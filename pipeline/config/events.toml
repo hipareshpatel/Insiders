@@ -1,0 +1,118 @@
+# Event-type prompt modules for Pass 2.
+#   focus    -> instructions appended to the analyst prompt for this event type
+#   keywords -> used to pick the most relevant PDF pages within the char budget
+
+[RESULTS]
+focus = """
+This is a periodic financial result. Extract revenue from operations, EBITDA (or operating profit),
+PAT, EPS for the latest period and the comparable period, and compute YoY (and QoQ for quarters)
+when both figures are present. State whether figures are standalone or consolidated and their unit
+in the source (₹ lakh / ₹ crore / ₹ million); convert to ₹ crore. Note exceptional items, auditor
+qualifications, and segment results. Compare against guidance in memory where one exists.
+"""
+keywords = ["revenue from operations", "total income", "profit before tax", "net profit", "ebitda",
+            "earnings per share", "segment", "exceptional", "consolidated", "standalone"]
+
+[CONCALL_PRESENTATION]
+focus = """
+This is an earnings call transcript or investor presentation. Capture forward-looking statements
+as guidance items (metric, target, timeline) with the speaker's exact numbers, and mark any prior
+guidance from memory that management confirmed, revised, or quietly dropped.
+"""
+keywords = ["guidance", "outlook", "target", "capex", "margin", "expect", "fy27", "fy28", "pipeline", "order book"]
+
+[RIGHTS_ISSUE]
+focus = """
+This is a rights issue. Extract issue size, rights price and discount to market price, entitlement
+ratio, record date, issue open/close dates, and stated use of proceeds. Add every dated milestone
+to upcoming_events. Connect the raise to leverage and capex in memory.
+"""
+keywords = ["rights", "entitlement", "record date", "issue price", "objects of the issue", "letter of offer"]
+
+[FUNDRAISE]
+focus = """
+This is a fundraise (QIP, preferential allotment, warrants, NCDs or similar). Extract amount,
+price, investors or allottees, dilution, and use of proceeds.
+"""
+keywords = ["allotment", "issue price", "floor price", "warrants", "investor", "qip", "proceeds"]
+
+[CAPEX]
+focus = """
+This is a capital expenditure or capacity announcement. Extract project cost, capacity added,
+funding mix (debt / internal accruals / equity), commissioning timeline and expected revenue
+potential. Flag a missing timeline or funding plan as a missing disclosure.
+"""
+keywords = ["capex", "capacity", "commissioning", "project cost", "expansion", "brownfield", "greenfield", "funding"]
+
+[M_AND_A]
+focus = """
+This is an acquisition, merger, demerger or scheme of arrangement. Extract counterparty, deal value,
+consideration form, valuation (EV, multiples if stated), swap ratio, target's revenue/profit, and
+approvals still required with expected dates.
+"""
+keywords = ["acquisition", "consideration", "swap ratio", "enterprise value", "turnover", "scheme", "valuation", "approval"]
+
+[ORDER_WIN]
+focus = """
+This is an order win. Extract order value, client (domestic/international, government/private),
+execution period, and the order's size relative to trailing revenue or order book in memory.
+"""
+keywords = ["order", "contract", "letter of award", "value", "execution", "client"]
+
+[MONTHLY_BUSINESS_UPDATE]
+focus = """
+This is a monthly or periodic business update (volumes, sales, disbursements, AUM). Extract each
+reported volume with YoY and MoM change, and compare with the trend in memory.
+"""
+keywords = ["units", "volume", "sales", "yoy", "domestic", "exports", "disbursement", "aum"]
+
+[DEBT_RATINGS]
+focus = """
+This is a credit rating action or debt disclosure. Extract agency, instrument, amount rated, old vs
+new rating and outlook, and the agency's stated rationale. An upgrade or downgrade changes the
+balance-sheet snapshot.
+"""
+keywords = ["rating", "outlook", "reaffirmed", "upgraded", "downgraded", "instrument", "bank facilities", "rationale"]
+
+[CORPORATE_ACTION]
+focus = """
+This is a corporate action (dividend, split, bonus, buyback). Extract the ratio or amount per
+share, record date, payment date and, for buybacks, size, price and method.
+"""
+keywords = ["dividend", "record date", "bonus", "split", "buyback", "per share", "payment date"]
+
+[GOVERNANCE]
+focus = """
+This is a governance matter (auditor change, board change, related-party transaction, pledge,
+promoter action, SEBI/stock-exchange observation). State plainly what changed and why it matters
+to minority shareholders.
+"""
+keywords = ["auditor", "resignation", "pledge", "related party", "promoter", "reason"]
+
+[MANAGEMENT_CHANGE]
+focus = """
+This is a key management change. Name the person, role, effective date, and stated reason. A
+resignation without a stated reason, or a CFO/auditor exit mid-year, is worth flagging.
+"""
+keywords = ["resignation", "appointment", "effective", "reason", "chief", "managing director"]
+
+[LITIGATION_REGULATORY]
+focus = """
+This is a legal, tax or regulatory matter (demand order, USFDA observation, penalty, license).
+Extract the amount at stake, authority, status and next steps, and its size relative to net worth
+in memory.
+"""
+keywords = ["order", "demand", "penalty", "observation", "warning letter", "inspection", "appeal", "tribunal"]
+
+[PRODUCT_LAUNCH]
+focus = """
+This is a product, plant or market launch. Extract what launched, addressable market or capacity
+where stated, and expected contribution.
+"""
+keywords = ["launch", "introduce", "market", "capacity", "approval"]
+
+[OTHER]
+focus = """
+Identify the single most decision-relevant fact in this filing and the numbers behind it.
+"""
+keywords = []

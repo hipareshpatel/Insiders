@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bse-intelligence",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bse-index",
+      // Replace with the id printed by `wrangler d1 create bse-index`.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "../db/migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "VAULT", "bucket_name": "bse-intelligence" }],
+  // Workers AI: the gateway's keyless spare provider (see /api/internal/ai).
+  "ai": { "binding": "AI" },
+  "observability": { "enabled": true }
+  // Secret (not in this file): INGEST_TOKEN, via `wrangler secret put INGEST_TOKEN`.
+}

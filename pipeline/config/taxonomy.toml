@@ -1,0 +1,117 @@
+# Rule-based triage, applied to every filing before any AI call.
+#
+# Matching is case-insensitive:
+#   categories / subcategories -> substring match on BSE CATEGORYNAME / SUBCATNAME
+#   headline                   -> regex search over HEADLINE + " " + NEWSSUB
+#   exclude_headline           -> regexes that veto a rule
+#
+# Order of evaluation: [[drop]] rules, then [[calendar]] rules, then
+# [[fast_track]] rules. Anything left over goes to the Pass 1 AI gatekeeper.
+# BSE renames subcategories occasionally; headline regexes are the safety net.
+
+[[drop]]
+reason = "share certificate housekeeping"
+subcategories = ["loss of share certificate", "duplicate share certificate", "issue of duplicate"]
+headline = ["loss of (share )?certificates?", "duplicate (share )?certificates?", "lost share certificates?"]
+
+[[drop]]
+reason = "trading window"
+subcategories = ["trading window"]
+headline = ["trading window"]
+
+[[drop]]
+reason = "Reg 74(5) depository certificate"
+subcategories = ["74(5)", "74 (5)"]
+headline = ["74\\s*\\(\\s*5\\s*\\)"]
+
+[[drop]]
+reason = "newspaper publication"
+subcategories = ["newspaper publication", "copy of newspaper"]
+headline = ["newspaper (publication|advertisement|cutting|clipping)s?", "copy of (the )?newspaper"]
+
+[[drop]]
+reason = "shareholding pattern"
+subcategories = ["shareholding pattern"]
+headline = ["shareholding pattern"]
+
+[[drop]]
+reason = "routine compliance certificate"
+subcategories = ["compliance certificate", "statement of investor complaints", "investor complaints"]
+headline = [
+  "regulation\\s*7\\s*\\(\\s*3\\s*\\)", "regulation\\s*40\\s*\\(\\s*(9|10)\\s*\\)",
+  "investor (grievances?|complaints?)", "compliance certificate",
+  "reconciliation of share capital audit", "regulation\\s*76",
+]
+
+# Board-meeting intimations carry no news yet, but their date is a catalyst.
+[[calendar]]
+reason = "board meeting intimation"
+event_type = "BOARD_MEETING"
+categories = ["board meeting"]
+headline = ["board meeting intimation", "intimation of board meeting", "prior intimation"]
+exclude_headline = ["outcome"]
+
+[[fast_track]]
+event_type = "RESULTS"
+categories = ["result"]
+headline = [
+  "(un)?-?audited (standalone |consolidated )?financial results",
+  "financial results for the (quarter|half|year|period)",
+  "outcome.{0,60}(financial )?results", "results.{0,60}outcome",
+]
+exclude_headline = ["intimation", "to be held", "will be held", "trading window", "newspaper"]
+
+[[fast_track]]
+event_type = "CONCALL_PRESENTATION"
+headline = ["investor presentation", "earnings (call|presentation)", "transcript", "analysts?/institutional investor meet.*(presentation|transcript)"]
+exclude_headline = ["intimation", "schedule"]
+
+[[fast_track]]
+event_type = "DEBT_RATINGS"
+subcategories = ["credit rating"]
+headline = ["credit rating"]
+
+[[fast_track]]
+event_type = "RIGHTS_ISSUE"
+headline = ["rights issue", "letter of offer"]
+exclude_headline = ["newspaper"]
+
+[[fast_track]]
+event_type = "FUNDRAISE"
+subcategories = ["qualified institutional", "preferential issue"]
+headline = ["qualified institutions? placement", "\\bqip\\b", "preferential (issue|allotment)", "fund ?rais"]
+
+[[fast_track]]
+event_type = "M_AND_A"
+subcategories = ["acquisition", "amalgamation", "merger", "scheme of arrangement", "demerger"]
+headline = ["acquisition", "amalgamation", "merger", "scheme of arrangement", "demerger", "open offer"]
+
+[[fast_track]]
+event_type = "ORDER_WIN"
+subcategories = ["award of order", "receipt of order", "bagging"]
+headline = ["(bags?|receipt of|secures?|wins?|awarded).{0,40}orders?", "letter of award", "\\bLoA\\b"]
+
+[[fast_track]]
+event_type = "MONTHLY_BUSINESS_UPDATE"
+headline = ["(monthly|sales|production|business) (update|volumes?|numbers)", "auto sales"]
+
+[[fast_track]]
+event_type = "LITIGATION_REGULATORY"
+headline = ["usfda", "us fda", "warning letter", "import alert", "form 483", "\\beir\\b", "establishment inspection report",
+            "show cause notice", "(tax|gst|income tax) demand", "penalty (imposed|levied)", "sebi order"]
+exclude_headline = ["clarification"]
+
+[[fast_track]]
+event_type = "CAPEX"
+headline = ["commencement of commercial (production|operations)", "commissioning of", "capacity expansion", "expansion of (the )?capacity",
+            "(new|greenfield|brownfield) (plant|facility|unit)"]
+
+[[fast_track]]
+event_type = "MANAGEMENT_CHANGE"
+headline = ["resignation of .*(managing director|ceo|cfo|chief|auditor)", "appointment of .*(managing director|ceo|cfo|chief executive|chief financial)"]
+
+# Any other board-meeting outcome (dividends, fundraises, appointments...):
+# material often enough to skip Pass 1; Pass 2 decides the event type.
+[[fast_track]]
+reason = "board meeting outcome"
+headline = ["outcome of (the )?board meeting", "board meeting outcome"]

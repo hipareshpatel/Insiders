@@ -1,0 +1,248 @@
+# AI providers and routes for the centralized gateway.
+#
+# Every provider speaks the OpenAI chat-completions protocol. Model IDs and
+# free-tier limits change often: check each console and edit this file; no
+# code change is needed. A provider whose key (or base-URL variable) is unset
+# is skipped, so the pipeline runs with any subset of providers.
+#
+# Operational rules (see bse_intel/ai/gateway.py):
+# * 95% safety ceiling: every limit below is scaled by `safety_ceiling`. A
+#   model leaves the active pool at 95% of its daily/monthly quota, and
+#   per-minute pacing keeps it under 95% of rpm/tpm. A 429 puts the model in
+#   cooldown (Retry-After), and a 429 that mentions a daily quota retires it
+#   for the day.
+# * Never hammer one provider: routes listed under [gateway.strategies] as
+#   "weighted" rotate across their pool by `weight` (smooth round-robin);
+#   other routes are priority order.
+# * `spare = true` targets are used only after every other target failed or
+#   hit its ceiling.
+# * Graceful degradation: when nothing can serve a request, the pipeline
+#   waits 60 s and retries if the blockers are per-minute limits/cooldowns,
+#   or leaves the filing PENDING in the D1 queue if they are daily/monthly
+#   ceilings. Nothing is dropped.
+#
+# Limits are per model unless set on the provider (shared allowances such as
+# a monthly token budget across all of a provider's models).
+
+[gateway]
+safety_ceiling = 0.95
+
+[gateway.strategies]
+pass2 = "weighted"
+pass2_bulk = "weighted"
+
+# ------------------------------------------------------------------ providers
+
+[providers.groq]
+base_url = "https://api.groq.com/openai/v1"
+api_key_env = "GROQ_API_KEY"
+timeout_s = 30
+
+[providers.nvidia]
+base_url = "https://integrate.api.nvidia.com/v1"
+api_key_env = "NVIDIA_API_KEY"
+timeout_s = 180
+
+[providers.mistral]
+base_url = "https://api.mistral.ai/v1"
+api_key_env = "MISTRAL_API_KEY"
+timeout_s = 120
+# Free "Experiment" tier monthly allowance, shared across models (check
+# admin.mistral.ai -> Limits for your workspace's current numbers).
+limits = { tpmo = 1_000_000_000 }
+
+[providers.zai]
+# Z.AI global platform. (open.bigmodel.cn is Zhipu's separate mainland-China
+# platform with its own accounts and keys.)
+base_url = "https://api.z.ai/api/paas/v4"
+api_key_env = "ZAI_API_KEY"
+timeout_s = 120
+
+[providers.cloudflare]
+# Workers AI through this project's own Worker (AI binding), so the runner
+# needs no extra Cloudflare credential: it reuses INGEST_TOKEN. To call the
+# Workers AI REST API directly instead, use
+#   base_url = "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/ai/v1"
+#   api_key_env = "CLOUDFLARE_AI_TOKEN"   (token with Workers AI permission)
+base_url = "${PLATFORM_API_URL}/api/internal/ai/v1"
+api_key_env = "INGEST_TOKEN"
+timeout_s = 120
+# The free plan allows 10,000 Neurons/day across all models. Neurons are
+# not reported per request, so this is a conservative token estimate.
+limits = { tpd = 150_000 }
+
+# ------------------------------------------------------------------ Pass 1: gatekeeper
+# Input: headline + subcategory + first ~2,500 characters of page 1.
+
+[[routes.pass1]]
+provider = "groq"
+model = "llama-3.1-8b-instant"
+json_mode = true
+max_tokens = 200
+limits = { rpm = 30, tpm = 6000, rpd = 14400, tpd = 500000 }
+
+[[routes.pass1]]
+provider = "mistral"
+model = "mistral-small-latest"
+json_mode = true
+max_tokens = 200
+limits = { rpm = 60 }
+
+[[routes.pass1]]
+provider = "zai"
+model = "glm-4.7-flash"
+json_mode = true
+max_tokens = 200
+extra_body = { thinking = { type = "disabled" } }
+limits = { rpm = 60 }
+
+[[routes.pass1]]
+provider = "cloudflare"
+model = "@cf/meta/llama-3.1-8b-instruct"
+max_tokens = 200
+context_tokens = 7000
+spare = true
+limits = { rpm = 60, tpd = 150_000 }
+
+# Backfill: Mistral's large monthly allowance carries the bulk.
+[[routes.pass1_bulk]]
+provider = "mistral"
+model = "mistral-small-latest"
+json_mode = true
+max_tokens = 200
+limits = { rpm = 60 }
+
+[[routes.pass1_bulk]]
+provider = "groq"
+model = "llama-3.1-8b-instant"
+json_mode = true
+max_tokens = 200
+limits = { rpm = 30, tpm = 6000, rpd = 14400, tpd = 500000 }
+
+[[routes.pass1_bulk]]
+provider = "zai"
+model = "glm-4.7-flash"
+json_mode = true
+max_tokens = 200
+extra_body = { thinking = { type = "disabled" } }
+limits = { rpm = 60 }
+
+[[routes.pass1_bulk]]
+provider = "cloudflare"
+model = "@cf/meta/llama-3.1-8b-instruct"
+max_tokens = 200
+context_tokens = 7000
+spare = true
+limits = { rpm = 60, tpd = 150_000 }
+
+# ------------------------------------------------------------------ Pass 2: deep analyst
+# Weighted rotation. DeepSeek-R1 is the primary analyst: it does not take
+# JSON mode and emits a <think> block, which the gateway strips before
+# validating. Prompts larger than a model's context_tokens skip that model,
+# so very long presentations and annual reports flow to GLM's 200K window.
+
+[[routes.pass2]]
+provider = "nvidia"
+model = "deepseek-ai/deepseek-r1"
+weight = 3
+json_mode = false
+strip_reasoning = true
+max_tokens = 8000
+context_tokens = 120000
+limits = { rpm = 40 }
+
+[[routes.pass2]]
+provider = "nvidia"
+model = "meta/llama-3.3-70b-instruct"
+weight = 2
+json_mode = true
+max_tokens = 3000
+context_tokens = 120000
+limits = { rpm = 40 }
+
+[[routes.pass2]]
+provider = "zai"
+model = "glm-4.7-flash"
+weight = 2
+json_mode = true
+max_tokens = 3000
+context_tokens = 190000
+extra_body = { thinking = { type = "disabled" } }
+limits = { rpm = 60 }
+
+[[routes.pass2]]
+provider = "mistral"
+model = "mistral-large-latest"
+weight = 2
+json_mode = true
+max_tokens = 3000
+context_tokens = 120000
+limits = { rpm = 60 }
+
+[[routes.pass2]]
+provider = "cloudflare"
+model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+max_tokens = 3000
+context_tokens = 24000
+spare = true
+limits = { rpm = 60, tpd = 60_000 }
+
+[[routes.pass2_bulk]]
+provider = "mistral"
+model = "mistral-large-latest"
+weight = 4
+json_mode = true
+max_tokens = 3000
+context_tokens = 120000
+limits = { rpm = 60 }
+
+[[routes.pass2_bulk]]
+provider = "zai"
+model = "glm-4.7-flash"
+weight = 2
+json_mode = true
+max_tokens = 3000
+context_tokens = 190000
+extra_body = { thinking = { type = "disabled" } }
+limits = { rpm = 60 }
+
+[[routes.pass2_bulk]]
+provider = "nvidia"
+model = "meta/llama-3.3-70b-instruct"
+weight = 1
+json_mode = true
+max_tokens = 3000
+context_tokens = 120000
+limits = { rpm = 40 }
+
+[[routes.pass2_bulk]]
+provider = "nvidia"
+model = "deepseek-ai/deepseek-r1"
+weight = 1
+json_mode = false
+strip_reasoning = true
+max_tokens = 8000
+context_tokens = 120000
+limits = { rpm = 40 }
+
+[[routes.pass2_bulk]]
+provider = "cloudflare"
+model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+max_tokens = 3000
+context_tokens = 24000
+spare = true
+limits = { rpm = 60, tpd = 60_000 }
+
+# ------------------------------------------------------------------ Vision OCR for scanned pages
+
+[[routes.vision]]
+provider = "zai"
+model = "glm-4.6v-flash"
+max_tokens = 2500
+limits = { rpm = 60 }
+
+[[routes.vision]]
+provider = "mistral"
+model = "pixtral-12b-latest"
+max_tokens = 2500
+limits = { rpm = 60 }

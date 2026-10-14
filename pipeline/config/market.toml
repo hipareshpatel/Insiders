@@ -1,0 +1,16 @@
+# Market-data enrichment (post-close job).
+#
+# Size buckets by market cap in ₹ crore. AMFI publishes the official
+# Large / Mid / Small lists every six months (ranks 1-100 / 101-250 / 251+);
+# these cut-offs approximate them. Update after each AMFI release.
+[size_buckets]
+LARGE = 100000
+MID = 33000
+SMALL = 5000
+# anything below SMALL is MICRO
+
+[yfinance]
+batch = 100              # tickers per bulk price download
+max_companies = 3000     # companies enriched per run (those with cards, most recent first)
+shares_refresh_days = 7  # refresh shares outstanding weekly
+max_share_lookups = 150  # per-ticker share-count lookups per run

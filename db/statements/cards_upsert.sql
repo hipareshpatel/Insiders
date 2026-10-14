@@ -1,0 +1,37 @@
+-- ?1 = JSON array of card rows; `card` is the full card object.
+INSERT INTO cards (news_id, scrip_code, symbol, company_name, filing_date, filed_at, sector,
+                   event_category, impact_level, headline, grounding_score, needs_review,
+                   memory_complete, card_json, pdf_url, model, created_at)
+SELECT json_extract(value, '$.news_id'),
+       json_extract(value, '$.scrip_code'),
+       json_extract(value, '$.symbol'),
+       json_extract(value, '$.company_name'),
+       json_extract(value, '$.filing_date'),
+       json_extract(value, '$.filed_at'),
+       json_extract(value, '$.sector'),
+       json_extract(value, '$.event_category'),
+       json_extract(value, '$.impact_level'),
+       json_extract(value, '$.headline'),
+       json_extract(value, '$.grounding_score'),
+       coalesce(json_extract(value, '$.needs_review'), 0),
+       coalesce(json_extract(value, '$.memory_complete'), 1),
+       json(json_extract(value, '$.card')),
+       json_extract(value, '$.pdf_url'),
+       json_extract(value, '$.model'),
+       json_extract(value, '$.created_at')
+FROM json_each(?1)
+WHERE true
+ON CONFLICT (news_id) DO UPDATE SET
+       symbol          = excluded.symbol,
+       company_name    = excluded.company_name,
+       sector          = excluded.sector,
+       event_category  = excluded.event_category,
+       impact_level    = excluded.impact_level,
+       headline        = excluded.headline,
+       grounding_score = excluded.grounding_score,
+       needs_review    = excluded.needs_review,
+       memory_complete = excluded.memory_complete,
+       card_json       = excluded.card_json,
+       pdf_url         = excluded.pdf_url,
+       model           = excluded.model,
+       created_at      = excluded.created_at;

@@ -1,0 +1,118 @@
+# Sector prompt modules for Pass 2.
+#
+# A company's BSE industry string (which covers every BSE scrip, unlike NSE's
+# classification) is matched case-insensitively against each module's `match`
+# prefixes (at a word boundary), in file order; the first hit wins, else [default].
+#   kpis    -> the sector-specific numbers the analyst should look for
+#   context -> how to read those numbers
+
+[nbfc]
+# Before [banks]: "Non Banking Financial Company" contains the word "Banking".
+match = ["non banking", "non-banking", "nbfc", "finance", "financial services", "housing finance", "microfinance", "asset management", "broking"]
+kpis = ["AUM", "disbursements", "NIM", "cost of funds", "GS3 / Stage 3", "ECL provisions", "capital adequacy", "RoA"]
+context = "Growth vs. asset quality and funding cost; ALM and borrowing mix matter for rating actions."
+
+[banks]
+match = ["bank"]
+kpis = ["NII", "NIM", "advances growth", "deposit growth", "CASA ratio", "GNPA", "NNPA", "PCR", "credit cost", "CRAR", "RoA"]
+context = "Asset quality and margins drive bank valuations; slippages and credit cost matter more than headline profit."
+
+[insurance]
+match = ["insurance"]
+kpis = ["GWP / premium", "APE", "VNB margin", "combined ratio", "solvency ratio", "persistency"]
+context = "Life: VNB and margins; general: combined ratio and solvency."
+
+[it]
+match = ["software", "computers", "it enabled", "it services", "information technology", "it consulting"]
+kpis = ["constant-currency revenue growth", "EBIT margin", "deal wins / TCV", "headcount", "attrition", "utilisation"]
+context = "Deal TCV and margin trajectory lead revenue; watch client concentration and vertical commentary."
+
+[pharma]
+match = ["pharma", "drug", "healthcare", "hospital", "diagnostic", "life sciences", "biotech"]
+kpis = ["US generics revenue", "India formulations growth", "R&D % of sales", "USFDA status", "ANDA approvals", "occupancy / ARPOB (hospitals)"]
+context = "USFDA inspection outcomes (OAI/VAI, warning letters) and launches drive pharma; hospitals run on occupancy and ARPOB."
+
+[auto]
+match = ["automobile", "passenger car", "two wheeler", "2/3 wheeler", "commercial vehicle", "tractor"]
+kpis = ["volumes (domestic/exports)", "realisation per vehicle", "EBITDA margin", "market share", "EV mix", "inventory days"]
+context = "Monthly volumes are the leading indicator; margins track commodity costs and mix."
+
+[auto_components]
+match = ["auto component", "auto ancillar", "tyres", "batteries"]
+kpis = ["revenue by segment/customer", "EBITDA margin", "export share", "order book / new business wins"]
+context = "Tied to OEM volumes; content-per-vehicle and export wins drive outperformance."
+
+[cement]
+match = ["cement"]
+kpis = ["volumes (MT)", "realisation per tonne", "EBITDA per tonne", "power & fuel cost per tonne", "capacity (MTPA)", "utilisation"]
+context = "EBITDA/tonne and capacity additions are the core metrics; regional pricing drives quarters."
+
+[metals]
+match = ["steel", "iron", "aluminium", "copper", "zinc", "metal", "mining", "minerals", "ferro alloys"]
+kpis = ["volumes", "realisation per tonne", "EBITDA per tonne", "net debt", "capex", "coking coal / input costs"]
+context = "Commodity cycle and spreads; leverage matters through the downcycle."
+
+[fmcg]
+match = ["fmcg", "personal care", "packaged foods", "food products", "beverages", "tobacco", "edible oil", "dairy"]
+kpis = ["volume growth", "price growth", "gross margin", "A&P spend", "rural vs urban demand"]
+context = "Volume growth vs. price-led growth; gross margins track input costs."
+
+[oil_gas]
+match = ["oil", "gas", "refiner", "petroleum", "lpg", "lng", "exploration"]
+kpis = ["GRM", "throughput", "marketing margin", "production volumes", "realisation", "inventory gains/losses"]
+context = "Refining margins and inventory effects swing quarters; government pricing policy matters for OMCs."
+
+[power]
+match = ["power", "electric utilities", "renewable", "solar", "wind", "transmission"]
+kpis = ["installed capacity (MW)", "PLF / CUF", "PPA tariffs", "receivables days", "pipeline under construction", "net debt"]
+context = "Capacity pipeline and commissioning timelines; receivables from discoms are a key risk."
+
+[capital_goods]
+match = ["capital goods", "engineering", "industrial machinery", "electrical equipment", "heavy electrical", "defence", "railway"]
+kpis = ["order inflow", "order book", "book-to-bill", "execution / revenue growth", "EBITDA margin", "working capital days"]
+context = "Order book visibility and execution pace; working capital intensity drives cash flow."
+
+[construction]
+match = ["construction", "infrastructure", "civil", "epc", "road", "ports"]
+kpis = ["order book", "order inflow", "execution", "EBITDA margin", "net debt", "working capital"]
+context = "Order book in years of revenue, execution and balance-sheet stretch."
+
+[realty]
+match = ["realty", "real estate", "residential", "commercial property"]
+kpis = ["pre-sales value", "area sold (msf)", "collections", "new launches", "net debt", "realisation per sq ft"]
+context = "Pre-sales and collections lead reported revenue (which follows project completion)."
+
+[consumer_durables]
+match = ["consumer durables", "consumer electronics", "household appliances", "cables", "paints", "jewellery", "footwear"]
+kpis = ["revenue growth", "volume growth", "gross margin", "EBITDA margin", "channel inventory"]
+context = "Demand cycles and input costs; distribution expansion drives growth."
+
+[chemicals]
+match = ["chemical", "fertiliser", "fertilizer", "agro", "pesticide", "specialty"]
+kpis = ["volumes", "realisation", "EBITDA margin", "capacity utilisation", "capex", "China pricing commentary"]
+context = "Utilisation of new capacity and global price competition drive margins."
+
+[textiles]
+match = ["textile", "apparel", "garment", "yarn", "fabric", "cotton"]
+kpis = ["volumes", "realisation", "EBITDA margin", "export share", "cotton cost"]
+context = "Raw material spreads and export demand."
+
+[telecom]
+match = ["telecom", "communication"]
+kpis = ["ARPU", "subscribers", "data usage", "EBITDA margin", "capex", "net debt"]
+context = "ARPU trajectory and leverage."
+
+[media]
+match = ["media", "entertainment", "broadcasting", "publishing", "film"]
+kpis = ["advertising revenue", "subscription revenue", "content cost", "EBITDA margin"]
+context = "Ad cycle and content spend."
+
+[consumer_services]
+match = ["hotel", "restaurant", "retail", "e-commerce", "travel", "aviation", "airline", "logistics", "education"]
+kpis = ["same-store sales / ARR / occupancy", "store or fleet additions", "EBITDA margin", "unit economics"]
+context = "Unit economics and footprint expansion."
+
+[default]
+match = []
+kpis = ["revenue", "EBITDA", "PAT", "order book or pipeline", "net debt"]
+context = "Focus on the numbers most likely to change an investor's view of earnings or balance-sheet risk."

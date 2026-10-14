@@ -1,0 +1,52 @@
+# Weekly export of every Living Dossier to the `backups` branch, one JSON
+# file per company, so git stores small text diffs instead of a growing zip.
+name: Backup dossiers
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 20 * * 0"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bse-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e pipeline
+      - name: Check out the backups branch
+        run: |
+          if git ls-remote --exit-code --heads origin backups >/dev/null; then
+            git worktree add -B backups backup-data origin/backups
+          else
+            git worktree add --orphan -b backups backup-data
+          fi
+      - name: Export dossiers
+        run: |
+          rm -rf backup-data/memory
+          python -m bse_intel backup --out backup-data
+      - name: Commit and push
+        working-directory: backup-data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+          git commit -m "Dossier backup $(date -u +%Y-%m-%d)"
+          git push origin backups

@@ -1,0 +1,36 @@
+# Post-close financial footer refresh: prices, 1W/1M/1Y returns, market cap
+# and size bucket for every company with cards. 10:45 UTC = 16:15 IST.
+name: Market data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "45 10 * * 1-5"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bse-market-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pipeline/pyproject.toml
+      - run: pip install -e ".[market]"
+      - run: python -m bse_intel market-data

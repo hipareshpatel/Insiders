@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Warm Institutional (light) */
+:root {
+  --bg: #f8f7f4;
+  --surface: #ffffff;
+  --surface-2: #f2f0eb;
+  --line: #e6e2d9;
+  --ink: #1c1b19;
+  --ink-2: #5f5d57;
+  --ink-3: #8a877f;
+  --memory: #eaf2ee;
+  --memory-line: #cfe2d8;
+  --forest: #1b4d3e;
+  --forest-ink: #ffffff;
+  --high: #b42318;
+  --high-bg: #fdecea;
+  --moderate: #b54708;
+  --moderate-bg: #fef3e2;
+  --low: #5f6b7a;
+  --low-bg: #eef0f3;
+  --pos: #157f3d;
+  --neg: #b42318;
+  --warn: #b54708;
+  --info: #175cd3;
+  --ring: #1b4d3e;
+  color-scheme: light;
+}
+
+/* OLED Midnight (dark) */
+:root[data-theme="dark"] {
+  --bg: #0b0f17;
+  --surface: #111724;
+  --surface-2: #161d2c;
+  --line: #222b3b;
+  --ink: #e7e9ee;
+  --ink-2: #a3abba;
+  --ink-3: #737c8c;
+  --memory: #0f231c;
+  --memory-line: #1d3b30;
+  --forest: #7cc4a4;
+  --forest-ink: #0b0f17;
+  --high: #f97066;
+  --high-bg: #2a1515;
+  --moderate: #fdb022;
+  --moderate-bg: #2a2010;
+  --low: #98a2b3;
+  --low-bg: #1a2130;
+  --pos: #47cd89;
+  --neg: #f97066;
+  --warn: #fdb022;
+  --info: #84adff;
+  --ring: #7cc4a4;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b0f17;
+    --surface: #111724;
+    --surface-2: #161d2c;
+    --line: #222b3b;
+    --ink: #e7e9ee;
+    --ink-2: #a3abba;
+    --ink-3: #737c8c;
+    --memory: #0f231c;
+    --memory-line: #1d3b30;
+    --forest: #7cc4a4;
+    --forest-ink: #0b0f17;
+    --high: #f97066;
+    --high-bg: #2a1515;
+    --moderate: #fdb022;
+    --moderate-bg: #2a2010;
+    --low: #98a2b3;
+    --low-bg: #1a2130;
+    --pos: #47cd89;
+    --neg: #f97066;
+    --warn: #fdb022;
+    --info: #84adff;
+    --ring: #7cc4a4;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --font-display: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-memory: var(--memory);
+  --color-memory-line: var(--memory-line);
+  --color-forest: var(--forest);
+  --color-forest-ink: var(--forest-ink);
+  --color-high: var(--high);
+  --color-high-bg: var(--high-bg);
+  --color-moderate: var(--moderate);
+  --color-moderate-bg: var(--moderate-bg);
+  --color-low: var(--low);
+  --color-low-bg: var(--low-bg);
+  --color-pos: var(--pos);
+  --color-neg: var(--neg);
+  --color-warn: var(--warn);
+  --color-info: var(--info);
+  --color-ring: var(--ring);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

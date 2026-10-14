@@ -1,23 +1,76 @@
 import { toBlob } from "html-to-image";
 import {
-  AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, Camera, CheckCircle2, FileText, FolderOpen,
-  Gauge, Info, ListChecks, Minus, Scale, ShieldAlert, Timer,
+  AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, Calculator, Camera, CheckCircle2, ChevronDown, FileText,
+  FolderOpen, Gauge, Info, ListChecks, Minus, Scale, ShieldAlert, Timer,
 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
-import type { CardBody, CardRow, Insight, Signal } from "../../shared/types";
+import type { CardBody, CardRow, Insight, QuantifiedImpact, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
-import { cr, istDateTime, pct, signClass, titleCase } from "../lib/format";
+import { cr, exact, istDateTime, marketSession, pct, quantValue, signClass, titleCase } from "../lib/format";
 import { EVENT_LABELS, IMPACT_LABEL, IMPACT_STYLE } from "../lib/taxonomy";
 import { useQueryState } from "../lib/url";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
 const BASIS_LABEL: Record<Insight["basis"], string> = {
-  MEMORY: "Memory",
+  MEMORY: "Memory link",
   BALANCE_SHEET: "Balance sheet",
-  SECTOR: "Sector",
+  SECTOR: "Peer context",
   FILING: "Filing",
 };
+
+const SOURCE_STYLE: Record<string, string> = {
+  FILING: "border-forest/30 text-forest",
+  MEMORY: "border-info/30 text-info",
+  ASSUMPTION: "border-warn/40 text-warn",
+};
+
+function QuantRow({ q }: { q: QuantifiedImpact }) {
+  const [open, setOpen] = useState(false);
+  const verified = q.check === "VERIFIED";
+  return (
+    <li className="rounded-md border border-memory-line bg-surface/60 px-2.5 py-2">
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <span className="mr-0.5 rounded bg-surface/70 px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-forest">
+          Quantified
+        </span>
+        <span className="font-medium text-ink">{q.label}:</span>
+        <span className="num font-semibold text-ink">{quantValue(q.result, q.unit)}</span>
+        <span
+          className={cn("inline-flex items-center gap-1 text-[11px]", verified ? "text-pos" : q.check === "MISMATCH" ? "text-neg" : "text-ink-3")}
+          title={q.check_note ?? (verified ? "The arithmetic was recomputed and matches" : "Not re-checked")}
+        >
+          {verified ? <BadgeCheck className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
+          {verified ? "math checked" : q.check === "MISMATCH" ? "math doesn't check out" : "unchecked"}
+        </span>
+      </div>
+      {q.interpretation ? <p className="mt-0.5 text-[13px] text-ink-2">{q.interpretation}</p> : null}
+      <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} data-noexport="true"
+        className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-forest hover:underline">
+        <Calculator className="h-3 w-3" /> {open ? "Hide working" : "Show working"}
+        <ChevronDown className={cn("h-3 w-3 transition-transform", open && "rotate-180")} />
+      </button>
+      {open && (
+        <div className="mt-1.5 space-y-1 text-[12px]">
+          <code className="num block overflow-x-auto rounded bg-surface-2 px-2 py-1 text-ink">{q.formula}</code>
+          <ul className="space-y-0.5">
+            {q.inputs.map((i) => (
+              <li key={i.name} className="flex flex-wrap items-baseline gap-x-2">
+                <span className="num text-ink">{i.name} = {exact(i.value)}{i.unit ? ` ${i.unit}` : ""}</span>
+                <span className={cn("rounded border px-1 text-[10px] font-semibold uppercase", SOURCE_STYLE[i.source] ?? SOURCE_STYLE.ASSUMPTION)}>
+                  {i.source.toLowerCase()}
+                </span>
+                {q.unsourced_inputs?.includes(i.name) ? <span className="text-neg">not found in the filing</span> : null}
+                {i.note ? <span className="text-ink-3">{i.note}</span> : null}
+              </li>
+            ))}
+          </ul>
+          <p className="text-[11px] text-ink-3">An estimate from the inputs above, not a forecast or recommendation.</p>
+        </div>
+      )}
+    </li>
+  );
+}
 
 const SIGNAL_ICON: Record<Signal["type"], typeof Info> = {
   PROMISE_DELIVERED: CheckCircle2,
@@ -103,6 +156,9 @@ export function SuperCard({ row, highlight }: { row: CardRow; highlight?: boolea
       <header className="flex flex-wrap items-center gap-x-2 gap-y-1.5 px-4 pt-4 sm:px-5">
         <Badge className={IMPACT_STYLE[row.impact_level]}>{IMPACT_LABEL[row.impact_level]}</Badge>
         <Badge className="border-line bg-surface-2 text-ink-2">{card.category_tag || EVENT_LABELS[row.event_category]}</Badge>
+        {row.sector && row.sector !== "default" ? (
+          <Badge className="border-line bg-surface text-ink-3">{titleCase(row.sector)}</Badge>
+        ) : null}
         <button
           type="button"
           onClick={() => openCompany()}
@@ -113,10 +169,15 @@ export function SuperCard({ row, highlight }: { row: CardRow; highlight?: boolea
         <span className="num text-xs text-ink-3">
           {row.symbol ? `${row.symbol} · ` : ""}
           {row.scrip_code}
+          {row.market_cap_cr != null ? ` · ${cr(row.market_cap_cr)}` : ""}
+          {row.size_category ? ` · ${titleCase(row.size_category)}cap` : ""}
         </span>
-        <time className="num ml-auto text-xs text-ink-3" dateTime={row.filed_at}>
-          {istDateTime(row.filed_at)}
-        </time>
+        <span className="ml-auto flex items-center gap-2 text-xs text-ink-3">
+          <span className="hidden rounded border border-line px-1.5 py-px text-[10px] font-medium uppercase tracking-wide sm:inline">
+            {marketSession(row.filed_at)}
+          </span>
+          <time className="num" dateTime={row.filed_at}>{istDateTime(row.filed_at)} IST</time>
+        </span>
       </header>
 
       <h3 className="px-4 pt-2 font-display text-[17px] font-bold leading-snug text-ink sm:px-5">{card.headline}</h3>
@@ -161,6 +222,7 @@ export function SuperCard({ row, highlight }: { row: CardRow; highlight?: boolea
                 {insight.text}
               </li>
             ))}
+            {(card.quantified_impact ?? []).map((q, i) => <QuantRow key={`q${i}`} q={q} />)}
             {card.missing_disclosures.map((m, i) => (
               <li key={`m${i}`} className="flex gap-1.5 text-warn">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -169,7 +231,7 @@ export function SuperCard({ row, highlight }: { row: CardRow; highlight?: boolea
                 </span>
               </li>
             ))}
-            {card.why_it_matters.length === 0 && card.missing_disclosures.length === 0 && (
+            {card.why_it_matters.length === 0 && card.missing_disclosures.length === 0 && !card.quantified_impact?.length && (
               <li className="text-ink-3">No memory links for this filing yet.</li>
             )}
           </ul>
@@ -259,10 +321,19 @@ export function SuperCard({ row, highlight }: { row: CardRow; highlight?: boolea
 
       <footer className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line bg-surface-2/40 px-4 py-2.5 sm:px-5">
         <div className="num flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-          <span className="text-ink">
-            {cr(row.market_cap_cr)}
-            {row.size_category ? <span className="text-ink-3"> · {titleCase(row.size_category)}cap</span> : null}
-          </span>
+          {card.fundamentals?.revenue && (
+            <span className="text-ink-3">
+              Rev {card.fundamentals.revenue.period ?? ""} <span className="text-ink">{cr(card.fundamentals.revenue.value)}</span>
+            </span>
+          )}
+          {card.fundamentals?.debt && (
+            <span className="text-ink-3">Debt <span className="text-ink">{cr(card.fundamentals.debt.value)}</span></span>
+          )}
+          {card.fundamentals?.net_worth && (
+            <span className="text-ink-3">
+              Net worth <span className={card.fundamentals.net_worth.value < 0 ? "text-neg" : "text-ink"}>{cr(card.fundamentals.net_worth.value)}</span>
+            </span>
+          )}
           <span className="text-ink-3">
             1W <span className={signClass(row.ret_1w)}>{pct(row.ret_1w)}</span>
           </span>
@@ -288,7 +359,7 @@ export function SuperCard({ row, highlight }: { row: CardRow; highlight?: boolea
         <div className="ml-auto flex flex-wrap gap-1.5" data-noexport="true">
           {row.pdf_url && (
             <Button size="sm" variant="ghost" onClick={() => openCompany("pdf")}>
-              <FileText className="h-3.5 w-3.5" /> View PDF
+              <FileText className="h-3.5 w-3.5" /> View PDF{card.pdf_pages ? ` (${card.pdf_pages}p)` : ""}
             </Button>
           )}
           <Button size="sm" variant="ghost" onClick={() => openCompany()}>

@@ -40,6 +40,33 @@ export interface TrackNext {
   risks: string[];
 }
 
+export interface QuantInput {
+  name: string;
+  value: number | null;
+  unit: string;
+  source: "FILING" | "MEMORY" | "ASSUMPTION";
+  note: string;
+}
+
+export interface QuantifiedImpact {
+  label: string;
+  formula: string;
+  inputs: QuantInput[];
+  result: number | null;
+  unit: string;
+  interpretation: string;
+  check: "VERIFIED" | "MISMATCH" | "UNCHECKED";
+  computed: number | null;
+  check_note?: string;
+  unsourced_inputs: string[];
+}
+
+export interface Fundamentals {
+  revenue?: { period: string | null; value: number };
+  debt?: { period: string | null; value: number };
+  net_worth?: { period: string | null; value: number };
+}
+
 export interface CardBody {
   category_tag: string;
   event_type: string;
@@ -51,9 +78,12 @@ export interface CardBody {
   key_numbers: KeyNumber[];
   notable_changes?: NotableChange[];
   track_next?: TrackNext;
+  quantified_impact?: QuantifiedImpact[];
+  fundamentals?: Fundamentals;
+  pdf_pages?: number | null;
   signals: Signal[];
   timeline_entry: string;
-  grounding: { score: number; checked: number; ungrounded: string[] };
+  grounding: { score: number; checked: number; ungrounded: string[]; math_mismatches?: number };
   model: string;
 }
 

@@ -64,7 +64,7 @@ function FilterRibbon({
   const activeCount = [filters.impact, filters.category, filters.size].filter(Boolean).length;
 
   return (
-    <div className="sticky top-0 z-20 border-b border-line bg-bg/95 px-4 py-3 backdrop-blur sm:px-6">
+    <div className="z-20 border-b border-line bg-bg/95 px-4 py-3 backdrop-blur sm:px-6 lg:sticky lg:top-0">
       <div className="flex flex-wrap items-center gap-2">
         <label className="relative min-w-0 flex-1 basis-56">
           <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-3" />

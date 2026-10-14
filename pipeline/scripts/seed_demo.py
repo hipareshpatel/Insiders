@@ -17,7 +17,7 @@ import json
 import os
 import re
 from dataclasses import replace
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from types import SimpleNamespace
 
 import pymupdf
@@ -70,7 +70,7 @@ FILINGS = [
     ("chem-agm", "999002", at(60, 19, 40), "AGM/EGM", "", "Transcript of AGM speech and investor Q&A",
      "Chairman's address at the 52nd AGM. We will commission the 12 TPD Triacetin plant at Dahej by Q3 FY27 within the "
      "approved capex of Rs. 64 crore, funded from internal accruals. We target specialty chemicals to exceed 40% of revenue by FY28 "
-     "from 31% in FY26. Net debt stood at Rs. 38 crore on 31 March 2026."),
+     "from 31% in FY26. Revenue for FY26 was Rs. 590 crore. Net debt stood at Rs. 38 crore on 31 March 2026."),
     ("pharma-usfda", "999005", at(40, 20, 15), "Company Update", "", "Receipt of Warning Letter from USFDA for Unit III, Pithampur",
      "The Company has received a Warning Letter from the US FDA for its oral solids facility, Unit III, following the inspection "
      "conducted in March 2026. Unit III contributed approximately 18% of US revenues (Rs. 610 crore in FY26). The Company will "
@@ -156,6 +156,7 @@ def pass2_reply(key: str, user: str) -> dict:
                            "guidance": [
                                {"statement": "Commission 12 TPD Triacetin plant at Dahej", "target": "₹64 Cr capex", "due": "Q3FY27", "source_type": "AGM"},
                                {"statement": "Specialty chemicals above 40% of revenue", "target": "40%", "due": "FY28", "source_type": "AGM"}],
+                           "financial_metrics": [{"metric": "revenue", "period": "FY26", "value": 590}],
                            "balance_sheet": {"period": "Mar-2026", "net_debt_cr": 38}}),
         "pharma-usfda": dict(event_type="LITIGATION_REGULATORY", card=card(
             "HIGH", "Demo Pharma gets USFDA warning letter for Unit III, ~18% of US revenue",
@@ -207,6 +208,17 @@ def pass2_reply(key: str, user: str) -> dict:
             [{"text": "Delivers the plant guided at the AGM, ahead of the Q3FY27 deadline and under budget.", "basis": "MEMORY",
               "memory_refs": [t["id"] for t in timeline[-1:]]}],
             missing_disclosures=["No ramp-up schedule or expected FY27 revenue from the plant"],
+            quantified_impact=[
+                {"label": "Annual revenue at full utilisation", "formula": "capacity_tpd * operating_days * realisation_per_tonne / 1e7",
+                 "inputs": [{"name": "capacity_tpd", "value": 12, "unit": "TPD", "source": "FILING", "note": "plant capacity"},
+                            {"name": "operating_days", "value": 330, "unit": "days", "source": "ASSUMPTION", "note": "continuous plant, ~1 month maintenance"},
+                            {"name": "realisation_per_tonne", "value": 95000, "unit": "INR/t", "source": "ASSUMPTION", "note": "indicative Triacetin price"}],
+                 "result": 37.6, "unit": "INR_CR", "interpretation": "About 6% of FY26 revenue of ₹590 Cr at full ramp-up."},
+                {"label": "Pre-tax payback on the plant", "formula": "capex_cr / (annual_revenue_cr * ebitda_margin)",
+                 "inputs": [{"name": "capex_cr", "value": 61, "unit": "INR Cr", "source": "FILING", "note": "actual project cost"},
+                            {"name": "annual_revenue_cr", "value": 37.6, "unit": "INR Cr", "source": "ASSUMPTION", "note": "estimate above"},
+                            {"name": "ebitda_margin", "value": 0.2, "unit": "ratio", "source": "ASSUMPTION", "note": "specialty chemicals peers ~20%"}],
+                 "result": 8.1, "unit": "years", "interpretation": "Slow payback unless realisations or margins beat the assumptions."}],
             track_next={"kpis_to_verify": [{"kpi": "Specialty chemicals share of revenue", "check_in": "Q3FY27 results", "target": "above 40%"}],
                         "risks": ["Export realisations for Triacetin vs cheaper imports"]}),
             timeline_entry="Commissioned 12 TPD Triacetin plant at ₹61 Cr (guided ₹64 Cr by Q3FY27).",
@@ -226,6 +238,16 @@ def pass2_reply(key: str, user: str) -> dict:
                               "direction": "NEGATIVE", "why": "Far faster than 19% revenue growth"},
                              {"metric": "Borrowings", "previous": "₹420 Cr", "current": "₹640 Cr", "change": "+52%",
                               "direction": "NEGATIVE", "why": "Leverage rising with no capex announced"}],
+            quantified_impact=[
+                {"label": "Annual interest on the added debt", "formula": "(debt_now - debt_year_ago) * interest_rate",
+                 "inputs": [{"name": "debt_now", "value": 640, "unit": "INR Cr", "source": "FILING", "note": "borrowings 30 Sep 2026"},
+                            {"name": "debt_year_ago", "value": 420, "unit": "INR Cr", "source": "FILING", "note": "borrowings 30 Sep 2025"},
+                            {"name": "interest_rate", "value": 0.095, "unit": "ratio", "source": "ASSUMPTION", "note": "typical A-rated borrowing cost"}],
+                 "result": 20.9, "unit": "INR_CR", "interpretation": "Roughly 18% of annualised Q2 PAT (₹29.4 Cr × 4)."},
+                {"label": "Receivable days (H1)", "formula": "receivables / h1_revenue * 183",
+                 "inputs": [{"name": "receivables", "value": 318, "unit": "INR Cr", "source": "FILING", "note": "30 Sep 2026"},
+                            {"name": "h1_revenue", "value": 867.9, "unit": "INR Cr", "source": "FILING", "note": "half year to 30 Sep 2026"}],
+                 "result": 67, "unit": "days", "interpretation": "Up from about 51 days a year earlier (₹205 Cr on ₹731.9 Cr)."}],
             track_next={"kpis_to_verify": [{"kpi": "Receivable days", "check_in": "Q4FY27 results"}],
                         "risks": ["Further price cuts in the region compress margins"]}),
             timeline_entry="Q2FY27 revenue ₹456 Cr (+20%), margin 14.9% (-370 bps), receivables +55%.",

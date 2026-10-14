@@ -278,3 +278,29 @@ def memory_ids(view: dict | None) -> set[str]:
     ids |= {t["id"] for t in view.get("recent_timeline", [])}
     ids |= {w["id"] for w in view.get("watchlist", [])}
     return ids
+
+
+def latest_fundamentals(dossier: dict) -> dict:
+    """Latest revenue (quarter preferred), debt and net worth, for the card's financial footer."""
+    out: dict = {}
+    metrics = dossier.get("financial_metrics", [])
+
+    def latest(names: tuple[str, ...], prefer_quarter: bool = False):
+        rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and due_date(m["period"])]
+        if prefer_quarter and any(m["period"].startswith("Q") for m in rows):
+            rows = [m for m in rows if m["period"].startswith("Q")]
+        return max(rows, key=lambda m: (due_date(m["period"]), m["as_of"]), default=None)
+
+    revenue = latest(("revenue", "revenue_from_operations", "total_revenue", "net_sales"), prefer_quarter=True)
+    if revenue:
+        out["revenue"] = {"period": revenue["period"], "value": revenue["value"]}
+    balance = dossier.get("balance_sheet", [])
+    for key, names, field in (("debt", ("gross_debt", "borrowings", "total_debt"), "gross_debt_cr"),
+                              ("net_worth", ("net_worth", "total_equity"), "net_worth_cr")):
+        snap = next((b for b in reversed(balance) if b.get(field) is not None), None)
+        metric = latest(names)
+        if snap and (not metric or snap["as_of"] >= metric["as_of"]):
+            out[key] = {"period": snap.get("period"), "value": snap[field]}
+        elif metric:
+            out[key] = {"period": metric["period"], "value": metric["value"]}
+    return out

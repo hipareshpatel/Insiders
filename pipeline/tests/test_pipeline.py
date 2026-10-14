@@ -123,7 +123,7 @@ def test_live_run_end_to_end(settings):
     assert all(m["source_news_id"] == "n-res" for m in dossier["financial_metrics"])
     assert dossier["timeline"][0]["summary"].startswith("Q2FY27 revenue")
 
-    archived = json.loads(sink.get_object(f"archive/cards/{now.date().isoformat()}.json"))
+    archived = json.loads(sink.get_object(f"daily_feed/{now.date().isoformat()}.json"))
     assert [c["news_id"] for c in archived] == ["n-res"]
 
     events = {r["event_type"] for r in rows(sink, "select event_type from catalysts")}
@@ -190,3 +190,23 @@ def test_backfill_walks_days_in_order_and_marks_complete(settings):
     assert notifier.sent == []  # historical cards never trigger alerts
     timeline = sink.get_dossier("999001")["timeline"]
     assert [t["news_id"] for t in timeline] == ["h0", "h1", "h2"]
+
+
+def test_card_with_wrong_math_is_held_for_review(settings):
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-q", "Unaudited Financial Results for the quarter", now, "Result")
+    bad = json.loads(json.dumps(PASS2))
+    bad["card"]["quantified_impact"] = [{
+        "label": "Annualised interest on new debt", "formula": "new_debt * rate",
+        "inputs": [{"name": "new_debt", "value": 1500, "source": "FILING"}, {"name": "rate", "value": 0.09}],
+        "result": 300, "unit": "INR_CR",
+    }]
+    pipeline, sink, fake, notifier = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                                           {"deepseek-ai/deepseek-r1": [json.dumps(bad)]}, env={"NVIDIA_API_KEY": "n"})
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    body = outcome.card["card"]
+    (q,) = body["quantified_impact"]
+    assert q["check"] == "MISMATCH" and q["computed"] == 135.0
+    assert outcome.card["needs_review"] == 1 and outcome.notify is False
+    assert body["fundamentals"]["revenue"] == {"period": "Q2FY27", "value": 120.0}
+    assert body["pdf_pages"] == 1

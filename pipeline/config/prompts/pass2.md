@@ -35,6 +35,17 @@ The card
   "+320 bps", "+48% YoY"), direction ("POSITIVE", "NEGATIVE" or "NEUTRAL" for shareholders) and
   why (one line). Only use figures present in the sources; use an empty list when nothing stands
   out.
+- quantified_impact: wherever the sources allow, quantify the financial effect instead of saying
+  "may improve margins". Up to 3 estimates that matter most for this event, each with its working
+  shown so it can be re-checked: a label, a formula over named inputs (plain arithmetic only, e.g.
+  "capacity_mw * plf * 8760 * tariff_inr / 1e7"), the inputs (name, value, unit, source, note),
+  the result, its unit and a one-line interpretation. source is "FILING" or "MEMORY" only for
+  figures present there; anything else is an "ASSUMPTION" whose note says why it is reasonable
+  (for example a sector-typical utilisation rate). Typical uses: revenue or EBITDA potential of
+  new capacity or an order relative to trailing revenue, dilution and use of proceeds, interest
+  cost of new debt against profit, payback period, a deal's size against net worth. Estimates
+  describe the company's fundamentals only: never a share price, target or valuation call. Use
+  an empty list when the inputs are not available rather than inventing them.
 - track_next: forward-looking triggers an investor should monitor after this filing.
   milestones: future dates or execution windows stated or clearly implied (what, when as written,
   and date in ISO form when exact). kpis_to_verify: the specific metric that will show whether this

@@ -39,6 +39,9 @@ def format_message(row: dict, card: dict) -> str:
     insights = [i["text"] if isinstance(i, dict) else i for i in card.get("why_it_matters", [])]
     if insights:
         lines += ["", "<b>Why it matters</b>"] + [f"• {esc(t)}" for t in insights[:3]]
+    for q in [q for q in card.get("quantified_impact", []) if q.get("check") == "VERIFIED"][:2]:
+        lines.append(f"🧮 <b>{esc(q['label'])}:</b> {esc(_quant_value(q))}"
+                     + (f" ({esc(q['interpretation'])})" if q.get("interpretation") else ""))
     for signal in card.get("signals", [])[:3]:
         kind = signal.get("type", "")
         label = SIGNAL_LABEL.get(kind, kind.replace("_", " ").capitalize() or "Signal")
@@ -54,6 +57,19 @@ def format_message(row: dict, card: dict) -> str:
     lines += ["", f"<i>{esc(row['filed_at'][:16].replace('T', ' '))} IST · {DISCLAIMER}</i>"]
     text = "\n".join(lines)
     return text[:4000]
+
+
+def _quant_value(q: dict) -> str:
+    value, unit = q.get("result"), (q.get("unit") or "").upper()
+    if value is None:
+        return "—"
+    if unit == "INR_CR":
+        return f"₹{value:,.1f} Cr"
+    if unit == "PCT":
+        return f"{value:,.1f}%"
+    if unit == "BPS":
+        return f"{value:,.0f} bps"
+    return f"{value:,.2f} {q.get('unit') or ''}".strip()
 
 
 def buttons(row: dict, card: dict, site_url: str) -> dict:

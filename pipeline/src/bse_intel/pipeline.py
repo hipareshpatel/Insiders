@@ -29,12 +29,13 @@ from threading import Lock
 
 from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import BseClient, SourceBlockedError
-from .dossier import memory_ids, merge, new_dossier, view_as_of
+from .dossier import latest_fundamentals, memory_ids, merge, new_dossier, view_as_of
 from .extract import Document
-from .grounding import check_card
+from .grounding import DEFAULT_THRESHOLD, check_card
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
 from .periods import due_date
 from .prompts.engine import PromptEngine
+from .quant import check as check_quant
 from .rules import RuleBook
 from .settings import Settings
 from .signals import compute as compute_signals
@@ -288,7 +289,12 @@ class Pipeline:
         valid_refs = memory_ids(view)
         for insight in card.why_it_matters:
             insight.memory_refs = [r for r in insight.memory_refs if r in valid_refs]
-        grounding = check_card(card, text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
+        sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
+        grounding = check_card(card, *sources)
+        quant = check_quant(card.quantified_impact, *sources)
+        checked = grounding.checked + quant.checked_inputs
+        ungrounded = grounding.ungrounded + quant.unsourced
+        score = 1.0 if checked == 0 else round(1 - len(ungrounded) / checked, 3)
 
         merged = merge(dossier, out, filing, card.impact_level, now)
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector), ("symbol", company.get("symbol") or filing.symbol)) if v})
@@ -299,18 +305,22 @@ class Pipeline:
             "category_tag": EVENT_TAGS.get(event_type, "UPDATE"),
             "event_type": event_type,
             **card.model_dump(),
+            "quantified_impact": quant.items,
             "signals": signals,
             "timeline_entry": out.timeline_entry,
-            "grounding": {"score": grounding.score, "checked": grounding.checked, "ungrounded": grounding.ungrounded[:10]},
+            "fundamentals": latest_fundamentals(merged),
+            "pdf_pages": doc.page_count or None,
+            "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
+                          "math_mismatches": quant.mismatches},
             "model": result.model_label,
         }
-        needs_review = not grounding.ok
+        needs_review = score < DEFAULT_THRESHOLD or quant.mismatches > 0
         row = {
             "news_id": filing.news_id, "scrip_code": filing.scrip_code,
             "symbol": company.get("symbol") or filing.symbol, "company_name": filing.company_name,
             "filing_date": filing.filing_date, "filed_at": filing.filed_at, "sector": sector,
             "event_category": event_type, "impact_level": card.impact_level, "headline": card.headline,
-            "grounding_score": grounding.score, "needs_review": int(needs_review),
+            "grounding_score": score, "needs_review": int(needs_review),
             "memory_complete": int(memory_complete), "card": card_json, "pdf_url": filing.pdf_url,
             "model": result.model_label, "created_at": now,
         }
@@ -384,7 +394,7 @@ class Pipeline:
         for card in cards:
             by_day.setdefault(card["filing_date"], []).append(card)
         for day, rows in by_day.items():
-            key = f"archive/cards/{day}.json"
+            key = f"daily_feed/{day}.json"
             try:
                 existing = json.loads(self.sink.get_object(key) or b"[]")
                 merged = {c["news_id"]: c for c in existing} | {c["news_id"]: c for c in rows}

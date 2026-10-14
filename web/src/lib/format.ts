@@ -15,6 +15,13 @@ export function pct(value: number | null | undefined, digits = 1): string {
   return `${value > 0 ? "+" : ""}${value.toFixed(digits)}%`;
 }
 
+const precise = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 8 });
+
+/** Exact value, for showing the inputs of a calculation. */
+export function exact(value: number | null | undefined): string {
+  return value == null ? "—" : precise.format(value);
+}
+
 export function num(value: number | null | undefined): string {
   return value == null ? "—" : inr2.format(value);
 }
@@ -66,4 +73,33 @@ export function titleCase(text: string): string {
 export function signClass(value: number | null | undefined): string {
   if (value == null || value === 0) return "text-ink-3";
   return value > 0 ? "text-pos" : "text-neg";
+}
+
+/** NSE/BSE cash-market session for a timestamp (exchange holidays not modelled). */
+export function marketSession(iso: string): "Pre-market" | "Market hours" | "Post-market" | "Non-trading day" {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: IST, weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
+  }).formatToParts(new Date(iso));
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+  if (["Sat", "Sun"].includes(get("weekday"))) return "Non-trading day";
+  const minutes = Number(get("hour")) * 60 + Number(get("minute"));
+  if (minutes < 9 * 60 + 15) return "Pre-market";
+  if (minutes <= 15 * 60 + 30) return "Market hours";
+  return "Post-market";
+}
+
+export function quantValue(value: number | null | undefined, unit: string): string {
+  if (value == null) return "—";
+  switch (unit.toUpperCase()) {
+    case "INR_CR":
+      return cr(value);
+    case "PCT":
+      return `${num(value)}%`;
+    case "BPS":
+      return `${Math.round(value)} bps`;
+    case "INR":
+      return rupees(value);
+    default:
+      return `${num(value)}${unit ? ` ${unit.toLowerCase()}` : ""}`;
+  }
 }

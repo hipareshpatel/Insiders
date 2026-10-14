@@ -273,6 +273,36 @@ class TrackNext(_Lenient):
     risks: StrList = Field(default_factory=list)
 
 
+class QuantInput(_Lenient):
+    name: str                   # identifier used in the formula, e.g. capacity_mw
+    value: Num
+    unit: str = ""
+    source: Literal["FILING", "MEMORY", "ASSUMPTION"] = "ASSUMPTION"
+    note: str = ""              # where it came from, or why the assumption is reasonable
+
+    @field_validator("name", mode="before")
+    @classmethod
+    def _identifier(cls, value: Any) -> str:
+        return re.sub(r"[^a-z0-9_]+", "_", str(value or "").strip().lower()).strip("_") or "x"
+
+    @field_validator("source", mode="before")
+    @classmethod
+    def _source(cls, value: Any) -> str:
+        text = str(value or "").upper()
+        return "FILING" if "FILING" in text else "MEMORY" if "MEMORY" in text else "ASSUMPTION"
+
+
+class QuantifiedImpact(_Lenient):
+    """An estimate with its working shown, so code can re-check the arithmetic."""
+
+    label: str                  # "Annual revenue at full utilisation"
+    formula: str                # "capacity_mw * plf * 8760 * tariff / 1e4"
+    inputs: Annotated[list[QuantInput], _drop_invalid(QuantInput)] = Field(default_factory=list)
+    result: Num = None
+    unit: str = ""              # "INR_CR", "PCT", "BPS", ...
+    interpretation: str = ""    # one line: what the number means for the company
+
+
 class Card(_Lenient):
     impact_level: ImpactLevel
     headline: str
@@ -282,6 +312,7 @@ class Card(_Lenient):
     key_numbers: list[KeyNumber] = Field(default_factory=list)
     notable_changes: Annotated[list[NotableChange], _drop_invalid(NotableChange)] = Field(default_factory=list)
     track_next: TrackNext = Field(default_factory=TrackNext)
+    quantified_impact: Annotated[list[QuantifiedImpact], _drop_invalid(QuantifiedImpact)] = Field(default_factory=list)
 
     @field_validator("headline")
     @classmethod

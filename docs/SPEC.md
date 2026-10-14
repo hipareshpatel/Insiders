@@ -24,7 +24,8 @@ system as built, with items still to build marked **Planned**.
 | 12 | Alerts for every high-impact card | Telegram allows about 20 messages a minute per channel, results season produces hundreds of HIGH cards, and backfill would alert on months-old news. | Paced at 3 s, capped per run, and sent only for HIGH impact + numbers verified + filed in the last 18 h. |
 | 13 | No hallucination checks | Mis-copied figures (a lakh/crore slip) are the most damaging error in this domain. | Each card's numbers are **grounded** against the filing and memory (§6). Cards below 70% are stored as `needs_review` and never alerted. |
 | 14 | "Why it matters" left to the model | Plausible-sounding prose is not a signal. | **Signals computed in code** from extracted facts: promise vs delivery, follow-ups, dilution, working capital, metric shifts (§7). |
-| 15 | Not covered | Publishing impact ratings on listed stocks to the public is close to the SEBI (Research Analysts) Regulations and the finfluencer rules. | Disclaimers everywhere, no buy/sell calls or price targets (enforced in the prompt), summaries of public disclosures only. Get legal advice before monetising. See §13. |
+| 15 | "Quantified impact: compute exact math" | A confident ₹ estimate is the most persuasive and the least verifiable part of a card. | Each estimate carries its **working**: a formula over named inputs, each input labelled FILING, MEMORY or ASSUMPTION (with a reason). Code re-runs the arithmetic and checks FILING/MEMORY inputs against the sources. A mismatch sends the card to review (§6). |
+| 16 | Not covered | Publishing impact ratings on listed stocks to the public is close to the SEBI (Research Analysts) Regulations and the finfluencer rules. | Disclaimers everywhere, no buy/sell calls or price targets (enforced in the prompt), summaries of public disclosures only. Get legal advice before monetising. See §13. |
 
 ---
 
@@ -87,10 +88,10 @@ Per filing:
 | Extract | PyMuPDF text for every page (serialised: PyMuPDF is not thread-safe). Scanned pages are rendered at 150 dpi and sent to the vision route, up to `MAX_OCR_PAGES`. The most relevant pages are picked within a character budget by event-type keywords (3× budget for concalls and presentations). | `extract.py` |
 | Pass 2 | System prompt = base + event module + sector lens + output schema. User message = filing + time-travel memory + peer context + filing text. | `config/prompts/pass2*.md`, `events.toml`, `sectors.toml` |
 | Validate | Lenient on shape (strings for lists, "₹1,234 Cr" for numbers, "HIGH IMPACT"), strict on meaning (enums, ISO dates, a card required when material). Hallucinated memory IDs are dropped. | `models.py` |
-| Ground | Card numbers are checked against the sources (§6). | `grounding.py` |
+| Ground | Card numbers are checked against the sources, and quantified estimates are re-computed (§6). | `grounding.py`, `quant.py` |
 | Merge | The delta is merged into the dossier with provenance; watch items are created from "track next". | `dossier.py` |
 | Signals | Deterministic computations over the merged dossier (§7). | `signals.py` |
-| Store | Dossier goes to R2. The card, catalysts, company row and ledger status go to D1. The card is also archived to `archive/cards/{date}.json`. | `pipeline.py`, `sinks/` |
+| Store | Dossier goes to R2. The card, catalysts, company row and ledger status go to D1. The card is also archived to `daily_feed/{date}.json`. | `pipeline.py`, `sinks/` |
 | Alert | Telegram, under the conditions in §11. | `telegram.py` |
 
 Failure handling: one bad filing is marked `FAILED` (retried up to `MAX_ATTEMPTS`)
@@ -186,8 +187,25 @@ for in the filing text, the headline/subject and the memory view, allowing for:
 - derived values: a YoY % from two source figures; bps and percentage-point changes
   as differences between two source percentages.
 
-Years, period labels and small counts are skipped. The score is the share of numbers
-grounded. Below 0.7 the card is stored with `needs_review` and is never alerted.
+Years, period labels and small counts are skipped.
+
+**Quantified impact** (`quant.py`). The analyst may add up to 3 estimates. Each has a
+label, a formula over named inputs, the inputs (value, unit, source = FILING / MEMORY /
+ASSUMPTION, note), the result, a unit and a one-line interpretation. Example:
+`capacity_mw * plf * 8760 * 1000 * tariff_inr / 1e7` gives ₹31.3 Cr a year for 50 MW at
+22% PLF and ₹3.25/kWh. Code then:
+
+- evaluates the formula with a whitelisted arithmetic evaluator (numbers, input names,
+  `+ − × ÷ **`, `abs/min/max/round`; no `eval`);
+- compares the result with the stated one (2% tolerance);
+- checks every FILING or MEMORY input against the sources.
+
+Assumptions are shown as assumptions on the card, under "Show working". Estimates
+cover company fundamentals only, never share prices or targets.
+
+The card's score is the share of all checked numbers grounded, including quant
+inputs. Below 0.7, or with any math mismatch, the card is stored with
+`needs_review` and is never alerted.
 
 ---
 
@@ -231,7 +249,7 @@ the request body without parsing it, keeping CPU time flat on the free plan.
 | Key | Content |
 |---|---|
 | `memory/{scrip}.json` | Dossiers |
-| `archive/cards/{date}.json` | Per-day card archive, enough to rebuild D1 without re-running AI |
+| `daily_feed/{date}.json` | Every card processed for that date, enough to rebuild D1 without re-running AI |
 | `backup/` | Reserved |
 
 Budget estimates (measure with the System view and adjust):
@@ -266,7 +284,7 @@ Internal, `Authorization: Bearer INGEST_TOKEN`:
 |---|---|
 | `POST /api/internal/exec/:statement` | Runs a whitelisted write over a JSON array |
 | `POST /api/internal/query/:name` | Runs a whitelisted read |
-| `GET/PUT /api/internal/objects/{memory,archive,backup}/…` and `GET /api/internal/objects?prefix=` | R2 objects |
+| `GET/PUT /api/internal/objects/{memory,daily_feed,backup}/…` and `GET /api/internal/objects?prefix=` | R2 objects |
 | `POST /api/internal/ai/v1/chat/completions` | Workers AI, OpenAI-compatible |
 
 ---
@@ -285,14 +303,17 @@ text, and JetBrains Mono tabular numbers.
 presets and date range, impact/event/market-cap pills, and the noise audit switch.
 Each Super-Card shows:
 
-- impact and category, company, time;
+- a telemetry header: impact, category, sector, company, symbol and scrip, market cap
+  and tier, market session (pre-market / market hours / post-market), time to the
+  minute in IST;
 - the headline and key numbers;
-- **what happened** (the facts) next to **why it matters** (memory and forensics,
-  each insight labelled by basis), with missing disclosures;
+- **what happened** (the facts) next to **why it matters** (memory and forensics):
+  memory links, balance sheet, peer context, quantified estimates with "show
+  working", and missing disclosures;
 - computed signals, notable changes, and what to track next;
-- a financial footer (market cap, size, 1W/1M/1Y) and trust markers (numbers
-  verified, partial memory);
-- three actions: View PDF, Company memory, Copy PNG.
+- a financial footer (latest revenue, debt, net worth, 1W/1M/1Y) and trust markers
+  (numbers verified, math checked, partial memory);
+- three actions: View PDF (with page count), Company memory, Copy PNG.
 
 **Company memory directory.** A–Z, search, sort and size filters; TanStack Table.
 
@@ -357,7 +378,7 @@ single-writer design depends on.
 | Worker secret | `INGEST_TOKEN` |
 
 **Backups.** The weekly `backup.yml` exports dossiers to the `backups` branch. R2
-`archive/cards/` holds every card. D1 Time Travel gives point-in-time restore (7 days
+`daily_feed/` holds every card. D1 Time Travel gives point-in-time restore (7 days
 on the free plan).
 
 **Market data.** `market-data.yml` runs at 16:15 IST on weekdays. yfinance bulk price

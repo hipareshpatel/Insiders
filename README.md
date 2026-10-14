@@ -7,8 +7,9 @@ watch next. It runs on free tiers.
 - **Pipeline** (`pipeline/`, Python). Fetches BSE announcements, drops noise by
   rules, gatekeeps ambiguous filings, extracts PDF text (OCR for scans), and analyses
   material filings through a 5-provider free AI gateway with a 95% quota ceiling. It
-  checks every number against the source, merges facts into per-company dossiers
-  with provenance, computes signals (promise vs delivery, dilution, working capital,
+  checks every number against the source, re-computes every quantified estimate from
+  its shown working, merges facts into per-company dossiers with provenance, computes
+  signals (promise vs delivery, dilution, working capital,
   metric shifts), and alerts Telegram.
 - **Web** (`web/`, Cloudflare Worker). A Hono API over D1 and R2, and a React app:
   live feed, company memory, catalyst calendar, system monitor.
@@ -35,7 +36,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
-python -m pytest -q              # 68 tests
+python -m pytest -q              # 83 tests
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \

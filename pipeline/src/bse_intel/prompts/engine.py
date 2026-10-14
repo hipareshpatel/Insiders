@@ -21,6 +21,12 @@ PASS2_SCHEMA = {
         "missing_disclosures": ["string"],
         "key_numbers": [{"label": "Revenue", "value": "₹120 Cr", "change": "+32% YoY"}],
         "notable_changes": [{"metric": "inventories", "previous": "₹40 Cr (Mar-2026)", "current": "₹66 Cr (Sep-2026)", "change": "+65%", "direction": "NEGATIVE", "why": "string"}],
+        "quantified_impact": [{
+            "label": "Annual revenue at full utilisation", "formula": "capacity_mw * plf * 8760 * tariff_inr / 1e7",
+            "inputs": [{"name": "capacity_mw", "value": 50, "unit": "MW", "source": "FILING", "note": "commissioned capacity"},
+                       {"name": "plf", "value": 0.22, "unit": "ratio", "source": "ASSUMPTION", "note": "typical for hybrid assets"},
+                       {"name": "tariff_inr", "value": 3.25, "unit": "INR/kWh", "source": "FILING", "note": "PPA tariff"}],
+            "result": 31.3, "unit": "INR_CR", "interpretation": "string"}],
         "track_next": {
             "milestones": [{"what": "Rights issue closes", "when": "Nov 19, 2026", "date": "2026-11-19"}],
             "kpis_to_verify": [{"kpi": "string", "check_in": "Q3FY27 results", "target": "string or null"}],

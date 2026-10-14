@@ -8,7 +8,7 @@ import type { AppEnv } from "./env";
 import { QUERIES, STATEMENTS } from "./sql";
 
 const MAX_BODY_BYTES = 1_000_000;
-const OBJECT_PREFIXES = ["memory/", "archive/", "backup/"];
+const OBJECT_PREFIXES = ["memory/", "daily_feed/", "backup/"];
 
 const allowedKey = (key: string) =>
   OBJECT_PREFIXES.some((p) => key.startsWith(p)) && !key.includes("..") && key.length < 512;

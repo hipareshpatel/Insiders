@@ -54,6 +54,7 @@ def new_dossier(filing: Filing, company: dict | None = None) -> dict:
         "segment_mix": [],
         "balance_sheet": [],
         "capital_actions": [],
+        "deals": [],
         "guidance": [],
         "watchlist": [],
         "timeline": [],
@@ -64,7 +65,7 @@ def new_dossier(filing: Filing, company: dict | None = None) -> dict:
 
 
 def _forget(dossier: dict, news_id: str) -> None:
-    for key in ("financial_metrics", "segment_mix", "balance_sheet", "capital_actions", "upcoming_events"):
+    for key in ("financial_metrics", "segment_mix", "balance_sheet", "capital_actions", "deals", "upcoming_events"):
         dossier[key] = [e for e in dossier.get(key, []) if e.get("source_news_id") != news_id]
     dossier["timeline"] = [e for e in dossier.get("timeline", []) if e.get("news_id") != news_id]
     for key in ("guidance", "watchlist"):
@@ -126,6 +127,12 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
 
     actions = [a.model_dump() | {"as_of": as_of, "source_news_id": news_id} for a in delta.capital_actions]
     d["capital_actions"] = sorted(d.get("capital_actions", []) + actions, key=lambda e: e["as_of"])[-40:]
+
+    deal = output.card.deal_value if output.card is not None else None
+    if deal is not None and deal.amount_cr:
+        d["deals"] = sorted(d.get("deals", []) + [deal.model_dump() | {
+            "id": "d_" + _hash(news_id), "as_of": as_of, "source_news_id": news_id,
+        }], key=lambda e: e["as_of"])[-60:]
 
     guidance = {g["id"]: g for g in d.get("guidance", [])}
     for item in delta.guidance:
@@ -252,6 +259,15 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
         {"type": e["event_type"], "date": e["date"], "description": e.get("description", "")}
         for e in dossier.get("upcoming_events", []) if before(e) and e["date"] >= cutoff[:10]
     ]
+    deals = [
+        {
+            "date": e["as_of"][:10], "kind": e["kind"], "amount_cr": e["amount_cr"], "stage": e.get("stage"),
+            **({"segment": e["segment"]} if e.get("segment") else {}),
+            **({"counterparty": e["counterparty"]} if e.get("counterparty") else {}),
+            **({"incl_gst": True} if e.get("includes_gst") else {}),
+        }
+        for e in dossier.get("deals", []) if before(e)
+    ]
     summary = dossier.get("business_summary")
 
     for periods, timeline_n, guidance_n in ((6, 12, 20), (4, 8, 12), (2, 5, 8), (1, 3, 5)):
@@ -263,6 +279,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
             "guidance": [g for g in guidance if g["status"] in ("OPEN", "ON_TRACK", "DELAYED", "REVISED")][-guidance_n:],
             "watchlist": watch[-guidance_n:],
             "recent_timeline": timeline[-timeline_n:],
+            "deals": deals[-guidance_n:],
             "upcoming_events": upcoming[:6],
         }
         view = {k: v for k, v in view.items() if v}
@@ -310,13 +327,20 @@ _RESULT_METRICS = (
     ("revenue", ("revenue", "revenue_from_operations", "total_revenue", "net_sales")),
     ("ebitda", ("ebitda", "operating_profit")),
     ("ebitda_margin", ("ebitda_margin", "opm", "operating_margin")),
+    ("pbt", ("pbt", "profit_before_tax")),
     ("pat", ("pat", "net_profit", "profit_after_tax")),
+    ("eps", ("eps", "basic_eps", "diluted_eps")),
 )
 
 
 def results_snapshot(dossier: dict, news_id: str) -> dict | None:
-    """Latest quarter reported by this filing with YoY changes, for the Results table."""
-    from .periods import prior_year_period
+    """This filing's latest quarter against a year ago and the previous quarter, for the results tables.
+
+    Each metric carries its value, the year-ago and previous-quarter values when memory has them,
+    and the YoY / QoQ change (in basis points for the margin, which is derived from EBITDA and
+    revenue when the filing did not state it).
+    """
+    from .periods import prior_quarter_period, prior_year_period
 
     mine = [m for m in dossier.get("financial_metrics", []) if m.get("source_news_id") == news_id]
     quarters = [m["period"] for m in mine if m["period"].startswith("Q") and due_date(m["period"])]
@@ -324,20 +348,38 @@ def results_snapshot(dossier: dict, news_id: str) -> dict | None:
         return None
     period = max(quarters, key=due_date)
     table = {(m["metric"], m["period"]): m for m in dossier.get("financial_metrics", [])}
-    prev_period = prior_year_period(period)
-    out: dict = {"period": period}
+    periods = {"value": period, "prev_year": prior_year_period(period), "prev_quarter": prior_quarter_period(period)}
+
+    def lookup(names: tuple[str, ...], p: str | None) -> float | None:
+        if not p:
+            return None
+        entry = next((table[(n, p)] for n in names if (n, p) in table), None)
+        return entry["value"] if entry and entry.get("value") is not None else None
+
+    def margin(p: str | None) -> float | None:
+        stated = lookup(_RESULT_METRICS[2][1], p)
+        if stated is not None:
+            return stated
+        ebitda, revenue = lookup(_RESULT_METRICS[1][1], p), lookup(_RESULT_METRICS[0][1], p)
+        return round(ebitda / revenue * 100, 2) if ebitda is not None and revenue else None
+
+    out: dict = {"period": period, "prev_year_period": periods["prev_year"], "prev_quarter_period": periods["prev_quarter"]}
     for key, names in _RESULT_METRICS:
-        entry = next((table[(n, period)] for n in names if (n, period) in table), None)
-        if not entry or entry.get("value") is None:
+        values = {slot: (margin(p) if key == "ebitda_margin" else lookup(names, p)) for slot, p in periods.items()}
+        if values["value"] is None:
             continue
-        prev = next((table[(n, prev_period)] for n in names if prev_period and (n, prev_period) in table), None)
-        row = {"value": entry["value"]}
-        if key == "ebitda_margin":
-            if prev and prev.get("value") is not None:
-                row["yoy_bps"] = round((entry["value"] - prev["value"]) * 100)
-        elif entry.get("yoy_pct") is not None:
-            row["yoy_pct"] = entry["yoy_pct"]
-        elif prev and prev.get("value"):
-            row["yoy_pct"] = round((entry["value"] - prev["value"]) / abs(prev["value"]) * 100, 1)
+        row = {slot: v for slot, v in values.items() if v is not None}
+        for slot, label in (("prev_year", "yoy"), ("prev_quarter", "qoq")):
+            base = values[slot]
+            if base is None:
+                continue
+            if key == "ebitda_margin":
+                row[f"{label}_bps"] = round((values["value"] - base) * 100)
+            elif base:
+                row[f"{label}_pct"] = round((values["value"] - base) / abs(base) * 100, 1)
+        if key == "revenue" and "yoy_pct" not in row:
+            stated = next((m for m in mine if m["metric"] in names and m["period"] == period and m.get("yoy_pct") is not None), None)
+            if stated:
+                row["yoy_pct"] = stated["yoy_pct"]
         out[key] = row
-    return out if len(out) > 1 else None
+    return out if len(out) > 3 else None

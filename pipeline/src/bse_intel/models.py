@@ -270,7 +270,66 @@ class TrackNext(_Lenient):
     milestones: Annotated[list[Milestone], _drop_invalid(Milestone)] = Field(default_factory=list)
     kpis_to_verify: Annotated[list[KpiWatch], _drop_invalid(KpiWatch)] = Field(default_factory=list)
     pending_approvals: StrList = Field(default_factory=list)
-    risks: StrList = Field(default_factory=list)
+    catalysts: StrList = Field(default_factory=list)   # what could make this work better than expected
+    risks: StrList = Field(default_factory=list)       # what could make it underperform ("road blockers")
+
+
+def _enum(allowed: tuple[str, ...], aliases: dict[str, str] | None = None, default: str | None = None):
+    """Normalise free-form model output onto a small vocabulary, falling back to ``default``."""
+
+    def validate(value: Any) -> str | None:
+        text = re.sub(r"[^A-Z]+", "_", str(value or "").upper()).strip("_")
+        text = (aliases or {}).get(text, text)
+        if text in allowed:
+            return text
+        return next((a for a in allowed if text.startswith(a)), default)
+
+    return BeforeValidator(validate)
+
+
+DEAL_KINDS = ("ORDER", "FUNDRAISE", "CAPEX", "ACQUISITION", "DIVESTMENT", "OTHER")
+DEAL_STAGES = ("LOI", "LOA", "WORK_ORDER", "CONTRACT", "MOU", "DEVELOPMENT_ORDER", "BOARD_APPROVED",
+               "SHAREHOLDER_APPROVED", "COMPLETED", "OTHER")
+
+
+class DealValue(_Lenient):
+    """The size of an order, fundraise, capex or deal, so code can put it in proportion."""
+
+    kind: Annotated[str, _enum(DEAL_KINDS, {"CONTRACT": "ORDER", "AWARD": "ORDER", "PREFERENTIAL": "FUNDRAISE",
+                                              "WARRANTS": "FUNDRAISE", "QIP": "FUNDRAISE", "M_A": "ACQUISITION"}, "OTHER")] = "OTHER"
+    amount_cr: Num = None
+    includes_gst: bool | None = None
+    counterparty: OptStr = None
+    stage: Annotated[str, _enum(DEAL_STAGES, {"LETTER_OF_INTENT": "LOI", "LETTER_OF_ACCEPTANCE": "LOA",
+                                                "LETTER_OF_AWARD": "LOA", "PURCHASE_ORDER": "WORK_ORDER", "PO": "WORK_ORDER",
+                                                "AGREEMENT": "CONTRACT", "MEMORANDUM_OF_UNDERSTANDING": "MOU",
+                                                "APPROVED": "BOARD_APPROVED"}, "OTHER")] = "OTHER"
+    segment: OptStr = None        # business line, e.g. "wind EPC", "underground cabling"
+    execution_by: OptStr = None   # as stated: "31 July 2027", "12 months"
+
+    @field_validator("includes_gst", mode="before")
+    @classmethod
+    def _gst(cls, value: Any) -> bool | None:
+        if isinstance(value, bool) or value is None:
+            return value
+        text = str(value).strip().lower()
+        return True if text in ("true", "yes", "incl", "including") else False if text in ("false", "no", "excl", "excluding") else None
+
+
+class CallRead(_Lenient):
+    """How a concall, presentation or AGM read, compared with the last one."""
+
+    guidance: Annotated[str, _enum(("RAISED", "LOWERED", "MAINTAINED", "NEW", "WITHDRAWN", "NONE"),
+                                   {"CUT": "LOWERED", "REDUCED": "LOWERED", "UPGRADED": "RAISED", "INCREASED": "RAISED",
+                                    "SAME": "MAINTAINED", "UNCHANGED": "MAINTAINED", "REITERATED": "MAINTAINED",
+                                    "SAME_AS_LAST_CALL": "MAINTAINED", "FIRST": "NEW", "NOT_GIVEN": "NONE"}, "NONE")] = "NONE"
+    management_tone: Annotated[str, _enum(("OPTIMISTIC", "NEUTRAL", "CAUTIOUS"),
+                                          {"CONFIDENT": "OPTIMISTIC", "BULLISH": "OPTIMISTIC", "POSITIVE": "OPTIMISTIC",
+                                           "DEFENSIVE": "CAUTIOUS", "CONSERVATIVE": "CAUTIOUS", "NEGATIVE": "CAUTIOUS"},
+                                          "NEUTRAL")] = "NEUTRAL"
+    transparency: Annotated[str, _enum(("HIGH", "MEDIUM", "LOW"), {"MODERATE": "MEDIUM"}, "MEDIUM")] = "MEDIUM"
+    story: Annotated[str | None, _enum(("GROWTH", "COMPOUNDER", "TURNAROUND", "CYCLICAL", "STRESSED", "TRANSITION", "VALUE"),
+                                       {"RECOVERY": "TURNAROUND", "CYCLICAL_RECOVERY": "CYCLICAL", "DISTRESS": "STRESSED"})] = None
 
 
 class QuantInput(_Lenient):
@@ -317,6 +376,15 @@ def _normalize_tone(value: Any) -> str:
 Tone = Annotated[Literal["POSITIVE", "NEGATIVE", "MIXED", "NEUTRAL"], BeforeValidator(_normalize_tone)]
 
 
+# "X posts a key update" says nothing; the validator rejects it so the gateway's repair attempt rewrites it.
+_GENERIC_HEADLINE = re.compile(
+    r"\b(?:posts?|shares?|announces?|gives?|provides?|issues?|makes?|files?|releases?)\s+(?:an?\s+)?"
+    r"(?:key|important|major|significant|new|business|corporate|regulatory|material)?\s*"
+    r"(?:update|announcement|disclosure|intimation)s?\s*$",
+    re.I,
+)
+
+
 class Card(_Lenient):
     impact_level: ImpactLevel
     tone: Tone = "NEUTRAL"      # for the company's fundamentals, not a price call
@@ -329,6 +397,25 @@ class Card(_Lenient):
     notable_changes: Annotated[list[NotableChange], _drop_invalid(NotableChange)] = Field(default_factory=list)
     track_next: TrackNext = Field(default_factory=TrackNext)
     quantified_impact: Annotated[list[QuantifiedImpact], _drop_invalid(QuantifiedImpact)] = Field(default_factory=list)
+    themes: StrList = Field(default_factory=list)          # up to 2 short tags: "Renewables", "Infra / EPC"
+    basis: Annotated[str | None, _enum(("CONSOLIDATED", "STANDALONE", "PROFORMA"))] = None
+    deal_value: DealValue | None = None
+    call_read: CallRead | None = None
+
+    @field_validator("deal_value", "call_read", mode="before")
+    @classmethod
+    def _optional_block(cls, value: Any) -> Any:
+        return value if isinstance(value, dict) and any(v not in (None, "", []) for v in value.values()) else None
+
+    @field_validator("themes")
+    @classmethod
+    def _themes(cls, value: list[str]) -> list[str]:
+        out = []
+        for tag in value:
+            tag = " ".join(str(tag).split())[:24]
+            if tag and tag.lower() not in {t.lower() for t in out}:
+                out.append(tag)
+        return out[:2]
 
     @field_validator("headline")
     @classmethod
@@ -336,6 +423,8 @@ class Card(_Lenient):
         value = " ".join(value.split())
         if len(value) < 8:
             raise ValueError("headline too short")
+        if _GENERIC_HEADLINE.search(value):
+            raise ValueError("headline is generic; say what the company actually announced, with its main figure")
         return value[:220]
 
     @model_validator(mode="after")

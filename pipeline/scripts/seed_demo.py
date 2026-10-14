@@ -56,6 +56,9 @@ COMPANIES = [
     {"scrip_code": "999006", "company_name": "Demo Forgings Ltd", "symbol": "DEMOFORGE", "industry": "Auto Components & Equipments",
      "sector": "auto_components", "shares_outstanding": 95_000_000, "last_price": 610.0, "market_cap_cr": 5795.0, "size_category": "SMALL",
      "ret_1w": 1.1, "ret_1m": 3.9, "ret_1y": 12.0},
+    {"scrip_code": "999007", "company_name": "Demo Infra Projects Ltd", "symbol": "DEMOINFRA", "industry": "Civil Construction",
+     "sector": "construction", "shares_outstanding": 100_000_000, "last_price": 324.4, "market_cap_cr": 3244.0, "size_category": "SMALL",
+     "ret_1w": -1.2, "ret_1m": -12.0, "ret_1y": -26.0},
 ]
 NAMES = {c["scrip_code"]: c for c in COMPANIES}
 
@@ -97,6 +100,20 @@ FILINGS = [
     ("fin-rating", "999004", at(1, 19, 20), "Company Update", "Credit Rating", "Credit Rating revised by CARE Ratings",
      "CARE Ratings has revised the rating on the Company's long term bank facilities of Rs. 1,800 crore to CARE A- (Negative) from "
      "CARE A (Stable), citing rising Stage 3 assets of 4.9% and moderation in profitability."),
+    ("infra-o1", "999007", at(152, 18, 10), "Company Update", "Award of Order", "Receipt of order for wind EPC works in Gujarat",
+     "Demo Wind EPC Ltd, a wholly owned subsidiary, has received a Letter of Award from a domestic developer for balance of plant "
+     "EPC works for a 50 MW wind project in Kutch, Gujarat. Contract value Rs. 142.00 crore (excluding GST). Execution by March 2027."),
+    ("infra-o2", "999007", at(73, 17, 45), "Company Update", "Award of Order", "Receipt of work order for wind EPC project",
+     "Demo Wind EPC Ltd has received a work order for EPC works for a 70 MW wind project in Dhule, Maharashtra. "
+     "Contract value Rs. 207.47 crore (excluding GST). Execution within 12 months."),
+    ("infra-q1", "999007", at(60, 18, 30), "Result", "Financial Results", "Unaudited Consolidated Financial Results for the quarter ended June 30, 2026",
+     "Statement of unaudited consolidated financial results (Rs. in crore). Quarter ended 30.06.2026 vs 30.06.2025: Revenue from "
+     "operations 312.40 vs 241.10. EBITDA 46.90 vs 34.20. Net profit 24.10 vs 17.80. Year ended 31.03.2026: Revenue from operations 1,238.60."),
+    ("infra-o3", "999007", at(1, 18, 20), "Company Update", "", "Receipt of Letter of Intent for wind EPC project",
+     "Demo Wind EPC Ltd, a step-down subsidiary, has received a Letter of Intent (LOI) dated today from Demo Renewables LLP for "
+     "Engineering, Procurement and Construction turnkey works for an 80 MW wind power project at Satara, Maharashtra. Nature: EPC. "
+     "Domestic. Time period: 30th June, 2027. Size of the order: Rs. 228.00 Crores (excluding GST). Promoter group interest: No. "
+     "Related party transaction: No."),
     ("noise-1", "999005", at(0, 9, 5), "Company Update", "Trading Window", "Closure of Trading Window", ""),
     ("noise-2", "999003", at(0, 9, 30), "Company Update", "", "Intimation of loss of share certificates", ""),
     ("noise-3", "999001", at(0, 10, 15), "Result", "", "Copy of Newspaper Publication of financial results", ""),
@@ -271,11 +288,101 @@ def pass2_reply(key: str, user: str) -> dict:
               "memory_refs": [t["id"] for t in timeline[-1:]]}]),
             timeline_entry="CARE downgraded to A- (Negative); Stage 3 at 4.9%.",
             dossier_delta={"balance_sheet": {"credit_rating": "CARE A-", "rating_agency": "CARE", "rating_outlook": "Negative"}}),
+        "infra-o1": dict(event_type="ORDER_WIN", card=card(
+            "MODERATE", "Demo Infra arm wins ₹142 Cr wind EPC order for 50 MW Gujarat project",
+            ["Subsidiary **Demo Wind EPC** received a letter of award worth **₹142 Cr** (excluding GST)",
+             "Balance-of-plant EPC for a **50 MW** wind project in Kutch, Gujarat", "Execution due by **March 2027**"],
+            [{"text": "Adds a wind EPC line to a mostly civil-construction order book.", "basis": "FILING"}],
+            missing_disclosures=["Customer name not disclosed"],
+            themes=["Renewables", "Infra / EPC"],
+            deal_value={"kind": "ORDER", "amount_cr": 142, "includes_gst": False, "stage": "LOA", "segment": "wind EPC", "execution_by": "March 2027"}),
+            timeline_entry="LoA for ₹142 Cr wind EPC (50 MW, Kutch), execution by Mar 2027.",
+            dossier_delta={"business_summary": "EPC contractor in civil works and wind power (fictional demo company)."}),
+        "infra-o2": dict(event_type="ORDER_WIN", card=card(
+            "MODERATE", "Demo Infra arm bags ₹207.47 Cr wind EPC work order in Maharashtra",
+            ["**Demo Wind EPC** received a **₹207.47 Cr** work order (excluding GST)", "EPC for a **70 MW** wind project in Dhule",
+             "Execution within **12 months**"],
+            [{"text": "Second wind EPC order since May and larger than the first (₹142 Cr).", "basis": "MEMORY",
+              "memory_refs": [t["id"] for t in timeline[-1:]]}],
+            themes=["Renewables", "Infra / EPC"],
+            deal_value={"kind": "ORDER", "amount_cr": 207.47, "includes_gst": False, "stage": "WORK_ORDER", "segment": "wind EPC", "execution_by": "12 months"}),
+            timeline_entry="Work order for ₹207.47 Cr wind EPC (70 MW, Dhule), 12 months.",
+            dossier_delta={}),
+        "infra-q1": dict(event_type="RESULTS", card=card(
+            "MODERATE", "Demo Infra Q1 revenue rose 30% YoY to ₹312 Cr; PAT up 35% to ₹24 Cr",
+            ["Revenue **₹312.4 Cr** vs ₹241.1 Cr (+30%), EBITDA ₹46.9 Cr vs ₹34.2 Cr, PAT **₹24.1 Cr** vs ₹17.8 Cr",
+             "FY26 revenue was ₹1,238.6 Cr"],
+            [{"text": "Wind EPC orders won since May are starting to show in revenue.", "basis": "MEMORY"}],
+            basis="CONSOLIDATED",
+            key_numbers=[{"label": "Revenue", "value": "₹312 Cr", "change": "+30%"}, {"label": "PAT", "value": "₹24 Cr", "change": "+35%"}]),
+            timeline_entry="Q1FY27 revenue ₹312 Cr (+30% YoY), PAT ₹24 Cr.",
+            dossier_delta={"financial_metrics": [
+                {"metric": "revenue", "period": "Q1FY27", "value": 312.4}, {"metric": "revenue", "period": "Q1FY26", "value": 241.1},
+                {"metric": "ebitda", "period": "Q1FY27", "value": 46.9}, {"metric": "ebitda", "period": "Q1FY26", "value": 34.2},
+                {"metric": "pat", "period": "Q1FY27", "value": 24.1}, {"metric": "pat", "period": "Q1FY26", "value": 17.8},
+                {"metric": "revenue", "period": "FY26", "value": 1238.6}]}),
+        "infra-o3": dict(event_type="ORDER_WIN", card=card(
+            "HIGH", "Demo Infra arm wins ₹228 Cr wind EPC LOI, near three-quarters of Q1 sales",
+            ["Subsidiary **Demo Wind EPC** received an LOI from **Demo Renewables LLP** for a **₹228 Cr** turnkey wind EPC contract (excluding GST)",
+             "Covers an **80 MW** wind project at Satara, Maharashtra", "Execution due by **30 June 2027**"],
+            [{"text": "Third wind EPC win since May and the largest so far; the earlier ones were ₹142 Cr and ₹207.47 Cr.", "basis": "MEMORY",
+              "memory_refs": [t["id"] for t in timeline[-2:]]},
+             {"text": "Still a letter of intent: revenue starts only once the formal EPC contract is signed.", "basis": "FILING"}],
+            missing_disclosures=["No expected margin or payment terms for the contract"],
+            themes=["Renewables", "Infra / EPC"],
+            deal_value={"kind": "ORDER", "amount_cr": 228, "includes_gst": False, "counterparty": "Demo Renewables LLP", "stage": "LOI",
+                        "segment": "wind EPC", "execution_by": "30 June 2027"},
+            track_next={"kpis_to_verify": [{"kpi": "Order book and wind EPC revenue", "check_in": "Q2FY27 results"}],
+                        "catalysts": ["More awards from the same developer, which is building a wind portfolio"],
+                        "risks": ["Turbine supply delays pushing execution past June 2027"]}),
+            timeline_entry="LOI for ₹228 Cr wind EPC (80 MW, Satara), execution by 30 Jun 2027.",
+            dossier_delta={}),
     }
     reply = replies[key]
     tone, takeaway = TONES[key]
     reply["card"].update(tone=tone, takeaway=takeaway)
+    extra = dict(EXTRAS.get(key, {}))
+    if "track_next" in extra:
+        reply["card"]["track_next"] = {**reply["card"].get("track_next", {}), **extra.pop("track_next")}
+    reply["card"].update(extra)
     return {"is_material": True, **reply}
+
+
+# New-format extras on the older demo cards: bold key facts, themes, deal sizes, the call read.
+EXTRAS = {
+    "cem-q1": {"basis": "STANDALONE",
+               "what_happened": ["Revenue **₹412.3 Cr** vs ₹351 Cr a year ago", "EBITDA margin **17.8%** vs 17.5%",
+                                 "Volumes **0.92 MT** vs 0.81 MT"]},
+    "chem-agm": {"call_read": {"guidance": "NEW", "management_tone": "OPTIMISTIC", "transparency": "HIGH", "story": "GROWTH"},
+                 "themes": ["Specialty chemicals"],
+                 "deal_value": {"kind": "CAPEX", "amount_cr": 64, "stage": "BOARD_APPROVED", "segment": "Triacetin plant", "execution_by": "Q3FY27"},
+                 "what_happened": ["**New plant:** 12 TPD Triacetin at Dahej to be commissioned by **Q3FY27**",
+                                   "**Funding:** ₹64 Cr capex from internal accruals",
+                                   "**Mix target:** specialty chemicals above **40%** of revenue by FY28, from 31% in FY26"],
+                 "key_numbers": [{"label": "Capex", "value": "₹64 Cr"}, {"label": "Specialty FY26", "value": "31%"},
+                                 {"label": "Target FY28", "value": ">40%"}, {"label": "Net debt", "value": "₹38 Cr"}],
+                 "track_next": {"catalysts": ["Faster ramp-up if export customers qualify the Triacetin grade early"]}},
+    "pharma-usfda": {"themes": ["US generics"],
+                     "what_happened": ["**Warning letter** for oral solids Unit III after the March 2026 inspection",
+                                       "Unit III is about **18%** of US revenue (US revenue ₹610 Cr in FY26)",
+                                       "Response due in 15 working days; re-inspection expected in **9–12 months**"]},
+    "forge-sep": {"themes": ["Exports"],
+                  "what_happened": ["Shipments **41,200 t** vs 33,770 t (+22%)", "Exports **16,900 t** vs 13,200 t (+28%), led by North American trucks"]},
+    "fin-rights": {"deal_value": {"kind": "FUNDRAISE", "amount_cr": 437.5, "stage": "BOARD_APPROVED"},
+                   "what_happened": ["Up to **6.25 Cr shares** at **₹70** in a 1:4 ratio, raising up to **₹437.5 Cr**",
+                                     "Record date 20 Oct; issue open **27 Oct – 10 Nov 2026**", "Capital adequacy 16.2% at 30 June 2026"],
+                   "track_next": {"risks": ["Weak take-up if the share price falls toward the ₹70 issue price"]}},
+    "auto-sep": {"themes": ["Exports"],
+                 "what_happened": ["Revenue **₹318 Cr** vs ₹267 Cr (+19%)", "Exports **₹141 Cr** vs ₹104 Cr (+35%), now 44% of revenue"]},
+    "chem-plant": {"themes": ["Specialty chemicals"],
+                   "deal_value": {"kind": "CAPEX", "amount_cr": 61, "stage": "COMPLETED", "segment": "Triacetin plant"},
+                   "what_happened": ["Commercial production began **07 Oct 2026** at Dahej", "Cost **₹61 Cr** vs the approved ₹64 Cr"]},
+    "cem-q2": {"basis": "STANDALONE",
+               "what_happened": ["Revenue **₹455.6 Cr** vs ₹380.9 Cr; PAT **₹29.4 Cr** vs ₹36.8 Cr", "EBITDA margin **14.9%** vs 18.6%",
+                                 "Borrowings **₹640 Cr** vs ₹420 Cr; receivables ₹318 Cr vs ₹205 Cr"]},
+    "fin-rating": {"what_happened": ["Rating revised to **CARE A- (Negative)** from CARE A (Stable) on ₹1,800 Cr facilities",
+                                     "Stage 3 assets at **4.9%**"]},
+}
 
 
 TONES = {
@@ -288,6 +395,10 @@ TONES = {
     "chem-plant": ("POSITIVE", "Delivered the AGM promise early and under budget; ramp-up and margins are now the question."),
     "cem-q2": ("NEGATIVE", "Growth is being bought with credit: receivables and debt rose far faster than sales."),
     "fin-rating": ("NEGATIVE", "A downgrade right after the rights issue suggests the raise is defensive."),
+    "infra-o1": ("POSITIVE", "Opens a wind EPC line alongside the civil-construction business."),
+    "infra-o2": ("POSITIVE", "Wind EPC is becoming a repeat business rather than a one-off."),
+    "infra-q1": ("POSITIVE", "Growth with margins intact; the wind EPC orders are the next leg."),
+    "infra-o3": ("POSITIVE", "The largest wind EPC award yet, but it is an LOI until the contract is signed."),
 }
 
 

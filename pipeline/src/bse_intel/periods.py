@@ -65,3 +65,14 @@ def prior_year_period(period: str) -> str | None:
     if m := re.fullmatch(r"([A-Z]{3})-?(20\d{2})", s):
         return f"{m[1]}-{int(m[2]) - 1}"
     return None
+
+
+def prior_quarter_period(period: str) -> str | None:
+    """The quarter before: Q2FY27 -> Q1FY27, Q1FY27 -> Q4FY26."""
+    m = re.fullmatch(r"Q([1-4])FY(\d{2}|\d{4})", period.upper().replace(" ", ""))
+    if not m:
+        return None
+    q, year, width = int(m[1]), int(m[2]), len(m[2])
+    if q > 1:
+        return f"Q{q - 1}FY{m[2]}"
+    return f"Q4FY{year - 1:0{width}d}"

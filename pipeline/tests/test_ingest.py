@@ -114,6 +114,8 @@ def _f(headline, category="", subcategory="", subject=""):
     ("Unaudited Financial Results for the quarter ended September 30, 2026", "Result", "", "FAST_TRACK", "RESULTS"),
     ("Credit Rating reaffirmed by CRISIL", "Company Update", "Credit Rating", "FAST_TRACK", "DEBT_RATINGS"),
     ("Company bags order worth Rs 450 crore from NHAI", "Company Update", "", "FAST_TRACK", "ORDER_WIN"),
+    ("Intimation under Regulation 30 - Receipt of Letter of Acceptance", "Company Update", "", "FAST_TRACK", "ORDER_WIN"),
+    ("Receipt of Letter of Intent for wind EPC project", "Company Update", "", "FAST_TRACK", "ORDER_WIN"),
     ("Investor Presentation for Q2 FY27", "Company Update", "", "FAST_TRACK", "CONCALL_PRESENTATION"),
     ("Outcome of Board Meeting held on 13.10.2026 - Dividend", "Board Meeting", "", "FAST_TRACK", None),
     ("Receipt of Warning Letter from USFDA for Unit III", "Company Update", "", "FAST_TRACK", "LITIGATION_REGULATORY"),

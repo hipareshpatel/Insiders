@@ -51,6 +51,7 @@ jobs:
       MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
       ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
       BACKFILL_START: ${{ vars.BACKFILL_START || '2026-01-01' }}
+      BACKFILL_PRIORITY_MCAP_CR: ${{ vars.BACKFILL_PRIORITY_MCAP_CR || '100' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

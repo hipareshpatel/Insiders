@@ -47,7 +47,8 @@ class Sink(ABC):
         """Run a whitelisted read query from db/queries."""
 
     @abstractmethod
-    def pending_filings(self, day_from: str, day_to: str, max_attempts: int, limit: int) -> list[dict]: ...
+    def pending_filings(self, day_from: str, day_to: str, max_attempts: int, limit: int,
+                        min_market_cap_cr: float | None = None) -> list[dict]: ...
 
     @abstractmethod
     def usage(self, day: str) -> list[dict]: ...

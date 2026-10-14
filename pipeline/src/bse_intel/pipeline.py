@@ -31,7 +31,7 @@ from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import BseClient, SourceBlockedError
 from .dossier import latest_fundamentals, memory_ids, merge, new_dossier, results_snapshot, view_as_of
 from .extract import Document
-from .grounding import DEFAULT_THRESHOLD, check_card
+from .grounding import DEFAULT_THRESHOLD, check_card, check_claims
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
 from .periods import due_date
 from .prompts.engine import PromptEngine
@@ -80,6 +80,12 @@ class Outcome:
     card: dict | None = None
     catalysts: list[dict] = field(default_factory=list)
     company: dict | None = None
+
+
+def reconcile_call_read(card, view: dict | None) -> None:
+    """"Guidance raised / lowered / maintained" needs earlier guidance in memory to compare with."""
+    if card.call_read and card.call_read.guidance in ("RAISED", "LOWERED", "MAINTAINED") and not (view or {}).get("guidance"):
+        card.call_read.guidance = "NEW"
 
 
 def _catalyst_id(scrip: str, event_type: str, event_date: str) -> str:
@@ -172,10 +178,11 @@ class Pipeline:
 
     # ------------------------------------------------------------------ processing
 
-    def process(self, day_from: str, day_to: str, deadline: float, bulk: bool, memory_complete: bool = True) -> None:
+    def process(self, day_from: str, day_to: str, deadline: float, bulk: bool, memory_complete: bool = True,
+                min_market_cap_cr: float | None = None) -> None:
         seen: set[str] = set()
         while time.monotonic() < deadline and not self._quota_hit:
-            rows = self.sink.pending_filings(day_from, day_to, self.settings.max_attempts, BATCH)
+            rows = self.sink.pending_filings(day_from, day_to, self.settings.max_attempts, BATCH, min_market_cap_cr)
             rows = [r for r in rows if r["news_id"] not in seen]
             if not rows:
                 return
@@ -283,8 +290,10 @@ class Pipeline:
         valid_refs = memory_ids(view)
         for insight in card.why_it_matters:
             insight.memory_refs = [r for r in insight.memory_refs if r in valid_refs]
+        reconcile_call_read(card, view)
         sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
         grounding = check_card(card, *sources)
+        claims = check_claims(card, *sources)
         quant = check_quant(card.quantified_impact, *sources)
         checked = grounding.checked + quant.checked_inputs
         ungrounded = grounding.ungrounded + quant.unsourced
@@ -306,10 +315,10 @@ class Pipeline:
             "results": results_snapshot(merged, filing.news_id) if event_type == "RESULTS" else None,
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
-                          "math_mismatches": quant.mismatches},
+                          "math_mismatches": quant.mismatches, "unsupported_claims": claims},
             "model": result.model_label,
         }
-        needs_review = score < DEFAULT_THRESHOLD or quant.mismatches > 0
+        needs_review = score < DEFAULT_THRESHOLD or quant.mismatches > 0 or bool(claims)
         row = {
             "news_id": filing.news_id, "scrip_code": filing.scrip_code,
             "symbol": company.get("symbol") or filing.symbol, "company_name": filing.company_name,
@@ -467,6 +476,11 @@ class Pipeline:
             self.discover(cursor)
             self.sink.kv_set("backfill:discovered_through", cursor.isoformat(), now_iso())
             days += 1
+        # Investable companies first: the free AI quota goes to them before the long tail of
+        # dormant micro-caps. Filtering is per company, so each company's history stays in order.
+        if self.settings.backfill_priority_mcap_cr > 0:
+            self.process(start.isoformat(), yesterday.isoformat(), deadline, bulk=True, memory_complete=True,
+                         min_market_cap_cr=self.settings.backfill_priority_mcap_cr)
         self.process(start.isoformat(), yesterday.isoformat(), deadline, bulk=True, memory_complete=True)
         if cursor >= yesterday and not self.sink.pending_filings(start.isoformat(), yesterday.isoformat(),
                                                                  self.settings.max_attempts, 1):

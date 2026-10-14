@@ -89,7 +89,8 @@ headline = ["acquisition", "amalgamation", "merger", "scheme of arrangement", "d
 [[fast_track]]
 event_type = "ORDER_WIN"
 subcategories = ["award of order", "receipt of order", "bagging"]
-headline = ["(bags?|receipt of|secures?|wins?|awarded).{0,40}orders?", "letter of award", "\\bLoA\\b"]
+headline = ["(bags?|receipt of|secures?|wins?|awarded).{0,40}orders?", "letter of award", "\\bLoA\\b",
+            "(receipt|received|receiving) of (an? )?letter of (intent|acceptance)", "\\bLoI\\b.{0,40}(order|contract|project|epc|work)"]
 
 [[fast_track]]
 event_type = "MONTHLY_BUSINESS_UPDATE"

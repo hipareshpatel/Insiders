@@ -93,12 +93,18 @@ def test_results_snapshot_for_the_results_table():
         {"metric": "pat", "period": "Q2FY27", "value": 29.4, "source_news_id": "n2", "as_of": "b"},
         {"metric": "pat", "period": "Q2FY26", "value": 36.8, "source_news_id": "n1", "as_of": "a"},
         {"metric": "revenue", "period": "H1FY27", "value": 867.9, "source_news_id": "n2", "as_of": "b"},
+        {"metric": "revenue", "period": "Q1FY27", "value": 412.3, "source_news_id": "n1", "as_of": "a"},
+        {"metric": "ebitda", "period": "Q1FY27", "value": 73.39, "source_news_id": "n1", "as_of": "a"},
+        {"metric": "ebitda", "period": "Q2FY27", "value": 67.88, "source_news_id": "n2", "as_of": "b"},
     ]}
     assert results_snapshot(dossier, "n2") == {
-        "period": "Q2FY27",
-        "revenue": {"value": 455.6, "yoy_pct": 19.6},
-        "ebitda_margin": {"value": 14.9, "yoy_bps": -370},
-        "pat": {"value": 29.4, "yoy_pct": -20.1},
+        "period": "Q2FY27", "prev_year_period": "Q2FY26", "prev_quarter_period": "Q1FY27",
+        # no year-ago revenue in memory, so the filing's own YoY is used
+        "revenue": {"value": 455.6, "prev_quarter": 412.3, "qoq_pct": 10.5, "yoy_pct": 19.6},
+        "ebitda": {"value": 67.88, "prev_quarter": 73.39, "qoq_pct": -7.5},
+        # Q1 margin was not stated: derived from EBITDA / revenue
+        "ebitda_margin": {"value": 14.9, "prev_year": 18.6, "prev_quarter": 17.8, "yoy_bps": -370, "qoq_bps": -290},
+        "pat": {"value": 29.4, "prev_year": 36.8, "yoy_pct": -20.1},
     }
     assert results_snapshot(dossier, "other") is None
 

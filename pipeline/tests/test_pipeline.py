@@ -198,3 +198,31 @@ def test_card_with_wrong_math_is_held_for_review(settings):
     assert outcome.card["needs_review"] == 1
     assert body["fundamentals"]["revenue"] == {"period": "Q2FY27", "value": 120.0}
     assert body["pdf_pages"] == 1
+
+
+def test_backfill_serves_investable_companies_first(settings):
+    """Companies above the market-cap bar are backfilled first; each keeps its own date order."""
+    from dataclasses import replace
+
+    today = now_ist().date()
+    start = today - timedelta(days=3)
+    settings = replace(settings, backfill_start=start.isoformat(), backfill_priority_mcap_cr=100, workers=1)
+    at = lambda k: now_ist().replace(year=(start + timedelta(days=k)).year, month=(start + timedelta(days=k)).month,  # noqa: E731
+                                     day=(start + timedelta(days=k)).day, hour=17)
+    filings = [
+        _filing("tiny0", "Unaudited Financial Results", at(0), "Result", scrip="999008", name="Demo Tiny Ltd"),
+        _filing("big1", "Unaudited Financial Results", at(1), "Result"),
+        _filing("big2", "Unaudited Financial Results", at(2), "Result"),
+    ]
+    pdfs = {f.pdf_url: _pdf(RESULT_TEXT) for f in filings}
+    order = []
+
+    def respond(kwargs):
+        order.append(kwargs["messages"][1]["content"].split("Company: ")[1].split(" (")[0])
+        return json.dumps(PASS2)
+
+    pipeline, sink, _ = build(settings, filings, pdfs, {"mistral-large-latest": [respond]}, env={"MISTRAL_API_KEY": "m"})
+    sink._db.executemany("INSERT INTO companies (scrip_code, company_name, market_cap_cr) VALUES (?, ?, ?)",
+                         [("999001", "Demo Cement Ltd", 4851.0), ("999008", "Demo Tiny Ltd", 20.0)])
+    pipeline.run("backfill", time_budget_s=60, max_backfill_days=10)
+    assert order == ["Demo Cement Ltd", "Demo Cement Ltd", "Demo Tiny Ltd"]

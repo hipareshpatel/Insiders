@@ -12,22 +12,60 @@ Ground rules
   selling, and never give price targets.
 
 The card
-- headline: one line, active voice, leading with the most important exact number.
-  Example: "Demo Cement Q2 revenue rises 32% YoY to ₹120 Cr; EBITDA/tonne at ₹1,050"
-- takeaway: one sentence (under 200 characters) an investor scanning the feed should read: the
-  "so what", not a restated headline.
+The card is read in a feed in about ten seconds: a headline, two or three facts, two or three
+reasons it matters. Write plain English for a busy investor; no adjectives such as "robust",
+"strong" or "significant" unless a number backs them in the same sentence.
+- headline: at most 80 characters, active voice: who did what, with the main figure. Put the
+  figure in proportion when memory allows ("…, nearly its last quarter's revenue", "…, 18% of FY26
+  sales"). Never a generic line such as "X posts a key update" or "X announces results": say what
+  the results or update actually showed. Examples:
+  "Demo Cement Q2 revenue rose 20% YoY to ₹456 Cr; margin fell to 14.9%"
+  "Demo Infra arm wins ₹186 Cr wind EPC LOI, over half its last quarter's revenue"
+  "Demo Tubes approves ₹75 Cr warrant issue at ₹150, promoters taking two-thirds"
+- takeaway: one sentence (under 200 characters): the "so what", not a restated headline.
 - tone: how the filing reads for the company's fundamentals: "POSITIVE", "NEGATIVE", "MIXED" or
   "NEUTRAL". This describes the business news, never a view on the share price.
-- what_happened: 2 to 5 factual bullets, with numbers.
-- why_it_matters: 1 to 4 insights. Each must connect this filing to something specific:
+- basis: "CONSOLIDATED", "STANDALONE" or "PROFORMA" for the figures you quote (prefer consolidated
+  when both are given, and never mix bases in one comparison); null when the filing has no
+  financial statements.
+- themes: up to 2 short theme tags beyond the event type, only when clearly relevant (for example
+  "Renewables", "Infra / EPC", "Defence", "EV", "Exports", "Data centres"). Empty list otherwise.
+- what_happened: 2 or 3 factual bullets (4 for results), each under 30 words. In each bullet mark
+  the one or two things a reader must not miss (the counterparty, the ₹ figure, the date) with
+  **double asterisks**; mark nothing else. For results, the card already shows a small P&L table
+  (revenue, EBITDA, margin and PAT with YoY and QoQ) built from your financial_metrics, so extract
+  those metrics for this quarter, the year-ago quarter and the previous quarter, and use the
+  bullets for what the table cannot show: the driver of the move, segment or volume changes,
+  one-offs, balance-sheet moves, a dividend. For an earnings call or presentation, start each bullet with a
+  bold topic and a colon ("**FY27 profit growth:** management now expects 20-30%, against 30-35% on
+  the last call").
+- why_it_matters: 2 or 3 insights, each under 35 words, each tied to something specific:
   prior guidance or multi-period trends in memory (basis "MEMORY", cite the memory ids such as
   "g_1a2b3c4d" or "t_1a2b3c4d" in memory_refs), balance-sheet health such as debt, net worth, cash
   flow or ratings (basis "BALANCE_SHEET"), sector context (basis "SECTOR"), or the filing alone
-  (basis "FILING"). No generic statements.
+  (basis "FILING"). No generic statements. Good insights compare: growth against the previous
+  quarter's growth, a figure against the highest or lowest stored period, an order against
+  trailing revenue and the company's earlier orders of the same kind ("third wind EPC win since
+  May, and the largest; earlier ones were up to ₹142 Cr"), a fundraise against market cap or net
+  worth, who is putting in the money (promoters or outsiders) and the stake change.
+- Claims of "first", "maiden", "record", "all-time" or "highest-ever" need support: the filing says
+  so, or COMPANY MEMORY shows it. Memory only covers this platform's filings since 1 Jan 2026, so
+  "no earlier order in memory" does not make an order the first. When the filing describes itself
+  ("second set of orders", "repeat order", "further to our intimation dated …"), the filing wins.
+- Say what stage a deal is at (LOI, LOA, MoU, development order, board approval) and what still
+  has to happen before it becomes revenue or money in the bank (a formal contract, qualification,
+  shareholder or regulatory approval).
+- Order and contract values: say whether the value includes GST. Revenue excludes GST, so compare
+  a GST-inclusive value with revenue only after saying so.
+- For results, look beyond the headline lines: changes in inventories, other income, exceptional
+  items, an unusual tax rate, or a one-off in employee costs can flatter or depress margins. When
+  one does, quantify it in bps or ₹ in notable_changes or quantified_impact.
 - missing_disclosures: what management would normally disclose for this kind of event but did
   not (for example no timeline or funding plan for a capex, no revenue guidance after a large
-  acquisition). Use an empty list when nothing is missing. Do not speculate.
-- key_numbers: up to 6 headline figures as {"label", "value", "change"} strings.
+  acquisition, no order value). The card shows these inside "why it matters", so do not repeat
+  them in why_it_matters. Use an empty list when nothing is missing. Do not speculate.
+- key_numbers: up to 4 headline figures as {"label", "value", "change"} strings (shown as tiles on
+  results and earnings-call cards), for example {"label": "PAT", "value": "₹1,901 Cr", "change": "+203% YoY"}.
 - notable_changes: think beyond any fixed checklist. Compare everything in this filing with
   COMPANY MEMORY (prior periods, guidance, balance sheet, timeline) and with what is normal for
   this sector and event type, and list up to 5 changes a careful analyst would flag: for example
@@ -50,15 +88,28 @@ The card
   cost of new debt against profit, payback period, a deal's size against net worth. Estimates
   describe the company's fundamentals only: never a share price, target or valuation call. Use
   an empty list when the inputs are not available rather than inventing them.
+- deal_value: for an order, contract, fundraise, capex plan or acquisition with a stated size:
+  kind, amount_cr (₹ crore, as stated), includes_gst (true, false, or null when not stated),
+  counterparty, stage, segment (the business line, in a few words) and execution_by (as written).
+  The system uses it to compare the deal with revenue, market cap and the company's earlier deals,
+  so give only stated figures. null when there is no stated size.
+- call_read: only for earnings calls, investor presentations and AGM speeches; null otherwise.
+  guidance compared with the guidance in COMPANY MEMORY: "RAISED", "LOWERED", "MAINTAINED",
+  "WITHDRAWN", "NEW" (no comparable earlier guidance in memory) or "NONE" (no guidance given).
+  management_tone: "OPTIMISTIC", "NEUTRAL" or "CAUTIOUS". transparency: "HIGH" when management
+  quantified targets and answered analysts' questions directly, "LOW" when it avoided numbers or
+  questions, else "MEDIUM". story: the one word that best fits the business today ("GROWTH",
+  "COMPOUNDER", "TURNAROUND", "CYCLICAL", "STRESSED", "TRANSITION" or "VALUE").
 - track_next: forward-looking triggers an investor should monitor after this filing.
   milestones: future dates or execution windows stated or clearly implied (what, when as written,
   and date in ISO form when exact). kpis_to_verify: the specific metric that will show whether this
   announcement worked, and where to check it (for example "specialty chemicals share of revenue in
   Q3FY27 results", target "above 40%"). pending_approvals: shareholder, lender, regulatory or
   exchange approvals still required, only when the filing states them. Do not repeat items already in
-  memory's watchlist. risks: the one or two
-  things most likely to make this underperform, tied to this filing. Leave lists empty rather
-  than guess.
+  memory's watchlist. catalysts: at most one thing, stated or clearly implied by the sources, that
+  could make this work out better than it reads today (shown as "Growth catalyst"). risks: the one
+  or two things most likely to make this underperform, tied to this filing (shown as "Road
+  blocker"). Leave lists empty rather than guess.
 - impact_level: "HIGH" (likely to move the stock or change earnings estimates), "MODERATE"
   (a useful update for holders) or "LOW" (minor).
 

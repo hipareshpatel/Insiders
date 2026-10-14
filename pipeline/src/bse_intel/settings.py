@@ -44,6 +44,8 @@ class Settings:
     # Stop discovering backfill days once this many D1 rows were written today
     # (free tier allows 100k/day; live processing is never throttled by this).
     d1_daily_write_budget: int = field(default_factory=lambda: _env_int("D1_DAILY_WRITE_BUDGET", 80_000))
+    # Backfill companies at or above this market cap (₹ Cr) first; 0 turns the priority pass off.
+    backfill_priority_mcap_cr: int = field(default_factory=lambda: _env_int("BACKFILL_PRIORITY_MCAP_CR", 100))
     max_ocr_pages: int = field(default_factory=lambda: _env_int("MAX_OCR_PAGES", 6))
     pass2_char_budget: int = field(default_factory=lambda: _env_int("PASS2_CHAR_BUDGET", 40_000))
     workers: int = field(default_factory=lambda: _env_int("PIPELINE_WORKERS", 3))

@@ -73,8 +73,8 @@ class PlatformSink(Sink):
         resp.raise_for_status()
         return resp.json().get("rows", [])
 
-    def pending_filings(self, day_from, day_to, max_attempts, limit):
-        return self.query("filings_pending", [day_from, day_to, max_attempts, limit])
+    def pending_filings(self, day_from, day_to, max_attempts, limit, min_market_cap_cr=None):
+        return self.query("filings_pending", [day_from, day_to, max_attempts, limit, min_market_cap_cr])
 
     def usage(self, day):
         return self.query("usage_for_day", [day])

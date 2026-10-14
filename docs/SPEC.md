@@ -75,7 +75,10 @@ recorded in the D1 ledger, so a run can stop anywhere and the next one resumes.
    the live queue oldest-first.
 2. **Backfill.** Discover more historical days, oldest first from `BACKFILL_START`
    (default 2026-01-01), within the D1 daily write budget. Then process the
-   historical queue oldest-first on the bulk AI routes.
+   historical queue oldest-first on the bulk AI routes: first the companies with a
+   market cap of at least `BACKFILL_PRIORITY_MCAP_CR` (default ₹100 Cr; companies with
+   no market data yet count as eligible), then everyone else. The filter is per company,
+   so each company's history is still read in date order.
 
 Per filing:
 
@@ -153,6 +156,7 @@ values in `providers.toml` must be checked against each console.
 | `business_summary` | Set once, with provenance |
 | `financial_metrics[]` | `{metric, period, value, unit, yoy_pct, qoq_pct, as_of, source_news_id}`, one per (metric, period); a later filing's restatement wins |
 | `segment_mix[]`, `balance_sheet[]`, `capital_actions[]` | Dated snapshots with provenance |
+| `deals[]` | Every order, fundraise, capex plan or acquisition with a stated size: `{id: d_…, kind, amount_cr, includes_gst, counterparty, stage, segment, execution_by, as_of, source_news_id}`, taken from the card's `deal_value` |
 | `guidance[]` | Management commitments: `{id: g_…, statement, target, due, due_date, given_on, status, status_history[]}` |
 | `watchlist[]` | System follow-ups from "track next": `{id: w_…, kind: KPI\|APPROVAL, check_by, status, status_history[]}` |
 | `timeline[]` | One entry per material filing: `{id: t_…, date, event_type, impact_level, summary, news_id}` |
@@ -161,8 +165,8 @@ values in `providers.toml` must be checked against each console.
 The prompt sees `view_as_of(dossier, filed_at)`. That is a compact view (≤6,000
 characters, trimmed progressively) of only the facts known before the filing:
 recent metrics per period kind, the latest balance sheet, open guidance (with
-`overdue` flags), open watch items, the last N timeline entries and upcoming
-events. The model cites memory by ID, and IDs not in the view are discarded.
+`overdue` flags), open watch items, the last N timeline entries, earlier deals and
+upcoming events. The model cites memory by ID, and IDs not in the view are discarded.
 
 **Promise vs delivery.** Guidance from AGMs, concalls and presentations gets an ID. A
 later filing that delivers, delays, revises or misses it is reported by the model as a
@@ -201,9 +205,21 @@ ASSUMPTION, note), the result, a unit and a one-line interpretation. Example:
 Assumptions are shown as assumptions on the card, under "Show working". Estimates
 cover company fundamentals only, never share prices or targets.
 
+**Claims** (`check_claims`). Words get the same treatment as numbers. "First",
+"maiden", "for the first time", "record", "all-time" and "highest-ever" on a card need
+the filing or memory to use the same word near the same subject ("first international
+credit rating" is not excused by a "first interim dividend" elsewhere). A filing that
+describes a repeat ("second set of orders", "repeat order", "further to our intimation")
+defeats any "first" claim outright: memory only covers this platform's filings since
+1 Jan 2026, so no earlier order in memory never makes an order the first. "On record"
+and "record date" are not records, and "the first (₹142 Cr)" is a reference, not a claim.
+
+**Generic headlines** ("X posts a key update", "X announces results") fail validation,
+which sends the reply back once for repair with the reason.
+
 The card's score is the share of all checked numbers grounded, including quant
-inputs. Below 0.7, or with any math mismatch, the card is stored with
-`needs_review`, which the card shows as "numbers need review".
+inputs. Below 0.7, with any math mismatch, or with an unsupported claim, the card is
+stored with `needs_review`, which the card shows as "Needs review" with the reasons.
 
 ---
 
@@ -214,6 +230,8 @@ inputs. Below 0.7, or with any math mismatch, the card is stored with
 | `PROMISE_DELIVERED` / `GUIDANCE_BREACH` | Validated promise updates against prior guidance, plus open guidance whose deadline has passed |
 | `WATCH_RESOLVED` | A follow-up from an earlier card resolved by this filing |
 | `DILUTION` | New shares ÷ pre-issue shares (from the filing, or the company's share count), the discount to last close, and the issue price ÷ book value per share (net worth from memory) |
+| `SCALE` | A deal put in proportion: an order or capex against the latest quarter's and last full year's revenue; a fundraise, acquisition or capex against market cap and net worth. A GST-inclusive order value is flagged, since revenue excludes GST |
+| `ORDER_FLOW` | Where an order sits among the company's earlier orders on record: "3rd order on record since 2026-05-15 (₹577.47 Cr in total); the largest so far (previous high ₹207.47 Cr)". No earlier order on record gives no signal, never a "first" |
 | `WORKING_CAPITAL_STRAIN` | Receivables or inventory YoY growth exceeding revenue growth by 15 percentage points or more, same period |
 | `METRIC_SHIFT` | A generic scan over *every* metric the filing reported: moves of 30% or more (200 bps or more for percentages) YoY or against the previous like period (quarter vs quarter, never quarter vs half-year), ranked by size, coloured by direction for common metrics, with trend-reversal notes |
 
@@ -303,25 +321,34 @@ setting, with a light/dark/system toggle. One centred column, at most 1200px wid
 active item as a soft emerald pill. Search (Ctrl+K / ⌘K) finds companies (opens the
 company page) and cards (opens the card).
 
-**Feed.** Tabs by family (All, High impact, Results, Capex & orders, Capital & deals,
-Governance & regulatory, Noise audit) and a single filter row (date range, market cap,
-sector, text). Each filing is a **compact row**: a left stripe coloured by tone
-(positive, negative, mixed, neutral), the headline, a one-line takeaway, and one meta
-line (ticker chip, company, market cap and tier, event, time, ✓/⚠ signal counts), with
-the impact level on the right. Tone is the analyst's read of what the filing means for
-the company's fundamentals, never a view on the share price; the takeaway is one
-sentence on why the filing matters. A row expands into the full card, in reading order:
+**Feed (home).** Tabs by family (All, High impact, Results, Capex & orders, Capital &
+deals, Governance & regulatory, Noise audit) and one filter row (date range, market cap,
+sector, text). The default view is a column of **announcement cards**, one per filing,
+readable in about ten seconds without opening anything:
 
-1. telemetry (event, sector lens, BSE code, time to the minute in IST, market session);
-2. **Core catalyst**: the takeaway in display type, with key numbers;
-3. **What happened** (facts) beside **Why it matters** (memory links, balance sheet,
-   peer context, quantified estimates with "show working", missing disclosures);
-4. computed signals and notable changes;
-5. **What to track next**: milestone dates, KPI to verify, pending approvals,
-   invalidation risk (only the ones the filing supports);
-6. financial footer (latest revenue, debt, net worth, market cap, 1W/1M/1Y) and trust
-   markers (numbers verified, math checked, partial memory);
-7. View official PDF (with page count), Open company memory, Copy card as PNG.
+1. ticker, market cap and size, and the impact pill (high / moderate / low);
+2. chips: the event, up to two themes ("Renewables", "Infra / EPC"), the deal stage
+   (LOI, LOA, MoU, development order, board approved: the provisional stages in amber)
+   and the figures' basis (consolidated, standalone, proforma);
+3. the headline: who did what, with the main figure, in proportion where memory allows;
+4. for results, a small P&L (revenue, EBITDA, margin, PAT with YoY and QoQ) computed from
+   the dossier; for concalls and presentations, the call read (guidance vs the last call,
+   management tone, transparency, story) and up to four metric tiles;
+5. two or three facts, with the key names and figures in bold (results bullets that only
+   repeat the table are hidden);
+6. a tinted box, "Why it matters" ("What these numbers mean" for results and business
+   updates): up to four lines from the memory insights, the most important computed
+   signal (marked "computed") and the first missing disclosure;
+7. a footer with the latest revenue, 1W / 1M / 1Y, the time, "Numbers verified" or
+   "Needs review", and actions: Full analysis, official PDF, copy as image, company.
+
+"Full analysis" opens the rest underneath: remaining insights with their basis, every
+quantified estimate with its working, all signals, notable changes, what to track next
+(milestones, KPI to verify, pending approvals, growth catalyst, road blocker) and the
+grounding detail. "Copy as image" exports the card alone, with the site name, date and
+disclaimer, for sharing. A **List** toggle switches to compact expandable rows for fast
+scanning. On wide screens a side rail shows today's numbers (filed, analysed, filtered
+as noise) and the next seven days of catalysts.
 
 **Results.** One table of results filings: date, company, verdict (Strong, Good, Mixed,
 Weak, Neutral, from tone and impact), market cap, quarter, revenue / EBITDA / PAT YoY
@@ -338,7 +365,7 @@ and 1W/1M/1Y, sector and size. Tabs:
 | Results | Quarterly scorecard (verdict, takeaway, revenue / EBITDA / OPM / PAT YoY per quarter); financial baseline pivot by period kind; balance sheet |
 | Promise tracker | Delivered / missed / open / delivery rate; every management commitment with given date, due date, status and evidence; follow-ups from earlier cards |
 | Timeline | 2026 events, high-impact ones marked |
-| Filings | The company's cards as expandable rows |
+| Filings | The company's announcement cards |
 
 **Companies.** Search, sort, size and coverage filters, A–Z; a table with sector,
 market cap, returns, filings and last filing date. A row opens the company page.
@@ -390,7 +417,7 @@ single-writer design depends on.
 | Where | What |
 |---|---|
 | Repository secrets | `PLATFORM_API_URL`, `INGEST_TOKEN`, `GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, and for deploys `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` |
-| Repository variables | `BACKFILL_START`, `D1_DATABASE_ID`, `PIPELINE_RUNNER_LABELS` |
+| Repository variables | `BACKFILL_START`, `BACKFILL_PRIORITY_MCAP_CR` (optional), `D1_DATABASE_ID`, `PIPELINE_RUNNER_LABELS` |
 | Worker secret | `INGEST_TOKEN` |
 
 **Backups.** The weekly `backup.yml` exports dossiers to the `backups` branch. R2

@@ -11,6 +11,10 @@ never be a plausible-sounding guess:
   issue, from the shares and prices the filing states.
 * WORKING_CAPITAL_STRAIN: receivables or inventory growing much faster than
   revenue over the same year-on-year period.
+* SCALE: an order, fundraise, capex plan or acquisition put in proportion:
+  against the last quarter's and last year's revenue, market cap or net worth.
+* ORDER_FLOW: where an order sits among the company's earlier orders on record
+  (how many since when, the total, and whether it is the largest).
 * METRIC_SHIFT: a generic scan over *every* metric this filing reported,
   whatever its name: large year-on-year or sequential moves, and trend
   reversals, ranked by size. Open-ended judgement on top of this comes from
@@ -39,7 +43,7 @@ WORKING_CAPITAL = {
 
 @dataclass
 class Signal:
-    type: str        # PROMISE_DELIVERED | GUIDANCE_BREACH | DILUTION | WORKING_CAPITAL_STRAIN
+    type: str        # PROMISE_DELIVERED | GUIDANCE_BREACH | WATCH_RESOLVED | DILUTION | SCALE | ORDER_FLOW | WORKING_CAPITAL_STRAIN | METRIC_SHIFT
     severity: str    # POSITIVE | WARNING | INFO
     text: str
     ref: str | None = None
@@ -49,6 +53,8 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     signals: list[Signal] = []
     signals += _promises(before, after, output, filing)
     signals += _dilution(after, output, company)
+    signals += _scale(before, output, company)
+    signals += _order_flow(before, output, filing)
     strain = _working_capital(after, filing)
     signals += strain
     signals += _metric_shifts(after, filing, skip={"trade_receivables", "receivables", "debtors", "inventories", "inventory"} if strain else set())
@@ -125,6 +131,77 @@ def _dilution(after: dict, output: Pass2Output, company: dict | None) -> list[Si
         severity = "WARNING" if (dilution or 0) >= 10 else "INFO"
         out.append(Signal("DILUTION", severity, f"{action.instrument}: " + "; ".join(parts) + "."))
     return out
+
+
+def _latest_revenue(dossier: dict | None, kind: str) -> tuple[str, float] | None:
+    """(period, value) of the latest quarterly ("Q") or full-year ("FY") revenue on record."""
+    best = None
+    for m in (dossier or {}).get("financial_metrics", []):
+        period = m.get("period", "")
+        if m.get("metric") not in REVENUE or not m.get("value") or (m.get("unit") or "INR_CR") != "INR_CR":
+            continue
+        if (kind == "Q" and not period.startswith("Q")) or (kind == "FY" and not period.startswith("FY")):
+            continue
+        end = due_date(period)
+        if end and (best is None or end > best[0]):
+            best = (end, period, m["value"])
+    return (best[1], best[2]) if best else None
+
+
+def _cr(value: float) -> str:
+    """₹ crore as filings write it: whole crores from ₹1,000 Cr, otherwise up to two decimals."""
+    if value >= 1000:
+        return f"₹{value:,.0f} Cr"
+    return "₹" + f"{value:,.2f}".rstrip("0").rstrip(".") + " Cr"
+
+
+_SCALE_NOUN = {"ORDER": "order", "FUNDRAISE": "raise", "CAPEX": "capex", "ACQUISITION": "deal", "DIVESTMENT": "sale"}
+
+
+def _scale(before: dict | None, output: Pass2Output, company: dict | None) -> list[Signal]:
+    deal = output.card.deal_value if output.card is not None else None
+    if deal is None or not deal.amount_cr or deal.amount_cr <= 0:
+        return []
+    amount, parts = deal.amount_cr, []
+    if deal.kind in ("ORDER", "CAPEX", "OTHER"):
+        for kind in ("Q", "FY"):
+            latest = _latest_revenue(before, kind)
+            if latest:
+                parts.append(f"{amount / latest[1] * 100:.0f}% of {latest[0]} revenue ({_cr(latest[1])})")
+    market_cap = (company or {}).get("market_cap_cr")
+    if deal.kind in ("FUNDRAISE", "ACQUISITION", "DIVESTMENT", "CAPEX") and market_cap:
+        parts.append(f"{amount / market_cap * 100:.0f}% of market cap ({_cr(market_cap)})")
+    net_worth = _latest_net_worth(before or {})
+    if deal.kind in ("FUNDRAISE", "ACQUISITION") and net_worth:
+        parts.append(f"{amount / net_worth * 100:.0f}% of net worth ({_cr(net_worth)})")
+    if not parts:
+        return []
+    noun = _SCALE_NOUN.get(deal.kind, "deal")
+    gst = "; the value includes GST, revenue does not" if deal.includes_gst and deal.kind == "ORDER" else ""
+    return [Signal("SCALE", "INFO", f"{_cr(amount)} {noun} = " + ", ".join(parts) + gst + ".")]
+
+
+def _ordinal(n: int) -> str:
+    return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
+
+
+def _order_flow(before: dict | None, output: Pass2Output, filing: Filing) -> list[Signal]:
+    deal = output.card.deal_value if output.card is not None else None
+    if deal is None or deal.kind != "ORDER" or not deal.amount_cr:
+        return []
+    prior = [d for d in (before or {}).get("deals", [])
+             if d.get("kind") == "ORDER" and d.get("amount_cr") and d.get("as_of", "") < filing.filed_at]
+    if not prior:
+        return []  # no earlier order on record; that does not make this one the first
+    since = min(d["as_of"] for d in prior)[:10]
+    largest = max(prior, key=lambda d: d["amount_cr"])
+    total = sum(d["amount_cr"] for d in prior) + deal.amount_cr
+    text = (f"{_ordinal(len(prior) + 1)} order on record since {since} ({_cr(total)} in total); ")
+    if deal.amount_cr > largest["amount_cr"]:
+        text += f"the largest so far (previous high {_cr(largest['amount_cr'])} on {largest['as_of'][:10]})."
+    else:
+        text += f"smaller than the {_cr(largest['amount_cr'])} order of {largest['as_of'][:10]}."
+    return [Signal("ORDER_FLOW", "INFO", text)]
 
 
 def _growth(metrics: dict, name: str, period: str) -> float | None:

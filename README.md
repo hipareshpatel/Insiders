@@ -12,7 +12,8 @@ watch next. It runs on free tiers.
   signals (promise vs delivery, dilution, working capital,
   metric shifts), and publishes cards to the web app.
 - **Web** (`web/`, Cloudflare Worker). A Hono API over D1 and R2, and a React app:
-  a live feed of compact filing rows that expand into the full card, a Results table,
+  a home feed of announcement cards (facts, "why it matters", a P&L for results, the
+  call read for concalls) with a compact list view, a Results table,
   company pages (overview, results scorecard, promise tracker, timeline, filings), a
   catalyst calendar and a system monitor. The website is the only distribution
   channel.
@@ -39,7 +40,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
-python -m pytest -q              # 84 tests
+python -m pytest -q              # 101 tests
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \

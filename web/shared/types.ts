@@ -27,7 +27,7 @@ export interface NotableChange {
 }
 
 export interface Signal {
-  type: "PROMISE_DELIVERED" | "GUIDANCE_BREACH" | "WATCH_RESOLVED" | "DILUTION" | "WORKING_CAPITAL_STRAIN" | "METRIC_SHIFT";
+  type: "PROMISE_DELIVERED" | "GUIDANCE_BREACH" | "WATCH_RESOLVED" | "DILUTION" | "SCALE" | "ORDER_FLOW" | "WORKING_CAPITAL_STRAIN" | "METRIC_SHIFT";
   severity: Severity;
   text: string;
   ref?: string | null;
@@ -37,6 +37,7 @@ export interface TrackNext {
   milestones: { what: string; when?: string | null; date?: string | null }[];
   kpis_to_verify: { kpi: string; check_in?: string | null; target?: string | null }[];
   pending_approvals: string[];
+  catalysts?: string[];
   risks: string[];
 }
 
@@ -67,12 +68,43 @@ export interface Fundamentals {
   net_worth?: { period: string | null; value: number };
 }
 
+export interface ResultLine {
+  value: number;
+  prev_year?: number;
+  prev_quarter?: number;
+  yoy_pct?: number;
+  qoq_pct?: number;
+  yoy_bps?: number;
+  qoq_bps?: number;
+}
+
 export interface ResultsSnapshot {
   period: string;
-  revenue?: { value: number; yoy_pct?: number };
-  ebitda?: { value: number; yoy_pct?: number };
-  ebitda_margin?: { value: number; yoy_bps?: number };
-  pat?: { value: number; yoy_pct?: number };
+  prev_year_period?: string | null;
+  prev_quarter_period?: string | null;
+  revenue?: ResultLine;
+  ebitda?: ResultLine;
+  ebitda_margin?: ResultLine;
+  pbt?: ResultLine;
+  pat?: ResultLine;
+  eps?: ResultLine;
+}
+
+export interface DealValue {
+  kind: "ORDER" | "FUNDRAISE" | "CAPEX" | "ACQUISITION" | "DIVESTMENT" | "OTHER";
+  amount_cr: number | null;
+  includes_gst?: boolean | null;
+  counterparty?: string | null;
+  stage: string;
+  segment?: string | null;
+  execution_by?: string | null;
+}
+
+export interface CallRead {
+  guidance: "RAISED" | "LOWERED" | "MAINTAINED" | "NEW" | "WITHDRAWN" | "NONE";
+  management_tone: "OPTIMISTIC" | "NEUTRAL" | "CAUTIOUS";
+  transparency: "HIGH" | "MEDIUM" | "LOW";
+  story?: string | null;
 }
 
 export interface CardBody {
@@ -82,6 +114,10 @@ export interface CardBody {
   tone?: "POSITIVE" | "NEGATIVE" | "MIXED" | "NEUTRAL";
   headline: string;
   takeaway?: string;
+  themes?: string[];
+  basis?: "CONSOLIDATED" | "STANDALONE" | "PROFORMA" | null;
+  deal_value?: DealValue | null;
+  call_read?: CallRead | null;
   results?: ResultsSnapshot | null;
   what_happened: string[];
   why_it_matters: Insight[];
@@ -94,7 +130,7 @@ export interface CardBody {
   pdf_pages?: number | null;
   signals: Signal[];
   timeline_entry: string;
-  grounding: { score: number; checked: number; ungrounded: string[]; math_mismatches?: number };
+  grounding: { score: number; checked: number; ungrounded: string[]; math_mismatches?: number; unsupported_claims?: string[] };
   model: string;
 }
 

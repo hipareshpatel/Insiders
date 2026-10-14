@@ -1,7 +1,7 @@
 import { toBlob } from "html-to-image";
 import {
   AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, Calculator, Camera, CheckCircle2, ChevronDown, FileText,
-  FolderOpen, Gauge, ListChecks, Minus, Scale, ShieldAlert, Timer,
+  FolderOpen, Gauge, Layers, ListChecks, Minus, Rocket, Ruler, Scale, ShieldAlert, Timer,
 } from "lucide-react";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useLocation } from "wouter";
@@ -10,6 +10,7 @@ import { cn } from "../lib/cn";
 import { cr, exact, istDateTime, marketSession, pct, quantValue, relativeTime, signClass, titleCase } from "../lib/format";
 import { EVENT_LABELS, IMPACT_LABEL, IMPACT_TEXT, SECTORS, TONE_STRIPE, type Tone } from "../lib/taxonomy";
 import { TickerChip } from "./Avatar";
+import { plain, RichText } from "./RichText";
 
 export function parseCard(row: CardRow): CardBody | null {
   try {
@@ -31,10 +32,12 @@ export const SIGNAL: Record<Signal["type"], { label: string; icon: typeof Gauge 
   GUIDANCE_BREACH: { label: "Guidance breach", icon: ShieldAlert },
   WATCH_RESOLVED: { label: "Follow-up", icon: ListChecks },
   DILUTION: { label: "Dilution", icon: Scale },
+  SCALE: { label: "Scale", icon: Ruler },
+  ORDER_FLOW: { label: "Order flow", icon: Layers },
   WORKING_CAPITAL_STRAIN: { label: "Working capital", icon: AlertTriangle },
   METRIC_SHIFT: { label: "Metric shift", icon: Gauge },
 };
-const SEVERITY_TEXT: Record<Signal["severity"], string> = { POSITIVE: "text-pos", WARNING: "text-warn", INFO: "text-info" };
+export const SEVERITY_TEXT: Record<Signal["severity"], string> = { POSITIVE: "text-pos", WARNING: "text-warn", INFO: "text-info" };
 
 /** One filing in a list: a compact row that expands into the full card. */
 export function FilingRow({ row, defaultOpen = false, highlight = false }: { row: CardRow; defaultOpen?: boolean; highlight?: boolean }) {
@@ -57,7 +60,7 @@ export function FilingRow({ row, defaultOpen = false, highlight = false }: { row
           <h3 className="min-w-0 flex-1 text-[15px] font-medium leading-snug text-ink">
             <button type="button" aria-expanded={open} onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
               className="text-left hover:text-accent focus-visible:text-accent">
-              {card.headline}
+              {plain(card.headline)}
             </button>
           </h3>
           <span className="flex shrink-0 items-center gap-2 pt-0.5" data-noexport="true">
@@ -117,10 +120,11 @@ export function FilingBody({ row, card, showHeadline = false }: { row: CardRow; 
     { icon: Timer, label: "Milestone dates", items: (track?.milestones ?? []).map((m) => `${m.what}${m.when ? ` · ${m.when}` : ""}`) },
     { icon: Gauge, label: "KPI to verify", items: (track?.kpis_to_verify ?? []).map((k) => `${k.kpi}${k.target ? ` (target ${k.target})` : ""}${k.check_in ? ` · ${k.check_in}` : ""}`) },
     { icon: Scale, label: "Pending approvals", items: track?.pending_approvals ?? [] },
+    { icon: Rocket, label: "Growth catalyst", items: track?.catalysts ?? [] },
     { icon: ShieldAlert, label: "Invalidation risk", items: track?.risks ?? [] },
   ].filter((t) => t.items.length > 0);
   // In a feed row the headline is already on screen, so the catalyst line carries the takeaway instead.
-  const catalyst = showHeadline || !card.takeaway ? card.headline : card.takeaway;
+  const catalyst = plain(showHeadline || !card.takeaway ? card.headline : card.takeaway);
 
   async function copyPng() {
     // Export the whole card (header included) when it sits in a feed row, so the PNG stands alone.
@@ -182,13 +186,13 @@ export function FilingBody({ row, card, showHeadline = false }: { row: CardRow; 
 
       <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <Section label="What happened · the facts">
-          <ul className="space-y-1.5">{card.what_happened.map((fact, i) => <Bullet key={i}>{fact}</Bullet>)}</ul>
+          <ul className="space-y-1.5">{card.what_happened.map((fact, i) => <Bullet key={i}><RichText text={fact} /></Bullet>)}</ul>
         </Section>
         <Section label="Why it matters · memory & forensics">
           <ul className="space-y-2">
             {card.why_it_matters.map((insight, i) => (
               <Bullet key={i}>
-                <span className="font-semibold text-accent">[{BASIS_LABEL[insight.basis] ?? insight.basis}]</span> {insight.text}
+                <span className="font-semibold text-accent">[{BASIS_LABEL[insight.basis] ?? insight.basis}]</span> <RichText text={insight.text} />
               </Bullet>
             ))}
             {quant.map((q, i) => <QuantLine key={`q${i}`} q={q} />)}
@@ -292,7 +296,7 @@ export function FilingBody({ row, card, showHeadline = false }: { row: CardRow; 
   );
 }
 
-function TrackItem({ icon: Icon, label, items }: { icon: typeof Timer; label: string; items: string[] }) {
+export function TrackItem({ icon: Icon, label, items }: { icon: typeof Timer; label: string; items: string[] }) {
   return (
     <div>
       <dt className="flex items-center gap-1.5 text-[13px] font-semibold text-ink"><Icon className="h-3.5 w-3.5 text-ink-3" />{label}</dt>
@@ -303,7 +307,7 @@ function TrackItem({ icon: Icon, label, items }: { icon: typeof Timer; label: st
   );
 }
 
-function QuantLine({ q }: { q: QuantifiedImpact }) {
+export function QuantLine({ q }: { q: QuantifiedImpact }) {
   const [open, setOpen] = useState(false);
   const verified = q.check === "VERIFIED";
   return (

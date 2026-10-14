@@ -4,7 +4,8 @@ import { useMemo, useState, type ReactNode } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import type { CardRow, Company, Dossier, Guidance } from "../../shared/types";
 import { Avatar } from "../components/Avatar";
-import { FilingRow, parseCard, SIGNAL } from "../components/FilingCard";
+import { AnnouncementCard } from "../components/AnnouncementCard";
+import { parseCard, SIGNAL } from "../components/FilingCard";
 import { Badge, TabStrip } from "../components/ui/badge";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
@@ -81,8 +82,8 @@ export function CompanyPage() {
         {tab === "promises" && <PromiseTracker dossier={dossier} />}
         {tab === "timeline" && <Timeline dossier={dossier} />}
         {tab === "filings" && (
-          <div className="space-y-2">
-            {cards.length ? cards.map((row) => <FilingRow key={row.news_id} row={row} />) : <Empty title="No material filings analysed yet" />}
+          <div className="mx-auto max-w-[720px] space-y-4">
+            {cards.length ? cards.map((row) => <AnnouncementCard key={row.news_id} row={row} />) : <Empty title="No material filings analysed yet" />}
           </div>
         )}
       </div>

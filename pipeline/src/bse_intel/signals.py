@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 
+from .dossier import deal_state
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period
 
@@ -187,21 +188,33 @@ def _ordinal(n: int) -> str:
 
 def _order_flow(before: dict | None, output: Pass2Output, filing: Filing) -> list[Signal]:
     deal = output.card.deal_value if output.card is not None else None
-    if deal is None or deal.kind != "ORDER" or not deal.amount_cr:
+    if deal is None or deal.kind != "ORDER":
         return []
-    prior = [d for d in (before or {}).get("deals", [])
-             if d.get("kind") == "ORDER" and d.get("amount_cr") and d.get("as_of", "") < filing.filed_at]
-    if not prior:
+    earlier = [(d, deal_state(d, filing.filed_at)) for d in (before or {}).get("deals", []) if d.get("kind") == "ORDER"]
+    earlier = [(d, st) for d, st in earlier if st is not None]
+    updated = next(((d, st) for d, st in earlier if d["id"] == deal.updates_deal_id), None) if deal.updates_deal_id else None
+    if updated is not None:
+        d, st = updated
+        size = f"{_cr(st['amount_cr'])} " if st.get("amount_cr") else ""
+        return [Signal("ORDER_FLOW", "INFO",
+                       f"Stage update, not a new order: the {size}order first reported on {d['as_of'][:10]} "
+                       f"moves from {_stage(st['stage'])} to {_stage(deal.stage)}.")]
+    prior = [(d, st) for d, st in earlier if st.get("amount_cr")]
+    if not deal.amount_cr or not prior:
         return []  # no earlier order on record; that does not make this one the first
-    since = min(d["as_of"] for d in prior)[:10]
-    largest = max(prior, key=lambda d: d["amount_cr"])
-    total = sum(d["amount_cr"] for d in prior) + deal.amount_cr
-    text = (f"{_ordinal(len(prior) + 1)} order on record since {since} ({_cr(total)} in total); ")
+    since = min(d["as_of"] for d, _ in prior)[:10]
+    largest_deal, largest = max(prior, key=lambda p: p[1]["amount_cr"])
+    total = sum(st["amount_cr"] for _, st in prior) + deal.amount_cr
+    text = f"{_ordinal(len(prior) + 1)} order on record since {since} ({_cr(total)} in total); "
     if deal.amount_cr > largest["amount_cr"]:
-        text += f"the largest so far (previous high {_cr(largest['amount_cr'])} on {largest['as_of'][:10]})."
+        text += f"the largest so far (previous high {_cr(largest['amount_cr'])} on {largest_deal['as_of'][:10]})."
     else:
-        text += f"smaller than the {_cr(largest['amount_cr'])} order of {largest['as_of'][:10]}."
+        text += f"smaller than the {_cr(largest['amount_cr'])} order of {largest_deal['as_of'][:10]}."
     return [Signal("ORDER_FLOW", "INFO", text)]
+
+
+def _stage(stage: str | None) -> str:
+    return {"LOI": "LOI", "LOA": "LOA", "MOU": "MoU"}.get(stage or "", (stage or "unknown stage").replace("_", " ").lower())
 
 
 def _growth(metrics: dict, name: str, period: str) -> float | None:

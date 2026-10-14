@@ -40,7 +40,8 @@ PASS2_SCHEMA = {
         },
         "deal_value": {"kind": "ORDER | FUNDRAISE | CAPEX | ACQUISITION | DIVESTMENT | OTHER", "amount_cr": 228.0,
                        "includes_gst": False, "counterparty": "string", "stage": "LOI | LOA | WORK_ORDER | CONTRACT | MOU | DEVELOPMENT_ORDER | BOARD_APPROVED | SHAREHOLDER_APPROVED | COMPLETED",
-                       "segment": "wind EPC", "execution_by": "31 July 2027"},
+                       "segment": "wind EPC", "execution_by": "31 July 2027", "progress": "40 MW of 60 MW commissioned or null",
+                       "updates_deal_id": "d_... from memory's deals, or null"},
         "call_read": {"guidance": "RAISED | LOWERED | MAINTAINED | NEW | WITHDRAWN | NONE", "management_tone": "OPTIMISTIC | NEUTRAL | CAUTIOUS",
                       "transparency": "HIGH | MEDIUM | LOW", "story": "GROWTH | COMPOUNDER | TURNAROUND | CYCLICAL | STRESSED | TRANSITION | VALUE"},
     },
@@ -55,6 +56,8 @@ PASS2_SCHEMA = {
         "balance_sheet": {"period": "Sep-2026", "gross_debt_cr": None, "cash_cr": None, "net_debt_cr": None, "net_worth_cr": None, "credit_rating": None, "rating_agency": None, "rating_outlook": None},
         "capital_actions": [{"instrument": "Rights issue", "new_shares": None, "existing_shares": None, "issue_price": None, "amount_cr": None}],
         "upcoming_events": [{"event_type": "RECORD_DATE", "date": "YYYY-MM-DD", "description": "string"}],
+        "analyst_concerns": [{"concern": "string", "management_response": "string"}],
+        "operating_notes": ["string"],
     },
 }
 
@@ -65,6 +68,7 @@ class SectorModule:
     patterns: tuple[re.Pattern, ...]
     kpis: tuple[str, ...]
     context: str
+    footer: tuple[dict, ...] = ()   # card-footer metrics: {metric, label, format, aliases}
 
 
 class PromptEngine:
@@ -82,6 +86,7 @@ class PromptEngine:
                 patterns=tuple(re.compile(r"\b" + re.escape(m), re.I) for m in entry.get("match", [])),
                 kpis=tuple(entry.get("kpis", [])),
                 context=entry.get("context", ""),
+                footer=tuple(entry.get("footer", [])),
             ))
 
     def sector_for(self, industry: str | None) -> SectorModule:
@@ -128,7 +133,9 @@ class PromptEngine:
             event_focus=self._event(event_type).get("focus", "").strip(),
             sector_name=sector.name.replace("_", " "),
             sector_context=sector.context,
-            sector_kpis=", ".join(sector.kpis),
+            sector_kpis=", ".join(sector.kpis) + (
+                ". Name these in financial_metrics exactly as: "
+                + ", ".join(f"{f['metric']} ({f['label']})" for f in sector.footer) if sector.footer else ""),
             schema=json.dumps(PASS2_SCHEMA, ensure_ascii=False, indent=1),
         )
         user = self._pass2_user.safe_substitute(

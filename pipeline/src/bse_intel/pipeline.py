@@ -119,6 +119,8 @@ def check_card_all(card, view: dict | None, sources: tuple[str, ...]) -> CardChe
     valid_refs = memory_ids(view)
     for insight in card.why_it_matters:
         insight.memory_refs = [r for r in insight.memory_refs if r in valid_refs]
+    if card.deal_value and card.deal_value.updates_deal_id not in valid_refs:
+        card.deal_value.updates_deal_id = None  # only a deal the model was shown can be updated
     reconcile_call_read(card, view)
     grounding = check_card(card, *sources)
     quant = check_quant(card.quantified_impact, *sources)
@@ -352,7 +354,8 @@ class Pipeline:
         view = view_as_of(dossier, filing.filed_at)
         budget = self.settings.pass2_char_budget * (3 if event_type == "CONCALL_PRESENTATION" else 1)
         text = doc.select_text(budget, self.prompts.keywords(event_type))
-        sector = self.prompts.sector_for(industry).name
+        sector_module = self.prompts.sector_for(industry)
+        sector = sector_module.name
         peers = self._peers(sector, event_type, filing)
         system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers)
         route = "pass2_bulk" if bulk else "pass2"
@@ -386,7 +389,7 @@ class Pipeline:
             "quantified_impact": quant.items,
             "signals": signals,
             "timeline_entry": out.timeline_entry,
-            "fundamentals": latest_fundamentals(merged),
+            "fundamentals": latest_fundamentals(merged, sector_module.footer),
             "results": results_snapshot(merged, filing.news_id) if event_type == "RESULTS" else None,
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],

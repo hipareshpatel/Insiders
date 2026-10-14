@@ -21,10 +21,13 @@ const IMPACT_PILL: Record<Impact, string> = {
 };
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
 
-const STAGE_LABEL: Record<string, string> = {
+export const STAGE_LABEL: Record<string, string> = {
   LOI: "LOI", LOA: "LOA", WORK_ORDER: "Work order", CONTRACT: "Contract", MOU: "MoU", DEVELOPMENT_ORDER: "Development order",
-  BOARD_APPROVED: "Board approved", SHAREHOLDER_APPROVED: "Shareholder approved", COMPLETED: "Completed",
+  PROPOSED: "Proposed", BOARD_APPROVED: "Board approved", TERMS_FINALISED: "Terms final", SHAREHOLDER_APPROVED: "Shareholder approved",
+  IN_PROGRESS: "In progress", PARTIALLY_COMPLETED: "Partly complete", COMPLETED: "Completed", CANCELLED: "Cancelled",
 };
+/** Stages where nothing is firm yet: shown in amber. */
+export const PROVISIONAL_STAGES = new Set(["LOI", "MOU", "DEVELOPMENT_ORDER", "PROPOSED", "BOARD_APPROVED", "CANCELLED"]);
 const BASIS_LABEL: Record<string, string> = { CONSOLIDATED: "Consolidated", STANDALONE: "Standalone", PROFORMA: "Proforma" };
 const INSIGHT_BASIS: Record<string, string> = { MEMORY: "memory", BALANCE_SHEET: "balance sheet", SECTOR: "peers", FILING: "filing" };
 
@@ -280,7 +283,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
           <Chip>{EVENT_LABELS[event] ?? card.category_tag}</Chip>
           {(card.themes ?? []).map((t) => <Chip key={t}>{t}</Chip>)}
-          {stage && <Chip tone={["LOI", "MoU", "Development order", "Board approved"].includes(stage) ? "warn" : "neutral"}>{stage}</Chip>}
+          {stage && <Chip tone={PROVISIONAL_STAGES.has(deal!.stage) ? "warn" : "neutral"}>{stage}</Chip>}
+          {deal?.updates_deal_id && <Chip tone="neutral">Update to earlier deal</Chip>}
           {card.basis && <Chip tone="neutral">{BASIS_LABEL[card.basis] ?? card.basis}</Chip>}
         </div>
 

@@ -125,7 +125,7 @@ def test_order_flow_counts_repeat_orders_and_the_largest():
         d = merge(d, out, filing(news_id, when), "MODERATE", "now")
     assert [x["amount_cr"] for x in d["deals"]] == [142, 207.47]
     view = view_as_of(d, "2026-10-14T00:00:00+05:30")
-    assert view["deals"][-1] == {"date": "2026-08-02", "kind": "ORDER", "amount_cr": 207.47, "stage": "LOI"}
+    assert view["deals"][-1] == {"id": d["deals"][-1]["id"], "date": "2026-08-02", "kind": "ORDER", "amount_cr": 207.47, "stage": "LOI"}
 
     out = order(228, segment="wind EPC")
     f = filing("n3", "2026-10-14T18:00:00+05:30")
@@ -163,3 +163,67 @@ def test_card_extras_are_normalised():
     # an optional block with missing or odd fields never sinks the card
     partial = card(headline="Demo Infra wins ₹50 Cr road order", deal_value={"amount_cr": "50"}, call_read={"story": "rocket"})
     assert (partial.deal_value.kind, partial.deal_value.amount_cr, partial.call_read.story) == ("OTHER", 50.0, None)
+
+
+def test_a_later_stage_updates_the_deal_instead_of_adding_one():
+    """LOI first, formal contract later: one order with a stage history, never two orders."""
+    d = new_dossier(filing("n0", "2026-05-01T10:00:00+05:30"))
+    d = merge(d, order(142), filing("n1", "2026-05-15T18:00:00+05:30"), "MODERATE", "now")
+    loi = order(228, segment="wind EPC")
+    d = merge(d, loi, filing("n2", "2026-08-02T18:00:00+05:30"), "MODERATE", "now")
+    loi_id = d["deals"][-1]["id"]
+
+    contract = order(228, stage="CONTRACT", updates_deal_id=loi_id, execution_by="30 June 2027")
+    f3 = filing("n3", "2026-10-14T18:00:00+05:30")
+    after = merge(d, contract, f3, "MODERATE", "now")
+    assert len(after["deals"]) == 2
+    updated = next(x for x in after["deals"] if x["id"] == loi_id)
+    assert (updated["stage"], updated["execution_by"], len(updated["history"])) == ("CONTRACT", "30 June 2027", 2)
+    flow = next(s for s in compute(d, after, contract, f3, None) if s["type"] == "ORDER_FLOW")
+    assert flow["text"] == "Stage update, not a new order: the ₹228 Cr order first reported on 2026-08-02 moves from LOI to contract."
+
+    # memory before the contract still shows the LOI; re-analysing the contract filing is idempotent
+    assert view_as_of(after, "2026-09-01T00:00:00+05:30")["deals"][-1]["stage"] == "LOI"
+    again = merge(after, contract, f3, "MODERATE", "now")
+    assert len(next(x for x in again["deals"] if x["id"] == loi_id)["history"]) == 2
+    # forgetting the contract filing (e.g. it is re-analysed as not material) reverts the stage
+    from bse_intel.dossier import _forget
+    _forget(again, "n3")
+    assert next(x for x in again["deals"] if x["id"] == loi_id)["stage"] == "LOI"
+
+
+def test_analyst_concerns_and_operating_notes_are_remembered():
+    d = new_dossier(filing("n0", "2026-05-01T10:00:00+05:30"))
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "CONCALL_PRESENTATION", "timeline_entry": "Q2 call",
+        "card": {"impact_level": "MODERATE", "headline": "Demo Infra guides 18-20% revenue growth for FY27", "what_happened": ["x"]},
+        "dossier_delta": {
+            "analyst_concerns": [{"concern": "Receivable days rose to 140", "management_response": "Expects 110 days by Q4FY27"}],
+            "operating_notes": ["Order book ₹2,450 Cr, executable over 24 months", "", "Steel prices up 8% QoQ"],
+        },
+    })
+    d = merge(d, out, filing("n1", "2026-10-14T18:00:00+05:30"), "MODERATE", "now")
+    (concern,) = [w for w in d["watchlist"] if w["kind"] == "CONCERN"]
+    assert (concern["text"], concern["response"], concern["status"]) == ("Receivable days rose to 140", "Expects 110 days by Q4FY27", "OPEN")
+    view = view_as_of(d, "2026-10-15T00:00:00+05:30")
+    assert view["watchlist"][-1]["management_said"] == "Expects 110 days by Q4FY27"
+    assert view["operating_notes"] == ["2026-10-14: Order book ₹2,450 Cr, executable over 24 months", "2026-10-14: Steel prices up 8% QoQ"]
+    assert view_as_of(d, "2026-10-14T00:00:00+05:30") is None or "operating_notes" not in view_as_of(d, "2026-10-14T00:00:00+05:30")
+
+
+def test_boilerplate_is_stripped_before_the_ai_reads_a_filing():
+    from bse_intel.extract import strip_boilerplate
+    letter = "\n".join([
+        "To,", "BSE Limited", "Phiroze Jeejeebhoy Towers, Dalal Street,", "Mumbai - 400 001", "Scrip Code: 544290",
+        "Sub: Bagging / Receiving of order / contract", "Dear Sir/Madam,",
+        "Suyog Urja Limited has received a Letter of Intent for a 100 MW wind project of Rs. 228.00 Crores (excluding GST).",
+        "For the reasons above, the board approved a merger with Demo Holdings Limited",
+        "We request you to take the above on record.", "Thanking you,", "Yours faithfully,", "For Enviro Infra Engineers Limited",
+        "Digitally signed by A Person", "Date: 2026.10.14 18:57:07 +05'30'", "Company Secretary & Compliance Officer",
+        "CIN: L37003DL2009PLC191418", "email : ho@eiepl.in, website : www.eiel.in",
+    ])
+    assert strip_boilerplate(letter).splitlines() == [
+        "Scrip Code: 544290", "Sub: Bagging / Receiving of order / contract",
+        "Suyog Urja Limited has received a Letter of Intent for a 100 MW wind project of Rs. 228.00 Crores (excluding GST).",
+        "For the reasons above, the board approved a merger with Demo Holdings Limited",
+    ]

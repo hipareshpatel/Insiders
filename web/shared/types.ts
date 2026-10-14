@@ -100,6 +100,8 @@ export interface DealValue {
   stage: string;
   segment?: string | null;
   execution_by?: string | null;
+  progress?: string | null;
+  updates_deal_id?: string | null;
 }
 
 export interface CallRead {
@@ -225,8 +227,10 @@ export interface Guidance {
 
 export interface WatchItem {
   id: string;
-  kind: "KPI" | "APPROVAL";
+  kind: "KPI" | "APPROVAL" | "CONCERN";
   text: string;
+  /** For an analyst concern: what management said on the call. */
+  response?: string | null;
   check_in?: string | null;
   target?: string | null;
   check_by?: string | null;
@@ -252,7 +256,25 @@ export interface Dossier {
   watchlist?: WatchItem[];
   timeline: { id: string; date: string; event_type: string; impact_level: Impact | null; summary: string; news_id: string }[];
   upcoming_events: { event_type: string; date: string; description: string }[];
+  deals?: DealRecord[];
+  operating_notes?: { text: string; as_of: string; source_news_id: string }[];
   updated_at: string | null;
+}
+
+export interface DealRecord {
+  id: string;
+  kind: DealValue["kind"];
+  amount_cr: number | null;
+  stage: string;
+  counterparty?: string | null;
+  segment?: string | null;
+  execution_by?: string | null;
+  progress?: string | null;
+  includes_gst?: boolean | null;
+  as_of: string;
+  updated_as_of?: string;
+  source_news_id: string;
+  history?: { stage: string; amount_cr: number | null; progress?: string | null; as_of: string; source_news_id: string }[];
 }
 
 export interface CompanyDetail {

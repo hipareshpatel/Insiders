@@ -11,6 +11,13 @@ Ground rules
   exchange rate as an ASSUMPTION input. Very large figures can be written in lakh crore
   ("₹13.75 lakh Cr").
 - COMPANY MEMORY describes the company *before* this filing. Do not treat it as new information.
+- Ignore boilerplate: exchange addresses, salutations, signature blocks, safe-harbour text, the
+  moderator's and operator's lines and analysts' pleasantries.
+- Indian fiscal year runs April to March: Q1 = Apr–Jun, Q2 = Jul–Sep, Q3 = Oct–Dec, Q4 = Jan–Mar.
+  The quarter ended 30 June 2026 is Q1FY27; September 2026 falls in Q2FY27.
+- Read table headers before comparing: current quarter, previous quarter, same quarter last year,
+  year to date. Never compare a month with a year-to-date or half-year figure, and never mix
+  standalone with consolidated figures.
 - This is analysis of a public disclosure, not investment advice: never recommend buying or
   selling, and never give price targets.
 
@@ -65,7 +72,9 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   one does, quantify it in bps or ₹ in notable_changes or quantified_impact.
 - missing_disclosures: what management would normally disclose for this kind of event but did
   not (for example no timeline or funding plan for a capex, no revenue guidance after a large
-  acquisition, no order value). The card shows these inside "why it matters", so do not repeat
+  acquisition, no order value). Check COMPANY MEMORY first: if an earlier AGM, call or filing in
+  memory already gave the figure (say the capex outlay), use it in the analysis instead of calling
+  it missing. The card shows these inside "why it matters", so do not repeat
   them in why_it_matters. Use an empty list when nothing is missing. Do not speculate.
 - key_numbers: up to 4 headline figures as {"label", "value", "change"} strings (shown as tiles on
   results and earnings-call cards), for example {"label": "PAT", "value": "₹1,901 Cr", "change": "+203% YoY"}.
@@ -96,7 +105,11 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   amount the filing does not convert), includes_gst (true, false, or null when not stated),
   counterparty, stage, segment (the business line, in a few words) and execution_by (as written).
   The system uses it to compare the deal with revenue, market cap and the company's earlier deals,
-  so give only stated figures. null when there is no stated size.
+  so give only stated figures. null when there is no stated size. progress: how much is done when
+  stated ("40 MW of 60 MW commissioned"). If memory's deals already hold this deal at an earlier
+  stage (an LOI now signed as a contract, a rights issue approved in principle now with final
+  terms, a planned plant now commissioned), set updates_deal_id to that deal's id and describe it
+  as the next stage of that deal, never as a new one.
 - call_read: only for earnings calls, investor presentations and AGM speeches; null otherwise.
   guidance compared with the guidance in COMPANY MEMORY: "RAISED", "LOWERED", "MAINTAINED",
   "WITHDRAWN", "NEW" (no comparable earlier guidance in memory) or "NONE" (no guidance given).
@@ -139,6 +152,12 @@ Dossier facts (dossier_delta), only for facts stated in this filing
   warrants, conversion, ESOP over 1% of capital, buyback): instrument, new_shares,
   existing_shares (pre-issue share count, if stated), issue_price (₹ per share) and amount_cr.
   Only stated figures; the system computes dilution and discounts itself.
+- analyst_concerns: from earnings calls only. When analysts press management on a red flag
+  (receivable days, debt, a delayed project, margins, a key customer), one line for the concern and
+  one for management's answer, saying so when the answer was evasive. The system follows them up.
+- operating_notes: up to 3 one-sentence facts worth remembering for later filings that fit nowhere
+  else, each with its figure: a feedstock price trend, realisation per tonne, capacity
+  utilisation, order book and execution period, a key customer's share.
 - upcoming_events: future-dated events with ISO dates (event_type "RECORD_DATE", "EX_DATE", "AGM",
   "EGM", "BOARD_MEETING", "RIGHTS_OPEN", "RIGHTS_CLOSE", "PAYMENT_DATE", "BUYBACK_OPEN",
   "BUYBACK_CLOSE", "COMMISSIONING" or "OTHER").

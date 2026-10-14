@@ -92,7 +92,7 @@ class Document:
             self._doc = None
 
     def first_page_text(self, limit: int = 2500) -> str:
-        return _clean(self.page_text(0))[:limit] if self.page_count else ""
+        return strip_boilerplate(_clean(self.page_text(0)))[:limit] if self.page_count else ""
 
     def select_text(self, budget_chars: int, keywords: Iterable[str] = ()) -> str:
         """Pick the most relevant pages within a character budget, kept in page order.
@@ -113,16 +113,16 @@ class Document:
             hits = sum(len(p.findall(self._digital[i])) for p in patterns)
             scored.append((hits, i))
         scored.sort(key=lambda item: (-item[0], item[1]))
-        used = sum(len(_clean(self._digital[i])) for i in chosen)
+        used = sum(len(strip_boilerplate(_clean(self._digital[i]))) for i in chosen)
         for _, i in scored:
-            size = len(_clean(self._digital[i])) if not self.is_scanned(i) else 3000
+            size = len(strip_boilerplate(_clean(self._digital[i]))) if not self.is_scanned(i) else 3000
             if used + size > budget_chars:
                 continue
             chosen.append(i)
             used += size
         parts = []
         for i in sorted(chosen):
-            text = _clean(self.page_text(i))
+            text = strip_boilerplate(_clean(self.page_text(i)))
             if text:
                 parts.append(f"--- Page {i + 1} of {self.page_count} ---\n{text}")
         return "\n\n".join(parts)[:budget_chars]
@@ -130,6 +130,43 @@ class Document:
 
 _WS = re.compile(r"[ \t ]+")
 _BLANKS = re.compile(r"\n{3,}")
+
+
+# Short lines that never carry decision-relevant information: exchange addresses, salutations,
+# sign-offs, signature blocks and contact footers. Removed before the text reaches the AI, so the
+# budget goes to the substance and nothing in them can be mistaken for a fact about the company.
+_BOILERPLATE = re.compile(
+    r"^(?:to,?|the (?:general )?manager\b.*|the secretary\b.*|(?:the )?listing (?:department|compliance)\b.*"
+    r"|(?:the )?department of corporate (?:services|relations)\b.*|corporate relationship department\b.*)$"
+    r"|bse limited|national stock exchange of india|phiroze jeejeebhoy|dalal street|exchange plaza"
+    r"|bandra[- ]kurla complex|bandra \(e(?:ast)?\)|\bfort,? mumbai|mumbai\s*[-–]?\s*400\s?0\d\d"
+    r"|^(?:dear sirs?(?:\s*/\s*madam)?|dear sir/ma'?am|respected sirs?(?:/madam)?|sir/madam)[,.]?$"
+    r"|yours (?:faithfully|sincerely|truly)|^thanking you|^thank you,?$|for and on behalf of"
+    r"|take (?:the|this|the same|the above)(?: information)? on (?:your )?record"
+    r"|this is for your (?:kind )?information|for your (?:kind )?information and (?:records|dissemination)"
+    r"|digitally signed by|^date: ?\d{4}\.\d{2}\.\d{2}|\+05'?30'?$|^(?:company secretary|compliance officer)\b"
+    r"|membership no\b|\bdin:? ?\d{8}\b|^encl(?:osure)?s?\b|e-?mail\.? ?(?:id)?\.?:|website\.?:"
+    r"|\btel(?:ephone)?\.? ?(?:no\.?)?:|\bfax\.?:|^phone(?: no\.?)?\s*:|\bcin:? ?[lu]\d{5}|\bgstin\b"
+    r"|regd\.? office|registered office:"
+    r"|information is (?:being )?(?:uploaded|available|hosted) on the (?:company's )?website",
+    re.I | re.M,
+)
+
+
+_SIGN_OFF = re.compile(r"^for,?\s+(.{3,70}?)\s*(?:limited|ltd\.?)\s*$", re.I)
+
+
+def _is_sign_off(line: str) -> bool:
+    """"For, Om Power Transmission Limited" above a signature; every word capitalised, no figures."""
+    m = _SIGN_OFF.match(line)
+    return bool(m) and all(w[:1].isupper() or w in ("&", "and", "of") for w in re.split(r"[\s,]+", m[1]) if w) \
+        and not re.search(r"\d", line)
+
+
+def strip_boilerplate(text: str) -> str:
+    kept = [line for line in text.splitlines()
+            if not (len(line) <= 160 and (_BOILERPLATE.search(line.strip()) or _is_sign_off(line.strip())))]
+    return _BLANKS.sub("\n\n", "\n".join(kept)).strip()
 
 
 def _clean(text: str) -> str:

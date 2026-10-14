@@ -4,7 +4,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import type { CardRow, Company, Dossier, Guidance } from "../../shared/types";
 import { Avatar } from "../components/Avatar";
-import { AnnouncementCard } from "../components/AnnouncementCard";
+import { AnnouncementCard, PROVISIONAL_STAGES, STAGE_LABEL } from "../components/AnnouncementCard";
 import { parseCard, SIGNAL } from "../components/FilingCard";
 import { Badge, TabStrip } from "../components/ui/badge";
 import { api } from "../lib/api";
@@ -23,6 +23,8 @@ const TABS = [
   { key: "timeline", label: "Timeline" },
   { key: "filings", label: "Filings" },
 ];
+
+const WATCH_VERB: Record<string, string> = { KPI: "Verify", APPROVAL: "Pending", CONCERN: "Analyst concern" };
 
 const STATUS_CHIP: Record<string, string> = {
   DELIVERED: "bg-pos-soft text-pos", MET: "bg-pos-soft text-pos", ON_TRACK: "bg-info-soft text-info",
@@ -140,7 +142,7 @@ function Overview({ company, dossier, cards, onTab }: { company: Company | null;
 
   const tracking = [
     ...(dossier?.watchlist ?? []).filter((w) => ["OPEN", "PENDING", "PARTIAL"].includes(w.status))
-      .map((w) => ({ when: w.check_in ?? "—", text: `${w.kind === "KPI" ? "Verify" : "Pending"}: ${w.text}${w.target ? ` (target ${w.target})` : ""}` })),
+      .map((w) => ({ when: w.check_in ?? "—", text: `${WATCH_VERB[w.kind] ?? "Pending"}: ${w.text}${w.target ? ` (target ${w.target})` : ""}` })),
     ...(dossier?.guidance ?? []).filter((g) => ["OPEN", "ON_TRACK"].includes(g.status))
       .map((g) => ({ when: g.due ?? "—", text: `Promise due: ${g.statement}` })),
     ...(dossier?.upcoming_events ?? []).filter((e) => e.date >= today)
@@ -202,6 +204,8 @@ function Overview({ company, dossier, cards, onTab }: { company: Company | null;
         ) : <p className="text-sm text-ink-3">No events recorded yet.</p>}
       </Panel>
 
+      <DealsAndNotes dossier={dossier} />
+
       <Panel title="The good & the bad" hint="Computed signals and notable changes from recent filings">
         <div className="grid gap-6 md:grid-cols-2">
           <GoodBad title="The good" items={good} tone="POSITIVE" />
@@ -221,6 +225,49 @@ function Overview({ company, dossier, cards, onTab }: { company: Company | null;
           </ul>
         ) : <p className="text-sm text-ink-3">Nothing to track yet.</p>}
       </Panel>
+    </div>
+  );
+}
+
+/** Each order, deal or capex plan once, at its latest stage; plus operating facts worth remembering. */
+function DealsAndNotes({ dossier }: { dossier: Dossier | null }) {
+  const deals = [...(dossier?.deals ?? [])].reverse().slice(0, 10);
+  const notes = [...(dossier?.operating_notes ?? [])].reverse().slice(0, 6);
+  if (!deals.length && !notes.length) return null;
+  return (
+    <div className={cn("grid gap-4", deals.length && notes.length && "md:grid-cols-2")}>
+      {deals.length > 0 && (
+        <Panel title="Orders, deals and capex" hint="Each deal once, at its latest stage">
+          <ul className="divide-y divide-line">
+            {deals.map((d) => (
+              <li key={d.id} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-baseline gap-x-3 py-2">
+                <span className="num text-[12px] text-ink-3">{istDate(d.as_of)}</span>
+                <span className="min-w-0 text-[13.5px] text-ink">
+                  <span className="num font-semibold">{d.amount_cr != null ? cr(d.amount_cr) : "—"}</span> {titleCase(d.kind)}
+                  {d.segment ? <span className="text-ink-2"> · {d.segment}</span> : null}
+                  {d.counterparty ? <span className="text-ink-2"> · {d.counterparty}</span> : null}
+                  {d.progress ? <span className="block text-[12px] text-ink-3">{d.progress}</span> : null}
+                </span>
+                <Badge className={PROVISIONAL_STAGES.has(d.stage) ? "bg-warn-soft text-warn" : "bg-surface-2 text-ink-2"}>
+                  {STAGE_LABEL[d.stage] ?? titleCase(d.stage)}
+                </Badge>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      )}
+      {notes.length > 0 && (
+        <Panel title="Operating notes" hint="Facts from filings worth remembering">
+          <ul className="space-y-2">
+            {notes.map((n, i) => (
+              <li key={i} className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 text-[13.5px]">
+                <span className="num text-[12px] text-ink-3">{istDate(n.as_of)}</span>
+                <span className="text-ink">{n.text}</span>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      )}
     </div>
   );
 }
@@ -311,12 +358,13 @@ function PromiseTracker({ dossier }: { dossier: Dossier | null }) {
           </div>
         ) : <p className="text-sm text-ink-3">No commitments recorded yet. Concall transcripts, AGM speeches and investor presentations feed this tracker.</p>}
       </Panel>
-      <Panel title="Follow-ups" hint="What earlier cards said to verify">
+      <Panel title="Follow-ups" hint="What earlier cards said to verify, and concerns analysts raised on calls">
         {dossier?.watchlist?.length ? (
           <ul className="divide-y divide-line">
             {dossier.watchlist.map((w) => (
               <li key={w.id} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2">
-                <span className="text-[14px] text-ink">{w.kind === "KPI" ? "Verify " : "Pending: "}{w.text}{w.target ? <span className="text-ink-2"> · target {w.target}</span> : null}</span>
+                <span className="text-[14px] text-ink">{WATCH_VERB[w.kind] ?? "Pending"}: {w.text}{w.target ? <span className="text-ink-2"> · target {w.target}</span> : null}
+                  {w.response ? <span className="block text-[12.5px] text-ink-3">Management said: {w.response}</span> : null}</span>
                 <span className="flex items-center gap-3">
                   <span className="num text-[12px] text-ink-3">{w.check_in ?? ""}</span>
                   <Badge className={STATUS_CHIP[w.status] ?? STATUS_CHIP.OPEN}>{titleCase(w.status)}</Badge>

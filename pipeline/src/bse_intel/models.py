@@ -288,8 +288,9 @@ def _enum(allowed: tuple[str, ...], aliases: dict[str, str] | None = None, defau
 
 
 DEAL_KINDS = ("ORDER", "FUNDRAISE", "CAPEX", "ACQUISITION", "DIVESTMENT", "OTHER")
-DEAL_STAGES = ("LOI", "LOA", "WORK_ORDER", "CONTRACT", "MOU", "DEVELOPMENT_ORDER", "BOARD_APPROVED",
-               "SHAREHOLDER_APPROVED", "COMPLETED", "OTHER")
+DEAL_STAGES = ("LOI", "LOA", "WORK_ORDER", "CONTRACT", "MOU", "DEVELOPMENT_ORDER", "PROPOSED", "BOARD_APPROVED",
+               "TERMS_FINALISED", "SHAREHOLDER_APPROVED", "IN_PROGRESS", "PARTIALLY_COMPLETED", "COMPLETED",
+               "CANCELLED", "OTHER")
 
 
 class DealValue(_Lenient):
@@ -303,9 +304,14 @@ class DealValue(_Lenient):
     stage: Annotated[str, _enum(DEAL_STAGES, {"LETTER_OF_INTENT": "LOI", "LETTER_OF_ACCEPTANCE": "LOA",
                                                 "LETTER_OF_AWARD": "LOA", "PURCHASE_ORDER": "WORK_ORDER", "PO": "WORK_ORDER",
                                                 "AGREEMENT": "CONTRACT", "MEMORANDUM_OF_UNDERSTANDING": "MOU",
-                                                "APPROVED": "BOARD_APPROVED"}, "OTHER")] = "OTHER"
+                                                "APPROVED": "BOARD_APPROVED", "IN_PRINCIPLE": "PROPOSED", "PLANNED": "PROPOSED",
+                                                "TERMS_FINALIZED": "TERMS_FINALISED", "COMMISSIONED": "COMPLETED",
+                                                "PARTIALLY_COMMISSIONED": "PARTIALLY_COMPLETED", "WITHDRAWN": "CANCELLED",
+                                                "UNDER_EXECUTION": "IN_PROGRESS"}, "OTHER")] = "OTHER"
     segment: OptStr = None        # business line, e.g. "wind EPC", "underground cabling"
     execution_by: OptStr = None   # as stated: "31 July 2027", "12 months"
+    progress: OptStr = None       # e.g. "40 MW of 60 MW commissioned"
+    updates_deal_id: OptStr = None  # a deal already in memory that this filing moves to a new stage
 
     @field_validator("includes_gst", mode="before")
     @classmethod
@@ -526,6 +532,13 @@ class UpcomingEvent(_Lenient):
         return date.fromisoformat(value.strip()[:10]).isoformat()
 
 
+class AnalystConcern(_Lenient):
+    """A red flag analysts pressed management on during a call, and what management said."""
+
+    concern: str
+    management_response: OptStr = None
+
+
 class DossierDelta(_Lenient):
     business_summary: OptStr = None
     financial_metrics: Annotated[list[FinancialMetric], _drop_invalid(FinancialMetric)] = Field(default_factory=list)
@@ -536,6 +549,8 @@ class DossierDelta(_Lenient):
     balance_sheet: BalanceSheet | None = None
     capital_actions: Annotated[list[CapitalAction], _drop_invalid(CapitalAction)] = Field(default_factory=list)
     upcoming_events: Annotated[list[UpcomingEvent], _drop_invalid(UpcomingEvent)] = Field(default_factory=list)
+    analyst_concerns: Annotated[list[AnalystConcern], _drop_invalid(AnalystConcern)] = Field(default_factory=list)
+    operating_notes: StrList = Field(default_factory=list)  # feedstock, realisations, utilisation, order book...
 
 
 class Pass2Output(_Lenient):

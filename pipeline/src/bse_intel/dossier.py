@@ -55,6 +55,7 @@ def new_dossier(filing: Filing, company: dict | None = None) -> dict:
         "balance_sheet": [],
         "capital_actions": [],
         "deals": [],
+        "operating_notes": [],
         "guidance": [],
         "watchlist": [],
         "timeline": [],
@@ -65,8 +66,14 @@ def new_dossier(filing: Filing, company: dict | None = None) -> dict:
 
 
 def _forget(dossier: dict, news_id: str) -> None:
-    for key in ("financial_metrics", "segment_mix", "balance_sheet", "capital_actions", "deals", "upcoming_events"):
+    for key in ("financial_metrics", "segment_mix", "balance_sheet", "capital_actions", "upcoming_events", "operating_notes"):
         dossier[key] = [e for e in dossier.get(key, []) if e.get("source_news_id") != news_id]
+    deals = []
+    for deal in dossier.get("deals", []):
+        history = [h for h in _deal_history(deal) if h.get("source_news_id") != news_id]
+        if history:
+            deals.append(_with_history(deal, history))
+    dossier["deals"] = deals
     dossier["timeline"] = [e for e in dossier.get("timeline", []) if e.get("news_id") != news_id]
     for key in ("guidance", "watchlist"):
         kept = []
@@ -129,10 +136,28 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     d["capital_actions"] = sorted(d.get("capital_actions", []) + actions, key=lambda e: e["as_of"])[-40:]
 
     deal = output.card.deal_value if output.card is not None else None
-    if deal is not None and deal.amount_cr:
-        d["deals"] = sorted(d.get("deals", []) + [deal.model_dump() | {
-            "id": "d_" + _hash(news_id), "as_of": as_of, "source_news_id": news_id,
-        }], key=lambda e: e["as_of"])[-60:]
+    if deal is not None and (deal.amount_cr or deal.updates_deal_id):
+        entry = {"stage": deal.stage, "amount_cr": deal.amount_cr, "progress": deal.progress,
+                 "as_of": as_of, "source_news_id": news_id}
+        details = {k: v for k, v in deal.model_dump(include={"includes_gst", "counterparty", "segment", "execution_by"}).items()
+                   if v is not None}
+        deals = d.get("deals", [])
+        target = next((x for x in deals if x["id"] == deal.updates_deal_id and x["as_of"] < as_of), None) \
+            if deal.updates_deal_id else None
+        if target is not None:
+            # a later stage of a deal already on record (LOI -> contract, in-principle -> final terms)
+            target.update(details)
+            deals[deals.index(target)] = _with_history(target, _deal_history(target) + [entry])
+        elif deal.amount_cr:
+            did = "d_" + _hash(news_id)
+            existing = next((x for x in deals if x["id"] == did), None)
+            base = deal.model_dump(exclude={"updates_deal_id"}) | {"id": did, "as_of": as_of, "source_news_id": news_id}
+            history = ([h for h in _deal_history(existing) if h["source_news_id"] != news_id] if existing else []) + [entry]
+            deals = [x for x in deals if x["id"] != did] + [_with_history(base, history)]
+        d["deals"] = sorted(deals, key=lambda e: e["as_of"])[-60:]
+
+    notes = [{"text": n.strip()[:240], "as_of": as_of, "source_news_id": news_id} for n in delta.operating_notes[:3] if n.strip()]
+    d["operating_notes"] = sorted(d.get("operating_notes", []) + notes, key=lambda e: e["as_of"])[-40:]
 
     guidance = {g["id"]: g for g in d.get("guidance", [])}
     for item in delta.guidance:
@@ -162,9 +187,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     watch = {w["id"]: w for w in d.get("watchlist", [])}
     if output.card is not None:
         track = output.card.track_next
-        items = [("KPI", k.kpi, k.check_in, k.target) for k in track.kpis_to_verify]
-        items += [("APPROVAL", a, None, None) for a in track.pending_approvals]
-        for kind, text, check_in, target in items:
+        items = [("KPI", k.kpi, k.check_in, k.target, None) for k in track.kpis_to_verify]
+        items += [("APPROVAL", a, None, None, None) for a in track.pending_approvals]
+        items += [("CONCERN", c.concern, None, None, c.management_response) for c in delta.analyst_concerns]
+        for kind, text, check_in, target, response in items:
             wid = "w_" + _hash(filing.scrip_code, kind, _norm(text))
             if wid in watch:
                 continue
@@ -173,6 +199,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
                 "id": wid, "kind": kind, "text": text.strip(), "check_in": check_in, "target": target,
                 "check_by": check_by.isoformat() if check_by else None, "created_on": as_of,
                 "source_news_id": news_id, "status": "OPEN", "status_history": [],
+                **({"response": response.strip()} if response else {}),
             }
     for update in delta.watch_updates:
         w = watch.get(update.watch_id)
@@ -250,6 +277,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
     watch = [
         {
             "id": w["id"], "kind": w["kind"], "text": w["text"], "check_in": w.get("check_in"),
+            **({"management_said": w["response"]} if w.get("response") else {}),
             **({"overdue": True} if w.get("check_by") and w["check_by"] < cutoff[:10] else {}),
         }
         for w in dossier.get("watchlist", [])
@@ -259,15 +287,19 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
         {"type": e["event_type"], "date": e["date"], "description": e.get("description", "")}
         for e in dossier.get("upcoming_events", []) if before(e) and e["date"] >= cutoff[:10]
     ]
-    deals = [
-        {
-            "date": e["as_of"][:10], "kind": e["kind"], "amount_cr": e["amount_cr"], "stage": e.get("stage"),
+    deals = []
+    for e in dossier.get("deals", []):
+        state = deal_state(e, cutoff)
+        if state is None:
+            continue
+        deals.append({
+            "id": e["id"], "date": e["as_of"][:10], "kind": e["kind"], "amount_cr": state["amount_cr"], "stage": state["stage"],
+            **({"progress": state["progress"]} if state.get("progress") else {}),
             **({"segment": e["segment"]} if e.get("segment") else {}),
             **({"counterparty": e["counterparty"]} if e.get("counterparty") else {}),
             **({"incl_gst": True} if e.get("includes_gst") else {}),
-        }
-        for e in dossier.get("deals", []) if before(e)
-    ]
+        })
+    notes = [f"{n['as_of'][:10]}: {n['text']}" for n in dossier.get("operating_notes", []) if before(n)]
     summary = dossier.get("business_summary")
 
     for periods, timeline_n, guidance_n in ((6, 12, 20), (4, 8, 12), (2, 5, 8), (1, 3, 5)):
@@ -280,6 +312,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
             "watchlist": watch[-guidance_n:],
             "recent_timeline": timeline[-timeline_n:],
             "deals": deals[-guidance_n:],
+            "operating_notes": notes[-max(3, guidance_n // 2):],
             "upcoming_events": upcoming[:6],
         }
         view = {k: v for k, v in view.items() if v}
@@ -294,11 +327,41 @@ def memory_ids(view: dict | None) -> set[str]:
     ids = {g["id"] for g in view.get("guidance", [])}
     ids |= {t["id"] for t in view.get("recent_timeline", [])}
     ids |= {w["id"] for w in view.get("watchlist", [])}
+    ids |= {d["id"] for d in view.get("deals", []) if d.get("id")}
     return ids
 
 
-def latest_fundamentals(dossier: dict) -> dict:
-    """Latest revenue (quarter preferred), debt and net worth, for the card's financial footer."""
+def _deal_history(deal: dict | None) -> list[dict]:
+    """A deal's stage history; deals stored before histories existed count as one entry."""
+    if not deal:
+        return []
+    return deal.get("history") or [{"stage": deal.get("stage"), "amount_cr": deal.get("amount_cr"), "progress": deal.get("progress"),
+                                     "as_of": deal["as_of"], "source_news_id": deal.get("source_news_id")}]
+
+
+def _with_history(deal: dict, history: list[dict]) -> dict:
+    """The deal with its history sorted and its current stage, size and progress taken from it."""
+    history = sorted(history, key=lambda h: h["as_of"])
+    out = {**deal, "history": history, "as_of": history[0]["as_of"], "source_news_id": history[0]["source_news_id"],
+           "updated_as_of": history[-1]["as_of"], "stage": history[-1]["stage"]}
+    out["amount_cr"] = next((h["amount_cr"] for h in reversed(history) if h.get("amount_cr")), deal.get("amount_cr"))
+    out["progress"] = next((h["progress"] for h in reversed(history) if h.get("progress")), None)
+    return out
+
+
+def deal_state(deal: dict, cutoff: str) -> dict | None:
+    """Stage, size and progress of a deal as known just before ``cutoff`` (None if not yet on record)."""
+    history = [h for h in _deal_history(deal) if h["as_of"] < cutoff]
+    if not history:
+        return None
+    return {"stage": history[-1]["stage"],
+            "amount_cr": next((h["amount_cr"] for h in reversed(history) if h.get("amount_cr")), None),
+            "progress": next((h["progress"] for h in reversed(history) if h.get("progress")), None)}
+
+
+def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = ()) -> dict:
+    """Latest revenue (quarter preferred), debt and net worth, and the sector's footer KPIs
+    (GNPA for a bank, EBITDA/t for cement, ARPU for telecom...), for the card's financial footer."""
     out: dict = {}
     metrics = dossier.get("financial_metrics", [])
 
@@ -320,12 +383,14 @@ def latest_fundamentals(dossier: dict) -> dict:
             out[key] = {"period": snap.get("period"), "value": snap[field]}
         elif metric:
             out[key] = {"period": metric["period"], "value": metric["value"]}
-    # One health ratio for the footer: asset quality for lenders, otherwise leverage (computed in the UI).
-    for key, names in (("gnpa_pct", ("gnpa", "gross_npa", "gnpa_pct", "gross_npa_pct")),
-                       ("nim_pct", ("nim", "net_interest_margin", "nim_pct"))):
-        metric = latest(names)
+    kpis = []
+    for spec in footer:
+        metric = latest((spec["metric"], *spec.get("aliases", ())), prefer_quarter=True)
         if metric:
-            out[key] = {"period": metric["period"], "value": metric["value"]}
+            kpis.append({"label": spec["label"], "format": spec.get("format", "num"),
+                         "period": metric["period"], "value": metric["value"]})
+    if kpis:
+        out["kpis"] = kpis[:2]
     return out
 
 

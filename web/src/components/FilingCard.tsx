@@ -281,7 +281,7 @@ export function FilingBody({ row, card, showHeadline = false }: { row: CardRow; 
         <span className="ml-auto inline-flex items-center gap-1.5 text-xs text-ink-3">
           {row.needs_review ? (
             <span className="inline-flex items-center gap-1 text-warn" title={card.grounding.ungrounded.join(", ")}>
-              <AlertTriangle className="h-3.5 w-3.5" /> Numbers need review
+              <AlertTriangle className="h-3.5 w-3.5" /> Unverified: check the PDF
             </span>
           ) : card.grounding.checked > 0 ? (
             <span className="inline-flex items-center gap-1" title="Every number was found in the filing or company memory">

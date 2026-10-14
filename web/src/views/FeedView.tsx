@@ -39,6 +39,7 @@ export function FeedView() {
     size: params.get("size") ?? undefined,
     sector: params.get("sector") ?? undefined,
     q: params.get("q") ?? undefined,
+    review: params.get("verified") === "1" ? "0" : undefined,
   };
 
   return (
@@ -92,7 +93,7 @@ function FilterBar({ params, setParams }: { params: URLSearchParams; setParams: 
     const id = setTimeout(() => { if (q !== text) setParams({ q: text || null }); }, 300);
     return () => clearTimeout(id);
   }, [text, q, setParams]);
-  const active = ["size", "sector", "q", "range"].some((k) => params.get(k));
+  const active = ["size", "sector", "q", "range", "verified"].some((k) => params.get(k));
 
   return (
     <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
@@ -107,13 +108,17 @@ function FilterBar({ params, setParams }: { params: URLSearchParams; setParams: 
         <option value="">All sectors</option>
         {Object.entries(SECTORS).filter(([k]) => k !== "default").map(([k, v]) => <option key={k} value={k}>{v}</option>)}
       </Select>
+      <Select aria-label="Verification" value={params.get("verified") ?? ""} onChange={(e) => setParams({ verified: e.target.value || null })}>
+        <option value="">All cards</option>
+        <option value="1">Verified only</option>
+      </Select>
       <label className="relative col-span-2 min-w-0 sm:flex-1 sm:basis-56">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-3" />
         <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Filter by company or headline"
           className="h-9 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-[13px] text-ink placeholder:text-ink-3 hover:border-line-strong focus:border-accent focus:outline-none" />
       </label>
       {active && (
-        <Button variant="ghost" size="sm" onClick={() => setParams({ size: null, sector: null, q: null, range: null })}>
+        <Button variant="ghost" size="sm" onClick={() => setParams({ size: null, sector: null, q: null, range: null, verified: null })}>
           <X className="h-3.5 w-3.5" /> Clear
         </Button>
       )}
@@ -240,6 +245,7 @@ function NoiseAudit({ date, onDate }: { date: string; onDate: (d: string) => voi
     getNextPageParam: (last) => last.next_offset,
   });
   const rows: NoiseRow[] = query.data?.pages.flatMap((p) => p.rows) ?? [];
+  const notStored = query.data?.pages[0]?.not_stored ?? null;
   return (
     <section>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -247,8 +253,14 @@ function NoiseAudit({ date, onDate }: { date: string; onDate: (d: string) => voi
         <input type="date" aria-label="Day" value={date} onChange={(e) => e.target.value && onDate(e.target.value)}
           className="num h-9 rounded-lg border border-line bg-surface px-3 text-[13px] text-ink" />
       </div>
+      {notStored ? (
+        <p className="mt-3 rounded-lg bg-surface-2 px-3 py-2 text-[13px] text-ink-2">
+          {num(notStored)} filings were filtered out by the rules on this day during the historical backfill. Their details
+          were counted but not stored, to save database writes; filings the AI judged not material are listed below.
+        </p>
+      ) : null}
       {query.isPending ? <Loading /> : query.isError ? <Empty title="Couldn't load the noise audit" body={String(query.error)} /> : rows.length === 0 ? (
-        <Empty title="Nothing was filtered on this day" />
+        <Empty title={notStored ? "No AI-rejected filings on this day" : "Nothing was filtered on this day"} />
       ) : (
         <div className="mt-3 overflow-hidden rounded-xl border border-line bg-surface">
           <table className="w-full text-[13.5px]">

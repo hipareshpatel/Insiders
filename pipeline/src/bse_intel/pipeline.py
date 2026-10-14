@@ -35,6 +35,7 @@ from .grounding import DEFAULT_THRESHOLD, check_card, check_claims
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
 from .periods import due_date
 from .prompts.engine import PromptEngine
+from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
 from .settings import Settings
@@ -47,6 +48,8 @@ log = logging.getLogger(__name__)
 TRANSIENT_WAIT_S = 60
 TRANSIENT_RETRIES = 3
 BATCH = 40
+HISTORY_LIMIT = 200      # one company's filings fetched per page (a year rarely has more)
+MAX_ORDER = 20_000       # companies in the cached backfill order
 
 
 class QuotaExhausted(RuntimeError):
@@ -65,6 +68,8 @@ class Stats:
     deferred: int = 0
     cards_high: int = 0
     needs_review: int = 0
+    second_opinions: int = 0
+    corrected: int = 0
     ocr_pages: int = 0
     d1_rows_written: int = 0
     days_discovered: list[str] = field(default_factory=list)
@@ -80,6 +85,47 @@ class Outcome:
     card: dict | None = None
     catalysts: list[dict] = field(default_factory=list)
     company: dict | None = None
+
+
+@dataclass
+class CardChecks:
+    """Everything the automatic checks found on one card."""
+
+    score: float
+    checked: int
+    ungrounded: list[str]
+    quant: QuantCheck
+    claims: list[str]
+
+    @property
+    def needs_review(self) -> bool:
+        return self.score < DEFAULT_THRESHOLD or self.quant.mismatches > 0 or bool(self.claims)
+
+    @property
+    def issue_count(self) -> int:
+        return len(self.ungrounded) + self.quant.mismatches + len(self.claims)
+
+    def problems(self) -> list[str]:
+        out = []
+        if self.ungrounded:
+            out.append("Numbers not found in the filing text or company memory: " + ", ".join(self.ungrounded[:10]))
+        out += [f"Quantified impact \"{q['label']}\": {q.get('check_note')}" for q in self.quant.items if q.get("check") == "MISMATCH"]
+        out += [f"Claim not supported by the sources: \"{c}\"" for c in self.claims]
+        return out
+
+
+def check_card_all(card, view: dict | None, sources: tuple[str, ...]) -> CardChecks:
+    """Memory-id hygiene, then the number, math and claim checks."""
+    valid_refs = memory_ids(view)
+    for insight in card.why_it_matters:
+        insight.memory_refs = [r for r in insight.memory_refs if r in valid_refs]
+    reconcile_call_read(card, view)
+    grounding = check_card(card, *sources)
+    quant = check_quant(card.quantified_impact, *sources)
+    checked = grounding.checked + quant.checked_inputs
+    ungrounded = grounding.ungrounded + quant.unsourced
+    score = 1.0 if checked == 0 else round(1 - len(ungrounded) / checked, 3)
+    return CardChecks(score, checked, ungrounded, quant, check_claims(card, *sources))
 
 
 def reconcile_call_read(card, view: dict | None) -> None:
@@ -141,17 +187,25 @@ class Pipeline:
 
     # ------------------------------------------------------------------ discovery
 
-    def discover(self, day: date) -> int:
-        """Fetch one day's announcements, triage by rules, and enqueue them."""
+    def discover(self, day: date, keep_noise: bool = True) -> int:
+        """Fetch one day's announcements, triage by rules, and enqueue them.
+
+        Backfill days pass ``keep_noise=False``: filings the rules drop are counted but not
+        written to the ledger. They are about 70% of all filings and each ledger row costs
+        several D1 writes, so this cuts backfill discovery from weeks of write budget to days.
+        """
         now = now_iso()
+        today = today_ist().isoformat()
         ledger, catalysts, companies = [], [], {}
+        dropped = 0
         for filing in self.bse.announcements(day):
             decision = self.rules.classify(filing)
             filing.reason = decision.reason
             if decision.action in ("DROP", "CALENDAR"):
                 filing.status, filing.route = "DROPPED_RULE", "NONE"
                 self.stats.dropped_rule += 1
-                if decision.catalyst_date:
+                dropped += 1
+                if decision.catalyst_date and decision.catalyst_date >= today:
                     catalysts.append({
                         "id": _catalyst_id(filing.scrip_code, decision.event_type or "BOARD_MEETING", decision.catalyst_date),
                         "scrip_code": filing.scrip_code, "company_name": filing.company_name, "symbol": filing.symbol,
@@ -167,22 +221,32 @@ class Pipeline:
                     "scrip_code": filing.scrip_code, "company_name": filing.company_name,
                     "symbol": filing.symbol, "updated_at": now,
                 }
-            ledger.append(filing.ledger_row(now))
-        self.stats.discovered += len(ledger)
+            if keep_noise or filing.status == "PENDING":
+                ledger.append(filing.ledger_row(now))
+        self.stats.discovered += len(ledger) + (0 if keep_noise else dropped)
         self._exec("companies_seen", list(companies.values()))
         self._exec("filings_discover", ledger)
         self._exec("catalysts_upsert", catalysts)
+        if not keep_noise:
+            self.sink.kv_set(f"noise_count:{day.isoformat()}", str(dropped), now)
         self.stats.days_discovered.append(day.isoformat())
-        log.info("discovered %s: %d filings (%d queued)", day, len(ledger), sum(1 for r in ledger if r["status"] == "PENDING"))
-        return len(ledger)
+        queued = sum(1 for r in ledger if r["status"] == "PENDING")
+        log.info("discovered %s: %d filings (%d queued, %d noise)", day, queued + dropped, queued, dropped)
+        return queued + dropped
 
     # ------------------------------------------------------------------ processing
 
     def process(self, day_from: str, day_to: str, deadline: float, bulk: bool, memory_complete: bool = True,
-                min_market_cap_cr: float | None = None) -> None:
+                history_first: bool = False) -> None:
+        """Work the queue for a date window, oldest first, companies in parallel.
+
+        With ``history_first`` (the live window), a company's unanalysed history is processed
+        before its new filing, so the live card is written with that company's memory.
+        """
         seen: set[str] = set()
+        discovered_through = (self.sink.kv_get("backfill:discovered_through") or "") if history_first else ""
         while time.monotonic() < deadline and not self._quota_hit:
-            rows = self.sink.pending_filings(day_from, day_to, self.settings.max_attempts, BATCH, min_market_cap_cr)
+            rows = self.sink.pending_filings(day_from, day_to, self.settings.max_attempts, BATCH)
             rows = [r for r in rows if r["news_id"] not in seen]
             if not rows:
                 return
@@ -192,10 +256,26 @@ class Pipeline:
                 groups.setdefault(row["scrip_code"], []).append(Filing.model_validate(row))
             outcomes: list[Outcome] = []
             with ThreadPoolExecutor(max_workers=max(1, self.settings.workers)) as pool:
-                futures = [pool.submit(self._process_group, group, deadline, bulk, memory_complete) for group in groups.values()]
+                if history_first:
+                    futures = [pool.submit(self._history_then, group, day_from, discovered_through, deadline, bulk, memory_complete)
+                               for group in groups.values()]
+                else:
+                    futures = [pool.submit(self._process_group, group, deadline, bulk, memory_complete) for group in groups.values()]
                 for future in futures:
                     outcomes.extend(future.result())
             self._commit(outcomes)
+
+    def _history_then(self, filings: list[Filing], window_start: str, discovered_through: str, deadline: float,
+                      bulk: bool, memory_complete: bool) -> list[Outcome]:
+        """Pull a company's unanalysed history forward, then analyse its new filings."""
+        history_to = (date.fromisoformat(window_start) - timedelta(days=1)).isoformat()
+        rows = self.sink.pending_for_company(filings[0].scrip_code, self.settings.backfill_start, history_to,
+                                             self.settings.max_attempts, HISTORY_LIMIT)
+        history = [Filing.model_validate(r) for r in rows]
+        results = self._process_group(history, deadline, bulk=True, memory_complete=True)
+        finished = len(results) == len(history) and all(o.update.get("status") != "PENDING" for o in results)
+        complete = memory_complete or (finished and len(rows) < HISTORY_LIMIT and discovered_through >= history_to)
+        return results + self._process_group(filings, deadline, bulk, complete)
 
     def _process_group(self, filings: list[Filing], deadline: float, bulk: bool, memory_complete: bool) -> list[Outcome]:
         results = []
@@ -275,29 +355,24 @@ class Pipeline:
         sector = self.prompts.sector_for(industry).name
         peers = self._peers(sector, event_type, filing)
         system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers)
-        result = self.gateway.complete_json("pass2_bulk" if bulk else "pass2", system, user, Pass2Output)
+        route = "pass2_bulk" if bulk else "pass2"
+        result = self.gateway.complete_json(route, system, user, Pass2Output)
         out: Pass2Output = result.value
         if not out.is_material or out.card is None:
             with self._lock:
                 self.stats.not_material += 1
             return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": out.event_type,
                             "reason": "pass2: not material", "updated_at": now})
+        sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
+        checks = check_card_all(out.card, view, sources)
+        review = None
+        if checks.needs_review and self.settings.second_opinion:
+            out, result, checks, review = self._second_opinion(route, system, user, out, result, checks, view, sources)
         if filing.route == "FAST_TRACK" and filing.event_type:
             out.event_type = filing.event_type  # rules know the event type better than the model
         event_type = out.event_type
-
         card = out.card
-        valid_refs = memory_ids(view)
-        for insight in card.why_it_matters:
-            insight.memory_refs = [r for r in insight.memory_refs if r in valid_refs]
-        reconcile_call_read(card, view)
-        sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
-        grounding = check_card(card, *sources)
-        claims = check_claims(card, *sources)
-        quant = check_quant(card.quantified_impact, *sources)
-        checked = grounding.checked + quant.checked_inputs
-        ungrounded = grounding.ungrounded + quant.unsourced
-        score = 1.0 if checked == 0 else round(1 - len(ungrounded) / checked, 3)
+        score, checked, ungrounded, quant, claims = checks.score, checks.checked, checks.ungrounded, checks.quant, checks.claims
 
         merged = merge(dossier, out, filing, card.impact_level, now)
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector), ("symbol", company.get("symbol") or filing.symbol)) if v})
@@ -316,9 +391,10 @@ class Pipeline:
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims},
+            "review": review,
             "model": result.model_label,
         }
-        needs_review = score < DEFAULT_THRESHOLD or quant.mismatches > 0 or bool(claims)
+        needs_review = checks.needs_review
         row = {
             "news_id": filing.news_id, "scrip_code": filing.scrip_code,
             "symbol": company.get("symbol") or filing.symbol, "company_name": filing.company_name,
@@ -379,6 +455,36 @@ class Pipeline:
                      "symbol": row["symbol"], "sector": sector, "updated_at": now},
         )
 
+    def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, view, sources):
+        """Ask a different provider to correct a card that failed the checks, then check again.
+
+        The better of the two cards is kept. Either way the card is published: a corrected one
+        normally, one that still fails with an "Unverified" mark and the problems listed, so a
+        material filing is never hidden.
+        """
+        problems = checks.problems()
+        base = {"first_model": result.model_label, "issues": problems}
+        with self._lock:
+            self.stats.second_opinions += 1
+        system2, user2 = self.prompts.verify(system, user, out.model_dump(mode="json"), problems)
+        try:
+            second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider,))
+        except AllProvidersFailed as exc:
+            return out, result, checks, {**base, "status": "UNCHECKED", "note": str(exc)[:200]}
+        fixed: Pass2Output = second.value
+        if not fixed.is_material or fixed.card is None:
+            return out, result, checks, {**base, "status": "UNRESOLVED", "checked_by": second.model_label}
+        checks2 = check_card_all(fixed.card, view, sources)
+        if not checks2.needs_review:
+            with self._lock:
+                self.stats.corrected += 1
+            return fixed, second, checks2, {**base, "status": "CORRECTED", "checked_by": second.model_label, "issues": [],
+                                            "fixed": problems}
+        if checks2.issue_count < checks.issue_count:
+            return fixed, second, checks2, {**base, "status": "UNRESOLVED", "checked_by": second.model_label,
+                                            "issues": checks2.problems()}
+        return out, result, checks, {**base, "status": "UNRESOLVED", "checked_by": second.model_label}
+
     def _peers(self, sector: str, event_type: str, filing: Filing) -> list[dict]:
         if sector == "default":
             return []
@@ -438,7 +544,7 @@ class Pipeline:
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 backfill_done = self.sink.kv_get("backfill:complete") == "1"
                 self.process(days[0].isoformat(), today.isoformat(), live_deadline, bulk=False,
-                             memory_complete=backfill_done)
+                             memory_complete=backfill_done, history_first=not backfill_done)
             if mode in ("backfill", "all") and not self._quota_hit:
                 self._backfill(today, deadline, writes_at_start, max_backfill_days)
         except SourceBlockedError as exc:
@@ -473,18 +579,52 @@ class Pipeline:
                 self.stats.stopped_reason = f"D1 daily write budget ({budget}) reached; backfill discovery paused"
                 break
             cursor += timedelta(days=1)
-            self.discover(cursor)
+            self.discover(cursor, keep_noise=False)
             self.sink.kv_set("backfill:discovered_through", cursor.isoformat(), now_iso())
             days += 1
-        # Investable companies first: the free AI quota goes to them before the long tail of
-        # dormant micro-caps. Filtering is per company, so each company's history stays in order.
-        if self.settings.backfill_priority_mcap_cr > 0:
-            self.process(start.isoformat(), yesterday.isoformat(), deadline, bulk=True, memory_complete=True,
-                         min_market_cap_cr=self.settings.backfill_priority_mcap_cr)
-        self.process(start.isoformat(), yesterday.isoformat(), deadline, bulk=True, memory_complete=True)
+        self._backfill_companies(start.isoformat(), yesterday.isoformat(), cursor.isoformat(), deadline)
         if cursor >= yesterday and not self.sink.pending_filings(start.isoformat(), yesterday.isoformat(),
                                                                  self.settings.max_attempts, 1):
             self.sink.kv_set("backfill:complete", "1", now_iso())
+
+
+    def _backfill_companies(self, day_from: str, day_to: str, through: str, deadline: float) -> None:
+        """Analyse history company by company, largest market cap first, each in date order.
+
+        A company's memory is then complete in one go, and the AI quota reaches the companies
+        investors follow before the long tail. The order is computed at most once a day (or when
+        discovery has moved on) and the unfinished remainder is kept in kv between runs.
+        """
+        raw = self.sink.kv_get("backfill:company_order")
+        state = json.loads(raw) if raw else {}
+        built = today_ist().isoformat()
+        if not state.get("scrips") or state.get("built") != built or state.get("through") != through:
+            rows = self.sink.query("backfill_companies", [day_from, day_to, self.settings.max_attempts, MAX_ORDER])
+            state = {"built": built, "through": through, "scrips": [r["scrip_code"] for r in rows]}
+        order: list[str] = state["scrips"]
+        width = max(1, self.settings.workers) * 2
+        tried: set[str] = set()  # a filing that fails is retried on a later run, not straight away
+        while order and time.monotonic() < deadline and not self._quota_hit:
+            batch, order = order[:width], order[width:]
+            queues = {s: [f for f in (Filing.model_validate(r) for r in
+                                      self.sink.pending_for_company(s, day_from, day_to, self.settings.max_attempts, HISTORY_LIMIT))
+                          if f.news_id not in tried]
+                      for s in batch}
+            tried.update(f.news_id for q in queues.values() for f in q)
+            outcomes: list[Outcome] = []
+            with ThreadPoolExecutor(max_workers=max(1, self.settings.workers)) as pool:
+                futures = {s: pool.submit(self._process_group, q, deadline, True, True) for s, q in queues.items() if q}
+                results = {s: f.result() for s, f in futures.items()}
+            unfinished = []
+            for s, q in queues.items():
+                done = results.get(s, [])
+                outcomes.extend(done)
+                cut_short = len(done) < len(q) or any(o.update.get("status") == "PENDING" for o in done)
+                if q and (cut_short or len(q) >= HISTORY_LIMIT):
+                    unfinished.append(s)  # stopped early, or has more than one page of history
+            self._commit(outcomes)
+            order = unfinished + order
+        self.sink.kv_set("backfill:company_order", json.dumps({**state, "scrips": order}), now_iso())
 
 
 def build_pipeline(settings: Settings, sink: Sink) -> Pipeline:

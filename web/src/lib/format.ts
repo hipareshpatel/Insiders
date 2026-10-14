@@ -3,6 +3,8 @@ const inr2 = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
 
 export function cr(value: number | null | undefined): string {
   if (value == null) return "—";
+  // ₹1,00,000 Cr and above reads better the way Indian markets say it: "₹12.5 lakh Cr".
+  if (Math.abs(value) >= 100000) return `₹${(value / 100000).toFixed(Math.abs(value) >= 1000000 ? 1 : 2).replace(/\.?0+$/, "")} lakh Cr`;
   return `₹${Math.abs(value) >= 100 ? inr0.format(value) : inr2.format(value)} Cr`;
 }
 

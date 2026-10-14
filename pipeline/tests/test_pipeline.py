@@ -189,30 +189,36 @@ def test_card_with_wrong_math_is_held_for_review(settings):
         "inputs": [{"name": "new_debt", "value": 1500, "source": "FILING"}, {"name": "rate", "value": 0.09}],
         "result": 300, "unit": "INR_CR",
     }]
+    # the second opinion (here the same provider's other model, the only one configured) repeats the mistake
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                           {"deepseek-ai/deepseek-r1": [json.dumps(bad)]}, env={"NVIDIA_API_KEY": "n"})
+                                 {"deepseek-ai/deepseek-r1": [json.dumps(bad)], "meta/llama-3.3-70b-instruct": [json.dumps(bad)]},
+                                 env={"NVIDIA_API_KEY": "n"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     body = outcome.card["card"]
     (q,) = body["quantified_impact"]
     assert q["check"] == "MISMATCH" and q["computed"] == 135.0
-    assert outcome.card["needs_review"] == 1
+    assert outcome.card["needs_review"] == 1  # still published, marked unverified
+    assert body["review"]["status"] == "UNRESOLVED" and "formula gives 135" in body["review"]["issues"][0]
     assert body["fundamentals"]["revenue"] == {"period": "Q2FY27", "value": 120.0}
     assert body["pdf_pages"] == 1
 
 
-def test_backfill_serves_investable_companies_first(settings):
-    """Companies above the market-cap bar are backfilled first; each keeps its own date order."""
+def test_backfill_goes_company_by_company_largest_first(settings):
+    """Backfill finishes one company's history (in date order) before the next, largest market cap
+    first, and does not store the noise rows of backfilled days."""
     from dataclasses import replace
 
     today = now_ist().date()
     start = today - timedelta(days=3)
-    settings = replace(settings, backfill_start=start.isoformat(), backfill_priority_mcap_cr=100, workers=1)
+    settings = replace(settings, backfill_start=start.isoformat(), workers=1)
     at = lambda k: now_ist().replace(year=(start + timedelta(days=k)).year, month=(start + timedelta(days=k)).month,  # noqa: E731
                                      day=(start + timedelta(days=k)).day, hour=17)
     filings = [
         _filing("tiny0", "Unaudited Financial Results", at(0), "Result", scrip="999008", name="Demo Tiny Ltd"),
         _filing("big1", "Unaudited Financial Results", at(1), "Result"),
+        _filing("tiny1", "Unaudited Financial Results", at(1), "Result", scrip="999008", name="Demo Tiny Ltd"),
         _filing("big2", "Unaudited Financial Results", at(2), "Result"),
+        _filing("noise", "Closure of Trading Window", at(2), "Company Update", "Trading Window"),
     ]
     pdfs = {f.pdf_url: _pdf(RESULT_TEXT) for f in filings}
     order = []
@@ -225,4 +231,55 @@ def test_backfill_serves_investable_companies_first(settings):
     sink._db.executemany("INSERT INTO companies (scrip_code, company_name, market_cap_cr) VALUES (?, ?, ?)",
                          [("999001", "Demo Cement Ltd", 4851.0), ("999008", "Demo Tiny Ltd", 20.0)])
     pipeline.run("backfill", time_budget_s=60, max_backfill_days=10)
-    assert order == ["Demo Cement Ltd", "Demo Cement Ltd", "Demo Tiny Ltd"]
+    assert order == ["Demo Cement Ltd", "Demo Cement Ltd", "Demo Tiny Ltd", "Demo Tiny Ltd"]
+    assert [d["news_id"] for d in (sink.get_dossier("999008") or {}).get("timeline", [])] == ["tiny0", "tiny1"]
+    assert not rows(sink, "SELECT news_id FROM filings WHERE news_id = 'noise'")  # counted, not stored
+    assert sink.kv_get(f"noise_count:{(start + timedelta(days=2)).isoformat()}") == "1"
+    assert sink.kv_get("backfill:complete") == "1"
+
+
+def test_live_filing_waits_for_its_company_history(settings):
+    """A live filing from a company whose history is still queued gets that history first."""
+    from dataclasses import replace
+
+    today = now_ist().date()
+    settings = replace(settings, backfill_start=(today - timedelta(days=30)).isoformat(), workers=1)
+    old = now_ist().replace(hour=17) - timedelta(days=20)
+    history = _filing("old", "Unaudited Financial Results", old, "Result")
+    live = _filing("new", "Unaudited Financial Results", now_ist() - timedelta(minutes=5), "Result")
+    seen = []
+
+    def respond(kwargs):
+        seen.append(kwargs["messages"][1]["content"].split("Filed: ")[1][:10])
+        return json.dumps(PASS2)
+
+    pipeline, sink, _ = build(settings, [history, live], {f.pdf_url: _pdf(RESULT_TEXT) for f in (history, live)},
+                              {"mistral-large-latest": [respond], "deepseek-ai/deepseek-r1": [respond]},
+                              env={"MISTRAL_API_KEY": "m", "NVIDIA_API_KEY": "n"})
+    pipeline.discover(old.date())  # as an earlier backfill run would have
+    sink.kv_set("backfill:discovered_through", (today - timedelta(days=1)).isoformat(), "now")
+    pipeline.run("live", time_budget_s=60)
+    assert seen == [old.date().isoformat(), today.isoformat()]  # history first, then the live filing
+    cards = {r["news_id"]: r for r in rows(sink, "SELECT news_id, memory_complete FROM cards")}
+    assert cards["new"]["memory_complete"] == 1
+
+
+def test_second_opinion_from_another_provider_corrects_the_card(settings):
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-q2", "Unaudited Financial Results for the quarter", now, "Result")
+    bad = json.loads(json.dumps(PASS2))
+    bad["card"]["what_happened"] = ["Revenue ₹120 Cr vs ₹90.9 Cr a year ago", "PAT ₹17.5 Cr"]  # PAT was ₹15 Cr
+    bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
+    good = json.loads(json.dumps(PASS2))
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                                 {"deepseek-ai/deepseek-r1": [json.dumps(bad)], "mistral-large-latest": [json.dumps(good)]},
+                                 env={"NVIDIA_API_KEY": "n", "MISTRAL_API_KEY": "m"})
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    first, second = fake.calls
+    assert first["model"] == "deepseek-ai/deepseek-r1" and second["model"] == "mistral-large-latest"
+    verify_prompt = second["messages"][1]["content"]
+    assert "DRAFT REPLY" in verify_prompt and "17.5" in verify_prompt and 'Claim not supported by the sources: "Record quarterly revenue' in verify_prompt
+    body = outcome.card["card"]
+    assert outcome.card["needs_review"] == 0 and body["what_happened"][1] == "PAT ₹15 Cr"
+    assert body["review"]["status"] == "CORRECTED" and body["review"]["checked_by"] == "mistral/mistral-large-latest"
+    assert body["model"] == "mistral/mistral-large-latest" and len(body["review"]["fixed"]) == 2

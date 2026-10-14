@@ -72,7 +72,7 @@ export function SystemView() {
             <table className="w-full min-w-[720px] text-[13.5px]">
               <thead className="eyebrow border-b border-line text-left text-ink-3">
                 <tr>
-                  {["Started", "Mode", "Status", "Discovered", "Analysed", "High", "Review", "Duration", "Note"].map((h) => <th key={h} className="px-4 py-2.5 font-semibold">{h}</th>)}
+                  {["Started", "Mode", "Status", "Discovered", "Analysed", "High", "Unverified", "Duration", "Note"].map((h) => <th key={h} className="px-4 py-2.5 font-semibold">{h}</th>)}
                 </tr>
               </thead>
               <tbody>{s.runs.map((r) => <RunRow key={r.run_id} run={r} />)}</tbody>

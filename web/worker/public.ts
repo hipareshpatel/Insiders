@@ -89,13 +89,21 @@ api.get("/noise", async (c) => {
   if (!isDate(date)) return c.json({ error: "date=YYYY-MM-DD required" }, 400);
   const limit = clamp(c.req.query("limit"), 100, 200);
   const offset = Math.max(Number.parseInt(c.req.query("offset") ?? "0", 10) || 0, 0);
-  const { results } = await c.env.DB.prepare(`
-    SELECT news_id, scrip_code, company_name, headline, category, subcategory, filed_at, status, reason, pdf_url
-      FROM filings
-     WHERE filing_date = ?1 AND status IN ('DROPPED_RULE', 'NOT_MATERIAL')
-     ORDER BY filed_at DESC
-     LIMIT ?2 OFFSET ?3`).bind(date, limit + 1, offset).all();
-  return c.json({ rows: results.slice(0, limit), next_offset: results.length > limit ? offset + limit : null });
+  const [{ results }, counted] = await Promise.all([
+    c.env.DB.prepare(`
+      SELECT news_id, scrip_code, company_name, headline, category, subcategory, filed_at, status, reason, pdf_url
+        FROM filings
+       WHERE filing_date = ?1 AND status IN ('DROPPED_RULE', 'NOT_MATERIAL')
+       ORDER BY filed_at DESC
+       LIMIT ?2 OFFSET ?3`).bind(date, limit + 1, offset).all(),
+    // Backfilled days count their rule-dropped filings instead of storing them (saves D1 writes).
+    c.env.DB.prepare("SELECT value FROM kv WHERE key = ?1").bind(`noise_count:${date}`).first<{ value: string }>(),
+  ]);
+  return c.json({
+    rows: results.slice(0, limit),
+    next_offset: results.length > limit ? offset + limit : null,
+    not_stored: counted ? Number(counted.value) : null,
+  });
 });
 
 api.get("/search", async (c) => {

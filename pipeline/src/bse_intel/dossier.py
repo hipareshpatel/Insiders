@@ -320,6 +320,12 @@ def latest_fundamentals(dossier: dict) -> dict:
             out[key] = {"period": snap.get("period"), "value": snap[field]}
         elif metric:
             out[key] = {"period": metric["period"], "value": metric["value"]}
+    # One health ratio for the footer: asset quality for lenders, otherwise leverage (computed in the UI).
+    for key, names in (("gnpa_pct", ("gnpa", "gross_npa", "gnpa_pct", "gross_npa_pct")),
+                       ("nim_pct", ("nim", "net_interest_margin", "nim_pct"))):
+        metric = latest(names)
+        if metric:
+            out[key] = {"period": metric["period"], "value": metric["value"]}
     return out
 
 

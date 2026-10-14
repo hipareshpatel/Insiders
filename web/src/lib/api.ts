@@ -34,6 +34,7 @@ export interface FeedFilters {
   size?: string;
   sector?: string;
   q?: string;
+  review?: string;
 }
 
 export const api = {
@@ -41,7 +42,7 @@ export const api = {
     get<FeedResponse>("/api/feed", { ...filters, cursor, limit }),
   card: (id: string) => get<CardRow>(`/api/cards/${encodeURIComponent(id)}`),
   noise: (date: string, offset = 0) =>
-    get<{ rows: NoiseRow[]; next_offset: number | null }>("/api/noise", { date, offset }),
+    get<{ rows: NoiseRow[]; next_offset: number | null; not_stored: number | null }>("/api/noise", { date, offset }),
   search: (q: string) => get<SearchResponse>("/api/search", { q }),
   companies: (params: Record<string, string | number | null | undefined>) =>
     get<CompaniesResponse>("/api/companies", params),

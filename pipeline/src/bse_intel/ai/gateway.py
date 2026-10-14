@@ -240,9 +240,11 @@ class AIGateway:
     def has_route(self, route: str) -> bool:
         return any(t.api_key for t in self.routes.get(route, []))
 
-    def complete_json(self, route: str, system: str, user: str, schema: type[T]) -> AIResult:
+    def complete_json(self, route: str, system: str, user: str, schema: type[T], avoid_providers: tuple[str, ...] = ()) -> AIResult:
+        """One validated JSON reply. ``avoid_providers`` are tried only after every other target,
+        so a second opinion comes from a different provider whenever one is available."""
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
-        return self._run(route, messages, schema)
+        return self._run(route, messages, schema, avoid=avoid_providers)
 
     def transcribe_image(self, png: bytes, route: str = "vision") -> str:
         b64 = base64.b64encode(png).decode()
@@ -293,11 +295,12 @@ class AIGateway:
 
     # ------------------------------------------------------------------ internals
 
-    def _ordered(self, route: str) -> list[Target]:
+    def _ordered(self, route: str, avoid: tuple[str, ...] = ()) -> list[Target]:
         targets = self.routes[route]
         rotation = self._rotations.get(route)
         primary = rotation.order() if rotation else [t for t in targets if not t.spare]
-        return primary + [t for t in targets if t.spare]
+        ordered = primary + [t for t in targets if t.spare]
+        return [t for t in ordered if t.provider not in avoid] + [t for t in ordered if t.provider in avoid]
 
     def _client(self, target: Target):
         with self._lock:
@@ -337,13 +340,14 @@ class AIGateway:
                 self._failures[target.key] = 0
                 log.warning("circuit opened for %s after %d failures", target.key, count)
 
-    def _run(self, route: str, messages: list[dict], schema: type[BaseModel] | None, image_tokens: int = 0) -> AIResult:
+    def _run(self, route: str, messages: list[dict], schema: type[BaseModel] | None, image_tokens: int = 0,
+             avoid: tuple[str, ...] = ()) -> AIResult:
         if route not in self.routes:
             raise AIError(f"unknown route: {route}")
         prompt_chars = "".join(m["content"] if isinstance(m["content"], str) else "" for m in messages)
         est_in = estimate_tokens(prompt_chars) + image_tokens
         outcomes: list[tuple[str, str, str]] = []
-        for target in self._ordered(route):
+        for target in self._ordered(route, avoid):
             est = est_in + target.max_tokens
             skip = self._skip(target, est_in, est)
             if skip:

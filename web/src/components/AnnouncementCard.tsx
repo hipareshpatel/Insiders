@@ -1,7 +1,7 @@
 import { toBlob } from "html-to-image";
 import {
   AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, Building2, Camera, Check, ChevronDown, ChevronRight, FileText, Gauge,
-  Minus, Rocket, Scale, ShieldAlert, Timer,
+  Minus, RefreshCcw, Rocket, Scale, ShieldAlert, Timer,
 } from "lucide-react";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
@@ -131,6 +131,15 @@ function ResultsTable({ r }: { r: ResultsSnapshot }) {
   );
 }
 
+/** One health ratio for the footer: gross NPA for lenders, otherwise debt to equity. */
+function healthMetric(card: CardBody): { label: string; value: string } | null {
+  const f = card.fundamentals ?? {};
+  if (f.gnpa_pct) return { label: "GNPA", value: `${f.gnpa_pct.value.toFixed(2)}%` };
+  if (f.debt && f.net_worth && f.net_worth.value > 0) return { label: "D/E", value: `${(f.debt.value / f.net_worth.value).toFixed(2)}x` };
+  if (f.net_worth && f.net_worth.value < 0) return { label: "Net worth", value: cr(f.net_worth.value) };
+  return null;
+}
+
 /** A results bullet that only restates numbers already in the P&L table adds nothing; the card hides it. */
 function coveredByTable(fact: string, r: ResultsSnapshot): boolean {
   const known: number[] = [];
@@ -190,7 +199,12 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
   const deal = card.deal_value;
   const stage = deal ? STAGE_LABEL[deal.stage] : undefined;
   const revenue = card.fundamentals?.revenue;
+  const health = healthMetric(card);
   const review = !!row.needs_review;
+  const issues = card.review?.issues?.length ? card.review.issues
+    : [...(card.grounding.unsupported_claims ?? []).map((c) => `Claim not supported by the sources: "${c}"`),
+       ...(card.grounding.ungrounded.length ? [`Numbers not found in the filing: ${card.grounding.ungrounded.join(", ")}`] : [])];
+  const corrected = card.review?.status === "CORRECTED";
   const tilesFor = event === "CONCALL_PRESENTATION" || (event === "RESULTS" && !card.results);
   const table = event === "RESULTS" && card.results ? card.results : null;
   const facts = card.what_happened
@@ -235,6 +249,14 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
             <span className="font-semibold text-accent">Insiders · BSE</span>
             <span className="num text-ink-3">{istDate(row.filed_at)}</span>
           </div>
+        )}
+
+        {review && !exporting && (
+          <p className="-mt-1 mb-3 flex items-start gap-2 rounded-lg bg-warn-soft px-3 py-2 text-[12.5px] leading-relaxed text-warn" data-noexport="true">
+            <AlertTriangle className="mt-[2px] h-3.5 w-3.5 shrink-0" />
+            <span><span className="font-semibold">Unverified.</span> {issues[0] ?? "Some numbers could not be matched to the filing."}
+              {card.review?.checked_by ? " A second AI could not resolve it." : ""} Check the official PDF before relying on it.</span>
+          </p>
         )}
 
         <header className="flex items-start justify-between gap-3">
@@ -292,6 +314,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           {revenue && (
             <span><span className="font-bold text-ink">{cr(revenue.value)}</span> {revenue.period} revenue</span>
           )}
+          {health && <span>{health.label} <span className="font-bold text-ink">{health.value}</span></span>}
           <span>1W <span className={cn("font-semibold", signClass(row.ret_1w))}>{pct(row.ret_1w)}</span></span>
           <span>1M <span className={cn("font-semibold", signClass(row.ret_1m))}>{pct(row.ret_1m)}</span></span>
           <span>1Y <span className={cn("font-semibold", signClass(row.ret_1y))}>{pct(row.ret_1y)}</span></span>
@@ -303,9 +326,12 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2 text-[12px] text-ink-3" data-noexport="true">
             <span className="num" title={`${istDateTime(row.filed_at)} IST`}>{istDateTime(row.filed_at).replace(/ \d{4},/, ",")} · {relativeTime(row.filed_at)}</span>
             {review ? (
-              <span className="inline-flex items-center gap-1 font-medium text-warn"
-                title={[...(card.grounding.unsupported_claims ?? []), ...card.grounding.ungrounded].join(" · ")}>
-                <AlertTriangle className="h-3.5 w-3.5" /> Needs review
+              <span className="inline-flex items-center gap-1 font-medium text-warn" title={issues.join(" · ")}>
+                <AlertTriangle className="h-3.5 w-3.5" /> Unverified
+              </span>
+            ) : corrected ? (
+              <span className="inline-flex items-center gap-1" title={`Corrected by ${card.review?.checked_by}: ${(card.review?.fixed ?? []).join(" · ")}`}>
+                <RefreshCcw className="h-3.5 w-3.5 text-pos" /> Verified after a second check
               </span>
             ) : card.grounding.checked > 0 ? (
               <span className="inline-flex items-center gap-1" title="Every number was found in the filing or company memory">
@@ -420,6 +446,21 @@ function DeepDive({ row, card, shown }: { row: CardRow; card: CardBody; shown: n
           <dl className="grid gap-x-8 gap-y-3 sm:grid-cols-2">{trackItems.map((t) => <TrackItem key={t.label} {...t} />)}</dl>
         ) : <p className="text-[13.5px] text-ink-3">Nothing dated, pending or at risk in this filing.</p>}
       </Section>
+
+      {card.review && (
+        <Section label="Second check">
+          <p className="text-[13px] leading-relaxed text-ink-2">
+            The first draft{card.review.first_model ? ` (${card.review.first_model})` : ""} failed the automatic checks
+            {card.review.checked_by ? `, so ${card.review.checked_by} was asked to correct it` : ", and no second AI was available"}.
+            {card.review.status === "CORRECTED" ? " The corrected card passed every check." : " Problems that remain are listed below."}
+          </p>
+          <ul className="mt-2 space-y-1">
+            {(card.review.status === "CORRECTED" ? card.review.fixed ?? [] : card.review.issues ?? []).map((p, i) => (
+              <li key={i} className={cn("text-[12.5px]", card.review!.status === "CORRECTED" ? "text-ink-3 line-through" : "text-warn")}>{p}</li>
+            ))}
+          </ul>
+        </Section>
+      )}
 
       <p className="text-[12px] leading-relaxed text-ink-3">
         {g.checked > 0 ? `${g.checked} numbers checked against the filing and company memory` : "No numbers to check"}

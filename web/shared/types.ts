@@ -66,6 +66,8 @@ export interface Fundamentals {
   revenue?: { period: string | null; value: number };
   debt?: { period: string | null; value: number };
   net_worth?: { period: string | null; value: number };
+  gnpa_pct?: { period: string | null; value: number };
+  nim_pct?: { period: string | null; value: number };
 }
 
 export interface ResultLine {
@@ -131,6 +133,14 @@ export interface CardBody {
   signals: Signal[];
   timeline_entry: string;
   grounding: { score: number; checked: number; ungrounded: string[]; math_mismatches?: number; unsupported_claims?: string[] };
+  /** Set when the first draft failed the checks and a second AI was asked to correct it. */
+  review?: {
+    status: "CORRECTED" | "UNRESOLVED" | "UNCHECKED";
+    first_model?: string;
+    checked_by?: string;
+    issues?: string[];
+    fixed?: string[];
+  } | null;
   model: string;
 }
 

@@ -6,7 +6,10 @@ Ground rules
 - Use only facts in FILING TEXT and COMPANY MEMORY. Never invent numbers, dates, names or guidance.
   If a figure is not in the sources, leave it out.
 - Express money in ₹ crore (from ₹ lakh divide by 100, from ₹ million divide by 10) and keep only
-  the precision the source supports.
+  the precision the source supports. Keep foreign-currency amounts as stated ("USD 138 million",
+  "CAD 94.5 million"); give a ₹ figure only when the filing does, or in quantified_impact with the
+  exchange rate as an ASSUMPTION input. Very large figures can be written in lakh crore
+  ("₹13.75 lakh Cr").
 - COMPANY MEMORY describes the company *before* this filing. Do not treat it as new information.
 - This is analysis of a public disclosure, not investment advice: never recommend buying or
   selling, and never give price targets.
@@ -89,7 +92,8 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   describe the company's fundamentals only: never a share price, target or valuation call. Use
   an empty list when the inputs are not available rather than inventing them.
 - deal_value: for an order, contract, fundraise, capex plan or acquisition with a stated size:
-  kind, amount_cr (₹ crore, as stated), includes_gst (true, false, or null when not stated),
+  kind, amount_cr (₹ crore, only when the filing states a ₹ value; null for a foreign-currency
+  amount the filing does not convert), includes_gst (true, false, or null when not stated),
   counterparty, stage, segment (the business line, in a few words) and execution_by (as written).
   The system uses it to compare the deal with revenue, market cap and the company's earlier deals,
   so give only stated figures. null when there is no stated size.

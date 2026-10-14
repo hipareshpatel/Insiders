@@ -11,7 +11,9 @@ import runsUpsert from "../../db/statements/runs_upsert.sql?raw";
 import usageAdd from "../../db/statements/usage_add.sql?raw";
 import companiesForMarket from "../../db/queries/companies_for_market.sql?raw";
 import companyGet from "../../db/queries/company_get.sql?raw";
+import backfillCompanies from "../../db/queries/backfill_companies.sql?raw";
 import filingsPending from "../../db/queries/filings_pending.sql?raw";
+import filingsPendingCompany from "../../db/queries/filings_pending_company.sql?raw";
 import kvGet from "../../db/queries/kv_get.sql?raw";
 import peerCards from "../../db/queries/peer_cards.sql?raw";
 import usageForDay from "../../db/queries/usage_for_day.sql?raw";
@@ -33,6 +35,8 @@ export const STATEMENTS: Record<string, string> = {
 /** Read queries with positional parameters. */
 export const QUERIES: Record<string, string> = {
   filings_pending: filingsPending,
+  filings_pending_company: filingsPendingCompany,
+  backfill_companies: backfillCompanies,
   usage_for_day: usageForDay,
   usage_for_month: usageForMonth,
   kv_get: kvGet,

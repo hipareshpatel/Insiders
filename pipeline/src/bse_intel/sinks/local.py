@@ -53,8 +53,8 @@ class LocalSink(Sink):
             cur = self._db.execute(self._settings.sql("queries", name), params)
             return [dict(r) for r in cur.fetchall()]
 
-    def pending_filings(self, day_from, day_to, max_attempts, limit, min_market_cap_cr=None):
-        return self.query("filings_pending", [day_from, day_to, max_attempts, limit, min_market_cap_cr])
+    def pending_filings(self, day_from, day_to, max_attempts, limit):
+        return self.query("filings_pending", [day_from, day_to, max_attempts, limit])
 
     def usage(self, day):
         return self.query("usage_for_day", [day])

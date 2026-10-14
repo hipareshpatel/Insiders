@@ -73,6 +73,7 @@ class PromptEngine:
         self._pass1 = Template((prompts / "pass1.md").read_text())
         self._pass2 = Template((prompts / "pass2.md").read_text())
         self._pass2_user = Template((prompts / "pass2_user.md").read_text())
+        self._verify = (prompts / "verify.md").read_text()
         self.events: dict = settings.load_toml("events.toml")
         self.sectors: list[SectorModule] = []
         for name, entry in settings.load_toml("sectors.toml").items():
@@ -109,6 +110,13 @@ class PromptEngine:
             f"First page:\n{page1_text or '(no attachment text)'}"
         )
         return system, user
+
+    def verify(self, system: str, user: str, draft: dict, problems: list[str]) -> tuple[str, str]:
+        """The second-opinion prompt: the original prompt, the draft reply and what the checks found."""
+        return system + self._verify, (
+            f"{user}\n\nDRAFT REPLY\n{json.dumps(draft, ensure_ascii=False)}\n\nPROBLEMS\n"
+            + "\n".join(f"- {p}" for p in problems)
+        )
 
     def pass2(
         self, filing: Filing, event_type: str, industry: str | None, memory: dict | None, text: str,

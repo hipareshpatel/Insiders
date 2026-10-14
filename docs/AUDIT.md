@@ -1,7 +1,7 @@
 # 360° audit: findings (in progress)
 
-Status: 2 of 6 area reports received (frontend; cross-component contracts and docs). Still running:
-ingestion/orchestration, AI layer and prompts, memory/checks/signals, SQL/D1/Worker.
+Status: 3 of 6 area reports received (frontend; contracts and docs; memory/checks/signals). Still running:
+ingestion/orchestration, AI layer and prompts, SQL/D1/Worker.
 Nothing below is fixed yet unless marked **fixed**. Each item was reported by an auditor and
 still needs verification before fixing.
 
@@ -64,6 +64,47 @@ still needs verification before fixing.
   "Moderate" vs "Medium impact" wording; hard-coded "2026" labels; calendar error state; key-number
   keys can collide; `cr(-50)` gives "₹-50 Cr"; Companies search not in URL; object URL not revoked;
   palette aria-activedescendant; placeholder D1 `database_id` in `wrangler.jsonc`.
+
+## Memory, checks and signals (report 3)
+
+Critical / high:
+- **M1. Grounding is far too permissive for %, bps and pp.** SCALES (×10, ×100…) and
+  `_derivable_percent` (any pair a≈b(1±p)) accept ~100% of integer percents and ~98% of bps on a
+  realistic results statement; a card with every ₹ figure invented scored 0.733 (passes 0.7). Fix:
+  percents only at scale 1/0.01; derive % only from nearby, similar-sized pairs; differences only for
+  pp/bps; any ungrounded headline ₹ figure forces review.
+- **M2. Signals and footer see future facts during backfill.** `compute()` and `latest_fundamentals`
+  use the whole stored dossier, so a May order is sized against October revenue; dilution uses today's
+  share count/price; guidance status is read as of now. Fix: filter by `as_of` before computing.
+- **M3. Re-reported comparatives take over a fact's as_of and source.** A Q2 results filing restating
+  Q1FY27 moves that fact's as_of to October: time travel loses it, the backfilled Q1 card's results
+  snapshot picks the wrong quarter, re-analysis deletes it. Fix: keep `known_since` and per-source
+  values; choose the snapshot quarter from the filing's own delta.
+- **M4. Memory view keeps the latest N rows by as_of, not the latest N periods.** A presentation with
+  7-year history pushes all quarters out of the prompt. Fix: pick latest N by period end per kind.
+- **M5. METRIC_SHIFT / WORKING_CAPITAL_STRAIN fire on comparative columns** (e.g. "PAT up 150% YoY
+  (Q1FY27)" on a Q2 card). Fix: only the filing's latest period of each kind.
+- **M6. Re-analysing the filing that created a guidance/watch item wipes later status history.**
+  Fix: keep the item, drop only that filing's history entries.
+
+Medium:
+- M7. `_to_float` strips "lakh"/"crore"/"million" without scaling (`"₹85.50 lakh"` → 85.5 Cr).
+- M8. Formula evaluator can raise non-FormulaError (complex powers, overflow, recursion) and fail the
+  whole filing.
+- M9. Integers ≤31 always pass and still count as checked (small-cap ₹ Cr figures).
+- M10. Period labels like "Q2FY27" leak phantom numbers; the year rule strips "2050.45" → 45; "INR1,234"
+  misread.
+- M11. Takeaway and insight numbers are never grounded.
+- M12. "basis points", "per cent", "3.1x" not recognised as units → correct figures flagged.
+- M13. Periods not normalised ("Q2FY2027" vs "Q2FY27"; "Sep 2026" vs "SEP-2025"); `due_date` wrong for
+  "FY2026-27", "Q2 FY 2026-27", "Q2-FY27", "30-09-2026", "November 15, 2026".
+- M14. `check_claims` false positives/negatives ("further orders" anywhere defeats every "first";
+  "track record"; bold "**maiden** order" skipped; "first quarter" supports "maiden order").
+- M15. Size caps drop backfilled history (600 metric rows; watchlist 80 drops OPEN items).
+
+Low: quant tolerance absolute 0.05; formula names not normalised; UNCHECKED never reviewed; buyback
+shown as dilution; dilution should be new/(old+new); equal-to-high order wording; negative net worth
+ratio; null/% metric units; guidance given_on not moved back on backfill.
 
 ## Checked and found consistent
 

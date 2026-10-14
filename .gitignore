@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# Local pipeline data (LocalSink)
+.local-data/
+
+# Node / Cloudflare (see web/.gitignore)
+node_modules/
+
+.DS_Store

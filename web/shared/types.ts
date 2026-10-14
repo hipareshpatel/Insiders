@@ -67,11 +67,22 @@ export interface Fundamentals {
   net_worth?: { period: string | null; value: number };
 }
 
+export interface ResultsSnapshot {
+  period: string;
+  revenue?: { value: number; yoy_pct?: number };
+  ebitda?: { value: number; yoy_pct?: number };
+  ebitda_margin?: { value: number; yoy_bps?: number };
+  pat?: { value: number; yoy_pct?: number };
+}
+
 export interface CardBody {
   category_tag: string;
   event_type: string;
   impact_level: Impact;
+  tone?: "POSITIVE" | "NEGATIVE" | "MIXED" | "NEUTRAL";
   headline: string;
+  takeaway?: string;
+  results?: ResultsSnapshot | null;
   what_happened: string[];
   why_it_matters: Insight[];
   missing_disclosures: string[];

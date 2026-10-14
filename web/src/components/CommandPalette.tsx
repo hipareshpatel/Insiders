@@ -1,19 +1,19 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, FileText, Loader2, Search } from "lucide-react";
+import { FileText, Loader2, Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
 import { istDate } from "../lib/format";
-import { IMPACT_STYLE } from "../lib/taxonomy";
-import { useQueryState } from "../lib/url";
-import { Badge } from "./ui/badge";
+import { IMPACT_LABEL, IMPACT_TEXT } from "../lib/taxonomy";
+import { Avatar } from "./Avatar";
 
 export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const [text, setText] = useState("");
   const [debounced, setDebounced] = useState("");
   const [active, setActive] = useState(0);
-  const [, setParams] = useQueryState();
+  const [, navigate] = useLocation();
 
   useEffect(() => {
     const id = setTimeout(() => setDebounced(text.trim()), 180);
@@ -35,17 +35,19 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
       key: `c${c.scrip_code}`,
       kind: "company" as const,
       title: c.company_name,
+      symbol: c.symbol,
       meta: `${c.symbol ?? ""} ${c.scrip_code}`.trim(),
-      extra: c.card_count ? `${c.card_count} cards` : "",
-      run: () => setParams({ company: c.scrip_code, tab: "dossier" }),
+      extra: c.card_count ? `${c.card_count} filings` : "",
+      run: () => navigate(`/company/${c.scrip_code}`),
     })),
     ...(query.data?.cards ?? []).map((c) => ({
       key: `n${c.news_id}`,
       kind: "card" as const,
       title: c.headline,
+      symbol: null as string | null,
       meta: `${c.company_name} · ${istDate(c.filed_at)}`,
       extra: c.impact_level,
-      run: () => setParams({ card: c.news_id, noise: null }, { path: "/" }),
+      run: () => navigate(`/?card=${encodeURIComponent(c.news_id)}`),
     })),
   ];
   useEffect(() => setActive(0), [debounced]);
@@ -60,9 +62,9 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/30" />
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/25 backdrop-blur-[2px]" />
         <Dialog.Content
-          className="fixed left-1/2 top-[12vh] z-50 w-[calc(100vw-2rem)] max-w-xl -translate-x-1/2 overflow-hidden rounded-xl border border-line bg-surface shadow-2xl"
+          className="fixed left-1/2 top-[12vh] z-50 w-[calc(100vw-2rem)] max-w-xl -translate-x-1/2 overflow-hidden rounded-xl border border-line bg-surface shadow-xl"
           onKeyDown={(e) => {
             if (e.key === "ArrowDown") { e.preventDefault(); setActive((a) => Math.min(a + 1, items.length - 1)); }
             if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => Math.max(a - 1, 0)); }
@@ -77,8 +79,8 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
               autoFocus
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Company, symbol, scrip code or headline…"
-              className="h-12 flex-1 bg-transparent text-sm text-ink placeholder:text-ink-3 focus:outline-none focus-visible:outline-none"
+              placeholder="Company, symbol, BSE code or headline…"
+              className="h-12 flex-1 bg-transparent text-[14px] text-ink placeholder:text-ink-3 focus:outline-none focus-visible:outline-none"
             />
             {query.isFetching && <Loader2 className="h-4 w-4 animate-spin text-ink-3" />}
           </div>
@@ -94,15 +96,15 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
                     type="button"
                     onMouseEnter={() => setActive(i)}
                     onClick={() => choose(i)}
-                    className={cn("flex w-full items-center gap-3 rounded-md px-3 py-2 text-left", i === active && "bg-surface-2")}
+                    className={cn("flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left", i === active && "bg-surface-2")}
                   >
-                    {item.kind === "company" ? <Building2 className="h-4 w-4 shrink-0 text-forest" /> : <FileText className="h-4 w-4 shrink-0 text-ink-3" />}
+                    {item.kind === "company" ? <Avatar name={item.title} symbol={item.symbol} size={22} /> : <FileText className="h-4 w-4 shrink-0 text-ink-3" />}
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm text-ink">{item.title}</span>
                       <span className="num block truncate text-[11px] text-ink-3">{item.meta}</span>
                     </span>
                     {item.kind === "card" && item.extra ? (
-                      <Badge className={IMPACT_STYLE[item.extra as keyof typeof IMPACT_STYLE]}>{item.extra}</Badge>
+                      <span className={cn("eyebrow shrink-0", IMPACT_TEXT[item.extra as keyof typeof IMPACT_TEXT])}>{IMPACT_LABEL[item.extra as keyof typeof IMPACT_LABEL] ?? item.extra}</span>
                     ) : item.extra ? <span className="text-[11px] text-ink-3">{item.extra}</span> : null}
                   </button>
                 </li>

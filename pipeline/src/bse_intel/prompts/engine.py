@@ -15,7 +15,9 @@ PASS2_SCHEMA = {
     "event_type": "RESULTS",
     "card": {
         "impact_level": "HIGH | MODERATE | LOW",
+        "tone": "POSITIVE | NEGATIVE | MIXED | NEUTRAL",
         "headline": "string",
+        "takeaway": "string",
         "what_happened": ["string"],
         "why_it_matters": [{"text": "string", "basis": "MEMORY | BALANCE_SHEET | SECTOR | FILING", "memory_refs": ["g_..."]}],
         "missing_disclosures": ["string"],

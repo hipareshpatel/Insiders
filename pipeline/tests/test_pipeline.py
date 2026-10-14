@@ -38,15 +38,6 @@ class FakeBse:
         return self.pdfs.get(url)
 
 
-class FakeNotifier:
-    def __init__(self):
-        self.sent = []
-
-    def send(self, row, card):
-        self.sent.append((row["news_id"], card["headline"]))
-        return True
-
-
 def _filing(news_id, headline, when, category="", subcategory="", scrip="999001", name="Demo Cement Ltd"):
     return Filing(news_id=news_id, scrip_code=scrip, company_name=name, headline=headline, subject=headline,
                   category=category, subcategory=subcategory, filed_at=when.isoformat(timespec="seconds"),
@@ -82,9 +73,8 @@ def build(settings, filings, pdfs, script, env=None):
     config = settings.load_toml("providers.toml")
     gateway = AIGateway(config, client_factory=lambda *a: fake,
                         env=env if env is not None else {"GROQ_API_KEY": "g", "NVIDIA_API_KEY": "n", "MISTRAL_API_KEY": "m"})
-    notifier = FakeNotifier()
-    pipeline = Pipeline(settings, sink, gateway, bse=FakeBse(filings, pdfs), notifier=notifier, sleep=lambda s: None)
-    return pipeline, sink, fake, notifier
+    pipeline = Pipeline(settings, sink, gateway, bse=FakeBse(filings, pdfs), sleep=lambda s: None)
+    return pipeline, sink, fake
 
 
 def rows(sink, sql, *params):
@@ -103,7 +93,7 @@ def test_live_run_end_to_end(settings):
         "llama-3.1-8b-instant": [{"is_material": False, "event_type": "OTHER", "reason": "routine clarification"}],
         "deepseek-ai/deepseek-r1": ["<think>checking memory</think>" + json.dumps(PASS2)],
     }
-    pipeline, sink, fake, notifier = build(settings, filings, pdfs, script)
+    pipeline, sink, fake = build(settings, filings, pdfs, script)
     stats = pipeline.run("live", time_budget_s=60)
 
     status = {r["news_id"]: r["status"] for r in rows(sink, "select news_id, status from filings")}
@@ -128,7 +118,6 @@ def test_live_run_end_to_end(settings):
 
     events = {r["event_type"] for r in rows(sink, "select event_type from catalysts")}
     assert events == {"AGM", "GUIDANCE_DUE"}
-    assert notifier.sent == [("n-res", PASS2["card"]["headline"])]
     (company,) = rows(sink, "select card_count, sector from companies")
     assert company["card_count"] == 1
 
@@ -138,9 +127,9 @@ def test_live_run_end_to_end(settings):
     assert usage == {("groq", "llama-3.1-8b-instant"): 1, ("nvidia", "deepseek-ai/deepseek-r1"): 1}
 
     # A second run is idempotent: nothing is re-analysed or re-sent.
-    pipeline2, sink2, fake2, notifier2 = build(settings, filings, pdfs, script)
+    pipeline2, sink2, fake2 = build(settings, filings, pdfs, script)
     pipeline2.run("live", time_budget_s=60)
-    assert fake2.calls == [] and notifier2.sent == []
+    assert fake2.calls == []
 
 
 def test_quota_ceiling_defers_work_instead_of_failing(settings):
@@ -154,7 +143,7 @@ def test_quota_ceiling_defers_work_instead_of_failing(settings):
     # Only NVIDIA is configured for Pass 2, and both of its models report their daily quota spent.
     err = api_error(openai.RateLimitError, 429, "You exceeded your current quota for the day")
     script = {"deepseek-ai/deepseek-r1": [err], "meta/llama-3.3-70b-instruct": [err]}
-    pipeline, sink, fake, _ = build(settings, filings, pdfs, script, env={"NVIDIA_API_KEY": "n"})
+    pipeline, sink, fake = build(settings, filings, pdfs, script, env={"NVIDIA_API_KEY": "n"})
     pipeline.discover(now.date())
     pipeline.process("2000-01-01", "2100-01-01", time.monotonic() + 30, bulk=False)
     status = {r["news_id"]: (r["status"], r["attempts"]) for r in rows(sink, "select news_id, status, attempts from filings")}
@@ -181,13 +170,12 @@ def test_backfill_walks_days_in_order_and_marks_complete(settings):
         seen_order.append(text.split("Filed: ")[1][:10])
         return json.dumps(PASS2)
 
-    pipeline, sink, fake, notifier = build(settings, filings, pdfs, {"mistral-large-latest": [respond]},
+    pipeline, sink, fake = build(settings, filings, pdfs, {"mistral-large-latest": [respond]},
                                            env={"MISTRAL_API_KEY": "m"})
     pipeline.run("backfill", time_budget_s=60, max_backfill_days=10)
     assert seen_order == sorted(seen_order) and len(seen_order) == 3
     assert sink.kv_get("backfill:discovered_through") == (today - timedelta(days=1)).isoformat()
     assert sink.kv_get("backfill:complete") == "1"
-    assert notifier.sent == []  # historical cards never trigger alerts
     timeline = sink.get_dossier("999001")["timeline"]
     assert [t["news_id"] for t in timeline] == ["h0", "h1", "h2"]
 
@@ -201,12 +189,12 @@ def test_card_with_wrong_math_is_held_for_review(settings):
         "inputs": [{"name": "new_debt", "value": 1500, "source": "FILING"}, {"name": "rate", "value": 0.09}],
         "result": 300, "unit": "INR_CR",
     }]
-    pipeline, sink, fake, notifier = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
                                            {"deepseek-ai/deepseek-r1": [json.dumps(bad)]}, env={"NVIDIA_API_KEY": "n"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     body = outcome.card["card"]
     (q,) = body["quantified_impact"]
     assert q["check"] == "MISMATCH" and q["computed"] == 135.0
-    assert outcome.card["needs_review"] == 1 and outcome.notify is False
+    assert outcome.card["needs_review"] == 1
     assert body["fundamentals"]["revenue"] == {"period": "Q2FY27", "value": 120.0}
     assert body["pdf_pages"] == 1

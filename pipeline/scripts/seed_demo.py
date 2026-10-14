@@ -27,7 +27,6 @@ from bse_intel.models import Filing
 from bse_intel.pipeline import Pipeline
 from bse_intel.settings import get_settings
 from bse_intel.sinks import make_sink
-from bse_intel.telegram import TelegramNotifier
 from bse_intel.timeutil import IST, now_iso, today_ist
 
 TODAY = today_ist()
@@ -142,7 +141,9 @@ def pass2_reply(key: str, user: str) -> dict:
                                {"metric": "revenue", "period": "Q1FY27", "value": 412.3, "yoy_pct": 17.5},
                                {"metric": "revenue", "period": "Q1FY26", "value": 351.0},
                                {"metric": "ebitda_margin", "period": "Q1FY27", "value": 17.8, "unit": "PCT"},
-                               {"metric": "pat", "period": "Q1FY27", "value": 38.2}]}),
+                               {"metric": "ebitda_margin", "period": "Q1FY26", "value": 17.5, "unit": "PCT"},
+                               {"metric": "ebitda", "period": "Q1FY27", "value": 73.39}, {"metric": "ebitda", "period": "Q1FY26", "value": 61.43},
+                               {"metric": "pat", "period": "Q1FY27", "value": 38.2}, {"metric": "pat", "period": "Q1FY26", "value": 31.1}]}),
         "chem-agm": dict(event_type="CONCALL_PRESENTATION", card=card(
             "MODERATE", "Demo Chemicals guides 12 TPD Triacetin plant by Q3FY27 at ₹64 Cr capex",
             ["Triacetin plant at Dahej to be commissioned by Q3FY27", "Capex ₹64 Cr from internal accruals",
@@ -256,7 +257,8 @@ def pass2_reply(key: str, user: str) -> dict:
                 {"metric": "revenue", "period": "Q2FY26", "value": 380.9},
                 {"metric": "ebitda_margin", "period": "Q2FY27", "value": 14.9, "unit": "PCT"},
                 {"metric": "ebitda_margin", "period": "Q2FY26", "value": 18.6, "unit": "PCT"},
-                {"metric": "pat", "period": "Q2FY27", "value": 29.4},
+                {"metric": "pat", "period": "Q2FY27", "value": 29.4}, {"metric": "pat", "period": "Q2FY26", "value": 36.8},
+                {"metric": "ebitda", "period": "Q2FY27", "value": 67.88}, {"metric": "ebitda", "period": "Q2FY26", "value": 70.85},
                 {"metric": "revenue", "period": "H1FY27", "value": 867.9}, {"metric": "revenue", "period": "H1FY26", "value": 731.9},
                 {"metric": "trade_receivables", "period": "H1FY27", "value": 318}, {"metric": "trade_receivables", "period": "H1FY26", "value": 205},
                 {"metric": "gross_debt", "period": "H1FY27", "value": 640}, {"metric": "gross_debt", "period": "H1FY26", "value": 420}],
@@ -271,7 +273,22 @@ def pass2_reply(key: str, user: str) -> dict:
             dossier_delta={"balance_sheet": {"credit_rating": "CARE A-", "rating_agency": "CARE", "rating_outlook": "Negative"}}),
     }
     reply = replies[key]
+    tone, takeaway = TONES[key]
+    reply["card"].update(tone=tone, takeaway=takeaway)
     return {"is_material": True, **reply}
+
+
+TONES = {
+    "cem-q1": ("POSITIVE", "Volume-led growth with margins holding near 18%; nothing alarming yet."),
+    "chem-agm": ("POSITIVE", "A funded, dated capacity promise: the plant is the test of execution this year."),
+    "pharma-usfda": ("NEGATIVE", "Roughly a fifth of US revenue now depends on a clean re-inspection 9–12 months away."),
+    "forge-sep": ("POSITIVE", "Export demand from North America is carrying volumes."),
+    "fin-rights": ("MIXED", "A 25% dilutive raise at a discount; the use of proceeds is still undisclosed."),
+    "auto-sep": ("POSITIVE", "Exports are outgrowing peers, pointing to share gains rather than a tide lifting all."),
+    "chem-plant": ("POSITIVE", "Delivered the AGM promise early and under budget; ramp-up and margins are now the question."),
+    "cem-q2": ("NEGATIVE", "Growth is being bought with credit: receivables and debt rose far faster than sales."),
+    "fin-rating": ("NEGATIVE", "A downgrade right after the rights issue suggests the raise is defensive."),
+}
 
 
 class ScriptedAI:
@@ -336,11 +353,10 @@ def main() -> None:
     fake = ScriptedAI(by_headline)
     env = {k: "demo" for k in ("GROQ_API_KEY", "NVIDIA_API_KEY", "MISTRAL_API_KEY", "ZAI_API_KEY")}
     gateway = AIGateway(settings.load_toml("providers.toml"), client_factory=lambda *a: fake, env=env)
-    pipeline = Pipeline(settings, sink, gateway, bse=DemoBse(filings, pdfs),
-                        notifier=TelegramNotifier(None, None, settings.site_url))
+    pipeline = Pipeline(settings, sink, gateway, bse=DemoBse(filings, pdfs))
     stats = pipeline.run("all", time_budget_s=300, max_backfill_days=400)
     print(json.dumps(stats.as_dict(), indent=2))
-    print("Seeded FICTIONAL demo data. Open the site and pick 30D to see every card.")
+    print("Seeded FICTIONAL demo data. Open the site and set the date range to 'Since 1 Jan 2026' to see every card.")
     if os.getenv("BSE_INTEL_SINK") != "platform":
         print("(local sink: data is in", settings.local_dir, ")")
 

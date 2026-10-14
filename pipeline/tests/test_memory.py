@@ -188,22 +188,6 @@ def test_track_next_becomes_watch_items_that_later_filings_resolve():
     assert [w["id"] for w in later["watchlist"]] == [approval["id"]]
 
 
-def test_telegram_message_escapes_and_includes_tracking():
-    from bse_intel.telegram import buttons, format_message
-
-    row = {"news_id": "n1", "scrip_code": "999001", "symbol": "DEMOCEM", "company_name": "Demo <Cement> & Co",
-           "impact_level": "HIGH", "filed_at": "2026-10-13T17:43:02+05:30", "pdf_url": "https://bse/x.pdf"}
-    card = {"category_tag": "RESULTS", "headline": "Revenue up 32% to ₹120 Cr", "what_happened": ["a < b"],
-            "why_it_matters": [{"text": "matters"}], "signals": [{"type": "WORKING_CAPITAL_STRAIN", "severity": "WARNING", "text": "Receivables up"}],
-            "track_next": {"milestones": [{"what": "Rights close", "when": "Nov 19"}]}}
-    text = format_message(row, card)
-    assert "Demo &lt;Cement&gt; &amp; Co" in text and "a &lt; b" in text
-    assert "⚠️ <b>Working capital strain:</b> Receivables up" in text and "⏱️ Rights close (Nov 19)" in text and "Not investment advice" in text
-    keyboard = buttons(row, card, "https://site.example")["inline_keyboard"]
-    assert keyboard[0][0]["url"] == "https://site.example/?card=n1" and keyboard[0][1]["url"] == "https://bse/x.pdf"
-    assert keyboard[1][0]["url"].startswith("https://wa.me/?text=")
-
-
 def test_grounding_accepts_bps_and_percentage_point_changes():
     source = "EBITDA margin 14.9% vs 18.6%. Revenue 455.60 vs 380.90"
     card = Card.model_validate({"impact_level": "HIGH", "headline": "Margin down 370 bps to 14.9%",

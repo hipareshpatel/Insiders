@@ -39,10 +39,6 @@ class Settings:
     platform_url: str | None = field(default_factory=lambda: _env("PLATFORM_API_URL"))
     ingest_token: str | None = field(default_factory=lambda: _env("INGEST_TOKEN"))
 
-    site_url: str = field(default_factory=lambda: _env("SITE_URL", "http://localhost:5173"))
-    telegram_bot_token: str | None = field(default_factory=lambda: _env("TELEGRAM_BOT_TOKEN"))
-    telegram_chat_id: str | None = field(default_factory=lambda: _env("TELEGRAM_CHANNEL_ID"))
-
     backfill_start: str = field(default_factory=lambda: _env("BACKFILL_START", "2026-01-01"))
     max_attempts: int = field(default_factory=lambda: _env_int("MAX_ATTEMPTS", 3))
     # Stop discovering backfill days once this many D1 rows were written today

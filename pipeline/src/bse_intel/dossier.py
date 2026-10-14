@@ -304,3 +304,40 @@ def latest_fundamentals(dossier: dict) -> dict:
         elif metric:
             out[key] = {"period": metric["period"], "value": metric["value"]}
     return out
+
+
+_RESULT_METRICS = (
+    ("revenue", ("revenue", "revenue_from_operations", "total_revenue", "net_sales")),
+    ("ebitda", ("ebitda", "operating_profit")),
+    ("ebitda_margin", ("ebitda_margin", "opm", "operating_margin")),
+    ("pat", ("pat", "net_profit", "profit_after_tax")),
+)
+
+
+def results_snapshot(dossier: dict, news_id: str) -> dict | None:
+    """Latest quarter reported by this filing with YoY changes, for the Results table."""
+    from .periods import prior_year_period
+
+    mine = [m for m in dossier.get("financial_metrics", []) if m.get("source_news_id") == news_id]
+    quarters = [m["period"] for m in mine if m["period"].startswith("Q") and due_date(m["period"])]
+    if not quarters:
+        return None
+    period = max(quarters, key=due_date)
+    table = {(m["metric"], m["period"]): m for m in dossier.get("financial_metrics", [])}
+    prev_period = prior_year_period(period)
+    out: dict = {"period": period}
+    for key, names in _RESULT_METRICS:
+        entry = next((table[(n, period)] for n in names if (n, period) in table), None)
+        if not entry or entry.get("value") is None:
+            continue
+        prev = next((table[(n, prev_period)] for n in names if prev_period and (n, prev_period) in table), None)
+        row = {"value": entry["value"]}
+        if key == "ebitda_margin":
+            if prev and prev.get("value") is not None:
+                row["yoy_bps"] = round((entry["value"] - prev["value"]) * 100)
+        elif entry.get("yoy_pct") is not None:
+            row["yoy_pct"] = entry["yoy_pct"]
+        elif prev and prev.get("value"):
+            row["yoy_pct"] = round((entry["value"] - prev["value"]) / abs(prev["value"]) * 100, 1)
+        out[key] = row
+    return out if len(out) > 1 else None

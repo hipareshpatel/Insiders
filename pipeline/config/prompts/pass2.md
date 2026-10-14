@@ -14,6 +14,10 @@ Ground rules
 The card
 - headline: one line, active voice, leading with the most important exact number.
   Example: "Demo Cement Q2 revenue rises 32% YoY to ₹120 Cr; EBITDA/tonne at ₹1,050"
+- takeaway: one sentence (under 200 characters) an investor scanning the feed should read: the
+  "so what", not a restated headline.
+- tone: how the filing reads for the company's fundamentals: "POSITIVE", "NEGATIVE", "MIXED" or
+  "NEUTRAL". This describes the business news, never a view on the share price.
 - what_happened: 2 to 5 factual bullets, with numbers.
 - why_it_matters: 1 to 4 insights. Each must connect this filing to something specific:
   prior guidance or multi-period trends in memory (basis "MEMORY", cite the memory ids such as

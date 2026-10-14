@@ -10,16 +10,14 @@
     "typecheck": "tsc -b",
     "deploy": "npm run build && wrangler deploy",
     "db:migrate:local": "wrangler d1 migrations apply bse-index --local",
-    "db:migrate:remote": "wrangler d1 migrations apply bse-index --remote",
-    "seed:local": "node seed/seed.mjs"
+    "db:migrate:remote": "wrangler d1 migrations apply bse-index --remote"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
-    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+    "@fontsource-variable/lexend": "^5.3.0",
+    "@fontsource/dm-serif-display": "^5.3.0",
     "@radix-ui/react-dialog": "^1.3.1",
-    "@radix-ui/react-switch": "^1.4.1",
-    "@radix-ui/react-tabs": "^1.2.1",
     "@tanstack/react-query": "^5.104.2",
     "@tanstack/react-table": "^8.21.3",
     "clsx": "^2.1.1",

@@ -81,3 +81,31 @@ def test_latest_fundamentals_prefers_latest_quarter_and_balance_sheet():
         "net_worth": {"period": "Sep-2026", "value": 1210},
     }
     assert latest_fundamentals({"financial_metrics": [], "balance_sheet": []}) == {}
+
+
+def test_results_snapshot_for_the_results_table():
+    from bse_intel.dossier import results_snapshot
+
+    dossier = {"financial_metrics": [
+        {"metric": "revenue", "period": "Q2FY27", "value": 455.6, "yoy_pct": 19.6, "source_news_id": "n2", "as_of": "b"},
+        {"metric": "ebitda_margin", "period": "Q2FY27", "value": 14.9, "unit": "PCT", "source_news_id": "n2", "as_of": "b"},
+        {"metric": "ebitda_margin", "period": "Q2FY26", "value": 18.6, "unit": "PCT", "source_news_id": "n2", "as_of": "b"},
+        {"metric": "pat", "period": "Q2FY27", "value": 29.4, "source_news_id": "n2", "as_of": "b"},
+        {"metric": "pat", "period": "Q2FY26", "value": 36.8, "source_news_id": "n1", "as_of": "a"},
+        {"metric": "revenue", "period": "H1FY27", "value": 867.9, "source_news_id": "n2", "as_of": "b"},
+    ]}
+    assert results_snapshot(dossier, "n2") == {
+        "period": "Q2FY27",
+        "revenue": {"value": 455.6, "yoy_pct": 19.6},
+        "ebitda_margin": {"value": 14.9, "yoy_bps": -370},
+        "pat": {"value": 29.4, "yoy_pct": -20.1},
+    }
+    assert results_snapshot(dossier, "other") is None
+
+
+def test_card_tone_and_takeaway_defaults():
+    card = Card.model_validate({"impact_level": "HIGH", "tone": "bullish", "headline": "Wins ₹450 Cr order",
+                                "what_happened": ["Order"], "why_it_matters": ["Equal to 30% of FY26 revenue"]})
+    assert card.tone == "POSITIVE" and card.takeaway == "Equal to 30% of FY26 revenue"
+    assert Card.model_validate({"impact_level": "LOW", "headline": "Routine update here", "what_happened": ["x"],
+                                "tone": "whatever"}).tone == "NEUTRAL"

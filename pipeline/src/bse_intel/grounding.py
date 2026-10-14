@@ -7,8 +7,7 @@ checked against the filing text and the memory view, allowing for:
 * display rounding (``₹1.2 Cr`` matches ``123.45`` lakh),
 * derived percentages (a YoY % computed from two source figures).
 
-Cards with a low score are stored with ``needs_review`` and are not pushed
-to Telegram.
+Cards with a low score are stored with ``needs_review``.
 """
 
 from __future__ import annotations

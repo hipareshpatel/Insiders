@@ -10,9 +10,12 @@ watch next. It runs on free tiers.
   checks every number against the source, re-computes every quantified estimate from
   its shown working, merges facts into per-company dossiers with provenance, computes
   signals (promise vs delivery, dilution, working capital,
-  metric shifts), and alerts Telegram.
+  metric shifts), and publishes cards to the web app.
 - **Web** (`web/`, Cloudflare Worker). A Hono API over D1 and R2, and a React app:
-  live feed, company memory, catalyst calendar, system monitor.
+  a live feed of compact filing rows that expand into the full card, a Results table,
+  company pages (overview, results scorecard, promise tracker, timeline, filings), a
+  catalyst calendar and a system monitor. The website is the only distribution
+  channel.
 - **Shared SQL** (`db/`). One schema and one set of statements, used by both.
 
 The design, and what changed from the original brief, is in
@@ -36,7 +39,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
-python -m pytest -q              # 83 tests
+python -m pytest -q              # 84 tests
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -91,8 +94,6 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 4. **Trigger.** cron-job.org → `POST /repos/{owner}/{repo}/actions/workflows/pipeline.yml/dispatches`
    every 15–30 minutes, using a fine-grained PAT with Actions read/write on this
    repository only.
-5. **Telegram.** Create a bot with @BotFather, add it to your channel as an admin, and
-   set `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID`.
 
 ## Tuning without code
 

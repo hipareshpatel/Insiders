@@ -7,6 +7,7 @@ import { istDateTime, num, relativeTime, titleCase } from "../lib/format";
 import { Empty, Loading } from "./FeedView";
 
 const CEILING = 0.95;
+const PROVIDER_LABEL: Record<string, string> = { groq: "Groq", nvidia: "NVIDIA NIM", mistral: "Mistral", zai: "Z.AI", cloudflare: "Workers AI" };
 
 export function SystemView() {
   const query = useQuery({ queryKey: ["system"], queryFn: api.system, refetchInterval: 30_000 });
@@ -25,10 +26,10 @@ export function SystemView() {
   const doneDays = Math.min(totalDays, Math.max(0, Math.round((through - start) / 86400_000) + 1));
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-5 px-4 py-5 sm:px-6">
+    <div className="mx-auto w-full max-w-[1200px] space-y-4 px-4 py-6 sm:px-6">
       <header>
-        <h1 className="font-display text-xl font-bold text-ink">System &amp; AI pipeline monitor</h1>
-        <p className="text-sm text-ink-2">Throughput, backfill progress and free-tier quota health. Refreshes every 30 seconds.</p>
+        <h1 className="font-display text-[30px] leading-tight text-ink">System</h1>
+        <p className="mt-1 text-sm text-ink-2">Throughput, backfill progress and free-tier quota health. Refreshes every 30 seconds.</p>
       </header>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -40,7 +41,7 @@ export function SystemView() {
 
       <section className="rounded-xl border border-line bg-surface p-4">
         <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="font-display text-sm font-bold">Historical backfill</h2>
+          <h2 className="font-display text-[18px] text-ink">Historical backfill</h2>
           <span className="num text-xs text-ink-2">
             {s.backfill.complete ? "Complete" : `${doneDays} of ${totalDays} days discovered`} · from {s.backfill.start}
             {s.backfill.discovered_through ? ` through ${s.backfill.discovered_through}` : ""}
@@ -53,8 +54,8 @@ export function SystemView() {
       </section>
 
       <section className="rounded-xl border border-line bg-surface">
-        <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line px-4 py-2.5">
-          <h2 className="font-display text-sm font-bold">Free AI provider health (today, UTC)</h2>
+        <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line px-4 py-3">
+          <h2 className="font-display text-[18px] text-ink">AI provider health · today (UTC)</h2>
           <span className="text-xs text-ink-3">Models leave the pool at {CEILING * 100}% of their daily quota</span>
         </header>
         {s.usage.length === 0 ? <p className="px-4 py-4 text-sm text-ink-3">No AI calls recorded today.</p> : (
@@ -65,13 +66,13 @@ export function SystemView() {
       </section>
 
       <section className="overflow-hidden rounded-xl border border-line bg-surface">
-        <header className="border-b border-line px-4 py-2.5"><h2 className="font-display text-sm font-bold">Recent pipeline runs</h2></header>
+        <header className="border-b border-line px-4 py-3"><h2 className="font-display text-[18px] text-ink">Recent pipeline runs</h2></header>
         {s.runs.length === 0 ? <p className="px-4 py-4 text-sm text-ink-3">No runs recorded yet.</p> : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-sm">
-              <thead className="bg-surface-2 text-left text-[11px] uppercase tracking-wide text-ink-3">
+            <table className="w-full min-w-[720px] text-[13.5px]">
+              <thead className="eyebrow border-b border-line text-left text-ink-3">
                 <tr>
-                  {["Started", "Mode", "Status", "Discovered", "Analysed", "High", "Review", "Duration", "Note"].map((h) => <th key={h} className="px-4 py-2 font-semibold">{h}</th>)}
+                  {["Started", "Mode", "Status", "Discovered", "Analysed", "High", "Review", "Duration", "Note"].map((h) => <th key={h} className="px-4 py-2.5 font-semibold">{h}</th>)}
                 </tr>
               </thead>
               <tbody>{s.runs.map((r) => <RunRow key={r.run_id} run={r} />)}</tbody>
@@ -86,8 +87,8 @@ export function SystemView() {
 function Stat({ label, value, sub, tone }: { label: string; value: number; sub: string; tone?: "warn" }) {
   return (
     <div className="rounded-xl border border-line bg-surface px-4 py-3">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-ink-3">{label}</div>
-      <div className={cn("num mt-1 text-2xl font-semibold", tone === "warn" ? "text-warn" : "text-ink")}>{num(value)}</div>
+      <div className="eyebrow text-ink-3">{label}</div>
+      <div className={cn("num mt-1.5 text-[26px] font-bold leading-none", tone === "warn" ? "text-warn" : "text-ink")}>{num(value)}</div>
       <div className="mt-0.5 text-xs text-ink-2">{sub}</div>
     </div>
   );
@@ -95,7 +96,7 @@ function Stat({ label, value, sub, tone }: { label: string; value: number; sub: 
 
 function Meter({ value, ceiling }: { value: number; ceiling?: number }) {
   const v = Math.max(0, Math.min(1, value));
-  const tone = ceiling && v >= ceiling ? "bg-neg" : ceiling && v >= ceiling * 0.8 ? "bg-warn" : "bg-forest";
+  const tone = ceiling && v >= ceiling ? "bg-neg" : ceiling && v >= ceiling * 0.8 ? "bg-warn" : "bg-accent";
   return (
     <div className="relative h-2 overflow-hidden rounded-full bg-surface-2" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(v * 100)}>
       <div className={cn("h-full rounded-full transition-[width]", tone)} style={{ width: `${v * 100}%` }} />
@@ -109,11 +110,11 @@ function ProviderRow({ usage }: { usage: ProviderUsage }) {
   const ratios = [usage.limit_rpd ? usage.requests / usage.limit_rpd : null, usage.limit_tpd ? tokens / usage.limit_tpd : null].filter((r): r is number => r !== null);
   const utilisation = ratios.length ? Math.max(...ratios) : null;
   const status = utilisation !== null && utilisation >= CEILING ? "At ceiling" : usage.rate_limited > 0 ? "Rate limited" : usage.failures > 0 ? "Errors" : "Healthy";
-  const statusStyle = status === "Healthy" ? "border-pos/30 bg-pos/10 text-pos" : status === "At ceiling" ? "border-neg/30 bg-neg/10 text-neg" : "border-warn/30 bg-warn/10 text-warn";
+  const statusStyle = status === "Healthy" ? "bg-pos-soft text-pos" : status === "At ceiling" ? "bg-neg-soft text-neg" : "bg-warn-soft text-warn";
   return (
     <li className="grid gap-2 px-4 py-3 md:grid-cols-[minmax(0,1.2fr)_minmax(0,2fr)_auto] md:items-center">
       <div className="min-w-0">
-        <div className="truncate text-sm font-medium text-ink">{titleCase(usage.provider)}</div>
+        <div className="truncate text-[14px] font-semibold text-ink">{PROVIDER_LABEL[usage.provider] ?? titleCase(usage.provider)}</div>
         <div className="num truncate text-[11px] text-ink-3">{usage.model}</div>
       </div>
       <div className="space-y-1">
@@ -140,9 +141,9 @@ function RunRow({ run }: { run: PipelineRun }) {
   }
   const n = (k: string) => (typeof stats[k] === "number" ? (stats[k] as number) : 0);
   const duration = run.finished_at ? Math.round((new Date(run.finished_at).getTime() - new Date(run.started_at).getTime()) / 1000) : null;
-  const tone = run.status === "OK" ? "border-pos/30 bg-pos/10 text-pos" : run.status === "RUNNING" ? "border-info/30 bg-info/10 text-info" : run.status === "PARTIAL" ? "border-warn/30 bg-warn/10 text-warn" : "border-neg/30 bg-neg/10 text-neg";
+  const tone = run.status === "OK" ? "bg-pos-soft text-pos" : run.status === "RUNNING" ? "bg-info-soft text-info" : run.status === "PARTIAL" ? "bg-warn-soft text-warn" : "bg-neg-soft text-neg";
   return (
-    <tr className="border-t border-line">
+    <tr className="border-b border-line last:border-0">
       <td className="num whitespace-nowrap px-4 py-2 text-xs text-ink-2" title={istDateTime(run.started_at)}>{relativeTime(run.started_at)}</td>
       <td className="px-4 py-2 text-ink">{run.mode}</td>
       <td className="px-4 py-2"><Badge className={tone}>{run.status}</Badge></td>

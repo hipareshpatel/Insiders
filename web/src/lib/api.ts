@@ -37,8 +37,8 @@ export interface FeedFilters {
 }
 
 export const api = {
-  feed: (filters: FeedFilters, cursor?: string | null) =>
-    get<FeedResponse>("/api/feed", { ...filters, cursor, limit: 20 }),
+  feed: (filters: FeedFilters, cursor?: string | null, limit = 20) =>
+    get<FeedResponse>("/api/feed", { ...filters, cursor, limit }),
   card: (id: string) => get<CardRow>(`/api/cards/${encodeURIComponent(id)}`),
   noise: (date: string, offset = 0) =>
     get<{ rows: NoiseRow[]; next_offset: number | null }>("/api/noise", { date, offset }),

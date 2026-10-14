@@ -2,115 +2,128 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* Warm Institutional (light) */
+/* Light: near-white page, white surfaces, hairline borders, one emerald accent. */
 :root {
-  --bg: #f8f7f4;
+  --bg: #f8f9fb;
   --surface: #ffffff;
-  --surface-2: #f2f0eb;
-  --line: #e6e2d9;
-  --ink: #1c1b19;
-  --ink-2: #5f5d57;
-  --ink-3: #8a877f;
-  --memory: #eaf2ee;
-  --memory-line: #cfe2d8;
-  --forest: #1b4d3e;
-  --forest-ink: #ffffff;
-  --high: #b42318;
-  --high-bg: #fdecea;
-  --moderate: #b54708;
-  --moderate-bg: #fef3e2;
-  --low: #5f6b7a;
-  --low-bg: #eef0f3;
-  --pos: #157f3d;
-  --neg: #b42318;
-  --warn: #b54708;
-  --info: #175cd3;
-  --ring: #1b4d3e;
+  --surface-2: #f3f4f6;
+  --line: #e7e9ee;
+  --line-strong: #d6d9e0;
+  --ink: #1a1d26;
+  --ink-2: #4b5160;
+  --ink-3: #8a8f9c;
+  --accent: #059669;
+  --accent-ink: #ffffff;
+  --accent-soft: #ecfdf5;
+  --accent-line: #a7f3d0;
+  --pos: #059669;
+  --neg: #dc2626;
+  --warn: #d97706;
+  --info: #2563eb;
+  --pos-soft: #ecfdf5;
+  --neg-soft: #fef2f2;
+  --warn-soft: #fffbeb;
+  --info-soft: #eff6ff;
+  --neutral-stripe: #d6d9e0;
+  --violet: #7c3aed;
+  --violet-soft: #f5f3ff;
+  --teal: #0d9488;
+  --teal-soft: #f0fdfa;
   color-scheme: light;
 }
 
-/* OLED Midnight (dark) */
+/* Dark: OLED midnight. */
 :root[data-theme="dark"] {
   --bg: #0b0f17;
-  --surface: #111724;
-  --surface-2: #161d2c;
-  --line: #222b3b;
-  --ink: #e7e9ee;
-  --ink-2: #a3abba;
-  --ink-3: #737c8c;
-  --memory: #0f231c;
-  --memory-line: #1d3b30;
-  --forest: #7cc4a4;
-  --forest-ink: #0b0f17;
-  --high: #f97066;
-  --high-bg: #2a1515;
-  --moderate: #fdb022;
-  --moderate-bg: #2a2010;
-  --low: #98a2b3;
-  --low-bg: #1a2130;
-  --pos: #47cd89;
-  --neg: #f97066;
-  --warn: #fdb022;
-  --info: #84adff;
-  --ring: #7cc4a4;
+  --surface: #111620;
+  --surface-2: #171d29;
+  --line: #222a37;
+  --line-strong: #2e3746;
+  --ink: #e6e8ee;
+  --ink-2: #a6adbb;
+  --ink-3: #6e7686;
+  --accent: #34d399;
+  --accent-ink: #052e22;
+  --accent-soft: rgba(52, 211, 153, 0.1);
+  --accent-line: rgba(52, 211, 153, 0.35);
+  --pos: #34d399;
+  --neg: #f87171;
+  --warn: #fbbf24;
+  --info: #60a5fa;
+  --pos-soft: rgba(52, 211, 153, 0.1);
+  --neg-soft: rgba(248, 113, 113, 0.1);
+  --warn-soft: rgba(251, 191, 36, 0.1);
+  --info-soft: rgba(96, 165, 250, 0.1);
+  --neutral-stripe: #3a4352;
+  --violet: #a78bfa;
+  --violet-soft: rgba(167, 139, 250, 0.12);
+  --teal: #2dd4bf;
+  --teal-soft: rgba(45, 212, 191, 0.12);
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0b0f17;
-    --surface: #111724;
-    --surface-2: #161d2c;
-    --line: #222b3b;
-    --ink: #e7e9ee;
-    --ink-2: #a3abba;
-    --ink-3: #737c8c;
-    --memory: #0f231c;
-    --memory-line: #1d3b30;
-    --forest: #7cc4a4;
-    --forest-ink: #0b0f17;
-    --high: #f97066;
-    --high-bg: #2a1515;
-    --moderate: #fdb022;
-    --moderate-bg: #2a2010;
-    --low: #98a2b3;
-    --low-bg: #1a2130;
-    --pos: #47cd89;
-    --neg: #f97066;
-    --warn: #fdb022;
-    --info: #84adff;
-    --ring: #7cc4a4;
+    --surface: #111620;
+    --surface-2: #171d29;
+    --line: #222a37;
+    --line-strong: #2e3746;
+    --ink: #e6e8ee;
+    --ink-2: #a6adbb;
+    --ink-3: #6e7686;
+    --accent: #34d399;
+    --accent-ink: #052e22;
+    --accent-soft: rgba(52, 211, 153, 0.1);
+    --accent-line: rgba(52, 211, 153, 0.35);
+    --pos: #34d399;
+    --neg: #f87171;
+    --warn: #fbbf24;
+    --info: #60a5fa;
+    --pos-soft: rgba(52, 211, 153, 0.1);
+    --neg-soft: rgba(248, 113, 113, 0.1);
+    --warn-soft: rgba(251, 191, 36, 0.1);
+    --info-soft: rgba(96, 165, 250, 0.1);
+    --neutral-stripe: #3a4352;
+    --violet: #a78bfa;
+    --violet-soft: rgba(167, 139, 250, 0.12);
+    --teal: #2dd4bf;
+    --teal-soft: rgba(45, 212, 191, 0.12);
     color-scheme: dark;
   }
 }
 
 @theme inline {
-  --font-display: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Lexend Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-num: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
 
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-ink-3: var(--ink-3);
-  --color-memory: var(--memory);
-  --color-memory-line: var(--memory-line);
-  --color-forest: var(--forest);
-  --color-forest-ink: var(--forest-ink);
-  --color-high: var(--high);
-  --color-high-bg: var(--high-bg);
-  --color-moderate: var(--moderate);
-  --color-moderate-bg: var(--moderate-bg);
-  --color-low: var(--low);
-  --color-low-bg: var(--low-bg);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
   --color-pos: var(--pos);
   --color-neg: var(--neg);
   --color-warn: var(--warn);
   --color-info: var(--info);
-  --color-ring: var(--ring);
+  --color-pos-soft: var(--pos-soft);
+  --color-neg-soft: var(--neg-soft);
+  --color-warn-soft: var(--warn-soft);
+  --color-info-soft: var(--info-soft);
+  --color-neutral-stripe: var(--neutral-stripe);
+  --color-violet: var(--violet);
+  --color-violet-soft: var(--violet-soft);
+  --color-teal: var(--teal);
+  --color-teal-soft: var(--teal-soft);
 }
 
 html,
@@ -118,17 +131,26 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
+  font-weight: 350;
   -webkit-font-smoothing: antialiased;
 }
 
+/* Numbers: Inter with tabular figures, so columns line up. */
 .num {
-  font-family: var(--font-mono);
+  font-family: var(--font-num);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
+}
+
+/* Small uppercase section labels. */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 :focus-visible {
-  outline: 2px solid var(--ring);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 

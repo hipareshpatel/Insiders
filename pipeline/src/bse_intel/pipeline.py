@@ -1,4 +1,4 @@
-"""Orchestration: discovery, triage, analysis, memory, distribution.
+"""Orchestration: discovery, triage, analysis, memory.
 
 A run spends its time budget in two phases:
 
@@ -29,7 +29,7 @@ from threading import Lock
 
 from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import BseClient, SourceBlockedError
-from .dossier import latest_fundamentals, memory_ids, merge, new_dossier, view_as_of
+from .dossier import latest_fundamentals, memory_ids, merge, new_dossier, results_snapshot, view_as_of
 from .extract import Document
 from .grounding import DEFAULT_THRESHOLD, check_card
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
@@ -40,14 +40,12 @@ from .rules import RuleBook
 from .settings import Settings
 from .signals import compute as compute_signals
 from .sinks.base import Sink
-from .telegram import TelegramNotifier
 from .timeutil import IST, now_iso, now_ist, today_ist, utc_day
 
 log = logging.getLogger(__name__)
 
 TRANSIENT_WAIT_S = 60
 TRANSIENT_RETRIES = 3
-NOTIFY_MAX_AGE = timedelta(hours=18)
 BATCH = 40
 
 
@@ -67,7 +65,6 @@ class Stats:
     deferred: int = 0
     cards_high: int = 0
     needs_review: int = 0
-    notified: int = 0
     ocr_pages: int = 0
     d1_rows_written: int = 0
     days_discovered: list[str] = field(default_factory=list)
@@ -83,7 +80,6 @@ class Outcome:
     card: dict | None = None
     catalysts: list[dict] = field(default_factory=list)
     company: dict | None = None
-    notify: bool = False
 
 
 def _catalyst_id(scrip: str, event_type: str, event_date: str) -> str:
@@ -97,7 +93,6 @@ class Pipeline:
         sink: Sink,
         gateway: AIGateway,
         bse: BseClient | None = None,
-        notifier: TelegramNotifier | None = None,
         prompts: PromptEngine | None = None,
         rules: RuleBook | None = None,
         sleep=time.sleep,
@@ -106,7 +101,6 @@ class Pipeline:
         self.sink = sink
         self.gateway = gateway
         self.bse = bse or BseClient()
-        self.notifier = notifier or TelegramNotifier(None, None, settings.site_url)
         self.prompts = prompts or PromptEngine(settings)
         self.rules = rules or RuleBook.from_config(settings.load_toml("taxonomy.toml"))
         self.stats = Stats()
@@ -309,6 +303,7 @@ class Pipeline:
             "signals": signals,
             "timeline_entry": out.timeline_entry,
             "fundamentals": latest_fundamentals(merged),
+            "results": results_snapshot(merged, filing.news_id) if event_type == "RESULTS" else None,
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
                           "math_mismatches": quant.mismatches},
@@ -362,8 +357,6 @@ class Pipeline:
                     "description": f"Verify: {k.kpi}" + (f" (target {k.target})" if k.target else ""),
                     "source_news_id": filing.news_id, "created_at": now,
                 })
-        filed = datetime.fromisoformat(filing.filed_at)
-        fresh = now_ist() - filed <= NOTIFY_MAX_AGE
         with self._lock:
             self.stats.analyzed += 1
             self.stats.cards_high += card.impact_level == "HIGH"
@@ -375,7 +368,6 @@ class Pipeline:
             catalysts=catalysts,
             company={"scrip_code": filing.scrip_code, "company_name": filing.company_name,
                      "symbol": row["symbol"], "sector": sector, "updated_at": now},
-            notify=card.impact_level == "HIGH" and not needs_review and not bulk and fresh,
         )
 
     def _peers(self, sector: str, event_type: str, filing: Filing) -> list[dict]:
@@ -411,9 +403,6 @@ class Pipeline:
         self._exec("catalysts_upsert", [c for o in outcomes for c in o.catalysts])
         self._exec("filings_update", [o.update for o in outcomes])
         self._flush_usage()
-        for o in outcomes:
-            if o.notify and o.card and self.notifier.send(o.card, o.card["card"]):
-                self.stats.notified += 1
 
     # ------------------------------------------------------------------ runs
 
@@ -492,8 +481,7 @@ def build_pipeline(settings: Settings, sink: Sink) -> Pipeline:
         log.warning("could not load AI usage; starting counters at zero: %s", exc)
         usage_today, usage_month = [], []
     gateway = AIGateway(settings.load_toml("providers.toml"), usage_today=usage_today, usage_month=usage_month)
-    notifier = TelegramNotifier(settings.telegram_bot_token, settings.telegram_chat_id, settings.site_url)
-    return Pipeline(settings, sink, gateway, notifier=notifier)
+    return Pipeline(settings, sink, gateway)
 
 
 __all__ = ["Pipeline", "Stats", "build_pipeline", "IST"]

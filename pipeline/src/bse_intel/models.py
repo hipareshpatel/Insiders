@@ -303,9 +303,25 @@ class QuantifiedImpact(_Lenient):
     interpretation: str = ""    # one line: what the number means for the company
 
 
+def _normalize_tone(value: Any) -> str:
+    text = str(value or "").upper()
+    if text.startswith(("POS", "GOOD", "BULL", "FAV", "STRONG")):
+        return "POSITIVE"
+    if text.startswith(("NEG", "BAD", "BEAR", "ADV", "WEAK", "UNFAV")):
+        return "NEGATIVE"
+    if text.startswith("MIX"):
+        return "MIXED"
+    return "NEUTRAL"
+
+
+Tone = Annotated[Literal["POSITIVE", "NEGATIVE", "MIXED", "NEUTRAL"], BeforeValidator(_normalize_tone)]
+
+
 class Card(_Lenient):
     impact_level: ImpactLevel
+    tone: Tone = "NEUTRAL"      # for the company's fundamentals, not a price call
     headline: str
+    takeaway: str = ""          # one line shown in the collapsed feed row
     what_happened: StrList = Field(min_length=1)
     why_it_matters: Annotated[list[Insight], BeforeValidator(_insights)] = Field(default_factory=list)
     missing_disclosures: StrList = Field(default_factory=list)
@@ -321,6 +337,13 @@ class Card(_Lenient):
         if len(value) < 8:
             raise ValueError("headline too short")
         return value[:220]
+
+    @model_validator(mode="after")
+    def _default_takeaway(self) -> "Card":
+        self.takeaway = " ".join(self.takeaway.split())[:240]
+        if not self.takeaway and self.why_it_matters:
+            self.takeaway = self.why_it_matters[0].text[:240]
+        return self
 
 
 class FinancialMetric(_Lenient):

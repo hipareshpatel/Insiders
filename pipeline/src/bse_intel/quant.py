@@ -11,7 +11,7 @@ ASSUMPTION. This module:
   the model claims came from the filing must actually be there.
 
 A stated result that its own formula does not reproduce is a MISMATCH, and
-the card goes to review instead of to Telegram.
+the card is flagged for review.
 """
 
 from __future__ import annotations

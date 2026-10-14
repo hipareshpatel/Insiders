@@ -21,8 +21,8 @@ system as built, with items still to build marked **Planned**.
 | 9 | Mandatory "⚠️ MISSING DISCLOSURE" bullet | A mandatory slot invites invented omissions. | `missing_disclosures` is optional and evidence-based. |
 | 10 | Scanned page = fewer than 50 characters | Short digital pages (a one-line cover letter) would be OCR'd. | Fewer than 50 characters **and** an embedded image, with a per-document OCR page budget. |
 | 11 | Daily zipped dossiers committed to the repository | Binary zips bloat git history by about 10 MB/day and hit the 100 MB file limit. | Weekly export of **one JSON file per company** to a `backups` branch (small text diffs), plus the R2 card archive and D1 Time Travel. |
-| 12 | Alerts for every high-impact card | Telegram allows about 20 messages a minute per channel, results season produces hundreds of HIGH cards, and backfill would alert on months-old news. | Paced at 3 s, capped per run, and sent only for HIGH impact + numbers verified + filed in the last 18 h. |
-| 13 | No hallucination checks | Mis-copied figures (a lakh/crore slip) are the most damaging error in this domain. | Each card's numbers are **grounded** against the filing and memory (§6). Cards below 70% are stored as `needs_review` and never alerted. |
+| 12 | Alerts for every high-impact card (Telegram, WhatsApp, X) | Out of scope by decision: the platform does not push to messaging or social channels. Push alerts would also need pacing, caps and a backfill guard. | The **website is the only distribution channel**. Every card has a permanent URL (`/?card=…`), a "Copy card as PNG" action, and a link to the official BSE PDF. |
+| 13 | No hallucination checks | Mis-copied figures (a lakh/crore slip) are the most damaging error in this domain. | Each card's numbers are **grounded** against the filing and memory (§6). Cards below 70% are stored as `needs_review` and flagged on the card. |
 | 14 | "Why it matters" left to the model | Plausible-sounding prose is not a signal. | **Signals computed in code** from extracted facts: promise vs delivery, follow-ups, dilution, working capital, metric shifts (§7). |
 | 15 | "Quantified impact: compute exact math" | A confident ₹ estimate is the most persuasive and the least verifiable part of a card. | Each estimate carries its **working**: a formula over named inputs, each input labelled FILING, MEMORY or ASSUMPTION (with a reason). Code re-runs the arithmetic and checks FILING/MEMORY inputs against the sources. A mismatch sends the card to review (§6). |
 | 16 | Not covered | Publishing impact ratings on listed stocks to the public is close to the SEBI (Research Analysts) Regulations and the finfluencer rules. | Disclaimers everywhere, no buy/sell calls or price targets (enforced in the prompt), summaries of public disclosures only. Get legal advice before monetising. See §13. |
@@ -51,7 +51,6 @@ flowchart LR
     W --> R2[("R2: dossiers,<br/>card archive")]
     W --> AI["Workers AI (spare)"]
   end
-  G --> TG["Telegram channel"]
   U["Browser"] --> W
 ```
 
@@ -60,7 +59,7 @@ Repository layout:
 | Path | What |
 |---|---|
 | `db/` | D1 schema (`migrations/`) and every SQL statement (`statements/`, `queries/`), shared verbatim by the Worker and the Python LocalSink |
-| `pipeline/` | Python package `bse_intel`: fetcher, rules, extraction, gateway, prompts, memory, signals, sinks, Telegram, market data, CLI |
+| `pipeline/` | Python package `bse_intel`: fetcher, rules, extraction, gateway, prompts, memory, signals, sinks, market data, CLI |
 | `pipeline/config/` | Everything tunable without code: `providers.toml`, `taxonomy.toml`, `events.toml`, `sectors.toml`, `market.toml`, `prompts/*.md` |
 | `web/` | Cloudflare Worker (Hono) serving the API and the React app (Vite + Tailwind + Radix + TanStack) |
 | `.github/workflows/` | CI, pipeline, market data, deploy, backup |
@@ -76,7 +75,7 @@ recorded in the D1 ledger, so a run can stop anywhere and the next one resumes.
    the live queue oldest-first.
 2. **Backfill.** Discover more historical days, oldest first from `BACKFILL_START`
    (default 2026-01-01), within the D1 daily write budget. Then process the
-   historical queue oldest-first on the bulk AI routes. Backfill never sends alerts.
+   historical queue oldest-first on the bulk AI routes.
 
 Per filing:
 
@@ -92,7 +91,6 @@ Per filing:
 | Merge | The delta is merged into the dossier with provenance; watch items are created from "track next". | `dossier.py` |
 | Signals | Deterministic computations over the merged dossier (§7). | `signals.py` |
 | Store | Dossier goes to R2. The card, catalysts, company row and ledger status go to D1. The card is also archived to `daily_feed/{date}.json`. | `pipeline.py`, `sinks/` |
-| Alert | Telegram, under the conditions in §11. | `telegram.py` |
 
 Failure handling: one bad filing is marked `FAILED` (retried up to `MAX_ATTEMPTS`)
 and never stops the run. AI exhaustion is handled as in §4.
@@ -205,7 +203,7 @@ cover company fundamentals only, never share prices or targets.
 
 The card's score is the share of all checked numbers grounded, including quant
 inputs. Below 0.7, or with any math mismatch, the card is stored with
-`needs_review` and is never alerted.
+`needs_review`, which the card shows as "numbers need review".
 
 ---
 
@@ -270,7 +268,7 @@ Public, read-only, short edge-cache lifetimes:
 | Route | Returns |
 |---|---|
 | `GET /api/feed` | Cards; `from`, `to`, `impact`, `category`, `size`, `sector`, `q` (FTS), `cursor`, `review` |
-| `GET /api/cards/:id` | One card (Telegram deep links `/?card=…`) |
+| `GET /api/cards/:id` | One card (shareable links `/?card=…`) |
 | `GET /api/noise?date=` | Filtered filings and why |
 | `GET /api/search?q=` | Companies and cards (Ctrl+K) |
 | `GET /api/companies` | Directory: `q`, `letter`, `sector`, `size`, `sort`, `all` |
@@ -292,59 +290,77 @@ Internal, `Authorization: Bearer INGEST_TOKEN`:
 ## 10. Frontend
 
 React + Vite + Tailwind v4 + Radix + TanStack Query/Table, served as Worker static
-assets.
+assets. The layout and density are benchmarked on EquiSense's public pages (design
+language only: no names, marks, scores or content are reused).
 
-**Aesthetic.** "Warm Institutional": alabaster `#F8F7F4`, white cards, sage memory
-boxes `#EAF2EE` with forest headers `#1B4D3E`. OLED Midnight `#0B0F17` dark mode
-(follows the system setting, with a toggle). Plus Jakarta Sans headings, Inter body
-text, and JetBrains Mono tabular numbers.
+**Look and feel.** A calm, light canvas `#F8F9FB`, white surfaces with a 1px hairline
+border and 12px radius, no shadows, one emerald accent `#059669`. Display headings in
+DM Serif Display, interface text in Lexend, numbers in Inter (tabular), working and
+formulas in JetBrains Mono. A dark theme with the same tokens follows the system
+setting, with a light/dark/system toggle. One centred column, at most 1200px wide.
 
-**Live intelligence feed.** A sticky filter ribbon with filter text, Ctrl+K palette,
-presets and date range, impact/event/market-cap pills, and the noise audit switch.
-Each Super-Card shows:
+**Navigation.** A sticky top bar: Feed, Results, Companies, Calendar, System, with the
+active item as a soft emerald pill. Search (Ctrl+K / ⌘K) finds companies (opens the
+company page) and cards (opens the card).
 
-- a telemetry header: impact, category, sector, company, symbol and scrip, market cap
-  and tier, market session (pre-market / market hours / post-market), time to the
-  minute in IST;
-- the headline and key numbers;
-- **what happened** (the facts) next to **why it matters** (memory and forensics):
-  memory links, balance sheet, peer context, quantified estimates with "show
-  working", and missing disclosures;
-- computed signals, notable changes, and what to track next;
-- a financial footer (latest revenue, debt, net worth, 1W/1M/1Y) and trust markers
-  (numbers verified, math checked, partial memory);
-- three actions: View PDF (with page count), Company memory, Copy PNG.
+**Feed.** Tabs by family (All, High impact, Results, Capex & orders, Capital & deals,
+Governance & regulatory, Noise audit) and a single filter row (date range, market cap,
+sector, text). Each filing is a **compact row**: a left stripe coloured by tone
+(positive, negative, mixed, neutral), the headline, a one-line takeaway, and one meta
+line (ticker chip, company, market cap and tier, event, time, ✓/⚠ signal counts), with
+the impact level on the right. Tone is the analyst's read of what the filing means for
+the company's fundamentals, never a view on the share price; the takeaway is one
+sentence on why the filing matters. A row expands into the full card, in reading order:
 
-**Company memory directory.** A–Z, search, sort and size filters; TanStack Table.
+1. telemetry (event, sector lens, BSE code, time to the minute in IST, market session);
+2. **Core catalyst**: the takeaway in display type, with key numbers;
+3. **What happened** (facts) beside **Why it matters** (memory links, balance sheet,
+   peer context, quantified estimates with "show working", missing disclosures);
+4. computed signals and notable changes;
+5. **What to track next**: milestone dates, KPI to verify, pending approvals,
+   invalidation risk (only the ones the filing supports);
+6. financial footer (latest revenue, debt, net worth, market cap, 1W/1M/1Y) and trust
+   markers (numbers verified, math checked, partial memory);
+7. View official PDF (with page count), Open company memory, Copy card as PNG.
 
-**Catalyst calendar.** A month grid coloured by family: corporate actions, meetings,
-rights windows, execution milestones, accountability checks (KPI checks, guidance
-deadlines).
+**Results.** One table of results filings: date, company, verdict (Strong, Good, Mixed,
+Weak, Neutral, from tone and impact), market cap, quarter, revenue / EBITDA / PAT YoY
+and margin change in basis points, signals, PDF. Rows carry the tone stripe and expand
+into the full card. Filters: quarter, verdict, size, company. The YoY figures come from
+the dossier (`results_snapshot`), not from model prose.
 
-**System & AI monitor.** Today's throughput, the queue, backfill progress, provider
-health meters with the 95% line, and recent runs.
+**Company page** (`/company/:scrip`). Header with symbol, name, BSE code, last price
+and 1W/1M/1Y, sector and size. Tabs:
 
-**Company 360° drawer.**
+| Tab | Shows |
+|---|---|
+| Overview | Key stats (market cap, size, revenue, debt, net worth, filings analysed); tiles for promise record, open commitments, latest filing tone and next catalyst; The story (business summary and latest read); How the story is unfolding (timeline); The good & the bad (signals and notable changes, de-duplicated); What to track |
+| Results | Quarterly scorecard (verdict, takeaway, revenue / EBITDA / OPM / PAT YoY per quarter); financial baseline pivot by period kind; balance sheet |
+| Promise tracker | Delivered / missed / open / delivery rate; every management commitment with given date, due date, status and evidence; follow-ups from earlier cards |
+| Timeline | 2026 events, high-impact ones marked |
+| Filings | The company's cards as expandable rows |
 
-1. Living dossier: summary, Promise vs Delivery table, watchlist, financial baseline
-   pivot by period kind, balance sheet, upcoming events, capital actions.
-2. 2026 timeline.
-3. Filings & PDF: split view with an "open on BSE" fallback for when framing is
-   blocked.
+**Companies.** Search, sort, size and coverage filters, A–Z; a table with sector,
+market cap, returns, filings and last filing date. A row opens the company page.
 
-Every view, filter, drawer and card is a URL.
+**Calendar.** A month grid with dots coloured by family (corporate actions, meetings,
+rights windows, execution milestones, accountability checks) and a "next 45 days"
+agenda; on phones the agenda is the view.
+
+**System.** Today's throughput, the queue, backfill progress, provider health meters
+with the 95% line, and recent runs.
+
+Every page, tab, filter and card is a URL.
 
 ---
 
 ## 11. Distribution
 
-**Telegram.** HTML messages with impact, company, headline, facts, insights, signals,
-missing disclosures, "track next" and a disclaimer. Buttons: 🌐 View on site · 📄 PDF ·
-📲 Share to WhatsApp (`wa.me/?text=`). Sent only for HIGH impact, numbers verified,
-filed within 18 h, and never from backfill. Paced 3.1 s apart, capped at 40 per run,
-honouring Telegram's `retry_after`.
+The website is the only channel. There is no Telegram, WhatsApp or X integration, and
+no push messaging of any kind. Sharing works through each card's permanent URL
+(`/?card=…`), the "Copy card as PNG" action, and the link to the official BSE filing.
 
-**Planned.** Digest mode for MODERATE cards, per-user watchlists, and a WhatsApp channel.
+**Planned.** Per-user watchlists and per-company RSS feeds on the site.
 
 ---
 
@@ -373,8 +389,8 @@ single-writer design depends on.
 
 | Where | What |
 |---|---|
-| Repository secrets | `PLATFORM_API_URL`, `INGEST_TOKEN`, `GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHANNEL_ID`, and for deploys `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` |
-| Repository variables | `SITE_URL`, `BACKFILL_START`, `D1_DATABASE_ID`, `PIPELINE_RUNNER_LABELS` |
+| Repository secrets | `PLATFORM_API_URL`, `INGEST_TOKEN`, `GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, and for deploys `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` |
+| Repository variables | `BACKFILL_START`, `D1_DATABASE_ID`, `PIPELINE_RUNNER_LABELS` |
 | Worker secret | `INGEST_TOKEN` |
 
 **Backups.** The weekly `backup.yml` exports dossiers to the `backups` branch. R2
@@ -419,4 +435,4 @@ the job is best-effort and never erases existing values.
 | Pull-forward backfill | When a live filing arrives for a company whose history isn't loaded, load that company's results, concalls and AGM filings first |
 | Evaluation harness: a golden set of real filings with expected facts | Compare prompts and models (fact recall, grounding score, JSON validity, latency, cost) before changing `providers.toml` |
 | Annual reports | Section-aware extraction (MD&A, segment notes) instead of keyword page selection |
-| Digest alerts, user watchlists, per-company RSS | Distribution |
+| User watchlists and per-company RSS on the site | Follow specific companies without messaging channels |

@@ -43,7 +43,9 @@ from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
 from .settings import Settings
+from .scoring import score as score_card
 from .signals import compute as compute_signals
+from .signals import priced_for
 from .sinks.base import Sink, SinkRejected
 from . import universe
 from .timeutil import IST, market_session, now_iso, now_ist, today_ist, utc_day
@@ -77,6 +79,7 @@ class Stats:
     deferred: int = 0
     cards_high: int = 0
     needs_review: int = 0
+    signals: int = 0
     second_opinions: int = 0
     corrected: int = 0
     ocr_pages: int = 0
@@ -592,14 +595,18 @@ class Pipeline:
             "model": result.model_label,
         }
         needs_review = checks.needs_review
+        rated = score_card(card_json, event_type, signals, current, priced_for(company, filing), needs_review, card.impact_level)
+        card_json["score"] = rated.as_dict()
+        card_json["model_impact"] = card.impact_level
         row = {
             "news_id": filing.news_id, "scrip_code": filing.scrip_code,
             "symbol": company.get("symbol") or filing.symbol, "company_name": filing.company_name,
             "filing_date": filing.filing_date, "filed_at": filing.filed_at, "sector": sector,
-            "event_category": event_type, "impact_level": card.impact_level, "headline": card.headline,
+            "event_category": event_type, "impact_level": rated.impact, "headline": card.headline,
             "grounding_score": score, "needs_review": int(needs_review),
             "memory_complete": int(memory_complete), "card": card_json, "pdf_url": filing.pdf_url,
             "model": result.model_label, "created_at": now, "market_session": market_session(filing.filed_at),
+            "actionability_score": rated.total, "is_actionable_signal": int(rated.actionable),
         }
         catalysts = [
             {
@@ -641,7 +648,8 @@ class Pipeline:
                 })
         with self._lock:
             self.stats.analyzed += 1
-            self.stats.cards_high += card.impact_level == "HIGH"
+            self.stats.cards_high += rated.impact == "HIGH"
+            self.stats.signals += rated.actionable
             self.stats.needs_review += needs_review
         return Outcome(
             update={"news_id": filing.news_id, "status": "ANALYZED", "event_type": event_type,
@@ -649,7 +657,8 @@ class Pipeline:
             card=row,
             catalysts=catalysts,
             company={"scrip_code": filing.scrip_code, "company_name": filing.company_name,
-                     "symbol": row["symbol"], "sector": sector, "updated_at": now},
+                     "symbol": row["symbol"], "sector": sector, "updated_at": now,
+                     **({"credibility_score": rated.credibility} if rated.credibility is not None else {})},
         )
 
     def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, view, sources):

@@ -110,7 +110,9 @@ def test_live_run_end_to_end(settings):
 
     (card,) = rows(sink, "select * from cards")
     body = json.loads(card["card_json"])
-    assert card["impact_level"] == "HIGH" and card["event_category"] == "RESULTS" and card["needs_review"] == 0
+    # Impact comes from the deterministic score (blueprint §11); the model's call is kept beside it.
+    assert card["event_category"] == "RESULTS" and card["needs_review"] == 0
+    assert card["impact_level"] == json.loads(card["card_json"])["score"]["impact"] and json.loads(card["card_json"])["model_impact"] == "HIGH"
     assert body["category_tag"] == "RESULTS" and body["model"] == "nvidia/deepseek-ai/deepseek-r1"
     assert body["why_it_matters"][0]["memory_refs"] == []  # hallucinated memory id removed
     assert body["grounding"]["score"] >= 0.7

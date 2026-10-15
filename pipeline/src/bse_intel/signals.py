@@ -55,7 +55,7 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     """Signals from memory as it stood at the filing: ``before`` excludes the filing, ``after`` includes
     it, and neither may hold later facts (pass them through ``dossier_as_of``). Market prices are
     today's, so price comparisons are made only for recent filings."""
-    company = _priced_for(company, filing)
+    company = priced_for(company, filing)
     signals: list[Signal] = []
     signals += _promises(before, after, output, filing)
     signals += _dilution(after, output, company)
@@ -70,7 +70,7 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
 PRICE_STALE_DAYS = 10
 
 
-def _priced_for(company: dict | None, filing: Filing) -> dict:
+def priced_for(company: dict | None, filing: Filing) -> dict:
     """The company row without today's price and market cap when the filing is older than that price:
     a May card must not compare an issue price with October's close."""
     company = dict(company or {})
@@ -80,7 +80,7 @@ def _priced_for(company: dict | None, filing: Filing) -> dict:
     except ValueError:
         stale = True
     if stale:
-        for key in ("last_price", "market_cap_cr"):
+        for key in ("last_price", "market_cap_cr", "ret_1w", "ret_1m", "ret_1y", "median_turnover_cr"):
             company.pop(key, None)
     return company
 

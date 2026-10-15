@@ -36,3 +36,5 @@ jobs:
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[market]"
       - run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel market-data'
+      - name: Price post-mortem (Loop 1)
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel post-mortem'

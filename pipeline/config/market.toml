@@ -14,3 +14,10 @@ max_companies = 3000     # companies enriched per run (those with cards, most re
 shares_refresh_days = 7  # refresh shares outstanding weekly
 max_share_lookups = 150  # per-ticker share-count lookups per run (no cap with --all)
 turnover_days = 30       # median daily traded value over this many sessions (liquidity floor)
+
+# Loop 1 price post-mortem (blueprint §12.1). Excess return is measured against the first benchmark
+# that returns data (Nifty Smallcap 250, then Nifty Smallcap 100, then Nifty 50); the one used is
+# recorded on each card. Yahoo index symbols change now and then: edit here, no code change.
+[learning]
+benchmarks = ["NIFTYSMLCAP250.NS", "^CNXSC", "^NSEI"]
+batch = 100

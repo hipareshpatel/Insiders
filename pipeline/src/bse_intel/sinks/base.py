@@ -22,6 +22,7 @@ STATEMENTS = (
     "usage_add",
     "kv_set",
     "filings_import",
+    "cards_reaction",
 )
 
 QUERIES = (
@@ -47,6 +48,8 @@ QUERIES = (
     "snapshot_signals",
     "snapshot_count",
     "feedback_examples",
+    "cards_awaiting_reaction",
+    "reaction_summary",
 )
 
 # Statements that add to what is stored: repeating one after an ambiguous failure (a timeout after

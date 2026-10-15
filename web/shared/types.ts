@@ -179,6 +179,8 @@ export interface CardRow {
   market_session?: "LIVE_MARKET" | "PRE_MARKET" | "AFTER_MARKET" | "NON_TRADING" | null;
   actionability_score?: number;
   is_actionable_signal?: number;
+  /** Loop 1: JSON PriceReaction, filled by the nightly post-mortem. */
+  post_event_return_json?: string | null;
   median_turnover_cr?: number | null;
   credibility_score?: number | null;
   watchlist?: number;
@@ -386,4 +388,18 @@ export interface SystemResponse {
   d1?: { writes_today: number; size_bytes: number | null };
   usage: ProviderUsage[];
   runs: PipelineRun[];
+}
+
+/** Loop 1 price reaction after a filing (blueprint §12.1). */
+export interface ReactionPoint { date: string; return_pct: number; excess_pct?: number; rvol?: number }
+export interface PriceReaction {
+  day0: string;
+  base_date: string;
+  benchmark: string | null;
+  t1?: ReactionPoint;
+  t2?: ReactionPoint;
+  t3?: ReactionPoint;
+  t5?: ReactionPoint;
+  complete: number;
+  missed_alpha?: number;
 }

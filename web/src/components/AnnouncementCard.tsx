@@ -5,7 +5,7 @@ import {
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { useLocation } from "wouter";
-import type { CallRead, CardBody, CardRow, Impact, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
+import type { CallRead, CardBody, CardRow, Impact, PriceReaction, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
 import { useRatings } from "../lib/owner";
 import { copyNodeAsPng } from "../lib/png";
@@ -544,6 +544,8 @@ function DeepDive({ row, card, shown, moreFacts, keyNumbers }: {
         </Section>
       )}
 
+      <MarketReaction raw={row.post_event_return_json} />
+
       {card.review && (
         <Section label="Second check">
           <p className="text-[13px] leading-relaxed text-ink-2">
@@ -567,5 +569,41 @@ function DeepDive({ row, card, shown, moreFacts, keyNumbers }: {
         {" "}AI summary of a public BSE filing; not investment advice.
       </p>
     </div>
+  );
+}
+
+function signedPct(v: number | undefined) {
+  return v === undefined ? "–" : `${v > 0 ? "+" : ""}${v.toFixed(1)}%`;
+}
+
+/** Loop 1: what the stock did after the filing, against the index (filled nightly). */
+function MarketReaction({ raw }: { raw?: string | null }) {
+  let rx: PriceReaction | null = null;
+  try { rx = raw ? JSON.parse(raw) : null; } catch { rx = null; }
+  if (!rx) return null;
+  const points = (["t1", "t3", "t5"] as const).filter((k) => rx![k]);
+  if (!points.length) return null;
+  return (
+    <Section label="How the market reacted">
+      <dl className="num grid grid-cols-3 gap-x-4 text-[13px]">
+        {points.map((k) => {
+          const p = rx![k]!;
+          const value = p.excess_pct ?? p.return_pct;
+          return (
+            <div key={k} className="border-b border-line py-1">
+              <dt className="font-sans text-ink-3">T+{k.slice(1)}</dt>
+              <dd className={cn("font-semibold", value > 0 ? "text-pos" : value < 0 ? "text-neg" : "text-ink")}>
+                {signedPct(value)}{p.rvol !== undefined ? <span className="ml-1 font-normal text-ink-3">· {p.rvol.toFixed(1)}x vol</span> : null}
+              </dd>
+            </div>
+          );
+        })}
+      </dl>
+      <p className="mt-2 text-[12.5px] text-ink-3">
+        {rx.benchmark ? `Return less the index (${rx.benchmark})` : "Raw return (no index data)"} from the close on {rx.base_date};
+        day 0 is {rx.day0}.{rx.complete ? "" : " Still being measured."}
+        {rx.missed_alpha ? " Flagged as missed alpha: rated below high impact, but the stock moved sharply on heavy volume." : ""}
+      </p>
+    </Section>
   );
 }

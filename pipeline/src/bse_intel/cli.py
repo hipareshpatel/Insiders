@@ -122,6 +122,13 @@ def cmd_sync_companies(args, settings, sink) -> int:
     return 0
 
 
+def cmd_post_mortem(args, settings, sink) -> int:
+    from .learning import post_mortem
+
+    print(json.dumps(post_mortem(settings, sink, since=args.since)))
+    return 0
+
+
 def cmd_backup(args, settings, sink) -> int:
     """Write every dossier as its own JSON file (text diffs well in git)."""
     out = Path(args.out)
@@ -208,6 +215,9 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("market-data", help="refresh prices, returns and market caps")
     p.add_argument("--all", action="store_true", help="every company, not only those with cards (laptop, before backfill)")
     p.set_defaults(func=cmd_market_data)
+    p = sub.add_parser("post-mortem", help="Loop 1: T+1/T+3/T+5 excess returns after each card")
+    p.add_argument("--since", help="revisit cards filed from this date (default: the last 14 days)")
+    p.set_defaults(func=cmd_post_mortem)
     sub.add_parser("sync-companies", help="load BSE's active equity scrip list").set_defaults(func=cmd_sync_companies)
 
     p = sub.add_parser("backup", help="export dossiers as JSON files")

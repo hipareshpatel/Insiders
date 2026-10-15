@@ -1,7 +1,7 @@
 # 360° audit: findings (in progress)
 
-Status: 3 of 6 area reports received (frontend; contracts and docs; memory/checks/signals). Still running:
-ingestion/orchestration, AI layer and prompts, SQL/D1/Worker.
+Status: 5 of 6 area reports received (frontend; contracts and docs; memory/checks/signals; AI layer;
+SQL/D1/Worker). Still running: ingestion/orchestration.
 Nothing below is fixed yet unless marked **fixed**. Each item was reported by an auditor and
 still needs verification before fixing.
 
@@ -105,6 +105,69 @@ Medium:
 Low: quant tolerance absolute 0.05; formula names not normalised; UNCHECKED never reviewed; buyback
 shown as dilution; dilution should be new/(old+new); equal-to-high order wording; negative net worth
 ratio; null/% metric units; guidance given_on not moved back on backfill.
+
+## AI layer, prompts and models (report 4)
+
+High:
+- **B1. The second opinion replaces the whole reply, not just the card.** A verifier reply with only
+  `{card}` wipes the filing's dossier delta (financials, deals, guidance). Fix: adopt only `card`.
+- **B2. The prompt asks for numbers the grounding check rejects** (proportions such as "18% of FY26
+  sales", computed EBITDA/margins): most results and order cards go to review plus a second call.
+  Fix: accept ratios of grounded figures; computed figures belong in quantified_impact.
+- **B3. Timeouts, 5xx and connection errors count as hard failures**: three outages drop a filing
+  for good. Fix: raise them as transient; count attempts only for content failures.
+
+Medium:
+- B4. Null/number shapes (`key_numbers: null`, numeric `value`, `track_next: null`, `takeaway: null`,
+  `dossier_delta: null`, `balance_sheet: []`) fail the whole reply.
+- B5. R1 output with only a closing `</think>` is parsed from inside the reasoning.
+- B6. Non-JSON 200 bodies raise AttributeError (no failover); `_second_opinion` catches only
+  AllProvidersFailed, so any other error fails a filing whose card was fine.
+- B7. Pass 2 overrides Pass 1's event type with OTHER or the example's "RESULTS". Fix: show the
+  current type and the allowed list; keep Pass 1's when Pass 2 says OTHER.
+- B8. Copied placeholders ("HIGH | MODERATE | LOW", "string or null") become confident values;
+  call_read kept on non-call events; new deal stages missing from the schema and aliases.
+- B9. Claim checker vs prompt: memory-based "first/record" always flagged; `is_repeat` scans memory;
+  "track record" flagged.
+- B10. The gateway ignores the run deadline (pacing, 180 s timeouts, second opinion, retry sleeps): a
+  filing started near the deadline can outlive the job timeout and lose the uncommitted batch.
+- B11. R1 at temperature 0.1, non-streaming, 8k tokens against a 180 s timeout; model id to verify.
+
+Low: usage baseline updated before the D1 write succeeds; 429/connection errors keep their usage
+estimate; JSON-mode fallback triggered by any 400 mentioning "json"; per-entry timeout ignored by the
+client cache; vision route thinking/truncation; standalone vs consolidated metrics mix; lakh/million
+not scaled; one route's ceiling stops all routes; "Aerospace & Defense" and "Industrial Gases" lens
+patterns.
+
+## SQL, D1 and Worker (report 5)
+
+Critical:
+- **D1. `filings_pending` reads every PENDING/FAILED row on every call** (planner picks
+  `idx_filings_queue (status=?)` without stats; confirmed with EXPLAIN QUERY PLAN). The live loop and
+  the backfill-complete check together read ~8–15M rows/day during backfill; once D1's read limit is
+  hit, the site and the pipeline both fail until 00:00 UTC.
+- **D2. `/api/system`** (same as item 1).
+- **D3. `/api/feed` walks the whole cards index** whenever a window has fewer than limit+1 matches
+  (Today early on, rare filters, the last page of every scroll, `?from=2999-01-01`). ~146k rows per
+  request at one year.
+- **D4. `/api/search`** sorts every FTS match (a 2-letter prefix like "li" matches almost every card).
+- **D5. No edge caching or rate limiting exists**: Worker responses are not cached from
+  Cache-Control headers.
+
+High:
+- **D6. D1's 500 MB per-database limit** is reached in roughly a year with `card_json` inline.
+- **D7. Write budget**: `companies_au` fires on every companies upsert (5 rows written per price
+  update); market-data and CLI writes are not counted; backfill analysis is not gated on the budget.
+
+Medium: backfill order rebuilt every run (also when the list is empty); `/api/companies` sorts scan
+all companies, no tie-break; `peer_cards` scans a category's whole window for rare sectors;
+`catalysts_upsert` rewrites today's catalysts every run; the platform sink retries non-idempotent
+statements (`usage_add`, `filings_update` attempt counts) and SQL errors.
+
+Low: `usage_for_month` scans all usage rows; noise_count for live days (item 16); assets binding
+missing (500 for unknown files); empty R2 list prefix lists the bucket; double URL-decoding; `__proto__`
+sort key; `/noise` OFFSET paging not stable; malformed internal JSON gives 500; LocalSink re-runs
+every migration; dossier re-serialised; error text published by `/api/system`; SPEC write-cost note.
 
 ## Checked and found consistent
 

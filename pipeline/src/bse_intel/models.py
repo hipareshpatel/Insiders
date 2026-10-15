@@ -579,6 +579,7 @@ class CapitalAction(_Lenient):
     instrument: str
     new_shares: Num = None
     existing_shares: Num = None
+    ratio: OptStr = None          # entitlement as stated: "19:25" (19 new for every 25 held)
     issue_price: Num = None
     amount_cr: Num = None
 

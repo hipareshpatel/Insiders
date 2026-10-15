@@ -20,7 +20,7 @@ import re
 from typing import Any
 
 from .models import Filing, Pass2Output
-from .periods import due_date
+from .periods import canonical_period, due_date
 
 SCHEMA_VERSION = 3
 MAX_TIMELINE = 600
@@ -39,7 +39,7 @@ def _norm(text: str) -> str:
 
 
 def _period(text: str) -> str:
-    return re.sub(r"\s+", "", text.upper())
+    return canonical_period(text)
 
 
 def new_dossier(filing: Filing, company: dict | None = None) -> dict:

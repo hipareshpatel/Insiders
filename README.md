@@ -40,7 +40,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
-python -m pytest -q              # 101 tests
+python -m pytest -q              # 154 tests
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -63,17 +63,33 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 
 | Command | Does |
 |---|---|
-| `python -m bse_intel run [--mode live\|backfill\|all] [--time-budget 2700]` | One scheduled run |
+| `python -m bse_intel run [--mode live\|backfill\|all] [--time-budget 2400]` | One run: live window, then backfill |
+| `python -m bse_intel backfill-companies --scrips 506525,532776,505192,500672,530019` | Smoke test: discover and analyse given companies since `BACKFILL_START` |
+| `python -m bse_intel sync-to-cloud [--source http://localhost:5173]` | Copy the laptop's local data to Cloudflare (resumable, stops at the D1 daily write budget) |
+| `python -m bse_intel sync-companies` | BSE's active equity list (industry → sector lens), then the universe file |
+| `python -m bse_intel market-data [--all]` | Prices, returns, liquidity, market caps (`pip install -e ".[market]"`); `--all` for every company |
 | `python -m bse_intel discover --date 2026-10-13` | Fetch and triage one day |
 | `python -m bse_intel process --from D --to D [--bulk]` | Work the queue for a range |
 | `python -m bse_intel analyze-pdf FILE ...` | Analyse one local PDF and print the card |
-| `python -m bse_intel market-data` | Refresh prices, returns and market caps (`pip install -e ".[market]"`) |
-| `python -m bse_intel sync-companies` | Load BSE's active equity scrip list |
 | `python -m bse_intel backup --out DIR` | Export dossiers as JSON files |
 | `python -m bse_intel health` | Configured AI targets and today's quota usage |
 
-`BSE_INTEL_SINK=local` (the default) writes to `.local-data/` (SQLite + files).
-`BSE_INTEL_SINK=platform` writes to the deployed Worker.
+## Filling history on the laptop (before go-live)
+
+The blueprint's playbook ([docs/BLUEPRINT.md §15](docs/BLUEPRINT.md), status in
+[docs/TRACKER.md](docs/TRACKER.md)):
+
+1. `cd web && npm run dev` (local Worker; D1/R2 persist in `data/wrangler`, git-ignored).
+2. In `pipeline/`, point the pipeline at it:
+   `export BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 INGEST_TOKEN=dev-local-token`
+   plus one key per AI provider (`GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`).
+3. `python -m bse_intel sync-companies && python -m bse_intel market-data --all` (industries, market caps, universe ≥ ₹100 Cr).
+4. Smoke test: `python -m bse_intel backfill-companies --scrips 506525,532776,505192,500672,530019`,
+   then check those companies on http://localhost:5173.
+5. Full history: repeat `python -m bse_intel run --mode backfill --max-backfill-days 30` until System shows the
+   backfill complete (it resumes wherever it stopped; extracted text is cached in `data/text_cache`).
+6. Go live: deploy, then `PLATFORM_API_URL=<deployed> INGEST_TOKEN=<secret> python -m bse_intel sync-to-cloud`
+   once a day until it reports `complete`.
 
 ## Deploy
 
@@ -83,6 +99,7 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
    npx wrangler d1 create bse-index    # put the id in wrangler.jsonc, or in the D1_DATABASE_ID repo variable
    npx wrangler r2 bucket create bse-intelligence
    npx wrangler secret put INGEST_TOKEN    # a long random string
+   npx wrangler secret put OWNER_TOKEN     # another one: owner mode (watchlist, Star/Noise) on the site
    npm run db:migrate:remote && npm run deploy
    ```
    Or let `.github/workflows/deploy-web.yml` do it on every push to `main`.

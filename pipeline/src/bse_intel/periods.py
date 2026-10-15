@@ -14,42 +14,100 @@ def _fy_end_year(token: str) -> int:
     return year + 2000 if year < 100 else year
 
 
-def due_date(text: str | None) -> date | None:
-    """Last day of the period a guidance deadline refers to, if parseable.
+_MON = r"(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\.?"
+_QUARTER_END = {6: 1, 9: 2, 12: 3, 3: 4}
 
-    "FY27" -> 2027-03-31, "Q3FY27" -> 2026-12-31, "H1 FY27" -> 2026-09-30,
-    "Dec-2026" / "December 2026" -> 2026-12-31, "2026-11-15" -> itself,
-    "CY2026" / "2026" -> 2026-12-31.
+
+def _fy_from_span(text: str) -> int | None:
+    """End year of a fiscal year written "FY27", "FY 2027", "FY2026-27", "FY 26-27", "2026-27"."""
+    if m := re.search(r"(20\d{2})\s*[-/–]\s*(\d{2,4})\b", text):
+        return _fy_end_year(m[2]) if len(m[2]) == 4 else int(m[1][:2] + m[2])
+    if m := re.search(r"(\d{2})\s*[-/–]\s*(\d{2})\b", text):
+        return _fy_end_year(m[2])
+    if m := re.search(r"(20\d{2}|\d{2})\b", text):
+        return _fy_end_year(m[1])
+    return None
+
+
+def explicit_date(text: str | None) -> date | None:
+    """A calendar date written out: 2026-11-15, 15-11-2026, 15.11.2026, 15 November 2026, November 15, 2026."""
+    if not text:
+        return None
+    s = text.strip().upper()
+    try:
+        if m := re.search(r"\b(20\d{2})-(\d{2})-(\d{2})\b", s):
+            return date(int(m[1]), int(m[2]), int(m[3]))
+        if m := re.search(r"\b(\d{1,2})[./-](\d{1,2})[./-](20\d{2})\b", s):  # Indian day-month-year
+            return date(int(m[3]), int(m[2]), int(m[1]))
+        if m := re.search(r"\b(\d{1,2})(?:ST|ND|RD|TH)?\s+" + _MON + r",?\s+(20\d{2})\b", s):
+            return date(int(m[3]), _MONTHS[m[2].lower()], int(m[1]))
+        if m := re.search(_MON + r"\s+(\d{1,2})(?:ST|ND|RD|TH)?,?\s+(20\d{2})\b", s):
+            return date(int(m[3]), _MONTHS[m[1].lower()], int(m[2]))
+    except ValueError:
+        return None
+    return None
+
+
+def canonical_period(text: str) -> str:
+    """One spelling per period, so the same quarter is one dossier row whatever the filing wrote:
+    "Q2 FY 2026-27", "Q2-FY27", "Q2FY2027", "quarter ended 30.09.2026" -> "Q2FY27";
+    "FY2026-27" -> "FY27"; "H1 FY27" -> "H1FY27"; "September 2026", "Sep-26" -> "SEP-2026".
+    Anything else is returned upper-cased without spaces."""
+    s = text.strip().upper().replace("’", "'")
+    compact = re.sub(r"\s+", "", s)
+    if m := re.search(r"\b(Q[1-4]|H[12]|9M)\s*[-–]?\s*FY\s*'?([\d\s/–-]{2,9})", s):
+        end = _fy_from_span(m[2])
+        if end:
+            return f"{m[1]}FY{end % 100:02d}"
+    if m := re.search(r"\bFY\s*'?([\d\s/–-]{2,9})", s):
+        end = _fy_from_span(m[1])
+        if end:
+            return f"FY{end % 100:02d}"
+    if re.search(r"QUARTER|THREE MONTHS|QTR", s):
+        d = explicit_date(s)
+        if d and d.month in _QUARTER_END:
+            q = _QUARTER_END[d.month]
+            return f"Q{q}FY{(d.year + (0 if q == 4 else 1)) % 100:02d}"
+    if m := re.fullmatch(_MON + r"[\s,'-]*(\d{2}|20\d{2})", s):
+        year = _fy_end_year(m[2])
+        return f"{m[1]}-{year}"
+    return compact
+
+
+def due_date(text: str | None) -> date | None:
+    """Last day of the period a deadline or figure refers to, if parseable.
+
+    "FY27" / "FY2026-27" -> 2027-03-31, "Q3FY27" / "Q3 FY 2026-27" -> 2026-12-31, "H1 FY27" ->
+    2026-09-30, "Dec-2026" / "December 2026" -> 2026-12-31, "2026-11-15" / "15-11-2026" /
+    "November 15, 2026" -> that day, "CY2026" / "2026" -> 2026-12-31.
     """
     if not text:
         return None
-    s = text.strip().upper().replace("’", "'")
-    if m := re.search(r"\b(20\d{2})-(\d{2})-(\d{2})\b", s):
-        try:
-            return date(int(m[1]), int(m[2]), int(m[3]))
-        except ValueError:
-            return None
-    if m := re.search(r"\bQ([1-4])\s*FY\s*'?(\d{2,4})\b", s):
+    exact = explicit_date(text)
+    if exact:
+        return exact
+    s = canonical_period(text)
+    if m := re.fullmatch(r"Q([1-4])FY(\d{2})", s):
         end_year = _fy_end_year(m[2])
-        q = int(m[1])
-        month, year = ((6, end_year - 1), (9, end_year - 1), (12, end_year - 1), (3, end_year))[q - 1]
+        month, year = ((6, end_year - 1), (9, end_year - 1), (12, end_year - 1), (3, end_year))[int(m[1]) - 1]
         return date(year, month, calendar.monthrange(year, month)[1])
-    if m := re.search(r"\b9M\s*FY\s*'?(\d{2,4})\b", s):
+    if m := re.fullmatch(r"9MFY(\d{2})", s):
         return date(_fy_end_year(m[1]) - 1, 12, 31)
-    if m := re.search(r"\bH([12])\s*FY\s*'?(\d{2,4})\b", s):
+    if m := re.fullmatch(r"H([12])FY(\d{2})", s):
         end_year = _fy_end_year(m[2])
         return date(end_year - 1, 9, 30) if m[1] == "1" else date(end_year, 3, 31)
-    if m := re.search(r"\bFY\s*'?(\d{2})(?:\s*[-/]\s*(\d{2}))?\b", s):
-        end = _fy_end_year(m[2] or m[1]) if m[2] else _fy_end_year(m[1])
-        return date(end, 3, 31)
-    if m := re.search(r"\bFY\s*(20\d{2})\b", s):
-        return date(int(m[1]), 3, 31)
-    if m := re.search(r"\b([A-Z]{3})[A-Z]*[\s,'-]*(20\d{2})\b", s):
+    if m := re.fullmatch(r"FY(\d{2})", s):
+        return date(_fy_end_year(m[1]), 3, 31)
+    if m := re.fullmatch(r"([A-Z]{3})-(20\d{2})", s):
         month = _MONTHS.get(m[1].lower())
         if month:
             year = int(m[2])
             return date(year, month, calendar.monthrange(year, month)[1])
-    if m := re.search(r"\b(?:CY\s*)?(20\d{2})\b", s):
+    upper = text.upper()
+    if m := re.search(r"\b" + _MON + r"[\s,'-]*(20\d{2})\b", upper):
+        month, year = _MONTHS[m[1].lower()], int(m[2])
+        return date(year, month, calendar.monthrange(year, month)[1])
+    if m := re.search(r"\b(?:CY\s*)?(20\d{2})\b", upper):
         return date(int(m[1]), 12, 31)
     return None
 

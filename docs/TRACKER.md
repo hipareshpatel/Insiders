@@ -23,6 +23,10 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | D10 | Sector-specific footer metrics (bank GNPA/NIM, cement EBITDA/t, telecom ARPU, hotel RevPAR...). | earlier |
 | D11 | Minimise multi-agent runs (token budget); keep docs current so context compaction loses nothing. | 2026-10-15 |
 
+## Optional, not adopted (cost)
+- TypeSafe AI "Jev" (typed decisions with calibrated confidence) would suit the Pass 1 gatekeeper,
+  but it has no free tier; it can be added as a provider in `providers.toml` if free credits appear.
+
 ## Points to discuss with the owner
 
 1. **Cloud sync is bounded by D1's 100,000 rows written per day**, including the import. Every card
@@ -52,31 +56,31 @@ Every item is pre-launch: the owner decided everything is built and tested local
 |---|---|---|
 | 5 providers, 95% ceiling, pacing, failover, Workers AI spare | done | |
 | Dual-key pool | dropped | D1 |
-| Task-aware routing: long documents (>12k tokens) to long-context models | todo | |
-| Vision OCR: glm-4.6v-flash, then pixtral | partial | thinking off for glm-4.6v, check pixtral id (audit B16) |
+| Task-aware routing: long documents (>12k tokens) to long-context models | done | `pass2_long` |
+| Vision OCR: glm-4.6v-flash, then Mistral | done | thinking off; mistral-small-latest |
 | Second opinion from another provider | done | adopts only the card (audit B1) |
 
 ### §5 Ingestion
 | Item | Status | Notes |
 |---|---|---|
-| Polite BSE session, paging pace, PDF pace with jitter | partial | page delay 1 s; add PDF download jitter 1.2–2.0 s |
-| Explicit 403 / HTML-challenge detection ("BSE_IP_BLOCKED") | partial | API 403 → SourceBlockedError; attachments → per-file, 3 in a row stop the run |
+| Polite BSE session, paging pace, PDF pace with jitter | done | 0.5 s pages, 1.2–2.0 s PDFs |
+| Explicit 403 / HTML-challenge detection | done | API 403 → SourceBlockedError; HTML bodies retried; attachments per file |
 | Stop paging at known filings | done | |
 | XBRL fast path (results, shareholding) | todo | |
-| Rule blacklist (certificates, trading window, Reg 74(5), newspaper, investor grievance, IEPF, small ESOP allotments, meet schedules) | partial | compound-headline overrides needed (audit A16); IEPF/ESOP/meet-schedule rules to add |
-| Reg 30 Schedule III Para A/B legal clue | todo | |
-| Board-meeting duration forensics | todo | |
+| Rule blacklist (certificates, trading window, Reg 74(5), newspaper, investor grievance, IEPF, meet schedules) | done | compound-headline vetoes; small ESOP allotments go to Pass 1 (size unknown from metadata) |
+| Reg 30 Schedule III Para A/B legal clue | done | `forensics.py` (Para B threshold note) |
+| Board-meeting duration forensics | done | 6+ hours flagged |
 | Pass 1 gatekeeper on subject + page 1 | done | subject now stored on the ledger |
-| Scanned-page OCR (<80 chars) | partial | threshold is 50 chars |
+| Scanned-page OCR (<80 chars) | done | |
 | Smart section chunking for 40–150 page documents | partial | keyword page ranking; concall/presentation/annual-report section rules to add |
-| Boilerplate stripping | partial | over-strips factual lines (audit A17) |
+| Boilerplate stripping | done | whole-line patterns only |
 | Local text cache `./data/text_cache/{news_id}.json.gz` | done | |
 
 ### §6 Memory (dossier)
 | Item | Status | Notes |
 |---|---|---|
 | Per-company R2 dossier, provenance, time travel | done | |
-| 10 compartments as specified | partial | have: identity, financial metrics, balance sheet, segments, guidance/watchlist, deals (orders, projects), events, timeline, concerns, operating notes. Missing: former names/entities tree, monthly operational ledger, ownership/governance, calibration/peer context, pending predictions |
+| 10 compartments as specified | partial | done: identity (former names, entities), financial history, sector KPIs, segments, capex/projects and orders (deals with stages, brownfield, captive), guidance/watchlist, monthly ledger (M-period metrics + streak/preview signals), corporate actions, ownership/governance, predictions. Left: calibration rules and peer margin benchmarks (Loop 1/2 outputs) |
 | `known_since` = earliest, never moved forward (bi-temporal) | done | per-figure sources; value = latest restatement |
 | Signals, footer, dilution read memory as of the filing date | done | `dossier_as_of`; today's price not used for old filings |
 | Partition by period kind, newest period first; OPEN items never evicted | done | |
@@ -86,24 +90,24 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | Item | Status | Notes |
 |---|---|---|
 | Boilerplate-free, 4-bucket distillation for long documents | partial | |
-| Core catalyst line (📌) | todo | |
+| Core catalyst line (📌) | done | |
 | Memory link, quantified narrative, peer/feedstock context, missing disclosure (memory first) | partial | as why_it_matters insights with basis; missing disclosures checked against memory |
 | Math checks with FILING/MEMORY/ASSUMPTION provenance | done | formula hardening still due (audit M8) |
-| Milestones, KPI to verify, pending approvals, invalidation risk | done | KPI → pending_predictions todo |
-| Headline ₹ figure ungrounded forces review | todo | audit M1 |
+| Milestones, KPI to verify, pending approvals, invalidation risk | done | numeric KPIs become predictions checked against results |
+| Headline ₹ figure ungrounded forces review | done | |
 
 ### §8 Card (8 zones)
 | Item | Status | Notes |
 |---|---|---|
 | Header: symbol, scrip, mcap + tier, timestamp, session tag | partial | session tag in Full analysis; tiers to match blueprint (Micro <500, Small 500–5,000, Mid 5,000–20,000, Large >20,000 ₹ Cr) |
-| Former-name badge, watchlist ★, credibility score, liquidity, ASM/T2T | todo | |
-| Event/sector pills, impact badge, actionability score | partial | score todo |
+| Former-name badge, watchlist ★, credibility score, liquidity, ASM/T2T | partial | watchlist, credibility, liquidity done; former-name badge on card and ASM/T2T (needs BSE group data) todo |
+| Event/sector pills, impact badge, actionability score | done | |
 | What happened + adaptive table (results P&L, monthly volume strip) | partial | monthly volume strip todo |
 | Why it matters box with Show Working | done | |
 | What to track next | done | |
 | Sector-aware footer | done | |
-| Verification bar: "Numbers verified (N/N)" / "X of Y" | done | add N/N count to the verified label |
-| Star / Noise feedback buttons | todo | |
+| Verification bar: "Numbers verified" / "X of Y" | done | |
+| Star / Noise feedback buttons | done | owner mode |
 | 6 case studies as test fixtures | todo | smoke test |
 
 ### §9 50 forensic modules
@@ -131,21 +135,21 @@ and as prompt rules otherwise. The per-module list is in BLUEPRINT §9.
 | Item | Status |
 |---|---|
 | Loop 1 price post-mortem (T+1/3/5 excess return, 15:30 IST rule) | todo |
-| Loop 2 predictions vs reality, credibility score | todo |
-| Loop 3 Star/Noise golden set injected as few-shot | todo |
+| Loop 2 predictions vs reality, credibility score | done (predictions + credibility); calibration rule text todo |
+| Loop 3 Star/Noise golden set injected as few-shot | done |
 
 ### §13 Website
 | Item | Status | Notes |
 |---|---|---|
 | Live feed with filters | done | 50 a page with page numbers (D4); session filter |
 | Top Signals + pre-market brief, "Since 3:30 PM close" | done | default view at `/`; feed moved to `/feed` |
-| Company directory, Inflection Radar | partial | directory done |
+| Company directory, Inflection Radar | partial | directory done; Inflection Radar todo |
 | Catalyst calendar, overdue promises panel | partial | calendar done |
 | System monitor (two progress bars, per-provider quota, needs-review queue) | partial | review queue todo |
 | 360° memory drawer (slide-over), split-screen PDF verifier | partial | company page exists; drawer and verifier todo |
 | Palette and typography per blueprint (warm light, OLED dark, Plus Jakarta Sans) | todo | current theme is EquiSense-like |
 | Search across former names | todo | |
-| DB dictionary (companies extra columns, cards score columns, card_feedback table) | todo | |
+| DB dictionary (companies extra columns, cards score columns, card_feedback table) | done | migration 0004 |
 
 ### §14 Audit invariants
 Tracked in AUDIT.md. Fixed so far: D1 read/write cost, orchestration resilience, gateway outages,

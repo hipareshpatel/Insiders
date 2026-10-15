@@ -21,7 +21,7 @@ system as built, with items still to build marked **Planned**.
 | 9 | Mandatory "⚠️ MISSING DISCLOSURE" bullet | A mandatory slot invites invented omissions. | `missing_disclosures` is optional and evidence-based. |
 | 10 | Scanned page = fewer than 50 characters | Short digital pages (a one-line cover letter) would be OCR'd. | Fewer than 50 characters **and** an embedded image, with a per-document OCR page budget. |
 | 11 | Daily zipped dossiers committed to the repository | Binary zips bloat git history by about 10 MB/day and hit the 100 MB file limit. | Weekly export of **one JSON file per company** to a `backups` branch (small text diffs), plus the R2 card archive and D1 Time Travel. |
-| 12 | Alerts for every high-impact card (Telegram, WhatsApp, X) | Out of scope by decision: the platform does not push to messaging or social channels. Push alerts would also need pacing, caps and a backfill guard. | The **website is the only distribution channel**. Every card has a permanent URL (`/?card=…`), a "Copy card as PNG" action, and a link to the official BSE PDF. |
+| 12 | Alerts for every high-impact card (Telegram, WhatsApp, X) | Out of scope by decision: the platform does not push to messaging or social channels. Push alerts would also need pacing, caps and a backfill guard. | The **website is the only distribution channel**. Every card has a permanent URL (`/feed?card=…`), a "Copy card as PNG" action, and a link to the official BSE PDF. |
 | 13 | No hallucination checks | Mis-copied figures (a lakh/crore slip) are the most damaging error in this domain. | Each card's numbers are **grounded** against the filing and memory (§6). Cards below 70% are stored as `needs_review` and flagged on the card. |
 | 14 | "Why it matters" left to the model | Plausible-sounding prose is not a signal. | **Signals computed in code** from extracted facts: promise vs delivery, follow-ups, dilution, working capital, metric shifts (§7). |
 | 15 | "Quantified impact: compute exact math" | A confident ₹ estimate is the most persuasive and the least verifiable part of a card. | Each estimate carries its **working**: a formula over named inputs, each input labelled FILING, MEMORY or ASSUMPTION (with a reason). Code re-runs the arithmetic and checks FILING/MEMORY inputs against the sources. A mismatch sends the card to review (§6). |
@@ -68,240 +68,214 @@ Repository layout:
 
 ## 3. Pipeline
 
-A run (`python -m bse_intel run`) spends a time budget in two phases. Every step is
-recorded in the D1 ledger, so a run can stop anywhere and the next one resumes.
+The owner's master blueprint is [BLUEPRINT.md](BLUEPRINT.md); what is built and what is
+left is tracked in [TRACKER.md](TRACKER.md).
 
-1. **Live.** Discover today's filings (and yesterday's, before 09:00 IST), then process
-   the live queue oldest-first.
-2. **Backfill.** Discover more historical days, oldest first from `BACKFILL_START`
-   (default 2026-01-01), within the D1 daily write budget. Then process the
-   historical queue oldest-first on the bulk AI routes: first the companies with a
-   market cap of at least `BACKFILL_PRIORITY_MCAP_CR` (default ₹100 Cr; companies with
-   no market data yet count as eligible), then everyone else. The filter is per company,
-   so each company's history is still read in date order.
+**Where it runs.** On an Indian connection (BSE refuses datacenter IPs). History from
+`BACKFILL_START` (default **2025-01-01**) to today is filled on the owner's laptop against
+the *local* Worker (`npm run dev`, whose D1/R2 persist under `data/wrangler`): no free-tier
+limits apply there except the AI providers'. `backfill-companies` runs the 5-company smoke
+test first; once the local site looks right, `sync-to-cloud` copies everything to Cloudflare
+(§8). Daily live runs then use the self-hosted runner (or the laptop) against the deployed
+Worker.
+
+A run (`python -m bse_intel run`) spends a time budget in two phases. State lives in D1/R2,
+so a run can stop anywhere; each company's results are committed as soon as it finishes.
+
+1. **Live.** Discover today's new filings (and yesterday's, before 09:00 IST). Paging stops at
+   the first BSE page with nothing new. Process the **live window** (the last 7 days since go-live)
+   oldest first; a company with a short unanalysed history (≤ 30 filings) gets it analysed first,
+   a longer backlog sends the company to the front of the backfill and the live card is marked
+   "memory still building".
+2. **Backfill.** Discover more historical days, oldest first, within the D1 daily write budget;
+   each finished day also gets one full closing pass. A weekday with no filings is checked again
+   on the next run before the cursor moves on. Then analyse the history **company by company,
+   largest market cap first**, each in date order (order rebuilt once a day, kept in kv).
+
+The **investable universe** (blueprint §15): companies with a known market cap below
+`UNIVERSE_MIN_MCAP_CR` (default ₹100 Cr) and not starred are skipped; their filings go to the
+day's noise file with the reason. The list is built after `market-data` / `sync-companies` into
+R2 `meta/universe.json`.
 
 Per filing:
 
 | Stage | What happens | Where |
 |---|---|---|
-| Fetch | Browser-style session (warm-up on `/corporates/ann`, Referer/Origin headers), paginated `AnnSubCategoryGetData`, retries with backoff, `SourceBlockedError` on 403. Endpoint and parameters verified against BSE's current JS bundle. | `bse.py` |
-| Rules | `DROP` (noise), `CALENDAR` (board-meeting intimations, with the meeting date extracted into the calendar), `FAST_TRACK` (known material event types) or `PASS1`. Rules are TOML with regexes and exclusions. | `rules.py`, `config/taxonomy.toml` |
-| Pass 1 | Headline, category and the first 2,500 characters of page 1 return `{is_material, event_type, confidence, reason}`. | `prompts/engine.py`, `config/prompts/pass1.md` |
-| Extract | PyMuPDF text for every page (serialised: PyMuPDF is not thread-safe). Scanned pages are rendered at 150 dpi and sent to the vision route, up to `MAX_OCR_PAGES`. The most relevant pages are picked within a character budget by event-type keywords (3× budget for concalls and presentations). | `extract.py` |
-| Pass 2 | System prompt = base + event module + sector lens + output schema. User message = filing + time-travel memory + peer context + filing text. | `config/prompts/pass2*.md`, `events.toml`, `sectors.toml` |
-| Validate | Lenient on shape (strings for lists, "₹1,234 Cr" for numbers, "HIGH IMPACT"), strict on meaning (enums, ISO dates, a card required when material). Hallucinated memory IDs are dropped. | `models.py` |
-| Ground | Card numbers are checked against the sources, and quantified estimates are re-computed (§6). | `grounding.py`, `quant.py` |
-| Merge | The delta is merged into the dossier with provenance; watch items are created from "track next". | `dossier.py` |
-| Signals | Deterministic computations over the merged dossier (§7). | `signals.py` |
-| Store | Dossier goes to R2. The card, catalysts, company row and ledger status go to D1. The card is also archived to `daily_feed/{date}.json`. | `pipeline.py`, `sinks/` |
+| Fetch | Browser-style session, paged `AnnSubCategoryGetData` (0.5 s between pages, no page cap overrun, de-duplicated), PDF downloads paced 1.2–2.0 s with jitter. An API 403 is `SourceBlockedError`; an attachment 403/5xx/timeout fails that filing only (retried next run), and three refusals in a row stop the run after committing finished work. | `bse.py` |
+| Rules | `DROP` noise, `CALENDAR` board-meeting intimations (date to the calendar), `FAST_TRACK` known events, else `PASS1`. Compound headlines that also carry results, an outcome or a board meeting are never dropped. | `rules.py`, `config/taxonomy.toml` |
+| Pass 1 | Headline, BSE subject and page 1 return `{is_material, event_type, confidence, reason}`. | `config/prompts/pass1.md` |
+| Extract | PyMuPDF text; pages under 80 characters with an image are OCR'd (GLM-4.6V, then Mistral). Boilerplate lines (addresses, salutations, signatures) are removed. Text is cached in `data/text_cache/` so re-analysis never downloads or OCRs again; a mostly scanned document whose OCR failed is retried, not judged from its headline. | `extract.py` |
+| Pass 2 | System = base + event module + sector lens + schema; user = filing + time-travel memory + peers + the owner's starred/noise examples + text. Prompts above ~12k tokens use the long-context route. | `prompts/engine.py`, `config/prompts/pass2*.md` |
+| Validate | Lenient on shape (nulls, numbers as strings, lakh/million scaled to crore, copied schema placeholders treated as missing), strict on meaning. | `models.py` |
+| Check | Numbers, math and claims (§6); a failing card gets one second opinion from another provider, which may correct only the card. | `grounding.py`, `quant.py` |
+| Merge | Delta merged into the dossier with provenance and `known_since` (§5). | `dossier.py` |
+| Signals + score | Deterministic signals (§7) and the 0–100 actionability score with the 4 gates; impact comes from the score. | `signals.py`, `forensics.py`, `scoring.py` |
+| Store | Dossier to R2; card, catalysts, company and ledger status to D1; card archived to `daily_feed/{date}.json`; after the run the homepage snapshot is republished. | `pipeline.py`, `sinks/` |
 
-Failure handling: one bad filing is marked `FAILED` (retried up to `MAX_ATTEMPTS`)
-and never stops the run. AI exhaustion is handled as in §4.
+Rule-dropped noise is not stored in D1: each day's drops are R2 `noise/{date}/NNN.json` chunks
+plus `noise_count:{date}` in kv (the noise audit reads them).
+
+Failure handling: a bad filing is `FAILED` with its attempt total (retried on later runs, up to
+`MAX_ATTEMPTS`, at most once per run); AI outages are transient and never use an attempt; quota
+ceilings leave work `PENDING` for the next day.
 
 ---
 
 ## 4. AI gateway
 
-Five free providers behind one OpenAI-compatible gateway, configured entirely in
-`pipeline/config/providers.toml`:
+Five free providers behind one OpenAI-compatible gateway (`config/providers.toml`), **one key
+per provider** (owner decision; no dual-key pool):
 
 | Provider | Role | Routes |
 |---|---|---|
-| Groq `llama-3.1-8b-instant` | Fast live gatekeeper | `pass1` (primary), `pass1_bulk` |
-| NVIDIA NIM `deepseek-ai/deepseek-r1`, `meta/llama-3.3-70b-instruct` | Deep analyst (R1 primary by weight; JSON mode off, `<think>` stripped) | `pass2`, `pass2_bulk` |
-| Mistral `mistral-small-latest`, `mistral-large-latest`, `pixtral-12b-latest` | Backfill workhorse (provider-level monthly token ceiling), OCR fallback | all |
-| Z.AI `glm-4.7-flash` (200K context), `glm-4.6v-flash` | Long documents, scanned-page OCR | `pass1`, `pass2`, `vision` |
-| Cloudflare Workers AI `@cf/meta/llama-3.x` | Spare, used only after every other target fails. Called through this project's Worker (`/api/internal/ai/v1`), so the runner needs no Cloudflare key. | `pass1*`, `pass2*` |
+| Groq `llama-3.1-8b-instant` | Fast gatekeeper | `pass1`, `pass1_bulk` |
+| NVIDIA NIM `deepseek-r1` (temperature 0.6), `llama-3.3-70b-instruct` | Deep analyst | `pass2`, `pass2_bulk`, `pass2_long` |
+| Mistral `mistral-small-latest`, `mistral-large-latest` | Backfill workhorse, OCR fallback | all |
+| Z.AI `glm-4.7-flash` (200K), `glm-4.6v-flash` | Long documents, OCR | `pass1`, `pass2*`, `vision` |
+| Workers AI `@cf/meta/llama-3.x` | Spare, through this Worker | `pass1*`, `pass2*` |
 
-Operating rules (all tested in `tests/test_gateway.py`):
+Rules (tested in `tests/test_gateway.py`): 95% safety ceiling on every limit, persisted in D1;
+weighted round-robin for Pass 2; 429 → cooldown (daily-quota 429 retires the model for the
+day); 401/403/404 disable the model for the run; **timeouts, connection errors and 5xx are
+transient** (fail over; if nothing can serve, the filing waits without losing an attempt); a 200
+with a non-JSON body fails over; JSON mode is dropped only when the provider says it is
+unsupported; invalid JSON gets one repair; requests never start after the run's deadline and
+each request's timeout is capped to the time left; R1's reasoning is stripped even when only the
+closing `</think>` is present. When nothing can serve, minute limits wait 60 s (up to 3 times,
+never past the deadline) and ceilings stop the route for the run.
 
-- **95% safety ceiling.** Every limit (rpm, tpm, rpd, tpd, monthly requests/tokens) is
-  scaled by `safety_ceiling`. A model leaves the pool at 95% of a daily or monthly
-  quota. Daily and monthly usage is persisted in D1 (`provider_usage`), so the
-  ceiling holds across stateless runs.
-- **Never hammer one provider.** Pass 2 routes use smooth weighted round-robin.
-  Pass 1 is priority order: Groq first, for speed.
-- **Failover by error type.**
-
-  | Error | Action |
-  |---|---|
-  | 429 | Cooldown for `Retry-After`; if the message mentions a daily quota, retire the model for the day |
-  | 401/403 | Disable the model for the run |
-  | 404 | Disable it: the model ID is wrong or deprecated |
-  | 400 mentioning JSON mode | Retry once without JSON mode |
-  | Timeout, connection error, 5xx | Count toward the circuit breaker (3 failures open it for 5 minutes) |
-  | Invalid JSON | Ask the same model once to repair it, then fail over |
-  | Prompt larger than `context_tokens` | Skip the model (long documents flow to GLM's 200K window) |
-
-- **Graceful degradation.** If nothing can serve a request:
-  - when the blockers are minute limits or cooldowns (`transient`), the pipeline waits
-    60 s and retries, up to 3 times;
-  - when they are daily or monthly ceilings (`quota_exhausted`), the filing stays
-    `PENDING` in the D1 queue and the run stops cleanly.
-
-  Nothing is dropped and no attempt counters are burned.
-
-Model IDs and free-tier limits change often. They are config, not code, and the
-values in `providers.toml` must be checked against each console.
-`python -m bse_intel health` prints what is configured and today's usage.
+**Second opinion** (`SECOND_OPINION=1`). A card that fails the checks is sent once to a different
+provider with the problems listed. Only the corrected card is adopted (memory stays from the
+first reply unless the verifier sent a fuller delta); it is published either way, "Verified
+after a second check" or "Unverified".
 
 ---
 
 ## 5. Memory: Living Company Dossiers
 
-`R2: memory/{scrip_code}.json`, schema version 2:
+`R2: memory/{scrip_code}.json`, schema version 3. Every fact carries provenance. Compartments
+(blueprint §6):
 
 | Field | Content |
 |---|---|
-| `business_summary` | Set once, with provenance |
-| `financial_metrics[]` | `{metric, period, value, unit, yoy_pct, qoq_pct, as_of, source_news_id}`, one per (metric, period); a later filing's restatement wins |
-| `segment_mix[]`, `balance_sheet[]`, `capital_actions[]` | Dated snapshots with provenance |
-| `deals[]` | Every order, fundraise, capex plan or acquisition with a stated size: `{id: d_…, kind, amount_cr, includes_gst, counterparty, stage, segment, execution_by, as_of, source_news_id}`, taken from the card's `deal_value` |
-| `guidance[]` | Management commitments: `{id: g_…, statement, target, due, due_date, given_on, status, status_history[]}` |
-| `watchlist[]` | System follow-ups from "track next": `{id: w_…, kind: KPI\|APPROVAL, check_by, status, status_history[]}` |
-| `timeline[]` | One entry per material filing: `{id: t_…, date, event_type, impact_level, summary, news_id}` |
-| `upcoming_events[]` | Future dated events |
+| `financial_metrics[]` | One per (metric, period): `value` (latest restatement), `as_of` = **known_since** (when first stated; a later comparative never moves it), `sources[]` when restated. Kept per period kind by period end: 12 quarters, 6 years, 6 halves, 18 months |
+| `segment_mix[]`, `balance_sheet[]`, `capital_actions[]` | Dated snapshots |
+| `deals[]` | Orders, fundraises, capex, acquisitions with stage history (L1 → LoI → LoA → contract …), brownfield/greenfield, captive/merchant |
+| `guidance[]` | Management promises with status history; re-analysing the source filing keeps later updates |
+| `watchlist[]` | Follow-ups (KPI, approval, analyst concern); open items are never evicted |
+| `predictions[]` | Numeric targets (Loop 2: metric, period, value, comparison) resolved MET/MISSED when that period's figures arrive |
+| `identity` | Former names, subsidiaries, JVs, brands |
+| `ownership[]` | Quarterly promoter / pledge / FII / DII / small holders |
+| `governance` | Auditor opinion history |
+| `operating_notes[]`, `timeline[]`, `upcoming_events[]`, `business_summary` | As before |
 
-The prompt sees `view_as_of(dossier, filed_at)`. That is a compact view (≤6,000
-characters, trimmed progressively) of only the facts known before the filing:
-recent metrics per period kind, the latest balance sheet, open guidance (with
-`overdue` flags), open watch items, the last N timeline entries, earlier deals and
-upcoming events. The model cites memory by ID, and IDs not in the view are discarded.
-
-**Promise vs delivery.** Guidance from AGMs, concalls and presentations gets an ID. A
-later filing that delivers, delays, revises or misses it is reported by the model as a
-`promise_update` against that ID. Code validates the ID and the chronology, then
-updates the status history.
-
-**Watch items.** "Track next" KPIs and pending approvals become watch items with a
-check-by date (`Q3FY27 results` → 2026-12-31). Later filings resolve them as
-MET / MISSED / PARTIAL.
+The prompt sees `view_as_of(dossier, filed_at)`: only facts known before the filing, compact
+(≤ 6,000 chars). Signals, the footer and the results table read `dossier_as_of(…)`, the dossier
+as it stood at the filing, so backfilled cards see no later facts (bi-temporal); today's price
+and market cap are not used for filings older than the price.
 
 ---
 
-## 6. Grounding check
+## 6. Checks
 
-Every number in the headline, the facts, key numbers and notable changes is searched
-for in the filing text, the headline/subject and the memory view, allowing for:
+**Numbers** (`grounding.py`): every figure in the headline, takeaway, facts, insights, key numbers,
+notable changes and KPI targets is checked by kind: amounts with unit conversions (crore, lakh,
+million, rupees); % as stated or as the change between neighbouring source figures; bps/pp as the
+difference of nearby margins; a share, change or multiple only when it follows from a grounded
+figure on the same card line. Period labels ("Q2FY27", "FY 2026-27"), dates, years and small bare
+counts are skipped. **An unmatched ₹ figure in the headline always holds the card.**
 
-- unit conversion (₹ lakh / million / thousand / rupees ↔ ₹ crore);
-- display rounding (`₹1.2 Cr` matches `123.45` lakh);
-- derived values: a YoY % from two source figures; bps and percentage-point changes
-  as differences between two source percentages.
+**Math** (`quant.py`): estimates carry a formula over named inputs (FILING / MEMORY / ASSUMPTION);
+a whitelisted evaluator (60 nodes, exponents ≤ 12) re-computes them within 2%.
 
-Years, period labels and small counts are skipped.
+**Claims**: "first", "maiden", "record" need the filing to say so near the same subject; a repeat
+described in the filing defeats a "first"; "track record", "on record" and "record date" are not records.
 
-**Quantified impact** (`quant.py`). The analyst may add up to 3 estimates. Each has a
-label, a formula over named inputs, the inputs (value, unit, source = FILING / MEMORY /
-ASSUMPTION, note), the result, a unit and a one-line interpretation. Example:
-`capacity_mw * plf * 8760 * 1000 * tariff_inr / 1e7` gives ₹31.3 Cr a year for 50 MW at
-22% PLF and ₹3.25/kWh. Code then:
-
-- evaluates the formula with a whitelisted arithmetic evaluator (numbers, input names,
-  `+ − × ÷ **`, `abs/min/max/round`; no `eval`);
-- compares the result with the stated one (2% tolerance);
-- checks every FILING or MEMORY input against the sources.
-
-Assumptions are shown as assumptions on the card, under "Show working". Estimates
-cover company fundamentals only, never share prices or targets.
-
-**Claims** (`check_claims`). Words get the same treatment as numbers. "First",
-"maiden", "for the first time", "record", "all-time" and "highest-ever" on a card need
-the filing or memory to use the same word near the same subject ("first international
-credit rating" is not excused by a "first interim dividend" elsewhere). A filing that
-describes a repeat ("second set of orders", "repeat order", "further to our intimation")
-defeats any "first" claim outright: memory only covers this platform's filings since
-1 Jan 2026, so no earlier order in memory never makes an order the first. "On record"
-and "record date" are not records, and "the first (₹142 Cr)" is a reference, not a claim.
-
-**Generic headlines** ("X posts a key update", "X announces results") fail validation,
-which sends the reply back once for repair with the reason.
-
-The card's score is the share of all checked numbers grounded, including quant
-inputs. Below 0.7, with any math mismatch, or with an unsupported claim, the card is
-stored with `needs_review`, which the card shows as "Needs review" with the reasons.
+`needs_review` = score below 0.7, an unmatched headline amount, a math mismatch or an unsupported
+claim. The badge says "Numbers verified" only when every number matched, otherwise "N of M numbers
+matched"; unverified cards carry the warning in the exported PNG too.
 
 ---
 
-## 7. Signals (computed in code, not by the model)
+## 7. Signals and the actionability score
+
+Computed in code from memory as of the filing:
 
 | Signal | Computation |
 |---|---|
-| `PROMISE_DELIVERED` / `GUIDANCE_BREACH` | Validated promise updates against prior guidance, plus open guidance whose deadline has passed |
-| `WATCH_RESOLVED` | A follow-up from an earlier card resolved by this filing |
-| `DILUTION` | New shares ÷ pre-issue shares (from the filing, or the company's share count), the discount to last close, and the issue price ÷ book value per share (net worth from memory) |
-| `SCALE` | A deal put in proportion: an order or capex against the latest quarter's and last full year's revenue; a fundraise, acquisition or capex against market cap and net worth. A GST-inclusive order value is flagged, since revenue excludes GST |
-| `ORDER_FLOW` | Where an order sits among the company's earlier orders on record: "3rd order on record since 2026-05-15 (₹577.47 Cr in total); the largest so far (previous high ₹207.47 Cr)". No earlier order on record gives no signal, never a "first" |
-| `WORKING_CAPITAL_STRAIN` | Receivables or inventory YoY growth exceeding revenue growth by 15 percentage points or more, same period |
-| `METRIC_SHIFT` | A generic scan over *every* metric the filing reported: moves of 30% or more (200 bps or more for percentages) YoY or against the previous like period (quarter vs quarter, never quarter vs half-year), ranked by size, coloured by direction for common metrics, with trend-reversal notes |
+| `PROMISE_DELIVERED` / `GUIDANCE_BREACH` / `WATCH_RESOLVED` | Validated updates against earlier guidance and follow-ups; overdue promises |
+| `PREDICTION_RESOLVED` | A numeric target met or missed by the reported figure (Loop 2) |
+| `DILUTION` | More shares %, post-money dilution new/(old+new), discount to close, price-to-book |
+| `SCALE` / `ORDER_FLOW` | Deal size against revenue, market cap, net worth; an order among earlier ones; a stage update is not a new order |
+| `WORKING_CAPITAL_STRAIN` / `METRIC_SHIFT` | On the filing's own latest period only (never comparatives) |
+| `VOLUME_STREAK` / `QUARTER_PREVIEW` | Monthly volumes > 25% YoY for 2+ months; on a quarter's third month, the quarter vs a year ago |
+| `OWNERSHIP_SHIFT` | Smart money accumulating vs retail distribution; pledge rise |
+| `AUDIT_FLAG` | Qualified / adverse / disclaimer opinion, mid-term resignation, emphasis of matter |
+| `BOARD_DELIBERATION` / `REG30_THRESHOLD` | Board meetings of 6+ hours; Reg 30 Schedule III Para B filings |
 
-On top of these, the analyst's open-ended `notable_changes` capture whatever else a
-careful analyst would flag, for any announcement type. Their numbers are grounded
-too. **Peer context** gives the analyst recent same-sector, same-event cards from D1,
-so it can tell an industry-wide trend from company-specific share gains.
+**Score** (`scoring.py`, blueprint §11): magnitude vs TTM revenue or market cap (30), margin and
+operating leverage (25), funding and balance sheet (20), management credibility (15), disclosure
+and price timing (10), penalties down to −50; a Gate 4 veto (unverified figures, auditor
+qualification or resignation, issuer-not-cooperating rating, a re-counted order) caps it at 35.
+Impact: ≥ 70 High, 40–69 Moderate, < 40 Low (the model's call is kept as `model_impact`). A **Top
+Signal** scores ≥ 70, passes Gate 4 and two of Gates 1–3 (magnitude ≥ 15%; inflection; price not
+run up, 1M ≤ 15%, 1W ≤ 10%, liquidity ≥ ₹50 lakh/day). Credibility = delivered ÷ (delivered +
+broken) promises and predictions.
 
 ---
 
 ## 8. Storage and budgets
 
-**D1** (`db/migrations/0001_init.sql`):
+**D1** (`db/migrations/0001`–`0004`): `filings` (queue and ledger: PENDING / NOT_MATERIAL /
+ANALYZED / FAILED, with subject and symbol), `cards` (with market session, actionability score,
+signal flag), `companies` (with former names, BSE group, liquidity, credibility, watchlist),
+`catalysts`, `card_feedback` (owner's Star/Noise), `pipeline_runs`, `provider_usage`, `kv`.
+Every write is a whitelisted SQL file taking one JSON array; unchanged values cost no write
+(kv, catalysts, the companies search trigger).
 
-| Table | Purpose |
-|---|---|
-| `filings` | Ledger and queue: every filing with status `PENDING / DROPPED_RULE / NOT_MATERIAL / ANALYZED / FAILED`, route, reason, attempts |
-| `cards` | One per material filing, with an FTS5 mirror |
-| `companies` | Scrip master plus the market-data footer, with an FTS5 mirror |
-| `catalysts` | Calendar entries |
-| `pipeline_runs` | One row per run, for the monitor |
-| `provider_usage` | Daily usage per model |
-| `kv` | Small state: backfill cursors, write counters |
+**Read budget (5M rows/day).** Every query is a range seek: the queue by `(status, filed_at)`,
+the feed by `filed_at` bounds with the cursor folded in, search from bounded FTS candidates,
+counts capped at 1,000–2,000. The homepage's default page and Top Signals are served from R2
+`daily_feed/latest_snapshot.json` (published after each run), hot responses are memoised in the
+isolate, and the Cache API is used on a custom domain.
 
-Every write is a whitelisted SQL file that takes **one JSON array parameter**
-(`json_each`). That sidesteps D1's 100-bound-parameter limit, and the Worker binds
-the request body without parsing it, keeping CPU time flat on the free plan.
+**Write budget (100k rows/day).** Backfill discovery and analysis stop at `D1_DAILY_WRITE_BUDGET`
+(80k); market-data and sync writes are counted too. Noise lives in R2.
 
-**R2** layout:
+**R2**: `memory/`, `daily_feed/` (card archive + snapshot), `noise/`, `meta/universe.json`, `backup/`.
 
-| Key | Content |
-|---|---|
-| `memory/{scrip}.json` | Dossiers |
-| `daily_feed/{date}.json` | Every card processed for that date, enough to rebuild D1 without re-running AI |
-| `backup/` | Reserved |
+**Laptop → cloud** (`sync-to-cloud`): companies, upcoming catalysts, pipeline state, recent and
+queued ledger rows, all cards (oldest first) and changed R2 objects, through the same statements;
+resumable (`data/sync_progress.json`) and stopped at the daily write budget. A card costs about
+8 row writes, so ~50k historical cards take about five days; live runs continue meanwhile.
 
-Budget estimates (measure with the System view and adjust):
-
-| Item | Estimate |
-|---|---|
-| Filings/day | About 1,500; rules should drop or route 40–60% without AI (tune with the noise audit) |
-| D1 writes, live | About 3 rows per new ledger row (row + 2 indexes) plus status updates: a few thousand a day |
-| D1 writes, backfill | About 300k historical filings: roughly 1M row-writes, about 2 weeks at the default 80k/day budget |
-| Pass 2 tokens | About 12–18k in and 1.5k out per filing; backfill of roughly 50–75k analyses ≈ 1B tokens, spread over weeks across providers (Mistral's monthly allowance does most of it) |
+**Size.** D1's free database cap is 500 MB; the System page shows the size. Card JSON is the
+main growth (~1–1.5 MB/day); compressing it or moving old card bodies to R2 is the lever.
 
 ---
 
 ## 9. API (Cloudflare Worker, Hono)
 
-Public, read-only, short edge-cache lifetimes:
+Public, read-only:
 
 | Route | Returns |
 |---|---|
-| `GET /api/feed` | Cards; `from`, `to`, `impact`, `category`, `size`, `sector`, `q` (FTS), `cursor`, `review` |
-| `GET /api/cards/:id` | One card (shareable links `/?card=…`) |
-| `GET /api/noise?date=` | Filtered filings and why |
+| `GET /api/feed` | Cards; `from`, `to`, `impact`, `category`, `size`, `sector`, `session`, `watch`, `q`, `review`; `page` (50 a page, capped total) or `cursor` |
+| `GET /api/signals` | Top Signals (`from` or `from_at`) |
+| `GET /api/brief?from_at=` | Pre-market brief: scanned, noise, cards, high, signals |
+| `GET /api/cards/:id` | One card (links `/feed?card=…`) |
+| `GET /api/noise?date=` | AI rejections (D1) and rule drops (R2) |
 | `GET /api/search?q=` | Companies and cards (Ctrl+K) |
-| `GET /api/companies` | Directory: `q`, `letter`, `sector`, `size`, `sort`, `all` |
-| `GET /api/companies/:scrip` | Company row, cards and dossier |
+| `GET /api/companies`, `/api/companies/:scrip` | Directory; company, cards and dossier |
 | `GET /api/calendar?from&to` | Catalysts |
-| `GET /api/system` | Monitor data |
+| `GET /api/system` | Monitor: queue (capped), backfill companies, D1 writes and size, providers, runs |
 
-Internal, `Authorization: Bearer INGEST_TOKEN`:
+Owner (`Authorization: Bearer OWNER_TOKEN`): `POST /api/owner/watchlist`, `POST/GET
+/api/owner/feedback`, `GET /api/owner/check`.
 
-| Route | Does |
-|---|---|
-| `POST /api/internal/exec/:statement` | Runs a whitelisted write over a JSON array |
-| `POST /api/internal/query/:name` | Runs a whitelisted read |
-| `GET/PUT /api/internal/objects/{memory,daily_feed,backup}/…` and `GET /api/internal/objects?prefix=` | R2 objects |
-| `POST /api/internal/ai/v1/chat/completions` | Workers AI, OpenAI-compatible |
+Internal (`Bearer INGEST_TOKEN`): `POST /exec/:statement`, `POST /query/:name` (whitelisted SQL;
+constraint errors return 400), R2 `GET/PUT /objects/{memory,daily_feed,backup,noise,meta}/…` and
+listing by prefix, `POST /ai/v1/chat/completions` (Workers AI).
 
 ---
 
@@ -317,11 +291,15 @@ DM Serif Display, interface text in Lexend, numbers in Inter (tabular), working 
 formulas in JetBrains Mono. A dark theme with the same tokens follows the system
 setting, with a light/dark/system toggle. One centred column, at most 1200px wide.
 
-**Navigation.** A sticky top bar: Feed, Results, Companies, Calendar, System, with the
-active item as a soft emerald pill. Search (Ctrl+K / ⌘K) finds companies (opens the
-company page) and cards (opens the card).
+**Navigation.** A sticky top bar: Top signals, Live feed, Results, Companies, Calendar,
+System. Search (Ctrl+K / ⌘K) finds companies and cards.
 
-**Feed (home).** Tabs by family (All, High impact, Results, Capex & orders, Capital &
+**Top signals (home, `/`).** The morning cockpit (blueprint view 1): cards that cleared the
+four gates, best score first, for "since the 3:30 PM close" or the last 3 days, under a brief
+(filings scanned, noise filtered, dossiers updated, signals).
+
+**Live feed (`/feed`).** 50 cards a page with page numbers (owner decision), filters for
+date range, size, sector, market session, verification and watchlist. Tabs by family (All, High impact, Results, Capex & orders, Capital &
 deals, Governance & regulatory, Noise audit) and one filter row (date range, market cap,
 sector, text). The default view is a column of **announcement cards**, one per filing,
 readable in about ten seconds without opening anything:
@@ -339,8 +317,11 @@ readable in about ten seconds without opening anything:
 6. a tinted box, "Why it matters" ("What these numbers mean" for results and business
    updates): up to four lines from the memory insights, the most important computed
    signal (marked "computed") and the first missing disclosure;
-7. a footer with the latest revenue, 1W / 1M / 1Y, the time, "Numbers verified" or
-   "Needs review", and actions: Full analysis, official PDF, copy as image, company.
+7. a footer with the latest revenue, the sector's own figures (GNPA/NIM for a bank, EBITDA/t for
+   cement, ARPU for telecom, RevPAR for hotels…), 1W / 1M / 1Y, the time and session, the
+   verification badge, and actions: Full analysis, PDF, copy as image, company, and for the
+   owner Star signal / Mark noise. The header shows the 0–100 score (🔥 for a Top Signal),
+   credibility and a thin-liquidity warning; a 📌 core-catalyst line sits under the headline.
 
 "Full analysis" opens the rest underneath: remaining insights with their basis, every
 quantified estimate with its working, all signals, notable changes, what to track next
@@ -374,8 +355,9 @@ market cap, returns, filings and last filing date. A row opens the company page.
 rights windows, execution milestones, accountability checks) and a "next 45 days"
 agenda; on phones the agenda is the view.
 
-**System.** Today's throughput, the queue, backfill progress, provider health meters
-with the 95% line, and recent runs.
+**System.** Today's throughput, the queue, backfill progress (days discovered and
+companies analysed), D1 writes and size, provider health meters with the 95% line, recent
+runs (a run still RUNNING after the job timeout shows as STOPPED), and owner mode.
 
 Every page, tab, filter and card is a URL.
 
@@ -385,9 +367,8 @@ Every page, tab, filter and card is a URL.
 
 The website is the only channel. There is no Telegram, WhatsApp or X integration, and
 no push messaging of any kind. Sharing works through each card's permanent URL
-(`/?card=…`), the "Copy card as PNG" action, and the link to the official BSE filing.
-
-**Planned.** Per-user watchlists and per-company RSS feeds on the site.
+(`/feed?card=…`), the "Copy card as PNG" action, and the link to the official BSE filing.
+The owner's ★ watchlist is on the site (owner mode).
 
 ---
 
@@ -417,18 +398,23 @@ single-writer design depends on.
 | Where | What |
 |---|---|
 | Repository secrets | `PLATFORM_API_URL`, `INGEST_TOKEN`, `GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, and for deploys `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` |
-| Repository variables | `BACKFILL_START`, `BACKFILL_PRIORITY_MCAP_CR` (optional), `D1_DATABASE_ID`, `PIPELINE_RUNNER_LABELS` |
-| Worker secret | `INGEST_TOKEN` |
+| Repository variables | `BACKFILL_START` (default 2025-01-01), `D1_DATABASE_ID`, `PIPELINE_RUNNER_LABELS` |
+| Worker secrets | `INGEST_TOKEN`, `OWNER_TOKEN` (owner mode) |
+| Optional env | `UNIVERSE_MIN_MCAP_CR` (100), `D1_DAILY_WRITE_BUDGET` (80000), `SECOND_OPINION` (1), `TEXT_CACHE` (1), `PIPELINE_WORKERS` (3) |
+
+**Workflows.** `pipeline.yml` (live + backfill, 2,400 s inside a 55-minute job), `market-data.yml`
+(weekdays 16:15 IST), `sync-companies.yml` (Saturdays 02:00 IST), `deploy-web.yml`, `backup.yml`,
+`ci.yml`. On a self-hosted runner they use the runner's own Python in a venv.
 
 **Backups.** The weekly `backup.yml` exports dossiers to the `backups` branch. R2
 `daily_feed/` holds every card. D1 Time Travel gives point-in-time restore (7 days
 on the free plan).
 
-**Market data.** `market-data.yml` runs at 16:15 IST on weekdays. yfinance bulk price
-download for `{scrip}.BO` tickers drives returns. Share counts are refreshed weekly
-per ticker, which gives market cap. Size buckets are thresholds in `market.toml`;
-align them with AMFI's semi-annual list. yfinance is unofficial and rate-limited, so
-the job is best-effort and never erases existing values.
+**Market data.** `market-data.yml` runs at 16:15 IST on weekdays: yfinance prices for
+`{scrip}.BO` give returns, 30-day median traded value (liquidity) and, with weekly share
+counts, market cap. Size tiers (blueprint): Micro < ₹500 Cr, Small < ₹5,000 Cr, Mid <
+₹20,000 Cr, Large above. `market-data --all` covers every company (run on the laptop before
+the backfill). Best-effort; never erases values. Each run rebuilds the universe file.
 
 ---
 
@@ -453,13 +439,5 @@ the job is best-effort and never erases existing values.
 
 ## 14. Roadmap
 
-| Item | Why |
-|---|---|
-| BSE corporate-actions feed for record, ex and payment dates | Authoritative calendar dates without AI |
-| BSE bhavcopy for EOD prices (one official file a day) | Replaces per-ticker yfinance calls |
-| AMFI classification import | Official Large/Mid/Small buckets |
-| Re-analysis job for `memory_complete = 0` cards once backfill finishes | Live cards written before history loaded get full context |
-| Pull-forward backfill | When a live filing arrives for a company whose history isn't loaded, load that company's results, concalls and AGM filings first |
-| Evaluation harness: a golden set of real filings with expected facts | Compare prompts and models (fact recall, grounding score, JSON validity, latency, cost) before changing `providers.toml` |
-| Annual reports | Section-aware extraction (MD&A, segment notes) instead of keyword page selection |
-| User watchlists and per-company RSS on the site | Follow specific companies without messaging channels |
+Everything still to build before go-live, and its status, is in [TRACKER.md](TRACKER.md)
+(owner decision: all of it is built and tested locally before launch).

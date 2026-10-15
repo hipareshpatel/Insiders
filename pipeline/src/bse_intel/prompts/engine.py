@@ -57,7 +57,7 @@ PASS2_SCHEMA = {
         "promise_updates": [{"guidance_id": "g_...", "status": "ON_TRACK", "evidence": "string"}],
         "watch_updates": [{"watch_id": "w_...", "status": "MET", "evidence": "string"}],
         "balance_sheet": {"period": "Sep-2026", "gross_debt_cr": None, "cash_cr": None, "net_debt_cr": None, "net_worth_cr": None, "credit_rating": None, "rating_agency": None, "rating_outlook": None},
-        "capital_actions": [{"instrument": "Rights issue", "new_shares": None, "existing_shares": None, "issue_price": None, "amount_cr": None}],
+        "capital_actions": [{"instrument": "Rights issue", "new_shares": None, "existing_shares": None, "ratio": "19:25 or null", "issue_price": None, "amount_cr": None}],
         "upcoming_events": [{"event_type": "RECORD_DATE", "date": "YYYY-MM-DD", "description": "string"}],
         "analyst_concerns": [{"concern": "string", "management_response": "string"}],
         "operating_notes": ["string"],

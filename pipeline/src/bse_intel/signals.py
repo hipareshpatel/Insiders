@@ -23,6 +23,7 @@ never be a plausible-sounding guess:
 
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass
 from datetime import date
 
@@ -253,7 +254,13 @@ def _dilution(after: dict, output: Pass2Output, company: dict | None) -> list[Si
         existing = action.existing_shares or company.get("shares_outstanding")
         parts = []
         dilution = None
-        if action.new_shares and existing:
+        ratio = re.fullmatch(r"\s*(\d+(?:\.\d+)?)\s*(?::|for(?: every)?|/)\s*(\d+(?:\.\d+)?)\s*", action.ratio or "")
+        if not action.new_shares and ratio and float(ratio[2]) > 0:
+            # a rights entitlement fixes the dilution without the share count: 19:25 -> +76% shares, 43.2% post-money
+            new, held = float(ratio[1]), float(ratio[2])
+            dilution = new / (new + held) * 100
+            parts.append(f"{action.ratio.strip()} entitlement: {new / held * 100:.1f}% more shares ({dilution:.1f}% post-money dilution)")
+        elif action.new_shares and existing:
             # Post-money: the new holders' share of the enlarged equity.
             dilution = action.new_shares / (existing + action.new_shares) * 100
             parts.append(f"{action.new_shares / existing * 100:.1f}% more shares ({dilution:.1f}% post-money dilution; "

@@ -327,3 +327,22 @@ def test_auditor_qualification_and_ownership_shift():
     after = merge(d, out, filing("s2", Q2), "HIGH", "now")
     kinds = {s["type"]: s for s in compute(d, after, out, filing("s2", Q2), {})}
     assert kinds["OWNERSHIP_SHIFT"]["severity"] == "POSITIVE" and kinds["AUDIT_FLAG"]["severity"] == "WARNING"
+
+
+def test_rights_entitlement_ratio_gives_dilution_without_a_share_count():
+    out = output(event_type="RIGHTS_ISSUE", capital_actions=[{"instrument": "Rights issue", "ratio": "19:25", "issue_price": 12}])
+    d = new_dossier(filing("r0", Q1))
+    after = merge(d, out, filing("r1", Q2), "MODERATE", "now")
+    (s,) = [s for s in compute(d, after, out, filing("r1", Q2), {}) if s["type"] == "DILUTION"]
+    assert "76.0% more shares (43.2% post-money dilution)" in s["text"] and s["severity"] == "WARNING"
+
+
+def test_period_spellings_land_on_one_dossier_row():
+    from bse_intel.periods import due_date
+
+    d = merge(new_dossier(filing("a", Q1)), output(financial_metrics=[{"metric": "revenue", "period": "Q2 FY 2026-27", "value": 1}]),
+              filing("a", Q1), "LOW", "now")
+    d = merge(d, output(financial_metrics=[{"metric": "revenue", "period": "Q2FY2027", "value": 2}]), filing("b", Q2), "LOW", "now")
+    assert [(m["period"], m["value"]) for m in d["financial_metrics"]] == [("Q2FY27", 2)]
+    assert str(due_date("FY2026-27")) == "2027-03-31" and str(due_date("November 15, 2026")) == "2026-11-15"
+    assert str(due_date("30-09-2026")) == "2026-09-30" and str(due_date("Q2-FY27")) == "2026-09-30"

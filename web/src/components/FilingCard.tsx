@@ -54,6 +54,8 @@ export const SIGNAL: Record<Signal["type"], { label: string; icon: typeof Gauge 
   RATING_LIQUIDITY: { label: "Rating", icon: ShieldAlert },
   FESTIVE_SEASON: { label: "Festive season", icon: Gauge },
   ASSET_TURN: { label: "Asset turns", icon: Scale },
+  CAPITAL_COMPOUNDER: { label: "Capital compounder", icon: Gauge },
+  CAPITAL_DILUTER: { label: "Capital diluter", icon: AlertTriangle },
 };
 export const SEVERITY_TEXT: Record<Signal["severity"], string> = { POSITIVE: "text-pos", WARNING: "text-warn", INFO: "text-info" };
 

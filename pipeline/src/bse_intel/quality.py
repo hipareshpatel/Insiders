@@ -264,3 +264,87 @@ def asset_turn_signals(card: dict, sector_name: str, band: tuple[float, float] |
         return [_signal("ASSET_TURN", "INFO", f"₹{revenue:g} Cr of revenue from ₹{capex:g} Cr of capex is only {turns:.1f}x asset turns "
                         f"(normal {lo:g}-{hi:g}x): conservative guidance, or a long gestation.")]
     return []
+
+
+ROIIC_SINCE = "2024-12-31"          # blueprint M35: capital and EBITDA added since January 2025
+COMPOUNDER_PCT, DILUTER_PCT = 20.0, 8.0
+
+
+def _sheet_date(sheet: dict):
+    return due_date(sheet.get("period")) or (date.fromisoformat(sheet["as_of"][:10]) if sheet.get("as_of") else None)
+
+
+def _capital(sheet: dict) -> float | None:
+    """Invested capital: net worth + gross debt - cash (cash only when stated)."""
+    if sheet.get("net_worth_cr") is None or sheet.get("gross_debt_cr") is None:
+        return None
+    return sheet["net_worth_cr"] + sheet["gross_debt_cr"] - (sheet.get("cash_cr") or 0)
+
+
+def roiic(dossier: dict, since: str = ROIIC_SINCE) -> dict | None:
+    """M35: annual EBITDA added per rupee of capital added since January 2025.
+
+    EBITDA is compared like for like: trailing four quarters when both ends have them, else the
+    same fiscal quarter a whole number of years apart, annualised. Capital is net worth + gross
+    debt - cash from the balance sheets closest to each end. Needs at least a year between ends.
+    """
+    t = _table(dossier)
+    start = date.fromisoformat(since)
+    quarters = sorted({p for (k, p) in t if k == "ebitda" and p.startswith("Q") and due_date(p)}, key=due_date)
+    if not quarters:
+        return None
+    latest = quarters[-1]
+    base = None
+    for p in quarters:
+        span = (due_date(latest) - due_date(p)).days
+        if due_date(p) >= start and span >= 360 and p[:2] == latest[:2]:
+            base = p
+            break
+    if not base:
+        return None
+
+    def run_rate(q: str) -> tuple[float, str]:
+        ttm = [t.get(("ebitda", p)) for p in _quarters_back(q, 4)]
+        if len(ttm) == 4 and all(v is not None for v in ttm):
+            return sum(ttm), "TTM"
+        return t[("ebitda", q)] * 4, "annualised quarter"
+
+    (now, how_now), (then, how_then) = run_rate(latest), run_rate(base)
+    if how_now != how_then:
+        now, then, how_now = t[("ebitda", latest)] * 4, t[("ebitda", base)] * 4, "annualised quarter"
+    sheets = [(d, c) for s in dossier.get("balance_sheet", []) if (d := _sheet_date(s)) and (c := _capital(s)) is not None]
+    if len(sheets) < 2:
+        return None
+    first = min(sheets, key=lambda x: abs((x[0] - due_date(base)).days))
+    last = max(sheets, key=lambda x: x[0])
+    added_capital, added_ebitda = last[1] - first[1], now - then
+    out = {"from": base, "to": latest, "basis": how_now, "ebitda_added_cr": round(added_ebitda, 1),
+           "capital_added_cr": round(added_capital, 1), "capital_from": first[0].isoformat(), "capital_to": last[0].isoformat()}
+    if last[0] <= first[0] or abs(added_capital) < 1:
+        out.update(pct=None, verdict="SELF_FUNDED" if added_ebitda > 0 else None)
+        return out
+    pct = added_ebitda / added_capital * 100 if added_capital > 0 else None
+    out["pct"] = round(pct, 1) if pct is not None else None
+    if added_capital <= 0:
+        out["verdict"] = "SELF_FUNDED" if added_ebitda > 0 else None
+    elif pct >= COMPOUNDER_PCT:
+        out["verdict"] = "COMPOUNDER"
+    elif pct < DILUTER_PCT:
+        out["verdict"] = "DILUTER"
+    else:
+        out["verdict"] = None
+    return out
+
+
+def roiic_signals(after: dict, news_id: str) -> list[dict]:
+    """M35 on the card that brings a new quarter or balance sheet."""
+    r = roiic(after)
+    if not r or not r.get("verdict") or _latest_quarter(after, news_id) != r["to"]:
+        return []
+    text = (f"Since {r['from']}: EBITDA run-rate {r['ebitda_added_cr']:+g} Cr on {r['capital_added_cr']:+g} Cr of capital added"
+            + (f", ROIIC {r['pct']:.0f}%" if r.get("pct") is not None else "") + ".")
+    if r["verdict"] == "COMPOUNDER":
+        return [_signal("CAPITAL_COMPOUNDER", "POSITIVE", text)]
+    if r["verdict"] == "DILUTER":
+        return [_signal("CAPITAL_DILUTER", "WARNING", text + " Capital is growing faster than the earnings it buys.")]
+    return [_signal("CAPITAL_COMPOUNDER", "POSITIVE", text + " Growth funded from internal accruals.")]

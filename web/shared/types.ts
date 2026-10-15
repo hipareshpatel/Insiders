@@ -30,7 +30,7 @@ export interface Signal {
   type: "PROMISE_DELIVERED" | "GUIDANCE_BREACH" | "WATCH_RESOLVED" | "DILUTION" | "SCALE" | "ORDER_FLOW" | "WORKING_CAPITAL_STRAIN" | "METRIC_SHIFT"
     | "BOARD_DELIBERATION" | "REG30_THRESHOLD" | "PREDICTION_RESOLVED" | "OWNERSHIP_SHIFT" | "AUDIT_FLAG"
     | "VOLUME_STREAK" | "QUARTER_PREVIEW" | "LOW_QUALITY_BEAT" | "MARGIN_MIX" | "JAWS" | "LOW_CASH_TAX" | "Q4_TRUE_UP"
-    | "RECURRING_ONE_OFFS" | "DEBT_CASH_PARADOX" | "DISTRESS" | "RATING_LIQUIDITY" | "FESTIVE_SEASON" | "ASSET_TURN";
+    | "RECURRING_ONE_OFFS" | "DEBT_CASH_PARADOX" | "DISTRESS" | "RATING_LIQUIDITY" | "FESTIVE_SEASON" | "ASSET_TURN" | "CAPITAL_COMPOUNDER" | "CAPITAL_DILUTER";
   severity: Severity;
   text: string;
   ref?: string | null;
@@ -273,6 +273,14 @@ export interface Company {
   gross_debt_cr?: number | null;
   /** Loop 2: how this management's targets and dates usually turn out. */
   calibration_rule?: string | null;
+  /** Module 35: EBITDA added per rupee of capital added since January 2025 (JSON Roiic). */
+  roiic?: string | null;
+}
+
+export interface Roiic {
+  from: string; to: string; basis: string; ebitda_added_cr: number; capital_added_cr: number;
+  capital_from: string; capital_to: string; pct: number | null;
+  verdict: "COMPOUNDER" | "DILUTER" | "SELF_FUNDED" | null;
 }
 
 export interface InflectionTrigger { kind: string; date: string; text: string }

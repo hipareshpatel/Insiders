@@ -70,10 +70,10 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     signals += _ownership(after, filing)
     signals += _auditor(after, filing)
     signals += _volumes(after, filing)
-    from .quality import festive_signals, quality_signals, rating_signals
+    from .quality import festive_signals, quality_signals, rating_signals, roiic_signals
 
     return [asdict(s) for s in signals] + quality_signals(after, filing.news_id) \
-        + rating_signals(before, after, filing.news_id) + festive_signals(after, filing.news_id)
+        + rating_signals(before, after, filing.news_id) + festive_signals(after, filing.news_id) + roiic_signals(after, filing.news_id)
 
 
 def _predictions(after: dict, filing: Filing) -> list[Signal]:

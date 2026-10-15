@@ -153,9 +153,12 @@ forensics), 32-34 (M&A Annexure A, RPT, demerger type, subsidiary share), 36 (bu
 37 (rated bank limits), 40 (institutional dissent), 41 (penalty size), 43 (evasion, goalpost
 shifting), 48 (insider trades).
 
-Module 2 asset turns: quality.py ASSET_TURN with the sector band. Not built (need data we do not have): 8 DGTR duties
-(needs a product list), 35 ROIIC (needs 3 years of history), 42 promoter-group contagion (needs a
-group map).
+Module 2 asset turns: quality.py ASSET_TURN with the sector band. Module 35 ROIIC: quality.py `roiic` compares the
+EBITDA run-rate (TTM, else the same quarter a year or more apart, annualised) with capital added (net worth + gross
+debt - cash) since January 2025; CAPITAL_COMPOUNDER at 20%+, CAPITAL_DILUTER under 8%, self-funded when capital did
+not grow. It sits in the company memory summary and the drawer's execution panel, and becomes meaningful once the
+backfill has a year of quarters. Not built (need data we do not have): 8 DGTR duties (needs a product list), 42
+promoter-group contagion (needs a group map).
 
 ### §10 Sector lenses
 | Item | Status | Notes |

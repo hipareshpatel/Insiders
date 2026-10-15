@@ -106,3 +106,32 @@ def test_volume_strip_lists_recent_months_up_to_the_filing():
     strip = volume_strip({"financial_metrics": rows}, N, months=3)
     assert strip["metric"] == "sales_volume" and [m["period"] for m in strip["months"]] == ["JUL-2026", "AUG-2026", "SEP-2026"]
     assert strip["months"][-1] == {"period": "SEP-2026", "value": 1200, "yoy_pct": 22.0}
+
+
+def _roiic_dossier(ebitda_now, capital_now, ebitda_then=40.0):
+    from bse_intel.quality import roiic  # noqa: F401
+    q = {"Q2FY26": ebitda_then, "Q3FY26": 42, "Q4FY26": 45, "Q1FY27": 48, "Q2FY27": ebitda_now}
+    return {"financial_metrics": [{"metric": "ebitda", "period": p, "value": v, "unit": "INR_CR"} for p, v in q.items()],
+            "balance_sheet": [{"period": "H1FY26", "as_of": "2025-11-10T10:00:00+05:30", "net_worth_cr": 300, "gross_debt_cr": 100, "cash_cr": 20},
+                              {"period": "H1FY27", "as_of": "2026-11-10T10:00:00+05:30", "net_worth_cr": capital_now, "gross_debt_cr": 100, "cash_cr": 20}]}
+
+
+def test_roiic_compounder_and_diluter():
+    from bse_intel.quality import roiic
+    good = roiic(_roiic_dossier(60, 340))  # +20 Cr a quarter = +80 Cr a year on +40 Cr of capital
+    assert good["from"] == "Q2FY26" and good["to"] == "Q2FY27" and good["basis"] == "annualised quarter"
+    assert good["ebitda_added_cr"] == 80 and good["capital_added_cr"] == 40 and good["verdict"] == "COMPOUNDER"
+    bad = roiic(_roiic_dossier(42, 700))  # +8 Cr a year on +400 Cr
+    assert bad["pct"] == 2.0 and bad["verdict"] == "DILUTER"
+    flat = roiic(_roiic_dossier(50, 300))
+    assert flat["verdict"] == "SELF_FUNDED"
+
+
+def test_roiic_needs_a_year_and_two_balance_sheets():
+    from bse_intel.quality import roiic
+    d = _roiic_dossier(60, 420)
+    d["financial_metrics"] = [m for m in d["financial_metrics"] if m["period"] != "Q2FY26"]
+    assert roiic(d) is None
+    d = _roiic_dossier(60, 420)
+    d["balance_sheet"] = d["balance_sheet"][:1]
+    assert roiic(d) is None

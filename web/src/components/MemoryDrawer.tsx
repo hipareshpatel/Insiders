@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ExternalLink, X } from "lucide-react";
 import { Fragment, type ReactNode } from "react";
 import { Link } from "wouter";
-import type { CardBody, CardRow, PriceReaction } from "../../shared/types";
+import type { CardBody, CardRow, PriceReaction, Roiic } from "../../shared/types";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
 import { istDate, istDateTime, rupees, titleCase } from "../lib/format";
@@ -81,7 +81,8 @@ function DrawerBody({ scrip, verify, tab, onTab, onClose }: {
           <>
             {tab === "dossier" && (
               <div className="space-y-4">
-                <Scorecard guidance={dossier?.guidance ?? []} credibility={company?.credibility_score ?? null} rule={company?.calibration_rule ?? null} />
+                <Scorecard guidance={dossier?.guidance ?? []} credibility={company?.credibility_score ?? null} rule={company?.calibration_rule ?? null}
+                  roiic={parseRoiic(company?.roiic)} />
                 <IdentityAndOwnership dossier={dossier} />
                 {dossier ? <MetricsPanel dossier={dossier} /> : <Empty title="No financials in memory yet" />}
                 <DealsAndNotes dossier={dossier} />
@@ -97,10 +98,20 @@ function DrawerBody({ scrip, verify, tab, onTab, onClose }: {
 }
 
 /** Delivered vs open vs broken promises as one bar. */
-function Scorecard({ guidance, credibility, rule }: { guidance: NonNullable<Parameters<typeof promiseStats>[0]>; credibility: number | null; rule: string | null }) {
+function parseRoiic(raw: string | null | undefined): Roiic | null {
+  try { return raw ? (JSON.parse(raw) as Roiic) : null; } catch { return null; }
+}
+
+const ROIIC_VERDICT: Record<NonNullable<Roiic["verdict"]>, { text: string; tone: string }> = {
+  COMPOUNDER: { text: "Capital compounder", tone: "text-pos" },
+  DILUTER: { text: "Capital diluter", tone: "text-neg" },
+  SELF_FUNDED: { text: "Self-funded growth", tone: "text-pos" },
+};
+
+function Scorecard({ guidance, credibility, rule, roiic }: { guidance: NonNullable<Parameters<typeof promiseStats>[0]>; credibility: number | null; rule: string | null; roiic: Roiic | null }) {
   const s = promiseStats(guidance);
   const total = s.delivered + s.open + s.missed;
-  if (!total && !rule) return null;
+  if (!total && !rule && !roiic) return null;
   const width = (n: number) => `${(n / total) * 100}%`;
   return (
     <Panel title="Management execution" hint={credibility != null ? `Credibility ${Math.round(credibility)}%` : undefined}>
@@ -117,6 +128,13 @@ function Scorecard({ guidance, credibility, rule }: { guidance: NonNullable<Para
       </p>
       </>}
       {rule && <p className="mt-2 rounded-lg bg-insight px-3 py-2 text-[13px] text-insight-ink">📐 {rule}</p>}
+      {roiic && (
+        <p className="num mt-2 text-[12.5px] text-ink-2">
+          {roiic.verdict && <span className={cn("font-semibold", ROIIC_VERDICT[roiic.verdict].tone)}>{ROIIC_VERDICT[roiic.verdict].text} · </span>}
+          {roiic.from} → {roiic.to}: EBITDA run-rate {roiic.ebitda_added_cr >= 0 ? "+" : ""}{rupees(roiic.ebitda_added_cr)} Cr on {rupees(roiic.capital_added_cr)} Cr of capital added
+          {roiic.pct != null && <> (ROIIC {Math.round(roiic.pct)}%)</>}
+        </p>
+      )}
     </Panel>
   );
 }

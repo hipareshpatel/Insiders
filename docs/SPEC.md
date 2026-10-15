@@ -137,7 +137,7 @@ Established models are preferred to the newest, which are often overloaded (owne
 | Z.AI | `glm-4.7-flash` (200K), `glm-4.6v-flash` | Long documents, OCR | `pass1*`, `pass2*`, `vision` |
 | Google Gemini (AI Studio) | `gemini-3.1-flash-lite`, `gemini-3.5-flash-lite`, `gemini-3.6-flash` (spare) | Gatekeeper, OCR, 1M-token spare | `pass1*`, `vision`, `pass2*` |
 | Workers AI | `@cf/meta/llama-3.1-8b-instruct-fp8`, `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | Spare, through this Worker | `pass1*`, `pass2*` |
-| OpenRouter (free models) | `nvidia/nemotron-3-ultra-550b-a55b:free` (reasoning stripped), `nvidia/nemotron-3.5-super-vl:free` | Spares only; 50 requests/day shared by all free models (1,000 after a one-time $10 credit purchase), 10/min per model | `pass2*`, `pass2_long`, `vision` |
+| OpenRouter (free models) | `nvidia/nemotron-3-ultra-550b-a55b:free` (reasoning stripped), `nvidia/nemotron-3.5-super-vl:free` | Spares only; 1,000 requests/day shared by all free models (credits bought once, 2026-10-16; the free models do not spend them), 10/min per model | `pass2*`, `pass2_long`, `vision` |
 
 Plan notes: Mistral's Free plan blocks `mistral-large` (403 "not available in your subscription
 tier") and includes $10 of API usage a month with pay-as-you-go off, so it cannot bill. Gemini's

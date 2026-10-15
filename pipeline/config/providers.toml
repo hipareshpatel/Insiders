@@ -102,7 +102,9 @@ limits = { tpd = 150_000 }
 base_url = "https://openrouter.ai/api/v1"
 api_key_env = "OPENROUTER_API_KEY"
 timeout_s = 180
-limits = { rpd = 50 }  # all free models together; 1_000 after a one-time $10 credit purchase
+# Credits bought 2026-10-16 ($11, so the key reports is_free_tier = false): 1,000 a day.
+# Only ":free" models are configured, so the credit is not spent (a test enforces it).
+limits = { rpd = 1_000 }  # all free models together
 
 # ------------------------------------------------------------------ Pass 1: gatekeeper
 # Input: headline + subcategory + first ~2,500 characters of page 1.

@@ -117,7 +117,7 @@ def test_provider_level_daily_requests_are_shared_by_its_models(make_gateway):
 
 def test_openrouter_free_models_are_spares_under_one_daily_allowance(settings):
     config = settings.load_toml("providers.toml")
-    assert config["providers"]["openrouter"]["limits"]["rpd"] == 50
+    assert config["providers"]["openrouter"]["limits"]["rpd"] == 1_000  # after the one-time credit purchase (D19)
     entries = [e for route in config["routes"].values() for e in route if e["provider"] == "openrouter"]
     assert entries and all(e.get("spare") for e in entries)
     assert all(e["model"].endswith(":free") for e in entries)  # never a paid model by accident

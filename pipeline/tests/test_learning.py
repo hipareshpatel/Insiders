@@ -113,25 +113,30 @@ def test_post_mortem_rerun_records_a_lesson_used_by_later_prompts(settings):
     from test_pipeline import PASS2, RESULT_TEXT, _filing, _pdf, build
 
     now = now_ist() - timedelta(minutes=30)
+    with_lesson = json.dumps(dict(PASS2, lesson="A receivables build hidden behind revenue growth moved the stock, not the headline."))
+    # every model the weighted rotation can pick answers the same, so the test does not depend on the order
+    script = {m: [with_lesson] for m in ("deepseek-ai/deepseek-r1", "meta/llama-3.3-70b-instruct", "mistral-large-latest")}
+
     first = _filing("n-pm", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
-    second = _filing("n-next", "Unaudited Financial Results for the quarter ended September 30, 2026", now + timedelta(minutes=5),
-                     "Result", scrip="999002", name="Demo Cement Two Ltd")
-    pdfs = {f.pdf_url: _pdf(RESULT_TEXT) for f in (first, second)}
-    with_lesson = dict(PASS2, lesson="A receivables build hidden behind revenue growth moved the stock, not the headline.")
-    pipeline, sink, fake = build(settings, [first, second], pdfs,
-                                 {"deepseek-ai/deepseek-r1": [json.dumps(with_lesson), json.dumps(PASS2)]})
+    pipeline, sink, fake = build(settings, [first], {first.pdf_url: _pdf(RESULT_TEXT)}, script)
     sink.kv_set("learning:postmortem_queue", json.dumps({"n-pm": "Rated moderate impact, then the stock moved: +11%."}), "x")
     pipeline.run("live", time_budget_s=60)
-    prompts = [c["messages"][-1]["content"] for c in fake.calls]
-    assert "MARKET REACTION AFTER THIS FILING" in prompts[0] and "+11%" in prompts[0]
+    (prompt,) = [c["messages"][-1]["content"] for c in fake.calls]
+    assert "MARKET REACTION AFTER THIS FILING" in prompt and "+11%" in prompt
     lessons = json.loads(sink.get_object(LESSONS_KEY))
     (key,) = lessons
     assert key.endswith("|RESULTS") and lessons[key][0]["news_id"] == "n-pm"
     assert json.loads(sink.kv_get("learning:postmortem_queue")) == {}
     assert "n-pm" in sink.kv_get("learning:postmortem_done")
-    # a later run reads the lesson for the same sector and event type
-    pipeline2, sink2, fake2 = build(settings, [], {}, {})
-    assert pipeline2._learning()["lessons"][key][0]["lesson"].startswith("A receivables build")
+
+    # a later filing of the same sector and event type is shown the lesson
+    second = _filing("n-next", "Unaudited Financial Results for the quarter ended September 30, 2026", now + timedelta(minutes=5),
+                     "Result", scrip="999002", name="Demo Cement Two Ltd")
+    pipeline2, sink2, fake2 = build(settings, [first, second], {f.pdf_url: _pdf(RESULT_TEXT) for f in (first, second)},
+                                    {m: [json.dumps(PASS2)] for m in script})
+    pipeline2.run("live", time_budget_s=60)
+    (later,) = [c["messages"][-1]["content"] for c in fake2.calls]
+    assert "LESSONS FROM PAST MARKET REACTIONS" in later and "A receivables build" in later
 
 
 def test_dampened_category_costs_five_points():

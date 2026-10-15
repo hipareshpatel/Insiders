@@ -109,10 +109,10 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 ### §8 Card (8 zones)
 | Item | Status | Notes |
 |---|---|---|
-| Header: symbol, scrip, mcap + tier, timestamp, session tag | partial | session tag in Full analysis; tiers to match blueprint (Micro <500, Small 500–5,000, Mid 5,000–20,000, Large >20,000 ₹ Cr) |
-| Former-name badge, watchlist ★, credibility score, liquidity, ASM/T2T | partial | watchlist, credibility, liquidity done; former-name badge on card and ASM/T2T (needs BSE group data) todo |
+| Header: symbol, scrip, mcap + tier, timestamp, session tag | done | tiers per blueprint (market.toml); session tag in the card meta line |
+| Former-name badge, watchlist ★, credibility score, liquidity, ASM/T2T | done | "formerly …" beside the symbol; T2T pill from the BSE group; ASM/GSM stage has no free source yet |
 | Event/sector pills, impact badge, actionability score | done | |
-| What happened + adaptive table (results P&L, monthly volume strip) | partial | monthly volume strip todo |
+| What happened + adaptive table (results P&L, monthly volume strip) | done | volume strip: last 6 months of the main volume metric from memory as of the filing |
 | Why it matters box with Show Working | done | |
 | What to track next | done | |
 | Sector-aware footer | done | |
@@ -217,7 +217,7 @@ docs, sync-companies workflow.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 199 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 200 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

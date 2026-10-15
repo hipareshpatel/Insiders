@@ -130,6 +130,26 @@ def _auditor(after: dict, filing: Filing) -> list[Signal]:
 VOLUME_METRICS = ("sales_volume", "volumes", "total_sales", "sales_units", "units_sold", "dispatches", "production", "despatches")
 
 
+def volume_strip(after: dict, news_id: str, months: int = 6) -> dict | None:
+    """The card's monthly strip: the main volume metric this filing reported, over the last months
+    memory holds (as of the filing), each with its YoY change."""
+    from .dossier import period_kind
+
+    own = [m for m in _own_latest(after, news_id) if period_kind(m["period"]) == "M"]
+    if not own:
+        return None
+    main = next((m for m in own if m["metric"] in VOLUME_METRICS), own[0])
+    rows = sorted((e for e in after.get("financial_metrics", []) if e["metric"] == main["metric"]
+                   and period_kind(e["period"]) == "M" and due_date(e["period"]) and e.get("value") is not None),
+                  key=lambda e: due_date(e["period"]))
+    end = due_date(main["period"])
+    rows = [e for e in rows if due_date(e["period"]) <= end][-months:]
+    if len(rows) < 2:
+        return None
+    return {"metric": main["metric"], "unit": main.get("unit"),
+            "months": [{"period": e["period"], "value": e["value"], "yoy_pct": e.get("yoy_pct")} for e in rows]}
+
+
 def _volumes(after: dict, filing: Filing) -> list[Signal]:
     """Monthly updates: a growth streak (Gate 2) and, on a quarter's third month, the quarter's
     volume against the same quarter last year (blueprint module 45: an earnings preview)."""

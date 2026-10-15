@@ -95,3 +95,14 @@ def test_sector_lens_carries_turns_drivers_and_red_flag(settings):
     assert lens.asset_turn == (0.8, 2.2)
     text = lens.lens()
     assert "Normal asset turns: 1.4-2.2x specialty" in text and "anti-dumping" in text and "Forensic red flag" in text
+
+
+def test_volume_strip_lists_recent_months_up_to_the_filing():
+    from bse_intel.signals import volume_strip
+
+    rows = [_m("sales_volume", p, v, "old") | {"yoy_pct": y} for p, v, y in
+            (("JUN-2026", 900, 5.0), ("JUL-2026", 1000, 12.0), ("AUG-2026", 1100, 18.0))]
+    rows.append(_m("sales_volume", "SEP-2026", 1200, N) | {"yoy_pct": 22.0})
+    strip = volume_strip({"financial_metrics": rows}, N, months=3)
+    assert strip["metric"] == "sales_volume" and [m["period"] for m in strip["months"]] == ["JUL-2026", "AUG-2026", "SEP-2026"]
+    assert strip["months"][-1] == {"period": "SEP-2026", "value": 1200, "yoy_pct": 22.0}

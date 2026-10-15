@@ -283,6 +283,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
             <Avatar name={row.company_name} symbol={row.symbol} size={24} />
             <span className="flex min-w-0 flex-wrap items-baseline gap-x-2">
               <span className="text-[17px] font-bold tracking-tight text-ink group-hover:text-accent">{row.symbol ?? row.company_name}</span>
+              {formerName(row) && <span className="text-[12px] text-ink-3">formerly {formerName(row)}</span>}
               {row.market_cap_cr != null && (
                 <span className="num whitespace-nowrap text-[13px] text-ink-3">
                   {cr(row.market_cap_cr)}{row.size_category ? ` · ${titleCase(row.size_category)}cap` : ""}
@@ -328,6 +329,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
 
         {card.call_read && <CallReadChips read={card.call_read} />}
         {table && <ResultsTable r={table} />}
+        {card.volume_strip && <VolumeStrip s={card.volume_strip} />}
         {tilesFor && card.key_numbers.length >= 2 && <KeyTiles items={card.key_numbers} />}
 
         <ul className="mt-3 space-y-2">
@@ -642,5 +644,39 @@ function TechnicalChips({ row }: { row: CardRow }) {
       {tech.rs_pct != null && tech.rs_pct >= 80 && <Chip tone="neutral">RS {tech.rs_pct}</Chip>}
       {tech.rvol != null && tech.rvol >= 2.5 && days >= 0 && days <= 2 && <Chip tone="neutral">Volume {tech.rvol.toFixed(1)}x</Chip>}
     </>
+  );
+}
+
+function formerName(row: CardRow): string | null {
+  try {
+    const names = row.former_names_json ? (JSON.parse(row.former_names_json) as string[]) : [];
+    return names[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Monthly business update: the main volume over recent months, bars scaled to the largest. */
+function VolumeStrip({ s }: { s: NonNullable<CardBody["volume_strip"]> }) {
+  const top = Math.max(...s.months.map((m) => m.value), 1);
+  return (
+    <figure className="mt-3 rounded-xl border border-line px-3 py-2.5">
+      <figcaption className="eyebrow text-ink-3">{s.metric.replace(/_/g, " ")}{s.unit && s.unit !== "INR_CR" ? ` · ${s.unit.toLowerCase()}` : ""}</figcaption>
+      <div className="mt-2 grid gap-2" style={{ gridTemplateColumns: `repeat(${s.months.length}, minmax(0, 1fr))` }}>
+        {s.months.map((m, i) => (
+          <div key={m.period} className="flex flex-col items-center gap-1">
+            <div className="flex h-12 w-full items-end">
+              <div className={cn("w-full rounded-t", i === s.months.length - 1 ? "bg-accent" : "bg-line-strong")}
+                style={{ height: `${Math.max(6, (m.value / top) * 100)}%` }} title={`${m.period}: ${m.value.toLocaleString("en-IN")}`} />
+            </div>
+            <span className="num text-[11px] text-ink">{m.value.toLocaleString("en-IN", { maximumFractionDigits: 1 })}</span>
+            <span className={cn("num text-[10.5px]", m.yoy_pct == null ? "text-ink-3" : m.yoy_pct >= 0 ? "text-pos" : "text-neg")}>
+              {m.yoy_pct == null ? m.period.slice(0, 3) : `${m.yoy_pct > 0 ? "+" : ""}${m.yoy_pct.toFixed(0)}%`}
+            </span>
+          </div>
+        ))}
+      </div>
+      <p className="num mt-1 text-[10.5px] text-ink-3">{s.months[0].period} to {s.months[s.months.length - 1].period} · change vs a year ago</p>
+    </figure>
   );
 }

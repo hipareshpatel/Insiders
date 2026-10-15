@@ -53,6 +53,7 @@ from . import universe
 from . import xbrl as xbrl_fast_path
 from .quality import asset_turn_signals, warrant_deadlines
 from .radar import summarize as memory_summary
+from .signals import volume_strip
 from .timeutil import IST, market_session, now_iso, now_ist, today_ist, utc_day
 
 log = logging.getLogger(__name__)
@@ -674,6 +675,7 @@ class Pipeline:
             "timeline_entry": out.timeline_entry,
             "fundamentals": latest_fundamentals(current, sector_module.footer),
             "results": results_snapshot(current, filing.news_id) if event_type == "RESULTS" else None,
+            "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims},

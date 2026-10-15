@@ -153,6 +153,8 @@ export interface CardBody {
     fixed?: string[];
   } | null;
   model: string;
+  /** Monthly business updates: the main volume metric over recent months, from memory at the filing. */
+  volume_strip?: { metric: string; unit: string | null; months: { period: string; value: number; yoy_pct: number | null }[] } | null;
   /** Set when the results figures came from the filing's XBRL file. */
   xbrl?: { basis: string | null; period: string | null; figures: number } | null;
   /** Market data as it stood when the filing came out (stored price series, else recent data). */
@@ -191,6 +193,7 @@ export interface CardRow {
   watchlist?: number;
   /** Techno-funda tags from the market-data job (JSON Technicals). */
   technicals_json?: string | null;
+  former_names_json?: string | null;
   /** BSE trading group (A, B, T, XT, Z...); T, XT and Z trade to trade with tight circuits. */
   bse_group?: string | null;
 }

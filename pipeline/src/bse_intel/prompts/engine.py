@@ -92,6 +92,21 @@ class SectorModule:
     kpis: tuple[str, ...]
     context: str
     footer: tuple[dict, ...] = ()   # card-footer metrics: {metric, label, format, aliases}
+    asset_turn: tuple[float, float] | None = None   # normal revenue per rupee of gross capex (module 2)
+    asset_turn_note: str = ""
+    drivers: str = ""               # feedstock / spread driver and seasonality
+    red_flag: str = ""              # the sector's main forensic trap
+
+    def lens(self) -> str:
+        """Context for the prompt: how to read the sector, its normal asset turns, drivers and trap."""
+        parts = [self.context]
+        if self.asset_turn_note:
+            parts.append(f"Normal asset turns: {self.asset_turn_note}.")
+        if self.drivers:
+            parts.append(f"Drivers and seasonality: {self.drivers}")
+        if self.red_flag:
+            parts.append(f"Forensic red flag to check: {self.red_flag}")
+        return " ".join(p for p in parts if p)
 
 
 class PromptEngine:
@@ -111,6 +126,10 @@ class PromptEngine:
                 kpis=tuple(entry.get("kpis", [])),
                 context=entry.get("context", ""),
                 footer=tuple(entry.get("footer", [])),
+                asset_turn=tuple(entry["asset_turn"]) if entry.get("asset_turn") else None,
+                asset_turn_note=entry.get("asset_turn_note", ""),
+                drivers=entry.get("drivers", ""),
+                red_flag=entry.get("red_flag", ""),
             ))
 
     def sector_for(self, industry: str | None) -> SectorModule:
@@ -156,7 +175,7 @@ class PromptEngine:
             event_type=event_type,
             event_focus=self._event(event_type).get("focus", "").strip(),
             sector_name=sector.name.replace("_", " "),
-            sector_context=sector.context,
+            sector_context=sector.lens(),
             sector_kpis=", ".join(sector.kpis) + (
                 ". Name these in financial_metrics exactly as: "
                 + ", ".join(f"{f['metric']} ({f['label']})" for f in sector.footer) if sector.footer else ""),

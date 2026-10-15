@@ -153,7 +153,7 @@ forensics), 32-34 (M&A Annexure A, RPT, demerger type, subsidiary share), 36 (bu
 37 (rated bank limits), 40 (institutional dissent), 41 (penalty size), 43 (evasion, goalpost
 shifting), 48 (insider trades).
 
-Not built (need data we do not have): 2 asset-turn bands (sector lens extras, next), 8 DGTR duties
+Module 2 asset turns: quality.py ASSET_TURN with the sector band. Not built (need data we do not have): 8 DGTR duties
 (needs a product list), 35 ROIIC (needs 3 years of history), 42 promoter-group contagion (needs a
 group map).
 
@@ -161,7 +161,7 @@ group map).
 | Item | Status | Notes |
 |---|---|---|
 | Sector lenses with KPIs and footer | done | 26 lenses (superset of the 22) |
-| Asset-turn bands, seasonality, feedstock, red flags per sector | todo | add to sectors.toml and the prompt |
+| Asset-turn bands, seasonality, feedstock, red flags per sector | done | sectors.toml (all 26 lenses) → prompt lens; module 2 ASSET_TURN check on capex with guided revenue |
 
 ### §11 4-gate funnel and 0–100 actionability score
 | Item | Status |
@@ -217,7 +217,7 @@ docs, sync-companies workflow.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 192 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 194 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

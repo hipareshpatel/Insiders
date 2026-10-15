@@ -51,7 +51,7 @@ from .signals import priced_for
 from .sinks.base import Sink, SinkRejected
 from . import universe
 from . import xbrl as xbrl_fast_path
-from .quality import warrant_deadlines
+from .quality import asset_turn_signals, warrant_deadlines
 from .radar import summarize as memory_summary
 from .timeutil import IST, market_session, now_iso, now_ist, today_ist, utc_day
 
@@ -681,6 +681,7 @@ class Pipeline:
             "model": result.model_label,
         }
         needs_review = checks.needs_review
+        signals += asset_turn_signals(card_json, sector, sector_module.asset_turn)  # extends card_json["signals"]
         rated = score_card(card_json, event_type, signals, current, priced, needs_review, card.impact_level)
         card_json["score"] = rated.as_dict()
         card_json["model_impact"] = card.impact_level

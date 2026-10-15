@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 
 from bse_intel.models import CapitalAction
-from bse_intel.quality import festive_signals, quality_signals, rating_signals, warrant_deadlines
+from bse_intel.quality import asset_turn_signals, festive_signals, quality_signals, rating_signals, warrant_deadlines
 
 N = "n-q"
 
@@ -76,3 +76,22 @@ def test_warrant_clock():
     out = SimpleNamespace(dossier_delta=SimpleNamespace(capital_actions=[CapitalAction(instrument="Convertible warrants", amount_cr=75, issue_price=150)]))
     ((deadline, text),) = warrant_deadlines(out, SimpleNamespace(filing_date="2026-10-01"))
     assert deadline == "2028-04-01" and "₹75 Cr at ₹150" in text
+
+
+def test_asset_turns_against_the_sector_band():
+    card = {"deal_value": {"kind": "CAPEX", "amount_cr": 100},
+            "quantified_impact": [{"label": "Peak revenue potential", "unit": "INR_CR", "result": 600, "check": "VERIFIED"}]}
+    (s,) = asset_turn_signals(card, "chemicals", (0.8, 2.2))
+    assert s["severity"] == "WARNING" and "6.0x asset turns, against 0.8-2.2x normal for chemicals" in s["text"]
+    card["quantified_impact"][0]["result"] = 180
+    assert asset_turn_signals(card, "chemicals", (0.8, 2.2)) == []
+    assert asset_turn_signals(card, "banks", None) == []
+
+
+def test_sector_lens_carries_turns_drivers_and_red_flag(settings):
+    from bse_intel.prompts.engine import PromptEngine
+
+    lens = PromptEngine(settings).sector_for("Specialty Chemicals")
+    assert lens.asset_turn == (0.8, 2.2)
+    text = lens.lens()
+    assert "Normal asset turns: 1.4-2.2x specialty" in text and "anti-dumping" in text and "Forensic red flag" in text

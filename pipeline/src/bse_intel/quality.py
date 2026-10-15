@@ -237,3 +237,30 @@ def warrant_deadlines(output, filing) -> list[tuple[str, str]]:
         out.append((deadline.isoformat(), f"18-month warrant conversion deadline (issued {start.isoformat()}{size}{price}): "
                     "the remaining 75% is due, or the warrants lapse."))
     return out
+
+
+REVENUE_WORDS = re.compile(r"revenue|sales|turnover|top[- ]?line", re.I)
+
+
+def asset_turn_signals(card: dict, sector_name: str, band: tuple[float, float] | None) -> list[dict]:
+    """M2: revenue a capex is guided to bring, against the sector's normal asset turns. Above 1.5x the
+    top of the band, the guidance is ambitious for the machinery (or the work is outsourced)."""
+    deal = card.get("deal_value") or {}
+    capex = deal.get("amount_cr")
+    if not band or deal.get("kind") != "CAPEX" or not capex or capex <= 0:
+        return []
+    guided = [q for q in card.get("quantified_impact") or []
+              if q.get("unit") == "INR_CR" and q.get("result") and REVENUE_WORDS.search(q.get("label") or "")
+              and q.get("check") != "MISMATCH"]
+    if not guided:
+        return []
+    revenue = max(q["result"] for q in guided)
+    turns = revenue / capex
+    lo, hi = band
+    if turns > hi * 1.5:
+        return [_signal("ASSET_TURN", "WARNING", f"₹{revenue:g} Cr of revenue from ₹{capex:g} Cr of capex is {turns:.1f}x asset turns, "
+                        f"against {lo:g}-{hi:g}x normal for {sector_name.replace('_', ' ')}: ambitious, or the making is outsourced.")]
+    if turns < lo * 0.5:
+        return [_signal("ASSET_TURN", "INFO", f"₹{revenue:g} Cr of revenue from ₹{capex:g} Cr of capex is only {turns:.1f}x asset turns "
+                        f"(normal {lo:g}-{hi:g}x): conservative guidance, or a long gestation.")]
+    return []

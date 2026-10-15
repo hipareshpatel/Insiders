@@ -7,7 +7,7 @@ import re
 from dataclasses import dataclass
 from string import Template
 
-from ..grounding import UNIT_NAMES, declared_unit
+from ..grounding import UNIT_NAMES, declared_unit, explicit_units
 from ..models import EVENT_TYPES, Filing
 from ..settings import Settings
 
@@ -74,11 +74,16 @@ def _unit_note(text: str | None) -> str:
     """A line naming the filing's unit when it is not ₹ crore: models copy "2,863" from a lakh
     statement as "₹2,863 Cr". Stated in code so the model does not have to notice the header."""
     unit = declared_unit(text)
-    if not unit:
-        return ""
-    return (f"UNITS: this filing states its amounts in {UNIT_NAMES[unit]}. Every amount on the card, in key_numbers, "
-            f"results and fundamentals is in ₹ crore: divide the filing's figures by {unit:,} "
-            f"(e.g. 12,345 in the filing is ₹{12345 / unit:,.2f} Cr).\n\n")
+    if unit:
+        return (f"UNITS: this filing states its amounts in {UNIT_NAMES[unit]}. Every amount on the card, in key_numbers, "
+                f"results and fundamentals is in ₹ crore: divide the filing's figures by {unit:,} "
+                f"(e.g. 12,345 in the filing is ₹{12345 / unit:,.2f} Cr).\n\n")
+    if explicit_units(text) - {1}:
+        return ("UNITS: this filing writes amounts in more than one unit (lakh, million, crore...). Convert each "
+                "amount to ₹ crore before writing it on the card, in key_numbers, results and fundamentals: "
+                "1 crore = 100 lakh = 10 million, 1 billion = 100 crore (e.g. INR 1,234 million is ₹123.4 Cr; "
+                "Rs. 5,678 lakh is ₹56.78 Cr).\n\n")
+    return ""
 
 
 def _examples_text(examples: dict[str, list[dict]]) -> str:

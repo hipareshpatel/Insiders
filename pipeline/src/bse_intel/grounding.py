@@ -45,6 +45,31 @@ _PER_CRORE = {"lakh": 100, "lac": 100, "million": 10, "thousand": 10_000, "'000"
 UNIT_NAMES = {100: "₹ lakh", 10: "₹ million", 10_000: "₹ thousand"}
 _CRORE_AMOUNT = re.compile(r"\d\s*(?:cr\b|crores?\b)", re.I)
 _CRORE_AFTER = re.compile(r"\s*(?:cr\b|crores?\b)", re.I)
+# The unit written right after a source figure ("INR 5445 Million", "Rs. 2,025 lakhs"), as figures
+# per ₹ crore. Kanoria's RPT notice (Apr 2025) mixes million, lakh and crore, so no single declared
+# unit exists; "5445 Million" was still written as "₹5,445 Cr".
+_MONEY_AFTER = re.compile(r"\s*(lakhs?|lacs?|crores?|cr|millions?|mn|billions?|bn|thousands?)(?![a-z])", re.I)
+_PER_CRORE_WORD = {"lakh": 100, "lac": 100, "crore": 1, "cr": 1, "million": 10, "mn": 10,
+                   "billion": 0.01, "bn": 0.01, "thousand": 10_000}
+
+
+def _money_unit(clean: str, end: int) -> float | None:
+    m = _MONEY_AFTER.match(clean, end)
+    if not m:
+        return None
+    word = m.group(1).lower()
+    return _PER_CRORE_WORD.get(word if word in _PER_CRORE_WORD else word[:-1])
+
+
+def explicit_units(text: str | None) -> set[float]:
+    """The money units written after figures in a text, as figures per ₹ crore."""
+    clean = _clean(text or "")
+    return {u for m in _NUMBER.finditer(clean) if (u := _money_unit(clean, m.end())) is not None}
+
+
+def _near(values: list[float], target: float, tolerance: float) -> bool:
+    i = bisect.bisect_left(values, target - tolerance)
+    return i < len(values) and values[i] <= target + tolerance
 DEFAULT_THRESHOLD = 0.7
 NEAR = 300  # characters: two source figures this close can be compared with each other
 
@@ -121,6 +146,28 @@ class SourceIndex:
         self.points = [(v, i, pos) for i, text in enumerate(texts) for v, _, pos, _, _ in _tokens(text or "") if v > 0]
         self.values = sorted({v for v, _, _ in self.points})
         self._pairs: list[tuple[float, float]] | None = None
+        by_unit: dict[float | None, set[float]] = {}
+        for text in texts:
+            clean = _clean(text or "")
+            for m in _NUMBER.finditer(clean):
+                try:
+                    value = abs(float(m.group(0).replace(",", "").strip("+").strip("()")))
+                except ValueError:
+                    continue
+                if value > 0:
+                    by_unit.setdefault(_money_unit(clean, m.end()), set()).add(value)
+        self._plain = sorted(by_unit.pop(None, set()))
+        self._by_unit = {unit: sorted(values) for unit, values in by_unit.items()}
+
+    def stated_crore(self, value: float, decimals: int, plain_scales=SCALES) -> bool:
+        """A ₹ crore figure on the card. A source figure written with a unit matches only at that
+        unit's scale ("5445 Million" grounds ₹544.5 Cr, never ₹5,445 Cr); a bare figure (a table
+        under "(INR in Lakhs)") at ``plain_scales``."""
+        rounding = 0.5 * 10 ** (-decimals) + 1e-9
+        for per_crore, values in self._by_unit.items():
+            if _near(values, value * per_crore, rounding * per_crore + abs(value * per_crore) * 1e-6):
+                return True
+        return any(_near(self._plain, value * s, rounding * s + abs(value * s) * 1e-6) for s in plain_scales)
 
     def _has_near(self, target: float, tolerance: float) -> bool:
         i = bisect.bisect_left(self.values, target - tolerance)
@@ -247,13 +294,15 @@ def check_card(card: Card, *sources: str) -> GroundingResult:
     a multiple) passes when it follows from another figure on the same line and a source figure;
     any other derivation belongs in quantified_impact, where its formula is checked.
 
-    When the filing (sources[0]) states its amounts in one unit, a ₹ crore figure must match it at
-    that unit's scale (₹28.63 Cr = 2,863 lakh) or the other sources as crore: copying 2,863 lakh as
-    "₹2,863 Cr" no longer passes on the any-scale rule."""
+    A ₹ crore figure must match a source figure at the unit written beside it ("INR 5445 Million"
+    is ₹544.5 Cr, never ₹5,445 Cr). A bare figure (a table) matches at the filing's declared unit
+    when it declares one ("(INR in Lakhs)": ₹28.63 Cr = 2,863), otherwise at any scale; the other
+    sources (headline, memory) are already in crore when the filing declares a unit."""
     index = SourceIndex(*sources)
     unit = declared_unit(sources[0]) if sources else None
-    filing_index = SourceIndex(sources[0]) if unit else None
-    other_index = SourceIndex(*sources[1:]) if unit else None
+    filing_index = SourceIndex(sources[0] if sources else "")
+    other_index = SourceIndex(*sources[1:])
+    filing_scales, other_scales = ((unit,), (1,)) if unit else (SCALES, SCALES)
     texts = [("headline", card.headline), ("takeaway", card.takeaway), *(("fact", f) for f in card.what_happened),
              *(("insight", i.text) for i in card.why_it_matters)]
     if card.deal_value and card.deal_value.amount_cr:
@@ -267,13 +316,14 @@ def check_card(card: Card, *sources: str) -> GroundingResult:
         tokens = _tokens(text or "")
         line_amounts = [v for v, d, _, kind, _ in tokens if kind in ("plain", "qty") and v > 31 and index.stated(v, d)]
         line_pcts = [v for v, _, _, kind, _ in tokens if kind == "pct"]
-        crore_at = _crore_positions(text or "") if unit else set()
+        crore_at = _crore_positions(text or "")
         for value, decimals, pos, kind, raw in tokens:
             if value == 0 or (kind == "plain" and value <= 31 and decimals == 0):
                 continue
             checked += 1
             if pos in crore_at:
-                if filing_index.stated(value, decimals, scales=(unit,)) or other_index.stated(value, decimals, scales=(1,)):
+                if (filing_index.stated_crore(value, decimals, filing_scales)
+                        or other_index.stated_crore(value, decimals, other_scales)):
                     continue
             elif index.grounded(value, decimals, kind=kind) or _from_line(value, decimals, kind, line_amounts, line_pcts, index):
                 continue

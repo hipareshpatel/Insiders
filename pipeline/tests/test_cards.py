@@ -294,6 +294,35 @@ def test_lakh_figures_copied_as_crore_are_caught():
     assert check_card(card(headline="FY26 revenue was ₹1,624.1 Cr"), RESULTS_TEXT, memory).ungrounded == []
 
 
+RPT_NOTICE = ("Kanoria Chemicals: approval of material related party transactions. Proposed maximum amount of"
+              " transactions INR. 5445 \nMillion (equivalent EURO 60.21 Million). Remuneration of the Whole Time"
+              " Director up to Rs. 180 lakhs per annum. Authorised capital of Rs. 25 crore.")
+
+
+def test_a_figure_is_read_in_the_unit_written_beside_it():
+    """Kanoria's RPT notice (Apr 2025) mixes million, lakh and crore, so no unit is declared for the
+    whole filing; "INR 5445 Million" was carried as "₹5,445 Cr" and passed at any scale."""
+    from bse_intel.grounding import declared_unit
+
+    assert declared_unit(RPT_NOTICE) is None
+    wrong = card(headline="Kanoria seeks approval for RPTs worth ₹5,445 Cr", what_happened=["WTD pay up to ₹180 Cr"])
+    result = check_card(wrong, RPT_NOTICE)
+    assert result.headline_ungrounded == ["5,445"] and "180" in result.ungrounded
+    right = card(headline="Kanoria seeks approval for RPTs worth ₹544.5 Cr",
+                 what_happened=["WTD pay up to ₹1.8 Cr a year", "Authorised capital ₹25 Cr"])
+    assert check_card(right, RPT_NOTICE).ungrounded == []
+    assert check_card(card(headline="RPTs of ₹545 Cr"), RPT_NOTICE).ungrounded == []  # rounded is fine
+
+
+def test_pass2_prompt_warns_when_units_are_mixed(settings):
+    from bse_intel.prompts.engine import PromptEngine
+
+    f = Filing(news_id="u2", scrip_code="506525", company_name="Kanoria Chemicals", headline="Notice",
+               filed_at="2025-04-09T17:00:00+05:30", filing_date="2025-04-09")
+    _, user = PromptEngine(settings).pass2(f, "GOVERNANCE", None, None, RPT_NOTICE)
+    assert "more than one unit" in user and "10 million" in user
+
+
 def test_pass2_prompt_names_a_non_crore_unit(settings):
     from bse_intel.prompts.engine import PromptEngine
 

@@ -6,7 +6,7 @@ watch next. It runs on free tiers.
 
 - **Pipeline** (`pipeline/`, Python). Fetches BSE announcements, drops noise by
   rules, gatekeeps ambiguous filings, extracts PDF text (OCR for scans), and analyses
-  material filings through a 6-provider free AI gateway with a 95% quota ceiling. It
+  material filings through a 7-provider free AI gateway with a 95% quota ceiling. It
   checks every number against the source, re-computes every quantified estimate from
   its shown working, merges facts into per-company dossiers with provenance, computes
   signals (promise vs delivery, dilution, working capital,
@@ -41,7 +41,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
-python -m pytest -q              # 237 tests
+python -m pytest -q              # 239 tests
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -91,7 +91,7 @@ below (keys from the keys file, 5 workers) and logs to `data\logs`.
    laptop set `CF_REMOTE_BINDINGS=1` first so the Workers AI spare works.
 2. In `pipeline/`, point the pipeline at it:
    `export BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 INGEST_TOKEN=dev-local-token`
-   plus one key per AI provider (`GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `GEMINI_API_KEY`).
+   plus one key per AI provider (`GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`).
    Run `python -m bse_intel models` and replace any model it flags as missing in `config/providers.toml`
    (free-tier catalogues change often). The Cloudflare Workers AI target needs `npx wrangler login` in
    `web/` first, because the local Worker calls Workers AI remotely; without it that target is skipped.

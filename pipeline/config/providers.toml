@@ -90,6 +90,20 @@ timeout_s = 120
 # not reported per request, so this is a conservative token estimate.
 limits = { tpd = 150_000 }
 
+[providers.openrouter]
+# One account (decision D1). OpenRouter's free models (":free") share one allowance:
+# 20 requests a minute and 50 a day without purchased credits, 1,000 a day once $10 of
+# credits has ever been bought (openrouter.ai/docs, Limits); extra keys or accounts add
+# nothing. Free models rotate and are throttled at peak, so they are spares only. Probed
+# 2026-10-16 with a lakh-to-crore JSON question: nemotron-3-ultra-550b and
+# nemotron-3.5-super-vl answered correctly; gemma-4-31b was rate-limited upstream,
+# inkling is app-only, nemotron-3.5-lightning returned nothing. Each route below is
+# capped at 10/min so the two models together stay under the 20/min allowance.
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
+timeout_s = 180
+limits = { rpd = 50 }  # all free models together; 1_000 after a one-time $10 credit purchase
+
 # ------------------------------------------------------------------ Pass 1: gatekeeper
 # Input: headline + subcategory + first ~2,500 characters of page 1.
 
@@ -242,6 +256,25 @@ context_tokens = 24000
 spare = true
 limits = { rpm = 60, tpd = 60_000 }
 
+[[routes.pass2]]
+provider = "openrouter"
+model = "nvidia/nemotron-3-ultra-550b-a55b:free"  # a reasoning model; this endpoint has no JSON mode
+spare = true
+json_mode = false
+strip_reasoning = true
+max_tokens = 8000
+context_tokens = 250000
+limits = { rpm = 10 }
+
+[[routes.pass2]]
+provider = "openrouter"
+model = "nvidia/nemotron-3.5-super-vl:free"
+spare = true
+json_mode = true
+max_tokens = 4000
+context_tokens = 250000
+limits = { rpm = 10 }
+
 [[routes.pass2_bulk]]
 provider = "mistral"
 model = "ministral-14b-2512"  # the free tier blocks mistral-large; 937k tokens/min, 0.5 requests/s
@@ -288,6 +321,25 @@ max_tokens = 3000
 context_tokens = 24000
 spare = true
 limits = { rpm = 60, tpd = 60_000 }
+
+[[routes.pass2_bulk]]
+provider = "openrouter"
+model = "nvidia/nemotron-3-ultra-550b-a55b:free"
+spare = true
+json_mode = false
+strip_reasoning = true
+max_tokens = 8000
+context_tokens = 250000
+limits = { rpm = 10 }
+
+[[routes.pass2_bulk]]
+provider = "openrouter"
+model = "nvidia/nemotron-3.5-super-vl:free"
+spare = true
+json_mode = true
+max_tokens = 4000
+context_tokens = 250000
+limits = { rpm = 10 }
 
 # ------------------------------------------------------------------ Vision OCR for scanned pages
 
@@ -345,9 +397,26 @@ context_tokens = 900000
 extra_body = { reasoning_effort = "low" }
 limits = { rpm = 5, tpm = 250_000, rpd = 20 }
 
+[[routes.pass2_long]]
+provider = "openrouter"
+model = "nvidia/nemotron-3-ultra-550b-a55b:free"
+spare = true
+json_mode = false
+strip_reasoning = true
+max_tokens = 8000
+context_tokens = 250000
+limits = { rpm = 10 }
+
 [[routes.vision]]
 provider = "gemini"
 model = "gemini-3.1-flash-lite"  # reads images; shares its daily quota with pass 1
 max_tokens = 2500
 extra_body = { reasoning_effort = "low" }
 limits = { rpm = 15, tpm = 250_000, rpd = 500 }
+
+[[routes.vision]]
+provider = "openrouter"
+model = "nvidia/nemotron-3.5-super-vl:free"  # reads images; last resort for scanned pages
+spare = true
+max_tokens = 2500
+limits = { rpm = 10 }

@@ -28,6 +28,7 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | D16 | Stick with the blueprint: every material filing gets the full Pass 2 analysis (no cheap one-call tier for routine filings). | 2026-10-16 |
 | D17 | Repeat submissions: skip only an exact body match, or a near-identical body with every number the same, from the same company within 3 days; never corrigenda, revised or corrected filings; keep the skipped filing as DUPLICATE linked to the original. | 2026-10-16 |
 | D18 | Backfill with 5 AI workers (`PIPELINE_WORKERS=5`, was 3). The gateway keeps pacing each model to 95% of its free limits; watch the 429 share and the daily ceilings on the System page and go back to 3 if extra workers only reach the daily quota sooner. | 2026-10-16 |
+| D19 | OpenRouter added with one account: two free models (Nemotron 3 Ultra, Nemotron 3.5 Super VL) as spares under its shared 50 requests/day. No extra accounts at any provider. The one-time $10 credit purchase (1,000/day) is deferred until a full day of backfill shows whether daily quotas bind. Checked and not used: Cerebras (card required, $5 credit expiring in 30 days, no free tier after), Hugging Face (no free credits), GitHub Models (retired July 2026), SambaNova (free but 20 requests/day per model; possible later). | 2026-10-16 |
 | D15 | The laptop's Claude Code session is the main engineer (it reaches BSE and sees real logs); `CLAUDE.md` holds the rules and status every session reads. The Worker is named `insiders` (https://insiders.reply-bd3.workers.dev). | 2026-10-16 |
 
 ## Optional, not adopted (cost)
@@ -91,7 +92,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 ### §4 AI gateway
 | Item | Status | Notes |
 |---|---|---|
-| 6 providers, 95% ceiling, pacing, failover, Workers AI spare | done | Gemini added 2026-10-16 |
+| 7 providers, 95% ceiling, pacing, failover, Workers AI spare | done | Gemini added 2026-10-16; OpenRouter free models as spares 2026-10-16 (D19) |
 | Dual-key pool | dropped | D1 |
 | Task-aware routing: long documents (>12k tokens) to long-context models | done | `pass2_long` |
 | Vision OCR: glm-4.6v-flash, then Mistral, then Gemini | done | thinking off; mistral-small-2603, gemini-3.1-flash-lite |
@@ -245,7 +246,7 @@ at its end and in PLAN.md.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 237 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 239 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

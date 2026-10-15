@@ -7,7 +7,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 Set-Location (Join-Path $root 'pipeline')
 . C:\Users\Quali\insiders-keys.ps1
-foreach ($k in 'GROQ_API_KEY', 'NVIDIA_API_KEY', 'MISTRAL_API_KEY', 'ZAI_API_KEY', 'GEMINI_API_KEY') {
+foreach ($k in 'GROQ_API_KEY', 'NVIDIA_API_KEY', 'MISTRAL_API_KEY', 'ZAI_API_KEY', 'GEMINI_API_KEY', 'OPENROUTER_API_KEY') {
   if (Test-Path "env:$k") { Set-Item "env:$k" ((Get-Item "env:$k").Value.Trim()) }  # a stray space breaks auth
 }
 $env:BSE_INTEL_SINK = 'platform'

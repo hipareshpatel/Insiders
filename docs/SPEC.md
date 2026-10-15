@@ -124,7 +124,7 @@ ceilings leave work `PENDING` for the next day.
 
 ## 4. AI gateway
 
-Six free providers behind one OpenAI-compatible gateway (`config/providers.toml`), **one key
+Seven free providers behind one OpenAI-compatible gateway (`config/providers.toml`), **one key
 per provider** (owner decision; no dual-key pool). Free-tier catalogues change often: `models`
 lists what each provider serves today and `ai-check` sends one tiny request to every target.
 Established models are preferred to the newest, which are often overloaded (owner decision D13).
@@ -137,6 +137,7 @@ Established models are preferred to the newest, which are often overloaded (owne
 | Z.AI | `glm-4.7-flash` (200K), `glm-4.6v-flash` | Long documents, OCR | `pass1*`, `pass2*`, `vision` |
 | Google Gemini (AI Studio) | `gemini-3.1-flash-lite`, `gemini-3.5-flash-lite`, `gemini-3.6-flash` (spare) | Gatekeeper, OCR, 1M-token spare | `pass1*`, `vision`, `pass2*` |
 | Workers AI | `@cf/meta/llama-3.1-8b-instruct-fp8`, `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | Spare, through this Worker | `pass1*`, `pass2*` |
+| OpenRouter (free models) | `nvidia/nemotron-3-ultra-550b-a55b:free` (reasoning stripped), `nvidia/nemotron-3.5-super-vl:free` | Spares only; 50 requests/day shared by all free models (1,000 after a one-time $10 credit purchase), 10/min per model | `pass2*`, `pass2_long`, `vision` |
 
 Plan notes: Mistral's Free plan blocks `mistral-large` (403 "not available in your subscription
 tier") and includes $10 of API usage a month with pay-as-you-go off, so it cannot bill. Gemini's
@@ -413,7 +414,7 @@ single-writer design depends on.
 
 | Where | What |
 |---|---|
-| Repository secrets | `PLATFORM_API_URL`, `INGEST_TOKEN`, `GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `GEMINI_API_KEY`, and for deploys `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` |
+| Repository secrets | `PLATFORM_API_URL`, `INGEST_TOKEN`, `GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, and for deploys `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` |
 | Repository variables | `BACKFILL_START` (default 2025-01-01), `D1_DATABASE_ID`, `PIPELINE_RUNNER_LABELS` |
 | Worker secrets | `INGEST_TOKEN`, `OWNER_TOKEN` (owner mode) |
 | Optional env | `UNIVERSE_MIN_MCAP_CR` (100), `D1_DAILY_WRITE_BUDGET` (80000), `SECOND_OPINION` (1), `TEXT_CACHE` (1), `PIPELINE_WORKERS` (3) |

@@ -101,6 +101,30 @@ def test_provider_level_monthly_ceiling(make_gateway):
     assert gw.complete_json("r", "s", "u", Pass1Result).provider == "b"
 
 
+def test_provider_level_daily_requests_are_shared_by_its_models(make_gateway):
+    """OpenRouter's free models share one allowance per day: requests to either model count against it."""
+    providers = {
+        "a": {"base_url": "https://a.invalid", "api_key_env": "A_KEY", "limits": {"rpd": 20}},
+        "b": {"base_url": "https://b.invalid", "api_key_env": "B_KEY"},
+    }
+    config = gateway_config(route({"provider": "a", "model": "m-a1"}, {"provider": "a", "model": "m-a2"},
+                                  {"provider": "b", "model": "m-b"}), providers)
+    used = [{"provider": "a", "model": "m-a1", "requests": 12}, {"provider": "a", "model": "m-a2", "requests": 7}]
+    gw, fake = make_gateway(config, {"m-a1": [GOOD], "m-a2": [GOOD], "m-b": [GOOD]}, usage_today=used)
+    assert gw.complete_json("r", "s", "u", Pass1Result).provider == "b"  # 19 of 20 x 95% spent
+    assert [c["model"] for c in fake.calls] == ["m-b"]
+
+
+def test_openrouter_free_models_are_spares_under_one_daily_allowance(settings):
+    config = settings.load_toml("providers.toml")
+    assert config["providers"]["openrouter"]["limits"]["rpd"] == 50
+    entries = [e for route in config["routes"].values() for e in route if e["provider"] == "openrouter"]
+    assert entries and all(e.get("spare") for e in entries)
+    assert all(e["model"].endswith(":free") for e in entries)  # never a paid model by accident
+    for route in config["routes"].values():  # the free allowance is 20/min across the models of one route
+        assert sum(e["limits"]["rpm"] for e in route if e["provider"] == "openrouter") <= 20
+
+
 def test_quota_exhausted_everywhere_is_reported_not_raised_as_crash(make_gateway):
     config = gateway_config(route({"provider": "a", "model": "m-a", "limits": {"rpd": 10}}))
     gw, _ = make_gateway(config, {"m-a": [GOOD]}, usage_today=[{"provider": "a", "model": "m-a", "requests": 10}])

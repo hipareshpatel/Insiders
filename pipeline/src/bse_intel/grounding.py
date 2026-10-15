@@ -46,8 +46,10 @@ CRORE_SCALES = (1, 10, 100, 1e4, 1e7)
 _DECLARED_UNIT = re.compile(
     r"(?:₹|\brs\.?|\binr)\s*(?:in\s*)?(lakhs?|lacs?|crores?|millions?|thousands?|'000)(?![a-z])"
     r"|\bin\s*(?:₹|rs\.?|inr)\s*(lakhs?|lacs?|crores?|millions?|thousands?|'000)(?![a-z])"
-    r"|^[ \t]*[(\[{/\"'`]?[ \t]*[^\s()]{0,3}[ \t]*in[ \t]*(lakhs?|lacs?|crores?|millions?|thousands?)\.?[ \t]*\)",
-    re.I | re.M)  # Jubilant's rupee sign arrives as a Tibetan letter: "(ཪ in million)"
+    r"|^[ \t]*[(\[{/\"'`]?[ \t]*[^\s()]{0,3}[ \t]*in[ \t]*(lakhs?|lacs?|crores?|millions?|thousands?)\.?[ \t]*\)"
+    r"|mount[ \t]+(?:in|ln|1n|111)[ \t]+(lakhs?|lacs?|crores?|millions?|thousands?)[ \t]+of\b",
+    re.I | re.M)  # Jubilant's rupee sign arrives as a Tibetan letter: "(ཪ in million)"; Heritage's
+# scanned headers as "(,\mount in millions of Z unless otherwise stated)" and "(Amount 111 millions oft"
 _PER_CRORE = {"lakh": 100, "lac": 100, "million": 10, "thousand": 10_000, "'000": 10_000, "crore": 1}
 UNIT_NAMES = {100: "₹ lakh", 10: "₹ million", 10_000: "₹ thousand"}
 _CRORE_AFTER = re.compile(r"\s*(?:cr\b|crores?\b)", re.I)
@@ -132,7 +134,7 @@ def declared_unit(text: str | None) -> int | None:
     XBRL table on top does): then bare figures may match at any scale. Amounts written with their
     own unit ("INR 300 Crores" in a note) are read in that unit whatever this returns."""
     text = text or ""
-    words = {(m.group(1) or m.group(2) or m.group(3)).lower().rstrip("s") for m in _DECLARED_UNIT.finditer(text)}
+    words = {next(g for g in m.groups() if g).lower().rstrip("s") for m in _DECLARED_UNIT.finditer(text)}
     units = {_PER_CRORE[w] for w in words}
     if len(units) != 1 or 1 in units:
         return None

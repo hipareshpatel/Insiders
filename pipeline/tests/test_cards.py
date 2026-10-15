@@ -449,3 +449,15 @@ def test_board_meeting_duration_and_reg30_para_b_clues():
     assert text_signals("commenced at 11:00 a.m. and concluded at 12:30 p.m.", "RESULTS") == []
     launch = "Disclosure under Regulation 30 read with Para B of Part A of Schedule III: launch of Triacetin."
     assert [s["type"] for s in text_signals(launch, "PRODUCT_LAUNCH")] == ["REG30_THRESHOLD"]
+
+
+def test_scanned_amount_in_millions_header_declares_the_unit():
+    r"""Heritage Foods' FY25 statements are scanned: "(,\mount in millions of Z unless otherwise stated)",
+    "(Amount 111 millions oft unlc:-s othenv1se statcu)". PAT 205.10 is ₹20.5 Cr, not "₹205 Cr"."""
+    from bse_intel.grounding import check_card, declared_unit
+
+    text = (r"(,\mount in millions of Z unless otherwise stated)" "\nProfit for Che period/year 205.10 412.92\n"
+            "(Amount 111 millions oft unlc:-s othenv1se statcu)\nBorrowing limit from Rs.500 Crores to Rs.800 Crores")
+    assert declared_unit(text) == 10
+    assert check_card(card(headline="Heritage PAT ₹205 Cr", what_happened=["PAT ₹205 Cr"]), text).headline_ungrounded == ["205"]
+    assert not check_card(card(headline="Heritage PAT ₹20.51 Cr", what_happened=["Borrowing limit raised to ₹800 Cr"]), text).ungrounded

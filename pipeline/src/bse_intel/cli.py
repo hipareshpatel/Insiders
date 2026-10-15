@@ -126,10 +126,12 @@ def cmd_sync_companies(args, settings, sink) -> int:
     import httpx
 
     from .bse import BseClient, fetch_scrip_list, industry_path
+    from .market import size_bucket
     from .prompts.engine import PromptEngine
 
     log = logging.getLogger("bse_intel.sync_companies")
     engine = PromptEngine(settings)
+    buckets = settings.load_toml("market.toml")["size_buckets"]
     stored = _stored_companies(sink)
     written = looked_up = failures = 0
     now = now_iso()
@@ -153,6 +155,9 @@ def cmd_sync_companies(args, settings, sink) -> int:
                     row["sector"] = engine.sector_for(row["industry"]).name
                 elif scrip not in stored:
                     row["sector"] = "default"  # new and unclassified; a stored sector is never overwritten
+                # BSE's list carries a market cap (₹ Cr) for companies Yahoo cannot price; label it
+                # too, or the size filters and the score never see those companies.
+                row["size_category"] = size_bucket(row.get("market_cap_cr"), buckets)
                 row["updated_at"] = now
             written += sink.execute("companies_upsert", batch)
             if looked_up:

@@ -53,6 +53,7 @@ ClientFactory = Callable[[str, str, float], Any]
 CIRCUIT_THRESHOLD = 3
 CIRCUIT_OPEN_SECONDS = 300
 MAX_PACING_WAIT = 30.0
+MAX_SLOT_WAIT = 10.0   # wait for a free slot on a concurrency-capped model, then try the next one
 
 UNAVAILABLE, CEILING, TRANSIENT, FAILED = "unavailable", "ceiling", "transient", "failed"
 
@@ -178,6 +179,7 @@ class AIGateway:
         self.routes: dict[str, list[Target]] = {}
         self._rotations: dict[str, _WeightedRotation] = {}
         self.limiters: dict[str, RateLimiter] = {}
+        self.slots: dict[str, threading.BoundedSemaphore] = {}  # per-model cap on requests in flight
         self.raw_limits: dict[str, Limits] = {}
         self.provider_quota: dict[str, QuotaCounter] = {}
         self.usage: dict[str, Usage] = {}
@@ -237,6 +239,9 @@ class AIGateway:
                         month_requests=int(m_row.get("requests", 0)), month_tokens=tokens(m_row),
                     ))
                     self.usage[target.key] = Usage()
+                concurrency = (entry.get("limits") or {}).get("concurrency")
+                if concurrency and target.key not in self.slots:
+                    self.slots[target.key] = threading.BoundedSemaphore(int(concurrency))
             self.routes[route] = targets
             if strategies.get(route) == "weighted":
                 self._rotations[route] = _WeightedRotation([t for t in targets if not t.spare])
@@ -368,15 +373,25 @@ class AIGateway:
             pquota = self.provider_quota.get(target.provider)
             extra = (pquota,) if pquota else ()
             wait = MAX_PACING_WAIT if left is None else min(MAX_PACING_WAIT, left)
-            if not self.limiters[target.key].acquire(est, max_wait=wait, extra_quota=extra):
-                outcomes.append((target.key, TRANSIENT, "paced"))
+            slot = self.slots.get(target.key)
+            # A model that allows N requests at once (Z.ai's free GLM models allow one) is waited on
+            # briefly, then skipped for the next target; the request is counted only once it goes.
+            if slot is not None and not slot.acquire(timeout=min(wait, MAX_SLOT_WAIT)):
+                outcomes.append((target.key, TRANSIENT, "busy: concurrency limit"))
                 continue
             try:
-                return self._call_target(target, messages, schema, est, extra)
-            except _Retryable as exc:
-                kind = TRANSIENT if exc.transient else FAILED
-                outcomes.append((target.key, kind, str(exc)))
-                continue
+                if not self.limiters[target.key].acquire(est, max_wait=wait, extra_quota=extra):
+                    outcomes.append((target.key, TRANSIENT, "paced"))
+                    continue
+                try:
+                    return self._call_target(target, messages, schema, est, extra)
+                except _Retryable as exc:
+                    kind = TRANSIENT if exc.transient else FAILED
+                    outcomes.append((target.key, kind, str(exc)))
+                    continue
+            finally:
+                if slot is not None:
+                    slot.release()
         raise AllProvidersFailed(route, outcomes)
 
     def _time_left(self) -> float | None:

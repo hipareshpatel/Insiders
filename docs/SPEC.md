@@ -147,7 +147,8 @@ both the old `{response}` and the OpenAI-shaped reply and turns an object reply 
 local dev needs the binding's `"remote": true`, `npx wrangler login` and a workers.dev subdomain.
 
 Rules (tested in `tests/test_gateway.py`): 95% safety ceiling on every limit, persisted in D1;
-weighted round-robin for Pass 2; 429 → cooldown, and a 429 that names a daily window retires the
+weighted round-robin for Pass 2; a `concurrency` limit caps requests in flight per model (Z.ai's
+free GLM models allow one: the gateway waits up to 10 s for the slot, then tries the next model); 429 → cooldown, and a 429 that names a daily window retires the
 model for the day (one that names a per-minute window, as Gemini's do, only cools down); 401 or a
 key-level 403 disables **every model of that provider** for the run; a 403 about one model's tier
 disables only that model; 404 and 410 (retired) disable the model; **timeouts, connection errors and

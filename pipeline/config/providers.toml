@@ -56,6 +56,8 @@ limits = { tpmo = 1_000_000_000 }
 # Z.AI global platform. (open.bigmodel.cn is Zhipu's separate mainland-China
 # platform with its own accounts and keys.)
 base_url = "https://api.z.ai/api/paas/v4"
+# The free Flash models allow one request in flight per key (concurrency = 1 on each route below):
+# with several workers, the gateway waits up to 10 s for the slot, then tries the next model.
 api_key_env = "ZAI_API_KEY"
 timeout_s = 120
 
@@ -112,7 +114,7 @@ model = "glm-4.7-flash"
 json_mode = true
 max_tokens = 200
 extra_body = { thinking = { type = "disabled" } }
-limits = { rpm = 60 }
+limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 
 [[routes.pass1]]
 provider = "gemini"
@@ -160,7 +162,7 @@ model = "glm-4.7-flash"
 json_mode = true
 max_tokens = 200
 extra_body = { thinking = { type = "disabled" } }
-limits = { rpm = 60 }
+limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 
 [[routes.pass1_bulk]]
 provider = "gemini"
@@ -211,7 +213,7 @@ json_mode = true
 max_tokens = 3000
 context_tokens = 190000
 extra_body = { thinking = { type = "disabled" } }
-limits = { rpm = 60 }
+limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 
 [[routes.pass2]]
 provider = "mistral"
@@ -257,7 +259,7 @@ json_mode = true
 max_tokens = 3000
 context_tokens = 190000
 extra_body = { thinking = { type = "disabled" } }
-limits = { rpm = 60 }
+limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 
 [[routes.pass2_bulk]]
 provider = "nvidia"
@@ -299,7 +301,7 @@ json_mode = true
 max_tokens = 4000
 context_tokens = 190000
 extra_body = { thinking = { type = "disabled" } }
-limits = { rpm = 60 }
+limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 
 [[routes.pass2_long]]
 provider = "mistral"
@@ -325,7 +327,7 @@ provider = "zai"
 model = "glm-4.6v-flash"
 max_tokens = 2500
 extra_body = { thinking = { type = "disabled" } }  # reasoning tokens would eat the transcription
-limits = { rpm = 60 }
+limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 
 [[routes.vision]]
 provider = "mistral"

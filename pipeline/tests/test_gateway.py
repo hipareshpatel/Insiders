@@ -50,6 +50,33 @@ def test_a_reply_passed_through_as_parsed_json_is_still_read(make_gateway):
     assert result.value.is_material
 
 
+def test_a_model_allowing_one_request_at_a_time_sends_the_next_elsewhere(make_gateway, monkeypatch):
+    import threading
+
+    from bse_intel.ai import gateway as gateway_module
+
+    monkeypatch.setattr(gateway_module, "MAX_SLOT_WAIT", 0.05)
+    config = gateway_config(route({"provider": "a", "model": "m-a", "limits": {"rpm": 60, "concurrency": 1}},
+                                  {"provider": "b", "model": "m-b"}))
+    inside, release = threading.Event(), threading.Event()
+
+    def slow(kwargs):
+        inside.set()
+        release.wait(5)
+        return GOOD
+
+    gw, fake = make_gateway(config, {"m-a": [slow], "m-b": [GOOD]})
+    first = {}
+    worker = threading.Thread(target=lambda: first.update(r=gw.complete_json("r", "s", "u", Pass1Result)))
+    worker.start()
+    assert inside.wait(5)
+    second = gw.complete_json("r", "s", "u", Pass1Result)  # m-a is busy: goes to m-b, not a second m-a call
+    release.set()
+    worker.join(5)
+    assert first["r"].provider == "a" and second.provider == "b"
+    assert [c["model"] for c in fake.calls] == ["m-a", "m-b"]
+
+
 def test_95_percent_ceiling_moves_traffic_before_the_hard_limit(make_gateway):
     config = gateway_config(route(
         {"provider": "a", "model": "m-a", "limits": {"rpd": 100}},

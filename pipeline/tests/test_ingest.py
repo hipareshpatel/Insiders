@@ -262,8 +262,8 @@ def test_sync_companies_looks_up_missing_industries_once(settings, monkeypatch):
             return httpx.Response(200, text="<html></html>")
         if request.url.path.endswith("/ListofScripData_new/w"):
             return httpx.Response(200, json=[
-                {"SCRIP_CD": code, "Issuer_Name": f"Demo {code} Ltd", "scrip_id": f"DEMO{code}", "INDUSTRY": None}
-                for code in ("999001", "999002", "999003")])
+                {"SCRIP_CD": code, "Issuer_Name": f"Demo {code} Ltd", "scrip_id": f"DEMO{code}", "INDUSTRY": None,
+                 "Mktcap": cap} for code, cap in (("999001", "1,234.50"), ("999002", "25000"), ("999003", None))])
         scrip = request.url.params["scripcode"]
         lookups.append(scrip)
         if scrip == "999003":
@@ -281,6 +281,8 @@ def test_sync_companies_looks_up_missing_industries_once(settings, monkeypatch):
     sectors = {s: sink.company(s)["sector"] for s in ("999001", "999002", "999003")}
     assert sectors == {"999001": "cement", "999002": "pharma", "999003": "chemicals"}  # failed lookup kept its sector
     assert sink.company("999002")["industry"].endswith("> Pharmaceuticals")
+    # BSE's own market cap gets a size label, so size filters and scoring see the company
+    assert [sink.company(s)["size_category"] for s in ("999001", "999002", "999003")] == ["SMALL", "LARGE", None]
 
     lookups.clear()
     assert cmd_sync_companies(args, settings, sink) == 0

@@ -21,6 +21,7 @@ STATEMENTS = (
     "runs_upsert",
     "usage_add",
     "kv_set",
+    "filings_import",
 )
 
 QUERIES = (
@@ -37,6 +38,11 @@ QUERIES = (
     "companies_for_market",
     "companies_outside_universe",
     "companies_for_market_all",
+    "export_cards",
+    "export_companies",
+    "export_catalysts",
+    "export_filings",
+    "export_kv",
 )
 
 # Statements that add to what is stored: repeating one after an ambiguous failure (a timeout after
@@ -96,8 +102,11 @@ class Sink(ABC):
     @abstractmethod
     def put_dossier(self, scrip_code: str, dossier: dict) -> None: ...
 
+    def list_dossiers(self) -> list[str]:
+        return [k.removeprefix("memory/").removesuffix(".json") for k in self.list_objects("memory/")]
+
     @abstractmethod
-    def list_dossiers(self) -> list[str]: ...
+    def list_objects(self, prefix: str) -> list[str]: ...
 
     @abstractmethod
     def put_object(self, key: str, body: bytes, content_type: str = "application/json") -> None: ...

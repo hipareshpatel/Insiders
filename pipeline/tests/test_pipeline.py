@@ -29,10 +29,11 @@ class FakeBse:
         self.filings = filings
         self.pdfs = pdfs
 
-    def announcements(self, day, day_to=None, known=None):
+    def announcements(self, day, day_to=None, known=None, scrip=""):
         self.pages = getattr(self, "pages", 0) + 1
+        last = (day_to or day).isoformat()
         for f in self.filings:
-            if f.filing_date == day.isoformat():
+            if day.isoformat() <= f.filing_date <= last and (not scrip or f.scrip_code == scrip):
                 yield f.model_copy()
 
     def download(self, url):

@@ -40,8 +40,8 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | Item | Status | Notes |
 |---|---|---|
 | Cloudflare Workers (Hono) + React/Vite + D1 + R2 | done | |
-| Local-first ingestion on an Indian IP | partial | Pipeline runs anywhere; BSE 403 surfaces as an error. Local mode = `BSE_INTEL_SINK=local`. Needs `./data/` layout and `.gitignore` per blueprint. |
-| `sync-to-cloud` (local SQLite + R2 folder → D1/R2, resumable, budget-aware) | todo | See discussion point 1. |
+| Local-first ingestion on an Indian IP | done | Laptop runs the pipeline against the local Worker (`npm run dev`), whose D1/R2 persist in `data/wrangler`; `data/` is git-ignored |
+| `sync-to-cloud` (local → D1/R2, resumable, budget-aware) | done | `python -m bse_intel sync-to-cloud`; progress in `data/sync_progress.json` |
 | R2 homepage/status snapshot (`daily_feed/latest_snapshot.json`), 0 D1 reads | todo | |
 | Bounded queue counts (LIMIT, "1,000+") | done | audit D2 |
 | No system polling from hidden rail; /api/system cached | done | memo 30 s, rail only on wide screens |
@@ -70,7 +70,7 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | Scanned-page OCR (<80 chars) | partial | threshold is 50 chars |
 | Smart section chunking for 40–150 page documents | partial | keyword page ranking; concall/presentation/annual-report section rules to add |
 | Boilerplate stripping | partial | over-strips factual lines (audit A17) |
-| Local text cache `./data/text_cache/{news_id}.json.gz` | todo | |
+| Local text cache `./data/text_cache/{news_id}.json.gz` | done | |
 
 ### §6 Memory (dossier)
 | Item | Status | Notes |
@@ -80,7 +80,7 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | `known_since` = earliest, never moved forward (bi-temporal) | done | per-figure sources; value = latest restatement |
 | Signals, footer, dilution read memory as of the filing date | done | `dossier_as_of`; today's price not used for old filings |
 | Partition by period kind, newest period first; OPEN items never evicted | done | |
-| Atomic local writes (tmp + replace) | todo | |
+| Atomic local writes (tmp + replace) | done | dossiers, text cache, sync progress |
 
 ### §7 Prompts and output contract
 | Item | Status | Notes |
@@ -152,6 +152,15 @@ Tracked in AUDIT.md. Fixed so far: D1 read/write cost, orchestration resilience,
 second opinion merge, Worker hardening, frontend honesty/Safari/error boundary. Open: memory
 bi-temporal (M1–M15), triage overrides (A16), boilerplate (A17), prompt items (B2, B4, B7–B9),
 docs, sync-companies workflow.
+
+### §15 Playbook commands
+| Step | Command | Status |
+|---|---|---|
+| Smoke test (5 companies) | `python -m bse_intel backfill-companies --scrips 506525,532776,505192,500672,530019` | done (command) |
+| Company master + market caps | `python -m bse_intel sync-companies` then `market-data --all` | done |
+| Universe ≥ ₹100 Cr | `UNIVERSE_MIN_MCAP_CR` (default 100); starred companies always in | done |
+| Pass A + B backfill | `python -m bse_intel run --mode backfill` repeatedly (resumable) | done |
+| Cloud sync | `python -m bse_intel sync-to-cloud` (repeat daily until complete) | done |
 
 ### §15 Playbook (how go-live happens)
 1. All tests green; `.env` with one key per provider; `BSE_INTEL_SINK=local`.

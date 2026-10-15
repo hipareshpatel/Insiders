@@ -27,6 +27,32 @@ def cmd_run(args, settings, sink) -> int:
     return 0 if stats.status in ("OK", "PARTIAL") else 1  # a run ending in ERROR fails the workflow
 
 
+def cmd_backfill_companies(args, settings, sink) -> int:
+    scrips = [s.strip() for s in args.scrips.split(",") if s.strip()]
+    stats = _pipeline(settings, sink).backfill_companies(
+        scrips, date.fromisoformat(args.date_from or settings.backfill_start),
+        date.fromisoformat(args.date_to) if args.date_to else date.today(), args.time_budget)
+    print(json.dumps(stats.as_dict(), indent=2))
+    return 0 if stats.status in ("OK", "PARTIAL") else 1
+
+
+def cmd_sync_to_cloud(args, settings, sink) -> int:
+    """Copy the laptop's local data to the deployed platform (see sync.py)."""
+    from .sinks.local import LocalSink
+    from .sinks.platform import PlatformSink
+    from .sync import Sync
+
+    if args.source == "local-sink":
+        source = LocalSink(settings)
+    else:
+        source = PlatformSink(args.source, args.source_token)
+    dest = PlatformSink(settings.platform_url or "", settings.ingest_token or "")
+    progress = Path(args.progress or (settings.local_dir.parent / "sync_progress.json"))
+    result = Sync(source, dest, progress, settings.d1_daily_write_budget).run()
+    print(json.dumps(result, indent=2))
+    return 0
+
+
 def cmd_discover(args, settings, sink) -> int:
     pipeline = _pipeline(settings, sink)
     count = pipeline.discover(date.fromisoformat(args.date))
@@ -141,6 +167,20 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--time-budget", type=int, default=2400, help="seconds")
     p.add_argument("--max-backfill-days", type=int, default=5, help="historical days to discover per run")
     p.set_defaults(func=cmd_run)
+
+    p = sub.add_parser("backfill-companies", help="discover and analyse given companies over a range (smoke test)")
+    p.add_argument("--scrips", required=True, help="comma-separated BSE scrip codes, e.g. 506525,532776")
+    p.add_argument("--from", dest="date_from", help="default BACKFILL_START")
+    p.add_argument("--to", dest="date_to", help="default today")
+    p.add_argument("--time-budget", type=int, default=6 * 3600)
+    p.set_defaults(func=cmd_backfill_companies)
+
+    p = sub.add_parser("sync-to-cloud", help="copy local data (laptop backfill) to the deployed platform")
+    p.add_argument("--source", default="http://localhost:5173",
+                   help="local Worker URL (default http://localhost:5173), or 'local-sink' for data/local")
+    p.add_argument("--source-token", default="dev-local-token", help="INGEST_TOKEN of the local Worker (.dev.vars)")
+    p.add_argument("--progress", help="progress file (default data/sync_progress.json)")
+    p.set_defaults(func=cmd_sync_to_cloud)
 
     p = sub.add_parser("discover", help="fetch and triage one day of announcements")
     p.add_argument("--date", required=True)

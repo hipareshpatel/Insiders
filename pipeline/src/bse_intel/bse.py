@@ -177,7 +177,7 @@ class BseClient:
         raise RuntimeError("unreachable")
 
     def announcements(self, day_from: date, day_to: date | None = None, category: str = "-1",
-                      known: set[str] | None = None, max_pages: int = 400) -> Iterator[Filing]:
+                      known: set[str] | None = None, max_pages: int = 400, scrip: str = "") -> Iterator[Filing]:
         """Yield every announcement disseminated between the two dates (inclusive).
 
         Pages come newest first. With ``known`` (news ids already recorded), paging stops at the
@@ -192,7 +192,7 @@ class BseClient:
                 "pageno": page,
                 "strCat": category,
                 "strPrevDate": day_from.strftime("%Y%m%d"),
-                "strScrip": "",
+                "strScrip": scrip,
                 "strSearch": "P",
                 "strToDate": day_to.strftime("%Y%m%d"),
                 "strType": "C",

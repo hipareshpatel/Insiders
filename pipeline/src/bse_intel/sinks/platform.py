@@ -112,16 +112,16 @@ class PlatformSink(Sink):
     def put_dossier(self, scrip_code, dossier):
         self.put_object(f"memory/{scrip_code}.json", _encode(dossier).encode())
 
-    def list_dossiers(self):
+    def list_objects(self, prefix):
         keys, cursor = [], None
         while True:
-            params = {"prefix": "memory/"}
+            params = {"prefix": prefix}
             if cursor:
                 params["cursor"] = cursor
             resp = self._request("GET", "/objects", params=params)
             resp.raise_for_status()
             data = resp.json()
-            keys += [k.removeprefix("memory/").removesuffix(".json") for k in data.get("keys", [])]
+            keys += data.get("keys", [])
             cursor = data.get("cursor")
             if not cursor:
                 return keys

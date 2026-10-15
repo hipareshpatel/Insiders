@@ -225,14 +225,35 @@ class Pipeline:
         page holding nothing new, so the frequent runs over today ask BSE for a page or two.
         Returns how many filings were new.
         """
-        now = now_iso()
-        today = today_ist().isoformat()
         key = day.isoformat()
         noise = self._load_noise(key)
-        noise_before = len(noise)
         known = self.sink.known_ids(key) | set(noise)
+        filings = self.bse.announcements(day, known=None if full else known)
+        count = self._record(key, filings, noise, known)
+        self.stats.days_discovered.append(key)
+        return count
+
+    def discover_company(self, scrip: str, day_from: date, day_to: date) -> int:
+        """Discover one company's filings over a date range (the smoke test, a watchlist add)."""
+        found, start = 0, day_from
+        while start <= day_to:
+            end = min(day_to, start + timedelta(days=30))  # a month per request keeps pages short
+            by_day: dict[str, list[Filing]] = {}
+            for filing in self.bse.announcements(start, end, scrip=scrip):
+                by_day.setdefault(filing.filing_date, []).append(filing)
+            for key, filings in sorted(by_day.items()):
+                noise = self._load_noise(key)
+                found += self._record(key, filings, noise, self.sink.known_ids(key) | set(noise))
+            start = end + timedelta(days=1)
+        return found
+
+    def _record(self, key: str, filings, noise: dict[str, list], known: set[str]) -> int:
+        """Triage new filings of one day: noise to the day's R2 file, the rest to the ledger queue."""
+        now = now_iso()
+        today = today_ist().isoformat()
+        noise_before = len(noise)
         ledger, catalysts, companies = [], [], {}
-        for filing in self.bse.announcements(day, known=None if full else known):
+        for filing in filings:
             if filing.news_id in known:
                 continue
             known.add(filing.news_id)
@@ -268,8 +289,7 @@ class Pipeline:
         self._exec("catalysts_upsert", catalysts)
         if new_noise:
             self._save_noise(key, noise)
-        self.stats.days_discovered.append(key)
-        log.info("discovered %s: %d new filings (%d queued, %d noise)", day, len(ledger) + new_noise, len(ledger), new_noise)
+        log.info("discovered %s: %d new filings (%d queued, %d noise)", key, len(ledger) + new_noise, len(ledger), new_noise)
         return len(ledger) + new_noise
 
     def _excluded(self) -> set[str]:
@@ -827,6 +847,21 @@ class Pipeline:
         if left == 0 and cursor >= yesterday:
             remaining = self.sink.filings_remaining(start.isoformat(), history_to.isoformat(), self.settings.max_attempts)
             self._kv_set("backfill:complete", "0" if remaining else "1")
+
+    def backfill_companies(self, scrips: list[str], day_from: date, day_to: date, time_budget_s: int) -> Stats:
+        """Discover and analyse a few companies end to end (blueprint phase 2, the 5-company smoke
+        test): every filing from ``day_from`` to ``day_to``, company by company, in date order."""
+        deadline = time.monotonic() + time_budget_s
+        self.gateway.deadline = deadline + DEADLINE_GRACE_S
+        for scrip in scrips:
+            self.discover_company(scrip, day_from, day_to)
+        self._priority = list(scrips)
+        state = {"built": today_ist().isoformat(), "through": "", "total": len(scrips), "scrips": []}
+        self.sink.kv_set("backfill:company_order", json.dumps(state), now_iso())  # only these companies
+        self._backfill_companies(day_from.isoformat(), day_to.isoformat(), "", deadline, self._writes_today())
+        self._flush_usage()
+        self.stats.status = "PARTIAL" if self.stats.failed else "OK"
+        return self.stats
 
     def _known_day(self, day: date) -> bool:
         return self._noise_count(day.isoformat()) > 0 or bool(self.sink.known_ids(day.isoformat()))

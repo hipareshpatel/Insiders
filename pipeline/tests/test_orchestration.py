@@ -202,3 +202,45 @@ def test_filings_of_companies_outside_the_universe_go_to_the_noise_file(settings
     assert queued == {"r0", "r2"}
     noise = json.loads(sink.get_object(f"noise/{now.date().isoformat()}/000.json"))["rows"]
     assert noise[0][0] == "r1" and "outside universe" in noise[0][7]
+
+
+def test_smoke_test_backfill_covers_only_the_given_companies_in_date_order(settings):
+    today = now_ist().date()
+    settings = replace(settings, backfill_start=(today - timedelta(days=60)).isoformat(), workers=1)
+    at = lambda d: now_ist().replace(hour=17) - timedelta(days=d)  # noqa: E731
+    filings = [_filing("a1", "Unaudited Financial Results", at(50), "Result", scrip="506525", name="Kanoria"),
+               _filing("a2", "Unaudited Financial Results", at(10), "Result", scrip="506525", name="Kanoria"),
+               _filing("b1", "Unaudited Financial Results", at(20), "Result", scrip="999999", name="Other")]
+    seen = []
+
+    def respond(kwargs):
+        seen.append(kwargs["messages"][1]["content"].split("Filed: ")[1][:10])
+        return json.dumps(PASS2)
+
+    pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
+                              {"mistral-large-latest": [respond]}, env={"MISTRAL_API_KEY": "m"})
+    stats = pipeline.backfill_companies(["506525"], today - timedelta(days=60), today, 60)
+    assert seen == [at(50).date().isoformat(), at(10).date().isoformat()] and stats.status == "OK"
+    assert {r["news_id"] for r in rows(sink, "select news_id from cards")} == {"a1", "a2"}
+
+
+def test_sync_to_cloud_copies_cards_state_and_objects_and_resumes(settings, tmp_path):
+    from bse_intel.sinks.local import LocalSink
+    from bse_intel.sync import Sync
+
+    now = now_ist() - timedelta(minutes=30)
+    filings = _results(3, now)
+    pipeline, source, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
+                                {"deepseek-ai/deepseek-r1": [json.dumps(PASS2)], "meta/llama-3.3-70b-instruct": [json.dumps(PASS2)]},
+                                env={"NVIDIA_API_KEY": "n"})
+    pipeline.run("live", time_budget_s=60)
+    dest = LocalSink(replace(settings, local_dir=tmp_path / "cloud"))
+    progress = tmp_path / "progress.json"
+    first = Sync(source, dest, progress, write_budget=10).run()  # budget hit almost at once
+    assert not first["complete"]
+    second = Sync(source, dest, progress, write_budget=10_000_000).run()
+    assert second["complete"]
+    copied = {r["news_id"] for r in rows(dest, "select news_id from cards")}
+    assert copied == {r["news_id"] for r in rows(source, "select news_id from cards")} and len(copied) == 3
+    assert dest.get_dossier("999100") == source.get_dossier("999100")
+    assert dest.kv_get("live:since") == source.kv_get("live:since")

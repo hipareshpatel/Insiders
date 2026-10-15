@@ -107,5 +107,6 @@ class LocalSink(Sink):
     def put_dossier(self, scrip_code, dossier):
         self.put_object(f"memory/{scrip_code}.json", _encode(dossier).encode())
 
-    def list_dossiers(self):
-        return sorted(p.stem for p in (self.objects / "memory").glob("*.json"))
+    def list_objects(self, prefix):
+        return sorted(str(p.relative_to(self.objects)) for p in self.objects.rglob("*")
+                      if p.is_file() and not p.name.endswith(".tmp") and str(p.relative_to(self.objects)).startswith(prefix))

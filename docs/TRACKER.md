@@ -90,7 +90,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | Item | Status | Notes |
 |---|---|---|
 | Per-company R2 dossier, provenance, time travel | done | |
-| 10 compartments as specified | partial | done: identity (former names, entities), financial history, sector KPIs, segments, capex/projects and orders (deals with stages, brownfield, captive), guidance/watchlist, monthly ledger (M-period metrics + streak/preview signals), corporate actions, ownership/governance, predictions. calibration rule (Loop 2) done; peer margin benchmarks come from the peer cards in the prompt |
+| 10 compartments as specified | done | identity (former names, entities), financial history, sector KPIs, segments, capex/projects and orders (stages, brownfield, captive), guidance/watchlist, monthly ledger, corporate actions, ownership/governance, predictions, calibration rule (Loop 2); peer benchmarks via peer cards in the prompt |
 | `known_since` = earliest, never moved forward (bi-temporal) | done | per-figure sources; value = latest restatement |
 | Signals, footer, dilution read memory as of the filing date | done | `dossier_as_of`; market data as of the filing from `price-history` (`prices.py`), else today's only for recent filings |
 | Partition by period kind, newest period first; OPEN items never evicted | done | |
@@ -101,7 +101,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 |---|---|---|
 | Boilerplate-free, 4-bucket distillation for long documents | done | boilerplate and call chatter stripped in code; the 4 buckets in the concall prompt |
 | Core catalyst line (📌) | done | |
-| Memory link, quantified narrative, peer/feedstock context, missing disclosure (memory first) | partial | as why_it_matters insights with basis; missing disclosures checked against memory |
+| Memory link, quantified narrative, peer/feedstock context, missing disclosure (memory first) | done | why_it_matters insights with basis (MEMORY / BALANCE_SHEET / SECTOR / FILING); sector drivers in the lens; missing disclosures checked against memory |
 | Math checks with FILING/MEMORY/ASSUMPTION provenance | done | formula hardening still due (audit M8) |
 | Milestones, KPI to verify, pending approvals, invalidation risk | done | numeric KPIs become predictions checked against results |
 | Headline ₹ figure ungrounded forces review | done | |

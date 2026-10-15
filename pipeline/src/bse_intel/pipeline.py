@@ -134,6 +134,7 @@ class CardChecks:
     quant: QuantCheck
     claims: list[str]
     headline_ungrounded: list[str] = field(default_factory=list)
+    amounts_ungrounded: list[str] = field(default_factory=list)
 
     @property
     def needs_review(self) -> bool:
@@ -141,6 +142,13 @@ class CardChecks:
         # so do a low overall match rate and an unsupported "first"/"record" claim.
         return (self.score < DEFAULT_THRESHOLD or self.quant.mismatches > 0 or bool(self.claims)
                 or bool(self.headline_ungrounded))
+
+    @property
+    def wants_second_opinion(self) -> bool:
+        # Blueprint §4: any ungrounded number sends the card to a second provider. Amounts only: a
+        # 10x lakh/crore slip in a key number leaves the overall match rate above the review
+        # threshold, while an unmatched percentage is usually a derivation the checks cannot follow.
+        return self.needs_review or bool(self.amounts_ungrounded)
 
     @property
     def issue_count(self) -> int:
@@ -226,7 +234,8 @@ def check_card_all(card, view: dict | None, sources: tuple[str, ...]) -> CardChe
     checked = grounding.checked + quant.checked_inputs
     ungrounded = grounding.ungrounded + quant.unsourced
     score = 1.0 if checked == 0 else round(1 - len(ungrounded) / checked, 3)
-    return CardChecks(score, checked, ungrounded, quant, check_claims(card, *sources), grounding.headline_ungrounded)
+    return CardChecks(score, checked, ungrounded, quant, check_claims(card, *sources),
+                      grounding.headline_ungrounded, grounding.amounts_ungrounded)
 
 
 def reconcile_call_read(card, view: dict | None) -> None:
@@ -767,7 +776,7 @@ class Pipeline:
         sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
         checks = check_card_all(out.card, view, sources)
         review = None
-        if checks.needs_review and self.settings.second_opinion:
+        if checks.wants_second_opinion and self.settings.second_opinion:
             out, result, checks, review = self._second_opinion(route, system, user, out, result, checks, view, sources)
         if filing.route == "FAST_TRACK" and filing.event_type:
             out.event_type = filing.event_type  # rules know the event type better than the model
@@ -904,7 +913,8 @@ class Pipeline:
             return out, result, checks, {**base, "status": "UNCHECKED", "note": "skipped: the run was ending"}
         with self._lock:
             self.stats.second_opinions += 1
-        system2, user2 = self.prompts.verify(system, user, out.model_dump(mode="json"), problems)
+        hints = [UNIT_HINT] if checks.amounts_ungrounded else []
+        system2, user2 = self.prompts.verify(system, user, out.model_dump(mode="json"), problems + hints)
         try:
             second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider,))
         except Exception as exc:  # the first card is still published, marked unverified
@@ -916,7 +926,7 @@ class Pipeline:
         # reply with just {"card": ...} must not wipe the quarter's figures from memory.
         fixed = _adopt_card(out, second.value)
         checks2 = check_card_all(fixed.card, view, sources)
-        if not checks2.needs_review:
+        if not checks2.wants_second_opinion:
             with self._lock:
                 self.stats.corrected += 1
             return fixed, second, checks2, {**base, "status": "CORRECTED", "checked_by": second.model_label, "issues": [],
@@ -1241,6 +1251,8 @@ def _noise_row(filing: Filing) -> list:
 
 
 SECOND_OPINION_MIN_S = 300
+UNIT_HINT = ("Convert each amount from the unit its table states: ₹ lakh ÷ 100 = ₹ Cr, ₹ million ÷ 10 = ₹ Cr, "
+             "₹ thousand ÷ 10,000 = ₹ Cr; remove a figure that matches no source at any unit")
 
 
 def _adopt_card(first: Pass2Output, second: Pass2Output) -> Pass2Output:

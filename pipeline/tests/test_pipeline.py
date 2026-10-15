@@ -296,3 +296,21 @@ def test_second_opinion_from_another_provider_corrects_the_card(settings):
     assert outcome.card["needs_review"] == 0 and body["what_happened"][1] == "PAT ₹15 Cr"
     assert body["review"]["status"] == "CORRECTED" and body["review"]["checked_by"] == "mistral/ministral-14b-2512"
     assert body["model"] == "mistral/ministral-14b-2512" and len(body["review"]["fixed"]) == 2
+
+
+def test_one_unmatched_amount_gets_a_second_opinion_even_above_the_review_threshold(settings):
+    """Ahluwalia's card had EBITDA ₹756 Cr for ₹75.6 Cr (a lakh table): 76% of its numbers matched,
+    above the review threshold, so it went out unchecked. Any unmatched amount now asks a second provider."""
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-q3", "Unaudited Financial Results for the quarter", now, "Result")
+    bad = json.loads(json.dumps(PASS2))
+    bad["card"]["what_happened"] = ["Revenue ₹120 Cr vs ₹90.9 Cr a year ago", "PAT ₹150 Cr"]  # PAT was ₹15 Cr
+    good = json.loads(json.dumps(PASS2))
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "ministral-14b-2512": [json.dumps(good)]},
+                                 env={"NVIDIA_API_KEY": "n", "MISTRAL_API_KEY": "m"})
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert len(fake.calls) == 2
+    assert "₹ lakh ÷ 100 = ₹ Cr" in fake.calls[1]["messages"][1]["content"]
+    body = outcome.card["card"]
+    assert body["review"]["status"] == "CORRECTED" and body["what_happened"][1] == "PAT ₹15 Cr"

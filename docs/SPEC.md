@@ -162,7 +162,9 @@ wait 60 s (up to 3 times, never past the deadline) and ceilings stop the route f
 filings in a row left queued because every provider was busy stop the run (rerun later).
 
 **Second opinion** (`SECOND_OPINION=1`). A card that fails the checks is sent once to a different
-provider with the problems listed. Only the corrected card is adopted (memory stays from the
+provider with the problems listed. "Fails" means it needs review, or any amount on it (not a
+percentage) matches no source: a 10x unit slip in one key number leaves the match rate above the
+review threshold. Only the corrected card is adopted (memory stays from the
 first reply unless the verifier sent a fuller delta); it is published either way, "Verified
 after a second check" or "Unverified".
 

@@ -86,6 +86,7 @@ class GroundingResult:
     checked: int
     ungrounded: list[str]
     headline_ungrounded: list[str] = field(default_factory=list)  # ₹ amounts in the headline not found
+    amounts_ungrounded: list[str] = field(default_factory=list)  # amounts anywhere on the card not found
 
     @property
     def ok(self) -> bool:
@@ -320,7 +321,7 @@ def check_card(card: Card, *sources: str) -> GroundingResult:
     texts += [("change", f"{c.previous or ''} ; {c.current or ''} ; {c.change or ''}") for c in card.notable_changes]
     track = card.track_next
     texts += [("track", f"{k.kpi} {k.target or ''}") for k in track.kpis_to_verify]
-    checked, ungrounded, headline_bad = 0, [], []
+    checked, ungrounded, headline_bad, amounts_bad = 0, [], [], []
     for where, text in texts:
         tokens = _tokens(text or "")
         line_amounts = [v for v, d, _, kind, _ in tokens if kind in ("plain", "qty") and v > 31 and index.stated(v, d)]
@@ -340,9 +341,11 @@ def check_card(card: Card, *sources: str) -> GroundingResult:
             ungrounded.append(label)
             if where == "headline" and kind in ("plain", "qty"):
                 headline_bad.append(label)
+            if kind in ("plain", "qty") and (value > 31 or pos in crore_at):
+                amounts_bad.append(label)
     if checked == 0:
         return GroundingResult(1.0, 0, [])
-    return GroundingResult(round(1 - len(ungrounded) / checked, 3), checked, ungrounded, headline_bad)
+    return GroundingResult(round(1 - len(ungrounded) / checked, 3), checked, ungrounded, headline_bad, amounts_bad)
 
 
 def _from_line(value: float, decimals: int, kind: str, amounts: list[float], pcts: list[float], index: SourceIndex) -> bool:

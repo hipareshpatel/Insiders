@@ -94,6 +94,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | F25: a Prism Johnson results PDF failed on the vision route (Z.ai and Mistral paced; Gemini Flash-Lite and Super VL empty) | retried by the next run (attempt 1) | watch |
 | F26: results-type cards tagged OTHER (Ahluwalia and eMudhra board outcomes carrying results) | event-type rules, with F6 | open |
 | F27: the same detail differs between cards of one event (eMudhra's Two95 deal "USD 1.01M" vs "US$10.1M"); prose period "Q4FY25 (Dec-2024)" on a tax-refund card | — | note |
+| F28: the 10x figures reach memory and the company page ("PAT down 30% YoY to 495.12 Cr" under The bad; a JV profit note as ₹6 Cr and, from a later copy of the results, ₹0.06 Cr); Ahluwalia's results filed 3 times (16:49, 16:52 exact repeat skipped, 18:12 a different document) give two timeline entries (F3); "₹494 Cr → ₹418 Cr (+15% YoY)" for a fall (F15) | re-run of the F24 cards replaces their memory entries | open |
 | Working (second test): quarter labels corrected from the statement (Q2FY25 → Q3FY25); 2 exact repeats skipped; bank card (CSB deposits, CASA, advances) reads right; headline amounts all grounded | | ok |
 
 ## Points to discuss with the owner

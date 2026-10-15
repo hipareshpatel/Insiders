@@ -48,6 +48,7 @@ Read before changing anything:
 - Smoke-test backfill: `python -m bse_intel backfill-companies --scrips 506525,532776,505192,500672,530019`.
   Results are saved every 5 filings per company; re-running a filing is safe (memory replaces
   that filing's earlier entry).
+- Backfill runs use `$env:PIPELINE_WORKERS = '5'` (decision D18); the gateway still paces each model.
 - Long runs: keep the laptop awake; log to a file (e.g. `D:\backfill.log`) and check it.
 
 ## Status and next steps

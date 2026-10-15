@@ -27,6 +27,7 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | D14 | API keys only in `C:\Users\Quali\insiders-keys.ps1` on the laptop: never in chat, logs or the repo, even though it is private. | 2026-10-16 |
 | D16 | Stick with the blueprint: every material filing gets the full Pass 2 analysis (no cheap one-call tier for routine filings). | 2026-10-16 |
 | D17 | Repeat submissions: skip only an exact body match, or a near-identical body with every number the same, from the same company within 3 days; never corrigenda, revised or corrected filings; keep the skipped filing as DUPLICATE linked to the original. | 2026-10-16 |
+| D18 | Backfill with 5 AI workers (`PIPELINE_WORKERS=5`, was 3). The gateway keeps pacing each model to 95% of its free limits; watch the 429 share and the daily ceilings on the System page and go back to 3 if extra workers only reach the daily quota sooner. | 2026-10-16 |
 | D15 | The laptop's Claude Code session is the main engineer (it reaches BSE and sees real logs); `CLAUDE.md` holds the rules and status every session reads. The Worker is named `insiders` (https://insiders.reply-bd3.workers.dev). | 2026-10-16 |
 
 ## Optional, not adopted (cost)

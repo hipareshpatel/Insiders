@@ -10,6 +10,7 @@ import { Badge, Select, TabStrip } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { api, type FeedFilters } from "../lib/api";
 import { cn } from "../lib/cn";
+import { HISTORY_START } from "../lib/config";
 import { addDays, istDate, istDateTime, num, titleCase, todayIST } from "../lib/format";
 import { catalystFamily, FEED_TABS, SECTORS, SIZES } from "../lib/taxonomy";
 import { useQueryState } from "../lib/url";
@@ -20,7 +21,7 @@ const RANGES = [
   { key: "today", label: "Today", days: 0 },
   { key: "7d", label: "Last 7 days", days: 7 },
   { key: "30d", label: "Last 30 days", days: 30 },
-  { key: "ytd", label: "Since 1 Jan 2026", days: null },
+  { key: "all", label: "Full history (since 1 Jan 2025)", days: null },
 ] as const;
 
 export function FeedView() {
@@ -30,7 +31,7 @@ export function FeedView() {
   const tab = FEED_TABS.find((t) => t.key === tabKey) ?? FEED_TABS[0];
   const rangeKey = params.get("range") ?? "7d";
   const range = RANGES.find((r) => r.key === rangeKey) ?? RANGES[1];
-  const from = range.days === null ? "2026-01-01" : addDays(today, -range.days);
+  const from = range.days === null ? HISTORY_START : addDays(today, -range.days);
   const shared = params.get("card");
   const view: View = params.get("view") === "list" ? "list" : "cards";
   const filters: FeedFilters = {

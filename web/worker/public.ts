@@ -314,7 +314,7 @@ async function systemStatus(c: Context<AppEnv>) {
     queue: { pending: count(pending), failed: count(failed), cap: QUEUE_CAP },
     cards_7d: cards7d.results,
     backfill: {
-      start: kvMap["backfill:start"] ?? "2026-01-01",
+      start: kvMap["backfill:start"] ?? "2025-01-01",
       discovered_through: kvMap["backfill:discovered_through"] ?? null,
       complete: kvMap["backfill:complete"] === "1",
       companies_left: progress?.companies_left ?? null,

@@ -9,6 +9,7 @@ import { Badge, Select } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
+import { HISTORY_START } from "../lib/config";
 import { cr, istDate, todayIST } from "../lib/format";
 import { SIZES, TONE_BORDER, TONE_CHIP, verdict, type Tone } from "../lib/taxonomy";
 import { periodEnd } from "../lib/periods";
@@ -38,7 +39,7 @@ export function ResultsView() {
 
   const query = useInfiniteQuery({
     queryKey: ["results", size, params.get("q")],
-    queryFn: ({ pageParam }) => api.feed({ from: "2026-01-01", to: todayIST(), category: "RESULTS", size: size ?? undefined, q: params.get("q") ?? undefined }, pageParam, 50),
+    queryFn: ({ pageParam }) => api.feed({ from: HISTORY_START, to: todayIST(), category: "RESULTS", size: size ?? undefined, q: params.get("q") ?? undefined }, pageParam, 50),
     initialPageParam: null as string | null,
     getNextPageParam: (last) => last.next_cursor,
   });

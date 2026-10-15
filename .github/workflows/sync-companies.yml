@@ -1,0 +1,40 @@
+# Weekly refresh of the company master: every active BSE equity with its industry (which picks the
+# sector lens for prompts and the card footer) and market cap. Runs before the week's backfill
+# and live runs depend on it (blueprint: run sync-companies before backfill).
+# 20:30 UTC Friday = 02:00 IST Saturday.
+name: Sync companies
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 20 * * 5"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bse-sync-companies
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      # GitHub-hosted runners get Python from setup-python; a self-hosted runner (a laptop or a
+      # Raspberry Pi on an Indian network) uses its own python3, which setup-python may not support.
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel sync-companies'

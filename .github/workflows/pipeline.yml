@@ -22,7 +22,7 @@ on:
         options: [all, live, backfill]
       time_budget:
         description: seconds of work before the run stops picking up filings
-        default: "2700"
+        default: "2400"  # leaves 15 minutes before the 55-minute job timeout
   repository_dispatch:
     types: [run-pipeline]
   schedule:
@@ -50,14 +50,16 @@ jobs:
       NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
       MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
       ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
-      BACKFILL_START: ${{ vars.BACKFILL_START || '2026-01-01' }}
+      BACKFILL_START: ${{ vars.BACKFILL_START || '2025-01-01' }}
     steps:
       - uses: actions/checkout@v4
+      # GitHub-hosted runners get Python from setup-python; a self-hosted runner (a laptop or a
+      # Raspberry Pi on an Indian network) uses its own python3, which setup-python may not support.
       - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
         with:
           python-version: "3.12"
-          cache: pip
-          cache-dependency-path: pipeline/pyproject.toml
-      - run: pip install -e .
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
       - name: Run pipeline
-        run: python -m bse_intel run --mode "${{ inputs.mode || 'all' }}" --time-budget "${{ inputs.time_budget || '2700' }}"
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel run --mode "${{ inputs.mode || ''all'' }}" --time-budget "${{ inputs.time_budget || ''2400'' }}"'

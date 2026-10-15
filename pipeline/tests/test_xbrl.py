@@ -106,7 +106,7 @@ def test_results_card_uses_xbrl_figures_in_memory(settings):
     pass2["card"]["basis"] = "CONSOLIDATED"
     pass2["dossier_delta"]["financial_metrics"][0]["value"] = 119  # the model misread the PDF
     pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text), filing.xbrl_url: results_xml()},
-                                 {"deepseek-ai/deepseek-r1": [json.dumps(pass2)]})
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(pass2)]})
     stats = pipeline.run("live", time_budget_s=60)
     assert stats.analyzed == 1 and stats.xbrl == 1
     assert "Machine-tagged results (XBRL" in fake.calls[0]["messages"][-1]["content"]

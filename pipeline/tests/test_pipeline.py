@@ -92,8 +92,8 @@ def test_live_run_end_to_end(settings):
     ]
     pdfs = {f.pdf_url: _pdf(RESULT_TEXT if f.news_id == "n-res" else "Clarification on news item. No impact.") for f in filings}
     script = {
-        "llama-3.1-8b-instant": [{"is_material": False, "event_type": "OTHER", "reason": "routine clarification"}],
-        "deepseek-ai/deepseek-r1": ["<think>checking memory</think>" + json.dumps(PASS2)],
+        "openai/gpt-oss-20b": [{"is_material": False, "event_type": "OTHER", "reason": "routine clarification"}],
+        "nvidia/nemotron-3-super-120b-a12b": ["<think>checking memory</think>" + json.dumps(PASS2)],
     }
     pipeline, sink, fake = build(settings, filings, pdfs, script)
     stats = pipeline.run("live", time_budget_s=60)
@@ -113,7 +113,7 @@ def test_live_run_end_to_end(settings):
     # Impact comes from the deterministic score (blueprint §11); the model's call is kept beside it.
     assert card["event_category"] == "RESULTS" and card["needs_review"] == 0
     assert card["impact_level"] == json.loads(card["card_json"])["score"]["impact"] and json.loads(card["card_json"])["model_impact"] == "HIGH"
-    assert body["category_tag"] == "RESULTS" and body["model"] == "nvidia/deepseek-ai/deepseek-r1"
+    assert body["category_tag"] == "RESULTS" and body["model"] == "nvidia/nvidia/nemotron-3-super-120b-a12b"
     assert body["why_it_matters"][0]["memory_refs"] == []  # hallucinated memory id removed
     assert body["grounding"]["score"] >= 0.7
     assert body["notable_changes"][0]["direction"] == "POSITIVE"
@@ -137,7 +137,7 @@ def test_live_run_end_to_end(settings):
     (run,) = rows(sink, "select status, stats_json from pipeline_runs")
     assert run["status"] == "OK" and json.loads(run["stats_json"])["analyzed"] == 1
     usage = {(r["provider"], r["model"]): r["requests"] for r in rows(sink, "select * from provider_usage")}
-    assert usage == {("groq", "llama-3.1-8b-instant"): 1, ("nvidia", "deepseek-ai/deepseek-r1"): 1}
+    assert usage == {("groq", "openai/gpt-oss-20b"): 1, ("nvidia", "nvidia/nemotron-3-super-120b-a12b"): 1}
 
     # A second run is idempotent: nothing is re-analysed or re-sent.
     pipeline2, sink2, fake2 = build(settings, filings, pdfs, script)
@@ -153,9 +153,9 @@ def test_quota_ceiling_defers_work_instead_of_failing(settings):
     filings = [_filing(f"n{i}", "Unaudited Financial Results for the quarter", now + timedelta(seconds=i), "Result",
                        scrip=str(999000 + i)) for i in range(3)]
     pdfs = {f.pdf_url: _pdf(RESULT_TEXT) for f in filings}
-    # Only NVIDIA is configured for Pass 2, and both of its models report their daily quota spent.
+    # Only NVIDIA is configured for Pass 2, and its model reports its daily quota spent.
     err = api_error(openai.RateLimitError, 429, "You exceeded your current quota for the day")
-    script = {"deepseek-ai/deepseek-r1": [err], "meta/llama-3.3-70b-instruct": [err]}
+    script = {"nvidia/nemotron-3-super-120b-a12b": [err]}
     pipeline, sink, fake = build(settings, filings, pdfs, script, env={"NVIDIA_API_KEY": "n"})
     pipeline.discover(now.date())
     pipeline.process("2000-01-01", "2100-01-01", time.monotonic() + 30, bulk=False)
@@ -163,8 +163,8 @@ def test_quota_ceiling_defers_work_instead_of_failing(settings):
     assert all(s == ("PENDING", 0) for s in status.values()), status  # nothing failed, nothing dropped
     assert pipeline.stats.deferred >= 1 and "quota" in pipeline.stats.stopped_reason
     assert pipeline.stats.failed == 0
-    # one try per model, then the ceiling stops the run instead of hammering the provider
-    assert sorted(c["model"] for c in fake.calls) == ["deepseek-ai/deepseek-r1", "meta/llama-3.3-70b-instruct"]
+    # one try, then the ceiling stops the run instead of hammering the provider
+    assert [c["model"] for c in fake.calls] == ["nvidia/nemotron-3-super-120b-a12b"]
 
 
 def test_backfill_walks_days_in_order_and_marks_complete(settings):
@@ -183,7 +183,7 @@ def test_backfill_walks_days_in_order_and_marks_complete(settings):
         seen_order.append(text.split("Filed: ")[1][:10])
         return json.dumps(PASS2)
 
-    pipeline, sink, fake = build(settings, filings, pdfs, {"mistral-large-latest": [respond]},
+    pipeline, sink, fake = build(settings, filings, pdfs, {"mistral-medium-latest": [respond]},
                                            env={"MISTRAL_API_KEY": "m"})
     pipeline.run("backfill", time_budget_s=60, max_backfill_days=10)
     assert seen_order == sorted(seen_order) and len(seen_order) == 3
@@ -204,7 +204,7 @@ def test_card_with_wrong_math_is_held_for_review(settings):
     }]
     # the second opinion (here the same provider's other model, the only one configured) repeats the mistake
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"deepseek-ai/deepseek-r1": [json.dumps(bad)], "meta/llama-3.3-70b-instruct": [json.dumps(bad)]},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)]},
                                  env={"NVIDIA_API_KEY": "n"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     body = outcome.card["card"]
@@ -240,7 +240,7 @@ def test_backfill_goes_company_by_company_largest_first(settings):
         order.append(kwargs["messages"][1]["content"].split("Company: ")[1].split(" (")[0])
         return json.dumps(PASS2)
 
-    pipeline, sink, _ = build(settings, filings, pdfs, {"mistral-large-latest": [respond]}, env={"MISTRAL_API_KEY": "m"})
+    pipeline, sink, _ = build(settings, filings, pdfs, {"mistral-medium-latest": [respond]}, env={"MISTRAL_API_KEY": "m"})
     sink._db.executemany("INSERT INTO companies (scrip_code, company_name, market_cap_cr) VALUES (?, ?, ?)",
                          [("999001", "Demo Cement Ltd", 4851.0), ("999008", "Demo Tiny Ltd", 20.0)])
     pipeline.run("backfill", time_budget_s=60, max_backfill_days=10)
@@ -267,7 +267,7 @@ def test_live_filing_waits_for_its_company_history(settings):
         return json.dumps(PASS2)
 
     pipeline, sink, _ = build(settings, [history, live], {f.pdf_url: _pdf(RESULT_TEXT) for f in (history, live)},
-                              {"mistral-large-latest": [respond], "deepseek-ai/deepseek-r1": [respond]},
+                              {"mistral-medium-latest": [respond], "nvidia/nemotron-3-super-120b-a12b": [respond]},
                               env={"MISTRAL_API_KEY": "m", "NVIDIA_API_KEY": "n"})
     pipeline.discover(old.date())  # as an earlier backfill run would have
     sink.kv_set("backfill:discovered_through", (today - timedelta(days=1)).isoformat(), "now")
@@ -285,14 +285,14 @@ def test_second_opinion_from_another_provider_corrects_the_card(settings):
     bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
     good = json.loads(json.dumps(PASS2))
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"deepseek-ai/deepseek-r1": [json.dumps(bad)], "mistral-large-latest": [json.dumps(good)]},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "mistral-medium-latest": [json.dumps(good)]},
                                  env={"NVIDIA_API_KEY": "n", "MISTRAL_API_KEY": "m"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     first, second = fake.calls
-    assert first["model"] == "deepseek-ai/deepseek-r1" and second["model"] == "mistral-large-latest"
+    assert first["model"] == "nvidia/nemotron-3-super-120b-a12b" and second["model"] == "mistral-medium-latest"
     verify_prompt = second["messages"][1]["content"]
     assert "DRAFT REPLY" in verify_prompt and "17.5" in verify_prompt and 'Claim not supported by the sources: "Record quarterly revenue' in verify_prompt
     body = outcome.card["card"]
     assert outcome.card["needs_review"] == 0 and body["what_happened"][1] == "PAT ₹15 Cr"
-    assert body["review"]["status"] == "CORRECTED" and body["review"]["checked_by"] == "mistral/mistral-large-latest"
-    assert body["model"] == "mistral/mistral-large-latest" and len(body["review"]["fixed"]) == 2
+    assert body["review"]["status"] == "CORRECTED" and body["review"]["checked_by"] == "mistral/mistral-medium-latest"
+    assert body["model"] == "mistral/mistral-medium-latest" and len(body["review"]["fixed"]) == 2

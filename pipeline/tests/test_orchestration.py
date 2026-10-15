@@ -26,7 +26,7 @@ def test_refused_attachment_fails_one_filing_and_three_in_a_row_stop_the_run(set
     now = now_ist() - timedelta(minutes=30)
     filings = _results(5, now)
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                              {"deepseek-ai/deepseek-r1": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
     real = pipeline.bse.download
 
     def download(url):
@@ -50,7 +50,7 @@ def test_a_failing_history_filing_is_tried_once_per_run(settings):
     history = _filing("old", "Unaudited Financial Results", old, "Result")
     live = _filing("new", "Unaudited Financial Results", now_ist() - timedelta(minutes=5), "Result")
     pipeline, sink, _ = build(settings, [history, live], {live.pdf_url: _pdf(RESULT_TEXT)},
-                              {"deepseek-ai/deepseek-r1": [json.dumps(PASS2)], "mistral-large-latest": [json.dumps(PASS2)]},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)], "mistral-medium-latest": [json.dumps(PASS2)]},
                               env={"MISTRAL_API_KEY": "m", "NVIDIA_API_KEY": "n"})
     pipeline.discover(old.date())
     pipeline.bse.download = lambda url: (_ for _ in ()).throw(AttachmentError("timed out")) if "old" in url else _pdf(RESULT_TEXT)
@@ -67,7 +67,7 @@ def test_retryable_failures_at_the_head_of_the_queue_do_not_stop_the_rest(settin
     now = now_ist() - timedelta(minutes=30)
     filings = _results(5, now)
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings[2:]},
-                              {"deepseek-ai/deepseek-r1": [json.dumps(PASS2)], "meta/llama-3.3-70b-instruct": [json.dumps(PASS2)]},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
                               env={"NVIDIA_API_KEY": "n"})
     pipeline.discover(now.date())
     sink._db.execute("UPDATE filings SET status = 'FAILED', attempts = 1 WHERE news_id IN ('r0', 'r1')")
@@ -92,7 +92,7 @@ def test_live_filing_of_a_company_with_a_long_backlog_is_not_held_back(settings,
         return json.dumps(PASS2)
 
     pipeline, sink, _ = build(settings, old + [live], {f.pdf_url: _pdf(RESULT_TEXT) for f in old + [live]},
-                              {"deepseek-ai/deepseek-r1": [respond]}, env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3-super-120b-a12b": [respond]}, env={"NVIDIA_API_KEY": "n"})
     for f in old:
         pipeline.discover(now_ist().date().fromisoformat(f.filing_date))
     pipeline.run("live", time_budget_s=60)
@@ -109,7 +109,7 @@ def test_second_opinion_reply_with_only_a_card_keeps_the_memory(settings):
     bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
     card_only = {"is_material": True, "card": PASS2["card"]}
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"deepseek-ai/deepseek-r1": [json.dumps(bad)], "mistral-large-latest": [json.dumps(card_only)]},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "mistral-medium-latest": [json.dumps(card_only)]},
                               env={"NVIDIA_API_KEY": "n", "MISTRAL_API_KEY": "m"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert outcome.card["card"]["review"]["status"] == "CORRECTED"
@@ -135,7 +135,7 @@ def test_a_discovery_error_does_not_stop_processing(settings):
     now = now_ist() - timedelta(minutes=30)
     filings = _results(1, now)
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                              {"deepseek-ai/deepseek-r1": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
     pipeline.discover(now.date())
     pipeline.bse.announcements = lambda *a, **k: (_ for _ in ()).throw(ValueError("HTML error page"))
     stats = pipeline.run("live", time_budget_s=60)
@@ -177,7 +177,7 @@ def test_extracted_text_is_cached_so_reanalysis_never_downloads_again(settings):
     now = now_ist() - timedelta(minutes=30)
     (f,) = _results(1, now)
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"deepseek-ai/deepseek-r1": [json.dumps(PASS2)], "meta/llama-3.3-70b-instruct": [json.dumps(PASS2)]},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
                               env={"NVIDIA_API_KEY": "n"})
     filing = f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"})
     pipeline.analyze(filing)
@@ -218,7 +218,7 @@ def test_smoke_test_backfill_covers_only_the_given_companies_in_date_order(setti
         return json.dumps(PASS2)
 
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                              {"mistral-large-latest": [respond]}, env={"MISTRAL_API_KEY": "m"})
+                              {"mistral-medium-latest": [respond]}, env={"MISTRAL_API_KEY": "m"})
     stats = pipeline.backfill_companies(["506525"], today - timedelta(days=60), today, 60)
     assert seen == [at(50).date().isoformat(), at(10).date().isoformat()] and stats.status == "OK"
     assert {r["news_id"] for r in rows(sink, "select news_id from cards")} == {"a1", "a2"}
@@ -231,7 +231,7 @@ def test_sync_to_cloud_copies_cards_state_and_objects_and_resumes(settings, tmp_
     now = now_ist() - timedelta(minutes=30)
     filings = _results(3, now)
     pipeline, source, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                                {"deepseek-ai/deepseek-r1": [json.dumps(PASS2)], "meta/llama-3.3-70b-instruct": [json.dumps(PASS2)]},
+                                {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
                                 env={"NVIDIA_API_KEY": "n"})
     pipeline.run("live", time_budget_s=60)
     dest = LocalSink(replace(settings, local_dir=tmp_path / "cloud"))
@@ -250,7 +250,7 @@ def test_run_publishes_the_homepage_snapshot(settings):
     now = now_ist() - timedelta(minutes=30)
     filings = _results(2, now)
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                              {"deepseek-ai/deepseek-r1": [json.dumps(PASS2)], "meta/llama-3.3-70b-instruct": [json.dumps(PASS2)]},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
                               env={"NVIDIA_API_KEY": "n"})
     pipeline.run("live", time_budget_s=60)
     snap = json.loads(sink.get_object("daily_feed/latest_snapshot.json"))
@@ -268,7 +268,7 @@ def test_owner_starred_and_noise_cards_are_shown_to_the_analyst(settings):
         return json.dumps(PASS2)
 
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"deepseek-ai/deepseek-r1": [respond], "meta/llama-3.3-70b-instruct": [respond]}, env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3-super-120b-a12b": [respond]}, env={"NVIDIA_API_KEY": "n"})
     starred = {"headline": "Starred example headline", "what_happened": ["fact"], "why_it_matters": [{"text": "why"}]}
     sink._db.execute("INSERT INTO card_feedback (news_id, scrip_code, sector, event_category, rating, card_json_snapshot, created_at)"
                      " VALUES ('x1', '1', 'default', 'RESULTS', 'STARRED', ?, '2026-01-01')", [json.dumps(starred)])

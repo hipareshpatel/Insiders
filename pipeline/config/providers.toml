@@ -77,10 +77,11 @@ limits = { tpd = 150_000 }
 
 [[routes.pass1]]
 provider = "groq"
-model = "llama-3.1-8b-instant"
+model = "openai/gpt-oss-20b"
 json_mode = true
 max_tokens = 200
-limits = { rpm = 30, tpm = 6000, rpd = 14400, tpd = 500000 }
+extra_body = { reasoning_effort = "low" }  # its reasoning tokens count against max_tokens
+limits = { rpm = 30, tpm = 8000, rpd = 1000, tpd = 200000 }
 
 [[routes.pass1]]
 provider = "mistral"
@@ -115,10 +116,11 @@ limits = { rpm = 60 }
 
 [[routes.pass1_bulk]]
 provider = "groq"
-model = "llama-3.1-8b-instant"
+model = "openai/gpt-oss-20b"
 json_mode = true
 max_tokens = 200
-limits = { rpm = 30, tpm = 6000, rpd = 14400, tpd = 500000 }
+extra_body = { reasoning_effort = "low" }  # its reasoning tokens count against max_tokens
+limits = { rpm = 30, tpm = 8000, rpd = 1000, tpd = 200000 }
 
 [[routes.pass1_bulk]]
 provider = "zai"
@@ -137,28 +139,19 @@ spare = true
 limits = { rpm = 60, tpd = 150_000 }
 
 # ------------------------------------------------------------------ Pass 2: deep analyst
-# Weighted rotation. DeepSeek-R1 is the primary analyst: it does not take
-# JSON mode and emits a <think> block, which the gateway strips before
-# validating. Prompts larger than a model's context_tokens skip that model,
-# so very long presentations and annual reports flow to GLM's 200K window.
+# Weighted rotation. Nemotron 3 Super (a reasoning model) is the primary
+# analyst; any <think> block is stripped before validating. NVIDIA retired
+# DeepSeek-R1 and Llama 3.3 70B, and deepseek-v4.1-flash took >200 s per reply.
+# Prompts larger than a model's context_tokens skip that model, so very long
+# presentations and annual reports flow to GLM's 200K window.
 
 [[routes.pass2]]
 provider = "nvidia"
-model = "deepseek-ai/deepseek-r1"
+model = "nvidia/nemotron-3-super-120b-a12b"
 weight = 3
-temperature = 0.6  # DeepSeek's advice for R1: 0.5-0.7 (lower loops and repeats)
-json_mode = false
+json_mode = true
 strip_reasoning = true
 max_tokens = 8000
-context_tokens = 120000
-limits = { rpm = 40 }
-
-[[routes.pass2]]
-provider = "nvidia"
-model = "meta/llama-3.3-70b-instruct"
-weight = 2
-json_mode = true
-max_tokens = 3000
 context_tokens = 120000
 limits = { rpm = 40 }
 
@@ -174,7 +167,7 @@ limits = { rpm = 60 }
 
 [[routes.pass2]]
 provider = "mistral"
-model = "mistral-large-latest"
+model = "mistral-medium-latest"  # mistral-large-latest is no longer offered
 weight = 2
 json_mode = true
 max_tokens = 3000
@@ -191,7 +184,7 @@ limits = { rpm = 60, tpd = 60_000 }
 
 [[routes.pass2_bulk]]
 provider = "mistral"
-model = "mistral-large-latest"
+model = "mistral-medium-latest"  # mistral-large-latest is no longer offered
 weight = 4
 json_mode = true
 max_tokens = 3000
@@ -210,19 +203,9 @@ limits = { rpm = 60 }
 
 [[routes.pass2_bulk]]
 provider = "nvidia"
-model = "meta/llama-3.3-70b-instruct"
-weight = 1
+model = "nvidia/nemotron-3-super-120b-a12b"
+weight = 2
 json_mode = true
-max_tokens = 3000
-context_tokens = 120000
-limits = { rpm = 40 }
-
-[[routes.pass2_bulk]]
-provider = "nvidia"
-model = "deepseek-ai/deepseek-r1"
-weight = 1
-temperature = 0.6
-json_mode = false
 strip_reasoning = true
 max_tokens = 8000
 context_tokens = 120000
@@ -252,7 +235,7 @@ limits = { rpm = 60 }
 
 [[routes.pass2_long]]
 provider = "mistral"
-model = "mistral-large-latest"
+model = "mistral-medium-latest"  # mistral-large-latest is no longer offered
 weight = 2
 json_mode = true
 max_tokens = 4000
@@ -261,10 +244,9 @@ limits = { rpm = 60 }
 
 [[routes.pass2_long]]
 provider = "nvidia"
-model = "deepseek-ai/deepseek-r1"
+model = "nvidia/nemotron-3-super-120b-a12b"
 weight = 1
-temperature = 0.6
-json_mode = false
+json_mode = true
 strip_reasoning = true
 max_tokens = 8000
 context_tokens = 120000

@@ -77,7 +77,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | Explicit 403 / HTML-challenge detection | done | API 403 → SourceBlockedError; HTML bodies retried; attachments per file |
 | Stop paging at known filings | done | |
 | XBRL fast path (results, shareholding) | done, verify on laptop | `xbrl.py`: results figures (₹ Cr, YoY/QoQ, EBITDA/margin, balance sheet) top the Pass 2 prompt and overwrite the model's in memory (same basis only; checked against the PDF's scale). Shareholding patterns go to memory with no AI call (route XBRL); without an XBRL file they stay noise. Built to the SEBI/BSE taxonomy without a live file (BSE blocks this cloud machine): the smoke test must confirm BSE's XBRL field name (`XML_NAME`/`XBRL`) and tag names, see System "xbrl" count |
-| Rule blacklist (certificates, trading window, Reg 74(5), newspaper, investor grievance, IEPF, meet schedules) | done | compound-headline vetoes; small ESOP allotments go to Pass 1 (size unknown from metadata) |
+| Rule blacklist (certificates, trading window, Reg 74(5), newspaper, investor grievance, IEPF, meet schedules) | done | plus stop transfer, SH-2/SH-4, listing fees, ISIN/depository, fractional shares, PIT code, Reg 24A/27(2)/57, nil deviation, dispatch notices, audio links; one shared material veto on every drop rule (compound titles); AGM notices and record dates go to the calendar. Small ESOP allotments and deviation statements not marked nil go to Pass 1 (size/content unknown from metadata) |
 | Reg 30 Schedule III Para A/B legal clue | done | `forensics.py` (Para B threshold note) |
 | Board-meeting duration forensics | done | 6+ hours flagged |
 | Pass 1 gatekeeper on subject + page 1 | done | subject now stored on the ledger |
@@ -187,7 +187,7 @@ docs, sync-companies workflow.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 167 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 185 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

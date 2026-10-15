@@ -9,10 +9,44 @@
 # [[fast_track]] rules. Anything left over goes to the Pass 1 AI gatekeeper.
 # BSE renames subcategories occasionally; headline regexes are the safety net.
 
+# A drop rule never fires when the headline also carries one of these: a compound title
+# ("Board meeting outcome ... and closure of trading window") is news. Added to every [[drop]]
+# rule's exclude_headline (unless the rule sets material_veto = false). Keep it specific: broad words ("contract", "volume") would rescue noise.
+[material_veto]
+headline = [
+  "financial results", "outcome of (the )?board", "board meeting outcome", "rights issue", "preferential (issue|allotment)",
+  "\\bqip\\b", "qualified institutions? placement", "warrants?", "merger", "amalgamation", "demerger", "acquisition",
+  "open offer", "credit rating", "(bags?|receipt of|secures?|wins?|awarded).{0,40}orders?", "letter of (award|acceptance|intent)",
+  "commercial (production|operations)", "commissioning", "usfda", "warning letter", "import alert", "form 483",
+  "resignation", "\\bdefault", "delay in (payment|servicing)", "insolvency", "\\bnclt\\b", "one[- ]time settlement",
+  "investor presentation", "transcript",
+]
+
 [[drop]]
 reason = "share certificate housekeeping"
 subcategories = ["loss of share certificate", "duplicate share certificate", "issue of duplicate"]
-headline = ["loss of (share )?certificates?", "duplicate (share )?certificates?", "lost share certificates?"]
+headline = ["loss of (share )?certificates?", "duplicate (share )?certificates?", "lost share certificates?",
+            "stop transfer", "letter of confirmation in lieu", "form\\s*sh\\s*-?\\s*[24]\\b", "transmission of shares"]
+
+[[drop]]
+reason = "routine depository / listing administration"
+headline = ["annual listing fees?", "listing fees? (paid|payment)", "isin (activation|credit)", "credit of (bonus |rights )?shares? (to|in) demat",
+            "corporate action.{0,30}(nsdl|cdsl)", "fractional (shares?|entitlements?)"]
+
+[[drop]]
+reason = "insider trading code (PIT) update"
+headline = ["code of (practices and procedures for )?fair disclosure", "code of conduct.{0,40}(insider trading|\\bpit\\b)"]
+
+[[drop]]
+reason = "routine periodic return"
+headline = ["secretarial compliance report", "regulation\\s*24\\s*a\\b", "corporate governance report", "regulation\\s*27\\s*\\(\\s*2\\s*\\)",
+            "regulation\\s*57\\s*\\(\\s*[1-5]\\s*\\)", "(payment|servicing) of interest.{0,40}(ncds?|non-convertible|debentures?)",
+            "statement of deviation.{0,60}(\\bnil\\b|no deviation|not applicable)", "no deviation.{0,40}(utili[sz]ation|proceeds)"]
+
+[[drop]]
+reason = "meeting logistics"
+headline = ["(completion of )?dispatch of (the )?(annual report|notice|postal ballot)", "audio (recording|link)", "web ?link.{0,30}(audio|recording)",
+            "(audio|video) recording of (the )?(earnings|conference|analyst|investor)"]
 
 [[drop]]
 reason = "trading window"
@@ -30,7 +64,9 @@ headline = ["74\\s*\\(\\s*5\\s*\\)"]
 reason = "newspaper publication"
 subcategories = ["newspaper publication", "copy of newspaper"]
 headline = ["newspaper (publication|advertisement|cutting|clipping)s?", "copy of (the )?newspaper"]
-# "Financial Results ... and Newspaper Publication" is the results filing itself.
+# "Financial Results ... and Newspaper Publication" is the results filing itself; a clipping of the
+# results is noise, so the shared veto (which keeps "financial results") is off for this rule.
+material_veto = false
 exclude_headline = ["results.{0,80}(and|&|along with|together with).{0,30}newspaper"]
 
 # Shareholding patterns are read from their XBRL file straight into memory (no AI call, no card);
@@ -73,6 +109,20 @@ subcategories = ["board meeting intimation", "intimation of board meeting"]
 headline = ["board meeting intimation", "intimation of (the )?board meeting", "prior intimation", "notice of (the )?board meeting"]
 exclude_headline = ["outcome", "approved", "considered and approved"]
 
+# AGM notices, book closures and record dates carry no news, but the date is a catalyst. Rights issues
+# are excluded: their record-date filing usually carries the issue terms.
+[[calendar]]
+reason = "AGM notice"
+event_type = "AGM"
+headline = ["(notice|intimation) of (the )?\\d*(st|nd|rd|th)? ?annual general meeting", "\\bagm\\b.{0,40}(notice|intimation|to be held|will be held)"]
+exclude_headline = ["outcome", "proceedings", "voting results", "scrutini[sz]er", "presentation", "speech", "transcript"]
+
+[[calendar]]
+reason = "record date / book closure"
+event_type = "RECORD_DATE"
+headline = ["record date", "book closure"]
+exclude_headline = ["rights", "letter of offer", "outcome", "approved", "financial results", "demerger", "amalgamation"]
+
 [[fast_track]]
 event_type = "RESULTS"
 categories = ["result"]
@@ -81,7 +131,8 @@ headline = [
   "financial results for the (quarter|half|year|period)",
   "outcome.{0,60}(financial )?results", "results.{0,60}outcome",
 ]
-exclude_headline = ["intimation", "to be held", "will be held", "trading window", "^\\W*(copy of )?(the )?newspaper"]
+exclude_headline = ["intimation", "to be held", "will be held", "trading window", "^\\W*(copy of )?(the )?newspaper",
+                    "voting results", "e-?voting", "postal ballot", "scrutini[sz]er"]
 
 [[fast_track]]
 event_type = "CONCALL_PRESENTATION"

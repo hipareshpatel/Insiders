@@ -52,6 +52,7 @@ class RuleBook:
             return tuple(re.compile(p, re.I) for p in patterns or ())
 
         rules: list[Rule] = []
+        veto = compile_all((config.get("material_veto") or {}).get("headline"))
         for section, action in (("drop", "DROP"), ("xbrl_only", "XBRL"), ("calendar", "CALENDAR"), ("fast_track", "FAST_TRACK")):
             for entry in config.get(section, []):
                 rules.append(Rule(
@@ -61,7 +62,7 @@ class RuleBook:
                     categories=tuple(c.lower() for c in entry.get("categories", ())),
                     subcategories=tuple(s.lower() for s in entry.get("subcategories", ())),
                     headline=compile_all(entry.get("headline")),
-                    exclude=compile_all(entry.get("exclude_headline")),
+                    exclude=compile_all(entry.get("exclude_headline")) + (veto if action == "DROP" and entry.get("material_veto", True) else ()),
                 ))
         return cls(rules)
 

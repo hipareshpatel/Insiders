@@ -51,6 +51,7 @@ from .signals import priced_for
 from .sinks.base import Sink, SinkRejected
 from . import universe
 from . import xbrl as xbrl_fast_path
+from .radar import summarize as memory_summary
 from .timeutil import IST, market_session, now_iso, now_ist, today_ist, utc_day
 
 log = logging.getLogger(__name__)
@@ -562,7 +563,9 @@ class Pipeline:
         own = tagged.ownership
         return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": "SHAREHOLDING",
                         "reason": f"xbrl: shareholding {own.period} saved to memory (promoter {own.promoter_pct}%)"[:300],
-                        "updated_at": now})
+                        "updated_at": now},
+                       company={"scrip_code": filing.scrip_code, "company_name": filing.company_name,
+                                "updated_at": now, **_company_memory(merged)})
 
     def _cache_path(self, news_id: str):
         root = self.settings.text_cache_dir
@@ -743,7 +746,8 @@ class Pipeline:
             catalysts=catalysts,
             company={"scrip_code": filing.scrip_code, "company_name": filing.company_name,
                      "symbol": row["symbol"], "sector": sector, "updated_at": now,
-                     **({"credibility_score": rated.credibility} if rated.credibility is not None else {})},
+                     **({"credibility_score": rated.credibility} if rated.credibility is not None else {}),
+                     **_company_memory(merged)},
         )
 
     def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, view, sources):
@@ -1108,3 +1112,9 @@ def _apply_xbrl(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult", news_id: 
             for key, value in tagged.balance_sheet.model_dump().items():
                 if value is not None:
                     setattr(sheet, key, value)
+
+
+def _company_memory(dossier: dict) -> dict:
+    """Company-row fields drawn from memory: former names (searchable) and the radar summary."""
+    names = (dossier.get("identity") or {}).get("former_names") or []
+    return {**memory_summary(dossier), **({"former_names_json": json.dumps(names, ensure_ascii=False)} if names else {})}

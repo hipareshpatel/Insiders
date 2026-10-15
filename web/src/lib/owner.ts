@@ -43,6 +43,8 @@ export const ownerApi = {
     call<{ ok: boolean }>(token, "/watchlist", { method: "POST", body: JSON.stringify({ scrip_code: scrip, on }) }),
   rate: (token: string, newsId: string, rating: "STARRED" | "NOISE" | "CLEAR") =>
     call<{ ok: boolean }>(token, "/feedback", { method: "POST", body: JSON.stringify({ news_id: newsId, rating }) }),
+  requeue: (token: string, newsId: string) =>
+    call<{ ok: boolean }>(token, "/requeue", { method: "POST", body: JSON.stringify({ news_id: newsId }) }),
   ratings: (token: string) => call<{ ratings: { news_id: string; rating: string }[] }>(token, "/feedback"),
 };
 

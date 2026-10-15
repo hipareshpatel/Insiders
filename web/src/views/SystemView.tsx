@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ownerApi, setOwnerToken, useOwnerToken } from "../lib/owner";
-import type { PipelineRun, ProviderUsage } from "../../shared/types";
+import type { PipelineRun, ProviderUsage, ReviewCard } from "../../shared/types";
 import { Badge } from "../components/ui/badge";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
@@ -76,6 +76,8 @@ export function SystemView() {
       </section>
 
       <OwnerMode />
+
+      <ReviewQueue />
 
       <section className="rounded-xl border border-line bg-surface">
         <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line px-4 py-3">
@@ -226,5 +228,57 @@ function RunRow({ run }: { run: PipelineRun }) {
       <td className="num whitespace-nowrap px-4 py-2 text-ink-2">{duration !== null ? `${Math.floor(duration / 60)}m ${duration % 60}s` : "—"}</td>
       <td className="max-w-xs truncate px-4 py-2 text-xs text-ink-2" title={run.error ?? String(stats.stopped_reason ?? "")}>{run.error ?? String(stats.stopped_reason ?? "")}</td>
     </tr>
+  );
+}
+
+/** Cards held back by the checks, with what failed and (owner mode) a re-run. */
+function ReviewQueue() {
+  const token = useOwnerToken();
+  const [queued, setQueued] = useState<Set<string>>(new Set());
+  const query = useQuery({ queryKey: ["review"], queryFn: () => api.review() });
+  const cards = query.data?.cards ?? [];
+  if (!cards.length) return null;
+  const problems = (card: ReviewCard) => {
+    const out: string[] = [];
+    try {
+      const g = card.grounding ? JSON.parse(card.grounding) : null;
+      if (g?.ungrounded?.length) out.push(`Not found in the filing: ${g.ungrounded.slice(0, 4).join(", ")}`);
+      if (g?.math_mismatches?.length) out.push(`Math check: ${g.math_mismatches.slice(0, 2).join("; ")}`);
+      if (g?.unsupported_claims?.length) out.push(`Unsupported: ${g.unsupported_claims.slice(0, 2).join("; ")}`);
+      const r = card.review ? JSON.parse(card.review) : null;
+      if (r?.issues?.length && !out.length) out.push(...r.issues.slice(0, 3));
+    } catch {
+      /* malformed: show the card without details */
+    }
+    return out;
+  };
+  const requeue = async (newsId: string) => {
+    if (!token) return;
+    await ownerApi.requeue(token, newsId);
+    setQueued((s) => new Set(s).add(newsId));
+  };
+  return (
+    <section className="rounded-xl border border-line bg-surface p-4">
+      <h2 className="text-[14px] font-semibold text-ink">Needs review · {cards.length}</h2>
+      <p className="mt-0.5 text-xs text-ink-3">Cards whose figures or math the automatic checks could not confirm. They are published with an Unverified mark.</p>
+      <ul className="mt-3 divide-y divide-line">
+        {cards.map((card) => (
+          <li key={card.news_id} className="flex flex-wrap items-start gap-3 py-2">
+            <a href={`/feed?card=${encodeURIComponent(card.news_id)}`} className="min-w-0 flex-1 text-[13px] hover:underline">
+              <span className="font-semibold text-ink">{card.symbol ?? card.scrip_code}</span>
+              <span className="text-ink-2"> · {card.headline}</span>
+              <span className="num block text-xs text-ink-3">{istDateTime(card.filed_at)} · {titleCase(card.event_category)}</span>
+              {problems(card).map((p, i) => <span key={i} className="block text-xs text-warn">{p}</span>)}
+            </a>
+            {token && (
+              <button type="button" disabled={queued.has(card.news_id)} onClick={() => requeue(card.news_id)}
+                className="h-7 shrink-0 rounded-md border border-line px-2.5 text-xs font-medium text-ink-2 hover:text-ink disabled:opacity-50">
+                {queued.has(card.news_id) ? "Queued for the next run" : "Re-run"}
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

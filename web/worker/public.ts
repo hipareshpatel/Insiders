@@ -15,7 +15,12 @@ const CARD_COLUMNS = `
 
 const COMPANY_COLUMNS = `scrip_code, symbol, company_name, isin, industry, sector, market_cap_cr,
   size_category, last_price, price_date, ret_1w, ret_1m, ret_1y, card_count, last_card_at,
-  watchlist, former_names_json, credibility_score, median_turnover_cr`;
+  watchlist, former_names_json, credibility_score, median_turnover_cr,
+  json_array_length(memory_summary_json, '$.open_promises') AS open_promises,
+  json_extract(memory_summary_json, '$.active_capex') AS active_capex,
+  json_extract(memory_summary_json, '$.revenue') AS latest_revenue,
+  json_extract(memory_summary_json, '$.ebitda') AS latest_ebitda,
+  json_extract(memory_summary_json, '$.gross_debt_cr') AS gross_debt_cr`;
 
 /** Turn free text into a safe FTS5 prefix query: "tata mot" -> "tata"* "mot"*. One-letter tokens
  * are dropped: a prefix that short matches nearly every row. */
@@ -367,6 +372,76 @@ api.get("/calendar", async (c) => {
      ORDER BY event_date, company_name
      LIMIT 3000`).bind(q.from, q.to, listParam(q.types)).all();
   return c.json({ events: results });
+});
+
+type MemorySummary = {
+  open_promises: { id: string; statement: string; due: string | null; due_date: string | null; given_on: string | null; status: string; source_news_id: string | null }[];
+  triggers: { kind: string; date: string; text: string }[];
+  active_capex: number;
+  revenue: { period: string; value: number } | null;
+  ebitda: { period: string; value: number } | null;
+  gross_debt_cr: number | null;
+};
+
+const parseSummary = (raw: unknown): MemorySummary | null => {
+  try {
+    return typeof raw === "string" ? (JSON.parse(raw) as MemorySummary) : null;
+  } catch {
+    return null;
+  }
+};
+
+const istDay = (offsetDays = 0) => new Date(Date.now() + 5.5 * 3600_000 + offsetDays * 86400_000).toISOString().slice(0, 10);
+
+// Inflection Radar (blueprint §13 View 3): companies with at least `min` different positive
+// triggers in the last 90 days. One range read on idx_companies_inflection.
+api.get("/radar", async (c) => {
+  const min = clamp(c.req.query("min"), 3, 5);
+  const body = await memoised(`radar:${min}`, 300_000, async () => {
+    const since = istDay(-90);
+    const { results } = await c.env.DB.prepare(`
+      SELECT scrip_code, symbol, company_name, sector, market_cap_cr, size_category, credibility_score, watchlist,
+             memory_summary_json, inflection_last_at
+        FROM companies WHERE inflection_last_at >= ?1 ORDER BY inflection_last_at DESC LIMIT 2000`).bind(since).all();
+    const companies = (results as Record<string, unknown>[]).flatMap((r) => {
+      const s = parseSummary(r.memory_summary_json);
+      const recent = (s?.triggers ?? []).filter((t) => t.date >= since);
+      if (new Set(recent.map((t) => t.kind)).size < min) return [];
+      const { memory_summary_json: _drop, ...row } = r;
+      return [{ ...row, triggers: recent, active_capex: s?.active_capex ?? 0 }];
+    });
+    companies.sort((a, b) => b.triggers.length - a.triggers.length || String(b.inflection_last_at).localeCompare(String(a.inflection_last_at)));
+    return { since, min, companies };
+  });
+  return c.json(body, 200, { "Cache-Control": "public, max-age=300" });
+});
+
+// Overdue management promises (Module 44): open promises whose due date has passed, earliest first.
+api.get("/promises/overdue", async (c) => {
+  const body = await memoised("overdue", 300_000, async () => {
+    const today = istDay();
+    const { results } = await c.env.DB.prepare(`
+      SELECT scrip_code, symbol, company_name, credibility_score, memory_summary_json
+        FROM companies WHERE earliest_open_due < ?1 ORDER BY earliest_open_due LIMIT 500`).bind(today).all();
+    const promises = (results as Record<string, unknown>[]).flatMap((r) =>
+      (parseSummary(r.memory_summary_json)?.open_promises ?? [])
+        .filter((p) => p.due_date && p.due_date < today)
+        .map((p) => ({ ...p, scrip_code: r.scrip_code, symbol: r.symbol, company_name: r.company_name,
+                       credibility_score: r.credibility_score,
+                       days_overdue: Math.round((Date.parse(today) - Date.parse(p.due_date!)) / 86400_000) })));
+    promises.sort((a, b) => b.days_overdue - a.days_overdue);
+    return { today, promises: promises.slice(0, 500) };
+  });
+  return c.json(body, 200, { "Cache-Control": "public, max-age=300" });
+});
+
+// Needs-review queue (View 5): cards held back by the checks, newest first (partial index).
+api.get("/review", async (c) => {
+  const { results } = await c.env.DB.prepare(`
+    SELECT c.news_id, c.scrip_code, c.symbol, c.company_name, c.filed_at, c.headline, c.event_category,
+           json_extract(c.card_json, '$.grounding') AS grounding, json_extract(c.card_json, '$.review') AS review
+      FROM cards c WHERE c.needs_review = 1 ORDER BY c.filed_at DESC LIMIT 100`).all();
+  return c.json({ cards: results }, 200, { "Cache-Control": "public, max-age=60" });
 });
 
 // Counts above this are shown as "1,000+": an exact count would read every queued row.

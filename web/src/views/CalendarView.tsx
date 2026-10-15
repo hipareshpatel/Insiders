@@ -62,6 +62,8 @@ export function CalendarView() {
         <p className="mt-1 text-sm text-ink-2">Record dates, meetings, rights windows, execution milestones, and the dates promises fall due.</p>
       </header>
 
+      <OverduePromises />
+
       <div className="mb-4 flex flex-wrap gap-1.5">
         {CATALYST_FAMILIES.map((f) => {
           const off = hidden.has(f.key);
@@ -147,5 +149,43 @@ export function CalendarView() {
         </section>
       </div>
     </div>
+  );
+}
+
+/** Module 44: open promises whose due date has passed with no delivery filing. */
+function OverduePromises() {
+  const [, navigate] = useLocation();
+  const [open, setOpen] = useState(false);
+  const query = useQuery({ queryKey: ["overdue"], queryFn: () => api.overdue() });
+  const items = query.data?.promises ?? [];
+  if (!items.length) return null;
+  const shown = open ? items : items.slice(0, 5);
+  return (
+    <section className="mb-4 rounded-xl border border-warn/40 bg-surface p-4">
+      <h2 className="text-[14px] font-semibold text-warn">⚠️ Overdue management promises · {items.length}</h2>
+      <p className="mt-0.5 text-xs text-ink-3">Open promises past their due date with no filing saying they were delivered.</p>
+      <ul className="mt-3 divide-y divide-line">
+        {shown.map((p) => (
+          <li key={`${p.scrip_code}-${p.id}`}>
+            <button type="button" onClick={() => navigate(`/company/${p.scrip_code}`)}
+              className="flex w-full items-start gap-3 py-2 text-left hover:bg-surface-2/50">
+              <Avatar name={p.company_name} symbol={p.symbol} size={24} />
+              <span className="min-w-0 flex-1 text-[13px]">
+                <span className="font-semibold text-ink">{p.symbol ?? p.scrip_code}</span>
+                <span className="text-ink-2"> · {p.statement}</span>
+                <span className="num block text-xs text-ink-3">
+                  Due {p.due ?? istDate(p.due_date)} ({istDate(p.due_date)}) · {p.days_overdue} days overdue
+                  {p.given_on ? ` · promised ${istDate(p.given_on)}` : ""}
+                  {p.credibility_score != null ? ` · credibility ${Math.round(p.credibility_score)}%` : ""}
+                </span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      {items.length > 5 && (
+        <Button size="sm" className="mt-2" onClick={() => setOpen((o) => !o)}>{open ? "Show fewer" : `Show all ${items.length}`}</Button>
+      )}
+    </section>
   );
 }

@@ -252,6 +252,28 @@ export interface Company {
   former_names_json?: string;
   credibility_score?: number | null;
   median_turnover_cr?: number | null;
+  /** From the company's memory summary (written with each card). */
+  open_promises?: number | null;
+  active_capex?: number | null;
+  latest_revenue?: string | null;   // JSON {period, value}
+  latest_ebitda?: string | null;
+  gross_debt_cr?: number | null;
+}
+
+export interface InflectionTrigger { kind: string; date: string; text: string }
+export interface RadarCompany {
+  scrip_code: string; symbol: string | null; company_name: string; sector: string | null;
+  market_cap_cr: number | null; size_category: SizeCategory | null; credibility_score: number | null;
+  watchlist: number | null; inflection_last_at: string; triggers: InflectionTrigger[]; active_capex: number;
+}
+export interface OverduePromise {
+  id: string; statement: string; due: string | null; due_date: string; given_on: string | null; status: string;
+  source_news_id: string | null; scrip_code: string; symbol: string | null; company_name: string;
+  credibility_score: number | null; days_overdue: number;
+}
+export interface ReviewCard {
+  news_id: string; scrip_code: string; symbol: string | null; company_name: string; filed_at: string;
+  headline: string; event_category: string; grounding: string | null; review: string | null;
 }
 
 export interface CompaniesResponse {

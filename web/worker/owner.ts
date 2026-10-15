@@ -46,6 +46,17 @@ owner.post("/feedback", async (c) => {
   return c.json({ ok: true });
 });
 
+// Re-run a card held for review: the filing goes back to the queue with its attempts reset. The
+// next pipeline run re-analyses it from the cached text (no new download).
+owner.post("/requeue", async (c) => {
+  const body = await c.req.json<{ news_id?: string }>().catch(() => null);
+  if (!body?.news_id) return c.json({ error: "news_id required" }, 400);
+  const result = await c.env.DB.prepare(
+    "UPDATE filings SET status = 'PENDING', attempts = 0, last_error = 'requeued by owner', updated_at = ?2 WHERE news_id = ?1")
+    .bind(body.news_id, new Date().toISOString()).run();
+  return c.json({ ok: (result.meta.changes ?? 0) > 0 });
+});
+
 owner.get("/feedback", async (c) => {
   const { results } = await c.env.DB.prepare(
     "SELECT news_id, rating FROM card_feedback ORDER BY created_at DESC LIMIT 500").all();

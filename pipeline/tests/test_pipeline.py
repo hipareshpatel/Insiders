@@ -128,8 +128,11 @@ def test_live_run_end_to_end(settings):
 
     events = {r["event_type"] for r in rows(sink, "select event_type from catalysts")}
     assert events == {"AGM", "GUIDANCE_DUE"}
-    (company,) = rows(sink, "select card_count, sector from companies")
+    (company,) = rows(sink, "select card_count, sector, memory_summary_json, earliest_open_due from companies")
     assert company["card_count"] == 1
+    # the radar summary rides on the company row: the open promise and its due date
+    assert company["earliest_open_due"] == "2027-03-31"
+    assert json.loads(company["memory_summary_json"])["open_promises"][0]["statement"].startswith("Commission 2 MTPA")
 
     (run,) = rows(sink, "select status, stats_json from pipeline_runs")
     assert run["status"] == "OK" and json.loads(run["stats_json"])["analyzed"] == 1

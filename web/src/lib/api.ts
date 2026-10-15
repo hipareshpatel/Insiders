@@ -1,14 +1,4 @@
-import type {
-  BriefResponse,
-  CardRow,
-  Catalyst,
-  CompaniesResponse,
-  CompanyDetail,
-  FeedResponse,
-  NoiseRow,
-  SearchResponse,
-  SystemResponse,
-} from "../../shared/types";
+import type { BriefResponse, CardRow, Catalyst, CompaniesResponse, CompanyDetail, FeedResponse, NoiseRow, OverduePromise, RadarCompany, ReviewCard, SearchResponse, SystemResponse } from "../../shared/types";
 
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
@@ -57,4 +47,7 @@ export const api = {
   company: (scrip: string) => get<CompanyDetail>(`/api/companies/${encodeURIComponent(scrip)}`),
   calendar: (from: string, to: string) => get<{ events: Catalyst[] }>("/api/calendar", { from, to }),
   system: () => get<SystemResponse>("/api/system"),
+  radar: (min = 3) => get<{ since: string; min: number; companies: RadarCompany[] }>("/api/radar", { min }),
+  overdue: () => get<{ today: string; promises: OverduePromise[] }>("/api/promises/overdue"),
+  review: () => get<{ cards: ReviewCard[] }>("/api/review"),
 };

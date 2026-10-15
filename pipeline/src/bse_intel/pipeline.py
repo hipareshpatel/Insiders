@@ -51,6 +51,7 @@ from .signals import priced_for
 from .sinks.base import Sink, SinkRejected
 from . import universe
 from . import xbrl as xbrl_fast_path
+from .quality import warrant_deadlines
 from .radar import summarize as memory_summary
 from .timeutil import IST, market_session, now_iso, now_ist, today_ist, utc_day
 
@@ -705,6 +706,12 @@ class Pipeline:
             }
             for ev in out.dossier_delta.upcoming_events if ev.date >= filing.filing_date
         ]
+        for deadline, text in warrant_deadlines(out, filing):  # module 31: the 18-month warrant clock
+            catalysts.append({
+                "id": _catalyst_id(filing.scrip_code, "WARRANT_EXPIRY", deadline), "scrip_code": filing.scrip_code,
+                "company_name": filing.company_name, "symbol": row["symbol"], "event_type": "WARRANT_EXPIRY",
+                "event_date": deadline, "description": text[:300], "source_news_id": filing.news_id, "created_at": now,
+            })
         for g in out.dossier_delta.guidance:
             deadline = due_date(g.due)
             if deadline and deadline.isoformat() >= filing.filing_date:

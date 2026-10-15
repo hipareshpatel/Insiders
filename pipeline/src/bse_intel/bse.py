@@ -323,6 +323,7 @@ def parse_scrip(row: dict) -> dict | None:
         "isin": pick("ISIN_NUMBER", "ISIN"),
         "industry": pick("INDUSTRY", "Industry", "industry"),
         "market_cap_cr": mktcap_value,
+        "bse_group": (pick("GROUP", "Group", "SCRIP_GROUP", "scrip_group") or "").upper() or None,
     }
 
 

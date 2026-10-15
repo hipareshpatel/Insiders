@@ -29,7 +29,8 @@ export interface NotableChange {
 export interface Signal {
   type: "PROMISE_DELIVERED" | "GUIDANCE_BREACH" | "WATCH_RESOLVED" | "DILUTION" | "SCALE" | "ORDER_FLOW" | "WORKING_CAPITAL_STRAIN" | "METRIC_SHIFT"
     | "BOARD_DELIBERATION" | "REG30_THRESHOLD" | "PREDICTION_RESOLVED" | "OWNERSHIP_SHIFT" | "AUDIT_FLAG"
-    | "VOLUME_STREAK" | "QUARTER_PREVIEW";
+    | "VOLUME_STREAK" | "QUARTER_PREVIEW" | "LOW_QUALITY_BEAT" | "MARGIN_MIX" | "JAWS" | "LOW_CASH_TAX" | "Q4_TRUE_UP"
+    | "RECURRING_ONE_OFFS" | "DEBT_CASH_PARADOX" | "DISTRESS" | "RATING_LIQUIDITY" | "FESTIVE_SEASON";
   severity: Severity;
   text: string;
   ref?: string | null;
@@ -188,6 +189,8 @@ export interface CardRow {
   median_turnover_cr?: number | null;
   credibility_score?: number | null;
   watchlist?: number;
+  /** BSE trading group (A, B, T, XT, Z...); T, XT and Z trade to trade with tight circuits. */
+  bse_group?: string | null;
 }
 
 export interface FeedResponse {
@@ -254,6 +257,7 @@ export interface Company {
   former_names_json?: string;
   credibility_score?: number | null;
   median_turnover_cr?: number | null;
+  bse_group?: string | null;
   /** From the company's memory summary (written with each card). */
   open_promises?: number | null;
   active_capex?: number | null;

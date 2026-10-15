@@ -23,6 +23,14 @@ def test_large_order_for_a_small_company_with_a_clean_record_is_a_top_signal():
     assert s.gates == {"magnitude": True, "inflection": True, "price": True, "clean": True}
     assert s.total >= 70 and s.impact == "HIGH" and s.actionable
     assert credibility(dossier) == (75.0, 3, 4)
+    # module 50: the same card on a trade-to-trade stock fails the price gate (hard to exit)
+    t2t = score(card, "ORDER_WIN", signals, dossier, {**company, "bse_group": "XT"}, needs_review=False, model_impact="HIGH")
+    assert t2t.gates["price"] is False and any("Trade-to-trade" in r for r in t2t.reasons)
+    # earnings-quality penalties count once each
+    weak = score(card, "ORDER_WIN", signals + [{"type": "DISTRESS", "severity": "WARNING", "text": "x"},
+                                                {"type": "DISTRESS", "severity": "WARNING", "text": "y"}],
+                 dossier, company, needs_review=False, model_impact="HIGH")
+    assert weak.pillars["penalty"] == -15 and weak.total == s.total - 15
 
 
 def test_distressed_rights_issue_and_vetoes_cap_the_score():

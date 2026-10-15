@@ -74,7 +74,7 @@ export const SECTORS: Record<string, string> = {
 
 /** Catalyst families for the calendar: colour by what the date means. */
 export const CATALYST_FAMILIES: { key: string; label: string; types: string[]; dot: string; chip: string }[] = [
-  { key: "corp", label: "Corporate actions", types: ["RECORD_DATE", "EX_DATE", "PAYMENT_DATE", "BUYBACK_OPEN", "BUYBACK_CLOSE"], dot: "bg-info", chip: "bg-info-soft text-info" },
+  { key: "corp", label: "Corporate actions", types: ["RECORD_DATE", "EX_DATE", "PAYMENT_DATE", "BUYBACK_OPEN", "BUYBACK_CLOSE", "WARRANT_EXPIRY"], dot: "bg-info", chip: "bg-info-soft text-info" },
   { key: "meet", label: "Meetings", types: ["AGM", "EGM", "BOARD_MEETING"], dot: "bg-violet", chip: "bg-violet-soft text-violet" },
   { key: "rights", label: "Rights windows", types: ["RIGHTS_OPEN", "RIGHTS_CLOSE"], dot: "bg-teal", chip: "bg-teal-soft text-teal" },
   { key: "exec", label: "Execution milestones", types: ["COMMISSIONING", "MILESTONE"], dot: "bg-pos", chip: "bg-pos-soft text-pos" },

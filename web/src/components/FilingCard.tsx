@@ -43,6 +43,16 @@ export const SIGNAL: Record<Signal["type"], { label: string; icon: typeof Gauge 
   AUDIT_FLAG: { label: "Audit", icon: ShieldAlert },
   VOLUME_STREAK: { label: "Volume streak", icon: Gauge },
   QUARTER_PREVIEW: { label: "Quarter preview", icon: Gauge },
+  LOW_QUALITY_BEAT: { label: "Earnings quality", icon: AlertTriangle },
+  MARGIN_MIX: { label: "Margin drivers", icon: Gauge },
+  JAWS: { label: "Cost vs revenue", icon: Scale },
+  LOW_CASH_TAX: { label: "Tax rate", icon: Scale },
+  Q4_TRUE_UP: { label: "Q4 true-up", icon: ShieldAlert },
+  RECURRING_ONE_OFFS: { label: "Recurring one-offs", icon: AlertTriangle },
+  DEBT_CASH_PARADOX: { label: "Debt and cash", icon: Scale },
+  DISTRESS: { label: "Debt service", icon: ShieldAlert },
+  RATING_LIQUIDITY: { label: "Rating", icon: ShieldAlert },
+  FESTIVE_SEASON: { label: "Festive season", icon: Gauge },
 };
 export const SEVERITY_TEXT: Record<Signal["severity"], string> = { POSITIVE: "text-pos", WARNING: "text-warn", INFO: "text-info" };
 

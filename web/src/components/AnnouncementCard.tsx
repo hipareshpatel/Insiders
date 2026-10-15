@@ -315,6 +315,9 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
             </Chip>
           )}
           {row.median_turnover_cr != null && row.median_turnover_cr < 0.5 && <Chip tone="warn">💧 Thin liquidity</Chip>}
+          {row.bse_group && ["T", "XT", "Z", "ZP", "TS", "MT"].includes(row.bse_group.toUpperCase()) && (
+            <Chip tone="warn">🔒 Trade-to-trade ({row.bse_group})</Chip>
+          )}
         </div>
 
         <h3 className="mt-3 font-display text-[19px] leading-snug text-ink sm:text-[21px]">{plain(card.headline)}</h3>

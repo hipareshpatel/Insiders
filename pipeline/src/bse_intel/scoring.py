@@ -21,6 +21,7 @@ REVENUE = ("revenue", "revenue_from_operations", "total_revenue", "net_sales", "
 HIGH, MODERATE = 70, 40
 DELIVERED = {"DELIVERED"}
 BROKEN = {"MISSED", "DELAYED", "WITHDRAWN"}
+T2T_GROUPS = {"T", "XT", "Z", "ZP", "TS", "MT"}  # module 50: trade-to-trade and restricted groups
 
 
 @dataclass
@@ -188,8 +189,11 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
     if ret_1m is not None and -10 <= ret_1m <= 12:
         pillars["disclosure"] += 5
     turnover = company.get("median_turnover_cr")
+    trade_to_trade = (company.get("bse_group") or "").upper() in T2T_GROUPS
     gate3 = (ret_1m is not None and ret_1m <= 15 and (ret_1w is None or ret_1w <= 10)
-             and (turnover is None or turnover >= 0.5))
+             and (turnover is None or turnover >= 0.5) and not trade_to_trade)
+    if trade_to_trade:
+        reasons.append(f"Trade-to-trade (BSE group {company['bse_group']}): tight circuits, hard to exit")
     if turnover is not None and turnover < 0.5:
         reasons.append(f"Thin liquidity (₹{turnover:.2f} Cr a day)")
 
@@ -200,7 +204,7 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
     if needs_review:
         vetoes.append("Unverified figures or failed math check")
     rating = " ".join(str(s.get("credit_rating") or "") for s in (dossier or {}).get("balance_sheet", [])[-1:]).lower()
-    if "not cooperating" in rating or " inc" in f" {rating}":
+    if ("not cooperating" in rating or " inc" in f" {rating}") and "Credit rating: issuer not cooperating" not in vetoes:
         vetoes.append("Credit rating: issuer not cooperating")
     if any(s["type"] == "ORDER_FLOW" and "not a new order" in s["text"].lower() for s in signals):
         vetoes.append("Stage update of an order already counted")
@@ -208,6 +212,15 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
         vetoes.append("Auditor qualification or mid-term resignation")
     if any(s["type"] == "OWNERSHIP_SHIFT" and s["severity"] == "WARNING" for s in signals):
         pillars["penalty"] -= 10
+    # earnings-quality forensics (quality.py): each counts once
+    for kind, points, why in (("LOW_QUALITY_BEAT", 10, "Profit driven by other income"), ("Q4_TRUE_UP", 10, "Q4 audit true-up"),
+                              ("RECURRING_ONE_OFFS", 5, "Recurring exceptional items"), ("DISTRESS", 15, "Weak interest cover or negative net worth")):
+        if any(s["type"] == kind and s["severity"] == "WARNING" for s in signals):
+            pillars["penalty"] -= points
+            reasons.append(f"Penalty: {why}")
+    if any(s["type"] == "RATING_LIQUIDITY" and "not cooperating" in s["text"].lower() for s in signals) \
+            and "Credit rating: issuer not cooperating" not in vetoes:
+        vetoes.append("Credit rating: issuer not cooperating")
 
     total_points = sum(pillars.values())
     if vetoes:

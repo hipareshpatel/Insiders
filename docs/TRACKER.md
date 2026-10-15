@@ -121,11 +121,41 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | 6 case studies as test fixtures | todo | smoke test |
 
 ### §9 50 forensic modules
-Built: SCALE (order/capex vs revenue, fundraise vs market cap), ORDER_FLOW (repeat orders, stage
-updates such as LoI to LoA), DILUTION, PROMISE_DELIVERED, GUIDANCE_BREACH, WATCH_RESOLVED,
-WORKING_CAPITAL_STRAIN, METRIC_SHIFT. All other modules are **todo**; they are to be built as
-deterministic checks in `signals.py` where the data exists (results, balance sheet, ratings, shareholding),
-and as prompt rules otherwise. The per-module list is in BLUEPRINT §9.
+Deterministic (code, from memory as of the filing; the XBRL fast path supplies the detailed P&L):
+| Modules | Where | Signal |
+|---|---|---|
+| 10 L1/LoI → LoA dedup | signals ORDER_FLOW + deal stages | stage update, not a new order (Gate 4 veto) |
+| 15 other income / low-quality beat | quality.py | LOW_QUALITY_BEAT (penalty) |
+| 16 gross margin vs operating leverage | quality.py | MARGIN_MIX |
+| 17 jaws / pre-launch hiring | quality.py | JAWS |
+| 18 low cash tax | quality.py | LOW_CASH_TAX |
+| 21 Q4 true-up | quality.py | Q4_TRUE_UP (penalty) |
+| 22 recurring one-offs | quality.py | RECURRING_ONE_OFFS (penalty) |
+| 23 working-capital bloat | signals | WORKING_CAPITAL_STRAIN (Gate 4) |
+| 27 debt + cash paradox | quality.py | DEBT_CASH_PARADOX |
+| 29 distress (cover < 1.5x, NW ≤ 0) | quality.py | DISTRESS (penalty) |
+| 30 dilution, rights ratio | signals | DILUTION |
+| 31 18-month warrant clock | quality.py | WARRANT_EXPIRY catalyst |
+| 38 short-term rating, outlook, INC | quality.py | RATING_LIQUIDITY (INC veto) |
+| 39 auditor ladder | signals | AUDIT_FLAG (Gate 4) |
+| 44 overdue promises | radar.py | Calendar panel |
+| 45 quarter preview | signals | QUARTER_PREVIEW |
+| 46 festive Oct+Nov | quality.py | FESTIVE_SEASON |
+| 47 smart money vs retail | signals | OWNERSHIP_SHIFT |
+| 49 name / ticker continuity | dossier identity, FTS | former-name search |
+| 50 trade-to-trade, liquidity | scoring Gate 3, card pills | needs `bse_group` from sync-companies; ASM/GSM stage has no free source yet |
+
+Prompt rules (`config/events.toml`, only the event type's own rules go into each call): 1 (330/275
+operating days), 3 (depreciation/interest cliff), 4-5 (captive / brownfield tags), 6 (qualification
+lag), 7 (environmental clearances), 9 (EPC vs O&M split), 11 (BG / working capital), 12 (price
+variation clause), 13 (scope cuts, LDs), 14 (bid pipeline in notes), 19-20, 24-26, 28 (results
+forensics), 32-34 (M&A Annexure A, RPT, demerger type, subsidiary share), 36 (buyback funding),
+37 (rated bank limits), 40 (institutional dissent), 41 (penalty size), 43 (evasion, goalpost
+shifting), 48 (insider trades).
+
+Not built (need data we do not have): 2 asset-turn bands (sector lens extras, next), 8 DGTR duties
+(needs a product list), 35 ROIIC (needs 3 years of history), 42 promoter-group contagion (needs a
+group map).
 
 ### §10 Sector lenses
 | Item | Status | Notes |
@@ -187,7 +217,7 @@ docs, sync-companies workflow.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 186 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 192 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

@@ -43,9 +43,10 @@ def test_parse_row():
 def test_parse_scrip_is_defensive():
     row = parse_scrip({"SCRIP_CD": "999001", "Scrip_Name": "DEMO CEMENT", "Issuer_Name": "Demo Cement Ltd",
                        "scrip_id": "democem", "ISIN_NUMBER": "INE000000001", "INDUSTRY": "Cement & Cement Products",
-                       "Mktcap": "1,234.50"})
+                       "Mktcap": "1,234.50", "GROUP": "xt"})
     assert row == {"scrip_code": "999001", "company_name": "Demo Cement Ltd", "symbol": "DEMOCEM",
-                   "isin": "INE000000001", "industry": "Cement & Cement Products", "market_cap_cr": 1234.5}
+                   "isin": "INE000000001", "industry": "Cement & Cement Products", "market_cap_cr": 1234.5,
+                   "bse_group": "XT"}
 
 
 def _transport(pages: list[list[dict]], total: int, seen: list[httpx.Request], status: int = 200):

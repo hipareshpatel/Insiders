@@ -18,7 +18,7 @@ import pymupdf
 
 log = logging.getLogger(__name__)
 
-SCANNED_PAGE_CHARS = 50
+SCANNED_PAGE_CHARS = 80  # blueprint §5.3: under 80 characters of text and an image means scanned
 OcrFn = Callable[[bytes], str]
 
 # PyMuPDF does not support concurrent use from multiple threads, even on

@@ -87,7 +87,7 @@ def test_download_falls_back_between_live_and_history():
         if "AttachLive" in request.url.path:
             return httpx.Response(404)
         return httpx.Response(200, content=b"%PDF-1.7 his")
-    client = BseClient(transport=httpx.MockTransport(handler))
+    client = BseClient(transport=httpx.MockTransport(handler), download_delay=(0, 0))
     client._warmed = True
     assert client.download("https://www.bseindia.com/xml-data/corpfiling/AttachLive/x.pdf") == b"%PDF-1.7 his"
 

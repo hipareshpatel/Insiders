@@ -21,7 +21,9 @@ than a silent empty result.
 from __future__ import annotations
 
 import logging
+import random
 import re
+import threading
 import time
 from collections.abc import Iterator
 from datetime import date
@@ -111,7 +113,8 @@ def parse_row(row: dict) -> Filing | None:
 
 
 class BseClient:
-    def __init__(self, timeout: float = 30.0, page_delay: float = 1.0, transport: httpx.BaseTransport | None = None):
+    def __init__(self, timeout: float = 30.0, page_delay: float = 0.5, transport: httpx.BaseTransport | None = None,
+                 download_delay: tuple[float, float] = (1.2, 2.0)):
         self._client = httpx.Client(
             timeout=timeout,
             follow_redirects=True,
@@ -119,6 +122,9 @@ class BseClient:
             headers={"User-Agent": USER_AGENT, "Accept-Language": "en-US,en;q=0.9"},
         )
         self._page_delay = page_delay
+        self._download_delay = download_delay  # polite pacing between attachments (blueprint §5.1)
+        self._last_download = 0.0
+        self._download_lock = threading.Lock()
         self._warmed = False
 
     def close(self) -> None:
@@ -223,6 +229,16 @@ class BseClient:
             page += 1
             time.sleep(self._page_delay)
 
+    def _pace_download(self) -> None:
+        low, high = self._download_delay
+        if high <= 0:
+            return
+        with self._download_lock:  # one pace for all worker threads
+            wait = self._last_download + random.uniform(low, high) - time.monotonic()
+            if wait > 0:
+                time.sleep(wait)
+            self._last_download = time.monotonic()
+
     def download(self, url: str, max_bytes: int = 30_000_000) -> bytes | None:
         """Fetch an attachment; falls back between AttachLive and AttachHis.
 
@@ -231,6 +247,7 @@ class BseClient:
         filing is retried later rather than analysed without its text.
         """
         self.warm_up()
+        self._pace_download()
         candidates = [url]
         if ATTACH_LIVE in url:
             candidates.append(url.replace(ATTACH_LIVE, ATTACH_HIS))

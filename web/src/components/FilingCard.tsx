@@ -36,6 +36,8 @@ export const SIGNAL: Record<Signal["type"], { label: string; icon: typeof Gauge 
   ORDER_FLOW: { label: "Order flow", icon: Layers },
   WORKING_CAPITAL_STRAIN: { label: "Working capital", icon: AlertTriangle },
   METRIC_SHIFT: { label: "Metric shift", icon: Gauge },
+  BOARD_DELIBERATION: { label: "Long board meeting", icon: Timer },
+  REG30_THRESHOLD: { label: "Reg 30 materiality", icon: Scale },
 };
 export const SEVERITY_TEXT: Record<Signal["severity"], string> = { POSITIVE: "text-pos", WARNING: "text-warn", INFO: "text-info" };
 

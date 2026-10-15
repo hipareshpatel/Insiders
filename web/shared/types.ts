@@ -27,7 +27,8 @@ export interface NotableChange {
 }
 
 export interface Signal {
-  type: "PROMISE_DELIVERED" | "GUIDANCE_BREACH" | "WATCH_RESOLVED" | "DILUTION" | "SCALE" | "ORDER_FLOW" | "WORKING_CAPITAL_STRAIN" | "METRIC_SHIFT";
+  type: "PROMISE_DELIVERED" | "GUIDANCE_BREACH" | "WATCH_RESOLVED" | "DILUTION" | "SCALE" | "ORDER_FLOW" | "WORKING_CAPITAL_STRAIN" | "METRIC_SHIFT"
+    | "BOARD_DELIBERATION" | "REG30_THRESHOLD";
   severity: Severity;
   text: string;
   ref?: string | null;

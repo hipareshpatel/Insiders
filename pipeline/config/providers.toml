@@ -30,6 +30,7 @@ safety_ceiling = 0.95
 [gateway.strategies]
 pass2 = "weighted"
 pass2_bulk = "weighted"
+pass2_long = "weighted"
 
 # ------------------------------------------------------------------ providers
 
@@ -236,6 +237,38 @@ spare = true
 limits = { rpm = 60, tpd = 60_000 }
 
 # ------------------------------------------------------------------ Vision OCR for scanned pages
+
+# Long documents (prompt above ~12,000 tokens: concall transcripts, investor presentations, annual
+# reports) go to the long-context models so nothing is cut (blueprint §4.3).
+[[routes.pass2_long]]
+provider = "zai"
+model = "glm-4.7-flash"
+weight = 2
+json_mode = true
+max_tokens = 4000
+context_tokens = 190000
+extra_body = { thinking = { type = "disabled" } }
+limits = { rpm = 60 }
+
+[[routes.pass2_long]]
+provider = "mistral"
+model = "mistral-large-latest"
+weight = 2
+json_mode = true
+max_tokens = 4000
+context_tokens = 120000
+limits = { rpm = 60 }
+
+[[routes.pass2_long]]
+provider = "nvidia"
+model = "deepseek-ai/deepseek-r1"
+weight = 1
+temperature = 0.6
+json_mode = false
+strip_reasoning = true
+max_tokens = 8000
+context_tokens = 120000
+limits = { rpm = 40 }
 
 [[routes.vision]]
 provider = "zai"

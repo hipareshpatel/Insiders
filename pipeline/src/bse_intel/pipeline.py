@@ -43,6 +43,7 @@ from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
 from .settings import Settings
+from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals
 from .signals import priced_for
@@ -65,6 +66,7 @@ NOISE_CHUNK = 500        # rows per noise-audit file in R2
 NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category", "subcategory",
                 "filed_at", "reason", "pdf_url")
 DONE = ("ANALYZED", "NOT_MATERIAL")
+LONG_PROMPT_TOKENS = 12_000
 SNAPSHOT_KEY = "daily_feed/latest_snapshot.json"
 SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
 SNAPSHOT_PAGE = 50        # the feed's page size
@@ -551,6 +553,8 @@ class Pipeline:
         peers = self._peers(sector, event_type, filing)
         system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers)
         route = "pass2_bulk" if bulk else "pass2"
+        if (len(system) + len(user)) / 4 > LONG_PROMPT_TOKENS and self.gateway.has_route("pass2_long"):
+            route = "pass2_long"  # a transcript or presentation: long-context models only
         result = self.gateway.complete_json(route, system, user, Pass2Output)
         out: Pass2Output = result.value
         if not out.is_material or out.card is None:
@@ -579,7 +583,7 @@ class Pipeline:
         # that a backfill may already have stored.
         before = dossier_as_of(dossier, filing.filed_at, inclusive=False)
         current = dossier_as_of(merged, filing.filed_at)
-        signals = compute_signals(before, current, out, filing, company)
+        signals = compute_signals(before, current, out, filing, company) + text_signals(text, event_type)
         self.sink.put_dossier(filing.scrip_code, merged)
 
         card_json = {

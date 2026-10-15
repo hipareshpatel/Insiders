@@ -306,3 +306,14 @@ def test_copied_placeholders_and_null_shapes_do_not_become_answers():
     with pytest.raises(Exception):
         Pass2Output.model_validate({"is_material": True, "card": {"impact_level": "HIGH | MODERATE | LOW",
                                                                  "headline": "Demo wins order", "what_happened": ["x"]}})
+
+
+def test_board_meeting_duration_and_reg30_para_b_clues():
+    from bse_intel.forensics import board_meeting_hours, text_signals
+
+    letter = "The meeting of the Board commenced at 2:30 p.m. and concluded at 11:45 p.m. The Board approved the results."
+    assert board_meeting_hours(letter) == 9.25
+    assert [s["type"] for s in text_signals(letter, "RESULTS")] == ["BOARD_DELIBERATION"]
+    assert text_signals("commenced at 11:00 a.m. and concluded at 12:30 p.m.", "RESULTS") == []
+    launch = "Disclosure under Regulation 30 read with Para B of Part A of Schedule III: launch of Triacetin."
+    assert [s["type"] for s in text_signals(launch, "PRODUCT_LAUNCH")] == ["REG30_THRESHOLD"]

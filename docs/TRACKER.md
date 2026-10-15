@@ -64,6 +64,16 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | Wrong-scale and lens-less figures already in the 5 companies' memory | smoke test reset: their cards, catalysts and dossiers deleted and all 543 filings requeued, then rebuilt on the fixed code | done 2026-10-16 |
 | Duplicate rule on the 543 smoke-test filings (text without OCR) | 91 skipped (16.8%), all exact repeats of one document under another BSE subcategory (results as "Financial Results" and "Outcome of Board Meeting"; one board outcome attached up to 8 times; annual report as "AGM"); spot checks of differently titled pairs found identical multi-page texts. The old 85% rule would have skipped 26 more, mostly same-template letters with new content (daily open-offer updates, NCD allotments, a re-worded CFO change) | measured 2026-10-16 |
 | Smoke-test rate | 15 filings (9 cards, 6 not material) in the first 9.5 min, about 95 filings/hour with 3 workers | measured |
+| Figures written beside their own unit ("INR 5445 Million") read at any scale when the filing mixes units (Kanoria RPTs "₹5,445 Cr" for ₹544.5 Cr) | grounding reads each source figure in the unit written after it; the prompt warns when units are mixed (be781a0) | fixed |
+| **Review of the site, 2026-10-16 ~03:00 (38 cards), fixes to be batched** | | |
+| F1: Novartis statements are "('l in million)": the ₹ sign is mangled in the PDF text, so no unit is declared and every results figure is 10x (revenue "₹839 Cr" for ₹83.9 Cr, RPT "₹3,000 Cr" for ₹300 Cr) | accept a mangled currency mark in a parenthesised "( … in million/lakh)" header | open |
+| F2: results for the quarter ended 31 Mar 2025 (filed May 2025) labelled Q1FY26 instead of Q4FY25 by the model; memory is keyed by period | derive the quarter from the statement's "quarter ended <date>" and correct the model's label | open |
+| F3: one results announcement filed as 3 different documents (Novartis, 9–10 May 2025) gives 3 near-identical cards | not exact repeats, so D17 keeps them; consider linking same-period results cards | open (owner) |
+| F4: arithmetic in prose not checked ("85% + 26% = 111% fully diluted"; "₹585 Cr + ₹555 Cr (₹1.14B total)") | look for a deterministic check of sums and percentages stated in text | open |
+| F5: raw rupees shown as ₹ ("₹4,135,498,900" for ₹413.5 Cr); the card was already marked Unverified | prompt and validation: amounts in ₹ crore | open |
+| F6: a draft tax order tagged ORDER WIN | event-type check (tax/penalty words) | open |
+| F7: the same dividend payout derived differently on two cards (₹308 Cr, ₹125 Cr; about ₹62 Cr from shares outstanding) | derived payouts from shares outstanding in code, not by the model | open |
+| Working: sector lenses (auto, pharma), size labels, duplicate skips, memory follow-ups ("Approval met", KPI checks), Unverified marks with reasons | | ok |
 
 ## Points to discuss with the owner
 

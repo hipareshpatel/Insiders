@@ -74,6 +74,41 @@ def canonical_period(text: str) -> str:
     return compact
 
 
+_STATEMENT_QUARTER = re.compile(r"(?:QUARTER|THREE\s+MONTHS)\s+(?:AND\s+[A-Z ]{3,30}?\s+)?ENDED\s+(?:ON\s+)?(.{6,28})", re.I)
+_STATEMENT_YEAR = re.compile(r"(?:\bYEAR|TWELVE\s+MONTHS)\s+ENDED\s+(?:ON\s+)?(.{6,28})", re.I)
+
+
+def statement_quarter(text: str | None) -> str | None:
+    """The quarter a results statement covers, from the first "quarter (and year) ended <date>" in
+    its opening pages: "for the quarter and year ended 31st March, 2025" -> "Q4FY25"."""
+    for m in _STATEMENT_QUARTER.finditer((text or "")[:8000]):
+        d = explicit_date(m.group(1))
+        if d and d.month in _QUARTER_END:
+            q = _QUARTER_END[d.month]
+            return f"Q{q}FY{(d.year + (0 if q == 4 else 1)) % 100:02d}"
+    return None
+
+
+def statement_year(text: str | None) -> str | None:
+    """The fiscal year a statement closes, when it says "year ended 31 March <yyyy>": "FY25"."""
+    for m in _STATEMENT_YEAR.finditer((text or "")[:8000]):
+        d = explicit_date(m.group(1))
+        if d and d.month == 3:
+            return f"FY{d.year % 100:02d}"
+    return None
+
+
+def quarter_index(period: str) -> int | None:
+    """Q1FY26 -> 26 * 4 + 1, so quarters can be shifted by arithmetic."""
+    m = re.fullmatch(r"Q([1-4])FY(\d{2})", period)
+    return int(m[2]) * 4 + int(m[1]) if m else None
+
+
+def quarter_from_index(index: int) -> str:
+    year, q = divmod(index - 1, 4)
+    return f"Q{q + 1}FY{year % 100:02d}"
+
+
 def due_date(text: str | None) -> date | None:
     """Last day of the period a deadline or figure refers to, if parseable.
 

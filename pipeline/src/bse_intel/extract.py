@@ -198,7 +198,9 @@ _SECTIONS = {
 }
 
 
-_WS = re.compile(r"[ \t ]+")
+# Spaces, plus control characters some PDFs use as spaces (Jubilant Pharmova's statements read
+# "Revenue\x03from\x03operations"); left in, they hide words from the model and every pattern.
+_WS = re.compile(r"[ \t\u00a0\x00-\x08\x0b\x0c\x0e-\x1f\x7f]+")
 _BLANKS = re.compile(r"\n{3,}")
 
 

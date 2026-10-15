@@ -229,6 +229,16 @@ def test_boilerplate_is_stripped_before_the_ai_reads_a_filing():
     ]
 
 
+def test_control_characters_used_as_spaces_become_spaces():
+    """Jubilant Pharmova's statements: "Revenue\\x03from\\x03operations", "(ཪ\\x03in\\x03million)"."""
+    from bse_intel.extract import _clean
+    from bse_intel.grounding import declared_unit
+
+    text = _clean("Page 4\n(ཪ\x03in\x03million)\nRevenue\x03from\x03operations\n18,137\x03\x03\x0317,422")
+    assert "\x03" not in text and "Revenue from operations" in text
+    assert declared_unit(text) == 10
+
+
 def test_boilerplate_keeps_factual_lines_that_mention_din_office_or_exchange():
     from bse_intel.extract import strip_boilerplate
 
@@ -317,7 +327,7 @@ def test_a_figure_is_read_in_the_unit_written_beside_it():
 
 
 @pytest.mark.parametrize("header", ["('l in million)", '"in million)', "c, in million)", "{f in million)",
-                                    "(fin million)", "/fin million)", "(' in million)"])
+                                    "(fin million)", "/fin million)", "(' in million)", "(ཪ in million)"])
 def test_a_statement_header_with_a_mangled_currency_sign_still_declares_its_unit(header):
     """Novartis India's statements, as the PDF text renders their "(₹ in million)" headers."""
     from bse_intel.grounding import declared_unit
@@ -366,6 +376,35 @@ def test_pass2_prompt_names_a_non_crore_unit(settings):
     assert "UNITS: this filing states its amounts in ₹ lakh" in user and "divide the filing's figures by 100" in user
     _, user = PromptEngine(settings).pass2(f, "RESULTS", None, None, "Revenue Rs. 456 crore")
     assert "UNITS:" not in user
+
+
+def test_results_period_labels_follow_the_statement():
+    """Novartis India, results for the quarter and year ended 31 Mar 2025: the model wrote Q1FY26."""
+    from bse_intel.periods import statement_quarter, statement_year
+    from bse_intel.pipeline import relabel_periods
+
+    text = "STATEMENT OF AUDITED FINANCIAL RESULTS FOR THE QUARTER AND YEAR ENDED 31ST MARCH, 2025 (in million)"
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q1FY26 revenue ₹83.9 Cr.",
+        "card": {"impact_level": "LOW", "headline": "Novartis India Q1FY26 revenue up 3.3% to ₹83.9 Cr",
+                 "what_happened": ["Q1FY26 revenue ₹83.9 Cr vs ₹81.2 Cr in Q1FY25; FY26 PAT ₹100.9 Cr"],
+                 "track_next": {"kpis_to_verify": [{"kpi": "Revenue growth", "check_in": "Q2FY26 results",
+                                                    "period": "Q2FY26", "metric": "revenue"}]}},
+        "dossier_delta": {"financial_metrics": [
+            {"metric": "revenue", "period": "Q1FY26", "value": 83.9}, {"metric": "revenue", "period": "Q1 FY25", "value": 81.2},
+            {"metric": "revenue", "period": "Q4FY25", "value": 93.0}, {"metric": "pat", "period": "FY26", "value": 100.9}]},
+    })
+    mapping = relabel_periods(out, statement_quarter(text), statement_year(text))
+    assert mapping == {"Q1FY26": "Q4FY25", "Q1FY25": "Q4FY24", "Q4FY25": "Q3FY25", "FY26": "FY25"}
+    assert [m.period for m in out.dossier_delta.financial_metrics] == ["Q4FY25", "Q4FY24", "Q3FY25", "FY25"]
+    assert out.card.headline.startswith("Novartis India Q4FY25 revenue")
+    assert out.card.what_happened[0] == "Q4FY25 revenue ₹83.9 Cr vs ₹81.2 Cr in Q4FY24; FY25 PAT ₹100.9 Cr"
+    assert out.card.track_next.kpis_to_verify[0].period == "Q1FY26" and out.timeline_entry.startswith("Q4FY25")
+    # a correctly labelled card is left alone
+    ok = Pass2Output.model_validate({"is_material": True, "card": {"impact_level": "LOW", "headline": "Q4FY25 revenue ₹93 Cr",
+                                     "what_happened": ["x"]}, "dossier_delta": {"financial_metrics": [
+                                         {"metric": "revenue", "period": "Q4FY25", "value": 93.0}]}})
+    assert relabel_periods(ok, "Q4FY25", "FY25") == {}
 
 
 def test_claims_track_record_bold_and_repeat_only_in_the_filing():

@@ -46,8 +46,8 @@ CRORE_SCALES = (1, 10, 100, 1e4, 1e7)
 _DECLARED_UNIT = re.compile(
     r"(?:₹|\brs\.?|\binr)\s*(?:in\s*)?(lakhs?|lacs?|crores?|millions?|thousands?|'000)(?![a-z])"
     r"|\bin\s*(?:₹|rs\.?|inr)\s*(lakhs?|lacs?|crores?|millions?|thousands?|'000)(?![a-z])"
-    r"|^[ \t]*[(\[{/\"'`]?[ \t]*[^\s\w]{0,2}[a-z]{0,2}[,.]?[ \t]*in[ \t]*(lakhs?|lacs?|crores?|millions?|thousands?)\.?[ \t]*\)",
-    re.I | re.M)
+    r"|^[ \t]*[(\[{/\"'`]?[ \t]*[^\s()]{0,3}[ \t]*in[ \t]*(lakhs?|lacs?|crores?|millions?|thousands?)\.?[ \t]*\)",
+    re.I | re.M)  # Jubilant's rupee sign arrives as a Tibetan letter: "(ཪ in million)"
 _PER_CRORE = {"lakh": 100, "lac": 100, "million": 10, "thousand": 10_000, "'000": 10_000, "crore": 1}
 UNIT_NAMES = {100: "₹ lakh", 10: "₹ million", 10_000: "₹ thousand"}
 _CRORE_AFTER = re.compile(r"\s*(?:cr\b|crores?\b)", re.I)

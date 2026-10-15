@@ -40,15 +40,20 @@ def evaluate(formula: str, values: dict[str, float]) -> float:
     except SyntaxError as exc:
         raise FormulaError(f"unparseable formula: {formula!r}") from exc
 
+    # Models name an input "q3fy25_ebitda" and write "Q3FY25_EBITDA * 4" in the formula: same input.
+    folded = {name.lower(): value for name, value in values.items()}
+
     def walk(node: ast.AST) -> float:
         if isinstance(node, ast.Expression):
             return walk(node.body)
         if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)) and not isinstance(node.value, bool):
             return float(node.value)
         if isinstance(node, ast.Name):
-            if node.id not in values:
-                raise FormulaError(f"unknown input {node.id!r}")
-            return float(values[node.id])
+            if node.id in values:
+                return float(values[node.id])
+            if node.id.lower() in folded:
+                return float(folded[node.id.lower()])
+            raise FormulaError(f"unknown input {node.id!r}")
         if isinstance(node, ast.BinOp) and type(node.op) in _BINARY:
             left, right = walk(node.left), walk(node.right)
             if isinstance(node.op, ast.Pow) and (abs(right) > 12 or abs(left) > 1e6 or (left < 0 and not float(right).is_integer())):

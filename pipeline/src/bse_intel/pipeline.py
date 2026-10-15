@@ -22,6 +22,7 @@ import gzip
 import hashlib
 import json
 import logging
+import re
 import time
 import uuid
 from collections import OrderedDict
@@ -38,7 +39,8 @@ from .dossier import dossier_as_of, latest_fundamentals, memory_ids, merge, new_
 from .extract import Document
 from .grounding import DEFAULT_THRESHOLD, check_card, check_claims
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
-from .periods import canonical_period, due_date
+from .periods import (canonical_period, due_date, quarter_from_index, quarter_index, statement_quarter,
+                      statement_year)
 from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
@@ -153,6 +155,62 @@ class CardChecks:
         out += [f"Quantified impact \"{q['label']}\": {q.get('check_note')}" for q in self.quant.items if q.get("check") == "MISMATCH"]
         out += [f"Claim not supported by the sources: \"{c}\"" for c in self.claims]
         return out
+
+
+_PERIOD_TOKEN = re.compile(r"\b(Q[1-4])\s?(FY)\s?'?(\d{2})\b|\b(FY)\s?'?(\d{2})\b")
+
+
+def relabel_periods(out: Pass2Output, quarter: str | None, year: str | None) -> dict[str, str]:
+    """Correct the model's period labels on a results card from the statement itself. Novartis's
+    results for the quarter ended 31 Mar 2025 were labelled Q1FY26 (it is Q4FY25), and memory is keyed
+    by period. When the model's main quarter differs from the statement's, every quarter label it used
+    is shifted by the same offset (its year-ago and previous quarters were off the same way); a single
+    wrong annual label is replaced by the statement's year. Returns the mapping applied."""
+    labels = [canonical_period(m.period) for m in out.dossier_delta.financial_metrics]
+    quarters = {p for p in labels if quarter_index(p) is not None}
+    mapping: dict[str, str] = {}
+    offset = 0
+    if quarter and quarters:
+        model_quarter = max(quarters, key=quarter_index)  # a statement's current period is its latest column
+        offset = quarter_index(quarter) - quarter_index(model_quarter)
+        if offset:
+            mapping = {p: quarter_from_index(quarter_index(p) + offset) for p in quarters}
+    years = {p for p in labels if re.fullmatch(r"FY\d{2}", p)}
+    if year and len(years) == 1 and year not in years:
+        mapping[years.pop()] = year
+    if not mapping:
+        return mapping
+
+    def fix(text: str | None) -> str | None:
+        if not text:
+            return text
+        def swap(m: re.Match) -> str:
+            label = f"{m[1]}FY{m[3]}" if m[1] else f"FY{m[5]}"
+            if label in mapping:
+                return mapping[label]
+            if m[1] and offset:  # a quarter the card names but memory does not (the next results)
+                return quarter_from_index(quarter_index(label) + offset)
+            return m[0]
+        return _PERIOD_TOKEN.sub(swap, text)
+
+    for metric in out.dossier_delta.financial_metrics:
+        metric.period = mapping.get(canonical_period(metric.period), metric.period)
+    card = out.card
+    card.headline = fix(card.headline)
+    card.takeaway = fix(card.takeaway) or ""
+    card.core_catalyst = fix(card.core_catalyst)
+    card.what_happened = [fix(t) for t in card.what_happened]
+    for insight in card.why_it_matters:
+        insight.text = fix(insight.text)
+    for key in card.key_numbers:
+        key.label, key.value, key.change = fix(key.label), fix(key.value), fix(key.change)
+    for change in card.notable_changes:
+        change.previous, change.current = fix(change.previous), fix(change.current)
+    for kpi in card.track_next.kpis_to_verify:
+        kpi.period, kpi.check_in, kpi.kpi = fix(kpi.period), fix(kpi.check_in), fix(kpi.kpi)
+    out.timeline_entry = fix(out.timeline_entry) or ""
+    log.info("period labels corrected from the statement: %s", mapping)
+    return mapping
 
 
 def check_card_all(card, view: dict | None, sources: tuple[str, ...]) -> CardChecks:
@@ -703,6 +761,9 @@ class Pipeline:
                 self.stats.not_material += 1
             return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": out.event_type,
                             "reason": "pass2: not material", "updated_at": now})
+        if "RESULTS" in (event_type, out.event_type):
+            quarter = canonical_period(tagged.period) if tagged and tagged.period else statement_quarter(text)
+            relabel_periods(out, quarter, statement_year(text))
         sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
         checks = check_card_all(out.card, view, sources)
         review = None

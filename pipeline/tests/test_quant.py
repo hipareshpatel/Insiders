@@ -65,6 +65,12 @@ def test_formula_evaluator_supports_plain_arithmetic():
     assert item["check"] == "UNCHECKED"
 
 
+def test_formula_inputs_match_whatever_their_case():
+    """SML Q3FY25: input "q3fy25_ebitda", formula "Q3FY25_EBITDA * 4" was left "Not checked"."""
+    assert evaluate("Q3FY25_EBITDA * 4", {"q3fy25_ebitda": 0.75}) == pytest.approx(3.0)
+    assert evaluate("Capacity_MW * 2", {"capacity_mw": 50, "Capacity_MW": 60}) == pytest.approx(120)  # exact name wins
+
+
 def test_latest_fundamentals_prefers_latest_quarter_and_balance_sheet():
     dossier = {
         "financial_metrics": [

@@ -18,6 +18,8 @@ headline = ["loss of (share )?certificates?", "duplicate (share )?certificates?"
 reason = "trading window"
 subcategories = ["trading window"]
 headline = ["trading window"]
+# "Board Meeting Intimation ... and Closure of Trading Window" carries a board meeting date.
+exclude_headline = ["board meeting", "financial results", "outcome", "dividend", "fund ?rais"]
 
 [[drop]]
 reason = "Reg 74(5) depository certificate"
@@ -28,6 +30,8 @@ headline = ["74\\s*\\(\\s*5\\s*\\)"]
 reason = "newspaper publication"
 subcategories = ["newspaper publication", "copy of newspaper"]
 headline = ["newspaper (publication|advertisement|cutting|clipping)s?", "copy of (the )?newspaper"]
+# "Financial Results ... and Newspaper Publication" is the results filing itself.
+exclude_headline = ["results.{0,80}(and|&|along with|together with).{0,30}newspaper"]
 
 [[drop]]
 reason = "shareholding pattern"
@@ -42,14 +46,29 @@ headline = [
   "investor (grievances?|complaints?)", "compliance certificate",
   "reconciliation of share capital audit", "regulation\\s*76",
 ]
+exclude_headline = ["financial results", "outcome of (the )?board"]
+
+[[drop]]
+reason = "IEPF transfer"
+headline = ["investor education and protection fund", "\\biepf\\b"]
+exclude_headline = ["financial results", "outcome of (the )?board"]
+
+# The invitation to an analyst or investor meet carries nothing; its presentation and transcript do.
+[[drop]]
+reason = "analyst / investor meet schedule"
+headline = ["(schedule|intimation) of (the )?(analysts?|investors?|institutional investors?)[ /]*(and )?(institutional investors? )?(meet|call|conference)",
+            "(analysts?|investors?)( ?/ ?institutional investors?)? (meet|call|conference).{0,40}(schedule|intimation)"]
+exclude_headline = ["presentation", "transcript", "recording", "audio", "financial results", "outcome"]
 
 # Board-meeting intimations carry no news yet, but their date is a catalyst.
+# Matched on the subcategory or headline, not on the "Board Meeting" category: outcomes filed under
+# that category ("Financial Results for the quarter", "Approval of QIP") are news, not a date.
 [[calendar]]
 reason = "board meeting intimation"
 event_type = "BOARD_MEETING"
-categories = ["board meeting"]
-headline = ["board meeting intimation", "intimation of board meeting", "prior intimation"]
-exclude_headline = ["outcome"]
+subcategories = ["board meeting intimation", "intimation of board meeting"]
+headline = ["board meeting intimation", "intimation of (the )?board meeting", "prior intimation", "notice of (the )?board meeting"]
+exclude_headline = ["outcome", "approved", "considered and approved"]
 
 [[fast_track]]
 event_type = "RESULTS"
@@ -59,11 +78,11 @@ headline = [
   "financial results for the (quarter|half|year|period)",
   "outcome.{0,60}(financial )?results", "results.{0,60}outcome",
 ]
-exclude_headline = ["intimation", "to be held", "will be held", "trading window", "newspaper"]
+exclude_headline = ["intimation", "to be held", "will be held", "trading window", "^\\W*(copy of )?(the )?newspaper"]
 
 [[fast_track]]
 event_type = "CONCALL_PRESENTATION"
-headline = ["investor presentation", "earnings (call|presentation)", "transcript", "analysts?/institutional investor meet.*(presentation|transcript)"]
+headline = ["investor presentation", "earnings (call|presentation)", "transcript", "analysts? ?/ ?institutional investors? meet.*(presentation|transcript)"]
 exclude_headline = ["intimation", "schedule"]
 
 [[fast_track]]

@@ -140,16 +140,17 @@ _BLANKS = re.compile(r"\n{3,}")
 _BOILERPLATE = re.compile(
     r"^(?:to,?|the (?:general )?manager\b.*|the secretary\b.*|(?:the )?listing (?:department|compliance)\b.*"
     r"|(?:the )?department of corporate (?:services|relations)\b.*|corporate relationship department\b.*)$"
-    r"|bse limited|national stock exchange of india|phiroze jeejeebhoy|dalal street|exchange plaza"
+    r"|^(?:bse|bse limited|bse ltd\.?|national stock exchange of india(?: limited| ltd\.?)?)[,.]?$"
+    r"|phiroze jeejeebhoy|dalal street|exchange plaza"
     r"|bandra[- ]kurla complex|bandra \(e(?:ast)?\)|\bfort,? mumbai|mumbai\s*[-–]?\s*400\s?0\d\d"
     r"|^(?:dear sirs?(?:\s*/\s*madam)?|dear sir/ma'?am|respected sirs?(?:/madam)?|sir/madam)[,.]?$"
     r"|yours (?:faithfully|sincerely|truly)|^thanking you|^thank you,?$|for and on behalf of"
     r"|take (?:the|this|the same|the above)(?: information)? on (?:your )?record"
     r"|this is for your (?:kind )?information|for your (?:kind )?information and (?:records|dissemination)"
     r"|digitally signed by|^date: ?\d{4}\.\d{2}\.\d{2}|\+05'?30'?$|^(?:company secretary|compliance officer)\b"
-    r"|membership no\b|\bdin:? ?\d{8}\b|^encl(?:osure)?s?\b|e-?mail\.? ?(?:id)?\.?:|website\.?:"
+    r"|^(?:membership no|m\.? ?no)\.?\b|^\(?din:? ?\d{8}\)?$|^encl(?:osure)?s?\b|e-?mail\.? ?(?:id)?\.?:|website\.?:"
     r"|\btel(?:ephone)?\.? ?(?:no\.?)?:|\bfax\.?:|^phone(?: no\.?)?\s*:|\bcin:? ?[lu]\d{5}|\bgstin\b"
-    r"|regd\.? office|registered office:"
+    r"|^regd\.? office\b|^registered office\s*:"
     r"|information is (?:being )?(?:uploaded|available|hosted) on the (?:company's )?website",
     re.I | re.M,
 )

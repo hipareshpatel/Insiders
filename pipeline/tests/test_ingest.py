@@ -122,6 +122,15 @@ def _f(headline, category="", subcategory="", subject=""):
     ("Commencement of commercial production at Dahej plant", "Company Update", "", "FAST_TRACK", "CAPEX"),
     ("Clarification sought on USFDA news item", "Company Update", "", "PASS1", None),
     ("Disclosure under Regulation 30 - Update", "Company Update", "", "PASS1", None),
+    # Compound headlines that carry news are not dropped as noise (audit A16)
+    ("Board Meeting Intimation for results on 21/10/2026 and Closure of Trading Window", "Board Meeting", "Board Meeting Intimation", "CALENDAR", "BOARD_MEETING"),
+    ("Unaudited Financial Results for the quarter ended 30.09.2026 and Newspaper Publication", "Result", "", "FAST_TRACK", "RESULTS"),
+    ("Financial Results for the quarter ended September 2026 with Investor Grievances", "Result", "", "FAST_TRACK", "RESULTS"),
+    ("Financial Results for the quarter ended September 30, 2026", "Board Meeting", "Outcome of Board Meeting", "FAST_TRACK", "RESULTS"),
+    ("Approval of fund raising through QIP", "Board Meeting", "Outcome of Board Meeting", "FAST_TRACK", "FUNDRAISE"),
+    ("Transfer of equity shares to Investor Education and Protection Fund", "Company Update", "", "DROP", None),
+    ("Schedule of Analyst / Institutional Investor Meet", "Company Update", "", "DROP", None),
+    ("Analyst / Institutional Investor Meet - Presentation", "Company Update", "", "FAST_TRACK", "CONCALL_PRESENTATION"),
 ])
 def test_rules(rulebook, headline, category, subcategory, action, event):
     decision = rulebook.classify(_f(headline, category, subcategory))

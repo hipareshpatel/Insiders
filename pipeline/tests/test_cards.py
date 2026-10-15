@@ -227,3 +227,22 @@ def test_boilerplate_is_stripped_before_the_ai_reads_a_filing():
         "Suyog Urja Limited has received a Letter of Intent for a 100 MW wind project of Rs. 228.00 Crores (excluding GST).",
         "For the reasons above, the board approved a merger with Demo Holdings Limited",
     ]
+
+
+def test_boilerplate_keeps_factual_lines_that_mention_din_office_or_exchange():
+    from bse_intel.extract import strip_boilerplate
+
+    text = "\n".join([
+        "BSE Limited",
+        "Mr. Ravi Kumar (DIN: 01234567) has been appointed as Managing Director for five years.",
+        "Shifting of the Registered Office: from Mumbai to Pune with effect from 1 November 2026.",
+        "The NCDs will be listed on BSE Limited.",
+        "DIN: 07654321",
+        "Registered Office: 12 MG Road, Pune",
+    ])
+    kept = strip_boilerplate(text).splitlines()
+    assert kept == [
+        "Mr. Ravi Kumar (DIN: 01234567) has been appointed as Managing Director for five years.",
+        "Shifting of the Registered Office: from Mumbai to Pune with effect from 1 November 2026.",
+        "The NCDs will be listed on BSE Limited.",
+    ]

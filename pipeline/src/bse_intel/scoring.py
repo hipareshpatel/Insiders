@@ -13,6 +13,7 @@ of Gates 1–3.
 
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass, field
 from datetime import date
 
@@ -22,6 +23,8 @@ REVENUE = ("revenue", "revenue_from_operations", "total_revenue", "net_sales", "
 HIGH, MODERATE = 70, 40
 DELIVERED = {"DELIVERED"}
 BROKEN = {"MISSED", "DELAYED", "WITHDRAWN"}
+# Module 5: capacity added at a site already running ("its existing GIDC Ankleshwar site").
+BROWNFIELD = re.compile(r"\bexisting (?:[\w&.-]+ ){0,3}(?:site|plant|facility|unit|complex|premises|campus)\b|brownfield|debottleneck")
 T2T_GROUPS = {"T", "XT", "Z", "ZP", "TS", "MT"}  # module 50: trade-to-trade and restricted groups
 
 
@@ -193,7 +196,7 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
     shifts = [s for s in signals if s["type"] == "METRIC_SHIFT" and s["severity"] == "POSITIVE"]
     if event_type == "MONTHLY_BUSINESS_UPDATE" and shifts:
         pillars["margin"] = max(pillars["margin"], 14)
-    if any(w in texts for w in ("existing site", "existing plant", "existing facility", "brownfield", "debottleneck")):
+    if deal.get("expansion") == "BROWNFIELD" or BROWNFIELD.search(texts):
         pillars["margin"] = max(pillars["margin"], 20)
         reasons.append("Brownfield addition at an existing site")
     if pillars["margin"] == 0:
@@ -277,7 +280,5 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
 
 
 def _post_money(text: str) -> float:
-    import re
-
     m = re.search(r"([\d.]+)% post-money", text)
     return float(m.group(1)) if m else 0.0

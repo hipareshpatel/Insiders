@@ -118,7 +118,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | Sector-aware footer | done | |
 | Verification bar: "Numbers verified" / "X of Y" | done | |
 | Star / Noise feedback buttons | done | owner mode |
-| 6 case studies as test fixtures | todo | smoke test |
+| 6 case studies as test fixtures | done | tests/test_case_studies.py: session tags, math check (₹100 Cr, 3,960 MTPA), 19:25 → 76.0% / 43.2% dilution, distress, promise delivered, 3-month volume streak and Q2 preview, scale vs market cap, grant-funded brownfield scoring, former names. The real-data check is still the laptop smoke test |
 
 ### §9 50 forensic modules
 Deterministic (code, from memory as of the filing; the XBRL fast path supplies the detailed P&L):
@@ -217,7 +217,7 @@ docs, sync-companies workflow.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 203 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 209 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

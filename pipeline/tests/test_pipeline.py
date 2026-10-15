@@ -183,7 +183,7 @@ def test_backfill_walks_days_in_order_and_marks_complete(settings):
         seen_order.append(text.split("Filed: ")[1][:10])
         return json.dumps(PASS2)
 
-    pipeline, sink, fake = build(settings, filings, pdfs, {"mistral-medium-latest": [respond]},
+    pipeline, sink, fake = build(settings, filings, pdfs, {"mistral-large-2512": [respond]},
                                            env={"MISTRAL_API_KEY": "m"})
     pipeline.run("backfill", time_budget_s=60, max_backfill_days=10)
     assert seen_order == sorted(seen_order) and len(seen_order) == 3
@@ -240,7 +240,7 @@ def test_backfill_goes_company_by_company_largest_first(settings):
         order.append(kwargs["messages"][1]["content"].split("Company: ")[1].split(" (")[0])
         return json.dumps(PASS2)
 
-    pipeline, sink, _ = build(settings, filings, pdfs, {"mistral-medium-latest": [respond]}, env={"MISTRAL_API_KEY": "m"})
+    pipeline, sink, _ = build(settings, filings, pdfs, {"mistral-large-2512": [respond]}, env={"MISTRAL_API_KEY": "m"})
     sink._db.executemany("INSERT INTO companies (scrip_code, company_name, market_cap_cr) VALUES (?, ?, ?)",
                          [("999001", "Demo Cement Ltd", 4851.0), ("999008", "Demo Tiny Ltd", 20.0)])
     pipeline.run("backfill", time_budget_s=60, max_backfill_days=10)
@@ -267,7 +267,7 @@ def test_live_filing_waits_for_its_company_history(settings):
         return json.dumps(PASS2)
 
     pipeline, sink, _ = build(settings, [history, live], {f.pdf_url: _pdf(RESULT_TEXT) for f in (history, live)},
-                              {"mistral-medium-latest": [respond], "nvidia/nemotron-3-super-120b-a12b": [respond]},
+                              {"mistral-large-2512": [respond], "nvidia/nemotron-3-super-120b-a12b": [respond]},
                               env={"MISTRAL_API_KEY": "m", "NVIDIA_API_KEY": "n"})
     pipeline.discover(old.date())  # as an earlier backfill run would have
     sink.kv_set("backfill:discovered_through", (today - timedelta(days=1)).isoformat(), "now")
@@ -285,14 +285,14 @@ def test_second_opinion_from_another_provider_corrects_the_card(settings):
     bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
     good = json.loads(json.dumps(PASS2))
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "mistral-medium-latest": [json.dumps(good)]},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "mistral-large-2512": [json.dumps(good)]},
                                  env={"NVIDIA_API_KEY": "n", "MISTRAL_API_KEY": "m"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     first, second = fake.calls
-    assert first["model"] == "nvidia/nemotron-3-super-120b-a12b" and second["model"] == "mistral-medium-latest"
+    assert first["model"] == "nvidia/nemotron-3-super-120b-a12b" and second["model"] == "mistral-large-2512"
     verify_prompt = second["messages"][1]["content"]
     assert "DRAFT REPLY" in verify_prompt and "17.5" in verify_prompt and 'Claim not supported by the sources: "Record quarterly revenue' in verify_prompt
     body = outcome.card["card"]
     assert outcome.card["needs_review"] == 0 and body["what_happened"][1] == "PAT ₹15 Cr"
-    assert body["review"]["status"] == "CORRECTED" and body["review"]["checked_by"] == "mistral/mistral-medium-latest"
-    assert body["model"] == "mistral/mistral-medium-latest" and len(body["review"]["fixed"]) == 2
+    assert body["review"]["status"] == "CORRECTED" and body["review"]["checked_by"] == "mistral/mistral-large-2512"
+    assert body["model"] == "mistral/mistral-large-2512" and len(body["review"]["fixed"]) == 2

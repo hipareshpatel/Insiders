@@ -85,10 +85,10 @@ limits = { rpm = 30, tpm = 8000, rpd = 1000, tpd = 200000 }
 
 [[routes.pass1]]
 provider = "mistral"
-model = "mistral-small-latest"
+model = "ministral-8b-2512"  # free tier: 625k tokens/min, ~3 requests/s
 json_mode = true
 max_tokens = 200
-limits = { rpm = 60 }
+limits = { rpm = 150, tpm = 625_000 }
 
 [[routes.pass1]]
 provider = "zai"
@@ -109,10 +109,10 @@ limits = { rpm = 60, tpd = 150_000 }
 # Backfill: Mistral's large monthly allowance carries the bulk.
 [[routes.pass1_bulk]]
 provider = "mistral"
-model = "mistral-small-latest"
+model = "ministral-8b-2512"  # free tier: 625k tokens/min, ~3 requests/s
 json_mode = true
 max_tokens = 200
-limits = { rpm = 60 }
+limits = { rpm = 150, tpm = 625_000 }
 
 [[routes.pass1_bulk]]
 provider = "groq"
@@ -167,12 +167,12 @@ limits = { rpm = 60 }
 
 [[routes.pass2]]
 provider = "mistral"
-model = "mistral-medium-latest"  # mistral-large-latest is no longer offered
+model = "mistral-large-2512"  # free tier: 250k tokens/min, 1 request/s (medium allows only 20k/min)
 weight = 2
 json_mode = true
 max_tokens = 3000
 context_tokens = 120000
-limits = { rpm = 60 }
+limits = { rpm = 50, tpm = 250_000 }
 
 [[routes.pass2]]
 provider = "cloudflare"
@@ -184,12 +184,12 @@ limits = { rpm = 60, tpd = 60_000 }
 
 [[routes.pass2_bulk]]
 provider = "mistral"
-model = "mistral-medium-latest"  # mistral-large-latest is no longer offered
+model = "mistral-large-2512"  # free tier: 250k tokens/min, 1 request/s (medium allows only 20k/min)
 weight = 4
 json_mode = true
 max_tokens = 3000
 context_tokens = 120000
-limits = { rpm = 60 }
+limits = { rpm = 50, tpm = 250_000 }
 
 [[routes.pass2_bulk]]
 provider = "zai"
@@ -235,12 +235,12 @@ limits = { rpm = 60 }
 
 [[routes.pass2_long]]
 provider = "mistral"
-model = "mistral-medium-latest"  # mistral-large-latest is no longer offered
+model = "mistral-large-2512"  # free tier: 250k tokens/min, 1 request/s (medium allows only 20k/min)
 weight = 2
 json_mode = true
 max_tokens = 4000
 context_tokens = 120000
-limits = { rpm = 60 }
+limits = { rpm = 50, tpm = 250_000 }
 
 [[routes.pass2_long]]
 provider = "nvidia"
@@ -261,6 +261,6 @@ limits = { rpm = 60 }
 
 [[routes.vision]]
 provider = "mistral"
-model = "mistral-small-latest"  # takes images; pixtral-12b is being retired
+model = "mistral-small-2603"  # takes images; free tier 20k tokens/min, 1 request/s
 max_tokens = 2500
-limits = { rpm = 60 }
+limits = { rpm = 50, tpm = 20_000 }

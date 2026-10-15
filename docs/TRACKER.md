@@ -90,7 +90,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | Item | Status | Notes |
 |---|---|---|
 | Per-company R2 dossier, provenance, time travel | done | |
-| 10 compartments as specified | partial | done: identity (former names, entities), financial history, sector KPIs, segments, capex/projects and orders (deals with stages, brownfield, captive), guidance/watchlist, monthly ledger (M-period metrics + streak/preview signals), corporate actions, ownership/governance, predictions. Left: calibration rules and peer margin benchmarks (Loop 1/2 outputs) |
+| 10 compartments as specified | partial | done: identity (former names, entities), financial history, sector KPIs, segments, capex/projects and orders (deals with stages, brownfield, captive), guidance/watchlist, monthly ledger (M-period metrics + streak/preview signals), corporate actions, ownership/governance, predictions. calibration rule (Loop 2) done; peer margin benchmarks come from the peer cards in the prompt |
 | `known_since` = earliest, never moved forward (bi-temporal) | done | per-figure sources; value = latest restatement |
 | Signals, footer, dilution read memory as of the filing date | done | `dossier_as_of`; market data as of the filing from `price-history` (`prices.py`), else today's only for recent filings |
 | Partition by period kind, newest period first; OPEN items never evicted | done | |
@@ -175,7 +175,7 @@ group map).
 | Item | Status |
 |---|---|
 | Loop 1 price post-mortem (T+1/3/5 excess return, 15:30 IST rule) | done: `post-mortem` nightly; missed-alpha flags and dampener list in kv. Re-running Pass 2 on missed alpha and writing sector_learned_rules: todo |
-| Loop 2 predictions vs reality, credibility score | done (predictions + credibility); calibration rule text todo |
+| Loop 2 predictions vs reality, credibility score | done: predictions, credibility, and the calibration rule (delivery ratio on numeric targets, months late on dated promises) in the memory the model reads and in the drawer |
 | Loop 3 Star/Noise golden set injected as few-shot | done |
 
 ### §13 Website
@@ -217,7 +217,7 @@ docs, sync-companies workflow.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 200 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 201 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

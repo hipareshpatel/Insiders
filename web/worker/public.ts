@@ -20,7 +20,8 @@ const COMPANY_COLUMNS = `scrip_code, symbol, company_name, isin, industry, secto
   json_extract(memory_summary_json, '$.active_capex') AS active_capex,
   json_extract(memory_summary_json, '$.revenue') AS latest_revenue,
   json_extract(memory_summary_json, '$.ebitda') AS latest_ebitda,
-  json_extract(memory_summary_json, '$.gross_debt_cr') AS gross_debt_cr`;
+  json_extract(memory_summary_json, '$.gross_debt_cr') AS gross_debt_cr,
+  json_extract(memory_summary_json, '$.calibration') AS calibration_rule`;
 
 /** Turn free text into a safe FTS5 prefix query: "tata mot" -> "tata"* "mot"*. One-letter tokens
  * are dropped: a prefix that short matches nearly every row. */

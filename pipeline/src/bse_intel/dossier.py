@@ -19,6 +19,7 @@ import json
 import re
 from typing import Any
 
+from .scoring import calibration
 from .models import Filing, Pass2Output
 from .periods import canonical_period, due_date
 
@@ -364,6 +365,7 @@ def _guidance_status_at(g: dict, cutoff: str) -> str:
 
 def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> dict | None:
     """Compact memory for the prompt, containing only facts known before ``cutoff``."""
+
     if not dossier:
         return None
     before = lambda e, field="as_of": e.get(field, "") < cutoff  # noqa: E731
@@ -458,6 +460,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
             "ownership": ownership,
             "auditor": {k: v for k, v in auditors[-1].items() if k not in ("as_of", "source_news_id")} if auditors else None,
             "predictions": predictions[-guidance_n:],
+            "calibration": (calibration(dossier, cutoff) or {}).get("rule"),  # Loop 2: how its targets turn out
         }
         view = {k: v for k, v in view.items() if v}
         if len(json.dumps(view, ensure_ascii=False)) <= budget_chars:

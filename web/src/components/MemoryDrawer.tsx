@@ -81,7 +81,7 @@ function DrawerBody({ scrip, verify, tab, onTab, onClose }: {
           <>
             {tab === "dossier" && (
               <div className="space-y-4">
-                <Scorecard guidance={dossier?.guidance ?? []} credibility={company?.credibility_score ?? null} />
+                <Scorecard guidance={dossier?.guidance ?? []} credibility={company?.credibility_score ?? null} rule={company?.calibration_rule ?? null} />
                 <IdentityAndOwnership dossier={dossier} />
                 {dossier ? <MetricsPanel dossier={dossier} /> : <Empty title="No financials in memory yet" />}
                 <DealsAndNotes dossier={dossier} />
@@ -97,13 +97,14 @@ function DrawerBody({ scrip, verify, tab, onTab, onClose }: {
 }
 
 /** Delivered vs open vs broken promises as one bar. */
-function Scorecard({ guidance, credibility }: { guidance: NonNullable<Parameters<typeof promiseStats>[0]>; credibility: number | null }) {
+function Scorecard({ guidance, credibility, rule }: { guidance: NonNullable<Parameters<typeof promiseStats>[0]>; credibility: number | null; rule: string | null }) {
   const s = promiseStats(guidance);
   const total = s.delivered + s.open + s.missed;
-  if (!total) return null;
+  if (!total && !rule) return null;
   const width = (n: number) => `${(n / total) * 100}%`;
   return (
     <Panel title="Management execution" hint={credibility != null ? `Credibility ${Math.round(credibility)}%` : undefined}>
+      {total > 0 && <>
       <div className="flex h-2.5 overflow-hidden rounded-full bg-surface-2" role="img"
         aria-label={`${s.delivered} delivered, ${s.open} open, ${s.missed} missed or revised`}>
         <span className="bg-pos" style={{ width: width(s.delivered) }} />
@@ -114,6 +115,8 @@ function Scorecard({ guidance, credibility }: { guidance: NonNullable<Parameters
         <span className="text-pos">● {s.delivered} delivered</span> · <span className="text-info">● {s.open} open</span> ·{" "}
         <span className="text-neg">● {s.missed} missed, delayed or withdrawn</span>
       </p>
+      </>}
+      {rule && <p className="mt-2 rounded-lg bg-insight px-3 py-2 text-[13px] text-insight-ink">📐 {rule}</p>}
     </Panel>
   );
 }

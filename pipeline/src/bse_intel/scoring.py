@@ -14,6 +14,7 @@ of Gates 1–3.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+from datetime import date
 
 from .periods import due_date
 
@@ -51,6 +52,46 @@ def credibility(dossier: dict | None) -> tuple[float | None, int, int]:
         broken += p.get("status") == "MISSED"
     total = delivered + broken
     return (round(delivered / total * 100, 1) if total else None), delivered, total
+
+
+def calibration(dossier: dict | None, cutoff: str = "~") -> dict | None:
+    """Loop 2 (blueprint §12.2): how this management's numbers and dates turn out, as a rule the
+    analyst applies to new guidance. Uses only targets and promises resolved before ``cutoff``.
+
+    * delivery ratio: actual / target for numeric targets checked against results (">=" targets
+      only, where more is better), averaged;
+    * slippage: how many months late dated promises were delivered or declared delayed.
+    """
+    d = dossier or {}
+    ratios = [p["actual"] / p["value"] for p in d.get("predictions", [])
+              if p.get("status") in ("MET", "MISSED") and p.get("comparison") == ">=" and p.get("value")
+              and p.get("actual") is not None and (p.get("resolved_on") or "") < cutoff and p["value"] > 0]
+    late: list[float] = []
+    for g in d.get("guidance", []):
+        due = g.get("due_date")
+        history = [h for h in g.get("status_history", []) if h["as_of"] < cutoff]
+        if not due or not history:
+            continue
+        settled = next((h for h in history if h["status"] in ("DELIVERED", "DELAYED", "MISSED")), None)
+        if settled:
+            months = (date.fromisoformat(settled["as_of"][:10]) - date.fromisoformat(due)).days / 30.4
+            late.append(max(months, 0.0) if settled["status"] == "DELIVERED" else max(months, 3.0))
+    if not ratios and not late:
+        return None
+    parts = []
+    out: dict = {}
+    if ratios:
+        ratio = sum(ratios) / len(ratios)
+        out.update(delivery_ratio=round(ratio, 2), targets_checked=len(ratios))
+        word = "beats" if ratio >= 1.05 else "falls short of" if ratio < 0.95 else "meets"
+        parts.append(f"Management {word} its numeric targets: {ratio:.2f}x of target on average ({len(ratios)} checked)")
+    if late:
+        avg = sum(late) / len(late)
+        out.update(avg_months_late=round(avg, 1), dated_promises=len(late))
+        parts.append("dated promises land on time" if avg < 1 else
+                     f"dated promises land about {avg:.0f} month{'s' if round(avg) != 1 else ''} late on average ({len(late)} resolved)")
+    out["rule"] = "; ".join(parts) + "." + (" Apply that discount to new guidance." if out.get("delivery_ratio", 1) < 0.95 or out.get("avg_months_late", 0) >= 3 else "")
+    return out
 
 
 def ttm_revenue(dossier: dict | None) -> tuple[float, str] | None:

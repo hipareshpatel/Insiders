@@ -48,3 +48,26 @@ def test_stage_update_of_a_known_order_is_vetoed():
     s = score({"headline": "h", "what_happened": [], "deal_value": {"kind": "ORDER", "amount_cr": 50}}, "ORDER_WIN",
               signals, None, {}, needs_review=False, model_impact="HIGH")
     assert "Stage update of an order already counted" in s.vetoes and s.total <= 35
+
+
+def test_calibration_rule_from_resolved_targets_and_dates():
+    from bse_intel.scoring import calibration
+
+    dossier = {
+        "predictions": [
+            {"status": "MET", "comparison": ">=", "value": 100, "actual": 120, "resolved_on": "2026-05-01"},
+            {"status": "MISSED", "comparison": ">=", "value": 100, "actual": 70, "resolved_on": "2026-08-01"},
+            {"status": "OPEN", "comparison": ">=", "value": 50},
+        ],
+        "guidance": [
+            {"due_date": "2026-03-31", "status_history": [{"status": "DELIVERED", "as_of": "2026-07-30T10:00:00+05:30"}]},
+            {"due_date": "2026-06-30", "status_history": [{"status": "DELAYED", "as_of": "2026-06-01T10:00:00+05:30"}]},
+        ],
+    }
+    c = calibration(dossier)
+    assert c["delivery_ratio"] == 0.95 and c["targets_checked"] == 2 and c["dated_promises"] == 2
+    assert c["avg_months_late"] == 3.5  # 4 months late, and a delay counted as at least 3: 3.49
+    assert "Management meets its numeric targets: 0.95x" in c["rule"] and "about 3 months late" in c["rule"]
+    assert c["rule"].endswith("Apply that discount to new guidance.")
+    assert calibration(dossier, cutoff="2026-06-01")["targets_checked"] == 1  # only what was known then
+    assert calibration({}) is None

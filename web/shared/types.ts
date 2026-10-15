@@ -271,6 +271,8 @@ export interface Company {
   latest_revenue?: string | null;   // JSON {period, value}
   latest_ebitda?: string | null;
   gross_debt_cr?: number | null;
+  /** Loop 2: how this management's targets and dates usually turn out. */
+  calibration_rule?: string | null;
 }
 
 export interface InflectionTrigger { kind: string; date: string; text: string }

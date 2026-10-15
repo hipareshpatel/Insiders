@@ -22,6 +22,7 @@ import re
 
 from .dossier import _deal_history, period_kind
 from .periods import due_date, prior_year_period
+from .scoring import calibration
 
 OPEN = ("OPEN", "ON_TRACK", "DELAYED", "REVISED")
 MAX_PROMISES = 15
@@ -154,6 +155,7 @@ def summarize(dossier: dict) -> dict:
         "revenue": _latest(dossier, ("revenue", "revenue_from_operations", "total_revenue", "net_sales")),
         "ebitda": _latest(dossier, ("ebitda", "operating_profit")),
         "gross_debt_cr": sheets[-1]["gross_debt_cr"] if sheets else None,
+        "calibration": (calibration(dossier) or {}).get("rule"),
     }
     return {
         "memory_summary_json": summary,

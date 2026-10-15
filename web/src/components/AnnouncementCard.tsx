@@ -16,8 +16,8 @@ import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL, TrackItem } from "./Filing
 import { plain, RichText } from "./RichText";
 
 const IMPACT_PILL: Record<Impact, string> = {
-  HIGH: "bg-accent text-accent-ink",
-  MODERATE: "bg-accent-soft text-accent",
+  HIGH: "bg-impact-high text-white dark:text-bg",
+  MODERATE: "bg-impact-moderate text-white dark:text-bg",
   LOW: "border border-line text-ink-3",
 };
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
@@ -317,7 +317,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           {row.median_turnover_cr != null && row.median_turnover_cr < 0.5 && <Chip tone="warn">💧 Thin liquidity</Chip>}
         </div>
 
-        <h3 className="mt-3 text-[19px] font-bold leading-snug tracking-[-0.01em] text-ink sm:text-[21px]">{plain(card.headline)}</h3>
+        <h3 className="mt-3 font-display text-[19px] leading-snug text-ink sm:text-[21px]">{plain(card.headline)}</h3>
         {card.core_catalyst && (
           <p className="mt-1.5 text-[13.5px] leading-snug text-ink-2"><span aria-hidden>📌 </span><span className="font-semibold text-ink">Core catalyst:</span> {plain(card.core_catalyst)}</p>
         )}
@@ -333,8 +333,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         </ul>
 
         {(box.insights.length > 0 || box.signal || box.missing || box.fallback) && (
-          <section className="mt-4 rounded-xl bg-accent-soft/70 px-4 py-3">
-            <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-accent">{boxLabel(event)}</h4>
+          <section className="mt-4 rounded-xl bg-insight px-4 py-3">
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-insight-ink">{boxLabel(event)}</h4>
             <ul className="mt-2 space-y-2">
               {box.fallback && <Point>{box.fallback}</Point>}
               {box.insights.map((insight, i) => <Point key={i}><RichText text={insight.text} /></Point>)}

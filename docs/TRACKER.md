@@ -157,7 +157,7 @@ and as prompt rules otherwise. The per-module list is in BLUEPRINT §9.
 | Catalyst calendar, overdue promises panel | done | Module 44: open promises past due, from the company summary (no daily scan needed) |
 | System monitor (two progress bars, per-provider quota, needs-review queue) | done | review queue lists the failed checks; owner Re-run requeues the filing |
 | 360° memory drawer (slide-over), split-screen PDF verifier | done | `?memory=<scrip>` opens it over any page (feed keeps its scroll): dossier with execution bar, financials, deals; timeline with T+1/T+3 vs index; `&verify=<news_id>` puts the BSE PDF beside the card with each figure marked found / not found and the math working. If BSE refuses framing, "Open on BSE" |
-| Palette and typography per blueprint (warm light, OLED dark, Plus Jakarta Sans) | todo | current theme is EquiSense-like |
+| Palette and typography per blueprint (warm light, OLED dark, Plus Jakarta Sans) | done | §13.1 tokens: alabaster #F8F7F4 canvas, #E6E4DD hairlines, sage #EAF2EE box with #1B4D3E heads, impact #0F766E / #B45309, risk #BE123C; OLED #0B0F17 / #111827 / #1F2937, box #06281E with #34D399. Plus Jakarta Sans headlines, Inter body 1.55, JetBrains Mono tabular figures |
 | Search across former names | done | companies_fts includes former names (migration 0007); former names now saved to the company row |
 | DB dictionary (companies extra columns, cards score columns, card_feedback table) | done | migration 0004 |
 

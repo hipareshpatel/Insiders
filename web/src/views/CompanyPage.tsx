@@ -13,6 +13,7 @@ import { cr, istDate, num, pct, rupees, signClass, titleCase, todayIST } from ".
 import { periodEnd, periodKind } from "../lib/periods";
 import { EVENT_LABELS, SECTORS, TONE_CHIP, TONE_LABEL, TONE_STRIPE, verdict, type Tone } from "../lib/taxonomy";
 import { ownerApi, useOwnerToken } from "../lib/owner";
+import { HISTORY_START } from "../lib/config";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading } from "./FeedView";
 import { Change } from "./ResultsView";
@@ -201,7 +202,7 @@ function Overview({ company, dossier, cards, onTab }: { company: Company | null;
         ) : null}
       </Panel>
 
-      <Panel title="How the story is unfolding" hint={dossier?.timeline.length ? `${dossier.timeline.length} events since 1 Jan 2026` : undefined}>
+      <Panel title="How the story is unfolding" hint={dossier?.timeline.length ? `${dossier.timeline.length} events since ${istDate(HISTORY_START)}` : undefined}>
         {dossier?.timeline.length ? (
           <ul className="space-y-2.5">
             {[...dossier.timeline].reverse().slice(0, 8).map((t) => (
@@ -595,7 +596,7 @@ function Timeline({ dossier }: { dossier: Dossier | null }) {
   const events = [...(dossier?.timeline ?? [])].reverse();
   if (!events.length) return <Empty title="No events recorded yet" />;
   return (
-    <Panel title="2026 event timeline" hint={`${events.length} material filings`}>
+    <Panel title={`Event timeline since ${istDate(HISTORY_START)}`} hint={`${events.length} material filings`}>
       <ol className="relative ml-1.5 border-l border-line">
         {events.map((e) => (
           <li key={e.id} className="relative ml-5 pb-5 last:pb-0">

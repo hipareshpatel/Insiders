@@ -64,7 +64,7 @@ export function FilingRow({ row, defaultOpen = false, highlight = false }: { row
       {/* The whole header toggles; the headline is the accessible toggle button. */}
       <div onClick={() => setOpen((v) => !v)} className="cursor-pointer px-4 py-3.5 pl-5 sm:px-5 sm:pl-6">
         <div className="flex items-start gap-4">
-          <h3 className="min-w-0 flex-1 text-[15px] font-medium leading-snug text-ink">
+          <h3 className="min-w-0 flex-1 font-display text-[15px] font-semibold leading-snug text-ink">
             <button type="button" aria-expanded={open} onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
               className="text-left hover:text-accent focus-visible:text-accent">
               {plain(card.headline)}

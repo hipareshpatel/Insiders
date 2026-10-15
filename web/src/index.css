@@ -2,56 +2,67 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* Light: near-white page, white surfaces, hairline borders, one emerald accent. */
+/* Light (blueprint §13.1): warm alabaster canvas, white cards on warm hairlines, deep forest green
+   accent, sage "why it matters" box. */
 :root {
-  --bg: #f8f9fb;
+  --bg: #f8f7f4;
   --surface: #ffffff;
-  --surface-2: #f3f4f6;
-  --line: #e7e9ee;
-  --line-strong: #d6d9e0;
-  --ink: #1a1d26;
-  --ink-2: #4b5160;
-  --ink-3: #8a8f9c;
-  --accent: #059669;
+  --surface-2: #f2f0eb;
+  --line: #e6e4dd;
+  --line-strong: #d4d1c7;
+  --ink: #1c1b17;
+  --ink-2: #4a4840;
+  --ink-3: #85827a;
+  --accent: #1b4d3e;
   --accent-ink: #ffffff;
-  --accent-soft: #ecfdf5;
-  --accent-line: #a7f3d0;
-  --pos: #059669;
-  --neg: #dc2626;
-  --warn: #d97706;
+  --accent-soft: #eaf2ee;
+  --accent-line: #b9d3c6;
+  --insight: #eaf2ee;
+  --insight-ink: #1b4d3e;
+  --impact-high: #0f766e;
+  --impact-moderate: #b45309;
+  --risk: #be123c;
+  --pos: #0f766e;
+  --neg: #be123c;
+  --warn: #b45309;
   --info: #2563eb;
-  --pos-soft: #ecfdf5;
-  --neg-soft: #fef2f2;
-  --warn-soft: #fffbeb;
-  --info-soft: #eff6ff;
-  --neutral-stripe: #d6d9e0;
-  --violet: #7c3aed;
-  --violet-soft: #f5f3ff;
-  --teal: #0d9488;
-  --teal-soft: #f0fdfa;
+  --pos-soft: #e6f3f1;
+  --neg-soft: #fcecef;
+  --warn-soft: #fbf1e4;
+  --info-soft: #edf2fd;
+  --neutral-stripe: #d4d1c7;
+  --violet: #6d28d9;
+  --violet-soft: #f3effc;
+  --teal: #0f766e;
+  --teal-soft: #e6f3f1;
   color-scheme: light;
 }
 
-/* Dark: OLED midnight. */
+/* Dark: OLED midnight, emerald accents. */
 :root[data-theme="dark"] {
   --bg: #0b0f17;
-  --surface: #111620;
-  --surface-2: #171d29;
-  --line: #222a37;
-  --line-strong: #2e3746;
-  --ink: #e6e8ee;
-  --ink-2: #a6adbb;
-  --ink-3: #6e7686;
+  --surface: #111827;
+  --surface-2: #172031;
+  --line: #1f2937;
+  --line-strong: #2d3a4d;
+  --ink: #e7eaf0;
+  --ink-2: #a7afbd;
+  --ink-3: #6f7889;
   --accent: #34d399;
   --accent-ink: #052e22;
   --accent-soft: rgba(52, 211, 153, 0.1);
   --accent-line: rgba(52, 211, 153, 0.35);
+  --insight: #06281e;
+  --insight-ink: #34d399;
+  --impact-high: #2dd4bf;
+  --impact-moderate: #fbbf24;
+  --risk: #fb7185;
   --pos: #34d399;
-  --neg: #f87171;
+  --neg: #fb7185;
   --warn: #fbbf24;
   --info: #60a5fa;
   --pos-soft: rgba(52, 211, 153, 0.1);
-  --neg-soft: rgba(248, 113, 113, 0.1);
+  --neg-soft: rgba(251, 113, 133, 0.1);
   --warn-soft: rgba(251, 191, 36, 0.1);
   --info-soft: rgba(96, 165, 250, 0.1);
   --neutral-stripe: #3a4352;
@@ -65,23 +76,28 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0b0f17;
-    --surface: #111620;
-    --surface-2: #171d29;
-    --line: #222a37;
-    --line-strong: #2e3746;
-    --ink: #e6e8ee;
-    --ink-2: #a6adbb;
-    --ink-3: #6e7686;
+    --surface: #111827;
+    --surface-2: #172031;
+    --line: #1f2937;
+    --line-strong: #2d3a4d;
+    --ink: #e7eaf0;
+    --ink-2: #a7afbd;
+    --ink-3: #6f7889;
     --accent: #34d399;
     --accent-ink: #052e22;
     --accent-soft: rgba(52, 211, 153, 0.1);
     --accent-line: rgba(52, 211, 153, 0.35);
+    --insight: #06281e;
+    --insight-ink: #34d399;
+    --impact-high: #2dd4bf;
+    --impact-moderate: #fbbf24;
+    --risk: #fb7185;
     --pos: #34d399;
-    --neg: #f87171;
+    --neg: #fb7185;
     --warn: #fbbf24;
     --info: #60a5fa;
     --pos-soft: rgba(52, 211, 153, 0.1);
-    --neg-soft: rgba(248, 113, 113, 0.1);
+    --neg-soft: rgba(251, 113, 133, 0.1);
     --warn-soft: rgba(251, 191, 36, 0.1);
     --info-soft: rgba(96, 165, 250, 0.1);
     --neutral-stripe: #3a4352;
@@ -94,9 +110,9 @@
 }
 
 @theme inline {
-  --font-sans: "Lexend Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "DM Serif Display", Georgia, serif;
-  --font-num: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-num: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
 
   --color-bg: var(--bg);
@@ -111,6 +127,11 @@
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
   --color-accent-line: var(--accent-line);
+  --color-insight: var(--insight);
+  --color-insight-ink: var(--insight-ink);
+  --color-impact-high: var(--impact-high);
+  --color-impact-moderate: var(--impact-moderate);
+  --color-risk: var(--risk);
   --color-pos: var(--pos);
   --color-neg: var(--neg);
   --color-warn: var(--warn);
@@ -131,11 +152,21 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
-  font-weight: 350;
+  font-weight: 400;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Numbers: Inter with tabular figures, so columns line up. */
+/* Headlines: Plus Jakarta Sans, semibold to bold, tight tracking. */
+.font-display {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.font-display.font-semibold {
+  font-weight: 600;
+}
+
+/* Figures, ratios, dates and scrip codes: JetBrains Mono with tabular figures, so columns line up. */
 .num {
   font-family: var(--font-num);
   font-variant-numeric: tabular-nums;

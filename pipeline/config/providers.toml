@@ -62,10 +62,11 @@ timeout_s = 120
 [providers.gemini]
 # Google AI Studio key, through Gemini's OpenAI-compatible endpoint. Free-tier
 # limits are per model per Google Cloud project (extra keys in one project add
-# nothing). Google publishes no free-tier table; the per-minute limits below
-# were read from the quota named in Gemini's own 429 replies on 2026-10-16
-# (GenerateRequestsPerMinutePerProjectPerModel-FreeTier). The daily limits are
-# still guesses: a 429 naming a per-day quota retires the model until midnight
+# nothing). Google publishes no free-tier table. AI Studio -> Rate Limit
+# (project "Insiders", Free tier, 2026-10-16) shows 15 RPM for 3.1 and 3.5
+# Flash-Lite, 5 RPM for 3.6 and 3.8 Flash and 250K TPM for each; the RPM matches
+# the quota named in Gemini's own 429 replies. The daily limits are still
+# guesses: a 429 naming a per-day quota retires the model until midnight
 # Pacific and its value shows as the model's last error on the System page.
 # Free-tier prompts may be used by Google to improve its products, which is
 # acceptable here because BSE filings are public. gemini-4-argon and
@@ -119,7 +120,7 @@ model = "gemini-3.1-flash-lite"  # free tier: 15 requests/min measured; ~500/day
 json_mode = true
 max_tokens = 400
 extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
-limits = { rpm = 15, rpd = 500 }
+limits = { rpm = 15, tpm = 250_000, rpd = 500 }
 
 [[routes.pass1]]
 provider = "gemini"
@@ -127,7 +128,7 @@ model = "gemini-3.5-flash-lite"  # free tier: 15 requests/min measured; ~500/day
 json_mode = true
 max_tokens = 400
 extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
-limits = { rpm = 15, rpd = 500 }
+limits = { rpm = 15, tpm = 250_000, rpd = 500 }
 
 [[routes.pass1]]
 provider = "cloudflare"
@@ -167,7 +168,7 @@ model = "gemini-3.1-flash-lite"  # free tier: 15 requests/min measured; ~500/day
 json_mode = true
 max_tokens = 400
 extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
-limits = { rpm = 15, rpd = 500 }
+limits = { rpm = 15, tpm = 250_000, rpd = 500 }
 
 [[routes.pass1_bulk]]
 provider = "gemini"
@@ -175,7 +176,7 @@ model = "gemini-3.5-flash-lite"  # free tier: 15 requests/min measured; ~500/day
 json_mode = true
 max_tokens = 400
 extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
-limits = { rpm = 15, rpd = 500 }
+limits = { rpm = 15, tpm = 250_000, rpd = 500 }
 
 [[routes.pass1_bulk]]
 provider = "cloudflare"
@@ -229,7 +230,7 @@ json_mode = true
 max_tokens = 6000
 context_tokens = 900000
 extra_body = { reasoning_effort = "low" }
-limits = { rpm = 5, rpd = 20 }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
 
 [[routes.pass2]]
 provider = "cloudflare"
@@ -276,7 +277,7 @@ json_mode = true
 max_tokens = 6000
 context_tokens = 900000
 extra_body = { reasoning_effort = "low" }
-limits = { rpm = 5, rpd = 20 }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
 
 [[routes.pass2_bulk]]
 provider = "cloudflare"
@@ -340,11 +341,11 @@ json_mode = true
 max_tokens = 6000
 context_tokens = 900000
 extra_body = { reasoning_effort = "low" }
-limits = { rpm = 5, rpd = 20 }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
 
 [[routes.vision]]
 provider = "gemini"
 model = "gemini-3.1-flash-lite"  # reads images; shares its daily quota with pass 1
 max_tokens = 2500
 extra_body = { reasoning_effort = "low" }
-limits = { rpm = 15, rpd = 500 }
+limits = { rpm = 15, tpm = 250_000, rpd = 500 }

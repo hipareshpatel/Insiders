@@ -37,13 +37,19 @@ _UNIT = re.compile(r"\s*(%|per\s*cent\b|percent\b|basis\s+points?\b|bps?\b|pp\b|
 _QUANTITY = re.compile(r"\s*(?:cr\b|crores?\b|lakhs?\b|lacs?\b|mn\b|million\b|bn\b|billion\b|mw\b|gw\b|kw\b|tpd\b|mtpa\b"
                        r"|mt\b|tonnes?\b|tons?\b|units?\b|vehicles?\b|beds?\b|stores?\b|kl\b|mld\b|sq\.?\s*ft\b)", re.I)
 SCALES = (1, 10, 100, 1000, 1e4, 1e5, 1e7, 0.1, 0.01, 0.001)  # unit conversions between ₹ crore, lakh, million, rupees
-# A statement's declared unit: "(INR in Lakhs)", "(Rs. in lakh)", "(₹ in million)", "Amount in ₹ '000".
+# A ₹ crore figure on the card can only come from crore, million, lakh, thousand or rupees in the
+# source. The wider SCALES let "₹3,000 Cr" match any bare 3 or 300 in the text (a page number).
+CRORE_SCALES = (1, 10, 100, 1e4, 1e7)
+# A statement's declared unit: "(INR in Lakhs)", "(Rs. in lakh)", "(₹ in million)", "Amount in ₹ '000",
+# and a header line of its own whose currency sign the PDF text mangled. Novartis's statements read
+# "('l in million)", '"in million)', "c, in million)", "{f in million)", "(fin million)", "/fin million)".
 _DECLARED_UNIT = re.compile(
     r"(?:₹|\brs\.?|\binr)\s*(?:in\s*)?(lakhs?|lacs?|crores?|millions?|thousands?|'000)(?![a-z])"
-    r"|\bin\s*(?:₹|rs\.?|inr)\s*(lakhs?|lacs?|crores?|millions?|thousands?|'000)(?![a-z])", re.I)
+    r"|\bin\s*(?:₹|rs\.?|inr)\s*(lakhs?|lacs?|crores?|millions?|thousands?|'000)(?![a-z])"
+    r"|^[ \t]*[(\[{/\"'`]?[ \t]*[^\s\w]{0,2}[a-z]{0,2}[,.]?[ \t]*in[ \t]*(lakhs?|lacs?|crores?|millions?|thousands?)\.?[ \t]*\)",
+    re.I | re.M)
 _PER_CRORE = {"lakh": 100, "lac": 100, "million": 10, "thousand": 10_000, "'000": 10_000, "crore": 1}
 UNIT_NAMES = {100: "₹ lakh", 10: "₹ million", 10_000: "₹ thousand"}
-_CRORE_AMOUNT = re.compile(r"\d\s*(?:cr\b|crores?\b)", re.I)
 _CRORE_AFTER = re.compile(r"\s*(?:cr\b|crores?\b)", re.I)
 # The unit written right after a source figure ("INR 5445 Million", "Rs. 2,025 lakhs"), as figures
 # per ₹ crore. Kanoria's RPT notice (Apr 2025) mixes million, lakh and crore, so no single declared
@@ -120,13 +126,14 @@ def _tokens(text: str) -> list[tuple[float, int, int, str, str]]:
 
 
 def declared_unit(text: str | None) -> int | None:
-    """Source figures per ₹ crore when a filing states its amounts in one unit other than crore
-    ("(INR in Lakhs)" -> 100). None when it declares no unit or several, or also states crore amounts
-    (a crore XBRL table on top, "₹50 crore" in a note): then any scale may apply."""
+    """Source figures per ₹ crore when a filing declares its statements in one unit other than crore
+    ("(INR in Lakhs)" -> 100). None when it declares no unit or several, or declares crore (as the
+    XBRL table on top does): then bare figures may match at any scale. Amounts written with their
+    own unit ("INR 300 Crores" in a note) are read in that unit whatever this returns."""
     text = text or ""
-    words = {(m.group(1) or m.group(2)).lower().rstrip("s") for m in _DECLARED_UNIT.finditer(text)}
+    words = {(m.group(1) or m.group(2) or m.group(3)).lower().rstrip("s") for m in _DECLARED_UNIT.finditer(text)}
     units = {_PER_CRORE[w] for w in words}
-    if len(units) != 1 or 1 in units or _CRORE_AMOUNT.search(text):
+    if len(units) != 1 or 1 in units:
         return None
     return units.pop()
 
@@ -156,10 +163,12 @@ class SourceIndex:
                     continue
                 if value > 0:
                     by_unit.setdefault(_money_unit(clean, m.end()), set()).add(value)
-        self._plain = sorted(by_unit.pop(None, set()))
+        plain = by_unit.pop(None, set())
+        # A figure written once with its unit ("INR 3,000 million") is that amount wherever it recurs bare.
+        self._plain = sorted(plain - set().union(*by_unit.values()))
         self._by_unit = {unit: sorted(values) for unit, values in by_unit.items()}
 
-    def stated_crore(self, value: float, decimals: int, plain_scales=SCALES) -> bool:
+    def stated_crore(self, value: float, decimals: int, plain_scales=CRORE_SCALES) -> bool:
         """A ₹ crore figure on the card. A source figure written with a unit matches only at that
         unit's scale ("5445 Million" grounds ₹544.5 Cr, never ₹5,445 Cr); a bare figure (a table
         under "(INR in Lakhs)") at ``plain_scales``."""
@@ -302,7 +311,7 @@ def check_card(card: Card, *sources: str) -> GroundingResult:
     unit = declared_unit(sources[0]) if sources else None
     filing_index = SourceIndex(sources[0] if sources else "")
     other_index = SourceIndex(*sources[1:])
-    filing_scales, other_scales = ((unit,), (1,)) if unit else (SCALES, SCALES)
+    filing_scales, other_scales = ((unit,), (1,)) if unit else (CRORE_SCALES, CRORE_SCALES)
     texts = [("headline", card.headline), ("takeaway", card.takeaway), *(("fact", f) for f in card.what_happened),
              *(("insight", i.text) for i in card.why_it_matters)]
     if card.deal_value and card.deal_value.amount_cr:

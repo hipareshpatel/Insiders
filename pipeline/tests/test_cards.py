@@ -283,8 +283,10 @@ def test_lakh_figures_copied_as_crore_are_caught():
     assert declared_unit(RESULTS_TEXT) == 100
     assert declared_unit("Statement (INRin Lakhs) Revenue 34,752") == 100
     assert declared_unit("(Rs. in million) Revenue 3,475") == 10
-    assert declared_unit("(Rs. in lakhs) and a ₹50 crore order") is None  # mixed units: any scale may apply
+    assert declared_unit("(Rs. in lakhs) and a ₹50 crore order") == 100  # "50 crore" carries its own unit
+    assert check_card(card(headline="Demo Ltd wins ₹50 Cr order"), "(Rs. in lakhs) and a ₹50 crore order").ungrounded == []
     assert declared_unit("Revenue 12,345.67 (lakhs)") is None
+    assert declared_unit("XBRL (₹ crore unless noted)\nStatement (Rs. in lakhs)") is None  # two declared units
     copied = card(headline="Demo Ltd Q2 revenue ₹45,612 Cr; PAT ₹4,752 Cr", what_happened=["Revenue ₹45,612 Cr"])
     result = check_card(copied, RESULTS_TEXT)
     assert "45,612" in result.headline_ungrounded and "4,752" in result.headline_ungrounded
@@ -312,6 +314,38 @@ def test_a_figure_is_read_in_the_unit_written_beside_it():
                  what_happened=["WTD pay up to ₹1.8 Cr a year", "Authorised capital ₹25 Cr"])
     assert check_card(right, RPT_NOTICE).ungrounded == []
     assert check_card(card(headline="RPTs of ₹545 Cr"), RPT_NOTICE).ungrounded == []  # rounded is fine
+
+
+@pytest.mark.parametrize("header", ["('l in million)", '"in million)', "c, in million)", "{f in million)",
+                                    "(fin million)", "/fin million)", "(' in million)"])
+def test_a_statement_header_with_a_mangled_currency_sign_still_declares_its_unit(header):
+    """Novartis India's statements, as the PDF text renders their "(₹ in million)" headers."""
+    from bse_intel.grounding import declared_unit
+
+    text = f"Novartis India Limited\n{header}\nSTATEMENT OF PROFIT AND LOSS\nRevenue from Operations\n875.5\n838.8"
+    assert declared_unit(text) == 10
+    wrong = check_card(card(headline="Novartis India Q1FY26 revenue rose 4% to ₹875.5 Cr"), text)
+    assert wrong.headline_ungrounded == ["875.5"]
+    assert check_card(card(headline="Novartis India Q1FY26 revenue rose 4% to ₹87.55 Cr"), text).ungrounded == []
+
+
+def test_prose_ending_in_a_unit_is_not_a_header():
+    from bse_intel.grounding import declared_unit
+
+    assert declared_unit("payable within 30 days in lakhs)\nRevenue 875.5") is None
+
+
+def test_a_bare_figure_takes_the_unit_it_has_elsewhere():
+    """Novartis's RPT notice: "INR 3,000 million only (INR 300 Crores Only)", with 3,000 also bare in a table."""
+    notice = "Maximum value INR 3,000 million only (INR 300 Crores Only).\nTable\nPharma imports 3,000\n"
+    assert check_card(card(headline="RPT worth ₹3,000 Cr"), notice).headline_ungrounded == ["3,000"]
+    assert check_card(card(headline="RPT worth ₹300 Cr"), notice).ungrounded == []
+
+
+def test_a_crore_figure_is_not_grounded_by_a_stray_small_number():
+    """Novartis's postal-ballot result: "₹3,000 Cr" passed because "3" (a list item) matched at x0.001."""
+    text = "Resolution 3 passed with 98.72% votes in favour. Item 300 of the agenda. Page 1 of 4."
+    assert check_card(card(headline="RPT of ₹3,000 Cr approved"), text).headline_ungrounded == ["3,000"]
 
 
 def test_pass2_prompt_warns_when_units_are_mixed(settings):

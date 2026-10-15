@@ -140,6 +140,23 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
 - impact_level: "HIGH" (likely to move the stock or change earnings estimates), "MODERATE"
   (a useful update for holders) or "LOW" (minor).
 
+Memory compartments (blueprint): fill these only from this filing, null or empty otherwise
+- former_names: earlier names the filing mentions ("formerly known as Novartis India Limited").
+- entities: subsidiaries, step-down subsidiaries, JVs (with the stake when stated), plants and
+  brands that the filing names, each with its type ("100% subsidiary", "JV (51%)", "brand").
+- ownership: shareholding at a quarter-end when the filing states it (promoter %, promoter shares
+  pledged as % of their holding, FII %, DII %, number of small shareholders).
+- auditor: the audit report's opinion on results or annual accounts ("UNMODIFIED",
+  "EMPHASIS_OF_MATTER", "QUALIFIED", "ADVERSE", "DISCLAIMER") with the matter and its ₹ figure in
+  note; change = "resigned" or "appointed" when this filing changes the auditor.
+- deal_value.expansion: "BROWNFIELD" when the capacity is added at an existing site, "GREENFIELD"
+  for a new site; deal_value.usage: "CAPTIVE" when the output is used in-house (no new revenue,
+  lower costs), "MERCHANT_SALE" when it is sold, "HYBRID" for both.
+- kpis_to_verify: when a target is a number (management guidance or a figure the filing implies),
+  also give metric (the snake_case financial_metrics name it will be reported under), period
+  ("Q3FY27", "FY27"), value and comparison (">=", "<=" or "="), so the platform can check it
+  automatically when that period's results arrive.
+
 Dossier facts (dossier_delta), only for facts stated in this filing
 - financial_metrics: one entry per metric per period. unit is "INR_CR" unless the metric is a
   percentage ("PCT"), a volume ("UNITS", "MT", "MW", ...) or per-share ("INR_PER_SHARE"). Period

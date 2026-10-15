@@ -64,7 +64,111 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     strain = _working_capital(after, filing)
     signals += strain
     signals += _metric_shifts(after, filing, skip={"trade_receivables", "receivables", "debtors", "inventories", "inventory"} if strain else set())
+    signals += _predictions(after, filing)
+    signals += _ownership(after, filing)
+    signals += _auditor(after, filing)
+    signals += _volumes(after, filing)
     return [asdict(s) for s in signals]
+
+
+def _predictions(after: dict, filing: Filing) -> list[Signal]:
+    """Loop 2: a number management or the analyst predicted, now checked against the actual."""
+    out = []
+    for p in after.get("predictions", []):
+        if p.get("resolved_by") != filing.news_id:
+            continue
+        met = p["status"] == "MET"
+        out.append(Signal("PREDICTION_RESOLVED", "POSITIVE" if met else "WARNING",
+                          f"{'Met' if met else 'Missed'}: \"{p['kpi']}\" ({metric_label(p['metric'])} {p['period']} target "
+                          f"{p['comparison']} {p['value']:g}; actual {p['actual']:g}, set {p['created_on'][:10]}).", p["id"]))
+    return out
+
+
+def _ownership(after: dict, filing: Filing) -> list[Signal]:
+    """Blueprint module 47: smart money accumulating vs retail distribution, and pledges."""
+    rows = after.get("ownership", [])
+    if len(rows) < 2 or rows[-1].get("source_news_id") != filing.news_id:
+        return []
+    now, prev = rows[-1], rows[-2]
+    out = []
+    def inst(r):
+        return sum(r.get(k) or 0 for k in ("promoter_pct", "fii_pct", "dii_pct"))
+    d_inst = inst(now) - inst(prev)
+    holders = (now.get("retail_holders"), prev.get("retail_holders"))
+    d_retail = (holders[0] / holders[1] - 1) * 100 if all(holders) else None
+    if d_inst >= 1 and d_retail is not None and d_retail <= -5:
+        out.append(Signal("OWNERSHIP_SHIFT", "POSITIVE", f"Smart money accumulating: promoter + FII + DII up {d_inst:.1f} pp "
+                          f"to {inst(now):.1f}% ({now['period']}) while small shareholders fell {abs(d_retail):.0f}%."))
+    elif d_inst <= -2 and d_retail is not None and d_retail >= 25:
+        out.append(Signal("OWNERSHIP_SHIFT", "WARNING", f"Retail distribution: promoter + institutions down {abs(d_inst):.1f} pp "
+                          f"while small shareholders rose {d_retail:.0f}% ({now['period']})."))
+    if (now.get("pledge_pct") or 0) - (prev.get("pledge_pct") or 0) >= 5:
+        out.append(Signal("OWNERSHIP_SHIFT", "WARNING", f"Promoter pledge up to {now['pledge_pct']:g}% from {prev.get('pledge_pct') or 0:g}%."))
+    return out
+
+
+def _auditor(after: dict, filing: Filing) -> list[Signal]:
+    """Blueprint module 39: the auditor opinion ladder and mid-term resignations."""
+    a = (after.get("governance") or {}).get("auditor")
+    if not a or a.get("source_news_id") != filing.news_id:
+        return []
+    if a.get("opinion") in ("QUALIFIED", "ADVERSE", "DISCLAIMER"):
+        return [Signal("AUDIT_FLAG", "WARNING", f"Auditor's opinion: {a['opinion'].lower().replace('_', ' ')}"
+                       + (f" ({a['note']})" if a.get("note") else "") + ".")]
+    if a.get("change") and "resign" in a["change"].lower():
+        return [Signal("AUDIT_FLAG", "WARNING", f"Auditor {a.get('name') or ''} resigned mid-term.".replace("  ", " "))]
+    if a.get("opinion") == "EMPHASIS_OF_MATTER":
+        return [Signal("AUDIT_FLAG", "INFO", "Emphasis of matter in the audit report" + (f": {a['note']}" if a.get("note") else "") + ".")]
+    return []
+
+
+VOLUME_METRICS = ("sales_volume", "volumes", "total_sales", "sales_units", "units_sold", "dispatches", "production", "despatches")
+
+
+def _volumes(after: dict, filing: Filing) -> list[Signal]:
+    """Monthly updates: a growth streak (Gate 2) and, on a quarter's third month, the quarter's
+    volume against the same quarter last year (blueprint module 45: an earnings preview)."""
+    from .dossier import period_kind
+
+    own = [m for m in _own_latest(after, filing.news_id) if m["metric"] in VOLUME_METRICS and period_kind(m["period"]) == "M"]
+    if not own:
+        return []
+    out = []
+    m = own[0]
+    series = {e["period"]: e["value"] for e in after.get("financial_metrics", []) if e["metric"] == m["metric"] and period_kind(e["period"]) == "M"}
+    def month(label: str, back: int) -> str | None:
+        end = due_date(label)
+        if not end:
+            return None
+        y, mo = end.year, end.month - back
+        while mo <= 0:
+            mo += 12
+            y -= 1
+        return f"{['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][mo - 1]}-{y}"
+    def yoy(label: str) -> float | None:
+        prev = month(label, 12)
+        if label in series and prev in series and series[prev]:
+            return (series[label] / series[prev] - 1) * 100
+        return None
+    streak = 0
+    for back in range(0, 6):
+        g = yoy(month(m["period"], back) or "")
+        if g is None or g <= 25:
+            break
+        streak += 1
+    if streak >= 2:
+        out.append(Signal("VOLUME_STREAK", "POSITIVE", f"{metric_label(m['metric'])} up more than 25% YoY for {streak} months running "
+                          f"(latest {yoy(m['period']):+.0f}%, {m['period']})."))
+    end = due_date(m["period"])
+    if end and end.month in (3, 6, 9, 12):
+        months = [month(m["period"], k) for k in (0, 1, 2)]
+        last_year = [month(m["period"], k + 12) for k in (0, 1, 2)]
+        if all(x in series for x in months + last_year) and sum(series[x] for x in last_year):
+            total, base = sum(series[x] for x in months), sum(series[x] for x in last_year)
+            out.append(Signal("QUARTER_PREVIEW", "POSITIVE" if total >= base else "WARNING",
+                              f"Quarter to {m['period']}: {metric_label(m['metric'])} {total:,.0f} vs {base:,.0f} a year ago "
+                              f"({(total / base - 1) * 100:+.1f}%), ahead of the quarterly results."))
+    return out
 
 
 PRICE_STALE_DAYS = 10

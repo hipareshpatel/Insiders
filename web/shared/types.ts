@@ -28,7 +28,8 @@ export interface NotableChange {
 
 export interface Signal {
   type: "PROMISE_DELIVERED" | "GUIDANCE_BREACH" | "WATCH_RESOLVED" | "DILUTION" | "SCALE" | "ORDER_FLOW" | "WORKING_CAPITAL_STRAIN" | "METRIC_SHIFT"
-    | "BOARD_DELIBERATION" | "REG30_THRESHOLD";
+    | "BOARD_DELIBERATION" | "REG30_THRESHOLD" | "PREDICTION_RESOLVED" | "OWNERSHIP_SHIFT" | "AUDIT_FLAG"
+    | "VOLUME_STREAK" | "QUARTER_PREVIEW";
   severity: Severity;
   text: string;
   ref?: string | null;
@@ -297,6 +298,11 @@ export interface Dossier {
   upcoming_events: { event_type: string; date: string; description: string }[];
   deals?: DealRecord[];
   operating_notes?: { text: string; as_of: string; source_news_id: string }[];
+  identity?: { former_names: string[]; entities: { name: string; type?: string | null; as_of: string }[] };
+  ownership?: { period: string; promoter_pct?: number; pledge_pct?: number; fii_pct?: number; dii_pct?: number; retail_holders?: number; as_of: string }[];
+  governance?: { auditor: { name?: string; opinion?: string; note?: string; change?: string; as_of: string } | null };
+  predictions?: { id: string; kpi: string; metric: string; period: string; value: number; comparison: string;
+    status: "OPEN" | "MET" | "MISSED"; actual?: number; created_on: string; resolved_on?: string }[];
   updated_at: string | null;
 }
 

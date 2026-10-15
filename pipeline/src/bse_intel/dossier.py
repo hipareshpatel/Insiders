@@ -62,6 +62,10 @@ def new_dossier(filing: Filing, company: dict | None = None) -> dict:
         "watchlist": [],
         "timeline": [],
         "upcoming_events": [],
+        "identity": {"former_names": [], "entities": []},
+        "ownership": [],
+        "governance": {"auditor": None, "auditor_history": []},
+        "predictions": [],
         "updated_at": None,
         "last_filed_at": None,
     }
@@ -142,6 +146,20 @@ def _forget(dossier: dict, news_id: str) -> None:
     summary = dossier.get("business_summary")
     if summary and summary.get("source_news_id") == news_id:
         dossier["business_summary"] = None
+    identity = dossier.setdefault("identity", {"former_names": [], "entities": []})
+    identity["entities"] = [e for e in identity.get("entities", []) if e.get("source_news_id") != news_id]
+    dossier["ownership"] = [o for o in dossier.get("ownership", []) if o.get("source_news_id") != news_id]
+    gov = dossier.setdefault("governance", {"auditor": None, "auditor_history": []})
+    gov["auditor_history"] = [a for a in gov.get("auditor_history", []) if a.get("source_news_id") != news_id]
+    gov["auditor"] = gov["auditor_history"][-1] if gov["auditor_history"] else None
+    predictions = []
+    for p in dossier.get("predictions", []):
+        if p.get("source_news_id") == news_id:
+            continue
+        if p.get("resolved_by") == news_id:
+            p = {k: v for k, v in p.items() if k not in ("resolved_by", "resolved_on", "actual")} | {"status": "OPEN"}
+        predictions.append(p)
+    dossier["predictions"] = predictions
 
 
 def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str | None, updated_at: str) -> dict:
@@ -189,7 +207,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     if deal is not None and (deal.amount_cr or deal.updates_deal_id):
         entry = {"stage": deal.stage, "amount_cr": deal.amount_cr, "progress": deal.progress,
                  "as_of": as_of, "source_news_id": news_id}
-        details = {k: v for k, v in deal.model_dump(include={"includes_gst", "counterparty", "segment", "execution_by"}).items()
+        details = {k: v for k, v in deal.model_dump(include={"includes_gst", "counterparty", "segment", "execution_by", "expansion", "usage"}).items()
                    if v is not None}
         deals = d.get("deals", [])
         target = next((x for x in deals if x["id"] == deal.updates_deal_id and x["as_of"] < as_of), None) \
@@ -265,6 +283,56 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     overflow = max(0, len(items) - 80)
     drop = {w["id"] for w in closed[:overflow]}
     d["watchlist"] = [w for w in items if w["id"] not in drop]
+
+    identity = d.setdefault("identity", {"former_names": [], "entities": []})
+    names = {n.lower(): n for n in identity.get("former_names", [])}
+    for name in delta.former_names:
+        name = " ".join(name.split())[:120]
+        if name and name.lower() != (d.get("company_name") or "").lower():
+            names.setdefault(name.lower(), name)
+    identity["former_names"] = list(names.values())[:6]
+    entities = {_norm(e["name"]): e for e in identity.get("entities", [])}
+    for e in delta.entities[:6]:
+        key = _norm(e.name)
+        if key and key not in entities:
+            entities[key] = {"name": e.name.strip()[:120], "type": e.type, "as_of": as_of, "source_news_id": news_id}
+    identity["entities"] = list(entities.values())[-20:]
+
+    if delta.ownership and any(v is not None for k, v in delta.ownership.model_dump().items() if k != "period"):
+        period = _period(delta.ownership.period)
+        rows = [o for o in d.get("ownership", []) if o["period"] != period]
+        rows.append({k: v for k, v in delta.ownership.model_dump().items() if v is not None}
+                    | {"period": period, "as_of": as_of, "source_news_id": news_id})
+        d["ownership"] = sorted(rows, key=lambda o: (str(due_date(o["period"]) or ""), o["as_of"]))[-8:]
+
+    if delta.auditor and (delta.auditor.opinion or delta.auditor.change or delta.auditor.name):
+        gov = d.setdefault("governance", {"auditor": None, "auditor_history": []})
+        entry = {k: v for k, v in delta.auditor.model_dump().items() if v is not None} | {"as_of": as_of, "source_news_id": news_id}
+        gov["auditor_history"] = sorted(gov.get("auditor_history", []) + [entry], key=lambda a: a["as_of"])[-6:]
+        gov["auditor"] = gov["auditor_history"][-1]
+
+    predictions = {p["id"]: p for p in d.get("predictions", [])}
+    if output.card is not None:
+        for k in output.card.track_next.kpis_to_verify:
+            if not (k.metric and k.period and k.value is not None):
+                continue
+            pid = "p_" + _hash(filing.scrip_code, _norm(k.metric), _period(k.period), f"{k.value:g}")
+            predictions.setdefault(pid, {
+                "id": pid, "metric": _norm(k.metric), "period": _period(k.period), "value": k.value,
+                "comparison": k.comparison or ">=", "kpi": k.kpi.strip()[:200], "created_on": as_of,
+                "source_news_id": news_id, "status": "OPEN",
+            })
+    by_key = {(m["metric"], m["period"]): m for m in d["financial_metrics"]}
+    for p in predictions.values():
+        if p["status"] != "OPEN" or p["created_on"] >= as_of:
+            continue
+        actual = by_key.get((p["metric"], p["period"]))
+        if actual is None or not reported_by(actual, news_id):
+            continue
+        hit = {">=": actual["value"] >= p["value"], "<=": actual["value"] <= p["value"],
+               "=": abs(actual["value"] - p["value"]) <= abs(p["value"]) * 0.02}[p["comparison"]]
+        p.update(status="MET" if hit else "MISSED", actual=actual["value"], resolved_on=as_of, resolved_by=news_id)
+    d["predictions"] = sorted(predictions.values(), key=lambda p: p["created_on"])[-60:]
 
     if output.is_material:
         d["timeline"] = sorted(d.get("timeline", []) + [{
@@ -363,6 +431,14 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
             **({"incl_gst": True} if e.get("includes_gst") else {}),
         })
     notes = [f"{n['as_of'][:10]}: {n['text']}" for n in dossier.get("operating_notes", []) if before(n)]
+    identity = dossier.get("identity") or {}
+    entities = [f"{e['name']} ({e['type']})" if e.get("type") else e["name"] for e in identity.get("entities", []) if before(e)]
+    ownership = [{k: v for k, v in o.items() if k not in ("as_of", "source_news_id")}
+                 for o in dossier.get("ownership", []) if before(o)][-2:]
+    auditors = [a for a in (dossier.get("governance") or {}).get("auditor_history", []) if before(a)]
+    predictions = [{"id": p["id"], "kpi": p["kpi"], "metric": p["metric"], "period": p["period"], "target": f"{p['comparison']} {p['value']:g}"}
+                   for p in dossier.get("predictions", []) if p.get("created_on", "") < cutoff
+                   and (p["status"] == "OPEN" or (p.get("resolved_on") or "") >= cutoff)]
     summary = dossier.get("business_summary")
 
     for periods, timeline_n, guidance_n in ((6, 12, 20), (4, 8, 12), (2, 5, 8), (1, 3, 5)):
@@ -377,6 +453,11 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
             "deals": deals[-guidance_n:],
             "operating_notes": notes[-max(3, guidance_n // 2):],
             "upcoming_events": upcoming[:6],
+            "former_names": identity.get("former_names") or None,
+            "entities": entities[-8:],
+            "ownership": ownership,
+            "auditor": {k: v for k, v in auditors[-1].items() if k not in ("as_of", "source_news_id")} if auditors else None,
+            "predictions": predictions[-guidance_n:],
         }
         view = {k: v for k, v in view.items() if v}
         if len(json.dumps(view, ensure_ascii=False)) <= budget_chars:
@@ -410,6 +491,13 @@ def dossier_as_of(dossier: dict | None, cutoff: str, inclusive: bool = True) -> 
         if history:
             deals.append(_with_history(e, history))
     d["deals"] = deals
+    d["ownership"] = [o for o in dossier.get("ownership", []) if ok(o.get("as_of"))]
+    gov = dossier.get("governance") or {}
+    history = [a for a in gov.get("auditor_history", []) if ok(a.get("as_of"))]
+    d["governance"] = {"auditor": history[-1] if history else None, "auditor_history": history}
+    d["predictions"] = [
+        p if ok(p.get("resolved_on")) else {k: v for k, v in p.items() if k not in ("resolved_by", "resolved_on", "actual")} | {"status": "OPEN"}
+        for p in dossier.get("predictions", []) if ok(p.get("created_on"))]
     for key, born in (("guidance", "given_on"), ("watchlist", "created_on")):
         items = []
         for item in dossier.get(key, []):

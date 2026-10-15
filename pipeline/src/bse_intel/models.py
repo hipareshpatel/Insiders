@@ -286,6 +286,16 @@ class NotableChange(_Lenient):
         return "NEUTRAL"
 
 
+def _enum_early(allowed: tuple[str, ...], aliases: dict[str, str]):
+    def validate(value: Any) -> str | None:
+        text = str(value or "").strip().upper()
+        if text in allowed:
+            return text
+        text = re.sub(r"[^A-Z]+", "_", text).strip("_")
+        return aliases.get(text)
+    return BeforeValidator(validate)
+
+
 class Milestone(_Lenient):
     what: str
     when: OptStr = None          # as stated: "Q1FY28", "Nov 19, 2026"
@@ -303,6 +313,12 @@ class Milestone(_Lenient):
 class KpiWatch(_Lenient):
     kpi: str
     check_in: OptStr = None      # where to verify it: "Q3FY27 results", "next monthly update"
+    # A testable prediction (blueprint Loop 2): the dossier metric, the period it is due for, the
+    # number and the comparison. Code checks it when that period's figures arrive.
+    metric: OptStr = None        # snake_case financial metric, e.g. "finance_cost", "revenue"
+    period: OptStr = None        # "Q3FY27", "FY27"
+    value: Num = None
+    comparison: Annotated[str | None, _enum_early((">=", "<=", "="), {"GTE": ">=", "LTE": "<=", "EQ": "=", "AT_LEAST": ">=", "AT_MOST": "<=", "ABOVE": ">=", "BELOW": "<="})] = None
     target: OptStr = None
 
 
@@ -355,6 +371,10 @@ class DealValue(_Lenient):
                                                 "PARTLY_COMMISSIONED": "PARTIALLY_COMPLETED", "PARTLY_COMPLETED": "PARTIALLY_COMPLETED",
                                                 "AWARDED": "LOA", "NOTICE_TO_PROCEED": "WORK_ORDER"}, "OTHER")] = "OTHER"
     segment: OptStr = None        # business line, e.g. "wind EPC", "underground cabling"
+    # Capex physics (blueprint modules 4-5): new site or existing one; sold outside or used in-house.
+    expansion: Annotated[str | None, _enum(("BROWNFIELD", "GREENFIELD"), {"EXISTING_SITE": "BROWNFIELD", "NEW_SITE": "GREENFIELD"})] = None
+    usage: Annotated[str | None, _enum(("MERCHANT_SALE", "CAPTIVE", "HYBRID"), {"MERCHANT": "MERCHANT_SALE", "CAPTIVE_INTEGRATION": "CAPTIVE",
+                                                                         "CAPTIVE_CONSUMPTION": "CAPTIVE", "BACKWARD_INTEGRATION": "CAPTIVE"})] = None
     execution_by: OptStr = None   # as stated: "31 July 2027", "12 months"
     progress: OptStr = None       # e.g. "40 MW of 60 MW commissioned"
     updates_deal_id: OptStr = None  # a deal already in memory that this filing moves to a new stage
@@ -586,6 +606,31 @@ class AnalystConcern(_Lenient):
     management_response: OptStr = None
 
 
+class Entity(_Lenient):
+    name: str
+    type: OptStr = None          # "100% subsidiary", "step-down WOS", "JV (51%)", "brand", "plant"
+
+
+class Ownership(_Lenient):
+    """Shareholding for a quarter-end (from a shareholding pattern, results or an annual report)."""
+
+    period: str
+    promoter_pct: Num = None
+    pledge_pct: Num = None       # promoter shares pledged, % of promoter holding
+    fii_pct: Num = None
+    dii_pct: Num = None
+    retail_holders: Num = None   # number of small shareholders
+
+
+class Auditor(_Lenient):
+    name: OptStr = None
+    opinion: Annotated[str | None, _enum(("UNMODIFIED", "EMPHASIS_OF_MATTER", "QUALIFIED", "ADVERSE", "DISCLAIMER"),
+                                         {"CLEAN": "UNMODIFIED", "UNQUALIFIED": "UNMODIFIED", "EOM": "EMPHASIS_OF_MATTER",
+                                          "EMPHASIS": "EMPHASIS_OF_MATTER", "DISCLAIMER_OF_OPINION": "DISCLAIMER"})] = None
+    note: OptStr = None          # the matter qualified or emphasised, with its ₹ figure
+    change: OptStr = None        # "resigned", "appointed", when this filing changes the auditor
+
+
 class DossierDelta(_Lenient):
     business_summary: OptStr = None
     financial_metrics: Annotated[list[FinancialMetric], _drop_invalid(FinancialMetric)] = Field(default_factory=list)
@@ -598,6 +643,10 @@ class DossierDelta(_Lenient):
     upcoming_events: Annotated[list[UpcomingEvent], _drop_invalid(UpcomingEvent)] = Field(default_factory=list)
     analyst_concerns: Annotated[list[AnalystConcern], _drop_invalid(AnalystConcern)] = Field(default_factory=list)
     operating_notes: StrList = Field(default_factory=list)  # feedstock, realisations, utilisation, order book...
+    former_names: StrList = Field(default_factory=list)     # "Novartis India Limited" (identity, blueprint compartment 1)
+    entities: Annotated[list[Entity], _drop_invalid(Entity)] = Field(default_factory=list)
+    ownership: Annotated[Ownership | None, BeforeValidator(lambda v: v if isinstance(v, dict) else None)] = None
+    auditor: Annotated[Auditor | None, BeforeValidator(lambda v: v if isinstance(v, dict) else None)] = None
 
 
 class Pass2Output(_Lenient):

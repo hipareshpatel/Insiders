@@ -205,6 +205,7 @@ function Overview({ company, dossier, cards, onTab }: { company: Company | null;
       </Panel>
 
       <DealsAndNotes dossier={dossier} />
+      <IdentityAndOwnership dossier={dossier} />
 
       <Panel title="The good & the bad" hint="Computed signals and notable changes from recent filings">
         <div className="grid gap-6 md:grid-cols-2">
@@ -225,6 +226,65 @@ function Overview({ company, dossier, cards, onTab }: { company: Company | null;
           </ul>
         ) : <p className="text-sm text-ink-3">Nothing to track yet.</p>}
       </Panel>
+    </div>
+  );
+}
+
+/** Who the company is (former names, subsidiaries, brands), who owns it, what the auditor said, and
+ * the numeric targets the platform is checking against results (blueprint compartments 1, 9, 10). */
+function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
+  const identity = dossier?.identity;
+  const owners = dossier?.ownership ?? [];
+  const auditor = dossier?.governance?.auditor;
+  const predictions = [...(dossier?.predictions ?? [])].reverse().slice(0, 8);
+  if (!identity?.former_names?.length && !identity?.entities?.length && !owners.length && !auditor && !predictions.length) return null;
+  const last = owners[owners.length - 1];
+  const prev = owners[owners.length - 2];
+  const delta = (k: "promoter_pct" | "fii_pct" | "dii_pct" | "pledge_pct") =>
+    last?.[k] != null && prev?.[k] != null ? ` (${(last[k]! - prev[k]!) >= 0 ? "+" : ""}${(last[k]! - prev[k]!).toFixed(1)} pp)` : "";
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      <Panel title="Identity & governance" hint="Former names, group entities, auditor">
+        <dl className="space-y-2 text-[13.5px]">
+          {identity?.former_names?.length ? <div><dt className="eyebrow text-ink-3">Formerly</dt><dd className="text-ink">{identity.former_names.join(" · ")}</dd></div> : null}
+          {identity?.entities?.length ? (
+            <div><dt className="eyebrow text-ink-3">Group entities & brands</dt>
+              <dd className="text-ink">{identity.entities.map((e) => e.type ? `${e.name} (${e.type})` : e.name).join(" · ")}</dd></div>
+          ) : null}
+          {auditor ? (
+            <div><dt className="eyebrow text-ink-3">Auditor</dt>
+              <dd className={cn(["QUALIFIED", "ADVERSE", "DISCLAIMER"].includes(auditor.opinion ?? "") ? "text-neg" : "text-ink")}>
+                {[auditor.name, auditor.opinion && titleCase(auditor.opinion), auditor.change].filter(Boolean).join(" · ")}
+                {auditor.note ? <span className="block text-[12px] text-ink-3">{auditor.note}</span> : null}
+              </dd></div>
+          ) : null}
+          {last ? (
+            <div><dt className="eyebrow text-ink-3">Shareholding · {last.period}</dt>
+              <dd className="num text-ink">
+                {last.promoter_pct != null && <span className="mr-3">Promoter {last.promoter_pct}%{delta("promoter_pct")}</span>}
+                {last.fii_pct != null && <span className="mr-3">FII {last.fii_pct}%{delta("fii_pct")}</span>}
+                {last.dii_pct != null && <span className="mr-3">DII {last.dii_pct}%{delta("dii_pct")}</span>}
+                {last.pledge_pct != null && <span className={cn((last.pledge_pct ?? 0) > 0 && "text-warn")}>Pledged {last.pledge_pct}%{delta("pledge_pct")}</span>}
+              </dd></div>
+          ) : null}
+        </dl>
+      </Panel>
+      {predictions.length > 0 && (
+        <Panel title="Targets being checked" hint="Numeric guidance, checked automatically against results">
+          <ul className="divide-y divide-line">
+            {predictions.map((p) => (
+              <li key={p.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 py-2 text-[13.5px]">
+                <span className="text-ink">{p.kpi}
+                  <span className="num block text-[12px] text-ink-3">{p.period} · target {p.comparison} {p.value}{p.actual != null ? ` · actual ${p.actual}` : ""}</span>
+                </span>
+                <Badge className={p.status === "MET" ? "bg-pos-soft text-pos" : p.status === "MISSED" ? "bg-neg-soft text-neg" : "bg-surface-2 text-ink-2"}>
+                  {p.status === "OPEN" ? "Open" : p.status === "MET" ? "Met" : "Missed"}
+                </Badge>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      )}
     </div>
   );
 }

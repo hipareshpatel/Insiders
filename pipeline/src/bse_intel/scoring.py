@@ -45,6 +45,9 @@ def credibility(dossier: dict | None) -> tuple[float | None, int, int]:
         status = g.get("status")
         delivered += status in DELIVERED
         broken += status in BROKEN
+    for p in (dossier or {}).get("predictions", []):  # Loop 2: numeric targets checked against results
+        delivered += p.get("status") == "MET"
+        broken += p.get("status") == "MISSED"
     total = delivered + broken
     return (round(delivered / total * 100, 1) if total else None), delivered, total
 
@@ -141,6 +144,10 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
     if "PROMISE_DELIVERED" in kinds:
         gate2 = True
         reasons.append("Delivers a promise in memory")
+    if "VOLUME_STREAK" in kinds:
+        gate2 = True
+        pillars["margin"] = max(pillars["margin"], 15)
+        reasons.append("Multi-month volume streak above 25% YoY")
     shifts = [s for s in signals if s["type"] == "METRIC_SHIFT" and s["severity"] == "POSITIVE"]
     if event_type == "MONTHLY_BUSINESS_UPDATE" and shifts:
         pillars["margin"] = max(pillars["margin"], 14)
@@ -197,6 +204,10 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
         vetoes.append("Credit rating: issuer not cooperating")
     if any(s["type"] == "ORDER_FLOW" and "not a new order" in s["text"].lower() for s in signals):
         vetoes.append("Stage update of an order already counted")
+    if any(s["type"] == "AUDIT_FLAG" and s["severity"] == "WARNING" for s in signals):
+        vetoes.append("Auditor qualification or mid-term resignation")
+    if any(s["type"] == "OWNERSHIP_SHIFT" and s["severity"] == "WARNING" for s in signals):
+        pillars["penalty"] -= 10
 
     total_points = sum(pillars.values())
     if vetoes:

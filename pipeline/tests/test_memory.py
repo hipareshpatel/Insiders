@@ -281,3 +281,49 @@ def test_metric_shift_ignores_comparative_columns():
     after = merge(d, out, filing("q2", Q2), "HIGH", "now")
     texts = [s["text"] for s in compute(d, after, out, filing("q2", Q2), {}) if s["type"] == "METRIC_SHIFT"]
     assert not any("Q1FY27" in t for t in texts)
+
+
+def test_predictions_resolve_against_reported_figures_and_feed_credibility():
+    from bse_intel.scoring import credibility
+
+    d = merge(new_dossier(filing("call", Q1)), Pass2Output.model_validate({
+        "is_material": True, "event_type": "CONCALL_PRESENTATION",
+        "card": {"impact_level": "MODERATE", "headline": "Demo Cement guides lower interest after rights issue", "what_happened": ["x"],
+                 "track_next": {"kpis_to_verify": [{"kpi": "Quarterly interest below ₹16 Cr", "metric": "finance_cost",
+                                                    "period": "Q2 FY27", "value": 16, "comparison": "below"}]}}}),
+        filing("call", Q1), "MODERATE", "now")
+    assert d["predictions"][0]["status"] == "OPEN" and d["predictions"][0]["comparison"] == "<="
+    out = output(financial_metrics=[{"metric": "finance_cost", "period": "Q2FY27", "value": 14.2}])
+    after = merge(d, out, filing("q2", Q2), "HIGH", "now")
+    (p,) = after["predictions"]
+    assert p["status"] == "MET" and p["actual"] == 14.2
+    signals = compute(d, after, out, filing("q2", Q2), {})
+    assert any(s["type"] == "PREDICTION_RESOLVED" and s["severity"] == "POSITIVE" for s in signals)
+    assert credibility(after)[0] == 100.0
+    # re-analysing the results filing reopens it
+    again = merge(after, output(financial_metrics=[]), filing("q2", Q2), "HIGH", "now")
+    assert again["predictions"][0]["status"] == "OPEN"
+
+
+def test_monthly_volume_streak_and_quarter_preview():
+    months = [("JUL-2025", 800), ("AUG-2025", 750), ("SEP-2025", 812), ("JUL-2026", 1000), ("AUG-2026", 1008)]
+    d = merge(new_dossier(filing("m0", Q1)), output(event_type="MONTHLY_BUSINESS_UPDATE",
+              financial_metrics=[{"metric": "sales_volume", "period": p, "value": v, "unit": "UNITS"} for p, v in months]),
+              filing("m0", Q1), "LOW", "now")
+    out = output(event_type="MONTHLY_BUSINESS_UPDATE", financial_metrics=[
+        {"metric": "sales_volume", "period": "Sep-2026", "value": 1071, "unit": "UNITS"},
+        {"metric": "sales_volume", "period": "Sep-2025", "value": 812, "unit": "UNITS"}])
+    after = merge(d, out, filing("sep", Q2), "MODERATE", "now")
+    kinds = {s["type"]: s for s in compute(d, after, out, filing("sep", Q2), {})}
+    assert "2 months running" in kinds["VOLUME_STREAK"]["text"]  # Aug +34.4%, Sep +31.9% (July is exactly 25%)
+    assert "3,079 vs 2,362" in kinds["QUARTER_PREVIEW"]["text"]
+
+
+def test_auditor_qualification_and_ownership_shift():
+    d = merge(new_dossier(filing("s1", Q1)), output(ownership={"period": "Jun-2026", "promoter_pct": 55, "fii_pct": 5, "dii_pct": 4,
+                                                               "retail_holders": 40000}), filing("s1", Q1), "LOW", "now")
+    out = output(ownership={"period": "Sep-2026", "promoter_pct": 55.5, "fii_pct": 6, "dii_pct": 4.5, "retail_holders": 36000},
+                 auditor={"name": "X & Co", "opinion": "qualified", "note": "₹42 Cr receivable"})
+    after = merge(d, out, filing("s2", Q2), "HIGH", "now")
+    kinds = {s["type"]: s for s in compute(d, after, out, filing("s2", Q2), {})}
+    assert kinds["OWNERSHIP_SHIFT"]["severity"] == "POSITIVE" and kinds["AUDIT_FLAG"]["severity"] == "WARNING"

@@ -38,6 +38,11 @@ export const SIGNAL: Record<Signal["type"], { label: string; icon: typeof Gauge 
   METRIC_SHIFT: { label: "Metric shift", icon: Gauge },
   BOARD_DELIBERATION: { label: "Long board meeting", icon: Timer },
   REG30_THRESHOLD: { label: "Reg 30 materiality", icon: Scale },
+  PREDICTION_RESOLVED: { label: "Target check", icon: ListChecks },
+  OWNERSHIP_SHIFT: { label: "Ownership", icon: Layers },
+  AUDIT_FLAG: { label: "Audit", icon: ShieldAlert },
+  VOLUME_STREAK: { label: "Volume streak", icon: Gauge },
+  QUARTER_PREVIEW: { label: "Quarter preview", icon: Gauge },
 };
 export const SEVERITY_TEXT: Record<Signal["severity"], string> = { POSITIVE: "text-pos", WARNING: "text-warn", INFO: "text-info" };
 

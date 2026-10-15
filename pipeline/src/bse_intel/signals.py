@@ -54,8 +54,9 @@ class Signal:
 
 def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filing, company: dict | None) -> list[dict]:
     """Signals from memory as it stood at the filing: ``before`` excludes the filing, ``after`` includes
-    it, and neither may hold later facts (pass them through ``dossier_as_of``). Market prices are
-    today's, so price comparisons are made only for recent filings."""
+    it, and neither may hold later facts (pass them through ``dossier_as_of``). ``company`` carries market
+    data as of the filing when a stored series has it (``prices.point_in_time``); today's prices are
+    used only for recent filings."""
     company = priced_for(company, filing)
     signals: list[Signal] = []
     signals += _promises(before, after, output, filing)

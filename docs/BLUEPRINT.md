@@ -1060,6 +1060,15 @@ Strict .gitignore Isolation for Local Data: Keep ./data/ (local_d1.sqlite, local
 ## 15. End-to-End Execution Playbook & The Daily 15-Minute Investor Ritual
 Follow this exact six-phase sequence to take the platform from code completion to daily live operation without wasting time or API quota.
 
+> **Owner addendum (2026-10-15): data dependency order.** Build data in this order so nothing has to
+> be re-run: (0) company master by scrip code (`sync-companies`) → (1) market caps and daily price
+> history (`market-data --all`, `price-history`) → (2) corporate actions, which arrive inside the
+> filings and are read from memory → (3) filings and memory, 2025 baseline then 2026, chronologically
+> (`known_since <= filed_at`) → (4) signals, score and Top Signals. Each history card is scored
+> with the price, market cap and returns of its own filing date. Prices come from yfinance, whose
+> close is already split/bonus-adjusted (no adjustment table needed); BSE bhavcopy files, if ever
+> used, are in the UDiFF format. Dual keys (Phase 1) are replaced by one key per provider (TRACKER D1).
+
 ### Phase 1: Final Audit Sweep & Dual-Key Setup (30 Minutes)
 Have Antigravity apply the combined fixes from all 6 audit reports and verify that all automated unit and integration tests pass (100% green).
 Populate your .env file with your dual API keys (GROQ_API_KEY_1, GROQ_API_KEY_2, NVIDIA_API_KEY_1, NVIDIA_API_KEY_2, MISTRAL_API_KEY_1, MISTRAL_API_KEY_2, ZAI_API_KEY_1, ZAI_API_KEY_2) and set STORAGE_MODE=local.

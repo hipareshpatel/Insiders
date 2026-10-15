@@ -39,6 +39,9 @@ class Settings:
     # Extracted PDF text per filing (gzip JSON), so re-analysis never downloads or OCRs again.
     text_cache_dir: Path | None = field(default_factory=lambda: (None if _env("TEXT_CACHE", "1") in ("0", "off")
                                                                  else Path(_env("TEXT_CACHE_DIR", str(_REPO_DIR / "data" / "text_cache")))))
+    # Daily price series per company for point-in-time footers during the history fill (laptop).
+    price_dir: Path | None = field(default_factory=lambda: (None if _env("PRICE_DIR", "") in ("0", "off")
+                                                            else Path(_env("PRICE_DIR", str(_REPO_DIR / "data" / "prices")))))
     # Companies analysed: market cap at least this (₹ Cr), or unknown, or on the watchlist. 0 = all.
     universe_min_mcap_cr: float = field(default_factory=lambda: float(_env("UNIVERSE_MIN_MCAP_CR", "100")))
     platform_url: str | None = field(default_factory=lambda: _env("PLATFORM_API_URL"))

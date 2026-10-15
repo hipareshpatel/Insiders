@@ -46,6 +46,7 @@ from .settings import Settings
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals
+from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected
 from . import universe
@@ -59,6 +60,8 @@ BATCH = 40
 HISTORY_LIMIT = 200      # one company's filings fetched per page (a year rarely has more)
 HISTORY_INLINE = 30      # history analysed ahead of a live filing; a longer backlog goes to the backfill
 MAX_ORDER = 20_000       # companies in the cached backfill order
+PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_1y",
+                 "median_turnover_cr", "point_in_time")
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
 MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing this network
@@ -180,6 +183,8 @@ class Pipeline:
     ):
         self.settings = settings
         self.sink = sink
+        self._prices = PriceStore(settings.price_dir) if settings.price_dir and settings.price_dir.is_dir() else None
+        self._buckets = settings.load_toml("market.toml")["size_buckets"]
         self.gateway = gateway
         self.bse = bse or BseClient()
         self.prompts = prompts or PromptEngine(settings)
@@ -585,7 +590,10 @@ class Pipeline:
         # that a backfill may already have stored.
         before = dossier_as_of(dossier, filing.filed_at, inclusive=False)
         current = dossier_as_of(merged, filing.filed_at)
-        signals = compute_signals(before, current, out, filing, company) + text_signals(text, event_type)
+        # Market data as it stood when the filing came out: the stored daily series (history fill on
+        # the laptop), else today's figures, dropped when they are too new for this filing.
+        priced = point_in_time(company, filing.filed_at, self._prices, self._buckets) or priced_for(company, filing)
+        signals = compute_signals(before, current, out, filing, priced) + text_signals(text, event_type)
         self.sink.put_dossier(filing.scrip_code, merged)
 
         card_json = {
@@ -604,9 +612,10 @@ class Pipeline:
             "model": result.model_label,
         }
         needs_review = checks.needs_review
-        rated = score_card(card_json, event_type, signals, current, priced_for(company, filing), needs_review, card.impact_level)
+        rated = score_card(card_json, event_type, signals, current, priced, needs_review, card.impact_level)
         card_json["score"] = rated.as_dict()
         card_json["model_impact"] = card.impact_level
+        card_json["priced_at_filing"] = {k: priced[k] for k in PRICED_FIELDS if priced.get(k) is not None} or None
         row = {
             "news_id": filing.news_id, "scrip_code": filing.scrip_code,
             "symbol": company.get("symbol") or filing.symbol, "company_name": filing.company_name,

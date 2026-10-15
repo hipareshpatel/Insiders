@@ -544,7 +544,7 @@ function DeepDive({ row, card, shown, moreFacts, keyNumbers }: {
         </Section>
       )}
 
-      <MarketReaction raw={row.post_event_return_json} />
+      <MarketReaction raw={row.post_event_return_json} atFiling={card.priced_at_filing} />
 
       {card.review && (
         <Section label="Second check">
@@ -577,14 +577,22 @@ function signedPct(v: number | undefined) {
 }
 
 /** Loop 1: what the stock did after the filing, against the index (filled nightly). */
-function MarketReaction({ raw }: { raw?: string | null }) {
+function MarketReaction({ raw, atFiling }: { raw?: string | null; atFiling?: CardBody["priced_at_filing"] }) {
   let rx: PriceReaction | null = null;
   try { rx = raw ? JSON.parse(raw) : null; } catch { rx = null; }
-  if (!rx) return null;
-  const points = (["t1", "t3", "t5"] as const).filter((k) => rx![k]);
-  if (!points.length) return null;
+  const points = rx ? (["t1", "t3", "t5"] as const).filter((k) => rx![k]) : [];
+  const at = atFiling?.last_price !== undefined ? atFiling : null;
+  if (!points.length && !at) return null;
   return (
     <Section label="How the market reacted">
+      {at && (
+        <p className="num mb-2 text-[12.5px] text-ink-2">
+          At filing ({at.price_date}): ₹{at.last_price!.toLocaleString("en-IN")}
+          {at.market_cap_cr !== undefined ? ` · market cap ₹${Math.round(at.market_cap_cr).toLocaleString("en-IN")} Cr` : ""}
+          {at.ret_1w !== undefined ? ` · 1W ${signedPct(at.ret_1w)}` : ""}{at.ret_1m !== undefined ? ` · 1M ${signedPct(at.ret_1m)}` : ""}
+        </p>
+      )}
+      {rx && points.length > 0 && <>
       <dl className="num grid grid-cols-3 gap-x-4 text-[13px]">
         {points.map((k) => {
           const p = rx![k]!;
@@ -604,6 +612,7 @@ function MarketReaction({ raw }: { raw?: string | null }) {
         day 0 is {rx.day0}.{rx.complete ? "" : " Still being measured."}
         {rx.missed_alpha ? " Flagged as missed alpha: rated below high impact, but the stock moved sharply on heavy volume." : ""}
       </p>
+      </>}
     </Section>
   );
 }

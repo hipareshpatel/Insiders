@@ -122,6 +122,17 @@ def cmd_sync_companies(args, settings, sink) -> int:
     return 0
 
 
+def cmd_price_history(args, settings, sink) -> int:
+    from datetime import date, timedelta
+
+    from .prices import fill
+
+    start = args.start or (date.fromisoformat(settings.backfill_start) - timedelta(days=400)).isoformat()
+    scrips = [s.strip() for s in args.scrips.split(",")] if args.scrips else None
+    print(json.dumps(fill(settings, sink, start, scrips)))
+    return 0
+
+
 def cmd_post_mortem(args, settings, sink) -> int:
     from .learning import post_mortem
 
@@ -215,6 +226,10 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("market-data", help="refresh prices, returns and market caps")
     p.add_argument("--all", action="store_true", help="every company, not only those with cards (laptop, before backfill)")
     p.set_defaults(func=cmd_market_data)
+    p = sub.add_parser("price-history", help="store daily prices for point-in-time card footers (laptop, before backfill)")
+    p.add_argument("--from", dest="start", help="first day (default: a year before BACKFILL_START)")
+    p.add_argument("--scrips", help="comma-separated scrip codes (default: every company)")
+    p.set_defaults(func=cmd_price_history)
     p = sub.add_parser("post-mortem", help="Loop 1: T+1/T+3/T+5 excess returns after each card")
     p.add_argument("--since", help="revisit cards filed from this date (default: the last 14 days)")
     p.set_defaults(func=cmd_post_mortem)

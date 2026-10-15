@@ -21,6 +21,7 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | D8 | Market data from yfinance (no bhavcopy pipeline). | earlier |
 | D9 | Cards that fail checks are never hidden: second check by another provider, then published with an Unverified mark. | earlier |
 | D10 | Sector-specific footer metrics (bank GNPA/NIM, cement EBITDA/t, telecom ARPU, hotel RevPAR...). | earlier |
+| D12 | Data is built in dependency order: company master → market caps → daily price history → filings/memory (2025 baseline, then 2026) → signals. Prices stay on yfinance (D8): its close is split/bonus-adjusted, so close × today's shares gives the day's market cap without a corporate-action adjustment table. If bhavcopy is ever needed, BSE's files are now in the UDiFF format. | 2026-10-15 |
 | D11 | Minimise multi-agent runs (token budget); keep docs current so context compaction loses nothing. | 2026-10-15 |
 
 ## Optional, not adopted (cost)
@@ -82,7 +83,7 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | Per-company R2 dossier, provenance, time travel | done | |
 | 10 compartments as specified | partial | done: identity (former names, entities), financial history, sector KPIs, segments, capex/projects and orders (deals with stages, brownfield, captive), guidance/watchlist, monthly ledger (M-period metrics + streak/preview signals), corporate actions, ownership/governance, predictions. Left: calibration rules and peer margin benchmarks (Loop 1/2 outputs) |
 | `known_since` = earliest, never moved forward (bi-temporal) | done | per-figure sources; value = latest restatement |
-| Signals, footer, dilution read memory as of the filing date | done | `dossier_as_of`; today's price not used for old filings |
+| Signals, footer, dilution read memory as of the filing date | done | `dossier_as_of`; market data as of the filing from `price-history` (`prices.py`), else today's only for recent filings |
 | Partition by period kind, newest period first; OPEN items never evicted | done | |
 | Atomic local writes (tmp + replace) | done | dossiers, text cache, sync progress |
 
@@ -134,7 +135,7 @@ and as prompt rules otherwise. The per-module list is in BLUEPRINT §9.
 ### §12 Learning loops
 | Item | Status |
 |---|---|
-| Loop 1 price post-mortem (T+1/3/5 excess return, 15:30 IST rule) | todo |
+| Loop 1 price post-mortem (T+1/3/5 excess return, 15:30 IST rule) | done: `post-mortem` nightly; missed-alpha flags and dampener list in kv. Re-running Pass 2 on missed alpha and writing sector_learned_rules: todo |
 | Loop 2 predictions vs reality, credibility score | done (predictions + credibility); calibration rule text todo |
 | Loop 3 Star/Noise golden set injected as few-shot | done |
 
@@ -162,19 +163,22 @@ docs, sync-companies workflow.
 |---|---|---|
 | Smoke test (5 companies) | `python -m bse_intel backfill-companies --scrips 506525,532776,505192,500672,530019` | done (command) |
 | Company master + market caps | `python -m bse_intel sync-companies` then `market-data --all` | done |
+| Daily price history (point-in-time footers) | `python -m bse_intel price-history` | done |
+| Loop 1 reactions for history | `python -m bse_intel post-mortem --since 2025-01-01` | done |
 | Universe ≥ ₹100 Cr | `UNIVERSE_MIN_MCAP_CR` (default 100); starred companies always in | done |
 | Pass A + B backfill | `python -m bse_intel run --mode backfill` repeatedly (resumable) | done |
 | Cloud sync | `python -m bse_intel sync-to-cloud` (repeat daily until complete) | done |
 
 ### §15 Playbook (how go-live happens)
 1. All tests green; `.env` with one key per provider; `BSE_INTEL_SINK=local`.
-2. Smoke test: 5 companies, 2025-01-01 → today, local website, compare with the case studies.
-3. `sync-companies` + market caps; universe = active and market cap ≥ ₹100 Cr (plus starred).
-4. Pass A: 2025 baseline. Pass B: 2026 → today. Resumable.
-5. `sync-to-cloud` (several days, budget-aware), then daily live runs.
+2. `sync-companies` + `market-data --all` (company master, market caps; universe = active and ≥ ₹100 Cr plus starred).
+3. `price-history` (daily prices since a year before BACKFILL_START), so history cards get the price, market cap and returns of their own date (D12).
+4. Smoke test: 5 companies, 2025-01-01 → today, local website, compare with the case studies.
+5. Pass A: 2025 baseline. Pass B: 2026 → today. Resumable. Then `post-mortem --since 2025-01-01`.
+6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 121 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 158 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

@@ -152,6 +152,8 @@ export interface CardBody {
     fixed?: string[];
   } | null;
   model: string;
+  /** Market data as it stood when the filing came out (stored price series, else recent data). */
+  priced_at_filing?: { last_price?: number; price_date?: string; market_cap_cr?: number; ret_1w?: number; ret_1m?: number; point_in_time?: boolean } | null;
 }
 
 export interface CardRow {

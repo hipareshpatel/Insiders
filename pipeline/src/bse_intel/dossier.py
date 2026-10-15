@@ -385,13 +385,36 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
             out[key] = {"period": metric["period"], "value": metric["value"]}
     kpis = []
     for spec in footer:
-        metric = latest((spec["metric"], *spec.get("aliases", ())), prefer_quarter=True)
+        fmt = spec.get("format", "num")
+        names = (spec["metric"], *spec.get("aliases", ()))
+        rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and due_date(m["period"])
+                and _unit_fits(fmt, m)]
+        if any(m["period"].startswith("Q") for m in rows):
+            rows = [m for m in rows if m["period"].startswith("Q")]
+        metric = max(rows, key=lambda m: (due_date(m["period"]), m["as_of"]), default=None)
         if metric:
-            kpis.append({"label": spec["label"], "format": spec.get("format", "num"),
-                         "period": metric["period"], "value": metric["value"]})
+            kpis.append({"label": spec["label"], "format": fmt, "period": metric["period"], "value": metric["value"]})
     if kpis:
         out["kpis"] = kpis[:2]
     return out
+
+
+def _unit_fits(fmt: str, metric: dict) -> bool:
+    """A footer figure is shown only in the unit its label promises: a gross NPA given in ₹ Cr is
+    not printed as a percentage, and a margin given as a fraction is not printed as 0.2%."""
+    unit = str(metric.get("unit") or "").upper().replace(" ", "")
+    value = metric["value"]
+    if fmt == "pct":
+        if unit in ("PCT", "%", "PERCENT"):
+            return True
+        return not unit.startswith("INR") and unit not in ("X", "RATIO") and 0 <= abs(value) <= 100
+    if fmt == "cr":
+        return unit in ("INR_CR", "", "CR")
+    if fmt == "x":
+        return unit in ("X", "RATIO", "TIMES", "") and abs(value) < 100
+    if fmt == "usd":
+        return unit.startswith("USD") or unit in ("$", "")
+    return unit not in ("PCT", "%", "PERCENT")
 
 
 _RESULT_METRICS = (

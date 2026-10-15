@@ -10,7 +10,7 @@ const CEILING = 0.95;
 const PROVIDER_LABEL: Record<string, string> = { groq: "Groq", nvidia: "NVIDIA NIM", mistral: "Mistral", zai: "Z.AI", cloudflare: "Workers AI" };
 
 export function SystemView() {
-  const query = useQuery({ queryKey: ["system"], queryFn: api.system, refetchInterval: 30_000 });
+  const query = useQuery({ queryKey: ["system"], queryFn: api.system, refetchInterval: 60_000 });
   if (query.isPending) return <Loading />;
   if (query.isError) return <div className="p-6"><Empty title="Could not load system status" body={String(query.error)} /></div>;
   const s = query.data;
@@ -29,14 +29,14 @@ export function SystemView() {
     <div className="mx-auto w-full max-w-[1200px] space-y-4 px-4 py-6 sm:px-6">
       <header>
         <h1 className="font-display text-[30px] leading-tight text-ink">System</h1>
-        <p className="mt-1 text-sm text-ink-2">Throughput, backfill progress and free-tier quota health. Refreshes every 30 seconds.</p>
+        <p className="mt-1 text-sm text-ink-2">Throughput, backfill progress and free-tier quota health. Refreshes every minute.</p>
       </header>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="Filings today" value={discoveredToday} sub={`${count("DROPPED_RULE")} noise · ${count("NOT_MATERIAL")} not material`} />
         <Stat label="Analysed today" value={count("ANALYZED")} sub={`${cards7d} cards in 7 days · ${high7d} high impact`} />
-        <Stat label="Queue" value={s.queue.pending} sub="pending analysis" tone={s.queue.pending > 500 ? "warn" : undefined} />
-        <Stat label="Failed" value={s.queue.failed} sub="will retry, up to 3 attempts" tone={s.queue.failed ? "warn" : undefined} />
+        <Stat label="Queue" value={s.queue.pending} cap={s.queue.cap} sub="pending analysis" tone={s.queue.pending > 500 ? "warn" : undefined} />
+        <Stat label="Failed" value={s.queue.failed} cap={s.queue.cap} sub="retried up to 3 runs, then left for review" tone={s.queue.failed ? "warn" : undefined} />
       </div>
 
       <section className="rounded-xl border border-line bg-surface p-4">
@@ -48,9 +48,23 @@ export function SystemView() {
           </span>
         </div>
         <Meter value={s.backfill.complete ? 1 : doneDays / totalDays} />
+        {!s.backfill.complete && s.backfill.companies_total ? (
+          <div className="mt-3">
+            <div className="num mb-1 text-xs text-ink-2">
+              Analysis: {num(Math.max(0, s.backfill.companies_total - (s.backfill.companies_left ?? 0)))} of {num(s.backfill.companies_total)} companies analysed (today's order)
+            </div>
+            <Meter value={1 - (s.backfill.companies_left ?? 0) / Math.max(1, s.backfill.companies_total)} />
+          </div>
+        ) : null}
         <p className="mt-2 text-xs text-ink-3">
-          Days are discovered oldest first; each company's filings are analysed in date order so early results and AGM guidance are in memory before later filings.
+          Days are discovered oldest first; history is then analysed company by company, largest market cap first, each in date order, so early results and AGM guidance are in memory before later filings.
         </p>
+        {s.d1 ? (
+          <p className="num mt-2 text-xs text-ink-3">
+            D1 today: {num(s.d1.writes_today)} rows written (free tier 100,000; backfill pauses at the budget)
+            {s.d1.size_bytes ? ` · database ${(s.d1.size_bytes / 1e6).toFixed(1)} MB of 500 MB` : ""}
+          </p>
+        ) : null}
       </section>
 
       <section className="rounded-xl border border-line bg-surface">
@@ -84,11 +98,13 @@ export function SystemView() {
   );
 }
 
-function Stat({ label, value, sub, tone }: { label: string; value: number; sub: string; tone?: "warn" }) {
+function Stat({ label, value, sub, tone, cap }: { label: string; value: number; sub: string; tone?: "warn"; cap?: number }) {
   return (
     <div className="rounded-xl border border-line bg-surface px-4 py-3">
       <div className="eyebrow text-ink-3">{label}</div>
-      <div className={cn("num mt-1.5 text-[26px] font-bold leading-none", tone === "warn" ? "text-warn" : "text-ink")}>{num(value)}</div>
+      <div className={cn("num mt-1.5 text-[26px] font-bold leading-none", tone === "warn" ? "text-warn" : "text-ink")}>
+        {num(value)}{cap && value >= cap ? "+" : ""}
+      </div>
       <div className="mt-0.5 text-xs text-ink-2">{sub}</div>
     </div>
   );
@@ -141,12 +157,15 @@ function RunRow({ run }: { run: PipelineRun }) {
   }
   const n = (k: string) => (typeof stats[k] === "number" ? (stats[k] as number) : 0);
   const duration = run.finished_at ? Math.round((new Date(run.finished_at).getTime() - new Date(run.started_at).getTime()) / 1000) : null;
-  const tone = run.status === "OK" ? "bg-pos-soft text-pos" : run.status === "RUNNING" ? "bg-info-soft text-info" : run.status === "PARTIAL" ? "bg-warn-soft text-warn" : "bg-neg-soft text-neg";
+  // A run still "RUNNING" after the job's timeout was stopped by the runner before it could report.
+  const stale = run.status === "RUNNING" && Date.now() - new Date(run.started_at).getTime() > 70 * 60_000;
+  const status = stale ? "STOPPED" : run.status;
+  const tone = stale ? "bg-neg-soft text-neg" : run.status === "OK" ? "bg-pos-soft text-pos" : run.status === "RUNNING" ? "bg-info-soft text-info" : run.status === "PARTIAL" ? "bg-warn-soft text-warn" : "bg-neg-soft text-neg";
   return (
     <tr className="border-b border-line last:border-0">
       <td className="num whitespace-nowrap px-4 py-2 text-xs text-ink-2" title={istDateTime(run.started_at)}>{relativeTime(run.started_at)}</td>
       <td className="px-4 py-2 text-ink">{run.mode}</td>
-      <td className="px-4 py-2"><Badge className={tone}>{run.status}</Badge></td>
+      <td className="px-4 py-2"><Badge className={tone}>{status}</Badge></td>
       <td className="num px-4 py-2 text-ink">{num(n("discovered"))}</td>
       <td className="num px-4 py-2 text-ink">{num(n("analyzed"))}</td>
       <td className="num px-4 py-2 text-ink">{num(n("cards_high"))}</td>

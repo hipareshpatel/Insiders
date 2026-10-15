@@ -20,7 +20,8 @@ async function get<T>(path: string, params?: Record<string, string | number | nu
   for (const [k, v] of Object.entries(params ?? {})) {
     if (v !== null && v !== undefined && v !== "") qs.set(k, String(v));
   }
-  const url = qs.size ? `${path}?${qs}` : path;
+  const query = qs.toString(); // not qs.size: undefined on Safari 16, which would drop every filter
+  const url = query ? `${path}?${query}` : path;
   const res = await fetch(url, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new ApiError(res.status, `${res.status} ${res.statusText}`);
   return res.json() as Promise<T>;
@@ -42,7 +43,7 @@ export const api = {
     get<FeedResponse>("/api/feed", { ...filters, cursor, limit }),
   card: (id: string) => get<CardRow>(`/api/cards/${encodeURIComponent(id)}`),
   noise: (date: string, offset = 0) =>
-    get<{ rows: NoiseRow[]; next_offset: number | null; not_stored: number | null }>("/api/noise", { date, offset }),
+    get<{ rows: NoiseRow[]; next_offset: number | null; rule_total: number }>("/api/noise", { date, offset }),
   search: (q: string) => get<SearchResponse>("/api/search", { q }),
   companies: (params: Record<string, string | number | null | undefined>) =>
     get<CompaniesResponse>("/api/companies", params),

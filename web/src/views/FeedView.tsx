@@ -146,7 +146,7 @@ function CardList({ filters, rangeLabel, view }: { filters: FeedFilters; rangeLa
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (query.isPending) return <Loading />;
-  if (query.isError) return <Empty title="Couldn't load the feed" body={String(query.error)} />;
+  if (!query.data) return <Empty title="Couldn't load the feed" body={String(query.error)} />;
   const cards = query.data.pages.flatMap((p) => p.cards);
   if (!cards.length) {
     return <Empty title={`No material filings · ${rangeLabel.toLowerCase()}`} body="Try a wider date range or another tab. The noise audit shows what was filtered out." />;
@@ -155,7 +155,10 @@ function CardList({ filters, rangeLabel, view }: { filters: FeedFilters; rangeLa
     <>
       {cards.map((row) => view === "cards" ? <AnnouncementCard key={row.news_id} row={row} /> : <FilingRow key={row.news_id} row={row} />)}
       <div ref={sentinel} className="flex justify-center py-5">
-        {isFetchingNextPage ? <Loader2 className="h-5 w-5 animate-spin text-ink-3" /> : hasNextPage ? (
+        {isFetchingNextPage ? <Loader2 className="h-5 w-5 animate-spin text-ink-3" /> : query.isFetchNextPageError ? (
+          // The cards already loaded stay on screen; only the next page is retried.
+          <Button size="sm" onClick={() => fetchNextPage()}>Couldn't load more · retry</Button>
+        ) : hasNextPage ? (
           <Button size="sm" onClick={() => fetchNextPage()}>Load more</Button>
         ) : (
           <span className="text-xs text-ink-3">{cards.length} filings · end of results</span>
@@ -166,8 +169,17 @@ function CardList({ filters, rangeLabel, view }: { filters: FeedFilters; rangeLa
 }
 
 function SharedCard({ id, view, onClose }: { id: string; view: View; onClose: () => void }) {
-  const query = useQuery({ queryKey: ["card", id], queryFn: () => api.card(id) });
-  if (!query.data) return null;
+  const query = useQuery({ queryKey: ["card", id], queryFn: () => api.card(id), retry: false });
+  useEffect(() => window.scrollTo({ top: 0 }), [id]); // a linked card opens at the top of the feed
+  if (query.isPending) return <div className="mb-6"><Loading /></div>;
+  if (!query.data) {
+    return (
+      <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-dashed border-line-strong px-4 py-3 text-sm text-ink-2">
+        <span>That filing could not be found. It may have been removed or the link is incomplete.</span>
+        <Button variant="ghost" size="sm" onClick={onClose}><X className="h-3.5 w-3.5" /> Dismiss</Button>
+      </div>
+    );
+  }
   return (
     <div className="mb-6 space-y-2">
       <div className="flex items-center justify-between">
@@ -181,8 +193,11 @@ function SharedCard({ id, view, onClose }: { id: string; view: View; onClose: ()
 
 /** Side rail: the day in numbers and what is coming up, so the feed stays about the filings. */
 function Rail({ today }: { today: string }) {
-  const system = useQuery({ queryKey: ["system"], queryFn: api.system, staleTime: 60_000 });
-  const upcoming = useQuery({ queryKey: ["calendar", today, "rail"], queryFn: () => api.calendar(today, addDays(today, 7)), staleTime: 300_000 });
+  // The rail is hidden below 1024px; fetching its data there would cost reads for nothing.
+  const wide = useMediaQuery("(min-width: 1024px)");
+  const system = useQuery({ queryKey: ["system"], queryFn: api.system, staleTime: 120_000, enabled: wide });
+  const upcoming = useQuery({ queryKey: ["calendar", today, "rail"], queryFn: () => api.calendar(today, addDays(today, 7)),
+    staleTime: 300_000, enabled: wide });
   const s = system.data;
   const count = (status: string) => s?.ledger_today.find((r) => r.status === status)?.n ?? 0;
   const filed = s?.ledger_today.reduce((a, r) => a + r.n, 0) ?? 0;
@@ -245,7 +260,7 @@ function NoiseAudit({ date, onDate }: { date: string; onDate: (d: string) => voi
     getNextPageParam: (last) => last.next_offset,
   });
   const rows: NoiseRow[] = query.data?.pages.flatMap((p) => p.rows) ?? [];
-  const notStored = query.data?.pages[0]?.not_stored ?? null;
+  const ruleTotal = query.data?.pages[0]?.rule_total ?? 0;
   return (
     <section>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -253,14 +268,13 @@ function NoiseAudit({ date, onDate }: { date: string; onDate: (d: string) => voi
         <input type="date" aria-label="Day" value={date} onChange={(e) => e.target.value && onDate(e.target.value)}
           className="num h-9 rounded-lg border border-line bg-surface px-3 text-[13px] text-ink" />
       </div>
-      {notStored ? (
-        <p className="mt-3 rounded-lg bg-surface-2 px-3 py-2 text-[13px] text-ink-2">
-          {num(notStored)} filings were filtered out by the rules on this day during the historical backfill. Their details
-          were counted but not stored, to save database writes; filings the AI judged not material are listed below.
+      {ruleTotal > 0 && (
+        <p className="mt-3 text-[13px] text-ink-3">
+          {num(ruleTotal)} filtered by the rules; filings the AI gatekeeper judged not material are listed first.
         </p>
-      ) : null}
-      {query.isPending ? <Loading /> : query.isError ? <Empty title="Couldn't load the noise audit" body={String(query.error)} /> : rows.length === 0 ? (
-        <Empty title={notStored ? "No AI-rejected filings on this day" : "Nothing was filtered on this day"} />
+      )}
+      {query.isPending ? <Loading /> : !query.data ? <Empty title="Couldn't load the noise audit" body={String(query.error)} /> : rows.length === 0 ? (
+        <Empty title="Nothing was filtered on this day" />
       ) : (
         <div className="mt-3 overflow-hidden rounded-xl border border-line bg-surface">
           <table className="w-full text-[13.5px]">
@@ -287,11 +301,28 @@ function NoiseAudit({ date, onDate }: { date: string; onDate: (d: string) => voi
               ))}
             </tbody>
           </table>
-          {query.hasNextPage && <div className="border-t border-line p-3 text-center"><Button size="sm" onClick={() => query.fetchNextPage()}>Load more</Button></div>}
+          {(query.hasNextPage || query.isFetchNextPageError) && (
+            <div className="border-t border-line p-3 text-center">
+              <Button size="sm" onClick={() => query.fetchNextPage()} disabled={query.isFetchingNextPage}>
+                {query.isFetchNextPageError ? "Couldn't load more · retry" : "Load more"}
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </section>
   );
+}
+
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(() => typeof window !== "undefined" && window.matchMedia(query).matches);
+  useEffect(() => {
+    const list = window.matchMedia(query);
+    const onChange = () => setMatches(list.matches);
+    list.addEventListener("change", onChange);
+    return () => list.removeEventListener("change", onChange);
+  }, [query]);
+  return matches;
 }
 
 export function Loading() {

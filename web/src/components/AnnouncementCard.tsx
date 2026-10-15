@@ -1,4 +1,3 @@
-import { toBlob } from "html-to-image";
 import {
   AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, Building2, Camera, Check, ChevronDown, ChevronRight, FileText, Gauge,
   Minus, RefreshCcw, Rocket, Scale, ShieldAlert, Timer,
@@ -8,7 +7,8 @@ import { flushSync } from "react-dom";
 import { useLocation } from "wouter";
 import type { CallRead, CardBody, CardRow, Impact, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
-import { cr, istDate, istDateTime, marketSession, pct, relativeTime, signClass, titleCase } from "../lib/format";
+import { copyNodeAsPng } from "../lib/png";
+import { cr, formatKpi, istDate, istDateTime, marketSession, pct, relativeTime, signClass, titleCase } from "../lib/format";
 import { EVENT_LABELS, SECTORS, TONE_STRIPE, type Tone } from "../lib/taxonomy";
 import { Avatar } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL, TrackItem } from "./FilingCard";
@@ -134,25 +134,37 @@ function ResultsTable({ r }: { r: ResultsSnapshot }) {
   );
 }
 
-/** One health ratio for the footer: gross NPA for lenders, otherwise debt to equity. */
-function healthMetric(card: CardBody): { label: string; value: string } | null {
+/** Footer figures follow the company's sector (GNPA for a bank, EBITDA/t for cement, ARPU for
+ * telecom, RevPAR for hotels...); without one, debt to equity. */
+function footerMetrics(card: CardBody): { label: string; value: string; period?: string | null }[] {
   const f = card.fundamentals ?? {};
-  if (f.gnpa_pct) return { label: "GNPA", value: `${f.gnpa_pct.value.toFixed(2)}%` };
-  if (f.debt && f.net_worth && f.net_worth.value > 0) return { label: "D/E", value: `${(f.debt.value / f.net_worth.value).toFixed(2)}x` };
-  if (f.net_worth && f.net_worth.value < 0) return { label: "Net worth", value: cr(f.net_worth.value) };
-  return null;
+  if (f.kpis?.length) return f.kpis.map((k) => ({ label: k.label, value: formatKpi(k), period: k.period }));
+  if (f.debt && f.net_worth && f.net_worth.value > 0) return [{ label: "D/E", value: `${(f.debt.value / f.net_worth.value).toFixed(2)}x` }];
+  if (f.net_worth && f.net_worth.value < 0) return [{ label: "Net worth", value: cr(f.net_worth.value) }];
+  return [];
 }
 
-/** A results bullet that only restates numbers already in the P&L table adds nothing; the card hides it. */
+const TABLE_LINES = ["revenue", "ebitda", "ebitda_margin", "pat"] as const;
+
+/** The P&L table shows only when at least two of its lines are known. */
+function tableShows(r: ResultsSnapshot | null | undefined): r is ResultsSnapshot {
+  return !!r && TABLE_LINES.filter((k) => r[k]).length >= 2;
+}
+
+/** A results bullet that only restates numbers the P&L table shows adds nothing; the card hides it. */
 function coveredByTable(fact: string, r: ResultsSnapshot): boolean {
   const known: number[] = [];
-  for (const line of [r.revenue, r.ebitda, r.ebitda_margin, r.pbt, r.pat, r.eps]) {
+  for (const key of TABLE_LINES) {
+    const line = r[key];
     if (!line) continue;
-    for (const v of [line.value, line.prev_year, line.prev_quarter, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps]) {
+    for (const v of [line.value, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps]) {
       if (v != null) known.push(Math.abs(v));
     }
   }
-  const numbers = plain(fact).replace(/\b(?:Q[1-4]|H[12]|FY)\s*'?\d{2,4}\b|\b20\d{2}\b/gi, " ").match(/\d[\d,]*(?:\.\d+)?/g) ?? [];
+  // Period labels ("Q2FY27", "Q2 FY 2026-27", "H1FY27") and years are not figures.
+  const numbers = plain(fact)
+    .replace(/\b(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2,4}(?:-\d{2})?\b|\b(?:Q[1-4]|H[12]|9M)\b|\b20\d{2}(?:-\d{2})?\b/gi, " ")
+    .match(/\d[\d,]*(?:\.\d+)?/g) ?? [];
   return numbers.length > 0 && numbers.every((raw) => {
     const n = Number(raw.replace(/,/g, ""));
     const rounding = raw.includes(".") ? 0.051 : 0.5; // "+30%" restates 29.6%
@@ -164,7 +176,7 @@ function KeyTiles({ items }: { items: CardBody["key_numbers"] }) {
   return (
     <dl className="mt-3 grid grid-cols-2 overflow-hidden rounded-xl border border-line sm:grid-cols-4">
       {items.slice(0, 4).map((k, i) => (
-        <div key={k.label} className={cn("px-3 py-2", i % 2 === 1 && "border-l border-line", i >= 2 && "border-t border-line sm:border-t-0", i >= 1 && "sm:border-l")}>
+        <div key={`${k.label}-${i}`} className={cn("px-3 py-2", i % 2 === 1 && "border-l border-line", i >= 2 && "border-t border-line sm:border-t-0", i >= 1 && "sm:border-l")}>
           <dt className="truncate text-[10.5px] font-semibold uppercase tracking-[0.08em] text-ink-3">{k.label}</dt>
           <dd className="num mt-0.5 text-[15px] font-bold text-ink">{k.value}</dd>
           {k.change ? <dd className={cn("num text-[12px] font-semibold", k.change.trim().startsWith("-") || k.change.trim().startsWith("−") ? "text-neg" : "text-pos")}>{k.change}</dd> : null}
@@ -202,38 +214,26 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
   const deal = card.deal_value;
   const stage = deal ? STAGE_LABEL[deal.stage] : undefined;
   const revenue = card.fundamentals?.revenue;
-  const health = healthMetric(card);
+  const footer = footerMetrics(card);
   const review = !!row.needs_review;
+  const g = card.grounding;
+  const allMatched = g.ungrounded.length === 0 && !g.math_mismatches && !(g.unsupported_claims ?? []).length;
   const issues = card.review?.issues?.length ? card.review.issues
     : [...(card.grounding.unsupported_claims ?? []).map((c) => `Claim not supported by the sources: "${c}"`),
        ...(card.grounding.ungrounded.length ? [`Numbers not found in the filing: ${card.grounding.ungrounded.join(", ")}`] : [])];
   const corrected = card.review?.status === "CORRECTED";
   const tilesFor = event === "CONCALL_PRESENTATION" || (event === "RESULTS" && !card.results);
-  const table = event === "RESULTS" && card.results ? card.results : null;
-  const facts = card.what_happened
-    .filter((fact) => !(table && coveredByTable(fact, table)))
-    .slice(0, event === "RESULTS" || event === "CONCALL_PRESENTATION" ? 4 : 3);
+  const table = event === "RESULTS" && tableShows(card.results) ? card.results : null;
+  const factLimit = event === "RESULTS" || event === "CONCALL_PRESENTATION" ? 4 : 3;
+  const unique = card.what_happened.filter((fact) => !(table && coveredByTable(fact, table)));
+  const facts = unique.slice(0, factLimit);
 
   async function share() {
     if (!ref.current) return;
+    const node = ref.current;
     flushSync(() => setExporting(true));
     try {
-      const bg = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim() || "#ffffff";
-      const blob = await toBlob(ref.current, {
-        pixelRatio: 2, backgroundColor: bg,
-        filter: (node) => !(node instanceof HTMLElement && node.dataset.noexport === "true"),
-      });
-      if (!blob) throw new Error("render failed");
-      if (navigator.clipboard && "ClipboardItem" in window) {
-        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-        setCopy("copied");
-      } else {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `${row.symbol ?? row.scrip_code}-${row.filing_date}.png`;
-        a.click();
-        setCopy("saved");
-      }
+      setCopy(await copyNodeAsPng(node, `${row.symbol ?? row.scrip_code}-${row.filing_date}.png`));
     } catch {
       setCopy("error");
     } finally {
@@ -252,6 +252,11 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
             <span className="font-semibold text-accent">Insiders · BSE</span>
             <span className="num text-ink-3">{istDate(row.filed_at)}</span>
           </div>
+        )}
+        {exporting && review && (
+          <p className="mb-3 flex items-center gap-2 rounded-lg bg-warn-soft px-3 py-1.5 text-[12px] font-medium text-warn">
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0" /> Unverified: some figures could not be matched to the filing. Check the official PDF.
+          </p>
         )}
 
         {review && !exporting && (
@@ -291,7 +296,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         <h3 className="mt-3 text-[19px] font-bold leading-snug tracking-[-0.01em] text-ink sm:text-[21px]">{plain(card.headline)}</h3>
 
         {card.call_read && <CallReadChips read={card.call_read} />}
-        {event === "RESULTS" && card.results && <ResultsTable r={card.results} />}
+        {table && <ResultsTable r={table} />}
         {tilesFor && card.key_numbers.length >= 2 && <KeyTiles items={card.key_numbers} />}
 
         <ul className="mt-3 space-y-2">
@@ -318,7 +323,9 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           {revenue && (
             <span><span className="font-bold text-ink">{cr(revenue.value)}</span> {revenue.period} revenue</span>
           )}
-          {health && <span>{health.label} <span className="font-bold text-ink">{health.value}</span></span>}
+          {footer.map((m) => (
+            <span key={m.label} title={m.period ? `${m.label}, ${m.period}` : undefined}>{m.label} <span className="font-bold text-ink">{m.value}</span></span>
+          ))}
           <span>1W <span className={cn("font-semibold", signClass(row.ret_1w))}>{pct(row.ret_1w)}</span></span>
           <span>1M <span className={cn("font-semibold", signClass(row.ret_1m))}>{pct(row.ret_1m)}</span></span>
           <span>1Y <span className={cn("font-semibold", signClass(row.ret_1y))}>{pct(row.ret_1y)}</span></span>
@@ -337,9 +344,13 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
               <span className="inline-flex items-center gap-1" title={`Corrected by ${card.review?.checked_by}: ${(card.review?.fixed ?? []).join(" · ")}`}>
                 <RefreshCcw className="h-3.5 w-3.5 text-pos" /> Verified after a second check
               </span>
-            ) : card.grounding.checked > 0 ? (
+            ) : g.checked > 0 && allMatched ? (
               <span className="inline-flex items-center gap-1" title="Every number was found in the filing or company memory">
                 <BadgeCheck className="h-3.5 w-3.5 text-pos" /> Numbers verified
+              </span>
+            ) : g.checked > 0 ? (
+              <span className="num inline-flex items-center gap-1" title={g.ungrounded.length ? `Not found: ${g.ungrounded.join(", ")}` : undefined}>
+                <BadgeCheck className="h-3.5 w-3.5 text-ink-3" /> {Math.max(0, g.checked - g.ungrounded.length)} of {g.checked} numbers matched
               </span>
             ) : null}
             <span className="ml-auto flex items-center gap-1">
@@ -365,7 +376,10 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           </div>
         )}
       </div>
-      {open && !exporting && <DeepDive row={row} card={card} shown={box.insights.length} />}
+      {open && !exporting && (
+        <DeepDive row={row} card={card} shown={box.insights.length} moreFacts={unique.slice(factLimit)}
+          keyNumbers={tilesFor && card.key_numbers.length >= 2 ? [] : card.key_numbers} />
+      )}
     </article>
   );
 }
@@ -380,7 +394,9 @@ function Section({ label, children }: { label: string; children: ReactNode }) {
 }
 
 /** Everything else the analysis produced: shown on demand, never in the share image. */
-function DeepDive({ row, card, shown }: { row: CardRow; card: CardBody; shown: number }) {
+function DeepDive({ row, card, shown, moreFacts, keyNumbers }: {
+  row: CardRow; card: CardBody; shown: number; moreFacts: string[]; keyNumbers: CardBody["key_numbers"];
+}) {
   const more = card.why_it_matters.slice(shown);
   const quant = card.quantified_impact ?? [];
   const changes = card.notable_changes ?? [];
@@ -402,6 +418,18 @@ function DeepDive({ row, card, shown }: { row: CardRow; card: CardBody; shown: n
         <span>·</span><span>BSE {row.scrip_code}</span>
         <span>·</span><span>{istDateTime(row.filed_at)} IST, {marketSession(row.filed_at).toLowerCase()}</span>
       </p>
+
+      {moreFacts.length > 0 && (
+        <Section label="More from the filing">
+          <ul className="space-y-2">{moreFacts.map((fact, i) => <Point key={i}><RichText text={fact} /></Point>)}</ul>
+        </Section>
+      )}
+
+      {keyNumbers.length > 0 && (
+        <Section label="Key numbers">
+          <KeyTiles items={keyNumbers} />
+        </Section>
+      )}
 
       {(more.length > 0 || card.missing_disclosures.length > 1) && (
         <Section label="More context">

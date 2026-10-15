@@ -64,11 +64,12 @@ export function verdict(tone: Tone, impact: Impact): { label: string; tone: Tone
 export const SIZES: SizeCategory[] = ["LARGE", "MID", "SMALL", "MICRO"];
 
 export const SECTORS: Record<string, string> = {
-  nbfc: "NBFC & finance", banks: "Banks", insurance: "Insurance", it: "IT services", pharma: "Pharma & healthcare",
+  nbfc: "NBFC & finance", banks: "Banks", insurance: "Insurance", it: "IT services", hospitals: "Hospitals", pharma: "Pharma & healthcare",
   auto: "Automobiles", auto_components: "Auto components", cement: "Cement", metals: "Metals & mining", fmcg: "FMCG",
   oil_gas: "Oil & gas", power: "Power & utilities", capital_goods: "Capital goods", construction: "Construction & infra",
   realty: "Real estate", consumer_durables: "Consumer durables", chemicals: "Chemicals", textiles: "Textiles",
-  telecom: "Telecom", media: "Media", consumer_services: "Consumer services", default: "Other",
+  telecom: "Telecom", media: "Media", hotels: "Hotels", aviation: "Aviation", consumer_services: "Consumer services",
+  sugar: "Sugar", default: "Other",
 };
 
 /** Catalyst families for the calendar: colour by what the date means. */

@@ -1,4 +1,3 @@
-import { toBlob } from "html-to-image";
 import {
   AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, Calculator, Camera, CheckCircle2, ChevronDown, FileText,
   FolderOpen, Gauge, Layers, ListChecks, Minus, Rocket, Ruler, Scale, ShieldAlert, Timer,
@@ -7,7 +6,8 @@ import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import type { CardBody, CardRow, Insight, QuantifiedImpact, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
-import { cr, exact, istDateTime, marketSession, pct, quantValue, relativeTime, signClass, titleCase } from "../lib/format";
+import { cr, exact, formatKpi, istDateTime, marketSession, pct, quantValue, relativeTime, signClass, titleCase } from "../lib/format";
+import { copyNodeAsPng } from "../lib/png";
 import { EVENT_LABELS, IMPACT_LABEL, IMPACT_TEXT, SECTORS, TONE_STRIPE, type Tone } from "../lib/taxonomy";
 import { TickerChip } from "./Avatar";
 import { plain, RichText } from "./RichText";
@@ -131,22 +131,7 @@ export function FilingBody({ row, card, showHeadline = false }: { row: CardRow; 
     const target = (ref.current?.closest("article") as HTMLElement | null) ?? ref.current;
     if (!target) return;
     try {
-      const bg = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim() || "#ffffff";
-      const blob = await toBlob(target, {
-        pixelRatio: 2, backgroundColor: bg,
-        filter: (node) => !(node instanceof HTMLElement && node.dataset.noexport === "true"),
-      });
-      if (!blob) throw new Error("render failed");
-      if (navigator.clipboard && "ClipboardItem" in window) {
-        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-        setCopy("copied");
-      } else {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `${row.symbol ?? row.scrip_code}-${row.filing_date}.png`;
-        a.click();
-        setCopy("saved");
-      }
+      setCopy(await copyNodeAsPng(target, `${row.symbol ?? row.scrip_code}-${row.filing_date}.png`));
     } catch {
       setCopy("error");
     }
@@ -258,11 +243,19 @@ export function FilingBody({ row, card, showHeadline = false }: { row: CardRow; 
         {f.debt && <span>Debt <span className="font-semibold text-ink">{cr(f.debt.value)}</span></span>}
         {f.net_worth && <span>Net worth <span className={cn("font-semibold", f.net_worth.value < 0 ? "text-neg" : "text-ink")}>{cr(f.net_worth.value)}</span></span>}
         {row.market_cap_cr != null && <span>MCap <span className="font-semibold text-ink">{cr(row.market_cap_cr)}</span></span>}
+        {(f.kpis ?? []).map((k) => (
+          <span key={k.label}>{k.label} <span className="font-semibold text-ink">{formatKpi(k)}</span></span>
+        ))}
         <span>1W <span className={signClass(row.ret_1w)}>{pct(row.ret_1w)}</span></span>
         <span>1M <span className={signClass(row.ret_1m)}>{pct(row.ret_1m)}</span></span>
         <span>1Y <span className={signClass(row.ret_1y)}>{pct(row.ret_1y)}</span></span>
       </div>
 
+      {row.needs_review ? (
+        <p className="mt-3 flex items-center gap-1.5 text-[12px] font-medium text-warn">
+          <AlertTriangle className="h-3.5 w-3.5 shrink-0" /> Unverified: some figures could not be matched to the filing. Check the official PDF.
+        </p>
+      ) : null}
       <div className="mt-3 flex flex-wrap items-center gap-2" data-noexport="true">
         {row.pdf_url && (
           <a href={row.pdf_url} target="_blank" rel="noreferrer"
@@ -284,8 +277,12 @@ export function FilingBody({ row, card, showHeadline = false }: { row: CardRow; 
               <AlertTriangle className="h-3.5 w-3.5" /> Unverified: check the PDF
             </span>
           ) : card.grounding.checked > 0 ? (
-            <span className="inline-flex items-center gap-1" title="Every number was found in the filing or company memory">
-              <BadgeCheck className="h-3.5 w-3.5 text-pos" /> {Math.round(card.grounding.score * 100)}% of numbers verified
+            <span className="inline-flex items-center gap-1"
+              title={card.grounding.ungrounded.length ? `Not found: ${card.grounding.ungrounded.join(", ")}` : "Every number was found in the filing or company memory"}>
+              <BadgeCheck className={cn("h-3.5 w-3.5", card.grounding.ungrounded.length ? "text-ink-3" : "text-pos")} />
+              {card.grounding.ungrounded.length
+                ? `${Math.max(0, card.grounding.checked - card.grounding.ungrounded.length)} of ${card.grounding.checked} numbers matched`
+                : "Numbers verified"}
             </span>
           ) : null}
           {!row.memory_complete && <span>· partial memory</span>}

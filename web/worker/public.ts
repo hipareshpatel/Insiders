@@ -1,7 +1,9 @@
 // Read-only API for the frontend. Every query is index-backed and bounded:
-// D1's free tier meters rows *read* (5M/day), so full scans are avoided and
-// responses carry short edge-cache lifetimes.
+// D1's free tier meters rows *read* (5M/day), so each query seeks a range
+// (dates, the cursor) instead of walking a table, and hot responses are kept
+// briefly in the isolate and, on a custom domain, in Cloudflare's edge cache.
 import { Hono } from "hono";
+import type { Context } from "hono";
 import type { AppEnv } from "./env";
 
 const CARD_COLUMNS = `
@@ -13,11 +15,42 @@ const CARD_COLUMNS = `
 const COMPANY_COLUMNS = `scrip_code, symbol, company_name, isin, industry, sector, market_cap_cr,
   size_category, last_price, price_date, ret_1w, ret_1m, ret_1y, card_count, last_card_at`;
 
-/** Turn free text into a safe FTS5 prefix query: "tata mot" -> "tata"* "mot"* */
+/** Turn free text into a safe FTS5 prefix query: "tata mot" -> "tata"* "mot"*. One-letter tokens
+ * are dropped: a prefix that short matches nearly every row. */
 export function ftsQuery(q: string | undefined): string | null {
-  const tokens = (q ?? "").toLowerCase().match(/[\p{L}\p{N}]+/gu)?.slice(0, 6) ?? [];
+  const tokens = ((q ?? "").toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? []).filter((t) => t.length >= 2).slice(0, 6);
   return tokens.length ? tokens.map((t) => `"${t}"*`).join(" ") : null;
 }
+
+/** Positional parameters for SQL built from optional filters: p(value) returns its placeholder. */
+function binder() {
+  const params: unknown[] = [];
+  const p = (value: unknown) => {
+    params.push(value);
+    return `?${params.length}`;
+  };
+  return { params, p };
+}
+
+// Responses kept in this isolate for a few seconds. An isolate serves many requests, so a
+// popular page costs one D1 query per interval instead of one per view.
+const memo = new Map<string, { until: number; body: unknown }>();
+async function memoised<T>(key: string, ttlMs: number, load: () => Promise<T>): Promise<T> {
+  const hit = memo.get(key);
+  if (hit && hit.until > Date.now()) return hit.body as T;
+  const body = await load();
+  if (memo.size > 200) memo.clear();
+  memo.set(key, { until: Date.now() + ttlMs, body });
+  return body;
+}
+
+const edgeCache = (): Cache | undefined => {
+  try {
+    return (globalThis as unknown as { caches?: { default: Cache } }).caches?.default;
+  } catch {
+    return undefined;
+  }
+};
 
 /** "HIGH,LOW" -> '["HIGH","LOW"]' restricted to allowed values, or null. */
 function listParam(value: string | undefined, allowed?: Set<string>): string | null {
@@ -36,40 +69,64 @@ const clamp = (v: string | undefined, def: number, max: number) =>
 
 export const api = new Hono<AppEnv>();
 
+// Worker responses are not cached by Cloudflare from their headers alone; the Cache API stores
+// them per data centre. It works on a custom domain and does nothing on workers.dev.
 api.use("*", async (c, next) => {
+  const cache = c.req.method === "GET" && !c.req.path.startsWith("/api/internal/") ? edgeCache() : undefined;
+  const key = new Request(c.req.url);
+  if (cache) {
+    const hit = await cache.match(key).catch(() => undefined);
+    if (hit) return hit;
+  }
   await next();
-  if (c.req.path.startsWith("/api/internal/")) return;
-  if (c.req.method === "GET" && c.res.status === 200 && !c.res.headers.has("Cache-Control")) {
-    c.res.headers.set("Cache-Control", "public, max-age=30, s-maxage=60");
+  if (c.req.method !== "GET" || c.res.status !== 200 || c.req.path.startsWith("/api/internal/")) return;
+  if (!c.res.headers.has("Cache-Control")) c.res.headers.set("Cache-Control", "public, max-age=30, s-maxage=60");
+  if (cache) {
+    try {
+      c.executionCtx.waitUntil(cache.put(key, c.res.clone()).catch(() => undefined));
+    } catch {
+      /* no execution context (tests) */
+    }
   }
 });
 
 api.get("/feed", async (c) => {
   const q = c.req.query();
   const from = isDate(q.from) ? q.from : "2000-01-01";
-  const to = isDate(q.to) ? q.to : "2999-12-31";
+  const to = `${isDate(q.to) ? q.to : "2999-12-31"}T99`; // filed_at is "YYYY-MM-DDTHH:MM:SS+05:30"
   const limit = clamp(q.limit, 20, 50);
   const [cursorAt, cursorId] = (q.cursor ?? "").split("|");
+  // The scan walks idx_cards_feed newest first between these two bounds; the cursor is folded into
+  // the upper one so a deep page does not re-read everything above it.
+  const upper = cursorAt && cursorAt < to ? cursorAt : to;
+  const { params, p } = binder();
+  const where = [`c.filed_at >= ${p(from)}`, `c.filed_at <= ${p(upper)}`];
+  const impact = listParam(q.impact, IMPACTS);
+  const category = listParam(q.category);
+  const size = listParam(q.size, SIZES);
+  const sector = listParam(q.sector);
+  const fts = ftsQuery(q.q);
+  // Unary + keeps the planner on the date index (with a LIMIT, walking it is the cheap plan).
+  if (impact) where.push(`+c.impact_level IN (SELECT value FROM json_each(${p(impact)}))`);
+  if (category) where.push(`+c.event_category IN (SELECT value FROM json_each(${p(category)}))`);
+  if (size) where.push(`co.size_category IN (SELECT value FROM json_each(${p(size)}))`);
+  if (sector) where.push(`+c.sector IN (SELECT value FROM json_each(${p(sector)}))`);
+  if (cursorAt) where.push(`(c.filed_at, c.news_id) < (${p(cursorAt)}, ${p(cursorId ?? "")})`);
+  if (q.review === "0") where.push("c.needs_review = 0");
+  // A text filter starts from the 500 best matches instead of testing every card in the window.
+  const source = fts
+    ? `(SELECT rowid AS rid FROM cards_fts WHERE cards_fts MATCH ${p(fts)} ORDER BY rank LIMIT 500) f
+       CROSS JOIN cards c ON c.rowid = f.rid`
+    : "cards c";
   const sql = `
     SELECT ${CARD_COLUMNS}
-      FROM cards c LEFT JOIN companies co ON co.scrip_code = c.scrip_code
-     WHERE c.filing_date BETWEEN ?1 AND ?2
-       AND (?3 IS NULL OR c.impact_level IN (SELECT value FROM json_each(?3)))
-       AND (?4 IS NULL OR c.event_category IN (SELECT value FROM json_each(?4)))
-       AND (?5 IS NULL OR co.size_category IN (SELECT value FROM json_each(?5)))
-       AND (?6 IS NULL OR c.sector IN (SELECT value FROM json_each(?6)))
-       AND (?7 IS NULL OR c.rowid IN (SELECT rowid FROM cards_fts WHERE cards_fts MATCH ?7))
-       AND (?8 IS NULL OR (c.filed_at, c.news_id) < (?8, ?9))
-       AND (?10 = 1 OR c.needs_review = 0)
+      FROM ${source} LEFT JOIN companies co ON co.scrip_code = c.scrip_code
+     WHERE ${where.join(" AND ")}
      ORDER BY c.filed_at DESC, c.news_id DESC
-     LIMIT ?11`;
-  const { results } = await c.env.DB.prepare(sql)
-    .bind(
-      from, to,
-      listParam(q.impact, IMPACTS), listParam(q.category), listParam(q.size, SIZES), listParam(q.sector),
-      ftsQuery(q.q), cursorAt || null, cursorId || "", q.review === "0" ? 0 : 1, limit + 1,
-    )
-    .all();
+     LIMIT ${p(limit + 1)}`;
+  const run = () => c.env.DB.prepare(sql).bind(...params).all().then((r) => r.results);
+  // The first page of an unfiltered view is what most visitors load.
+  const results = !cursorAt && !fts ? await memoised(`feed:${sql}:${JSON.stringify(params)}`, 20_000, run) : await run();
   const more = results.length > limit;
   const cards = results.slice(0, limit) as { filed_at: string; news_id: string }[];
   const last = cards[cards.length - 1];
@@ -83,55 +140,74 @@ api.get("/cards/:id", async (c) => {
   return row ? c.json(row) : c.json({ error: "not found" }, 404);
 });
 
-// Noise audit: what the rules and the gatekeeper filtered out on a given day.
+// Noise audit: what the AI gatekeeper (D1 ledger) and the rules (one R2 file set per day, newest
+// first, NOISE_CHUNK rows each) filtered out on a given day. The first page leads with the
+// gatekeeper's rejections; the rule drops follow, paged by offset.
+const NOISE_CHUNK = 500;
+
 api.get("/noise", async (c) => {
   const date = c.req.query("date");
   if (!isDate(date)) return c.json({ error: "date=YYYY-MM-DD required" }, 400);
   const limit = clamp(c.req.query("limit"), 100, 200);
   const offset = Math.max(Number.parseInt(c.req.query("offset") ?? "0", 10) || 0, 0);
-  const [{ results }, counted] = await Promise.all([
-    c.env.DB.prepare(`
-      SELECT news_id, scrip_code, company_name, headline, category, subcategory, filed_at, status, reason, pdf_url
-        FROM filings
-       WHERE filing_date = ?1 AND status IN ('DROPPED_RULE', 'NOT_MATERIAL')
-       ORDER BY filed_at DESC
-       LIMIT ?2 OFFSET ?3`).bind(date, limit + 1, offset).all(),
-    // Backfilled days count their rule-dropped filings instead of storing them (saves D1 writes).
+  const [counted, judged] = await Promise.all([
     c.env.DB.prepare("SELECT value FROM kv WHERE key = ?1").bind(`noise_count:${date}`).first<{ value: string }>(),
+    offset === 0
+      ? c.env.DB.prepare(`
+          SELECT news_id, scrip_code, company_name, headline, category, subcategory, filed_at, status, reason, pdf_url
+            FROM filings
+           WHERE status = 'NOT_MATERIAL' AND filed_at >= ?1 AND filed_at < date(?1, '+1 day')
+           ORDER BY filed_at DESC, news_id DESC
+           LIMIT 500`).bind(date).all().then((r) => r.results)
+      : Promise.resolve([]),
   ]);
+  const total = Number(counted?.value ?? 0) || 0;
+  const rows: Record<string, unknown>[] = [];
+  for (let chunk = Math.floor(offset / NOISE_CHUNK); chunk * NOISE_CHUNK < Math.min(total, offset + limit); chunk++) {
+    const object = await c.env.VAULT.get(`noise/${date}/${String(chunk).padStart(3, "0")}.json`);
+    if (!object) break;
+    const { fields, rows: part } = (await object.json()) as { fields: string[]; rows: unknown[][] };
+    const start = Math.max(offset - chunk * NOISE_CHUNK, 0);
+    for (const values of part.slice(start, start + limit - rows.length)) {
+      rows.push({ ...Object.fromEntries(fields.map((f, i) => [f, values[i] ?? null])), status: "DROPPED_RULE" });
+    }
+  }
   return c.json({
-    rows: results.slice(0, limit),
-    next_offset: results.length > limit ? offset + limit : null,
-    not_stored: counted ? Number(counted.value) : null,
+    rows: [...judged, ...rows],
+    next_offset: offset + limit < total ? offset + limit : null,
+    rule_total: total,
   });
 });
 
 api.get("/search", async (c) => {
   const fts = ftsQuery(c.req.query("q"));
   if (!fts) return c.json({ companies: [], cards: [] });
+  // Each side starts from a bounded set of best matches, so a short, common prefix costs the same
+  // as a rare one (sorting every match by date would read every matching card).
   const [companies, cards] = await c.env.DB.batch([
     c.env.DB.prepare(`
       SELECT co.scrip_code, co.symbol, co.company_name, co.sector, co.card_count
-        FROM companies_fts f JOIN companies co ON co.rowid = f.rowid
-       WHERE companies_fts MATCH ?1
-       ORDER BY co.card_count DESC, rank
+        FROM (SELECT rowid AS rid, rank FROM companies_fts WHERE companies_fts MATCH ?1 ORDER BY rank LIMIT 30) f
+        CROSS JOIN companies co ON co.rowid = f.rid
+       ORDER BY co.card_count DESC, f.rank
        LIMIT 8`).bind(fts),
     c.env.DB.prepare(`
       SELECT c.news_id, c.scrip_code, c.company_name, c.headline, c.impact_level, c.filed_at
-        FROM cards_fts f JOIN cards c ON c.rowid = f.rowid
-       WHERE cards_fts MATCH ?1
+        FROM (SELECT rowid AS rid FROM cards_fts WHERE cards_fts MATCH ?1 ORDER BY rank LIMIT 50) f
+        CROSS JOIN cards c ON c.rowid = f.rid
        ORDER BY c.filed_at DESC
        LIMIT 8`).bind(fts),
   ]);
   return c.json({ companies: companies.results, cards: cards.results });
 });
 
-const SORTS: Record<string, string> = {
-  name: "company_name COLLATE NOCASE ASC",
-  mcap: "market_cap_cr IS NULL, market_cap_cr DESC",
-  cards: "card_count DESC, company_name COLLATE NOCASE",
-  recent: "last_card_at IS NULL, last_card_at DESC",
-};
+// Every sort ends on the primary key, so OFFSET paging never repeats or skips a company.
+const SORTS = new Map<string, string>([
+  ["name", "company_name COLLATE NOCASE ASC, scrip_code"],
+  ["mcap", "market_cap_cr IS NULL, market_cap_cr DESC, scrip_code"],
+  ["cards", "card_count DESC, company_name COLLATE NOCASE, scrip_code"],
+  ["recent", "last_card_at IS NULL, last_card_at DESC, scrip_code"],
+]);
 
 api.get("/companies", async (c) => {
   const q = c.req.query();
@@ -147,19 +223,22 @@ api.get("/companies", async (c) => {
     lo = "";
     hi = "A";
   }
+  const { params, p } = binder();
+  const where = ["1"];
+  const fts = ftsQuery(q.q);
+  const size = listParam(q.size, SIZES);
+  if (fts) where.push(`rowid IN (SELECT rowid FROM companies_fts WHERE companies_fts MATCH ${p(fts)})`);
+  if (lo !== null && hi !== null) where.push(`company_name >= ${p(lo)} COLLATE NOCASE AND company_name < ${p(hi)} COLLATE NOCASE`);
+  if (q.sector) where.push(`sector = ${p(q.sector)}`);
+  if (size) where.push(`size_category IN (SELECT value FROM json_each(${p(size)}))`);
+  if (q.all !== "1") where.push("card_count > 0");
   const sql = `
     SELECT ${COMPANY_COLUMNS}
       FROM companies
-     WHERE (?1 IS NULL OR rowid IN (SELECT rowid FROM companies_fts WHERE companies_fts MATCH ?1))
-       AND (?2 IS NULL OR (company_name >= ?2 COLLATE NOCASE AND company_name < ?3 COLLATE NOCASE))
-       AND (?4 IS NULL OR sector = ?4)
-       AND (?5 IS NULL OR size_category IN (SELECT value FROM json_each(?5)))
-       AND (?6 = 0 OR card_count > 0)
-     ORDER BY ${SORTS[q.sort ?? "name"] ?? SORTS.name}
-     LIMIT ?7 OFFSET ?8`;
-  const { results } = await c.env.DB.prepare(sql)
-    .bind(ftsQuery(q.q), lo, hi, q.sector || null, listParam(q.size, SIZES), q.all === "1" ? 0 : 1, limit + 1, offset)
-    .all();
+     WHERE ${where.join(" AND ")}
+     ORDER BY ${SORTS.get(q.sort ?? "name") ?? SORTS.get("name")}
+     LIMIT ${p(limit + 1)} OFFSET ${p(offset)}`;
+  const { results } = await c.env.DB.prepare(sql).bind(...params).all();
   return c.json({ companies: results.slice(0, limit), next_offset: results.length > limit ? offset + limit : null });
 });
 
@@ -173,7 +252,11 @@ api.get("/companies/:scrip", async (c) => {
        WHERE c.scrip_code = ?1 ORDER BY c.filed_at DESC LIMIT 60`).bind(scrip).all(),
     c.env.VAULT.get(`memory/${scrip}.json`),
   ]);
-  return c.json({ company, cards: cards.results, dossier: object ? await object.json() : null });
+  // The dossier is spliced in as stored text: parsing and re-serialising a large one would spend
+  // most of the free plan's CPU allowance.
+  const dossier = object ? await object.text() : "null";
+  return c.body(`{"company":${JSON.stringify(company)},"cards":${JSON.stringify(cards.results)},"dossier":${dossier}}`, 200,
+    { "Content-Type": "application/json; charset=UTF-8" });
 });
 
 api.get("/calendar", async (c) => {
@@ -189,36 +272,56 @@ api.get("/calendar", async (c) => {
   return c.json({ events: results });
 });
 
+// Counts above this are shown as "1,000+": an exact count would read every queued row.
+const QUEUE_CAP = 1000;
+
 api.get("/system", async (c) => {
+  const body = await memoised("system", 30_000, () => systemStatus(c));
+  return c.json(body, 200, { "Cache-Control": "public, max-age=15, s-maxage=30" });
+});
+
+async function systemStatus(c: Context<AppEnv>) {
   const today = new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10); // IST date
   const utcDay = new Date().toISOString().slice(0, 10);
-  const weekAgo = new Date(Date.now() - 7 * 86400_000).toISOString().slice(0, 10);
+  const weekAgo = new Date(Date.now() + 5.5 * 3600_000 - 7 * 86400_000).toISOString().slice(0, 10);
   const db = c.env.DB;
   const [ledger, pending, failed, cards7d, usage, runs, kv] = await db.batch([
     db.prepare("SELECT status, count(*) AS n FROM filings WHERE filing_date = ?1 GROUP BY status").bind(today),
-    db.prepare("SELECT count(*) AS n FROM filings WHERE status = 'PENDING'"),
-    db.prepare("SELECT count(*) AS n FROM filings WHERE status = 'FAILED'"),
-    db.prepare("SELECT impact_level, count(*) AS n FROM cards WHERE filing_date >= ?1 GROUP BY impact_level").bind(weekAgo),
-    db.prepare("SELECT * FROM provider_usage WHERE day = ?1 ORDER BY provider, model").bind(utcDay),
-    db.prepare("SELECT * FROM pipeline_runs ORDER BY started_at DESC LIMIT 25"),
-    db.prepare("SELECT key, value FROM kv WHERE key IN ('backfill:discovered_through', 'backfill:complete', 'backfill:start')"),
+    db.prepare(`SELECT count(*) AS n FROM (SELECT 1 FROM filings WHERE status = 'PENDING' LIMIT ${QUEUE_CAP})`),
+    db.prepare(`SELECT count(*) AS n FROM (SELECT 1 FROM filings WHERE status = 'FAILED' LIMIT ${QUEUE_CAP})`),
+    db.prepare(`SELECT impact_level, count(*) AS n FROM cards
+                 WHERE impact_level IN ('HIGH', 'MODERATE', 'LOW') AND filed_at >= ?1 GROUP BY impact_level`).bind(weekAgo),
+    db.prepare(`SELECT day, provider, model, requests, input_tokens, output_tokens, failures, rate_limited, limit_rpd,
+                       limit_tpd, substr(last_error, 1, 160) AS last_error, updated_at
+                  FROM provider_usage WHERE day = ?1 ORDER BY provider, model`).bind(utcDay),
+    db.prepare(`SELECT run_id, mode, started_at, finished_at, status, stats_json, substr(error, 1, 200) AS error
+                  FROM pipeline_runs ORDER BY started_at DESC LIMIT 25`),
+    db.prepare(`SELECT key, value FROM kv WHERE key IN ('backfill:discovered_through', 'backfill:complete',
+                  'backfill:start', 'backfill:progress', ?1, ?2)`).bind(`noise_count:${today}`, `d1_writes:${utcDay}`),
   ]);
   const kvMap = Object.fromEntries((kv.results as { key: string; value: string }[]).map((r) => [r.key, r.value]));
-  return c.json(
-    {
-      today,
-      ledger_today: ledger.results,
-      queue: { pending: (pending.results[0] as { n: number })?.n ?? 0, failed: (failed.results[0] as { n: number })?.n ?? 0 },
-      cards_7d: cards7d.results,
-      backfill: {
-        start: kvMap["backfill:start"] ?? "2026-01-01",
-        discovered_through: kvMap["backfill:discovered_through"] ?? null,
-        complete: kvMap["backfill:complete"] === "1",
-      },
-      usage: usage.results,
-      runs: runs.results,
+  const count = (r: D1Result) => (r.results[0] as { n: number } | undefined)?.n ?? 0;
+  const ruleDropped = Number(kvMap[`noise_count:${today}`] ?? 0) || 0;
+  let progress: { companies_left: number; companies_total: number | null } | null = null;
+  try {
+    progress = kvMap["backfill:progress"] ? JSON.parse(kvMap["backfill:progress"]) : null;
+  } catch {
+    progress = null;
+  }
+  return {
+    today,
+    ledger_today: [...(ledger.results as { status: string; n: number }[]), ...(ruleDropped ? [{ status: "DROPPED_RULE", n: ruleDropped }] : [])],
+    queue: { pending: count(pending), failed: count(failed), cap: QUEUE_CAP },
+    cards_7d: cards7d.results,
+    backfill: {
+      start: kvMap["backfill:start"] ?? "2026-01-01",
+      discovered_through: kvMap["backfill:discovered_through"] ?? null,
+      complete: kvMap["backfill:complete"] === "1",
+      companies_left: progress?.companies_left ?? null,
+      companies_total: progress?.companies_total ?? null,
     },
-    200,
-    { "Cache-Control": "public, max-age=15, s-maxage=30" },
-  );
-});
+    d1: { writes_today: Number(kvMap[`d1_writes:${utcDay}`] ?? 0) || 0, size_bytes: ledger.meta?.size_after ?? null },
+    usage: usage.results,
+    runs: runs.results,
+  };
+}

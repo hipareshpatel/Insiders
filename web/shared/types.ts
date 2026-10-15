@@ -68,6 +68,8 @@ export interface Fundamentals {
   net_worth?: { period: string | null; value: number };
   gnpa_pct?: { period: string | null; value: number };
   nim_pct?: { period: string | null; value: number };
+  /** The sector's footer figures (GNPA for a bank, EBITDA/t for cement, ARPU for telecom...). */
+  kpis?: { label: string; format: "pct" | "cr" | "inr" | "x" | "usd" | "num"; period: string | null; value: number }[];
 }
 
 export interface ResultLine {
@@ -327,9 +329,14 @@ export interface PipelineRun {
 export interface SystemResponse {
   today: string;
   ledger_today: { status: string; n: number }[];
-  queue: { pending: number; failed: number };
+  /** Counts stop at cap (shown as "1,000+"): an exact count would read every queued row. */
+  queue: { pending: number; failed: number; cap?: number };
   cards_7d: { impact_level: Impact; n: number }[];
-  backfill: { start: string; discovered_through: string | null; complete: boolean };
+  backfill: {
+    start: string; discovered_through: string | null; complete: boolean;
+    companies_left?: number | null; companies_total?: number | null;
+  };
+  d1?: { writes_today: number; size_bytes: number | null };
   usage: ProviderUsage[];
   runs: PipelineRun[];
 }

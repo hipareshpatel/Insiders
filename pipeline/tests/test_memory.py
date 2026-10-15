@@ -197,3 +197,24 @@ def test_grounding_accepts_bps_and_percentage_point_changes():
     assert result.ungrounded == [], result
     assert not check_card(Card.model_validate({"impact_level": "LOW", "headline": "Margin down 900 bps",
                                                "what_happened": ["x"]}), source).ok
+
+
+def test_footer_shows_the_sector_metric_only_in_the_unit_its_label_promises():
+    from bse_intel.dossier import latest_fundamentals
+
+    d = new_dossier(filing("n1", Q2))
+    d["financial_metrics"] = [
+        {"metric": "gnpa", "period": "Q2FY27", "value": 2345.0, "unit": "INR_CR", "as_of": Q2},  # an amount, not a ratio
+        {"metric": "gnpa_pct", "period": "Q1FY27", "value": 2.1, "unit": "PCT", "as_of": Q1},
+        {"metric": "nim", "period": "Q2FY27", "value": 3.4, "unit": "PCT", "as_of": Q2},
+        {"metric": "arpu", "period": "Q2FY27", "value": 211.0, "unit": "INR", "as_of": Q2},
+    ]
+    bank = ({"metric": "gnpa", "label": "GNPA", "format": "pct", "aliases": ["gnpa_pct"]},
+            {"metric": "nim", "label": "NIM", "format": "pct"})
+    assert latest_fundamentals(d, bank)["kpis"] == [
+        {"label": "GNPA", "format": "pct", "period": "Q1FY27", "value": 2.1},
+        {"label": "NIM", "format": "pct", "period": "Q2FY27", "value": 3.4},
+    ]
+    telecom = ({"metric": "arpu", "label": "ARPU", "format": "inr"},)
+    assert latest_fundamentals(d, telecom)["kpis"][0]["value"] == 211.0
+    assert "kpis" not in latest_fundamentals(d, ({"metric": "revpar", "label": "RevPAR", "format": "inr"},))

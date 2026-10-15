@@ -3,9 +3,11 @@ const inr2 = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
 
 export function cr(value: number | null | undefined): string {
   if (value == null) return "—";
+  const sign = value < 0 ? "−" : "";
+  const v = Math.abs(value);
   // ₹1,00,000 Cr and above reads better the way Indian markets say it: "₹12.5 lakh Cr".
-  if (Math.abs(value) >= 100000) return `₹${(value / 100000).toFixed(Math.abs(value) >= 1000000 ? 1 : 2).replace(/\.?0+$/, "")} lakh Cr`;
-  return `₹${Math.abs(value) >= 100 ? inr0.format(value) : inr2.format(value)} Cr`;
+  if (v >= 100000) return `${sign}₹${(v / 100000).toFixed(v >= 1000000 ? 1 : 2).replace(/\.?0+$/, "")} lakh Cr`;
+  return `${sign}₹${v >= 100 ? inr0.format(v) : inr2.format(v)} Cr`;
 }
 
 export function rupees(value: number | null | undefined): string {
@@ -103,5 +105,18 @@ export function quantValue(value: number | null | undefined, unit: string): stri
       return rupees(value);
     default:
       return `${num(value)}${unit ? ` ${unit.toLowerCase()}` : ""}`;
+  }
+}
+
+/** A sector footer figure in the unit its label promises (the pipeline has checked the unit). */
+export function formatKpi(k: { format: string; value: number }): string {
+  const v = k.value;
+  switch (k.format) {
+    case "pct": return `${v.toFixed(Math.abs(v) < 10 ? 2 : 1)}%`;
+    case "cr": return cr(v);
+    case "inr": return `₹${v.toLocaleString("en-IN", { maximumFractionDigits: Math.abs(v) < 100 ? 2 : 0 })}`;
+    case "usd": return `$${v.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
+    case "x": return `${v.toFixed(2)}x`;
+    default: return v.toLocaleString("en-IN", { maximumFractionDigits: 2 });
   }
 }

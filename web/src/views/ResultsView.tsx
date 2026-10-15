@@ -11,6 +11,7 @@ import { api } from "../lib/api";
 import { cn } from "../lib/cn";
 import { cr, istDate, todayIST } from "../lib/format";
 import { SIZES, TONE_BORDER, TONE_CHIP, verdict, type Tone } from "../lib/taxonomy";
+import { periodEnd } from "../lib/periods";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading } from "./FeedView";
 
@@ -44,7 +45,8 @@ export function ResultsView() {
   const rows = useMemo(() => (query.data?.pages.flatMap((p) => p.cards) ?? [])
     .map((row) => ({ row, card: parseCard(row) }))
     .filter((r): r is { row: CardRow; card: CardBody } => !!r.card), [query.data]);
-  const quarters = [...new Set(rows.map((r) => r.card.results?.period).filter(Boolean) as string[])].sort().reverse();
+  const quarters = [...new Set(rows.map((r) => r.card.results?.period).filter(Boolean) as string[])]
+    .sort((a, b) => periodEnd(b).localeCompare(periodEnd(a)));
   const visible = rows.filter((r) => (!quarter || r.card.results?.period === quarter) && (!tone || (r.card.tone ?? "NEUTRAL") === tone));
 
   return (
@@ -78,8 +80,15 @@ export function ResultsView() {
       </div>
 
       <div className="mt-4">
-        {query.isPending ? <Loading /> : query.isError ? <Empty title="Couldn't load results" body={String(query.error)} /> : visible.length === 0 ? (
-          <Empty title="No results match" body="Results appear here as companies report and the pipeline analyses them." />
+        {query.isPending ? <Loading /> : !query.data ? <Empty title="Couldn't load results" body={String(query.error)} /> : visible.length === 0 ? (
+          <div className="space-y-3">
+            <Empty title="No results match" body={query.hasNextPage
+              ? "None in the results loaded so far. Load older results to keep looking."
+              : "Results appear here as companies report and the pipeline analyses them."} />
+            {query.hasNextPage && (
+              <div className="text-center"><Button size="sm" onClick={() => query.fetchNextPage()} disabled={query.isFetchingNextPage}>Load older results</Button></div>
+            )}
+          </div>
         ) : (
           <div className="overflow-x-auto rounded-xl border border-line bg-surface">
             <table className="w-full min-w-[920px] text-[13.5px]">
@@ -106,7 +115,8 @@ export function ResultsView() {
                   const isOpen = open === row.news_id;
                   return (
                     <Fragment key={row.news_id}>
-                      <tr onClick={() => setOpen(isOpen ? null : row.news_id)}
+                      <tr onClick={() => setOpen(isOpen ? null : row.news_id)} tabIndex={0} aria-expanded={isOpen}
+                        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(isOpen ? null : row.news_id); } }}
                         className={cn("num cursor-pointer border-b border-line border-l-[3px] hover:bg-surface-2/60", TONE_BORDER[t], isOpen && "bg-surface-2/60")}>
                         <td className="whitespace-nowrap py-3 pl-[17px] pr-3 text-ink-3">{istDate(row.filed_at).replace(/ \d{4}$/, "")}</td>
                         <td className="px-3 py-3">
@@ -145,7 +155,13 @@ export function ResultsView() {
                 })}
               </tbody>
             </table>
-            {query.hasNextPage && <div className="border-t border-line p-3 text-center"><Button size="sm" onClick={() => query.fetchNextPage()}>Load more</Button></div>}
+            {(query.hasNextPage || query.isFetchNextPageError) && (
+              <div className="border-t border-line p-3 text-center">
+                <Button size="sm" onClick={() => query.fetchNextPage()} disabled={query.isFetchingNextPage}>
+                  {query.isFetchNextPageError ? "Couldn't load more · retry" : "Load more"}
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>

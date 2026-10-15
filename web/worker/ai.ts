@@ -19,7 +19,10 @@ interface AiResult {
 type AiRunner = { run(model: string, inputs: Record<string, unknown>): Promise<AiResult | string> };
 
 export async function aiChatCompletions(c: Context<AppEnv>) {
-  const req = await c.req.json<ChatRequest>();
+  const req = await c.req.json<ChatRequest>().catch(() => null);
+  if (!req || !Array.isArray(req.messages)) {
+    return c.json({ error: { message: "body must be a chat request with messages", type: "invalid_request_error" } }, 400);
+  }
   if (!req.model?.startsWith("@cf/")) {
     return c.json({ error: { message: `model not found: ${req.model}`, type: "invalid_request_error" } }, 404);
   }

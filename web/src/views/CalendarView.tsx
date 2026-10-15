@@ -31,7 +31,8 @@ export function CalendarView() {
   const [params, setParams] = useQueryState();
   const [, navigate] = useLocation();
   const today = todayIST();
-  const month = params.get("month") ?? today.slice(0, 7);
+  const asked = params.get("month");
+  const month = asked && /^20\d{2}-(0[1-9]|1[0-2])$/.test(asked) ? asked : today.slice(0, 7);
   const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<string | null>(null);
   const { first, last, from, to } = monthBounds(month);

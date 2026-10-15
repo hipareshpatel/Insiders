@@ -69,6 +69,22 @@ PASS2_SCHEMA = {
 }
 
 
+def _examples_text(examples: dict[str, list[dict]]) -> str:
+    """The owner's rated cards for this kind of filing, as compact examples (blueprint Loop 3)."""
+    def brief(card: dict) -> str:
+        facts = "; ".join(str(f) for f in (card.get("what_happened") or [])[:2])
+        insights = "; ".join(str(i.get("text", i)) for i in (card.get("why_it_matters") or [])[:2])
+        return f"  headline: {card.get('headline', '')}\n  facts: {facts}\n  why: {insights}"[:900]
+    parts = []
+    if examples.get("STARRED"):
+        parts.append("OWNER'S STARRED CARDS for this kind of filing (match their depth and focus, not their facts):\n"
+                     + "\n---\n".join(brief(c) for c in examples["STARRED"]))
+    if examples.get("NOISE"):
+        parts.append("OWNER MARKED THIS AS NOISE (avoid writing a card like it):\n"
+                     + "\n---\n".join(brief(c) for c in examples["NOISE"]))
+    return "\n\n".join(parts)
+
+
 @dataclass(frozen=True)
 class SectorModule:
     name: str
@@ -133,7 +149,7 @@ class PromptEngine:
 
     def pass2(
         self, filing: Filing, event_type: str, industry: str | None, memory: dict | None, text: str,
-        peers: list[dict] | None = None,
+        peers: list[dict] | None = None, examples: dict[str, list[dict]] | None = None,
     ) -> tuple[str, str]:
         sector = self.sector_for(industry)
         system = self._pass2.safe_substitute(
@@ -163,4 +179,7 @@ class PromptEngine:
             ) or "None.",
             text=text or "(attachment had no extractable text; rely on the headline)",
         )
+        shown = _examples_text(examples or {})
+        if shown:
+            user = shown + "\n\n" + user
         return system, user

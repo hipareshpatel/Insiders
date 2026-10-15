@@ -14,7 +14,8 @@ const CARD_COLUMNS = `
   co.median_turnover_cr, co.credibility_score, co.watchlist`;
 
 const COMPANY_COLUMNS = `scrip_code, symbol, company_name, isin, industry, sector, market_cap_cr,
-  size_category, last_price, price_date, ret_1w, ret_1m, ret_1y, card_count, last_card_at`;
+  size_category, last_price, price_date, ret_1w, ret_1m, ret_1y, card_count, last_card_at,
+  watchlist, former_names_json, credibility_score, median_turnover_cr`;
 
 /** Turn free text into a safe FTS5 prefix query: "tata mot" -> "tata"* "mot"*. One-letter tokens
  * are dropped: a prefix that short matches nearly every row. */
@@ -73,14 +74,15 @@ export const api = new Hono<AppEnv>();
 // Worker responses are not cached by Cloudflare from their headers alone; the Cache API stores
 // them per data centre. It works on a custom domain and does nothing on workers.dev.
 api.use("*", async (c, next) => {
-  const cache = c.req.method === "GET" && !c.req.path.startsWith("/api/internal/") ? edgeCache() : undefined;
+  const isPrivate = c.req.path.startsWith("/api/internal/") || c.req.path.startsWith("/api/owner/");
+  const cache = c.req.method === "GET" && !isPrivate ? edgeCache() : undefined;
   const key = new Request(c.req.url);
   if (cache) {
     const hit = await cache.match(key).catch(() => undefined);
     if (hit) return hit;
   }
   await next();
-  if (c.req.method !== "GET" || c.res.status !== 200 || c.req.path.startsWith("/api/internal/")) return;
+  if (c.req.method !== "GET" || c.res.status !== 200 || isPrivate) return;
   if (!c.res.headers.has("Cache-Control")) c.res.headers.set("Cache-Control", "public, max-age=30, s-maxage=60");
   if (cache) {
     try {

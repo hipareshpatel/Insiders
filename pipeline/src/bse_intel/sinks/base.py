@@ -46,6 +46,7 @@ QUERIES = (
     "snapshot_feed",
     "snapshot_signals",
     "snapshot_count",
+    "feedback_examples",
 )
 
 # Statements that add to what is stored: repeating one after an ambiguous failure (a timeout after

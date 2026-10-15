@@ -27,6 +27,7 @@ import exportKv from "../../db/queries/export_kv.sql?raw";
 import snapshotFeed from "../../db/queries/snapshot_feed.sql?raw";
 import snapshotSignals from "../../db/queries/snapshot_signals.sql?raw";
 import snapshotCount from "../../db/queries/snapshot_count.sql?raw";
+import feedbackExamples from "../../db/queries/feedback_examples.sql?raw";
 import kvGet from "../../db/queries/kv_get.sql?raw";
 import peerCards from "../../db/queries/peer_cards.sql?raw";
 import usageForDay from "../../db/queries/usage_for_day.sql?raw";
@@ -69,5 +70,6 @@ export const QUERIES: Record<string, string> = {
   snapshot_feed: snapshotFeed,
   snapshot_signals: snapshotSignals,
   snapshot_count: snapshotCount,
+  feedback_examples: feedbackExamples,
 };
 

@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { ownerApi, setOwnerToken, useOwnerToken } from "../lib/owner";
 import type { PipelineRun, ProviderUsage } from "../../shared/types";
 import { Badge } from "../components/ui/badge";
 import { api } from "../lib/api";
@@ -67,6 +69,8 @@ export function SystemView() {
         ) : null}
       </section>
 
+      <OwnerMode />
+
       <section className="rounded-xl border border-line bg-surface">
         <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line px-4 py-3">
           <h2 className="font-display text-[18px] text-ink">AI provider health · today (UTC)</h2>
@@ -95,6 +99,49 @@ export function SystemView() {
         )}
       </section>
     </div>
+  );
+}
+
+/** The owner enters OWNER_TOKEN once; this browser then shows Star/Noise and watchlist controls. */
+function OwnerMode() {
+  const token = useOwnerToken();
+  const [value, setValue] = useState("");
+  const [state, setState] = useState<"idle" | "checking" | "bad">("idle");
+  async function save() {
+    setState("checking");
+    try {
+      await ownerApi.check(value.trim());
+      setOwnerToken(value.trim());
+      setValue("");
+      setState("idle");
+    } catch {
+      setState("bad");
+    }
+  }
+  return (
+    <section className="rounded-xl border border-line bg-surface px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="font-display text-[18px] text-ink">Owner mode</h2>
+          <p className="text-xs text-ink-3">Star or mark cards as noise (the prompts learn from them) and keep a watchlist. Stored in this browser only.</p>
+        </div>
+        {token ? (
+          <button type="button" onClick={() => setOwnerToken(null)} className="h-9 rounded-lg border border-line px-3 text-[13px] font-medium text-ink hover:border-accent-line">
+            Sign out of owner mode
+          </button>
+        ) : (
+          <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); void save(); }}>
+            <input type="password" value={value} onChange={(e) => setValue(e.target.value)} placeholder="OWNER_TOKEN" aria-label="Owner token"
+              className="h-9 w-48 rounded-lg border border-line bg-surface px-3 text-[13px] text-ink" />
+            <button type="submit" disabled={!value.trim() || state === "checking"}
+              className="h-9 rounded-lg bg-accent px-3 text-[13px] font-medium text-accent-ink disabled:opacity-50">
+              {state === "checking" ? "Checking…" : "Enter"}
+            </button>
+            {state === "bad" && <span className="self-center text-xs text-neg">Token refused</span>}
+          </form>
+        )}
+      </div>
+    </section>
   );
 }
 

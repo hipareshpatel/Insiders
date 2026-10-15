@@ -2,11 +2,13 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import type { AppEnv } from "./env";
 import { internal } from "./internal";
+import { owner } from "./owner";
 import { api } from "./public";
 
 const app = new Hono<AppEnv>();
 
 app.route("/api/internal", internal);
+app.route("/api/owner", owner);
 app.route("/api", api);
 
 app.notFound((c) =>

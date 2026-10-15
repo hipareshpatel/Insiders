@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 import { Link, useLocation, useParams } from "wouter";
@@ -12,6 +12,7 @@ import { cn } from "../lib/cn";
 import { cr, istDate, num, pct, rupees, signClass, titleCase, todayIST } from "../lib/format";
 import { periodEnd, periodKind } from "../lib/periods";
 import { EVENT_LABELS, SECTORS, TONE_CHIP, TONE_LABEL, TONE_STRIPE, verdict, type Tone } from "../lib/taxonomy";
+import { ownerApi, useOwnerToken } from "../lib/owner";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading } from "./FeedView";
 import { Change } from "./ResultsView";
@@ -65,7 +66,18 @@ export function CompanyPage() {
             {company?.price_date && <span className="text-[12px] text-ink-3">as of {istDate(company.price_date)}</span>}
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {company && <WatchButton scrip={company.scrip_code} on={!!company.watchlist} />}
+          {company?.credibility_score != null && (
+            <Badge className={company.credibility_score >= 75 ? "bg-pos-soft text-pos" : company.credibility_score < 50 ? "bg-warn-soft text-warn" : "bg-surface-2 text-ink-2"}>
+              🎯 Credibility {Math.round(company.credibility_score)}%
+            </Badge>
+          )}
+          {company?.median_turnover_cr != null && (
+            <Badge className={company.median_turnover_cr < 0.5 ? "bg-warn-soft text-warn" : "bg-surface-2 text-ink-2"}>
+              💧 ₹{company.median_turnover_cr.toFixed(company.median_turnover_cr < 10 ? 2 : 0)} Cr/day
+            </Badge>
+          )}
           {company?.sector && <Badge className="bg-surface-2 text-ink-2">{SECTORS[company.sector] ?? titleCase(company.sector)}</Badge>}
           {company?.size_category && <Badge className="bg-accent-soft text-accent">{titleCase(company.size_category)}cap</Badge>}
         </div>
@@ -227,6 +239,23 @@ function Overview({ company, dossier, cards, onTab }: { company: Company | null;
         ) : <p className="text-sm text-ink-3">Nothing to track yet.</p>}
       </Panel>
     </div>
+  );
+}
+
+/** ★ the company (owner only): starred companies stay in the universe whatever their size. */
+function WatchButton({ scrip, on }: { scrip: string; on: boolean }) {
+  const token = useOwnerToken();
+  const client = useQueryClient();
+  const [value, setValue] = useState(on);
+  if (!token) return value ? <Badge className="bg-accent-soft text-accent">★ Watchlist</Badge> : null;
+  return (
+    <button type="button" aria-pressed={value} onClick={async () => {
+      setValue(!value);
+      await ownerApi.watch(token, scrip, !value).catch(() => setValue(value));
+      void client.invalidateQueries({ queryKey: ["company", scrip] });
+    }} className={cn("h-7 rounded-full border px-3 text-[12px] font-semibold", value ? "border-accent bg-accent-soft text-accent" : "border-line text-ink-2 hover:text-ink")}>
+      {value ? "★ On watchlist" : "☆ Watch"}
+    </button>
   );
 }
 

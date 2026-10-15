@@ -195,6 +195,7 @@ class Pipeline:
         self._blocked: SourceBlockedError | None = None
         self._usage_lock = Lock()
         self._universe: tuple[set[str], float] | None = None
+        self._examples: dict[tuple[str, str], dict[str, list[dict]]] = {}
 
     # ------------------------------------------------------------------ writes
 
@@ -551,7 +552,8 @@ class Pipeline:
         sector_module = self.prompts.sector_for(industry)
         sector = sector_module.name
         peers = self._peers(sector, event_type, filing)
-        system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers)
+        system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers,
+                                          examples=self._owner_examples(sector, event_type))
         route = "pass2_bulk" if bulk else "pass2"
         if (len(system) + len(user)) / 4 > LONG_PROMPT_TOKENS and self.gateway.has_route("pass2_long"):
             route = "pass2_long"  # a transcript or presentation: long-context models only
@@ -703,6 +705,24 @@ class Pipeline:
             return fixed, second, checks2, {**base, "status": "UNRESOLVED", "checked_by": second.model_label,
                                             "issues": checks2.problems()}
         return out, result, checks, {**base, "status": "UNRESOLVED", "checked_by": second.model_label}
+
+    def _owner_examples(self, sector: str, event_type: str) -> dict[str, list[dict]]:
+        """The owner's two latest starred cards and latest noise card for this sector and event
+        (blueprint Loop 3), read once per run per kind of filing."""
+        key = (sector, event_type)
+        with self._lock:
+            if key in self._examples:
+                return self._examples[key]
+        try:
+            found = {rating: [json.loads(r["card_json_snapshot"]) for r in
+                              self.sink.query("feedback_examples", [sector, event_type, rating, limit]) if r.get("card_json_snapshot")]
+                     for rating, limit in (("STARRED", 2), ("NOISE", 1))}
+        except Exception as exc:  # examples are a refinement; never fail a filing for them
+            log.warning("owner examples unavailable: %s", exc)
+            found = {"STARRED": [], "NOISE": []}
+        with self._lock:
+            self._examples[key] = found
+        return found
 
     def _peers(self, sector: str, event_type: str, filing: Filing) -> list[dict]:
         if sector == "default":

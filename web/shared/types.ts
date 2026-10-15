@@ -244,6 +244,10 @@ export interface Company {
   ret_1y: number | null;
   card_count: number;
   last_card_at: string | null;
+  watchlist?: number;
+  former_names_json?: string;
+  credibility_score?: number | null;
+  median_turnover_cr?: number | null;
 }
 
 export interface CompaniesResponse {

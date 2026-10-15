@@ -4,6 +4,7 @@ export interface Env {
   AI: Ai;
   ASSETS: Fetcher;
   INGEST_TOKEN: string;
+  OWNER_TOKEN?: string;
 }
 
 export type AppEnv = { Bindings: Env };

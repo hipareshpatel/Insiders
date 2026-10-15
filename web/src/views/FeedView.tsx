@@ -42,6 +42,7 @@ export function FeedView() {
     q: params.get("q") ?? undefined,
     review: params.get("verified") === "1" ? "0" : undefined,
     session: params.get("session") ?? undefined,
+    watch: params.get("verified") === "watch" ? "1" : undefined,
   };
   const page = Math.max(1, Number.parseInt(params.get("page") ?? "1", 10) || 1);
 
@@ -122,6 +123,7 @@ function FilterBar({ params, setParams: setRaw }: { params: URLSearchParams; set
       <Select aria-label="Verification" value={params.get("verified") ?? ""} onChange={(e) => setParams({ verified: e.target.value || null })}>
         <option value="">All cards</option>
         <option value="1">Verified only</option>
+        <option value="watch">★ Watchlist only</option>
       </Select>
       <label className="relative col-span-2 min-w-0 sm:flex-1 sm:basis-56">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-3" />

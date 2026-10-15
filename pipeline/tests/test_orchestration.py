@@ -256,3 +256,22 @@ def test_run_publishes_the_homepage_snapshot(settings):
     snap = json.loads(sink.get_object("daily_feed/latest_snapshot.json"))
     assert snap["limit"] == 50 and snap["feed"]["total"] == 2 and len(snap["feed"]["cards"]) == 2
     assert {"card_json", "actionability_score", "market_cap_cr"} <= set(snap["feed"]["cards"][0])
+
+
+def test_owner_starred_and_noise_cards_are_shown_to_the_analyst(settings):
+    now = now_ist() - timedelta(minutes=30)
+    (f,) = _results(1, now)
+    prompts = []
+
+    def respond(kwargs):
+        prompts.append(kwargs["messages"][1]["content"])
+        return json.dumps(PASS2)
+
+    pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                              {"deepseek-ai/deepseek-r1": [respond], "meta/llama-3.3-70b-instruct": [respond]}, env={"NVIDIA_API_KEY": "n"})
+    starred = {"headline": "Starred example headline", "what_happened": ["fact"], "why_it_matters": [{"text": "why"}]}
+    sink._db.execute("INSERT INTO card_feedback (news_id, scrip_code, sector, event_category, rating, card_json_snapshot, created_at)"
+                     " VALUES ('x1', '1', 'default', 'RESULTS', 'STARRED', ?, '2026-01-01')", [json.dumps(starred)])
+    sink._db.commit()
+    pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert "OWNER'S STARRED CARDS" in prompts[0] and "Starred example headline" in prompts[0]

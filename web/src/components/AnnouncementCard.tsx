@@ -1,12 +1,13 @@
 import {
   AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, Building2, Camera, Check, ChevronDown, ChevronRight, FileText, Gauge,
-  Minus, RefreshCcw, Rocket, Scale, ShieldAlert, Timer,
+  Flame, Minus, RefreshCcw, Rocket, Scale, ShieldAlert, Timer, Trash2,
 } from "lucide-react";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { useLocation } from "wouter";
 import type { CallRead, CardBody, CardRow, Impact, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
+import { useRatings } from "../lib/owner";
 import { copyNodeAsPng } from "../lib/png";
 import { cr, formatKpi, istDate, istDateTime, marketSession, pct, relativeTime, signClass, titleCase } from "../lib/format";
 import { EVENT_LABELS, SECTORS, TONE_STRIPE, type Tone } from "../lib/taxonomy";
@@ -213,6 +214,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
   const [copy, setCopy] = useState<"idle" | "copied" | "saved" | "error">("idle");
   const ref = useRef<HTMLElement>(null);
   const [, navigate] = useLocation();
+  const owner = useRatings();
   if (!card) return null;
 
   const tone = (card.tone ?? "NEUTRAL") as Tone;
@@ -395,6 +397,20 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
                 className="grid h-8 w-8 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
                 {copy === "idle" ? <Camera className="h-4 w-4" /> : copy === "error" ? <AlertTriangle className="h-4 w-4 text-warn" /> : <Check className="h-4 w-4 text-pos" />}
               </button>
+              {owner.token && (
+                <>
+                  <button type="button" onClick={() => owner.rate(row.news_id, "STARRED")} aria-pressed={owner.ratings[row.news_id] === "STARRED"}
+                    title="Star signal: show more cards like this" aria-label="Star signal"
+                    className={cn("grid h-8 w-8 place-items-center rounded-lg hover:bg-surface-2", owner.ratings[row.news_id] === "STARRED" ? "text-accent" : "text-ink-2")}>
+                    <Flame className="h-4 w-4" />
+                  </button>
+                  <button type="button" onClick={() => owner.rate(row.news_id, "NOISE")} aria-pressed={owner.ratings[row.news_id] === "NOISE"}
+                    title="Mark noise: show fewer cards like this" aria-label="Mark noise"
+                    className={cn("grid h-8 w-8 place-items-center rounded-lg hover:bg-surface-2", owner.ratings[row.news_id] === "NOISE" ? "text-warn" : "text-ink-2")}>
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </>
+              )}
               <button type="button" onClick={() => navigate(`/company/${row.scrip_code}`)} title="Company memory" aria-label="Company memory"
                 className="grid h-8 w-8 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
                 <Building2 className="h-4 w-4" />

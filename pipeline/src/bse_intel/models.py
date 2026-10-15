@@ -625,6 +625,14 @@ class Ownership(_Lenient):
     retail_holders: Num = None   # number of small shareholders
 
 
+def _ownership_or_none(value: Any) -> dict | None:
+    """Models fill the ownership block with nulls when a filing has no shareholding: without a
+    quarter-end it says nothing, so drop it instead of failing (and repairing) the whole card."""
+    if not isinstance(value, dict) or _to_str_or_none(value.get("period")) is None:
+        return None
+    return {**value, "period": _to_str_or_none(value["period"])}
+
+
 class Auditor(_Lenient):
     name: OptStr = None
     opinion: Annotated[str | None, _enum(("UNMODIFIED", "EMPHASIS_OF_MATTER", "QUALIFIED", "ADVERSE", "DISCLAIMER"),
@@ -648,7 +656,7 @@ class DossierDelta(_Lenient):
     operating_notes: StrList = Field(default_factory=list)  # feedstock, realisations, utilisation, order book...
     former_names: StrList = Field(default_factory=list)     # "Novartis India Limited" (identity, blueprint compartment 1)
     entities: Annotated[list[Entity], _drop_invalid(Entity)] = Field(default_factory=list)
-    ownership: Annotated[Ownership | None, BeforeValidator(lambda v: v if isinstance(v, dict) else None)] = None
+    ownership: Annotated[Ownership | None, BeforeValidator(_ownership_or_none)] = None
     auditor: Annotated[Auditor | None, BeforeValidator(lambda v: v if isinstance(v, dict) else None)] = None
 
 

@@ -224,6 +224,22 @@ def test_smoke_test_backfill_covers_only_the_given_companies_in_date_order(setti
     assert {r["news_id"] for r in rows(sink, "select news_id from cards")} == {"a1", "a2"}
 
 
+def test_a_long_company_history_is_saved_every_few_filings(settings, monkeypatch):
+    today = now_ist().date()
+    settings = replace(settings, backfill_start=(today - timedelta(days=60)).isoformat(), workers=1)
+    at = lambda d: now_ist().replace(hour=17) - timedelta(days=d)  # noqa: E731
+    filings = [_filing(f"k{i}", "Unaudited Financial Results", at(40 - i), "Result", scrip="506525", name="Kanoria")
+               for i in range(12)]
+    pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
+                              {"ministral-14b-2512": [json.dumps(PASS2)] * 12}, env={"MISTRAL_API_KEY": "m"})
+    saved = []
+    commit = pipeline._commit
+    monkeypatch.setattr(pipeline, "_commit", lambda outcomes: (saved.append(len(outcomes)), commit(outcomes)))
+    pipeline.backfill_companies(["506525"], today - timedelta(days=60), today, 60)
+    assert [n for n in saved if n] == [5, 5, 2]
+    assert len(rows(sink, "select news_id from cards")) == 12
+
+
 def test_sync_to_cloud_copies_cards_state_and_objects_and_resumes(settings, tmp_path):
     from bse_intel.sinks.local import LocalSink
     from bse_intel.sync import Sync

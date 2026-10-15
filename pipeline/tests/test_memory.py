@@ -346,3 +346,8 @@ def test_period_spellings_land_on_one_dossier_row():
     assert [(m["period"], m["value"]) for m in d["financial_metrics"]] == [("Q2FY27", 2)]
     assert str(due_date("FY2026-27")) == "2027-03-31" and str(due_date("November 15, 2026")) == "2026-11-15"
     assert str(due_date("30-09-2026")) == "2026-09-30" and str(due_date("Q2-FY27")) == "2026-09-30"
+
+
+def test_an_ownership_block_without_a_quarter_end_is_dropped_not_failed():
+    assert output(ownership={"period": None, "promoter_pct": None}).dossier_delta.ownership is None
+    assert output(ownership={"period": 202609, "promoter_pct": 51}).dossier_delta.ownership.period == "202609"

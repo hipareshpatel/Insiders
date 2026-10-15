@@ -63,6 +63,7 @@ TRANSIENT_WAIT_S = 60
 TRANSIENT_RETRIES = 3
 BUSY_STOP = 4  # filings in a row left queued because every provider was busy: stop the run, rerun later
 BATCH = 40
+COMMIT_EVERY = 5         # a company's results are saved this often, so a crash loses at most a few
 HISTORY_LIMIT = 200      # one company's filings fetched per page (a year rarely has more)
 HISTORY_INLINE = 30      # history analysed ahead of a live filing; a longer backlog goes to the backfill
 MAX_ORDER = 20_000       # companies in the cached backfill order
@@ -116,6 +117,7 @@ class Outcome:
     card: dict | None = None
     catalysts: list[dict] = field(default_factory=list)
     company: dict | None = None
+    committed: bool = False
 
 
 @dataclass
@@ -208,6 +210,7 @@ class Pipeline:
         self._busy_halt = False
         self._blocked: SourceBlockedError | None = None
         self._usage_lock = Lock()
+        self._commit_lock = Lock()  # companies commit from worker threads; the R2 day archive is read-modify-write
         self._universe: tuple[set[str], float] | None = None
         self._examples: dict[tuple[str, str], dict[str, list[dict]]] = {}
         self._learned: dict | None = None   # Loop 1 state: post-mortem queue, lessons, dampened categories
@@ -421,8 +424,8 @@ class Pipeline:
         return results + self._process_group(filings, deadline, bulk, discovered and finished)
 
     def _run_parallel(self, jobs: dict) -> dict[str, list[Outcome]]:
-        """Run one job per company in parallel and commit each company's results as it finishes, so
-        a timeout or a crash loses at most the filings still in flight."""
+        """Run one job per company in parallel. Each company commits every COMMIT_EVERY results as
+        it goes and the rest when it finishes, so a timeout or a crash loses at most a few filings."""
         done: dict[str, list[Outcome]] = {}
         if not jobs:
             return done
@@ -431,7 +434,7 @@ class Pipeline:
             for future in as_completed(futures):
                 outcomes = future.result()
                 done[futures[future]] = outcomes
-                self._commit(outcomes)
+                self._commit([o for o in outcomes if not o.committed])
         if self._blocked:
             raise self._blocked
         return done
@@ -446,6 +449,11 @@ class Pipeline:
                     continue
                 self._tried.add(filing.news_id)
             results.append(self._process_one(filing, bulk, memory_complete, deadline))
+            unsaved = [o for o in results if not o.committed]
+            if len(unsaved) >= COMMIT_EVERY:
+                self._commit(unsaved)
+                for o in unsaved:
+                    o.committed = True
         return results
 
     def _halted(self, bulk: bool) -> bool:
@@ -903,6 +911,10 @@ class Pipeline:
     def _commit(self, outcomes: list[Outcome]) -> None:
         if not outcomes:
             return
+        with self._commit_lock:
+            self._commit_locked(outcomes)
+
+    def _commit_locked(self, outcomes: list[Outcome]) -> None:
         try:
             self._commit_rows(outcomes)
         except SinkRejected as exc:

@@ -44,6 +44,15 @@ def returns(closes: list[float]) -> dict:
     return out
 
 
+def median_turnover_cr(frame, days: int) -> float | None:
+    """Median daily traded value (close x volume) over the last ``days`` sessions, in ₹ crore."""
+    try:
+        traded = (frame["Close"] * frame["Volume"]).dropna().tail(days)
+        return round(float(traded.median()) / 1e7, 3) if len(traded) else None
+    except Exception:
+        return None
+
+
 def _stale(updated_at: str | None, days: int) -> bool:
     if not updated_at:
         return True
@@ -53,12 +62,14 @@ def _stale(updated_at: str | None, days: int) -> bool:
         return True
 
 
-def enrich(settings: Settings, sink: Sink) -> int:
+def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
     import yfinance as yf  # optional dependency: pip install -e ".[market]"
 
     config = settings.load_toml("market.toml")
     yconf, buckets = config["yfinance"], config["size_buckets"]
-    companies = sink.query("companies_for_market", [int(yconf["max_companies"])])
+    companies = (sink.query("companies_for_market_all", [20000]) if all_companies
+                 else sink.query("companies_for_market", [int(yconf["max_companies"])]))
+    max_lookups = len(companies) if all_companies else int(yconf["max_share_lookups"])
     if not companies:
         log.info("no companies with cards yet; nothing to enrich")
         return 0
@@ -83,9 +94,12 @@ def enrich(settings: Settings, sink: Sink) -> int:
                 continue
             row = {"scrip_code": company["scrip_code"], "last_price": round(closes[-1], 2),
                    "price_date": price_date, "updated_at": now, **returns(closes)}
+            turnover = median_turnover_cr(frame, int(yconf.get("turnover_days", 30)))
+            if turnover is not None:
+                row["median_turnover_cr"] = turnover
             shares = company.get("shares_outstanding")
             if _stale(company.get("shares_updated_at"), int(yconf["shares_refresh_days"])) \
-                    and share_lookups < int(yconf["max_share_lookups"]):
+                    and share_lookups < max_lookups:
                 share_lookups += 1
                 try:
                     looked_up = yf.Ticker(ticker).fast_info.get("shares")

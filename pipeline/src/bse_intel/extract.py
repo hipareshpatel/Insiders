@@ -54,6 +54,20 @@ class Document:
             self.error = f"unreadable attachment: {exc}"
             log.warning(self.error)
 
+    def to_cache(self) -> dict:
+        """Everything read from the PDF (digital text and the pages OCR'd so far), for the text cache."""
+        return {"v": 1, "error": self.error, "digital": self._digital, "has_image": self._has_image,
+                "ocr": {str(k): v for k, v in self._ocr_cache.items()}}
+
+    @classmethod
+    def from_cache(cls, data: dict, ocr: OcrFn | None = None, max_ocr_pages: int = 6) -> "Document":
+        doc = cls(None, ocr=ocr, max_ocr_pages=max_ocr_pages)
+        doc.error = data.get("error")
+        doc._digital = list(data.get("digital", []))
+        doc._has_image = list(data.get("has_image", [False] * len(doc._digital)))
+        doc._ocr_cache = {int(k): v for k, v in (data.get("ocr") or {}).items()}
+        return doc
+
     @property
     def page_count(self) -> int:
         return len(self._digital)

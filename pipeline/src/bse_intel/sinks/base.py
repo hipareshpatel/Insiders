@@ -35,6 +35,8 @@ QUERIES = (
     "company_get",
     "peer_cards",
     "companies_for_market",
+    "companies_outside_universe",
+    "companies_for_market_all",
 )
 
 # Statements that add to what is stored: repeating one after an ambiguous failure (a timeout after

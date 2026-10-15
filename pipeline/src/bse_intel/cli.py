@@ -70,7 +70,10 @@ def cmd_analyze_pdf(args, settings, sink) -> int:
 def cmd_market_data(args, settings, sink) -> int:
     from .market import enrich
 
-    print(json.dumps({"companies_updated": enrich(settings, sink)}))
+    from . import universe
+
+    updated = enrich(settings, sink, all_companies=args.all)
+    print(json.dumps({"companies_updated": updated, "outside_universe": universe.build(settings, sink)}))
     return 0
 
 
@@ -87,7 +90,9 @@ def cmd_sync_companies(args, settings, sink) -> int:
         row["updated_at"] = now
     written = sink.execute("companies_upsert", rows)
     sink.add_writes(utc_day(), written, now)
-    print(json.dumps({"companies": len(rows), "rows_written": written}))
+    from . import universe
+
+    print(json.dumps({"companies": len(rows), "rows_written": written, "outside_universe": universe.build(settings, sink)}))
     return 0
 
 
@@ -160,7 +165,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--news-id")
     p.set_defaults(func=cmd_analyze_pdf)
 
-    sub.add_parser("market-data", help="refresh prices, returns and market caps").set_defaults(func=cmd_market_data)
+    p = sub.add_parser("market-data", help="refresh prices, returns and market caps")
+    p.add_argument("--all", action="store_true", help="every company, not only those with cards (laptop, before backfill)")
+    p.set_defaults(func=cmd_market_data)
     sub.add_parser("sync-companies", help="load BSE's active equity scrip list").set_defaults(func=cmd_sync_companies)
 
     p = sub.add_parser("backup", help="export dossiers as JSON files")

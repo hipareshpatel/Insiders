@@ -13,7 +13,8 @@ from bse_intel.settings import Settings
 
 @pytest.fixture
 def settings(tmp_path) -> Settings:
-    return replace(Settings(), sink="local", local_dir=tmp_path / "local", workers=2)
+    return replace(Settings(), sink="local", local_dir=tmp_path / "local", workers=2, text_cache_dir=tmp_path / "text_cache",
+                   universe_min_mcap_cr=0)
 
 
 def completion(text: str, prompt_tokens: int = 100, completion_tokens: int = 50):

@@ -35,7 +35,12 @@ class Settings:
     # Where results go. "platform" = the deployed Worker's internal API,
     # "local" = a SQLite file + a directory of dossiers (dry runs, development).
     sink: str = field(default_factory=lambda: _env("BSE_INTEL_SINK", "local"))
-    local_dir: Path = field(default_factory=lambda: Path(_env("BSE_INTEL_LOCAL_DIR", str(_REPO_DIR / ".local-data"))))
+    local_dir: Path = field(default_factory=lambda: Path(_env("BSE_INTEL_LOCAL_DIR", str(_REPO_DIR / "data" / "local"))))
+    # Extracted PDF text per filing (gzip JSON), so re-analysis never downloads or OCRs again.
+    text_cache_dir: Path | None = field(default_factory=lambda: (None if _env("TEXT_CACHE", "1") in ("0", "off")
+                                                                 else Path(_env("TEXT_CACHE_DIR", str(_REPO_DIR / "data" / "text_cache")))))
+    # Companies analysed: market cap at least this (₹ Cr), or unknown, or on the watchlist. 0 = all.
+    universe_min_mcap_cr: float = field(default_factory=lambda: float(_env("UNIVERSE_MIN_MCAP_CR", "100")))
     platform_url: str | None = field(default_factory=lambda: _env("PLATFORM_API_URL"))
     ingest_token: str | None = field(default_factory=lambda: _env("INGEST_TOKEN"))
 

@@ -171,3 +171,34 @@ def test_scanned_document_with_failed_ocr_is_retried_not_judged_on_its_headline(
     pipeline.gateway.transcribe_image = lambda png, route="vision": (_ for _ in ()).throw(RuntimeError("vision down"))
     outcome = pipeline._process_one(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}), False, True)
     assert outcome.update["status"] == "FAILED" and "OCR failed" in outcome.update["last_error"]
+
+
+def test_extracted_text_is_cached_so_reanalysis_never_downloads_again(settings):
+    now = now_ist() - timedelta(minutes=30)
+    (f,) = _results(1, now)
+    pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                              {"deepseek-ai/deepseek-r1": [json.dumps(PASS2)], "meta/llama-3.3-70b-instruct": [json.dumps(PASS2)]},
+                              env={"NVIDIA_API_KEY": "n"})
+    filing = f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"})
+    pipeline.analyze(filing)
+    pipeline.bse.download = lambda url: (_ for _ in ()).throw(AssertionError("downloaded again"))
+    outcome = pipeline.analyze(filing)
+    assert outcome.update["status"] == "ANALYZED" and list(settings.text_cache_dir.rglob("*.json.gz"))
+
+
+def test_filings_of_companies_outside_the_universe_go_to_the_noise_file(settings):
+    from bse_intel import universe
+
+    settings = replace(settings, universe_min_mcap_cr=100)
+    now = now_ist() - timedelta(minutes=30)
+    filings = _results(3, now)  # scrips 999100, 999101, 999102
+    pipeline, sink, _ = build(settings, filings, {}, {}, env={})
+    sink._db.executemany("INSERT INTO companies (scrip_code, company_name, market_cap_cr, watchlist) VALUES (?, ?, ?, ?)",
+                         [("999100", "Big", 900.0, 0), ("999101", "Shell", 40.0, 0), ("999102", "Starred", 40.0, 1)])
+    sink._db.commit()
+    assert universe.build(settings, sink) == 1
+    pipeline.discover(now.date())
+    queued = {r["news_id"] for r in rows(sink, "select news_id from filings")}
+    assert queued == {"r0", "r2"}
+    noise = json.loads(sink.get_object(f"noise/{now.date().isoformat()}/000.json"))["rows"]
+    assert noise[0][0] == "r1" and "outside universe" in noise[0][7]

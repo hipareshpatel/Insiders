@@ -1,7 +1,8 @@
 -- ?1 = JSON array of card rows; `card` is the full card object.
 INSERT INTO cards (news_id, scrip_code, symbol, company_name, filing_date, filed_at, sector,
                    event_category, impact_level, headline, grounding_score, needs_review,
-                   memory_complete, card_json, pdf_url, model, created_at)
+                   memory_complete, card_json, pdf_url, model, created_at, market_session,
+                   actionability_score, is_actionable_signal)
 SELECT json_extract(value, '$.news_id'),
        json_extract(value, '$.scrip_code'),
        json_extract(value, '$.symbol'),
@@ -18,7 +19,10 @@ SELECT json_extract(value, '$.news_id'),
        json(json_extract(value, '$.card')),
        json_extract(value, '$.pdf_url'),
        json_extract(value, '$.model'),
-       json_extract(value, '$.created_at')
+       json_extract(value, '$.created_at'),
+       json_extract(value, '$.market_session'),
+       coalesce(json_extract(value, '$.actionability_score'), 0),
+       coalesce(json_extract(value, '$.is_actionable_signal'), 0)
 FROM json_each(?1)
 WHERE true
 ON CONFLICT (news_id) DO UPDATE SET
@@ -34,4 +38,7 @@ ON CONFLICT (news_id) DO UPDATE SET
        card_json       = excluded.card_json,
        pdf_url         = excluded.pdf_url,
        model           = excluded.model,
-       created_at      = excluded.created_at;
+       created_at      = excluded.created_at,
+       market_session  = excluded.market_session,
+       actionability_score  = excluded.actionability_score,
+       is_actionable_signal = excluded.is_actionable_signal;

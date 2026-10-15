@@ -18,6 +18,7 @@ are processed sequentially in timestamp order; companies run in parallel.
 
 from __future__ import annotations
 
+import gzip
 import hashlib
 import json
 import logging
@@ -44,7 +45,8 @@ from .rules import RuleBook
 from .settings import Settings
 from .signals import compute as compute_signals
 from .sinks.base import Sink, SinkRejected
-from .timeutil import IST, now_iso, now_ist, today_ist, utc_day
+from . import universe
+from .timeutil import IST, market_session, now_iso, now_ist, today_ist, utc_day
 
 log = logging.getLogger(__name__)
 
@@ -80,6 +82,7 @@ class Stats:
     ocr_pages: int = 0
     d1_rows_written: int = 0
     discovery_errors: int = 0
+    outside_universe: int = 0
     days_discovered: list[str] = field(default_factory=list)
     stopped_reason: str | None = None
     last_error: str | None = None
@@ -183,6 +186,7 @@ class Pipeline:
         self._refusals = 0
         self._blocked: SourceBlockedError | None = None
         self._usage_lock = Lock()
+        self._universe: tuple[set[str], float] | None = None
 
     # ------------------------------------------------------------------ writes
 
@@ -245,6 +249,11 @@ class Pipeline:
                         "description": filing.headline[:300], "source_news_id": filing.news_id, "created_at": now,
                     })
                 continue
+            if filing.scrip_code in self._excluded():
+                self.stats.outside_universe += 1
+                filing.reason = f"outside universe (market cap below ₹{self._universe[1]:g} Cr)"
+                noise[filing.news_id] = _noise_row(filing)
+                continue
             filing.status, filing.route, filing.event_type = "PENDING", decision.action, decision.event_type
             self.stats.pending_new += 1
             ledger.append(filing.ledger_row(now))
@@ -262,6 +271,12 @@ class Pipeline:
         self.stats.days_discovered.append(key)
         log.info("discovered %s: %d new filings (%d queued, %d noise)", day, len(ledger) + new_noise, len(ledger), new_noise)
         return len(ledger) + new_noise
+
+    def _excluded(self) -> set[str]:
+        """Companies outside the investable universe (loaded once per run; see universe.py)."""
+        if self._universe is None:
+            self._universe = universe.load(self.sink) if self.settings.universe_min_mcap_cr > 0 else (set(), 0.0)
+        return self._universe[0]
 
     def _load_noise(self, day: str) -> dict[str, list]:
         count = self._noise_count(day)
@@ -442,16 +457,48 @@ class Pipeline:
         """Run Pass 1 (if needed), extraction, Pass 2, grounding, merge and signals for one filing."""
         company = self.sink.company(filing.scrip_code) or {}
         industry = company.get("industry")
-        pdf = self.bse.download(filing.pdf_url) if filing.pdf_url else None
-        self._refusals = 0
         ocr = self.gateway.transcribe_image if self.gateway.has_route("vision") else None
-        doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
+        cached = self._cached_text(filing.news_id)
+        if cached is not None:
+            doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
+        else:
+            pdf = self.bse.download(filing.pdf_url) if filing.pdf_url else None
+            self._refusals = 0
+            doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         try:
             return self._analyze_document(filing, company, industry, doc, bulk, memory_complete)
         finally:
             with self._lock:
                 self.stats.ocr_pages += doc.ocr_pages_used
+            if doc.ocr_error is None:
+                self._cache_text(filing.news_id, doc)
             doc.close()
+
+    def _cache_path(self, news_id: str):
+        root = self.settings.text_cache_dir
+        safe = "".join(ch for ch in news_id if ch.isalnum() or ch in "-_")[:80]
+        return root / safe[:2] / f"{safe}.json.gz" if root and safe else None
+
+    def _cached_text(self, news_id: str) -> dict | None:
+        path = self._cache_path(news_id)
+        if not path or not path.exists():
+            return None
+        try:
+            return json.loads(gzip.decompress(path.read_bytes()))
+        except Exception:  # a damaged cache file is re-read from BSE
+            return None
+
+    def _cache_text(self, news_id: str, doc: Document) -> None:
+        path = self._cache_path(news_id)
+        if not path:
+            return
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_suffix(".tmp")
+            tmp.write_bytes(gzip.compress(json.dumps(doc.to_cache(), ensure_ascii=False).encode()))
+            tmp.replace(path)  # atomic: an interrupted run never leaves half a file
+        except OSError as exc:
+            log.warning("text cache write failed for %s: %s", news_id, exc)
 
     def _analyze_document(self, filing, company, industry, doc: Document, bulk: bool, memory_complete: bool) -> Outcome:
         now = now_iso()
@@ -532,7 +579,7 @@ class Pipeline:
             "event_category": event_type, "impact_level": card.impact_level, "headline": card.headline,
             "grounding_score": score, "needs_review": int(needs_review),
             "memory_complete": int(memory_complete), "card": card_json, "pdf_url": filing.pdf_url,
-            "model": result.model_label, "created_at": now,
+            "model": result.model_label, "created_at": now, "market_session": market_session(filing.filed_at),
         }
         catalysts = [
             {

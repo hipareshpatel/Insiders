@@ -38,6 +38,18 @@ def parse_bse_datetime(value: str | None) -> datetime | None:
     return parsed if parsed.tzinfo else parsed.replace(tzinfo=IST)
 
 
+def market_session(filed_at: str) -> str:
+    """LIVE_MARKET (09:15-15:30 IST on a weekday), PRE_MARKET, AFTER_MARKET or NON_TRADING (weekend).
+    Exchange holidays are not known here and count as trading days."""
+    dt = datetime.fromisoformat(filed_at).astimezone(IST)
+    if dt.weekday() >= 5:
+        return "NON_TRADING"
+    minutes = dt.hour * 60 + dt.minute
+    if minutes < 9 * 60 + 15:
+        return "PRE_MARKET"
+    return "LIVE_MARKET" if minutes <= 15 * 60 + 30 else "AFTER_MARKET"
+
+
 def iso_ist(dt: datetime) -> str:
     return dt.astimezone(IST).isoformat(timespec="seconds")
 

@@ -73,7 +73,22 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | F5: raw rupees shown as ₹ ("₹4,135,498,900" for ₹413.5 Cr); the card was already marked Unverified | prompt and validation: amounts in ₹ crore | open |
 | F6: a draft tax order tagged ORDER WIN | event-type check (tax/penalty words) | open |
 | F7: the same dividend payout derived differently on two cards (₹308 Cr, ₹125 Cr; about ₹62 Cr from shares outstanding) | derived payouts from shares outstanding in code, not by the model | open |
-| Working: sector lenses (auto, pharma), size labels, duplicate skips, memory follow-ups ("Approval met", KPI checks), Unverified marks with reasons | | ok |
+| F1 fixed in b1bd8a7: mangled "( … in million)" headers declare the unit, a figure keeps its written unit where it recurs bare, crore figures match only at real conversions; re-grading flags all 7 wrong Novartis cards | | fixed |
+| F8: the score treats a quantified *estimate* as the catalyst's size ("Estimated April revenue … is 19% of revenue" passes the size gate) | size from deals/orders/capex only | open |
+| F9: an invented comparison base ("Passenger share 74% vs 79% YoY", 79% not in the filing; already listed as not found) | — | note |
+| F10/F17: open-offer letters tagged "Rights issue"; the open offer stored as a "Fundraise" deal | event and deal-kind rules for open offers | open |
+| F11: memory repeats facts: each operating note twice (with and without a date prefix); group entities doubled ("(Target Company) (Target Company)") | normalise before merging notes and entities | open |
+| F12: follow-up marks "Approval met" while its own text says the approval is pending | an approval resolves only on a clear approval verb | open |
+| F13: one pending approval (CCI) listed 5 times in different words | merge near-identical pending approvals | open |
+| F14: a post-offer *projection* (promoter 85%) stored as the actual May-2025 shareholding; promoter 85% + DII 40.76% > 100% | ownership only from shareholding filings (XBRL) or with a sanity check | open |
+| F15/F18: prose comparisons not checked: "₹1,140 Cr exceeds ₹1,627 Cr"; "PAT ₹68.7 Cr vs ₹55.56 Cr, down 20%" (up 24%) | deterministic check of "exceeds/up/down N%" between two amounts in one sentence | open |
+| F16: EPS shown as "0.36 INR_PER_SHARE" | display unit labels | open |
+| F19: the math check says "unknown input 'Q3FY25_EBITDA'" for input `q3fy25_ebitda`: names are case-sensitive, so the item is "Not checked" | case-insensitive input names | open |
+| F20: EBITDA equal to PBT (₹0.75 Cr each, SML Q3FY25): the model likely copied PBT; the 0.23% margin follows | EBITDA ≥ PBT + finance cost + depreciation when those are stated | open |
+| F21: company backfills are not recorded as runs (System: "No runs recorded", "0 of 653 days") | record backfill-companies runs | open (display) |
+| F22: OpenRouter shows "No daily limit configured"; its shared 1,000/day provider limit is not shown | show provider-level limits | open (display) |
+| F23: error rates cost throughput: NVIDIA 21 timeouts in 87 calls, Z.ai 23 x 429 in 44, ministral-14b 12 invalid JSON in 76, OpenRouter Ultra 3/9 no JSON, Super VL 5/11 empty | tune timeouts, max_tokens and weights from these numbers | open |
+| Working: card full analysis (key numbers, math working, memory signals, track-next, score breakdown, point-in-time price), company page sections, memory drawer over the feed, PDF verifier beside the card, Needs-review list with reasons, sector lenses, size labels, duplicate skips | | ok |
 
 ## Points to discuss with the owner
 

@@ -32,7 +32,9 @@ Read before changing anything:
 2. Fix the root cause, keep the change small, and match the surrounding code style.
 3. Add or adjust a test. Run `python -m pytest -q` in `pipeline/` (all must pass) and
    `npx tsc -p . --noEmit` in `web/` for Worker or React changes.
-4. Commit with a clear message, `git push -u origin claude/nice-goodall-ta0sxs`, and watch CI on the PR.
+4. Before committing after a `git pull` or `git stash pop`, make sure no conflict markers remain:
+   `git diff --check` and `git grep -n "^<<<<<<<"` must print nothing, and the tests must pass.
+   Commit with a clear message, `git push -u origin claude/nice-goodall-ta0sxs`, and watch CI on the PR.
 5. Update `README.md` / `docs/TRACKER.md` when behaviour, commands or the test count change.
 
 ## Running locally (Windows laptop, D:\Insiders)

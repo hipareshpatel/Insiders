@@ -42,7 +42,7 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | Cloudflare Workers (Hono) + React/Vite + D1 + R2 | done | |
 | Local-first ingestion on an Indian IP | done | Laptop runs the pipeline against the local Worker (`npm run dev`), whose D1/R2 persist in `data/wrangler`; `data/` is git-ignored |
 | `sync-to-cloud` (local → D1/R2, resumable, budget-aware) | done | `python -m bse_intel sync-to-cloud`; progress in `data/sync_progress.json` |
-| R2 homepage/status snapshot (`daily_feed/latest_snapshot.json`), 0 D1 reads | todo | |
+| R2 homepage/status snapshot (`daily_feed/latest_snapshot.json`), 0 D1 reads | done | published after each run; default feed page and Top Signals served from it |
 | Bounded queue counts (LIMIT, "1,000+") | done | audit D2 |
 | No system polling from hidden rail; /api/system cached | done | memo 30 s, rail only on wide screens |
 | Noise rows not stored in D1 | done | rule drops kept in R2 `noise/<date>/` chunks + `noise_count:<date>` |
@@ -122,9 +122,9 @@ and as prompt rules otherwise. The per-module list is in BLUEPRINT §9.
 ### §11 4-gate funnel and 0–100 actionability score
 | Item | Status |
 |---|---|
-| Gates 1–4 deterministic in signals.py | todo |
-| 0–100 score, impact mapping (≥70 high, 40–69 moderate, <40 low) | todo |
-| Top Signals view (≥70 and Gate 4 clean and 2 of gates 1–3) | todo |
+| Gates 1–4 deterministic (scoring.py) | done |
+| 0–100 score, impact mapping (≥70 high, 40–69 moderate, <40 low) | done |
+| Top Signals view (≥70 and Gate 4 clean and 2 of gates 1–3) | done |
 | Techno-funda tags (trend template, VCP, RS percentile, RVOL) | todo |
 
 ### §12 Learning loops
@@ -137,8 +137,8 @@ and as prompt rules otherwise. The per-module list is in BLUEPRINT §9.
 ### §13 Website
 | Item | Status | Notes |
 |---|---|---|
-| Live feed with filters | done | page-numbered pagination (D4) todo |
-| Top Signals + pre-market brief, "Since 3:30 PM close" | todo | |
+| Live feed with filters | done | 50 a page with page numbers (D4); session filter |
+| Top Signals + pre-market brief, "Since 3:30 PM close" | done | default view at `/`; feed moved to `/feed` |
 | Company directory, Inflection Radar | partial | directory done |
 | Catalyst calendar, overdue promises panel | partial | calendar done |
 | System monitor (two progress bars, per-provider quota, needs-review queue) | partial | review queue todo |

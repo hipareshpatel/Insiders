@@ -24,7 +24,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
               className="h-9 rounded-lg border border-line px-3 text-[13px] font-medium text-ink hover:border-accent-line hover:text-accent">
               Clear filters and reload
             </button>
-            <a href="/" className="inline-flex h-9 items-center rounded-lg px-3 text-[13px] font-medium text-accent hover:bg-accent-soft">Live filings</a>
+            <a href="/feed" className="inline-flex h-9 items-center rounded-lg px-3 text-[13px] font-medium text-accent hover:bg-accent-soft">Live feed</a>
           </div>
         </div>
       </div>

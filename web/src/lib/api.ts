@@ -1,4 +1,5 @@
 import type {
+  BriefResponse,
   CardRow,
   Catalyst,
   CompaniesResponse,
@@ -36,11 +37,17 @@ export interface FeedFilters {
   sector?: string;
   q?: string;
   review?: string;
+  session?: string;
+  watch?: string;
 }
 
 export const api = {
   feed: (filters: FeedFilters, cursor?: string | null, limit = 20) =>
     get<FeedResponse>("/api/feed", { ...filters, cursor, limit }),
+  feedPage: (filters: FeedFilters, page: number, limit = 50) =>
+    get<FeedResponse>("/api/feed", { ...filters, page, limit }),
+  signals: (params: { from?: string; from_at?: string }) => get<{ cards: CardRow[] }>("/api/signals", params),
+  brief: (fromAt: string) => get<BriefResponse>("/api/brief", { from_at: fromAt }),
   card: (id: string) => get<CardRow>(`/api/cards/${encodeURIComponent(id)}`),
   noise: (date: string, offset = 0) =>
     get<{ rows: NoiseRow[]; next_offset: number | null; rule_total: number }>("/api/noise", { date, offset }),

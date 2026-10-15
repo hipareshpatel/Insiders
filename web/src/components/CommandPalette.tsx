@@ -47,7 +47,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
       symbol: null as string | null,
       meta: `${c.company_name} · ${istDate(c.filed_at)}`,
       extra: c.impact_level,
-      run: () => navigate(`/?card=${encodeURIComponent(c.news_id)}`),
+      run: () => navigate(`/feed?card=${encodeURIComponent(c.news_id)}`),
     })),
   ];
   useEffect(() => setActive(0), [debounced]);

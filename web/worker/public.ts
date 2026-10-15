@@ -9,8 +9,9 @@ import type { AppEnv } from "./env";
 const CARD_COLUMNS = `
   c.news_id, c.scrip_code, c.symbol, c.company_name, c.filing_date, c.filed_at, c.sector,
   c.event_category, c.impact_level, c.headline, c.grounding_score, c.needs_review,
-  c.memory_complete, c.card_json, c.pdf_url,
-  co.market_cap_cr, co.size_category, co.last_price, co.ret_1w, co.ret_1m, co.ret_1y`;
+  c.memory_complete, c.card_json, c.pdf_url, c.market_session, c.actionability_score, c.is_actionable_signal,
+  co.market_cap_cr, co.size_category, co.last_price, co.ret_1w, co.ret_1m, co.ret_1y,
+  co.median_turnover_cr, co.credibility_score, co.watchlist`;
 
 const COMPANY_COLUMNS = `scrip_code, symbol, company_name, isin, industry, sector, market_cap_cr,
   size_category, last_price, price_date, ret_1w, ret_1m, ret_1y, card_count, last_card_at`;
@@ -90,12 +91,45 @@ api.use("*", async (c, next) => {
   }
 });
 
+const SESSIONS = new Set(["LIVE_MARKET", "PRE_MARKET", "AFTER_MARKET", "NON_TRADING"]);
+const PAGE_COUNT_CAP = 2000; // "40+ pages": an exact total would read every matching card
+const SNAPSHOT_KEY = "daily_feed/latest_snapshot.json";
+
+interface Snapshot {
+  generated_at: string;
+  from: string;
+  limit: number;
+  feed: { cards: unknown[]; total: number };
+  signals: unknown[];
+}
+
+/** The pipeline publishes the default first page and the top signals to R2 after every run, so the
+ * homepage costs no D1 reads (blueprint §3.3). */
+async function snapshot(c: Context<AppEnv>): Promise<Snapshot | null> {
+  return memoised("snapshot", 30_000, async () => {
+    const object = await c.env.VAULT.get(SNAPSHOT_KEY);
+    return object ? ((await object.json()) as Snapshot) : null;
+  });
+}
+
 api.get("/feed", async (c) => {
   const q = c.req.query();
   const from = isDate(q.from) ? q.from : "2000-01-01";
   const to = `${isDate(q.to) ? q.to : "2999-12-31"}T99`; // filed_at is "YYYY-MM-DDTHH:MM:SS+05:30"
   const limit = clamp(q.limit, 20, 50);
+  const page = q.page ? clamp(q.page, 1, 400) : null;
   const [cursorAt, cursorId] = (q.cursor ?? "").split("|");
+
+  // The default first page comes from the R2 snapshot when it was built for the same window.
+  const keys = Object.keys(q).filter((k) => q[k] !== "" && !["from", "to", "limit", "page"].includes(k));
+  if (!keys.length && (page ?? 1) === 1 && !cursorAt) {
+    const snap = await snapshot(c);
+    if (snap && snap.from === q.from && snap.limit === limit && q.to === todayIst()) {
+      return c.json({ cards: snap.feed.cards, page: 1, pages: Math.max(1, Math.ceil(snap.feed.total / limit)),
+        total: snap.feed.total, total_capped: snap.feed.total >= PAGE_COUNT_CAP, next_cursor: null, source: "snapshot" });
+    }
+  }
+
   // The scan walks idx_cards_feed newest first between these two bounds; the cursor is folded into
   // the upper one so a deep page does not re-read everything above it.
   const upper = cursorAt && cursorAt < to ? cursorAt : to;
@@ -105,12 +139,15 @@ api.get("/feed", async (c) => {
   const category = listParam(q.category);
   const size = listParam(q.size, SIZES);
   const sector = listParam(q.sector);
+  const session = listParam(q.session, SESSIONS);
   const fts = ftsQuery(q.q);
   // Unary + keeps the planner on the date index (with a LIMIT, walking it is the cheap plan).
   if (impact) where.push(`+c.impact_level IN (SELECT value FROM json_each(${p(impact)}))`);
   if (category) where.push(`+c.event_category IN (SELECT value FROM json_each(${p(category)}))`);
   if (size) where.push(`co.size_category IN (SELECT value FROM json_each(${p(size)}))`);
   if (sector) where.push(`+c.sector IN (SELECT value FROM json_each(${p(sector)}))`);
+  if (session) where.push(`+c.market_session IN (SELECT value FROM json_each(${p(session)}))`);
+  if (q.watch === "1") where.push("co.watchlist = 1");
   if (cursorAt) where.push(`(c.filed_at, c.news_id) < (${p(cursorAt)}, ${p(cursorId ?? "")})`);
   if (q.review === "0") where.push("c.needs_review = 0");
   // A text filter starts from the 500 best matches instead of testing every card in the window.
@@ -118,19 +155,77 @@ api.get("/feed", async (c) => {
     ? `(SELECT rowid AS rid FROM cards_fts WHERE cards_fts MATCH ${p(fts)} ORDER BY rank LIMIT 500) f
        CROSS JOIN cards c ON c.rowid = f.rid`
     : "cards c";
-  const sql = `
-    SELECT ${CARD_COLUMNS}
-      FROM ${source} LEFT JOIN companies co ON co.scrip_code = c.scrip_code
-     WHERE ${where.join(" AND ")}
-     ORDER BY c.filed_at DESC, c.news_id DESC
-     LIMIT ${p(limit + 1)}`;
-  const run = () => c.env.DB.prepare(sql).bind(...params).all().then((r) => r.results);
+  const body = `FROM ${source} LEFT JOIN companies co ON co.scrip_code = c.scrip_code WHERE ${where.join(" AND ")}`;
+  const countParams = [...params];
+  const sql = `SELECT ${CARD_COLUMNS} ${body} ORDER BY c.filed_at DESC, c.news_id DESC
+     LIMIT ${p(limit + 1)}${page ? ` OFFSET ${p((page - 1) * limit)}` : ""}`;
+  const run = async () => {
+    if (!page) return { rows: (await c.env.DB.prepare(sql).bind(...params).all()).results, total: null as number | null };
+    const [rows, counted] = await c.env.DB.batch([
+      c.env.DB.prepare(sql).bind(...params),
+      c.env.DB.prepare(`SELECT count(*) AS n FROM (SELECT 1 ${body} LIMIT ${PAGE_COUNT_CAP})`).bind(...countParams),
+    ]);
+    return { rows: rows.results, total: (counted.results[0] as { n: number } | undefined)?.n ?? 0 };
+  };
   // The first page of an unfiltered view is what most visitors load.
-  const results = !cursorAt && !fts ? await memoised(`feed:${sql}:${JSON.stringify(params)}`, 20_000, run) : await run();
-  const more = results.length > limit;
-  const cards = results.slice(0, limit) as { filed_at: string; news_id: string }[];
+  const result = !cursorAt && !fts && (page ?? 1) === 1 ? await memoised(`feed:${sql}:${page}:${JSON.stringify(params)}`, 20_000, run) : await run();
+  const more = result.rows.length > limit;
+  const cards = result.rows.slice(0, limit) as { filed_at: string; news_id: string }[];
   const last = cards[cards.length - 1];
-  return c.json({ cards, next_cursor: more && last ? `${last.filed_at}|${last.news_id}` : null });
+  return c.json({
+    cards,
+    next_cursor: more && last ? `${last.filed_at}|${last.news_id}` : null,
+    ...(page ? { page, pages: Math.max(1, Math.ceil((result.total ?? 0) / limit)), total: result.total,
+      total_capped: (result.total ?? 0) >= PAGE_COUNT_CAP } : {}),
+  });
+});
+
+const todayIst = () => new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10);
+
+// Top Signals: cards that cleared the 4 gates, best score first (partial index idx_cards_signals).
+api.get("/signals", async (c) => {
+  const q = c.req.query();
+  const fromAt = q.from_at && /^\d{4}-\d{2}-\d{2}T/.test(q.from_at) ? q.from_at : `${isDate(q.from) ? q.from : todayIst()}`;
+  const toAt = q.to_at && /^\d{4}-\d{2}-\d{2}T/.test(q.to_at) ? q.to_at : `${isDate(q.to) ? q.to : "2999-12-31"}T99`;
+  const snap = !q.from_at && !q.to && q.from ? await snapshot(c) : null;
+  if (snap && snap.from === q.from) return c.json({ cards: snap.signals, source: "snapshot" });
+  const { results } = await c.env.DB.prepare(`
+    SELECT ${CARD_COLUMNS}
+      FROM cards c LEFT JOIN companies co ON co.scrip_code = c.scrip_code
+     WHERE c.is_actionable_signal = 1 AND c.filed_at >= ?1 AND c.filed_at <= ?2
+     ORDER BY c.actionability_score DESC, c.filed_at DESC
+     LIMIT 50`).bind(fromAt, toAt).all();
+  return c.json({ cards: results });
+});
+
+// Pre-market brief: what came in since a moment (by default yesterday's 15:30 IST close).
+api.get("/brief", async (c) => {
+  const q = c.req.query();
+  if (!q.from_at || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(q.from_at)) return c.json({ error: "from_at required" }, 400);
+  const fromAt = q.from_at;
+  const days = [fromAt.slice(0, 10), todayIst()].filter((d, i, a) => a.indexOf(d) === i);
+  const body = await memoised(`brief:${fromAt}`, 60_000, async () => {
+    const db = c.env.DB;
+    const [cards, ledger, kv] = await db.batch([
+      db.prepare(`SELECT impact_level, sum(is_actionable_signal) AS signals, count(*) AS n FROM cards
+                   WHERE impact_level IN ('HIGH', 'MODERATE', 'LOW') AND filed_at >= ?1 GROUP BY impact_level`).bind(fromAt),
+      db.prepare(`SELECT count(*) AS n FROM filings WHERE filing_date IN (SELECT value FROM json_each(?1)) AND filed_at >= ?2`)
+        .bind(JSON.stringify(days), fromAt),
+      db.prepare("SELECT key, value FROM kv WHERE key IN (SELECT 'noise_count:' || value FROM json_each(?1))").bind(JSON.stringify(days)),
+    ]);
+    const rows = cards.results as { impact_level: string; signals: number; n: number }[];
+    const material = rows.reduce((a, r) => a + r.n, 0);
+    const noise = (kv.results as { value: string }[]).reduce((a, r) => a + (Number(r.value) || 0), 0);
+    const queued = (ledger.results[0] as { n: number } | undefined)?.n ?? 0;
+    return {
+      from_at: fromAt,
+      scanned: queued + noise, noise, cards: material,
+      high: rows.find((r) => r.impact_level === "HIGH")?.n ?? 0,
+      signals: rows.reduce((a, r) => a + (r.signals ?? 0), 0),
+      noise_note: "noise counts cover the whole of each day",
+    };
+  });
+  return c.json(body);
 });
 
 api.get("/cards/:id", async (c) => {

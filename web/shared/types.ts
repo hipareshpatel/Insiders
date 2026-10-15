@@ -120,6 +120,8 @@ export interface CardBody {
   tone?: "POSITIVE" | "NEGATIVE" | "MIXED" | "NEUTRAL";
   headline: string;
   takeaway?: string;
+  score?: CardScore;
+  model_impact?: Impact;
   /** One line naming the economic driver (blueprint "📌 Core catalyst"). */
   core_catalyst?: string | null;
   themes?: string[];
@@ -172,11 +174,43 @@ export interface CardRow {
   ret_1w: number | null;
   ret_1m: number | null;
   ret_1y: number | null;
+  market_session?: "LIVE_MARKET" | "PRE_MARKET" | "AFTER_MARKET" | "NON_TRADING" | null;
+  actionability_score?: number;
+  is_actionable_signal?: number;
+  median_turnover_cr?: number | null;
+  credibility_score?: number | null;
+  watchlist?: number;
 }
 
 export interface FeedResponse {
   cards: CardRow[];
   next_cursor: string | null;
+  /** Present when the request asked for a page number. */
+  page?: number;
+  pages?: number;
+  total?: number;
+  total_capped?: boolean;
+}
+
+export interface BriefResponse {
+  from_at: string;
+  scanned: number;
+  noise: number;
+  cards: number;
+  high: number;
+  signals: number;
+}
+
+/** The deterministic 0-100 actionability score (blueprint §11), stored in card_json.score. */
+export interface CardScore {
+  total: number;
+  impact: Impact;
+  actionable: boolean;
+  pillars: Record<string, number>;
+  gates: { magnitude: boolean; inflection: boolean; price: boolean; clean: boolean };
+  vetoes: string[];
+  reasons: string[];
+  credibility: number | null;
 }
 
 export interface NoiseRow {

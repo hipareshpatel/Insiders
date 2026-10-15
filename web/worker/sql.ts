@@ -24,6 +24,9 @@ import exportCompanies from "../../db/queries/export_companies.sql?raw";
 import exportCatalysts from "../../db/queries/export_catalysts.sql?raw";
 import exportFilings from "../../db/queries/export_filings.sql?raw";
 import exportKv from "../../db/queries/export_kv.sql?raw";
+import snapshotFeed from "../../db/queries/snapshot_feed.sql?raw";
+import snapshotSignals from "../../db/queries/snapshot_signals.sql?raw";
+import snapshotCount from "../../db/queries/snapshot_count.sql?raw";
 import kvGet from "../../db/queries/kv_get.sql?raw";
 import peerCards from "../../db/queries/peer_cards.sql?raw";
 import usageForDay from "../../db/queries/usage_for_day.sql?raw";
@@ -63,5 +66,8 @@ export const QUERIES: Record<string, string> = {
   export_catalysts: exportCatalysts,
   export_filings: exportFilings,
   export_kv: exportKv,
+  snapshot_feed: snapshotFeed,
+  snapshot_signals: snapshotSignals,
+  snapshot_count: snapshotCount,
 };
 

@@ -9,6 +9,7 @@ import { CompanyPage } from "./views/CompanyPage";
 import { Empty, FeedView } from "./views/FeedView";
 import { ResultsView } from "./views/ResultsView";
 import { SystemView } from "./views/SystemView";
+import { TopSignalsView } from "./views/TopSignalsView";
 
 export function App() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -42,7 +43,8 @@ export function App() {
       <main className="min-w-0 flex-1">
         <ErrorBoundary key={location}>
         <Switch>
-          <Route path="/" component={FeedView} />
+          <Route path="/" component={TopSignalsView} />
+          <Route path="/feed" component={FeedView} />
           <Route path="/results" component={ResultsView} />
           <Route path="/companies" component={CompaniesView} />
           <Route path="/company/:scrip" component={CompanyPage} />

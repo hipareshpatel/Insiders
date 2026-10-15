@@ -401,7 +401,7 @@ function ResultsScorecard({ cards }: { cards: CardRow[] }) {
                   <span className="num text-xs text-ink-3">{istDate(row.filed_at)}</span>
                 </div>
                 {card.takeaway ? <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink-2">{card.takeaway}</p> : null}
-                <button type="button" onClick={() => navigate(`/?card=${encodeURIComponent(row.news_id)}`)}
+                <button type="button" onClick={() => navigate(`/feed?card=${encodeURIComponent(row.news_id)}`)}
                   className="mt-1 text-xs font-medium text-accent hover:underline">Read the full card →</button>
               </div>
               <dl className="num grid grid-cols-4 gap-2">

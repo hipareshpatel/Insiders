@@ -28,6 +28,13 @@ export const STAGE_LABEL: Record<string, string> = {
 };
 /** Stages where nothing is firm yet: shown in amber. */
 export const PROVISIONAL_STAGES = new Set(["LOI", "MOU", "DEVELOPMENT_ORDER", "PROPOSED", "BOARD_APPROVED", "CANCELLED"]);
+const SESSION_LABEL: Record<string, string> = {
+  LIVE_MARKET: "Live market", PRE_MARKET: "Pre-market", AFTER_MARKET: "After market", NON_TRADING: "Non-trading day",
+};
+const PILLAR_LABEL: Record<string, string> = {
+  magnitude: "Size vs company (30)", margin: "Margin & operating leverage (25)", balance_sheet: "Funding & balance sheet (20)",
+  credibility: "Management credibility (15)", disclosure: "Disclosure & price timing (10)", penalty: "Forensic penalties",
+};
 const BASIS_LABEL: Record<string, string> = { CONSOLIDATED: "Consolidated", STANDALONE: "Standalone", PROFORMA: "Proforma" };
 const INSIGHT_BASIS: Record<string, string> = { MEMORY: "memory", BALANCE_SHEET: "balance sheet", SECTOR: "peers", FILING: "filing" };
 
@@ -280,8 +287,16 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
               )}
             </span>
           </button>
-          <span className={cn("shrink-0 rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-[0.08em]", IMPACT_PILL[row.impact_level])}>
-            {IMPACT_WORD[row.impact_level]}
+          <span className="flex shrink-0 items-center gap-1.5">
+            {card.score && (
+              <span className="num rounded-full border border-line px-2 py-[3px] text-[11px] font-semibold text-ink-2"
+                title={`Actionability ${card.score.total}/100, computed from the filing and memory`}>
+                {row.is_actionable_signal ? "🔥 " : ""}{card.score.total}
+              </span>
+            )}
+            <span className={cn("rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-[0.08em]", IMPACT_PILL[row.impact_level])}>
+              {IMPACT_WORD[row.impact_level]}
+            </span>
           </span>
         </header>
 
@@ -291,6 +306,12 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           {stage && <Chip tone={PROVISIONAL_STAGES.has(deal!.stage) ? "warn" : "neutral"}>{stage}</Chip>}
           {deal?.updates_deal_id && <Chip tone="neutral">Update to earlier deal</Chip>}
           {card.basis && <Chip tone="neutral">{BASIS_LABEL[card.basis] ?? card.basis}</Chip>}
+          {card.score?.credibility != null && (
+            <Chip tone={card.score.credibility >= 75 ? "accent" : card.score.credibility < 50 ? "warn" : "neutral"}>
+              🎯 Credibility {Math.round(card.score.credibility)}%
+            </Chip>
+          )}
+          {row.median_turnover_cr != null && row.median_turnover_cr < 0.5 && <Chip tone="warn">💧 Thin liquidity</Chip>}
         </div>
 
         <h3 className="mt-3 text-[19px] font-bold leading-snug tracking-[-0.01em] text-ink sm:text-[21px]">{plain(card.headline)}</h3>
@@ -338,7 +359,10 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           <p className="mt-2 text-[10.5px] text-ink-3">AI summary of a public BSE filing. Not investment advice; verify against the original filing.</p>
         ) : (
           <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2 text-[12px] text-ink-3" data-noexport="true">
-            <span className="num" title={`${istDateTime(row.filed_at)} IST`}>{istDateTime(row.filed_at).replace(/ \d{4},/, ",")} · {relativeTime(row.filed_at)}</span>
+            <span className="num" title={`${istDateTime(row.filed_at)} IST`}>
+              {istDateTime(row.filed_at).replace(/ \d{4},/, ",")} · {relativeTime(row.filed_at)}
+              {row.market_session ? ` · ${SESSION_LABEL[row.market_session] ?? ""}` : ""}
+            </span>
             {review ? (
               <span className="inline-flex items-center gap-1 font-medium text-warn" title={issues.join(" · ")}>
                 <AlertTriangle className="h-3.5 w-3.5" /> Unverified
@@ -481,6 +505,28 @@ function DeepDive({ row, card, shown, moreFacts, keyNumbers }: {
           <dl className="grid gap-x-8 gap-y-3 sm:grid-cols-2">{trackItems.map((t) => <TrackItem key={t.label} {...t} />)}</dl>
         ) : <p className="text-[13.5px] text-ink-3">Nothing dated, pending or at risk in this filing.</p>}
       </Section>
+
+      {card.score && (
+        <Section label={`How this was scored · ${card.score.total}/100`}>
+          <dl className="num grid gap-x-6 gap-y-1 text-[13px] sm:grid-cols-2">
+            {Object.entries(card.score.pillars).filter(([k, v]) => k !== "penalty" || v !== 0).map(([k, v]) => (
+              <div key={k} className="flex justify-between gap-3 border-b border-line py-1">
+                <dt className="font-sans text-ink-2">{PILLAR_LABEL[k] ?? k}</dt><dd className="font-semibold text-ink">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-2 text-[12.5px] text-ink-2">
+            Gates: {([["magnitude", "size"], ["inflection", "inflection"], ["price", "price not run up"], ["clean", "clean checks"]] as const)
+              .map(([k, label]) => `${card.score!.gates[k] ? "✓" : "✗"} ${label}`).join(" · ")}
+            {card.model_impact && card.model_impact !== row.impact_level ? ` · the analyst rated it ${IMPACT_WORD[card.model_impact].toLowerCase()}` : ""}
+          </p>
+          {[...card.score.reasons, ...card.score.vetoes.map((v) => `Veto: ${v}`)].length > 0 && (
+            <ul className="mt-1 space-y-0.5 text-[12.5px] text-ink-3">
+              {[...card.score.reasons, ...card.score.vetoes.map((v) => `Veto: ${v}`)].map((r, i) => <li key={i}>{r}</li>)}
+            </ul>
+          )}
+        </Section>
+      )}
 
       {card.review && (
         <Section label="Second check">

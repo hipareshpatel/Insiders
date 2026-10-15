@@ -244,3 +244,15 @@ def test_sync_to_cloud_copies_cards_state_and_objects_and_resumes(settings, tmp_
     assert copied == {r["news_id"] for r in rows(source, "select news_id from cards")} and len(copied) == 3
     assert dest.get_dossier("999100") == source.get_dossier("999100")
     assert dest.kv_get("live:since") == source.kv_get("live:since")
+
+
+def test_run_publishes_the_homepage_snapshot(settings):
+    now = now_ist() - timedelta(minutes=30)
+    filings = _results(2, now)
+    pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
+                              {"deepseek-ai/deepseek-r1": [json.dumps(PASS2)], "meta/llama-3.3-70b-instruct": [json.dumps(PASS2)]},
+                              env={"NVIDIA_API_KEY": "n"})
+    pipeline.run("live", time_budget_s=60)
+    snap = json.loads(sink.get_object("daily_feed/latest_snapshot.json"))
+    assert snap["limit"] == 50 and snap["feed"]["total"] == 2 and len(snap["feed"]["cards"]) == 2
+    assert {"card_json", "actionability_score", "market_cap_cr"} <= set(snap["feed"]["cards"][0])

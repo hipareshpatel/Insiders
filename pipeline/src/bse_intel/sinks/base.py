@@ -43,6 +43,9 @@ QUERIES = (
     "export_catalysts",
     "export_filings",
     "export_kv",
+    "snapshot_feed",
+    "snapshot_signals",
+    "snapshot_count",
 )
 
 # Statements that add to what is stored: repeating one after an ambiguous failure (a timeout after

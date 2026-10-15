@@ -65,6 +65,9 @@ NOISE_CHUNK = 500        # rows per noise-audit file in R2
 NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category", "subcategory",
                 "filed_at", "reason", "pdf_url")
 DONE = ("ANALYZED", "NOT_MATERIAL")
+SNAPSHOT_KEY = "daily_feed/latest_snapshot.json"
+SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
+SNAPSHOT_PAGE = 50        # the feed's page size
 
 
 @dataclass
@@ -807,6 +810,7 @@ class Pipeline:
                 self._flush_usage()
                 self._exec("runs_upsert", [dict(run_row, finished_at=now_iso(), status=status,
                                                 stats=self.stats.as_dict(), error=error)])
+                self._publish_snapshot()
                 # Read-modify-write under the current UTC day, so a run that crosses midnight does
                 # not carry yesterday's total into the new day.
                 self.sink.add_writes(utc_day(), self.stats.d1_rows_written, now_iso())
@@ -814,6 +818,27 @@ class Pipeline:
                 log.exception("could not record run")
         log.info("run %s finished: %s %s", run_id, status, json.dumps(self.stats.as_dict()))
         return self.stats
+
+    def _publish_snapshot(self) -> None:
+        """The homepage's default first page and the top signals, as one R2 object (blueprint §3.3):
+        visitors read it instead of D1. Rebuilt when this run wrote cards or the day changed."""
+        today = today_ist()
+        start = (today - timedelta(days=SNAPSHOT_DAYS)).isoformat()
+        try:
+            current = json.loads(self.sink.get_object(SNAPSHOT_KEY) or b"{}")
+        except Exception:
+            current = {}
+        if not self.stats.analyzed and current.get("from") == start:
+            return
+        try:
+            cards = self.sink.query("snapshot_feed", [start, SNAPSHOT_PAGE])
+            total = (self.sink.query("snapshot_count", [start]) or [{"n": len(cards)}])[0]["n"]
+            signals = self.sink.query("snapshot_signals", [(today - timedelta(days=3)).isoformat()])
+            body = {"generated_at": now_iso(), "from": start, "limit": SNAPSHOT_PAGE,
+                    "feed": {"cards": cards, "total": total}, "signals": signals}
+            self.sink.put_object(SNAPSHOT_KEY, json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode())
+        except Exception as exc:  # the snapshot is an optimisation; the feed falls back to D1
+            log.warning("snapshot not published: %s", exc)
 
     def _over_budget(self, writes_at_start: int) -> bool:
         budget = self.settings.d1_daily_write_budget

@@ -1,6 +1,6 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { LayoutList, Loader2, Rows3, Search, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { ChevronLeft, ChevronRight, LayoutList, Loader2, Rows3, Search, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import type { NoiseRow } from "../../shared/types";
 import { AnnouncementCard } from "../components/AnnouncementCard";
@@ -41,7 +41,9 @@ export function FeedView() {
     sector: params.get("sector") ?? undefined,
     q: params.get("q") ?? undefined,
     review: params.get("verified") === "1" ? "0" : undefined,
+    session: params.get("session") ?? undefined,
   };
+  const page = Math.max(1, Number.parseInt(params.get("page") ?? "1", 10) || 1);
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 py-6 sm:px-6">
@@ -77,7 +79,8 @@ export function FeedView() {
         <div className={cn("mt-5 grid gap-6", view === "cards" && "lg:grid-cols-[minmax(0,1fr)_300px]")}>
           <div className={cn("min-w-0", view === "cards" ? "mx-auto w-full max-w-[720px] space-y-4" : "space-y-2")}>
             {shared && <SharedCard id={shared} view={view} onClose={() => setParams({ card: null })} />}
-            <CardList filters={filters} rangeLabel={range.label} view={view} />
+            <CardList filters={filters} rangeLabel={range.label} view={view} page={page}
+              onPage={(n) => { setParams({ page: n > 1 ? String(n) : null }); window.scrollTo({ top: 0 }); }} />
           </div>
           {view === "cards" && <Rail today={today} />}
         </div>
@@ -86,7 +89,9 @@ export function FeedView() {
   );
 }
 
-function FilterBar({ params, setParams }: { params: URLSearchParams; setParams: ReturnType<typeof useQueryState>[1] }) {
+function FilterBar({ params, setParams: setRaw }: { params: URLSearchParams; setParams: ReturnType<typeof useQueryState>[1] }) {
+  // Any filter change starts again at page 1.
+  const setParams = (changes: Record<string, string | null>) => setRaw({ ...changes, page: null });
   const [text, setText] = useState(params.get("q") ?? "");
   const q = params.get("q") ?? "";
   useEffect(() => setText(q), [q]);
@@ -94,7 +99,7 @@ function FilterBar({ params, setParams }: { params: URLSearchParams; setParams: 
     const id = setTimeout(() => { if (q !== text) setParams({ q: text || null }); }, 300);
     return () => clearTimeout(id);
   }, [text, q, setParams]);
-  const active = ["size", "sector", "q", "range", "verified"].some((k) => params.get(k));
+  const active = ["size", "sector", "q", "range", "verified", "session"].some((k) => params.get(k));
 
   return (
     <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
@@ -109,6 +114,11 @@ function FilterBar({ params, setParams }: { params: URLSearchParams; setParams: 
         <option value="">All sectors</option>
         {Object.entries(SECTORS).filter(([k]) => k !== "default").map(([k, v]) => <option key={k} value={k}>{v}</option>)}
       </Select>
+      <Select aria-label="Market session" value={params.get("session") ?? ""} onChange={(e) => setParams({ session: e.target.value || null })}>
+        <option value="">All sessions</option>
+        <option value="LIVE_MARKET">Live market (09:15–15:30)</option>
+        <option value="AFTER_MARKET,PRE_MARKET,NON_TRADING">After hours &amp; weekend</option>
+      </Select>
       <Select aria-label="Verification" value={params.get("verified") ?? ""} onChange={(e) => setParams({ verified: e.target.value || null })}>
         <option value="">All cards</option>
         <option value="1">Verified only</option>
@@ -119,7 +129,7 @@ function FilterBar({ params, setParams }: { params: URLSearchParams; setParams: 
           className="h-9 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-[13px] text-ink placeholder:text-ink-3 hover:border-line-strong focus:border-accent focus:outline-none" />
       </label>
       {active && (
-        <Button variant="ghost" size="sm" onClick={() => setParams({ size: null, sector: null, q: null, range: null, verified: null })}>
+        <Button variant="ghost" size="sm" onClick={() => setParams({ size: null, sector: null, q: null, range: null, verified: null, session: null })}>
           <X className="h-3.5 w-3.5" /> Clear
         </Button>
       )}
@@ -127,45 +137,60 @@ function FilterBar({ params, setParams }: { params: URLSearchParams; setParams: 
   );
 }
 
-function CardList({ filters, rangeLabel, view }: { filters: FeedFilters; rangeLabel: string; view: View }) {
-  const query = useInfiniteQuery({
-    queryKey: ["feed", filters],
-    queryFn: ({ pageParam }) => api.feed(filters, pageParam),
-    initialPageParam: null as string | null,
-    getNextPageParam: (last) => last.next_cursor,
-  });
-  const sentinel = useRef<HTMLDivElement>(null);
-  const { hasNextPage, isFetchingNextPage, fetchNextPage } = query;
-  useEffect(() => {
-    const el = sentinel.current;
-    if (!el) return;
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) fetchNextPage();
-    }, { rootMargin: "600px" });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+const PAGE_SIZE = 50;
 
+/** One page of 50 cards with page numbers (the owner's choice over endless scrolling: pages stay
+ * light however far back the filters reach). */
+function CardList({ filters, rangeLabel, view, page, onPage }: {
+  filters: FeedFilters; rangeLabel: string; view: View; page: number; onPage: (n: number) => void;
+}) {
+  const query = useQuery({
+    queryKey: ["feed", filters, page],
+    queryFn: () => api.feedPage(filters, page, PAGE_SIZE),
+    placeholderData: keepPreviousData,
+  });
   if (query.isPending) return <Loading />;
   if (!query.data) return <Empty title="Couldn't load the feed" body={String(query.error)} />;
-  const cards = query.data.pages.flatMap((p) => p.cards);
+  const { cards, pages = 1, total = cards.length, total_capped } = query.data;
   if (!cards.length) {
     return <Empty title={`No material filings · ${rangeLabel.toLowerCase()}`} body="Try a wider date range or another tab. The noise audit shows what was filtered out." />;
   }
   return (
     <>
+      <p className="num text-xs text-ink-3">
+        {total_capped ? `${total.toLocaleString("en-IN")}+` : total.toLocaleString("en-IN")} filings · page {page} of {pages}{total_capped ? "+" : ""}
+        {query.isFetching ? <Loader2 className="ml-2 inline h-3.5 w-3.5 animate-spin" /> : null}
+      </p>
       {cards.map((row) => view === "cards" ? <AnnouncementCard key={row.news_id} row={row} /> : <FilingRow key={row.news_id} row={row} />)}
-      <div ref={sentinel} className="flex justify-center py-5">
-        {isFetchingNextPage ? <Loader2 className="h-5 w-5 animate-spin text-ink-3" /> : query.isFetchNextPageError ? (
-          // The cards already loaded stay on screen; only the next page is retried.
-          <Button size="sm" onClick={() => fetchNextPage()}>Couldn't load more · retry</Button>
-        ) : hasNextPage ? (
-          <Button size="sm" onClick={() => fetchNextPage()}>Load more</Button>
-        ) : (
-          <span className="text-xs text-ink-3">{cards.length} filings · end of results</span>
-        )}
-      </div>
+      <Pager page={page} pages={pages} capped={!!total_capped} onPage={onPage} />
     </>
+  );
+}
+
+export function Pager({ page, pages, capped, onPage }: { page: number; pages: number; capped: boolean; onPage: (n: number) => void }) {
+  if (pages <= 1) return null;
+  const numbers = [...new Set([1, page - 2, page - 1, page, page + 1, page + 2, pages])].filter((n) => n >= 1 && n <= pages).sort((a, b) => a - b);
+  return (
+    <nav aria-label="Pages" className="flex flex-wrap items-center justify-center gap-1 py-5">
+      <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)} aria-label="Previous page"
+        className="grid h-9 w-9 place-items-center rounded-lg border border-line text-ink-2 enabled:hover:border-accent-line enabled:hover:text-accent disabled:opacity-40">
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+      {numbers.map((n, i) => (
+        <span key={n} className="flex items-center gap-1">
+          {i > 0 && n - numbers[i - 1] > 1 && <span className="px-1 text-ink-3">…</span>}
+          <button type="button" onClick={() => onPage(n)} aria-current={n === page ? "page" : undefined}
+            className={cn("num h-9 min-w-9 rounded-lg px-2 text-[13px] font-medium",
+              n === page ? "bg-accent text-accent-ink" : "border border-line text-ink-2 hover:border-accent-line hover:text-accent")}>
+            {n}{capped && n === pages ? "+" : ""}
+          </button>
+        </span>
+      ))}
+      <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)} aria-label="Next page"
+        className="grid h-9 w-9 place-items-center rounded-lg border border-line text-ink-2 enabled:hover:border-accent-line enabled:hover:text-accent disabled:opacity-40">
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </nav>
   );
 }
 
@@ -219,7 +244,7 @@ function Rail({ today }: { today: string }) {
             ))}
           </div>
           <p className="mt-3 text-[12px] text-ink-3">
-            {num(high7d)} high-impact filings in the last 7 days. <Link href="/?tab=noise" className="font-medium text-accent hover:underline">See what was filtered</Link>
+            {num(high7d)} high-impact filings in the last 7 days. <Link href="/feed?tab=noise" className="font-medium text-accent hover:underline">See what was filtered</Link>
           </p>
         </section>
         <section className="rounded-xl border border-line bg-surface">

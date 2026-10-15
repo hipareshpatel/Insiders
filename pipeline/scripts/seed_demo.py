@@ -428,10 +428,12 @@ class DemoBse:
     def __init__(self, filings: list[Filing], pdfs: dict[str, bytes]):
         self.filings, self.pdfs = filings, pdfs
 
-    def announcements(self, day, day_to=None):
-        return [f.model_copy() for f in self.filings if f.filing_date == day.isoformat()]
+    def announcements(self, day, day_to=None, known=None, scrip="", **_):
+        last = (day_to or day).isoformat()
+        return [f.model_copy() for f in self.filings
+                if day.isoformat() <= f.filing_date <= last and (not scrip or f.scrip_code == scrip)]
 
-    def download(self, url):
+    def download(self, url, max_bytes=None):
         return self.pdfs.get(url)
 
 
@@ -465,7 +467,11 @@ def main() -> None:
     env = {k: "demo" for k in ("GROQ_API_KEY", "NVIDIA_API_KEY", "MISTRAL_API_KEY", "ZAI_API_KEY")}
     gateway = AIGateway(settings.load_toml("providers.toml"), client_factory=lambda *a: fake, env=env)
     pipeline = Pipeline(settings, sink, gateway, bse=DemoBse(filings, pdfs))
-    stats = pipeline.run("all", time_budget_s=300, max_backfill_days=400)
+    # Company by company, as the smoke test does (demo days have gaps a day-by-day backfill would
+    # stop at), then a live run for the latest days.
+    history = pipeline.backfill_companies(sorted(NAMES), first, today_ist(), time_budget_s=300)
+    print("history:", json.dumps(history.as_dict()))
+    stats = pipeline.run("live", time_budget_s=300)
     print(json.dumps(stats.as_dict(), indent=2))
     print("Seeded FICTIONAL demo data. Open the site and set the date range to 'Since 1 Jan 2026' to see every card.")
     if os.getenv("BSE_INTEL_SINK") != "platform":

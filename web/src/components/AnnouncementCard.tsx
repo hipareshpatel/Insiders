@@ -1,10 +1,10 @@
 import {
-  AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, Building2, Camera, Check, ChevronDown, ChevronRight, FileText, Gauge,
+  AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, Building2, Camera, Check, ChevronDown, ChevronRight, FileSearch, FileText, Gauge,
   Flame, Minus, RefreshCcw, Rocket, Scale, ShieldAlert, Timer, Trash2,
 } from "lucide-react";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
-import { useLocation } from "wouter";
+import { useQueryState } from "../lib/url";
 import type { CallRead, CardBody, CardRow, Impact, PriceReaction, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
 import { useRatings } from "../lib/owner";
@@ -213,7 +213,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
   const [exporting, setExporting] = useState(false);
   const [copy, setCopy] = useState<"idle" | "copied" | "saved" | "error">("idle");
   const ref = useRef<HTMLElement>(null);
-  const [, navigate] = useLocation();
+  const [, setParams] = useQueryState();
+  const openMemory = (verify?: string) => setParams({ memory: row.scrip_code, verify: verify ?? null, mtab: verify ? "verify" : null });
   const owner = useRatings();
   if (!card) return null;
 
@@ -277,7 +278,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         )}
 
         <header className="flex items-start justify-between gap-3">
-          <button type="button" onClick={() => navigate(`/company/${row.scrip_code}`)}
+          <button type="button" onClick={() => openMemory()}
             className="group flex min-w-0 items-center gap-2 text-left" title={`${row.company_name} · BSE ${row.scrip_code}`}>
             <Avatar name={row.company_name} symbol={row.symbol} size={24} />
             <span className="flex min-w-0 flex-wrap items-baseline gap-x-2">
@@ -411,7 +412,13 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
                   </button>
                 </>
               )}
-              <button type="button" onClick={() => navigate(`/company/${row.scrip_code}`)} title="Company memory" aria-label="Company memory"
+              {row.pdf_url && (
+                <button type="button" onClick={() => openMemory(row.news_id)} title="Verify against the PDF" aria-label="Verify against the PDF"
+                  className="grid h-8 w-8 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
+                  <FileSearch className="h-4 w-4" />
+                </button>
+              )}
+              <button type="button" onClick={() => openMemory()} title="360° company memory" aria-label="360° company memory"
                 className="grid h-8 w-8 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
                 <Building2 className="h-4 w-4" />
               </button>

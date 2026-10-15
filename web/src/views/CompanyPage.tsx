@@ -27,7 +27,7 @@ const TABS = [
 
 const WATCH_VERB: Record<string, string> = { KPI: "Verify", APPROVAL: "Pending", CONCERN: "Analyst concern" };
 
-const STATUS_CHIP: Record<string, string> = {
+export const STATUS_CHIP: Record<string, string> = {
   DELIVERED: "bg-pos-soft text-pos", MET: "bg-pos-soft text-pos", ON_TRACK: "bg-info-soft text-info",
   OPEN: "bg-surface-2 text-ink-2", PENDING: "bg-surface-2 text-ink-2", PARTIAL: "bg-warn-soft text-warn",
   REVISED: "bg-warn-soft text-warn", DELAYED: "bg-warn-soft text-warn", MISSED: "bg-neg-soft text-neg", WITHDRAWN: "bg-neg-soft text-neg",
@@ -106,7 +106,7 @@ export function CompanyPage() {
   );
 }
 
-function Panel({ title, children, hint, className }: { title: string; children: ReactNode; hint?: ReactNode; className?: string }) {
+export function Panel({ title, children, hint, className }: { title: string; children: ReactNode; hint?: ReactNode; className?: string }) {
   return (
     <section className={cn("rounded-xl border border-line bg-surface", className)}>
       <header className="flex flex-wrap items-baseline justify-between gap-2 px-5 pt-4">
@@ -118,7 +118,7 @@ function Panel({ title, children, hint, className }: { title: string; children: 
   );
 }
 
-function promiseStats(guidance: Guidance[]) {
+export function promiseStats(guidance: Guidance[]) {
   const delivered = guidance.filter((g) => g.status === "DELIVERED").length;
   const missed = guidance.filter((g) => ["MISSED", "DELAYED", "WITHDRAWN"].includes(g.status)).length;
   const open = guidance.filter((g) => ["OPEN", "ON_TRACK", "REVISED"].includes(g.status)).length;
@@ -261,7 +261,7 @@ function WatchButton({ scrip, on }: { scrip: string; on: boolean }) {
 
 /** Who the company is (former names, subsidiaries, brands), who owns it, what the auditor said, and
  * the numeric targets the platform is checking against results (blueprint compartments 1, 9, 10). */
-function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
+export function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
   const identity = dossier?.identity;
   const owners = dossier?.ownership ?? [];
   const auditor = dossier?.governance?.auditor;
@@ -319,7 +319,7 @@ function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
 }
 
 /** Each order, deal or capex plan once, at its latest stage; plus operating facts worth remembering. */
-function DealsAndNotes({ dossier }: { dossier: Dossier | null }) {
+export function DealsAndNotes({ dossier }: { dossier: Dossier | null }) {
   const deals = [...(dossier?.deals ?? [])].reverse().slice(0, 10);
   const notes = [...(dossier?.operating_notes ?? [])].reverse().slice(0, 6);
   if (!deals.length && !notes.length) return null;
@@ -515,7 +515,7 @@ function ResultsScorecard({ cards }: { cards: CardRow[] }) {
   );
 }
 
-function MetricsPanel({ dossier }: { dossier: Dossier }) {
+export function MetricsPanel({ dossier }: { dossier: Dossier }) {
   type Cell = { value: number; unit: string; yoy?: number | null };
   type Group = { periods: string[]; metrics: Map<string, Map<string, Cell>> };
   const groups = useMemo(() => {

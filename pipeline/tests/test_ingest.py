@@ -217,3 +217,15 @@ def test_sector_lens_matching(settings, industry, sector):
     from bse_intel.prompts.engine import PromptEngine
 
     assert PromptEngine(settings).sector_for(industry).name == sector
+
+
+def test_sql_files_hold_one_statement_with_nothing_after_it():
+    """D1 refuses a parameterised call holding more than one statement, and reads anything after
+    the final semicolon (even a comment) as another one. Python's sqlite3 does not, so check here."""
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2] / "db"
+    for path in sorted([*root.glob("queries/*.sql"), *root.glob("statements/*.sql")]):
+        body = "\n".join(line for line in path.read_text().splitlines() if not line.strip().startswith("--"))
+        assert body.count(";") <= 1, path.name
+        assert not body[body.rfind(";") + 1:].strip(), f"{path.name}: text after the final semicolon"

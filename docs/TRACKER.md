@@ -156,7 +156,7 @@ and as prompt rules otherwise. The per-module list is in BLUEPRINT §9.
 | Company directory, Inflection Radar | done | directory shows credibility, open promises, active capex, latest quarter; radar = 3+ trigger kinds in 90 days (capex commissioned, volume streak, margin +150 bps, debt -15%, smart money) from `radar.py`, stored on the company row with each card |
 | Catalyst calendar, overdue promises panel | done | Module 44: open promises past due, from the company summary (no daily scan needed) |
 | System monitor (two progress bars, per-provider quota, needs-review queue) | done | review queue lists the failed checks; owner Re-run requeues the filing |
-| 360° memory drawer (slide-over), split-screen PDF verifier | partial | company page exists; drawer and verifier todo |
+| 360° memory drawer (slide-over), split-screen PDF verifier | done | `?memory=<scrip>` opens it over any page (feed keeps its scroll): dossier with execution bar, financials, deals; timeline with T+1/T+3 vs index; `&verify=<news_id>` puts the BSE PDF beside the card with each figure marked found / not found and the math working. If BSE refuses framing, "Open on BSE" |
 | Palette and typography per blueprint (warm light, OLED dark, Plus Jakarta Sans) | todo | current theme is EquiSense-like |
 | Search across former names | done | companies_fts includes former names (migration 0007); former names now saved to the company row |
 | DB dictionary (companies extra columns, cards score columns, card_feedback table) | done | migration 0004 |
@@ -187,7 +187,7 @@ docs, sync-companies workflow.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 185 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 186 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

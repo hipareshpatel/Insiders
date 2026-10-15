@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import { CommandPalette } from "./components/CommandPalette";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { MemoryDrawer } from "./components/MemoryDrawer";
 import { TopNav } from "./components/TopNav";
 import { CalendarView } from "./views/CalendarView";
 import { CompaniesView } from "./views/CompaniesView";
@@ -62,6 +63,7 @@ export function App() {
         </p>
       </footer>
       <CommandPalette open={searchOpen} onOpenChange={setSearchOpen} />
+      <MemoryDrawer />
     </div>
   );
 }

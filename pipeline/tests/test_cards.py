@@ -275,6 +275,36 @@ def test_true_figures_and_ratios_of_grounded_figures_pass():
     assert check_card(order, "Letter of Intent for Rs. 80 crore from NHAI", memory).ungrounded == []
 
 
+def test_lakh_figures_copied_as_crore_are_caught():
+    """Kanoria Q3FY25: "(INR in Lakhs)" with a loss of 2,863 written as "₹2,863 Cr". Matching at any
+    scale let it pass; with a declared unit, crore figures must match at that unit's scale."""
+    from bse_intel.grounding import declared_unit
+
+    assert declared_unit(RESULTS_TEXT) == 100
+    assert declared_unit("Statement (INRin Lakhs) Revenue 34,752") == 100
+    assert declared_unit("(Rs. in million) Revenue 3,475") == 10
+    assert declared_unit("(Rs. in lakhs) and a ₹50 crore order") is None  # mixed units: any scale may apply
+    assert declared_unit("Revenue 12,345.67 (lakhs)") is None
+    copied = card(headline="Demo Ltd Q2 revenue ₹45,612 Cr; PAT ₹4,752 Cr", what_happened=["Revenue ₹45,612 Cr"])
+    result = check_card(copied, RESULTS_TEXT)
+    assert "45,612" in result.headline_ungrounded and "4,752" in result.headline_ungrounded
+    tenfold = card(headline="Demo Ltd Q2 PAT ₹475.2 Cr")  # read as ₹ million
+    assert check_card(tenfold, RESULTS_TEXT).headline_ungrounded == ["475.2"]
+    memory = '{"metrics":{"revenue":["FY26: 1,624.1 INR_CR"]}}'  # memory is already in crore
+    assert check_card(card(headline="FY26 revenue was ₹1,624.1 Cr"), RESULTS_TEXT, memory).ungrounded == []
+
+
+def test_pass2_prompt_names_a_non_crore_unit(settings):
+    from bse_intel.prompts.engine import PromptEngine
+
+    f = Filing(news_id="u1", scrip_code="999001", company_name="Demo Ltd", headline="Results",
+               filed_at="2026-10-13T17:43:02+05:30", filing_date="2026-10-13")
+    _, user = PromptEngine(settings).pass2(f, "RESULTS", None, None, RESULTS_TEXT)
+    assert "UNITS: this filing states its amounts in ₹ lakh" in user and "divide the filing's figures by 100" in user
+    _, user = PromptEngine(settings).pass2(f, "RESULTS", None, None, "Revenue Rs. 456 crore")
+    assert "UNITS:" not in user
+
+
 def test_claims_track_record_bold_and_repeat_only_in_the_filing():
     from bse_intel.grounding import check_claims
 

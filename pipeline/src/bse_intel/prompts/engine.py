@@ -7,6 +7,7 @@ import re
 from dataclasses import dataclass
 from string import Template
 
+from ..grounding import UNIT_NAMES, declared_unit
 from ..models import EVENT_TYPES, Filing
 from ..settings import Settings
 
@@ -67,6 +68,17 @@ PASS2_SCHEMA = {
         "auditor": {"name": None, "opinion": "UNMODIFIED | EMPHASIS_OF_MATTER | QUALIFIED | ADVERSE | DISCLAIMER", "note": None, "change": None},
     },
 }
+
+
+def _unit_note(text: str | None) -> str:
+    """A line naming the filing's unit when it is not ₹ crore: models copy "2,863" from a lakh
+    statement as "₹2,863 Cr". Stated in code so the model does not have to notice the header."""
+    unit = declared_unit(text)
+    if not unit:
+        return ""
+    return (f"UNITS: this filing states its amounts in {UNIT_NAMES[unit]}. Every amount on the card, in key_numbers, "
+            f"results and fundamentals is in ₹ crore: divide the filing's figures by {unit:,} "
+            f"(e.g. 12,345 in the filing is ₹{12345 / unit:,.2f} Cr).\n\n")
 
 
 def _examples_text(examples: dict[str, list[dict]]) -> str:
@@ -133,10 +145,13 @@ class PromptEngine:
             ))
 
     def sector_for(self, industry: str | None) -> SectorModule:
+        """The lens for a BSE industry. A classification path ("Consumer Discretionary > Automobile
+        and Auto Components > Auto Components > Auto Components & Equipments") is read from its most
+        specific level up, so the sub-group decides before the broad sector does."""
         default = next((s for s in self.sectors if s.name == "default"), None)
-        if industry:
+        for level in reversed([part.strip() for part in (industry or "").split(">") if part.strip()]):
             for module in self.sectors:
-                if any(p.search(industry) for p in module.patterns):
+                if any(p.search(level) for p in module.patterns):
                     return module
         if default is None:
             return SectorModule("default", (), (), "")
@@ -197,7 +212,7 @@ class PromptEngine:
             peers="\n".join(
                 f"- {p['filed_at'][:10]} {p['company_name']}: {p['headline']}" for p in peers or []
             ) or "None.",
-            text=text or "(attachment had no extractable text; rely on the headline)",
+            text=_unit_note(text) + (text or "(attachment had no extractable text; rely on the headline)"),
         )
         shown = _examples_text(examples or {})
         if shown:

@@ -213,11 +213,78 @@ def test_unreadable_attachment_does_not_raise():
     ("Auto Components & Equipments", "auto_components"),
     ("IT Enabled Services", "it"),
     (None, "default"),
+    # BSE's classification path is read from its most specific level up
+    ("Consumer Discretionary > Automobile and Auto Components > Auto Components > Auto Components & Equipments",
+     "auto_components"),
+    ("Consumer Discretionary > Automobile and Auto Components > Automobiles > Commercial Vehicles", "auto"),
+    ("Healthcare > Healthcare > Pharmaceuticals & Biotechnology > Pharmaceuticals", "pharma"),
+    ("Healthcare > Healthcare > Healthcare Services > Hospital", "hospitals"),
+    ("Industrials > Capital Goods > Industrial Manufacturing > Industrial Products", "capital_goods"),
+    ("Fast Moving Consumer Goods > Food Products > Edible Oil", "fmcg"),
 ])
 def test_sector_lens_matching(settings, industry, sector):
     from bse_intel.prompts.engine import PromptEngine
 
     assert PromptEngine(settings).sector_for(industry).name == sector
+
+
+def test_industry_path_from_the_scrip_header():
+    from bse_intel.bse import industry_path
+
+    header = {"Industry": "Industrial Products", "Sector": "Industrials", "IndustryNew": "Capital Goods",
+              "IGroup": "Industrial Manufacturing", "ISubGroup": "Industrial Products"}
+    assert industry_path(header) == "Industrials > Capital Goods > Industrial Manufacturing > Industrial Products"
+    assert industry_path({"Sector": "Financial Services", "IndustryNew": "Financial Services", "IGroup": "Banks",
+                          "ISubGroup": ""}) == "Financial Services > Banks"
+    assert industry_path({"Industry": "Cement & Cement Products"}) == "Cement & Cement Products"
+    assert industry_path({}) is None
+
+
+def test_sync_companies_looks_up_missing_industries_once(settings, monkeypatch):
+    """BSE's scrip list now carries INDUSTRY null; each company's industry comes from its quote
+    header, once, and a failed lookup never overwrites a stored sector."""
+    import argparse
+
+    from bse_intel import bse
+    from bse_intel.cli import cmd_sync_companies
+    from bse_intel.sinks.local import LocalSink
+
+    headers = {
+        "999001": {"Sector": "Commodities", "IndustryNew": "Construction Materials", "IGroup": "Cement & Cement Products",
+                   "ISubGroup": "Cement & Cement Products"},
+        "999002": {"Sector": "Healthcare", "IndustryNew": "Healthcare", "IGroup": "Pharmaceuticals & Biotechnology",
+                   "ISubGroup": "Pharmaceuticals"},
+    }
+    lookups: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.host == "www.bseindia.com":
+            return httpx.Response(200, text="<html></html>")
+        if request.url.path.endswith("/ListofScripData_new/w"):
+            return httpx.Response(200, json=[
+                {"SCRIP_CD": code, "Issuer_Name": f"Demo {code} Ltd", "scrip_id": f"DEMO{code}", "INDUSTRY": None}
+                for code in ("999001", "999002", "999003")])
+        scrip = request.url.params["scripcode"]
+        lookups.append(scrip)
+        if scrip == "999003":
+            return httpx.Response(404)
+        return httpx.Response(200, json=headers[scrip])
+
+    real = bse.BseClient
+    monkeypatch.setattr(bse, "BseClient", lambda: real(transport=httpx.MockTransport(handler), page_delay=0))
+    sink = LocalSink(settings)
+    sink.execute("companies_upsert", [{"scrip_code": "999003", "company_name": "Demo 999003 Ltd", "sector": "chemicals"}])
+    args = argparse.Namespace(max_lookups=10_000, refresh_industry=False)
+
+    assert cmd_sync_companies(args, settings, sink) == 0
+    assert sorted(lookups) == ["999001", "999002", "999003"]
+    sectors = {s: sink.company(s)["sector"] for s in ("999001", "999002", "999003")}
+    assert sectors == {"999001": "cement", "999002": "pharma", "999003": "chemicals"}  # failed lookup kept its sector
+    assert sink.company("999002")["industry"].endswith("> Pharmaceuticals")
+
+    lookups.clear()
+    assert cmd_sync_companies(args, settings, sink) == 0
+    assert lookups == ["999003"]  # known industries are not fetched again
 
 
 def test_sql_files_hold_one_statement_with_nothing_after_it():

@@ -39,6 +39,7 @@ SITE = "https://www.bseindia.com"
 WARMUP_URL = f"{SITE}/corporates/ann"
 API_BASE = "https://api.bseindia.com/BseIndiaAPI/api"
 ANN_ENDPOINT = f"{API_BASE}/AnnSubCategoryGetData/w"
+SCRIP_HEADER_ENDPOINT = f"{API_BASE}/ComHeadernew/w"  # the stock quote page's header
 ATTACH_LIVE = f"{SITE}/xml-data/corpfiling/AttachLive/"
 ATTACH_HIS = f"{SITE}/xml-data/corpfiling/AttachHis/"
 
@@ -244,6 +245,13 @@ class BseClient:
             page += 1
             time.sleep(self._page_delay)
 
+    def scrip_header(self, scrip_code: str) -> dict:
+        """One scrip's quote-page header: BSE's four-level classification and ratios. The scrip
+        list stopped carrying INDUSTRY (null for every scrip, Oct 2026), so this is its source."""
+        data = self._get_json(SCRIP_HEADER_ENDPOINT, {"quotetype": "EQ", "scripcode": scrip_code, "seriesid": ""})
+        time.sleep(self._page_delay)
+        return data if isinstance(data, dict) else {}
+
     def _pace_download(self) -> None:
         low, high = self._download_delay
         if high <= 0:
@@ -325,6 +333,22 @@ def parse_scrip(row: dict) -> dict | None:
         "market_cap_cr": mktcap_value,
         "bse_group": (pick("GROUP", "Group", "SCRIP_GROUP", "scrip_group") or "").upper() or None,
     }
+
+
+INDUSTRY_LEVELS = ("Sector", "IndustryNew", "IGroup", "ISubGroup")  # broad to narrow
+
+
+def industry_path(header: dict) -> str | None:
+    """BSE's classification as one string, broad to narrow, e.g. "Industrials > Capital Goods >
+    Industrial Manufacturing > Industrial Products". Falls back to the older single Industry."""
+    levels: list[str] = []
+    for name in INDUSTRY_LEVELS:
+        value = str(header.get(name) or "").strip()
+        if value and value not in levels:
+            levels.append(value)
+    if levels:
+        return " > ".join(levels)
+    return str(header.get("Industry") or "").strip() or None
 
 
 def fetch_scrip_list(client: BseClient, segment: str = "Equity", status: str = "Active") -> list[dict]:

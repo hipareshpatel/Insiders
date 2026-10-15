@@ -106,22 +106,63 @@ def cmd_market_data(args, settings, sink) -> int:
     return 0
 
 
+SYNC_COMPANIES_BATCH = 200  # rows per write, so a stopped industry lookup keeps what it found
+MAX_LOOKUP_FAILURES = 10    # consecutive header failures before the lookups stop for this run
+
+
+def _stored_companies(sink) -> dict[str, str | None]:
+    """scrip code -> stored industry, for every company already in the database."""
+    stored: dict[str, str | None] = {}
+    after = ""
+    while True:
+        page = sink.query("export_companies", [after, 1000])
+        if not page:
+            return stored
+        stored.update({r["scrip_code"]: r.get("industry") for r in page})
+        after = page[-1]["scrip_code"]
+
+
 def cmd_sync_companies(args, settings, sink) -> int:
-    from .bse import BseClient, fetch_scrip_list
+    import httpx
+
+    from .bse import BseClient, fetch_scrip_list, industry_path
     from .prompts.engine import PromptEngine
 
+    log = logging.getLogger("bse_intel.sync_companies")
     engine = PromptEngine(settings)
+    stored = _stored_companies(sink)
+    written = looked_up = failures = 0
+    now = now_iso()
     with BseClient() as client:
         rows = fetch_scrip_list(client)
-    now = now_iso()
-    for row in rows:
-        row["sector"] = engine.sector_for(row.get("industry")).name
-        row["updated_at"] = now
-    written = sink.execute("companies_upsert", rows)
+        for at in range(0, len(rows), SYNC_COMPANIES_BATCH):
+            batch = rows[at:at + SYNC_COMPANIES_BATCH]
+            for row in batch:
+                scrip = row["scrip_code"]
+                industry = row.get("industry") or (None if args.refresh_industry else stored.get(scrip))
+                if not industry and failures < MAX_LOOKUP_FAILURES and looked_up < args.max_lookups:
+                    looked_up += 1
+                    try:
+                        industry = industry_path(client.scrip_header(scrip))
+                        failures = 0
+                    except (httpx.HTTPError, ValueError) as exc:
+                        failures += 1
+                        log.warning("industry lookup failed for %s: %s", scrip, exc)
+                row["industry"] = industry or stored.get(scrip)
+                if row["industry"]:
+                    row["sector"] = engine.sector_for(row["industry"]).name
+                elif scrip not in stored:
+                    row["sector"] = "default"  # new and unclassified; a stored sector is never overwritten
+                row["updated_at"] = now
+            written += sink.execute("companies_upsert", batch)
+            if looked_up:
+                log.info("sync-companies: %d/%d companies, %d industry lookups", at + len(batch), len(rows), looked_up)
     sink.add_writes(utc_day(), written, now)
     from . import universe
 
-    print(json.dumps({"companies": len(rows), "rows_written": written, "outside_universe": universe.build(settings, sink)}))
+    print(json.dumps({"companies": len(rows), "rows_written": written, "industry_lookups": looked_up,
+                      "without_industry": sum(1 for r in rows if not r.get("industry")),
+                      "outside_universe": universe.build(settings, sink)}))
     return 0
 
 
@@ -312,7 +353,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--filter", help="only list available models containing this text (e.g. llama, deepseek)")
     p.add_argument("--all", action="store_true", help="list every available model")
     p.set_defaults(func=cmd_models)
-    sub.add_parser("sync-companies", help="load BSE's active equity scrip list").set_defaults(func=cmd_sync_companies)
+    p = sub.add_parser("sync-companies", help="load BSE's active equity scrip list and each company's industry")
+    p.add_argument("--max-lookups", type=int, default=10_000,
+                   help="most industry lookups this run (one BSE request each, for companies without one)")
+    p.add_argument("--refresh-industry", action="store_true", help="look up every company's industry again")
+    p.set_defaults(func=cmd_sync_companies)
 
     p = sub.add_parser("backup", help="export dossiers as JSON files")
     p.add_argument("--out", required=True)

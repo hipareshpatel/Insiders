@@ -54,6 +54,8 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | Tests failed in the half hour after midnight IST | test clock shifted in that window | fixed |
 | `ministral-14b-2512` sometimes returns no JSON | watch after the restart | open: 1 in the first 10 min (the repair call recovers it) |
 | Gemini free-tier limits (Google publishes no table) | per-minute limits read from Gemini's own 429 quota detail: 15/min for 3.1 and 3.5 Flash-Lite, 5/min for 3.6 Flash; daily limits stay guesses (a per-day 429 retires the model until midnight Pacific and shows its value on the System page) | per-minute fixed; per-day open |
+| Every company in sector `default` (no sector lens): BSE's scrip list now returns `INDUSTRY: null` for all 5,111 | `sync-companies` reads each company's classification from BSE's quote header (`ComHeadernew`: Sector > Industry > Group > Sub-group), once per company; lenses match the most specific level first; a stored sector is never overwritten with `default` | fixed |
+| Lakh figures written as crore (Kanoria Q3FY25 "loss ₹2,863 Cr" from "(INR in Lakhs)"; 100x) and passed grounding, which matched any scale | the pass-2 prompt names the filing's declared unit and the conversion; grounding requires ₹ crore figures to match a single-unit filing at that unit's scale (the real card now scores 0.30 with both headline amounts flagged, so it goes to the second check) | fixed |
 | Smoke-test rate | 15 filings (9 cards, 6 not material) in the first 9.5 min, about 95 filings/hour with 3 workers | measured |
 
 ## Points to discuss with the owner
@@ -237,7 +239,7 @@ at its end and in PLAN.md.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 220 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 230 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

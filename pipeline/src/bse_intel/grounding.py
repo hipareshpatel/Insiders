@@ -37,6 +37,14 @@ _UNIT = re.compile(r"\s*(%|per\s*cent\b|percent\b|basis\s+points?\b|bps?\b|pp\b|
 _QUANTITY = re.compile(r"\s*(?:cr\b|crores?\b|lakhs?\b|lacs?\b|mn\b|million\b|bn\b|billion\b|mw\b|gw\b|kw\b|tpd\b|mtpa\b"
                        r"|mt\b|tonnes?\b|tons?\b|units?\b|vehicles?\b|beds?\b|stores?\b|kl\b|mld\b|sq\.?\s*ft\b)", re.I)
 SCALES = (1, 10, 100, 1000, 1e4, 1e5, 1e7, 0.1, 0.01, 0.001)  # unit conversions between ₹ crore, lakh, million, rupees
+# A statement's declared unit: "(INR in Lakhs)", "(Rs. in lakh)", "(₹ in million)", "Amount in ₹ '000".
+_DECLARED_UNIT = re.compile(
+    r"(?:₹|\brs\.?|\binr)\s*(?:in\s*)?(lakhs?|lacs?|crores?|millions?|thousands?|'000)(?![a-z])"
+    r"|\bin\s*(?:₹|rs\.?|inr)\s*(lakhs?|lacs?|crores?|millions?|thousands?|'000)(?![a-z])", re.I)
+_PER_CRORE = {"lakh": 100, "lac": 100, "million": 10, "thousand": 10_000, "'000": 10_000, "crore": 1}
+UNIT_NAMES = {100: "₹ lakh", 10: "₹ million", 10_000: "₹ thousand"}
+_CRORE_AMOUNT = re.compile(r"\d\s*(?:cr\b|crores?\b)", re.I)
+_CRORE_AFTER = re.compile(r"\s*(?:cr\b|crores?\b)", re.I)
 DEFAULT_THRESHOLD = 0.7
 NEAR = 300  # characters: two source figures this close can be compared with each other
 
@@ -84,6 +92,24 @@ def _tokens(text: str) -> list[tuple[float, int, int, str, str]]:
             kind = "qty" if _QUANTITY.match(clean, match.end()) else "plain"
         out.append((value, decimals, match.start(), kind, match.group(0).strip("+")))
     return out
+
+
+def declared_unit(text: str | None) -> int | None:
+    """Source figures per ₹ crore when a filing states its amounts in one unit other than crore
+    ("(INR in Lakhs)" -> 100). None when it declares no unit or several, or also states crore amounts
+    (a crore XBRL table on top, "₹50 crore" in a note): then any scale may apply."""
+    text = text or ""
+    words = {(m.group(1) or m.group(2)).lower().rstrip("s") for m in _DECLARED_UNIT.finditer(text)}
+    units = {_PER_CRORE[w] for w in words}
+    if len(units) != 1 or 1 in units or _CRORE_AMOUNT.search(text):
+        return None
+    return units.pop()
+
+
+def _crore_positions(text: str) -> set[int]:
+    """Start positions (as in _tokens) of figures written in ₹ crore ("₹2,863 Cr", "(28.6) crore")."""
+    clean = _clean(text)
+    return {m.start() for m in _NUMBER.finditer(clean) if _CRORE_AFTER.match(clean, m.end())}
 
 
 def _numbers(text: str) -> list[tuple[float, int]]:
@@ -219,8 +245,15 @@ def check_claims(card: Card, *sources: str) -> list[str]:
 def check_card(card: Card, *sources: str) -> GroundingResult:
     """Every figure on the card against the sources. A figure derived on the card (a share, a change,
     a multiple) passes when it follows from another figure on the same line and a source figure;
-    any other derivation belongs in quantified_impact, where its formula is checked."""
+    any other derivation belongs in quantified_impact, where its formula is checked.
+
+    When the filing (sources[0]) states its amounts in one unit, a ₹ crore figure must match it at
+    that unit's scale (₹28.63 Cr = 2,863 lakh) or the other sources as crore: copying 2,863 lakh as
+    "₹2,863 Cr" no longer passes on the any-scale rule."""
     index = SourceIndex(*sources)
+    unit = declared_unit(sources[0]) if sources else None
+    filing_index = SourceIndex(sources[0]) if unit else None
+    other_index = SourceIndex(*sources[1:]) if unit else None
     texts = [("headline", card.headline), ("takeaway", card.takeaway), *(("fact", f) for f in card.what_happened),
              *(("insight", i.text) for i in card.why_it_matters)]
     if card.deal_value and card.deal_value.amount_cr:
@@ -234,11 +267,15 @@ def check_card(card: Card, *sources: str) -> GroundingResult:
         tokens = _tokens(text or "")
         line_amounts = [v for v, d, _, kind, _ in tokens if kind in ("plain", "qty") and v > 31 and index.stated(v, d)]
         line_pcts = [v for v, _, _, kind, _ in tokens if kind == "pct"]
-        for value, decimals, _, kind, raw in tokens:
+        crore_at = _crore_positions(text or "") if unit else set()
+        for value, decimals, pos, kind, raw in tokens:
             if value == 0 or (kind == "plain" and value <= 31 and decimals == 0):
                 continue
             checked += 1
-            if index.grounded(value, decimals, kind=kind) or _from_line(value, decimals, kind, line_amounts, line_pcts, index):
+            if pos in crore_at:
+                if filing_index.stated(value, decimals, scales=(unit,)) or other_index.stated(value, decimals, scales=(1,)):
+                    continue
+            elif index.grounded(value, decimals, kind=kind) or _from_line(value, decimals, kind, line_amounts, line_pcts, index):
                 continue
             label = raw.strip("()-") + {"pct": "%", "bps": " bps", "pp": " pp", "x": "x"}.get(kind, "")
             ungrounded.append(label)

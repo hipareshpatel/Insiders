@@ -37,8 +37,11 @@ Read before changing anything:
 
 ## Running locally (Windows laptop, D:\Insiders)
 
-- Web: `cd web; npm run dev` → http://localhost:5173 (Workers AI runs remotely: needs
-  `npx wrangler login`; the account's workers.dev subdomain is `reply-bd3`).
+- Web: `cd web; $env:CF_REMOTE_BINDINGS = '1'; npm run dev` → http://localhost:5173. Workers AI
+  runs remotely only with that variable set (vite.config.ts overrides `remote: true`), and needs
+  `npx wrangler login`; the account's workers.dev subdomain is `reply-bd3`. Vite hot-reloads Worker
+  code changes, so a pull rarely needs a restart. Avoid restarting it during a backfill: the
+  pipeline's retries to the Worker last about 14 s and a remote-mode start takes about 12 s.
 - Pipeline: `cd pipeline; .venv\Scripts\activate`, then `python -m bse_intel <command>`.
 - Smoke-test backfill: `python -m bse_intel backfill-companies --scrips 506525,532776,505192,500672,530019`.
   Results are saved every 5 filings per company; re-running a filing is safe (memory replaces
@@ -53,7 +56,8 @@ Read before changing anything:
   site check on localhost and a comparison with the case studies.
 - Next: the full backfill; `post-mortem --since 2025-01-01`; deploy the Worker (`insiders`,
   at https://insiders.reply-bd3.workers.dev); `sync-to-cloud`.
-- To confirm: Gemini free-tier limits in AI Studio (providers.toml has cautious guesses); Yahoo
-  price coverage after the symbol-based lookup (`market-data`, `price-history`); `ai-check
-  --provider cloudflare` after the Workers AI fix; whether `ministral-14b-2512` keeps returning no JSON.
+- Confirmed 2026-10-16: Yahoo coverage 97.6% (4,988 of 5,111); `ai-check` passes for Cloudflare;
+  Gemini per-minute limits (15/min Flash-Lite, 5/min 3.6 Flash, read from Gemini's 429 quota detail).
+- To confirm: Gemini daily limits (Google publishes none; a per-day 429 shows the value on the
+  System page); whether `ministral-14b-2512` keeps returning no JSON (1 in the first 10 min).
 - Keep this file and `docs/TRACKER.md` current as things change: they are the project's memory.

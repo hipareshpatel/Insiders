@@ -43,17 +43,18 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 ## Laptop smoke test: findings and fixes (2026-10-16)
 | Finding | Fix | Status |
 |---|---|---|
-| Yahoo priced 10 of 5,111 companies (numeric `500325.BO` no longer served) | `yahoo.py`: try `SYMBOL.BO`, then `SYMBOL.NS`, then `SCRIP.BO` | fixed; coverage to confirm from `market-data --all` |
+| Yahoo priced 10 of 5,111 companies (numeric `500325.BO` no longer served) | `yahoo.py`: try `SYMBOL.BO`, then `SYMBOL.NS`, then `SCRIP.BO` | fixed: `market-data --all` priced 4,988 of 5,111 (97.6%), `price-history` stored 4,995 |
 | Retired or tier-blocked models (404/410/403) | models replaced; 410 disables; key-level 403 disables the provider, a tier 403 only the model | fixed |
 | Endless 60 s waits when every provider was busy | stop after 4 such filings in a row | fixed |
 | Windows paths and a temp-file race in local storage | lexical key check, per-thread temp files | fixed |
 | Worker refused `learning/` objects | prefix allowed | fixed |
-| Workers AI 502 locally | `remote: true`, wrangler login, workers.dev subdomain; fp8 8B model; object replies stringified | fixed; `ai-check --provider cloudflare` to confirm |
+| Workers AI 502 locally | `remote: true`, wrangler login, workers.dev subdomain; fp8 8B model; object replies stringified; start the dev server with `CF_REMOTE_BINDINGS=1` (vite.config.ts overrides `remote: true`) | fixed: `ai-check --provider cloudflare` passes both models |
 | Backfill saved a company only when its whole history finished | saved every 5 filings per company, under a commit lock | fixed |
-| Repairs on `dossier_delta.ownership.period` (null period) | an ownership block without a quarter-end is dropped | fixed |
+| Repairs on `dossier_delta.ownership.period` (null period) | an ownership block without a quarter-end is dropped | fixed: 0 such repairs in the first 10 min after the fix (17 before) |
 | Tests failed in the half hour after midnight IST | test clock shifted in that window | fixed |
-| `ministral-14b-2512` sometimes returns no JSON | watch after the restart | open |
-| Gemini free-tier limits | read from AI Studio → Usage & limits | open (owner) |
+| `ministral-14b-2512` sometimes returns no JSON | watch after the restart | open: 1 in the first 10 min (the repair call recovers it) |
+| Gemini free-tier limits (Google publishes no table) | per-minute limits read from Gemini's own 429 quota detail: 15/min for 3.1 and 3.5 Flash-Lite, 5/min for 3.6 Flash; daily limits stay guesses (a per-day 429 retires the model until midnight Pacific and shows its value on the System page) | per-minute fixed; per-day open |
+| Smoke-test rate | 15 filings (9 cards, 6 not material) in the first 9.5 min, about 95 filings/hour with 3 workers | measured |
 
 ## Points to discuss with the owner
 

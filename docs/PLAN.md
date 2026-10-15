@@ -11,7 +11,7 @@ reaches BSE and runs everything; **Owner** = you, for accounts, keys and decisio
 
 Companies 506525, 532776, 505192, 500672, 530019, from 2025-01-01 to today (decision D6).
 
-1. Laptop: `ai-check` passes for every provider (Cloudflare to re-check after the Workers AI fix).
+1. Laptop: `ai-check` passes for every provider (done 2026-10-16; Mistral's 429s are expected).
 2. Laptop: `backfill-companies --scrips 506525,532776,505192,500672,530019` until no filing is PENDING.
 3. Laptop: review on http://localhost:5173: home, feed, each company page, memory drawer, PDF
    verifier, System page; desktop and phone widths.
@@ -25,9 +25,12 @@ and a measured rate (filings per hour) to size Phase 3.
 
 1. Laptop: `sync-companies`, then `market-data --all`. Check the Yahoo coverage it reports.
    If many companies have no price, build the bhavcopy fallback (TRACKER, "Price source fallback").
+   Done 2026-10-16: 4,988 of 5,111 priced (97.6%), so no fallback for now.
 2. Laptop: `price-history`, so history cards get the price and market cap of their own date.
-3. Owner: paste Gemini's free-tier limits from AI Studio → Usage & limits; laptop updates
-   `providers.toml`.
+   Done 2026-10-16: 4,995 companies stored.
+3. Laptop: Gemini's free-tier limits. Google publishes no table, so the per-minute limits were read
+   from Gemini's own 429 quota detail (done); the daily limits show up as a per-day 429 on the
+   System page once reached, and then go into `providers.toml`.
 
 Exit: universe (active, ≥ ₹100 Cr, plus starred) priced; daily price history stored.
 
@@ -87,11 +90,11 @@ refer to the sections above.
 | # | Item | Who | When |
 |---|---|---|---|
 | 1 | Finish the 5-company backfill and review the site against the case studies | Laptop | Phase 1 |
-| 2 | `ai-check --provider cloudflare` after the Workers AI fix (`b4744d1`) | Laptop | Phase 1 |
+| 2 | ~~`ai-check --provider cloudflare` after the Workers AI fix~~ done 2026-10-16: both models pass | Laptop | Phase 1 |
 | 3 | `ministral-14b-2512` sometimes returns no JSON: find why (truncation at max_tokens?) or lower its weight | Laptop | Phase 1 |
 | 4 | Confirm BSE's XBRL field and tag names on real filings (System "xbrl" count; tracker row "XBRL fast path") | Laptop | Phase 1 |
-| 5 | Gemini free-tier limits from AI Studio → `providers.toml` | Owner, then laptop | Phase 2 |
-| 6 | Yahoo price coverage after `market-data --all`; build the bhavcopy fallback only if needed | Laptop | Phase 2 |
+| 5 | Gemini daily limits (per-minute ones measured 2026-10-16): record the value from the first per-day 429 on the System page in `providers.toml` | Laptop | Phase 3 |
+| 6 | ~~Yahoo price coverage after `market-data --all`~~ done 2026-10-16: 97.6%, no fallback needed for now | Laptop | Phase 2 |
 | 7 | Copy `size_category` onto cards at write time so size filters use the feed index (tracker, point 3) | Laptop | before Phase 4 |
 | 8 | Live-run scheduler for Windows: a PowerShell script for Task Scheduler (or adapt `pipeline.yml` for a Windows runner); fix README/SPEC, which still say a Linux runner | Owner decides, laptop builds | before Phase 4 |
 | 9 | Cloudflare D1 and R2, Worker secrets, D1 id in `wrangler.jsonc`, deploy | Owner and laptop | Phase 4 |

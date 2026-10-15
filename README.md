@@ -41,11 +41,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
-<<<<<<< Updated upstream
-python -m pytest -q              # 234 tests
-=======
-python -m pytest -q              # 235 tests
->>>>>>> Stashed changes
+python -m pytest -q              # 236 tests
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \

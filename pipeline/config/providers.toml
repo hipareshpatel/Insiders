@@ -112,7 +112,7 @@ limits = { rpm = 60 }
 
 [[routes.pass1]]
 provider = "gemini"
-model = "gemini-3.5-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
+model = "gemini-3.1-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
 json_mode = true
 max_tokens = 400
 extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
@@ -120,7 +120,7 @@ limits = { rpm = 10, rpd = 500 }
 
 [[routes.pass1]]
 provider = "gemini"
-model = "gemini-3.1-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
+model = "gemini-3.5-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
 json_mode = true
 max_tokens = 400
 extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
@@ -160,7 +160,7 @@ limits = { rpm = 60 }
 
 [[routes.pass1_bulk]]
 provider = "gemini"
-model = "gemini-3.5-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
+model = "gemini-3.1-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
 json_mode = true
 max_tokens = 400
 extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
@@ -168,7 +168,7 @@ limits = { rpm = 10, rpd = 500 }
 
 [[routes.pass1_bulk]]
 provider = "gemini"
-model = "gemini-3.1-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
+model = "gemini-3.5-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
 json_mode = true
 max_tokens = 400
 extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
@@ -220,7 +220,7 @@ limits = { rpm = 25, tpm = 937_500 }
 
 [[routes.pass2]]
 provider = "gemini"
-model = "gemini-3.8-flash"  # strong but only ~20 free requests/day, so kept as a spare
+model = "gemini-3.6-flash"  # an established model, not the newest (3.8 is often overloaded); ~20 free requests/day, so a spare
 spare = true
 json_mode = true
 max_tokens = 6000
@@ -267,7 +267,7 @@ limits = { rpm = 40 }
 
 [[routes.pass2_bulk]]
 provider = "gemini"
-model = "gemini-3.8-flash"  # strong but only ~20 free requests/day, so kept as a spare
+model = "gemini-3.6-flash"  # an established model, not the newest (3.8 is often overloaded); ~20 free requests/day, so a spare
 spare = true
 json_mode = true
 max_tokens = 6000
@@ -331,7 +331,7 @@ limits = { rpm = 50, tpm = 20_000 }
 
 [[routes.pass2_long]]
 provider = "gemini"
-model = "gemini-3.8-flash"  # 1M-token window for the longest annual reports
+model = "gemini-3.6-flash"  # 1M-token window for the longest annual reports
 spare = true
 json_mode = true
 max_tokens = 6000
@@ -341,7 +341,7 @@ limits = { rpm = 5, rpd = 20 }
 
 [[routes.vision]]
 provider = "gemini"
-model = "gemini-3.5-flash-lite"  # reads images; shares its daily quota with pass 1
+model = "gemini-3.1-flash-lite"  # reads images; shares its daily quota with pass 1
 max_tokens = 2500
 extra_body = { reasoning_effort = "low" }
 limits = { rpm = 10, rpd = 500 }

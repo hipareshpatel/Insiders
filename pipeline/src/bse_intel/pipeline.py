@@ -91,6 +91,11 @@ _REVISION = re.compile(r"\b(?:revised|revision|corrigendum|addendum|rectif\w*|co
 def _shingles(text: str, n: int = 5) -> set[int]:
     words = re.findall(r"[a-z0-9]+", (text or "").lower())
     return {hash(" ".join(words[i:i + n])) for i in range(len(words) - n + 1)}
+
+
+def _numbers(text: str) -> set[str]:
+    """Every figure in the text, commas dropped: a re-filing that changes one number is new news."""
+    return {m.replace(",", "") for m in re.findall(r"\d[\d,]*(?:\.\d+)?", text or "")}
 LONG_PROMPT_TOKENS = 12_000
 SNAPSHOT_KEY = "daily_feed/latest_snapshot.json"
 SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
@@ -230,7 +235,7 @@ class Pipeline:
         self._universe: tuple[set[str], float] | None = None
         self._examples: dict[tuple[str, str], dict[str, list[dict]]] = {}
         self._learned: dict | None = None   # Loop 1 state: post-mortem queue, lessons, dampened categories
-        self._texts: dict[str, list[tuple[str, str, set[int]]]] = {}  # scrip -> (filed_at, news_id, shingles) this run
+        self._texts: dict[str, list[tuple[str, str, set[int], set[str]]]] = {}  # scrip -> (filed_at, news_id, shingles, numbers) this run
 
     # ------------------------------------------------------------------ writes
 
@@ -570,25 +575,29 @@ class Pipeline:
         duplicates."""
         if _REVISION.search(f"{filing.headline} {filing.subject or ''}"):
             return None
-        mine = _shingles(doc.select_text(DUPLICATE_CHARS))
+        text = doc.select_text(DUPLICATE_CHARS)
+        mine, figures = _shingles(text), _numbers(text)
         if len(mine) < DUPLICATE_MIN_SHINGLES:
             return None
         since = (datetime.fromisoformat(filing.filed_at) - timedelta(days=DUPLICATE_DAYS)).isoformat()
         earlier = lambda at, news_id: since <= at < filing.filed_at or (at == filing.filed_at and news_id < filing.news_id)
         with self._lock:
             seen = list(self._texts.get(filing.scrip_code, []))
-        candidates = [(n, s) for at, n, s in seen if earlier(at, n)]
-        known = {n for _, n, _ in seen}
+        candidates = [(n, sh, nums) for at, n, sh, nums in seen if earlier(at, n)]
+        known = {n for _, n, _, _ in seen}
         for row in self.sink.query("filings_recent_company", [filing.scrip_code, since, filing.filed_at, 20]):
             if row["news_id"] in known or row["news_id"] == filing.news_id:
                 continue
             cached = self._cached_text(row["news_id"])
             if cached is not None:
-                candidates.append((row["news_id"], _shingles(Document.from_cache(cached).select_text(DUPLICATE_CHARS))))
+                theirs = Document.from_cache(cached).select_text(DUPLICATE_CHARS)
+                candidates.append((row["news_id"], _shingles(theirs), _numbers(theirs)))
         with self._lock:
-            self._texts.setdefault(filing.scrip_code, []).append((filing.filed_at, filing.news_id, mine))
-        for news_id, theirs in candidates:
-            if len(mine & theirs) >= DUPLICATE_SHARE * len(mine):
+            self._texts.setdefault(filing.scrip_code, []).append((filing.filed_at, filing.news_id, mine, figures))
+        for news_id, theirs, their_figures in candidates:
+            # Mostly the same words AND no figure the earlier filing lacks: a corrected results
+            # statement or a monthly update in the same template is never a duplicate.
+            if len(mine & theirs) >= DUPLICATE_SHARE * len(mine) and figures <= their_figures:
                 log.info("%s is a duplicate of %s (same company, same text)", filing.news_id, news_id)
                 return news_id
         return None

@@ -52,6 +52,22 @@ def test_repeat_submissions_of_one_event_are_marked_duplicate(settings, workers)
     assert {r["news_id"] for r in rows(sink, "select news_id from cards")} == {original, "d4", "e1"}
 
 
+def test_a_refiling_that_changes_any_figure_is_not_a_duplicate(settings):
+    """A corrected statement filed without "revised" in its title is mostly the same text, but new news."""
+    settings = replace(settings, workers=1)
+    now = now_ist() - timedelta(minutes=30)
+    filings = [_filing("f1", "Unaudited Financial Results", now, "Result"),
+               _filing("f2", "Financial Results for the quarter", now + timedelta(minutes=40), "Result")]
+    corrected = LETTER.replace("Net profit 1,500.00", "Net profit 1,350.00")
+    assert corrected != LETTER
+    pdfs = {filings[0].pdf_url: _pdf(LETTER), filings[1].pdf_url: _pdf(corrected)}
+    pipeline, sink, fake = build(settings, filings, pdfs, {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)] * 2},
+                                 env={"NVIDIA_API_KEY": "n"})
+    pipeline.run("live", time_budget_s=60)
+    status = {r["news_id"]: r["status"] for r in rows(sink, "select news_id, status from filings")}
+    assert status == {"f1": "ANALYZED", "f2": "ANALYZED"} and len(fake.calls) == 2
+
+
 def test_a_later_run_finds_the_duplicate_through_the_text_cache(settings):
     settings = replace(settings, workers=1)
     now = now_ist() - timedelta(minutes=30)

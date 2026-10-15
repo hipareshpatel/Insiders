@@ -31,6 +31,16 @@ def test_daily_quota_429_retires_model_for_the_day(make_gateway):
     assert gw.limiters["a:m-a"].quota.exhausted() == "provider reported daily quota reached"
 
 
+def test_per_minute_quota_429_only_cools_down(make_gateway):
+    config = gateway_config(route({"provider": "a", "model": "m-a"}, {"provider": "b", "model": "m-b"}))
+    err = api_error(openai.RateLimitError, 429, "You exceeded your current quota. Quota exceeded for metric: "
+                    "generate_content_free_tier_requests, quotaId: GenerateRequestsPerMinutePerProjectPerModel-FreeTier")
+    gw, _ = make_gateway(config, {"m-a": [err], "m-b": [GOOD]})
+    gw.complete_json("r", "s", "u", Pass1Result)
+    assert not gw.limiters["a:m-a"].quota.exhausted()
+    assert gw.limiters["a:m-a"].cooling_down()
+
+
 def test_95_percent_ceiling_moves_traffic_before_the_hard_limit(make_gateway):
     config = gateway_config(route(
         {"provider": "a", "model": "m-a", "limits": {"rpd": 100}},

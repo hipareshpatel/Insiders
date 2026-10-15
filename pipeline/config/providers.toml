@@ -59,6 +59,18 @@ base_url = "https://api.z.ai/api/paas/v4"
 api_key_env = "ZAI_API_KEY"
 timeout_s = 120
 
+[providers.gemini]
+# Google AI Studio key, through Gemini's OpenAI-compatible endpoint. Free-tier
+# limits are per Google Cloud project (extra keys in one project add nothing)
+# and are shown only in AI Studio -> Usage & limits; the numbers below are
+# cautious guesses until confirmed there. Daily quotas reset at midnight
+# Pacific. Free-tier prompts may be used by Google to improve its products,
+# which is acceptable here because BSE filings are public. gemini-4-argon and
+# gemini-3.1-pro-preview are paid-only.
+base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
+api_key_env = "GEMINI_API_KEY"
+timeout_s = 120
+
 [providers.cloudflare]
 # Workers AI through this project's own Worker (AI binding), so the runner
 # needs no extra Cloudflare credential: it reuses INGEST_TOKEN. To call the
@@ -99,6 +111,22 @@ extra_body = { thinking = { type = "disabled" } }
 limits = { rpm = 60 }
 
 [[routes.pass1]]
+provider = "gemini"
+model = "gemini-3.5-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
+json_mode = true
+max_tokens = 400
+extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
+limits = { rpm = 10, rpd = 500 }
+
+[[routes.pass1]]
+provider = "gemini"
+model = "gemini-3.1-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
+json_mode = true
+max_tokens = 400
+extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
+limits = { rpm = 10, rpd = 500 }
+
+[[routes.pass1]]
 provider = "cloudflare"
 model = "@cf/meta/llama-3.1-8b-instruct"
 max_tokens = 200
@@ -129,6 +157,22 @@ json_mode = true
 max_tokens = 200
 extra_body = { thinking = { type = "disabled" } }
 limits = { rpm = 60 }
+
+[[routes.pass1_bulk]]
+provider = "gemini"
+model = "gemini-3.5-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
+json_mode = true
+max_tokens = 400
+extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
+limits = { rpm = 10, rpd = 500 }
+
+[[routes.pass1_bulk]]
+provider = "gemini"
+model = "gemini-3.1-flash-lite"  # free tier, ~500 requests/day per model (confirm in AI Studio)
+json_mode = true
+max_tokens = 400
+extra_body = { reasoning_effort = "low" }  # thinking tokens count against max_tokens
+limits = { rpm = 10, rpd = 500 }
 
 [[routes.pass1_bulk]]
 provider = "cloudflare"
@@ -175,6 +219,16 @@ context_tokens = 120000
 limits = { rpm = 25, tpm = 937_500 }
 
 [[routes.pass2]]
+provider = "gemini"
+model = "gemini-3.8-flash"  # strong but only ~20 free requests/day, so kept as a spare
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, rpd = 20 }
+
+[[routes.pass2]]
 provider = "cloudflare"
 model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
 max_tokens = 3000
@@ -210,6 +264,16 @@ strip_reasoning = true
 max_tokens = 8000
 context_tokens = 120000
 limits = { rpm = 40 }
+
+[[routes.pass2_bulk]]
+provider = "gemini"
+model = "gemini-3.8-flash"  # strong but only ~20 free requests/day, so kept as a spare
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, rpd = 20 }
 
 [[routes.pass2_bulk]]
 provider = "cloudflare"
@@ -264,3 +328,20 @@ provider = "mistral"
 model = "mistral-small-2603"  # takes images; free tier 20k tokens/min, 1 request/s
 max_tokens = 2500
 limits = { rpm = 50, tpm = 20_000 }
+
+[[routes.pass2_long]]
+provider = "gemini"
+model = "gemini-3.8-flash"  # 1M-token window for the longest annual reports
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, rpd = 20 }
+
+[[routes.vision]]
+provider = "gemini"
+model = "gemini-3.5-flash-lite"  # reads images; shares its daily quota with pass 1
+max_tokens = 2500
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 10, rpd = 500 }

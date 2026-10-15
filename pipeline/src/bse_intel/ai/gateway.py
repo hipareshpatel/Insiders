@@ -406,7 +406,8 @@ class AIGateway:
                 resp = client.chat.completions.create(**kwargs)
             except openai.RateLimitError as exc:
                 message = str(exc)
-                if re.search(r"per day|daily|\bTPD\b|\bRPD\b|quota", message, re.I):
+                if _DAILY_QUOTA.search(message) or (
+                        re.search(r"quota", message, re.I) and not _MINUTE_QUOTA.search(message)):
                     limiter.quota.forced_exhausted = "provider reported daily quota reached"
                 limiter.cooldown(_retry_after(exc))
                 self._note_failure(target, f"429: {message}", rate_limited=True)
@@ -514,6 +515,9 @@ class _Retryable(Exception):
         self.transient = transient
 
 
+# Gemini says "quota" in every 429 and names the window (PerMinute / PerDay).
+_DAILY_QUOTA = re.compile(r"per ?day|daily|\bTPD\b|\bRPD\b", re.I)
+_MINUTE_QUOTA = re.compile(r"per ?minute|\bRPM\b|\bTPM\b", re.I)
 _MODEL_NOT_ALLOWED = re.compile(r"tier|not available|not allowed for (?:this )?model|model access|subscription", re.I)
 
 

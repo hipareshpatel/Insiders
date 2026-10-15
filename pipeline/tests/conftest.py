@@ -8,7 +8,24 @@ import httpx
 import openai
 import pytest
 
+from bse_intel import timeutil
 from bse_intel.settings import Settings
+
+
+@pytest.fixture(autouse=True)
+def _clear_of_ist_midnight(monkeypatch):
+    """Tests date filings "minutes ago"; just after midnight IST that lands on yesterday.
+    In that window, run the clock two hours behind so every test sees one calendar day."""
+    real = timeutil.datetime
+    if real.now(timeutil.IST).hour >= 1:
+        return
+
+    class Shifted(real):
+        @classmethod
+        def now(cls, tz=None):
+            return real.now(tz) - timeutil.timedelta(hours=2)
+
+    monkeypatch.setattr(timeutil, "datetime", Shifted)
 
 
 @pytest.fixture

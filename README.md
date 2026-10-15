@@ -40,7 +40,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
-python -m pytest -q              # 216 tests
+python -m pytest -q              # 217 tests
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -54,7 +54,7 @@ signals and storage all run for real.
 Analyse a real PDF you have locally (needs at least one AI key):
 
 ```bash
-export NVIDIA_API_KEY=...  # and/or GROQ_API_KEY, MISTRAL_API_KEY, ZAI_API_KEY
+export NVIDIA_API_KEY=...  # and/or GROQ_API_KEY, MISTRAL_API_KEY, ZAI_API_KEY, GEMINI_API_KEY
 python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" \
   --headline "Unaudited Financial Results" --event-type RESULTS --industry "Cement & Cement Products"
 ```
@@ -86,7 +86,7 @@ The blueprint's playbook ([docs/BLUEPRINT.md §15](docs/BLUEPRINT.md), status in
 1. `cd web && npm run dev` (local Worker; D1/R2 persist in `data/wrangler`, git-ignored).
 2. In `pipeline/`, point the pipeline at it:
    `export BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 INGEST_TOKEN=dev-local-token`
-   plus one key per AI provider (`GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`).
+   plus one key per AI provider (`GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `GEMINI_API_KEY`).
    Run `python -m bse_intel models` and replace any model it flags as missing in `config/providers.toml`
    (free-tier catalogues change often). The Cloudflare Workers AI target needs `npx wrangler login` in
    `web/` first, because the local Worker calls Workers AI remotely; without it that target is skipped.

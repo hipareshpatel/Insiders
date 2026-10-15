@@ -464,7 +464,7 @@ def main() -> None:
         by_headline[headline] = key
 
     fake = ScriptedAI(by_headline)
-    env = {k: "demo" for k in ("GROQ_API_KEY", "NVIDIA_API_KEY", "MISTRAL_API_KEY", "ZAI_API_KEY")}
+    env = {k: "demo" for k in ("GROQ_API_KEY", "NVIDIA_API_KEY", "MISTRAL_API_KEY", "ZAI_API_KEY", "GEMINI_API_KEY")}
     gateway = AIGateway(settings.load_toml("providers.toml"), client_factory=lambda *a: fake, env=env)
     pipeline = Pipeline(settings, sink, gateway, bse=DemoBse(filings, pdfs))
     # Company by company, as the smoke test does (demo days have gaps a day-by-day backfill would

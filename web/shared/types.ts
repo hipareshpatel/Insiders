@@ -189,6 +189,8 @@ export interface CardRow {
   median_turnover_cr?: number | null;
   credibility_score?: number | null;
   watchlist?: number;
+  /** Techno-funda tags from the market-data job (JSON Technicals). */
+  technicals_json?: string | null;
   /** BSE trading group (A, B, T, XT, Z...); T, XT and Z trade to trade with tight circuits. */
   bse_group?: string | null;
 }
@@ -254,6 +256,8 @@ export interface Company {
   card_count: number;
   last_card_at: string | null;
   watchlist?: number;
+  /** Techno-funda tags from the market-data job (JSON Technicals). */
+  technicals_json?: string | null;
   former_names_json?: string;
   credibility_score?: number | null;
   median_turnover_cr?: number | null;
@@ -435,3 +439,6 @@ export interface PriceReaction {
   complete: number;
   missed_alpha?: number;
 }
+
+/** Optional price-structure tags (blueprint §11.3); never part of the score. */
+export interface Technicals { stage2?: boolean; vcp?: boolean; rs_pct?: number; clenow?: number; rvol?: number; as_of?: string | null }

@@ -169,7 +169,7 @@ group map).
 | Gates 1–4 deterministic (scoring.py) | done |
 | 0–100 score, impact mapping (≥70 high, 40–69 moderate, <40 low) | done |
 | Top Signals view (≥70 and Gate 4 clean and 2 of gates 1–3) | done |
-| Techno-funda tags (trend template, VCP, RS percentile, RVOL) | todo |
+| Techno-funda tags (trend template, VCP, RS percentile, RVOL) | done | `technicals.py` in the market-data job → companies.technicals_json (migration 0008); card chips for fresh cards (⚡ coiled spring = HIGH + VCP, Stage 2, RS ≥ 80, volume ≥ 2.5x); display only, not scored |
 
 ### §12 Learning loops
 | Item | Status |
@@ -217,7 +217,7 @@ docs, sync-companies workflow.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 196 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 199 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

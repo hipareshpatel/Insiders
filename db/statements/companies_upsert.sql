@@ -4,7 +4,7 @@
 INSERT INTO companies (scrip_code, symbol, company_name, isin, industry, sector, market_cap_cr,
                        size_category, shares_outstanding, shares_updated_at, last_price,
                        price_date, ret_1w, ret_1m, ret_1y, updated_at, median_turnover_cr, bse_group,
-                       credibility_score, former_names_json, memory_summary_json, earliest_open_due, inflection_last_at)
+                       credibility_score, former_names_json, memory_summary_json, earliest_open_due, inflection_last_at, technicals_json)
 SELECT json_extract(value, '$.scrip_code'),
        json_extract(value, '$.symbol'),
        coalesce(json_extract(value, '$.company_name'), json_extract(value, '$.scrip_code')),
@@ -27,7 +27,8 @@ SELECT json_extract(value, '$.scrip_code'),
        coalesce(json_extract(value, '$.former_names_json'), '[]'),
        json_extract(value, '$.memory_summary_json'),
        json_extract(value, '$.earliest_open_due'),
-       json_extract(value, '$.inflection_last_at')
+       json_extract(value, '$.inflection_last_at'),
+       json_extract(value, '$.technicals_json')
 FROM json_each(?1)
 WHERE true
 ON CONFLICT (scrip_code) DO UPDATE SET
@@ -57,4 +58,5 @@ ON CONFLICT (scrip_code) DO UPDATE SET
        earliest_open_due   = CASE WHEN excluded.memory_summary_json IS NULL THEN companies.earliest_open_due
                                   ELSE excluded.earliest_open_due END,
        inflection_last_at  = CASE WHEN excluded.memory_summary_json IS NULL THEN companies.inflection_last_at
-                                  ELSE excluded.inflection_last_at END;
+                                  ELSE excluded.inflection_last_at END,
+       technicals_json     = coalesce(excluded.technicals_json, companies.technicals_json);

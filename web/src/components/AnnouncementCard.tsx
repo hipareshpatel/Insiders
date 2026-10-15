@@ -5,7 +5,7 @@ import {
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { useQueryState } from "../lib/url";
-import type { CallRead, CardBody, CardRow, Impact, PriceReaction, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
+import type { CallRead, CardBody, CardRow, Impact, PriceReaction, Technicals, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
 import { useRatings } from "../lib/owner";
 import { copyNodeAsPng } from "../lib/png";
@@ -315,6 +315,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
             </Chip>
           )}
           {row.median_turnover_cr != null && row.median_turnover_cr < 0.5 && <Chip tone="warn">💧 Thin liquidity</Chip>}
+          <TechnicalChips row={row} />
           {row.bse_group && ["T", "XT", "Z", "ZP", "TS", "MT"].includes(row.bse_group.toUpperCase()) && (
             <Chip tone="warn">🔒 Trade-to-trade ({row.bse_group})</Chip>
           )}
@@ -624,5 +625,22 @@ function MarketReaction({ raw, atFiling }: { raw?: string | null; atFiling?: Car
       </p>
       </>}
     </Section>
+  );
+}
+
+/** Price structure beside a fresh card (the tags describe the latest prices, so older cards skip them). */
+function TechnicalChips({ row }: { row: CardRow }) {
+  let tech: Technicals | null = null;
+  try { tech = row.technicals_json ? JSON.parse(row.technicals_json) : null; } catch { tech = null; }
+  if (!tech?.as_of) return null;
+  const days = (Date.parse(tech.as_of) - Date.parse(row.filing_date)) / 86400_000;
+  if (days < -3 || days > 10) return null;
+  return (
+    <>
+      {tech.vcp && row.impact_level === "HIGH" && <Chip>⚡ Coiled spring</Chip>}
+      {tech.stage2 && <Chip tone="neutral">📈 Stage 2 trend</Chip>}
+      {tech.rs_pct != null && tech.rs_pct >= 80 && <Chip tone="neutral">RS {tech.rs_pct}</Chip>}
+      {tech.rvol != null && tech.rvol >= 2.5 && days >= 0 && days <= 2 && <Chip tone="neutral">Volume {tech.rvol.toFixed(1)}x</Chip>}
+    </>
   );
 }

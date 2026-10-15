@@ -15,6 +15,8 @@ import time
 from datetime import datetime, timedelta
 
 from .settings import Settings
+from .technicals import rank_rs
+from .technicals import tags as price_tags
 from .sinks.base import Sink
 from .timeutil import now_iso, now_ist, utc_day
 
@@ -98,6 +100,12 @@ def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
                 continue
             row = {"scrip_code": company["scrip_code"], "last_price": round(closes[-1], 2),
                    "price_date": price_date, "updated_at": now, **returns(closes)}
+            try:
+                ohlcv = frame[["High", "Low", "Close", "Volume"]].dropna(subset=["Close"])
+                row["_tech"] = {**price_tags(*(ohlcv[c].astype(float).tolist() for c in ("High", "Low", "Close", "Volume"))),
+                                "as_of": price_date}
+            except Exception:
+                pass
             turnover = median_turnover_cr(frame, int(yconf.get("turnover_days", 30)))
             if turnover is not None:
                 row["median_turnover_cr"] = turnover
@@ -117,6 +125,12 @@ def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
                 market_cap = round(closes[-1] * shares / 1e7, 2)
                 row.update(market_cap_cr=market_cap, size_category=size_bucket(market_cap, buckets))
             rows.append(row)
+    techs = [r["_tech"] for r in rows if "_tech" in r]
+    rank_rs(techs)  # relative strength as a percentile among the companies priced in this run
+    for r in rows:
+        tech = r.pop("_tech", None)
+        if tech and len(tech) > 1:
+            r["technicals_json"] = json.dumps(tech)
     coverage = {"date": now, "companies": len(companies), "priced": len(rows), "missing": len(missing),
                 "missing_pct": round(len(missing) / len(companies) * 100, 1), "sample": missing[:200]}
     sink.kv_set("market:coverage", json.dumps(coverage), now)

@@ -11,11 +11,11 @@ const CARD_COLUMNS = `
   c.event_category, c.impact_level, c.headline, c.grounding_score, c.needs_review,
   c.memory_complete, c.card_json, c.pdf_url, c.market_session, c.actionability_score, c.is_actionable_signal, c.post_event_return_json,
   co.market_cap_cr, co.size_category, co.last_price, co.ret_1w, co.ret_1m, co.ret_1y,
-  co.median_turnover_cr, co.credibility_score, co.watchlist, co.bse_group`;
+  co.median_turnover_cr, co.credibility_score, co.watchlist, co.bse_group, co.technicals_json`;
 
 const COMPANY_COLUMNS = `scrip_code, symbol, company_name, isin, industry, sector, market_cap_cr,
   size_category, last_price, price_date, ret_1w, ret_1m, ret_1y, card_count, last_card_at,
-  watchlist, former_names_json, credibility_score, median_turnover_cr, bse_group,
+  watchlist, former_names_json, credibility_score, median_turnover_cr, bse_group, technicals_json,
   json_array_length(memory_summary_json, '$.open_promises') AS open_promises,
   json_extract(memory_summary_json, '$.active_capex') AS active_capex,
   json_extract(memory_summary_json, '$.revenue') AS latest_revenue,

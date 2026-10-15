@@ -37,6 +37,9 @@ DAMPEN_MIN_CARDS, DAMPEN_BAND, DAMPEN_RVOL = 10, 1.0, 1.2
 OPEN_DAYS = 14          # the nightly job revisits cards this many days back
 PAGE = 500
 MISSED_KEEP = 100
+MAX_RERUNS = 5            # missed-alpha filings re-analysed with their reaction per night (AI cost)
+LESSONS_KEY = "learning/sector_rules.json"   # R2: {"sector|EVENT": [{lesson, news_id, added}]}
+LESSONS_KEEP = 5
 
 
 def day_zero(filed_at: str, sessions: list[date]) -> int | None:
@@ -124,7 +127,7 @@ def post_mortem(settings: Settings, sink: Sink, since: str | None = None) -> dic
         if len(page) < PAGE:
             break
         after = (page[-1]["filed_at"], page[-1]["news_id"])
-    stats = {"cards": len(cards), "updated": 0, "complete": 0, "missed_alpha": 0, "benchmark": None}
+    stats = {"cards": len(cards), "updated": 0, "complete": 0, "missed_alpha": 0, "requeued": 0, "benchmark": None}
     if not cards:
         sink.kv_set("learning:dampen", json.dumps(dampen(sink)), now_iso())
         return stats
@@ -172,6 +175,7 @@ def post_mortem(settings: Settings, sink: Sink, since: str | None = None) -> dic
         seen = {m["news_id"] for m in missed}
         merged = (missed + [m for m in previous if m.get("news_id") not in seen])[:MISSED_KEEP]
         sink.kv_set("learning:missed_alpha", json.dumps(merged), now)
+        stats["requeued"] = queue_reruns(sink, missed, now)
     sink.kv_set("learning:dampen", json.dumps(dampen(sink)), now)
     sink.add_writes(utc_day(), written, now)
     log.info("post-mortem: %s", stats)
@@ -184,3 +188,33 @@ def dampen(sink: Sink, days: int = 365) -> list[dict]:
     return [dict(r, flag="TIGHTEN") for r in rows
             if r.get("avg_t3_excess") is not None and abs(r["avg_t3_excess"]) <= DAMPEN_BAND
             and (r.get("avg_t3_rvol") or 0) < DAMPEN_RVOL]
+
+
+def _reaction_text(m: dict) -> str:
+    parts = []
+    for k, label in (("t1", "the first session"), ("t2", "two sessions")):
+        e = m.get(k) or {}
+        if e.get("return_pct") is not None:
+            parts.append(f"{label}: {e['return_pct']:+.1f}%"
+                         + (f" ({e['excess_pct']:+.1f}% vs the index)" if e.get("excess_pct") is not None else "")
+                         + (f" on {e['rvol']:.1f}x usual volume" if e.get("rvol") else ""))
+    return "; ".join(parts)
+
+
+def queue_reruns(sink: Sink, missed: list[dict], now: str) -> int:
+    """Missed alpha: put up to MAX_RERUNS new cases back in the queue. The next run re-analyses each
+    with its market reaction attached and asks for the lesson (blueprint §12.1)."""
+    try:
+        done = set(json.loads(sink.kv_get("learning:postmortem_done") or "[]"))
+        queue = json.loads(sink.kv_get("learning:postmortem_queue") or "{}")
+    except ValueError:
+        done, queue = set(), {}
+    fresh = [m for m in missed if m["news_id"] not in done and m["news_id"] not in queue][:max(0, MAX_RERUNS - len(queue))]
+    if not fresh:
+        return 0
+    for m in fresh:
+        queue[m["news_id"]] = f"Rated {m.get('impact', '').lower()} impact, then the stock moved: {_reaction_text(m)}."
+    sink.kv_set("learning:postmortem_queue", json.dumps(queue), now)
+    sink.execute("filings_update", [{"news_id": m["news_id"], "status": "PENDING", "attempts": 0, "updated_at": now,
+                                     "last_error": "post-mortem: re-analysis with the market reaction"} for m in fresh])
+    return len(fresh)

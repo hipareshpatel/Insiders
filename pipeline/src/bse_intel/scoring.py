@@ -131,7 +131,7 @@ def _band(ratio_pct: float) -> int:
 
 
 def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None, company: dict | None,
-          needs_review: bool, model_impact: str) -> Score:
+          needs_review: bool, model_impact: str, dampened: bool = False) -> Score:
     company = company or {}
     reasons: list[str] = []
     vetoes: list[str] = []
@@ -263,6 +263,9 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
             and "Credit rating: issuer not cooperating" not in vetoes:
         vetoes.append("Credit rating: issuer not cooperating")
 
+    if dampened:  # Loop 1: HIGH cards of this sector and event have not moved prices
+        pillars["penalty"] -= 5
+        reasons.append("Calibration: high-impact cards of this kind have not moved prices so far (-5)")
     total_points = sum(pillars.values())
     if vetoes:
         total_points = min(total_points, 35)

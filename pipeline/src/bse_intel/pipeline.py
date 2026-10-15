@@ -51,6 +51,7 @@ from .signals import priced_for
 from .sinks.base import Sink, SinkRejected
 from . import universe
 from . import xbrl as xbrl_fast_path
+from .learning import LESSONS_KEEP, LESSONS_KEY
 from .quality import asset_turn_signals, warrant_deadlines
 from .radar import summarize as memory_summary
 from .signals import volume_strip
@@ -206,6 +207,7 @@ class Pipeline:
         self._usage_lock = Lock()
         self._universe: tuple[set[str], float] | None = None
         self._examples: dict[tuple[str, str], dict[str, list[dict]]] = {}
+        self._learned: dict | None = None   # Loop 1 state: post-mortem queue, lessons, dampened categories
 
     # ------------------------------------------------------------------ writes
 
@@ -625,8 +627,12 @@ class Pipeline:
         sector_module = self.prompts.sector_for(industry)
         sector = sector_module.name
         peers = self._peers(sector, event_type, filing)
+        learned = self._learning()
+        reaction = learned["queue"].get(filing.news_id)
         system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers,
-                                          examples=self._owner_examples(sector, event_type))
+                                          examples=self._owner_examples(sector, event_type),
+                                          lessons=[x["lesson"] for x in learned["lessons"].get(f"{sector}|{event_type}", [])][-3:],
+                                          reaction=reaction)
         route = "pass2_bulk" if bulk else "pass2"
         if (len(system) + len(user)) / 4 > LONG_PROMPT_TOKENS and self.gateway.has_route("pass2_long"):
             route = "pass2_long"  # a transcript or presentation: long-context models only
@@ -684,7 +690,10 @@ class Pipeline:
         }
         needs_review = checks.needs_review
         signals += asset_turn_signals(card_json, sector, sector_module.asset_turn)  # extends card_json["signals"]
-        rated = score_card(card_json, event_type, signals, current, priced, needs_review, card.impact_level)
+        rated = score_card(card_json, event_type, signals, current, priced, needs_review, card.impact_level,
+                           dampened=(sector, event_type) in learned["dampen"])
+        if reaction:
+            self._record_lesson(filing.news_id, sector, event_type, out.lesson, now)
         card_json["score"] = rated.as_dict()
         card_json["model_impact"] = card.impact_level
         if tagged:
@@ -795,6 +804,45 @@ class Pipeline:
             return fixed, second, checks2, {**base, "status": "UNRESOLVED", "checked_by": second.model_label,
                                             "issues": checks2.problems()}
         return out, result, checks, {**base, "status": "UNRESOLVED", "checked_by": second.model_label}
+
+    def _learning(self) -> dict:
+        """Loop 1 state, read once per run: filings queued for a post-mortem re-analysis (with their
+        reaction), lessons learnt per sector and event, and categories whose HIGH cards did not move prices."""
+        with self._lock:
+            if self._learned is not None:
+                return self._learned
+        state = {"queue": {}, "lessons": {}, "dampen": set()}
+        try:
+            state["queue"] = json.loads(self.sink.kv_get("learning:postmortem_queue") or "{}")
+            state["lessons"] = json.loads(self.sink.get_object(LESSONS_KEY) or "{}")
+            state["dampen"] = {(d.get("sector"), d.get("event_category")) for d in json.loads(self.sink.kv_get("learning:dampen") or "[]")}
+        except Exception as exc:  # learning is an extra; a read problem never blocks analysis
+            log.warning("learning state unavailable: %s", exc)
+        with self._lock:
+            self._learned = state
+        return state
+
+    def _record_lesson(self, news_id: str, sector: str, event_type: str, lesson: str, now: str) -> None:
+        """Store a post-mortem lesson and take the filing off the queue. State changes under the lock;
+        the writes after it (sink calls must never run while the lock is held)."""
+        state = self._learning()
+        with self._lock:
+            state["queue"].pop(news_id, None)
+            queue = json.dumps(state["queue"])
+            lessons = None
+            if lesson:
+                rows = state["lessons"].setdefault(f"{sector}|{event_type}", [])
+                rows.append({"lesson": lesson, "news_id": news_id, "added": now})
+                del rows[:-LESSONS_KEEP]
+                lessons = json.dumps(state["lessons"], ensure_ascii=False).encode()
+        if lessons is not None:
+            self.sink.put_object(LESSONS_KEY, lessons)
+        try:
+            done = json.loads(self.sink.kv_get("learning:postmortem_done") or "[]")
+        except ValueError:
+            done = []
+        self._kv_set("learning:postmortem_done", json.dumps((done + [news_id])[-500:]))
+        self._kv_set("learning:postmortem_queue", queue)
 
     def _owner_examples(self, sector: str, event_type: str) -> dict[str, list[dict]]:
         """The owner's two latest starred cards and latest noise card for this sector and event

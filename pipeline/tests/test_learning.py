@@ -68,6 +68,8 @@ def test_post_mortem_writes_reactions_and_flags(settings, monkeypatch):
     monkeypatch.setattr(learning, "now_ist", lambda: pd.Timestamp(days[-1]).to_pydatetime().replace(tzinfo=learning.IST))
     stats = learning.post_mortem(settings, sink, since=days[0].isoformat())
     assert stats["updated"] == 1 and stats["complete"] == 1 and stats["missed_alpha"] == 1
+    # the missed-alpha card goes back to the queue for a re-analysis with its reaction
+    assert stats["requeued"] == 1 and "N1" in sink.kv_get("learning:postmortem_queue")
     assert stats["benchmark"] == "^NSEI"
     rows = sink.query("cards_awaiting_reaction", ["", "9999", "", "", 10])
     assert rows == []  # complete: not revisited
@@ -100,3 +102,42 @@ def test_market_data_records_which_companies_yahoo_lacks(settings, monkeypatch):
     coverage = json.loads(sink.kv_get("market:coverage"))
     assert coverage["companies"] == 2 and coverage["missing"] == 1 and coverage["missing_pct"] == 50.0
     assert coverage["sample"][0]["scrip_code"] == "500002"
+
+
+def test_post_mortem_rerun_records_a_lesson_used_by_later_prompts(settings):
+    import json
+    from datetime import timedelta
+
+    from bse_intel.learning import LESSONS_KEY
+    from bse_intel.timeutil import now_ist
+    from test_pipeline import PASS2, RESULT_TEXT, _filing, _pdf, build
+
+    now = now_ist() - timedelta(minutes=30)
+    first = _filing("n-pm", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    second = _filing("n-next", "Unaudited Financial Results for the quarter ended September 30, 2026", now + timedelta(minutes=5),
+                     "Result", scrip="999002", name="Demo Cement Two Ltd")
+    pdfs = {f.pdf_url: _pdf(RESULT_TEXT) for f in (first, second)}
+    with_lesson = dict(PASS2, lesson="A receivables build hidden behind revenue growth moved the stock, not the headline.")
+    pipeline, sink, fake = build(settings, [first, second], pdfs,
+                                 {"deepseek-ai/deepseek-r1": [json.dumps(with_lesson), json.dumps(PASS2)]})
+    sink.kv_set("learning:postmortem_queue", json.dumps({"n-pm": "Rated moderate impact, then the stock moved: +11%."}), "x")
+    pipeline.run("live", time_budget_s=60)
+    prompts = [c["messages"][-1]["content"] for c in fake.calls]
+    assert "MARKET REACTION AFTER THIS FILING" in prompts[0] and "+11%" in prompts[0]
+    lessons = json.loads(sink.get_object(LESSONS_KEY))
+    (key,) = lessons
+    assert key.endswith("|RESULTS") and lessons[key][0]["news_id"] == "n-pm"
+    assert json.loads(sink.kv_get("learning:postmortem_queue")) == {}
+    assert "n-pm" in sink.kv_get("learning:postmortem_done")
+    # a later run reads the lesson for the same sector and event type
+    pipeline2, sink2, fake2 = build(settings, [], {}, {})
+    assert pipeline2._learning()["lessons"][key][0]["lesson"].startswith("A receivables build")
+
+
+def test_dampened_category_costs_five_points():
+    from bse_intel.scoring import score
+
+    card = {"headline": "h", "what_happened": [], "deal_value": {"kind": "ORDER", "amount_cr": 40}}
+    base = score(card, "ORDER_WIN", [], None, {}, needs_review=False, model_impact="HIGH")
+    damp = score(card, "ORDER_WIN", [], None, {}, needs_review=False, model_impact="HIGH", dampened=True)
+    assert damp.total == base.total - 5 and any(r.startswith("Calibration:") for r in damp.reasons)

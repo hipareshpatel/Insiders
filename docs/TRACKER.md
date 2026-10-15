@@ -174,7 +174,7 @@ group map).
 ### §12 Learning loops
 | Item | Status |
 |---|---|
-| Loop 1 price post-mortem (T+1/3/5 excess return, 15:30 IST rule) | done: `post-mortem` nightly; missed-alpha flags and dampener list in kv. Re-running Pass 2 on missed alpha and writing sector_learned_rules: todo |
+| Loop 1 price post-mortem (T+1/3/5 excess return, 15:30 IST rule) | done: nightly `post-mortem`; missed alpha re-queued (5 a night) and re-analysed with its reaction, the lesson stored per sector and event in R2 `learning/sector_rules.json` and shown to later prompts; dampener list costs matching cards 5 points |
 | Loop 2 predictions vs reality, credibility score | done: predictions, credibility, and the calibration rule (delivery ratio on numeric targets, months late on dated promises) in the memory the model reads and in the drawer |
 | Loop 3 Star/Noise golden set injected as few-shot | done |
 
@@ -217,7 +217,7 @@ docs, sync-companies workflow.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 201 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 203 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

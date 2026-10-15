@@ -169,6 +169,7 @@ class PromptEngine:
     def pass2(
         self, filing: Filing, event_type: str, industry: str | None, memory: dict | None, text: str,
         peers: list[dict] | None = None, examples: dict[str, list[dict]] | None = None,
+        lessons: list[str] | None = None, reaction: str | None = None,
     ) -> tuple[str, str]:
         sector = self.sector_for(industry)
         system = self._pass2.safe_substitute(
@@ -201,4 +202,12 @@ class PromptEngine:
         shown = _examples_text(examples or {})
         if shown:
             user = shown + "\n\n" + user
+        if lessons:
+            user = ("LESSONS FROM PAST MARKET REACTIONS (same sector and event type; details the market priced that "
+                    "earlier cards underrated)\n" + "\n".join(f"- {x}" for x in lessons) + "\n\n" + user)
+        if reaction:
+            user += ("\n\nMARKET REACTION AFTER THIS FILING (post-mortem)\n" + reaction + "\nWrite the card as usual, "
+                     "then add a top-level field \"lesson\": one sentence naming the specific detail in this filing that "
+                     "the market priced, written as a rule for future filings of this sector and event type. If the "
+                     "filing holds no such detail (the move came from elsewhere), say so in the lesson.")
         return system, user

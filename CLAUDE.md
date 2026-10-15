@@ -7,7 +7,8 @@ Read before changing anything:
 - `docs/BLUEPRINT.md`: the spec (modules are numbered; "Module 35" means section 35).
 - `docs/TRACKER.md`: decisions D1–D12, what is built and what is not.
 - `docs/SPEC.md`: the design as built. `README.md`: setup and the CLI commands table.
-- `pipeline/config/providers.toml`: AI providers, models, free-tier limits and routes.
+- `pipeline/config/providers.toml`: AI providers, models, free-tier limits and routes; `docs/SPEC.md` §4
+  explains the gateway rules. Owner decisions D13–D15 in the tracker cover providers, keys and this setup.
 
 ## Rules
 
@@ -45,8 +46,12 @@ Read before changing anything:
 ## Status and next steps
 
 - Done: all blueprint modules except 8 (DGTR) and 42 (promoter-group contagion), which have no data source.
-- In progress: the 5-company smoke-test backfill; then the site check on localhost.
+- Smoke-test findings and their fixes: the table in `docs/TRACKER.md` ("Laptop smoke test").
+- In progress: the 5-company smoke-test backfill (restarted on the save-every-5 fix); then the
+  site check on localhost and a comparison with the case studies.
 - Next: the full backfill; `post-mortem --since 2025-01-01`; deploy the Worker (`insiders`,
   at https://insiders.reply-bd3.workers.dev); `sync-to-cloud`.
-- To confirm: Gemini free-tier limits in AI Studio (providers.toml has cautious guesses), and
-  Yahoo price coverage after the symbol-based lookup (`market-data`, `price-history`).
+- To confirm: Gemini free-tier limits in AI Studio (providers.toml has cautious guesses); Yahoo
+  price coverage after the symbol-based lookup (`market-data`, `price-history`); `ai-check
+  --provider cloudflare` after the Workers AI fix; whether `ministral-14b-2512` keeps returning no JSON.
+- Keep this file and `docs/TRACKER.md` current as things change: they are the project's memory.

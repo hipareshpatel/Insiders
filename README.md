@@ -6,7 +6,7 @@ watch next. It runs on free tiers.
 
 - **Pipeline** (`pipeline/`, Python). Fetches BSE announcements, drops noise by
   rules, gatekeeps ambiguous filings, extracts PDF text (OCR for scans), and analyses
-  material filings through a 5-provider free AI gateway with a 95% quota ceiling. It
+  material filings through a 6-provider free AI gateway with a 95% quota ceiling. It
   checks every number against the source, re-computes every quantified estimate from
   its shown working, merges facts into per-company dossiers with provenance, computes
   signals (promise vs delivery, dilution, working capital,
@@ -20,7 +20,8 @@ watch next. It runs on free tiers.
 - **Shared SQL** (`db/`). One schema and one set of statements, used by both.
 
 The design, and what changed from the original brief, is in
-**[docs/SPEC.md](docs/SPEC.md)**.
+**[docs/SPEC.md](docs/SPEC.md)**. Status and owner decisions are in [docs/TRACKER.md](docs/TRACKER.md);
+working rules for Claude Code sessions are in [CLAUDE.md](CLAUDE.md).
 
 > Summaries of public BSE disclosures. Not investment advice.
 
@@ -112,13 +113,14 @@ The blueprint's playbook ([docs/BLUEPRINT.md §15](docs/BLUEPRINT.md), status in
    npx wrangler secret put OWNER_TOKEN     # another one: owner mode (watchlist, Star/Noise) on the site
    npm run db:migrate:remote && npm run deploy
    ```
+   The Worker is named `insiders`, so it serves at `https://insiders.<your-subdomain>.workers.dev`
+   (this account: https://insiders.reply-bd3.workers.dev).
    Or let `.github/workflows/deploy-web.yml` do it on every push to `main`.
 2. **GitHub secrets and variables.** See [SPEC §12](docs/SPEC.md#12-operations).
 3. **Runner.** BSE's API refused a non-Indian datacenter IP in testing. Run the
    pipeline on a self-hosted runner on an Indian connection: register the runner and
    set the repository variable `PIPELINE_RUNNER_LABELS` to `["self-hosted","linux"]`.
-   This repository is public; consider making it private before attaching a
-   self-hosted runner.
+   The repository is private, as it should be with a self-hosted runner.
 4. **Trigger.** cron-job.org → `POST /repos/{owner}/{repo}/actions/workflows/pipeline.yml/dispatches`
    every 15–30 minutes, using a fine-grained PAT with Actions read/write on this
    repository only.

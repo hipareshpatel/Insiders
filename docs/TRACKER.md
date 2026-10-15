@@ -15,7 +15,7 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | D2 | Everything is built, run and fixed on the laptop with the website running locally; go-live only after that. | 2026-10-15 |
 | D3 | History (2025-01-01 to today) is filled on the laptop (local SQLite + local R2 folder), then synced to Cloudflare. Only AI token limits apply locally. | 2026-10-15 |
 | D4 | Feed uses page-numbered pagination (50 cards a page), not endless scrolling; filters (dates, company, event, sector, size, impact) find older filings. | 2026-10-15 |
-| D5 | The blueprint lives in `docs/`; the GitHub repo is to be made private (owner action). | 2026-10-15 |
+| D5 | The blueprint lives in `docs/`; the GitHub repo is private (done by the owner). | 2026-10-15 |
 | D6 | Never test the backfill at scale before the 5-company smoke test (506525, 532776, 505192, 500672, 530019) looks right. | 2026-10-15 |
 | D7 | No Telegram, WhatsApp or X distribution. EquiSense is a design benchmark only (no name, logo or score). | earlier |
 | D8 | Market data from yfinance (no bhavcopy pipeline). | earlier |
@@ -23,6 +23,9 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | D10 | Sector-specific footer metrics (bank GNPA/NIM, cement EBITDA/t, telecom ARPU, hotel RevPAR...). | earlier |
 | D12 | Data is built in dependency order: company master → market caps → daily price history → filings/memory (2025 baseline, then 2026) → signals. Prices stay on yfinance (D8): its close is split/bonus-adjusted, so close × today's shares gives the day's market cap without a corporate-action adjustment table. If bhavcopy is ever needed, BSE's files are now in the UDiFF format. | 2026-10-15 |
 | D11 | Minimise multi-agent runs (token budget); keep docs current so context compaction loses nothing. | 2026-10-15 |
+| D13 | AI providers: Groq, NVIDIA, Mistral (Free plan, never pay-as-you-go, no phone verification), Z.AI, Google Gemini (free tier) and Workers AI. Prefer established models to the newest; check `models` / `ai-check` and the provider's docs before changing one. | 2026-10-16 |
+| D14 | API keys only in `C:\Users\Quali\insiders-keys.ps1` on the laptop: never in chat, logs or the repo, even though it is private. | 2026-10-16 |
+| D15 | The laptop's Claude Code session is the main engineer (it reaches BSE and sees real logs); `CLAUDE.md` holds the rules and status every session reads. The Worker is named `insiders` (https://insiders.reply-bd3.workers.dev). | 2026-10-16 |
 
 ## Optional, not adopted (cost)
 - TypeSafe AI "Jev" (typed decisions with calibrated confidence) would suit the Pass 1 gatekeeper,
@@ -36,6 +39,21 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
    splits/bonuses then need BSE's corporate-actions CSV for adjustment factors.
 2. Share counts for market cap: BSE's scrip header data (TotalShares, MktCapFull) or the
    shareholding-pattern XBRL total, for companies where Yahoo has no share count.
+
+## Laptop smoke test: findings and fixes (2026-10-16)
+| Finding | Fix | Status |
+|---|---|---|
+| Yahoo priced 10 of 5,111 companies (numeric `500325.BO` no longer served) | `yahoo.py`: try `SYMBOL.BO`, then `SYMBOL.NS`, then `SCRIP.BO` | fixed; coverage to confirm from `market-data --all` |
+| Retired or tier-blocked models (404/410/403) | models replaced; 410 disables; key-level 403 disables the provider, a tier 403 only the model | fixed |
+| Endless 60 s waits when every provider was busy | stop after 4 such filings in a row | fixed |
+| Windows paths and a temp-file race in local storage | lexical key check, per-thread temp files | fixed |
+| Worker refused `learning/` objects | prefix allowed | fixed |
+| Workers AI 502 locally | `remote: true`, wrangler login, workers.dev subdomain; fp8 8B model; object replies stringified | fixed; `ai-check --provider cloudflare` to confirm |
+| Backfill saved a company only when its whole history finished | saved every 5 filings per company, under a commit lock | fixed |
+| Repairs on `dossier_delta.ownership.period` (null period) | an ownership block without a quarter-end is dropped | fixed |
+| Tests failed in the half hour after midnight IST | test clock shifted in that window | fixed |
+| `ministral-14b-2512` sometimes returns no JSON | watch after the restart | open |
+| Gemini free-tier limits | read from AI Studio → Usage & limits | open (owner) |
 
 ## Points to discuss with the owner
 
@@ -67,7 +85,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | 5 providers, 95% ceiling, pacing, failover, Workers AI spare | done | |
 | Dual-key pool | dropped | D1 |
 | Task-aware routing: long documents (>12k tokens) to long-context models | done | `pass2_long` |
-| Vision OCR: glm-4.6v-flash, then Mistral | done | thinking off; mistral-small-latest |
+| Vision OCR: glm-4.6v-flash, then Mistral, then Gemini | done | thinking off; mistral-small-2603, gemini-3.1-flash-lite |
 | Second opinion from another provider | done | adopts only the card (audit B1) |
 
 ### §5 Ingestion

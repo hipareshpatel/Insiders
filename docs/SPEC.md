@@ -104,7 +104,7 @@ Per filing:
 | Fetch | Browser-style session, paged `AnnSubCategoryGetData` (0.5 s between pages, no page cap overrun, de-duplicated), PDF downloads paced 1.2–2.0 s with jitter. An API 403 is `SourceBlockedError`; an attachment 403/5xx/timeout fails that filing only (retried next run), and three refusals in a row stop the run after committing finished work. | `bse.py` |
 | Rules | `DROP` noise, `CALENDAR` board-meeting intimations (date to the calendar), `FAST_TRACK` known events, else `PASS1`. Compound headlines that also carry results, an outcome or a board meeting are never dropped. | `rules.py`, `config/taxonomy.toml` |
 | Pass 1 | Headline, BSE subject and page 1 return `{is_material, event_type, confidence, reason}`. | `config/prompts/pass1.md` |
-| Extract | PyMuPDF text; pages under 80 characters with an image are OCR'd (GLM-4.6V, then Mistral). Boilerplate lines (addresses, salutations, signatures) are removed. Text is cached in `data/text_cache/` so re-analysis never downloads or OCRs again; a mostly scanned document whose OCR failed is retried, not judged from its headline. | `extract.py` |
+| Extract | PyMuPDF text; pages under 80 characters with an image are OCR'd (GLM-4.6V, then Mistral, then Gemini Flash-Lite). Boilerplate lines (addresses, salutations, signatures) are removed. Text is cached in `data/text_cache/` so re-analysis never downloads or OCRs again; a mostly scanned document whose OCR failed is retried, not judged from its headline. | `extract.py` |
 | Pass 2 | System = base + event module + sector lens + schema; user = filing + time-travel memory + peers + the owner's starred/noise examples + text. Prompts above ~12k tokens use the long-context route. | `prompts/engine.py`, `config/prompts/pass2*.md` |
 | Validate | Lenient on shape (nulls, numbers as strings, lakh/million scaled to crore, copied schema placeholders treated as missing), strict on meaning. | `models.py` |
 | Check | Numbers, math and claims (§6); a failing card gets one second opinion from another provider, which may correct only the card. | `grounding.py`, `quant.py` |
@@ -123,26 +123,40 @@ ceilings leave work `PENDING` for the next day.
 
 ## 4. AI gateway
 
-Five free providers behind one OpenAI-compatible gateway (`config/providers.toml`), **one key
-per provider** (owner decision; no dual-key pool):
+Six free providers behind one OpenAI-compatible gateway (`config/providers.toml`), **one key
+per provider** (owner decision; no dual-key pool). Free-tier catalogues change often: `models`
+lists what each provider serves today and `ai-check` sends one tiny request to every target.
+Established models are preferred to the newest, which are often overloaded (owner decision D13).
 
-| Provider | Role | Routes |
-|---|---|---|
-| Groq `llama-3.1-8b-instant` | Fast gatekeeper | `pass1`, `pass1_bulk` |
-| NVIDIA NIM `deepseek-r1` (temperature 0.6), `llama-3.3-70b-instruct` | Deep analyst | `pass2`, `pass2_bulk`, `pass2_long` |
-| Mistral `mistral-small-latest`, `mistral-large-latest` | Backfill workhorse, OCR fallback | all |
-| Z.AI `glm-4.7-flash` (200K), `glm-4.6v-flash` | Long documents, OCR | `pass1`, `pass2*`, `vision` |
-| Workers AI `@cf/meta/llama-3.x` | Spare, through this Worker | `pass1*`, `pass2*` |
+| Provider | Models (October 2026) | Role | Routes |
+|---|---|---|---|
+| Groq | `openai/gpt-oss-20b` (reasoning low; 1,000 requests/day) | Fast gatekeeper | `pass1`, `pass1_bulk` |
+| NVIDIA NIM | `nvidia/nemotron-3-super-120b-a12b` (reasoning stripped) | Primary deep analyst | `pass2`, `pass2_bulk`, `pass2_long` |
+| Mistral (Free plan) | `ministral-8b-2512`, `ministral-14b-2512`, `mistral-small-2603` | Backfill workhorse, OCR fallback | all |
+| Z.AI | `glm-4.7-flash` (200K), `glm-4.6v-flash` | Long documents, OCR | `pass1*`, `pass2*`, `vision` |
+| Google Gemini (AI Studio) | `gemini-3.1-flash-lite`, `gemini-3.5-flash-lite`, `gemini-3.6-flash` (spare) | Gatekeeper, OCR, 1M-token spare | `pass1*`, `vision`, `pass2*` |
+| Workers AI | `@cf/meta/llama-3.1-8b-instruct-fp8`, `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | Spare, through this Worker | `pass1*`, `pass2*` |
+
+Plan notes: Mistral's Free plan blocks `mistral-large` (403 "not available in your subscription
+tier") and includes $10 of API usage a month with pay-as-you-go off, so it cannot bill. Gemini's
+free limits are per Google project and shown only in AI Studio; the config holds cautious guesses
+(about 500 requests/day for Flash-Lite, 20 for Flash) until confirmed. `gemini-4-argon` and
+`gemini-3.1-pro-preview` are paid-only. Workers AI goes through `web/worker/ai.ts`, which accepts
+both the old `{response}` and the OpenAI-shaped reply and turns an object reply back into text;
+local dev needs the binding's `"remote": true`, `npx wrangler login` and a workers.dev subdomain.
 
 Rules (tested in `tests/test_gateway.py`): 95% safety ceiling on every limit, persisted in D1;
-weighted round-robin for Pass 2; 429 → cooldown (daily-quota 429 retires the model for the
-day); 401/403/404 disable the model for the run; **timeouts, connection errors and 5xx are
-transient** (fail over; if nothing can serve, the filing waits without losing an attempt); a 200
-with a non-JSON body fails over; JSON mode is dropped only when the provider says it is
-unsupported; invalid JSON gets one repair; requests never start after the run's deadline and
-each request's timeout is capped to the time left; R1's reasoning is stripped even when only the
-closing `</think>` is present. When nothing can serve, minute limits wait 60 s (up to 3 times,
-never past the deadline) and ceilings stop the route for the run.
+weighted round-robin for Pass 2; 429 → cooldown, and a 429 that names a daily window retires the
+model for the day (one that names a per-minute window, as Gemini's do, only cools down); 401 or a
+key-level 403 disables **every model of that provider** for the run; a 403 about one model's tier
+disables only that model; 404 and 410 (retired) disable the model; **timeouts, connection errors and
+5xx are transient** (fail over; if nothing can serve, the filing waits without losing an attempt);
+a 200 with a non-JSON body fails over; JSON mode is dropped only when the provider says it is
+unsupported; invalid JSON gets one repair; JSON in a ```json fence is accepted; requests never start
+after the run's deadline and each request's timeout is capped to the time left; reasoning blocks are
+stripped even when only the closing `</think>` is present. When nothing can serve, minute limits
+wait 60 s (up to 3 times, never past the deadline) and ceilings stop the route for the run; four
+filings in a row left queued because every provider was busy stop the run (rerun later).
 
 **Second opinion** (`SECOND_OPINION=1`). A card that fails the checks is sent once to a different
 provider with the problems listed. Only the corrected card is adopted (memory stays from the

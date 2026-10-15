@@ -106,10 +106,14 @@ class CardChecks:
     ungrounded: list[str]
     quant: QuantCheck
     claims: list[str]
+    headline_ungrounded: list[str] = field(default_factory=list)
 
     @property
     def needs_review(self) -> bool:
-        return self.score < DEFAULT_THRESHOLD or self.quant.mismatches > 0 or bool(self.claims)
+        # Blueprint rule: an unmatched ₹ figure in the headline or a failed math check holds the card;
+        # so do a low overall match rate and an unsupported "first"/"record" claim.
+        return (self.score < DEFAULT_THRESHOLD or self.quant.mismatches > 0 or bool(self.claims)
+                or bool(self.headline_ungrounded))
 
     @property
     def issue_count(self) -> int:
@@ -117,6 +121,8 @@ class CardChecks:
 
     def problems(self) -> list[str]:
         out = []
+        if self.headline_ungrounded:
+            out.append("Headline figures not found in the filing or company memory: " + ", ".join(self.headline_ungrounded))
         if self.ungrounded:
             out.append("Numbers not found in the filing text or company memory: " + ", ".join(self.ungrounded[:10]))
         out += [f"Quantified impact \"{q['label']}\": {q.get('check_note')}" for q in self.quant.items if q.get("check") == "MISMATCH"]
@@ -137,7 +143,7 @@ def check_card_all(card, view: dict | None, sources: tuple[str, ...]) -> CardChe
     checked = grounding.checked + quant.checked_inputs
     ungrounded = grounding.ungrounded + quant.unsourced
     score = 1.0 if checked == 0 else round(1 - len(ungrounded) / checked, 3)
-    return CardChecks(score, checked, ungrounded, quant, check_claims(card, *sources))
+    return CardChecks(score, checked, ungrounded, quant, check_claims(card, *sources), grounding.headline_ungrounded)
 
 
 def reconcile_call_read(card, view: dict | None) -> None:

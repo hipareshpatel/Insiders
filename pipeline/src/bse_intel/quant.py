@@ -51,12 +51,14 @@ def evaluate(formula: str, values: dict[str, float]) -> float:
             return float(values[node.id])
         if isinstance(node, ast.BinOp) and type(node.op) in _BINARY:
             left, right = walk(node.left), walk(node.right)
-            if isinstance(node.op, ast.Pow) and (abs(right) > 4 or abs(left) > 1e6):
+            if isinstance(node.op, ast.Pow) and (abs(right) > 12 or abs(left) > 1e6 or (left < 0 and not float(right).is_integer())):
                 raise FormulaError("exponent out of range")
             try:
                 return _BINARY[type(node.op)](left, right)
             except ZeroDivisionError as exc:
                 raise FormulaError("division by zero") from exc
+            except (ArithmeticError, TypeError, ValueError) as exc:
+                raise FormulaError(f"arithmetic error: {exc}") from exc
         if isinstance(node, ast.UnaryOp) and type(node.op) in _UNARY:
             return _UNARY[type(node.op)](walk(node.operand))
         if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in _FUNCS
@@ -70,7 +72,12 @@ def evaluate(formula: str, values: dict[str, float]) -> float:
                 raise FormulaError(f"bad arguments to {node.func.id}") from exc
         raise FormulaError(f"unsupported expression: {ast.dump(node)[:60]}")
 
-    result = walk(tree)
+    if sum(1 for _ in ast.walk(tree)) > 60:
+        raise FormulaError("formula too long")
+    try:
+        result = walk(tree)
+    except RecursionError as exc:
+        raise FormulaError("formula too deeply nested") from exc
     if not math.isfinite(result):
         raise FormulaError("non-finite result")
     return result
@@ -99,7 +106,7 @@ def check(estimates: list[QuantifiedImpact], *sources: str) -> QuantCheck:
         for i in est.inputs:
             if i.source in ("FILING", "MEMORY") and i.value is not None:
                 out.checked_inputs += 1
-                if not index.grounded(abs(i.value), _decimals(i.value), is_percent=False):
+                if not (index.stated(abs(i.value), _decimals(i.value)) or (abs(i.value) <= 31 and float(i.value).is_integer())):
                     flags.append(i.name)
                     out.unsourced.append(f"{i.name}={i.value:g}")
         item["unsourced_inputs"] = flags

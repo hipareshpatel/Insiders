@@ -246,3 +246,42 @@ def test_boilerplate_keeps_factual_lines_that_mention_din_office_or_exchange():
         "Shifting of the Registered Office: from Mumbai to Pune with effect from 1 November 2026.",
         "The NCDs will be listed on BSE Limited.",
     ]
+
+
+RESULTS_TEXT = ("Statement of standalone unaudited results for the quarter ended 30.09.2026 (Rs. in lakhs). "
+                "Revenue from operations 45,612.40 41,208.75 38,964.10 86,821.15 79,402.33 1,62,410.88. "
+                "Other income 612.30 588.10 401.25 1,200.40 802.10 1,950.66. Total expenses 39,874.22 36,410.90 "
+                "34,120.55 76,285.12 70,112.40 1,43,880.20. Profit before tax 6,350.48 5,385.95 5,244.80 "
+                "11,736.43 10,092.03 20,481.34. Net profit 4,752.11 4,030.66 3,925.37 8,782.77 7,552.40 15,327.61. "
+                "EPS 12.45 10.56 10.28 23.01 19.79 40.15.")
+
+
+def test_invented_figures_on_a_realistic_results_statement_are_caught():
+    invented = card(headline="Demo Ltd Q2 revenue up 26% to ₹640 Cr; PAT ₹71 Cr",
+                    what_happened=["EBITDA rose 37% to ₹95 Cr", "Margin expanded 260 bps to 19.4%", "Order book at ₹2,340 Cr"])
+    result = check_card(invented, RESULTS_TEXT)
+    assert not result.ok and len(result.ungrounded) >= 5, result
+    assert result.headline_ungrounded  # an invented headline amount alone holds the card
+
+
+def test_true_figures_and_ratios_of_grounded_figures_pass():
+    good = card(headline="Demo Ltd Q2 revenue up 17.1% YoY to ₹456 Cr; PAT ₹47.5 Cr",
+                what_happened=["Revenue ₹456.1 Cr vs ₹389.6 Cr a year ago", "Net profit up 21.1% YoY to ₹47.5 Cr"])
+    result = check_card(good, RESULTS_TEXT)
+    assert result.ungrounded == [], result
+    order = card(headline="Demo Ltd wins ₹80 Cr LoI, 18% of FY26 sales",
+                 what_happened=["LoI worth **₹80 Cr** from NHAI"])
+    memory = '{"metrics":{"revenue":["FY26: 444.4 INR_CR"]}}'
+    assert check_card(order, "Letter of Intent for Rs. 80 crore from NHAI", memory).ungrounded == []
+
+
+def test_claims_track_record_bold_and_repeat_only_in_the_filing():
+    from bse_intel.grounding import check_claims
+
+    c = card(headline="Company wins **maiden** international order from Airbus",
+             what_happened=["Strong track record in aerostructures"])
+    filing = "We are pleased to announce receipt of our maiden international order from Airbus."
+    memory = '{"recent_timeline":[{"summary":"further order from HAL"}]}'
+    assert check_claims(c, filing, memory) == []  # a repeat in memory does not undo the filing's own claim
+    first_quarter = card(headline="Maiden order from Airbus", what_happened=["x"])
+    assert check_claims(first_quarter, "Results for the first quarter. Order from Airbus received.") != []

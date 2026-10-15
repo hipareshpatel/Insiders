@@ -20,18 +20,25 @@ from __future__ import annotations
 
 import bisect
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .models import Card
 
-_NUMBER = re.compile(r"(?<![A-Za-z])[-+]?\(?\d[\d,]*(?:\.\d+)?\)?")
+_NUMBER = re.compile(r"(?<![A-Za-z\d.])[-+]?\(?\d[\d,]*(?:\.\d+)?\)?")
+# Period labels and dates are not figures: "Q2FY27", "Q2 FY 2026-27", "H1FY27", "FY26", 30-09-2026,
+# and years (but "2050.45" is a figure).
 _IGNORE = re.compile(
-    r"\b(?:FY|Q[1-4]|H[12]|9M)\s*'?\d{2,4}\b|\b(?:19|20)\d{2}\b|\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b",
+    r"(?<![A-Za-z])(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2,4}(?:\s*-\s*\d{2,4})?\b|\b(?:Q[1-4]|H[12]|9M)\b"
+    r"|(?<![\d.,])(?:19|20)\d{2}(?![\d]|[.,]\d)|\b\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\b",
     re.I,
 )
-_UNIT = re.compile(r"\s*(%|bps?\b|pp\b|percentage points?)", re.I)
-SCALES = (1, 10, 100, 1000, 1e4, 1e5, 1e7, 0.1, 0.01, 0.001)
+_CURRENCY = re.compile(r"(?:₹|\b(?:rs\.?|inr|usd|cad|eur|gbp)|us\$|\$)\s*", re.I)
+_UNIT = re.compile(r"\s*(%|per\s*cent\b|percent\b|basis\s+points?\b|bps?\b|pp\b|percentage\s+points?\b|x\b|times\b)", re.I)
+_QUANTITY = re.compile(r"\s*(?:cr\b|crores?\b|lakhs?\b|lacs?\b|mn\b|million\b|bn\b|billion\b|mw\b|gw\b|kw\b|tpd\b|mtpa\b"
+                       r"|mt\b|tonnes?\b|tons?\b|units?\b|vehicles?\b|beds?\b|stores?\b|kl\b|mld\b|sq\.?\s*ft\b)", re.I)
+SCALES = (1, 10, 100, 1000, 1e4, 1e5, 1e7, 0.1, 0.01, 0.001)  # unit conversions between ₹ crore, lakh, million, rupees
 DEFAULT_THRESHOLD = 0.7
+NEAR = 300  # characters: two source figures this close can be compared with each other
 
 
 @dataclass
@@ -39,71 +46,104 @@ class GroundingResult:
     score: float
     checked: int
     ungrounded: list[str]
+    headline_ungrounded: list[str] = field(default_factory=list)  # ₹ amounts in the headline not found
 
     @property
     def ok(self) -> bool:
-        return self.score >= DEFAULT_THRESHOLD
+        return self.score >= DEFAULT_THRESHOLD and not self.headline_ungrounded
 
 
-def _numbers(text: str) -> list[tuple[float, int]]:
-    """(value, decimals) for each number in text, skipping years and period labels."""
-    text = _IGNORE.sub(" ", text)
+def _clean(text: str) -> str:
+    """Text with currency marks and period labels blanked out, positions kept."""
+    text = _CURRENCY.sub(lambda m: " " * len(m.group(0)), text.replace("**", "  "))
+    return _IGNORE.sub(lambda m: " " * len(m.group(0)), text)
+
+
+def _tokens(text: str) -> list[tuple[float, int, int, str, str]]:
+    """(value, decimals, position, kind, raw) for each figure; kind is pct, bps, pp, x, qty or plain."""
+    clean = _clean(text)
     out = []
-    for raw in _NUMBER.findall(text):
-        cleaned = raw.replace(",", "").strip("+").strip("()")
+    for match in _NUMBER.finditer(clean):
+        cleaned = match.group(0).replace(",", "").strip("+").strip("()")
         try:
-            value = float(cleaned)
+            value = abs(float(cleaned))
         except ValueError:
             continue
         decimals = len(cleaned.split(".")[1]) if "." in cleaned else 0
-        out.append((abs(value), decimals))
+        unit = _UNIT.match(clean, match.end())
+        word = unit.group(1).lower() if unit else ""
+        if word.startswith(("pp", "percentage")):
+            kind = "pp"
+        elif word in ("%", "percent") or word.startswith("per"):
+            kind = "pct"
+        elif word.startswith(("bp", "basis")):
+            kind = "bps"
+        elif word in ("x", "times"):
+            kind = "x"
+        else:
+            kind = "qty" if _QUANTITY.match(clean, match.end()) else "plain"
+        out.append((value, decimals, match.start(), kind, match.group(0).strip("+")))
     return out
+
+
+def _numbers(text: str) -> list[tuple[float, int]]:
+    return [(v, d) for v, d, _, _, _ in _tokens(text)]
 
 
 class SourceIndex:
     def __init__(self, *texts: str):
-        values = {v for text in texts for v, _ in _numbers(text) if v > 0}
-        self.values = sorted(values)
+        self.points = [(v, i, pos) for i, text in enumerate(texts) for v, _, pos, _, _ in _tokens(text or "") if v > 0]
+        self.values = sorted({v for v, _, _ in self.points})
+        self._pairs: list[tuple[float, float]] | None = None
 
     def _has_near(self, target: float, tolerance: float) -> bool:
         i = bisect.bisect_left(self.values, target - tolerance)
         return i < len(self.values) and self.values[i] <= target + tolerance
 
-    def grounded(self, value: float, decimals: int, is_percent: bool) -> bool:
-        if value <= 31 and decimals == 0 and not is_percent:
-            return True  # small counts (units, days, months) are not worth checking
+    def stated(self, value: float, decimals: int, scales=SCALES) -> bool:
+        """A source figure s matches when s / scale rounds to the card's value."""
         rounding = 0.5 * 10 ** (-decimals) + 1e-9
-        for scale in SCALES:
-            # card shows `value` in its unit; a source figure s matches if s / scale rounds to value
-            if self._has_near(value * scale, rounding * scale + abs(value * scale) * 1e-6):
+        return any(self._has_near(value * s, rounding * s + abs(value * s) * 1e-6) for s in scales)
+
+    def pairs(self) -> list[tuple[float, float]]:
+        """Pairs of figures that sit close together in the same source, as a table row or a sentence
+        compares them (this year against last year)."""
+        if self._pairs is None:
+            pts = sorted(self.points, key=lambda p: (p[1], p[2]))
+            pairs = set()
+            for k, (a, ia, pa) in enumerate(pts):
+                for b, ib, pb in pts[k + 1:k + 7]:  # the next few figures: a row's columns, a sentence's "vs"
+                    if ib != ia or pb - pa > NEAR:
+                        break
+                    if a != b and 0.5 <= a / b <= 2:
+                        pairs.add((a, b))
+            self._pairs = sorted(pairs)
+        return self._pairs
+
+    def grounded(self, value: float, decimals: int, is_percent: bool = False, kind: str | None = None) -> bool:
+        kind = kind or ("pct" if is_percent else "plain")
+        if kind == "plain" and value <= 31 and decimals == 0:
+            return True  # small counts (days, months, a board of 7) are not worth checking
+        if kind in ("pct", "x"):
+            # stated as is, or as a fraction (0.25 for 25%), or the change between two nearby figures
+            if self.stated(value, decimals, scales=(1, 0.01) if kind == "pct" else (1,)):
                 return True
-        if is_percent:
-            # a percentage change between two figures, or a change in percentage points
-            return self._derivable_percent(value, decimals) or self.derivable_difference(value, 0.5 * 10 ** (-decimals) + 0.05)
-        return False
+            return kind == "pct" and self._derived_change(value, decimals)
+        if kind in ("bps", "pp"):
+            if self.stated(value, decimals, scales=(1,)):
+                return True  # the filing states the change itself ("up 40bps")
+            points = value / 100 if kind == "bps" else value
+            return self.derivable_difference(points, 0.5 * 10 ** (-decimals) * (0.01 if kind == "bps" else 1) + 0.01)
+        return self.stated(value, decimals)
 
     def derivable_difference(self, diff: float, tolerance: float) -> bool:
-        """Is diff ~= a - b for two source figures (e.g. bps = change in a margin)?"""
-        return any(self._has_near(a - diff, tolerance) or self._has_near(a + diff, tolerance)
-                   for a in self.values if a <= 1000)
+        """Is diff ~= a - b for two nearby percentage-sized source figures (a change in a margin)?"""
+        return any(abs(abs(a - b) - diff) <= tolerance for a, b in self.pairs() if a <= 100 and b <= 100)
 
-    def _derivable_percent(self, pct: float, decimals: int) -> bool:
-        """Is pct ~= (a - b) / b * 100 for two source figures a, b (either sign)?"""
+    def _derived_change(self, pct: float, decimals: int) -> bool:
         tolerance = max(0.5 * 10 ** (-decimals), 0.05)
-        values = self.values
-        if len(values) > 4000:
-            values = values[:: len(values) // 4000 + 1]
-        for b in values:
-            if b < 1:
-                continue
-            for factor in (1 + pct / 100, 1 - pct / 100):
-                if factor <= 0:
-                    continue
-                target = b * factor
-                slack = b * tolerance / 100
-                if self._has_near(target, slack) and abs(target - b) > 1e-9:
-                    return True
-        return False
+        return any(abs(abs(a - b) / b * 100 - pct) <= tolerance or abs(abs(a - b) / a * 100 - pct) <= tolerance
+                   for a, b in self.pairs())
 
 
 _ORDINAL_NOUNS = (r"half|quarter|phase|tranche|interim|instal+ment|day|week|month|year|stage|leg|batch|round|cycle"
@@ -112,7 +152,8 @@ _FIRST_CLAIM = re.compile(
     rf"\bfor\s+the\s+first\s+time\b|\b(?:first(?:[- ]ever)?|maiden|debut|inaugural)\b(?!\s+(?:{_ORDINAL_NOUNS})\b)",
     re.I,
 )
-_FIRST_EVIDENCE = re.compile(r"\b(?:first|maiden|debut|inaugural)\b", re.I)
+# Evidence uses the same exclusions as a claim: "the first quarter" says nothing about a maiden order.
+_FIRST_EVIDENCE = _FIRST_CLAIM
 _REPEAT = re.compile(
     r"\b(?:second|third|fourth|fifth|repeat|follow[- ]on|another|further|additional|subsequent)\s+"
     r"(?:set\s+of\s+|batch\s+of\s+|tranche\s+of\s+|round\s+of\s+)?"
@@ -122,7 +163,7 @@ _REPEAT = re.compile(
 _RECORD_CLAIM = re.compile(
     r"\brecord\b(?!\s+date)|\ball[- ]time\b|\b(?:highest|lowest|best|worst|largest|biggest|strongest)[- ]ever\b", re.I,
 )
-_ON_RECORD = re.compile(r"\b(?:on|of)\s+record\b|\brecord\s+date\b", re.I)
+_ON_RECORD = re.compile(r"\b(?:on|of)\s+record\b|\brecord\s+date\b|\btrack\s+record\b|\brecord(?:ed|s|ing)\b", re.I)
 
 
 def _snippet(text: str, match: re.Match) -> str:
@@ -152,8 +193,10 @@ def _supported(family: re.Pattern, source: str, subject: list[str], window: int 
 def check_claims(card: Card, *sources: str) -> list[str]:
     """Superlative and "first" claims on the card that the sources do not support."""
     source = _ON_RECORD.sub(" ", " ".join(sources))  # "take the above on record" is not a record
-    is_repeat = bool(_REPEAT.search(source))
-    texts = [card.headline, card.takeaway, *card.what_happened, *(i.text for i in card.why_it_matters)]
+    # A repeat counts only when the filing itself describes one (sources[0]); a past order in memory
+    # does not undo a filing that calls this one the first of its kind.
+    is_repeat = bool(_REPEAT.search(sources[0] if sources else ""))
+    texts = [t.replace("**", "") for t in (card.headline, card.takeaway, *card.what_happened, *(i.text for i in card.why_it_matters))]
     unsupported: list[str] = []
     for text in texts:
         for m in _FIRST_CLAIM.finditer(text):
@@ -174,37 +217,50 @@ def check_claims(card: Card, *sources: str) -> list[str]:
 
 
 def check_card(card: Card, *sources: str) -> GroundingResult:
+    """Every figure on the card against the sources. A figure derived on the card (a share, a change,
+    a multiple) passes when it follows from another figure on the same line and a source figure;
+    any other derivation belongs in quantified_impact, where its formula is checked."""
     index = SourceIndex(*sources)
-    texts = [card.headline, *card.what_happened]
+    texts = [("headline", card.headline), ("takeaway", card.takeaway), *(("fact", f) for f in card.what_happened),
+             *(("insight", i.text) for i in card.why_it_matters)]
     if card.deal_value and card.deal_value.amount_cr:
-        texts.append(f"{card.deal_value.amount_cr:g}")
-    texts += [f"{k.value} {k.change or ''}" for k in card.key_numbers]
-    texts += [f"{c.previous or ''} {c.current or ''} {c.change or ''}" for c in card.notable_changes]
-    checked, ungrounded = 0, []
-    for text in texts:
-        stripped = _IGNORE.sub(" ", text)
-        for match in _NUMBER.finditer(stripped):
-            raw = match.group(0)
-            cleaned = raw.replace(",", "").strip("+").strip("()")
-            try:
-                value = abs(float(cleaned))
-            except ValueError:
-                continue
-            decimals = len(cleaned.split(".")[1]) if "." in cleaned else 0
-            unit = _UNIT.match(stripped, match.end())
-            unit_text = unit.group(1).lower() if unit else ""
-            is_bps = unit_text.startswith("bp")
-            is_points = unit_text.startswith(("pp", "percentage point"))
-            is_percent = unit_text == "%" or is_bps or is_points
-            if value == 0:
+        texts.append(("deal", f"{card.deal_value.amount_cr:g} Cr"))
+    texts += [("key", f"{k.value} {k.change or ''}") for k in card.key_numbers]
+    texts += [("change", f"{c.previous or ''} ; {c.current or ''} ; {c.change or ''}") for c in card.notable_changes]
+    track = card.track_next
+    texts += [("track", f"{k.kpi} {k.target or ''}") for k in track.kpis_to_verify]
+    checked, ungrounded, headline_bad = 0, [], []
+    for where, text in texts:
+        tokens = _tokens(text or "")
+        line_amounts = [v for v, d, _, kind, _ in tokens if kind in ("plain", "qty") and v > 31 and index.stated(v, d)]
+        line_pcts = [v for v, _, _, kind, _ in tokens if kind == "pct"]
+        for value, decimals, _, kind, raw in tokens:
+            if value == 0 or (kind == "plain" and value <= 31 and decimals == 0):
                 continue
             checked += 1
-            if is_bps and index.derivable_difference(value / 100, 0.01):
+            if index.grounded(value, decimals, kind=kind) or _from_line(value, decimals, kind, line_amounts, line_pcts, index):
                 continue
-            if is_points and index.derivable_difference(value, 0.5 * 10 ** (-decimals) + 0.01):
-                continue
-            if not index.grounded(value, decimals, is_percent):
-                ungrounded.append(raw + (" bps" if is_bps else " pp" if is_points else "%" if is_percent else ""))
+            label = raw.strip("()-") + {"pct": "%", "bps": " bps", "pp": " pp", "x": "x"}.get(kind, "")
+            ungrounded.append(label)
+            if where == "headline" and kind in ("plain", "qty"):
+                headline_bad.append(label)
     if checked == 0:
         return GroundingResult(1.0, 0, [])
-    return GroundingResult(round(1 - len(ungrounded) / checked, 3), checked, ungrounded)
+    return GroundingResult(round(1 - len(ungrounded) / checked, 3), checked, ungrounded, headline_bad)
+
+
+def _from_line(value: float, decimals: int, kind: str, amounts: list[float], pcts: list[float], index: SourceIndex) -> bool:
+    """"₹80 Cr LoI, 18% of FY26 sales": 18% = 80 / a source figure. "Up 150 bps to 14.9%": a source
+    margin 150 bps away from 14.9. "2.1x its revenue": a line amount over a source figure."""
+    tolerance = 0.5 * 10 ** (-decimals) + 1e-9
+    candidates = [b for b in index.values if b > 1]
+    if kind == "pct":
+        return any(abs(a / b * 100 - value) <= max(tolerance, 0.05) or abs((a - b) / b * 100 - value) <= max(tolerance, 0.05)
+                   for a in amounts for b in candidates)
+    if kind == "x":
+        return any(abs(a / b - value) <= max(tolerance, 0.05) for a in amounts for b in candidates)
+    if kind in ("bps", "pp"):
+        points = value / 100 if kind == "bps" else value
+        return any(abs(abs(a - b) - points) <= (0.01 if kind == "bps" else tolerance) + 1e-6
+                   for a in pcts for b in index.values if b <= 100)
+    return False

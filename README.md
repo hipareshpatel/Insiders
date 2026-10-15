@@ -20,7 +20,7 @@ watch next. It runs on free tiers.
 - **Shared SQL** (`db/`). One schema and one set of statements, used by both.
 
 The design, and what changed from the original brief, is in
-**[docs/SPEC.md](docs/SPEC.md)**. Status and owner decisions are in [docs/TRACKER.md](docs/TRACKER.md);
+**[docs/SPEC.md](docs/SPEC.md)**. The plan to go-live is [docs/PLAN.md](docs/PLAN.md); status and owner decisions are in [docs/TRACKER.md](docs/TRACKER.md);
 working rules for Claude Code sessions are in [CLAUDE.md](CLAUDE.md).
 
 > Summaries of public BSE disclosures. Not investment advice.

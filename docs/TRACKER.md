@@ -2,7 +2,7 @@
 
 The single list of what the platform must do, where each item stands, and what the owner decided.
 The full specification is [BLUEPRINT.md](BLUEPRINT.md) (owner's master prompt, verbatim). Pre-launch
-audit findings are in [AUDIT.md](AUDIT.md). Architecture as built is in [SPEC.md](SPEC.md).
+audit findings are in [AUDIT.md](AUDIT.md). Architecture as built is in [SPEC.md](SPEC.md). The order of work to go-live is [PLAN.md](PLAN.md).
 
 Status: **done** (built and tested), **partial** (built, gaps listed), **todo** (not built).
 Every item is pre-launch: the owner decided everything is built and tested locally before go-live.

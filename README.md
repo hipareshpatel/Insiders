@@ -75,6 +75,7 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 | `python -m bse_intel analyze-pdf FILE ...` | Analyse one local PDF and print the card |
 | `python -m bse_intel backup --out DIR` | Export dossiers as JSON files |
 | `python -m bse_intel health` | Configured AI targets and today's quota usage |
+| `python -m bse_intel ai-check [--provider nvidia]` | One tiny real request to every configured model; prints OK, or the HTTP error and what it means |
 | `python -m bse_intel models [--filter llama]` | Each provider's live model list; flags IDs in `providers.toml` it no longer serves |
 
 ## Filling history on the laptop (before go-live)

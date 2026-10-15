@@ -177,6 +177,50 @@ def cmd_health(args, settings, sink) -> int:
     return 0
 
 
+def cmd_ai_check(args, settings, sink) -> int:
+    """Send one tiny real request to every configured (provider, model) and report each result."""
+    import time
+
+    import openai
+
+    from .ai.gateway import AIGateway
+
+    gateway = AIGateway(settings.load_toml("providers.toml"))
+    seen, results = set(), []
+    for route_targets in gateway.routes.values():
+        for t in route_targets:
+            if t.key in seen or (args.provider and t.provider != args.provider):
+                continue
+            seen.add(t.key)
+            row = {"target": t.key}
+            if not t.api_key:
+                results.append({**row, "result": "SKIPPED", "detail": "no key set"})
+                continue
+            kwargs = {"model": t.model, "max_tokens": min(t.max_tokens, 400), "temperature": 0,
+                      "messages": [{"role": "user", "content": 'Reply with exactly this JSON: {"ok": true}'}]}
+            if t.extra_body:
+                kwargs["extra_body"] = t.extra_body
+            started = time.monotonic()
+            try:
+                resp = gateway._client(t).chat.completions.create(timeout=min(t.timeout, 120), **kwargs)
+                text = (resp.choices[0].message.content or "").strip()
+                results.append({**row, "result": "OK", "seconds": round(time.monotonic() - started, 1),
+                                "reply": text[-80:], "tokens": getattr(resp.usage, "total_tokens", None)})
+            except openai.APIStatusError as exc:
+                hint = {401: "key rejected", 403: "key or account not allowed (check plan / activation)",
+                        404: "model name not found", 410: "model retired", 429: "rate limited or quota used up"}
+                results.append({**row, "result": f"HTTP {exc.status_code}", "detail": hint.get(exc.status_code, ""),
+                                "message": str(exc)[:300]})
+            except Exception as exc:
+                results.append({**row, "result": type(exc).__name__, "message": str(exc)[:300]})
+            time.sleep(1)
+    for r in results:
+        print(f"{r['result']:<10} {r['target']:<55} {r.get('seconds', '')!s:>6}  {r.get('detail') or r.get('reply') or ''}")
+        if r.get("message"):
+            print(f"{'':<10} {r['message']}")
+    return 0 if all(r["result"] in ("OK", "SKIPPED") for r in results) else 1
+
+
 def cmd_models(args, settings, sink) -> int:
     """Ask each configured provider for its model list and flag configured IDs it no longer serves."""
     from .ai.gateway import AIGateway
@@ -261,6 +305,9 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("post-mortem", help="Loop 1: T+1/T+3/T+5 excess returns after each card")
     p.add_argument("--since", help="revisit cards filed from this date (default: the last 14 days)")
     p.set_defaults(func=cmd_post_mortem)
+    p = sub.add_parser("ai-check", help="one tiny real request to every configured AI model, with the result of each")
+    p.add_argument("--provider", help="only this provider (groq, nvidia, mistral, zai, cloudflare)")
+    p.set_defaults(func=cmd_ai_check)
     p = sub.add_parser("models", help="list each provider's models and flag configured IDs it no longer serves")
     p.add_argument("--filter", help="only list available models containing this text (e.g. llama, deepseek)")
     p.add_argument("--all", action="store_true", help="list every available model")

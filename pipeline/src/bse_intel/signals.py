@@ -24,8 +24,9 @@ never be a plausible-sounding guess:
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from datetime import date
 
-from .dossier import deal_state
+from .dossier import deal_state, reported_by
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period
 
@@ -51,6 +52,10 @@ class Signal:
 
 
 def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filing, company: dict | None) -> list[dict]:
+    """Signals from memory as it stood at the filing: ``before`` excludes the filing, ``after`` includes
+    it, and neither may hold later facts (pass them through ``dossier_as_of``). Market prices are
+    today's, so price comparisons are made only for recent filings."""
+    company = _priced_for(company, filing)
     signals: list[Signal] = []
     signals += _promises(before, after, output, filing)
     signals += _dilution(after, output, company)
@@ -60,6 +65,36 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     signals += strain
     signals += _metric_shifts(after, filing, skip={"trade_receivables", "receivables", "debtors", "inventories", "inventory"} if strain else set())
     return [asdict(s) for s in signals]
+
+
+PRICE_STALE_DAYS = 10
+
+
+def _priced_for(company: dict | None, filing: Filing) -> dict:
+    """The company row without today's price and market cap when the filing is older than that price:
+    a May card must not compare an issue price with October's close."""
+    company = dict(company or {})
+    price_date = company.get("price_date")
+    try:
+        stale = not price_date or (date.fromisoformat(str(price_date)[:10]) - date.fromisoformat(filing.filing_date)).days > PRICE_STALE_DAYS
+    except ValueError:
+        stale = True
+    if stale:
+        for key in ("last_price", "market_cap_cr"):
+            company.pop(key, None)
+    return company
+
+
+def _own_latest(after: dict, news_id: str) -> list[dict]:
+    """The figures this filing reported for its own latest period of each kind (Q2FY27, not the
+    Q1FY27 and Q2FY26 comparatives printed beside it)."""
+    mine = [m for m in after.get("financial_metrics", []) if reported_by(m, news_id) and due_date(m["period"])]
+    latest: dict[str, object] = {}
+    for m in mine:
+        kind, end = _period_kind(m["period"]), due_date(m["period"])
+        if kind not in latest or end > latest[kind]:
+            latest[kind] = end
+    return [m for m in mine if due_date(m["period"]) == latest[_period_kind(m["period"])]]
 
 
 def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Filing) -> list[Signal]:
@@ -115,8 +150,10 @@ def _dilution(after: dict, output: Pass2Output, company: dict | None) -> list[Si
         parts = []
         dilution = None
         if action.new_shares and existing:
-            dilution = action.new_shares / existing * 100
-            parts.append(f"{dilution:.1f}% dilution ({action.new_shares:,.0f} new shares on {existing:,.0f})")
+            # Post-money: the new holders' share of the enlarged equity.
+            dilution = action.new_shares / (existing + action.new_shares) * 100
+            parts.append(f"{action.new_shares / existing * 100:.1f}% more shares ({dilution:.1f}% post-money dilution; "
+                         f"{action.new_shares:,.0f} new on {existing:,.0f})")
         price = company.get("last_price")
         if action.issue_price and price:
             discount = (price - action.issue_price) / price * 100
@@ -231,7 +268,7 @@ def _growth(metrics: dict, name: str, period: str) -> float | None:
 
 
 def _working_capital(after: dict, filing: Filing) -> list[Signal]:
-    fresh = [m for m in after.get("financial_metrics", []) if m.get("source_news_id") == filing.news_id]
+    fresh = _own_latest(after, filing.news_id)
     if not fresh:
         return []
     metrics = {(m["metric"], m["period"]): m for m in after.get("financial_metrics", [])}
@@ -307,8 +344,8 @@ def _metric_shifts(after: dict, filing: Filing, skip: set[str]) -> list[Signal]:
     for m in after.get("financial_metrics", []):
         by_metric.setdefault(m["metric"], []).append(m)
     found: list[tuple[float, Signal]] = []
-    for m in after.get("financial_metrics", []):
-        if m.get("source_news_id") != filing.news_id or m["metric"] in skip:
+    for m in _own_latest(after, filing.news_id):
+        if m["metric"] in skip:
             continue
         end = due_date(m["period"])
         if end is None:

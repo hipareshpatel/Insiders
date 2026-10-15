@@ -45,7 +45,9 @@ def test_older_filing_never_overrides_a_later_restatement():
     d = merge(d, output(financial_metrics=[{"metric": "pat", "period": "Q1FY27", "value": 10}]),
               filing("n1", Q1), "HIGH", "now")
     (pat,) = [m for m in d["financial_metrics"] if m["metric"] == "pat"]
-    assert pat["value"] == 9 and pat["source_news_id"] == "n2"
+    # The value is the later restatement; the figure counts as known since the first filing (bi-temporal).
+    assert pat["value"] == 9 and pat["value_news_id"] == "n2"
+    assert pat["as_of"] == Q1 and pat["source_news_id"] == "n1" and len(pat["sources"]) == 2
 
 
 def test_guidance_promise_tracking_and_hallucinated_ids():
@@ -96,9 +98,13 @@ def test_dilution_signal_is_computed_not_guessed():
     out = output(event_type="RIGHTS_ISSUE",
                  capital_actions=[{"instrument": "Rights issue", "new_shares": "2,50,00,000", "issue_price": "80"}])
     after = merge(d, out, filing("n2", Q2), "HIGH", "now")
-    (signal,) = compute(d, after, out, filing("n2", Q2), {"shares_outstanding": 10_00_00_000, "last_price": 100})
+    company = {"shares_outstanding": 10_00_00_000, "last_price": 100, "price_date": Q2[:10]}
+    (signal,) = compute(d, after, out, filing("n2", Q2), company)
     assert signal["type"] == "DILUTION" and signal["severity"] == "WARNING"
-    assert "25.0% dilution" in signal["text"] and "20.0% below" in signal["text"]
+    assert "25.0% more shares (20.0% post-money dilution" in signal["text"] and "20.0% below" in signal["text"]
+    # A backfilled card is not compared with today's price.
+    (old,) = compute(d, after, out, filing("n2", Q2), {**company, "price_date": "2027-03-01"})
+    assert "below" not in old["text"]
     assert "1.60x book value" in signal["text"]  # BVPS = 500 Cr / 10 Cr shares = ₹50
 
 
@@ -218,3 +224,60 @@ def test_footer_shows_the_sector_metric_only_in_the_unit_its_label_promises():
     telecom = ({"metric": "arpu", "label": "ARPU", "format": "inr"},)
     assert latest_fundamentals(d, telecom)["kpis"][0]["value"] == 211.0
     assert "kpis" not in latest_fundamentals(d, ({"metric": "revpar", "label": "RevPAR", "format": "inr"},))
+
+
+def test_comparatives_do_not_move_known_since_and_backfill_sees_no_future():
+    from bse_intel.dossier import dossier_as_of, latest_fundamentals
+
+    d = merge(new_dossier(filing("q1", Q1)), output(financial_metrics=[{"metric": "revenue", "period": "Q1FY27", "value": 100}]),
+              filing("q1", Q1), "HIGH", "now")
+    d = merge(d, output(financial_metrics=[{"metric": "revenue", "period": "Q2FY27", "value": 130},
+                                            {"metric": "revenue", "period": "Q1FY27", "value": 101}]),
+              filing("q2", Q2), "HIGH", "now")
+    (q1,) = [m for m in d["financial_metrics"] if m["period"] == "Q1FY27"]
+    assert q1["as_of"] == Q1 and q1["value"] == 101
+    # As of the Q1 filing: Q2 does not exist yet, and Q1 has its original value.
+    then = dossier_as_of(d, Q1)
+    assert [(m["period"], m["value"]) for m in then["financial_metrics"]] == [("Q1FY27", 100)]
+    assert latest_fundamentals(then)["revenue"] == {"period": "Q1FY27", "value": 100}
+    # Re-analysing Q2 keeps Q1's first value.
+    d = merge(d, output(financial_metrics=[]), filing("q2", Q2), "HIGH", "now")
+    assert [(m["period"], m["value"], m["source_news_id"]) for m in d["financial_metrics"]] == [("Q1FY27", 100, "q1")]
+
+
+def test_a_long_annual_table_does_not_push_out_recent_quarters():
+    from bse_intel.dossier import view_as_of
+
+    quarters = [{"metric": "revenue", "period": f"Q{q}FY27", "value": 100 + q} for q in (1, 2)]
+    years = [{"metric": "revenue", "period": f"FY{y}", "value": 300 + y} for y in range(10, 27)]
+    d = merge(new_dossier(filing("n1", Q1)), output(financial_metrics=quarters), filing("n1", Q1), "HIGH", "now")
+    d = merge(d, output(financial_metrics=years), filing("ppt", Q2), "LOW", "now")
+    kinds = [m["period"] for m in d["financial_metrics"]]
+    assert "Q1FY27" in kinds and "Q2FY27" in kinds and sum(p.startswith("FY") for p in kinds) == 6
+    lines = view_as_of(d, "2027-01-01T00:00:00+05:30")["metrics"]["revenue"]
+    assert any(line.startswith("Q2FY27") for line in lines)
+
+
+def test_reanalysing_the_filing_that_set_guidance_keeps_later_status():
+    agm = filing("agm", AGM)
+    d = merge(new_dossier(agm), output(event_type="CONCALL_PRESENTATION",
+              guidance=[{"statement": "Commission Ankleshwar plant", "due": "Q3FY27"}]), agm, "MODERATE", "now")
+    gid = d["guidance"][0]["id"]
+    d = merge(d, output(promise_updates=[{"guidance_id": gid, "status": "DELIVERED", "evidence": "commissioned"}]),
+              filing("n9", Q2), "HIGH", "now")
+    d = merge(d, output(event_type="CONCALL_PRESENTATION",
+              guidance=[{"statement": "Commission Ankleshwar plant", "due": "Q3FY27"}]), agm, "MODERATE", "now")
+    (g,) = d["guidance"]
+    assert g["status"] == "DELIVERED" and len(g["status_history"]) == 1
+
+
+def test_metric_shift_ignores_comparative_columns():
+    d = merge(new_dossier(filing("q1", Q1)), output(financial_metrics=[
+        {"metric": "pat", "period": "Q1FY26", "value": 10}, {"metric": "pat", "period": "Q1FY27", "value": 25}]),
+        filing("q1", Q1), "HIGH", "now")
+    out = output(financial_metrics=[{"metric": "pat", "period": "Q2FY27", "value": 26},
+                                    {"metric": "pat", "period": "Q2FY26", "value": 24},
+                                    {"metric": "pat", "period": "Q1FY27", "value": 25}])
+    after = merge(d, out, filing("q2", Q2), "HIGH", "now")
+    texts = [s["text"] for s in compute(d, after, out, filing("q2", Q2), {}) if s["type"] == "METRIC_SHIFT"]
+    assert not any("Q1FY27" in t for t in texts)

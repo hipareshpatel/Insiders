@@ -104,23 +104,41 @@ class Filing(BaseModel):
 
 # --------------------------------------------------------------------------- coercion helpers
 
-_NUM_CLEAN = re.compile(r"[₹,\s]|(?i:rs\.?|inr|crores?|cr\.?|lakhs?|%)")
+_NUM_CLEAN = re.compile(r"[₹,\s]|(?i:rs\.?|inr|%)")
+# Unit words scaled to ₹ crore (the unit of every amount field) before they are stripped.
+_SCALE_WORDS = (
+    (re.compile(r"lakh\s*crores?|lac\s*crores?|lakh\s*cr\b", re.I), 1e5),
+    (re.compile(r"\bcrores?\b|\bcr\.?(?![a-z])", re.I), 1.0),
+    (re.compile(r"\blakhs?\b|\blacs?\b", re.I), 0.01),
+    (re.compile(r"\bbillions?\b|\bbn\b", re.I), 100.0),
+    (re.compile(r"\bmillions?\b|\bmn\b|\bmio\b", re.I), 0.1),
+    (re.compile(r"\bthousands?\b|\b000s\b", re.I), 1e-4),
+)
 
 
 def _to_float(value: Any) -> float | None:
+    """A number from model output: "₹1,250 Cr" -> 1250, "₹85.50 lakh" -> 0.855 (crore), "(12.5)" -> -12.5."""
     if value is None or isinstance(value, bool):
         return None
     if isinstance(value, (int, float)):
         return float(value)
-    text = _NUM_CLEAN.sub("", str(value))
+    text = str(value)
+    scale = 1.0
+    for pattern, factor in _SCALE_WORDS:
+        if pattern.search(text):
+            scale = factor
+            text = pattern.sub("", text)
+            break
+    text = _NUM_CLEAN.sub("", text)
     if text in ("", "-", "NA", "N/A", "null", "None"):
         return None
     negative = text.startswith("(") and text.endswith(")")
     text = text.strip("()")
     try:
-        number = float(text)
+        number = float(text) * scale
     except ValueError:
         return None
+    number = round(number, 6) if scale != 1.0 else number
     return -number if negative else number
 
 

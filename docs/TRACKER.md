@@ -77,9 +77,9 @@ Every item is pre-launch: the owner decided everything is built and tested local
 |---|---|---|
 | Per-company R2 dossier, provenance, time travel | done | |
 | 10 compartments as specified | partial | have: identity, financial metrics, balance sheet, segments, guidance/watchlist, deals (orders, projects), events, timeline, concerns, operating notes. Missing: former names/entities tree, monthly operational ledger, ownership/governance, calibration/peer context, pending predictions |
-| `known_since` = earliest, never moved forward (bi-temporal) | todo | audit M3 |
-| Signals, footer, dilution read memory as of the filing date | todo | audit M2 |
-| Partition by period kind, newest period first; OPEN items never evicted | todo | audit M4, M15 |
+| `known_since` = earliest, never moved forward (bi-temporal) | done | per-figure sources; value = latest restatement |
+| Signals, footer, dilution read memory as of the filing date | done | `dossier_as_of`; today's price not used for old filings |
+| Partition by period kind, newest period first; OPEN items never evicted | done | |
 | Atomic local writes (tmp + replace) | todo | |
 
 ### §7 Prompts and output contract

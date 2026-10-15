@@ -22,10 +22,12 @@ from typing import Any
 from .models import Filing, Pass2Output
 from .periods import due_date
 
-SCHEMA_VERSION = 2
-MAX_METRICS = 600
+SCHEMA_VERSION = 3
 MAX_TIMELINE = 600
 MAX_BALANCE_SNAPSHOTS = 16
+# Periods kept per metric, by kind: a seven-year table in a presentation must not push out the
+# recent quarters, so each kind keeps its own latest periods (by period end, not by filing date).
+KEEP_PERIODS = {"Q": 12, "H": 6, "9M": 4, "FY": 6, "M": 18, "other": 8}
 
 
 def _hash(*parts: str) -> str:
@@ -65,8 +67,60 @@ def new_dossier(filing: Filing, company: dict | None = None) -> dict:
     }
 
 
+def period_kind(period: str) -> str:
+    p = period.upper()
+    for kind in ("9M", "Q", "H", "FY"):
+        if p.startswith(kind):
+            return kind
+    return "M" if re.match(r"^[A-Z]{3}-?20\d{2}$", p) else "other"
+
+
+def _sources(entry: dict | None) -> list[dict]:
+    """Every filing that stated this figure. A single-source figure is stored flat."""
+    if not entry:
+        return []
+    return entry.get("sources") or [{
+        "news_id": entry.get("source_news_id"), "as_of": entry["as_of"], "value": entry.get("value"),
+        "unit": entry.get("unit"), "yoy_pct": entry.get("yoy_pct"), "qoq_pct": entry.get("qoq_pct"),
+    }]
+
+
+def _metric_entry(metric: str, period: str, sources: list[dict]) -> dict:
+    """One figure from its sources: the value is the latest restatement; ``as_of`` is when it was
+    first known (known_since), which a later filing re-reporting it as a comparative never moves."""
+    sources = sorted(sources, key=lambda s: s["as_of"])
+    last = sources[-1]
+    entry = {"metric": metric, "period": period, "value": last["value"], "unit": last.get("unit") or "INR_CR",
+             "yoy_pct": last.get("yoy_pct"), "qoq_pct": last.get("qoq_pct"), "as_of": sources[0]["as_of"],
+             "source_news_id": sources[0]["news_id"]}
+    if len(sources) > 1:
+        entry.update(sources=sources, updated_as_of=last["as_of"], value_news_id=last["news_id"])
+    return entry
+
+
+def reported_by(entry: dict, news_id: str) -> bool:
+    return any(s["news_id"] == news_id for s in _sources(entry))
+
+
+def _cap_metrics(entries: list[dict]) -> list[dict]:
+    groups: dict[tuple[str, str], list[dict]] = {}
+    for e in entries:
+        groups.setdefault((e["metric"], period_kind(e["period"])), []).append(e)
+    kept = []
+    for (_, kind), items in groups.items():
+        items.sort(key=lambda e: (str(due_date(e["period"]) or ""), e["period"]))
+        kept += items[-KEEP_PERIODS[kind]:]
+    return sorted(kept, key=lambda e: e["as_of"])
+
+
 def _forget(dossier: dict, news_id: str) -> None:
-    for key in ("financial_metrics", "segment_mix", "balance_sheet", "capital_actions", "upcoming_events", "operating_notes"):
+    metrics = []
+    for e in dossier.get("financial_metrics", []):
+        sources = [s for s in _sources(e) if s["news_id"] != news_id]
+        if sources:
+            metrics.append(_metric_entry(e["metric"], e["period"], sources))
+    dossier["financial_metrics"] = metrics
+    for key in ("segment_mix", "balance_sheet", "capital_actions", "upcoming_events", "operating_notes"):
         dossier[key] = [e for e in dossier.get(key, []) if e.get("source_news_id") != news_id]
     deals = []
     for deal in dossier.get("deals", []):
@@ -78,9 +132,9 @@ def _forget(dossier: dict, news_id: str) -> None:
     for key in ("guidance", "watchlist"):
         kept = []
         for item in dossier.get(key, []):
-            if item.get("source_news_id") == news_id:
-                continue
             history = [h for h in item.get("status_history", []) if h.get("source_news_id") != news_id]
+            if item.get("source_news_id") == news_id and not history:
+                continue  # re-created by this analysis if it still applies; kept if later filings updated it
             item["status_history"] = history
             item["status"] = history[-1]["status"] if history else "OPEN"
             kept.append(item)
@@ -101,19 +155,15 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     if delta.business_summary and not d.get("business_summary"):
         d["business_summary"] = {"text": delta.business_summary.strip(), "as_of": as_of, "source_news_id": news_id}
 
-    metrics = {(_norm(m["metric"]), _period(m["period"])): m for m in d.get("financial_metrics", [])}
+    metrics = {(m["metric"], m["period"]): m for m in d.get("financial_metrics", [])}
     for m in delta.financial_metrics:
         if m.value is None:
             continue
         key = (_norm(m.metric), _period(m.period))
-        existing = metrics.get(key)
-        if existing and existing.get("as_of", "") > as_of:
-            continue  # a later filing already restated this figure
-        metrics[key] = {
-            "metric": key[0], "period": key[1], "value": m.value, "unit": m.unit,
-            "yoy_pct": m.yoy_pct, "qoq_pct": m.qoq_pct, "as_of": as_of, "source_news_id": news_id,
-        }
-    d["financial_metrics"] = sorted(metrics.values(), key=lambda e: e["as_of"])[-MAX_METRICS:]
+        source = {"news_id": news_id, "as_of": as_of, "value": m.value, "unit": m.unit,
+                  "yoy_pct": m.yoy_pct, "qoq_pct": m.qoq_pct}
+        metrics[key] = _metric_entry(*key, [s for s in _sources(metrics.get(key)) if s["news_id"] != news_id] + [source])
+    d["financial_metrics"] = _cap_metrics(list(metrics.values()))
 
     segments = {(_norm(s["segment"]), _period(s["period"])): s for s in d.get("segment_mix", [])}
     for s in delta.segment_mix:
@@ -125,7 +175,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             "segment": s.segment.strip(), "period": key[1], "revenue_cr": s.revenue_cr,
             "share_pct": s.share_pct, "as_of": as_of, "source_news_id": news_id,
         }
-    d["segment_mix"] = sorted(segments.values(), key=lambda e: e["as_of"])[-MAX_METRICS:]
+    d["segment_mix"] = sorted(segments.values(), key=lambda e: e["as_of"])[-120:]
 
     if delta.balance_sheet and not delta.balance_sheet.is_empty():
         snapshot = {k: v for k, v in delta.balance_sheet.model_dump().items() if v is not None}
@@ -209,7 +259,12 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             "status": update.status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,
         }], key=lambda h: h["as_of"])
         w["status"] = w["status_history"][-1]["status"]
-    d["watchlist"] = sorted(watch.values(), key=lambda w: w["created_on"])[-80:]
+    # Open items are never dropped for size; closed ones go first, oldest first.
+    items = sorted(watch.values(), key=lambda w: w["created_on"])
+    closed = [w for w in items if w.get("status") not in ("OPEN", "PENDING", "PARTIAL")]
+    overflow = max(0, len(items) - 80)
+    drop = {w["id"] for w in closed[:overflow]}
+    d["watchlist"] = [w for w in items if w["id"] not in drop]
 
     if output.is_material:
         d["timeline"] = sorted(d.get("timeline", []) + [{
@@ -247,13 +302,21 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
 
     metrics_by_name: dict[str, list[dict]] = {}
     for m in dossier.get("financial_metrics", []):
-        if before(m):
-            metrics_by_name.setdefault(m["metric"], []).append(m)
+        known = [s for s in _sources(m) if s["as_of"] < cutoff]
+        if known:
+            metrics_by_name.setdefault(m["metric"], []).append(_metric_entry(m["metric"], m["period"], known))
 
     def metric_lines(periods: int) -> dict[str, list[str]]:
         out = {}
         for name, entries in metrics_by_name.items():
-            entries = sorted(entries, key=lambda e: e["as_of"])[-periods:]
+            by_kind: dict[str, list[dict]] = {}
+            for e in entries:
+                by_kind.setdefault(period_kind(e["period"]), []).append(e)
+            entries = []
+            for kind, items in by_kind.items():
+                items.sort(key=lambda e: (str(due_date(e["period"]) or ""), e["period"]))
+                entries += items[-(periods if kind in ("Q", "M") else max(1, periods // 2)):]
+            entries.sort(key=lambda e: (str(due_date(e["period"]) or ""), e["period"]))
             out[name] = [
                 f"{e['period']}: {e['value']:g} {e['unit']}"
                 + (f" (YoY {e['yoy_pct']:+g}%)" if e.get("yoy_pct") is not None else "")
@@ -319,6 +382,43 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
         if len(json.dumps(view, ensure_ascii=False)) <= budget_chars:
             break
     return view if len(view) > 1 else None
+
+
+def dossier_as_of(dossier: dict | None, cutoff: str, inclusive: bool = True) -> dict | None:
+    """The dossier as it stood at ``cutoff`` (including that moment's own filing when ``inclusive``).
+
+    Signals, the footer and the results table read memory through this, so a backfilled May card
+    is never sized against October revenue or told about guidance that came later.
+    """
+    if not dossier:
+        return dossier
+    limit = cutoff + "~" if inclusive else cutoff  # "~" sorts after every character of a timestamp
+    ok = lambda ts: (ts or "") < limit  # noqa: E731
+    d = dict(dossier)
+    metrics = []
+    for e in dossier.get("financial_metrics", []):
+        known = [s for s in _sources(e) if ok(s["as_of"])]
+        if known:
+            metrics.append(_metric_entry(e["metric"], e["period"], known))
+    d["financial_metrics"] = metrics
+    for key in ("segment_mix", "balance_sheet", "capital_actions", "operating_notes", "upcoming_events"):
+        d[key] = [e for e in dossier.get(key, []) if ok(e.get("as_of"))]
+    d["timeline"] = [e for e in dossier.get("timeline", []) if ok(e.get("date"))]
+    deals = []
+    for e in dossier.get("deals", []):
+        history = [h for h in _deal_history(e) if ok(h["as_of"])]
+        if history:
+            deals.append(_with_history(e, history))
+    d["deals"] = deals
+    for key, born in (("guidance", "given_on"), ("watchlist", "created_on")):
+        items = []
+        for item in dossier.get(key, []):
+            if not ok(item.get(born)):
+                continue
+            history = [h for h in item.get("status_history", []) if ok(h["as_of"])]
+            items.append({**item, "status_history": history, "status": history[-1]["status"] if history else "OPEN"})
+        d[key] = items
+    return d
 
 
 def memory_ids(view: dict | None) -> set[str]:
@@ -436,7 +536,7 @@ def results_snapshot(dossier: dict, news_id: str) -> dict | None:
     """
     from .periods import prior_quarter_period, prior_year_period
 
-    mine = [m for m in dossier.get("financial_metrics", []) if m.get("source_news_id") == news_id]
+    mine = [m for m in dossier.get("financial_metrics", []) if reported_by(m, news_id)]
     quarters = [m["period"] for m in mine if m["period"].startswith("Q") and due_date(m["period"])]
     if not quarters:
         return None

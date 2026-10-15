@@ -32,7 +32,7 @@ from threading import Lock
 
 from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError
-from .dossier import latest_fundamentals, memory_ids, merge, new_dossier, results_snapshot, view_as_of
+from .dossier import dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, results_snapshot, view_as_of
 from .extract import Document
 from .grounding import DEFAULT_THRESHOLD, check_card, check_claims
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
@@ -494,7 +494,11 @@ class Pipeline:
 
         merged = merge(dossier, out, filing, card.impact_level, now)
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector), ("symbol", company.get("symbol") or filing.symbol)) if v})
-        signals = compute_signals(dossier, merged, out, filing, company)
+        # Signals, footer and results table see memory as it stood at this filing, not later facts
+        # that a backfill may already have stored.
+        before = dossier_as_of(dossier, filing.filed_at, inclusive=False)
+        current = dossier_as_of(merged, filing.filed_at)
+        signals = compute_signals(before, current, out, filing, company)
         self.sink.put_dossier(filing.scrip_code, merged)
 
         card_json = {
@@ -504,8 +508,8 @@ class Pipeline:
             "quantified_impact": quant.items,
             "signals": signals,
             "timeline_entry": out.timeline_entry,
-            "fundamentals": latest_fundamentals(merged, sector_module.footer),
-            "results": results_snapshot(merged, filing.news_id) if event_type == "RESULTS" else None,
+            "fundamentals": latest_fundamentals(current, sector_module.footer),
+            "results": results_snapshot(current, filing.news_id) if event_type == "RESULTS" else None,
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims},

@@ -119,8 +119,11 @@ def test_openrouter_free_models_are_spares_under_one_daily_allowance(settings):
     config = settings.load_toml("providers.toml")
     assert config["providers"]["openrouter"]["limits"]["rpd"] == 1_000  # after the one-time credit purchase (D19)
     entries = [e for route in config["routes"].values() for e in route if e["provider"] == "openrouter"]
-    assert entries and all(e.get("spare") for e in entries)
-    assert all(e["model"].endswith(":free") for e in entries)  # never a paid model by accident
+    assert entries and all(e["model"].endswith(":free") for e in entries)  # never a paid model by accident
+    for name, route in config["routes"].items():  # a regular, weighted share in the backfill only
+        for e in (e for e in route if e["provider"] == "openrouter"):
+            assert (not e.get("spare") and e.get("weight", 1) >= 1) if name == "pass2_bulk" else e.get("spare"), (name, e)
+    assert config["gateway"]["strategies"]["pass2_bulk"] == "weighted"
     for route in config["routes"].values():  # the free allowance is 20/min across the models of one route
         assert sum(e["limits"]["rpm"] for e in route if e["provider"] == "openrouter") <= 20
 

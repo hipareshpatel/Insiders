@@ -324,10 +324,12 @@ context_tokens = 24000
 spare = true
 limits = { rpm = 60, tpd = 60_000 }
 
+# Backfill only: with 1,000 free requests a day the two OpenRouter models take a regular share
+# (weight 1 each, about 2 in 7 analyses at today's weights); everywhere else they stay spares.
 [[routes.pass2_bulk]]
 provider = "openrouter"
 model = "nvidia/nemotron-3-ultra-550b-a55b:free"
-spare = true
+weight = 1
 json_mode = false
 strip_reasoning = true
 max_tokens = 8000
@@ -337,7 +339,7 @@ limits = { rpm = 10 }
 [[routes.pass2_bulk]]
 provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
-spare = true
+weight = 1
 json_mode = true
 max_tokens = 4000
 context_tokens = 250000

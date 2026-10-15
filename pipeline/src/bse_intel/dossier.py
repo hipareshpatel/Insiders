@@ -39,6 +39,52 @@ def _norm(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
 
 
+_DATED = re.compile(r"^\s*\d{4}-\d{2}-\d{2}\s*[:\-–]\s*")  # "2025-05-13: " as the memory view prints notes
+_ROLE_SUFFIX = re.compile(r"(?:\s*\([^()]{1,40}\))+\s*$")    # "SML Isuzu Limited (Target Company) (Target Company)"
+
+
+def _bare_name(name: str) -> str:
+    return _ROLE_SUFFIX.sub("", name).strip() or name.strip()
+
+
+_GRANTED = re.compile(r"\b(?:approved|granted|received|obtained|cleared|accorded|sanctioned|passed|approval\s+(?:was|has\s+been)\s+(?:given|received))\b", re.I)
+_NOT_YET = re.compile(r"\b(?:pending|awaited|awaiting|yet\s+to|subject\s+to|sought|seeks?|seeking|to\s+be\s+(?:obtained|received)|applied|proposed)\b", re.I)
+
+
+def approval_granted(evidence: str | None) -> bool:
+    """Evidence that an approval came through, not that it is still pending."""
+    return bool(evidence) and bool(_GRANTED.search(evidence)) and not _NOT_YET.search(evidence)
+
+
+def _real_holding(own) -> bool:
+    """A shareholding as reported: as of a quarter-end, and holder groups that fit in 100%. SML's
+    open-offer letter gave a post-offer projection (promoter 85%, "MAY-2025") stored as the actual
+    holding next to DII 40.76%."""
+    end = due_date(_period(own.period)) if own.period else None
+    if end is None or end.month not in (3, 6, 9, 12):
+        return False
+    return sum(v or 0 for v in (own.promoter_pct, own.fii_pct, own.dii_pct)) <= 100.5
+
+
+_APPROVAL_GENERIC = frozenset(
+    "approval approvals approve approved pending required requirement requirements regulatory statutory "
+    "shareholder shareholders member members board for of the and to from by in on a an any its their "
+    "receipt obtain obtaining subject other necessary applicable final".split())
+
+
+def _approval_words(text: str) -> set[str]:
+    return {w for w in re.findall(r"[a-z0-9]+", text.lower()) if w not in _APPROVAL_GENERIC and len(w) > 1}
+
+
+def _same_approval(a: str, b: str) -> bool:
+    """Two wordings of one pending approval: most of the shorter one's specific words are in the other
+    ("CCI approval for the open offer and SPAs" / "Approval from Competition Commission of India (CCI)")."""
+    wa, wb = _approval_words(a), _approval_words(b)
+    if not wa or not wb:
+        return False
+    return len(wa & wb) / min(len(wa), len(wb)) >= 0.5
+
+
 def _period(text: str) -> str:
     return canonical_period(text)
 
@@ -225,7 +271,14 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             deals = [x for x in deals if x["id"] != did] + [_with_history(base, history)]
         d["deals"] = sorted(deals, key=lambda e: e["as_of"])[-60:]
 
-    notes = [{"text": n.strip()[:240], "as_of": as_of, "source_news_id": news_id} for n in delta.operating_notes[:3] if n.strip()]
+    # The memory view shows notes as "2025-05-13: text", and models copy that back as a new note.
+    known_notes = {_norm(n["text"]) for n in d.get("operating_notes", [])}
+    notes = []
+    for n in delta.operating_notes[:3]:
+        text = _DATED.sub("", n.strip())[:240]
+        if text and _norm(text) not in known_notes:
+            known_notes.add(_norm(text))
+            notes.append({"text": text, "as_of": as_of, "source_news_id": news_id})
     d["operating_notes"] = sorted(d.get("operating_notes", []) + notes, key=lambda e: e["as_of"])[-40:]
 
     guidance = {g["id"]: g for g in d.get("guidance", [])}
@@ -263,6 +316,9 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             wid = "w_" + _hash(filing.scrip_code, kind, _norm(text))
             if wid in watch:
                 continue
+            if kind == "APPROVAL" and any(w["kind"] == "APPROVAL" and w.get("status") in ("OPEN", "PENDING")
+                                          and _same_approval(text, w["text"]) for w in watch.values()):
+                continue  # the same approval in other words (SML's CCI approval was listed five times)
             check_by = due_date(check_in)
             watch[wid] = {
                 "id": wid, "kind": kind, "text": text.strip(), "check_in": check_in, "target": target,
@@ -274,6 +330,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         w = watch.get(update.watch_id)
         if w is None or w.get("created_on", "") >= as_of:
             continue
+        if w["kind"] == "APPROVAL" and update.status == "MET" and not approval_granted(update.evidence):
+            continue  # SML: "Approval met: CCI approval ..." with the evidence "CCI approval pending"
         w["status_history"] = sorted(w.get("status_history", []) + [{
             "status": update.status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,
         }], key=lambda h: h["as_of"])
@@ -292,14 +350,17 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if name and name.lower() != (d.get("company_name") or "").lower():
             names.setdefault(name.lower(), name)
     identity["former_names"] = list(names.values())[:6]
-    entities = {_norm(e["name"]): e for e in identity.get("entities", [])}
+    # The view shows entities as "Name (type)"; models copy that back as the name.
+    entities = {_norm(_bare_name(e["name"])): e for e in identity.get("entities", [])}
     for e in delta.entities[:6]:
-        key = _norm(e.name)
+        name = _bare_name(e.name.strip())
+        key = _norm(name)
         if key and key not in entities:
-            entities[key] = {"name": e.name.strip()[:120], "type": e.type, "as_of": as_of, "source_news_id": news_id}
+            entities[key] = {"name": name[:120], "type": e.type, "as_of": as_of, "source_news_id": news_id}
     identity["entities"] = list(entities.values())[-20:]
 
-    if delta.ownership and any(v is not None for k, v in delta.ownership.model_dump().items() if k != "period"):
+    if delta.ownership and any(v is not None for k, v in delta.ownership.model_dump().items() if k != "period") \
+            and _real_holding(delta.ownership):
         period = _period(delta.ownership.period)
         rows = [o for o in d.get("ownership", []) if o["period"] != period]
         rows.append({k: v for k, v in delta.ownership.model_dump().items() if v is not None}

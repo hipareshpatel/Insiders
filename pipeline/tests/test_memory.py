@@ -26,6 +26,57 @@ Q2 = "2026-10-20T17:00:00+05:30"
 AGM = "2026-08-25T11:00:00+05:30"
 
 
+def test_memory_does_not_take_back_its_own_view_as_new_facts():
+    """SML Mahindra: notes came back with the view's "2025-05-13: " prefix, entities with the view's
+    "(type)" suffix, and one CCI approval was stored in five wordings."""
+    d = new_dossier(filing("n1", Q1))
+    first = output(event_type="M_AND_A", operating_notes=["Open offer price reflects a 2.4x premium over the SPA price."],
+                   entities=[{"name": "SML Isuzu Limited", "type": "Target Company"}])
+    first.card.track_next.pending_approvals = ["CCI approval for the open offer and SPAs (triggering control transfer)"]
+    d = merge(d, first, filing("n1", Q1), "MODERATE", "now")
+    again = output(event_type="M_AND_A",
+                   operating_notes=["2026-07-20: Open offer price reflects a 2.4x premium over the SPA price.",
+                                    "Public shareholding falls to 15% if the offer is fully accepted."],
+                   entities=[{"name": "SML Isuzu Limited (Target Company)", "type": "Target Company"}])
+    again.card.track_next.pending_approvals = ["Approval from Competition Commission of India (CCI) for open offer and SPAs",
+                                               "Shareholder approval for the related party transactions"]
+    d = merge(d, again, filing("n2", Q2), "MODERATE", "now")
+    assert [n["text"] for n in d["operating_notes"]] == ["Open offer price reflects a 2.4x premium over the SPA price.",
+                                                         "Public shareholding falls to 15% if the offer is fully accepted."]
+    assert [e["name"] for e in d["identity"]["entities"]] == ["SML Isuzu Limited"]
+    approvals = [w["text"] for w in d["watchlist"] if w["kind"] == "APPROVAL"]
+    assert approvals == ["CCI approval for the open offer and SPAs (triggering control transfer)",
+                         "Shareholder approval for the related party transactions"]
+
+
+def test_an_approval_is_met_only_when_the_evidence_says_it_came_through():
+    """SML: "Approval met: CCI approval for open offer and SPAs ... CCI approval pending"."""
+    d = new_dossier(filing("n1", Q1))
+    first = output(event_type="M_AND_A")
+    first.card.track_next.pending_approvals = ["CCI approval for the open offer and SPAs"]
+    d = merge(d, first, filing("n1", Q1), "MODERATE", "now")
+    wid = next(w["id"] for w in d["watchlist"] if w["kind"] == "APPROVAL")
+    pending = output(event_type="M_AND_A", watch_updates=[{"watch_id": wid, "status": "MET",
+                                                           "evidence": "CCI approval pending for open offer and SPAs."}])
+    assert not [s for s in compute(d, d, pending, filing("n2", Q2), {}) if s["type"] == "WATCH_RESOLVED"]
+    d2 = merge(d, pending, filing("n2", Q2), "MODERATE", "now")
+    assert next(w for w in d2["watchlist"] if w["id"] == wid)["status"] == "OPEN"
+    granted = output(event_type="M_AND_A", watch_updates=[{"watch_id": wid, "status": "MET",
+                                                           "evidence": "The Competition Commission of India approved the transaction."}])
+    assert [s for s in compute(d2, d2, granted, filing("n3", Q2), {}) if s["type"] == "WATCH_RESOLVED"]
+    assert next(w for w in merge(d2, granted, filing("n3", Q2), "LOW", "now")["watchlist"] if w["id"] == wid)["status"] == "MET"
+
+
+def test_a_projected_or_impossible_shareholding_is_not_stored():
+    d = new_dossier(filing("n1", Q1))
+    projected = output(event_type="M_AND_A", ownership={"period": "May-2026", "promoter_pct": 85, "dii_pct": 40.76})
+    assert merge(d, projected, filing("n1", Q1), "LOW", "now")["ownership"] == []
+    impossible = output(event_type="RESULTS", ownership={"period": "Q1FY27", "promoter_pct": 85, "fii_pct": 10, "dii_pct": 40})
+    assert merge(d, impossible, filing("n1", Q1), "LOW", "now")["ownership"] == []
+    real = output(event_type="RESULTS", ownership={"period": "Q1FY27", "promoter_pct": 58.96, "fii_pct": 0.27, "dii_pct": 12.1})
+    assert merge(d, real, filing("n1", Q1), "LOW", "now")["ownership"][0]["promoter_pct"] == 58.96
+
+
 def test_merge_stamps_provenance_and_is_idempotent():
     d0 = new_dossier(filing("n1", Q1))
     out = output(financial_metrics=[{"metric": "Revenue", "period": "Q1 FY27", "value": "₹1,10.5 Cr"}])

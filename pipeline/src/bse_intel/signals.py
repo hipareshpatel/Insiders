@@ -27,7 +27,7 @@ import re
 from dataclasses import asdict, dataclass
 from datetime import date
 
-from .dossier import deal_state, reported_by
+from .dossier import approval_granted, deal_state, reported_by
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period
 
@@ -245,6 +245,8 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
         w = watch.get(update.watch_id)
         if not w or update.status == "PENDING":
             continue
+        if w["kind"] == "APPROVAL" and update.status == "MET" and not approval_granted(update.evidence):
+            continue  # "Approval met" with evidence that it is still pending
         severity = {"MET": "POSITIVE", "MISSED": "WARNING"}.get(update.status, "INFO")
         label = "KPI check" if w["kind"] == "KPI" else "Approval"
         out.append(Signal("WATCH_RESOLVED", severity,

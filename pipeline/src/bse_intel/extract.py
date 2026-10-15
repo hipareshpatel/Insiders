@@ -110,23 +110,45 @@ class Document:
     def first_page_text(self, limit: int = 2500) -> str:
         return strip_boilerplate(_clean(self.page_text(0)))[:limit] if self.page_count else ""
 
+    def kind(self) -> str:
+        """TRANSCRIPT, PRESENTATION, ANNUAL_REPORT or OTHER, from the digital text (blueprint §5.3)."""
+        head = " ".join(self._digital[:3]).lower()
+        whole = " ".join(self._digital).lower()
+        if whole.count("moderator") >= 3 or ("conference call" in head and "participant" in whole):
+            return "TRANSCRIPT"
+        if "annual report" in head or (self.page_count >= 60 and "directors' report" in whole):
+            return "ANNUAL_REPORT"
+        if "investor presentation" in head or "earnings presentation" in head or "corporate presentation" in head:
+            return "PRESENTATION"
+        return "OTHER"
+
     def select_text(self, budget_chars: int, keywords: Iterable[str] = ()) -> str:
         """Pick the most relevant pages within a character budget, kept in page order.
 
-        The first two pages are always included (cover letter + headline
-        numbers); the rest are ranked by keyword hits. Scanned pages cannot be
-        ranked before OCR, so they are taken in order once ranked pages run out.
+        The first two pages are always included (cover letter + headline numbers). The rest are
+        ranked by keyword hits plus the sections that matter for the kind of document (smart
+        section chunking): the opening remarks and Q&A of a transcript; financial highlights,
+        segments, capex, order book and guidance slides of a presentation; the auditor's report,
+        statements, segment, related-party and contingent-liability notes of an annual report.
+        Disclaimers, CSR, macro and agenda pages go last. Scanned pages cannot be ranked before OCR,
+        so they are taken in order once ranked pages run out.
         """
         if not self.page_count:
             return ""
         patterns = [re.compile(re.escape(k), re.I) for k in keywords]
+        keep, skip = _SECTIONS.get(self.kind(), (None, None))
         chosen = [i for i in range(min(2, self.page_count))]
         scored = []
         for i in range(len(chosen), self.page_count):
             if self.is_scanned(i):
                 scored.append((-1, i))
                 continue
-            hits = sum(len(p.findall(self._digital[i])) for p in patterns)
+            page = self._digital[i]
+            hits = sum(len(p.findall(page)) for p in patterns)
+            if keep is not None:
+                hits += 20 * len(keep.findall(page[:1500]))  # section titles sit at the top of a page or slide
+                if skip.search(page[:600]) and not keep.search(page[:600]):
+                    hits = -0.5  # after every ranked page, before scanned ones
             scored.append((hits, i))
         scored.sort(key=lambda item: (-item[0], item[1]))
         used = sum(len(strip_boilerplate(_clean(self._digital[i]))) for i in chosen)
@@ -142,6 +164,38 @@ class Document:
             if text:
                 parts.append(f"--- Page {i + 1} of {self.page_count} ---\n{text}")
         return "\n\n".join(parts)[:budget_chars]
+
+
+def _rx(*words: str) -> re.Pattern:
+    return re.compile("|".join(words), re.I)
+
+
+# Per document kind: (sections to favour, pages to put last). Blueprint §5.3.
+_SECTIONS = {
+    "TRANSCRIPT": (
+        _rx(r"opening remarks", r"\bq\s*&\s*a\b", r"question[- ]and[- ]answer", r"\bguidance\b", r"\bcapex\b",
+            r"order book", r"\bmargins?\b", r"\butili[sz]ation\b", r"commission", r"\bfy\s?2?\d\b"),
+        _rx(r"safe harbou?r", r"disclaimer", r"forward[- ]looking statements", r"list of participants",
+            r"^\s*participants\b"),
+    ),
+    "PRESENTATION": (
+        _rx(r"financial highlights", r"key highlights", r"performance (?:highlights|overview|update)", r"segment",
+            r"\bcapex\b", r"capacity", r"project", r"roadmap", r"order book", r"guidance", r"outlook",
+            r"\brevenue\b", r"\bebitda\b", r"profit and loss", r"balance sheet", r"\bdebt\b"),
+        _rx(r"safe harbou?r", r"disclaimer", r"forward[- ]looking statements", r"\bcsr\b", r"\besg\b",
+            r"sustainab", r"awards?\b", r"board of directors", r"industry overview", r"global econom", r"macro",
+            r"^\s*thank you\s*$", r"^\s*agenda\b"),
+    ),
+    "ANNUAL_REPORT": (
+        _rx(r"independent auditor", r"emphasis of matter", r"qualified opinion", r"basis for (?:qualified )?opinion",
+            r"\bcaro\b", r"annexure .{0,10} to the (?:independent )?auditor", r"statement of profit and loss",
+            r"balance sheet", r"cash flow", r"segment (?:information|reporting)", r"related party",
+            r"contingent liabilit", r"key audit matters"),
+        _rx(r"notice (?:of|is hereby given)", r"e-?voting", r"corporate social responsibility",
+            r"business responsibility", r"\bbrsr\b", r"profile of directors", r"route map", r"proxy form",
+            r"chairman'?s message"),
+    ),
+}
 
 
 _WS = re.compile(r"[ \t ]+")
@@ -165,7 +219,11 @@ _BOILERPLATE = re.compile(
     r"|^(?:membership no|m\.? ?no)\.?\b|^\(?din:? ?\d{8}\)?$|^encl(?:osure)?s?\b|e-?mail\.? ?(?:id)?\.?:|website\.?:"
     r"|\btel(?:ephone)?\.? ?(?:no\.?)?:|\bfax\.?:|^phone(?: no\.?)?\s*:|\bcin:? ?[lu]\d{5}|\bgstin\b"
     r"|^regd\.? office\b|^registered office\s*:"
-    r"|information is (?:being )?(?:uploaded|available|hosted) on the (?:company's )?website",
+    r"|information is (?:being )?(?:uploaded|available|hosted) on the (?:company's )?website"
+    # earnings-call chatter (operator instructions, moderator hand-offs, pleasantries)
+    r"|^moderator:.{0,120}(?:next question|please go ahead|line of|queue|ask a question)"
+    r"|press (?:\*|star) (?:and|then) (?:1|one)|all participant lines (?:are|will be) in (?:the )?listen[- ]only"
+    r"|^(?:thank you|thanks)(?: (?:very much|so much))?(?:,? (?:sir|madam|ma'?am))?[.!]?$",
     re.I | re.M,
 )
 

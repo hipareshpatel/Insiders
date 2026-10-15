@@ -25,6 +25,12 @@ focus = """
 This is an earnings call transcript or investor presentation. Capture forward-looking statements
 as guidance items (metric, target, timeline) with the speaker's exact numbers, and mark any prior
 guidance from memory that management confirmed, revised, or quietly dropped.
+However long the document, distil it into four buckets: (1) numeric guidance (revenue, margin band,
+utilisation by year, capex, debt targets) as guidance items; (2) project and capex progress
+(commissioning dates, brownfield or greenfield, active vs total capacity) in deals and milestones;
+(3) unit economics, feedstock and order book (realisations, raw material moves, order book and
+execution period, segment shares) in operating_notes and segment_mix; (4) Q&A forensics (questions
+management dodged, timelines quietly pushed back) in analyst_concerns.
 Forensic reading: when management answers a numeric question vaguely or not at all, record it in
 analyst_concerns and say it was evasive. When a target moves (a full-year figure becoming an "exit
 run-rate", a date slipping a quarter), report the earlier guidance as REVISED with the old and new

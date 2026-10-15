@@ -82,7 +82,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | Board-meeting duration forensics | done | 6+ hours flagged |
 | Pass 1 gatekeeper on subject + page 1 | done | subject now stored on the ledger |
 | Scanned-page OCR (<80 chars) | done | |
-| Smart section chunking for 40–150 page documents | partial | keyword page ranking; concall/presentation/annual-report section rules to add |
+| Smart section chunking for 40–150 page documents | done | `Document.kind()` + per-kind section boosts (transcript opening remarks and Q&A; presentation highlights, segments, capex, order book, guidance; annual report auditor's report, statements, segment / RPT / contingent notes); disclaimers, CSR, macro and agenda pages last; moderator and operator chatter stripped |
 | Boilerplate stripping | done | whole-line patterns only |
 | Local text cache `./data/text_cache/{news_id}.json.gz` | done | |
 
@@ -99,7 +99,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 ### §7 Prompts and output contract
 | Item | Status | Notes |
 |---|---|---|
-| Boilerplate-free, 4-bucket distillation for long documents | partial | |
+| Boilerplate-free, 4-bucket distillation for long documents | done | boilerplate and call chatter stripped in code; the 4 buckets in the concall prompt |
 | Core catalyst line (📌) | done | |
 | Memory link, quantified narrative, peer/feedstock context, missing disclosure (memory first) | partial | as why_it_matters insights with basis; missing disclosures checked against memory |
 | Math checks with FILING/MEMORY/ASSUMPTION provenance | done | formula hardening still due (audit M8) |
@@ -217,7 +217,7 @@ docs, sync-companies workflow.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 194 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 196 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

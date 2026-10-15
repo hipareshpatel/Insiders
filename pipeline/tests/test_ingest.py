@@ -230,3 +230,40 @@ def test_sql_files_hold_one_statement_with_nothing_after_it():
         body = "\n".join(line for line in path.read_text().splitlines() if not line.strip().startswith("--"))
         assert body.count(";") <= 1, path.name
         assert not body[body.rfind(";") + 1:].strip(), f"{path.name}: text after the final semicolon"
+
+
+def _pages_pdf(pages: list[str]) -> bytes:
+    import pymupdf
+
+    doc = pymupdf.open()
+    for text in pages:
+        doc.new_page().insert_textbox(pymupdf.Rect(36, 36, 560, 800), text, fontsize=9)
+    return doc.tobytes()
+
+
+def test_presentation_chunking_favours_financial_and_capex_slides():
+    filler = " lorem ipsum" * 60
+    pages = ["Demo Chem Ltd Investor Presentation Q2 FY27", "Agenda and company at a glance" + filler,
+             "Safe Harbour Statement. This presentation contains forward-looking statements." + filler,
+             "Global economy and macro outlook for chemicals" + filler,
+             "CSR and ESG initiatives across our plants" + filler,
+             "Financial Highlights Q2 FY27: Revenue 412 Cr, EBITDA 74 Cr" + filler,
+             "Capex roadmap: 30,000 MTPA brownfield plant commissioning Q4 FY27" + filler]
+    doc = Document(_pages_pdf(pages))
+    assert doc.kind() == "PRESENTATION"
+    text = doc.select_text(2600)  # the first two pages always, then room for two more
+    assert "Financial Highlights" in text and "Capex roadmap" in text
+    assert "CSR and ESG" not in text and "Safe Harbour" not in text
+
+
+def test_transcript_kind_and_chatter_is_stripped():
+    pages = ["Demo Chem Ltd Q2 FY27 Earnings Conference Call. Participants: management.",
+             "Moderator: Ladies and gentlemen, good day. All participant lines will be in the listen-only mode.\n"
+             "Moderator: Thank you. The next question is from the line of A from B. Please go ahead.\n"
+             "Management: We expect FY27 revenue growth of 20% with margins at 18%.\nThank you, sir.\n"
+             "Moderator: The next question is from the line of C. Please go ahead."]
+    doc = Document(_pages_pdf(pages))
+    assert doc.kind() == "TRANSCRIPT"
+    text = doc.select_text(10_000)
+    assert "We expect FY27 revenue growth of 20%" in text
+    assert "next question" not in text and "listen-only" not in text and "Thank you, sir" not in text

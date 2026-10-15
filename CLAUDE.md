@@ -62,6 +62,10 @@ Read before changing anything:
   requeued); `sync-companies` filling every company's industry and size label. Then the site check
   on localhost and the case-study comparison with the owner. Do not start the full backfill before
   the owner has reviewed the smoke test (decision D6) and chosen the order (PLAN.md item 1c).
+- Stopped 2026-10-16 ~02:00 (laptop shut down), resume both with `laptop.ps1`: smoke test 30 analysed,
+  11 not material, 9 duplicates, **493 pending** (`backfill-companies --scrips 506525,532776,505192,500672,530019`);
+  industry fill at 3,600 of 5,111 with 27 companies still unlabelled by size (`sync-companies`, skips
+  known industries). Start the web dev server first. Then measure 5 vs 3 workers over an hour (PLAN 1b).
 - Gotchas found tonight: models copy lakh figures as crore (grounding now enforces the declared unit);
   BSE's scrip list no longer carries industry; one event can be filed up to 8 times (duplicates.py);
   commit before `git pull`, never autostash over another session's changes.

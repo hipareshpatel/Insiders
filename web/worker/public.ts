@@ -408,9 +408,9 @@ api.get("/radar", async (c) => {
       const recent = (s?.triggers ?? []).filter((t) => t.date >= since);
       if (new Set(recent.map((t) => t.kind)).size < min) return [];
       const { memory_summary_json: _drop, ...row } = r;
-      return [{ ...row, triggers: recent, active_capex: s?.active_capex ?? 0 }];
+      return [{ ...row, inflection_last_at: String(r.inflection_last_at ?? ""), triggers: recent, active_capex: s?.active_capex ?? 0 }];
     });
-    companies.sort((a, b) => b.triggers.length - a.triggers.length || String(b.inflection_last_at).localeCompare(String(a.inflection_last_at)));
+    companies.sort((a, b) => b.triggers.length - a.triggers.length || b.inflection_last_at.localeCompare(a.inflection_last_at));
     return { since, min, companies };
   });
   return c.json(body, 200, { "Cache-Control": "public, max-age=300" });

@@ -494,6 +494,8 @@ class Pipeline:
             out.event_type = filing.event_type  # rules know the event type better than the model
         elif out.event_type == "OTHER" and event_type != "OTHER":
             out.event_type = event_type  # Pass 2 left it open; Pass 1 had decided
+        if out.card is not None and out.event_type != "CONCALL_PRESENTATION":
+            out.card.call_read = None  # guidance, tone and transparency describe a call, not other filings
         event_type = out.event_type
         card = out.card
         score, checked, ungrounded, quant, claims = checks.score, checks.checked, checks.ungrounded, checks.quant, checks.claims

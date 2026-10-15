@@ -120,6 +120,8 @@ export interface CardBody {
   tone?: "POSITIVE" | "NEGATIVE" | "MIXED" | "NEUTRAL";
   headline: string;
   takeaway?: string;
+  /** One line naming the economic driver (blueprint "📌 Core catalyst"). */
+  core_catalyst?: string | null;
   themes?: string[];
   basis?: "CONSOLIDATED" | "STANDALONE" | "PROFORMA" | null;
   deal_value?: DealValue | null;

@@ -92,7 +92,7 @@ footer = [{ metric = "volume_growth", label = "Volume growth", format = "pct", a
           { metric = "gross_margin", label = "Gross margin", format = "pct", aliases = ["gross_margin_pct"] }]
 
 [oil_gas]
-match = ["oil", "gas", "refiner", "petroleum", "lpg", "lng", "exploration"]
+match = ["oil", "natural gas", "gas distribution", "gas transmission", "city gas", "refiner", "petroleum", "lpg", "lng", "exploration"]
 kpis = ["GRM", "throughput", "marketing margin", "production volumes", "realisation", "inventory gains/losses"]
 context = "Refining margins and inventory effects swing quarters; government pricing policy matters for OMCs."
 footer = [{ metric = "grm", label = "GRM ($/bbl)", format = "usd", aliases = ["grm_usd_bbl", "gross_refining_margin"] },
@@ -106,7 +106,7 @@ footer = [{ metric = "installed_capacity", label = "Capacity (MW)", format = "nu
           { metric = "plf", label = "PLF/CUF", format = "pct", aliases = ["plf_pct", "cuf", "cuf_pct"] }]
 
 [capital_goods]
-match = ["capital goods", "engineering", "industrial machinery", "electrical equipment", "heavy electrical", "defence", "railway"]
+match = ["capital goods", "engineering", "industrial machinery", "electrical equipment", "heavy electrical", "defence", "defense", "aerospace", "railway"]
 kpis = ["order inflow", "order book", "book-to-bill", "execution / revenue growth", "EBITDA margin", "working capital days"]
 context = "Order book visibility and execution pace; working capital intensity drives cash flow."
 footer = [{ metric = "order_book", label = "Order book", format = "cr", aliases = ["order_book_cr", "orderbook"] },

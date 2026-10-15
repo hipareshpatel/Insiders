@@ -145,6 +145,7 @@ limits = { rpm = 60, tpd = 150_000 }
 provider = "nvidia"
 model = "deepseek-ai/deepseek-r1"
 weight = 3
+temperature = 0.6  # DeepSeek's advice for R1: 0.5-0.7 (lower loops and repeats)
 json_mode = false
 strip_reasoning = true
 max_tokens = 8000
@@ -219,6 +220,7 @@ limits = { rpm = 40 }
 provider = "nvidia"
 model = "deepseek-ai/deepseek-r1"
 weight = 1
+temperature = 0.6
 json_mode = false
 strip_reasoning = true
 max_tokens = 8000
@@ -239,10 +241,11 @@ limits = { rpm = 60, tpd = 60_000 }
 provider = "zai"
 model = "glm-4.6v-flash"
 max_tokens = 2500
+extra_body = { thinking = { type = "disabled" } }  # reasoning tokens would eat the transcription
 limits = { rpm = 60 }
 
 [[routes.vision]]
 provider = "mistral"
-model = "pixtral-12b-latest"
+model = "mistral-small-latest"  # takes images; pixtral-12b is being retired
 max_tokens = 2500
 limits = { rpm = 60 }

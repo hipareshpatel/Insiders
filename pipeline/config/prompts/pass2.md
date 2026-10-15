@@ -5,6 +5,11 @@ long-running memory dossier.
 Ground rules
 - Use only facts in FILING TEXT and COMPANY MEMORY. Never invent numbers, dates, names or guidance.
   If a figure is not in the sources, leave it out.
+- Every figure in headline, what_happened, why_it_matters and key_numbers is checked against the
+  sources. Use figures as stated, or a simple share, change or multiple of two of them written in the
+  same sentence ("₹80 Cr LoI, 18% of FY26 sales" when memory holds FY26 sales). Anything you compute
+  further (an EBITDA the filing does not state, an annualised figure, savings, dilution maths) goes
+  in quantified_impact with its formula, where the arithmetic is re-checked.
 - Express money in ₹ crore (from ₹ lakh divide by 100, from ₹ million divide by 10) and keep only
   the precision the source supports. Keep foreign-currency amounts as stated ("USD 138 million",
   "CAD 94.5 million"); give a ₹ figure only when the filing does, or in quantified_impact with the
@@ -25,13 +30,17 @@ The card
 The card is read in a feed in about ten seconds: a headline, two or three facts, two or three
 reasons it matters. Write plain English for a busy investor; no adjectives such as "robust",
 "strong" or "significant" unless a number backs them in the same sentence.
-- headline: at most 80 characters, active voice: who did what, with the main figure. Put the
+- event_type: "$event_type" as triaged, unless the filing is clearly another of: $event_types.
+- headline: at most 110 characters (aim for 80), active voice: who did what, with the main figure. Put the
   figure in proportion when memory allows ("…, nearly its last quarter's revenue", "…, 18% of FY26
   sales"). Never a generic line such as "X posts a key update" or "X announces results": say what
   the results or update actually showed. Examples:
   "Demo Cement Q2 revenue rose 20% YoY to ₹456 Cr; margin fell to 14.9%"
   "Demo Infra arm wins ₹186 Cr wind EPC LOI, over half its last quarter's revenue"
   "Demo Tubes approves ₹75 Cr warrant issue at ₹150, promoters taking two-thirds"
+- core_catalyst: one line (under 140 characters) naming the economic driver behind the news, e.g.
+  "Brownfield specialty ester capacity shifting the mix away from bulk chemicals" or "Dilutive
+  rescue raise to service a ₹399 Cr debt pile". No new figures beyond those in the headline or facts.
 - takeaway: one sentence (under 200 characters): the "so what", not a restated headline.
 - tone: how the filing reads for the company's fundamentals: "POSITIVE", "NEGATIVE", "MIXED" or
   "NEUTRAL". This describes the business news, never a view on the share price.
@@ -58,9 +67,10 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   trailing revenue and the company's earlier orders of the same kind ("third wind EPC win since
   May, and the largest; earlier ones were up to ₹142 Cr"), a fundraise against market cap or net
   worth, who is putting in the money (promoters or outsiders) and the stake change.
-- Claims of "first", "maiden", "record", "all-time" or "highest-ever" need support: the filing says
-  so, or COMPANY MEMORY shows it. Memory only covers this platform's filings since 1 Jan 2026, so
-  "no earlier order in memory" does not make an order the first. When the filing describes itself
+- Claims of "first", "maiden", "record", "all-time" or "highest-ever" only when the filing itself
+  says so. Memory only covers this platform's filings since $memory_start, so "no earlier order in
+  memory" does not make an order the first, and the highest figure in memory is "the highest since
+  <period>", never a record. When the filing describes itself
   ("second set of orders", "repeat order", "further to our intimation dated …"), the filing wins.
 - Say what stage a deal is at (LOI, LOA, MoU, development order, board approval) and what still
   has to happen before it becomes revenue or money in the bank (a formal contract, qualification,
@@ -92,7 +102,7 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
 - quantified_impact: wherever the sources allow, quantify the financial effect instead of saying
   "may improve margins". Up to 3 estimates that matter most for this event, each with its working
   shown so it can be re-checked: a label, a formula over named inputs (plain arithmetic only, e.g.
-  "capacity_mw * plf * 8760 * tariff_inr / 1e7"), the inputs (name, value, unit, source, note),
+  "capacity_mw * 1000 * plf * 8760 * tariff_inr / 1e7": MW to kW, hours a year, ₹ to crore), the inputs (name, value, unit, source, note),
   the result, its unit and a one-line interpretation. source is "FILING" or "MEMORY" only for
   figures present there; anything else is an "ASSUMPTION" whose note says why it is reasonable
   (for example a sector-typical utilisation rate). Typical uses: revenue or EBITDA potential of

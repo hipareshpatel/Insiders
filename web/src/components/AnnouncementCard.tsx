@@ -294,6 +294,9 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         </div>
 
         <h3 className="mt-3 text-[19px] font-bold leading-snug tracking-[-0.01em] text-ink sm:text-[21px]">{plain(card.headline)}</h3>
+        {card.core_catalyst && (
+          <p className="mt-1.5 text-[13.5px] leading-snug text-ink-2"><span aria-hidden>📌 </span><span className="font-semibold text-ink">Core catalyst:</span> {plain(card.core_catalyst)}</p>
+        )}
 
         {card.call_read && <CallReadChips read={card.call_read} />}
         {table && <ResultsTable r={table} />}

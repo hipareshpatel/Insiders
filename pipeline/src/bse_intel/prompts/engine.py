@@ -17,6 +17,7 @@ PASS2_SCHEMA = {
         "impact_level": "HIGH | MODERATE | LOW",
         "tone": "POSITIVE | NEGATIVE | MIXED | NEUTRAL",
         "headline": "string",
+        "core_catalyst": "string",
         "takeaway": "string",
         "basis": "CONSOLIDATED | STANDALONE | PROFORMA | null",
         "themes": ["Renewables", "Infra / EPC"],
@@ -26,20 +27,20 @@ PASS2_SCHEMA = {
         "key_numbers": [{"label": "Revenue", "value": "₹120 Cr", "change": "+32% YoY"}],
         "notable_changes": [{"metric": "inventories", "previous": "₹40 Cr (Mar-2026)", "current": "₹66 Cr (Sep-2026)", "change": "+65%", "direction": "NEGATIVE", "why": "string"}],
         "quantified_impact": [{
-            "label": "Annual revenue at full utilisation", "formula": "capacity_mw * plf * 8760 * tariff_inr / 1e7",
+            "label": "Annual revenue at full utilisation", "formula": "capacity_mw * 1000 * plf * 8760 * tariff_inr / 1e7",
             "inputs": [{"name": "capacity_mw", "value": 50, "unit": "MW", "source": "FILING", "note": "commissioned capacity"},
                        {"name": "plf", "value": 0.22, "unit": "ratio", "source": "ASSUMPTION", "note": "typical for hybrid assets"},
                        {"name": "tariff_inr", "value": 3.25, "unit": "INR/kWh", "source": "FILING", "note": "PPA tariff"}],
             "result": 31.3, "unit": "INR_CR", "interpretation": "string"}],
         "track_next": {
-            "milestones": [{"what": "Rights issue closes", "when": "Nov 19, 2026", "date": "2026-11-19"}],
+            "milestones": [{"what": "string", "when": "as written", "date": "YYYY-MM-DD or null"}],
             "kpis_to_verify": [{"kpi": "string", "check_in": "Q3FY27 results", "target": "string or null"}],
             "pending_approvals": ["string"],
             "catalysts": ["string"],
             "risks": ["string"],
         },
         "deal_value": {"kind": "ORDER | FUNDRAISE | CAPEX | ACQUISITION | DIVESTMENT | OTHER", "amount_cr": 228.0,
-                       "includes_gst": False, "counterparty": "string", "stage": "LOI | LOA | WORK_ORDER | CONTRACT | MOU | DEVELOPMENT_ORDER | BOARD_APPROVED | SHAREHOLDER_APPROVED | COMPLETED",
+                       "includes_gst": False, "counterparty": "string", "stage": "L1_BIDDER | LOI | LOA | WORK_ORDER | CONTRACT | MOU | DEVELOPMENT_ORDER | PROPOSED | BOARD_APPROVED | TERMS_FINALISED | SHAREHOLDER_APPROVED | IN_PROGRESS | PARTIALLY_COMPLETED | COMPLETED | CANCELLED",
                        "segment": "wind EPC", "execution_by": "31 July 2027", "progress": "40 MW of 60 MW commissioned or null",
                        "updates_deal_id": "d_... from memory's deals, or null"},
         "call_read": {"guidance": "RAISED | LOWERED | MAINTAINED | NEW | WITHDRAWN | NONE", "management_tone": "OPTIMISTIC | NEUTRAL | CAUTIOUS",
@@ -78,6 +79,7 @@ class PromptEngine:
         self._pass2 = Template((prompts / "pass2.md").read_text())
         self._pass2_user = Template((prompts / "pass2_user.md").read_text())
         self._verify = (prompts / "verify.md").read_text()
+        self.memory_start = settings.backfill_start
         self.events: dict = settings.load_toml("events.toml")
         self.sectors: list[SectorModule] = []
         for name, entry in settings.load_toml("sectors.toml").items():
@@ -136,7 +138,9 @@ class PromptEngine:
             sector_kpis=", ".join(sector.kpis) + (
                 ". Name these in financial_metrics exactly as: "
                 + ", ".join(f"{f['metric']} ({f['label']})" for f in sector.footer) if sector.footer else ""),
-            schema=json.dumps(PASS2_SCHEMA, ensure_ascii=False, indent=1),
+            schema=json.dumps({**PASS2_SCHEMA, "event_type": event_type}, ensure_ascii=False, indent=1),
+            event_types=", ".join(EVENT_TYPES),
+            memory_start=self.memory_start,
         )
         user = self._pass2_user.safe_substitute(
             company_name=filing.company_name,

@@ -142,6 +142,23 @@ def _to_float(value: Any) -> float | None:
     return -number if negative else number
 
 
+_PLACEHOLDER = re.compile(r"^(?:[A-Z][A-Z_&]*(?:\s*\|\s*[A-Z][A-Z_&]*)+|string|string or null|YYYY-MM-DD(?: or null)?|g_\.\.\.|w_\.\.\.|d_\.\.\..*)$")
+
+
+def _strip_placeholders(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {k: _strip_placeholders(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_strip_placeholders(v) for v in value]
+    if isinstance(value, str):
+        text = value.strip()
+        if _PLACEHOLDER.match(text):
+            return None
+        if text.endswith(" or null"):
+            return None  # an answer never ends in "or null"; this is the schema's example
+    return value
+
+
 def _to_list(value: Any) -> list:
     if value is None:
         return []
@@ -213,7 +230,7 @@ class Pass1Result(_Lenient):
 
 class KeyNumber(_Lenient):
     label: str
-    value: str
+    value: Annotated[str, BeforeValidator(lambda v: "" if v is None else str(v))]
     change: OptStr = None
 
 
@@ -313,7 +330,7 @@ def _enum(allowed: tuple[str, ...], aliases: dict[str, str] | None = None, defau
 
 
 DEAL_KINDS = ("ORDER", "FUNDRAISE", "CAPEX", "ACQUISITION", "DIVESTMENT", "OTHER")
-DEAL_STAGES = ("LOI", "LOA", "WORK_ORDER", "CONTRACT", "MOU", "DEVELOPMENT_ORDER", "PROPOSED", "BOARD_APPROVED",
+DEAL_STAGES = ("L1_BIDDER", "LOI", "LOA", "WORK_ORDER", "CONTRACT", "MOU", "DEVELOPMENT_ORDER", "PROPOSED", "BOARD_APPROVED",
                "TERMS_FINALISED", "SHAREHOLDER_APPROVED", "IN_PROGRESS", "PARTIALLY_COMPLETED", "COMPLETED",
                "CANCELLED", "OTHER")
 
@@ -332,7 +349,11 @@ class DealValue(_Lenient):
                                                 "APPROVED": "BOARD_APPROVED", "IN_PRINCIPLE": "PROPOSED", "PLANNED": "PROPOSED",
                                                 "TERMS_FINALIZED": "TERMS_FINALISED", "COMMISSIONED": "COMPLETED",
                                                 "PARTIALLY_COMMISSIONED": "PARTIALLY_COMPLETED", "WITHDRAWN": "CANCELLED",
-                                                "UNDER_EXECUTION": "IN_PROGRESS"}, "OTHER")] = "OTHER"
+                                                "UNDER_EXECUTION": "IN_PROGRESS", "L1": "L1_BIDDER", "LOWEST_BIDDER": "L1_BIDDER",
+                                                "BOARD_APPROVAL": "BOARD_APPROVED", "SHAREHOLDER_APPROVAL": "SHAREHOLDER_APPROVED",
+                                                "IN_PRINCIPLE_APPROVAL": "PROPOSED", "FINAL_TERMS": "TERMS_FINALISED",
+                                                "PARTLY_COMMISSIONED": "PARTIALLY_COMPLETED", "PARTLY_COMPLETED": "PARTIALLY_COMPLETED",
+                                                "AWARDED": "LOA", "NOTICE_TO_PROCEED": "WORK_ORDER"}, "OTHER")] = "OTHER"
     segment: OptStr = None        # business line, e.g. "wind EPC", "underground cabling"
     execution_by: OptStr = None   # as stated: "31 July 2027", "12 months"
     progress: OptStr = None       # e.g. "40 MW of 60 MW commissioned"
@@ -420,13 +441,14 @@ class Card(_Lenient):
     impact_level: ImpactLevel
     tone: Tone = "NEUTRAL"      # for the company's fundamentals, not a price call
     headline: str
-    takeaway: str = ""          # one line shown in the collapsed feed row
+    takeaway: Annotated[str, BeforeValidator(lambda v: v or "")] = ""   # one line shown in the collapsed feed row
+    core_catalyst: OptStr = None   # one line: the economic driver behind the news (blueprint "📌 Core catalyst")
     what_happened: StrList = Field(min_length=1)
     why_it_matters: Annotated[list[Insight], BeforeValidator(_insights)] = Field(default_factory=list)
     missing_disclosures: StrList = Field(default_factory=list)
-    key_numbers: list[KeyNumber] = Field(default_factory=list)
+    key_numbers: Annotated[list[KeyNumber], _drop_invalid(KeyNumber)] = Field(default_factory=list)
     notable_changes: Annotated[list[NotableChange], _drop_invalid(NotableChange)] = Field(default_factory=list)
-    track_next: TrackNext = Field(default_factory=TrackNext)
+    track_next: Annotated[TrackNext, BeforeValidator(lambda v: v if isinstance(v, dict) else {})] = Field(default_factory=TrackNext)
     quantified_impact: Annotated[list[QuantifiedImpact], _drop_invalid(QuantifiedImpact)] = Field(default_factory=list)
     themes: StrList = Field(default_factory=list)          # up to 2 short tags: "Renewables", "Infra / EPC"
     basis: Annotated[str | None, _enum(("CONSOLIDATED", "STANDALONE", "PROFORMA"))] = None
@@ -571,7 +593,7 @@ class DossierDelta(_Lenient):
     guidance: Annotated[list[GuidanceItem], _drop_invalid(GuidanceItem)] = Field(default_factory=list)
     promise_updates: Annotated[list[PromiseUpdate], _drop_invalid(PromiseUpdate)] = Field(default_factory=list)
     watch_updates: Annotated[list[WatchUpdate], _drop_invalid(WatchUpdate)] = Field(default_factory=list)
-    balance_sheet: BalanceSheet | None = None
+    balance_sheet: Annotated[BalanceSheet | None, BeforeValidator(lambda v: v if isinstance(v, dict) else None)] = None
     capital_actions: Annotated[list[CapitalAction], _drop_invalid(CapitalAction)] = Field(default_factory=list)
     upcoming_events: Annotated[list[UpcomingEvent], _drop_invalid(UpcomingEvent)] = Field(default_factory=list)
     analyst_concerns: Annotated[list[AnalystConcern], _drop_invalid(AnalystConcern)] = Field(default_factory=list)
@@ -582,8 +604,14 @@ class Pass2Output(_Lenient):
     is_material: bool
     event_type: EventType = "OTHER"
     card: Card | None = None
-    timeline_entry: str = ""
-    dossier_delta: DossierDelta = Field(default_factory=DossierDelta)
+    timeline_entry: Annotated[str, BeforeValidator(lambda v: v if isinstance(v, str) else "")] = ""
+    dossier_delta: Annotated[DossierDelta, BeforeValidator(lambda v: v if isinstance(v, dict) else {})] = Field(default_factory=DossierDelta)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _placeholders(cls, data: Any) -> Any:
+        """Schema text copied into a reply ("HIGH | MODERATE | LOW", "string or null") is not an answer."""
+        return _strip_placeholders(data)
 
     @model_validator(mode="after")
     def _card_required(self) -> "Pass2Output":

@@ -285,3 +285,24 @@ def test_claims_track_record_bold_and_repeat_only_in_the_filing():
     assert check_claims(c, filing, memory) == []  # a repeat in memory does not undo the filing's own claim
     first_quarter = card(headline="Maiden order from Airbus", what_happened=["x"])
     assert check_claims(first_quarter, "Results for the first quarter. Order from Airbus received.") != []
+
+
+def test_copied_placeholders_and_null_shapes_do_not_become_answers():
+    from bse_intel.models import Pass2Output
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "ORDER_WIN", "timeline_entry": None, "dossier_delta": None,
+        "card": {"impact_level": "HIGH", "headline": "Demo Infra wins ₹186 Cr wind EPC LoI", "takeaway": None,
+                 "what_happened": ["LoI worth ₹186 Cr"], "key_numbers": [{"label": "Order", "value": 186}, {"bad": 1}],
+                 "track_next": None, "tone": "POSITIVE | NEGATIVE | MIXED | NEUTRAL",
+                 "deal_value": {"kind": "ORDER", "amount_cr": 186, "stage": "Board approval",
+                                "progress": "40 MW of 60 MW commissioned or null", "counterparty": "string"}},
+    })
+    card = out.card
+    assert card.tone == "NEUTRAL" and card.key_numbers[0].value == "186" and len(card.key_numbers) == 1
+    assert card.deal_value.progress is None and card.deal_value.counterparty is None
+    assert card.deal_value.stage == "BOARD_APPROVED"
+    assert out.timeline_entry == card.headline
+    with pytest.raises(Exception):
+        Pass2Output.model_validate({"is_material": True, "card": {"impact_level": "HIGH | MODERATE | LOW",
+                                                                 "headline": "Demo wins order", "what_happened": ["x"]}})

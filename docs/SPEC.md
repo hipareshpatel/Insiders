@@ -103,10 +103,11 @@ Per filing:
 |---|---|---|
 | Fetch | Browser-style session, paged `AnnSubCategoryGetData` (0.5 s between pages, no page cap overrun, de-duplicated), PDF downloads paced 1.2–2.0 s with jitter. An API 403 is `SourceBlockedError`; an attachment 403/5xx/timeout fails that filing only (retried next run), and three refusals in a row stop the run after committing finished work. | `bse.py` |
 | Rules | `DROP` noise, `CALENDAR` board-meeting intimations (date to the calendar), `FAST_TRACK` known events, else `PASS1`. Compound headlines that also carry results, an outcome or a board meeting are never dropped. | `rules.py`, `config/taxonomy.toml` |
+| Duplicate | BSE asks for one submission per applicable subcategory, so one event can arrive several times in minutes. Once its text is extracted, a filing whose word 5-grams are ≥85% inside an earlier filing by the same company from the last 3 days (this run, or finished filings via their cached text) is marked DUPLICATE of it: no AI call, no card, no memory change. Revised filings and corrigenda are never duplicates. | `pipeline.py` (`_duplicate_of`) |
 | Pass 1 | Headline, BSE subject and page 1 return `{is_material, event_type, confidence, reason}`. | `config/prompts/pass1.md` |
 | Extract | PyMuPDF text; pages under 80 characters with an image are OCR'd (GLM-4.6V, then Mistral, then Gemini Flash-Lite). Boilerplate lines (addresses, salutations, signatures) are removed. Text is cached in `data/text_cache/` so re-analysis never downloads or OCRs again; a mostly scanned document whose OCR failed is retried, not judged from its headline. | `extract.py` |
 | Pass 2 | System = base + event module + sector lens + schema; user = filing + time-travel memory + peers + the owner's starred/noise examples + text. Prompts above ~12k tokens use the long-context route. | `prompts/engine.py`, `config/prompts/pass2*.md` |
-| Validate | Lenient on shape (nulls, numbers as strings, lakh/million scaled to crore, copied schema placeholders treated as missing), strict on meaning. | `models.py` |
+| Validate | Lenient on shape (nulls, numbers as strings, lakh/million scaled to crore, copied schema placeholders treated as missing), strict on meaning. When the filing declares one unit other than crore ("(INR in Lakhs)"), the prompt names it and ₹ crore figures must match the filing at that unit's scale. | `models.py`, `grounding.py` |
 | Check | Numbers, math and claims (§6); a failing card gets one second opinion from another provider, which may correct only the card. | `grounding.py`, `quant.py` |
 | Merge | Delta merged into the dossier with provenance and `known_since` (§5). | `dossier.py` |
 | Signals + score | Deterministic signals (§7) and the 0–100 actionability score with the 4 gates; impact comes from the score. | `signals.py`, `forensics.py`, `scoring.py` |
@@ -241,7 +242,7 @@ broken) promises and predictions.
 ## 8. Storage and budgets
 
 **D1** (`db/migrations/0001`–`0004`): `filings` (queue and ledger: PENDING / NOT_MATERIAL /
-ANALYZED / FAILED, with subject and symbol), `cards` (with market session, actionability score,
+ANALYZED / FAILED / DUPLICATE, with subject and symbol; DUPLICATE needs no schema change), `cards` (with market session, actionability score,
 signal flag), `companies` (with former names, BSE group, liquidity, credibility, watchlist),
 `catalysts`, `card_feedback` (owner's Star/Noise), `pipeline_runs`, `provider_usage`, `kv`.
 Every write is a whitelisted SQL file taking one JSON array; unchanged values cost no write

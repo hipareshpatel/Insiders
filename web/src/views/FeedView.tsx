@@ -229,7 +229,7 @@ function Rail({ today }: { today: string }) {
   const s = system.data;
   const count = (status: string) => s?.ledger_today.find((r) => r.status === status)?.n ?? 0;
   const filed = s?.ledger_today.reduce((a, r) => a + r.n, 0) ?? 0;
-  const noise = count("DROPPED_RULE") + count("NOT_MATERIAL");
+  const noise = count("DROPPED_RULE") + count("NOT_MATERIAL") + count("DUPLICATE");
   const high7d = s?.cards_7d.find((r) => r.impact_level === "HIGH")?.n ?? 0;
   const events = (upcoming.data?.events ?? []).slice(0, 8);
   return (

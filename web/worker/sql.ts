@@ -19,6 +19,7 @@ import backfillCompanies from "../../db/queries/backfill_companies.sql?raw";
 import filingsPending from "../../db/queries/filings_pending.sql?raw";
 import filingsKnownDay from "../../db/queries/filings_known_day.sql?raw";
 import filingsPendingCompany from "../../db/queries/filings_pending_company.sql?raw";
+import filingsRecentCompany from "../../db/queries/filings_recent_company.sql?raw";
 import filingsRemaining from "../../db/queries/filings_remaining.sql?raw";
 import exportCards from "../../db/queries/export_cards.sql?raw";
 import exportCompanies from "../../db/queries/export_companies.sql?raw";
@@ -55,6 +56,7 @@ export const STATEMENTS: Record<string, string> = {
 export const QUERIES: Record<string, string> = {
   filings_pending: filingsPending,
   filings_pending_company: filingsPendingCompany,
+  filings_recent_company: filingsRecentCompany,
   filings_remaining: filingsRemaining,
   filings_known_day: filingsKnownDay,
   backfill_companies: backfillCompanies,

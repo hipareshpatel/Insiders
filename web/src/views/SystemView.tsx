@@ -35,7 +35,7 @@ export function SystemView() {
       </header>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Stat label="Filings today" value={discoveredToday} sub={`${count("DROPPED_RULE")} noise · ${count("NOT_MATERIAL")} not material`} />
+        <Stat label="Filings today" value={discoveredToday} sub={`${count("DROPPED_RULE")} noise · ${count("NOT_MATERIAL")} not material · ${count("DUPLICATE")} duplicate`} />
         <Stat label="Analysed today" value={count("ANALYZED")} sub={`${cards7d} cards in 7 days · ${high7d} high impact`} />
         <Stat label="Queue" value={s.queue.pending} cap={s.queue.cap} sub="pending analysis" tone={s.queue.pending > 500 ? "warn" : undefined} />
         <Stat label="Failed" value={s.queue.failed} cap={s.queue.cap} sub="retried up to 3 runs, then left for review" tone={s.queue.failed ? "warn" : undefined} />

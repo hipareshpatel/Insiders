@@ -56,6 +56,8 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | Gemini free-tier limits (Google publishes no table) | per-minute limits read from Gemini's own 429 quota detail: 15/min for 3.1 and 3.5 Flash-Lite, 5/min for 3.6 Flash; daily limits stay guesses (a per-day 429 retires the model until midnight Pacific and shows its value on the System page) | per-minute fixed; per-day open |
 | Every company in sector `default` (no sector lens): BSE's scrip list now returns `INDUSTRY: null` for all 5,111 | `sync-companies` reads each company's classification from BSE's quote header (`ComHeadernew`: Sector > Industry > Group > Sub-group), once per company; lenses match the most specific level first; a stored sector is never overwritten with `default` | fixed |
 | Lakh figures written as crore (Kanoria Q3FY25 "loss ₹2,863 Cr" from "(INR in Lakhs)"; 100x) and passed grounding, which matched any scale | the pass-2 prompt names the filing's declared unit and the conversion; grounding requires ₹ crore figures to match a single-unit filing at that unit's scale (the real card now scores 0.30 with both headline amounts flagged, so it goes to the second check) | fixed |
+| One event analysed up to 5 times (SML Mahindra's CEO change filed 5 times in 8 minutes, once per BSE subcategory; Shivam's NCD approval twice) | a filing whose text is ≥85% inside an earlier one by the same company within 3 days is marked DUPLICATE (no AI call, no card); revised filings and corrigenda excepted | fixed |
+| Wrong-scale and lens-less figures already in the 5 companies' memory | smoke test reset: their cards, catalysts and dossiers deleted and all 543 filings requeued, then rebuilt on the fixed code | done 2026-10-16 |
 | Smoke-test rate | 15 filings (9 cards, 6 not material) in the first 9.5 min, about 95 filings/hour with 3 workers | measured |
 
 ## Points to discuss with the owner
@@ -239,7 +241,7 @@ at its end and in PLAN.md.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 230 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 233 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

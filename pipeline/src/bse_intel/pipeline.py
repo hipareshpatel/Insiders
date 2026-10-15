@@ -22,6 +22,7 @@ import gzip
 import hashlib
 import json
 import logging
+import re
 import time
 import uuid
 from collections import OrderedDict
@@ -75,7 +76,21 @@ MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing th
 NOISE_CHUNK = 500        # rows per noise-audit file in R2
 NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category", "subcategory",
                 "filed_at", "reason", "pdf_url")
-DONE = ("ANALYZED", "NOT_MATERIAL")
+DONE = ("ANALYZED", "NOT_MATERIAL", "DUPLICATE")
+# BSE asks for one submission per applicable subcategory, so one event can arrive five times in
+# minutes (SML Mahindra's CEO change, 21 Mar 2025: resignation of MD, of CEO, change in directorate,
+# change in management, outcome). A filing whose text sits inside an earlier one from the same
+# company is recorded as its duplicate: no AI call, no card, no memory change.
+DUPLICATE_DAYS = 3
+DUPLICATE_SHARE = 0.85       # share of the new filing's word 5-grams already in the earlier one
+DUPLICATE_MIN_SHINGLES = 40  # shorter texts (a cover letter, an empty scan) are never matched
+DUPLICATE_CHARS = 60_000
+_REVISION = re.compile(r"\b(?:revised|revision|corrigendum|addendum|rectif\w*|correction|erratum|modified)\b", re.I)
+
+
+def _shingles(text: str, n: int = 5) -> set[int]:
+    words = re.findall(r"[a-z0-9]+", (text or "").lower())
+    return {hash(" ".join(words[i:i + n])) for i in range(len(words) - n + 1)}
 LONG_PROMPT_TOKENS = 12_000
 SNAPSHOT_KEY = "daily_feed/latest_snapshot.json"
 SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
@@ -102,6 +117,7 @@ class Stats:
     discovery_errors: int = 0
     outside_universe: int = 0
     xbrl: int = 0           # filings whose figures came from their XBRL file
+    duplicates: int = 0     # repeat submissions of an earlier filing's text (no AI call)
     days_discovered: list[str] = field(default_factory=list)
     stopped_reason: str | None = None
     last_error: str | None = None
@@ -214,6 +230,7 @@ class Pipeline:
         self._universe: tuple[set[str], float] | None = None
         self._examples: dict[tuple[str, str], dict[str, list[dict]]] = {}
         self._learned: dict | None = None   # Loop 1 state: post-mortem queue, lessons, dampened categories
+        self._texts: dict[str, list[tuple[str, str, set[int]]]] = {}  # scrip -> (filed_at, news_id, shingles) this run
 
     # ------------------------------------------------------------------ writes
 
@@ -532,6 +549,12 @@ class Pipeline:
             self._refusals = 0
             doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         try:
+            original = self._duplicate_of(filing, doc)
+            if original:
+                with self._lock:
+                    self.stats.duplicates += 1
+                return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": filing.event_type,
+                                "reason": f"duplicate of {original}", "updated_at": now_iso()})
             return self._analyze_document(filing, company, industry, doc, bulk, memory_complete)
         finally:
             with self._lock:
@@ -539,6 +562,36 @@ class Pipeline:
             if doc.ocr_error is None:
                 self._cache_text(filing.news_id, doc)
             doc.close()
+
+    def _duplicate_of(self, filing: Filing, doc: Document) -> str | None:
+        """The news_id of an earlier filing by the same company, within DUPLICATE_DAYS, that already
+        holds this filing's text; None when there is none. Filings of this run are registered before
+        they are analysed, so parallel workers cannot both analyse one event. Corrections are never
+        duplicates."""
+        if _REVISION.search(f"{filing.headline} {filing.subject or ''}"):
+            return None
+        mine = _shingles(doc.select_text(DUPLICATE_CHARS))
+        if len(mine) < DUPLICATE_MIN_SHINGLES:
+            return None
+        since = (datetime.fromisoformat(filing.filed_at) - timedelta(days=DUPLICATE_DAYS)).isoformat()
+        earlier = lambda at, news_id: since <= at < filing.filed_at or (at == filing.filed_at and news_id < filing.news_id)
+        with self._lock:
+            seen = list(self._texts.get(filing.scrip_code, []))
+        candidates = [(n, s) for at, n, s in seen if earlier(at, n)]
+        known = {n for _, n, _ in seen}
+        for row in self.sink.query("filings_recent_company", [filing.scrip_code, since, filing.filed_at, 20]):
+            if row["news_id"] in known or row["news_id"] == filing.news_id:
+                continue
+            cached = self._cached_text(row["news_id"])
+            if cached is not None:
+                candidates.append((row["news_id"], _shingles(Document.from_cache(cached).select_text(DUPLICATE_CHARS))))
+        with self._lock:
+            self._texts.setdefault(filing.scrip_code, []).append((filing.filed_at, filing.news_id, mine))
+        for news_id, theirs in candidates:
+            if len(mine & theirs) >= DUPLICATE_SHARE * len(mine):
+                log.info("%s is a duplicate of %s (same company, same text)", filing.news_id, news_id)
+                return news_id
+        return None
 
     def _xbrl(self, filing: Filing, strict: bool = False) -> "xbrl_fast_path.XbrlResult | None":
         """The filing's XBRL figures (cached beside the text cache). A download problem fails only a

@@ -21,6 +21,52 @@ def _results(n, when, scrip_base=999100):
                     scrip=str(scrip_base + i), name=f"Demo {i} Ltd") for i in range(n)]
 
 
+LETTER = RESULT_TEXT + (" The Board of Directors at its meeting held today considered and approved the statement of"
+                        " unaudited financial results for the quarter, together with the limited review report of the"
+                        " statutory auditors, and took note of the compliance certificate placed before it. The meeting"
+                        " commenced at 11:00 a.m. and concluded at 1:15 p.m. Kindly take the same on record.")
+
+
+@pytest.mark.parametrize("workers", [1, 3])
+def test_repeat_submissions_of_one_event_are_marked_duplicate(settings, workers):
+    """SML Mahindra filed one CEO change five times in eight minutes, once per BSE subcategory. Only the
+    first is analysed; a revised filing and another company's identical text are not duplicates."""
+    settings = replace(settings, workers=workers)
+    now = now_ist() - timedelta(minutes=30)
+    filings = [_filing("d1", "Outcome of Board Meeting", now, "Result"),
+               _filing("d2", "Unaudited Financial Results", now + timedelta(minutes=2), "Result"),
+               _filing("d3", "Financial Results for the quarter", now + timedelta(minutes=5), "Result"),
+               _filing("d4", "Revised Financial Results", now + timedelta(minutes=9), "Result"),
+               _filing("e1", "Unaudited Financial Results", now + timedelta(minutes=3), "Result", scrip="999002",
+                       name="Other Ltd")]
+    pipeline, sink, fake = build(settings, filings, {f.pdf_url: _pdf(LETTER) for f in filings},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)] * 5}, env={"NVIDIA_API_KEY": "n"})
+    pipeline.run("live", time_budget_s=60)
+    status = {r["news_id"]: (r["status"], r["reason"]) for r in rows(sink, "select news_id, status, reason from filings")}
+    same = sorted(n for n in ("d1", "d2", "d3") if status[n][0] == "DUPLICATE")
+    assert len(same) == 2, status  # one of the three is analysed, whichever a worker reached first
+    original = ({"d1", "d2", "d3"} - set(same)).pop()
+    assert status[original][0] == "ANALYZED" and all(status[n][1] == f"duplicate of {original}" for n in same)
+    assert status["d4"][0] == "ANALYZED" and status["e1"][0] == "ANALYZED"
+    assert len(fake.calls) == 3 and pipeline.stats.duplicates == 2
+    assert {r["news_id"] for r in rows(sink, "select news_id from cards")} == {original, "d4", "e1"}
+
+
+def test_a_later_run_finds_the_duplicate_through_the_text_cache(settings):
+    settings = replace(settings, workers=1)
+    now = now_ist() - timedelta(minutes=30)
+    first = [_filing("c1", "Outcome of Board Meeting", now, "Result")]
+    pipeline, sink, _ = build(settings, first, {first[0].pdf_url: _pdf(LETTER)},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
+    pipeline.run("live", time_budget_s=60)
+    later = first + [_filing("c2", "Raising of Funds", now + timedelta(minutes=26), "Result")]
+    pipeline2, _, fake2 = build(settings, later, {f.pdf_url: _pdf(LETTER) for f in later},
+                                {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
+    pipeline2.run("live", time_budget_s=60)
+    status = {r["news_id"]: (r["status"], r["reason"]) for r in rows(sink, "select news_id, status, reason from filings")}
+    assert status["c2"] == ("DUPLICATE", "duplicate of c1") and fake2.calls == []
+
+
 def test_refused_attachment_fails_one_filing_and_three_in_a_row_stop_the_run(settings):
     settings = replace(settings, workers=1)
     now = now_ist() - timedelta(minutes=30)

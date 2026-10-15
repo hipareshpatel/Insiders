@@ -29,6 +29,7 @@ transient (minute limits, cooldowns: wait ~60s and retry) or a ceiling
 from __future__ import annotations
 
 import base64
+import json
 import logging
 import os
 import re
@@ -471,6 +472,8 @@ class AIGateway:
             if in_tok is not None and out_tok is not None:
                 limiter.settle(est, in_tok + out_tok, extra_quota=extra)
             text = (resp.choices[0].message.content or "") if resp.choices else ""
+            if not isinstance(text, str):  # a proxy that passed a parsed JSON reply through
+                text = json.dumps(text, ensure_ascii=False)
             if target.strip_reasoning:
                 text = strip_reasoning(text)
             if schema is None:

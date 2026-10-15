@@ -128,7 +128,7 @@ limits = { rpm = 10, rpd = 500 }
 
 [[routes.pass1]]
 provider = "cloudflare"
-model = "@cf/meta/llama-3.1-8b-instruct"
+model = "@cf/meta/llama-3.1-8b-instruct-fp8"  # the plain 8B was deprecated on 2026-05-30
 max_tokens = 200
 context_tokens = 7000
 spare = true
@@ -176,7 +176,7 @@ limits = { rpm = 10, rpd = 500 }
 
 [[routes.pass1_bulk]]
 provider = "cloudflare"
-model = "@cf/meta/llama-3.1-8b-instruct"
+model = "@cf/meta/llama-3.1-8b-instruct-fp8"  # the plain 8B was deprecated on 2026-05-30
 max_tokens = 200
 context_tokens = 7000
 spare = true

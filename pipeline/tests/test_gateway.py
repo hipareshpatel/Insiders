@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pytest
-from conftest import api_error, gateway_config, openai
+from conftest import api_error, completion, gateway_config, openai
 
 from bse_intel.ai.gateway import AllProvidersFailed
 from bse_intel.models import Pass1Result
@@ -39,6 +39,15 @@ def test_per_minute_quota_429_only_cools_down(make_gateway):
     gw.complete_json("r", "s", "u", Pass1Result)
     assert not gw.limiters["a:m-a"].quota.exhausted()
     assert gw.limiters["a:m-a"].cooling_down()
+
+
+def test_a_reply_passed_through_as_parsed_json_is_still_read(make_gateway):
+    config = gateway_config(route({"provider": "a", "model": "m-a"}))
+    reply = completion("")
+    reply.choices[0].message.content = dict(GOOD)  # Workers AI hands JSON back as an object
+    gw, _ = make_gateway(config, {"m-a": [reply]})
+    result = gw.complete_json("r", "s", "u", Pass1Result)
+    assert result.value.is_material
 
 
 def test_95_percent_ceiling_moves_traffic_before_the_hard_limit(make_gateway):

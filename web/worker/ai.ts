@@ -12,7 +12,10 @@ interface ChatRequest {
 }
 
 interface AiResult {
-  response?: string;
+  // Older models reply { response: "..." }; a JSON reply may arrive already parsed as an object.
+  // Newer ones (gpt-oss, Qwen 3) reply in OpenAI shape: { choices: [{ message: { content } }] }.
+  response?: unknown;
+  choices?: { message?: { content?: unknown } }[];
   usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
 }
 
@@ -37,12 +40,14 @@ export async function aiChatCompletions(c: Context<AppEnv>) {
       temperature: req.temperature ?? 0.1,
     });
     const result: AiResult = typeof raw === "string" ? { response: raw } : raw;
+    const reply = result.choices?.[0]?.message?.content ?? result.response ?? "";
+    const content = typeof reply === "string" ? reply : JSON.stringify(reply);
     return c.json({
       id: `cf-${crypto.randomUUID()}`,
       object: "chat.completion",
       created: Math.floor(Date.now() / 1000),
       model: req.model,
-      choices: [{ index: 0, message: { role: "assistant", content: result.response ?? "" }, finish_reason: "stop" }],
+      choices: [{ index: 0, message: { role: "assistant", content }, finish_reason: "stop" }],
       usage: result.usage
         ? {
             prompt_tokens: result.usage.prompt_tokens ?? 0,
@@ -61,6 +66,9 @@ export async function aiChatCompletions(c: Context<AppEnv>) {
     }
     if (/rate.?limit|too many requests|capacity/i.test(message)) {
       return c.json({ error: { message, type: "rate_limit" } }, 429);
+    }
+    if (/deprecat|retired|no longer (?:available|supported)/i.test(message)) {
+      return c.json({ error: { message, type: "invalid_request_error" } }, 410);
     }
     if (/not found|no such model|unknown model/i.test(message)) {
       return c.json({ error: { message, type: "invalid_request_error" } }, 404);

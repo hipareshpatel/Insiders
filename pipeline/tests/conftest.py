@@ -66,6 +66,8 @@ class FakeProvider:
             raise item
         if callable(item):
             item = item(kwargs)
+        if isinstance(item, SimpleNamespace):  # a whole completion, as given
+            return item
         return completion(item if isinstance(item, str) else json.dumps(item))
 
 

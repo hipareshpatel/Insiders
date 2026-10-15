@@ -13,7 +13,9 @@ import companiesForMarket from "../../db/queries/companies_for_market.sql?raw";
 import companyGet from "../../db/queries/company_get.sql?raw";
 import backfillCompanies from "../../db/queries/backfill_companies.sql?raw";
 import filingsPending from "../../db/queries/filings_pending.sql?raw";
+import filingsKnownDay from "../../db/queries/filings_known_day.sql?raw";
 import filingsPendingCompany from "../../db/queries/filings_pending_company.sql?raw";
+import filingsRemaining from "../../db/queries/filings_remaining.sql?raw";
 import kvGet from "../../db/queries/kv_get.sql?raw";
 import peerCards from "../../db/queries/peer_cards.sql?raw";
 import usageForDay from "../../db/queries/usage_for_day.sql?raw";
@@ -36,6 +38,8 @@ export const STATEMENTS: Record<string, string> = {
 export const QUERIES: Record<string, string> = {
   filings_pending: filingsPending,
   filings_pending_company: filingsPendingCompany,
+  filings_remaining: filingsRemaining,
+  filings_known_day: filingsKnownDay,
   backfill_companies: backfillCompanies,
   usage_for_day: usageForDay,
   usage_for_month: usageForMonth,

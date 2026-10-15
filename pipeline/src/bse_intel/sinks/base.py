@@ -26,6 +26,8 @@ STATEMENTS = (
 QUERIES = (
     "filings_pending",
     "filings_pending_company",
+    "filings_remaining",
+    "filings_known_day",
     "backfill_companies",
     "usage_for_day",
     "usage_for_month",
@@ -35,8 +37,16 @@ QUERIES = (
     "companies_for_market",
 )
 
+# Statements that add to what is stored: repeating one after an ambiguous failure (a timeout after
+# D1 committed) would count twice, so they are retried only when the request never got through.
+NOT_IDEMPOTENT = frozenset({"usage_add"})
+
 # Keep each JSON payload comfortably under D1's per-value size limit.
 MAX_PAYLOAD_BYTES = 900_000
+
+
+class SinkRejected(RuntimeError):
+    """The database refused a statement's rows (a constraint, a bad value). Not worth retrying."""
 
 
 class Sink(ABC):
@@ -48,8 +58,17 @@ class Sink(ABC):
     def query(self, name: str, params: list) -> list[dict]:
         """Run a whitelisted read query from db/queries."""
 
-    @abstractmethod
-    def pending_filings(self, day_from: str, day_to: str, max_attempts: int, limit: int) -> list[dict]: ...
+    def pending_filings(self, day_from: str, day_to: str, max_attempts: int, limit: int,
+                        after: tuple[str, str] = ("", "")) -> list[dict]:
+        """Queued filings in a date window, oldest first, starting after ``after`` (filed_at, news_id)."""
+        return self.query("filings_pending", [day_from, day_to, max_attempts, limit, *after])
+
+    def filings_remaining(self, day_from: str, day_to: str, max_attempts: int) -> bool:
+        rows = self.query("filings_remaining", [day_from, day_to, max_attempts])
+        return bool(rows and rows[0].get("remaining"))
+
+    def known_ids(self, day: str) -> set[str]:
+        return {r["news_id"] for r in self.query("filings_known_day", [day])}
 
     def pending_for_company(self, scrip_code: str, day_from: str, day_to: str, max_attempts: int, limit: int) -> list[dict]:
         return self.query("filings_pending_company", [scrip_code, day_from, day_to, max_attempts, limit])
@@ -86,6 +105,16 @@ class Sink(ABC):
 
     def kv_set(self, key: str, value: str, updated_at: str) -> int:
         return self.execute("kv_set", [{"key": key, "value": value, "updated_at": updated_at}])
+
+    def add_writes(self, day: str, rows_written: int, updated_at: str) -> None:
+        """Add a job's D1 writes to the day's counter, which gates backfill against the free tier."""
+        if rows_written <= 0:
+            return
+        try:
+            current = int(self.kv_get(f"d1_writes:{day}") or 0)
+        except ValueError:
+            current = 0
+        self.kv_set(f"d1_writes:{day}", str(current + rows_written), updated_at)
 
 
 def chunk_rows(rows: list[dict], encode) -> list[list[dict]]:

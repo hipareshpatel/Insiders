@@ -34,6 +34,7 @@ class Document:
         self._dpi = dpi
         self._ocr_cache: dict[int, str] = {}
         self.ocr_pages_used = 0
+        self.ocr_error: Exception | None = None  # last OCR failure, if any
         self.error: str | None = None
         self._doc = None
         self._digital: list[str] = []
@@ -81,6 +82,7 @@ class Document:
             try:
                 text = self._ocr(png) or text
             except Exception as exc:
+                self.ocr_error = exc
                 log.warning("OCR failed on page %d: %s", index + 1, exc)
         self._ocr_cache[index] = text
         return text

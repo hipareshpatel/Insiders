@@ -14,7 +14,7 @@ from urllib.parse import quote
 
 import httpx
 
-from .base import QUERIES, STATEMENTS, Sink, chunk_rows
+from .base import NOT_IDEMPOTENT, QUERIES, STATEMENTS, Sink, SinkRejected, chunk_rows
 
 log = logging.getLogger(__name__)
 
@@ -37,17 +37,19 @@ class PlatformSink(Sink):
     def close(self) -> None:
         self._http.close()
 
-    def _request(self, method: str, url: str, **kwargs) -> httpx.Response:
+    def _request(self, method: str, url: str, idempotent: bool = True, **kwargs) -> httpx.Response:
         for attempt in range(4):
             try:
                 resp = self._http.request(method, url, **kwargs)
             except httpx.TransportError as exc:
-                if attempt == 3:
+                # A connect failure never reached the Worker; anything later may have been applied.
+                if attempt == 3 or not (idempotent or isinstance(exc, (httpx.ConnectError, httpx.ConnectTimeout))):
                     raise
                 log.warning("platform API %s %s failed (%s); retrying", method, url, exc)
                 time.sleep(2 ** (attempt + 1))
                 continue
-            if resp.status_code >= 500 or resp.status_code == 429:
+            # 429 and 503 mean the request was not processed; other 5xx may have been applied.
+            if resp.status_code in (429, 503) or (resp.status_code >= 500 and idempotent):
                 if attempt == 3:
                     resp.raise_for_status()
                 time.sleep(2 ** (attempt + 1))
@@ -60,8 +62,10 @@ class PlatformSink(Sink):
             raise ValueError(f"statement not allowed: {statement}")
         written = 0
         for batch in chunk_rows(rows, _encode):
-            resp = self._request("POST", f"/exec/{statement}", content=_encode(batch).encode(),
-                                 headers={"Content-Type": "application/json"})
+            resp = self._request("POST", f"/exec/{statement}", idempotent=statement not in NOT_IDEMPOTENT,
+                                 content=_encode(batch).encode(), headers={"Content-Type": "application/json"})
+            if resp.status_code == 400:
+                raise SinkRejected(f"{statement}: {resp.text[:300]}")
             resp.raise_for_status()
             written += int(resp.json().get("rows_written", 0))
         return written
@@ -72,9 +76,6 @@ class PlatformSink(Sink):
         resp = self._request("POST", f"/query/{name}", json={"params": params})
         resp.raise_for_status()
         return resp.json().get("rows", [])
-
-    def pending_filings(self, day_from, day_to, max_attempts, limit):
-        return self.query("filings_pending", [day_from, day_to, max_attempts, limit])
 
     def usage(self, day):
         return self.query("usage_for_day", [day])

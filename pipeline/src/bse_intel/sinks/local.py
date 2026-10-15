@@ -8,7 +8,7 @@ import threading
 from pathlib import Path
 
 from ..settings import Settings
-from .base import QUERIES, STATEMENTS, Sink, chunk_rows
+from .base import QUERIES, STATEMENTS, Sink, SinkRejected, chunk_rows
 
 
 def _encode(row) -> str:
@@ -24,8 +24,17 @@ class LocalSink(Sink):
         self._db = sqlite3.connect(self.root / "d1.sqlite3", check_same_thread=False)
         self._db.row_factory = sqlite3.Row
         self._lock = threading.Lock()
-        for migration in sorted((settings.db_dir / "migrations").glob("*.sql")):
+        self._migrate(settings.db_dir / "migrations")
+
+    def _migrate(self, folder: Path) -> None:
+        """Apply each migration once, as wrangler does for D1 (ALTER TABLE cannot run twice)."""
+        self._db.execute("CREATE TABLE IF NOT EXISTS _migrations (name TEXT PRIMARY KEY)")
+        done = {r[0] for r in self._db.execute("SELECT name FROM _migrations")}
+        for migration in sorted(folder.glob("*.sql")):
+            if migration.name in done:
+                continue
             self._db.executescript(migration.read_text())
+            self._db.execute("INSERT INTO _migrations (name) VALUES (?)", [migration.name])
         self._db.commit()
 
     def close(self) -> None:
@@ -39,10 +48,14 @@ class LocalSink(Sink):
         sql = self._settings.sql("statements", statement)
         written = 0
         with self._lock:
-            for batch in chunk_rows(rows, _encode):
-                before = self._db.total_changes
-                self._db.execute(sql, [_encode(batch)])
-                written += self._db.total_changes - before
+            try:
+                for batch in chunk_rows(rows, _encode):
+                    before = self._db.total_changes
+                    self._db.execute(sql, [_encode(batch)])
+                    written += self._db.total_changes - before
+            except sqlite3.IntegrityError as exc:
+                self._db.rollback()
+                raise SinkRejected(f"{statement}: {exc}") from exc
             self._db.commit()
         return written
 
@@ -52,9 +65,6 @@ class LocalSink(Sink):
         with self._lock:
             cur = self._db.execute(self._settings.sql("queries", name), params)
             return [dict(r) for r in cur.fetchall()]
-
-    def pending_filings(self, day_from, day_to, max_attempts, limit):
-        return self.query("filings_pending", [day_from, day_to, max_attempts, limit])
 
     def usage(self, day):
         return self.query("usage_for_day", [day])

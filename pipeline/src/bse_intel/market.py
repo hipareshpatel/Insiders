@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 
 from .settings import Settings
 from .sinks.base import Sink
-from .timeutil import now_iso, now_ist
+from .timeutil import now_iso, now_ist, utc_day
 
 log = logging.getLogger(__name__)
 
@@ -100,5 +100,6 @@ def enrich(settings: Settings, sink: Sink) -> int:
                 row.update(market_cap_cr=market_cap, size_category=size_bucket(market_cap, buckets))
             rows.append(row)
     written = sink.execute("companies_upsert", rows)
+    sink.add_writes(utc_day(), written, now)  # counts toward the daily budget that gates backfill
     log.info("market data: %d companies updated (%d D1 rows written)", len(rows), written)
     return len(rows)

@@ -50,6 +50,15 @@ class SourceBlockedError(RuntimeError):
     """BSE refused the request (HTTP 403), usually because of the caller's network."""
 
 
+class AttachmentError(RuntimeError):
+    """One attachment could not be fetched (refused, server error, timeout). The filing is retried
+    on a later run instead of being analysed from its headline alone."""
+
+    def __init__(self, message: str, refused: bool = False):
+        super().__init__(message)
+        self.refused = refused
+
+
 def attachment_url(attachment: str | None, pdf_flag: int | None) -> str | None:
     if not attachment:
         return None
@@ -158,14 +167,27 @@ class BseClient:
                 time.sleep(2 ** (attempt + 1))
                 continue
             resp.raise_for_status()
-            return resp.json()
+            try:
+                return resp.json()
+            except ValueError:  # an HTML error page served with 200; treat like a server error
+                if attempt == 3:
+                    raise
+                log.warning("BSE returned a non-JSON body, retrying")
+                time.sleep(2 ** (attempt + 1))
         raise RuntimeError("unreachable")
 
-    def announcements(self, day_from: date, day_to: date | None = None, category: str = "-1") -> Iterator[Filing]:
-        """Yield every announcement disseminated between the two dates (inclusive)."""
+    def announcements(self, day_from: date, day_to: date | None = None, category: str = "-1",
+                      known: set[str] | None = None, max_pages: int = 400) -> Iterator[Filing]:
+        """Yield every announcement disseminated between the two dates (inclusive).
+
+        Pages come newest first. With ``known`` (news ids already recorded), paging stops at the
+        first page that holds nothing new, so a run that re-reads today asks BSE for one or two
+        pages instead of every page of the day.
+        """
         day_to = day_to or day_from
-        page, seen, total = 1, 0, None
-        while True:
+        page, total = 1, None
+        ids: set[str] = set()
+        while page <= max_pages:
             data = self._get_json(ANN_ENDPOINT, {
                 "pageno": page,
                 "strCat": category,
@@ -184,30 +206,44 @@ class BseClient:
                     total = 0
             if not rows:
                 break
+            fresh = unknown = 0
             for row in rows:
                 filing = parse_row(row)
-                if filing:
+                if filing and filing.news_id not in ids:  # rows shift between pages while BSE adds filings
+                    ids.add(filing.news_id)
+                    fresh += 1
+                    unknown += known is None or filing.news_id not in known
                     yield filing
-            seen += len(rows)
-            if total and seen >= total:
+            if total and len(ids) >= total:
                 break
+            if not fresh:
+                break  # the same page again: BSE gave no row count and is repeating itself
+            if not unknown:
+                break  # everything on this page is already recorded, and older pages were too
             page += 1
             time.sleep(self._page_delay)
 
     def download(self, url: str, max_bytes: int = 30_000_000) -> bytes | None:
-        """Fetch an attachment; falls back between AttachLive and AttachHis."""
+        """Fetch an attachment; falls back between AttachLive and AttachHis.
+
+        Returns None when the file does not exist (404 on both paths) or is too large to read.
+        Raises AttachmentError when it exists but could not be fetched (403, 5xx, timeout), so the
+        filing is retried later rather than analysed without its text.
+        """
         self.warm_up()
         candidates = [url]
         if ATTACH_LIVE in url:
             candidates.append(url.replace(ATTACH_LIVE, ATTACH_HIS))
         elif ATTACH_HIS in url:
             candidates.append(url.replace(ATTACH_HIS, ATTACH_LIVE))
+        problem: AttachmentError | None = None
         for candidate in candidates:
             try:
                 with self._client.stream("GET", candidate, headers={"Referer": WARMUP_URL}) as resp:
-                    if resp.status_code == 403:
-                        raise SourceBlockedError(f"BSE refused attachment download ({candidate})")
                     if resp.status_code == 404:
+                        continue
+                    if resp.status_code == 403:
+                        problem = AttachmentError(f"BSE refused the attachment ({candidate})", refused=True)
                         continue
                     resp.raise_for_status()
                     chunks, size = [], 0
@@ -221,6 +257,9 @@ class BseClient:
                     return b"".join(chunks)
             except httpx.HTTPError as exc:
                 log.warning("Attachment download failed (%s): %s", candidate, exc)
+                problem = AttachmentError(f"attachment download failed: {exc}")
+        if problem:
+            raise problem
         return None
 
 

@@ -24,7 +24,7 @@ def _pipeline(settings, sink):
 def cmd_run(args, settings, sink) -> int:
     stats = _pipeline(settings, sink).run(args.mode, args.time_budget, args.max_backfill_days)
     print(json.dumps(stats.as_dict(), indent=2))
-    return 1 if stats.stopped_reason == "BSE blocked the request" else 0
+    return 0 if stats.status in ("OK", "PARTIAL") else 1  # a run ending in ERROR fails the workflow
 
 
 def cmd_discover(args, settings, sink) -> int:
@@ -86,6 +86,7 @@ def cmd_sync_companies(args, settings, sink) -> int:
         row["sector"] = engine.sector_for(row.get("industry")).name
         row["updated_at"] = now
     written = sink.execute("companies_upsert", rows)
+    sink.add_writes(utc_day(), written, now)
     print(json.dumps({"companies": len(rows), "rows_written": written}))
     return 0
 

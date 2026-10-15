@@ -12,8 +12,11 @@ _FENCE = re.compile(r"```(?:json)?\s*(.*?)```", re.S | re.I)
 def strip_reasoning(text: str) -> str:
     """Drop <think> blocks emitted by reasoning models (DeepSeek-R1 and similar)."""
     text = _THINK.sub("", text)
-    if "<think>" in text.lower():  # unterminated: the answer never started
-        text = text[: text.lower().index("<think>")]
+    lower = text.lower()
+    if "</think>" in lower:  # the opening tag was part of the prompt template: keep only the answer
+        text = text[lower.rindex("</think>") + len("</think>"):]
+    elif "<think>" in lower:  # unterminated: the answer never started
+        text = text[: lower.index("<think>")]
     return text.strip()
 
 

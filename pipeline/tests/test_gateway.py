@@ -156,3 +156,50 @@ def test_usage_rows_report_limits(make_gateway):
     gw.complete_json("r", "s", "u", Pass1Result)
     (row,) = gw.usage_rows("2026-10-14", "now")
     assert row["requests"] == 1 and row["input_tokens"] == 100 and row["limit_rpd"] == 14400
+
+
+def test_outage_is_transient_so_the_filing_keeps_its_attempts(make_gateway):
+    config = gateway_config(route({"provider": "a", "model": "m-a"}, {"provider": "b", "model": "m-b"}))
+    timeout = openai.APITimeoutError(request=__import__("httpx").Request("POST", "https://a.invalid"))
+    gw, _ = make_gateway(config, {"m-a": [timeout], "m-b": [api_error(openai.InternalServerError, 502)]})
+    with pytest.raises(AllProvidersFailed) as info:
+        gw.complete_json("r", "s", "u", Pass1Result)
+    assert info.value.transient and not info.value.attempted
+
+
+def test_groq_json_validation_failure_is_not_mistaken_for_unsupported_json_mode(make_gateway):
+    config = gateway_config(route({"provider": "a", "model": "m-a", "json_mode": True}))
+    err = api_error(openai.BadRequestError, 400, "json_validate_failed: Failed to generate JSON")
+    gw, fake = make_gateway(config, {"m-a": [err, GOOD]})
+    with pytest.raises(AllProvidersFailed):
+        gw.complete_json("r", "s", "u", Pass1Result)
+    assert len(fake.calls) == 1 and gw.routes["r"][0].json_mode
+
+
+def test_answer_after_closing_think_tag_without_an_opening_one(make_gateway):
+    config = gateway_config(route({"provider": "a", "model": "r1", "strip_reasoning": True}))
+    text = 'The filing says {"is_material": false} at first, but on reflection...</think>{"is_material": true, "event_type": "RESULTS"}'
+    gw, _ = make_gateway(config, {"r1": [text]})
+    assert gw.complete_json("r", "s", "u", Pass1Result).value.is_material
+
+
+def test_no_request_starts_after_the_deadline(make_gateway):
+    import time
+
+    config = gateway_config(route({"provider": "a", "model": "m-a"}))
+    gw, fake = make_gateway(config, {"m-a": [GOOD]})
+    gw.deadline = time.monotonic() - 1
+    with pytest.raises(AllProvidersFailed) as info:
+        gw.complete_json("r", "s", "u", Pass1Result)
+    assert info.value.transient and fake.calls == []
+    gw.deadline = time.monotonic() + 100
+    gw.complete_json("r", "s", "u", Pass1Result)
+    assert fake.calls[0]["timeout"] <= 100
+
+
+def test_non_json_body_fails_over(make_gateway):
+    config = gateway_config(route({"provider": "a", "model": "m-a"}, {"provider": "b", "model": "m-b"}))
+    gw, fake = make_gateway(config, {"m-a": [lambda kw: None], "m-b": [GOOD]})
+    fake.chat.completions.create = lambda **kw: "<html>gateway error</html>" if kw["model"] == "m-a" else \
+        __import__("conftest").completion(__import__("json").dumps(GOOD))
+    assert gw.complete_json("r", "s", "u", Pass1Result).provider == "b"

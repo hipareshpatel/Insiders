@@ -29,7 +29,8 @@ class FakeBse:
         self.filings = filings
         self.pdfs = pdfs
 
-    def announcements(self, day, day_to=None):
+    def announcements(self, day, day_to=None, known=None):
+        self.pages = getattr(self, "pages", 0) + 1
         for f in self.filings:
             if f.filing_date == day.isoformat():
                 yield f.model_copy()
@@ -97,8 +98,14 @@ def test_live_run_end_to_end(settings):
     stats = pipeline.run("live", time_budget_s=60)
 
     status = {r["news_id"]: r["status"] for r in rows(sink, "select news_id, status from filings")}
-    assert status == {"n-noise": "DROPPED_RULE", "n-res": "ANALYZED", "n-amb": "NOT_MATERIAL"}
+    assert status == {"n-res": "ANALYZED", "n-amb": "NOT_MATERIAL"}
     assert stats.analyzed == 1 and stats.pass1_rejected == 1 and stats.dropped_rule == 1
+    # Rule-dropped noise lives in R2 (one file per day), not in the D1 ledger.
+    noise = json.loads(sink.get_object(f"noise/{now.date().isoformat()}/000.json"))
+    assert [r[0] for r in noise["rows"]] == ["n-noise"] and noise["fields"][0] == "news_id"
+    assert sink.kv_get(f"noise_count:{now.date().isoformat()}") == "1"
+    (queued,) = rows(sink, "select subject, symbol from filings where news_id = 'n-res'")
+    assert queued["subject"].startswith("Unaudited") and queued["symbol"] == "DEMOCEM"
 
     (card,) = rows(sink, "select * from cards")
     body = json.loads(card["card_json"])

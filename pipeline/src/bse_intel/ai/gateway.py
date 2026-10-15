@@ -13,7 +13,10 @@ hammered), keeps "spare" targets for last, and walks it:
   wait fails over instead of stalling the run;
 * fails over on 429 / timeout / connection / 5xx, honouring Retry-After as
   a cooldown, and retires a model for the day when the provider says its
-  daily quota is spent;
+  daily quota is spent; an outage counts as transient, so it never uses up
+  a filing's attempts;
+* stops starting requests past the run's deadline (``gateway.deadline``) and
+  caps each request's timeout to the time left, so a run ends on time;
 * validates output against a pydantic schema, asks the same model once to
   repair invalid JSON, then fails over;
 * records usage so quotas survive across stateless runs.
@@ -180,6 +183,7 @@ class AIGateway:
         self.disabled: dict[str, str] = {}
         self._failures: dict[str, int] = {}
         self._circuit_open_until: dict[str, float] = {}
+        self.deadline: float | None = None  # time.monotonic() after which no request starts
 
         today = {f"{u['provider']}:{u['model']}": u for u in usage_today or []}
         month = {f"{u['provider']}:{u['model']}": u for u in usage_month or []}
@@ -304,7 +308,7 @@ class AIGateway:
 
     def _client(self, target: Target):
         with self._lock:
-            key = f"{target.provider}|{target.base_url}"
+            key = f"{target.provider}|{target.base_url}|{target.timeout}"
             if key not in self._clients:
                 self._clients[key] = self._client_factory(target.base_url, target.api_key, target.timeout)
             return self._clients[key]
@@ -353,9 +357,14 @@ class AIGateway:
             if skip:
                 outcomes.append((target.key, *skip))
                 continue
+            left = self._time_left()
+            if left is not None and left <= 0:
+                outcomes.append((target.key, TRANSIENT, "run deadline reached"))
+                continue
             pquota = self.provider_quota.get(target.provider)
             extra = (pquota,) if pquota else ()
-            if not self.limiters[target.key].acquire(est, max_wait=MAX_PACING_WAIT, extra_quota=extra):
+            wait = MAX_PACING_WAIT if left is None else min(MAX_PACING_WAIT, left)
+            if not self.limiters[target.key].acquire(est, max_wait=wait, extra_quota=extra):
                 outcomes.append((target.key, TRANSIENT, "paced"))
                 continue
             try:
@@ -366,12 +375,16 @@ class AIGateway:
                 continue
         raise AllProvidersFailed(route, outcomes)
 
+    def _time_left(self) -> float | None:
+        return None if self.deadline is None else self.deadline - time.monotonic()
+
     def _call_target(self, target: Target, messages: list[dict], schema, est: int, extra: tuple) -> AIResult:
         limiter = self.limiters[target.key]
         usage = self.usage[target.key]
         client = self._client(target)
         convo = list(messages)
-        for attempt in range(2):  # second pass = JSON-mode fallback or JSON repair, same model
+        repaired = json_fallback = False
+        while True:  # at most one JSON-mode fallback and one JSON repair, same model
             kwargs: dict[str, Any] = {
                 "model": target.model,
                 "messages": convo,
@@ -382,6 +395,9 @@ class AIGateway:
                 kwargs["response_format"] = {"type": "json_object"}
             if target.extra_body:
                 kwargs["extra_body"] = target.extra_body
+            left = self._time_left()
+            if left is not None:
+                kwargs["timeout"] = max(15.0, min(target.timeout, left))
             started = time.monotonic()
             try:
                 resp = client.chat.completions.create(**kwargs)
@@ -404,20 +420,29 @@ class AIGateway:
                 raise _Retryable("model not found") from exc
             except openai.BadRequestError as exc:
                 message = str(exc)
-                if kwargs.get("response_format") and ("response_format" in message or "json" in message.lower()):
+                if kwargs.get("response_format") and not json_fallback and _JSON_MODE_UNSUPPORTED.search(message):
                     log.warning("%s rejected JSON mode; retrying without it", target.key)
                     target.json_mode = False
+                    json_fallback = True
                     if not limiter.acquire(est, max_wait=MAX_PACING_WAIT, extra_quota=extra):
                         raise _Retryable("paced", transient=True) from exc
                     continue
                 self._note_failure(target, f"400 bad request: {message}")
                 raise _Retryable("bad request") from exc
             except (openai.APITimeoutError, openai.APIConnectionError, openai.InternalServerError) as exc:
+                # An outage, not a problem with the filing: fail over, and if nothing else can
+                # serve it the filing waits for a later run without losing an attempt.
                 self._note_failure(target, f"{type(exc).__name__}: {exc}")
-                raise _Retryable(type(exc).__name__) from exc
+                raise _Retryable(type(exc).__name__, transient=True) from exc
             except openai.APIStatusError as exc:
                 self._note_failure(target, f"HTTP {exc.status_code}: {exc}")
-                raise _Retryable(f"HTTP {exc.status_code}") from exc
+                raise _Retryable(f"HTTP {exc.status_code}", transient=exc.status_code >= 500) from exc
+            except openai.APIError as exc:  # e.g. a body that is not JSON at all
+                self._note_failure(target, f"{type(exc).__name__}: {exc}")
+                raise _Retryable(type(exc).__name__, transient=True) from exc
+            if not hasattr(resp, "choices"):  # the SDK returns the raw text when a 200 body is not JSON
+                self._note_failure(target, "malformed response")
+                raise _Retryable("malformed response", transient=True)
 
             latency = time.monotonic() - started
             in_tok = getattr(resp.usage, "prompt_tokens", None) if getattr(resp, "usage", None) else None
@@ -442,7 +467,8 @@ class AIGateway:
                 value = schema.model_validate(extract_json_object(text))
             except (ValueError, ValidationError) as exc:
                 problem = _short_error(exc)
-                if attempt == 0:
+                if not repaired:
+                    repaired = True
                     log.info("%s returned invalid output (%s); asking for a repair", target.key, problem)
                     convo = convo + [
                         {"role": "assistant", "content": text[:6000]},
@@ -458,7 +484,13 @@ class AIGateway:
                 raise _Retryable("invalid output") from exc
             self._failures[target.key] = 0
             return AIResult(value, target.provider, target.model, latency, text)
-        raise _Retryable("invalid output")
+
+
+# A provider saying it does not support JSON mode, not a model that failed to produce valid JSON
+# (Groq's "json_validate_failed" is the latter).
+_JSON_MODE_UNSUPPORTED = re.compile(r"response_format.*(?:not supported|unsupported|invalid|unknown)|"
+                                    r"(?:not supported|unsupported|unknown).*response_format|json_object.*not supported",
+                                    re.I | re.S)
 
 
 class _Retryable(Exception):

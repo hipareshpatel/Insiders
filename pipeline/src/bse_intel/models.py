@@ -62,6 +62,11 @@ class Filing(BaseModel):
     symbol: str | None = None
     headline: str = ""
     subject: str = ""
+
+    @field_validator("headline", "subject", "category", "subcategory", mode="before")
+    @classmethod
+    def _text(cls, v: Any) -> str:
+        return v or ""  # ledger rows written before these columns existed hold NULL
     category: str = ""
     subcategory: str = ""
     filed_at: str
@@ -81,7 +86,9 @@ class Filing(BaseModel):
             "news_id": self.news_id,
             "scrip_code": self.scrip_code,
             "company_name": self.company_name,
+            "symbol": self.symbol,
             "headline": self.headline,
+            "subject": self.subject,
             "category": self.category,
             "subcategory": self.subcategory,
             "filed_at": self.filed_at,

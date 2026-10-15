@@ -3,4 +3,5 @@ INSERT INTO kv (key, value, updated_at)
 SELECT json_extract(value, '$.key'), json_extract(value, '$.value'), json_extract(value, '$.updated_at')
 FROM json_each(?1)
 WHERE true
-ON CONFLICT (key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at;
+ON CONFLICT (key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+ WHERE kv.value IS NOT excluded.value;  -- an unchanged value costs no write

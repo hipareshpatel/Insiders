@@ -14,4 +14,7 @@ FROM json_each(?1)
 WHERE true
 ON CONFLICT (id) DO UPDATE SET
        description    = excluded.description,
-       source_news_id = excluded.source_news_id;
+       source_news_id = excluded.source_news_id
+ -- Discovery re-reads today's filings on every run; an unchanged catalyst costs no write.
+ WHERE catalysts.description IS NOT excluded.description
+    OR catalysts.source_news_id IS NOT excluded.source_news_id;

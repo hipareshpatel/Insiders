@@ -61,6 +61,7 @@ log = logging.getLogger(__name__)
 
 TRANSIENT_WAIT_S = 60
 TRANSIENT_RETRIES = 3
+BUSY_STOP = 4  # filings in a row left queued because every provider was busy: stop the run, rerun later
 BATCH = 40
 HISTORY_LIMIT = 200      # one company's filings fetched per page (a year rarely has more)
 HISTORY_INLINE = 30      # history analysed ahead of a live filing; a longer backlog goes to the backfill
@@ -203,6 +204,8 @@ class Pipeline:
         self._tried: set[str] = set()       # filings attempted this run (one attempt each)
         self._priority: list[str] = []      # live companies whose history should be backfilled first
         self._refusals = 0
+        self._busy = 0
+        self._busy_halt = False
         self._blocked: SourceBlockedError | None = None
         self._usage_lock = Lock()
         self._universe: tuple[set[str], float] | None = None
@@ -447,7 +450,7 @@ class Pipeline:
 
     def _halted(self, bulk: bool) -> bool:
         """The analyst route for this phase has hit its quota ceilings: work stays queued."""
-        return ("pass2_bulk" if bulk else "pass2") in self._exhausted
+        return self._busy_halt or ("pass2_bulk" if bulk else "pass2") in self._exhausted
 
     def _process_one(self, filing: Filing, bulk: bool, memory_complete: bool, deadline: float | None = None) -> Outcome:
         pass1 = "pass1_bulk" if bulk else "pass1"
@@ -455,7 +458,10 @@ class Pipeline:
             return self._deferred(filing, "deferred: AI quota ceilings")
         for attempt in range(TRANSIENT_RETRIES + 1):
             try:
-                return self.analyze(filing, bulk, memory_complete)
+                outcome = self.analyze(filing, bulk, memory_complete)
+                with self._lock:
+                    self._busy = 0
+                return outcome
             except AllProvidersFailed as exc:
                 if exc.quota_exhausted:
                     with self._lock:
@@ -469,6 +475,13 @@ class Pipeline:
                     self._sleep(TRANSIENT_WAIT_S)
                     continue
                 if exc.transient:
+                    with self._lock:
+                        self._busy += 1
+                        if self._busy >= BUSY_STOP and not self._busy_halt:
+                            self._busy_halt = True
+                            self.stats.stopped_reason = (f"every AI provider busy or failing for {self._busy} filings in a row; "
+                                                         "work stays queued, rerun later")
+                            log.warning("stopping: %s", self.stats.stopped_reason)
                     return self._deferred(filing, "deferred: providers busy")
                 return self._failed(filing, exc)
             except AttachmentError as exc:

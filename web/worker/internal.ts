@@ -8,7 +8,7 @@ import type { AppEnv } from "./env";
 import { QUERIES, STATEMENTS } from "./sql";
 
 const MAX_BODY_BYTES = 1_000_000;
-const OBJECT_PREFIXES = ["memory/", "daily_feed/", "backup/", "noise/", "meta/"];
+const OBJECT_PREFIXES = ["memory/", "daily_feed/", "backup/", "noise/", "meta/", "learning/"];
 const has = (table: Record<string, string>, key: string) => Object.hasOwn(table, key);
 
 const allowedKey = (key: string) =>

@@ -24,6 +24,7 @@ import logging
 import statistics
 from datetime import date, datetime, timedelta
 
+from . import yahoo
 from .settings import Settings
 from .sinks.base import Sink
 from .timeutil import IST, now_iso, now_ist, utc_day
@@ -138,32 +139,22 @@ def post_mortem(settings: Settings, sink: Sink, since: str | None = None) -> dic
     by_scrip: dict[str, list[dict]] = {}
     for card in cards:
         by_scrip.setdefault(str(card["scrip_code"]), []).append(card)
-    scrips, batch = sorted(by_scrip), int(conf.get("batch", 100))
+    symbols = {str(c["scrip_code"]): c.get("symbol") for c in sink.query("companies_for_market_all", [20000])}
+    companies = [{"scrip_code": s, "symbol": symbols.get(s)} for s in sorted(by_scrip)]
+    found = yahoo.download(yf, companies, int(conf.get("batch", 100)), start=history_start.isoformat())
     updates, missed = [], []
-    for at in range(0, len(scrips), batch):
-        chunk = scrips[at:at + batch]
-        tickers = [f"{s}.BO" for s in chunk]
-        try:
-            data = yf.download(tickers, start=history_start.isoformat(), interval="1d", auto_adjust=False,
-                               group_by="ticker", progress=False, threads=True)
-        except Exception as exc:
-            log.warning("price download failed for batch at %d: %s", at, exc)
-            continue
-        for scrip, t in zip(chunk, tickers):
-            try:
-                series = _series(data[t] if len(tickers) > 1 else data)
-            except Exception:
-                series = []
-            for card in by_scrip[scrip]:
-                rx = reaction(card["filed_at"], series, bench, ticker) if series else None
-                if not rx:
-                    continue
-                if missed_alpha(card.get("impact_level"), rx):
-                    rx["missed_alpha"] = 1
-                    missed.append({"news_id": card["news_id"], "scrip_code": scrip, "filed_at": card["filed_at"],
-                                   "impact": card.get("impact_level"), "t1": rx.get("t1"), "t2": rx.get("t2")})
-                updates.append({"news_id": card["news_id"], "reaction": rx})
-                stats["complete"] += rx["complete"]
+    for scrip in sorted(by_scrip):
+        series = _series(found[scrip][1]) if scrip in found else []
+        for card in by_scrip[scrip]:
+            rx = reaction(card["filed_at"], series, bench, ticker) if series else None
+            if not rx:
+                continue
+            if missed_alpha(card.get("impact_level"), rx):
+                rx["missed_alpha"] = 1
+                missed.append({"news_id": card["news_id"], "scrip_code": scrip, "filed_at": card["filed_at"],
+                               "impact": card.get("impact_level"), "t1": rx.get("t1"), "t2": rx.get("t2")})
+            updates.append({"news_id": card["news_id"], "reaction": rx})
+            stats["complete"] += rx["complete"]
     written = sink.execute("cards_reaction", updates) if updates else 0
     stats.update(updated=written, missed_alpha=len(missed))
     now = now_iso()

@@ -40,7 +40,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
-python -m pytest -q              # 211 tests
+python -m pytest -q              # 215 tests
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -75,6 +75,7 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 | `python -m bse_intel analyze-pdf FILE ...` | Analyse one local PDF and print the card |
 | `python -m bse_intel backup --out DIR` | Export dossiers as JSON files |
 | `python -m bse_intel health` | Configured AI targets and today's quota usage |
+| `python -m bse_intel models [--filter llama]` | Each provider's live model list; flags IDs in `providers.toml` it no longer serves |
 
 ## Filling history on the laptop (before go-live)
 
@@ -85,6 +86,9 @@ The blueprint's playbook ([docs/BLUEPRINT.md §15](docs/BLUEPRINT.md), status in
 2. In `pipeline/`, point the pipeline at it:
    `export BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 INGEST_TOKEN=dev-local-token`
    plus one key per AI provider (`GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`).
+   Run `python -m bse_intel models` and replace any model it flags as missing in `config/providers.toml`
+   (free-tier catalogues change often). The Cloudflare Workers AI target needs `npx wrangler login` in
+   `web/` first, because the local Worker calls Workers AI remotely; without it that target is skipped.
 3. `python -m bse_intel sync-companies && python -m bse_intel market-data --all` (industries, market caps, universe ≥ ₹100 Cr).
 4. `python -m bse_intel price-history` (daily prices since a year before `BACKFILL_START`, stored in
    `data/prices`), so each history card gets the price, market cap and returns of its own date.

@@ -203,3 +203,22 @@ def test_non_json_body_fails_over(make_gateway):
     fake.chat.completions.create = lambda **kw: "<html>gateway error</html>" if kw["model"] == "m-a" else \
         __import__("conftest").completion(__import__("json").dumps(GOOD))
     assert gw.complete_json("r", "s", "u", Pass1Result).provider == "b"
+
+
+def test_rejected_key_disables_every_model_of_that_provider(make_gateway):
+    config = gateway_config(route(
+        {"provider": "a", "model": "m-a"}, {"provider": "a", "model": "m-a2"}, {"provider": "b", "model": "m-b"},
+    ))
+    gw, fake = make_gateway(config, {"m-a": [api_error(openai.PermissionDeniedError, 403)], "m-b": [GOOD, GOOD]})
+    assert gw.complete_json("r", "s", "u", Pass1Result).provider == "b"
+    assert gw.complete_json("r", "s", "u", Pass1Result).provider == "b"
+    assert "m-a2" not in [c["model"] for c in fake.calls]
+    assert {h["target"]: h["status"] for h in gw.health()}["a:m-a2"] == "disabled"
+
+
+def test_retired_model_410_is_disabled(make_gateway):
+    config = gateway_config(route({"provider": "a", "model": "old"}, {"provider": "b", "model": "m-b"}))
+    gw, fake = make_gateway(config, {"old": [api_error(openai.APIStatusError, 410, "gone")], "m-b": [GOOD, GOOD]})
+    gw.complete_json("r", "s", "u", Pass1Result)
+    gw.complete_json("r", "s", "u", Pass1Result)
+    assert gw.disabled["a:old"] == "model retired" and [c["model"] for c in fake.calls] == ["old", "m-b", "m-b"]

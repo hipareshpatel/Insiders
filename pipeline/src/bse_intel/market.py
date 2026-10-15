@@ -1,7 +1,7 @@
 """Financial footer enrichment: price, returns, market cap, size bucket.
 
-Prices come from one bulk yfinance download per batch of BSE tickers
-(``{scrip_code}.BO``); market cap is price times shares outstanding, where
+Prices come from bulk yfinance downloads by ticker (``SYMBOL.BO``, then ``SYMBOL.NS``, then
+``SCRIP.BO``; see yahoo.py); market cap is price times shares outstanding, where
 the share count is refreshed weekly per ticker. yfinance is unofficial and
 rate-limited, so the job is best-effort: anything it cannot fetch keeps its
 previous values (the upsert never erases fields).
@@ -15,6 +15,7 @@ import time
 from datetime import datetime, timedelta
 
 from .settings import Settings
+from . import yahoo
 from .technicals import rank_rs
 from .technicals import tags as price_tags
 from .sinks.base import Sink
@@ -78,53 +79,44 @@ def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
         return 0
     rows, share_lookups, now = [], 0, now_iso()
     missing: list[dict] = []  # companies Yahoo has no price for (decides whether a second source is needed)
-    for start in range(0, len(companies), int(yconf["batch"])):
-        batch = companies[start : start + int(yconf["batch"])]
-        tickers = [f"{c['scrip_code']}.BO" for c in batch]
+    found = yahoo.download(yf, companies, int(yconf["batch"]), period="13mo")
+    for company in companies:
+        ticker, frame = found.get(str(company["scrip_code"]), (None, None))
         try:
-            data = yf.download(tickers, period="13mo", interval="1d", auto_adjust=False,
-                               group_by="ticker", progress=False, threads=True)
-        except Exception as exc:
-            log.warning("price download failed for batch at %d: %s", start, exc)
-            missing += [{"scrip_code": c["scrip_code"], "symbol": c.get("symbol"), "why": "batch failed"} for c in batch]
+            closes = [float(v) for v in frame["Close"].dropna().tolist()]
+            price_date = frame["Close"].dropna().index[-1].date().isoformat() if closes else None
+        except Exception:
+            closes, price_date = [], None
+        if not closes:
+            missing.append({"scrip_code": company["scrip_code"], "symbol": company.get("symbol"), "why": "no price on Yahoo"})
             continue
-        for company, ticker in zip(batch, tickers):
+        row = {"scrip_code": company["scrip_code"], "last_price": round(closes[-1], 2),
+               "price_date": price_date, "updated_at": now, **returns(closes)}
+        try:
+            ohlcv = frame[["High", "Low", "Close", "Volume"]].dropna(subset=["Close"])
+            row["_tech"] = {**price_tags(*(ohlcv[c].astype(float).tolist() for c in ("High", "Low", "Close", "Volume"))),
+                            "as_of": price_date}
+        except Exception:
+            pass
+        turnover = median_turnover_cr(frame, int(yconf.get("turnover_days", 30)))
+        if turnover is not None:
+            row["median_turnover_cr"] = turnover
+        shares = company.get("shares_outstanding")
+        if _stale(company.get("shares_updated_at"), int(yconf["shares_refresh_days"])) \
+                and share_lookups < max_lookups:
+            share_lookups += 1
             try:
-                frame = data[ticker] if len(tickers) > 1 else data
-                closes = [float(v) for v in frame["Close"].dropna().tolist()]
-                price_date = frame["Close"].dropna().index[-1].date().isoformat() if closes else None
-            except Exception:
-                closes, price_date = [], None
-            if not closes:
-                missing.append({"scrip_code": company["scrip_code"], "symbol": company.get("symbol"), "why": "no price on Yahoo"})
-                continue
-            row = {"scrip_code": company["scrip_code"], "last_price": round(closes[-1], 2),
-                   "price_date": price_date, "updated_at": now, **returns(closes)}
-            try:
-                ohlcv = frame[["High", "Low", "Close", "Volume"]].dropna(subset=["Close"])
-                row["_tech"] = {**price_tags(*(ohlcv[c].astype(float).tolist() for c in ("High", "Low", "Close", "Volume"))),
-                                "as_of": price_date}
-            except Exception:
-                pass
-            turnover = median_turnover_cr(frame, int(yconf.get("turnover_days", 30)))
-            if turnover is not None:
-                row["median_turnover_cr"] = turnover
-            shares = company.get("shares_outstanding")
-            if _stale(company.get("shares_updated_at"), int(yconf["shares_refresh_days"])) \
-                    and share_lookups < max_lookups:
-                share_lookups += 1
-                try:
-                    looked_up = yf.Ticker(ticker).fast_info.get("shares")
-                    if looked_up:
-                        shares = float(looked_up)
-                        row.update(shares_outstanding=shares, shares_updated_at=now)
-                except Exception as exc:
-                    log.debug("share count lookup failed for %s: %s", ticker, exc)
-                time.sleep(0.4)
-            if shares:
-                market_cap = round(closes[-1] * shares / 1e7, 2)
-                row.update(market_cap_cr=market_cap, size_category=size_bucket(market_cap, buckets))
-            rows.append(row)
+                looked_up = yf.Ticker(ticker).fast_info.get("shares")
+                if looked_up:
+                    shares = float(looked_up)
+                    row.update(shares_outstanding=shares, shares_updated_at=now)
+            except Exception as exc:
+                log.debug("share count lookup failed for %s: %s", ticker, exc)
+            time.sleep(0.4)
+        if shares:
+            market_cap = round(closes[-1] * shares / 1e7, 2)
+            row.update(market_cap_cr=market_cap, size_category=size_bucket(market_cap, buckets))
+        rows.append(row)
     techs = [r["_tech"] for r in rows if "_tech" in r]
     rank_rs(techs)  # relative strength as a percentile among the companies priced in this run
     for r in rows:

@@ -181,6 +181,7 @@ class AIGateway:
         self.provider_quota: dict[str, QuotaCounter] = {}
         self.usage: dict[str, Usage] = {}
         self.disabled: dict[str, str] = {}
+        self.disabled_providers: dict[str, str] = {}   # a rejected key disables every model on it
         self._failures: dict[str, int] = {}
         self._circuit_open_until: dict[str, float] = {}
         self.deadline: float | None = None  # time.monotonic() after which no request starts
@@ -212,7 +213,7 @@ class AIGateway:
                     provider=entry["provider"],
                     model=entry["model"],
                     base_url=base_url or pconf["base_url"],
-                    api_key=(env.get(pconf["api_key_env"]) or None) if base_url else None,
+                    api_key=((env.get(pconf["api_key_env"]) or "").strip() or None) if base_url else None,
                     timeout=float(entry.get("timeout_s", pconf.get("timeout_s", 60))),
                     json_mode=bool(entry.get("json_mode", False)),
                     max_tokens=int(entry.get("max_tokens", 2000)),
@@ -284,7 +285,7 @@ class AIGateway:
             provider = key.split(":", 1)[0]
             pquota = self.provider_quota.get(provider)
             status = "ok"
-            if key in self.disabled:
+            if key in self.disabled or provider in self.disabled_providers:
                 status = "disabled"
             elif limiter.quota.exhausted() or (pquota and pquota.exhausted()):
                 status = "ceiling"
@@ -318,6 +319,8 @@ class AIGateway:
             return UNAVAILABLE, "not configured"
         if target.key in self.disabled:
             return UNAVAILABLE, self.disabled[target.key]
+        if target.provider in self.disabled_providers:
+            return UNAVAILABLE, self.disabled_providers[target.provider]
         if target.context_tokens and est_in > target.context_tokens:
             return UNAVAILABLE, "prompt exceeds context window"
         reason = self.limiters[target.key].quota.exhausted(est_total)
@@ -410,8 +413,10 @@ class AIGateway:
                 raise _Retryable("rate limited (429)", transient=True) from exc
             except (openai.AuthenticationError, openai.PermissionDeniedError) as exc:
                 self.disabled[target.key] = f"auth error {exc.status_code}"
+                self.disabled_providers[target.provider] = f"auth error {exc.status_code}"
                 self._note_failure(target, f"auth error {exc.status_code}: {exc}")
-                log.error("%s rejected the API key (%s); disabled for this run", target.key, exc.status_code)
+                log.error("%s rejected the API key (%s); every %s model disabled for this run",
+                          target.key, exc.status_code, target.provider)
                 raise _Retryable("auth error") from exc
             except openai.NotFoundError as exc:
                 self.disabled[target.key] = "model not found"
@@ -435,6 +440,11 @@ class AIGateway:
                 self._note_failure(target, f"{type(exc).__name__}: {exc}")
                 raise _Retryable(type(exc).__name__, transient=True) from exc
             except openai.APIStatusError as exc:
+                if exc.status_code == 410:  # the provider retired the model
+                    self.disabled[target.key] = "model retired"
+                    self._note_failure(target, f"410 model retired: {exc}")
+                    log.error("%s: model retired; update config/providers.toml", target.key)
+                    raise _Retryable("model retired") from exc
                 self._note_failure(target, f"HTTP {exc.status_code}: {exc}")
                 raise _Retryable(f"HTTP {exc.status_code}", transient=exc.status_code >= 500) from exc
             except openai.APIError as exc:  # e.g. a body that is not JSON at all

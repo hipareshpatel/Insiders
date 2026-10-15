@@ -30,7 +30,7 @@ from .timeutil import now_iso, today_ist, utc_day
 log = logging.getLogger(__name__)
 
 PAGE = 400
-OBJECT_PREFIXES = ("meta/", "memory/", "daily_feed/", "noise/")
+OBJECT_PREFIXES = ("meta/", "memory/", "daily_feed/", "noise/", "learning/")
 RECENT_LEDGER_DAYS = 10
 
 

@@ -267,3 +267,17 @@ def test_transcript_kind_and_chatter_is_stripped():
     text = doc.select_text(10_000)
     assert "We expect FY27 revenue growth of 20%" in text
     assert "next question" not in text and "listen-only" not in text and "Thank you, sir" not in text
+
+
+def test_local_object_keys_are_checked_lexically_and_listed_with_slashes(settings):
+    import pytest
+
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    sink.put_object("memory/500001.json", b"{}")
+    sink.put_object("learning/sector_rules.json", b"{}")
+    assert sink.list_objects("memory/") == ["memory/500001.json"]
+    for bad in ("../x.json", "memory/../../x", "/etc/x", "memory\\\\x.json", "C:/x", "memory//x"):
+        with pytest.raises(ValueError):
+            sink.put_object(bad, b"{}")

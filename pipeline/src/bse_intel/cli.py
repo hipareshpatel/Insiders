@@ -177,6 +177,31 @@ def cmd_health(args, settings, sink) -> int:
     return 0
 
 
+def cmd_models(args, settings, sink) -> int:
+    """Ask each configured provider for its model list and flag configured IDs it no longer serves."""
+    from .ai.gateway import AIGateway
+
+    gateway = AIGateway(settings.load_toml("providers.toml"))
+    targets: dict[str, dict] = {}
+    for route_targets in gateway.routes.values():
+        for t in route_targets:
+            if t.api_key:
+                targets.setdefault(t.provider, {"target": t, "models": set()})["models"].add(t.model)
+    report = {}
+    for provider, entry in sorted(targets.items()):
+        t = entry["target"]
+        try:
+            available = sorted(m.id for m in gateway._client(t).models.list())
+        except Exception as exc:  # some providers do not serve /models; report and move on
+            report[provider] = {"error": f"{type(exc).__name__}: {exc}"[:300], "configured": sorted(entry["models"])}
+            continue
+        report[provider] = {"configured_missing": sorted(m for m in entry["models"] if m not in available),
+                            "configured_ok": sorted(m for m in entry["models"] if m in available),
+                            "available": available if args.all else [m for m in available if not args.filter or args.filter in m.lower()]}
+    print(json.dumps(report, indent=2))
+    return 1 if any(r.get("configured_missing") for r in report.values()) else 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="bse-intel", description=__doc__)
     parser.add_argument("--sink", choices=["local", "platform"], help="override BSE_INTEL_SINK")
@@ -236,6 +261,10 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("post-mortem", help="Loop 1: T+1/T+3/T+5 excess returns after each card")
     p.add_argument("--since", help="revisit cards filed from this date (default: the last 14 days)")
     p.set_defaults(func=cmd_post_mortem)
+    p = sub.add_parser("models", help="list each provider's models and flag configured IDs it no longer serves")
+    p.add_argument("--filter", help="only list available models containing this text (e.g. llama, deepseek)")
+    p.add_argument("--all", action="store_true", help="list every available model")
+    p.set_defaults(func=cmd_models)
     sub.add_parser("sync-companies", help="load BSE's active equity scrip list").set_defaults(func=cmd_sync_companies)
 
     p = sub.add_parser("backup", help="export dossiers as JSON files")

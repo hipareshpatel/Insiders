@@ -25,6 +25,7 @@ import tempfile
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
+from . import yahoo
 from .market import TRADING_DAYS, size_bucket
 from .timeutil import IST
 
@@ -109,29 +110,25 @@ def fill(settings, sink, start: str, scrips: list[str] | None = None) -> dict:
     store = PriceStore(settings.price_dir)
     if not store.root:
         raise RuntimeError("PRICE_DIR is off; nothing to fill")
-    codes = scrips or [str(c["scrip_code"]) for c in sink.query("companies_for_market_all", [20000])]
+    companies = sink.query("companies_for_market_all", [20000])
+    if scrips:
+        known = {str(c["scrip_code"]): c for c in companies}
+        companies = [known.get(s, {"scrip_code": s}) for s in scrips]
     batch = int(settings.load_toml("market.toml")["yfinance"]["batch"])
-    stats = {"companies": len(codes), "stored": 0, "empty": 0}
-    for at in range(0, len(codes), batch):
-        chunk = codes[at:at + batch]
-        tickers = [f"{s}.BO" for s in chunk]
+    stats = {"companies": len(companies), "stored": 0, "empty": 0}
+    found = yahoo.download(yf, companies, batch, start=start)
+    for company in companies:
+        scrip = str(company["scrip_code"])
         try:
-            data = yf.download(tickers, start=start, interval="1d", auto_adjust=False,
-                               group_by="ticker", progress=False, threads=True)
-        except Exception as exc:
-            log.warning("price download failed for batch at %d: %s", at, exc)
-            continue
-        for scrip, ticker in zip(chunk, tickers):
-            try:
-                frame = (data[ticker] if len(tickers) > 1 else data).dropna(subset=["Close"])
-                rows = [(idx.date().isoformat(), float(c), float(v or 0))
-                        for idx, c, v in zip(frame.index, frame["Close"], frame["Volume"])]
-            except Exception:
-                rows = []
-            if rows:
-                store.save(scrip, rows)
-                stats["stored"] += 1
-            else:
-                stats["empty"] += 1
-        log.info("price history: %d/%d companies", min(at + batch, len(codes)), len(codes))
+            frame = found[scrip][1]
+            rows = [(idx.date().isoformat(), float(c), float(v or 0))
+                    for idx, c, v in zip(frame.index, frame["Close"], frame["Volume"])]
+        except Exception:
+            rows = []
+        if rows:
+            store.save(scrip, rows)
+            stats["stored"] += 1
+        else:
+            stats["empty"] += 1
+    log.info("price history: %d of %d companies stored", stats["stored"], stats["companies"])
     return stats

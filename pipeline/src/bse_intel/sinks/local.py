@@ -84,10 +84,11 @@ class LocalSink(Sink):
         return self.query("peer_cards", [sector, event_category, scrip_code, since, until, limit])
 
     def _path(self, key: str) -> Path:
-        path = (self.objects / key).resolve()
-        if self.objects.resolve() not in path.parents:
+        # Checked lexically: resolve() raced with concurrent writes on Windows and rejected good keys.
+        parts = key.split("/")
+        if not key or "\\" in key or ":" in key or key.startswith("/") or any(p in ("", ".", "..") for p in parts):
             raise ValueError(f"bad object key: {key}")
-        return path
+        return self.objects.joinpath(*parts)
 
     def get_object(self, key):
         path = self._path(key)
@@ -96,7 +97,7 @@ class LocalSink(Sink):
     def put_object(self, key, body, content_type="application/json"):
         path = self._path(key)
         path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_suffix(path.suffix + ".tmp")
+        tmp = path.with_suffix(f"{path.suffix}.{threading.get_ident()}.tmp")  # one temp file per writer
         tmp.write_bytes(body)
         tmp.replace(path)
 
@@ -108,5 +109,6 @@ class LocalSink(Sink):
         self.put_object(f"memory/{scrip_code}.json", _encode(dossier).encode())
 
     def list_objects(self, prefix):
-        return sorted(str(p.relative_to(self.objects)) for p in self.objects.rglob("*")
-                      if p.is_file() and not p.name.endswith(".tmp") and str(p.relative_to(self.objects)).startswith(prefix))
+        keys = (p.relative_to(self.objects).as_posix() for p in self.objects.rglob("*")
+                if p.is_file() and not p.name.endswith(".tmp"))
+        return sorted(k for k in keys if k.startswith(prefix))

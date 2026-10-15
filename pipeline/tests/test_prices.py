@@ -30,3 +30,30 @@ def test_as_of_uses_the_close_known_when_the_filing_came_out(tmp_path):
     assert point_in_time(company, "2026-01-10T11:00:00+05:30", store) is None  # long after it ends
     assert point_in_time({"scrip_code": "999"}, f"{day}T11:00:00+05:30", store) is None
     assert point_in_time(company, f"{day}T11:00:00+05:30", None) is None
+
+
+def test_yahoo_tries_symbol_then_nse_then_scrip_code():
+    import types
+
+    import pytest
+
+    from bse_intel import yahoo
+
+    pd = pytest.importorskip("pandas")
+    assert yahoo.candidates({"scrip_code": "500325", "symbol": "RELIANCE"}) == ["RELIANCE.BO", "RELIANCE.NS", "500325.BO"]
+    assert yahoo.candidates({"scrip_code": "999999", "symbol": None}) == ["999999.BO"]
+    days = pd.to_datetime(["2026-10-01", "2026-10-02"])
+    ok = pd.DataFrame({"Close": [10.0, 11.0], "Volume": [1.0, 2.0]}, index=days)
+    blank = pd.DataFrame({"Close": [float("nan")] * 2, "Volume": [0.0] * 2}, index=days)
+    served = {"RELIANCE.BO": ok, "TCS.NS": ok}   # TCS only on NSE; 500003 nowhere
+    asked = []
+
+    def download(tickers, **_):
+        asked.append(list(tickers))
+        return pd.concat({t: served.get(t, blank) for t in tickers}, axis=1)
+
+    found = yahoo.download(types.SimpleNamespace(download=download),
+                           [{"scrip_code": "500325", "symbol": "RELIANCE"}, {"scrip_code": "532540", "symbol": "TCS"},
+                            {"scrip_code": "500003", "symbol": "GONE"}], batch=50, period="1mo")
+    assert {s: t for s, (t, _) in found.items()} == {"500325": "RELIANCE.BO", "532540": "TCS.NS"}
+    assert asked == [["RELIANCE.BO", "TCS.BO", "GONE.BO"], ["TCS.NS", "GONE.NS"], ["500003.BO"]]

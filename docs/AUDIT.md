@@ -1,9 +1,20 @@
-# 360° audit: findings (in progress)
+# 360° audit: findings (resolved)
 
-Status: all 6 area reports received (frontend; contracts and docs; memory/checks/signals; AI layer;
-SQL/D1/Worker; ingestion/orchestration).
-Nothing below is fixed yet unless marked **fixed**. Each item was reported by an auditor and
-still needs verification before fixing.
+Status (2026-10-16): all 6 area reports were received and the findings were fixed in these commits.
+The list below is kept as the record of what was found; it is not a to-do list. What is still open
+is listed at the end and in [PLAN.md](PLAN.md) ("Pending work").
+
+| Findings | Fixed in |
+|---|---|
+| 1, 19, D1–D7, A1–A3 (D1 read/write cost, queue scans, no-op writes, budgets) | `2b46df3`, `627b7ef` |
+| 2, 18 (sync-companies workflow, stale docs) | `788f879` and the sync-companies workflow |
+| 3–13 (frontend honesty, Safari, error boundary, footer units) | `627b7ef` |
+| 14 (subject and symbol in the ledger) | `2b46df3` (migration 0003) |
+| 15–16, A4–A15 (orchestration, commits, attempts, live vs backfill) | `2b46df3`; saving every 5 filings `fc51611` |
+| 17, B1–B11 (formula, second opinion, outages, null shapes, event type, R1) | `2b46df3`, `a536c09` |
+| A16–A17 (triage drops, boilerplate) | `e614539` |
+| M1–M15 (grounding, bi-temporal memory, periods, claims, caps) | `61c3892`, `b6232ac`, `788f879` |
+| Low items (README count, ERROR exit code, assets binding, lakh/million...) | across the commits above |
 
 ## Critical / high
 
@@ -214,3 +225,12 @@ SQL statement/query whitelists, parameter counts and JSON field names (Python �
 key names; R2 prefixes; env var names for keys and platform; CLI commands; config files and keys;
 thresholds in docs; card contract with older stored cards (no crash paths); hooks order; dark-mode
 tokens; routing and SPA fallback; Telegram/WhatsApp/X fully removed.
+
+## Still open after the fixes
+
+- D5: responses are memoised and use the Cache API where available, but there is no per-client rate
+  limiting (the free plan has no built-in one). Revisit if the site gets abusive traffic.
+- D6/A18: the 500 MB D1 cap is watched (the System page shows the size) rather than removed; card
+  JSON stays inline. Move it to R2 if the size approaches the cap.
+- `size_category` is still only on companies (tracker, "Points to discuss" 3): size filters join.
+- The midnight-IST test failure (low, report 6) was fixed in `c1d3de3`.

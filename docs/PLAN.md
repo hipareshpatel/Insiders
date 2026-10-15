@@ -79,6 +79,27 @@ Exit: the deployed site shows the full history and new filings within the run in
    fallback if that is not practical.
 3. **Price fallback** (bhavcopy), only if Yahoo coverage turns out poor in Phase 2.
 
+## Pending work (one list)
+
+Everything not finished, from the tracker, the audit and the laptop smoke test. Phase numbers
+refer to the sections above.
+
+| # | Item | Who | When |
+|---|---|---|---|
+| 1 | Finish the 5-company backfill and review the site against the case studies | Laptop | Phase 1 |
+| 2 | `ai-check --provider cloudflare` after the Workers AI fix (`b4744d1`) | Laptop | Phase 1 |
+| 3 | `ministral-14b-2512` sometimes returns no JSON: find why (truncation at max_tokens?) or lower its weight | Laptop | Phase 1 |
+| 4 | Confirm BSE's XBRL field and tag names on real filings (System "xbrl" count; tracker row "XBRL fast path") | Laptop | Phase 1 |
+| 5 | Gemini free-tier limits from AI Studio → `providers.toml` | Owner, then laptop | Phase 2 |
+| 6 | Yahoo price coverage after `market-data --all`; build the bhavcopy fallback only if needed | Laptop | Phase 2 |
+| 7 | Copy `size_category` onto cards at write time so size filters use the feed index (tracker, point 3) | Laptop | before Phase 4 |
+| 8 | Live-run scheduler for Windows: a PowerShell script for Task Scheduler (or adapt `pipeline.yml` for a Windows runner); fix README/SPEC, which still say a Linux runner | Owner decides, laptop builds | before Phase 4 |
+| 9 | Cloudflare D1 and R2, Worker secrets, D1 id in `wrangler.jsonc`, deploy | Owner and laptop | Phase 4 |
+| 10 | Merge the PR into `main`; GitHub secrets for `deploy-web.yml` | Owner | Phase 4 |
+| 11 | `sync-to-cloud` daily until complete | Laptop | Phase 4 |
+| 12 | Per-client rate limiting on the public API (audit D5); card JSON to R2 if D1 nears 500 MB (D6) | Laptop | if needed after go-live |
+| 13 | Modules 8 (DGTR duties) and 42 (promoter-group contagion): need a data source | Owner decides | later |
+
 ## Risks
 
 - Free-tier changes: models get retired and limits change without notice. `ai-check` finds it;

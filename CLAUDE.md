@@ -5,7 +5,8 @@ with Hono and React (`web/`), shared SQL (`db/`). It must run at $0 a month on f
 
 Read before changing anything:
 - `docs/BLUEPRINT.md`: the spec (modules are numbered; "Module 35" means section 35).
-- `docs/PLAN.md`: the phases from smoke test to go-live and how it runs after; open decisions.
+- `docs/PLAN.md`: the phases from smoke test to go-live, how it runs after, open decisions and the
+  single "Pending work" list. Work from that list and tick items off there.
 - `docs/TRACKER.md`: decisions D1–D15, what is built and what is not.
 - `docs/SPEC.md`: the design as built. `README.md`: setup and the CLI commands table.
 - `pipeline/config/providers.toml`: AI providers, models, free-tier limits and routes; `docs/SPEC.md` §4

@@ -119,7 +119,8 @@ The blueprint's playbook ([docs/BLUEPRINT.md §15](docs/BLUEPRINT.md), status in
 2. **GitHub secrets and variables.** See [SPEC §12](docs/SPEC.md#12-operations).
 3. **Runner.** BSE's API refused a non-Indian datacenter IP in testing. Run the
    pipeline on a self-hosted runner on an Indian connection: register the runner and
-   set the repository variable `PIPELINE_RUNNER_LABELS` to `["self-hosted","linux"]`.
+   set the repository variable `PIPELINE_RUNNER_LABELS` to `["self-hosted","linux"]`. The owner's
+   laptop runs Windows, so this is still to be decided (see docs/PLAN.md, "Decisions still open").
    The repository is private, as it should be with a self-hosted runner.
 4. **Trigger.** cron-job.org → `POST /repos/{owner}/{repo}/actions/workflows/pipeline.yml/dispatches`
    every 15–30 minutes, using a fine-grained PAT with Actions read/write on this

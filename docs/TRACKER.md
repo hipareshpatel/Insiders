@@ -213,10 +213,8 @@ promoter-group contagion (needs a group map).
 | DB dictionary (companies extra columns, cards score columns, card_feedback table) | done | migration 0004 |
 
 ### §14 Audit invariants
-Tracked in AUDIT.md. Fixed so far: D1 read/write cost, orchestration resilience, gateway outages,
-second opinion merge, Worker hardening, frontend honesty/Safari/error boundary. Open: memory
-bi-temporal (M1–M15), triage overrides (A16), boilerplate (A17), prompt items (B2, B4, B7–B9),
-docs, sync-companies workflow.
+Tracked in AUDIT.md: every finding is fixed (commit list there); the few items left open are listed
+at its end and in PLAN.md.
 
 ### §15 Playbook commands
 | Step | Command | Status |

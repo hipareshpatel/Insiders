@@ -89,12 +89,16 @@ refer to the sections above.
 
 | # | Item | Who | When |
 |---|---|---|---|
-| 1 | Finish the 5-company backfill and review the site against the case studies | Laptop | Phase 1 |
+| 1 | Finish the 5-company backfill (rebuilt from scratch on 2026-10-16 after the unit, sector-lens and duplicate fixes; 5 workers; expected done about 07:00) and review the site against the case studies | Laptop, then owner | Phase 1 |
+| 1a | Retry the one Kanoria long document (2025-05-21) that failed on every long-context provider; it is retried automatically by the next run | Laptop | Phase 1 |
+| 1b | Measure 5 vs 3 workers over a full hour (filings/hour, 429 share) and keep the better (D18); the first 14 min gave ~125/h vs ~95/h, 9% 429s before the Z.ai one-at-a-time cap | Laptop | Phase 1 |
+| 1c | Full backfill order: owner leans to the ₹1,000–10,000 Cr band first (985 companies, large caps last); size it from the smoke-test rate and the 16.8% duplicate share, then decide | Owner decides | after Phase 1 |
 | 2 | ~~`ai-check --provider cloudflare` after the Workers AI fix~~ done 2026-10-16: both models pass | Laptop | Phase 1 |
 | 3 | `ministral-14b-2512` sometimes returns no JSON: find why (truncation at max_tokens?) or lower its weight | Laptop | Phase 1 |
 | 4 | Confirm BSE's XBRL field and tag names on real filings (System "xbrl" count; tracker row "XBRL fast path") | Laptop | Phase 1 |
 | 5 | Gemini daily limits (per-minute ones measured 2026-10-16): record the value from the first per-day 429 on the System page in `providers.toml` | Laptop | Phase 3 |
 | 6 | ~~Yahoo price coverage after `market-data --all`~~ done 2026-10-16: 97.6%, no fallback needed for now | Laptop | Phase 2 |
+| 6a | Industry for every company from BSE's quote header (`sync-companies`, about 5,100 lookups, saved every 200; finishing 2026-10-16 about 02:35), which also labels the 485 companies with a market cap but no size; confirm 0 remain unlabelled | Laptop | Phase 2 |
 | 7 | Copy `size_category` onto cards at write time so size filters use the feed index (tracker, point 3) | Laptop | before Phase 4 |
 | 8 | Live-run scheduler for Windows: a PowerShell script for Task Scheduler (or adapt `pipeline.yml` for a Windows runner); fix README/SPEC, which still say a Linux runner | Owner decides, laptop builds | before Phase 4 |
 | 9 | Cloudflare D1 and R2, Worker secrets, D1 id in `wrangler.jsonc`, deploy | Owner and laptop | Phase 4 |

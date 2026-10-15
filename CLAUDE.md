@@ -7,7 +7,7 @@ Read before changing anything:
 - `docs/BLUEPRINT.md`: the spec (modules are numbered; "Module 35" means section 35).
 - `docs/PLAN.md`: the phases from smoke test to go-live, how it runs after, open decisions and the
   single "Pending work" list. Work from that list and tick items off there.
-- `docs/TRACKER.md`: decisions D1–D15, what is built and what is not.
+- `docs/TRACKER.md`: decisions D1–D18, what is built and what is not.
 - `docs/SPEC.md`: the design as built. `README.md`: setup and the CLI commands table.
 - `pipeline/config/providers.toml`: AI providers, models, free-tier limits and routes; `docs/SPEC.md` §4
   explains the gateway rules. Owner decisions D13–D15 in the tracker cover providers, keys and this setup.
@@ -44,7 +44,9 @@ Read before changing anything:
   `npx wrangler login`; the account's workers.dev subdomain is `reply-bd3`. Vite hot-reloads Worker
   code changes, so a pull rarely needs a restart. Avoid restarting it during a backfill: the
   pipeline's retries to the Worker last about 14 s and a remote-mode start takes about 12 s.
-- Pipeline: `cd pipeline; .venv\Scripts\activate`, then `python -m bse_intel <command>`.
+- Pipeline: `cd pipeline; .venv\Scripts\activate`, then `python -m bse_intel <command>`. For long
+  runs use `pwsh -File pipeline\scripts\laptop.ps1 <command> [args]`: it loads and trims the keys,
+  points the pipeline at the local site, sets 5 workers and logs to `data\logs\<command>-<time>.log`.
 - Smoke-test backfill: `python -m bse_intel backfill-companies --scrips 506525,532776,505192,500672,530019`.
   Results are saved every 5 filings per company; re-running a filing is safe (memory replaces
   that filing's earlier entry).
@@ -55,12 +57,19 @@ Read before changing anything:
 
 - Done: all blueprint modules except 8 (DGTR) and 42 (promoter-group contagion), which have no data source.
 - Smoke-test findings and their fixes: the table in `docs/TRACKER.md` ("Laptop smoke test").
-- In progress: the 5-company smoke-test backfill (restarted on the save-every-5 fix); then the
-  site check on localhost and a comparison with the case studies.
+- In progress (2026-10-16 night): the 5-company smoke test, rebuilt from scratch after the lakh/crore,
+  sector-lens and duplicate fixes (their cards, catalysts and dossiers were deleted, all 543 filings
+  requeued); `sync-companies` filling every company's industry and size label. Then the site check
+  on localhost and the case-study comparison with the owner. Do not start the full backfill before
+  the owner has reviewed the smoke test (decision D6) and chosen the order (PLAN.md item 1c).
+- Gotchas found tonight: models copy lakh figures as crore (grounding now enforces the declared unit);
+  BSE's scrip list no longer carries industry; one event can be filed up to 8 times (duplicates.py);
+  commit before `git pull`, never autostash over another session's changes.
 - Next: the full backfill; `post-mortem --since 2025-01-01`; deploy the Worker (`insiders`,
   at https://insiders.reply-bd3.workers.dev); `sync-to-cloud`.
 - Confirmed 2026-10-16: Yahoo coverage 97.6% (4,988 of 5,111); `ai-check` passes for Cloudflare;
-  Gemini per-minute limits (15/min Flash-Lite, 5/min 3.6 Flash, read from Gemini's 429 quota detail).
+  Gemini per-minute limits (15/min Flash-Lite, 5/min 3.6 Flash, read from Gemini's 429 quota detail
+  and AI Studio); the duplicate rule skips 91 of the 543 smoke-test filings, all exact repeats.
 - To confirm: Gemini daily limits (Google publishes none; a per-day 429 shows the value on the
   System page); whether `ministral-14b-2512` keeps returning no JSON (1 in the first 10 min).
 - Keep this file and `docs/TRACKER.md` current as things change: they are the project's memory.

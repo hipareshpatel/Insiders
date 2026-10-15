@@ -82,7 +82,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 ### §4 AI gateway
 | Item | Status | Notes |
 |---|---|---|
-| 5 providers, 95% ceiling, pacing, failover, Workers AI spare | done | |
+| 6 providers, 95% ceiling, pacing, failover, Workers AI spare | done | Gemini added 2026-10-16 |
 | Dual-key pool | dropped | D1 |
 | Task-aware routing: long documents (>12k tokens) to long-context models | done | `pass2_long` |
 | Vision OCR: glm-4.6v-flash, then Mistral, then Gemini | done | thinking off; mistral-small-2603, gemini-3.1-flash-lite |

@@ -5,7 +5,7 @@ with Hono and React (`web/`), shared SQL (`db/`). It must run at $0 a month on f
 
 Read before changing anything:
 - `docs/BLUEPRINT.md`: the spec (modules are numbered; "Module 35" means section 35).
-- `docs/TRACKER.md`: decisions D1–D12, what is built and what is not.
+- `docs/TRACKER.md`: decisions D1–D15, what is built and what is not.
 - `docs/SPEC.md`: the design as built. `README.md`: setup and the CLI commands table.
 - `pipeline/config/providers.toml`: AI providers, models, free-tier limits and routes; `docs/SPEC.md` §4
   explains the gateway rules. Owner decisions D13–D15 in the tracker cover providers, keys and this setup.

@@ -167,12 +167,12 @@ limits = { rpm = 60 }
 
 [[routes.pass2]]
 provider = "mistral"
-model = "mistral-large-2512"  # free tier: 250k tokens/min, 1 request/s (medium allows only 20k/min)
-weight = 2
+model = "ministral-14b-2512"  # the free tier blocks mistral-large; 937k tokens/min, 0.5 requests/s
+weight = 1
 json_mode = true
 max_tokens = 3000
 context_tokens = 120000
-limits = { rpm = 50, tpm = 250_000 }
+limits = { rpm = 25, tpm = 937_500 }
 
 [[routes.pass2]]
 provider = "cloudflare"
@@ -184,12 +184,12 @@ limits = { rpm = 60, tpd = 60_000 }
 
 [[routes.pass2_bulk]]
 provider = "mistral"
-model = "mistral-large-2512"  # free tier: 250k tokens/min, 1 request/s (medium allows only 20k/min)
-weight = 4
+model = "ministral-14b-2512"  # the free tier blocks mistral-large; 937k tokens/min, 0.5 requests/s
+weight = 1
 json_mode = true
 max_tokens = 3000
 context_tokens = 120000
-limits = { rpm = 50, tpm = 250_000 }
+limits = { rpm = 25, tpm = 937_500 }
 
 [[routes.pass2_bulk]]
 provider = "zai"
@@ -235,12 +235,12 @@ limits = { rpm = 60 }
 
 [[routes.pass2_long]]
 provider = "mistral"
-model = "mistral-large-2512"  # free tier: 250k tokens/min, 1 request/s (medium allows only 20k/min)
-weight = 2
+model = "ministral-14b-2512"  # the free tier blocks mistral-large; 937k tokens/min, 0.5 requests/s
+weight = 1
 json_mode = true
 max_tokens = 4000
 context_tokens = 120000
-limits = { rpm = 50, tpm = 250_000 }
+limits = { rpm = 25, tpm = 937_500 }
 
 [[routes.pass2_long]]
 provider = "nvidia"

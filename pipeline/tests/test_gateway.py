@@ -222,3 +222,13 @@ def test_retired_model_410_is_disabled(make_gateway):
     gw.complete_json("r", "s", "u", Pass1Result)
     gw.complete_json("r", "s", "u", Pass1Result)
     assert gw.disabled["a:old"] == "model retired" and [c["model"] for c in fake.calls] == ["old", "m-b", "m-b"]
+
+
+def test_403_for_a_models_tier_disables_only_that_model(make_gateway):
+    config = gateway_config(route(
+        {"provider": "a", "model": "big"}, {"provider": "a", "model": "small"},
+    ))
+    err = api_error(openai.PermissionDeniedError, 403, "This model is not available in your subscription tier")
+    gw, fake = make_gateway(config, {"big": [err], "small": [GOOD]})
+    assert gw.complete_json("r", "s", "u", Pass1Result).model == "small"
+    assert gw.disabled["a:big"] == "model not in subscription tier" and "a" not in gw.disabled_providers

@@ -115,7 +115,7 @@ def test_post_mortem_rerun_records_a_lesson_used_by_later_prompts(settings):
     now = now_ist() - timedelta(minutes=30)
     with_lesson = json.dumps(dict(PASS2, lesson="A receivables build hidden behind revenue growth moved the stock, not the headline."))
     # every model the weighted rotation can pick answers the same, so the test does not depend on the order
-    script = {m: [with_lesson] for m in ("nvidia/nemotron-3-super-120b-a12b", "mistral-large-2512")}
+    script = {m: [with_lesson] for m in ("nvidia/nemotron-3-super-120b-a12b", "ministral-14b-2512")}
 
     first = _filing("n-pm", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
     pipeline, sink, fake = build(settings, [first], {first.pdf_url: _pdf(RESULT_TEXT)}, script)

@@ -50,7 +50,7 @@ def test_a_failing_history_filing_is_tried_once_per_run(settings):
     history = _filing("old", "Unaudited Financial Results", old, "Result")
     live = _filing("new", "Unaudited Financial Results", now_ist() - timedelta(minutes=5), "Result")
     pipeline, sink, _ = build(settings, [history, live], {live.pdf_url: _pdf(RESULT_TEXT)},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)], "mistral-large-2512": [json.dumps(PASS2)]},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)], "ministral-14b-2512": [json.dumps(PASS2)]},
                               env={"MISTRAL_API_KEY": "m", "NVIDIA_API_KEY": "n"})
     pipeline.discover(old.date())
     pipeline.bse.download = lambda url: (_ for _ in ()).throw(AttachmentError("timed out")) if "old" in url else _pdf(RESULT_TEXT)
@@ -109,7 +109,7 @@ def test_second_opinion_reply_with_only_a_card_keeps_the_memory(settings):
     bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
     card_only = {"is_material": True, "card": PASS2["card"]}
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "mistral-large-2512": [json.dumps(card_only)]},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "ministral-14b-2512": [json.dumps(card_only)]},
                               env={"NVIDIA_API_KEY": "n", "MISTRAL_API_KEY": "m"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert outcome.card["card"]["review"]["status"] == "CORRECTED"
@@ -218,7 +218,7 @@ def test_smoke_test_backfill_covers_only_the_given_companies_in_date_order(setti
         return json.dumps(PASS2)
 
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                              {"mistral-large-2512": [respond]}, env={"MISTRAL_API_KEY": "m"})
+                              {"ministral-14b-2512": [respond]}, env={"MISTRAL_API_KEY": "m"})
     stats = pipeline.backfill_companies(["506525"], today - timedelta(days=60), today, 60)
     assert seen == [at(50).date().isoformat(), at(10).date().isoformat()] and stats.status == "OK"
     assert {r["news_id"] for r in rows(sink, "select news_id from cards")} == {"a1", "a2"}

@@ -412,6 +412,11 @@ class AIGateway:
                 self._note_failure(target, f"429: {message}", rate_limited=True)
                 raise _Retryable("rate limited (429)", transient=True) from exc
             except (openai.AuthenticationError, openai.PermissionDeniedError) as exc:
+                if _MODEL_NOT_ALLOWED.search(str(exc)):  # a 403 about this model's tier, not the key
+                    self.disabled[target.key] = "model not in subscription tier"
+                    self._note_failure(target, f"403 model not allowed: {exc}")
+                    log.error("%s: model not available on this account's plan; update config/providers.toml", target.key)
+                    raise _Retryable("model not allowed") from exc
                 self.disabled[target.key] = f"auth error {exc.status_code}"
                 self.disabled_providers[target.provider] = f"auth error {exc.status_code}"
                 self._note_failure(target, f"auth error {exc.status_code}: {exc}")
@@ -507,6 +512,9 @@ class _Retryable(Exception):
     def __init__(self, message: str, transient: bool = False):
         super().__init__(message)
         self.transient = transient
+
+
+_MODEL_NOT_ALLOWED = re.compile(r"tier|not available|not allowed for (?:this )?model|model access|subscription", re.I)
 
 
 def _retry_after(exc: openai.APIStatusError) -> float:

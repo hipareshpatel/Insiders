@@ -22,7 +22,6 @@ import gzip
 import hashlib
 import json
 import logging
-import re
 import time
 import uuid
 from collections import OrderedDict
@@ -34,6 +33,7 @@ from threading import Lock
 
 from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError
+from . import duplicates
 from .dossier import dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, results_snapshot, view_as_of
 from .extract import Document
 from .grounding import DEFAULT_THRESHOLD, check_card, check_claims
@@ -76,6 +76,7 @@ MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing th
 NOISE_CHUNK = 500        # rows per noise-audit file in R2
 NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category", "subcategory",
                 "filed_at", "reason", "pdf_url")
+<<<<<<< Updated upstream
 DONE = ("ANALYZED", "NOT_MATERIAL", "DUPLICATE")
 # BSE asks for one submission per applicable subcategory, so one event can arrive five times in
 # minutes (SML Mahindra's CEO change, 21 Mar 2025: resignation of MD, of CEO, change in directorate,
@@ -96,6 +97,9 @@ def _shingles(text: str, n: int = 5) -> set[int]:
 def _numbers(text: str) -> set[str]:
     """Every figure in the text, commas dropped: a re-filing that changes one number is new news."""
     return {m.replace(",", "") for m in re.findall(r"\d[\d,]*(?:\.\d+)?", text or "")}
+=======
+DONE = ("ANALYZED", "NOT_MATERIAL", "DUPLICATE")  # DUPLICATE: a repeat submission (duplicates.py)
+>>>>>>> Stashed changes
 LONG_PROMPT_TOKENS = 12_000
 SNAPSHOT_KEY = "daily_feed/latest_snapshot.json"
 SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
@@ -235,7 +239,11 @@ class Pipeline:
         self._universe: tuple[set[str], float] | None = None
         self._examples: dict[tuple[str, str], dict[str, list[dict]]] = {}
         self._learned: dict | None = None   # Loop 1 state: post-mortem queue, lessons, dampened categories
+<<<<<<< Updated upstream
         self._texts: dict[str, list[tuple[str, str, set[int], set[str]]]] = {}  # scrip -> (filed_at, news_id, shingles, numbers) this run
+=======
+        self._bodies: dict[str, list[tuple[str, str, duplicates.Body]]] = {}  # scrip -> (filed_at, news_id, body) this run
+>>>>>>> Stashed changes
 
     # ------------------------------------------------------------------ writes
 
@@ -554,12 +562,12 @@ class Pipeline:
             self._refusals = 0
             doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         try:
-            original = self._duplicate_of(filing, doc)
-            if original:
+            repeat = self._duplicate_of(filing, doc)
+            if repeat:
                 with self._lock:
                     self.stats.duplicates += 1
                 return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": filing.event_type,
-                                "reason": f"duplicate of {original}", "updated_at": now_iso()})
+                                "reason": f"duplicate of {repeat[0]} ({repeat[1]} match)", "updated_at": now_iso()})
             return self._analyze_document(filing, company, industry, doc, bulk, memory_complete)
         finally:
             with self._lock:
@@ -568,28 +576,41 @@ class Pipeline:
                 self._cache_text(filing.news_id, doc)
             doc.close()
 
-    def _duplicate_of(self, filing: Filing, doc: Document) -> str | None:
-        """The news_id of an earlier filing by the same company, within DUPLICATE_DAYS, that already
-        holds this filing's text; None when there is none. Filings of this run are registered before
-        they are analysed, so parallel workers cannot both analyse one event. Corrections are never
-        duplicates."""
-        if _REVISION.search(f"{filing.headline} {filing.subject or ''}"):
+    def _duplicate_of(self, filing: Filing, doc: Document) -> tuple[str, str] | None:
+        """(news_id, "exact" | "near") of an earlier filing by the same company, within
+        duplicates.DAYS, that this one repeats (see duplicates.py); None when there is none.
+        Filings of this run are registered before they are analysed, so parallel workers cannot both
+        analyse one event. Corrections are never duplicates."""
+        if duplicates.is_correction(filing.headline, filing.subject):
             return None
+<<<<<<< Updated upstream
         text = doc.select_text(DUPLICATE_CHARS)
         mine, figures = _shingles(text), _numbers(text)
         if len(mine) < DUPLICATE_MIN_SHINGLES:
+=======
+        mine = duplicates.body(doc.select_text(duplicates.CHARS))
+        if not mine.matchable:
+>>>>>>> Stashed changes
             return None
-        since = (datetime.fromisoformat(filing.filed_at) - timedelta(days=DUPLICATE_DAYS)).isoformat()
+        since = (datetime.fromisoformat(filing.filed_at) - timedelta(days=duplicates.DAYS)).isoformat()
         earlier = lambda at, news_id: since <= at < filing.filed_at or (at == filing.filed_at and news_id < filing.news_id)
         with self._lock:
+<<<<<<< Updated upstream
             seen = list(self._texts.get(filing.scrip_code, []))
         candidates = [(n, sh, nums) for at, n, sh, nums in seen if earlier(at, n)]
         known = {n for _, n, _, _ in seen}
+=======
+            seen = list(self._bodies.get(filing.scrip_code, []))
+            self._bodies.setdefault(filing.scrip_code, []).append((filing.filed_at, filing.news_id, mine))
+        candidates = [(n, b) for at, n, b in seen if earlier(at, n)]
+        known = {n for _, n, _ in seen}
+>>>>>>> Stashed changes
         for row in self.sink.query("filings_recent_company", [filing.scrip_code, since, filing.filed_at, 20]):
             if row["news_id"] in known or row["news_id"] == filing.news_id:
                 continue
             cached = self._cached_text(row["news_id"])
             if cached is not None:
+<<<<<<< Updated upstream
                 theirs = Document.from_cache(cached).select_text(DUPLICATE_CHARS)
                 candidates.append((row["news_id"], _shingles(theirs), _numbers(theirs)))
         with self._lock:
@@ -600,6 +621,14 @@ class Pipeline:
             if len(mine & theirs) >= DUPLICATE_SHARE * len(mine) and figures <= their_figures:
                 log.info("%s is a duplicate of %s (same company, same text)", filing.news_id, news_id)
                 return news_id
+=======
+                candidates.append((row["news_id"], duplicates.body(Document.from_cache(cached).select_text(duplicates.CHARS))))
+        for news_id, theirs in candidates:
+            kind = duplicates.match(mine, theirs)
+            if kind:
+                log.info("%s repeats %s (%s match, same company)", filing.news_id, news_id, kind)
+                return news_id, kind
+>>>>>>> Stashed changes
         return None
 
     def _xbrl(self, filing: Filing, strict: bool = False) -> "xbrl_fast_path.XbrlResult | None":

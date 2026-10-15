@@ -25,6 +25,8 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | D11 | Minimise multi-agent runs (token budget); keep docs current so context compaction loses nothing. | 2026-10-15 |
 | D13 | AI providers: Groq, NVIDIA, Mistral (Free plan, never pay-as-you-go, no phone verification), Z.AI, Google Gemini (free tier) and Workers AI. Prefer established models to the newest; check `models` / `ai-check` and the provider's docs before changing one. | 2026-10-16 |
 | D14 | API keys only in `C:\Users\Quali\insiders-keys.ps1` on the laptop: never in chat, logs or the repo, even though it is private. | 2026-10-16 |
+| D16 | Stick with the blueprint: every material filing gets the full Pass 2 analysis (no cheap one-call tier for routine filings). | 2026-10-16 |
+| D17 | Repeat submissions: skip only an exact body match, or a near-identical body with every number the same, from the same company within 3 days; never corrigenda, revised or corrected filings; keep the skipped filing as DUPLICATE linked to the original. | 2026-10-16 |
 | D15 | The laptop's Claude Code session is the main engineer (it reaches BSE and sees real logs); `CLAUDE.md` holds the rules and status every session reads. The Worker is named `insiders` (https://insiders.reply-bd3.workers.dev). | 2026-10-16 |
 
 ## Optional, not adopted (cost)
@@ -56,7 +58,7 @@ CLI `yahoo_missing`). If the gap matters, candidates in order:
 | Gemini free-tier limits (Google publishes no table) | per-minute limits read from Gemini's own 429 quota detail: 15/min for 3.1 and 3.5 Flash-Lite, 5/min for 3.6 Flash; daily limits stay guesses (a per-day 429 retires the model until midnight Pacific and shows its value on the System page) | per-minute fixed; per-day open |
 | Every company in sector `default` (no sector lens): BSE's scrip list now returns `INDUSTRY: null` for all 5,111 | `sync-companies` reads each company's classification from BSE's quote header (`ComHeadernew`: Sector > Industry > Group > Sub-group), once per company; lenses match the most specific level first; a stored sector is never overwritten with `default` | fixed |
 | Lakh figures written as crore (Kanoria Q3FY25 "loss ₹2,863 Cr" from "(INR in Lakhs)"; 100x) and passed grounding, which matched any scale | the pass-2 prompt names the filing's declared unit and the conversion; grounding requires ₹ crore figures to match a single-unit filing at that unit's scale (the real card now scores 0.30 with both headline amounts flagged, so it goes to the second check) | fixed |
-| One event analysed up to 5 times (SML Mahindra's CEO change filed 5 times in 8 minutes, once per BSE subcategory; Shivam's NCD approval twice) | a filing whose text is ≥85% inside an earlier one by the same company within 3 days is marked DUPLICATE (no AI call, no card); revised filings and corrigenda excepted | fixed |
+| One event analysed up to 5 times (SML Mahindra's CEO change filed 5 times in 8 minutes, once per BSE subcategory; Shivam's NCD approval twice) | `duplicates.py`: within 3 days and the same company, skip only an exact body match (covering letter and whitespace stripped) or a near-identical body (Jaccard ≥ 0.9) with every number the same; never corrigenda, revised or corrected filings; kept in the ledger as DUPLICATE linked to the original (no AI call, no card). Owner's rule, replacing a looser 85%-overlap rule that could skip same-template filings with new numbers | fixed |
 | Wrong-scale and lens-less figures already in the 5 companies' memory | smoke test reset: their cards, catalysts and dossiers deleted and all 543 filings requeued, then rebuilt on the fixed code | done 2026-10-16 |
 | Smoke-test rate | 15 filings (9 cards, 6 not material) in the first 9.5 min, about 95 filings/hour with 3 workers | measured |
 
@@ -241,7 +243,11 @@ at its end and in PLAN.md.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
+<<<<<<< Updated upstream
 - Unit/integration tests for every module (current: 234 pipeline tests, typecheck and build for web).
+=======
+- Unit/integration tests for every module (current: 235 pipeline tests, typecheck and build for web).
+>>>>>>> Stashed changes
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

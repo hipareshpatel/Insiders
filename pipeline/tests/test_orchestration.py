@@ -46,7 +46,7 @@ def test_repeat_submissions_of_one_event_are_marked_duplicate(settings, workers)
     same = sorted(n for n in ("d1", "d2", "d3") if status[n][0] == "DUPLICATE")
     assert len(same) == 2, status  # one of the three is analysed, whichever a worker reached first
     original = ({"d1", "d2", "d3"} - set(same)).pop()
-    assert status[original][0] == "ANALYZED" and all(status[n][1] == f"duplicate of {original}" for n in same)
+    assert status[original][0] == "ANALYZED" and all(status[n][1] == f"duplicate of {original} (exact match)" for n in same)
     assert status["d4"][0] == "ANALYZED" and status["e1"][0] == "ANALYZED"
     assert len(fake.calls) == 3 and pipeline.stats.duplicates == 2
     assert {r["news_id"] for r in rows(sink, "select news_id from cards")} == {original, "d4", "e1"}
@@ -80,7 +80,65 @@ def test_a_later_run_finds_the_duplicate_through_the_text_cache(settings):
                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
     pipeline2.run("live", time_budget_s=60)
     status = {r["news_id"]: (r["status"], r["reason"]) for r in rows(sink, "select news_id, status, reason from filings")}
-    assert status["c2"] == ("DUPLICATE", "duplicate of c1") and fake2.calls == []
+    assert status["c2"] == ("DUPLICATE", "duplicate of c1 (exact match)") and fake2.calls == []
+
+
+MONTHLY = ("SML Mahindra Limited sales and production for the month of {month} 2025. Particulars: Cargo vehicles"
+           " sales {cargo} units against {cargo_ly} units in the same month last year. Passenger vehicles sales"
+           " {pax} units against {pax_ly} units. Total sales {total} units, production {prod} units. The figures are"
+           " provisional and subject to audit. This is for your information and records.")
+CORRECTED = LETTER.replace("12,000.00", "12,400.00").replace("1,500.00", "1,620.00")
+
+
+def test_template_filings_with_new_numbers_are_never_duplicates(settings):
+    """A corrected results statement a day later (not titled revised, two figures changed) and two
+    monthly updates in the same words are near-identical text, but hold new numbers: both analysed."""
+    settings = replace(settings, workers=1)
+    now = now_ist() - timedelta(days=2)
+    jan = MONTHLY.format(month="January", cargo=812, cargo_ly=905, pax=213, pax_ly=240, total=1025, prod=1100)
+    feb = MONTHLY.format(month="February", cargo=1004, cargo_ly=905, pax=284, pax_ly=240, total=1288, prod=1350)
+    filings = [_filing("o1", "Financial Results", now, "Result"),
+               _filing("o2", "Outcome of Board Meeting", now + timedelta(days=1), "Result"),
+               _filing("m1", "Monthly Business Update", now, "Company Update", scrip="999003"),
+               _filing("m2", "Monthly Business Update", now + timedelta(hours=20), "Company Update", scrip="999003")]
+    pdfs = {"https://bse.invalid/o1.pdf": _pdf(LETTER), "https://bse.invalid/o2.pdf": _pdf(CORRECTED),
+            "https://bse.invalid/m1.pdf": _pdf(jan), "https://bse.invalid/m2.pdf": _pdf(feb)}
+    pipeline, sink, _ = build(settings, filings, pdfs, {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)] * 4,
+                                                        "openai/gpt-oss-20b": [json.dumps({"is_material": True, "event_type": "MONTHLY_UPDATE"})] * 2},
+                              env={"NVIDIA_API_KEY": "n", "GROQ_API_KEY": "g"})
+    pipeline.backfill_companies(["999001", "999003"], now.date() - timedelta(days=1), now.date() + timedelta(days=2), 60)
+    status = {r["news_id"]: r["status"] for r in rows(sink, "select news_id, status from filings")}
+    assert "DUPLICATE" not in status.values(), status
+    assert pipeline.stats.duplicates == 0
+
+
+def test_duplicate_rule_exact_near_and_corrections():
+    from bse_intel import duplicates
+
+    cover_a = "To, BSE Limited\nPhiroze Jeejeebhoy Towers, Dalal Street, Mumbai 400001\nSub: Financial Results\nDear Sir,\n"
+    cover_b = "To, The Listing Department\nBSE Limited\nSub: Outcome of Board Meeting held on 13.02.2025\nDear Sir/Madam,\n"
+    sign = "\nYours faithfully,\nFor Demo Cement Ltd\nCompany Secretary\nDate: 13.02.2025"
+    original = duplicates.body(cover_a + LETTER + sign)
+    assert duplicates.match(duplicates.body(cover_b + LETTER + "\nThanking you,\nCompliance Officer"), original) == "exact"
+    notes = (" The results were reviewed by the audit committee and approved by the board. The statutory auditors"
+             " carried out a limited review and issued an unmodified conclusion. Figures of the previous periods are"
+             " regrouped wherever necessary to make them comparable. The company operates in a single segment, namely"
+             " manufacture and sale of cement, and the chief operating decision maker reviews performance as a whole."
+             " The results are also available on the website of the company and of the stock exchange where the"
+             " shares of the company are listed. The board places on record its appreciation for the support of all"
+             " stakeholders during the quarter under review.")
+    long_original = duplicates.body(cover_a + LETTER + notes + sign)
+    reworded = duplicates.body(cover_b + LETTER + notes.replace("during the quarter under review", "during the quarter"))
+    assert duplicates.match(reworded, long_original) == "near"   # a few words differ, every number is the same
+    assert duplicates.match(duplicates.body(CORRECTED), original) is None  # same words, new figures
+    jan = MONTHLY.format(month="January", cargo=812, cargo_ly=905, pax=213, pax_ly=240, total=1025, prod=1100)
+    feb = MONTHLY.format(month="February", cargo=1004, cargo_ly=905, pax=284, pax_ly=240, total=1288, prod=1350)
+    assert duplicates.match(duplicates.body(feb), duplicates.body(jan)) is None
+    assert duplicates.match(duplicates.body("Please find attached."), duplicates.body("Please find attached.")) is None
+    for title in ("Corrigendum to Financial Results", "Revised Outcome of Board Meeting", "Correction in Results",
+                  "Rectified statement", "Amendment to the notice"):
+        assert duplicates.is_correction(title), title
+    assert not duplicates.is_correction("Financial Results", "Outcome of Board Meeting")
 
 
 def test_refused_attachment_fails_one_filing_and_three_in_a_row_stop_the_run(settings):

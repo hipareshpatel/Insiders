@@ -5,7 +5,7 @@
 #   headline                   -> regex search over HEADLINE + " " + NEWSSUB
 #   exclude_headline           -> regexes that veto a rule
 #
-# Order of evaluation: [[drop]] rules, then [[calendar]] rules, then
+# Order of evaluation: [[drop]] rules, then [[xbrl_only]], [[calendar]] and
 # [[fast_track]] rules. Anything left over goes to the Pass 1 AI gatekeeper.
 # BSE renames subcategories occasionally; headline regexes are the safety net.
 
@@ -33,8 +33,11 @@ headline = ["newspaper (publication|advertisement|cutting|clipping)s?", "copy of
 # "Financial Results ... and Newspaper Publication" is the results filing itself.
 exclude_headline = ["results.{0,80}(and|&|along with|together with).{0,30}newspaper"]
 
-[[drop]]
+# Shareholding patterns are read from their XBRL file straight into memory (no AI call, no card);
+# one without an XBRL file is noise.
+[[xbrl_only]]
 reason = "shareholding pattern"
+event_type = "SHAREHOLDING"
 subcategories = ["shareholding pattern"]
 headline = ["shareholding pattern"]
 

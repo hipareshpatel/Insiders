@@ -28,6 +28,15 @@ Every item is pre-launch: the owner decided everything is built and tested local
 - TypeSafe AI "Jev" (typed decisions with calibrated confidence) would suit the Pass 1 gatekeeper,
   but it has no free tier; it can be added as a provider in `providers.toml` if free credits appear.
 
+## Price source fallback (decide after the first `market-data --all`)
+`market-data` records which companies Yahoo has no price for (kv `market:coverage`, System page,
+CLI `yahoo_missing`). If the gap matters, candidates in order:
+1. BSE UDiFF bhavcopy (`BhavCopy_BSE_CM_0_0_0_{YYYYMMDD}_F_0000.CSV`: FinInstrmId = scrip code,
+   ClsPric, PrvsClsPric, TtlTrfVal) into the same `data/prices` store. Raw (unadjusted) closes, so
+   splits/bonuses then need BSE's corporate-actions CSV for adjustment factors.
+2. Share counts for market cap: BSE's scrip header data (TotalShares, MktCapFull) or the
+   shareholding-pattern XBRL total, for companies where Yahoo has no share count.
+
 ## Points to discuss with the owner
 
 1. **Cloud sync is bounded by D1's 100,000 rows written per day**, including the import. Every card
@@ -67,7 +76,7 @@ Every item is pre-launch: the owner decided everything is built and tested local
 | Polite BSE session, paging pace, PDF pace with jitter | done | 0.5 s pages, 1.2–2.0 s PDFs |
 | Explicit 403 / HTML-challenge detection | done | API 403 → SourceBlockedError; HTML bodies retried; attachments per file |
 | Stop paging at known filings | done | |
-| XBRL fast path (results, shareholding) | todo | |
+| XBRL fast path (results, shareholding) | done, verify on laptop | `xbrl.py`: results figures (₹ Cr, YoY/QoQ, EBITDA/margin, balance sheet) top the Pass 2 prompt and overwrite the model's in memory (same basis only; checked against the PDF's scale). Shareholding patterns go to memory with no AI call (route XBRL); without an XBRL file they stay noise. Built to the SEBI/BSE taxonomy without a live file (BSE blocks this cloud machine): the smoke test must confirm BSE's XBRL field name (`XML_NAME`/`XBRL`) and tag names, see System "xbrl" count |
 | Rule blacklist (certificates, trading window, Reg 74(5), newspaper, investor grievance, IEPF, meet schedules) | done | compound-headline vetoes; small ESOP allotments go to Pass 1 (size unknown from metadata) |
 | Reg 30 Schedule III Para A/B legal clue | done | `forensics.py` (Para B threshold note) |
 | Board-meeting duration forensics | done | 6+ hours flagged |
@@ -178,7 +187,7 @@ docs, sync-companies workflow.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 158 pipeline tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 165 pipeline tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

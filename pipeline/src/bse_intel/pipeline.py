@@ -37,7 +37,7 @@ from .dossier import dossier_as_of, latest_fundamentals, memory_ids, merge, new_
 from .extract import Document
 from .grounding import DEFAULT_THRESHOLD, check_card, check_claims
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
-from .periods import due_date
+from .periods import canonical_period, due_date
 from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
@@ -50,6 +50,7 @@ from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected
 from . import universe
+from . import xbrl as xbrl_fast_path
 from .timeutil import IST, market_session, now_iso, now_ist, today_ist, utc_day
 
 log = logging.getLogger(__name__)
@@ -94,6 +95,7 @@ class Stats:
     d1_rows_written: int = 0
     discovery_errors: int = 0
     outside_universe: int = 0
+    xbrl: int = 0           # filings whose figures came from their XBRL file
     days_discovered: list[str] = field(default_factory=list)
     stopped_reason: str | None = None
     last_error: str | None = None
@@ -273,7 +275,9 @@ class Pipeline:
             known.add(filing.news_id)
             decision = self.rules.classify(filing)
             filing.reason = decision.reason
-            if decision.action in ("DROP", "CALENDAR"):
+            if decision.action == "XBRL" and not filing.xbrl_url:
+                filing.reason = f"{decision.reason} (no XBRL file)"
+            if decision.action in ("DROP", "CALENDAR") or (decision.action == "XBRL" and not filing.xbrl_url):
                 self.stats.dropped_rule += 1
                 noise[filing.news_id] = _noise_row(filing)
                 if decision.catalyst_date and decision.catalyst_date >= today:
@@ -490,6 +494,8 @@ class Pipeline:
     def analyze(self, filing: Filing, bulk: bool = False, memory_complete: bool = True) -> Outcome:
         """Run Pass 1 (if needed), extraction, Pass 2, grounding, merge and signals for one filing."""
         company = self.sink.company(filing.scrip_code) or {}
+        if filing.route == "XBRL":
+            return self._xbrl_memory(filing, company)
         industry = company.get("industry")
         ocr = self.gateway.transcribe_image if self.gateway.has_route("vision") else None
         cached = self._cached_text(filing.news_id)
@@ -507,6 +513,56 @@ class Pipeline:
             if doc.ocr_error is None:
                 self._cache_text(filing.news_id, doc)
             doc.close()
+
+    def _xbrl(self, filing: Filing, strict: bool = False) -> "xbrl_fast_path.XbrlResult | None":
+        """The filing's XBRL figures (cached beside the text cache). A download problem fails only a
+        strict (XBRL-only) filing; results fall back to the PDF."""
+        if not filing.xbrl_url:
+            return None
+        path = self._cache_path(filing.news_id)
+        path = path.with_name(path.name.replace(".json.gz", ".xbrl.gz")) if path else None
+        data = None
+        if path and path.exists():
+            try:
+                data = gzip.decompress(path.read_bytes())
+            except OSError:
+                data = None
+        if data is None:
+            try:
+                data = self.bse.download(filing.xbrl_url, max_bytes=8_000_000)
+            except AttachmentError:
+                if strict:
+                    raise
+                log.warning("XBRL download failed for %s; using the PDF", filing.news_id)
+                return None
+            if data and path:
+                try:
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_bytes(gzip.compress(data))
+                except OSError:
+                    pass
+        result = xbrl_fast_path.parse(data) if data else None
+        if result:
+            with self._lock:
+                self.stats.xbrl += 1
+        return result
+
+    def _xbrl_memory(self, filing: Filing, company: dict) -> Outcome:
+        """A shareholding pattern: its XBRL figures go straight into memory; no AI call, no card."""
+        now = now_iso()
+        tagged = self._xbrl(filing, strict=True)
+        if not tagged or tagged.kind != "SHAREHOLDING" or not tagged.ownership:
+            return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": "SHAREHOLDING",
+                            "reason": "xbrl: no shareholding figures in the file", "updated_at": now})
+        dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
+        out = Pass2Output(is_material=False, timeline_entry="")
+        out.dossier_delta.ownership = tagged.ownership
+        merged = merge(dossier, out, filing, None, now)
+        self.sink.put_dossier(filing.scrip_code, merged)
+        own = tagged.ownership
+        return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": "SHAREHOLDING",
+                        "reason": f"xbrl: shareholding {own.period} saved to memory (promoter {own.promoter_pct}%)"[:300],
+                        "updated_at": now})
 
     def _cache_path(self, news_id: str):
         root = self.settings.text_cache_dir
@@ -554,6 +610,13 @@ class Pipeline:
         budget = self.settings.pass2_char_budget * (3 if event_type == "CONCALL_PRESENTATION" else 1)
         text = doc.select_text(budget, self.prompts.keywords(event_type))
         _ocr_check(doc)
+        tagged = self._xbrl(filing) if event_type == "RESULTS" else None
+        if tagged and (tagged.kind != "RESULTS" or not xbrl_fast_path.confirm(tagged, text)):
+            if tagged.kind == "RESULTS":
+                log.warning("XBRL figures for %s not found in the PDF in any unit; using the PDF only", filing.news_id)
+            tagged = None
+        if tagged:
+            text = tagged.table() + "\n\n" + text  # exact figures first; they also ground the card
         sector_module = self.prompts.sector_for(industry)
         sector = sector_module.name
         peers = self._peers(sector, event_type, filing)
@@ -582,6 +645,8 @@ class Pipeline:
             out.card.call_read = None  # guidance, tone and transparency describe a call, not other filings
         event_type = out.event_type
         card = out.card
+        if tagged:
+            _apply_xbrl(out, tagged, filing.news_id)
         score, checked, ungrounded, quant, claims = checks.score, checks.checked, checks.ungrounded, checks.quant, checks.claims
 
         merged = merge(dossier, out, filing, card.impact_level, now)
@@ -615,6 +680,8 @@ class Pipeline:
         rated = score_card(card_json, event_type, signals, current, priced, needs_review, card.impact_level)
         card_json["score"] = rated.as_dict()
         card_json["model_impact"] = card.impact_level
+        if tagged:
+            card_json["xbrl"] = {"basis": tagged.basis, "period": tagged.period, "figures": len(tagged.metrics)}
         card_json["priced_at_filing"] = {k: priced[k] for k in PRICED_FIELDS if priced.get(k) is not None} or None
         row = {
             "news_id": filing.news_id, "scrip_code": filing.scrip_code,
@@ -1019,3 +1086,25 @@ def build_pipeline(settings: Settings, sink: Sink) -> Pipeline:
 
 
 __all__ = ["Pipeline", "Stats", "build_pipeline", "IST"]
+
+
+def _apply_xbrl(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult", news_id: str) -> None:
+    """XBRL figures replace the model's for the same metric and period (and fill the ones it missed).
+    A file on another basis than the card's figures (standalone vs consolidated) is left out of memory
+    so the two are never mixed."""
+    basis = out.card.basis if out.card else None
+    if basis and tagged.basis and basis != tagged.basis:
+        log.info("XBRL for %s is %s, the card quotes %s figures; memory keeps the card's", news_id, tagged.basis, basis)
+        return
+    delta = out.dossier_delta
+    exact = {(m.metric, m.period): m for m in tagged.metrics}
+    delta.financial_metrics = [m for m in delta.financial_metrics if (m.metric, canonical_period(m.period)) not in exact] \
+        + list(exact.values())
+    if tagged.balance_sheet and not tagged.balance_sheet.is_empty():
+        sheet = delta.balance_sheet
+        if sheet is None or sheet.is_empty():
+            delta.balance_sheet = tagged.balance_sheet
+        else:
+            for key, value in tagged.balance_sheet.model_dump().items():
+                if value is not None:
+                    setattr(sheet, key, value)

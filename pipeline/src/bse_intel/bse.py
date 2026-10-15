@@ -61,6 +61,20 @@ class AttachmentError(RuntimeError):
         self.refused = refused
 
 
+def xbrl_url(row: dict) -> str | None:
+    """The filing's XBRL instance, when BSE lists one (results, shareholding patterns). BSE has used
+    more than one field name for it; a bare file name is resolved like a PDF attachment. Whether a
+    file really is XBRL is decided when it is parsed (xbrl.parse)."""
+    for key in ("XBRL", "XBRL_URL", "XBRLURL", "XML_NAME", "XMLNAME"):
+        value = str(row.get(key) or "").strip()
+        if not value.lower().endswith(".xml"):
+            continue
+        if value.startswith("http"):
+            return value
+        return f"{SITE}/{value.lstrip('/')}" if "/" in value.strip("/") else ATTACH_LIVE + value.lstrip("/")
+    return None
+
+
 def attachment_url(attachment: str | None, pdf_flag: int | None) -> str | None:
     if not attachment:
         return None
@@ -107,6 +121,7 @@ def parse_row(row: dict) -> Filing | None:
         filed_at=iso_ist(filed),
         filing_date=filed.date().isoformat(),
         pdf_url=attachment_url(row.get("ATTACHMENTNAME"), pdf_flag),
+        xbrl_url=xbrl_url(row),
         attachment_size=row.get("Fld_Attachsize"),
         critical=bool(row.get("CRITICALNEWS")),
     )

@@ -108,7 +108,7 @@ def _f(headline, category="", subcategory="", subject=""):
     ("Closure of Trading Window", "Company Update", "Trading Window", "DROP", None),
     ("Certificate under Reg. 74 (5) of SEBI (DP) Regulations", "Company Update", "", "DROP", None),
     ("Copy of Newspaper Publication of financial results", "Result", "", "DROP", None),
-    ("Shareholding Pattern for the quarter ended Sep 2026", "", "Shareholding Pattern", "DROP", None),
+    ("Shareholding Pattern for the quarter ended Sep 2026", "", "Shareholding Pattern", "XBRL", "SHAREHOLDING"),
     ("Board Meeting Intimation for considering results on 21/10/2026", "Board Meeting", "", "CALENDAR", "BOARD_MEETING"),
     ("Outcome of Board Meeting - Financial results", "Board Meeting", "", "FAST_TRACK", "RESULTS"),
     ("Unaudited Financial Results for the quarter ended September 30, 2026", "Result", "", "FAST_TRACK", "RESULTS"),

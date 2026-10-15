@@ -394,7 +394,7 @@ async function systemStatus(c: Context<AppEnv>) {
     db.prepare(`SELECT run_id, mode, started_at, finished_at, status, stats_json, substr(error, 1, 200) AS error
                   FROM pipeline_runs ORDER BY started_at DESC LIMIT 25`),
     db.prepare(`SELECT key, value FROM kv WHERE key IN ('backfill:discovered_through', 'backfill:complete',
-                  'backfill:start', 'backfill:progress', ?1, ?2)`).bind(`noise_count:${today}`, `d1_writes:${utcDay}`),
+                  'backfill:start', 'backfill:progress', 'market:coverage', ?1, ?2)`).bind(`noise_count:${today}`, `d1_writes:${utcDay}`),
   ]);
   const kvMap = Object.fromEntries((kv.results as { key: string; value: string }[]).map((r) => [r.key, r.value]));
   const count = (r: D1Result) => (r.results[0] as { n: number } | undefined)?.n ?? 0;
@@ -405,8 +405,17 @@ async function systemStatus(c: Context<AppEnv>) {
   } catch {
     progress = null;
   }
+  let coverage: Record<string, unknown> | null = null;
+  try {
+    coverage = kvMap["market:coverage"] ? JSON.parse(kvMap["market:coverage"]) : null;
+  } catch {
+    coverage = null;
+  }
   return {
     today,
+    market_coverage: coverage
+      ? { date: coverage.date, companies: coverage.companies, priced: coverage.priced, missing: coverage.missing, missing_pct: coverage.missing_pct }
+      : null,
     ledger_today: [...(ledger.results as { status: string; n: number }[]), ...(ruleDropped ? [{ status: "DROPPED_RULE", n: ruleDropped }] : [])],
     queue: { pending: count(pending), failed: count(failed), cap: QUEUE_CAP },
     cards_7d: cards7d.results,

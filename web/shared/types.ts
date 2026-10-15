@@ -388,6 +388,8 @@ export interface SystemResponse {
     companies_left?: number | null; companies_total?: number | null;
   };
   d1?: { writes_today: number; size_bytes: number | null };
+  /** Companies Yahoo Finance had a price for at the last market-data run. */
+  market_coverage?: { date: string; companies: number; priced: number; missing: number; missing_pct: number } | null;
   usage: ProviderUsage[];
   runs: PipelineRun[];
 }

@@ -73,3 +73,30 @@ def test_post_mortem_writes_reactions_and_flags(settings, monkeypatch):
     assert rows == []  # complete: not revisited
     assert '"N1"' in sink.kv_get("learning:missed_alpha")
     assert learning.post_mortem(settings, sink, since=days[0].isoformat())["cards"] == 0
+
+
+def test_market_data_records_which_companies_yahoo_lacks(settings, monkeypatch):
+    import json
+    import sys
+    import types
+
+    import pytest
+
+    from bse_intel.market import enrich
+    from bse_intel.sinks.local import LocalSink
+
+    pd = pytest.importorskip("pandas")
+    sink = LocalSink(settings)
+    sink.execute("companies_upsert", [{"scrip_code": s, "company_name": s, "updated_at": "x"} for s in ("500001", "500002")])
+    days = pd.to_datetime([d.isoformat() for d in _sessions(date(2026, 9, 1), 30)])
+    priced = pd.DataFrame({"Close": [100.0] * 30, "Volume": [1000.0] * 30}, index=days)
+    empty = pd.DataFrame({"Close": [float("nan")] * 30, "Volume": [0.0] * 30}, index=days)
+    frame = pd.concat({"500001.BO": priced, "500002.BO": empty}, axis=1)
+    yf = types.SimpleNamespace(download=lambda *a, **k: frame,
+                               Ticker=lambda t: types.SimpleNamespace(fast_info={"shares": 1e7}))
+    monkeypatch.setitem(sys.modules, "yfinance", yf)
+    monkeypatch.setattr("bse_intel.market.time.sleep", lambda s: None)
+    assert enrich(settings, sink, all_companies=True) == 1
+    coverage = json.loads(sink.kv_get("market:coverage"))
+    assert coverage["companies"] == 2 and coverage["missing"] == 1 and coverage["missing_pct"] == 50.0
+    assert coverage["sample"][0]["scrip_code"] == "500002"

@@ -72,6 +72,7 @@ class Filing(BaseModel):
     filed_at: str
     filing_date: str
     pdf_url: str | None = None
+    xbrl_url: str | None = None
     attachment_size: Any = None
     critical: bool = False
     # Ledger fields
@@ -94,6 +95,7 @@ class Filing(BaseModel):
             "filed_at": self.filed_at,
             "filing_date": self.filing_date,
             "pdf_url": self.pdf_url,
+            "xbrl_url": self.xbrl_url,
             "status": self.status,
             "route": self.route,
             "event_type": self.event_type,

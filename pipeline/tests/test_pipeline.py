@@ -36,7 +36,7 @@ class FakeBse:
             if day.isoformat() <= f.filing_date <= last and (not scrip or f.scrip_code == scrip):
                 yield f.model_copy()
 
-    def download(self, url):
+    def download(self, url, max_bytes=None):
         return self.pdfs.get(url)
 
 

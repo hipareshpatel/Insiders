@@ -9,6 +9,7 @@ previous values (the upsert never erases fields).
 
 from __future__ import annotations
 
+import json
 import logging
 import time
 from datetime import datetime, timedelta
@@ -74,6 +75,7 @@ def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
         log.info("no companies with cards yet; nothing to enrich")
         return 0
     rows, share_lookups, now = [], 0, now_iso()
+    missing: list[dict] = []  # companies Yahoo has no price for (decides whether a second source is needed)
     for start in range(0, len(companies), int(yconf["batch"])):
         batch = companies[start : start + int(yconf["batch"])]
         tickers = [f"{c['scrip_code']}.BO" for c in batch]
@@ -82,6 +84,7 @@ def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
                                group_by="ticker", progress=False, threads=True)
         except Exception as exc:
             log.warning("price download failed for batch at %d: %s", start, exc)
+            missing += [{"scrip_code": c["scrip_code"], "symbol": c.get("symbol"), "why": "batch failed"} for c in batch]
             continue
         for company, ticker in zip(batch, tickers):
             try:
@@ -91,6 +94,7 @@ def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
             except Exception:
                 closes, price_date = [], None
             if not closes:
+                missing.append({"scrip_code": company["scrip_code"], "symbol": company.get("symbol"), "why": "no price on Yahoo"})
                 continue
             row = {"scrip_code": company["scrip_code"], "last_price": round(closes[-1], 2),
                    "price_date": price_date, "updated_at": now, **returns(closes)}
@@ -113,6 +117,12 @@ def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
                 market_cap = round(closes[-1] * shares / 1e7, 2)
                 row.update(market_cap_cr=market_cap, size_category=size_bucket(market_cap, buckets))
             rows.append(row)
+    coverage = {"date": now, "companies": len(companies), "priced": len(rows), "missing": len(missing),
+                "missing_pct": round(len(missing) / len(companies) * 100, 1), "sample": missing[:200]}
+    sink.kv_set("market:coverage", json.dumps(coverage), now)
+    if missing:
+        log.warning("Yahoo had no price for %d of %d companies (%.1f%%); see kv market:coverage",
+                    len(missing), len(companies), coverage["missing_pct"])
     written = sink.execute("companies_upsert", rows)
     sink.add_writes(utc_day(), written, now)  # counts toward the daily budget that gates backfill
     log.info("market data: %d companies updated (%d D1 rows written)", len(rows), written)

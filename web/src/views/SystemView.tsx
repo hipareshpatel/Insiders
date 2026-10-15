@@ -67,6 +67,12 @@ export function SystemView() {
             {s.d1.size_bytes ? ` · database ${(s.d1.size_bytes / 1e6).toFixed(1)} MB of 500 MB` : ""}
           </p>
         ) : null}
+        {s.market_coverage ? (
+          <p className="num mt-1 text-xs text-ink-3">
+            Prices (Yahoo Finance, {s.market_coverage.date.slice(0, 10)}): {num(s.market_coverage.priced)} of {num(s.market_coverage.companies)} companies
+            {s.market_coverage.missing ? ` · ${num(s.market_coverage.missing)} without a price (${s.market_coverage.missing_pct}%)` : ""}
+          </p>
+        ) : null}
       </section>
 
       <OwnerMode />

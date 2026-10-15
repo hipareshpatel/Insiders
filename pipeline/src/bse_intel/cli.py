@@ -99,7 +99,10 @@ def cmd_market_data(args, settings, sink) -> int:
     from . import universe
 
     updated = enrich(settings, sink, all_companies=args.all)
-    print(json.dumps({"companies_updated": updated, "outside_universe": universe.build(settings, sink)}))
+    coverage = json.loads(sink.kv_get("market:coverage") or "{}")
+    print(json.dumps({"companies_updated": updated, "outside_universe": universe.build(settings, sink),
+                      "yahoo_missing": coverage.get("missing"), "yahoo_missing_pct": coverage.get("missing_pct"),
+                      "missing_sample": [m["scrip_code"] for m in coverage.get("sample", [])[:30]]}))
     return 0
 
 

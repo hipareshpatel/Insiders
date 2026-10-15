@@ -1,7 +1,7 @@
 # 360° audit: findings (in progress)
 
-Status: 5 of 6 area reports received (frontend; contracts and docs; memory/checks/signals; AI layer;
-SQL/D1/Worker). Still running: ingestion/orchestration.
+Status: all 6 area reports received (frontend; contracts and docs; memory/checks/signals; AI layer;
+SQL/D1/Worker; ingestion/orchestration).
 Nothing below is fixed yet unless marked **fixed**. Each item was reported by an auditor and
 still needs verification before fixing.
 
@@ -168,6 +168,45 @@ Low: `usage_for_month` scans all usage rows; noise_count for live days (item 16)
 missing (500 for unknown files); empty R2 list prefix lists the bucket; double URL-decoding; `__proto__`
 sort key; `/noise` OFFSET paging not stable; malformed internal JSON gives 500; LocalSink re-runs
 every migration; dossier re-serialised; error text published by `/api/system`; SPEC write-cost note.
+
+## Ingestion and orchestration (report 6)
+
+Critical / high:
+- **A1. Queue scans** (same as D1): ~400k rows read per run including the completion check and the
+  order rebuild.
+- **A2. The write budget gates backfill discovery only**, not backfill analysis (~25 writes per card).
+- **A3. No-op writes**: catalysts rewritten every run; `companies_au` fires on unchanged names (same
+  as D7); market-data writes not counted.
+- **A4. History first starves live work**: a live company's whole pending history (up to 200
+  filings) runs inside the live budget; the batch commits only when every group finishes.
+- **A5. Yesterday's unfinished live filings fall into the backfill order after 09:00 IST** and can
+  wait days behind thousands of larger companies.
+- **A6. A 403 on one attachment poisons every run**: SourceBlockedError aborts the run, the batch's
+  finished work is never committed, the filing's attempts never grow, AttachHis is never tried.
+- **A7. A failing history filing burns all its attempts in one run** (retried by both the history
+  step and the company backfill).
+- **A8. Commit granularity vs the job timeout**: a backfill batch commits once at the deadline; a
+  kill at 55 min loses it, leaves the run RUNNING and the write counter stale.
+
+Medium:
+- A9. A discovery error (HTML body, 5xx, timeout) aborts all processing for the run.
+- A10. An empty BSE response advances the backfill cursor for good.
+- A11. `process()` exits early when a whole batch was already seen (retryable FAILED at the head).
+- A12. Download timeouts/5xx, files over 30 MB and spent OCR quota are analysed as "no text", final.
+- A13. The D1 write counter carries yesterday's total into the new UTC day.
+- A14. Every run re-pages the whole day from BSE (politeness, block risk): stop at known pages.
+- A15. memory_complete wrong in several paths (FAILED history counted as finished; leftover live
+  days; `backfill:complete` never cleared).
+- A16. Triage drops material filings: "Board Meeting Intimation … Closure of Trading Window",
+  "Results … and Newspaper Publication", "Results with Investor Grievances", board-meeting outcomes
+  whose headline lacks "outcome".
+- A17. `strip_boilerplate` deletes factual lines ("Mr. X (DIN: …) appointed as MD", "shifting of the
+  Registered Office: …", "NCDs will be listed on BSE Limited").
+- A18. 500 MB D1 cap (same as D6); live noise rows add ~2 MB/day.
+- A19. `peer_cards` scans a whole event type (same as report 5).
+
+Low: setup-python on a self-hosted ARM/Debian runner; BSE paging has no page cap or de-dup;
+usage_for_month scan; usage deltas lost on a failed write; a test fails between 00:00 and 00:05 IST.
 
 ## Checked and found consistent
 

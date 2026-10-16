@@ -38,12 +38,14 @@ class SeedStats:
     shareholding_files: int = 0
     shareholding_periods: int = 0
     skipped: int = 0
+    results_from_nse: int = 0   # quarters BSE would not serve and NSE did
     failures: list[str] = field(default_factory=list)
 
     def line(self) -> str:
         return (f"{self.companies} companies: {self.results_periods} results quarters from {self.results_files} XBRL files, "
                 f"{self.shareholding_periods} shareholding quarters from {self.shareholding_files} files, "
-                f"{self.skipped} skipped, {len(self.failures)} failures")
+                f"{self.skipped} skipped, {len(self.failures)} failures"
+                + (f", {self.results_from_nse} quarters from NSE where BSE served nothing" if self.results_from_nse else ""))
 
 
 def _cache(root: Path | None, url: str) -> Path | None:
@@ -84,15 +86,24 @@ def _filing(kind: str, scrip: str, name: str, period: str, filed_at: str, url: s
 
 
 def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path | None,
-                 stats: SeedStats, company: dict | None = None) -> None:
+                 stats: SeedStats, company: dict | None = None, nse=None, symbol: str = "") -> None:
     """Every quarter's results XBRL in the company's BSE archive, into memory. Consolidated wins where
-    a quarter has both: memory keeps one basis, and the cards quote the consolidated figures."""
+    a quarter has both: memory keeps one basis, and the cards quote the consolidated figures.
+
+    With `nse` and `symbol`, NSE is a fallback for the quarters BSE will not serve. BSE's own archive
+    lists the NBFC and life-insurance templates under paths that return its homepage to a plain fetch and
+    nothing to ours, so Bajaj Finance and Max Financial had no machine-tagged figures at all while the
+    archive said the files existed. The same quarters from NSE parse with the tag map already here: 0
+    bytes against 23 metrics, measured 2026-10-16 (PLAN item 1i).
+    """
     links = [link for link in bse.results_xbrl(scrip) if link.filed_at[:10] >= since]
     by_period: dict[str, object] = {}
     for link in sorted(links, key=lambda link: (link.filed_at, link.basis == "CONSOLIDATED")):
         by_period[link.period] = link  # later filing, then consolidated, wins
     for period, link in sorted(by_period.items()):
         data = _fetch(bse, link.url, cache_root)
+        if not data and nse is not None and symbol:
+            data = _from_nse(nse, symbol, period, link, cache_root, stats, scrip)
         if not data:
             # Loudly: BSE's own archive listed this file, so nothing coming back means the company is
             # about to be written from PDFs alone with no machine-tagged figure to check against. Two of
@@ -118,6 +129,40 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
         stats.results_periods += 1
         log.info("seed %s %s: %d figures from %s (%s)", scrip, period, len(parsed.metrics), link.url.rsplit("/", 1)[-1],
                  parsed.basis or "basis not stated")
+
+
+def _from_nse(nse, symbol: str, period: str, link, cache_root: Path | None, stats: SeedStats,
+              scrip: str) -> bytes | None:
+    """The same quarter from NSE, when BSE served nothing. Matched on the filing date BSE listed, so the
+    row is the same filing and not merely the same company; the basis is matched where NSE states it."""
+    try:
+        rows = nse.financial_results(symbol)
+    except Exception as exc:
+        log.info("seed %s %s: NSE fallback unavailable (%s)", scrip, period, type(exc).__name__)
+        return None
+    from datetime import date as _date
+
+    want_consolidated = link.basis == "CONSOLIDATED"
+    try:
+        when = _date.fromisoformat(link.filed_at[:10])
+    except ValueError:
+        return None
+    # Within a week of the date BSE listed: the two exchanges stamp the same filing a day or two apart.
+    near = []
+    for r in rows:
+        try:
+            if abs((_date.fromisoformat(r.filed_at[:10]) - when).days) <= 7:
+                near.append(r)
+        except ValueError:
+            continue
+    row = next((r for r in near if r.consolidated == want_consolidated), None) or next(iter(near), None)
+    if row is None:
+        return None
+    data = _fetch(nse, row.xbrl_url, cache_root)
+    if data:
+        stats.results_from_nse += 1
+        log.info("seed %s %s: BSE served nothing, NSE did (%s)", scrip, period, row.xbrl_url.rsplit("/", 1)[-1])
+    return data
 
 
 def seed_shareholding(sink, nse, scrip: str, symbol: str, name: str, since: str, cache_root: Path | None,

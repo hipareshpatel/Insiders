@@ -191,7 +191,8 @@ def cmd_seed_memory(args, settings, sink) -> int:
             stats.companies += 1
             if not args.shareholding_only:
                 try:
-                    seed_results(sink, bse, scrip, name, args.since, cache_root, stats, company)
+                    seed_results(sink, bse, scrip, name, args.since, cache_root, stats, company,
+                                 nse=nse, symbol=symbol)
                 except Exception as exc:  # one company's archive must not end the run
                     stats.failures.append(f"{scrip} results: {type(exc).__name__}: {exc}"[:200])
                     log.warning("seed %s results failed: %s", scrip, exc)

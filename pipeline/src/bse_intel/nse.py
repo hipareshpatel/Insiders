@@ -35,6 +35,11 @@ log = logging.getLogger(__name__)
 
 SITE = "https://www.nseindia.com"
 SHAREHOLDING_ENDPOINT = f"{SITE}/api/corporate-share-holdings-master"
+# Results XBRL, where BSE's own archive will not serve it: BSE's NBFCUploadDocument path
+# returns its homepage to a plain fetch and nothing to ours, so Bajaj Finance and Max Financial
+# had no machine-tagged figures at all. NSE lists the same quarters and they parse with the tag
+# map already here - 0 bytes against 23 metrics, measured 2026-10-16.
+RESULTS_ENDPOINT = f"{SITE}/api/corporates-financial-results"
 USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
               "Chrome/120.0.0.0 Safari/537.36")
 BLOCKING_STATUS = (401, 403, 429)
@@ -75,6 +80,40 @@ def _nse_date(value: str | None) -> date | None:
         return datetime.strptime(text.split()[0], "%d-%b-%Y").date()
     except ValueError:
         return None
+
+
+@dataclass(frozen=True)
+class ResultsFiling:
+    """One row of NSE's financial-results list: the XBRL instance and what it covers."""
+
+    period: str          # as NSE words it, e.g. "Quarterly"
+    consolidated: bool
+    audited: str
+    filed_at: str        # ISO date, best effort from the broadcast or filing date
+    xbrl_url: str
+    is_bank: bool
+
+
+def parse_results_rows(rows: list[dict]) -> list[ResultsFiling]:
+    """NSE's rows, newest first, keeping only those that carry an XBRL instance."""
+    out = []
+    for row in rows:
+        url = (row.get("xbrl") or "").strip()
+        if not url:
+            continue
+        if not url.startswith("http"):
+            url = f"https://nsearchives.nseindia.com/{url.lstrip('/')}"
+        filed = _nse_date(row.get("filingDate") or row.get("broadCastDate") or row.get("exchdisstime"))
+        out.append(ResultsFiling(
+            period=str(row.get("period") or row.get("cumulative") or "").strip(),
+            consolidated="non" not in str(row.get("consolidated") or "").lower()
+            and "consolidated" in str(row.get("consolidated") or "").lower(),
+            audited=str(row.get("audited") or "").strip(),
+            filed_at=filed.isoformat() if filed else "",
+            xbrl_url=url,
+            is_bank=str(row.get("bank") or "").strip().lower() in ("yes", "true", "1"),
+        ))
+    return sorted(out, key=lambda r: r.filed_at, reverse=True)
 
 
 def parse_shareholding_rows(rows: list[dict]) -> list[ShareholdingFiling]:
@@ -176,6 +215,13 @@ class NseClient:
         rows = data.get("data") if isinstance(data, dict) else data
         filings = parse_shareholding_rows(rows if isinstance(rows, list) else [])
         return [f for f in filings if not since or f.quarter_end >= since]
+
+    def financial_results(self, symbol: str, quarterly: bool = True) -> list[ResultsFiling]:
+        """Every results XBRL NSE lists for the symbol, newest first. Used only as a fallback: BSE's own
+        archive is the first source, and this fills the templates it will not serve (NBFC, life insurance)."""
+        data = self._get(RESULTS_ENDPOINT, {"index": "equities", "symbol": symbol.strip().upper(),
+                                            "period": "Quarterly" if quarterly else "Annual"}).json()
+        return parse_results_rows(data if isinstance(data, list) else [])
 
     def download(self, url: str, max_bytes: int = 8_000_000) -> bytes | None:
         """One XBRL file. None when NSE serves something that is not XML."""

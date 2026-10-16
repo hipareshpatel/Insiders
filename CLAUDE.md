@@ -69,21 +69,36 @@ Read before changing anything:
   against 3.67** (`docs/audit/round-1.json`). wrong_period, invented, unit_scale and signal_verdict all
   roughly halved or better; arithmetic and direction did not move, because two of our own fixers were
   writing wrong numbers over right ones (D25, now guarded against the filing's own figures).
-- **Next, in this order (2026-10-16 night).** 1) An annual report is not a results filing: BSE labels it
-  "Reg. 34 (1) Annual Report" and pass 1 typed one RESULTS, so a 563k-character report was re-read for
-  revenue, EBITDA and PAT that XBRL already had exactly, and it carried every 10x slip. Give it its own
-  event type whose prompt says the financials are known from XBRL and memory and must not be restated;
-  its job is the MD&A, segment commentary, key audit matters, related-party transactions, pledge and
-  subsidiary performance. 2) Anchor a fact's figures to its own quote's neighbourhood instead of the
-  whole document: on that report, invented whole-crore figures passed grounding 40% of the time (8% at
-  one decimal, 3% at two), which is why round headline numbers slip through. The baseline is pinned in
-  test_cards.py. 3) Catch duplicates before pass 2 on the FAST_TRACK route, which skips pass 1 and
-  carried 134 of the 175 duplicate pairs. 4) Re-seed memory for the ten companies so the stored values
-  pick up the XBRL precedence fix, and check it with scripts/memory_check.py. 5) Raise the paid weight
-  and rebuild, then audit round 2 - stratified by filing type and sector, not newest-first, because the
-  errors cluster by document kind. Report WRONG share and the share of WRONG the code flagged (56% now).
+- **To do, in this order (left 2026-10-16 night, laptop shut down, nothing running).** Done tonight and
+  committed: the paid route and prompt-prefix caching (D24), five card-correctness fixes and two memory
+  guards (D25), the bank taxonomy and bank EPS, the duplicate gate widened to eight event types over ten
+  days, pass 1 and a cheap fast-track check that name a repeat, a card held back when a second provider
+  cannot verify it (migration 0009; the feed went 456 to 339), the top signal no longer printed twice,
+  and `memory_check.py` plus `defect_digest.py`. Still open:
+  1. **Quote contract on the number-bearing fields.** Copy `Fact` (models.py, text + verbatim quote) onto
+     `KeyNumber`, `Insight` and `NotableChange`; ask for it in `PASS2_SCHEMA` (prompts/engine.py); extend
+     `check_quotes` (pipeline.py) to run `gate.numbers_in_quote()` over those three and stop the
+     document-wide fallback for any item that carries a quote. Not signals: the model never writes them.
+     Both halves must land together or nothing moves. Baseline pinned in test_cards.py: an invented
+     whole-crore figure passes 40% of the time, 8% at one decimal, 3% at two.
+  2. **ANNUAL_REPORT event type.** BSE labels it "Reg. 34 (1) Annual Report" and pass 1 types it RESULTS,
+     so a 563k-character report is re-read for figures XBRL already has. New type whose prompt forbids
+     restating P&L or balance-sheet numbers and asks only for MD&A commitments, key audit matters,
+     related-party transactions and Form AOC-1 subsidiary drag.
+  3. **Finish the XBRL sources.** The NSE fallback is in `seed_results` and works, but PLAN 1k is the
+     bigger gap: BSE's Integrated Filing paths serve nothing and they are the current format, so an NBFC
+     has no machine-tagged results from 2025 on, and NSE's list stops at 2025-01-29. Then PLAN 1j, the
+     general-insurance tag map (NetPremium, GrossPremiumsWritten, UnderwritingProfitOrLoss).
+  4. **Raise the paid weight**, then drain the 160 queued filings (4 FAILED are below max attempts and
+     retry themselves). At the accuracy weights the run stalls: 27 successes against 16 429s and 19 5xx,
+     all on free targets.
+  5. **Audit round 2**, stratified by filing type and sector rather than newest first, and report the
+     WRONG share *and* the share of WRONG the code flagged (56% now). Measure against the baselines:
+     33% WRONG, 38% duplicate pairs, 40/8/3 on grounding.
+  6. **PLAN 1h**: check the 48 `quotes_dropped` facts against their filings, in one batch.
   Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order
-  (PLAN.md item 1c).
+  (PLAN.md item 1c). `sync-to-cloud` still cannot run: no PLATFORM_API_URL or INGEST_TOKEN for the
+  deployed Worker, and laptop.ps1 hardcodes both to localhost.
 - The site shows nothing with the default "Last 7 days" range while the rebuild is walking history: the
   newest card is as old as the filings being processed. Use `/feed?range=all`.
 - Industry fill complete (5,111 companies, 3 without an industry).

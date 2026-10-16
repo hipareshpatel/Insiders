@@ -300,3 +300,25 @@ def test_a_banks_results_are_read_from_the_banking_template():
     assert now["eps"] == 8.74
     # the identity holds on the bank's own statement: income less expenditure, before provisions
     assert abs(now["pbt"] - (now["pre_provision_operating_profit"] - now["provisions"])) < 0.05
+
+
+def test_nse_results_rows_are_read_and_matched_by_date():
+    """BSE lists the NBFC and life-insurance templates under paths that serve nothing, so those companies
+    had no machine-tagged results at all. NSE lists the same filings; the rows are matched to the BSE one
+    by its filing date, within a week, because the two exchanges stamp the same filing a day or two apart."""
+    from bse_intel.nse import parse_results_rows
+
+    rows = parse_results_rows([
+        {"xbrl": "/corporate/xbrl/NBFC_INDAS_1_29012025.xml", "filingDate": "29-Jan-2025",
+         "consolidated": "Consolidated", "audited": "Un-Audited", "bank": "No", "period": "Quarterly"},
+        {"xbrl": "https://nsearchives.nseindia.com/corporate/xbrl/NBFC_INDAS_2_29012025.xml",
+         "filingDate": "29-Jan-2025", "consolidated": "Non-Consolidated", "audited": "Un-Audited", "bank": "No"},
+        {"xbrl": "", "filingDate": "29-Jan-2025"},          # no instance: dropped
+        {"xbrl": "/corporate/xbrl/OLD_1_22102024.xml", "filingDate": "22-Oct-2024", "consolidated": "Consolidated"},
+    ])
+    assert len(rows) == 3, "rows without an XBRL instance are dropped"
+    assert rows[0].filed_at == "2025-01-29" and rows[-1].filed_at == "2024-10-22"   # newest first
+    assert rows[0].xbrl_url.startswith("https://nsearchives.nseindia.com/"), "a relative path is made absolute"
+    assert rows[1].xbrl_url.startswith("https://nsearchives.nseindia.com/"), "an absolute one is left alone"
+    assert rows[0].consolidated is True and rows[1].consolidated is False   # "Non-Consolidated" is not consolidated
+    assert rows[0].is_bank is False

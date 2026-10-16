@@ -31,7 +31,7 @@ def _clear_of_ist_midnight(monkeypatch):
 @pytest.fixture
 def settings(tmp_path) -> Settings:
     return replace(Settings(), sink="local", local_dir=tmp_path / "local", workers=2, text_cache_dir=tmp_path / "text_cache", price_dir=tmp_path / "prices",
-                   universe_min_mcap_cr=0)
+                   universe_min_mcap_cr=0, one_card_per_results_quarter=False)  # fixtures reuse one quarter's results text
 
 
 def completion(text: str, prompt_tokens: int = 100, completion_tokens: int = 50):

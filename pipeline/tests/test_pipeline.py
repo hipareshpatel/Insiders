@@ -332,3 +332,21 @@ def test_a_lakh_figure_read_at_the_wrong_scale_is_corrected_without_a_second_mod
     body = outcome.card["card"]
     assert len(fake.calls) == 1 and body["review"] is None
     assert body["what_happened"][1] == "PAT ₹15 Cr" and body["grounding"]["unit_fixes"] == {"150": "15"}
+
+
+def test_one_card_per_company_per_results_quarter(settings):
+    """Decision D20: Novartis filed one quarter's results as three documents and got three cards. The
+    first gets the card; a later document of the same quarter is linked to it, with no AI call."""
+    from dataclasses import replace
+
+    settings = replace(settings, one_card_per_results_quarter=True, workers=1)
+    now = now_ist() - timedelta(hours=3)
+    first = _filing("q-1", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    again = _filing("q-2", "Outcome of Board Meeting - results", now + timedelta(hours=1), "Board Meeting")
+    pipeline, sink, fake = build(settings, [first, again], {f.pdf_url: _pdf(RESULT_TEXT) for f in (first, again)},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]})
+    one = pipeline.analyze(first.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    pipeline._results_quarters.clear()  # a later run: only memory knows the quarter has its card
+    two = pipeline.analyze(again.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert one.card is not None and len(fake.calls) == 1
+    assert two.update["status"] == "DUPLICATE" and two.update["reason"] == "duplicate of q-1 (same results quarter Q2FY27, D20)"

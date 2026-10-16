@@ -35,7 +35,8 @@ from threading import Lock
 from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
-from .dossier import dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, results_snapshot, view_as_of
+from .dossier import (dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, reported_by, results_snapshot,
+                      view_as_of)
 from .extract import Document
 from .grounding import DEFAULT_THRESHOLD, check_card, check_claims, margin_issues, scale_issues, unit_slips
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
@@ -371,6 +372,33 @@ def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None") 
     return list(dict.fromkeys(issues))
 
 
+_RESULTS_STATEMENT = re.compile(r"statement of (?:standalone |consolidated )?(?:un-?)?audited\b.{0,80}?financial results", re.I | re.S)
+_TAKEOVER = re.compile(r"open offer|substantial acquisition of shares|\bSAST\b|regulation 3\(1\)|regulation 4\b", re.I)
+_PROMOTER_DISCLOSURE = re.compile(r"regulation 29\b|reg\.? ?29\b|regulation 31\b|inter ?se transfer|\bgift(?:ed)?\b", re.I)
+_TAX_OR_PENALTY = re.compile(r"\b(?:demand|penalty|show[- ]cause|assessment order|tax order|adjudication|"
+                             r"(?:income[- ]tax|GST|CGST|service tax|customs) (?:order|notice|demand|authorit))", re.I)  # "excluding GST" is an order
+_REAL_ORDER = re.compile(r"letter of (?:award|intent)|\bLoA\b|\bLoI\b|work order|purchase order|order (?:received|bagged|secured|worth)|"
+                         r"contract (?:awarded|worth|valued)|lowest bidder|\bL1\b", re.I)
+
+
+def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
+    """Event types the model got wrong in the smoke-test audit, settled from the filing itself:
+    results statements typed OTHER (board outcomes carrying the results); an open offer typed as a
+    rights issue or fundraise (no new shares); a promoter's Reg 29 gift typed M&A; a tax demand or
+    penalty typed as an order win."""
+    head = f"{filing.headline} {filing.subject} {text[:3000]}"
+    if event_type in ("OTHER", "GOVERNANCE", "CORPORATE_ACTION") and (
+            (tagged is not None and tagged.kind == "RESULTS") or _RESULTS_STATEMENT.search(text[:20000])):
+        return "RESULTS"
+    if event_type in ("RIGHTS_ISSUE", "FUNDRAISE") and _TAKEOVER.search(head):
+        return "M_AND_A"
+    if event_type == "M_AND_A" and _PROMOTER_DISCLOSURE.search(head) and not _TAKEOVER.search(head):
+        return "GOVERNANCE"
+    if event_type == "ORDER_WIN" and _TAX_OR_PENALTY.search(head) and not _REAL_ORDER.search(head):
+        return "LITIGATION_REGULATORY"
+    return event_type
+
+
 def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...], history: list[dict] | None = None) -> CardChecks:
     """Memory-id hygiene, then the number, math, claim and scale checks (`history`: the dossier's
     stored financial metrics, which the reply's quarterly figures are compared with)."""
@@ -439,6 +467,7 @@ class Pipeline:
         self._learned: dict | None = None   # Loop 1 state: post-mortem queue, lessons, dampened categories
         self._bodies: dict[str, list[tuple[str, str, duplicates.Body]]] = {}  # scrip -> (filed_at, news_id, body) this run
         self._xbrl_links: dict[str, list[XbrlLink]] = {}  # scrip -> its results archive, read once a run
+        self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
 
     # ------------------------------------------------------------------ writes
 
@@ -832,6 +861,29 @@ class Pipeline:
             return max(timely, key=lambda link: link.filed_at).url
         return min(links, key=lambda link: link.filed_at).url if links else None
 
+    def _same_results_quarter(self, filing: Filing, dossier: dict, quarter: str | None) -> tuple[str, str] | None:
+        """(news_id, quarter) of the results filing that already has this company's card for the quarter
+        (decision D20: one card per company per results quarter; the others are linked to it). Novartis
+        filed one quarter's results as three documents, Ahluwalia as a board outcome and a later meeting
+        update. From memory (a RESULTS timeline entry whose filing reported the quarter's figures) and
+        from this run's own claims, so parallel workers cannot both take the quarter."""
+        if not quarter or quarter_index(quarter) is None:
+            return None
+        key = (filing.scrip_code, quarter)
+        with self._lock:
+            claimed = self._results_quarters.get(key)
+            if claimed and claimed != filing.news_id:
+                return claimed, quarter
+            done = {t["news_id"] for t in dossier.get("timeline", [])
+                    if t.get("event_type") == "RESULTS" and t.get("date", "") < filing.filed_at and t.get("news_id") != filing.news_id}
+            for m in dossier.get("financial_metrics", []):
+                if m.get("period") == quarter:
+                    owner = next((n for n in done if reported_by(m, n)), None)
+                    if owner:
+                        return owner, quarter
+            self._results_quarters[key] = filing.news_id
+        return None
+
     def _xbrl_comparatives(self, filing: Filing, tagged: "xbrl_fast_path.XbrlResult") -> None:
         """Year-ago and previous-quarter figures for a results file, from those quarters' files in the
         company's results archive (cached by URL). Best effort: a missing file leaves the change out."""
@@ -977,6 +1029,14 @@ class Pipeline:
             if tagged.kind == "RESULTS":
                 log.warning("XBRL figures for %s not found in the PDF in any unit; using the PDF only", filing.news_id)
             tagged = None
+        if event_type == "RESULTS" and self.settings.one_card_per_results_quarter:
+            earlier = self._same_results_quarter(filing, dossier, tagged.period if tagged else statement_quarter(text))
+            if earlier:
+                with self._lock:
+                    self.stats.duplicates += 1
+                return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": "RESULTS",
+                                "reason": f"duplicate of {earlier[0]} (same results quarter {earlier[1]}, D20)",
+                                "updated_at": now_iso()})
         if tagged:
             self._xbrl_comparatives(filing, tagged)
             text = tagged.table() + "\n\n" + text  # exact figures first; they also ground the card
@@ -1017,6 +1077,10 @@ class Pipeline:
             out.event_type = filing.event_type  # rules know the event type better than the model
         elif out.event_type == "OTHER" and event_type != "OTHER":
             out.event_type = event_type  # Pass 2 left it open; Pass 1 had decided
+        corrected = event_type_rules(out.event_type, filing, text, tagged)
+        if corrected != out.event_type:
+            log.info("event type for %s: %s -> %s (rules)", filing.news_id, out.event_type, corrected)
+            out.event_type = corrected
         if out.card is not None and out.event_type != "CONCALL_PRESENTATION":
             out.card.call_read = None  # guidance, tone and transparency describe a call, not other filings
         event_type = out.event_type

@@ -485,16 +485,24 @@ def _near_amount(index: SourceIndex, target: float) -> bool:
 def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, float, int, float, int]]:
     """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct."""
     unit = declared_unit(filing)
-    if not unit:
-        return []
     filing_index, other_index = SourceIndex(filing), SourceIndex(*others)
+    if not unit and not any(u != 1 for u in filing_index._by_unit):
+        return []
     slips: dict[str, tuple[str, float, int, float, int]] = {}
     for text in texts:
         crore_at = _crore_positions(text or "")
         for value, decimals, pos, kind, raw in _tokens(text or ""):
             if pos not in crore_at or value < 10 or raw in slips:
                 continue
-            if filing_index.stated_crore(value, decimals, (unit,)) or other_index.stated_crore(value, decimals, (1,)):
+            if filing_index.stated_crore(value, decimals, (unit,) if unit else CRORE_SCALES)                     or other_index.stated_crore(value, decimals, (1,)):
+                continue
+            if not unit:
+                # No table unit, but figures written with their own ("INR 14,077 million" in a rating
+                # report, written "₹14,077 Cr"): the card copied the number and kept "Cr".
+                fits = [(round(value / u, 2), 2) for u, values in filing_index._by_unit.items()
+                        if u != 1 and _near(values, value, 0.5 * 10 ** (-decimals) + 1e-9)]
+                if len(fits) == 1 and not _near_amount(other_index, value):
+                    slips[raw] = (raw, value, decimals, *fits[0])
                 continue
             if _near_amount(filing_index, value * unit) or _near_amount(other_index, value):
                 continue  # within 0.5% of a real figure: a rounding or a derivation ("₹955 Cr" beside ₹951.96 Cr), not a slip

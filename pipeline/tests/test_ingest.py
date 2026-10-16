@@ -350,3 +350,20 @@ def test_local_object_keys_are_checked_lexically_and_listed_with_slashes(setting
     for bad in ("../x.json", "memory/../../x", "/etc/x", "memory\\\\x.json", "C:/x", "memory//x"):
         with pytest.raises(ValueError):
             sink.put_object(bad, b"{}")
+
+
+@pytest.mark.parametrize("headline,subject", [
+    ("News Paper Cutting for Q3 Results 31-12-2024 published on 13-02-2025 on FE and Jansatta",
+     "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Outcome"),
+    ("News Paper Cutting on 15-08-2025 Q1 Financial Results FE and Jansatta",
+     "Copy Of News Paper Cutting Of Q1 Un-Audited Financial Results For The FY 2025-26"),
+    ("Published Financial Results for the FY 2025-26 Audited",
+     "Copy Of News Paper Cutting Of Un-Audited Financial Results For Q4 31-03-2026"),
+    ("Published News for Q3 Results 31-12-2024 Notice for Board Meeting will be held on 11-02-2025",
+     "New Paper Cutting For Un-Audited Financial Results 31-12-2024"),
+    ("News Paper Cutting", "Published News Paper Cutting For The FY 2026-27 Q1 Results 30-06-2026"),
+])
+def test_news_paper_cuttings_are_dropped_whatever_the_spelling(rulebook, headline, subject):
+    """Ahluwalia Contracts' clippings ("News Paper Cutting", with a space) reached the model, which invented results
+    cards from text with no numbers; two were even fast-tracked as results filings."""
+    assert rulebook.classify(_f(headline, "Company Update", "General", subject)).action == "DROP"

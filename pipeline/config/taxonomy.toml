@@ -62,12 +62,15 @@ headline = ["74\\s*\\(\\s*5\\s*\\)"]
 
 [[drop]]
 reason = "newspaper publication"
-subcategories = ["newspaper publication", "copy of newspaper"]
-headline = ["newspaper (publication|advertisement|cutting|clipping)s?", "copy of (the )?newspaper"]
+subcategories = ["newspaper publication", "news paper publication", "copy of newspaper"]
+# "News Paper Cutting for Q3 Results ... published on ... on FE and Jansatta" (Ahluwalia, Feb 2025) has a space in
+# "news paper"; it reached the model, which invented a results card from a clipping with no numbers.
+headline = ["news\\s?papers?\\s+(publication|advertis\\w*|cutting|clipping|extract|notice)s?", "paper\\s+(cutting|clipping)s?",
+            "copy of (the )?news\\s?paper", "(publication|published)\\s+(in|on)\\s+(the\\s+)?news\\s?papers?"]
 # "Financial Results ... and Newspaper Publication" is the results filing itself; a clipping of the
 # results is noise, so the shared veto (which keeps "financial results") is off for this rule.
 material_veto = false
-exclude_headline = ["results.{0,80}(and|&|along with|together with).{0,30}newspaper"]
+exclude_headline = ["results.{0,80}(and|&|along with|together with)\\s+(the\\s+)?news\\s?papers?\\s+(publication|advertis\\w*)"]
 
 # Shareholding patterns are read from their XBRL file straight into memory (no AI call, no card);
 # one without an XBRL file is noise.
@@ -131,7 +134,7 @@ headline = [
   "financial results for the (quarter|half|year|period)",
   "outcome.{0,60}(financial )?results", "results.{0,60}outcome",
 ]
-exclude_headline = ["intimation", "to be held", "will be held", "trading window", "^\\W*(copy of )?(the )?newspaper",
+exclude_headline = ["intimation", "to be held", "will be held", "trading window", "^\\W*(copy of )?(the )?news\\s?paper",
                     "voting results", "e-?voting", "postal ballot", "scrutini[sz]er"]
 
 [[fast_track]]
@@ -147,7 +150,7 @@ headline = ["credit rating"]
 [[fast_track]]
 event_type = "RIGHTS_ISSUE"
 headline = ["rights issue", "letter of offer"]
-exclude_headline = ["newspaper"]
+exclude_headline = ["news\\s?paper"]
 
 [[fast_track]]
 event_type = "FUNDRAISE"

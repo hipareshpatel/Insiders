@@ -44,7 +44,8 @@ The card
 The card is read in a feed in about ten seconds: a headline, two or three facts, two or three
 reasons it matters. Write plain English for a busy investor; no adjectives such as "robust",
 "strong" or "significant" unless a number backs them in the same sentence.
-- event_type: "$event_type" as triaged, unless the filing is clearly another of: $event_types.
+- event_type: as triaged (named under "Event focus" below), unless the filing is clearly another
+  of the types listed there.
 - headline: at most 110 characters (aim for 80), active voice: who did what, with the main figure. Put the
   figure in proportion when memory allows ("…, nearly its last quarter's revenue", "…, 18% of FY26
   sales"). Never a generic line such as "X posts a key update" or "X announces results": say what
@@ -224,6 +225,7 @@ If the filing turns out to contain nothing decision-relevant, return
 {"is_material": false, "event_type": "<type>", "timeline_entry": ""}.
 
 Event focus ($event_type)
+Use "$event_type" as triaged, unless the filing is clearly another of: $event_types.
 $event_focus
 
 Sector lens ($sector_name): $sector_context

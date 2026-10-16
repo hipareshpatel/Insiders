@@ -13,7 +13,6 @@ from ..settings import Settings
 
 PASS2_SCHEMA = {
     "is_material": True,
-    "event_type": "RESULTS",
     "card": {
         "impact_level": "HIGH | MODERATE | LOW",
         "tone": "POSITIVE | NEGATIVE | MIXED | NEUTRAL",

@@ -7,6 +7,8 @@ an order called the "first" when the filing says "second", Indian digit grouping
 
 from __future__ import annotations
 
+import os
+
 import pytest
 
 from bse_intel.dossier import merge, new_dossier, view_as_of
@@ -565,3 +567,21 @@ def test_the_scale_block_gives_the_model_proportions_it_must_not_compute():
     assert "net cash ₹304.24 Cr" in block and "order book ₹25,194 Cr" in block     # not "net debt ₹-304.24 Cr"
     assert "₹396.5 Cr = 10.5% of market cap, 8.6% of revenue, 19.8% of net worth, 1.6% of order book" in block
     assert "give no proportions" in scale_block({}, {}, "Rs. 396.5 crore", None)   # nothing known: say so
+
+
+def test_pass2_system_prompt_is_one_shared_prefix_across_events_and_sectors(settings):
+    """Prefix caching bills a repeated prompt at 2% (D24), but only for the bytes before the first
+    difference. Every part that varies — the triaged event type, its focus, the sector lens, the schema's
+    event_type — therefore belongs at the end: two calls that share nothing else must still share most of
+    the system prompt."""
+    from bse_intel.prompts.engine import PromptEngine
+
+    engine = PromptEngine(settings)
+    f = Filing(news_id="p1", scrip_code="999001", company_name="Demo Ltd", headline="Results",
+               filed_at="2026-10-13T17:43:02+05:30", filing_date="2026-10-13")
+    a, _ = engine.pass2(f, "RESULTS", "Refineries", None, "text")
+    b, _ = engine.pass2(f, "ORDER_WIN", "Construction", None, "text")
+    shared = os.path.commonprefix([a, b])
+    assert len(shared) > 0.6 * len(a), f"only {len(shared)} of {len(a)} chars shared"
+    # the rules the two calls share must sit inside that prefix, not after the first difference
+    assert "event_type: as triaged" in shared

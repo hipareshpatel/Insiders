@@ -238,7 +238,7 @@ limits = { rpm = 60, tpd = 150_000 }
 [[routes.pass2]]
 provider = "deepseek"
 model = "deepseek-flash"
-weight = 8
+weight = 20
 json_mode = true
 max_tokens = 6000
 context_tokens = 900000  # 1M window: no filing is too long for it
@@ -334,7 +334,7 @@ limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 [[routes.pass2_bulk]]
 provider = "deepseek"
 model = "deepseek-flash"
-weight = 8
+weight = 20
 json_mode = true
 max_tokens = 6000
 context_tokens = 900000  # 1M window: no filing is too long for it
@@ -398,7 +398,7 @@ limits = { rpm = 10 }
 [[routes.pass2_long]]
 provider = "deepseek"
 model = "deepseek-flash"
-weight = 8
+weight = 20
 json_mode = true
 max_tokens = 4000
 context_tokens = 900000  # 1M window: no filing is too long for it

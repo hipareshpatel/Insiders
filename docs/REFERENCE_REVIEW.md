@@ -88,3 +88,17 @@ their repo and ours: BSE results archive (`Result_Arch_ng`), BSE-side XBRL fetch
    raw bytes kept, per-item status, AttachHis fallback and PDF checks.
 3. Context engine blocks (section 2) on that history.
 4. Restart loop with a progress guard; fixtures from real data.
+
+## 8. Speed and accuracy compared (checked against their own records, 2026-10-16)
+
+- **Speed.** Their workflow says a 100-filing supervised run needs about 80 minutes (`minutes=80`, job timeout 110);
+  a live run read 17 filings (plus 7 copies) in 23 minutes with two lanes, 294 chosen filings left for later runs
+  (docs/ANNOUNCEMENT_READER.md, run 38452625630). That is about 45 to 75 filings an hour; ours is 70 to 100 with thinking
+  on and should be faster with it off. No run of 100 in 20 minutes is recorded.
+- **Accuracy.** Their audit of run 4 (77 cards): their own pass found 4 to 5 problems, ten independent reviewers found
+  about 60; 26 stored cards were put on the hold list and several rules were added. Same journey as ours.
+- **What is genuinely different.** (1) Their task is smaller: extract fields with a quote from a short announcement;
+  ours writes a full card with memory (about 18,000 input and 2,700 to 5,600 output tokens a Pass 2 call). (2) They
+  filter 73% of filings with rules and no model ("routine or no file": 1,226 of 1,685). (3) One worker per provider,
+  each taking the next filing, so a slow model holds up only its own filing. (4) Z.ai GLM-4.5-Flash: 17 of 17 answers,
+  median 10.6 s, no 429; ours: glm-4.7-flash rate-limited on 23 of 30 calls today. Worth testing GLM-4.5-Flash.

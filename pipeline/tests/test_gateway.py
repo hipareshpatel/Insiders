@@ -120,9 +120,10 @@ def test_openrouter_free_models_are_spares_under_one_daily_allowance(settings):
     assert config["providers"]["openrouter"]["limits"]["rpd"] == 1_000  # after the one-time credit purchase (D19)
     entries = [e for route in config["routes"].values() for e in route if e["provider"] == "openrouter"]
     assert entries and all(e["model"].endswith(":free") for e in entries)  # never a paid model by accident
-    for name, route in config["routes"].items():  # a regular, weighted share in the backfill only
-        for e in (e for e in route if e["provider"] == "openrouter"):
-            assert (not e.get("spare") and e.get("weight", 1) >= 1) if name == "pass2_bulk" else e.get("spare"), (name, e)
+    for name, route in config["routes"].items():  # a regular, weighted share in the backfill only, for the VL model alone:
+        for e in (e for e in route if e["provider"] == "openrouter"):  # Ultra (53% wrong in the audit) is a spare everywhere
+            regular = name == "pass2_bulk" and "3.5-super-vl" in e["model"]
+            assert (not e.get("spare") and e.get("weight", 1) >= 1) if regular else e.get("spare"), (name, e)
     assert config["gateway"]["strategies"]["pass2_bulk"] == "weighted"
     for route in config["routes"].values():  # the free allowance is 20/min across the models of one route
         assert sum(e["limits"]["rpm"] for e in route if e["provider"] == "openrouter") <= 20

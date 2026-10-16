@@ -220,7 +220,8 @@ limits = { rpm = 60, tpd = 150_000 }
 # Pass 2 weights follow the card audit (docs/audit, round 0, old code, 177 cards): the share of cards wrong by writer was
 # Nemotron 3 Super 20% (1.4 issues a card), Nemotron 3 Ultra 53%, GLM-4.7-Flash 73%, ministral-14b 81% (5.9 issues a card,
 # 51 unit slips). So Super carries most of the traffic and ministral-14b is a spare. Ultra keeps its regular share of the
-# backfill route under the owner's D19 although the audit says 53% wrong (the owner's call); GLM-4.5-Flash stays in the
+# Ultra is a spare on every route (owner, 2026-10-16: supersedes D19's weighted share for it; the audit says 53% wrong);
+# Nemotron 3.5 Super VL (33% wrong on 6 cards) keeps its D19 share of the backfill route. GLM-4.5-Flash stays in the
 # regular rotation until a fresh audit round measures it. Re-weight from each round (docs/AUDIT_LOOP.md).
 [[routes.pass2]]
 provider = "nvidia"
@@ -342,7 +343,7 @@ limits = { rpm = 60, tpd = 60_000 }
 [[routes.pass2_bulk]]
 provider = "openrouter"
 model = "nvidia/nemotron-3-ultra-550b-a55b:free"
-weight = 1
+spare = true
 json_mode = false
 strip_reasoning = true
 max_tokens = 12000

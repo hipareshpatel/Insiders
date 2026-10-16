@@ -296,5 +296,7 @@ def test_a_banks_results_are_read_from_the_banking_template():
     assert now["pbt"] == 204.12          # ProfitLossFromOrdinaryActivitiesBeforeTax, not ProfitBeforeTax
     assert now["pat"] == 151.63          # the figure the audited card carried
     assert now["total_income"] == 1138.75
+    # EPS comes from the RBI Form B names (before/after extraordinary items), not the commercial tag
+    assert now["eps"] == 8.74
     # the identity holds on the bank's own statement: income less expenditure, before provisions
     assert abs(now["pbt"] - (now["pre_provision_operating_profit"] - now["provisions"])) < 0.05

@@ -64,6 +64,11 @@ RESULT_TAGS = {
     # CSB Bank, audit round 1 - 6 of 12 metrics). Interest earned is the top line of a bank's statement,
     # interest expended its cost of funds, and operating profit before provisions its pre-provision
     # operating profit, which is the figure a bank is read on rather than EBITDA.
+    # EPS too: the banking template reports it before and after extraordinary items (the RBI Form B
+    # names), not under the commercial tag, so SBI and CSB Bank had no EPS at all. Where a bank
+    # reports both and they differ, the first in the document wins, as for every other metric.
+    "BasicEarningsPerShareAfterExtraordinaryItems": "eps",
+    "BasicEarningsPerShareBeforeExtraordinaryItems": "eps",
     "InterestEarned": "interest_earned",
     "InterestExpended": "interest_expended",
     "OperatingProfitBeforeProvisionAndContingencies": "pre_provision_operating_profit",

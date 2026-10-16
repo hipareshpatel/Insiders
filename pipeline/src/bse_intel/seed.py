@@ -94,7 +94,14 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     for period, link in sorted(by_period.items()):
         data = _fetch(bse, link.url, cache_root)
         if not data:
+            # Loudly: BSE's own archive listed this file, so nothing coming back means the company is
+            # about to be written from PDFs alone with no machine-tagged figure to check against. Two of
+            # eight companies surveyed on 2026-10-16 failed this way (Bajaj Finance, Max Financial, both on
+            # the NBFCUploadDocument path) and only a counter moved.
             stats.skipped += 1
+            stats.failures.append(f"{scrip} {period}: nothing fetched from {link.url}")
+            log.warning("seed %s %s: the archive lists %s but nothing came back; this company has no "
+                        "machine-tagged results for that quarter", scrip, period, link.url)
             continue
         stats.results_files += 1
         parsed = xbrl_fast_path.parse(data)

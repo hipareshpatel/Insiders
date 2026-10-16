@@ -89,7 +89,9 @@ refer to the sections above.
 
 | # | Item | Who | When |
 |---|---|---|---|
-| 1 | Rebuild both smoke tests (10 companies, reset 2026-10-16 06:30 after the card-vs-PDF audit: 95 of 177 cards wrong, classes fixed in code; `docs/audit/`), re-audit a sample against the PDFs, then the owner reviews the site against the case studies | Laptop, then owner | Phase 1 |
+| 1 | Rebuild both smoke tests (10 companies, reset 2026-10-16 06:30 after the card-vs-PDF audit) and re-audit a sample: rebuild running, **audit round 1 done** (98 cards, 33% wrong against round 0's 53%; `docs/audit/round-1.json`, D25). Still to do: the owner reviews the site against the case studies | Laptop, then owner | Phase 1 |
+| 1g | Error classes round 1 left open: filings read without XBRL still carry 10x slips (the annual-report path); the DISTRESS template prints "barely covers interest" at 0.2x and at -0.0x; a conversion or a completed allotment is typed FUNDRAISE and emits a SCALE "raise" signal although no cash reaches the company; an approval is called "met" on the arrival of a disclosure about the approval process | Laptop | Phase 1 |
+| 1h | Check the 48 `quotes_dropped` facts from the rebuild against their filings in one batch | Laptop | Phase 1 |
 | 1f | Audit classes not fixable by a rule (docs/audit/README.md "Still open"): invented facts (stricter prompt + claim checks), prose arithmetic, standalone/consolidated mixing, wrong table row, OCR losing brackets on negatives, stale market cap in signals | Laptop | Phase 1 |
 | 1a | Retry the one Kanoria long document (2025-05-21) that failed on every long-context provider; it is retried automatically by the next run | Laptop | Phase 1 |
 | 1b | Measure 5 vs 3 workers over a full hour (filings/hour, 429 share) and keep the better (D18); the first 14 min gave ~125/h vs ~95/h, 9% 429s before the Z.ai one-at-a-time cap | Laptop | Phase 1 |

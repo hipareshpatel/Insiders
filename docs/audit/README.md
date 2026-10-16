@@ -20,6 +20,27 @@ direction 29, standalone/consolidated mixed 12.
 | Event type | rules: results statements → RESULTS; open offer → M&A; promoter Reg 29 gift → governance; tax demand/penalty → litigation |
 | Same results filed several times | D20: one card per company per results quarter, later documents linked |
 
+## Round 1 (2026-10-16, `round-1.json`)
+
+98 cards over the same ten companies, rebuilt on the fixed code and reviewed the same way:
+**32 WRONG (33%), 46 MINOR (47%), 20 OK (20%)**, 2.0 issues a card, against round 0's
+95/56/26 (53% WRONG) and 3.67. Per 100 cards: wrong_period 36 to 5, invented 83 to 31,
+unit_scale 50 to 22, signal_verdict 31 to 16, wrong_column 24 to 14; arithmetic 50 to 41 and
+direction 16 to 17 barely moved.
+
+Two of our own fixers caused most of what did not move, and both are now guarded (D25):
+`xbrl_key_numbers` replaced a correct YoY with one from the wrong XBRL comparative, and
+`fix_change_percentages` computed a change from a figure the model had misread. An XBRL YoY is
+now taken only when the year-ago figure it implies is in the filing, and a change is recomputed
+only when the filing states both sides.
+
+Left open by this round, beyond the list below: filings read without XBRL still carry 10x slips
+(the annual-report path); the DISTRESS template prints "barely covers interest" at 0.2x and at
+-0.0x; a conversion or a completed allotment is typed FUNDRAISE and emits a SCALE "raise" signal
+although no cash reaches the company; an approval is called "met" when a disclosure about the
+approval process arrives. Round 1 deliberately re-audited the same filings rather than skipping
+them with `audited_ids.txt`, because measuring the same cards on new code is the point of a round.
+
 ## Still open (not fixable by a rule; prompt work or second opinion)
 
 - **Invented facts** (the largest class): purposes of fundraises, "fixed-price" contracts,

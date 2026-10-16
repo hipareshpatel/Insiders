@@ -299,10 +299,13 @@ def _amount(text: str | None) -> float | None:
     return -value if raw.startswith(("-", "(")) else value
 
 
-def fix_change_percentages(out: Pass2Output) -> list[str]:
+def fix_change_percentages(out: Pass2Output, sources: tuple[str, ...] = ()) -> list[str]:
     """A notable change whose % does not follow from its own two figures ("₹494 Cr → ₹418 Cr, +15% YoY",
-    a 15% fall) gets the computed % in code. Only amounts on both sides, neither a percentage."""
+    a 15% fall) gets the computed % in code. Only amounts on both sides, neither a percentage, and only
+    when the filing states both: computing from a figure the model misread turns a small unit slip into a
+    confident nonsense ("₹43 Cr → ₹458 Cr, +965%" where the statement said 457.86 million, audit round 1)."""
     fixed = []
+    index = SourceIndex(*sources) if sources else None
     for change in out.card.notable_changes if out.card else []:
         before, after, stated = change.previous or "", change.current or "", change.change or ""
         m = _CHANGE_PCT.search(stated)
@@ -311,6 +314,8 @@ def fix_change_percentages(out: Pass2Output) -> list[str]:
         a, b = _amount(before), _amount(after)
         if a is None or b is None or a == 0:
             continue
+        if index and not all(index.stated_crore(abs(v), 2) for v in (a, b)):
+            continue  # one side is not in the filing, so the % computed from it would be worse
         real = (b - a) / abs(a) * 100
         claimed = float(m.group(2)) * (-1 if m.group(1) in ("-", "−") else 1)
         if not m.group(1) and re.search(r"\b(?:down|fell|lower|decline)", stated, re.I):
@@ -319,8 +324,10 @@ def fix_change_percentages(out: Pass2Output) -> list[str]:
             continue
         new = f"{real:+.1f}%".replace(".0%", "%")
         change.change = stated[:m.start()] + new + stated[m.end():]
-        if change.direction in ("positive", "negative") and (real > 0) != (claimed > 0):
-            change.direction = "negative" if change.direction == "positive" else "positive"
+        # the model writes the direction in capitals, so compare without case or the flip never fires
+        if (change.direction or "").lower() in ("positive", "negative") and (real > 0) != (claimed > 0):
+            flipped = "NEGATIVE" if change.direction.lower() == "positive" else "POSITIVE"
+            change.direction = flipped if change.direction.isupper() else flipped.lower()
         fixed.append(f"{change.metric}: {stated} -> {change.change}")
     if fixed:
         log.info("change percentages corrected in code: %s", fixed)
@@ -334,7 +341,8 @@ _KEY_METRIC = (("ebitda", re.compile(r"\bebitda\b(?!.*margin)", re.I)),
                ("revenue", re.compile(r"revenue|net sales|income from operations|\bsales\b", re.I)))
 
 
-def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult") -> list[str]:
+def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
+                     sources: tuple[str, ...] = ()) -> list[str]:
     """A results card's key numbers for revenue, EBITDA, PBT, PAT and EPS set from the XBRL file: exact
     value and YoY (SML's "revenue -40% YoY" was the fall from the previous quarter; its "EBITDA ₹0.75 Cr"
     was PBT). Only on the card's own basis and quarter. Returns what changed."""
@@ -343,7 +351,9 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult") -> l
     if out.card.basis and tagged.basis and out.card.basis != tagged.basis:
         return []
     now = {m.metric: m for m in tagged.metrics if m.period == tagged.period}
-    changed = []
+    index = SourceIndex(*sources) if sources else None
+    changed: list[str] = []
+    unverified: list[str] = []
     for key in out.card.key_numbers:
         if "margin" in (key.label or "").lower() or "%" in (key.value or ""):
             continue
@@ -352,12 +362,23 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult") -> l
         if m is None or m.value is None:
             continue
         value = f"₹{m.value:,.2f}" + (" per share" if metric == "eps" else " Cr")
-        change = f"{m.yoy_pct:+.1f}% YoY" if m.yoy_pct is not None else key.change
+        # The value is one tagged fact and is trusted; the YoY needs a second one, and a wrong period
+        # match produced headline reversals in audit round 1 (Kanoria Q1FY27 revenue +129% rewritten to
+        # +1.5%). Accept it only when the year-ago figure it implies is in the filing as well.
+        change = key.change
+        if m.yoy_pct is not None and m.yoy_pct != -100:
+            prior = m.value / (1 + m.yoy_pct / 100)
+            if index is None or index.stated_crore(round(abs(prior), 2), 2):
+                change = f"{m.yoy_pct:+.1f}% YoY"
+            elif key.change:
+                unverified.append(f"{key.label}: XBRL year-ago ₹{prior:,.2f} Cr is not in the filing")
         if (key.value, key.change) != (value, change):
             changed.append(f"{key.label}: {key.value} ({key.change}) -> {value} ({change})")
             key.value, key.change = value, change
     if changed:
         log.info("key numbers set from XBRL: %s", changed)
+    if unverified:
+        log.info("XBRL YoY left alone, comparative not in the filing: %s", unverified)
     return changed
 
 
@@ -1221,10 +1242,10 @@ class Pipeline:
         sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
         history = dossier.get("financial_metrics", [])
         unit_fixes = fix_unit_slips(out, sources)
-        change_fixes = fix_change_percentages(out)
+        change_fixes = fix_change_percentages(out, sources)
         change_fixes += apply_deal_guards(out, filing, history, dossier.get("balance_sheet", []), text)
         if tagged:
-            change_fixes += xbrl_key_numbers(out, tagged)
+            change_fixes += xbrl_key_numbers(out, tagged, sources)
         checks = check_card_all(out, view, sources, history)
         checks.scale += period_mixups(out, tagged)
         quote_problems, quotes_missing, quotes_dropped = check_quotes(out, text, filing.news_id)

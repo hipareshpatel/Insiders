@@ -7,10 +7,11 @@ Read before changing anything:
 - `docs/BLUEPRINT.md`: the spec (modules are numbered; "Module 35" means section 35).
 - `docs/PLAN.md`: the phases from smoke test to go-live, how it runs after, open decisions and the
   single "Pending work" list. Work from that list and tick items off there.
-- `docs/TRACKER.md`: decisions D1–D23, what is built and what is not.
+- `docs/TRACKER.md`: decisions D1–D25, what is built and what is not.
 - `docs/SPEC.md`: the design as built. `README.md`: setup and the CLI commands table.
 - `pipeline/config/providers.toml`: AI providers, models, free-tier limits and routes; `docs/SPEC.md` §4
-  explains the gateway rules. Owner decisions D13–D15 in the tracker cover providers, keys and this setup.
+  explains the gateway rules. Owner decisions D13–D15 cover providers, keys and this setup; D24–D25
+  the one paid route and the weights each audit round measures.
 
 ## Rules
 
@@ -60,18 +61,19 @@ Read before changing anything:
 
 - Done: all blueprint modules except 8 (DGTR) and 42 (promoter-group contagion), which have no data source.
 - Smoke-test findings and their fixes: the table in `docs/TRACKER.md` ("Laptop smoke test").
-- **State at 2026-10-16 06:30 (laptop shut down; nothing running).** Every card of both smoke tests
-  (177) was checked against its PDF: 95 wrong, 56 minor, 26 OK (`docs/audit/`). The error classes were
-  fixed in code (XBRL results from BSE's results archive, unit-slip correction, YoY/QoQ from XBRL,
-  event-type rules, signal-verdict checks, D20 one card per results quarter). Then **all ten smoke-test
-  companies were reset** (cards, catalysts and memory deleted; analysed, duplicate, failed and pass-2
-  not-material filings requeued: 1,088 PENDING; pass-1 rejections kept; text cache kept).
-- **Next, on restart:** start the web site (`cd web; $env:CF_REMOTE_BINDINGS='1'; npm run dev`), then
-  rebuild both smoke tests on the fixed code:
-  `pwsh -File pipeline\scripts\laptop.ps1 backfill-companies --scrips 506525,532776,505192,500672,530019,542867,500338,519552,532811,543533`.
-  Re-audit a sample of the new cards against their PDFs (as in `docs/audit/`) before the owner review;
-  then the D21 thinking A/B. Do not start the full backfill before the owner has reviewed the smoke test
-  (decision D6) and chosen the order (PLAN.md item 1c).
+- **State at 2026-10-16 19:30 (laptop awake; the rebuild is running).** Round 0 checked every card of
+  both smoke tests (177) against its PDF: 95 wrong, 56 minor, 26 OK. The error classes were fixed in code
+  (XBRL results from BSE's results archive, unit-slip correction, YoY/QoQ from XBRL, event-type rules,
+  signal-verdict checks, D20 one card per results quarter), all ten companies were reset, and the rebuild
+  was re-audited: **round 1, 98 cards, 32 wrong / 46 minor / 20 OK (33% against 53%), 2.0 issues a card
+  against 3.67** (`docs/audit/round-1.json`). wrong_period, invented, unit_scale and signal_verdict all
+  roughly halved or better; arithmetic and direction did not move, because two of our own fixers were
+  writing wrong numbers over right ones (D25, now guarded against the filing's own figures).
+- **Next:** the owner reviews the site against the case studies. Then PLAN items 1g (the classes round 1
+  left open), 1h (the 48 dropped facts) and 1f. Do not start the full backfill before the owner has
+  reviewed the smoke test (decision D6) and chosen the order (PLAN.md item 1c).
+- The site shows nothing with the default "Last 7 days" range while the rebuild is walking history: the
+  newest card is as old as the filings being processed. Use `/feed?range=all`.
 - Industry fill complete (5,111 companies, 3 without an industry).
 - Fix in batches during a run, not by stopping it for each bug (owner, 2026-10-16).
 - Gotchas found tonight: models copy lakh figures as crore (grounding now enforces the declared unit);

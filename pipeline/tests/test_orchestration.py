@@ -170,8 +170,8 @@ def test_a_failing_history_filing_is_tried_once_per_run(settings):
     history = _filing("old", "Unaudited Financial Results", old, "Result")
     live = _filing("new", "Unaudited Financial Results", now_ist() - timedelta(minutes=5), "Result")
     pipeline, sink, _ = build(settings, [history, live], {live.pdf_url: _pdf(RESULT_TEXT)},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)], "ministral-14b-2512": [json.dumps(PASS2)]},
-                              env={"MISTRAL_API_KEY": "m", "NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)], "glm-4.5-flash": [json.dumps(PASS2)]},
+                              env={"ZAI_API_KEY": "z", "NVIDIA_API_KEY": "n"})
     pipeline.discover(old.date())
     pipeline.bse.download = lambda url: (_ for _ in ()).throw(AttachmentError("timed out")) if "old" in url else _pdf(RESULT_TEXT)
     pipeline.run("all", time_budget_s=60, max_backfill_days=40)
@@ -229,8 +229,8 @@ def test_second_opinion_reply_with_only_a_card_keeps_the_memory(settings):
     bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
     card_only = {"is_material": True, "card": PASS2["card"]}
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "ministral-14b-2512": [json.dumps(card_only)]},
-                              env={"NVIDIA_API_KEY": "n", "MISTRAL_API_KEY": "m"})
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(card_only)]},
+                              env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert outcome.card["card"]["review"]["status"] == "CORRECTED"
     assert {m["period"] for m in sink.get_dossier("999001")["financial_metrics"]} == {"Q2FY27", "Q2FY26"}
@@ -287,7 +287,7 @@ def test_scanned_document_with_failed_ocr_is_retried_not_judged_on_its_headline(
     now = now_ist() - timedelta(minutes=30)
     (f,) = _results(1, now)
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: pdf}, {"pixtral-12b-latest": [RuntimeError("vision down")]},
-                              env={"MISTRAL_API_KEY": "m"})
+                              env={"ZAI_API_KEY": "z"})
     pipeline.gateway.transcribe_image = lambda png, route="vision": (_ for _ in ()).throw(RuntimeError("vision down"))
     outcome = pipeline._process_one(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}), False, True)
     assert outcome.update["status"] == "FAILED" and "OCR failed" in outcome.update["last_error"]
@@ -338,7 +338,7 @@ def test_smoke_test_backfill_covers_only_the_given_companies_in_date_order(setti
         return json.dumps(PASS2)
 
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                              {"ministral-14b-2512": [respond]}, env={"MISTRAL_API_KEY": "m"})
+                              {"glm-4.5-flash": [respond]}, env={"ZAI_API_KEY": "z"})
     stats = pipeline.backfill_companies(["506525"], today - timedelta(days=60), today, 60)
     assert seen == [at(50).date().isoformat(), at(10).date().isoformat()] and stats.status == "OK"
     assert {r["news_id"] for r in rows(sink, "select news_id from cards")} == {"a1", "a2"}
@@ -351,7 +351,7 @@ def test_a_long_company_history_is_saved_every_few_filings(settings, monkeypatch
     filings = [_filing(f"k{i}", "Unaudited Financial Results", at(40 - i), "Result", scrip="506525", name="Kanoria")
                for i in range(12)]
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                              {"ministral-14b-2512": [json.dumps(PASS2)] * 12}, env={"MISTRAL_API_KEY": "m"})
+                              {"glm-4.5-flash": [json.dumps(PASS2)] * 12}, env={"ZAI_API_KEY": "z"})
     saved = []
     commit = pipeline._commit
     monkeypatch.setattr(pipeline, "_commit", lambda outcomes: (saved.append(len(outcomes)), commit(outcomes)))

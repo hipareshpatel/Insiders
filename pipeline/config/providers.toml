@@ -229,16 +229,18 @@ limits = { rpm = 60, tpd = 150_000 }
 # Prompts larger than a model's context_tokens skip that model, so very long
 # presentations and annual reports flow to GLM's 200K window.
 
-# Pass 2 weights follow the card audit (docs/audit, round 0, old code, 177 cards): the share of cards wrong by writer was
-# Nemotron 3 Super 20% (1.4 issues a card), Nemotron 3 Ultra 53%, GLM-4.7-Flash 73%, ministral-14b 81% (5.9 issues a card,
-# 51 unit slips). So Super carries most of the traffic and ministral-14b is a spare. Ultra keeps its regular share of the
-# Ultra is a spare on every route (owner, 2026-10-16: supersedes D19's weighted share for it; the audit says 53% wrong);
-# Nemotron 3.5 Super VL (33% wrong on 6 cards) keeps its D19 share of the backfill route. GLM-4.5-Flash stays in the
-# regular rotation until a fresh audit round measures it. Re-weight from each round (docs/AUDIT_LOOP.md).
+# Pass 2 weights follow the card audit (docs/audit, round 1, 98 cards on the current code; round 0 in round-0 terms
+# in brackets). Share of cards wrong by writer: GLM-4.5-Flash 0% and 1.0 issues a card, Nemotron 3 Super 28% / 2.0 [20%],
+# GLM-4.7-Flash 33% [73%], DeepSeek-Flash 47% / 1.9, ministral-14b 67% / 3.6 [81%]. So GLM-4.5-Flash now carries the
+# largest share, the paid route sits below Nemotron Super despite its speed (D24, D25), and ministral-14b is off pass 2
+# altogether - two rounds running it was the worst writer, and as a spare it still wrote 18 of the 98 cards. Nemotron 3
+# Ultra is a spare on every route (owner, 2026-10-16: supersedes D19 weighted share; 53% wrong); Nemotron 3.5 Super VL
+# (33% wrong on 6 cards) keeps its D19 share of the backfill route. Samples are 15-43 cards and the hard filings cluster,
+# so re-weight from each round (docs/AUDIT_LOOP.md).
 [[routes.pass2]]
 provider = "deepseek"
 model = "deepseek-flash"
-weight = 20
+weight = 3
 json_mode = true
 max_tokens = 6000
 context_tokens = 900000  # 1M window: no filing is too long for it
@@ -259,21 +261,12 @@ limits = { rpm = 40 }
 [[routes.pass2]]
 provider = "zai"
 model = "glm-4.5-flash"
-weight = 2
+weight = 4
 json_mode = true
 max_tokens = 5000
 context_tokens = 120000
 extra_body = { thinking = { type = "disabled" } }
 limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
-
-[[routes.pass2]]
-provider = "mistral"
-model = "ministral-14b-2512"  # the free tier blocks mistral-large; 937k tokens/min, 0.5 requests/s
-spare = true
-json_mode = true
-max_tokens = 6000
-context_tokens = 120000
-limits = { rpm = 25, tpm = 937_500 }
 
 [[routes.pass2]]
 provider = "gemini"
@@ -313,18 +306,9 @@ context_tokens = 250000
 limits = { rpm = 10 }
 
 [[routes.pass2_bulk]]
-provider = "mistral"
-model = "ministral-14b-2512"  # the free tier blocks mistral-large; 937k tokens/min, 0.5 requests/s
-spare = true
-json_mode = true
-max_tokens = 6000
-context_tokens = 120000
-limits = { rpm = 25, tpm = 937_500 }
-
-[[routes.pass2_bulk]]
 provider = "zai"
 model = "glm-4.5-flash"
-weight = 2
+weight = 4
 json_mode = true
 max_tokens = 5000
 context_tokens = 120000
@@ -334,7 +318,7 @@ limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 [[routes.pass2_bulk]]
 provider = "deepseek"
 model = "deepseek-flash"
-weight = 20
+weight = 3
 json_mode = true
 max_tokens = 6000
 context_tokens = 900000  # 1M window: no filing is too long for it
@@ -398,7 +382,7 @@ limits = { rpm = 10 }
 [[routes.pass2_long]]
 provider = "deepseek"
 model = "deepseek-flash"
-weight = 20
+weight = 4
 json_mode = true
 max_tokens = 4000
 context_tokens = 900000  # 1M window: no filing is too long for it
@@ -414,15 +398,6 @@ max_tokens = 4000
 context_tokens = 190000
 extra_body = { thinking = { type = "disabled" } }
 limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
-
-[[routes.pass2_long]]
-provider = "mistral"
-model = "ministral-14b-2512"  # the free tier blocks mistral-large; 937k tokens/min, 0.5 requests/s
-spare = true
-json_mode = true
-max_tokens = 4000
-context_tokens = 120000
-limits = { rpm = 25, tpm = 937_500 }
 
 [[routes.pass2_long]]
 provider = "nvidia"

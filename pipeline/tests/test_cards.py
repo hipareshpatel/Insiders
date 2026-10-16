@@ -585,3 +585,32 @@ def test_pass2_system_prompt_is_one_shared_prefix_across_events_and_sectors(sett
     assert len(shared) > 0.6 * len(a), f"only {len(shared)} of {len(a)} chars shared"
     # the rules the two calls share must sit inside that prefix, not after the first difference
     assert "event_type: as triaged" in shared
+
+
+def test_a_change_is_recomputed_only_from_figures_the_filing_states():
+    """Audit round 1: Kanoria's annual report said finance costs of 457.86 million (₹45.79 Cr); the card read
+    it as "₹458 Cr", and the fixer dutifully computed "+965.1% YoY" from it, turning a unit slip into a
+    confident nonsense. A side that is not in the filing now leaves the change alone."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import fix_change_percentages
+
+    def card(previous: str, current: str, change: str):
+        return Pass2Output.model_validate({
+            "is_material": True, "event_type": "RESULTS", "timeline_entry": "FY25 results",
+            "card": {"impact_level": "MODERATE", "headline": "Kanoria FY25 results",
+                     "what_happened": ["Finance costs rose"], "key_numbers": [],
+                     "notable_changes": [{"metric": "Finance Costs", "previous": previous, "current": current,
+                                          "change": change, "direction": "negative"}]}})
+
+    filing = ("Finance costs 457.86 million against 430.20 million in the previous year. "
+              "Revenue from operations 15,367 million against 14,751 million.")
+    # "₹458 Cr" is the 457.86 million figure misread, so no % may be computed from it
+    out = card("₹43 Cr (FY24)", "₹458 Cr (FY25)", "+6.5% YoY")
+    assert fix_change_percentages(out, (filing,)) == []
+    assert out.card.notable_changes[0].change == "+6.5% YoY"
+
+    # both sides stated in the filing: the arithmetic is still corrected in code
+    out = card("₹1,475.10 Cr (FY24)", "₹1,536.70 Cr (FY25)", "-12% YoY")
+    assert fix_change_percentages(out, (filing,))
+    assert out.card.notable_changes[0].change == "+4.2% YoY"
+    assert out.card.notable_changes[0].direction == "POSITIVE"

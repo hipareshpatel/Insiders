@@ -226,3 +226,35 @@ def test_promoter_locked_in_shares_are_not_the_promoter_holding():
     own = result.ownership
     assert own.promoter_pct == 49.72 and own.pledge_pct == 0.0
     assert own.fii_pct == 5.9 and own.dii_pct == 12.25 and own.retail_holders == 54796
+
+
+def test_an_xbrl_yoy_is_only_trusted_when_its_comparative_is_in_the_filing():
+    """Audit round 1: the XBRL period match put Kanoria's Q1FY27 year-ago revenue at about ₹454 Cr against a
+    real ₹201 Cr, and the card's correct "+129% YoY" was rewritten to "+1.5% YoY". The value is one tagged
+    fact and is still trusted; the YoY needs a second one, so it is taken only when the year-ago figure it
+    implies also appears in the filing."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import xbrl_key_numbers
+
+    tagged = xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    assert xbrl.add_comparatives(tagged, *(xbrl.parse((FIXTURES / f"bse_main_ind_as_532811_{q}.xml").read_bytes())
+                                           for q in ("q3fy24", "q2fy25")))
+    rev = next(m for m in tagged.metrics if m.period == "Q3FY25" and m.metric == "revenue")
+    prior = rev.value / (1 + rev.yoy_pct / 100)
+
+    def card():
+        return Pass2Output.model_validate({
+            "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q3FY25 results",
+            "card": {"impact_level": "MODERATE", "headline": "Ahluwalia Q3FY25 results", "basis": "STANDALONE",
+                     "what_happened": ["Revenue fell to ₹952 Cr"],
+                     "key_numbers": [{"label": "Revenue", "value": "₹952 Cr", "change": "-3.0% YoY"}]}})
+
+    # the comparative is nowhere in the filing: the model's own change stands and the value is still corrected
+    out = card()
+    xbrl_key_numbers(out, tagged, sources=("Revenue for the quarter was 951.96",))
+    assert [(k.value, k.change) for k in out.card.key_numbers] == [("₹951.96 Cr", "-3.0% YoY")]
+
+    # the same filing stating the year-ago figure: the XBRL YoY is taken
+    out = card()
+    xbrl_key_numbers(out, tagged, sources=(f"Revenue 951.96 against {prior:,.2f} in the corresponding quarter",))
+    assert [(k.value, k.change) for k in out.card.key_numbers] == [("₹951.96 Cr", f"{rev.yoy_pct:+.1f}% YoY")]

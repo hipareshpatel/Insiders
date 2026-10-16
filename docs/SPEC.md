@@ -204,6 +204,16 @@ difference of nearby margins; a share, change or multiple only when it follows f
 figure on the same card line. Period labels ("Q2FY27", "FY 2026-27"), dates, years and small bare
 counts are skipped. **An unmatched ₹ figure in the headline always holds the card.**
 
+**Corrections in code** (`pipeline.py`): a card's amounts that are a statement figure read at the
+wrong unit are rewritten (`fix_unit_slips`); a notable change whose % does not follow from its own
+two figures is recomputed (`fix_change_percentages`); a results card's key numbers take the XBRL
+file's exact values and YoY (`xbrl_key_numbers`). Each correction is recorded on the card under
+`grounding.unit_fixes` / `change_fixes`. A correction is only as good as what it reads, so both
+change fixers check the figures against the filing first: a change is recomputed only when the
+filing states both sides, and an XBRL YoY is taken only when the year-ago figure it implies is in
+the filing too. Without those guards a unit slip became a confident "+965% YoY", and a wrong XBRL
+period match overwrote a correct "+129% YoY" with "+1.5%" (audit round 1, D25).
+
 **Math** (`quant.py`): estimates carry a formula over named inputs (FILING / MEMORY / ASSUMPTION);
 a whitelisted evaluator (60 nodes, exponents ≤ 12) re-computes them within 2%.
 

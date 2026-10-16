@@ -353,6 +353,14 @@ DEAL_STAGES = ("L1_BIDDER", "LOI", "LOA", "WORK_ORDER", "CONTRACT", "MOU", "DEVE
                "CANCELLED", "OTHER")
 
 
+class ShareTranche(_Lenient):
+    """One buyer's purchase in a sale of shares, as written: the model never multiplies (code does)."""
+
+    party: OptStr = None
+    shares: Num = None
+    price_per_share: Num = None   # ₹ per share, as written
+
+
 class DealValue(_Lenient):
     """The size of an order, fundraise, capex or deal, so code can put it in proportion."""
 
@@ -380,6 +388,8 @@ class DealValue(_Lenient):
     execution_by: OptStr = None   # as stated: "31 July 2027", "12 months"
     progress: OptStr = None       # e.g. "40 MW of 60 MW commissioned"
     updates_deal_id: OptStr = None  # a deal already in memory that this filing moves to a new stage
+    # A sale or purchase of shares at stated prices: each buyer's shares and price, so code computes the consideration.
+    tranches: Annotated[list[ShareTranche], _drop_invalid(ShareTranche)] = Field(default_factory=list)
 
     @field_validator("includes_gst", mode="before")
     @classmethod

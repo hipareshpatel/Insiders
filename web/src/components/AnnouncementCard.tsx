@@ -378,7 +378,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
               </span>
             ) : corrected ? (
               <span className="inline-flex items-center gap-1" title={`Corrected by ${card.review?.checked_by}: ${(card.review?.fixed ?? []).join(" · ")}`}>
-                <RefreshCcw className="h-3.5 w-3.5 text-pos" /> Verified after a second check
+                <RefreshCcw className="h-3.5 w-3.5 text-pos" /> Numbers re-checked by a second model
               </span>
             ) : g.checked > 0 && allMatched ? (
               <span className="inline-flex items-center gap-1" title="Every number was found in the filing or company memory">
@@ -564,7 +564,7 @@ function DeepDive({ row, card, shown, moreFacts, keyNumbers }: {
           <p className="text-[13px] leading-relaxed text-ink-2">
             The first draft{card.review.first_model ? ` (${card.review.first_model})` : ""} failed the automatic checks
             {card.review.checked_by ? `, so ${card.review.checked_by} was asked to correct it` : ", and no second AI was available"}.
-            {card.review.status === "CORRECTED" ? " The corrected card passed every check." : " Problems that remain are listed below."}
+            {card.review.status === "CORRECTED" ? " The corrected card passed the number checks: each figure is found in the filing. The checks do not confirm that a figure means what the card says." : " Problems that remain are listed below."}
           </p>
           <ul className="mt-2 space-y-1">
             {(card.review.status === "CORRECTED" ? card.review.fixed ?? [] : card.review.issues ?? []).map((p, i) => (

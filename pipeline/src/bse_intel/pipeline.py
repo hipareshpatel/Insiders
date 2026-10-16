@@ -406,10 +406,14 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
     return event_type
 
 
-def gate_issues(out: Pass2Output, card) -> list[str]:
+def gate_issues(out: Pass2Output, card, sources: tuple[str, ...] = ()) -> list[str]:
     """Amounts that cannot be crore, and a fundraise whose size does not follow from its shares and price."""
     issues = [f"{n} Cr is not a crore figure (a rupee amount written in full)" for n in gate.impossible_crore_amounts(_card_texts(out))]
     deal = card.deal_value
+    if deal and deal.amount_cr and sources:
+        problem = gate.deal_amount_context(deal.amount_cr, sources[0])
+        if problem:
+            issues.append(problem)
     if deal and deal.kind == "FUNDRAISE":
         for action in out.dossier_delta.capital_actions:
             problem = gate.issue_size_mismatch(deal.amount_cr, action.new_shares, action.issue_price)
@@ -418,7 +422,8 @@ def gate_issues(out: Pass2Output, card) -> list[str]:
     return issues
 
 
-def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], balance_sheet: list[dict]) -> list[str]:
+def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], balance_sheet: list[dict],
+                      text: str = "") -> list[str]:
     """A deal size that is the company's own revenue, net worth or share capital is dropped; a terminated
     or withdrawn deal is marked CANCELLED. Returns what was done."""
     deal = out.card.deal_value if out.card else None
@@ -427,6 +432,10 @@ def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], bal
     notes = []
     known = {"financial_metrics": history + [m.model_dump() for m in out.dossier_delta.financial_metrics],
              "balance_sheet": balance_sheet}
+    computed = gate.tranche_total_cr(deal.tranches, text)
+    if computed and (not deal.amount_cr or abs(deal.amount_cr - computed) > 0.03 * computed):
+        notes.append(f"deal size set to ₹{computed:,.2f} Cr from the buyers' shares x price (the model gave {deal.amount_cr})")
+        deal.amount_cr = computed
     name = gate.deal_is_company_figure(deal.amount_cr, known)
     if name:
         notes.append(f"deal size {deal.amount_cr:g} Cr dropped: it is the company's {name}")
@@ -459,7 +468,7 @@ def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...]
                       grounding.headline_ungrounded, grounding.amounts_ungrounded,
                       scale_issues(out.dossier_delta.financial_metrics, history or [])
                       + margin_issues(out.dossier_delta.financial_metrics, card.key_numbers)
-                      + gate_issues(out, card))
+                      + gate_issues(out, card, sources))
 
 
 def reconcile_call_read(card, view: dict | None) -> None:
@@ -1119,7 +1128,7 @@ class Pipeline:
         history = dossier.get("financial_metrics", [])
         unit_fixes = fix_unit_slips(out, sources)
         change_fixes = fix_change_percentages(out)
-        change_fixes += apply_deal_guards(out, filing, history, dossier.get("balance_sheet", []))
+        change_fixes += apply_deal_guards(out, filing, history, dossier.get("balance_sheet", []), text)
         if tagged:
             change_fixes += xbrl_key_numbers(out, tagged)
         checks = check_card_all(out, view, sources, history)

@@ -73,6 +73,60 @@ def deal_is_company_figure(amount_cr: float | None, dossier: dict | None, tolera
     return None
 
 
+# --- a deal size taken from the wrong clause --------------------------------------------------------------------------
+
+# Novartis India's SPA (Feb 2026) gave ₹660.09 Cr only as the instruments the seller subscribes to at Closing, set off
+# against the price; the card called it the deal size. The real consideration (₹1,445.9 Cr) is the buyers' shares x price.
+_SUB_AMOUNT = re.compile(r"\binstruments?\b|\bset[- ]?off\b|\bescrow\b|\bsubscribe\b|\bbank guarantee\b|\bsecurity deposit\b|"
+                         r"\bearnest money\b|\bbreak fee\b|\btermination fee\b|\bindemnit", re.I)
+_MAIN_AMOUNT = re.compile(r"\bconsideration\b|\bpurchase price\b|\bsale price\b|\btransaction value\b|\bdeal value\b|"
+                          r"\benterprise value\b|\bvalued at\b|\bvaluation\b|\border value\b|\bcontract value\b|\bproject cost\b|"
+                          r"\bissue size\b|\baggregating\b|\bworth\b", re.I)
+
+
+def _sentence(text: str, start: int, end: int) -> str:
+    left = max(text.rfind(". ", 0, start), text.rfind("\n\n", 0, start), text.rfind(";", 0, start))
+    right_candidates = [i for i in (text.find(". ", end), text.find("\n\n", end), text.find(";", end)) if i != -1]
+    return text[left + 1:(min(right_candidates) if right_candidates else len(text))]
+
+
+def deal_amount_context(amount_cr: float | None, text: str | None) -> str | None:
+    """Every place the deal amount appears in the filing sits in a sentence about instruments, set-off, escrow or
+    a guarantee, and none says consideration, price or value: the amount is a sub-clause, not the deal size."""
+    if not amount_cr or amount_cr <= 0 or not text:
+        return None
+    from .grounding import CRORE_SCALES, _tokens  # local: grounding does not import the gate
+
+    found = []
+    for value, _, pos, kind, raw in _tokens(text):
+        if kind in ("pct", "bps", "pp", "x"):
+            continue
+        if any(abs(value / s - amount_cr) <= 0.005 * amount_cr for s in CRORE_SCALES):
+            found.append(_sentence(text, pos, pos + len(raw)))
+    if not found:
+        return None
+    if all(_SUB_AMOUNT.search(s) and not _MAIN_AMOUNT.search(s) for s in found):
+        word = _SUB_AMOUNT.search(found[0]).group(0).lower()
+        return f"₹{amount_cr:g} Cr appears in the filing only in a clause about {word}, not as the deal's consideration or value"
+    return None
+
+
+def tranche_total_cr(tranches: list, text: str | None) -> float | None:
+    """Σ shares x price per share in ₹ crore, only when every tranche has both numbers and both are in the filing."""
+    if not tranches or not text:
+        return None
+    from .grounding import SourceIndex
+
+    index = SourceIndex(text)
+    total = 0.0
+    for t in tranches:
+        if not t.shares or not t.price_per_share or not index.stated(float(t.shares), 0, (1,)) \
+                or not index.stated(float(t.price_per_share), 2, (1,)):
+            return None
+        total += float(t.shares) * float(t.price_per_share) / 1e7
+    return round(total, 2)
+
+
 # --- a terminated deal is not a live one -----------------------------------------------------------------------------
 
 _TERMINATED = re.compile(r"\b(?:terminat\w+|cancel\w*|withdr[ae]w\w*|rescind\w*|called off|abandon\w*|lapse[ds]?)\b", re.I)

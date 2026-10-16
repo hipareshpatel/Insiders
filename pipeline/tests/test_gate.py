@@ -1,5 +1,6 @@
 """The accuracy gate (gate.py). Each test is named after the filing whose card it would have caught."""
 import json
+from pathlib import Path
 from datetime import timedelta
 
 import pytest
@@ -81,3 +82,44 @@ def test_a_garbled_scan_marks_the_card_for_review(settings):
     review = outcome.card["card"]["review"]
     assert outcome.card["needs_review"] == 1 and review["status"] == "HELD" and "garbled" in review["issues"][0]
     assert len(fake.calls) == 1  # a second model cannot repair a scan
+
+
+NOVARTIS_SPA = (Path(__file__).parent / "fixtures" / "bse_novartis_spa_20260219.txt").read_text(encoding="utf-8")
+
+
+def test_novartis_instrument_amount_is_not_the_deal_size():
+    """Novartis India, 19 Feb 2026: the card said "70.68% stake sold for ₹660 Cr". ₹660.09 Cr (INR 660,09,25,235) is only
+    what the seller subscribes to in instruments at Closing, set off against the price; it is in the filing, so the
+    number check passed it. The consideration is the buyers' shares x price: ₹1,445.9 Cr."""
+    problem = gate.deal_amount_context(660.09, NOVARTIS_SPA)
+    assert problem and "not as the deal's consideration" in problem
+    assert gate.deal_amount_context(1445.9, NOVARTIS_SPA) is None  # not in the text at all: nothing to say
+    assert gate.deal_amount_context(660.09, "The consideration for the acquisition is INR 660,09,25,235.") is None
+    assert gate.deal_amount_context(None, NOVARTIS_SPA) is None
+
+
+def test_the_consideration_is_computed_from_each_buyers_shares_and_price():
+    from bse_intel.models import ShareTranche
+
+    tranches = [ShareTranche(party="WaveRise", shares=13_938_382, price_per_share=860.64),
+                ShareTranche(party="ChrysCapital", shares=2_547_189, price_per_share=701.25),
+                ShareTranche(party="Two Infinity", shares=965_109, price_per_share=701.25)]
+    assert gate.tranche_total_cr(tranches, NOVARTIS_SPA) == 1445.89
+    assert gate.tranche_total_cr([ShareTranche(shares=13_938_382, price_per_share=900.0)], NOVARTIS_SPA) is None  # a price not in the filing
+    assert gate.tranche_total_cr([], NOVARTIS_SPA) is None
+
+
+def test_a_card_with_the_wrong_deal_size_is_corrected_from_the_tranches(settings):
+    from bse_intel.pipeline import apply_deal_guards
+    from bse_intel.models import Pass2Output
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A", "timeline_entry": "SPA signed",
+        "card": {"impact_level": "HIGH", "headline": "Novartis AG sells 70.68% of Novartis India for ₹660 Cr", "what_happened": ["x"],
+                 "deal_value": {"kind": "ACQUISITION", "amount_cr": 660.09, "stage": "CONTRACT", "tranches": [
+                     {"party": "WaveRise", "shares": 13938382, "price_per_share": 860.64},
+                     {"party": "ChrysCapital", "shares": 2547189, "price_per_share": 701.25},
+                     {"party": "Two Infinity", "shares": 965109, "price_per_share": 701.25}]}}})
+    filing = _filing("n-spa", "Disclosure under Regulation 30", now_ist(), "Company Update")
+    notes = apply_deal_guards(out, filing, [], [], NOVARTIS_SPA)
+    assert out.card.deal_value.amount_cr == 1445.89 and "shares x price" in notes[0]

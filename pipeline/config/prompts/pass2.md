@@ -115,7 +115,12 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   amount the filing does not convert), includes_gst (true, false, or null when not stated),
   counterparty, stage, segment (the business line, in a few words) and execution_by (as written).
   The system uses it to compare the deal with revenue, market cap and the company's earlier deals,
-  so give only stated figures. null when there is no stated size. progress: how much is done when
+  so give only stated figures. null when there is no stated size. amount_cr is the size of the deal
+  itself (the consideration, the order value, the issue size): never an amount the filing gives for
+  something else in the same deal (instruments the seller subscribes to, set-off, escrow, guarantee,
+  deposit, a break fee or a liability cap). For a sale or purchase of shares at stated prices, list
+  tranches: each buyer's shares and price_per_share exactly as written, and do not multiply them (the
+  system computes the consideration); leave amount_cr null when the filing states no total. progress: how much is done when
   stated ("40 MW of 60 MW commissioned"). If memory's deals already hold this deal at an earlier
   stage (an LOI now signed as a contract, a rights issue approved in principle now with final
   terms, a planned plant now commissioned), set updates_deal_id to that deal's id and describe it

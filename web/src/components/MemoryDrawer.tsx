@@ -220,7 +220,7 @@ function Verifier({ row, newsId }: { row: CardRow | null; newsId: string }) {
   const card: CardBody | null = row ? parseCard(row) : null;
   if (!row || !card) return <Empty title="This card is not in the company's last 60 filings" body={newsId} />;
   const ungrounded = new Set(card.grounding?.ungrounded ?? []);
-  const lines = [card.headline, ...(card.what_happened ?? []), ...(card.why_it_matters ?? []).map((w) => w.text)];
+  const lines = [card.headline, ...(card.what_happened ?? []).map((f) => (typeof f === "string" ? f : f.text)), ...(card.why_it_matters ?? []).map((w) => w.text)];
   return (
     <div className="grid h-full gap-4 lg:grid-cols-2">
       <section className="flex min-h-[60vh] flex-col overflow-hidden rounded-xl border border-line bg-surface">

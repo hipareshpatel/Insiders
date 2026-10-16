@@ -5,7 +5,7 @@ import {
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { useQueryState } from "../lib/url";
-import type { CallRead, CardBody, CardRow, Impact, PriceReaction, Technicals, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
+import type { CallRead, CardBody, CardRow, Fact, Impact, PriceReaction, Technicals, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
 import { useRatings } from "../lib/owner";
 import { copyNodeAsPng } from "../lib/png";
@@ -451,7 +451,7 @@ function Section({ label, children }: { label: string; children: ReactNode }) {
 
 /** Everything else the analysis produced: shown on demand, never in the share image. */
 function DeepDive({ row, card, shown, moreFacts, keyNumbers }: {
-  row: CardRow; card: CardBody; shown: number; moreFacts: string[]; keyNumbers: CardBody["key_numbers"];
+  row: CardRow; card: CardBody; shown: number; moreFacts: Fact[]; keyNumbers: CardBody["key_numbers"];
 }) {
   const more = card.why_it_matters.slice(shown);
   const quant = card.quantified_impact ?? [];

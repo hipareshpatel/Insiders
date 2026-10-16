@@ -69,9 +69,21 @@ Read before changing anything:
   against 3.67** (`docs/audit/round-1.json`). wrong_period, invented, unit_scale and signal_verdict all
   roughly halved or better; arithmetic and direction did not move, because two of our own fixers were
   writing wrong numbers over right ones (D25, now guarded against the filing's own figures).
-- **Next:** the owner reviews the site against the case studies. Then PLAN items 1g (the classes round 1
-  left open), 1h (the 48 dropped facts) and 1f. Do not start the full backfill before the owner has
-  reviewed the smoke test (decision D6) and chosen the order (PLAN.md item 1c).
+- **Next, in this order (2026-10-16 night).** 1) An annual report is not a results filing: BSE labels it
+  "Reg. 34 (1) Annual Report" and pass 1 typed one RESULTS, so a 563k-character report was re-read for
+  revenue, EBITDA and PAT that XBRL already had exactly, and it carried every 10x slip. Give it its own
+  event type whose prompt says the financials are known from XBRL and memory and must not be restated;
+  its job is the MD&A, segment commentary, key audit matters, related-party transactions, pledge and
+  subsidiary performance. 2) Anchor a fact's figures to its own quote's neighbourhood instead of the
+  whole document: on that report, invented whole-crore figures passed grounding 40% of the time (8% at
+  one decimal, 3% at two), which is why round headline numbers slip through. The baseline is pinned in
+  test_cards.py. 3) Catch duplicates before pass 2 on the FAST_TRACK route, which skips pass 1 and
+  carried 134 of the 175 duplicate pairs. 4) Re-seed memory for the ten companies so the stored values
+  pick up the XBRL precedence fix, and check it with scripts/memory_check.py. 5) Raise the paid weight
+  and rebuild, then audit round 2 - stratified by filing type and sector, not newest-first, because the
+  errors cluster by document kind. Report WRONG share and the share of WRONG the code flagged (56% now).
+  Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order
+  (PLAN.md item 1c).
 - The site shows nothing with the default "Last 7 days" range while the rebuild is walking history: the
   newest card is as old as the filings being processed. Use `/feed?range=all`.
 - Industry fill complete (5,111 companies, 3 without an industry).

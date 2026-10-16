@@ -433,7 +433,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         )}
       </div>
       {open && !exporting && (
-        <DeepDive row={row} card={card} shown={box.insights.length} moreFacts={unique.slice(factLimit)}
+        <DeepDive row={row} card={card} shown={box.insights.length} shownSignal={box.signal}
+          moreFacts={unique.slice(factLimit)}
           keyNumbers={tilesFor && card.key_numbers.length >= 2 ? [] : card.key_numbers} />
       )}
     </article>
@@ -450,10 +451,15 @@ function Section({ label, children }: { label: string; children: ReactNode }) {
 }
 
 /** Everything else the analysis produced: shown on demand, never in the share image. */
-function DeepDive({ row, card, shown, moreFacts, keyNumbers }: {
-  row: CardRow; card: CardBody; shown: number; moreFacts: Fact[]; keyNumbers: CardBody["key_numbers"];
+function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers }: {
+  row: CardRow; card: CardBody; shown: number; shownSignal?: Signal;
+  moreFacts: Fact[]; keyNumbers: CardBody["key_numbers"];
 }) {
   const more = card.why_it_matters.slice(shown);
+  // The summary box above already shows the top-ranked signal, so showing every signal here printed it
+  // twice on one card - the Scale line read the same in both places. The card is a page in a pocket
+  // diary: a line that repeats costs a reader more than it tells them.
+  const restSignals = card.signals.filter((s) => s !== shownSignal);
   const quant = card.quantified_impact ?? [];
   const changes = card.notable_changes ?? [];
   const track = card.track_next;
@@ -504,9 +510,9 @@ function DeepDive({ row, card, shown, moreFacts, keyNumbers }: {
         </Section>
       )}
 
-      {card.signals.length > 0 && (
+      {restSignals.length > 0 && (
         <Section label="Signals computed from memory">
-          <ul className="space-y-2">{card.signals.map((s, i) => <Point key={i}><SignalLine s={s} /></Point>)}</ul>
+          <ul className="space-y-2">{restSignals.map((s, i) => <Point key={i}><SignalLine s={s} /></Point>)}</ul>
         </Section>
       )}
 

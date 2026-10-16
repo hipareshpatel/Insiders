@@ -45,6 +45,23 @@ def spread(rows: list[dict]) -> list[dict]:
     return out
 
 
+def _xbrl_note(card: dict) -> str:
+    """The pipeline prepends the machine-tagged XBRL table to the filing text it sends the model, but the
+    table is built in memory and never cached, so it cannot be exported. Without this note a reviewer reads
+    only the PDF and calls an XBRL figure invented, or misses that a wrong figure came from the table rather
+    than from the model (audit round 1: three results cards took a wrong year-ago figure from it). Say so."""
+    tagged = card.get("xbrl") or {}
+    if not tagged.get("period"):
+        return ""
+    return ("NOTE FOR THE REVIEWER: besides the text below, the model was given a machine-tagged XBRL table for "
+            f"{tagged.get('basis') or 'an unstated basis'}, {tagged['period']}, holding {tagged.get('figures', '?')} "
+            "figures in \u20b9 crore, and was told to prefer it over figures read from the PDF. That table is not "
+            "reproducible here. So: a figure that is not in the text below may still have come from the XBRL file "
+            "rather than been invented - say it is not in the filing text rather than that the model made it up, and "
+            "check any year-on-year or quarter-on-quarter change against the statement's own comparative column, "
+            "which is the figure the table itself has sometimes got wrong.\n\n")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("cards_json")
@@ -76,7 +93,7 @@ def main() -> int:
         path = cache / row["news_id"][:2] / f"{row['news_id']}.json.gz"
         text = (Document.from_cache(json.loads(gzip.decompress(path.read_bytes()))).select_text(10_000_000, [])
                 if path.exists() else "(no cached text)")
-        (folder / f"{row['news_id']}.pdf.txt").write_text(text, encoding="utf-8")
+        (folder / f"{row['news_id']}.pdf.txt").write_text(_xbrl_note(card) + text, encoding="utf-8")
         written += 1
     folders = len({i // args.per_reviewer for i in range(written)})
     per_company = collections.Counter(str(r.get("scrip_code")) for r in rows)

@@ -38,6 +38,7 @@ from . import duplicates
 from .dossier import (dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, reported_by, results_snapshot,
                       view_as_of)
 from .extract import Document
+from . import gate
 from .grounding import DEFAULT_THRESHOLD, check_card, check_claims, margin_issues, scale_issues, unit_slips
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
@@ -137,11 +138,16 @@ class CardChecks:
     headline_ungrounded: list[str] = field(default_factory=list)
     amounts_ungrounded: list[str] = field(default_factory=list)
     scale: list[str] = field(default_factory=list)  # figures out of scale or not fitting their margin
+    held: list[str] = field(default_factory=list)   # reasons a second model cannot fix: garbled scan, human hold
 
     @property
     def needs_review(self) -> bool:
         # Blueprint rule: an unmatched ₹ figure in the headline or a failed math check holds the card;
         # so do a low overall match rate, an unsupported "first"/"record" claim and a figure out of scale.
+        return self.fixable or bool(self.held)
+
+    @property
+    def fixable(self) -> bool:
         return (self.score < DEFAULT_THRESHOLD or self.quant.mismatches > 0 or bool(self.claims)
                 or bool(self.headline_ungrounded) or bool(self.scale))
 
@@ -150,7 +156,7 @@ class CardChecks:
         # Blueprint §4: any ungrounded number sends the card to a second provider. Amounts only: a
         # 10x lakh/crore slip in a key number leaves the overall match rate above the review
         # threshold, while an unmatched percentage is usually a derivation the checks cannot follow.
-        return self.needs_review or bool(self.amounts_ungrounded)
+        return self.fixable or bool(self.amounts_ungrounded)
 
     @property
     def issue_count(self) -> int:
@@ -165,6 +171,7 @@ class CardChecks:
         out += [f"Quantified impact \"{q['label']}\": {q.get('check_note')}" for q in self.quant.items if q.get("check") == "MISMATCH"]
         out += [f"Claim not supported by the sources: \"{c}\"" for c in self.claims]
         out += [f"Figures that do not fit (check the statement's unit and column): {s}" for s in self.scale]
+        out += list(self.held)
         return out
 
 
@@ -399,6 +406,40 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
     return event_type
 
 
+def gate_issues(out: Pass2Output, card) -> list[str]:
+    """Amounts that cannot be crore, and a fundraise whose size does not follow from its shares and price."""
+    issues = [f"{n} Cr is not a crore figure (a rupee amount written in full)" for n in gate.impossible_crore_amounts(_card_texts(out))]
+    deal = card.deal_value
+    if deal and deal.kind == "FUNDRAISE":
+        for action in out.dossier_delta.capital_actions:
+            problem = gate.issue_size_mismatch(deal.amount_cr, action.new_shares, action.issue_price)
+            if problem:
+                issues.append(problem)
+    return issues
+
+
+def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], balance_sheet: list[dict]) -> list[str]:
+    """A deal size that is the company's own revenue, net worth or share capital is dropped; a terminated
+    or withdrawn deal is marked CANCELLED. Returns what was done."""
+    deal = out.card.deal_value if out.card else None
+    if deal is None:
+        return []
+    notes = []
+    known = {"financial_metrics": history + [m.model_dump() for m in out.dossier_delta.financial_metrics],
+             "balance_sheet": balance_sheet}
+    name = gate.deal_is_company_figure(deal.amount_cr, known)
+    if name:
+        notes.append(f"deal size {deal.amount_cr:g} Cr dropped: it is the company's {name}")
+        out.card.deal_value = None
+        deal = None
+    if deal is not None and deal.stage != "CANCELLED" and gate.is_terminated(filing.headline, filing.subject):
+        notes.append("deal marked cancelled: the filing terminates or withdraws it")
+        deal.stage = "CANCELLED"
+    if notes:
+        log.info("deal guards for %s: %s", filing.news_id, notes)
+    return notes
+
+
 def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...], history: list[dict] | None = None) -> CardChecks:
     """Memory-id hygiene, then the number, math, claim and scale checks (`history`: the dossier's
     stored financial metrics, which the reply's quarterly figures are compared with)."""
@@ -417,7 +458,8 @@ def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...]
     return CardChecks(score, checked, ungrounded, quant, check_claims(card, *sources),
                       grounding.headline_ungrounded, grounding.amounts_ungrounded,
                       scale_issues(out.dossier_delta.financial_metrics, history or [])
-                      + margin_issues(out.dossier_delta.financial_metrics, card.key_numbers))
+                      + margin_issues(out.dossier_delta.financial_metrics, card.key_numbers)
+                      + gate_issues(out, card))
 
 
 def reconcile_call_read(card, view: dict | None) -> None:
@@ -467,6 +509,7 @@ class Pipeline:
         self._learned: dict | None = None   # Loop 1 state: post-mortem queue, lessons, dampened categories
         self._bodies: dict[str, list[tuple[str, str, duplicates.Body]]] = {}  # scrip -> (filed_at, news_id, body) this run
         self._xbrl_links: dict[str, list[XbrlLink]] = {}  # scrip -> its results archive, read once a run
+        self._holds = gate.load_holds(settings.config_dir / settings.card_holds_file)  # news_id -> reason
         self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
 
     # ------------------------------------------------------------------ writes
@@ -861,6 +904,16 @@ class Pipeline:
             return max(timely, key=lambda link: link.filed_at).url
         return min(links, key=lambda link: link.filed_at).url if links else None
 
+    def _held_reasons(self, filing: Filing, text: str) -> list[str]:
+        """Reasons the card is published as unverified that no second model can fix: a scan whose text layer
+        is garbled (its table figures may be wrong), and the human hold list (config/card_holds.txt)."""
+        held = []
+        if gate.text_is_garbled(text):
+            held.append("The filing's text layer is garbled (scan errors inside numbers): figures from its tables may be wrong")
+        if filing.news_id in self._holds:
+            held.append(f"Held after review: {self._holds[filing.news_id]}")
+        return held
+
     def _same_results_quarter(self, filing: Filing, dossier: dict, quarter: str | None) -> tuple[str, str] | None:
         """(news_id, quarter) of the results filing that already has this company's card for the quarter
         (decision D20: one card per company per results quarter; the others are linked to it). Novartis
@@ -1066,6 +1119,7 @@ class Pipeline:
         history = dossier.get("financial_metrics", [])
         unit_fixes = fix_unit_slips(out, sources)
         change_fixes = fix_change_percentages(out)
+        change_fixes += apply_deal_guards(out, filing, history, dossier.get("balance_sheet", []))
         if tagged:
             change_fixes += xbrl_key_numbers(out, tagged)
         checks = check_card_all(out, view, sources, history)
@@ -1073,6 +1127,9 @@ class Pipeline:
         review = None
         if checks.wants_second_opinion and self.settings.second_opinion:
             out, result, checks, review = self._second_opinion(route, system, user, out, result, checks, view, sources, history)
+        checks.held += self._held_reasons(filing, text)
+        if checks.held and review is None:
+            review = {"status": "HELD", "issues": checks.held}
         if filing.route == "FAST_TRACK" and filing.event_type:
             out.event_type = filing.event_type  # rules know the event type better than the model
         elif out.event_type == "OTHER" and event_type != "OTHER":

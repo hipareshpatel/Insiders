@@ -1,0 +1,3 @@
+# Cards held after a human review. One per line: news_id | reason
+# The card is published marked "held after review: <reason>" and needs review; the stored analysis is untouched.
+# Remove the line when the filing is re-read. A malformed line stops the run, so a typo cannot drop a hold.

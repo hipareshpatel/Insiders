@@ -54,6 +54,8 @@ class Settings:
     d1_daily_write_budget: int = field(default_factory=lambda: _env_int("D1_DAILY_WRITE_BUDGET", 80_000))
     # A card that fails the number, claim or math checks gets a second opinion from another provider.
     second_opinion: bool = field(default_factory=lambda: _env("SECOND_OPINION", "1") not in ("0", "false", "no"))
+    # Human hold list (gate.load_holds): cards named there are published as "held after review".
+    card_holds_file: str = "card_holds.txt"
     # Decision D20: one card per company per results quarter; later documents of that quarter are linked to it.
     one_card_per_results_quarter: bool = field(default_factory=lambda: _env("ONE_CARD_PER_RESULTS_QUARTER", "1") not in ("0", "false", "no"))
     max_ocr_pages: int = field(default_factory=lambda: _env_int("MAX_OCR_PAGES", 6))

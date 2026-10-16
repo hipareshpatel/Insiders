@@ -305,3 +305,17 @@ def test_403_for_a_models_tier_disables_only_that_model(make_gateway):
     gw, fake = make_gateway(config, {"big": [err], "small": [GOOD]})
     assert gw.complete_json("r", "s", "u", Pass1Result).model == "small"
     assert gw.disabled["a:big"] == "model not in subscription tier" and "a" not in gw.disabled_providers
+
+
+def test_nemotron_super_runs_with_thinking_off_on_every_pass2_route():
+    """Owner decision D21 (2026-10-16): thinking on took 150-760 s a card and timed out 1 call in 3; off took 23-68 s.
+    With thinking off the model answers "{}" in JSON mode, so JSON mode is off on those entries."""
+    import tomllib
+    from pathlib import Path
+
+    config = tomllib.loads((Path(__file__).parent.parent / "config" / "providers.toml").read_text(encoding="utf-8"))
+    entries = [t for route in ("pass2", "pass2_bulk", "pass2_long") for t in config["routes"][route]
+               if t["model"] == "nvidia/nemotron-3-super-120b-a12b"]
+    assert len(entries) == 3
+    for entry in entries:
+        assert entry["extra_body"] == {"chat_template_kwargs": {"enable_thinking": False}} and entry["json_mode"] is False

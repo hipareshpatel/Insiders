@@ -42,7 +42,9 @@ timeout_s = 30
 [providers.nvidia]
 base_url = "https://integrate.api.nvidia.com/v1"
 api_key_env = "NVIDIA_API_KEY"
-# Nemotron thinks before answering (37 s for a short card in a probe, 2026-10-16); at 180 s one call in four timed out.
+# Nemotron thinks before answering. D21 (2026-10-16): switched off for Pass 2 on every route. A 20-filing A/B on the same
+# model and prompt: thinking on 150-760 s a card and 1 in 3 timed out at 300 s; off 23-68 s with the same grounding scores.
+# To re-enable (PLAN item 14, the last item): remove the extra_body line and set json_mode = true on the three entries.
 timeout_s = 300
 
 [providers.mistral]
@@ -216,8 +218,9 @@ limits = { rpm = 60, tpd = 150_000 }
 provider = "nvidia"
 model = "nvidia/nemotron-3-super-120b-a12b"
 weight = 3
-json_mode = true
+json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
 strip_reasoning = true
+extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)
 max_tokens = 8000
 context_tokens = 120000
 limits = { rpm = 40 }
@@ -301,8 +304,9 @@ limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 provider = "nvidia"
 model = "nvidia/nemotron-3-super-120b-a12b"
 weight = 2
-json_mode = true
+json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
 strip_reasoning = true
+extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)
 max_tokens = 8000
 context_tokens = 120000
 limits = { rpm = 40 }
@@ -373,8 +377,9 @@ limits = { rpm = 25, tpm = 937_500 }
 provider = "nvidia"
 model = "nvidia/nemotron-3-super-120b-a12b"
 weight = 1
-json_mode = true
+json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
 strip_reasoning = true
+extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)
 max_tokens = 8000
 context_tokens = 120000
 limits = { rpm = 40 }

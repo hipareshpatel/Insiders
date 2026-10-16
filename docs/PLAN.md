@@ -93,7 +93,7 @@ refer to the sections above.
 | 1f | Audit classes not fixable by a rule (docs/audit/README.md "Still open"): invented facts (stricter prompt + claim checks), prose arithmetic, standalone/consolidated mixing, wrong table row, OCR losing brackets on negatives, stale market cap in signals | Laptop | Phase 1 |
 | 1a | Retry the one Kanoria long document (2025-05-21) that failed on every long-context provider; it is retried automatically by the next run | Laptop | Phase 1 |
 | 1b | Measure 5 vs 3 workers over a full hour (filings/hour, 429 share) and keep the better (D18); the first 14 min gave ~125/h vs ~95/h, 9% 429s before the Z.ai one-at-a-time cap | Laptop | Phase 1 |
-| 1d | Thinking for the Nemotron models: keep it (more accurate, 37 s a card, timeouts) or switch it off on the backfill route (2–4x faster, 8–16 s); measure accuracy on the second smoke test first (tracker F23). Decided (D21): A/B on ~20 filings, switch off for the backfill only if accuracy holds | Laptop | Phase 1 |
+| 1d | ~~Thinking for the Nemotron models~~ decided by the owner 2026-10-16 (D21): switched off for Pass 2 on every route; an A/B on the same 20 filings, same model and prompt, showed 150–760 s a card with thinking on (1 in 3 timed out at 300 s) against 23–68 s with it off at similar grounding scores. OpenRouter's Nemotron models (spares and weight 1 in bulk) keep their defaults until probed | Laptop | done |
 | 1e | Batch from the site review (tracker F1–F23): done F1 units, F2 quarter labels, F11–F14 memory, F19 math names, F23 safe tuning; still open F3 same-results cards, F4/F15/F18 prose arithmetic, F5 raw rupees, F6/F10/F17 event tags, F7 derived payouts, F8 score size, F16 unit labels, F20 EBITDA vs PBT, F21/F22 System display | Laptop | Phase 1 |
 | 1c | Full backfill order: owner leans to the ₹1,000–10,000 Cr band first (985 companies, large caps last); size it from the smoke-test rate and the 16.8% duplicate share, then decide | Owner decides | after Phase 1 |
 | 2 | ~~`ai-check --provider cloudflare` after the Workers AI fix~~ done 2026-10-16: both models pass | Laptop | Phase 1 |
@@ -109,6 +109,7 @@ refer to the sections above.
 | 11 | `sync-to-cloud` daily until complete | Laptop | Phase 4 |
 | 12 | Per-client rate limiting on the public API (audit D5); card JSON to R2 if D1 nears 500 MB (D6) | Laptop | if needed after go-live |
 | 13 | Modules 8 (DGTR duties) and 42 (promoter-group contagion): need a data source | Owner decides | later |
+| 14 | **Last item, once everything is live and up to date:** re-measure thinking on the Nemotron models (and OpenRouter's), A/B on a fresh audited set including accuracy against the PDFs, and re-enable where it pays (undo: remove the `extra_body` line and set `json_mode = true` on the three NVIDIA entries in `providers.toml`; a test pins the current setting) | Laptop, owner decides | after Phase 4 |
 
 ## Risks
 

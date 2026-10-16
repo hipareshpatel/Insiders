@@ -351,22 +351,31 @@ def _scale(before: dict | None, output: Pass2Output, company: dict | None) -> li
     deal = output.card.deal_value if output.card is not None else None
     if deal is None or not deal.amount_cr or deal.amount_cr <= 0:
         return []
+    deal_kind = deal.kind
+    # A fundraise is money reaching the company. On an M_AND_A filing it is not: an open offer or a block
+    # of shares bought from existing holders moves money between shareholders, and the company receives
+    # nothing, so "x Cr raise = n% of net worth" is simply false (audit round 1: Novartis India's 552.5 Cr
+    # open offer and M&M's 554.65 Cr purchase of SML Isuzu both read that way). The size against the
+    # target's market cap still says something, so that line stays and only the raise reading goes.
+    shareholder_money = deal_kind == "FUNDRAISE" and output.event_type == "M_AND_A"
+    if shareholder_money:
+        deal_kind = "ACQUISITION"
     amount, parts = deal.amount_cr, []
-    if deal.kind in ("ORDER", "CAPEX", "OTHER"):
-        for kind in ("Q", "FY"):
-            latest = _latest_revenue(before, kind)
+    if deal_kind in ("ORDER", "CAPEX", "OTHER"):
+        for period_kind in ("Q", "FY"):
+            latest = _latest_revenue(before, period_kind)
             if latest:
                 parts.append(f"{amount / latest[1] * 100:.0f}% of {latest[0]} revenue ({_cr(latest[1])})")
     market_cap = (company or {}).get("market_cap_cr")
-    if deal.kind in ("FUNDRAISE", "ACQUISITION", "DIVESTMENT", "CAPEX") and market_cap:
+    if deal_kind in ("FUNDRAISE", "ACQUISITION", "DIVESTMENT", "CAPEX") and market_cap:
         parts.append(f"{amount / market_cap * 100:.0f}% of market cap ({_cr(market_cap)})")
     net_worth = _latest_net_worth(before or {})
-    if deal.kind in ("FUNDRAISE", "ACQUISITION") and net_worth:
+    if deal_kind in ("FUNDRAISE", "ACQUISITION") and net_worth and not shareholder_money:
         parts.append(f"{amount / net_worth * 100:.0f}% of net worth ({_cr(net_worth)})")
     if not parts:
         return []
-    noun = _SCALE_NOUN.get(deal.kind, "deal")
-    gst = "; the value includes GST, revenue does not" if deal.includes_gst and deal.kind == "ORDER" else ""
+    noun = _SCALE_NOUN.get(deal_kind, "deal")
+    gst = "; the value includes GST, revenue does not" if deal.includes_gst and deal_kind == "ORDER" else ""
     return [Signal("SCALE", "INFO", f"{_cr(amount)} {noun} = " + ", ".join(parts) + gst + ".")]
 
 

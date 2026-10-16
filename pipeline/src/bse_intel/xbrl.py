@@ -59,6 +59,18 @@ RESULT_TAGS = {
     "BasicEarningsLossPerShareFromContinuingOperations": "eps",
     "BasicEarningsPerShare": "eps",
     "PaidUpValueOfEquityShareCapital": "paid_up_capital",
+    # Banks file the banking template, not the commercial one, so none of the names above appear on a
+    # bank's results and its memory held almost nothing: no top line, no PBT, no interest cost (found on
+    # CSB Bank, audit round 1 - 6 of 12 metrics). Interest earned is the top line of a bank's statement,
+    # interest expended its cost of funds, and operating profit before provisions its pre-provision
+    # operating profit, which is the figure a bank is read on rather than EBITDA.
+    "InterestEarned": "interest_earned",
+    "InterestExpended": "interest_expended",
+    "OperatingProfitBeforeProvisionAndContingencies": "pre_provision_operating_profit",
+    "ProvisionsOtherThanTaxAndContingencies": "provisions",
+    "ProfitLossFromOrdinaryActivitiesBeforeTax": "pbt",
+    "EmployeesCost": "employee_cost",
+    "OperatingExpenses": "other_expenses",
 }
 BALANCE_TAGS = {
     "Equity": "net_worth_cr",

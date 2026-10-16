@@ -614,3 +614,32 @@ def test_a_change_is_recomputed_only_from_figures_the_filing_states():
     assert fix_change_percentages(out, (filing,))
     assert out.card.notable_changes[0].change == "+4.2% YoY"
     assert out.card.notable_changes[0].direction == "POSITIVE"
+
+
+def test_an_open_offer_is_not_a_raise_against_the_target():
+    """Audit round 1: Novartis India's 552.5 Cr open offer and M&M's 554.65 Cr purchase of SML Isuzu were
+    typed FUNDRAISE, so the card read "552.5 Cr raise = n% of net worth" for money that never reaches the
+    company - it passes between shareholders. The size against market cap still says something and stays."""
+    from bse_intel.models import Pass2Output
+
+    def out(event_type):
+        return Pass2Output.model_validate({
+            "is_material": True, "event_type": event_type, "timeline_entry": "open offer",
+            "card": {"impact_level": "HIGH", "headline": "Open offer for 26% at Rs 860.64",
+                     "what_happened": ["Open offer for 26%"], "key_numbers": [],
+                     "deal_value": {"kind": "FUNDRAISE", "amount_cr": 552.5}}})
+
+    f = filing("n_oo", "2026-10-14T18:00:00+05:30")
+    d = new_dossier(f)
+    d["balance_sheet"] = [{"period": "Q1FY27", "net_worth_cr": 300.0, "as_of": "2026-08-01T00:00:00+05:30",
+                           "source_news_id": "old"}]
+    company = {"market_cap_cr": 2000, "price_date": "2026-10-14"}
+
+    scale = [s for s in compute(d, d, out("M_AND_A"), f, company) if s["type"] == "SCALE"]
+    assert scale, "the size against market cap should still be reported"
+    assert "raise" not in scale[0]["text"] and "deal" in scale[0]["text"]
+    assert "net worth" not in scale[0]["text"]
+
+    # a real fundraise is unchanged: the company does receive the money
+    raised = [s for s in compute(d, d, out("FUNDRAISE"), f, company) if s["type"] == "SCALE"]
+    assert raised and "raise" in raised[0]["text"]

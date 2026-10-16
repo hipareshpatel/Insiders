@@ -52,7 +52,9 @@ def test_q4_true_up_low_tax_one_offs_and_distress():
     assert "800 bps below" in found["Q4_TRUE_UP"]["text"]
     assert found["LOW_CASH_TAX"]["severity"] == "INFO"
     assert "3 of the last 8" in found["RECURRING_ONE_OFFS"]["text"]
-    assert found["DISTRESS"]["text"].startswith("Interest cover 0.8x")
+    # below 1x the operating profit covers only part of the interest; "barely covers" is for 1x to 1.5x
+    assert found["DISTRESS"]["text"].startswith("EBIT/interest 0.8x")
+    assert "covers only part of the interest" in found["DISTRESS"]["text"]
 
 
 def test_rating_ladder_and_inc():
@@ -169,3 +171,18 @@ def test_the_defect_digest_groups_cards_by_class_and_finds_repeats():
 
     pairs = mod.duplicate_pairs(cards)
     assert len(pairs) == 1 and pairs[0]["repeat"] == "b2" and pairs[0]["days"] == 2
+
+
+def test_a_negative_interest_cover_does_not_read_as_barely_covered():
+    """Audit round 1: the one sentence served every cover below 1.5x, so -0.3x and even -0.0x read
+    "operating profit barely covers interest", the opposite of the figure printed beside it."""
+    # EBITDA 10, depreciation 13, finance 10: EBIT is -3, so interest is not covered at all
+    rows = _quarter("Q4FY27", 100, 58, 10, 10, 10, 8, 7, fin=10, dep=13, news=N)
+    found = kinds(quality_signals({"financial_metrics": rows, "balance_sheet": []}, N))
+    assert found["DISTRESS"]["text"].startswith("EBIT/interest -0.3x")
+    assert "does not cover interest at all" in found["DISTRESS"]["text"]
+
+    # EBITDA equal to depreciation: exactly zero cover, and it must not print as "-0.0x"
+    rows = _quarter("Q4FY27", 100, 58, 10, 10, 13, 8, 7, fin=10, dep=13, news=N)
+    found = kinds(quality_signals({"financial_metrics": rows, "balance_sheet": []}, N))
+    assert found["DISTRESS"]["text"].startswith("EBIT/interest +0.00x")

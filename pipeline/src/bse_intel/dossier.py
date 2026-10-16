@@ -210,7 +210,9 @@ FLOW_METRICS = frozenset({
     "revenue", "total_income", "total_expenses", "ebitda", "pbt", "pat", "pat_continuing", "other_income",
     "employee_cost", "other_expenses", "depreciation", "finance_cost", "tax_expense", "current_tax",
     "deferred_tax", "exceptional_items", "cost_of_materials", "purchases_stock_in_trade",
-    "raw_material_cost", "inventory_change", "operating_cash_flow"})
+    "raw_material_cost", "inventory_change", "operating_cash_flow",
+    # the banking template's flows
+    "interest_earned", "interest_expended", "pre_provision_operating_profit", "provisions"})
 RECONCILE_TOLERANCE = 0.02  # a filing's own crore figures are rounded
 
 

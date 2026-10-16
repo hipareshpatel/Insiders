@@ -176,7 +176,19 @@ def quality_signals(after: dict, news_id: str) -> list[dict]:
     if fin and fin > 0 and ebitda is not None:
         cover = (ebitda - (dep or 0)) / fin
         if cover < 1.5:
-            out.append(_signal("DISTRESS", "WARNING", f"Interest cover {cover:.1f}x ({q}): operating profit barely covers interest."))
+            # One sentence used to serve every cover below 1.5x, so a negative one read "operating profit
+            # barely covers interest" at -0.3x and even -0.0x, which is the opposite of what it says (audit
+            # round 1). The measure is named too: a company's own Interest Service Coverage Ratio is defined
+            # differently and a card that contradicts the filing's stated ratio reads as an error.
+            if cover <= 0:
+                said = "operating profit does not cover interest at all"
+            elif cover < 1:
+                said = "operating profit covers only part of the interest"
+            else:
+                said = "operating profit barely covers interest"
+            shown = f"{cover:+.2f}" if abs(cover) < 0.05 else f"{cover:.1f}"
+            out.append(_signal("DISTRESS", "WARNING",
+                               f"EBIT/interest {shown}x ({q}): {said}."))
     if sheet.get("net_worth_cr") is not None and sheet["net_worth_cr"] <= 0 and sheet.get("source_news_id") == news_id:
         out.append(_signal("DISTRESS", "WARNING", f"Negative net worth (₹{sheet['net_worth_cr']:g} Cr): read it as a debt-service story, not on P/E."))
     return out

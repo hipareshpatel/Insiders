@@ -278,3 +278,23 @@ def test_the_xbrl_table_cannot_verify_its_own_comparative():
     # the table alone as the source, exactly as the pipeline passes it: it must not prove itself
     xbrl_key_numbers(out, tagged, sources=(tagged.table(),))
     assert [(k.value, k.change) for k in out.card.key_numbers] == [("₹951.96 Cr", "-3.0% YoY")]
+
+
+def test_a_banks_results_are_read_from_the_banking_template():
+    """A bank files the banking template, so none of the commercial names appear on its results and its
+    memory held almost nothing: no top line, no PBT, no cost of funds (CSB Bank, audit round 1 - 6 of 12
+    metrics, and the card's "other income jumped 75%" had no machine-tagged comparative to be checked
+    against). Interest earned is a bank's top line, interest expended its cost of funds, and operating
+    profit before provisions the figure it is read on rather than EBITDA."""
+    result = xbrl.parse((FIXTURES / "bse_bank_542867_q3fy25.xml").read_bytes())
+    assert result is not None and result.kind == "RESULTS" and result.period == "Q3FY25"
+    now = {m.metric: m.value for m in result.metrics if m.period == "Q3FY25"}
+    assert now["interest_earned"] == 919.38
+    assert now["interest_expended"] == 543.93
+    assert now["pre_provision_operating_profit"] == 220.65
+    assert now["provisions"] == 16.53
+    assert now["pbt"] == 204.12          # ProfitLossFromOrdinaryActivitiesBeforeTax, not ProfitBeforeTax
+    assert now["pat"] == 151.63          # the figure the audited card carried
+    assert now["total_income"] == 1138.75
+    # the identity holds on the bank's own statement: income less expenditure, before provisions
+    assert abs(now["pbt"] - (now["pre_provision_operating_profit"] - now["provisions"])) < 0.05

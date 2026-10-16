@@ -82,7 +82,8 @@ def test_case_2_shivam_autotech_rights_issue():
     # blueprint: 76.0% more shares, 19 / (25 + 19) = 43.18% post-money dilution
     assert "19:25 entitlement: 76.0% more shares (43.2% post-money dilution)" in dilution["text"]
     distress = [s["text"] for s in quality_signals(current, "shiv-1") if s["type"] == "DISTRESS"]
-    assert any(t.startswith("Interest cover 1.1x") for t in distress) and any("Negative net worth" in t for t in distress)
+    assert any(t.startswith("EBIT/interest 1.1x") and "barely covers" in t for t in distress)
+    assert any("Negative net worth" in t for t in distress)
     s = score(payload["card"], "RIGHTS_ISSUE", signals, current, {"market_cap_cr": 223, "ret_1m": -3.8, "ret_1w": -2.1},
               needs_review=False, model_impact="MODERATE")
     assert s.pillars["balance_sheet"] == 3 and not s.actionable  # a rescue raise is never a Top Signal

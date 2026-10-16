@@ -20,5 +20,15 @@ newspaper publications; duplicate share certificates.
 
 When unsure, answer material: a deeper stage double-checks.
 
+ALREADY IN THE FEED lists what this company has already filed, with dates. One event often reaches the
+exchange as several different documents: a results statement and then its investor presentation, a
+rights-issue letter of offer and the intimation covering it, one board approval filed under two
+subcategories, a shareholding disclosure and the company's own notice of the same transfer. If this
+filing is that same event again, set duplicate_of to the date of the entry it repeats, exactly as
+listed. A later stage of the same event (an approval that has now closed, an allotment after the
+approval to issue, a result after guidance) is NOT a repeat: it carries something new. Neither is a
+filing that reports the same kind of event with different figures, such as the next month's sales or
+another order. Leave duplicate_of empty unless you can point at the entry.
+
 Reply with only this JSON object:
-{"is_material": true, "event_type": "<one of: $event_types>", "confidence": 0.0, "reason": "<15 words or fewer>", "timeline_only": false}
+{"is_material": true, "event_type": "<one of: $event_types>", "confidence": 0.0, "reason": "<15 words or fewer>", "timeline_only": false, "duplicate_of": ""}

@@ -36,7 +36,7 @@ from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, reported_by,
-                      results_snapshot, similar_timeline_entry, view_as_of)
+                      results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import Document
 from . import gate
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, check_card, check_claims, declared_unit,
@@ -1174,22 +1174,34 @@ class Pipeline:
     def _analyze_document(self, filing, company, industry, doc: Document, bulk: bool, memory_complete: bool) -> Outcome:
         now = now_iso()
         event_type = filing.event_type or "OTHER"
+        # Before pass 1, not after it: the gatekeeper is shown what this company has already filed, so it
+        # can name an event arriving again as a different document (the document rules cannot see those).
+        dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
         if filing.route == "PASS1":
             first_page = doc.first_page_text()
             _ocr_check(doc)
-            system, user = self.prompts.pass1(filing, first_page)
+            recent = [t for t in dossier.get("timeline", []) if str(t.get("date", "")) < filing.filed_at][-8:]
+            system, user = self.prompts.pass1(filing, first_page, recent)
             verdict: Pass1Result = self.gateway.complete_json("pass1_bulk" if bulk else "pass1", system, user, Pass1Result).value
             if not verdict.is_material:
                 with self._lock:
                     self.stats.pass1_rejected += 1
                 return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": verdict.event_type,
                                 "reason": f"pass1: {verdict.reason}"[:300], "updated_at": now})
+            repeat = timeline_entry_dated(dossier, filing, verdict.duplicate_of)
+            if repeat:  # confirmed in code: the entry it named is on file and near in time
+                with self._lock:
+                    self.stats.duplicates += 1
+                log.info("pass 1 calls %s a repeat of %s (%s), so pass 2 is not spent on it",
+                         filing.news_id, repeat.get("news_id"), str(repeat.get("date", ""))[:10])
+                return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": verdict.event_type,
+                                "reason": f"duplicate of {repeat.get('news_id')} (same event, another document; "
+                                          f"pass 1 named {verdict.duplicate_of})"[:300], "updated_at": now})
             event_type = verdict.event_type
             if verdict.timeline_only:
                 return self._timeline_flow(filing.model_copy(update={"event_type": event_type}), company, industry, doc, bulk,
                                            memory_complete)
 
-        dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
         view = view_as_of(dossier, filing.filed_at)
         budget = self.settings.pass2_char_budget * (3 if event_type == "CONCALL_PRESENTATION" else 1)
         text = doc.select_text(budget, self.prompts.keywords(event_type))
@@ -1742,7 +1754,16 @@ def _noise_row(filing: Filing) -> list:
 
 
 SECOND_OPINION_MIN_S = 300
-ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE")  # the same event filed in other words is one card (D22)
+# The same event filed in other words is one card (D22). BSE asks for one submission per applicable
+# subcategory, so one event arrives as several different documents - a results PDF and its concall deck,
+# a rights-issue letter of offer and its covering intimation, an NCD approval under two subcategories, a
+# SAST disclosure and the company's own. duplicates.py cannot see these: it compares documents, and these
+# documents differ. Measured on the rebuild, 123 of 456 cards repeated an event already in the feed, so
+# every type that showed duplicates is listed here. Left out on purpose: ORDER_WIN,
+# MONTHLY_BUSINESS_UPDATE, CAPEX, PRODUCT_LAUNCH and CORPORATE_ACTION recur with new numbers in nearly
+# the same words, and RESULTS has its own one-card-per-quarter rule (D20).
+ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE", "LITIGATION_REGULATORY", "FUNDRAISE",
+                      "RIGHTS_ISSUE", "M_AND_A", "DEBT_RATINGS", "CONCALL_PRESENTATION")
 UNIT_HINT = ("Convert each amount from the unit its table states: ₹ lakh ÷ 100 = ₹ Cr, ₹ million ÷ 10 = ₹ Cr, "
              "₹ thousand ÷ 10,000 = ₹ Cr; remove a figure that matches no source at any unit")
 

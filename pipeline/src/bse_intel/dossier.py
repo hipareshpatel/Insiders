@@ -292,10 +292,13 @@ def _timeline_words(text: str) -> set[str]:
     return {w for w in re.findall(r"[a-z0-9]{4,}", (text or "").lower()) if w not in _TIMELINE_STOP}
 
 
-def similar_timeline_entry(dossier: dict, filing: Filing, entry: str, days: int = 3, threshold: float = 0.5) -> dict | None:
+def similar_timeline_entry(dossier: dict, filing: Filing, entry: str, days: int = 10, threshold: float = 0.5) -> dict | None:
     """An earlier timeline entry of the same company that reads as this event again: within `days` days and sharing at
     least `threshold` of the content words (SML Mahindra's MD and CEO change reached the feed as three cards, each worded
-    differently: one event is one entry). Another filing of the same news id is not a repeat of itself."""
+    differently: one event is one entry). Another filing of the same news id is not a repeat of itself.
+
+    Ten days, not three: a concall deck follows its results by up to a week, and a SAST disclosure and the
+    company's own intimation of the same transfer arrived six days apart (measured on the rebuild)."""
     from datetime import date
 
     try:
@@ -313,6 +316,31 @@ def similar_timeline_entry(dossier: dict, filing: Filing, entry: str, days: int 
         theirs = _timeline_words(t.get("summary", ""))
         if gap <= days and mine and theirs and len(mine & theirs) / len(mine | theirs) >= threshold:
             return t
+    return None
+
+
+def timeline_entry_dated(dossier: dict, filing: Filing, claimed: str, days: int = 15) -> dict | None:
+    """The company's timeline entry on the date the gatekeeper named, when it is close enough to be the
+    same event. The gatekeeper judges whether this filing repeats that entry; this only checks that the
+    entry is really there and near in time, so a hallucinated date drops nothing. Another filing of the
+    same news id is never a repeat of itself.
+    """
+    from datetime import date
+
+    claimed = (claimed or "").strip()[:10]
+    if len(claimed) != 10:
+        return None
+    try:
+        when, said = date.fromisoformat(filing.filed_at[:10]), date.fromisoformat(claimed)
+    except ValueError:
+        return None
+    if abs((said - when).days) > days:
+        return None
+    for entry in dossier.get("timeline", []):
+        if entry.get("news_id") == filing.news_id:
+            continue
+        if str(entry.get("date", ""))[:10] == claimed:
+            return entry
     return None
 
 

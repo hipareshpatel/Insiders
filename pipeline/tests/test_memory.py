@@ -539,3 +539,41 @@ def test_memory_leaves_out_a_figure_that_breaks_its_own_periods():
     dossier = {"financial_metrics": card_only, "company_name": "Kanoria", "scrip_code": "506525"}
     view = view_as_of(dossier, "2026-06-01T00:00:00+05:30")
     assert "453.78" not in json.dumps(view or {})
+
+
+def test_a_named_repeat_is_confirmed_in_code_before_anything_is_dropped():
+    """Pass 1 is shown what the company has already filed and names the entry a filing repeats, which catches
+    one event arriving as a second document - a results statement and its investor presentation, an approval
+    filed under two subcategories - that duplicates.py cannot see, because it compares documents and these
+    documents differ. The gatekeeper only judges the match: a date with no entry on it, or one far away,
+    drops nothing, so a hallucinated date costs a card nothing."""
+    from bse_intel.dossier import timeline_entry_dated
+
+    f = Filing(news_id="n2", scrip_code="543533", company_name="eMudhra", headline="Investor presentation",
+               filed_at="2025-11-11T18:00:00+05:30", filing_date="2025-11-11")
+    dossier = {"timeline": [
+        {"news_id": "n1", "date": "2025-11-04T18:00:00+05:30", "summary": "Q2FY26 results: revenue up 22.6%"},
+        {"news_id": "n0", "date": "2025-02-01T18:00:00+05:30", "summary": "Q3FY25 results"},
+    ]}
+    assert timeline_entry_dated(dossier, f, "2025-11-04")["news_id"] == "n1"
+    assert timeline_entry_dated(dossier, f, "2025-11-05") is None      # no entry on that date
+    assert timeline_entry_dated(dossier, f, "2025-02-01") is None      # on file, but months away
+    assert timeline_entry_dated(dossier, f, "") is None                # nothing named
+    assert timeline_entry_dated(dossier, f, "not a date") is None
+    # a filing is never a repeat of itself
+    assert timeline_entry_dated({"timeline": [{"news_id": "n2", "date": "2025-11-04T18:00:00+05:30"}]}, f,
+                                "2025-11-04") is None
+
+
+def test_pass1_is_shown_what_the_company_already_filed():
+    from bse_intel.prompts.engine import PromptEngine
+    from bse_intel.settings import get_settings
+
+    f = Filing(news_id="n2", scrip_code="543533", company_name="eMudhra", headline="Investor presentation",
+               filed_at="2025-11-11T18:00:00+05:30", filing_date="2025-11-11")
+    system, user = PromptEngine(get_settings()).pass1(
+        f, "deck", [{"date": "2025-11-04T18:00:00+05:30", "summary": "Q2FY26 results: revenue up 22.6%"}])
+    assert "ALREADY IN THE FEED" in user and "2025-11-04: Q2FY26 results" in user
+    assert "duplicate_of" in system
+    _, empty = PromptEngine(get_settings()).pass1(f, "deck", [])
+    assert "Nothing on file yet." in empty

@@ -226,6 +226,10 @@ class Pass1Result(_Lenient):
     confidence: Num = 0.5
     reason: str = ""
     timeline_only: bool = False   # routine and worth a dated timeline line, not an analysis card
+    # The date (YYYY-MM-DD) of the recent entry this filing repeats, when it is the same event filed
+    # again as a different document. The gatekeeper judges the match; code checks the entry is really
+    # there and close enough before dropping anything.
+    duplicate_of: str = ""
 
 
 class TimelineVerdict(_Lenient):

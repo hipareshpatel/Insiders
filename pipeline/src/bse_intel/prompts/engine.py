@@ -170,13 +170,19 @@ class PromptEngine:
     def _event(self, event_type: str) -> dict:
         return self.events.get(event_type) or self.events.get("OTHER", {})
 
-    def pass1(self, filing: Filing, page1_text: str) -> tuple[str, str]:
+    def pass1(self, filing: Filing, page1_text: str, recent: list[dict] | None = None) -> tuple[str, str]:
+        """The gatekeeper. `recent` is the company's latest timeline entries, so it can say that this
+        filing is an event already in the feed arriving as a different document, which the document-level
+        duplicate rules cannot see (one event, several submissions)."""
         system = self._pass1.safe_substitute(event_types=", ".join(EVENT_TYPES))
+        already = "\n".join(f"- {str(t.get('date', ''))[:10]}: {str(t.get('summary', ''))[:160]}"
+                            for t in (recent or [])) or "Nothing on file yet."
         user = (
             f"Company: {filing.company_name} (BSE {filing.scrip_code})\n"
             f"BSE category: {filing.category or '-'} / {filing.subcategory or '-'}\n"
             f"Headline: {filing.headline}\n"
             f"Subject: {filing.subject}\n\n"
+            f"ALREADY IN THE FEED (this company, most recent last)\n{already}\n\n"
             f"First page:\n{page1_text or '(no attachment text)'}"
         )
         return system, user

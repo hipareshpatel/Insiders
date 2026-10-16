@@ -24,6 +24,27 @@ in a batch by itself and about 60 with ten reviewers: "never audit alone").
 6. **Re-run** the affected cards, then audit the next round. Do not fix and re-audit the same cards only: the target
    is the error rate on cards the fixes have never seen.
 
+## Every day, between rounds
+
+A round costs ten independent reviewers and cannot run daily, but the checks already wrote their findings
+on every card. `scripts/defect_digest.py` reads them back grouped by class - ungrounded numbers, an
+unresolved second opinion, a dropped quote, a unit corrected in code, a change recomputed, cards that
+repeat another announcement - with the writer model behind each and a few cards to open. No AI call, no
+reviewer. Fix in that order: one class is one change in code.
+
+How much the flags are worth, measured on round 1 (98 audited cards cross-checked against what the code
+had flagged on them):
+
+| the code | cards | WRONG |
+|---|---|---|
+| flagged it | 34 | 18 (52%) |
+| called it clean | 64 | 14 (21%) |
+
+So a flagged card is about 2.5x as likely to be wrong, and withholding every flagged card would remove 56%
+of the wrong cards while dropping 35% of the feed and still publishing 21% wrong. Useful, not sufficient:
+the work that matters is turning the errors the checks cannot see into errors they can. `memory_check.py`
+does that for memory, by arithmetic alone.
+
 ## Measure
 
 Share of WRONG cards, share of OK cards, issues per card, and the class counts, per round. The gate for starting the

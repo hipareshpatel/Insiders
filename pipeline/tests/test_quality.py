@@ -135,3 +135,37 @@ def test_roiic_needs_a_year_and_two_balance_sheets():
     d = _roiic_dossier(60, 420)
     d["balance_sheet"] = d["balance_sheet"][:1]
     assert roiic(d) is None
+
+
+def test_the_defect_digest_groups_cards_by_class_and_finds_repeats():
+    """The 100-card audit is the measure of truth but needs ten reviewers, so it cannot run daily. Every card
+    already carries what the checks found; the digest reads it back by class, because one class is one change
+    in code. Measured on the rebuild, a card the checks flagged was 2.5x as likely to be judged WRONG."""
+    import importlib.util
+    import pathlib
+
+    spec = importlib.util.spec_from_file_location(
+        "defect_digest", pathlib.Path(__file__).resolve().parents[1] / "scripts" / "defect_digest.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+
+    def row(news_id, scrip, at, headline, grounding=None, review=None):
+        return {"news_id": news_id, "scrip_code": scrip, "filed_at": at, "route": "PASS1", "needs_review": 0,
+                "card": {"headline": headline, "timeline_entry": headline, "model": "x/y", "event_type": "RESULTS",
+                         "grounding": grounding or {}, "review": review}}
+
+    cards = [
+        row("a1", "500", "2026-01-01T10:00:00+05:30", "Q1 revenue up 10%",
+            grounding={"ungrounded": ["123.4"], "change_fixes": ["revenue: +1% -> +10%"]},
+            review={"status": "UNRESOLVED"}),
+        row("b2", "500", "2026-01-03T10:00:00+05:30", "Q1 revenue up 10 percent"),
+        row("c3", "600", "2026-02-01T10:00:00+05:30", "Board approves a plant in Gujarat"),
+    ]
+    found = mod.classes(cards)
+    assert len(found["number not found in the filing or memory"]) == 1
+    assert len(found["second opinion could not resolve it (a flagged error shipped)"]) == 1
+    assert len(found["change recomputed in code"]) == 1
+    assert "a1" == found["number not found in the filing or memory"][0]["news_id"]
+
+    pairs = mod.duplicate_pairs(cards)
+    assert len(pairs) == 1 and pairs[0]["repeat"] == "b2" and pairs[0]["days"] == 2

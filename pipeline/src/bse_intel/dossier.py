@@ -14,6 +14,8 @@ older cards.
 
 from __future__ import annotations
 
+import logging
+
 import hashlib
 import json
 import re
@@ -199,11 +201,66 @@ def _sources(entry: dict | None) -> list[dict]:
     }]
 
 
+log = logging.getLogger(__name__)
+
+XBRL_SOURCE = "xbrl:"  # the seed's synthetic ids: "xbrl:res:<scrip>:<period>"
+
+# Flows accumulate over a financial year; balances, margins and per-share figures do not.
+FLOW_METRICS = frozenset({
+    "revenue", "total_income", "total_expenses", "ebitda", "pbt", "pat", "pat_continuing", "other_income",
+    "employee_cost", "other_expenses", "depreciation", "finance_cost", "tax_expense", "current_tax",
+    "deferred_tax", "exceptional_items", "cost_of_materials", "purchases_stock_in_trade",
+    "raw_material_cost", "inventory_change", "operating_cash_flow"})
+RECONCILE_TOLERANCE = 0.02  # a filing's own crore figures are rounded
+
+
+def unreconciled(entries: list[dict]) -> set[tuple[str, str]]:
+    """(metric, period) pairs that break the way Indian results accumulate.
+
+    Results are filed cumulatively, so for any flow H1 = Q1 + Q2, 9M = H1 + Q3 and FY = 9M + Q4. A figure
+    that breaks the identity is wrong whoever wrote it, and needs no PDF to catch. A machine-tagged member
+    of a failing set is kept and the card-written ones are returned, because the filer's own tagging beats a
+    model reading a PDF; when every member came from a card, all of them are returned, since nothing here
+    says which one is wrong. Audit round 1 found Kanoria's Q1FY26 revenue stored as 453.78 where H1 minus Q2
+    gives 201.38, and every later card read it as the year-ago figure.
+    """
+    by: dict[tuple[str, str], dict] = {}
+    for e in entries:
+        if e.get("metric") in FLOW_METRICS and e.get("unit") == "INR_CR" and e.get("value") is not None:
+            by[(e["metric"], e["period"])] = e
+    bad: set[tuple[str, str]] = set()
+    for metric in {m for m, _ in by}:
+        periods = {p for m, p in by if m == metric}
+        for fy in {p[-4:] for p in periods if p[-4:].startswith("FY")}:
+            get = lambda p: by.get((metric, p))  # noqa: E731
+            q1, q2, q3, q4 = (get(f"Q{i}{fy}") for i in (1, 2, 3, 4))
+            h1, m9, full = get(f"H1{fy}"), get(f"9M{fy}"), get(fy)
+            for whole, parts in ((h1, (q1, q2)), (m9, (h1, q3)), (full, (m9, q4))):
+                members = [m for m in (whole,) + parts if m is not None]
+                if whole is None or len(members) != 3:
+                    continue
+                total = sum(m["value"] for m in parts)
+                if abs(total - whole["value"]) <= max(0.05, abs(whole["value"]) * RECONCILE_TOLERANCE):
+                    continue
+                from_card = [m for m in members
+                             if not str(m.get("value_news_id") or m.get("source_news_id") or "").startswith(XBRL_SOURCE)]
+                for m in (from_card or members):
+                    bad.add((m["metric"], m["period"]))
+    return bad
+
+
+
 def _metric_entry(metric: str, period: str, sources: list[dict]) -> dict:
     """One figure from its sources: the value is the latest restatement; ``as_of`` is when it was
-    first known (known_since), which a later filing re-reporting it as a comparative never moves."""
+    first known (known_since), which a later filing re-reporting it as a comparative never moves.
+
+    A machine-tagged XBRL source outranks any card, however recent. The figures in an XBRL instance are
+    tagged by the company's own filing agent and cannot be misread, while a card is a model reading a
+    PDF; letting the newest writer win meant one card turned Jubilant's FY24 revenue from the seed's
+    exact 7,587.51 into 78.4, and every later card then compared against that (audit round 1)."""
     sources = sorted(sources, key=lambda s: s["as_of"])
-    last = sources[-1]
+    tagged = [s for s in sources if str(s.get("news_id", "")).startswith(XBRL_SOURCE)]
+    last = tagged[-1] if tagged else sources[-1]
     entry = {"metric": metric, "period": period, "value": last["value"], "unit": last.get("unit") or "INR_CR",
              "yoy_pct": last.get("yoy_pct"), "qoq_pct": last.get("qoq_pct"), "as_of": sources[0]["as_of"],
              "source_news_id": sources[0]["news_id"]}
@@ -562,11 +619,21 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
         return None
     before = lambda e, field="as_of": e.get(field, "") < cutoff  # noqa: E731
 
-    metrics_by_name: dict[str, list[dict]] = {}
+    as_known = []
     for m in dossier.get("financial_metrics", []):
         known = [s for s in _sources(m) if s["as_of"] < cutoff]
         if known:
-            metrics_by_name.setdefault(m["metric"], []).append(_metric_entry(m["metric"], m["period"], known))
+            as_known.append(_metric_entry(m["metric"], m["period"], known))
+    # A figure that breaks the cumulative identity never reaches the model: a wrong comparative is worse
+    # than no comparative, because the card states it as fact (audit round 1).
+    broken = unreconciled(as_known)
+    if broken:
+        log.info("memory: %d figures left out, they do not reconcile with their own periods: %s",
+                 len(broken), sorted(f"{m} {p}" for m, p in broken)[:8])
+    metrics_by_name: dict[str, list[dict]] = {}
+    for entry in as_known:
+        if (entry["metric"], entry["period"]) not in broken:
+            metrics_by_name.setdefault(entry["metric"], []).append(entry)
 
     def metric_lines(periods: int) -> dict[str, list[str]]:
         out = {}

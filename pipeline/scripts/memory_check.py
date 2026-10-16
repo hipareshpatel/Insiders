@@ -12,13 +12,12 @@ BACKUP_DIR is what `bse-intel backup --out DIR` wrote: DIR/memory/<scrip>.json.
 import argparse
 import json
 import pathlib
+import sys
 
-# Flows accumulate over a financial year; balances, margins and per-share figures do not.
-FLOWS = {"revenue", "total_income", "total_expenses", "ebitda", "pbt", "pat", "pat_continuing",
-         "other_income", "employee_cost", "other_expenses", "depreciation", "finance_cost",
-         "tax_expense", "current_tax", "deferred_tax", "exceptional_items", "cost_of_materials",
-         "purchases_stock_in_trade", "raw_material_cost", "inventory_change", "operating_cash_flow"}
-TOLERANCE = 0.02  # 2%: a filing's own crore figures are rounded
+SRC = pathlib.Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
+from bse_intel.dossier import FLOW_METRICS as FLOWS  # noqa: E402  the pipeline's own list, never a copy
+from bse_intel.dossier import RECONCILE_TOLERANCE as TOLERANCE  # noqa: E402
 
 
 def problems(scrip: str, metrics: list[dict]) -> list[dict]:

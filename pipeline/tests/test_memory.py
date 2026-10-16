@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from bse_intel.dossier import memory_ids, merge, new_dossier, view_as_of
 from bse_intel.grounding import check_card
 from bse_intel.models import Card, Filing, Pass2Output
@@ -471,3 +473,69 @@ def test_a_flow_figure_that_breaks_the_cumulative_identity_is_reported():
              metric("paid_up_capital", "Q1FY26", 12.34), metric("paid_up_capital", "Q2FY26", 12.34),
              metric("paid_up_capital", "H1FY26", 12.34)]
     assert mod.problems("506525", fixed) == []
+
+
+def test_an_xbrl_figure_outranks_a_card_however_recent():
+    """Audit round 1: Jubilant's FY24 revenue was seeded from its XBRL file as 7,587.51, two cards agreed,
+    and a card filed fifteen months later wrote 78.4 - which won, because memory took the newest writer.
+    Every later card then read 78.4 as the year-ago figure. A machine-tagged source now wins outright, and
+    a genuine restatement still carries when no XBRL source exists."""
+    from bse_intel.dossier import _metric_entry
+
+    def src(news_id, value, as_of):
+        return {"news_id": news_id, "value": value, "as_of": as_of, "unit": "INR_CR"}
+
+    entry = _metric_entry("revenue", "FY24", [
+        src("xbrl:res:500338:Q4FY24", 7587.51, "2024-05-17T18:00:00+05:30"),
+        src("bcad18ec", 7587.51, "2025-05-15T13:36:21+05:30"),
+        src("2cd1a396", 78.4, "2026-07-31T20:42:44+05:30"),
+    ])
+    assert entry["value"] == 7587.51 and entry["value_news_id"] == "xbrl:res:500338:Q4FY24"
+    assert entry["as_of"] == "2024-05-17T18:00:00+05:30"  # first known, unmoved
+
+    # the later of two XBRL files still wins, so a restated machine-tagged figure carries
+    entry = _metric_entry("revenue", "FY24", [
+        src("xbrl:res:500338:Q4FY24", 7587.51, "2024-05-17T18:00:00+05:30"),
+        src("xbrl:res:500338:Q4FY25", 7560.00, "2025-06-10T18:00:00+05:30"),
+    ])
+    assert entry["value"] == 7560.00
+
+    # with no XBRL source at all, the newest card still carries
+    entry = _metric_entry("revenue", "FY26", [
+        src("card-old", 100.0, "2026-01-01T00:00:00+05:30"),
+        src("card-new", 120.0, "2026-06-01T00:00:00+05:30"),
+    ])
+    assert entry["value"] == 120.0
+
+
+def test_memory_leaves_out_a_figure_that_breaks_its_own_periods():
+    """Kanoria's Q1FY26 revenue sat in memory as 453.78 where H1FY26 minus Q2FY26 gives 201.38, and every
+    later card read it as the year-ago figure, so "+129% YoY" became "+1.5%". A wrong comparative is worse
+    than none: the whole failing set is kept out of the memory the model sees when every member came from a
+    card, while a machine-tagged member stays and only the card-written ones go."""
+    from bse_intel.dossier import unreconciled, view_as_of
+
+    def m(metric, period, value, news_id):
+        return {"metric": metric, "period": period, "value": value, "unit": "INR_CR",
+                "as_of": "2026-01-01T00:00:00+05:30", "source_news_id": news_id, "value_news_id": news_id,
+                "sources": [{"news_id": news_id, "value": value, "as_of": "2026-01-01T00:00:00+05:30",
+                             "unit": "INR_CR"}]}
+
+    card_only = [m("revenue", "Q1FY26", 453.78, "card-1"), m("revenue", "Q2FY26", 209.84, "card-2"),
+                 m("revenue", "H1FY26", 411.22, "card-2")]
+    assert unreconciled(card_only) == {("revenue", "Q1FY26"), ("revenue", "Q2FY26"), ("revenue", "H1FY26")}
+
+    # the same break with the cumulative figures machine-tagged: only the card's quarter is dropped
+    mixed = [m("revenue", "Q1FY26", 453.78, "card-1"), m("revenue", "Q2FY26", 209.84, "xbrl:res:1:Q2FY26"),
+             m("revenue", "H1FY26", 411.22, "xbrl:res:1:Q2FY26")]
+    assert unreconciled(mixed) == {("revenue", "Q1FY26")}
+
+    # and a series that reconciles is left alone
+    good = [m("revenue", "Q1FY26", 201.38, "card-1"), m("revenue", "Q2FY26", 209.84, "card-2"),
+            m("revenue", "H1FY26", 411.22, "card-2")]
+    assert unreconciled(good) == set()
+
+    # end to end: the figure must not appear in the memory handed to the model (this also runs the logging)
+    dossier = {"financial_metrics": card_only, "company_name": "Kanoria", "scrip_code": "506525"}
+    view = view_as_of(dossier, "2026-06-01T00:00:00+05:30")
+    assert "453.78" not in json.dumps(view or {})

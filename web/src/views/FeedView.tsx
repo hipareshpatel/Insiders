@@ -198,7 +198,11 @@ export function Pager({ page, pages, capped, onPage }: { page: number; pages: nu
 
 function SharedCard({ id, view, onClose }: { id: string; view: View; onClose: () => void }) {
   const query = useQuery({ queryKey: ["card", id], queryFn: () => api.card(id), retry: false });
-  useEffect(() => window.scrollTo({ top: 0 }), [id]); // a linked card opens at the top of the feed
+  // A linked card opens at the top of the feed. The braces matter: window.scrollTo returns an object
+  // here, and an effect that returns a non-function makes React throw "destroy is not a function".
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [id]);
   if (query.isPending) return <div className="mb-6"><Loading /></div>;
   if (!query.data) {
     return (

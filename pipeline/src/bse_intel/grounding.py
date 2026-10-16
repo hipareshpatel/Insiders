@@ -23,6 +23,7 @@ import re
 from dataclasses import dataclass, field
 
 from .models import Card
+from .periods import quarter_index
 
 _NUMBER = re.compile(r"(?<![A-Za-z\d.])[-+]?\(?\d[\d,]*(?:\.\d+)?\)?")
 # Period labels and dates are not figures: "Q2FY27", "Q2 FY 2026-27", "H1FY27", "FY26", 30-09-2026,
@@ -365,3 +366,45 @@ def _from_line(value: float, decimals: int, kind: str, amounts: list[float], pct
         return any(abs(abs(a - b) - points) <= (0.01 if kind == "bps" else tolerance) + 1e-6
                    for a in pcts for b in index.values if b <= 100)
     return False
+
+
+SCALE_METRICS = ("revenue", "ebitda", "pbt", "pat")
+SCALE_JUMP = 5  # a quarterly figure this many times the company's recent quarters is a unit slip, not news
+_PROFIT_LABELS = {"ebitda": "EBITDA", "pbt": "PBT", "pat": "PAT", "revenue": "Revenue"}
+
+
+def scale_issues(metrics: list, history: list[dict]) -> list[str]:
+    """Quarterly figures out of scale, a lakh/million table read as crore (Ahluwalia's "PAT ₹495 Cr" for
+    ₹49.5 Cr) or the reverse. Two rules: a profit line above the same quarter's revenue and total
+    income; a figure more than SCALE_JUMP times the company's largest of its last four quarters in
+    memory, or a revenue below a fifth of its smallest. `metrics` are the reply's FinancialMetrics,
+    `history` the dossier's stored ones."""
+    now: dict[str, dict[str, float]] = {}
+    for m in metrics:
+        if m.metric in SCALE_METRICS and m.value is not None and quarter_index(m.period) is not None:
+            now.setdefault(m.period, {})[m.metric] = float(m.value)
+    totals = {m.period: float(m.value) for m in metrics if m.metric == "total_income" and m.value is not None}
+    issues = []
+    for period, values in now.items():
+        top = max(values.get("revenue") or 0, totals.get(period) or 0)
+        for metric in ("ebitda", "pbt", "pat"):
+            value = values.get(metric)
+            if value is not None and top >= 1 and abs(value) > top * 1.02:
+                issues.append(f"{_PROFIT_LABELS[metric]} {period} ₹{value:,.2f} Cr is above revenue ₹{top:,.2f} Cr")
+        here = quarter_index(period)
+        for metric, value in values.items():
+            past = sorted(((quarter_index(h["period"]), abs(float(h["value"]))) for h in history
+                           if h.get("metric") == metric and h.get("value") is not None
+                           and quarter_index(str(h.get("period"))) is not None and quarter_index(h["period"]) < here),
+                          reverse=True)[:4]
+            sizes = [v for _, v in past if v >= 1]
+            if len(sizes) < 2:
+                continue
+            label = _PROFIT_LABELS[metric]
+            if abs(value) > SCALE_JUMP * max(sizes):
+                issues.append(f"{label} {period} ₹{value:,.2f} Cr is over {SCALE_JUMP}x the company's recent quarters "
+                              f"(at most ₹{max(sizes):,.2f} Cr)")
+            elif metric == "revenue" and abs(value) < min(sizes) / SCALE_JUMP:
+                issues.append(f"{label} {period} ₹{value:,.2f} Cr is under a fifth of the company's recent quarters "
+                              f"(at least ₹{min(sizes):,.2f} Cr)")
+    return issues

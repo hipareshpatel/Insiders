@@ -33,11 +33,11 @@ from functools import partial
 from threading import Lock
 
 from .ai.gateway import AIGateway, AllProvidersFailed
-from .bse import AttachmentError, BseClient, SourceBlockedError
+from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, results_snapshot, view_as_of
 from .extract import Document
-from .grounding import DEFAULT_THRESHOLD, check_card, check_claims
+from .grounding import DEFAULT_THRESHOLD, check_card, check_claims, scale_issues
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
 from .periods import (canonical_period, due_date, quarter_from_index, quarter_index, statement_quarter,
                       statement_year)
@@ -135,13 +135,14 @@ class CardChecks:
     claims: list[str]
     headline_ungrounded: list[str] = field(default_factory=list)
     amounts_ungrounded: list[str] = field(default_factory=list)
+    scale: list[str] = field(default_factory=list)  # quarterly figures out of scale (grounding.scale_issues)
 
     @property
     def needs_review(self) -> bool:
         # Blueprint rule: an unmatched ₹ figure in the headline or a failed math check holds the card;
-        # so do a low overall match rate and an unsupported "first"/"record" claim.
+        # so do a low overall match rate, an unsupported "first"/"record" claim and a figure out of scale.
         return (self.score < DEFAULT_THRESHOLD or self.quant.mismatches > 0 or bool(self.claims)
-                or bool(self.headline_ungrounded))
+                or bool(self.headline_ungrounded) or bool(self.scale))
 
     @property
     def wants_second_opinion(self) -> bool:
@@ -152,7 +153,7 @@ class CardChecks:
 
     @property
     def issue_count(self) -> int:
-        return len(self.ungrounded) + self.quant.mismatches + len(self.claims)
+        return len(self.ungrounded) + self.quant.mismatches + len(self.claims) + len(self.scale)
 
     def problems(self) -> list[str]:
         out = []
@@ -162,6 +163,7 @@ class CardChecks:
             out.append("Numbers not found in the filing text or company memory: " + ", ".join(self.ungrounded[:10]))
         out += [f"Quantified impact \"{q['label']}\": {q.get('check_note')}" for q in self.quant.items if q.get("check") == "MISMATCH"]
         out += [f"Claim not supported by the sources: \"{c}\"" for c in self.claims]
+        out += [f"Out of scale (check the statement's unit and column): {s}" for s in self.scale]
         return out
 
 
@@ -221,8 +223,10 @@ def relabel_periods(out: Pass2Output, quarter: str | None, year: str | None) -> 
     return mapping
 
 
-def check_card_all(card, view: dict | None, sources: tuple[str, ...]) -> CardChecks:
-    """Memory-id hygiene, then the number, math and claim checks."""
+def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...], history: list[dict] | None = None) -> CardChecks:
+    """Memory-id hygiene, then the number, math, claim and scale checks (`history`: the dossier's
+    stored financial metrics, which the reply's quarterly figures are compared with)."""
+    card = out.card
     valid_refs = memory_ids(view)
     for insight in card.why_it_matters:
         insight.memory_refs = [r for r in insight.memory_refs if r in valid_refs]
@@ -235,7 +239,8 @@ def check_card_all(card, view: dict | None, sources: tuple[str, ...]) -> CardChe
     ungrounded = grounding.ungrounded + quant.unsourced
     score = 1.0 if checked == 0 else round(1 - len(ungrounded) / checked, 3)
     return CardChecks(score, checked, ungrounded, quant, check_claims(card, *sources),
-                      grounding.headline_ungrounded, grounding.amounts_ungrounded)
+                      grounding.headline_ungrounded, grounding.amounts_ungrounded,
+                      scale_issues(out.dossier_delta.financial_metrics, history or []))
 
 
 def reconcile_call_read(card, view: dict | None) -> None:
@@ -284,6 +289,7 @@ class Pipeline:
         self._examples: dict[tuple[str, str], dict[str, list[dict]]] = {}
         self._learned: dict | None = None   # Loop 1 state: post-mortem queue, lessons, dampened categories
         self._bodies: dict[str, list[tuple[str, str, duplicates.Body]]] = {}  # scrip -> (filed_at, news_id, body) this run
+        self._xbrl_links: dict[str, list[XbrlLink]] = {}  # scrip -> its results archive, read once a run
 
     # ------------------------------------------------------------------ writes
 
@@ -646,6 +652,37 @@ class Pipeline:
                 return news_id, kind
         return None
 
+    def _results_xbrl_url(self, filing: Filing, text: str) -> str | None:
+        """The XBRL file for a results filing, from the company's results archive: the statement's
+        quarter, consolidated when the company files it (memory keeps one basis), the latest file
+        (revision) filed within 45 days of the PDF, else the earliest. Without a stated quarter, the
+        file filed within three days of the PDF. Announcement rows carry no XBRL link of their own."""
+        with self._lock:
+            links = self._xbrl_links.get(filing.scrip_code)
+        if links is None:
+            try:
+                links = self.bse.results_xbrl(filing.scrip_code)
+            except Exception as exc:  # XBRL is an extra: the PDF still carries the results
+                log.warning("results archive for %s unavailable (%s); using the PDF", filing.scrip_code, exc)
+                links = []
+            with self._lock:
+                self._xbrl_links[filing.scrip_code] = links
+        if not links:
+            return None
+        quarter = statement_quarter(text)
+        if quarter:
+            links = [link for link in links if link.period == quarter]
+        else:
+            day = date.fromisoformat(filing.filed_at[:10])
+            links = [link for link in links if -1 <= (date.fromisoformat(link.filed_at[:10]) - day).days <= 3]
+        if any(link.basis == "CONSOLIDATED" for link in links):
+            links = [link for link in links if link.basis == "CONSOLIDATED"]
+        day = date.fromisoformat(filing.filed_at[:10])
+        timely = [link for link in links if -2 <= (date.fromisoformat(link.filed_at[:10]) - day).days <= 45]
+        if timely:
+            return max(timely, key=lambda link: link.filed_at).url
+        return min(links, key=lambda link: link.filed_at).url if links else None
+
     def _xbrl(self, filing: Filing, strict: bool = False) -> "xbrl_fast_path.XbrlResult | None":
         """The filing's XBRL figures (cached beside the text cache). A download problem fails only a
         strict (XBRL-only) filing; results fall back to the PDF."""
@@ -744,6 +781,8 @@ class Pipeline:
         budget = self.settings.pass2_char_budget * (3 if event_type == "CONCALL_PRESENTATION" else 1)
         text = doc.select_text(budget, self.prompts.keywords(event_type))
         _ocr_check(doc)
+        if event_type == "RESULTS" and not filing.xbrl_url:
+            filing = filing.model_copy(update={"xbrl_url": self._results_xbrl_url(filing, text)})
         tagged = self._xbrl(filing) if event_type == "RESULTS" else None
         if tagged and (tagged.kind != "RESULTS" or not xbrl_fast_path.confirm(tagged, text)):
             if tagged.kind == "RESULTS":
@@ -774,10 +813,11 @@ class Pipeline:
             quarter = canonical_period(tagged.period) if tagged and tagged.period else statement_quarter(text)
             relabel_periods(out, quarter, statement_year(text))
         sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
-        checks = check_card_all(out.card, view, sources)
+        history = dossier.get("financial_metrics", [])
+        checks = check_card_all(out, view, sources, history)
         review = None
         if checks.wants_second_opinion and self.settings.second_opinion:
-            out, result, checks, review = self._second_opinion(route, system, user, out, result, checks, view, sources)
+            out, result, checks, review = self._second_opinion(route, system, user, out, result, checks, view, sources, history)
         if filing.route == "FAST_TRACK" and filing.event_type:
             out.event_type = filing.event_type  # rules know the event type better than the model
         elif out.event_type == "OTHER" and event_type != "OTHER":
@@ -899,7 +939,7 @@ class Pipeline:
                      **_company_memory(merged)},
         )
 
-    def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, view, sources):
+    def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, view, sources, history=None):
         """Ask a different provider to correct a card that failed the checks, then check again.
 
         The better of the two cards is kept. Either way the card is published: a corrected one
@@ -925,7 +965,7 @@ class Pipeline:
         # first reply unless the verifier sent a fuller one: it was asked to fix the card, and a
         # reply with just {"card": ...} must not wipe the quarter's figures from memory.
         fixed = _adopt_card(out, second.value)
-        checks2 = check_card_all(fixed.card, view, sources)
+        checks2 = check_card_all(fixed, view, sources, history)
         if not checks2.wants_second_opinion:
             with self._lock:
                 self.stats.corrected += 1

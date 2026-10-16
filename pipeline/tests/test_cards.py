@@ -461,3 +461,22 @@ def test_scanned_amount_in_millions_header_declares_the_unit():
     assert declared_unit(text) == 10
     assert check_card(card(headline="Heritage PAT ₹205 Cr", what_happened=["PAT ₹205 Cr"]), text).headline_ungrounded == ["205"]
     assert not check_card(card(headline="Heritage PAT ₹20.51 Cr", what_happened=["Borrowing limit raised to ₹800 Cr"]), text).ungrounded
+
+
+def test_scale_check_flags_a_lakh_table_read_as_crore():
+    """Ahluwalia Q3FY25: PAT "₹495 Cr" and EBITDA "₹756 Cr" on ₹952 Cr revenue (they were ₹49.4 Cr
+    and ₹84.4 Cr); its recent quarters made ₹40–60 Cr of profit."""
+    from bse_intel.grounding import scale_issues
+    from bse_intel.models import FinancialMetric
+
+    history = [{"metric": "pat", "period": p, "value": v} for p, v in (("Q1FY25", 41.2), ("Q2FY25", 55.7), ("Q3FY24", 60.1))]
+    now = [FinancialMetric(metric="revenue", period="Q3FY25", value=952), FinancialMetric(metric="ebitda", period="Q3FY25", value=756),
+           FinancialMetric(metric="pat", period="Q3FY25", value=495)]
+    issues = scale_issues(now, history)
+    assert any(i.startswith("PAT Q3FY25 ₹495.00 Cr is over 5x") for i in issues)
+    assert not any(i.startswith("EBITDA") for i in issues)  # below revenue, and no EBITDA history
+    assert scale_issues([FinancialMetric(metric="pat", period="Q3FY25", value=960)],
+                        []) == []  # no revenue, no history: nothing to compare with
+    assert scale_issues(now[:1] + [FinancialMetric(metric="pat", period="Q3FY25", value=1200)], []) == [
+        "PAT Q3FY25 ₹1,200.00 Cr is above revenue ₹952.00 Cr"]
+    assert scale_issues([FinancialMetric(metric="pat", period="Q3FY25", value=49.39)], history) == []

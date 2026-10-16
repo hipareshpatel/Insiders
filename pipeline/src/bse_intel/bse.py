@@ -26,6 +26,7 @@ import re
 import threading
 import time
 from collections.abc import Iterator
+from dataclasses import dataclass
 from datetime import date
 
 import httpx
@@ -74,6 +75,42 @@ def xbrl_url(row: dict) -> str | None:
             return value
         return f"{SITE}/{value.lstrip('/')}" if "/" in value.strip("/") else ATTACH_LIVE + value.lstrip("/")
     return None
+
+
+# Announcement rows carry no XBRL link (XML_NAME is "ANN_<scrip>_<id>" with no file behind it).
+# The results archive behind the site's "Financial Results" page lists each quarter's XBRL instance:
+# FourOneUploadDocument/Main_Ind_As_*.xml up to Dec 2024, IFIndasUploadDocument/Integrated_Finance_*.xml
+# (Integrated Filing) from the Mar 2025 quarter. "Quarter" reads "Standalone-Dec-24;DQ2024-2025;124.00;D".
+RESULTS_ARCHIVE_ENDPOINT = f"{API_BASE}/Result_Arch_ng/w"
+_ARCHIVE_QUARTER = re.compile(r"^(Standalone|Consolidated)-(Mar|Jun|Sep|Dec)-(\d{2})\b", re.I)
+_QUARTER_OF_MONTH = {"jun": 1, "sep": 2, "dec": 3, "mar": 4}
+
+
+@dataclass(frozen=True)
+class XbrlLink:
+    period: str        # Q3FY25
+    basis: str         # STANDALONE / CONSOLIDATED
+    url: str
+    filed_at: str      # ISO, the filing or revision time
+
+
+def parse_results_archive(rows: list[dict]) -> list[XbrlLink]:
+    """Quarter rows of BSE's results archive as XBRL links (yearly rows repeat a quarter's file)."""
+    links: dict[tuple[str, str, str], XbrlLink] = {}
+    for row in rows:
+        m = _ARCHIVE_QUARTER.match(str(row.get("Quarter") or ""))
+        if not m or str(row.get("Fld_QuarterName") or "Quarter").strip().lower() == "year":
+            continue
+        basis, month, yy = m.group(1).upper(), m.group(2).lower(), int(m.group(3))
+        quarter = _QUARTER_OF_MONTH[month]
+        fy = yy if quarter == 4 else yy + 1
+        path = str(row.get("conso_xbrl_link" if basis == "CONSOLIDATED" else "stand_xbrl_link") or "").strip()
+        filed = str(row.get("Revised_Date_Time") or row.get("Filing_Date_Time") or "")[:19]
+        if not path.lower().endswith(".xml") or not filed:
+            continue
+        link = XbrlLink(f"Q{quarter}FY{fy % 100:02d}", basis, path if path.startswith("http") else SITE + "/" + path.lstrip("/"), filed)
+        links[(link.period, link.basis, link.url)] = link
+    return sorted(links.values(), key=lambda link: link.filed_at, reverse=True)
 
 
 def attachment_url(attachment: str | None, pdf_flag: int | None) -> str | None:
@@ -251,6 +288,12 @@ class BseClient:
         data = self._get_json(SCRIP_HEADER_ENDPOINT, {"quotetype": "EQ", "scripcode": scrip_code, "seriesid": ""})
         time.sleep(self._page_delay)
         return data if isinstance(data, dict) else {}
+
+    def results_xbrl(self, scrip_code: str) -> list[XbrlLink]:
+        """Every results XBRL file a company has filed (its results archive), newest first."""
+        data = self._get_json(RESULTS_ARCHIVE_ENDPOINT, {"scrip_cd": scrip_code})
+        time.sleep(self._page_delay)
+        return parse_results_archive((data or {}).get("Table") or [] if isinstance(data, dict) else [])
 
     def _pace_download(self) -> None:
         low, high = self._download_delay

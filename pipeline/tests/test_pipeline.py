@@ -39,6 +39,9 @@ class FakeBse:
     def download(self, url, max_bytes=None):
         return self.pdfs.get(url)
 
+    def results_xbrl(self, scrip_code):
+        return getattr(self, "archive", {}).get(scrip_code, [])
+
 
 def _filing(news_id, headline, when, category="", subcategory="", scrip="999001", name="Demo Cement Ltd"):
     return Filing(news_id=news_id, scrip_code=scrip, company_name=name, headline=headline, subject=headline,

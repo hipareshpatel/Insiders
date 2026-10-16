@@ -1,7 +1,9 @@
 import json
 from datetime import timedelta
+from pathlib import Path
 
 from bse_intel import xbrl
+from bse_intel.bse import XbrlLink, parse_results_archive
 from bse_intel.timeutil import now_ist
 
 from test_pipeline import PASS2, _filing, _pdf, build, rows
@@ -130,3 +132,59 @@ def test_shareholding_pattern_goes_to_memory_without_ai(settings):
     assert row["status"] == "NOT_MATERIAL" and row["event_type"] == "SHAREHOLDING" and row["route"] == "XBRL"
     (own,) = sink.get_dossier("999001")["ownership"]
     assert own["period"] == "Q2FY27" and own["promoter_pct"] == 55.23 and own["source_news_id"] == "n-shp"
+
+
+FIXTURES = Path(__file__).parent / "fixtures"
+
+
+def test_results_archive_rows_become_quarter_links():
+    """BSE's results archive (Result_Arch_ng), as returned for Ahluwalia Contracts: announcement rows
+    carry no XBRL link, this does. Yearly rows repeat the quarter's file and are skipped."""
+    rows = [
+        {"Quarter": "Consolidated-Dec-24;DQ2024-2025;124.00;c", "Fld_QuarterName": "Quarter", "stand_xbrl_link": None,
+         "conso_xbrl_link": "/XBRLFILES/FourOneUploadDocument/Main_Ind_As_532811_1222025155245.xml",
+         "Filing_Date_Time": "2025-02-12T15:53:53.533", "Revised_Date_Time": None},
+        {"Quarter": "Standalone-Dec-24;DQ2024-2025;124.00;D", "Fld_QuarterName": "Quarter",
+         "stand_xbrl_link": "/XBRLFILES/FourOneUploadDocument/Main_Ind_As_532811_1222025155130.xml", "conso_xbrl_link": None,
+         "Filing_Date_Time": "2025-02-12T15:52:35.207", "Revised_Date_Time": None},
+        {"Quarter": "Standalone-Mar-25;MC2024-2025;125.50;D", "Fld_QuarterName": "Year",
+         "stand_xbrl_link": "/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_532811_166202510955.xml",
+         "conso_xbrl_link": None, "Filing_Date_Time": "2025-06-16T10:10:03.393", "Revised_Date_Time": None},
+        {"Quarter": "Standalone-Mar-25;MQ2024-2025;125.00;D", "Fld_QuarterName": "Quarter",
+         "stand_xbrl_link": "/XBRLFILES/IFIndasUploadDocument/Integrated_Finance_Ind_As_532811_972026133555.xml",
+         "conso_xbrl_link": None, "Filing_Date_Time": None, "Revised_Date_Time": "2026-07-09T13:36:48.993"},
+    ]
+    links = parse_results_archive(rows)
+    assert [(link.period, link.basis) for link in links] == [
+        ("Q4FY25", "STANDALONE"), ("Q3FY25", "CONSOLIDATED"), ("Q3FY25", "STANDALONE")]
+    assert links[1].url == "https://www.bseindia.com/XBRLFILES/FourOneUploadDocument/Main_Ind_As_532811_1222025155245.xml"
+
+
+def test_real_bse_results_file_parses_to_the_statement_figures():
+    """Ahluwalia Contracts' standalone Q3FY25 XBRL file from BSE (Feb 2025). Its card had read the
+    lakh table as crore: EBITDA "₹756 Cr", PAT "₹495 Cr", finance cost "₹145 Cr"."""
+    result = xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    assert (result.kind, result.period, result.basis) == ("RESULTS", "Q3FY25", "STANDALONE")
+    now = {m.metric: m.value for m in result.metrics if m.period == "Q3FY25"}
+    assert now["revenue"] == 951.96 and now["pat"] == 49.39 and now["finance_cost"] == 14.55
+    assert now["ebitda"] == 84.36 and now["eps"] == 7.37
+
+
+def test_results_filing_finds_its_xbrl_in_the_archive(settings):
+    """No link on the announcement: the archive's file for the statement's quarter is used,
+    consolidated over standalone, the timely revision over a later one."""
+    now = now_ist() - timedelta(minutes=30)
+    filing = _filing("n-arc", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    text = ("Statement of unaudited consolidated financial results for the quarter ended 30.09.2026 (Rs. in lakhs). "
+            "Revenue from operations 12,000.00 9,091.00. Net profit 1,500.00.")
+    day = now.date()
+    archive = [XbrlLink("Q2FY27", "STANDALONE", "https://bse.invalid/sa.xml", f"{day}T18:00:00"),
+               XbrlLink("Q2FY27", "CONSOLIDATED", "https://bse.invalid/co.xml", f"{day}T18:05:00"),
+               XbrlLink("Q2FY27", "CONSOLIDATED", "https://bse.invalid/co-late.xml", f"{day + timedelta(days=200)}T10:00:00"),
+               XbrlLink("Q1FY27", "CONSOLIDATED", "https://bse.invalid/q1.xml", f"{day - timedelta(days=90)}T10:00:00")]
+    pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text), "https://bse.invalid/co.xml": results_xml()},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]})
+    pipeline.bse.archive = {"999001": archive}
+    stats = pipeline.run("live", time_budget_s=60)
+    assert stats.analyzed == 1 and stats.xbrl == 1
+    assert "Machine-tagged results (XBRL, CONSOLIDATED" in fake.calls[0]["messages"][-1]["content"]

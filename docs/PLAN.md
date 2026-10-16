@@ -97,7 +97,7 @@ refer to the sections above.
 | 1c | Full backfill order: owner leans to the ₹1,000–10,000 Cr band first (985 companies, large caps last); size it from the smoke-test rate and the 16.8% duplicate share, then decide | Owner decides | after Phase 1 |
 | 2 | ~~`ai-check --provider cloudflare` after the Workers AI fix~~ done 2026-10-16: both models pass | Laptop | Phase 1 |
 | 3 | `ministral-14b-2512` sometimes returns no JSON: find why (truncation at max_tokens?) or lower its weight | Laptop | Phase 1 |
-| 4 | Confirm BSE's XBRL field and tag names on real filings (System "xbrl" count; tracker row "XBRL fast path") | Laptop | Phase 1 |
+| 4 | ~~Confirm BSE's XBRL field and tag names on real filings~~ done 2026-10-16: announcement rows carry no XBRL link (0 of 1,166 had one), so results XBRL now comes from BSE's results archive (`Result_Arch_ng`); 53 of 55 smoke-test results filings found and confirmed their file; the parser reads BSE's real files unchanged | Laptop | Phase 1 |
 | 5 | Gemini daily limits (per-minute ones measured 2026-10-16): record the value from the first per-day 429 on the System page in `providers.toml` | Laptop | Phase 3 |
 | 6 | ~~Yahoo price coverage after `market-data --all`~~ done 2026-10-16: 97.6%, no fallback needed for now | Laptop | Phase 2 |
 | 6a | Industry for every company from BSE's quote header (`sync-companies`, about 5,100 lookups, saved every 200; finishing 2026-10-16 about 02:35), which also labels the 485 companies with a market cap but no size; confirm 0 remain unlabelled | Laptop | Phase 2 |

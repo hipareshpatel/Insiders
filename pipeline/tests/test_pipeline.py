@@ -307,7 +307,7 @@ def test_one_unmatched_amount_gets_a_second_opinion_even_above_the_review_thresh
     now = now_ist() - timedelta(minutes=10)
     f = _filing("n-q3", "Unaudited Financial Results for the quarter", now, "Result")
     bad = json.loads(json.dumps(PASS2))
-    bad["card"]["what_happened"] = ["Revenue ₹120 Cr vs ₹90.9 Cr a year ago", "PAT ₹150 Cr"]  # PAT was ₹15 Cr
+    bad["card"]["what_happened"] = ["Revenue ₹120 Cr vs ₹90.9 Cr a year ago", "PAT ₹16.5 Cr"]  # PAT was ₹15 Cr
     good = json.loads(json.dumps(PASS2))
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
                                  {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "ministral-14b-2512": [json.dumps(good)]},
@@ -317,3 +317,18 @@ def test_one_unmatched_amount_gets_a_second_opinion_even_above_the_review_thresh
     assert "₹ lakh ÷ 100 = ₹ Cr" in fake.calls[1]["messages"][1]["content"]
     body = outcome.card["card"]
     assert body["review"]["status"] == "CORRECTED" and body["what_happened"][1] == "PAT ₹15 Cr"
+
+
+def test_a_lakh_figure_read_at_the_wrong_scale_is_corrected_without_a_second_model(settings):
+    """"PAT ₹150 Cr" from "Net profit 1,500.00" under "(Rs. in lakhs)": only ₹15 Cr fits, so code
+    corrects the card and memory, and no second provider is asked."""
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-q4", "Unaudited Financial Results for the quarter", now, "Result")
+    bad = json.loads(json.dumps(PASS2))
+    bad["card"]["what_happened"] = ["Revenue ₹120 Cr vs ₹90.9 Cr a year ago", "PAT ₹150 Cr"]
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)]}, env={"NVIDIA_API_KEY": "n"})
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    body = outcome.card["card"]
+    assert len(fake.calls) == 1 and body["review"] is None
+    assert body["what_happened"][1] == "PAT ₹15 Cr" and body["grounding"]["unit_fixes"] == {"150": "15"}

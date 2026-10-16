@@ -37,7 +37,7 @@ from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, results_snapshot, view_as_of
 from .extract import Document
-from .grounding import DEFAULT_THRESHOLD, check_card, check_claims, scale_issues
+from .grounding import DEFAULT_THRESHOLD, check_card, check_claims, margin_issues, scale_issues, unit_slips
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
 from .periods import (canonical_period, due_date, quarter_from_index, quarter_index, statement_quarter,
                       statement_year)
@@ -135,7 +135,7 @@ class CardChecks:
     claims: list[str]
     headline_ungrounded: list[str] = field(default_factory=list)
     amounts_ungrounded: list[str] = field(default_factory=list)
-    scale: list[str] = field(default_factory=list)  # quarterly figures out of scale (grounding.scale_issues)
+    scale: list[str] = field(default_factory=list)  # figures out of scale or not fitting their margin
 
     @property
     def needs_review(self) -> bool:
@@ -163,7 +163,7 @@ class CardChecks:
             out.append("Numbers not found in the filing text or company memory: " + ", ".join(self.ungrounded[:10]))
         out += [f"Quantified impact \"{q['label']}\": {q.get('check_note')}" for q in self.quant.items if q.get("check") == "MISMATCH"]
         out += [f"Claim not supported by the sources: \"{c}\"" for c in self.claims]
-        out += [f"Out of scale (check the statement's unit and column): {s}" for s in self.scale]
+        out += [f"Figures that do not fit (check the statement's unit and column): {s}" for s in self.scale]
         return out
 
 
@@ -223,6 +223,52 @@ def relabel_periods(out: Pass2Output, quarter: str | None, year: str | None) -> 
     return mapping
 
 
+def _card_texts(out: Pass2Output) -> list[str]:
+    card = out.card
+    texts = [card.headline, card.takeaway, card.core_catalyst, *card.what_happened, *(i.text for i in card.why_it_matters),
+             *(f"{k.value} {k.change or ''}" for k in card.key_numbers),
+             *(f"{c.previous or ''} ; {c.current or ''}" for c in card.notable_changes), out.timeline_entry]
+    return [t for t in texts if t]
+
+
+def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...]) -> dict[str, str]:
+    """Correct, in code, card amounts that are a statement figure read at the wrong unit (grounding.
+    unit_slips): in the card's text, its key numbers and changes, the timeline entry, and the reply's
+    ₹ crore metrics for memory. Returns {as written: corrected}."""
+    if out.card is None or not sources:
+        return {}
+    slips = unit_slips(_card_texts(out), sources[0], *sources[1:])
+    if not slips:
+        return {}
+    mapping = {raw: f"{right:,.{places}f}".rstrip("0").rstrip(".") if places else f"{right:,.0f}"
+               for raw, _, _, right, places in slips}
+    pattern = re.compile(r"(?<![\d.,])(" + "|".join(re.escape(r) for r in sorted(mapping, key=len, reverse=True))
+                         + r")(?=\s*(?:cr\b|crores?\b))", re.I)
+
+    def fix(text: str | None) -> str | None:
+        return pattern.sub(lambda m: mapping[m.group(1)], text) if text else text
+
+    card = out.card
+    card.headline, card.takeaway, card.core_catalyst = fix(card.headline), fix(card.takeaway) or "", fix(card.core_catalyst)
+    card.what_happened = [fix(t) for t in card.what_happened]
+    for insight in card.why_it_matters:
+        insight.text = fix(insight.text)
+    for key in card.key_numbers:
+        key.value, key.change = fix(key.value), fix(key.change)
+    for change in card.notable_changes:
+        change.previous, change.current = fix(change.previous), fix(change.current)
+    out.timeline_entry = fix(out.timeline_entry) or ""
+    for m in out.dossier_delta.financial_metrics:
+        if m.value is None or (m.unit or "INR_CR") != "INR_CR":
+            continue
+        for _, value, decimals, right, _ in slips:
+            if abs(abs(float(m.value)) - value) <= 0.5 * 10 ** (-decimals) + 1e-9:
+                m.value = right if float(m.value) >= 0 else -right
+                break
+    log.info("unit slips corrected in code: %s", mapping)
+    return mapping
+
+
 def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...], history: list[dict] | None = None) -> CardChecks:
     """Memory-id hygiene, then the number, math, claim and scale checks (`history`: the dossier's
     stored financial metrics, which the reply's quarterly figures are compared with)."""
@@ -240,7 +286,8 @@ def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...]
     score = 1.0 if checked == 0 else round(1 - len(ungrounded) / checked, 3)
     return CardChecks(score, checked, ungrounded, quant, check_claims(card, *sources),
                       grounding.headline_ungrounded, grounding.amounts_ungrounded,
-                      scale_issues(out.dossier_delta.financial_metrics, history or []))
+                      scale_issues(out.dossier_delta.financial_metrics, history or [])
+                      + margin_issues(out.dossier_delta.financial_metrics, card.key_numbers))
 
 
 def reconcile_call_read(card, view: dict | None) -> None:
@@ -814,6 +861,7 @@ class Pipeline:
             relabel_periods(out, quarter, statement_year(text))
         sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
         history = dossier.get("financial_metrics", [])
+        unit_fixes = fix_unit_slips(out, sources)
         checks = check_card_all(out, view, sources, history)
         review = None
         if checks.wants_second_opinion and self.settings.second_opinion:
@@ -854,7 +902,8 @@ class Pipeline:
             "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
-                          "math_mismatches": quant.mismatches, "unsupported_claims": claims},
+                          "math_mismatches": quant.mismatches, "unsupported_claims": claims,
+                          "unit_fixes": unit_fixes or None, "out_of_fit": checks.scale or None},
             "review": review,
             "model": result.model_label,
         }

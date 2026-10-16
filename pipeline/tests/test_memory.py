@@ -402,3 +402,17 @@ def test_period_spellings_land_on_one_dossier_row():
 def test_an_ownership_block_without_a_quarter_end_is_dropped_not_failed():
     assert output(ownership={"period": None, "promoter_pct": None}).dossier_delta.ownership is None
     assert output(ownership={"period": 202609, "promoter_pct": 51}).dossier_delta.ownership.period == "202609"
+
+
+def test_kpi_verdict_is_checked_in_code():
+    """"Cement EBITDA/tonne of ₹701 in Q2FY26 is below the >=700 target for Q3FY26" came back MISSED:
+    701 meets ">=700", and a Q2FY26 figure does not settle a Q3FY26 check."""
+    from bse_intel.dossier import kpi_verdict
+
+    w = {"kind": "KPI", "text": "Cement EBITDA/tonne", "check_in": "Q3FY26 results", "target": ">=700"}
+    assert kpi_verdict(w, "MISSED", "Cement EBITDA/tonne of ₹701 in Q2FY26 is below the >=700 target for Q3FY26.") == "PENDING"
+    assert kpi_verdict(w, "MISSED", "Cement EBITDA/tonne of ₹701 in Q3FY26 vs the >=700 target.") == "MET"
+    assert kpi_verdict(w, "MET", "Q3FY26 EBITDA/tonne ₹655, short of the ₹700 target") == "MISSED"
+    assert kpi_verdict(w, "MET", "EBITDA per tonne improved as guided") == "MET"  # no figure: the model's call stands
+    assert kpi_verdict({**w, "target": "Disclosed"}, "MISSED", "Order book not disclosed in Q3FY26") == "MISSED"
+    assert kpi_verdict({**w, "kind": "APPROVAL"}, "MET", "anything") == "MET"

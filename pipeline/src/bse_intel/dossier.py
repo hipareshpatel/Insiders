@@ -21,7 +21,7 @@ from typing import Any
 
 from .scoring import calibration
 from .models import Filing, Pass2Output
-from .periods import canonical_period, due_date
+from .periods import canonical_period, due_date, quarter_index
 
 SCHEMA_VERSION = 3
 MAX_TIMELINE = 600
@@ -49,6 +49,43 @@ def _bare_name(name: str) -> str:
 
 _GRANTED = re.compile(r"\b(?:approved|granted|received|obtained|cleared|accorded|sanctioned|passed|approval\s+(?:was|has\s+been)\s+(?:given|received))\b", re.I)
 _NOT_YET = re.compile(r"\b(?:pending|awaited|awaiting|yet\s+to|subject\s+to|sought|seeks?|seeking|to\s+be\s+(?:obtained|received)|applied|proposed)\b", re.I)
+
+
+_QUARTER_LABEL = re.compile(r"\bQ[1-4]\s*FY\s*'?\d{2,4}\b", re.I)
+_TARGET = re.compile(r"(>=|<=|≥|≤|>|<|=)?\s*(?:₹|rs\.?|inr)?\s*(-?\d[\d,]*\.?\d*)", re.I)
+_NUMBER_IN = re.compile(r"-?\d[\d,]*\.?\d*")
+
+
+def kpi_verdict(watch: dict, status: str, evidence: str | None) -> str:
+    """The model's verdict on a KPI watch item, checked in code. A cement card: "Cement EBITDA/tonne of
+    ₹701 in Q2FY26 is below the >=700 target for Q3FY26" came back MISSED: 701 meets ">=700", and a
+    Q2FY26 figure cannot settle a Q3FY26 check. Evidence for a quarter before the check's quarter (the
+    first quarter named is the figure's own) keeps it PENDING; otherwise the first figure in the
+    evidence, not the target's own, is compared with the target. Without a numeric target or figure,
+    the model's verdict stands."""
+    if watch.get("kind") != "KPI" or status not in ("MET", "MISSED"):
+        return status
+    evidence = evidence or ""
+    due = quarter_index(canonical_period(str(watch.get("check_in") or "")))
+    quarters = [quarter_index(canonical_period(m.group(0))) for m in _QUARTER_LABEL.finditer(evidence)]
+    quarters = [q for q in quarters if q is not None]
+    if due is not None and quarters and quarters[0] < due:
+        return "PENDING"  # the figure's own quarter is named first ("₹701 in Q2FY26 … target for Q3FY26")
+    target = _TARGET.search(str(watch.get("target") or ""))
+    if not target:
+        return status
+    sign = {"≥": ">=", "≤": "<=", None: ">="}.get(target.group(1), target.group(1))
+    goal = float(target.group(2).replace(",", ""))
+    plain = _QUARTER_LABEL.sub(" ", evidence)
+    plain = re.sub(r"(?:>=|<=|≥|≤|>|<|target(?:\s+of)?)\s*(?:₹|rs\.?|inr)?\s*" + re.escape(target.group(2)), " ", plain, flags=re.I)
+    figures = [float(n.replace(",", "")) for n in _NUMBER_IN.findall(plain) if n.replace(",", "").replace(".", "").lstrip("-")]
+    figures = [f for f in figures if not (1990 <= f <= 2100 and f == int(f))]  # years ("as of Dec 2025")
+    if not figures:
+        return status
+    actual = figures[0]
+    hit = {">=": actual >= goal, ">": actual > goal, "<=": actual <= goal, "<": actual < goal,
+           "=": abs(actual - goal) <= abs(goal) * 0.02}[sign]
+    return "MET" if hit else "MISSED"
 
 
 def approval_granted(evidence: str | None) -> bool:
@@ -332,8 +369,11 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             continue
         if w["kind"] == "APPROVAL" and update.status == "MET" and not approval_granted(update.evidence):
             continue  # SML: "Approval met: CCI approval ..." with the evidence "CCI approval pending"
+        status = kpi_verdict(w, update.status, update.evidence)
+        if status == "PENDING" and update.status != "PENDING":
+            continue  # evidence from an earlier quarter settles nothing yet
         w["status_history"] = sorted(w.get("status_history", []) + [{
-            "status": update.status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,
+            "status": status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,
         }], key=lambda h: h["as_of"])
         w["status"] = w["status_history"][-1]["status"]
     # Open items are never dropped for size; closed ones go first, oldest first.

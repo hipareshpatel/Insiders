@@ -19,6 +19,7 @@ earlier order there never makes an order the first.
 from __future__ import annotations
 
 import bisect
+import math
 import re
 from dataclasses import dataclass, field
 
@@ -408,3 +409,102 @@ def scale_issues(metrics: list, history: list[dict]) -> list[str]:
                 issues.append(f"{label} {period} ₹{value:,.2f} Cr is under a fifth of the company's recent quarters "
                               f"(at least ₹{min(sizes):,.2f} Cr)")
     return issues
+
+
+_MARGINS = {"ebitda_margin": "ebitda", "ebitda_margin_pct": "ebitda", "pat_margin": "pat", "pat_margin_pct": "pat",
+            "net_margin": "pat", "net_profit_margin": "pat", "pbt_margin": "pbt", "pbt_margin_pct": "pbt"}
+MARGIN_TOLERANCE_PP = 1.0
+_KEY_AMOUNT = re.compile(r"(-?\(?[\d,]+(?:\.\d+)?\)?)\s*(?:cr\b|crores?\b)", re.I)
+_KEY_PCT = re.compile(r"(-?[\d.]+)\s*%")
+
+
+def _key_figures(key_numbers: list) -> dict[str, float]:
+    """revenue / ebitda / pat and their margins as the card's key numbers state them."""
+    out: dict[str, float] = {}
+    for k in key_numbers:
+        label = (k.label or "").lower()
+        base = "ebitda" if "ebitda" in label else "pat" if re.search(r"\bpat\b|net profit|profit after tax", label) \
+            else "pbt" if re.search(r"\bpbt\b|profit before tax", label) \
+            else "revenue" if re.search(r"revenue|sales|income from operations", label) else None
+        if not base:
+            continue
+        if "margin" in label:
+            m = _KEY_PCT.search(k.value or "")
+            if m:
+                out.setdefault(f"{base}_margin", float(m.group(1)))
+        else:
+            m = _KEY_AMOUNT.search(k.value or "")
+            if m:
+                raw = m.group(1).replace(",", "")
+                negative = raw.startswith("-") or raw.startswith("(")
+                out.setdefault(base, -float(raw.strip("-()")) if negative else float(raw.strip("-()")))
+    return out
+
+
+def margin_issues(metrics: list, key_numbers: list = ()) -> list[str]:
+    """A stated margin that does not fit the same period's figures (Ahluwalia: EBITDA "₹756 Cr" on
+    ₹952 Cr revenue "at a 7.9% margin"; 756 / 952 is 79%). From the reply's quarterly metrics, and
+    from the card's key numbers for its own figures."""
+    sets: list[tuple[str, dict[str, float]]] = []
+    by_period: dict[str, dict[str, float]] = {}
+    for m in metrics:
+        if m.value is not None:
+            by_period.setdefault(m.period, {})[m.metric] = float(m.value)
+    sets += sorted(by_period.items())
+    if key_numbers:
+        sets.append(("key numbers", _key_figures(key_numbers)))
+    issues = []
+    for period, values in sets:
+        revenue = values.get("revenue")
+        if not revenue or revenue <= 0:
+            continue
+        for name, base in _MARGINS.items():
+            margin, amount = values.get(name), values.get(base)
+            if name not in values or amount is None:
+                continue
+            implied = amount / revenue * 100
+            if abs(implied - margin) > MARGIN_TOLERANCE_PP:
+                issue = (f"{base.upper()} ₹{amount:,.2f} Cr on revenue ₹{revenue:,.2f} Cr is a {implied:.1f}% margin, "
+                         f"not the stated {margin:g}% ({period})")
+                if issue not in issues:
+                    issues.append(issue)
+    return issues
+
+
+# A card amount written in ₹ crore that matches no source but matches one statement figure read at a
+# wrong unit: the slips a model makes with a lakh or million table (7,560.12 lakh written "₹756 Cr",
+# 205.10 million written "₹205 Cr"). Only for a filing that declares a single unit, where the right
+# reading is not in doubt.
+def _near_amount(index: SourceIndex, target: float) -> bool:
+    """A source figure within 0.5% of target, years (1990–2100) aside."""
+    lo, hi = target * 0.995, target * 1.005
+    i = bisect.bisect_left(index.values, lo)
+    return any(not (1990 <= v <= 2100 and v == int(v)) for v in index.values[i:bisect.bisect_right(index.values, hi)])
+
+
+def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, float, int, float, int]]:
+    """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct."""
+    unit = declared_unit(filing)
+    if not unit:
+        return []
+    filing_index, other_index = SourceIndex(filing), SourceIndex(*others)
+    slips: dict[str, tuple[str, float, int, float, int]] = {}
+    for text in texts:
+        crore_at = _crore_positions(text or "")
+        for value, decimals, pos, kind, raw in _tokens(text or ""):
+            if pos not in crore_at or value < 10 or raw in slips:
+                continue
+            if filing_index.stated_crore(value, decimals, (unit,)) or other_index.stated_crore(value, decimals, (1,)):
+                continue
+            if _near_amount(filing_index, value * unit) or _near_amount(other_index, value):
+                continue  # within 0.5% of a real figure: a rounding or a derivation ("₹955 Cr" beside ₹951.96 Cr), not a slip
+            fits = []
+            for wrong in (s for s in CRORE_SCALES if s != unit):  # the model divided by `wrong`, not by `unit`
+                factor = unit / wrong                               # its figure is the true one times this
+                shift = round(math.log10(factor))
+                right, right_decimals = value / factor, max(0, decimals + shift)
+                if filing_index.stated_crore(right, right_decimals, (unit,)):
+                    fits.append((round(right, min(right_decimals, 2)), min(right_decimals, 2)))
+            if len(fits) == 1:
+                slips[raw] = (raw, value, decimals, *fits[0])
+    return list(slips.values())

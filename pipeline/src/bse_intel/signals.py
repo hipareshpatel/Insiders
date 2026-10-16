@@ -27,7 +27,7 @@ import re
 from dataclasses import asdict, dataclass
 from datetime import date
 
-from .dossier import approval_granted, deal_state, reported_by
+from .dossier import approval_granted, kpi_verdict, deal_state, reported_by
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period
 
@@ -247,10 +247,13 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             continue
         if w["kind"] == "APPROVAL" and update.status == "MET" and not approval_granted(update.evidence):
             continue  # "Approval met" with evidence that it is still pending
-        severity = {"MET": "POSITIVE", "MISSED": "WARNING"}.get(update.status, "INFO")
+        status = kpi_verdict(w, update.status, update.evidence)
+        if status == "PENDING":
+            continue  # a KPI checked against an earlier quarter's figure
+        severity = {"MET": "POSITIVE", "MISSED": "WARNING"}.get(status, "INFO")
         label = "KPI check" if w["kind"] == "KPI" else "Approval"
         out.append(Signal("WATCH_RESOLVED", severity,
-                          f"{label} {update.status.lower()}: \"{w['text']}\" (flagged {w['created_on'][:10]})."
+                          f"{label} {status.lower()}: \"{w['text']}\" (flagged {w['created_on'][:10]})."
                           + (f" {update.evidence}" if update.evidence else ""), w["id"]))
     touched = {u.guidance_id for u in output.dossier_delta.promise_updates}
     today = filing.filed_at[:10]

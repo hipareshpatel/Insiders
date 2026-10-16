@@ -480,3 +480,57 @@ def test_scale_check_flags_a_lakh_table_read_as_crore():
     assert scale_issues(now[:1] + [FinancialMetric(metric="pat", period="Q3FY25", value=1200)], []) == [
         "PAT Q3FY25 ₹1,200.00 Cr is above revenue ₹952.00 Cr"]
     assert scale_issues([FinancialMetric(metric="pat", period="Q3FY25", value=49.39)], history) == []
+
+
+LAKH_STATEMENT = ("Statement of unaudited standalone financial results for the quarter ended 31.12.2024 (₹ in Lakhs)\n"
+                  "Revenue from operations 95,196.00 1,02,642.00\nFinance costs 1,455.10 1,230.00\n"
+                  "Profit for the period 4,939.22 7,071.00\nOther comprehensive income 955.40\n")
+
+
+def _results_reply(what_happened, metrics, key_numbers=()):
+    return Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": what_happened[0],
+        "card": {"impact_level": "MODERATE", "headline": "Ahluwalia Q3FY25 revenue ₹951.96 Cr", "what_happened": what_happened,
+                 "key_numbers": list(key_numbers)},
+        "dossier_delta": {"financial_metrics": metrics}})
+
+
+def test_unit_slips_are_corrected_in_code_when_one_reading_fits():
+    """Ahluwalia's lakh table read as tenths of a crore: PAT "₹493.92 Cr" (4,939.22 lakh = ₹49.39 Cr),
+    finance cost "₹145.51 Cr"; the right reading is the only one that fits, so code corrects it."""
+    from bse_intel.pipeline import fix_unit_slips
+
+    out = _results_reply(["Revenue ₹951.96 Cr, PAT ₹493.92 Cr", "Finance cost ₹145.51 Cr; PAT was ₹4,939 Cr? no"],
+                         [{"metric": "pat", "period": "Q3FY25", "value": 493.92},
+                          {"metric": "revenue", "period": "Q3FY25", "value": 951.96}],
+                         [{"label": "PAT", "value": "₹493.92 Cr", "change": "-30% YoY"}])
+    fixed = fix_unit_slips(out, (LAKH_STATEMENT, "", ""))
+    assert fixed == {"493.92": "49.39", "145.51": "14.55", "4,939": "49.39"}
+    assert out.card.what_happened[0] == "Revenue ₹951.96 Cr, PAT ₹49.39 Cr"
+    assert out.card.key_numbers[0].value == "₹49.39 Cr" and out.timeline_entry == "Revenue ₹951.96 Cr, PAT ₹49.39 Cr"
+    assert {m.metric: m.value for m in out.dossier_delta.financial_metrics} == {"pat": 49.39, "revenue": 951.96}
+
+
+def test_unit_slips_need_a_declared_unit_and_a_single_fit():
+    from bse_intel.grounding import unit_slips
+
+    assert unit_slips(["PAT ₹493.92 Cr"], LAKH_STATEMENT.replace("(₹ in Lakhs)", "")) == []  # no declared unit
+    assert unit_slips(["Order book ₹2,400 Cr"], LAKH_STATEMENT) == []  # fits no statement figure: left to the checks
+    assert unit_slips(["Revenue ₹951.96 Cr"], LAKH_STATEMENT) == []  # already right
+    # "₹955 Cr" is within 0.5% of the ₹951.96 Cr revenue: a rounding, though 955.40 lakh would also "fit"
+    assert unit_slips(["Revenue about ₹955 Cr"], LAKH_STATEMENT) == []
+
+
+def test_margin_that_does_not_fit_its_figures_is_flagged():
+    """Ahluwalia's card: EBITDA "₹756 Cr" on ₹952 Cr revenue "at a 7.9% margin" (756 / 952 is 79%)."""
+    from bse_intel.grounding import margin_issues
+    from bse_intel.models import FinancialMetric, KeyNumber
+
+    metrics = [FinancialMetric(metric="revenue", period="Q3FY25", value=952), FinancialMetric(metric="ebitda", period="Q3FY25", value=756),
+               FinancialMetric(metric="ebitda_margin", period="Q3FY25", value=7.9)]
+    assert margin_issues(metrics) == ["EBITDA ₹756.00 Cr on revenue ₹952.00 Cr is a 79.4% margin, not the stated 7.9% (Q3FY25)"]
+    keys = [KeyNumber(label="Revenue", value="₹952 Cr"), KeyNumber(label="EBITDA", value="₹756 Cr"),
+            KeyNumber(label="EBITDA Margin", value="7.9%")]
+    assert margin_issues([], keys) == ["EBITDA ₹756.00 Cr on revenue ₹952.00 Cr is a 79.4% margin, not the stated 7.9% (key numbers)"]
+    metrics[1] = FinancialMetric(metric="ebitda", period="Q3FY25", value=75.6)
+    assert margin_issues(metrics) == []

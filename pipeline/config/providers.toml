@@ -61,6 +61,9 @@ limits = { tpmo = 1_000_000_000 }
 base_url = "https://api.z.ai/api/paas/v4"
 # The free Flash models allow one request in flight per key (concurrency = 1 on each route below):
 # with several workers, the gateway waits up to 10 s for the slot, then tries the next model.
+# 2026-10-16 (owner): GLM-4.5-Flash replaces GLM-4.7-Flash on Pass 1 and Pass 2. Head to head on tiny calls: 4.5 answered 20 of 20,
+# 4.7 only 4 of 20 (errors 1302 concurrency, 1305 overloaded, 1234 server); on real Pass 2 prompts 4.5 answered every filing so far at
+# 12-96 s. 4.7 stays on pass2_long only, because 4.5's window is 128K against 4.7's 200K.
 api_key_env = "ZAI_API_KEY"
 timeout_s = 120
 
@@ -129,7 +132,7 @@ limits = { rpm = 150, tpm = 625_000 }
 
 [[routes.pass1]]
 provider = "zai"
-model = "glm-4.7-flash"
+model = "glm-4.5-flash"
 json_mode = true
 max_tokens = 200
 extra_body = { thinking = { type = "disabled" } }
@@ -177,7 +180,7 @@ limits = { rpm = 30, tpm = 8000, rpd = 1000, tpd = 200000 }
 
 [[routes.pass1_bulk]]
 provider = "zai"
-model = "glm-4.7-flash"
+model = "glm-4.5-flash"
 json_mode = true
 max_tokens = 200
 extra_body = { thinking = { type = "disabled" } }
@@ -227,11 +230,11 @@ limits = { rpm = 40 }
 
 [[routes.pass2]]
 provider = "zai"
-model = "glm-4.7-flash"
+model = "glm-4.5-flash"
 weight = 2
 json_mode = true
-max_tokens = 3000
-context_tokens = 190000
+max_tokens = 5000
+context_tokens = 120000
 extra_body = { thinking = { type = "disabled" } }
 limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 
@@ -292,11 +295,11 @@ limits = { rpm = 25, tpm = 937_500 }
 
 [[routes.pass2_bulk]]
 provider = "zai"
-model = "glm-4.7-flash"
+model = "glm-4.5-flash"
 weight = 2
 json_mode = true
-max_tokens = 3000
-context_tokens = 190000
+max_tokens = 5000
+context_tokens = 120000
 extra_body = { thinking = { type = "disabled" } }
 limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 

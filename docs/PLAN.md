@@ -110,6 +110,9 @@ refer to the sections above.
 | 12 | Per-client rate limiting on the public API (audit D5); card JSON to R2 if D1 nears 500 MB (D6) | Laptop | if needed after go-live |
 | 13 | Modules 8 (DGTR duties) and 42 (promoter-group contagion): need a data source | Owner decides | later |
 | 14 | **Last item, once everything is live and up to date:** re-measure thinking on the Nemotron models (and OpenRouter's), A/B on a fresh audited set including accuracy against the PDFs, and re-enable where it pays (undo: remove the `extra_body` line and set `json_mode = true` on the three NVIDIA entries in `providers.toml`; a test pins the current setting) | Laptop, owner decides | after Phase 4 |
+| 15 | Find BSE's source for shareholding-pattern XBRL (as `Result_Arch_ng` was found for results: the site's own page calls an API) and fill ownership history deterministically: promoter, pledge, FPI, MF, retail, back to 2023; until then shareholding filings are dropped as noise | Laptop | before Phase 3 |
+| 16 | Results flash then verify: when a results card is made before the XBRL is listed (up to 24 h later), re-run it once the XBRL appears, so the exact figures replace the PDF's | Laptop | before Phase 4 |
+| 17 | Verify whether BSE offers event XBRL for Reg 30 events, voting results (Reg 44), related-party transactions and insider/SAST disclosures; use it where it exists, with the PDF only for narrative | Laptop | after item 15 |
 
 ## Risks
 

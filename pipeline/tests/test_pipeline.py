@@ -350,3 +350,25 @@ def test_one_card_per_company_per_results_quarter(settings):
     two = pipeline.analyze(again.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert one.card is not None and len(fake.calls) == 1
     assert two.update["status"] == "DUPLICATE" and two.update["reason"] == "duplicate of q-1 (same results quarter Q2FY27, D20)"
+
+
+def test_a_card_the_second_opinion_cannot_fix_is_held_back(settings):
+    """A card that failed its checks, went to a second provider and still failed used to be published with
+    an "Unverified" mark, so that a material filing was never hidden. On the rebuild that was 117 of 456
+    cards, and a flagged card was judged WRONG 52% of the time against 21% for a clean one (audit round 1),
+    so for a feed meant to run unattended the trade was the wrong way round. The row is still written in
+    full - the digest, the audit export and the review queue read it - but held keeps it out of the feed."""
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-held", "Unaudited Financial Results for the quarter", now, "Result")
+    bad = json.loads(json.dumps(PASS2))
+    bad["card"]["what_happened"] = ["Revenue ₹120 Cr vs ₹90.9 Cr a year ago", "PAT ₹17.5 Cr"]  # PAT was ₹15 Cr
+    bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
+    # both providers return the same wrong card, so the second opinion resolves nothing
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)],
+                                  "glm-4.5-flash": [json.dumps(bad)]},
+                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert outcome.card is not None, "the row is still written, so the defect can be seen"
+    assert outcome.card["card"]["review"]["status"] == "UNRESOLVED"
+    assert outcome.card["held"] == 1

@@ -9,7 +9,7 @@ import type { AppEnv } from "./env";
 const CARD_COLUMNS = `
   c.news_id, c.scrip_code, c.symbol, c.company_name, c.filing_date, c.filed_at, c.sector,
   c.event_category, c.impact_level, c.headline, c.grounding_score, c.needs_review,
-  c.memory_complete, c.card_json, c.pdf_url, c.market_session, c.actionability_score, c.is_actionable_signal, c.post_event_return_json,
+  c.memory_complete, c.card_json, c.pdf_url, c.market_session, c.actionability_score, c.is_actionable_signal, c.post_event_return_json, c.held,
   co.market_cap_cr, co.size_category, co.last_price, co.ret_1w, co.ret_1m, co.ret_1y,
   co.median_turnover_cr, co.credibility_score, co.watchlist, co.bse_group, co.technicals_json, co.former_names_json`;
 
@@ -143,7 +143,10 @@ api.get("/feed", async (c) => {
   // the upper one so a deep page does not re-read everything above it.
   const upper = cursorAt && cursorAt < to ? cursorAt : to;
   const { params, p } = binder();
-  const where = [`c.filed_at >= ${p(from)}`, `c.filed_at <= ${p(upper)}`];
+  // held = 0: a card whose numbers a second provider could not verify stays out of the feed rather
+  // than appearing with an "Unverified" warning (migration 0009). It is still in the table, for the
+  // review queue and the audit export.
+  const where = [`c.held = 0`, `c.filed_at >= ${p(from)}`, `c.filed_at <= ${p(upper)}`];
   const impact = listParam(q.impact, IMPACTS);
   const category = listParam(q.category);
   const size = listParam(q.size, SIZES);
@@ -201,7 +204,7 @@ api.get("/signals", async (c) => {
   const { results } = await c.env.DB.prepare(`
     SELECT ${CARD_COLUMNS}
       FROM cards c LEFT JOIN companies co ON co.scrip_code = c.scrip_code
-     WHERE c.is_actionable_signal = 1 AND c.filed_at >= ?1 AND c.filed_at <= ?2
+     WHERE c.held = 0 AND c.is_actionable_signal = 1 AND c.filed_at >= ?1 AND c.filed_at <= ?2
      ORDER BY c.actionability_score DESC, c.filed_at DESC
      LIMIT 50`).bind(fromAt, toAt).all();
   return c.json({ cards: results });
@@ -353,7 +356,7 @@ api.get("/companies/:scrip", async (c) => {
     c.env.DB.prepare(`SELECT ${COMPANY_COLUMNS} FROM companies WHERE scrip_code = ?1`).bind(scrip).first(),
     c.env.DB.prepare(`
       SELECT ${CARD_COLUMNS} FROM cards c LEFT JOIN companies co ON co.scrip_code = c.scrip_code
-       WHERE c.scrip_code = ?1 ORDER BY c.filed_at DESC LIMIT 60`).bind(scrip).all(),
+       WHERE c.held = 0 AND c.scrip_code = ?1 ORDER BY c.filed_at DESC LIMIT 60`).bind(scrip).all(),
     c.env.VAULT.get(`memory/${scrip}.json`),
   ]);
   // The dossier is spliced in as stored text: parsing and re-serialising a large one would spend
@@ -441,8 +444,9 @@ api.get("/promises/overdue", async (c) => {
 api.get("/review", async (c) => {
   const { results } = await c.env.DB.prepare(`
     SELECT c.news_id, c.scrip_code, c.symbol, c.company_name, c.filed_at, c.headline, c.event_category,
-           json_extract(c.card_json, '$.grounding') AS grounding, json_extract(c.card_json, '$.review') AS review
-      FROM cards c WHERE c.needs_review = 1 ORDER BY c.filed_at DESC LIMIT 100`).all();
+           json_extract(c.card_json, '$.grounding') AS grounding, json_extract(c.card_json, '$.review') AS review, c.held
+      FROM cards c WHERE c.needs_review = 1 OR c.held = 1
+     ORDER BY c.held DESC, c.filed_at DESC LIMIT 100`).all();
   return c.json({ cards: results }, 200, { "Cache-Control": "public, max-age=60" });
 });
 

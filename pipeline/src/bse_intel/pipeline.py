@@ -1322,6 +1322,13 @@ class Pipeline:
             "model": result.model_label,
         }
         needs_review = checks.needs_review
+        # A card the checks faulted, that a second provider was asked to correct and that still
+        # fails, is kept out of the feed rather than published with an "Unverified" mark. On the
+        # rebuild that was 117 of 456 cards, and a flagged card was judged WRONG 52% of the time
+        # against 21% for a clean one (audit round 1), so for a feed meant to run unattended the
+        # old trade was the wrong way round. The row is still written in full for the digest, the
+        # audit export and the review queue.
+        held = (review or {}).get("status") == "UNRESOLVED"
         signals += asset_turn_signals(card_json, sector, sector_module.asset_turn)  # extends card_json["signals"]
         rated = score_card(card_json, event_type, signals, current, priced, needs_review, card.impact_level,
                            dampened=(sector, event_type) in learned["dampen"])
@@ -1337,7 +1344,7 @@ class Pipeline:
             "symbol": company.get("symbol") or filing.symbol, "company_name": filing.company_name,
             "filing_date": filing.filing_date, "filed_at": filing.filed_at, "sector": sector,
             "event_category": event_type, "impact_level": rated.impact, "headline": card.headline,
-            "grounding_score": score, "needs_review": int(needs_review),
+            "grounding_score": score, "needs_review": int(needs_review), "held": int(held),
             "memory_complete": int(memory_complete), "card": card_json, "pdf_url": filing.pdf_url,
             "model": result.model_label, "created_at": now, "market_session": market_session(filing.filed_at),
             "actionability_score": rated.total, "is_actionable_signal": int(rated.actionable),

@@ -2,7 +2,7 @@
 INSERT INTO cards (news_id, scrip_code, symbol, company_name, filing_date, filed_at, sector,
                    event_category, impact_level, headline, grounding_score, needs_review,
                    memory_complete, card_json, pdf_url, model, created_at, market_session,
-                   actionability_score, is_actionable_signal, post_event_return_json)
+                   actionability_score, is_actionable_signal, post_event_return_json, held)
 SELECT json_extract(value, '$.news_id'),
        json_extract(value, '$.scrip_code'),
        json_extract(value, '$.symbol'),
@@ -23,7 +23,8 @@ SELECT json_extract(value, '$.news_id'),
        json_extract(value, '$.market_session'),
        coalesce(json_extract(value, '$.actionability_score'), 0),
        coalesce(json_extract(value, '$.is_actionable_signal'), 0),
-       json_extract(value, '$.post_event_return_json')
+       json_extract(value, '$.post_event_return_json'),
+       coalesce(json_extract(value, '$.held'), 0)
 FROM json_each(?1)
 WHERE true
 ON CONFLICT (news_id) DO UPDATE SET
@@ -43,5 +44,6 @@ ON CONFLICT (news_id) DO UPDATE SET
        market_session  = excluded.market_session,
        actionability_score  = excluded.actionability_score,
        is_actionable_signal = excluded.is_actionable_signal,
+       held            = excluded.held,
        -- a re-analysis keeps the measured price reaction (Loop 1); sync-to-cloud carries it over
        post_event_return_json = coalesce(excluded.post_event_return_json, cards.post_event_return_json);

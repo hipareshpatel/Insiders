@@ -178,6 +178,8 @@ export interface CardRow {
   headline: string;
   grounding_score: number | null;
   needs_review: number;
+  /** 1 when the card is kept out of the feed because its numbers could not be verified. */
+  held?: number;
   memory_complete: number;
   card_json: string;
   pdf_url: string | null;

@@ -41,7 +41,7 @@ from .extract import Document
 from . import gate
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, check_card, check_claims, declared_unit,
                         margin_issues, scale_issues, unit_slips)
-from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output, TimelineVerdict
+from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
                       quarter_index, statement_quarter, statement_year)
 from .prompts.engine import PromptEngine
@@ -1202,6 +1202,31 @@ class Pipeline:
                 return self._timeline_flow(filing.model_copy(update={"event_type": event_type}), company, industry, doc, bulk,
                                            memory_complete)
 
+        # The fast-track route skips pass 1, and with it the question of whether this event is already
+        # in the feed - 134 of the 175 duplicate pairs measured on the rebuild had a fast-track later
+        # card. A deterministic check on BSE's own headline cannot stand in for it: word overlap against
+        # the timeline caught 4 of 128, and the best same-domain variant caught 27 while wrongly dropping
+        # 13 real cards, because the headline BSE puts on a filing is boilerplate. So ask, in one small
+        # call on the free routes, and confirm the answer in code before dropping anything.
+        # Only the event types that were measured to arrive twice, which is the same list the
+        # one-card rule uses: a monthly update or another order win recurs in nearly the same words and
+        # must never be dropped, and results have their own one-card-per-quarter rule. This keeps the
+        # extra call off most filings - free-tier requests were what tripped the breaker, so spending one
+        # everywhere would trade a paid call for the scarcer thing.
+        if filing.route != "PASS1" and event_type in ONE_EVENT_ONE_CARD:
+            # Only entries close enough to be the same event: with nothing within the window there is
+            # nothing to repeat, so the call is not made at all. Most filings never reach it.
+            since = (datetime.fromisoformat(filing.filed_at) - timedelta(days=REPEAT_DAYS)).isoformat()
+            recent = [t for t in dossier.get("timeline", [])
+                      if since <= str(t.get("date", "")) < filing.filed_at][-8:]
+            if recent:
+                repeat = self._repeat_check(filing, recent, dossier, bulk)
+                if repeat:
+                    with self._lock:
+                        self.stats.duplicates += 1
+                    return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": event_type,
+                                    "reason": f"duplicate of {repeat.get('news_id')} (same event, another "
+                                              f"document; checked before pass 2)"[:300], "updated_at": now})
         view = view_as_of(dossier, filing.filed_at)
         budget = self.settings.pass2_char_budget * (3 if event_type == "CONCALL_PRESENTATION" else 1)
         text = doc.select_text(budget, self.prompts.keywords(event_type))
@@ -1408,6 +1433,22 @@ class Pipeline:
                      **({"credibility_score": rated.credibility} if rated.credibility is not None else {}),
                      **_company_memory(merged)},
         )
+
+    def _repeat_check(self, filing, recent: list[dict], dossier: dict, bulk: bool) -> dict | None:
+        """One cheap call: is this filing an event the feed already has? The model only points at an
+        entry; `timeline_entry_dated` then checks the entry is really on file and near in time, so a
+        date it invents drops nothing. A failure here is never fatal - the filing goes on to pass 2."""
+        system, user = self.prompts.repeat(filing, recent)
+        try:
+            said = self.gateway.complete_json("pass1_bulk" if bulk else "pass1", system, user, RepeatVerdict).value
+        except Exception as exc:
+            log.info("repeat check skipped for %s: %s", filing.news_id, type(exc).__name__)
+            return None
+        entry = timeline_entry_dated(dossier, filing, said.duplicate_of)
+        if entry:
+            log.info("repeat check: %s repeats %s (%s) - %s; pass 2 not spent on it", filing.news_id,
+                     entry.get("news_id"), str(entry.get("date", ""))[:10], said.why[:60])
+        return entry
 
     def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, view, sources, history=None):
         """Ask a different provider to correct a card that failed the checks, then check again.
@@ -1769,6 +1810,7 @@ SECOND_OPINION_MIN_S = 300
 # every type that showed duplicates is listed here. Left out on purpose: ORDER_WIN,
 # MONTHLY_BUSINESS_UPDATE, CAPEX, PRODUCT_LAUNCH and CORPORATE_ACTION recur with new numbers in nearly
 # the same words, and RESULTS has its own one-card-per-quarter rule (D20).
+REPEAT_DAYS = 10  # the window the fast-track repeat check looks back over, as similar_timeline_entry
 ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE", "LITIGATION_REGULATORY", "FUNDRAISE",
                       "RIGHTS_ISSUE", "M_AND_A", "DEBT_RATINGS", "CONCALL_PRESENTATION")
 UNIT_HINT = ("Convert each amount from the unit its table states: ₹ lakh ÷ 100 = ₹ Cr, ₹ million ÷ 10 = ₹ Cr, "

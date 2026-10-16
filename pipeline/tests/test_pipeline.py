@@ -11,6 +11,7 @@ import pymupdf
 from conftest import FakeProvider, api_error, openai
 
 from bse_intel.ai.gateway import AIGateway
+from bse_intel.dossier import new_dossier
 from bse_intel.models import Filing
 from bse_intel.pipeline import Pipeline
 from bse_intel.sinks.local import LocalSink
@@ -372,3 +373,46 @@ def test_a_card_the_second_opinion_cannot_fix_is_held_back(settings):
     assert outcome.card is not None, "the row is still written, so the defect can be seen"
     assert outcome.card["card"]["review"]["status"] == "UNRESOLVED"
     assert outcome.card["held"] == 1
+
+
+def test_a_fast_track_repeat_is_dropped_before_pass_2(settings):
+    """FAST_TRACK skips pass 1, and with it the question of whether the event is already in the feed: 134
+    of the 175 duplicate pairs measured on the rebuild had a fast-track later card, so about a quarter of
+    pass 2 calls went on events already covered. A deterministic check on BSE's own headline cannot stand
+    in - word overlap against the timeline caught 4 of 128, and the best same-domain variant caught 27
+    while wrongly dropping 13 real cards - so one small call asks, and code confirms the answer."""
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-deck", "Investor presentation for the quarter ended September 30, 2026", now, "Company Update")
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                                 {"ministral-8b-2512": [json.dumps({"duplicate_of": "2026-10-10", "why": "deck for those results"})]},
+                                 env={"MISTRAL_API_KEY": "m"})
+    dossier = new_dossier(f)
+    dossier["timeline"] = [{"id": "t1", "news_id": "n-results", "date": "2026-10-10T18:00:00+05:30",
+                            "event_type": "RESULTS", "summary": "Q2FY27 results: revenue up 22.6%", "tier": "TIMELINE"}]
+    sink.put_dossier(f.scrip_code, dossier)
+
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "CONCALL_PRESENTATION"}))
+    assert outcome.update["status"] == "DUPLICATE"
+    assert "n-results" in outcome.update["reason"] and "before pass 2" in outcome.update["reason"]
+    assert outcome.card is None, "no card is written for a repeat"
+    # and the expensive call never happened: only the cheap repeat check was made
+    assert len(fake.calls) == 1, [c["model"] for c in fake.calls]
+
+
+def test_a_fast_track_filing_that_is_not_a_repeat_goes_on_to_pass_2(settings):
+    """The other half of the gate: an invented date, or none, must drop nothing."""
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-new", "Unaudited Financial Results for the quarter", now, "Result")
+    pipeline, sink, fake = build(
+        settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+        {"ministral-8b-2512": [json.dumps({"duplicate_of": "2026-01-01", "why": "nothing on that date"})],
+         "nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)],
+         "glm-4.5-flash": [json.dumps(PASS2)]},
+        env={"MISTRAL_API_KEY": "m", "NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+    dossier = new_dossier(f)
+    dossier["timeline"] = [{"id": "t1", "news_id": "n-other", "date": "2026-10-10T18:00:00+05:30",
+                            "event_type": "GOVERNANCE", "summary": "Board meeting outcome", "tier": "TIMELINE"}]
+    sink.put_dossier(f.scrip_code, dossier)
+
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert outcome.update["status"] == "ANALYZED" and outcome.card is not None

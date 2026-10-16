@@ -232,6 +232,21 @@ class Pass1Result(_Lenient):
     duplicate_of: str = ""
 
 
+class RepeatVerdict(_Lenient):
+    """Whether a filing is an event the feed already has, asked on its own on the fast-track route.
+
+    FAST_TRACK skips pass 1, where the duplicate question is asked, and 134 of the 175 duplicate pairs
+    measured on the rebuild had a FAST_TRACK later card. A deterministic check on BSE's own headline
+    cannot replace it: measured over those cards, word overlap against the timeline caught 4 of 128, and
+    the best same-domain variant caught 27 while wrongly dropping 13 real cards, because the headline BSE
+    puts on a filing is boilerplate. So this is one cheap call on the free routes to save one expensive
+    one, asked with the headline, the subject and the recent timeline - never the attachment.
+    """
+
+    duplicate_of: str = ""   # the listed date of the entry it repeats, or empty
+    why: str = ""
+
+
 class TimelineVerdict(_Lenient):
     """The timeline tier's reply for a routine filing: the line, or a request for a full card."""
 

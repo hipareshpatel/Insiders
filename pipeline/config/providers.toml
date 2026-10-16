@@ -217,10 +217,15 @@ limits = { rpm = 60, tpd = 150_000 }
 # Prompts larger than a model's context_tokens skip that model, so very long
 # presentations and annual reports flow to GLM's 200K window.
 
+# Pass 2 weights follow the card audit (docs/audit, round 0, old code, 177 cards): the share of cards wrong by writer was
+# Nemotron 3 Super 20% (1.4 issues a card), Nemotron 3 Ultra 53%, GLM-4.7-Flash 73%, ministral-14b 81% (5.9 issues a card,
+# 51 unit slips). So Super carries most of the traffic and ministral-14b is a spare. Ultra keeps its regular share of the
+# backfill route under the owner's D19 although the audit says 53% wrong (the owner's call); GLM-4.5-Flash stays in the
+# regular rotation until a fresh audit round measures it. Re-weight from each round (docs/AUDIT_LOOP.md).
 [[routes.pass2]]
 provider = "nvidia"
 model = "nvidia/nemotron-3-super-120b-a12b"
-weight = 3
+weight = 5
 json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
 strip_reasoning = true
 extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)
@@ -241,7 +246,7 @@ limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 [[routes.pass2]]
 provider = "mistral"
 model = "ministral-14b-2512"  # the free tier blocks mistral-large; 937k tokens/min, 0.5 requests/s
-weight = 1
+spare = true
 json_mode = true
 max_tokens = 6000
 context_tokens = 120000
@@ -287,7 +292,7 @@ limits = { rpm = 10 }
 [[routes.pass2_bulk]]
 provider = "mistral"
 model = "ministral-14b-2512"  # the free tier blocks mistral-large; 937k tokens/min, 0.5 requests/s
-weight = 1
+spare = true
 json_mode = true
 max_tokens = 6000
 context_tokens = 120000
@@ -306,7 +311,7 @@ limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 [[routes.pass2_bulk]]
 provider = "nvidia"
 model = "nvidia/nemotron-3-super-120b-a12b"
-weight = 2
+weight = 5
 json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
 strip_reasoning = true
 extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)
@@ -360,7 +365,7 @@ limits = { rpm = 10 }
 [[routes.pass2_long]]
 provider = "zai"
 model = "glm-4.7-flash"
-weight = 2
+weight = 1
 json_mode = true
 max_tokens = 4000
 context_tokens = 190000
@@ -370,7 +375,7 @@ limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 [[routes.pass2_long]]
 provider = "mistral"
 model = "ministral-14b-2512"  # the free tier blocks mistral-large; 937k tokens/min, 0.5 requests/s
-weight = 1
+spare = true
 json_mode = true
 max_tokens = 4000
 context_tokens = 120000
@@ -379,7 +384,7 @@ limits = { rpm = 25, tpm = 937_500 }
 [[routes.pass2_long]]
 provider = "nvidia"
 model = "nvidia/nemotron-3-super-120b-a12b"
-weight = 1
+weight = 3
 json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
 strip_reasoning = true
 extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)

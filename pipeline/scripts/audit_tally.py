@@ -24,6 +24,21 @@ def main() -> int:
     n = max(len(cards), 1)
     print(f"{len(cards)} cards: " + ", ".join(f"{k} {v} ({v / n:.0%})" for k, v in verdicts.most_common()))
     print("issues by class:", ", ".join(f"{k} {v}" for k, v in classes.most_common()))
+    models = {}
+    for path in glob.glob(str(pathlib.Path(args.audit_dir) / "*" / "*.card.json")):
+        card = json.load(open(path, encoding="utf-8"))
+        models[card["_filing"]["news_id"]] = str(card.get("model") or "?").split("/", 1)[-1]
+    if models:  # which model wrote the card: the weights in providers.toml follow this table
+        by_model = collections.defaultdict(lambda: collections.Counter())
+        issues_by_model = collections.Counter()
+        for c in cards:
+            m = models.get(c["news_id"], "?")
+            by_model[m][c.get("verdict")] += 1
+            issues_by_model[m] += len(c.get("issues") or [])
+        print("by writer model:")
+        for m, v in sorted(by_model.items(), key=lambda kv: -sum(kv[1].values())):
+            n = sum(v.values())
+            print(f"  {m[:46]:46} {n:>4} cards  WRONG {v['WRONG'] / n:>4.0%}  OK {v['OK'] / n:>4.0%}  {issues_by_model[m] / n:.1f} issues a card")
     worst = sorted((c for c in cards if c.get("verdict") == "WRONG"), key=lambda c: -len(c.get("issues") or []))[:8]
     for c in worst:
         print(f"  {c['news_id'][:8]} {len(c['issues']):>2} issues  {str(c.get('headline'))[:80]}")

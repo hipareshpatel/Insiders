@@ -21,7 +21,7 @@ from bse_intel.settings import get_settings  # noqa: E402
 
 KEEP = ("headline", "takeaway", "core_catalyst", "what_happened", "why_it_matters", "key_numbers", "notable_changes",
         "deal_value", "quantified_impact", "track_next", "signals", "timeline_entry", "event_type", "impact_level",
-        "missing_disclosures", "grounding", "review", "xbrl")
+        "missing_disclosures", "grounding", "review", "xbrl", "model")
 
 
 def main() -> int:

@@ -160,7 +160,7 @@ function tableShows(r: ResultsSnapshot | null | undefined): r is ResultsSnapshot
 }
 
 /** A results bullet that only restates numbers the P&L table shows adds nothing; the card hides it. */
-function coveredByTable(fact: string, r: ResultsSnapshot): boolean {
+function coveredByTable(fact: Fact, r: ResultsSnapshot): boolean {
   const known: number[] = [];
   for (const key of TABLE_LINES) {
     const line = r[key];

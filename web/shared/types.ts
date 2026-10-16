@@ -116,6 +116,10 @@ export interface CallRead {
   story?: string | null;
 }
 
+/** A fact from the filing. Since the quote-per-claim change each one carries the quote that
+ *  supports it; cards archived before that hold a plain string. */
+export type Fact = string | { text: string; quote?: string | null };
+
 export interface CardBody {
   category_tag: string;
   event_type: string;
@@ -132,7 +136,7 @@ export interface CardBody {
   deal_value?: DealValue | null;
   call_read?: CallRead | null;
   results?: ResultsSnapshot | null;
-  what_happened: string[];
+  what_happened: Fact[];
   why_it_matters: Insight[];
   missing_disclosures: string[];
   key_numbers: KeyNumber[];

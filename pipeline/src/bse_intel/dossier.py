@@ -227,6 +227,51 @@ def _cap_metrics(entries: list[dict]) -> list[dict]:
     return sorted(kept, key=lambda e: e["as_of"])
 
 
+_TIMELINE_STOP = {"with", "from", "that", "this", "will", "were", "been", "effective", "company", "limited", "board",
+                  "approves", "approved", "appoints", "appointed", "announces", "announced", "regulation", "disclosure"}
+
+
+def _timeline_words(text: str) -> set[str]:
+    return {w for w in re.findall(r"[a-z0-9]{4,}", (text or "").lower()) if w not in _TIMELINE_STOP}
+
+
+def similar_timeline_entry(dossier: dict, filing: Filing, entry: str, days: int = 3, threshold: float = 0.5) -> dict | None:
+    """An earlier timeline entry of the same company that reads as this event again: within `days` days and sharing at
+    least `threshold` of the content words (SML Mahindra's MD and CEO change reached the feed as three cards, each worded
+    differently: one event is one entry). Another filing of the same news id is not a repeat of itself."""
+    from datetime import date
+
+    try:
+        when = date.fromisoformat(filing.filed_at[:10])
+    except ValueError:
+        return None
+    mine = _timeline_words(entry)
+    for t in dossier.get("timeline", []):
+        if t.get("news_id") == filing.news_id:
+            continue
+        try:
+            gap = abs((date.fromisoformat(str(t.get("date", ""))[:10]) - when).days)
+        except ValueError:
+            continue
+        theirs = _timeline_words(t.get("summary", ""))
+        if gap <= days and mine and theirs and len(mine & theirs) / len(mine | theirs) >= threshold:
+            return t
+    return None
+
+
+def add_timeline_entry(dossier: dict, filing: Filing, event_type: str, entry: str, updated_at: str) -> dict:
+    """The dossier with one dated timeline line for a routine filing (no card). A re-run replaces its own earlier line."""
+    d = json.loads(json.dumps(dossier))
+    _forget(d, filing.news_id)  # an earlier full analysis of this filing (before it was routed here) leaves no residue
+    d["timeline"] = [t for t in d.get("timeline", []) if t.get("news_id") != filing.news_id]
+    d["timeline"] = sorted(d["timeline"] + [{
+        "id": "t_" + _hash(filing.news_id), "date": filing.filed_at, "event_type": event_type, "impact_level": None,
+        "summary": entry.strip(), "news_id": filing.news_id, "tier": "TIMELINE",
+    }], key=lambda e: e["date"])[-MAX_TIMELINE:]
+    d["updated_at"] = updated_at
+    return d
+
+
 def _forget(dossier: dict, news_id: str) -> None:
     metrics = []
     for e in dossier.get("financial_metrics", []):

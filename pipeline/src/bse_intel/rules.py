@@ -9,7 +9,7 @@ from typing import Literal
 
 from .models import Filing
 
-Action = Literal["DROP", "XBRL", "CALENDAR", "FAST_TRACK", "PASS1"]
+Action = Literal["DROP", "XBRL", "CALENDAR", "TIMELINE", "FAST_TRACK", "PASS1"]
 
 
 @dataclass(frozen=True)
@@ -53,7 +53,8 @@ class RuleBook:
 
         rules: list[Rule] = []
         veto = compile_all((config.get("material_veto") or {}).get("headline"))
-        for section, action in (("drop", "DROP"), ("xbrl_only", "XBRL"), ("calendar", "CALENDAR"), ("fast_track", "FAST_TRACK")):
+        for section, action in (("drop", "DROP"), ("xbrl_only", "XBRL"), ("calendar", "CALENDAR"), ("timeline", "TIMELINE"),
+                                ("fast_track", "FAST_TRACK")):
             for entry in config.get(section, []):
                 rules.append(Rule(
                     action=action,

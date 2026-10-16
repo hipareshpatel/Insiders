@@ -35,12 +35,12 @@ from threading import Lock
 from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
-from .dossier import (dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, reported_by, results_snapshot,
-                      view_as_of)
+from .dossier import (add_timeline_entry, dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, reported_by,
+                      results_snapshot, similar_timeline_entry, view_as_of)
 from .extract import Document
 from . import gate
 from .grounding import DEFAULT_THRESHOLD, check_card, check_claims, margin_issues, scale_issues, unit_slips
-from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
+from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
                       quarter_index, statement_quarter, statement_year)
 from .prompts.engine import PromptEngine
@@ -93,6 +93,7 @@ class Stats:
     dropped_rule: int = 0
     pending_new: int = 0
     pass1_rejected: int = 0
+    timeline_only: int = 0  # routine filings given a timeline line and no card (D22)
     analyzed: int = 0
     not_material: int = 0
     failed: int = 0
@@ -844,6 +845,8 @@ class Pipeline:
                     self.stats.duplicates += 1
                 return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": filing.event_type,
                                 "reason": f"duplicate of {repeat[0]} ({repeat[1]} match)", "updated_at": now_iso()})
+            if filing.route == "TIMELINE":
+                return self._timeline_flow(filing, company, industry, doc, bulk, memory_complete)
             return self._analyze_document(filing, company, industry, doc, bulk, memory_complete)
         finally:
             with self._lock:
@@ -912,6 +915,35 @@ class Pipeline:
         if timely:
             return max(timely, key=lambda link: link.filed_at).url
         return min(links, key=lambda link: link.filed_at).url if links else None
+
+    def _timeline_flow(self, filing: Filing, company: dict, industry, doc: Document, bulk: bool, memory_complete: bool) -> Outcome:
+        """A routine filing (dividend recommendation, voting result, a nil pledge declaration) gets one dated line in
+        the company's timeline and no card (D22). A cheap model writes the line and asks for a full card when the
+        filing is consequential; the same event filed again is recorded once."""
+        now = now_iso()
+        first = doc.select_text(6000, [])
+        _ocr_check(doc)
+        system, user = self.prompts.timeline(filing, first)
+        verdict: TimelineVerdict = self.gateway.complete_json("pass1_bulk" if bulk else "pass1", system, user, TimelineVerdict).value
+        if verdict.needs_card or not verdict.entry.strip():
+            filing = filing.model_copy(update={"route": "FAST_TRACK", "event_type": verdict.event_type if verdict.event_type != "OTHER" else filing.event_type})
+            return self._analyze_document(filing, company, industry, doc, bulk, memory_complete)
+        event_type = verdict.event_type if verdict.event_type != "OTHER" else (filing.event_type or "OTHER")
+        dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
+        repeat = similar_timeline_entry(dossier, filing, verdict.entry)
+        if repeat:
+            with self._lock:
+                self.stats.duplicates += 1
+            return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": event_type,
+                            "reason": f"duplicate of {repeat['news_id']} (same timeline event)", "updated_at": now})
+        merged = add_timeline_entry(dossier, filing, event_type, verdict.entry, now)
+        self.sink.put_dossier(filing.scrip_code, merged)
+        with self._lock:
+            self.stats.timeline_only += 1
+        return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": event_type,
+                        "reason": f"timeline only: {verdict.entry}"[:300], "updated_at": now},
+                       company={"scrip_code": filing.scrip_code, "company_name": filing.company_name,
+                                "updated_at": now, **_company_memory(merged)})
 
     def _held_reasons(self, filing: Filing, text: str) -> list[str]:
         """Reasons the card is published as unverified that no second model can fix: a scan whose text layer
@@ -1078,6 +1110,9 @@ class Pipeline:
                 return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": verdict.event_type,
                                 "reason": f"pass1: {verdict.reason}"[:300], "updated_at": now})
             event_type = verdict.event_type
+            if verdict.timeline_only:
+                return self._timeline_flow(filing.model_copy(update={"event_type": event_type}), company, industry, doc, bulk,
+                                           memory_complete)
 
         dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
         view = view_as_of(dossier, filing.filed_at)
@@ -1121,6 +1156,13 @@ class Pipeline:
                 self.stats.not_material += 1
             return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": out.event_type,
                             "reason": "pass2: not material", "updated_at": now})
+        if out.event_type in ONE_EVENT_ONE_CARD and out.timeline_entry:
+            repeat = similar_timeline_entry(dossier, filing, out.timeline_entry)
+            if repeat:  # the same event filed again in other words (BSE takes one submission per subcategory)
+                with self._lock:
+                    self.stats.duplicates += 1
+                return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": out.event_type,
+                                "reason": f"duplicate of {repeat['news_id']} (same event, in other words)", "updated_at": now})
         if "RESULTS" in (event_type, out.event_type):
             quarter = canonical_period(tagged.period) if tagged and tagged.period else statement_quarter(text)
             relabel_periods(out, quarter, statement_year(text))
@@ -1617,6 +1659,7 @@ def _noise_row(filing: Filing) -> list:
 
 
 SECOND_OPINION_MIN_S = 300
+ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE")  # the same event filed in other words is one card (D22)
 UNIT_HINT = ("Convert each amount from the unit its table states: ₹ lakh ÷ 100 = ₹ Cr, ₹ million ÷ 10 = ₹ Cr, "
              "₹ thousand ÷ 10,000 = ₹ Cr; remove a figure that matches no source at any unit")
 

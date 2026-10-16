@@ -225,6 +225,16 @@ class Pass1Result(_Lenient):
     event_type: EventType = "OTHER"
     confidence: Num = 0.5
     reason: str = ""
+    timeline_only: bool = False   # routine and worth a dated timeline line, not an analysis card
+
+
+class TimelineVerdict(_Lenient):
+    """The timeline tier's reply for a routine filing: the line, or a request for a full card."""
+
+    entry: str = ""
+    event_type: EventType = "OTHER"
+    needs_card: bool = True       # when unsure, a card
+    reason: str = ""
 
 
 # --------------------------------------------------------------------------- Pass 2

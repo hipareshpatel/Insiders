@@ -126,6 +126,27 @@ event_type = "RECORD_DATE"
 headline = ["record date", "book closure"]
 exclude_headline = ["rights", "letter of offer", "outcome", "approved", "financial results", "demerger", "amalgamation"]
 
+# Routine events get one dated line in the company's timeline and no analysis card (owner decision D22,
+# 2026-10-16). A cheap model writes the line and sends the filing back for a full card when it is consequential
+# (a pledge created or invoked, results or a fundraise in the same letter, resolutions that failed).
+[[timeline]]
+event_type = "CORPORATE_ACTION"
+reason = "timeline: dividend recommendation"
+headline = ["(recommend|declar|approv)\\w*.{0,50}dividend", "dividend.{0,50}(recommend|declar|approv)"]
+exclude_headline = ["result", "financial (statement|result)", "buy-?back", "bonus", "split", "fund ?rais", "acquisition", "merger", "right"]
+
+[[timeline]]
+event_type = "GOVERNANCE"
+reason = "timeline: postal ballot or voting result"
+headline = ["postal ballot", "voting results?", "e-?voting", "scrutini[sz]er", "outcome of (the )?(agm|egm|annual general|extra-?ordinary)"]
+exclude_headline = ["notice", "dispatch", "cut-?off", "intimation"]
+
+[[timeline]]
+event_type = "GOVERNANCE"
+reason = "timeline: promoter encumbrance disclosure"
+headline = ["regulation 31\\s*\\(", "encumbrance", "pledge of shares", "creation of pledge"]
+exclude_headline = ["invok", "invocation"]
+
 [[fast_track]]
 event_type = "RESULTS"
 categories = ["result"]
@@ -183,6 +204,7 @@ event_type = "CAPEX"
 headline = ["commencement of commercial (production|operations)", "commissioning of", "capacity expansion", "expansion of (the )?capacity",
             "(new|greenfield|brownfield) (plant|facility|unit)"]
 
+# Management changes are "deemed material" events under Reg 30 (Schedule III Para A): they keep a card (owner, 2026-10-16).
 [[fast_track]]
 event_type = "MANAGEMENT_CHANGE"
 headline = ["resignation of .*(managing director|ceo|cfo|chief|auditor)", "appointment of .*(managing director|ceo|cfo|chief executive|chief financial)"]

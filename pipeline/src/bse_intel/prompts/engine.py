@@ -131,6 +131,7 @@ class PromptEngine:
     def __init__(self, settings: Settings):
         prompts = settings.config_dir / "prompts"
         self._pass1 = Template((prompts / "pass1.md").read_text())
+        self._timeline = Template((prompts / "timeline.md").read_text())
         self._pass2 = Template((prompts / "pass2.md").read_text())
         self._pass2_user = Template((prompts / "pass2_user.md").read_text())
         self._verify = (prompts / "verify.md").read_text()
@@ -177,6 +178,20 @@ class PromptEngine:
             f"Headline: {filing.headline}\n"
             f"Subject: {filing.subject}\n\n"
             f"First page:\n{page1_text or '(no attachment text)'}"
+        )
+        return system, user
+
+    def timeline(self, filing: Filing, text: str) -> tuple[str, str]:
+        """The prompt for a routine filing that gets a timeline line instead of a card."""
+        system = self._timeline.safe_substitute(event_types=", ".join(EVENT_TYPES))
+        user = (
+            f"Company: {filing.company_name} (BSE {filing.scrip_code})\n"
+            f"Filed: {filing.filed_at}\n"
+            f"BSE category: {filing.category or '-'} / {filing.subcategory or '-'}\n"
+            f"Headline: {filing.headline}\n"
+            f"Subject: {filing.subject}\n"
+            f"Suggested event type: {filing.event_type or '-'}\n\n"
+            f"Filing text:\n{text or '(no attachment text)'}"
         )
         return system, user
 

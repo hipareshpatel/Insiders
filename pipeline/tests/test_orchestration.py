@@ -370,6 +370,9 @@ def test_sync_to_cloud_copies_cards_state_and_objects_and_resumes(settings, tmp_
                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
                                 env={"NVIDIA_API_KEY": "n"})
     pipeline.run("live", time_budget_s=60)
+    held = rows(source, "select news_id from cards")[0]["news_id"]
+    source._db.execute("UPDATE cards SET held = 1 WHERE news_id = ?", [held])
+    source._db.commit()
     dest = LocalSink(replace(settings, local_dir=tmp_path / "cloud"))
     progress = tmp_path / "progress.json"
     first = Sync(source, dest, progress, write_budget=10).run()  # budget hit almost at once
@@ -380,6 +383,7 @@ def test_sync_to_cloud_copies_cards_state_and_objects_and_resumes(settings, tmp_
     assert copied == {r["news_id"] for r in rows(source, "select news_id from cards")} and len(copied) == 3
     assert dest.get_dossier("999100") == source.get_dossier("999100")
     assert dest.kv_get("live:since") == source.kv_get("live:since")
+    assert {r["news_id"] for r in rows(dest, "select news_id from cards where held = 1")} == {held}  # a held card stays out of the cloud feed
 
 
 def test_run_publishes_the_homepage_snapshot(settings):

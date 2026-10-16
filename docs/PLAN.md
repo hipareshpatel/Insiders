@@ -89,7 +89,8 @@ refer to the sections above.
 
 | # | Item | Who | When |
 |---|---|---|---|
-| 1 | Finish the 5-company backfill (rebuilt from scratch on 2026-10-16 after the unit, sector-lens and duplicate fixes; 5 workers; expected done about 07:00) and review the site against the case studies | Laptop, then owner | Phase 1 |
+| 1 | Rebuild both smoke tests (10 companies, reset 2026-10-16 06:30 after the card-vs-PDF audit: 95 of 177 cards wrong, classes fixed in code; `docs/audit/`), re-audit a sample against the PDFs, then the owner reviews the site against the case studies | Laptop, then owner | Phase 1 |
+| 1f | Audit classes not fixable by a rule (docs/audit/README.md "Still open"): invented facts (stricter prompt + claim checks), prose arithmetic, standalone/consolidated mixing, wrong table row, OCR losing brackets on negatives, stale market cap in signals | Laptop | Phase 1 |
 | 1a | Retry the one Kanoria long document (2025-05-21) that failed on every long-context provider; it is retried automatically by the next run | Laptop | Phase 1 |
 | 1b | Measure 5 vs 3 workers over a full hour (filings/hour, 429 share) and keep the better (D18); the first 14 min gave ~125/h vs ~95/h, 9% 429s before the Z.ai one-at-a-time cap | Laptop | Phase 1 |
 | 1d | Thinking for the Nemotron models: keep it (more accurate, 37 s a card, timeouts) or switch it off on the backfill route (2–4x faster, 8–16 s); measure accuracy on the second smoke test first (tracker F23). Decided (D21): A/B on ~20 filings, switch off for the backfill only if accuracy holds | Laptop | Phase 1 |

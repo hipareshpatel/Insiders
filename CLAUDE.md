@@ -57,17 +57,19 @@ Read before changing anything:
 
 - Done: all blueprint modules except 8 (DGTR) and 42 (promoter-group contagion), which have no data source.
 - Smoke-test findings and their fixes: the table in `docs/TRACKER.md` ("Laptop smoke test").
-- In progress (2026-10-16 night): the 5-company smoke test, rebuilt from scratch after the lakh/crore,
-  sector-lens and duplicate fixes (their cards, catalysts and dossiers were deleted, all 543 filings
-  requeued); `sync-companies` filling every company's industry and size label. Then the site check
-  on localhost and the case-study comparison with the owner. Do not start the full backfill before
-  the owner has reviewed the smoke test (decision D6) and chosen the order (PLAN.md item 1c).
-- 2026-10-16 ~03:15: industry fill complete (5,111 companies, 3 without an industry). The first smoke
-  test (506525,532776,505192,500672,530019) was stopped at 105 done / 438 pending after the site review
-  (tracker F1–F23, batch status in PLAN 1e); its memory holds pre-fix errors, so rebuild those five from
-  scratch later. The **second smoke test** runs on the fixed code with five other sectors:
-  `backfill-companies --scrips 542867,500338,519552,532811,543533` (CSB Bank, Prism Johnson, Heritage
-  Foods, Ahluwalia Contracts, eMudhra). Review its cards on /feed?range=all before the full backfill.
+- **State at 2026-10-16 06:30 (laptop shut down; nothing running).** Every card of both smoke tests
+  (177) was checked against its PDF: 95 wrong, 56 minor, 26 OK (`docs/audit/`). The error classes were
+  fixed in code (XBRL results from BSE's results archive, unit-slip correction, YoY/QoQ from XBRL,
+  event-type rules, signal-verdict checks, D20 one card per results quarter). Then **all ten smoke-test
+  companies were reset** (cards, catalysts and memory deleted; analysed, duplicate, failed and pass-2
+  not-material filings requeued: 1,088 PENDING; pass-1 rejections kept; text cache kept).
+- **Next, on restart:** start the web site (`cd web; $env:CF_REMOTE_BINDINGS='1'; npm run dev`), then
+  rebuild both smoke tests on the fixed code:
+  `pwsh -File pipeline\scripts\laptop.ps1 backfill-companies --scrips 506525,532776,505192,500672,530019,542867,500338,519552,532811,543533`.
+  Re-audit a sample of the new cards against their PDFs (as in `docs/audit/`) before the owner review;
+  then the D21 thinking A/B. Do not start the full backfill before the owner has reviewed the smoke test
+  (decision D6) and chosen the order (PLAN.md item 1c).
+- Industry fill complete (5,111 companies, 3 without an industry).
 - Fix in batches during a run, not by stopping it for each bug (owner, 2026-10-16).
 - Gotchas found tonight: models copy lakh figures as crore (grounding now enforces the declared unit);
   BSE's scrip list no longer carries industry; one event can be filed up to 8 times (duplicates.py);

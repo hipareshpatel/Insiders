@@ -320,3 +320,16 @@ def test_nemotron_super_runs_with_thinking_off_on_every_pass2_route():
     assert len(entries) == 3
     for entry in entries:
         assert entry["extra_body"] == {"chat_template_kwargs": {"enable_thinking": False}} and entry["json_mode"] is False
+
+
+def test_deepseek_is_billed_per_token_so_thinking_stays_off(settings):
+    """The one paid provider (owner, 2026-10-16). DeepSeek enables thinking by default at high effort and
+    bills every reasoning token as output, so each entry must disable it; the 1M window makes it the only
+    target that never has to skip a long filing."""
+    config = settings.load_toml("providers.toml")
+    entries = [e for route in config["routes"].values() for e in route if e["provider"] == "deepseek"]
+    assert entries
+    for entry in entries:
+        assert entry["model"] == "deepseek-flash"  # V4-Flash and V4-Flash-Vision-Exp are retired
+        assert entry["extra_body"] == {"thinking": {"type": "disabled"}}, entry
+        assert entry["context_tokens"] <= 1_000_000

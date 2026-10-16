@@ -92,7 +92,8 @@ below (keys from the keys file, 5 workers) and logs to `data\logs`.
    laptop set `CF_REMOTE_BINDINGS=1` first so the Workers AI spare works.
 2. In `pipeline/`, point the pipeline at it:
    `export BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 INGEST_TOKEN=dev-local-token`
-   plus one key per AI provider (`GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`).
+   plus one key per AI provider (`GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`,
+   and `DEEPSEEK_API_KEY` for the one paid provider, D24). A provider whose key is unset is skipped.
    Run `python -m bse_intel models` and replace any model it flags as missing in `config/providers.toml`
    (free-tier catalogues change often). The Cloudflare Workers AI target needs `npx wrangler login` in
    `web/` first, because the local Worker calls Workers AI remotely; without it that target is skipped.

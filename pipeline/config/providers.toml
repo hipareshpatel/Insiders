@@ -112,6 +112,18 @@ timeout_s = 180
 # Only ":free" models are configured, so the credit is not spent (a test enforces it).
 limits = { rpd = 1_000 }  # all free models together
 
+[providers.deepseek]
+# The only paid provider (owner, 2026-10-16): a prepaid balance, no card on file, so the
+# top-up is the spending cap. Off-peak is every hour outside 01:00-04:00 and 06:00-10:00 UTC
+# on weekdays, which covers the overnight runs here, and halves the price. Thinking is ON by
+# default at high effort: every route below disables it (D21 again; NVIDIA's hosted copy of
+# this model took >200 s a reply with thinking on). Prompt-prefix caching is automatic and
+# charges cache hits at 2% of the miss price, so the prompt puts the blocks that repeat
+# across a company's filings first (config/prompts/pass2_user.md).
+base_url = "https://api.deepseek.com/v1"
+api_key_env = "DEEPSEEK_API_KEY"
+timeout_s = 120
+
 # ------------------------------------------------------------------ Pass 1: gatekeeper
 # Input: headline + subcategory + first ~2,500 characters of page 1.
 
@@ -224,6 +236,16 @@ limits = { rpm = 60, tpd = 150_000 }
 # Nemotron 3.5 Super VL (33% wrong on 6 cards) keeps its D19 share of the backfill route. GLM-4.5-Flash stays in the
 # regular rotation until a fresh audit round measures it. Re-weight from each round (docs/AUDIT_LOOP.md).
 [[routes.pass2]]
+provider = "deepseek"
+model = "deepseek-flash"
+weight = 8
+json_mode = true
+max_tokens = 6000
+context_tokens = 900000  # 1M window: no filing is too long for it
+extra_body = { thinking = { type = "disabled" } }  # on by default at high effort
+limits = { rpm = 60 }
+
+[[routes.pass2]]
 provider = "nvidia"
 model = "nvidia/nemotron-3-super-120b-a12b"
 weight = 5
@@ -310,6 +332,16 @@ extra_body = { thinking = { type = "disabled" } }
 limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 
 [[routes.pass2_bulk]]
+provider = "deepseek"
+model = "deepseek-flash"
+weight = 8
+json_mode = true
+max_tokens = 6000
+context_tokens = 900000  # 1M window: no filing is too long for it
+extra_body = { thinking = { type = "disabled" } }  # on by default at high effort
+limits = { rpm = 60 }
+
+[[routes.pass2_bulk]]
 provider = "nvidia"
 model = "nvidia/nemotron-3-super-120b-a12b"
 weight = 5
@@ -363,6 +395,16 @@ limits = { rpm = 10 }
 
 # Long documents (prompt above ~12,000 tokens: concall transcripts, investor presentations, annual
 # reports) go to the long-context models so nothing is cut (blueprint §4.3).
+[[routes.pass2_long]]
+provider = "deepseek"
+model = "deepseek-flash"
+weight = 8
+json_mode = true
+max_tokens = 4000
+context_tokens = 900000  # 1M window: no filing is too long for it
+extra_body = { thinking = { type = "disabled" } }  # on by default at high effort
+limits = { rpm = 60 }
+
 [[routes.pass2_long]]
 provider = "zai"
 model = "glm-4.7-flash"

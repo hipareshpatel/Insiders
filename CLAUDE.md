@@ -20,7 +20,10 @@ Read before changing anything:
 - API keys live only in `C:\Users\Quali\insiders-keys.ps1` (outside the repo). Never print,
   log, commit or paste a key. Dot-source the file in each new shell: `. C:\Users\Quali\insiders-keys.ps1`.
 - Don't work around BSE's firewall. BSE blocks non-Indian IPs, which is why BSE work runs here.
-- Every paid upgrade must stay off. Don't ask the owner to verify a phone number with Mistral.
+- Every paid upgrade must stay off, with one exception the owner chose: the prepaid DeepSeek balance
+  (`DEEPSEEK_API_KEY`, decision D24) that speeds up the backfill. The steady state must still cost $0,
+  so never add a paid route to a path that runs every day. Don't ask the owner to verify a phone number
+  with Mistral.
 - No AI model names or IDs of the assistant itself in commits, PR text or code.
 
 ## How to work

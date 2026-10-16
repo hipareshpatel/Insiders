@@ -412,7 +412,7 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
     return event_type
 
 
-def check_quotes(out: Pass2Output, text: str) -> tuple[list[str], list[str]]:
+def check_quotes(out: Pass2Output, text: str, news_id: str = "") -> tuple[list[str], list[str], list[str]]:
     """Every what_happened fact carries the filing's own sentence, checked in code.
 
     A fact whose quote is not in the filing is dropped **only when its figures are not in the filing
@@ -421,10 +421,11 @@ def check_quotes(out: Pass2Output, text: str) -> tuple[list[str], list[str]]:
     quote is a composition rather than one row ("PAT ₹0.53 Cr, down 80% YoY and 98% QoQ"), is true and
     is kept, reported for the second opinion to quote properly. A fact with no quote at all is only
     reported: until every model fills the field, holding those cards would send all of them to a second
-    provider for nothing. Returns (problems, missing)."""
+    provider for nothing. Returns (problems, facts with no quote, facts dropped) so the card records all
+    three: a dropped fact that was true is a defect the audit must be able to see."""
     card = out.card
     if card is None or not text:
-        return [], []
+        return [], [], []
     index = SourceIndex(text)
     problems, missing_quote, dropped, kept = [], [], [], []
     for fact in card.what_happened:
@@ -452,8 +453,8 @@ def check_quotes(out: Pass2Output, text: str) -> tuple[list[str], list[str]]:
         problems.append("no fact carries a quote found in the filing")
         dropped = []
     if dropped:
-        log.info("facts dropped for %s: %s", out.event_type, dropped)
-    return problems + [f"dropped: {d}" for d in dropped], missing_quote
+        log.info("facts dropped from %s (%s): %s", news_id or "?", out.event_type, dropped)
+    return problems + [f"dropped: {d}" for d in dropped], missing_quote, dropped
 
 
 def gate_issues(out: Pass2Output, card, sources: tuple[str, ...] = ()) -> list[str]:
@@ -1226,7 +1227,7 @@ class Pipeline:
             change_fixes += xbrl_key_numbers(out, tagged)
         checks = check_card_all(out, view, sources, history)
         checks.scale += period_mixups(out, tagged)
-        quote_problems, quotes_missing = check_quotes(out, text)
+        quote_problems, quotes_missing, quotes_dropped = check_quotes(out, text, filing.news_id)
         checks.quotes += quote_problems
         review = None
         if checks.wants_second_opinion and self.settings.second_opinion:
@@ -1276,7 +1277,7 @@ class Pipeline:
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims,
                           "unit_fixes": unit_fixes or None, "change_fixes": change_fixes or None,
-                          "quotes_missing": quotes_missing or None, "out_of_fit": checks.scale or None},
+                          "quotes_missing": quotes_missing or None, "quotes_dropped": quotes_dropped or None, "out_of_fit": checks.scale or None},
             "review": review,
             "model": result.model_label,
         }

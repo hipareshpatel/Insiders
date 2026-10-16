@@ -291,6 +291,26 @@ promoter-group contagion (needs a group map).
 Tracked in AUDIT.md: every finding is fixed (commit list there); the few items left open are listed
 at its end and in PLAN.md.
 
+**Audit round 1 (2026-10-16, `docs/audit/round-1.json`).** 98 cards over the ten smoke-test companies,
+rebuilt on the fixed code and reviewed card-against-filing as in round 0: **32 WRONG (33%), 46 MINOR
+(47%), 20 OK (20%)**, 2.0 issues a card, against round 0's 95/56/26 (53% WRONG) and 3.67 issues a
+card. Per 100 cards the classes the fixes targeted fell hardest: wrong_period 36 to 5, invented 83 to
+31, unit_scale 50 to 22, signal_verdict 31 to 16. Arithmetic (50 to 41) and direction (16 to 17) did
+not move, and the cause is ours, not a model's: on four results cards `grounding.change_fixes`
+overwrote a correct change with a wrong one (f02fe231 +129% to "+1.5% YoY"; 0758a110 "+14.5% QoQ" to
+"-29.4% YoY" against +42.3%; 371cb9bc to "-23.5% YoY" against +47.4%; 5fc5b553 finance cost +6.5% to
+"+965.1%"). Fix the fixer before round 2.
+Per writer model, WRONG share and issues a card: glm-4.5-flash 0% / 1.0 (18 cards), nemotron-3-super
+28% / 2.0 (43), glm-4.7-flash 33% / 2.0 (3), deepseek-flash 47% / 1.9 (15), ministral-14b 67% / 3.6
+(18). The samples are thin and the hard filings cluster (three of the five worst cards are Kanoria
+results), but ministral-14b is indefensible on pass 2 and the paid route's weight of 20, raised for
+backfill speed, is not supported by accuracy.
+Also open from this round: filings read without XBRL still carry 10x slips (the annual-report path);
+the DISTRESS template prints "barely covers interest" at 0.2x and at -0.0x; a conversion or a
+completed allotment is still typed FUNDRAISE and emits a SCALE "raise" signal although no cash
+reaches the company. "SML Mahindra Ltd" on scrip 505192 is BSE's current name after the Mahindra
+acquisition, not a card error.
+
 ### §15 Playbook commands
 | Step | Command | Status |
 |---|---|---|

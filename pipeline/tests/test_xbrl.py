@@ -188,3 +188,30 @@ def test_results_filing_finds_its_xbrl_in_the_archive(settings):
     stats = pipeline.run("live", time_budget_s=60)
     assert stats.analyzed == 1 and stats.xbrl == 1
     assert "Machine-tagged results (XBRL, CONSOLIDATED" in fake.calls[0]["messages"][-1]["content"]
+
+
+def test_results_card_key_numbers_come_from_xbrl_and_yoy_qoq_mixups_are_flagged():
+    """SML's results cards called the fall from the previous quarter a YoY fall and showed PBT as
+    EBITDA. With the XBRL file, key numbers take its exact values and YoY; a "% YoY" that is a QoQ
+    change is flagged."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import period_mixups, xbrl_key_numbers
+
+    tagged = xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    assert xbrl.add_comparatives(tagged, *(xbrl.parse((FIXTURES / f"bse_main_ind_as_532811_{q}.xml").read_bytes())
+                                           for q in ("q3fy24", "q2fy25")))
+    now = {m.metric: m for m in tagged.metrics if m.period == "Q3FY25"}
+    rev, pbt = now["revenue"], now["pbt"]
+    assert (rev.yoy_pct, rev.qoq_pct, now["pat"].yoy_pct) == (-7.3, -5.9, -30.1)  # BSE's files carry no comparatives
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q3FY25 results",
+        "card": {"impact_level": "MODERATE", "headline": "Ahluwalia Q3FY25 results", "basis": "STANDALONE",
+                 "what_happened": [f"Revenue fell {abs(rev.qoq_pct):.1f}% YoY to ₹952 Cr"],
+                 "key_numbers": [{"label": "Revenue", "value": "₹952 Cr", "change": f"{rev.qoq_pct:+.1f}% YoY"},
+                                 {"label": "EBITDA", "value": f"₹{pbt.value} Cr", "change": "-20% YoY"},
+                                 {"label": "EBITDA margin", "value": "7.0%", "change": None}]}})
+    changed = xbrl_key_numbers(out, tagged)
+    keys = {k.label: (k.value, k.change) for k in out.card.key_numbers}
+    assert keys["Revenue"] == ("₹951.96 Cr", f"{rev.yoy_pct:+.1f}% YoY")
+    assert keys["EBITDA"][0] == "₹84.36 Cr" and keys["EBITDA margin"] == ("7.0%", None) and len(changed) == 2
+    assert period_mixups(out, tagged) == [f"\"{abs(rev.qoq_pct):.1f}% YoY\" is a quarter-on-quarter change, not year-on-year"]

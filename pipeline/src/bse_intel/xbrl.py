@@ -27,7 +27,7 @@ from dataclasses import dataclass, field
 from datetime import date
 
 from .models import BalanceSheet, FinancialMetric, Ownership
-from .periods import canonical_period
+from .periods import canonical_period, prior_quarter_period, prior_year_period
 
 log = logging.getLogger(__name__)
 
@@ -346,3 +346,30 @@ def confirm(result: XbrlResult, text: str) -> bool:
                     or round(abs(crore) * scale - 0.5, 0) in numbers:
                 return True
     return False
+
+
+def add_comparatives(result: XbrlResult, *earlier: XbrlResult) -> int:
+    """YoY and QoQ for a results file from the year-ago and previous quarters' own files. BSE's files
+    carry only the current quarter and the year to date (Ahluwalia Q3FY25: Q3FY25 and 9MFY25), so the
+    changes come from those quarters' filings. Their figures are added for memory too. Returns how
+    many changes were filled."""
+    if result.kind != "RESULTS":
+        return 0
+    known = {(m.metric, m.period): m for m in result.metrics}
+    for other in earlier:
+        if other and other.kind == "RESULTS" and (not result.basis or other.basis in (None, result.basis)):
+            for m in other.metrics:
+                if (m.metric, m.period) not in known:
+                    known[(m.metric, m.period)] = m
+                    result.metrics.append(m)
+    filled = 0
+    for m in result.metrics:
+        if m.unit == "PCT" or m.value is None:
+            continue
+        year_ago = known.get((m.metric, prior_year_period(m.period) or ""))
+        if m.yoy_pct is None and year_ago and year_ago.value:
+            m.yoy_pct, filled = _change(m.value, year_ago.value), filled + 1
+        before = known.get((m.metric, prior_quarter_period(m.period) or "")) if m.period.startswith("Q") else None
+        if m.qoq_pct is None and before and before.value:
+            m.qoq_pct, filled = _change(m.value, before.value), filled + 1
+    return filled

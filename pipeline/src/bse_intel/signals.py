@@ -27,7 +27,7 @@ import re
 from dataclasses import asdict, dataclass
 from datetime import date
 
-from .dossier import approval_granted, kpi_verdict, deal_state, reported_by
+from .dossier import approval_granted, watch_verdict, deal_state, reported_by
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period
 
@@ -247,20 +247,23 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             continue
         if w["kind"] == "APPROVAL" and update.status == "MET" and not approval_granted(update.evidence):
             continue  # "Approval met" with evidence that it is still pending
-        status = kpi_verdict(w, update.status, update.evidence)
+        status = watch_verdict(w, update.status, update.evidence)
         if status == "PENDING":
-            continue  # a KPI checked against an earlier quarter's figure
+            continue  # no news, another item's news, or an earlier quarter's figure
         severity = {"MET": "POSITIVE", "MISSED": "WARNING"}.get(status, "INFO")
-        label = "KPI check" if w["kind"] == "KPI" else "Approval"
+        label = {"KPI": "KPI check", "APPROVAL": "Approval", "CONCERN": "Concern"}.get(w["kind"], "Watch item")
         out.append(Signal("WATCH_RESOLVED", severity,
                           f"{label} {status.lower()}: \"{w['text']}\" (flagged {w['created_on'][:10]})."
                           + (f" {update.evidence}" if update.evidence else ""), w["id"]))
     touched = {u.guidance_id for u in output.dossier_delta.promise_updates}
     today = filing.filed_at[:10]
+    # Flagged once, on the first filing after the deadline: Ahluwalia's FY25 revenue guidance was
+    # "Deadline passed" on five cards in a row.
+    last = max((t.get("date", "")[:10] for t in (before or {}).get("timeline", []) if t.get("date", "") < filing.filed_at), default="")
     overdue = [
         g for g in after.get("guidance", [])
         if g.get("due_date") and g["due_date"] < today and g.get("status") in ("OPEN", "ON_TRACK")
-        and g["id"] not in touched and g.get("given_on", "") < filing.filed_at
+        and g["id"] not in touched and g.get("given_on", "") < filing.filed_at and not (last and last > g["due_date"])
     ]
     for g in sorted(overdue, key=lambda g: g["due_date"])[:MAX_OVERDUE_SIGNALS]:
         out.append(Signal("GUIDANCE_BREACH", "WARNING",
@@ -276,10 +279,18 @@ def _latest_net_worth(dossier: dict) -> float | None:
     return None
 
 
+# Capital actions that issue no new shares: a dividend's "issue price" or an open offer's share count
+# is not dilution (Mahindra's open offer read as "26% more shares"; a ₹18 dividend "99% below" the close).
+_NOT_AN_ISSUE = re.compile(r"dividend|open offer|buy-?back|authori[sz]ed|split|sub-?division|consolidation|"
+                           r"offer for sale|\bofs\b|bonus|reduction", re.I)
+
+
 def _dilution(after: dict, output: Pass2Output, company: dict | None) -> list[Signal]:
     out: list[Signal] = []
     company = company or {}
     for action in output.dossier_delta.capital_actions:
+        if _NOT_AN_ISSUE.search(action.instrument or ""):
+            continue
         existing = action.existing_shares or company.get("shares_outstanding")
         parts = []
         dilution = None

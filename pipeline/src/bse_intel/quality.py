@@ -85,6 +85,9 @@ def _quarters_back(period: str, n: int) -> list[str]:
     return out
 
 
+LENDERS = {"banks", "nbfc", "insurance"}
+
+
 def quality_signals(after: dict, news_id: str) -> list[dict]:
     t = _table(after)
     q = _latest_quarter(after, news_id)
@@ -96,7 +99,8 @@ def quality_signals(after: dict, news_id: str) -> list[dict]:
 
     # M15: other income share of PBT; profit up while core EBITDA is not
     oi, pbt = get("other_income"), get("pbt")
-    if oi is not None and pbt and pbt > 0 and oi / pbt >= 0.4:
+    lender = after.get("sector") in LENDERS  # a bank's or NBFC's other income is fees and treasury: core business
+    if not lender and oi is not None and pbt and pbt > 0 and oi / pbt >= 0.4:
         out.append(_signal("LOW_QUALITY_BEAT", "WARNING", f"Other income ₹{oi:g} Cr is {oi / pbt * 100:.0f}% of PBT ({q})."))
     pat_g, ebitda_g = _pct(get("pat"), get("pat", ya)), _pct(get("ebitda"), get("ebitda", ya))
     if pat_g is not None and ebitda_g is not None and pat_g >= 15 and ebitda_g <= 0:

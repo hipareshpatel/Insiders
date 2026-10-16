@@ -88,6 +88,32 @@ def kpi_verdict(watch: dict, status: str, evidence: str | None) -> str:
     return "MET" if hit else "MISSED"
 
 
+_NO_NEWS = re.compile(r"not (?:yet )?(?:disclosed|reported|available|provided|updated|mentioned)|no (?:update|disclosure|mention|new information)|"
+                      r"\bassumed\b|\boverdue\b|not part of (?:this|the) filing", re.I)
+_TOPIC_STOP = {"with", "from", "that", "this", "than", "into", "over", "under", "after", "before", "target", "growth",
+               "improvement", "check", "level", "levels", "ratio", "approval", "shareholder", "company", "quarter", "results"}
+
+
+def _topic_words(text: str) -> set[str]:
+    return {w[:5] for w in re.findall(r"[a-z]{4,}", (text or "").lower()) if w not in _TOPIC_STOP}
+
+
+def watch_verdict(watch: dict, status: str, evidence: str | None) -> str:
+    """The model's verdict on a watch item, checked in code. "Met"/"missed" with no news ("not disclosed
+    in Q1FY26 results; watchlist item overdue", "no update in filing; assumed resolved") or with
+    evidence about another item (a debt/EBITDA check answered with a director's appointment) stays
+    PENDING; a KPI verdict is then checked against its target and quarter (kpi_verdict)."""
+    if status not in ("MET", "MISSED"):
+        return status
+    evidence = evidence or ""
+    if _NO_NEWS.search(evidence):
+        return "PENDING"
+    topic = _topic_words(watch.get("text", "")) if watch.get("kind") == "KPI" else set()  # approvals: approval_granted
+    if topic and evidence and not topic & _topic_words(evidence):
+        return "PENDING"
+    return kpi_verdict(watch, status, evidence)
+
+
 def approval_granted(evidence: str | None) -> bool:
     """Evidence that an approval came through, not that it is still pending."""
     return bool(evidence) and bool(_GRANTED.search(evidence)) and not _NOT_YET.search(evidence)
@@ -246,6 +272,21 @@ def _forget(dossier: dict, news_id: str) -> None:
     dossier["predictions"] = predictions
 
 
+_LOWER_IS_BETTER = re.compile(r"\b(?:reduc\w*|declin\w*|lower\w*|cut\w*|deleverag\w*|debt|npa|cost[- ]to[- ]income|"
+                              r"leverage|losses?)\b", re.I)
+
+
+def _plausible_target(d: dict, metric: str, value: float) -> bool:
+    """A numeric KPI target in the scale of the company's own figures for that metric: one more than 5x
+    away from the latest stored value (a refund amount as a net-worth target, a segment's growth %
+    as a revenue target, "EBITDA margin >= 1" against a 9% margin) is not a target."""
+    latest = [m for m in d.get("financial_metrics", []) if m.get("metric") == metric and m.get("value")]
+    if not latest:
+        return True
+    ref = abs(float(max(latest, key=lambda m: m.get("as_of") or "")["value"]))
+    return ref < 1 or ref / 5 <= abs(float(value)) <= ref * 5
+
+
 def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str | None, updated_at: str) -> dict:
     """Return the dossier with this filing's facts merged in (input is not mutated)."""
     d = json.loads(json.dumps(dossier))  # deep copy, JSON-safe
@@ -369,9 +410,9 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             continue
         if w["kind"] == "APPROVAL" and update.status == "MET" and not approval_granted(update.evidence):
             continue  # SML: "Approval met: CCI approval ..." with the evidence "CCI approval pending"
-        status = kpi_verdict(w, update.status, update.evidence)
+        status = watch_verdict(w, update.status, update.evidence)
         if status == "PENDING" and update.status != "PENDING":
-            continue  # evidence from an earlier quarter settles nothing yet
+            continue  # no news, another item's news, or an earlier quarter's figure: settles nothing yet
         w["status_history"] = sorted(w.get("status_history", []) + [{
             "status": status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,
         }], key=lambda h: h["as_of"])
@@ -418,10 +459,15 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         for k in output.card.track_next.kpis_to_verify:
             if not (k.metric and k.period and k.value is not None):
                 continue
+            comparison = k.comparison or ">="
+            if comparison == ">=" and _LOWER_IS_BETTER.search(f"{k.kpi} {k.metric}"):
+                comparison = "<="  # "Net debt reduction ... target >= 1,200" meant at most 1,200
+            if not _plausible_target(d, _norm(k.metric), k.value):
+                continue  # "Net worth target >= 128.1" (a refund) for a ₹1,357 Cr net worth
             pid = "p_" + _hash(filing.scrip_code, _norm(k.metric), _period(k.period), f"{k.value:g}")
             predictions.setdefault(pid, {
                 "id": pid, "metric": _norm(k.metric), "period": _period(k.period), "value": k.value,
-                "comparison": k.comparison or ">=", "kpi": k.kpi.strip()[:200], "created_on": as_of,
+                "comparison": comparison, "kpi": k.kpi.strip()[:200], "created_on": as_of,
                 "source_news_id": news_id, "status": "OPEN",
             })
     by_key = {(m["metric"], m["period"]): m for m in d["financial_metrics"]}

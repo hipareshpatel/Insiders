@@ -416,3 +416,27 @@ def test_kpi_verdict_is_checked_in_code():
     assert kpi_verdict(w, "MET", "EBITDA per tonne improved as guided") == "MET"  # no figure: the model's call stands
     assert kpi_verdict({**w, "target": "Disclosed"}, "MISSED", "Order book not disclosed in Q3FY26") == "MISSED"
     assert kpi_verdict({**w, "kind": "APPROVAL"}, "MET", "anything") == "MET"
+
+
+def test_watch_verdicts_without_news_or_about_another_item_stay_pending():
+    """From the smoke test's follow-ups: "missed ... not disclosed; watchlist item overdue", "met ... no
+    update in filing; assumed resolved", and a debt/EBITDA check answered with a director's appointment."""
+    from bse_intel.dossier import watch_verdict
+
+    kpi = {"kind": "KPI", "text": "Cement segment EBITDA/tonne recovery", "check_in": "Q1FY26", "target": ">0"}
+    assert watch_verdict(kpi, "MISSED", "Cement EBITDA/tonne not disclosed in Q1FY26 results; watchlist item overdue.") == "PENDING"
+    gst = {"kind": "KPI", "text": "GST refund status", "check_in": None, "target": None}
+    assert watch_verdict(gst, "MET", "No GST refund status update in filing; assumed resolved or not material.") == "PENDING"
+    debt = {"kind": "KPI", "text": "Debt/EBITDA ratio", "check_in": None, "target": None}
+    assert watch_verdict(debt, "MET", "Dr. Rao's WTD appointment requires AGM approval (July 31, 2025).") == "PENDING"
+    de = {"kind": "KPI", "text": "Debt-to-equity ratio", "check_in": "Q2FY26", "target": "<=2"}
+    assert watch_verdict(de, "MISSED", "Debt-to-equity ratio of 0.6x in Q2FY26 is lower than the <=2 target.") == "MET"
+
+
+def test_reduction_targets_compare_downwards_and_off_scale_targets_are_dropped():
+    from bse_intel.dossier import _LOWER_IS_BETTER, _plausible_target
+
+    d = {"financial_metrics": [{"metric": "net_worth", "period": "Q3FY25", "value": 1357.5, "as_of": "2025-01-28"}]}
+    assert not _plausible_target(d, "net_worth", 128.1)  # a tax refund, not a net-worth target
+    assert _plausible_target(d, "net_worth", 1459) and _plausible_target(d, "ebitda", 5)  # no history: kept
+    assert _LOWER_IS_BETTER.search("Net debt reduction") and not _LOWER_IS_BETTER.search("Revenue growth")

@@ -534,3 +534,17 @@ def test_margin_that_does_not_fit_its_figures_is_flagged():
     assert margin_issues([], keys) == ["EBITDA ₹756.00 Cr on revenue ₹952.00 Cr is a 79.4% margin, not the stated 7.9% (key numbers)"]
     metrics[1] = FinancialMetric(metric="ebitda", period="Q3FY25", value=75.6)
     assert margin_issues(metrics) == []
+
+
+def test_no_dilution_signal_for_dividends_open_offers_or_authorised_capital():
+    """Smoke test: "Dividend: issue price ₹18.00 is 99.0% below the last close"; "Open Offer: 26.0% more
+    shares"; "Authorised Share Capital Increase: 46.7% more shares"."""
+    from bse_intel.signals import _dilution
+
+    def actions(*instruments):
+        return Pass2Output.model_validate({"is_material": False, "event_type": "OTHER", "timeline_entry": "x",
+                                           "dossier_delta": {"capital_actions": [
+                                               {"instrument": i, "new_shares": 3_762_628, "issue_price": 18} for i in instruments]}})
+    company = {"shares_outstanding": 14_471_646, "last_price": 1836.35}
+    assert _dilution({}, actions("Dividend", "Open Offer", "Authorised Share Capital Increase"), company) == []
+    assert [s.type for s in _dilution({}, actions("QIP"), company)] == ["DILUTION"]

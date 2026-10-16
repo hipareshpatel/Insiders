@@ -39,8 +39,8 @@ from .dossier import dossier_as_of, latest_fundamentals, memory_ids, merge, new_
 from .extract import Document
 from .grounding import DEFAULT_THRESHOLD, check_card, check_claims, margin_issues, scale_issues, unit_slips
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output
-from .periods import (canonical_period, due_date, quarter_from_index, quarter_index, statement_quarter,
-                      statement_year)
+from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
+                      quarter_index, statement_quarter, statement_year)
 from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
@@ -267,6 +267,108 @@ def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...]) -> dict[str, str]
                 break
     log.info("unit slips corrected in code: %s", mapping)
     return mapping
+
+
+_CHANGE_AMOUNT = re.compile(r"(?<![\w.])(\(?-?\d[\d,]*(?:\.\d+)?\)?)")
+_CHANGE_PCT = re.compile(r"([+\-−]?)\s*(\d+(?:\.\d+)?)\s*%")
+
+
+def _amount(text: str | None) -> float | None:
+    m = _CHANGE_AMOUNT.search(re.sub(r"\b(?:Q[1-4]|H[12]|9M)?FY\s?'?\d{2,4}\b|\b(?:19|20)\d{2}\b", " ", text or ""))
+    if not m:
+        return None
+    raw = m.group(1)
+    try:
+        value = float(raw.strip("-()").replace(",", ""))
+    except ValueError:
+        return None
+    return -value if raw.startswith(("-", "(")) else value
+
+
+def fix_change_percentages(out: Pass2Output) -> list[str]:
+    """A notable change whose % does not follow from its own two figures ("₹494 Cr → ₹418 Cr, +15% YoY",
+    a 15% fall) gets the computed % in code. Only amounts on both sides, neither a percentage."""
+    fixed = []
+    for change in out.card.notable_changes if out.card else []:
+        before, after, stated = change.previous or "", change.current or "", change.change or ""
+        m = _CHANGE_PCT.search(stated)
+        if not m or "%" in before or "%" in after:
+            continue
+        a, b = _amount(before), _amount(after)
+        if a is None or b is None or a == 0:
+            continue
+        real = (b - a) / abs(a) * 100
+        claimed = float(m.group(2)) * (-1 if m.group(1) in ("-", "−") else 1)
+        if not m.group(1) and re.search(r"\b(?:down|fell|lower|decline)", stated, re.I):
+            claimed = -claimed
+        if abs(claimed - real) <= max(1.0, abs(real) * 0.05):
+            continue
+        new = f"{real:+.1f}%".replace(".0%", "%")
+        change.change = stated[:m.start()] + new + stated[m.end():]
+        if change.direction in ("positive", "negative") and (real > 0) != (claimed > 0):
+            change.direction = "negative" if change.direction == "positive" else "positive"
+        fixed.append(f"{change.metric}: {stated} -> {change.change}")
+    if fixed:
+        log.info("change percentages corrected in code: %s", fixed)
+    return fixed
+
+
+_KEY_METRIC = (("ebitda", re.compile(r"\bebitda\b(?!.*margin)", re.I)),
+               ("pbt", re.compile(r"\bpbt\b|profit before tax", re.I)),
+               ("pat", re.compile(r"\bpat\b|net profit|profit after tax|net income", re.I)),
+               ("eps", re.compile(r"\beps\b|earnings per share", re.I)),
+               ("revenue", re.compile(r"revenue|net sales|income from operations|\bsales\b", re.I)))
+
+
+def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult") -> list[str]:
+    """A results card's key numbers for revenue, EBITDA, PBT, PAT and EPS set from the XBRL file: exact
+    value and YoY (SML's "revenue -40% YoY" was the fall from the previous quarter; its "EBITDA ₹0.75 Cr"
+    was PBT). Only on the card's own basis and quarter. Returns what changed."""
+    if out.card is None or tagged.kind != "RESULTS" or not tagged.period:
+        return []
+    if out.card.basis and tagged.basis and out.card.basis != tagged.basis:
+        return []
+    now = {m.metric: m for m in tagged.metrics if m.period == tagged.period}
+    changed = []
+    for key in out.card.key_numbers:
+        if "margin" in (key.label or "").lower() or "%" in (key.value or ""):
+            continue
+        metric = next((name for name, pattern in _KEY_METRIC if pattern.search(key.label or "")), None)
+        m = now.get(metric) if metric else None
+        if m is None or m.value is None:
+            continue
+        value = f"₹{m.value:,.2f}" + (" per share" if metric == "eps" else " Cr")
+        change = f"{m.yoy_pct:+.1f}% YoY" if m.yoy_pct is not None else key.change
+        if (key.value, key.change) != (value, change):
+            changed.append(f"{key.label}: {key.value} ({key.change}) -> {value} ({change})")
+            key.value, key.change = value, change
+    if changed:
+        log.info("key numbers set from XBRL: %s", changed)
+    return changed
+
+
+_PCT_LABELLED = re.compile(r"([+\-−]?\d+(?:\.\d+)?)\s*%\s*(?:\(?\s*)(YoY|QoQ|y-o-y|q-o-q|year[- ]on[- ]year|quarter[- ]on[- ]quarter)", re.I)
+
+
+def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None") -> list[str]:
+    """A "% YoY" on the card that is the quarter-on-quarter change of a tagged figure (and no figure's
+    YoY), or the reverse: SML's results cards called the fall from Q2 a fall from a year ago."""
+    if out.card is None or tagged is None or tagged.kind != "RESULTS":
+        return []
+    now = [m for m in tagged.metrics if m.period == tagged.period and m.unit != "PCT"]
+    yoy = [abs(m.yoy_pct) for m in now if m.yoy_pct is not None]
+    qoq = [abs(m.qoq_pct) for m in now if m.qoq_pct is not None]
+    issues = []
+    for text in _card_texts(out):
+        for m in _PCT_LABELLED.finditer(text):
+            value, label = abs(float(m.group(1).replace("−", "-"))), m.group(2).lower()
+            near = lambda xs: any(abs(x - value) <= 0.6 for x in xs)  # noqa: E731
+            is_yoy = label.startswith(("yoy", "y-o-y", "year"))
+            if is_yoy and near(qoq) and not near(yoy):
+                issues.append(f"\"{m.group(0)}\" is a quarter-on-quarter change, not year-on-year")
+            elif not is_yoy and near(yoy) and not near(qoq):
+                issues.append(f"\"{m.group(0)}\" is a year-on-year change, not quarter-on-quarter")
+    return list(dict.fromkeys(issues))
 
 
 def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...], history: list[dict] | None = None) -> CardChecks:
@@ -730,6 +832,46 @@ class Pipeline:
             return max(timely, key=lambda link: link.filed_at).url
         return min(links, key=lambda link: link.filed_at).url if links else None
 
+    def _xbrl_comparatives(self, filing: Filing, tagged: "xbrl_fast_path.XbrlResult") -> None:
+        """Year-ago and previous-quarter figures for a results file, from those quarters' files in the
+        company's results archive (cached by URL). Best effort: a missing file leaves the change out."""
+        if tagged.kind != "RESULTS" or not tagged.period or not tagged.period.startswith("Q"):
+            return
+        with self._lock:
+            links = self._xbrl_links.get(filing.scrip_code) or []
+        earlier = []
+        for period in {prior_year_period(tagged.period), prior_quarter_period(tagged.period)} - {None}:
+            same = [link for link in links if link.period == period and link.basis == (tagged.basis or link.basis)]
+            if not same:
+                continue
+            data = self._xbrl_file(max(same, key=lambda link: link.filed_at).url)
+            parsed = xbrl_fast_path.parse(data) if data else None
+            if parsed:
+                earlier.append(parsed)
+        if earlier:
+            xbrl_fast_path.add_comparatives(tagged, *earlier)
+
+    def _xbrl_file(self, url: str) -> bytes | None:
+        """An XBRL file by URL, cached under the text cache's xbrl folder."""
+        root = self.settings.text_cache_dir
+        path = root / "xbrl" / (hashlib.sha1(url.encode()).hexdigest()[:20] + ".xml.gz") if root else None
+        if path and path.exists():
+            try:
+                return gzip.decompress(path.read_bytes())
+            except OSError:
+                pass
+        try:
+            data = self.bse.download(url, max_bytes=8_000_000)
+        except AttachmentError:
+            return None
+        if data and path:
+            try:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(gzip.compress(data))
+            except OSError:
+                pass
+        return data
+
     def _xbrl(self, filing: Filing, strict: bool = False) -> "xbrl_fast_path.XbrlResult | None":
         """The filing's XBRL figures (cached beside the text cache). A download problem fails only a
         strict (XBRL-only) filing; results fall back to the PDF."""
@@ -836,6 +978,7 @@ class Pipeline:
                 log.warning("XBRL figures for %s not found in the PDF in any unit; using the PDF only", filing.news_id)
             tagged = None
         if tagged:
+            self._xbrl_comparatives(filing, tagged)
             text = tagged.table() + "\n\n" + text  # exact figures first; they also ground the card
         sector_module = self.prompts.sector_for(industry)
         sector = sector_module.name
@@ -862,7 +1005,11 @@ class Pipeline:
         sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
         history = dossier.get("financial_metrics", [])
         unit_fixes = fix_unit_slips(out, sources)
+        change_fixes = fix_change_percentages(out)
+        if tagged:
+            change_fixes += xbrl_key_numbers(out, tagged)
         checks = check_card_all(out, view, sources, history)
+        checks.scale += period_mixups(out, tagged)
         review = None
         if checks.wants_second_opinion and self.settings.second_opinion:
             out, result, checks, review = self._second_opinion(route, system, user, out, result, checks, view, sources, history)
@@ -903,7 +1050,7 @@ class Pipeline:
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims,
-                          "unit_fixes": unit_fixes or None, "out_of_fit": checks.scale or None},
+                          "unit_fixes": unit_fixes or None, "change_fixes": change_fixes or None, "out_of_fit": checks.scale or None},
             "review": review,
             "model": result.model_label,
         }

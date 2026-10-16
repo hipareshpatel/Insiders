@@ -351,7 +351,11 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
     if out.card.basis and tagged.basis and out.card.basis != tagged.basis:
         return []
     now = {m.metric: m for m in tagged.metrics if m.period == tagged.period}
-    index = SourceIndex(*sources) if sources else None
+    # The table is prepended to the filing text the model reads, so it usually arrives inside `sources`
+    # too. Take it out: a comparative checked against the very table it came from would always verify,
+    # and the guard below would silently do nothing.
+    table = tagged.table()
+    index = SourceIndex(*(s.replace(table, " ") for s in sources)) if sources else None
     changed: list[str] = []
     unverified: list[str] = []
     for key in out.card.key_numbers:
@@ -1205,6 +1209,7 @@ class Pipeline:
                 return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": "RESULTS",
                                 "reason": f"duplicate of {earlier[0]} (same results quarter {earlier[1]}, D20)",
                                 "updated_at": now_iso()})
+        filed_text = text  # the document alone, before the XBRL table goes in front of it
         if tagged:
             self._xbrl_comparatives(filing, tagged)
             text = tagged.table() + "\n\n" + text  # exact figures first; they also ground the card
@@ -1245,7 +1250,9 @@ class Pipeline:
         change_fixes = fix_change_percentages(out, sources)
         change_fixes += apply_deal_guards(out, filing, history, dossier.get("balance_sheet", []), text)
         if tagged:
-            change_fixes += xbrl_key_numbers(out, tagged, sources)
+            # against the document alone: `sources` starts with the XBRL table, so checking the table's
+            # own comparative against it would always succeed and the guard would do nothing
+            change_fixes += xbrl_key_numbers(out, tagged, (filed_text,))
         checks = check_card_all(out, view, sources, history)
         checks.scale += period_mixups(out, tagged)
         quote_problems, quotes_missing, quotes_dropped = check_quotes(out, text, filing.news_id)

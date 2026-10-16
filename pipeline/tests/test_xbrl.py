@@ -258,3 +258,23 @@ def test_an_xbrl_yoy_is_only_trusted_when_its_comparative_is_in_the_filing():
     out = card()
     xbrl_key_numbers(out, tagged, sources=(f"Revenue 951.96 against {prior:,.2f} in the corresponding quarter",))
     assert [(k.value, k.change) for k in out.card.key_numbers] == [("₹951.96 Cr", f"{rev.yoy_pct:+.1f}% YoY")]
+
+
+def test_the_xbrl_table_cannot_verify_its_own_comparative():
+    """The table is prepended to the filing text the model reads, so it also arrives in the sources the
+    guard checks against. Were it left there, the year-ago figure would be found in the table it came from,
+    every YoY would verify and the guard would be a no-op - which is what shipped first."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import xbrl_key_numbers
+
+    tagged = xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    assert xbrl.add_comparatives(tagged, *(xbrl.parse((FIXTURES / f"bse_main_ind_as_532811_{q}.xml").read_bytes())
+                                           for q in ("q3fy24", "q2fy25")))
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q3FY25 results",
+        "card": {"impact_level": "MODERATE", "headline": "Ahluwalia Q3FY25 results", "basis": "STANDALONE",
+                 "what_happened": ["Revenue fell to ₹952 Cr"],
+                 "key_numbers": [{"label": "Revenue", "value": "₹952 Cr", "change": "-3.0% YoY"}]}})
+    # the table alone as the source, exactly as the pipeline passes it: it must not prove itself
+    xbrl_key_numbers(out, tagged, sources=(tagged.table(),))
+    assert [(k.value, k.change) for k in out.card.key_numbers] == [("₹951.96 Cr", "-3.0% YoY")]

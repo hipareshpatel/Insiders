@@ -436,7 +436,7 @@ def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], bal
     if computed and (not deal.amount_cr or abs(deal.amount_cr - computed) > 0.03 * computed):
         notes.append(f"deal size set to ₹{computed:,.2f} Cr from the buyers' shares x price (the model gave {deal.amount_cr})")
         deal.amount_cr = computed
-    name = gate.deal_is_company_figure(deal.amount_cr, known)
+    name = None if computed else gate.deal_is_company_figure(deal.amount_cr, known)  # shares x price is exact
     if name:
         notes.append(f"deal size {deal.amount_cr:g} Cr dropped: it is the company's {name}")
         out.card.deal_value = None

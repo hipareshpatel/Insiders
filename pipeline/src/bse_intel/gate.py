@@ -54,10 +54,11 @@ def impossible_crore_amounts(texts: list[str]) -> list[str]:
 
 # --- a deal "size" that is really a company figure -------------------------------------------------------------------
 
-def deal_is_company_figure(amount_cr: float | None, dossier: dict | None, tolerance: float = 0.01) -> str | None:
+def deal_is_company_figure(amount_cr: float | None, dossier: dict | None, tolerance: float = 0.002) -> str | None:
     """The deal amount equals the company's own revenue, net worth or paid-up capital within `tolerance`
-    (turnover, net worth and share capital are never the size of an order or a raise). Returns the figure's
-    name, else None."""
+    (turnover, net worth and share capital are never the size of an order or a raise). The tolerance is a
+    rounding (0.2%): SML's computed ₹554.65 Cr deal sat 0.9% from a quarter's revenue of ₹549.71 Cr by chance.
+    Returns the figure's name, else None."""
     if not amount_cr or amount_cr <= 0 or not dossier:
         return None
 

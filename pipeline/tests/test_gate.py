@@ -123,3 +123,9 @@ def test_a_card_with_the_wrong_deal_size_is_corrected_from_the_tranches(settings
     filing = _filing("n-spa", "Disclosure under Regulation 30", now_ist(), "Company Update")
     notes = apply_deal_guards(out, filing, [], [], NOVARTIS_SPA)
     assert out.card.deal_value.amount_cr == 1445.89 and "shares x price" in notes[0]
+
+
+def test_a_computed_deal_size_is_never_dropped_as_company_revenue():
+    """SML Mahindra: shares x price gave ₹554.65 Cr, which sat 0.9% from Q2FY25 revenue of ₹549.71 Cr by chance."""
+    assert gate.deal_is_company_figure(554.65, {"financial_metrics": [{"metric": "revenue", "period": "Q2FY25", "value": 549.71}]}) is None
+    assert gate.deal_is_company_figure(549.8, {"financial_metrics": [{"metric": "revenue", "period": "Q2FY25", "value": 549.71}]}) == "revenue Q2FY25"

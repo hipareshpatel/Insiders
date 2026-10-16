@@ -441,3 +441,33 @@ def test_reduction_targets_compare_downwards_and_off_scale_targets_are_dropped()
     assert not _plausible_target(d, "net_worth", 128.1)  # a tax refund, not a net-worth target
     assert _plausible_target(d, "net_worth", 1459) and _plausible_target(d, "ebitda", 5)  # no history: kept
     assert _LOWER_IS_BETTER.search("Net debt reduction") and not _LOWER_IS_BETTER.search("Revenue growth")
+
+
+def test_a_flow_figure_that_breaks_the_cumulative_identity_is_reported():
+    """Indian results accumulate over the year, so H1 = Q1 + Q2 and FY = 9M + Q4 for any flow. Audit round 1
+    traced every wrong Kanoria YoY to one figure in memory that broke this: Q1FY26 revenue stored as 453.78
+    where H1 minus Q2 gives 201.38. The check needs no PDF and no AI, only the arithmetic."""
+    import importlib.util
+    import pathlib
+
+    spec = importlib.util.spec_from_file_location(
+        "memory_check", pathlib.Path(__file__).resolve().parents[1] / "scripts" / "memory_check.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+
+    def metric(name, period, value, source="xbrl:res:1"):
+        return {"metric": name, "period": period, "value": value, "unit": "INR_CR", "source_news_id": source}
+
+    broken = [metric("revenue", "Q1FY26", 453.78, "card-1"), metric("revenue", "Q2FY26", 209.84),
+              metric("revenue", "H1FY26", 411.22)]
+    found = mod.problems("506525", broken)
+    assert len(found) == 1 and found[0]["period"] == "H1FY26"
+    assert found[0]["parts_sum"] == 663.62 and found[0]["difference"] == -252.4
+    assert "card-1" in found[0]["sources"]
+
+    # the same series with the figure H1 implies, and a balance that must never be summed
+    fixed = [metric("revenue", "Q1FY26", 201.38), metric("revenue", "Q2FY26", 209.84),
+             metric("revenue", "H1FY26", 411.22),
+             metric("paid_up_capital", "Q1FY26", 12.34), metric("paid_up_capital", "Q2FY26", 12.34),
+             metric("paid_up_capital", "H1FY26", 12.34)]
+    assert mod.problems("506525", fixed) == []

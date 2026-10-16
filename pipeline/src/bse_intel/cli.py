@@ -243,9 +243,13 @@ def cmd_backup(args, settings, sink) -> int:
         if body is None:
             continue
         data = json.loads(body)
-        (out / "memory" / f"{scrip}.json").write_text(json.dumps(data, indent=1, ensure_ascii=False, sort_keys=True) + "\n")
+        # encoding: the dossiers are full of rupee signs and Windows writes cp1252 by default,
+        # which made every backup on the laptop die on the first one
+        (out / "memory" / f"{scrip}.json").write_text(
+            json.dumps(data, indent=1, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
         count += 1
-    (out / "MANIFEST.json").write_text(json.dumps({"dossiers": count, "exported_at": now_iso()}, indent=1) + "\n")
+    (out / "MANIFEST.json").write_text(
+        json.dumps({"dossiers": count, "exported_at": now_iso()}, indent=1) + "\n", encoding="utf-8")
     print(json.dumps({"dossiers": count, "out": str(out)}))
     return 0
 

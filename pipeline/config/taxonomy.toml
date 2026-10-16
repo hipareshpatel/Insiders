@@ -26,7 +26,8 @@ headline = [
 reason = "share certificate housekeeping"
 subcategories = ["loss of share certificate", "duplicate share certificate", "issue of duplicate"]
 headline = ["loss of (share )?certificates?", "duplicate (share )?certificates?", "lost share certificates?",
-            "stop transfer", "letter of confirmation in lieu", "form\\s*sh\\s*-?\\s*[24]\\b", "transmission of shares"]
+            "stop transfer", "letter of confirmation in lieu", "form\\s*sh\\s*-?\\s*[24]\\b", "transmission of shares",
+            "regulation\\s*39\\s*\\(\\s*3\\s*\\)", "reg\\.?\\s*39\\s*\\(\\s*3\\s*\\)"]
 
 [[drop]]
 reason = "routine depository / listing administration"
@@ -87,6 +88,8 @@ headline = [
   "regulation\\s*7\\s*\\(\\s*3\\s*\\)", "regulation\\s*40\\s*\\(\\s*(9|10)\\s*\\)",
   "investor (grievances?|complaints?)", "compliance certificate",
   "reconciliation of share capital audit", "regulation\\s*76",
+  "certificate from (a )?practi[sc]ing company secretary", "(share )?transfers? .{0,40}(within|timelines?|processed)",
+  "regulation\\s*47\\b",
 ]
 exclude_headline = ["financial results", "outcome of (the )?board"]
 
@@ -94,6 +97,41 @@ exclude_headline = ["financial results", "outcome of (the )?board"]
 reason = "IEPF transfer"
 headline = ["investor education and protection fund", "\\biepf\\b"]
 exclude_headline = ["financial results", "outcome of (the )?board"]
+
+# Shareholder administration and tax reminders: TDS on a dividend, PAN / KYC / nomination / bank-detail updates,
+# unclaimed or unpaid dividend lists. The dividend itself is a separate filing.
+[[drop]]
+reason = "shareholder administration / tax reminder"
+headline = ["tax deduction at source", "\\btds\\b", "(updat\\w+|registration|furnish\\w*).{0,50}(\\bpan\\b|\\bkyc\\b|nomination|bank (account )?(details|mandate)|e-?mail (id|address))",
+            "\\bkyc\\b", "(unclaimed|unpaid) (dividend|shares)", "communication (is )?sent .{0,60}shareholders",
+            "intimation to (the )?shareholders? (regarding|for) (updat|tax)"]
+exclude_headline = ["financial results", "outcome of (the )?board", "record date"]
+
+# Reg 30(5): who is authorised to decide the materiality of an event and make disclosures (a name, an e-mail, a phone).
+[[drop]]
+reason = "authorised key managerial person contact details"
+headline = ["regulation\\s*30\\s*\\(\\s*5\\s*\\)", "authori[sz]ed (key managerial )?(person|personnel|kmp).{0,60}(materiality|disclos|contact)",
+            "contact details of (the )?(key managerial|authori[sz]ed)", "determining materiality"]
+exclude_headline = ["resignation", "cessation", "financial results"]
+
+# The exchange's price/volume surveillance notice and the company's standard reply ("purely market driven"). A reply
+# about a media report, a rumour, an acquisition or a probe (Reg 30(11)) is news and goes on to Pass 1.
+[[drop]]
+reason = "price / volume movement clarification"
+headline = ["(clarification|reply|response).{0,60}(price|volume|trading) (movement|increase|variation|surge|spike|rise|fall)",
+            "(price|volume|trading) (movement|increase|variation|surge|spike)s?.{0,40}(clarification|reply|response)",
+            "(increase|movement|surge|spike|variation|rise|fall) in (the )?(share )?(price|volume|trading volume)",
+            "\\bprice movement\\b", "\\bvolume (movement|increase|surge|spike)\\b"]
+exclude_headline = ["news", "media", "report", "rumou?r", "article", "speculat", "30\\s*\\(\\s*11\\s*\\)", "acqui", "probe", "fraud", "sebi order", "usfda"]
+
+# Employee stock options: grants, small allotments and trust transfers move paid-up equity by a fraction of a percent.
+# Preferential, rights, QIP and warrant allotments are different filings and are kept.
+[[drop]]
+reason = "employee stock option grant or allotment"
+headline = ["(grant|approval for grant|allotment).{0,40}(stock options?|esops?|esos|rsus?|psus?|sars?\\b|employee stock)",
+            "(allotment|issue) of .{0,40}shares.{0,60}(esop|esos|stock option|employee stock)",
+            "(esop|esos|stock option).{0,40}(allotment|exercise|grant|trust)", "from .{0,30}(esop|esos) trust"]
+exclude_headline = ["preferential", "rights", "\\bqip\\b", "warrants?", "bonus", "financial results", "outcome of (the )?board", "buy-?back", "scheme of arrangement"]
 
 # The invitation to an analyst or investor meet carries nothing; its presentation and transcript do.
 [[drop]]

@@ -132,6 +132,19 @@ def _f(headline, category="", subcategory="", subject=""):
     ("Outcome of Postal Ballot - re-appointment of Mr Rao as Independent Director", "AGM/EGM", "", "TIMELINE", "GOVERNANCE"),
     ("Disclosure under Regulation 31(1) and 31(4) of SEBI SAST - nil encumbrance", "Company Update", "", "TIMELINE", "GOVERNANCE"),
     ("Invocation of pledge on promoter shares under Regulation 31", "Company Update", "", "PASS1", None),
+    # The owner's Stage 1 list (seven hard-drop categories) and the conditional ones, with real headlines
+    ("Communication to the shareholders w.r.t. TDS on Final Dividend for FY 24-25", "Company Update", "", "DROP", None),
+    ("Letter to shareholders whose KYC is not updated", "Company Update", "", "DROP", None),
+    ("Intimation to Shareholders related to mandatory furnishing of PAN, KYC and Nomination details", "Company Update", "", "DROP", None),
+    ("Intimation under Regulation 30(5) of SEBI (LODR) Reg 2015", "Company Update", "", "DROP", None),
+    ("KMP authorised for the purpose of determining materiality of any information", "Company Update", "", "DROP", None),
+    ("Clarification on movement in share price", "Company Update", "", "DROP", None),
+    ("Reply - Increase in Volume", "Company Update", "", "DROP", None),
+    ("Clarification on news item appearing in 'Media/Publication'", "Company Update", "", "PASS1", None),
+    ("Grant of Stock Options", "Company Update", "", "DROP", None),
+    ("Transfer of Equity Shares from CSB ESOS Trust", "Company Update", "", "DROP", None),
+    ("Adoption of eMudhra ESOP/RSU Scheme 2025", "Company Update", "", "PASS1", None),
+    ("Allotment of equity shares on preferential basis", "Company Update", "", "PASS1", None),  # not an ESOP drop
     ("Audited financial results for FY25 and recommendation of final dividend", "Result", "", "FAST_TRACK", "RESULTS"),
     ("Appointment of Mr Yasushi Nishikawa as Managing Director and CEO", "Company Update", "", "FAST_TRACK", "MANAGEMENT_CHANGE"),
     ("Intimation of Stop Transfer of share certificates", "Company Update", "", "DROP", None),
@@ -146,7 +159,7 @@ def _f(headline, category="", subcategory="", subject=""):
     ("Transcript of the Earnings Conference Call for Q2 FY27", "Company Update", "", "FAST_TRACK", "CONCALL_PRESENTATION"),
     ("Statement of Deviation under Regulation 32(1)", "Company Update", "", "PASS1", None),  # may hold a deviation
     ("Delay in payment of interest on NCDs under Regulation 57(1)", "Company Update", "", "PASS1", None),
-    ("Allotment of 1,200 equity shares under ESOP", "Company Update", "", "PASS1", None),  # size unknown here
+    ("Allotment of 1,200 equity shares under ESOP", "Company Update", "", "DROP", None),  # a fraction of a percent of equity
     ("Sale of fractional shares and Outcome of Board Meeting - Bonus issue", "Board Meeting", "", "FAST_TRACK", None),
     # Compound headlines that carry news are not dropped as noise (audit A16)
     ("Board Meeting Intimation for results on 21/10/2026 and Closure of Trading Window", "Board Meeting", "Board Meeting Intimation", "CALENDAR", "BOARD_MEETING"),

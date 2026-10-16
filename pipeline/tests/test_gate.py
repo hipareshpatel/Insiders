@@ -129,3 +129,53 @@ def test_a_computed_deal_size_is_never_dropped_as_company_revenue():
     """SML Mahindra: shares x price gave ₹554.65 Cr, which sat 0.9% from Q2FY25 revenue of ₹549.71 Cr by chance."""
     assert gate.deal_is_company_figure(554.65, {"financial_metrics": [{"metric": "revenue", "period": "Q2FY25", "value": 549.71}]}) is None
     assert gate.deal_is_company_figure(549.8, {"financial_metrics": [{"metric": "revenue", "period": "Q2FY25", "value": 549.71}]}) == "revenue Q2FY25"
+
+
+def test_a_quote_is_matched_through_pdf_spacing_and_smart_punctuation():
+    text = ("Pursuant  to Regulation 30, the Board\nhas recommended a final dividend of Rs 5 per share\n"
+            "for FY25, subject to approval of the members.")
+    assert gate.quote_found("the Board has recommended a final dividend of Rs 5 per share", text)
+    assert gate.quote_found("the Board has recommended ... subject to approval", text)  # joined passages, in order
+    assert not gate.quote_found("the Board has recommended an interim dividend", text)
+    assert not gate.quote_found("subject to approval ... the Board has recommended", text)  # out of order
+    assert not gate.quote_found("", text) and not gate.quote_found("anything", "")
+
+
+def test_a_fact_cannot_borrow_a_number_its_quote_does_not_have():
+    quote = "Revenue from operations stood at Rs 951.96 crore for the quarter."
+    assert gate.numbers_in_quote("Revenue ₹951.96 Cr", quote) == []
+    assert gate.numbers_in_quote("Revenue ₹951.96 Cr, PAT ₹49.39 Cr", quote) == ["49.39"]
+    assert gate.numbers_in_quote("Revenue ₹95 Cr", quote) == []  # a prefix of the quote's figure: rounding
+    assert gate.numbers_in_quote("anything", "") == []
+
+
+def test_a_fact_whose_quote_is_not_in_the_filing_is_dropped(settings):
+    """The audit's largest class was invented facts (147 issues): "fixed-price, no escalation clause",
+    "currency risk premium", "NCLT approvals". A fact now carries the filing's sentence, checked in code."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import check_quotes
+
+    text = "The Board approved an order worth Rs 396.5 crore from Godrej Properties for residential construction."
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "ORDER_WIN", "timeline_entry": "order win",
+        "card": {"impact_level": "MODERATE", "headline": "Order win", "what_happened": [
+            {"text": "Order worth **₹396.5 Cr** from Godrej Properties", "quote": "an order worth Rs 396.5 crore from Godrej Properties"},
+            {"text": "The contract is fixed-price with no escalation clause", "quote": "The contract is fixed-price with no escalation clause"},
+            {"text": "Residential construction project", "quote": None}]}})
+    problems, missing = check_quotes(out, text)
+    assert [f.text for f in out.card.what_happened] == ["Order worth **₹396.5 Cr** from Godrej Properties",
+                                                        "Residential construction project"]
+    assert any("not in the filing" in p for p in problems) and missing == ["Residential construction project"]
+
+
+def test_a_card_whose_every_quote_fails_is_kept_and_marked(settings):
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import check_quotes
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "OTHER", "timeline_entry": "x",
+        "card": {"impact_level": "LOW", "headline": "Company files an update with the exchange",
+                 "what_happened": [{"text": "invented", "quote": "not in the filing"}]}})
+    problems, _ = check_quotes(out, "The filing says something else entirely.")
+    assert len(out.card.what_happened) == 1  # never an empty card
+    assert any("no fact carries a quote" in p for p in problems)

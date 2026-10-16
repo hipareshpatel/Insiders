@@ -296,7 +296,7 @@ def test_second_opinion_from_another_provider_corrects_the_card(settings):
     verify_prompt = second["messages"][1]["content"]
     assert "DRAFT REPLY" in verify_prompt and "17.5" in verify_prompt and 'Claim not supported by the sources: "Record quarterly revenue' in verify_prompt
     body = outcome.card["card"]
-    assert outcome.card["needs_review"] == 0 and body["what_happened"][1] == "PAT ₹15 Cr"
+    assert outcome.card["needs_review"] == 0 and body["what_happened"][1]["text"] == "PAT ₹15 Cr"
     assert body["review"]["status"] == "CORRECTED" and body["review"]["checked_by"] == "mistral/ministral-14b-2512"
     assert body["model"] == "mistral/ministral-14b-2512" and len(body["review"]["fixed"]) == 2
 
@@ -316,7 +316,7 @@ def test_one_unmatched_amount_gets_a_second_opinion_even_above_the_review_thresh
     assert len(fake.calls) == 2
     assert "₹ lakh ÷ 100 = ₹ Cr" in fake.calls[1]["messages"][1]["content"]
     body = outcome.card["card"]
-    assert body["review"]["status"] == "CORRECTED" and body["what_happened"][1] == "PAT ₹15 Cr"
+    assert body["review"]["status"] == "CORRECTED" and body["what_happened"][1]["text"] == "PAT ₹15 Cr"
 
 
 def test_a_lakh_figure_read_at_the_wrong_scale_is_corrected_without_a_second_model(settings):
@@ -331,7 +331,7 @@ def test_a_lakh_figure_read_at_the_wrong_scale_is_corrected_without_a_second_mod
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     body = outcome.card["card"]
     assert len(fake.calls) == 1 and body["review"] is None
-    assert body["what_happened"][1] == "PAT ₹15 Cr" and body["grounding"]["unit_fixes"] == {"150": "15"}
+    assert body["what_happened"][1]["text"] == "PAT ₹15 Cr" and body["grounding"]["unit_fixes"] == {"150": "15"}
 
 
 def test_one_card_per_company_per_results_quarter(settings):

@@ -398,7 +398,7 @@ def test_results_period_labels_follow_the_statement():
     assert mapping == {"Q1FY26": "Q4FY25", "Q1FY25": "Q4FY24", "Q4FY25": "Q3FY25", "FY26": "FY25"}
     assert [m.period for m in out.dossier_delta.financial_metrics] == ["Q4FY25", "Q4FY24", "Q3FY25", "FY25"]
     assert out.card.headline.startswith("Novartis India Q4FY25 revenue")
-    assert out.card.what_happened[0] == "Q4FY25 revenue ₹83.9 Cr vs ₹81.2 Cr in Q4FY24; FY25 PAT ₹100.9 Cr"
+    assert out.card.what_happened[0].text == "Q4FY25 revenue ₹83.9 Cr vs ₹81.2 Cr in Q4FY24; FY25 PAT ₹100.9 Cr"
     assert out.card.track_next.kpis_to_verify[0].period == "Q1FY26" and out.timeline_entry.startswith("Q4FY25")
     # a correctly labelled card is left alone
     ok = Pass2Output.model_validate({"is_material": True, "card": {"impact_level": "LOW", "headline": "Q4FY25 revenue ₹93 Cr",
@@ -506,7 +506,7 @@ def test_unit_slips_are_corrected_in_code_when_one_reading_fits():
                          [{"label": "PAT", "value": "₹493.92 Cr", "change": "-30% YoY"}])
     fixed = fix_unit_slips(out, (LAKH_STATEMENT, "", ""))
     assert fixed == {"493.92": "49.39", "145.51": "14.55", "4,939": "49.39"}
-    assert out.card.what_happened[0] == "Revenue ₹951.96 Cr, PAT ₹49.39 Cr"
+    assert out.card.what_happened[0].text == "Revenue ₹951.96 Cr, PAT ₹49.39 Cr"
     assert out.card.key_numbers[0].value == "₹49.39 Cr" and out.timeline_entry == "Revenue ₹951.96 Cr, PAT ₹49.39 Cr"
     assert {m.metric: m.value for m in out.dossier_delta.financial_metrics} == {"pat": 49.39, "revenue": 951.96}
 
@@ -548,3 +548,20 @@ def test_no_dilution_signal_for_dividends_open_offers_or_authorised_capital():
     company = {"shares_outstanding": 14_471_646, "last_price": 1836.35}
     assert _dilution({}, actions("Dividend", "Open Offer", "Authorised Share Capital Increase"), company) == []
     assert [s.type for s in _dilution({}, actions("QIP"), company)] == ["DILUTION"]
+
+
+def test_the_scale_block_gives_the_model_proportions_it_must_not_compute():
+    """Owner's note, 2026-10-16: the model works out no share of revenue or market cap. The audit found
+    "₹500 Cr is 41% of FY25 revenue" where it was 7.3%, and "3.6x FY25 revenue" where the filing said 84%
+    of turnover. Code computes every proportion and the prompt carries them."""
+    from bse_intel.signals import scale_block
+
+    dossier = {"financial_metrics": [{"metric": "revenue", "period": p, "value": v, "unit": "INR_CR"}
+                                     for p, v in (("Q1FY26", 1000), ("Q2FY26", 1100), ("Q3FY26", 1200), ("Q4FY26", 1300))]
+               + [{"metric": "order_book", "period": "Q4FY26", "value": 25194, "unit": "INR_CR"}],
+               "balance_sheet": [{"period": "Q4FY26", "net_worth_cr": 2000.0, "net_debt_cr": -304.24}]}
+    block = scale_block(dossier, {"market_cap_cr": 3779.0}, "The order is valued at Rs. 396.5 crore.", None)
+    assert "revenue ₹4,600 Cr (TTM to Q4FY26)" in block and "market cap ₹3,779 Cr" in block
+    assert "net cash ₹304.24 Cr" in block and "order book ₹25,194 Cr" in block     # not "net debt ₹-304.24 Cr"
+    assert "₹396.5 Cr = 10.5% of market cap, 8.6% of revenue, 19.8% of net worth, 1.6% of order book" in block
+    assert "give no proportions" in scale_block({}, {}, "Rs. 396.5 crore", None)   # nothing known: say so

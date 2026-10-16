@@ -22,7 +22,8 @@ PASS2_SCHEMA = {
         "takeaway": "string",
         "basis": "CONSOLIDATED | STANDALONE | PROFORMA | null",
         "themes": ["Renewables", "Infra / EPC"],
-        "what_happened": ["string with **key name** and **₹ figure** marked"],
+        "what_happened": [{"text": "string with **key name** and **₹ figure** marked",
+                           "quote": "the sentence from the filing that says it, copied exactly"}],
         "why_it_matters": [{"text": "string", "basis": "MEMORY | BALANCE_SHEET | SECTOR | FILING", "memory_refs": ["g_..."]}],
         "missing_disclosures": ["string"],
         "key_numbers": [{"label": "Revenue", "value": "₹120 Cr", "change": "+32% YoY"}],
@@ -90,7 +91,7 @@ def _unit_note(text: str | None) -> str:
 def _examples_text(examples: dict[str, list[dict]]) -> str:
     """The owner's rated cards for this kind of filing, as compact examples (blueprint Loop 3)."""
     def brief(card: dict) -> str:
-        facts = "; ".join(str(f) for f in (card.get("what_happened") or [])[:2])
+        facts = "; ".join(str(f.get("text") if isinstance(f, dict) else f) for f in (card.get("what_happened") or [])[:2])
         insights = "; ".join(str(i.get("text", i)) for i in (card.get("why_it_matters") or [])[:2])
         return f"  headline: {card.get('headline', '')}\n  facts: {facts}\n  why: {insights}"[:900]
     parts = []
@@ -205,7 +206,7 @@ class PromptEngine:
     def pass2(
         self, filing: Filing, event_type: str, industry: str | None, memory: dict | None, text: str,
         peers: list[dict] | None = None, examples: dict[str, list[dict]] | None = None,
-        lessons: list[str] | None = None, reaction: str | None = None,
+        lessons: list[str] | None = None, reaction: str | None = None, scale: str | None = None,
     ) -> tuple[str, str]:
         sector = self.sector_for(industry)
         system = self._pass2.safe_substitute(
@@ -230,6 +231,7 @@ class PromptEngine:
             subcategory=filing.subcategory or "-",
             headline=filing.headline,
             memory=json.dumps(memory, ensure_ascii=False, separators=(",", ":")) if memory else "No prior memory.",
+            scale=scale or "Not known for this company yet: give no proportions of revenue, market cap or net worth.",
             peers="\n".join(
                 f"- {p['filed_at'][:10]} {p['company_name']}: {p['headline']}" for p in peers or []
             ) or "None.",

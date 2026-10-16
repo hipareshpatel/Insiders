@@ -140,7 +140,8 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
     vetoes: list[str] = []
     pillars = {"magnitude": 0, "margin": 0, "balance_sheet": 12, "credibility": 8, "disclosure": 0, "penalty": 0}
     kinds = {s["type"] for s in signals}
-    texts = " ".join([card.get("headline", ""), *card.get("what_happened", [])]).lower()
+    facts = [f.get("text", "") if isinstance(f, dict) else str(f) for f in card.get("what_happened") or []]
+    texts = " ".join([card.get("headline", ""), *facts]).lower()
 
     # --- Pillar 1 / Gate 1: economic magnitude relative to the company's scale
     deal = card.get("deal_value") or {}

@@ -559,3 +559,67 @@ def _reversal(entries: list[dict], current: dict) -> str | None:
     if len(signs) == 1 and (current["yoy_pct"] > 0) not in signs:
         return f"Breaks a run of {len(last)} periods of YoY {'growth' if True in signs else 'decline'}."
     return None
+
+
+_ORDER_BOOK = ("order_book", "order_book_outstanding", "unexecuted_order_book")
+
+
+def scale_block(dossier: dict | None, company: dict | None, text: str, unit: int | None = None, top: int = 4) -> str:
+    """The proportions for the Pass 2 prompt, computed in code (owner's note, 2026-10-16: the model must
+    not work out shares of revenue or market cap; the audit found "41% of FY25 revenue" where it was 7.3%
+    and "3.6x FY25 revenue" where the filing said 84% of turnover).
+
+    Gives the company's denominators and, for each large ₹ crore amount written in the filing, its share
+    of them. `unit` is the filing's declared unit (grounding.declared_unit), so a lakh table's bare
+    figures are not read as crore."""
+    from .grounding import UNIT_NAMES, _crore_positions, _tokens  # local: grounding imports nothing from here
+    from .scoring import ttm_revenue
+
+    company = company or {}
+    lines: list[str] = []
+    denominators: list[tuple[str, float]] = []
+    market_cap = company.get("market_cap_cr")
+    if market_cap:
+        denominators.append(("market cap", float(market_cap)))
+        lines.append(f"- market cap {_cr(float(market_cap))}" + (f" ({company['price_date']})" if company.get("price_date") else ""))
+    ttm = ttm_revenue(dossier)
+    if ttm:
+        denominators.append(("revenue", ttm[0]))
+        lines.append(f"- revenue {_cr(ttm[0])} ({ttm[1]})")
+    quarter = _latest_revenue(dossier, "Q")
+    if quarter:
+        lines.append(f"- latest quarter revenue {_cr(quarter[1])} ({quarter[0]})")
+    net_worth = _latest_net_worth(dossier or {})
+    if net_worth:
+        denominators.append(("net worth", net_worth))
+        lines.append(f"- net worth {_cr(net_worth)}")
+    for snap in reversed((dossier or {}).get("balance_sheet", [])):
+        if snap.get("net_debt_cr") is not None or snap.get("gross_debt_cr") is not None:
+            debt = snap.get("net_debt_cr")
+            if debt is not None and debt < 0:
+                lines.append(f"- net cash {_cr(-debt)} ({snap.get('period', 'latest')})")
+            else:
+                lines.append(f"- {'net' if debt is not None else 'gross'} debt "
+                             f"{_cr(debt if debt is not None else snap['gross_debt_cr'])} ({snap.get('period', 'latest')})")
+            break
+    book = [m for m in (dossier or {}).get("financial_metrics", []) if m.get("metric") in _ORDER_BOOK and m.get("value")]
+    if book:
+        latest = max(book, key=lambda m: due_date(m["period"]) or date.min)
+        denominators.append(("order book", float(latest["value"])))
+        lines.append(f"- order book {_cr(float(latest['value']))} ({latest['period']})")
+    if not lines:
+        return "Not known for this company yet: give no proportions of revenue, market cap or net worth."
+
+    # ₹ crore amounts the filing itself writes, largest first, with their share of each denominator
+    crore_at = _crore_positions(text or "")
+    amounts = sorted({round(value, 2) for value, _, pos, kind, _ in _tokens(text or "")
+                      if pos in crore_at and kind in ("plain", "qty") and value >= 1}, reverse=True)[:top]
+    if amounts and denominators:
+        lines.append("Amounts written in this filing, in proportion:")
+        for amount in amounts:
+            shares = ", ".join(f"{amount / base * 100:.1f}% of {name}" for name, base in denominators if base > 0)
+            lines.append(f"- {_cr(amount)} = {shares}")
+    elif unit:
+        lines.append(f"The statement is in {UNIT_NAMES.get(unit, 'a stated unit')}: divide by "
+                     f"{unit:,} for ₹ crore before comparing anything.")
+    return "\n".join(lines)

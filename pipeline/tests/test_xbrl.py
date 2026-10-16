@@ -215,3 +215,14 @@ def test_results_card_key_numbers_come_from_xbrl_and_yoy_qoq_mixups_are_flagged(
     assert keys["Revenue"] == ("₹951.96 Cr", f"{rev.yoy_pct:+.1f}% YoY")
     assert keys["EBITDA"][0] == "₹84.36 Cr" and keys["EBITDA margin"] == ("7.0%", None) and len(changed) == 2
     assert period_mixups(out, tagged) == [f"\"{abs(rev.qoq_pct):.1f}% YoY\" is a quarter-on-quarter change, not year-on-year"]
+
+
+def test_promoter_locked_in_shares_are_not_the_promoter_holding():
+    """CSB Bank's shareholding XBRL (from NSE): the promoter group's locked-in shares are 80.45% of its own
+    holding, while the promoter held 49.72% of the company. The old rule took the larger of every promoter
+    percentage; the seed's cross-check against NSE's own list caught it on six quarters."""
+    result = xbrl.parse((FIXTURES / "nse_shp_csbbank_q1fy24.xml").read_bytes())
+    assert result.kind == "SHAREHOLDING"
+    own = result.ownership
+    assert own.promoter_pct == 49.72 and own.pledge_pct == 0.0
+    assert own.fii_pct == 5.9 and own.dii_pct == 12.25 and own.retail_holders == 54796

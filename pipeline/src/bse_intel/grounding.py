@@ -283,7 +283,8 @@ def check_claims(card: Card, *sources: str) -> list[str]:
     # A repeat counts only when the filing itself describes one (sources[0]); a past order in memory
     # does not undo a filing that calls this one the first of its kind.
     is_repeat = bool(_REPEAT.search(sources[0] if sources else ""))
-    texts = [t.replace("**", "") for t in (card.headline, card.takeaway, *card.what_happened, *(i.text for i in card.why_it_matters))]
+    texts = [t.replace("**", "") for t in (card.headline, card.takeaway, *(f.text for f in card.what_happened),
+                                            *(i.text for i in card.why_it_matters))]
     unsupported: list[str] = []
     for text in texts:
         for m in _FIRST_CLAIM.finditer(text):
@@ -317,7 +318,7 @@ def check_card(card: Card, *sources: str) -> GroundingResult:
     filing_index = SourceIndex(sources[0] if sources else "")
     other_index = SourceIndex(*sources[1:])
     filing_scales, other_scales = ((unit,), (1,)) if unit else (CRORE_SCALES, CRORE_SCALES)
-    texts = [("headline", card.headline), ("takeaway", card.takeaway), *(("fact", f) for f in card.what_happened),
+    texts = [("headline", card.headline), ("takeaway", card.takeaway), *(("fact", f.text) for f in card.what_happened),
              *(("insight", i.text) for i in card.why_it_matters)]
     if card.deal_value and card.deal_value.amount_cr:
         texts.append(("deal", f"{card.deal_value.amount_cr:g} Cr"))

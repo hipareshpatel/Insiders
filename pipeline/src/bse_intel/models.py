@@ -479,13 +479,32 @@ _GENERIC_HEADLINE = re.compile(
 )
 
 
+def _facts(value):
+    """A fact is {text, quote}. A bare string (an older stored card, or a model that ignored the shape)
+    becomes a fact with no quote, which the checks then hold."""
+    out = []
+    for item in _to_list(value):
+        if isinstance(item, str) and item.strip():
+            out.append({"text": item, "quote": None})
+        elif isinstance(item, dict) and str(item.get("text") or "").strip():
+            out.append({"text": str(item["text"]), "quote": item.get("quote")})
+    return out
+
+
+class Fact(_Lenient):
+    """One line of what happened, with the sentence from the filing that says it."""
+
+    text: str
+    quote: OptStr = None   # verbatim from the filing; code checks it is really there
+
+
 class Card(_Lenient):
     impact_level: ImpactLevel
     tone: Tone = "NEUTRAL"      # for the company's fundamentals, not a price call
     headline: str
     takeaway: Annotated[str, BeforeValidator(lambda v: v or "")] = ""   # one line shown in the collapsed feed row
     core_catalyst: OptStr = None   # one line: the economic driver behind the news (blueprint "📌 Core catalyst")
-    what_happened: StrList = Field(min_length=1)
+    what_happened: Annotated[list[Fact], BeforeValidator(_facts)] = Field(min_length=1)
     why_it_matters: Annotated[list[Insight], BeforeValidator(_insights)] = Field(default_factory=list)
     missing_disclosures: StrList = Field(default_factory=list)
     key_numbers: Annotated[list[KeyNumber], _drop_invalid(KeyNumber)] = Field(default_factory=list)

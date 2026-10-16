@@ -208,7 +208,8 @@ def test_lenient_model_parsing():
                                               {"event_type": "record date", "date": "2026-11-05"}]},
     })
     assert out.event_type == "M_AND_A" and out.card.impact_level == "HIGH"
-    assert out.card.what_happened == ["Acquisition of 100% stake", "Consideration in cash"]
+    assert [f.text for f in out.card.what_happened] == ["Acquisition of 100% stake", "Consideration in cash"]
+    assert [f.quote for f in out.card.what_happened] == [None, None]  # a bare string still parses: the checks hold it
     assert out.card.why_it_matters[0].basis == "FILING"
     assert out.card.notable_changes[0].direction == "NEGATIVE" and len(out.card.notable_changes) == 1
     assert [m.value for m in out.dossier_delta.financial_metrics] == [-12.5]

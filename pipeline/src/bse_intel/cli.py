@@ -171,6 +171,50 @@ def cmd_sync_companies(args, settings, sink) -> int:
     return 0
 
 
+def cmd_seed_memory(args, settings, sink) -> int:
+    """Financial and ownership history from XBRL, with no AI call (see seed.py). Results come from BSE's
+    results archive, shareholding from NSE for the companies listed there."""
+    from .bse import BseClient
+    from .nse import NseClient, SourceBlockedError
+    from .seed import SeedStats, seed_results, seed_shareholding
+
+    log = logging.getLogger("bse_intel.seed")
+    scrips = [s.strip() for s in args.scrips.split(",") if s.strip()]
+    stats = SeedStats()
+    cache_root = settings.text_cache_dir
+    with BseClient() as bse, NseClient() as nse:
+        bse.warm_up()
+        for scrip in scrips:
+            company = sink.company(scrip) or {}
+            name = company.get("company_name") or scrip
+            symbol = (company.get("symbol") or "").strip()
+            stats.companies += 1
+            if not args.shareholding_only:
+                try:
+                    seed_results(sink, bse, scrip, name, args.since, cache_root, stats, company)
+                except Exception as exc:  # one company's archive must not end the run
+                    stats.failures.append(f"{scrip} results: {type(exc).__name__}: {exc}"[:200])
+                    log.warning("seed %s results failed: %s", scrip, exc)
+            if not args.results_only and symbol:
+                try:
+                    seed_shareholding(sink, nse, scrip, symbol, name, args.since, cache_root, stats, company)
+                except SourceBlockedError as exc:
+                    stats.failures.append(f"{scrip} shareholding: {exc}"[:200])
+                    log.error("NSE refused the session; stopping the shareholding seed: %s", exc)
+                    break  # NSE limits by IP: stop, do not press on
+                except Exception as exc:
+                    stats.failures.append(f"{scrip} shareholding: {type(exc).__name__}: {exc}"[:200])
+                    log.warning("seed %s shareholding failed: %s", scrip, exc)
+            elif not args.results_only:
+                stats.failures.append(f"{scrip}: no NSE symbol stored")
+            log.info("seed: %s", stats.line())
+    print(json.dumps({"companies": stats.companies, "results_files": stats.results_files,
+                      "results_periods": stats.results_periods, "shareholding_files": stats.shareholding_files,
+                      "shareholding_periods": stats.shareholding_periods, "skipped": stats.skipped,
+                      "failures": stats.failures[:20]}, ensure_ascii=False))
+    return 0
+
+
 def cmd_price_history(args, settings, sink) -> int:
     from datetime import date, timedelta
 
@@ -363,6 +407,13 @@ def main(argv: list[str] | None = None) -> int:
                    help="most industry lookups this run (one BSE request each, for companies without one)")
     p.add_argument("--refresh-industry", action="store_true", help="look up every company's industry again")
     p.set_defaults(func=cmd_sync_companies)
+
+    p = sub.add_parser("seed-memory", help="financial and ownership history from XBRL, no AI (results: BSE archive; shareholding: NSE)")
+    p.add_argument("--scrips", required=True, help="comma-separated BSE scrip codes")
+    p.add_argument("--since", default="2023-01-01", help="ignore quarters filed before this date")
+    p.add_argument("--results-only", action="store_true")
+    p.add_argument("--shareholding-only", action="store_true")
+    p.set_defaults(func=cmd_seed_memory)
 
     p = sub.add_parser("backup", help="export dossiers as JSON files")
     p.add_argument("--out", required=True)

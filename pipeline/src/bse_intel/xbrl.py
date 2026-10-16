@@ -306,7 +306,11 @@ def _shareholding(facts, contexts) -> XbrlResult | None:
         lowered = name.lower()
         if "percentage" in lowered and "pledged" in lowered and "promoter" in members:
             pct["pledge"].append(value)
-        elif "percentage" in lowered and ("totalnumberofshares" in lowered or "shareholding" in lowered):
+        elif ("percentage" in lowered and ("totalnumberofshares" in lowered or "shareholding" in lowered)
+              # A percentage of the holder's own stake, not of the company: CSB Bank's promoter locked-in
+              # shares were 80.45% of its holding while the promoter held 49.72% (NSE's own list disagreed,
+              # and the seed's cross-check refused to store either figure).
+              and not any(w in lowered for w in ("lockedin", "encumber", "assumingfullconversion", "underlyingoutstanding"))):
             if "promoter" in members and "nonpromoter" not in members and "public" not in members:
                 pct["promoter"].append(value)
             elif "foreignportfolio" in members or "foreigninstitution" in members or "institutionsforeign" in members:

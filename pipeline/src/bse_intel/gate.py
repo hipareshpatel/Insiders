@@ -74,6 +74,52 @@ def deal_is_company_figure(amount_cr: float | None, dossier: dict | None, tolera
     return None
 
 
+# --- a claim must be the filing's own words -------------------------------------------------------------------------
+
+_SOFT = {"‘": "'", "’": "'", "“": '"', "”": '"', "–": "-", "—": "-", " ": " "}
+
+
+def _flat(text: str) -> str:
+    """Lower case, straight quotes and dashes, one space between words: a PDF's line breaks and double
+    spaces must not decide whether a quote is in the filing."""
+    for bad, good in _SOFT.items():
+        text = text.replace(bad, good)
+    return " ".join(text.lower().split())
+
+
+def quote_found(quote: str | None, text: str) -> bool:
+    """The quote appears in the filing, ignoring case, spacing and smart punctuation. A quote joined
+    with "..." must have every part present, in order."""
+    if not quote or not text:
+        return False
+    haystack = _flat(text)
+    at = 0
+    for part in (p for p in re.split(r"\.\.\.|…", quote) if p.strip()):
+        found = haystack.find(_flat(part), at)
+        if found == -1:
+            return False
+        at = found + 1
+    return True
+
+
+_CLAIM_NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
+
+def numbers_in_quote(claim: str, quote: str) -> list[str]:
+    """Numbers written in the claim that its own quote does not carry (4.5 never matches 45), so a fact
+    cannot borrow a figure from elsewhere in the filing. A figure that is a rounding of the quote's own
+    ("95" of "951.96") is allowed."""
+    if not quote:
+        return []
+    digits = {m.group(0).replace(",", "") for m in _CLAIM_NUMBER.finditer(_flat(quote))}
+    missing = []
+    for m in _CLAIM_NUMBER.finditer(_flat(claim)):
+        value = m.group(0).replace(",", "")
+        if value not in digits and not any(d.startswith(value) or value.startswith(d) for d in digits):
+            missing.append(m.group(0))
+    return missing
+
+
 # --- a deal size taken from the wrong clause --------------------------------------------------------------------------
 
 # Novartis India's SPA (Feb 2026) gave ₹660.09 Cr only as the instruments the seller subscribes to at Closing, set off

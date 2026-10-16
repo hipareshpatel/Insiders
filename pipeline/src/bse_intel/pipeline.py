@@ -39,7 +39,8 @@ from .dossier import (add_timeline_entry, dossier_as_of, latest_fundamentals, me
                       results_snapshot, similar_timeline_entry, view_as_of)
 from .extract import Document
 from . import gate
-from .grounding import DEFAULT_THRESHOLD, check_card, check_claims, margin_issues, scale_issues, unit_slips
+from .grounding import (DEFAULT_THRESHOLD, check_card, check_claims, declared_unit, margin_issues, scale_issues,
+                        unit_slips)
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
                       quarter_index, statement_quarter, statement_year)
@@ -50,7 +51,7 @@ from .rules import RuleBook
 from .settings import Settings
 from .forensics import text_signals
 from .scoring import score as score_card
-from .signals import compute as compute_signals
+from .signals import compute as compute_signals, scale_block
 from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected
@@ -139,6 +140,7 @@ class CardChecks:
     headline_ungrounded: list[str] = field(default_factory=list)
     amounts_ungrounded: list[str] = field(default_factory=list)
     scale: list[str] = field(default_factory=list)  # figures out of scale or not fitting their margin
+    quotes: list[str] = field(default_factory=list)  # facts whose quote is not the filing's own words
     held: list[str] = field(default_factory=list)   # reasons a second model cannot fix: garbled scan, human hold
 
     @property
@@ -150,7 +152,7 @@ class CardChecks:
     @property
     def fixable(self) -> bool:
         return (self.score < DEFAULT_THRESHOLD or self.quant.mismatches > 0 or bool(self.claims)
-                or bool(self.headline_ungrounded) or bool(self.scale))
+                or bool(self.headline_ungrounded) or bool(self.scale) or bool(self.quotes))
 
     @property
     def wants_second_opinion(self) -> bool:
@@ -161,7 +163,7 @@ class CardChecks:
 
     @property
     def issue_count(self) -> int:
-        return len(self.ungrounded) + self.quant.mismatches + len(self.claims) + len(self.scale)
+        return len(self.ungrounded) + self.quant.mismatches + len(self.claims) + len(self.scale) + len(self.quotes)
 
     def problems(self) -> list[str]:
         out = []
@@ -172,6 +174,7 @@ class CardChecks:
         out += [f"Quantified impact \"{q['label']}\": {q.get('check_note')}" for q in self.quant.items if q.get("check") == "MISMATCH"]
         out += [f"Claim not supported by the sources: \"{c}\"" for c in self.claims]
         out += [f"Figures that do not fit (check the statement's unit and column): {s}" for s in self.scale]
+        out += [f"Give each fact the filing's own sentence as its quote: {q}" for q in self.quotes]
         out += list(self.held)
         return out
 
@@ -218,7 +221,8 @@ def relabel_periods(out: Pass2Output, quarter: str | None, year: str | None) -> 
     card.headline = fix(card.headline)
     card.takeaway = fix(card.takeaway) or ""
     card.core_catalyst = fix(card.core_catalyst)
-    card.what_happened = [fix(t) for t in card.what_happened]
+    for fact in card.what_happened:
+        fact.text = fix(fact.text) or fact.text
     for insight in card.why_it_matters:
         insight.text = fix(insight.text)
     for key in card.key_numbers:
@@ -234,7 +238,7 @@ def relabel_periods(out: Pass2Output, quarter: str | None, year: str | None) -> 
 
 def _card_texts(out: Pass2Output) -> list[str]:
     card = out.card
-    texts = [card.headline, card.takeaway, card.core_catalyst, *card.what_happened, *(i.text for i in card.why_it_matters),
+    texts = [card.headline, card.takeaway, card.core_catalyst, *(f.text for f in card.what_happened), *(i.text for i in card.why_it_matters),
              *(f"{k.value} {k.change or ''}" for k in card.key_numbers),
              *(f"{c.previous or ''} ; {c.current or ''}" for c in card.notable_changes), out.timeline_entry]
     return [t for t in texts if t]
@@ -259,7 +263,8 @@ def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...]) -> dict[str, str]
 
     card = out.card
     card.headline, card.takeaway, card.core_catalyst = fix(card.headline), fix(card.takeaway) or "", fix(card.core_catalyst)
-    card.what_happened = [fix(t) for t in card.what_happened]
+    for fact in card.what_happened:
+        fact.text = fix(fact.text) or fact.text
     for insight in card.why_it_matters:
         insight.text = fix(insight.text)
     for key in card.key_numbers:
@@ -405,6 +410,38 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
     if event_type == "ORDER_WIN" and _TAX_OR_PENALTY.search(head) and not _REAL_ORDER.search(head):
         return "LITIGATION_REGULATORY"
     return event_type
+
+
+def check_quotes(out: Pass2Output, text: str) -> tuple[list[str], list[str]]:
+    """Every what_happened fact must carry the filing's own sentence. A fact whose quote is not in the
+    filing is dropped and the card goes for a second opinion (the model proposes, code rejects). A fact
+    with no quote at all is only reported: until every model fills the field, holding those cards would
+    send all of them to a second provider for nothing. Returns (problems, missing)."""
+    card = out.card
+    if card is None or not text:
+        return [], []
+    problems, missing_quote, dropped, kept = [], [], [], []
+    for fact in card.what_happened:
+        label = fact.text.replace("**", "")[:60]
+        if not fact.quote:
+            missing_quote.append(label)
+            kept.append(fact)
+            continue
+        if not gate.quote_found(fact.quote, text):
+            dropped.append(f'"{label}" (its quote is not in the filing)')
+            continue
+        missing = gate.numbers_in_quote(fact.text.replace("**", ""), fact.quote)
+        if missing:
+            problems.append(f'"{label}" states {", ".join(missing[:4])}, which its own quote does not')
+        kept.append(fact)
+    if kept:
+        card.what_happened = kept
+    elif dropped:  # a card needs one fact: keep them all, marked, rather than publishing nothing
+        problems.append("no fact carries a quote found in the filing")
+        dropped = []
+    if dropped:
+        log.info("facts dropped for %s: %s", out.event_type, dropped)
+    return problems + [f"dropped: {d}" for d in dropped], missing_quote
 
 
 def gate_issues(out: Pass2Output, card, sources: tuple[str, ...] = ()) -> list[str]:
@@ -1142,7 +1179,9 @@ class Pipeline:
         peers = self._peers(sector, event_type, filing)
         learned = self._learning()
         reaction = learned["queue"].get(filing.news_id)
-        system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers,
+        # The proportions the model may use, computed here from memory as it stood before this filing.
+        scale = scale_block(dossier_as_of(dossier, filing.filed_at, inclusive=False), company, text, declared_unit(text))
+        system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers, scale=scale,
                                           examples=self._owner_examples(sector, event_type),
                                           lessons=[x["lesson"] for x in learned["lessons"].get(f"{sector}|{event_type}", [])][-3:],
                                           reaction=reaction)
@@ -1175,6 +1214,8 @@ class Pipeline:
             change_fixes += xbrl_key_numbers(out, tagged)
         checks = check_card_all(out, view, sources, history)
         checks.scale += period_mixups(out, tagged)
+        quote_problems, quotes_missing = check_quotes(out, text)
+        checks.quotes += quote_problems
         review = None
         if checks.wants_second_opinion and self.settings.second_opinion:
             out, result, checks, review = self._second_opinion(route, system, user, out, result, checks, view, sources, history)
@@ -1222,7 +1263,8 @@ class Pipeline:
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims,
-                          "unit_fixes": unit_fixes or None, "change_fixes": change_fixes or None, "out_of_fit": checks.scale or None},
+                          "unit_fixes": unit_fixes or None, "change_fixes": change_fixes or None,
+                          "quotes_missing": quotes_missing or None, "out_of_fit": checks.scale or None},
             "review": review,
             "model": result.model_label,
         }

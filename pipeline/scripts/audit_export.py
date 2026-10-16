@@ -3,12 +3,16 @@
 Usage:
   npx wrangler d1 execute bse-index --local --persist-to ../data/wrangler --json --command \
     "SELECT c.news_id, c.scrip_code, f.headline headline_filing, f.subject, c.card_json FROM cards c JOIN filings f USING(news_id) ..." > cards.json
-  python scripts/audit_export.py cards.json OUT_DIR [--per-reviewer 10] [--skip audited_ids.txt]
+  python scripts/audit_export.py cards.json OUT_DIR [--per-reviewer 10] [--limit 100] [--skip audited_ids.txt]
+
+The query must select scrip_code and filed_at too: the round is spread across companies (at least MIN_COMPANIES of
+them, newest cards first) instead of taking whichever cards come first.
 
 Writes OUT_DIR/reviewer_NN/<news_id>.card.json and <news_id>.pdf.txt (the same cached text the pipeline read, not a
 re-download). Reviewers write findings.json beside them; scripts/audit_tally.py summarises. Run with `python -I -X utf8`.
 """
 import argparse
+import collections
 import gzip
 import json
 import pathlib
@@ -19,9 +23,26 @@ sys.path.insert(0, str(SRC))
 from bse_intel.extract import Document  # noqa: E402
 from bse_intel.settings import get_settings  # noqa: E402
 
+MIN_COMPANIES = 10   # the owner's rule (2026-10-16): a round covers at least ten different companies
+
 KEEP = ("headline", "takeaway", "core_catalyst", "what_happened", "why_it_matters", "key_numbers", "notable_changes",
         "deal_value", "quantified_impact", "track_next", "signals", "timeline_entry", "event_type", "impact_level",
         "missing_disclosures", "grounding", "review", "xbrl", "model")
+
+
+def spread(rows: list[dict]) -> list[dict]:
+    """The cards in company order, one company at a time round and round, so a round covers every company
+    instead of the first few (the owner's rule: at least MIN_COMPANIES companies a round). Within a company
+    the newest cards come first, because they were written by the newest code."""
+    by_company: dict[str, list[dict]] = {}
+    for row in sorted(rows, key=lambda r: str(r.get("filed_at") or ""), reverse=True):
+        by_company.setdefault(str(row.get("scrip_code")), []).append(row)
+    out = []
+    while any(by_company.values()):
+        for queue in by_company.values():
+            if queue:
+                out.append(queue.pop(0))
+    return out
 
 
 def main() -> int:
@@ -29,11 +50,19 @@ def main() -> int:
     ap.add_argument("cards_json")
     ap.add_argument("out_dir")
     ap.add_argument("--per-reviewer", type=int, default=10)
+    ap.add_argument("--limit", type=int, default=100, help="cards in this round (0 for all)")
+    ap.add_argument("--min-companies", type=int, default=MIN_COMPANIES)
     ap.add_argument("--skip", help="file with news_ids already audited, one per line")
     args = ap.parse_args()
     rows = json.load(open(args.cards_json, encoding="utf-8"))[0]["results"]
     skip = set(pathlib.Path(args.skip).read_text().split()) if args.skip else set()
     rows = [r for r in rows if r["news_id"] not in skip]
+    rows = spread(rows)[:args.limit or None]
+    companies = {str(r.get("scrip_code")) for r in rows}
+    if len(companies) < args.min_companies:
+        print(f"refusing: {len(rows)} cards cover {len(companies)} companies, fewer than {args.min_companies}. "
+              "Let the run write more cards, or lower --min-companies deliberately.")
+        return 1
     cache = get_settings().text_cache_dir
     out = pathlib.Path(args.out_dir)
     written = 0
@@ -49,7 +78,10 @@ def main() -> int:
                 if path.exists() else "(no cached text)")
         (folder / f"{row['news_id']}.pdf.txt").write_text(text, encoding="utf-8")
         written += 1
-    print(f"{written} cards in {len({i // args.per_reviewer for i in range(written)})} reviewer folders under {out}")
+    folders = len({i // args.per_reviewer for i in range(written)})
+    per_company = collections.Counter(str(r.get("scrip_code")) for r in rows)
+    print(f"{written} cards in {folders} reviewer folders under {out}")
+    print(f"{len(per_company)} companies: " + ", ".join(f"{k} {v}" for k, v in sorted(per_company.items())))
     return 0
 
 

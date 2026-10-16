@@ -6,11 +6,14 @@ in a batch by itself and about 60 with ten reviewers: "never audit alone").
 
 ## One round
 
-1. **Sample.** The next 100 cards not yet audited (all event types and sectors, results included). Skip audited ids
-   (`docs/audit/audited_ids.txt`).
+1. **Sample.** 100 cards not yet audited, spread across **at least ten different companies** (the owner's rule,
+   2026-10-16) and covering all event types, results included. `audit_export.py` takes the cards company by company,
+   newest first, and refuses a round that covers fewer than ten companies (`--min-companies`); skip audited ids with
+   `--skip docs/audit/audited_ids.txt`.
 2. **Export.** Query the cards from the local database and run `scripts/audit_export.py` (it writes the same cached
    filing text the pipeline read, so reviewers see what the model saw): about 10 cards per reviewer folder.
-3. **Review.** One independent reviewer per folder, with the prompt in `docs/audit/REVIEWER_PROMPT.md`. Each writes
+3. **Review.** One independent reviewer per folder (a folder holds cards from several companies, so no reviewer
+   sees one company only), with the prompt in `docs/audit/REVIEWER_PROMPT.md`. Each writes
    `findings.json`: per card OK, MINOR or WRONG, and each issue's field, what the card says, what the filing says
    and its class.
 4. **Tally.** `python -I -X utf8 scripts/audit_tally.py <dir> --save docs/audit/round-N.json`; add the round to the

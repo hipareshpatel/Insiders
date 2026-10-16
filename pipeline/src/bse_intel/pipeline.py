@@ -39,8 +39,8 @@ from .dossier import (add_timeline_entry, dossier_as_of, latest_fundamentals, me
                       results_snapshot, similar_timeline_entry, view_as_of)
 from .extract import Document
 from . import gate
-from .grounding import (DEFAULT_THRESHOLD, check_card, check_claims, declared_unit, margin_issues, scale_issues,
-                        unit_slips)
+from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, check_card, check_claims, declared_unit,
+                        margin_issues, scale_issues, unit_slips)
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
                       quarter_index, statement_quarter, statement_year)
@@ -413,13 +413,19 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
 
 
 def check_quotes(out: Pass2Output, text: str) -> tuple[list[str], list[str]]:
-    """Every what_happened fact must carry the filing's own sentence. A fact whose quote is not in the
-    filing is dropped and the card goes for a second opinion (the model proposes, code rejects). A fact
-    with no quote at all is only reported: until every model fills the field, holding those cards would
-    send all of them to a second provider for nothing. Returns (problems, missing)."""
+    """Every what_happened fact carries the filing's own sentence, checked in code.
+
+    A fact whose quote is not in the filing is dropped **only when its figures are not in the filing
+    either**: that is the invented claim the audit found most of ("EBITDA rose 31.8% to ₹287 Cr",
+    "will cease to be a subsidiary"). A fact built from a table, whose figures are all there but whose
+    quote is a composition rather than one row ("PAT ₹0.53 Cr, down 80% YoY and 98% QoQ"), is true and
+    is kept, reported for the second opinion to quote properly. A fact with no quote at all is only
+    reported: until every model fills the field, holding those cards would send all of them to a second
+    provider for nothing. Returns (problems, missing)."""
     card = out.card
     if card is None or not text:
         return [], []
+    index = SourceIndex(text)
     problems, missing_quote, dropped, kept = [], [], [], []
     for fact in card.what_happened:
         label = fact.text.replace("**", "")[:60]
@@ -428,7 +434,13 @@ def check_quotes(out: Pass2Output, text: str) -> tuple[list[str], list[str]]:
             kept.append(fact)
             continue
         if not gate.quote_found(fact.quote, text):
-            dropped.append(f'"{label}" (its quote is not in the filing)')
+            figures = [(v, d) for v, d, _, kind, _ in _tokens(fact.text.replace("**", ""))
+                       if kind in ("plain", "qty") and v > 31]
+            if figures and all(index.stated(v, d) for v, d in figures):
+                problems.append(f'"{label}" is in the filing but its quote is not the filing\'s own words')
+                kept.append(fact)
+            else:
+                dropped.append(f'"{label}" (neither its quote nor its figures are in the filing)')
             continue
         missing = gate.numbers_in_quote(fact.text.replace("**", ""), fact.quote)
         if missing:

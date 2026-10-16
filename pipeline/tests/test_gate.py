@@ -165,7 +165,7 @@ def test_a_fact_whose_quote_is_not_in_the_filing_is_dropped(settings):
     problems, missing = check_quotes(out, text)
     assert [f.text for f in out.card.what_happened] == ["Order worth **₹396.5 Cr** from Godrej Properties",
                                                         "Residential construction project"]
-    assert any("not in the filing" in p for p in problems) and missing == ["Residential construction project"]
+    assert any("neither its quote nor its figures" in p for p in problems) and missing == ["Residential construction project"]
 
 
 def test_a_card_whose_every_quote_fails_is_kept_and_marked(settings):
@@ -179,3 +179,23 @@ def test_a_card_whose_every_quote_fails_is_kept_and_marked(settings):
     problems, _ = check_quotes(out, "The filing says something else entirely.")
     assert len(out.card.what_happened) == 1  # never an empty card
     assert any("no fact carries a quote" in p for p in problems)
+
+
+def test_a_true_fact_composed_from_a_table_is_kept_not_dropped(settings):
+    """SML Isuzu's "Q3FY25 PAT ₹0.53 Cr, down 80% YoY and 98% QoQ" is right, but no single sentence says
+    it: the figures come from a results table. Dropping it would delete a true fact, so a fact whose
+    figures are all in the filing is kept and reported for the second opinion to quote properly."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import check_quotes
+
+    text = "Profit for the period 0.53 2.68 21.80 ... Revenue from operations 331.80 386.13 549.71"
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "results",
+        "card": {"impact_level": "MODERATE", "headline": "SML Isuzu Q3FY25 revenue falls to ₹331.8 Cr",
+                 "what_happened": [{"text": "Q3FY25 revenue ₹331.80 Cr against ₹386.13 Cr a year earlier",
+                                    "quote": "Revenue fell to Rs 331.80 crore from Rs 386.13 crore"},
+                                   {"text": "An invented ₹9,999 Cr provision", "quote": "no such sentence"}]}})
+    problems, _ = check_quotes(out, text)
+    assert [f.text for f in out.card.what_happened] == ["Q3FY25 revenue ₹331.80 Cr against ₹386.13 Cr a year earlier"]
+    assert any("is in the filing but its quote is not" in p for p in problems)      # kept, reported
+    assert any("neither its quote nor its figures" in p for p in problems)          # dropped

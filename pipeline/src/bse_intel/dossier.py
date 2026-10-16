@@ -50,7 +50,16 @@ def _bare_name(name: str) -> str:
 
 
 _GRANTED = re.compile(r"\b(?:approved|granted|received|obtained|cleared|accorded|sanctioned|passed|approval\s+(?:was|has\s+been)\s+(?:given|received))\b", re.I)
-_NOT_YET = re.compile(r"\b(?:pending|awaited|awaiting|yet\s+to|subject\s+to|sought|seeks?|seeking|to\s+be\s+(?:obtained|received)|applied|proposed)\b", re.I)
+# Words that mean the approval has not come through, even beside one that sounds as if it has. The last
+# group is the stages of an approval process that read as the approval itself: an in-principle approval
+# is not the final one (Shivam Autotech's listing approval was called "met" on NSE's in-principle
+# letter), and a public announcement or draft letter of offer only opens an open offer (Novartis India
+# had two approvals "met" on its public announcement alone). Audit round 1.
+_NOT_YET = re.compile(r"\b(?:pending|awaited|awaiting|yet\s+to|subject\s+to|sought|seeks?|seeking|"
+                      r"to\s+be\s+(?:obtained|received)|applied|proposed|conditional|"
+                      r"(?:up)?on\s+receipt|after\s+obtaining|in[-\s]principle|"
+                      r"public\s+announcement|detailed\s+public\s+statement|"
+                      r"draft\s+letter\s+of\s+offer)\b", re.I)
 
 
 _QUARTER_LABEL = re.compile(r"\bQ[1-4]\s*FY\s*'?\d{2,4}\b", re.I)

@@ -643,3 +643,29 @@ def test_an_open_offer_is_not_a_raise_against_the_target():
     # a real fundraise is unchanged: the company does receive the money
     raised = [s for s in compute(d, d, out("FUNDRAISE"), f, company) if s["type"] == "SCALE"]
     assert raised and "raise" in raised[0]["text"]
+
+
+def test_a_round_figure_grounds_against_an_unrelated_line_in_range():
+    """The weakness that let Kanoria's annual-report cards carry every 10x slip and still pass grounding.
+
+    A card figure is matched against every number in the document at every legitimate unit scale, with no
+    regard to where it sits, and a whole crore figure carries a +/-0.5 Cr tolerance, which becomes +/-5 at
+    the million scale. In a short filing that is harmless, because nothing unrelated is in range. In a
+    563,458-character annual report declared in million it is not: invented whole-crore figures were
+    accepted 40% of the time, against 8% at one decimal and 3% at two. So the check is weakest exactly
+    where cards state round numbers, which is most headline figures.
+
+    Pinned so a fix can be measured. The fix is to anchor a fact's figures to its own quote's
+    neighbourhood, which every fact now carries, instead of to the whole document.
+    """
+    from bse_intel.grounding import SourceIndex
+
+    # a short filing with its unit stated: the 10x misreading is correctly refused
+    index = SourceIndex("Finance costs for the year were 457.86 million against 430.20 million.")
+    assert index.stated_crore(45.79, 2)        # the right reading, in crore
+    assert not index.stated_crore(458.0, 0)    # 458 Cr would need 4,580 million, which is not there
+
+    # the hole: the figure is absent, but an unrelated line sits within tolerance at the same scale
+    unrelated = SourceIndex("Property, plant and equipment 4,583 million. Trade receivables 1,204 million.")
+    assert unrelated.stated_crore(458.0, 0), "documents today behaviour, not what it should be"
+    assert not unrelated.stated_crore(458.31, 2)   # two decimals do not slip through the same way

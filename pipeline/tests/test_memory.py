@@ -577,3 +577,22 @@ def test_pass1_is_shown_what_the_company_already_filed():
     assert "duplicate_of" in system
     _, empty = PromptEngine(get_settings()).pass1(f, "deck", [])
     assert "Nothing on file yet." in empty
+
+
+def test_a_stage_of_an_approval_is_not_the_approval():
+    """Audit round 1: three cards marked an approval "met" on a document from the middle of the process -
+    NSE's in-principle letter read as the final listing approval, and Novartis India's public announcement
+    read as both SEBI's clearance and a shareholder vote that does not exist. The words that name a stage
+    now count as not yet, even beside a word that sounds like consent."""
+    from bse_intel.dossier import approval_granted
+
+    assert not approval_granted("NSE granted in-principle approval for listing of 92.73 lakh shares")
+    assert not approval_granted("Public Announcement issued; SEBI SAST approval received")
+    assert not approval_granted("approval obtained via board resolution, subject to the approval of the Shareholders")
+    assert not approval_granted("Draft letter of offer filed; approval received in principle")
+    assert not approval_granted("approval expected upon receipt of the scheme")
+    # and consent that really was given still reads as given
+    assert approval_granted("Final listing and trading approval received from BSE and NSE")
+    assert approval_granted("CCI approved the transaction on 12 March 2025")
+    assert approval_granted("Shareholders passed the resolution with 99.8% in favour")
+    assert not approval_granted("")

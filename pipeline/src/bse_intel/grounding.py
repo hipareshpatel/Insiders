@@ -46,13 +46,18 @@ CRORE_SCALES = (1, 10, 100, 1e4, 1e7)
 # and a header line of its own whose currency sign the PDF text mangled. Novartis's statements read
 # "('l in million)", '"in million)', "c, in million)", "{f in million)", "(fin million)", "/fin million)".
 _DECLARED_UNIT = re.compile(
-    r"(?:₹|\brs\.?|\binr)\s*(?:in\s*)?(lakhs?|lacs?|crores?|millions?|thousands?|'000)(?![a-z])"
-    r"|\bin\s*(?:₹|rs\.?|inr)\s*(lakhs?|lacs?|crores?|millions?|thousands?|'000)(?![a-z])"
+    r"(?:₹|\brs\.?|\binr|\brupees?)\s*(?:in\s*)?(?:(lakhs?|lacs?|crores?|millions?|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
+    r"|\bin\s*(?:₹|rs\.?|inr|rupees?)\s*(?:(lakhs?|lacs?|crores?|millions?|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
+    # the rupee sign mangled and glued to the word, with no "in": "(XLakhs)", "( Ė Crores)". Not after a
+    # figure, where a unit belongs to that figure alone ("12,345.67 (lakhs)").
+    r"|(?<![\d.,]\s)(?<![\d.,])\([ \t]*[^\s()\w]?[A-Za-z']{0,2}[^\s()\w]?[ \t]*(lakhs?|lacs?|crores?|millions?)[ \t]*\)"
     r"|^[ \t]*[(\[{/\"'`]?[ \t]*[^\s()]{0,3}[ \t]*in[ \t]*(lakhs?|lacs?|crores?|millions?|thousands?)\.?[ \t]*\)"
     r"|mount[ \t]+(?:in|ln|1n|111)[ \t]+(lakhs?|lacs?|crores?|millions?|thousands?)[ \t]+of\b",
     re.I | re.M)  # Jubilant's rupee sign arrives as a Tibetan letter: "(ཪ in million)"; Heritage's
 # scanned headers as "(,\mount in millions of Z unless otherwise stated)" and "(Amount 111 millions oft"
-_PER_CRORE = {"lakh": 100, "lac": 100, "million": 10, "thousand": 10_000, "'000": 10_000, "crore": 1}
+# SML writes the currency out ("(Rupees in Crores, except share data)") and some filers write thousands
+# as "(Rs. 000)" without the apostrophe; neither was read, so those statements had no unit at all.
+_PER_CRORE = {"lakh": 100, "lac": 100, "million": 10, "thousand": 10_000, "'000": 10_000, "000": 10_000, "crore": 1}
 UNIT_NAMES = {100: "₹ lakh", 10: "₹ million", 10_000: "₹ thousand"}
 _CRORE_AFTER = re.compile(r"\s*(?:cr\b|crores?\b)", re.I)
 # The unit written right after a source figure ("INR 5445 Million", "Rs. 2,025 lakhs"), as figures

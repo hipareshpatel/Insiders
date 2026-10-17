@@ -713,3 +713,23 @@ def test_a_headline_number_answers_to_its_own_quote_not_the_whole_filing():
     none_given = card("₹45.79 Cr", None)
     problems, unquoted, _ = check_quoted_numbers(none_given, filing)
     assert problems == [] and unquoted == ["key number: Finance cost"]
+
+
+def test_a_unit_written_the_ways_indian_statements_write_it():
+    """Read on 929 cached filings, these were the declarations the pattern missed: the currency spelled
+    out (SML's "(Rupees in Crores, except share data)"), thousands as "(Rs. 000)", and a rupee sign the
+    PDF mangled and glued to the word ("(XLakhs)"). Five filings changed, each for the better - two
+    rating letters now read in million, as their tables say, and a BRSR that mixes lakh and crore no
+    longer claims to be all lakh."""
+    from bse_intel.grounding import declared_unit
+
+    assert declared_unit("(Rupees in Lakhs, except per share data)") == 100
+    assert declared_unit("(Rupees in Crores, except share data)") is None   # crore: nothing to convert
+    assert declared_unit("(Rs. 000)") == declared_unit("(₹ 000s)") == 10_000
+    assert declared_unit("Net Worth (XLakhs)") == 100
+    assert declared_unit("Turnover (in Rs. Lakhs) 3,792 ... Revenue from operations in Rupees Crores 38.1") is None, \
+        "two units declared: no single one applies"
+    # and what must still not read as a declaration
+    assert declared_unit("Revenue 12,345.67 (lakhs)") is None      # belongs to that one figure
+    assert declared_unit("Rs. 000,123 was paid") is None
+    assert declared_unit("purchase of 5 lakhs shares at Rs 10") is None

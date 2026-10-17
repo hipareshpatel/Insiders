@@ -16,6 +16,8 @@ from collections.abc import Callable, Iterable
 
 import pymupdf
 
+from .ocr import DPI as OCR_DPI
+
 log = logging.getLogger(__name__)
 
 SCANNED_PAGE_CHARS = 80  # blueprint §5.3: under 80 characters of text and an image means scanned
@@ -64,7 +66,7 @@ _MUPDF = threading.Lock()
 
 
 class Document:
-    def __init__(self, pdf_bytes: bytes | None, ocr: OcrFn | None = None, max_ocr_pages: int = 6, dpi: int = 150):
+    def __init__(self, pdf_bytes: bytes | None, ocr: OcrFn | None = None, max_ocr_pages: int = 6, dpi: int = OCR_DPI):
         self._ocr = ocr
         self._max_ocr = max_ocr_pages
         self._dpi = dpi

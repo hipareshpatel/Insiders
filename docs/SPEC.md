@@ -105,7 +105,7 @@ Per filing:
 | Rules | `DROP` noise, `CALENDAR` board-meeting intimations (date to the calendar), `FAST_TRACK` known events, else `PASS1`. Compound headlines that also carry results, an outcome or a board meeting are never dropped. | `rules.py`, `config/taxonomy.toml` |
 | Duplicate | BSE asks for one submission per applicable subcategory, so one event can arrive several times (one results PDF as "Financial Results" and as "Outcome of Board Meeting"). Once its text is extracted, a filing is marked DUPLICATE of an earlier filing by the same company from the last 3 days only when its body (whitespace and covering-letter lines removed) is exactly the same, or is near-identical (word 5-gram Jaccard ≥ 0.9) and holds exactly the same numbers. Same-template filings with new figures (a corrected statement, monthly updates, orders, ratings) are therefore never skipped; anything titled corrigendum, revised, corrected, amended or similar never is either. The duplicate stays in the ledger as "duplicate of <news_id> (exact/near match)": no AI call, no card, no memory change. | `duplicates.py`, `pipeline.py` (`_duplicate_of`) |
 | Pass 1 | Headline, BSE subject and page 1 return `{is_material, event_type, confidence, reason}`. | `config/prompts/pass1.md` |
-| Extract | PyMuPDF text; pages under 80 characters with an image are OCR'd (GLM-4.6V, then Mistral, then Gemini Flash-Lite). Boilerplate lines (addresses, salutations, signatures) are removed. Text is cached in `data/text_cache/` so re-analysis never downloads or OCRs again; a mostly scanned document whose OCR failed is retried, not judged from its headline. | `extract.py` |
+| Extract | PyMuPDF text in reading order; pages under 80 characters with an image, and pages in a broken font, are OCR'd at 200 dpi by RapidOCR on the CPU (`ocr.py`, the `[ocr]` extra; about 5 s a page, no quota), falling back to the vision route (GLM-4.6V, then Mistral, then Gemini Flash-Lite) when it is not installed or reads nothing. Boilerplate lines (addresses, salutations, signatures) are removed. Text is cached in `data/text_cache/` so re-analysis never downloads or OCRs again; a mostly scanned document whose OCR failed is retried, not judged from its headline. | `extract.py` |
 | Pass 2 | System = base + event module + sector lens + schema; user = filing + time-travel memory + peers + the owner's starred/noise examples + text. Prompts above ~12k tokens use the long-context route. | `prompts/engine.py`, `config/prompts/pass2*.md` |
 | Validate | Lenient on shape (nulls, numbers as strings, lakh/million scaled to crore, copied schema placeholders treated as missing), strict on meaning. When the filing declares one unit other than crore ("(INR in Lakhs)"), the prompt names it and ₹ crore figures must match the filing at that unit's scale. | `models.py`, `grounding.py` |
 | Check | Numbers, math and claims (§6); a failing card gets one second opinion from another provider, which may correct only the card. | `grounding.py`, `quant.py` |
@@ -402,6 +402,10 @@ The owner's ★ watchlist is on the site (owner mode).
 ---
 
 ## 12. Operations
+
+**GitHub-hosted runners (probed 2026-10-17, D27).** NSE, Yahoo and RapidOCR work there (`pipeline.yml`
+installs the `[ocr]` extra; about 16 s to install, 5 s a page); BSE answers every call with HTTP 403, so
+the BSE half needs an Indian connection for now. `runner-probe.yml` and `ocr-probe.yml` repeat the checks.
 
 **Where the pipeline runs.** Use a self-hosted GitHub Actions runner on an Indian home
 or office connection. Set the repository variable `PIPELINE_RUNNER_LABELS` to

@@ -7,8 +7,10 @@ Read before changing anything:
 - `docs/BLUEPRINT.md`: the spec (modules are numbered; "Module 35" means section 35).
 - `docs/PLAN.md`: the phases from smoke test to go-live, how it runs after, open decisions and the
   single "Pending work" list. Work from that list and tick items off there.
-- `docs/TRACKER.md`: decisions D1–D25, what is built and what is not.
+- `docs/TRACKER.md`: decisions D1–D28, what is built and what is not.
 - `docs/SPEC.md`: the design as built. `README.md`: setup and the CLI commands table.
+- `docs/DATA_QUALITY.md`: the cleaning stages and **the routine when data is wrong** (fix the class in
+  code with a test, re-run only the affected filings, never edit stored data by hand). Follow it.
 - `pipeline/config/providers.toml`: AI providers, models, free-tier limits and routes; `docs/SPEC.md` §4
   explains the gateway rules. Owner decisions D13–D15 cover providers, keys and this setup; D24–D25
   the one paid route and the weights each audit round measures.
@@ -48,7 +50,8 @@ Read before changing anything:
   `npx wrangler login`; the account's workers.dev subdomain is `reply-bd3`. Vite hot-reloads Worker
   code changes, so a pull rarely needs a restart. Avoid restarting it during a backfill: the
   pipeline's retries to the Worker last about 14 s and a remote-mode start takes about 12 s.
-- Pipeline: `cd pipeline; .venv\Scripts\activate`, then `python -m bse_intel <command>`. For long
+- Pipeline: `cd pipeline; .venv\Scripts\activate`, then `python -m bse_intel <command>`. Install once with
+  `pip install -e ".[dev,ocr,market]"`: without `ocr` (RapidOCR) scanned pages go to the vision route, 6 a document. For long
   runs use `pwsh -File pipeline\scripts\laptop.ps1 <command> [args]`: it loads and trims the keys,
   points the pipeline at the local site, sets 5 workers and logs to `data\logs\<command>-<time>.log`.
 - Smoke-test backfill: `python -m bse_intel backfill-companies --scrips 506525,532776,505192,500672,530019`.
@@ -87,11 +90,13 @@ Read before changing anything:
      on the line with its label, nil "-" kept. **Add the cloud vision route** (gateway.transcribe_image,
      free models - owner: no LOCAL vision model) on the same pages. If OCR wins on text too, the owner's
      option is OCR as the FIRST reader, not only the second.
-  2. **Wire RapidOCR into extract.py** at 200 dpi (rapidocr 3.10, onnxruntime, opencv-headless; rows
-     rebuilt from box positions with skew correction, `data/bench/scripts/paddle/rowbuild.py`). Turn a
-     sideways page upright first: if most boxes stand on end, try both 90-degree turns and keep the one whose
-     boxes lie flat (RapidOCR reads sideways text confidently and then builds the table's columns as rows).
-     Local OCR is free, so lift the 6-page OCR cap. Vision only where the readers disagree.
+  2. **RapidOCR is wired in** (other session, D26, `pipeline/src/bse_intel/ocr.py`: scanned and unreadable
+     pages on the CPU at 200 dpi, up to 20 pages a document, 6 on the vision route). Still to check there:
+     that a sideways page is turned upright first - RapidOCR reads sideways text confidently and then builds
+     the table's columns as rows (the rotated AOC-1 gave 17 transposed rows until the image was turned; fix
+     in `pipeline/scripts/bench_hard_ocr.py`: if most boxes stand on end, try both 90-degree turns and keep
+     the one whose boxes lie flat). Then decide, from step 1, whether OCR should also be the second reader
+     on digital figure-heavy pages, or even the first.
   3. Re-run the 20-filing loop (`scripts/rerun.py`, `process --news-ids`) and compare held cards and
      correctness with rounds 2a-2f (docs/audit/loop-2026-10-17.md).
   4. ANNUAL_REPORT event type, using NSE's annual-report XBRL (docs/SOURCES.md).

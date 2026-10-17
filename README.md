@@ -40,8 +40,8 @@ npm run dev                      # http://localhost:5173
 # 2. Pipeline, in another terminal
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
-pip install -e ".[dev]"
-python -m pytest -q              # 365 tests
+pip install -e ".[dev,ocr]"      # ocr: RapidOCR for scanned pages (optional)
+python -m pytest -q              # 372 tests
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \

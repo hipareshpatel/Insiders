@@ -179,6 +179,7 @@ class BseClient:
         self._last_download = 0.0
         self._download_lock = threading.Lock()
         self._warmed = False
+        self.raw = None  # a raw.RawStore: every JSON answer is saved as received, before it is parsed
 
     def close(self) -> None:
         self._client.close()
@@ -227,12 +228,16 @@ class BseClient:
                 continue
             resp.raise_for_status()
             try:
-                return resp.json()
+                data = resp.json()
             except ValueError:  # an HTML error page served with 200; treat like a server error
                 if attempt == 3:
                     raise
                 log.warning("BSE returned a non-JSON body, retrying")
                 time.sleep(2 ** (attempt + 1))
+                continue
+            if self.raw is not None:
+                self.raw.save(url, params, resp.status_code, resp.content)
+            return data
         raise RuntimeError("unreachable")
 
     def announcements(self, day_from: date, day_to: date | None = None, category: str = "-1",

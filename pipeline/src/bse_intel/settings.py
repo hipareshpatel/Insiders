@@ -65,6 +65,8 @@ class Settings:
     one_card_per_results_quarter: bool = field(default_factory=lambda: _env("ONE_CARD_PER_RESULTS_QUARTER", "1") not in ("0", "false", "no"))
     # Pages OCR'd per document. 20 with RapidOCR, which runs on the CPU with no quota (about 5 s a page);
     # 6 when only the vision route can read them, since every page there is a free-tier request.
+    # The exact JSON answers of BSE and NSE, saved before parsing (raw.py, docs/DATA_QUALITY.md).
+    save_raw: bool = field(default_factory=lambda: _env("SAVE_RAW", "1") not in ("0", "false", "no"))
     max_ocr_pages: int = field(default_factory=lambda: _env_int("MAX_OCR_PAGES", 20 if _local_ocr() else 6))
     pass2_char_budget: int = field(default_factory=lambda: _env_int("PASS2_CHAR_BUDGET", 40_000))
     workers: int = field(default_factory=lambda: _env_int("PIPELINE_WORKERS", 3))

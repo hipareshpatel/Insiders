@@ -209,6 +209,7 @@ class NseClient:
         self._lock = threading.Lock()
         self._calls = 0
         self._warmed = False
+        self.raw = None  # a raw.RawStore: every JSON answer is saved as received, before it is parsed
 
     def close(self) -> None:
         self._client.close()
@@ -253,6 +254,8 @@ class NseClient:
                 last = httpx.HTTPStatusError(f"HTTP {response.status_code}", request=response.request, response=response)
                 continue
             response.raise_for_status()
+            if self.raw is not None and "json" in response.headers.get("content-type", ""):
+                self.raw.save(url, params, response.status_code, response.content)
             return response
         raise RuntimeError(f"NSE request failed after {self._retries} attempts: {last}")
 

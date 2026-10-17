@@ -39,6 +39,7 @@ from .dossier import (add_timeline_entry, dossier_as_of, latest_fundamentals, me
                       results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import CACHE_VERSION, Document, cache_needs_ocr
 from .ocr import page_reader
+from . import raw
 from . import gate
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, check_card, check_claims, declared_unit,
                         margin_issues, scale_issues, unit_slips)
@@ -715,6 +716,7 @@ class Pipeline:
         self._buckets = settings.load_toml("market.toml")["size_buckets"]
         self.gateway = gateway
         self.bse = bse or BseClient()
+        raw.attach(self.bse, sink, "bse", settings)
         self.prompts = prompts or PromptEngine(settings)
         self.rules = rules or RuleBook.from_config(settings.load_toml("taxonomy.toml"))
         self.stats = Stats()

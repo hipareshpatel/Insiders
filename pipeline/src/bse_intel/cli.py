@@ -10,6 +10,7 @@ import time
 from datetime import date
 from pathlib import Path
 
+from . import raw
 from .settings import get_settings
 from .sinks import make_sink
 from .timeutil import now_iso, utc_day
@@ -141,6 +142,7 @@ def cmd_sync_companies(args, settings, sink) -> int:
     written = looked_up = failures = 0
     now = now_iso()
     with BseClient() as client:
+        raw.attach(client, sink, "bse", settings)
         rows = fetch_scrip_list(client)
         for at in range(0, len(rows), SYNC_COMPANIES_BATCH):
             batch = rows[at:at + SYNC_COMPANIES_BATCH]
@@ -188,6 +190,8 @@ def cmd_seed_memory(args, settings, sink) -> int:
     stats = SeedStats()
     cache_root = settings.text_cache_dir
     with BseClient() as bse, NseClient() as nse:
+        raw.attach(bse, sink, "bse", settings)
+        raw.attach(nse, sink, "nse", settings)
         bse.warm_up()
         for scrip in scrips:
             company = sink.company(scrip) or {}

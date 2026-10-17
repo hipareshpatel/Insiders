@@ -417,3 +417,48 @@ def test_page_text_comes_back_in_reading_order():
     assert unit < revenue < finance, "the unit header leads, then the rows in page order"
     line = next(l for l in text.split("\n") if "457.86" in l)
     assert "Finance Costs" in line and "430.17" in line, "a row keeps its label and both columns"
+
+
+def test_every_announcement_page_is_saved_as_received_and_reads_back_to_the_same_filings(settings):
+    """docs/DATA_QUALITY.md: a parsing fix is re-run over what BSE sent, not over a new request."""
+    import json
+    from dataclasses import replace
+
+    from bse_intel import raw
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    rows = [dict(ROW, NEWSID=f"id-{i}") for i in range(3)]
+    client = BseClient(page_delay=0, transport=_transport([rows[:2], rows[2:]], 3, []))
+    raw.attach(client, sink, "bse", settings)
+    live = list(client.announcements(date(2026, 10, 13)))
+    list(BseClient(page_delay=0, transport=_transport([rows[:2], rows[2:]], 3, [])).announcements(date(2026, 10, 13)))
+
+    keys = sink.list_objects("raw/bse/AnnSubCategoryGetData/")
+    assert len(keys) == 2 and client.raw.saved == 2, "one file a page"
+    replayed = []
+    for key in keys:
+        meta, body = raw.decode(sink.get_object(key))
+        assert meta["status"] == 200 and meta["params"]["strPrevDate"] == "20261013"
+        replayed += [parse_row(r) for r in json.loads(body)["Table"]]
+    assert sorted(f.news_id for f in replayed) == sorted(f.news_id for f in live)
+
+    client.raw.save("https://api.bseindia.com/x", {"a": 1}, 200, b"{}")
+    client.raw.save("https://api.bseindia.com/x", {"a": 1}, 200, b"{}")
+    assert client.raw.saved == 3, "the same answer twice in a run is written once"
+
+    off = BseClient(page_delay=0, transport=_transport([rows], 3, []))
+    raw.attach(off, sink, "bse", replace(settings, save_raw=False))
+    assert off.raw is None
+
+
+def test_a_failed_raw_write_never_stops_the_fetch():
+    from bse_intel import raw
+
+    class Broken:
+        def put_object(self, *a, **k):
+            raise OSError("disk full")
+
+    store = raw.RawStore(Broken(), "bse")
+    store.save("https://api.bseindia.com/x", {}, 200, b"{}")
+    assert store.saved == 0

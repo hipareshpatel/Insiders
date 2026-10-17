@@ -7,8 +7,10 @@ Read before changing anything:
 - `docs/BLUEPRINT.md`: the spec (modules are numbered; "Module 35" means section 35).
 - `docs/PLAN.md`: the phases from smoke test to go-live, how it runs after, open decisions and the
   single "Pending work" list. Work from that list and tick items off there.
-- `docs/TRACKER.md`: decisions D1–D27, what is built and what is not.
+- `docs/TRACKER.md`: decisions D1–D28, what is built and what is not.
 - `docs/SPEC.md`: the design as built. `README.md`: setup and the CLI commands table.
+- `docs/DATA_QUALITY.md`: the cleaning stages and **the routine when data is wrong** (fix the class in
+  code with a test, re-run only the affected filings, never edit stored data by hand). Follow it.
 - `pipeline/config/providers.toml`: AI providers, models, free-tier limits and routes; `docs/SPEC.md` §4
   explains the gateway rules. Owner decisions D13–D15 cover providers, keys and this setup; D24–D25
   the one paid route and the weights each audit round measures.

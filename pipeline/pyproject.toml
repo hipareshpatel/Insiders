@@ -13,7 +13,7 @@ dependencies = [
 [project.optional-dependencies]
 market = ["yfinance>=0.2.40", "pandas>=2.2"]
 dev = ["pytest>=8", "respx>=0.21"]
-ocr = ["rapidocr_onnxruntime>=1.3"]
+ocr = ["rapidocr>=3.10,<4", "onnxruntime>=1.20"]  # the package and version measured on the extraction benchmark
 
 [project.scripts]
 bse-intel = "bse_intel.cli:main"

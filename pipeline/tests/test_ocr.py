@@ -97,7 +97,7 @@ def test_a_sideways_page_is_turned_until_its_text_lies_flat(monkeypatch):
     class Engine:
         def __call__(self, image):
             reads.append(image)
-            if isinstance(image, bytes):            # the page as rendered
+            if len(reads) == 1:                      # the page as rendered
                 return sideways, None
             return (flat, None) if len(reads) == 2 else (sideways, None)   # turned clockwise: lies flat
 
@@ -111,3 +111,21 @@ def test_a_sideways_page_is_turned_until_its_text_lies_flat(monkeypatch):
     reads.clear()
     monkeypatch.setattr(ocr, "_engine", lambda image: reads.append(image) or (flat, None))
     assert ocr.recognise(png).startswith("Subsidiary 0") and len(reads) == 1, "an upright page is read once"
+
+
+def test_a_half_lost_bracket_is_put_back_and_close_rows_stay_apart():
+    """The older OCR merged two close rows and interleaved their figures - "Employee Benefits Expense
+    Finance Costs 31.7 1.2 48.1 3.6" - a wrong column on every figure. Rows two box-heights apart stay two
+    lines, and a negative whose closing bracket the OCR lost stays negative."""
+    result = [
+        (box(40, 100, w=200), "(c) Employee Benefits Expense", 0.99),
+        (box(400, 100), "31.7", 0.99), (box(480, 100), "48.1", 0.99),
+        (box(40, 112, w=120), "(d) Finance Costs", 0.99),
+        (box(400, 112), "1.2", 0.99), (box(480, 112), "3.6", 0.99),
+        (box(40, 124, w=120), "Impairment loss", 0.99), (box(400, 124), "(2.0", 0.98),
+    ]
+    assert ocr.lines_from_boxes(result) == (
+        "(c) Employee Benefits Expense  31.7  48.1\n"
+        "(d) Finance Costs  1.2  3.6\n"
+        "Impairment loss  (2.0)"
+    )

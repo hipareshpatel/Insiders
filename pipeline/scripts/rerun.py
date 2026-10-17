@@ -59,7 +59,8 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    ids = list(args.news_ids)
+    ids = [i.strip() for i in args.news_ids]  # a Windows shell passes the file's CR along
+ along
     if args.from_audit:
         rows = [r for r in json.loads(Path(args.from_audit).read_text(encoding="utf-8"))
                 if r.get("verdict") == args.verdict]

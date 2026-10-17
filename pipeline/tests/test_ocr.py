@@ -65,3 +65,15 @@ def test_rapidocr_reads_a_rendered_statement_row():
     png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
     text = ocr.recognise(png)
     assert "1,234.56" in text and "Revenue" in text.splitlines()[0]
+
+
+def test_twenty_pages_a_document_with_rapidocr_and_six_on_the_vision_route(monkeypatch):
+    from bse_intel.settings import Settings
+
+    monkeypatch.delenv("MAX_OCR_PAGES", raising=False)
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    assert Settings().max_ocr_pages == 20
+    monkeypatch.setattr(ocr, "available", lambda: False)
+    assert Settings().max_ocr_pages == 6
+    monkeypatch.setenv("MAX_OCR_PAGES", "9")
+    assert Settings().max_ocr_pages == 9

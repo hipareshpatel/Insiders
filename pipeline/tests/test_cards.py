@@ -808,3 +808,22 @@ def test_a_figure_rounded_to_the_cards_own_last_digit_is_the_quotes_figure():
     assert numbers_in_quote("₹458 Cr", "Finance costs 457.86", 10) == ["458"]
     assert numbers_in_quote("₹110 Cr", "a demand of Rs. 109.4 lakh") == ["110"]
     assert numbers_in_quote("₹1.09 lakh", "a demand of Rs. 1.1 lakh") == ["1.09"]
+
+
+def test_a_row_copied_digit_for_digit_is_a_slip_whatever_happens_to_sit_near_the_right_reading():
+    """Jubilant's FY25 card: "exceptional items of ₹3,595 Cr" from the row "Exceptional items (3,595)" of a
+    statement in ₹ million (₹359.5 Cr). An unrelated 35,9xx elsewhere sat within 0.5% of 35,950, so the fixer
+    took the card's figure for a rounding and left it (loop round 3c, 2026-10-18)."""
+    from bse_intel.grounding import unit_slips
+
+    million = ("Statement of audited consolidated financial results (₹ in million)\n"
+               "Revenue from operations 19,288 72,345\nExceptional items (3,595) 1,689\n"
+               "Total assets of the segment 35,912 33,004\n")
+    assert unit_slips(["FY25 PAT rose due to exceptional items of ₹3,595 Cr"], million) == \
+        [("3,595", 3595.0, 0, 359.5, 1)]
+    # in prose the sentence the figure ends, its naming words on the lines before it
+    note = million + ("a) Net income pursuant to sale of investment in SOFIE (including waiver fee and\n"
+                      "accelerated share payment) aggregating to ₹ 6,715 million.\nTotal assets 67,190 67,000\n")
+    assert ("6,715", 6715.0, 0, 671.5, 1) in unit_slips(["Mainly driven by ₹6,715 Cr gain from SOFIE sale"], note)
+    # a figure near a real one, copied from a row with another name, is still left alone (Ahluwalia's "₹955 Cr")
+    assert unit_slips(["Revenue about ₹955 Cr"], LAKH_STATEMENT) == []

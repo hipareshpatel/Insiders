@@ -558,6 +558,36 @@ def _near_amount(index: SourceIndex, target: float) -> bool:
     return any(not (1990 <= v <= 2100 and v == int(v)) for v in index.values[i:bisect.bisect_right(index.values, hi)])
 
 
+_LABEL_STOP = {"from", "with", "were", "this", "that", "year", "quarter", "rupees", "crore", "crores", "lakh", "lakhs",
+               "million", "total", "rose", "fell", "grew", "about", "nearly", "over", "under", "against", "versus"}
+
+
+def _copied_from_its_row(filing: str, raw: str, before: str, after: str = "") -> bool:
+    """The card's figure is printed digit for digit on a line of the filing that carries the words the card
+    puts around it ("exceptional items of ₹3,595 Cr", "₹6,715 Cr gain from SOFIE sale"): the model copied
+    that row's number and kept "Cr"."""
+    near = re.findall(r"[a-z]{4,}", before.lower())[-6:] + re.findall(r"[a-z]{4,}", after.lower())[:6]
+    words = {w for w in near if w not in _LABEL_STOP}
+    digits = raw.replace(",", "").strip("()+-")
+    if not words or len(digits.replace(".", "")) < 3:
+        return False
+    pattern = re.compile(rf"(?<![\d.]){re.escape(digits)}(?![\d]|\.\d)")
+    lines = filing.splitlines()
+    for i, line in enumerate(lines):
+        if not pattern.search(re.sub(r"(?<=\d),(?=\d)", "", line)):
+            continue
+        # the row it is on, or in prose the sentence it ends ("...sale of investment in SOFIE ... aggregating to
+        # ₹ 6,715 million."): up to three lines back, stopping at a sentence's end or at a table row
+        context = [line]
+        for prev in reversed(lines[max(0, i - 3):i]):
+            if len(_NUMBER.findall(prev)) >= 2 or prev.rstrip().endswith(".") or len(_NUMBER.findall(line)) >= 2:
+                break
+            context.append(prev)
+        if words & set(re.findall(r"[a-z]{4,}", " ".join(context).lower())):
+            return True
+    return False
+
+
 def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, float, int, float, int]]:
     """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct."""
     unit = declared_unit(filing)
@@ -580,8 +610,13 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
                 if len(fits) == 1 and not _near_amount(other_index, value):
                     slips[raw] = (raw, value, decimals, *fits[0])
                 continue
-            if _near_amount(filing_index, value * unit) or _near_amount(other_index, value):
-                continue  # within 0.5% of a real figure: a rounding or a derivation ("₹955 Cr" beside ₹951.96 Cr), not a slip
+            if (_near_amount(filing_index, value * unit) or _near_amount(other_index, value)) \
+                    and not _copied_from_its_row(filing, raw, (text or "")[:pos], (text or "")[pos + len(raw):]):
+                # within 0.5% of a real figure: a rounding or a derivation ("₹955 Cr" beside ₹951.96 Cr), not a
+                # slip - unless the card copied a row's own digits under that row's own name. On a long statement
+                # some figure sits within 0.5% by chance: Jubilant's "exceptional items of ₹3,595 Cr" is the
+                # row "Exceptional items (3,595)" in ₹ million, and a 35,9xx elsewhere kept it uncorrected.
+                continue
             fits = []
             for wrong in (s for s in CRORE_SCALES if s != unit):  # the model divided by `wrong`, not by `unit`
                 factor = unit / wrong                               # its figure is the true one times this

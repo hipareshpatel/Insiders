@@ -49,7 +49,11 @@ def text_unreadable(text: str | None) -> bool:
 
 
 def cache_needs_ocr(data: dict) -> bool:
-    """A cached document with an unreadable page that was never OCR'd: read the PDF again."""
+    """A cached document with an unreadable page that was never OCR'd: read the PDF again. Once only: an
+    entry written since unreadable pages go to OCR is marked, since reading the PDF again cannot OCR a page
+    the run never reached, the OCR cap left out or no vision route could read."""
+    if data.get("unreadable_checked"):
+        return False
     ocr = data.get("ocr") or {}
     return any(text_unreadable(t) and str(i) not in ocr for i, t in enumerate(data.get("digital") or []))
 
@@ -68,6 +72,7 @@ class Document:
         self.ocr_pages_used = 0
         self.ocr_error: Exception | None = None  # last OCR failure, if any
         self.cache_version = CACHE_VERSION  # an old entry kept as a fallback keeps its own, so it is re-read later
+        self.unreadable_checked = True  # read by this code, which sends an unreadable page to OCR
         self.error: str | None = None
         self._doc = None
         self._digital: list[str] = []
@@ -95,7 +100,7 @@ class Document:
     def to_cache(self) -> dict:
         """Everything read from the PDF (digital text and the pages OCR'd so far), for the text cache."""
         return {"v": self.cache_version, "error": self.error, "digital": self._digital, "has_image": self._has_image,
-                "ocr": {str(k): v for k, v in self._ocr_cache.items()}}
+                "ocr": {str(k): v for k, v in self._ocr_cache.items()}, "unreadable_checked": self.unreadable_checked}
 
     def keep_ocr(self, data: dict) -> None:
         """Reuse the pages an older cache entry already OCR'd: re-reading the text layer does not change them."""
@@ -107,6 +112,7 @@ class Document:
         doc = cls(None, ocr=ocr, max_ocr_pages=max_ocr_pages)
         doc.error = data.get("error")
         doc.cache_version = data.get("v", 1)
+        doc.unreadable_checked = bool(data.get("unreadable_checked"))
         doc._digital = list(data.get("digital", []))
         doc._has_image = list(data.get("has_image", [False] * len(doc._digital)))
         doc._ocr_cache = {int(k): v for k, v in (data.get("ocr") or {}).items()}

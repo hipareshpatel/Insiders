@@ -597,3 +597,20 @@ def test_a_held_card_does_not_own_its_results_quarter_and_a_not_material_claim_i
     pipeline._results_quarters[("999001", "Q2FY27")] = "notice-1"
     pipeline._release_claims("notice-1", "NOT_MATERIAL")
     assert ("999001", "Q2FY27") not in pipeline._results_quarters
+
+
+def test_scanned_pages_the_old_ocr_cap_left_unread_are_read_again_once_under_a_higher_cap():
+    """The cap went from 6 pages to 20 with local OCR: a long scan cached under 6 had pages 7 on never read,
+    and a cached document has no PDF to read them from, so nothing marked the entry stale."""
+    from bse_intel.extract import Document, cache_needs_ocr
+
+    scan = {"v": 2, "digital": [""] * 9, "has_image": [True] * 9, "ocr": {str(i): "read" for i in range(6)},
+            "unreadable_checked": True}
+    assert cache_needs_ocr(scan, max_ocr_pages=20), "written before the cap was recorded: cap 6, pages 6-8 unread"
+    assert not cache_needs_ocr(scan, max_ocr_pages=6)
+    assert not cache_needs_ocr(scan), "no OCR on this run: nothing to gain"
+    assert not cache_needs_ocr({**scan, "ocr_cap": 20}, max_ocr_pages=20), "read once under today's cap"
+    assert not cache_needs_ocr({**scan, "ocr": {str(i): "read" for i in range(9)}}, max_ocr_pages=20)
+    # kept as the fallback when the exchange refuses the PDF, it keeps its old cap and is still read again later
+    assert cache_needs_ocr(Document.from_cache(scan).to_cache(), max_ocr_pages=20)
+    assert Document(None, max_ocr_pages=20).to_cache()["ocr_cap"] == 20

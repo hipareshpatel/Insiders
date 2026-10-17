@@ -101,7 +101,7 @@ def upright_text(page) -> str | None:
     return lines_from_boxes(boxes)
 
 
-def cache_needs_ocr(data: dict, local_ocr: bool = False) -> bool:
+def cache_needs_ocr(data: dict, local_ocr: bool = False, max_ocr_pages: int | None = None) -> bool:
     """A cached document with an unreadable page that was never OCR'd: read the PDF again. Once only: an
     entry written since unreadable pages go to OCR is marked, since reading the PDF again cannot OCR a page
     the run never reached, the OCR cap left out or no vision route could read.
@@ -111,9 +111,16 @@ def cache_needs_ocr(data: dict, local_ocr: bool = False) -> bool:
     if local_ocr and data.get("local_ocr", 0) < LOCAL_OCR_VERSION:
         if data.get("ocr") or any(figure_page(t) for t in data.get("digital") or []):
             return True
+    ocr = data.get("ocr") or {}
+    if max_ocr_pages and data.get("ocr_cap", 6) < max_ocr_pages:
+        # Written under a lower OCR cap (6 before RapidOCR): a scanned page the cap left out was never read,
+        # and a cached document has no PDF to render it from, so it is read again once under today's cap.
+        digital, images = data.get("digital") or [], data.get("has_image") or []
+        if any(len(t.strip()) < SCANNED_PAGE_CHARS and i < len(images) and images[i] and str(i) not in ocr
+               for i, t in enumerate(digital)):
+            return True
     if data.get("unreadable_checked"):
         return False
-    ocr = data.get("ocr") or {}
     return any(text_unreadable(t) and str(i) not in ocr for i, t in enumerate(data.get("digital") or []))
 
 def _block_reading(page) -> str:
@@ -143,6 +150,7 @@ class Document:
                  figure_reader: OcrFn | None = None, max_figure_pages: int = 12):
         self._ocr = ocr
         self._max_ocr = max_ocr_pages
+        self.ocr_cap = max_ocr_pages  # the cap this reading was made under; an old entry kept as a fallback keeps its own
         self._dpi = dpi
         # Local OCR only, never the vision route: a figure page has a text layer to fall back on, and a
         # model reading a statement's small print swaps digits without saying so (docs/bench).
@@ -187,7 +195,7 @@ class Document:
         """Everything read from the PDF (digital text and the pages OCR'd so far), for the text cache."""
         return {"v": self.cache_version, "error": self.error, "digital": self._digital, "has_image": self._has_image,
                 "ocr": {str(k): v for k, v in self._ocr_cache.items()}, "unreadable_checked": self.unreadable_checked,
-                "local_ocr": self.local_ocr, **({"blocks": self._blocks} if self._blocks_read else {})}
+                "local_ocr": self.local_ocr, "ocr_cap": self.ocr_cap, **({"blocks": self._blocks} if self._blocks_read else {})}
 
     def keep_ocr(self, data: dict) -> None:
         """Reuse the pages an older cache entry already OCR'd: re-reading the text layer does not change them.
@@ -209,6 +217,7 @@ class Document:
         doc._has_image = list(data.get("has_image", [False] * len(doc._digital)))
         doc._blocks = list(data.get("blocks") or [])
         doc._blocks_read = "blocks" in data
+        doc.ocr_cap = data.get("ocr_cap", 6)
         doc._ocr_cache = {int(k): v for k, v in (data.get("ocr") or {}).items()}
         return doc
 

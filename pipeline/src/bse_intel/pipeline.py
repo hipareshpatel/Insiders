@@ -1191,7 +1191,8 @@ class Pipeline:
         # it can be: the cache would otherwise hand the same garbage to the model on every re-run. So is
         # an entry written before figure pages went to local OCR.
         current = (cached is not None and cached.get("v", 1) >= CACHE_VERSION
-                   and not cache_needs_ocr(cached, local_ocr=figures is not None)
+                   and not cache_needs_ocr(cached, local_ocr=figures is not None,
+                                       max_ocr_pages=self.settings.max_ocr_pages if ocr else None)
                    and "blocks" in cached)  # written before pages were also read block by block
         if cached is not None and (current or not filing.pdf_url):
             doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)

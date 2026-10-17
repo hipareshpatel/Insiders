@@ -469,3 +469,25 @@ def test_a_change_of_more_than_a_thousand_percent_is_read_whole():
     out.card.notable_changes[0].change = "+2,400%"      # wrong by far more than the tolerance
     assert fix_change_percentages(out, (source,)) == ["net_profit: +2,400% -> +1050.3%"]
     assert out.card.notable_changes[0].change == "+1050.3%", "the whole number is replaced, not its tail"
+
+
+def test_a_card_is_not_held_back_only_for_how_it_quoted_the_filing(settings):
+    """Every figure of the fact was found in the document; only the sentence around them is the
+    model's own wording. Three of Prism Johnson's segment facts were held that way on 2026-10-17,
+    each one checked and right. That is worth recording, not worth keeping the card out of the feed."""
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-q2", "Unaudited Financial Results for the quarter", now, "Result")
+    card = json.loads(json.dumps(PASS2))
+    card["card"]["what_happened"] = [
+        {"text": "Revenue ₹120 Cr vs ₹90.9 Cr a year ago",
+         "quote": "Revenue rose to Rs 120 crore from Rs 90.9 crore"},   # a paraphrase, figures verified
+        {"text": "PAT ₹15 Cr", "quote": "Net profit 1,500.00"}]
+    card["card"]["why_it_matters"] = [{"text": "Scale is building", "basis": "FILING",
+                                       "quote": "Net profit 1,500.00"}]
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(card)]},
+                                 env={"NVIDIA_API_KEY": "n"})
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    body = outcome.card["card"]
+    assert body["grounding"]["quotes_paraphrased"], "the wording is still reported"
+    assert outcome.card["held"] == 0, "but the card reaches the feed"

@@ -162,7 +162,7 @@ def test_a_fact_whose_quote_is_not_in_the_filing_is_dropped(settings):
             {"text": "Order worth **₹396.5 Cr** from Godrej Properties", "quote": "an order worth Rs 396.5 crore from Godrej Properties"},
             {"text": "The contract is fixed-price with no escalation clause", "quote": "The contract is fixed-price with no escalation clause"},
             {"text": "Residential construction project", "quote": None}]}})
-    problems, missing, dropped = check_quotes(out, text)
+    problems, missing, dropped, paraphrased = check_quotes(out, text)
     assert [f.text for f in out.card.what_happened] == ["Order worth **₹396.5 Cr** from Godrej Properties",
                                                         "Residential construction project"]
     assert any("neither its quote nor its figures" in p for p in problems) and missing == ["Residential construction project"]
@@ -177,7 +177,7 @@ def test_a_card_whose_every_quote_fails_is_kept_and_marked(settings):
         "is_material": True, "event_type": "OTHER", "timeline_entry": "x",
         "card": {"impact_level": "LOW", "headline": "Company files an update with the exchange",
                  "what_happened": [{"text": "invented", "quote": "not in the filing"}]}})
-    problems, _, _ = check_quotes(out, "The filing says something else entirely.")
+    problems, _, _, paraphrased = check_quotes(out, "The filing says something else entirely.")
     assert len(out.card.what_happened) == 1  # never an empty card
     assert any("no fact carries a quote" in p for p in problems)
 
@@ -196,9 +196,9 @@ def test_a_true_fact_composed_from_a_table_is_kept_not_dropped(settings):
                  "what_happened": [{"text": "Q3FY25 revenue ₹331.80 Cr against ₹386.13 Cr a year earlier",
                                     "quote": "Revenue fell to Rs 331.80 crore from Rs 386.13 crore"},
                                    {"text": "An invented ₹9,999 Cr provision", "quote": "no such sentence"}]}})
-    problems, _, _ = check_quotes(out, text)
+    problems, _, _, paraphrased = check_quotes(out, text)
     assert [f.text for f in out.card.what_happened] == ["Q3FY25 revenue ₹331.80 Cr against ₹386.13 Cr a year earlier"]
-    assert any("is in the filing but its quote is not" in p for p in problems)      # kept, reported
+    assert any("is in the filing but its quote is not" in p for p in paraphrased),         "every figure verified, only the wording is the model's: reported, but not a reason to hold"
     assert any("neither its quote nor its figures" in p for p in problems)          # dropped
 
 

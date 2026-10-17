@@ -140,7 +140,12 @@ class CardChecks:
     headline_ungrounded: list[str] = field(default_factory=list)
     amounts_ungrounded: list[str] = field(default_factory=list)
     scale: list[str] = field(default_factory=list)  # figures out of scale or not fitting their margin
-    quotes: list[str] = field(default_factory=list)  # facts whose quote is not the filing's own words
+    quotes: list[str] = field(default_factory=list)  # facts whose figures their own quote does not carry
+    # A fact whose figures are all in the filing but whose quote is a paraphrase of it. Worth recording,
+    # and worth a second provider's try at quoting properly, but on its own it is not a reason to keep a
+    # card out of the feed: nothing it says has been found wrong. Three of Prism Johnson's segment facts
+    # were held this way on 2026-10-17 with every figure verified.
+    quote_style: list[str] = field(default_factory=list)
     held: list[str] = field(default_factory=list)   # reasons a second model cannot fix: garbled scan, human hold
 
     @property
@@ -155,11 +160,16 @@ class CardChecks:
                 or bool(self.headline_ungrounded) or bool(self.scale) or bool(self.quotes))
 
     @property
+    def only_style(self) -> bool:
+        """Nothing found wrong with the card beyond how it quoted the filing."""
+        return bool(self.quote_style) and not self.fixable and not self.amounts_ungrounded
+
+    @property
     def wants_second_opinion(self) -> bool:
         # Blueprint §4: any ungrounded number sends the card to a second provider. Amounts only: a
         # 10x lakh/crore slip in a key number leaves the overall match rate above the review
         # threshold, while an unmatched percentage is usually a derivation the checks cannot follow.
-        return self.fixable or bool(self.amounts_ungrounded)
+        return self.fixable or bool(self.amounts_ungrounded) or bool(self.quote_style)
 
     @property
     def issue_count(self) -> int:
@@ -488,7 +498,7 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
 
 
 def check_quotes(out: Pass2Output, text: str, news_id: str = "",
-                 unit: int | None = None) -> tuple[list[str], list[str], list[str]]:
+                 unit: int | None = None) -> tuple[list[str], list[str], list[str], list[str]]:
     """Every what_happened fact carries the filing's own sentence, checked in code.
 
     A fact whose quote is not in the filing is dropped **only when its figures are not in the filing
@@ -508,7 +518,7 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
     # declarations disagreeing, so reading it from `text` returned nothing for every filing that has an
     # XBRL file and the conversion never ran where it was needed most.
     unit = unit if unit is not None else declared_unit(text)
-    problems, missing_quote, dropped, kept = [], [], [], []
+    problems, missing_quote, dropped, kept, paraphrased = [], [], [], [], []
     for fact in card.what_happened:
         label = fact.text.replace("**", "")[:60]
         if not fact.quote:
@@ -519,7 +529,7 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
             figures = [(v, d) for v, d, _, kind, _ in _tokens(fact.text.replace("**", ""))
                        if kind in ("plain", "qty") and v > 31]
             if figures and all(index.stated(v, d) for v, d in figures):
-                problems.append(f'"{label}" is in the filing but its quote is not the filing\'s own words')
+                paraphrased.append(f'"{label}" is in the filing but its quote is not the filing\'s own words')
                 kept.append(fact)
             else:
                 dropped.append(f'"{label}" (neither its quote nor its figures are in the filing)')
@@ -535,7 +545,7 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
         dropped = []
     if dropped:
         log.info("facts dropped from %s (%s): %s", news_id or "?", out.event_type, dropped)
-    return problems + [f"dropped: {d}" for d in dropped], missing_quote, dropped
+    return problems + [f"dropped: {d}" for d in dropped], missing_quote, dropped, paraphrased
 
 
 def check_quoted_numbers(out: Pass2Output, text: str) -> tuple[list[str], list[str]]:
@@ -1429,9 +1439,10 @@ class Pipeline:
                 changes += xbrl_key_numbers(candidate, tagged, (filed_text,))
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged)
-            quote_problems, missing, dropped = check_quotes(candidate, text, filing.news_id,
-                                                            declared_unit(filed_text))
+            quote_problems, missing, dropped, paraphrased = check_quotes(
+                candidate, text, filing.news_id, declared_unit(filed_text))
             found.quotes += quote_problems
+            found.quote_style += paraphrased
             # The headline numbers answer to their own sentence too, not to the whole filing.
             number_problems, unquoted = check_quoted_numbers(candidate, text)
             found.quotes += number_problems
@@ -1489,7 +1500,8 @@ class Pipeline:
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims,
                           "unit_fixes": unit_fixes or None, "change_fixes": change_fixes or None,
-                          "quotes_missing": quotes_missing or None, "quotes_dropped": quotes_dropped or None, "out_of_fit": checks.scale or None},
+                          "quotes_missing": quotes_missing or None, "quotes_dropped": quotes_dropped or None,
+                          "quotes_paraphrased": checks.quote_style or None, "out_of_fit": checks.scale or None},
             "review": review,
             "model": result.model_label,
         }
@@ -1500,7 +1512,10 @@ class Pipeline:
         # against 21% for a clean one (audit round 1), so for a feed meant to run unattended the
         # old trade was the wrong way round. The row is still written in full for the digest, the
         # audit export and the review queue.
-        held = (review or {}).get("status") == "UNRESOLVED"
+        # ...unless all that is left is how the card quoted the filing. Its figures were each found in
+        # the document; only the sentence around them is the model's wording. Prism Johnson's three
+        # segment facts were held that way on 2026-10-17 with every figure verified.
+        held = (review or {}).get("status") == "UNRESOLVED" and not checks.only_style
         signals += asset_turn_signals(card_json, sector, sector_module.asset_turn)  # extends card_json["signals"]
         rated = score_card(card_json, event_type, signals, current, priced, needs_review, card.impact_level,
                            dampened=(sector, event_type) in learned["dampen"])

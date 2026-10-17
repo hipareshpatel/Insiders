@@ -101,8 +101,13 @@ Read before changing anything:
      card states and made two cards' rows quotable. Found and fixed on the way: Jubilant's own Q4FY24 XBRL
      tagged at a tenth of its value (F54, `xbrl.fix_scale`; cards said revenue +979% YoY), raw answers never
      stored (F55), and the YoY/QoQ check holding real full-year and loss changes (all 10 such holds were
-     false). 3b: 15 cards, 6 held. Next in the loop: model-computed figures quoted against one row, and
-     two-column letters read across both columns (pre-existing; both readers do it).
+     false). 3b: 15 cards, 6 held. 3c (computed figures, rounding, YoY period, two-column and near quotes):
+     15 cards, 5 held.
+  3a. **Done 2026-10-18: audit of every discard and hold path** (owner; `docs/audit/discard-paths.md`, funnel in
+     `funnel-2026-10-18.md`, re-run with `pipeline/scripts/funnel/`). 21 defects fixed with tests; the biggest
+     losses of right cards were scale-block figures held as unfound and D20 ownership. Open items are listed
+     there (pass 2's reason not stored, annual reports, memory facts after reclassification, repeat M&A cards).
+     Next: re-run the held cards and the D20 quarters to measure the fixes on real cards.
   4. ANNUAL_REPORT event type, using NSE's annual-report XBRL (docs/SOURCES.md).
   5. Raise the paid weight and drain the 160 queued filings; audit round 2; PLAN 1h.
   Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order

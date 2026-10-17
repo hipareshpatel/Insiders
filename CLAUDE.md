@@ -97,8 +97,12 @@ Read before changing anything:
      invisible OCR layer never overrules. Sideways pages' text layers are rebuilt in rows. Hard pages: rows
      intact 77% (vision 77%, text layer 49%), figures in column order 95% (vision 85%). Prose pages keep the
      text layer. Open: nils on scanned grids (governance grid 4/20 rows, vision 14/20).
-  3. Re-run the 20-filing loop (`scripts/rerun.py`, `process --news-ids`) and compare held cards and
-     correctness with rounds 2a-2f (docs/audit/loop-2026-10-17.md).
+  3. **Done 2026-10-17: loop rounds 3a-3b** (docs/audit/loop-2026-10-17.md). OCR-first lost no figure a
+     card states and made two cards' rows quotable. Found and fixed on the way: Jubilant's own Q4FY24 XBRL
+     tagged at a tenth of its value (F54, `xbrl.fix_scale`; cards said revenue +979% YoY), raw answers never
+     stored (F55), and the YoY/QoQ check holding real full-year and loss changes (all 10 such holds were
+     false). 3b: 15 cards, 6 held. Next in the loop: model-computed figures quoted against one row, and
+     two-column letters read across both columns (pre-existing; both readers do it).
   4. ANNUAL_REPORT event type, using NSE's annual-report XBRL (docs/SOURCES.md).
   5. Raise the paid weight and drain the 160 queued filings; audit round 2; PLAN 1h.
   Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order

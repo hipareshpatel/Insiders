@@ -669,3 +669,43 @@ def test_a_round_figure_grounds_against_an_unrelated_line_in_range():
     unrelated = SourceIndex("Property, plant and equipment 4,583 million. Trade receivables 1,204 million.")
     assert unrelated.stated_crore(458.0, 0), "documents today behaviour, not what it should be"
     assert not unrelated.stated_crore(458.31, 2)   # two decimals do not slip through the same way
+
+
+def test_a_headline_number_answers_to_its_own_quote_not_the_whole_filing():
+    """The fix for the pinned 40% baseline. key_numbers, notable_changes and why_it_matters state the
+    figures a reader acts on and carried no quote, so their numbers were only looked for in the whole
+    filing - where a round one lands on an unrelated line within its own rounding. Inside one sentence
+    there is nothing to land on. The check is unit-aware, because the card writes crore where the filing
+    writes million: 45.79 Cr is the right reading of 457.86 million and must pass, 458 Cr is the 10x
+    misreading and must not, even though 4,583 million appears further down the page."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import check_quoted_numbers
+
+    filing = ("Finance costs for the year were 457.86 million against 430.20 million. "
+              "Property, plant and equipment stood at 4,583 million.")
+
+    def card(value, quote):
+        return Pass2Output.model_validate({
+            "is_material": True, "event_type": "RESULTS", "timeline_entry": "FY25 results",
+            "card": {"impact_level": "MODERATE", "headline": "FY25 results",
+                     "what_happened": [{"text": "Finance costs reported", "quote": "Finance costs for the year"}],
+                     "key_numbers": [{"label": "Finance cost", "value": value, "quote": quote}]}})
+
+    good = card("₹45.79 Cr", "Finance costs for the year were 457.86 million")
+    assert check_quoted_numbers(good, filing) == ([], [])
+
+    # the 10x misreading: 4,583 million is in the filing and rounds to 458 Cr, but not in this sentence
+    bad = card("₹458 Cr", "Finance costs for the year were 457.86 million")
+    problems, unquoted = check_quoted_numbers(bad, filing)
+    assert problems and "458" in problems[0] and "its own quote does not" in problems[0]
+    assert unquoted == []
+
+    # a quote that is not in the filing at all is its own problem
+    invented = card("₹45.79 Cr", "Finance costs rose sharply during the year under review")
+    problems, _ = check_quoted_numbers(invented, filing)
+    assert problems and "not in the filing" in problems[0]
+
+    # and a figure with no quote is reported, not failed, while the models learn the field
+    none_given = card("₹45.79 Cr", None)
+    problems, unquoted = check_quoted_numbers(none_given, filing)
+    assert problems == [] and unquoted == ["key number: Finance cost"]

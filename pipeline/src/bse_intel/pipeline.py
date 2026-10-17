@@ -482,6 +482,60 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "") -> tuple[list[s
     return problems + [f"dropped: {d}" for d in dropped], missing_quote, dropped
 
 
+def check_quoted_numbers(out: Pass2Output, text: str) -> tuple[list[str], list[str]]:
+    """Each figure on a card checked against the sentence that card says it came from.
+
+    `what_happened` has carried a quote since D23 and is checked this way already. The fields that state
+    the headline numbers - key_numbers, notable_changes, why_it_matters - had none, so their figures were
+    only ever looked for in the whole filing, and on a long one that is weak: an invented whole-crore
+    figure is accepted 40% of the time against 8% at one decimal and 3% at two (test_cards.py), because a
+    round number lands on an unrelated line within its own rounding. Inside a single sentence there is
+    nothing to land on.
+
+    The comparison is unit-aware rather than digit-by-digit, because the card writes crore and the filing
+    often writes million or lakh: "₹45.79 Cr" is the right reading of "457.86 million" and must pass,
+    while "₹458 Cr" is the 10x misreading and must not. Returns (problems, items with no quote).
+    """
+    card = out.card
+    if card is None or not text:
+        return [], []
+    problems, unquoted = [], []
+    for kind, label, claim, quote in _quoted_claims(card):
+        if not quote:
+            unquoted.append(f"{kind}: {label}")
+            continue
+        if not gate.quote_found(quote, text):
+            problems.append(f'{kind} "{label}" quotes a sentence that is not in the filing')
+            continue
+        inside = SourceIndex(quote)
+        digits = {d.replace(",", "") for d in re.findall(r"\d[\d,]*(?:\.\d+)?", quote)}
+        # A rupee amount must match at a real unit scale, so "45.79 Cr" passes against "457.86 million"
+        # and "458 Cr" does not. Anything else - a share count, a number of days - is matched on its own
+        # digits, since no conversion applies to it.
+        missing = [raw for value, decimals, _, token, raw in _tokens(claim)
+                   if token in ("plain", "qty") and value > 31
+                   and not inside.stated_crore(value, decimals)
+                   and raw.replace(",", "") not in digits]
+        if missing:
+            problems.append(f'{kind} "{label}" states {", ".join(dict.fromkeys(missing))[:90]}, '
+                            "which its own quote does not")
+    return problems, unquoted
+
+
+def _quoted_claims(card) -> list[tuple[str, str, str, str | None]]:
+    """(field, label, the text whose figures are checked, the quote) for every field that carries one."""
+    out = []
+    for key in card.key_numbers:
+        out.append(("key number", key.label or "", f"{key.value or ''} {key.change or ''}", key.quote))
+    for change in card.notable_changes or []:
+        out.append(("notable change", change.metric or "",
+                    f"{change.previous or ''} {change.current or ''} {change.change or ''}", change.quote))
+    for insight in card.why_it_matters:
+        if insight.basis == "FILING":  # a point resting on memory is checked against memory, not the filing
+            out.append(("why it matters", (insight.text or "")[:48], insight.text or "", insight.quote))
+    return out
+
+
 def gate_issues(out: Pass2Output, card, sources: tuple[str, ...] = ()) -> list[str]:
     """Amounts that cannot be crore, and a fundraise whose size does not follow from its shares and price."""
     issues = [f"{n} Cr is not a crore figure (a rupee amount written in full)" for n in gate.impossible_crore_amounts(_card_texts(out))]
@@ -1294,6 +1348,10 @@ class Pipeline:
         checks.scale += period_mixups(out, tagged)
         quote_problems, quotes_missing, quotes_dropped = check_quotes(out, text, filing.news_id)
         checks.quotes += quote_problems
+        # The headline numbers answer to their own sentence too, not to the whole filing.
+        number_problems, unquoted = check_quoted_numbers(out, text)
+        checks.quotes += number_problems
+        quotes_missing += unquoted
         review = None
         if checks.wants_second_opinion and self.settings.second_opinion:
             out, result, checks, review = self._second_opinion(route, system, user, out, result, checks, view, sources, history)

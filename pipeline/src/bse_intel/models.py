@@ -263,12 +263,24 @@ class KeyNumber(_Lenient):
     label: str
     value: Annotated[str, BeforeValidator(lambda v: "" if v is None else str(v))]
     change: OptStr = None
+    # The filing's own sentence for the figure, checked in code against the filing and, where it is
+    # there, against the figure itself. `Fact` has carried one since D23 and what_happened is the
+    # better for it; these three state the headline numbers and had none, so their figures were
+    # only ever checked against the whole document - where an invented whole-crore figure passes
+    # 40% of the time on a long filing (test_cards.py).
+    quote: OptStr = None
 
 
 class Insight(_Lenient):
     text: str
     basis: Literal["MEMORY", "BALANCE_SHEET", "FILING", "SECTOR"] = "FILING"
     memory_refs: StrList = Field(default_factory=list)
+    # The filing's own sentence for the figure, checked in code against the filing and, where it is
+    # there, against the figure itself. `Fact` has carried one since D23 and what_happened is the
+    # better for it; these three state the headline numbers and had none, so their figures were
+    # only ever checked against the whole document - where an invented whole-crore figure passes
+    # 40% of the time on a long filing (test_cards.py).
+    quote: OptStr = None
 
     @field_validator("basis", mode="before")
     @classmethod
@@ -305,6 +317,12 @@ class NotableChange(_Lenient):
     change: OptStr = None
     direction: Literal["POSITIVE", "NEGATIVE", "NEUTRAL"] = "NEUTRAL"
     why: str = ""
+    # The filing's own sentence for the figure, checked in code against the filing and, where it is
+    # there, against the figure itself. `Fact` has carried one since D23 and what_happened is the
+    # better for it; these three state the headline numbers and had none, so their figures were
+    # only ever checked against the whole document - where an invented whole-crore figure passes
+    # 40% of the time on a long filing (test_cards.py).
+    quote: OptStr = None
 
     @field_validator("direction", mode="before")
     @classmethod

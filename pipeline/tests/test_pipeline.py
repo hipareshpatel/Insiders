@@ -560,3 +560,11 @@ def test_a_text_layer_in_a_broken_or_shifted_font_is_ocrd_not_trusted():
     assert cache_needs_ocr({"digital": [broken], "ocr": {}})
     assert not cache_needs_ocr({"digital": [broken], "ocr": {"0": "read"}}), "already OCR'd: no re-read"
     assert not cache_needs_ocr({"digital": [ligatures], "ocr": {}})
+    # Read again once, not on every run: a page the run never OCR'd (no vision route, the OCR cap, a page the
+    # analysis did not reach) stays unread, and the entry written after the re-read says it was checked.
+    unread = Document(pdf.tobytes())
+    unread._digital[0] = broken
+    assert not cache_needs_ocr(unread.to_cache())
+    assert not cache_needs_ocr(Document.from_cache(unread.to_cache()).to_cache())
+    assert cache_needs_ocr(Document.from_cache({"v": 2, "digital": [broken], "ocr": {}}).to_cache()), \
+        "an entry from before the check, kept as a fallback, is still read again later"

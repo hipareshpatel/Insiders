@@ -1,0 +1,35 @@
+engine                  rows intact  figs in order  figs on line  sentences
+plumber-layout                35.8%          47.4%         44.4%    1/3
+plumber-words                 16.8%          22.6%         29.5%    1/3
+pymupdf-default                0.0%           5.1%         13.4%    2/3
+pymupdf-sorted                48.9%          62.0%         60.4%    1/3
+pymupdf-words                 25.5%          32.1%         37.1%    1/3
+pymupdf4llm                   28.5%          40.1%         39.7%    0/3
+rapidocr-200                  51.1%          89.8%         98.1%    0/3
+vision-route                  76.6%          84.7%         97.1%    1/3
+vision-route.log               0.0%           0.0%          0.0%    0/3
+
+(137 rows with figures on 7 pages)
+
+rows intact, by page:
+                       A_novarti B_jubilan C_ahluwal D_kanoria E_sml_rat F_kanoria G_jubilan
+plumber-layout           17/23      0/16      0/17      6/20      0/2       7/30     19/29  
+plumber-words             5/23      0/16      0/17      0/20      0/2       0/30     18/29  
+pymupdf-default           0/23      0/16      0/17      0/20      0/2       0/30      0/29  
+pymupdf-sorted           21/23      0/16      0/17      6/20      0/2      11/30     29/29  
+pymupdf-words             5/23      0/16      0/17      0/20      0/2       1/30     29/29  
+pymupdf4llm               0/23      0/16      0/17      6/20      0/2       4/30     29/29  
+rapidocr-200             18/23      0/16      1/17      4/20      0/2      20/30     27/29  
+vision-route             23/23      5/16      4/17     14/20      0/2      30/30     29/29  
+vision-route.log          0/23      0/16      0/17      0/20      0/2       0/30      0/29  
+
+Figures a reader produced that appear nowhere on the page (reference: text layer + the other reader):
+  vision route (gemini-3.1-flash-lite): 24 of 1,012 (2.4%). 9 are a letterhead's phone numbers that are on
+    the page; the rest are silent digit swaps in the dense AOC-1 - "7,993" read as 7983, "7,112" as 7122,
+    "1,684,168" as 1884168 - plausible and wrong.
+  RapidOCR: 10 of 1,310 (0.8%).
+Where each reader fails: RapidOCR keeps figures and their order but drops thin cells - a "-" nil, "INR",
+"Nil" - so a later figure slides a column (Novartis "(2.0) 0.4 (1.7) 1.7" for "(2.0) 0.4 - (1.7) 1.7").
+The text layer keeps nils exactly but has no rows at all on a rotated table and breaks rows on stamped
+and garbled pages. The vision route keeps rows best but swaps digits in small print and costs 13-83 s and
+free-tier quota a page. Key: two independent readers, 1,063 cells, all agreed (docs/bench/hard-pages-answer-key.json).

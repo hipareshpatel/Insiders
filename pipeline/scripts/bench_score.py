@@ -107,12 +107,21 @@ def main() -> int:
     ap.add_argument("output")
     ap.add_argument("--name", default="")
     ap.add_argument("--detail", action="store_true")
+    ap.add_argument("--all", action="store_true", help="count filings the output does not cover as misses")
     args = ap.parse_args()
     manifest = json.loads((Path(args.bench) / "manifest.json").read_text(encoding="utf-8"))
     output = json.loads(Path(args.output).read_text(encoding="utf-8"))
+    # Score what the engine covers, and say so. Counting a filing an engine never ran on as zero
+    # made RapidOCR look like 9% when it had read the three scanned filings it was given - 21 of 36,
+    # against 0 of 36 for the text layer. Use --all to count the missing ones as misses.
+    covered = [m for m in manifest if m["news_id"] in output]
+    if not args.all and len(covered) < len(manifest):
+        manifest = covered
     result = score(manifest, output)
     n = result["figures"]
-    print(f"{args.name or Path(args.output).stem}: {n} figures in {len(manifest)} filings")
+    print(f"{args.name or Path(args.output).stem}: {n} figures in {len(manifest)} filings"
+          + (f" (covers {len(covered)} of {len(json.loads((Path(args.bench) / 'manifest.json').read_text(encoding='utf-8')))}"
+             " - partial)" if len(covered) < len(json.loads((Path(args.bench) / "manifest.json").read_text(encoding="utf-8"))) else ""))
     for key in ("row+column", "row", "anywhere"):
         print(f"  {key:11} {result[key]:4}  {result[key] / n:6.1%}")
     if args.detail:

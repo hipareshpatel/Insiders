@@ -484,3 +484,19 @@ def test_an_unreadable_attachment_fails_before_any_card_and_an_announcement_with
     pipeline, sink, fake = build(settings, [text_only], {}, {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(reply)]})
     outcome = pipeline._process_one(text_only, False, True)
     assert outcome.update["status"] == "ANALYZED"
+
+
+def test_a_held_card_is_not_shown_to_the_analyst_as_peer_context(settings):
+    """A card held because its figures could not be verified must not shape another company's card."""
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    for news_id, held in (("peer-ok", 0), ("peer-held", 1)):
+        sink._db.execute(
+            "INSERT INTO cards (news_id, scrip_code, company_name, filing_date, filed_at, sector, event_category,"
+            " impact_level, headline, card_json, created_at, held) VALUES (?, '111', 'Peer', '2026-10-01',"
+            " '2026-10-01T10:00:00+05:30', 'cement', 'RESULTS', 'HIGH', ?, '{}', '2026-10-01', ?)",
+            [news_id, f"headline {news_id}", held])
+    sink._db.commit()
+    peers = sink.peer_cards("cement", "RESULTS", "222", "2026-09-01", "2026-10-15")
+    assert [p["headline"] for p in peers] == ["headline peer-ok"]

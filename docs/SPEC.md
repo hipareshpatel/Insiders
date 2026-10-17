@@ -403,6 +403,10 @@ The owner's ★ watchlist is on the site (owner mode).
 
 ## 12. Operations
 
+**GitHub-hosted runners (probed 2026-10-17, D27).** NSE, Yahoo and RapidOCR work there (`pipeline.yml`
+installs the `[ocr]` extra; about 16 s to install, 5 s a page); BSE answers every call with HTTP 403, so
+the BSE half needs an Indian connection for now. `runner-probe.yml` and `ocr-probe.yml` repeat the checks.
+
 **Where the pipeline runs.** Use a self-hosted GitHub Actions runner on an Indian home
 or office connection. Set the repository variable `PIPELINE_RUNNER_LABELS` to
 `["self-hosted","linux"]`.

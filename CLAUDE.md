@@ -7,7 +7,7 @@ Read before changing anything:
 - `docs/BLUEPRINT.md`: the spec (modules are numbered; "Module 35" means section 35).
 - `docs/PLAN.md`: the phases from smoke test to go-live, how it runs after, open decisions and the
   single "Pending work" list. Work from that list and tick items off there.
-- `docs/TRACKER.md`: decisions D1–D25, what is built and what is not.
+- `docs/TRACKER.md`: decisions D1–D27, what is built and what is not.
 - `docs/SPEC.md`: the design as built. `README.md`: setup and the CLI commands table.
 - `pipeline/config/providers.toml`: AI providers, models, free-tier limits and routes; `docs/SPEC.md` §4
   explains the gateway rules. Owner decisions D13–D15 cover providers, keys and this setup; D24–D25
@@ -48,7 +48,8 @@ Read before changing anything:
   `npx wrangler login`; the account's workers.dev subdomain is `reply-bd3`. Vite hot-reloads Worker
   code changes, so a pull rarely needs a restart. Avoid restarting it during a backfill: the
   pipeline's retries to the Worker last about 14 s and a remote-mode start takes about 12 s.
-- Pipeline: `cd pipeline; .venv\Scripts\activate`, then `python -m bse_intel <command>`. For long
+- Pipeline: `cd pipeline; .venv\Scripts\activate`, then `python -m bse_intel <command>`. Install once with
+  `pip install -e ".[dev,ocr,market]"`: without `ocr` (RapidOCR) scanned pages go to the vision route, 6 a document. For long
   runs use `pwsh -File pipeline\scripts\laptop.ps1 <command> [args]`: it loads and trims the keys,
   points the pipeline at the local site, sets 5 workers and logs to `data\logs\<command>-<time>.log`.
 - Smoke-test backfill: `python -m bse_intel backfill-companies --scrips 506525,532776,505192,500672,530019`.
@@ -91,8 +92,8 @@ Read before changing anything:
   4. **Raise the paid weight**, then drain the 160 queued filings (4 FAILED are below max attempts and
      retry themselves). At the accuracy weights the run stalls.
   5. **PLAN 1h**: check the `quotes_dropped` facts against their filings, in one batch.
-  6. **PLAN 1m**: the vision re-read, now only for pages with no text layer (2% of filings outright, 10%
-     needing OCR). Reading order fixed what vision was wanted for everywhere else.
+  6. **PLAN 1m**: the vision re-read of a held card's disputed figure. Scanned and unreadable pages no longer
+     need it: RapidOCR reads them on the CPU at 200 dpi, up to 20 pages a document (D26, `ocr.py`).
   Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order
   (PLAN.md item 1c). `sync-to-cloud` still cannot run: no PLATFORM_API_URL or INGEST_TOKEN for the
   deployed Worker, and laptop.ps1 hardcodes both to localhost.

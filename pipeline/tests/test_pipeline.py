@@ -416,3 +416,33 @@ def test_a_fast_track_filing_that_is_not_a_repeat_goes_on_to_pass_2(settings):
 
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert outcome.update["status"] == "ANALYZED" and outcome.card is not None
+
+
+def test_a_corrected_card_is_itself_corrected_and_checked(settings):
+    """The deterministic fixers used to run on the first card only.
+
+    So a card adopted from the second provider was published having had none of them - no unit slip
+    corrected, no deal size recomputed, no exact XBRL value - on exactly the cards that had already
+    failed once. Worse, the record stored beside it described the card that had been thrown away: on
+    2026-10-17 Novartis FY25 was published at the right Rs 356.27 Cr with a note beside it saying it
+    had been changed to Rs 83.88 Cr, which was the discarded card's figure.
+    """
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-q2", "Unaudited Financial Results for the quarter", now, "Result")
+    bad = json.loads(json.dumps(PASS2))
+    bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
+    # The second provider fixes the claim but reads the statement's lakhs as crore, a slip the code knows
+    second = json.loads(json.dumps(PASS2))
+    second["card"]["what_happened"] = ["Revenue ₹12,000 Cr vs ₹90.9 Cr a year ago", "PAT ₹15 Cr"]
+    second["card"]["headline"] = "Demo Cement Q2 revenue ₹12,000 Cr"
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)],
+                                  "glm-4.5-flash": [json.dumps(second)]},
+                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    body = outcome.card["card"]
+    assert body["model"] == "zai/glm-4.5-flash", "the second provider's card was the one published"
+    assert "₹120 Cr" in body["headline"] and "12,000" not in body["headline"], \
+        "the adopted card went through the unit fixer too"
+    assert body["grounding"]["unit_fixes"] == {"12,000": "120"}, \
+        "the record beside the card describes the card that was published"

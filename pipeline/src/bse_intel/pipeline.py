@@ -1388,24 +1388,39 @@ class Pipeline:
             relabel_periods(out, quarter, statement_year(text))
         sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
         history = dossier.get("financial_metrics", [])
-        unit_fixes = fix_unit_slips(out, sources)
-        change_fixes = fix_change_percentages(out, sources)
-        change_fixes += apply_deal_guards(out, filing, history, dossier.get("balance_sheet", []), text)
-        if tagged:
-            # against the document alone: `sources` starts with the XBRL table, so checking the table's
-            # own comparative against it would always succeed and the guard would do nothing
-            change_fixes += xbrl_key_numbers(out, tagged, (filed_text,))
-        checks = check_card_all(out, view, sources, history)
-        checks.scale += period_mixups(out, tagged)
-        quote_problems, quotes_missing, quotes_dropped = check_quotes(out, text, filing.news_id)
-        checks.quotes += quote_problems
-        # The headline numbers answer to their own sentence too, not to the whole filing.
-        number_problems, unquoted = check_quoted_numbers(out, text)
-        checks.quotes += number_problems
-        quotes_missing += unquoted
+        def ground(candidate: Pass2Output):
+            """Correct a card where the filing can settle it, then check what is left.
+
+            Every card goes through this, including one a second provider wrote. It used to run on the
+            first card only, so a corrected card was published having had none of it: no exact XBRL
+            values, no deal size recomputed from shares x price, no unit slips fixed - on exactly the
+            cards that had already failed once. The record stored beside the card described the card
+            that had been thrown away (2026-10-17: Novartis FY25 was published at the right Rs 356.27 Cr
+            with a note saying it had been changed to Rs 83.88 Cr, which was the discarded card).
+            """
+            units = fix_unit_slips(candidate, sources)
+            changes = fix_change_percentages(candidate, sources)
+            changes += apply_deal_guards(candidate, filing, history, dossier.get("balance_sheet", []), text)
+            if tagged:
+                # against the document alone: `sources` starts with the XBRL table, so checking the
+                # table's own comparative against it would always succeed and the guard would do nothing
+                changes += xbrl_key_numbers(candidate, tagged, (filed_text,))
+            found = check_card_all(candidate, view, sources, history)
+            found.scale += period_mixups(candidate, tagged)
+            quote_problems, missing, dropped = check_quotes(candidate, text, filing.news_id)
+            found.quotes += quote_problems
+            # The headline numbers answer to their own sentence too, not to the whole filing.
+            number_problems, unquoted = check_quoted_numbers(candidate, text)
+            found.quotes += number_problems
+            return found, units, changes, missing + unquoted, dropped
+
+        checks, unit_fixes, change_fixes, quotes_missing, quotes_dropped = ground(out)
         review = None
         if checks.wants_second_opinion and self.settings.second_opinion:
-            out, result, checks, review = self._second_opinion(route, system, user, out, result, checks, view, sources, history)
+            out, result, checks, review, fixes = self._second_opinion(
+                route, system, user, out, result, checks, ground)
+            if fixes is not None:
+                unit_fixes, change_fixes, quotes_missing, quotes_dropped = fixes
         checks.held += self._held_reasons(filing, text)
         if checks.held and review is None:
             review = {"status": "HELD", "issues": checks.held}
@@ -1559,18 +1574,20 @@ class Pipeline:
                      entry.get("news_id"), str(entry.get("date", ""))[:10], said.why[:60])
         return entry
 
-    def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, view, sources, history=None):
+    def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, ground):
         """Ask a different provider to correct a card that failed the checks, then check again.
 
         The better of the two cards is kept. Either way the card is published: a corrected one
         normally, one that still fails with an "Unverified" mark and the problems listed, so a
-        material filing is never hidden.
+        material filing is never hidden. `ground` corrects and checks a candidate card; the adopted
+        one goes through it too, and the fixes it reports are the ones recorded beside the card.
+        Returns the fixes, or None when the first card is kept and its own still stand.
         """
         problems = checks.problems()
         base = {"first_model": result.model_label, "issues": problems}
         left = self.gateway.deadline - time.monotonic() if self.gateway.deadline else None
         if left is not None and left < SECOND_OPINION_MIN_S:
-            return out, result, checks, {**base, "status": "UNCHECKED", "note": "skipped: the run was ending"}
+            return out, result, checks, {**base, "status": "UNCHECKED", "note": "skipped: the run was ending"}, None
         with self._lock:
             self.stats.second_opinions += 1
         hints = [UNIT_HINT] if checks.amounts_ungrounded else []
@@ -1578,23 +1595,23 @@ class Pipeline:
         try:
             second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider,))
         except Exception as exc:  # the first card is still published, marked unverified
-            return out, result, checks, {**base, "status": "UNCHECKED", "note": f"{type(exc).__name__}: {exc}"[:200]}
+            return out, result, checks, {**base, "status": "UNCHECKED", "note": f"{type(exc).__name__}: {exc}"[:200]}, None
         if not second.value.is_material or second.value.card is None:
-            return out, result, checks, {**base, "status": "UNRESOLVED", "checked_by": second.model_label}
+            return out, result, checks, {**base, "status": "UNRESOLVED", "checked_by": second.model_label}, None
         # Adopt the corrected card only. Memory (dossier delta, timeline, event type) stays from the
         # first reply unless the verifier sent a fuller one: it was asked to fix the card, and a
         # reply with just {"card": ...} must not wipe the quarter's figures from memory.
         fixed = _adopt_card(out, second.value)
-        checks2 = check_card_all(fixed, view, sources, history)
+        checks2, *fixes2 = ground(fixed)
         if not checks2.wants_second_opinion:
             with self._lock:
                 self.stats.corrected += 1
             return fixed, second, checks2, {**base, "status": "CORRECTED", "checked_by": second.model_label, "issues": [],
-                                            "fixed": problems}
+                                            "fixed": problems}, fixes2
         if checks2.issue_count < checks.issue_count:
             return fixed, second, checks2, {**base, "status": "UNRESOLVED", "checked_by": second.model_label,
-                                            "issues": checks2.problems()}
-        return out, result, checks, {**base, "status": "UNRESOLVED", "checked_by": second.model_label}
+                                            "issues": checks2.problems()}, fixes2
+        return out, result, checks, {**base, "status": "UNRESOLVED", "checked_by": second.model_label}, None
 
     def _learning(self) -> dict:
         """Loop 1 state, read once per run: filings queued for a post-mortem re-analysis (with their

@@ -53,7 +53,11 @@ ratings, each with its own page under `/companies-listing/`. The endpoint for an
 
 ## Still open
 
-- BSE's own `beta.bseindia.com/corporates/ann.html` is said to carry XBRL links the API we read does
-  not. Not yet checked. If true it would give XBRL on the announcement itself, without NSE.
+- BSE's announcement API does carry an XBRL identity we had missed, but it is not a link. The beta
+  site reads the same `AnnSubCategoryGetData` endpoint we do, and every row has `XML_NAME`
+  (`ANN_<scrip>_<guid>`) - which is why "0 of 1,166 rows had an XBRL link" was true and still
+  misleading: we looked for a URL and the field holds a name. Checked 2026-10-17: that name 404s
+  under AttachHis, AttachLive, CorpAttachment, Attachbse and AttachXbrl, with and without `.xml`,
+  so the serving path is still unknown. NSE's announcement XBRL listing covers the same ground.
 - Whether an Integrated Filing instance exists for companies listed only on BSE (NSE has 2,480 of our
   5,111 companies). Those are almost all micro caps.

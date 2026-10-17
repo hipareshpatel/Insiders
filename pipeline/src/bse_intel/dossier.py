@@ -212,6 +212,33 @@ def _sources(entry: dict | None) -> list[dict]:
 
 log = logging.getLogger(__name__)
 
+BALANCE_SCALE = 3   # a balance-sheet figure this many times off the other sources for its date is a unit slip
+
+
+def _out_of_scale(snapshot: dict, existing: list[dict], news_id: str) -> list[str]:
+    """The fields of a card's balance-sheet snapshot that sit three or more times off what the other sources
+    say for the same date, the company's own XBRL first. Kanoria's Mar-2025 net worth was ₹601.22 Cr from two
+    filings and ₹520.82 Cr from its XBRL when an AGM presentation's card put in ₹5,794.25 Cr, ten times too
+    large; memory took it, and a later card quoted net worth "falling 91%" from it (loop round 3c,
+    2026-10-18). A figure the company's XBRL tagged is never refused here: it is what the others answer to."""
+    if news_id.startswith(XBRL_SOURCE):
+        return []
+    end = due_date(snapshot.get("period"))
+    if end is None:
+        return []
+    same = [e for e in existing if e.get("source_news_id") != news_id and due_date(e.get("period")) == end]
+    tagged = [e for e in same if str(e.get("source_news_id", "")).startswith(XBRL_SOURCE)]
+    refused = []
+    for field in ("net_worth_cr", "gross_debt_cr", "cash_cr"):
+        value = snapshot.get(field)
+        others = [abs(e[field]) for e in (tagged or same) if isinstance(e.get(field), (int, float)) and abs(e[field]) >= 1]
+        if not isinstance(value, (int, float)) or abs(value) < 1 or not others:
+            continue
+        ref = sorted(others)[len(others) // 2]
+        if max(abs(value), ref) / min(abs(value), ref) >= BALANCE_SCALE:
+            refused.append(field)
+    return refused
+
 XBRL_SOURCE = "xbrl:"  # the seed's synthetic ids: "xbrl:res:<scrip>:<period>"
 
 # Flows accumulate over a financial year; balances, margins and per-share figures do not.
@@ -463,6 +490,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
 
     if delta.balance_sheet and not delta.balance_sheet.is_empty():
         snapshot = {k: v for k, v in delta.balance_sheet.model_dump().items() if v is not None}
+        for field in _out_of_scale(snapshot, d.get("balance_sheet", []), news_id):
+            log.info("memory: %s %s %s from %s refused: out of scale with the other sources for that date",
+                     field, snapshot.get("period"), snapshot[field], news_id)
+            snapshot.pop(field)
         snapshot.update(as_of=as_of, source_news_id=news_id)
         d["balance_sheet"] = sorted(d.get("balance_sheet", []) + [snapshot], key=lambda e: e["as_of"])[-MAX_BALANCE_SNAPSHOTS:]
 

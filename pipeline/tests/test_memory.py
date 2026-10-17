@@ -596,3 +596,23 @@ def test_a_stage_of_an_approval_is_not_the_approval():
     assert approval_granted("CCI approved the transaction on 12 March 2025")
     assert approval_granted("Shareholders passed the resolution with 99.8% in favour")
     assert not approval_granted("")
+
+
+def test_a_balance_sheet_figure_out_of_scale_with_the_other_sources_is_refused():
+    """Kanoria's Mar-2025 net worth was ₹601.22 Cr from two filings and ₹520.82 Cr from its own XBRL when an AGM
+    presentation's card put in ₹5,794.25 Cr; memory took it and a later card said net worth fell 91% from it
+    (loop round 3c, 2026-10-18)."""
+    d = new_dossier(filing("n1", Q1))
+    d = merge(d, output(balance_sheet={"period": "Mar-2025", "net_worth_cr": 601.22, "gross_debt_cr": 19.7}),
+              filing("n1", Q1), "LOW", "now")
+    xbrl = filing("xbrl:res:999001:Q4FY25", Q1)
+    d = merge(d, output(balance_sheet={"period": "Q4FY25", "net_worth_cr": 520.82}), xbrl, "LOW", "now")
+    d = merge(d, output(balance_sheet={"period": "Mar-2025", "net_worth_cr": 5794.25, "gross_debt_cr": 21.4}),
+              filing("agm", AGM), "LOW", "now")
+    agm = next(b for b in d["balance_sheet"] if b["source_news_id"] == "agm")
+    assert "net_worth_cr" not in agm and agm["gross_debt_cr"] == 21.4, "the ten-times figure is refused, the rest kept"
+    # a later date is not compared with this one, and the company's XBRL is never refused
+    d = merge(d, output(balance_sheet={"period": "Sep-2025", "net_worth_cr": 5794.25}), filing("n3", Q2), "LOW", "now")
+    assert next(b for b in d["balance_sheet"] if b["source_news_id"] == "n3")["net_worth_cr"] == 5794.25
+    d = merge(d, output(balance_sheet={"period": "Q4FY25", "net_worth_cr": 9000.0}), filing("xbrl:res:999001:Q4FY25b", Q2), "LOW", "now")
+    assert any(b.get("net_worth_cr") == 9000.0 for b in d["balance_sheet"])

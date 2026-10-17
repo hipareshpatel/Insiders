@@ -225,3 +225,25 @@ def test_a_period_label_and_a_percentage_are_not_figures_a_quote_must_carry():
     assert gate.numbers_in_quote("March 2025 cargo sales were 594 units, down 0.8% YoY",
                                  "Cargo vehicles 594 599") == []
     assert gate.numbers_in_quote("FY25 revenue ₹402 Cr", row, 100) == ["402"], "an invented figure still shows"
+
+
+def test_the_unit_is_read_from_the_filing_not_from_the_table_put_in_front_of_it():
+    """The XBRL table is prepended to the text the model reads and states crore itself, so the filing's
+    own "(Rs. in lakhs)" and the table's crore disagreed and no unit was found at all - for every
+    filing that has an XBRL file, which is where the conversion was needed most."""
+    from bse_intel.grounding import declared_unit
+
+    filing = "Statement of unaudited results (Rs. in lakhs). Provisions and contingencies 1,653 (454)"
+    table = "Machine-tagged results (XBRL, STANDALONE, ₹ crore unless noted):\n- pat Q3FY25: 151.63 Cr\n"
+    assert declared_unit(filing) == 100
+    assert declared_unit(table + "\n\n" + filing) is None, "the two declarations disagree"
+    claim = "Provisions rose to ₹16.53 Cr in Q3FY25 from a write-back of ₹4.54 Cr in Q3FY24"
+    row = "8. Provisions (other than tax) and Contingencies 1,653 1,391 (454) 5,050 (313) 1,848"
+    assert gate.numbers_in_quote(claim, row, declared_unit(filing)) == []
+    assert gate.numbers_in_quote(claim, row, declared_unit(table + filing)) == ["16.53", "4.54"], \
+        "what the card was held for before the unit came from the document alone"
+
+
+def test_a_day_of_the_month_is_not_a_figure_the_quote_must_carry():
+    assert gate.numbers_in_quote("GNPA stood at 1.58% as of December 31, 2024, up from 1.22%",
+                                 "b) % of Gross NPAs 1.58% 1.68% 1.22%") == []

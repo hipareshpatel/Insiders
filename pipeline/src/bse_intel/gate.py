@@ -146,7 +146,10 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
             number = float(value)
         except ValueError:
             continue
-        tolerance = 0.5 * 10 ** -len(value.partition(".")[2])
+        decimals = len(value.partition(".")[2])
+        if not decimals and number <= 31:
+            continue  # a day of the month, a count of directors: grounding leaves these alone too
+        tolerance = 0.5 * 10 ** -decimals
         if any(abs(c - number) <= tolerance for c in in_crore):
             continue
         missing.append(m.group(0))

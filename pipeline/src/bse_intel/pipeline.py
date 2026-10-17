@@ -487,7 +487,8 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
     return event_type
 
 
-def check_quotes(out: Pass2Output, text: str, news_id: str = "") -> tuple[list[str], list[str], list[str]]:
+def check_quotes(out: Pass2Output, text: str, news_id: str = "",
+                 unit: int | None = None) -> tuple[list[str], list[str], list[str]]:
     """Every what_happened fact carries the filing's own sentence, checked in code.
 
     A fact whose quote is not in the filing is dropped **only when its figures are not in the filing
@@ -502,7 +503,11 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "") -> tuple[list[s
     if card is None or not text:
         return [], [], []
     index = SourceIndex(text)
-    unit = declared_unit(text)  # what the statement says its figures are in: a card writes crore
+    # What the statement says its figures are in - a card writes crore. It must come from the document
+    # alone: the XBRL table is put in front of the text and says crore itself, which leaves the two
+    # declarations disagreeing, so reading it from `text` returned nothing for every filing that has an
+    # XBRL file and the conversion never ran where it was needed most.
+    unit = unit if unit is not None else declared_unit(text)
     problems, missing_quote, dropped, kept = [], [], [], []
     for fact in card.what_happened:
         label = fact.text.replace("**", "")[:60]
@@ -1424,7 +1429,8 @@ class Pipeline:
                 changes += xbrl_key_numbers(candidate, tagged, (filed_text,))
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged)
-            quote_problems, missing, dropped = check_quotes(candidate, text, filing.news_id)
+            quote_problems, missing, dropped = check_quotes(candidate, text, filing.news_id,
+                                                            declared_unit(filed_text))
             found.quotes += quote_problems
             # The headline numbers answer to their own sentence too, not to the whole filing.
             number_problems, unquoted = check_quoted_numbers(candidate, text)

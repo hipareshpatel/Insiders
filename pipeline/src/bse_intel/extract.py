@@ -48,7 +48,12 @@ class Document:
                 if doc.needs_pass and not doc.authenticate(""):
                     raise ValueError("password-protected PDF")
                 self._doc = doc
-                self._digital = [page.get_text("text") or "" for page in doc]
+                # sort=True: in reading order, so a figure stays on the line with its own row label and
+                # the unit header comes before the numbers it governs. Measured on Kanoria's FY25
+                # consolidated P&L, 0% of the lines carrying a figure also carried its label without this
+                # and 100% with it; the year columns arrived after all the rows rather than above them.
+                # That ordering is where the wrong-column and unit-scale errors come from (audit round 1).
+                self._digital = [page.get_text("text", sort=True) or "" for page in doc]
                 self._has_image = [bool(page.get_images(full=False)) for page in doc]
         except Exception as exc:  # corrupt PDF, or a non-PDF attachment (xml, zip, xlsx)
             self.error = f"unreadable attachment: {exc}"

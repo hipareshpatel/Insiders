@@ -387,3 +387,33 @@ def test_news_paper_cuttings_are_dropped_whatever_the_spelling(rulebook, headlin
     """Ahluwalia Contracts' clippings ("News Paper Cutting", with a space) reached the model, which invented results
     cards from text with no numbers; two were even fast-tracked as results filings."""
     assert rulebook.classify(_f(headline, "Company Update", "General", subject)).action == "DROP"
+
+
+def test_page_text_comes_back_in_reading_order():
+    """A statement's rows and its column headers are laid out on the page, not in the order a PDF happens
+    to store them. Without sorting, Kanoria's FY25 consolidated P&L gave 0% of its figure-carrying lines
+    their own row label and put the year headers after every row; with it, 100%. That ordering is where
+    the wrong-column and unit-scale errors come from, so the extractor asks for reading order."""
+    import pymupdf
+
+    from bse_intel.extract import Document
+
+    doc = pymupdf.open()
+    page = doc.new_page()
+    # written bottom-up and right-to-left, the way a generator may emit a table
+    page.insert_text((320, 190), "430.17", fontsize=9)
+    page.insert_text((240, 190), "457.86", fontsize=9)
+    page.insert_text((60, 190), "Finance Costs", fontsize=9)
+    page.insert_text((320, 150), "14,750.51", fontsize=9)
+    page.insert_text((240, 150), "15,367.16", fontsize=9)
+    page.insert_text((60, 150), "Revenue from Operations", fontsize=9)
+    page.insert_text((60, 110), "(Rs. in million)", fontsize=9)
+    pdf = doc.tobytes()
+    doc.close()
+
+    text = Document(pdf).page_text(0)
+    unit, revenue, finance = text.find("Rs. in million"), text.find("15,367.16"), text.find("457.86")
+    assert unit != -1 and revenue != -1 and finance != -1
+    assert unit < revenue < finance, "the unit header leads, then the rows in page order"
+    line = next(l for l in text.split("\n") if "457.86" in l)
+    assert "Finance Costs" in line and "430.17" in line, "a row keeps its label and both columns"

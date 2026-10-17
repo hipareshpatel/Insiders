@@ -234,6 +234,21 @@ def test_a_page_of_figures_is_read_by_ocr_first_and_a_prose_page_by_its_text_lay
     def broken(png):
         raise RuntimeError("onnxruntime missing a library")
 
+    # A scan whose own OCR text is drawn under the page image (Heritage Foods): its line is not the PDF's text,
+    # so it does not replace RapidOCR's row - the label stays readable - though its nil still goes back.
+    import pymupdf
+
+    scan = pymupdf.open()
+    page = scan.new_page()
+    page.insert_textbox(pymupdf.Rect(36, 36, 560, 800), "\n".join(
+        f"Total e.-.:pcnscs {chr(65 + i)} {1000 + i:,}.50 - {900 + i:,}.25 {4000 + i:,}.75" for i in range(8)), fontsize=9)
+    image = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 40, 40), False)
+    image.clear_with(200)
+    page.insert_image(page.rect, pixmap=image)
+    beneath = Document(scan.tobytes(), figure_reader=lambda png: "\n".join(
+        f"Total expenses {chr(65 + i)}  {1000 + i:,}.50  {900 + i:,}.25  {4000 + i:,}.75" for i in range(8)))
+    assert beneath.page_text(0).splitlines()[0] == "Total expenses A  1,000.50 - 900.25 4,000.75"
+
     failed = Document(_figure_pdf(), figure_reader=broken)
     assert failed.page_text(0).startswith("Statement of profit") and failed.ocr_error is None
     assert "0" not in failed.to_cache()["ocr"], "not cached as read, so a later run tries again"

@@ -91,10 +91,12 @@ Read before changing anything:
      measured settings, takes out page tilt, clusters rows on a running centre, repairs half-lost brackets,
      and turns a sideways page upright. Hard pages 36% -> 98% figures on their line; ~4-5 s a page.
      Install with `pip install -e ".[ocr]"` (the extra is now `rapidocr>=3.10`, not rapidocr_onnxruntime).
-  2a. **Next: OCR as the FIRST reader on pages with figures or tables** (owner's option, now supported by the
-     numbers), the text layer as the cross-check: where both have a page, put back the nil cells OCR drops
-     by aligning OCR boxes to the table's columns by x-position, and keep the text layer for plain prose
-     letters (faster, complete). Vision only where the two readers disagree on a figure a card uses.
+  2a. **Done 2026-10-17: OCR is the first reader on pages of figures** (D29; 15+ amounts on the page). Its
+     rows are checked cell by cell against the text layer: a PDF-text line with exactly the row's figures
+     is the row; otherwise nils OCR dropped go back and garbled figures are taken from the layer; a scan's
+     invisible OCR layer never overrules. Sideways pages' text layers are rebuilt in rows. Hard pages: rows
+     intact 77% (vision 77%, text layer 49%), figures in column order 95% (vision 85%). Prose pages keep the
+     text layer. Open: nils on scanned grids (governance grid 4/20 rows, vision 14/20).
   3. Re-run the 20-filing loop (`scripts/rerun.py`, `process --news-ids`) and compare held cards and
      correctness with rounds 2a-2f (docs/audit/loop-2026-10-17.md).
   4. ANNUAL_REPORT event type, using NSE's annual-report XBRL (docs/SOURCES.md).

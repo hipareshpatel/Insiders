@@ -68,6 +68,8 @@ LOCAL_OCR_VERSION = 1
 # OCR's reading is kept only when it holds most of the amounts the text layer prints: a page it could not
 # read - a faint scan behind a clean text layer, a chart - keeps the text layer.
 FIGURE_SHARE = 0.8
+# An image covering this much of the page makes it a scan, whatever its text layer claims to be.
+SCAN_COVER = 0.9
 
 
 def amounts(text: str | None) -> int:
@@ -244,10 +246,13 @@ class Document:
         with _MUPDF:
             page = self._doc[index]
             png = page.get_pixmap(dpi=self._dpi).tobytes("png")
-            # A scan's text layer is an OCR of its own, laid invisibly over the image (render mode 3):
-            # it misreads like any OCR, so it fills OCR's gaps but does not overrule its figures.
+            # A scan's text layer is an OCR of its own, laid invisibly over the image (render mode 3) or
+            # drawn beneath it (Heritage Foods' statements, where it reads "Total e.-.:pcnscs"): it misreads
+            # like any OCR, so it fills OCR's gaps but does not overrule its figures.
             trace = page.get_texttrace()
-            exact = sum(span.get("type") == 3 for span in trace) < 0.5 * max(1, len(trace))
+            area = abs(page.rect) or 1.0
+            cover = max((abs(pymupdf.Rect(info["bbox"]) & page.rect) / area for info in page.get_image_info()), default=0.0)
+            exact = cover < SCAN_COVER and sum(span.get("type") == 3 for span in trace) < 0.5 * max(1, len(trace))
         self.figure_pages_used += 1
         try:
             read = self._figures(png) or ""

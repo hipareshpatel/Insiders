@@ -33,3 +33,34 @@ Where each reader fails: RapidOCR keeps figures and their order but drops thin c
 The text layer keeps nils exactly but has no rows at all on a rotated table and breaks rows on stamped
 and garbled pages. The vision route keeps rows best but swaps digits in small print and costs 13-83 s and
 free-tier quota a page. Key: two independent readers, 1,063 cells, all agreed (docs/bench/hard-pages-answer-key.json).
+
+
+== 2026-10-17, later: the pipeline as it now reads a page (D29) ==
+pipeline-reader = extract.Document.page_text: RapidOCR first on a page of 15+ amounts, each row checked
+cell by cell against the text layer (a PDF-text line with the same figures is the row; otherwise nils put
+back and garbled figures taken from the layer; a scan's invisible OCR layer never overrules); a sideways
+page's text layer rebuilt in rows from its words (layer-upright); prose pages keep the text layer.
+
+engine                  rows intact  figs in order  figs on line  sentences
+pymupdf-sorted                48.9%          62.0%         60.4%    1/3
+pipeline-ocr                  52.6%          90.5%         98.2%    1/3
+layer-upright                 70.1%          83.2%         94.8%    1/3
+pipeline-reader               77.4%          94.9%         99.1%    1/3
+vision-route                  76.6%          84.7%         97.1%    1/3
+
+(137 rows with figures on 7 pages)
+
+rows intact, by page:
+                       A_novarti B_jubilan C_ahluwal D_kanoria E_sml_rat F_kanoria G_jubilan
+pymupdf-sorted           21/23      0/16      0/17      6/20      0/2      11/30     29/29  
+pipeline-ocr             19/23      1/16      1/17      4/20      0/2      20/30     27/29  
+layer-upright            21/23     16/16     12/17      6/20      0/2      12/30     29/29  
+pipeline-reader          21/23     16/16     12/17      4/20      0/2      24/30     29/29  
+vision-route             23/23      5/16      4/17     14/20      0/2      30/30     29/29  
+
+Still short of the vision route on the scans: A, D and F have an invisible OCR layer, which fills OCR's
+gaps but is not trusted over it. On D, a voting grid, both OCRs drop the "-" cells of 14 rows, so they stay
+dropped; on its two total rows RapidOCR read 99.9959 as "6966 96" and the scan's layer, which had it right,
+may not overrule it (D: 4 of 20 rows, the scan's layer alone 6, the vision route 14).
+On chart pages OCR misses axis ticks and small data labels; under 80% of the text layer's amounts it keeps
+the text layer (an investor presentation's charts, 2026-10-17 loop).

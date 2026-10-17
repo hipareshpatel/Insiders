@@ -446,3 +446,26 @@ def test_a_corrected_card_is_itself_corrected_and_checked(settings):
         "the adopted card went through the unit fixer too"
     assert body["grounding"]["unit_fixes"] == {"12,000": "120"}, \
         "the record beside the card describes the card that was published"
+
+
+def test_a_change_of_more_than_a_thousand_percent_is_read_whole():
+    """Jubilant's FY25 net profit rose from Rs 72.7 Cr to Rs 836.3 Cr, which the model wrote as
+    "+1,050%". The pattern could not read the thousands separator, so it took the change for 50%,
+    decided the model was wrong by a factor of twenty and spliced its own figure into the middle of
+    the old one: the card recorded "+1,+1050.3%". A turnaround off a small base writes it this way
+    every time."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import fix_change_percentages
+
+    source = "Net profit for the year 836.3 against 72.7 in the previous year (Rs in crore)"
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "FY25 results",
+        "card": {"impact_level": "HIGH", "headline": "FY25 results", "what_happened": ["Profit up sharply"],
+                 "notable_changes": [{"metric": "net_profit", "previous": "₹72.7 Cr", "current": "₹836.3 Cr",
+                                      "change": "+1,050%", "direction": "POSITIVE"}]}})
+    assert fix_change_percentages(out, (source,)) == [], "1,050% is right: 72.7 -> 836.3 is +1,050.3%"
+    assert out.card.notable_changes[0].change == "+1,050%"
+
+    out.card.notable_changes[0].change = "+2,400%"      # wrong by far more than the tolerance
+    assert fix_change_percentages(out, (source,)) == ["net_profit: +2,400% -> +1050.3%"]
+    assert out.card.notable_changes[0].change == "+1050.3%", "the whole number is replaced, not its tail"

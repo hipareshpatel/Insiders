@@ -284,7 +284,10 @@ def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...]) -> dict[str, str]
 
 
 _CHANGE_AMOUNT = re.compile(r"(?<![\w.])(\(?-?\d[\d,]*(?:\.\d+)?\)?)")
-_CHANGE_PCT = re.compile(r"([+\-−]?)\s*(\d+(?:\.\d+)?)\s*%")
+# The thousands separator is part of the number: a turnaround off a small base is written "+1,050%",
+# and without the comma the pattern read it as 50%, decided the model was wrong by a factor of
+# twenty, and spliced its correction into the middle, leaving "+1,+1050.3%" on the card.
+_CHANGE_PCT = re.compile(r"([+\-−]?)\s*(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*%")
 
 
 def _amount(text: str | None) -> float | None:
@@ -317,7 +320,7 @@ def fix_change_percentages(out: Pass2Output, sources: tuple[str, ...] = ()) -> l
         if index and not all(index.stated_crore(abs(v), 2) for v in (a, b)):
             continue  # one side is not in the filing, so the % computed from it would be worse
         real = (b - a) / abs(a) * 100
-        claimed = float(m.group(2)) * (-1 if m.group(1) in ("-", "−") else 1)
+        claimed = float(m.group(2).replace(",", "")) * (-1 if m.group(1) in ("-", "−") else 1)
         if not m.group(1) and re.search(r"\b(?:down|fell|lower|decline)", stated, re.I):
             claimed = -claimed
         if abs(claimed - real) <= max(1.0, abs(real) * 0.05):

@@ -247,3 +247,16 @@ def test_the_unit_is_read_from_the_filing_not_from_the_table_put_in_front_of_it(
 def test_a_day_of_the_month_is_not_a_figure_the_quote_must_carry():
     assert gate.numbers_in_quote("GNPA stood at 1.58% as of December 31, 2024, up from 1.22%",
                                  "b) % of Gross NPAs 1.58% 1.68% 1.22%") == []
+
+
+def test_an_amount_written_out_in_full_and_a_change_in_basis_points():
+    """Two things a quoted line carries without printing the card's own digits.
+
+    A notice writes the amount in rupees in Indian grouping ("Rs.50,10,05,632") where the card writes
+    Rs 50.10 Cr; and a change in a ratio is in basis points, which is a difference between two figures
+    the line does print, not a figure of its own."""
+    notice = "Show Cause Notice for Tax liability of Rs.50,10,05,632 and penalty of Rs.50,10,05,632"
+    assert gate.numbers_in_quote("Tax liability ₹50.10 Cr", notice) == []
+    assert gate.numbers_in_quote("Tax liability ₹73.40 Cr", notice) == ["73.40"]
+    assert gate.numbers_in_quote("GNPA 1.58%, +36 bps YoY", "b) % of Gross NPAs 1.58% 1.68% 1.22%") == []
+    assert gate.numbers_in_quote("Margin 9.78%, up 56 basis points", "ebitda_margin FY25: 9.78 %") == []

@@ -112,7 +112,7 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
     ("95" of "951.96") is allowed.
 
     `unit` is what the filing says its figures are in, as a divisor to crore (100 for lakh, 10 for
-    million). A card writes crore and an Indian statement writes lakh, so without it a right reading was
+    million); plain rupees are always tried too, since a notice writes the amount out in full. A card writes crore and an Indian statement writes lakh, so without it a right reading was
     reported as missing: "16.53 Cr" is the quoted row's own "1,653". Dividing by the stated unit also
     keeps the check that matters - "458 Cr" of a row reading 457.86 million is the ten-times misreading
     and is still refused, because 45.79 is what that row says.
@@ -126,17 +126,23 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
         return []
     found = [m.group(0).replace(",", "") for m in _CLAIM_NUMBER.finditer(_flat(quote))]
     digits = set(found)
+    # Scales a quoted figure may be at: the unit the filing declares, and plain rupees, because a
+    # notice writes the amount out in full ("Rs.50,10,05,632") where the card writes Rs 50.10 Cr.
+    scales = [s for s in (unit, 1e7) if s and s > 1]
     in_crore = []
-    if unit and unit > 1:
-        for d in found:
-            try:
-                in_crore.append(float(d) / unit)
-            except ValueError:
-                pass
+    for d in found:
+        try:
+            value = float(d)
+        except ValueError:
+            continue
+        in_crore += [value / s for s in scales]
     missing = []
     flat_claim = _PERIOD_LABEL.sub(" ", _flat(claim))
     for m in _CLAIM_NUMBER.finditer(flat_claim):
-        if flat_claim[m.end():m.end() + 2].lstrip().startswith("%"):
+        after = flat_claim[m.end():m.end() + 14].lstrip()
+        if after.startswith(("bps", "bp ", "bp,", "bp.", "pp", "basis point", "percentage point")):
+            continue  # a change in a ratio, not a figure the row prints: "+56 bps" off 9.78% and 9.22%
+        if after.startswith("%"):
             continue  # a percentage follows from the row's own figures rather than being printed in it,
             # and grounding already checks one against the whole filing, stated or derived
         value = m.group(0).replace(",", "")

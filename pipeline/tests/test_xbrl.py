@@ -223,13 +223,25 @@ def test_results_card_key_numbers_come_from_xbrl_and_yoy_qoq_mixups_are_flagged(
 
     year = copy.deepcopy(tagged)
     year.metrics.append(FinancialMetric(metric="revenue", period="9MFY25", value=2_800.0, yoy_pct=rev.qoq_pct))
-    assert period_mixups(out, year) == []
+    assert period_mixups(out, year), "the card is about Q3: the nine months' change does not answer for it"
+    nine_months = out.model_copy(deep=True)
+    nine_months.card.what_happened[0].text = f"9MFY25 revenue fell {abs(rev.qoq_pct):.1f}% YoY to ₹2,800 Cr"
+    nine_months.card.key_numbers = []
+    assert period_mixups(nine_months, year) == []
+    nine_months.card.what_happened[0].text = f"Nine-month revenue is ₹2,800 Cr, down {abs(rev.qoq_pct):.1f}% YoY"
+    assert period_mixups(nine_months, year) == [], "a period in words (Novartis, loop round 2c)"
     # A loss narrowing from 100 to 94.1 has no XBRL YoY, but it is a 5.9% change all the same (Shivam's FY25
     # "+4.3% YoY (less negative)").
     loss = copy.deepcopy(tagged)
     loss.metrics += [FinancialMetric(metric="pat", period="9MFY24", value=-100.0),
                      FinancialMetric(metric="pat", period="9MFY25", value=-94.1)]
-    assert period_mixups(out, loss) == []
+    nine_months.card.what_happened[0].text = f"9MFY25 loss narrowed {abs(rev.qoq_pct):.1f}% YoY to ₹94.1 Cr"
+    assert period_mixups(nine_months, loss) == []
+    # the period may follow the change: "the 12.3% YoY growth in H1FY26" on a Q2 card whose quarter fell
+    # 12.3% QoQ (Novartis, loop round 2e)
+    nine_months.card.what_happened[0].text = (f"Q3FY25 revenue was ₹952 Cr, while the {abs(rev.qoq_pct):.1f}% YoY "
+                                              "fall in 9MFY25 came from exports")
+    assert period_mixups(nine_months, year) == []
 
 
 def test_promoter_locked_in_shares_are_not_the_promoter_holding():

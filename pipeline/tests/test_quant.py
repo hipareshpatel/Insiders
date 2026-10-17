@@ -121,3 +121,20 @@ def test_card_tone_and_takeaway_defaults():
     assert card.tone == "POSITIVE" and card.takeaway == "Equal to 30% of FY26 revenue"
     assert Card.model_validate({"impact_level": "LOW", "headline": "Routine update here", "what_happened": ["x"],
                                 "tone": "whatever"}).tone == "NEUTRAL"
+
+
+def test_an_estimate_may_build_on_an_earlier_verified_one():
+    """Shivam's "exposure as a share of the FY25 loss" took the total exposure (₹50.1 Cr tax + ₹50.1 Cr penalty)
+    as its input and that input was reported as unsourced (loop round 3a, 2026-10-17)."""
+    filing = "Show cause notice for tax of Rs.50,10,05,632 and an equal penalty. Net loss for FY25 Rs. 48.04 crore."
+    card = Card.model_validate({"impact_level": "HIGH", "headline": "GST demand", "what_happened": ["demand"],
+                                "quantified_impact": [
+        {"label": "Total exposure", "formula": "tax_cr + penalty_cr", "result": 100.2, "unit": "INR_CR", "inputs": [
+            {"name": "tax_cr", "value": 50.1, "source": "FILING"}, {"name": "penalty_cr", "value": 50.1, "source": "FILING"}]},
+        {"label": "Exposure against the loss", "formula": "total_cr / loss_cr", "result": 2.09, "unit": "X", "inputs": [
+            {"name": "total_cr", "value": 100.2, "source": "FILING"}, {"name": "loss_cr", "value": 48.04, "source": "FILING"}]},
+        {"label": "An invented input", "formula": "x * 2", "result": 251.0, "unit": "INR_CR", "inputs": [
+            {"name": "x", "value": 125.5, "source": "FILING"}]}]})
+    result = check(card.quantified_impact, filing)
+    assert [i["check"] for i in result.items] == ["VERIFIED", "VERIFIED", "VERIFIED"]
+    assert result.unsourced == ["x=125.5"]

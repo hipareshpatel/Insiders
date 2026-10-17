@@ -42,8 +42,8 @@ from .ocr import available as local_ocr_available
 from .ocr import page_reader, recognise
 from . import raw
 from . import gate
-from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, check_card, check_claims, declared_unit,
-                        margin_issues, scale_issues, unit_slips)
+from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
+                        declared_unit, margin_issues, scale_issues, unit_slips)
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
                       quarter_index, statement_quarter, statement_year)
@@ -453,32 +453,64 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
 _PCT_LABELLED = re.compile(r"([+\-−]?\d+(?:\.\d+)?)\s*%\s*(?:\(?\s*)(YoY|QoQ|y-o-y|q-o-q|year[- ]on[- ]year|quarter[- ]on[- ]quarter)", re.I)
 
 
+_PERIOD_WORDS = re.compile(r"\b(?:nine[- ]months?|first[- ]half|second[- ]half|full[- ]year)\b", re.I)
+_PERIOD_WORD_LABELS = {"nine ": "9M", "nine-": "9M", "first": "H1", "secon": "H2", "full ": "FY", "full-": "FY"}
+
+
 def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None") -> list[str]:
     """A "% YoY" on the card that is the quarter-on-quarter change of a tagged figure (and no figure's
-    YoY), or the reverse: SML's results cards called the fall from Q2 a fall from a year ago."""
+    YoY), or the reverse: SML's results cards called the fall from Q2 a fall from a year ago.
+
+    Each change is compared with the changes of the period it is about, and only those: the period named
+    just before it in its own sentence, else its key number's label, else the period the card's headline
+    and timeline entry name (as xbrl_key_numbers reads them, d6e7c14). Comparing with the latest quarter
+    alone held Jubilant's FY25 revenue "+7.9% YoY" as a quarter-on-quarter change; comparing with every
+    period's would let a quarter's figure pass with the year's change (loop rounds 3a-3b, 2026-10-17)."""
     if out.card is None or tagged is None or tagged.kind != "RESULTS":
         return []
-    now = [m for m in tagged.metrics if m.period == tagged.period and m.unit != "PCT"]
-    yoy = [abs(m.yoy_pct) for m in now if m.yoy_pct is not None]
-    qoq = [abs(m.qoq_pct) for m in now if m.qoq_pct is not None]
-    # A "% YoY" may be the year's or the half year's change, not only the quarter's: Jubilant's FY25 revenue
-    # "+7.9% YoY" and Shivam's FY25 and Novartis's H1 changes were held as quarter-on-quarter ones, because
-    # only the latest quarter's YoY was compared (loop rounds 3a-3b, 2026-10-17).
-    yoy_any = [abs(m.yoy_pct) for m in tagged.metrics if m.unit != "PCT" and m.yoy_pct is not None]
-    # XBRL gives no change on a loss (xbrl._change), but a card may: Shivam's FY25 loss of 48.04 against
-    # 50.2 was "+4.3% YoY (less negative)".
-    known = {(m.metric, m.period): m.value for m in tagged.metrics if m.value is not None}
+    by_period: dict[str, list] = {}
     for m in tagged.metrics:
-        before = known.get((m.metric, prior_year_period(m.period) or ""))
-        if m.yoy_pct is None and m.unit != "PCT" and m.value is not None and before:
-            yoy_any += [abs((m.value - before) / abs(before) * 100), abs((abs(m.value) / abs(before) - 1) * 100)]
+        if m.unit != "PCT":
+            by_period.setdefault(m.period, []).append(m)
+    known = {(m.metric, m.period): m.value for m in tagged.metrics if m.value is not None}
+
+    def changes(period: str) -> tuple[list[float], list[float]]:
+        metrics = by_period.get(period) or []
+        yoy = [abs(m.yoy_pct) for m in metrics if m.yoy_pct is not None]
+        qoq = [abs(m.qoq_pct) for m in metrics if m.qoq_pct is not None]
+        # XBRL gives no change on a loss (xbrl._change), but a card may: Shivam's FY25 loss of 48.04
+        # against 50.2 was "+4.3% YoY (less negative)".
+        for m in metrics:
+            before = known.get((m.metric, prior_year_period(m.period) or ""))
+            if m.yoy_pct is None and m.value is not None and before:
+                yoy += [abs((m.value - before) / abs(before) * 100), abs((abs(m.value) / abs(before) - 1) * 100)]
+        return yoy, qoq
+
+    card = out.card
+    about = _label_period(f"{card.headline or ''} {out.timeline_entry or ''}", tagged.period, by_period) or tagged.period
+    items = [(t, about) for t in (card.headline, card.takeaway, card.core_catalyst, *(f.text for f in card.what_happened),
+                                  *(i.text for i in card.why_it_matters), out.timeline_entry) if t]
+    items += [(f"{k.value} {k.change or ''}", _label_period(k.label or "", about, by_period)) for k in card.key_numbers]
+    items += [(f"{c.previous or ''} ; {c.current or ''}", about) for c in card.notable_changes]
     issues = []
-    for text in _card_texts(out):
+    for text, default in items:
+        # periods in words, written over in place so positions hold: "Nine-month revenue ... down 3.2% YoY"
+        text = _PERIOD_WORDS.sub(lambda w: _PERIOD_WORD_LABELS[w.group(0).lower()[:5]].ljust(len(w.group(0))), text)
         for m in _PCT_LABELLED.finditer(text):
+            # the period named just before the change, and just after it: "the 12.3% YoY growth in H1FY26"
+            before = list(_LABEL_PERIOD.finditer(text[:m.start()]))
+            after = _LABEL_PERIOD.search(text[m.end():m.end() + 30])
+            named = [p.group(0) for p in (before[-1] if before else None, after) if p]
+            periods = {_label_period(p, about, by_period) for p in named} if named else {default}
+            periods.discard(None)  # a period the file does not carry: nothing to compare the change with
+            if not periods:
+                continue
+            yoy = [x for p in periods for x in changes(p)[0]]
+            qoq = [x for p in periods for x in changes(p)[1]]
             value, label = abs(float(m.group(1).replace("−", "-"))), m.group(2).lower()
             near = lambda xs: any(abs(x - value) <= 0.6 for x in xs)  # noqa: E731
             is_yoy = label.startswith(("yoy", "y-o-y", "year"))
-            if is_yoy and near(qoq) and not near(yoy_any):
+            if is_yoy and near(qoq) and not near(yoy):
                 issues.append(f"\"{m.group(0)}\" is a quarter-on-quarter change, not year-on-year")
             elif not is_yoy and near(yoy) and not near(qoq):
                 issues.append(f"\"{m.group(0)}\" is a year-on-year change, not quarter-on-quarter")
@@ -628,8 +660,11 @@ def _quoted_claims(card) -> list[tuple[str, str, str, str | None, bool]]:
         # measured against belongs to an earlier filing or to memory, which is where it is checked.
         # Asking for both put "finance_cost Rs 0.11 Cr (Q2FY26) -> Rs 0.98 Cr (Q3FY26)" against a quote
         # reading "finance_cost Q3FY26: 0.98 Cr" and reported the 0.11 as missing.
+        # Nor is its change, when the change is the line's own arithmetic: "+₹246.77 Cr" from ₹34.96 Cr
+        # to ₹281.73 Cr is not a figure any row prints (grounding.change_derived).
+        derived = change_derived(change.previous, change.current, change.change)
         out.append(("notable change", change.metric or "",
-                    f"{change.current or ''} {change.change or ''}", change.quote, False))
+                    f"{change.current or ''} {'' if derived else change.change or ''}", change.quote, False))
     for insight in card.why_it_matters:
         if insight.basis == "FILING":  # a point resting on memory is checked against memory, not the filing
             out.append(("why it matters", (insight.text or "")[:48], insight.text or "", insight.quote, True))
@@ -689,8 +724,15 @@ def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...]
     if card.deal_value and card.deal_value.updates_deal_id not in valid_refs:
         card.deal_value.updates_deal_id = None  # only a deal the model was shown can be updated
     reconcile_call_read(card, view)
-    grounding = check_card(card, *sources)
     quant = check_quant(card.quantified_impact, *sources)
+    # Figures code computed from the filing's own: an impact verified from sourced inputs, and a deal's
+    # size from its buyers' shares x price (apply_deal_guards). SML's ₹554.65 Cr - 85,33,053 shares at ₹650
+    # - was held as a number the filing does not print (loop round 3b, 2026-10-17).
+    derived = [i["computed"] for i in quant.items
+               if i.get("check") == "VERIFIED" and not i.get("unsourced_inputs") and i.get("computed") is not None]
+    if card.deal_value and card.deal_value.tranches and sources:
+        derived.append(gate.tranche_total_cr(card.deal_value.tranches, sources[0]))
+    grounding = check_card(card, *sources, derived=derived)
     checked = grounding.checked + quant.checked_inputs
     ungrounded = grounding.ungrounded + quant.unsourced
     score = 1.0 if checked == 0 else round(1 - len(ungrounded) / checked, 3)

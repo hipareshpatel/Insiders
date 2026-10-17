@@ -309,30 +309,98 @@ def check_claims(card: Card, *sources: str) -> list[str]:
     return list(dict.fromkeys(unsupported))[:5]
 
 
-def check_card(card: Card, *sources: str) -> GroundingResult:
+def _side(text: str | None) -> tuple[float, bool, float] | None:
+    """The first figure of a notable change's previous or current, signed, as (value, is a percentage, half
+    its last printed digit); money is in crore when a unit is written after it ("₹19.78 lakh" is 0.1978)."""
+    clean = _clean((text or "").replace("−", "-"))
+    for m in _NUMBER.finditer(clean):
+        raw = m.group(0)
+        digits = raw.replace(",", "").strip("+-()")
+        try:
+            value = float(digits)
+        except ValueError:
+            continue
+        negative = raw.startswith(("-", "(")) or clean[:m.start()].rstrip().endswith(("-", "("))
+        is_pct = bool(re.match(r"\s*(?:%|per\s*cent)", clean[m.end():], re.I))
+        unit = (None if is_pct else _money_unit(clean, m.end())) or 1
+        half = 0.5 * 10 ** -len(digits.partition(".")[2]) / unit
+        return (-value if negative else value) / unit, is_pct, half
+    return None
+
+
+def change_follows(previous: str | None, current: str | None, value: float, decimals: int, kind: str) -> bool:
+    """A notable change's figure computed from its own previous and current: the difference, the change in
+    per cent (on a loss too: a loss of 224.4 narrowing to 23.2 is "-89.7%"), the multiple, or between two
+    percentages the change in points. Kanoria's net debt "+₹246.77 Cr" (₹34.96 Cr to ₹281.73 Cr) was held as
+    a figure the filing does not print, though it is the line's own subtraction (loop round 3a, 2026-10-17).
+    Signs are read loosely - a card writes a loss as "-₹6.38 Cr", "₹-6.38 Cr" or "₹6.38 Cr loss" - so the
+    difference is tried both as written and between the sizes. Both sides are themselves rounded, so their
+    rounding is carried through the arithmetic: a change worked out from the unrounded figures is not
+    refused for a digit the card's previous and current do not show (the owner, 2026-10-18)."""
+    before, after = _side(previous), _side(current)
+    if not before or not after or not before[0]:
+        return False
+    (p, p_pct, dp), (c, c_pct, dc) = before, after
+    half = 0.5 * 10 ** (-decimals)
+    if kind == "pct":
+        slack = 100 * (abs(c) + dc) / max(abs(p) - dp, 1e-9) * (dc / max(abs(c), 1e-9) + dp / abs(p)) if c else 0.0
+        changes = [(c - p) / abs(p) * 100, (abs(c) - abs(p)) / abs(p) * 100]
+        if p_pct and c_pct:
+            changes.append(c - p)
+            slack = max(slack, dc + dp)
+        return any(abs(abs(x) - value) <= max(half, 0.05) + slack for x in changes)
+    if kind in ("bps", "pp"):
+        points, slack = abs(c - p), dc + dp
+        if kind == "bps":
+            points, slack = points * 100, slack * 100
+        return p_pct and c_pct and abs(points - value) <= half + slack + 1e-9
+    if kind == "x":
+        if not c:
+            return False
+        ratios = (abs(c / p), abs(p / c))
+        return any(abs(r - value) <= max(half, 0.02 * value) + r * (dc / abs(c) + dp / abs(p)) for r in ratios)
+    if p_pct or c_pct:
+        return False
+    return any(abs(d - value) <= half + dc + dp + 1e-9 for d in (abs(c - p), abs(abs(c) - abs(p)), abs(c) + abs(p)))
+
+
+def change_derived(previous: str | None, current: str | None, change: str | None) -> bool:
+    """Every figure a notable change's `change` states follows from its own previous and current."""
+    tokens = [t for t in _tokens(change or "") if not (t[3] == "plain" and t[0] <= 31 and t[1] == 0)]
+    return bool(tokens) and all(change_follows(previous, current, v, d, kind) for v, d, _, kind, _ in tokens)
+
+
+def check_card(card: Card, *sources: str, derived=()) -> GroundingResult:
     """Every figure on the card against the sources. A figure derived on the card (a share, a change,
-    a multiple) passes when it follows from another figure on the same line and a source figure;
-    any other derivation belongs in quantified_impact, where its formula is checked.
+    a multiple) passes when it follows from another figure on the same line and a source figure, and a
+    notable change's change when it follows from its own previous and current (change_follows); any other
+    derivation belongs in quantified_impact, where its formula is checked. `derived` are figures code has
+    computed from the filing's own (a deal's shares x price, an impact's verified result), in crore.
 
     A ₹ crore figure must match a source figure at the unit written beside it ("INR 5445 Million"
     is ₹544.5 Cr, never ₹5,445 Cr). A bare figure (a table) matches at the filing's declared unit
     when it declares one ("(INR in Lakhs)": ₹28.63 Cr = 2,863), otherwise at any scale; the other
     sources (headline, memory) are already in crore when the filing declares a unit."""
-    index = SourceIndex(*sources)
+    computed = " ; ".join(f"{v:.2f}" for v in derived if v is not None)
+    index = SourceIndex(*sources, computed)
     unit = declared_unit(sources[0]) if sources else None
     filing_index = SourceIndex(sources[0] if sources else "")
-    other_index = SourceIndex(*sources[1:])
+    other_index = SourceIndex(*sources[1:], computed)
     filing_scales, other_scales = ((unit,), (1,)) if unit else (CRORE_SCALES, CRORE_SCALES)
     texts = [("headline", card.headline), ("takeaway", card.takeaway), *(("fact", f.text) for f in card.what_happened),
              *(("insight", i.text) for i in card.why_it_matters)]
     if card.deal_value and card.deal_value.amount_cr:
         texts.append(("deal", f"{card.deal_value.amount_cr:g} Cr"))
     texts += [("key", f"{k.value} {k.change or ''}") for k in card.key_numbers]
-    texts += [("change", f"{c.previous or ''} ; {c.current or ''} ; {c.change or ''}") for c in card.notable_changes]
+    sides: dict[int, tuple[str | None, str | None, int]] = {}   # a change line: its previous, current, and where its change starts
+    for c in card.notable_changes:
+        head = f"{c.previous or ''} ; {c.current or ''} ; "
+        sides[len(texts)] = (c.previous, c.current, len(head))
+        texts.append(("change", head + (c.change or "")))
     track = card.track_next
     texts += [("track", f"{k.kpi} {k.target or ''}") for k in track.kpis_to_verify]
     checked, ungrounded, headline_bad, amounts_bad = 0, [], [], []
-    for where, text in texts:
+    for n, (where, text) in enumerate(texts):
         tokens = _tokens(text or "")
         line_amounts = [v for v, d, _, kind, _ in tokens if kind in ("plain", "qty") and v > 31 and index.stated(v, d)]
         line_pcts = [v for v, _, _, kind, _ in tokens if kind == "pct"]
@@ -341,6 +409,8 @@ def check_card(card: Card, *sources: str) -> GroundingResult:
             if value == 0 or (kind == "plain" and value <= 31 and decimals == 0):
                 continue
             checked += 1
+            if n in sides and pos >= sides[n][2] and change_follows(sides[n][0], sides[n][1], value, decimals, kind):
+                continue
             if pos in crore_at:
                 if (filing_index.stated_crore(value, decimals, filing_scales)
                         or other_index.stated_crore(value, decimals, other_scales)):

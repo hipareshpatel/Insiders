@@ -124,18 +124,24 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
     """
     if not quote:
         return []
-    found = [m.group(0).replace(",", "") for m in _CLAIM_NUMBER.finditer(_flat(quote))]
+    flat_quote = _flat(quote)
+    found = [m.group(0).replace(",", "") for m in _CLAIM_NUMBER.finditer(flat_quote)]
     digits = set(found)
-    # Scales a quoted figure may be at: the unit the filing declares, and plain rupees, because a
-    # notice writes the amount out in full ("Rs.50,10,05,632") where the card writes Rs 50.10 Cr.
-    scales = [s for s in (unit, 1e7) if s and s > 1]
-    in_crore = []
-    for d in found:
+    # Each quoted figure in crore at every unit it may be in: the unit written after it ("Rs. 1.09 lakh"),
+    # else the unit the filing declares, and plain rupees, because a notice writes the amount out in full
+    # ("Rs.50,10,05,632") where the card writes Rs 50.10 Cr. `as_printed` keeps the figure as it stands, for
+    # a card figure with no money unit (a per-share amount, a count) and for a filing that declares none.
+    in_crore, as_printed = [], []
+    for m in _CLAIM_NUMBER.finditer(flat_quote):
         try:
-            value = float(d)
+            value = float(m.group(0).replace(",", ""))
         except ValueError:
             continue
-        in_crore += [value / s for s in scales]
+        own = _unit_after(flat_quote, m.end())
+        in_crore += [value / s for s in ([own] if own else [s for s in (unit, 1e7) if s and s > 1])]
+        if own is None and not (unit and unit > 1):
+            in_crore.append(value)
+        as_printed.append(value)
     missing = []
     flat_claim = _PERIOD_LABEL.sub(" ", _flat(claim))
     for m in _CLAIM_NUMBER.finditer(flat_claim):
@@ -155,11 +161,33 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
         decimals = len(value.partition(".")[2])
         if not decimals and number <= 31:
             continue  # a day of the month, a count of directors: grounding leaves these alone too
+        # A figure rounded to the card's own last digit is that figure: "₹952 Cr" of a row reading 951.96,
+        # "₹1.1 lakh" of a demand of 1.09 lakh. Only a prefix used to count ("95" of "951.96"), so a figure
+        # rounded up was held as missing. The unit still has to be right: a card amount in crore, lakh or
+        # million is compared in crore, and "458 Cr" of a row reading 457.86 million is still refused.
         tolerance = 0.5 * 10 ** -decimals
-        if any(abs(c - number) <= tolerance for c in in_crore):
+        card_unit = _unit_after(flat_claim, m.end())
+        if card_unit is not None:
+            if any(abs(c - number / card_unit) <= tolerance / card_unit + 1e-12 for c in in_crore):
+                continue
+        elif any(abs(c - number) <= tolerance for c in in_crore + as_printed):
             continue
         missing.append(m.group(0))
     return missing
+
+
+_UNIT_WORD = re.compile(r"\s*(crores?|cr\b|lakhs?|lacs?|millions?|mn\b|billions?|bn\b|thousands?)")
+_PER_CRORE = {"crore": 1, "cr": 1, "lakh": 100, "lac": 100, "million": 10, "mn": 10, "billion": 0.01, "bn": 0.01,
+              "thousand": 10_000}
+
+
+def _unit_after(flat: str, end: int) -> float | None:
+    """The money unit written right after a figure in lower-cased text, as figures per ₹ crore."""
+    m = _UNIT_WORD.match(flat, end)
+    if not m:
+        return None
+    word = m.group(1)
+    return _PER_CRORE.get(word, _PER_CRORE.get(word[:-1]))
 
 
 SAME_BLOCK = 2000  # characters either side of the quote: about one statement table, not the document

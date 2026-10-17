@@ -104,6 +104,10 @@ class QuantCheck:
 def check(estimates: list[QuantifiedImpact], *sources: str) -> QuantCheck:
     index = SourceIndex(*sources)
     out = QuantCheck()
+    # An estimate may build on an earlier one's verified result: Shivam's "exposure as a share of the FY25
+    # loss" took the total exposure (₹50.1 Cr tax + ₹50.1 Cr penalty = ₹100.2 Cr) as its input, and that
+    # input was reported as a figure the filing does not state (loop round 3a, 2026-10-17).
+    results: list[float] = []
     for est in estimates[:5]:
         item = est.model_dump()
         values = {i.name: i.value for i in est.inputs if i.value is not None}
@@ -111,6 +115,8 @@ def check(estimates: list[QuantifiedImpact], *sources: str) -> QuantCheck:
         for i in est.inputs:
             if i.source in ("FILING", "MEMORY") and i.value is not None:
                 out.checked_inputs += 1
+                if any(math.isclose(abs(i.value), abs(r), rel_tol=0.005, abs_tol=0.05) for r in results):
+                    continue
                 if not (index.stated(abs(i.value), _decimals(i.value)) or (abs(i.value) <= 31 and float(i.value).is_integer())):
                     flags.append(i.name)
                     out.unsourced.append(f"{i.name}={i.value:g}")
@@ -130,5 +136,7 @@ def check(estimates: list[QuantifiedImpact], *sources: str) -> QuantCheck:
             item["check"] = "MISMATCH"
             item["check_note"] = f"formula gives {computed:,.4g}, card states {est.result:,.4g}"
             out.mismatches += 1
+        if item["check"] == "VERIFIED" and not flags:
+            results.append(computed)
         out.items.append(item)
     return out

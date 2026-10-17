@@ -733,3 +733,78 @@ def test_a_unit_written_the_ways_indian_statements_write_it():
     assert declared_unit("Revenue 12,345.67 (lakhs)") is None      # belongs to that one figure
     assert declared_unit("Rs. 000,123 was paid") is None
     assert declared_unit("purchase of 5 lakhs shares at Rs 10") is None
+
+
+def test_a_change_computed_from_its_own_line_is_checked_by_arithmetic_not_looked_up():
+    """Loop rounds 3a-3b (2026-10-17): Kanoria's net debt "+₹246.77 Cr" (₹34.96 Cr to ₹281.73 Cr), its textile
+    loss "+₹0.50 Cr" (-₹6.38 Cr to -₹5.88 Cr) and Jubilant's Generics loss "narrowed -89.7%" were held as
+    figures the filing does not print - each is the line's own subtraction. A wrong one still is not."""
+    from bse_intel.grounding import change_derived, change_follows
+    from bse_intel.pipeline import check_quoted_numbers
+
+    assert change_derived("₹34.96 Cr (Mar-2025)", "₹281.73 Cr (Sep-2025)", "+₹246.77 Cr")
+    assert change_derived("-₹6.38 Cr (Q2FY25)", "-₹5.88 Cr (Q2FY26)", "+₹0.50 Cr")
+    assert change_derived("-₹224.4 Cr (FY24)", "-₹23.2 Cr (FY25)", "loss narrowed-89.7%")
+    assert change_derived("₹11.28 Cr (H1FY25)", "-₹4.18 Cr (H1FY26)", "-62.9%")
+    assert change_derived("22.99% (Q3FY24)", "21.08% (Q3FY25)", "-191 bps")
+    assert change_derived("₹19.78 lakh (June 2025)", "₹50.1 Cr tax plus ₹50.1 Cr penalty", "about 250x larger")
+    assert not change_derived("27.9% (Q3FY25)", "45.7% (Q3FY26)", "+178 bps"), "1,780 bps: the model's slip"
+    assert not change_derived("₹12.11 Cr (Q3FY25)", "₹8.53 Cr (Q3FY26)", "-30.0% YoY"), "-29.6%, not -30.0%"
+    assert not change_derived("₹4.54 Cr write-back", "₹16.53 Cr charge", "swing to charge"), "no figure to follow"
+    assert not change_follows("Nil", "₹5 Cr", 5, 0, "plain")
+    # the sides are rounded too: a change worked out from the unrounded figures is not refused for it
+    assert change_derived("₹0.4 Cr (Q3FY25)", "₹1.0 Cr (Q3FY26)", "+172% YoY")
+    assert change_derived("-₹224 Cr (FY24)", "-₹23 Cr (FY25)", "-89.7%")
+
+    filing = "Net debt stood at Rs. 28,173 lakh as at 30 September 2025 against Rs. 3,496 lakh in March 2025 (Rs. in lakh)."
+    held = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q2FY26 results",
+        "card": {"impact_level": "MODERATE", "headline": "Q2FY26 results",
+                 "what_happened": [{"text": "Net debt rose", "quote": "Net debt stood at Rs. 28,173 lakh"}],
+                 "notable_changes": [{"metric": "net_debt", "previous": "₹34.96 Cr (Mar-2025)",
+                                      "current": "₹281.73 Cr (Sep-2025)", "change": "+₹246.77 Cr",
+                                      "quote": "Net debt stood at Rs. 28,173 lakh as at 30 September 2025"}]}})
+    assert check_quoted_numbers(held, filing, 100)[0] == []
+    assert "246.77" not in check_card(held.card, filing).ungrounded
+    held.card.notable_changes[0].change = "+₹264.77 Cr"           # a slip in the subtraction is still caught
+    assert "264.77" in check_card(held.card, filing).ungrounded
+
+
+def test_figures_code_computed_from_the_filing_are_grounded():
+    """SML's deal of ₹554.65 Cr is 85,33,053 shares at ₹650, both read from the filing by the deal guard, and
+    was held as a number the filing does not print (loop round 3b, 2026-10-17)."""
+    from bse_intel.pipeline import check_card_all
+
+    filing = ("Share purchase agreements for 63,62,306 equity shares from Sumitomo Corporation and 21,70,747 equity "
+              "shares from Isuzu Motors Limited at a price of Rs. 650 per share.")
+    card = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A", "timeline_entry": "SPA signed",
+        "card": {"impact_level": "HIGH", "headline": "Mahindra to buy 58.96% of SML for ₹554.65 Cr",
+                 "what_happened": [{"text": "SPAs signed", "quote": "Share purchase agreements"}],
+                 "deal_value": {"kind": "ACQUISITION", "amount_cr": 554.65, "tranches": [
+                     {"party": "M&M from Sumitomo", "shares": 6362306, "price_per_share": 650},
+                     {"party": "M&M from Isuzu", "shares": 2170747, "price_per_share": 650}]}}})
+    found = check_card_all(card, None, (filing,))
+    assert "554.65" not in found.ungrounded and "58.96%" in found.ungrounded
+    card.card.deal_value.tranches = []
+    assert "554.65" in check_card_all(card, None, (filing,)).ungrounded, "without the shares it is not derived"
+
+
+def test_a_figure_rounded_to_the_cards_own_last_digit_is_the_quotes_figure():
+    """Only a prefix used to count as a rounding ("95" of "951.96"), and a unit the quote writes itself was not
+    read: Novartis's note "₹ 16.8 million (Gratuity by 14.2 million ...)" given as ₹1.68 Cr and ₹1.42 Cr, and
+    Jubilant's finance cost "52.7 Cr" given as ₹53 Cr, were held as figures their quotes do not carry
+    (12 of 766 quoted items in loop rounds 2a-3b; the owner's question, 2026-10-18: 1.09 lakh written as 1.1
+    lakh must not hold a card). The unit still has to be right."""
+    from bse_intel.gate import numbers_in_quote
+
+    assert numbers_in_quote("₹1.1 lakh", "a demand of Rs. 1.09 lakh") == []
+    assert numbers_in_quote("₹952 Cr", "Revenue from operations 951.96") == []
+    assert numbers_in_quote("₹53 Cr (Q4FY25)", "finance_cost Q4FY25: 52.7 Cr, QoQ -5.2%", 10) == []
+    assert numbers_in_quote("₹1.68 Cr (gratuity ₹1.42 Cr, leave ₹0.26 Cr)",
+                            "increase in the provision by ₹ 16.8 million (Gratuity by 14.2 million and leave 2.6 million)") == []
+    assert numbers_in_quote("₹53.0 per share", "Basic EPS 52.99", 100) == []
+    # the wrong unit, or more precision than the quote has, is still a figure the quote does not carry
+    assert numbers_in_quote("₹458 Cr", "Finance costs 457.86", 10) == ["458"]
+    assert numbers_in_quote("₹110 Cr", "a demand of Rs. 109.4 lakh") == ["110"]
+    assert numbers_in_quote("₹1.09 lakh", "a demand of Rs. 1.1 lakh") == ["1.09"]

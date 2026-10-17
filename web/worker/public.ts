@@ -302,6 +302,7 @@ api.get("/search", async (c) => {
       SELECT c.news_id, c.scrip_code, c.company_name, c.headline, c.impact_level, c.filed_at
         FROM (SELECT rowid AS rid FROM cards_fts WHERE cards_fts MATCH ?1 ORDER BY rank LIMIT 50) f
         CROSS JOIN cards c ON c.rowid = f.rid
+       WHERE c.held = 0
        ORDER BY c.filed_at DESC
        LIMIT 8`).bind(fts),
   ]);

@@ -23,6 +23,36 @@ SCANNED_PAGE_CHARS = 80  # blueprint §5.3: under 80 characters of text and an i
 CACHE_VERSION = 2
 OcrFn = Callable[[bytes], str]
 
+# A text layer can be present and still unreadable: a font whose glyphs map to the wrong letters. On
+# 929 cached filings, 32 pages in 4 filings were like that - Jubilant's statements read "ŝŶ ŵŝůůŝŽŶͿ zĞĂƌ
+# ŶĚĞĚ ϯϬ" for "in million) Year Ended 30", digits included; a takeover disclosure read "FRPSDQ\VHFUHWDU\"
+# for "company secretary", every letter moved three places. Each is long enough to pass for a text page,
+# so none was OCR'd and the model was handed the garbage. Two signs, calibrated on all 10,873 text pages
+# by eye: letters from scripts an English filing does not use (ligatures such as "ﬁ" are fine), and
+# control characters. Two control characters are benign substitutes and are not counted: one stands for
+# a space (Jubilant's readable pages, "Year<03>Ended", repaired by _clean) and one for a bullet in
+# sustainability reports - counting it flagged a good page at exactly the threshold.
+UNREADABLE_FOREIGN = 0.10
+UNREADABLE_CONTROL = 0.02
+_BENIGN_GLYPHS = frozenset((chr(3), chr(7)))
+
+
+def text_unreadable(text: str | None) -> bool:
+    """The page's text layer is in a broken or shifted font: OCR it rather than trust it."""
+    visible = [c for c in (text or "") if not c.isspace() and c not in _BENIGN_GLYPHS]
+    if len(visible) < 150:
+        return False
+    control = sum(1 for c in visible if ord(c) < 0x20 or 0x7F <= ord(c) < 0xA0)
+    letters = [c for c in visible if c.isalpha()]
+    foreign = sum(1 for c in letters if ord(c) > 0x24F and not 0xFB00 <= ord(c) <= 0xFB06)
+    return control >= UNREADABLE_CONTROL * len(visible) or foreign >= UNREADABLE_FOREIGN * max(1, len(letters))
+
+
+def cache_needs_ocr(data: dict) -> bool:
+    """A cached document with an unreadable page that was never OCR'd: read the PDF again."""
+    ocr = data.get("ocr") or {}
+    return any(text_unreadable(t) and str(i) not in ocr for i, t in enumerate(data.get("digital") or []))
+
 # PyMuPDF does not support concurrent use from multiple threads, even on
 # separate documents. All PyMuPDF calls go through this lock; OCR network
 # calls happen outside it.
@@ -95,10 +125,13 @@ class Document:
             return 0.0
         return sum(self.is_scanned(i) for i in range(self.page_count)) / self.page_count
 
+    def is_unreadable(self, index: int) -> bool:
+        return text_unreadable(self._digital[index])
+
     def page_text(self, index: int) -> str:
         if index >= self.page_count:
             return ""
-        if not self.is_scanned(index):
+        if not self.is_scanned(index) and not self.is_unreadable(index):
             return self._digital[index]
         if index in self._ocr_cache:
             return self._ocr_cache[index]

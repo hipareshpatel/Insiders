@@ -532,3 +532,31 @@ def test_a_results_reading_that_does_not_add_up_goes_to_a_second_provider(settin
     pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert len(fake.calls) == 2, "the figures that did not add up sent the card to a second provider"
     assert "PBT 20.00 - tax 5.00 = 15.00 Cr, but PAT is given as 17.50 Cr" in fake.calls[1]["messages"][1]["content"]
+
+
+def test_a_text_layer_in_a_broken_or_shifted_font_is_ocrd_not_trusted():
+    """32 pages in 4 of 929 cached filings had a text layer long enough to pass for a text page and
+    unreadable: Jubilant's statements in a font whose glyphs map to the wrong letters, a takeover
+    disclosure in one that shifts every letter three places. None was OCR'd; the model got the garbage."""
+    import pymupdf
+
+    from bse_intel.extract import Document, cache_needs_ocr, text_unreadable
+
+    broken = "ŝŶ ŵŝůůŝŽŶͿ zĞĂƌ ŶĚĞĚ ϯϬ ^ĞƉƚĞŵďĞƌ ϯϬ :ƵŶĞ ϯϬ " * 6           # "in million) Year Ended 30"
+    shifted = (chr(20) + " FRPSDQ VHFUHWDU " + chr(25) + chr(19) + "#JPDLO" + chr(17) + "FRP 6HQW ") * 12
+    assert text_unreadable(broken) and text_unreadable(shifted)
+    # what must still be read as it is
+    spaces = chr(3).join("Year Ended 31 December Revenue from operations Other income Total income".split()) * 5
+    bullets = (chr(7) + " Details of concentration of purchases and sales with trading houses. ") * 8
+    ligatures = "Notes forming part of the ﬁnancial statements for the year ended 31 March 2025 " * 6
+    assert not any(text_unreadable(t) for t in (spaces, bullets, ligatures))
+
+    pdf = pymupdf.open()
+    pdf.new_page().insert_text((72, 72), "placeholder")
+    doc = Document(pdf.tobytes(), ocr=lambda png: "OCR READ: Revenue from operations 1,234.56")
+    doc._digital[0] = broken
+    assert doc.page_text(0).startswith("OCR READ"), "an unreadable page goes to OCR like a scanned one"
+
+    assert cache_needs_ocr({"digital": [broken], "ocr": {}})
+    assert not cache_needs_ocr({"digital": [broken], "ocr": {"0": "read"}}), "already OCR'd: no re-read"
+    assert not cache_needs_ocr({"digital": [ligatures], "ocr": {}})

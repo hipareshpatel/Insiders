@@ -69,33 +69,30 @@ Read before changing anything:
   against 3.67** (`docs/audit/round-1.json`). wrong_period, invented, unit_scale and signal_verdict all
   roughly halved or better; arithmetic and direction did not move, because two of our own fixers were
   writing wrong numbers over right ones (D25, now guarded against the filing's own figures).
-- **To do, in this order (left 2026-10-16 night, laptop shut down, nothing running).** Done tonight and
-  committed: the paid route and prompt-prefix caching (D24), five card-correctness fixes and two memory
-  guards (D25), the bank taxonomy and bank EPS, the duplicate gate widened to eight event types over ten
-  days, pass 1 and a cheap fast-track check that name a repeat, a card held back when a second provider
-  cannot verify it (migration 0009; the feed went 456 to 339), the top signal no longer printed twice,
-  and `memory_check.py` plus `defect_digest.py`. Still open:
-  1. **Quote contract on the number-bearing fields.** Copy `Fact` (models.py, text + verbatim quote) onto
-     `KeyNumber`, `Insight` and `NotableChange`; ask for it in `PASS2_SCHEMA` (prompts/engine.py); extend
-     `check_quotes` (pipeline.py) to run `gate.numbers_in_quote()` over those three and stop the
-     document-wide fallback for any item that carries a quote. Not signals: the model never writes them.
-     Both halves must land together or nothing moves. Baseline pinned in test_cards.py: an invented
-     whole-crore figure passes 40% of the time, 8% at one decimal, 3% at two.
+- **To do, in this order (left 2026-10-17 afternoon).** The day's work was a measured loop on the same
+  twenty filings: `scripts/rerun.py` picks a stratified sample from an audit file and puts those filings
+  back in the queue, `process --news-ids` reads only them, so a fix is checked on the documents that
+  failed rather than on a fresh sample. Keep the model weights unchanged between rounds or the
+  comparison measures the models. Landed today: reading order (`sort=True`), the quote contract, NSE's
+  Integrated Filing and the two insurance taxonomies (PLAN 1k and 1j, `docs/SOURCES.md`), and eight
+  defects the loop found, each with a test. Still open:
+  1. **Audit round 2 proper**, stratified by filing type and sector rather than newest first. Report the
+     WRONG share *and* the share of WRONG the code flagged (56% at round 1). Baselines: 33% WRONG, 38%
+     duplicate pairs, 40/8/3 on grounding.
   2. **ANNUAL_REPORT event type.** BSE labels it "Reg. 34 (1) Annual Report" and pass 1 types it RESULTS,
-     so a 563k-character report is re-read for figures XBRL already has. New type whose prompt forbids
-     restating P&L or balance-sheet numbers and asks only for MD&A commitments, key audit matters,
-     related-party transactions and Form AOC-1 subsidiary drag.
-  3. **Finish the XBRL sources.** The NSE fallback is in `seed_results` and works, but PLAN 1k is the
-     bigger gap: BSE's Integrated Filing paths serve nothing and they are the current format, so an NBFC
-     has no machine-tagged results from 2025 on, and NSE's list stops at 2025-01-29. Then PLAN 1j, the
-     general-insurance tag map (NetPremium, GrossPremiumsWritten, UnderwritingProfitOrLoss).
+     so a 563k-character report is re-read for figures XBRL already has. Now cheaper than it looked: NSE
+     serves the whole annual report machine-tagged (`/api/annual-reports-xbrl`, 631 numeric and 332 text
+     facts), carrying related-party transactions, auditors, subsidiaries, continuing defaults and loans
+     due from directors - three of the four buckets the prompt was going to ask a model to read.
+  3. **Why a card is still held.** Round 2d measures the eight fixes; whatever is left is the next loop.
+     The two known and unfixed: a figure the code itself derives (a deal size from shares x price) is
+     then reported as ungrounded, and a percentage that is the sum of two stated ones (43.96 + 15) has
+     no rule, while `_derived_change` and `derivable_difference` cover the other derivations.
   4. **Raise the paid weight**, then drain the 160 queued filings (4 FAILED are below max attempts and
-     retry themselves). At the accuracy weights the run stalls: 27 successes against 16 429s and 19 5xx,
-     all on free targets.
-  5. **Audit round 2**, stratified by filing type and sector rather than newest first, and report the
-     WRONG share *and* the share of WRONG the code flagged (56% now). Measure against the baselines:
-     33% WRONG, 38% duplicate pairs, 40/8/3 on grounding.
-  6. **PLAN 1h**: check the 48 `quotes_dropped` facts against their filings, in one batch.
+     retry themselves). At the accuracy weights the run stalls.
+  5. **PLAN 1h**: check the `quotes_dropped` facts against their filings, in one batch.
+  6. **PLAN 1m**: the vision re-read, now only for pages with no text layer (2% of filings outright, 10%
+     needing OCR). Reading order fixed what vision was wanted for everywhere else.
   Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order
   (PLAN.md item 1c). `sync-to-cloud` still cannot run: no PLATFORM_API_URL or INGEST_TOKEN for the
   deployed Worker, and laptop.ps1 hardcodes both to localhost.

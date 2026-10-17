@@ -558,7 +558,7 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
     three: a dropped fact that was true is a defect the audit must be able to see."""
     card = out.card
     if card is None or not text:
-        return [], [], []
+        return [], [], [], []
     index = SourceIndex(text)
     # What the statement says its figures are in - a card writes crore. It must come from the document
     # alone: the XBRL table is put in front of the text and says crore itself, which leaves the two
@@ -1495,6 +1495,15 @@ class Pipeline:
             if tagged.kind == "RESULTS":
                 log.warning("XBRL figures for %s not found in the PDF in any unit; using the PDF only", filing.news_id)
             tagged = None
+        if not text.strip() and not tagged:
+            if filing.pdf_url:
+                # The attachment is there but nothing could be read from it (a 404, over 30 MB, corrupt or
+                # password-protected): a card from the headline alone cannot be checked against anything, and
+                # its checks crashed on the empty text. Failed, so a later run tries the file again.
+                raise RuntimeError(f"no readable text in the attachment ({doc.error or 'empty'})")
+            # No attachment by design - an exchange's clarification request is its headline and subject - so
+            # those are the filing's own words, and what its quotes answer to.
+            text = "\n".join(t for t in (filing.headline, filing.subject) if t)
         if event_type == "RESULTS" and self.settings.one_card_per_results_quarter:
             earlier = self._same_results_quarter(filing, dossier, tagged.period if tagged else statement_quarter(text))
             if earlier:

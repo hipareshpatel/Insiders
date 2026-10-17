@@ -6,6 +6,6 @@ SELECT c.news_id, c.scrip_code, c.symbol, c.company_name, c.filing_date, c.filed
        co.market_cap_cr, co.size_category, co.last_price, co.ret_1w, co.ret_1m, co.ret_1y,
        co.median_turnover_cr, co.credibility_score, co.watchlist, co.bse_group, co.technicals_json, co.former_names_json
   FROM cards c LEFT JOIN companies co ON co.scrip_code = c.scrip_code
- WHERE c.is_actionable_signal = 1 AND c.filed_at >= ?1
+ WHERE c.held = 0 AND c.is_actionable_signal = 1 AND c.filed_at >= ?1
  ORDER BY c.actionability_score DESC, c.filed_at DESC
  LIMIT 50;

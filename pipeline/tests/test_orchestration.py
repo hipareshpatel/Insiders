@@ -432,6 +432,13 @@ def test_run_publishes_the_homepage_snapshot(settings):
     snap = json.loads(sink.get_object("daily_feed/latest_snapshot.json"))
     assert snap["limit"] == 50 and snap["feed"]["total"] == 2 and len(snap["feed"]["cards"]) == 2
     assert {"card_json", "actionability_score", "market_cap_cr"} <= set(snap["feed"]["cards"][0])
+    # A held card stays off the homepage as it does in the live feed: the snapshot queries had no held = 0
+    # (audit of discard paths, 2026-10-18).
+    sink._db.execute("UPDATE cards SET held = 1, is_actionable_signal = 1 WHERE news_id = ?", (filings[0].news_id,))
+    start = (now.date() - timedelta(days=7)).isoformat()
+    assert [c["news_id"] for c in sink.query("snapshot_feed", [start, 50])] == [filings[1].news_id]
+    assert sink.query("snapshot_count", [start])[0]["n"] == 1
+    assert filings[0].news_id not in [c["news_id"] for c in sink.query("snapshot_signals", [start])]
 
 
 def test_owner_starred_and_noise_cards_are_shown_to_the_analyst(settings):
@@ -451,3 +458,29 @@ def test_owner_starred_and_noise_cards_are_shown_to_the_analyst(settings):
     sink._db.commit()
     pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert "OWNER'S STARRED CARDS" in prompts[0] and "Starred example headline" in prompts[0]
+
+
+def test_an_unreadable_attachment_fails_before_any_card_and_an_announcement_without_one_is_its_headline(settings):
+    """With no text and no XBRL the card was written from the headline and its quote checks crashed on the empty
+    text (check_quotes returned three values for four), so the filing ended FAILED with a ValueError and, after
+    three runs, for good (audit of discard paths, 2026-10-18). Now an unreadable attachment fails with that reason
+    before any model is asked; an exchange's clarification request, which has no attachment, is read from its
+    headline and subject."""
+    now = now_ist() - timedelta(minutes=30)
+    (f,) = _results(1, now)
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: b"PK\x03\x04 not a pdf"},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]})
+    outcome = pipeline._process_one(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}), False, True)
+    assert outcome.update["status"] == "FAILED" and "no readable text in the attachment" in outcome.update["last_error"]
+    assert fake.calls == []
+
+    headline = "The Exchange has sought clarification from Demo Cement Ltd with reference to a media report on a plant shutdown"
+    text_only = f.model_copy(update={"news_id": "n-clar", "pdf_url": None, "headline": headline, "subject": headline,
+                                     "route": "FAST_TRACK", "event_type": "OTHER"})
+    reply = {"is_material": True, "event_type": "OTHER", "timeline_entry": "Exchange sought clarification",
+             "card": {"impact_level": "LOW", "headline": "Exchange seeks clarification from Demo Cement on plant report",
+                      "what_happened": [{"text": "The exchange sought a clarification on a media report",
+                                         "quote": "has sought clarification from Demo Cement Ltd with reference to a media report"}]}}
+    pipeline, sink, fake = build(settings, [text_only], {}, {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(reply)]})
+    outcome = pipeline._process_one(text_only, False, True)
+    assert outcome.update["status"] == "ANALYZED"

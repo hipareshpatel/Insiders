@@ -25,7 +25,6 @@ import re
 import statistics
 import threading
 from collections import Counter
-from collections import Counter
 from typing import Callable
 
 log = logging.getLogger(__name__)

@@ -591,8 +591,12 @@ def _quoted_claims(card) -> list[tuple[str, str, str, str | None]]:
     for key in card.key_numbers:
         out.append(("key number", key.label or "", f"{key.value or ''} {key.change or ''}", key.quote))
     for change in card.notable_changes or []:
+        # Only what this period is: a change quotes the line it is reporting, and the figure it is
+        # measured against belongs to an earlier filing or to memory, which is where it is checked.
+        # Asking for both put "finance_cost Rs 0.11 Cr (Q2FY26) -> Rs 0.98 Cr (Q3FY26)" against a quote
+        # reading "finance_cost Q3FY26: 0.98 Cr" and reported the 0.11 as missing.
         out.append(("notable change", change.metric or "",
-                    f"{change.previous or ''} {change.current or ''} {change.change or ''}", change.quote))
+                    f"{change.current or ''} {change.change or ''}", change.quote))
     for insight in card.why_it_matters:
         if insight.basis == "FILING":  # a point resting on memory is checked against memory, not the filing
             out.append(("why it matters", (insight.text or "")[:48], insight.text or "", insight.quote))

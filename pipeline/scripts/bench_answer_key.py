@@ -1,5 +1,5 @@
-"""Apply the scorer audit's hand-checked findings (data/bench/reports/scorer-audit.md) to the answer key: figures
-and the unit of the filings whose text layer does not say it."""
+"""Apply the scorer audit's hand-checked findings (data/bench/reports/scorer-audit.md) to the answer key:
+the figures each PDF never prints, and the unit of the filings whose text layer does not say it."""
 import json, pathlib
 p = pathlib.Path(r"D:\Insiders\data\bench\manifest.json")
 man = json.loads(p.read_text(encoding="utf-8"))

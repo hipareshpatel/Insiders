@@ -77,3 +77,37 @@ def test_twenty_pages_a_document_with_rapidocr_and_six_on_the_vision_route(monke
     assert Settings().max_ocr_pages == 6
     monkeypatch.setenv("MAX_OCR_PAGES", "9")
     assert Settings().max_ocr_pages == 9
+
+
+def test_a_sideways_page_is_turned_until_its_text_lies_flat(monkeypatch):
+    """A landscape table on a portrait page reads with high confidence - each run of text is recognised -
+    but its boxes stand on end, and putting them into lines by height turns its columns into rows. The
+    benchmark's rotated Form AOC-1 came back as 17 transposed rows. A page whose boxes mostly stand on end
+    is read again turned each way, and the reading whose boxes lie flat is kept."""
+    np = pytest.importorskip("numpy")
+    cv2 = pytest.importorskip("cv2")
+
+    def tall(x, y):
+        return [[x, y], [x + 12, y], [x + 12, y + 90], [x, y + 90]]
+
+    sideways = [(tall(40 * i, 50), f"col {i}", 0.98) for i in range(10)]
+    flat = [(box(40, 100 + 20 * i, w=200), f"Subsidiary {i}  {i * 100:,}", 0.99) for i in range(10)]
+    reads = []
+
+    class Engine:
+        def __call__(self, image):
+            reads.append(image)
+            if isinstance(image, bytes):            # the page as rendered
+                return sideways, None
+            return (flat, None) if len(reads) == 2 else (sideways, None)   # turned clockwise: lies flat
+
+    png = cv2.imencode(".png", np.zeros((40, 30, 3), np.uint8))[1].tobytes()
+    monkeypatch.setattr(ocr, "_engine", Engine())
+    text = ocr.recognise(png)
+    assert len(reads) == 3, "read once as rendered, then a quarter turn each way"
+    assert text.splitlines()[0] == "Subsidiary 0  0" and len(text.splitlines()) == 10
+    assert ocr.lying_flat(sideways) == 0.0 and ocr.lying_flat(flat) == 1.0
+
+    reads.clear()
+    monkeypatch.setattr(ocr, "_engine", lambda image: reads.append(image) or (flat, None))
+    assert ocr.recognise(png).startswith("Subsidiary 0") and len(reads) == 1, "an upright page is read once"

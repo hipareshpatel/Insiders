@@ -52,14 +52,48 @@ def lines_from_boxes(result) -> str:
     return "\n".join("  ".join(i[3] for i in sorted(line, key=lambda i: i[2])) for line in lines)
 
 
+def lying_flat(result) -> float:
+    """The share of RapidOCR's boxes that are wider than they are tall: near 1 on an upright page."""
+    boxes = [box for box, text, _score in result or [] if str(text).strip()]
+    if not boxes:
+        return 1.0
+    flat = sum(1 for b in boxes
+               if max(p[0] for p in b) - min(p[0] for p in b) >= max(p[1] for p in b) - min(p[1] for p in b))
+    return flat / len(boxes)
+
+
+def _mean_score(result) -> float:
+    scores = [float(score) for _box, text, score in result or [] if str(text).strip()]
+    return sum(scores) / len(scores) if scores else 0.0
+
+
 def recognise(png: bytes) -> str:
-    """The page image's text, in lines."""
+    """The page image's text, in lines.
+
+    A page printed sideways - an annual report's Form AOC-1 or fixed-asset note, set landscape on a portrait
+    page - is read with high confidence, because each run of text is recognised on its own, but its boxes
+    stand on end, and putting them back into lines by height then makes the table's columns into rows: the
+    benchmark's rotated AOC-1 came back as 17 transposed "rows" (2026-10-17). So when most boxes stand on
+    end, the page is read again turned a quarter each way, and the reading whose boxes lie flat is kept.
+    """
     global _engine
     with _lock:
         if _engine is None:
             from rapidocr_onnxruntime import RapidOCR
             _engine = RapidOCR()
         result, _ = _engine(png)
+        if result and len(result) >= 8 and lying_flat(result) < 0.5:
+            import cv2
+            import numpy as np
+
+            image = cv2.imdecode(np.frombuffer(png, np.uint8), cv2.IMREAD_COLOR)
+            best = None
+            for turn in (cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_90_COUNTERCLOCKWISE):
+                turned, _ = _engine(cv2.rotate(image, turn))
+                if turned and lying_flat(turned) >= 0.5 and (best is None or _mean_score(turned) > _mean_score(best)):
+                    best = turned
+            if best is not None:
+                result = best
     return lines_from_boxes(result)
 
 

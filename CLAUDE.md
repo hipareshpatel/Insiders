@@ -69,30 +69,33 @@ Read before changing anything:
   against 3.67** (`docs/audit/round-1.json`). wrong_period, invented, unit_scale and signal_verdict all
   roughly halved or better; arithmetic and direction did not move, because two of our own fixers were
   writing wrong numbers over right ones (D25, now guarded against the filing's own figures).
-- **To do, in this order (left 2026-10-17 afternoon).** The day's work was a measured loop on the same
-  twenty filings: `scripts/rerun.py` picks a stratified sample from an audit file and puts those filings
-  back in the queue, `process --news-ids` reads only them, so a fix is checked on the documents that
-  failed rather than on a fresh sample. Keep the model weights unchanged between rounds or the
-  comparison measures the models. Landed today: reading order (`sort=True`), the quote contract, NSE's
-  Integrated Filing and the two insurance taxonomies (PLAN 1k and 1j, `docs/SOURCES.md`), and eight
-  defects the loop found, each with a test. Still open:
-  1. **Audit round 2 proper**, stratified by filing type and sector rather than newest first. Report the
-     WRONG share *and* the share of WRONG the code flagged (56% at round 1). Baselines: 33% WRONG, 38%
-     duplicate pairs, 40/8/3 on grounding.
-  2. **ANNUAL_REPORT event type.** BSE labels it "Reg. 34 (1) Annual Report" and pass 1 types it RESULTS,
-     so a 563k-character report is re-read for figures XBRL already has. Now cheaper than it looked: NSE
-     serves the whole annual report machine-tagged (`/api/annual-reports-xbrl`, 631 numeric and 332 text
-     facts), carrying related-party transactions, auditors, subsidiaries, continuing defaults and loans
-     due from directors - three of the four buckets the prompt was going to ask a model to read.
-  3. **Why a card is still held.** Round 2d measures the eight fixes; whatever is left is the next loop.
-     The two known and unfixed: a figure the code itself derives (a deal size from shares x price) is
-     then reported as ungrounded, and a percentage that is the sum of two stated ones (43.96 + 15) has
-     no rule, while `_derived_change` and `derivable_difference` cover the other derivations.
-  4. **Raise the paid weight**, then drain the 160 queued filings (4 FAILED are below max attempts and
-     retry themselves). At the accuracy weights the run stalls.
-  5. **PLAN 1h**: check the `quotes_dropped` facts against their filings, in one batch.
-  6. **PLAN 1m**: the vision re-read, now only for pages with no text layer (2% of filings outright, 10%
-     needing OCR). Reading order fixed what vision was wanted for everywhere else.
+- **To do, in this order (left 2026-10-17 evening, owner out of tokens; local tests may still be running).**
+  The extraction benchmark is the current work. Everything is in `docs/bench/` (reports, score tables,
+  answer keys) and `pipeline/scripts/bench_*.py`; PDFs and raw engine outputs are local in `data/bench/`.
+  Measured (scorer audited independently, then reproduced exactly - see docs/bench/scorer-audit.md):
+  results statements, 195 printed figures: **RapidOCR 98.5%** on the right row and column, PyMuPDF
+  reading-order text (what we run) 80.0%, pdfplumber/pymupdf4llm/combinations 56-80%, MinerU standard
+  ~100% on 7 filings but ~1 min/page and 2.7 GB, MinerU basic 69%. Non-results pages (84 pages, 14 types,
+  page's own text layer as key): RapidOCR 92.3% figures exact at 200 dpi, 88.7% at 150, 92.0% at 300;
+  weakest on credit ratings (79%) and "other" (86%); ~1 in 10 bracketed negatives loses its brackets.
+  1. **Finish the complicated-pages test** (owner, 2026-10-17): 7 hard pages in `data/bench/hard/`
+     (stamped statement, rotated AOC-1, rotated PPE note, governance grid, rating letter, two statements).
+     Two independent readers were transcribing them from images into `data/bench/hard/reader_a|b/key.json`
+     (no extraction allowed). Merge: keep cells both agree on, check disagreements on the crop. Then grade
+     every extractor in `data/bench/hard/out/` (pymupdf sorted/default/words, plumber words/layout,
+     pymupdf4llm, rapidocr-200, rapidocr-200-upright) on row integrity: the row's values, in column order,
+     on the line with its label, nil "-" kept. **Add the cloud vision route** (gateway.transcribe_image,
+     free models - owner: no LOCAL vision model) on the same pages. If OCR wins on text too, the owner's
+     option is OCR as the FIRST reader, not only the second.
+  2. **Wire RapidOCR into extract.py** at 200 dpi (rapidocr 3.10, onnxruntime, opencv-headless; rows
+     rebuilt from box positions with skew correction, `data/bench/scripts/paddle/rowbuild.py`). Turn a
+     sideways page upright first: if most boxes stand on end, try both 90-degree turns and keep the one whose
+     boxes lie flat (RapidOCR reads sideways text confidently and then builds the table's columns as rows).
+     Local OCR is free, so lift the 6-page OCR cap. Vision only where the readers disagree.
+  3. Re-run the 20-filing loop (`scripts/rerun.py`, `process --news-ids`) and compare held cards and
+     correctness with rounds 2a-2f (docs/audit/loop-2026-10-17.md).
+  4. ANNUAL_REPORT event type, using NSE's annual-report XBRL (docs/SOURCES.md).
+  5. Raise the paid weight and drain the 160 queued filings; audit round 2; PLAN 1h.
   Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order
   (PLAN.md item 1c). `sync-to-cloud` still cannot run: no PLATFORM_API_URL or INGEST_TOKEN for the
   deployed Worker, and laptop.ps1 hardcodes both to localhost.

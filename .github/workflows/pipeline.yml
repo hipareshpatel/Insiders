@@ -61,6 +61,6 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install
-        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
       - name: Run pipeline
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel run --mode "${{ inputs.mode || ''all'' }}" --time-budget "${{ inputs.time_budget || ''2400'' }}"'

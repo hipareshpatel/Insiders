@@ -3,7 +3,7 @@ Read-only: NSE's announcement list, a handful of its PDFs, a few pages of each r
 Each page's text layer is the answer key where it has one (a good text layer is an exact transcript
 of the page): the share of its figures that OCR also reads. Writes nothing, calls no AI model.
 
-    python scripts/ocr_probe.py [--files 8] [--pages 3] [--report probe.md]
+    python scripts/ocr_probe.py [--files 8] [--pages 3] [--dpi 150] [--report probe.md]
 """
 
 from __future__ import annotations
@@ -39,6 +39,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--files", type=int, default=8)
     parser.add_argument("--pages", type=int, default=3)
+    parser.add_argument("--dpi", type=int, default=150)
     parser.add_argument("--report")
     args = parser.parse_args()
 
@@ -81,7 +82,7 @@ def main() -> int:
             for index in range(min(args.pages, doc.page_count)):
                 page = doc[index]
                 layer = page.get_text("text", sort=True)
-                png = page.get_pixmap(dpi=150).tobytes("png")
+                png = page.get_pixmap(dpi=args.dpi).tobytes("png")
                 t0 = time.monotonic()
                 result, _ = engine(png)
                 seconds = time.monotonic() - t0
@@ -99,7 +100,7 @@ def main() -> int:
                 table.append(f"| {label} | {index + 1} | {len(layer.strip()):,} | {len(ocr):,} | {seconds:.1f} | {share} |")
             doc.close()
 
-    summary = [f"## RapidOCR on this runner: {int(total_pages)} pages, "
+    summary = [f"## RapidOCR at {args.dpi} dpi: {int(total_pages)} pages, "
                f"{(total_s / total_pages if total_pages else 0):.1f} s a page on average", ""]
     if key:
         summary.append(f"Figures in the text layer that OCR also read: {hit:,} of {key:,} ({hit / key:.1%}).")

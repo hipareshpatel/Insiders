@@ -803,12 +803,16 @@ class Pipeline:
     # ------------------------------------------------------------------ processing
 
     def process(self, day_from: str, day_to: str, deadline: float, bulk: bool, memory_complete: bool = True,
-                history_first: bool = False) -> None:
+                history_first: bool = False, only: set[str] | None = None) -> None:
         """Work the queue for a date window, oldest first, companies in parallel.
 
         With ``history_first`` (the live window), a company's unanalysed history is processed before
         its new filing, so the live card is written with that company's memory. Companies with
         little history go first, and each company's results are committed as soon as it finishes.
+
+        With ``only``, nothing outside that set of news ids is analysed. That is how a measured round
+        is run: the same filings whose cards an audit called wrong, re-read after a fix, so the before
+        and after are the same documents rather than two different samples.
         """
         after = ("", "")
         while time.monotonic() < deadline and not self._halted(bulk):
@@ -818,6 +822,8 @@ class Pipeline:
             after = (rows[-1]["filed_at"], rows[-1]["news_id"])
             groups: OrderedDict[str, list[Filing]] = OrderedDict()
             for row in rows:
+                if only is not None and row["news_id"] not in only:
+                    continue
                 if row["news_id"] not in self._tried:
                     groups.setdefault(row["scrip_code"], []).append(Filing.model_validate(row))
             if history_first:

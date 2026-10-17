@@ -62,7 +62,12 @@ def cmd_discover(args, settings, sink) -> int:
 
 def cmd_process(args, settings, sink) -> int:
     pipeline = _pipeline(settings, sink)
-    pipeline.process(args.date_from, args.date_to, time.monotonic() + args.time_budget, bulk=args.bulk)
+    only = None
+    if args.news_ids:
+        text = Path(args.news_ids[1:]).read_text() if args.news_ids.startswith("@") else args.news_ids
+        only = {part.strip() for part in text.replace(",", " ").split() if part.strip()}
+        print(f"{len(only)} filings only")
+    pipeline.process(args.date_from, args.date_to, time.monotonic() + args.time_budget, bulk=args.bulk, only=only)
     print(json.dumps(pipeline.stats.as_dict(), indent=2))
     return 0
 
@@ -376,6 +381,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--to", dest="date_to", required=True)
     p.add_argument("--bulk", action="store_true", help="use the bulk (backfill) AI routes")
     p.add_argument("--time-budget", type=int, default=1800)
+    p.add_argument("--news-ids", help="only these filings (comma or whitespace separated, or @file); "
+                                      "for re-running an audited sample after a fix")
     p.set_defaults(func=cmd_process)
 
     p = sub.add_parser("analyze-pdf", help="analyse a local PDF and print the card")

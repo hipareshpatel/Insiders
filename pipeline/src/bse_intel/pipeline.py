@@ -461,13 +461,24 @@ def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None") 
     now = [m for m in tagged.metrics if m.period == tagged.period and m.unit != "PCT"]
     yoy = [abs(m.yoy_pct) for m in now if m.yoy_pct is not None]
     qoq = [abs(m.qoq_pct) for m in now if m.qoq_pct is not None]
+    # A "% YoY" may be the year's or the half year's change, not only the quarter's: Jubilant's FY25 revenue
+    # "+7.9% YoY" and Shivam's FY25 and Novartis's H1 changes were held as quarter-on-quarter ones, because
+    # only the latest quarter's YoY was compared (loop rounds 3a-3b, 2026-10-17).
+    yoy_any = [abs(m.yoy_pct) for m in tagged.metrics if m.unit != "PCT" and m.yoy_pct is not None]
+    # XBRL gives no change on a loss (xbrl._change), but a card may: Shivam's FY25 loss of 48.04 against
+    # 50.2 was "+4.3% YoY (less negative)".
+    known = {(m.metric, m.period): m.value for m in tagged.metrics if m.value is not None}
+    for m in tagged.metrics:
+        before = known.get((m.metric, prior_year_period(m.period) or ""))
+        if m.yoy_pct is None and m.unit != "PCT" and m.value is not None and before:
+            yoy_any += [abs((m.value - before) / abs(before) * 100), abs((abs(m.value) / abs(before) - 1) * 100)]
     issues = []
     for text in _card_texts(out):
         for m in _PCT_LABELLED.finditer(text):
             value, label = abs(float(m.group(1).replace("−", "-"))), m.group(2).lower()
             near = lambda xs: any(abs(x - value) <= 0.6 for x in xs)  # noqa: E731
             is_yoy = label.startswith(("yoy", "y-o-y", "year"))
-            if is_yoy and near(qoq) and not near(yoy):
+            if is_yoy and near(qoq) and not near(yoy_any):
                 issues.append(f"\"{m.group(0)}\" is a quarter-on-quarter change, not year-on-year")
             elif not is_yoy and near(yoy) and not near(qoq):
                 issues.append(f"\"{m.group(0)}\" is a year-on-year change, not quarter-on-quarter")

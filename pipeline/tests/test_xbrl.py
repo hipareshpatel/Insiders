@@ -215,6 +215,21 @@ def test_results_card_key_numbers_come_from_xbrl_and_yoy_qoq_mixups_are_flagged(
     assert keys["Revenue"] == ("₹951.96 Cr", f"{rev.yoy_pct:+.1f}% YoY")
     assert keys["EBITDA"][0] == "₹84.36 Cr" and keys["EBITDA margin"] == ("7.0%", None) and len(changed) == 2
     assert period_mixups(out, tagged) == [f"\"{abs(rev.qoq_pct):.1f}% YoY\" is a quarter-on-quarter change, not year-on-year"]
+    # The same percentage as the nine months' YoY is that change, not a mislabelled QoQ (Jubilant's FY25
+    # revenue "+7.9% YoY" was held because only the quarter's changes were compared).
+    import copy
+
+    from bse_intel.models import FinancialMetric
+
+    year = copy.deepcopy(tagged)
+    year.metrics.append(FinancialMetric(metric="revenue", period="9MFY25", value=2_800.0, yoy_pct=rev.qoq_pct))
+    assert period_mixups(out, year) == []
+    # A loss narrowing from 100 to 94.1 has no XBRL YoY, but it is a 5.9% change all the same (Shivam's FY25
+    # "+4.3% YoY (less negative)").
+    loss = copy.deepcopy(tagged)
+    loss.metrics += [FinancialMetric(metric="pat", period="9MFY24", value=-100.0),
+                     FinancialMetric(metric="pat", period="9MFY25", value=-94.1)]
+    assert period_mixups(out, loss) == []
 
 
 def test_promoter_locked_in_shares_are_not_the_promoter_holding():

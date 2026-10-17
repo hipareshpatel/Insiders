@@ -89,7 +89,7 @@ def grade(key: dict, lines_by_page: dict) -> dict:
 def main() -> int:
     hard = Path(sys.argv[1])
     key = json.loads((hard / "key.json").read_text(encoding="utf-8"))
-    engines = sys.argv[2:] or sorted(p.stem for p in (hard / "out").glob("*.json"))
+    engines = sys.argv[2:] or sorted(p.stem for p in (hard / "out").glob("*.json") if not p.stem.endswith(".log"))
     pct = lambda a, b: f"{a / b:6.1%}" if b else "   n/a"
     print(f"{'engine':22} {'rows intact':>12} {'figs in order':>14} {'figs on line':>13} {'sentences':>10}")
     results = {}

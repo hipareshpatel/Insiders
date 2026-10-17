@@ -548,7 +548,7 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
     return problems + [f"dropped: {d}" for d in dropped], missing_quote, dropped, paraphrased
 
 
-def check_quoted_numbers(out: Pass2Output, text: str) -> tuple[list[str], list[str]]:
+def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None) -> tuple[list[str], list[str]]:
     """Each figure on a card checked against the sentence that card says it came from.
 
     `what_happened` has carried a quote since D23 and is checked this way already. The fields that state
@@ -573,15 +573,12 @@ def check_quoted_numbers(out: Pass2Output, text: str) -> tuple[list[str], list[s
         if not gate.quote_found(quote, text):
             problems.append(f'{kind} "{label}" quotes a sentence that is not in the filing')
             continue
-        inside = SourceIndex(quote)
-        digits = {d.replace(",", "") for d in re.findall(r"\d[\d,]*(?:\.\d+)?", quote)}
-        # A rupee amount must match at a real unit scale, so "45.79 Cr" passes against "457.86 million"
-        # and "458 Cr" does not. Anything else - a share count, a number of days - is matched on its own
-        # digits, since no conversion applies to it.
-        missing = [raw for value, decimals, _, token, raw in _tokens(claim)
-                   if token in ("plain", "qty") and value > 31
-                   and not inside.stated_crore(value, decimals)
-                   and raw.replace(",", "") not in digits]
+        # The same comparison `what_happened` gets, and for the same reasons: the quoted row is read at
+        # the unit the filing declares, so "16.53 Cr" passes against a row reading 1,653 in lakhs while
+        # the ten-times misreading does not, and a period label or a day of the month is not a figure.
+        # These three fields had their own copy of the rule and it had fallen behind: on 2026-10-17 it
+        # was reporting figures that were right thirteen times in twenty filings.
+        missing = gate.numbers_in_quote(claim, quote, unit)
         if missing:
             problems.append(f'{kind} "{label}" states {", ".join(dict.fromkeys(missing))[:90]}, '
                             "which its own quote does not")
@@ -1444,7 +1441,7 @@ class Pipeline:
             found.quotes += quote_problems
             found.quote_style += paraphrased
             # The headline numbers answer to their own sentence too, not to the whole filing.
-            number_problems, unquoted = check_quoted_numbers(candidate, text)
+            number_problems, unquoted = check_quoted_numbers(candidate, text, declared_unit(filed_text))
             found.quotes += number_problems
             return found, units, changes, missing + unquoted, dropped
 

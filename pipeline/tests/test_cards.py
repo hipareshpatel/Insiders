@@ -678,11 +678,15 @@ def test_a_headline_number_answers_to_its_own_quote_not_the_whole_filing():
     there is nothing to land on. The check is unit-aware, because the card writes crore where the filing
     writes million: 45.79 Cr is the right reading of 457.86 million and must pass, 458 Cr is the 10x
     misreading and must not, even though 4,583 million appears further down the page."""
+    from bse_intel.grounding import declared_unit
     from bse_intel.models import Pass2Output
     from bse_intel.pipeline import check_quoted_numbers
 
-    filing = ("Finance costs for the year were 457.86 million against 430.20 million. "
-              "Property, plant and equipment stood at 4,583 million.")
+    filing = ("Statement of profit and loss (Rs. in million). "
+              "Finance costs for the year were 457.86 against 430.20. "
+              "Property, plant and equipment stood at 4,583.")
+    unit = declared_unit(filing)
+    assert unit == 10
 
     def card(value, quote):
         return Pass2Output.model_validate({
@@ -691,12 +695,12 @@ def test_a_headline_number_answers_to_its_own_quote_not_the_whole_filing():
                      "what_happened": [{"text": "Finance costs reported", "quote": "Finance costs for the year"}],
                      "key_numbers": [{"label": "Finance cost", "value": value, "quote": quote}]}})
 
-    good = card("₹45.79 Cr", "Finance costs for the year were 457.86 million")
-    assert check_quoted_numbers(good, filing) == ([], [])
+    good = card("₹45.79 Cr", "Finance costs for the year were 457.86 against 430.20")
+    assert check_quoted_numbers(good, filing, unit) == ([], [])
 
     # the 10x misreading: 4,583 million is in the filing and rounds to 458 Cr, but not in this sentence
-    bad = card("₹458 Cr", "Finance costs for the year were 457.86 million")
-    problems, unquoted = check_quoted_numbers(bad, filing)
+    bad = card("₹458 Cr", "Finance costs for the year were 457.86 against 430.20")
+    problems, unquoted = check_quoted_numbers(bad, filing, unit)
     assert problems and "458" in problems[0] and "its own quote does not" in problems[0]
     assert unquoted == []
 

@@ -333,3 +333,21 @@ def test_deepseek_is_billed_per_token_so_thinking_stays_off(settings):
         assert entry["model"] == "deepseek-flash"  # V4-Flash and V4-Flash-Vision-Exp are retired
         assert entry["extra_body"] == {"thinking": {"type": "disabled"}}, entry
         assert entry["context_tokens"] <= 1_000_000
+
+
+def test_a_prompt_over_a_models_minute_token_limit_skips_that_model(make_gateway):
+    """A prompt larger than a model's tokens-per-minute could never be sent, but was reported as "paced": a busy
+    provider, so the filing was deferred on every run and never failed (audit of discard paths, 2026-10-18)."""
+    from bse_intel.ai.gateway import AllProvidersFailed
+
+    config = gateway_config(route({"provider": "a", "model": "m-a", "limits": {"tpm": 50}},
+                                  {"provider": "b", "model": "m-b"}))
+    gw, fake = make_gateway(config, {"m-a": [GOOD], "m-b": [GOOD]})
+    assert gw.complete_json("r", "s", "u " * 400, Pass1Result).provider == "b"
+    assert [c["model"] for c in fake.calls] == ["m-b"]
+
+    alone = gateway_config(route({"provider": "a", "model": "m-a", "limits": {"tpm": 50}}))
+    gw, _ = make_gateway(alone, {"m-a": [GOOD]})
+    with pytest.raises(AllProvidersFailed) as failed:
+        gw.complete_json("r", "s", "u " * 400, Pass1Result)
+    assert not failed.value.transient, "nothing will change on the next run: not a busy provider"

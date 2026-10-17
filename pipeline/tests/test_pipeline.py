@@ -373,6 +373,7 @@ def test_a_card_the_second_opinion_cannot_fix_is_held_back(settings):
     assert outcome.card is not None, "the row is still written, so the defect can be seen"
     assert outcome.card["card"]["review"]["status"] == "UNRESOLVED"
     assert outcome.card["held"] == 1
+    assert outcome.card["needs_review"] == 1, "a held card is always one for review (audit, 2026-10-18)"
 
 
 def test_a_fast_track_repeat_is_dropped_before_pass_2(settings):

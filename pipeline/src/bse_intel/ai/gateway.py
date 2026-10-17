@@ -329,6 +329,11 @@ class AIGateway:
             return UNAVAILABLE, self.disabled_providers[target.provider]
         if target.context_tokens and est_in > target.context_tokens:
             return UNAVAILABLE, "prompt exceeds context window"
+        tpm = self.limiters[target.key].limits.tpm
+        if tpm and est_total > tpm:
+            # It can never fit in this model's minute: reported as "paced" it was a busy provider for ever, and
+            # the filing was deferred on every run without failing (audit of discard paths, 2026-10-18).
+            return UNAVAILABLE, "prompt exceeds the per-minute token limit"
         reason = self.limiters[target.key].quota.exhausted(est_total)
         pquota = self.provider_quota.get(target.provider)
         reason = reason or (pquota.exhausted(est_total) if pquota else None)

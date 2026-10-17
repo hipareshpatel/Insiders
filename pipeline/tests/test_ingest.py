@@ -462,3 +462,11 @@ def test_a_failed_raw_write_never_stops_the_fetch():
     store = raw.RawStore(Broken(), "bse")
     store.save("https://api.bseindia.com/x", {}, 200, b"{}")
     assert store.saved == 0
+
+
+def test_a_scanned_page_past_the_ocr_cap_is_not_kept_as_read():
+    """A page the OCR cap left out was stored as its empty text layer and counted as OCR'd, so no later run
+    read it (audit of discard paths, 2026-10-18)."""
+    doc = Document(_pdf(["Outcome of board meeting. " * 8, "", ""]), ocr=lambda png: "| Revenue | 120 |", max_ocr_pages=1)
+    assert doc.page_text(1) == "| Revenue | 120 |" and doc.page_text(2) == ""
+    assert list(doc.to_cache()["ocr"]) == ["1"]

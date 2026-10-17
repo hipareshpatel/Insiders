@@ -1711,6 +1711,10 @@ class Pipeline:
         # the document; only the sentence around them is the model's wording. Prism Johnson's three
         # segment facts were held that way on 2026-10-17 with every figure verified.
         held = (review or {}).get("status") == "UNRESOLVED" and not checks.only_style
+        # A held card is one for review whatever made it so: a card held only for an unfound amount had
+        # needs_review = 0, so it escaped the review count and the scoring veto (76 of 118 held cards in the
+        # smoke-test funnel, 2026-10-18).
+        needs_review = needs_review or held
         signals += asset_turn_signals(card_json, sector, sector_module.asset_turn)  # extends card_json["signals"]
         rated = score_card(card_json, event_type, signals, current, priced, needs_review, card.impact_level,
                            dampened=(sector, event_type) in learned["dampen"])

@@ -254,7 +254,9 @@ class Document:
             except Exception as exc:
                 self.ocr_error = exc
                 log.warning("OCR failed on page %d: %s", index + 1, exc)
-        self._ocr_cache[index] = text
+            # Kept as read only when it was read. A page past the OCR cap, or with nothing to OCR it, was stored
+            # as its empty text layer and counted as OCR'd, so no later run read it (audit, 2026-10-18).
+            self._ocr_cache[index] = text
         return text
 
     def _figure_text(self, index: int) -> str:

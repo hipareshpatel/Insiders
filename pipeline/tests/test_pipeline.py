@@ -568,3 +568,31 @@ def test_a_text_layer_in_a_broken_or_shifted_font_is_ocrd_not_trusted():
     assert not cache_needs_ocr(Document.from_cache(unread.to_cache()).to_cache())
     assert cache_needs_ocr(Document.from_cache({"v": 2, "digital": [broken], "ocr": {}}).to_cache()), \
         "an entry from before the check, kept as a fallback, is still read again later"
+
+
+def test_a_held_card_does_not_own_its_results_quarter_and_a_not_material_claim_is_given_back(settings):
+    """D20 let the first document decide the quarter: in 17 of 43 quarters its card was held and the statement
+    itself was marked a duplicate of it, so nothing was published; in 2 a notice typed RESULTS claimed the
+    quarter before pass 2, was found not material, and kept it (funnel over the smoke-test companies,
+    2026-10-18)."""
+    from dataclasses import replace
+
+    settings = replace(settings, one_card_per_results_quarter=True, workers=1,
+                       second_opinion=False)
+    now = now_ist() - timedelta(hours=3)
+    first = _filing("q-1", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    again = _filing("q-2", "Outcome of Board Meeting - results", now + timedelta(hours=1), "Board Meeting")
+    pipeline, sink, fake = build(settings, [first, again], {f.pdf_url: _pdf(RESULT_TEXT) for f in (first, again)},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2), json.dumps(PASS2)],
+                                  "glm-4.5-flash": [json.dumps(PASS2)]})
+    one = pipeline.analyze(first.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    pipeline._commit([one])
+    sink._db.execute("UPDATE cards SET held = 1 WHERE news_id = 'q-1'")
+    pipeline._results_quarters.clear()  # a later run: only memory knows the quarter
+    two = pipeline.analyze(again.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert two.card is not None, "the owner's card is held: this document may make the quarter's card"
+
+    # a claim made before pass 2 is given back when the claimant ends without a card
+    pipeline._results_quarters[("999001", "Q2FY27")] = "notice-1"
+    pipeline._release_claims("notice-1", "NOT_MATERIAL")
+    assert ("999001", "Q2FY27") not in pipeline._results_quarters

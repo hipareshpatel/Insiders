@@ -29,6 +29,7 @@ QUERIES = (
     "filings_pending",
     "filings_pending_company",
     "filings_recent_company",
+    "card_held",
     "filings_remaining",
     "filings_known_day",
     "backfill_companies",

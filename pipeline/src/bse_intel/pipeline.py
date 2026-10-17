@@ -1061,6 +1061,29 @@ class Pipeline:
         return self._busy_halt or ("pass2_bulk" if bulk else "pass2") in self._exhausted
 
     def _process_one(self, filing: Filing, bulk: bool, memory_complete: bool, deadline: float | None = None) -> Outcome:
+        outcome = self._attempt(filing, bulk, memory_complete, deadline)
+        status = outcome.update.get("status")
+        if status != "ANALYZED":
+            self._release_claims(filing.news_id, status)
+        return outcome
+
+    def _release_claims(self, news_id: str, status: str | None) -> None:
+        """What a filing claimed at the start of its analysis, given back when it ends without a card.
+
+        A results filing claims its quarter before pass 2 (D20), so two workers cannot both take it. Prism's
+        trading-window notice and Ahluwalia's board-meeting intimation, typed RESULTS by pass 1, claimed the
+        quarter, were then found not material, and kept it: the real statements filed after them were marked
+        duplicates of a notice and the quarter had no card (funnel, 2026-10-18). A filing that failed or was
+        deferred also gives back its text, so a copy of it later in the run is analysed rather than marked
+        a duplicate of a filing that may never get a card."""
+        with self._lock:
+            for key in [k for k, owner in self._results_quarters.items() if owner == news_id]:
+                del self._results_quarters[key]
+            if status in ("FAILED", "PENDING"):
+                for scrip, bodies in self._bodies.items():
+                    self._bodies[scrip] = [b for b in bodies if b[1] != news_id]
+
+    def _attempt(self, filing: Filing, bulk: bool, memory_complete: bool, deadline: float | None = None) -> Outcome:
         pass1 = "pass1_bulk" if bulk else "pass1"
         if filing.route == "PASS1" and pass1 in self._exhausted:
             return self._deferred(filing, "deferred: AI quota ceilings")
@@ -1290,19 +1313,26 @@ class Pipeline:
         if not quarter or quarter_index(quarter) is None:
             return None
         key = (filing.scrip_code, quarter)
+        done = {t["news_id"] for t in dossier.get("timeline", [])
+                if t.get("event_type") == "RESULTS" and t.get("date", "") < filing.filed_at and t.get("news_id") != filing.news_id}
+        owners = list(dict.fromkeys(n for m in dossier.get("financial_metrics", []) if m.get("period") == quarter
+                                    for n in done if reported_by(m, n)))
+        # An owner whose card is held out of the feed is not the quarter's card: another document of the quarter
+        # may make the one that is published. 17 of the 43 quarters with D20 duplicates had their only card held
+        # while the statement itself was marked a duplicate of it (funnel, 2026-10-18).
+        owners = [n for n in owners if not self._card_held(n)]
         with self._lock:
             claimed = self._results_quarters.get(key)
             if claimed and claimed != filing.news_id:
                 return claimed, quarter
-            done = {t["news_id"] for t in dossier.get("timeline", [])
-                    if t.get("event_type") == "RESULTS" and t.get("date", "") < filing.filed_at and t.get("news_id") != filing.news_id}
-            for m in dossier.get("financial_metrics", []):
-                if m.get("period") == quarter:
-                    owner = next((n for n in done if reported_by(m, n)), None)
-                    if owner:
-                        return owner, quarter
+            if owners:
+                return owners[0], quarter
             self._results_quarters[key] = filing.news_id
         return None
+
+    def _card_held(self, news_id: str) -> bool:
+        rows = self.sink.query("card_held", [news_id]) or []
+        return bool(rows and rows[0].get("held"))
 
     def _xbrl_comparatives(self, filing: Filing, tagged: "xbrl_fast_path.XbrlResult", history=()) -> None:
         """Year-ago and previous-quarter figures for a results file, from those quarters' files in the

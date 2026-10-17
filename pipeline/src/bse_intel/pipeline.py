@@ -304,8 +304,12 @@ _CHANGE_AMOUNT = re.compile(r"(?<![\w.])(\(?-?\d[\d,]*(?:\.\d+)?\)?)")
 _CHANGE_PCT = re.compile(r"([+\-−]?)\s*(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*%")
 
 
+def _without_periods(text: str | None) -> str:
+    return re.sub(r"\b(?:Q[1-4]|H[12]|9M)?FY\s?'?\d{2,4}\b|\b(?:19|20)\d{2}\b", " ", text or "")
+
+
 def _amount(text: str | None) -> float | None:
-    m = _CHANGE_AMOUNT.search(re.sub(r"\b(?:Q[1-4]|H[12]|9M)?FY\s?'?\d{2,4}\b|\b(?:19|20)\d{2}\b", " ", text or ""))
+    m = _CHANGE_AMOUNT.search(_without_periods(text))
     if not m:
         return None
     raw = m.group(1)
@@ -314,6 +318,12 @@ def _amount(text: str | None) -> float | None:
     except ValueError:
         return None
     return -value if raw.startswith(("-", "(")) else value
+
+
+def _decimals_of(text: str | None) -> int:
+    """How many decimals the amount `_amount` reads from this text was written with."""
+    m = _CHANGE_AMOUNT.search(_without_periods(text))
+    return len(m.group(1).strip("-()").partition(".")[2]) if m else 2
 
 
 def fix_change_percentages(out: Pass2Output, sources: tuple[str, ...] = ()) -> list[str]:
@@ -331,7 +341,9 @@ def fix_change_percentages(out: Pass2Output, sources: tuple[str, ...] = ()) -> l
         a, b = _amount(before), _amount(after)
         if a is None or b is None or a == 0:
             continue
-        if index and not all(index.stated_crore(abs(v), 2) for v in (a, b)):
+        # each side at the precision the card wrote it: "₹494 Cr" is the statement's 49,412 lakh; asked at two
+        # decimals it never matched, so a whole-crore change was never corrected (audit, 2026-10-18)
+        if index and not all(index.stated_crore(abs(v), _decimals_of(t)) for v, t in ((a, before), (b, after))):
             continue  # one side is not in the filing, so the % computed from it would be worse
         real = (b - a) / abs(a) * 100
         claimed = float(m.group(2).replace(",", "")) * (-1 if m.group(1) in ("-", "−") else 1)
@@ -428,8 +440,18 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
         # +1.5%). Accept it only when the year-ago figure it implies is in the filing as well.
         change = key.change
         if m.yoy_pct is not None and m.yoy_pct != -100:
-            prior = m.value / (1 + m.yoy_pct / 100)
-            if index is None or index.stated_crore(round(abs(prior), 2), 2):
+            # The year-ago figure itself where the earlier quarter's file gave it (add_comparatives). Rebuilt
+            # from the YoY, it is only as exact as a YoY rounded to a tenth of a point: Jubilant's Q4 revenue
+            # of ₹1,928.8 Cr puts it ₹0.9 Cr out, and asked at two decimals the right YoY was refused - "XBRL
+            # year-ago not in the filing" on most results cards (audit of discard paths, 2026-10-18).
+            year_ago = by_period.get(prior_year_period(wanted) or "", {}).get(metric) if metric else None
+            if year_ago is not None and year_ago.value is not None:
+                prior = year_ago.value
+            else:
+                prior = m.value / (1 + m.yoy_pct / 100)
+                slack = abs(m.value) * 0.0005 / (1 + m.yoy_pct / 100) ** 2   # half a tenth of a point
+            if index is None or (index.stated_crore(round(abs(prior), 2), 2) if year_ago is not None and year_ago.value
+                                 is not None else index.stated_crore(abs(prior), 2, tolerance=slack + 0.005)):
                 change = f"{m.yoy_pct:+.1f}% YoY"
             elif key.change:
                 unverified.append(f"{key.label}: XBRL year-ago ₹{prior:,.2f} Cr is not in the filing")

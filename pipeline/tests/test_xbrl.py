@@ -281,9 +281,21 @@ def test_an_xbrl_yoy_is_only_trusted_when_its_comparative_is_in_the_filing():
     xbrl_key_numbers(out, tagged, sources=("Revenue for the quarter was 951.96",))
     assert [(k.value, k.change) for k in out.card.key_numbers] == [("₹951.96 Cr", "-3.0% YoY")]
 
-    # the same filing stating the year-ago figure: the XBRL YoY is taken
+    # the same filing stating the year-ago figure - as the earlier quarter's file has it, ₹1,026.48 Cr - takes the
+    # XBRL YoY. Rebuilt from a YoY rounded to a tenth of a point it is ₹1,026.92 Cr; asked at two decimals that
+    # refused the right YoY on most results cards (audit of discard paths, 2026-10-18).
+    year_ago = next(m for m in tagged.metrics if m.period == "Q3FY24" and m.metric == "revenue").value
+    assert round(year_ago, 2) == 1026.48 and abs(prior - year_ago) > 0.3
     out = card()
-    xbrl_key_numbers(out, tagged, sources=(f"Revenue 951.96 against {prior:,.2f} in the corresponding quarter",))
+    xbrl_key_numbers(out, tagged, sources=(f"Revenue 951.96 against {year_ago:,.2f} in the corresponding quarter",))
+    assert [(k.value, k.change) for k in out.card.key_numbers] == [("₹951.96 Cr", f"{rev.yoy_pct:+.1f}% YoY")]
+    # without the earlier quarter's file the figure rebuilt from the YoY is matched within that rounding
+    alone = xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    for m in alone.metrics:
+        if m.period == "Q3FY25" and m.metric == "revenue":
+            m.yoy_pct = rev.yoy_pct
+    out = card()
+    xbrl_key_numbers(out, alone, sources=(f"Revenue 951.96 against {year_ago:,.2f} in the corresponding quarter",))
     assert [(k.value, k.change) for k in out.card.key_numbers] == [("₹951.96 Cr", f"{rev.yoy_pct:+.1f}% YoY")]
 
 

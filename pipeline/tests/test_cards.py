@@ -846,3 +846,19 @@ def test_a_figure_the_prompt_gave_the_model_is_grounded():
     scale = scale_block({}, {"market_cap_cr": 391.58}, filing)
     assert "391.58" in check_card_all(card, None, (filing, "", "", "{}")).ungrounded
     assert "391.58" not in check_card_all(card, None, (filing, "", "", "{}", scale)).ungrounded
+
+
+def test_a_change_between_whole_crore_figures_is_corrected_too():
+    """The change fixer asks for both sides in the filing before it trusts its own arithmetic, and asked at two
+    decimals whatever the card wrote: "₹494 Cr → ₹418 Cr, +15% YoY" against a statement of 49,412 and 41,804
+    lakh was never corrected, since 494.00 is not 494.12 (audit of discard paths, 2026-10-18)."""
+    from bse_intel.pipeline import fix_change_percentages
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q3 results",
+        "card": {"impact_level": "MODERATE", "headline": "Q3 revenue ₹418 Cr", "what_happened": ["Revenue ₹418 Cr"],
+                 "notable_changes": [{"metric": "revenue", "previous": "₹494 Cr (Q3FY24)", "current": "₹418 Cr (Q3FY25)",
+                                      "change": "+15% YoY", "direction": "POSITIVE"}]}})
+    statement = "Statement of results (₹ in Lakhs)\nRevenue from operations 41,804.10 49,412.30"
+    assert fix_change_percentages(out, (statement,)) == ["revenue: +15% YoY -> -15.4% YoY"]
+    assert out.card.notable_changes[0].direction == "NEGATIVE"

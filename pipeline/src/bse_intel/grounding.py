@@ -178,11 +178,12 @@ class SourceIndex:
         self._plain = sorted(plain - set().union(*by_unit.values()))
         self._by_unit = {unit: sorted(values) for unit, values in by_unit.items()}
 
-    def stated_crore(self, value: float, decimals: int, plain_scales=CRORE_SCALES) -> bool:
+    def stated_crore(self, value: float, decimals: int, plain_scales=CRORE_SCALES, tolerance: float | None = None) -> bool:
         """A ₹ crore figure on the card. A source figure written with a unit matches only at that
         unit's scale ("5445 Million" grounds ₹544.5 Cr, never ₹5,445 Cr); a bare figure (a table
-        under "(INR in Lakhs)") at ``plain_scales``."""
-        rounding = 0.5 * 10 ** (-decimals) + 1e-9
+        under "(INR in Lakhs)") at ``plain_scales``. `tolerance`, in crore, replaces the rounding of
+        `decimals` for a figure known only that closely (one rebuilt from a rounded percentage)."""
+        rounding = (tolerance if tolerance is not None else 0.5 * 10 ** (-decimals)) + 1e-9
         for per_crore, values in self._by_unit.items():
             if _near(values, value * per_crore, rounding * per_crore + abs(value * per_crore) * 1e-6):
                 return True

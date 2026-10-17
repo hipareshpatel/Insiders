@@ -22,13 +22,21 @@ _NUMERIC = re.compile(r"^\(?-?[\d,]+(?:\.\d+)?\)?%?$")
 
 
 def split_line(line: str) -> dict:
-    """A line of text as a label followed by its numeric cells."""
+    """A line of text as a label followed by its numeric cells.
+
+    A serial or note number before the label ("2  Other income  92  217  358", Schedule III's note
+    column) is not a figure: read as one, it took the label with it. Leading numbers are skipped when a
+    label follows them; a line of figures alone (wrapped below its label) keeps them all.
+    """
     tokens = line.split()
-    first_num = next((i for i, t in enumerate(tokens) if _NUMERIC.match(t)), len(tokens))
-    # keep a leading serial ("1.", "(a)") with the label, not as a figure
-    label = " ".join(tokens[:first_num])
-    cells = [t for t in tokens[first_num:] if _NUMERIC.match(t)]
-    return {"label": label, "cells": cells}
+    lead = 0
+    while lead < len(tokens) and _NUMERIC.match(tokens[lead]):
+        lead += 1
+    if lead == len(tokens):
+        return {"label": "", "cells": tokens}
+    rest = tokens[lead:]
+    first_num = next((i for i, t in enumerate(rest) if _NUMERIC.match(t)), len(rest))
+    return {"label": " ".join(rest[:first_num]), "cells": [t for t in rest[first_num:] if _NUMERIC.match(t)]}
 
 
 def text_rows(page, sort: bool) -> list[dict]:
@@ -85,5 +93,41 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and not (len(sys.argv) > 2 and sys.argv[2] == "joined"):
     raise SystemExit(main())
+
+
+def joined_rows(page) -> list[dict]:
+    """Reading-order lines, with a label-only line joined to the figures-only line that follows it.
+
+    A long row label wraps ("Profit for the period attributable to" / "owners of the company 100.7 ..."),
+    or a PDF puts the label and its figures on separate baselines, and the figures then reach the model
+    on a line with no name. 23 of the benchmark's 228 figures arrived like that.
+    """
+    raw = [split_line(l) for l in page.get_text("text", sort=True).splitlines() if l.strip()]
+    out: list[dict] = []
+    pending = ""
+    for row in raw:
+        if row["label"] and not row["cells"]:
+            pending = f"{pending} {row['label']}".strip() if pending else row["label"]
+            continue
+        if row["cells"] and not row["label"] and pending:
+            out.append({"label": pending, "cells": row["cells"]})
+        else:
+            if pending:
+                out.append({"label": pending, "cells": []})
+            out.append(row)
+        pending = ""
+    if pending:
+        out.append({"label": pending, "cells": []})
+    return out
+
+
+if __name__ == "__main__" and len(sys.argv) > 2 and sys.argv[2] == "joined":
+    bench = Path(sys.argv[1])
+    manifest = json.loads((bench / "manifest.json").read_text(encoding="utf-8"))
+    result = {}
+    for item in manifest:
+        doc = pymupdf.open(bench / item["pdf"])
+        result[item["news_id"]] = [{"page": i + 1, **r} for i, p in enumerate(doc) for r in joined_rows(p)]
+    (bench / "out" / "text-joined.json").write_text(json.dumps(result, ensure_ascii=False), encoding="utf-8")

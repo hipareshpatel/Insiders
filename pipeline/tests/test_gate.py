@@ -200,3 +200,28 @@ def test_a_true_fact_composed_from_a_table_is_kept_not_dropped(settings):
     assert [f.text for f in out.card.what_happened] == ["Q3FY25 revenue ₹331.80 Cr against ₹386.13 Cr a year earlier"]
     assert any("is in the filing but its quote is not" in p for p in problems)      # kept, reported
     assert any("neither its quote nor its figures" in p for p in problems)          # dropped
+
+
+def test_a_quoted_row_is_read_at_the_filings_own_unit():
+    """An Indian statement prints lakh and a card writes crore, so the right reading was reported as a
+    figure the quote does not carry - on 2026-10-17 the commonest single reason a card was held back.
+    Dividing by the unit the filing declares keeps the check that matters: the ten-times misreading of
+    the same row is still refused."""
+    row = "Provisions (other than tax) and contingencies 1,653 (454)"
+    assert gate.numbers_in_quote("Provisions rose to ₹16.53 Cr in Q3FY25 from ₹-4.54 Cr in Q3FY24", row, 100) == []
+    assert gate.numbers_in_quote("Provisions rose to ₹88.40 Cr in Q3FY25", row, 100) == ["88.40"],         "a figure the row does not carry at any unit still shows"
+
+    million = "Finance costs 457.86"
+    assert gate.numbers_in_quote("Finance cost ₹45.79 Cr", million, 10) == []
+    assert gate.numbers_in_quote("Finance cost ₹458 Cr", million, 10) == ["458"], "the 10x misreading"
+    # with no unit declared the old digit rule stands, so nothing is let through that was not before
+    assert gate.numbers_in_quote("Finance cost ₹45.79 Cr", million) == ["45.79"]
+
+
+def test_a_period_label_and_a_percentage_are_not_figures_a_quote_must_carry():
+    """A row prints the two amounts, not the year in the label nor the change between them."""
+    row = "Revenue from operations 35,627 33,517"
+    assert gate.numbers_in_quote("FY25 revenue ₹356.27 Cr grew 6.3% YoY from FY24", row, 100) == []
+    assert gate.numbers_in_quote("March 2025 cargo sales were 594 units, down 0.8% YoY",
+                                 "Cargo vehicles 594 599") == []
+    assert gate.numbers_in_quote("FY25 revenue ₹402 Cr", row, 100) == ["402"], "an invented figure still shows"

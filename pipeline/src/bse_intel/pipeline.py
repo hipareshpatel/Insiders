@@ -502,6 +502,7 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "") -> tuple[list[s
     if card is None or not text:
         return [], [], []
     index = SourceIndex(text)
+    unit = declared_unit(text)  # what the statement says its figures are in: a card writes crore
     problems, missing_quote, dropped, kept = [], [], [], []
     for fact in card.what_happened:
         label = fact.text.replace("**", "")[:60]
@@ -518,7 +519,7 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "") -> tuple[list[s
             else:
                 dropped.append(f'"{label}" (neither its quote nor its figures are in the filing)')
             continue
-        missing = gate.numbers_in_quote(fact.text.replace("**", ""), fact.quote)
+        missing = gate.numbers_in_quote(fact.text.replace("**", ""), fact.quote, unit)
         if missing:
             problems.append(f'"{label}" states {", ".join(missing[:4])}, which its own quote does not')
         kept.append(fact)

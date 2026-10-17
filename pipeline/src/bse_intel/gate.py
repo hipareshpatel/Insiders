@@ -103,20 +103,53 @@ def quote_found(quote: str | None, text: str) -> bool:
 
 
 _CLAIM_NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
+_PERIOD_LABEL = re.compile(r"\b(?:q[1-4]|h[12]|9m)?fy\s?'?\d{2,4}\b|\b(?:19|20)\d{2}\b|\bq[1-4]\b", re.I)
 
 
-def numbers_in_quote(claim: str, quote: str) -> list[str]:
+def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[str]:
     """Numbers written in the claim that its own quote does not carry (4.5 never matches 45), so a fact
     cannot borrow a figure from elsewhere in the filing. A figure that is a rounding of the quote's own
-    ("95" of "951.96") is allowed."""
+    ("95" of "951.96") is allowed.
+
+    `unit` is what the filing says its figures are in, as a divisor to crore (100 for lakh, 10 for
+    million). A card writes crore and an Indian statement writes lakh, so without it a right reading was
+    reported as missing: "16.53 Cr" is the quoted row's own "1,653". Dividing by the stated unit also
+    keeps the check that matters - "458 Cr" of a row reading 457.86 million is the ten-times misreading
+    and is still refused, because 45.79 is what that row says.
+
+    Period labels are not figures either, nor are percentages: a row prints the two amounts, not the
+    change between them, which grounding checks against the whole filing anyway. "FY25 revenue rose
+    6.3% YoY to Rs 356.27 Cr" was reported as stating 25, 6.3 and 356.27 - none of them wrong - and on
+    2026-10-17 this was the commonest single reason a card was held back from the feed.
+    """
     if not quote:
         return []
-    digits = {m.group(0).replace(",", "") for m in _CLAIM_NUMBER.finditer(_flat(quote))}
+    found = [m.group(0).replace(",", "") for m in _CLAIM_NUMBER.finditer(_flat(quote))]
+    digits = set(found)
+    in_crore = []
+    if unit and unit > 1:
+        for d in found:
+            try:
+                in_crore.append(float(d) / unit)
+            except ValueError:
+                pass
     missing = []
-    for m in _CLAIM_NUMBER.finditer(_flat(claim)):
+    flat_claim = _PERIOD_LABEL.sub(" ", _flat(claim))
+    for m in _CLAIM_NUMBER.finditer(flat_claim):
+        if flat_claim[m.end():m.end() + 2].lstrip().startswith("%"):
+            continue  # a percentage follows from the row's own figures rather than being printed in it,
+            # and grounding already checks one against the whole filing, stated or derived
         value = m.group(0).replace(",", "")
-        if value not in digits and not any(d.startswith(value) or value.startswith(d) for d in digits):
-            missing.append(m.group(0))
+        if value in digits or any(d.startswith(value) or value.startswith(d) for d in digits):
+            continue
+        try:
+            number = float(value)
+        except ValueError:
+            continue
+        tolerance = 0.5 * 10 ** -len(value.partition(".")[2])
+        if any(abs(c - number) <= tolerance for c in in_crore):
+            continue
+        missing.append(m.group(0))
     return missing
 
 

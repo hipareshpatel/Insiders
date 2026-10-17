@@ -696,20 +696,20 @@ def test_a_headline_number_answers_to_its_own_quote_not_the_whole_filing():
                      "key_numbers": [{"label": "Finance cost", "value": value, "quote": quote}]}})
 
     good = card("₹45.79 Cr", "Finance costs for the year were 457.86 against 430.20")
-    assert check_quoted_numbers(good, filing, unit) == ([], [])
+    assert check_quoted_numbers(good, filing, unit) == ([], [], [])
 
     # the 10x misreading: 4,583 million is in the filing and rounds to 458 Cr, but not in this sentence
     bad = card("₹458 Cr", "Finance costs for the year were 457.86 against 430.20")
-    problems, unquoted = check_quoted_numbers(bad, filing, unit)
+    problems, unquoted, _ = check_quoted_numbers(bad, filing, unit)
     assert problems and "458" in problems[0] and "its own quote does not" in problems[0]
     assert unquoted == []
 
     # a quote that is not in the filing at all is its own problem
     invented = card("₹45.79 Cr", "Finance costs rose sharply during the year under review")
-    problems, _ = check_quoted_numbers(invented, filing)
+    problems, _, _ = check_quoted_numbers(invented, filing)
     assert problems and "not in the filing" in problems[0]
 
     # and a figure with no quote is reported, not failed, while the models learn the field
     none_given = card("₹45.79 Cr", None)
-    problems, unquoted = check_quoted_numbers(none_given, filing)
+    problems, unquoted, _ = check_quoted_numbers(none_given, filing)
     assert problems == [] and unquoted == ["key number: Finance cost"]

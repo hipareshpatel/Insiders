@@ -260,3 +260,21 @@ def test_an_amount_written_out_in_full_and_a_change_in_basis_points():
     assert gate.numbers_in_quote("Tax liability ₹73.40 Cr", notice) == ["73.40"]
     assert gate.numbers_in_quote("GNPA 1.58%, +36 bps YoY", "b) % of Gross NPAs 1.58% 1.68% 1.22%") == []
     assert gate.numbers_in_quote("Margin 9.78%, up 56 basis points", "ebitda_margin FY25: 9.78 %") == []
+
+
+def test_a_sibling_row_answers_for_a_sentence_but_not_for_a_labelled_figure():
+    """A sentence reports the row it quotes and leans on others around it, so a figure from a sibling
+    row of the same table is reported rather than held. A key number names one line and states its
+    figure, so there the row itself has to carry it - which is what keeps "Rs 458 Cr" quoting a row of
+    457.86 million a failure even though 4,583 million is printed a few rows below."""
+    text = ("Statement of unaudited results (Rs. in lakhs) Revenue from operations 35,627 33,517 "
+            "Other income 1,200 900 Profit for the period 10,090 8,520")
+    quote = "Revenue from operations 35,627 33,517"
+    missing = gate.numbers_in_quote("FY25 revenue ₹356.27 Cr and PAT ₹100.90 Cr", quote, 100)
+    assert missing == ["100.90"], "the profit row is not in the revenue row"
+    assert gate.figures_in_same_block(missing, quote, text, 100) == ([], ["100.90"]), \
+        "but it is in the same table, so it is reported, not held"
+
+    far = "Exceptional items 9,999 0 " + "filler " * 900
+    assert gate.figures_in_same_block(["99.99"], quote, text + far, 100) == (["99.99"], []), \
+        "a figure a thousand words away is not a sibling row"

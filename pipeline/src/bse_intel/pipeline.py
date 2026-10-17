@@ -535,6 +535,10 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
                 dropped.append(f'"{label}" (neither its quote nor its figures are in the filing)')
             continue
         missing = gate.numbers_in_quote(fact.text.replace("**", ""), fact.quote, unit)
+        missing, siblings = gate.figures_in_same_block(missing, fact.quote, text, unit)
+        if siblings:
+            paraphrased.append(f'"{label}" also states {", ".join(siblings[:4])}, from another row of '
+                               "the same table")
         if missing:
             problems.append(f'"{label}" states {", ".join(missing[:4])}, which its own quote does not')
         kept.append(fact)
@@ -548,7 +552,8 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
     return problems + [f"dropped: {d}" for d in dropped], missing_quote, dropped, paraphrased
 
 
-def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None) -> tuple[list[str], list[str]]:
+def check_quoted_numbers(out: Pass2Output, text: str,
+                         unit: int | None = None) -> tuple[list[str], list[str], list[str]]:
     """Each figure on a card checked against the sentence that card says it came from.
 
     `what_happened` has carried a quote since D23 and is checked this way already. The fields that state
@@ -564,9 +569,9 @@ def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None) -
     """
     card = out.card
     if card is None or not text:
-        return [], []
-    problems, unquoted = [], []
-    for kind, label, claim, quote in _quoted_claims(card):
+        return [], [], []
+    problems, unquoted, elsewhere = [], [], []
+    for kind, label, claim, quote, siblings_count in _quoted_claims(card):
         if not quote:
             unquoted.append(f"{kind}: {label}")
             continue
@@ -579,27 +584,40 @@ def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None) -
         # These three fields had their own copy of the rule and it had fallen behind: on 2026-10-17 it
         # was reporting figures that were right thirteen times in twenty filings.
         missing = gate.numbers_in_quote(claim, quote, unit)
+        siblings: list[str] = []
+        if siblings_count:
+            missing, siblings = gate.figures_in_same_block(missing, quote, text, unit)
+        if siblings:
+            elsewhere.append(f'{kind} "{label}" also states {", ".join(dict.fromkeys(siblings))[:60]}, '
+                             "from another row of the same table")
         if missing:
             problems.append(f'{kind} "{label}" states {", ".join(dict.fromkeys(missing))[:90]}, '
                             "which its own quote does not")
-    return problems, unquoted
+    return problems, unquoted, elsewhere
 
 
-def _quoted_claims(card) -> list[tuple[str, str, str, str | None]]:
-    """(field, label, the text whose figures are checked, the quote) for every field that carries one."""
+def _quoted_claims(card) -> list[tuple[str, str, str, str | None, bool]]:
+    """(field, label, the text whose figures are checked, the quote, whether a sibling row may answer).
+
+    A key number and a notable change name one line of the statement and state its figure, so that
+    figure has to be in that line: this is where an invented whole-crore number is caught, and where
+    "Rs 458 Cr" quoting a row of 457.86 million has to fail even though 4,583 million is printed a few
+    rows below. A sentence is different - it reports the row it quotes and leans on others around it -
+    so there a figure from a sibling row of the same table is reported rather than held.
+    """
     out = []
     for key in card.key_numbers:
-        out.append(("key number", key.label or "", f"{key.value or ''} {key.change or ''}", key.quote))
+        out.append(("key number", key.label or "", f"{key.value or ''} {key.change or ''}", key.quote, False))
     for change in card.notable_changes or []:
         # Only what this period is: a change quotes the line it is reporting, and the figure it is
         # measured against belongs to an earlier filing or to memory, which is where it is checked.
         # Asking for both put "finance_cost Rs 0.11 Cr (Q2FY26) -> Rs 0.98 Cr (Q3FY26)" against a quote
         # reading "finance_cost Q3FY26: 0.98 Cr" and reported the 0.11 as missing.
         out.append(("notable change", change.metric or "",
-                    f"{change.current or ''} {change.change or ''}", change.quote))
+                    f"{change.current or ''} {change.change or ''}", change.quote, False))
     for insight in card.why_it_matters:
         if insight.basis == "FILING":  # a point resting on memory is checked against memory, not the filing
-            out.append(("why it matters", (insight.text or "")[:48], insight.text or "", insight.quote))
+            out.append(("why it matters", (insight.text or "")[:48], insight.text or "", insight.quote, True))
     return out
 
 
@@ -1445,8 +1463,10 @@ class Pipeline:
             found.quotes += quote_problems
             found.quote_style += paraphrased
             # The headline numbers answer to their own sentence too, not to the whole filing.
-            number_problems, unquoted = check_quoted_numbers(candidate, text, declared_unit(filed_text))
+            number_problems, unquoted, elsewhere = check_quoted_numbers(
+                candidate, text, declared_unit(filed_text))
             found.quotes += number_problems
+            found.quote_style += elsewhere
             return found, units, changes, missing + unquoted, dropped
 
         checks, unit_fixes, change_fixes, quotes_missing, quotes_dropped = ground(out)

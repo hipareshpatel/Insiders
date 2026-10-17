@@ -162,6 +162,36 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
     return missing
 
 
+SAME_BLOCK = 2000  # characters either side of the quote: about one statement table, not the document
+
+
+def figures_in_same_block(missing: list[str], quote: str, text: str, unit: int | None = None,
+                          window: int = SAME_BLOCK) -> tuple[list[str], list[str]]:
+    """Split figures a quote does not carry into those the same table does, and the rest.
+
+    A card sentence naturally draws on more than one row - revenue and the profit below it, this
+    quarter beside last - while it quotes the row it is mainly about. Holding the card for the second
+    figure was the commonest complaint left on 2026-10-17, and almost every one was right.
+
+    The window is the table around the quote, not the whole filing: document-wide is the weak test the
+    quote contract was written to replace, where an invented whole-crore figure lands on an unrelated
+    line 40% of the time (test_cards.py). A figure from a sibling row is reported, not held; one that
+    is nowhere near the quote is still a hold.
+    """
+    if not missing or not text or not quote:
+        return list(missing), []
+    flat = _flat(text)
+    first = _flat(re.split(r"\.\.\.|…", quote)[0].strip())
+    at = flat.find(first) if first else -1
+    if at == -1:
+        return list(missing), []
+    block = flat[max(0, at - window):at + len(first) + window]
+    still, siblings = [], []
+    for raw in missing:
+        (still if numbers_in_quote(raw, block, unit) else siblings).append(raw)
+    return still, siblings
+
+
 # --- a deal size taken from the wrong clause --------------------------------------------------------------------------
 
 # Novartis India's SPA (Feb 2026) gave ₹660.09 Cr only as the instruments the seller subscribes to at Closing, set off

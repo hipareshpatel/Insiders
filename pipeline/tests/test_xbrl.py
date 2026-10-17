@@ -433,10 +433,19 @@ def test_a_full_year_key_number_is_not_overwritten_with_the_quarters_figure():
                                  {"label": "PAT", "value": "₹-48.04 Cr", "change": "+4.3% YoY"}]}})
     xbrl_key_numbers(out, tagged)
     keys = {k.label: k.value for k in out.card.key_numbers}
-    assert keys["FY25 revenue"] == "₹453.98 Cr", "the year keeps the year's figure"
     changes = {k.label: k.change for k in out.card.key_numbers}
-    assert keys["PAT"] == "₹-14.76 Cr" and changes["PAT"] is None,         "a figure replaced by another period's loses the change that belonged to the one it replaced"
+    assert keys["FY25 revenue"] == "₹453.98 Cr", "the year keeps the year's figure"
     assert changes["FY25 revenue"] == "-3.3% YoY", "a figure left alone keeps its change"
     assert keys["Q4 EBITDA"] == "₹8.20 Cr", "a bare quarter is the quarter of the year reported"
     assert keys["FY25 PBT"] == "₹5 Cr", "the file carries no PBT for the year: left to the model"
-    assert keys["Revenue"] == "₹107.84 Cr", "a label with no period is the period filed for"
+    assert keys["Revenue"] == "₹453.98 Cr", "a bare label follows the period the card is about"
+
+    # the same file, read by a card about the quarter: now a bare label is the quarter's
+    out.card.headline = out.timeline_entry = "Q4FY25 results"
+    out.card.key_numbers[3].value, out.card.key_numbers[3].change = "₹100 Cr", "+4.3% YoY"
+    out.card.key_numbers[4].value, out.card.key_numbers[4].change = "₹-48.04 Cr", "+4.3% YoY"
+    xbrl_key_numbers(out, tagged)
+    keys = {k.label: k.value for k in out.card.key_numbers}
+    changes = {k.label: k.change for k in out.card.key_numbers}
+    assert keys["Revenue"] == "₹107.84 Cr" and changes["Revenue"] == "-12.0% YoY"
+    assert keys["PAT"] == "₹-14.76 Cr" and changes["PAT"] is None,         "a figure replaced by another period's loses the change that belonged to the one it replaced"

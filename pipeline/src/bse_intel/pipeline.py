@@ -351,7 +351,7 @@ def _label_period(label: str, default: str, available: dict) -> str | None:
     """Which period a key number's label is about, or None when the file cannot answer for it.
 
     "FY25 revenue" is the year, "Q4 EBITDA" the quarter of whichever year the file reports, and a bare
-    "revenue" is the period the file was filed for.
+    "revenue" is whatever `default` says the card is about.
     """
     m = _LABEL_PERIOD.search(label)
     if not m:
@@ -379,6 +379,12 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
     by_period: dict[str, dict] = {}
     for m in tagged.metrics:
         by_period.setdefault(m.period, {})[m.metric] = m
+    # Which period the card is about, where it says so. A results file for Q4 carries the quarter and
+    # the year, and a label with no period of its own ("Revenue") means whichever the card is about:
+    # Jubilant's FY25 card had its Rs 7,234.5 Cr for the year replaced by the quarter's Rs 1,928.80 Cr
+    # because the file was filed for the quarter.
+    card_period = _label_period(f"{out.card.headline or ''} {out.timeline_entry or ''}",
+                                tagged.period, by_period) or tagged.period
     now = by_period.get(tagged.period, {})
     # The table is prepended to the filing text the model reads, so it usually arrives inside `sources`
     # too. Take it out: a comparative checked against the very table it came from would always verify,
@@ -396,7 +402,7 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
         # by metric alone put the quarter's figure under the year's label - SML's FY25 revenue went from
         # Rs 453.98 Cr to Rs 107.84 Cr, a fifth of itself, with the year's YoY left beside it. So the
         # label's period picks the fact, and a period the file does not carry is left to the model.
-        wanted = _label_period(key.label or "", tagged.period, by_period)
+        wanted = _label_period(key.label or "", card_period, by_period)
         if wanted is None:
             continue
         m = by_period.get(wanted, {}).get(metric) if metric else None

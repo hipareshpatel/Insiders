@@ -77,6 +77,52 @@ RESULT_TAGS = {
     "EmployeesCost": "employee_cost",
     "OperatingExpenses": "other_expenses",
 }
+# Insurers file neither template above. SEBI gives them their own taxonomies and the names share almost
+# nothing with a manufacturer's: a general insurer's top line is premium earned and its profit comes out of
+# an underwriting account, a life insurer's is net premium income with the result struck in a shareholders'
+# account below a policyholders' one. With only the commercial map, ICICI Lombard yielded 4 metrics of 23
+# and HDFC Life 8, so cards for 198 financial companies had almost nothing machine-tagged to stand on.
+#
+# These are overlays, not additions, because one name means two things: `ProvisionForTax` is the tax on a
+# general insurer's profit but a life insurer's POLICYHOLDERS' tax, nowhere near the tax on its result. The
+# taxonomy each instance declares picks the overlay, and a None suppresses a commercial tag that would
+# otherwise read the wrong account.
+GENERAL_INSURANCE_TAGS = {
+    "GrossPremiumsWritten": "gross_premium",
+    "NetPremiumWritten": "net_premium",
+    "PremiumEarned": "revenue",          # net earned premium is the top line of the revenue account
+    "IncurredClaims": "incurred_claims",
+    "NetCommission": "commission",
+    "ProfitOrLossBeforeTax": "pbt",
+    "ProfitLossAfterTax": "pat",
+    "ProvisionForTax": "tax_expense",
+    "BasicAndDilutedEPSAfterExtraordinaryItemsNetOfTaxExpenseForThePeriodNotToBeAnnualized": "eps",
+}
+LIFE_INSURANCE_TAGS = {
+    "GrossPremiumIncome": "gross_premium",
+    "NetPremiumIncome": "revenue",
+    "IncomeFirstYearPremium": "first_year_premium",
+    "IncomeRenewalPremium": "renewal_premium",
+    "IncomeSinglePremium": "single_premium",
+    "BenefitsPaidNet": "benefits_paid",
+    "NetCommission": "commission",
+    "NetSurplusDeficit": "surplus",
+    "ProfitLossAfterTaxAndExtraordinaryItems": "pat",
+    "ProvisionsForTaxes": "tax_expense",      # the shareholders' account, where the result is struck
+    "ProvisionForTax": None,                  # the policyholders' account: not the tax on this profit
+    "CurrentTax": None,
+    "BasicAndDilutedEPSAfterExtraordinaryItemsNetOfTaxExpenseForThePeriodNotToBeAnnualized": "eps",
+}
+OVERLAYS = {"GI": GENERAL_INSURANCE_TAGS, "LI": LIFE_INSURANCE_TAGS}
+# Ratios an insurer reports as a fraction (1.0705) and everyone quotes as a percentage. The combined ratio
+# is the one general insurance is read on: above 100% the underwriting itself loses money. Solvency is
+# deliberately left out - filers disagree on its scale (0.0275 against 1.8 for the same kind of number).
+RATIO_TAGS = {
+    "CombinedRatio": "combined_ratio",
+    "IncurredClaimRatio": "claims_ratio",
+    "NetRetentionRatio": "retention_ratio",
+    "ExpensesOfManagementRatio": "expense_ratio",
+}
 BALANCE_TAGS = {
     "Equity": "net_worth_cr",
     "EquityAttributableToOwnersOfParent": "net_worth_cr",
@@ -85,6 +131,7 @@ BALANCE_TAGS = {
     "CashAndCashEquivalents": "cash_cr",
 }
 PER_SHARE = {"eps"}
+PERCENT = {"ebitda_margin", *RATIO_TAGS.values()}
 CONFIRM = ("revenue", "pat")  # figures looked for in the PDF text before the file is trusted
 
 
@@ -200,6 +247,15 @@ def period_label(info: dict) -> str | None:
     return None
 
 
+_TAXONOMY = re.compile(rb"IntegratedFinance_(\w+)")
+
+
+def taxonomy(data: bytes) -> str:
+    """Which SEBI template this instance was filed on: INDAS, NBFC, BANKING, GI or LI ("" if it says)."""
+    m = _TAXONOMY.search(data[:8000])
+    return m.group(1).decode("ascii", "ignore").upper() if m else ""
+
+
 def parse(data: bytes) -> XbrlResult | None:
     """Parse an XBRL instance; None when it is not one or holds nothing we use."""
     try:
@@ -213,14 +269,17 @@ def parse(data: bytes) -> XbrlResult | None:
     facts = list(_facts(root))
     names = {name for name, *_ in facts}
     text_facts = {name: value for name, ctx, unit, value in facts if unit is None}
-    if any("Shareholding" in n or "Shareholder" in n for n in names) and not names & set(RESULT_TAGS):
+    tags = {**RESULT_TAGS, **OVERLAYS.get(taxonomy(data), {})}
+    tags = {name: metric for name, metric in tags.items() if metric}
+    if any("Shareholding" in n or "Shareholder" in n for n in names) and not names & set(tags):
         return _shareholding(facts, contexts)
-    return _results(facts, contexts, units, text_facts)
+    return _results(facts, contexts, units, text_facts, tags)
 
 
-def _results(facts, contexts, units, text_facts) -> XbrlResult | None:
+def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = None) -> XbrlResult | None:
     nature = " ".join(v for k, v in text_facts.items() if "Standalone" in k or "Consolidated" in k or k == "NatureOfReport").lower()
     basis = "CONSOLIDATED" if "consolidated" in nature else "STANDALONE" if "standalone" in nature else None
+    tags = tags or RESULT_TAGS
     values: dict[tuple[str, str], float] = {}
     ends: dict[str, date] = {}
     balance: dict[str, float] = {}
@@ -231,18 +290,24 @@ def _results(facts, contexts, units, text_facts) -> XbrlResult | None:
         if info is None or value is None or info["dims"]:
             continue  # segment and other dimensional facts are not totals
         kind = units.get(unit or "", "PURE")
-        if name in RESULT_TAGS:
+        if name in tags or name in RATIO_TAGS:
             label = period_label(info)
             if not label:
                 continue
-            metric = RESULT_TAGS[name]
-            if metric in PER_SHARE:
-                if kind != "PER_SHARE" and kind != "PURE":
+            if name in RATIO_TAGS:
+                metric = RATIO_TAGS[name]
+                if kind != "PURE":
                     continue
-            elif kind != "MONEY":
-                continue
+                value *= 100  # filed as a fraction, read as a percentage
             else:
-                value = value / 1e7
+                metric = tags[name]
+                if metric in PER_SHARE:
+                    if kind != "PER_SHARE" and kind != "PURE":
+                        continue
+                elif kind != "MONEY":
+                    continue
+                else:
+                    value = value / 1e7
             values.setdefault((metric, label), value)
             ends[label] = info["endDate"]
         elif name in BALANCE_TAGS and kind == "MONEY" and info.get("instant"):
@@ -265,9 +330,9 @@ def _results(facts, contexts, units, text_facts) -> XbrlResult | None:
     quarter = max((p for p in ends if p.startswith("Q")), key=lambda p: ends[p], default=None)
     metrics = []
     for (metric, label), value in sorted(values.items(), key=lambda kv: (ends.get(kv[0][1]) or date.min, kv[0][0])):
-        unit = "INR" if metric in PER_SHARE else "PCT" if metric == "ebitda_margin" else "INR_CR"
+        unit = "INR" if metric in PER_SHARE else "PCT" if metric in PERCENT else "INR_CR"
         yoy = qoq = None
-        if metric != "ebitda_margin":
+        if metric not in PERCENT:
             yoy = _change(value, _match(values, ends, metric, label, years=1))
             if label.startswith("Q"):
                 qoq = _change(value, _match(values, ends, metric, label, months=3))

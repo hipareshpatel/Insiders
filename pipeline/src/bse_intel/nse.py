@@ -40,6 +40,13 @@ SHAREHOLDING_ENDPOINT = f"{SITE}/api/corporate-share-holdings-master"
 # had no machine-tagged figures at all. NSE lists the same quarters and they parse with the tag
 # map already here - 0 bytes against 23 metrics, measured 2026-10-16.
 RESULTS_ENDPOINT = f"{SITE}/api/corporates-financial-results"
+# SEBI's Integrated Filing replaced the standalone results filing for quarters from March 2025, which is
+# why the list above stops there and why a 2025-on NBFC appeared to have no machine-tagged results at all.
+# NSE kept both surfaces: the old page for what was filed the old way (and for SME, debt and REIT/InvIT,
+# which still are), a new one for the integrated format. We read both and merge them, so a company's
+# history does not break at the changeover.
+INTEGRATED_ENDPOINT = f"{SITE}/api/integrated-filing-results"
+INTEGRATED_FINANCIALS = "Integrated Filing- Financials"
 USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
               "Chrome/120.0.0.0 Safari/537.36")
 BLOCKING_STATUS = (401, 403, 429)
@@ -92,6 +99,9 @@ class ResultsFiling:
     filed_at: str        # ISO date, best effort from the broadcast or filing date
     xbrl_url: str
     is_bank: bool
+    period_end: str = ""     # ISO date of the quarter end, where the row states it
+    taxonomy: str = ""       # INDAS, NBFC_INDAS, BANKING, GI or LI, from the file name
+    revised: bool = False
 
 
 def parse_results_rows(rows: list[dict]) -> list[ResultsFiling]:
@@ -114,6 +124,44 @@ def parse_results_rows(rows: list[dict]) -> list[ResultsFiling]:
             is_bank=str(row.get("bank") or "").strip().lower() in ("yes", "true", "1"),
         ))
     return sorted(out, key=lambda r: r.filed_at, reverse=True)
+
+
+_INTEGRATED_NAME = re.compile(r"INTEGRATED_FILING_(.+?)_\d+_\d{14}_", re.I)
+
+
+def parse_integrated_rows(rows: list[dict]) -> list[ResultsFiling]:
+    """The Integrated Filing list as filings, newest first.
+
+    A revision supersedes the original for the same quarter and basis - NSE lists both, and the original
+    is the one with the mistake the revision was filed to correct.
+    """
+    best: dict[tuple[str, bool], ResultsFiling] = {}
+    for row in rows:
+        url = (row.get("xbrl") or "").strip()
+        quarter_end = _nse_date(row.get("qe_Date"))
+        if not url.lower().endswith(".xml") or not quarter_end:
+            continue
+        if not url.startswith("http"):
+            url = f"https://nsearchives.nseindia.com/{url.lstrip('/')}"
+        consolidated = "consolidated" in str(row.get("consolidated") or "").lower()
+        filed = _nse_date(row.get("broadcast_Date")) or _nse_date(row.get("revised_Date"))             or _nse_date(row.get("creation_Date")) or quarter_end
+        family = _INTEGRATED_NAME.search(url)
+        filing = ResultsFiling(
+            period="Quarterly",
+            consolidated=consolidated,
+            audited=str(row.get("audited") or "").strip(),
+            filed_at=filed.isoformat(),
+            xbrl_url=url,
+            is_bank=bool(family) and family.group(1).upper() == "BANKING",
+            period_end=quarter_end.isoformat(),
+            taxonomy=family.group(1).upper() if family else "",
+            revised=str(row.get("type_Sub") or "").strip().lower() == "revision",
+        )
+        key = (filing.period_end, consolidated)
+        kept = best.get(key)
+        if kept is None or (filing.revised and not kept.revised) or                 (filing.revised == kept.revised and filing.filed_at > kept.filed_at):
+            best[key] = filing
+    return sorted(best.values(), key=lambda f: (f.period_end, f.filed_at), reverse=True)
 
 
 def parse_shareholding_rows(rows: list[dict]) -> list[ShareholdingFiling]:
@@ -216,12 +264,32 @@ class NseClient:
         filings = parse_shareholding_rows(rows if isinstance(rows, list) else [])
         return [f for f in filings if not since or f.quarter_end >= since]
 
+    def integrated_filings(self, symbol: str) -> list[ResultsFiling]:
+        """The symbol's Integrated Filing (Financials) XBRL, newest quarter first. This is the current
+        format: banks, NBFCs and insurers all file here, each on its own SEBI template."""
+        data = self._get(INTEGRATED_ENDPOINT, {"symbol": symbol.strip().upper(),
+                                               "type": INTEGRATED_FINANCIALS, "page": 1, "size": 50}).json()
+        rows = data.get("data") if isinstance(data, dict) else data
+        return parse_integrated_rows(rows if isinstance(rows, list) else [])
+
     def financial_results(self, symbol: str, quarterly: bool = True) -> list[ResultsFiling]:
-        """Every results XBRL NSE lists for the symbol, newest first. Used only as a fallback: BSE's own
-        archive is the first source, and this fills the templates it will not serve (NBFC, life insurance)."""
+        """Every results XBRL NSE lists for the symbol, newest first, from both surfaces. Used only as a
+        fallback: BSE's own archive is the first source, and this fills the templates it will not serve
+        (NBFC, banking, life and general insurance)."""
+        out: list[ResultsFiling] = []
+        if quarterly:
+            try:
+                out.extend(self.integrated_filings(symbol))
+            except SourceBlockedError:
+                raise
+            except (httpx.HTTPError, ValueError, RuntimeError) as exc:
+                log.info("NSE integrated filings unavailable for %s (%s); using the older list", symbol, exc)
         data = self._get(RESULTS_ENDPOINT, {"index": "equities", "symbol": symbol.strip().upper(),
                                             "period": "Quarterly" if quarterly else "Annual"}).json()
-        return parse_results_rows(data if isinstance(data, list) else [])
+        out.extend(parse_results_rows(data if isinstance(data, list) else []))
+        seen: set[str] = set()
+        unique = [f for f in out if not (f.xbrl_url in seen or seen.add(f.xbrl_url))]
+        return sorted(unique, key=lambda f: f.filed_at, reverse=True)
 
     def download(self, url: str, max_bytes: int = 8_000_000) -> bytes | None:
         """One XBRL file. None when NSE serves something that is not XML."""

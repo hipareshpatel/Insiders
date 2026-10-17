@@ -20,11 +20,13 @@ import gzip
 import hashlib
 import logging
 from dataclasses import dataclass, field
+from functools import lru_cache
 from pathlib import Path
 
 from . import xbrl as xbrl_fast_path
 from .dossier import merge, new_dossier
 from .models import Filing, Pass2Output
+from .periods import canonical_period
 from .timeutil import now_iso
 
 log = logging.getLogger(__name__)
@@ -97,6 +99,7 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     bytes against 23 metrics, measured 2026-10-16 (PLAN item 1i).
     """
     links = [link for link in bse.results_xbrl(scrip) if link.filed_at[:10] >= since]
+    done: set[str] = set()
     by_period: dict[str, object] = {}
     for link in sorted(links, key=lambda link: (link.filed_at, link.basis == "CONSOLIDATED")):
         by_period[link.period] = link  # later filing, then consolidated, wins
@@ -114,21 +117,69 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
             log.warning("seed %s %s: the archive lists %s but nothing came back; this company has no "
                         "machine-tagged results for that quarter", scrip, period, link.url)
             continue
-        stats.results_files += 1
-        parsed = xbrl_fast_path.parse(data)
-        if not parsed or parsed.kind != "RESULTS" or not parsed.metrics:
-            stats.skipped += 1
+        if _write_results(sink, scrip, name, company, period, link.filed_at[:10], link.url, data, stats):
+            done.add(period)
+
+    # Quarters NSE has that BSE's archive never listed at all. The fallback above only fires for a file
+    # BSE named, and since March 2025 the integrated format means BSE often names none: a company that
+    # changed over has a gap in memory rather than a failed fetch, which no counter would have shown.
+    if nse is not None and symbol:
+        for period, row in _nse_quarters(nse, symbol, since, scrip).items():
+            if period in done:
+                continue
+            data = _fetch(nse, row.xbrl_url, cache_root)
+            if not data:
+                continue
+            stats.results_from_nse += 1
+            if _write_results(sink, scrip, name, company, period, row.filed_at[:10], row.xbrl_url, data, stats):
+                done.add(period)
+                log.info("seed %s %s: BSE's archive did not list this quarter, NSE did (%s)",
+                         scrip, period, row.taxonomy or "template not stated")
+
+
+def _write_results(sink, scrip: str, name: str, company: dict | None, period: str, filed_on: str,
+                   url: str, data: bytes, stats: SeedStats) -> bool:
+    """One XBRL file into memory. False when it parses to nothing we can use."""
+    stats.results_files += 1
+    parsed = xbrl_fast_path.parse(data)
+    if not parsed or parsed.kind != "RESULTS" or not parsed.metrics:
+        stats.skipped += 1
+        return False
+    filing = _filing("res", scrip, name, period, f"{filed_on}T18:00:00+05:30", url)
+    out = Pass2Output(is_material=False, timeline_entry="")
+    out.dossier_delta.financial_metrics = list(parsed.metrics)
+    if parsed.balance_sheet and not parsed.balance_sheet.is_empty():
+        out.dossier_delta.balance_sheet = parsed.balance_sheet
+    dossier = sink.get_dossier(scrip) or new_dossier(filing, company or {})
+    sink.put_dossier(scrip, merge(dossier, out, filing, None, now_iso()))
+    stats.results_periods += 1
+    log.info("seed %s %s: %d figures from %s (%s)", scrip, period, len(parsed.metrics), url.rsplit("/", 1)[-1],
+             parsed.basis or "basis not stated")
+    return True
+
+
+def _nse_quarters(nse, symbol: str, since: str, scrip: str) -> dict:
+    """The newest filing NSE lists per quarter, consolidated where both bases are filed."""
+    try:
+        rows = _nse_rows(nse, symbol)
+    except Exception as exc:
+        log.info("seed %s: NSE list unavailable (%s)", scrip, type(exc).__name__)
+        return {}
+    best: dict = {}
+    for row in sorted(rows, key=lambda r: (r.filed_at, r.consolidated)):
+        if not row.period_end or row.period_end < since:
             continue
-        filing = _filing("res", scrip, name, period, f"{link.filed_at[:10]}T18:00:00+05:30", link.url)
-        out = Pass2Output(is_material=False, timeline_entry="")
-        out.dossier_delta.financial_metrics = list(parsed.metrics)
-        if parsed.balance_sheet and not parsed.balance_sheet.is_empty():
-            out.dossier_delta.balance_sheet = parsed.balance_sheet
-        dossier = sink.get_dossier(scrip) or new_dossier(filing, company or {})
-        sink.put_dossier(scrip, merge(dossier, out, filing, None, now_iso()))
-        stats.results_periods += 1
-        log.info("seed %s %s: %d figures from %s (%s)", scrip, period, len(parsed.metrics), link.url.rsplit("/", 1)[-1],
-                 parsed.basis or "basis not stated")
+        label = canonical_period(f"quarter ended {row.period_end[8:10]}.{row.period_end[5:7]}.{row.period_end[:4]}")
+        if label:
+            best[label] = row  # later filing, then consolidated, wins
+    return best
+
+
+@lru_cache(maxsize=64)
+def _nse_rows(nse, symbol: str) -> tuple:
+    """NSE's results list for one symbol, fetched once: it is read per quarter and the client paces
+    itself by several seconds a call."""
+    return tuple(nse.financial_results(symbol))
 
 
 def _from_nse(nse, symbol: str, period: str, link, cache_root: Path | None, stats: SeedStats,
@@ -136,7 +187,7 @@ def _from_nse(nse, symbol: str, period: str, link, cache_root: Path | None, stat
     """The same quarter from NSE, when BSE served nothing. Matched on the filing date BSE listed, so the
     row is the same filing and not merely the same company; the basis is matched where NSE states it."""
     try:
-        rows = nse.financial_results(symbol)
+        rows = _nse_rows(nse, symbol)
     except Exception as exc:
         log.info("seed %s %s: NSE fallback unavailable (%s)", scrip, period, type(exc).__name__)
         return None

@@ -322,3 +322,84 @@ def test_nse_results_rows_are_read_and_matched_by_date():
     assert rows[1].xbrl_url.startswith("https://nsearchives.nseindia.com/"), "an absolute one is left alone"
     assert rows[0].consolidated is True and rows[1].consolidated is False   # "Non-Consolidated" is not consolidated
     assert rows[0].is_bank is False
+
+
+def _insurance_xml(family: str, facts: str) -> bytes:
+    """An instance on one of SEBI's insurance templates, which the parser tells apart by namespace."""
+    head = ('<?xml version="1.0"?><xbrli:xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance" '
+            'xmlns:iso4217="http://www.xbrl.org/2003/iso4217" '
+            f'xmlns:in-capmkt-ent="http://www.sebi.gov.in/xbrl/IntegratedFinance_{family}/2025-01-31/'
+            'in-capmkt/in-capmkt-ent" xmlns:in-capmkt="http://www.sebi.gov.in/xbrl/2025-01-31/in-capmkt">'
+            '<xbrli:unit id="INR"><xbrli:measure>iso4217:INR</xbrli:measure></xbrli:unit>'
+            '<xbrli:unit id="pure"><xbrli:measure>xbrli:pure</xbrli:measure></xbrli:unit>')
+    return (head + _ctx("Q", "2026-07-01", "2026-09-30")
+            + '<in-capmkt:NatureOfReportStandaloneConsolidated contextRef="Q">Standalone'
+              "</in-capmkt:NatureOfReportStandaloneConsolidated>"
+            + facts + "</xbrli:xbrl>").encode()
+
+
+def _cap(name, value, unit="INR"):
+    return f'<in-capmkt:{name} contextRef="Q" unitRef="{unit}">{value}</in-capmkt:{name}>'
+
+
+def test_a_general_insurer_is_read_from_its_own_template():
+    """Premium is the top line, and the combined ratio is filed as a fraction but read as a percentage."""
+    xml = _insurance_xml("GI", _cap("PremiumEarned", 66_518_700_000) + _cap("GrossPremiumsWritten", 77_020_900_000)
+                         + _cap("IncurredClaims", 48_388_400_000) + _cap("ProfitOrLossBeforeTax", 12_474_100_000)
+                         + _cap("ProvisionForTax", 3_010_100_000) + _cap("ProfitLossAfterTax", 9_464_000_000)
+                         + _cap("CombinedRatio", "1.0705", "pure"))
+    result = xbrl.parse(xml)
+    figures = {m.metric: m.value for m in result.metrics}
+    assert figures["revenue"] == 6651.87 and figures["gross_premium"] == 7702.09
+    assert figures["incurred_claims"] == 4838.84
+    # the three profit figures have to reconcile, or the overlay has picked the wrong account
+    assert round(figures["pbt"] - figures["tax_expense"], 2) == figures["pat"] == 946.4
+    assert figures["combined_ratio"] == 107.05
+    assert next(m for m in result.metrics if m.metric == "combined_ratio").unit == "PCT"
+
+
+def test_a_life_insurers_tax_comes_from_the_account_its_profit_does():
+    """`ProvisionForTax` is the general insurer's tax on profit and the life insurer's POLICYHOLDERS'
+    tax, twenty times larger and unrelated to the result. The shareholders' account is the right one."""
+    xml = _insurance_xml("LI", _cap("NetPremiumIncome", 218_557_900_000) + _cap("GrossPremiumIncome", 225_021_500_000)
+                         + _cap("ProfitLossBeforeTax", 5_405_000_000) + _cap("ProvisionsForTaxes", 189_000_000)
+                         + _cap("ProvisionForTax", 381_600_000) + _cap("CurrentTax", 381_600_000)
+                         + _cap("ProfitLossAfterTaxAndExtraordinaryItems", 5_216_000_000)
+                         + _cap("NetSurplusDeficit", 2_893_900_000))
+    figures = {m.metric: m.value for m in xbrl.parse(xml).metrics}
+    assert figures["revenue"] == 21855.79 and figures["gross_premium"] == 22502.15
+    assert figures["tax_expense"] == 18.9
+    assert round(figures["pbt"] - figures["tax_expense"], 2) == figures["pat"] == 521.6
+    assert "current_tax" not in figures  # the policyholders' tax, suppressed rather than mislabelled
+    assert figures["surplus"] == 289.39
+
+
+def test_the_same_instance_on_the_commercial_template_keeps_the_commercial_reading():
+    """The overlay must apply only where the insurance taxonomy is declared."""
+    xml = _insurance_xml("IndAS", _cap("ProfitLossBeforeTax", 5_405_000_000) + _cap("CurrentTax", 381_600_000))
+    figures = {m.metric: m.value for m in xbrl.parse(xml).metrics}
+    assert figures["current_tax"] == 38.16
+
+
+def test_integrated_filing_rows_keep_the_revision_and_name_the_template():
+    from bse_intel.nse import parse_integrated_rows
+
+    rows = [
+        {"symbol": "ICICIGI", "qe_Date": "30-SEP-2026", "consolidated": "Standalone", "type_Sub": "Original",
+         "audited": "Audited", "broadcast_Date": "14-Oct-2026 10:36:36",
+         "xbrl": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GI_1738196_14102026103636_WEB.xml"},
+        {"symbol": "ICICIGI", "qe_Date": "30-SEP-2026", "consolidated": "Standalone", "type_Sub": "Revision",
+         "audited": "Audited", "broadcast_Date": None, "revised_Date": "16-OCT-2026 19:35:22",
+         "xbrl": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GI_1740432_16102026073544_WEB.xml"},
+        {"symbol": "PNB", "qe_Date": "30-JUN-2026", "consolidated": "Consolidated", "type_Sub": "Original",
+         "audited": "Un-Audited", "broadcast_Date": "18-Jul-2026 04:24:21",
+         "xbrl": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_BANKING_1696149_18072026042421_WEB.xml"},
+        {"symbol": "X", "qe_Date": "30-JUN-2026", "consolidated": "Standalone", "type_Sub": "Original", "xbrl": ""},
+    ]
+    filings = parse_integrated_rows(rows)
+    assert [f.period_end for f in filings] == ["2026-09-30", "2026-06-30"]
+    newest = filings[0]
+    assert newest.revised and newest.taxonomy == "GI" and not newest.is_bank
+    assert newest.filed_at == "2026-10-16" and "1740432" in newest.xbrl_url
+    bank = filings[1]
+    assert bank.is_bank and bank.taxonomy == "BANKING" and bank.consolidated

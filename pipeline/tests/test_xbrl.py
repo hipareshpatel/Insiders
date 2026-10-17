@@ -403,3 +403,36 @@ def test_integrated_filing_rows_keep_the_revision_and_name_the_template():
     assert newest.filed_at == "2026-10-16" and "1740432" in newest.xbrl_url
     bank = filings[1]
     assert bank.is_bank and bank.taxonomy == "BANKING" and bank.consolidated
+
+
+def test_a_full_year_key_number_is_not_overwritten_with_the_quarters_figure():
+    """Our own fixer was writing wrong numbers over right ones, for the third time (D25).
+
+    A Q4 results file carries the quarter AND the year it closes. The override matched a key number by
+    metric alone, so "FY25 revenue" took the Q4 fact: in the 2026-10-17 round SML's FY25 revenue went
+    from Rs 453.98 Cr to Rs 107.84 Cr - a fifth of itself - with the year's own YoY left beside it, and
+    FY25 PAT from -Rs 48.04 Cr to -Rs 14.76 Cr. The label names its period; it has to be read.
+    """
+    from bse_intel.models import FinancialMetric, Pass2Output
+    from bse_intel.pipeline import xbrl_key_numbers
+
+    tagged = xbrl.XbrlResult("RESULTS", "STANDALONE", "Q4FY25", [
+        FinancialMetric(metric="revenue", period="Q4FY25", value=107.84, unit="INR_CR", yoy_pct=-12.0),
+        FinancialMetric(metric="revenue", period="FY25", value=453.98, unit="INR_CR", yoy_pct=-3.3),
+        FinancialMetric(metric="pat", period="Q4FY25", value=-14.76, unit="INR_CR"),
+        FinancialMetric(metric="ebitda", period="Q4FY25", value=8.2, unit="INR_CR"),
+    ])
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "FY25 results",
+        "card": {"impact_level": "MODERATE", "headline": "FY25 results", "basis": "STANDALONE",
+                 "what_happened": ["FY25 results declared"],
+                 "key_numbers": [{"label": "FY25 revenue", "value": "₹453.98 Cr", "change": "-3.3% YoY"},
+                                 {"label": "Q4 EBITDA", "value": "₹8.2 Cr", "change": None},
+                                 {"label": "FY25 PBT", "value": "₹5 Cr", "change": None},
+                                 {"label": "Revenue", "value": "₹100 Cr", "change": None}]}})
+    xbrl_key_numbers(out, tagged)
+    keys = {k.label: k.value for k in out.card.key_numbers}
+    assert keys["FY25 revenue"] == "₹453.98 Cr", "the year keeps the year's figure"
+    assert keys["Q4 EBITDA"] == "₹8.20 Cr", "a bare quarter is the quarter of the year reported"
+    assert keys["FY25 PBT"] == "₹5 Cr", "the file carries no PBT for the year: left to the model"
+    assert keys["Revenue"] == "₹107.84 Cr", "a label with no period is the period filed for"

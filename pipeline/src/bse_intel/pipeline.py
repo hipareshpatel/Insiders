@@ -341,6 +341,29 @@ _KEY_METRIC = (("ebitda", re.compile(r"\bebitda\b(?!.*margin)", re.I)),
                ("revenue", re.compile(r"revenue|net sales|income from operations|\bsales\b", re.I)))
 
 
+_LABEL_PERIOD = re.compile(r"\b(9M|H[12]|Q[1-4]|FY)\s*(?:FY)?\s*(\d{4}|\d{2})?\b", re.I)
+
+
+def _label_period(label: str, default: str, available: dict) -> str | None:
+    """Which period a key number's label is about, or None when the file cannot answer for it.
+
+    "FY25 revenue" is the year, "Q4 EBITDA" the quarter of whichever year the file reports, and a bare
+    "revenue" is the period the file was filed for.
+    """
+    m = _LABEL_PERIOD.search(label)
+    if not m:
+        return default
+    kind, year = m.group(1).upper(), m.group(2)
+    if year:
+        fy = f"FY{year[-2:]}"
+    else:
+        fy = default[-4:] if default[-4:].startswith("FY") else None
+        if fy is None:
+            return default
+    period = fy if kind == "FY" else f"{kind}{fy}"
+    return period if period in available else None
+
+
 def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
                      sources: tuple[str, ...] = ()) -> list[str]:
     """A results card's key numbers for revenue, EBITDA, PBT, PAT and EPS set from the XBRL file: exact
@@ -350,7 +373,10 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
         return []
     if out.card.basis and tagged.basis and out.card.basis != tagged.basis:
         return []
-    now = {m.metric: m for m in tagged.metrics if m.period == tagged.period}
+    by_period: dict[str, dict] = {}
+    for m in tagged.metrics:
+        by_period.setdefault(m.period, {})[m.metric] = m
+    now = by_period.get(tagged.period, {})
     # The table is prepended to the filing text the model reads, so it usually arrives inside `sources`
     # too. Take it out: a comparative checked against the very table it came from would always verify,
     # and the guard below would silently do nothing.
@@ -362,7 +388,15 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
         if "margin" in (key.label or "").lower() or "%" in (key.value or ""):
             continue
         metric = next((name for name, pattern in _KEY_METRIC if pattern.search(key.label or "")), None)
-        m = now.get(metric) if metric else None
+        # The label usually names its own period ("FY25 revenue", "Q4 EBITDA") and it is often not the
+        # quarter the file was filed for: a results file for Q4 also carries the full year. Overwriting
+        # by metric alone put the quarter's figure under the year's label - SML's FY25 revenue went from
+        # Rs 453.98 Cr to Rs 107.84 Cr, a fifth of itself, with the year's YoY left beside it. So the
+        # label's period picks the fact, and a period the file does not carry is left to the model.
+        wanted = _label_period(key.label or "", tagged.period, by_period)
+        if wanted is None:
+            continue
+        m = by_period.get(wanted, {}).get(metric) if metric else None
         if m is None or m.value is None:
             continue
         value = f"₹{m.value:,.2f}" + (" per share" if metric == "eps" else " Cr")

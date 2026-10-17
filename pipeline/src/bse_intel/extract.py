@@ -160,6 +160,7 @@ class Document:
         self._digital: list[str] = []
         self._has_image: list[bool] = []
         self._blocks: list[str] = []
+        self._blocks_read = True  # an old cache entry kept as a fallback has none, and must stay marked so
         self.selected: list[int] = []   # the pages the last select_text took
         if not pdf_bytes:
             self.error = "no attachment"
@@ -186,7 +187,7 @@ class Document:
         """Everything read from the PDF (digital text and the pages OCR'd so far), for the text cache."""
         return {"v": self.cache_version, "error": self.error, "digital": self._digital, "has_image": self._has_image,
                 "ocr": {str(k): v for k, v in self._ocr_cache.items()}, "unreadable_checked": self.unreadable_checked,
-                "local_ocr": self.local_ocr, "blocks": self._blocks}
+                "local_ocr": self.local_ocr, **({"blocks": self._blocks} if self._blocks_read else {})}
 
     def keep_ocr(self, data: dict) -> None:
         """Reuse the pages an older cache entry already OCR'd: re-reading the text layer does not change them.
@@ -207,6 +208,7 @@ class Document:
         doc._digital = list(data.get("digital", []))
         doc._has_image = list(data.get("has_image", [False] * len(doc._digital)))
         doc._blocks = list(data.get("blocks") or [])
+        doc._blocks_read = "blocks" in data
         doc._ocr_cache = {int(k): v for k, v in (data.get("ocr") or {}).items()}
         return doc
 

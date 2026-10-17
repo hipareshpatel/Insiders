@@ -330,6 +330,17 @@ def test_a_text_cache_entry_from_before_reading_order_is_read_again_once(setting
     pipeline.bse.download = lambda url, **kw: (_ for _ in ()).throw(AssertionError("downloaded again"))
     assert pipeline.analyze(filing).update["status"] == "ANALYZED"
 
+    # An entry from before pages were also read block by block, kept as the fallback when BSE refuses the
+    # PDF, must still say it has no block reading - or it would count as current and never be read again.
+    no_blocks = {k: v for k, v in pipeline._cached_text(f.news_id).items() if k != "blocks"}
+    path.write_bytes(gzip.compress(json.dumps(no_blocks).encode()))
+    pipeline.bse.download = lambda url, **kw: (_ for _ in ()).throw(AttachmentError("refused"))
+    pipeline.analyze(filing)
+    assert "blocks" not in pipeline._cached_text(f.news_id)
+    pipeline.bse.download = download
+    pipeline.analyze(filing)
+    assert "blocks" in pipeline._cached_text(f.news_id)
+
 
 def test_filings_of_companies_outside_the_universe_go_to_the_noise_file(settings):
     from bse_intel import universe

@@ -28,6 +28,13 @@ def _clear_of_ist_midnight(monkeypatch):
     monkeypatch.setattr(timeutil, "datetime", Shifted)
 
 
+@pytest.fixture(autouse=True)
+def _no_local_ocr_on_figure_pages(monkeypatch):
+    """analyze() reads a page of figures with local OCR when it is installed. The tests' PDFs are the same
+    on a laptop that has it and a runner that does not; a test that wants it turns it on."""
+    monkeypatch.setattr("bse_intel.pipeline.local_ocr_available", lambda: False)
+
+
 @pytest.fixture
 def settings(tmp_path) -> Settings:
     return replace(Settings(), sink="local", local_dir=tmp_path / "local", workers=2, text_cache_dir=tmp_path / "text_cache", price_dir=tmp_path / "prices",

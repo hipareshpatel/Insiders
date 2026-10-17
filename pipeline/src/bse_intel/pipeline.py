@@ -38,7 +38,8 @@ from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, reported_by,
                       results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import CACHE_VERSION, Document, cache_needs_ocr
-from .ocr import page_reader
+from .ocr import available as local_ocr_available
+from .ocr import page_reader, recognise
 from . import raw
 from . import gate
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, check_card, check_claims, declared_unit,
@@ -1069,11 +1070,16 @@ class Pipeline:
             return self._xbrl_memory(filing, company)
         industry = company.get("industry")
         ocr = page_reader(self.gateway.transcribe_image if self.gateway.has_route("vision") else None)
+        # Pages of figures are read by local OCR first, the text layer putting back the nils it drops
+        # (extract.figure_page); never by the vision route, which costs quota and swaps digits.
+        figures = recognise if local_ocr_available() else None
         cached = self._cached_text(filing.news_id)
         doc = None
         # A page whose text layer is unreadable and was never OCR'd is read again from the PDF, once, so
-        # it can be: the cache would otherwise hand the same garbage to the model on every re-run.
-        current = cached is not None and cached.get("v", 1) >= CACHE_VERSION and not cache_needs_ocr(cached)
+        # it can be: the cache would otherwise hand the same garbage to the model on every re-run. So is
+        # an entry written before figure pages went to local OCR.
+        current = (cached is not None and cached.get("v", 1) >= CACHE_VERSION
+                   and not cache_needs_ocr(cached, local_ocr=figures is not None))
         if cached is not None and (current or not filing.pdf_url):
             doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         elif cached is not None:
@@ -1082,14 +1088,14 @@ class Pipeline:
             try:
                 pdf = self.bse.download(filing.pdf_url)
                 self._refusals = 0
-                doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
+                doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
                 doc.keep_ocr(cached)
             except AttachmentError:
                 doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         if doc is None:
             pdf = self.bse.download(filing.pdf_url) if filing.pdf_url else None
             self._refusals = 0
-            doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
+            doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
         try:
             repeat = self._duplicate_of(filing, doc)
             if repeat:
@@ -1102,7 +1108,7 @@ class Pipeline:
             return self._analyze_document(filing, company, industry, doc, bulk, memory_complete)
         finally:
             with self._lock:
-                self.stats.ocr_pages += doc.ocr_pages_used
+                self.stats.ocr_pages += doc.ocr_pages_used + doc.figure_pages_used
             if doc.ocr_error is None:
                 self._cache_text(filing.news_id, doc)
             doc.close()
@@ -1114,7 +1120,7 @@ class Pipeline:
         analyse one event. Corrections are never duplicates."""
         if duplicates.is_correction(filing.headline, filing.subject):
             return None
-        mine = duplicates.body(doc.select_text(duplicates.CHARS))
+        mine = duplicates.body(doc.select_text(duplicates.CHARS, figures=False))
         if not mine.matchable:
             return None
         since = (datetime.fromisoformat(filing.filed_at) - timedelta(days=duplicates.DAYS)).isoformat()
@@ -1129,7 +1135,7 @@ class Pipeline:
                 continue
             cached = self._cached_text(row["news_id"])
             if cached is not None:
-                candidates.append((row["news_id"], duplicates.body(Document.from_cache(cached).select_text(duplicates.CHARS))))
+                candidates.append((row["news_id"], duplicates.body(Document.from_cache(cached).select_text(duplicates.CHARS, figures=False))))
         for news_id, theirs in candidates:
             kind = duplicates.match(mine, theirs)
             if kind:

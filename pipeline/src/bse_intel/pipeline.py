@@ -37,7 +37,7 @@ from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, reported_by,
                       results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
-from .extract import Document
+from .extract import CACHE_VERSION, Document
 from . import gate
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, check_card, check_claims, declared_unit,
                         margin_issues, scale_issues, unit_slips)
@@ -961,9 +961,20 @@ class Pipeline:
         industry = company.get("industry")
         ocr = self.gateway.transcribe_image if self.gateway.has_route("vision") else None
         cached = self._cached_text(filing.news_id)
-        if cached is not None:
+        doc = None
+        if cached is not None and (cached.get("v", 1) >= CACHE_VERSION or not filing.pdf_url):
             doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
-        else:
+        elif cached is not None:
+            # Written before the text layer was read in reading order: read the PDF again, keeping the
+            # pages already OCR'd; if BSE will not serve it now, the old text is still better than none.
+            try:
+                pdf = self.bse.download(filing.pdf_url)
+                self._refusals = 0
+                doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
+                doc.keep_ocr(cached)
+            except AttachmentError:
+                doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
+        if doc is None:
             pdf = self.bse.download(filing.pdf_url) if filing.pdf_url else None
             self._refusals = 0
             doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)

@@ -306,6 +306,31 @@ def test_extracted_text_is_cached_so_reanalysis_never_downloads_again(settings):
     assert outcome.update["status"] == "ANALYZED" and list(settings.text_cache_dir.rglob("*.json.gz"))
 
 
+def test_a_text_cache_entry_from_before_reading_order_is_read_again_once(settings):
+    import gzip
+
+    now = now_ist() - timedelta(minutes=30)
+    (f,) = _results(1, now)
+    pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)] * 3},
+                              env={"NVIDIA_API_KEY": "n"})
+    filing = f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"})
+    path = pipeline._cache_path(f.news_id)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    stale = {"v": 1, "error": None, "digital": ["stale text, file order"], "has_image": [False], "ocr": {}}
+    path.write_bytes(gzip.compress(json.dumps(stale).encode()))
+    download = pipeline.bse.download
+    pipeline.bse.download = lambda url, **kw: (_ for _ in ()).throw(AttachmentError("refused"))
+    pipeline.analyze(filing)  # BSE refuses: the old text is used, and stays marked old
+    assert pipeline._cached_text(f.news_id)["v"] == 1
+    pipeline.bse.download = download
+    pipeline.analyze(filing)  # read again from the PDF and stored as current
+    cached = pipeline._cached_text(f.news_id)
+    assert cached["v"] == 2 and "stale text" not in " ".join(cached["digital"])
+    pipeline.bse.download = lambda url, **kw: (_ for _ in ()).throw(AssertionError("downloaded again"))
+    assert pipeline.analyze(filing).update["status"] == "ANALYZED"
+
+
 def test_filings_of_companies_outside_the_universe_go_to_the_noise_file(settings):
     from bse_intel import universe
 

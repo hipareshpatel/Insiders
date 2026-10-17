@@ -19,6 +19,8 @@ import pymupdf
 log = logging.getLogger(__name__)
 
 SCANNED_PAGE_CHARS = 80  # blueprint §5.3: under 80 characters of text and an image means scanned
+# 2: the text layer is read in reading order (sort=True). An entry written before that is re-read once.
+CACHE_VERSION = 2
 OcrFn = Callable[[bytes], str]
 
 # PyMuPDF does not support concurrent use from multiple threads, even on
@@ -35,6 +37,7 @@ class Document:
         self._ocr_cache: dict[int, str] = {}
         self.ocr_pages_used = 0
         self.ocr_error: Exception | None = None  # last OCR failure, if any
+        self.cache_version = CACHE_VERSION  # an old entry kept as a fallback keeps its own, so it is re-read later
         self.error: str | None = None
         self._doc = None
         self._digital: list[str] = []
@@ -61,13 +64,19 @@ class Document:
 
     def to_cache(self) -> dict:
         """Everything read from the PDF (digital text and the pages OCR'd so far), for the text cache."""
-        return {"v": 1, "error": self.error, "digital": self._digital, "has_image": self._has_image,
+        return {"v": self.cache_version, "error": self.error, "digital": self._digital, "has_image": self._has_image,
                 "ocr": {str(k): v for k, v in self._ocr_cache.items()}}
+
+    def keep_ocr(self, data: dict) -> None:
+        """Reuse the pages an older cache entry already OCR'd: re-reading the text layer does not change them."""
+        if len((data.get("digital") or [])) == len(self._digital):
+            self._ocr_cache.update({int(k): v for k, v in (data.get("ocr") or {}).items()})
 
     @classmethod
     def from_cache(cls, data: dict, ocr: OcrFn | None = None, max_ocr_pages: int = 6) -> "Document":
         doc = cls(None, ocr=ocr, max_ocr_pages=max_ocr_pages)
         doc.error = data.get("error")
+        doc.cache_version = data.get("v", 1)
         doc._digital = list(data.get("digital", []))
         doc._has_image = list(data.get("has_image", [False] * len(doc._digital)))
         doc._ocr_cache = {int(k): v for k, v in (data.get("ocr") or {}).items()}

@@ -827,3 +827,22 @@ def test_a_row_copied_digit_for_digit_is_a_slip_whatever_happens_to_sit_near_the
     assert ("6,715", 6715.0, 0, 671.5, 1) in unit_slips(["Mainly driven by ₹6,715 Cr gain from SOFIE sale"], note)
     # a figure near a real one, copied from a row with another name, is still left alone (Ahluwalia's "₹955 Cr")
     assert unit_slips(["Revenue about ₹955 Cr"], LAKH_STATEMENT) == []
+
+
+def test_a_figure_the_prompt_gave_the_model_is_grounded():
+    """Pass 2 is given the company's market cap, revenue, net worth and debt to measure an event against (the
+    scale block), and grounding did not look there: Shivam's "12.8% of its ₹391.58 Cr market cap" was held as a
+    figure the filing does not print. 40 of the 77 cards held only for an unfound amount were like this
+    (funnel, 2026-10-18)."""
+    from bse_intel.pipeline import check_card_all
+    from bse_intel.signals import scale_block
+
+    filing = "The Company has received an order worth Rs. 50.10 crore from Tata Motors Limited."
+    card = Pass2Output.model_validate({
+        "is_material": True, "event_type": "ORDER_WIN", "timeline_entry": "Order win",
+        "card": {"impact_level": "MODERATE", "headline": "Shivam wins ₹50.10 Cr order from Tata Motors",
+                 "what_happened": [{"text": "Order worth ₹50.10 Cr", "quote": "an order worth Rs. 50.10 crore"}],
+                 "why_it_matters": [{"text": "The order is 12.8% of the ₹391.58 Cr market cap", "basis": "FILING"}]}})
+    scale = scale_block({}, {"market_cap_cr": 391.58}, filing)
+    assert "391.58" in check_card_all(card, None, (filing, "", "", "{}")).ungrounded
+    assert "391.58" not in check_card_all(card, None, (filing, "", "", "{}", scale)).ungrounded

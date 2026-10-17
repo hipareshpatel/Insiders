@@ -560,6 +560,14 @@ def test_a_named_repeat_is_confirmed_in_code_before_anything_is_dropped():
     assert timeline_entry_dated(dossier, f, "2025-02-01") is None      # on file, but months away
     assert timeline_entry_dated(dossier, f, "") is None                # nothing named
     assert timeline_entry_dated(dossier, f, "not a date") is None
+    # Only an entry on or before the filing: in a re-run or a backfill, an older filing is not the repeat of a
+    # newer one that memory already holds (audit of discard paths, 2026-10-18).
+    from bse_intel.dossier import similar_timeline_entry
+
+    later = {"timeline": [{"news_id": "n9", "date": "2025-11-14T18:00:00+05:30", "summary": "Q2FY26 results: revenue up 22.6%"}]}
+    assert timeline_entry_dated(later, f, "2025-11-14") is None
+    assert similar_timeline_entry(later, f, "Q2FY26 results: revenue up 22.6%") is None
+    assert similar_timeline_entry(dossier, f, "Q2FY26 results: revenue up 22.6%")["news_id"] == "n1"
     # a filing is never a repeat of itself
     assert timeline_entry_dated({"timeline": [{"news_id": "n2", "date": "2025-11-04T18:00:00+05:30"}]}, f,
                                 "2025-11-04") is None

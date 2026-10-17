@@ -1551,7 +1551,10 @@ class Pipeline:
         if "RESULTS" in (event_type, out.event_type):
             quarter = canonical_period(tagged.period) if tagged and tagged.period else statement_quarter(text)
             relabel_periods(out, quarter, statement_year(text))
-        sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False))
+        # The scale block too: the market cap, revenue, net worth and debt the prompt gave the model to measure
+        # the event against. Not checked against it, a card that used them was held as stating figures the
+        # filing does not print - 40 of the 77 cards held only for an unfound amount (funnel, 2026-10-18).
+        sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False), scale)
         history = dossier.get("financial_metrics", [])
         def ground(candidate: Pass2Output):
             """Correct a card where the filing can settle it, then check what is left.

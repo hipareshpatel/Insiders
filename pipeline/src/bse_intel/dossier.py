@@ -348,9 +348,11 @@ def similar_timeline_entry(dossier: dict, filing: Filing, entry: str, days: int 
         if t.get("news_id") == filing.news_id:
             continue
         try:
-            gap = abs((date.fromisoformat(str(t.get("date", ""))[:10]) - when).days)
+            gap = (when - date.fromisoformat(str(t.get("date", ""))[:10])).days
         except ValueError:
             continue
+        if gap < 0:
+            continue  # a later entry: in a re-run or a backfill an older filing is not the repeat of a newer one
         theirs = _timeline_words(t.get("summary", ""))
         if gap <= days and mine and theirs and len(mine & theirs) / len(mine | theirs) >= threshold:
             return t
@@ -372,8 +374,8 @@ def timeline_entry_dated(dossier: dict, filing: Filing, claimed: str, days: int 
         when, said = date.fromisoformat(filing.filed_at[:10]), date.fromisoformat(claimed)
     except ValueError:
         return None
-    if abs((said - when).days) > days:
-        return None
+    if not 0 <= (when - said).days <= days:
+        return None  # only an entry on or before this filing can be the event it repeats
     for entry in dossier.get("timeline", []):
         if entry.get("news_id") == filing.news_id:
             continue

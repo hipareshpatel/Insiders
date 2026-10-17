@@ -512,3 +512,23 @@ def test_a_site_that_does_not_answer_costs_no_attempts_and_stops_the_run(setting
     assert all(o.update["status"] == "PENDING" and "attempts" not in o.update for o in outcomes), \
         "left as it was: no attempt spent"
     assert pipeline._blocked is not None and "did not answer" in str(pipeline._blocked)
+
+
+def test_a_results_reading_that_does_not_add_up_goes_to_a_second_provider(settings):
+    """With no XBRL behind a results filing the model's reading is all there is, so it has to add up.
+    PBT 20 less tax 5 is 15; a reply giving PAT as 17.5 has misread a line, and the second provider is
+    told exactly where the gap is."""
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-q2", "Unaudited Financial Results for the quarter", now, "Result")
+    bad = json.loads(json.dumps(PASS2))
+    bad["dossier_delta"]["financial_metrics"] += [
+        {"metric": "pbt", "period": "Q2FY27", "value": 20}, {"metric": "tax_expense", "period": "Q2FY27", "value": 5},
+        {"metric": "pat", "period": "Q2FY27", "value": 17.5}]
+    good = json.loads(json.dumps(bad))
+    good["dossier_delta"]["financial_metrics"][-1]["value"] = 15
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(good)]},
+                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+    pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert len(fake.calls) == 2, "the figures that did not add up sent the card to a second provider"
+    assert "PBT 20.00 - tax 5.00 = 15.00 Cr, but PAT is given as 17.50 Cr" in fake.calls[1]["messages"][1]["content"]

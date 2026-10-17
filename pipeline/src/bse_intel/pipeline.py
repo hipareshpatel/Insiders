@@ -1473,6 +1473,11 @@ class Pipeline:
                 changes += xbrl_key_numbers(candidate, tagged, (filed_text,))
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged)
+            if not tagged and "RESULTS" in (event_type, candidate.event_type):
+                # With no XBRL the reading of the statement is all there is, so it has to add up: 27 of
+                # 68 results cards had no XBRL behind them. Reported for the second provider to fix, with
+                # the exact gap; never corrected here, since a sum cannot say which line is wrong.
+                found.scale += gate.statement_footing(candidate.dossier_delta.financial_metrics)
             quote_problems, missing, dropped, paraphrased = check_quotes(
                 candidate, text, filing.news_id, declared_unit(filed_text))
             found.quotes += quote_problems

@@ -278,3 +278,34 @@ def test_a_sibling_row_answers_for_a_sentence_but_not_for_a_labelled_figure():
     far = " filler" * 900 + " Exceptional items 9,999 0"
     assert gate.figures_in_same_block(["99.99"], quote, text + far, 100) == (["99.99"], []), \
         "a figure a thousand words away is not a sibling row"
+
+
+def test_results_figures_that_do_not_add_up_are_reported():
+    """A statement adds up by construction, so a reading of it that does not has misread a line - and
+    that needs no second document to see. The three identities held on all 737 checks of 277 known-good
+    XBRL files; these are the misreadings they exist for."""
+    from bse_intel.models import FinancialMetric
+
+    def figures(**kw):
+        return [FinancialMetric(metric=k, period="Q2FY27", value=v, unit="INR_CR") for k, v in kw.items()]
+
+    right = figures(revenue=1821.70, other_income=9.20, total_income=1830.90, total_expenses=1700.10,
+                    pbt=130.80, tax_expense=30.10, pat=100.70)
+    assert gate.statement_footing(right) == []
+    # rounding: each printed line is rounded on its own
+    assert gate.statement_footing(figures(revenue=331.80, other_income=0.41, total_income=332.20)) == []
+    # a lakh read as crore on one line
+    slip = figures(revenue=1821.70, other_income=920.0, total_income=1830.90)
+    assert gate.statement_footing(slip) and "other income 920.00" in gate.statement_footing(slip)[0]
+    # last year's column read for one line
+    column = figures(pbt=130.80, tax_expense=30.10, pat=88.40)
+    assert gate.statement_footing(column) and "PAT is given as 88.40" in gate.statement_footing(column)[0]
+    # an exceptional item, either sign convention
+    assert gate.statement_footing(figures(total_income=500.0, total_expenses=420.0, exceptional_items=30.0, pbt=50.0)) == []
+    assert gate.statement_footing(figures(total_income=500.0, total_expenses=420.0, exceptional_items=-30.0, pbt=50.0)) == []
+    # discontinued operations: PAT for the period includes them, the identity is on the continuing part
+    assert gate.statement_footing(figures(pbt=-2.0, tax_expense=0.24, pat_continuing=-2.24, pat=91.81)) == []
+    # names a reply may use
+    assert gate.statement_footing([FinancialMetric(metric="profit_before_tax", period="FY25", value=10.0),
+                                   FinancialMetric(metric="tax", period="FY25", value=2.0),
+                                   FinancialMetric(metric="net_profit", period="FY25", value=9.0)])

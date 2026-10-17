@@ -1,3 +1,8 @@
+Pipeline OCR (bse_intel.ocr after the switch to rapidocr 3.10, tilt correction, row clustering, bracket repair, sideways turn), 2026-10-17:
+  results statements: 193/195 printed figures on the right row and column (99.0%), all 195 read; 221 pages, 3.7 s a page
+  complicated pages: rows intact 52.6%, figures in order 90.5%, figures on their line 98.2%
+  before the switch (rapidocr_onnxruntime, grouping by height): complicated pages 21.2% / 31.4% / 35.7%
+
 combo-sorted-layout             156   80.0%   anywhere   85.6%  
 combo-sorted-words-layout       154   79.0%   anywhere   85.1%  
 combo-sorted-words              154   79.0%   anywhere   85.1%  

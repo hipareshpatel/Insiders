@@ -65,6 +65,14 @@ class SinkRejected(RuntimeError):
     """The database refused a statement's rows (a constraint, a bad value). Not worth retrying."""
 
 
+class SinkUnavailable(RuntimeError):
+    """The platform did not answer at all - the connection was refused or dropped through every retry.
+
+    Not the filing's fault, so it must not count as a failed attempt: on 2026-10-17 the local web server
+    had exited and a run marked all twenty filings it touched as failed in thirty seconds. A filing past
+    its attempt limit is never retried, so in a backfill that is silent loss rather than a delay."""
+
+
 class Sink(ABC):
     @abstractmethod
     def execute(self, statement: str, rows: list[dict]) -> int:

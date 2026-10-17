@@ -54,7 +54,7 @@ from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block
 from .prices import PriceStore, point_in_time
 from .signals import priced_for
-from .sinks.base import Sink, SinkRejected
+from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
 from . import xbrl as xbrl_fast_path
 from .learning import LESSONS_KEEP, LESSONS_KEY
@@ -78,6 +78,7 @@ PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
 MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing this network
+MAX_UNREACHABLE = 3      # filings in a row the platform did not answer for: the site is down, stop
 NOISE_CHUNK = 500        # rows per noise-audit file in R2
 NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category", "subcategory",
                 "filed_at", "reason", "pdf_url")
@@ -723,6 +724,7 @@ class Pipeline:
         self._tried: set[str] = set()       # filings attempted this run (one attempt each)
         self._priority: list[str] = []      # live companies whose history should be backfilled first
         self._refusals = 0
+        self._unreachable = 0
         self._busy = 0
         self._busy_halt = False
         self._blocked: SourceBlockedError | None = None
@@ -996,7 +998,20 @@ class Pipeline:
                 outcome = self.analyze(filing, bulk, memory_complete)
                 with self._lock:
                     self._busy = 0
+                    self._unreachable = 0
                 return outcome
+            except SinkUnavailable as exc:
+                # The site is not there. Leave the filing exactly as it was rather than spend one of its
+                # attempts, and stop the run after a few: every further filing would fail the same way.
+                with self._lock:
+                    self._unreachable += 1
+                    if self._unreachable >= MAX_UNREACHABLE and not self._blocked:
+                        self._blocked = SourceBlockedError(
+                            f"the platform API did not answer for {self._unreachable} filings in a row; "
+                            f"stopping this run with the work still queued. Is the web server running? ({exc})")
+                        self.stats.stopped_reason = str(self._blocked)[:300]
+                        log.error("stopping: %s", self._blocked)
+                return self._deferred(filing, "deferred: the platform did not answer")
             except AllProvidersFailed as exc:
                 if exc.quota_exhausted:
                     with self._lock:

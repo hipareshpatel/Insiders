@@ -14,7 +14,7 @@ from urllib.parse import quote
 
 import httpx
 
-from .base import NOT_IDEMPOTENT, QUERIES, STATEMENTS, Sink, SinkRejected, chunk_rows
+from .base import NOT_IDEMPOTENT, QUERIES, STATEMENTS, Sink, SinkRejected, SinkUnavailable, chunk_rows
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +44,10 @@ class PlatformSink(Sink):
             except httpx.TransportError as exc:
                 # A connect failure never reached the Worker; anything later may have been applied.
                 if attempt == 3 or not (idempotent or isinstance(exc, (httpx.ConnectError, httpx.ConnectTimeout))):
+                    if isinstance(exc, (httpx.ConnectError, httpx.ConnectTimeout, httpx.RemoteProtocolError,
+                                        httpx.ReadError)):
+                        raise SinkUnavailable(f"the platform API at {self._http.base_url} did not answer "
+                                              f"({type(exc).__name__}: {exc})") from exc
                     raise
                 log.warning("platform API %s %s failed (%s); retrying", method, url, exc)
                 time.sleep(2 ** (attempt + 1))

@@ -15,6 +15,21 @@ $env:PLATFORM_API_URL = 'http://localhost:5173'
 $env:INGEST_TOKEN = 'dev-local-token'
 $env:PYTHONIOENCODING = 'utf-8'
 if (-not $env:PIPELINE_WORKERS) { $env:PIPELINE_WORKERS = '5' }  # decision D18
+# The local site has to be answering first: the dev server can exit on its own, and a run against it
+# spends the whole round on connection errors (2026-10-17). The pipeline now stops itself after a few,
+# but there is no reason to start at all. `models` and `ai-check` never touch the site.
+if ($args[0] -notin @('models', 'ai-check')) {
+  try {
+    $probe = Invoke-WebRequest -Uri "$($env:PLATFORM_API_URL)/api/feed?range=all" -UseBasicParsing -TimeoutSec 15
+  } catch {
+    $probe = $null
+  }
+  if (-not $probe -or $probe.StatusCode -ne 200) {
+    Write-Output "The local site at $($env:PLATFORM_API_URL) is not answering. Start it first:"
+    Write-Output "  cd web; `$env:CF_REMOTE_BINDINGS = '1'; npm run dev"
+    exit 2
+  }
+}
 $logs = Join-Path $root 'data\logs'
 New-Item -ItemType Directory -Force $logs | Out-Null
 $log = Join-Path $logs ("{0}-{1:yyyyMMdd-HHmm}.log" -f $args[0], (Get-Date))

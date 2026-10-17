@@ -491,3 +491,24 @@ def test_a_card_is_not_held_back_only_for_how_it_quoted_the_filing(settings):
     body = outcome.card["card"]
     assert body["grounding"]["quotes_paraphrased"], "the wording is still reported"
     assert outcome.card["held"] == 0, "but the card reaches the feed"
+
+
+def test_a_site_that_does_not_answer_costs_no_attempts_and_stops_the_run(settings):
+    """On 2026-10-17 the local web server had exited and a run marked all twenty filings it touched as
+    failed in thirty seconds. A filing past its attempt limit is never retried, so in a backfill that is
+    silent loss. Now the filing is left as it was, and the run stops after a few in a row."""
+    from bse_intel import pipeline as pl
+    from bse_intel.sinks.base import SinkUnavailable
+
+    now = now_ist() - timedelta(minutes=10)
+    filings = [_filing(f"n-{i}", "Unaudited Financial Results", now, "Result") for i in range(5)]
+    pipeline, sink, fake = build(settings, filings, {}, {}, env={})
+
+    def down(*_a, **_k):
+        raise SinkUnavailable("the platform API did not answer (ConnectError)")
+
+    pipeline.analyze = down
+    outcomes = [pipeline._process_one(f, bulk=True, memory_complete=True) for f in filings[:pl.MAX_UNREACHABLE]]
+    assert all(o.update["status"] == "PENDING" and "attempts" not in o.update for o in outcomes), \
+        "left as it was: no attempt spent"
+    assert pipeline._blocked is not None and "did not answer" in str(pipeline._blocked)

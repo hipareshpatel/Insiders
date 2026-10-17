@@ -275,6 +275,6 @@ def test_a_sibling_row_answers_for_a_sentence_but_not_for_a_labelled_figure():
     assert gate.figures_in_same_block(missing, quote, text, 100) == ([], ["100.90"]), \
         "but it is in the same table, so it is reported, not held"
 
-    far = "Exceptional items 9,999 0 " + "filler " * 900
+    far = " filler" * 900 + " Exceptional items 9,999 0"
     assert gate.figures_in_same_block(["99.99"], quote, text + far, 100) == (["99.99"], []), \
         "a figure a thousand words away is not a sibling row"

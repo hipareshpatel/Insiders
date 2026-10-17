@@ -21,7 +21,9 @@ the PDF text in any common unit is treated as unconfirmed and not used (a wrongl
 from __future__ import annotations
 
 import logging
+import math
 import re
+import statistics
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from datetime import date
@@ -432,6 +434,83 @@ def confirm(result: XbrlResult, text: str) -> bool:
                     or round(abs(crore) * scale - 0.5, 0) in numbers:
                 return True
     return False
+
+
+_SCALE_REFERENCE = ("revenue", "total_income", "interest_earned")
+_SCALE_TOLERANCE = 0.2   # in powers of ten: within 0.63x-1.58x of an exact 10^k
+
+
+def _quarters(metrics) -> dict[str, dict[str, float]]:
+    """{quarter: {metric: value}} for the single-quarter figures among metrics (XBRL's or memory's)."""
+    out: dict[str, dict[str, float]] = {}
+    for m in metrics or []:
+        get = m.get if isinstance(m, dict) else (lambda key, m=m: getattr(m, key, None))
+        period, value = get("period") or "", get("value")
+        if re.fullmatch(r"Q[1-4]FY\d\d", period) and isinstance(value, (int, float)) and not isinstance(value, bool):
+            out.setdefault(period, {})[get("metric")] = float(value)
+    return out
+
+
+def _shares(figures: dict[str, float]) -> float | None:
+    """The share count a quarter's profit and EPS imply, in crore: EPS is per share and keeps its value
+    whatever unit a file's amounts are tagged in, so a file in the wrong unit moves this with them."""
+    pat, eps = figures.get("pat"), figures.get("eps")
+    if pat and eps and abs(eps) >= 0.5 and abs(pat) >= 0.5:
+        return abs(pat / eps)
+    return None
+
+
+def scale_slip(result: XbrlResult, history) -> int:
+    """The power of ten a results file's amounts are off by, against the company's other quarters; 0 when
+    they fit or there is too little to tell.
+
+    Jubilant Pharmova's Q4FY24 file tags revenue as 1,758,600,000 INR with its rounding declared "Lakhs";
+    the statement is in millions and the quarter was ₹1,758.6 Cr. Every amount in the file is a tenth of
+    its value, so memory held FY24 at ₹670 Cr and the FY25 cards said revenue +979% YoY (2026-10-17).
+    confirm() passed it, since 175.86 crore is the statement's 17,586 read as lakh. A slip is told from a
+    real fall by two things moving together by the same power of ten: the quarter's revenue, and the share
+    count its profit and EPS imply. A business that shrinks keeps its shares; a file in the wrong unit
+    does not."""
+    if result.kind != "RESULTS" or not result.period:
+        return 0
+    own = _quarters(result.metrics).get(result.period) or {}
+    others = [f for period, f in _quarters(history).items() if period != result.period]
+
+    def power(mine: float | None, theirs: list) -> int | None:
+        theirs = [t for t in theirs if t and t > 0]
+        if not mine or mine <= 0 or len(theirs) < 2:
+            return None
+        ratio = math.log10(statistics.median(theirs) / mine)
+        k = round(ratio)
+        return k if k and abs(ratio - k) <= _SCALE_TOLERANCE else None
+
+    metric = next((m for m in _SCALE_REFERENCE if own.get(m)), None)
+    if metric is None:
+        return 0
+    by_revenue = power(own[metric], [f.get(metric) for f in others])
+    by_shares = power(_shares(own), [_shares(f) for f in others])
+    return by_revenue if by_revenue is not None and by_revenue == by_shares else 0
+
+
+def fix_scale(result: XbrlResult | None, history, source: str = "") -> int:
+    """Put a results file tagged in the wrong unit right (scale_slip): every ₹ crore amount, the balance
+    sheet's included, times the power of ten found. EPS, per-share and percentage figures are left as
+    they are. Returns the power applied, 0 for none."""
+    k = scale_slip(result, history) if result else 0
+    if not k:
+        return 0
+    factor = 10 ** k
+    for m in result.metrics:
+        if m.unit == "INR_CR" and m.value is not None:
+            m.value = round(m.value * factor, 2)
+    if result.balance_sheet:
+        for name, value in result.balance_sheet.model_dump().items():
+            if name.endswith("_cr") and isinstance(value, (int, float)):
+                setattr(result.balance_sheet, name, round(value * factor, 2))
+    log.warning("XBRL %s %s: amounts tagged at 10^%d of their value (revenue and the share count its profit "
+                "and EPS imply both off by it against the company's other quarters); multiplied by %g",
+                source, result.period, -k, factor)
+    return k
 
 
 def add_comparatives(result: XbrlResult, *earlier: XbrlResult) -> int:

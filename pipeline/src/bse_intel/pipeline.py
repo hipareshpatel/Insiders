@@ -1236,9 +1236,11 @@ class Pipeline:
             self._results_quarters[key] = filing.news_id
         return None
 
-    def _xbrl_comparatives(self, filing: Filing, tagged: "xbrl_fast_path.XbrlResult") -> None:
+    def _xbrl_comparatives(self, filing: Filing, tagged: "xbrl_fast_path.XbrlResult", history=()) -> None:
         """Year-ago and previous-quarter figures for a results file, from those quarters' files in the
-        company's results archive (cached by URL). Best effort: a missing file leaves the change out."""
+        company's results archive (cached by URL). Best effort: a missing file leaves the change out. An
+        earlier file tagged in the wrong unit is put right first, or every change against it is off by
+        that power of ten (Jubilant's FY25 revenue "+979%")."""
         if tagged.kind != "RESULTS" or not tagged.period or not tagged.period.startswith("Q"):
             return
         with self._lock:
@@ -1251,6 +1253,7 @@ class Pipeline:
             data = self._xbrl_file(max(same, key=lambda link: link.filed_at).url)
             parsed = xbrl_fast_path.parse(data) if data else None
             if parsed:
+                xbrl_fast_path.fix_scale(parsed, [*history, *tagged.metrics], filing.scrip_code)
                 earlier.append(parsed)
         if earlier:
             xbrl_fast_path.add_comparatives(tagged, *earlier)
@@ -1431,7 +1434,11 @@ class Pipeline:
                                 "updated_at": now_iso()})
         filed_text = text  # the document alone, before the XBRL table goes in front of it
         if tagged:
-            self._xbrl_comparatives(filing, tagged)
+            # A file tagged in the wrong unit, told by the company's quarters in memory (xbrl.fix_scale):
+            # confirm() above accepts the figures at any unit, so it cannot.
+            history = dossier.get("financial_metrics") or []
+            xbrl_fast_path.fix_scale(tagged, history, filing.news_id)
+            self._xbrl_comparatives(filing, tagged, history)
             text = tagged.table() + "\n\n" + text  # exact figures first; they also ground the card
         sector_module = self.prompts.sector_for(industry)
         sector = sector_module.name

@@ -82,3 +82,27 @@ def test_the_nse_list_is_fetched_once_for_a_company_not_once_a_quarter():
     assert nse.listed == 1, "one list for the company, however many quarters ask for it"
     assert stats.skipped == 2, "the two quarters BSE listed and served nothing for are still reported"
     assert stats.results_periods == 1
+
+
+def test_a_quarter_tagged_in_the_wrong_unit_reaches_memory_put_right(monkeypatch):
+    """Every quarter is read before any is written, so the company's other quarters can show that one file
+    is tagged at a tenth of its value (Jubilant Pharmova Q4FY24) before it reaches memory."""
+    from test_xbrl import _quarter
+
+    files = {"q1": _quarter("Q1FY24", 1586.9, 60.0, 3.77), "q2": _quarter("Q2FY24", 1680.3, 62.1, 3.90),
+             "q3": _quarter("Q3FY24", 1677.1, 66.4, 4.17), "q4": _quarter("Q4FY24", 1758.6, -61.8, -3.69, scale=0.1)}
+    links = [XbrlLink(period=f.period, basis="CONSOLIDATED", url=url, filed_at="2024-06-01T18:00:00")
+             for url, f in files.items()]
+
+    class Served(Bse):
+        def download(self, url, max_bytes=0):
+            return url.encode()
+
+    monkeypatch.setattr(seed_mod.xbrl_fast_path, "parse", lambda data: files[data.decode()])
+    sink, stats = Sink(), SeedStats()
+    seed_results(sink, Served(links), "530019", "Jubilant Pharmova", "2024-01-01", None, stats, company={})
+
+    memory = {(m["metric"], m["period"]): m["value"] for m in sink.dossiers["530019"]["financial_metrics"]}
+    assert memory[("revenue", "Q4FY24")] == 1758.6 and memory[("pat", "Q4FY24")] == -61.8
+    assert memory[("revenue", "Q3FY24")] == 1677.1 and stats.rescaled == 1 and stats.results_periods == 4
+    assert "1 files in the wrong unit put right" in stats.line()

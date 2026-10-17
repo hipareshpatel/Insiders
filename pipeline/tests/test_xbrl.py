@@ -449,3 +449,37 @@ def test_a_full_year_key_number_is_not_overwritten_with_the_quarters_figure():
     changes = {k.label: k.change for k in out.card.key_numbers}
     assert keys["Revenue"] == "₹107.84 Cr" and changes["Revenue"] == "-12.0% YoY"
     assert keys["PAT"] == "₹-14.76 Cr" and changes["PAT"] is None,         "a figure replaced by another period's loses the change that belonged to the one it replaced"
+
+
+def _quarter(period, revenue, pat, eps, scale=1.0):
+    from bse_intel.models import BalanceSheet, FinancialMetric
+
+    return xbrl.XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period=period, metrics=[
+        FinancialMetric(metric="revenue", period=period, value=revenue * scale),
+        FinancialMetric(metric="pat", period=period, value=pat * scale),
+        FinancialMetric(metric="eps", period=period, value=eps, unit="INR"),
+        FinancialMetric(metric="ebitda_margin", period=period, value=14.2, unit="PCT")],
+        balance_sheet=BalanceSheet(period=period, net_worth_cr=6_100 * scale))
+
+
+def test_a_results_file_tagged_in_the_wrong_unit_is_put_right_and_a_real_fall_is_not():
+    """Jubilant Pharmova's Q4FY24 file tags every amount at a tenth of its value ("Lakhs" declared for a
+    statement in millions): memory held FY24 revenue at Rs 670 Cr, and the FY25 cards said +979% YoY. A
+    slip moves revenue and the share count profit/EPS imply by the same power of ten; a real fall does not."""
+    others = [_quarter("Q1FY24", 1586.9, 60.0, 3.77), _quarter("Q2FY24", 1680.3, 62.1, 3.90),
+              _quarter("Q3FY24", 1677.1, 66.4, 4.17), _quarter("Q1FY25", 1731.7, 481.8, 30.25)]
+    history = [m for q in others for m in q.metrics]
+
+    slipped = _quarter("Q4FY24", 1758.6, -61.8, -3.69, scale=0.1)
+    assert xbrl.scale_slip(slipped, history) == 1
+    assert xbrl.fix_scale(slipped, history, "530019") == 1
+    figures = {m.metric: m.value for m in slipped.metrics}
+    assert figures == {"revenue": 1758.6, "pat": -61.8, "eps": -3.69, "ebitda_margin": 14.2}
+    assert slipped.balance_sheet.net_worth_cr == 6100.0
+
+    # Revenue down to a tenth after a demerger: same shares, so profit/EPS says the unit is right.
+    shrunk = _quarter("Q4FY24", 170.0, 6.4, 0.40)
+    assert xbrl.scale_slip(shrunk, history) == 0
+    assert xbrl.scale_slip(_quarter("Q4FY24", 1758.6, -61.8, -3.69), history) == 0, "a file in the right unit"
+    assert xbrl.scale_slip(slipped, history[:4]) == 0, "one other quarter is too little to judge by"
+    assert xbrl.fix_scale(None, history) == 0

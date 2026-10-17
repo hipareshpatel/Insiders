@@ -41,13 +41,15 @@ class SeedStats:
     shareholding_periods: int = 0
     skipped: int = 0
     results_from_nse: int = 0   # quarters BSE would not serve and NSE did
+    rescaled: int = 0           # files tagged in the wrong unit, put right against the company's other quarters
     failures: list[str] = field(default_factory=list)
 
     def line(self) -> str:
         return (f"{self.companies} companies: {self.results_periods} results quarters from {self.results_files} XBRL files, "
                 f"{self.shareholding_periods} shareholding quarters from {self.shareholding_files} files, "
                 f"{self.skipped} skipped, {len(self.failures)} failures"
-                + (f", {self.results_from_nse} quarters from NSE where BSE served nothing" if self.results_from_nse else ""))
+                + (f", {self.results_from_nse} quarters from NSE where BSE served nothing" if self.results_from_nse else "")
+                + (f", {self.rescaled} files in the wrong unit put right" if self.rescaled else ""))
 
 
 def _cache(root: Path | None, url: str) -> Path | None:
@@ -99,7 +101,9 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     bytes against 23 metrics, measured 2026-10-16 (PLAN item 1i).
     """
     links = [link for link in bse.results_xbrl(scrip) if link.filed_at[:10] >= since]
-    done: set[str] = set()
+    # Every quarter is read before any is written, so a file tagged in the wrong unit can be told by the
+    # company's other quarters and put right before it reaches memory (xbrl.fix_scale).
+    found: dict[str, tuple[str, str, object, bool]] = {}     # period -> (filed on, url, parsed, from NSE only)
     by_period: dict[str, object] = {}
     for link in sorted(links, key=lambda link: (link.filed_at, link.basis == "CONSOLIDATED")):
         by_period[link.period] = link  # later filing, then consolidated, wins
@@ -117,34 +121,48 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
             log.warning("seed %s %s: the archive lists %s but nothing came back; this company has no "
                         "machine-tagged results for that quarter", scrip, period, link.url)
             continue
-        if _write_results(sink, scrip, name, company, period, link.filed_at[:10], link.url, data, stats):
-            done.add(period)
+        parsed = _parse_results(data, stats)
+        if parsed:
+            found[period] = (link.filed_at[:10], link.url, parsed, False)
 
     # Quarters NSE has that BSE's archive never listed at all. The fallback above only fires for a file
     # BSE named, and since March 2025 the integrated format means BSE often names none: a company that
     # changed over has a gap in memory rather than a failed fetch, which no counter would have shown.
     if nse is not None and symbol:
         for period, row in _nse_quarters(nse, symbol, since, scrip).items():
-            if period in done:
+            if period in found:
                 continue
             data = _fetch(nse, row.xbrl_url, cache_root)
             if not data:
                 continue
             stats.results_from_nse += 1
-            if _write_results(sink, scrip, name, company, period, row.filed_at[:10], row.xbrl_url, data, stats):
-                done.add(period)
+            parsed = _parse_results(data, stats)
+            if parsed:
+                found[period] = (row.filed_at[:10], row.xbrl_url, parsed, True)
                 log.info("seed %s %s: BSE's archive did not list this quarter, NSE did (%s)",
                          scrip, period, row.taxonomy or "template not stated")
 
+    for period, (filed_on, url, parsed, _) in found.items():
+        others = [m for other, (_, _, result, _) in found.items() if other != period for m in result.metrics]
+        if xbrl_fast_path.fix_scale(parsed, others, scrip):
+            stats.rescaled += 1
+    for period, (filed_on, url, parsed, _) in sorted(found.items()):
+        _write_results(sink, scrip, name, company, period, filed_on, url, parsed, stats)
 
-def _write_results(sink, scrip: str, name: str, company: dict | None, period: str, filed_on: str,
-                   url: str, data: bytes, stats: SeedStats) -> bool:
-    """One XBRL file into memory. False when it parses to nothing we can use."""
+
+def _parse_results(data: bytes, stats: SeedStats):
+    """One results XBRL file parsed; None, counted as skipped, when it holds nothing we can use."""
     stats.results_files += 1
     parsed = xbrl_fast_path.parse(data)
     if not parsed or parsed.kind != "RESULTS" or not parsed.metrics:
         stats.skipped += 1
-        return False
+        return None
+    return parsed
+
+
+def _write_results(sink, scrip: str, name: str, company: dict | None, period: str, filed_on: str,
+                   url: str, parsed, stats: SeedStats) -> None:
+    """One parsed results file into memory."""
     filing = _filing("res", scrip, name, period, f"{filed_on}T18:00:00+05:30", url)
     out = Pass2Output(is_material=False, timeline_entry="")
     out.dossier_delta.financial_metrics = list(parsed.metrics)
@@ -155,7 +173,6 @@ def _write_results(sink, scrip: str, name: str, company: dict | None, period: st
     stats.results_periods += 1
     log.info("seed %s %s: %d figures from %s (%s)", scrip, period, len(parsed.metrics), url.rsplit("/", 1)[-1],
              parsed.basis or "basis not stated")
-    return True
 
 
 def _nse_quarters(nse, symbol: str, since: str, scrip: str) -> dict:

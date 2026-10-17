@@ -545,7 +545,7 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
 
 
 def check_quotes(out: Pass2Output, text: str, news_id: str = "",
-                 unit: int | None = None) -> tuple[list[str], list[str], list[str], list[str]]:
+                 unit: int | None = None, reading: str = "") -> tuple[list[str], list[str], list[str], list[str]]:
     """Every what_happened fact carries the filing's own sentence, checked in code.
 
     A fact whose quote is not in the filing is dropped **only when its figures are not in the filing
@@ -572,17 +572,25 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
             missing_quote.append(label)
             kept.append(fact)
             continue
-        if not gate.quote_found(fact.quote, text):
-            figures = [(v, d) for v, d, _, kind, _ in _tokens(fact.text.replace("**", ""))
-                       if kind in ("plain", "qty") and v > 31]
-            if figures and all(index.stated(v, d) for v, d in figures):
-                paraphrased.append(f'"{label}" is in the filing but its quote is not the filing\'s own words')
-                kept.append(fact)
+        quote = fact.quote
+        if not gate.quote_found(quote, text, reading):
+            # A word dropped or changed in the quote: the filing's sentence it copies is what its figures
+            # answer to. A fact with no large figure ("re-appointed for 5 years") used to be dropped here.
+            near = gate.quote_near(quote, text, reading)
+            if near is not None:
+                paraphrased.append(f'"{label}" quotes the filing with small differences')
+                quote = near
             else:
-                dropped.append(f'"{label}" (neither its quote nor its figures are in the filing)')
-            continue
-        missing = gate.numbers_in_quote(fact.text.replace("**", ""), fact.quote, unit)
-        missing, siblings = gate.figures_in_same_block(missing, fact.quote, text, unit)
+                figures = [(v, d) for v, d, _, kind, _ in _tokens(fact.text.replace("**", ""))
+                           if kind in ("plain", "qty") and v > 31]
+                if figures and all(index.stated(v, d) for v, d in figures):
+                    paraphrased.append(f'"{label}" is in the filing but its quote is not the filing\'s own words')
+                    kept.append(fact)
+                else:
+                    dropped.append(f'"{label}" (neither its quote nor its figures are in the filing)')
+                continue
+        missing = gate.numbers_in_quote(fact.text.replace("**", ""), quote, unit)
+        missing, siblings = gate.figures_in_same_block(missing, quote, text, unit)
         if siblings:
             paraphrased.append(f'"{label}" also states {", ".join(siblings[:4])}, from another row of '
                                "the same table")
@@ -600,7 +608,7 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
 
 
 def check_quoted_numbers(out: Pass2Output, text: str,
-                         unit: int | None = None) -> tuple[list[str], list[str], list[str]]:
+                         unit: int | None = None, reading: str = "") -> tuple[list[str], list[str], list[str]]:
     """Each figure on a card checked against the sentence that card says it came from.
 
     `what_happened` has carried a quote since D23 and is checked this way already. The fields that state
@@ -622,9 +630,15 @@ def check_quoted_numbers(out: Pass2Output, text: str,
         if not quote:
             unquoted.append(f"{kind}: {label}")
             continue
-        if not gate.quote_found(quote, text):
-            problems.append(f'{kind} "{label}" quotes a sentence that is not in the filing')
-            continue
+        if not gate.quote_found(quote, text, reading):
+            # A word dropped or changed is the model's wording, not a figure of its own: the sentence it
+            # copies is found and the card's figures are checked against that (gate.quote_near).
+            near = gate.quote_near(quote, text, reading)
+            if near is None:
+                problems.append(f'{kind} "{label}" quotes a sentence that is not in the filing')
+                continue
+            elsewhere.append(f'{kind} "{label}" quotes the filing with small differences')
+            quote = near
         # The same comparison `what_happened` gets, and for the same reasons: the quoted row is read at
         # the unit the filing declares, so "16.53 Cr" passes against a row reading 1,653 in lakhs while
         # the ten-times misreading does not, and a period label or a day of the month is not a figure.
@@ -1132,7 +1146,8 @@ class Pipeline:
         # it can be: the cache would otherwise hand the same garbage to the model on every re-run. So is
         # an entry written before figure pages went to local OCR.
         current = (cached is not None and cached.get("v", 1) >= CACHE_VERSION
-                   and not cache_needs_ocr(cached, local_ocr=figures is not None))
+                   and not cache_needs_ocr(cached, local_ocr=figures is not None)
+                   and "blocks" in cached)  # written before pages were also read block by block
         if cached is not None and (current or not filing.pdf_url):
             doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         elif cached is not None:
@@ -1469,6 +1484,9 @@ class Pipeline:
         view = view_as_of(dossier, filing.filed_at)
         budget = self.settings.pass2_char_budget * (3 if event_type == "CONCALL_PRESENTATION" else 1)
         text = doc.select_text(budget, self.prompts.keywords(event_type))
+        # The same pages read block by block, where a cell or a column stays whole: a quote of a two-column
+        # page is the filing's own words if either reading has it (gate.quote_found).
+        blocks = doc.block_text(doc.selected)
         _ocr_check(doc)
         if event_type == "RESULTS" and not filing.xbrl_url:
             filing = filing.model_copy(update={"xbrl_url": self._results_xbrl_url(filing, text)})
@@ -1551,12 +1569,12 @@ class Pipeline:
                 # the exact gap; never corrected here, since a sum cannot say which line is wrong.
                 found.scale += gate.statement_footing(candidate.dossier_delta.financial_metrics)
             quote_problems, missing, dropped, paraphrased = check_quotes(
-                candidate, text, filing.news_id, declared_unit(filed_text))
+                candidate, text, filing.news_id, declared_unit(filed_text), blocks)
             found.quotes += quote_problems
             found.quote_style += paraphrased
             # The headline numbers answer to their own sentence too, not to the whole filing.
             number_problems, unquoted, elsewhere = check_quoted_numbers(
-                candidate, text, declared_unit(filed_text))
+                candidate, text, declared_unit(filed_text), blocks)
             found.quotes += number_problems
             found.quote_style += elsewhere
             return found, units, changes, missing + unquoted, dropped

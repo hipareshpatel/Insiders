@@ -309,3 +309,86 @@ def test_results_figures_that_do_not_add_up_are_reported():
     assert gate.statement_footing([FinancialMetric(metric="profit_before_tax", period="FY25", value=10.0),
                                    FinancialMetric(metric="tax", period="FY25", value=2.0),
                                    FinancialMetric(metric="net_profit", period="FY25", value=9.0)])
+
+
+def test_a_quote_from_a_two_column_page_is_found_in_its_block_reading():
+    """SML's share purchase disclosure is a table: the label cell "Significant terms of the agreement (in
+    brief)" beside a paragraph cell. Read line by line, the label's words land inside the paragraph's
+    sentence, so the sentence the model quoted was "not in the filing" (loop rounds 3a-3b, 2026-10-17). Read
+    block by block, the cell is whole. Nothing is skipped to make a quote fit: it is still one reading's own
+    words, contiguous."""
+    import pymupdf
+
+    from bse_intel.extract import Document
+
+    pdf = pymupdf.open()
+    page = pdf.new_page()
+    page.insert_textbox(pymupdf.Rect(60, 100, 200, 160), "5. Significant terms of the agreement (in brief).", fontsize=10)
+    page.insert_textbox(pymupdf.Rect(230, 100, 540, 200),
+                        "The sale of all of SPA 1 Sale Shares from the Seller 1 to the Purchaser under the SPA 1 is "
+                        "for an aggregate consideration of Rs. 4,135,498,900/-, subject to adjustments.", fontsize=10)
+    doc = Document(pdf.tobytes())
+    lines, blocks = doc.select_text(10_000), doc.block_text(doc.selected)
+    quote = ("The sale of all of SPA 1 Sale Shares from the Seller 1 to the Purchaser under the SPA 1 is for an "
+             "aggregate consideration of Rs. 4,135,498,900/-")
+    assert not gate.quote_found(quote, lines), "the line reading runs the two cells together"
+    assert gate.quote_found(quote, lines, blocks)
+    assert not gate.quote_found("The sale of all of SPA 1 Sale Shares to the Purchaser", lines, blocks), \
+        "words left out of the cell are still not the filing's words"
+    assert Document.from_cache(doc.to_cache()).block_text([0]) == blocks
+
+
+def test_a_quote_may_leave_words_out_with_an_elision_mark():
+    text = "Direct SPA - The Acquirers have entered into a SPA dated February 19, 2026 with the Seller for a total consideration of INR 1445 Cr."
+    assert gate.quote_found("Direct SPA - The Acquirers have entered into a SPA [...] total consideration of INR 1445 Cr", text)
+    assert gate.quote_found("The Acquirers have entered into a SPA … with the Seller", text)
+    assert not gate.quote_found("The Acquirers have entered into a SPA [...] with the Buyer", text)
+    assert not gate.quote_found("[...]", text)
+
+
+def test_a_quote_with_a_word_dropped_is_the_filings_sentence_unless_the_word_turns_it():
+    """Novartis's quote "...Twenty Eight Thousand Fifty Six" of the PDF's "...Twenty Eight Thousand and Fifty
+    Six", and SML's "Lakhs" for "Lakh", held their cards out of the feed as quotes "not in the filing" with
+    every figure right (loop round 3a). At least nine words in ten in order in one place is the filing's own
+    sentence - but not when the word that differs is "not", "subject" or "only"."""
+    text = ("The Maximum Consideration, i.e., total funding requirement for the Open Offer, assuming full acceptance "
+            "of the Offer, is INR 584,93,81,488.80 (Indian Rupees Five Hundred Eighty Four Crore Ninety Three Lakh "
+            "Eighty One Thousand Four Hundred Eighty Eight only). The Board has not approved the proposed merger "
+            "of the two subsidiaries with the Company at its meeting held today.")
+    near = gate.quote_near("aggregating to a total consideration of up to INR 584,93,81,488.80 (Indian Rupees Five "
+                           "Hundred Eighty Four Crore Ninety Three Lakhs Eighty One Thousand Four Hundred Eighty Eight",
+                           text)
+    assert near is None, "the opening words are not the filing's: no place to anchor"
+    near = gate.quote_near("is INR 584,93,81,488.80 (Indian Rupees Five Hundred Eighty Four Crore Ninety Three Lakhs "
+                           "Eighty One Thousand Four Hundred Eighty Eight only)", text)
+    assert near and "584,93,81,488.80" in near and "lakh eighty" in near
+    assert gate.quote_near("The Board has approved the proposed merger of the two subsidiaries with the Company at "
+                           "its meeting held today.", text) is None, "a dropped 'not' turns the sentence round"
+    assert gate.quote_near("Board has not approved", text) is None, "too short to judge by"
+
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import check_quoted_numbers
+
+    card = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A", "timeline_entry": "Open offer",
+        "card": {"impact_level": "HIGH", "headline": "Open offer",
+                 "what_happened": [{"text": "Open offer made", "quote": "total funding requirement for the Open Offer"}],
+                 "key_numbers": [{"label": "Maximum consideration", "value": "₹584.94 Cr", "quote":
+                                  "is INR 584,93,81,488.80 (Indian Rupees Five Hundred Eighty Four Crore Ninety Three "
+                                  "Lakhs Eighty One Thousand Four Hundred Eighty Eight only)"}]}})
+    problems, _, style = check_quoted_numbers(card, text)
+    assert problems == [] and style == ['key number "Maximum consideration" quotes the filing with small differences']
+    card.card.key_numbers[0].value = "₹585.94 Cr"
+    assert "585.94" in check_quoted_numbers(card, text)[0][0], "the figure still answers to that one sentence"
+
+
+def test_what_may_differ_in_a_near_quote_is_wording_not_figures():
+    text = ("Pursuant to the approval, 92,72,997 equity shares of face value Rs. 2 each were allotted to the holders "
+            "of the compulsorily convertible debentures on conversion at a price of Rs. 26.96 per share.")
+    assert gate.quote_near("Pursuant to the approval, 9272997 equity shares of face value ₹ 2 each were allotted to "
+                           "the holders of the debentures on conversion", text), "the same number, a rupee sign"
+    assert gate.quote_near("Pursuant to the approval, 92,72,997 equity shares of face value Rs. 2 each were allotted to "
+                           "the holders of the compulsorily convertible debentures on conversion at a price of "
+                           "Rs. 29.96 per share.", text) is None, "a figure that differs is not wording"
+    assert gate.quote_near("Pursuant to the approval, 92,72,997 equity shares were allotted at a price of Rs. 26.96 "
+                           "per share.", text) is None, "too much of the sentence left out without a mark"

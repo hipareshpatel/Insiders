@@ -116,6 +116,16 @@ def cache_needs_ocr(data: dict, local_ocr: bool = False) -> bool:
     ocr = data.get("ocr") or {}
     return any(text_unreadable(t) and str(i) not in ocr for i, t in enumerate(data.get("digital") or []))
 
+def _block_reading(page) -> str:
+    """The page's text layer block by block, top to bottom and left to right, each block whole.
+
+    The reading the analysis uses (sort=True) puts every line that shares a height on one line, which keeps
+    a statement's row together across its columns but runs a two-column page, or a table whose cells take
+    several lines, across both columns at once. PyMuPDF's blocks keep a cell or a column together. Kept
+    beside the main reading for the quote checks only (gate.quote_found): what the model reads is unchanged."""
+    return "\n".join(b[4].strip() for b in page.get_text("blocks", sort=True) if b[6] == 0 and b[4].strip())
+
+
 def _layer_text(page) -> str:
     """The page's text layer in reading order; a sideways page of figures turned upright first."""
     text = page.get_text("text", sort=True) or ""
@@ -149,6 +159,8 @@ class Document:
         self._doc = None
         self._digital: list[str] = []
         self._has_image: list[bool] = []
+        self._blocks: list[str] = []
+        self.selected: list[int] = []   # the pages the last select_text took
         if not pdf_bytes:
             self.error = "no attachment"
             return
@@ -165,6 +177,7 @@ class Document:
                 # That ordering is where the wrong-column and unit-scale errors come from (audit round 1).
                 self._digital = [_layer_text(page) for page in doc]
                 self._has_image = [bool(page.get_images(full=False)) for page in doc]
+                self._blocks = [_block_reading(page) for page in doc]
         except Exception as exc:  # corrupt PDF, or a non-PDF attachment (xml, zip, xlsx)
             self.error = f"unreadable attachment: {exc}"
             log.warning(self.error)
@@ -173,7 +186,7 @@ class Document:
         """Everything read from the PDF (digital text and the pages OCR'd so far), for the text cache."""
         return {"v": self.cache_version, "error": self.error, "digital": self._digital, "has_image": self._has_image,
                 "ocr": {str(k): v for k, v in self._ocr_cache.items()}, "unreadable_checked": self.unreadable_checked,
-                "local_ocr": self.local_ocr}
+                "local_ocr": self.local_ocr, "blocks": self._blocks}
 
     def keep_ocr(self, data: dict) -> None:
         """Reuse the pages an older cache entry already OCR'd: re-reading the text layer does not change them.
@@ -193,12 +206,17 @@ class Document:
         doc.local_ocr = data.get("local_ocr", 0)
         doc._digital = list(data.get("digital", []))
         doc._has_image = list(data.get("has_image", [False] * len(doc._digital)))
+        doc._blocks = list(data.get("blocks") or [])
         doc._ocr_cache = {int(k): v for k, v in (data.get("ocr") or {}).items()}
         return doc
 
     @property
     def page_count(self) -> int:
         return len(self._digital)
+
+    def block_text(self, pages: Iterable[int]) -> str:
+        """The text layer of these pages read block by block (_block_reading), for the quote checks."""
+        return "\n".join(self._blocks[i] for i in pages if i < len(self._blocks) and self._blocks[i])
 
     def is_scanned(self, index: int) -> bool:
         return len(self._digital[index].strip()) < SCANNED_PAGE_CHARS and self._has_image[index]
@@ -325,6 +343,7 @@ class Document:
                 continue
             chosen.append(i)
             used += size
+        self.selected = sorted(chosen)
         parts = []
         for i in sorted(chosen):
             text = strip_boilerplate(_clean(self.page_text(i, figures)))

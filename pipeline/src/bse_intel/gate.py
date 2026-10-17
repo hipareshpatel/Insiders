@@ -87,19 +87,108 @@ def _flat(text: str) -> str:
     return " ".join(text.lower().split())
 
 
-def quote_found(quote: str | None, text: str) -> bool:
+_ELISION = re.compile(r"\[\s*(?:\.\.\.|…)\s*\]|\.\.\.|…")
+
+
+def quote_found(quote: str | None, text: str, *readings: str) -> bool:
     """The quote appears in the filing, ignoring case, spacing and smart punctuation. A quote joined
-    with "..." must have every part present, in order."""
-    if not quote or not text:
+    with "..." or "[...]" must have every part present, in order.
+
+    `readings` are the same pages read another way. A page set in two columns, or as a table whose cells
+    run to several lines, is read line by line across all of them, so the left cell's words land inside
+    the right cell's sentence ("...SPA 1 Sale Shares from the agreement (in brief). Seller 1 to the
+    Purchaser..."); the model quotes the sentence the page prints and it is not in that reading (SML's
+    share purchase agreements, loop rounds 3a-3b, 2026-10-17). Read block by block, the cell is whole.
+    A quote must still be one reading's own words, contiguous: nothing is skipped to make it fit."""
+    if not quote:
         return False
-    haystack = _flat(text)
-    at = 0
-    for part in (p for p in re.split(r"\.\.\.|…", quote) if p.strip()):
-        found = haystack.find(_flat(part), at)
-        if found == -1:
-            return False
-        at = found + 1
-    return True
+    parts = [p for p in _ELISION.split(quote) if p.strip()]
+    for haystack in (_flat(t) for t in (text, *readings) if t):
+        at = 0
+        for part in parts:
+            found = haystack.find(_flat(part), at)
+            if found == -1:
+                break
+            at = found + 1
+        else:
+            return bool(parts)
+    return False
+
+
+NEAR_QUOTE = 0.9   # share of a quote's words that must stand in order in one place of the filing
+
+
+def quote_near(quote: str | None, text: str, *readings: str) -> str | None:
+    """The filing's own sentence a quote copies with small differences, or None.
+
+    Models quote with a word dropped or changed: "Twenty Eight Thousand Fifty Six" for the PDF's "Twenty
+    Eight Thousand and Fifty Six", "Lakhs" for "Lakh", "the provisions of the SEBI" for "the SEBI (LODR)"
+    (Novartis's and SML's offer letters, loop round 3a). Held as quotes "not in the filing", their cards were
+    kept out of the feed with every figure right. Here at least 90% of the quote's words (and at least six)
+    must stand in order in one place of one reading; the span they cover is returned, so a figure can still
+    be asked to be in that one sentence rather than anywhere in the filing.
+
+    What may differ is wording only. Not a word that turns the sentence round ("has not approved"), not a
+    figure (a quote carrying 5,349 where the filing has none, or leaving out the figures between - a table's
+    "8.0% 9.2%"), and not more than a few of the filing's words left out: an elision is marked with "...".
+    The same number written two ways (92,72,997 and 9272997), a lost rupee sign and a margin's line number
+    are not differences (all seen on the loop's cards, 2026-10-18)."""
+    import difflib
+
+    words = _norm(_flat(_ELISION.sub(" ", quote or "")).split())[0]
+    if len(words) < 6:
+        return None
+    need = NEAR_QUOTE * len(words)
+    for reading in (t for t in (text, *readings) if t):
+        printed = _flat(reading).split()
+        hay, where = _norm(printed)
+        starts = {i for i in range(len(hay) - 2) if hay[i:i + 3] == words[:3]}
+        ends = {i for i in range(len(hay) - 2) if hay[i:i + 3] == words[-3:]}
+        anchors = sorted(starts | {max(0, e - len(words)) for e in ends})
+        for a in anchors[:50]:
+            low = max(0, a - 3)
+            window = hay[low:a + int(len(words) * 1.3) + 3]
+            blocks = difflib.SequenceMatcher(None, words, window, autojunk=False).get_matching_blocks()
+            if sum(b.size for b in blocks) < need:
+                continue
+            used = [b for b in blocks if b.size]
+            span = window[used[0].b:used[-1].b + used[-1].size]
+            in_quote = {i for b in used for i in range(b.a, b.a + b.size)}
+            in_span = {i for b in used for i in range(b.b - used[0].b, b.b - used[0].b + b.size)}
+            dropped = [w for i, w in enumerate(words) if i not in in_quote]      # the quote's, not the filing's
+            skipped = [w for i, w in enumerate(span) if i not in in_span]       # the filing's, left out
+            if set(dropped + skipped) & _TURNING:
+                continue
+            if any(_has_digit(w) for w in dropped) or any(_has_digit(w) and not (w.isdigit() and len(w) <= 2)
+                                                          for w in skipped):
+                continue
+            if len(skipped) > max(3, 0.15 * len(words)):
+                continue
+            first, last = where[low + used[0].b], where[low + used[-1].b + used[-1].size - 1]
+            return " ".join(printed[first:last + 1])
+    return None
+
+
+def _has_digit(word: str) -> bool:
+    return any(c.isdigit() for c in word)
+
+
+def _norm(words: list[str]) -> tuple[list[str], list[int]]:
+    """Words compared as words: without the punctuation around them ("only)." is "only"), a number without
+    its grouping commas (92,72,997 is 9272997), a rupee sign left out. With each one's place in `words`."""
+    out, where = [], []
+    for i, w in enumerate(words):
+        t = w.strip(".,;:()[]'\"_")
+        if not t or t in ("₹", "`"):
+            continue
+        out.append(t.replace(",", "") if _has_digit(t) else t)
+        where.append(i)
+    return out, where
+
+
+_TURNING = {"not", "no", "nil", "never", "neither", "nor", "none", "without", "except", "excluding", "unless",
+            "subject", "cannot", "can't", "won't", "didn't", "doesn't", "isn't", "wasn't", "shall", "may",
+            "might", "proposed", "intends", "approved", "rejected", "withdrawn", "terminated", "cancelled"}
 
 
 _CLAIM_NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")

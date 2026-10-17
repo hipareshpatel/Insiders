@@ -100,6 +100,9 @@ Read before changing anything:
   newest card is as old as the filings being processed. Use `/feed?range=all`.
 - Industry fill complete (5,111 companies, 3 without an industry).
 - Fix in batches during a run, not by stopping it for each bug (owner, 2026-10-16).
+- Check the local site answers before starting a run: the dev server can exit on its own, and the
+  pipeline then spends the whole round on connection errors and writes nothing (2026-10-17, one
+  round lost). `curl -s -o /dev/null -w '%{http_code}' http://localhost:5173/api/feed?range=all`.
 - Gotchas found tonight: models copy lakh figures as crore (grounding now enforces the declared unit);
   BSE's scrip list no longer carries industry; one event can be filed up to 8 times (duplicates.py);
   commit before `git pull`, never autostash over another session's changes.

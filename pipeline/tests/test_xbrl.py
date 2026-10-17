@@ -429,10 +429,14 @@ def test_a_full_year_key_number_is_not_overwritten_with_the_quarters_figure():
                  "key_numbers": [{"label": "FY25 revenue", "value": "₹453.98 Cr", "change": "-3.3% YoY"},
                                  {"label": "Q4 EBITDA", "value": "₹8.2 Cr", "change": None},
                                  {"label": "FY25 PBT", "value": "₹5 Cr", "change": None},
-                                 {"label": "Revenue", "value": "₹100 Cr", "change": None}]}})
+                                 {"label": "Revenue", "value": "₹100 Cr", "change": None},
+                                 {"label": "PAT", "value": "₹-48.04 Cr", "change": "+4.3% YoY"}]}})
     xbrl_key_numbers(out, tagged)
     keys = {k.label: k.value for k in out.card.key_numbers}
     assert keys["FY25 revenue"] == "₹453.98 Cr", "the year keeps the year's figure"
+    changes = {k.label: k.change for k in out.card.key_numbers}
+    assert keys["PAT"] == "₹-14.76 Cr" and changes["PAT"] is None,         "a figure replaced by another period's loses the change that belonged to the one it replaced"
+    assert changes["FY25 revenue"] == "-3.3% YoY", "a figure left alone keeps its change"
     assert keys["Q4 EBITDA"] == "₹8.20 Cr", "a bare quarter is the quarter of the year reported"
     assert keys["FY25 PBT"] == "₹5 Cr", "the file carries no PBT for the year: left to the model"
     assert keys["Revenue"] == "₹107.84 Cr", "a label with no period is the period filed for"

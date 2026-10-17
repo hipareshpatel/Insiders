@@ -413,6 +413,13 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
                 change = f"{m.yoy_pct:+.1f}% YoY"
             elif key.change:
                 unverified.append(f"{key.label}: XBRL year-ago ₹{prior:,.2f} Cr is not in the filing")
+        # A value and the change beside it have to be about the same period. Where the figure is
+        # replaced by a materially different one and the file's own YoY could not be verified, the
+        # model's change belonged to the figure that has just gone: Shivam's Rs 453.98 Cr for the year
+        # became the quarter's Rs 107.84 Cr with "-3.3% YoY", which was the year's fall. Say nothing
+        # rather than pair a figure with a change that is not its own.
+        if change is key.change and _amount(key.value) is not None                 and abs((_amount(key.value) or 0) - m.value) > max(0.01, abs(m.value) * 0.005):
+            change = None
         if (key.value, key.change) != (value, change):
             changed.append(f"{key.label}: {key.value} ({key.change}) -> {value} ({change})")
             key.value, key.change = value, change

@@ -81,22 +81,20 @@ Read before changing anything:
   ~100% on 7 filings but ~1 min/page and 2.7 GB, MinerU basic 69%. Non-results pages (84 pages, 14 types,
   page's own text layer as key): RapidOCR 92.3% figures exact at 200 dpi, 88.7% at 150, 92.0% at 300;
   weakest on credit ratings (79%) and "other" (86%); ~1 in 10 bracketed negatives loses its brackets.
-  1. **Finish the complicated-pages test** (owner, 2026-10-17): 7 hard pages in `data/bench/hard/`
-     (stamped statement, rotated AOC-1, rotated PPE note, governance grid, rating letter, two statements).
-     Two independent readers were transcribing them from images into `data/bench/hard/reader_a|b/key.json`
-     (no extraction allowed). Merge: keep cells both agree on, check disagreements on the crop. Then grade
-     every extractor in `data/bench/hard/out/` (pymupdf sorted/default/words, plumber words/layout,
-     pymupdf4llm, rapidocr-200, rapidocr-200-upright) on row integrity: the row's values, in column order,
-     on the line with its label, nil "-" kept. **Add the cloud vision route** (gateway.transcribe_image,
-     free models - owner: no LOCAL vision model) on the same pages. If OCR wins on text too, the owner's
-     option is OCR as the FIRST reader, not only the second.
-  2. **RapidOCR is wired in** (other session, D26, `pipeline/src/bse_intel/ocr.py`: scanned and unreadable
-     pages on the CPU at 200 dpi, up to 20 pages a document, 6 on the vision route). Still to check there:
-     that a sideways page is turned upright first - RapidOCR reads sideways text confidently and then builds
-     the table's columns as rows (the rotated AOC-1 gave 17 transposed rows until the image was turned; fix
-     in `pipeline/scripts/bench_hard_ocr.py`: if most boxes stand on end, try both 90-degree turns and keep
-     the one whose boxes lie flat). Then decide, from step 1, whether OCR should also be the second reader
-     on digital figure-heavy pages, or even the first.
+  1. **Done 2026-10-17: the complicated-pages test** (docs/bench/hard-pages-results.txt). 7 pages, key from
+     two independent readers (1,063 cells, all agreed). Figures on their own line: text layer 60%, pipeline
+     OCR 98%, vision route 97%; whole rows with nils kept: 49% / 53% / 77%. Vision silently swaps digits in
+     small print (7,993 read as 7983; 2.4% of its figures are not on the page, OCR 0.8%) and costs 13-83 s
+     and a free-tier request a page. OCR drops thin cells - a "-" nil, "Nil" - so a later figure slides a
+     column; the text layer keeps them but has no rows on rotated or garbled pages.
+  2. **Done 2026-10-17: the pipeline's OCR is the benchmarked one.** `ocr.py` now runs rapidocr 3.10 with the
+     measured settings, takes out page tilt, clusters rows on a running centre, repairs half-lost brackets,
+     and turns a sideways page upright. Hard pages 36% -> 98% figures on their line; ~4-5 s a page.
+     Install with `pip install -e ".[ocr]"` (the extra is now `rapidocr>=3.10`, not rapidocr_onnxruntime).
+  2a. **Next: OCR as the FIRST reader on pages with figures or tables** (owner's option, now supported by the
+     numbers), the text layer as the cross-check: where both have a page, put back the nil cells OCR drops
+     by aligning OCR boxes to the table's columns by x-position, and keep the text layer for plain prose
+     letters (faster, complete). Vision only where the two readers disagree on a figure a card uses.
   3. Re-run the 20-filing loop (`scripts/rerun.py`, `process --news-ids`) and compare held cards and
      correctness with rounds 2a-2f (docs/audit/loop-2026-10-17.md).
   4. ANNUAL_REPORT event type, using NSE's annual-report XBRL (docs/SOURCES.md).

@@ -145,7 +145,9 @@ def test_a_fact_cannot_borrow_a_number_its_quote_does_not_have():
     quote = "Revenue from operations stood at Rs 951.96 crore for the quarter."
     assert gate.numbers_in_quote("Revenue ₹951.96 Cr", quote) == []
     assert gate.numbers_in_quote("Revenue ₹951.96 Cr, PAT ₹49.39 Cr", quote) == ["49.39"]
-    assert gate.numbers_in_quote("Revenue ₹95 Cr", quote) == []  # a prefix of the quote's figure: rounding
+    assert gate.numbers_in_quote("Revenue ₹952 Cr", quote) == []  # rounded to the card's last digit
+    # a prefix of the quote's figure used to pass as a "rounding": ₹95 Cr is a tenth of ₹951.96 Cr
+    assert gate.numbers_in_quote("Revenue ₹95 Cr", quote) == ["95"]
     assert gate.numbers_in_quote("anything", "") == []
 
 
@@ -392,3 +394,31 @@ def test_what_may_differ_in_a_near_quote_is_wording_not_figures():
                            "Rs. 29.96 per share.", text) is None, "a figure that differs is not wording"
     assert gate.quote_near("Pursuant to the approval, 92,72,997 equity shares were allotted at a price of Rs. 26.96 "
                            "per share.", text) is None, "too much of the sentence left out without a mark"
+
+
+def test_a_figure_from_a_sibling_row_must_be_at_the_right_unit():
+    """Jubilant's FY25 card wrote "exceptional items of ₹3,595 Cr" from a statement in ₹ million, where (3,595)
+    is ₹359.5 Cr. The sibling-row rule matched the digits 3,595 and let the ten-times figure pass as "from
+    another row of the same table" (loop round 3c, 2026-10-18)."""
+    text = ("(₹ in million) Particulars FY25 FY24\nProfit for the year 8,363 727\nExceptional items (3,595) 1,689\n"
+            "Total comprehensive income 8,101 690")
+    claim = "FY25 PAT rose to ₹836.3 Cr due to exceptional items of ₹3,595 Cr"
+    still, siblings = gate.figures_in_same_block(["3,595"], "Profit for the year 8,363 727", text, 10, claim)
+    assert still == ["3,595"] and siblings == []
+    right = "FY25 PAT rose to ₹836.3 Cr due to exceptional items of ₹359.5 Cr"
+    assert gate.figures_in_same_block(["359.5"], "Profit for the year 8,363 727", text, 10, right) == ([], ["359.5"])
+
+
+def test_a_card_amount_is_compared_in_crore_whatever_digits_it_shares():
+    """The same digits used to pass whatever the unit: Novartis's FY25 cards wrote employee cost ₹187.2 Cr and
+    operating cash flow ₹745.7 Cr from a statement in ₹ million (₹18.72 Cr, ₹74.57 Cr), CSB's gross NPA ₹45,817 Cr
+    from one in lakh (₹458.17 Cr), and each passed its own quote (loop rounds 2a-3c, 2026-10-18)."""
+    assert gate.numbers_in_quote("₹187.2 Cr (Mar-2025)", "Employee Benefits Expense 187.2 229.6", 10) == ["187.2"]
+    assert gate.numbers_in_quote("₹18.72 Cr (Mar-2025)", "Employee Benefits Expense 187.2 229.6", 10) == []
+    assert gate.numbers_in_quote("₹45,817 Cr", "a) Gross NPAs 45,817 45,212 27,873", 100) == ["45,817"]
+    # the XBRL table's balance-sheet line names its unit: "net_debt_cr 1348.6" is crore, whatever the filing's
+    line = "balance sheet Q4FY25: gross_debt_cr 2436.9, cash_cr 1088.3, net_debt_cr 1348.6, net_worth_cr 6254.9"
+    assert gate.numbers_in_quote("₹1,348.6 Cr net debt (Q4FY25)", line, 10) == []
+    assert gate.numbers_in_quote("₹134.86 Cr net debt (Q4FY25)", line, 10) == ["134.86"]
+    # a figure without a unit is compared as printed
+    assert gate.numbers_in_quote("₹52.99 per share", "Basic EPS 52.99 4.87", 10) == []

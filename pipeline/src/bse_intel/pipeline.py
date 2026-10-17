@@ -590,7 +590,7 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
                     dropped.append(f'"{label}" (neither its quote nor its figures are in the filing)')
                 continue
         missing = gate.numbers_in_quote(fact.text.replace("**", ""), quote, unit)
-        missing, siblings = gate.figures_in_same_block(missing, quote, text, unit)
+        missing, siblings = gate.figures_in_same_block(missing, quote, text, unit, fact.text.replace("**", ""))
         if siblings:
             paraphrased.append(f'"{label}" also states {", ".join(siblings[:4])}, from another row of '
                                "the same table")
@@ -647,7 +647,7 @@ def check_quoted_numbers(out: Pass2Output, text: str,
         missing = gate.numbers_in_quote(claim, quote, unit)
         siblings: list[str] = []
         if siblings_count:
-            missing, siblings = gate.figures_in_same_block(missing, quote, text, unit)
+            missing, siblings = gate.figures_in_same_block(missing, quote, text, unit, claim)
         if siblings:
             elsewhere.append(f'{kind} "{label}" also states {", ".join(dict.fromkeys(siblings))[:60]}, '
                              "from another row of the same table")

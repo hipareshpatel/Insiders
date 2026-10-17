@@ -197,8 +197,8 @@ _PERIOD_LABEL = re.compile(r"\b(?:q[1-4]|h[12]|9m)?fy\s?'?\d{2,4}\b|\b(?:19|20)\
 
 def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[str]:
     """Numbers written in the claim that its own quote does not carry (4.5 never matches 45), so a fact
-    cannot borrow a figure from elsewhere in the filing. A figure that is a rounding of the quote's own
-    ("95" of "951.96") is allowed.
+    cannot borrow a figure from elsewhere in the filing. A figure rounded to the card's own last digit is the
+    quote's ("952" of "951.96"); a prefix is not ("95" of "951.96" is a tenth of it).
 
     `unit` is what the filing says its figures are in, as a divisor to crore (100 for lakh, 10 for
     million); plain rupees are always tried too, since a notice writes the amount out in full. A card writes crore and an Indian statement writes lakh, so without it a right reading was
@@ -226,7 +226,9 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
             value = float(m.group(0).replace(",", ""))
         except ValueError:
             continue
-        own = _unit_after(flat_quote, m.end())
+        # its own unit: written after it ("1.09 lakh"), or in the name before it, as the XBRL table's
+        # balance-sheet line writes crore ("net_debt_cr 1348.6")
+        own = _unit_after(flat_quote, m.end()) or (1 if re.search(r"_cr\s*:?\s*$", flat_quote[:m.start()]) else None)
         in_crore += [value / s for s in ([own] if own else [s for s in (unit, 1e7) if s and s > 1])]
         if own is None and not (unit and unit > 1):
             in_crore.append(value)
@@ -241,7 +243,10 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
             continue  # a percentage follows from the row's own figures rather than being printed in it,
             # and grounding already checks one against the whole filing, stated or derived
         value = m.group(0).replace(",", "")
-        if value in digits or any(d.startswith(value) or value.startswith(d) for d in digits):
+        card_unit = _unit_after(flat_claim, m.end())
+        # The same digits only count when the card wrote no unit: "₹3,595 Cr" is not the 3,595 of a statement
+        # in million, and "458 Cr" is not "4583" (Jubilant FY25, loop round 3c).
+        if card_unit is None and (value in digits or any(d.startswith(value) or value.startswith(d) for d in digits)):
             continue
         try:
             number = float(value)
@@ -255,7 +260,6 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
         # rounded up was held as missing. The unit still has to be right: a card amount in crore, lakh or
         # million is compared in crore, and "458 Cr" of a row reading 457.86 million is still refused.
         tolerance = 0.5 * 10 ** -decimals
-        card_unit = _unit_after(flat_claim, m.end())
         if card_unit is not None:
             if any(abs(c - number / card_unit) <= tolerance / card_unit + 1e-12 for c in in_crore):
                 continue
@@ -283,7 +287,7 @@ SAME_BLOCK = 2000  # characters either side of the quote: about one statement ta
 
 
 def figures_in_same_block(missing: list[str], quote: str, text: str, unit: int | None = None,
-                          window: int = SAME_BLOCK) -> tuple[list[str], list[str]]:
+                          claim: str = "", window: int = SAME_BLOCK) -> tuple[list[str], list[str]]:
     """Split figures a quote does not carry into those the same table does, and the rest.
 
     A card sentence naturally draws on more than one row - revenue and the profit below it, this
@@ -303,9 +307,15 @@ def figures_in_same_block(missing: list[str], quote: str, text: str, unit: int |
     if at == -1:
         return list(missing), []
     block = flat[max(0, at - window):at + len(first) + window]
+    # Each figure with the unit the card wrote after it, so it is compared in crore: Jubilant's "₹3,595 Cr"
+    # passed against a statement's 3,595 million (₹359.5 Cr) while the digits alone were compared.
+    said = _flat(_PERIOD_LABEL.sub(" ", claim or ""))
     still, siblings = [], []
     for raw in missing:
-        (still if numbers_in_quote(raw, block, unit) else siblings).append(raw)
+        at_raw = said.find(raw.lower())
+        word = _UNIT_WORD.match(said, at_raw + len(raw)) if at_raw != -1 else None
+        figure = f"{raw} {word.group(1)}" if word else raw
+        (still if numbers_in_quote(figure, block, unit) else siblings).append(raw)
     return still, siblings
 
 

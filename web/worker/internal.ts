@@ -8,7 +8,8 @@ import type { AppEnv } from "./env";
 import { QUERIES, STATEMENTS } from "./sql";
 
 const MAX_BODY_BYTES = 1_000_000;
-const OBJECT_PREFIXES = ["memory/", "daily_feed/", "backup/", "noise/", "meta/", "learning/"];
+// raw/: every BSE and NSE answer as received (pipeline raw.py, D28); refused until 2026-10-17, so none was kept.
+const OBJECT_PREFIXES = ["memory/", "daily_feed/", "backup/", "noise/", "meta/", "learning/", "raw/"];
 const has = (table: Record<string, string>, key: string) => Object.hasOwn(table, key);
 
 const allowedKey = (key: string) =>

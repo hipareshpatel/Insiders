@@ -22,7 +22,9 @@ import difflib
 import logging
 import math
 import re
+import statistics
 import threading
+from collections import Counter
 from collections import Counter
 from typing import Callable
 
@@ -74,16 +76,18 @@ def _skew(items: list[tuple]) -> float:
     """The page's tilt in radians from the box centres alone: the angle whose row histogram is sharpest."""
     if len(items) < 30:
         return 0.0
-    import numpy as np
-
-    cx = np.array([i[2] for i in items])
-    cy = np.array([i[0] for i in items])
-    bin_ = max(2.0, 0.35 * float(np.median([i[1] for i in items])))
+    # Plain Python, not numpy: the text layer of a sideways page is put into lines here too, and that path
+    # must work without the [ocr] extra (numpy comes with it; without it every PDF read as unreadable).
+    cx = [i[2] for i in items]
+    cy = [i[0] for i in items]
+    bin_ = max(2.0, 0.35 * statistics.median(i[1] for i in items))
 
     def sharpness(theta: float) -> float:
-        y = cy - cx * math.tan(theta)
-        counts, _ = np.histogram(y, bins=np.arange(y.min(), y.max() + bin_, bin_))
-        return float((counts.astype(float) ** 2).sum())
+        t = math.tan(theta)
+        y = [yc - x * t for yc, x in zip(cy, cx)]
+        low = min(y)
+        counts = Counter(int((v - low) // bin_) for v in y)
+        return float(sum(n * n for n in counts.values()))
 
     base = best_s = sharpness(0.0)
     best = 0.0

@@ -134,6 +134,10 @@ Read before changing anything:
      `REVIEWER_PROMPT_ROUND2.md`), ~50 set-aside filings checked for missed news, AI requests per filing and
      filings an hour measured. Pass marks set before reviewing: WRONG <= 15% of published, MISSED <= 2 of ~50.
      Pass -> the backfill decision (PLAN 1c, owner); fail -> the commonest WRONG and MISSED classes are next.
+     **Result 2026-10-18: accuracy FAIL** (29 of 80 published WRONG = 36%; held 32% on these companies);
+     recall pass (1 MISSED, 3 UNSURE of 50). Released-by-loop cards 32% WRONG. Next: like-for-like bases, memory
+     10x/100x refusal, table column order, signal verdicts, keeping true dropped facts; then round 3 on 14 new
+     companies. Reports: `docs/audit/round-2.md`, `docs/audit/round-2/`.
      After it: re-run 5fc5b553 and 1e3f6e56 (item 4); re-reading an annual report once its NSE XBRL appears is
      being built in its own session.
   6. Raise the paid weight and drain the 160 queued filings; PLAN 1h.

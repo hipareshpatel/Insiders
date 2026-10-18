@@ -57,6 +57,56 @@ results). Memory seeded from XBRL first (`seed-memory`), as for the smoke test.
 Both marks met -> the backfill decision (PLAN 1c, the owner's). Either missed -> the commonest WRONG classes and every
 MISSED class on these companies are the next fixes, and the round is repeated on fresh companies.
 
-## Results
+## Results (2026-10-18)
 
-(to follow)
+The run: 499 announcements for the 14 companies, 177 dropped by rule, 322 processed in 1.95 h (165 an hour; the
+site went down once and the run was restarted), 2.06 AI requests and ~24k tokens a filing, 3.3% of requests 429s.
+131 cards, **42 held (32%)** against 6% on the smoke-test companies after the held-card loop: the checks were tuned
+to the filings they were tuned on. Reviewers: 14 independent, blind; findings in `round-2/` and `round-2.json`.
+
+| Pass mark (set before review) | result | |
+|---|---|---|
+| WRONG <= 15% of published cards | **29 of 80 = 36%** (MINOR 40%, OK 24%) | **fail** |
+| MISSED <= 2 of ~50 set aside | **1 MISSED, 3 UNSURE of 50**; all 25 rule drops RIGHT | pass (fails if 2 UNSURE are real) |
+| holds (reported) | the 10 held: 6 WRONG, 4 MINOR, 0 OK | holds are right |
+
+**Accuracy is no better than round 1 (33%) on companies the pipeline had never read.** Issues by class over the 90
+cards: other 60, memory 47 (memory points wrong on 37 cards, tallied apart), arithmetic 20, invented 19, signal
+verdict 16, wrong column 13, direction 12, unit scale 11, event type 9, standalone/consolidated 6. By writer model,
+WRONG: deepseek-flash 42% (40 cards), nemotron-3-super 41% (32), glm-4.5-flash 29% (17). Impact level fits on 74
+of 90. The recurring causes, from the reviewers' worst cases:
+
+1. **Bases that are not like for like**: a demerger or deconsolidation leaves the year-ago figure on another base
+   (SKF India, Prism's RQBE, Kanoria's APAG, HEG); standalone against consolidated (eMudhra, Magellanic's annual
+   report); a share split in EPS (Adani Power). Signals (MARGIN_MIX, DILUTION, growth %) inherit the wrong base.
+2. **Memory carrying a slip forward**: Magellanic's ₹12.76 Cr GAIL order stored as ₹127.62 Cr and then counted in
+   ORDER_FLOW on three cards; Bandhan's net worth 100x too small ("contingent liabilities 110x net worth"); SBI
+   Life's expense ratio 100x. The memory scale guard (dossier `_out_of_scale`) did not stop them.
+3. **Columns and direction in prose**: Bandhan's business update read with its columns in the wrong order (every
+   figure wrong); "margin improved from 12.83% to 11.78%"; inventory build called a drawdown (SKF, Britannia).
+4. **Signals that contradict the card**: approvals "met" on an unrelated order (Adani), dilution counting only the
+   equity shares beside 12.67 Cr warrants (Magellanic), a rating reaffirmation shown as a ₹105 Cr fundraise (Lehar).
+
+**Other measurements this round:**
+- *The cards the held-card loop released* (59 not checked before): **32% WRONG**, memory points wrong on 27. The
+  loosening released wrong cards at round 1's rate (`round-2/released-cards.json`).
+- *The 40 cards still held on the smoke test*: 57% WRONG, 33% MINOR, 10% OK - the remaining holds are right.
+- *Dropped facts* (PLAN 1h, `round-2/dropped_facts.md`): 50 of 60 facts the quote check dropped were true; a
+  fact whose quote fails is kept only when it has a plain figure above 31, so ratings, dates, percentages and small
+  amounts are dropped outright.
+- *Signals and ranking* (`round-2/signals_audit.md`): Top Signals is empty (no card scores 70); by score, 10 of the
+  top 30 do not deserve their place (11 are open-offer filings; any computed ₹ figure counts as the deal size), and
+  signals contradict the card on 12 of the top 30.
+- *Backfill readiness* (`round-2/backfill_readiness.md`): the live flow (~720 filings a day for the 2,894
+  companies above ₹100 Cr) fits the free tiers in ~5.5 h a day, 11-17 h in results season; a backfill from
+  January 2025 (~467,000 filings) needs ~150 days of running free, ~118 with the paid route.
+- *Repeat cards* (`round-2/repeat_cards.md`): a narrow SAST rule would merge 6 same-stage repeats and no separate
+  stage; proposed, not built.
+
+## Decision
+
+The accuracy mark is missed, so by the rule set before review the backfill decision waits. Next fixes, in order of
+how many WRONG cards they explain: like-for-like bases (demerger / restated / standalone-consolidated / split)
+for every computed change and signal; memory refusing figures off scale by 10x and 100x before they are stored
+and reused; column order read from a table's own headers and arithmetic; the signal verdict checks the reviewers
+found; and keeping true facts the quote check drops. Then a round 3 on another 14 unseen companies, same marks.

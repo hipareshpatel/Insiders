@@ -26,8 +26,9 @@ QUOTA = {"rule drop": 25, "not material": 15, "timeline only": 5, "duplicate": 5
 ap = argparse.ArgumentParser()
 ap.add_argument("out_dir")
 ap.add_argument("--per-reviewer", type=int, default=10)
+ap.add_argument("--kinds", default=",".join(QUOTA), help="which strata to export now (rule drops are final once discovery has run; the others once processing has)")
 args = ap.parse_args()
-rng = random.Random(SPEC["seed"])
+kinds = [k.strip() for k in args.kinds.split(",") if k.strip()]
 db = [p for p in glob.glob(r"D:\Insiders\data\wrangler\v3\d1\miniflare-D1DatabaseObject\*.sqlite") if "metadata" not in p][0]
 c = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
 c.row_factory = sqlite3.Row
@@ -52,11 +53,11 @@ for key in sink.list_objects("noise/"):
             pools["rule drop"].append({**r, "filing_date": day, "status": "DROPPED"})
 print({k: len(v) for k, v in pools.items()})
 sample = []
-for kind, n in QUOTA.items():
+for kind in kinds:   # one seeded draw per stratum, so exporting them at different times gives the same sample
     pool = sorted(pools[kind], key=lambda r: r["news_id"])
-    rng.shuffle(pool)
-    sample += [{**r, "_kind": kind} for r in pool[:n]]
-rng.shuffle(sample)
+    random.Random(f"{SPEC['seed']}-{kind}").shuffle(pool)
+    sample += [{**r, "_kind": kind} for r in pool[:QUOTA[kind]]]
+random.Random(f"{SPEC['seed']}-{args.kinds}").shuffle(sample)
 
 bse = BseClient()
 cache = pathlib.Path(r"D:\Insiders\data\text_cache")

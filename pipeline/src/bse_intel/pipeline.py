@@ -2253,6 +2253,9 @@ class Pipeline:
         if tagged:
             card_json["xbrl"] = {"basis": tagged.basis, "period": tagged.period, "figures": len(tagged.metrics),
                                  "url": filing.xbrl_url}
+        elif event_type == "RESULTS" and filing.news_id.startswith(nse_api.NEWS_ID_PREFIX):
+            # made from the PDF alone: the files listed then, so the catch-up re-reads it only for a new one
+            card_json["xbrl_seen"] = [link.url for link in self._results_links(filing)]
         if annual:
             card_json["annual_xbrl"] = {"bases": [r.basis for r in annual], "period": annual[0].fy,
                                         "figures": sum(r.figures() for r in annual)}

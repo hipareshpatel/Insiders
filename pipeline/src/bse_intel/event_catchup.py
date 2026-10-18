@@ -99,7 +99,13 @@ def results_due(row: dict, links: list) -> bool:
     day = datetime.fromisoformat(row["filed_at"]).date()
     from datetime import date as _date
 
-    return any(-2 <= (_date.fromisoformat(l.filed_at[:10]) - day).days <= 45 for l in links)
+    # A file the card was already made beside (and could not use) does not bring it back: without this a card whose
+    # quarter the file does not match was read again, at a model call each time, on every run for RESULTS_DAYS.
+    try:
+        seen = set(json.loads(row.get("seen") or "[]"))
+    except (TypeError, ValueError):
+        seen = set()
+    return any(-2 <= (_date.fromisoformat(l.filed_at[:10]) - day).days <= 45 for l in links if l.url not in seen)
 
 
 def results_catch_up(pipeline, deadline: float, max_reruns: int = MAX_RERUNS) -> dict:

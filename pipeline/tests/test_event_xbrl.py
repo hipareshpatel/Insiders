@@ -5,6 +5,7 @@ suspensions, Camlin's director retirement)."""
 
 from __future__ import annotations
 
+import json
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -257,6 +258,9 @@ def test_results_catch_up_reads_again_on_a_new_file_or_a_revision():
     made_from_pdf = {"filed_at": "2026-10-17T16:05:00+05:30", "xbrl_url": None}
     assert event_catchup.results_due(made_from_pdf, [first])
     assert not event_catchup.results_due(made_from_pdf, [XbrlLink("Q4FY26", "CONSOLIDATED", "u", "2026-05-02")])
+    # a file listed when the card was made, which it could not use, does not bring it back on every run
+    assert not event_catchup.results_due(dict(made_from_pdf, seen=json.dumps([first.url])), [first])
+    assert event_catchup.results_due(dict(made_from_pdf, seen=json.dumps([first.url])), [first, revised])
     made_from_first = {"filed_at": "2026-10-17T16:05:00+05:30", "xbrl_url": first.url, "period": "Q2FY27", "basis": "CONSOLIDATED"}
     assert event_catchup.results_due(made_from_first, [first, revised])
     assert not event_catchup.results_due(dict(made_from_first, xbrl_url=revised.url), [first, revised])

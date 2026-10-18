@@ -11,7 +11,8 @@ Checks (docs/SOURCES.md "Event XBRL" and "Timing checked live"):
 4. results XBRL (integrated filing): the gap after the board-meeting outcome for a few companies;
 5. annual-report XBRL lists, and shareholding XBRL read with the pipeline's own parser;
 6. an announcement PDF downloaded and read with the pipeline's own reader;
-7. BSE's announcement XBRL page (CorpXbrlGen), which answered a non-Indian cloud address once.
+7. BSE's announcement XBRL page (CorpXbrlGen), which answered a non-Indian cloud address once;
+8. a BSE results file on www.bseindia.com/XBRLFILES, BSE's file host rather than its refused API.
 
 Exit status is 0 whatever NSE answers: the report is the result. Run by online-probe.yml.
 """
@@ -36,6 +37,9 @@ COMPANIES = ["LTM", "MAHABANK", "CGCL", "NTPC"]
 EVENT_TYPES = ["announcements", "para-b", "action"]
 BSE_XBRL = ("https://www.bseindia.com/Msource/90D/CorpXbrlGen.aspx"
             "?Bsenewid=8911e55c-f499-4973-9e33-c13c680640b4&Scripcode=503804")
+# A results file the owner opened (Cupid Breweries, Q2FY27): BSE's file host, not its api.bseindia.com
+BSE_RESULTS_FILE = ("https://www.bseindia.com/XBRLFILES/IFIndasDuplicateUploadDocument/"
+                    "Integrated_Finance_Ind_As_512361_17102026233627_IFIndAs.html")
 _FACT = re.compile(r"<(in-capmkt:\w+)[^>]*>([^<]{1,200})</")
 _WHEN = "%d-%b-%Y %H:%M:%S"
 
@@ -164,6 +168,17 @@ def main() -> int:
         return f"HTTP {r.status_code}, {len(r.content)} bytes, fields: {', '.join(tags[:8])}"
 
     step("BSE announcement XBRL page (CorpXbrlGen)", bse_xbrl)
+
+    def bse_results_file():
+        r = httpx.get(BSE_RESULTS_FILE, headers={"User-Agent": USER_AGENT}, timeout=40)
+        figures = re.findall(r"<ix:nonfraction[^>]*?name=.([\w:-]+).[^>]*>([^<]*)<", r.text, re.I)
+        names = dict(re.findall(r"<ix:nonnumeric[^>]*?name=.in-capmkt:(NameOfTheCompany|ScripCode).[^>]*>([^<]*)<",
+                                r.text, re.I))
+        cost = next((v for n, v in figures if n.endswith(":FinanceCosts")), None)
+        return (f"HTTP {r.status_code}, {len(r.content):,} bytes, {len(figures)} tagged figures; "
+                f"{names.get('NameOfTheCompany')} ({names.get('ScripCode')}), finance costs {cost}")
+
+    step("BSE results file on www.bseindia.com/XBRLFILES (owner's link)", bse_results_file)
 
     lines = ["| check | result | detail | s |", "|---|---|---|---|"]
     lines += [f"| {n} | {s} | {d.replace('|', '/')} | {t:.1f} |" for n, s, d, t in rows]

@@ -970,3 +970,12 @@ def test_a_memory_insight_that_puts_a_figure_under_another_period_is_dropped():
     dropped = misdated_memory_insights(out, view, "Finance cost for the quarter 3.98, a year earlier 1.79")
     assert len(dropped) == 1 and "842 is 2025-08's volumes in memory, not 2025-07's" in dropped[0], dropped
     assert [w.text for w in out.card.why_it_matters] == [t for _, t in points[1:]]
+
+    # One metric's figure equal by chance to another's in another period is no misdating: revenue holds it for Q2FY26
+    view = {"metrics": {"ebitda": ["Q1FY26: 112.5 INR_CR"], "revenue": ["Q2FY26: 112.5 INR_CR"]}}
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q2 results",
+        "card": {"impact_level": "LOW", "headline": "Demo Tubes Q2FY26 revenue steady",
+                 "what_happened": ["Revenue steady"],
+                 "why_it_matters": [{"text": "Revenue of ₹112.5 Cr in Q2FY26 held steady", "basis": "MEMORY"}]}})
+    assert misdated_memory_insights(out, view, "") == []

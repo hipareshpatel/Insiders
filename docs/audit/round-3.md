@@ -54,5 +54,7 @@ Window: filings from 15 July to 18 October 2026, as in round 2. Memory seeded fr
 written down and fixed after the review, so the round measures the code as it stood when it started (commit
 recorded here when the run begins).
 
+Run started 2026-10-18 at commit `ccf98d1` (pipeline code as of 950db92), provider weights unchanged since round 2.
+
 Both marks met -> the backfill decision (PLAN 1c, the owner's; scope options in `round-2.md`). Either missed -> the
 commonest WRONG classes and every MISSED class are the next fixes, and a round 4 on fresh companies.

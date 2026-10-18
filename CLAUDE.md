@@ -110,7 +110,10 @@ Read before changing anything:
      **Re-run done 2026-10-18** (`docs/audit/rerun-held-2026-10-18.md`, F58): held 118 -> 51, published
      333 -> 381, 10 of the 19 card-less quarters now have a card; six wrong duplicate merges found and fixed
      (D20 claim by a meeting notice, a repeat check blind to the attachment). Round 3d (the 51 still held, those
-     six, the 31 annual-report filings) was started 07:22 with today's code; its results go in that note.
+     six, the 31 annual-report filings): **43 held, 400 published** (from 333). What still holds a card:
+     the quote contract on figures from memory or the scale block, and the annual-report path (lakh,
+     standalone vs consolidated) until NSE's annual-report XBRL is read. Also new today: a memory insight
+     naming the wrong period is dropped (card kept); no second opinion for quote wording alone.
   4. **Half done 2026-10-18: ANNUAL_REPORT event type** (F57). Reg 34(1) filings and annual reports filed with
      their AGM notice go to a fast track with an auditor / CARO / related-party / contingent-liability focus,
      3x page budget, a 120 MB download cap; the Reg 36(1)(b) letters are dropped. `retriage --scrips` queues

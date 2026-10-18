@@ -82,7 +82,29 @@ AGM notice and 2 AGM filings whose subject names the report; the two shareholder
 `scripts/rerun.py` now routes a reset filing by today's rules, so the 19 annual reports pass 1 had typed
 RESULTS or not material are read on the new route.
 
-## Round 3d (running)
+## Round 3d (07:22-08:11)
 
-86 filings with today's code: the 51 still held, the 6 wrong duplicates and the 31 annual-report filings.
-Results to follow here.
+86 filings with the code of 40d0aff (the fixes above, before the memory-insight check and the annual-report
+focus change): the 51 still held, the 6 wrong duplicates and the 31 annual-report filings.
+
+| | funnel | first re-run | round 3d |
+|---|---|---|---|
+| cards | 451 | 432 | 443 |
+| held | 118 (26%) | 51 (12%) | 43 (10%) |
+| published | 333 | 381 | **400** |
+
+- The 51 held: 15 now published, 30 still held, 5 duplicates, 1 not material.
+- The 6 wrong duplicates: 4 have their own card again (Ahluwalia's Q3FY25 statement, Prism's rights
+  subscription, Shivam's ₹1.73 Cr GST notice, Heritage's completed acquisition); Ahluwalia's deck is now a
+  duplicate of its own statement, as D22 means; one of Heritage's two completion filings is still taken for the
+  signing, but the other carries the completion.
+- The 31 annual-report filings: 10 published (7 before), 12 held, 8 exact copies of another, 1 not material.
+  The held ones are the annual-report path PLAN 1g named: figures in lakh, pages outside the selection, and
+  standalone and consolidated mixed (Kanoria's "standalone revenue ₹1,536.71 Cr" is the consolidated figure).
+  The focus now asks for the consolidated statements and crore (b2a8cbf, after this round); NSE's annual-report
+  XBRL is the real fix.
+- Still held (43): the quote contract (98 issue lines) and figures not found (21) lead. The commonest left: a
+  key number or a filing-based point that uses a figure from memory or the scale block (Ahluwalia's order as
+  "5.1% of the ₹7,794 Cr order book"), and a price or comparison one sentence away from the quote.
+- Second opinions: 60 for 69 cards, 4 corrected. The ones spent on a quote's wording alone are no longer made
+  (9131ece).

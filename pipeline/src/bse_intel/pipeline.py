@@ -677,7 +677,8 @@ def check_quoted_numbers(out: Pass2Output, text: str,
             precise = gate.stated_precisely(missing, claim, text, unit)   # a sentence, not a key number's row
             if precise:
                 missing = [m for m in missing if m not in precise]
-                siblings += [f"{m} (from elsewhere in the filing)" for m in precise]
+                elsewhere.append(f'{kind} "{label}" also states {", ".join(dict.fromkeys(precise))[:60]}, '
+                                 "from elsewhere in the filing")
         if siblings:
             elsewhere.append(f'{kind} "{label}" also states {", ".join(dict.fromkeys(siblings))[:60]}, '
                              "from another row of the same table")

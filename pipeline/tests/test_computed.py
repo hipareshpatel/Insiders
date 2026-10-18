@@ -142,3 +142,14 @@ def test_adani_a_sentence_left_broken_by_a_removed_figure_is_dropped_or_mended()
     assert [f.text for f in out.card.what_happened] == ["Promoters bought shares"]
     assert computed._repair("Home First Finance approved ₹150 Cr NCD issuance, of net worth") == \
         "Home First Finance approved ₹150 Cr NCD issuance"
+
+
+def test_skf_a_verb_against_its_own_two_levels_becomes_moved():
+    """bc3e32e7: "margin slipped to 15.0% from 13.0% a year ago" - both levels right, the verb backwards."""
+    pool = computed.build_pool("EBITDA margin 15.0% 13.0%")
+    out = _out({"takeaway": "Continuing revenue was flat QoQ, but margin slipped to 15.0% from 13.0% a year ago",
+                "what_happened": ["Operating margin fell to 11.78% from 12.83%"]})
+    notes = computed.enforce(out, pool)
+    assert out.card.takeaway == "Continuing revenue was flat QoQ, but margin moved to 15.0% from 13.0% a year ago"
+    assert out.card.what_happened[0].text == "Operating margin fell to 11.78% from 12.83%"
+    assert any("slipped" in n for n in notes)

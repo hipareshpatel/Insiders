@@ -208,12 +208,51 @@ def _clauses(text: str, pool: Pool) -> tuple[str, list[str]]:
     return "; ".join(p for p in kept if p.strip()), removed
 
 
+# "slipped to 15.0% from 13.0%", "rose from ₹50 Cr to ₹42 Cr": a verb against the two levels it names
+_LEVEL = r"[₹]?\s?(\d[\d,]*(?:\.\d+)?)\s*(%|Cr\b|crore\b)"
+_PAIR = re.compile(r"(?P<verb>" + _UP.pattern + "|" + _DOWN.pattern + r")(?P<mid>[^.;]{0,40}?)\b(?:to\s+" + _LEVEL + r"[^.;]{0,25}?\bfrom\s+" + _LEVEL
+                   + r"|from\s+" + _LEVEL + r"[^.;]{0,25}?\bto\s+" + _LEVEL + r")", re.I)
+
+
+def fix_direction(text: str | None) -> tuple[str | None, list[str]]:
+    """The verb of a move whose two levels say the opposite becomes "moved": the figures are right (code or the
+    filing produced both), the word is not (SKF India's "margin slipped to 15.0% from 13.0%", round-2 re-run)."""
+    if not text:
+        return text, []
+    notes = []
+
+    def one(m: re.Match) -> str:
+        verb = m.group("verb")
+        up, down = _UP.fullmatch(verb), _DOWN.fullmatch(verb)
+        if not (up or down):
+            return m.group(0)
+        g = m.groups()
+        if g[2] is not None:  # "to X from Y"
+            new, unit_new, old, unit_old = float(g[2].replace(",", "")), g[3], float(g[4].replace(",", "")), g[5]
+        else:                 # "from Y to X"
+            old, unit_old, new, unit_new = float(g[6].replace(",", "")), g[7], float(g[8].replace(",", "")), g[9]
+        if unit_new.lower()[:2] != unit_old.lower()[:2] or new == old or bool(up) == (new > old):
+            return m.group(0)
+        notes.append(f"'{verb}' for a move from {old:g} to {new:g}")
+        return "moved" + m.group(0)[len(verb):]
+
+    return _PAIR.sub(one, text), notes
+
+
 def enforce(out, pool: Pool) -> list[str]:
     """Remove from the card every computed figure code did not produce. Returns what was removed."""
     card = out.card
     if card is None:
         return []
     notes: list[str] = []
+    for name in ("headline", "takeaway", "core_catalyst"):
+        setattr(card, name, (lambda r: (notes.extend(r[1]), r[0])[1])(fix_direction(getattr(card, name, None))))
+    for item in [*card.what_happened, *card.why_it_matters]:
+        if getattr(item, "text", None):
+            item.text, moved = fix_direction(item.text)
+            notes += moved
+    out.timeline_entry, moved = fix_direction(out.timeline_entry)
+    notes += moved
     for name in ("headline", "takeaway", "core_catalyst"):
         value = getattr(card, name, None)
         if isinstance(value, str) and value:

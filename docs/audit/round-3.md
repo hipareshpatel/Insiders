@@ -66,3 +66,63 @@ requeued by hand. The connection dropped again during that pass, and the local s
 the site was restarted and the same command started a third time at 17:40, code still unchanged (`git diff 958a567
 HEAD -- pipeline/src pipeline/config` empty). At that start: 54 filings analysed, 46 not material, 21 duplicates,
 146 failed below three attempts (retried by the queue), 18 queued; 54 cards, 15 held.
+
+The run ended at 19:07 with one filing failed on its second attempt (a download cut off mid-transfer); the same
+command run again at 19:08 analysed it. **No filing ended failed and none was requeued by hand.** Settled: 128 cards
+(37 held, 29%), 104 not material, 53 duplicates; 143 more were dropped by rule at discovery.
+
+## Results (reviewed 2026-10-18)
+
+Sample drawn after the run (`sample_cards.py`, seed 20261019): 80 published cards from 13 companies (Goodyear had
+none published) and 10 held cards, exported blind with memory into 9 folders, plus 50 set-aside filings for missed
+news (`recall_export.py`). **Reviewed by the author of the pipeline's fixes, not blind and not by independent
+reviewers** (owner: no agents), with `REVIEWER_PROMPT_ROUND2.md`'s rules, every figure checked against the filing text.
+Findings: `round-3.json` (cards), `round-3/missed-news.json`, manifests in `round-3/`.
+
+| | round 2 | round 2 re-run (F64) | **round 3** | mark |
+|---|---|---|---|---|
+| published cards WRONG | 29 / 80 (36%) | 13 / 70 (19%) | **10 / 80 (12.5%)** | ≤ 15% |
+| held cards WRONG | 6 / 10 | 3 / 10 | 4 / 10 | none |
+| missed news | 1 MISSED, 3 UNSURE / 50 | - | **1 MISSED, 2 UNSURE / 50** | ≤ 2 MISSED |
+| memory points wrong | 37 cards | 11 cards | 8 / 90 cards | apart |
+| impact level misfit | - | - | 10 / 90 (all too high) | none |
+
+**Both marks are met.** All 90 cards: OK 56, MINOR 20, WRONG 14.
+
+How close it is. The accuracy mark holds with two calls to spare: five published cards were judged MINOR on a
+point a stricter reader could call WRONG - Andhra Petrochemicals' restart card ties FY26 revenue to an outage that
+began two weeks before the year ended (the annual-report card with the same claim as its core catalyst was judged
+WRONG), Balu Forge "first private Indian entity" where the release says "one of the first", HDFC Life's Q2 takeaway
+crediting a lower expense ratio that was lower only QoQ, the OFS headline giving the 3% base without the 3% green
+shoe, and a voting card with its two percentages blanked out. Three of those five as WRONG would be 16%.
+
+The 10 published WRONG, by cause:
+
+| cause | cards | example |
+|---|---|---|
+| a quantity read as a different one | 2 | Bank of Maharashtra: "₹65,000 Cr of advances added" carded as total advances ₹65,000 Cr; Capri: NNPA row labelled GNPA |
+| sign or direction of a table line | 2 | Exxaro: inventory build and drawdown swapped, other expenses "rose" while they fell; HDFC Life: 83% persistency "below" an 80% target |
+| a table read across its columns | 2 | Hindustan Copper: two-column designation table merged; NTPC: Q4 employee cost shown as Q1's |
+| a ratio the model worked out | 1 | Milky Mist: "most of the PAT jump" from a deferred-tax credit that is 17% of it |
+| a figure 100x in memory, then a signal | 1 | Newgen: employee cost ₹1,901 Mn stored as ₹19,010 Cr, so JAWS said +10,373% |
+| event type | 1 | Hindustan Copper: two independent directors carded as ORDER_WIN |
+| an invented cause | 1 | Andhra Petrochemicals: FY26 loss put on a five-month shutdown; the filing blames product prices |
+
+Held WRONG (4, all HDFC Life or NTPC): a GST penalty of ₹2,423 Cr carded as the whole demand (tax ₹942 Cr comes on top),
+new-business strain "narrowed" when it widened, NTPC's 136 GW renewables target carded as total capacity (250 GW), and
+two quantified impacts on the wrong base (one still shown though code marked it MISMATCH).
+
+Also seen, not counted WRONG: an AUDIT_FLAG from one filing repeated on later cards of the same company (3 cards); the
+same "** **" blanked percentages that round 2's re-run found (3 cards; fixed on the post-round branch); memory holding
+standalone quarters beside consolidated years (Capri, LTM), which skews ratios; two cards for one launch (Milky Mist).
+
+Missed news: the one MISSED is LTM's 15 Oct "multi-million-dollar" managed-services deal, which pass 1 called a
+routine corporate action. UNSURE: LTM leading L&T Group's Copilot rollout (no value, promoter group) and Milky Mist's
+postal ballot to pay executive directors above the Section 197 limits (CMD about ₹10 Cr a year).
+
+AI use (from the run logs, all four passes, outage retries included): 532 AI requests for 285 queued filings (1.9 a
+filing, 4.2 per analysed filing), DeepSeek 89 (0.31 a filing), 25 rate-limited answers; about 106 filings an hour over
+2.7 hours of running (round 2: 130 free, 165 with DeepSeek).
+
+Next, in the owner's order: the backfill decision (PLAN 1c) and the DeepSeek weight for speed are the owner's; the
+fixes written after round 2's re-run go in now (branch `fixes-after-round3`), then the causes above.

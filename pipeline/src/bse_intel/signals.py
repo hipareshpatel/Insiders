@@ -27,7 +27,7 @@ import re
 from dataclasses import asdict, dataclass
 from datetime import date
 
-from .dossier import approval_granted, watch_verdict, deal_state, reported_by
+from .dossier import approval_granted, watch_verdict, deal_state, is_recap, reported_by, same_deal
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period
 
@@ -106,6 +106,10 @@ def misfires(signal: dict, output: Pass2Output) -> bool:
         deal_kind = output.card.deal_value.kind if output.card and output.card.deal_value else None
         # a rating action's bank limits are no fundraise (Lehar), and in M&A the company may be the target
         if event in ("DEBT_RATINGS", "M_AND_A", "GOVERNANCE") or (deal_kind == "FUNDRAISE" and event not in ("FUNDRAISE", "RIGHTS_ISSUE")):
+            return True
+        # a recap of orders already on record is no order to size (Magellanic's ₹111.04 Cr "= 62% of revenue")
+        deal = output.card.deal_value if output.card else None
+        if deal is not None and is_recap(deal.kind, deal.counterparty):
             return True
     return False
 
@@ -431,11 +435,23 @@ def _ordinal(n: int) -> str:
 
 def _order_flow(before: dict | None, output: Pass2Output, filing: Filing) -> list[Signal]:
     deal = output.card.deal_value if output.card is not None else None
-    if deal is None or deal.kind != "ORDER":
+    if deal is None or deal.kind != "ORDER" or is_recap(deal.kind, deal.counterparty):
         return []
-    earlier = [(d, deal_state(d, filing.filed_at)) for d in (before or {}).get("deals", []) if d.get("kind") == "ORDER"]
-    earlier = [(d, st) for d, st in earlier if st is not None]
+    earlier, seen = [], []
+    for d in (before or {}).get("deals", []):
+        st = deal_state(d, filing.filed_at) if d.get("kind") == "ORDER" else None
+        if st is None or is_recap(d.get("kind"), d.get("counterparty")):
+            continue
+        # memory written before same_deal() holds a press release's order beside its intimation's
+        if same_deal(seen, "ORDER", d.get("amount_cr"), d.get("counterparty"), d["as_of"], d.get("source_news_id", "")):
+            continue
+        seen.append(d)
+        earlier.append((d, st))
     updated = next(((d, st) for d, st in earlier if d["id"] == deal.updates_deal_id), None) if deal.updates_deal_id else None
+    if updated is None:
+        repeat = same_deal([d for d, _ in earlier], "ORDER", deal.amount_cr, deal.counterparty, filing.filed_at,
+                           filing.news_id)
+        updated = next(((d, st) for d, st in earlier if repeat is not None and d["id"] == repeat["id"]), None)
     if updated is not None:
         d, st = updated
         size = f"{_cr(st['amount_cr'])} " if st.get("amount_cr") else ""

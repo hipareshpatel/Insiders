@@ -122,13 +122,24 @@ def main() -> int:
             if scrip not in dossiers:
                 dossiers[scrip] = sink.get_dossier(scrip) or {}
             view = view_as_of(dossiers[scrip], str(row.get("filed_at"))) if dossiers[scrip] else {}
-            (folder / f"{row['news_id']}.memory.json").write_text(json.dumps(view, ensure_ascii=False, indent=1),
-                                                                  encoding="utf-8")
         keep["_filing"] = {"news_id": row["news_id"], "headline": row.get("headline_filing"), "subject": row.get("subject")}
         (folder / f"{row['news_id']}.card.json").write_text(json.dumps(keep, ensure_ascii=False, indent=1), encoding="utf-8")
         path = cache / row["news_id"][:2] / f"{row['news_id']}.json.gz"
         text = (Document.from_cache(json.loads(gzip.decompress(path.read_bytes()))).select_text(10_000_000, [])
                 if path.exists() else "(no cached text)")
+        if sink is not None:
+            # The proportions code computed for the card's writer (shares of revenue, net worth, market cap), rebuilt
+            # from memory as it stood before the filing. Round 3's reviewers could not see them and counted the ratios
+            # as unsupported memory points (36 cards).
+            from bse_intel.dossier import dossier_as_of  # noqa: E402
+            from bse_intel.grounding import declared_unit  # noqa: E402
+            from bse_intel.signals import scale_block  # noqa: E402
+            before = dossier_as_of(dossiers[scrip], str(row.get("filed_at")), inclusive=False) if dossiers[scrip] else None
+            scale = scale_block(before, sink.company(scrip) or {}, text, declared_unit(text)) if before else ""
+            if scale:
+                view = {**(view or {}), "scale_block (computed by code from memory, shown to the card's writer)": scale}
+            (folder / f"{row['news_id']}.memory.json").write_text(json.dumps(view, ensure_ascii=False, indent=1),
+                                                                  encoding="utf-8")
         (folder / f"{row['news_id']}.pdf.txt").write_text(_xbrl_note(card) + text, encoding="utf-8")
         manifest[row["news_id"]] = {"model": card.get("model"), "scrip_code": str(row.get("scrip_code")),
                                     "event_type": card.get("event_type"), "folder": folder.name,

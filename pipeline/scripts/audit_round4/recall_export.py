@@ -1,4 +1,4 @@
-"""Audit round 4, missed news: a seeded sample of the filings the round-3 companies had set aside, with their text.
+"""Audit round 4, missed news: a seeded sample of the filings the round-4 companies had set aside, with their text.
 
   recall_export.py OUT_DIR [--per-reviewer 10]
 
@@ -14,6 +14,7 @@ import random
 import sqlite3
 
 from bse_intel.bse import BseClient
+from bse_intel.nse import NseClient
 from bse_intel.extract import Document
 from bse_intel.sinks.platform import PlatformSink
 
@@ -60,6 +61,7 @@ for kind in kinds:   # one seeded draw per stratum, so exporting them at differe
 random.Random(f"{SPEC['seed']}-{args.kinds}").shuffle(sample)
 
 bse = BseClient()
+nse = NseClient()   # round 4 is NSE: its attachments are on nsearchives
 cache = pathlib.Path(r"D:\Insiders\data\text_cache")
 out = pathlib.Path(args.out_dir)
 for i, r in enumerate(sample):
@@ -73,7 +75,7 @@ for i, r in enumerate(sample):
         text = Document.from_cache(json.loads(gzip.decompress(path.read_bytes()))).select_text(200_000, [])
     elif r.get("pdf_url"):
         try:
-            pdf = bse.download(r["pdf_url"])
+            pdf = (nse.fetch if "nseindia.com" in r["pdf_url"] else bse.download)(r["pdf_url"])
             text = Document(pdf).select_text(200_000, []) if pdf else ""
         except Exception as exc:
             text = f"(attachment not readable: {type(exc).__name__})"

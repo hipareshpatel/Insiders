@@ -2552,6 +2552,12 @@ class Pipeline:
                     caught = event_catchup.results_catch_up(self, live_deadline)
                     if caught["rerun"] or caught["stopped"]:
                         log.info("results XBRL catch-up: %s", json.dumps(caught))
+                    if time.monotonic() < live_deadline:
+                        from . import governance_memory   # quarterly governance reports into memory, no card
+
+                        synced = governance_memory.sync(self, live_deadline)
+                        if synced["filed"] or synced["stopped"] or synced["errors"]:
+                            log.info("governance memory: %s", json.dumps(synced))
             if mode in ("backfill", "all") and not self._halted(bulk=True):
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
         except SourceBlockedError as exc:

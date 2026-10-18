@@ -457,6 +457,45 @@ def add_timeline_entry(dossier: dict, filing: Filing, event_type: str, entry: st
     return d
 
 
+GOVERNANCE_QUARTERS = 8   # quarterly governance reports kept in memory (two years)
+
+
+def merge_governance(d: dict, entry: dict, as_of: str, source: str) -> bool:
+    """One quarter's governance report (governance_xbrl.GovernanceReport.memory()) into memory: it replaces an
+    earlier file for the same quarter (a revision), and the latest GOVERNANCE_QUARTERS quarters are kept. Returns
+    whether memory changed."""
+    gov = d.setdefault("governance", {"auditor": None, "auditor_history": []})
+    quarters = gov.setdefault("quarters", [])
+    if any(q.get("source") == source for q in quarters):
+        return False
+    row = {**entry, "as_of": as_of, "source": source}
+    quarters = [q for q in quarters if q.get("quarter_end") != entry.get("quarter_end")] + [row]
+    gov["quarters"] = sorted(quarters, key=lambda q: str(q.get("quarter_end") or ""))[-GOVERNANCE_QUARTERS:]
+    return True
+
+
+def governance_view(quarters: list[dict]) -> dict | None:
+    """The latest governance quarter known, as the model sees it: the board's size and independence, what the
+    company itself flagged as not in terms of SEBI's rules, fines, money lent or guaranteed to insiders, and who
+    joined or left the board since the quarter before."""
+    if not quarters:
+        return None
+    last = quarters[-1]
+    view = {"quarter_end": last.get("quarter_end"), "board_size": last.get("board_size"),
+            "independent_directors": last.get("independent_directors"),
+            "chair_related_to_md": last.get("chair_related_to_md") or None,
+            "exceptions": last.get("exceptions") or None,
+            "tax_litigation_open": len(last.get("tax_litigation") or []) or None}
+    if len(quarters) > 1:
+        before = {b["name"].lower() for b in quarters[-2].get("board") or [] if not b.get("ceased")}
+        now = {b["name"].lower(): b["name"] for b in last.get("board") or [] if not b.get("ceased")}
+        joined = [now[n] for n in now if n not in before]
+        left = [b["name"] for b in quarters[-2].get("board") or [] if not b.get("ceased") and b["name"].lower() not in now]
+        if joined or left:
+            view["board_changes"] = {"joined": joined or None, "left": left or None}
+    return {k: v for k, v in view.items() if v is not None}
+
+
 def forget_filing(dossier: dict, news_id: str) -> bool:
     """Take out everything one filing put in memory; True when there was something. For a filing that, read
     again, turns out not material or a duplicate: what its earlier analysis stored would otherwise stay for
@@ -842,6 +881,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
     ownership = [{k: v for k, v in o.items() if k not in ("as_of", "source_news_id")}
                  for o in dossier.get("ownership", []) if before(o)][-2:]
     auditors = [a for a in (dossier.get("governance") or {}).get("auditor_history", []) if before(a)]
+    governance = governance_view([q for q in (dossier.get("governance") or {}).get("quarters", []) if before(q)])
     predictions = [{"id": p["id"], "kpi": p["kpi"], "metric": p["metric"], "period": p["period"], "target": f"{p['comparison']} {p['value']:g}"}
                    for p in dossier.get("predictions", []) if p.get("created_on", "") < cutoff
                    and (p["status"] == "OPEN" or (p.get("resolved_on") or "") >= cutoff)]
@@ -863,6 +903,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
             "entities": entities[-8:],
             "ownership": ownership,
             "auditor": {k: v for k, v in auditors[-1].items() if k not in ("as_of", "source_news_id")} if auditors else None,
+            "governance": governance,
             "predictions": predictions[-guidance_n:],
             "calibration": (calibration(dossier, cutoff) or {}).get("rule"),  # Loop 2: how its targets turn out
         }
@@ -901,7 +942,8 @@ def dossier_as_of(dossier: dict | None, cutoff: str, inclusive: bool = True) -> 
     d["ownership"] = [o for o in dossier.get("ownership", []) if ok(o.get("as_of"))]
     gov = dossier.get("governance") or {}
     history = [a for a in gov.get("auditor_history", []) if ok(a.get("as_of"))]
-    d["governance"] = {"auditor": history[-1] if history else None, "auditor_history": history}
+    d["governance"] = {"auditor": history[-1] if history else None, "auditor_history": history,
+                       "quarters": [q for q in gov.get("quarters", []) if ok(q.get("as_of"))]}
     d["predictions"] = [
         p if ok(p.get("resolved_on")) else {k: v for k, v in p.items() if k not in ("resolved_by", "resolved_on", "actual")} | {"status": "OPEN"}
         for p in dossier.get("predictions", []) if ok(p.get("created_on"))]

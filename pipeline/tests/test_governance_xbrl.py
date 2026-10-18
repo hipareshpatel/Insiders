@@ -64,3 +64,66 @@ def test_memory_keeps_the_board_and_no_personal_identifiers():
     assert all(set(d) == {"name", "category", "role", "appointed", "ceased", "cessation_reason", "tenure_months"} for d in m["board"])
     assert m["exceptions"][0] == "board composition not in terms of SEBI's rules"
     assert g.parse(b"<not xml") is None and g.parse(b"") is None
+
+
+def test_memory_keeps_quarters_a_revision_replaces_its_quarter_and_the_view_is_dated():
+    from bse_intel.dossier import governance_view, merge_governance, view_as_of
+
+    d = {"company_name": "Chennai Petroleum", "governance": {"auditor": None, "auditor_history": []}}
+    q2 = _report("chennpetro").memory()
+    q1 = dict(q2, quarter_end="2026-06-30", exceptions=[], board=q2["board"][1:] + [
+        {"name": "Former Director", "category": "Non-Executive - Independent Director", "role": None, "appointed": None,
+         "ceased": None, "cessation_reason": None, "tenure_months": None}])
+    assert merge_governance(d, q1, "2026-07-20T18:00:00+05:30", "https://x/q1.xml")
+    assert merge_governance(d, q2, "2026-10-17T18:00:00+05:30", "https://x/q2.xml")
+    assert not merge_governance(d, q2, "2026-10-17T18:00:00+05:30", "https://x/q2.xml")       # the same file twice
+    assert merge_governance(d, q2, "2026-10-18T09:00:00+05:30", "https://x/q2-revised.xml")   # a revision replaces it
+    assert [q["source"] for q in d["governance"]["quarters"]] == ["https://x/q1.xml", "https://x/q2-revised.xml"]
+    view = governance_view(d["governance"]["quarters"])
+    assert view["board_size"] == 11 and view["independent_directors"] == 1
+    assert view["exceptions"][0] == "board composition not in terms of SEBI's rules"
+    assert view["board_changes"] == {"joined": ["Arvinder Singh Sahney"], "left": ["Former Director"]}
+    # A card filed in August sees the June quarter only, which was clean
+    august = view_as_of(d, "2026-08-10T10:00:00+05:30")
+    assert august["governance"]["quarter_end"] == "2026-06-30" and "exceptions" not in august["governance"]
+    assert view_as_of(d, "2026-10-19T10:00:00+05:30")["governance"]["quarter_end"] == "2026-09-30"
+
+
+class GovNse:
+    def __init__(self, rows, files):
+        self.rows, self.files, self.downloads = rows, files, []
+
+    def integrated_list(self, kind, page=1, size=500):
+        assert kind == "Integrated Filing- Governance"
+        return self.rows if page == 1 else []
+
+    def download(self, url, max_bytes=None):
+        self.downloads.append(url)
+        return self.files.get(url)
+
+
+def test_sync_files_the_universe_companies_reports_once(settings):
+    import json
+    import time
+    from types import SimpleNamespace
+
+    from bse_intel import governance_memory, universe
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    sink.put_object(universe.UNIVERSE_KEY, json.dumps({"source": "nse", "included": ["500110"],
+                                                       "symbols": {"CHENNPETRO": "500110", "TINY": "500999"}, "isins": {}}).encode())
+    url_old, url_new = "https://x/INTEGRATED_FILING_GOVERNANCE_1.xml", "https://x/INTEGRATED_FILING_GOVERNANCE_2.xml"
+    rows = [{"symbol": "CHENNPETRO", "qe_Date": "30-SEP-2026", "xbrl": url_new, "type_Sub": "Revision",
+             "revised_Date": "18-OCT-2026 21:27:17", "broadcast_Date": None, "smName": "Chennai Petroleum"},
+            {"symbol": "CHENNPETRO", "qe_Date": "30-SEP-2026", "xbrl": url_old, "type_Sub": "New",
+             "broadcast_Date": "17-Oct-2026 18:00:00"},
+            {"symbol": "TINY", "qe_Date": "30-SEP-2026", "xbrl": "https://x/tiny.xml", "broadcast_Date": "17-Oct-2026 18:00:00"}]
+    body = (FIX / "nse_gov_chennpetro_q2fy27.xml").read_bytes()
+    pipe = SimpleNamespace(nse=GovNse(rows, {url_new: body}), sink=sink, _nse_refused=False)
+    first = governance_memory.sync(pipe, time.monotonic() + 60)
+    assert first["filed"] == 1 and first["in_universe"] == 1 and pipe.nse.downloads == [url_new]   # the revision only
+    quarters = sink.get_dossier("500110")["governance"]["quarters"]
+    assert quarters[0]["as_of"] == "2026-10-18T21:27:17+05:30" and quarters[0]["source"] == url_new
+    again = governance_memory.sync(pipe, time.monotonic() + 60)
+    assert again["filed"] == 0 and again["known"] == 1 and pipe.nse.downloads == [url_new]

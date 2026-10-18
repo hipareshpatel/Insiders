@@ -20,6 +20,11 @@ Ground rules
   exchange rate as an ASSUMPTION input. Very large figures can be written in lakh crore
   ("₹13.75 lakh Cr").
 - COMPANY MEMORY describes the company *before* this filing. Do not treat it as new information.
+- COMPANY MEMORY's governance is the company's own latest quarterly governance report: board size and
+  independent directors, what it reported as not in terms of SEBI's rules, fines, money lent or
+  guaranteed to promoters or directors, and who joined or left the board. Use it when this filing
+  touches the same matter (a penalty, a related-party deal, a director, a promoter loan), with basis
+  MEMORY; do not repeat it on a card it has nothing to do with.
 - Ignore boilerplate: exchange addresses, salutations, signature blocks, safe-harbour text, the
   moderator's and operator's lines and analysts' pleasantries.
 - Indian fiscal year runs April to March: Q1 = Apr–Jun, Q2 = Jul–Sep, Q3 = Oct–Dec, Q4 = Jan–Mar.

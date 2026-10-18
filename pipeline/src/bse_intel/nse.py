@@ -478,6 +478,13 @@ class NseClient:
                 out.append(filing)
         return out
 
+    def integrated_list(self, kind: str, page: int = 1, size: int = 500) -> list[dict]:
+        """One page of NSE's all-company integrated-filing list ("Integrated Filing- Financials" or "...- Governance"),
+        newest first, as NSE's rows (measured 2026-10-18: up to 1,000 rows a page honoured)."""
+        data = self._get(INTEGRATED_ENDPOINT, {"type": kind, "page": page, "size": size}).json()
+        rows = data.get("data") if isinstance(data, dict) else data
+        return rows if isinstance(rows, list) else []
+
     def event_xbrl(self, kind: str, day_from: date, day_to: date | None = None, symbol: str | None = None) -> list:
         """NSE's event XBRL files of one type ("announcements", "para-b", "action") broadcast between the two dates
         (event_xbrl.py). One answer for the range, as the "Announcements XBRL" tab asks for it."""

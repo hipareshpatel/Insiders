@@ -68,7 +68,7 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 | `python -m bse_intel backfill-companies --scrips 506525,532776,505192,500672,530019` | Smoke test: discover and analyse given companies since `BACKFILL_START` |
 | `python -m bse_intel sync-to-cloud [--source http://localhost:5173]` | Copy the laptop's local data to Cloudflare (resumable, stops at the D1 daily write budget) |
 | `python -m bse_intel seed-memory --scrips A,B [--since 2023-01-01]` | Financial and ownership history from XBRL, no AI call: results from BSE's results archive, shareholding from NSE (decision D23) |
-| `python -m bse_intel sync-universe` | NSE's main-board equity list joined to the company master by ISIN: the companies analysed (market cap ≥ `UNIVERSE_MIN_MCAP_CR`, ₹100 Cr; unpriced and watchlisted ones stay in) and the maps NSE discovery uses. Needed before NSE discovery; `market-data` and `sync-companies` rebuild it too. 2,232 companies on 2026-10-18 |
+| `python -m bse_intel sync-universe` | NSE's main-board equity list joined to the company master by ISIN: the companies analysed (market cap ≥ `UNIVERSE_MIN_MCAP_CR`, ₹500 Cr; unpriced and watchlisted ones stay in) and the maps NSE discovery uses. Needed before NSE discovery; `market-data` and `sync-companies` rebuild it too. 1,778 companies on 2026-10-19 at ₹500 Cr |
 | `python -m bse_intel sync-companies [--max-lookups N] [--refresh-industry]` | BSE's active equity list, then each company's industry from its quote header (once per company; → sector lens) and size label, then the universe file |
 | `python -m bse_intel market-data [--all]` | Prices, returns, liquidity, market caps (`pip install -e ".[market]"`); `--all` for every company; reports companies Yahoo has no price for |
 | `python -m bse_intel price-history [--scrips ...]` | Daily prices for point-in-time card footers (laptop, before the history fill) |
@@ -100,7 +100,7 @@ below (keys from the keys file, 5 workers) and logs to `data\logs`.
    Run `python -m bse_intel models` and replace any model it flags as missing in `config/providers.toml`
    (free-tier catalogues change often). The Cloudflare Workers AI target needs `npx wrangler login` in
    `web/` first, because the local Worker calls Workers AI remotely; without it that target is skipped.
-3. `python -m bse_intel sync-companies && python -m bse_intel market-data --all` (industries, market caps, universe ≥ ₹100 Cr).
+3. `python -m bse_intel sync-companies && python -m bse_intel market-data --all` (industries, market caps, universe ≥ ₹500 Cr).
 4. `python -m bse_intel price-history` (daily prices since a year before `BACKFILL_START`, stored in
    `data/prices`), so each history card gets the price, market cap and returns of its own date.
 5. Smoke test: `python -m bse_intel backfill-companies --scrips 506525,532776,505192,500672,530019`,

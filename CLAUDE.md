@@ -149,7 +149,7 @@ Read before changing anything:
      **Round 2 re-run (F64): 13 of 70 WRONG (19%). Round 3 (F65, `docs/audit/round-3.md`), 14 more new companies on
      the F60-F63 code: **passed on the independent blind agent review** (owner decision 1-A): 10 of 80 published
      WRONG (12.5%), 2 MISSED of 50; the author's own review gave the same 10 and 1 MISSED. Next (owner, 2026-10-18):
-     the NSE pipeline, online-only, companies >= ₹100 Cr, then its own measured round, then the 6-month backfill.
+     the NSE pipeline, online-only, companies >= ₹500 Cr (owner, 2026-10-19; was ₹100 Cr), then its own measured round, then the 6-month backfill.
      Audit rounds are reviewed by independent blind agents, one per folder; the fix author does not review.
      **NSE parts 1-3 built (F67, F68):** universe, discovery, event XBRL (joined by the same file, else by content). No cards for director/KMP changes (D30). **Go-live needs 95% of published cards right** (owner, 2026-10-18); once the pipeline works, the focus is card output and contextual memory.
   6. Raise the paid weight and drain the 160 queued filings; PLAN 1h.

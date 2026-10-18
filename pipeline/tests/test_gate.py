@@ -448,3 +448,50 @@ def test_a_hold_is_kept_on_the_card_when_a_second_opinion_ran(settings):
     review = outcome.card["card"]["review"]
     assert review["status"] in ("UNRESOLVED", "CORRECTED") and len(fake.calls) == 2
     assert review["held"] == ["Held after review: EBITDA is PBT in the source table"]
+
+
+def test_a_quote_is_read_as_printed_rounded_truncated_or_in_its_own_currency():
+    """Right cards held in the re-run of the held cards (2026-10-18), and the misreadings that must still fail."""
+    # a presentation rounds what the XBRL file states exactly (Jubilant's tagged ₹2,122.50 Cr)
+    assert gate.numbers_in_quote("Revenue: ₹2,122.50 Cr +17% YoY", "Revenue 1,822 1,966 2,123 17% 5,306 5,990 13%") == []
+    assert gate.numbers_in_quote("₹23.4 Cr", "Revenue from operations 23 2,83,791.74", 100) == ["23.4"], "a note number is no rounding"
+    # a card cuts at its last digit: "₹554 Cr" of ₹554.65 Cr, "₹79 Cr" of 796 million
+    assert gate.numbers_in_quote("The block is worth ₹554 Cr", "aggregate consideration of Rs. 554.65 crore") == []
+    assert gate.numbers_in_quote("Dividend payout of ₹79 Cr", "a dividend amounting to 796 million") == []
+    assert gate.numbers_in_quote("The block is worth ₹553 Cr", "aggregate consideration of Rs. 554.65 crore") == ["553"]
+    assert gate.numbers_in_quote("₹458 Cr", "Revenue 457.86 million") == ["458"], "the ten-times misreading still fails"
+    # OCR's decimal comma, a press release's spaced thousands, and an amount in euros
+    assert gate.numbers_in_quote("Contract Work carried ₹950 Cr", "a) Contract Work 95028,10 100816.13", 100) == []
+    assert gate.numbers_in_quote("debt free with ₹188.6 Cr cash", "cash and cash equivalents of INR 1 885.6 million") == []
+    assert gate.numbers_in_quote("Cryptas has EUR 9.7 million revenue", "out of EUR 9.7 trust will be around EUR 1.8") == []
+
+
+def test_a_quote_is_read_in_the_unit_its_own_page_declares():
+    """An annual report or a deck declares several units, so the document as a whole has none, while the page a
+    quote comes from does: SML's FY26 revenue "2,83,791.74" under "(₹ in lakhs)", Heritage's EBITDA "739" under
+    "(Rs. In Mn.)" (2026-10-18)."""
+    text = ("--- Page 3 of 9 ---\nStandalone statement (₹ in lakhs)\nRevenue from operations 23 2,83,791.74 2,39,899.28\n"
+            "--- Page 4 of 9 ---\nNotes (₹ in crore)\nContingent liabilities 12.5\n"
+            "--- Page 5 of 9 ---\nQ1 FY26 Performance (Rs. In Mn.)\nEBITDA 739 836 (21)%")
+    revenue = "Revenue from operations 23 2,83,791.74 2,39,899.28"
+    assert gate.quote_unit(revenue, text, None) == 100
+    assert gate.numbers_in_quote("FY26 revenue was ₹2,838 Cr", revenue, gate.quote_unit(revenue, text, None)) == []
+    assert gate.numbers_in_quote("FY26 revenue was ₹2,838 Cr", revenue, None) == ["2,838"], "without it, held"
+    assert gate.quote_unit("EBITDA 739 836 (21)%", text, None) == 10
+    assert gate.numbers_in_quote("EBITDA fell 21% to ₹73.9 Cr", "EBITDA 739 836 (21)%", 10) == []
+    assert gate.quote_unit("Contingent liabilities 12.5", text, 100) == 1
+    assert gate.quote_unit("a sentence not in the text at all", text, 100) == 100
+
+
+def test_a_figure_a_fact_compares_with_may_come_from_memory():
+    """"5.1% of the ₹7,794 Cr order book" quoting Ahluwalia's order letter, "₹19.88 Cr vs -₹0.44 Cr YoY" quoting the
+    XBRL line: the comparison is the company's known figure, in memory or the scale block. A figure the fact does
+    not mark as its comparison stays its quote's to carry, since a wrong period's figure is in memory too."""
+    memory = '{"metrics": {"ebitda": ["Q3FY25: -0.44 INR_CR", "Q2FY26: 845.89 INR_CR"]}}\n- order book ₹7,794 Cr (Sep-2025)'
+    assert gate.compared_figures(["7,794"], "Share of order book: 5.1% of ₹7,794 Cr", memory, "") == ["7,794"]
+    assert gate.compared_figures(["0.44"], "EBITDA: ₹19.88 Cr vs -₹0.44 Cr YoY", memory, "") == ["0.44"]
+    assert gate.compared_figures(["845.89"], "Revenue of ₹845.89 Cr in Q3FY26", memory, "") == []
+    assert gate.compared_figures(["7,795"], "5.1% of ₹7,795 Cr", memory, "") == [], "not memory's figure"
+    # or the filing states it to two decimals: Shivam's loss "narrowed from ₹50.19 Cr"
+    assert gate.compared_figures(["50.19"], "PAT: -₹48.04 Cr loss narrowed from ₹50.19 Cr", "",
+                                 "a loss of Rs. 5,019.20 lakhs in the previous year", 100) == ["50.19"]

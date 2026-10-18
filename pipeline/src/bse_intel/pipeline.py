@@ -59,6 +59,8 @@ from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
+from . import annual_xbrl
+from . import nse as nse_api
 from . import xbrl as xbrl_fast_path
 from .learning import LESSONS_KEEP, LESSONS_KEY
 from .quality import asset_turn_signals, warrant_deadlines
@@ -373,6 +375,9 @@ _KEY_METRIC = (("ebitda", re.compile(r"\bebitda\b(?!.*margin)", re.I)),
 
 
 _LABEL_PERIOD = re.compile(r"\b(9M|H[12]|Q[1-4]|FY)\s*(?:FY)?\s*(\d{4}|\d{2})?\b", re.I)
+# A figure the company defines for itself, which no XBRL fact is: left as the model read it
+_QUALIFIED_LABEL = re.compile(r"\b(?:normali[sz]ed|adjusted|underlying|core|recurring|pro[- ]?forma|"
+                              r"excluding|ex[- ]exceptional|before exceptional|cash)\b", re.I)
 
 
 def _label_period(label: str, default: str, available: dict) -> str | None:
@@ -425,6 +430,8 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
         if "margin" in (key.label or "").lower() or "%" in (key.value or ""):
             continue
         metric = next((name for name, pattern in _KEY_METRIC if pattern.search(key.label or "")), None)
+        if metric and _QUALIFIED_LABEL.search(key.label or ""):
+            continue  # "Normalised PAT" is not the file's PAT: Jubilant's ₹86 Cr became the reported ₹55.80 Cr
         # The label usually names its own period ("FY25 revenue", "Q4 EBITDA") and it is often not the
         # quarter the file was filed for: a results file for Q4 also carries the full year. Overwriting
         # by metric alone put the quarter's figure under the year's label - SML's FY25 revenue went from
@@ -467,6 +474,11 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
         if (key.value, key.change) != (value, change):
             changed.append(f"{key.label}: {key.value} ({key.change}) -> {value} ({change})")
             key.value, key.change = value, change
+            # and its quote is the file's line: the press release's "Revenue for the quarter was INR 1,749.5
+            # million" held eMudhra's tagged ₹172.88 Cr as stating a figure its own quote does not (2026-10-18)
+            line = next((l[2:] for l in table.splitlines() if l.startswith(f"- {m.metric} {m.period}: ")), None)
+            if line:
+                key.quote = line
     if changed:
         log.info("key numbers set from XBRL: %s", changed)
     if unverified:
@@ -699,8 +711,8 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
     return event_type
 
 
-def check_quotes(out: Pass2Output, text: str, news_id: str = "",
-                 unit: int | None = None, reading: str = "") -> tuple[list[str], list[str], list[str], list[str]]:
+def check_quotes(out: Pass2Output, text: str, news_id: str = "", unit: int | None = None, reading: str = "",
+                 memory: str = "") -> tuple[list[str], list[str], list[str], list[str]]:
     """Every what_happened fact carries the filing's own sentence, checked in code.
 
     A fact whose quote is not in the filing is dropped **only when its figures are not in the filing
@@ -744,15 +756,20 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
                 else:
                     dropped.append(f'"{label}" (neither its quote nor its figures are in the filing)')
                 continue
-        missing = gate.numbers_in_quote(fact.text.replace("**", ""), quote, unit)
-        missing, siblings = gate.figures_in_same_block(missing, quote, text, unit, fact.text.replace("**", ""))
+        claim = fact.text.replace("**", "")
+        missing = gate.numbers_in_quote(claim, quote, gate.quote_unit(quote, text, unit))
+        missing, siblings = gate.figures_in_same_block(missing, quote, text, unit, claim)
         if siblings:
             paraphrased.append(f'"{label}" also states {", ".join(siblings[:4])}, from another row of '
                                "the same table")
-        precise = gate.stated_precisely(missing, fact.text.replace("**", ""), text, unit)
+        precise = gate.stated_precisely(missing, claim, text, unit)
         if precise:
             missing = [m for m in missing if m not in precise]
             paraphrased.append(f'"{label}" also states {", ".join(precise[:4])}, from elsewhere in the filing')
+        compared = gate.compared_figures(missing, claim, memory, text, unit)
+        if compared:
+            missing = [m for m in missing if m not in compared]
+            paraphrased.append(f'"{label}" compares with {", ".join(compared[:4])}, from memory or the filing')
         if missing:
             problems.append(f'"{label}" states {", ".join(missing[:4])}, which its own quote does not')
         kept.append(fact)
@@ -766,8 +783,8 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
     return problems + [f"dropped: {d}" for d in dropped], missing_quote, dropped, paraphrased
 
 
-def check_quoted_numbers(out: Pass2Output, text: str,
-                         unit: int | None = None, reading: str = "") -> tuple[list[str], list[str], list[str]]:
+def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None, reading: str = "",
+                         memory: str = "") -> tuple[list[str], list[str], list[str]]:
     """Each figure on a card checked against the sentence that card says it came from.
 
     `what_happened` has carried a quote since D23 and is checked this way already. The fields that state
@@ -803,7 +820,7 @@ def check_quoted_numbers(out: Pass2Output, text: str,
         # the ten-times misreading does not, and a period label or a day of the month is not a figure.
         # These three fields had their own copy of the rule and it had fallen behind: on 2026-10-17 it
         # was reporting figures that were right thirteen times in twenty filings.
-        missing = gate.numbers_in_quote(claim, quote, unit)
+        missing = gate.numbers_in_quote(claim, quote, gate.quote_unit(quote, text, unit))
         siblings: list[str] = []
         if siblings_count:
             missing, siblings = gate.figures_in_same_block(missing, quote, text, unit, claim)
@@ -812,6 +829,13 @@ def check_quoted_numbers(out: Pass2Output, text: str,
                 missing = [m for m in missing if m not in precise]
                 elsewhere.append(f'{kind} "{label}" also states {", ".join(dict.fromkeys(precise))[:60]}, '
                                  "from elsewhere in the filing")
+        # A figure it sets its own against - the order book, last year's loss - is the company's known figure,
+        # for a key number as for a sentence: its own figure is still the one its row must carry.
+        compared = gate.compared_figures(missing, claim, memory, text, unit)
+        if compared:
+            missing = [m for m in missing if m not in compared]
+            elsewhere.append(f'{kind} "{label}" compares with {", ".join(dict.fromkeys(compared))[:60]}, '
+                             "from memory or the filing")
         if siblings:
             elsewhere.append(f'{kind} "{label}" also states {", ".join(dict.fromkeys(siblings))[:60]}, '
                              "from another row of the same table")
@@ -941,6 +965,7 @@ class Pipeline:
         prompts: PromptEngine | None = None,
         rules: RuleBook | None = None,
         sleep=time.sleep,
+        nse: "nse_api.NseClient | None" = None,
     ):
         self.settings = settings
         self.sink = sink
@@ -949,6 +974,12 @@ class Pipeline:
         self.gateway = gateway
         self.bse = bse or BseClient()
         raw.attach(self.bse, sink, "bse", settings)
+        # Only annual reports call it (annual_xbrl); None reads them from the PDF alone, as tests do.
+        self.nse = nse
+        if nse is not None:
+            raw.attach(nse, sink, "nse", settings)
+        self._annual_lists: dict[str, list] = {}   # symbol -> NSE's annual-report XBRL list, read once a run
+        self._nse_refused = False                  # NSE refused the address: no more calls this run
         self.prompts = prompts or PromptEngine(settings)
         self.rules = rules or RuleBook.from_config(settings.load_toml("taxonomy.toml"))
         self.stats = Stats()
@@ -1576,8 +1607,8 @@ class Pipeline:
         if earlier:
             xbrl_fast_path.add_comparatives(tagged, *earlier)
 
-    def _xbrl_file(self, url: str) -> bytes | None:
-        """An XBRL file by URL, cached under the text cache's xbrl folder."""
+    def _xbrl_file(self, url: str, client=None, max_bytes: int = 8_000_000) -> bytes | None:
+        """An XBRL file by URL, cached under the text cache's xbrl folder (as seed.py keeps NSE's)."""
         root = self.settings.text_cache_dir
         path = root / "xbrl" / (hashlib.sha1(url.encode()).hexdigest()[:20] + ".xml.gz") if root else None
         if path and path.exists():
@@ -1586,7 +1617,7 @@ class Pipeline:
             except OSError:
                 pass
         try:
-            data = self.bse.download(url, max_bytes=8_000_000)
+            data = (client or self.bse).download(url, max_bytes=max_bytes)
         except AttachmentError:
             return None
         if data and path:
@@ -1596,6 +1627,43 @@ class Pipeline:
             except OSError:
                 pass
         return data
+
+    def _annual_report_xbrl(self, filing: Filing, company: dict, doc: Document) -> list[annual_xbrl.AnnualReport]:
+        """The annual report's own XBRL from NSE (annual_xbrl), for the year the report closes: consolidated first,
+        then standalone. Empty - the report read from its PDF alone, as before - when the company is not on NSE,
+        has not filed the year's file yet, or the file's figures are not in the PDF at any unit."""
+        symbol = (company.get("symbol") or filing.symbol or "").strip().upper()
+        if self.nse is None or not symbol:
+            return []
+        with self._lock:
+            listing, refused = self._annual_lists.get(symbol), self._nse_refused
+        if refused:
+            return []
+        try:
+            if listing is None:
+                listing = self.nse.annual_reports(symbol)
+                with self._lock:
+                    self._annual_lists[symbol] = listing
+            year = annual_xbrl.report_year(filing.headline, filing.subject, filing.filed_at)
+            reports = []
+            for row in annual_xbrl.pick(listing, year):
+                data = self._xbrl_file(row.xbrl_url, self.nse, max_bytes=nse_api.ANNUAL_REPORT_MAX_BYTES)
+                parsed = annual_xbrl.parse(data) if data else None
+                if parsed and parsed.period_end.year == year and parsed.period_end.isoformat() < filing.filed_at[:10]:
+                    reports.append(parsed)
+        except nse_api.SourceBlockedError as exc:
+            log.error("NSE refused the session; annual reports are read from their PDF for the rest of this run: %s", exc)
+            with self._lock:
+                self._nse_refused = True
+            return []
+        except Exception as exc:  # the XBRL is an extra: the PDF still carries the report
+            log.warning("annual-report XBRL for %s unavailable (%s: %s); using the PDF", filing.news_id, type(exc).__name__, exc)
+            return []
+        if reports and not annual_xbrl.confirm(reports[0], doc.layer_text()):
+            log.warning("annual-report XBRL for %s (%s %s): its figures are not in the PDF at any unit; using the PDF only",
+                        filing.news_id, symbol, reports[0].fy)
+            return []
+        return reports
 
     def _xbrl(self, filing: Filing, strict: bool = False) -> "xbrl_fast_path.XbrlResult | None":
         """The filing's XBRL figures (cached beside the text cache). A download problem fails only a
@@ -1771,6 +1839,12 @@ class Pipeline:
             xbrl_fast_path.fix_scale(tagged, history, filing.news_id)
             self._xbrl_comparatives(filing, tagged, history)
             text = tagged.table() + "\n\n" + text  # exact figures first; they also ground the card
+        # An annual report's statements as the company tagged them, in crore and on a named basis, where the PDF
+        # prints lakh or million with standalone and consolidated side by side (12 of 31 cards held, round 3d).
+        # Its lines are the filing's own figures, so a card may quote them as it quotes the results table.
+        annual = self._annual_report_xbrl(filing, company, doc) if event_type == "ANNUAL_REPORT" else []
+        if annual:
+            text = annual_xbrl.table(annual) + "\n\n" + text
         sector_module = self.prompts.sector_for(industry)
         sector = sector_module.name
         peers = self._peers(sector, event_type, filing)
@@ -1833,13 +1907,14 @@ class Pipeline:
                 # 68 results cards had no XBRL behind them. Reported for the second provider to fix, with
                 # the exact gap; never corrected here, since a sum cannot say which line is wrong.
                 found.scale += gate.statement_footing(candidate.dossier_delta.financial_metrics)
+            known = f"{sources[3]}\n{scale}"   # memory and the scale block: the figures a fact may compare with
             quote_problems, missing, dropped, paraphrased = check_quotes(
-                candidate, text, filing.news_id, declared_unit(filed_text), blocks)
+                candidate, text, filing.news_id, declared_unit(filed_text), blocks, known)
             found.quotes += quote_problems
             found.quote_style += paraphrased
             # The headline numbers answer to their own sentence too, not to the whole filing.
             number_problems, unquoted, elsewhere = check_quoted_numbers(
-                candidate, text, declared_unit(filed_text), blocks)
+                candidate, text, declared_unit(filed_text), blocks, known)
             found.quotes += number_problems
             found.quote_style += elsewhere
             return found, units, changes, missing + unquoted, dropped
@@ -1929,6 +2004,9 @@ class Pipeline:
         card_json["model_impact"] = card.impact_level
         if tagged:
             card_json["xbrl"] = {"basis": tagged.basis, "period": tagged.period, "figures": len(tagged.metrics)}
+        if annual:
+            card_json["annual_xbrl"] = {"bases": [r.basis for r in annual], "period": annual[0].fy,
+                                        "figures": sum(r.figures() for r in annual)}
         card_json["priced_at_filing"] = {k: priced[k] for k in PRICED_FIELDS if priced.get(k) is not None} or None
         row = {
             "news_id": filing.news_id, "scrip_code": filing.scrip_code,
@@ -2430,7 +2508,7 @@ def build_pipeline(settings: Settings, sink: Sink) -> Pipeline:
         log.warning("could not load AI usage; starting counters at zero: %s", exc)
         usage_today, usage_month = [], []
     gateway = AIGateway(settings.load_toml("providers.toml"), usage_today=usage_today, usage_month=usage_month)
-    return Pipeline(settings, sink, gateway)
+    return Pipeline(settings, sink, gateway, nse=nse_api.NseClient() if settings.nse_annual_xbrl else None)
 
 
 __all__ = ["Pipeline", "Stats", "build_pipeline", "IST"]

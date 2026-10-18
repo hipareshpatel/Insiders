@@ -20,11 +20,28 @@ def strip_reasoning(text: str) -> str:
     return text.strip()
 
 
+# UTF-8 read as cp1252 somewhere on a provider's side: "â‚¹519.4 Cr" for "₹519.4 Cr". It reached five cards and,
+# through memory's timeline, the prompts of later filings, which copied it (2026-10-18). Only these sequences
+# are put back: a reply may mix them with correct text, so the whole reply cannot be re-decoded.
+_MOJIBAKE = {
+    "â‚¹": "₹",   # ₹
+    "â€™": "’", "â€˜": "‘",   # ’ ‘
+    "â€œ": "“", "â€\u009d": "”", "â€\u009c": "“",   # “ ”
+    "â€“": "–", "â€”": "—", "â€¦": "…",   # – — …
+    "Â ": " ",
+}
+_MOJIBAKE_RE = re.compile("|".join(re.escape(k) for k in sorted(_MOJIBAKE, key=len, reverse=True)))
+
+
+def repair_mojibake(text: str) -> str:
+    return _MOJIBAKE_RE.sub(lambda m: _MOJIBAKE[m.group(0)], text) if "â" in text or "Â" in text else text
+
+
 def extract_json_object(text: str) -> dict:
     """Return the first complete top-level JSON object found in ``text``."""
     if not text:
         raise ValueError("empty response")
-    text = strip_reasoning(text)
+    text = repair_mojibake(strip_reasoning(text))
     fenced = _FENCE.search(text)
     if fenced:
         text = fenced.group(1)

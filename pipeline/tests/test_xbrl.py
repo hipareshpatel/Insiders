@@ -214,10 +214,17 @@ def test_results_card_key_numbers_come_from_xbrl_and_yoy_qoq_mixups_are_flagged(
                  "key_numbers": [{"label": "Revenue", "value": "₹952 Cr", "change": f"{rev.qoq_pct:+.1f}% YoY"},
                                  {"label": "EBITDA", "value": f"₹{pbt.value} Cr", "change": "-20% YoY"},
                                  {"label": "EBITDA margin", "value": "7.0%", "change": None}]}})
+    out.card.key_numbers[0].quote = "Revenue for the quarter was Rs 952 crore"   # a press release's line
+    out.card.key_numbers.append(out.card.key_numbers[1].model_copy(update={"label": "Normalised EBITDA",
+                                                                           "value": "₹90 Cr", "change": None}))
     changed = xbrl_key_numbers(out, tagged)
     keys = {k.label: (k.value, k.change) for k in out.card.key_numbers}
     assert keys["Revenue"] == ("₹951.96 Cr", f"{rev.yoy_pct:+.1f}% YoY")
     assert keys["EBITDA"][0] == "₹84.36 Cr" and keys["EBITDA margin"] == ("7.0%", None) and len(changed) == 2
+    # the file's figure is quoted from the file's line, not from the press release's rounding (eMudhra, 2026-10-18)
+    assert out.card.key_numbers[0].quote.startswith("revenue Q3FY25: 951.96 Cr")
+    # and a figure the company defines for itself keeps its own value (Jubilant's normalised PAT became reported PAT)
+    assert keys["Normalised EBITDA"] == ("₹90 Cr", None)
     assert period_mixups(out, tagged) == [f"\"{abs(rev.qoq_pct):.1f}% YoY\" is a quarter-on-quarter change, not year-on-year"]
     # The same percentage as the nine months' YoY is that change, not a mislabelled QoQ (Jubilant's FY25
     # revenue "+7.9% YoY" was held because only the quarter's changes were compared).

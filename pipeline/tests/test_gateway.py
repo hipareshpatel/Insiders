@@ -351,3 +351,11 @@ def test_a_prompt_over_a_models_minute_token_limit_skips_that_model(make_gateway
     with pytest.raises(AllProvidersFailed) as failed:
         gw.complete_json("r", "s", "u " * 400, Pass1Result)
     assert not failed.value.transient, "nothing will change on the next run: not a busy provider"
+
+
+def test_a_rupee_sign_garbled_by_a_provider_is_put_back():
+    """"â‚¹519.4 Cr" reached five cards and, through memory's timeline, the prompts of later filings (2026-10-18)."""
+    from bse_intel.ai.jsonutil import extract_json_object
+
+    garbled = '{"headline": "eMudhra FY25 revenue â‚¹519.4 Cr â€“ up 39%", "note": "₹1 Cr"}'
+    assert extract_json_object(garbled) == {"headline": "eMudhra FY25 revenue ₹519.4 Cr – up 39%", "note": "₹1 Cr"}

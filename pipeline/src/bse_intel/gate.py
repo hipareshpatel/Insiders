@@ -216,26 +216,31 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
     """
     if not quote:
         return []
-    flat_quote = _flat(quote)
+    flat_quote = _SPACED_THOUSANDS.sub(r"\1\2", _DECIMAL_COMMA.sub(r"\1.\2", _flat(quote)))
     found = [m.group(0).replace(",", "") for m in _CLAIM_NUMBER.finditer(flat_quote)]
     digits = set(found)
     # Each quoted figure in crore at every unit it may be in: the unit written after it ("Rs. 1.09 lakh"),
     # else the unit the filing declares, and plain rupees, because a notice writes the amount out in full
     # ("Rs.50,10,05,632") where the card writes Rs 50.10 Cr. `as_printed` keeps the figure as it stands, for
     # a card figure with no money unit (a per-share amount, a count) and for a filing that declares none.
+    # Each quoted figure also carries its own rounding, in crore: a presentation's "2,123" is the tagged ₹2,122.50
+    # Cr rounded (Jubilant, 2026-10-18). Only for a figure of three or more digits - a note number ("23") is not
+    # a rounded amount.
     in_crore, as_printed = [], []
     for m in _CLAIM_NUMBER.finditer(flat_quote):
+        raw = m.group(0).replace(",", "")
         try:
-            value = float(m.group(0).replace(",", ""))
+            value = float(raw)
         except ValueError:
             continue
+        rounding = 0.5 * 10 ** -len(raw.partition(".")[2]) if len(raw.replace(".", "").lstrip("0")) >= 3 else 0.0
         # its own unit: written after it ("1.09 lakh"), or in the name before it, as the XBRL table's
         # balance-sheet line writes crore ("net_debt_cr 1348.6")
         own = _unit_after(flat_quote, m.end()) or (1 if re.search(r"_cr\s*:?\s*$", flat_quote[:m.start()]) else None)
-        in_crore += [value / s for s in ([own] if own else [s for s in (unit, 1e7) if s and s > 1])]
+        in_crore += [(value / s, rounding / s) for s in ([own] if own else [s for s in (unit, 1e7) if s and s > 1])]
         if own is None and not (unit and unit > 1):
-            in_crore.append(value)
-        as_printed.append(value)
+            in_crore.append((value, rounding))
+        as_printed.append((value, rounding))
     missing = []
     flat_claim = _PERIOD_LABEL.sub(" ", _WRITTEN_DATE.sub(" ", _flat(claim)))
     for m in _CLAIM_NUMBER.finditer(flat_claim):
@@ -247,6 +252,8 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
             # and grounding already checks one against the whole filing, stated or derived
         value = m.group(0).replace(",", "")
         card_unit = _unit_after(flat_claim, m.end())
+        if card_unit is not None and _FOREIGN.search(flat_claim[max(0, m.start() - 8):m.start()]):
+            card_unit = None   # "EUR 9.7 million" is the euro amount as written, not rupees (eMudhra's Cryptas)
         # The same digits only count when the card wrote no unit: "₹3,595 Cr" is not the 3,595 of a statement
         # in million, and "458 Cr" is not "4583" (Jubilant FY25, loop round 3c).
         if card_unit is None and (value in digits or any(d.startswith(value) or value.startswith(d) for d in digits)):
@@ -262,14 +269,24 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
         # "₹1.1 lakh" of a demand of 1.09 lakh. Only a prefix used to count ("95" of "951.96"), so a figure
         # rounded up was held as missing. The unit still has to be right: a card amount in crore, lakh or
         # million is compared in crore, and "458 Cr" of a row reading 457.86 million is still refused.
-        tolerance = 0.5 * 10 ** -decimals
-        if card_unit is not None:
-            if any(abs(c - number / card_unit) <= tolerance / card_unit + 1e-12 for c in in_crore):
-                continue
-        elif any(abs(c - number) <= tolerance for c in in_crore + as_printed):
+        # And a figure cut at the card's last digit is that figure too: "₹554 Cr" of ₹554.65 Cr, "₹79 Cr" of
+        # 796 million (2026-10-18). Not one rounded the wrong way by more than half a digit.
+        tolerance, step = 0.5 * 10 ** -decimals, 10 ** -decimals
+        scale = card_unit or 1
+        candidates = in_crore if card_unit is not None else in_crore + as_printed
+        target = number / scale
+        if any(abs(c - target) <= max(tolerance / scale, r) + 1e-12 or 0 <= abs(c) - abs(target) < step / scale
+               for c, r in candidates):
             continue
         missing.append(m.group(0))
     return missing
+
+
+# How OCR and a press release write a figure: "95028,10" for 95,028.10 (a last group of two digits is no
+# thousands group), "INR 1 885.6 million" for 1,885.6 (Ahluwalia's segment row, eMudhra's cash; 2026-10-18)
+_DECIMAL_COMMA = re.compile(r"(?<![\d,])(\d{3,}),(\d{2})(?![\d,.])")
+_SPACED_THOUSANDS = re.compile(r"((?:inr|rs\.?|₹|usd|us\$|eur|€)\s*\d{1,3}) (\d{3})(?=[.,]\d|\b)")
+_FOREIGN = re.compile(r"(?:eur|euro|euros|usd|us\$|\$|€|gbp|£|jpy|¥|chf|aed|sgd)\s*$")
 
 
 _UNIT_WORD = re.compile(r"\s*(crores?|cr\b|lakhs?|lacs?|millions?|mn\b|billions?|bn\b|thousands?)")
@@ -324,6 +341,43 @@ def _with_unit(claim: str, raw: str) -> str:
     at = said.find(raw.lower())
     word = _UNIT_WORD.match(said, at + len(raw)) if at != -1 else None
     return f"{raw} {word.group(1)}" if word else raw
+
+
+def quote_unit(quote: str, text: str, unit: float | None = None) -> float | None:
+    """The unit the quote's own table declares, where the document as a whole declares several (a deck in "Rs. In
+    Mn." beside crore pages, an annual report in lakh beside crore notes); else the document's `unit`."""
+    from .grounding import unit_before  # local: grounding does not import the gate
+
+    words = re.findall(r"[^\W_]+|\d[\d,.]*", quote or "")[:8]
+    if len(words) < 3 or not text:
+        return unit
+    m = re.search(r"\W+".join(re.escape(w) for w in words), text, re.I)
+    here = unit_before(text, m.start()) if m else None
+    return here if here is not None else unit
+
+
+# A figure a fact sets its own against: "5.1% of the ₹7,794 Cr order book", "vs -₹0.44 Cr YoY", "narrowed from ₹50.19 Cr"
+_COMPARED = re.compile(r"\b(?:vs|versus|against|compared (?:with|to)|from|over)\b|%\s*of\b|\bx\s+of\b|\btimes\b")
+
+
+def compared_figures(missing: list[str], claim: str, memory: str, text: str, unit: float | None = None) -> list[str]:
+    """The figures a fact compares its own with, where they are not in its quote but are the company's own known
+    figures: in memory or the scale block the prompt gave (the order book, last year's loss, net worth), or in the
+    filing to two decimals. A key number "5.1% of ₹7,794 Cr" quoting the order letter, or "EBITDA ₹19.88 Cr vs
+    -₹0.44 Cr YoY" quoting the XBRL line, was held as stating a figure its quote does not (2026-10-18). Only a
+    figure the fact itself marks as the comparison: "revenue of ₹845.89 Cr" stays held, since a wrong period's
+    figure is in memory too."""
+    flat = _flat(claim)
+    out = []
+    for raw in missing:
+        at = flat.find(raw.lower())
+        if at < 0 or not _COMPARED.search(flat[max(0, at - 35):at]):
+            continue
+        said = _with_unit(claim, raw)
+        precise = len(raw.replace(",", "").partition(".")[2]) >= 2
+        if (memory and not numbers_in_quote(said, memory)) or (precise and not numbers_in_quote(said, text, unit)):
+            out.append(raw)
+    return out
 
 
 def stated_precisely(missing: list[str], claim: str, text: str, unit: int | None = None) -> list[str]:

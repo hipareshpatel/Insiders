@@ -496,3 +496,32 @@ def test_a_figure_a_fact_compares_with_may_come_from_memory():
     # or the filing states it to two decimals: Shivam's loss "narrowed from ₹50.19 Cr"
     assert gate.compared_figures(["50.19"], "PAT: -₹48.04 Cr loss narrowed from ₹50.19 Cr", "",
                                  "a loss of Rs. 5,019.20 lakhs in the previous year", 100) == ["50.19"]
+
+
+BANDHAN_Q2FY27 = """Particulars September June YoY QoQ
+30,2026 30, 2025 30, 2026 (%) (%)
+Loans & Advances (On book + PTC) 140,041 155,555 158,335 13.1% 1.8%
+Total Deposits 158,075 164,886 172,689 9.2% 4.7%
+CASA Deposits 44,211 48,479 46,131 4.3% (4.8)%
+Retail to Total Deposits (%) 70.93% 73.96% 72.66%
+CASA Ratio (%) 27.97% 29.40% 26.71%
+"""
+
+
+def test_bandhan_the_latest_column_comes_from_the_tables_own_changes():
+    """36024ce2: garbled headers; the card read the first column (September 2025) as September 2026 and called a
+    13.1% rise in advances a 13.1% fall. The YoY and QoQ columns show the third column is the latest."""
+    latest, stale = gate.table_columns(BANDHAN_Q2FY27)
+    assert {158335.0, 172689.0, 46131.0, 26.71} <= latest and {140041.0, 158075.0, 27.97} <= stale
+    problems = gate.stale_columns(["Loans & advances fell 13.1% YoY to ₹1,40,041 Cr; CASA ratio 27.97%"], BANDHAN_Q2FY27)
+    assert len(problems) == 2 and "1,40,041" in problems[0]
+    # the right reading, with its year-ago comparison, raises nothing
+    assert gate.stale_columns(["Advances rose 13.1% to ₹1,58,335 Cr from ₹1,40,041 Cr; CASA ratio 26.71%"],
+                              BANDHAN_Q2FY27) == []
+
+
+def test_bandhan_memory_refuses_the_year_old_column():
+    from bse_intel.trust import Checker
+
+    check = Checker(BANDHAN_Q2FY27, {"market_cap_cr": 27000}, {})
+    assert check.printed_crore(158335) and not check.printed_crore(140041)

@@ -33,6 +33,49 @@ MAX_BALANCE_SNAPSHOTS = 16
 KEEP_PERIODS = {"Q": 12, "H": 6, "9M": 4, "FY": 6, "M": 18, "other": 8}
 
 
+SAME_DEAL_DAYS = 45
+_PARTY_FILLER = {"limited", "ltd", "private", "pvt", "india", "of", "the", "and", "co", "company", "corporation", "corp",
+                 "inc", "llc", "plc", "division", "unit", "group", "govt", "government"}
+
+
+def _party(name: str | None) -> tuple[str, ...]:
+    words = [w for w in re.findall(r"[a-z0-9]+", (name or "").lower()) if w not in _PARTY_FILLER]
+    return tuple(words[:2])
+
+
+def is_recap(kind: str | None, counterparty: str | None) -> bool:
+    """A press release listing the orders won since April is no order: its "deal" names many clients ("Indian
+    Railways divisions, PNB, GAIL, DFCCIL, ...") and its amount is the sum of orders already on record
+    (Magellanic's ₹111.04 Cr, round-2 re-run). Stored as one order it inflated every later ORDER_FLOW."""
+    return kind == "ORDER" and len([p for p in re.split(r",|;|/| and ", counterparty or "") if p.strip()]) >= 3
+
+
+def same_deal(deals: list[dict], kind: str | None, amount: float | None, counterparty: str | None, as_of: str,
+              news_id: str) -> dict | None:
+    """The deal on record that a filing repeats: the press release beside an order's own intimation, filed the
+    same day or a week later, names the same client and amount and was stored as a second order (Magellanic's
+    railway LOAs, round-2 re-run: "17th order, ₹291 Cr" for 10 orders and ₹100 Cr)."""
+    key = _party(counterparty)
+    if not amount or not key:
+        return None
+    for x in reversed(deals):
+        if x.get("source_news_id") == news_id or x.get("kind") != kind or _party(x.get("counterparty")) != key:
+            continue
+        days = (_day(as_of) - _day(x["as_of"])).days if _day(as_of) and _day(x.get("as_of")) else None
+        if days is not None and 0 <= days <= SAME_DEAL_DAYS and x.get("amount_cr") \
+                and abs(x["amount_cr"] - amount) <= max(0.01, 0.005 * amount):
+            return x
+    return None
+
+
+def _day(text: str | None):
+    from datetime import date
+    try:
+        return date.fromisoformat(str(text)[:10])
+    except ValueError:
+        return None
+
+
 def _hash(*parts: str) -> str:
     return hashlib.sha1("|".join(parts).encode()).hexdigest()[:8]
 
@@ -521,7 +564,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         deals = d.get("deals", [])
         target = next((x for x in deals if x["id"] == deal.updates_deal_id and x["as_of"] < as_of), None) \
             if deal.updates_deal_id else None
-        if target is not None:
+        target = target or same_deal(deals, deal.kind, deal.amount_cr, deal.counterparty, as_of, news_id)
+        if target is None and is_recap(deal.kind, deal.counterparty):
+            pass  # a list of orders already on record, not one more
+        elif target is not None:
             # a later stage of a deal already on record (LOI -> contract, in-principle -> final terms)
             target.update(details)
             deals[deals.index(target)] = _with_history(target, _deal_history(target) + [entry])

@@ -47,12 +47,21 @@ class Checker:
         for snap in dossier.get("balance_sheet", []):
             if str(snap.get("source_news_id") or "").startswith("xbrl:") and snap.get("net_worth_cr"):
                 self.history.setdefault("net_worth", []).append(abs(snap["net_worth_cr"]))
+        # a table whose own YoY and QoQ columns show its first column is a year old (Bandhan's Q2FY27 update put
+        # September 2025's advances and CASA ratio into memory as September 2026's, round-2 re-run)
+        from .gate import table_columns
+
+        self.latest, self.stale = table_columns(filed_text or "")
+
+    def stale_only(self, value: float) -> bool:
+        v, tolerance = abs(value), 0.5 * 10 ** -_decimals(value) + 1e-9
+        return any(abs(abs(s) - v) <= tolerance for s in self.stale) and not any(abs(abs(x) - v) <= tolerance for x in self.latest)
 
     def printed_crore(self, value: float) -> bool:
-        return self.index.stated_crore(abs(value), _decimals(value), plain_scales=self.scales)
+        return self.index.stated_crore(abs(value), _decimals(value), plain_scales=self.scales) and not self.stale_only(value)
 
     def printed(self, value: float) -> bool:
-        return self.index.stated(abs(value), _decimals(value), (1,))
+        return self.index.stated(abs(value), _decimals(value), (1,)) and not self.stale_only(value)
 
     def in_scale(self, value: float, metric: str = "") -> bool:
         v = abs(value)

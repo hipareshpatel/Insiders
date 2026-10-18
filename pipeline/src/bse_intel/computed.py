@@ -27,6 +27,7 @@ from .periods import prior_quarter_period, prior_year_period
 # A figure that is computed rather than read: a percentage, a basis-point or percentage-point move, a multiple
 _FIGURE = re.compile(r"(?<![\w.])([+\-−]?)\s?(\d{1,3}(?:,\d{2,3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*"
                      r"(%|per\s?cent\b|bps\b|basis points?\b|pp\b|percentage points?\b|x\b|times\b)", re.I)
+_BARE = re.compile(r"(?<![\w.,])(\d{1,3}\.\d{2,})(?!\s*(?:%|per\s?cent|\d|,\d))")
 _UP = re.compile(r"\b(?:up|rose|rise|rising|grew|grow|growth|increase[sd]?|higher|gain(?:ed|s)?|jump(?:ed|s)?|"
                  r"improv\w*|expand\w*|surg\w*|climb\w*|widen\w*)\b", re.I)
 _DOWN = re.compile(r"\b(?:down|fell|fall|falling|declin\w*|lower|drop\w*|decrease[sd]?|contract\w*|shr[iau]nk\w*|"
@@ -50,6 +51,23 @@ class Pool:
     pct: list[tuple[float, int]] = field(default_factory=list)
     bps: list[tuple[float, int]] = field(default_factory=list)
     x: list[float] = field(default_factory=list)
+    # figures the filing prints with two or more decimals and no % sign: a voting result's 97.0846, a stake's 17.12
+    # under a "% of shares" header (round-2 re-run: removed as unproduced, leaving "** ** of votes")
+    bare: list[float] = field(default_factory=list)
+    # the scale block's shares, by base: [(22.6, "market cap"), (150.6, "net worth")], and the shares the filing
+    # itself prints with their base ("x% of net worth" in a Reg 30 note)
+    shares: list[tuple[float, str]] = field(default_factory=list)
+
+    def add_shares(self, text: str) -> None:
+        for m in re.finditer(r"(\d+(?:\.\d+)?)%" + _BASE.pattern, text or "", re.I):
+            self.shares.append((float(m.group(1)), _base(m.group(2))))
+
+    def share_of(self, base: str, value: float, decimals: int) -> bool:
+        tolerance, step = 0.5 * 10 ** -decimals + 1e-9, 10 ** -decimals
+        return any(b == base and (abs(v - value) <= tolerance or 0 <= v - value < step) for v, b in self.shares)
+
+    def add_bare(self, text: str) -> None:
+        self.bare += [float(m.group(1)) for m in _BARE.finditer(text or "")]
 
     def add_printed(self, text: str) -> None:
         for m in _FIGURE.finditer(text or ""):
@@ -75,7 +93,10 @@ class Pool:
             a = abs(v)
             if abs(a - value) <= tolerance or 0 <= a - value < step:
                 return True
-        return False
+        # a share the filing prints without its % sign, matched only to two decimals: an invented whole or
+        # one-decimal percentage would land on an unrelated table figure too often
+        return kind == "pct" and decimals >= 2 and value <= 100 \
+            and any(abs(b - value) <= tolerance or 0 <= b - value < step for b in self.bare)
 
 
 def _base_printed(index: SourceIndex | None, base: float) -> bool:
@@ -86,10 +107,13 @@ def build_pool(filed_text: str, tagged=None, annual_table: str = "", history: li
                scale: str = "", ownership: dict | None = None) -> Pool:
     pool = Pool()
     pool.add_printed(filed_text)
+    pool.add_bare(filed_text)
     printed = Pool()   # the filing's own text alone: where a like-for-like base margin must be printed
     printed.add_printed(filed_text)
     pool.add_printed(annual_table)   # the annual report's own tagged figures
     pool.add_printed(scale)          # shares of revenue, net worth and market cap computed in code
+    pool.add_shares(scale)
+    pool.add_shares(filed_text)
     pool.add_printed(json.dumps(ownership or {}))
     index = SourceIndex(filed_text) if filed_text else None
     tagged_metrics = list(getattr(tagged, "metrics", None) or [])
@@ -141,10 +165,28 @@ def _figures(text: str):
         yield m, kind, value, len(raw.partition(".")[2]), sign
 
 
+_BASE = re.compile(r"\s*(?:of|to)\s+(?:the\s+)?(?:company'?s\s+|its\s+)?(market cap(?:italisation)?|net worth|"
+                   r"(?:\w+\s+){0,2}revenue)", re.I)
+
+
+def _base(phrase: str) -> str:
+    phrase = phrase.lower()
+    return "market cap" if phrase.startswith("market cap") else "net worth" if phrase == "net worth" else "revenue"
+
+
 def unproduced(text: str, pool: Pool) -> list[str]:
-    """The computed figures in `text` that code did not produce and the filing does not print."""
-    return [m.group(0).strip() for m, kind, value, decimals, sign in _figures(text)
-            if not pool.has(kind, value, decimals, sign)]
+    """The computed figures in `text` that code did not produce and the filing does not print. A share of market
+    cap, net worth or revenue must be the one code worked out for that base: Adani Power's "₹1,00,000 Cr limit is
+    22.6% of net worth" passed on the 22.6% code had worked out for market cap (round-2 re-run)."""
+    out = []
+    for m, kind, value, decimals, sign in _figures(text):
+        if not pool.has(kind, value, decimals, sign):
+            out.append(m.group(0).strip())
+            continue
+        said = _BASE.match(text, m.end())
+        if kind == "pct" and said and pool.shares and not pool.share_of(_base(said.group(1)), value, decimals):
+            out.append(m.group(0).strip())
+    return out
 
 
 # The phrase a removed figure sits in: "up 10% YoY", "(+12.3% QoQ)", "a 15% rise"
@@ -156,10 +198,27 @@ _PHRASE = (r"\s*\(?\s*(?:(?:up|down|rose|fell|grew|declined|jumped|slipped|gaine
 def _strip(text: str, figures: list[str]) -> str:
     for fig in figures:
         text = re.sub(_PHRASE.format(fig=re.escape(fig)), " ", text, count=1, flags=re.I)
+    text = re.sub(r"\*\*\s*\*\*", " ", text)   # the bold a removed figure sat in
     text = re.sub(r"\s+([,;.)])", r"\1", re.sub(r"\(\s*\)", "", text))
     text = re.sub(r"\b(revenue|sales|profit|PAT|EBITDA|PBT|income|margin|EPS)\s+to\s+(₹|Rs|INR|\d)", r"\1 at \2", text)
     text = re.sub(r"[,;]\s*[,;]", ",", text)
     return re.sub(r"\s{2,}", " ", text).strip(" ,;")
+
+
+# A word left without its object once a figure is removed: "increase stake to via open market", "Only of votes
+# cast", "approved ₹150 Cr NCD issuance, of net worth", "holds but can vote" (round-2 re-run)
+_DANGLING = re.compile(r"\b(?:to|of|at|about|over|only|by|holds?|than|nearly|around|approximately)\s+"
+                       r"(?=(?:via|of|in|and|from|against|votes?|with|but|while|the\s+(?:highest|lowest))\b)"
+                       r"|(?:^|[,;]\s*)of\b[^,;]*|\b(?:to|of|at|about|over|by|than)\s*(?=[,;.:)]|$)", re.I)
+
+
+def broken(text: str) -> bool:
+    return bool(_DANGLING.search(text or ""))
+
+
+def _repair(text: str) -> str:
+    """A headline keeps its subject: the dangling word goes, and so does a clause left as "of net worth"."""
+    return re.sub(r"\s{2,}", " ", _DANGLING.sub(" ", text)).strip(" ,;")
 
 
 def _clauses(text: str, pool: Pool) -> tuple[str, list[str]]:
@@ -175,8 +234,40 @@ def _clauses(text: str, pool: Pool) -> tuple[str, list[str]]:
         if not bad:
             kept.append(part)
         elif not kept:
-            kept.append(_strip(part, bad))
+            stripped = _strip(part, bad)
+            kept.append(_repair(stripped) if broken(stripped) else stripped)
     return "; ".join(p for p in kept if p.strip()), removed
+
+
+# "slipped to 15.0% from 13.0%", "rose from ₹50 Cr to ₹42 Cr": a verb against the two levels it names
+_LEVEL = r"[₹]?\s?(\d[\d,]*(?:\.\d+)?)\s*(%|Cr\b|crore\b)"
+_PAIR = re.compile(r"(?P<verb>" + _UP.pattern + "|" + _DOWN.pattern + r")(?P<mid>[^.;]{0,40}?)\b(?:to\s+" + _LEVEL + r"[^.;]{0,25}?\bfrom\s+" + _LEVEL
+                   + r"|from\s+" + _LEVEL + r"[^.;]{0,25}?\bto\s+" + _LEVEL + r")", re.I)
+
+
+def fix_direction(text: str | None) -> tuple[str | None, list[str]]:
+    """The verb of a move whose two levels say the opposite becomes "moved": the figures are right (code or the
+    filing produced both), the word is not (SKF India's "margin slipped to 15.0% from 13.0%", round-2 re-run)."""
+    if not text:
+        return text, []
+    notes = []
+
+    def one(m: re.Match) -> str:
+        verb = m.group("verb")
+        up, down = _UP.fullmatch(verb), _DOWN.fullmatch(verb)
+        if not (up or down):
+            return m.group(0)
+        g = m.groups()
+        if g[2] is not None:  # "to X from Y"
+            new, unit_new, old, unit_old = float(g[2].replace(",", "")), g[3], float(g[4].replace(",", "")), g[5]
+        else:                 # "from Y to X"
+            old, unit_old, new, unit_new = float(g[6].replace(",", "")), g[7], float(g[8].replace(",", "")), g[9]
+        if unit_new.lower()[:2] != unit_old.lower()[:2] or new == old or bool(up) == (new > old):
+            return m.group(0)
+        notes.append(f"'{verb}' for a move from {old:g} to {new:g}")
+        return "moved" + m.group(0)[len(verb):]
+
+    return _PAIR.sub(one, text), notes
 
 
 def enforce(out, pool: Pool) -> list[str]:
@@ -185,6 +276,14 @@ def enforce(out, pool: Pool) -> list[str]:
     if card is None:
         return []
     notes: list[str] = []
+    for name in ("headline", "takeaway", "core_catalyst"):
+        setattr(card, name, (lambda r: (notes.extend(r[1]), r[0])[1])(fix_direction(getattr(card, name, None))))
+    for item in [*card.what_happened, *card.why_it_matters]:
+        if getattr(item, "text", None):
+            item.text, moved = fix_direction(item.text)
+            notes += moved
+    out.timeline_entry, moved = fix_direction(out.timeline_entry)
+    notes += moved
     for name in ("headline", "takeaway", "core_catalyst"):
         value = getattr(card, name, None)
         if isinstance(value, str) and value:
@@ -224,7 +323,7 @@ def enforce(out, pool: Pool) -> list[str]:
             facts.append(fact)
             continue
         stripped = _strip(text, bad)
-        if len(stripped) >= 25 and not unproduced(stripped, pool):
+        if len(stripped) >= 25 and not unproduced(stripped, pool) and not broken(stripped):
             if hasattr(fact, "text"):
                 fact.text = stripped
             else:

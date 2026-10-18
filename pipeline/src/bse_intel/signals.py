@@ -344,7 +344,13 @@ def _cr(value: float) -> str:
     return "₹" + f"{value:,.2f}".rstrip("0").rstrip(".") + " Cr"
 
 
-_SCALE_NOUN = {"ORDER": "order", "FUNDRAISE": "raise", "CAPEX": "capex", "ACQUISITION": "deal", "DIVESTMENT": "sale"}
+_SCALE_NOUN = {"ORDER": "order", "FUNDRAISE": "raise", "CAPEX": "capex", "ACQUISITION": "deal", "DIVESTMENT": "sale",
+               "CONVERSION": "conversion"}
+# Debentures, bonds, loans or preference shares converted into equity; "convertible" (an instrument still to be
+# issued for cash) and warrants (whose conversion brings in the unpaid 75%) are not.
+_DEBT_INSTRUMENT = r"\b(?:(?:o|c|oc)cds?|ocrps?|ccps|debentures?|fccbs?|bonds?|loans?|notes|preference shares?|unsecured)\b"
+_DEBT_CONVERTED = re.compile(rf"conver(?:t|ts|ted|ting|sion)\b.{{0,40}}{_DEBT_INSTRUMENT}|{_DEBT_INSTRUMENT}.{{0,40}}"
+                             r"conver(?:t|ts|ted|ting|sion)\b", re.I)
 
 
 def _scale(before: dict | None, output: Pass2Output, company: dict | None) -> list[Signal]:
@@ -360,6 +366,11 @@ def _scale(before: dict | None, output: Pass2Output, company: dict | None) -> li
     shareholder_money = deal_kind == "FUNDRAISE" and output.event_type == "M_AND_A"
     if shareholder_money:
         deal_kind = "ACQUISITION"
+    # Debt turned into shares brings no new cash either: Shivam Autotech's 250 OCDs converted into equity read
+    # "₹25 Cr raise = 74% of net worth" (audit round 1). Its size against market cap stays, as a conversion.
+    elif deal_kind == "FUNDRAISE" and _DEBT_CONVERTED.search(
+            " ".join([output.card.headline] + [a.instrument or "" for a in output.dossier_delta.capital_actions])):
+        deal_kind = "CONVERSION"
     amount, parts = deal.amount_cr, []
     if deal_kind in ("ORDER", "CAPEX", "OTHER"):
         for period_kind in ("Q", "FY"):
@@ -367,7 +378,7 @@ def _scale(before: dict | None, output: Pass2Output, company: dict | None) -> li
             if latest:
                 parts.append(f"{amount / latest[1] * 100:.0f}% of {latest[0]} revenue ({_cr(latest[1])})")
     market_cap = (company or {}).get("market_cap_cr")
-    if deal_kind in ("FUNDRAISE", "ACQUISITION", "DIVESTMENT", "CAPEX") and market_cap:
+    if deal_kind in ("FUNDRAISE", "ACQUISITION", "DIVESTMENT", "CAPEX", "CONVERSION") and market_cap:
         parts.append(f"{amount / market_cap * 100:.0f}% of market cap ({_cr(market_cap)})")
     net_worth = _latest_net_worth(before or {})
     if deal_kind in ("FUNDRAISE", "ACQUISITION") and net_worth and not shareholder_money:

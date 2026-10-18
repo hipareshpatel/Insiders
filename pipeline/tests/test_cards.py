@@ -645,6 +645,38 @@ def test_an_open_offer_is_not_a_raise_against_the_target():
     assert raised and "raise" in raised[0]["text"]
 
 
+@pytest.mark.parametrize("headline,instrument,converted", [
+    # Audit round 1: debt turned into shares brings no cash, yet read "₹25 Cr raise = 74% of net worth"
+    ("Shivam Autotech converts 250 OCDs into 92,72,997 equity shares for India Credit Opportunities Fund II", "", True),
+    ("Shivam Autotech to convert ₹25 Cr OCDs into 92.73 lakh equity shares at pre-determined price", "", True),
+    ("Board approves allotment of 9.3 lakh shares", "Conversion of unsecured loan into equity", True),
+    ("Board approves allotment of 9.3 lakh shares", "CCDs converted to equity", True),
+    # still money reaching the company
+    ("Demo Tubes raises ₹500 Cr through compulsorily convertible debentures", "CCD", False),
+    ("Demo Tubes allots 40 lakh shares on conversion of warrants, receiving the balance 75%", "Warrant conversion", False),
+    ("Demo Tubes approves ₹75 Cr preferential issue of convertible warrants", "", False),
+])
+def test_debt_converted_into_shares_is_not_a_raise(headline, instrument, converted):
+    from bse_intel.models import Pass2Output
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "FUNDRAISE", "timeline_entry": headline,
+        "card": {"impact_level": "MODERATE", "headline": headline, "what_happened": [headline], "key_numbers": [],
+                 "deal_value": {"kind": "FUNDRAISE", "amount_cr": 25.0}},
+        "dossier_delta": {"capital_actions": [{"instrument": instrument, "new_shares": 9272997}] if instrument else []}})
+    f = filing("n_ocd", "2025-02-20T18:00:00+05:30")
+    d = new_dossier(f)
+    d["balance_sheet"] = [{"period": "Q3FY25", "net_worth_cr": 33.92, "as_of": "2025-02-01T00:00:00+05:30",
+                           "source_news_id": "old"}]
+    scale = [s["text"] for s in compute(d, d, out, f, {"market_cap_cr": 400, "price_date": "2025-02-20"})
+             if s["type"] == "SCALE"]
+    assert scale
+    if converted:
+        assert scale[0].startswith("₹25 Cr conversion = 6% of market cap") and "net worth" not in scale[0], scale
+    else:
+        assert "₹25 Cr raise" in scale[0] and "net worth" in scale[0], scale
+
+
 def test_a_round_figure_grounds_against_an_unrelated_line_in_range():
     """The weakness that let Kanoria's annual-report cards carry every 10x slip and still pass grounding.
 

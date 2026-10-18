@@ -61,6 +61,7 @@ from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
 from . import annual_xbrl
 from . import computed
+from . import trust
 from . import nse as nse_api
 from . import xbrl as xbrl_fast_path
 from .learning import LESSONS_KEEP, LESSONS_KEY
@@ -1966,11 +1967,15 @@ class Pipeline:
             out.card.call_read = None  # guidance, tone and transparency describe a call, not other filings
         event_type = out.event_type
         card = out.card
+        # Memory takes only figures confirmed at the filing's unit and the company's scale (audit round 2); the
+        # card keeps what it read. XBRL figures go into both, unfiltered.
+        remembered, _ = trust.for_memory(out, filed_text, company, dossier)
         if tagged:
             _apply_xbrl(out, tagged, filing.news_id)
+            _apply_xbrl(remembered, tagged, filing.news_id)
         score, checked, ungrounded, quant, claims = checks.score, checks.checked, checks.ungrounded, checks.quant, checks.claims
 
-        merged = merge(dossier, out, filing, card.impact_level, now)
+        merged = merge(dossier, remembered, filing, card.impact_level, now)
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector), ("symbol", company.get("symbol") or filing.symbol)) if v})
         # Signals, footer and results table see memory as it stood at this filing, not later facts
         # that a backfill may already have stored.

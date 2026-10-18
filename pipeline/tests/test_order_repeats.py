@@ -73,3 +73,24 @@ def test_0f2061e4_memory_written_before_the_fix_counts_each_order_once():
     out, f = _order(29.13, "Northern Railway, Moradabad Division"), _filing("2bc2ef91", "2026-10-16T18:00:00+05:30")
     assert _flow(d, out, f) == ("3rd order on record since 2026-08-06 (₹44.99 Cr in total); "
                                 "the largest so far (previous high ₹12.13 Cr on 2026-08-06).")
+
+
+def test_a_deal_size_echoed_with_its_decimal_moved_is_set_back():
+    """Anlon (round 4): deal_value ₹153.3 Cr (8.59 Cr shares x ₹17.85), the timeline line "₹1,533 Cr", which memory carried
+    into two later cards."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import deal_echo_slips
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "ACQUISITION",
+        "timeline_entry": "Board approved a preferential issue of 8.59 Cr shares for ₹1,533 Cr via share swap.",
+        "card": {"impact_level": "MODERATE", "headline": "Anlon to buy two firms for ₹1,533 Cr in a share swap",
+                 "what_happened": ["Issue of 8.59 Cr shares at ₹17.85 each"],
+                 "deal_value": {"kind": "ACQUISITION", "amount_cr": 153.3}}})
+    filing = "8,59,00,000 equity shares at Rs 17.85 per share; Apiqo Rs 116.52 Cr and Bizotic Rs 36.78 Cr."
+    notes = deal_echo_slips(out, filing)
+    assert out.timeline_entry.endswith("for ₹153.3 Cr via share swap.") and "₹153.3 Cr" in out.card.headline
+    assert len(notes) == 2
+    # an amount the filing itself prints is left alone, however it relates to the deal
+    out.timeline_entry = "Total consideration ₹1,533 Cr."
+    assert deal_echo_slips(out, filing + " Total consideration Rs 1,533 crore.") == []

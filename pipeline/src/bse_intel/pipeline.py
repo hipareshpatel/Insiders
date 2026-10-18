@@ -977,6 +977,48 @@ def gate_issues(out: Pass2Output, card, sources: tuple[str, ...] = ()) -> list[s
     return issues
 
 
+_RUPEE_CRORE = re.compile(r"₹\s*(\d[\d,]*(?:\.\d+)?)\s*(?=cr\b|crores?\b)", re.I)
+
+
+def deal_echo_slips(out: Pass2Output, text: str) -> list[str]:
+    """A card amount that is its own deal size times 10 or 100 (or divided), printed nowhere in the filing, is the deal
+    size with its decimal moved: Anlon's ₹153.3 Cr share swap was "₹1,533 Cr" in the timeline line, which memory then
+    carried into two later cards (round 4). Set to the deal size. Returns what changed."""
+    deal = out.card.deal_value if out.card else None
+    if deal is None or not deal.amount_cr or deal.amount_cr <= 0:
+        return []
+    index = SourceIndex(text or "")
+    notes: list[str] = []
+
+    def fix(value_text: str | None) -> str | None:
+        if not value_text:
+            return value_text
+
+        def swap(m: re.Match) -> str:
+            raw = m.group(1)
+            value = float(raw.replace(",", ""))
+            decimals = len(raw.split(".")[1]) if "." in raw else 0
+            for k in (10, 100, 0.1, 0.01):
+                if abs(value - deal.amount_cr * k) <= max(0.006 * value, 0.05) and abs(value - deal.amount_cr) > 0.01 * deal.amount_cr                         and not index.stated_crore(value, decimals, (1, 10, 100, 10_000, 1e7)):
+                    right = f"{deal.amount_cr:,.2f}".rstrip("0").rstrip(".")
+                    notes.append(f"₹{raw} Cr -> ₹{right} Cr (the card's own deal size, decimal moved)")
+                    return m.group(0).replace(raw, right)
+            return m.group(0)
+
+        return _RUPEE_CRORE.sub(swap, value_text)
+
+    card = out.card
+    card.headline, card.takeaway, card.core_catalyst = fix(card.headline), fix(card.takeaway) or "", fix(card.core_catalyst)
+    for fact in card.what_happened:
+        fact.text = fix(fact.text) or fact.text
+    for insight in card.why_it_matters:
+        insight.text = fix(insight.text)
+    for key in card.key_numbers:
+        key.value = fix(key.value)
+    out.timeline_entry = fix(out.timeline_entry) or out.timeline_entry
+    return notes
+
+
 def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], balance_sheet: list[dict],
                       text: str = "") -> list[str]:
     """A deal size that is the company's own revenue, net worth or share capital is dropped; a terminated
@@ -2160,6 +2202,7 @@ class Pipeline:
             counts = fix_count_millions(candidate, sources)
             changes = fix_change_percentages(candidate, sources) + counts
             changes += apply_deal_guards(candidate, filing, history, dossier.get("balance_sheet", []), text)
+            changes += deal_echo_slips(candidate, filed_text)
             changes += event_xbrl.apply_orders(candidate.card, event_orders)   # the file's figures have the last word
             changes += misdated_memory_insights(candidate, view, filed_text)
             if tagged:

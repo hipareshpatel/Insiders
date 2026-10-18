@@ -124,5 +124,45 @@ AI use (from the run logs, all four passes, outage retries included): 532 AI req
 filing, 4.2 per analysed filing), DeepSeek 89 (0.31 a filing), 25 rate-limited answers; about 106 filings an hour over
 2.7 hours of running (round 2: 130 free, 165 with DeepSeek).
 
-Next, in the owner's order: the backfill decision (PLAN 1c) and the DeepSeek weight for speed are the owner's; the
-fixes written after round 2's re-run go in now (branch `fixes-after-round3`), then the causes above.
+## Independent blind review (the pass, owner decision 1-A, 2026-10-18)
+
+The owner ruled that the author's review above does not count as the pass. The same 90 cards and 50 set-aside
+filings were copied to clean folders (no findings, no manifest) and reviewed by 14 independent agents, one per
+folder, each told to read only its folder, with `REVIEWER_PROMPT_ROUND2.md` word for word, as in round 2. Findings:
+`round-3-agents.json`, `round-3/missed-news-agents.json`. One card reviewer listed the session scratchpad's file
+names while setting up a script and read none of them; the author's findings were never there.
+
+| | author (not blind) | **agents (blind, the pass)** | mark |
+|---|---|---|---|
+| published cards WRONG | 10 / 80 (12.5%) | **10 / 80 (12.5%)** | ≤ 15% |
+| held cards WRONG | 4 / 10 | 6 / 10 | none |
+| missed news | 1 MISSED, 2 UNSURE | **2 MISSED, 3 UNSURE** | ≤ 2 MISSED |
+| all cards OK / MINOR / WRONG | 56 / 20 / 14 | 29 / 45 / 16 | |
+| memory points wrong | 8 cards | 36 cards | apart |
+| impact level misfit | 10 | 25 (nearly all too high) | none |
+
+**Round 3 passes on the blind review: published WRONG 12.5%, MISSED 2 of 50 - both at or within the marks, the
+recall mark with nothing to spare.**
+
+Agreement: 8 published cards are WRONG in both reviews (Bank of Maharashtra advances added read as the book, Exxaro's
+inventory direction, Andhra's invented cause, Milky Mist's deferred-tax share, Newgen's 100x memory figure, Hindustan
+Copper's designations and its directors as ORDER_WIN, Capri's NNPA as GNPA). The agents also found Balu Forge's Q1
+card WRONG (defence share read from the wrong chart series, inventory direction reversed) and Hindustan Copper's AAA
+card WRONG (a ₹21 Cr interest saving four times the company's interest bill, "two notches"); the author had both
+MINOR. The author had HDFC Life's "83% below an 80% target" WRONG (the agent counted it under memory) and NTPC's
+employee-cost column WRONG (the agent: MINOR). The agents are stricter on the rest: 26 cards the author called OK
+they call MINOR, mostly unsupported ratios to net worth or revenue that come from the scale block, which the blind
+export does not show (and which the agents then count as memory issues), invented deal fields (MERCHANT_SALE on
+contracted supply), and overstated impact levels.
+
+The two MISSED: LTM's managed-services deal (both reviews) and Milky Mist's postal ballot to pay its executive
+directors above the Section 197 limits (author: UNSURE). The three UNSURE all turn on whether another filing got a
+card; each did: the ₹4,000 Cr fund-raise card (fcff489f), NTPC's ₹12,000 Cr NCD card (6f02c9a6), NTPC's annual report
+card (cbee73fc).
+
+What the agents add to the causes above: impact levels are set too high on routine filings (25 of 90), and figures
+that rest on the scale block or pre-IPO net worth are not visible to a reader as such.
+
+Next (owner, 2026-10-18): the fixes written after round 2's re-run are merged into the working branch (TRACKER
+F66); the pipeline moves online to NSE, companies >= ₹100 Cr (PLAN), measured by its own blind round before the
+6-month free-tier backfill is sized and started.

@@ -1,0 +1,1904 @@
+[
+ {
+  "news_id": "1d2fd6cf-9954-489f-ba6d-1d7a4e1eec3b",
+  "headline": "Balu Forge receives multi-month contract for 155mm ERFB BB/BT shells from Indian ammunition player",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "First private Indian entity to commercialise 155mm ERFB BB/BT shells",
+    "pdf_says": "'one of the first private entities to successfully commercialise this advanced ammunition variant'; the order is the first purchase order for this variant",
+    "class": "invented"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "establishing Balu Forge as a key supplier for Indian armed forces' artillery upgrade programmes",
+    "pdf_says": "Customer is an unnamed Indian ammunition player; the filing describes armed forces' use of ERFB shells generally, not a supply relationship with the forces",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "1f646789-dd19-4ea2-bc16-74038ea8df32",
+  "headline": "Dr Pamidi Kotaiah, Chairman & Director, passes away",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [],
+  "impact_why": "He was a non-executive independent director; no executive, control or earnings change, so it is a routine board vacancy."
+ },
+ {
+  "news_id": "5cdc9dbf-6efb-4829-b6c9-9c61bbf6581e",
+  "headline": "Hindustan Copper Q1FY27 revenue up 81% YoY to ₹936.5 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes.current_tax.why",
+    "card_says": "Tax rose faster than PBT, lifting the effective tax rate and capping PAT growth",
+    "pdf_says": "Current tax +130.5% (43.06 -> 99.26) vs PBT +163.0% (179.36 -> 471.77); total tax 45.08 -> 119.16 (+164%); ETR 25.1% -> 25.3%, as the card's own quantified_impact says ('tax is not the reason')",
+    "class": "arithmetic"
+   },
+   {
+    "field": "notable_changes.inventory_change.why",
+    "card_says": "Inventory drawdown again reduced expense, consistent with selling down stock",
+    "pdf_says": "Changes in inventories (37.21) is a negative charge, i.e. closing stock above opening: an inventory build, not a drawdown",
+    "class": "direction"
+   },
+   {
+    "field": "signals[0]",
+    "card_says": "Emphasis of matter in the audit report",
+    "pdf_says": "Paragraph is 'Other Matters' in a limited review report; conclusion not modified",
+    "class": "other"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "Higher copper realisations and volumes lifted revenue 81%",
+    "pdf_says": "Filing gives no volume or realisation data (card's own missing_disclosures says so)",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "a2480e4e-1907-481b-a605-ad737707fc3b",
+  "headline": "Fitch assigns expected BB-(EXP) rating to Capri Global's proposed USD senior secured bonds",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "af69ad36-1c3f-4f9e-b6d6-d4cb671659e5",
+  "headline": "Newgen Q1FY27 revenue rose 11.2% YoY to ₹356.68 Cr; PAT grew 26.3% to ₹62.82 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[JAWS]",
+    "card_says": "Employee cost up 10373% YoY vs revenue +11% (Q1FY27) - WARNING",
+    "pdf_says": "Employee benefits INR 1,901.0 Mn (₹190.10 Cr) vs 1,815.1 Mn (₹181.51 Cr): +4.7% YoY, slower than revenue +11.2%. Memory stores Q1FY27 employee cost as 19010 Cr (100x slip), so the warning is false",
+    "class": "unit_scale"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "growth ... supported by strategic wins and leadership changes effective August 2026",
+    "pdf_says": "CEO/CGO changes take effect 1 Aug 2026, after the quarter ended 30 Jun 2026; they cannot have supported Q1 results",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "d1b79d01-17c0-4211-b4b3-5b31e287b29d",
+  "headline": "LTM launches BlueVerse SovereignSphere Models to help enterprises own their AI advantage",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "d5d83757-357d-4ed8-a7c9-ff6cac041429",
+  "headline": "Balmer Lawrie Investments Q1FY27 standalone revenue at ₹2.54 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst / why_it_matters[0] / notable_changes",
+    "card_says": "Standalone revenue declined due to lower interest and dividend income",
+    "pdf_says": "Dividend income is nil in both Q1FY27 and Q1FY26 (only Q4FY26 and FY26 carry dividends); the fall is interest income alone, 295.64 -> 254.45 lakh",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "d98c3673-6681-47fc-8d94-3a12aaf7534c",
+  "headline": "NTPC Green Energy declares COD of 6.3 MW wind capacity in Gujarat, taking NTPC group installed capacity to 91,086 MW",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] (MEMORY)",
+    "card_says": "NTPC's open guidance to reach 60 GW renewable capacity by FY32 and 136 GW by FY37",
+    "pdf_says": "Memory g_6ea670da: 60 GW RE by FY32 and 136 GW TOTAL capacity by FY37; the card's wording reads as 136 GW of renewables",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "f2787ada-65b8-44c0-bfe5-bf8762efb1aa",
+  "headline": "Fitch assigns final BBB- to Bank of Maharashtra's USD 500 million notes",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "f3041659-249b-4cf6-80c1-af52b97b1f17",
+  "headline": "Milky Mist Q1FY27 revenue up 43.6% YoY to ₹973 Cr; gross margin 34.2%, PAT ₹64.68 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1] (SECTOR)",
+    "card_says": "Britannia revenue +9.5% and Heritage +18% in Q1FY27",
+    "pdf_says": "Not in the filing and not in memory; peer figures unsourced",
+    "class": "invented"
+   },
+   {
+    "field": "quantified_impact[0]",
+    "card_says": "8% interest rate assumed -> ~₹40 Cr a year saving, 'about a quarter of FY26 PBT'",
+    "pdf_says": "Card's own input note derives ~6.4% (106.26 / 1,671.85); at that rate the saving is ~₹31.6 Cr (~20% of PBT); the 8% assumption overstates against its own evidence",
+    "class": "other"
+   },
+   {
+    "field": "quantified_impact[1]",
+    "card_says": "Cheddar capacity added = 120 MT/day",
+    "pdf_says": "Cheddar capacity went from 15.6 to 120 MT/day installed; the addition is ~104 MT/day (120 is the total)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "0dc894b3-aba9-4c45-804e-2e4c1a3335ef",
+  "headline": "Milky Mist Dairy Food Ltd credit rating upgraded to Crisil A+/Stable long term and Crisil A1 short term",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] (basis BALANCE_SHEET)",
+    "card_says": "Rated facilities of Rs 1,747 Cr are 7.4% of the company's market cap of Rs 23,757 Cr",
+    "pdf_says": "memory.json holds only the company name and a former name: no market cap or balance sheet, so Rs 23,757 Cr is not supported by memory (1747/23757 = 7.35% is arithmetically fine)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "1baf7eb0-6507-4f22-a5b1-ac18f9e156a9",
+  "headline": "Exxaro Tiles Q1FY27 revenue rose 31% YoY to Rs 85.2 Cr; PAT Rs 2.07 Cr, up 156%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst; notable_changes[inventory_change]",
+    "card_says": "'a swing to inventory drawdown'; Q4FY26 Rs 8.11 Cr build -> Q1FY27 Rs 7.57 Cr drawdown; 'Inventory liquidation supported cash and cost of goods'",
+    "pdf_says": "Changes in inventories line: Q1FY27 (757.21) lakh is an inventory BUILD of Rs 7.57 Cr (lowers expense); Q4FY26 +810.98 lakh was a drawdown. Both quarters and the explanation are reversed",
+    "class": "direction"
+   },
+   {
+    "field": "what_happened[1]; takeaway",
+    "card_says": "other expenses rose to Rs 5.71 Cr from Rs 6.27 Cr; 'power & fuel and other expenses rose faster than sales'",
+    "pdf_says": "Other Expenses 570.54 vs 626.96 lakh: down 9% YoY",
+    "class": "direction"
+   },
+   {
+    "field": "signals[CAPITAL_DILUTER]",
+    "card_says": "Since Q1FY26: EBITDA run-rate -2.1 Cr on +2 Cr of capital added, ROIIC -105%",
+    "pdf_says": "EBITDA ex other income 6.97 Cr vs 6.12 Cr in Q1FY26 (+13.9%, as the card's own key_numbers say): the run-rate rose. The signal contradicts the card's numbers",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "notable_changes[ebitda_margin].why",
+    "card_says": "Power & fuel and raw material costs rose faster than revenue",
+    "pdf_says": "Cost of materials 2,502.21 vs 2,080.29 lakh = +20.3%, slower than revenue +31.3%; only power & fuel (+47.8%) and stock-in-trade purchases rose faster",
+    "class": "other"
+   },
+   {
+    "field": "notable_changes[other_income].change",
+    "card_says": "+1775%",
+    "pdf_says": "75.44 / 3.91 lakh = +1,829% (card divided rounded crore figures)",
+    "class": "arithmetic"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "finance cost Rs 2.74 Cr, roughly a third of EBITDA",
+    "pdf_says": "2.74 / 6.97 = 39%",
+    "class": "arithmetic"
+   }
+  ]
+ },
+ {
+  "news_id": "2436bc2d-bf86-4c22-965f-8cbd8cd15af3",
+  "headline": "Hester Biosciences Ltd gets NSE and BSE NOC for re-classification of Ravin Gandhi and Bela Gandhi from promoter to public category",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] (basis MEMORY, ref t_d20f7ff0)",
+    "card_says": "Promoter shareholding decreases as Ravin and Bela Gandhi move to public, increasing free float",
+    "pdf_says": "The cited memory item is the 21 Jul 2026 AGM attendance; memory holds no holding for the two persons and the filing gives no share count. Claim not supported by memory",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "47e705d1-c23d-4bf5-8504-e135513c6ccf",
+  "headline": "Andhra Petrochemicals FY26 loss Rs 15.67 Cr; auditor flags Rs 7.51 Cr cash loss, clean opinion",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "FY26 loss came from a five-month shutdown on uneconomic HPCL feedstock pricing",
+    "pdf_says": "Directors' report and MD&A: FY26 loss due to lower product prices from Chinese capacity additions; the plant produced 47,844 MT in FY26. The shutdown ran 17 Mar to 4 Aug 2026, almost entirely in FY27 (memory operating notes)",
+    "class": "wrong_period"
+   },
+   {
+    "field": "notable_changes[cash losses].why; notable_changes[inventories].why",
+    "card_says": "cash-loss remark reflects the five-month plant shutdown; inventory drawdown 'during the shutdown year'",
+    "pdf_says": "FY26 was not a shutdown year (only its last two weeks); same misattribution",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters[0] (basis MEMORY, ref t_18327a97)",
+    "card_says": "FY26 revenue of Rs 455.8 Cr and a Rs 15.67 Cr loss were already reported",
+    "pdf_says": "Figures match memory metrics (FY26 455.8 / -15.67), but the cited timeline item is the Q1FY27 results, not FY26",
+    "class": "memory"
+   }
+  ],
+  "impact_note": "Annual report of a small loss-maker whose FY26 figures were already published; clean opinion and no new earnings or balance-sheet news (the card says so itself)."
+ },
+ {
+  "news_id": "4af25650-945d-486d-ae4d-134cc1c6f69a",
+  "headline": "HDFC Life Q2FY27 PAT Rs 508 Cr; solvency at 180%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway; core_catalyst",
+    "card_says": "Profit rose on premium growth and a lower expense ratio",
+    "pdf_says": "The expenses of management ratio fell only QoQ (22.5% -> 21.9%), when PAT fell (611 -> 508 Cr); YoY, when PAT rose (447 -> 508), the ratio rose from 21.3% to 21.9%",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Solvency of 180% sits at the lower end of the 175-185% range seen over the past year",
+    "pdf_says": "180% is the middle of 175-185% (Sep-25 175%, Mar-26 177%, Jun-26 185%)",
+    "class": "other"
+   },
+   {
+    "field": "track_next.pending_approvals; milestones",
+    "card_says": "Shareholder approval via postal ballot for NCD issuance",
+    "pdf_says": "The postal ballot in the filing is for the IFSC Insurance Office (IRDAI policyholder regulations); the NCD item is an in-principle board approval with no shareholder approval mentioned",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "8ac076ff-9db6-45a2-8a0e-70aaea8a7227",
+  "headline": "Newgen Q1FY27 revenue up 11% to Rs 357 Cr; EBITDA margin 15.7%, PAT up 26%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[implementation revenue]",
+    "card_says": "implementation revenue down ~23% YoY in Q1FY27",
+    "pdf_says": "The transcript only says management hopes 'to recover the Q1, 23%, which is amounted to some INR12 crores'; it does not call this a YoY decline (it may be the shortfall against plan)",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]; quantified_impact[1]; risks",
+    "card_says": "management guides to 23-25% EBITDA margin for the full year",
+    "pdf_says": "Management said 'we usually have 23% to 25% EBITDA margin for the entire year': a historical norm stated loosely, not a formal FY27 guide",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "a9014f3d-248d-46d3-adcb-bd0731e24e78",
+  "headline": "Balu Forge EGM clears FCCB issue, Rs 1,000 Cr borrowing limit and charge creation",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "what_happened[1]; takeaway",
+    "card_says": "'Public institutions cast ** ** of their polled votes against ... backed them at ** **'; takeaway ends 'the loudest dissent in the filing'",
+    "pdf_says": "The figures are blank: institutions voted 57.9988% of their polled votes against; public non-institutions 99.99% in favour",
+    "class": "other"
+   },
+   {
+    "field": "notable_changes[Institutional vote against]",
+    "card_says": "Public institutions opposed all three resolutions, signalling concern over dilution and leverage",
+    "pdf_says": "Only 2,13,351 of 86,35,207 institutional shares (2.47%) voted; the 1,23,741 votes against are 0.18% of all votes cast",
+    "class": "other"
+   },
+   {
+    "field": "headline; timeline_entry",
+    "card_says": "Rs 1,000 Cr borrowing limit",
+    "pdf_says": "The filing states no amount for the Sec 180(1)(c) limit (the card's own missing_disclosures says so); the figure comes from memory of the EGM notice",
+    "class": "other"
+   },
+   {
+    "field": "track_next.catalysts",
+    "card_says": "FCCB proceeds could fund the Belagavi machining capacity expansion to 80,000 TPA",
+    "pdf_says": "No use of proceeds in the filing; memory holds the Belagavi guidance but no link to the FCCB",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0] (basis MEMORY, ref t_1fb09a2f)",
+    "card_says": "The EGM follows the 4 September 2026 approval of FCCBs up to USD 60 million",
+    "pdf_says": "The memory item is this same 4 Sep EGM (notice amount USD 60 mn), not an earlier approval; the vote is that approval",
+    "class": "memory"
+   }
+  ],
+  "impact_note": "Voting result of an EGM whose fundraise was already announced; promoters hold about 54%, so passage was certain."
+ },
+ {
+  "news_id": "cd3c8d1c-23e8-4c84-ae85-a4f6997b055e",
+  "headline": "Hindustan Copper re-designates three senior managers effective on or before 09.10.2026",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[0] (Nagesh Shenoy)",
+    "card_says": "from 'ED & Unit ED (Mining-Head-Malanjkhand Copper Production, Safety & ISO Project Chief), Corporate Office' to 'ED & Unit ED & Unit Head-Taloja Copper Project Head-Malanjkhand Copper & Gujarat Copper Project'",
+    "pdf_says": "The two-column table was read across rows. Previous: 'Executive Director & Unit Head - Malanjkhand Copper Project'; New: 'Executive Director (Mining - Production, Safety & ISO Chief), Corporate Office'",
+    "class": "wrong_column"
+   },
+   {
+    "field": "what_happened[1] (Abhimanue Singh)",
+    "card_says": "re-designated from a designation to the identical designation",
+    "pdf_says": "Previous: 'Executive Director & Unit Head - Taloja Copper Project & Gujarat Copper Project'; New: 'Executive Director & Unit Head - Malanjkhand Copper Project'. The card misses who now heads Malanjkhand, the main mine",
+    "class": "wrong_column"
+   }
+  ]
+ },
+ {
+  "news_id": "d93bec96-fd5f-4cca-8bef-27ce406a69d3",
+  "headline": "LTM collaborates with IBM, Red Hat on Lightwell for AI-driven software remediation",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "why_it_matters[1] (basis MEMORY, ref t_6ae9d6dc)",
+    "card_says": "Aligns with LTM's focus on Business AI and application modernization capabilities mentioned in memory",
+    "pdf_says": "The cited memory item is the Aug 2026 Chainguard software-supply-chain collaboration; it does not mention Business AI or application modernization (those words are from this filing's boilerplate)",
+    "class": "memory"
+   }
+  ],
+  "impact_note": "Partnership press release with no value, client or timeline, for a company with about Rs 42,000 Cr of revenue."
+ },
+ {
+  "news_id": "fd430c64-6286-4ab9-bf14-37a7cb32f078",
+  "headline": "BSE imposed a fine of Rs 9.78 lakh on Balmer Lawrie Investments for Q1FY27 board composition non-compliance",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "12fc5be5-fb60-4dbb-b7c1-0e40ad58daed",
+  "headline": "Capri Global files USD 1 bn GMTN programme docs on India INX, NSE IFSC",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "Regulatory approvals for USD bond issuance",
+    "pdf_says": "Filing only reports upload of a preliminary supplemental offering circular; no pending approval is mentioned",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "64e7ea0c-e0d5-4bab-b7ef-d46eff52df9c",
+  "headline": "HDFC Life confirms GST demand of ₹2,423 Cr including interest and penalty for FY18-FY22 period",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[0] / key_numbers[0] / timeline_entry",
+    "card_says": "GST demand of ₹2,423 Cr including interest and penalty",
+    "pdf_says": "Tax demand Rs 942.18 crore, interest as applicable, and penalty Rs 2,422.97 crore; ₹2,423 Cr is the penalty alone, so the confirmed demand is at least ₹3,365 Cr plus interest",
+    "class": "other"
+   },
+   {
+    "field": "what_happened[1]",
+    "card_says": "tax of ₹942.18 Cr plus applicable interest and penalty of ₹2,422.97 Cr",
+    "pdf_says": "₹2,422.97 Cr is the penalty; interest is unquantified ('as applicable')",
+    "class": "other"
+   },
+   {
+    "field": "takeaway / why_it_matters[0]",
+    "card_says": "Confirmed GST liability of ₹2,423 Cr = 12.4% of net worth",
+    "pdf_says": "Total demand is at least ₹3,365 Cr (about 17% of the ₹19,509 Cr net worth) before interest; the ratio is computed on the penalty only",
+    "class": "arithmetic"
+   },
+   {
+    "field": "track_next.risks",
+    "card_says": "cash outflow of ₹2,423 Cr plus further interest",
+    "pdf_says": "Exposure is tax ₹942.18 Cr + penalty ₹2,422.97 Cr + interest",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "c233ccaf-d031-4d74-acc7-72b7bd41e7e6",
+  "headline": "Newgen UK unit wins GBP £1.63M order for document management system",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "1.3% of TTM revenue and 0.3% of market capitalisation (basis FILING)",
+    "pdf_says": "Filing gives no revenue or market cap; ratios come from outside the filing (memory has no FY26/TTM revenue either) but are labelled FILING",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "d573d84c-3a58-4d54-acfe-1579e61d5761",
+  "headline": "Hester Biosciences upgraded to BBB+ by CARE Ratings",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[2]",
+    "card_says": "₹48.45 Cr long-term and ₹65 Cr short-term",
+    "pdf_says": "₹65.00 Cr is long-term/short-term facilities; pure short-term facilities are ₹0.22 Cr",
+    "class": "other"
+   },
+   {
+    "field": "key_numbers[2].change",
+    "card_says": "Total rated facilities ₹113.67 Cr, No change",
+    "pdf_says": "Long-term facilities reduced from ₹66.25 Cr to ₹48.45 Cr, so the rated total fell",
+    "class": "invented"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "Credit upgrade reflects stronger financials post-Gates Foundation loan waiver",
+    "pdf_says": "CARE cites operational and financial performance for FY26 and Q1FY27; the waiver is not in the filing (inference from memory)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "f76827ae-b62c-4f53-b5cf-7d5776fc9656",
+  "headline": "Balmer Lawrie Investments board notes BSE fines for Q4FY26 board-composition lapses, seeks waiver",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "f9d68d76-2bc6-41da-b074-1b23faf00b3d",
+  "headline": "NTPC Green Energy declares COD of 50 MW solar capacity in Rajasthan, taking group commercial capacity to 90,000 MW",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Filing says nothing about offtake; an RE round-the-clock project is not described as merchant sale",
+    "class": "invented"
+   },
+   {
+    "field": "what_happened[2]",
+    "card_says": "commercial capacity ... will increase to 10,836.56 MW",
+    "pdf_says": "NGEL letter: total installed capacity of the NGEL group will increase to 10,836.56 MW (current commercial 10,786.56 MW)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "5da1c3a7-6c05-458a-a3f6-192c6e307f77",
+  "headline": "Milky Mist Q1FY27 revenue ₹973.45 Cr; PAT ₹64.68 Cr on a low tax base",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway / core_catalyst",
+    "card_says": "most of the PAT jump came from a deferred-tax credit; not operations alone",
+    "pdf_says": "PAT rose ₹58.15 Cr (6.53 to 64.68) while PBT rose ₹63.1 Cr (10.41 to 73.51); total tax expense rose from ₹3.88 Cr to ₹8.83 Cr. The ₹9.68 Cr deferred-tax credit is about 17% of the PAT jump; the jump is operational",
+    "class": "arithmetic"
+   },
+   {
+    "field": "track_next.risks",
+    "card_says": "PAT base flattered by tax credits that will not repeat",
+    "pdf_says": "Tax charge was higher than a year earlier; the credit offsets part of current tax but did not drive the PAT increase",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.amount_cr",
+    "card_says": "₹1,553.2 Cr FUNDRAISE (IPO)",
+    "pdf_says": "₹1,428 Cr fresh issue to the company; ₹125 Cr is an OFS whose proceeds go to promoter sellers (the filing's own 'gross proceeds to the company' row also shows 1,55,320.47 lakh)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "d3e633c4-2e62-4ef9-a3af-08dfe802bf3c",
+  "headline": "Fitch assigns BBB- to Bank of Maharashtra's USD 500 million MTN programme",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "EMTN programme set up on 5 September 2026",
+    "pdf_says": "Programme established on September 4, 2026 (memory holds the 5 Sep filing date, not the establishment date); the card itself says Sep 4 elsewhere",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "04ad94e5-7c3c-403e-ab9c-7807537481bf",
+  "headline": "Exxaro FY26 audit clean but carries emphasis of matter; ₹124 Cr contingent liabilities vs ₹280 Cr net worth",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "track_next.catalysts",
+    "card_says": "Resolution of GST and income-tax appeals would release ₹64.60 Cr",
+    "pdf_says": "₹64.60 Cr is indirect-tax demands only; income-tax demands are a further ₹7.68 Cr (₹72.28 Cr together)",
+    "class": "other"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "₹6.6 Cr of promoter-director loans",
+    "pdf_says": "MD ₹6.57 Cr + WTD ₹0.22 Cr = ₹6.79 Cr",
+    "class": "arithmetic"
+   }
+  ]
+ },
+ {
+  "news_id": "c5deee61-a13b-4259-8b38-fda0245af230",
+  "headline": "Balu Forge FY26 annual report: unmodified audit, export receivables flagged",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "key_numbers[2] Net worth",
+    "card_says": "₹1,369.73 Cr (beside consolidated revenue ₹1,107.37 Cr and PAT ₹258.89 Cr)",
+    "pdf_says": "₹1,369.73 Cr is standalone total equity; consolidated total equity is ₹1,594.52 Cr",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Trade receivables of ₹339.08 Cr against FY26 revenue of ₹1,107.37 Cr",
+    "pdf_says": "₹339.08 Cr is standalone receivables (standalone revenue ₹647.42 Cr); consolidated receivables are ₹425.10 Cr against ₹1,107.37 Cr",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "cash fell to ₹84.48 Cr from ₹92.64 Cr",
+    "pdf_says": "Standalone figures; consolidated cash ₹85.66 Cr from ₹93.08 Cr",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "the only flags are the export-receivable realisation and undeposited cheques",
+    "pdf_says": "Auditor's Other Matter: ₹524.13 lakh export receivables from a subsidiary exceed RBI realisation timelines; note 46: Income Tax search and seizure on 7 Jan 2026 covering FY21-FY26, proceedings pending, impact not ascertainable",
+    "class": "other"
+   },
+   {
+    "field": "key_numbers[0].quote",
+    "card_says": "Revenue ₹1,107.37 Cr quoted with 'Net profit after tax 15,320.77 13,422.97'",
+    "pdf_says": "That quote is standalone PAT; consolidated revenue is 1,10,736.69 lakh",
+    "class": "other"
+   },
+   {
+    "field": "notable_changes[2]",
+    "card_says": "CWIP ₹273.71 Cr",
+    "pdf_says": "Standalone; consolidated CWIP ₹277.31 Cr",
+    "class": "standalone_consolidated"
+   }
+  ]
+ },
+ {
+  "news_id": "15a51e47-a1a7-473d-99d8-a8a2eec89725",
+  "headline": "Newgen signs $1.79 mn Qatar platform deal, 1.1% of TTM revenue",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / key_numbers 'Share of TTM revenue' / why_it_matters",
+    "card_says": "1.1% of TTM revenue and 1.0% of net worth (basis FILING, quoting the INR conversion line)",
+    "pdf_says": "Filing gives only USD 1,791,140 = INR 17.14 Cr; no TTM revenue or net worth. Memory has FY25 revenue 1,354.35 Cr and Q1FY27 356.68 Cr but no FY26/TTM revenue or net worth, so neither ratio can be checked (FY25 basis would give 1.27%)",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "2eb68fd4-9860-418a-b46b-c4767c932eac",
+  "headline": "LTM launches BlueVerse OneToken to route enterprise AI requests to cheaper models",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] (MEMORY)",
+    "card_says": "Fourth BlueVerse announcement since 9 September 2026, after Lightwell, the Shekhar Kapur advisory and SovereignSphere Models",
+    "pdf_says": "Memory t_1321c009 describes Lightwell as a collaboration with IBM and Red Hat on open-source remediation; nothing ties it to BlueVerse, so 'fourth BlueVerse announcement' is not supported",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "34bf5f12-f60c-471b-b3ab-b01334901867",
+  "headline": "Milky Mist commissions 10 MW solar plant at Arasanoor, taking renewable capacity to 41 MW",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.amount_cr / signals SCALE",
+    "card_says": "CAPEX 109.6 Cr for this event; '₹109.6 Cr capex = 11% of Q1FY27 revenue'",
+    "pdf_says": "109.60 Cr is the total investment in the whole 25 MW at Arasanoor, including the 15 MW plant commissioned earlier; the cost of the new 10 MW plant is not disclosed",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.counterparty",
+    "card_says": "Internal accruals",
+    "pdf_says": "Funding is not stated in the filing (the card itself lists the funding mix as a missing disclosure)",
+    "class": "invented"
+   },
+   {
+    "field": "key_numbers[2] label",
+    "card_says": "Cumulative power generated from renewable plants: ₹165 Cr",
+    "pdf_says": "~210 million units generated, 'equivalent to a value of around ₹165 crore'; the ₹165 Cr is the value of the power, not the power generated",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "3dffc23c-1674-432e-a109-bb4107601a9f",
+  "headline": "HDFC Life Q1FY27 PAT at ₹611 Cr; solvency slipped to 185%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst / takeaway / why_it_matters[0]",
+    "card_says": "New business strain narrowed to ₹1,519 Cr from ₹1,326 Cr; profit growth came from a smaller new-business strain",
+    "pdf_says": "New business strain (151,916) lakh vs (132,596) lakh a year ago: the strain widened by 14.6%. Profit grew because existing-business surplus rose (187,422 vs 162,976 lakh). The card's own notable_changes calls it NEGATIVE.",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Solvency of 185% is down from 192% a year ago and 177% at March 2026",
+    "pdf_says": "Solvency 185% vs 177% at March 2026 is up 8 points quarter on quarter; it is down only against 192% a year ago",
+    "class": "direction"
+   },
+   {
+    "field": "notable_changes persistency_13m",
+    "card_says": "80.08% (Q1FY27)",
+    "pdf_says": "Extracted text shows '%0.08%' (garbled; the other ratios have one decimal, e.g. 80.0% or 80.8%); 80.08% is a guess, not a printed figure",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "73798fad-7b30-4b78-8036-1ac5680dad90",
+  "headline": "Bank of Maharashtra establishes USD 500 million Euro MTN programme",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": []
+ },
+ {
+  "news_id": "b8d921aa-eb5d-446a-b505-eb57d10b7ad9",
+  "headline": "Andhra Petrochemicals held its 42nd AGM on 23 September 2026, reappointing two directors and fixing auditor remuneration",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "c101cd2d-344c-4e48-a6ee-7c079b1e7205",
+  "headline": "Balu Forge buys ring rolling line for forged rings up to 6.7 m OD, adding 18,000 T capacity",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "M_AND_A",
+    "pdf_says": "Purchase of a ring rolling production line (equipment / capacity addition), not the acquisition of a company or business; the card's own deal_value kind is CAPEX",
+    "class": "event_type"
+   },
+   {
+    "field": "why_it_matters[0] (MEMORY)",
+    "card_says": "defence, aerospace and wind rings, the segments memory says already make up about half the order book",
+    "pdf_says": "Memory t_7ebe361c: defence, aerospace and railways ~50% of the order book; wind is not in that share",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[1] (BALANCE_SHEET)",
+    "card_says": "₹1,595 Cr net worth or ₹41.06 Cr net debt",
+    "pdf_says": "Neither figure is in the filing or in memory (balance_sheet holds only the period Jun-2026)",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[2] (SECTOR)",
+    "card_says": "Peer HEG is also restructuring its graphite business via NCLT demerger",
+    "pdf_says": "Not in the filing; HEG (graphite electrodes) is not a forging peer, so the comparison is irrelevant",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "d7031b42-462a-4dde-b2cf-89308ffa06f0",
+  "headline": "Capri Global Q1FY27 revenue ₹1,576 Cr; PAT ₹353 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "Revenue and profit both roughly doubled YoY on consolidated basis",
+    "pdf_says": "Consolidated revenue 15,764.75 vs 10,009.98 mn = +57.5%; only PAT doubled (3,533.81 vs 1,749.04 mn = +102%)",
+    "class": "arithmetic"
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "Q1FY27 revenue of ₹1,233 Cr and PAT of ₹314 Cr",
+    "pdf_says": "These are the standalone figures (12,325.20 mn and 3,140.83 mn); the card's headline and body use consolidated ₹1,576 Cr and ₹353 Cr. The timeline gives no basis and contradicts the card.",
+    "class": "standalone_consolidated"
+   }
+  ]
+ },
+ {
+  "news_id": "dfe5b7ad-99f8-4864-91f4-13c90b61c3c8",
+  "headline": "Hindustan Copper gets two independent directors appointed",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "ORDER_WIN",
+    "pdf_says": "A Ministry of Mines order appointing two part-time non-official (independent) directors; this is a board / governance change, not a business order",
+    "class": "event_type"
+   },
+   {
+    "field": "core_catalyst / why_it_matters[0]",
+    "card_says": "Appointment resolves governance concerns / resolves auditor's emphasis of matter",
+    "pdf_says": "The appointment runs from the date of notification; the company 'will undertake necessary action to complete the statutory formalities', so it is not yet effective, and whether two directors restore a valid audit committee is not stated",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "e0e0ef91-6c54-4bd6-98e9-19ea60164763",
+  "headline": "NTPC Q1FY27 revenue rose 7.8% YoY to ₹50,741 Cr; PAT up 12.9% to ₹6,896 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes employee_cost",
+    "card_says": "previous ₹1,713.10 Cr (Q4FY26), change 0%, 'flat QoQ'",
+    "pdf_says": "Consolidated employee benefits expense for Q4FY26 was 2,064.80 Cr; Q1FY27 1,713.10 Cr is down 17.0% QoQ (and up 8.1% YoY vs 1,584.35 Cr)",
+    "class": "wrong_column"
+   },
+   {
+    "field": "notable_changes other_income previous",
+    "card_says": "₹755.75 Cr (Q1FY26)",
+    "pdf_says": "Consolidated other income Q1FY26: 756.76 Cr (the -47% change is still right)",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0] (MEMORY)",
+    "card_says": "EBITDA margin 31.99%, the highest since Q4FY26 (30.83%)",
+    "pdf_says": "Memory supports 31.99% being above every period it holds, including Q4FY26's 30.83%; 'highest since Q4FY26' misstates the comparison",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "0148a4c9-459c-430e-ba54-d57a0d67c5b2",
+  "headline": "Balu Forge Q1FY27 revenue rose 29% YoY to ₹300.71 Cr; EBITDA margin fell to 28.2%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[0]",
+    "card_says": "defence/aerospace/railway at 34% of the mix",
+    "pdf_says": "End-user pie: the series reading 6% (FY25) / 13% (FY26) / 14% (Q1FY27) is defence/aerospace/railway (the card itself and memory say 13% of FY26); 40/36/34% is another segment. Defence share is ~14%, not 34%.",
+    "class": "wrong_column"
+   },
+   {
+    "field": "notable_changes[inventory_change].why",
+    "card_says": "Inventory build absorbed cash this quarter after a drawdown in Q4FY26",
+    "pdf_says": "Change in inventories +43.83 Cr is a P&L charge (it is subtracted to reach EBITDA 84.77), i.e. inventories fell in Q1FY27; Q4FY26 -8.24 Cr was a build. Direction reversed.",
+    "class": "direction"
+   },
+   {
+    "field": "signals[WATCH_RESOLVED]",
+    "card_says": "KPI check partial ... Q1FY27 EBITDA margin 28.19%, roughly flat on Q1FY27's 28.19%",
+    "pdf_says": "Compares Q1FY27 with itself; the watch was set the same day (12 Aug 2026) with check-in at Q2FY27 results, so this filing cannot resolve it.",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[0] (MEMORY)",
+    "card_says": "Defence, aerospace and railways held 34% of Q1FY27 revenue, above the 20% Q2FY27 verification threshold and up from 13% of FY26 revenue",
+    "pdf_says": "Memory holds 13% of FY26 revenue and ~50% of the order book; it does not support 34% of Q1FY27 revenue (the filing's series gives ~14%, below the 20% threshold).",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "19154bbe-eaae-4a53-94e4-537b78e6da3e",
+  "headline": "Promoter to sell up to 2.90 Cr shares (3.00% of capital) via OFS on Aug 25-26, floor price ₹514",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type / deal_value.kind",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "Offer for sale by the promoter (President of India); no money reaches the company, as the card itself says. A promoter stake sale, not a company fund raise.",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "22d0c0fa-552b-4df5-89fe-66c07ee4ed1c",
+  "headline": "Andhra Petrochemicals to restart plant on 5 August 2026 after March shutdown",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "CAPEX",
+    "pdf_says": "Restart of plant operations after a shutdown; no capital expenditure is mentioned. An operational update (OTHER).",
+    "class": "event_type"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "covering most of Q1FY27 and part of Q2FY27",
+    "pdf_says": "17 Mar to 5 Aug 2026 covers all of Q1FY27 (Apr-Jun), plus the last two weeks of Q4FY26 and five weeks of Q2FY27.",
+    "class": "wrong_period"
+   },
+   {
+    "field": "takeaway (memory figures)",
+    "card_says": "Restart ends a multi-month outage that left FY26 revenue at ₹455.8 Cr and the last quarter at ₹79.3 Cr",
+    "pdf_says": "The figures match memory, but the shutdown began 17 Mar 2026, two weeks before FY26 ended, and memory shows revenue already down in Q3FY26 (67.39 Cr). Memory does not support attributing FY26 revenue to this outage.",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[1] (BALANCE_SHEET)",
+    "card_says": "gross debt at nil and net worth of ₹505.35 Cr",
+    "pdf_says": "Memory balance sheet has gross_debt_cr 0 but no net worth; ₹505.35 Cr is supported by neither memory nor the filing.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "37813845-14d7-4749-8106-134f269c214e",
+  "headline": "Milky Mist launched High Protein Lactose-free Milk in 250 ml pack on October 15, 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] (MEMORY)",
+    "card_says": "The launch aligns with the company's guidance to deploy more than 50,000 visi coolers, ice cream freezers and chocolate coolers",
+    "pdf_says": "Memory holds the cooler guidance, but it has no link to a high-protein milk launch; the claimed alignment is not supported.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "8b22fb9c-f727-4a2b-abe9-943b3b6c7f35",
+  "headline": "LTM submits applications to reclassify Nabha Power from promoter to public",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "MANAGEMENT_CHANGE",
+    "pdf_says": "Reg 31A reclassification of a promoter-group shareholder to public: a shareholding change, not a management change.",
+    "class": "event_type"
+   }
+  ],
+  "impact_why": "Routine Reg 31A procedural step (applications filed after the board approval already disclosed); no change to control, earnings or governance."
+ },
+ {
+  "news_id": "c45ec145-e5c8-417d-8966-fcd248346103",
+  "headline": "Newgen KMP Surender Jeet Raj, EVP Global Business Strategy and HR, retires on 12 Oct 2026",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.risks[0]",
+    "card_says": "Loss of a long-tenured strategy and HR executive",
+    "pdf_says": "The filing gives no tenure or profile ('Brief profile ... Not Applicable').",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "ea5c02c6-3b68-4073-97c1-3d43677a4f23",
+  "headline": "S&P Global Ratings assigns BBB to Bank of Maharashtra's USD 500 million MTN notes",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.stage / amount_cr",
+    "card_says": "stage PROPOSED, amount_cr null",
+    "pdf_says": "S&P letter rates an issued 'U.S.$500,000,000 6.112 per cent. Senior Notes due 24 September 2031' (memory: priced 17 Sep 2026); the issue is priced, not proposed, and its size is stated.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "ef617cfd-cc0e-4bcb-abb8-3c6afca7e0a8",
+  "headline": "HDFC Life Q1FY27 VNB up 9% to ₹879 Cr, margin 25.0%; bancassurance APE flat",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "quantified_impact[GST impact on PAT]",
+    "card_says": "GST reduces PAT by roughly ₹2.6 Cr, or about 0.4% of reported profit",
+    "pdf_says": "PAT 611 vs 546 a year ago; ex-GST growth of 17% implies ~₹639 Cr, so the GST hit is ~₹27-28 Cr (~4.5% of PAT). The card's own check computed 26.11 and flagged MISMATCH; the published 2.6 is a 10x slip.",
+    "class": "arithmetic"
+   },
+   {
+    "field": "quantified_impact[GST impact on VNB]",
+    "card_says": "vnb_reported x (25.6-25.0)/100 = ₹5.3 Cr, about 0.6% of VNB",
+    "pdf_says": "Margin is VNB/APE, so the hit is APE x 0.6pp = 3,515 x 0.006 = ~₹21 Cr; consistent with footnote 'VNB grew by 11%' ex-GST (809 x 1.11 = ~898 vs 879). Understated ~4x.",
+    "class": "arithmetic"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "management attributes it to product and tier mix rather than a channel fix",
+    "pdf_says": "Filing says only 'These trends reflect the underlying product and tier mix'; 'rather than a channel fix' is not in it.",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "fc269ffe-cd0b-4ecb-b553-99f374ef3fd3",
+  "headline": "NTPC Green Energy commissions 50.4 MW wind capacity in Gujarat, raising group capacity to 10,977.23 MW",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened",
+    "card_says": "50.4 MW added, raising capacity to 10,977.23 MW",
+    "pdf_says": "Filing declares COD of two projects (item i, a further part of the REMCL RTC wind component; item ii, 50.4 MW Jamjodhpur); capacity goes 10,920.53 -> 10,977.23 MW, i.e. 56.7 MW added. Item (i) (~6.3 MW) is omitted.",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "The capacity is under the 500 MW REMCL RTC project, i.e. contracted round-the-clock supply to REMCL, not merchant sale.",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0] (MEMORY)",
+    "card_says": "NTPC's guided target of 60 GW renewable capacity by FY32 and 136 GW by FY37",
+    "pdf_says": "Memory: 60 GW RE by FY32 and 136 GW TOTAL capacity by FY37; the wording reads as 136 GW renewable.",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[1] (MEMORY)",
+    "card_says": "68.22 MW solar and 9.45 MW wind in September 2026",
+    "pdf_says": "Memory: the 68.22 MW solar was commercial from 23 July 2026 (disclosed 19 Sep); only the 9.45 MW wind dates from September.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "fcff489f-7a29-44a8-9580-bbb6f60500ef",
+  "headline": "Capri Global Capital approves raising of funds up to ₹4,000 Cr",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Board approval to raise funds is FUNDRAISE (memory files Capri's NCD issues as FUNDRAISE).",
+    "class": "event_type"
+   },
+   {
+    "field": "takeaway / why_it_matters[0]",
+    "card_says": "a significant capital infusion plan ... 55.5% of net worth",
+    "pdf_says": "Enabling approval 'up to' ₹4,000 Cr across equity, debt, FCCB and ECB, in one or more tranches; it need not be capital (equity) at all. The TTM-revenue ratio checks (~₹4,957 Cr TTM).",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0] (BALANCE_SHEET)",
+    "card_says": "55.5% of net worth (implies ~₹7,207 Cr)",
+    "pdf_says": "Memory balance sheet (Sep-2026) holds no net worth; the ratio is not supported by memory.",
+    "class": "memory"
+   }
+  ],
+  "impact_why": "Enabling resolution with no instrument split, pricing or timing; an NBFC raises debt routinely, so the view changes only once terms are set."
+ },
+ {
+  "news_id": "14ac0bd3-789a-42a7-a43d-07134b33a2d3",
+  "headline": "Bank of Maharashtra Q1FY27 net profit rose 27% YoY to ₹2,020 Cr; advances grew 27% YoY to ₹65,000 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[1] / key_numbers.Advances",
+    "card_says": "Total advances grew 27% YoY to ₹65,000 Cr (value ₹65,000 Cr)",
+    "pdf_says": "\"INR65,000 crores of advances have been added\" - ₹65,000 Cr is the year's increase in advances, not the advances book",
+    "class": "other"
+   },
+   {
+    "field": "what_happened[2] / key_numbers.CASA",
+    "card_says": "CASA grew 9% YoY to ₹14,000 Cr",
+    "pdf_says": "CASA grew 9% YoY and \"INR14,000 crores in amount terms\" - ₹14,000 Cr is the amount added, not total CASA",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Advances growth of 27% well above guided 18%, indicating potential for upward revision",
+    "pdf_says": "MD: \"I would not like to look at, relook at, revisit our guidance of 18% growth ... we will maintain the guidance at 18%\"; 3 of the 27 points come from the IBU book",
+    "class": "invented"
+   },
+   {
+    "field": "key_numbers.Gross NPA.change",
+    "card_says": "0% YoY",
+    "pdf_says": "GNPA \"maintained at the March level 1.45%\" - flat against March (QoQ); no YoY comparison given",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters[0] (basis MEMORY)",
+    "card_says": "27% profit growth exceeds the bank's historical trend (Q1FY26 ₹1,593 Cr)",
+    "pdf_says": "Memory: Q1FY26 PAT 1,593.09 is right, but FY26 PAT 7,020.64 vs FY25 5,520.87 is also +27%; memory does not show 27% exceeding the trend",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "a0062553-6bb4-4c17-8811-6982191fab3e",
+  "headline": "HDFC Life held its 26th AGM on July 16, 2026; all resolutions passed including dividend declaration and auditor appointment",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "resolutions approved ... with no dissent noted",
+    "pdf_says": "Filing says only \"passed by the Members with the requisite majority\"; voting results to follow within two working days - nothing on dissent",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "KKC & Associates appointed as joint statutory auditor alongside BSR & Co. LLP and G.M. Kapadia & Co.",
+    "pdf_says": "Filing: \"Appointment of KKC & Associates LLP ... as one of the Joint Statutory Auditors\"; it does not say both current auditors continue",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "a4299e99-1fed-4d62-9357-ba569c72d3d0",
+  "headline": "Ms. Tabassum Begum resigns as Company Secretary & Compliance Officer",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "a827d550-4a9b-463f-9c10-c31f82e71f89",
+  "headline": "NTPC group adds 64.76 MW solar capacity, total installed at 91,030 MW",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "64.76 MW is about 0.07% of NTPC's 91,030 MW; a routine part-COD notice",
+  "issues": [
+   {
+    "field": "notable_changes.installed_capacity.previous / key_numbers change",
+    "card_says": "Installed capacity previous 90,965.24 MW, +64.76 MW (also +64.76 MW on commercial capacity)",
+    "pdf_says": "Filing gives only the new totals (installed 91,030 MW, commercial 89,950 MW); the prior figure and the +64.76 MW on installed capacity are computed, and a COD moves commercial, not necessarily installed, capacity",
+    "class": "invented"
+   },
+   {
+    "field": "what_happened[0] / timeline_entry",
+    "card_says": "NTPC Green Energy commissioned 64.76 MW",
+    "pdf_says": "Project of NTPC Renewable Energy Limited (subsidiary of NGEL); NGEL made the disclosure",
+    "class": "other"
+   },
+   {
+    "field": "deal_value",
+    "card_says": "counterparty GSECL, usage MERCHANT_SALE, stage COMPLETED",
+    "pdf_says": "GSECL RE Park is the site; no offtaker or merchant sale stated; only 64.76 of 225 MW commissioned",
+    "class": "invented"
+   },
+   {
+    "field": "track_next.kpis_to_verify",
+    "card_says": "check_in Q1FY27 results, period Q1FY27",
+    "pdf_says": "COD 24.07.2026 falls in Q2FY27 (Jul-Sep); Q1FY27 ended 30 Jun 2026",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters[1] (basis MEMORY, ref t_2dd048a9)",
+    "card_says": "The 225 MW Khavda project is part of NTPC's larger renewable expansion",
+    "pdf_says": "t_2dd048a9 is THDC India's 11 MWac floating solar plant at Khurja; memory holds nothing on Khavda",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "c707fc7d-44ba-47c8-9162-8c29e55c0c8f",
+  "headline": "LTM Q1FY27 revenue ₹11,608 Cr, up 18% YoY; EBIT margin 15.5%, PAT ₹1,469 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[2] (basis BALANCE_SHEET)",
+    "card_says": "Cash and investments of ₹15,021 Cr (62.5% of net worth) and zero gross debt",
+    "pdf_says": "₹15,021 Cr (transcript) and zero gross debt (memory Q4FY26 gross_debt 0) are supported; memory holds no net worth, so 62.5% cannot be checked",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "ccd151af-b408-4c64-95b9-2ed8735320a5",
+  "headline": "Milky Mist commissions 150 tonnes/day Skyr and Greek Yogurt plant for ₹40 Cr",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "₹40 Cr is 1.3% of FY26 revenue and ~0.2% of market cap; the card itself calls it small",
+  "issues": [
+   {
+    "field": "key_numbers.Category demand growth / notable_changes.why",
+    "card_says": ">50% a year; demand the filing says has grown over 50% a year",
+    "pdf_says": "\"Since then [2022], annual demand for the category has grown by more than 50%\" - cumulative growth since 2022, not 50% each year",
+    "class": "other"
+   },
+   {
+    "field": "what_happened[1] / timeline_entry",
+    "card_says": "The new 150 t/day plant replaces the 2022 ~20 t/day multi-product yogurt line",
+    "pdf_says": "Filing calls it a \"new exclusive plant\"; it does not say the 2022 line is replaced",
+    "class": "invented"
+   },
+   {
+    "field": "track_next.kpis_to_verify[0]",
+    "card_says": "Gross margin after the new yogurt plant starts depreciating",
+    "pdf_says": "Depreciation sits below gross margin; this KPI cannot show the effect it claims to track",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1] (basis MEMORY, refs t_128adffa, d_128adffa)",
+    "card_says": "This is the second Perundurai commissioning in memory after the ₹40 Cr Skyr plant card of 10 September; treat as the same event",
+    "pdf_says": "t_128adffa / d_128adffa are this same filing's event (10 Sep 2026); memory shows no second commissioning",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "d1364ba2-5d76-484b-997b-825be59a1282",
+  "headline": "LTM partners with Chainguard to enhance BlueVerse RightLogic for software supply chain security",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "A partnership press release with no money or revenue attached does not change the view of a ₹42,000 Cr revenue IT company",
+  "issues": []
+ },
+ {
+  "news_id": "d9ed8b5f-7564-4e4a-8a69-e26b74b16005",
+  "headline": "CRISIL reaffirmed short-term rating A1 for ₹125 Cr bank facilities of Newgen Software, enhanced from ₹96 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] (basis BALANCE_SHEET)",
+    "card_says": "₹125 Cr is 8.0% of TTM revenue and 7.0% of net worth",
+    "pdf_says": "Memory holds no TTM revenue (latest full year FY25 ₹1,354 Cr; Q1FY27 ₹356.68 Cr) and no net worth (balance_sheet has period only); ratios cannot be checked against memory",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "eb8c5202-d14c-4939-9d57-397e298e30e8",
+  "headline": "Hindustan Copper FY26 annual report filed; audit unmodified with emphasis on provisional revenue recognition and pending legal matters",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[0].why",
+    "card_says": "Increase driven by disputed VAT/GST rising 6,722.96 -> 10,656.69 lakh and Other Demand 86,389.56 -> 83,321.54 lakh",
+    "pdf_says": "Other Demand fell by ₹30.7 Cr; the largest rise is bill discounting 6,041.34 -> 15,885.67 lakh (+₹98.4 Cr), not mentioned. Total rise ₹112.1 Cr = VAT +39.3, income tax +5.1, other demand -30.7, BG -0.1, bill discounting +98.4",
+    "class": "direction"
+   }
+  ]
+ },
+ {
+  "news_id": "ebba7c9f-08e8-4c41-a4d9-4d45894232b1",
+  "headline": "Capri Global raises US$ 300 mn in maiden dollar bond at 7.55%, 2.3x oversubscribed",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1] / quantified_impact[1] (basis BALANCE_SHEET, net_worth source MEMORY)",
+    "card_says": "₹7,566 Cr net worth and ₹4,959 Cr TTM revenue; notes = 34.9% of net worth",
+    "pdf_says": "Memory has no net worth (balance_sheet holds period only) and no Q1FY26 revenue to build TTM; FY26 4,731.14 and Q1FY27 1,232.52 make ₹4,959 Cr plausible but unverifiable",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "1b82d1e3-638c-48fd-91a2-c3932a0fea9c",
+  "headline": "Bank of Maharashtra notified of proposed strike on 28-30 Sep 2026",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "LITIGATION_REGULATORY",
+    "pdf_says": "Reg 30 intimation of a proposed union strike (Strikes/Lockouts/Disturbances); no litigation or regulator involved",
+    "class": "event_type"
+   },
+   {
+    "field": "takeaway / why_it_matters[0]",
+    "card_says": "Bank expects minimal disruption; unlikely to materially impact operations given contingency measures",
+    "pdf_says": "Bank is taking necessary steps, 'however, in the event the strike materializes, the functioning of the branches and offices may be affected' - no statement of minimal disruption",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "3716efc7-9ab4-42b9-950d-cdfee2de3c85",
+  "headline": "Hind Copper plans ₹7,000 Cr capex over 5-6 years, 209% of net worth",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "why_it_matters[0] (BALANCE_SHEET quote)",
+    "card_says": "₹7,000 Cr = 16.0% of market cap, 200.1% of revenue, 209.4% of net worth",
+    "pdf_says": "Filing gives market cap ₹50,822 Cr (=13.8%) and FY26 revenue ₹3,077.92 Cr (=227%); the card's own SCALE signal says 227% of FY26 revenue and 14% of market cap - the two ratio sets contradict each other",
+    "class": "other"
+   },
+   {
+    "field": "headline / why_it_matters[0]",
+    "card_says": "209% of net worth (basis BALANCE_SHEET)",
+    "pdf_says": "Memory's balance_sheet (Mar-2026) holds no net worth figure; neither filing nor memory supports the 209% ratio",
+    "class": "memory"
+   },
+   {
+    "field": "what_happened[2] / takeaway",
+    "card_says": "Khetri to 3.00 MTPA concentrator capacity",
+    "pdf_says": "Table is mine capacity in MTPA (KCC 1.50 -> 3.00 by FY30); 'concentrator plants' is part of the strategy text, not the unit of the target",
+    "class": "other"
+   }
+  ],
+  "impact_note": "Updated corporate presentation repeating the 12.20 MTPA roadmap already in memory from 18 Aug 2026; the 'over ₹7,000 Cr in 5-6 years' is a vague strategic line, not a new approval"
+ },
+ {
+  "news_id": "412fbec6-dba7-49e8-b3a5-cabaa432b5b2",
+  "headline": "NTPC Green Energy starts 73.06 MW and 80.88 MW Kalasar solar units; NTPC group capacity 91,456 MW",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Capacity is the solar component of the 500 MW REMCL RTC (round-the-clock supply to REMCL, railways) project - a contracted supply, not merchant sale",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "47987a32-0cc3-4f8a-b2c9-b7d833d4ac61",
+  "headline": "NTPC Green Energy declares 81.34 MW solar capacity commercial in Rajasthan",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Part of the 500 MW REMCL RTC project (contracted round-the-clock supply), not merchant sale",
+    "class": "invented"
+   },
+   {
+    "field": "deal_value.progress",
+    "card_says": "81.34 MW of 500 MW REMCL RTC Project commissioned",
+    "pdf_says": "81.34 MW is the first part of the 650 MW solar component under the 500 MW RTC project",
+    "class": "other"
+   }
+  ],
+  "impact_note": "81 MW is under 0.1% of NTPC group's 91,302 MW; the sister card for the next 154 MW at the same site is LOW"
+ },
+ {
+  "news_id": "8008661c-8607-43a1-8286-527d4f7e168f",
+  "headline": "Hindustan Copper FY26 revenue rose 49% YoY to ₹3,078 Cr; PAT up 97% to ₹921 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened",
+    "card_says": "Card is built on FY26 results recapped in the chairman's AGM speech",
+    "pdf_says": "The filing's new items are not mentioned: ICRA long-term rating upgraded from AA+ to AAA (stable) on 22 Sep 2026; AGM passed QIP of up to 9,69,76,680 shares, NCD/bond private placement and five director appointments",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0] (MEMORY)",
+    "card_says": "FY26 PAT of ₹921 Cr is the highest since FY25 per company memory (refs g_e4715344, g_92c487ee)",
+    "pdf_says": "The cited memory items are ore-production targets (5.90 MTPA FY27, 12.20 MTPA FY29-30); memory holds no PAT history before FY26 to support 'highest since FY25'",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "c613fedb-a193-4d01-ae29-13527e24b504",
+  "headline": "LTM appoints Shekhar Kapur as Strategic Advisor to BlueVerse Craft for AI-powered storytelling",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "PRODUCT_LAUNCH",
+    "pdf_says": "Press release on a collaboration / appointment of an external strategic advisor; no product is launched",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "ccb730de-1c7d-4453-967f-8c253083170c",
+  "headline": "HDFC Life gets IRDAI approval for re-appointment of MD & CEO and CFO",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "db7b3744-5d46-4937-a70f-5f95da59c9f0",
+  "headline": "Milky Mist commissions Skyr and Greek Yogurt plant with ₹40 Cr investment, 1.3% of FY26 revenue",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "what_happened[1]",
+    "card_says": "Plant has processing capacity of up to 150 tonnes per day, up from existing 20 tonnes per day capacity",
+    "pdf_says": "Existing capacity 20 tpd; proposed capacity addition up to 150 tpd through the new plant (an addition, not a replacement figure)",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.counterparty",
+    "card_says": "Internal accruals and IPO proceeds",
+    "pdf_says": "That is the mode of financing; no counterparty",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0] (BALANCE_SHEET)",
+    "card_says": "₹40 Cr = 8.6% of net worth",
+    "pdf_says": "Memory net worth ₹463.02 Cr is for Mar-2026, before the ₹1,553 Cr IPO completed in Aug 2026 (memory deal d_125d2f82); the ratio against current net worth is far lower",
+    "class": "memory"
+   }
+  ],
+  "impact_note": "₹40 Cr is 1.3% of FY26 revenue and under a tenth of FY26 capex (₹469.72 Cr); a routine plant commissioning"
+ },
+ {
+  "news_id": "eadc2faf-63ef-4dbd-a153-5f590fd1893b",
+  "headline": "Capri Global Capital allots ₹160 Cr subordinated NCDs at 9.75% coupon, 2.1% of net worth",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "deal_value.stage",
+    "card_says": "OTHER",
+    "pdf_says": "Allotment approved and made on 13 Oct 2026 - completed",
+    "class": "other"
+   },
+   {
+    "field": "headline / why_it_matters[0] / signals[0] (BALANCE_SHEET)",
+    "card_says": "2.1% of net worth (₹7,566 Cr)",
+    "pdf_says": "Memory balance_sheet (Sep-2026) holds only credit ratings, no net worth; figure not supported by memory",
+    "class": "memory"
+   }
+  ],
+  "impact_note": "Routine ₹160 Cr subordinated-debt placement for an NBFC with ~₹40,000 Cr AUM; already rated and flagged (₹300 Cr proposed) in memory"
+ },
+ {
+  "news_id": "f9c1c534-aefd-4764-a74c-d8ce440dd181",
+  "headline": "Capri Gold Loans runs four-day 'Vyapar Mahotsav' with gold loans from 11% p.a.",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "032cd4a4-27b8-4d91-a0ab-55542ee65234",
+  "headline": "Capri Global files final docs for $300 mn 7.55% notes due 2029",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway / deal_value.execution_by",
+    "card_says": "$300 mn senior secured notes issued on September 2, 2026",
+    "pdf_says": "Filing gives no issue date; the pricing supplement is dated 09 Sep 2026. Memory dates the pricing approval/announcement (t_41a5efa6, t_e9016f0f) to 2026-09-02, not an issue/settlement date.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "19950d38-f8eb-48bd-84a2-851e4a132183",
+  "headline": "Milky Mist launches High Protein Milk in 250 ml pack on October 15, 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "1a84a2bd-b7a2-440a-90b6-528b621ce310",
+  "headline": "Hind Copper long-term rating upgraded to ICRA AAA (Stable) from AA+",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "Positive but a one-notch upgrade for a company with almost no debt (FY26 finance cost Rs 4.91 Cr) does not change the earnings or balance-sheet view.",
+  "issues": [
+   {
+    "field": "why_it_matters[0] / notable_changes[0].why",
+    "card_says": "lifts the long-term rating two notches to ICRA's top grade",
+    "pdf_says": "[ICRA]AA+ (Stable) to [ICRA]AAA (Stable) is a one-notch upgrade",
+    "class": "other"
+   },
+   {
+    "field": "quantified_impact[0]",
+    "card_says": "~Rs 21 Cr a year interest saved (Rs 2,100 Cr x 100 bps, AA+ 9.5% vs AAA 8.5%)",
+    "pdf_says": "Assumed 100 bps AA+/AAA spread is unsupported; of the Rs 2,100 Cr, Rs 800 Cr is non-fund-based and Rs 800 Cr unallocated limits; memory shows FY26 finance cost of only Rs 4.91 Cr, so the 'saving' is ~4x the company's entire interest bill",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Rs 2,100 Cr rated facilities equal 60% of trailing revenue and 62.8% of net worth (basis FILING)",
+    "pdf_says": "Filing gives no revenue or net worth; memory has no net worth and FY26 revenue 3,077.92 (2,100 = 68%); ratios unsupported",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Peer Jindal Stainless was also upgraded by Care Ratings in August 2026",
+    "pdf_says": "Not in the filing or memory",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0] / core_catalyst",
+    "card_says": "lower the cost of the Rs 7,000 Cr capex borrowing",
+    "pdf_says": "Memory t_86be1b70 / d_86be1b70 has a Rs 7,000 Cr capex plan, not a Rs 7,000 Cr borrowing; funding mix not stated",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "2514c4f3-9925-40f0-89dd-f3a76b802a26",
+  "headline": "LTM clients PHINIA, Carrier win ISG Paragon Awards for transformation",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "Industry awards for client projects are routine press releases with no financial content.",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "PRODUCT_LAUNCH",
+    "pdf_says": "Press release about awards (ISG Paragon Awards) - no product launched",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "5d2268c0-2ced-4de8-b34d-bc930c9ed542",
+  "headline": "Milky Mist Q1FY27 concall: revenue up 44% YoY to Rs 973 Cr, paneer sales grow 34%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "scaling cold-chain infrastructure to 50,000+ units",
+    "pdf_says": "Already has 41,000+ visi coolers/freezers and plans to deploy more than 50,000 more over three fiscal years (total would be ~90,000+)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "6f02c9a6-adf9-4297-8e5c-f3b60f7dc076",
+  "headline": "NTPC board approved issue of up to Rs 12,000 Cr non-convertible debentures, subject to shareholder approval",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "A routine annual enabling approval for domestic NCD private placement by a large, regular bond issuer; terms decided per tranche.",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Board approval to raise funds via NCDs (card's own deal_value.kind is FUNDRAISE)",
+    "class": "event_type"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "Fundraising to support ongoing capital expenditure and working capital needs",
+    "pdf_says": "Filing states no purpose or use of proceeds",
+    "class": "invented"
+   },
+   {
+    "field": "takeaway / why_it_matters[0]",
+    "card_says": "6.3% of TTM revenue, 5.9% of net worth, 3.9% of market cap (basis BALANCE_SHEET)",
+    "pdf_says": "memory.json balance_sheet holds no net worth or market cap; TTM revenue ratio is consistent with memory revenue but the net-worth and market-cap ratios are unsupported",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "7c3eccbc-ead3-4d6c-bbb7-5e7d48226dc1",
+  "headline": "Chief Compliance Officer Uma Vedula resigns effective 23 July 2026 for personal reasons",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "The resignation follows RBI guidelines requiring the CCO to be appointed at senior level",
+    "pdf_says": "Resignation is for personal reasons; the RBI guideline is cited for the rank of the replacement being appointed (CGM), not as the cause of the resignation",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "89a68d86-4f60-487f-9136-c4ac15616118",
+  "headline": "HDFC Life H1FY27 VNB rose 12% to Rs 2,037 Cr, ahead of 11% APE growth; margin 24.7%",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "13-month persistency of 83% is ... below the 80% Q3FY27 target the platform was tracking",
+    "pdf_says": "83% is above 80%. The 80% target in memory (p_cd6cd352) is on a premium basis where memory has Q2FY27 at 79.4%; the 83% in the filing is a different measure, so the comparison mixes bases and states the wrong direction",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "9e5fced2-60cf-4653-ab93-c63c7111bc86",
+  "headline": "LTM partners with Glean to pair BlueVerse with Glean's enterprise AI context layer",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "PRODUCT_LAUNCH",
+    "pdf_says": "Strategic partnership / alliance announcement, no product launched",
+    "class": "event_type"
+   },
+   {
+    "field": "why_it_matters[0].memory_refs",
+    "card_says": "AI revenue ~USD 150 million a quarter, ref g_d82f65c0",
+    "pdf_says": "Figure is supported by memory operating_notes (2026-07-16), but the cited ref g_d82f65c0 is the organic-growth guidance, not the AI run-rate",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "c36f4518-b6ac-43cd-8ff9-b63f1fc03527",
+  "headline": "ICRA reaffirms Bank of Maharashtra AA+ (Stable) on Rs 12,000 Cr bonds; GNPA down to 1.45%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[1]",
+    "card_says": "GNPA fell to 1.45% as on June 30, 2026 from 1.74% a year earlier",
+    "pdf_says": "1.74% was as on March 31, 2025 (15 months earlier); GNPA was 1.45% at March 31, 2026 too, i.e. flat over the last quarter",
+    "class": "wrong_period"
+   },
+   {
+    "field": "what_happened[1]",
+    "card_says": "NNPA was 0.13% and PCR 90.90% (as on June 30, 2026)",
+    "pdf_says": "PCR 90.90% is as on March 31, 2026",
+    "class": "wrong_period"
+   },
+   {
+    "field": "missing_disclosures[0]",
+    "card_says": "equity raise ... beyond the earlier Rs 5,000 Cr board approval",
+    "pdf_says": "Memory d_84776a3d's Rs 5,000 Cr approval is for offshore senior unsecured notes, not equity",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "0c6a3c7e-2f49-4dcd-9b2e-a4b4647dec58",
+  "headline": "Capri Loans partners with OpenAI for enterprise-grade AI in lending",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_reason": "Exploratory AI collaboration press release with no spend, revenue or cost figures; does not change the earnings view.",
+  "issues": [
+   {
+    "field": "key_numbers[AUM].change",
+    "card_says": "806.6% of revenue",
+    "pdf_says": "Filing gives only 'AUM of over Rs. 40,000 crores'; no revenue figure and no AUM/revenue ratio (the ratio is meaningless for an NBFC)",
+    "class": "invented"
+   },
+   {
+    "field": "event_type",
+    "card_says": "PRODUCT_LAUNCH",
+    "pdf_says": "A technology collaboration to 'explore' AI deployment over the coming months, not a product launch",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "50de8a5b-ba39-4cbc-a815-94daf4574745",
+  "headline": "NTPC targets 136 GW by FY37 from 90.9 GW; ₹16.86 lakh Cr capex plan to FY37",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / core_catalyst / what_happened[1] / track_next.milestones",
+    "card_says": "Total capacity target of 136 GW by FY37 (and separately 250 GW by 2037)",
+    "pdf_says": "136 GW is the renewables target for FY37 (slide 11 under 'Commitment on RE Front': 'Target of 60GW (FY32) 136GW (FY37)'; slide 19 'Focus on RE' bars 60 at FY2032E, 136 at FY2037E). The group total is 250 GW by 2037 (slide 17: 91 GW Jun-26, 150 GW 2032, 250 GW 2037, ~54% renewables)",
+    "class": "other"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "The plan nearly doubles capacity by FY37",
+    "pdf_says": "91 GW to 250 GW by 2037, about 2.75x",
+    "class": "arithmetic"
+   },
+   {
+    "field": "quantified_impact[0]",
+    "card_says": "Capex per GW added = 16.86 lakh Cr / (136 - 90.9) GW = ₹37,383 Cr per GW",
+    "pdf_says": "Uses the RE target as the total; on the filing's own totals 16.86 lakh Cr / (250 - 91) GW is about ₹10,600 Cr per GW",
+    "class": "arithmetic"
+   },
+   {
+    "field": "what_happened[2]",
+    "card_says": "of which renewables are ₹5.97 lakh Cr (quote 'INR S.97 Lakh Crore')",
+    "pdf_says": "Slide 18: ₹5.97 lakh Cr is the 2027-32 period capex (1.08 for 2025-27 + 5.97 for 2027-32 + 9.81 for 2032-37 = 16.86). The segment split is 3.09 thermal (18%), 1.28 (8%), 0.52 (3%), 0.10 (1%), 4.63 (27%), 7.24 (43%); 5.97 is not a segment figure",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Nothing on merchant sale; the presentation stresses regulated returns and long-term PPAs (slide 28)",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[Leverage ratio].why",
+    "card_says": "Leverage ticked up after four years of decline",
+    "pdf_says": "4.80 (FY22) -> 4.37 -> 4.24 -> 4.19 (FY25) is three years of decline before 4.41 in FY26",
+    "class": "arithmetic"
+   },
+   {
+    "field": "why_it_matters[2] (low confidence, chart garbled)",
+    "card_says": "Coal PLF of 72.04% in FY26 beat All-India's 69.95%",
+    "pdf_says": "All-India series in the text reads 58.70 / 64.20 / 69.50 / 69.95 / 65.59; FY26 All-India may be 65.59% with 69.95% for FY25",
+    "class": "wrong_column"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "basis BALANCE_SHEET: group debt ₹2.47 -> 2.67 lakh Cr, net worth ₹2.03 lakh Cr",
+    "pdf_says": "Figures are right per the filing's Group Financials slide, but this card's memory.json balance_sheet holds no debt or net-worth figures; the point rests on the filing, not on memory",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "7b176154-2dff-4544-b54b-9bee0152628e",
+  "headline": "Moody's assigns Ba3 to Capri Global's senior secured USD notes; GMTN programme rated (P)Ba3",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_reason": "Rating on notes already priced, at the expected level and alongside Fitch's existing BB-; no change in credit view or funding cost.",
+  "issues": [
+   {
+    "field": "why_it_matters[0].memory_refs",
+    "card_says": "Refs t_a7d00770, t_e9016f0f for 'Fitch had already put an expected BB-(EXP)'",
+    "pdf_says": "Memory supports the Fitch BB-(EXP) fact in operating_notes and balance_sheet, not in the two cited timeline items (claim supported, references imprecise)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "9280ec6b-6954-4a9e-aa05-9061df628cc0",
+  "headline": "S&P Global Ratings assigns BBB to Bank of Maharashtra's USD 500 million EMTN programme",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_reason": "Programme rating equalised with the existing issuer rating; no new information on credit quality and no issue drawn.",
+  "issues": [
+   {
+    "field": "missing_disclosures",
+    "card_says": "Rating outlook and short-term rating not disclosed",
+    "pdf_says": "The enclosed S&P report states the issuer rating as 'BBB/Stable/A-2' (the card itself quotes it)",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "EMTN programme established on 5 September 2026 (memory t_9f783ac8)",
+    "pdf_says": "Filing says the programme was established on September 4, 2026; memory's date conflicts with the filing",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "cbee73fc-3555-4df7-a7ea-f3f72f5ac8b5",
+  "headline": "NTPC FY26 revenue flat at ₹187,385 Cr; PAT up 15% to ₹27,546 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "no change in guidance or capex targets",
+    "pdf_says": "The annual report makes no statement that guidance is unchanged; claim not in the filing",
+    "class": "invented"
+   },
+   {
+    "field": "core_catalyst / why_it_matters[0]",
+    "card_says": "Lower tax expense drove profit growth despite flat revenue",
+    "pdf_says": "Directionally right but leaves out the offset: profit before tax and regulatory deferral fell to 27,133.56 from 28,496.41 Cr, and the net regulatory deferral movement swung to (2,464.22) from 3,701.92 Cr, absorbing much of the 11,121 Cr tax swing",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "ced380e2-80b6-4ed6-ad4a-6ba85530c806",
+  "headline": "Bank of Maharashtra appoints Shri Devdatta Rokade as Chief Compliance Officer",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Follows the CVO's superannuation, suggesting ongoing management restructuring",
+    "pdf_says": "Memory t_d13d8859 supports the CVO superannuation on 30 Sep 2026, but not a 'restructuring': it was a routine retirement, and the CCO post was filling a July resignation",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "dd7a0c9f-e42d-4594-ab1b-6614a29d70cb",
+  "headline": "THDC commissions 11 MWac floating solar plant at Khurja STPP, taking NTPC group capacity to 90,965 MW",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Filing says nothing about how the power is sold",
+    "class": "invented"
+   },
+   {
+    "field": "deal_value.counterparty",
+    "card_says": "THDC India Limited",
+    "pdf_says": "THDC is the NTPC subsidiary that commissioned the plant, not a counterparty",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "eac6ffa7-aa82-484c-98e6-09c8b01845b0",
+  "headline": "Chief Vigilance Officer Shri Amit Srivastava superannuated effective 30 September 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "f596ea71-e3c0-49a2-93de-9b11568eb1f4",
+  "headline": "Capri Global Q1FY27 PAT up 102% to ₹353 Cr, AUM up 62% to ₹401 bn",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_reason": "Corporate presentation for investor meetings that repeats Q1FY27 results and targets already filed in July; no new information.",
+  "issues": [
+   {
+    "field": "what_happened[2]",
+    "card_says": "GNPA to 0.6%; NNPA to 0.6%",
+    "pdf_says": "GNPA is 1.1% at Q1FY27; 0.6% is NNPA (slide 5 '1.1% / 0.6% GNPA / NNPA'; slide 66 'Stage 3 % - Gross NPA 1.1%')",
+    "class": "other"
+   },
+   {
+    "field": "notable_changes[GNPA]",
+    "card_says": "GNPA 1.0% (Q1FY26) -> 0.6% (Q1FY27); 'GNPA at a 5-year low'",
+    "pdf_says": "Those are NNPA figures (1.0% -> 0.6%). GNPA went 1.7% -> 1.1%, and GNPA was lower at Q4FY26 (0.9%), so it is not a 5-year low",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Asset quality (GNPA 0.6%, NNPA 0.6%) the best since FY22",
+    "pdf_says": "At FY26/Q4FY26 NNPA was 0.5% and GNPA 0.9%, both better than Q1FY27",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[Credit Cost]",
+    "card_says": "0.7% (Q1FY26) -> 1.0% (Q1FY27), NEGATIVE, 'ECL provisions increased'",
+    "pdf_says": "RoAA tree: ECL provisions 1.3% in Q1FY26 -> 1.0% in Q1FY27 (0.7% is Q4FY26). Total provisions 1.5% -> 0.7% of assets and ₹815 mn -> ₹622 mn (-24%). Credit cost fell YoY; the direction is wrong",
+    "class": "wrong_column"
+   },
+   {
+    "field": "key_numbers[NIM].change",
+    "card_says": "+0.2% YoY",
+    "pdf_says": "Quarterly NIM series reads 8.9% (Q1FY26) ... 9.5% (Q4FY26), 9.7% (Q1FY27): +0.2 pp is QoQ; YoY is about +0.8 pp",
+    "class": "wrong_column"
+   },
+   {
+    "field": "notable_changes[Co-lending Income].why",
+    "card_says": "Share of co-lending AUM fell from 21.3% to 20.3% (explaining the YoY decline)",
+    "pdf_says": "21.3% is FY26 (31 Mar 2026), not Q1FY26; a QoQ comparison given as the reason for a YoY change",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters[2] (basis MEMORY)",
+    "card_says": "GNPA 0.6% ... best since FY22 (ref g_f565a3a7)",
+    "pdf_says": "Memory holds gnpa Q1FY27 1.06% and the cited guidance item is about RoAE; memory supports neither GNPA 0.6% nor 'best since FY22'",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "f81c66d5-177b-4b3c-85a7-7269649cc2d4",
+  "headline": "NTPC announces cessation of four senior management members",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_reason": "Four executive directors (senior management, not the board) retiring on superannuation is routine for a PSU of NTPC's size.",
+  "issues": []
+ }
+]

@@ -147,9 +147,10 @@ Read before changing anything:
      After it: re-run 5fc5b553 and 1e3f6e56 (item 4); re-reading an annual report once its NSE XBRL appears is
      being built in its own session.
      **Round 2 re-run (F64): 13 of 70 WRONG (19%). Round 3 (F65, `docs/audit/round-3.md`), 14 more new companies on
-     the F60-F63 code: 10 of 80 published WRONG (12.5%), 1 MISSED of 50 - both marks met**, reviewed by the author,
-     not blind, with five close MINOR calls listed. Next: the backfill decision (owner), the post-re-run fixes
-     (branch `fixes-after-round3`), the round-3 causes, then the move to NSE (owner, 2026-10-18).
+     the F60-F63 code: **passed on the independent blind agent review** (owner decision 1-A): 10 of 80 published
+     WRONG (12.5%), 2 MISSED of 50; the author's own review gave the same 10 and 1 MISSED. Next (owner, 2026-10-18):
+     the NSE pipeline, online-only, companies >= ₹100 Cr, then its own measured round, then the 6-month backfill.
+     Audit rounds are reviewed by independent blind agents, one per folder; the fix author does not review.
   6. Raise the paid weight and drain the 160 queued filings; PLAN 1h.
   Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order
   (PLAN.md item 1c). `sync-to-cloud` still cannot run: no PLATFORM_API_URL or INGEST_TOKEN for the

@@ -61,3 +61,15 @@ def test_nothing_without_the_files_figures():
     out = _out("PAT up 20% on lower tax")
     assert directions.guard(out, None) == [] and out.card.headline == "PAT up 20% on lower tax"
     assert directions.guard(out, SimpleNamespace(kind="SHAREHOLDING", period="Q1FY27", metrics=[])) == []
+
+
+def test_a_tax_rate_or_slower_growth_is_not_a_direction_of_the_line():
+    """A lower effective tax rate is often true while tax expense rises with profit, and "EPS growth moderated" says
+    growth slowed, not that EPS fell: neither is cut."""
+    tagged = _tagged(tax_expense=(120.0, 10.0, 5.0), eps=(12.0, 8.0, 2.0))
+    figures = directions._current(tagged)
+    for text in ("PAT rose 30% on a lower effective tax rate.", "Net profit grew, helped by a lower tax rate.",
+                 "EPS growth moderated to 8% from 25%.", "Lower EPS growth than last year."):
+        assert directions.contradicted(text, figures) == [], text
+    assert [n for n, _ in directions.contradicted("PAT rose on lower tax.", figures)] == ["lower tax"]
+    assert [n for n, _ in directions.contradicted("EPS declined 4%.", figures)] == ["EPS fell"]

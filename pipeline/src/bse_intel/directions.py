@@ -14,7 +14,9 @@ from __future__ import annotations
 
 import re
 
-_TAXWORDS = r"(?:tax|taxes|tax expense|tax outgo|tax rate|tax provision|tax charge|tax burden)"
+# A tax rate is not the tax bill: the rate can fall while the bill rises with profit ("PAT up on a lower effective tax
+# rate" is often true when tax expense grew), so a rate claim is never checked against tax expense
+_TAXWORDS = r"(?:tax|taxes|tax expense|tax outgo|tax provision|tax charge|tax burden)(?!\s+rates?\b)"
 _LOWER = r"(?:lower|reduced|declin\w*|fall\w*|fell|lighter|softer|smaller|decreas\w*|moderat\w*)"
 _HIGHER = r"(?:higher|increased|rising|rose|heavier|elevated|bigger|larger)"
 _NEAR = r"\s+(?:\w+\s+){0,2}?"
@@ -60,6 +62,8 @@ def contradicted(text: str, figures: dict) -> list[tuple[str, re.Match]]:
         if m_fig is None or m_fig.value is None:
             continue
         for hit in pattern.finditer(text or ""):
+            if re.search(r"\bgrowth\b", (text or "")[hit.start():hit.end() + 10], re.I):
+                continue   # "EPS growth moderated" says growth slowed, not that EPS fell
             sentence = _sentence(text, hit.start())
             if says in ("negative", "positive"):
                 wrong = m_fig.value > 0 if says == "negative" else m_fig.value < 0

@@ -75,3 +75,56 @@ round still measures `32a518b`):
 - Siemens Q1FY27: the card's "PAT (Continuing) ₹343 Cr (-18.7% YoY)" was replaced by the file's total PAT, ₹2,143.10 Cr
   with the demerged business's gain (+406%). A continuing label now takes the file's continuing-operations PAT; a
   discontinued one is left as read.
+
+## Results (reviewed 2026-10-19 by 18 independent blind agents)
+
+The run settled all 309 queued filings in 1 h 22 min on free providers only (about 225 filings an hour; round 3 106 with
+DeepSeek): 122 cards (28 held, 23%), 144 not material, 43 duplicates; 262 more dropped by rule at discovery. AI requests:
+534 for 309 filings (1.7 a filing, 4.4 a card) - Mistral 251, NVIDIA 146, Z.ai 69, OpenRouter 57, Gemini 11 - with 5
+rate-limited answers (429) and 3 server errors. Every published card (94, from 17 companies) and every held card (28),
+mixed blind, were reviewed in 13 folders with `REVIEWER_PROMPT_ROUND4.md`; 50 set-aside filings in 5. Findings:
+`round-4.json`, `round-4/`.
+
+| | round 3 (agents) | **round 4 (agents)** | mark |
+|---|---|---|---|
+| published cards WRONG | 10 / 80 (12.5%) | **20 / 94 (21%)** | go-live ≤ 5%; round ≤ 15% |
+| held cards WRONG | 6 / 10 | 10 / 28 | none |
+| missed news | 2 MISSED, 3 UNSURE / 50 | **2 MISSED, 3 UNSURE / 50** (1 MISSED once checked) | ≤ 2 MISSED |
+| all cards OK / MINOR / WRONG | 29 / 45 / 16 | 31 / 61 / 30 | |
+| memory points wrong | 36 cards | 23 cards | apart |
+| impact level misfit | 25 / 90 | 38 / 122 | none |
+
+**Accuracy fails both marks; recall passes.** The figures themselves held up better than the words around them: most
+reviewers recomputed every ₹ amount and change on most cards. By writer: nemotron-3-super 65 cards, 26% WRONG;
+glm-4.5-flash 24, 17%; nemotron-3-ultra (free, OpenRouter) 12, **58%**; nemotron-3.5-super-vl 10, 10%; Gemini 9, 11%.
+Round 3 had the paid route writing a share of its cards; this round had none (as the online pipeline will run).
+
+Published WRONG by cause (the 20, from the reviewers' reports):
+- **Invented causes, outcomes and stages** (most): profit "on lower tax" when tax rose (AGI Infra, RSWM, Sterling Tools
+  twice), "lower credit costs" when they rose 53% (RBL), an income-tax visit "concluded without penalties" (RSWM), a
+  scheme "after NCLT approval" when only the meetings were dispensed with (Siemens), a reclassification that "reduces
+  promoter shareholding" of nil holders (Siemens), creditors' recovery money "improving liquidity" (McNally), a merger
+  effect credited before the merger (Anlon).
+- **Units the code did not catch**: a rating table in INR million read as crore (AGI Infra, 10x), "INR 3 Million" as
+  ₹3 Cr (Excelsoft), Rs billion as crore (RBL, 100x), NGN 90 million as ₹ (Anlon).
+- **Direction and sign**: change in inventories read the wrong way (Nestle, RSWM, Foseco), EPS "declined" when up 48%
+  (Nestle), a margin fall shown as expansion (Nestle), an arbitration claim against NHPC carded as an award in its favour.
+- **Signals from code that contradict the filing**: BOARD_DELIBERATION ("the board meeting ran 8.0 hours") on a
+  postal-ballot result (Torrent), CAPITAL_DILUTER and JAWS on mixed bases (Sterling Tools, Cyient), REG30_THRESHOLD
+  against "no major financial impact" (Nuvoco, Siemens), DISTRESS on a lender's interest cover (HUDCO).
+- **Deal figures**: Anlon's ₹153.3 Cr share swap stored in memory and the timeline as ₹1,533 Cr; the two targets' share
+  counts and prices swapped; Siemens' continuing PAT replaced by total PAT (fixed during the run, `a264359`).
+
+Missed news: Nestle's ₹6.67 Cr Tripura VAT demand (borderline for a company of Nestle's size); Anlon's board outcome
+filed under "Record Date" and dropped unread - the same outcome filed as "Outcome of Board Meeting" (nse-106743024) has a
+published card, so the news was not lost. UNSURE: RBL's USD 350 mn notes (a duplicate of nse-106776948, whose card is
+held: the news did not reach the feed), Cyient's director resignation (the zip filing; its XBRL names an independent
+director's tenure ending: RIGHT under D30), McNally's results clarification query (text blank).
+
+Note on the missed-news prompt: a cloud session changed it after it was set (7794802, "MD/CEO/CFO exits keep a card,
+owner, D30 amended") while the pipeline still drops those exits. No MISSED or UNSURE verdict here turned on such an exit.
+
+Next: the classes above, in code first (units, directions, signals, deal arithmetic), then the writer routes (the
+58% model off pass 2), then the prompt's limits on causes and stages; re-run these same 122 cards as a measured re-run,
+then round 5 on fresh companies.
+

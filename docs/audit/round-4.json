@@ -1,0 +1,2590 @@
+[
+ {
+  "news_id": "nse-106742560",
+  "headline": "Excelsoft Q1FY27 revenue rose 44% YoY to ₹802.63 million; EBITDA up 30% to ₹130.31 million",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.milestones[1]",
+    "card_says": "Conclusion of acquisition negotiations for three targets (US and India) in a couple of weeks",
+    "pdf_says": "Three targets are in the pipeline (two with non-binding offers, one at an early stage); 'in a couple of weeks' refers only to the earlier, separate acquisition in final negotiation",
+    "class": "other"
+   },
+   {
+    "field": "track_next.kpis_to_verify[0]",
+    "card_says": "Revenue Q2FY27 value 401.07, comparison >=, target null",
+    "pdf_says": "No 401.07 figure anywhere in the filing; Q1 revenue was ₹802.63 million (₹80.26 Cr), FY27 guidance ₹350-360 Cr. The check has no meaningful target",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "44% growth exceeds sector average of ~11-18% seen in peers like Newgen and LTM",
+    "pdf_says": "No peer or sector growth figures in the filing (basis SECTOR, unsourced)",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106700726",
+  "headline": "Cyient completed buyback of 64 lakh shares at ₹1,125 per share for ₹720 Cr, extinguished on July 15, 2026",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "deal_value.kind",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "A buyback returns ₹720 Cr to shareholders; it does not raise funds",
+    "class": "other"
+   },
+   {
+    "field": "notable_changes[0].why",
+    "card_says": "Increase in promoter holding post-buyback signals confidence in company's prospects",
+    "pdf_says": "Promoter shares are unchanged at 2,58,70,288; the % rose only because 64 lakh other shares were extinguished. The filing gives no confidence signal",
+    "class": "other"
+   }
+  ],
+  "impact_note": "This is a compliance filing confirming that an already-announced buyback's shares were extinguished; nothing new for investors"
+ },
+ {
+  "news_id": "nse-106779271",
+  "headline": "Star Health withdraws reclassification application for promoter group entities after Industrial Glass Fiber Industries and Interics ceased to exist",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / timeline_entry",
+    "card_says": "Star Health withdraws / withdrew its application",
+    "pdf_says": "The company 'shall make necessary steps for processing the withdrawal ... subject to the approval of the Board of Directors'; the withdrawal is pending",
+    "class": "other"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "no change in promoter holding or public float",
+    "pdf_says": "The filing gives no shareholding figures",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106736373",
+  "headline": "RSWM executes JV with NDS9 for ₹186.3 Cr denim garment facility, 74:26 shareholding",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0].quote",
+    "card_says": "\"In order to move up the value chain, we are proposing to start garment as we already have Denim Fabric with us...\"",
+    "pdf_says": "This sentence is not in this filing (probably from the 5 Aug 2026 disclosure)",
+    "class": "invented"
+   },
+   {
+    "field": "key_numbers[0].quote",
+    "card_says": "\"Setting up of a Denim Garment facility at a project cost of Rs. 186.30 crores in joint venture with NDS9 Private Limited.\"",
+    "pdf_says": "Not verbatim in the filing; the filing says 'estimated project cost of approximately ₹186.30 crore' (figure correct)",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106760419",
+  "headline": "RBL Bank received GST show cause notice for FY 2020-21 proposing demand of ₹103.77 Cr including interest and penalty",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106741958",
+  "headline": "AGI Infra Q1FY27 revenue rose 5.3% YoY to ₹96.44 Cr; PAT jumped 37.6% to ₹27.54 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway / core_catalyst",
+    "card_says": "Strong bottom-line growth ... aided by tax benefits; higher revenue and lower tax expense drove profit growth",
+    "pdf_says": "Tax rose YoY: current tax ₹583.00 lakh vs ₹425.00 lakh, no deferred tax in either quarter, effective rate 17.5% in both. PAT grew because PBT grew 37.5% (₹3,336.91 vs ₹2,426.45 lakh). The card's own notable_changes says tax rose 37.2%",
+    "class": "direction"
+   },
+   {
+    "field": "notable_changes[1].change",
+    "card_says": "inventory change -75.39 Cr: 'loss widened'",
+    "pdf_says": "-7,539.27 lakh is an inventory build (WIP credit to expenses), not a loss",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106704760",
+  "headline": "NHPC reports 10 casualties in methane blast at Teesta VI tunnel",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "LITIGATION_REGULATORY",
+    "pdf_says": "A site accident and rescue press release; no litigation or regulatory action",
+    "class": "event_type"
+   },
+   {
+    "field": "core_catalyst / why_it_matters[0]",
+    "card_says": "Safety incident halting work; project represents significant capex for NHPC",
+    "pdf_says": "The filing does not say work is halted and gives no capex figure",
+    "class": "invented"
+   }
+  ],
+  "impact_note": "A tragic incident, but at one 500 MW under-construction project of a ₹73,000 Cr company. A delay is possible but unquantified; it does not change the view of earnings or the balance sheet"
+ },
+ {
+  "news_id": "nse-106784256",
+  "headline": "Siemens Ltd board approves reclassification of Siemens Energy entities from promoter to public category",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway / core_catalyst",
+    "card_says": "The reclassification reduces promoter shareholding; 'promoter holding reduction'",
+    "pdf_says": "Siemens Energy Holdco B.V. and Siemens Energy Holding B.V. hold Nil shares (0%); the promoter shareholding does not change",
+    "class": "invented"
+   },
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "A Reg 31A promoter reclassification is a governance matter (GOVERNANCE)",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106740356",
+  "headline": "NCLT Kolkata orders UCO Bank and three JVs to refund ₹24.25 Cr to McNally Bharat, recognised in Q1FY27 results",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "takeaway / why_it_matters[0]",
+    "card_says": "The ₹24.25 Cr recovery improves liquidity ... reducing net debt; 'materially improving liquidity'",
+    "pdf_says": "The recovery is 'to be applied in accordance with Clause 5.14 of the Company's approved Resolution Plan and the distribution mechanism under Section 53 of the IBC', i.e. it goes to creditors under the waterfall, not to the company's liquidity. Its impact was already booked in Q1FY27 results (memory: Q1FY27 exceptional item -15.18 Cr)",
+    "class": "invented"
+   }
+  ],
+  "impact_note": "The money goes to creditors under the resolution plan, it is already in the published Q1 results, and it is 1.7% of market cap"
+ },
+ {
+  "news_id": "nse-106742109",
+  "headline": "Jai Corp Q1FY27 revenue rose 20.1% YoY to ₹157.58 Cr; PAT fell 73.0% YoY to ₹28.2 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "PAT decline due to lower other income and exceptional items in prior year",
+    "pdf_says": "Q1FY26 had no exceptional items (consolidated exceptional item column 30.06.2025 blank; ₹141 lakh only in FY26). The fall is the ₹10,357 lakh other income in Q1FY26",
+    "class": "invented"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "Revenue growth driven by higher raw material cost",
+    "pdf_says": "The filing does not attribute revenue growth to raw material cost; the growth is plastic processing revenue ₹15,464 vs ₹13,046 lakh",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[1].why",
+    "card_says": "Inventory build-up (change in inventories ₹6.24 Cr)",
+    "pdf_says": "A positive change-in-inventories expense of ₹624 lakh means inventories fell (drawdown), not a build-up",
+    "class": "direction"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106698132",
+  "headline": "Manaksia Coated Metals Q1FY27 revenue rose 5% YoY to ₹262 Cr; EBITDA margin improved to 11.06%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[1] / headline",
+    "card_says": "EBITDA margin improving to 11.06% from in Q1FY26 (headline: EBITDA margin improved to 11.06%, beside a YoY revenue claim)",
+    "pdf_says": "EBITDA margin chart: Q1FY26 11.27%, Q4FY26 6.84%, Q1FY27 11.06% (29.09/263.07 vs 28.62/253.94). Margin fell YoY; it improved only QoQ.",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Net debt reduced to ₹114.15 Cr as of Q4FY26 from ₹162 Cr in FY23",
+    "pdf_says": "Net debt chart (same filing): FY23 162, FY24 157, FY25 117, FY26 81. The card sets memory's 114.15 (gross debt less cash equivalents only) against the filing's FY23 figure on a different basis, and contradicts the filing's own FY26 figure of 81.",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.stage",
+    "card_says": "₹65 Cr capex, BOARD_APPROVED",
+    "pdf_says": "Est. capex Rs. 65 Cr for CCL-2, expected to be commissioned Q2FY27; project already under way, no board approval in this filing",
+    "class": "other"
+   },
+   {
+    "field": "missing_disclosures[0]",
+    "card_says": "Capex details for the 7 MW captive solar plant missing",
+    "pdf_says": "Solar plant: capex of Rs. 30 Cr, annual savings up to Rs. 7 Cr (page 19)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106698658",
+  "headline": "CRISIL assigns AA/Stable to Nuvoco's ₹500 Cr NCDs; reaffirms existing ratings",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": []
+ },
+ {
+  "news_id": "nse-106711839",
+  "headline": "HUDCO Q1FY27 revenue rose 26.6% YoY to ₹3,717 Cr; PAT up 35.0% YoY to ₹851 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "DISTRESS WARNING: EBIT/interest 1.4x, operating profit barely covers interest",
+    "pdf_says": "HUDCO is a lender: finance cost is its cost of funds (Annexure A marks interest service coverage 'Not Applicable'); PAT +35% YoY, CRAR 39.41%, net credit-impaired 0.05%. A distress warning does not fit.",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "notable_changes[0]",
+    "card_says": "deferred tax previous -75.87 Cr (Q3FY26) -> 9.31 Cr, POSITIVE, 'reduced tax benefit'",
+    "pdf_says": "Comparatives are Q4FY26 (1,530.32) credit and Q1FY26 86.43 expense; Q3FY26 is not a comparative column. YoY the deferred tax charge fell from 86.43 to 9.31 (a smaller charge, not a lost benefit).",
+    "class": "wrong_column"
+   },
+   {
+    "field": "notable_changes[1].why",
+    "card_says": "Other income increase driven by interest income on No Lien AGP Account",
+    "pdf_says": "AGP interest was ₹6.41 Cr this quarter vs ₹6.36 Cr a year ago; it does not explain other income rising from 8.16 to 20.32 Cr.",
+    "class": "invented"
+   },
+   {
+    "field": "key_numbers[2]",
+    "card_says": "EBITDA margin 97.08%",
+    "pdf_says": "Not a figure in the filing; EBITDA before finance cost is not meaningful for a lender (the filing's operating margin is 28.68%).",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106712459",
+  "headline": "Torrent Pharma gets final listing approval for 4,19,22,416 shares issued to JB Chemicals shareholders",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "what_happened[1]",
+    "card_says": "The shares were allotted on 17th July, 2026",
+    "pdf_says": "17 July 2026 is the Record Date; the allotment was intimated on 20 July 2026 (memory t_85bd6660 dates the allotment 2026-07-20).",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106726159",
+  "headline": "Sterling Tools Q1 revenue up 11% to ₹214 Cr; PAT falls 35% YoY to ₹5.86 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] / notable_changes[0].why / takeaway / core_catalyst",
+    "card_says": "PAT fell because the prior year's exceptional gain of ₹9.5 Cr was not repeated",
+    "pdf_says": "Q1FY26 (consolidated) had no exceptional item; PBT rose 1,227.73 -> 1,285.53 lakh. The ₹949.64 lakh DMRC gain was booked later in FY26. PAT fell because tax rose 328.85 -> 699.71 lakh (deferred tax swung from a 215.58 lakh credit to an 85.29 lakh charge).",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[3].why",
+    "card_says": "Current tax rose sharply, pulling down PAT despite a lower deferred tax charge",
+    "pdf_says": "Current tax 544.43 -> 614.42 lakh (+13%); deferred tax went from (215.58) credit to 85.29 charge, i.e. a higher deferred charge, which drove most of the increase.",
+    "class": "direction"
+   },
+   {
+    "field": "notable_changes[2].why",
+    "card_says": "A sharp drawdown in inventories helped offset higher raw material costs",
+    "pdf_says": "Changes in inventories (1,104.87) lakh means finished goods and WIP were built up, not drawn down.",
+    "class": "direction"
+   },
+   {
+    "field": "signals[2]",
+    "card_says": "CAPITAL_DILUTER: EBITDA run-rate -27.3 Cr since Q1FY26",
+    "pdf_says": "EBITDA Q1FY27 22.67 Cr vs Q1FY26 22.03 Cr (card's own quote: +2.9% YoY). The signal contradicts the card's own numbers.",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "signals[1]",
+    "card_says": "Exceptional items in 3 of last 8 quarters; treat them as a running cost",
+    "pdf_says": "The only exceptional item is the one-time DMRC land compensation (₹949.64 lakh for FY26). Memory splits it across quarters with a reversal, but it is one event, not a recurring cost.",
+    "class": "memory"
+   },
+   {
+    "field": "track_next.milestones[1]",
+    "card_says": "Book closure and record date 28th August to 4th September 2026",
+    "pdf_says": "Book closure 29 Aug to 4 Sep 2026; record date 28 Aug 2026",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106733412",
+  "headline": "Anlon Healthcare executes share swap to acquire up to 32.52% in Apiqo Organics and 43.33% in Bizotic Lifescience for ₹153 Cr via preferential equity at ₹17.85/share",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "timeline_entry",
+    "card_says": "for ₹1,533 Cr via preferential equity issuance",
+    "pdf_says": "Rs. 1,165,179,600 + Rs. 367,840,000 = Rs. 153.30 Cr (8,58,83,617 shares x ₹17.85)",
+    "class": "unit_scale"
+   },
+   {
+    "field": "quantified_impact[1] / takeaway / risks",
+    "card_says": "Issue price at 35% discount to implied market price (₹27.56 from market cap ₹1,465 Cr), value transfer to promoters",
+    "pdf_says": "The filing gives no market price. The ₹1,465 Cr market cap is memory's 2026-10-15 value, two months after the 8 Aug 2026 pricing, so it does not show the discount at the time.",
+    "class": "memory"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "increases control over two subsidiaries",
+    "pdf_says": "Control acquired: Not applicable pursuant to the proposed transaction",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106742754",
+  "headline": "Foseco to acquire Mehsana crucibles biz from VIL for ₹43.25 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] / key_numbers[1-2] / quantified_impact[1]",
+    "card_says": "FY25 revenue ₹58.13 Cr; FY23 ₹46.43 Cr",
+    "pdf_says": "Turnover for years ended 31 December 2025 (₹5,813 lakh) and 31 December 2023 (₹4,643 lakh): calendar years, not Indian FY25/FY23",
+    "class": "wrong_period"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "with a 2-year revenue track record",
+    "pdf_says": "Three years of turnover given (CY2023-CY2025); the facility is an established going concern",
+    "class": "other"
+   },
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "none",
+    "pdf_says": "Approval of Gujarat Industrial Development Corporation for the sub-lease is required; completion by 31 December 2026",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106757760",
+  "headline": "Nestle India receives customs order for ₹11.11 Cr duty, fine and penalty",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "timeline_entry",
+    "card_says": "2026-08-26: Nestle India receives customs order",
+    "pdf_says": "Order received 25 August 2026; disclosed 26 August 2026",
+    "class": "other"
+   },
+   {
+    "field": "headline",
+    "card_says": "customs order for ₹11.11 Cr duty, fine and penalty",
+    "pdf_says": "Duty ₹11.11 Cr plus interest, fine ₹0.25 Cr, penalty ₹0.50 Cr (₹11.86 Cr before interest). The headline reads as if ₹11.11 Cr were the total.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106760259",
+  "headline": "Wealth First convenes 24th AGM for 24 Sep 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106760671",
+  "headline": "Excelsoft incorporates Canadian WOS to expand North American operations",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "why_it_matters[0] / track_next.catalysts",
+    "card_says": "Supports nearshore expansion strategy with secured visibility of ₹40 Cr for FY27 (memory_ref t_c5af4843)",
+    "pdf_says": "Memory t_c5af4843 is only the WOS approval with up to ₹3 Cr investment. The ₹40 Cr visibility is an operating note about existing nearshore operations, not about the new Canadian entity, which has nil turnover and has not started business.",
+    "class": "memory"
+   },
+   {
+    "field": "what_happened[1] / deal_value.stage",
+    "card_says": "initial investment up to ₹3 Cr; deal stage COMPLETED, amount ₹3 Cr",
+    "pdf_says": "This filing states charter capital NIL and says the cost will be updated later; ₹3 Cr comes from the earlier 7 Aug disclosure (memory). Incorporation is done, but the investment is not.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106755576",
+  "headline": "Cyient outlines three growth engines and lifecycle engineering strategy in Investor Day presentation",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[2] (basis BALANCE_SHEET)",
+    "card_says": "FCF at 114%+ of PAT on average over five years",
+    "pdf_says": "Figure is in the filing (p.52 '5 year generation at 114%+ of PAT (Avg)') and correct, but memory's balance sheet holds no FCF figure; basis label BALANCE_SHEET is not supported by memory",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106722858",
+  "headline": "Star Health submits application for reclassification of promoter group entities to public category",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106744468",
+  "headline": "Income Tax Dept completes audit at RSWM office",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "core_catalyst / takeaway",
+    "card_says": "Routine tax inspection concluded without penalties or findings; standard compliance check with no material impact",
+    "pdf_says": "Filing only says Income Tax officials visited 10-13 Aug 2026 to check books of accounts and left after completing the check; it says nothing about the outcome, findings, penalties or impact, nor that it was routine",
+    "class": "invented"
+   },
+   {
+    "field": "headline / what_happened",
+    "card_says": "Income Tax Dept completes audit",
+    "pdf_says": "A four-day visit by IT officials 'for their checking of books of accounts' (a search/survey-type visit), not a described audit with a result",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106806515",
+  "headline": "RBL Bank Q2FY27 deposits rose 25% QoQ to ₹1,562.8 Cr; advances grew 22% QoQ to ₹1,433.5 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened / key_numbers / timeline_entry",
+    "card_says": "Total deposits ₹1,562.8 Cr",
+    "pdf_says": "Amount in Rs. Billion: 1,562.8 bn = ₹1,56,280 Cr",
+    "class": "unit_scale"
+   },
+   {
+    "field": "what_happened / key_numbers",
+    "card_says": "CASA ₹425.3 Cr",
+    "pdf_says": "425.3 bn = ₹42,530 Cr",
+    "class": "unit_scale"
+   },
+   {
+    "field": "headline / what_happened / key_numbers",
+    "card_says": "Gross advances ₹1,433.5 Cr",
+    "pdf_says": "1,433.5 bn = ₹1,43,350 Cr",
+    "class": "unit_scale"
+   },
+   {
+    "field": "what_happened[1]",
+    "card_says": "CASA deposits increased 17% QoQ, lifting CASA ratio to 27.2%",
+    "pdf_says": "CASA ratio fell from 29.2% (30-Jun-26) to 27.2% (and 31.9% a year ago)",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Advances growth of 22% QoQ exceeds Q1FY27's 13% QoQ (ex-FCNR), indicating accelerating lending momentum",
+    "pdf_says": "13% QoQ (and 30% YoY) is this quarter's (Q2FY27) growth excluding FCNR(B)-backed IBU loans; it is not Q1FY27 growth. Underlying growth is 13%, the rest is FCNR loans",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Deposit growth outpaced Bandhan Bank's Q2FY27 advance decline",
+    "pdf_says": "No Bandhan Bank data in the filing",
+    "class": "invented"
+   },
+   {
+    "field": "takeaway / core_catalyst",
+    "card_says": "Growth driven by retail and wholesale lending",
+    "pdf_says": "A large part of the jump is FCNR(B) deposits and loans against them by the IBU (ex-FCNR advances +13% QoQ); card omits this driver",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1] (basis MEMORY)",
+    "card_says": "CASA ratio 27.2% below Q1FY27's 29.2%",
+    "pdf_says": "Both ratios come from the filing; memory holds no CASA ratio for Q1FY27 (only an average CASA 25.2% note)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106722420",
+  "headline": "AGI Infra assigned IND A-/Stable rating on ₹2,000 Mn bank loan facilities and ₹780 Mn fixed deposits",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "stable outlook, unchanged from prior assessments",
+    "pdf_says": "Rating action is 'Assigned' (new rating by India Ratings); no prior rating mentioned",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106699875",
+  "headline": "NHPC Limited resumes commercial operations of Unit#3 (170 MW) of Teesta-V Power Station on 16 July 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106779637",
+  "headline": "Siemens to merge wholly owned SRAPL into itself after NCLT approval",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "headline",
+    "card_says": "merge ... after NCLT approval",
+    "pdf_says": "NCLT order of 7 Sep 2026 only dispensed with shareholder/creditor meetings; the scheme is not yet sanctioned",
+    "class": "other"
+   },
+   {
+    "field": "what_happened[1] / track_next.milestones[0]",
+    "card_says": "Representations to be submitted by 4 September 2026 (date 2026-09-04)",
+    "pdf_says": "4 Sep 2026 is the shareholder record date (31 Aug 2026 for creditors); no deadline is given, and the notice itself is dated 12 Sep",
+    "class": "wrong_period"
+   },
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "High Court approval for the scheme",
+    "pdf_says": "No High Court step; sanction is by NCLT under Sections 230-232",
+    "class": "invented"
+   },
+   {
+    "field": "deal_value",
+    "card_says": "kind ACQUISITION, stage BOARD_APPROVED",
+    "pdf_says": "Amalgamation of a wholly owned subsidiary, at NCLT stage (meetings dispensed), no consideration",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106809935",
+  "headline": "MBECL reports no loan defaults as of 30 Sep 2026",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_note": "Routine quarterly nil default disclosure (C2 format); the NPA-pending-NOC note restates a known post-resolution position",
+  "issues": []
+ },
+ {
+  "news_id": "nse-106716896",
+  "headline": "Jai Corp's Vasona unit partially restarts after flood disruption",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106819295",
+  "headline": "Nuvoco approves voluntary liquidation of wholly owned subsidiary Algebra Endeavour Private Limited",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106708356",
+  "headline": "Cyient DET Q1 revenue ₹1,540 Cr (+10.6% YoY), PAT ₹141 Cr (+2.1% QoQ)",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "signals[JAWS]",
+    "card_says": "Employee cost up 250% YoY vs revenue +181% (Q1FY27) - WARNING",
+    "pdf_says": "Not in filing. Memory's own Q1FY27 figures: employee cost ₹1,122.8 Cr YoY +16.6%, revenue ₹2,075.7 Cr YoY +21.3% - revenue outgrew cost, so no jaws warning; the 250%/181% compare a consolidated quarter with standalone-sized earlier quarters",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "event_type",
+    "card_says": "MONTHLY_BUSINESS_UPDATE",
+    "pdf_says": "Press release on Q1FY27 quarterly results (quarter ended June 30, 2026) - RESULTS / press release, not a monthly update",
+    "class": "event_type"
+   },
+   {
+    "field": "notable_changes[EBIT margin].why",
+    "card_says": "Margin expansion driven by operational efficiencies and cost controls",
+    "pdf_says": "No reason for the margin rise is given in the filing",
+    "class": "invented"
+   },
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "Regulatory approvals for TAO Digital Solutions acquisition",
+    "pdf_says": "Filing only says the agreement to acquire TAO Digital was announced; no approvals mentioned",
+    "class": "invented"
+   },
+   {
+    "field": "impact_level",
+    "card_says": "HIGH",
+    "pdf_says": "Press release repeating the same-day results for one segment (DET, normalised); the results filing carries the news",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106723666",
+  "headline": "Nestle India Q1FY27 revenue at ₹6,378 Cr and PAT at ₹959 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[ebitda_margin]",
+    "card_says": "previous 24.12% (Q1FY27), current 26.25% (Q4FY26), POSITIVE, 'expanded sequentially from Q1FY27 to Q4FY26'",
+    "pdf_says": "Memory: Q4FY26 26.25%, Q1FY27 24.12% - the margin fell about 213 bps quarter on quarter; periods swapped and direction reversed",
+    "class": "direction"
+   },
+   {
+    "field": "what_happened / key_numbers",
+    "card_says": "Q1FY27 revenue ₹6,378 Cr, PAT ₹959 Cr (quoted from memory timeline)",
+    "pdf_says": "Not in this filing (an investor-meet presentation with no quarterly P&L); figures match memory's results entry of 2026-07-22, so they are a rehash rather than this filing's news",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106732537",
+  "headline": "Excelsoft Technologies Limited approved incorporation of wholly owned subsidiary in Canada with initial investment up to ₹3 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[1] / deal_value.amount_cr / timeline_entry",
+    "card_says": "initial investment up to ₹3 Cr (amount_cr 3.0)",
+    "pdf_says": "up to INR 3 (Three) Million through cash = ₹0.3 Cr",
+    "class": "unit_scale"
+   },
+   {
+    "field": "why_it_matters[1] (BALANCE_SHEET)",
+    "card_says": "Initial investment of ₹3 Cr is small relative to net cash ₹64.87 Cr and net worth ₹578.33 Cr",
+    "pdf_says": "Investment is ₹0.3 Cr; net cash and net worth match memory",
+    "class": "unit_scale"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106741268",
+  "headline": "Wealth First to acquire 51% stake in Wealth First Advisors for ₹52.1 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[SCALE]",
+    "card_says": "₹52.1 Cr deal = 5% of market cap (₹985.59 Cr)",
+    "pdf_says": "Memory scale_block gives market cap ₹937.59 Cr (5.6%); the ₹985.59 Cr figure is not in memory",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106742851",
+  "headline": "Foseco India Q1FY27 revenue at ₹231.41 Cr; PAT up 8.7% QoQ to ₹36.4 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "Higher revenue driven by improved sales volume and realisation",
+    "pdf_says": "Filing gives no driver for revenue growth",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[inventory_change]",
+    "card_says": "-₹10.97 Cr vs -₹2.56 Cr, 'loss widened', NEGATIVE, demand slowdown or stockpiling",
+    "pdf_says": "Figures right ((1,096.83) vs (255.70) lakh), but a negative change-in-inventories line is an inventory build that adds to profit, not a loss; the reading is speculative",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[0] (MEMORY)",
+    "card_says": "Revenue growth outperforms the sequential decline seen in Q4FY26, indicating a turnaround",
+    "pdf_says": "Memory: Q3FY26 ₹186.94 Cr -> Q4FY26 ₹201.88 Cr, a rise, not a decline",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106743024",
+  "headline": "Anlon Healthcare approves preferential issue of 8.59 Cr shares to acquire up to 44.94% in Apiqo Organics and 47.41% in Bizotic Lifescience for ₹153.3 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "timeline_entry",
+    "card_says": "for ₹1,533 Cr via share swap",
+    "pdf_says": "Rs.1,165,179,600 + Rs.367,840,000 = ₹153.3 Cr (headline and deal_value have it right)",
+    "class": "unit_scale"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "The proposed acquisitions represent 116.31% and 58.15% of the company's annual consolidated turnover",
+    "pdf_says": "116.31% and 58.15% are the total proposed RPT limits with AOPL (Rs.20,000 lakh = 120 Cr acquisition + 80 Cr purchases/sales) and BLPL (Rs.10,000 lakh = 40 Cr + 60 Cr), not the acquisitions",
+    "class": "other"
+   },
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Share-swap acquisition of further stakes in two subsidiaries (related party) - M_AND_A",
+    "class": "event_type"
+   },
+   {
+    "field": "deal_value.kind",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "Acquisition paid in shares (no cash raised): 'No cash consideration is expected to be payable'",
+    "class": "event_type"
+   },
+   {
+    "field": "missing_disclosures[0]",
+    "card_says": "Timeline for completion of customary closing conditions not disclosed",
+    "pdf_says": "Filing states completion within 90 days of signing the SSAs",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106754291",
+  "headline": "Akhill Aggarwal acquired 80,000 shares (0.22%) via inter-se gift, taking holding to 8.95%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[1]",
+    "card_says": "holding along with PACs rose to 33,51,838 shares or 8.95%",
+    "pdf_says": "Filing prints 33,51,838 but 31,71,838 + 80,000 = 32,51,838, which is 8.95% of 3,63,44,426; 33,51,838 would be 9.22%. Card repeats the filing's typo without noting it",
+    "class": "arithmetic"
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "increasing promoter holding to 8.95%",
+    "pdf_says": "8.95% is Akhill Aggarwal's individual holding; promoter group holds 64.86% and is unchanged by an inter-se gift",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106761333",
+  "headline": "Star Health held 21st AGM on August 28, 2026",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway / why_it_matters[0]",
+    "card_says": "no dissent exceeding 0.41%; votes against any resolution did not exceed 0.41%",
+    "pdf_says": "Resolution 3 (Utpal Sheth as nominee director, special resolution): 12,540,453 votes against = 2.39%",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1] (MEMORY)",
+    "card_says": "Re-appointment of retiring director and nominee director appointment align with prior promoter reclassification applications",
+    "pdf_says": "Memory t_d1254654 / t_0411b9bc only record reclassification applications; nothing links them to these director resolutions",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106788372",
+  "headline": "HUDCO promoter shareholding consolidated under MoHUA",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": []
+ },
+ {
+  "news_id": "nse-106796786",
+  "headline": "Torrent Pharma increases investment in Torrent Urja by ₹3.96 Cr to ₹11.88 Cr for 26% stake in captive hybrid power project",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[2]",
+    "card_says": "Torrent Urja is an associate and step-down subsidiary of Torrent Pharma",
+    "pdf_says": "Torrent Urja is an associate of the Company and a step-down subsidiary of the Company's holding company (wholly owned by Torrent Green Energy)",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.kind",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "Torrent Pharma is investing cash for a 26% stake (acquisition/captive capex), not raising funds",
+    "class": "event_type"
+   },
+   {
+    "field": "track_next.milestones[0]",
+    "card_says": "Completion of captive hybrid power project ... 18 to 21 months, 2028-03-28",
+    "pdf_says": "18 to 21 months is the indicative period for completing the acquisition of the stake, not the project",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106731464",
+  "headline": "NHPC's subsidiary JPCL amalgamation hearing set for 25 August 2026",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "Procedural hearing date for merging a wholly owned subsidiary into a ~Rs 73,000 Cr company; no consideration, no change to group economics.",
+  "issues": [
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "Approval from National Company Law Tribunal (NCLT) post-hearing",
+    "pdf_says": "The scheme is before the Ministry of Corporate Affairs, which fixed the hearing; the filing names MCA, not NCLT, as the authority",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "follow-up to the scheme filed on 29 September 2025",
+    "pdf_says": "In continuation to our earlier letter dated 29.09.2025 (a letter, not the scheme's filing date)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106740331",
+  "headline": "McNally Bharat Q1FY27 revenue flat at ₹15.05 Cr; PAT loss narrowed to ₹25.27 Cr",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "Quarterly results of a loss-making post-CIRP company, with an emphasis of matter that NCLT held the Rs 30 Cr buyback obligation mandatory and the resolution plan not fully implemented, plus an auditor change; more than routine.",
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Exceptional items turned negative at ₹15.18 Cr in Q1FY27 vs ₹-26.7 Cr in Q4FY26",
+    "pdf_says": "Both quarters are charges (memory: Q4FY26 -26.7, Q1FY27 -15.18); they did not turn negative, the charge shrank",
+    "class": "direction"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "operating loss improved due to lower finance charges and one-off items",
+    "pdf_says": "Finance cost and exceptional items sit below operating profit; EBITDA loss narrowed from -32.34 to -6.61 Cr on its own",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106741212",
+  "headline": "Wealth First Q1 revenue falls 42% YoY to ₹14.32 Cr; EPS down 35%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers/what_happened/notable_changes (other income)",
+    "card_says": "+6,557% YoY (₹0.07 Cr to ₹4.66 Cr)",
+    "pdf_says": "Consolidated other income 465.96 vs 7.33 lakh = +6,257%; card's figure comes from the rounded 0.07 Cr base",
+    "class": "arithmetic"
+   },
+   {
+    "field": "why_it_matters[1] / notable_changes[1].why",
+    "card_says": "this is a one-time gain and not recurring revenue",
+    "pdf_says": "The filing does not characterise other income; Q4FY26 other income was also 214.62 lakh",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[4].why",
+    "card_says": "Lower tax expense contributed to the decline in net profit",
+    "pdf_says": "Tax fell 552.95 -> 331.66 lakh, which raises net profit; the decline came from lower PBT",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Revenue fell 42% YoY, the lowest since Q1FY26 (basis MEMORY)",
+    "pdf_says": "Memory has Q3FY26 revenue of 6.49 Cr and Q4FY26 16.51 Cr; 14.32 Cr is not the lowest since Q1FY26",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106752367",
+  "headline": "RSWM's JV with NDS9 incorporated as LNJ NDS9 Global Private Limited with 74:26 shareholding",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst / why_it_matters[0]",
+    "card_says": "board approval of the denim garment JV on August 11, 2026",
+    "pdf_says": "August 5 disclosure was the project; August 11 was execution of the JV Agreement (memory t_08fa0800 says the same)",
+    "class": "other"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "no change in project cost, timeline or revenue expectations",
+    "pdf_says": "Filing restates only the ~₹186.30 Cr cost; it says nothing on timeline or revenue",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106763131",
+  "headline": "Nuvoco Vistas held AGM on August 31, 2026; all resolutions passed with requisite majority",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "prior auditor was not a Big Four firm (basis MEMORY)",
+    "pdf_says": "Filing only records MSKA's resignation and Walker Chandiok's appointment; nothing on Big Four, and the new auditor is not Big Four either, so the implied upgrade is unsupported",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "basis MEMORY for the Big Four remark",
+    "pdf_says": "memory.json holds no auditor entry for Nuvoco",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106773682",
+  "headline": "Siemens Energy entities seek promoter status removal",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "The two entities hold nil shares and no control; reclassifying them changes nothing in ownership or governance.",
+  "issues": [
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "SEBI approval",
+    "pdf_says": "Filing refers to Regulation 31A steps (Board, then stock exchanges); no SEBI approval is named",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106779863",
+  "headline": "Moody's assigns Baa2 rating with stable outlook to RBL Bank's USD 350 million fixed rate notes due 2031",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.counterparty",
+    "card_says": "Emirates NBD Bank (P.J.S.C.)",
+    "pdf_says": "The notes are issued by RBL Bank's IFSC Banking Unit under its EMTN programme; no subscriber is named and Emirates NBD is not a party",
+    "class": "invented"
+   },
+   {
+    "field": "deal_value.stage",
+    "card_says": "PROPOSED",
+    "pdf_says": "Notes priced 9 Sep 2026 and described as 'issued by the Bank'",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106784488",
+  "headline": "BSE seeks clarification from Nestle on FSSAI baby formula legal action",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened / timeline_entry",
+    "card_says": "BSE sought clarification",
+    "pdf_says": "NSE filing (attachment empty): 'The Exchange has sought clarification' on NSE's feed, i.e. NSE, not BSE",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "baby formula segment, which is material for Nestle's revenue",
+    "pdf_says": "Nothing in the filing or memory sizes the baby-formula business",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106806763",
+  "headline": "AGI Infra seeks shareholder approval to raise up to ₹275 Cr via QIP, 59.2% of net worth",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "Postal-ballot notice for an enabling QIP the board already approved on 25 Sep (in memory); ~9% of market cap, terms and timing undecided.",
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "₹275 Cr raise = 8% of market cap (₹3,247 Cr)",
+    "pdf_says": "Scale block shown to the writer: market cap ₹3,083 Cr, ₹275 Cr = 8.9% of market cap",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106816475",
+  "headline": "Anlon Healthcare approves preferential issue of warrants up to ₹250 Cr to promoters and public investors",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Preferential issue of convertible warrants for up to Rs 250 Cr: a FUNDRAISE",
+    "class": "event_type"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "Fundraise to support growth initiatives including potential capex and working capital needs",
+    "pdf_says": "Filing states no object or use of proceeds",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Funds will support ... capex expansion, with FY28 revenue guidance of ₹700 Cr (basis MEMORY g_6318cdad)",
+    "pdf_says": "Memory holds the FY28 ₹700 Cr guidance but nothing tying this warrant issue to that capex",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106810289",
+  "headline": "India Ratings affirmed Torrent Pharma's IND AA+/Positive rating and IND A1+ for commercial paper",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106719238",
+  "headline": "HUDCO targets FY27 disbursement of ₹65,000 Cr, up from ₹5,000 Cr last year",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "notable_changes[sanctions outstanding]",
+    "card_says": "Sanctions outstanding rose from ₹1.64 lakh Cr (FY26) to ₹2.5 lakh Cr (Q1FY27)",
+    "pdf_says": "₹2.5 lakh Cr is total sanctions outstanding; ₹1.64 lakh Cr is the amount sanctioned during last year (a flow), not the outstanding at FY26 end. The two are different metrics, so the stated increase is not supported.",
+    "class": "other"
+   },
+   {
+    "field": "what_happened[1]",
+    "card_says": "MOUs with Gujarat and Bihar each in excess of ₹1 lakh Cr, adding to existing MOUs of about ₹7 lakh Cr",
+    "pdf_says": "Both figures are an analyst's words in a question ('I don't recall', '7 lakh or 8 lakh'); management did not confirm them, and a later analyst cites ~6 MOUs of ~₹6.5 lakh Cr from the presentation. Presented as fact.",
+    "class": "invented"
+   },
+   {
+    "field": "headline / notable_changes[disbursement]",
+    "card_says": "FY27 disbursement ₹65,000 Cr up from ₹5,000 Cr last year; 'massive increase in lending activity'",
+    "pdf_says": "Transcript does say 'Last year, we had achieved around INR5,000 crores', but this is implausible against FY26 sanctions of ₹1.64 lakh Cr, ~₹20,000 Cr annual repayments and an ~₹13,000 Cr interest income book; likely a transcription slip (e.g. 50,000). The card builds a 13x growth headline on it without caution.",
+    "class": "other"
+   },
+   {
+    "field": "quantified_impact",
+    "card_says": "₹65,000 Cr x 8.78% = ₹5,707 Cr annual interest income potential from FY27 disbursement",
+    "pdf_says": "Arithmetic correct, but gross disbursement is not incremental book (≈₹20,000 Cr repayments expected this year) and 8.78% is the analyst's figure (CMD: 'around 8.7%'); overstates incremental income.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106770987",
+  "headline": "Sterling Tools shareholders approved all resolutions at the 47th AGM held on 4 September 2026.",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "All resolutions passed with requisite majority; no dissent",
+    "pdf_says": "Small votes against on every resolution (584-628 votes, 0.0024%-0.0026%; 15-16 members voted against)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106732497",
+  "headline": "Excelsoft Q1FY27 revenue at ₹80.26 Cr; PAT dropped 44.4% QoQ to ₹9.23 Cr",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "takeaway / headline",
+    "card_says": "QoQ contraction signals near-term pressure; only QoQ changes reported",
+    "pdf_says": "Consolidated PAT 92.28 mn vs 58.73 mn in Q1FY26 (+57% YoY); standalone revenue 803.41 mn vs 557.60 mn (+44% YoY). Q4 is the comparison the card uses; the strong YoY growth is omitted, so the card's tone is one-sided.",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "EBITDA margin compressed to 16.24% from 30.27% in Q4FY26",
+    "pdf_says": "16.24% is consolidated (from the XBRL figures); 30.27% is the standalone Q4FY26 margin held in memory. Mixed bases (standalone Q1FY27 margin is 15.34%).",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "signals[0]",
+    "card_says": "Other income ₹5.81 Cr is 52% of PBT",
+    "pdf_says": "52% uses standalone PBT (111.09 mn = ₹11.11 Cr); consolidated PBT is ~₹11.83 Cr (92.28 + 26.03 mn tax), giving ~49%. Also labelled LOW_QUALITY_BEAT although profit fell QoQ.",
+    "class": "standalone_consolidated"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106708248",
+  "headline": "Cyient Q1FY27 revenue rose 21.3% YoY to ₹2,075.7 Cr; PAT fell 30.9% YoY to ₹108.7 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway / core_catalyst",
+    "card_says": "Profitability pressures due to higher employee expenses and raw material costs",
+    "pdf_says": "EBITDA rose 14.3% YoY (2,638 vs 2,307 mn); the PAT fall comes from other income down 628 mn (697 to 69), higher depreciation (767 vs 680) and finance costs (217 vs 163) and tax. Attribution misleads.",
+    "class": "other"
+   },
+   {
+    "field": "notable_changes[employee_cost].why",
+    "card_says": "Higher headcount and integration expenses increase cost base",
+    "pdf_says": "Filing gives no reason; only notes acquisitions (Kinetic Technologies) make periods not strictly comparable.",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106715650",
+  "headline": "Star Health Q1FY27 insurance revenue at ₹4,917 Cr; PAT at ₹550 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106726720",
+  "headline": "RSWM Q1FY27 revenue flat at ₹1,161 Cr; PAT up 135% YoY to ₹19.65 Cr on lower tax and higher EBITDA",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[2] / why_it_matters[1] / notable_changes[deferred_tax]",
+    "card_says": "PAT up 'on lower tax', 'aided by deferred tax credit of ₹7.66 Cr', 'deferred tax write-back, boosting PAT', deferred tax change POSITIVE",
+    "pdf_says": "Deferred tax of ₹7.66 Cr is a charge (expense). Total tax rose from ₹2.66 Cr (1.68 current - 0.76 earlier years + 1.74 deferred) to ₹7.66 Cr. PAT grew despite higher tax, because PBT rose from ₹11.03 Cr to ₹27.31 Cr. The tax story is reversed.",
+    "class": "direction"
+   },
+   {
+    "field": "what_happened[2]",
+    "card_says": "deferred tax charge of ₹0.98 Cr last year",
+    "pdf_says": "Deferred tax Q1FY26 = ₹1.74 Cr",
+    "class": "wrong_column"
+   },
+   {
+    "field": "notable_changes[inventory_change]",
+    "card_says": "Larger inventory drawdown (-₹31.68 Cr) suggests weaker demand; 'loss widened'",
+    "pdf_says": "A negative 'change in inventories' (31.68) means inventory was built up (reduces expense), not drawn down.",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[0] (basis MEMORY)",
+    "card_says": "EBITDA margin 7.76% is the highest since Q4FY25 in memory",
+    "pdf_says": "Memory holds no Q4FY25 margin; its periods (H1FY26-Q4FY26) are all ~6.1-6.25%. 'Since Q4FY25' is not supported.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106791610",
+  "headline": "RBL Bank notified of nationwide bank strike on 28-30 Sep 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106793924",
+  "headline": "AGI Infra plans to raise up to ₹275 Cr via QIP, subject to shareholder and regulatory approvals",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Board-approved QIP fundraise; should be FUNDRAISE",
+    "class": "event_type"
+   },
+   {
+    "field": "takeaway / why_it_matters[0]",
+    "card_says": "QIP is 59.2% of net worth, indicating significant potential dilution",
+    "pdf_says": "Ratio is right (scale block), but dilution depends on market cap: ₹275 Cr is 8.9% of market cap (~8% dilution), not 59%.",
+    "class": "other"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "Fundraise to support growth initiatives",
+    "pdf_says": "Filing states no use of proceeds (the card itself lists it as missing).",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106788220",
+  "headline": "NHPC sets 28 September 2026 as hearing date for amalgamation of Jalpower Corporation Limited",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "Approval from National Company Law Tribunal (NCLT) post-hearing; shareholder approval for the scheme",
+    "pdf_says": "The scheme is heard by the Ministry of Corporate Affairs (MCA), not NCLT; filing says nothing about a pending shareholder vote.",
+    "class": "other"
+   },
+   {
+    "field": "headline",
+    "card_says": "NHPC sets 28 September 2026 as hearing date",
+    "pdf_says": "MCA intimated the hearing date to NHPC",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106737745",
+  "headline": "Siemens Ltd held its 68th AGM on August 11, 2026, approving all resolutions including dividend and director appointments",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Appointment of Michael Peter adds to the board, which had 9 members and 6 independent directors as of June 30, 2026",
+    "pdf_says": "Board size 9 / 6 independents is in memory, but the same AGM resolved not to fill the vacancy left by Tim Holt retiring by rotation (Resolution 3), so the appointment does not simply add to a 9-member board; memory does not support 'adds'",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106711496",
+  "headline": "McNally Bharat appoints Sarvesh Adukia as CEO",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Board appointment of a CEO and KMP with immediate effect: a management change (governance/management event), not OTHER",
+    "class": "event_type"
+   },
+   {
+    "field": "impact_level",
+    "card_says": "LOW",
+    "pdf_says": "New CEO with immediate effect at a loss-making company emerging from a restructuring (memory: FY26 EBITDA -220 Cr, exceptional gain 3,918 Cr); a CEO change is news an investor would weigh",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106803119",
+  "headline": "NU Vista subsidiary confirms receipt of GST Show Cause Notice on September 28, 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106759855",
+  "headline": "Nestle India acquires 26% stake in Radiance KA Sunshine Seven for ₹7.61 Cr to secure renewable power for a plant",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[0] / headline",
+    "card_says": "Nestle India acquired a 26% equity stake",
+    "pdf_says": "Company has entered into a Share Subscription and Shareholders' Agreement; completion 'within 30 days from execution of agreement' - the acquisition is agreed, not completed",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.stage",
+    "card_says": "SHAREHOLDER_APPROVED",
+    "pdf_says": "Agreement executed; no shareholder approval involved or mentioned (no approvals required)",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "The deal size is negligible at 0.1% of revenue and 0.3% of net worth (quote: ₹15.8 Cr = ...)",
+    "pdf_says": "The ratios are for ₹15.8 Cr, the target's FY26 turnover, not the ₹7.61 Cr consideration (7.61 Cr = ~0.03% of revenue, ~0.15% of net worth); conclusion (negligible) unchanged",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Nestle India confirmed the acquisition is at arm's length with no promoter involvement",
+    "pdf_says": "Related-party question answered only 'Not applicable'; no arm's-length confirmation is given",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106786071",
+  "headline": "Anlon Healthcare shareholders approved preferential issue of 8.59 Cr shares at ₹17.85 to acquire 44.94% in Apiqo Organics and 47.41% in Bizotic Lifescience for ₹1,533 Cr",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "headline / takeaway / key_numbers[Deal Value] / deal_value.amount_cr / timeline_entry",
+    "card_says": "₹1,533 Cr",
+    "pdf_says": "8.59 Cr shares x ₹17.85 = ₹153.3 Cr (₹1,533 million); ₹1,533 Cr is 10x, and exceeds the company's whole market cap (₹1,465 Cr). Figure is not in this filing; carried from memory where it was already 10x",
+    "class": "unit_scale"
+   },
+   {
+    "field": "quantified_impact[0]",
+    "card_says": "Deal valued at 8.9x FY26 revenue (1,533 / 171.97), high valuation multiple",
+    "pdf_says": "With the correct ₹153.3 Cr it is ~0.9x; also the denominator is Anlon's own revenue, not the targets', so the 'valuation multiple' of the deal is meaningless",
+    "class": "unit_scale"
+   },
+   {
+    "field": "notable_changes[0]",
+    "card_says": "promoter_pct 52.68% (Q1FY27) -> 47.32% (SEP-2026), dilution from the preferential issue",
+    "pdf_says": "No promoter holding in the filing; memory has only 52.68% for Q4FY26/Q1FY27; shares are not yet allotted, so no dilution has happened",
+    "class": "invented"
+   },
+   {
+    "field": "takeaway / core_catalyst",
+    "card_says": "Now executable post-AGM approval; approval enables completion",
+    "pdf_says": "Filing is a further disclosure after second rounds of BSE/NSE observations on the in-principle application; exchange in-principle approval is still pending and not listed in pending_approvals",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Not a related-party transaction as allottees are external, not promoters or directors",
+    "pdf_says": "Filing lists the allottees and their beneficial owners only; it makes no related-party statement (quote is about partnership firms)",
+    "class": "invented"
+   },
+   {
+    "field": "deal_value.updates_deal_id",
+    "card_says": "d_89f9f448",
+    "pdf_says": "Memory deal d_89f9f448 is the ₹23.6 Cr Brickwork bank-loan rating, a different deal",
+    "class": "memory"
+   },
+   {
+    "field": "key_numbers[Deal Value, Shares]",
+    "card_says": "₹1,533 Cr / 8.59 Cr shares quoted from memory timeline t_99770b61",
+    "pdf_says": "Memory holds ₹1,533 Cr, which is itself 10x the share count x price; memory figure wrong",
+    "class": "memory"
+   },
+   {
+    "field": "impact_level",
+    "card_says": "HIGH",
+    "pdf_says": "This filing is a supplementary pricing/UBO disclosure after the approval already recorded on Sep 5; the real issue is ~₹153 Cr (~10% of market cap) for minority stakes in existing subsidiaries",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106773535",
+  "headline": "Torrent Pharma appoints Shanti Ekambaram as independent director",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "BOARD_DELIBERATION WARNING: the board meeting ran 8.0 hours before this outcome; prolonged deliberation often precedes difficult results or restructuring",
+    "pdf_says": "No board meeting in this filing: it is a postal-ballot result (e-voting 8 Aug - 6 Sep, result announced 7 Sep). The warning is unfounded and points the reader to trouble that is not there",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "what_happened[1]",
+    "card_says": "1,711 valid votes cast out of 1,713 total members",
+    "pdf_says": "1,711 members cast valid votes (34,14,41,548 votes); 2 members' votes (365 shares) invalid",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106804007",
+  "headline": "HUDCO sanctions ₹1,04,592 Cr loans in H1FY27",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "takeaway / timeline_entry",
+    "card_says": "Loan sanctions surged YoY; sanctions and disbursements show strong YoY growth",
+    "pdf_says": "Filing gives no prior-year sanction figure; only disbursements have a comparison (25,838 -> 35,371 Cr, +36.9%)",
+    "class": "invented"
+   },
+   {
+    "field": "impact_level",
+    "card_says": "HIGH",
+    "pdf_says": "Half-year provisional business update (sanctions, disbursements), no earnings or balance-sheet figures; useful but operational",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106727322",
+  "headline": "Sterling Tools Q1FY27 standalone revenue rose 23.7% YoY to ₹201.9 Cr; EBITDA margin improved to 15.4%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[1] CAPITAL_DILUTER",
+    "card_says": "Since Q1FY26: EBITDA run-rate -27.3 Cr on +53.8 Cr of capital added, ROIIC -51%",
+    "pdf_says": "Consolidated EBITDA Q1FY27 25.2 Cr vs Q1FY26 24.9 Cr (+1.2%); standalone 31.1 vs 24.5 (+26.9%); memory Q1FY27 22.67 vs Q1FY26 ~22.0. No basis for a 27.3 Cr fall in EBITDA run-rate; the warning contradicts the filing",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "notable_changes[1].why",
+    "card_says": "PAT growth outpaced revenue growth due to lower tax rate and improved operating leverage",
+    "pdf_says": "Standalone tax 5.6/22.0 = 25.5% vs 3.8/14.9 = 25.5% a year ago; tax rate unchanged, PAT growth (48.4%) tracks PBT growth (47.8%)",
+    "class": "invented"
+   },
+   {
+    "field": "headline / key_numbers[Revenue]",
+    "card_says": "Standalone revenue ₹201.9 Cr",
+    "pdf_says": "₹201.9 Cr is standalone Total Income (includes other income)",
+    "class": "other"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "Robust standalone Q1FY27 results with revenue and EBITDA growth",
+    "pdf_says": "Accurate for standalone, but the same deck shows consolidated PAT down 34.8% YoY to 5.9 Cr and EBITDA margin down to 11.6% from 12.8%; the card does not mention it",
+    "class": "standalone_consolidated"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106770053",
+  "headline": "Cyient completed acquisition of 100% stake in Tao Digital Solutions Inc.",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1] / deal_value.segment",
+    "card_says": "The deal aligns with Cyient's strategy to grow its Digital Engineering & Technology segment (memory t_a06f5660)",
+    "pdf_says": "Filing names no segment; t_a06f5660 is the Investor Day summary (three growth engines) and does not mention Tao or DET; claim not supported by memory",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106801908",
+  "headline": "Sthitaprajna Advisors LLP seeks reclassification from promoter group to public category",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106736447",
+  "headline": "RSWM Q1FY27 revenue rose 1.7% QoQ to ₹1,161 Cr; EBITDA margin improved to 8%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "missing_disclosures[1]",
+    "card_says": "Timeline for commercial production of the PET food-grade chip project (listed as not disclosed)",
+    "pdf_says": "project is likely to be completed in fourth quarter of this year for trials and commercial production may happen in quarter one of next financial year (the card's own track_next uses this)",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Renewable energy share rose to ~60% in Q1FY27 from mid-20s a year ago",
+    "pdf_says": "Renewables improved from mid-20s last year to mid-40s; 'in the current quarter' (said on 5 Aug, i.e. Q2) around 60%. The ~60% is not clearly a Q1FY27 figure",
+    "class": "wrong_period"
+   },
+   {
+    "field": "deal_value.stage / missing_disclosures[2]",
+    "card_says": "JV with NDS9 at stage BOARD_APPROVED; stake percentage listed as not disclosed",
+    "pdf_says": "Memory (deal d_08fa0800, timeline 2026-08-11) holds the JV agreement as executed on 11 Aug 2026 with 74:26 shareholding and a ₹186.3 Cr project cost; the card's update regresses the stage and calls the known stake missing (transcript of 5 Aug itself said stake under discussion)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106777824",
+  "headline": "RBL Bank Limited informed of proposed nationwide bank strike on September 11, 2026, by United Forum of Bank Unions",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "LITIGATION_REGULATORY",
+    "pdf_says": "Strikes/Lockouts/Disturbances intimation: an industry-wide union strike, not litigation or a regulatory action (OTHER / labour event)",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106792853",
+  "headline": "India Ratings upgraded bank loan facilities of subsidiary Worldnext Realty LLP to IND BB+/Stable from lower rating, affirmed bank guarantee at IND A4+",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "key_numbers[0] / why_it_matters[1]",
+    "card_says": "Bank Loan Facilities Rated ₹1,425.50 Cr",
+    "pdf_says": "Amount column is 'INR Million': 1425.50 million = ₹142.55 Cr",
+    "class": "unit_scale"
+   },
+   {
+    "field": "key_numbers[1]",
+    "card_says": "Bank Guarantee Rated ₹74.50 Cr",
+    "pdf_says": "74.50 INR million = ₹7.45 Cr",
+    "class": "unit_scale"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "₹1,425.50 Cr facilities are substantial compared to TTM revenue of ₹357.36 Cr, indicating significant exposure",
+    "pdf_says": "True amount ₹142.55 Cr, about 40% of TTM revenue, not 4x; the conclusion rests on the 10x slip",
+    "class": "unit_scale"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "The rating upgrade reflects stronger financials of the subsidiary",
+    "pdf_says": "Filing gives only the rating table; no rationale or financials stated",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106766506",
+  "headline": "NHPC Limited receives arbitral award of ₹796.87 Cr in BGS-SGS-SOMA dispute, recoverable via tariff",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened / key_numbers / why_it_matters",
+    "card_says": "Award of ₹796.87 Cr (₹7,96,86,70,978 'awarded')",
+    "pdf_says": "₹7,96,86,70,978 + €28,76,497.44 is the Claimed Amount column; the amount awarded by the tribunal (principal plus 10% interest) is ₹3,92,31,46,740 (₹392.31 Cr) + €15,36,530",
+    "class": "wrong_column"
+   },
+   {
+    "field": "headline / timeline_entry",
+    "card_says": "NHPC 'receives' an award; 'arbitral award of ₹796.87 Cr in favour of the company'",
+    "pdf_says": "The claim was brought by the contractor M/s BGS-SGS-SOMA; the award is payable by NHPC (hence the note that it is allowable as project cost and recoverable through tariff)",
+    "class": "direction"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "with no immediate cash outflow",
+    "pdf_says": "Filing says only that the amount is allowable as project cost and recoverable through tariff; nothing on timing of payment",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106751501",
+  "headline": "Siemens wins GST litigation as Supreme Court dismisses department's SLP against ₹34.8 Cr demand",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "REG30_THRESHOLD: management expects at least the materiality threshold (lower of 2% turnover, 2% net worth, 5% of 3-yr avg profit)",
+    "pdf_says": "The only figure is ₹34.83 Cr, far below 2% of net worth (~₹277 Cr) or 2% of turnover; the signal contradicts the filing's own number",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106760870",
+  "headline": "MBECL gets trading approval for 3.33 Cr shares issued post-resolution plan",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "Listing/trading approval for shares already allotted under an NCLT resolution plan (capital reduction plus allotment effected Feb 2025); no money raised in this filing",
+    "class": "event_type"
+   },
+   {
+    "field": "what_happened[0]",
+    "card_says": "3,33,33,334 equity shares issued on preferential basis",
+    "pdf_says": "16,66,667 shares are post capital-reduction shares; 3,16,66,667 were preferential (16,66,667 to public, 3,00,00,000 to SRA)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106799844",
+  "headline": "Nuvoco acquires 26% stake in CleanMax Ilgohp SPV for 46.4 MW hybrid renewable project",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "headline",
+    "card_says": "Nuvoco acquires 26% stake",
+    "pdf_says": "Company 'executed Share Purchase Agreement ... for acquiring 26%'; the acquisition is contracted, not completed (deal stage CONTRACT is correct)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106706181",
+  "headline": "Nestle India Q1FY27 revenue rose 25.2% YoY to ₹6,378 Cr; PAT up 48.3% to ₹959 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[2]",
+    "card_says": "EPS declined to ₹4.97 due to bonus share allotment",
+    "pdf_says": "Consolidated EPS 4.97 vs 3.35 in Q1FY26 (restated for the bonus) = +48% YoY; the bonus was allotted in FY26 and comparatives are restated, so EPS did not decline because of it (only QoQ vs 5.77, which has nothing to do with the bonus)",
+    "class": "direction"
+   },
+   {
+    "field": "notable_changes[2].why",
+    "card_says": "Employee cost growth outpaced revenue growth, pressuring margins",
+    "pdf_says": "Employee cost +10.5% YoY (5,705.7 vs 5,165.7 mn) against revenue +25.2%; it grew far slower than revenue",
+    "class": "direction"
+   },
+   {
+    "field": "notable_changes[2].previous",
+    "card_says": "₹515.67 Cr (Q1FY26)",
+    "pdf_says": "5,165.7 million = ₹516.57 Cr",
+    "class": "other"
+   },
+   {
+    "field": "notable_changes[0]",
+    "card_says": "Other income ₹4.04 Cr (Q1FY26) -> ₹22.47 Cr, +456.2% YoY",
+    "pdf_says": "Q1FY26 comparative 41.7 million = ₹4.17 Cr; change +439%",
+    "class": "wrong_column"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106729695",
+  "headline": "Anlon posts Q1FY27 results audio link",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106717353",
+  "headline": "Torrent Pharma Q1FY27 revenue rose 55% YoY to ₹4,921 Cr; PAT up 3% YoY to ₹566 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway / why_it_matters[1]",
+    "card_says": "Standalone base business (excluding JB) grew revenue 17% quarter-on-quarter to ₹3,720 Cr",
+    "pdf_says": "The 17% is Q1 growth year-on-year (vs Q1 FY26) per the 'Q1 Growth (%)' column; base business is Torrent ex-JB on a consolidated basis, not 'standalone' (standalone revenue is ₹4,158 Cr)",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Revenue growth reflects full-quarter contribution from JB Pharma post-amalgamation effective July 8, 2026",
+    "pdf_says": "JB has been consolidated since 21 Jan 2026 (control); the scheme became effective 8 Jul 2026, after the quarter; YoY growth reflects JB absent from Q1FY26",
+    "class": "other"
+   },
+   {
+    "field": "notable_changes[2].why",
+    "card_says": "Inventory change 40 -> 23: lower inventory build-up vs prior year",
+    "pdf_says": "Positive 'changes in inventories' is an inventory drawdown in both quarters, not a build-up",
+    "class": "direction"
+   },
+   {
+    "field": "deal_value.stage",
+    "card_says": "SHAREHOLDER_APPROVED",
+    "pdf_says": "Scheme approved by NCLT on 6 Jul 2026, effective 8 Jul 2026, shares allotted 20 Jul 2026: completed",
+    "class": "other"
+   },
+   {
+    "field": "signals[1]",
+    "card_says": "CAPITAL_DILUTER: EBITDA run-rate +978 Cr on +12,501 Cr capital, ROIIC 8%",
+    "pdf_says": "Op. EBITDA rose from ₹1,032 Cr (Q1FY26) to ₹1,664 Cr (+632 a quarter, ~+2,528 annualised); the +978 Cr run-rate cannot be reproduced from the filing",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106766507",
+  "headline": "HUDCO signs MoU with Bihar govt for ₹25,000 Cr industrial infrastructure financing",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "A non-binding MoU (valid 3 years, operational agreements still to be signed); the concall had already flagged Bihar/Gujarat MoUs, so it does not change the earnings view.",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "CAPEX",
+    "pdf_says": "HUDCO (a lender) signs an MoU to provide term loans of up to Rs 25,000 Cr to Bihar; this is a lending/business MoU, not HUDCO capital expenditure",
+    "class": "event_type"
+   },
+   {
+    "field": "takeaway / headline",
+    "card_says": "HUDCO secures a significant ₹25,000 Cr commitment",
+    "pdf_says": "MoU 'executed to put on record the intent of Parties'; separate operational agreements to be executed; HUDCO 'aims to provide financial assistance to the extent of' Rs 25,000 Cr",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "moratorium and 25-year tenure reduce near-term cash flow pressure",
+    "pdf_says": "Moratorium and flexible repayment up to 25 years are terms in favour of the borrower (Bihar's authority); for HUDCO they defer repayments rather than ease its cash flow",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106808062",
+  "headline": "Cyient forms Intelligent Engineering Solutions unit and launches CYiNGINE AI platform",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106757062",
+  "headline": "Star Health received IRDAI directions on portability norms for FY24-25 and FY25-26, with limited financial impact expected",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "IRDAI identified aberrations in portability claim settlement and ordered a review of FY25-FY26 cases. Claims practice is a key governance and regulatory issue for this health insurer, even with no penalty.",
+  "issues": [
+   {
+    "field": "core_catalyst / what_happened",
+    "card_says": "Regulatory guidance on policy portability; order to follow norms for FY 2024-25 and FY 2025-26",
+    "pdf_says": "Item 8: 'aberrations/non-compliances identified by the authority' - certain portability-related claims from FY 2024-25 and FY 2025-26 subject to review, with appropriate action where necessary; the card leaves out that IRDAI found non-compliance and ordered a review of cases",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106775235",
+  "headline": "CareEdge Global assigns BBB+/Stable rating to RBL Bank's USD 1 billion EMTN programme and issuer rating",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106752826",
+  "headline": "NHPC postpones MCA final hearing on JPCL amalgamation; fresh date awaited",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / timeline_entry",
+    "card_says": "NHPC postpones MCA final hearing",
+    "pdf_says": "MCA conveyed postponement of the final hearing due to administrative exigencies (MCA postponed, not NHPC)",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0] / pending_approvals",
+    "card_says": "delays NCLT approval and shareholder approval",
+    "pdf_says": "The hearing is before the MCA; the filing does not mention NCLT or a shareholder vote (memory watchlist w_8c83bac8 / w_b2bda39e lists them, but the filing does not support them)",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[1] / missing_disclosures",
+    "card_says": "No swap ratio, consideration or deal value disclosed, so financial impact cannot be assessed",
+    "pdf_says": "Jalpower is a wholly owned subsidiary merging into its parent; no swap ratio or consideration applies",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106775966",
+  "headline": "NCLT Mumbai dispenses with shareholder and creditor meetings for Siemens Rail Automation merger",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "A procedural first-motion order in a parent-subsidiary amalgamation with no economic change.",
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "No financial impact expected as SRAPL is already fully consolidated (basis FILING)",
+    "pdf_says": "The filing says nothing about financial impact or consolidation; the quote given ('Scheme remains subject to ... approvals') does not support the claim",
+    "class": "invented"
+   },
+   {
+    "field": "deal_value",
+    "card_says": "kind ACQUISITION, stage BOARD_APPROVED",
+    "pdf_says": "Amalgamation of a wholly owned subsidiary, now past the NCLT first-motion order (meetings dispensed with)",
+    "class": "other"
+   },
+   {
+    "field": "missing_disclosures",
+    "card_says": "Details of any consideration or share exchange ratio",
+    "pdf_says": "Wholly owned subsidiary merging into its parent; no consideration applies",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106736846",
+  "headline": "MBECL wins ₹5.52 Cr release from Delhi HC in Metso arbitration",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "₹5.52 Cr is 0.4% of market cap and 1% of net worth; the company itself says it has no material impact.",
+  "issues": []
+ },
+ {
+  "news_id": "nse-106703753",
+  "headline": "Nuvoco Q1FY27 EBITDA rose 7% YoY to ₹572 Cr; volume up 5% YoY to 5.3 MT",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "record volume and EBITDA",
+    "pdf_says": "'highest-ever first quarter volume and EBITDA' - a record for a first quarter only",
+    "class": "other"
+   },
+   {
+    "field": "track_next.kpis_to_verify",
+    "card_says": "EBITDA per tonne >= 1,000 in Q2FY27",
+    "pdf_says": "MD: 'I will not be able to give a guidance on what will be the EBITDA per ton'; he expects about Rs 100/t cost inflation in Q2 vs Q1 and says Q2 is seasonally weak; the 1,000 figure came from an analyst's question",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "track_next.risks",
+    "card_says": "Power cost increase due to plant shutdowns in Q2 and Q3",
+    "pdf_says": "Shutdowns 'in the next two months' / 'two, three months' - Q2",
+    "class": "wrong_period"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106818387",
+  "headline": "Nestle India Q2FY27 revenue rose 20.3% YoY to ₹6,788 Cr; PAT up 35.9% to ₹1,010 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[other_income]",
+    "card_says": "previous ₹1.64 Cr (Q2FY26), current ₹20.26 Cr, +1135.4%",
+    "pdf_says": "Consolidated other income Q2FY26 Rs 55.4 mn = ₹5.54 Cr; Q2FY27 ₹20.26 Cr; +265.7% YoY",
+    "class": "wrong_column"
+   },
+   {
+    "field": "notable_changes[inventory_change]",
+    "card_says": "₹94.93 Cr change 'indicates inventory build-up' (NEGATIVE)",
+    "pdf_says": "Changes in inventories of +949.3 mn is a charge, meaning finished-goods/WIP inventories fell during the quarter (a drawdown, not a build-up)",
+    "class": "direction"
+   },
+   {
+    "field": "track_next.kpis_to_verify[1]",
+    "card_says": "advertising and marketing spends, metric employee_cost",
+    "pdf_says": "A&M spend is not employee cost; the KPI is mapped to the wrong metric",
+    "class": "other"
+   },
+   {
+    "field": "signals[0]",
+    "card_says": "Exceptional items in 4 of the last 8 quarters ... treat them as a running cost",
+    "pdf_says": "Q2FY27 charge ₹3.69 Cr and Q1FY27 ₹6.23 Cr; FY26 was a net credit of ₹120.8 Cr - the items are small and mixed in sign, not a running cost",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "what_happened[1] quote",
+    "card_says": "EBITDA YoY +30.6%",
+    "pdf_says": "16,154.8 vs 12,327.4 mn = +31.0% (only in the quote, not stated in the card text)",
+    "class": "arithmetic"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106738880",
+  "headline": "Anlon Healthcare Q1FY27 revenue at ₹87.62 Cr; EBITDA margin moderated to ~17% due to raw material cost and acquisition integration",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Revenue guidance for FY27 maintained at ₹350-400 Cr, implying ~30% CAGR over next three years",
+    "pdf_says": "₹350-400 Cr for FY27 is roughly double FY26 total income (₹172 Cr), not 30%; the ~30% 3-year CAGR is a separate statement (the analyst pointed out that 30% would give only ~₹220-225 Cr)",
+    "class": "arithmetic"
+   },
+   {
+    "field": "why_it_matters[1] basis",
+    "card_says": "basis MEMORY g_a5126d73 for ₹350-400 Cr guidance",
+    "pdf_says": "Memory g_a5126d73 holds only the ~30% CAGR; the ₹350-400 Cr figure comes from the filing, not memory",
+    "class": "memory"
+   },
+   {
+    "field": "headline / key_numbers",
+    "card_says": "Revenue ₹87.62 Cr",
+    "pdf_says": "₹87.62 Cr is total income (revenue ₹87.56 Cr per memory); this is a label slip",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106702202",
+  "headline": "Torrent Pharmaceuticals receives Crisil ESG rating of 66",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "DEBT_RATINGS",
+    "pdf_says": "Crisil ESG Ratings & Analytics assigned an ESG rating ('Crisil ESG 66', Core ESG 74); this is an ESG score, not a credit/debt rating",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106703247",
+  "headline": "Torrent Pharma allots 4.19 Cr shares to JB Chemicals shareholders post-NCLT approval",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_line": "Procedural allotment under a scheme already sanctioned by NCLT on 6 Jul 2026 and disclosed then; the dilution (12.4% more shares) follows from the known swap ratio.",
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Allotment completes the final step of the NCLT-sanctioned amalgamation scheme",
+    "pdf_says": "Filing reports the allotment only; it does not call it the final step of the scheme",
+    "class": "invented"
+   },
+   {
+    "field": "track_next.milestones[0]",
+    "card_says": "Completion of amalgamation scheme, date 2026-07-06",
+    "pdf_says": "6 Jul 2026 is the NCLT order date, already past; not a future milestone",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106744210",
+  "headline": "Star Health seeks BSE/NSE approval to reclassify promoter group as public shareholders",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_line": "Procedural application to the exchanges after requests and Board approval already disclosed on 12-13 Aug; no new economic information.",
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "with applications previously submitted on August 12 and 13, 2026",
+    "pdf_says": "The 12 and 13 Aug intimations were about receipt of the promoter-group request and Board approval; the application to the exchanges was submitted on 14 Aug",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106755285",
+  "headline": "Joint Commissioner, CGST, Durgapur issues show cause notice to NU Vista Limited proposing denial of input tax credit amounting to ₹15.41 Cr for FY20-21 to FY23-24",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0] REG30_THRESHOLD",
+    "card_says": "management expects at least that much impact (the lower of 2% of turnover, 2% of net worth or 5% of 3-year average profit)",
+    "pdf_says": "Filing says the matter 'will have no major financial impact'; the demand of Rs 15.41 Cr is 0.1% of revenue and 0.2% of net worth (card's own why_it_matters), far below the threshold",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "headline",
+    "card_says": "proposing denial of input tax credit amounting to ₹15.41 Cr",
+    "pdf_says": "Rs 15.41 Cr is the total proposed demand covering both ITC denial and denial of reduction in output tax liability from credit notes",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106757124",
+  "headline": "Cyient receives CCI approval for Tao Digital Solutions acquisition",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst / deal_value.segment",
+    "card_says": "USA-based semiconductor design acquisition; segment Semiconductors",
+    "pdf_says": "Filing says only a company incorporated in USA; neither filing nor memory says Tao Digital is a semiconductor design business",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106766875",
+  "headline": "RBL Bank mobilised ~USD 3.40 billion (~₹32,472 Cr) in FCNR(B) deposits under RBI swap facility up to August 31, 2026, with loans of ~USD 1.08 billion (~₹10,309 Cr) against such deposits",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.risks[0] / milestones[0]",
+    "card_says": "RBI swap facility ended on August 31, 2026, so no further mobilisation under this facility is possible",
+    "pdf_says": "Filing reports mobilisation 'up to August 31, 2026' under the facility; it does not say the facility ended or that no further mobilisation is possible",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106794809",
+  "headline": "Siemens gets NCLT approval to buy back 0.78% of C&S Electric shares",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / missing_disclosures",
+    "card_says": "Siemens gets NCLT approval to buy back 0.78% of C&S Electric shares; 'consideration paid for the share buyback'",
+    "pdf_says": "NCLT approved a capital reduction of C&S Electric (cancelling 343,948 shares held by Specified Shareholders); C&S implements it, not a Siemens buyback",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.stage",
+    "card_says": "BOARD_APPROVED",
+    "pdf_says": "NCLT order dated 24 Sep 2026 approved the reduction; implementation pending",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106725123",
+  "headline": "NHPC Q1FY27 revenue rose 18.5% YoY to ₹3,808 Cr; PAT up 4.1% to ₹1,178 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "Revenue growth offset by higher finance costs and tax",
+    "pdf_says": "Consolidated total tax fell: 375.61 Cr vs 387.15 Cr in Q1FY26; the offsets were finance cost (605.76 vs 260.80), depreciation (599.65 vs 435.77) and lower other income",
+    "class": "direction"
+   },
+   {
+    "field": "notable_changes[deferred_tax].why",
+    "card_says": "reduces PAT growth despite higher PBT",
+    "pdf_says": "PBT before regulatory deferral fell: 1,299.39 Cr vs 1,334.55 Cr; PAT growth came from the regulatory deferral movement (254.31 vs 183.76)",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[0] (basis MEMORY)",
+    "card_says": "EBITDA margin 61.76% well above FY26 average 45.08% and Q4FY26 42.48%, indicating improved operational efficiency",
+    "pdf_says": "Memory figures are right, but the filing notes the business is seasonal; same quarter last year was ~56.1% (1,801.51/3,213.77) and H1FY26 58.19% in memory, so the Q1 vs full-year comparison does not support an efficiency claim",
+    "class": "memory"
+   },
+   {
+    "field": "track_next.kpis_to_verify[0].value",
+    "card_says": "0.0",
+    "pdf_says": "No target given; a zero value is meaningless",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106780459",
+  "headline": "Brickwork Ratings assigns BWR BBB/Stable to ₹23.60 Cr bank loan facilities of Anlon Healthcare Limited",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_line": "BBB rating on Rs 23.6 Cr of bank lines for a company with ~Rs 1,465 Cr market cap and debt/TNW 0.22x; little bearing on the equity view.",
+  "issues": [
+   {
+    "field": "why_it_matters[2] / notable_changes[0]",
+    "card_says": "Upgrade from previous BBB- (Stable) as of 14Apr2026 to BBB (Stable)",
+    "pdf_says": "Rating history shows BWR BB+ Stable on 14 Apr 2026 (removal from Issuer Not Cooperating / upgrade); current action is an 'Assignment' of BBB/Stable, i.e. two notches above BB+",
+    "class": "invented"
+   },
+   {
+    "field": "deal_value",
+    "card_says": "kind OTHER, amount_cr 23.6, counterparty Punjab National Bank",
+    "pdf_says": "Rs 23.60 Cr is the rated amount of existing PNB facilities (3.60 term loan outstanding + 20.00 cash credit), not a deal",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106820604",
+  "headline": "Moody's affirms HUDCO's Baa3 rating with stable outlook, in line with India's sovereign rating",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_line": "Periodic affirmation at the sovereign level with unchanged outlook; nothing changes for the equity holder.",
+  "issues": []
+ },
+ {
+  "news_id": "nse-106701643",
+  "headline": "RBL Bank Q1FY27 net profit up 27% YoY to ₹254 Cr; CRAR expands to 33.3%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[nim].why / track_next.risks",
+    "card_says": "Margin compression driven by faster growth in wholesale advances",
+    "pdf_says": "Presentation gives NIM 4.13% vs 4.50% and wholesale +38% YoY but states no cause for the NIM decline",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106718357",
+  "headline": "Moody's assigns first-time Baa2 issuer ratings to RBL Bank with stable outlook",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [],
+  "impact_why": "First international rating; it mirrors ENBD support already known and the bank already holds domestic AAA, so it does not change the equity view on earnings or governance."
+ },
+ {
+  "news_id": "nse-106725808",
+  "headline": "Star Health Q1FY27 PAT rose 25% YoY to ₹550 Cr; underwriting profit improved to ₹111 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.kpis_to_verify[expense_ratio]",
+    "card_says": "metric expense_ratio, Q2FY27, value 0.35, comparison >=, target '30-40 bps annual improvement'",
+    "pdf_says": "CFO: 30-40 bps improvement in expense ratio 'consistently over the years' - an annual improvement, not a level; checking expense_ratio >= 0.35 at Q2FY27 makes no sense",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "track_next.kpis_to_verify[revenue]",
+    "card_says": "insurance revenue growth >= 15% at Q2FY27",
+    "pdf_says": "Management: growth 'should start touching 15-16% as we keep on moving ahead through the quarters' (gradual, Q1 was 13.4%); not a Q2 target",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106725901",
+  "headline": "Anlon Healthcare Q1FY27 revenue at ₹87.56 Cr; EBITDA margin at 17.86%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.tranches",
+    "card_says": "Apiqo Organics 25.5 (lakh) shares @ ₹14.89; Bizotic Lifescience 55.34 (lakh) shares @ ₹9.76",
+    "pdf_says": "Swapped: Bizotic 56.67% for ₹3.79 Cr = 25.50 lakh shares @ ₹14.89; Apiqo 67.48% for ₹5.40 Cr = 55.34 lakh shares @ ₹9.76",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.stage / core_catalyst",
+    "card_says": "All three acquisitions COMPLETED, 'completed in FY26'",
+    "pdf_says": "Remember India completed 8 May 2026 (FY27); Bizotic snapshot says 'SPA executed; completion expected within ~3 months' (elsewhere 'has become a subsidiary')",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Net worth rose to ₹254.79 Cr from ₹80.42 Cr 'reflecting equity accretive impact of acquisitions and retained earnings'",
+    "pdf_says": "Net worth figures right, but acquisitions were for cash; equity capital 39.85->53.15 and other equity 40.57->201.64 against FY26 PAT of 29.09 - the rise is mainly fresh equity, not acquisitions",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "17.86% is below the guided 25-30% range for FY26-27",
+    "pdf_says": "Presentation says operating leverage etc. 'expected to support sustainable EBITDA margin of 25-30%', no FY26-27 period attached",
+    "class": "wrong_period"
+   },
+   {
+    "field": "track_next.risks",
+    "card_says": "top 10 customers accounted for 43.87% of revenue in Q1FY27",
+    "pdf_says": "Slide gives segment-wise top-5/top-10 shares (APIs 43.93%/43.87% etc., standalone); 43.87% is not total revenue share",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106736493",
+  "headline": "Siemens Q1FY27 revenue rose 14.8% YoY to ₹4,714 Cr; PAT from continuing ops fell 18.9% to ₹343 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[PAT (Continuing)]",
+    "card_says": "₹2,143.10 Cr, +406.2% YoY",
+    "pdf_says": "Continuing PAT ₹343.4 Cr (3,434 mn) vs ₹422.3 Cr; ₹2,143.1 Cr is total PAT incl. ₹1,799.7 Cr discontinued (LVM sale gain); contradicts the card's own headline",
+    "class": "other"
+   },
+   {
+    "field": "headline / what_happened / key_numbers[EPS]",
+    "card_says": "PAT continuing -18.9% YoY; EPS 9.64 -18.9% YoY",
+    "pdf_says": "3,434 vs 4,223 = -18.7%; EPS 9.64 vs 11.86 = -18.7%",
+    "class": "arithmetic"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Revenue growth exceeds HEG Advanced Materials' 10% YoY growth in Q1FY27",
+    "pdf_says": "No peer figure in the filing or memory",
+    "class": "invented"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "Revenue growth driven by Smart Infrastructure and Mobility",
+    "pdf_says": "Consolidated segment revenue: Digital Industries +24.9% (9,156->11,440), Mobility +12.8%, Smart Infrastructure +10.7%; DI grew fastest and is omitted",
+    "class": "other"
+   },
+   {
+    "field": "notable_changes / kpis_to_verify",
+    "card_says": "ebitda_margin 11.0% -> 7.6%; EBITDA margin target above 8%",
+    "pdf_says": "7.6%/11.0% is 'Profit from Operations' (segment result, after depreciation, before other income) as % of revenue, not EBITDA margin",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106752612",
+  "headline": "CRISIL reaffirmed A1+ rating on ₹1,100 Cr commercial paper programme, reduced from ₹1,700 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106756296",
+  "headline": "HUDCO shareholders approve raising up to ₹70,000 Cr via private placement of NCDs, 306% of net worth",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [],
+  "impact_why": "Annual enabling resolution for routine bond borrowing by a PSU lender, passed with 99.99%; no new information on earnings, balance sheet or governance."
+ },
+ {
+  "news_id": "nse-106768111",
+  "headline": "Japan Credit Rating Agency upgrades HUDCO's long-term issuer ratings from BBB+ to A- with Stable outlook",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Net worth of ₹22,867 Cr provides strong loss-absorption capacity, supporting the rating upgrade",
+    "pdf_says": "JCR upgraded by one notch 'in keeping with the rating upgrade for Republic of India'; the filing gives no balance-sheet reason",
+    "class": "invented"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "impact on pricing is limited given its existing access to funds",
+    "pdf_says": "Not stated in the filing",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106800450",
+  "headline": "Subsidiary NU Vista Limited receives show cause notice for ₹10.70 Cr ITC demand for FY22-23 from Patna tax authority",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[REG30_THRESHOLD]",
+    "card_says": "management expects at least the materiality-threshold impact even where the filing gives no figure",
+    "pdf_says": "Company says the notice 'will not be sustained' and 'no major financial impact'; ₹10.70 Cr is ~0.1% of net worth, far below 2% thresholds",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Similar ITC show cause notices set aside in appeals for peers like Prism Johnson",
+    "pdf_says": "Not in filing or memory; the quoted Prism Johnson item is a CESTAT excise demand, not an ITC show cause notice",
+    "class": "invented"
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "proposing denial of input tax credit of ₹10.70 Cr",
+    "pdf_says": "₹10.70 Cr is the total proposed demand covering ITC denial, ITC already reversed and tax on advances",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106805218",
+  "headline": "India Ratings affirmed Star Health's issuer rating at AA+ with Stable outlook and subordinate debt at AA with Stable outlook",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106716746",
+  "headline": "Anlon Healthcare Q1FY27 revenue rose 72% QoQ to ₹87.56 Cr; PAT fell 25% QoQ to ₹8.28 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] / core_catalyst",
+    "card_says": "Revenue growth reflects full consolidation of Apiqo Organics and Bizotic Lifescience post-share swap; revenue surge driven by consolidation of newly acquired subsidiaries post-IPO proceeds deployment",
+    "pdf_says": "The share swap is only authorised at this meeting (to acquire the remaining 32.52% of AOPL and 43.33% of BLPL); both were already subsidiaries consolidated in Q4FY26 (non-controlling interest Rs 57.43 lakh in Q4FY26). The swap has not happened, so it cannot explain Q1 revenue.",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[paid_up_capital].why",
+    "card_says": "Capital doubled due to preferential allotment for share swap with Apiqo and Bizotic sellers",
+    "pdf_says": "No allotment for the swap is reported; the swap is only authorised. Paid-up capital rose from Rs 53.15 Cr to Rs 106.30 Cr while face value changed from Rs 10 to Rs 2; the filing gives no reason.",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[depreciation].change",
+    "card_says": "+269.0% (₹0.29 Cr -> ₹1.07 Cr); reflects IPO-funded manufacturing facility upgrade",
+    "pdf_says": "106.60 vs 29.19 lakh = +265%; the IPO-capex link is not in the filing",
+    "class": "arithmetic"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106776948",
+  "headline": "RBL Bank approved pricing for USD 350 million senior notes under EMTN Programme",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Follows Bank of Maharashtra's USD 500 million MTN programme establishment, showing peer trend of private banks accessing international bond markets",
+    "pdf_says": "Not in the filing (SECTOR basis); Bank of Maharashtra is a public sector bank, not a private bank",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106786079",
+  "headline": "Anlon Healthcare incorporates Nigerian subsidiary for West African market access",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "A newly incorporated subsidiary with about NGN 90 million (a few crore rupees) of equity and no turnover is small against a ₹1,465 Cr market cap.",
+  "issues": [
+   {
+    "field": "key_numbers[Subscribed Capital].value; what_happened[1]",
+    "card_says": "₹90 million",
+    "pdf_says": "Naira 90,000,000 (NGN 90 million, face value Naira 1). The amount is in Nigerian naira, not rupees; ₹90 million (₹9 Cr) is a wrong currency and overstates it",
+    "class": "unit_scale"
+   },
+   {
+    "field": "what_happened[1]",
+    "card_says": "Subscribed 90% equity ... for manufacturing APIs and formulations",
+    "pdf_says": "Paid-up capital is Naira 100,000,000, of which the company holds 90%; objects listed also include trading, cosmetics, surgical implants and medical devices (wording, not a figure error)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106814536",
+  "headline": "RBL Bank Q2FY27 net profit ₹482 Cr, 170% YoY jump",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "Strong NII growth and lower credit costs drive profitability",
+    "pdf_says": "Credit cost rose: ₹771 Cr vs ₹503 Cr YoY (+53%) and ₹597 Cr QoQ (+29%); credit cost ratio 0.63% vs 0.54%. Profit was driven by NII and operating profit (+92%), not lower credit costs",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Profit growth of 170% YoY is significantly higher than the 90% QoQ growth in Q1FY27, indicating accelerating profitability momentum",
+    "pdf_says": "The 90% QoQ figure is Q2FY27 vs Q1FY27 (482 vs 254), not Q1FY27's growth; comparing YoY with QoQ to claim acceleration is wrong",
+    "class": "wrong_period"
+   },
+   {
+    "field": "track_next.pending_approvals[1]",
+    "card_says": "regulatory, statutory and other approval(s) as may be required for EMTN Programme",
+    "pdf_says": "Not in this filing. Memory watchlist item is stale (EMTN notes priced on 9 Sep, allotted on 16 Sep 2026)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106820722",
+  "headline": "RBL Bank receives RBI approval for amalgamation of Emirates NBD Bank India branches, effective December 1, 2026",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "The amalgamation requires additional regulatory, statutory and other approvals as may be required, per prior disclosures (memory w_97f9bfcd)",
+    "pdf_says": "Memory w_97f9bfcd is the approvals for the EMTN Programme, not for the amalgamation",
+    "class": "memory"
+   },
+   {
+    "field": "takeaway / track_next.milestones[1] / risks",
+    "card_says": "subject to remaining approvals; receipt of remaining regulatory and statutory approvals; delay could postpone effective date",
+    "pdf_says": "The filing reports the RBI sanction under Section 44A(4) with a fixed effective date of 1 Dec 2026; no remaining approvals are mentioned",
+    "class": "invented"
+   },
+   {
+    "field": "deal_value.stage",
+    "card_says": "BOARD_APPROVED",
+    "pdf_says": "Shareholder (EGM Nov 2025) and RBI approval both received; the stage is regulator-approved / awaiting effective date",
+    "class": "other"
+   },
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "regulatory, statutory and other approval(s) as may be required for EMTN Programme",
+    "pdf_says": "Unrelated to this filing; stale memory item",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106731609",
+  "headline": "RBL Bank Limited releases FY26 Annual Report and schedules 83rd AGM for Sep 2, 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106802084",
+  "headline": "RBL Bank received GST show cause notice for FY23 proposing demand of ₹173 Cr including interest and penalty",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106814520",
+  "headline": "RBL Bank Q2FY27 net profit at ₹482 Cr",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "impact_why": "These are the quarterly results: standalone PAT up 170% YoY, GNPA down to 1.02%. That changes the earnings view.",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Outcome of board meeting approving the Q2FY27 standalone and consolidated results; should be RESULTS",
+    "class": "event_type"
+   },
+   {
+    "field": "core_catalyst / what_happened[1]",
+    "card_says": "Improved asset quality and higher other income drove profit growth; other income driven by treasury and fee income",
+    "pdf_says": "Provisions rose to ₹766.5 Cr from ₹499.7 Cr YoY, and interest earned rose ₹815 Cr YoY. Note 6 lists what other income includes but gives no treasury vs fee split.",
+    "class": "other"
+   },
+   {
+    "field": "deal_value",
+    "card_says": "FUNDRAISE ₹26,016 Cr, Emirates NBD, completed June 18, 2026",
+    "pdf_says": "Background note 4 about a deal completed in June. This filing is not a fundraise.",
+    "class": "other"
+   },
+   {
+    "field": "track_next.pending_approvals[1]",
+    "card_says": "regulatory, statutory and other approval(s) as may be required for EMTN Programme",
+    "pdf_says": "Not in this filing; stale memory item (EMTN notes already priced and allotted in Sep 2026)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106772565",
+  "headline": "RBL Bank approves EMTN Programme to issue up to USD 1 bn foreign currency bonds",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "prior preferential allotment of ₹26,015.77 Cr to Emirates NBD in July 2026",
+    "pdf_says": "Memory deal d_308409ae is dated 2026-07-17 (the date it was recorded from the Q1 results); the allotment itself was on June 18, 2026",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106707038",
+  "headline": "RBL Bank Q1FY27 transcript released",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "The filing only says the earnings call transcript is posted on the website. It contains no content.",
+  "issues": []
+ },
+ {
+  "news_id": "nse-106701619",
+  "headline": "RBL Bank Q1FY27 PAT up 9% YoY to ₹234 Cr; Emirates NBD completes ₹26,016 Cr investment",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[2].text / takeaway",
+    "card_says": "Standalone Gross NPA improved to (vs 1.45% in Q4FY26 and in Q1FY26), while Net NPA reached. / takeaway: 'asset quality improves with GNPA down .'",
+    "pdf_says": "Standalone Gross NPA % 1.30 (Q1FY27), 1.45 (Q4FY26), 2.78 (Q1FY26); Net NPA % 0.37 / 0.39 / 0.45. The card's text has its figures stripped and reads as broken sentences.",
+    "class": "other"
+   },
+   {
+    "field": "headline / timeline_entry / deal_value",
+    "card_says": "Headline and timeline present 'Emirates NBD completes ₹26,016 Cr investment' as this filing's news; deal_value COMPLETED attached to the results card",
+    "pdf_says": "The allotment was made on June 18, 2026 (note 5, a recap); this filing (July 17, 2026) is the Q1FY27 results and AGM agenda. Figures are right (929,134,820 shares x ₹280 = ₹26,015.8 Cr), but the event is a month old, not new in this filing.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106774766",
+  "headline": "Moody's assigns (P)Baa2 rating to RBL Bank's USD 1 bn MTN program, stable outlook",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_reason": "A provisional rating on an already-announced programme that is in line with the existing Baa2 issuer rating, with no change in rating or outlook: routine.",
+  "issues": [
+   {
+    "field": "why_it_matters[1].text",
+    "card_says": "very high probability of support from Emirates NBD Bank (Aa2 stable)",
+    "pdf_says": "United Arab Emirates (UAE, Aa2 stable)-based Emirates NBD Bank PJSC (ENBD, A1 stable, baa2): Aa2 is the UAE sovereign rating; ENBD is rated A1 stable.",
+    "class": "other"
+   }
+  ]
+ }
+]

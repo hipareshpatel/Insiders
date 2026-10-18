@@ -58,3 +58,8 @@ Run started 2026-10-18 at commit `ccf98d1` (pipeline code as of 950db92), provid
 
 Both marks met -> the backfill decision (PLAN 1c, the owner's; scope options in `round-2.md`). Either missed -> the
 commonest WRONG classes and every MISSED class are the next fixes, and a round 4 on fresh companies.
+
+Run log: the first pass ended PARTIAL at 15:03 when the laptop lost its internet connection (DNS lookups for BSE
+failed); 36 filings were marked failed after one attempt and 151 were still queued. The same command was started
+again at 15:13 with the code unchanged; the queue retries failed filings below three attempts, so no filing was
+requeued by hand.

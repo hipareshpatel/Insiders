@@ -153,3 +153,16 @@ def test_skf_a_verb_against_its_own_two_levels_becomes_moved():
     assert out.card.takeaway == "Continuing revenue was flat QoQ, but margin moved to 15.0% from 13.0% a year ago"
     assert out.card.what_happened[0].text == "Operating margin fell to 11.78% from 12.83%"
     assert any("slipped" in n for n in notes)
+
+
+def test_adani_power_a_share_must_be_of_the_base_it_names():
+    """c5f4d350: "The borrowing limit increase of ₹1,00,000 Cr is 22.6% of net worth" - 22.6% is what code worked
+    out against market cap; against net worth it is 150.6%."""
+    scale = ("Amounts written in this filing, in proportion:\n"
+             "- ₹1,00,000 Cr = 22.6% of market cap, 150.6% of net worth, 169.4% of FY26 revenue")
+    pool = computed.build_pool("borrowings not exceeding Rs. 1,00,000 crore", scale=scale)
+    out = _out({"why_it_matters": [
+        {"text": "The ₹1,00,000 Cr limit is 22.6% of net worth and 169.4% of TTM revenue", "basis": "BALANCE_SHEET"},
+        {"text": "The ₹1,00,000 Cr limit is 150.6% of net worth", "basis": "BALANCE_SHEET"}]})
+    computed.enforce(out, pool)
+    assert [w.text for w in out.card.why_it_matters] == ["The ₹1,00,000 Cr limit is 150.6% of net worth"]

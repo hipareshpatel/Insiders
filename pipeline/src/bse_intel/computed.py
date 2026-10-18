@@ -54,6 +54,17 @@ class Pool:
     # figures the filing prints with two or more decimals and no % sign: a voting result's 97.0846, a stake's 17.12
     # under a "% of shares" header (round-2 re-run: removed as unproduced, leaving "** ** of votes")
     bare: list[float] = field(default_factory=list)
+    # the scale block's shares, by base: [(22.6, "market cap"), (150.6, "net worth")], and the shares the filing
+    # itself prints with their base ("x% of net worth" in a Reg 30 note)
+    shares: list[tuple[float, str]] = field(default_factory=list)
+
+    def add_shares(self, text: str) -> None:
+        for m in re.finditer(r"(\d+(?:\.\d+)?)%" + _BASE.pattern, text or "", re.I):
+            self.shares.append((float(m.group(1)), _base(m.group(2))))
+
+    def share_of(self, base: str, value: float, decimals: int) -> bool:
+        tolerance, step = 0.5 * 10 ** -decimals + 1e-9, 10 ** -decimals
+        return any(b == base and (abs(v - value) <= tolerance or 0 <= v - value < step) for v, b in self.shares)
 
     def add_bare(self, text: str) -> None:
         self.bare += [float(m.group(1)) for m in _BARE.finditer(text or "")]
@@ -101,6 +112,8 @@ def build_pool(filed_text: str, tagged=None, annual_table: str = "", history: li
     printed.add_printed(filed_text)
     pool.add_printed(annual_table)   # the annual report's own tagged figures
     pool.add_printed(scale)          # shares of revenue, net worth and market cap computed in code
+    pool.add_shares(scale)
+    pool.add_shares(filed_text)
     pool.add_printed(json.dumps(ownership or {}))
     index = SourceIndex(filed_text) if filed_text else None
     tagged_metrics = list(getattr(tagged, "metrics", None) or [])
@@ -152,10 +165,28 @@ def _figures(text: str):
         yield m, kind, value, len(raw.partition(".")[2]), sign
 
 
+_BASE = re.compile(r"\s*(?:of|to)\s+(?:the\s+)?(?:company'?s\s+|its\s+)?(market cap(?:italisation)?|net worth|"
+                   r"(?:\w+\s+){0,2}revenue)", re.I)
+
+
+def _base(phrase: str) -> str:
+    phrase = phrase.lower()
+    return "market cap" if phrase.startswith("market cap") else "net worth" if phrase == "net worth" else "revenue"
+
+
 def unproduced(text: str, pool: Pool) -> list[str]:
-    """The computed figures in `text` that code did not produce and the filing does not print."""
-    return [m.group(0).strip() for m, kind, value, decimals, sign in _figures(text)
-            if not pool.has(kind, value, decimals, sign)]
+    """The computed figures in `text` that code did not produce and the filing does not print. A share of market
+    cap, net worth or revenue must be the one code worked out for that base: Adani Power's "₹1,00,000 Cr limit is
+    22.6% of net worth" passed on the 22.6% code had worked out for market cap (round-2 re-run)."""
+    out = []
+    for m, kind, value, decimals, sign in _figures(text):
+        if not pool.has(kind, value, decimals, sign):
+            out.append(m.group(0).strip())
+            continue
+        said = _BASE.match(text, m.end())
+        if kind == "pct" and said and pool.shares and not pool.share_of(_base(said.group(1)), value, decimals):
+            out.append(m.group(0).strip())
+    return out
 
 
 # The phrase a removed figure sits in: "up 10% YoY", "(+12.3% QoQ)", "a 15% rise"

@@ -235,8 +235,10 @@ limits = { rpm = 60, tpd = 150_000 }
 # GLM-4.7-Flash 33% [73%], DeepSeek-Flash 47% / 1.9, ministral-14b 67% / 3.6 [81%]. So GLM-4.5-Flash now carries the
 # largest share, the paid route sits below Nemotron Super despite its speed (D24, D25), and ministral-14b is off pass 2
 # altogether - two rounds running it was the worst writer, and as a spare it still wrote 18 of the 98 cards. Nemotron 3
-# Ultra is a spare on every route (owner, 2026-10-16: supersedes D19 weighted share; 53% wrong); Nemotron 3.5 Super VL
-# (33% wrong on 6 cards) keeps its D19 share of the backfill route. Samples are 15-43 cards and the hard filings cluster,
+# Ultra was a spare on every route (owner, 2026-10-16: 53% wrong) and is off every card route since round 4 (2026-10-19:
+# as a spare on free tiers it still wrote 12 of 122 cards, 58% WRONG; Nemotron 3 Super 26% of 65, GLM-4.5-Flash 17% of
+# 24, Nemotron 3.5 Super VL 10% of 10, Gemini 11% of 9). Nemotron 3.5 Super VL
+# (33% wrong on 6 cards in round 1, 10% of 10 in round 4) takes a share of the live route too. Samples are 15-43 cards and the hard filings cluster,
 # so re-weight from each round (docs/AUDIT_LOOP.md).
 [[routes.pass2]]
 provider = "deepseek"
@@ -289,18 +291,8 @@ limits = { rpm = 60, tpd = 60_000 }
 
 [[routes.pass2]]
 provider = "openrouter"
-model = "nvidia/nemotron-3-ultra-550b-a55b:free"  # a reasoning model; this endpoint has no JSON mode
-spare = true
-json_mode = false
-strip_reasoning = true
-max_tokens = 12000
-context_tokens = 250000
-limits = { rpm = 10 }
-
-[[routes.pass2]]
-provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
-spare = true
+weight = 2
 json_mode = true
 max_tokens = 8000
 context_tokens = 250000
@@ -357,16 +349,6 @@ limits = { rpm = 60, tpd = 60_000 }
 
 # Backfill only: with 1,000 free requests a day the two OpenRouter models take a regular share
 # (weight 1 each, about 2 in 7 analyses at today's weights); everywhere else they stay spares.
-[[routes.pass2_bulk]]
-provider = "openrouter"
-model = "nvidia/nemotron-3-ultra-550b-a55b:free"
-spare = true
-json_mode = false
-strip_reasoning = true
-max_tokens = 12000
-context_tokens = 250000
-limits = { rpm = 10 }
-
 [[routes.pass2_bulk]]
 provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
@@ -433,16 +415,6 @@ max_tokens = 6000
 context_tokens = 900000
 extra_body = { reasoning_effort = "low" }
 limits = { rpm = 5, tpm = 250_000, rpd = 20 }
-
-[[routes.pass2_long]]
-provider = "openrouter"
-model = "nvidia/nemotron-3-ultra-550b-a55b:free"
-spare = true
-json_mode = false
-strip_reasoning = true
-max_tokens = 12000
-context_tokens = 250000
-limits = { rpm = 10 }
 
 [[routes.vision]]
 provider = "gemini"

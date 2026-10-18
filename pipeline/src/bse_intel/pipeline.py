@@ -1262,7 +1262,10 @@ class Pipeline:
         current = (cached is not None and cached.get("v", 1) >= CACHE_VERSION
                    and not cache_needs_ocr(cached, local_ocr=figures is not None,
                                        max_ocr_pages=self.settings.max_ocr_pages if ocr else None)
-                   and "blocks" in cached)  # written before pages were also read block by block
+                   and "blocks" in cached  # written before pages were also read block by block
+                   # Nothing was read (too large at the cap then, or not there): there is no text to lose by
+                   # asking again, and 519552's annual report, skipped at 30 MB, would stay empty for good.
+                   and bool(cached.get("digital")))
         if cached is not None and (current or not filing.pdf_url):
             doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         elif cached is not None:

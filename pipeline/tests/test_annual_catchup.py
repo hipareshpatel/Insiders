@@ -175,7 +175,7 @@ def test_another_run_on_the_machine_keeps_the_step_waiting(tmp_path):
     logs.mkdir()
     now = time.time()
     for name, age in (("process-20261018-0948.log", 120), ("seed-memory-20261018-0700.log", 3 * 3600),
-                      ("annual-xbrl-catchup-20261018-1900.log", 0)):
+                      ("annual-xbrl-catchup-20261018-1900.log", 0), ("webdev.log", 0)):   # the dev server's own
         (logs / name).write_text("x")
         os.utime(logs / name, (now - age, now - age))
     processes = lambda: [(os.getpid(), "python -m bse_intel annual-xbrl-catchup"),  # noqa: E731

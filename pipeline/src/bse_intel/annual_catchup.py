@@ -55,13 +55,15 @@ MAX_RERUNS = 10          # annual reports read again per run
 MAX_CARDS = 5000
 QUIET_MINUTES = 10       # a log written this recently is a run still going, or one that has just stopped calling NSE
 OWN_LOG = "annual-xbrl-catchup-"
+# A command's log as laptop.ps1 names it ("backfill-companies-20261018-1024.log"); the dev server's webdev.log is not one
+_COMMAND_LOG = re.compile(r"^[a-z][a-z-]*-\d{8}-\d{4}\.log$")
 # Another pipeline command or script: `python -m bse_intel ...`, `python scripts/rerun.py`
 _PIPELINE_CMD = re.compile(r"bse_intel|bse-intel|scripts[\\/][\w.-]+\.py", re.I)
 
 
 def other_runs(log_dir: Path, processes=None, now: float | None = None) -> list[str]:
     """What else on this machine may be calling NSE or writing to the database now: another bse_intel command or
-    pipeline script among the running processes, or a log in `log_dir` written in the last QUIET_MINUTES.
+    pipeline script among the running processes, or a command's log in `log_dir` written in the last QUIET_MINUTES.
     Empty when the slot is free."""
     busy = []
     mine = {os.getpid(), os.getppid()}   # a venv's python.exe starts the real interpreter as its child
@@ -71,7 +73,7 @@ def other_runs(log_dir: Path, processes=None, now: float | None = None) -> list[
     now = time.time() if now is None else now
     if log_dir.is_dir():
         for path in sorted(log_dir.glob("*.log")):
-            if path.name.startswith(OWN_LOG):
+            if path.name.startswith(OWN_LOG) or not _COMMAND_LOG.match(path.name):
                 continue
             age = now - path.stat().st_mtime
             if age < QUIET_MINUTES * 60:

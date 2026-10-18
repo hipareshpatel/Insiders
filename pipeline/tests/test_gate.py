@@ -229,6 +229,15 @@ def test_a_period_label_and_a_percentage_are_not_figures_a_quote_must_carry():
     assert gate.numbers_in_quote("FY25 revenue ₹402 Cr", row, 100) == ["402"], "an invented figure still shows"
 
 
+def test_a_written_date_is_not_a_figure_a_quote_must_carry():
+    """"Order received on 16.12.2025" was held as stating 16.12: the year was taken off as a period label and
+    the day and month were left as an amount with two decimals (SML Mahindra's ROC order, 2026-10-18)."""
+    quote = "The order was received by the Company on 16th December, 2025; there is no financial impact."
+    assert gate.numbers_in_quote("Order received on 16.12.2025; no financial impact on the company", quote) == []
+    assert gate.numbers_in_quote("Hearing on 05/01/26 and 07-02-2026", "The hearing is listed for January.") == []
+    assert gate.numbers_in_quote("Penalty of ₹16.12 Cr", quote) == ["16.12"], "an amount is still a figure"
+
+
 def test_the_unit_is_read_from_the_filing_not_from_the_table_put_in_front_of_it():
     """The XBRL table is prepended to the text the model reads and states crore itself, so the filing's
     own "(Rs. in lakhs)" and the table's crore disagreed and no unit was found at all - for every

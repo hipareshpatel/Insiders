@@ -193,6 +193,9 @@ _TURNING = {"not", "no", "nil", "never", "neither", "nor", "none", "without", "e
 
 _CLAIM_NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
 _PERIOD_LABEL = re.compile(r"\b(?:q[1-4]|h[12]|9m)?fy\s?'?\d{2,4}\b|\b(?:19|20)\d{2}\b|\bq[1-4]\b", re.I)
+# A date written out in figures (16.12.2025, 05/01/26): with the year taken off as a period label the day and month
+# were left as an amount, 16.12 (SML Mahindra's ROC order, 2026-10-18).
+_WRITTEN_DATE = re.compile(r"\b\d{1,2}[./-]\d{1,2}[./-](?:\d{4}|\d{2})\b")
 
 
 def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[str]:
@@ -234,7 +237,7 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
             in_crore.append(value)
         as_printed.append(value)
     missing = []
-    flat_claim = _PERIOD_LABEL.sub(" ", _flat(claim))
+    flat_claim = _PERIOD_LABEL.sub(" ", _WRITTEN_DATE.sub(" ", _flat(claim)))
     for m in _CLAIM_NUMBER.finditer(flat_claim):
         after = flat_claim[m.end():m.end() + 14].lstrip()
         if after.startswith(("bps", "bp ", "bp,", "bp.", "pp", "basis point", "percentage point")):

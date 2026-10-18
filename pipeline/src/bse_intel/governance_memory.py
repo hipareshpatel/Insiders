@@ -53,8 +53,9 @@ def latest(rows: list[dict]) -> list[dict]:
     return sorted(best.values(), key=lambda r: r["_when"], reverse=True)
 
 
-def sync(pipeline, deadline: float, pages: int = 1, max_files: int = MAX_FILES) -> dict:
-    """File the governance reports NSE has listed since memory last took them. Returns what it did."""
+def sync(pipeline, deadline: float, pages: int = 1, max_files: int = MAX_FILES, scrips: set[str] | None = None) -> dict:
+    """File the governance reports NSE has listed since memory last took them (only `scrips`' when given, as a
+    measured round does). Returns what it did."""
     report = {"listed": 0, "in_universe": 0, "filed": 0, "known": 0, "errors": [], "stopped": None}
     nse, sink = pipeline.nse, pipeline.sink
     if nse is None or getattr(pipeline, "_nse_refused", False):
@@ -74,7 +75,7 @@ def sync(pipeline, deadline: float, pages: int = 1, max_files: int = MAX_FILES) 
     for row in latest(rows):
         report["listed"] += 1
         scrip = nse_map.symbols.get(row["symbol"].strip().upper())
-        if not scrip or scrip not in nse_map.included:
+        if not scrip or scrip not in nse_map.included or (scrips and scrip not in scrips):
             continue
         report["in_universe"] += 1
         if report["filed"] >= max_files or time.monotonic() >= deadline:

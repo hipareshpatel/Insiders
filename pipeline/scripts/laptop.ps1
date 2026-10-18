@@ -10,6 +10,8 @@ Set-Location (Join-Path $root 'pipeline')
 foreach ($k in 'GROQ_API_KEY', 'NVIDIA_API_KEY', 'MISTRAL_API_KEY', 'ZAI_API_KEY', 'GEMINI_API_KEY', 'OPENROUTER_API_KEY', 'DEEPSEEK_API_KEY') {
   if (Test-Path "env:$k") { Set-Item "env:$k" ((Get-Item "env:$k").Value.Trim()) }  # a stray space breaks auth
 }
+# A measured round runs as the online pipeline will: free providers only (FREE_ONLY=1 leaves the paid key out, D24)
+if ($env:FREE_ONLY -eq '1') { Remove-Item env:DEEPSEEK_API_KEY -ErrorAction SilentlyContinue }
 $env:BSE_INTEL_SINK = 'platform'
 $env:PLATFORM_API_URL = 'http://localhost:5173'
 $env:INGEST_TOKEN = 'dev-local-token'

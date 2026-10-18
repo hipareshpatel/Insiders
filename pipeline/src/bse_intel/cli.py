@@ -221,7 +221,9 @@ def cmd_governance_sync(args, settings, sink) -> int:
     from . import governance_memory
 
     pipeline = _pipeline(settings, sink)
-    report = governance_memory.sync(pipeline, time.monotonic() + args.time_budget, pages=args.pages, max_files=args.max_files)
+    scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()} or None
+    report = governance_memory.sync(pipeline, time.monotonic() + args.time_budget, pages=args.pages, max_files=args.max_files,
+                                    scrips=scrips)
     print(json.dumps(report))
     return 0
 
@@ -504,6 +506,7 @@ def main(argv: list[str] | None = None) -> int:
                    ).set_defaults(func=cmd_sync_universe)
     p = sub.add_parser("governance-sync", help="quarterly governance XBRL into memory (board, SEBI flags, penalties, insider loans), no AI")
     p.add_argument("--pages", type=int, default=1, help="pages of NSE's list (500 rows each) to read back")
+    p.add_argument("--scrips", help="only these companies (comma-separated scrip codes), as a measured round does")
     p.add_argument("--max-files", type=int, default=200, help="reports filed this run")
     p.add_argument("--time-budget", type=int, default=1800, help="seconds")
     p.set_defaults(func=cmd_governance_sync)

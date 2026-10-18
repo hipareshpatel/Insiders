@@ -62,4 +62,7 @@ commonest WRONG classes and every MISSED class are the next fixes, and a round 4
 Run log: the first pass ended PARTIAL at 15:03 when the laptop lost its internet connection (DNS lookups for BSE
 failed); 36 filings were marked failed after one attempt and 151 were still queued. The same command was started
 again at 15:13 with the code unchanged; the queue retries failed filings below three attempts, so no filing was
-requeued by hand.
+requeued by hand. The connection dropped again during that pass, and the local site stopped with a session restart;
+the site was restarted and the same command started a third time at 17:40, code still unchanged (`git diff 958a567
+HEAD -- pipeline/src pipeline/config` empty). At that start: 54 filings analysed, 46 not material, 21 duplicates,
+146 failed below three attempts (retried by the queue), 18 queued; 54 cards, 15 held.

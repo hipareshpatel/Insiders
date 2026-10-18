@@ -110,3 +110,46 @@ how many WRONG cards they explain: like-for-like bases (demerger / restated / st
 for every computed change and signal; memory refusing figures off scale by 10x and 100x before they are stored
 and reused; column order read from a table's own headers and arithmetic; the signal verdict checks the reviewers
 found; and keeping true facts the quote check drops. Then a round 3 on another 14 unseen companies, same marks.
+
+The owner then set a structural order instead (2026-10-18): code computes and the model describes (cf52585,
+12a83c0), memory stores only trusted figures (04bcda5), signals that contradict their card are off (d87ab01), and
+true facts the quote check dropped are kept on their figures, dates, ratings or names (950db92). Round 2's 90
+cards are re-run as a measured round, then round 3 on 14 more unseen companies at the same marks. DeepSeek's weight
+stays where it is until round 3 passes.
+
+## For the owner: backfill scope options (not acted on)
+
+From January 2025 the backfill is ~467,000 filings and ~150 days free. Narrower scopes, from round 2's measured
+rates (`round-2/backfill_readiness.md`):
+
+- **Filings:** 7.5 a company a month (round 2's 14 companies, large-cap heavy, so small caps likely file less).
+  Companies by market cap (D1 `companies`): 2,894 at ₹100 Cr and above, 1,908 at ₹500 Cr, 1,562 at ₹1,000 Cr.
+- **Speed:** 130 filings an hour free, 165 with the DeepSeek route. "Free, 24 h" is the laptop running all day;
+  "18.5 h" leaves the ~5.5 h a day the live flow needs.
+- **DeepSeek cost:** 0.42 requests a filing x $0.0032 (D24), for the filings that reach pass 2.
+- **Event types:** results, annual reports and major events (order wins, M&A, fundraises and rights issues,
+  capex, ratings, litigation and regulatory, management changes) were 147 of round 2's 322 filings but 103 of its
+  131 cards. Pass 1 still has to read every filing to know its type, and pass 2 is ~95% of the time, so this scope
+  saves only ~20%: the filings it leaves out are mostly the ones pass 1 already stops (governance, "other").
+
+| Companies | Months back | Types | Filings | Free, 24 h | Free, 18.5 h | With DeepSeek (24 h), cost |
+|---|---|---|---|---|---|---|
+| ≥ ₹100 Cr (2,894) | 21.5 | all | 467k | 150 d | 194 d | 118 d, ~$630 |
+| | 12 | all | 260k | 83 d | 108 d | 66 d, ~$350 |
+| | 6 | all | 130k | 42 d | 54 d | 33 d, ~$175 |
+| | 12 | results, AR, major | 260k | 67 d | 86 d | 52 d, ~$275 |
+| | 6 | results, AR, major | 130k | 33 d | 43 d | 26 d, ~$140 |
+| ≥ ₹500 Cr (1,908) | 21.5 | all | 308k | 99 d | 128 d | 78 d, ~$415 |
+| | 12 | all | 172k | 55 d | 71 d | 43 d, ~$230 |
+| | 6 | all | 86k | 28 d | 36 d | 22 d, ~$115 |
+| | 12 | results, AR, major | 172k | 44 d | 57 d | 35 d, ~$180 |
+| | 6 | results, AR, major | 86k | 22 d | 28 d | 17 d, ~$90 |
+| ≥ ₹1,000 Cr (1,562) | 21.5 | all | 252k | 81 d | 105 d | 64 d, ~$340 |
+| | 12 | all | 141k | 45 d | 58 d | 36 d, ~$190 |
+| | 6 | all | 70k | 23 d | 29 d | 18 d, ~$95 |
+| | 12 | results, AR, major | 141k | 36 d | 47 d | 28 d, ~$150 |
+| | 6 | results, AR, major | 70k | 18 d | 23 d | 14 d, ~$75 |
+
+What moves the time most is the number of companies and months, not the event types. The levers that are not
+scope (8 workers instead of 5, fewer second opinions, fewer wasted pass-2 calls) are in `backfill_readiness.md` §5
+and are unmeasured. The paid route stays off the daily path whatever is chosen; it only shortens a backfill.

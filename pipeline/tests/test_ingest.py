@@ -150,6 +150,10 @@ def _f(headline, category="", subcategory="", subject=""):
     ("Appointment of Mr Yasushi Nishikawa as Managing Director and CEO", "Company Update", "", "DROP", None),
     ("Resignation of Mr X as Chief Financial Officer", "Company Update", "", "DROP", None),
     ("Resignation of Statutory Auditors", "Company Update", "", "PASS1", None),
+    # Owner, 2026-10-18: no newspaper publications, of results or anything else
+    ("Newspaper publication of extract of Consolidated Unaudited Financial Results for the quarter and half year ended September 30, 2026.",
+     "Company Update", "Copy of Newspaper Publication", "DROP", None),
+    ("intimation regarding notice to members in newspapers pursuant to Section 201(2) of the Companies Act", "Company Update", "", "DROP", None),
     ("Appointment of M/s ABC & Co as Statutory Auditors for a second term of five years", "Company Update", "", "DROP", None),
     ("Completion of term of Statutory Auditors at the conclusion of the 40th AGM", "Company Update", "", "DROP", None),
     ("Appointment of Statutory Auditors to fill the casual vacancy caused by resignation", "Company Update", "", "PASS1", None),

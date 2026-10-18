@@ -84,6 +84,10 @@ def test_results_xbrl_is_confirmed_against_the_pdf_scale():
     assert xbrl.confirm(r, "Revenue from operations 12,000.00 (Rs. in lakhs)")
     assert xbrl.confirm(r, "Revenue 120.00 crore")
     assert not xbrl.confirm(r, "Revenue from operations 1,234.56 and profit 78.9")
+    # a quarter with nothing in it - no revenue, nil profit - cannot be looked for at any unit: not refused
+    for m in r.metrics:
+        m.value = 0.0
+    assert xbrl.confirm(r, "Revenue from operations Nil")
 
 
 def test_shareholding_xbrl_takes_category_totals():

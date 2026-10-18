@@ -426,14 +426,18 @@ def confirm(result: XbrlResult, text: str) -> bool:
     if not figures:
         return True
     numbers = {round(float(n.replace(",", "")), 0) for n in re.findall(r"\d[\d,]*\.?\d*", text) if n.replace(",", "").replace(".", "").isdigit()}
+    checked = False
     for crore in figures.values():
         for scale in (1, 100, 10, 10_000, 1e7):  # crore, lakh, million, thousand, rupees
             if abs(crore) * scale < 10:
                 continue  # too small to tell apart from any other number in the text
+            checked = True
             if round(abs(crore) * scale, 0) in numbers or round(abs(crore) * scale + 0.5, 0) in numbers \
                     or round(abs(crore) * scale - 0.5, 0) in numbers:
                 return True
-    return False
+    # Every figure zero (a shell company's quarter: no revenue, nil profit) cannot be looked for at any unit;
+    # that is no evidence of a wrong scale, and refusing the file left the card to read the PDF alone.
+    return not checked
 
 
 _SCALE_REFERENCE = ("revenue", "total_income", "interest_earned")

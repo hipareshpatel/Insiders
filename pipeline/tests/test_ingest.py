@@ -156,6 +156,10 @@ def _f(headline, category="", subcategory="", subject=""):
     ("intimation regarding notice to members in newspapers pursuant to Section 201(2) of the Companies Act", "Company Update", "", "DROP", None),
     ("Advertisement in newspapers regarding transfer of equity shares to IEPF", "Company Update", "", "DROP", None),
     ("Intimation of Board Meeting notice given in newspaper", "Company Update", "", "DROP", None),
+    # ... but a reply to a newspaper report is Reg 30(11) news
+    ("Clarification on news item appearing in the Economic Times newspaper", "Company Update", "", "PASS1", None),
+    ("Verification of market rumour - article published in Business Standard newspaper on 17 October 2026",
+     "Company Update", "", "PASS1", None),
     ("Appointment of M/s ABC & Co as Statutory Auditors for a second term of five years", "Company Update", "", "DROP", None),
     ("Completion of term of Statutory Auditors at the conclusion of the 40th AGM", "Company Update", "", "DROP", None),
     ("Appointment of Statutory Auditors to fill the casual vacancy caused by resignation", "Company Update", "", "PASS1", None),

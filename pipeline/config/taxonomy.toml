@@ -107,7 +107,9 @@ headline = ["\\bnews\\s?papers?\\b", "paper\\s+(cutting|clipping)s?"]
 # "Financial Results ... and Newspaper Publication" is the results filing itself; a clipping of the
 # results is noise, so the shared veto (which keeps "financial results") is off for this rule.
 material_veto = false
-exclude_headline = ["results.{0,80}(and|&|along with|together with)\\s+(the\\s+)?news\\s?papers?\\s+(publication|advertis\\w*)"]
+# A company answering or confirming a newspaper report (Reg 30(11)) is news, not a publication: it goes on to Pass 1.
+exclude_headline = ["results.{0,80}(and|&|along with|together with)\\s+(the\\s+)?news\\s?papers?\\s+(publication|advertis\\w*)",
+                    "clarif", "verif", "news\\s+(item|article|report)", "media", "rumou?r", "speculat", "30\\s*\\(\\s*11\\s*\\)"]
 
 # Shareholding patterns are read from their XBRL file straight into memory (no AI call, no card);
 # one without an XBRL file is noise.

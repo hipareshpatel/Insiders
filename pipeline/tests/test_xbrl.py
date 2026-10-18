@@ -120,7 +120,9 @@ def test_results_card_uses_xbrl_figures_in_memory(settings):
     assert metrics[("revenue", "Q2FY27")] == 120.0 and metrics[("ebitda", "Q2FY27")] == 26.0
     assert sink.get_dossier("999001")["balance_sheet"][-1]["net_worth_cr"] == 500.0
     body = json.loads(rows(sink, "select card_json from cards")[0]["card_json"])
-    assert body["xbrl"] == {"basis": "CONSOLIDATED", "period": "Q2FY27", "figures": len(xbrl.parse(results_xml()).metrics)}
+    assert {k: body["xbrl"][k] for k in ("basis", "period", "figures")} == \
+        {"basis": "CONSOLIDATED", "period": "Q2FY27", "figures": len(xbrl.parse(results_xml()).metrics)}
+    assert body["xbrl"]["url"].endswith(".xml")   # the file it was made from (event_catchup.results_catch_up)
 
 
 def test_shareholding_pattern_goes_to_memory_without_ai(settings):

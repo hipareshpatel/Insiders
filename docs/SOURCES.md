@@ -144,6 +144,22 @@ So for these events the amount, unit, counterparty, dates and stage need no mode
   licences 4 of 6, guarantees 3 of 3, ESOPs 3 of 4, agreements 3 of 5. Unjoined files are mostly scanned PDFs without a
   text layer (the check reads the layer) and filings outside the window.
 
+## Integrated filing lists (results and governance), all companies (measured 2026-10-18)
+
+The owner's pages `corporate-integrated-filing?integratedType=integratedfilingfinancials` and `...governance` load
+their tables from `/api/integrated-filing-results?type=Integrated%20Filing-%20Financials` (or `...-%20Governance`)
+`&page=N&size=M` with no symbol: every company, newest first, `{data, size, page, totalCount}`.
+- Financials: totalCount 27,140; `size` up to 1,000 honoured (page 1 reached back to 14 Aug 2026, page 2 to 11 Aug).
+  Every one of 1,000 rows had an `.xml`; basis "Standalone" 620, "Consolidated" 380; 219 rows for the September 2026
+  quarter by 17 Oct. 321 of 1,000 were revisions (`type_Sub` "Revision"), whose time is `revised_Date`
+  ("18-OCT-2026 21:27:17", the page's "Revised Date/Time" column; owner) - `broadcast_Date` is null on them.
+- Governance: totalCount 21,021; 727 rows for the September 2026 quarter by 18 Oct (684 companies); 306 of 1,000
+  revisions. Its XBRL is read by `governance_xbrl.py` (board, committees, SEBI compliance flags, meeting gaps, fines and
+  penalties, tax litigation, loans and guarantees to insiders, cyber incidents); the PDF stays on the drop list.
+- The pipeline reads results per company (`/api/integrated-filing-results?symbol=`, `NseClient.financial_results`), which
+  also gives the year-ago and previous-quarter files; the all-company list is the cheaper way to sweep a day or a
+  backfill (assumption until measured in the NSE round).
+
 ## Timing checked live (2026-10-18, cloud session)
 
 | Data | Claim in these docs | Measured |

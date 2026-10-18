@@ -231,3 +231,52 @@ def test_catch_up_reads_again_only_for_a_new_file_of_the_event(settings):
     assert len(event_catchup.new_files(dict(row, subject="General Updates"), [seen, landed, licence])) == 2
     # The query runs on the local database
     assert LocalSink(settings).query("event_cards_without_xbrl", ["2026-10-01", 10]) == []
+
+
+def test_nse_results_rows_become_quarter_links_with_the_revision_first():
+    from bse_intel.nse import parse_integrated_rows, results_links
+
+    rows = [{"xbrl": "https://x/INTEGRATED_FILING_INDAS_1_17102026091927_WEB.xml", "qe_Date": "30-SEP-2026",
+             "consolidated": "Consolidated", "type_Sub": "Original", "broadcast_Date": "17-Oct-2026 21:19:12"},
+            # a revision has no broadcast time; its time is revised_Date (owner, from the page's columns)
+            {"xbrl": "https://x/INTEGRATED_FILING_INDAS_2_18102026091927_WEB.xml", "qe_Date": "30-SEP-2026",
+             "consolidated": "Consolidated", "type_Sub": "Revision", "revised_Date": "18-OCT-2026 21:27:17"},
+            {"xbrl": "https://x/INTEGRATED_FILING_INDAS_3_01082026091927_WEB.xml", "qe_Date": "30-JUN-2026",
+             "consolidated": "Non-Consolidated", "type_Sub": "Original", "broadcast_Date": "01-Aug-2026 10:00:00"}]
+    links = results_links(parse_integrated_rows(rows))
+    assert [(l.period, l.basis, l.url, l.filed_at) for l in links] == [
+        ("Q2FY27", "CONSOLIDATED", rows[1]["xbrl"], "2026-10-18"), ("Q1FY27", "STANDALONE", rows[2]["xbrl"], "2026-08-01")]
+
+
+def test_results_catch_up_reads_again_on_a_new_file_or_a_revision():
+    from bse_intel import event_catchup
+    from bse_intel.bse import XbrlLink
+
+    first = XbrlLink("Q2FY27", "CONSOLIDATED", "https://x/1.xml", "2026-10-17")
+    revised = XbrlLink("Q2FY27", "CONSOLIDATED", "https://x/2.xml", "2026-10-18")
+    made_from_pdf = {"filed_at": "2026-10-17T16:05:00+05:30", "xbrl_url": None}
+    assert event_catchup.results_due(made_from_pdf, [first])
+    assert not event_catchup.results_due(made_from_pdf, [XbrlLink("Q4FY26", "CONSOLIDATED", "u", "2026-05-02")])
+    made_from_first = {"filed_at": "2026-10-17T16:05:00+05:30", "xbrl_url": first.url, "period": "Q2FY27", "basis": "CONSOLIDATED"}
+    assert event_catchup.results_due(made_from_first, [first, revised])
+    assert not event_catchup.results_due(dict(made_from_first, xbrl_url=revised.url), [first, revised])
+
+
+def test_a_fresh_nse_results_filing_waits_for_its_xbrl(settings):
+    from bse_intel.timeutil import now_ist
+    from test_pipeline import RESULT_TEXT, _pdf, build
+
+    filing = _nse_order(now_ist() - timedelta(minutes=40)).model_copy(update={
+        "subject": "Outcome of Board Meeting", "subcategory": "Outcome of Board Meeting", "event_type": "RESULTS"})
+    pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(RESULT_TEXT)}, {}, env={})
+
+    class NoResultsYet(EventNse):
+        def financial_results(self, symbol, quarterly=True):
+            self.calls.append(("results", symbol))
+            return []
+
+    pipeline.nse = NoResultsYet([], b"")
+    outcome = pipeline._process_one(filing, bulk=False, memory_complete=True)
+    assert outcome.update["status"] == "PENDING" and "attempts" not in outcome.update
+    assert outcome.update["last_error"].startswith("deferred: waiting for its results XBRL")
+    assert ("results", "RAILTEL") in pipeline.nse.calls and fake.calls == []   # no model was asked

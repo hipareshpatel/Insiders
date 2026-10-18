@@ -83,3 +83,59 @@ def catch_up(pipeline, deadline: float, max_reruns: int = MAX_RERUNS) -> dict:
         pipeline._exec("cards_delete", [{"news_id": i} for i in cardless])
     report["rerun"] = {i: (outcomes[i].update.get("status") if i in outcomes else "left in the queue") for i in ids}
     return report
+
+
+RESULTS_DAYS = 10        # results cards looked at again for this long (a revision can come days later)
+MAX_RESULTS_COMPANIES = 60   # companies' results lists read per run (one NSE request each)
+
+
+def results_due(row: dict, links: list) -> bool:
+    """Whether a results card should be read again: it was made from the PDF alone and its quarter's file is now
+    listed (filed from two days before the card to 45 days after, as Pipeline._results_xbrl_url takes it), or it was
+    made from a file that a later one (a revision) has replaced for the same quarter and basis."""
+    if row.get("xbrl_url"):
+        same = [l for l in links if l.period == row.get("period") and l.basis == (row.get("basis") or l.basis)]
+        return bool(same) and max(same, key=lambda l: l.filed_at).url != row["xbrl_url"]
+    day = datetime.fromisoformat(row["filed_at"]).date()
+    from datetime import date as _date
+
+    return any(-2 <= (_date.fromisoformat(l.filed_at[:10]) - day).days <= 45 for l in links)
+
+
+def results_catch_up(pipeline, deadline: float, max_reruns: int = MAX_RERUNS) -> dict:
+    """Read again the NSE results cards whose XBRL has landed, or been revised, since they were made."""
+    report = {"cards": 0, "rerun": {}, "stopped": None}
+    if pipeline.nse is None or getattr(pipeline, "_nse_refused", False):
+        report["stopped"] = "NSE not asked (off or refused this run)"
+        return report
+    since = (today_ist() - __import__("datetime").timedelta(days=RESULTS_DAYS)).isoformat()
+    rows = pipeline.sink.query("results_cards_recent", [since, MAX_CARDS])
+    report["cards"] = len(rows)
+    due, companies = [], 0
+    for row in rows:
+        if len(due) >= max_reruns or companies >= MAX_RESULTS_COMPANIES or time.monotonic() >= deadline:
+            break
+        companies += 1
+        probe = SimpleNamespace(scrip_code=row["scrip_code"], symbol=row.get("symbol"), news_id=row["news_id"])
+        links = pipeline._results_links(probe)
+        if getattr(pipeline, "_nse_refused", False):
+            report["stopped"] = "NSE refused the session"
+            return report
+        if results_due(row, links):
+            due.append(row)
+    if not due:
+        return report
+    from .pipeline import DEADLINE_GRACE_S
+
+    ids = [r["news_id"] for r in due]
+    pipeline._exec("filings_update", [{"news_id": i, "status": "PENDING", "attempts": 0, "updated_at": now_iso()} for i in ids])
+    log.info("results XBRL landed or revised for %d cards; reading them again: %s", len(ids), ", ".join(ids))
+    pipeline.gateway.deadline = deadline + DEADLINE_GRACE_S
+    with pipeline._lock:
+        pipeline._tried.difference_update(ids)
+        for r in due:
+            pipeline._results_quarters = {k: v for k, v in pipeline._results_quarters.items() if v != r["news_id"]}
+    days = [r["filing_date"] for r in due]
+    outcomes = {o.update["news_id"]: o for o in pipeline.process(min(days), max(days), deadline, bulk=False, only=set(ids))}
+    report["rerun"] = {i: (outcomes[i].update.get("status") if i in outcomes else "left in the queue") for i in ids}
+    return report

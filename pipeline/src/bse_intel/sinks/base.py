@@ -33,6 +33,7 @@ QUERIES = (
     "card_held",
     "annual_cards_without_xbrl",
     "event_cards_without_xbrl",
+    "results_cards_recent",
     "filings_remaining",
     "filings_known_day",
     "backfill_companies",

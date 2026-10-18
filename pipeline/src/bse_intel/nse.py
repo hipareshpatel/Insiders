@@ -222,6 +222,23 @@ def parse_results_rows(rows: list[dict]) -> list[ResultsFiling]:
     return sorted(out, key=lambda r: r.filed_at, reverse=True)
 
 
+def results_links(filings: list[ResultsFiling]) -> list:
+    """NSE's results files as the pipeline's quarter links (bse.XbrlLink: period, basis, url, filed_at), so an NSE
+    filing finds its file, and its year-ago and previous-quarter files, as a BSE one did. Rows without a quarter end
+    (the older results list) are left out: the integrated filing covers every quarter since December 2024."""
+    from .bse import XbrlLink
+
+    out = []
+    for f in filings:
+        if not f.period_end:
+            continue
+        end = date.fromisoformat(f.period_end)
+        period = canonical_period(f"quarter ended {end:%d.%m.%Y}")
+        if period.startswith("Q"):
+            out.append(XbrlLink(period, "CONSOLIDATED" if f.consolidated else "STANDALONE", f.xbrl_url, f.filed_at))
+    return out
+
+
 _INTEGRATED_NAME = re.compile(r"INTEGRATED_FILING_(.+?)_\d+_\d{14}_", re.I)
 
 
@@ -239,7 +256,9 @@ def parse_integrated_rows(rows: list[dict]) -> list[ResultsFiling]:
             continue
         if not url.startswith("http"):
             url = f"https://nsearchives.nseindia.com/{url.lstrip('/')}"
-        consolidated = "consolidated" in str(row.get("consolidated") or "").lower()
+        basis = str(row.get("consolidated") or "").lower()
+        # "Consolidated" or "Standalone" (measured 2026-10-18: 380 and 620 of 1,000); "Non-Consolidated" is standalone
+        consolidated = "consolidated" in basis and "non" not in basis
         filed = _nse_date(row.get("broadcast_Date")) or _nse_date(row.get("revised_Date"))             or _nse_date(row.get("creation_Date")) or quarter_end
         family = _INTEGRATED_NAME.search(url)
         filing = ResultsFiling(

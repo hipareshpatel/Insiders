@@ -1607,21 +1607,40 @@ class Pipeline:
                 return news_id, kind
         return None
 
+    def _results_links(self, filing: Filing) -> list[XbrlLink]:
+        """The company's results XBRL files as quarter links, read once a run: NSE's integrated filing (and its
+        older results list) for an NSE filing, BSE's results archive otherwise. NSE's rows are the latest file per
+        quarter and basis, a revision before its original (nse.parse_integrated_rows)."""
+        with self._lock:
+            links = self._xbrl_links.get(filing.scrip_code)
+        if links is not None:
+            return links
+        try:
+            if self.nse is not None and filing.news_id.startswith(nse_api.NEWS_ID_PREFIX) and filing.symbol:
+                with self._lock:
+                    if self._nse_refused:
+                        return []
+                links = nse_api.results_links(self.nse.financial_results(filing.symbol))
+            else:
+                links = self.bse.results_xbrl(filing.scrip_code)
+        except nse_api.SourceBlockedError as exc:
+            log.error("NSE refused the session; results are read from their PDF for the rest of this run: %s", exc)
+            with self._lock:
+                self._nse_refused = True
+            return []
+        except Exception as exc:  # XBRL is an extra: the PDF still carries the results
+            log.warning("results XBRL list for %s unavailable (%s); using the PDF", filing.scrip_code, exc)
+            links = []
+        with self._lock:
+            self._xbrl_links[filing.scrip_code] = links
+        return links
+
     def _results_xbrl_url(self, filing: Filing, text: str) -> str | None:
         """The XBRL file for a results filing, from the company's results archive: the statement's
         quarter, consolidated when the company files it (memory keeps one basis), the latest file
         (revision) filed within 45 days of the PDF, else the earliest. Without a stated quarter, the
         file filed within three days of the PDF. Announcement rows carry no XBRL link of their own."""
-        with self._lock:
-            links = self._xbrl_links.get(filing.scrip_code)
-        if links is None:
-            try:
-                links = self.bse.results_xbrl(filing.scrip_code)
-            except Exception as exc:  # XBRL is an extra: the PDF still carries the results
-                log.warning("results archive for %s unavailable (%s); using the PDF", filing.scrip_code, exc)
-                links = []
-            with self._lock:
-                self._xbrl_links[filing.scrip_code] = links
+        links = self._results_links(filing)
         if not links:
             return None
         quarter = statement_quarter(text)
@@ -2007,6 +2026,14 @@ class Pipeline:
         _ocr_check(doc)
         if event_type == "RESULTS" and not filing.xbrl_url:
             filing = filing.model_copy(update={"xbrl_url": self._results_xbrl_url(filing, text)})
+            if not filing.xbrl_url and filing.news_id.startswith(nse_api.NEWS_ID_PREFIX) and self.nse is not None \
+                    and not self._nse_refused:
+                age = datetime.now(tz=IST) - datetime.fromisoformat(filing.filed_at)
+                if age < timedelta(minutes=RESULTS_XBRL_WAIT_MINUTES):
+                    # NSE's integrated-filing XBRL followed the outcome by 5 min to 2 h 40 min (measured 2026-10-18)
+                    with self._lock:
+                        self._xbrl_links.pop(filing.scrip_code, None)   # read the list afresh next time
+                    raise EventXbrlPending(f"waiting for its results XBRL ({age.total_seconds() / 60:.0f} min after the PDF)")
         tagged = self._xbrl(filing) if event_type == "RESULTS" else None
         if tagged and (tagged.kind != "RESULTS" or not xbrl_fast_path.confirm(tagged, text)):
             if tagged.kind == "RESULTS":
@@ -2224,7 +2251,8 @@ class Pipeline:
         card_json["score"] = rated.as_dict()
         card_json["model_impact"] = card.impact_level
         if tagged:
-            card_json["xbrl"] = {"basis": tagged.basis, "period": tagged.period, "figures": len(tagged.metrics)}
+            card_json["xbrl"] = {"basis": tagged.basis, "period": tagged.period, "figures": len(tagged.metrics),
+                                 "url": filing.xbrl_url}
         if annual:
             card_json["annual_xbrl"] = {"bases": [r.basis for r in annual], "period": annual[0].fy,
                                         "figures": sum(r.figures() for r in annual)}
@@ -2521,6 +2549,9 @@ class Pipeline:
                     caught = event_catchup.catch_up(self, live_deadline)
                     if caught["rerun"] or caught["stopped"]:
                         log.info("event XBRL catch-up: %s", json.dumps(caught))
+                    caught = event_catchup.results_catch_up(self, live_deadline)
+                    if caught["rerun"] or caught["stopped"]:
+                        log.info("results XBRL catch-up: %s", json.dumps(caught))
             if mode in ("backfill", "all") and not self._halted(bulk=True):
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
         except SourceBlockedError as exc:
@@ -2708,7 +2739,8 @@ SECOND_OPINION_MIN_S = 300
 # MONTHLY_BUSINESS_UPDATE, CAPEX, PRODUCT_LAUNCH and CORPORATE_ACTION recur with new numbers in nearly
 # the same words, and RESULTS has its own one-card-per-quarter rule (D20).
 REPEAT_DAYS = 10  # the window the fast-track repeat check looks back over, as similar_timeline_entry
-NO_CARD_EVENTS = ("MANAGEMENT_CHANGE",)   # owner, 2026-10-18: no cards for director / KMP changes
+NO_CARD_EVENTS = ("MANAGEMENT_CHANGE",)
+RESULTS_XBRL_WAIT_MINUTES = 180   # a live NSE results filing waits this long for its XBRL (measured: 5 min - 2 h 40 min)   # owner, 2026-10-18: no cards for director / KMP changes
 ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE", "LITIGATION_REGULATORY", "FUNDRAISE",
                       "RIGHTS_ISSUE", "M_AND_A", "DEBT_RATINGS", "CONCALL_PRESENTATION", "ANNUAL_REPORT")
 UNIT_HINT = ("Convert each amount from the unit its table states: ₹ lakh ÷ 100 = ₹ Cr, ₹ million ÷ 10 = ₹ Cr, "

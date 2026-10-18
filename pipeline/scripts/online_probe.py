@@ -13,7 +13,9 @@ Checks (docs/SOURCES.md "Event XBRL" and "Timing checked live"):
 6. an announcement PDF downloaded and read with the pipeline's own reader;
 7. BSE's announcement XBRL page (CorpXbrlGen), which answered a non-Indian cloud address once;
 8. a BSE results file on www.bseindia.com/XBRLFILES, BSE's file host rather than its refused API;
-9. the two calls BSE's Financial Results page makes for its table (NSTodayResults_ng, Result_Arch_ng).
+9. the two calls BSE's Financial Results page makes for its table (NSTodayResults_ng, Result_Arch_ng);
+10. the event XBRL lag: each file against its company's nearest earlier announcement flagged hasXbrl;
+11. NSE's SAST Reg 31 encumbrance feed (promoter pledges, module 42).
 
 Exit status is 0 whatever NSE answers: the report is the result. Run by online-probe.yml.
 """
@@ -118,6 +120,38 @@ def main() -> int:
             return f"{match} of {len(found['xbrl'])} event XBRL files have an announcement of the same symbol within 10 min"
 
         step("event XBRL joined to its announcement", joined)
+
+        def lag():
+            flagged: dict[str, list[datetime]] = collections.defaultdict(list)
+            for r in found.get("ann", []):
+                if r.get("hasXbrl") and r.get("an_dt"):
+                    flagged[r.get("symbol")].append(datetime.strptime(r["an_dt"], _WHEN))
+            gaps = []
+            for r in found["xbrl"]:
+                try:
+                    at = datetime.strptime(r["broadcastDateTime"], _WHEN)
+                except (KeyError, ValueError):
+                    continue
+                before = [t for t in flagged.get(r.get("symbol"), []) if t <= at]
+                if before:
+                    gaps.append((at - max(before)).total_seconds() / 60)
+            if not gaps:
+                return "no file matched"
+            gaps.sort()
+            share = lambda m: sum(1 for g in gaps if g <= m)
+            return (f"{len(gaps)} of {len(found['xbrl'])} matched; median {gaps[len(gaps) // 2]:.0f} min; "
+                    f"<=1 min {share(1)}, <=15 min {share(15)}, <=1 h {share(60)}, <=4 h {share(240)}; "
+                    f"max {gaps[-1] / 60:.1f} h")
+
+        step("event XBRL lag after its hasXbrl announcement", lag)
+
+        def pledges():
+            got = _list(nse._get(f"{SITE}/api/corporate-pledgedata-sast3132",
+                                 {"from_date": week_ago, "to_date": to_day}).json())
+            keys = sorted(got[0])[:12] if got else []
+            return f"{len(got)} rows over 7 days; fields: {', '.join(keys)}"
+
+        step("SAST Reg 31 encumbrance feed (pledges)", pledges)
 
         for symbol in COMPANIES:
             def results_gap(symbol=symbol):

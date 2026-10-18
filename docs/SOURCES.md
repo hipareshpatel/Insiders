@@ -92,7 +92,10 @@ event XBRL had "no source found" (TRACKER F48 gap 3, PLAN 17) was wrong for NSE.
 (orders, director changes, regulatory actions) to the company's nearest earlier announcement flagged `hasXbrl`:
 median 8 minutes; 14 within 15 minutes, 19 within an hour, 21 within 4 hours, all within 17 hours. RailTel's ₹18.99 Cr
 order: PDF 17 Oct 13:37, XBRL 18 Oct 10:38 (21 hours). So a card written from the PDF must be checked against the
-XBRL when it lands, as for results (PLAN 16), not assume it is there.
+XBRL when it lands, as for results (PLAN 16), not assume it is there. **Reproduced on a GitHub runner 2026-10-18**
+(`online_probe.py`, 11-18 Oct, 354 files, 320 matched to the nearest earlier `hasXbrl` announcement of the symbol):
+median 9 minutes; 50 within a minute, 185 within 15 minutes, 242 within an hour, 278 within 4 hours. The longest
+matches (up to 5 days) are likely a later event paired with an older announcement: nearest-earlier is not a join key.
 
 - `/api/corporate-announcements?index=equities`: every row carries `hasXbrl` (20 of 20 true on 18 Oct 2026) and
   `seq_id`, beside the PDF in `attchmntFile`. **There is no shared key** with the XBRL rows (`seq_id` and `appId` are
@@ -123,7 +126,7 @@ So for these events the amount, unit, counterparty, dates and stage need no mode
 | Event XBRL (Reg 30) | "no source found" | Exists. Published minutes after the announcement as a rule (median 8 min, 19 of 24 within an hour), up to 21 hours (above; laptop, 2026-10-18) |
 | Results XBRL (NSE integrated filing) | "up to 24 hours" after the outcome PDF (TRACKER F48 gap 2) | Same day, **5 minutes to 2 h 40 min** after the board-meeting outcome: Capri Global 5 min (Q1FY27), LTM 49 min (Q2FY27), Newgen 2 h 28 min, Bank of Maharashtra 2 h 39 min. A results card can wait for it or be corrected within hours, not a day |
 | Annual-report XBRL | "weeks to months after the PDF" | **True**: LTM ~7 weeks, NTPC ~7.5, Newgen ~8, Hindustan Copper FY25 ~4.5 months; Capri Global FY26 not listed yet |
-| Pledged data | `/api/corporate-pledgedata` gives `percSharesPledged` (Pledged data row above) | **Not reproduced**: empty `data` with and without symbol and dates; `/api/corporate-pledge-holding` returns a count of 0. **Re-read from the page's own code 2026-10-18 (laptop, Indian IP):** the page calls exactly `/api/corporate-pledgedata?` plus `&symbol=` and dates; still empty. Its neighbour **`/api/corporate-pledgedata-sast3132?&from_date=&to_date=`** (SAST Reg 31 encumbrance disclosures) returns rows: 288 for 1 Jul-18 Oct 2026, each with company, lender (`eventDetailsEntity`), shares encumbered and % (`encumbHolding`, `encumbPerc`), event dates and the filing (`attachment`). That is a promoter-pledge source for module 42, event by event |
+| Pledged data | `/api/corporate-pledgedata` gives `percSharesPledged` (Pledged data row above) | **Not reproduced**: empty `data` with and without symbol and dates; `/api/corporate-pledge-holding` returns a count of 0. **Re-read from the page's own code 2026-10-18 (laptop, Indian IP):** the page calls exactly `/api/corporate-pledgedata?` plus `&symbol=` and dates; still empty. Its neighbour **`/api/corporate-pledgedata-sast3132?&from_date=&to_date=`** (SAST Reg 31 encumbrance disclosures) returns rows: 288 for 1 Jul-18 Oct 2026, each with company, lender (`eventDetailsEntity`), shares encumbered and % (`encumbHolding`, `encumbPerc`), event dates and the filing (`attachment`). That is a promoter-pledge source for module 42, event by event. **Reproduced on a GitHub runner 2026-10-18**: 11 rows for 11-18 Oct, same fields |
 
 ## Still open
 

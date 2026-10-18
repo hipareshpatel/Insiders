@@ -827,6 +827,7 @@ class Pipeline:
         self._examples: dict[tuple[str, str], dict[str, list[dict]]] = {}
         self._learned: dict | None = None   # Loop 1 state: post-mortem queue, lessons, dampened categories
         self._bodies: dict[str, list[tuple[str, str, duplicates.Body]]] = {}  # scrip -> (filed_at, news_id, body) this run
+        self._held_this_run: set[str] = set()   # news_ids whose card this run held (D20: not the quarter's card)
         self._xbrl_links: dict[str, list[XbrlLink]] = {}  # scrip -> its results archive, read once a run
         self._holds = gate.load_holds(settings.config_dir / settings.card_holds_file)  # news_id -> reason
         self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
@@ -1085,7 +1086,12 @@ class Pipeline:
     def _process_one(self, filing: Filing, bulk: bool, memory_complete: bool, deadline: float | None = None) -> Outcome:
         outcome = self._attempt(filing, bulk, memory_complete, deadline)
         status = outcome.update.get("status")
-        if status != "ANALYZED":
+        held = bool(outcome.card and outcome.card.get("held"))
+        if held:
+            with self._lock:
+                self._held_this_run.add(filing.news_id)
+        if status != "ANALYZED" or held:
+            # a held card is no more the quarter's card in this run than in memory (_same_results_quarter)
             self._release_claims(filing.news_id, status)
         return outcome
 
@@ -1354,6 +1360,10 @@ class Pipeline:
         return None
 
     def _card_held(self, news_id: str) -> bool:
+        # this run's own verdict first: its card may not be committed yet, and a re-run deleted the old one
+        with self._lock:
+            if news_id in self._held_this_run:
+                return True
         rows = self.sink.query("card_held", [news_id]) or []
         return bool(rows and rows[0].get("held"))
 

@@ -614,3 +614,17 @@ def test_scanned_pages_the_old_ocr_cap_left_unread_are_read_again_once_under_a_h
     # kept as the fallback when the exchange refuses the PDF, it keeps its old cap and is still read again later
     assert cache_needs_ocr(Document.from_cache(scan).to_cache(), max_ocr_pages=20)
     assert Document(None, max_ocr_pages=20).to_cache()["ocr_cap"] == 20
+
+
+def test_a_card_held_in_this_run_gives_back_its_quarter_at_once(settings, monkeypatch):
+    """Within one run the owner's claim and its new card decide too: a held owner kept its claim (it is ANALYZED),
+    and its new card was not yet committed when the next document asked, so the statement was again a duplicate."""
+    from bse_intel.pipeline import Outcome
+
+    pipeline, sink, _ = build(settings, [], {}, {})
+    owner = _filing("q-own", "Outcome of Board Meeting", now_ist())
+    pipeline._results_quarters[("999001", "Q2FY27")] = "q-own"
+    monkeypatch.setattr(pipeline, "_attempt", lambda *a, **k: Outcome({"news_id": "q-own", "status": "ANALYZED"}, card={"held": 1}))
+    pipeline._process_one(owner, False, True)
+    assert ("999001", "Q2FY27") not in pipeline._results_quarters
+    assert pipeline._card_held("q-own"), "known held before its card is committed"

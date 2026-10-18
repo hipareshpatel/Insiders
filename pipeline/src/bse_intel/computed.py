@@ -86,6 +86,8 @@ def build_pool(filed_text: str, tagged=None, annual_table: str = "", history: li
                scale: str = "", ownership: dict | None = None) -> Pool:
     pool = Pool()
     pool.add_printed(filed_text)
+    printed = Pool()   # the filing's own text alone: where a like-for-like base margin must be printed
+    printed.add_printed(filed_text)
     pool.add_printed(annual_table)   # the annual report's own tagged figures
     pool.add_printed(scale)          # shares of revenue, net worth and market cap computed in code
     pool.add_printed(json.dumps(ownership or {}))
@@ -106,7 +108,9 @@ def build_pool(filed_text: str, tagged=None, annual_table: str = "", history: li
             pool.pct.append((m.value, 0))   # a margin the file states or code derived from its figures
             for prior in (prior_year_period(m.period), prior_quarter_period(m.period)):
                 base = by_key.get((m.metric, prior or ""))
-                if base is not None and (any(abs(b - base) <= 0.006 for b, _ in pool.pct[:-1]) or base in by_key.values()):
+                # only a base margin the filing prints itself: `base` always comes from by_key, so testing it against
+                # by_key let a pre-demerger or other-basis margin through
+                if base is not None and printed.has("pct", base, 2, 0):
                     diff = (m.value - base) * 100
                     pool.bps.append((abs(diff), 1 if diff > 0 else -1))
             continue

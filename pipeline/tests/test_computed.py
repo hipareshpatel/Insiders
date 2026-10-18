@@ -66,6 +66,13 @@ def test_jindal_stainless_a_margin_fall_called_an_improvement_is_removed():
     assert "Operating margin fell 105 bps to 11.78% from 12.83% a year ago" in texts
     assert not any("improved by 105 bps" in t for t in texts)
 
+    # A year-ago margin the filing does not print (memory's, from before a demerger or on another basis) is no base:
+    # the move against it is removed, not stated
+    pool = computed.build_pool("Operating margin 11.78% for the quarter", tagged, history=history)
+    out = _out({"what_happened": ["Operating margin fell 105 bps to 11.78% from 12.83% a year ago"]})
+    computed.enforce(out, pool)
+    assert not any("105 bps" in f.text for f in out.card.what_happened)
+
 
 def test_emudhra_a_consolidated_quarter_against_a_standalone_one_gives_no_change():
     """cc896891: memory's Q1FY26 revenue (₹55.51 Cr) was standalone; the filing is consolidated and prints its own

@@ -228,9 +228,10 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
   const review = !!row.needs_review;
   const g = card.grounding;
   const allMatched = g.ungrounded.length === 0 && !g.math_mismatches && !(g.unsupported_claims ?? []).length;
-  const issues = card.review?.issues?.length ? card.review.issues
+  // A garbled scan or an owner's hold outlives a correction: it is why a corrected card is still unverified.
+  const issues = [...(card.review?.held ?? []), ...(card.review?.issues?.length ? card.review.issues
     : [...(card.grounding.unsupported_claims ?? []).map((c) => `Claim not supported by the sources: "${c}"`),
-       ...(card.grounding.ungrounded.length ? [`Numbers not found in the filing: ${card.grounding.ungrounded.join(", ")}`] : [])];
+       ...(card.grounding.ungrounded.length ? [`Numbers not found in the filing: ${card.grounding.ungrounded.join(", ")}`] : [])])];
   const corrected = card.review?.status === "CORRECTED";
   const tilesFor = event === "CONCALL_PRESENTATION" || (event === "RESULTS" && !card.results);
   const table = event === "RESULTS" && tableShows(card.results) ? card.results : null;
@@ -273,7 +274,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           <p className="-mt-1 mb-3 flex items-start gap-2 rounded-lg bg-warn-soft px-3 py-2 text-[12.5px] leading-relaxed text-warn" data-noexport="true">
             <AlertTriangle className="mt-[2px] h-3.5 w-3.5 shrink-0" />
             <span><span className="font-semibold">Unverified.</span> {issues[0] ?? "Some numbers could not be matched to the filing."}
-              {card.review?.checked_by ? " A second AI could not resolve it." : ""} Check the official PDF before relying on it.</span>
+              {card.review?.checked_by && !corrected ? " A second AI could not resolve it." : ""} Check the official PDF before relying on it.</span>
           </p>
         )}
 
@@ -575,6 +576,9 @@ function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers }: {
           <ul className="mt-2 space-y-1">
             {(card.review.status === "CORRECTED" ? card.review.fixed ?? [] : card.review.issues ?? []).map((p, i) => (
               <li key={i} className={cn("text-[12.5px]", card.review!.status === "CORRECTED" ? "text-ink-3 line-through" : "text-warn")}>{p}</li>
+            ))}
+            {card.review.status === "CORRECTED" && (card.review.held ?? []).map((p, i) => (
+              <li key={`held-${i}`} className="text-[12.5px] text-warn">{p}</li>
             ))}
           </ul>
         </Section>

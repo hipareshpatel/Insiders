@@ -125,7 +125,17 @@ Read before changing anything:
      classes fixed after the run (the borrowings line's prior year; the contingent total sharing its line with
      the classes): re-run 5fc5b553 and 1e3f6e56 when the slot is free. The file comes weeks to months after the
      PDF, so the daily path mostly still reads the PDF alone (`NSE_ANNUAL_XBRL=0` turns it off).
-  5. Raise the paid weight and drain the 160 queued filings; audit round 2; PLAN 1h.
+  4a. **Held-card loop stopped 2026-10-18** after round 3e: 28 held (6%), 412 published. Nearly every fix since
+     round 1 made the checks accept more, and published cards had not been measured since (owner's review).
+  5. **Now: audit round 2** (`docs/audit/round-2.md`, scripts in `pipeline/scripts/audit_round2/`): 14 companies
+     never read before, drawn by seed across sectors and sizes, processed for 15 Jul - 18 Oct 2026; a blind
+     review of ~80 published and ~10 held cards against their PDFs (`audit_export.py --blind --memory --random`,
+     `REVIEWER_PROMPT_ROUND2.md`), ~50 set-aside filings checked for missed news, AI requests per filing and
+     filings an hour measured. Pass marks set before reviewing: WRONG <= 15% of published, MISSED <= 2 of ~50.
+     Pass -> the backfill decision (PLAN 1c, owner); fail -> the commonest WRONG and MISSED classes are next.
+     After it: re-run 5fc5b553 and 1e3f6e56 (item 4); re-reading an annual report once its NSE XBRL appears is
+     being built in its own session.
+  6. Raise the paid weight and drain the 160 queued filings; PLAN 1h.
   Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order
   (PLAN.md item 1c). `sync-to-cloud` still cannot run: no PLATFORM_API_URL or INGEST_TOKEN for the
   deployed Worker, and laptop.ps1 hardcodes both to localhost.

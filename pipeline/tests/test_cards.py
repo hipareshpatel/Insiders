@@ -922,3 +922,15 @@ def test_a_sentences_figure_from_far_down_the_filing_is_reported_when_stated_to_
         "ten times the filing's figure is not stated anywhere"
     assert check_quotes(card("Provisions rose to ₹16.53 Cr from ₹5 Cr a year ago"), filing, unit=100)[0] == [], \
         "a whole number of 31 or less is never checked (unchanged)"
+
+
+def test_a_quantity_the_sources_set_aside_as_a_year_is_still_found():
+    """SML's April-August cargo sales were 2052 units, printed bare in a table, and the bare 2052 was set aside as a
+    year, so "2,052" on the card - which no one writes for a year - held the card as stating a figure not in the
+    filing (re-run of the held cards, 2026-10-18)."""
+    filing = ("Sales figure for the month of August 2025\n"
+              "Cargo Vehicles 321 303 6% 2052 1472 39%\nTotal 842 990 -15% 7195 6572 9%")
+    good = card(headline="SML August sales 842 units", key_numbers=[{"label": "April-August cargo", "value": "2,052 units"}])
+    assert check_card(good, filing).ungrounded == []
+    bad = card(headline="SML August sales 842 units", key_numbers=[{"label": "April-August cargo", "value": "2,053 units"}])
+    assert check_card(bad, filing).ungrounded == ["2,053"]

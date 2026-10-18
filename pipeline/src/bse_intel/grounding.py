@@ -34,6 +34,9 @@ _IGNORE = re.compile(
     r"|(?<![\d.,])(?:19|20)\d{2}(?![\d]|[.,]\d)|\b\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\b",
     re.I,
 )
+# A bare 19xx or 20xx in a source, set aside above as a year. SML's April-August cargo sales were 2052 units, and
+# "2,052" on the card, which no one writes for a year, was held as not in the filing (2026-10-18).
+_YEAR_TOKEN = re.compile(r"(?<![\d.,])(?:19|20)\d{2}(?![\d]|[.,]\d)")
 _CURRENCY = re.compile(r"(?:₹|\b(?:rs\.?|inr|usd|cad|eur|gbp)|us\$|\$)\s*", re.I)
 _UNIT = re.compile(r"\s*(%|per\s*cent\b|percent\b|basis\s+points?\b|bps?\b|pp\b|percentage\s+points?\b|x\b|times\b)", re.I)
 _QUANTITY = re.compile(r"\s*(?:cr\b|crores?\b|lakhs?\b|lacs?\b|mn\b|million\b|bn\b|billion\b|mw\b|gw\b|kw\b|tpd\b|mtpa\b"
@@ -387,6 +390,7 @@ def check_card(card: Card, *sources: str, derived=()) -> GroundingResult:
     unit = declared_unit(sources[0]) if sources else None
     filing_index = SourceIndex(sources[0] if sources else "")
     other_index = SourceIndex(*sources[1:], computed)
+    year_like = {int(m.group(0)) for text in sources for m in _YEAR_TOKEN.finditer(text or "")}
     filing_scales, other_scales = ((unit,), (1,)) if unit else (CRORE_SCALES, CRORE_SCALES)
     texts = [("headline", card.headline), ("takeaway", card.takeaway), *(("fact", f.text) for f in card.what_happened),
              *(("insight", i.text) for i in card.why_it_matters)]
@@ -418,6 +422,8 @@ def check_card(card: Card, *sources: str, derived=()) -> GroundingResult:
                     continue
             elif index.grounded(value, decimals, kind=kind) or _from_line(value, decimals, kind, line_amounts, line_pcts, index):
                 continue
+            if "," in raw and not decimals and kind in ("plain", "qty") and int(value) in year_like:
+                continue  # "2,052 units" is the table's 2052, which the sources set aside as a year
             label = raw.strip("()-") + {"pct": "%", "bps": " bps", "pp": " pp", "x": "x"}.get(kind, "")
             ungrounded.append(label)
             if where == "headline" and kind in ("plain", "qty"):

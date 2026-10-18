@@ -3,7 +3,8 @@
 Round 4 is the measured NSE round (`round-4.md`). Round 2's prompts word for word, with three changes, written before
 the review: the filings are NSE's; `memory.json` may carry the scale block the card's writer was shown (round 3's
 reviewers could not see it and counted its ratios as unsupported); and the missed-news prompt follows the owner's
-decisions on what gets no card (TRACKER D30 and the newspaper rule), so a filing the owner has excluded is RIGHT.
+decisions on what gets no card (TRACKER D30 as amended 2026-10-19: MD, CEO and CFO exits keep a card; the newspaper
+rule, which keeps replies to news reports), so a filing the owner has excluded is RIGHT.
 
 ## Published cards
 
@@ -55,12 +56,15 @@ checks added. Give each reviewer one `reviewer_NN` folder and this text, with th
 >
 > For each filing decide whether an investor following this company would want an analysis card for it:
 > - `MISSED`: it carries decision-relevant news (results, an order, a fundraise, a deal, a rating action, an auditor
->   resigning before its term ends, a penalty or regulatory action, guidance, a default) and setting it aside lost it;
+>   resigning before its term ends, the MD, CEO or CFO resigning, ceasing, stepping down, being removed or retiring,
+>   a penalty or regulatory action, guidance, a default, the company's reply to a newspaper or media report) and
+>   setting it aside lost it;
 > - `RIGHT`: routine (compliance certificates, meeting logistics, newspaper copies, trading windows, duplicates of a
 >   filing already covered, schedules with no new information), and what the platform's owner has decided gets no
->   card: appointments, resignations, cessations or retirements of directors, the MD, CEO, CFO, company secretary or
->   other key managerial persons; an auditor's appointment, re-appointment, rotation or completion of term; any
->   newspaper notice or publication;
+>   card: appointments or re-appointments of anyone (directors, MD, CEO, CFO, company secretary, key managerial
+>   persons); resignations, cessations or retirements of directors other than the MD, of the company secretary or of
+>   other key managerial persons other than the CEO and CFO; an auditor's appointment, re-appointment, rotation or
+>   completion of term; a newspaper notice or publication (not a reply to a news report);
 > - `UNSURE`: say what would decide it.
 > Write `findings.json`: a list of `{"news_id", "verdict": "MISSED"|"RIGHT"|"UNSURE", "why": "<one line>",
 > "news": "<for MISSED: the news in one line>"}`. Reply with the counts and every MISSED item.

@@ -129,5 +129,10 @@ So for these events the amount, unit, counterparty, dates and stage need no mode
   board-meeting intimation of Shri Dinesh Mills (503804) it holds only the announcement's own metadata in the
   generic `in-bse-co` taxonomy: subject, description, PDF link, submission time, category, type. No event fields
   (amount, counterparty, dates), unlike NSE's Reg 30 XBRL above. Not checked yet for an order or results row.
+  The site's **Financial Results** page (`/corporates/comp_resultsnew`, "Std XBRL" / "Con XBRL" columns) loads
+  `api.bseindia.com/BseIndiaAPI/api/Result_Arch_ng/w` (checked in its own JS bundle 2026-10-18): the same endpoint
+  and `stand_xbrl_link` / `conso_xbrl_link` fields `bse.py` has read since F33. It is on `api.bseindia.com`, which
+  answers 403 outside India (this cloud session, GitHub runners), so an online-only pipeline takes results XBRL
+  from NSE's integrated filing instead.
 - Whether an Integrated Filing instance exists for companies listed only on BSE (NSE has 2,480 of our
   5,111 companies). Those are almost all micro caps.

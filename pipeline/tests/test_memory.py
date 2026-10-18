@@ -624,3 +624,20 @@ def test_a_balance_sheet_figure_out_of_scale_with_the_other_sources_is_refused()
     assert next(b for b in d["balance_sheet"] if b["source_news_id"] == "n3")["net_worth_cr"] == 5794.25
     d = merge(d, output(balance_sheet={"period": "Q4FY25", "net_worth_cr": 9000.0}), filing("xbrl:res:999001:Q4FY25b", Q2), "LOW", "now")
     assert any(b.get("net_worth_cr") == 9000.0 for b in d["balance_sheet"])
+
+
+def test_jindal_period_guidance_waits_for_its_results():
+    """44c7bf29: Jindal's H1FY27 EBITDA/tonne guidance read "Deadline passed" on 16 October 2026, a month before the
+    H1 results; a period is judged on its results, filed up to 60 days after it ends."""
+    given = "2026-05-15T18:00:00+05:30"
+    d = merge(new_dossier(filing("g", given)),
+              output(guidance=[{"statement": "EBITDA per tonne of ₹18,000-20,000 for H1FY27", "due": "H1FY27"}]),
+              filing("g", given), "LOW", "now")
+
+    def breach(when):
+        out = output()
+        return [s for s in compute(d, merge(d, out, filing("n", when), "LOW", "now"), out, filing("n", when), {}, every=True)
+                if s["type"] == "GUIDANCE_BREACH"]
+
+    assert breach("2026-10-16T18:00:00+05:30") == []
+    assert breach("2026-12-05T18:00:00+05:30")

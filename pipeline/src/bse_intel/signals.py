@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import asdict, dataclass
-from datetime import date
+from datetime import date, timedelta
 
 from .dossier import approval_granted, watch_verdict, deal_state, is_recap, reported_by, same_deal
 from .models import Filing, Pass2Output
@@ -33,6 +33,10 @@ from .periods import due_date, prior_year_period
 
 STRAIN_GAP_PP = 15.0      # receivable/inventory growth minus revenue growth, percentage points
 MAX_OVERDUE_SIGNALS = 2
+# A period's guidance is judged on its results, filed up to 45 days after a quarter and 60 after the year: Jindal's
+# H1FY27 EBITDA/tonne guidance was "Deadline passed" on 16 October, a month before its results (round-2 re-run)
+RESULTS_GRACE_DAYS = 60
+_PERIOD_DUE = re.compile(r"\s*(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2}", re.I)  # a deadline that is a date is judged on the day
 
 REVENUE = ("revenue", "revenue_from_operations", "total_revenue", "net_sales", "sales", "total_income")
 WORKING_CAPITAL = {
@@ -295,12 +299,14 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
                           + (f" {update.evidence}" if update.evidence else ""), w["id"]))
     touched = {u.guidance_id for u in output.dossier_delta.promise_updates}
     today = filing.filed_at[:10]
+    judged_by = (date.fromisoformat(today) - timedelta(days=RESULTS_GRACE_DAYS)).isoformat()
     # Flagged once, on the first filing after the deadline: Ahluwalia's FY25 revenue guidance was
     # "Deadline passed" on five cards in a row.
     last = max((t.get("date", "")[:10] for t in (before or {}).get("timeline", []) if t.get("date", "") < filing.filed_at), default="")
     overdue = [
         g for g in after.get("guidance", [])
-        if g.get("due_date") and g["due_date"] < today and g.get("status") in ("OPEN", "ON_TRACK")
+        if g.get("due_date") and g["due_date"] < (judged_by if _PERIOD_DUE.match(str(g.get("due") or "")) else today)
+        and g.get("status") in ("OPEN", "ON_TRACK")
         and g["id"] not in touched and g.get("given_on", "") < filing.filed_at and not (last and last > g["due_date"])
     ]
     for g in sorted(overdue, key=lambda g: g["due_date"])[:MAX_OVERDUE_SIGNALS]:

@@ -31,6 +31,10 @@ Read before changing anything:
 
 ## How to work
 
+0. **Every claim in the docs about a data source** (it exists, is missing, is blocked, arrives late) carries either
+   "measured <date>: <example>" or "assumption". Check an assumption live before building on it; an empty answer is
+   "not found by <call> on <date>", not "no source". Timing claims come from the source's own timestamps, not from
+   one example (owner, 2026-10-18).
 1. Diagnose from logs and the local database (`data/`), not guesses. Each provider's model list
    and free-tier limits change often: check with `python -m bse_intel models` and
    `python -m bse_intel ai-check [--provider X]`, and read the provider's own docs before changing
@@ -62,7 +66,9 @@ Read before changing anything:
 
 ## Status and next steps
 
-- Done: all blueprint modules except 8 (DGTR) and 42 (promoter-group contagion), which have no data source.
+- Done: all blueprint modules except 8 (DGTR) and 42 (promoter-group contagion). Both have a source, measured
+  2026-10-18 (docs/SOURCES.md): DGTR publishes findings as dated PDFs per case; NSE's SAST Reg 31 encumbrance feed
+  gives promoter pledges event by event. Neither is read yet.
 - Smoke-test findings and their fixes: the table in `docs/TRACKER.md` ("Laptop smoke test").
 - **State at 2026-10-16 19:30 (laptop awake; the rebuild is running).** Round 0 checked every card of
   both smoke tests (177) against its PDF: 95 wrong, 56 minor, 26 OK. The error classes were fixed in code

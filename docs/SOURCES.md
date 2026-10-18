@@ -75,7 +75,7 @@ Found but not yet read. Each would replace something a model currently reads out
 | What | Endpoint | Why it matters |
 |---|---|---|
 | Announcements | `/api/corporate-announcements?index=equities&symbol=X` | every filing with a `desc` category NSE assigns it, plus `attchmntText`. An independent label to check our own event typing against, and a second dedup key (`seq_id`) |
-| Pledged data | `/api/corporate-pledgedata?index=equities&symbol=X` | `percSharesPledged`, `percPromoterHolding`. Blueprint module 42 (promoter-group contagion) is recorded as having no data source; this is one |
+| Pledged data | `/api/corporate-pledgedata?index=equities&symbol=X` | `percSharesPledged`, `percPromoterHolding` (assumption: the page's columns; **empty when called, 2026-10-18**). Use `/api/corporate-pledgedata-sast3132` instead (encumbrance disclosures, measured 2026-10-18, below) for module 42 |
 | Shareholding | `/api/corporate-share-holdings-master?index=equities&symbol=X` | already read (`seed_shareholding`) |
 
 The menu also lists board meetings, corporate actions, voting results, insider trading, SAST
@@ -86,11 +86,19 @@ ratings, each with its own page under `/companies-listing/`. The endpoint for an
 ## Event XBRL (Reg 30 announcements): published with the announcement
 
 Verified 2026-10-18 (cloud session, live calls; the owner pointed at the announcements page). The earlier view that
-structured data "arrives after the PDF" and that event XBRL had "no source found" (TRACKER F48 gap 3, PLAN 17) was
-wrong for NSE: event XBRL is broadcast within seconds of the announcement.
+event XBRL had "no source found" (TRACKER F48 gap 3, PLAN 17) was wrong for NSE. **"Within seconds" was wrong too**
+(measured 2026-10-18, laptop, `xbrl_lag.py` in the session scratchpad): the rows' `timeTaken` / `difference` of
+00:00:01 is NSE's own dissemination delay, not the gap after the PDF. Matching 24 seeded event-XBRL rows of 13-17 Oct
+(orders, director changes, regulatory actions) to the company's nearest earlier announcement flagged `hasXbrl`:
+median 8 minutes; 14 within 15 minutes, 19 within an hour, 21 within 4 hours, all within 17 hours. RailTel's ₹18.99 Cr
+order: PDF 17 Oct 13:37, XBRL 18 Oct 10:38 (21 hours). So a card written from the PDF must be checked against the
+XBRL when it lands, as for results (PLAN 16), not assume it is there.
 
 - `/api/corporate-announcements?index=equities`: every row carries `hasXbrl` (20 of 20 true on 18 Oct 2026) and
-  `seq_id`, beside the PDF in `attchmntFile`.
+  `seq_id`, beside the PDF in `attchmntFile`. **There is no shared key** with the XBRL rows (`seq_id` and `appId` are
+  different series; measured 2026-10-18): join by symbol, event type and time, and confirm from the file itself, which
+  carries `NSESymbol`, `ScripCode` (BSE's code: our `scrip_code`), `ISIN`, `DateOfOccurrenceOfEventOrInformation` and
+  `DateOfReport`. One event can have two PDFs and two XBRL files (RailTel 17-18 Oct).
 - `/api/XBRL-announcements?index=equities&from_date=dd-mm-yyyy&to_date=dd-mm-yyyy&type=T` (the page's
   "Announcements XBRL" tab) lists the files: `xbrl` (raw `.xml` on nsearchives), `ixbrl` (HTML view), `eventType`,
   `broadcastDateTime`, `typeOfAnn` / `prevAppId` for revisions. Some rows put the file in `attachment` instead
@@ -103,7 +111,8 @@ wrong for NSE: event XBRL is broadcast within seconds of the announcement.
   `DateOfBaggingOrReceivingOfOrdersOrContracts`, `TimePeriodByWhichTheOrdersOrContractsIsToBeExecuted`,
   `WhetherTheOrdersOrContractsIsOrdinaryCourseOfBusiness`, `WhetherTheOrderOrContractWouldFallWithinRelatedPartyTransactions`,
   `TypeOfAnnouncementAsPerRegulation30ParaBOfPartAOfScheduleIII` (New / amendment). A director change gives name,
-  designation, type of change and effective date.
+  designation, type of change and effective date. `BroadConsiderationForTheOrdersOrContracts` is free text and says
+  whether the amount includes tax (RailTel: "Rs. 18,99,03,173/ (IncludingTax)"); the counterparty's CIN/LEI is a field.
 
 So for these events the amount, unit, counterparty, dates and stage need no model reading: they are exact fields.
 
@@ -111,10 +120,10 @@ So for these events the amount, unit, counterparty, dates and stage need no mode
 
 | Data | Claim in these docs | Measured |
 |---|---|---|
-| Event XBRL (Reg 30) | "no source found" | Published with the announcement, seconds apart (above) |
+| Event XBRL (Reg 30) | "no source found" | Exists. Published minutes after the announcement as a rule (median 8 min, 19 of 24 within an hour), up to 21 hours (above; laptop, 2026-10-18) |
 | Results XBRL (NSE integrated filing) | "up to 24 hours" after the outcome PDF (TRACKER F48 gap 2) | Same day, **5 minutes to 2 h 40 min** after the board-meeting outcome: Capri Global 5 min (Q1FY27), LTM 49 min (Q2FY27), Newgen 2 h 28 min, Bank of Maharashtra 2 h 39 min. A results card can wait for it or be corrected within hours, not a day |
 | Annual-report XBRL | "weeks to months after the PDF" | **True**: LTM ~7 weeks, NTPC ~7.5, Newgen ~8, Hindustan Copper FY25 ~4.5 months; Capri Global FY26 not listed yet |
-| Pledged data | `/api/corporate-pledgedata` gives `percSharesPledged` (Pledged data row above) | **Not reproduced**: empty `data` with and without symbol and dates; `/api/corporate-pledge-holding` returns a count of 0. The page's call needs reading again before module 42 relies on it |
+| Pledged data | `/api/corporate-pledgedata` gives `percSharesPledged` (Pledged data row above) | **Not reproduced**: empty `data` with and without symbol and dates; `/api/corporate-pledge-holding` returns a count of 0. **Re-read from the page's own code 2026-10-18 (laptop, Indian IP):** the page calls exactly `/api/corporate-pledgedata?` plus `&symbol=` and dates; still empty. Its neighbour **`/api/corporate-pledgedata-sast3132?&from_date=&to_date=`** (SAST Reg 31 encumbrance disclosures) returns rows: 288 for 1 Jul-18 Oct 2026, each with company, lender (`eventDetailsEntity`), shares encumbered and % (`encumbHolding`, `encumbPerc`), event dates and the filing (`attachment`). That is a promoter-pledge source for module 42, event by event |
 
 ## Still open
 
@@ -142,5 +151,10 @@ So for these events the amount, unit, counterparty, dates and stage need no mode
   217 tagged figures, and `CorpXbrlGen` the announcement metadata. So on GitHub BSE's files can be read but not listed;
   a file's address carries its upload time, so it cannot be built without a list. NSE answered every call (announcements,
   event XBRL, results, annual reports, shareholding, PDFs).
-- Whether an Integrated Filing instance exists for companies listed only on BSE (NSE has 2,480 of our
-  5,111 companies). Those are almost all micro caps.
+- Whether an Integrated Filing instance exists for companies listed only on BSE. NSE lists 2,477 of our 5,111
+  companies (measured 2026-10-18 against `EQUITY_L.csv`, 2,605 rows, by ISIN; 2,480 on 2026-10-16): 77% of those
+  above ₹100 Cr, 96% above ₹1,000 Cr, 99% above ₹10,000 Cr. The rest are almost all micro caps. NSE's SME list is a
+  separate file, not counted.
+- DGTR (module 8): measured 2026-10-18, `dgtr.gov.in` answers; each anti-dumping case has a page listing its
+  initiation, preliminary findings and final findings as dated PDF downloads, and the case list filters by date, HS
+  code, country and status. A source, as PDFs; linking a product to listed companies is the open part.

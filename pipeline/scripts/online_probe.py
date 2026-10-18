@@ -9,7 +9,7 @@ Checks (docs/SOURCES.md "Event XBRL" and "Timing checked live"):
 2. the event XBRL list (/api/XBRL-announcements) by type, and one order's XBRL read field by field;
 3. how many event XBRL files can be joined to their announcement (same symbol, broadcast within 10 minutes);
 4. results XBRL (integrated filing): the gap after the board-meeting outcome for a few companies;
-5. annual-report XBRL lists;
+5. annual-report XBRL lists, and shareholding XBRL read with the pipeline's own parser;
 6. an announcement PDF downloaded and read with the pipeline's own reader;
 7. BSE's announcement XBRL page (CorpXbrlGen), which answered a non-Indian cloud address once.
 
@@ -29,6 +29,7 @@ import httpx
 from bse_intel.extract import Document
 from bse_intel.nse import SITE, USER_AGENT, NseClient
 from bse_intel.timeutil import today_ist
+from bse_intel.xbrl import parse as xbrl_parse
 
 # A large IT company, a bank, an NBFC and a PSU: round 3's companies, all on NSE
 COMPANIES = ["LTM", "MAHABANK", "CGCL", "NTPC"]
@@ -137,6 +138,16 @@ def main() -> int:
         for symbol in COMPANIES[:2]:
             step(f"annual-report XBRL list, {symbol}", lambda symbol=symbol: "; ".join(
                 f"FY{f.to_year} {f.basis} {f.filed_at}" for f in nse.annual_reports(symbol)[:4]))
+
+        for symbol in COMPANIES[2:]:
+            def shareholding(symbol=symbol):
+                filings = nse.shareholding(symbol)[:1]
+                data = nse.download(filings[0].xbrl_url) if filings else None
+                parsed = xbrl_parse(data) if data else None
+                return (f"{filings[0].period} filed {filings[0].filed_at[:10]}: {parsed.table()}" if parsed
+                        else f"{len(filings)} filings, no XBRL read")
+
+            step(f"shareholding XBRL read by the pipeline, {symbol}", shareholding)
 
         def pdf_read():
             row = next(r for r in found.get("ann", []) if str(r.get("attchmntFile", "")).endswith(".pdf"))

@@ -20,9 +20,34 @@ headline = [
   "\\bqip\\b", "qualified institutions? placement", "warrants?", "merger", "amalgamation", "demerger", "acquisition",
   "open offer", "credit rating", "(bags?|receipt of|secures?|wins?|awarded).{0,40}orders?", "letter of (award|acceptance|intent)",
   "commercial (production|operations)", "commissioning", "usfda", "warning letter", "import alert", "form 483",
-  "resignation", "\\bdefault", "delay in (payment|servicing)", "insolvency", "\\bnclt\\b", "one[- ]time settlement",
+  "\\bdefault", "delay in (payment|servicing)", "insolvency", "\\bnclt\\b", "one[- ]time settlement",
   "investor presentation", "transcript",
 ]
+
+# Director, KMP and company-secretary changes and resignations get no card (owner, 2026-10-18; replaces the
+# 2026-10-16 fast track, and "resignation" is off the material veto). NSE's subjects for them, measured 13-18 Oct 2026:
+# 171 filings. An auditor's change or resignation is not a director change and stays with pass 1; so does a letter that
+# also carries results, a deal, a default or insolvency.
+[[drop]]
+reason = "director / KMP change or resignation (no card)"
+material_veto = false
+subcategories = ["resignation of director/kmp", "appointment", "resignation", "change in management", "change in director",
+                 "cessation", "change in company secretary", "retirement"]
+headline = ["\\bresign(ation|ed|s)?\\b", "\\bcessation\\b",
+            "\\b(re-?)?appointment of .{0,80}(director|\\bceo\\b|\\bcfo\\b|chief|company secretary|compliance officer|key managerial|\\bkmp\\b)"]
+# A board-meeting outcome may carry other news (pass 2 still gives a director change no card); a vote is a timeline line
+exclude_headline = ["auditor", "financial results", "merger", "amalgamation", "acquisition", "\\bdefault", "insolvency",
+                    "outcome of (the )?board", "board meeting outcome", "postal ballot", "voting results?", "\\b(agm|egm)\\b"]
+
+# Auditors rotate by law (Companies Act s.139: one five-year term for an individual, two for a firm), so an appointment,
+# re-appointment or completion of term is routine (owner, 2026-10-18). A resignation before the term ends is the signal
+# (SEBI's 2019 circular on auditor resignations makes the company disclose its reasons): it goes to pass 1, as does a
+# casual vacancy, which a resignation leaves.
+[[drop]]
+reason = "auditor appointment or end of term (routine)"
+headline = ["(re-?)?appointment of .{0,80}auditors?", "auditors?.{0,80}(completion|expiry|end) of (the |its |their )?(term|tenure)",
+            "(completion|expiry|end) of (the |its |their )?(term|tenure) of .{0,60}auditors?", "rotation of .{0,40}auditors?"]
+exclude_headline = ["resign", "casual vacancy", "removal"]
 
 [[drop]]
 reason = "share certificate housekeeping"
@@ -272,11 +297,6 @@ event_type = "CAPEX"
 subcategories = ["capacity addition", "commencement of commercial production"]
 headline = ["commencement of commercial (production|operations)", "commissioning of", "capacity expansion", "expansion of (the )?capacity",
             "(new|greenfield|brownfield) (plant|facility|unit)"]
-
-# Management changes are "deemed material" events under Reg 30 (Schedule III Para A): they keep a card (owner, 2026-10-16).
-[[fast_track]]
-event_type = "MANAGEMENT_CHANGE"
-headline = ["resignation of .*(managing director|ceo|cfo|chief|auditor)", "appointment of .*(managing director|ceo|cfo|chief executive|chief financial)"]
 
 # Any other board-meeting outcome (dividends, fundraises, appointments...):
 # material often enough to skip Pass 1; Pass 2 decides the event type.

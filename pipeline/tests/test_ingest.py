@@ -127,7 +127,7 @@ def _f(headline, category="", subcategory="", subject=""):
     ("Intimation of Record Date for interim dividend - 30/10/2026", "Corp. Action", "", "CALENDAR", "RECORD_DATE"),
     ("Record date for Rights Issue of equity shares", "Corp. Action", "", "FAST_TRACK", "RIGHTS_ISSUE"),
     ("Outcome of AGM and voting results", "AGM/EGM", "", "TIMELINE", "GOVERNANCE"),
-    # Routine events: a dated timeline line, no card (D22); management changes stay cards (deemed material, Reg 30 Para A)
+    # Routine events: a dated timeline line, no card (D22)
     ("Jubilant Pharmova recommends final dividend of Rs 5 per share for FY25", "Company Update", "", "TIMELINE", "CORPORATE_ACTION"),
     ("Outcome of Postal Ballot - re-appointment of Mr Rao as Independent Director", "AGM/EGM", "", "TIMELINE", "GOVERNANCE"),
     ("Disclosure under Regulation 31(1) and 31(4) of SEBI SAST - nil encumbrance", "Company Update", "", "TIMELINE", "GOVERNANCE"),
@@ -146,7 +146,13 @@ def _f(headline, category="", subcategory="", subject=""):
     ("Adoption of eMudhra ESOP/RSU Scheme 2025", "Company Update", "", "PASS1", None),
     ("Allotment of equity shares on preferential basis", "Company Update", "", "PASS1", None),  # not an ESOP drop
     ("Audited financial results for FY25 and recommendation of final dividend", "Result", "", "FAST_TRACK", "RESULTS"),
-    ("Appointment of Mr Yasushi Nishikawa as Managing Director and CEO", "Company Update", "", "FAST_TRACK", "MANAGEMENT_CHANGE"),
+    # Owner, 2026-10-18: no cards for director / KMP changes or resignations; an auditor's resignation stays with pass 1
+    ("Appointment of Mr Yasushi Nishikawa as Managing Director and CEO", "Company Update", "", "DROP", None),
+    ("Resignation of Mr X as Chief Financial Officer", "Company Update", "", "DROP", None),
+    ("Resignation of Statutory Auditors", "Company Update", "", "PASS1", None),
+    ("Appointment of M/s ABC & Co as Statutory Auditors for a second term of five years", "Company Update", "", "DROP", None),
+    ("Completion of term of Statutory Auditors at the conclusion of the 40th AGM", "Company Update", "", "DROP", None),
+    ("Appointment of Statutory Auditors to fill the casual vacancy caused by resignation", "Company Update", "", "PASS1", None),
     ("Intimation of Stop Transfer of share certificates", "Company Update", "", "DROP", None),
     ("Register of duplicate share certificates in Form SH-2", "Company Update", "", "DROP", None),
     ("Payment of Annual Listing Fees for FY 2026-27", "Company Update", "", "DROP", None),

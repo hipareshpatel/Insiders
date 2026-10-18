@@ -4,15 +4,19 @@ company's earnings, balance sheet, governance, or growth outlook.
 
 Usually material: financial results; earnings-call transcripts and investor presentations; order
 wins; capex and capacity additions; acquisitions, mergers, demergers; fundraises (QIP, rights,
-preferential, warrants, NCDs); credit-rating actions; exits of the MD, CEO, CFO or auditor;
-regulatory actions, penalties, tax demands, USFDA outcomes; significant litigation; dividends,
+preferential, warrants, NCDs); credit-rating actions; a statutory auditor resigning before its
+term ends (the reasons it gives matter most); regulatory actions, penalties, tax demands, USFDA outcomes; significant litigation; dividends,
 buybacks, bonus issues, splits; monthly business or volume updates.
 
 Routine but worth a dated timeline line, with no analysis card (set timeline_only to true): a
-director, MD or CEO appointment or re-appointment, a dividend recommendation on its own, a postal
-ballot or AGM voting result, a promoter's nil pledge declaration. A CFO or auditor exit, a pledge
-created or invoked, or any of these together with results, a fundraise or other business is not
-routine.
+dividend recommendation on its own, a postal ballot or AGM voting result, a promoter's nil pledge
+declaration. A pledge created or invoked, or any of these together with results, a fundraise or
+other business is not routine.
+
+Not material, no card and no timeline line: an appointment, re-appointment, resignation, cessation
+or retirement of a director, MD, CEO, CFO, company secretary or other key managerial person; an
+auditor's appointment, re-appointment, rotation or completion of its term. Only an auditor leaving
+before its term ends is material.
 
 Usually not material: routine compliance certificates; procedural intimations with no new
 information; analyst-meet schedules; small ESOP allotments; clarifications that add nothing;

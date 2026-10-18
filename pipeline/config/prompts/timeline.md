@@ -7,7 +7,7 @@ amount, in one sentence of 30 words or fewer. Name the company's people and role
 filing does. Add nothing the filing does not say: no opinion, no context, no comparison.
 
 Set needs_card to true when a reader would want an analysis card for this filing, that is when:
-- the CFO or the statutory auditor leaves, is changed or is replaced mid-term;
+- the statutory auditor resigns or is replaced before its term ends;
 - a departure comes with disagreement, fraud, an investigation or a regulator's involvement;
 - a promoter's pledge is created, increased or invoked (a nil or unchanged declaration is routine);
 - the letter also carries results, a fundraise, an acquisition or sale, an order, capex, a buyback,

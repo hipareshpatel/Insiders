@@ -54,23 +54,18 @@ def test_a_consequential_filing_goes_back_for_a_full_card(settings):
     assert pipeline.stats.timeline_only == 0
 
 
-def test_a_management_change_filed_in_other_words_is_one_card(settings):
-    """"Yasushi Nishikawa appointed MD & CEO" and "MD & CEO Junya Yamanishi steps down; Nishikawa takes over": one event."""
+def test_a_management_change_gets_no_card_even_when_pass_2_types_it(settings):
+    """Owner, 2026-10-18: no cards for director / KMP changes. The rule book drops most of them before any model call;
+    one that still reaches pass 2 (an appointment in a board-meeting letter) ends without a card or memory change."""
     now = now_ist() - timedelta(hours=3)
-    a = _filing("n-a", "Appointment of Mr Nishikawa as Managing Director and CEO", now, "Company Update")
-    b = _filing("n-b", "Resignation of Mr Yamanishi; Nishikawa takes over as Managing Director and CEO", now + timedelta(hours=1), "Company Update")
-    a, b = (x.model_copy(update={"route": "FAST_TRACK", "event_type": "MANAGEMENT_CHANGE"}) for x in (a, b))
+    a = _filing("n-a", "Outcome of board meeting", now, "Company Update")
+    a = a.model_copy(update={"route": "FAST_TRACK", "event_type": None})   # the board-outcome rule sets none
     one = json.loads(json.dumps(PASS2))
     one["event_type"] = "MANAGEMENT_CHANGE"
     one["timeline_entry"] = "Yasushi Nishikawa appointed Managing Director and CEO from 17 April 2025, succeeding Junya Yamanishi."
-    two = json.loads(json.dumps(one))
-    two["timeline_entry"] = "Managing Director and CEO Junya Yamanishi steps down; Yasushi Nishikawa takes over as MD and CEO from 17 April 2025."
-    pipeline, sink, fake = build(settings, [a, b], {f.pdf_url: _pdf("Appointment of Managing Director and CEO") for f in (a, b)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(one), json.dumps(two)]}, env={"NVIDIA_API_KEY": "n"})
+    pipeline, sink, fake = build(settings, [a], {a.pdf_url: _pdf("Appointment of Managing Director and CEO")},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(one)]}, env={"NVIDIA_API_KEY": "n"})
     first = pipeline.analyze(a)
-    assert first.card is not None
-    from bse_intel.dossier import merge, new_dossier
-    from bse_intel.models import Pass2Output
-    sink.put_dossier("999001", merge(new_dossier(a, {}), Pass2Output.model_validate(one), a, "MODERATE", "now"))
-    second = pipeline.analyze(b)
-    assert second.update["status"] == "DUPLICATE" and "same event" in second.update["reason"]
+    assert first.card is None and first.update["status"] == "NOT_MATERIAL"
+    assert "director / KMP" in first.update["reason"]
+    assert not (sink.get_dossier("999001") or {}).get("timeline")

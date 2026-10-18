@@ -60,6 +60,7 @@ from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
 from . import annual_xbrl
+from . import event_xbrl
 from . import computed
 from . import trust
 from . import nse as nse_api
@@ -94,6 +95,10 @@ LONG_PROMPT_TOKENS = 12_000
 SNAPSHOT_KEY = "daily_feed/latest_snapshot.json"
 SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
 SNAPSHOT_PAGE = 50        # the feed's page size
+
+
+class EventXbrlPending(Exception):
+    """A live filing's event XBRL has not reached NSE yet; the filing stays queued without spending an attempt."""
 
 
 @dataclass
@@ -1056,6 +1061,7 @@ class Pipeline:
         if nse is not None:
             raw.attach(nse, sink, "nse", settings)
         self._annual_lists: dict[str, tuple[list, str]] = {}   # symbol -> NSE's annual-report XBRL list and when it was read
+        self._event_days: dict[str, list] = {}   # IST day -> NSE's event XBRL files broadcast that day (this run)
         self._nse_refused = False                  # NSE refused the address: no more calls this run
         self.prompts = prompts or PromptEngine(settings)
         self.rules = rules or RuleBook.from_config(settings.load_toml("taxonomy.toml"))
@@ -1489,6 +1495,8 @@ class Pipeline:
                             log.warning("stopping: %s", self.stats.stopped_reason)
                     return self._deferred(filing, "deferred: providers busy")
                 return self._failed(filing, exc)
+            except EventXbrlPending as exc:
+                return self._deferred(filing, f"deferred: {exc}")
             except AttachmentError as exc:
                 if exc.refused:
                     with self._lock:
@@ -1735,7 +1743,10 @@ class Pipeline:
             except OSError:
                 pass
         try:
-            data = (client or self.bse).download(url, max_bytes=max_bytes)
+            client = client or self.bse
+            # an event XBRL file comes as a zip of the XML and its PDF on some rows (event_xbrl.xml_of)
+            fetch = client.fetch if url.lower().endswith(".zip") and hasattr(client, "fetch") else client.download
+            data = fetch(url, max_bytes=max_bytes)
         except AttachmentError:
             return None
         if data and path:
@@ -1745,6 +1756,67 @@ class Pipeline:
             except OSError:
                 pass
         return data
+
+    def _event_files(self, filing: Filing) -> list:
+        """NSE's event XBRL files broadcast in the window around a filing, read once a run for each day (one request
+        per type for the days not read yet)."""
+        filed = datetime.fromisoformat(filing.filed_at)
+        first = (filed - event_xbrl.BEFORE).date()
+        last = min((filed + event_xbrl.AFTER).date(), today_ist())
+        days = [first + timedelta(days=n) for n in range((last - first).days + 1)]
+        with self._lock:
+            missing = [d for d in days if d.isoformat() not in self._event_days]
+        if missing:
+            got: dict[str, list] = {d.isoformat(): [] for d in missing}
+            for kind in event_xbrl.KINDS:
+                for f in self.nse.event_xbrl(kind, missing[0], missing[-1]):
+                    got.setdefault(f.broadcast_at.date().isoformat(), []).append(f)
+            with self._lock:
+                for day, files in got.items():
+                    self._event_days.setdefault(day, files)
+        with self._lock:
+            return [f for d in days for f in self._event_days.get(d.isoformat(), [])]
+
+    def _event_xbrl(self, filing: Filing, doc: Document) -> tuple[list, list[str] | None]:
+        """The filing's event XBRL from NSE (event_xbrl.py): its matches, and the app ids of the company's files looked
+        at (None when NSE was not asked: not an NSE filing, not an event filed with XBRL, refused or failing).
+
+        Raises EventXbrlPending for a live filing of an event that is filed with XBRL (orders, litigation, actions,
+        director changes...) when no file has come yet and the PDF is younger than event_xbrl.WAIT_MINUTES: it stays
+        queued without spending an attempt, since the file follows the PDF by a median of 8 minutes."""
+        if self.nse is None or not filing.news_id.startswith(nse_api.NEWS_ID_PREFIX) or not filing.symbol:
+            return [], None
+        mine = event_xbrl.family(filing.subject)
+        if not mine and not event_xbrl.generic(filing.subject):
+            return [], None
+        with self._lock:
+            if self._nse_refused:
+                return [], None
+        cache: dict[str, object] = {}
+
+        def read(file):
+            if file.app_id not in cache:
+                data = self._xbrl_file(file.xbrl_url, self.nse) if file.xbrl_url else None
+                cache[file.app_id] = event_xbrl.parse(data, file.app_id) if data else None
+            return cache[file.app_id]
+
+        try:
+            matches, checked = event_xbrl.match(filing, self._event_files(filing), read, doc.layer_text() or "")
+        except nse_api.SourceBlockedError as exc:
+            log.error("NSE refused the session; events are read from their PDF for the rest of this run: %s", exc)
+            with self._lock:
+                self._nse_refused = True
+            return [], None
+        except Exception as exc:  # the XBRL is an extra: the PDF still carries the event
+            log.warning("event XBRL for %s unavailable (%s: %s); using the PDF", filing.news_id, type(exc).__name__, exc)
+            return [], None
+        if not matches and mine:
+            age = datetime.now(tz=IST) - datetime.fromisoformat(filing.filed_at)
+            if age < timedelta(minutes=event_xbrl.WAIT_MINUTES):
+                raise EventXbrlPending(f"waiting for its event XBRL ({age.total_seconds() / 60:.0f} min after the PDF)")
+        if matches:
+            log.info("event XBRL for %s: %s", filing.news_id, ", ".join(f"{m.file.app_id} ({m.how})" for m in matches))
+        return matches, checked
 
     def _annual_report_xbrl(self, filing: Filing, company: dict,
                             doc: Document) -> tuple[list[annual_xbrl.AnnualReport], str | None]:
@@ -1870,6 +1942,8 @@ class Pipeline:
     def _analyze_document(self, filing, company, industry, doc: Document, bulk: bool, memory_complete: bool) -> Outcome:
         now = now_iso()
         event_type = filing.event_type or "OTHER"
+        # Before any model call: a live filing waiting for its file stays queued at no cost (EventXbrlPending)
+        events, events_checked = self._event_xbrl(filing, doc)
         # Before pass 1, not after it: the gatekeeper is shown what this company has already filed, so it
         # can name an event arriving again as a different document (the document rules cannot see those).
         dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
@@ -1938,7 +2012,8 @@ class Pipeline:
             if tagged.kind == "RESULTS":
                 log.warning("XBRL figures for %s not found in the PDF in any unit; using the PDF only", filing.news_id)
             tagged = None
-        if not text.strip() and not tagged:
+        events_table = event_xbrl.table(events)
+        if not text.strip() and not tagged and not events:
             if filing.pdf_url:
                 # The attachment is there but nothing could be read from it (a 404, over 30 MB, corrupt or
                 # password-protected): a card from the headline alone cannot be checked against anything, and
@@ -1969,6 +2044,9 @@ class Pipeline:
         annual, annual_checked = self._annual_report_xbrl(filing, company, doc) if event_type == "ANNUAL_REPORT" else ([], None)
         if annual:
             text = annual_xbrl.table(annual) + "\n\n" + text
+        # The event's own structured filing: amounts, parties, dates and stage as exact fields (PLAN 18 part 3)
+        if events_table:
+            text = events_table + "\n\n" + text
         sector_module = self.prompts.sector_for(industry)
         sector = sector_module.name
         peers = self._peers(sector, event_type, filing)
@@ -2006,8 +2084,10 @@ class Pipeline:
         # filing does not print - 40 of the 77 cards held only for an unfound amount (funnel, 2026-10-18).
         sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False), scale)
         history = dossier.get("financial_metrics", [])
+        event_orders = event_xbrl.orders(events)
         # Code computes, the model describes (audit round 2): the changes, margins and ratios a card may state
-        produced = computed.build_pool(filed_text, tagged, annual_xbrl.table(annual) if annual else "", history, scale,
+        produced = computed.build_pool(filed_text, tagged, "\n".join(x for x in (annual_xbrl.table(annual) if annual else "",
+                                                                                  events_table) if x), history, scale,
                                        (view or {}).get("ownership"))
         def ground(candidate: Pass2Output):
             """Correct a card where the filing can settle it, then check what is left.
@@ -2023,6 +2103,7 @@ class Pipeline:
             counts = fix_count_millions(candidate, sources)
             changes = fix_change_percentages(candidate, sources) + counts
             changes += apply_deal_guards(candidate, filing, history, dossier.get("balance_sheet", []), text)
+            changes += event_xbrl.apply_orders(candidate.card, event_orders)   # the file's figures have the last word
             changes += misdated_memory_insights(candidate, view, filed_text)
             if tagged:
                 # against the document alone: `sources` starts with the XBRL table, so checking the
@@ -2074,6 +2155,12 @@ class Pipeline:
         if out.card is not None and out.event_type != "CONCALL_PRESENTATION":
             out.card.call_read = None  # guidance, tone and transparency describe a call, not other filings
         event_type = out.event_type
+        if event_type in NO_CARD_EVENTS:
+            # director and KMP changes get no card (owner, 2026-10-18); the rule book drops most before any model call
+            with self._lock:
+                self.stats.not_material += 1
+            return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": event_type,
+                            "reason": "pass2: director / KMP change (no card)", "updated_at": now})
         card = out.card
         # Memory takes only figures confirmed at the filing's unit and the company's scale (audit round 2); the
         # card keeps what it read. XBRL figures go into both, unfiltered.
@@ -2143,6 +2230,9 @@ class Pipeline:
                                         "figures": sum(r.figures() for r in annual)}
         if annual_checked:
             card_json["annual_xbrl_checked"] = annual_checked  # NSE's list as of then: annual_catchup.py
+        if events_checked is not None:
+            # the files read with the card, and every file of the company's looked at then: event_catchup.py
+            card_json["event_xbrl"] = event_xbrl.summary(events, events_checked)
         card_json["priced_at_filing"] = {k: priced[k] for k in PRICED_FIELDS if priced.get(k) is not None} or None
         row = {
             "news_id": filing.news_id, "scrip_code": filing.scrip_code,
@@ -2425,6 +2515,12 @@ class Pipeline:
                 backfill_done = self.sink.kv_get("backfill:complete") == "1"
                 self.process(live_from.isoformat(), today.isoformat(), live_deadline, bulk=False,
                              memory_complete=backfill_done, history_first=True)
+                if self._on_nse() and time.monotonic() < live_deadline:
+                    from . import event_catchup   # cards made before their event XBRL landed
+
+                    caught = event_catchup.catch_up(self, live_deadline)
+                    if caught["rerun"] or caught["stopped"]:
+                        log.info("event XBRL catch-up: %s", json.dumps(caught))
             if mode in ("backfill", "all") and not self._halted(bulk=True):
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
         except SourceBlockedError as exc:
@@ -2612,6 +2708,7 @@ SECOND_OPINION_MIN_S = 300
 # MONTHLY_BUSINESS_UPDATE, CAPEX, PRODUCT_LAUNCH and CORPORATE_ACTION recur with new numbers in nearly
 # the same words, and RESULTS has its own one-card-per-quarter rule (D20).
 REPEAT_DAYS = 10  # the window the fast-track repeat check looks back over, as similar_timeline_entry
+NO_CARD_EVENTS = ("MANAGEMENT_CHANGE",)   # owner, 2026-10-18: no cards for director / KMP changes
 ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE", "LITIGATION_REGULATORY", "FUNDRAISE",
                       "RIGHTS_ISSUE", "M_AND_A", "DEBT_RATINGS", "CONCALL_PRESENTATION", "ANNUAL_REPORT")
 UNIT_HINT = ("Convert each amount from the unit its table states: ₹ lakh ÷ 100 = ₹ Cr, ₹ million ÷ 10 = ₹ Cr, "

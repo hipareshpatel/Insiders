@@ -69,6 +69,8 @@ EQUITY_LIST_URL = "https://nsearchives.nseindia.com/content/equities/EQUITY_L.cs
 # with its PDF and whether event XBRL exists. Read from the "Corporate Filings - Announcements" page's own call.
 ANNOUNCEMENTS_ENDPOINT = f"{SITE}/api/corporate-announcements"
 NEWS_ID_PREFIX = "nse-"
+# Event XBRL files (Reg 30: orders, litigation, actions, director changes...), listed by type; event_xbrl.py
+EVENT_XBRL_ENDPOINT = f"{SITE}/api/XBRL-announcements"
 
 
 class SourceBlockedError(_SourceBlocked):
@@ -456,6 +458,18 @@ class NseClient:
                 seen.add(filing.news_id)
                 out.append(filing)
         return out
+
+    def event_xbrl(self, kind: str, day_from: date, day_to: date | None = None, symbol: str | None = None) -> list:
+        """NSE's event XBRL files of one type ("announcements", "para-b", "action") broadcast between the two dates
+        (event_xbrl.py). One answer for the range, as the "Announcements XBRL" tab asks for it."""
+        from . import event_xbrl
+
+        params = {"index": "equities", "from_date": day_from.strftime("%d-%m-%Y"),
+                  "to_date": (day_to or day_from).strftime("%d-%m-%Y"), "type": kind}
+        if symbol:
+            params["symbol"] = symbol.strip().upper()
+        data = self._get(EVENT_XBRL_ENDPOINT, params).json()
+        return event_xbrl.parse_list(data.get("data") if isinstance(data, dict) else data, kind)
 
     def fetch(self, url: str, max_bytes: int = 30_000_000) -> bytes | None:
         """An announcement's attachment (PDF, sometimes a ZIP) from nsearchives. None when it does not exist or is

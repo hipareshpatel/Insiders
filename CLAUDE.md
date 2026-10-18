@@ -151,6 +151,7 @@ Read before changing anything:
      WRONG (12.5%), 2 MISSED of 50; the author's own review gave the same 10 and 1 MISSED. Next (owner, 2026-10-18):
      the NSE pipeline, online-only, companies >= ₹100 Cr, then its own measured round, then the 6-month backfill.
      Audit rounds are reviewed by independent blind agents, one per folder; the fix author does not review.
+     **NSE parts 1-3 built (F67, F68):** universe, discovery, event XBRL (joined by the same file, else by content). No cards for director/KMP changes (D30). **Go-live needs 95% of published cards right** (owner, 2026-10-18); once the pipeline works, the focus is card output and contextual memory.
   6. Raise the paid weight and drain the 160 queued filings; PLAN 1h.
   Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order
   (PLAN.md item 1c). `sync-to-cloud` still cannot run: no PLATFORM_API_URL or INGEST_TOKEN for the

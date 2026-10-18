@@ -124,6 +124,26 @@ guarantees, amendment or termination of agreements, regulatory-framework changes
 
 So for these events the amount, unit, counterparty, dates and stage need no model reading: they are exact fields.
 
+### Joining an event file to its announcement (measured 2026-10-18, laptop, `scripts/event_xbrl_join.py`)
+
+13-18 Oct 2026: 2,429 announcements, 130 event files once director changes are left out (D30: they get no card).
+- **The announcements page's XML icon is not the event file.** It links `/api/xbrl/<seq_id>`, NSE's generic record of
+  the announcement (symbol, company, subject, the one-line description, the PDF's URL, the time; 1.7 KB for RailTel's
+  order of 17 Oct, seq 106821056), the same data as the JSON row. No amount, no party, no link to the event file.
+- **The same file is the key where it exists.** 45 director-change rows carry the announcement's own attachment URL;
+  76 of 82 order, action and litigation rows that carry a PDF carry one of exactly the announcement's size ("409.89 KB"),
+  each time one announcement of the symbol; a zip holds the PDF beside the XML. 74 of the 130 files have such a pair.
+- **Otherwise the content.** An amount the file states printed in the PDF (crore, lakh, million or rupees, three
+  significant digits at least), or for an event without an amount a name it states. On the 74 known pairs this alone
+  finds the right announcement for 50 and takes 3 others (product-launch filings of the same company the same day:
+  MilkyMist twice, SBI Card's press release; probably the same launch, not checked). The company's own name and an
+  authority's name (RBI, SEBI, a tax office) count only under the event's own subject: under "General Updates" they
+  paired Yes Bank's action file with its ESG-rating letter and Reliance Power's with an unrelated letter.
+- **Together:** 106 of 130 files reach an announcement (79 by the same file, the rest by content); none of the 74
+  known pairs is joined elsewhere. By event: orders 28 of 36, legal (actions, litigation) 55 of 61, operations 9 of 13,
+  licences 4 of 6, guarantees 3 of 3, ESOPs 3 of 4, agreements 3 of 5. Unjoined files are mostly scanned PDFs without a
+  text layer (the check reads the layer) and filings outside the window.
+
 ## Timing checked live (2026-10-18, cloud session)
 
 | Data | Claim in these docs | Measured |

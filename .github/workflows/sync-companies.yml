@@ -18,6 +18,9 @@ concurrency:
 
 jobs:
   sync:
+    # BSE's scrip list: BSE refuses GitHub's addresses, so the weekly run is off unless BSE_SYNC is "on" (owner,
+    # 2026-10-18: BSE stays in the repo as a backup, off the daily path, until the online run has been green a week)
+    if: github.event_name != 'schedule' || vars.BSE_SYNC == 'on'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 30
     defaults:

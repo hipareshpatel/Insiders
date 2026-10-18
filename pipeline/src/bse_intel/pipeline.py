@@ -86,6 +86,7 @@ PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
 MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing this network
+MAX_NETWORK_FAILURES = 5  # attachment downloads failing on the network in a row that mean the source is down
 MAX_UNREACHABLE = 3      # filings in a row the platform did not answer for: the site is down, stop
 NOISE_CHUNK = 500        # rows per noise-audit file in R2
 NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category", "subcategory",
@@ -1073,6 +1074,7 @@ class Pipeline:
         self._tried: set[str] = set()       # filings attempted this run (one attempt each)
         self._priority: list[str] = []      # live companies whose history should be backfilled first
         self._refusals = 0
+        self._network_failures = 0   # attachment downloads that failed on the network in a row (no attempt spent)
         self._unreachable = 0
         self._busy = 0
         self._busy_halt = False
@@ -1497,13 +1499,34 @@ class Pipeline:
                 return self._failed(filing, exc)
             except EventXbrlPending as exc:
                 return self._deferred(filing, f"deferred: {exc}")
+            except SourceBlockedError as exc:
+                # NSE answered 401, 403 or 429 (or BSE refused): stop the run politely; the work stays queued and no
+                # filing's attempt is spent (owner, 2026-10-18)
+                with self._lock:
+                    if not self._blocked:
+                        self._blocked = exc
+                        self.stats.stopped_reason = f"source refused the session: {exc}"[:300]
+                        log.error("stopping: %s", exc)
+                return self._deferred(filing, "deferred: the source refused the session")
             except AttachmentError as exc:
+                if not exc.refused:
+                    # A network failure or a server error: the file is tried again on a later run and the filing's
+                    # attempts are not spent on it (owner, 2026-10-18). Several in a row stop the run.
+                    with self._lock:
+                        self._network_failures += 1
+                        if self._network_failures >= MAX_NETWORK_FAILURES and not self._blocked:
+                            self._blocked = SourceBlockedError(
+                                f"{self._network_failures} attachment downloads failed on the network in a row; "
+                                "stopping this run with the work still queued")
+                            self.stats.stopped_reason = str(self._blocked)[:300]
+                    return self._deferred(filing, f"deferred: attachment download failed ({exc})"[:300])
                 if exc.refused:
                     with self._lock:
                         self._refusals += 1
                         if self._refusals >= MAX_REFUSALS and not self._blocked:
                             self._blocked = SourceBlockedError(
                                 f"BSE refused {self._refusals} attachment downloads in a row; stopping this run")
+                            self.stats.stopped_reason = str(self._blocked)[:300]
                 return self._failed(filing, exc)
             except Exception as exc:  # one bad filing must not stop the run
                 log.exception("filing %s failed", filing.news_id)
@@ -1551,14 +1574,14 @@ class Pipeline:
             # pages already OCR'd; if BSE will not serve it now, the old text is still better than none.
             try:
                 pdf = self._attachment(filing.pdf_url, _attachment_cap(filing))
-                self._refusals = 0
+                self._refusals = self._network_failures = 0
                 doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
                 doc.keep_ocr(cached)
             except AttachmentError:
                 doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         if doc is None:
             pdf = self._attachment(filing.pdf_url, _attachment_cap(filing)) if filing.pdf_url else None
-            self._refusals = 0
+            self._refusals = self._network_failures = 0
             doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
         try:
             repeat = self._duplicate_of(filing, doc)
@@ -2568,7 +2591,7 @@ class Pipeline:
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
         except SourceBlockedError as exc:
             status, error = "ERROR", str(exc)
-            self.stats.stopped_reason = "BSE blocked the request"
+            self.stats.stopped_reason = self.stats.stopped_reason or "the source refused the session; work stays queued"
             log.error("%s", exc)
         except Exception as exc:
             status, error = "ERROR", f"{type(exc).__name__}: {exc}"

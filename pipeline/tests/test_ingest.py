@@ -155,6 +155,12 @@ def _f(headline, category="", subcategory="", subject=""):
      "Company Update", "Copy of Newspaper Publication", "DROP", None),
     ("intimation regarding notice to members in newspapers pursuant to Section 201(2) of the Companies Act", "Company Update", "", "DROP", None),
     ("Advertisement in newspapers regarding transfer of equity shares to IEPF", "Company Update", "", "DROP", None),
+    # NSE annual-report season wording (25-26 Aug 2026)
+    ("Notice of 33rd Annual General Meeting ( AGM ) and Annual Report for the Financial Year 2025-26 including Report on "
+     "Business Responsibility and Sustainability Reporting ( BRSR )", "Company Update", "", "FAST_TRACK", "ANNUAL_REPORT"),
+    ("Business Responsibility and Sustainability Reporting ( BRSR ) for the Financial Year 2025-26", "Company Update", "", "PASS1", None),
+    ("Letter Sent To Shareholders For Annual Report Web-Link And Path", "Company Update", "", "DROP", None),
+    ("Annual Report 2025-26 Web Link Letters to Shareholders", "Company Update", "", "DROP", None),
     ("Intimation of Board Meeting notice given in newspaper", "Company Update", "", "DROP", None),
     # ... but a reply to a newspaper report is Reg 30(11) news
     ("Clarification on news item appearing in the Economic Times newspaper", "Company Update", "", "PASS1", None),

@@ -160,7 +160,7 @@ def test_refused_attachment_fails_one_filing_and_three_in_a_row_stop_the_run(set
     assert status["r0"] == ("ANALYZED", 0)          # committed before the block, not thrown away
     assert status["r1"] == ("FAILED", 1) and status["r3"] == ("FAILED", 1)
     assert status["r4"] == ("PENDING", 0)           # left for the next run once BSE is refusing us
-    assert stats.status == "ERROR" and stats.stopped_reason == "BSE blocked the request"
+    assert stats.status == "ERROR" and stats.stopped_reason.startswith("BSE refused 3 attachment downloads in a row")
 
 
 def test_a_failing_history_filing_is_tried_once_per_run(settings):
@@ -176,7 +176,9 @@ def test_a_failing_history_filing_is_tried_once_per_run(settings):
     pipeline.bse.download = lambda url, max_bytes=None: (_ for _ in ()).throw(AttachmentError("timed out")) if "old" in url else _pdf(RESULT_TEXT)
     pipeline.run("all", time_budget_s=60, max_backfill_days=40)
     (row,) = rows(sink, "select status, attempts from filings where news_id = 'old'")
-    assert row == {"status": "FAILED", "attempts": 1}  # not three attempts in one run
+    # A timeout is the network, not the filing: it stays queued with no attempt spent (owner, 2026-10-18), and is
+    # still tried only once in the run
+    assert row == {"status": "PENDING", "attempts": 0}
     (card,) = rows(sink, "select memory_complete from cards where news_id = 'new'")
     assert card["memory_complete"] == 0                # its history did not make it in
 
@@ -519,3 +521,27 @@ def test_an_attachment_once_read_as_nothing_is_downloaded_again(settings):
     path.write_bytes(gzip.compress(json.dumps(Document(None).to_cache()).encode()))
     assert pipeline.analyze(filing).update["status"] == "ANALYZED"
     assert pipeline._cached_text(f.news_id)["digital"], "read from the PDF this time"
+
+
+def test_nse_refusal_and_network_failures_spend_no_attempts_and_stop_the_run(settings):
+    """Owner, 2026-10-18: stop politely on NSE 401/403/429 and leave filings queued; never spend a filing's
+    attempts on network errors. Five network failures in a row also stop the run."""
+    from bse_intel.nse import SourceBlockedError as NseRefused
+    from test_pipeline import _filing as make, build
+
+    now = now_ist() - timedelta(hours=2)
+    filings = [make(f"n{i}", "Disclosure under Regulation 30", now + timedelta(minutes=i), "Company Update") for i in range(7)]
+    pipeline, sink, fake = build(settings, filings, {}, {})
+
+    def refused(url, max_bytes=None):
+        raise NseRefused("NSE refused the attachment (HTTP 403)")
+
+    pipeline.bse.download = refused
+    out = pipeline._process_one(filings[0], bulk=False, memory_complete=True)
+    assert out.update["status"] == "PENDING" and "attempts" not in out.update and pipeline._blocked is not None
+
+    pipeline, sink, fake = build(settings, filings, {}, {})
+    pipeline.bse.download = lambda url, max_bytes=None: (_ for _ in ()).throw(AttachmentError("timed out"))
+    outs = [pipeline._process_one(f, bulk=False, memory_complete=True) for f in filings[:5]]
+    assert all(o.update["status"] == "PENDING" and "attempts" not in o.update for o in outs)
+    assert pipeline._blocked is not None and "failed on the network" in str(pipeline._blocked)

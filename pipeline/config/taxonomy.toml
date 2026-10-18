@@ -79,6 +79,8 @@ headline = ["(completion of )?dispatch of (the )?(annual report|notice|postal ba
             "(audio|video) recording of (the )?(earnings|conference|analyst|investor)",
             # The letter telling shareholders without an e-mail address where to download the annual report (Reg 36(1)(b))
             "web ?-?link.{0,100}annual report", "letter.{0,40}dispatch\\w*.{0,120}annual report",
+            # the same letter worded the other way round (NSE, 25-26 Aug 2026: Maharashtra Seamless, Ashoka Metcast)
+            "annual report.{0,60}web ?-?link", "letters? (sent )?to (the )?shareholders.{0,40}annual report",
             "regulation\\s*36\\s*\\(\\s*1\\s*\\)\\s*\\(\\s*b\\s*\\)"]
 # Filed under the Reg 34(1) subcategory (its subject), the attachment is the annual report itself, whatever the headline says.
 exclude_headline = ["34\\s*\\(\\s*1\\s*\\)\\s*annual report"]
@@ -254,7 +256,9 @@ exclude_headline = ["intimation", "schedule"]
 event_type = "ANNUAL_REPORT"
 subcategories = ["annual report"]
 headline = ["annual report"]
-exclude_headline = ["web ?-?link", "letter to (the )?shareholders", "business responsibility", "\\bbrsr\\b", "news\\s?paper"]
+# A BRSR filed on its own is not the annual report; one "including" the BRSR is (Cupid, NSE, 26 Aug 2026)
+exclude_headline = ["web ?-?link", "letter to (the )?shareholders", "news\\s?paper",
+                    "^(?!.*((\\band|&)\\s+(the\\s+)?annual report|notice of .{0,80}annual report)).*(business responsibility|\\bbrsr\\b)"]
 
 [[fast_track]]
 event_type = "DEBT_RATINGS"

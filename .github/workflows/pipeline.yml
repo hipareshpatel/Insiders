@@ -2,14 +2,17 @@
 # within a time budget. State lives in D1, so every run resumes where the
 # last one stopped.
 #
-# Triggers: cron-job.org (every 15-30 min) calls the workflow_dispatch API;
-# the schedule below is only a fallback, since GitHub runs scheduled
-# workflows on a best-effort basis.
+# Source: NSE (owner, 2026-10-18: online-only, NSE only). NSE answers every call the pipeline makes from a
+# GitHub-hosted runner (measured 2026-10-18 with online-probe.yml), so ubuntu-latest is the runner; the
+# repository variable PIPELINE_RUNNER_LABELS can still point it elsewhere. BSE's API refuses GitHub's
+# addresses and is off this path (DISCOVERY_SOURCE=bse is kept only as a backup).
 #
-# Runner: set the repository variable PIPELINE_RUNNER_LABELS, e.g.
-# ["self-hosted","linux"], to use a self-hosted runner on an Indian network.
-# BSE's API refuses some non-Indian datacenter IPs, which GitHub-hosted
-# runners use. See docs/SPEC.md, "Where the pipeline runs".
+# Triggers: cron-job.org (every 15-30 min) calls the workflow_dispatch API. The schedule below is a
+# fallback that runs only when the repository variable PIPELINE_SCHEDULE is "on", so nothing starts on
+# its own before the owner switches the pipeline on (go-live needs 95% of published cards right).
+#
+# An NSE refusal (401/403/429) or five attachment downloads failing on the network in a row stop the run
+# with the work still queued; no filing's attempts are spent on either.
 name: Pipeline
 
 on:
@@ -37,6 +40,7 @@ concurrency:
 
 jobs:
   run:
+    if: github.event_name != 'schedule' || vars.PIPELINE_SCHEDULE == 'on'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 55
     defaults:
@@ -51,7 +55,10 @@ jobs:
       MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
       ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      BACKFILL_START: ${{ vars.BACKFILL_START || '2025-01-01' }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      DISCOVERY_SOURCE: nse
+      UNIVERSE_MIN_MCAP_CR: ${{ vars.UNIVERSE_MIN_MCAP_CR || '500' }}
+      BACKFILL_START: ${{ vars.BACKFILL_START || '2026-04-19' }}  # 6 months back (owner, 2026-10-18)
     steps:
       - uses: actions/checkout@v4
       # GitHub-hosted runners get Python from setup-python; a self-hosted runner (a laptop or a

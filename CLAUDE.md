@@ -107,7 +107,10 @@ Read before changing anything:
      `funnel-2026-10-18.md`, re-run with `pipeline/scripts/funnel/`). 21 defects fixed with tests; the biggest
      losses of right cards were scale-block figures held as unfound and D20 ownership. Open items are listed
      there (pass 2's reason not stored, annual reports, memory facts after reclassification, repeat M&A cards).
-     Next: re-run the held cards and the D20 quarters to measure the fixes on real cards.
+     **Re-run done 2026-10-18** (`docs/audit/rerun-held-2026-10-18.md`, F58): held 118 -> 51, published
+     333 -> 381, 10 of the 19 card-less quarters now have a card; six wrong duplicate merges found and fixed
+     (D20 claim by a meeting notice, a repeat check blind to the attachment). Round 3d (the 51 still held, those
+     six, the 31 annual-report filings) was started 07:22 with today's code; its results go in that note.
   4. **Half done 2026-10-18: ANNUAL_REPORT event type** (F57). Reg 34(1) filings and annual reports filed with
      their AGM notice go to a fast track with an auditor / CARO / related-party / contingent-liability focus,
      3x page budget, a 120 MB download cap; the Reg 36(1)(b) letters are dropped. `retriage --scrips` queues

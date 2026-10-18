@@ -65,16 +65,19 @@ Each has a test that fails without the fix. "Loop" means found on the twenty aud
 
 ## Still open, by expected gain
 
+Measured on real cards in `rerun-held-2026-10-18.md`: held 118 -> 51, published 333 -> 381.
+
 | Item | Evidence | Proposed |
 |---|---|---|
-| A fact's comparative from a far row holds a right card | CSB Q3FY25: "provisions rose to ₹16.53 Cr (from -₹4.54 Cr)" | calibrate against the 40/8/3 baseline: a two-decimal figure found in the filing at its unit is ~3% chance; report rather than hold above a precision bar |
-| Pass 2 "not material" on substantive filings; reason not stored | Prism Preferred Bidder, stake sale; Novartis tax orders, court admission; 3 board outcomes | store pass 2's reason; review the 70 |
-| Annual reports | 4 annual reports not material; 12 taken by the "AGM notice" rule | ANNUAL_REPORT event type with NSE's AR XBRL (to-do item 4) |
-| Memory facts outlive a filing's reclassification | Kanoria's ₹5,794.25 Cr is still in memory from a filing now NOT_MATERIAL | forget a filing's facts when a re-run ends without a card |
-| A duplicate of a filing that later fails for good stays a duplicate | 4 duplicates point at results filings still PENDING | re-queue duplicates whose original ends FAILED at max attempts |
+| A fact's comparative from a far row holds a right card | CSB Q3FY25: "provisions rose to ₹16.53 Cr (from -₹4.54 Cr)" | calibrate against the 40/8/3 baseline: a two-decimal figure found in the filing at its unit is ~3% chance; report rather than hold above a precision bar  **Done (48cb51c)** |
+| Pass 2 "not material" on substantive filings; reason not stored | Prism Preferred Bidder, stake sale; Novartis tax orders, court admission; 3 board outcomes | store pass 2's reason; review the 70. **Reason stored (4606a1c)**; review open |
+| Annual reports | 4 annual reports not material; 12 taken by the "AGM notice" rule | ANNUAL_REPORT event type with NSE's AR XBRL (to-do item 4). **Type, routing and `retriage` done (F57)**; AR XBRL open |
+| Memory facts outlive a filing's reclassification | Kanoria's ₹5,794.25 Cr is still in memory from a filing now NOT_MATERIAL | forget a filing's facts when a re-run ends without a card. **Done (2a11133)** |
+| A duplicate of a filing that later fails for good stays a duplicate | 4 duplicates point at results filings still PENDING | re-queue duplicates whose original ends FAILED at max attempts. **Not built**: none of the 180 duplicates in the ledger points at a FAILED filing (2026-10-18) |
 | Repeats published as separate cards | SML's acquisition: 15 M&A cards, four the same day saying the same | tighten the same-event check for M&A within a day |
-| "HELD" (garbled scan, human hold) does not hold a card, and is lost when a second opinion ran | CSB 3649405a published with the garbled-scan note | record held reasons on the card; decide whether HELD should hold |
-| XBRL `confirm()` rejects a file whose figures are all zero | code reading | treat zero as unconfirmable, not wrong |
+| "HELD" (garbled scan, human hold) does not hold a card, and is lost when a second opinion ran | CSB 3649405a published with the garbled-scan note | record held reasons on the card; decide whether HELD should hold. **Reasons recorded (6c3ca51)**; the decision is the owner's |
+| XBRL `confirm()` rejects a file whose figures are all zero | code reading | treat zero as unconfirmable, not wrong. **Done (b239c9c)** |
+| A memory insight attaches a right figure to the wrong month or deal (published, not held) | SML 9634c075 (August's 842 units called July's), e4d8f81b (the open-offer price put on the SPA purchase) | check a memory insight's figure against the period it names, as the YoY check does |
 | Shareholding XBRL never arrives through announcements | every shareholding filing goes to noise; the seed reads NSE's | leave (memory gets it from NSE) or link NSE's file |
 
 ## Inventory: every discard, hold and overwrite, with its threshold

@@ -303,6 +303,59 @@ def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...]) -> dict[str, str]
     return mapping
 
 
+_MILLION_COUNT = re.compile(r"(?<![\d.,])(\d+(?:\.\d+)?)\s*(?:M|mn|million)\b(?=(?:\s+[\w-]+){0,2}?\s+"
+                            r"(?:shares|warrants|options|units|securities)\b)", re.I)
+_PRINTED_COUNT = re.compile(r"(?<![\d.,])\d{1,3}(?:,\d{2,3})+(?![\d,])|(?<![\d.,])\d{6,}(?![\d.,])")
+
+
+def fix_count_millions(out: Pass2Output, sources: tuple[str, ...]) -> list[str]:
+    """Share and warrant counts the filing prints in Indian grouping and the card writes as millions one place off:
+    10,80,27,500 shares is 108.0 million, not "10.8M" (Adani Power's SAST disclosure; Magellanic's 12,67,00,000
+    warrants as "12.67 million", round-2 re-run). A count is corrected only when the filing prints ten times it and
+    not the count itself."""
+    if out.card is None or not sources:
+        return []
+    printed = {int(m.group(0).replace(",", "")) for s in sources for m in _PRINTED_COUNT.finditer(s or "")}
+    if not printed:
+        return []
+
+    def near(target: float, step: float) -> bool:
+        return any(abs(p - target) <= step / 2 for p in printed)
+
+    notes: list[str] = []
+
+    def fix(text: str | None) -> str | None:
+        if not text:
+            return text
+
+        def one(m: re.Match) -> str:
+            raw = m.group(1)
+            places = len(raw.partition(".")[2])
+            value, step = float(raw), 10 ** (6 - places)
+            if near(value * 1e6, step) or not near(value * 1e7, step * 10):
+                return m.group(0)
+            right = f"{value * 10:.{max(places - 1, 0)}f}"
+            notes.append(f"count {raw} million read as {right} million (printed in crore)")
+            return m.group(0).replace(raw, right, 1)
+
+        return _MILLION_COUNT.sub(one, text)
+
+    card = out.card
+    card.headline, card.takeaway, card.core_catalyst = fix(card.headline), fix(card.takeaway) or "", fix(card.core_catalyst)
+    for fact in card.what_happened:
+        fact.text = fix(fact.text) or fact.text
+    for insight in card.why_it_matters:
+        insight.text = fix(insight.text)
+    for key in card.key_numbers:
+        key.value = fix(key.value)
+    track = card.track_next
+    if track is not None:
+        track.risks = [fix(r) for r in track.risks]
+        track.catalysts = [fix(c) for c in track.catalysts]
+    out.timeline_entry = fix(out.timeline_entry) or ""
+    return notes
+
+
 _CHANGE_AMOUNT = re.compile(r"(?<![\w.])(\(?-?\d[\d,]*(?:\.\d+)?\)?)")
 # The thousands separator is part of the number: a turnaround off a small base is written "+1,050%",
 # and without the comma the pattern read it as 50%, decided the model was wrong by a factor of
@@ -1925,7 +1978,8 @@ class Pipeline:
             with a note saying it had been changed to Rs 83.88 Cr, which was the discarded card).
             """
             units = fix_unit_slips(candidate, sources)
-            changes = fix_change_percentages(candidate, sources)
+            counts = fix_count_millions(candidate, sources)
+            changes = fix_change_percentages(candidate, sources) + counts
             changes += apply_deal_guards(candidate, filing, history, dossier.get("balance_sheet", []), text)
             changes += misdated_memory_insights(candidate, view, filed_text)
             if tagged:

@@ -979,3 +979,22 @@ def test_a_memory_insight_that_puts_a_figure_under_another_period_is_dropped():
                  "what_happened": ["Revenue steady"],
                  "why_it_matters": [{"text": "Revenue of ₹112.5 Cr in Q2FY26 held steady", "basis": "MEMORY"}]}})
     assert misdated_memory_insights(out, view, "") == []
+
+
+def test_adani_share_counts_printed_in_crore_are_not_read_as_millions():
+    """fc2e28bd / ff8021a8: "10.8M shares" for the filing's 10,80,27,500 (108.0 million), "12.67 million convertible
+    warrants" for 12,67,00,000. A count the filing prints as written is left alone."""
+    from bse_intel.pipeline import fix_count_millions
+
+    text = ("Market Purchase of 10,80,27,500 Equity Shares (0.56%) by Adani Tradeline; 12,67,00,000 Convertible Warrants; "
+            "Market Purchase of 5,039,326 shares")
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A", "timeline_entry": "x",
+        "card": {"impact_level": "LOW", "headline": "Adani Tradeline buys 10.8M shares of Adani Power",
+                 "what_happened": ["Adani Tradeline acquired 10.8M shares (0.56%)", "GQG sold 5.04 million shares"],
+                 "track_next": {"risks": ["Potential dilution from 12.67 million convertible warrants"]}}})
+    notes = fix_count_millions(out, (text,))
+    assert out.card.headline == "Adani Tradeline buys 108M shares of Adani Power"
+    assert [f.text for f in out.card.what_happened] == ["Adani Tradeline acquired 108M shares (0.56%)", "GQG sold 5.04 million shares"]
+    assert out.card.track_next.risks == ["Potential dilution from 126.7 million convertible warrants"]
+    assert len(notes) == 3

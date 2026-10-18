@@ -2561,6 +2561,9 @@ class Pipeline:
                         synced = governance_memory.sync(self, live_deadline)
                         if synced["filed"] or synced["stopped"] or synced["errors"]:
                             log.info("governance memory: %s", json.dumps(synced))
+                        synced = governance_memory.shareholding_sync(self, live_deadline)
+                        if synced["filed"] or synced["stopped"] or synced["errors"] or synced["refused"]:
+                            log.info("shareholding memory: %s", json.dumps(synced))
             if mode in ("backfill", "all") and not self._halted(bulk=True):
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
         except SourceBlockedError as exc:

@@ -226,6 +226,17 @@ def cmd_governance_sync(args, settings, sink) -> int:
     return 0
 
 
+def cmd_shareholding_sync(args, settings, sink) -> int:
+    """Each universe company's quarterly shareholding XBRL into memory (governance_memory.shareholding_sync), no AI."""
+    from . import governance_memory
+
+    pipeline = _pipeline(settings, sink)
+    report = governance_memory.shareholding_sync(pipeline, time.monotonic() + args.time_budget, days=args.days,
+                                                 max_files=args.max_files)
+    print(json.dumps(report))
+    return 0
+
+
 def cmd_seed_memory(args, settings, sink) -> int:
     """Financial and ownership history from XBRL, with no AI call (see seed.py). Results come from BSE's
     results archive, shareholding from NSE for the companies listed there."""
@@ -496,6 +507,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-files", type=int, default=200, help="reports filed this run")
     p.add_argument("--time-budget", type=int, default=1800, help="seconds")
     p.set_defaults(func=cmd_governance_sync)
+    p = sub.add_parser("shareholding-sync", help="quarterly shareholding XBRL into memory (promoter, pledge, FII, DII), no AI")
+    p.add_argument("--days", type=int, default=10, help="days of NSE's list to read back")
+    p.add_argument("--max-files", type=int, default=400, help="patterns filed this run")
+    p.add_argument("--time-budget", type=int, default=1800, help="seconds")
+    p.set_defaults(func=cmd_shareholding_sync)
     p = sub.add_parser("seed-memory", help="financial and ownership history from XBRL, no AI (results: BSE archive; shareholding: NSE)")
     p.add_argument("--scrips", required=True, help="comma-separated BSE scrip codes")
     p.add_argument("--since", default="2023-01-01", help="ignore quarters filed before this date")

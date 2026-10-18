@@ -478,6 +478,17 @@ class NseClient:
                 out.append(filing)
         return out
 
+    def shareholding_list(self, day_from: date, day_to: date) -> list[ShareholdingFiling]:
+        """Every company's shareholding patterns broadcast between the two dates, the latest per company and quarter
+        (measured 2026-10-19: 1,651 rows for 1-18 Oct 2026, every one with its XBRL)."""
+        data = self._get(SHAREHOLDING_ENDPOINT, {"index": "equities", "from_date": day_from.strftime("%d-%m-%Y"),
+                                                 "to_date": day_to.strftime("%d-%m-%Y")}).json()
+        rows = data.get("data") if isinstance(data, dict) else data
+        by_symbol: dict[str, list[dict]] = {}
+        for row in rows if isinstance(rows, list) else []:
+            by_symbol.setdefault(str(row.get("symbol") or "").strip().upper(), []).append(row)
+        return [f for symbol, group in by_symbol.items() if symbol for f in parse_shareholding_rows(group)]
+
     def integrated_list(self, kind: str, page: int = 1, size: int = 500) -> list[dict]:
         """One page of NSE's all-company integrated-filing list ("Integrated Filing- Financials" or "...- Governance"),
         newest first, as NSE's rows (measured 2026-10-18: up to 1,000 rows a page honoured)."""

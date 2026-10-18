@@ -47,6 +47,34 @@ def test_penalty_amounts_are_read_from_their_words_and_minor_ones_kept_quiet():
     assert g.penalty_rupees("Not a material effect.") is None
     # The impact's amount before the details' (IndusInd, Q2FY27: details "Total SNR of Rs. 16.85 Crores", impact "Rs. 2,250/-")
     assert g.penalty_rupees("Rs. 2,250/-", "Total SNR of Rs. 16.85 Crores remitted") == 2250.0
+    # An amount that is not the penalty's is not taken (JK Cement, Q2FY27: a dropped tax demand)
+    assert g.penalty_rupees(None, "Order issued for dropping the tax demand Rs 2,99,95,934/- raised by Audit Wing") is None
+    assert g.penalty_rupees("Nil", "NSE imposed a monetary penalty of ₹23,600/- on the Company.") == 23600.0
+    assert g.penalty_rupees("Rs.200/- Monetary Penalty.", "delay in upload of the scanned image") == 200.0
+
+
+def test_money_below_one_percent_of_annual_profit_is_not_raised():
+    """Owner, 2026-10-19: a governance issue under 1% of annual profit is dropped. Chennai Petroleum's ₹9.66 lakh
+    exchange fines and ₹0.60 Cr of guarantees to directors are raised against a ₹50 Cr profit, not against ₹2,000 Cr."""
+    r = _report("chennpetro")
+    small = r.exceptions(annual_profit_cr=50.0)          # floor ₹50 lakh
+    assert not any(e.startswith("fine or penalty") for e in small)
+    assert "guarantee or comfort to directors and relatives: ₹0.5973 Cr outstanding" in small
+    big = r.exceptions(annual_profit_cr=2000.0)          # floor ₹20 Cr
+    assert not any(e.startswith(("fine or penalty", "guarantee")) for e in big)
+    assert "board composition not in terms of SEBI's rules" in big   # no amount to weigh: always raised
+    loss = r.exceptions(annual_profit_cr=-120.0)          # a loss: the ₹1 lakh floor
+    assert sum(e.startswith("fine or penalty") for e in loss) == 2
+    assert r.memory(annual_profit_cr=2000.0)["material_floor_cr"] == 20.0
+
+
+def test_annual_profit_from_memory():
+    from bse_intel.dossier import annual_profit_cr
+
+    q = lambda p, v: {"metric": "pat", "period": p, "value": v, "unit": "INR_CR"}
+    assert annual_profit_cr({"financial_metrics": [q("Q3FY26", 10), q("Q4FY26", 12), q("Q1FY27", 9), q("Q2FY27", 11)]}) == 42
+    assert annual_profit_cr({"financial_metrics": [q("FY25", 30), q("FY26", 38), q("Q1FY27", 9)]}) == 38
+    assert annual_profit_cr({}) is None
 
 
 def test_meeting_gaps_count_only_where_a_rule_sets_a_limit():
@@ -77,6 +105,8 @@ def test_memory_keeps_quarters_a_revision_replaces_its_quarter_and_the_view_is_d
     assert merge_governance(d, q1, "2026-07-20T18:00:00+05:30", "https://x/q1.xml")
     assert merge_governance(d, q2, "2026-10-17T18:00:00+05:30", "https://x/q2.xml")
     assert not merge_governance(d, q2, "2026-10-17T18:00:00+05:30", "https://x/q2.xml")       # the same file twice
+    assert merge_governance(d, dict(q2, parser=-1), "2026-10-17T18:00:00+05:30", "https://x/q2.xml")   # a parser fix
+    assert merge_governance(d, q2, "2026-10-17T18:00:00+05:30", "https://x/q2.xml")
     assert merge_governance(d, q2, "2026-10-18T09:00:00+05:30", "https://x/q2-revised.xml")   # a revision replaces it
     assert [q["source"] for q in d["governance"]["quarters"]] == ["https://x/q1.xml", "https://x/q2-revised.xml"]
     view = governance_view(d["governance"]["quarters"])
@@ -127,3 +157,49 @@ def test_sync_files_the_universe_companies_reports_once(settings):
     assert quarters[0]["as_of"] == "2026-10-18T21:27:17+05:30" and quarters[0]["source"] == url_new
     again = governance_memory.sync(pipe, time.monotonic() + 60)
     assert again["filed"] == 0 and again["known"] == 1 and pipe.nse.downloads == [url_new]
+
+
+def test_shareholding_sync_files_each_quarter_once_and_refuses_a_disagreeing_file(settings):
+    import json
+    import time
+    from datetime import date
+    from types import SimpleNamespace
+
+    from bse_intel import governance_memory, universe
+    from bse_intel.nse import parse_shareholding_rows
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    sink.put_object(universe.UNIVERSE_KEY, json.dumps({"source": "nse", "included": ["542867", "500111"],
+                                                       "symbols": {"CSBBANK": "542867", "OTHER": "500111"}, "isins": {}}).encode())
+    good = "https://nsearchives.nseindia.com/corporate/xbrl/SHP_1001_15072023101500_WEB.xml"
+    wrong = "https://nsearchives.nseindia.com/corporate/xbrl/SHP_1002_15072023101600_WEB.xml"
+    rows = [{"symbol": "CSBBANK", "date": "30-JUN-2023", "xbrl": good, "broadcastDate": "15-JUL-2023 10:15:00",
+             "pr_and_prgrp": "49.72", "public_val": "50.28"},
+            # NSE's list says 70% but the file says 49.72%: stored nowhere
+            {"symbol": "OTHER", "date": "30-JUN-2023", "xbrl": wrong, "broadcastDate": "15-JUL-2023 10:16:00",
+             "pr_and_prgrp": "70.00"}]
+    body = (FIX / "nse_shp_csbbank_q1fy24.xml").read_bytes()
+
+    class ShpNse:
+        downloads = []
+
+        def shareholding_list(self, day_from, day_to):
+            by = {}
+            for r in rows:
+                by.setdefault(r["symbol"], []).append(r)
+            return [f for g in by.values() for f in parse_shareholding_rows(g)]
+
+        def download(self, url, max_bytes=None):
+            self.downloads.append(url)
+            return body
+
+    pipe = SimpleNamespace(nse=ShpNse(), sink=sink, _nse_refused=False)
+    first = governance_memory.shareholding_sync(pipe, time.monotonic() + 60, day_to=date(2023, 7, 20))
+    assert first["filed"] == 1 and first["in_universe"] == 2 and len(first["refused"]) == 1
+    own = sink.get_dossier("542867")["ownership"]
+    assert own[-1]["period"] == "Q1FY24" and own[-1]["promoter_pct"] == 49.72
+    assert own[-1]["as_of"] == "2023-07-15T10:15:00+05:30"     # the upload time in the file's name
+    assert not (sink.get_dossier("500111") or {}).get("ownership")
+    again = governance_memory.shareholding_sync(pipe, time.monotonic() + 60, day_to=date(2023, 7, 20))
+    assert again["filed"] == 0 and again["known"] == 1

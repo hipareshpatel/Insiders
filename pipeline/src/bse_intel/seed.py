@@ -242,21 +242,32 @@ def seed_shareholding(sink, nse, scrip: str, symbol: str, name: str, since: str,
             stats.skipped += 1
             continue
         stats.shareholding_files += 1
-        parsed = xbrl_fast_path.parse(data)
-        if not parsed or parsed.kind != "SHAREHOLDING" or not parsed.ownership:
+        problem = file_shareholding(sink, scrip, name, filing_row, data, company)
+        if problem == "unreadable":
             stats.skipped += 1
-            continue
-        own = parsed.ownership
-        if filing_row.promoter_pct is not None and own.promoter_pct is not None \
-                and abs(filing_row.promoter_pct - own.promoter_pct) > 0.5:
-            stats.failures.append(f"{scrip} {filing_row.period}: XBRL promoter {own.promoter_pct}% against "
-                                  f"{filing_row.promoter_pct}% in NSE's list")
-            continue  # the two disagree: store neither (never a figure we cannot stand behind)
-        filing = _filing("shp", scrip, name, filing_row.period, filing_row.filed_at, filing_row.xbrl_url)
-        out = Pass2Output(is_material=False, timeline_entry="")
-        out.dossier_delta.ownership = own
-        dossier = sink.get_dossier(scrip) or new_dossier(filing, company or {})
-        sink.put_dossier(scrip, merge(dossier, out, filing, None, now_iso()))
-        stats.shareholding_periods += 1
-        log.info("seed %s %s: promoter %s%%, pledge %s%%, FII %s%%, DII %s%%", scrip, filing_row.period,
-                 own.promoter_pct, own.pledge_pct, own.fii_pct, own.dii_pct)
+        elif problem:
+            stats.failures.append(problem)
+        else:
+            stats.shareholding_periods += 1
+
+
+def file_shareholding(sink, scrip: str, name: str, filing_row, data: bytes, company: dict | None = None) -> str | None:
+    """One quarter's shareholding XBRL into the company's memory. Returns None when filed, "unreadable", or why it
+    was refused: a promoter holding that disagrees with NSE's own list by more than 0.5 point is stored nowhere
+    (never a figure we cannot stand behind)."""
+    parsed = xbrl_fast_path.parse(data)
+    if not parsed or parsed.kind != "SHAREHOLDING" or not parsed.ownership:
+        return "unreadable"
+    own = parsed.ownership
+    if filing_row.promoter_pct is not None and own.promoter_pct is not None \
+            and abs(filing_row.promoter_pct - own.promoter_pct) > 0.5:
+        return (f"{scrip} {filing_row.period}: XBRL promoter {own.promoter_pct}% against "
+                f"{filing_row.promoter_pct}% in NSE's list")
+    filing = _filing("shp", scrip, name, filing_row.period, filing_row.filed_at, filing_row.xbrl_url)
+    out = Pass2Output(is_material=False, timeline_entry="")
+    out.dossier_delta.ownership = own
+    dossier = sink.get_dossier(scrip) or new_dossier(filing, company or {})
+    sink.put_dossier(scrip, merge(dossier, out, filing, None, now_iso()))
+    log.info("shareholding %s %s: promoter %s%%, pledge %s%%, FII %s%%, DII %s%%", scrip, filing_row.period,
+             own.promoter_pct, own.pledge_pct, own.fii_pct, own.dii_pct)
+    return None

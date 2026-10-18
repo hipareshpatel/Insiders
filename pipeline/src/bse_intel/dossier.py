@@ -466,12 +466,25 @@ def merge_governance(d: dict, entry: dict, as_of: str, source: str) -> bool:
     whether memory changed."""
     gov = d.setdefault("governance", {"auditor": None, "auditor_history": []})
     quarters = gov.setdefault("quarters", [])
-    if any(q.get("source") == source for q in quarters):
-        return False
+    if any(q.get("source") == source and q.get("parser") == entry.get("parser") for q in quarters):
+        return False   # the same file read by the same parser; a parser fix files it again
     row = {**entry, "as_of": as_of, "source": source}
     quarters = [q for q in quarters if q.get("quarter_end") != entry.get("quarter_end")] + [row]
     gov["quarters"] = sorted(quarters, key=lambda q: str(q.get("quarter_end") or ""))[-GOVERNANCE_QUARTERS:]
     return True
+
+
+def annual_profit_cr(dossier: dict | None) -> float | None:
+    """The company's annual profit after tax from memory, ₹ Cr: the last four quarters when memory has them, else the
+    latest year. None when memory has neither."""
+    rows = [m for m in (dossier or {}).get("financial_metrics", [])
+            if m.get("metric") in ("pat", "net_profit") and m.get("value") is not None
+            and (m.get("unit") or "INR_CR") == "INR_CR" and due_date(m["period"])]
+    quarters = {m["period"]: m["value"] for m in rows if m["period"].startswith("Q")}
+    if len(quarters) >= 4:
+        return sum(v for _, v in sorted(quarters.items(), key=lambda kv: due_date(kv[0]))[-4:])
+    years = sorted((m for m in rows if m["period"].startswith("FY")), key=lambda m: due_date(m["period"]))
+    return years[-1]["value"] if years else None
 
 
 def governance_view(quarters: list[dict]) -> dict | None:

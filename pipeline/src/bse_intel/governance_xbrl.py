@@ -42,20 +42,38 @@ _CYBER = "WhetherAsPerSubRegulation2baOfRegulation27OfSEBILODRThereHasBeenCyberS
 _PARTY = (("PromoterGroup", "promoter group"), ("Promoter", "promoter"), ("Directors", "directors and relatives"),
           ("KMPs", "KMP"))
 _EMPTY = {"", "na", "n.a.", "nil", "none", "not applicable", "-"}
+# Raised when what is read changes, so memory files a quarter again (dossier.merge_governance). 2: a penalty's amount
+# only beside its own words (2026-10-19)
+PARSER_VERSION = 3   # 3: money below 1% of annual profit is not raised (owner, 2026-10-19)
 # A penalty below this is kept in memory but raised as no exception (Harsha's ₹648 GST penalty, measured 2026-10-18)
 MINOR_PENALTY_RUPEES = 100_000
+MATERIAL_SHARE_OF_PROFIT = 0.01   # owner, 2026-10-19: a governance issue under 1% of annual profit is dropped
 _RUPEES = re.compile(r"(?:rs\.?|inr|₹)\s*([\d,]+(?:\.\d+)?)\s*(crores?|cr\.?|lakhs?|lacs?|million|mn)?", re.I)
 
 
-def penalty_rupees(*texts: str | None) -> float | None:
-    """The amount a penalty's own words state ("Fine of Rs. 9,66,420/-", "₹23,600", "Rs 1.95 lacs", "Rs. 0.30 million"),
-    in rupees."""
-    for text in texts:
-        m = _RUPEES.search(text or "")
-        if m:
-            value = float(m.group(1).replace(",", "") or 0)
-            unit = (m.group(2) or "").lower()
-            return value * (1e7 if unit.startswith("cr") else 1e5 if unit.startswith(("lakh", "lac")) else 1e6 if unit in ("million", "mn") else 1)
+_PENALTY_WORDS = re.compile(r"penalt|\bfines?\b|levied|levy|imposed|compound|monetary|award", re.I)
+
+
+def _rupees(m) -> float:
+    value = float(m.group(1).replace(",", "") or 0)
+    unit = (m.group(2) or "").lower()
+    return value * (1e7 if unit.startswith("cr") else 1e5 if unit.startswith(("lakh", "lac")) else 1e6 if unit in ("million", "mn") else 1)
+
+
+def penalty_rupees(impact: str | None, *details: str | None) -> float | None:
+    """The penalty's amount in rupees: one written beside "penalty", "fine", "levied", "imposed", "compounding" in the
+    impact or the details ("Fine of Rs. 9,66,420/- imposed", "Amount of penalty imposed is Rs. 0.30 million",
+    "Rs.200/- Monetary Penalty"), else the
+    impact field when it is just an amount ("Rs. 2,250/-"). Any other amount in the details is something else: a
+    ₹16.85 Cr cash remittance (IndusInd), a ₹3 Cr tax demand the authority dropped (JK Cement), measured 2026-10-19.
+    None when no amount can be told for the penalty."""
+    for text in (impact, *details):
+        for m in _RUPEES.finditer(text or ""):
+            if _PENALTY_WORDS.search(text[max(0, m.start() - 80):m.start()] + " " + text[m.end():m.end() + 30]):
+                return _rupees(m)
+    m = _RUPEES.search(impact or "")
+    if m and len(re.sub(r"[\W_]+", "", (impact or "")[:m.start()] + (impact or "")[m.end():])) <= 12:
+        return _rupees(m)
     return None
 
 
@@ -110,8 +128,18 @@ class GovernanceReport:
     related_finance: list[dict] = field(default_factory=list)        # Part F, non-zero lines only
     unlisted_acquisitions: bool | None = None                        # Part C applies
 
-    def exceptions(self) -> list[str]:
-        """What an investor would want to hear about, in plain words; empty for a clean quarter."""
+    def floor_rupees(self, annual_profit_cr: float | None = None) -> float:
+        """Below this a fine, or money lent, guaranteed or secured for insiders, is not raised (owner, 2026-10-19: a
+        governance issue under 1% of annual profit is dropped). For a loss-making company, or one whose profit memory
+        does not hold, the ₹1 lakh floor."""
+        if annual_profit_cr and annual_profit_cr > 0:
+            return max(MINOR_PENALTY_RUPEES, annual_profit_cr * 1e7 * MATERIAL_SHARE_OF_PROFIT)
+        return MINOR_PENALTY_RUPEES
+
+    def exceptions(self, annual_profit_cr: float | None = None) -> list[str]:
+        """What an investor would want to hear about, in plain words; empty for a clean quarter. Money below
+        floor_rupees() stays in memory without a line of its own; a penalty with no stated amount is raised."""
+        floor = self.floor_rupees(annual_profit_cr)
         out = [f"{body} composition not in terms of SEBI's rules" if body != "meetings"
                else "board and committee meetings not held as SEBI's rules specify"
                for body, ok in self.compliance.items() if ok is False]
@@ -124,18 +152,21 @@ class GovernanceReport:
         if self.cyber_incident:
             out.append("cyber-security incident in the quarter")
         for p in self.penalties:
-            if p.get("amount_rupees") is not None and p["amount_rupees"] < MINOR_PENALTY_RUPEES:
+            if p.get("amount_rupees") is not None and p["amount_rupees"] < floor:
                 continue   # kept in memory; not worth a line of its own
             amount = f" ₹{p['amount_rupees'] / 1e5:,.2f} lakh" if p.get("amount_rupees") is not None else ""
             out.append(f"fine or penalty{amount}: {p.get('authority') or 'authority not named'}"
                        + (f" ({p['details'][:120]})" if p.get("details") else ""))
         for f in self.related_finance:
+            if max(f["given_cr"], f["outstanding_cr"]) * 1e7 < floor:
+                continue
             out.append(f"{f['kind']} to {f['party']}: ₹{f['outstanding_cr']:g} Cr outstanding")
         return out
 
-    def memory(self) -> dict:
+    def memory(self, annual_profit_cr: float | None = None) -> dict:
         """The quarter's entry for the company's memory (dossier), without the board's personal fields."""
-        return {"quarter_end": self.quarter_end,
+        return {"parser": PARSER_VERSION, "quarter_end": self.quarter_end,
+                "material_floor_cr": round(self.floor_rupees(annual_profit_cr) / 1e7, 4),
                 "board": [{"name": d.name, "category": d.category, "role": d.role if d.role != "Not Applicable" else None,
                            "appointed": d.appointed, "ceased": d.ceased, "cessation_reason": d.cessation_reason,
                            "tenure_months": d.tenure_months} for d in self.board],
@@ -144,7 +175,7 @@ class GovernanceReport:
                 "committees": self.committees, "compliance": self.compliance, "gaps": self.gaps,
                 "chair_related_to_md": self.chair_related_to_md, "cyber_incident": self.cyber_incident,
                 "complaints": self.complaints, "penalties": self.penalties, "tax_litigation": self.tax_litigation,
-                "related_finance": self.related_finance, "exceptions": self.exceptions()}
+                "related_finance": self.related_finance, "exceptions": self.exceptions(annual_profit_cr)}
 
     def as_dict(self) -> dict:
         return asdict(self)

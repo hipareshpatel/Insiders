@@ -12,12 +12,13 @@ from __future__ import annotations
 
 import logging
 import time
+from dataclasses import replace
 from datetime import datetime
 from types import SimpleNamespace
 
 from . import governance_xbrl, universe
 from . import nse as nse_api
-from .dossier import merge_governance, new_dossier
+from .dossier import annual_profit_cr, merge_governance, new_dossier
 from .timeutil import IST, iso_ist
 
 log = logging.getLogger(__name__)
@@ -79,7 +80,8 @@ def sync(pipeline, deadline: float, pages: int = 1, max_files: int = MAX_FILES) 
         if report["filed"] >= max_files or time.monotonic() >= deadline:
             continue
         dossier = sink.get_dossier(scrip)
-        if dossier and any(q.get("source") == row["xbrl"] for q in (dossier.get("governance") or {}).get("quarters", [])):
+        if dossier and any(q.get("source") == row["xbrl"] and q.get("parser") == governance_xbrl.PARSER_VERSION
+                           for q in (dossier.get("governance") or {}).get("quarters", [])):
             report["known"] += 1
             continue
         try:
@@ -98,9 +100,73 @@ def sync(pipeline, deadline: float, pages: int = 1, max_files: int = MAX_FILES) 
             company = sink.company(scrip) or {}
             dossier = new_dossier(SimpleNamespace(scrip_code=scrip, company_name=company.get("company_name") or row.get("smName"),
                                                   symbol=row["symbol"]), company)
-        if merge_governance(dossier, parsed.memory(), row["_when"], row["xbrl"]):
+        if merge_governance(dossier, parsed.memory(annual_profit_cr(dossier)), row["_when"], row["xbrl"]):
             sink.put_dossier(scrip, dossier)
             report["filed"] += 1
-            if parsed.exceptions():
-                log.info("governance %s %s: %s", row["symbol"], parsed.quarter_end, "; ".join(parsed.exceptions())[:300])
+            raised = parsed.exceptions(annual_profit_cr(dossier))
+            if raised:
+                log.info("governance %s %s: %s", row["symbol"], parsed.quarter_end, "; ".join(raised)[:300])
+    return report
+
+
+SHAREHOLDING_DAYS = 10       # days of NSE's shareholding list read each live run
+MAX_SHAREHOLDING_FILES = 60  # patterns filed per live run
+
+
+def shareholding_sync(pipeline, deadline: float, days: int = SHAREHOLDING_DAYS, max_files: int = MAX_SHAREHOLDING_FILES,
+                      day_to=None) -> dict:
+    """Each universe company's quarterly shareholding pattern (XBRL) into memory (PLAN 18 part 5): promoter,
+    pledge, FII, DII and public holdings per quarter, cross-checked against NSE's own list (seed.file_shareholding).
+    NSE lists every company's patterns in one answer for a date range (measured 2026-10-19). No AI call, no card."""
+    from datetime import timedelta
+
+    from .seed import file_shareholding
+    from .timeutil import today_ist
+
+    report = {"listed": 0, "in_universe": 0, "filed": 0, "known": 0, "refused": [], "errors": [], "stopped": None}
+    nse, sink = pipeline.nse, pipeline.sink
+    if nse is None or getattr(pipeline, "_nse_refused", False):
+        report["stopped"] = "NSE not asked (off or refused this run)"
+        return report
+    nse_map = universe.load_nse(sink)
+    if not nse_map.built:
+        report["stopped"] = "no NSE universe file yet"
+        return report
+    end = day_to or today_ist()
+    try:
+        filings = nse.shareholding_list(end - timedelta(days=days), end)
+    except nse_api.SourceBlockedError as exc:
+        report["stopped"] = f"NSE refused the session: {exc}"
+        return report
+    for row in sorted(filings, key=lambda f: f.filed_at, reverse=True):
+        report["listed"] += 1
+        scrip = nse_map.symbols.get(row.symbol) or nse_map.isins.get((row.isin or "").upper())
+        if not scrip or scrip not in nse_map.included:
+            continue
+        report["in_universe"] += 1
+        if report["filed"] >= max_files or time.monotonic() >= deadline:
+            continue
+        # The upload time is in the file's name ("SHP_1689543_09072026111935_WEB.xml"); the list gives the day only
+        row = replace(row, filed_at=nse_api.shareholding_filed_at(row.xbrl_url) or row.filed_at)
+        dossier = sink.get_dossier(scrip) or {}
+        source = f"xbrl:shp:{scrip}:{row.period}"
+        if any(o.get("period") == row.period and o.get("source_news_id") == source and str(o.get("as_of", "")) >= row.filed_at
+               for o in dossier.get("ownership", [])):
+            report["known"] += 1
+            continue
+        try:
+            data = nse.download(row.xbrl_url)
+        except nse_api.SourceBlockedError as exc:
+            report["stopped"] = f"NSE refused the session: {exc}"
+            break
+        except Exception as exc:  # one file must not end the step; the next run tries it again
+            report["errors"].append(f"{row.symbol}: {type(exc).__name__}: {exc}"[:200])
+            continue
+        company = sink.company(scrip) or {}
+        problem = file_shareholding(sink, scrip, company.get("company_name") or row.symbol, row, data, company) if data \
+            else "unreadable"
+        if problem:
+            report["refused"].append(problem if problem != "unreadable" else f"{row.symbol} {row.period}: unreadable")
+        else:
+            report["filed"] += 1
     return report

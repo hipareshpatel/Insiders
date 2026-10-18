@@ -1569,7 +1569,8 @@ class Pipeline:
                                     "reason": f"duplicate of {repeat.get('news_id')} (same event, another "
                                               f"document; checked before pass 2)"[:300], "updated_at": now})
         view = view_as_of(dossier, filing.filed_at)
-        budget = self.settings.pass2_char_budget * (3 if event_type == "CONCALL_PRESENTATION" else 1)
+        # A transcript or an annual report runs to 100-400 pages: the auditor's report and the notes need room
+        budget = self.settings.pass2_char_budget * (3 if event_type in ("CONCALL_PRESENTATION", "ANNUAL_REPORT") else 1)
         text = doc.select_text(budget, self.prompts.keywords(event_type))
         # The same pages read block by block, where a cell or a column stays whole: a quote of a two-column
         # page is the filing's own words if either reading has it (gate.quote_found).
@@ -2215,7 +2216,7 @@ SECOND_OPINION_MIN_S = 300
 # the same words, and RESULTS has its own one-card-per-quarter rule (D20).
 REPEAT_DAYS = 10  # the window the fast-track repeat check looks back over, as similar_timeline_entry
 ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE", "LITIGATION_REGULATORY", "FUNDRAISE",
-                      "RIGHTS_ISSUE", "M_AND_A", "DEBT_RATINGS", "CONCALL_PRESENTATION")
+                      "RIGHTS_ISSUE", "M_AND_A", "DEBT_RATINGS", "CONCALL_PRESENTATION", "ANNUAL_REPORT")
 UNIT_HINT = ("Convert each amount from the unit its table states: ₹ lakh ÷ 100 = ₹ Cr, ₹ million ÷ 10 = ₹ Cr, "
              "₹ thousand ÷ 10,000 = ₹ Cr; remove a figure that matches no source at any unit")
 

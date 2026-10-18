@@ -3,6 +3,7 @@ import type { Impact, SizeCategory } from "../../shared/types";
 export const EVENT_LABELS: Record<string, string> = {
   RESULTS: "Results",
   CONCALL_PRESENTATION: "Concall / presentation",
+  ANNUAL_REPORT: "Annual report",
   RIGHTS_ISSUE: "Rights issue",
   FUNDRAISE: "Fundraise",
   CAPEX: "Capex",
@@ -22,7 +23,7 @@ export const EVENT_LABELS: Record<string, string> = {
 export const FEED_TABS: { key: string; label: string; impact?: string; category?: string }[] = [
   { key: "all", label: "All filings" },
   { key: "high", label: "High impact", impact: "HIGH" },
-  { key: "results", label: "Results", category: "RESULTS,CONCALL_PRESENTATION" },
+  { key: "results", label: "Results", category: "RESULTS,CONCALL_PRESENTATION,ANNUAL_REPORT" },
   { key: "growth", label: "Capex & orders", category: "CAPEX,ORDER_WIN,PRODUCT_LAUNCH,MONTHLY_BUSINESS_UPDATE" },
   { key: "capital", label: "Capital & deals", category: "RIGHTS_ISSUE,FUNDRAISE,M_AND_A,CORPORATE_ACTION,DEBT_RATINGS" },
   { key: "governance", label: "Governance & regulatory", category: "GOVERNANCE,MANAGEMENT_CHANGE,LITIGATION_REGULATORY" },

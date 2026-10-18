@@ -47,7 +47,12 @@ headline = ["secretarial compliance report", "regulation\\s*24\\s*a\\b", "corpor
 [[drop]]
 reason = "meeting logistics"
 headline = ["(completion of )?dispatch of (the )?(annual report|notice|postal ballot)", "audio (recording|link)", "web ?link.{0,30}(audio|recording)",
-            "(audio|video) recording of (the )?(earnings|conference|analyst|investor)"]
+            "(audio|video) recording of (the )?(earnings|conference|analyst|investor)",
+            # The letter telling shareholders without an e-mail address where to download the annual report (Reg 36(1)(b))
+            "web ?-?link.{0,100}annual report", "letter.{0,40}dispatch\\w*.{0,120}annual report",
+            "regulation\\s*36\\s*\\(\\s*1\\s*\\)\\s*\\(\\s*b\\s*\\)"]
+# Filed under the Reg 34(1) subcategory (its subject), the attachment is the annual report itself, whatever the headline says.
+exclude_headline = ["34\\s*\\(\\s*1\\s*\\)\\s*annual report"]
 
 [[drop]]
 reason = "trading window"
@@ -151,18 +156,19 @@ headline = ["board meeting intimation", "intimation of (the )?board meeting", "p
 exclude_headline = ["outcome", "approved", "considered and approved"]
 
 # AGM notices, book closures and record dates carry no news, but the date is a catalyst. Rights issues
-# are excluded: their record-date filing usually carries the issue terms.
+# are excluded: their record-date filing usually carries the issue terms. So is an annual report filed
+# with its AGM notice ("Notice of the 33rd AGM and Annual Report for FY 2024-25"): it is read as one.
 [[calendar]]
 reason = "AGM notice"
 event_type = "AGM"
 headline = ["(notice|intimation) of (the )?\\d*(st|nd|rd|th)? ?annual general meeting", "\\bagm\\b.{0,40}(notice|intimation|to be held|will be held)"]
-exclude_headline = ["outcome", "proceedings", "voting results", "scrutini[sz]er", "presentation", "speech", "transcript"]
+exclude_headline = ["outcome", "proceedings", "voting results", "scrutini[sz]er", "presentation", "speech", "transcript", "annual report"]
 
 [[calendar]]
 reason = "record date / book closure"
 event_type = "RECORD_DATE"
 headline = ["record date", "book closure"]
-exclude_headline = ["rights", "letter of offer", "outcome", "approved", "financial results", "demerger", "amalgamation"]
+exclude_headline = ["rights", "letter of offer", "outcome", "approved", "financial results", "demerger", "amalgamation", "annual report"]
 
 # Routine events get one dated line in the company's timeline and no analysis card (owner decision D22,
 # 2026-10-16). A cheap model writes the line and sends the filing back for a full card when it is consequential
@@ -200,6 +206,14 @@ exclude_headline = ["intimation", "to be held", "will be held", "trading window"
 event_type = "CONCALL_PRESENTATION"
 headline = ["investor presentation", "earnings (call|presentation)", "transcript", "analysts? ?/ ?institutional investors? meet.*(presentation|transcript)"]
 exclude_headline = ["intimation", "schedule"]
+
+# The annual report (Reg 34(1)): the auditor's report, related parties and contingent liabilities that the
+# results do not carry. Pass 1 and pass 2 had typed it RESULTS, or not material (to-do item 4, 2026-10-18).
+[[fast_track]]
+event_type = "ANNUAL_REPORT"
+subcategories = ["annual report"]
+headline = ["annual report"]
+exclude_headline = ["web ?-?link", "letter to (the )?shareholders", "business responsibility", "\\bbrsr\\b", "news\\s?paper"]
 
 [[fast_track]]
 event_type = "DEBT_RATINGS"

@@ -185,6 +185,36 @@ def test_calendar_rule_extracts_meeting_date(rulebook):
     assert extract_date("for FY 2025 ended 31/03/2025", "2026-10-13") is None
 
 
+REG34 = "Reg. 34 (1) Annual Report"
+
+
+@pytest.mark.parametrize("headline,subcategory,action,event", [
+    # Filed with its AGM notice, under either subcategory: the "AGM notice" date rule took these (audit of discard paths)
+    ("Notice of the 33rd Annual General Meeting and Annual Report for the Financial Year 2024-25", REG34, "FAST_TRACK", "ANNUAL_REPORT"),
+    ("Notice of the 33rd Annual General Meeting and Annual Report for the Financial year 2024-25", "AGM", "FAST_TRACK", "ANNUAL_REPORT"),
+    ("Please find attached herewith the Notice of 48th Annual General Meeting alongwith the Annual Report for the "
+     "Financial Year 2025-26. The 48th AGM of the Company will be held on Wednesday", "AGM", "FAST_TRACK", "ANNUAL_REPORT"),
+    ("Annual Report for the Financial year 2024-25", REG34, "FAST_TRACK", "ANNUAL_REPORT"),
+    ("46th AR 2024-25", REG34, "FAST_TRACK", "ANNUAL_REPORT"),
+    ("The Annual Report for the Financial Year 2024-25 is sent to the shareholders on July 04, 2025", REG34, "FAST_TRACK", "ANNUAL_REPORT"),
+    ("Completion of dispatch of Annual Report and Notice of AGM", REG34, "FAST_TRACK", "ANNUAL_REPORT"),
+    ("Notice of AGM, Book Closure and Annual Report for FY 2025-26", "AGM", "FAST_TRACK", "ANNUAL_REPORT"),
+    # The letters telling shareholders without an e-mail address where to find it (Reg 36(1)(b)) carry nothing
+    ("Weblink of annual report to the shareholder whose email id not registered.", "General", "DROP", None),
+    ("Letter to Shareholders - Weblink of Integrated Annual Report FY 2025-26.", "General", "DROP", None),
+    ("Letter to shareholders - Providing the weblink to access the Notice of the 42nd Annual General Meeting and the "
+     "Annual Report for FY 2025-26.", "General", "DROP", None),
+    ("Intimation regarding a letter dispatched to the Shareholders  for Annual Report of the Company for FY 2024-25", "General", "DROP", None),
+    ("Intimation pursuant to Regulation 36(1)(b) of the SEBI LODR Regulations to non-email shareholders", "General", "DROP", None),
+    ("Completion of dispatch of Annual Report and Notice of AGM", "AGM", "DROP", None),
+    ("Notice of the 34th Annual General Meeting to be held on 20/11/2026", "AGM", "CALENDAR", "AGM"),
+    ("Business Responsibility and Sustainability Report forming part of the Annual Report", "Business Responsibility", "PASS1", None),
+])
+def test_annual_reports_are_read_and_their_letters_dropped(rulebook, headline, subcategory, action, event):
+    decision = rulebook.classify(_f(headline, "Company Update", subcategory, subject=subcategory))
+    assert (decision.action, decision.event_type) == (action, event), decision
+
+
 def _pdf(pages: list[str | None]) -> bytes:
     """Text pages; "" = scanned page (image only); None = blank page."""
     scan = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 40, 40), False)

@@ -40,6 +40,30 @@ infrastructure, agrochemicals, paints), compare Q2 with a year ago rather than w
 """
 keywords = ["guidance", "outlook", "target", "capex", "margin", "expect", "fy27", "fy28", "pipeline", "order book"]
 
+[ANNUAL_REPORT]
+focus = """
+This is an annual report. Its year's revenue and profit were already reported with the fourth-quarter
+results, so do not make them the news; use them only to put the findings below in proportion. Report
+what only the annual report shows:
+(1) the auditor's report: the opinion (unmodified, qualified, adverse or disclaimer) quoted as worded,
+any emphasis of matter, a material uncertainty about going concern, the key audit matters by name, an
+adverse remark in the CARO annexure (default to a lender, short-term funds used for long-term assets,
+statutory dues unpaid, a fraud reported, cash losses) and a modified opinion on internal financial
+controls; (2) related-party transactions: the largest ones with promoter-group entities and their
+total against revenue, loans or guarantees given to related parties, royalty or brand fees paid to the
+promoter; (3) contingent liabilities and corporate guarantees against net worth; (4) directors'
+remuneration growing much faster than profit; (5) subsidiaries or associates making losses, and
+investments in them impaired; (6) guidance from the management discussion (capacity, capex, order book,
+targets) as guidance items.
+Forensic reading: an auditor's report that is unmodified and has no emphasis of matter is worth one
+plain line, not a paragraph. If none of (1)-(6) stands out, the card is short and its impact LOW: say
+the audit is clean and give the related-party and contingent-liability totals against revenue and net
+worth, as the baseline later filings are read against.
+"""
+keywords = ["independent auditor", "opinion", "emphasis of matter", "going concern", "key audit matter", "caro",
+            "related party", "contingent liabilit", "guarantee", "remuneration", "subsidiar", "impairment",
+            "default", "outlook", "capacity", "order book"]
+
 [RIGHTS_ISSUE]
 focus = """
 This is a rights issue. Extract issue size, rights price and discount to market price, entitlement

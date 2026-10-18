@@ -233,9 +233,10 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
     : [...(card.grounding.unsupported_claims ?? []).map((c) => `Claim not supported by the sources: "${c}"`),
        ...(card.grounding.ungrounded.length ? [`Numbers not found in the filing: ${card.grounding.ungrounded.join(", ")}`] : [])])];
   const corrected = card.review?.status === "CORRECTED";
-  const tilesFor = event === "CONCALL_PRESENTATION" || (event === "RESULTS" && !card.results);
+  const longRead = event === "CONCALL_PRESENTATION" || event === "ANNUAL_REPORT";  // a 100-400 page document
+  const tilesFor = longRead || (event === "RESULTS" && !card.results);
   const table = event === "RESULTS" && tableShows(card.results) ? card.results : null;
-  const factLimit = event === "RESULTS" || event === "CONCALL_PRESENTATION" ? 4 : 3;
+  const factLimit = event === "RESULTS" || longRead ? 4 : 3;
   const unique = card.what_happened.filter((fact) => !(table && coveredByTable(fact, table)));
   const facts = unique.slice(0, factLimit);
 

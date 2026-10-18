@@ -83,6 +83,39 @@ regulations 29/31, secretarial compliance, statements of deviation, investor com
 ratings, each with its own page under `/companies-listing/`. The endpoint for any of them is the
 `/api/...` call that page makes; read it from the page rather than guessing the name.
 
+## Event XBRL (Reg 30 announcements): published with the announcement
+
+Verified 2026-10-18 (cloud session, live calls; the owner pointed at the announcements page). The earlier view that
+structured data "arrives after the PDF" and that event XBRL had "no source found" (TRACKER F48 gap 3, PLAN 17) was
+wrong for NSE: event XBRL is broadcast within seconds of the announcement.
+
+- `/api/corporate-announcements?index=equities`: every row carries `hasXbrl` (20 of 20 true on 18 Oct 2026) and
+  `seq_id`, beside the PDF in `attchmntFile`.
+- `/api/XBRL-announcements?index=equities&from_date=dd-mm-yyyy&to_date=dd-mm-yyyy&type=T` (the page's
+  "Announcements XBRL" tab) lists the files: `xbrl` (raw `.xml` on nsearchives), `ixbrl` (HTML view), `eventType`,
+  `broadcastDateTime`, `typeOfAnn` / `prevAppId` for revisions. Some rows put the file in `attachment` instead
+  (`.xml`, or a `.zip`). `type` seen to work: `announcements` (director/KMP/auditor changes, resignations),
+  `para-b` (orders and contracts, litigation, ESOPs, product launches: 267 rows 1-18 Oct), `action` (regulatory
+  actions and orders: 105), `analyst` (meet schedules, recordings, transcripts: 375). Other types are on the page's
+  dropdown; read them from it, not by guessing.
+- Example, RailTel order 18 Oct 2026 (`REG30_PARA_B_18826_WebXMLFile_20261018_103857107.xml`, taxonomy `in-capmkt`):
+  `AmountOfTheOrdersOrContracts` 189903173 (rupees, so ₹18.99 Cr exactly), `NameOfTheEntityAwardingTheOrdersOrContracts`,
+  `DateOfBaggingOrReceivingOfOrdersOrContracts`, `TimePeriodByWhichTheOrdersOrContractsIsToBeExecuted`,
+  `WhetherTheOrdersOrContractsIsOrdinaryCourseOfBusiness`, `WhetherTheOrderOrContractWouldFallWithinRelatedPartyTransactions`,
+  `TypeOfAnnouncementAsPerRegulation30ParaBOfPartAOfScheduleIII` (New / amendment). A director change gives name,
+  designation, type of change and effective date.
+
+So for these events the amount, unit, counterparty, dates and stage need no model reading: they are exact fields.
+
+## Timing checked live (2026-10-18, cloud session)
+
+| Data | Claim in these docs | Measured |
+|---|---|---|
+| Event XBRL (Reg 30) | "no source found" | Published with the announcement, seconds apart (above) |
+| Results XBRL (NSE integrated filing) | "up to 24 hours" after the outcome PDF (TRACKER F48 gap 2) | Same day, **5 minutes to 2 h 40 min** after the board-meeting outcome: Capri Global 5 min (Q1FY27), LTM 49 min (Q2FY27), Newgen 2 h 28 min, Bank of Maharashtra 2 h 39 min. A results card can wait for it or be corrected within hours, not a day |
+| Annual-report XBRL | "weeks to months after the PDF" | **True**: LTM ~7 weeks, NTPC ~7.5, Newgen ~8, Hindustan Copper FY25 ~4.5 months; Capri Global FY26 not listed yet |
+| Pledged data | `/api/corporate-pledgedata` gives `percSharesPledged` (Pledged data row above) | **Not reproduced**: empty `data` with and without symbol and dates; `/api/corporate-pledge-holding` returns a count of 0. The page's call needs reading again before module 42 relies on it |
+
 ## Still open
 
 - BSE's announcement API does carry an XBRL identity we had missed, but it is not a link. The beta
@@ -90,6 +123,6 @@ ratings, each with its own page under `/companies-listing/`. The endpoint for an
   (`ANN_<scrip>_<guid>`) - which is why "0 of 1,166 rows had an XBRL link" was true and still
   misleading: we looked for a URL and the field holds a name. Checked 2026-10-17: that name 404s
   under AttachHis, AttachLive, CorpAttachment, Attachbse and AttachXbrl, with and without `.xml`,
-  so the serving path is still unknown. NSE's announcement XBRL listing covers the same ground.
+  so the serving path is still unknown. NSE's announcement XBRL listing covers the same ground (above).
 - Whether an Integrated Filing instance exists for companies listed only on BSE (NSE has 2,480 of our
   5,111 companies). Those are almost all micro caps.

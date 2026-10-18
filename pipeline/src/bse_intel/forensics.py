@@ -19,6 +19,14 @@ _CONCLUDED = re.compile(r"(?:concluded|ended|closed)\s+(?:at\s+)?" + _TIME, re.I
 _PARA_B = re.compile(r"(?:para(?:graph)?|part)\s*[-–]?\s*B\b(?:\s+of)?(?:\s+part\s+a)?\s+of\s+schedule\s+iii", re.I)
 _PARA_A = re.compile(r"(?:para(?:graph)?|part)\s*[-–]?\s*A\b(?:\s+of)?(?:\s+part\s+a)?\s+of\s+schedule\s+iii", re.I)
 PROLONGED_HOURS = 6.0
+# Times that belong to a board meeting, not to a postal ballot's or an AGM's e-voting window: Torrent's postal-ballot
+# result ("e-voting commenced at 9:00 a.m. ... ended at 5:00 p.m.") was flagged as an 8-hour board meeting (round 4)
+_BOARD_MEETING = re.compile(r"meeting of the board|board meeting|board of directors(?: of the company)? (?:at its|in its) meeting", re.I)
+_VOTING = re.compile(r"postal ballot|e-?voting|remote voting|voting period|scrutini[sz]er", re.I)
+# What the company says when it expects no material impact: then it is not telling the market it crossed the threshold
+_NO_IMPACT = re.compile(r"\bno\s+(?:major|material|significant|adverse)?\s*(?:financial\s+|material\s+)?impact|"
+                        r"\bnot\s+(?:likely\s+to\s+)?(?:have|be|having)\s+(?:a\s+|any\s+)?(?:material|significant)|"
+                        r"\bimmaterial\b|\bnot\s+material\b|\bwill\s+not\s+be\s+sustained", re.I)
 
 
 def _minutes(match: re.Match) -> int | None:
@@ -33,6 +41,8 @@ def _minutes(match: re.Match) -> int | None:
 
 
 def board_meeting_hours(text: str) -> float | None:
+    if not _BOARD_MEETING.search(text) or _VOTING.search(text):
+        return None
     start, end = _COMMENCED.search(text), _CONCLUDED.search(text)
     if not start or not end:
         return None
@@ -52,7 +62,7 @@ def text_signals(text: str, event_type: str) -> list[dict]:
         out.append({"type": "BOARD_DELIBERATION", "severity": "WARNING", "ref": None,
                     "text": f"The board meeting ran {hours:.1f} hours before this outcome (a routine one takes 1-3); "
                             "prolonged deliberation often precedes difficult results or restructuring."})
-    if _PARA_B.search(text or "") and event_type in ("CAPEX", "ORDER_WIN", "PRODUCT_LAUNCH", "OTHER", "LITIGATION_REGULATORY"):
+    if _PARA_B.search(text or "") and not _NO_IMPACT.search(text or "") and event_type in ("CAPEX", "ORDER_WIN", "PRODUCT_LAUNCH", "OTHER", "LITIGATION_REGULATORY"):
         out.append({"type": "REG30_THRESHOLD", "severity": "INFO", "ref": None,
                     "text": "Filed under Reg 30 Schedule III Para B, which applies only above SEBI's materiality threshold "
                             "(the lower of 2% of turnover, 2% of net worth or 5% of 3-year average profit): management "

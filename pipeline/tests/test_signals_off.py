@@ -48,3 +48,27 @@ def test_novartis_an_open_offer_does_not_set_the_size_score():
     card = {**card, "headline": "Novartis India to acquire a plant for ₹552.5 Cr", "what_happened": ["Acquisition agreed"]}
     result = score(card, "M_AND_A", [], d, {"market_cap_cr": 2000}, False, "HIGH")
     assert "Size: 28% of market cap" in result.reasons
+
+
+def test_round_4_false_signals():
+    """Round 4 (blind agents): an 8-hour "board meeting" that was a postal ballot's e-voting window (Torrent), the Para B
+    threshold claimed where the filing says "no major financial impact" (Nuvoco), interest cover on a lender (HUDCO),
+    and JAWS / CAPITAL_DILUTER on mixed bases."""
+    from bse_intel.forensics import text_signals
+    from bse_intel.quality import quality_signals
+    from bse_intel.signals import SIGNALS_OFF
+
+    ballot = ("Results of postal ballot. The remote e-voting commenced at 9:00 a.m. on 10 September and ended at 5:00 p.m. "
+              "on 9 October 2026. The scrutinizer's report is enclosed.")
+    assert text_signals(ballot, "GOVERNANCE") == []
+    board = "The meeting of the Board of Directors commenced at 10:00 a.m. and concluded at 6:30 p.m."
+    assert [s["type"] for s in text_signals(board, "RESULTS")] == ["BOARD_DELIBERATION"]
+    para_b = ("Disclosure under Para B of Schedule III: a show cause notice of Rs 15.41 Cr. The company believes it will have "
+              "no major financial impact.")
+    assert text_signals(para_b, "LITIGATION_REGULATORY") == []
+    assert [s["type"] for s in text_signals("Disclosure under Para B of Schedule III: an order.", "ORDER_WIN")] == ["REG30_THRESHOLD"]
+    assert {"JAWS", "CAPITAL_DILUTER"} <= set(SIGNALS_OFF)
+    lender = {"sector": "nbfc", "financial_metrics": [
+        {"metric": m, "period": "Q1FY27", "value": v, "unit": "INR_CR", "as_of": "2026-08-10", "source_news_id": "n"}
+        for m, v in (("revenue", 3000.0), ("finance", 2000.0), ("ebitda", 2700.0), ("depreciation", 10.0))]}
+    assert not [s for s in quality_signals(lender, "n") if s["type"] == "DISTRESS"]

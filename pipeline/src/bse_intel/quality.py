@@ -173,7 +173,9 @@ def quality_signals(after: dict, news_id: str) -> list[dict]:
             out.append(_signal("DEBT_CASH_PARADOX", "INFO", f"Debt ₹{debt:g} Cr is {debt / sum(ttm):.1f}x TTM EBITDA while cash is ₹{cash:g} Cr: "
                                "check whether the cash is margin money or otherwise not free."))
     fin, ebitda, dep = get("finance"), get("ebitda"), get("depreciation")
-    if fin and fin > 0 and ebitda is not None:
+    # A lender's finance cost is its cost of funds, not a debt burden: HUDCO's own filing marks interest cover "Not
+    # Applicable", and its card warned that "operating profit barely covers interest" at 39% capital adequacy (round 4)
+    if fin and fin > 0 and ebitda is not None and not lender:
         cover = (ebitda - (dep or 0)) / fin
         if cover < 1.5:
             # One sentence used to serve every cover below 1.5x, so a negative one read "operating profit

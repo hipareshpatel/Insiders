@@ -94,6 +94,10 @@ SIGNALS_OFF = {
     "METRIC_SHIFT": "mostly noise: tax and inventory lines, moves of 300% or more, another period than the card's, a crore "
                     "figure against a percentage",
     "PREDICTION_RESOLVED": "judged a consolidated actual against a standalone target (eMudhra) and on a wrong memory figure",
+    # audit round 4 (2026-10-19), blind agents
+    "CAPITAL_DILUTER": "an EBITDA run-rate 'down ₹27.3 Cr' where the filing shows EBITDA up 1-3% YoY (Sterling Tools, twice), "
+                       "a run-rate the reviewer could not reproduce (Torrent): standalone and consolidated quarters mixed",
+    "JAWS": "'employee cost up 250% YoY vs revenue +181%' where memory gives +16.6% and +21.3% (Cyient): bases mixed",
 }
 
 

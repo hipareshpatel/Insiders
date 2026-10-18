@@ -124,7 +124,8 @@ Read before changing anything:
      table 5 published / 5 held (round 3d 4 / 6); Shivam FY25, eMudhra FY25 and Heritage FY26 released. Two table
      classes fixed after the run (the borrowings line's prior year; the contingent total sharing its line with
      the classes): re-run 5fc5b553 and 1e3f6e56 when the slot is free. The file comes weeks to months after the
-     PDF, so the daily path mostly still reads the PDF alone (`NSE_ANNUAL_XBRL=0` turns it off).
+     PDF, so the daily path mostly still reads the PDF alone (`NSE_ANNUAL_XBRL=0` turns it off);
+     `annual-xbrl-catchup` (daily after the close, PLAN phase 5) re-reads such a report once its file is listed.
   4a. **Held-card loop stopped 2026-10-18** after round 3e: 28 held (6%), 412 published. Nearly every fix since
      round 1 made the checks accept more, and published cards had not been measured since (owner's review).
   5. **Now: audit round 2** (`docs/audit/round-2.md`, scripts in `pipeline/scripts/audit_round2/`): 14 companies

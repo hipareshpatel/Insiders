@@ -23,6 +23,7 @@ STATEMENTS = (
     "kv_set",
     "filings_import",
     "cards_reaction",
+    "cards_delete",
 )
 
 QUERIES = (
@@ -30,6 +31,7 @@ QUERIES = (
     "filings_pending_company",
     "filings_recent_company",
     "card_held",
+    "annual_cards_without_xbrl",
     "filings_remaining",
     "filings_known_day",
     "backfill_companies",

@@ -83,6 +83,21 @@ def cmd_process(args, settings, sink) -> int:
     return 0
 
 
+def cmd_annual_xbrl_catchup(args, settings, sink) -> int:
+    """Annual reports read again once NSE lists their XBRL (annual_catchup.py). Exit 3: another run is going on."""
+    from . import annual_catchup
+
+    busy = annual_catchup.wait_for_quiet(settings.log_dir, args.wait * 60)
+    if busy:
+        print(json.dumps({"skipped": "another run on this machine may be calling NSE or writing", "busy": busy}, indent=2))
+        return 3
+    report = annual_catchup.catch_up(_pipeline(settings, sink), time.monotonic() + args.time_budget,
+                                     horizon_days=args.days, every_days=args.every, max_companies=args.max_companies,
+                                     max_reruns=args.max_reruns)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
+
+
 def cmd_analyze_pdf(args, settings, sink) -> int:
     """Analyse a local PDF end to end (no BSE access needed): prints the card."""
     from .models import Filing
@@ -404,6 +419,16 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--news-ids", help="only these filings (comma or whitespace separated, or @file); "
                                       "for re-running an audited sample after a fix")
     p.set_defaults(func=cmd_process)
+
+    p = sub.add_parser("annual-xbrl-catchup",
+                       help="read annual reports again once NSE lists their XBRL (daily, after the close)")
+    p.add_argument("--days", type=int, default=365, help="reports filed in the last N days")
+    p.add_argument("--every", type=int, default=7, help="read a company's NSE list at most every N days")
+    p.add_argument("--max-companies", type=int, default=150, help="NSE lists read this run")
+    p.add_argument("--max-reruns", type=int, default=10, help="annual reports read again this run")
+    p.add_argument("--wait", type=int, default=0, help="minutes to wait for another run on this machine to finish")
+    p.add_argument("--time-budget", type=int, default=3600)
+    p.set_defaults(func=cmd_annual_xbrl_catchup)
 
     p = sub.add_parser("analyze-pdf", help="analyse a local PDF and print the card")
     p.add_argument("pdf")

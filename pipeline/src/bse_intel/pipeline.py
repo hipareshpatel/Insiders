@@ -978,7 +978,7 @@ class Pipeline:
         self.nse = nse
         if nse is not None:
             raw.attach(nse, sink, "nse", settings)
-        self._annual_lists: dict[str, list] = {}   # symbol -> NSE's annual-report XBRL list, read once a run
+        self._annual_lists: dict[str, tuple[list, str]] = {}   # symbol -> NSE's annual-report XBRL list and when it was read
         self._nse_refused = False                  # NSE refused the address: no more calls this run
         self.prompts = prompts or PromptEngine(settings)
         self.rules = rules or RuleBook.from_config(settings.load_toml("taxonomy.toml"))
@@ -1184,7 +1184,7 @@ class Pipeline:
     # ------------------------------------------------------------------ processing
 
     def process(self, day_from: str, day_to: str, deadline: float, bulk: bool, memory_complete: bool = True,
-                history_first: bool = False, only: set[str] | None = None) -> None:
+                history_first: bool = False, only: set[str] | None = None) -> list[Outcome]:
         """Work the queue for a date window, oldest first, companies in parallel.
 
         With ``history_first`` (the live window), a company's unanalysed history is processed before
@@ -1193,13 +1193,13 @@ class Pipeline:
 
         With ``only``, nothing outside that set of news ids is analysed. That is how a measured round
         is run: the same filings whose cards an audit called wrong, re-read after a fix, so the before
-        and after are the same documents rather than two different samples.
+        and after are the same documents rather than two different samples. Returns the outcomes, committed.
         """
-        after = ("", "")
+        after, done = ("", ""), []
         while time.monotonic() < deadline and not self._halted(bulk):
             rows = self.sink.pending_filings(day_from, day_to, self.settings.max_attempts, BATCH, after)
             if not rows:
-                return
+                return done
             after = (rows[-1]["filed_at"], rows[-1]["news_id"])
             groups: OrderedDict[str, list[Filing]] = OrderedDict()
             for row in rows:
@@ -1211,7 +1211,8 @@ class Pipeline:
                 jobs = self._live_jobs(groups, day_from, deadline, bulk, memory_complete)
             else:
                 jobs = {s: partial(self._process_group, g, deadline, bulk, memory_complete) for s, g in groups.items()}
-            self._run_parallel(jobs)
+            done += [o for outcomes in self._run_parallel(jobs).values() for o in outcomes]
+        return done
 
     def _live_jobs(self, groups: dict[str, list[Filing]], window_start: str, deadline: float, bulk: bool,
                    memory_complete: bool) -> dict:
@@ -1628,22 +1629,28 @@ class Pipeline:
                 pass
         return data
 
-    def _annual_report_xbrl(self, filing: Filing, company: dict, doc: Document) -> list[annual_xbrl.AnnualReport]:
+    def _annual_report_xbrl(self, filing: Filing, company: dict,
+                            doc: Document) -> tuple[list[annual_xbrl.AnnualReport], str | None]:
         """The annual report's own XBRL from NSE (annual_xbrl), for the year the report closes: consolidated first,
         then standalone. Empty - the report read from its PDF alone, as before - when the company is not on NSE,
-        has not filed the year's file yet, or the file's figures are not in the PDF at any unit."""
+        has not filed the year's file yet, or the file's figures are not in the PDF at any unit.
+
+        Also returns when NSE's list was read, if every file it lists for the year was looked at; None when NSE
+        was off, refused or failing. The catch-up (annual_catchup.py) reads the report again for a file broadcast
+        after that time, and for any file of the year when there is none."""
         symbol = (company.get("symbol") or filing.symbol or "").strip().upper()
         if self.nse is None or not symbol:
-            return []
+            return [], None
         with self._lock:
-            listing, refused = self._annual_lists.get(symbol), self._nse_refused
+            cached, refused = self._annual_lists.get(symbol), self._nse_refused
         if refused:
-            return []
+            return [], None
         try:
-            if listing is None:
-                listing = self.nse.annual_reports(symbol)
+            if cached is None:
+                cached = (self.nse.annual_reports(symbol), now_iso())
                 with self._lock:
-                    self._annual_lists[symbol] = listing
+                    self._annual_lists[symbol] = cached
+            listing, read_at = cached
             year = annual_xbrl.report_year(filing.headline, filing.subject, filing.filed_at)
             reports = []
             for row in annual_xbrl.pick(listing, year):
@@ -1655,15 +1662,15 @@ class Pipeline:
             log.error("NSE refused the session; annual reports are read from their PDF for the rest of this run: %s", exc)
             with self._lock:
                 self._nse_refused = True
-            return []
+            return [], None
         except Exception as exc:  # the XBRL is an extra: the PDF still carries the report
             log.warning("annual-report XBRL for %s unavailable (%s: %s); using the PDF", filing.news_id, type(exc).__name__, exc)
-            return []
+            return [], None
         if reports and not annual_xbrl.confirm(reports[0], doc.layer_text()):
             log.warning("annual-report XBRL for %s (%s %s): its figures are not in the PDF at any unit; using the PDF only",
                         filing.news_id, symbol, reports[0].fy)
-            return []
-        return reports
+            return [], read_at
+        return reports, read_at
 
     def _xbrl(self, filing: Filing, strict: bool = False) -> "xbrl_fast_path.XbrlResult | None":
         """The filing's XBRL figures (cached beside the text cache). A download problem fails only a
@@ -1842,7 +1849,7 @@ class Pipeline:
         # An annual report's statements as the company tagged them, in crore and on a named basis, where the PDF
         # prints lakh or million with standalone and consolidated side by side (12 of 31 cards held, round 3d).
         # Its lines are the filing's own figures, so a card may quote them as it quotes the results table.
-        annual = self._annual_report_xbrl(filing, company, doc) if event_type == "ANNUAL_REPORT" else []
+        annual, annual_checked = self._annual_report_xbrl(filing, company, doc) if event_type == "ANNUAL_REPORT" else ([], None)
         if annual:
             text = annual_xbrl.table(annual) + "\n\n" + text
         sector_module = self.prompts.sector_for(industry)
@@ -2007,6 +2014,8 @@ class Pipeline:
         if annual:
             card_json["annual_xbrl"] = {"bases": [r.basis for r in annual], "period": annual[0].fy,
                                         "figures": sum(r.figures() for r in annual)}
+        if annual_checked:
+            card_json["annual_xbrl_checked"] = annual_checked  # NSE's list as of then: annual_catchup.py
         card_json["priced_at_filing"] = {k: priced[k] for k in PRICED_FIELDS if priced.get(k) is not None} or None
         row = {
             "news_id": filing.news_id, "scrip_code": filing.scrip_code,

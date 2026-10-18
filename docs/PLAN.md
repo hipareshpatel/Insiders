@@ -65,7 +65,7 @@ Exit: the deployed site shows the full history and new filings within the run in
 | When | What | Where |
 |---|---|---|
 | Every 15–30 min, market days | `run` (live filings first, then any backfill) | laptop |
-| Weekdays after the close | `market-data`, then `post-mortem` | laptop |
+| Weekdays after the close | `market-data`, then `post-mortem`, then `annual-xbrl-catchup --wait 30` | laptop |
 | Weekly | `sync-companies`; `backup` of dossiers | laptop / GitHub Actions |
 | Daily glance | System page: queue, failures, per-provider quota, review queue | owner |
 | Monthly | `models` and `ai-check`: replace retired models in `providers.toml` | laptop |

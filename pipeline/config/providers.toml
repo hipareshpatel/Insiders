@@ -123,6 +123,7 @@ limits = { rpd = 1_000 }  # all free models together
 base_url = "https://api.deepseek.com/v1"
 api_key_env = "DEEPSEEK_API_KEY"
 timeout_s = 120
+paid = true  # left out of the steps that run every day (annual_catchup.py), even where the key is loaded
 
 # ------------------------------------------------------------------ Pass 1: gatekeeper
 # Input: headline + subcategory + first ~2,500 characters of page 1.

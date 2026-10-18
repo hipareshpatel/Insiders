@@ -1,5 +1,6 @@
 // Shared SQL, imported verbatim from ../db so the Worker and the Python
 // pipeline's LocalSink execute exactly the same statements.
+import cardsDelete from "../../db/statements/cards_delete.sql?raw";
 import cardsReaction from "../../db/statements/cards_reaction.sql?raw";
 import cardsUpsert from "../../db/statements/cards_upsert.sql?raw";
 import catalystsUpsert from "../../db/statements/catalysts_upsert.sql?raw";
@@ -21,6 +22,7 @@ import filingsKnownDay from "../../db/queries/filings_known_day.sql?raw";
 import filingsPendingCompany from "../../db/queries/filings_pending_company.sql?raw";
 import filingsRecentCompany from "../../db/queries/filings_recent_company.sql?raw";
 import cardHeld from "../../db/queries/card_held.sql?raw";
+import annualCardsWithoutXbrl from "../../db/queries/annual_cards_without_xbrl.sql?raw";
 import filingsRemaining from "../../db/queries/filings_remaining.sql?raw";
 import exportCards from "../../db/queries/export_cards.sql?raw";
 import exportCompanies from "../../db/queries/export_companies.sql?raw";
@@ -45,6 +47,7 @@ export const STATEMENTS: Record<string, string> = {
   filings_update: filingsUpdate,
   cards_upsert: cardsUpsert,
   cards_reaction: cardsReaction,
+  cards_delete: cardsDelete,
   companies_upsert: companiesUpsert,
   companies_seen: companiesSeen,
   catalysts_upsert: catalystsUpsert,
@@ -59,6 +62,7 @@ export const QUERIES: Record<string, string> = {
   filings_pending_company: filingsPendingCompany,
   filings_recent_company: filingsRecentCompany,
   card_held: cardHeld,
+  annual_cards_without_xbrl: annualCardsWithoutXbrl,
   filings_remaining: filingsRemaining,
   filings_known_day: filingsKnownDay,
   backfill_companies: backfillCompanies,

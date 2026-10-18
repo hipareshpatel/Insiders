@@ -59,7 +59,11 @@ result. What the pipeline reads and puts in front of an annual report's text is 
   on the statements is unmodified; the opinion is read from its "Basis for ... Opinion" heading.
 - **It comes weeks to months after the PDF.** Kanoria FY25: report 2 Sep 2025, XBRL 22 Dec 2025; eMudhra 2.5
   months; Heritage 6 weeks. A report read the day it is filed has none yet. The year is taken from the filing
-  (its headline, else the date), never "the newest file listed".
+  (its headline, else the date), never "the newest file listed". `annual-xbrl-catchup` (`annual_catchup.py`),
+  run once a day after the close, reads the list again for each company whose annual-report card has no table
+  (one request per company, at most weekly, every four weeks while the list is empty, 150 a run at the usual
+  3-5 s pace) and re-reads the report when a file for its year was broadcast after the card last read the list
+  in full (`card_json.annual_xbrl_checked`). It stops on 401/403/429 and queues nothing then.
 - Coverage for the ten smoke-test companies on 2026-10-18: 8 of 10 list files (not Novartis, not CSB Bank);
   FY25 for six, FY26 for three; Shivam and SML file standalone only, Jubilant consolidated only. Ahluwalia's
   FY24 rows carry report_type "ARnull" (not read yet).

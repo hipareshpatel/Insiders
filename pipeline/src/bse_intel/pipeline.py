@@ -1989,6 +1989,7 @@ class Pipeline:
             changes += computed.enforce(candidate, produced)
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged)
+            found.scale += gate.stale_columns(_card_texts(candidate), filed_text)
             if not tagged and "RESULTS" in (event_type, candidate.event_type):
                 # With no XBRL the reading of the statement is all there is, so it has to add up: 27 of
                 # 68 results cards had no XBRL behind them. Reported for the second provider to fix, with

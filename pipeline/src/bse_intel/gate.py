@@ -650,3 +650,75 @@ def statement_footing(metrics) -> list[str]:
             problems.append(f"{period}: PBT {pbt:,.2f} - tax {tax:,.2f} = {pbt - tax:,.2f} Cr, "
                             f"but PAT is given as {pat:,.2f} Cr")
     return problems
+
+
+# --- a table's latest column, from its own YoY and QoQ columns -------------------------------------------------------
+
+_NUM = r"\(?-?\d[\d,]*(?:\.\d+)?\)?"
+_CHANGE_ROW = re.compile(r"(?m)^(?P<label>[^\n]*?[A-Za-z][^\n\d]*?)\s+(?P<a>" + _NUM + r")\s+(?P<b>" + _NUM + r")\s+(?P<c>"
+                         + _NUM + r")\s+(?P<y>" + _NUM + r")\s*%\s+(?P<q>" + _NUM + r")\s*%\s*$")
+_THREE = re.compile(r"(?m)^[^\n]*?[A-Za-z][^\n\d]*?\s+(" + _NUM + r")\s*%?\s+(" + _NUM + r")\s*%?\s+(" + _NUM + r")\s*%?\s*$")
+
+
+def _num(raw: str) -> float:
+    neg = raw.startswith("(") or raw.startswith("-")
+    value = float(raw.strip("()-").replace(",", ""))
+    return -value if neg else value
+
+
+def table_columns(text: str) -> tuple[set[float], set[float]]:
+    """(latest, stale) figures of the tables whose rows print a YoY and a QoQ change after three periods.
+
+    A business update prints "Loans & Advances 140,041 155,555 158,335 13.1% 1.8%": the headers that would say
+    which column is September 2026 came out garbled, and the card took the first column, a year old, and called a
+    13.1% rise a 13.1% fall (Bandhan Bank's Q2FY27 update, round-2 re-run; memory stored the year-old figures as
+    the quarter's). The changes say which column is the latest: here only the third column is 13.1% above one of
+    the others and 1.8% above the third. Rows of the same table without change columns take the same order."""
+    latest, stale, orders = set(), set(), []
+    for m in _CHANGE_ROW.finditer(text or ""):
+        cells = [_num(m.group(k)) for k in "abc"]
+        yoy, qoq = _num(m.group("y")), _num(m.group("q"))
+        found = set()
+        for cur in range(3):
+            for ya in range(3):
+                qa = 3 - cur - ya
+                if len({cur, ya, qa}) < 3 or not cells[ya] or not cells[qa]:
+                    continue
+                y, q = (cells[cur] / cells[ya] - 1) * 100, (cells[cur] / cells[qa] - 1) * 100
+                if abs(abs(y) - abs(yoy)) <= 0.15 and abs(abs(q) - abs(qoq)) <= 0.15 \
+                        and (yoy >= 0) == (y >= 0 or abs(y) < 0.05) and (qoq >= 0) == (q >= 0 or abs(q) < 0.05):
+                    found.add(cur)
+        if len(found) == 1:
+            cur = found.pop()
+            orders.append((m.start(), cur))
+            latest.add(cells[cur])
+            stale.update(c for i, c in enumerate(cells) if i != cur)
+    if orders and all(cur != 0 for _, cur in orders):
+        cur = orders[0][1]
+        first, last = min(p for p, _ in orders) - 1500, max(p for p, _ in orders) + 1500
+        for m in _THREE.finditer(text or ""):
+            if first <= m.start() <= last:
+                cells = [_num(g) for g in m.groups()]
+                latest.add(cells[cur])
+                stale.update(c for i, c in enumerate(cells) if i != cur)
+    return latest, stale - latest
+
+
+def stale_columns(texts: list[str], filed_text: str) -> list[str]:
+    """Figures a card states that the table's own changes show are a year or a quarter old."""
+    latest, stale = table_columns(filed_text)
+    if not stale:
+        return []
+    from .grounding import _tokens   # local: grounding does not import the gate
+
+    problems = []
+    for text in texts:
+        flat = text or ""
+        for value, decimals, pos, kind, raw in _tokens(flat):
+            if kind in ("bps", "pp", "x") or value < 1 or _COMPARED.search(flat[max(0, pos - 35):pos].lower()):
+                continue  # "to 158,335 from 140,041": the comparison is meant to be the earlier figure
+            tolerance = 0.5 * 10 ** -decimals + 1e-9
+            if any(abs(abs(s) - value) <= tolerance for s in stale) and not any(abs(abs(v) - value) <= tolerance for v in latest):
+                problems.append(f"states {raw} as current, but the table's YoY and QoQ columns show it is an earlier "
+                                "period's figure; read the columns in the order the changes give")
+    return list(dict.fromkeys(problems))

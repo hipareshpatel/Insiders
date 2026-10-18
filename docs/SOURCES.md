@@ -134,5 +134,13 @@ So for these events the amount, unit, counterparty, dates and stage need no mode
   and `stand_xbrl_link` / `conso_xbrl_link` fields `bse.py` has read since F33. It is on `api.bseindia.com`, which
   answers 403 outside India (this cloud session, GitHub runners), so an online-only pipeline takes results XBRL
   from NSE's integrated filing instead.
+  **GitHub verdict, 2026-10-18** (`online-probe.yml`, run 5, `pipeline/scripts/online_probe.py`): on a GitHub-hosted
+  runner every `api.bseindia.com` call the results pages make answers **403 Access Denied**: `Corp_FinanceResult_ng_new`
+  (the filter form: today, all companies; and one company, last week), `Corp_Archive_Wthxml_ng_new` (its announcements
+  panel), `NSTodayResults_ng` and `Result_Arch_ng`. BSE's file host answers **200**: the owner's
+  `www.bseindia.com/XBRLFILES/IFIndasDuplicateUploadDocument/Integrated_Finance_Ind_As_512361_..._IFIndAs.html` gave all
+  217 tagged figures, and `CorpXbrlGen` the announcement metadata. So on GitHub BSE's files can be read but not listed;
+  a file's address carries its upload time, so it cannot be built without a list. NSE answered every call (announcements,
+  event XBRL, results, annual reports, shareholding, PDFs).
 - Whether an Integrated Filing instance exists for companies listed only on BSE (NSE has 2,480 of our
   5,111 companies). Those are almost all micro caps.

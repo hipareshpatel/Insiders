@@ -443,6 +443,9 @@ def table(reports: list[AnnualReport]) -> str:
     debt = [main.current.get(m) for m in ("borrowings_noncurrent", "borrowings_current")]
     if any(debt):
         parts = ", ".join(f"{label} {_cr(v)}" for label, v in zip(("non-current", "current"), debt) if v)
+        # the year before too: Kanoria's card compared with FY24's ₹506.72 Cr, a sum no line printed (held)
+        before = [main.prior.get(m) for m in ("borrowings_noncurrent", "borrowings_current")]
+        parts += f"; {prior_fy}: {_cr(sum(v for v in before if v))}" if any(before) else ""
         lines.append(f"- {basis} borrowings at {at}: {_cr(sum(v for v in debt if v))} ({parts})")
     for other in others:
         figures = [f"{wording} {other.fy} {_cr(other.current[m])}" for m, wording, _ in FLOWS
@@ -454,13 +457,21 @@ def table(reports: list[AnnualReport]) -> str:
     if "managerial_remuneration" in main.current:
         lines.append(f"- {basis} managerial remuneration {fy}: {_cr(main.current['managerial_remuneration'])}")
     for report in reports:
+        # The total and its classes on one line, so a card quoting either quotes both: Jubilant's card quoted the
+        # by-class line for its ₹368.40 Cr total, printed on a line of its own, and was held. With no total tagged,
+        # what the listed classes add to (a class with no description of its own is never among them).
         b = (report.basis or "").lower()
-        if "contingent_liabilities" in report.current:
-            lines.append(f"- {b} contingent liabilities at {at}: {_cr(report.current['contingent_liabilities'])}")
-        if report.contingent:
-            lines.append(f"- {b} contingent liabilities at {at}, by class: "
-                         + "; ".join(f"{what} {_cr(v)}" for what, v in report.contingent[:MAX_LINE_ITEMS]))
-        if report.contingent or "contingent_liabilities" in report.current:
+        total = report.current.get("contingent_liabilities")
+        classes = "; ".join(f"{what} {_cr(v)}" for what, v in report.contingent[:MAX_LINE_ITEMS])
+        if total and classes:
+            lines.append(f"- {b} contingent liabilities at {at}: {_cr(total)}; by class: {classes}")
+        elif total:
+            lines.append(f"- {b} contingent liabilities at {at}: {_cr(total)}")
+        elif classes:
+            lines.append(f"- {b} contingent liabilities at {at}, by class: {classes}"
+                         + (f"; all {len(report.contingent)} classes add to {_cr(sum(v for _, v in report.contingent))}"
+                            if len(report.contingent) > 1 else ""))
+        if total or classes:
             break   # one basis is enough; the consolidated set includes the company's own
     for report in reports:
         b = (report.basis or "").lower()

@@ -35,13 +35,41 @@ Banking and the two insurance maps are overlays on the commercial one, because t
 different things: `ProvisionForTax` is a general insurer's tax on profit and a life insurer's
 *policyholders'* tax, twenty times larger and unrelated to the result it would be read against.
 
+## Annual reports
+
+Read since 2026-10-18 (`annual_xbrl.py`, `NseClient.annual_reports`; to-do item 4, TRACKER F57). The endpoint
+is the call the "Annual Reports XBRL" page (`/companies-listing/corporate-filings-annual-reports-xbrl`) makes:
+
+| What | Endpoint | Answer |
+|---|---|---|
+| Annual report XBRL | `/api/annual-reports-xbrl?index=equities&symbol=X` | `{"data": [{fromYr, toYr, report_type, submission_type, broadcast_dttm, fileName}]}`: one row per financial year and basis (`Standalone` / `Consolidated`), `fileName` a direct `nsearchives.nseindia.com/corporate/xbrl/AR_XBRL_<SYMBOL>_<ddmmyyyyhhmmss>.xml` |
+
+Each file is the company's financial statements as filed with MCA, on the MCA Ind-AS taxonomy
+(`in-ci-ent-2017-03-31`), 2.5-4.5 MB for the smoke-test companies: every amount in rupees, the basis in
+`NatureOfReportStandaloneConsolidated`, the PDF's printing unit in `LevelOfRoundingUsedInFinancialStatements`,
+each related party, key managerial person and consolidated entity a typed member of its own. The
+standalone file alone carries the board's report (KMP pay by person) and the auditor's CARO clauses
+(statutory dues, defaults to lenders, fraud); the consolidated one carries each group entity's share of the
+result. What the pipeline reads and puts in front of an annual report's text is listed in `annual_xbrl.py`.
+
+- **A zero is the filing software's blank.** Kanoria FY25 files `ContingentLiabilities` 0 beside
+  `WhetherThereAreAnyContingentLiabilities` "true" and ₹6.82 Cr by class, and `ManagerialRemuneration` 0 while
+  its board's report pays the MD ₹3.15 Cr. Zeros are left out, never shown as nil.
+- **"Qualified Opinion" can head the report on internal financial controls** (Shivam FY25) while the opinion
+  on the statements is unmodified; the opinion is read from its "Basis for ... Opinion" heading.
+- **It comes weeks to months after the PDF.** Kanoria FY25: report 2 Sep 2025, XBRL 22 Dec 2025; eMudhra 2.5
+  months; Heritage 6 weeks. A report read the day it is filed has none yet. The year is taken from the filing
+  (its headline, else the date), never "the newest file listed".
+- Coverage for the ten smoke-test companies on 2026-10-18: 8 of 10 list files (not Novartis, not CSB Bank);
+  FY25 for six, FY26 for three; Shivam and SML file standalone only, Jubilant consolidated only. Ahluwalia's
+  FY24 rows carry report_type "ARnull" (not read yet).
+
 ## Everything else NSE publishes as data
 
 Found but not yet read. Each would replace something a model currently reads out of a PDF.
 
 | What | Endpoint | Why it matters |
 |---|---|---|
-| Annual report XBRL | `/api/annual-reports-xbrl?index=equities&symbol=X` | the whole annual report tagged: 631 numeric and 332 text facts. Carries related-party transactions, auditors and their signatories, significant investments in subsidiaries, managerial remuneration, CSR, **continuing defaults on principal and interest**, and **loans and receivables due from directors**. Three of the four buckets PLAN item 2 wanted a model to read, machine-tagged instead. Example: `AR_XBRL_GOKULAGRO_16102026164404.xml`, 3.9 MB |
 | Announcements | `/api/corporate-announcements?index=equities&symbol=X` | every filing with a `desc` category NSE assigns it, plus `attchmntText`. An independent label to check our own event typing against, and a second dedup key (`seq_id`) |
 | Pledged data | `/api/corporate-pledgedata?index=equities&symbol=X` | `percSharesPledged`, `percPromoterHolding`. Blueprint module 42 (promoter-group contagion) is recorded as having no data source; this is one |
 | Shareholding | `/api/corporate-share-holdings-master?index=equities&symbol=X` | already read (`seed_shareholding`) |

@@ -83,11 +83,25 @@ def test_table_leads_with_the_consolidated_set_and_names_each_basis():
     assert lines[0].startswith("Machine-tagged annual report (XBRL the company filed with NSE, FY25, consolidated, "
                                "₹ crore unless noted") and "prints its statements in millions" in lines[0]
     assert "- consolidated revenue from operations FY25: 1,536.72 Cr (FY24: 1,475.05 Cr, +4.2%)" in lines
-    assert "- consolidated borrowings at 31 March 2025: 594.12 Cr (non-current 343.62 Cr, current 250.50 Cr)" in lines
+    # the year before on the same line: the held card compared with FY24's 506.72, which no line printed
+    assert "- consolidated borrowings at 31 March 2025: 594.12 Cr (non-current 343.62 Cr, current 250.50 Cr; " \
+           "FY24: 506.72 Cr)" in lines
     assert any(line.startswith("- standalone (the company alone): revenue from operations FY25 678.30 Cr") for line in lines)
     assert any("Rajya Vardhan Kanoria (Managing Director) 3.15 Cr" in line for line in lines)
-    assert not any(": 0.00 Cr" in line or "contingent liabilities at 31 March 2025: " in line for line in lines)
+    # no total is tagged (the filed 0 is a blank), so the classes and what they add to, on one line
+    (contingent,) = [line for line in lines if "contingent liabilities" in line]
+    assert contingent.startswith("- consolidated contingent liabilities at 31 March 2025, by class: Income Tax demands 5.84 Cr")
+    assert contingent.endswith("; all 2 classes add to 6.82 Cr") and not any(": 0.00 Cr" in line for line in lines)
     assert len(table) < 6000
+
+
+def test_a_tagged_contingent_total_shares_its_line_with_the_classes():
+    """Jubilant FY25 tags a total and its classes; its card quoted the by-class line for the total and was held."""
+    report = annual_xbrl.parse(CONSOLIDATED)
+    report.current["contingent_liabilities"] = 6.82
+    (line,) = [l for l in annual_xbrl.table([report]).splitlines() if "contingent liabilities" in l]
+    assert line.startswith("- consolidated contingent liabilities at 31 March 2025: 6.82 Cr; by class: Income Tax demands 5.84 Cr")
+    assert gate.numbers_in_quote("Contingent liabilities ₹6.82 Cr", line[2:], unit=10) == []
 
 
 def test_a_card_may_quote_a_table_line_whatever_unit_the_pdf_prints():

@@ -114,13 +114,17 @@ Read before changing anything:
      the quote contract on figures from memory or the scale block, and the annual-report path (lakh,
      standalone vs consolidated) until NSE's annual-report XBRL is read. Also new today: a memory insight
      naming the wrong period is dropped (card kept); no second opinion for quote wording alone.
-  4. **Half done 2026-10-18: ANNUAL_REPORT event type** (F57). Reg 34(1) filings and annual reports filed with
-     their AGM notice go to a fast track with an auditor / CARO / related-party / contingent-liability focus,
-     3x page budget, a 120 MB download cap; the Reg 36(1)(b) letters are dropped. `retriage --scrips` queues
-     what a narrowed rule no longer drops (12 annual reports freed for the smoke-test companies), and
-     `scripts/rerun.py` now routes a reset filing by today's rules. Next: run the 31 ledger filings today's
-     rules type ANNUAL_REPORT (`rerun.py` them, then `process --news-ids`) and audit the cards against their
-     PDFs; then read NSE's annual-report XBRL (docs/SOURCES.md) into a table in front of the text.
+  4. **Done 2026-10-18: ANNUAL_REPORT event type and its own XBRL** (F57). Reg 34(1) filings and annual reports
+     filed with their AGM notice go to a fast track with an auditor / CARO / related-party / contingent-liability
+     focus, 3x page budget, a 120 MB download cap; the Reg 36(1)(b) letters are dropped. NSE's annual-report XBRL
+     (`annual_xbrl.py`, docs/SOURCES.md) is fetched for the report's year and put in front of the text: the
+     statements in crore on a named basis, related parties by party, KMP pay, contingent liabilities, loss-making
+     group entities, the auditor's opinion by its basis-for-opinion heading, CARO. Filler zeros are never shown
+     as nil. All 31 annual-report filings re-run (docs/audit/annual-xbrl-2026-10-18.md): the 10 that got the
+     table 5 published / 5 held (round 3d 4 / 6); Shivam FY25, eMudhra FY25 and Heritage FY26 released. Two table
+     classes fixed after the run (the borrowings line's prior year; the contingent total sharing its line with
+     the classes): re-run 5fc5b553 and 1e3f6e56 when the slot is free. The file comes weeks to months after the
+     PDF, so the daily path mostly still reads the PDF alone (`NSE_ANNUAL_XBRL=0` turns it off).
   5. Raise the paid weight and drain the 160 queued filings; audit round 2; PLAN 1h.
   Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order
   (PLAN.md item 1c). `sync-to-cloud` still cannot run: no PLATFORM_API_URL or INGEST_TOKEN for the

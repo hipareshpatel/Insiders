@@ -118,3 +118,27 @@ def test_heg_no_percentage_off_a_loss_in_a_signal():
     assert _change({"metric": "pat", "value": 61.92, "unit": "INR_CR"}, {"value": -19.76}) == (3.0, "TURN")
     assert _change({"metric": "deferred_tax", "value": 6.72, "unit": "INR_CR"}, {"value": -1.5}) is None
     assert _change({"metric": "pat", "value": 50.0, "unit": "INR_CR"}, {"value": 30.0})[1] == "67%"
+
+
+def test_britannia_a_vote_share_printed_without_a_percent_sign_stays():
+    """17762e34 / 558fc7e9: the scrutiniser prints 97.0846 and 2.9154 under "% of votes"; the card's 97.08% and
+    2.92% were removed as unproduced and left "** ** of valid votes were in favour"."""
+    pool = computed.build_pool("Votes in favour of the resolution 2,302 18,79,81,898 97.0846 "
+                               "Votes against the resolution 263 56,44,992 2.9154")
+    out = _out({"what_happened": ["**97.08%** of valid votes were in favour and **2.92%** against"]})
+    assert computed.enforce(out, pool) == []
+    # only to two decimals: a one-decimal or whole share could land on any table figure
+    assert computed.unproduced("97.1% in favour", pool) == ["97.1%"]
+
+
+def test_adani_a_sentence_left_broken_by_a_removed_figure_is_dropped_or_mended():
+    """fc2e28bd / 879e1c65 / 10f81073: "increase stake to via open market purchases", "NCD issuance, of net worth",
+    "Only of votes cast were in favour"."""
+    pool = computed.build_pool("Market purchase of shares by the promoter group")
+    out = _out({"headline": "Adani Power promoters increase stake to 75.5% via open market purchases",
+                "what_happened": ["Only 62% of votes cast were in favour of Resolution No. 3", "Promoters bought shares"]})
+    computed.enforce(out, pool)
+    assert out.card.headline == "Adani Power promoters increase stake via open market purchases"
+    assert [f.text for f in out.card.what_happened] == ["Promoters bought shares"]
+    assert computed._repair("Home First Finance approved ₹150 Cr NCD issuance, of net worth") == \
+        "Home First Finance approved ₹150 Cr NCD issuance"

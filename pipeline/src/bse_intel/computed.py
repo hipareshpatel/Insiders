@@ -27,6 +27,7 @@ from .periods import prior_quarter_period, prior_year_period
 # A figure that is computed rather than read: a percentage, a basis-point or percentage-point move, a multiple
 _FIGURE = re.compile(r"(?<![\w.])([+\-−]?)\s?(\d{1,3}(?:,\d{2,3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*"
                      r"(%|per\s?cent\b|bps\b|basis points?\b|pp\b|percentage points?\b|x\b|times\b)", re.I)
+_BARE = re.compile(r"(?<![\w.,])(\d{1,3}\.\d{2,})(?!\s*(?:%|per\s?cent|\d|,\d))")
 _UP = re.compile(r"\b(?:up|rose|rise|rising|grew|grow|growth|increase[sd]?|higher|gain(?:ed|s)?|jump(?:ed|s)?|"
                  r"improv\w*|expand\w*|surg\w*|climb\w*|widen\w*)\b", re.I)
 _DOWN = re.compile(r"\b(?:down|fell|fall|falling|declin\w*|lower|drop\w*|decrease[sd]?|contract\w*|shr[iau]nk\w*|"
@@ -50,6 +51,12 @@ class Pool:
     pct: list[tuple[float, int]] = field(default_factory=list)
     bps: list[tuple[float, int]] = field(default_factory=list)
     x: list[float] = field(default_factory=list)
+    # figures the filing prints with two or more decimals and no % sign: a voting result's 97.0846, a stake's 17.12
+    # under a "% of shares" header (round-2 re-run: removed as unproduced, leaving "** ** of votes")
+    bare: list[float] = field(default_factory=list)
+
+    def add_bare(self, text: str) -> None:
+        self.bare += [float(m.group(1)) for m in _BARE.finditer(text or "")]
 
     def add_printed(self, text: str) -> None:
         for m in _FIGURE.finditer(text or ""):
@@ -75,7 +82,10 @@ class Pool:
             a = abs(v)
             if abs(a - value) <= tolerance or 0 <= a - value < step:
                 return True
-        return False
+        # a share the filing prints without its % sign, matched only to two decimals: an invented whole or
+        # one-decimal percentage would land on an unrelated table figure too often
+        return kind == "pct" and decimals >= 2 and value <= 100 \
+            and any(abs(b - value) <= tolerance or 0 <= b - value < step for b in self.bare)
 
 
 def _base_printed(index: SourceIndex | None, base: float) -> bool:
@@ -86,6 +96,7 @@ def build_pool(filed_text: str, tagged=None, annual_table: str = "", history: li
                scale: str = "", ownership: dict | None = None) -> Pool:
     pool = Pool()
     pool.add_printed(filed_text)
+    pool.add_bare(filed_text)
     printed = Pool()   # the filing's own text alone: where a like-for-like base margin must be printed
     printed.add_printed(filed_text)
     pool.add_printed(annual_table)   # the annual report's own tagged figures
@@ -156,10 +167,27 @@ _PHRASE = (r"\s*\(?\s*(?:(?:up|down|rose|fell|grew|declined|jumped|slipped|gaine
 def _strip(text: str, figures: list[str]) -> str:
     for fig in figures:
         text = re.sub(_PHRASE.format(fig=re.escape(fig)), " ", text, count=1, flags=re.I)
+    text = re.sub(r"\*\*\s*\*\*", " ", text)   # the bold a removed figure sat in
     text = re.sub(r"\s+([,;.)])", r"\1", re.sub(r"\(\s*\)", "", text))
     text = re.sub(r"\b(revenue|sales|profit|PAT|EBITDA|PBT|income|margin|EPS)\s+to\s+(₹|Rs|INR|\d)", r"\1 at \2", text)
     text = re.sub(r"[,;]\s*[,;]", ",", text)
     return re.sub(r"\s{2,}", " ", text).strip(" ,;")
+
+
+# A word left without its object once a figure is removed: "increase stake to via open market", "Only of votes
+# cast", "approved ₹150 Cr NCD issuance, of net worth", "holds but can vote" (round-2 re-run)
+_DANGLING = re.compile(r"\b(?:to|of|at|about|over|only|by|holds?|than|nearly|around|approximately)\s+"
+                       r"(?=(?:via|of|in|and|from|against|votes?|with|but|while|the\s+(?:highest|lowest))\b)"
+                       r"|(?:^|[,;]\s*)of\b[^,;]*|\b(?:to|of|at|about|over|by|than)\s*(?=[,;.:)]|$)", re.I)
+
+
+def broken(text: str) -> bool:
+    return bool(_DANGLING.search(text or ""))
+
+
+def _repair(text: str) -> str:
+    """A headline keeps its subject: the dangling word goes, and so does a clause left as "of net worth"."""
+    return re.sub(r"\s{2,}", " ", _DANGLING.sub(" ", text)).strip(" ,;")
 
 
 def _clauses(text: str, pool: Pool) -> tuple[str, list[str]]:
@@ -175,7 +203,8 @@ def _clauses(text: str, pool: Pool) -> tuple[str, list[str]]:
         if not bad:
             kept.append(part)
         elif not kept:
-            kept.append(_strip(part, bad))
+            stripped = _strip(part, bad)
+            kept.append(_repair(stripped) if broken(stripped) else stripped)
     return "; ".join(p for p in kept if p.strip()), removed
 
 
@@ -224,7 +253,7 @@ def enforce(out, pool: Pool) -> list[str]:
             facts.append(fact)
             continue
         stripped = _strip(text, bad)
-        if len(stripped) >= 25 and not unproduced(stripped, pool):
+        if len(stripped) >= 25 and not unproduced(stripped, pool) and not broken(stripped):
             if hasattr(fact, "text"):
                 fact.text = stripped
             else:

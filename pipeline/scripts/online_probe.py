@@ -185,7 +185,19 @@ def main() -> int:
     # page's own JS, 2026-10-18): the recent list across companies, and one company's archive (?Code=)
     bse_headers = {"User-Agent": USER_AGENT, "Referer": "https://www.bseindia.com/", "Origin": "https://www.bseindia.com",
                    "Accept": "application/json, text/plain, */*"}
-    for name, url in (("recent results, all companies (NSTodayResults_ng)",
+    # The page with the filter form (Segment, Industry, Broadcast Period, Submit; owner's screenshot) calls
+    # Corp_FinanceResult_ng_new for the table and Corp_Archive_Wthxml_ng_new for the announcements beside it. The
+    # page's defaults: FlagDur 1 = Today, segment C = Equity, every industry and result period.
+    for name, url in (("filter form, today, all companies (Corp_FinanceResult_ng_new)",
+                       "https://api.bseindia.com/BseIndiaAPI/api/Corp_FinanceResult_ng_new/w"
+                       "?SCRIP_CD=&FlagDur=1&HFQ=&ISUBGROUP_CODE=&segment=C"),
+                      ("filter form, last week, one company (Corp_FinanceResult_ng_new, 512361)",
+                       "https://api.bseindia.com/BseIndiaAPI/api/Corp_FinanceResult_ng_new/w"
+                       "?SCRIP_CD=512361&FlagDur=7&HFQ=&ISUBGROUP_CODE=&segment=C"),
+                      ("announcements panel (Corp_Archive_Wthxml_ng_new)",
+                       "https://api.bseindia.com/BseIndiaAPI/api/Corp_Archive_Wthxml_ng_new/w"
+                       "?SCRIP_CD=&CATNAME=Result&FROMDT=&TODT=&PER=D&SEGMENT=A"),
+                      ("recent results, all companies (NSTodayResults_ng)",
                        "https://api.bseindia.com/BseIndiaAPI/api/NSTodayResults_ng/w"),
                       ("one company's results archive (Result_Arch_ng, 512361)",
                        "https://api.bseindia.com/BseIndiaAPI/api/Result_Arch_ng/w?scrip_cd=512361")):

@@ -759,13 +759,24 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "", unit: int | Non
                 paraphrased.append(f'"{label}" quotes the filing with small differences')
                 quote = near
             else:
-                figures = [(v, d) for v, d, _, kind, _ in _tokens(fact.text.replace("**", ""))
-                           if kind in ("plain", "qty") and v > 31]
-                if figures and all(index.stated(v, d) for v, d in figures):
-                    paraphrased.append(f'"{label}" is in the filing but its quote is not the filing\'s own words')
+                # Its figures decide - every amount at the declared unit, percentage, multiple, date and rating -
+                # or with none, its names: 50 of the 60 facts dropped here in audit round 2 were true, and the
+                # old test looked only at amounts above 31 (dropped_facts.md)
+                source = f"{text}\n{reading}" if reading else text
+                checked, unprinted = gate.unprinted_anchors(fact.text, source, unit, None if reading else index)
+                what = "figures"
+                if not checked:
+                    checked, unprinted = gate.unprinted_names(fact.text, source)
+                    what = "names"
+                if checked and not unprinted:
+                    paraphrased.append(f'"{label}" is in the filing but its quote is not the filing\'s own words '
+                                       f"(its {what} are)")
                     kept.append(fact)
                 else:
-                    dropped.append(f'"{label}" (neither its quote nor its figures are in the filing)')
+                    why = f"; not found: {', '.join(unprinted[:4])}" if unprinted else ""
+                    # in full, with its quote: 60 characters left 3 of round 2's 60 drops impossible to judge
+                    dropped.append(f'"{fact.text.replace("**", "")}" (neither its quote nor its figures are in '
+                                   f'the filing{why}; quoted: "{(fact.quote or "")[:300]}")')
                 continue
         claim = fact.text.replace("**", "")
         missing = gate.numbers_in_quote(claim, quote, gate.quote_unit(quote, text, unit))

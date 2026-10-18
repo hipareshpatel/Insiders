@@ -168,7 +168,8 @@ def test_a_fact_whose_quote_is_not_in_the_filing_is_dropped(settings):
     assert [f.text for f in out.card.what_happened] == ["Order worth **₹396.5 Cr** from Godrej Properties",
                                                         "Residential construction project"]
     assert any("neither its quote nor its figures" in p for p in problems) and missing == ["Residential construction project"]
-    assert dropped == ['"The contract is fixed-price with no escalation clause" (neither its quote nor its figures are in the filing)']
+    assert dropped == ['"The contract is fixed-price with no escalation clause" (neither its quote nor its figures are in '
+                       'the filing; quoted: "The contract is fixed-price with no escalation clause")']
 
 
 def test_a_card_whose_every_quote_fails_is_kept_and_marked(settings):

@@ -76,15 +76,21 @@ def deal_is_company_figure(amount_cr: float | None, dossier: dict | None, tolera
 
 # --- a claim must be the filing's own words -------------------------------------------------------------------------
 
-_SOFT = {"‘": "'", "’": "'", "“": '"', "”": '"', "–": "-", "—": "-", " ": " "}
+_SOFT = {"‘": "'", "’": "'", "“": '"', "”": '"', "–": "-", "—": "-", " ": " ",
+         # ligature glyphs a PDF's text layer keeps ("quick-seƫng", "EﬀecƟve"; audit round 2, dropped_facts.md)
+         "ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi", "ﬄ": "ffl", "Ɵ": "ti", "ƫ": "tti"}
+_PAGE_BREAK = re.compile(r"-{3}\s*page \d+(?: of \d+)?\s*-{3}")
+_LINE_HYPHEN = re.compile(r"(?<=[a-z])- (?=[a-z])")
 
 
 def _flat(text: str) -> str:
     """Lower case, straight quotes and dashes, one space between words: a PDF's line breaks and double
-    spaces must not decide whether a quote is in the filing."""
+    spaces must not decide whether a quote is in the filing, nor a word broken at a line end ("Long- term")
+    or a sentence running across a page break."""
     for bad, good in _SOFT.items():
         text = text.replace(bad, good)
-    return " ".join(text.lower().split())
+    flat = _PAGE_BREAK.sub(" ", " ".join(text.lower().split()))
+    return " ".join(_LINE_HYPHEN.sub("-", flat).split())
 
 
 _ELISION = re.compile(r"\[\s*(?:\.\.\.|…)\s*\]|\.\.\.|…")
@@ -395,6 +401,104 @@ def stated_precisely(missing: list[str], claim: str, text: str, unit: int | None
         if len(raw.replace(",", "").partition(".")[2]) >= 2 and not numbers_in_quote(_with_unit(claim, raw), text, unit):
             found.append(raw)
     return found
+
+
+# --- a fact whose quote is not the filing's own words -----------------------------------------------------------------
+
+_MONTHS = {m: i for i, names in enumerate(("jan january", "feb february", "mar march", "apr april", "may", "jun june",
+                                            "jul july", "aug august", "sep sept september", "oct october",
+                                            "nov november", "dec december"), 1) for m in names.split()}
+_MONTH = r"(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)"
+_DATE_DMY = re.compile(r"\b(\d{1,2})(?:st|nd|rd|th)?\s*(?:day of\s+)?" + _MONTH + r"\.?,?\s*(\d{4})\b", re.I)
+_DATE_MDY = re.compile(r"\b" + _MONTH + r"\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s*(\d{4})\b", re.I)
+_DATE_NUM = re.compile(r"\b(\d{1,2})[./-](\d{1,2})[./-](\d{4})\b")
+_DATE_ISO = re.compile(r"\b(\d{4})-(\d{2})-(\d{2})\b")
+_RATING = re.compile(r"\b(crisil|icra|care|ind|acuite|bwr|brickwork|ivr|infomerics)\s*\)?\s*(?:pp-?)?"
+                     r"(a1\+?|a[2-4]\+?|aaa|aa[+-]?|a[+-]?|bbb[+-]?|bb[+-]?|b[+-]?|c|d)(?![\w+-])", re.I)
+
+
+def _dates(text: str) -> set[tuple[int, int, int]]:
+    found = set()
+    for m in _DATE_DMY.finditer(text):
+        found.add((int(m.group(3)), _MONTHS[m.group(2).lower()[:3] if m.group(2).lower()[:4] != "sept" else "sep"], int(m.group(1))))
+    for m in _DATE_MDY.finditer(text):
+        found.add((int(m.group(3)), _MONTHS[m.group(1).lower()[:3]], int(m.group(2))))
+    for m in _DATE_NUM.finditer(text):
+        found.add((int(m.group(3)), int(m.group(2)), int(m.group(1))))
+    for m in _DATE_ISO.finditer(text):
+        found.add((int(m.group(1)), int(m.group(2)), int(m.group(3))))
+    return {d for d in found if 1 <= d[1] <= 12 and 1 <= d[2] <= 31}
+
+
+def _ratings(text: str) -> set[str]:
+    return {f"{m.group(1).lower().replace('brickwork', 'bwr').replace('infomerics', 'ivr')} {m.group(2).lower()}"
+            for m in _RATING.finditer(text)}
+
+
+def unprinted_anchors(claim: str, text: str, unit: int | None = None, index=None) -> tuple[int, list[str]]:
+    """The figures, dates and ratings a fact states, and those of them the filing does not print.
+
+    When a fact's quote is not the filing's own words, its figures decide: audit round 2 found 50 of the 60
+    facts the quote check dropped were true (dropped_facts.md). Their quotes were put together from a Reg 30
+    table's cells, abbreviated, or copied from a damaged scan, and the old fallback looked only at amounts
+    above 31, so a rating, a date, a percentage or a ₹6.98 Cr penalty could not save its fact. Each kind is
+    checked here: a crore amount at the filing's declared unit, any other figure as printed, a date in any of
+    the ways filings write one, a rating with its agency. Returns (how many there were, those not found)."""
+    from .grounding import CRORE_SCALES, SourceIndex, _tokens   # local: grounding does not import the gate
+
+    index = index or SourceIndex(text)
+    claim = claim.replace("**", "")
+    checked, missing = 0, []
+    for value, decimals, pos, kind, raw in _tokens(claim):
+        after = claim[pos + len(raw):pos + len(raw) + 8].lower()
+        crore = re.match(r"\s*(?:cr\b|crores?\b)", after)
+        if kind == "plain" and value <= 31 and decimals == 0:
+            continue   # a count or a day of the month: dates are checked whole below
+        checked += 1
+        if crore:
+            ok = index.stated_crore(value, decimals, plain_scales=(unit,) if unit else CRORE_SCALES)
+        elif kind == "pct":
+            ok = index.stated(value, decimals, scales=(1, 0.01))
+        else:
+            ok = index.stated(value, decimals, scales=(1,))
+        if not ok:
+            missing.append(raw)
+    printed_dates = None
+    for d in _dates(claim):
+        checked += 1
+        printed_dates = printed_dates if printed_dates is not None else _dates(text)
+        if d not in printed_dates:
+            missing.append(f"{d[2]:02d}.{d[1]:02d}.{d[0]}")
+    said = _ratings(claim)
+    if said:
+        printed = _ratings(text)
+        for r in said:
+            checked += 1
+            if r not in printed:
+                missing.append(r.upper())
+    return checked, missing
+
+
+_NAME = re.compile(r"(?<![\w.&'-])([A-Z][\w&'.-]*[A-Za-z0-9])")
+_NOT_NAMES = {"the", "this", "that", "these", "those", "its", "his", "her", "their", "company", "board", "bank", "order",
+              "shareholders", "auditor", "director", "directors", "chairman", "managing", "independent", "non", "long",
+              "short", "term", "rating", "ratings", "it", "he", "she", "they", "if", "on", "in", "of", "for", "and", "an",
+              "pvt", "private", "ltd", "limited", "llp", "inc", "plc",
+              "as", "at", "by", "with", "from", "under", "after", "before", "during", "post", "pre", "mr", "ms", "mrs", "dr"}
+
+
+def unprinted_names(claim: str, text: str) -> tuple[int, list[str]]:
+    """The names a fact with no figure gives - people, companies, places, agencies, instruments - and those the
+    filing does not print. Of the 16 round-2 facts dropped with no figure, date or rating to check, 15 were true
+    and their names were in the filing ("Dr. Muddana Sambasiva Rao", "Pierre Fabre", "Faridabad")."""
+    flat = f" {_flat(text)} "
+    names = []
+    for m in _NAME.finditer(claim.replace("**", "")):
+        word = m.group(1)
+        if len(word) >= 3 and word.lower() not in _NOT_NAMES and (m.start() > 0 or word.isupper()):
+            names.append(word)
+    missing = [w for w in dict.fromkeys(names) if not re.search(r"(?<![a-z0-9])" + re.escape(_flat(w)) + r"(?![a-z0-9])", flat)]
+    return len(names), missing
 
 
 # --- a deal size taken from the wrong clause --------------------------------------------------------------------------

@@ -642,3 +642,24 @@ def test_pass_2_says_why_a_filing_is_not_material(settings):
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "OTHER"}))
     assert outcome.update["status"] == "NOT_MATERIAL"
     assert outcome.update["reason"] == "pass2: not material: A schedule of investor meetings; no new information about the business"
+
+
+def test_a_filing_read_again_as_not_material_takes_its_facts_out_of_memory(settings):
+    """Kanoria's AGM presentation was analysed once and wrote a balance sheet ten times too large into memory; read
+    again it was not material, and its facts stayed for good, grounding later cards (audit, 2026-10-18)."""
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-again", "Unaudited Financial Results for the quarter", now, "Result")
+    not_material = {"is_material": False, "event_type": "RESULTS", "timeline_entry": "", "reason": "a duplicate copy"}
+    pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)], "glm-4.5-flash": [json.dumps(PASS2)]})
+    first = pipeline._process_one(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}), False, True)
+    pipeline._commit([first])
+    from bse_intel.dossier import _sources
+
+    sources = lambda: {s["news_id"] for m in sink.get_dossier("999001")["financial_metrics"] for s in _sources(m)}  # noqa: E731
+    assert "n-again" in sources()
+    pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},   # the same store, read again
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(not_material)],
+                               "glm-4.5-flash": [json.dumps(not_material)]})
+    again = pipeline._process_one(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}), False, True)
+    assert again.update["status"] == "NOT_MATERIAL" and "n-again" not in sources()

@@ -397,6 +397,16 @@ def add_timeline_entry(dossier: dict, filing: Filing, event_type: str, entry: st
     return d
 
 
+def forget_filing(dossier: dict, news_id: str) -> bool:
+    """Take out everything one filing put in memory; True when there was something. For a filing that, read
+    again, turns out not material or a duplicate: what its earlier analysis stored would otherwise stay for
+    good - Kanoria's AGM presentation, now not material, still held net worth at ten times its value (audit of
+    discard paths, 2026-10-18)."""
+    before = json.dumps(dossier, sort_keys=True, default=str)
+    _forget(dossier, news_id)
+    return json.dumps(dossier, sort_keys=True, default=str) != before
+
+
 def _forget(dossier: dict, news_id: str) -> None:
     metrics = []
     for e in dossier.get("financial_metrics", []):

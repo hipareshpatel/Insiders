@@ -35,8 +35,8 @@ from threading import Lock
 from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
-from .dossier import (add_timeline_entry, dossier_as_of, latest_fundamentals, memory_ids, merge, new_dossier, reported_by,
-                      results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
+from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, latest_fundamentals, memory_ids, merge,
+                      new_dossier, reported_by, results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import CACHE_VERSION, Document, cache_needs_ocr
 from .ocr import available as local_ocr_available
 from .ocr import page_reader, recognise
@@ -1093,7 +1093,22 @@ class Pipeline:
         if status != "ANALYZED" or held:
             # a held card is no more the quarter's card in this run than in memory (_same_results_quarter)
             self._release_claims(filing.news_id, status)
+        # Only a verdict that the filing has no card of its own; the XBRL shareholding path and the timeline tier
+        # write memory and report NOT_MATERIAL too.
+        if status in ("NOT_MATERIAL", "DUPLICATE") and str(outcome.update.get("reason", "")).startswith(
+                ("pass1:", "pass2:", "duplicate of")):
+            self._forget_in_memory(filing)
         return outcome
+
+    def _forget_in_memory(self, filing: Filing) -> None:
+        """What an earlier analysis of this filing put in memory, taken out now that it ends without a card."""
+        try:
+            dossier = self.sink.get_dossier(filing.scrip_code)
+            if dossier and forget_filing(dossier, filing.news_id):
+                self.sink.put_dossier(filing.scrip_code, dossier)
+                log.info("memory: %s's facts taken out; it now ends without a card", filing.news_id)
+        except Exception as exc:  # memory hygiene must not fail the filing; a later run tries again
+            log.warning("could not take %s's facts out of memory: %s", filing.news_id, exc)
 
     def _release_claims(self, news_id: str, status: str | None) -> None:
         """What a filing claimed at the start of its analysis, given back when it ends without a card.

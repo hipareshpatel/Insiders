@@ -60,6 +60,7 @@ from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
 from . import annual_xbrl
+from . import computed
 from . import nse as nse_api
 from . import xbrl as xbrl_fast_path
 from .learning import LESSONS_KEEP, LESSONS_KEY
@@ -313,7 +314,8 @@ def _without_periods(text: str | None) -> str:
 
 
 def _amount(text: str | None) -> float | None:
-    m = _CHANGE_AMOUNT.search(_without_periods(text))
+    plain = re.sub(r"[-−]\s*(?:₹|rs\.?|inr)\s*", "-", _without_periods(text), flags=re.I)  # "-₹14.22 Cr" is negative
+    m = _CHANGE_AMOUNT.search(plain)
     if not m:
         return None
     raw = m.group(1)
@@ -344,6 +346,14 @@ def fix_change_percentages(out: Pass2Output, sources: tuple[str, ...] = ()) -> l
             continue
         a, b = _amount(before), _amount(after)
         if a is None or b is None or a == 0:
+            continue
+        if a < 0 or b < 0:
+            # A percentage across a loss or a sign change means nothing: Britannia's inventory change "+894.4%" from
+            # ₹1.43 Cr to -₹14.22 Cr, CSB's provisions "+1713%" off a write-back (audit round 2). Said in words.
+            words = ("loss narrowed" if abs(b) < abs(a) else "loss widened") if a < 0 and b < 0 else \
+                ("turned positive" if b > 0 else "turned negative")
+            change.change = (stated[:m.start()] + words + stated[m.end():]).strip()
+            fixed.append(f"{change.metric}: {stated} -> {change.change}")
             continue
         # each side at the precision the card wrote it: "₹494 Cr" is the statement's 49,412 lakh; asked at two
         # decimals it never matched, so a whole-crore change was never corrected (audit, 2026-10-18)
@@ -1889,6 +1899,9 @@ class Pipeline:
         # filing does not print - 40 of the 77 cards held only for an unfound amount (funnel, 2026-10-18).
         sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False), scale)
         history = dossier.get("financial_metrics", [])
+        # Code computes, the model describes (audit round 2): the changes, margins and ratios a card may state
+        produced = computed.build_pool(filed_text, tagged, annual_xbrl.table(annual) if annual else "", history, scale,
+                                       (view or {}).get("ownership"))
         def ground(candidate: Pass2Output):
             """Correct a card where the filing can settle it, then check what is left.
 
@@ -1907,6 +1920,7 @@ class Pipeline:
                 # against the document alone: `sources` starts with the XBRL table, so checking the
                 # table's own comparative against it would always succeed and the guard would do nothing
                 changes += xbrl_key_numbers(candidate, tagged, (filed_text,))
+            changes += computed.enforce(candidate, produced)
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged)
             if not tagged and "RESULTS" in (event_type, candidate.event_type):

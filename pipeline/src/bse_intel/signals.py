@@ -434,7 +434,7 @@ def _growth(metrics: dict, name: str, period: str) -> float | None:
         return entry["yoy_pct"]
     prev_period = prior_year_period(period)
     prev = metrics.get((name, prev_period)) if prev_period else None
-    if prev and prev.get("value"):
+    if prev and prev.get("value") and prev["value"] > 0 and (entry.get("value") or 0) >= 0:  # no % off a negative base
         return (entry["value"] - prev["value"]) / abs(prev["value"]) * 100
     return None
 
@@ -493,12 +493,22 @@ SHIFT_PP = 2.0            # percentage metrics (margins, ratios): flag moves of 
 MAX_SHIFT_SIGNALS = 3
 
 
+PROFIT_LINES = {"pat", "pbt", "ebitda", "ebit", "net_profit", "eps", "operating_profit"}
+
+
 def _change(entry: dict, base: dict) -> tuple[float, str] | None:
     if base.get("value") in (None, 0) or entry.get("value") is None:
         return None
     if entry.get("unit") == "PCT":
         diff = entry["value"] - base["value"]
         return (diff / SHIFT_PP, f"{abs(diff) * 100:.0f} bps") if abs(diff) >= SHIFT_PP else None
+    # A percentage off a loss, a write-back or a negative base means nothing: "PAT up 413% vs Q4FY26" was a swing
+    # from a ₹19.76 Cr loss, "EBITDA up 4618%" from -₹0.44 Cr (audit round 2). A profit line that crosses zero is
+    # said in words; anything else is not a shift worth a percentage.
+    if base["value"] < 0 or entry["value"] < 0:
+        if entry.get("metric") in PROFIT_LINES and (base["value"] < 0) != (entry["value"] < 0):
+            return (3.0 if entry["value"] > 0 else -3.0, "TURN")
+        return None
     pct = (entry["value"] - base["value"]) / abs(base["value"]) * 100
     return (pct / SHIFT_PCT, f"{abs(pct):.0f}%") if abs(pct) >= SHIFT_PCT else None
 
@@ -533,7 +543,7 @@ def _metric_shifts(after: dict, filing: Filing, skip: set[str]) -> list[Signal]:
         base = next((e for e in same_kind if e["period"] == prev_year), None)
         if base:
             comparisons.append(("YoY", base))
-        elif m.get("yoy_pct") is not None and m.get("unit") != "PCT" and m["yoy_pct"] > -100:
+        elif m.get("yoy_pct") is not None and m.get("unit") != "PCT" and m["yoy_pct"] > -100 and m["value"] > 0:
             comparisons.append(("YoY", {"value": m["value"] / (1 + m["yoy_pct"] / 100), "unit": m.get("unit")}))
         if kind in ("Q", "M") and same_kind:
             latest = max(same_kind, key=lambda e: due_date(e["period"]))
@@ -543,7 +553,7 @@ def _metric_shifts(after: dict, filing: Filing, skip: set[str]) -> list[Signal]:
         for label, base_entry in comparisons:
             result = _change(m, base_entry)
             if result and (best is None or abs(result[0]) > abs(best[0])):
-                best = (result[0], f"{result[1]} {label}")
+                best = (result[0], result[1], label, base_entry)
         if best is None:
             continue
         rising = best[0] > 0
@@ -554,9 +564,14 @@ def _metric_shifts(after: dict, filing: Filing, skip: set[str]) -> list[Signal]:
             severity = "WARNING" if rising else "POSITIVE"
         else:
             severity = "INFO"
-        value = f"{m['value']:,.2f}".rstrip("0").rstrip(".")
         unit = {"INR_CR": " Cr", "PCT": "%"}.get(m.get("unit"), f" {m.get('unit', '')}".rstrip())
-        text = f"{name} {'up' if rising else 'down'} {best[1]} to {value}{unit} ({m['period']})."
+        shown = lambda v: f"{v:,.2f}".rstrip("0").rstrip(".")  # noqa: E731
+        value = shown(m["value"])
+        if best[1] == "TURN":
+            text = (f"{name} turned to a {'profit' if rising else 'loss'} of {shown(abs(m['value']))}{unit} ({m['period']}) "
+                    f"from a {'loss' if rising else 'profit'} of {shown(abs(best[3]['value']))}{unit} {best[2]}.")
+        else:
+            text = f"{name} {'up' if rising else 'down'} {best[1]} {best[2]} to {value}{unit} ({m['period']})."
         reversal = _reversal(by_metric[m["metric"]], m)
         if reversal:
             text += f" {reversal}"

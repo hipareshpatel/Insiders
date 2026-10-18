@@ -309,14 +309,35 @@ def figures_in_same_block(missing: list[str], quote: str, text: str, unit: int |
     block = flat[max(0, at - window):at + len(first) + window]
     # Each figure with the unit the card wrote after it, so it is compared in crore: Jubilant's "₹3,595 Cr"
     # passed against a statement's 3,595 million (₹359.5 Cr) while the digits alone were compared.
-    said = _flat(_PERIOD_LABEL.sub(" ", claim or ""))
     still, siblings = [], []
     for raw in missing:
-        at_raw = said.find(raw.lower())
-        word = _UNIT_WORD.match(said, at_raw + len(raw)) if at_raw != -1 else None
-        figure = f"{raw} {word.group(1)}" if word else raw
-        (still if numbers_in_quote(figure, block, unit) else siblings).append(raw)
+        (still if numbers_in_quote(_with_unit(claim, raw), block, unit) else siblings).append(raw)
     return still, siblings
+
+
+def _with_unit(claim: str, raw: str) -> str:
+    """A figure as the card wrote it, with the money unit after it ("3,595 cr")."""
+    said = _flat(_PERIOD_LABEL.sub(" ", claim or ""))
+    at = said.find(raw.lower())
+    word = _UNIT_WORD.match(said, at + len(raw)) if at != -1 else None
+    return f"{raw} {word.group(1)}" if word else raw
+
+
+def stated_precisely(missing: list[str], claim: str, text: str, unit: int | None = None) -> list[str]:
+    """The figures a sentence takes from another part of the filing that the filing states to their last digit.
+
+    A sentence quotes the row it is about and leans on others: CSB's "provisions rose to ₹16.53 Cr (from a
+    negative ₹4.54 Cr)" quotes the XBRL line, and the year-ago ₹4.54 Cr is the statement's (454) lakh, far
+    down the page - a right card held (loop round 3c, 2026-10-18). Looked for in the whole filing, an invented
+    figure lands on an unrelated line 40% of the time when it is a whole number but 3% at two decimals, and
+    that was measured on a 563,458-character annual report (test_cards.py). So a figure written to two or more
+    decimals and found at the right unit is reported, not held. Not for a key number or a notable change,
+    whose figure must be on its own row."""
+    found = []
+    for raw in missing:
+        if len(raw.replace(",", "").partition(".")[2]) >= 2 and not numbers_in_quote(_with_unit(claim, raw), text, unit):
+            found.append(raw)
+    return found
 
 
 # --- a deal size taken from the wrong clause --------------------------------------------------------------------------

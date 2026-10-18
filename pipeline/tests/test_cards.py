@@ -862,3 +862,28 @@ def test_a_change_between_whole_crore_figures_is_corrected_too():
     statement = "Statement of results (₹ in Lakhs)\nRevenue from operations 41,804.10 49,412.30"
     assert fix_change_percentages(out, (statement,)) == ["revenue: +15% YoY -> -15.4% YoY"]
     assert out.card.notable_changes[0].direction == "NEGATIVE"
+
+
+def test_a_sentences_figure_from_far_down_the_filing_is_reported_when_stated_to_two_decimals():
+    """CSB's "provisions rose to ₹16.53 Cr (from a negative ₹4.54 Cr)" quoted the XBRL line, and the year-ago
+    figure is the statement's (454) lakh far down the page: a right card held (loop round 3c). A figure written
+    to two decimals and found at its unit is 3% chance at worst (the 40/8/3 baseline above), so it is reported;
+    a whole number, or one at the wrong unit, still holds."""
+    from bse_intel.pipeline import check_quotes
+
+    xbrl = "provisions Q3FY25: 16.53 Cr, YoY swing\n"
+    filing = xbrl + ("x " * 1500) + "\nStatement (₹ in Lakhs)\nProvisions (other than tax) and Contingencies 1,653 1,391 (454)"
+
+    def card(text):
+        return Pass2Output.model_validate({
+            "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q3 results",
+            "card": {"impact_level": "MODERATE", "headline": "CSB Q3 results",
+                     "what_happened": [{"text": text, "quote": "provisions Q3FY25: 16.53 Cr"}]}})
+
+    right = card("Provisions rose to ₹16.53 Cr from a negative ₹4.54 Cr a year ago")
+    problems, _, _, style = check_quotes(right, filing, unit=100)
+    assert problems == [] and any("4.54" in s and "elsewhere in the filing" in s for s in style)
+    assert check_quotes(card("Provisions rose to ₹16.53 Cr from a negative ₹45.40 Cr a year ago"), filing, unit=100)[0], \
+        "ten times the filing's figure is not stated anywhere"
+    assert check_quotes(card("Provisions rose to ₹16.53 Cr from ₹5 Cr a year ago"), filing, unit=100)[0] == [], \
+        "a whole number of 31 or less is never checked (unchanged)"

@@ -616,6 +616,10 @@ def check_quotes(out: Pass2Output, text: str, news_id: str = "",
         if siblings:
             paraphrased.append(f'"{label}" also states {", ".join(siblings[:4])}, from another row of '
                                "the same table")
+        precise = gate.stated_precisely(missing, fact.text.replace("**", ""), text, unit)
+        if precise:
+            missing = [m for m in missing if m not in precise]
+            paraphrased.append(f'"{label}" also states {", ".join(precise[:4])}, from elsewhere in the filing')
         if missing:
             problems.append(f'"{label}" states {", ".join(missing[:4])}, which its own quote does not')
         kept.append(fact)
@@ -670,6 +674,10 @@ def check_quoted_numbers(out: Pass2Output, text: str,
         siblings: list[str] = []
         if siblings_count:
             missing, siblings = gate.figures_in_same_block(missing, quote, text, unit, claim)
+            precise = gate.stated_precisely(missing, claim, text, unit)   # a sentence, not a key number's row
+            if precise:
+                missing = [m for m in missing if m not in precise]
+                siblings += [f"{m} (from elsewhere in the filing)" for m in precise]
         if siblings:
             elsewhere.append(f'{kind} "{label}" also states {", ".join(dict.fromkeys(siblings))[:60]}, '
                              "from another row of the same table")

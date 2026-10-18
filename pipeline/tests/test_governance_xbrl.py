@@ -53,19 +53,19 @@ def test_penalty_amounts_are_read_from_their_words_and_minor_ones_kept_quiet():
     assert g.penalty_rupees("Rs.200/- Monetary Penalty.", "delay in upload of the scanned image") == 200.0
 
 
-def test_money_below_one_percent_of_annual_profit_is_not_raised():
-    """Owner, 2026-10-19: a governance issue under 1% of annual profit is dropped. Chennai Petroleum's ₹9.66 lakh
-    exchange fines and ₹0.60 Cr of guarantees to directors are raised against a ₹50 Cr profit, not against ₹2,000 Cr."""
+def test_money_below_five_percent_of_annual_profit_is_not_raised():
+    """Owner, 2026-10-19: a governance issue under 5% of annual profit is dropped. Chennai Petroleum's ₹9.66 lakh
+    exchange fines and ₹0.60 Cr of guarantees to directors are raised against a ₹5 Cr profit, not against ₹50 Cr."""
     r = _report("chennpetro")
-    small = r.exceptions(annual_profit_cr=50.0)          # floor ₹50 lakh
+    small = r.exceptions(annual_profit_cr=5.0)           # floor ₹25 lakh
     assert not any(e.startswith("fine or penalty") for e in small)
     assert "guarantee or comfort to directors and relatives: ₹0.5973 Cr outstanding" in small
-    big = r.exceptions(annual_profit_cr=2000.0)          # floor ₹20 Cr
+    big = r.exceptions(annual_profit_cr=50.0)            # floor ₹2.5 Cr
     assert not any(e.startswith(("fine or penalty", "guarantee")) for e in big)
     assert "board composition not in terms of SEBI's rules" in big   # no amount to weigh: always raised
     loss = r.exceptions(annual_profit_cr=-120.0)          # a loss: the ₹1 lakh floor
     assert sum(e.startswith("fine or penalty") for e in loss) == 2
-    assert r.memory(annual_profit_cr=2000.0)["material_floor_cr"] == 20.0
+    assert r.memory(annual_profit_cr=2000.0)["material_floor_cr"] == 100.0
 
 
 def test_annual_profit_from_memory():

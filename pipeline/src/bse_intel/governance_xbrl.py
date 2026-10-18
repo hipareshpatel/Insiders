@@ -44,10 +44,10 @@ _PARTY = (("PromoterGroup", "promoter group"), ("Promoter", "promoter"), ("Direc
 _EMPTY = {"", "na", "n.a.", "nil", "none", "not applicable", "-"}
 # Raised when what is read changes, so memory files a quarter again (dossier.merge_governance). 2: a penalty's amount
 # only beside its own words (2026-10-19)
-PARSER_VERSION = 3   # 3: money below 1% of annual profit is not raised (owner, 2026-10-19)
+PARSER_VERSION = 4   # 3: money below a share of annual profit is not raised; 4: that share is 5% (owner, 2026-10-19)
 # A penalty below this is kept in memory but raised as no exception (Harsha's ₹648 GST penalty, measured 2026-10-18)
 MINOR_PENALTY_RUPEES = 100_000
-MATERIAL_SHARE_OF_PROFIT = 0.01   # owner, 2026-10-19: a governance issue under 1% of annual profit is dropped
+MATERIAL_SHARE_OF_PROFIT = 0.05   # owner, 2026-10-19: a governance issue under 5% of annual profit is dropped
 _RUPEES = re.compile(r"(?:rs\.?|inr|₹)\s*([\d,]+(?:\.\d+)?)\s*(crores?|cr\.?|lakhs?|lacs?|million|mn)?", re.I)
 
 
@@ -130,7 +130,7 @@ class GovernanceReport:
 
     def floor_rupees(self, annual_profit_cr: float | None = None) -> float:
         """Below this a fine, or money lent, guaranteed or secured for insiders, is not raised (owner, 2026-10-19: a
-        governance issue under 1% of annual profit is dropped). For a loss-making company, or one whose profit memory
+        governance issue under 5% of annual profit is dropped). For a loss-making company, or one whose profit memory
         does not hold, the ₹1 lakh floor."""
         if annual_profit_cr and annual_profit_cr > 0:
             return max(MINOR_PENALTY_RUPEES, annual_profit_cr * 1e7 * MATERIAL_SHARE_OF_PROFIT)

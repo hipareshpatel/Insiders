@@ -29,10 +29,19 @@ def main() -> int:
         card = json.load(open(path, encoding="utf-8"))
         models[card["_filing"]["news_id"]] = str(card.get("model") or "?").split("/", 1)[-1]
     manifest = pathlib.Path(args.audit_dir) / "manifest.json"   # a blind export keeps the model out of the cards
+    held = set()
     if manifest.exists():
         for news_id, row in json.load(open(manifest, encoding="utf-8")).items():
             if models.get(news_id, "?") == "?":
                 models[news_id] = str(row.get("model") or "?").split("/", 1)[-1]
+            if row.get("held"):
+                held.add(news_id)
+    if held:  # held cards are mixed in blind (round 2): the pass mark is on the published ones
+        for name, group in (("published", [c for c in cards if c["news_id"] not in held]),
+                            ("held", [c for c in cards if c["news_id"] in held])):
+            v = collections.Counter(c.get("verdict") for c in group)
+            k = max(len(group), 1)
+            print(f"  {name}: {len(group)} cards: " + ", ".join(f"{x} {y} ({y / k:.0%})" for x, y in v.most_common()))
     # Audit round 2: memory points and impact levels are judged too, and reported apart so the WRONG share stays
     # comparable with round 1 (which judged neither)
     memory_only = [c for c in cards if c.get("verdict") == "WRONG"

@@ -131,7 +131,8 @@ def main() -> int:
                 if path.exists() else "(no cached text)")
         (folder / f"{row['news_id']}.pdf.txt").write_text(_xbrl_note(card) + text, encoding="utf-8")
         manifest[row["news_id"]] = {"model": card.get("model"), "scrip_code": str(row.get("scrip_code")),
-                                    "event_type": card.get("event_type"), "folder": folder.name}
+                                    "event_type": card.get("event_type"), "folder": folder.name,
+                                    "held": bool(row.get("held"))}   # held cards are mixed in blind (round 2)
         written += 1
     # outside the reviewers' folders: which model wrote each card, for the tally, without showing the reviewer
     (out / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")

@@ -39,10 +39,23 @@ results). Memory seeded from XBRL first (`seed-memory`), as for the smoke test.
    (`audit_export.py --blind --memory --random`): reviewers see the card, the filing text and memory as the card saw
    it, not the pipeline's own checks. One independent reviewer per folder, `REVIEWER_PROMPT_ROUND2.md`: round 1's
    rules for the verdict, plus memory points (tallied apart) and whether the impact level fits.
-3. **Missed news**: about 50 filings the companies' cards never covered (25 dropped by rule, 15 not material, 5
+3. **Held cards** (owner, 2026-10-18): about 10 cards the checks held back on these companies, mixed into the same
+   folders and reviewed with the same prompt, the reviewer not told which they are. At 6% held on the smoke test,
+   this shows whether the holds left are mostly right or still keep correct cards out; without them the round
+   measures only one of the two ways the checks can fail.
+4. **Missed news**: about 50 filings the companies' cards never covered (25 dropped by rule, 15 not material, 5
    timeline only, 5 duplicates), seeded sample, attachments read; same prompt file, second part.
-4. **Decide**: WRONG under round 1's 33% and few MISSED -> the backfill decision (PLAN 1c, owner). Otherwise the
-   commonest wrong classes on these companies are the next fixes.
+
+## Pass marks, set before any review (owner, 2026-10-18)
+
+- **Accuracy: WRONG at most 15% of the published cards** reviewed (round 1 was 33%; under 33% is not a pass, since
+  30% would still be nearly one card in three misleading a reader). Memory-point errors are counted apart and
+  reported beside it.
+- **Recall: at most 2 MISSED** of the ~50 filings set aside.
+- **Holds**: reported, no mark: the share of held cards the reviewers judge OK or MINOR is the share held wrongly.
+
+Both marks met -> the backfill decision (PLAN 1c, the owner's). Either missed -> the commonest WRONG classes and every
+MISSED class on these companies are the next fixes, and the round is repeated on fresh companies.
 
 ## Results
 

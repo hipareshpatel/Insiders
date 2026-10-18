@@ -50,8 +50,9 @@ class Settings:
     # Where filings are discovered: "nse" (owner, 2026-10-18: online-only, NSE only) or "bse" (kept as a backup,
     # off the daily path). NSE needs the universe file built by `sync-universe` to map its rows onto our companies.
     discovery_source: str = field(default_factory=lambda: (_env("DISCOVERY_SOURCE", "nse") or "nse").lower())
-    # Companies analysed: market cap at least this (₹ Cr), or unknown, or on the watchlist. 0 = all.
-    universe_min_mcap_cr: float = field(default_factory=lambda: float(_env("UNIVERSE_MIN_MCAP_CR", "100")))
+    # Companies analysed: market cap at least this (₹ Cr; owner, 2026-10-19: ₹500 Cr, was 100), or unknown, or on the
+    # watchlist. 0 = all.
+    universe_min_mcap_cr: float = field(default_factory=lambda: float(_env("UNIVERSE_MIN_MCAP_CR", "500")))
     platform_url: str | None = field(default_factory=lambda: _env("PLATFORM_API_URL"))
     ingest_token: str | None = field(default_factory=lambda: _env("INGEST_TOKEN"))
 

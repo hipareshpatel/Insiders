@@ -500,3 +500,22 @@ def test_a_held_card_is_not_shown_to_the_analyst_as_peer_context(settings):
     sink._db.commit()
     peers = sink.peer_cards("cement", "RESULTS", "222", "2026-09-01", "2026-10-15")
     assert [p["headline"] for p in peers] == ["headline peer-ok"]
+
+
+def test_an_attachment_once_read_as_nothing_is_downloaded_again(settings):
+    """519552's annual report was skipped at the old 30 MB cap and its empty reading cached: with the cap raised,
+    a re-run took the empty cache as current and never asked for the file again."""
+    import gzip
+
+    now = now_ist() - timedelta(minutes=30)
+    (f,) = _results(1, now)
+    pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
+                              env={"NVIDIA_API_KEY": "n"})
+    filing = f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"})
+    from bse_intel.extract import Document
+    path = pipeline._cache_path(f.news_id)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(gzip.compress(json.dumps(Document(None).to_cache()).encode()))
+    assert pipeline.analyze(filing).update["status"] == "ANALYZED"
+    assert pipeline._cached_text(f.news_id)["digital"], "read from the PDF this time"

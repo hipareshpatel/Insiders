@@ -424,6 +424,10 @@ def test_a_fast_track_repeat_is_dropped_before_pass_2(settings):
     assert outcome.card is None, "no card is written for a repeat"
     # and the expensive call never happened: only the cheap repeat check was made
     assert len(fake.calls) == 1, [c["model"] for c in fake.calls]
+    # with the document's opening, not BSE's boilerplate headline alone: from the headline it took a ₹1.73 Cr
+    # GST notice for FY22 to repeat a ₹2.64 Cr one for FY20 (re-run of the held cards, 2026-10-18)
+    asked = fake.calls[0]["messages"][1]["content"]
+    assert "OPENING OF THE DOCUMENT" in asked and "Revenue from operations 12,000.00" in asked
 
 
 def test_a_fast_track_filing_that_is_not_a_repeat_goes_on_to_pass_2(settings):
@@ -623,6 +627,38 @@ def test_a_held_card_does_not_own_its_results_quarter_and_a_not_material_claim_i
     pipeline._results_quarters[("999001", "Q2FY27")] = "notice-1"
     pipeline._release_claims("notice-1", "NOT_MATERIAL")
     assert ("999001", "Q2FY27") not in pipeline._results_quarters
+
+
+def test_a_board_meeting_notice_does_not_take_the_results_quarter(settings):
+    """Ahluwalia's notice of the meeting that would consider Q3FY25 was typed RESULTS, read "for the quarter ended
+    31st December, 2024" as its quarter and claimed it; the statement filed three weeks later was then marked a D20
+    duplicate of the notice, and the quarter had no results card (re-run of the held cards, 2026-10-18)."""
+    from dataclasses import replace
+
+    from bse_intel.pipeline import results_quarter
+
+    notice_text = ("The meeting of the Board of Directors will be held on Thursday, November 12, 2026 to consider "
+                   "the Unaudited Financial Results for the quarter and half year ended 30th September, 2026.")
+    assert results_quarter(None, notice_text) is None
+    assert results_quarter(None, RESULT_TEXT) == "Q2FY27"
+
+    settings = replace(settings, one_card_per_results_quarter=True, workers=1, second_opinion=False)
+    now = now_ist() - timedelta(hours=3)
+    notice = _filing("q-0", "Board meeting on 12 November 2026", now - timedelta(days=20), "Board Meeting")
+    first = _filing("q-1", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    card = {"is_material": True, "event_type": "RESULTS", "timeline_entry": "Board meets on 12 November 2026 on Q2 results.",
+            "card": {"impact_level": "LOW", "headline": "Demo Cement board meets on 12 November 2026 on Q2 results",
+                     "what_happened": [{"text": "Board meets on 12 November 2026", "quote": notice_text}]}}
+
+    def reply(kwargs):  # the notice's card, or the statement's
+        return json.dumps(card if "November 12" in kwargs["messages"][1]["content"] else PASS2)
+
+    pipeline, sink, fake = build(settings, [notice, first], {notice.pdf_url: _pdf(notice_text), first.pdf_url: _pdf(RESULT_TEXT)},
+                                 {model: [reply] * 2 for model in ("nvidia/nemotron-3-super-120b-a12b", "glm-4.5-flash")})
+    pipeline._commit([pipeline.analyze(notice.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))])
+    assert ("999001", "Q2FY27") not in pipeline._results_quarters
+    two = pipeline.analyze(first.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert two.card is not None, two.update
 
 
 def test_scanned_pages_the_old_ocr_cap_left_unread_are_read_again_once_under_a_higher_cap():

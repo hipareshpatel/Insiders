@@ -37,7 +37,7 @@ from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, latest_fundamentals, memory_ids, merge,
                       new_dossier, reported_by, results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
-from .extract import CACHE_VERSION, Document, cache_needs_ocr
+from .extract import CACHE_VERSION, FIGURE_PAGE_AMOUNTS, Document, amounts, cache_needs_ocr
 from .ocr import available as local_ocr_available
 from .ocr import page_reader, recognise
 from . import raw
@@ -546,6 +546,18 @@ _TAX_OR_PENALTY = re.compile(r"\b(?:demand|penalty|show[- ]cause|assessment orde
                              r"(?:income[- ]tax|GST|CGST|service tax|customs) (?:order|notice|demand|authorit))", re.I)  # "excluding GST" is an order
 _REAL_ORDER = re.compile(r"letter of (?:award|intent)|\bLoA\b|\bLoI\b|work order|purchase order|order (?:received|bagged|secured|worth)|"
                          r"contract (?:awarded|worth|valued)|lowest bidder|\bL1\b", re.I)
+
+
+def results_quarter(tagged, text: str) -> str | None:
+    """The quarter whose results a filing carries, for D20: from its XBRL, or from a statement of results or a
+    page of figures in its text. The notice of the board meeting that will consider the results names the quarter
+    too ("for the quarter and nine months ended 31st December, 2024") but prints no figure, and claimed Ahluwalia's
+    Q3FY25 from the statement filed three weeks later (re-run of the held cards, 2026-10-18)."""
+    if tagged is not None and tagged.period:
+        return tagged.period
+    if _RESULTS_STATEMENT.search(text[:20000]) or amounts(text) >= FIGURE_PAGE_AMOUNTS:
+        return statement_quarter(text)
+    return None
 
 
 def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
@@ -1588,7 +1600,7 @@ class Pipeline:
             recent = [t for t in dossier.get("timeline", [])
                       if since <= str(t.get("date", "")) < filing.filed_at][-8:]
             if recent:
-                repeat = self._repeat_check(filing, recent, dossier, bulk)
+                repeat = self._repeat_check(filing, recent, dossier, bulk, doc.first_page_text(2000))
                 if repeat:
                     with self._lock:
                         self.stats.duplicates += 1
@@ -1620,7 +1632,7 @@ class Pipeline:
             # those are the filing's own words, and what its quotes answer to.
             text = "\n".join(t for t in (filing.headline, filing.subject) if t)
         if event_type == "RESULTS" and self.settings.one_card_per_results_quarter:
-            earlier = self._same_results_quarter(filing, dossier, tagged.period if tagged else statement_quarter(text))
+            earlier = self._same_results_quarter(filing, dossier, results_quarter(tagged, text))
             if earlier:
                 with self._lock:
                     self.stats.duplicates += 1
@@ -1863,11 +1875,13 @@ class Pipeline:
                      **_company_memory(merged)},
         )
 
-    def _repeat_check(self, filing, recent: list[dict], dossier: dict, bulk: bool) -> dict | None:
+    def _repeat_check(self, filing, recent: list[dict], dossier: dict, bulk: bool, opening: str = "") -> dict | None:
         """One cheap call: is this filing an event the feed already has? The model only points at an
         entry; `timeline_entry_dated` then checks the entry is really on file and near in time, so a
-        date it invents drops nothing. A failure here is never fatal - the filing goes on to pass 2."""
-        system, user = self.prompts.repeat(filing, recent)
+        date it invents drops nothing. A failure here is never fatal - the filing goes on to pass 2.
+        It is shown the opening of the document: from BSE's boilerplate headline alone it took a ₹1.73 Cr GST
+        notice for FY22 to repeat a ₹2.64 Cr one for FY20, and a completed acquisition to repeat its signing."""
+        system, user = self.prompts.repeat(filing, recent, opening)
         try:
             said = self.gateway.complete_json("pass1_bulk" if bulk else "pass1", system, user, RepeatVerdict).value
         except Exception as exc:

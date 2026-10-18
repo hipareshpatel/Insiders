@@ -529,3 +529,20 @@ def test_rerun_routes_a_reset_filing_by_todays_rules(settings):
     got = {r[0]: (r[1], r[2]) for r in sink._db.execute("select news_id, route, event_type from filings")}
     assert got["n-ar"] == ("FAST_TRACK", "ANNUAL_REPORT")
     assert got["n-res"][1] == "RESULTS" and got["n-tw"] == ("PASS1", "OTHER") and got["n-p1"] == ("PASS1", "GOVERNANCE")
+
+
+@pytest.mark.parametrize("headline,category,subcategory,subject", [
+    # BSE's own wording under the bare "Board Meeting" subcategory; four reached the model (re-run, 2026-10-18)
+    ("AHLUWALIA CONTRACTS (INDIA) LTD.has informed BSE that the meeting of the Board of Directors of the Company is "
+     "scheduled on 11/02/2025 ,inter alia, to consider and approve Update on board meeting", "Board Meeting", "Board Meeting",
+     "Update on board meeting"),
+    ("Shivam Autotech Ltdhas informed BSE that the meeting of the Board of Directors of the Company is scheduled on "
+     "12/11/2025 ,inter alia, to consider and approve Update on board meeting", "Board Meeting", "Board Meeting",
+     "Update on board meeting"),
+    ("The meeting of the Board of Directors of the Company is scheduled to be held on Friday, May 09, 2025 to inter alia "
+     "consider and approve the Audited Financial Results of the Company for ....", "Insider Trading / SAST",
+     "Closure of Trading Window", "Closure of Trading Window"),
+])
+def test_bse_worded_board_meeting_notices_are_dates(rulebook, headline, category, subcategory, subject):
+    decision = rulebook.classify(_f(headline, category, subcategory, subject=subject))
+    assert (decision.action, decision.event_type) == ("CALENDAR", "BOARD_MEETING"), decision

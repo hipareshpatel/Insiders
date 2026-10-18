@@ -193,10 +193,10 @@ class PromptEngine:
         )
         return system, user
 
-    def repeat(self, filing: Filing, recent: list[dict]) -> tuple[str, str]:
-        """Is this filing an event already in the feed? Headline, subject and the company's recent
-        timeline only: no attachment text, so the call stays small enough to spend on the fast-track
-        route, where pass 1 (and its duplicate question) is skipped."""
+    def repeat(self, filing: Filing, recent: list[dict], opening: str = "") -> tuple[str, str]:
+        """Is this filing an event already in the feed? Headline, subject, the opening of the attachment
+        (its first page, cut short) and the company's recent timeline, so the call stays small enough to
+        spend on the fast-track route, where pass 1 (and its duplicate question) is skipped."""
         already = "\n".join(f"- {str(t.get('date', ''))[:10]}: {str(t.get('summary', ''))[:160]}"
                             for t in recent) or "Nothing on file yet."
         user = (
@@ -205,7 +205,8 @@ class PromptEngine:
             f"Headline: {filing.headline}\n"
             f"Subject: {filing.subject}\n"
             f"Filed: {filing.filed_at}\n\n"
-            f"ALREADY IN THE FEED (this company, most recent last)\n{already}"
+            + (f"OPENING OF THE DOCUMENT\n{opening.strip()}\n\n" if opening.strip() else "")
+            + f"ALREADY IN THE FEED (this company, most recent last)\n{already}"
         )
         return self._repeat.safe_substitute(), user
 

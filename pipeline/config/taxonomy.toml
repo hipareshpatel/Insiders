@@ -152,7 +152,10 @@ exclude_headline = ["presentation", "transcript", "recording", "audio", "financi
 reason = "board meeting intimation"
 event_type = "BOARD_MEETING"
 subcategories = ["board meeting intimation", "intimation of board meeting"]
-headline = ["board meeting intimation", "intimation of (the )?board meeting", "prior intimation", "notice of (the )?board meeting"]
+headline = ["board meeting intimation", "intimation of (the )?board meeting", "prior intimation", "notice of (the )?board meeting",
+            # BSE's own wording, filed under the bare "Board Meeting" subcategory: four reached the model, and one,
+            # typed RESULTS, took Ahluwalia's Q3FY25 from the statement itself (D20)
+            "meeting of the board of directors.{0,60}(is |are )?scheduled (on|to be held)", "update on board meeting"]
 exclude_headline = ["outcome", "approved", "considered and approved"]
 
 # AGM notices, book closures and record dates carry no news, but the date is a catalyst. Rights issues

@@ -173,7 +173,9 @@ class CardChecks:
         # Blueprint §4: any ungrounded number sends the card to a second provider. Amounts only: a
         # 10x lakh/crore slip in a key number leaves the overall match rate above the review
         # threshold, while an unmatched percentage is usually a derivation the checks cannot follow.
-        return self.fixable or bool(self.amounts_ungrounded) or bool(self.quote_style)
+        # How a fact quoted the filing is not a reason on its own: the second provider was given no issue to
+        # fix, and 30 of the 31 cards sent for their wording alone came back unresolved (2026-10-18).
+        return self.fixable or bool(self.amounts_ungrounded)
 
     @property
     def issue_count(self) -> int:

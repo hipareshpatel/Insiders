@@ -516,12 +516,16 @@ def test_a_card_is_not_held_back_only_for_how_it_quoted_the_filing(settings):
     card["card"]["why_it_matters"] = [{"text": "Scale is building", "basis": "FILING",
                                        "quote": "Net profit 1,500.00"}]
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(card)]},
-                                 env={"NVIDIA_API_KEY": "n"})
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(card)],
+                                  "glm-4.5-flash": [json.dumps(card)]},
+                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     body = outcome.card["card"]
     assert body["grounding"]["quotes_paraphrased"], "the wording is still reported"
     assert outcome.card["held"] == 0, "but the card reaches the feed"
+    # nor is a second provider asked: it was given no issue to fix, and 30 of the 31 cards sent for wording alone
+    # came back unresolved (re-run of the held cards, 2026-10-18)
+    assert len(fake.calls) == 1 and body.get("review") is None, [c["model"] for c in fake.calls]
 
 
 def test_a_site_that_does_not_answer_costs_no_attempts_and_stops_the_run(settings):

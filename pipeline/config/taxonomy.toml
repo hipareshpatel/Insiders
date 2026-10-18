@@ -101,11 +101,9 @@ reason = "newspaper publication"
 subcategories = ["newspaper publication", "news paper publication", "copy of newspaper"]
 # "News Paper Cutting for Q3 Results ... published on ... on FE and Jansatta" (Ahluwalia, Feb 2025) has a space in
 # "news paper"; it reached the model, which invented a results card from a clipping with no numbers.
-headline = ["news\\s?papers?\\s+(publication|advertis\\w*|cutting|clipping|extract|notice)s?", "paper\\s+(cutting|clipping)s?",
-            "copy of (the )?news\\s?paper", "(publication|published)\\s+(in|on)\\s+(the\\s+)?news\\s?papers?",
-            # "intimation regarding notice to members in newspapers pursuant to Section 201(2)" (Kirloskar Electric, NSE,
-            # 13-18 Oct 2026): the only newspaper filing of 206 that reached pass 1
-            "notice\\s+(to\\s+(the\\s+)?(members|shareholders)\\s+)?(in|on)\\s+(the\\s+)?news\\s?papers?"]
+# Any filing about a newspaper notice or publication is dropped (owner, 2026-10-18): whatever it advertises was filed
+# on its own ("notice to members in newspapers pursuant to Section 201(2)", Kirloskar Electric, NSE, 13-18 Oct 2026).
+headline = ["\\bnews\\s?papers?\\b", "paper\\s+(cutting|clipping)s?"]
 # "Financial Results ... and Newspaper Publication" is the results filing itself; a clipping of the
 # results is noise, so the shared veto (which keeps "financial results") is off for this rule.
 material_veto = false

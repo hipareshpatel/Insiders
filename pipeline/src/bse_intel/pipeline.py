@@ -579,15 +579,18 @@ def misdated_memory_insights(out: Pass2Output, view: dict | None, filing_text: s
                 if named is None:
                     continue
                 kind, period = named[2], named[3]
+                elsewhere = []
                 for (name, series_unit), values in series.items():
                     if (series_unit not in wanted) if wanted else series_unit in ("PCT", "X", "BPS"):
                         continue  # "₹3.98 Cr" is not a 3.98% margin
                     held = [key for (k, key), v in values.items() if k == kind and abs(abs(v) - value) <= tolerance]
-                    if held and period not in held:
-                        reason = f"{written} is {held[0]}'s {name} in memory, not {period}'s"
+                    if period in held:
+                        break  # some metric holds it under the period named: another's same value is chance
+                    elsewhere += [(key, name) for key in held]
+                else:
+                    if elsewhere:
+                        reason = f"{written} is {elsewhere[0][0]}'s {elsewhere[0][1]} in memory, not {period}'s"
                         break
-                if reason:
-                    break
         if reason:
             dropped.append(f'memory insight dropped ("{(insight.text or "")[:60]}"): {reason}')
         else:

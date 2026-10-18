@@ -27,7 +27,9 @@ from .periods import prior_quarter_period, prior_year_period
 # A figure that is computed rather than read: a percentage, a basis-point or percentage-point move, a multiple
 _FIGURE = re.compile(r"(?<![\w.])([+\-−]?)\s?(\d{1,3}(?:,\d{2,3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*"
                      r"(%|per\s?cent\b|bps\b|basis points?\b|pp\b|percentage points?\b|x\b|times\b)", re.I)
-_BARE = re.compile(r"(?<![\w.,])(\d{1,3}\.\d{2,})(?!\s*(?:%|per\s?cent|\d|,\d))")
+# A table row's columns count too: "Gross NPA % 1.30 1.45 2.78" lost all but its last column to the old "(?!\s*\d)",
+# and RBL's card had its NPA ratios stripped to "Gross NPA improved to (vs 1.45% ...)" (round 4)
+_BARE = re.compile(r"(?<![\w.,])(\d{1,3}\.\d{2,})(?!\s*(?:%|per\s?cent)|\d|,\d)")
 _UP = re.compile(r"\b(?:up|rose|rise|rising|grew|grow|growth|increase[sd]?|higher|gain(?:ed|s)?|jump(?:ed|s)?|"
                  r"improv\w*|expand\w*|surg\w*|climb\w*|widen\w*)\b", re.I)
 _DOWN = re.compile(r"\b(?:down|fell|fall|falling|declin\w*|lower|drop\w*|decrease[sd]?|contract\w*|shr[iau]nk\w*|"

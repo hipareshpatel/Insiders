@@ -166,3 +166,13 @@ def test_adani_power_a_share_must_be_of_the_base_it_names():
         {"text": "The ₹1,00,000 Cr limit is 150.6% of net worth", "basis": "BALANCE_SHEET"}]})
     computed.enforce(out, pool)
     assert [w.text for w in out.card.why_it_matters] == ["The ₹1,00,000 Cr limit is 150.6% of net worth"]
+
+
+def test_a_table_rows_columns_count_as_printed_shares():
+    """RBL Q1FY27 (round 4): "Gross NPA % 1.30 1.45 2.78" kept only its last column as printed, so the card's true
+    "Gross NPA improved to 1.30% (vs 1.45% ... 2.78%)" was stripped to "improved to (vs 1.45% ...)"."""
+    from bse_intel import computed
+
+    pool = computed.build_pool("(b) Gross NPA % 1.30 1.45 2.78 1.45\nNet NPA % 0.37 0.39 0.45 0.39")
+    assert computed.unproduced("Gross NPA improved to 1.30% (vs 1.45% and 2.78%); Net NPA 0.37%", pool) == []
+    assert computed.unproduced("Gross NPA improved to 1.31%", pool) == ["1.31%"]

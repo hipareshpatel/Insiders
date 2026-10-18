@@ -628,3 +628,17 @@ def test_a_card_held_in_this_run_gives_back_its_quarter_at_once(settings, monkey
     pipeline._process_one(owner, False, True)
     assert ("999001", "Q2FY27") not in pipeline._results_quarters
     assert pipeline._card_held("q-own"), "known held before its card is committed"
+
+
+def test_pass_2_says_why_a_filing_is_not_material(settings):
+    """Pass 2's verdict was stored as a bare "pass2: not material", so the 70 filings it set aside in the smoke test
+    could not be reviewed without reading each PDF; pass 1's reason was always kept (audit, 2026-10-18)."""
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-nm", "Intimation of analyst meet", now, "Company Update")
+    reply = {"is_material": False, "event_type": "OTHER", "timeline_entry": "",
+             "reason": "A schedule of investor meetings; no new information about the business"}
+    pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf("Schedule of analyst / investor meetings on 12 November.")},
+                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(reply)], "glm-4.5-flash": [json.dumps(reply)]})
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "OTHER"}))
+    assert outcome.update["status"] == "NOT_MATERIAL"
+    assert outcome.update["reason"] == "pass2: not material: A schedule of investor meetings; no new information about the business"

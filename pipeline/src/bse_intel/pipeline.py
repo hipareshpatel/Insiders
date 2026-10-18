@@ -1603,7 +1603,8 @@ class Pipeline:
             with self._lock:
                 self.stats.not_material += 1
             return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": out.event_type,
-                            "reason": "pass2: not material", "updated_at": now})
+                            "reason": f"pass2: not material{': ' + out.reason if out.reason else ''}"[:300],
+                            "updated_at": now})
         if out.event_type in ONE_EVENT_ONE_CARD and out.timeline_entry:
             repeat = similar_timeline_entry(dossier, filing, out.timeline_entry)
             if repeat:  # the same event filed again in other words (BSE takes one submission per subcategory)
@@ -1664,6 +1665,10 @@ class Pipeline:
         checks.held += self._held_reasons(filing, text)
         if checks.held and review is None:
             review = {"status": "HELD", "issues": checks.held}
+        elif checks.held:
+            # A second opinion's block replaced these, so a garbled scan or an owner's hold left no trace on the
+            # card (CSB 3649405a; audit of discard paths, 2026-10-18). Kept beside its verdict.
+            review = {**review, "held": list(checks.held)}
         if filing.route == "FAST_TRACK" and filing.event_type:
             out.event_type = filing.event_type  # rules know the event type better than the model
         elif out.event_type == "OTHER" and event_type != "OTHER":

@@ -422,3 +422,20 @@ def test_a_card_amount_is_compared_in_crore_whatever_digits_it_shares():
     assert gate.numbers_in_quote("₹134.86 Cr net debt (Q4FY25)", line, 10) == ["134.86"]
     # a figure without a unit is compared as printed
     assert gate.numbers_in_quote("₹52.99 per share", "Basic EPS 52.99 4.87", 10) == []
+
+
+def test_a_hold_is_kept_on_the_card_when_a_second_opinion_ran(settings):
+    """The second opinion's review block replaced the hold reasons, so an owner's hold or a garbled scan left no trace
+    on a card that also went to a second model (audit of discard paths, 2026-10-18)."""
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-hold2", "Unaudited Financial Results for the quarter", now, "Result")
+    bad = json.loads(json.dumps(PASS2))
+    bad["card"]["what_happened"] = ["Revenue ₹120 Cr vs ₹90.9 Cr a year ago", "PAT ₹17.5 Cr"]  # PAT was ₹15 Cr
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(bad)]},
+                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+    pipeline._holds = {"n-hold2": "EBITDA is PBT in the source table"}
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    review = outcome.card["card"]["review"]
+    assert review["status"] in ("UNRESOLVED", "CORRECTED") and len(fake.calls) == 2
+    assert review["held"] == ["Held after review: EBITDA is PBT in the source table"]

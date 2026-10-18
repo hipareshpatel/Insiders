@@ -222,7 +222,7 @@ Signals
   computations in the card.
 
 If the filing turns out to contain nothing decision-relevant, return
-{"is_material": false, "event_type": "<type>", "timeline_entry": ""}.
+{"is_material": false, "event_type": "<type>", "timeline_entry": "", "reason": "<15 words or fewer: why it does not matter>"}.
 
 Event focus ($event_type)
 Use "$event_type" as triaged, unless the filing is clearly another of: $event_types.

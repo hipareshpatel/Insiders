@@ -741,6 +741,9 @@ class Pass2Output(_Lenient):
     event_type: EventType = "OTHER"
     card: Card | None = None
     timeline_entry: Annotated[str, BeforeValidator(lambda v: v if isinstance(v, str) else "")] = ""
+    # Why nothing here is decision-relevant, when is_material is false: stored like pass 1's reason, so the
+    # 70 filings pass 2 set aside in the smoke test can be reviewed without reading each PDF (audit, 2026-10-18)
+    reason: Annotated[str, BeforeValidator(lambda v: " ".join(v.split())[:200] if isinstance(v, str) else "")] = ""
     # Loop 1 post-mortem only: the detail the market priced, as a reusable rule for this sector and event
     lesson: Annotated[str, BeforeValidator(lambda v: " ".join(v.split())[:300] if isinstance(v, str) else "")] = ""
     dossier_delta: Annotated[DossierDelta, BeforeValidator(lambda v: v if isinstance(v, dict) else {})] = Field(default_factory=DossierDelta)

@@ -635,13 +635,13 @@ def test_an_open_offer_is_not_a_raise_against_the_target():
                            "source_news_id": "old"}]
     company = {"market_cap_cr": 2000, "price_date": "2026-10-14"}
 
-    scale = [s for s in compute(d, d, out("M_AND_A"), f, company) if s["type"] == "SCALE"]
+    scale = [s for s in compute(d, d, out("M_AND_A"), f, company, every=True) if s["type"] == "SCALE"]
     assert scale, "the size against market cap should still be reported"
     assert "raise" not in scale[0]["text"] and "deal" in scale[0]["text"]
     assert "net worth" not in scale[0]["text"]
 
     # a real fundraise is unchanged: the company does receive the money
-    raised = [s for s in compute(d, d, out("FUNDRAISE"), f, company) if s["type"] == "SCALE"]
+    raised = [s for s in compute(d, d, out("FUNDRAISE"), f, company, every=True) if s["type"] == "SCALE"]
     assert raised and "raise" in raised[0]["text"]
 
 
@@ -671,7 +671,7 @@ def test_debt_converted_into_shares_is_not_a_raise(headline, instrument, convert
     d = new_dossier(f)
     d["balance_sheet"] = [{"period": "Q3FY25", "net_worth_cr": 33.92, "as_of": "2025-02-01T00:00:00+05:30",
                            "source_news_id": "old"}]
-    scale = [s["text"] for s in compute(d, d, out, f, {"market_cap_cr": 400, "price_date": "2025-02-20"})
+    scale = [s["text"] for s in compute(d, d, out, f, {"market_cap_cr": 400, "price_date": "2025-02-20"}, every=True)
              if s["type"] == "SCALE"]
     assert scale
     if converted:

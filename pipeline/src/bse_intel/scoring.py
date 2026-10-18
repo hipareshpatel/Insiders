@@ -149,14 +149,18 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
     ttm = ttm_revenue(dossier)
     market_cap = company.get("market_cap_cr")
     ratios: list[tuple[float, str]] = []
+    # An open offer moves money between shareholders and the company is its target: 11 of the 30 cards the ranking
+    # put first were open-offer filings, a daily tender count at #1 (audit round 2, signals_audit.md)
+    if event_type == "M_AND_A" and "open offer" in texts:
+        amount = None
     if amount and amount > 0:
         if deal.get("kind") in ("ORDER", "CAPEX", "OTHER") and ttm:
             ratios.append((amount / ttm[0] * 100, f"{amount:g} Cr is {amount / ttm[0] * 100:.0f}% of {ttm[1]} revenue"))
         if deal.get("kind") in ("ACQUISITION", "DIVESTMENT", "FUNDRAISE", "CAPEX") and market_cap:
             ratios.append((amount / market_cap * 100, f"{amount / market_cap * 100:.0f}% of market cap"))
-    for q in card.get("quantified_impact") or []:
-        if q.get("check") == "VERIFIED" and q.get("unit") == "INR_CR" and q.get("result") and ttm:
-            ratios.append((abs(q["result"]) / ttm[0] * 100, f"\"{q['label']}\" is {abs(q['result']) / ttm[0] * 100:.0f}% of revenue"))
+    # Size comes from the deal's own amount only: a figure the model computed in quantified_impact ("offer value at the
+    # offer price" 156% of revenue, revenue compared with itself 114%, an aspirational FY27 target 138%) set the size
+    # of 60 cards (audit round 2)
     gate1 = False
     if ratios:
         best = max(ratios)

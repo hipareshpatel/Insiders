@@ -60,12 +60,12 @@ def test_an_approval_is_met_only_when_the_evidence_says_it_came_through():
     wid = next(w["id"] for w in d["watchlist"] if w["kind"] == "APPROVAL")
     pending = output(event_type="M_AND_A", watch_updates=[{"watch_id": wid, "status": "MET",
                                                            "evidence": "CCI approval pending for open offer and SPAs."}])
-    assert not [s for s in compute(d, d, pending, filing("n2", Q2), {}) if s["type"] == "WATCH_RESOLVED"]
+    assert not [s for s in compute(d, d, pending, filing("n2", Q2), {}, every=True) if s["type"] == "WATCH_RESOLVED"]
     d2 = merge(d, pending, filing("n2", Q2), "MODERATE", "now")
     assert next(w for w in d2["watchlist"] if w["id"] == wid)["status"] == "OPEN"
     granted = output(event_type="M_AND_A", watch_updates=[{"watch_id": wid, "status": "MET",
                                                            "evidence": "The Competition Commission of India approved the transaction."}])
-    assert [s for s in compute(d2, d2, granted, filing("n3", Q2), {}) if s["type"] == "WATCH_RESOLVED"]
+    assert [s for s in compute(d2, d2, granted, filing("n3", Q2), {}, every=True) if s["type"] == "WATCH_RESOLVED"]
     assert next(w for w in merge(d2, granted, filing("n3", Q2), "LOW", "now")["watchlist"] if w["id"] == wid)["status"] == "MET"
 
 
@@ -115,7 +115,7 @@ def test_guidance_promise_tracking_and_hallucinated_ids():
                                   {"guidance_id": "g_deadbeef", "status": "MISSED"}])
     d = merge(d, out, filing("n2", Q2), "HIGH", "now")
     assert d["guidance"][0]["status"] == "DELIVERED"
-    signals = compute(before, d, out, filing("n2", Q2), {})
+    signals = compute(before, d, out, filing("n2", Q2), {}, every=True)
     assert [s["type"] for s in signals] == ["PROMISE_DELIVERED"]
 
 
@@ -141,7 +141,7 @@ def test_overdue_guidance_is_flagged():
     assert view["guidance"][0]["overdue"] is True
     out = output()
     after = merge(d, out, filing("n2", Q2), "HIGH", "now")
-    signals = compute(d, after, out, filing("n2", Q2), {})
+    signals = compute(d, after, out, filing("n2", Q2), {}, every=True)
     assert signals[0]["type"] == "GUIDANCE_BREACH" and "Deadline passed" in signals[0]["text"]
 
 
@@ -152,11 +152,11 @@ def test_dilution_signal_is_computed_not_guessed():
                  capital_actions=[{"instrument": "Rights issue", "new_shares": "2,50,00,000", "issue_price": "80"}])
     after = merge(d, out, filing("n2", Q2), "HIGH", "now")
     company = {"shares_outstanding": 10_00_00_000, "last_price": 100, "price_date": Q2[:10]}
-    (signal,) = compute(d, after, out, filing("n2", Q2), company)
+    (signal,) = compute(d, after, out, filing("n2", Q2), company, every=True)
     assert signal["type"] == "DILUTION" and signal["severity"] == "WARNING"
     assert "25.0% more shares (20.0% post-money dilution" in signal["text"] and "20.0% below" in signal["text"]
     # A backfilled card is not compared with today's price.
-    (old,) = compute(d, after, out, filing("n2", Q2), {**company, "price_date": "2027-03-01"})
+    (old,) = compute(d, after, out, filing("n2", Q2), {**company, "price_date": "2027-03-01"}, every=True)
     assert "below" not in old["text"]
     assert "1.60x book value" in signal["text"]  # BVPS = 500 Cr / 10 Cr shares = ₹50
 
@@ -176,7 +176,7 @@ def test_working_capital_strain_and_generic_metric_shift():
         {"metric": "revenue", "period": "Q2FY27", "value": 70},  # no comparable quarter: must not be compared to H1
     ])
     after = merge(d, out, filing("n2", Q2), "HIGH", "now")
-    signals = compute(d, after, out, filing("n2", Q2), {})
+    signals = compute(d, after, out, filing("n2", Q2), {}, every=True)
     by_type = {}
     for s in signals:
         by_type.setdefault(s["type"], []).append(s)
@@ -241,7 +241,7 @@ def test_track_next_becomes_watch_items_that_later_filings_resolve():
     results = output(watch_updates=[{"watch_id": kpi["id"], "status": "achieved", "evidence": "Specialty at 43%"}])
     after = merge(d, results, filing("q3", "2027-01-25T17:00:00+05:30"), "HIGH", "now")
     assert next(w for w in after["watchlist"] if w["id"] == kpi["id"])["status"] == "MET"
-    signals = compute(d, after, results, filing("q3", "2027-01-25T17:00:00+05:30"), {})
+    signals = compute(d, after, results, filing("q3", "2027-01-25T17:00:00+05:30"), {}, every=True)
     resolved = [s for s in signals if s["type"] == "WATCH_RESOLVED"]
     assert resolved and resolved[0]["severity"] == "POSITIVE" and "Specialty at 43%" in resolved[0]["text"]
     later = view_as_of(after, "2027-02-01T00:00:00+05:30")
@@ -333,7 +333,7 @@ def test_metric_shift_ignores_comparative_columns():
                                     {"metric": "pat", "period": "Q2FY26", "value": 24},
                                     {"metric": "pat", "period": "Q1FY27", "value": 25}])
     after = merge(d, out, filing("q2", Q2), "HIGH", "now")
-    texts = [s["text"] for s in compute(d, after, out, filing("q2", Q2), {}) if s["type"] == "METRIC_SHIFT"]
+    texts = [s["text"] for s in compute(d, after, out, filing("q2", Q2), {}, every=True) if s["type"] == "METRIC_SHIFT"]
     assert not any("Q1FY27" in t for t in texts)
 
 
@@ -351,7 +351,7 @@ def test_predictions_resolve_against_reported_figures_and_feed_credibility():
     after = merge(d, out, filing("q2", Q2), "HIGH", "now")
     (p,) = after["predictions"]
     assert p["status"] == "MET" and p["actual"] == 14.2
-    signals = compute(d, after, out, filing("q2", Q2), {})
+    signals = compute(d, after, out, filing("q2", Q2), {}, every=True)
     assert any(s["type"] == "PREDICTION_RESOLVED" and s["severity"] == "POSITIVE" for s in signals)
     assert credibility(after)[0] == 100.0
     # re-analysing the results filing reopens it
@@ -368,7 +368,7 @@ def test_monthly_volume_streak_and_quarter_preview():
         {"metric": "sales_volume", "period": "Sep-2026", "value": 1071, "unit": "UNITS"},
         {"metric": "sales_volume", "period": "Sep-2025", "value": 812, "unit": "UNITS"}])
     after = merge(d, out, filing("sep", Q2), "MODERATE", "now")
-    kinds = {s["type"]: s for s in compute(d, after, out, filing("sep", Q2), {})}
+    kinds = {s["type"]: s for s in compute(d, after, out, filing("sep", Q2), {}, every=True)}
     assert "2 months running" in kinds["VOLUME_STREAK"]["text"]  # Aug +34.4%, Sep +31.9% (July is exactly 25%)
     assert "3,079 vs 2,362" in kinds["QUARTER_PREVIEW"]["text"]
 
@@ -379,7 +379,7 @@ def test_auditor_qualification_and_ownership_shift():
     out = output(ownership={"period": "Sep-2026", "promoter_pct": 55.5, "fii_pct": 6, "dii_pct": 4.5, "retail_holders": 36000},
                  auditor={"name": "X & Co", "opinion": "qualified", "note": "₹42 Cr receivable"})
     after = merge(d, out, filing("s2", Q2), "HIGH", "now")
-    kinds = {s["type"]: s for s in compute(d, after, out, filing("s2", Q2), {})}
+    kinds = {s["type"]: s for s in compute(d, after, out, filing("s2", Q2), {}, every=True)}
     assert kinds["OWNERSHIP_SHIFT"]["severity"] == "POSITIVE" and kinds["AUDIT_FLAG"]["severity"] == "WARNING"
 
 
@@ -387,7 +387,7 @@ def test_rights_entitlement_ratio_gives_dilution_without_a_share_count():
     out = output(event_type="RIGHTS_ISSUE", capital_actions=[{"instrument": "Rights issue", "ratio": "19:25", "issue_price": 12}])
     d = new_dossier(filing("r0", Q1))
     after = merge(d, out, filing("r1", Q2), "MODERATE", "now")
-    (s,) = [s for s in compute(d, after, out, filing("r1", Q2), {}) if s["type"] == "DILUTION"]
+    (s,) = [s for s in compute(d, after, out, filing("r1", Q2), {}, every=True) if s["type"] == "DILUTION"]
     assert "76.0% more shares (43.2% post-money dilution)" in s["text"] and s["severity"] == "WARNING"
 
 

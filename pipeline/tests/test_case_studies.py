@@ -25,7 +25,7 @@ def _run(dossier, filing, payload, company):
     after = merge(dossier, out, filing, out.card.impact_level, filing.filed_at)
     before = dossier_as_of(dossier, filing.filed_at, inclusive=False)
     current = dossier_as_of(after, filing.filed_at)
-    signals = compute(before, current, out, filing, company)
+    signals = compute(before, current, out, filing, company, every=True)
     return out, current, signals
 
 

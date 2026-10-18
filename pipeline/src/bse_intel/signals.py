@@ -52,7 +52,8 @@ class Signal:
     ref: str | None = None
 
 
-def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filing, company: dict | None) -> list[dict]:
+def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filing, company: dict | None,
+            every: bool = False) -> list[dict]:
     """Signals from memory as it stood at the filing: ``before`` excludes the filing, ``after`` includes
     it, and neither may hold later facts (pass them through ``dossier_as_of``). ``company`` carries market
     data as of the filing when a stored series has it (``prices.point_in_time``); today's prices are
@@ -72,8 +73,41 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     signals += _volumes(after, filing)
     from .quality import festive_signals, quality_signals, rating_signals, roiic_signals
 
-    return [asdict(s) for s in signals] + quality_signals(after, filing.news_id) \
+    found = [asdict(s) for s in signals] + quality_signals(after, filing.news_id) \
         + rating_signals(before, after, filing.news_id) + festive_signals(after, filing.news_id) + roiic_signals(after, filing.news_id)
+    return found if every else [s for s in found if not misfires(s, output)]   # every: a signal's own logic, in tests
+
+
+# Signal types turned off until each is checked against round 2's cards (audit round 2, signals_audit.md): each of
+# these contradicted the card it sat on, and a card with fewer points beats one with wrong points. Off the card and,
+# since scoring reads only what compute() returns, out of the score.
+SIGNALS_OFF = {
+    "DILUTION": "missed warrants beside equity (Magellanic), counted non-convertible preference shares and a demerger "
+                "entitlement as new shares (Kanoria, HEG), read a promoter's holding as the share count",
+    "MARGIN_MIX": "compared quarters on different bases (SKF India +1251 bps against a pre-demerger year) and cost lines "
+                  "filed differently (moves of 3,000 bps)",
+    "CAPITAL_COMPOUNDER": "called negative capital added 'growth funded from internal accruals' (deconsolidation, unit slips)",
+    "METRIC_SHIFT": "mostly noise: tax and inventory lines, moves of 300% or more, another period than the card's, a crore "
+                    "figure against a percentage",
+    "PREDICTION_RESOLVED": "judged a consolidated actual against a standalone target (eMudhra) and on a wrong memory figure",
+}
+
+
+def misfires(signal: dict, output: Pass2Output) -> bool:
+    kind, text = signal.get("type"), signal.get("text") or ""
+    if kind in SIGNALS_OFF:
+        return True
+    # "met" on an approval, a concern or a KPI: it fired on the arrival of an unrelated order or a disclosure (Adani
+    # Power's GVK approvals, Shivam's "net worth turning positive: met" at -₹40.68 Cr)
+    if kind == "WATCH_RESOLVED" and re.search(r"\bmet\b", text, re.I):
+        return True
+    if kind == "SCALE":
+        event = output.event_type
+        deal_kind = output.card.deal_value.kind if output.card and output.card.deal_value else None
+        # a rating action's bank limits are no fundraise (Lehar), and in M&A the company may be the target
+        if event in ("DEBT_RATINGS", "M_AND_A", "GOVERNANCE") or (deal_kind == "FUNDRAISE" and event not in ("FUNDRAISE", "RIGHTS_ISSUE")):
+            return True
+    return False
 
 
 def _predictions(after: dict, filing: Filing) -> list[Signal]:

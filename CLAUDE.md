@@ -108,7 +108,13 @@ Read before changing anything:
      losses of right cards were scale-block figures held as unfound and D20 ownership. Open items are listed
      there (pass 2's reason not stored, annual reports, memory facts after reclassification, repeat M&A cards).
      Next: re-run the held cards and the D20 quarters to measure the fixes on real cards.
-  4. ANNUAL_REPORT event type, using NSE's annual-report XBRL (docs/SOURCES.md).
+  4. **Half done 2026-10-18: ANNUAL_REPORT event type** (F57). Reg 34(1) filings and annual reports filed with
+     their AGM notice go to a fast track with an auditor / CARO / related-party / contingent-liability focus,
+     3x page budget, a 120 MB download cap; the Reg 36(1)(b) letters are dropped. `retriage --scrips` queues
+     what a narrowed rule no longer drops (12 annual reports freed for the smoke-test companies), and
+     `scripts/rerun.py` now routes a reset filing by today's rules. Next: run the 31 ledger filings today's
+     rules type ANNUAL_REPORT (`rerun.py` them, then `process --news-ids`) and audit the cards against their
+     PDFs; then read NSE's annual-report XBRL (docs/SOURCES.md) into a table in front of the text.
   5. Raise the paid weight and drain the 160 queued filings; audit round 2; PLAN 1h.
   Do not start the full backfill before the owner has reviewed the smoke test (D6) and chosen the order
   (PLAN.md item 1c). `sync-to-cloud` still cannot run: no PLATFORM_API_URL or INGEST_TOKEN for the

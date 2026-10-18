@@ -63,3 +63,15 @@ down and fixed after the review, so the round measures the code as it stood when
 
 Results go below once reviewed. Below 95%: the commonest WRONG classes and every MISSED class are the next fixes,
 with card output and contextual memory first (owner, 2026-10-19), then a round 5 on fresh companies.
+
+## Run
+
+Started 2026-10-19 02:22 IST at commit `32a518b` (`backfill-companies`, FREE_ONLY=1), after `seed-memory` (168 results
+quarters, 166 shareholding quarters; one 2025 shareholding file of Manaksia answered 404) and `governance-sync` (14 of the
+20 companies had a governance report in NSE's list's last 2,000 rows).
+
+Defects seen in the run's log, fixed in code after the round started (the run keeps the code it started with, so the
+round still measures `32a518b`):
+- Siemens Q1FY27: the card's "PAT (Continuing) ₹343 Cr (-18.7% YoY)" was replaced by the file's total PAT, ₹2,143.10 Cr
+  with the demerged business's gain (+406%). A continuing label now takes the file's continuing-operations PAT; a
+  discontinued one is left as read.

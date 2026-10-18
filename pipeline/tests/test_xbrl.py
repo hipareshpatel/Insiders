@@ -201,6 +201,7 @@ def test_results_card_key_numbers_come_from_xbrl_and_yoy_qoq_mixups_are_flagged(
     EBITDA. With the XBRL file, key numbers take its exact values and YoY; a "% YoY" that is a QoQ
     change is flagged."""
     from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import xbrl_key_numbers
     from bse_intel.pipeline import period_mixups, xbrl_key_numbers
 
     tagged = xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
@@ -275,6 +276,7 @@ def test_an_xbrl_yoy_is_only_trusted_when_its_comparative_is_in_the_filing():
     implies also appears in the filing."""
     from bse_intel.models import Pass2Output
     from bse_intel.pipeline import xbrl_key_numbers
+    from bse_intel.pipeline import xbrl_key_numbers
 
     tagged = xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
     assert xbrl.add_comparatives(tagged, *(xbrl.parse((FIXTURES / f"bse_main_ind_as_532811_{q}.xml").read_bytes())
@@ -317,6 +319,7 @@ def test_the_xbrl_table_cannot_verify_its_own_comparative():
     guard checks against. Were it left there, the year-ago figure would be found in the table it came from,
     every YoY would verify and the guard would be a no-op - which is what shipped first."""
     from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import xbrl_key_numbers
     from bse_intel.pipeline import xbrl_key_numbers
 
     tagged = xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
@@ -535,3 +538,28 @@ def test_a_results_file_tagged_in_the_wrong_unit_is_put_right_and_a_real_fall_is
     assert xbrl.scale_slip(_quarter("Q4FY24", 1758.6, -61.8, -3.69), history) == 0, "a file in the right unit"
     assert xbrl.scale_slip(slipped, history[:4]) == 0, "one other quarter is too little to judge by"
     assert xbrl.fix_scale(None, history) == 0
+
+
+def test_continuing_and_discontinued_pat_are_not_the_files_total_pat():
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import xbrl_key_numbers
+
+    """Siemens Q1FY27 (round 4, 2026-10-19): "PAT (Continuing) ₹343 Cr" was overwritten with total PAT ₹2,143.10 Cr,
+    which carries the demerged business's gain, and -18.7% YoY became +406%. A continuing label takes the file's
+    continuing-operations profit when it has one, and is left as read otherwise; a discontinued one is never touched."""
+    tagged = xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    pat = next(m for m in tagged.metrics if m.period == "Q3FY25" and m.metric == "pat")
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q3FY25 results",
+        "card": {"impact_level": "MODERATE", "headline": "Ahluwalia Q3FY25 results", "basis": "STANDALONE",
+                 "what_happened": ["Results"],
+                 "key_numbers": [{"label": "PAT (Continuing)", "value": "₹10 Cr", "change": "-18.7% YoY"},
+                                 {"label": "PAT from discontinued operations", "value": "₹1,800 Cr", "change": None},
+                                 {"label": "PAT", "value": "₹1 Cr", "change": None}]}})
+    xbrl_key_numbers(out, tagged)
+    keys = {k.label: k.value for k in out.card.key_numbers}
+    continuing = next((m for m in tagged.metrics if m.period == "Q3FY25" and m.metric == "pat_continuing"), None)
+    assert keys["PAT (Continuing)"] == (f"₹{continuing.value:,.2f} Cr" if continuing else "₹10 Cr")
+    assert keys["PAT (Continuing)"] != f"₹{pat.value:,.2f} Cr" or (continuing and continuing.value == pat.value)
+    assert keys["PAT from discontinued operations"] == "₹1,800 Cr"
+    assert keys["PAT"] == f"₹{pat.value:,.2f} Cr"      # the plain label still takes the file's PAT

@@ -500,6 +500,12 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
         if "margin" in (key.label or "").lower() or "%" in (key.value or ""):
             continue
         metric = next((name for name, pattern in _KEY_METRIC if pattern.search(key.label or "")), None)
+        if metric == "pat" and re.search(r"\bdiscontinued\b", key.label or "", re.I):
+            continue  # the discontinued business's own result, which is not the file's PAT
+        if metric == "pat" and re.search(r"\bcontinuing\b", key.label or "", re.I):
+            # "PAT (Continuing)" is profit from continuing operations, not the total: Siemens' ₹343 Cr became the
+            # ₹2,143 Cr that includes the demerged business's gain, and -18.7% YoY became +406% (round 4, 2026-10-19)
+            metric = "pat_continuing"
         if metric and _QUALIFIED_LABEL.search(key.label or ""):
             continue  # "Normalised PAT" is not the file's PAT: Jubilant's ₹86 Cr became the reported ₹55.80 Cr
         # The label usually names its own period ("FY25 revenue", "Q4 EBITDA") and it is often not the

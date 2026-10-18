@@ -689,3 +689,13 @@ def test_a_filing_read_again_as_not_material_takes_its_facts_out_of_memory(setti
                                "glm-4.5-flash": [json.dumps(not_material)]})
     again = pipeline._process_one(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}), False, True)
     assert again.update["status"] == "NOT_MATERIAL" and "n-again" not in sources()
+
+
+def test_an_annual_report_may_be_larger_than_other_attachments():
+    """519552's FY26 annual report was skipped at the 30 MB cap and, read as nothing, called not material (F57)."""
+    from bse_intel.pipeline import ATTACHMENT_MAX_BYTES, _attachment_cap
+
+    when = now_ist()
+    report = _filing("n-ar", "34th Annual Report for FY 2025-26", when, "Company Update", "Reg. 34 (1) Annual Report")
+    assert _attachment_cap(report.model_copy(update={"event_type": "ANNUAL_REPORT"})) >= 100_000_000
+    assert _attachment_cap(report.model_copy(update={"event_type": "RESULTS"})) == ATTACHMENT_MAX_BYTES == 30_000_000

@@ -1257,14 +1257,14 @@ class Pipeline:
             # Written before the text layer was read in reading order: read the PDF again, keeping the
             # pages already OCR'd; if BSE will not serve it now, the old text is still better than none.
             try:
-                pdf = self.bse.download(filing.pdf_url)
+                pdf = self.bse.download(filing.pdf_url, max_bytes=_attachment_cap(filing))
                 self._refusals = 0
                 doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
                 doc.keep_ocr(cached)
             except AttachmentError:
                 doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         if doc is None:
-            pdf = self.bse.download(filing.pdf_url) if filing.pdf_url else None
+            pdf = self.bse.download(filing.pdf_url, max_bytes=_attachment_cap(filing)) if filing.pdf_url else None
             self._refusals = 0
             doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
         try:
@@ -2237,6 +2237,16 @@ def _still_noise(decision, filing: Filing, row: list) -> bool:
     pattern with no XBRL file, or outside the investable universe (a market-cap test, not a rule)."""
     return (decision.action in ("DROP", "CALENDAR") or (decision.action == "XBRL" and not filing.xbrl_url)
             or str(row[7] or "").startswith("outside universe"))
+
+
+# An annual report runs to 300 pages and often past 30 MB: 519552's FY26 report was skipped at that cap and,
+# with no text, called not material (F57). Every other kind of filing stays under it.
+ATTACHMENT_MAX_BYTES = 30_000_000
+ANNUAL_REPORT_MAX_BYTES = 120_000_000
+
+
+def _attachment_cap(filing: Filing) -> int:
+    return ANNUAL_REPORT_MAX_BYTES if filing.event_type == "ANNUAL_REPORT" else ATTACHMENT_MAX_BYTES
 
 
 SECOND_OPINION_MIN_S = 300

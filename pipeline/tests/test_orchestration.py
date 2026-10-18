@@ -149,7 +149,7 @@ def test_refused_attachment_fails_one_filing_and_three_in_a_row_stop_the_run(set
                               {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
     real = pipeline.bse.download
 
-    def download(url):
+    def download(url, max_bytes=None):
         if url.endswith(("r1.pdf", "r2.pdf", "r3.pdf")):
             raise AttachmentError("BSE refused the attachment", refused=True)
         return real(url)
@@ -173,7 +173,7 @@ def test_a_failing_history_filing_is_tried_once_per_run(settings):
                               {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)], "glm-4.5-flash": [json.dumps(PASS2)]},
                               env={"ZAI_API_KEY": "z", "NVIDIA_API_KEY": "n"})
     pipeline.discover(old.date())
-    pipeline.bse.download = lambda url: (_ for _ in ()).throw(AttachmentError("timed out")) if "old" in url else _pdf(RESULT_TEXT)
+    pipeline.bse.download = lambda url, max_bytes=None: (_ for _ in ()).throw(AttachmentError("timed out")) if "old" in url else _pdf(RESULT_TEXT)
     pipeline.run("all", time_budget_s=60, max_backfill_days=40)
     (row,) = rows(sink, "select status, attempts from filings where news_id = 'old'")
     assert row == {"status": "FAILED", "attempts": 1}  # not three attempts in one run
@@ -301,7 +301,7 @@ def test_extracted_text_is_cached_so_reanalysis_never_downloads_again(settings):
                               env={"NVIDIA_API_KEY": "n"})
     filing = f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"})
     pipeline.analyze(filing)
-    pipeline.bse.download = lambda url: (_ for _ in ()).throw(AssertionError("downloaded again"))
+    pipeline.bse.download = lambda url, max_bytes=None: (_ for _ in ()).throw(AssertionError("downloaded again"))
     outcome = pipeline.analyze(filing)
     assert outcome.update["status"] == "ANALYZED" and list(settings.text_cache_dir.rglob("*.json.gz"))
 

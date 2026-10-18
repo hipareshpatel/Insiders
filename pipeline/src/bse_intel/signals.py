@@ -349,8 +349,9 @@ _SCALE_NOUN = {"ORDER": "order", "FUNDRAISE": "raise", "CAPEX": "capex", "ACQUIS
 # Debentures, bonds, loans or preference shares converted into equity; "convertible" (an instrument still to be
 # issued for cash) and warrants (whose conversion brings in the unpaid 75%) are not.
 _DEBT_INSTRUMENT = r"\b(?:(?:o|c|oc)cds?|ocrps?|ccps|debentures?|fccbs?|bonds?|loans?|notes|preference shares?|unsecured)\b"
-_DEBT_CONVERTED = re.compile(rf"conver(?:t|ts|ted|ting|sion)\b.{{0,40}}{_DEBT_INSTRUMENT}|{_DEBT_INSTRUMENT}.{{0,40}}"
-                             r"conver(?:t|ts|ted|ting|sion)\b", re.I)
+# A new FCCB or bond issue states its terms ("conversion price Rs 512", "conversion premium"): still a raise.
+_CONVERSION = r"conver(?:t|ts|ted|ting|sion)\b(?!\s+(?:price|premium|ratio|option|right|terms?|period|date)s?\b)"
+_DEBT_CONVERTED = re.compile(rf"{_CONVERSION}.{{0,40}}{_DEBT_INSTRUMENT}|{_DEBT_INSTRUMENT}.{{0,40}}{_CONVERSION}", re.I)
 
 
 def _scale(before: dict | None, output: Pass2Output, company: dict | None) -> list[Signal]:

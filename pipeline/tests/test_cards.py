@@ -655,6 +655,9 @@ def test_an_open_offer_is_not_a_raise_against_the_target():
     ("Demo Tubes raises ₹500 Cr through compulsorily convertible debentures", "CCD", False),
     ("Demo Tubes allots 40 lakh shares on conversion of warrants, receiving the balance 75%", "Warrant conversion", False),
     ("Demo Tubes approves ₹75 Cr preferential issue of convertible warrants", "", False),
+    # a new issue stating its conversion terms is still a raise
+    ("Demo Tubes issues USD 50 mn FCCBs at a conversion price of ₹512", "FCCBs", False),
+    ("Demo Tubes raises ₹300 Cr in bonds with a conversion premium of 20%", "", False),
 ])
 def test_debt_converted_into_shares_is_not_a_raise(headline, instrument, converted):
     from bse_intel.models import Pass2Output

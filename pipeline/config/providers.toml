@@ -406,6 +406,17 @@ model = "mistral-small-2603"  # takes images; free tier 20k tokens/min, 1 reques
 max_tokens = 2500
 limits = { rpm = 50, tpm = 20_000 }
 
+# The long-document spare since Ultra left the card routes (round 4): 250K window, 10% WRONG on 10 cards. Without it a
+# slow or rate-limited GLM left two long filings with no provider at all on free tiers (round 4's re-run).
+[[routes.pass2_long]]
+provider = "openrouter"
+model = "nvidia/nemotron-3.5-super-vl:free"
+spare = true
+json_mode = true
+max_tokens = 8000
+context_tokens = 250000
+limits = { rpm = 10 }
+
 [[routes.pass2_long]]
 provider = "gemini"
 model = "gemini-3.6-flash"  # 1M-token window for the longest annual reports

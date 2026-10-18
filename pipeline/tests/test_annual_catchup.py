@@ -154,6 +154,14 @@ def test_a_report_older_than_the_horizon_is_not_looked_at(settings):
     assert report["cards"] == 1 and nse.lists == ["OTHERCO"] and report["rerun"] == {}
 
 
+def test_only_the_named_companies_are_looked_at(settings):
+    _read_the_day_they_were_filed(settings)
+    nse = FakeNse({"DEMOCEM": LISTING["data"], "OTHERCO": LISTING["data"]})
+    report, sink, _ = _catch_up(settings, nse, scrips={"999002"})   # DEMOCEM's cards are under review: left alone
+    assert report["cards"] == 1 and nse.lists == ["OTHERCO"] and report["rerun"] == {}
+    assert {r["status"] for r in rows(sink, "select status from filings")} == {"ANALYZED"}
+
+
 def test_the_rerun_limit_leaves_the_rest_due(settings):
     _read_the_day_they_were_filed(settings)
     nse = FakeNse({"DEMOCEM": LISTING["data"], "OTHERCO": LISTING["data"]})
@@ -184,7 +192,7 @@ def test_another_run_on_the_machine_keeps_the_step_waiting(tmp_path):
 
 def test_the_command_skips_while_another_run_is_going(settings, monkeypatch, capsys):
     monkeypatch.setattr(annual_catchup, "other_runs", lambda log_dir: ["process 4242: python -m bse_intel run"])
-    args = SimpleNamespace(wait=0, time_budget=60, days=365, every=7, max_companies=150, max_reruns=10)
+    args = SimpleNamespace(wait=0, time_budget=60, days=365, every=7, max_companies=150, max_reruns=10, scrips=None)
     assert cli.cmd_annual_xbrl_catchup(args, settings, None) == 3
     assert json.loads(capsys.readouterr().out)["busy"] == ["process 4242: python -m bse_intel run"]
 

@@ -151,9 +151,10 @@ def _verdict(outcome) -> str:
 
 
 def catch_up(pipeline, deadline: float, horizon_days: int = HORIZON_DAYS, every_days: int = EVERY_DAYS,
-             max_companies: int = MAX_COMPANIES, max_reruns: int = MAX_RERUNS) -> dict:
+             max_companies: int = MAX_COMPANIES, max_reruns: int = MAX_RERUNS, scrips: set[str] | None = None) -> dict:
     """Read NSE's list for the companies whose annual-report cards lack the table, and read again the reports
-    whose year now has a file. Returns what was looked at and what each re-run made."""
+    whose year now has a file. With `scrips`, only those companies (a measured round leaves the others alone).
+    Returns what was looked at and what each re-run made."""
     from .pipeline import DEADLINE_GRACE_S
 
     report = {"cards": 0, "companies": 0, "companies_due": 0, "lists_read": 0, "errors": [],
@@ -165,6 +166,7 @@ def catch_up(pipeline, deadline: float, horizon_days: int = HORIZON_DAYS, every_
     report["paid_left_out"] = _free_routes_only(pipeline)
     today = today_ist()
     rows = sink.query("annual_cards_without_xbrl", [(today - timedelta(days=horizon_days)).isoformat(), MAX_CARDS])
+    rows = [r for r in rows if not scrips or r["scrip_code"] in scrips]
     by_symbol: dict[str, list[dict]] = {}
     for row in rows:
         by_symbol.setdefault(row["symbol"].strip().upper(), []).append(row)

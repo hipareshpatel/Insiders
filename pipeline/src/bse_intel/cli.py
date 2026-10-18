@@ -91,9 +91,10 @@ def cmd_annual_xbrl_catchup(args, settings, sink) -> int:
     if busy:
         print(json.dumps({"skipped": "another run on this machine may be calling NSE or writing", "busy": busy}, indent=2))
         return 3
+    scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()} or None
     report = annual_catchup.catch_up(_pipeline(settings, sink), time.monotonic() + args.time_budget,
                                      horizon_days=args.days, every_days=args.every, max_companies=args.max_companies,
-                                     max_reruns=args.max_reruns)
+                                     max_reruns=args.max_reruns, scrips=scrips)
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
 
@@ -427,6 +428,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-companies", type=int, default=150, help="NSE lists read this run")
     p.add_argument("--max-reruns", type=int, default=10, help="annual reports read again this run")
     p.add_argument("--wait", type=int, default=0, help="minutes to wait for another run on this machine to finish")
+    p.add_argument("--scrips", help="only these companies (comma-separated scrip codes); default every company")
     p.add_argument("--time-budget", type=int, default=3600)
     p.set_defaults(func=cmd_annual_xbrl_catchup)
 

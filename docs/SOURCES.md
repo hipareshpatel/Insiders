@@ -124,5 +124,10 @@ So for these events the amount, unit, counterparty, dates and stage need no mode
   misleading: we looked for a URL and the field holds a name. Checked 2026-10-17: that name 404s
   under AttachHis, AttachLive, CorpAttachment, Attachbse and AttachXbrl, with and without `.xml`,
   so the serving path is still unknown. NSE's announcement XBRL listing covers the same ground (above).
+  **Found 2026-10-18 (owner's link):** `https://www.bseindia.com/Msource/90D/CorpXbrlGen.aspx?Bsenewid=<news_id>&Scripcode=<scrip>`
+  serves it (HTTP 200 even from a non-Indian cloud IP, unlike the announcement API, which still answers 403). For a
+  board-meeting intimation of Shri Dinesh Mills (503804) it holds only the announcement's own metadata in the
+  generic `in-bse-co` taxonomy: subject, description, PDF link, submission time, category, type. No event fields
+  (amount, counterparty, dates), unlike NSE's Reg 30 XBRL above. Not checked yet for an order or results row.
 - Whether an Integrated Filing instance exists for companies listed only on BSE (NSE has 2,480 of our
   5,111 companies). Those are almost all micro caps.

@@ -525,3 +525,21 @@ def test_bandhan_memory_refuses_the_year_old_column():
 
     check = Checker(BANDHAN_Q2FY27, {"market_cap_cr": 27000}, {})
     assert check.printed_crore(158335) and not check.printed_crore(140041)
+
+
+def test_round_4_units_million_billion_and_foreign_currency():
+    """Round 4's unit slips: "(Rs billion)" read as crore (RBL, 100x), "CINR Million )" (a garbled "(INR Million)",
+    AGI Infra, 10x), "INR 3 (Three) Million" as ₹3 Cr (Excelsoft), and NGN 90 million as rupees (Anlon)."""
+    from bse_intel.grounding import declared_unit, foreign_as_rupees, unit_slips
+
+    rbl = "Key business update (Rs billion)\nTotal deposits 1,562.8 1,250.2\nCASA 425.3 362.0"
+    assert declared_unit(rbl) == 0.01
+    assert unit_slips(["Deposits rose 25% QoQ to ₹1,562.8 Cr"], rbl) == [("1,562.8", 1562.8, 1, 156280.0, 0)]
+    agi = "Instrument Amount Rating | Description CINR Million ) Watch/Outlook\nBank Loan Facilities 1425.50 IND BB+/Stable"
+    assert unit_slips(["Facilities of ₹1,425.50 Cr rated BB+"], agi) == [("1,425.50", 1425.5, 2, 142.55, 2)]
+    excelsoft = "The Company will invest up to INR 3 (Three) Million in the share capital of the subsidiary."
+    assert unit_slips(["Excelsoft to invest ₹3 Cr in a Canadian subsidiary"], excelsoft) == [("3", 3.0, 0, 0.3, 2)]
+    anlon = "an investment of NGN 90 million in the share capital of Anlon Nigeria Limited"
+    assert unit_slips(["Anlon invests ₹90 Cr in Nigeria"], anlon) == []          # never "corrected" as rupees
+    assert foreign_as_rupees(["Investment: ₹90 million"], anlon) == ["₹90 is the filing's NGN figure, not a rupee amount"]
+    assert foreign_as_rupees(["Investment: ₹90 Cr"], anlon + " and Rs 90 crore of loans") == []   # also a rupee figure

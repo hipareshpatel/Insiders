@@ -50,8 +50,10 @@ CRORE_SCALES = (1, 10, 100, 1e4, 1e7)
 # "('l in million)", '"in million)', "c, in million)", "{f in million)", "(fin million)", "/fin million)".
 _DECLARED_UNIT = re.compile(
     # "(Rs. In Mn.)" heads Heritage's investor decks (2026-10-18)
-    r"(?:₹|\brs\.?|\binr|\brupees?)\s*(?:in\s*)?(?:(lakhs?|lacs?|crores?|millions?|mn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
-    r"|\bin\s*(?:₹|rs\.?|inr|rupees?)\s*(?:(lakhs?|lacs?|crores?|millions?|mn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
+    r"(?:₹|\brs\.?|\binr|\brupees?)\s*(?:in\s*)?(?:(lakhs?|lacs?|crores?|millions?|mn|billions?|bn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
+    r"|\bin\s*(?:₹|rs\.?|inr|rupees?)\s*(?:(lakhs?|lacs?|crores?|millions?|mn|billions?|bn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
+    # "(INR Million)" read as "CINR Million )" (AGI Infra's rating letter, round 4): the bracket fused to the currency
+    r"|inr\s*(millions?|billions?|lakhs?|crores?)(?![a-z])"
     # the rupee sign mangled and glued to the word, with no "in": "(XLakhs)", "( Ė Crores)". Not after a
     # figure, where a unit belongs to that figure alone ("12,345.67 (lakhs)").
     r"|(?<![\d.,]\s)(?<![\d.,])\([ \t]*[^\s()\w]?[A-Za-z']{0,2}[^\s()\w]?[ \t]*(lakhs?|lacs?|crores?|millions?)[ \t]*\)"
@@ -62,13 +64,15 @@ _DECLARED_UNIT = re.compile(
 # SML writes the currency out ("(Rupees in Crores, except share data)") and some filers write thousands
 # as "(Rs. 000)" without the apostrophe; neither was read, so those statements had no unit at all.
 _PER_CRORE = {"lakh": 100, "lac": 100, "million": 10, "mn": 10, "thousand": 10_000, "'000": 10_000, "000": 10_000,
-              "crore": 1}
-UNIT_NAMES = {100: "₹ lakh", 10: "₹ million", 10_000: "₹ thousand"}
+              "crore": 1, "billion": 0.01, "bn": 0.01}   # "(Rs billion)": RBL's business update, round 4 (100x as crore)
+UNIT_NAMES = {100: "₹ lakh", 10: "₹ million", 10_000: "₹ thousand", 0.01: "₹ billion"}
 _CRORE_AFTER = re.compile(r"\s*(?:cr\b|crores?\b)", re.I)
 # The unit written right after a source figure ("INR 5445 Million", "Rs. 2,025 lakhs"), as figures
 # per ₹ crore. Kanoria's RPT notice (Apr 2025) mixes million, lakh and crore, so no single declared
 # unit exists; "5445 Million" was still written as "₹5,445 Cr".
-_MONEY_AFTER = re.compile(r"\s*(lakhs?|lacs?|crores?|cr|millions?|mn|billions?|bn|thousands?)(?![a-z])", re.I)
+# The amount spelt out in brackets may come between ("INR 3 (Three) Million": Excelsoft, round 4, carded as ₹3 Cr)
+_MONEY_AFTER = re.compile(r"\s*(?:\([A-Za-z][A-Za-z ,-]{0,60}\)\s*)?(lakhs?|lacs?|crores?|cr|millions?|mn|billions?|bn|thousands?)(?![a-z])",
+                          re.I)
 _PER_CRORE_WORD = {"lakh": 100, "lac": 100, "crore": 1, "cr": 1, "million": 10, "mn": 10,
                    "billion": 0.01, "bn": 0.01, "thousand": 10_000}
 
@@ -614,6 +618,8 @@ def _copied_from_its_row(filing: str, raw: str, before: str, after: str = "") ->
 def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, float, int, float, int]]:
     """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct."""
     unit = declared_unit(filing)
+    # a foreign-currency amount is no rupee figure at any unit: it is held, never "corrected" (foreign_as_rupees)
+    filing = _FOREIGN.sub(" ", filing or "")
     filing_index, other_index = SourceIndex(filing), SourceIndex(*others)
     if not unit and not any(u != 1 for u in filing_index._by_unit):
         return []
@@ -621,7 +627,9 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
     for text in texts:
         crore_at = _crore_positions(text or "")
         for value, decimals, pos, kind, raw in _tokens(text or ""):
-            if pos not in crore_at or value < 10 or raw in slips:
+            # A small figure is ambiguous against a table's unit, not against a figure that carries its own: "INR 3
+            # (Three) Million" carded as "₹3 Cr" (Excelsoft, round 4)
+            if pos not in crore_at or value < (10 if unit else 1) or raw in slips:
                 continue
             if filing_index.stated_crore(value, decimals, (unit,) if unit else CRORE_SCALES)                     or other_index.stated_crore(value, decimals, (1,)):
                 continue
@@ -650,3 +658,37 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
     return list(slips.values())
+
+
+# An amount the filing writes in another currency ("NGN 90 million", "USD 350 mn", "EUR 15.37 lakh"). Anlon's card gave a
+# Nigerian subsidiary's NGN 90 million as "₹90 million" (round 4): no rupee unit can correct that, so the card is held.
+_FOREIGN = re.compile(r"(?:\b(?:USD|US\$|NGN|EUR|GBP|AED|SGD|JPY|CHF|CAD|AUD|SAR|QAR|KES|ZAR)|[$€£¥₦])\s*"
+                      r"(\d[\d,]*(?:\.\d+)?)\s*(millions?|mn|billions?|bn|lakhs?|crores?|thousands?)?", re.I)
+
+
+def foreign_amounts(text: str | None) -> list[tuple[float, str]]:
+    """(number as written, currency) for each amount the text writes in a currency other than the rupee."""
+    out = []
+    for m in _FOREIGN.finditer(text or ""):
+        try:
+            out.append((float(m.group(1).replace(",", "")), m.group(0).split()[0][:4]))
+        except ValueError:
+            continue
+    return out
+
+
+def foreign_as_rupees(texts: list[str], filing: str) -> list[str]:
+    """Card amounts in ₹ that are the filing's foreign-currency figure with the currency swapped, when the filing writes
+    that number in no rupee amount at all."""
+    foreign = foreign_amounts(filing)
+    if not foreign:
+        return []
+    rupee_numbers = {round(v, 2) for v, _ in _numbers(_FOREIGN.sub(" ", filing))}
+    problems = []
+    for text in texts:
+        for m in re.finditer(r"₹\s*(\d[\d,]*(?:\.\d+)?)", text or ""):
+            value = float(m.group(1).replace(",", ""))
+            hit = next((cur for v, cur in foreign if abs(v - value) < 1e-9), None)
+            if hit and round(value, 2) not in rupee_numbers:
+                problems.append(f"₹{m.group(1)} is the filing's {hit} figure, not a rupee amount")
+    return sorted(set(problems))

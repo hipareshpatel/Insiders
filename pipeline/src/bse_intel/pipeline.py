@@ -43,7 +43,7 @@ from .ocr import page_reader, recognise
 from . import raw
 from . import gate
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
-                        declared_unit, margin_issues, scale_issues, unit_slips)
+                        declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
                       quarter_index, statement_quarter, statement_year)
@@ -2169,6 +2169,7 @@ class Pipeline:
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged)
             found.scale += gate.stale_columns(_card_texts(candidate), filed_text)
+            found.scale += foreign_as_rupees(_card_texts(candidate), filed_text)
             if not tagged and "RESULTS" in (event_type, candidate.event_type):
                 # With no XBRL the reading of the statement is all there is, so it has to add up: 27 of
                 # 68 results cards had no XBRL behind them. Reported for the second provider to fix, with

@@ -107,6 +107,15 @@ wrong for NSE: event XBRL is broadcast within seconds of the announcement.
 
 So for these events the amount, unit, counterparty, dates and stage need no model reading: they are exact fields.
 
+## Timing checked live (2026-10-18, cloud session)
+
+| Data | Claim in these docs | Measured |
+|---|---|---|
+| Event XBRL (Reg 30) | "no source found" | Published with the announcement, seconds apart (above) |
+| Results XBRL (NSE integrated filing) | "up to 24 hours" after the outcome PDF (TRACKER F48 gap 2) | Same day, **5 minutes to 2 h 40 min** after the board-meeting outcome: Capri Global 5 min (Q1FY27), LTM 49 min (Q2FY27), Newgen 2 h 28 min, Bank of Maharashtra 2 h 39 min. A results card can wait for it or be corrected within hours, not a day |
+| Annual-report XBRL | "weeks to months after the PDF" | **True**: LTM ~7 weeks, NTPC ~7.5, Newgen ~8, Hindustan Copper FY25 ~4.5 months; Capri Global FY26 not listed yet |
+| Pledged data | `/api/corporate-pledgedata` gives `percSharesPledged` (Pledged data row above) | **Not reproduced**: empty `data` with and without symbol and dates; `/api/corporate-pledge-holding` returns a count of 0. The page's call needs reading again before module 42 relies on it |
+
 ## Still open
 
 - BSE's announcement API does carry an XBRL identity we had missed, but it is not a link. The beta

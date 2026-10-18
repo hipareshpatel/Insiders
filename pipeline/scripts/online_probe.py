@@ -1,0 +1,168 @@
+"""Can an online-only pipeline (GitHub + Cloudflare, NSE as the source) get what it needs? Read-only checks of
+the NSE addresses an NSE-first pipeline would use, from a GitHub-hosted runner, each reported on its own so one
+refusal does not hide the rest. Writes nothing, calls no AI model, needs no secrets.
+
+    python scripts/online_probe.py [--report probe.md]
+
+Checks (docs/SOURCES.md "Event XBRL" and "Timing checked live"):
+1. NSE's announcement list, and how many rows carry hasXbrl and a PDF;
+2. the event XBRL list (/api/XBRL-announcements) by type, and one order's XBRL read field by field;
+3. how many event XBRL files can be joined to their announcement (same symbol, broadcast within 10 minutes);
+4. results XBRL (integrated filing): the gap after the board-meeting outcome for a few companies;
+5. annual-report XBRL lists;
+6. an announcement PDF downloaded and read with the pipeline's own reader;
+7. BSE's announcement XBRL page (CorpXbrlGen), which answered a non-Indian cloud address once.
+
+Exit status is 0 whatever NSE answers: the report is the result. Run by online-probe.yml.
+"""
+
+from __future__ import annotations
+
+import argparse
+import collections
+import re
+import time
+from datetime import datetime, timedelta
+
+import httpx
+
+from bse_intel.extract import Document
+from bse_intel.nse import SITE, USER_AGENT, NseClient
+from bse_intel.timeutil import today_ist
+
+# A large IT company, a bank, an NBFC and a PSU: round 3's companies, all on NSE
+COMPANIES = ["LTM", "MAHABANK", "CGCL", "NTPC"]
+EVENT_TYPES = ["announcements", "para-b", "action"]
+BSE_XBRL = ("https://www.bseindia.com/Msource/90D/CorpXbrlGen.aspx"
+            "?Bsenewid=8911e55c-f499-4973-9e33-c13c680640b4&Scripcode=503804")
+_FACT = re.compile(r"<(in-capmkt:\w+)[^>]*>([^<]{1,200})</")
+_WHEN = "%d-%b-%Y %H:%M:%S"
+
+rows: list[tuple[str, str, str, float]] = []
+
+
+def step(name: str, fn):
+    start = time.monotonic()
+    try:
+        detail = fn()
+        rows.append((name, "ok", str(detail), time.monotonic() - start))
+        return detail
+    except Exception as exc:  # the probe reports every failure and carries on
+        rows.append((name, "FAILED", f"{type(exc).__name__}: {exc}"[:300], time.monotonic() - start))
+        return None
+
+
+def _list(data) -> list:
+    data = data.get("data", data) if isinstance(data, dict) else data
+    return data if isinstance(data, list) else []
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--report")
+    args = parser.parse_args()
+    today = today_ist()
+    week_ago = (today - timedelta(days=7)).strftime("%d-%m-%Y")
+    to_day = today.strftime("%d-%m-%Y")
+    found: dict[str, list] = {}
+
+    with NseClient() as nse:
+        def announcements():
+            found["ann"] = _list(nse._get(f"{SITE}/api/corporate-announcements",
+                                          {"index": "equities", "from_date": week_ago, "to_date": to_day}).json())
+            ann = found["ann"]
+            return (f"{len(ann)} rows over 7 days; hasXbrl {sum(1 for r in ann if r.get('hasXbrl'))}, "
+                    f"PDF {sum(1 for r in ann if r.get('attchmntFile'))}")
+
+        step("NSE announcements", announcements)
+
+        found["xbrl"] = []
+        for kind in EVENT_TYPES:
+            def event_list(kind=kind):
+                got = _list(nse._get(f"{SITE}/api/XBRL-announcements", {"index": "equities", "from_date": week_ago,
+                                                                        "to_date": to_day, "type": kind}).json())
+                found["xbrl"] += got
+                top = collections.Counter(r.get("eventType") for r in got).most_common(4)
+                return f"{len(got)} files; " + "; ".join(f"{k} {v}" for k, v in top)
+
+            step(f"event XBRL list, type={kind}", event_list)
+
+        def order_fields():
+            order = next(r for r in found["xbrl"] if "orders" in str(r.get("eventType", "")).lower()
+                         and str(r.get("xbrl") or r.get("attachment") or "").endswith(".xml"))
+            body = nse._get(order.get("xbrl") or order["attachment"]).text
+            facts = dict(_FACT.findall(body))
+            keep = ("NameOfTheCompany", "AmountOfTheOrdersOrContracts", "NameOfTheEntityAwardingTheOrdersOrContracts",
+                    "DateOfBaggingOrReceivingOfOrdersOrContracts", "TypeOfAnnouncementAsPerRegulation30ParaBOfPartAOfScheduleIII",
+                    "WhetherTheOrderOrContractWouldFallWithinRelatedPartyTransactions")
+            return "; ".join(f"{k}={facts.get('in-capmkt:' + k)}" for k in keep)
+
+        step("one order's XBRL, field by field", order_fields)
+
+        def joined():
+            ann = [(r.get("symbol"), datetime.strptime(r["an_dt"], _WHEN)) for r in found.get("ann", []) if r.get("an_dt")]
+            match = 0
+            for r in found["xbrl"]:
+                try:
+                    at = datetime.strptime(r["broadcastDateTime"], _WHEN)
+                except (KeyError, ValueError):
+                    continue
+                if any(s == r.get("symbol") and abs((t - at).total_seconds()) <= 600 for s, t in ann):
+                    match += 1
+            return f"{match} of {len(found['xbrl'])} event XBRL files have an announcement of the same symbol within 10 min"
+
+        step("event XBRL joined to its announcement", joined)
+
+        for symbol in COMPANIES:
+            def results_gap(symbol=symbol):
+                filings = _list(nse._get(f"{SITE}/api/integrated-filing-results", {"index": "equities",
+                                                                                   "symbol": symbol}).json())
+                outcome = _list(nse._get(f"{SITE}/api/corporate-announcements", {
+                    "index": "equities", "symbol": symbol,
+                    "from_date": (today - timedelta(days=120)).strftime("%d-%m-%Y"), "to_date": to_day}).json())
+                outs = [datetime.strptime(r["an_dt"], _WHEN) for r in outcome
+                        if "outcome of board" in str(r.get("desc", "")).lower()]
+                gaps = []
+                for f in filings:
+                    if "Financials" not in str(f.get("type", "")) or not f.get("broadcast_Date"):
+                        continue
+                    at = datetime.strptime(f["broadcast_Date"], _WHEN)
+                    before = [o for o in outs if o <= at and at - o < timedelta(days=2)]
+                    if before:
+                        gaps.append(f"{f.get('qe_Date')} {f.get('consolidated')}: {at - max(before)}")
+                return "; ".join(gaps[:4]) or f"{len(filings)} filings, none matched to an outcome"
+
+            step(f"results XBRL after the outcome, {symbol}", results_gap)
+
+        for symbol in COMPANIES[:2]:
+            step(f"annual-report XBRL list, {symbol}", lambda symbol=symbol: "; ".join(
+                f"FY{f.to_year} {f.basis} {f.filed_at}" for f in nse.annual_reports(symbol)[:4]))
+
+        def pdf_read():
+            row = next(r for r in found.get("ann", []) if str(r.get("attchmntFile", "")).endswith(".pdf"))
+            body = nse._get(row["attchmntFile"]).content
+            doc = Document(body)
+            text = doc.select_text(4000, [])
+            return f"{row.get('symbol')}: {len(body):,} bytes, {doc.page_count} pages, {len(text)} characters read"
+
+        step("NSE announcement PDF read by the pipeline", pdf_read)
+
+    def bse_xbrl():
+        r = httpx.get(BSE_XBRL, headers={"User-Agent": USER_AGENT}, timeout=30)
+        tags = re.findall(r"<in-bse-co:(\w+)[ >]", r.text)
+        return f"HTTP {r.status_code}, {len(r.content)} bytes, fields: {', '.join(tags[:8])}"
+
+    step("BSE announcement XBRL page (CorpXbrlGen)", bse_xbrl)
+
+    lines = ["| check | result | detail | s |", "|---|---|---|---|"]
+    lines += [f"| {n} | {s} | {d.replace('|', '/')} | {t:.1f} |" for n, s, d, t in rows]
+    report = "## Online-only probe (NSE from a GitHub-hosted runner)\n\n" + "\n".join(lines) + "\n"
+    print(report)
+    if args.report:
+        with open(args.report, "a", encoding="utf-8") as fh:
+            fh.write(report)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

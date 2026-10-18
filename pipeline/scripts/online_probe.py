@@ -14,7 +14,7 @@ Checks (docs/SOURCES.md "Event XBRL" and "Timing checked live"):
 7. BSE's announcement XBRL page (CorpXbrlGen), which answered a non-Indian cloud address once;
 8. a BSE results file on www.bseindia.com/XBRLFILES, BSE's file host rather than its refused API;
 9. the two calls BSE's Financial Results page makes for its table (NSTodayResults_ng, Result_Arch_ng);
-10. the event XBRL lag: each file against its company's nearest earlier announcement flagged hasXbrl;
+10. the event XBRL lag: each file against its company's nearest earlier announcement of the same subject;
 11. NSE's SAST Reg 31 encumbrance feed (promoter pledges, module 42).
 
 Exit status is 0 whatever NSE answers: the report is the result. Run by online-probe.yml.
@@ -58,6 +58,28 @@ def step(name: str, fn):
     except Exception as exc:  # the probe reports every failure and carries on
         rows.append((name, "FAILED", f"{type(exc).__name__}: {exc}"[:300], time.monotonic() - start))
         return None
+
+
+def _subject(text: str) -> str:
+    return " ".join(str(text).lower().replace("&amp;", "&").split())[:30]
+
+
+# Event XBRL subjects whose announcement goes under other words (measured 11-18 Oct 2026, nearest announcement of
+# the symbol): a director change is filed as "Appointment", "Change in Management", "Resignation", "Cessation"...
+_SAME_EVENT = {
+    "change in directors/kmp/smp/au": ("appointment", "change in management", "resignation", "cessation",
+                                       "change in director", "change in company secretary", "change in auditor",
+                                       "change in registrar"),
+    "pendency of any litigation(s) ": ("pendency of litigation",),
+    "key licenses/regulatory approv": ("granting/withdrawal/surrender",),
+    "commencement or postponement (": ("commencement",),
+}
+
+
+def _same_event(xbrl_subject: str, announcement_subject: str) -> bool:
+    if announcement_subject and xbrl_subject.startswith(announcement_subject):
+        return True
+    return any(announcement_subject.startswith(a) for a in _SAME_EVENT.get(xbrl_subject, ()))
 
 
 def _list(data) -> list:
@@ -122,28 +144,43 @@ def main() -> int:
         step("event XBRL joined to its announcement", joined)
 
         def lag():
-            flagged: dict[str, list[datetime]] = collections.defaultdict(list)
+            # NSE flags every announcement hasXbrl (515 of 515 on 16 Oct 2026), so the flag cannot pick the PDF an
+            # XBRL file belongs to: match the same symbol and the same event (the XBRL's eventType starts with the
+            # announcement's desc, e.g. "Bagging/Receiving of orders/contracts", or _SAME_EVENT), the nearest before it
+            by_symbol: dict[str, list[tuple[datetime, str]]] = collections.defaultdict(list)
             for r in found.get("ann", []):
-                if r.get("hasXbrl") and r.get("an_dt"):
-                    flagged[r.get("symbol")].append(datetime.strptime(r["an_dt"], _WHEN))
-            gaps = []
+                if r.get("an_dt") and r.get("desc"):
+                    by_symbol[r.get("symbol")].append((datetime.strptime(r["an_dt"], _WHEN),
+                                                       _subject(r["desc"])))
+            gaps, any_subject = [], 0
             for r in found["xbrl"]:
                 try:
                     at = datetime.strptime(r["broadcastDateTime"], _WHEN)
                 except (KeyError, ValueError):
                     continue
-                before = [t for t in flagged.get(r.get("symbol"), []) if t <= at]
-                if before:
-                    gaps.append((at - max(before)).total_seconds() / 60)
+                kind = _subject(r.get("eventType") or "")
+                before = [t for t, d in by_symbol.get(r.get("symbol"), []) if t <= at]
+                any_subject += bool(before)
+                same = [t for t, d in by_symbol.get(r.get("symbol"), []) if t <= at and _same_event(kind, d)]
+                if same:
+                    gaps.append((at - max(same)).total_seconds() / 60)
             if not gaps:
-                return "no file matched"
+                return f"no file matched on subject ({any_subject} on symbol alone)"
             gaps.sort()
             share = lambda m: sum(1 for g in gaps if g <= m)
-            return (f"{len(gaps)} of {len(found['xbrl'])} matched; median {gaps[len(gaps) // 2]:.0f} min; "
-                    f"<=1 min {share(1)}, <=15 min {share(15)}, <=1 h {share(60)}, <=4 h {share(240)}; "
-                    f"max {gaps[-1] / 60:.1f} h")
+            return (f"{len(gaps)} of {len(found['xbrl'])} matched on symbol and subject ({any_subject} on symbol "
+                    f"alone); median {gaps[len(gaps) // 2]:.0f} min; <=1 min {share(1)}, <=15 min {share(15)}, "
+                    f"<=1 h {share(60)}, <=4 h {share(240)}; max {gaps[-1] / 60:.1f} h")
 
-        step("event XBRL lag after its hasXbrl announcement", lag)
+        step("event XBRL lag after its announcement of the same subject", lag)
+
+        def subjects():
+            ann = collections.Counter(_subject(r.get("desc") or "") for r in found.get("ann", []))
+            xb = collections.Counter(_subject(r.get("eventType") or "") for r in found["xbrl"])
+            missing = [k for k in xb if not any(_same_event(k, d) for d in ann)]
+            return f"XBRL subjects with no announcement subject as prefix: {missing[:6]}"
+
+        step("event XBRL subjects against announcement subjects", subjects)
 
         def pledges():
             got = _list(nse._get(f"{SITE}/api/corporate-pledgedata-sast3132",

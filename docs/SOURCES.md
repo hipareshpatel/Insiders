@@ -94,10 +94,15 @@ median 8 minutes; 14 within 15 minutes, 19 within an hour, 21 within 4 hours, al
 order: PDF 17 Oct 13:37, XBRL 18 Oct 10:38 (21 hours). So a card written from the PDF must be checked against the
 XBRL when it lands, as for results (PLAN 16), not assume it is there. **Reproduced on a GitHub runner 2026-10-18**
 (`online_probe.py`, 11-18 Oct, 354 files, 320 matched to the nearest earlier `hasXbrl` announcement of the symbol):
-median 9 minutes; 50 within a minute, 185 within 15 minutes, 242 within an hour, 278 within 4 hours. The longest
-matches (up to 5 days) are likely a later event paired with an older announcement: nearest-earlier is not a join key.
+median 9 minutes; 50 within a minute, 185 within 15 minutes, 242 within an hour, 278 within 4 hours. **But
+`hasXbrl` is true on every row** (515 of 515 on 16 Oct, measured 2026-10-18), so both counts paired a file with the
+company's nearest announcement of any kind. Matched on the same event as well (the XBRL's `eventType` starts with the
+announcement's `desc`; a director change's announcement says "Appointment", "Change in Management", "Resignation" or
+"Cessation"; `_SAME_EVENT` in `online_probe.py`): 261 of 354, **median 8 minutes**; 50 within a minute, 158 within 15
+minutes, 205 within an hour (79%), 227 within 4 hours (87%), the longest 92 hours. Not yet paired: frauds/defaults,
+guarantees, amendment or termination of agreements, regulatory-framework changes, new lines of business.
 
-- `/api/corporate-announcements?index=equities`: every row carries `hasXbrl` (20 of 20 true on 18 Oct 2026) and
+- `/api/corporate-announcements?index=equities`: every row carries `hasXbrl`, true on every row (20 of 20 on 18 Oct 2026, 515 of 515 on 16 Oct), so it says nothing, and
   `seq_id`, beside the PDF in `attchmntFile`. **There is no shared key** with the XBRL rows (`seq_id` and `appId` are
   different series; measured 2026-10-18): join by symbol, event type and time, and confirm from the file itself, which
   carries `NSESymbol`, `ScripCode` (BSE's code: our `scrip_code`), `ISIN`, `DateOfOccurrenceOfEventOrInformation` and

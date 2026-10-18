@@ -43,11 +43,28 @@ def _party(name: str | None) -> tuple[str, ...]:
     return tuple(words[:2])
 
 
+_ORG_WORD = re.compile(r"\b(?:railways?|limited|ltd|corporation|corp|company|bank|authority|ministry|board|"
+                       r"divisions?|department|undertaking|enterprises?|industries|finance|power|steel|oil|gas)\b", re.I)
+
+
+def _organisation(part: str) -> bool:
+    """A part of a counterparty that names a client, not its address or its parent ("Secunderabad", "Telangana",
+    "Government of India")."""
+    part = part.strip()
+    if not part or re.match(r"(?i)(?:the\s+)?government\s+of\b", part):
+        return False
+    return bool(_ORG_WORD.search(part) or re.search(r"\b[A-Z]{3,}\b", part))
+
+
 def is_recap(kind: str | None, counterparty: str | None) -> bool:
     """A press release listing the orders won since April is no order: its "deal" names many clients ("Indian
     Railways divisions, PNB, GAIL, DFCCIL, ...") and its amount is the sum of orders already on record
-    (Magellanic's ₹111.04 Cr, round-2 re-run). Stored as one order it inflated every later ORDER_FLOW."""
-    return kind == "ORDER" and len([p for p in re.split(r",|;|/| and ", counterparty or "") if p.strip()]) >= 3
+    (Magellanic's ₹111.04 Cr, round-2 re-run). Stored as one order it inflated every later ORDER_FLOW.
+    Only parts that name an organisation count: one client written with its address ("South Central Railway,
+    Secunderabad, Telangana") or its parent ("Ministry of Road Transport and Highways, Government of India") is
+    one order, and dropping it would lose a real order from memory, ORDER_FLOW and SCALE."""
+    parts = re.split(r",|;|/| and ", counterparty or "")
+    return kind == "ORDER" and sum(1 for p in parts if _organisation(p)) >= 3
 
 
 def same_deal(deals: list[dict], kind: str | None, amount: float | None, counterparty: str | None, as_of: str,

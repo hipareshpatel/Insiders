@@ -45,6 +45,11 @@ def test_7fe943d3_a_recap_of_orders_won_is_no_order():
     cards read "17th order, ₹291 Cr" and sized the recap at 62% of a quarter's revenue."""
     recap = "Indian Railways divisions, PNB, GAIL, DFCCIL, MANGA-group technology company, Manappuram Finance"
     assert is_recap("ORDER", recap) and not is_recap("ORDER", "Western Railway, Ratlam Division")
+    # one client written with its address or its parent is one order, not a recap
+    for one in ("South Central Railway, Secunderabad, Telangana",
+                "Ministry of Road Transport and Highways, Government of India",
+                "National Highways Authority of India (NHAI), New Delhi"):
+        assert not is_recap("ORDER", one), one
     d = new_dossier(_filing("n0", "2026-07-01T10:00:00+05:30"))
     d = merge(d, _order(12.76, "GAIL (India) Limited"), _filing("99f1c20d", "2026-07-30T18:00:00+05:30"), "LOW", "now")
     out, f = _order(111.04, recap), _filing("7fe943d3", "2026-08-19T08:47:00+05:30")

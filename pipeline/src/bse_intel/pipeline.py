@@ -60,6 +60,7 @@ from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
 from . import annual_xbrl
+from . import directions
 from . import event_xbrl
 from . import computed
 from . import trust
@@ -2166,6 +2167,7 @@ class Pipeline:
                 # table's own comparative against it would always succeed and the guard would do nothing
                 changes += xbrl_key_numbers(candidate, tagged, (filed_text,))
             changes += computed.enforce(candidate, produced)
+            changes += directions.guard(candidate, tagged)   # tax, inventory, EPS, credit cost: the file decides
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged)
             found.scale += gate.stale_columns(_card_texts(candidate), filed_text)

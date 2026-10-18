@@ -108,3 +108,26 @@ focus change): the 51 still held, the 6 wrong duplicates and the 31 annual-repor
   "5.1% of the ₹7,794 Cr order book"), and a price or comparison one sentence away from the quote.
 - Second opinions: 60 for 69 cards, 4 corrected. The ones spent on a quote's wording alone are no longer made
   (9131ece).
+
+## Round 3e (09:18-09:43): the last round of this loop
+
+The 43 still held, read for where each held figure really is (session scratchpad `round3e/classify.py`): of the
+figures missing from their own quote, 63 were printed elsewhere in the filing, 3 only in memory or the scale block,
+15 nowhere; 38 more were not found anywhere by grounding, and 28 lines were quotes not found at all. Read card by
+card, a fair share of the holds were right (a ₹ million statement read as crore, "Normalised PAT" overwritten with
+the reported one, a €5 mn deal written ₹97 Cr). The checker errors were fixed (8f59bd3): a comparison figure from
+memory or the scale block, the unit of the quote's own page, a rounded quote or a truncated card, OCR's decimal
+comma and spaced thousands, euro millions, XBRL key numbers quoting the file's line, and company-defined figures
+left alone. A rupee sign garbled by a provider and copied through memory was repaired at the parser.
+
+| | funnel | round 3d | round 3e |
+|---|---|---|---|
+| cards | 451 | 443 | 440 |
+| held | 118 (26%) | 43 (10%) | 28 (6%) |
+| published | 333 | 400 | **412** |
+
+The 43: 13 now published, 27 still held, 2 duplicates, 1 not material. Garbled rupee signs left on cards: 0.
+
+**This loop stops here.** Nearly every fix since round 1 made the checks accept more, each justified case by case,
+and the only check of published cards since round 1 is the 10 above. Audit round 2 measures what this did to the
+cards readers see, on companies the pipeline has never read (`round-2.md`).

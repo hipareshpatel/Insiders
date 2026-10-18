@@ -45,6 +45,19 @@ def spread(rows: list[dict]) -> list[dict]:
     return out
 
 
+def _round_robin(rows: list[dict]) -> list[dict]:
+    """One card per company in turn, keeping each company's cards in the order given (a seeded shuffle)."""
+    by_company: dict[str, list[dict]] = {}
+    for row in rows:
+        by_company.setdefault(str(row.get("scrip_code")), []).append(row)
+    out = []
+    while any(by_company.values()):
+        for queue in by_company.values():
+            if queue:
+                out.append(queue.pop(0))
+    return out
+
+
 def _xbrl_note(card: dict) -> str:
     """The pipeline prepends the machine-tagged XBRL table to the filing text it sends the model, but the
     table is built in memory and never cached, so it cannot be exported. Without this note a reviewer reads
@@ -70,11 +83,27 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=100, help="cards in this round (0 for all)")
     ap.add_argument("--min-companies", type=int, default=MIN_COMPANIES)
     ap.add_argument("--skip", help="file with news_ids already audited, one per line")
+    # Audit round 2 (2026-10-18): a reviewer who sees the checks' own verdict on a card is steered by it, and one
+    # who cannot see memory cannot judge a point resting on it - two of ten released cards had a wrong memory point.
+    ap.add_argument("--blind", action="store_true", help="leave out the pipeline's own grounding, review and model")
+    ap.add_argument("--memory", metavar="URL", help="also write <news_id>.memory.json, memory as the card saw it, "
+                                                    "read from the local site at URL (e.g. http://localhost:5173)")
+    ap.add_argument("--random", type=int, metavar="SEED", help="a seeded random order within each company, not newest first")
     args = ap.parse_args()
     rows = json.load(open(args.cards_json, encoding="utf-8"))[0]["results"]
     skip = set(pathlib.Path(args.skip).read_text().split()) if args.skip else set()
     rows = [r for r in rows if r["news_id"] not in skip]
-    rows = spread(rows)[:args.limit or None]
+    if args.random is not None:
+        import random
+        rows = sorted(rows, key=lambda r: r["news_id"])
+        random.Random(args.random).shuffle(rows)
+    rows = (spread(rows) if args.random is None else _round_robin(rows))[:args.limit or None]
+    keep_fields = tuple(k for k in KEEP if not (args.blind and k in ("grounding", "review", "model")))
+    sink = None
+    if args.memory:
+        from bse_intel.dossier import view_as_of  # noqa: E402
+        from bse_intel.sinks.platform import PlatformSink  # noqa: E402
+        sink, dossiers = PlatformSink(args.memory, "dev-local-token"), {}
     companies = {str(r.get("scrip_code")) for r in rows}
     if len(companies) < args.min_companies:
         print(f"refusing: {len(rows)} cards cover {len(companies)} companies, fewer than {args.min_companies}. "
@@ -82,19 +111,30 @@ def main() -> int:
         return 1
     cache = get_settings().text_cache_dir
     out = pathlib.Path(args.out_dir)
-    written = 0
+    written, manifest = 0, {}
     for i, row in enumerate(rows):
         folder = out / f"reviewer_{i // args.per_reviewer + 1:02d}"
         folder.mkdir(parents=True, exist_ok=True)
         card = json.loads(row["card_json"])
-        keep = {k: card.get(k) for k in KEEP}
+        keep = {k: card.get(k) for k in keep_fields}
+        if sink is not None:
+            scrip = str(row.get("scrip_code"))
+            if scrip not in dossiers:
+                dossiers[scrip] = sink.get_dossier(scrip) or {}
+            view = view_as_of(dossiers[scrip], str(row.get("filed_at"))) if dossiers[scrip] else {}
+            (folder / f"{row['news_id']}.memory.json").write_text(json.dumps(view, ensure_ascii=False, indent=1),
+                                                                  encoding="utf-8")
         keep["_filing"] = {"news_id": row["news_id"], "headline": row.get("headline_filing"), "subject": row.get("subject")}
         (folder / f"{row['news_id']}.card.json").write_text(json.dumps(keep, ensure_ascii=False, indent=1), encoding="utf-8")
         path = cache / row["news_id"][:2] / f"{row['news_id']}.json.gz"
         text = (Document.from_cache(json.loads(gzip.decompress(path.read_bytes()))).select_text(10_000_000, [])
                 if path.exists() else "(no cached text)")
         (folder / f"{row['news_id']}.pdf.txt").write_text(_xbrl_note(card) + text, encoding="utf-8")
+        manifest[row["news_id"]] = {"model": card.get("model"), "scrip_code": str(row.get("scrip_code")),
+                                    "event_type": card.get("event_type"), "folder": folder.name}
         written += 1
+    # outside the reviewers' folders: which model wrote each card, for the tally, without showing the reviewer
+    (out / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
     folders = len({i // args.per_reviewer for i in range(written)})
     per_company = collections.Counter(str(r.get("scrip_code")) for r in rows)
     print(f"{written} cards in {folders} reviewer folders under {out}")

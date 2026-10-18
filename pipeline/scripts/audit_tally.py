@@ -28,6 +28,21 @@ def main() -> int:
     for path in glob.glob(str(pathlib.Path(args.audit_dir) / "*" / "*.card.json")):
         card = json.load(open(path, encoding="utf-8"))
         models[card["_filing"]["news_id"]] = str(card.get("model") or "?").split("/", 1)[-1]
+    manifest = pathlib.Path(args.audit_dir) / "manifest.json"   # a blind export keeps the model out of the cards
+    if manifest.exists():
+        for news_id, row in json.load(open(manifest, encoding="utf-8")).items():
+            if models.get(news_id, "?") == "?":
+                models[news_id] = str(row.get("model") or "?").split("/", 1)[-1]
+    # Audit round 2: memory points and impact levels are judged too, and reported apart so the WRONG share stays
+    # comparable with round 1 (which judged neither)
+    memory_only = [c for c in cards if c.get("verdict") == "WRONG"
+                   and all(i.get("class") == "memory" for i in c.get("issues") or [])]
+    if any(i.get("class") == "memory" for c in cards for i in c.get("issues") or []):
+        print(f"memory points wrong on {sum(any(i.get('class') == 'memory' for i in c.get('issues') or []) for c in cards)} "
+              f"cards; WRONG only for memory on {len(memory_only)}")
+    impact = collections.Counter(str(c.get("impact_ok")) for c in cards if "impact_ok" in c)
+    if impact:
+        print("impact level fits:", ", ".join(f"{k} {v}" for k, v in impact.most_common()))
     if models:  # which model wrote the card: the weights in providers.toml follow this table
         by_model = collections.defaultdict(lambda: collections.Counter())
         issues_by_model = collections.Counter()

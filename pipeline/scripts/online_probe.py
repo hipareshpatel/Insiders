@@ -12,7 +12,8 @@ Checks (docs/SOURCES.md "Event XBRL" and "Timing checked live"):
 5. annual-report XBRL lists, and shareholding XBRL read with the pipeline's own parser;
 6. an announcement PDF downloaded and read with the pipeline's own reader;
 7. BSE's announcement XBRL page (CorpXbrlGen), which answered a non-Indian cloud address once;
-8. a BSE results file on www.bseindia.com/XBRLFILES, BSE's file host rather than its refused API.
+8. a BSE results file on www.bseindia.com/XBRLFILES, BSE's file host rather than its refused API;
+9. the two calls BSE's Financial Results page makes for its table (NSTodayResults_ng, Result_Arch_ng).
 
 Exit status is 0 whatever NSE answers: the report is the result. Run by online-probe.yml.
 """
@@ -179,6 +180,24 @@ def main() -> int:
                 f"{names.get('NameOfTheCompany')} ({names.get('ScripCode')}), finance costs {cost}")
 
     step("BSE results file on www.bseindia.com/XBRLFILES (owner's link)", bse_results_file)
+
+    # The Financial Results page (/corporates/comp_resultsnew) loads its table from these two calls (read from the
+    # page's own JS, 2026-10-18): the recent list across companies, and one company's archive (?Code=)
+    bse_headers = {"User-Agent": USER_AGENT, "Referer": "https://www.bseindia.com/", "Origin": "https://www.bseindia.com",
+                   "Accept": "application/json, text/plain, */*"}
+    for name, url in (("recent results, all companies (NSTodayResults_ng)",
+                       "https://api.bseindia.com/BseIndiaAPI/api/NSTodayResults_ng/w"),
+                      ("one company's results archive (Result_Arch_ng, 512361)",
+                       "https://api.bseindia.com/BseIndiaAPI/api/Result_Arch_ng/w?scrip_cd=512361")):
+        def bse_results_list(url=url):
+            r = httpx.get(url, headers=bse_headers, timeout=40)
+            if r.status_code != 200 or "json" not in r.headers.get("content-type", ""):
+                return f"HTTP {r.status_code} {r.headers.get('content-type', '')}: {r.text[:80]!r}"
+            table = (r.json() or {}).get("Table") or []
+            links = sum(1 for row in table if row.get("stand_xbrl_link") or row.get("conso_xbrl_link"))
+            return f"HTTP 200, {len(table)} rows, {links} with an XBRL link; first: {str(table[:1])[:160]}"
+
+        step(f"BSE Financial Results page: {name}", bse_results_list)
 
     lines = ["| check | result | detail | s |", "|---|---|---|---|"]
     lines += [f"| {n} | {s} | {d.replace('|', '/')} | {t:.1f} |" for n, s, d, t in rows]

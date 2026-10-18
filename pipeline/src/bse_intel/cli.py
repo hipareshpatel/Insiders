@@ -132,7 +132,7 @@ def cmd_market_data(args, settings, sink) -> int:
 
     updated = enrich(settings, sink, all_companies=args.all)
     coverage = json.loads(sink.kv_get("market:coverage") or "{}")
-    print(json.dumps({"companies_updated": updated, "outside_universe": universe.build(settings, sink),
+    print(json.dumps({"companies_updated": updated, "outside_universe": universe.rebuild(settings, sink),
                       "yahoo_missing": coverage.get("missing"), "yahoo_missing_pct": coverage.get("missing_pct"),
                       "missing_sample": [m["scrip_code"] for m in coverage.get("sample", [])[:30]]}))
     return 0
@@ -200,7 +200,19 @@ def cmd_sync_companies(args, settings, sink) -> int:
 
     print(json.dumps({"companies": len(rows), "rows_written": written, "industry_lookups": looked_up,
                       "without_industry": sum(1 for r in rows if not r.get("industry")),
-                      "outside_universe": universe.build(settings, sink)}))
+                      "outside_universe": universe.rebuild(settings, sink)}))
+    return 0
+
+
+def cmd_sync_universe(args, settings, sink) -> int:
+    """NSE's equity list joined to the company master by ISIN: the companies whose filings are analysed (universe.py)."""
+    from . import universe
+    from .nse import NseClient
+
+    with NseClient() as client:
+        raw.attach(client, sink, "nse", settings)
+        counts = universe.build_nse(settings, sink, client.equity_list())
+    print(json.dumps({"min_mcap_cr": settings.universe_min_mcap_cr, **counts}))
     return 0
 
 
@@ -467,6 +479,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--refresh-industry", action="store_true", help="look up every company's industry again")
     p.set_defaults(func=cmd_sync_companies)
 
+    sub.add_parser("sync-universe", help="NSE's equity list joined to the company master: the companies analysed (>= the market-cap floor)"
+                   ).set_defaults(func=cmd_sync_universe)
     p = sub.add_parser("seed-memory", help="financial and ownership history from XBRL, no AI (results: BSE archive; shareholding: NSE)")
     p.add_argument("--scrips", required=True, help="comma-separated BSE scrip codes")
     p.add_argument("--since", default="2023-01-01", help="ignore quarters filed before this date")

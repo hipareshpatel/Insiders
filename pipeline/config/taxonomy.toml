@@ -1,7 +1,9 @@
 # Rule-based triage, applied to every filing before any AI call.
 #
 # Matching is case-insensitive:
-#   categories / subcategories -> substring match on BSE CATEGORYNAME / SUBCATNAME
+#   categories / subcategories -> substring match on BSE CATEGORYNAME / SUBCATNAME, or on NSE's subject ("desc",
+#                                 e.g. "Bagging/Receiving of orders/contracts"), which NSE discovery puts where
+#                                 BSE's subcategory stood (nse.parse_announcement; owner, 2026-10-18: NSE only)
 #   headline                   -> regex search over HEADLINE + " " + NEWSSUB
 #   exclude_headline           -> regexes that veto a rule
 #
@@ -40,6 +42,8 @@ headline = ["code of (practices and procedures for )?fair disclosure", "code of 
 
 [[drop]]
 reason = "routine periodic return"
+# NSE: the quarterly corporate-governance report (Reg 27(2)) and the structural digital database certificate
+subcategories = ["integrated filing- governance", "structural digital database"]
 headline = ["secretarial compliance report", "regulation\\s*24\\s*a\\b", "corporate governance report", "regulation\\s*27\\s*\\(\\s*2\\s*\\)",
             "regulation\\s*57\\s*\\(\\s*[1-5]\\s*\\)", "(payment|servicing) of interest.{0,40}(ncds?|non-convertible|debentures?)",
             "statement of deviation.{0,60}(\\bnil\\b|no deviation|not applicable)", "no deviation.{0,40}(utili[sz]ation|proceeds)"]
@@ -63,7 +67,8 @@ exclude_headline = ["board meeting", "financial results", "outcome", "dividend",
 
 [[drop]]
 reason = "Reg 74(5) depository certificate"
-subcategories = ["74(5)", "74 (5)"]
+# NSE: "Certificate under SEBI (Depositories and Participants) Regulations, 2018" (715 of 2,749 filings, 12-16 Oct 2026)
+subcategories = ["74(5)", "74 (5)", "depositories and participants"]
 headline = ["74\\s*\\(\\s*5\\s*\\)"]
 
 [[drop]]
@@ -123,6 +128,7 @@ exclude_headline = ["resignation", "cessation", "financial results"]
 # about a media report, a rumour, an acquisition or a probe (Reg 30(11)) is news and goes on to Pass 1.
 [[drop]]
 reason = "price / volume movement clarification"
+subcategories = ["spurt in volume", "price movement"]   # NSE's own surveillance notices
 headline = ["(clarification|reply|response).{0,60}(price|volume|trading) (movement|increase|variation|surge|spike|rise|fall)",
             "(price|volume|trading) (movement|increase|variation|surge|spike)s?.{0,40}(clarification|reply|response)",
             "(increase|movement|surge|spike|variation|rise|fall) in (the )?(share )?(price|volume|trading volume)",
@@ -133,6 +139,7 @@ exclude_headline = ["news", "media", "report", "rumou?r", "article", "speculat",
 # Preferential, rights, QIP and warrant allotments are different filings and are kept.
 [[drop]]
 reason = "employee stock option grant or allotment"
+subcategories = ["esop/esos/esps"]   # NSE: "... has informed the Exchange regarding Allotment of 84890 Shares."
 headline = ["(grant|approval for grant|allotment).{0,40}(stock options?|esops?|esos|rsus?|psus?|sars?\\b|employee stock)",
             "(allotment|issue) of .{0,40}shares.{0,60}(esop|esos|stock option|employee stock)",
             "(esop|esos|stock option).{0,40}(allotment|exercise|grant|trust)", "from .{0,30}(esop|esos) trust"]
@@ -142,7 +149,9 @@ exclude_headline = ["preferential", "rights", "\\bqip\\b", "warrants?", "bonus",
 [[drop]]
 reason = "analyst / investor meet schedule"
 headline = ["(schedule|intimation) of (the )?(analysts?|investors?|institutional investors?)[ /]*(and )?(institutional investors? )?(meet|call|conference)",
-            "(analysts?|investors?)( ?/ ?institutional investors?)? (meet|call|conference).{0,40}(schedule|intimation)"]
+            "(analysts?|investors?)( ?/ ?institutional investors?)? (meet|call|conference).{0,40}(schedule|intimation)",
+            # NSE: "... has informed the Exchange about Schedule of meet on 2nd November 2026."
+            "\\bschedule of (the )?meet(ing)?s?\\b"]
 exclude_headline = ["presentation", "transcript", "recording", "audio", "financial results", "outcome"]
 
 # Board-meeting intimations carry no news yet, but their date is a catalyst.
@@ -197,6 +206,7 @@ exclude_headline = ["invok", "invocation"]
 [[fast_track]]
 event_type = "RESULTS"
 categories = ["result"]
+subcategories = ["integrated filing- financial"]
 headline = [
   "(un)?-?audited (standalone |consolidated )?financial results",
   "financial results for the (quarter|half|year|period)",
@@ -235,12 +245,12 @@ headline = ["qualified institutions? placement", "\\bqip\\b", "preferential (iss
 
 [[fast_track]]
 event_type = "M_AND_A"
-subcategories = ["acquisition", "amalgamation", "merger", "scheme of arrangement", "demerger"]
+subcategories = ["acquisition", "amalgamation", "merger", "scheme of arrangement", "demerger", "sale or disposal"]
 headline = ["acquisition", "amalgamation", "merger", "scheme of arrangement", "demerger", "open offer"]
 
 [[fast_track]]
 event_type = "ORDER_WIN"
-subcategories = ["award of order", "receipt of order", "bagging"]
+subcategories = ["award of order", "receipt of order", "bagging", "awarding of order"]
 headline = ["(bags?|receipt of|secures?|wins?|awarded).{0,40}orders?", "letter of award", "\\bLoA\\b",
             "(receipt|received|receiving) of (an? )?letter of (intent|acceptance)", "\\bLoI\\b.{0,40}(order|contract|project|epc|work)"]
 
@@ -250,12 +260,16 @@ headline = ["(monthly|sales|production|business) (update|volumes?|numbers)", "au
 
 [[fast_track]]
 event_type = "LITIGATION_REGULATORY"
+# NSE's Reg 30 subjects for actions, litigation, defaults and insolvency
+subcategories = ["action(s) taken or orders passed", "action(s) initiated or orders passed", "pendency of litigation",
+                 "fraud/default/arrest", "corporate insolvency resolution process"]
 headline = ["usfda", "us fda", "warning letter", "import alert", "form 483", "\\beir\\b", "establishment inspection report",
             "show cause notice", "(tax|gst|income tax) demand", "penalty (imposed|levied)", "sebi order"]
 exclude_headline = ["clarification"]
 
 [[fast_track]]
 event_type = "CAPEX"
+subcategories = ["capacity addition", "commencement of commercial production"]
 headline = ["commencement of commercial (production|operations)", "commissioning of", "capacity expansion", "expansion of (the )?capacity",
             "(new|greenfield|brownfield) (plant|facility|unit)"]
 

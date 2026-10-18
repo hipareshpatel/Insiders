@@ -77,6 +77,7 @@ class Filing(BaseModel):
     xbrl_url: str | None = None
     attachment_size: Any = None
     critical: bool = False
+    has_xbrl: bool = False   # NSE says event XBRL exists for it (read in a later step; not stored in the ledger)
     # Ledger fields
     status: str = "PENDING"
     route: str = "NONE"

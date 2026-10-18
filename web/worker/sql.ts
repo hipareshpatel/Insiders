@@ -15,6 +15,7 @@ import usageAdd from "../../db/statements/usage_add.sql?raw";
 import companiesForMarket from "../../db/queries/companies_for_market.sql?raw";
 import companiesForMarketAll from "../../db/queries/companies_for_market_all.sql?raw";
 import companiesOutsideUniverse from "../../db/queries/companies_outside_universe.sql?raw";
+import companiesUniverse from "../../db/queries/companies_universe.sql?raw";
 import companyGet from "../../db/queries/company_get.sql?raw";
 import backfillCompanies from "../../db/queries/backfill_companies.sql?raw";
 import filingsPending from "../../db/queries/filings_pending.sql?raw";
@@ -75,6 +76,7 @@ export const QUERIES: Record<string, string> = {
   peer_cards: peerCards,
   companies_for_market: companiesForMarket,
   companies_outside_universe: companiesOutsideUniverse,
+  companies_universe: companiesUniverse,
   companies_for_market_all: companiesForMarketAll,
   export_cards: exportCards,
   export_companies: exportCompanies,

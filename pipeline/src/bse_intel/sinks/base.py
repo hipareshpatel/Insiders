@@ -42,6 +42,7 @@ QUERIES = (
     "peer_cards",
     "companies_for_market",
     "companies_outside_universe",
+    "companies_universe",
     "companies_for_market_all",
     "export_cards",
     "export_companies",

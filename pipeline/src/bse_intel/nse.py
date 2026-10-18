@@ -27,9 +27,17 @@ import time
 from dataclasses import dataclass
 from datetime import date, datetime
 
+import csv
+import html
+import io
+
 import httpx
 
+from .bse import AttachmentError
+from .bse import SourceBlockedError as _SourceBlocked
+from .models import Filing
 from .periods import canonical_period
+from .timeutil import IST, iso_ist
 
 log = logging.getLogger(__name__)
 
@@ -54,10 +62,92 @@ ANNUAL_REPORT_MAX_BYTES = 40_000_000   # 2.5-4.5 MB for the smoke-test companies
 USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
               "Chrome/120.0.0.0 Safari/537.36")
 BLOCKING_STATUS = (401, 403, 429)
+# Every company listed on NSE's main board, one row each: symbol, name, series, listing date, ISIN.
+# Measured 2026-10-18: 2,605 rows; 2,477 of them are among our 5,111 companies by ISIN.
+EQUITY_LIST_URL = "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv"
+# Every announcement of a day (about 500-600 on a weekday, measured 12-16 Oct 2026), all in one answer, each
+# with its PDF and whether event XBRL exists. Read from the "Corporate Filings - Announcements" page's own call.
+ANNOUNCEMENTS_ENDPOINT = f"{SITE}/api/corporate-announcements"
+NEWS_ID_PREFIX = "nse-"
 
 
-class SourceBlockedError(RuntimeError):
-    """NSE refused the session (401, 403 or 429). Stop for this run rather than pressing on."""
+class SourceBlockedError(_SourceBlocked):
+    """NSE refused the session (401, 403 or 429). Stop for this run rather than pressing on. A kind of BSE's
+    error of the same name, so the pipeline stops on either source the same way."""
+
+
+@dataclass(frozen=True)
+class Equity:
+    """One company on NSE's main-board equity list."""
+
+    symbol: str
+    name: str
+    isin: str
+    series: str = ""
+    listed_on: str | None = None   # ISO date
+
+
+def parse_equity_list(text: str) -> list[Equity]:
+    """NSE's EQUITY_L.csv. Its headers carry stray spaces (" ISIN NUMBER"), so they are stripped."""
+    out: list[Equity] = []
+    for row in csv.DictReader(io.StringIO(text.lstrip("\ufeff"))):
+        row = {(k or "").strip().upper(): (v or "").strip() for k, v in row.items()}
+        symbol, isin = row.get("SYMBOL", "").upper(), row.get("ISIN NUMBER", "").upper()
+        if not symbol or not isin:
+            continue
+        listed = None
+        try:
+            listed = datetime.strptime(row.get("DATE OF LISTING", ""), "%d-%b-%Y").date().isoformat()
+        except ValueError:
+            pass
+        out.append(Equity(symbol, row.get("NAME OF COMPANY", ""), isin, row.get("SERIES", ""), listed))
+    return out
+
+
+def _nse_datetime(value: str | None) -> datetime | None:
+    """NSE's announcement times: "17-Oct-2026 13:37:56" (an_dt) or "2026-10-17 13:37:56" (sort_date), IST."""
+    for fmt in ("%d-%b-%Y %H:%M:%S", "%Y-%m-%d %H:%M:%S", "%d-%b-%Y"):
+        try:
+            return datetime.strptime((value or "").strip(), fmt).replace(tzinfo=IST)
+        except ValueError:
+            continue
+    return None
+
+
+def parse_announcement(row: dict, scrip_for) -> Filing | None:
+    """One row of /api/corporate-announcements as a Filing.
+
+    ``scrip_for(isin, symbol)`` gives our company key (the BSE scrip code the company table is keyed by) or None for a
+    company not in the master; such a filing gets ``NSE:<symbol>`` so it can be set aside with its reason. NSE's own
+    subject (``desc``, e.g. "Bagging/Receiving of orders/contracts") stands where BSE's subcategory stood, so the
+    rule book's subcategory lists match it; the exchange's one-line summary (``attchmntText``) is the headline."""
+    seq = str(row.get("seq_id") or "").strip()
+    symbol = (row.get("symbol") or "").strip().upper()
+    if not seq or not symbol:
+        return None
+    filed = _nse_datetime(row.get("an_dt")) or _nse_datetime(row.get("sort_date"))
+    if filed is None:
+        return None
+    desc = html.unescape(row.get("desc") or "").strip()
+    text = " ".join(html.unescape(row.get("attchmntText") or "").split())
+    isin = (row.get("sm_isin") or "").strip().upper() or None
+    scrip = scrip_for(isin, symbol)
+    attachment = (row.get("attchmntFile") or "").strip() or None
+    return Filing(
+        news_id=f"{NEWS_ID_PREFIX}{seq}",
+        scrip_code=scrip or f"NSE:{symbol}",
+        company_name=(row.get("sm_name") or "").strip() or symbol,
+        symbol=symbol,
+        headline=text or desc,
+        subject=desc,
+        category="",
+        subcategory=desc,
+        filed_at=iso_ist(filed),
+        filing_date=filed.date().isoformat(),
+        pdf_url=attachment if attachment and attachment != "-" else None,
+        attachment_size=row.get("attFileSize") or row.get("fileSize"),
+        has_xbrl=bool(row.get("hasXbrl")),
+    )
 
 
 @dataclass(frozen=True)
@@ -343,6 +433,59 @@ class NseClient:
         data = self._get(ANNUAL_REPORT_ENDPOINT, {"index": "equities", "symbol": symbol.strip().upper()}).json()
         rows = data.get("data") if isinstance(data, dict) else data
         return parse_annual_report_rows(rows if isinstance(rows, list) else [])
+
+    def equity_list(self) -> list[Equity]:
+        """NSE's main-board equity list (the universe's starting point; universe.build_nse)."""
+        return parse_equity_list(self._get(EQUITY_LIST_URL).text)
+
+    def announcements(self, day_from: date, day_to: date | None = None, symbol: str | None = None,
+                      scrip_for=lambda isin, symbol: None) -> list[Filing]:
+        """Every announcement NSE disseminated between the two dates (inclusive), newest first. NSE answers a whole
+        range at once; without a symbol, ask for one day at a time (a day is about 400 KB)."""
+        params = {"index": "equities", "from_date": day_from.strftime("%d-%m-%Y"),
+                  "to_date": (day_to or day_from).strftime("%d-%m-%Y")}
+        if symbol:
+            params["symbol"] = symbol.strip().upper()
+        data = self._get(ANNOUNCEMENTS_ENDPOINT, params).json()
+        rows = data.get("data") if isinstance(data, dict) else data
+        seen: set[str] = set()
+        out: list[Filing] = []
+        for row in rows if isinstance(rows, list) else []:
+            filing = parse_announcement(row, scrip_for)
+            if filing and filing.news_id not in seen:
+                seen.add(filing.news_id)
+                out.append(filing)
+        return out
+
+    def fetch(self, url: str, max_bytes: int = 30_000_000) -> bytes | None:
+        """An announcement's attachment (PDF, sometimes a ZIP) from nsearchives. None when it does not exist or is
+        larger than ``max_bytes`` (a truncated PDF is unreadable). A refusal stops the run (SourceBlockedError); a
+        network failure raises AttachmentError, so the filing is tried again rather than read without its text."""
+        self.warm_up()
+        problem: Exception | None = None
+        for _ in range(self._retries):
+            self._wait()
+            try:
+                with self._client.stream("GET", url) as resp:
+                    if resp.status_code == 404:
+                        return None
+                    if resp.status_code in BLOCKING_STATUS:
+                        raise SourceBlockedError(f"NSE refused the attachment (HTTP {resp.status_code}): {url}")
+                    if resp.status_code >= 500:
+                        problem = AttachmentError(f"NSE answered HTTP {resp.status_code} for {url}")
+                        continue
+                    resp.raise_for_status()
+                    chunks, size = [], 0
+                    for chunk in resp.iter_bytes():
+                        size += len(chunk)
+                        if size > max_bytes:
+                            log.warning("Attachment over %d bytes, skipped: %s", max_bytes, url)
+                            return None
+                        chunks.append(chunk)
+                    return b"".join(chunks)
+            except httpx.HTTPError as exc:
+                problem = AttachmentError(f"attachment download failed: {exc}")
+        raise problem or AttachmentError(f"attachment download failed: {url}")
 
     def download(self, url: str, max_bytes: int = 8_000_000) -> bytes | None:
         """One XBRL file. None when NSE serves something that is not XML."""

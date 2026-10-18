@@ -1049,8 +1049,10 @@ class Pipeline:
         self.gateway = gateway
         self.bse = bse or BseClient()
         raw.attach(self.bse, sink, "bse", settings)
-        # Only annual reports call it (annual_xbrl); None reads them from the PDF alone, as tests do.
+        # NSE discovery and attachments, and annual reports' XBRL (annual_xbrl). None with BSE discovery reads annual
+        # reports from the PDF alone, as tests do.
         self.nse = nse
+        self._nse_universe: universe.NseUniverse | None = None
         if nse is not None:
             raw.attach(nse, sink, "nse", settings)
         self._annual_lists: dict[str, tuple[list, str]] = {}   # symbol -> NSE's annual-report XBRL list and when it was read
@@ -1120,7 +1122,10 @@ class Pipeline:
         key = day.isoformat()
         noise = self._load_noise(key)
         known = self.sink.known_ids(key) | set(noise)
-        filings = self.bse.announcements(day, known=None if full else known)
+        if self._on_nse():
+            filings = self.nse.announcements(day, scrip_for=self._nse_map().scrip_for)
+        else:
+            filings = self.bse.announcements(day, known=None if full else known)
         count = self._record(key, filings, noise, known)
         self.stats.days_discovered.append(key)
         return count
@@ -1131,7 +1136,7 @@ class Pipeline:
         while start <= day_to:
             end = min(day_to, start + timedelta(days=30))  # a month per request keeps pages short
             by_day: dict[str, list[Filing]] = {}
-            for filing in self.bse.announcements(start, end, scrip=scrip):
+            for filing in self._company_announcements(scrip, start, end):
                 by_day.setdefault(filing.filing_date, []).append(filing)
             for key, filings in sorted(by_day.items()):
                 noise = self._load_noise(key)
@@ -1151,7 +1156,7 @@ class Pipeline:
         while start <= day_to:
             end = min(day_to, start + timedelta(days=30))
             by_day: dict[str, list[Filing]] = {}
-            for filing in self.bse.announcements(start, end, scrip=scrip):
+            for filing in self._company_announcements(scrip, start, end):
                 by_day.setdefault(filing.filing_date, []).append(filing)
             for key, filings in sorted(by_day.items()):
                 noise = self._load_noise(key)
@@ -1165,6 +1170,37 @@ class Pipeline:
                 queued += [f.news_id for f in freed]
             start = end + timedelta(days=1)
         return queued
+
+    def _on_nse(self) -> bool:
+        return self.settings.discovery_source == "nse"
+
+    def _nse_map(self) -> universe.NseUniverse:
+        """NSE row -> our company key, from the universe file (loaded once per run). Without the file NSE discovery
+        cannot tell our companies apart, so it stops and says how to build it."""
+        if self._nse_universe is None:
+            if self.nse is None:
+                raise RuntimeError("NSE discovery needs an NSE client")
+            self._nse_universe = universe.load_nse(self.sink)
+            if not self._nse_universe.built:
+                raise RuntimeError("no NSE universe file yet: run `python -m bse_intel sync-universe` first")
+        return self._nse_universe
+
+    def _company_announcements(self, scrip: str, start: date, end: date) -> list[Filing]:
+        """One company's filings over a range, from the discovery source."""
+        if not self._on_nse():
+            return list(self.bse.announcements(start, end, scrip=scrip))
+        nse_map = self._nse_map()
+        symbol = nse_map.symbol_for(scrip)
+        if not symbol:
+            log.warning("%s is not on NSE's list in the universe file; nothing to discover", scrip)
+            return []
+        return self.nse.announcements(start, end, symbol=symbol, scrip_for=nse_map.scrip_for)
+
+    def _attachment(self, url: str, max_bytes: int) -> bytes | None:
+        """A filing's attachment from whichever exchange serves it."""
+        if self.nse is not None and "nseindia.com" in url:
+            return self.nse.fetch(url, max_bytes=max_bytes)
+        return self.bse.download(url, max_bytes=max_bytes)
 
     def _record(self, key: str, filings, noise: dict[str, list], known: set[str]) -> int:
         """Triage new filings of one day: noise to the day's R2 file, the rest to the ledger queue."""
@@ -1190,6 +1226,12 @@ class Pipeline:
                         "event_type": decision.event_type or "BOARD_MEETING", "event_date": decision.catalyst_date,
                         "description": filing.headline[:300], "source_news_id": filing.news_id, "created_at": now,
                     })
+                continue
+            if filing.scrip_code.startswith("NSE:"):
+                # Listed on NSE but not in our company master (no market cap to place it against the floor).
+                self.stats.outside_universe += 1
+                filing.reason = "not in the company master (listed on NSE only)"
+                noise[filing.news_id] = _noise_row(filing)
                 continue
             if filing.scrip_code in self._excluded():
                 self.stats.outside_universe += 1
@@ -1500,14 +1542,14 @@ class Pipeline:
             # Written before the text layer was read in reading order: read the PDF again, keeping the
             # pages already OCR'd; if BSE will not serve it now, the old text is still better than none.
             try:
-                pdf = self.bse.download(filing.pdf_url, max_bytes=_attachment_cap(filing))
+                pdf = self._attachment(filing.pdf_url, _attachment_cap(filing))
                 self._refusals = 0
                 doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
                 doc.keep_ocr(cached)
             except AttachmentError:
                 doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         if doc is None:
-            pdf = self.bse.download(filing.pdf_url, max_bytes=_attachment_cap(filing)) if filing.pdf_url else None
+            pdf = self._attachment(filing.pdf_url, _attachment_cap(filing)) if filing.pdf_url else None
             self._refusals = 0
             doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
         try:
@@ -2602,7 +2644,8 @@ def build_pipeline(settings: Settings, sink: Sink) -> Pipeline:
         log.warning("could not load AI usage; starting counters at zero: %s", exc)
         usage_today, usage_month = [], []
     gateway = AIGateway(settings.load_toml("providers.toml"), usage_today=usage_today, usage_month=usage_month)
-    return Pipeline(settings, sink, gateway, nse=nse_api.NseClient() if settings.nse_annual_xbrl else None)
+    on_nse = settings.discovery_source == "nse"
+    return Pipeline(settings, sink, gateway, nse=nse_api.NseClient() if (on_nse or settings.nse_annual_xbrl) else None)
 
 
 __all__ = ["Pipeline", "Stats", "build_pipeline", "IST"]

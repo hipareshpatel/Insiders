@@ -1,0 +1,1268 @@
+[
+ {
+  "news_id": "03deebba-41af-43ac-8ff0-97e33f63dbce",
+  "headline": "Magellanic Cloud convenes AGM on Sept 30, appoints senior management",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "22344cf9-97a5-4f2e-bd50-5238600b67db",
+  "headline": "Lehar Footwears' bank loan facilities rated at ₹105 Cr, reaffirmed at BBB/Stable",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "deal_value",
+    "card_says": "kind OTHER ₹105 Cr, stage BOARD_APPROVED",
+    "pdf_says": "a rating on bank limits; no deal and no board approval",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "₹105 Cr facility is 79.3% of net worth, providing significant operational cushion",
+    "pdf_says": "rated bank limits are borrowing capacity, not a cushion; the share is computed from the scale block",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "2d010e5a-43ce-46df-ae75-81f59db9d512",
+  "headline": "ESDS launches SWARAJ Sethu DevSecOps platform for the domestic market",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "44c7bf29-865d-4176-a970-e07c7af3d3f8",
+  "headline": "Chromeni Steels acquires 40% stake in 24 MW hybrid renewable SPV",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals",
+    "card_says": "GUIDANCE_BREACH: deadline passed for H1FY27 EBITDA/tonne guidance, no delivery on record",
+    "pdf_says": "filed 16 Oct 2026; H1FY27 results were not yet due, so nothing can have been missed",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "quantified_impact[0]",
+    "card_says": "annual generation worth ₹45.5 Cr at an assumed ₹6.5/unit (check MISMATCH)",
+    "pdf_says": "no tariff in the filing; the formula's own result is off by 1e6",
+    "class": "arithmetic"
+   }
+  ],
+  "held": true,
+  "held_before": false
+ },
+ {
+  "news_id": "558fc7e9-e3d0-4728-8785-40c959bf9083",
+  "headline": "Britannia AGM: all four resolutions pass",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "what_happened[1..2]",
+    "card_says": "\"** ** of public institution votes went against\", \"over ** ** votes in favour\"",
+    "pdf_says": "27.5902% of institutional votes against Ness Wadia (printed without a % sign); the figures were removed and left empty markers",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "5b37aebf-6841-4597-8781-09b7b130fbfe",
+  "headline": "ICRA revalidated [ICRA]AA (Stable) rating on ₹561 Cr NCDs of Home First Finance",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "966105f7-eed4-4025-9eda-84fbc65db05b",
+  "headline": "Poddar Pigments Q1FY27 revenue fell 1.2% YoY to ₹90 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "9d6f5927-3206-42d3-adf5-fe2b3ad7ab53",
+  "headline": "ICRA reaffirms AA- (Stable) rating on Bandhan Bank's ₹75 Cr NCDs and A1+ on ₹3,000 Cr CDs",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "bc3e32e7-4148-4d84-b840-396bdcb4bb94",
+  "headline": "SKF India Q1FY27 revenue ₹588 Cr, down 54% YoY on demerger; PAT ₹62 Cr, down 48%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "margin slipped to 15.0% from 13.0% a year ago",
+    "pdf_says": "15.0% against 13.0% is a rise",
+    "class": "direction"
+   },
+   {
+    "field": "headline/key_numbers",
+    "card_says": "revenue -54.2% YoY, PAT -47.6% YoY",
+    "pdf_says": "against a year-ago that still held the demerged industrial business; continuing revenue 5,877.9 against a re-presented 4,625.0 million is +27.1%, not stated",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Q4FY26 carried ₹43.12 Cr of exceptional items",
+    "pdf_says": "Q4FY26 exceptional items 72.8 million (₹7.28 Cr); ₹43.12 Cr is FY26",
+    "class": "memory"
+   },
+   {
+    "field": "notable_changes[2]",
+    "card_says": "employee cost ₹99.7 Cr -> ₹50.35 Cr (-49.5%)",
+    "pdf_says": "year-ago includes the demerged business",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": true
+ },
+ {
+  "news_id": "f4a2a9d3-0bee-409f-adeb-ef3665990534",
+  "headline": "Income Tax officials checked HEG's books at corporate office over 10-13 August",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": true
+ },
+ {
+  "news_id": "fbe3646f-9a19-4d6a-99f4-85cfe338c11f",
+  "headline": "Adani Power wins UPCL LoA for 1,234 MW thermal supply over 25 years",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "a 25-year PSA with a state discom, not merchant sale",
+    "class": "other"
+   }
+  ],
+  "held": true,
+  "held_before": false
+ },
+ {
+  "news_id": "d74653f5-1535-4390-90ca-38209ccf0234",
+  "headline": "SBI Life FY26 audit unmodified; ₹27,529 Lakh IRDAI commission order still contingent",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[2]",
+    "card_says": "Net worth ₹18,083 Cr",
+    "pdf_says": "₹18,083 Cr is reserves and surplus alone; with share capital (₹1,003 Cr) and the fair value account net worth is ~₹19,086 Cr",
+    "class": "other"
+   },
+   {
+    "field": "what_happened[0]",
+    "card_says": "key audit matter is valuation of investments, of total assets",
+    "pdf_says": "a share of total assets was removed and the sentence left broken",
+    "class": "other"
+   }
+  ],
+  "held": true,
+  "held_before": true
+ },
+ {
+  "news_id": "09120818-c3c9-4131-b9ad-d76a0cf5aa3a",
+  "headline": "India Ratings upgrades ESDS bank loan facilities to IND A/Stable/IND A1",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "2e4c1876-be28-49ce-a839-9df134648ee9",
+  "headline": "JSL Overseas Holding acquires stake in Jindal Stainless",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[2]",
+    "card_says": "Post-acquisition, promoter entity holds ** ** stake",
+    "pdf_says": "17.12% after the purchase (printed without % sign); the figure was removed and the sentence left empty",
+    "class": "other"
+   }
+  ],
+  "held": true,
+  "held_before": false
+ },
+ {
+  "news_id": "399697e7-fc7e-43ac-b7f9-97077db4dac1",
+  "headline": "SBI Life Q1FY27 PAT rose 22% YoY to ₹725 Cr; VNB ₹1,410 Cr, EV ₹85,290 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "PAT of ₹725 Cr is the highest in memory for any quarter, above Q4FY26's ₹805 Cr? No, below; it is the second-highest.",
+    "pdf_says": "a self-correcting draft sentence; Q4FY26 PAT ₹805 Cr is higher",
+    "class": "other"
+   }
+  ],
+  "held": true,
+  "held_before": false
+ },
+ {
+  "news_id": "46a22751-6c74-4162-b113-ca1093616423",
+  "headline": "Lehar Footwears Q1FY27 revenue fell 47% YoY to ₹75 Cr; PAT down 59% to ₹3.01 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "56123d80-e28c-469a-9a39-ee60482d47c4",
+  "headline": "Britannia appoints N. Venkataraman as Deputy Managing Director and Ramamurthy Jayaraman as CFO effective 1 October 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "7d5bbf71-82e8-4ff2-a4e4-707a29e56bf6",
+  "headline": "Bandhan Bank sets AGM on Aug 24, 2026 and record date for dividend on Aug 17, 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0..1]",
+    "card_says": "record date and AGM 'align with prior annual pattern', 'consistent with past practice'",
+    "pdf_says": "memory holds no earlier AGM or record date to compare",
+    "class": "memory"
+   }
+  ],
+  "held": false,
+  "held_before": true
+ },
+ {
+  "news_id": "879e1c65-4e98-4ecf-8b7d-d6334cae14be",
+  "headline": "Home First Finance approved ₹150 Cr NCD issuance, of net worth",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline",
+    "card_says": "Home First Finance approved ₹150 Cr NCD issuance, of net worth",
+    "pdf_says": "a share of net worth was removed and the headline left broken",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "98468a40-29af-4e67-8696-5e6b448452cc",
+  "headline": "SPARC wins CESTAT ruling upholding ₹27.51 Cr CENVAT credit refund",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "e047dcc0-66ad-4ef2-ab5d-1355857f20b1",
+  "headline": "Adani Power assigns MSEDCL's 2,500 MW RE RTC LOA to group firm Powerpulse",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "ORDER_WIN",
+    "pdf_says": "APL assigned away a contract it had won (a transfer to a group company), not an order win",
+    "class": "event_type"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "e64f18c4-b61c-4b9a-a6c3-b8af5c6163ab",
+  "headline": "Poddar Pigments signs strategic partnership with Sukano Polymers Corp. USA for sales of SPD portfolio across US, Canada and Latin America",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "e8855e8b-dce5-4136-8310-a35104a778d7",
+  "headline": "Promoter group stake in HEG Advanced Materials rises to 60.72% after scheme allotment",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[0]",
+    "card_says": "taking its holding to 40,536,893 shares **",
+    "pdf_says": "12.29% (printed without % sign) removed, sentence left with an empty marker",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "ff8021a8-122e-4cf6-90b4-34cde950b3a4",
+  "headline": "Magellanic Cloud amends preferential issue objects to include inorganic growth",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.risks",
+    "card_says": "Potential dilution from 12.67 million convertible warrants",
+    "pdf_says": "12,67,00,000 warrants = 12.67 crore (126.7 million), ten times more",
+    "class": "unit_scale"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "0676e799-3d32-4360-828d-815584e7c7fc",
+  "headline": "Home First Q1FY27 revenue ₹538 Cr; PAT ₹160 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst/headline",
+    "card_says": "'finance costs rise only'; headline and timeline give no change",
+    "pdf_says": "the changes were removed and the catalyst left broken (revenue +18.6%, PAT +34.5% YoY on printed figures)",
+    "class": "other"
+   }
+  ],
+  "held": true,
+  "held_before": false
+ },
+ {
+  "news_id": "1629cf52-d919-44a7-b5da-9d795f0d2db4",
+  "headline": "Poddar Pigments FY26 audit clean; ₹849.82 lakh Chaksu capex adds 6,000 MT capacity",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": true,
+  "held_before": true
+ },
+ {
+  "news_id": "1e02b13e-9989-454f-82d2-7bd15b2d25c9",
+  "headline": "HEG Advanced Materials' investor relations head Salil Bawa resigns, effective 14 September",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "2331eb13-6197-4e18-b3f4-88ded5fac81f",
+  "headline": "SPARC files application to reclassify promoter group to public category",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "2b4345ba-6929-4325-b3f9-5291195e731c",
+  "headline": "Replus Engitech receives ₹127.35 Cr order from Indus Towers for lithium-ion battery banks supply",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "the September MoU for 1.5 GWh BESS is now converting into a firm order",
+    "pdf_says": "the filing does not link this battery-bank order to the MoU",
+    "class": "memory"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "2bdfd8b6-e1fe-4e2a-a253-ae0c77a58f3d",
+  "headline": "Bandhan Bank Q1FY27 PAT up 35% YoY to ₹502 Cr, but 1.6-1.8% ROA target pushed past Q4FY27",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0..1]",
+    "card_says": "PAT ₹502 Cr flat versus Q1FY27's own ₹502 Cr; PPOP flat QoQ (₹1,358 Cr in Q1FY27 per memory)",
+    "pdf_says": "both compare the quarter with itself",
+    "class": "memory"
+   }
+  ],
+  "held": true,
+  "held_before": false
+ },
+ {
+  "news_id": "54a74396-8b41-4b1f-b40f-29b1451dfff1",
+  "headline": "Lehar Footwears commences operations at new sports shoes facility in Kundli, expanding capacity by 150% to 2.5 lakh pairs per month",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "969c382d-41c9-4ce0-abf1-f5e0313f4aa8",
+  "headline": "Provigil Surveillance gets ₹7.92 Cr LOA from Western Railway for e-surveillance system",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals",
+    "card_says": "ORDER_FLOW: 11th order since 2026-07-30 (₹218.04 Cr in total); smaller than the ₹111.04 Cr order of 2026-08-19",
+    "pdf_says": "memory stores each order twice (BSE filing and its copy) and a ₹111.04 Cr 'order' that is the group's year-to-date total; the real flow to 24 Aug is 6 orders, ~₹64 Cr",
+    "class": "signal_verdict"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "9842ebe3-074f-4d2d-8a4b-4f6ac6fa1c7d",
+  "headline": "Britannia FY26 audit clean",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": true,
+  "held_before": false
+ },
+ {
+  "news_id": "a369adcf-9ab2-457b-933f-bada90dc9f66",
+  "headline": "CRISIL Ratings upgraded ESDS Software Solution Ltd's long-term facilities to A-/Positive from BBB+/Positive and short-term facilities to A2+ from A2 on September 16, 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "f53adfdc-94c8-4192-80bc-4af64f1c8b56",
+  "headline": "Jindal Stainless FY26 audit clean; related-party flows ₹4,205 Cr, contingencies ₹717 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[1]",
+    "card_says": "net debt ₹6,926 Cr (Q4FY26, memory) -> ₹3,040 Cr (FY26, filing)",
+    "pdf_says": "both are 31 March 2026: ₹6,926.47 Cr is the ratio note's net debt (1.26x EBITDA), ₹3,040 Cr the MD&A's (0.55x); two definitions, not a fall",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "fc2e28bd-8f9c-4996-8225-59f536bf1a2a",
+  "headline": "Adani Power promoters increase stake to via open market purchases and block deals",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[0..1]",
+    "card_says": "Adani Tradeline 10.8M shares, Ardour 20.5M, Adani Infra 12.48M",
+    "pdf_says": "10,80,27,500 / 20,50,00,000 / 12,48,00,000 shares = 108.0M / 205.0M / 124.8M, ten times more",
+    "class": "unit_scale"
+   },
+   {
+    "field": "headline/takeaway",
+    "card_says": "promoters increase stake to via...; increased holding to;",
+    "pdf_says": "74.96% (printed without % sign) removed, sentences left broken",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": true
+ },
+ {
+  "news_id": "020fb32c-efbc-4eab-9888-45ad25ca6a5a",
+  "headline": "Britannia CIO Susheel Navanale to retire 30 September; Rejin Surendran named successor",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "the outgoing CIO retires at 60",
+    "pdf_says": "the filing gives no age",
+    "class": "invented"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "0beca6b8-0600-4e66-86fe-74c9150a6fba",
+  "headline": "LIC raises Britannia stake to 5.006% with 53,260-share market purchase",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "22ed6085-8dc4-4648-b727-ff7de6a7ab69",
+  "headline": "Bandhan Bank board recommends Babbar ED & CBO re-appointment for 3 years from March 2027",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "internal audit leadership is still unsettled a year after the vacancy opened",
+    "pdf_says": "the interim CAE took over on 27 April 2026, about five months earlier",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "36024ce2-81e5-4c4f-afd3-a1e93e30dc87",
+  "headline": "Bandhan Bank Q2FY27 advances fall 13.1% YoY to ₹1.40 lakh Cr; CASA ratio down to 27.97%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline/key_numbers/what_happened",
+    "card_says": "advances fell 13.1% YoY to ₹1,40,041 Cr; deposits down 9.2% to ₹1,58,075 Cr; CASA ratio 27.97% from 29.40%",
+    "pdf_says": "the columns are Sep-2025, Jun-2026, Sep-2026 (the YoY and QoQ columns prove it): advances rose 13.1% to ₹1,58,335 Cr, deposits rose 9.2% to ₹1,72,689 Cr, CASA ratio 26.71% from 27.97%",
+    "class": "wrong_column"
+   },
+   {
+    "field": "headline/takeaway",
+    "card_says": "loan book shrank, deposits down",
+    "pdf_says": "both grew",
+    "class": "direction"
+   },
+   {
+    "field": "memory",
+    "card_says": "loans_and_advances SEP-2026 140041 stored",
+    "pdf_says": "the Sep-2025 figure stored as Sep-2026",
+    "class": "memory"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "38c6cbfc-ac38-40d4-a01e-1d04f9fc2be7",
+  "headline": "Provigil Surveillance secures ₹12.76 Cr order from GAIL for E-surveillance system",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "card",
+    "card_says": "a second card for the GAIL order first reported 30 July (press release of the same order)",
+    "pdf_says": "the same event; the card says so itself",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "457675f3-df7c-47ca-8a6d-8440248968ee",
+  "headline": "Care Ratings upgrades Jindal Stainless long-term debt to CARE AA+ from CARE AA",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "Lower leverage and steady cash generation earning a one-notch upgrade",
+    "pdf_says": "the filing gives no rationale",
+    "class": "invented"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "76cbf1e4-b37b-42bf-939d-4492f52dd4bf",
+  "headline": "Home First Finance Q1FY27 PAT rose 34.5% YoY to ₹160 Cr on AUM growth of 25.7% YoY to ₹16,938 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "c21f067f-83e9-4584-a053-33c495bdf2f2",
+  "headline": "Home First Finance CFO Nutan Gaba Patwari resigned effective August 31, 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "c5f4d350-80f5-4d1a-b129-db4425fc7b71",
+  "headline": "Adani Power shareholders approved raising borrowing limit by ₹1,00,000 Cr and QIP of up to ₹15,000 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "borrowing limit increase of ₹1,00,000 Cr is 22.6% of net worth",
+    "pdf_says": "22.6% is its share of market cap; against net worth (₹64,937-71,392 Cr in memory) it is ~140-155%",
+    "class": "arithmetic"
+   }
+  ],
+  "held": true,
+  "held_before": false
+ },
+ {
+  "news_id": "d4cbdf9f-fcd5-44d1-b14f-907ba6c91512",
+  "headline": "HEG Advanced Materials approves scheme effective Sept 1, 2026; record date Sept 7, 2026 for 1:1 demerger and 8:7 amalgamation",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false,
+  "stands_for": "5b2fc7bb-b3bc-49e0-8023-7b6f05de5756"
+ },
+ {
+  "news_id": "e4903509-3435-425f-ae23-5c4012f9c87d",
+  "headline": "Magellanic Cloud completed Phase 1 deployment of 685 of 930 Punjab & Sind Bank sites in five months",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "eabccac7-21d4-4f1b-9658-d1c434686e96",
+  "headline": "Adani Power Q1FY27 revenue rose 34% YoY to ₹18,902 Cr; PAT up 47% to ₹4,867 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": true
+ },
+ {
+  "news_id": "17762e34-0166-45fe-a9a3-73eb7186f043",
+  "headline": "Britannia shareholders pass N. Venkataraman's CFO re-appointment with votes in favour",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline/what_happened",
+    "card_says": "'with votes in favour'; '** ** of valid votes were in favour and ** ** against'; institutions cast '** **' against",
+    "pdf_says": "97.0846% for, 2.9154% against (printed without % sign); the figures were removed and the sentences left broken",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "2706203a-1321-491c-b301-6eea5b4a1a52",
+  "headline": "Provigil Surveillance wins ₹8.90 Cr LOA from DFCCIL for IP-based CCTV surveillance on OPEX basis for 5 years",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals",
+    "card_says": "ORDER_FLOW: 8th order since 2026-07-30 (₹90.18 Cr in total)",
+    "pdf_says": "memory holds three orders twice; the real flow is 5 orders, ₹55.92 Cr",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "two similar LOAs from DFCCIL on August 13, each worth ₹3.73 Cr",
+    "pdf_says": "one ₹3.73 Cr LOA stored twice",
+    "class": "memory"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "2b0553a9-fa63-4028-9e1b-d2ce4f613656",
+  "headline": "Britannia Q1FY27 revenue rose 8.2% YoY to ₹5,000 Cr; PAT up 14.1% to ₹593 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false,
+  "stands_for": "0c00a45a-fa59-494f-8644-a85ed3018266"
+ },
+ {
+  "news_id": "3dd11a45-c50f-4f9a-ae48-7016ba849c8f",
+  "headline": "Crisil reaffirmed AA-/Stable on ₹230 Cr NCDs and A1+ on ₹6,000 Cr CDs; withdrew ₹1,065 Cr NCDs post repayment",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "53238fd9-9580-4881-9b0b-924c80115ead",
+  "headline": "Bandhan Bank AGM: all 7 resolutions pass",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway/what_happened",
+    "card_says": "'over of votes polled in favour', '** ** of public institutional votes went against', 'Promoter holds ** **'",
+    "pdf_says": "percentages printed without % sign were removed and the sentences left broken",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "6192cdc5-7ee7-4269-9ea1-b6d97416ff9b",
+  "headline": "Jindal Stainless Q1FY27 revenue rose 10.5% YoY to ₹11,278.5 Cr; PAT up 7.6% to ₹768.7 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "Higher revenue from operations driven by increased raw material cost and other expenses",
+    "pdf_says": "costs do not drive revenue; a causal claim the filing does not make",
+    "class": "other"
+   },
+   {
+    "field": "what_happened[2]",
+    "card_says": "EBITDA rose ** ** to ₹1,363.75 Cr",
+    "pdf_says": "change removed, empty marker left",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "10.5% exceeds the company's 5-year average growth rate",
+    "pdf_says": "memory holds no 5-year growth figure",
+    "class": "memory"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "799d649d-c5a1-4bed-8ddd-62b0f3d7dec0",
+  "headline": "NCLT Mumbai sanctions Adani Power merger of Vidarbha Industries Power",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "8fa0252d-85ca-4472-bdcd-45c054bfef5e",
+  "headline": "HEG Advanced Materials receives NCLT approval for demerger scheme; shareholders to get 1:1 shares in HEG Graphite Limited",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[0]",
+    "card_says": "NCLT approved the scheme on August 18 2026",
+    "pdf_says": "the order is dated 13 August 2026; 18 August is when it was uploaded",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "9738381c-7cc5-4ef0-aad8-84616e15b986",
+  "headline": "Magellanic Cloud wins ₹3.29 Cr DFCCIL LOA, third in weeks",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "card",
+    "card_says": "a second card for the ₹3.29 Cr DFCCIL Ajmer LOA first reported on 1 September (press release of the same order)",
+    "pdf_says": "the same event; its own signal says so",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "9c2e7ded-3821-4738-832e-0aa8734e71b0",
+  "headline": "NCLT Ahmedabad sanctions Adani Power merger of nine wholly owned subsidiaries",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "c3612069-dcd3-4789-8da3-568481255221",
+  "headline": "HEG Limited renamed HEG Advanced Materials Ltd from September 2, 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false,
+  "stands_for": "c56e5504-6ffe-4358-82ad-5c25b227ce5d"
+ },
+ {
+  "news_id": "caf6462e-58c9-4474-88b9-789c6d5b6c00",
+  "headline": "HEG arm's ₹217.56 Cr Indus Towers battery order re-filed to fix a missing 'Crore'",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "1044154a-5023-4f09-a428-ad471c9e89d5",
+  "headline": "GQG Partners LLC reduced stake in Adani Power by 0.02% via open market sales from August 2023 to October 2026",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline/timeline",
+    "card_says": "GQG reduced stake by 0.02% via open market sales from August 2023 to October 2026",
+    "pdf_says": "the filing is made because the aggregate change since the last disclosure exceeds 2%; 0.02% is only the last trades' effect",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.kind",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "a shareholder's sale; the company raises nothing",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "2bc2ef91-7a01-4fe3-87e3-e866fe2be1ae",
+  "headline": "Provigil Surveillance wins ₹29.13 Cr LOA from Northern Railway for e-surveillance",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals",
+    "card_says": "ORDER_FLOW: 16th order since 2026-07-30 (₹262.32 Cr in total)",
+    "pdf_says": "memory holds most orders twice plus a ₹111.04 Cr year-to-date total stored as an order",
+    "class": "signal_verdict"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "0f2061e4-ad22-43e6-870d-2f38a7b20202",
+  "headline": "Provigil Surveillance Ltd secures ₹29.13 Cr LOA from Northern Railway for Kumbh Mela 2027 e-surveillance",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals",
+    "card_says": "ORDER_FLOW: 17th order since 2026-07-30 (₹291.45 Cr in total)",
+    "pdf_says": "memory holds most orders twice plus a ₹111.04 Cr year-to-date total stored as an order",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "card",
+    "card_says": "a second card for the ₹29.13 Cr Northern Railway order; its memory point cites the order itself",
+    "pdf_says": "press release beside the intimation 2bc2ef91",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": true
+ },
+ {
+  "news_id": "3825f429-286f-4cd3-8fc9-003fbddb7581",
+  "headline": "India Ratings upgrades Adani Power's NCDs and bank loans to IND AA+/Stable from IND AA, affirms short-term IND A1+",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "42c76ec5-6d00-4a86-ab6e-156af6788e2f",
+  "headline": "Adani Power sells CIPL subsidiary to AdaniConneX for ₹535.69 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "43b9d18e-4ae1-4611-86da-a1f30714f9e2",
+  "headline": "HEG unit Replus wins ₹217.56 Cr Indus Towers lithium-ion battery bank order",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "The order is about of trailing revenue ...; so it adds a modest; near-term revenue stream",
+    "pdf_says": "a share of revenue was removed and the sentence left broken",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "57be80aa-81ef-41f3-a290-39b27f835ba7",
+  "headline": "IVIS International Pvt. Ltd. receives second purchase order from Capri Global Capital Limited for pan-India deployment of Integrated E-Surveillance & Vault Operation Solution",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "7fca44f2-f0ec-4318-8ee5-09677501238a",
+  "headline": "IVIS wins second pan-India e-surveillance order from Capri Global",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "card",
+    "card_says": "a second card for the Capri Global order of 20 August (revised press release of the intimation 57be80aa)",
+    "pdf_says": "the same event",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "a161327d-ef2c-4ed8-a17d-fc78dc92f13a",
+  "headline": "Bandhan Bank Q1FY27 PAT rose 35% YoY to ₹502 Cr; NII up 5.9% YoY",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": true,
+  "held_before": false,
+  "stands_for": "274dc978-ee63-4d1f-8910-18a96a4e2c4b"
+ },
+ {
+  "news_id": "eb24413e-f85b-45bd-81d3-7ec0fabf9c2f",
+  "headline": "Adani Power signs SHA for 770 MW hydropower project in Bhutan",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "ec3bce80-3e5e-4860-9eb2-fd47efe45e54",
+  "headline": "US Commerce sets 6.99% preliminary CVD on HEG's graphite electrodes",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "ef8fc04d-1bf6-4fbd-b14a-a3a25aace583",
+  "headline": "HEG Q1FY27 revenue ₹681 Cr, up 10% YoY; EBITDA margin 22.1% vs 17.1%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes/what_happened",
+    "card_says": "Q1FY26 current tax ₹17.18 Cr, tax ₹22.63 Cr, other income ₹66.92 Cr; other expenses ₹146.44 Cr (standalone) beside consolidated revenue and PAT",
+    "pdf_says": "the filing's re-presented consolidated Q1FY26 column prints current tax 16.31, tax 21.52, other income 60.49; the year-ago figures come from before the demerger re-presentation, and other expenses are the standalone line",
+    "class": "standalone_consolidated"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "10f81073-e8dd-4033-bca3-5bded792361c",
+  "headline": "Magellanic Cloud EGM rejects related-party transactions under Section 185 with MCRAY Xtend, Scandron, Motivity Labs",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway/what_happened",
+    "card_says": "'failed with only votes in favour'; 'Only of votes cast were in favour ... while of votes were declared invalid'",
+    "pdf_says": "percentages removed, sentences left broken",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": true
+ },
+ {
+  "news_id": "178285c3-0792-43dd-aea8-02ad754d3e3e",
+  "headline": "IVIS International Private Limited secured ₹18.4 Cr purchase orders from NCR Corporation India Private for E-surveillance solutions at PNB ATM sites over 5 years",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals",
+    "card_says": "ORDER_FLOW: 4th order since 2026-07-30 (₹55.42 Cr in total)",
+    "pdf_says": "the ₹12.13 Cr Western Railway LOA is in memory twice; 3 orders, ₹43.29 Cr",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "two ₹12.13 Cr LOAs from Western Railway",
+    "pdf_says": "one LOA filed twice",
+    "class": "memory"
+   }
+  ],
+  "held": true,
+  "held_before": false
+ },
+ {
+  "news_id": "4526e618-7d28-4b84-b036-dee53d57bbe1",
+  "headline": "Magellanic Cloud FY26 audit clean, but CARO flags adverse remarks at parent and three subsidiaries",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": true,
+  "held_before": true
+ },
+ {
+  "news_id": "461381fd-841e-4d14-a9f9-c31a5ce6c8c8",
+  "headline": "Adani Power wins LOI to acquire 330 MW hydro plant from GVK Energy",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "4eb31f3a-92cf-408a-93c2-9c82681c98ad",
+  "headline": "Adani Power wins APTEL appeal against MERC order",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "531d99a4-0db9-4e32-ab66-bd31410f221b",
+  "headline": "Magellanic Cloud arm Provigil wins ₹12.13 Cr Western Railway LOA, 1.8% of revenue",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals",
+    "card_says": "ORDER_FLOW: 3rd order since 2026-07-30 (₹37.02 Cr in total)",
+    "pdf_says": "this ₹12.13 Cr LOA is counted twice (intimation and press release); 2 orders, ₹24.89 Cr",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "second railway surveillance win after the ₹12.13 Cr Western Railway Ratlam LOA of 6 Aug 2026",
+    "pdf_says": "that LOA is this one",
+    "class": "memory"
+   },
+   {
+    "field": "card",
+    "card_says": "a second card for the same LOA (press release beside the intimation d54e811f)",
+    "pdf_says": "the same event",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "7fe943d3-e780-4be8-a7a4-28928145eddf",
+  "headline": "Magellanic Cloud lists ₹111.04 Cr of orders won since April, 15.5% of TTM revenue",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals",
+    "card_says": "SCALE: ₹111.04 Cr order = 62% of Q1FY27 revenue; ORDER_FLOW: 10th order, the largest so far",
+    "pdf_says": "₹111.04 Cr is a recap of 14 orders since April, most already carded; it is no order",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "deal_value",
+    "card_says": "kind ORDER, ₹111.04 Cr, stage LOA (stored in memory as one order)",
+    "pdf_says": "an aggregate of orders already disclosed",
+    "class": "other"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "99f1c20d-6f56-4fe4-8d65-c4ef7930b08e",
+  "headline": "Provigil Surveillance wins ₹12.76 Cr GAIL E-surveillance order",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "following previous orders from Google LLC",
+    "pdf_says": "memory names a MANGA-group client; the filing names none",
+    "class": "memory"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "c866b310-6cf8-43d4-ba4b-d4810fea6b5d",
+  "headline": "Adani Power settles SEBI proceedings for ₹37.05 lakh with no material financial impact",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "cac7f199-6ff1-40da-a6e1-30104a0b63e7",
+  "headline": "Magellanic Cloud narrows ₹490.89 Cr preferential issue object 6 to 'acquisition for inorganic growth'",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "held": false,
+  "held_before": false
+ },
+ {
+  "news_id": "dcadcb1d-5854-49c3-8087-f1ea8673522c",
+  "headline": "Adani Power Q1 revenue up 32% to ₹19,322 Cr; PAT up 47% to ₹4,867 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "The board's QIP plan of up to ₹15,000 Cr is 38.9% of market cap and 206% of net worth",
+    "pdf_says": "₹15,000 Cr is ~21% of the ₹71,392 Cr net worth and a few percent of market cap; neither figure is in the filing",
+    "class": "arithmetic"
+   }
+  ],
+  "held": true,
+  "held_before": false
+ },
+ {
+  "news_id": "e2079dd7-ea05-4f7f-ae46-15ef920a5fe7",
+  "headline": "Magellanic Cloud arm Provigil wins ₹3.73 Cr DFCCIL e-surveillance LOA, 0.5% of revenue",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals",
+    "card_says": "ORDER_FLOW: 7th order since 2026-07-30 (₹81.28 Cr in total)",
+    "pdf_says": "memory holds several orders twice; 5 distinct orders to 13 Aug, ~₹47 Cr",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Second DFCCIL LOA in two days: memory holds a ₹3.73 Cr DFCCIL LOA dated 2026-08-13",
+    "pdf_says": "that is this LOA (intimation and press release)",
+    "class": "memory"
+   }
+  ],
+  "held": false,
+  "held_before": false
+ }
+]

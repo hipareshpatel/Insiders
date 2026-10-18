@@ -153,3 +153,64 @@ rates (`round-2/backfill_readiness.md`):
 What moves the time most is the number of companies and months, not the event types. The levers that are not
 scope (8 workers instead of 5, fewer second opinions, fewer wasted pass-2 calls) are in `backfill_readiness.md` §5
 and are unmeasured. The paid route stays off the daily path whatever is chosen; it only shortens a backfill.
+
+## Re-run as a measured round (2026-10-18, DATA_QUALITY.md step 6)
+
+After the four structural changes (TRACKER F60-F63) the 14 companies were rebuilt from scratch: cards, catalysts
+and memory reset, XBRL re-seeded, all 322 filings read again with the same provider weights
+(`pipeline/scripts/audit_round2/reset.py`, `rerun_cards.py`). The same 90 filings were then reviewed against their
+filings with round 2's prompt (`round-2-rerun.json`; comparison by `compare_rerun.py`). 84 have a card: 80 their own
+and 4 whose filing was merged into another of the same event, judged on the card that now carries it. 6 have none:
+4 merged into a card already in the sample, 2 now not material (a debt-servicing note round 2 called OK, and a
+subsidiary's rename round 2 called WRONG).
+
+**Who reviewed:** one reviewer, the author of the fixes, not blind to round 2's verdicts (the owner asked for no
+agents). Round 2 had seven independent blind reviewers. Read the "after" figures with that in mind. Round 3 will
+measure the changes on companies nobody has seen.
+
+| Filings | Before (round 2) | After (re-run) |
+|---|---|---|
+| Published in round 2 (80) | WRONG 29, MINOR 32, OK 19 | WRONG 14, MINOR 21, OK 39, no card 6 |
+| Held in round 2 (10) | WRONG 6, MINOR 4 | WRONG 3, MINOR 2, OK 5 |
+| Cards published now | 29 of 80 WRONG (36%) | 13 of 70 WRONG (19%) |
+| Memory points wrong | 37 cards | 11 cards |
+
+WRONG cards by class (a card counts once per class):
+
+| Class | Before | After |
+|---|---|---|
+| other | 20 | 7 |
+| arithmetic | 12 | 3 |
+| signal_verdict | 10 | 9 |
+| invented | 10 | 0 |
+| direction | 8 | 2 |
+| unit_scale | 7 | 2 |
+| wrong_column | 3 | 1 |
+| standalone_consolidated | 3 | 0 |
+| wrong_period, event_type | 4 | 0 |
+
+Verdict moves: of the 35 WRONG, 21 now OK or MINOR, 11 still WRONG, 3 without a card; 6 cards got worse (2 OK and
+4 MINOR now WRONG).
+
+**What is left, by cause (to fix after round 3's review, not before: no change to the checks while round 3 runs):**
+
+1. *One order counted twice, and a recap counted as an order* (7 of the 17 WRONG, all Magellanic): an order's BSE
+   intimation and its press release are both carded and both stored as deals, and a press release listing
+   ₹111.04 Cr of orders since April is stored as one order. ORDER_FLOW then reads "17th order, ₹291 Cr" where there
+   were 10 orders and ₹100 Cr. The card's own text often says it is the same order.
+2. *Percentages printed without a "%" sign are removed* (vote results "97.0846", stakes "17.12", "74.96"): change 1
+   sees them as unproduced, and the stripped sentence keeps empty bold markers or loses its object ("** ** of
+   votes", "increase stake to via", "of net worth"). Ten MINOR cards, no wrong figure, but unreadable sentences.
+3. *A pooled figure on the wrong base*: "₹1,00,000 Cr limit is 22.6% of net worth" (22.6% is of market cap);
+   "QIP is 38.9% of market cap and 206% of net worth" survived although neither figure is printed. Change 1 checks
+   that a figure was produced, not what it is a share of.
+4. *A table's columns read in the wrong order*: Bandhan's September update has garbled headers; the YoY and QoQ
+   columns show the order is Sep-25, Jun-26, Sep-26, so advances grew 13.1%; the card says they fell 13.1%, and
+   memory took the year-old figures as September 2026 (printed and in scale, so the trust rule let them in).
+5. *Crore share counts read as million* (Adani SAST "10.8M shares" for 10,80,27,500; Magellanic "12.67 million
+   warrants" for 12,67,00,000).
+6. *Signals*: GUIDANCE_BREACH fires when the period ends, before its results are due (Jindal, 16 Oct for H1FY27).
+7. *Direction of a level pair* ("margin slipped to 15.0% from 13.0%", SKF) and *two measures of one date shown as
+   a change* (Jindal net debt ₹6,926 Cr covenant basis vs ₹3,040 Cr MD&A basis, both 31 March 2026).
+
+Seven of the 13 published WRONG cards are cause 1 alone; without it the published WRONG share would be 6 of 70 (9%).

@@ -900,6 +900,33 @@ class Pipeline:
             start = end + timedelta(days=1)
         return found
 
+    def retriage_company(self, scrip: str, day_from: date, day_to: date) -> list[str]:
+        """Apply today's rules to one company's filings that an earlier rule left in the noise file.
+
+        Discovery skips a filing already in its day's noise file, so narrowing a drop or date rule never reached
+        the filings it had dropped (the "AGM notice" rule took 12 annual reports filed with their notice, F57).
+        The rows are fetched again from BSE, for the subject and symbol the noise row does not keep; each one
+        today's rules no longer drop leaves the noise file and is queued. Returns their news ids."""
+        queued: list[str] = []
+        start = day_from
+        while start <= day_to:
+            end = min(day_to, start + timedelta(days=30))
+            by_day: dict[str, list[Filing]] = {}
+            for filing in self.bse.announcements(start, end, scrip=scrip):
+                by_day.setdefault(filing.filing_date, []).append(filing)
+            for key, filings in sorted(by_day.items()):
+                noise = self._load_noise(key)
+                freed = [f for f in filings if f.news_id in noise and not _still_noise(self.rules.classify(f), f, noise[f.news_id])]
+                if not freed:
+                    continue
+                for filing in freed:
+                    del noise[filing.news_id]
+                self._save_noise(key, noise)
+                self._record(key, freed, noise, self.sink.known_ids(key))
+                queued += [f.news_id for f in freed]
+            start = end + timedelta(days=1)
+        return queued
+
     def _record(self, key: str, filings, noise: dict[str, list], known: set[str]) -> int:
         """Triage new filings of one day: noise to the day's R2 file, the rest to the ledger queue."""
         now = now_iso()
@@ -2203,6 +2230,13 @@ def _noise_key(day: str, chunk: int) -> str:
 def _noise_row(filing: Filing) -> list:
     return [filing.news_id, filing.scrip_code, filing.company_name, filing.headline[:240], filing.category,
             filing.subcategory, filing.filed_at, (filing.reason or "")[:120], filing.pdf_url]
+
+
+def _still_noise(decision, filing: Filing, row: list) -> bool:
+    """Whether a filing in the noise file stays there under today's rules: dropped or a date, a shareholding
+    pattern with no XBRL file, or outside the investable universe (a market-cap test, not a rule)."""
+    return (decision.action in ("DROP", "CALENDAR") or (decision.action == "XBRL" and not filing.xbrl_url)
+            or str(row[7] or "").startswith("outside universe"))
 
 
 SECOND_OPINION_MIN_S = 300

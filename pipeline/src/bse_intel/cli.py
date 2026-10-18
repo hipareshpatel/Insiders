@@ -54,6 +54,16 @@ def cmd_sync_to_cloud(args, settings, sink) -> int:
     return 0
 
 
+def cmd_retriage(args, settings, sink) -> int:
+    pipeline = _pipeline(settings, sink)
+    day_from = date.fromisoformat(args.date_from or settings.backfill_start)
+    day_to = date.fromisoformat(args.date_to) if args.date_to else date.today()
+    queued = {scrip: pipeline.retriage_company(scrip, day_from, day_to)
+              for scrip in (s.strip() for s in args.scrips.split(",")) if scrip}
+    print(json.dumps({"queued": queued, "count": sum(len(v) for v in queued.values())}, indent=2))
+    return 0
+
+
 def cmd_discover(args, settings, sink) -> int:
     pipeline = _pipeline(settings, sink)
     count = pipeline.discover(date.fromisoformat(args.date))
@@ -375,6 +385,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--source-token", default="dev-local-token", help="INGEST_TOKEN of the local Worker (.dev.vars)")
     p.add_argument("--progress", help="progress file (default data/sync_progress.json)")
     p.set_defaults(func=cmd_sync_to_cloud)
+
+    p = sub.add_parser("retriage", help="queue a company's filings that today's rules no longer drop (after a rule fix)")
+    p.add_argument("--scrips", required=True, help="comma-separated BSE scrip codes")
+    p.add_argument("--from", dest="date_from", help="default BACKFILL_START")
+    p.add_argument("--to", dest="date_to", help="default today")
+    p.set_defaults(func=cmd_retriage)
 
     p = sub.add_parser("discover", help="fetch and triage one day of announcements")
     p.add_argument("--date", required=True)

@@ -41,7 +41,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev,ocr]"      # ocr: RapidOCR for scanned pages (optional)
-python -m pytest -q              # 428 tests
+python -m pytest -q              # 429 tests
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -73,6 +73,7 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 | `python -m bse_intel price-history [--scrips ...]` | Daily prices for point-in-time card footers (laptop, before the history fill) |
 | `python -m bse_intel post-mortem [--since D]` | Loop 1: T+1/T+3/T+5 return less the index after each card (nightly after market data) |
 | `python -m bse_intel discover --date 2026-10-13` | Fetch and triage one day |
+| `python -m bse_intel retriage --scrips A,B [--from D] [--to D]` | After a drop or date rule is narrowed: re-read those companies' filings from BSE and queue the ones today's rules no longer drop (discovery skips what is already in the noise file) |
 | `python -m bse_intel process --from D --to D [--bulk]` | Work the queue for a range |
 | `python -m bse_intel analyze-pdf FILE ...` | Analyse one local PDF and print the card |
 | `python -m bse_intel backup --out DIR` | Export dossiers as JSON files |

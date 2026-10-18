@@ -197,6 +197,32 @@ def test_backfill_walks_days_in_order_and_marks_complete(settings):
     assert [t["news_id"] for t in timeline] == ["h0", "h1", "h2"]
 
 
+def test_retriage_queues_what_a_narrowed_rule_no_longer_drops(settings):
+    """Discovery skips a filing already in its day's noise file, so the 12 annual reports the old "AGM notice"
+    rule had taken stayed there after the rule was narrowed (F57). Retriage reads them again from BSE, with
+    today's rules; what is still noise stays, and a second pass changes nothing."""
+    from bse_intel.pipeline import _noise_row
+
+    when = now_ist().replace(year=2025, month=7, day=15, hour=18, minute=0, second=0, microsecond=0)
+    day = when.date().isoformat()
+    report = _filing("n-ar", "Notice of the 33rd Annual General Meeting and Annual Report for the Financial Year 2024-25",
+                     when, "AGM/EGM", "Reg. 34 (1) Annual Report")
+    window = _filing("n-tw", "Closure of Trading Window", when, "Company Update", "Trading Window")
+    other = _filing("n-oth", "Notice of the 33rd Annual General Meeting and Annual Report", when, "AGM/EGM",
+                    "Reg. 34 (1) Annual Report", scrip="999002", name="Other Ltd")
+    pipeline, sink, _ = build(settings, [report, window, other], {}, {})
+    old = {f.news_id: _noise_row(f.model_copy(update={"reason": reason}))
+           for f, reason in ((report, "AGM notice"), (window, "trading window"), (other, "AGM notice"))}
+    pipeline._save_noise(day, old)
+
+    assert pipeline.retriage_company("999001", when.date(), when.date()) == ["n-ar"]
+    (queued,) = rows(sink, "select news_id, status, route, event_type, symbol from filings")
+    assert queued == {"news_id": "n-ar", "status": "PENDING", "route": "FAST_TRACK", "event_type": "ANNUAL_REPORT",
+                      "symbol": "DEMOCEM"}
+    assert sorted(pipeline._load_noise(day)) == ["n-oth", "n-tw"]  # another company's filing is left for its own run
+    assert pipeline.retriage_company("999001", when.date(), when.date()) == []
+
+
 def test_card_with_wrong_math_is_held_for_review(settings):
     now = now_ist() - timedelta(minutes=10)
     f = _filing("n-q", "Unaudited Financial Results for the quarter", now, "Result")

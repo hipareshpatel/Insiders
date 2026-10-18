@@ -66,8 +66,13 @@ hook (2a11133), so these were re-run again with today's code (round 3d, below) b
 
 The facts were right on all ten. Both wrong points are memory insights, which are checked for their figures
 but not for what the figures belong to: every number in them exists in memory, attached to another month or
-another leg of the deal. Open: check a memory insight's figure against the period it names, as the YoY check
-does for a change.
+another leg of the deal. Now checked for the period: a memory insight whose figure memory holds under
+another period (and not under the one named, nor printed in the filing) is dropped and the card kept
+(`misdated_memory_insights`). A first, looser version caught 10 over the 343 cards with memory insights and 9
+were right (a figure the filing itself reports, a range of percentages, a ratio, "a year ago", a 3.98% margin
+for ₹3.98 Cr); the version kept reads only memory's metric series, at the figure's unit, and drops 3, all wrong:
+SML's July, and two Shivam cards calling March 2025's net worth September's. e4d8f81b's error (a price from
+another leg of the deal) is not a period and stays open.
 
 ## Annual reports (F57)
 

@@ -77,7 +77,7 @@ Measured on real cards in `rerun-held-2026-10-18.md`: held 118 -> 51, published 
 | Repeats published as separate cards | SML's acquisition: 15 M&A cards, four the same day saying the same | tighten the same-event check for M&A within a day |
 | "HELD" (garbled scan, human hold) does not hold a card, and is lost when a second opinion ran | CSB 3649405a published with the garbled-scan note | record held reasons on the card; decide whether HELD should hold. **Reasons recorded (6c3ca51)**; the decision is the owner's |
 | XBRL `confirm()` rejects a file whose figures are all zero | code reading | treat zero as unconfirmable, not wrong. **Done (b239c9c)** |
-| A memory insight attaches a right figure to the wrong month or deal (published, not held) | SML 9634c075 (August's 842 units called July's), e4d8f81b (the open-offer price put on the SPA purchase) | check a memory insight's figure against the period it names, as the YoY check does |
+| A memory insight attaches a right figure to the wrong month or deal (published, not held) | SML 9634c075 (August's 842 units called July's), e4d8f81b (the open-offer price put on the SPA purchase) | check a memory insight's figure against the period it names, as the YoY check does. **Done**: the insight is dropped, the card kept (`misdated_memory_insights`); over the 343 cards with memory insights it drops 3, all wrong (two "Sep-2025" labels on March's net worth, SML's July) |
 | Shareholding XBRL never arrives through announcements | every shareholding filing goes to noise; the seed reads NSE's | leave (memory gets it from NSE) or link NSE's file |
 
 ## Inventory: every discard, hold and overwrite, with its threshold

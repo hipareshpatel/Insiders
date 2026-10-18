@@ -478,6 +478,122 @@ _PCT_LABELLED = re.compile(r"([+\-−]?\d+(?:\.\d+)?)\s*%\s*(?:\(?\s*)(YoY|QoQ|y
 _PERIOD_WORDS = re.compile(r"\b(?:nine[- ]months?|first[- ]half|second[- ]half|full[- ]year)\b", re.I)
 _PERIOD_WORD_LABELS = {"nine ": "9M", "nine-": "9M", "first": "H1", "secon": "H2", "full ": "FY", "full-": "FY"}
 
+# A period a memory insight names, and how memory writes it: "July 2025", "Jul-25", "AUG-2025"; "Q1FY26", "H1 FY26";
+# "FY25", "FY 2024-25".
+_MONTH_NAMES = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
+_INSIGHT_PERIOD = re.compile(
+    # a two-digit year only after a dash or apostrophe: "March 31, 2025" is not March 2031
+    r"\b(?P<mon>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?(?:[\s'’-]*(?P<my>(?:19|20)\d{2})|\s*[-'’]\s*(?P<my2>\d{2}))\b"
+    r"|\b(?P<q>Q[1-4]|H[12]|9M)\s*FY\s*'?(?P<qy>\d{2}(?:\d{2})?)\b"
+    r"|(?<![\w-])FY\s*'?(?P<fy>\d{2}(?:\d{2})?)(?:\s*[-–/]\s*(?P<fy2>\d{2}(?:\d{2})?))?\b", re.I)
+# A figure in an insight. A percentage, a range of them ("1.5-1.8%"), a ratio ("0.5x") and basis points are not amounts.
+_INSIGHT_FIGURE = re.compile(r"(?<![\w.,])(?>\d[\d,]*(?:\.\d+)?)"
+                             r"(?!\s*(?:[-–]\s*\d[\d.,]*\s*)?(?:%|per\s*cent|bps|pp\b|x\b|times\b))", re.I)
+# What may stand between a figure and the period written after it: "₹1,019.8 Cr in Q2FY25", "842 units (Aug-2025)"
+_FIGURE_TO_PERIOD = re.compile(r"\s*(?:cr|crores?|lakhs?|mn|million|bn|units?|mt|mtpa|tonnes?)?\.?\s*\)?\s*"
+                               r"(?:in|for|at|during|as of|as at|of)?\s*\(?\s*", re.I)
+
+
+def _period_keys(text: str) -> list[tuple[int, int, str, str]]:
+    """(start, end, kind, key) of each period named: kind M (a month), Q (a quarter, half or nine months), FY."""
+    out = []
+    for m in _INSIGHT_PERIOD.finditer(text):
+        if m.group("mon"):
+            year = m.group("my") or "20" + m.group("my2")
+            out.append((m.start(), m.end(), "M", f"{year}-{_MONTH_NAMES.index(m.group('mon').lower()) + 1:02d}"))
+        elif m.group("q"):
+            out.append((m.start(), m.end(), "Q", f"{m.group('q').upper()}FY{m.group('qy')[-2:]}"))
+        else:
+            out.append((m.start(), m.end(), "FY", f"FY{(m.group('fy2') or m.group('fy'))[-2:]}"))
+    return out
+
+
+def _memory_series(view: dict) -> dict[tuple[str, str], dict[tuple[str, str], float]]:
+    """Memory's metric series, {(name, unit): {(kind, period): value}}, from the view's "PERIOD: value UNIT" lines.
+    A span of months ("APR-AUG-2025") is left out: it is not the month it ends in."""
+    series: dict[tuple[str, str], dict[tuple[str, str], float]] = {}
+    for name, lines in ((view or {}).get("metrics") or {}).items():
+        for line in lines if isinstance(lines, list) else []:
+            label, _, rest = str(line).partition(":")
+            label = label.strip()
+            keys = _period_keys(label)
+            value = re.match(r"\s*(-?\d[\d,]*(?:\.\d+)?)\s*([A-Z_]*)", rest)
+            if len(keys) == 1 and value and keys[0][:2] == (0, len(label)):
+                series.setdefault((name, value.group(2)), {})[keys[0][2:]] = float(value.group(1).replace(",", ""))
+    return series
+
+
+# The unit an insight writes after a figure, as memory names it; a money figure is compared in crore
+_FIGURE_UNIT = re.compile(r"\s*(?:(?P<cr>cr\b|crores?)|(?P<lakh>lakhs?|lacs?)|(?P<mn>mn\b|millions?)|(?P<bn>bn\b|billions?)"
+                          r"|(?P<units>units?\b|vehicles?\b|nos\b))", re.I)
+_TO_CRORE = {"cr": 1, "lakh": 0.01, "mn": 0.1, "bn": 100}
+
+
+def misdated_memory_insights(out: Pass2Output, view: dict | None, filing_text: str = "") -> list[str]:
+    """Memory insights that put a figure memory holds under another period: SML's August card said "July 2025,
+    when sales were 842 units", and memory has 842 as August's - a right card published with a wrong point, since
+    a memory insight is checked only for its figures being somewhere in memory (re-run of the held cards,
+    2026-10-18). The insight is dropped and the card kept.
+
+    Only a clear case counts, measured on the 332 cards with memory insights (9 of 10 first catches were wrong):
+    the figure is in one of memory's metric series under another period of the same kind, and not under the one
+    the insight names; the insight ties it to that period tightly ("₹1,019.8 Cr in Q2FY25", or the period just
+    before it with no other figure between); and the filing does not print it, since memory does not yet hold
+    the figures of the filing being read. A timeline sentence is too loose to judge by."""
+    card = out.card
+    if card is None or not view:
+        return []
+    series = _memory_series(view)
+    if not series:
+        return []
+    printed = [v for v, _, _, _, _ in _tokens(filing_text or "")]
+    dropped, kept = [], []
+    for insight in card.why_it_matters:
+        reason = None
+        if insight.basis in ("MEMORY", "BALANCE_SHEET"):
+            text = insight.text or ""
+            periods = _period_keys(text)
+            figures = [f for f in _INSIGHT_FIGURE.finditer(text) if not any(s <= f.start() < e for s, e, _, _ in periods)]
+            for i, fig in enumerate(figures):
+                written = fig.group(0).rstrip(",")
+                raw = written.replace(",", "")
+                value, decimals = float(raw), len(raw.partition(".")[2])
+                if (value < 32 or ("," not in written and 1990 <= value <= 2100)) and not decimals:
+                    continue  # a day, a count, a year
+                tolerance = 0.5 * 10 ** -decimals + 1e-9
+                unit = _FIGURE_UNIT.match(text, fig.end())
+                word = next((k for k, v in unit.groupdict().items() if v), None) if unit else None
+                money = word in _TO_CRORE or text[max(0, fig.start() - 3):fig.start()].strip().endswith(("₹", "Rs", "Rs."))
+                scales = (1, 10, 100, 1e7) if money else (1,)   # a crore figure printed in million, lakh or rupees
+                if any(abs(v - value * s) <= tolerance * s for v in printed for s in scales):
+                    continue  # the filing prints it
+                if money:
+                    value, tolerance = value * _TO_CRORE.get(word or "cr", 1), tolerance * _TO_CRORE.get(word or "cr", 1)
+                wanted = ("INR_CR",) if money else ("UNITS",) if word == "units" else None
+                after = [p for p in periods if p[0] >= fig.end() and _FIGURE_TO_PERIOD.fullmatch(text[fig.end():p[0]])]
+                floor = figures[i - 1].end() if i else 0
+                before = [p for p in periods if p[0] >= floor and p[1] <= fig.start() and fig.start() - p[1] <= 40]
+                named = after[0] if after else (before[-1] if before else None)
+                if named is None:
+                    continue
+                kind, period = named[2], named[3]
+                for (name, series_unit), values in series.items():
+                    if (series_unit not in wanted) if wanted else series_unit in ("PCT", "X", "BPS"):
+                        continue  # "₹3.98 Cr" is not a 3.98% margin
+                    held = [key for (k, key), v in values.items() if k == kind and abs(abs(v) - value) <= tolerance]
+                    if held and period not in held:
+                        reason = f"{written} is {held[0]}'s {name} in memory, not {period}'s"
+                        break
+                if reason:
+                    break
+        if reason:
+            dropped.append(f'memory insight dropped ("{(insight.text or "")[:60]}"): {reason}')
+        else:
+            kept.append(insight)
+    if dropped:
+        card.why_it_matters = kept
+    return dropped
+
 
 def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None") -> list[str]:
     """A "% YoY" on the card that is the quarter-on-quarter change of a tagged figure (and no figure's
@@ -1700,6 +1816,7 @@ class Pipeline:
             units = fix_unit_slips(candidate, sources)
             changes = fix_change_percentages(candidate, sources)
             changes += apply_deal_guards(candidate, filing, history, dossier.get("balance_sheet", []), text)
+            changes += misdated_memory_insights(candidate, view, filed_text)
             if tagged:
                 # against the document alone: `sources` starts with the XBRL table, so checking the
                 # table's own comparative against it would always succeed and the guard would do nothing

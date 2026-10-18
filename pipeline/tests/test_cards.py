@@ -934,3 +934,39 @@ def test_a_quantity_the_sources_set_aside_as_a_year_is_still_found():
     assert check_card(good, filing).ungrounded == []
     bad = card(headline="SML August sales 842 units", key_numbers=[{"label": "April-August cargo", "value": "2,053 units"}])
     assert check_card(bad, filing).ungrounded == ["2,053"]
+
+
+def test_a_memory_insight_that_puts_a_figure_under_another_period_is_dropped():
+    """SML's August card said "July 2025, when sales were 842 units"; memory has 842 as August's (July's was 1,427).
+    Its figures were all in memory, which is all a memory insight is checked for, so a right card was published
+    with a wrong point (re-run of the held cards, 2026-10-18). The point goes; the card and its other points stay."""
+    from bse_intel.pipeline import misdated_memory_insights
+
+    view = {"metrics": {"volumes": ["JUL-2025: 1427 UNITS (YoY +18.6%)", "AUG-2025: 842 UNITS (YoY -15%)"],
+                        "revenue": ["Q2FY25: 1019.8 INR_CR", "Q2FY26: 1112.5 INR_CR"],
+                        "net_worth": ["MAR-2025: 601.22 INR_CR"], "net_debt": ["MAR-2025: 195 INR_CR"],
+                        "pat": ["Q2FY25: -16.48 INR_CR", "Q1FY26: -13.78 INR_CR"],
+                        "tax_expense": ["Q3FY24: 0.46 INR_CR", "Q2FY25: 1.1 INR_CR"],
+                        "finance_cost": ["9MFY23: 3.98 INR_CR"], "roa": ["FY25: 1.5 PCT"], "net_debt_to_equity": ["Q1FY26: 0.5 X"]},
+            "recent_timeline": ["1 September 2025: SML Mahindra reported August 2025 sales of 842 units, down 15% YoY"]}
+    points = [
+        ("MEMORY", "August 2025 sales continued the declining trend from July 2025, when sales were 842 units (down 15% YoY)"),
+        ("MEMORY", "Q2FY26 revenue of ₹1,112.5 Cr rose from ₹1,019.8 Cr in Q2FY25"),
+        ("BALANCE_SHEET", "Net worth of ₹601.22 Cr (Mar-2025) leaves limited headroom"),
+        ("BALANCE_SHEET", "Net debt was ₹195 Cr at March 31, 2025"),
+        ("FILING", "July 2025 dispatches were 842 units"),  # a point on the filing answers to the filing
+        # caught by a first, looser version over the 332 cards with memory insights, and right:
+        ("MEMORY", "PAT of ₹22.4 Cr is the highest since Q2FY25's ₹22.3 Cr, but the tax charge of ₹3.00 Cr versus "
+                   "₹0.46 Cr a year ago absorbed much of the operating gain"),          # "a year ago" is not Q2FY25
+        ("MEMORY", "PAT swung to profit after being negative in Q1FY26 (₹-13.78 Cr) and Q2FY25 (₹-16.48 Cr)"),
+        ("BALANCE_SHEET", "Finance cost of ₹3.98 Cr in Q3FY25 is more than double the ₹1.79 Cr a year earlier"),  # the filing's
+        ("MEMORY", "ROA of 1.03% is below the guided range of 1.5-1.8% for FY26"),       # a range of percentages
+        ("MEMORY", "Net debt of ₹771 Cr against net worth of ₹1,487 Cr is 0.5x in Q2FY26"),  # a ratio
+    ]
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "MONTHLY_BUSINESS_UPDATE", "timeline_entry": "August volumes",
+        "card": {"impact_level": "LOW", "headline": "SML August sales 815 units", "what_happened": ["815 units"],
+                 "why_it_matters": [{"text": t, "basis": b} for b, t in points]}})
+    dropped = misdated_memory_insights(out, view, "Finance cost for the quarter 3.98, a year earlier 1.79")
+    assert len(dropped) == 1 and "842 is 2025-08's volumes in memory, not 2025-07's" in dropped[0], dropped
+    assert [w.text for w in out.card.why_it_matters] == [t for _, t in points[1:]]

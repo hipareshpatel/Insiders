@@ -305,6 +305,10 @@ class Document:
                 self._doc.close()
             self._doc = None
 
+    def layer_text(self) -> str:
+        """Every page's own text layer and no OCR: enough to look a figure up anywhere in a 300-page report."""
+        return "\n".join(self._digital)
+
     def first_page_text(self, limit: int = 2500) -> str:
         return strip_boilerplate(_clean(self.page_text(0)))[:limit] if self.page_count else ""
 

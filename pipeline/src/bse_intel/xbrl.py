@@ -423,11 +423,18 @@ def confirm(result: XbrlResult, text: str) -> bool:
     if not text or result.kind != "RESULTS":
         return True
     figures = {m.metric: m.value for m in result.metrics if m.period == result.period and m.metric in CONFIRM}
-    if not figures:
-        return True
-    numbers = {round(float(n.replace(",", "")), 0) for n in re.findall(r"\d[\d,]*\.?\d*", text) if n.replace(",", "").replace(".", "").isdigit()}
+    # Every figure zero (a shell company's quarter: no revenue, nil profit) cannot be looked for at any unit;
+    # that is no evidence of a wrong scale, and refusing the file left the card to read the PDF alone.
+    return appears_in(list(figures.values()), text) is not False
+
+
+def appears_in(crores: list[float], text: str) -> bool | None:
+    """Whether any of these ₹ crore figures is in the text in crore, lakh, million, thousand or rupees: None
+    when none is large enough to tell apart from any other number in it (or there are none)."""
+    numbers = {round(float(n.replace(",", "")), 0) for n in re.findall(r"\d[\d,]*\.?\d*", text or "")
+               if n.replace(",", "").replace(".", "").isdigit()}
     checked = False
-    for crore in figures.values():
+    for crore in crores:
         for scale in (1, 100, 10, 10_000, 1e7):  # crore, lakh, million, thousand, rupees
             if abs(crore) * scale < 10:
                 continue  # too small to tell apart from any other number in the text
@@ -435,9 +442,7 @@ def confirm(result: XbrlResult, text: str) -> bool:
             if round(abs(crore) * scale, 0) in numbers or round(abs(crore) * scale + 0.5, 0) in numbers \
                     or round(abs(crore) * scale - 0.5, 0) in numbers:
                 return True
-    # Every figure zero (a shell company's quarter: no revenue, nil profit) cannot be looked for at any unit;
-    # that is no evidence of a wrong scale, and refusing the file left the card to read the PDF alone.
-    return not checked
+    return False if checked else None
 
 
 _SCALE_REFERENCE = ("revenue", "total_income", "interest_earned")

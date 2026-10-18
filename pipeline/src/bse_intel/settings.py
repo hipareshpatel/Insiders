@@ -63,6 +63,9 @@ class Settings:
     card_holds_file: str = "card_holds.txt"
     # Decision D20: one card per company per results quarter; later documents of that quarter are linked to it.
     one_card_per_results_quarter: bool = field(default_factory=lambda: _env("ONE_CARD_PER_RESULTS_QUARTER", "1") not in ("0", "false", "no"))
+    # An annual report's own XBRL from NSE, as a table in front of its text (annual_xbrl.py). Off where NSE is
+    # not reachable or another run on the same address is already calling it (NSE limits by IP).
+    nse_annual_xbrl: bool = field(default_factory=lambda: _env("NSE_ANNUAL_XBRL", "1") not in ("0", "false", "no"))
     # Pages OCR'd per document. 20 with RapidOCR, which runs on the CPU with no quota (about 5 s a page);
     # 6 when only the vision route can read them, since every page there is a free-tier request.
     # The exact JSON answers of BSE and NSE, saved before parsing (raw.py, docs/DATA_QUALITY.md).

@@ -47,6 +47,10 @@ RESULTS_ENDPOINT = f"{SITE}/api/corporates-financial-results"
 # history does not break at the changeover.
 INTEGRATED_ENDPOINT = f"{SITE}/api/integrated-filing-results"
 INTEGRATED_FINANCIALS = "Integrated Filing- Financials"
+# An annual report's financial statements as filed with MCA, one XBRL instance per year and basis (annual_xbrl.py).
+# Read from the "Annual Reports XBRL" page's own call on 2026-10-18.
+ANNUAL_REPORT_ENDPOINT = f"{SITE}/api/annual-reports-xbrl"
+ANNUAL_REPORT_MAX_BYTES = 40_000_000   # 2.5-4.5 MB for the smoke-test companies; a large group's runs longer
 USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
               "Chrome/120.0.0.0 Safari/537.36")
 BLOCKING_STATUS = (401, 403, 429)
@@ -162,6 +166,46 @@ def parse_integrated_rows(rows: list[dict]) -> list[ResultsFiling]:
         if kept is None or (filing.revised and not kept.revised) or                 (filing.revised == kept.revised and filing.filed_at > kept.filed_at):
             best[key] = filing
     return sorted(best.values(), key=lambda f: (f.period_end, f.filed_at), reverse=True)
+
+
+@dataclass(frozen=True)
+class AnnualReportFiling:
+    """One row of NSE's annual-report XBRL list: the statements of one financial year on one basis."""
+
+    from_year: int
+    to_year: int         # the year the financial year ends in: 2025 for 2024-25
+    basis: str           # CONSOLIDATED or STANDALONE
+    filed_at: str        # ISO, the broadcast time
+    xbrl_url: str
+    report_type: str = ""
+
+
+def parse_annual_report_rows(rows: list[dict]) -> list[AnnualReportFiling]:
+    """The list's rows, newest year first. A file filed again for the same year and basis supersedes the
+    earlier one (the later broadcast wins)."""
+    best: dict[tuple[int, str], AnnualReportFiling] = {}
+    for row in rows:
+        url = str(row.get("fileName") or "").strip()
+        basis = str(row.get("submission_type") or "").strip().upper()
+        try:
+            years = int(str(row.get("fromYr")).strip()), int(str(row.get("toYr")).strip())
+        except ValueError:
+            continue
+        if not url.lower().endswith(".xml") or basis not in ("CONSOLIDATED", "STANDALONE"):
+            continue
+        try:
+            filed = datetime.strptime(str(row.get("broadcast_dttm") or "").strip(), "%d-%b-%Y %H:%M:%S")
+        except ValueError:
+            filed = None
+        filing = AnnualReportFiling(
+            from_year=years[0], to_year=years[1], basis=basis,
+            filed_at=filed.strftime("%Y-%m-%dT%H:%M:%S+05:30") if filed else "",
+            xbrl_url=url if url.startswith("http") else f"https://nsearchives.nseindia.com/{url.lstrip('/')}",
+            report_type=str(row.get("report_type") or "").strip())
+        kept = best.get((filing.to_year, basis))
+        if kept is None or filing.filed_at > kept.filed_at:
+            best[(filing.to_year, basis)] = filing
+    return sorted(best.values(), key=lambda f: (f.to_year, f.basis), reverse=True)
 
 
 def parse_shareholding_rows(rows: list[dict]) -> list[ShareholdingFiling]:
@@ -293,6 +337,12 @@ class NseClient:
         seen: set[str] = set()
         unique = [f for f in out if not (f.xbrl_url in seen or seen.add(f.xbrl_url))]
         return sorted(unique, key=lambda f: f.filed_at, reverse=True)
+
+    def annual_reports(self, symbol: str) -> list[AnnualReportFiling]:
+        """Every annual-report XBRL NSE lists for the symbol (both bases), newest year first."""
+        data = self._get(ANNUAL_REPORT_ENDPOINT, {"index": "equities", "symbol": symbol.strip().upper()}).json()
+        rows = data.get("data") if isinstance(data, dict) else data
+        return parse_annual_report_rows(rows if isinstance(rows, list) else [])
 
     def download(self, url: str, max_bytes: int = 8_000_000) -> bytes | None:
         """One XBRL file. None when NSE serves something that is not XML."""

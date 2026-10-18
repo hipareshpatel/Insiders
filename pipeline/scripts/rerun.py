@@ -49,6 +49,34 @@ def stratified(rows: list[dict], limit: int) -> list[dict]:
     return chosen
 
 
+def retriage(conn: sqlite3.Connection, ids: list[str]) -> int:
+    """Route each filing as discovery would today, so a re-run also measures a rule fix: the annual reports
+    pass 1 had typed RESULTS go to the ANNUAL_REPORT fast track (F57). A filing today's rules would drop or
+    date is left as it was, and named: re-reading it measures the reading, not the rule."""
+    from bse_intel.models import Filing
+    from bse_intel.rules import RuleBook
+    from bse_intel.settings import Settings
+
+    rules = RuleBook.from_config(Settings().load_toml("taxonomy.toml"))
+    marks = ",".join("?" * len(ids))
+    changed = 0
+    for row in conn.execute(f"select news_id, scrip_code, company_name, headline, subject, category, subcategory, "
+                            f"filed_at, filing_date, route, event_type from filings where news_id in ({marks})", ids).fetchall():
+        filing = Filing(news_id=row[0], scrip_code=row[1], company_name=row[2] or "", headline=row[3] or "",
+                        subject=row[4] or "", category=row[5] or "", subcategory=row[6] or "", filed_at=row[7],
+                        filing_date=row[8])
+        decision = rules.classify(filing)
+        if decision.action in ("DROP", "CALENDAR", "XBRL"):
+            print(f"{row[0][:8]}: today's rules say {decision.action} ({decision.reason}); route left as {row[9]}",
+                  file=sys.stderr)
+            continue
+        if (decision.action, decision.event_type) != (row[9], row[10]) and (decision.action != "PASS1" or row[9] != "PASS1"):
+            conn.execute("update filings set route = ?, event_type = ? where news_id = ?",
+                         (decision.action, decision.event_type, row[0]))
+            changed += 1
+    return changed
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("news_ids", nargs="*")
@@ -83,8 +111,10 @@ def main() -> int:
     queued = conn.execute(
         f"update filings set status = 'PENDING', attempts = 0, last_error = null where news_id in ({marks})",
         ids).rowcount
+    retyped = retriage(conn, ids)
     conn.commit()
-    print(f"{cards} cards deleted, {queued} filings back in the queue", file=sys.stderr)
+    print(f"{cards} cards deleted, {queued} filings back in the queue, {retyped} routed again by today's rules",
+          file=sys.stderr)
     print("\n".join(sorted(known)))
     return 0
 

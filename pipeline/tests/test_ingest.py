@@ -500,3 +500,32 @@ def test_a_scanned_page_past_the_ocr_cap_is_not_kept_as_read():
     doc = Document(_pdf(["Outcome of board meeting. " * 8, "", ""]), ocr=lambda png: "| Revenue | 120 |", max_ocr_pages=1)
     assert doc.page_text(1) == "| Revenue | 120 |" and doc.page_text(2) == ""
     assert list(doc.to_cache()["ocr"]) == ["1"]
+
+
+def test_rerun_routes_a_reset_filing_by_todays_rules(settings):
+    """scripts/rerun.py: an annual report pass 1 had typed RESULTS is re-run on the ANNUAL_REPORT fast track (F57);
+    a filing today's rules would drop keeps its route, since re-reading it measures the reading, not the rule."""
+    import importlib.util
+    from pathlib import Path
+
+    from bse_intel.sinks.local import LocalSink
+
+    spec = importlib.util.spec_from_file_location("rerun", Path(__file__).parents[1] / "scripts" / "rerun.py")
+    rerun = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rerun)
+    sink = LocalSink(settings)
+    rows = [("n-ar", "Annual Report for the Financial year 2024-25", REG34, "PASS1", "RESULTS"),
+            ("n-res", "Unaudited Financial Results for the quarter ended September 30, 2026", "Financial Results",
+             "FAST_TRACK", "RESULTS"),
+            ("n-tw", "Closure of Trading Window", "Trading Window", "PASS1", "OTHER"),
+            ("n-p1", "Disclosure under Regulation 30 - Update", "", "PASS1", "GOVERNANCE")]
+    sink.execute("filings_discover", [{
+        **_f(headline, "Company Update", subcategory, subject=subcategory).model_copy(update={"news_id": nid}).ledger_row(
+            "2026-10-18T00:00:00+05:30"), "status": "ANALYZED", "route": route, "event_type": event}
+        for nid, headline, subcategory, route, event in rows])
+    sink._db.execute("update filings set route = ?, event_type = ? where news_id = 'n-ar'", ("PASS1", "RESULTS"))
+
+    assert rerun.retriage(sink._db, [r[0] for r in rows]) == 1
+    got = {r[0]: (r[1], r[2]) for r in sink._db.execute("select news_id, route, event_type from filings")}
+    assert got["n-ar"] == ("FAST_TRACK", "ANNUAL_REPORT")
+    assert got["n-res"][1] == "RESULTS" and got["n-tw"] == ("PASS1", "OTHER") and got["n-p1"] == ("PASS1", "GOVERNANCE")

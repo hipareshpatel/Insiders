@@ -4,8 +4,9 @@ import { Link, useLocation } from "wouter";
 import { cn } from "../lib/cn";
 
 const NAV = [
-  { href: "/", label: "Top signals" },
-  { href: "/feed", label: "Live feed" },
+  { href: "/", label: "Today" },
+  { href: "/signals", label: "Signals" },
+  { href: "/feed", label: "All filings" },
   { href: "/results", label: "Results" },
   { href: "/companies", label: "Companies" },
   { href: "/calendar", label: "Calendar" },

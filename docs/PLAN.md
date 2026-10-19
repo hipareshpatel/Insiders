@@ -94,6 +94,7 @@ second opinion → later: re-read when XBRL lands, price reaction T+1/3/5, gover
 | B5 | Prices from NSE's bhavcopy (official daily file) instead of Yahoo; market cap = price × shares from the shareholding XBRL | probe on GitHub first |
 | B6 | Newer free models on NVIDIA's catalog (DeepSeek V4.1 Flash, Kimi K2.6, GLM-5.3, Gemma 4 31B, Palmyra Fin 70B; Nemotron Parse 2.0 for tables), each `ai-check`ed, then a blind A/B | replaces the old "re-test thinking mode" item (thinking measured 16 Oct: 3-10x slower, no accuracy gain, D21) |
 | B7 | A "report an error" button for the owner on each card, feeding the audit set (the Star / Noise feedback teaches taste, not correctness) | |
+| B8 | **Site redesign** (owner, 2026-10-19; concept approved): step 1 done, the Today page at `/` (high-impact cards in full, the rest as rows, filters left, due-today / to-verify / watchlist right; Top signals moved to `/signals`, the feed is "All filings"). Next: calmer cards with a trust line, the company page panels (B4), phone navigation | |
 
 ## 7. Decisions open for the owner
 

@@ -20,6 +20,8 @@ async function get<T>(path: string, params?: Record<string, string | number | nu
 
 export interface FeedFilters {
   from?: string;
+  /** Since a moment, "YYYY-MM-DDTHH:MM:SS+05:30" (overrides from). */
+  from_at?: string;
   to?: string;
   impact?: string;
   category?: string;

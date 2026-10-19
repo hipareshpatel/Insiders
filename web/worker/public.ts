@@ -126,7 +126,8 @@ async function snapshot(c: Context<AppEnv>): Promise<Snapshot | null> {
 
 api.get("/feed", async (c) => {
   const q = c.req.query();
-  const from = isDate(q.from) ? q.from : "2000-01-01";
+  // from_at: since a moment ("since yesterday's 15:30 close", the Today page); else from a day
+  const from = q.from_at && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(q.from_at) ? q.from_at : isDate(q.from) ? q.from : "2000-01-01";
   const to = `${isDate(q.to) ? q.to : "2999-12-31"}T99`; // filed_at is "YYYY-MM-DDTHH:MM:SS+05:30"
   const limit = clamp(q.limit, 20, 50);
   const page = q.page ? clamp(q.page, 1, 400) : null;

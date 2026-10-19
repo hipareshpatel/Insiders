@@ -305,6 +305,8 @@ export interface OverduePromise {
 export interface ReviewCard {
   news_id: string; scrip_code: string; symbol: string | null; company_name: string; filed_at: string;
   headline: string; event_category: string; grounding: string | null; review: string | null;
+  /** 1 when kept off the public feed (figures not verified); 0 when only flagged for review. */
+  held?: number;
 }
 
 export interface CompaniesResponse {

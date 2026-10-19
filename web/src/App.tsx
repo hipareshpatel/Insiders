@@ -10,6 +10,7 @@ import { CompanyPage } from "./views/CompanyPage";
 import { Empty, FeedView } from "./views/FeedView";
 import { ResultsView } from "./views/ResultsView";
 import { SystemView } from "./views/SystemView";
+import { TodayView } from "./views/TodayView";
 import { TopSignalsView } from "./views/TopSignalsView";
 
 export function App() {
@@ -44,7 +45,8 @@ export function App() {
       <main className="min-w-0 flex-1">
         <ErrorBoundary key={location}>
         <Switch>
-          <Route path="/" component={TopSignalsView} />
+          <Route path="/" component={TodayView} />
+          <Route path="/signals" component={TopSignalsView} />
           <Route path="/feed" component={FeedView} />
           <Route path="/results" component={ResultsView} />
           <Route path="/companies" component={CompaniesView} />

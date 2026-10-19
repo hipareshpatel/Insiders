@@ -8,7 +8,7 @@ behind each, and a few real cards to open. The order of the list is the order to
 is one change in code (the owner's rule: fix in batches, not card by card).
 
 Usage:
-  npx wrangler d1 execute insiders --local --persist-to ../data/wrangler --json --command \
+  npx wrangler d1 execute bse-index --local --persist-to ../data/wrangler --json --command \
     "SELECT c.news_id, c.scrip_code, c.needs_review, c.grounding_score, f.filed_at, f.route, c.card_json \
      FROM cards c JOIN filings f USING(news_id)" > cards.json
   python -I -X utf8 scripts/defect_digest.py cards.json [--examples 3] [--json out.json]

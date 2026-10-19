@@ -3,7 +3,7 @@
   python -I -X utf8 scripts/owner_verdicts.py [--db PATH] [--since YYYY-MM-DD]
 
 Reads card_verdicts from the local D1 file (the laptop's site), or from a copy of the deployed database
-(`wrangler d1 export insiders --remote --table card_verdicts`, loaded into SQLite). Prints the share WRONG of
+(`wrangler d1 export bse-index --remote --table card_verdicts`, loaded into SQLite). Prints the share WRONG of
 published and of held cards, per event type, and every WRONG and MINOR note, so each can be traced to its error
 class (docs/DATA_QUALITY.md) before it is fixed.
 """

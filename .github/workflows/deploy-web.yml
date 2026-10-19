@@ -1,6 +1,6 @@
 # Deploys the Worker (API + React app) and applies D1 migrations.
 # Needs secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID, and the
-# repository variable D1_DATABASE_ID (from `wrangler d1 create insiders`).
+# repository variable D1_DATABASE_ID (from `wrangler d1 create bse-index`).
 name: Deploy web
 
 on:
@@ -36,5 +36,5 @@ jobs:
       - name: Point wrangler at the real D1 database
         run: sed -i "s/00000000-0000-0000-0000-000000000000/${{ vars.D1_DATABASE_ID }}/" wrangler.jsonc
       - run: npm run build
-      - run: npx wrangler d1 migrations apply insiders --remote
+      - run: npx wrangler d1 migrations apply bse-index --remote
       - run: npx wrangler deploy

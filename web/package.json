@@ -1,5 +1,5 @@
 {
-  "name": "insiders-web",
+  "name": "bse-intelligence-web",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -9,8 +9,8 @@
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "deploy": "npm run build && wrangler deploy",
-    "db:migrate:local": "wrangler d1 migrations apply insiders --local --persist-to ../data/wrangler",
-    "db:migrate:remote": "wrangler d1 migrations apply insiders --remote",
+    "db:migrate:local": "wrangler d1 migrations apply bse-index --local --persist-to ../data/wrangler",
+    "db:migrate:remote": "wrangler d1 migrations apply bse-index --remote",
     "test": "node --test --experimental-strip-types --no-warnings test/cardText.test.ts"
   },
   "dependencies": {

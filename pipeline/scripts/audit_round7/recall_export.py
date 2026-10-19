@@ -35,8 +35,13 @@ c = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
 c.row_factory = sqlite3.Row
 marks = ",".join("?" * len(SCRIPS))
 pools: dict[str, list[dict]] = collections.defaultdict(list)
+# A filing that got a card is no set-aside filing, whatever its route says: round 6's sample took Ambuja's merger vote
+# (route TIMELINE, then a held card) as "timeline only", and its reviewer counted it MISSED
+carded = {r[0] for r in c.execute(f"select news_id from cards where scrip_code in ({marks})", sorted(SCRIPS))}
 for r in c.execute(f"select * from filings where scrip_code in ({marks})", sorted(SCRIPS)):
     r = dict(r)
+    if r["news_id"] in carded:
+        continue
     kind = ("not material" if r["status"] == "NOT_MATERIAL" else "timeline only" if r["route"] == "TIMELINE"
             else "duplicate" if r["status"] == "DUPLICATE" else None)
     if kind:

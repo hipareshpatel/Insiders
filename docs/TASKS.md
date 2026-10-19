@@ -80,15 +80,21 @@ Files you may change: none. Report: here (the seed's JSON summary line and each 
 ## T12 · P1 · laptop · BLOCKED on the owner — deploy the Worker with its database and bucket (PLAN G4)
 
 Measured 2026-10-20 (owner's screenshot): the Worker `insiders` is deployed on insiders.reply-bd3.workers.dev with
-**0 bindings** (no D1, no R2), uploaded 4 days ago. The owner is creating D1 `bse-index` and R2 `bse-intelligence` in the
-dashboard and the GitHub secrets. When the owner says they exist (or `npx wrangler d1 list` shows `bse-index`):
-1. Put its id in `web/wrangler.jsonc` (`database_id`); `cd web; npm run db:migrate:remote`.
-2. `npx wrangler secret put INGEST_TOKEN` and `npx wrangler secret put OWNER_TOKEN`, values from the owner's keys file
-   (never printed or committed).
-3. `npm run deploy` (or the repo's deploy script); then check the dashboard shows 3 bindings (DB, VAULT, AI) and
+**0 bindings** (no D1, no R2), uploaded 4 days ago. **Renamed 2026-10-20 (owner: "isn't it now NSE project"):** D1
+`insiders` (was `bse-index`) and R2 `insiders` (was `bse-intelligence`). The owner is creating both in the dashboard, and
+the GitHub secrets. Locally nothing moves: the config keeps `preview_database_id` at the placeholder and
+`preview_bucket_name: bse-intelligence`, so `npm run dev` reads the same local database and memory files as before
+(tested in the cloud on the demo data: 13 cards and the memory objects read back after the rename). Local commands now
+name the database `insiders`: `npx wrangler d1 execute insiders --local --persist-to ../data/wrangler ...` (update any
+note or script of yours that says `bse-index`). When the owner says they exist (or `npx wrangler d1 list` shows `insiders`):
+1. Set the repository variable `D1_DATABASE_ID` (GitHub, Settings -> Variables) to its id, or ask the owner to; for a
+   deploy from the laptop, put the id in `database_id` only (not `preview_database_id`) in a local, uncommitted edit.
+2. `cd web; npm run db:migrate:remote`; `npx wrangler secret put INGEST_TOKEN` and `npx wrangler secret put OWNER_TOKEN`,
+   values from the owner's keys file (never printed or committed).
+3. `npm run deploy`; then check the dashboard shows 3 bindings (DB, VAULT, AI) and
    `curl.exe -s -o NUL -w '%{http_code}' https://insiders.reply-bd3.workers.dev/api/feed?range=all` gives 200.
 4. Do not load data yet (G6 and `sync-to-cloud` come after); do not switch the schedule on (G7, owner).
-Files you may change: `web/wrangler.jsonc` (the id only), `docs/PLAN.md` (G1/G4 status lines). Report: here.
+Files you may change: `docs/PLAN.md` (G1/G4 status lines). Report: here.
 
 ## T11 · P1 · laptop · DONE — screenshots of the site on real data (owner asked, 2026-10-20)
 

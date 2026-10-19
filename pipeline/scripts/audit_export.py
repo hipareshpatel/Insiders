@@ -1,7 +1,7 @@
 """Export cards and their filing text for an independent card-vs-PDF audit (docs/AUDIT_LOOP.md).
 
 Usage:
-  npx wrangler d1 execute bse-index --local --persist-to ../data/wrangler --json --command \
+  npx wrangler d1 execute insiders --local --persist-to ../data/wrangler --json --command \
     "SELECT c.news_id, c.scrip_code, f.headline headline_filing, f.subject, c.card_json FROM cards c JOIN filings f USING(news_id) ..." > cards.json
   python scripts/audit_export.py cards.json OUT_DIR [--per-reviewer 10] [--limit 100] [--skip audited_ids.txt]
 

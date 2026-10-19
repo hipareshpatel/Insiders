@@ -11,13 +11,16 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "bse-index",
-      // Replace with the id printed by `wrangler d1 create bse-index`.
+      "database_name": "insiders",
+      // Replace with the id printed by `wrangler d1 create insiders` (deploy-web.yml does, from the D1_DATABASE_ID
+      // repository variable). Local dev keeps the placeholder id, so the laptop's local database stays where it is.
       "database_id": "00000000-0000-0000-0000-000000000000",
+      "preview_database_id": "00000000-0000-0000-0000-000000000000",
       "migrations_dir": "../db/migrations"
     }
   ],
-  "r2_buckets": [{ "binding": "VAULT", "bucket_name": "bse-intelligence" }],
+  // Local dev reads the bucket under its old name, where the laptop's local memory files are (renamed 2026-10-20: NSE).
+  "r2_buckets": [{ "binding": "VAULT", "bucket_name": "insiders", "preview_bucket_name": "bse-intelligence" }],
   // Workers AI: the gateway's keyless spare provider (see /api/internal/ai).
   // Workers AI only runs on Cloudflare: local dev calls it remotely (needs `npx wrangler login`).
   "ai": { "binding": "AI", "remote": true },

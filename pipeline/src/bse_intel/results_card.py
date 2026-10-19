@@ -321,6 +321,10 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "") -
         return []
     unconfirmed = unconfirmed_changes(tagged, text)
     now = {m.metric: m for m in tagged.metrics if m.period == tagged.period and m.value is not None}
+    if now.get("pat_owners") is not None and now["pat_owners"].value == 0 and (now.get("pat") or now["pat_owners"]).value:
+        # a zero the file carries for the owners' share beside a real profit is a filler, not a figure: Ahluwalia's
+        # Q4FY25 card read "net profit to shareholders ₹0 Cr" beside PAT ₹83.33 Cr (live review 2, 2026-10-20)
+        del now["pat_owners"]
     top = now.get("revenue") or now.get("interest_earned") or now.get("total_income")
     net = _net_of_excise(tagged)
     if net is not None and top is not None and top.metric == "revenue":

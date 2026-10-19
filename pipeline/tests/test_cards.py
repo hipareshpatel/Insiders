@@ -1064,8 +1064,9 @@ def test_a_table_line_quoted_with_its_change_added():
 
     problems, _, elsewhere = check_quoted_numbers(card("₹23.88 Cr", "- ebitda Q2FY26: 23.88 Cr, QoQ -12.3%"), text)
     assert problems == [] and elsewhere, "the table's line with a change added is the table's line"
+    # words after the line: still the figure's own line (the row rule, `_row_quoted`)
     problems, _, _ = check_quoted_numbers(card("₹23.88 Cr", "- ebitda Q2FY26: 23.88 Cr, up on lower costs"), text)
-    assert problems and "not in the filing" in problems[0], "words after the line are not a change"
+    assert problems == []
     problems, _, _ = check_quoted_numbers(card("₹28.40 Cr", "- ebitda Q2FY26: 28.40 Cr, QoQ -12.3%"), text)
     assert problems, "a figure the table does not print"
 
@@ -1114,3 +1115,60 @@ def test_a_filing_read_again_without_a_card_removes_its_old_card():
     Pipeline._commit_rows(fake, outcomes)
     deleted = [r["news_id"] for s, rows in calls if s == "cards_delete" for r in rows]
     assert deleted == ["a", "b"], "only a filing that ends without a card, and not a failed one (it is tried again)"
+
+
+def test_a_reaffirmed_rating_is_not_an_upgrade():
+    """eMudhra's ICRA A reaffirmed was published as "upgraded to A (Stable)" (live review 2, 2026-10-20)."""
+    from bse_intel.card_context import rating_word_mismatch
+
+    memory = {"balance_sheet": [{"credit_rating": "[ICRA]A (Stable)", "rating_agency": "ICRA", "as_of": "2024-07-01"}]}
+    said = rating_word_mismatch("ICRA upgrades eMudhra's bank facilities to A (Stable)", "[ICRA]A (Stable)", "ICRA", memory)
+    assert said and "reaffirmation" in said[0]
+    assert rating_word_mismatch("ICRA reaffirms eMudhra at A (Stable)", "[ICRA]A (Stable)", "ICRA", memory) == []
+    # the earlier grade from the filing's own words when memory has none
+    text = "ICRA has upgraded the long-term rating to [ICRA]AAA (Stable) from [ICRA]AA+ (Stable)"
+    assert rating_word_mismatch("ICRA upgrades HCL to AAA", "[ICRA]AAA (Stable)", "ICRA", None, text) == []
+    assert rating_word_mismatch("ICRA downgrades HCL to AAA", "[ICRA]AAA (Stable)", "ICRA", None, text)
+    # another agency's earlier grade is not this one's
+    other = {"balance_sheet": [{"credit_rating": "CARE AA-", "rating_agency": "CARE"}]}
+    assert rating_word_mismatch("ICRA upgrades to A", "[ICRA]A", "ICRA", other) == []
+
+
+def test_a_unit_resuming_after_an_outage_is_not_capex():
+    """NHPC's Teesta-V unit resuming came as CAPEX and was written up as added capacity (live review 1, 2026-10-20)."""
+    from types import SimpleNamespace
+
+    from bse_intel.pipeline import event_type_rules
+
+    def filing(headline):
+        return SimpleNamespace(headline=headline, subject="Commencement of Commercial Production")
+
+    assert event_type_rules("CAPEX", filing("NHPC has resumed commercial generation of Unit#3 (170 MW)"), "", None) == "OTHER"
+    assert event_type_rules("CAPEX", filing("Commissioning of new 500 MW unit at Parbati"), "", None) == "CAPEX"
+    assert event_type_rules("CAPEX", filing("Capacity expansion resumed after the monsoon"), "", None) == "CAPEX"
+
+
+def test_a_key_number_quoting_a_table_row_the_text_breaks_up():
+    """Novartis India's shareholding table reached the text as "Acquirer 2:" and "25,47,189 10.32% 10.32%" on two
+    lines, and the model quoted the row whole; four right cards were held this way (live reviews 1-2, 2026-10-20).
+    A line carrying the figure that sits inside the quote, or shares four words with it, is the figure's row; a figure
+    on no such line still fails."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import check_quoted_numbers
+
+    text = ("Details of acquisition\nShares carrying voting rights acquired\nAcquirer 2: Acquirer 2:\n"
+            "25,47,189 10.32% 10.32%\n1 To invest/ infuse funds in our newly incorporated 150.00 24 Months\n"
+            "subsidiary for developing the drone facility\n")
+
+    def card(value, quote):
+        return Pass2Output.model_validate({
+            "is_material": True, "event_type": "M_AND_A", "timeline_entry": "x",
+            "card": {"impact_level": "HIGH", "headline": "Acquirer buys 10.32% stake",
+                     "what_happened": [{"text": "Details of acquisition", "quote": "Details of acquisition"}],
+                     "key_numbers": [{"label": "Shares", "value": value, "quote": quote}]}})
+
+    row = "Shares carrying voting rights acquired Acquirer 2: 25,47,189 10.32% 10.32%"
+    assert check_quoted_numbers(card("25,47,189", row), text)[0] == []
+    wrapped = "1 To invest/ infuse funds in our newly incorporated subsidiary for developing the drone facility... 150.00"
+    assert check_quoted_numbers(card("₹150 Cr", wrapped), text)[0] == []
+    assert check_quoted_numbers(card("₹175 Cr", wrapped.replace("150.00", "175.00")), text)[0], "an invented figure"

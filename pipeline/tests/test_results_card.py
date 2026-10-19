@@ -251,3 +251,28 @@ def test_memory_points_say_when_growth_picks_up_or_slows():
     history = _history("revenue", [100, 100, 100, 100, 120, 150])   # Q1FY25..Q2FY26
     points = [p.text for p in results_card.memory_points(_tagged("Q3FY26", 10, 9, revenue=200, revenue_year_ago=100), history)]
     assert "Revenue growth picked up to +100% YoY from +50% in Q2FY26." in points, points
+
+
+def test_a_zero_for_the_owners_share_beside_a_real_profit_is_a_filler():
+    """Ahluwalia Q4FY25 (live review 2, 2026-10-20): "net profit to shareholders ₹0 Cr" beside PAT ₹83.33 Cr."""
+    from bse_intel.models import FinancialMetric
+    from bse_intel.xbrl import XbrlResult
+
+    tagged = XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q4FY25", metrics=[
+        FinancialMetric(metric="revenue", period="Q4FY25", value=1215.84),
+        FinancialMetric(metric="pat", period="Q4FY25", value=83.33),
+        FinancialMetric(metric="pat_owners", period="Q4FY25", value=0.0)])
+    out = _model_card()
+    results_card.build(out, tagged, "Ahluwalia Contracts (India) Limited")
+    assert "shareholders" not in out.card.headline and "₹83.33 Cr" in out.card.headline
+    assert not any("₹0 Cr" in f.text for f in out.card.what_happened)
+
+
+def test_a_change_cut_from_a_pair_keeps_its_brackets():
+    """Shivam Autotech Q3FY25 (live review 2, 2026-10-20): "₹11.36 Cr, -7.0% QoQ);" once its YoY was removed."""
+    from bse_intel.computed import _strip
+
+    assert _strip("EBITDA Q3FY25: ₹11.36 Cr (+12.3% YoY, -7.0% QoQ); margin 10.1%.", ["+12.3%"]) == \
+        "EBITDA Q3FY25: ₹11.36 Cr (-7.0% QoQ); margin 10.1%."
+    assert _strip("Revenue ₹90 Cr (+3.7% YoY, +3.2% QoQ).", ["+3.2%"]) == "Revenue ₹90 Cr (+3.7% YoY)."
+    assert _strip("EBITDA ₹11.36 Cr (+12.3% YoY); margin 10.1%.", ["+12.3%"]) == "EBITDA ₹11.36 Cr; margin 10.1%."

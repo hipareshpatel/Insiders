@@ -200,6 +200,15 @@ _PHRASE = (r"\s*\(?\s*(?:(?:up|down|rose|fell|grew|declined|jumped|slipped|gaine
 def _strip(text: str, figures: list[str]) -> str:
     for fig in figures:
         text = re.sub(_PHRASE.format(fig=re.escape(fig)), " ", text, count=1, flags=re.I)
+        # "(+12.3% YoY, -7.0% QoQ)" less its first change took the "(" with it and left "₹11.36 Cr, -7.0% QoQ)"
+        # (Shivam Autotech Q3FY25, live review 2, 2026-10-20): the bracket of the change that stays goes back
+        if text.count(")") > text.count("("):
+            text = re.sub(r"\s+,\s*([^()]*\))", r" (\1", text, count=1)
+        elif text.count("(") > text.count(")"):   # and its mirror: "(+3.7% YoY, +3.2% QoQ)" less the second
+            open_at = text.rfind("(")
+            tail = re.fullmatch(r"(\([^()]*?)[\s,]*([.;]?)\s*", text[open_at:])
+            if tail:
+                text = f"{text[:open_at]}{tail.group(1)}){tail.group(2)}"
     text = re.sub(r"\*\*\s*\*\*", " ", text)   # the bold a removed figure sat in
     text = re.sub(r"\s+([,;.)])", r"\1", re.sub(r"\(\s*\)", "", text))
     text = re.sub(r"\b(revenue|sales|profit|PAT|EBITDA|PBT|income|margin|EPS)\s+to\s+(₹|Rs|INR|\d)", r"\1 at \2", text)

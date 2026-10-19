@@ -55,7 +55,7 @@ from .settings import Settings
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
-from .card_context import case_stage, guidance_recall, rating_change
+from .card_context import case_stage, guidance_recall, rating_change, rating_word_mismatch
 from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
@@ -907,7 +907,18 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
         return "GOVERNANCE"
     if event_type == "ORDER_WIN" and _TAX_OR_PENALTY.search(head) and not _REAL_ORDER.search(head):
         return "LITIGATION_REGULATORY"
+    if event_type == "CAPEX" and _RESUMED.search(head) and not _NEW_CAPACITY.search(head):
+        return "OTHER"
     return event_type
+
+
+# A unit back in service after an outage, repair or flood is not capacity added: NHPC's Teesta-V unit resuming came by
+# the "commencement of commercial production" rule as CAPEX, and the card said it "boosts generation capacity" (live
+# review 1, 2026-10-20). Words of a new plant or added capacity keep it CAPEX.
+_RESUMED = re.compile(r"\b(resum(?:ed|es|ption|ing)|restor(?:ed|ation|es)|re-?start(?:ed)?|back (?:in|into) (?:service|operation)"
+                      r"|after (?:the )?(?:outage|shutdown|shut-down|breakdown|flood|repair|maintenance))\b", re.I)
+_NEW_CAPACITY = re.compile(r"\b(new|additional|greenfield|brownfield|expansion|expanded|capacity addition|added capacity"
+                           r"|debottleneck\w*)\b", re.I)
 
 
 # A headline says who did what: "WaveRise" (the acquirer's name from the exchange's subject line) was Novartis India's
@@ -1045,6 +1056,8 @@ def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None, r
             near = gate.quote_near(quote, text, reading)
             if near is None:
                 near = _table_line_quoted(quote, text)
+            if near is None and kind != "why it matters":
+                near = _row_quoted(quote, claim, text, unit)
             if near is None:
                 problems.append(f'{kind} "{label}" quotes a sentence that is not in the filing')
                 continue
@@ -1097,6 +1110,30 @@ def _table_line_quoted(quote: str, text: str) -> str | None:
         return None
     line = m.group(1)
     return line if gate.quote_found(line, text) else None
+
+
+def _row_quoted(quote: str, claim: str, text: str, unit: float | None) -> str | None:
+    """The filing's line a key number's quote was built from, when the quote itself is not in the filing: a line that
+    carries the key number's figures (at the filing's unit) and either sits whole inside the quote or shares a run of
+    four words with it.
+
+    A table's row reaches the text as fragments or with its wrapped cells interleaved, and the model quotes the row as
+    it reads it: Novartis India's "Acquirer 2: 25,47,189 10.32% 10.32%" is "Acquirer 2:" and "25,47,189 10.32% 10.32%"
+    on two lines, Magellanic's objects table puts "150.00 24 Months" on the line of the row's first words. Four right
+    cards were held this way (live reviews 1-2, 2026-10-20). The figure still has to be on the one line."""
+    flat_quote = gate._flat(quote or "")
+    words = flat_quote.split()
+    runs = {" ".join(words[i:i + 4]) for i in range(len(words) - 3)}
+    for line in (text or "").splitlines():
+        flat_line = gate._flat(line)
+        tokens = flat_line.split()
+        if len(tokens) < 2 or not any(ch.isdigit() for ch in flat_line):
+            continue
+        inside = flat_line in flat_quote
+        shared = any(" ".join(tokens[i:i + 4]) in runs for i in range(len(tokens) - 3))
+        if (inside or shared) and not gate.numbers_in_quote(claim, line, gate.quote_unit(line, text, unit)):
+            return line
+    return None
 
 
 def _quoted_claims(card) -> list[tuple[str, str, str, str | None, bool]]:
@@ -2499,6 +2536,11 @@ class Pipeline:
             found.scale += gate.stale_columns(_card_texts(candidate), filed_text)
             found.scale += foreign_as_rupees(_card_texts(candidate), filed_text)
             found.form += headline_form(candidate)
+            if candidate.card is not None and "DEBT_RATINGS" in (event_type, candidate.event_type):
+                sheet = candidate.dossier_delta.balance_sheet
+                words = " ".join([candidate.card.headline or "", *(f.text for f in candidate.card.what_happened[:2])])
+                found.claims += rating_word_mismatch(words, getattr(sheet, "credit_rating", None),
+                                                     getattr(sheet, "rating_agency", None), dossier, filed_text)
             if not tagged and "RESULTS" in (event_type, candidate.event_type):
                 # With no XBRL the reading of the statement is all there is, so it has to add up: 27 of
                 # 68 results cards had no XBRL behind them. Reported for the second provider to fix, with

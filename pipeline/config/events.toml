@@ -90,7 +90,8 @@ keywords = ["allotment", "issue price", "floor price", "warrants", "investor", "
 
 [CAPEX]
 focus = """
-This is a capital expenditure or capacity announcement. Extract project cost, capacity added,
+This is a capital expenditure or capacity announcement. A unit resuming after an outage, repair or flood is not
+capacity added: say it restores output that had stopped, never that it adds capacity. Extract project cost, capacity added,
 funding mix (debt / internal accruals / equity), commissioning timeline and expected revenue
 potential. Flag a missing timeline or funding plan as a missing disclosure.
 Forensic reading: convert per-day capacity to a year at 330 operating days for continuous process

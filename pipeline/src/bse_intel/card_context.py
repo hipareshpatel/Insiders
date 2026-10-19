@@ -85,6 +85,36 @@ def rating_change(before: dict | None, after: dict, news_id: str, text: str = ""
     }
 
 
+_UPGRADE_WORD = re.compile(r"\bupgrad\w*", re.I)
+_DOWNGRADE_WORD = re.compile(r"\bdowngrad\w*", re.I)
+
+
+def rating_word_mismatch(words: str, new_rating: str | None, new_agency: str | None, before: dict | None,
+                         text: str = "") -> list[str]:
+    """A card that calls a rating an upgrade or a downgrade when its grade did not move, or the other way round.
+
+    eMudhra's ICRA A reaffirmed was published as "upgraded to A (Stable)" (live review 2, 2026-10-20): the earlier
+    grade, from the same agency in memory or in the filing's own "from ..." words, is the test. `words` is the card's
+    headline and first points; nothing is said when the earlier grade is not known."""
+    grade = long_term_grade(new_rating)
+    if grade is None:
+        return []
+    agency = agency_of({"rating_agency": new_agency, "credit_rating": new_rating})
+    prev = next((s for s in reversed((before or {}).get("balance_sheet", []))
+                 if s.get("credit_rating") and (agency is None or agency_of(s) in (agency, None))), None)
+    was = long_term_grade((prev or {}).get("credit_rating")) or grade_before_in_text(text)
+    if was is None:
+        return []
+    up, down = bool(_UPGRADE_WORD.search(words)), bool(_DOWNGRADE_WORD.search(words))
+    if was == grade and (up or down):
+        return [f"The card calls the rating {'an upgrade' if up else 'a downgrade'}, but the long-term grade is {grade} "
+                f"before and after: a reaffirmation"]
+    moved = LONG_TERM.index(was) - LONG_TERM.index(grade)
+    if (moved > 0 and down and not up) or (moved < 0 and up and not down):
+        return [f"The card calls the rating {'a downgrade' if down else 'an upgrade'}, but it moved from {was} to {grade}"]
+    return []
+
+
 _USFDA = (("Form 483", r"\b(?:form\s*)?483\b|observations?\b"), ("Warning letter", r"\bwarning\s+letter\b"),
           ("Import alert", r"\bimport\s+alert\b"),
           ("Closed", r"\b(?:establishment\s+inspection\s+report|eir|close[- ]?out\s+letter|nai|vai)\b|\bclosed\b"))

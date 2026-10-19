@@ -167,3 +167,10 @@ def test_a_formula_over_mixed_units_is_checked_in_the_result_unit():
         "inputs": [{"name": "order_usd", "value": 135, "unit": "USD_M", "source": "FILING"},
                    {"name": "fx", "value": 85, "unit": "INR", "source": "ASSUMPTION"}]})
     assert check([own], text).items[0]["check"] == "VERIFIED"
+    # shapes the unit check leaves to plain arithmetic (each held a true card when it did not, 2026-10-19)
+    for formula, inputs, result, unit in (
+            ("6000", [{"name": "target", "value": 6000, "unit": "INR_CR", "source": "FILING"}], 6000, "INR_CR"),
+            ("a_lakh / 100 / nw * 100", [{"name": "a_lakh", "value": 27529, "unit": "INR_LAKH", "source": "FILING"},
+                                         {"name": "nw", "value": 18083, "unit": "INR_CR", "source": "MEMORY"}], 1.52, "PCT")):
+        est = QuantifiedImpact.model_validate({"label": "x", "formula": formula, "inputs": inputs, "result": result, "unit": unit})
+        assert check([est], "27,529 lakh; net worth 18,083 crore; target 6,000 crore").items[0]["check"] == "VERIFIED"

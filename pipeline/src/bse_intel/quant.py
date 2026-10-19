@@ -41,7 +41,9 @@ _UNIT_SIZE = {"INR": 1, "RS": 1, "USD": 1, "EUR": 1, "GBP": 1, "JPY": 1, "AED": 
               "EUR_M": 1e6, "EUR_MN": 1e6, "EUR_BN": 1e9, "SHARES_CR": 1e7, "SHARES_LAKH": 1e5, "SHARES_M": 1e6}
 
 
-_CONVERTS = re.compile(r"\d(?:\.\d+)?[eE]\+?[3-9]|(?<![\d.])1000+(?![\d.])")
+_NAMES = re.compile(r"[A-Za-z_][A-Za-z_0-9]*")
+_LITERAL = re.compile(r"\d+(?:\.\d+)?(?:[eE][+-]?\d+)?")
+_MULTIPLIERS = {2.0, 3.0, 4.0, 12.0}   # halves, quarters and months to a year
 
 
 def _size(unit: str | None) -> float | None:
@@ -53,8 +55,14 @@ def in_units(est: QuantifiedImpact) -> float | None:
     is not known (then only the plain arithmetic is checked, as before)."""
     sizes = {i.name: _size(i.unit) for i in est.inputs if i.value is not None}
     out = _size(est.unit)
-    if out is None or not sizes or any(s is None for s in sizes.values()) or _CONVERTS.search(est.formula or ""):
-        return None   # a formula that divides by 1e7 or multiplies by 100000 converts units itself
+    formula = est.formula or ""
+    units = [str(i.unit or "").upper() for i in est.inputs] + [str(est.unit or "").upper()]
+    if out is None or not sizes or any(s is None for s in sizes.values())             or any(u in ("PCT", "%") for u in units)             or any(name not in formula for name in sizes)             or any(float(n) not in _MULTIPLIERS for n in _LITERAL.findall(_NAMES.sub(" ", formula))):
+        # Only a plain product, quotient or sum of named amounts is put in units. Measured on 383 stored impacts
+        # (2026-10-19): a formula that is a bare number ("6000"), one that converts itself ("/ 100" from lakh, "/ 1e7"),
+        # or one over percentages was held wrongly; the three it caught (Texmaco's USD x ₹85, SKF's ₹ million x 4,
+        # twice) are plain products.
+        return None
     try:
         return evaluate(est.formula, {i.name: i.value * sizes[i.name] for i in est.inputs if i.value is not None}) / out
     except (FormulaError, ZeroDivisionError, OverflowError):

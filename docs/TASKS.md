@@ -62,6 +62,14 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T16 · P1 · cloud · OPEN — daily review of the live cards by independent agents (D37)
+
+Once the live site has cards (T15, then the schedule): each day, every held card plus a random sample of the published ones
+(about 20, by event type), each judged blind against its filing's PDF by a separate reviewer agent with round 4's prompt
+(`REVIEWER_PROMPT_ROUND4.md`) and the block paragraph of round 7's method. Results and the tally in
+`docs/audit/live/<date>.json` and `.md`; WRONG classes fixed in code (or given to the laptop when they are in its files).
+The PDFs come from NSE's archive links on each card; where the cloud cannot fetch one, the laptop is asked to export it.
+
 ## T15 · P1 · laptop · OPEN — load the laptop's data onto the live site (go-live, PLAN G6)
 
 The owner's choice (D37): go live and review the live cards. The live site (D1 `bse-index-nse`, R2 `bse-intelligence`) is

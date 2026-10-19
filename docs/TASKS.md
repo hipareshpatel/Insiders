@@ -62,6 +62,18 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T19 · P1 · laptop · OPEN, do first — export the held cards for the cloud's live review (owner, 2026-10-20)
+
+The owner chose the laptop's export over giving the cloud the owner token. With the owner token from the keys file:
+1. Page `https://insiders.reply-bd3.workers.dev/api/owner/feed?held=only&limit=50` (header `Authorization: Bearer
+   <OWNER_TOKEN>`, never printed) to the end, then `GET /api/owner/cards/<news_id>` for each.
+2. Write `docs/audit/live/held-2026-10-20.json`: a list of `{"news_id", "scrip_code", "symbol", "company_name",
+   "filed_at", "event_category", "pdf_url", "card_json"}` (the card as stored, `card_json` parsed), every held card (187).
+   Nothing else: the cloud fetches the PDFs from NSE and the memory from the live site itself. The repo is public, so
+   these drafts become readable there; the owner accepted the export (say so in the commit).
+3. Commit with "T19" first and push; the cloud reviews a sample of them with the next published sample.
+Files you may change: `docs/audit/live/held-2026-10-20.json`. Report: here (the count).
+
 ## T18 · P1 · laptop · OPEN — live review 2's classes in your files, and re-running stale cards
 
 From `docs/audit/live/2026-10-20-review2.md` (10 of 24 WRONG; 17 of 48 over both reviews). The headline figures were

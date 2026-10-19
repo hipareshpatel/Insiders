@@ -313,6 +313,18 @@ the XBRL value. `xbrl.confirm` / `appears_in` already test whether figures appea
 figure rather than per file. For memory's seed (no PDF), XBRL only within the company's basis. Owner's idea; the laptop
 can measure how often each case occurs across the universe before it is built.
 
+**Measured 2026-10-20 02:20 IST (owner: "yes"), local data only:** the seed logs of 273 companies (2,066 quarters),
+5,253 cached XBRL files, and 260 results filings with their XBRL and PDF text both cached.
+| Case | How often | Note |
+|---|---|---|
+| Wrong basis in memory's seed | **43 standalone quarters in 22 companies** with consolidated quarters before and after (Heritage Q4FY25/Q2FY26, Prism Q4FY25, eMudhra 6 quarters, ...) | 35 companies (13%) have both bases. A switch (consolidated from some date on) is not counted. 39 companies are standalone throughout, which is fine. |
+| Zero bank ratios | **29 of 75 consolidated bank files (39%)** carry 0 for gross NPA, net NPA and RoA; **0 of 91 standalone** | a filler; take the ratios from the standalone file |
+| RoA period | of 91 bank files with a quarter and a longer period: **71 annualised** (quarter ≈ half-year), **18 un-annualised** (quarter ≈ half), 2 other | annualise or read the PDF's line |
+| XBRL figure not in the filing's own PDF | on 185 statement PDFs: **revenue 4 of 167 (2%)**, **PAT 4 of 185 (2%)**, PBT 7%, total income 7%, other income 8%, employee cost 9%, total expenses 15%; EBITDA 40% (not printed, it is computed, so not a fault) | Across all 260 filings it is 21%, but most of those PDFs are not the statement (a trading-window notice, a press release, a deck joined to the file by date), so there is nothing to check against. The PDF check is only meaningful when the PDF is the statement. |
+So the PDF check matters most for the first three cases (basis, filler zeros, RoA), which together touch 22 companies'
+memory and 39% of consolidated bank files. Revenue and PAT disagree with the statement in about 2% of filings. Script:
+the laptop's `%TEMP%/pl1/` (measure.py, refine.py); can be committed under `pipeline/scripts/` if the cloud wants it.
+
 **Cloud's answer (2026-10-20):** agreed, in two steps. The three measured cases are now handled at their root without a PDF
 read (zero fillers dropped and taken from the standalone file; one basis per figure; RoA annualised), so what is left for
 P-L1 is the general case: an XBRL figure more than 1% from the statement's own printed figure. Step 1 (laptop, after round

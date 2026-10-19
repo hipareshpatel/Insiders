@@ -14,9 +14,12 @@ from __future__ import annotations
 
 import re
 
-from .models import Fact, KeyNumber
+from .models import Fact, Insight, KeyNumber
+from .periods import quarter_from_index, quarter_index
 
 MAX_WHY = 2
+MEMORY_POINTS = 2   # code's own points from memory, ahead of the model's
+MIN_QUARTERS = 4    # a rank or a streak needs this many earlier quarters in memory
 _LEGAL = re.compile(r"\s+(?:limited|ltd\.?|corporation of india limited)$", re.I)
 
 
@@ -72,7 +75,94 @@ _LABELS = (("revenue", "Revenue from operations"), ("interest_earned", "Interest
            ("provisions", "Provisions"), ("pat", "Net profit"), ("eps", "EPS"))
 
 
-def build(out, tagged, company_name: str | None) -> list[str]:
+def _quarters(history, metric: str) -> dict[int, float]:
+    """Memory's quarterly values of one metric, by quarter index."""
+    out = {}
+    for h in history or ():
+        index = quarter_index(str(h.get("period") or ""))
+        if h.get("metric") == metric and index is not None and h.get("value") is not None:
+            out[index] = float(h["value"])
+    return out
+
+
+def _same_basis(tagged, history) -> bool:
+    """Memory and the file agree on the file's own comparative figures: then memory's quarters are the same series. A
+    standalone file against consolidated memory (Max Financial's ₹17 Cr holding-company quarter beside ₹39,473 Cr of
+    group revenue, round 5) or a restated year gives no point at all."""
+    mem = {(h.get("metric"), h.get("period")): h.get("value") for h in history or () if h.get("value") is not None}
+    shared = [(m.value, float(mem[(m.metric, m.period)])) for m in tagged.metrics
+              if m.period != tagged.period and m.value and (m.metric, m.period) in mem]
+    return bool(shared) and all(abs(a - b) <= 0.02 * abs(a) + 0.01 for a, b in shared)
+
+
+def _value(x: float) -> str:
+    return f"{x:,.2f}".rstrip("0").rstrip(".")
+
+
+def memory_points(tagged, history) -> list[Insight]:
+    """What the quarter means against the company's own history, computed in code from memory (owner, 2026-10-19:
+    "quarterly results with contextual memory"). The model wrote these from memory and got the periods wrong: Dabur's
+    "EBITDA 734.13 against 756.15" was two other quarters, Protean's year-ago margin was Q3's (round 5). Each point uses
+    only figures memory holds under the period it names and the file's own figure for this quarter:
+    - the highest or lowest quarter memory holds, for revenue and net profit;
+    - a run of year-on-year growth or decline, or its end;
+    - the EBITDA margin above or below each of the previous four quarters."""
+    if tagged is None or not tagged.period or not history:
+        return []
+    now_index = quarter_index(tagged.period)
+    if now_index is None or not _same_basis(tagged, history):
+        return []
+    now = {m.metric: m for m in tagged.metrics if m.period == tagged.period and m.value is not None}
+    points: list[tuple[int, str]] = []    # (priority, text): lower first
+    for metric, word in (("pat", "net profit"), ("revenue", "revenue"), ("interest_earned", "interest earned")):
+        m = now.get(metric)
+        if m is None:
+            continue
+        past = {i: v for i, v in _quarters(history, metric).items() if i < now_index}
+        if len(past) >= MIN_QUARTERS:
+            first = quarter_from_index(min(past))
+            if m.value > max(past.values()):
+                points.append((2, f"{tagged.period} {word} of ₹{_value(m.value)} Cr is the highest of the {len(past) + 1} "
+                                  f"quarters memory holds since {first}."))
+            elif m.value < min(past.values()):
+                points.append((2, f"{tagged.period} {word} of ₹{_value(m.value)} Cr is the lowest of the {len(past) + 1} "
+                                  f"quarters memory holds since {first}."))
+        # year-on-year signs, newest first: this quarter's from the file, earlier ones from memory's own quarters
+        series = {**past, now_index: m.value}
+        signs = []
+        for i in range(now_index, now_index - 12, -1):
+            if i not in series or i - 4 not in series or series[i - 4] <= 0 or series[i] < 0:
+                break
+            signs.append(series[i] > series[i - 4])
+        if len(signs) >= 2:
+            run = 1
+            while run < len(signs) - 1 and signs[run + 1] == signs[1]:
+                run += 1
+            if signs[0] != signs[1] and run >= 3:
+                points.append((1, f"{tagged.period} is the first year-on-year {'rise' if signs[0] else 'fall'} in {word} "
+                                  f"after {run} quarters of {'growth' if signs[1] else 'decline'} in memory."))
+            elif signs[0] == signs[1]:
+                streak = 1
+                while streak < len(signs) and signs[streak] == signs[0]:
+                    streak += 1
+                if streak >= 4:
+                    points.append((3, f"{word.capitalize()} has {'grown' if signs[0] else 'fallen'} year on year for "
+                                      f"{streak} quarters running, {tagged.period} included."))
+    margin = now.get("ebitda_margin")
+    if margin is not None:
+        past = _quarters(history, "ebitda_margin")
+        last4 = [(i, past[i]) for i in range(now_index - 1, now_index - 5, -1) if i in past]
+        if len(last4) == 4:
+            listed = ", ".join(f"{quarter_from_index(i)} {v:.1f}%" for i, v in last4)
+            if all(margin.value > v + 0.5 for _, v in last4):
+                points.append((2, f"EBITDA margin of {margin.value:.1f}% is above each of the previous four quarters ({listed})."))
+            elif all(margin.value < v - 0.5 for _, v in last4):
+                points.append((2, f"EBITDA margin of {margin.value:.1f}% is below each of the previous four quarters ({listed})."))
+    points.sort(key=lambda p: p[0])
+    return [Insight(text=text, basis="MEMORY") for _, text in points[:MEMORY_POINTS]]
+
+
+def build(out, tagged, company_name: str | None, history=None) -> list[str]:
     """Put the file's figures on a results card. Returns what was replaced (empty when the file cannot carry it)."""
     card = getattr(out, "card", None)
     if card is None or tagged is None or getattr(tagged, "kind", None) != "RESULTS" or not tagged.period:
@@ -132,6 +222,10 @@ def build(out, tagged, company_name: str | None) -> list[str]:
     if card.quantified_impact:
         replaced.append(f"computed impacts ({len(card.quantified_impact)}) left out")
     card.quantified_impact = []
-    card.why_it_matters = card.why_it_matters[:MAX_WHY]
+    context = memory_points(tagged, history)
+    # the model keeps two points, or one beside two of code's: three at most
+    card.why_it_matters = context + card.why_it_matters[:min(MAX_WHY, MAX_WHY + 1 - len(context))]
+    if context:
+        replaced.append(f"{len(context)} point(s) from memory by code")
     out.timeline_entry = f"{period} results ({basis or 'basis not stated'}): {phrase(top, top_word)}, {phrase(profit, 'net profit')}."
     return [f"results card from the XBRL file: {', '.join(replaced)}"]

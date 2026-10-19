@@ -74,3 +74,52 @@ def test_a_loss_is_written_as_a_loss_and_a_turnaround_says_what_it_was():
     out = _model_card()
     results_card.build(out, tagged(20.0, -10.0), "Turn Co Limited")
     assert out.card.headline.endswith("net profit ₹20 Cr (against a loss of ₹10 Cr a year earlier)")
+
+
+def _history(metric, values, unit="INR_CR"):
+    from bse_intel.periods import quarter_from_index, quarter_index
+    start = quarter_index("Q1FY25")
+    return [{"metric": metric, "period": quarter_from_index(start + i), "value": v, "unit": unit} for i, v in enumerate(values)]
+
+
+def _tagged(period, pat, pat_year_ago, revenue=None, revenue_year_ago=None, margin=None):
+    from bse_intel.models import FinancialMetric
+    from bse_intel.periods import prior_year_period
+    from bse_intel.xbrl import XbrlResult
+    metrics = [FinancialMetric(metric="pat", period=period, value=pat),
+               FinancialMetric(metric="pat", period=prior_year_period(period), value=pat_year_ago)]
+    if revenue is not None:
+        metrics += [FinancialMetric(metric="revenue", period=period, value=revenue),
+                    FinancialMetric(metric="revenue", period=prior_year_period(period), value=revenue_year_ago)]
+    if margin is not None:
+        metrics.append(FinancialMetric(metric="ebitda_margin", period=period, value=margin, unit="PCT"))
+    return XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period=period, metrics=metrics)
+
+
+def test_memory_points_rank_streaks_and_margins_from_memory_alone():
+    """Owner (2026-10-19): results with contextual memory. Code states what memory holds, by period, so the model's
+    misdated comparisons (Dabur, Protean in round 5) cannot happen."""
+    from bse_intel.results_card import memory_points
+
+    # Q1FY25..Q4FY26 in memory (8 quarters), this filing is Q1FY27
+    history = _history("pat", [10, 11, 12, 13, 14, 15, 16, 17]) + _history("revenue", [100, 100, 100, 100, 90, 90, 90, 90]) \
+        + _history("ebitda_margin", [15, 15, 15, 15, 18.0, 17.5, 18.2, 17.9], "PCT")
+    points = [p.text for p in memory_points(_tagged("Q1FY27", 20, 14, revenue=120, revenue_year_ago=90, margin=14.0), history)]
+    assert "Q1FY27 is the first year-on-year rise in revenue after 4 quarters of decline in memory." in points
+    assert any("net profit of ₹20 Cr is the highest of the 9 quarters memory holds since Q1FY25" in p for p in points)
+    assert len(points) == 2 and all(p for p in points)
+    # the margin point names each earlier quarter's own figure
+    only_margin = memory_points(_tagged("Q1FY27", 15.5, 14, margin=14.0), _history("pat", [10, 11, 12, 13, 14, 15, 16, 17])
+                                + _history("ebitda_margin", [15, 15, 15, 15, 18.0, 17.5, 18.2, 17.9], "PCT"))
+    assert [p.text for p in only_margin] == [
+        "EBITDA margin of 14.0% is below each of the previous four quarters (Q4FY26 17.9%, Q3FY26 18.2%, Q2FY26 17.5%, Q1FY26 18.0%).",
+        "Net profit has grown year on year for 5 quarters running, Q1FY27 included."]
+
+
+def test_memory_points_need_memory_and_the_file_to_agree_on_the_basis():
+    """Max Financial (round 5): standalone figures against consolidated memory; nothing is said then."""
+    from bse_intel.results_card import memory_points
+
+    history = _history("pat", [10, 11, 12, 13, 14, 15, 16, 17])
+    assert memory_points(_tagged("Q1FY27", 20, 1.4), history) == []      # the file's year-ago 1.4 is not memory's 14
+    assert memory_points(_tagged("Q1FY27", 20, 14), history[:2]) == []   # too little memory for a rank or a run

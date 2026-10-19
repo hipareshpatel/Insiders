@@ -68,6 +68,17 @@ def test_a_quarter_bse_never_listed_is_seeded_from_nse():
     assert metrics["pat"]["value"] == 946.4
 
 
+def test_without_a_bse_client_the_seed_reads_nse_alone():
+    """Owner, 2026-10-19: everything on NSE. The seed runs online with no BSE client at all."""
+    seed_mod._nse_rows.cache_clear()
+    sink, stats = Sink(), SeedStats()
+    url = "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GI_1_14102026103636_WEB.xml"
+    nse = Nse([_row(url, "2026-09-30", "2026-10-14")], {url: GI_XML})
+    seed_results(sink, None, "NEWCO", "New Co", "2025-01-01", None, stats, company={}, nse=nse, symbol="NEWCO")
+    assert stats.results_periods == 1 and stats.skipped == 0
+    assert sink.dossiers["NEWCO"]["financial_metrics"]
+
+
 def test_the_nse_list_is_fetched_once_for_a_company_not_once_a_quarter():
     """NSE paces itself by several seconds a call and the list is read for every quarter BSE fails on."""
     seed_mod._nse_rows.cache_clear()

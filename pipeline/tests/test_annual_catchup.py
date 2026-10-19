@@ -214,3 +214,40 @@ def test_a_card_read_while_nse_refused_has_no_stamp_and_takes_any_file_of_its_ye
     sink.close()
     report, sink, _ = _catch_up(settings, FakeNse({"DEMOCEM": LISTING["data"]}), reports=REPORTS[:1])
     assert report["rerun"] == {"n-fy25": "published with the table"}
+
+
+def test_online_the_catch_up_runs_inside_an_evening_run_once_a_day(settings, monkeypatch):
+    """Owner, 2026-10-19: everything on GitHub. A separate job would share the pipeline's concurrency queue and be
+    replaced by the next waiting run, so the catch-up runs inside `run`: after 18:30 IST, once a day, the day marked
+    done only when every company due has had its list read."""
+    from bse_intel import pipeline as pipeline_mod
+
+    pipeline, sink, _ = build(settings, [], {}, {})
+    pipeline.nse = FakeNse({})
+    calls = []
+    monkeypatch.setattr(annual_catchup, "catch_up", lambda p, deadline, **kw: calls.append(kw) or
+                        {"rerun": {}, "stopped": None, "errors": [], "lists_read": 3, "companies_due": 3})
+    clock = {"now": datetime(2026, 10, 19, 17, 0, tzinfo=IST)}
+    monkeypatch.setattr(pipeline_mod, "now_ist", lambda: clock["now"])
+    monkeypatch.setattr(pipeline_mod, "today_ist", lambda: clock["now"].date())
+
+    assert not pipeline._annual_catchup_due()            # before the close
+    clock["now"] = datetime(2026, 10, 19, 18, 45, tzinfo=IST)
+    assert pipeline._annual_catchup_due()
+    pipeline._annual_catchup(time.monotonic() + 60)
+    assert calls == [{"record_writes": False}]           # the run records its own writes
+    assert not pipeline._annual_catchup_due()            # done for today
+    clock["now"] = datetime(2026, 10, 20, 19, 0, tzinfo=IST)
+    assert pipeline._annual_catchup_due()                # and due again the next evening
+
+
+def test_a_catch_up_cut_short_stays_due_for_the_next_run_that_evening(settings, monkeypatch):
+    from bse_intel import pipeline as pipeline_mod
+
+    pipeline, sink, _ = build(settings, [], {}, {})
+    pipeline.nse = FakeNse({})
+    monkeypatch.setattr(annual_catchup, "catch_up", lambda p, deadline, **kw:
+                        {"rerun": {}, "stopped": None, "errors": [], "lists_read": 40, "companies_due": 90})
+    monkeypatch.setattr(pipeline_mod, "now_ist", lambda: datetime(2026, 10, 19, 19, 0, tzinfo=IST))
+    pipeline._annual_catchup(time.monotonic() + 60)
+    assert pipeline._annual_catchup_due()

@@ -1213,8 +1213,9 @@ class Pipeline:
         self._prices = PriceStore(settings.price_dir) if settings.price_dir and settings.price_dir.is_dir() else None
         self._buckets = settings.load_toml("market.toml")["size_buckets"]
         self.gateway = gateway
-        self.bse = bse or BseClient()
-        raw.attach(self.bse, sink, "bse", settings)
+        # BSE is a backup source only (owner, 2026-10-19: everything on NSE): its client is made the first time
+        # something asks for it (DISCOVERY_SOURCE=bse, a BSE attachment), so an NSE run never calls BSE at all
+        self._bse = bse
         # NSE discovery and attachments, and annual reports' XBRL (annual_xbrl). None with BSE discovery reads annual
         # reports from the PDF alone, as tests do.
         self.nse = nse
@@ -1343,6 +1344,17 @@ class Pipeline:
                 queued += [f.news_id for f in freed]
             start = end + timedelta(days=1)
         return queued
+
+    @property
+    def bse(self) -> BseClient:
+        if self._bse is None:
+            self._bse = BseClient()
+            raw.attach(self._bse, self.sink, "bse", self.settings)
+        return self._bse
+
+    @bse.setter
+    def bse(self, client: BseClient) -> None:
+        self._bse = client
 
     def _on_nse(self) -> bool:
         return self.settings.discovery_source == "nse"
@@ -2089,7 +2101,7 @@ class Pipeline:
                 data = None
         if data is None:
             try:
-                data = self.bse.download(filing.xbrl_url, max_bytes=8_000_000)
+                data = self._attachment(filing.xbrl_url, 8_000_000)   # NSE's archive for an NSE file
             except AttachmentError:
                 if strict:
                     raise
@@ -2788,6 +2800,8 @@ class Pipeline:
                         synced = governance_memory.shareholding_sync(self, live_deadline)
                         if synced["filed"] or synced["stopped"] or synced["errors"] or synced["refused"]:
                             log.info("shareholding memory: %s", json.dumps(synced))
+                    if time.monotonic() < live_deadline and self._annual_catchup_due():
+                        self._annual_catchup(live_deadline)
             if mode in ("backfill", "all") and not self._halted(bulk=True):
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
         except SourceBlockedError as exc:
@@ -2813,6 +2827,25 @@ class Pipeline:
                 log.exception("could not record run")
         log.info("run %s finished: %s %s", run_id, status, json.dumps(self.stats.as_dict()))
         return self.stats
+
+    def _annual_catchup_due(self) -> bool:
+        """The daily annual-report catch-up's slot: after 18:30 IST, once a day, with NSE's annual-report XBRL on."""
+        now = now_ist()
+        return (self.nse is not None and self.settings.nse_annual_xbrl
+                and (now.hour, now.minute) >= ANNUAL_CATCHUP_AFTER
+                and self.sink.kv_get(ANNUAL_CATCHUP_KEY) != now.date().isoformat())
+
+    def _annual_catchup(self, deadline: float) -> None:
+        """Annual reports read again once NSE lists their XBRL (annual_catchup.py), as part of an evening run. The
+        day is marked done once every company due has had its list read, so a run cut short leaves the rest to the
+        next run that evening."""
+        from . import annual_catchup
+
+        report = annual_catchup.catch_up(self, deadline, record_writes=False)
+        if report["rerun"] or report["stopped"] or report["errors"]:
+            log.info("annual-report XBRL catch-up: %s", json.dumps(report, ensure_ascii=False))
+        if not report["stopped"] and report["lists_read"] >= min(report["companies_due"], annual_catchup.MAX_COMPANIES):
+            self._kv_set(ANNUAL_CATCHUP_KEY, today_ist().isoformat())
 
     def _publish_snapshot(self) -> None:
         """The homepage's default first page and the top signals, as one R2 object (blueprint §3.3):
@@ -2976,6 +3009,8 @@ SECOND_OPINION_MIN_S = 300
 # MONTHLY_BUSINESS_UPDATE, CAPEX, PRODUCT_LAUNCH and CORPORATE_ACTION recur with new numbers in nearly
 # the same words, and RESULTS has its own one-card-per-quarter rule (D20).
 REPEAT_DAYS = 10  # the window the fast-track repeat check looks back over, as similar_timeline_entry
+ANNUAL_CATCHUP_AFTER = (18, 30)   # IST: the annual-report catch-up runs inside the first run after the close
+ANNUAL_CATCHUP_KEY = "annual_catchup:last_day"
 NO_CARD_EVENTS = ("MANAGEMENT_CHANGE",)
 # The MD, CEO or CFO leaving keeps a card (owner, 2026-10-19, D30 amended); the same words as the rule book's D30 rule.
 # "Not liable to retire by rotation" in an appointment letter is not an exit.

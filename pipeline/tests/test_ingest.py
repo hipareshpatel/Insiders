@@ -354,7 +354,7 @@ def test_sync_companies_looks_up_missing_industries_once(settings, monkeypatch):
     monkeypatch.setattr(bse, "BseClient", lambda: real(transport=httpx.MockTransport(handler), page_delay=0))
     sink = LocalSink(settings)
     sink.execute("companies_upsert", [{"scrip_code": "999003", "company_name": "Demo 999003 Ltd", "sector": "chemicals"}])
-    args = argparse.Namespace(max_lookups=10_000, refresh_industry=False)
+    args = argparse.Namespace(source="bse", max_lookups=10_000, refresh_industry=False)
 
     assert cmd_sync_companies(args, settings, sink) == 0
     assert sorted(lookups) == ["999001", "999002", "999003"]

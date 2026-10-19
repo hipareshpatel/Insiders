@@ -9,7 +9,7 @@ import type { CallRead, CardBody, CardRow, Fact, Impact, PriceReaction, Technica
 import { cn } from "../lib/cn";
 import { useRatings } from "../lib/owner";
 import { copyNodeAsPng } from "../lib/png";
-import { cr, formatKpi, istDate, istDateTime, marketSession, pct, relativeTime, signClass, titleCase } from "../lib/format";
+import { cr, formatKpi, istDate, istDateTime, listing, marketSession, pct, relativeTime, signClass, titleCase } from "../lib/format";
 import { EVENT_LABELS, SECTORS, TONE_STRIPE, type Tone } from "../lib/taxonomy";
 import { Avatar } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL, TrackItem } from "./FilingCard";
@@ -261,7 +261,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
       <div className="px-5 pb-4 pt-4 sm:px-6 sm:pt-5">
         {exporting && (
           <div className="mb-3 flex items-baseline justify-between text-[12px]">
-            <span className="font-semibold text-accent">Insiders · BSE</span>
+            <span className="font-semibold text-accent">Insiders · NSE</span>
             <span className="num text-ink-3">{istDate(row.filed_at)}</span>
           </div>
         )}
@@ -281,7 +281,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
 
         <header className="flex items-start justify-between gap-3">
           <button type="button" onClick={() => openMemory()}
-            className="group flex min-w-0 items-center gap-2 text-left" title={`${row.company_name} · BSE ${row.scrip_code}`}>
+            className="group flex min-w-0 items-center gap-2 text-left" title={`${row.company_name} · ${listing(row.symbol, row.scrip_code)}`}>
             <Avatar name={row.company_name} symbol={row.symbol} size={24} />
             <span className="flex min-w-0 flex-wrap items-baseline gap-x-2">
               <span className="text-[17px] font-bold tracking-tight text-ink group-hover:text-accent">{row.symbol ?? row.company_name}</span>
@@ -319,9 +319,6 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           )}
           {row.median_turnover_cr != null && row.median_turnover_cr < 0.5 && <Chip tone="warn">💧 Thin liquidity</Chip>}
           <TechnicalChips row={row} />
-          {row.bse_group && ["T", "XT", "Z", "ZP", "TS", "MT"].includes(row.bse_group.toUpperCase()) && (
-            <Chip tone="warn">🔒 Trade-to-trade ({row.bse_group})</Chip>
-          )}
         </div>
 
         <h3 className="mt-3 font-display text-[19px] leading-snug text-ink sm:text-[21px]">{plain(card.headline)}</h3>
@@ -367,7 +364,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         </div>
 
         {exporting ? (
-          <p className="mt-2 text-[10.5px] text-ink-3">AI summary of a public BSE filing. Not investment advice; verify against the original filing.</p>
+          <p className="mt-2 text-[10.5px] text-ink-3">AI summary of a public NSE filing. Not investment advice; verify against the original filing.</p>
         ) : (
           <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2 text-[12px] text-ink-3" data-noexport="true">
             <span className="num" title={`${istDateTime(row.filed_at)} IST`}>
@@ -479,7 +476,7 @@ function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers }: {
       <p className="num flex flex-wrap gap-x-2 text-[12px] text-ink-3">
         <span>{EVENT_LABELS[card.event_type || row.event_category] ?? card.category_tag}</span>
         {row.sector && row.sector !== "default" && <><span>·</span><span>{SECTORS[row.sector] ?? titleCase(row.sector)} lens</span></>}
-        <span>·</span><span>BSE {row.scrip_code}</span>
+        <span>·</span><span>{listing(row.symbol, row.scrip_code)}</span>
         <span>·</span><span>{istDateTime(row.filed_at)} IST, {marketSession(row.filed_at).toLowerCase()}</span>
       </p>
 
@@ -590,7 +587,7 @@ function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers }: {
         {g.ungrounded.length ? `; not found: ${g.ungrounded.join(", ")}` : ""}
         {g.unsupported_claims?.length ? `. Claims the sources don't support: ${g.unsupported_claims.map((c) => `"${c}"`).join(", ")}` : ""}
         {!row.memory_complete ? ". Written before this company's history finished loading" : ""}.
-        {" "}AI summary of a public BSE filing; not investment advice.
+        {" "}AI summary of a public NSE filing; not investment advice.
       </p>
     </div>
   );

@@ -13,7 +13,7 @@ from pathlib import Path
 from . import raw
 from .settings import get_settings
 from .sinks import make_sink
-from .timeutil import now_iso, utc_day
+from .timeutil import now_iso, today_ist, utc_day
 
 
 def _pipeline(settings, sink):
@@ -155,6 +155,8 @@ def _stored_companies(sink) -> dict[str, str | None]:
 
 
 def cmd_sync_companies(args, settings, sink) -> int:
+    if args.source == "nse":
+        return _sync_companies_nse(settings, sink)
     import httpx
 
     from .bse import BseClient, fetch_scrip_list, industry_path
@@ -204,6 +206,22 @@ def cmd_sync_companies(args, settings, sink) -> int:
     return 0
 
 
+def _sync_companies_nse(settings, sink) -> int:
+    """The company master from NSE's equity list and NSE's own industry fields (company_master.py): new listings
+    added under their NSE symbol, matched companies kept on their key. Then the universe file is rebuilt."""
+    from . import company_master, universe
+    from .nse import NseClient
+    from .prompts.engine import PromptEngine
+
+    engine = PromptEngine(settings)
+    with NseClient() as client:
+        raw.attach(client, sink, "nse", settings)
+        report = company_master.sync(settings, sink, client, lambda industry: engine.sector_for(industry).name,
+                                     now_iso(), today_ist())
+    print(json.dumps({**report.as_dict(), "outside_universe": universe.rebuild(settings, sink)}))
+    return 0
+
+
 def cmd_sync_universe(args, settings, sink) -> int:
     """NSE's equity list joined to the company master by ISIN: the companies whose filings are analysed (universe.py)."""
     from . import universe
@@ -240,8 +258,10 @@ def cmd_shareholding_sync(args, settings, sink) -> int:
 
 
 def cmd_seed_memory(args, settings, sink) -> int:
-    """Financial and ownership history from XBRL, with no AI call (see seed.py). Results come from BSE's
-    results archive, shareholding from NSE for the companies listed there."""
+    """Financial and ownership history from XBRL, with no AI call (see seed.py). Results and shareholding come from
+    NSE (owner, 2026-10-19: everything on NSE); `--source bse` adds BSE's results archive (needs an Indian address)."""
+    import contextlib
+
     from .bse import BseClient
     from .nse import NseClient, SourceBlockedError
     from .seed import SeedStats, seed_results, seed_shareholding
@@ -250,10 +270,11 @@ def cmd_seed_memory(args, settings, sink) -> int:
     scrips = [s.strip() for s in args.scrips.split(",") if s.strip()]
     stats = SeedStats()
     cache_root = settings.text_cache_dir
-    with BseClient() as bse, NseClient() as nse:
-        raw.attach(bse, sink, "bse", settings)
+    with (BseClient() if args.source == "bse" else contextlib.nullcontext()) as bse, NseClient() as nse:
+        if bse is not None:
+            raw.attach(bse, sink, "bse", settings)
+            bse.warm_up()
         raw.attach(nse, sink, "nse", settings)
-        bse.warm_up()
         for scrip in scrips:
             company = sink.company(scrip) or {}
             name = company.get("company_name") or scrip
@@ -497,10 +518,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--filter", help="only list available models containing this text (e.g. llama, deepseek)")
     p.add_argument("--all", action="store_true", help="list every available model")
     p.set_defaults(func=cmd_models)
-    p = sub.add_parser("sync-companies", help="load BSE's active equity scrip list and each company's industry")
+    p = sub.add_parser("sync-companies", help="the company master from NSE's equity list (new listings, names, industry)")
+    p.add_argument("--source", choices=("nse", "bse"), default="nse",
+                   help="nse (default: online, owner 2026-10-19) or bse (BSE's scrip list; needs an Indian address)")
     p.add_argument("--max-lookups", type=int, default=10_000,
-                   help="most industry lookups this run (one BSE request each, for companies without one)")
-    p.add_argument("--refresh-industry", action="store_true", help="look up every company's industry again")
+                   help="bse only: most industry lookups this run (one BSE request each, for companies without one)")
+    p.add_argument("--refresh-industry", action="store_true", help="bse only: look up every company's industry again")
     p.set_defaults(func=cmd_sync_companies)
 
     sub.add_parser("sync-universe", help="NSE's equity list joined to the company master: the companies analysed (>= the market-cap floor)"
@@ -516,8 +539,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-files", type=int, default=400, help="patterns filed this run")
     p.add_argument("--time-budget", type=int, default=1800, help="seconds")
     p.set_defaults(func=cmd_shareholding_sync)
-    p = sub.add_parser("seed-memory", help="financial and ownership history from XBRL, no AI (results: BSE archive; shareholding: NSE)")
-    p.add_argument("--scrips", required=True, help="comma-separated BSE scrip codes")
+    p = sub.add_parser("seed-memory", help="financial and ownership history from NSE's XBRL, no AI (results and shareholding)")
+    p.add_argument("--scrips", required=True, help="comma-separated company keys (BSE scrip codes, or NSE symbols)")
+    p.add_argument("--source", choices=("nse", "bse"), default="nse",
+                   help="nse (default) or bse: also read BSE's results archive (needs an Indian address)")
     p.add_argument("--since", default="2023-01-01", help="ignore quarters filed before this date")
     p.add_argument("--results-only", action="store_true")
     p.add_argument("--shareholding-only", action="store_true")

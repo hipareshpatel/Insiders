@@ -6,7 +6,7 @@ import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import type { CardBody, CardRow, Insight, QuantifiedImpact, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
-import { cr, exact, formatKpi, istDateTime, marketSession, pct, quantValue, relativeTime, signClass, titleCase } from "../lib/format";
+import { cr, exact, formatKpi, istDateTime, listing, marketSession, pct, quantValue, relativeTime, signClass, titleCase } from "../lib/format";
 import { copyNodeAsPng } from "../lib/png";
 import { EVENT_LABELS, IMPACT_LABEL, IMPACT_TEXT, SECTORS, TONE_STRIPE, type Tone } from "../lib/taxonomy";
 import { TickerChip } from "./Avatar";
@@ -166,7 +166,7 @@ export function FilingBody({ row, card, showHeadline = false }: { row: CardRow; 
         <span className="font-medium text-ink-2">{card.category_tag || EVENT_LABELS[row.event_category]}</span>
         {row.sector && row.sector !== "default" && <><span>·</span><span>{SECTORS[row.sector] ?? titleCase(row.sector)} lens</span></>}
         <span>·</span>
-        <span>BSE {row.scrip_code}</span>
+        <span>{listing(row.symbol, row.scrip_code)}</span>
         <span className="sm:ml-auto">{istDateTime(row.filed_at)} IST · {marketSession(row.filed_at)}</span>
       </div>
 
@@ -308,7 +308,7 @@ export function FilingBody({ row, card, showHeadline = false }: { row: CardRow; 
           {!row.memory_complete && <span>· partial memory</span>}
         </span>
       </div>
-      <p className="mt-3 text-[11px] text-ink-3">AI summary of a public BSE filing. Not investment advice; verify against the original filing.</p>
+      <p className="mt-3 text-[11px] text-ink-3">AI summary of a public NSE filing. Not investment advice; verify against the original filing.</p>
     </div>
   );
 }

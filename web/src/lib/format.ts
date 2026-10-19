@@ -79,7 +79,11 @@ export function signClass(value: number | null | undefined): string {
   return value > 0 ? "text-pos" : "text-neg";
 }
 
-/** NSE/BSE cash-market session for a timestamp (exchange holidays not modelled). */
+/** How a company's listing is shown: its NSE symbol (owner, 2026-10-19: everything on NSE), else its key. */
+export const listing = (symbol: string | null | undefined, key: string | null | undefined) =>
+  symbol ? `NSE: ${symbol}` : (key ?? "");
+
+/** NSE cash-market session for a timestamp (exchange holidays not modelled). */
 export function marketSession(iso: string): "Pre-market" | "Market hours" | "Post-market" | "Non-trading day" {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: IST, weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,

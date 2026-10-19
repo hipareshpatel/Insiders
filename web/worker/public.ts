@@ -73,6 +73,9 @@ function listParam(value: string | undefined, allowed?: Set<string>): string | n
 const IMPACTS = new Set(["HIGH", "MODERATE", "LOW"]);
 const SIZES = new Set(["LARGE", "MID", "SMALL", "MICRO"]);
 const isDate = (s: string | undefined) => !!s && /^\d{4}-\d{2}-\d{2}$/.test(s);
+// A company's key: its BSE scrip code, or for a company never on BSE (a listing after the move to NSE,
+// 2026-10-19) its NSE symbol ("TATATECH", "M&M", "BAJAJ-AUTO")
+export const isCompanyKey = (s: string | undefined) => !!s && /^(\d{3,8}|[A-Z0-9][A-Z0-9&-]{0,19})$/.test(s);
 const clamp = (v: string | undefined, def: number, max: number) =>
   Math.min(Math.max(Number.parseInt(v ?? "", 10) || def, 1), max);
 
@@ -352,7 +355,7 @@ api.get("/companies", async (c) => {
 
 api.get("/companies/:scrip", async (c) => {
   const scrip = c.req.param("scrip");
-  if (!/^\d{3,8}$/.test(scrip)) return c.json({ error: "bad scrip code" }, 400);
+  if (!isCompanyKey(scrip)) return c.json({ error: "bad company key" }, 400);
   const [company, cards, object] = await Promise.all([
     c.env.DB.prepare(`SELECT ${COMPANY_COLUMNS} FROM companies WHERE scrip_code = ?1`).bind(scrip).first(),
     c.env.DB.prepare(`

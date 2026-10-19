@@ -5,10 +5,10 @@ PEER CONTEXT (same sector and event type, last 60 days)
 $peers
 
 FILING
-Company: $company_name (BSE $scrip_code$symbol)
+Company: $company_name ($listing)
 Industry: $industry
 Filed: $filed_at
-BSE category: $category / $subcategory
+Exchange subject: $exchange_subject
 Headline: $headline
 
 SCALE (computed in code; use these proportions as given, never your own)

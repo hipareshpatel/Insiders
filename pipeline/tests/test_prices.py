@@ -32,7 +32,7 @@ def test_as_of_uses_the_close_known_when_the_filing_came_out(tmp_path):
     assert point_in_time(company, f"{day}T11:00:00+05:30", None) is None
 
 
-def test_yahoo_tries_symbol_then_nse_then_scrip_code():
+def test_yahoo_tries_nse_then_bse_then_scrip_code():
     import types
 
     import pytest
@@ -40,8 +40,10 @@ def test_yahoo_tries_symbol_then_nse_then_scrip_code():
     from bse_intel import yahoo
 
     pd = pytest.importorskip("pandas")
-    assert yahoo.candidates({"scrip_code": "500325", "symbol": "RELIANCE"}) == ["RELIANCE.BO", "RELIANCE.NS", "500325.BO"]
+    assert yahoo.candidates({"scrip_code": "500325", "symbol": "RELIANCE"}) == ["RELIANCE.NS", "RELIANCE.BO", "500325.BO"]
     assert yahoo.candidates({"scrip_code": "999999", "symbol": None}) == ["999999.BO"]
+    # a company added from NSE's list is keyed by its symbol: no scrip-code ticker (owner, 2026-10-19: NSE only)
+    assert yahoo.candidates({"scrip_code": "NEWCO", "symbol": "NEWCO"}) == ["NEWCO.NS", "NEWCO.BO"]
     days = pd.to_datetime(["2026-10-01", "2026-10-02"])
     ok = pd.DataFrame({"Close": [10.0, 11.0], "Volume": [1.0, 2.0]}, index=days)
     blank = pd.DataFrame({"Close": [float("nan")] * 2, "Volume": [0.0] * 2}, index=days)
@@ -56,4 +58,4 @@ def test_yahoo_tries_symbol_then_nse_then_scrip_code():
                            [{"scrip_code": "500325", "symbol": "RELIANCE"}, {"scrip_code": "532540", "symbol": "TCS"},
                             {"scrip_code": "500003", "symbol": "GONE"}], batch=50, period="1mo")
     assert {s: t for s, (t, _) in found.items()} == {"500325": "RELIANCE.BO", "532540": "TCS.NS"}
-    assert asked == [["RELIANCE.BO", "TCS.BO", "GONE.BO"], ["TCS.NS", "GONE.NS"], ["500003.BO"]]
+    assert asked == [["RELIANCE.NS", "TCS.NS", "GONE.NS"], ["RELIANCE.BO", "GONE.BO"], ["500003.BO"]]

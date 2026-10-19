@@ -171,7 +171,7 @@ export function CompaniesView() {
       <div className="flex flex-wrap items-center gap-2">
         <label className="relative min-w-0 flex-1 basis-60">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-3" />
-          <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Name, former name, symbol or BSE code"
+          <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Name, former name or NSE symbol"
             className="h-9 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-[13px] text-ink placeholder:text-ink-3 focus:border-accent focus:outline-none" />
         </label>
         <Select aria-label="Sort" value={sort} onChange={(e) => setParams({ sort: e.target.value === "recent" ? null : e.target.value })}>

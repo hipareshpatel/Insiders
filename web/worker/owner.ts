@@ -4,6 +4,7 @@
 import { Hono, type MiddlewareHandler } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import type { AppEnv } from "./env";
+import { isCompanyKey } from "./public";
 
 export const owner = new Hono<AppEnv>();
 
@@ -17,7 +18,7 @@ owner.get("/check", (c) => c.json({ ok: true }));
 
 owner.post("/watchlist", async (c) => {
   const body = await c.req.json<{ scrip_code?: string; on?: boolean }>().catch(() => null);
-  if (!body?.scrip_code || !/^\d{3,8}$/.test(body.scrip_code)) return c.json({ error: "scrip_code required" }, 400);
+  if (!body || !isCompanyKey(body.scrip_code)) return c.json({ error: "scrip_code required" }, 400);
   const result = await c.env.DB.prepare("UPDATE companies SET watchlist = ?1 WHERE scrip_code = ?2")
     .bind(body.on === false ? 0 : 1, body.scrip_code).run();
   return c.json({ ok: (result.meta.changes ?? 0) > 0 });

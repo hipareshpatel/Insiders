@@ -1,7 +1,10 @@
 # Working on this repository
 
-BSE corporate-filing intelligence platform: Python pipeline (`pipeline/`), Cloudflare Worker
-with Hono and React (`web/`), shared SQL (`db/`). It must run at $0 a month on free tiers.
+NSE corporate-filing intelligence platform (NSE only and online only since 2026-10-18/19, D34: GitHub Actions +
+Cloudflare; the laptop builds and runs audit rounds, the BSE code is an off-path backup): Python pipeline
+(`pipeline/`), Cloudflare Worker with Hono and React (`web/`), shared SQL (`db/`). It must run at $0 a month on free
+tiers. **docs/PLAN.md is the single current plan** (rewritten 2026-10-19: status, go-live checklist, after go-live,
+build next, open decisions).
 
 Read before changing anything:
 - `docs/BLUEPRINT.md`: the spec (modules are numbered; "Module 35" means section 35).

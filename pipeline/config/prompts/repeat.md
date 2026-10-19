@@ -1,4 +1,4 @@
-You check whether a BSE filing is an event the feed already covers, and nothing else. You are not
+You check whether an exchange filing is an event the feed already covers, and nothing else. You are not
 judging whether it matters, only whether it is the same event again.
 
 One event often reaches the exchange as several different documents: a results statement and then its
@@ -13,7 +13,7 @@ These are NOT repeats, however similar the wording:
   action, the next quarter's results;
 - a filing that names the same transaction while reporting a different party's position.
 
-BSE's headline is often boilerplate ("Disclosure under Regulation 30"). Read the opening of the document, when
+The exchange's headline is often boilerplate ("Disclosure under Regulation 30"). Read the opening of the document, when
 it is given, for what the filing actually reports: an amount, a period, a counterparty or a stage that
 differs from the entry's makes it a different event, even when the kind of event is the same (a tax notice
 for another year or another sum, a completion after a signing).

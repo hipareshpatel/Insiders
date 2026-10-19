@@ -2866,6 +2866,11 @@ class Pipeline:
                         synced = governance_memory.shareholding_sync(self, live_deadline)
                         if synced["filed"] or synced["stopped"] or synced["errors"] or synced["refused"]:
                             log.info("shareholding memory: %s", json.dumps(synced))
+                        from . import pledges   # promoter encumbrance events into memory (module 42), no card
+
+                        synced = pledges.sync(self, live_deadline)
+                        if synced["filed"] or synced["stopped"] or synced["errors"]:
+                            log.info("pledge memory: %s", json.dumps(synced))
                     if time.monotonic() < live_deadline and self._annual_catchup_due():
                         self._annual_catchup(live_deadline)
             if mode in ("backfill", "all") and not self._halted(bulk=True):

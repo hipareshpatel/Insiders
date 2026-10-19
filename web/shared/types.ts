@@ -30,7 +30,7 @@ export interface Signal {
   type: "PROMISE_DELIVERED" | "GUIDANCE_BREACH" | "WATCH_RESOLVED" | "DILUTION" | "SCALE" | "ORDER_FLOW" | "WORKING_CAPITAL_STRAIN" | "METRIC_SHIFT"
     | "BOARD_DELIBERATION" | "REG30_THRESHOLD" | "PREDICTION_RESOLVED" | "OWNERSHIP_SHIFT" | "AUDIT_FLAG"
     | "VOLUME_STREAK" | "QUARTER_PREVIEW" | "LOW_QUALITY_BEAT" | "MARGIN_MIX" | "JAWS" | "LOW_CASH_TAX" | "Q4_TRUE_UP"
-    | "RECURRING_ONE_OFFS" | "DEBT_CASH_PARADOX" | "DISTRESS" | "RATING_LIQUIDITY" | "FESTIVE_SEASON" | "ASSET_TURN" | "CAPITAL_COMPOUNDER" | "CAPITAL_DILUTER";
+    | "RECURRING_ONE_OFFS" | "DEBT_CASH_PARADOX" | "DISTRESS" | "RATING_LIQUIDITY" | "FESTIVE_SEASON" | "ASSET_TURN" | "CAPITAL_COMPOUNDER" | "CAPITAL_DILUTER" | "PLEDGE";
   severity: Severity;
   text: string;
   ref?: string | null;
@@ -360,6 +360,14 @@ export interface WatchItem {
   status_history: { status: string; evidence: string; as_of: string }[];
 }
 
+/** One promoter encumbrance event from NSE's SAST Reg 31 feed (pipeline pledges.py, module 42); % of total share capital. */
+export interface PledgeEvent {
+  seq_id: string | null; symbol: string; promoter: string | null;
+  event: "CREATED" | "RELEASED" | "INVOKED" | string; type: string | null; event_on: string | null;
+  shares: number | null; pct: number | null; before_pct: number | null; after_shares: number | null; after_pct: number | null;
+  promoter_pct: number | null; lender: string | null; reported_on: string | null; as_of: string; attachment: string | null;
+}
+
 export interface Dossier {
   schema_version: number;
   scrip_code: string;
@@ -386,6 +394,7 @@ export interface Dossier {
   predictions?: { id: string; kpi: string; metric: string; period: string; value: number; comparison: string;
     status: "OPEN" | "MET" | "MISSED"; actual?: number; created_on: string; resolved_on?: string }[];
   updated_at: string | null;
+  pledges?: { events: PledgeEvent[]; summary?: { encumbered_pct: number | null; promoters: number; as_of: string } };
 }
 
 export interface DealRecord {

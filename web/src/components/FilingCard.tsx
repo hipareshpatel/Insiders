@@ -1,4 +1,5 @@
 import {
+  Lock,
   AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, Calculator, Camera, CheckCircle2, ChevronDown, FileText,
   FolderOpen, Gauge, Layers, ListChecks, Minus, Rocket, Ruler, Scale, ShieldAlert, Timer,
 } from "lucide-react";
@@ -34,6 +35,7 @@ export const SIGNAL: Record<Signal["type"], { label: string; icon: typeof Gauge 
   DILUTION: { label: "Dilution", icon: Scale },
   SCALE: { label: "Scale", icon: Ruler },
   ORDER_FLOW: { label: "Order flow", icon: Layers },
+  PLEDGE: { label: "Promoter pledge", icon: Lock },
   WORKING_CAPITAL_STRAIN: { label: "Working capital", icon: AlertTriangle },
   METRIC_SHIFT: { label: "Metric shift", icon: Gauge },
   BOARD_DELIBERATION: { label: "Long board meeting", icon: Timer },

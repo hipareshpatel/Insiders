@@ -989,6 +989,8 @@ def dossier_as_of(dossier: dict | None, cutoff: str, inclusive: bool = True) -> 
             deals.append(_with_history(e, history))
     d["deals"] = deals
     d["ownership"] = [o for o in dossier.get("ownership", []) if ok(o.get("as_of"))]
+    if dossier.get("pledges"):
+        d["pledges"] = {"events": [e for e in dossier["pledges"].get("events", []) if ok(e.get("as_of"))]}
     gov = dossier.get("governance") or {}
     history = [a for a in gov.get("auditor_history", []) if ok(a.get("as_of"))]
     d["governance"] = {"auditor": history[-1] if history else None, "auditor_history": history,

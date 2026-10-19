@@ -107,7 +107,7 @@ when the site is shared. Built for it:
 
 | # | Item | Notes |
 |---|---|---|
-| B1 | **Module 42, promoter pledges**: NSE's SAST Reg 31 encumbrance feed into memory, a "pledge rising / invoked" signal | source measured on GitHub (`docs/SOURCES.md`) |
+| B1 | **Module 42, promoter pledges**: NSE's SAST Reg 31 encumbrance feed into memory, a "pledge rising / invoked" signal | **built 2026-10-19** (`pledges.py`, `pledge-sync`, end of every live run; PLEDGE signal with a score penalty; company page panel). Measured on the live feed: 315 events in 120 days, 93 universe companies; to check against filings (TASKS T8) |
 | B2 | **Module 8, anti-dumping (DGTR)**: case PDFs by product, linked to companies | linking product → company needs its own accuracy check |
 | B3 | Held cards: owner **Approve / Reject** on the review queue (today only Re-run); optionally show unreviewed held cards with a "verify against the filing" banner | 34 of 146 cards held in arm B, 10 of them WRONG |
 | B4 | Company page panels from data already stored: quarterly governance (board, penalties, insider loans), peers, segment mix, auditor history, a price chart | |

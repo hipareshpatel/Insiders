@@ -68,6 +68,7 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     signals += _dilution(after, output, company)
     signals += _scale(before, output, company, filing.filed_at)
     signals += _order_flow(before, output, filing)
+    signals += _pledges(after, filing)
     strain = _working_capital(after, filing)
     signals += strain
     signals += _metric_shifts(after, filing, skip={"trade_receivables", "receivables", "debtors", "inventories", "inventory"} if strain else set())
@@ -478,6 +479,14 @@ def _scale(before: dict | None, output: Pass2Output, company: dict | None, filed
 
 def _ordinal(n: int) -> str:
     return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
+
+
+def _pledges(after: dict | None, filing: Filing) -> list[Signal]:
+    """Module 42: a promoter pledge invoked, encumbrance rising, or released in full, from NSE's SAST Reg 31 feed in
+    memory (pledges.py). `after` is memory as of the filing, so a card sees only the events known then."""
+    from .pledges import signals as pledge_signals
+
+    return [Signal("PLEDGE", severity, text) for severity, text in pledge_signals(after, filing.filed_at)]
 
 
 def _order_flow(before: dict | None, output: Pass2Output, filing: Filing) -> list[Signal]:

@@ -246,6 +246,17 @@ def cmd_governance_sync(args, settings, sink) -> int:
     return 0
 
 
+def cmd_pledge_sync(args, settings, sink) -> int:
+    """Promoter encumbrance events (NSE's SAST Reg 31 feed) into memory (pledges.py, module 42), no AI."""
+    from . import pledges
+
+    pipeline = _pipeline(settings, sink)
+    scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()} or None
+    report = pledges.sync(pipeline, time.monotonic() + args.time_budget, days=args.days, scrips=scrips)
+    print(json.dumps(report, indent=2))
+    return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
+
+
 def cmd_shareholding_sync(args, settings, sink) -> int:
     """Each universe company's quarterly shareholding XBRL into memory (governance_memory.shareholding_sync), no AI."""
     from . import governance_memory
@@ -559,6 +570,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-files", type=int, default=200, help="reports filed this run")
     p.add_argument("--time-budget", type=int, default=1800, help="seconds")
     p.set_defaults(func=cmd_governance_sync)
+    p = sub.add_parser("pledge-sync", help="promoter pledge events (NSE SAST Reg 31) into memory, no AI (module 42)")
+    p.add_argument("--days", type=int, default=3, help="days of NSE's feed to read (365 for a year)")
+    p.add_argument("--scrips", help="only these companies (comma separated)")
+    p.add_argument("--time-budget", type=int, default=900)
+    p.set_defaults(func=cmd_pledge_sync)
+
     p = sub.add_parser("shareholding-sync", help="quarterly shareholding XBRL into memory (promoter, pledge, FII, DII), no AI")
     p.add_argument("--days", type=int, default=10, help="days of NSE's list to read back")
     p.add_argument("--max-files", type=int, default=400, help="patterns filed this run")

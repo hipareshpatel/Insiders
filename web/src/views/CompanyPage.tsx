@@ -855,6 +855,7 @@ function OwnersTab({ dossier, peers, company }: { dossier: Dossier | null; peers
             </p>
           </Panel>
         )}
+        <PledgesPanel dossier={dossier} />
         <IdentityAndOwnership dossier={dossier} />
       </div>
       <div className="min-w-0 space-y-4">
@@ -894,9 +895,51 @@ function OwnersTab({ dossier, peers, company }: { dossier: Dossier | null; peers
             </div>
           </Panel>
         )}
-        {!gov && !peers.length && !own.length && <Empty title="No ownership or governance data yet" body="It fills in from the quarterly shareholding and governance filings on NSE." />}
+        {!gov && !peers.length && !own.length && !dossier?.pledges?.events?.length && <Empty title="No ownership or governance data yet" body="It fills in from the quarterly shareholding and governance filings on NSE." />}
       </div>
     </div>
+  );
+}
+
+const PLEDGE_EVENT: Record<string, { word: string; cls: string }> = {
+  CREATED: { word: "Created", cls: "bg-warn-soft text-warn" },
+  RELEASED: { word: "Released", cls: "bg-pos-soft text-pos" },
+  INVOKED: { word: "Invoked", cls: "bg-neg-soft text-neg" },
+};
+
+/** Module 42: promoter encumbrance events from NSE's SAST Reg 31 disclosures, newest first (pipeline pledges.py). */
+function PledgesPanel({ dossier }: { dossier: Dossier | null }) {
+  const box = dossier?.pledges;
+  const events = [...(box?.events ?? [])].reverse().slice(0, 8);
+  if (!events.length) return null;
+  const total = box?.summary?.encumbered_pct;
+  return (
+    <Panel title="Promoter pledges" hint="SAST Reg 31 disclosures on NSE · % of the company's shares">
+      <p className="mb-3 text-[13.5px] text-ink-2">
+        {total == null
+          ? "The filings give group figures on single promoters' rows, so no total is added up here."
+          : <>Encumbered now, as disclosed: <span className={cn("num font-extrabold", total > 0 ? "text-warn" : "text-pos")}>{total.toFixed(2)}%</span> of the company across {box?.summary?.promoters} promoter{box?.summary?.promoters === 1 ? "" : "s"}.</>}
+      </p>
+      <ul className="space-y-2">
+        {events.map((e, i) => {
+          const kind = PLEDGE_EVENT[e.event] ?? { word: titleCase(e.event), cls: "bg-surface-2 text-ink-2" };
+          return (
+            <li key={e.seq_id ?? i} className="grid grid-cols-[76px_minmax(0,1fr)_auto] items-baseline gap-2.5 text-[13px]">
+              <span className="num text-[12px] text-ink-3">{e.event_on ? istDate(e.event_on) : istDate(e.as_of)}</span>
+              <span className="min-w-0">
+                <span className={cn("mr-1.5 rounded-full px-2 py-0.5 text-[11px] font-bold", kind.cls)}>{kind.word}</span>
+                <span className="text-ink">{e.promoter ?? "Promoter"}</span>
+                <span className="line-clamp-2 block break-words text-[12px] text-ink-3" title={e.lender ?? undefined}>
+                  {e.type && e.type !== "Pledge" ? `${e.type} · ` : ""}{e.lender ?? ""}
+                  {e.attachment && <> · <a href={e.attachment} target="_blank" rel="noreferrer" className="text-accent hover:underline">filing</a></>}
+                </span>
+              </span>
+              <span className="num text-right font-semibold text-ink">{e.pct != null ? `${e.pct.toFixed(2)}%` : "—"}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </Panel>
   );
 }
 

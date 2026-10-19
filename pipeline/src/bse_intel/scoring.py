@@ -267,6 +267,13 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
         if any(s["type"] == kind and s["severity"] == "WARNING" for s in signals):
             pillars["penalty"] -= points
             reasons.append(f"Penalty: {why}")
+    # module 42: a lender selling pledged promoter shares, or promoters pledging more (pledges.py)
+    if any(s["type"] == "PLEDGE" and s["text"].startswith("Pledge invoked") for s in signals):
+        pillars["penalty"] -= 10
+        reasons.append("Penalty: a promoter pledge was invoked")
+    elif any(s["type"] == "PLEDGE" and s["severity"] == "WARNING" for s in signals):
+        pillars["penalty"] -= 5
+        reasons.append("Penalty: promoter pledges rising")
     if any(s["type"] == "RATING_LIQUIDITY" and "not cooperating" in s["text"].lower() for s in signals) \
             and "Credit rating: issuer not cooperating" not in vetoes:
         vetoes.append("Credit rating: issuer not cooperating")

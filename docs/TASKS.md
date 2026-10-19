@@ -58,6 +58,15 @@ marked, the warning letter as the current step; CSB has no stale "Management sai
 has no P/E line. And `/company/519552?tab=results` at 390 px: the quarter labels whole.
 Files you may change: none. Report: here.
 
+## T8 · P2 · laptop · OPEN — check the new promoter-pledge memory against filings (module 42)
+
+After the go-live load (T4), run `python -m bse_intel pledge-sync --days 365` (one NSE request a month of feed; a minute
+or two). Then for 6 companies - 2 with an invocation, 2 with "up ... in 90 days", 1 released in full, 1 whose total is
+withheld for group figures - open the disclosure (`attachment` in `pledges.events`) and check: promoter, event, shares and
+% of the company, lender, and the company total on `/company/<scrip>?tab=owners` against the latest disclosures. Report
+any figure the rules read wrong with the row.
+Files you may change: none. Report: here.
+
 ## T2 · P1 · laptop · OPEN — measure the bank ratio scale before it is trusted (CLAUDE.md rule 0)
 
 The pipeline now reads `PercentageOfGrossNpa`, `PercentageOfNpa` and `ReturnOnAssets` from the banking results XBRL

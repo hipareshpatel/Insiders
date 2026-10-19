@@ -66,6 +66,7 @@ BLOCKING_STATUS = (401, 403, 429)
 # Every company listed on NSE's main board, one row each: symbol, name, series, listing date, ISIN.
 # Measured 2026-10-18: 2,605 rows; 2,477 of them are among our 5,111 companies by ISIN.
 EQUITY_LIST_URL = "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv"
+ENCUMBRANCE_ENDPOINT = "https://www.nseindia.com/api/corporate-pledgedata-sast3132"
 # Every announcement of a day (about 500-600 on a weekday, measured 12-16 Oct 2026), all in one answer, each
 # with its PDF and whether event XBRL exists. Read from the "Corporate Filings - Announcements" page's own call.
 ANNOUNCEMENTS_ENDPOINT = f"{SITE}/api/corporate-announcements"
@@ -499,6 +500,13 @@ class NseClient:
         for row in rows if isinstance(rows, list) else []:
             by_symbol.setdefault(str(row.get("symbol") or "").strip().upper(), []).append(row)
         return [f for symbol, group in by_symbol.items() if symbol for f in parse_shareholding_rows(group)]
+
+    def encumbrances(self, day_from: date, day_to: date) -> list[dict]:
+        """SAST Regulation 31 encumbrance disclosures of every company broadcast between the two dates, as NSE's rows
+        (pledges.py; measured 2026-10-19: 40 rows for 1-19 Oct, one per promoter event)."""
+        data = self._get(ENCUMBRANCE_ENDPOINT, {"from_date": day_from.strftime("%d-%m-%Y"), "to_date": day_to.strftime("%d-%m-%Y")}).json()
+        rows = data.get("data") if isinstance(data, dict) else data
+        return rows if isinstance(rows, list) else []
 
     def integrated_list(self, kind: str, page: int = 1, size: int = 500) -> list[dict]:
         """One page of NSE's all-company integrated-filing list ("Integrated Filing- Financials" or "...- Governance"),

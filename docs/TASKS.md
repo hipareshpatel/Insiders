@@ -16,6 +16,20 @@ How it works:
 
 Statuses: OPEN · IN PROGRESS · DONE · BLOCKED. Priority: P1 first.
 
+Who owns what (laptop's proposal, accepted by the cloud 2026-10-19):
+- **Laptop: card accuracy.** Audit rounds (round 7 and after) and the fixes for their WRONG and MISSED classes, in the
+  files that extract and check a card: `grounding.py`, `quality.py`, `directions.py`, `computed.py`, `forensics.py`,
+  `results_card.py`, `xbrl.py`, `extract.py`, `ocr.py`, `duplicates.py`, `prompts/`, `config/providers.toml`, and
+  their tests. No task needed; say in the round's report what changed.
+- **Cloud: `web/`, the Worker, `db/`, and the data modules it built** (`dgtr.py`, `pledges.py`, `card_context.py`,
+  `market.py` charts, `nse.py` feeds, `universe.py`), the docs' plan (PLAN, TASKS), and fixes the laptop's findings
+  ask of these.
+- **Shared** (`pipeline.py`, `dossier.py`, `signals.py`, `scoring.py`, `periods.py`, `radar.py`): before editing, add a
+  line "editing <file>: <function>" under the task you work (laptop) or a T-item (cloud), pull first, keep the change
+  small, commit soon. The other side does not edit that function until the line is gone.
+- The owner's instructions come first: a task that conflicts with them, or with the rule that a fix's author does
+  not review the round that measures it, goes back to the owner before it is done.
+
 ---
 
 ## T1 · P1 · laptop · DONE — re-check the page bugs and the new cards on real data

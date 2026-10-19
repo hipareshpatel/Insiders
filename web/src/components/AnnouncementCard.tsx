@@ -10,15 +10,21 @@ import { cn } from "../lib/cn";
 import { useRatings } from "../lib/owner";
 import { copyNodeAsPng } from "../lib/png";
 import { cr, formatKpi, istDate, istDateTime, listing, marketSession, pct, relativeTime, signClass, titleCase } from "../lib/format";
-import { EVENT_LABELS, SECTORS, TONE_STRIPE, type Tone } from "../lib/taxonomy";
+import { EVENT_LABELS, SECTORS, TONE_CHIP, TONE_LABEL, type Tone } from "../lib/taxonomy";
 import { Avatar } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL, TrackItem } from "./FilingCard";
 import { plain, RichText } from "./RichText";
 
 const IMPACT_PILL: Record<Impact, string> = {
-  HIGH: "bg-impact-high text-white dark:text-bg",
-  MODERATE: "bg-impact-moderate text-white dark:text-bg",
-  LOW: "border border-line text-ink-3",
+  HIGH: "bg-neg-soft text-impact-high",
+  MODERATE: "bg-warn-soft text-warn",
+  LOW: "bg-surface-2 text-ink-3",
+};
+/** The thin bar across the top of a card: its impact at a glance in a scrolled list. */
+const IMPACT_BAR: Record<Impact, string> = {
+  HIGH: "linear-gradient(90deg, var(--impact-high), var(--impact-moderate))",
+  MODERATE: "var(--impact-moderate)",
+  LOW: "var(--neutral-stripe)",
 };
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
 
@@ -256,8 +262,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
 
   return (
     <article ref={ref} id={`card-${row.news_id}`}
-      className={cn("relative overflow-hidden rounded-2xl border bg-surface", highlight ? "border-accent-line ring-2 ring-accent-soft" : "border-line")}>
-      <span aria-hidden className={cn("absolute inset-y-0 left-0 w-[3px]", TONE_STRIPE[tone])} />
+      className={cn("card-soft card-lift rise-in relative overflow-hidden", highlight && "ring-2 ring-accent")}>
+      <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: IMPACT_BAR[row.impact_level] }} />
       <div className="px-5 pb-4 pt-4 sm:px-6 sm:pt-5">
         {exporting && (
           <div className="mb-3 flex items-baseline justify-between text-[12px]">
@@ -279,34 +285,37 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           </p>
         )}
 
-        <header className="flex items-start justify-between gap-3">
+        <header className="flex items-center justify-between gap-3">
           <button type="button" onClick={() => openMemory()}
-            className="group flex min-w-0 items-center gap-2 text-left" title={`${row.company_name} · ${listing(row.symbol, row.scrip_code)}`}>
-            <Avatar name={row.company_name} symbol={row.symbol} size={24} />
-            <span className="flex min-w-0 flex-wrap items-baseline gap-x-2">
-              <span className="text-[17px] font-bold tracking-tight text-ink group-hover:text-accent">{row.symbol ?? row.company_name}</span>
-              {formerName(row) && <span className="text-[12px] text-ink-3">formerly {formerName(row)}</span>}
-              {row.market_cap_cr != null && (
-                <span className="num whitespace-nowrap text-[13px] text-ink-3">
-                  {cr(row.market_cap_cr)}{row.size_category ? ` · ${titleCase(row.size_category)}cap` : ""}
-                </span>
-              )}
+            className="group flex min-w-0 items-center gap-3 text-left" title={`${row.company_name} · ${listing(row.symbol, row.scrip_code)}`}>
+            <Avatar name={row.company_name} symbol={row.symbol} size={44} />
+            <span className="min-w-0">
+              <span className="block truncate text-[16px] font-extrabold tracking-tight text-ink group-hover:text-accent">
+                {row.company_name}{formerName(row) && <span className="ml-2 text-[12px] font-semibold text-ink-3">formerly {formerName(row)}</span>}
+              </span>
+              <span className="num block truncate text-[12px] font-medium text-ink-3">
+                {listing(row.symbol, row.scrip_code)}
+                {row.market_cap_cr != null && <span className="font-sans font-semibold"> · {cr(row.market_cap_cr)}{row.size_category ? ` · ${titleCase(row.size_category)} cap` : ""}</span>}
+              </span>
             </span>
           </button>
-          <span className="flex shrink-0 items-center gap-1.5">
-            {card.score && (
-              <span className="num rounded-full border border-line px-2 py-[3px] text-[11px] font-semibold text-ink-2"
-                title={`Actionability ${card.score.total}/100, computed from the filing and memory`}>
-                {row.is_actionable_signal ? "🔥 " : ""}{card.score.total}
-              </span>
-            )}
-            <span className={cn("rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-[0.08em]", IMPACT_PILL[row.impact_level])}>
-              {IMPACT_WORD[row.impact_level]}
+          {row.last_price != null && (
+            <span className="num shrink-0 text-right">
+              <span className="block text-[15px] font-bold text-ink">₹{row.last_price.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              {row.ret_1w != null && <span className={cn("block text-[12px] font-semibold", signClass(row.ret_1w))}>{row.ret_1w >= 0 ? "▲" : "▼"} {Math.abs(row.ret_1w).toFixed(1)}% 1W</span>}
             </span>
-          </span>
+          )}
         </header>
 
-        <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          {card.score && (
+            <span className="num rounded-full bg-ink px-2.5 py-[3px] text-[11.5px] font-bold text-surface"
+              title={`Actionability ${card.score.total}/100, computed from the filing and memory`}>
+              {row.is_actionable_signal ? "🔥 " : ""}{card.score.total}
+            </span>
+          )}
+          <span className={cn("rounded-full px-2.5 py-[3px] text-[11.5px] font-bold", IMPACT_PILL[row.impact_level])}>{IMPACT_WORD[row.impact_level]}</span>
+          {tone !== "NEUTRAL" && <span className={cn("rounded-full px-2.5 py-[3px] text-[11.5px] font-bold", TONE_CHIP[tone])}>{TONE_LABEL[tone]}</span>}
           <Chip>{EVENT_LABELS[event] ?? card.category_tag}</Chip>
           {(card.themes ?? []).map((t) => <Chip key={t}>{t}</Chip>)}
           {stage && <Chip tone={PROVISIONAL_STAGES.has(deal!.stage) ? "warn" : "neutral"}>{stage}</Chip>}
@@ -321,7 +330,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           <TechnicalChips row={row} />
         </div>
 
-        <h3 className="mt-3 font-display text-[19px] leading-snug text-ink sm:text-[21px]">{plain(card.headline)}</h3>
+        <h3 className="mt-3 font-display text-[18px] leading-snug text-ink sm:text-[19.5px]">{plain(card.headline)}</h3>
         {card.core_catalyst && (
           <p className="mt-1.5 text-[13.5px] leading-snug text-ink-2"><span aria-hidden>📌 </span><span className="font-semibold text-ink">Core catalyst:</span> {plain(card.core_catalyst)}</p>
         )}
@@ -338,7 +347,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         </ul>
 
         {(box.insights.length > 0 || box.signal || box.missing || box.fallback) && (
-          <section className="mt-4 rounded-xl bg-insight px-4 py-3">
+          <section className="mt-4 rounded-2xl bg-insight px-4 py-3">
             <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-insight-ink">{boxLabel(event)}</h4>
             <ul className="mt-2 space-y-2">
               {box.fallback && <Point>{box.fallback}</Point>}
@@ -351,22 +360,22 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           </section>
         )}
 
-        <div className="num mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-1 border-y border-line py-2 text-[13px] text-ink-3">
+        <div className="mt-3.5 flex flex-wrap items-baseline gap-2 text-[12px] font-semibold text-ink-3">
           {revenue && (
-            <span><span className="font-bold text-ink">{cr(revenue.value)}</span> {revenue.period} revenue</span>
+            <span className="rounded-[10px] bg-surface-2 px-2.5 py-1">{revenue.period} revenue <span className="num font-bold text-ink">{cr(revenue.value)}</span></span>
           )}
           {footer.map((m) => (
-            <span key={m.label} title={m.period ? `${m.label}, ${m.period}` : undefined}>{m.label} <span className="font-bold text-ink">{m.value}</span></span>
+            <span key={m.label} className="rounded-[10px] bg-surface-2 px-2.5 py-1" title={m.period ? `${m.label}, ${m.period}` : undefined}>{m.label} <span className="num font-bold text-ink">{m.value}</span></span>
           ))}
-          <span>1W <span className={cn("font-semibold", signClass(row.ret_1w))}>{pct(row.ret_1w)}</span></span>
-          <span>1M <span className={cn("font-semibold", signClass(row.ret_1m))}>{pct(row.ret_1m)}</span></span>
-          <span>1Y <span className={cn("font-semibold", signClass(row.ret_1y))}>{pct(row.ret_1y)}</span></span>
+          {([["1W", row.ret_1w], ["1M", row.ret_1m], ["1Y", row.ret_1y]] as const).map(([label, v]) => (
+            <span key={label} className="rounded-[10px] bg-surface-2 px-2.5 py-1">{label} <span className={cn("num font-bold", v == null ? "text-ink" : signClass(v))}>{pct(v)}</span></span>
+          ))}
         </div>
 
         {exporting ? (
           <p className="mt-2 text-[10.5px] text-ink-3">AI summary of a public NSE filing. Not investment advice; verify against the original filing.</p>
         ) : (
-          <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2 text-[12px] text-ink-3" data-noexport="true">
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-line pt-2.5 text-[12px] text-ink-3" data-noexport="true">
             <span className="num" title={`${istDateTime(row.filed_at)} IST`}>
               {istDateTime(row.filed_at).replace(/ \d{4},/, ",")} · {relativeTime(row.filed_at)}
               {row.market_session ? ` · ${SESSION_LABEL[row.market_session] ?? ""}` : ""}

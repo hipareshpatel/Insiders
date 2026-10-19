@@ -222,22 +222,33 @@ api.get("/brief", async (c) => {
   const days = [fromAt.slice(0, 10), todayIst()].filter((d, i, a) => a.indexOf(d) === i);
   const body = await memoised(`brief:${fromAt}`, 60_000, async () => {
     const db = c.env.DB;
-    const [cards, ledger, kv] = await db.batch([
-      db.prepare(`SELECT impact_level, sum(is_actionable_signal) AS signals, count(*) AS n FROM cards
+    const [cards, ledger, kv, bySector] = await db.batch([
+      db.prepare(`SELECT impact_level, sum(is_actionable_signal) AS signals, sum(held) AS held, count(*) AS n FROM cards
                    WHERE impact_level IN ('HIGH', 'MODERATE', 'LOW') AND filed_at >= ?1 GROUP BY impact_level`).bind(fromAt),
       db.prepare(`SELECT count(*) AS n FROM filings WHERE filing_date IN (SELECT value FROM json_each(?1)) AND filed_at >= ?2`)
         .bind(JSON.stringify(days), fromAt),
       db.prepare("SELECT key, value FROM kv WHERE key IN (SELECT 'noise_count:' || value FROM json_each(?1))").bind(JSON.stringify(days)),
+      // where the news is: published cards by sector and impact (the home page's sector bars)
+      db.prepare(`SELECT coalesce(sector, 'default') AS sector, impact_level, count(*) AS n FROM cards
+                   WHERE held = 0 AND filed_at >= ?1 GROUP BY 1, 2`).bind(fromAt),
     ]);
-    const rows = cards.results as { impact_level: string; signals: number; n: number }[];
+    const rows = cards.results as { impact_level: string; signals: number; held: number; n: number }[];
+    const sectors: Record<string, { high: number; moderate: number; low: number }> = {};
+    for (const r of bySector.results as { sector: string; impact_level: string; n: number }[]) {
+      const row = (sectors[r.sector] ??= { high: 0, moderate: 0, low: 0 });
+      if (r.impact_level === "HIGH") row.high += r.n; else if (r.impact_level === "MODERATE") row.moderate += r.n; else row.low += r.n;
+    }
+    const count = (level: string) => rows.find((r) => r.impact_level === level)?.n ?? 0;
     const material = rows.reduce((a, r) => a + r.n, 0);
     const noise = (kv.results as { value: string }[]).reduce((a, r) => a + (Number(r.value) || 0), 0);
     const queued = (ledger.results[0] as { n: number } | undefined)?.n ?? 0;
     return {
       from_at: fromAt,
       scanned: queued + noise, noise, cards: material,
-      high: rows.find((r) => r.impact_level === "HIGH")?.n ?? 0,
+      high: count("HIGH"), moderate: count("MODERATE"), low: count("LOW"),
+      held: rows.reduce((a, r) => a + (r.held ?? 0), 0),
       signals: rows.reduce((a, r) => a + (r.signals ?? 0), 0),
+      sectors,
       noise_note: "noise counts cover the whole of each day",
     };
   });
@@ -367,7 +378,14 @@ api.get("/companies/:scrip", async (c) => {
   // The dossier is spliced in as stored text: parsing and re-serialising a large one would spend
   // most of the free plan's CPU allowance.
   const dossier = object ? await object.text() : "null";
-  return c.body(`{"company":${JSON.stringify(company)},"cards":${JSON.stringify(cards.results)},"dossier":${dossier}}`, 200,
+  // Peers: the same sector's companies nearest in market cap (the company page's peers panel)
+  const co = company as { sector?: string | null; market_cap_cr?: number | null } | null;
+  const peers = co?.sector && co.sector !== "default" && co.market_cap_cr != null
+    ? (await c.env.DB.prepare(`SELECT scrip_code, symbol, company_name, market_cap_cr, ret_1m, ret_1y, card_count FROM companies
+         WHERE sector = ?1 AND scrip_code <> ?2 AND market_cap_cr IS NOT NULL
+         ORDER BY abs(market_cap_cr - ?3) LIMIT 5`).bind(co.sector, scrip, co.market_cap_cr).all()).results
+    : [];
+  return c.body(`{"company":${JSON.stringify(company)},"cards":${JSON.stringify(cards.results)},"peers":${JSON.stringify(peers)},"dossier":${dossier}}`, 200,
     { "Content-Type": "application/json; charset=UTF-8" });
 });
 

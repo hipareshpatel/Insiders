@@ -322,17 +322,17 @@ def test_second_opinion_from_another_provider_corrects_the_card(settings):
     bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
     good = json.loads(json.dumps(PASS2))
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(good)]},
+                                 {"glm-4.5-flash": [json.dumps(bad)], "nvidia/nemotron-3.5-super-vl:free": [json.dumps(good)]},
                                  env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     first, second = fake.calls
-    assert first["model"] == "nvidia/nemotron-3.5-super-vl:free" and second["model"] == "glm-4.5-flash"
+    assert first["model"] == "glm-4.5-flash" and second["model"] == "nvidia/nemotron-3.5-super-vl:free"
     verify_prompt = second["messages"][1]["content"]
     assert "DRAFT REPLY" in verify_prompt and "17.5" in verify_prompt and 'Claim not supported by the sources: "Record quarterly revenue' in verify_prompt
     body = outcome.card["card"]
     assert outcome.card["needs_review"] == 0 and body["what_happened"][1]["text"] == "PAT ₹15 Cr"
-    assert body["review"]["status"] == "CORRECTED" and body["review"]["checked_by"] == "zai/glm-4.5-flash"
-    assert body["model"] == "zai/glm-4.5-flash" and len(body["review"]["fixed"]) == 2
+    assert body["review"]["status"] == "CORRECTED" and body["review"]["checked_by"] == "openrouter/nvidia/nemotron-3.5-super-vl:free"
+    assert body["model"] == "openrouter/nvidia/nemotron-3.5-super-vl:free" and len(body["review"]["fixed"]) == 2
 
 
 def test_one_unmatched_amount_gets_a_second_opinion_even_above_the_review_threshold(settings):
@@ -344,7 +344,7 @@ def test_one_unmatched_amount_gets_a_second_opinion_even_above_the_review_thresh
     bad["card"]["what_happened"] = ["Revenue ₹120 Cr vs ₹90.9 Cr a year ago", "PAT ₹16.5 Cr"]  # PAT was ₹15 Cr
     good = json.loads(json.dumps(PASS2))
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(good)]},
+                                 {"glm-4.5-flash": [json.dumps(bad)], "nvidia/nemotron-3.5-super-vl:free": [json.dumps(good)]},
                                  env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert len(fake.calls) == 2
@@ -569,7 +569,7 @@ def test_a_results_reading_that_does_not_add_up_goes_to_a_second_provider(settin
     good = json.loads(json.dumps(bad))
     good["dossier_delta"]["financial_metrics"][-1]["value"] = 15
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(good)]},
+                                 {"glm-4.5-flash": [json.dumps(bad)], "nvidia/nemotron-3.5-super-vl:free": [json.dumps(good)]},
                                  env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert len(fake.calls) == 2, "the figures that did not add up sent the card to a second provider"

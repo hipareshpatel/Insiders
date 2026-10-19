@@ -252,7 +252,7 @@ def test_second_opinion_reply_with_only_a_card_keeps_the_memory(settings):
     bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
     card_only = {"is_material": True, "card": PASS2["card"]}
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(card_only)]},
+                              {"glm-4.5-flash": [json.dumps(bad)], "nvidia/nemotron-3.5-super-vl:free": [json.dumps(card_only)]},
                               env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert outcome.card["card"]["review"]["status"] == "CORRECTED"

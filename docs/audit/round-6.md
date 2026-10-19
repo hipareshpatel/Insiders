@@ -88,3 +88,9 @@ writer stays on the routes only as a spare, and only if its published WRONG is *
 share than Gemini. Two caveats are read with the result: (1) the trial runs on code that already has round 6's fixes
 (ownership, foreign amounts, vote counts, results comparisons), so Gemini's 5.5% was measured on older code and a trial
 writer level with it may be a little worse; (2) with about 50 cards a writer the sampling margin is roughly ±6 points.
+
+**Trial outcome (stopped at 19:05 IST, 40 minutes in):** not a quality result but a supply one. OpenRouter's free models
+could not carry the lanes: 24 429s, MiniMax 16 empty answers and its circuit opened, Gemma 28 429s, Nemotron 3.5 Super VL
+empty answers on long documents (15 filings failed); lane B stopped with every provider busy. 13 cards were written (3
+MiniMax, 10 by the GLM spare); not reviewed. MiniMax and Gemma are off the card routes again (`docs/AI_PROVIDERS.md`).
+Round 6's companies are left as the trial left them; their reviewed cards are in `data/audit/round6/cards_reviewed.json`.

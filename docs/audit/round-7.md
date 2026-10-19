@@ -20,8 +20,7 @@ providers only), started after Gemini's quota reset (12:30 IST), on the start co
 published and held card reviewed blind by independent agents with `REVIEWER_PROMPT_ROUND4.md` word for word (the
 missed-news prompt with round 6's one change: a set-aside call transcript is MISSED). ~50 set-aside filings.
 
-Added before the run (2026-10-19): two OpenRouter free writers on trial, MiniMax M3.1 Flash and Gemma 4 31B, with a
-share of the regular pass-2 routes, reported per writer like the rest; and the **pack bleed check** -
+Added before the run (2026-10-19): the **pack bleed check** -
 `scripts/audit_round7/pack_bleed.py` after the run (every packed card records its pack's members), with the reviewers'
 issue class `other` labelled "fact from another filing" when a card states a fact that belongs to another filing.
 
@@ -29,6 +28,9 @@ Also added before the run (owner, 2026-10-19 19:20 IST): Gemini 3.5 Flash and 3 
 after 3.6, 3.7 and 3.8 Flash, each with its own free daily quota (60 -> 100 packed requests a day), so a round no longer
 runs out of Gemini as round 6 did; reported per model. Gemini 3.5 Flash Lite is last (owner): it writes a pack only when all five
 Flash models are out for the day, under the trial writers' rule (at most about 8% WRONG).
+
+MiniMax and Gemma were planned as trial writers and taken off again before the run (their evening trial failed on
+supply, round-6.md); long documents go to Gemini 3.6 Flash first.
 
 ## Pass marks, set before any processing or review
 

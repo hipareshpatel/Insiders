@@ -289,34 +289,19 @@ limits = { rpm = 60, tpd = 60_000 }
 [[routes.pass2]]
 provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
-weight = 5
+weight = 2
 json_mode = true
 max_tokens = 8000
 context_tokens = 250000
-limits = { rpm = 8 }
+limits = { rpm = 10 }
 
+# Writer trial of 2026-10-19 evening (docs/audit/round-6.md): OpenRouter's free models could not carry a lane - 24 429s,
+# MiniMax 16 empty answers, Nemotron 3.5 Super VL 240 failures in 573 requests over two days, Gemma 28 429s - so MiniMax
+# and Gemma are off the card routes again and VL keeps a small share; long documents go to Gemini 3.6 Flash first.
 # Probed 2026-10-19 on a lakh-to-crore, YoY and direction question: MiniMax M3.1 Flash and Gemma 4 31B (OpenRouter,
 # free) both right in 3-4 s; on NVIDIA DeepSeek V4.1 Flash and GLM-5.3 timed out, Kimi K2.6 is listed but not served
 # (404), GLM-5.3 Flash wrote revenue 10x too high. Given a share in round 7 to be measured per writer, like the rest;
 # the three OpenRouter entries keep the route under its 20 a minute.
-[[routes.pass2]]
-provider = "openrouter"
-model = "minimax/minimax-m3.1-flash:free"
-weight = 3
-json_mode = true
-max_tokens = 8000
-context_tokens = 120000
-limits = { rpm = 6 }
-
-[[routes.pass2]]
-provider = "openrouter"
-model = "google/gemma-4-31b-it:free"
-weight = 2
-json_mode = false   # it answers in a fenced block; the reply is parsed as for other models
-max_tokens = 8000
-context_tokens = 120000
-limits = { rpm = 6 }
-
 [[routes.pass2_bulk]]
 provider = "zai"
 model = "glm-4.5-flash"
@@ -360,11 +345,11 @@ limits = { rpm = 60, tpd = 60_000 }
 [[routes.pass2_bulk]]
 provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
-weight = 4
+weight = 2
 json_mode = true
 max_tokens = 8000
 context_tokens = 250000
-limits = { rpm = 8 }
+limits = { rpm = 10 }
 
 # Pass 2 packed (PASS2_PACK=N, ai/packer.py): N filings in one request, so a free model with few requests a day can
 # write a regular share of cards. Gemini 3.6 Flash wrote the best free cards in round 4 (11% WRONG on 9) but allows 20
@@ -375,24 +360,6 @@ limits = { rpm = 8 }
 # free) both right in 3-4 s; on NVIDIA DeepSeek V4.1 Flash and GLM-5.3 timed out, Kimi K2.6 is listed but not served
 # (404), GLM-5.3 Flash wrote revenue 10x too high. Given a share in round 7 to be measured per writer, like the rest;
 # the three OpenRouter entries keep the route under its 20 a minute.
-[[routes.pass2_bulk]]
-provider = "openrouter"
-model = "minimax/minimax-m3.1-flash:free"
-weight = 3
-json_mode = true
-max_tokens = 8000
-context_tokens = 120000
-limits = { rpm = 6 }
-
-[[routes.pass2_bulk]]
-provider = "openrouter"
-model = "google/gemma-4-31b-it:free"
-weight = 2
-json_mode = false   # it answers in a fenced block; the reply is parsed as for other models
-max_tokens = 8000
-context_tokens = 120000
-limits = { rpm = 6 }
-
 [[routes.pass2_packed]]
 provider = "gemini"
 model = "gemini-3.6-flash"
@@ -498,7 +465,7 @@ limits = { rpm = 10 }
 [[routes.pass2_long]]
 provider = "gemini"
 model = "gemini-3.6-flash"  # 1M-token window for the longest annual reports
-spare = true
+weight = 3
 json_mode = true
 max_tokens = 6000
 context_tokens = 900000

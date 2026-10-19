@@ -30,7 +30,7 @@ c = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
 c.row_factory = sqlite3.Row
 marks = ",".join("?" * len(scrips))
 rows = [dict(r) for r in c.execute(
-    "select c.news_id, f.scrip_code, f.filed_at, f.headline headline_filing, f.subject, c.card_json, c.held "
+    "select c.news_id, f.scrip_code, f.filed_at, f.headline headline_filing, f.subject, c.card_json, c.held, c.impact_level "
     f"from cards c join filings f using(news_id) where f.scrip_code in ({marks}) "
     "and f.filing_date between ? and ? order by c.news_id", (*scrips, lo, hi))]
 rng = random.Random(SPEC["seed"])

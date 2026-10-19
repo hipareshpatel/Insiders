@@ -147,6 +147,10 @@ def main() -> int:
         folder.mkdir(parents=True, exist_ok=True)
         card = json.loads(row["card_json"])
         keep = {k: card.get(k) for k in keep_fields}
+        if row.get("impact_level"):
+            # the impact the site shows is the card's score, not the writer's call: round 5's reviewers judged the
+            # writer's and 55 of 140 shown impacts went unchecked against what a reader sees (2026-10-19)
+            keep["impact_level"] = row["impact_level"]
         if sink is not None:
             scrip = str(row.get("scrip_code"))
             if scrip not in dossiers:

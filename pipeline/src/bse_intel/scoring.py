@@ -280,6 +280,11 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
     total_points = max(0, min(100, total_points))
     gates = {"magnitude": gate1, "inflection": gate2, "price": gate3, "clean": not vetoes}
     impact = "HIGH" if total_points >= HIGH else "MODERATE" if total_points >= MODERATE else "LOW"
+    if impact == "LOW" and event_type == "RESULTS":
+        # A quarter's results always matter to a holder (pass 2's own rule): the blind agents of round 5 put 12 of the
+        # results cards shown LOW at MODERATE or HIGH (2026-10-19). The points and the actionable flag are unchanged.
+        impact = "MODERATE"
+        reasons.append("Impact: results are at least moderate")
     actionable = total_points >= HIGH and gates["clean"] and sum((gate1, gate2, gate3)) >= 2
     return Score(total_points, impact, actionable, pillars, gates, vetoes, reasons, cred)
 

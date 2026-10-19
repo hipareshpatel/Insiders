@@ -71,3 +71,8 @@ What the agents found, by class, and what was done (2026-10-19, after the review
    the same companies with packed Gemini writing pass 2.
 7. Open, not yet fixed: impact level set too high on routine reaffirmations and procedural steps (49 of 140 off);
    pending approvals copied from a stale memory watchlist; ratios against a holding company's standalone revenue.
+8. **Impact level, measured against what the site shows** (2026-10-19, after the review). The export gave reviewers
+   the writer's impact; the site shows the card's score. Against the agents' calls the writer fitted 91 of 140, the
+   site's score 85: it fixed overrated cards (22 shown LOW where the writer said MODERATE and the agents said LOW) but
+   put 12 results cards at LOW. Results are now never shown LOW (`scoring.score`, test), and the export carries the
+   shown impact from round 6 on (`audit_export.py`, `audit_round5/sample_cards.py`).

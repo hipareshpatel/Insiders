@@ -146,3 +146,12 @@ def test_dampened_category_costs_five_points():
     base = score(card, "ORDER_WIN", [], None, {}, needs_review=False, model_impact="HIGH")
     damp = score(card, "ORDER_WIN", [], None, {}, needs_review=False, model_impact="HIGH", dampened=True)
     assert damp.total == base.total - 5 and any(r.startswith("Calibration:") for r in damp.reasons)
+
+
+def test_results_are_never_shown_low():
+    """Round 5 (2026-10-19): 12 results cards were shown LOW; the blind agents put every one at MODERATE or HIGH."""
+    from bse_intel.scoring import score
+
+    card = {"headline": "Quiet quarter", "what_happened": [{"text": "Revenue flat"}]}
+    assert score(card, "RESULTS", [], None, {}, needs_review=True, model_impact="LOW").impact == "MODERATE"
+    assert score(card, "OTHER", [], None, {}, needs_review=True, model_impact="LOW").impact == "LOW"

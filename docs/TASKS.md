@@ -417,3 +417,28 @@ P-L1 is the general case: an XBRL figure more than 1% from the statement's own p
 and EBITDA with the PDF's printed figure (`xbrl.appears_in` on the cached text) and count the misses by cause. Step 2
 (cloud): if misses are more than ~1 in 100 figures, build the per-figure check (PDF value used and noted on the card when
 the PDF prints it; XBRL kept when it does not). Not before round 7 ends, so the round measures one code.
+
+### P-L2 · four fault classes from the owner's first live review (Jindal Stainless `44c7bf29`, 2026-10-20)
+
+Reviewed with the owner against the filing (Chromeni Steels, a JSL subsidiary, takes 40% of Oyster Green Hybrid Four
+for a 24 MW captive wind-solar plant; ₹1.25 Cr now, ₹12.50 Cr committed). The card's facts are right (40%, 24 MW,
+₹1.25 / ₹12.50 Cr, ~70 million units a year, commissioning Q1 FY2027-28, net zero by 2050; "0.1% of net worth" = 12.50 /
+20,672). Wrong or misleading:
+1. **"formerly AGH Dreams Private Limited (now AGH Dreams Limited)"** next to the company name. `companies.former_names_json`
+   for JSL holds four other companies' renames (AGH Dreams, Utkrisht Dream Ventures, Jindal Strategic Systems -> Jindal
+   Quanta, Chromeni Steels), and the header shows the first. Heritage's page showed its subsidiary "Heritage Novandie
+   Foods Private Limited (now ...)" the same way. Rule: a former name is the listed company's own ("formerly X" in its
+   own name change, the exchange's previous-name field), never an "X (now Y)" where Y is another entity.
+2. **"Guidance breach: Deadline passed ... EBITDA per tonne ₹18,000-20,000 for H1FY27 ... no delivery on record"**: false. H1FY27
+   ended 30 Sep; JSL's Q2 results were not filed yet (latest results card Q1FY27, 3 Aug), and Q1's EBITDA/t was 22,884,
+   above the range. Rule: guidance due at a period's end is not breached until that period's results (and call) are in;
+   until then it is pending.
+3. **Held for a false reason.** Quantified impact "annual_units * tariff_inr / 1e7" with annual_units 70 "million units"
+   gives 4.55e-05 in the check, because the check ignored the input's "million". The card's 45.5 (70e6 x 6.5 / 1e7) is
+   the right arithmetic. Rule: the formula check applies an input's stated scale (million, lakh, crore). Also, the tariff
+   is an ASSUMPTION, so the line is an estimate; it should say so or stay off the face.
+4. **The deal block:** "From: Oyster Green Hybrid Four" names the target (the company invested in), not a seller, so
+   the label should read "Target" for an acquisition. The progress dots light "Shareholders", but no shareholder approval
+   is involved ("No approval is required for this acquisition"; a tranche was paid). Also left out: the filing says the
+   counterparty is a **related party** (Oyster Renewable, common promoter group, "at arm's length").
+Owner's verdict on the card: theirs to record on the site.

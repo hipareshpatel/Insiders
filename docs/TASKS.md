@@ -127,6 +127,14 @@ read "loss to profit"); UCO's 26 Oct strike twice (Other + Milestone with differ
 re-appointment in the calendar (Bandhan, D30); "has informed BSE" in NSE meeting texts; Ahluwalia's promise "it would
 be about 15%." (a fragment); CSB credit-cost targets for Q4FY26/Q1FY27 still Open.
 
+**Cloud on T11 (2026-10-20), fixed:** held cards private (a public link and the public review queue no longer show one;
+the owner's routes do); the System page's provider rows truncate at 390 px; generic calendar events of one company and
+day are one (UCO); a change across a loss reads "Loss to profit" / "Profit to loss" / "Loss narrowed / widened", not a %;
+banks' and insurers' top line on the Results page; "What to track" shows 8 with "Show all"; `refresh-summaries` for
+the stale overdue list. Not yet: the calendar's "has informed BSE" texts, the AHLUCONT fragment and governance catalysts
+(pipeline catalysts, after round 7); Dabur's import alert (the case steps read the card, which does not name it).
+Checks: T13 step 5.
+
 ## T7 · P1 · laptop · DONE — confirm the re-check fixes on the same filings
 
 After pulling the commit that follows `bdd7f99`, process again (`process --news-ids`, FREE_ONLY):

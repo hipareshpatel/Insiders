@@ -41,7 +41,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev,ocr]"      # ocr: RapidOCR for scanned pages (optional)
-python -m pytest -q              # 665 tests; web: npm test (card text, calendar, chart)
+python -m pytest -q              # 667 tests; web: npm test (card text, calendar, chart)
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -71,6 +71,7 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 | `python -m bse_intel governance-sync [--pages N]` | The quarterly governance XBRL of the universe's companies into memory (board, committees, SEBI flags, penalties, loans and guarantees to insiders, cyber incidents); no AI, no card. The live run does 40 a run; `--pages` reads back for the backfill |
 | `python -m bse_intel shareholding-sync [--days N]` | Each universe company's quarterly shareholding XBRL into memory (promoter, pledge, FII, DII), cross-checked against NSE's list; no AI, no card. The live run reads 10 days |
 | `pledge-sync [--days N] [--scrips a,b]` | Promoter pledge events (NSE SAST Reg 31) into memory, no AI (module 42); also at the end of every live run |
+| `refresh-summaries [--scrips a,b]` | Rebuild each company's stored summary (overdue promises, radar, credibility) from its memory, no AI; run after a change to what summaries hold |
 | `dgtr-sync [--pages N] [--scrips a,b]` | DGTR anti-dumping / countervailing / safeguard cases into the memory of the companies their notices name as applicant or supporter, no AI (module 8); once a day in a live run (`NSE_DGTR=0` off); `--pages 42` reads every listed case (OCR of scanned notices, hours) |
 | `python -m bse_intel sync-universe` | NSE's main-board equity list joined to the company master by ISIN: the companies analysed (market cap ≥ `UNIVERSE_MIN_MCAP_CR`, ₹500 Cr; unpriced and watchlisted ones stay in) and the maps NSE discovery uses. Needed before NSE discovery; `market-data` and `sync-companies` rebuild it too. 1,778 companies on 2026-10-19 at ₹500 Cr |
 | `python -m bse_intel sync-companies [--max-lookups N] [--refresh-industry]` | BSE's active equity list, then each company's industry from its quote header (once per company; → sector lens) and size label, then the universe file |

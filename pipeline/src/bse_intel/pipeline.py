@@ -2130,7 +2130,7 @@ class Pipeline:
         # must never be dropped, and results have their own one-card-per-quarter rule. This keeps the
         # extra call off most filings - free-tier requests were what tripped the breaker, so spending one
         # everywhere would trade a paid call for the scarcer thing.
-        if filing.route != "PASS1" and event_type in ONE_EVENT_ONE_CARD:
+        if filing.route != "PASS1" and event_type in ONE_EVENT_ONE_CARD and not is_transcript(filing):
             # Only entries close enough to be the same event: with nothing within the window there is
             # nothing to repeat, so the call is not made at all. Most filings never reach it.
             since = (datetime.fromisoformat(filing.filed_at) - timedelta(days=REPEAT_DAYS)).isoformat()
@@ -2227,7 +2227,7 @@ class Pipeline:
             return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": out.event_type,
                             "reason": f"pass2: not material{': ' + out.reason if out.reason else ''}"[:300],
                             "updated_at": now})
-        if out.event_type in ONE_EVENT_ONE_CARD and out.timeline_entry:
+        if out.event_type in ONE_EVENT_ONE_CARD and out.timeline_entry and not is_transcript(filing):
             repeat = similar_timeline_entry(dossier, filing, out.timeline_entry)
             if repeat:  # the same event filed again in other words (BSE takes one submission per subcategory)
                 with self._lock:
@@ -2896,6 +2896,17 @@ NO_CARD_EVENTS = ("MANAGEMENT_CHANGE",)
 _EXIT = r"(resign\w*|cessation|ceas(e|es|ed|ing)\b|step(s|ped|ping)?\s+down|removal|removed|retire(s|d|ment)?\b(?!\s+by\s+rotation)|superannuat\w*|demise|passed away)"
 _ROLE = r"(managing director|\bmd\b|chief executive|\bceo\b|chief financial|\bcfo\b)"
 TOP_EXIT = re.compile(rf"{_EXIT}.{{0,120}}{_ROLE}|{_ROLE}.{{0,120}}{_EXIT}", re.I | re.S)
+
+
+_TRANSCRIPT = re.compile(r"\btranscripts?\b", re.I)
+
+
+def is_transcript(filing) -> bool:
+    """A call transcript always gets its own card (owner, 2026-10-19: "big yes", for its forward-looking statements):
+    never a repeat of its results card or of the deck. Round 5: Texmaco's Q1 transcript (an order book of ₹9,923 Cr, a
+    South Africa order, a plan to double revenue by 2030) was set aside as the results card "in other words". An exact
+    refiling of the same transcript is still one document to duplicates.py."""
+    return bool(_TRANSCRIPT.search(f"{filing.headline or ''} {filing.subject or ''}"))
 
 
 def top_exit(text: str | None) -> bool:

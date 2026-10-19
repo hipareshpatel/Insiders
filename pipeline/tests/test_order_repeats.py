@@ -120,3 +120,18 @@ def test_a_filing_that_continues_an_intimation_moves_that_deal_on():
     twice = {"deals": view["deals"] + [{"id": "d_twin", "date": "2026-09-08", "kind": "ORDER"}]}
     assert continued_deal(out(), twice, text) == []
     assert str(_stated_date("September 8, 2026")) == str(_stated_date("08.09.2026")) == "2026-09-08"
+
+
+def test_a_call_transcript_is_never_a_repeat_of_its_results():
+    """Owner, 2026-10-19: transcripts get their own card for their forward-looking statements. Round 5's Texmaco Q1
+    transcript had been set aside as its results card "in other words"."""
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import is_transcript
+
+    def filing(headline, subject="Analysts/Institutional Investor Meet/Con. Call Updates"):
+        return Filing(news_id="nse-1", scrip_code="533326", company_name="Texmaco Rail & Engineering Limited",
+                      headline=headline, subject=subject, filed_at="2026-08-10T10:00:00+05:30", filing_date="2026-08-10")
+
+    assert is_transcript(filing("Texmaco Rail & Engineering Limited has informed the Exchange about Transcript"))
+    assert is_transcript(filing("Transcripts of the earnings call for Q1FY27"))
+    assert not is_transcript(filing("Texmaco Rail & Engineering Limited has informed the Exchange about Investor Presentation"))

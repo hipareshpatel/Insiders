@@ -307,6 +307,8 @@ def fix_foreign_crore(out: Pass2Output, text: str) -> list[str]:
         written = float(figure.replace(",", ""))
         if not written or any(abs(f / 1e7 - written) <= 0.005 * written + 1e-9 for f in figures):
             continue                                         # the filing has it at that size
+        if re.search(rf"(?<![\d.,]){re.escape(figure)}\s*(?:cr\b|crores?\b)", text, re.I):
+            continue                                         # the filing writes it in crore too ("USD 2 crore")
         for scale in (1e6, 1e5, 1e8, 1e9):                   # read as million or lakh, or ten or a hundred times small
             right = next((f / 1e7 for f in figures if abs(f / scale - written) <= 0.005 * written + 1e-9), None)
             if right is not None:

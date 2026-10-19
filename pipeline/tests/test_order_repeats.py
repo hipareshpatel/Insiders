@@ -189,6 +189,12 @@ def test_a_foreign_amount_written_in_crore_at_the_wrong_size_is_set_right():
         "is_material": True, "event_type": "ORDER_WIN",
         "card": {"impact_level": "LOW", "headline": "Order of USD 13.5 Cr", "what_happened": ["USD 13.5 Cr order"]}})
     assert fix_foreign_crore(ok, "An order of USD 135,000,000.") == []    # 135 million is 13.5 crore: right as written
+    # the filing writes the amount in crore itself; a share count that is the same digits at lakh size is not it
+    two = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A",
+        "card": {"impact_level": "LOW", "headline": "Invests USD 2 Cr in its US arm", "what_happened": ["USD 2 Cr"]}})
+    assert fix_foreign_crore(two, "An investment of USD 2 crore for 2,00,000 equity shares of the US subsidiary.") == []
+    assert two.card.headline == "Invests USD 2 Cr in its US arm"
 
 
 def test_a_count_of_votes_written_in_crore_at_the_wrong_size_is_set_right():

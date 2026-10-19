@@ -62,6 +62,22 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T11 · P1 · laptop · OPEN — screenshots of the site on real data (owner asked, 2026-10-20)
+
+The owner wants to see the site as it is now with the laptop's real data; the cloud has only demo data. With the local
+site running (`npm run dev`), take full-page screenshots at **1280 px** and **390 px** (phone), light mode, plus dark mode
+for the first two. Do not run anything that spends AI quota for this; round 7 comes first if they clash.
+1. `/` (Today), default range, and `/feed?range=all`.
+2. Five cards opened, one each: a bank results card, another results card, an order win, a credit rating, a
+   regulatory/legal card (the T7 filings are fine).
+3. Three company pages, each on Overview, Results and Owners: one bank, one with several cards, one with a price chart
+   (after T9's `market-data`) or say none has one yet.
+4. `/calendar`, `/results`, and the held-card review queue.
+Save them as PNG in `docs/audit/screens-2026-10-20/` named `<nn>-<page>-<width>.png` (keep each under ~1.5 MB; a JPEG at
+quality 80 is fine for long pages), plus `index.md` with one line per shot: the URL and anything that looks wrong
+against the data (a figure, an empty panel, a cut label).
+Files you may change: `docs/audit/screens-2026-10-20/`. Report: here, with the count and the worst three problems seen.
+
 ## T7 · P1 · laptop · OPEN — confirm the re-check fixes on the same filings
 
 After pulling the commit that follows `bdd7f99`, process again (`process --news-ids`, FREE_ONLY):

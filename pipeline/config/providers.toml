@@ -76,12 +76,15 @@ timeout_s = 120
 # the quota named in Gemini's own 429 replies. The daily limits are still
 # guesses: a 429 naming a per-day quota retires the model until midnight
 # Pacific and its value shows as the model's last error on the System page.
+# Measured 2026-10-19 (Gemini's own 429 quota detail): 20 requests a day per
+# model for 3.5 and 3.6 Flash, each model counted apart; 3.7 and 3.8 Flash
+# answer (33 s and 52 s for a one-word reply); 2.5 Flash and Pro are retired.
 # Free-tier prompts may be used by Google to improve its products, which is
 # acceptable here because BSE filings are public. gemini-4-argon and
 # gemini-3.1-pro-preview are paid-only.
 base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
 api_key_env = "GEMINI_API_KEY"
-timeout_s = 120
+timeout_s = 300  # a packed pass-2 request carries several filings and runs for minutes
 
 [providers.cloudflare]
 # Workers AI through this project's own Worker (AI binding), so the runner
@@ -359,11 +362,30 @@ context_tokens = 250000
 limits = { rpm = 10 }
 
 # Pass 2 packed (PASS2_PACK=N, ai/packer.py): N filings in one request, so a free model with few requests a day can
-# write a regular share of cards. Gemini 3.6 Flash wrote the best free cards in round 4 (11% WRONG on 9) but allows about
-# 20 requests a day; packed 6 to a request that is ~120 cards. Its limiter is shared with its other routes.
+# write a regular share of cards. Gemini 3.6 Flash wrote the best free cards in round 4 (11% WRONG on 9) but allows 20
+# requests a day, each Gemini model counted apart (measured 2026-10-19): three models packed 6 to a request is ~360
+# cards a day. In order; a model out of its day's quota hands the pack to the next.
 [[routes.pass2_packed]]
 provider = "gemini"
 model = "gemini-3.6-flash"
+json_mode = true
+max_tokens = 60000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
+[[routes.pass2_packed]]
+provider = "gemini"
+model = "gemini-3.7-flash"
+json_mode = true
+max_tokens = 60000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
+[[routes.pass2_packed]]
+provider = "gemini"
+model = "gemini-3.8-flash"
 json_mode = true
 max_tokens = 60000
 context_tokens = 900000

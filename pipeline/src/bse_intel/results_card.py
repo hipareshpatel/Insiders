@@ -246,23 +246,38 @@ def unconfirmed_changes(tagged, text: str) -> list[str]:
     those quarters' own files, which keep the figures first reported; a statement that restates them (Ambuja after the
     Orient Cement purchase-price allocation, Titagarh) prints the restated ones, and the change against the old figure
     was wrong (round 6, 2026-10-19). Figures too small to tell apart in the text are left as they are."""
-    from .xbrl import appears_in
-
     if not text or tagged is None:
         return []
+    numbers = sorted({float(n.replace(",", "")) for n in re.findall(r"\d[\d,]*\.?\d*", text)
+                      if n.replace(",", "").replace(".", "").isdigit()})
     dropped = []
     for m in tagged.metrics:
         if m.period != tagged.period or m.value is None or m.unit in ("PCT", "INR"):
             continue
         for attr, label in (("yoy_pct", "YoY"), ("qoq_pct", "QoQ")):
             pct = getattr(m, attr)
-            if pct is None or pct <= -100:
+            if pct is None or pct <= -99.95:
                 continue
-            comparative = m.value / (1 + pct / 100)
-            if appears_in([comparative], text) is False:
+            if _printed(m.value, pct, numbers) is False:
                 setattr(m, attr, None)
                 dropped.append(f"{m.metric} {label}")
     return dropped
+
+
+def _printed(value: float, pct: float, numbers: list[float]) -> bool | None:
+    """Whether the text has a figure, in crore, lakh, million, thousand or rupees, that gives this change. The change is
+    stored to one decimal, so the comparative is a range (₹6,296.67 Cr at +12.3% is anything from ₹5,604.5 to ₹5,609.5
+    Cr), not the one figure worked back from it. None when the comparative is too small to tell from other numbers."""
+    ends = [abs(value) / (1 + (pct + d) / 100) for d in (0.05, -0.05)]
+    checked = False
+    for scale in (1, 100, 10, 10_000, 1e7):  # crore, lakh, million, thousand, rupees
+        low, high = min(ends) * scale - 0.5, max(ends) * scale + 0.5
+        if high < 10:
+            continue
+        checked = True
+        if any(low <= n <= high for n in numbers):
+            return True
+    return False if checked else None
 
 
 def build(out, tagged, company_name: str | None, history=None, text: str = "") -> list[str]:

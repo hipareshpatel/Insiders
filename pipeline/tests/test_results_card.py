@@ -223,3 +223,8 @@ def test_a_change_against_a_comparative_the_filing_does_not_print_is_left_out():
     text = "Net profit 660.00 1,041.12 (restated). Revenue from operations 9,500.00 8,636.36"
     assert unconfirmed_changes(tagged, text) == ["pat YoY"]
     assert tagged.metrics[0].yoy_pct is None and tagged.metrics[1].yoy_pct == 10.0
+    # a change is stored to one decimal: the printed comparative it was made from is found, in crore or in lakh
+    for printed in ("Net profit 6,296.67 5,604.97", "Net profit 6,29,667 5,60,497 (Rs in lakh)"):
+        rounded = XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q1FY27", metrics=[
+            FinancialMetric(metric="pat", period="Q1FY27", value=6296.67, yoy_pct=12.3)])   # 6,296.67 / 5,604.97 - 1
+        assert unconfirmed_changes(rounded, printed) == [] and rounded.metrics[0].yoy_pct == 12.3

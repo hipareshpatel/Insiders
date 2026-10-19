@@ -164,3 +164,13 @@ What is still WRONG on published cards (reviewers' reports):
 Next: whole-rupee amounts and the remaining unit paths, the direction guard on notable changes and without XBRL, then
 round 5 on fresh companies.
 
+## A check on causes, outcomes and stages, measured and not adopted (2026-10-19)
+
+`causes.py` picks a card's sentences that hang a cause, an outcome or a stage on the news, asks a model on the free card
+route whether the filing states each, wants the filing's own sentence back and keeps the claim only when code finds that
+sentence in the filing. Measured offline on the re-run's 120 reviewed cards (`scripts/claims_probe.py`, free providers):
+153 claim sentences, 111 would be cut (73%); of the 27 fields the reviewers flagged as invented or wrong in direction, 8
+were cut (8 more had no claim sentence the pattern picks); 23 cuts fell on 15 of the 42 cards the reviewers called OK.
+Too blunt to wire in, like the NLI check before it (`nli-round-1.md`): a free model deciding "is this stated" cuts true
+claims as readily as invented ones. Kept as a module and a probe for a stronger checker later.
+

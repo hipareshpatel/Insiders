@@ -13,9 +13,16 @@ import { EVENT_LABELS, IMPACT_LABEL, IMPACT_TEXT, SECTORS, TONE_STRIPE, type Ton
 import { TickerChip } from "./Avatar";
 import { plain, RichText } from "./RichText";
 
+/** Signal types the pipeline has turned off (signals.py SIGNALS_OFF): cards written before then still carry them, and
+ * live reviews 1-2 found them wrong on the card's face (Ahluwalia's margin mix, Shivam's EPS shift, CSB's resolved
+ * prediction). Keep in step with SIGNALS_OFF. */
+export const SIGNALS_OFF = new Set<string>(["DILUTION", "MARGIN_MIX", "CAPITAL_COMPOUNDER", "METRIC_SHIFT", "PREDICTION_RESOLVED",
+  "CAPITAL_DILUTER", "JAWS"]);
+
 export function parseCard(row: CardRow): CardBody | null {
   try {
-    return JSON.parse(row.card_json) as CardBody;
+    const card = JSON.parse(row.card_json) as CardBody;
+    return { ...card, signals: (card.signals ?? []).filter((s) => !SIGNALS_OFF.has(s.type)) };
   } catch {
     return null;
   }

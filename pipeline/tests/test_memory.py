@@ -660,3 +660,15 @@ def test_jindal_period_guidance_waits_for_its_results():
               output(guidance=[{"statement": "EBITDA per tonne of ₹18,000-20,000 for H1FY27", "due": "H1FY27"}]),
               filing("g", given), "LOW", "now")
     assert breach("2027-02-05T18:00:00+05:30")
+
+
+def test_a_watch_long_past_its_quarter_or_already_settled_is_not_resolved_again():
+    """Novartis India (live review 2): a Q4FY25 EBITDA-margin watch, met in May 2025, was "met" again by the
+    Q2FY26 results in Nov 2025 and shown as a signal on that card."""
+    from bse_intel.dossier import watch_verdict
+
+    w = {"id": "w1", "kind": "KPI", "text": "EBITDA margin above 25%", "target": "above 25%",
+         "check_by": "2025-03-31", "status": "OPEN"}
+    assert watch_verdict(w, "MET", "EBITDA margin 27.5%", "2025-05-20T17:00:00+05:30") == "MET"
+    assert watch_verdict(w, "MET", "EBITDA margin 27.5%", "2025-11-10T17:00:00+05:30") == "PENDING"
+    assert watch_verdict({**w, "status": "MET"}, "MET", "EBITDA margin 27.5%", "2025-05-21T17:00:00+05:30") == "PENDING"

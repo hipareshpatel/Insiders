@@ -19,7 +19,7 @@ import logging
 import hashlib
 import json
 import re
-from datetime import timedelta
+from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
@@ -171,13 +171,20 @@ def _topic_words(text: str) -> set[str]:
     return {w[:5] for w in re.findall(r"[a-z]{4,}", (text or "").lower()) if w not in _TOPIC_STOP}
 
 
-def watch_verdict(watch: dict, status: str, evidence: str | None) -> str:
+WATCH_STALE_DAYS = 120   # a watch due this long before a filing has expired; that filing cannot settle it
+
+
+def watch_verdict(watch: dict, status: str, evidence: str | None, as_of: str | None = None) -> str:
     """The model's verdict on a watch item, checked in code. "Met"/"missed" with no news ("not disclosed
     in Q1FY26 results; watchlist item overdue", "no update in filing; assumed resolved") or with
     evidence about another item (a debt/EBITDA check answered with a director's appointment) stays
     PENDING; a KPI verdict is then checked against its target and quarter (kpi_verdict)."""
     if status not in ("MET", "MISSED"):
         return status
+    if watch.get("status") in ("MET", "MISSED"):
+        return "PENDING"  # settled already: Novartis's Q4FY25 margin watch, met in May 2025, was "met" again in Q2FY26
+    if as_of and watch.get("check_by") and watch["check_by"] < (date.fromisoformat(as_of[:10]) - timedelta(days=WATCH_STALE_DAYS)).isoformat():
+        return "PENDING"  # its quarter is long past: a later quarter's figure does not answer it (live review 2)
     evidence = evidence or ""
     if _NO_NEWS.search(evidence):
         return "PENDING"
@@ -803,7 +810,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             continue
         if w["kind"] == "APPROVAL" and update.status == "MET" and not approval_granted(update.evidence):
             continue  # SML: "Approval met: CCI approval ..." with the evidence "CCI approval pending"
-        status = watch_verdict(w, update.status, update.evidence)
+        status = watch_verdict(w, update.status, update.evidence, as_of)
         if status == "PENDING" and update.status != "PENDING":
             continue  # no news, another item's news, or an earlier quarter's figure: settles nothing yet
         w["status_history"] = sorted(w.get("status_history", []) + [{

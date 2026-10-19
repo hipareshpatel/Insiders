@@ -27,7 +27,8 @@ issue class `other` labelled "fact from another filing" when a card states a fac
 
 Also added before the run (owner, 2026-10-19 19:20 IST): Gemini 3.5 Flash and 3 Flash preview join the packed rotation
 after 3.6, 3.7 and 3.8 Flash, each with its own free daily quota (60 -> 100 packed requests a day), so a round no longer
-runs out of Gemini as round 6 did; reported per model.
+runs out of Gemini as round 6 did; reported per model. Gemini 3.5 Flash Lite is last (owner): it writes a pack only when all five
+Flash models are out for the day, under the trial writers' rule (at most about 8% WRONG).
 
 ## Pass marks, set before any processing or review
 

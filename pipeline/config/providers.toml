@@ -442,6 +442,21 @@ context_tokens = 900000
 extra_body = { reasoning_effort = "low" }
 limits = { rpm = 5, tpm = 250_000, rpd = 20 }
 
+# Last in the rotation (owner, 2026-10-19): the smaller Lite tier writes a pack only when all five Flash models are out
+# for the day, so a pack stays with Google rather than falling to unmeasured writers. Probed right on the lakh-to-crore
+# task (3.8 s); 500 requests a day, shared with pass 1, which uses part of it. Reported per writer in round 7 under the
+# same rule as the trial writers (at most about 8% WRONG). Probed and not used: 3.1 Pro, pro-latest, Gemini 4 Argon,
+# Omni Flash and Omni 1.1 Flash have no free quota; 2.0 Flash/Lite and 2.5 Flash/Pro/Flash Lite are retired; Gemma 4
+# 26B/31B on Gemini's API returned server errors twice (Gemma 4 31B runs on OpenRouter).
+[[routes.pass2_packed]]
+provider = "gemini"
+model = "gemini-3.5-flash-lite"
+json_mode = true
+max_tokens = 60000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 15, tpm = 250_000, rpd = 500 }
+
 # ------------------------------------------------------------------ Vision OCR for scanned pages
 
 # Long documents (prompt above ~12,000 tokens: concall transcripts, investor presentations, annual

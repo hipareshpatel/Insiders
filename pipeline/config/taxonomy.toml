@@ -1,0 +1,320 @@
+# Rule-based triage, applied to every filing before any AI call.
+#
+# Matching is case-insensitive:
+#   categories / subcategories -> substring match on BSE CATEGORYNAME / SUBCATNAME, or on NSE's subject ("desc",
+#                                 e.g. "Bagging/Receiving of orders/contracts"), which NSE discovery puts where
+#                                 BSE's subcategory stood (nse.parse_announcement; owner, 2026-10-18: NSE only)
+#   headline                   -> regex search over HEADLINE + " " + NEWSSUB
+#   exclude_headline           -> regexes that veto a rule
+#
+# Order of evaluation: [[drop]] rules, then [[xbrl_only]], [[calendar]] and
+# [[fast_track]] rules. Anything left over goes to the Pass 1 AI gatekeeper.
+# BSE renames subcategories occasionally; headline regexes are the safety net.
+
+# A drop rule never fires when the headline also carries one of these: a compound title
+# ("Board meeting outcome ... and closure of trading window") is news. Added to every [[drop]]
+# rule's exclude_headline (unless the rule sets material_veto = false). Keep it specific: broad words ("contract", "volume") would rescue noise.
+[material_veto]
+headline = [
+  "financial results", "outcome of (the )?board", "board meeting outcome", "rights issue", "preferential (issue|allotment)",
+  "\\bqip\\b", "qualified institutions? placement", "warrants?", "merger", "amalgamation", "demerger", "acquisition",
+  "open offer", "credit rating", "(bags?|receipt of|secures?|wins?|awarded).{0,40}orders?", "letter of (award|acceptance|intent)",
+  "commercial (production|operations)", "commissioning", "usfda", "warning letter", "import alert", "form 483",
+  "\\bdefault", "delay in (payment|servicing)", "insolvency", "\\bnclt\\b", "one[- ]time settlement",
+  "investor presentation", "transcript",
+]
+
+# Director, KMP and company-secretary changes and resignations get no card (owner, 2026-10-18; replaces the
+# 2026-10-16 fast track, and "resignation" is off the material veto). NSE's subjects for them, measured 13-18 Oct 2026:
+# 171 filings. An auditor's change or resignation is not a director change and stays with pass 1; so does a letter that
+# also carries results, a deal, a default or insolvency.
+[[drop]]
+reason = "director / KMP change or resignation (no card)"
+material_veto = false
+subcategories = ["resignation of director/kmp", "appointment", "resignation", "change in management", "change in director",
+                 "cessation", "change in company secretary", "retirement"]
+headline = ["\\bresign(ation|ed|s)?\\b", "\\bcessation\\b",
+            "\\b(re-?)?appointment of .{0,80}(director|\\bceo\\b|\\bcfo\\b|chief|company secretary|compliance officer|key managerial|\\bkmp\\b)"]
+# A board-meeting outcome may carry other news (pass 2 still gives a director change no card); a vote is a timeline line
+exclude_headline = ["auditor", "financial results", "merger", "amalgamation", "acquisition", "\\bdefault", "insolvency",
+                    "outcome of (the )?board", "board meeting outcome", "postal ballot", "voting results?", "\\b(agm|egm)\\b",
+                    # the MD, CEO or CFO leaving keeps a card (owner, 2026-10-19, D30 amended); the same words as
+                    # pipeline.TOP_EXIT, which keeps pass 2 from dropping it as a director change
+                    "(resign\\w*|cessation|ceas(e|es|ed|ing)\\b|step(s|ped|ping)?\\s+down|removal|removed|retire(s|d|ment)?\\b(?!\\s+by\\s+rotation)|superannuat\\w*|demise|passed away).{0,120}(managing director|\\bmd\\b|chief executive|\\bceo\\b|chief financial|\\bcfo\\b)", "(managing director|\\bmd\\b|chief executive|\\bceo\\b|chief financial|\\bcfo\\b).{0,120}(resign\\w*|cessation|ceas(e|es|ed|ing)\\b|step(s|ped|ping)?\\s+down|removal|removed|retire(s|d|ment)?\\b(?!\\s+by\\s+rotation)|superannuat\\w*|demise|passed away)"]
+
+# Auditors rotate by law (Companies Act s.139: one five-year term for an individual, two for a firm), so an appointment,
+# re-appointment or completion of term is routine (owner, 2026-10-18). A resignation before the term ends is the signal
+# (SEBI's 2019 circular on auditor resignations makes the company disclose its reasons): it goes to pass 1, as does a
+# casual vacancy, which a resignation leaves.
+[[drop]]
+reason = "auditor appointment or end of term (routine)"
+headline = ["(re-?)?appointment of .{0,80}auditors?", "auditors?.{0,80}(completion|expiry|end) of (the |its |their )?(term|tenure)",
+            "(completion|expiry|end) of (the |its |their )?(term|tenure) of .{0,60}auditors?", "rotation of .{0,40}auditors?"]
+exclude_headline = ["resign", "casual vacancy", "removal"]
+
+[[drop]]
+reason = "share certificate housekeeping"
+subcategories = ["loss of share certificate", "duplicate share certificate", "issue of duplicate"]
+headline = ["loss of (share )?certificates?", "duplicate (share )?certificates?", "lost share certificates?",
+            "stop transfer", "letter of confirmation in lieu", "form\\s*sh\\s*-?\\s*[24]\\b", "transmission of shares",
+            "regulation\\s*39\\s*\\(\\s*3\\s*\\)", "reg\\.?\\s*39\\s*\\(\\s*3\\s*\\)"]
+
+[[drop]]
+reason = "routine depository / listing administration"
+headline = ["annual listing fees?", "listing fees? (paid|payment)", "isin (activation|credit)", "credit of (bonus |rights )?shares? (to|in) demat",
+            "corporate action.{0,30}(nsdl|cdsl)", "fractional (shares?|entitlements?)"]
+
+[[drop]]
+reason = "insider trading code (PIT) update"
+headline = ["code of (practices and procedures for )?fair disclosure", "code of conduct.{0,40}(insider trading|\\bpit\\b)"]
+
+[[drop]]
+reason = "routine periodic return"
+# NSE: the quarterly corporate-governance report (Reg 27(2)) and the structural digital database certificate
+subcategories = ["integrated filing- governance", "structural digital database"]
+headline = ["secretarial compliance report", "regulation\\s*24\\s*a\\b", "corporate governance report", "regulation\\s*27\\s*\\(\\s*2\\s*\\)",
+            "regulation\\s*57\\s*\\(\\s*[1-5]\\s*\\)", "(payment|servicing) of interest.{0,40}(ncds?|non-convertible|debentures?)",
+            "statement of deviation.{0,60}(\\bnil\\b|no deviation|not applicable)", "no deviation.{0,40}(utili[sz]ation|proceeds)"]
+
+[[drop]]
+reason = "meeting logistics"
+headline = ["(completion of )?dispatch of (the )?(annual report|notice|postal ballot)", "audio (recording|link)", "web ?link.{0,30}(audio|recording)",
+            "(audio|video) recording of (the )?(earnings|conference|analyst|investor)",
+            # The letter telling shareholders without an e-mail address where to download the annual report (Reg 36(1)(b))
+            "web ?-?link.{0,100}annual report", "letter.{0,40}dispatch\\w*.{0,120}annual report",
+            # the same letter worded the other way round (NSE, 25-26 Aug 2026: Maharashtra Seamless, Ashoka Metcast)
+            "annual report.{0,60}web ?-?link", "letters? (sent )?to (the )?shareholders.{0,40}annual report",
+            "regulation\\s*36\\s*\\(\\s*1\\s*\\)\\s*\\(\\s*b\\s*\\)"]
+# Filed under the Reg 34(1) subcategory (its subject), the attachment is the annual report itself, whatever the headline says.
+exclude_headline = ["34\\s*\\(\\s*1\\s*\\)\\s*annual report"]
+
+[[drop]]
+reason = "trading window"
+subcategories = ["trading window"]
+headline = ["trading window"]
+# "Board Meeting Intimation ... and Closure of Trading Window" carries a board meeting date.
+exclude_headline = ["board meeting", "financial results", "outcome", "dividend", "fund ?rais"]
+
+[[drop]]
+reason = "Reg 74(5) depository certificate"
+# NSE: "Certificate under SEBI (Depositories and Participants) Regulations, 2018" (715 of 2,749 filings, 12-16 Oct 2026)
+subcategories = ["74(5)", "74 (5)", "depositories and participants"]
+headline = ["74\\s*\\(\\s*5\\s*\\)"]
+
+[[drop]]
+reason = "newspaper publication"
+subcategories = ["newspaper publication", "news paper publication", "copy of newspaper"]
+# "News Paper Cutting for Q3 Results ... published on ... on FE and Jansatta" (Ahluwalia, Feb 2025) has a space in
+# "news paper"; it reached the model, which invented a results card from a clipping with no numbers.
+# Any filing about a newspaper notice or publication is dropped (owner, 2026-10-18): whatever it advertises was filed
+# on its own ("notice to members in newspapers pursuant to Section 201(2)", Kirloskar Electric, NSE, 13-18 Oct 2026).
+headline = ["\\bnews\\s?papers?\\b", "paper\\s+(cutting|clipping)s?"]
+# "Financial Results ... and Newspaper Publication" is the results filing itself; a clipping of the
+# results is noise, so the shared veto (which keeps "financial results") is off for this rule.
+material_veto = false
+# A company answering or confirming a newspaper report (Reg 30(11)) is news, not a publication: it goes on to Pass 1.
+exclude_headline = ["results.{0,80}(and|&|along with|together with)\\s+(the\\s+)?news\\s?papers?\\s+(publication|advertis\\w*)",
+                    "clarif", "verif", "news\\s+(item|article|report)", "media", "rumou?r", "speculat", "30\\s*\\(\\s*11\\s*\\)"]
+
+# Shareholding patterns are read from their XBRL file straight into memory (no AI call, no card);
+# one without an XBRL file is noise.
+[[xbrl_only]]
+reason = "shareholding pattern"
+event_type = "SHAREHOLDING"
+subcategories = ["shareholding pattern"]
+headline = ["shareholding pattern"]
+
+[[drop]]
+reason = "routine compliance certificate"
+subcategories = ["compliance certificate", "statement of investor complaints", "investor complaints"]
+headline = [
+  "regulation\\s*7\\s*\\(\\s*3\\s*\\)", "regulation\\s*40\\s*\\(\\s*(9|10)\\s*\\)",
+  "investor (grievances?|complaints?)", "compliance certificate",
+  "reconciliation of share capital audit", "regulation\\s*76",
+  "certificate from (a )?practi[sc]ing company secretary", "(share )?transfers? .{0,40}(within|timelines?|processed)",
+  "regulation\\s*47\\b",
+]
+exclude_headline = ["financial results", "outcome of (the )?board"]
+
+[[drop]]
+reason = "IEPF transfer"
+headline = ["investor education and protection fund", "\\biepf\\b"]
+exclude_headline = ["financial results", "outcome of (the )?board"]
+
+# Shareholder administration and tax reminders: TDS on a dividend, PAN / KYC / nomination / bank-detail updates,
+# unclaimed or unpaid dividend lists. The dividend itself is a separate filing.
+[[drop]]
+reason = "shareholder administration / tax reminder"
+headline = ["tax deduction at source", "\\btds\\b", "(updat\\w+|registration|furnish\\w*).{0,50}(\\bpan\\b|\\bkyc\\b|nomination|bank (account )?(details|mandate)|e-?mail (id|address))",
+            "\\bkyc\\b", "(unclaimed|unpaid) (dividend|shares)", "communication (is )?sent .{0,60}shareholders",
+            "intimation to (the )?shareholders? (regarding|for) (updat|tax)"]
+exclude_headline = ["financial results", "outcome of (the )?board", "record date"]
+
+# Reg 30(5): who is authorised to decide the materiality of an event and make disclosures (a name, an e-mail, a phone).
+[[drop]]
+reason = "authorised key managerial person contact details"
+headline = ["regulation\\s*30\\s*\\(\\s*5\\s*\\)", "authori[sz]ed (key managerial )?(person|personnel|kmp).{0,60}(materiality|disclos|contact)",
+            "contact details of (the )?(key managerial|authori[sz]ed)", "determining materiality"]
+exclude_headline = ["resignation", "cessation", "financial results"]
+
+# The exchange's price/volume surveillance notice and the company's standard reply ("purely market driven"). A reply
+# about a media report, a rumour, an acquisition or a probe (Reg 30(11)) is news and goes on to Pass 1.
+[[drop]]
+reason = "price / volume movement clarification"
+subcategories = ["spurt in volume", "price movement"]   # NSE's own surveillance notices
+headline = ["(clarification|reply|response).{0,60}(price|volume|trading) (movement|increase|variation|surge|spike|rise|fall)",
+            "(price|volume|trading) (movement|increase|variation|surge|spike)s?.{0,40}(clarification|reply|response)",
+            "(increase|movement|surge|spike|variation|rise|fall) in (the )?(share )?(price|volume|trading volume)",
+            "\\bprice movement\\b", "\\bvolume (movement|increase|surge|spike)\\b"]
+exclude_headline = ["news", "media", "report", "rumou?r", "article", "speculat", "30\\s*\\(\\s*11\\s*\\)", "acqui", "probe", "fraud", "sebi order", "usfda"]
+
+# Employee stock options: grants, small allotments and trust transfers move paid-up equity by a fraction of a percent.
+# Preferential, rights, QIP and warrant allotments are different filings and are kept.
+[[drop]]
+reason = "employee stock option grant or allotment"
+subcategories = ["esop/esos/esps"]   # NSE: "... has informed the Exchange regarding Allotment of 84890 Shares."
+headline = ["(grant|approval for grant|allotment).{0,40}(stock options?|esops?|esos|rsus?|psus?|sars?\\b|employee stock)",
+            "(allotment|issue) of .{0,40}shares.{0,60}(esop|esos|stock option|employee stock)",
+            "(esop|esos|stock option).{0,40}(allotment|exercise|grant|trust)", "from .{0,30}(esop|esos) trust"]
+exclude_headline = ["preferential", "rights", "\\bqip\\b", "warrants?", "bonus", "financial results", "outcome of (the )?board", "buy-?back", "scheme of arrangement"]
+
+# The invitation to an analyst or investor meet carries nothing; its presentation and transcript do.
+[[drop]]
+reason = "analyst / investor meet schedule"
+headline = ["(schedule|intimation) of (the )?(analysts?|investors?|institutional investors?)[ /]*(and )?(institutional investors? )?(meet|call|conference)",
+            "(analysts?|investors?)( ?/ ?institutional investors?)? (meet|call|conference).{0,40}(schedule|intimation)",
+            # NSE: "... has informed the Exchange about Schedule of meet on 2nd November 2026."
+            "\\bschedule of (the )?meet(ing)?s?\\b"]
+exclude_headline = ["presentation", "transcript", "recording", "audio", "financial results", "outcome"]
+
+# Board-meeting intimations carry no news yet, but their date is a catalyst.
+# Matched on the subcategory or headline, not on the "Board Meeting" category: outcomes filed under
+# that category ("Financial Results for the quarter", "Approval of QIP") are news, not a date.
+[[calendar]]
+reason = "board meeting intimation"
+event_type = "BOARD_MEETING"
+subcategories = ["board meeting intimation", "intimation of board meeting"]
+headline = ["board meeting intimation", "intimation of (the )?board meeting", "prior intimation", "notice of (the )?board meeting",
+            # BSE's own wording, filed under the bare "Board Meeting" subcategory: four reached the model, and one,
+            # typed RESULTS, took Ahluwalia's Q3FY25 from the statement itself (D20)
+            "meeting of the board of directors.{0,60}(is |are )?scheduled (on|to be held)", "update on board meeting"]
+exclude_headline = ["outcome", "approved", "considered and approved"]
+
+# AGM notices, book closures and record dates carry no news, but the date is a catalyst. Rights issues
+# are excluded: their record-date filing usually carries the issue terms. So is an annual report filed
+# with its AGM notice ("Notice of the 33rd AGM and Annual Report for FY 2024-25"): it is read as one.
+[[calendar]]
+reason = "AGM notice"
+event_type = "AGM"
+headline = ["(notice|intimation) of (the )?\\d*(st|nd|rd|th)? ?annual general meeting", "\\bagm\\b.{0,40}(notice|intimation|to be held|will be held)"]
+exclude_headline = ["outcome", "proceedings", "voting results", "scrutini[sz]er", "presentation", "speech", "transcript", "annual report"]
+
+[[calendar]]
+reason = "record date / book closure"
+event_type = "RECORD_DATE"
+headline = ["record date", "book closure"]
+exclude_headline = ["rights", "letter of offer", "outcome", "approved", "financial results", "demerger", "amalgamation", "annual report"]
+
+# Routine events get one dated line in the company's timeline and no analysis card (owner decision D22,
+# 2026-10-16). A cheap model writes the line and sends the filing back for a full card when it is consequential
+# (a pledge created or invoked, results or a fundraise in the same letter, resolutions that failed).
+[[timeline]]
+event_type = "CORPORATE_ACTION"
+reason = "timeline: dividend recommendation"
+headline = ["(recommend|declar|approv)\\w*.{0,50}dividend", "dividend.{0,50}(recommend|declar|approv)"]
+exclude_headline = ["result", "financial (statement|result)", "buy-?back", "bonus", "split", "fund ?rais", "acquisition", "merger", "right"]
+
+[[timeline]]
+event_type = "GOVERNANCE"
+reason = "timeline: postal ballot or voting result"
+headline = ["postal ballot", "voting results?", "e-?voting", "scrutini[sz]er", "outcome of (the )?(agm|egm|annual general|extra-?ordinary)"]
+exclude_headline = ["notice", "dispatch", "cut-?off", "intimation"]
+
+[[timeline]]
+event_type = "GOVERNANCE"
+reason = "timeline: promoter encumbrance disclosure"
+headline = ["regulation 31\\s*\\(", "encumbrance", "pledge of shares", "creation of pledge"]
+exclude_headline = ["invok", "invocation"]
+
+[[fast_track]]
+event_type = "RESULTS"
+categories = ["result"]
+subcategories = ["integrated filing- financial"]
+headline = [
+  "(un)?-?audited (standalone |consolidated )?financial results",
+  "financial results for the (quarter|half|year|period)",
+  "outcome.{0,60}(financial )?results", "results.{0,60}outcome",
+]
+exclude_headline = ["intimation", "to be held", "will be held", "trading window", "^\\W*(copy of )?(the )?news\\s?paper",
+                    "voting results", "e-?voting", "postal ballot", "scrutini[sz]er"]
+
+# The MD, CEO or CFO leaving (owner, 2026-10-19, D30 amended): appointments and other directors' exits stay dropped
+[[fast_track]]
+event_type = "MANAGEMENT_CHANGE"
+headline = ["(resign\\w*|cessation|ceas(e|es|ed|ing)\\b|step(s|ped|ping)?\\s+down|removal|removed|retire(s|d|ment)?\\b(?!\\s+by\\s+rotation)|superannuat\\w*|demise|passed away).{0,120}(managing director|\\bmd\\b|chief executive|\\bceo\\b|chief financial|\\bcfo\\b)", "(managing director|\\bmd\\b|chief executive|\\bceo\\b|chief financial|\\bcfo\\b).{0,120}(resign\\w*|cessation|ceas(e|es|ed|ing)\\b|step(s|ped|ping)?\\s+down|removal|removed|retire(s|d|ment)?\\b(?!\\s+by\\s+rotation)|superannuat\\w*|demise|passed away)"]
+
+[[fast_track]]
+event_type = "CONCALL_PRESENTATION"
+headline = ["investor presentation", "earnings (call|presentation)", "transcript", "analysts? ?/ ?institutional investors? meet.*(presentation|transcript)"]
+exclude_headline = ["intimation", "schedule"]
+
+# The annual report (Reg 34(1)): the auditor's report, related parties and contingent liabilities that the
+# results do not carry. Pass 1 and pass 2 had typed it RESULTS, or not material (to-do item 4, 2026-10-18).
+[[fast_track]]
+event_type = "ANNUAL_REPORT"
+subcategories = ["annual report"]
+headline = ["annual report"]
+# A BRSR filed on its own is not the annual report; one "including" the BRSR is (Cupid, NSE, 26 Aug 2026)
+exclude_headline = ["web ?-?link", "letter to (the )?shareholders", "news\\s?paper",
+                    "^(?!.*((\\band|&)\\s+(the\\s+)?annual report|notice of .{0,80}annual report)).*(business responsibility|\\bbrsr\\b)"]
+
+[[fast_track]]
+event_type = "DEBT_RATINGS"
+subcategories = ["credit rating"]
+headline = ["credit rating"]
+
+[[fast_track]]
+event_type = "RIGHTS_ISSUE"
+headline = ["rights issue", "letter of offer"]
+exclude_headline = ["news\\s?paper"]
+
+[[fast_track]]
+event_type = "FUNDRAISE"
+subcategories = ["qualified institutional", "preferential issue"]
+headline = ["qualified institutions? placement", "\\bqip\\b", "preferential (issue|allotment)", "fund ?rais"]
+
+[[fast_track]]
+event_type = "M_AND_A"
+subcategories = ["acquisition", "amalgamation", "merger", "scheme of arrangement", "demerger", "sale or disposal"]
+headline = ["acquisition", "amalgamation", "merger", "scheme of arrangement", "demerger", "open offer"]
+
+[[fast_track]]
+event_type = "ORDER_WIN"
+subcategories = ["award of order", "receipt of order", "bagging", "awarding of order"]
+headline = ["(bags?|receipt of|secures?|wins?|awarded).{0,40}orders?", "letter of award", "\\bLoA\\b",
+            "(receipt|received|receiving) of (an? )?letter of (intent|acceptance)", "\\bLoI\\b.{0,40}(order|contract|project|epc|work)"]
+
+[[fast_track]]
+event_type = "MONTHLY_BUSINESS_UPDATE"
+headline = ["(monthly|sales|production|business) (update|volumes?|numbers)", "auto sales"]
+
+[[fast_track]]
+event_type = "LITIGATION_REGULATORY"
+# NSE's Reg 30 subjects for actions, litigation, defaults and insolvency
+subcategories = ["action(s) taken or orders passed", "action(s) initiated or orders passed", "pendency of litigation",
+                 "fraud/default/arrest", "corporate insolvency resolution process"]
+headline = ["usfda", "us fda", "warning letter", "import alert", "form 483", "\\beir\\b", "establishment inspection report",
+            "show cause notice", "(tax|gst|income tax) demand", "penalty (imposed|levied)", "sebi order"]
+exclude_headline = ["clarification"]
+
+[[fast_track]]
+event_type = "CAPEX"
+subcategories = ["capacity addition", "commencement of commercial production"]
+headline = ["commencement of commercial (production|operations)", "commissioning of", "capacity expansion", "expansion of (the )?capacity",
+            "(new|greenfield|brownfield) (plant|facility|unit)"]
+
+# Any other board-meeting outcome (dividends, fundraises, appointments...):
+# material often enough to skip Pass 1; Pass 2 decides the event type.
+[[fast_track]]
+reason = "board meeting outcome"
+headline = ["outcome of (the )?board meeting", "board meeting outcome"]

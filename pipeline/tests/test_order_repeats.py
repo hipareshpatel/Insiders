@@ -1,0 +1,211 @@
+"""One order counted once (round-2 re-run): an order's BSE intimation and its press release name the same client and
+amount, and a press release listing the orders won since April is no order. Each test is a Magellanic Cloud card."""
+from __future__ import annotations
+
+from bse_intel.dossier import is_recap, merge, new_dossier
+from bse_intel.models import Filing, Pass2Output
+from bse_intel.signals import compute, misfires
+
+
+def _filing(news_id: str, filed_at: str) -> Filing:
+    return Filing(news_id=news_id, scrip_code="538891", company_name="Magellanic Cloud Ltd", headline="h",
+                  filed_at=filed_at, filing_date=filed_at[:10])
+
+
+def _order(amount: float, counterparty: str, stage: str = "LOA") -> Pass2Output:
+    return Pass2Output.model_validate({
+        "is_material": True, "event_type": "ORDER_WIN", "timeline_entry": "x",
+        "card": {"impact_level": "LOW", "headline": f"Provigil wins ₹{amount} Cr order from {counterparty}",
+                 "what_happened": ["x"],
+                 "deal_value": {"kind": "ORDER", "amount_cr": amount, "stage": stage, "counterparty": counterparty}}})
+
+
+def _flow(before, out, f):
+    return next((s["text"] for s in compute(before, merge(before, out, f, "LOW", "now"), out, f, None)
+                 if s["type"] == "ORDER_FLOW"), None)
+
+
+def test_531d99a4_a_press_release_of_an_order_already_on_record_is_the_same_order():
+    """d54e811f (intimation) and 531d99a4 (press release), both 6 Aug: ₹12.13 Cr from Western Railway, Ratlam."""
+    d = new_dossier(_filing("n0", "2026-07-01T10:00:00+05:30"))
+    d = merge(d, _order(12.76, "GAIL (India) Limited"), _filing("99f1c20d", "2026-07-30T18:00:00+05:30"), "LOW", "now")
+    d = merge(d, _order(12.13, "Western Railway, Ratlam Division"), _filing("d54e811f", "2026-08-06T12:00:00+05:30"),
+              "LOW", "now")
+    repeat, f = _order(12.13, "Western Railway Ratlam Division"), _filing("531d99a4", "2026-08-06T17:00:00+05:30")
+    assert _flow(d, repeat, f).startswith("Stage update, not a new order: the ₹12.13 Cr order first reported on 2026-08-06")
+    assert len(merge(d, repeat, f, "LOW", "now")["deals"]) == 2
+
+    # a different order from the same client weeks later is a new order
+    later = _order(7.92, "Western Railway, Ratlam Division")
+    assert _flow(d, later, _filing("969c382d", "2026-08-24T18:00:00+05:30")).startswith("3rd order on record")
+
+
+def test_7fe943d3_a_recap_of_orders_won_is_no_order():
+    """₹111.04 Cr "orders won since April" across railways, PNB, GAIL and DFCCIL, stored as one order, made later
+    cards read "17th order, ₹291 Cr" and sized the recap at 62% of a quarter's revenue."""
+    recap = "Indian Railways divisions, PNB, GAIL, DFCCIL, MANGA-group technology company, Manappuram Finance"
+    assert is_recap("ORDER", recap) and not is_recap("ORDER", "Western Railway, Ratlam Division")
+    # one client written with its address or its parent is one order, not a recap
+    for one in ("South Central Railway, Secunderabad, Telangana",
+                "Ministry of Road Transport and Highways, Government of India",
+                "National Highways Authority of India (NHAI), New Delhi"):
+        assert not is_recap("ORDER", one), one
+    d = new_dossier(_filing("n0", "2026-07-01T10:00:00+05:30"))
+    d = merge(d, _order(12.76, "GAIL (India) Limited"), _filing("99f1c20d", "2026-07-30T18:00:00+05:30"), "LOW", "now")
+    out, f = _order(111.04, recap), _filing("7fe943d3", "2026-08-19T08:47:00+05:30")
+    after = merge(d, out, f, "LOW", "now")
+    assert [x["amount_cr"] for x in after["deals"]] == [12.76]
+    assert _flow(d, out, f) is None
+    assert misfires({"type": "SCALE", "text": "₹111.04 Cr order = 62% of Q1FY27 revenue"}, out)
+
+
+def test_0f2061e4_memory_written_before_the_fix_counts_each_order_once():
+    """Memory already held every railway order twice; ORDER_FLOW counts them once."""
+    d = new_dossier(_filing("n0", "2026-07-01T10:00:00+05:30"))
+    d["deals"] = [
+        {"id": f"d_{i}", "kind": "ORDER", "amount_cr": amt, "stage": "LOA", "counterparty": who, "as_of": when,
+         "source_news_id": f"s{i}"}
+        for i, (amt, who, when) in enumerate([
+            (12.13, "Western Railway, Ratlam Division", "2026-08-06T12:00:00+05:30"),
+            (12.13, "Western Railway, Ratlam Division", "2026-08-06T17:00:00+05:30"),
+            (3.73, "Dedicated Freight Corridor Corporation of India Limited", "2026-08-13T12:00:00+05:30"),
+            (3.73, "Dedicated Freight Corridor Corporation o", "2026-08-13T17:00:00+05:30")])]
+    out, f = _order(29.13, "Northern Railway, Moradabad Division"), _filing("2bc2ef91", "2026-10-16T18:00:00+05:30")
+    assert _flow(d, out, f) == ("3rd order on record since 2026-08-06 (₹44.99 Cr in total); "
+                                "the largest so far (previous high ₹12.13 Cr on 2026-08-06).")
+
+
+def test_a_deal_size_echoed_with_its_decimal_moved_is_set_back():
+    """Anlon (round 4): deal_value ₹153.3 Cr (8.59 Cr shares x ₹17.85), the timeline line "₹1,533 Cr", which memory carried
+    into two later cards."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import deal_echo_slips
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "ACQUISITION",
+        "timeline_entry": "Board approved a preferential issue of 8.59 Cr shares for ₹1,533 Cr via share swap.",
+        "card": {"impact_level": "MODERATE", "headline": "Anlon to buy two firms for ₹1,533 Cr in a share swap",
+                 "what_happened": ["Issue of 8.59 Cr shares at ₹17.85 each"],
+                 "deal_value": {"kind": "ACQUISITION", "amount_cr": 153.3}}})
+    filing = "8,59,00,000 equity shares at Rs 17.85 per share; Apiqo Rs 116.52 Cr and Bizotic Rs 36.78 Cr."
+    notes = deal_echo_slips(out, filing)
+    assert out.timeline_entry.endswith("for ₹153.3 Cr via share swap.") and "₹153.3 Cr" in out.card.headline
+    assert len(notes) == 2
+    # an amount the filing itself prints is left alone, however it relates to the deal
+    out.timeline_entry = "Total consideration ₹1,533 Cr."
+    assert deal_echo_slips(out, filing + " Total consideration Rs 1,533 crore.") == []
+
+
+def test_a_filing_that_continues_an_intimation_moves_that_deal_on():
+    """Ceigall (round 5): an LoI "in continuation to our earlier intimation dated 08th September 2026" was written as a
+    second order from the same department, and the order flow counted the one Bihar Lot-4 order twice."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import _stated_date, continued_deal
+
+    def out():
+        return Pass2Output.model_validate({
+            "is_material": True, "event_type": "ORDER_WIN",
+            "card": {"impact_level": "LOW", "headline": "Ceigall gets LoI for Bihar stone block", "what_happened": ["LoI"],
+                     "deal_value": {"kind": "ORDER", "amount_cr": 28.82, "stage": "LOI"}}})
+
+    view = {"deals": [{"id": "d_ceb282b4", "date": "2026-09-08", "kind": "ORDER", "amount_cr": 28.82, "stage": "OTHER"},
+                      {"id": "d_other", "date": "2026-08-26", "kind": "ORDER", "amount_cr": 608.67}]}
+    text = "In continuation to our earlier intimation dated 08th September 2026 and in accordance with Regulation 30"
+    card = out()
+    assert continued_deal(card, view, text) and card.card.deal_value.updates_deal_id == "d_ceb282b4"
+    # no date stated, no deal that day, or two deals that day: left as written
+    for other in ("Ceigall has received an LoI", "In continuation to our intimation dated 1st August 2026"):
+        card = out()
+        assert continued_deal(card, view, other) == [] and card.card.deal_value.updates_deal_id is None
+    twice = {"deals": view["deals"] + [{"id": "d_twin", "date": "2026-09-08", "kind": "ORDER"}]}
+    assert continued_deal(out(), twice, text) == []
+    assert str(_stated_date("September 8, 2026")) == str(_stated_date("08.09.2026")) == "2026-09-08"
+
+
+def test_a_call_transcript_is_never_a_repeat_of_its_results():
+    """Owner, 2026-10-19: transcripts get their own card for their forward-looking statements. Round 5's Texmaco Q1
+    transcript had been set aside as its results card "in other words"."""
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import is_transcript
+
+    def filing(headline, subject="Analysts/Institutional Investor Meet/Con. Call Updates"):
+        return Filing(news_id="nse-1", scrip_code="533326", company_name="Texmaco Rail & Engineering Limited",
+                      headline=headline, subject=subject, filed_at="2026-08-10T10:00:00+05:30", filing_date="2026-08-10")
+
+    assert is_transcript(filing("Texmaco Rail & Engineering Limited has informed the Exchange about Transcript"))
+    assert is_transcript(filing("Transcripts of the earnings call for Q1FY27"))
+    assert not is_transcript(filing("Texmaco Rail & Engineering Limited has informed the Exchange about Investor Presentation"))
+
+
+def test_a_pending_approval_copied_from_the_watchlist_is_dropped():
+    """Round 5: Persistent's BaFin approval listed as pending from a stale watchlist item on a filing about something
+    else; an approval the filing itself states stays."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import stale_approvals
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A",
+        "card": {"impact_level": "HIGH", "headline": "Minimum acceptance met", "what_happened": ["Threshold met"],
+                 "track_next": {"pending_approvals": ["BaFin approval of the offer document",
+                                                     "Merger control clearance in Austria"]}}})
+    view = {"watchlist": [{"id": "w_1", "kind": "APPROVAL", "text": "BaFin approval of the offer document"},
+                          {"id": "w_2", "kind": "APPROVAL", "text": "Merger control clearance in Austria"}]}
+    text = "The minimum acceptance threshold was met. Completion remains subject to merger control clearance in Austria."
+    assert stale_approvals(out, view, text)
+    assert out.card.track_next.pending_approvals == ["Merger control clearance in Austria"]
+
+
+def test_a_call_card_keeps_only_changes_whose_figures_the_call_states():
+    """Electrosteel's call (round 5 arm B): "EBITDA margin 4.14% (Q4FY26) -> 9.5%", the 4.14% memory's margin without
+    other income; the call said about 6.5% on its own basis."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import call_changes
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "CONCALL_PRESENTATION",
+        "card": {"impact_level": "MODERATE", "headline": "Electrosteel call: margin recovers", "what_happened": ["call"],
+                 "notable_changes": [
+                     {"metric": "EBITDA margin", "previous": "4.14% (Q4FY26)", "current": "9.5%", "direction": "POSITIVE"},
+                     {"metric": "Volume guidance", "previous": "650,000-700,000 t", "current": "575,000 t", "direction": "NEGATIVE"}]}})
+    call = ("EBITDA margin was about 9.5% this quarter against roughly 6.5% last quarter. We now guide volumes of about "
+            "575,000 tonnes for FY27, against 650,000 to 700,000 tonnes earlier.")
+    assert call_changes(out, "CONCALL_PRESENTATION", call)
+    assert [c.metric for c in out.card.notable_changes] == ["Volume guidance"]
+
+
+def test_a_foreign_amount_written_in_crore_at_the_wrong_size_is_set_right():
+    """Clean Max (round 6): "Thai Baht 1,250,000" (12.5 lakh) on the card as "THB 1.25 Cr"."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import fix_foreign_crore
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A", "timeline_entry": "Buys Massmunch for THB 1.25 Cr",
+        "card": {"impact_level": "LOW", "headline": "Clean Max buys Massmunch for THB 1.25 Cr",
+                 "what_happened": ["Consideration THB 1.25 Cr"]}})
+    text = "The consideration is Thai Baht 1,250,000 for 100% of the shares."
+    assert fix_foreign_crore(out, text)
+    assert out.card.headline == "Clean Max buys Massmunch for THB 0.125 Cr" and out.timeline_entry.endswith("THB 0.125 Cr")
+    ok = Pass2Output.model_validate({
+        "is_material": True, "event_type": "ORDER_WIN",
+        "card": {"impact_level": "LOW", "headline": "Order of USD 13.5 Cr", "what_happened": ["USD 13.5 Cr order"]}})
+    assert fix_foreign_crore(ok, "An order of USD 135,000,000.") == []    # 135 million is 13.5 crore: right as written
+    # the filing writes the amount in crore itself; a share count that is the same digits at lakh size is not it
+    two = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A",
+        "card": {"impact_level": "LOW", "headline": "Invests USD 2 Cr in its US arm", "what_happened": ["USD 2 Cr"]}})
+    assert fix_foreign_crore(two, "An investment of USD 2 crore for 2,00,000 equity shares of the US subsidiary.") == []
+    assert two.card.headline == "Invests USD 2 Cr in its US arm"
+
+
+def test_a_count_of_votes_written_in_crore_at_the_wrong_size_is_set_right():
+    """Ambuja (round 6): 2,254,107,305 votes for written "2,254.11 Cr votes"; 418,004 against written "4.18 Cr votes"."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import fix_foreign_crore
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A",
+        "card": {"impact_level": "LOW", "headline": "Shareholders approve the ACC merger",
+                 "what_happened": ["2,254.11 Cr votes in favour and 4.18 Cr votes against"]}})
+    text = "Votes in favour 2,254,107,305; votes against 418,004."
+    assert fix_foreign_crore(out, text)
+    assert out.card.what_happened[0].text == "225.4107 Cr votes in favour and 0.0418 Cr votes against"

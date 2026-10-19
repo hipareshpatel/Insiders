@@ -1,0 +1,214 @@
+# Event-type prompt modules for Pass 2.
+#   focus    -> instructions appended to the analyst prompt for this event type
+#   keywords -> used to pick the most relevant PDF pages within the char budget
+
+[RESULTS]
+focus = """
+This is a periodic financial result. Extract revenue from operations, EBITDA (or operating profit),
+PAT, EPS for the latest period and the comparable period, and compute YoY (and QoQ for quarters)
+when both figures are present. State whether figures are standalone or consolidated and their unit
+in the source (₹ lakh / ₹ crore / ₹ million); convert to ₹ crore. Note exceptional items, auditor
+qualifications, and segment results. Compare against guidance in memory where one exists.
+Forensic reading (blueprint §9): name other income, treasury or forex gains, write-backs and asset
+sales when they lift profit; note capitalised R&D or intangibles under development growing faster
+than EBITDA; isolate PLI, RoDTEP or state subsidy income if disclosed; note contract assets or
+unbilled revenue growing faster than revenue; quote operating cash flow against EBITDA when the
+half-year or annual cash flow is given; quote contingent liabilities and corporate guarantees
+against net worth when stated; flag MSME payables or LC acceptances if called out. In a Q4 result,
+note a provision or cost line that is far out of line with the first three quarters.
+"""
+keywords = ["revenue from operations", "total income", "profit before tax", "net profit", "ebitda",
+            "earnings per share", "segment", "exceptional", "consolidated", "standalone"]
+
+[CONCALL_PRESENTATION]
+focus = """
+This is an earnings call transcript or investor presentation. Capture forward-looking statements
+as guidance items (metric, target, timeline) with the speaker's exact numbers, and mark any prior
+guidance from memory that management confirmed, revised, or quietly dropped.
+However long the document, distil it into four buckets: (1) numeric guidance (revenue, margin band,
+utilisation by year, capex, debt targets) as guidance items; (2) project and capex progress
+(commissioning dates, brownfield or greenfield, active vs total capacity) in deals and milestones;
+(3) unit economics, feedstock and order book (realisations, raw material moves, order book and
+execution period, segment shares) in operating_notes and segment_mix; (4) Q&A forensics (questions
+management dodged, timelines quietly pushed back) in analyst_concerns.
+Forensic reading: when management answers a numeric question vaguely or not at all, record it in
+analyst_concerns and say it was evasive. When a target moves (a full-year figure becoming an "exit
+run-rate", a date slipping a quarter), report the earlier guidance as REVISED with the old and new
+wording. A stated bid pipeline ("bids of ₹3,000 Cr pending") goes in operating_notes with its
+figure, so later order wins can be set against it. For monsoon-hit sectors (cement, steel,
+infrastructure, agrochemicals, paints), compare Q2 with a year ago rather than with Q1.
+"""
+keywords = ["guidance", "outlook", "target", "capex", "margin", "expect", "fy27", "fy28", "pipeline", "order book"]
+
+[ANNUAL_REPORT]
+focus = """
+This is an annual report. Its year's revenue and profit were already reported with the fourth-quarter
+results, so do not make them the news; use them only to put the findings below in proportion. Where it
+carries both, read the consolidated statements and their auditor's report; a holding company's standalone
+figures are not the group's. Give amounts in ₹ Cr. Report what only the annual report shows:
+(1) the auditor's report: the opinion (unmodified, qualified, adverse or disclaimer) quoted as worded,
+any emphasis of matter, a material uncertainty about going concern, the key audit matters by name, an
+adverse remark in the CARO annexure (default to a lender, short-term funds used for long-term assets,
+statutory dues unpaid, a fraud reported, cash losses) and a modified opinion on internal financial
+controls; (2) related-party transactions: the largest ones with promoter-group entities and their
+total against revenue, loans or guarantees given to related parties, royalty or brand fees paid to the
+promoter; (3) contingent liabilities and corporate guarantees against net worth; (4) directors'
+remuneration growing much faster than profit; (5) subsidiaries or associates making losses, and
+investments in them impaired; (6) guidance from the management discussion (capacity, capex, order book,
+targets) as guidance items.
+Forensic reading: an auditor's report that is unmodified and has no emphasis of matter is worth one
+plain line, not a paragraph. If none of (1)-(6) stands out, the card is short and its impact LOW: say
+the audit is clean and give the related-party and contingent-liability totals against revenue and net
+worth, as the baseline later filings are read against.
+"""
+keywords = ["independent auditor", "opinion", "emphasis of matter", "going concern", "key audit matter", "caro",
+            "related party", "contingent liabilit", "guarantee", "remuneration", "subsidiar", "impairment",
+            "default", "outlook", "capacity", "order book"]
+
+[RIGHTS_ISSUE]
+focus = """
+This is a rights issue. Extract issue size, rights price and discount to market price, entitlement
+ratio, record date, issue open/close dates, and stated use of proceeds. Add every dated milestone
+to upcoming_events. Connect the raise to leverage and capex in memory.
+Forensic reading: state whether the full price is paid on application or in calls (partly paid),
+and whether promoters subscribe by converting their own unsecured loans (this cuts debt but brings
+no fresh cash). Give the issue price and entitlement so the system can compute dilution and the
+theoretical ex-rights price.
+"""
+keywords = ["rights", "entitlement", "record date", "issue price", "objects of the issue", "letter of offer"]
+
+[FUNDRAISE]
+focus = """
+This is a fundraise (QIP, preferential allotment, warrants, NCDs or similar). Extract amount,
+price, investors or allottees, dilution, and use of proceeds.
+Forensic reading: for convertible warrants, record them in capital_actions with instrument
+"warrants", the exercise price and amount; 25% is paid now and 75% within 18 months, and the system
+puts that deadline on the calendar. Note who is subscribing (promoters, named investors), and
+whether earlier warrants were converted or allowed to lapse.
+"""
+keywords = ["allotment", "issue price", "floor price", "warrants", "investor", "qip", "proceeds"]
+
+[CAPEX]
+focus = """
+This is a capital expenditure or capacity announcement. A unit resuming after an outage, repair or flood is not
+capacity added: say it restores output that had stopped, never that it adds capacity. Extract project cost, capacity added,
+funding mix (debt / internal accruals / equity), commissioning timeline and expected revenue
+potential. Flag a missing timeline or funding plan as a missing disclosure.
+Forensic reading: convert per-day capacity to a year at 330 operating days for continuous process
+plants and about 275 for batch plants, unless the filing states the annual figure. Mark the project
+BROWNFIELD or GREENFIELD and CAPTIVE or MERCHANT_SALE (deal_value.expansion, deal_value.usage).
+When a plant is commissioned, note that depreciation and interest move from work in progress to
+the P&L at once, so early quarters can show lower profit until utilisation passes roughly 40-50%.
+For pharma, food-grade chemicals and auto components, expect a qualification period (stability
+batches, DMF, PPAP) of 1-2 quarters before bulk sales. For chemical, pharma or metal plants, say
+whether environmental clearance and consent to establish or operate are in hand; a missing
+clearance is a missing disclosure. If guided revenue implies an asset turnover far above what
+the sector's machinery usually produces, say so and check for contract manufacturing.
+"""
+keywords = ["capex", "capacity", "commissioning", "project cost", "expansion", "brownfield", "greenfield", "funding"]
+
+[M_AND_A]
+focus = """
+This is an acquisition, merger, demerger or scheme of arrangement. Extract counterparty, deal value,
+consideration form, valuation (EV, multiples if stated), swap ratio, target's revenue/profit, and
+approvals still required with expected dates.
+Forensic reading: from the Reg 30 Annexure A, quote the target's last three years' turnover and
+compute what was paid against sales or EBITDA when the figures are given; state plainly whether the
+deal is a related-party transaction or involves promoter interest. For a demerger, say whether
+shareholders get shares in the new company directly (mirror shareholding) or the parent becomes a
+holding company. For a deal inside a subsidiary, say what share the listed company owns.
+"""
+keywords = ["acquisition", "consideration", "swap ratio", "enterprise value", "turnover", "scheme", "valuation", "approval"]
+
+[ORDER_WIN]
+focus = """
+This is an order win. Extract order value, client (domestic/international, government/private),
+execution period, and the order's size relative to trailing revenue or order book in memory.
+Forensic reading: split the order into supply or EPC value and operations-and-maintenance value with
+their periods, so the yearly run-rate is clear (a ₹500 Cr order of which ₹350 Cr is 15 years of O&M
+adds about ₹23 Cr a year). Say whether it is an L1 position, an LoI or a firm LoA or work order; a
+later stage of an order already in memory is an update, not a new order (use deal_value.updates_deal_id).
+For long fixed-price contracts, say whether there is a price-variation clause. Note when the order
+is won by a subsidiary or JV and the listed company's share. If the company's debt, receivable
+days or bank guarantee limits look too thin to execute it, say so. A reduced scope, cancellation or
+liquidated damages on an order in memory is a negative update to that order.
+"""
+keywords = ["order", "contract", "letter of award", "value", "execution", "client"]
+
+[MONTHLY_BUSINESS_UPDATE]
+focus = """
+This is a monthly or periodic business update (volumes, sales, disbursements, AUM). Extract each
+reported volume with YoY and MoM change, and compare with the trend in memory.
+Forensic reading: for October and November, also give the two months together against the same
+two months last year, since Diwali moves between them.
+"""
+keywords = ["units", "volume", "sales", "yoy", "domestic", "exports", "disbursement", "aum"]
+
+[DEBT_RATINGS]
+focus = """
+This is a credit rating action or debt disclosure. Extract agency, instrument, amount rated, old vs
+new rating and outlook, and the agency's stated rationale. An upgrade or downgrade changes the
+balance-sheet snapshot.
+Forensic reading: give the short-term rating separately (A1+ to A4, D) and its previous grade, since
+it measures near-term liquidity; quote the total rated bank facilities and the previous total
+when the annexure shows them (rising sanctioned limits often come before orders or capex). Quote
+"Issuer Not Cooperating" exactly when the agency says it.
+"""
+keywords = ["rating", "outlook", "reaffirmed", "upgraded", "downgraded", "instrument", "bank facilities", "rationale"]
+
+[CORPORATE_ACTION]
+focus = """
+This is a corporate action (dividend, split, bonus, buyback). Extract the ratio or amount per
+share, record date, payment date and, for buybacks, size, price and method.
+Forensic reading: for a buyback, say whether promoters participate (cashing out) or abstain, and
+whether cash flow or debt funds it; for a large dividend, the same funding question.
+"""
+keywords = ["dividend", "record date", "bonus", "split", "buyback", "per share", "payment date"]
+
+[GOVERNANCE]
+focus = """
+This is a governance matter (auditor change, board change, related-party transaction, pledge,
+promoter action, SEBI/stock-exchange observation). State plainly what changed and why it matters
+to minority shareholders.
+Forensic reading: for Regulation 44 voting results, quote the share of public institutional votes
+against any resolution where it exceeds 25% (promoters always vote for their own resolutions),
+naming the resolution. For a mid-term auditor or CFO resignation, quote the stated reason. An auditor
+change to a large firm (Deloitte, EY / SR Batliboi, KPMG / BSR, PwC, Grant Thornton / Walker
+Chandiok, BDO) is a governance upgrade. For insider or promoter trades (PIT Reg 7, SAST Reg 29),
+say whether it is an open-market buy or sell, and its size; inter-se transfers and ESOP exercises
+are routine. If a sister company of the same promoter group has had a default, downgrade or search,
+mention it only if the filing does.
+"""
+keywords = ["auditor", "resignation", "pledge", "related party", "promoter", "reason"]
+
+[MANAGEMENT_CHANGE]
+focus = """
+This is a key management change. Name the person, role, effective date, and stated reason. A
+resignation without a stated reason, or a CFO/auditor exit mid-year, is worth flagging.
+"""
+keywords = ["resignation", "appointment", "effective", "reason", "chief", "managing director"]
+
+[LITIGATION_REGULATORY]
+focus = """
+This is a legal, tax or regulatory matter (demand order, USFDA observation, penalty, license).
+Extract the amount at stake, authority, status and next steps, and its size relative to net worth
+in memory.
+Forensic reading: give the demand or penalty in ₹ Cr so the system can put it against profit; a
+routine fine with no operational restriction is minor, while a plant closure, licence suspension,
+pollution board order or USFDA action is not. For a pollution board closure, say how long and which
+plant, and the plant's share of revenue if known.
+"""
+keywords = ["order", "demand", "penalty", "observation", "warning letter", "inspection", "appeal", "tribunal"]
+
+[PRODUCT_LAUNCH]
+focus = """
+This is a product, plant or market launch. Extract what launched, addressable market or capacity
+where stated, and expected contribution.
+"""
+keywords = ["launch", "introduce", "market", "capacity", "approval"]
+
+[OTHER]
+focus = """
+Identify the single most decision-relevant fact in this filing and the numbers behind it.
+"""
+keywords = []

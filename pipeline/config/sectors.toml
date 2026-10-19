@@ -1,0 +1,297 @@
+# Sector prompt modules for Pass 2.
+#
+# A company's BSE industry string (which covers every BSE scrip, unlike NSE's
+# classification) is matched case-insensitively against each module's `match`
+# prefixes (at a word boundary), in file order; the first hit wins, else [default].
+#   kpis    -> the sector-specific numbers the analyst should look for
+#   context -> how to read those numbers
+#   asset_turn / asset_turn_note -> normal revenue per rupee of gross capex (module 2 check)
+#   drivers / red_flag -> feedstock, seasonality and the sector's main forensic trap (blueprint §10)
+#   footer  -> the one or two figures shown in every card's footer for this sector, by the
+#              snake_case metric name the analyst is told to use in financial_metrics
+#              (aliases catch variants). format: pct | cr | inr | x | num | usd
+
+[nbfc]
+# Before [banks]: "Non Banking Financial Company" contains the word "Banking".
+match = ["non banking", "non-banking", "nbfc", "finance", "financial services", "housing finance", "microfinance", "asset management", "broking"]
+kpis = ["AUM", "disbursements", "NIM", "cost of funds", "GS3 / Stage 3", "ECL provisions", "capital adequacy", "RoA"]
+context = "Growth vs. asset quality and funding cost; ALM and borrowing mix matter for rating actions."
+footer = [{ metric = "gnpa", label = "GS3", format = "pct", aliases = ["gs3", "stage_3", "gross_stage_3", "gnpa_pct"] },
+          { metric = "nim", label = "NIM", format = "pct", aliases = ["nim_pct", "net_interest_margin"] },
+          { metric = "aum", label = "AUM", format = "cr", aliases = ["aum_cr", "assets_under_management"] }]
+asset_turn_note = "not used: lenders are judged on RoA 1.5-3.5% and RoE 14-20% at 4-7x leverage"
+drivers = "Repo-rate pass-through, wholesale borrowing cost, CASA where relevant. Q4 recovery and disbursement peak; rural slippages in Q1/Q2."
+red_flag = "Stage 3 looking flat only because provision cover was cut or bad loans were written off or sold to ARCs."
+
+[banks]
+match = ["bank"]
+kpis = ["NII", "NIM", "advances growth", "deposit growth", "CASA ratio", "GNPA", "NNPA", "PCR", "credit cost", "CRAR", "RoA"]
+context = "Asset quality and margins drive bank valuations; slippages and credit cost matter more than headline profit."
+footer = [{ metric = "gnpa", label = "GNPA", format = "pct", aliases = ["gnpa_pct", "gross_npa"] },
+          { metric = "nim", label = "NIM", format = "pct", aliases = ["nim_pct", "net_interest_margin"] },
+          { metric = "casa_ratio", label = "CASA", format = "pct", aliases = ["casa", "casa_pct"] }]
+asset_turn_note = "not used: banks are judged on RoA 1.5-3.5% and RoE 14-20% at 4-7x leverage"
+drivers = "Repo-rate transmission, CASA ratio, credit-deposit ratio. Q4 recovery peak; Q1/Q2 rural slippages."
+red_flag = "NNPA flat only because PCR was cut or bad loans were written off / sold to ARCs."
+
+[insurance]
+match = ["insurance"]
+kpis = ["GWP / premium", "APE", "VNB margin", "combined ratio", "solvency ratio", "persistency"]
+context = "Life: VNB and margins; general: combined ratio and solvency."
+footer = [{ metric = "vnb_margin", label = "VNB margin", format = "pct", aliases = ["vnb_margin_pct"] },
+          { metric = "combined_ratio", label = "Combined ratio", format = "pct", aliases = ["combined_ratio_pct"] },
+          { metric = "solvency_ratio", label = "Solvency", format = "x", aliases = ["solvency"] }]
+asset_turn_note = "not used: judge VNB margin, combined ratio and solvency"
+drivers = "Interest rates, persistency, regulatory caps on commissions. Q4 (January-March) tax-saving sales peak."
+red_flag = "VNB margin flattered by a shift to non-par products, or reserve releases lifting profit."
+
+[it]
+match = ["software", "computers", "it enabled", "it services", "information technology", "it consulting"]
+kpis = ["constant-currency revenue growth", "EBIT margin", "deal wins / TCV", "headcount", "attrition", "utilisation"]
+context = "Deal TCV and margin trajectory lead revenue; watch client concentration and vertical commentary."
+footer = [{ metric = "ebit_margin", label = "EBIT margin", format = "pct", aliases = ["ebit_margin_pct", "operating_margin"] },
+          { metric = "attrition", label = "Attrition", format = "pct", aliases = ["attrition_pct", "ltm_attrition"] }]
+asset_turn_note = "asset-light: judge revenue per employee and OCF/EBITDA above 80%"
+drivers = "US/Europe BFSI and retail tech budgets; INR/USD. Q3 (Oct-Dec) furlough weakness."
+red_flag = "Capitalised software salaries (intangibles under development) or surging unbilled revenue hiding slow collections."
+
+[hospitals]
+# Before [pharma], whose "healthcare" would otherwise catch hospitals.
+match = ["hospital", "diagnostic", "healthcare services", "healthcare facilities"]
+kpis = ["occupancy", "ARPOB", "bed additions", "EBITDA margin", "payor mix"]
+context = "Occupancy and ARPOB drive hospitals; new beds dilute margins until they mature."
+footer = [{ metric = "occupancy", label = "Occupancy", format = "pct", aliases = ["occupancy_pct", "bed_occupancy"] },
+          { metric = "arpob", label = "ARPOB", format = "inr", aliases = ["arpob_inr", "average_revenue_per_occupied_bed"] }]
+asset_turn = [0.8, 2.5]
+asset_turn_note = "0.8-1.3x greenfield hospital, 1.8-2.5x brownfield beds"
+drivers = "Payor mix (cash/insurance vs scheme patients), doctor costs. Q2 monsoon infection peak."
+red_flag = "A new greenfield hospital takes 18-24 months to break even on EBITDA; brownfield beds earn far more."
+
+[pharma]
+match = ["pharma", "drug", "healthcare", "life sciences", "biotech"]
+kpis = ["US generics revenue", "India formulations growth", "R&D % of sales", "USFDA status", "ANDA approvals", "EBITDA margin"]
+context = "USFDA inspection outcomes (OAI/VAI, warning letters) and launches drive pharma."
+footer = [{ metric = "ebitda_margin", label = "EBITDA margin", format = "pct", aliases = ["ebitda_margin_pct", "opm"] },
+          { metric = "rd_to_sales", label = "R&D", format = "pct", aliases = ["rd_pct", "r_d_pct", "rd_spend_pct"] }]
+asset_turn = [1.0, 2.5]
+asset_turn_note = "1.5-2.5x formulations, 1.0-1.6x APIs/CDMO, 4-6 quarter regulatory ramp"
+drivers = "KSM/API import dependence on China, US price erosion. Q2/Q3 acute season in India."
+red_flag = "USFDA OAI or import alert; capitalised R&D above 15% of EBITDA; channel stuffing in trade generics."
+
+[auto]
+match = ["automobile", "passenger car", "two wheeler", "2/3 wheeler", "commercial vehicle", "tractor"]
+kpis = ["volumes (domestic/exports)", "realisation per vehicle", "EBITDA margin", "market share", "EV mix", "inventory days"]
+context = "Monthly volumes are the leading indicator; margins track commodity costs and mix."
+footer = [{ metric = "volumes", label = "Volumes", format = "num", aliases = ["total_volumes", "sales_volume", "units_sold"] },
+          { metric = "ebitda_margin", label = "EBITDA margin", format = "pct", aliases = ["ebitda_margin_pct", "opm"] }]
+asset_turn = [3.0, 4.5]
+asset_turn_note = "3.0-4.5x OEMs"
+drivers = "Steel, aluminium, copper, rubber, precious metals. Oct-Nov festive peak; Q4 CV fleet buying."
+red_flag = "Inventory pushed to dealers before a slowdown; heavy discounts behind volume growth."
+
+[auto_components]
+match = ["auto component", "auto ancillar", "tyres", "batteries"]
+kpis = ["revenue by segment/customer", "EBITDA margin", "export share", "order book / new business wins"]
+context = "Tied to OEM volumes; content-per-vehicle and export wins drive outperformance."
+footer = [{ metric = "ebitda_margin", label = "EBITDA margin", format = "pct", aliases = ["ebitda_margin_pct", "opm"] },
+          { metric = "export_share", label = "Exports", format = "pct", aliases = ["export_share_pct", "exports_pct"] }]
+asset_turn = [2.0, 3.5]
+asset_turn_note = "2.0-3.5x ancillaries, 2-4 quarter OEM PPAP approval"
+drivers = "Steel, aluminium, copper, rubber. OEM production schedules; festive and Q4 peaks."
+red_flag = "One OEM above 50% of sales; negative net worth or heavy interest on debt-funded tooling capex."
+
+[cement]
+match = ["cement"]
+kpis = ["volumes (MT)", "realisation per tonne", "EBITDA per tonne", "power & fuel cost per tonne", "capacity (MTPA)", "utilisation"]
+context = "EBITDA/tonne and capacity additions are the core metrics; regional pricing drives quarters."
+footer = [{ metric = "ebitda_per_tonne", label = "EBITDA/t", format = "inr", aliases = ["ebitda_per_ton", "ebitda_tonne"] },
+          { metric = "volumes", label = "Volumes (MT)", format = "num", aliases = ["sales_volume", "volume_mt"] }]
+asset_turn = [0.7, 2.5]
+asset_turn_note = "0.7-1.1x cement, 1.5-2.5x tiles, pipes, wood panels"
+drivers = "Petcoke, imported coal, gas, PVC resin, timber; grid vs WHRS/solar power. Weak Q2 monsoon, strong Q4."
+red_flag = "Regional price wars eroding EBITDA/tonne as new capacity arrives; channel stuffing in March."
+
+[metals]
+match = ["steel", "iron", "aluminium", "copper", "zinc", "metal", "mining", "minerals", "ferro alloys"]
+kpis = ["volumes", "realisation per tonne", "EBITDA per tonne", "net debt", "capex", "coking coal / input costs"]
+context = "Commodity cycle and spreads; leverage matters through the downcycle."
+footer = [{ metric = "ebitda_per_tonne", label = "EBITDA/t", format = "inr", aliases = ["ebitda_per_ton"] },
+          { metric = "net_debt_to_ebitda", label = "Net debt/EBITDA", format = "x", aliases = ["net_debt_ebitda"] }]
+asset_turn = [0.8, 5.0]
+asset_turn_note = "0.8-1.6x integrated, 3.0-5.0x pipes and tubes conversion"
+drivers = "Iron ore, coking coal, HR coil, scrap, captive vs grid power. Weak Q2 monsoon quarter."
+red_flag = "Inventory losses when metal prices fall; commodity vs value-added margin confusion."
+
+[fmcg]
+match = ["fmcg", "personal care", "packaged foods", "food products", "beverages", "tobacco", "edible oil", "dairy"]
+kpis = ["volume growth", "price growth", "gross margin", "A&P spend", "rural vs urban demand"]
+context = "Volume growth vs. price-led growth; gross margins track input costs."
+footer = [{ metric = "volume_growth", label = "Volume growth", format = "pct", aliases = ["volume_growth_pct", "uvg"] },
+          { metric = "gross_margin", label = "Gross margin", format = "pct", aliases = ["gross_margin_pct"] }]
+asset_turn = [2.5, 6.0]
+asset_turn_note = "2.5-5.0x own manufacturing, 6x+ when outsourced"
+drivers = "Palm oil, wheat, sugar, milk, coffee, maize, packaging. Festive Q3 and summer Q1 peaks."
+red_flag = "Price-led growth (+10% price, -3% volume) hiding share loss; A&P cuts used to beat EBITDA."
+
+[oil_gas]
+match = ["oil", "natural gas", "gas distribution", "gas transmission", "city gas", "refiner", "petroleum", "lpg", "lng", "exploration"]
+kpis = ["GRM", "throughput", "marketing margin", "production volumes", "realisation", "inventory gains/losses"]
+context = "Refining margins and inventory effects swing quarters; government pricing policy matters for OMCs."
+footer = [{ metric = "grm", label = "GRM ($/bbl)", format = "usd", aliases = ["grm_usd_bbl", "gross_refining_margin"] },
+          { metric = "throughput", label = "Throughput (MMT)", format = "num", aliases = ["throughput_mmt", "crude_throughput"] }]
+asset_turn = [1.2, 2.5]
+asset_turn_note = "1.2-2.5x city gas networks; regulated pipeline tariffs"
+drivers = "Brent, spot LNG, government APM gas allocation."
+red_flag = "A cut in cheap APM gas allocation forcing city gas distributors onto expensive spot LNG."
+
+[power]
+match = ["power", "electric utilities", "renewable", "solar", "wind", "transmission"]
+kpis = ["installed capacity (MW)", "PLF / CUF", "PPA tariffs", "receivables days", "pipeline under construction", "net debt"]
+context = "Capacity pipeline and commissioning timelines; receivables from discoms are a key risk."
+footer = [{ metric = "installed_capacity", label = "Capacity (MW)", format = "num", aliases = ["capacity_mw", "operational_capacity"] },
+          { metric = "plf", label = "PLF/CUF", format = "pct", aliases = ["plf_pct", "cuf", "cuf_pct"] }]
+asset_turn = [0.2, 4.0]
+asset_turn_note = "0.2-0.3x solar/wind IPP (75-85% EBITDA margin), 2.5-4.0x solar EPC"
+drivers = "Module and cell prices, wind regime, discom payment days. Q2 wind peak; Q1/Q4 solar peak."
+red_flag = "One-time EPC revenue (12-15% margin) confused with 25-year IPP power sales (80% margin)."
+
+[capital_goods]
+match = ["capital goods", "engineering", "industrial machinery", "electrical equipment", "heavy electrical", "defence", "defense", "aerospace", "railway"]
+kpis = ["order inflow", "order book", "book-to-bill", "execution / revenue growth", "EBITDA margin", "working capital days"]
+context = "Order book visibility and execution pace; working capital intensity drives cash flow."
+footer = [{ metric = "order_book", label = "Order book", format = "cr", aliases = ["order_book_cr", "orderbook"] },
+          { metric = "book_to_bill", label = "Book-to-bill", format = "x", aliases = ["book_to_bill_ratio"] }]
+asset_turn = [2.5, 4.5]
+asset_turn_note = "2.5-4.5x asset-light assembly, 12-36 month execution"
+drivers = "Special alloys, electronics, copper, steel. Q4 billing peak (35-45% of the year for government work)."
+red_flag = "L1 counted as a firm order; 15-year O&M lumped into the EPC order book; contract assets surging."
+
+[construction]
+match = ["construction", "infrastructure", "civil", "epc", "road", "ports"]
+kpis = ["order book", "order inflow", "execution", "EBITDA margin", "net debt", "working capital"]
+context = "Order book in years of revenue, execution and balance-sheet stretch."
+footer = [{ metric = "order_book", label = "Order book", format = "cr", aliases = ["order_book_cr", "orderbook"] },
+          { metric = "ebitda_margin", label = "EBITDA margin", format = "pct", aliases = ["ebitda_margin_pct", "opm"] }]
+asset_turn = [3.0, 6.0]
+asset_turn_note = "3.0-6.0x equipment turns; working capital is the real constraint"
+drivers = "Bitumen, cement, steel, diesel; NHAI and state budget payouts. Severe Q2 monsoon dip; Q4 execution peak."
+red_flag = "Receivables plus unbilled contract assets growing faster than revenue; EPC profit locked in HAM/BOT SPV equity."
+
+[realty]
+match = ["realty", "real estate", "residential", "commercial property"]
+kpis = ["pre-sales value", "area sold (msf)", "collections", "new launches", "net debt", "realisation per sq ft"]
+context = "Pre-sales and collections lead reported revenue (which follows project completion)."
+footer = [{ metric = "pre_sales", label = "Pre-sales", format = "cr", aliases = ["presales", "pre_sales_cr", "sales_bookings"] },
+          { metric = "collections", label = "Collections", format = "cr", aliases = ["collections_cr"] }]
+asset_turn_note = "not used: judge pre-sales, collections and launch pipeline"
+drivers = "Land and RERA approvals, construction cost, mortgage rates. Q3 festive and Q4 launch peaks."
+red_flag = "Ind AS 115 revenue reflects flats sold years ago; current pre-sales and collections are the real read."
+
+[consumer_durables]
+match = ["consumer durables", "consumer electronics", "household appliances", "cables", "paints", "jewellery", "footwear"]
+kpis = ["revenue growth", "volume growth", "gross margin", "EBITDA margin", "channel inventory"]
+context = "Demand cycles and input costs; distribution expansion drives growth."
+footer = [{ metric = "ebitda_margin", label = "EBITDA margin", format = "pct", aliases = ["ebitda_margin_pct", "opm"] },
+          { metric = "volume_growth", label = "Volume growth", format = "pct", aliases = ["volume_growth_pct"] }]
+asset_turn = [3.5, 7.0]
+asset_turn_note = "3.5-7.0x high-velocity assembly at 7-14% gross margin"
+drivers = "Imported compressors, PCBs, copper, aluminium, resins. Q1 summer (cooling) and Q3 festive peaks."
+red_flag = "Treating 5-6% assembly margin as tech margin when much of the profit is temporary PLI or stretched payables."
+
+[chemicals]
+match = ["chemical", "fertiliser", "fertilizer", "agro", "pesticide", "specialty"]
+kpis = ["volumes", "realisation", "EBITDA margin", "capacity utilisation", "capex", "China pricing commentary"]
+context = "Utilisation of new capacity and global price competition drive margins."
+footer = [{ metric = "ebitda_margin", label = "EBITDA margin", format = "pct", aliases = ["ebitda_margin_pct", "opm"] },
+          { metric = "capacity_utilisation", label = "Utilisation", format = "pct", aliases = ["utilisation", "capacity_utilization", "utilization"] }]
+asset_turn = [0.8, 2.2]
+asset_turn_note = "1.4-2.2x specialty, 0.8-1.3x bulk, 2-3 quarter qualification ramp"
+drivers = "Crude derivatives, glycerin, phenol, caustic soda, bromine, fluorine; anti-dumping duties; pollution board clearances."
+red_flag = "Feedstock inflation lifting sales while the spread per kg shrinks; captive vs merchant capacity confused."
+
+[textiles]
+match = ["textile", "apparel", "garment", "yarn", "fabric", "cotton"]
+kpis = ["volumes", "realisation", "EBITDA margin", "export share", "cotton cost"]
+context = "Raw material spreads and export demand."
+footer = [{ metric = "ebitda_margin", label = "EBITDA margin", format = "pct", aliases = ["ebitda_margin_pct", "opm"] },
+          { metric = "export_share", label = "Exports", format = "pct", aliases = ["export_share_pct"] }]
+asset_turn = [1.2, 4.0]
+asset_turn_note = "1.2-1.8x spinning, 2.5-4.0x garments"
+drivers = "Indian vs international cotton, polyester and viscose, export rebates (RoSCTL/RoDTEP), FTA tariffs."
+red_flag = "Export rebates and interest subsidies counted as core operating margin."
+
+[telecom]
+match = ["telecom", "communication"]
+kpis = ["ARPU", "subscribers", "data usage", "EBITDA margin", "capex", "net debt"]
+context = "ARPU trajectory and leverage."
+footer = [{ metric = "arpu", label = "ARPU", format = "inr", aliases = ["arpu_inr", "average_revenue_per_user"] },
+          { metric = "subscribers", label = "Subscribers (mn)", format = "num", aliases = ["subscribers_mn", "customer_base"] }]
+asset_turn = [0.5, 0.9]
+asset_turn_note = "0.5-0.9x spectrum and network"
+drivers = "Tariff hikes, AGR and spectrum dues, 5G and fibre capex, tower tenancy receivables."
+red_flag = "Depreciation and spectrum interest eating most of EBITDA; one tenant dominating receivables."
+
+[media]
+match = ["media", "entertainment", "broadcasting", "publishing", "film"]
+kpis = ["advertising revenue", "subscription revenue", "content cost", "EBITDA margin"]
+context = "Ad cycle and content spend."
+footer = [{ metric = "ebitda_margin", label = "EBITDA margin", format = "pct", aliases = ["ebitda_margin_pct", "opm"] },
+          { metric = "advertising_revenue", label = "Ad revenue", format = "cr", aliases = ["ad_revenue", "advertisement_revenue"] }]
+asset_turn = [1.5, 3.0]
+asset_turn_note = "1.5-3.0x multiplexes and print"
+drivers = "Newsprint, film pipeline, FMCG ad budgets. Q3 festive ad peak."
+red_flag = "Film or OTT content costs capitalised instead of written off when titles flop."
+
+[hotels]
+match = ["hotel", "resort", "hospitality"]
+kpis = ["RevPAR", "ARR", "occupancy", "room additions", "EBITDA margin"]
+context = "RevPAR (occupancy × ARR) leads hotel earnings; asset-light management contracts change the margin mix."
+footer = [{ metric = "revpar", label = "RevPAR", format = "inr", aliases = ["revpar_inr"] },
+          { metric = "occupancy", label = "Occupancy", format = "pct", aliases = ["occupancy_pct"] },
+          { metric = "arr", label = "ARR", format = "inr", aliases = ["average_room_rate", "adr"] }]
+asset_turn = [0.4, 0.7]
+asset_turn_note = "0.4-0.7x owned hotels; managed and franchised rooms are asset-light"
+drivers = "Corporate MICE, foreign arrivals, wedding dates, airline capacity. Oct-Mar brings 65%+ of profit."
+red_flag = "Debt-funded owned greenfield hotels vs high-ROCE management contracts."
+
+[aviation]
+match = ["airline", "aviation", "air transport"]
+kpis = ["passengers", "load factor", "yield", "RASK", "CASK ex-fuel", "fleet", "market share"]
+context = "Load factor and yields against fuel and currency costs; leases make reported debt large."
+footer = [{ metric = "load_factor", label = "Load factor", format = "pct", aliases = ["load_factor_pct", "plf"] },
+          { metric = "market_share", label = "Market share", format = "pct", aliases = ["market_share_pct"] }]
+asset_turn = [0.6, 5.0]
+asset_turn_note = "0.6-1.0x ports and shipping, 3.0-5.0x surface logistics"
+drivers = "Freight indices, ATF and diesel, dedicated freight corridor shift."
+red_flag = "Ind AS 116 lease accounting on aircraft, ships and warehouses hiding cash rent."
+
+[consumer_services]
+match = ["restaurant", "retail", "e-commerce", "travel", "logistics", "education", "quick service"]
+kpis = ["same-store sales growth", "store or fleet additions", "revenue per sq ft", "EBITDA margin", "unit economics"]
+context = "Unit economics and footprint expansion."
+footer = [{ metric = "same_store_sales_growth", label = "SSSG", format = "pct", aliases = ["sssg", "sssg_pct", "lfl_growth"] },
+          { metric = "ebitda_margin", label = "EBITDA margin", format = "pct", aliases = ["ebitda_margin_pct", "opm"] }]
+asset_turn = [2.5, 4.5]
+asset_turn_note = "2.5-4.5x store capex; store payback under 36 months"
+drivers = "Gold lease rates (jewellery), retail rents, food inflation (QSR). Big Q3 festive and wedding peak."
+red_flag = "Ind AS 116 moves rent out of EBITDA and inflates the margin by 600-900 bps: check pre-Ind AS 116 EBITDA."
+
+[sugar]
+match = ["sugar", "distiller", "ethanol"]
+kpis = ["cane crushed", "sugar recovery", "sugar realisation per quintal", "ethanol volumes", "distillery capacity (KLPD)", "inventory"]
+context = "Seasonal (crushing from October); sugar realisations, recovery rates and the ethanol mix drive margins."
+footer = [{ metric = "sugar_recovery", label = "Recovery", format = "pct", aliases = ["recovery", "recovery_pct"] },
+          { metric = "sugar_realisation", label = "Realisation (₹/qtl)", format = "inr", aliases = ["sugar_realization", "realisation_per_quintal"] }]
+asset_turn = [0.8, 1.5]
+asset_turn_note = "about 0.8-1.5x mills with distillery"
+drivers = "Cane price (FRP/SAP), sugar export quotas, ethanol procurement price. Crushing season Oct-Apr."
+red_flag = "Inventory valued at a high sugar price before a fall; ethanol diversion assumptions."
+
+[default]
+match = []
+kpis = ["revenue", "EBITDA", "PAT", "order book or pipeline", "net debt"]
+context = "Focus on the numbers most likely to change an investor's view of earnings or balance-sheet risk."
+footer = [{ metric = "ebitda_margin", label = "EBITDA margin", format = "pct", aliases = ["ebitda_margin_pct", "opm", "operating_margin"] }]
+asset_turn_note = "for diversified groups, read each segment with its own sector's norms (sum of the parts)"
+drivers = "Cross-subsidy from a cash-generating division into a low-return one."
+red_flag = "Free cash from a high-ROCE division poured into a 6% ROCE one until a demerger unlocks value."

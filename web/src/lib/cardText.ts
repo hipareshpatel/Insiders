@@ -1,0 +1,57 @@
+/** Plain-text rules the card uses to say each thing once (owner, 2026-10-19: "lots of repeated items"). No React here,
+ * so `node --test` runs the cases in cardText.test.ts. */
+
+const plainText = (text: string) => text.replace(/\*\*/g, "");
+
+// Period labels ("Q2FY27", "Q2 FY 2026-27", "H1FY27") and years are not figures.
+export const PERIOD_WORDS = /\b(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2,4}(?:-\d{2})?\b|\b(?:Q[1-4]|H[12]|9M)\b|\b20\d{2}(?:-\d{2})?\b/gi;
+
+export function figures(text: string): number[] {
+  return (text.replace(PERIOD_WORDS, " ").match(/\d[\d,]*(?:\.\d+)?/g) ?? []).map((raw) => Number(raw.replace(/,/g, "")));
+}
+
+export function near(n: number, known: number[], raw = ""): boolean {
+  const rounding = raw.includes(".") ? 0.051 : 0.5; // "+30%" restates 29.6%
+  return known.some((k) => Math.abs(k - n) <= Math.max(rounding, Math.abs(k) * 0.006));
+}
+
+const STOP = new Set(["with", "from", "that", "this", "were", "have", "been", "which", "their", "into", "over", "under",
+  "after", "before", "about", "against", "company", "limited", "crore", "lakh", "year", "quarter", "said", "will", "also"]);
+export function words(text: string): Set<string> {
+  return new Set((text.toLowerCase().match(/[a-z][a-z-]{3,}/g) ?? []).filter((w) => !STOP.has(w)));
+}
+
+/** `value` appears in `text` as a figure of its own ("2.1" is not inside "12.1"). */
+export function showsFigure(text: string, value: string): boolean {
+  const v = value.replace(/^₹|\s*Cr$|%$|x$/g, "").trim();
+  if (!v) return false;
+  return new RegExp(`(^|[^\\d.,])${v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\d]|[.,]\\d)`).test(text);
+}
+
+/** True when `text` says nothing `of` does not: its figures are all there and most of its words, or nearly every word. */
+export function repeats(text: string, of: string): boolean {
+  const t = plainText(text), o = plainText(of);
+  const mine = [...words(t)], theirs = words(o);
+  const overlap = mine.length ? mine.filter((w) => theirs.has(w)).length / mine.length : 0;
+  const nums = figures(t), known = figures(o);
+  const allFigures = nums.length > 0 && nums.every((n) => near(n, known, String(n)));
+  return (allFigures && overlap >= 0.4) || overlap >= 0.8;
+}
+
+/** "36 months" or "05 years" is a term, "30 June 2027" a date (Ceigall's "Complete by 05 years", laptop re-check). */
+export function executionFact(text: string): [string, string] {
+  const term = text.match(/^\s*(?:within|over|for(?: a period of)?)?\s*0*(\d+(?:\.\d+)?)\s*(months?|years?)\b/i);
+  return term ? ["Term", `${term[1]} ${term[2].toLowerCase()}`] : ["Complete by", text];
+}
+
+/** The verified face (owner, 2026-10-20, after two live reviews put 17 of 48 cards WRONG, nearly all in the prose): a
+ * fact stays on the card when code found its quoted sentence in the filing and none of its figures is among those the
+ * checks could not find. Anything else is the AI's reading and goes behind "AI reading · not verified". */
+export function verifiedFact(fact: string | { text: string; quote?: string | null }, ungrounded: string[] = []): boolean {
+  if (typeof fact === "string" || !fact.quote || !fact.quote.trim()) return false;
+  const text = plainText(fact.text);
+  return !ungrounded.some((u) => {
+    const value = String(u).split("=").pop()!.trim();
+    return value !== "" && showsFigure(text, value.replace(/^₹/, ""));
+  });
+}

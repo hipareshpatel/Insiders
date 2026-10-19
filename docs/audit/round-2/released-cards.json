@@ -1,0 +1,1475 @@
+[
+ {
+  "news_id": "0fd4cf53-ed33-4396-ab98-5fb141ad219a",
+  "headline": "SML Mahindra August 2025 sales: cargo vehicles up 6% MoM, passenger vehicles down 24% MoM, total volumes down 15% MoM",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline",
+    "card_says": "cargo up 6% MoM, passenger down 24% MoM, total down 15% MoM",
+    "pdf_says": "The table compares August 2025-26 with August 2024-25 (321 vs 303, 521 vs 687, 842 vs 990): these are YoY changes. Against July 2025 (memory: 449 / 978 / 1,427) cargo fell 28%, passenger 47%, total 41%.",
+    "class": "wrong_period"
+   },
+   {
+    "field": "what_happened",
+    "card_says": "rose to 321 units from 303 units in July 2025; fell to 521 from 687 in July 2025; declined to 842 from 990 in July 2025",
+    "pdf_says": "303 / 687 / 990 are August 2024 figures (2024-25 column), not July 2025. Cargo actually fell month on month (449 to 321).",
+    "class": "wrong_period"
+   },
+   {
+    "field": "key_numbers",
+    "card_says": "Cargo vehicles MoM change 6%; Passenger vehicles MoM change -24%; Total sales MoM change -15%",
+    "pdf_says": "6% / -24% / -15% are the filing's YoY % change column (August 2025 vs August 2024).",
+    "class": "wrong_period"
+   },
+   {
+    "field": "notable_changes",
+    "card_says": "previous 990 UNITS (Jul-2025), change -15%",
+    "pdf_says": "990 is August 2024; July 2025 was 1,427 (memory), so the MoM change is -41% (as the card's own signal says).",
+    "class": "wrong_period"
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "842 units, down 15% MoM, with cargo vehicles up 6% and passenger vehicles down 24%",
+    "pdf_says": "Down 15% YoY (vs 990 in August 2024); the card's own signals give -41% vs July 2025.",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters",
+    "card_says": "basis MEMORY, refs t_8a3389ce, t_4972accb, t_a4204a42 for YTD cargo 2,052 (+39%) and passenger 5,143 (+1%)",
+    "pdf_says": "The figures are from the filing; the cited memory entries are the M&M share purchase, open offer and name change, which say nothing about volumes.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "7ad3190f-6fe9-4fa0-9dda-736d071c0a3a",
+  "headline": "Income Tax survey underway; Q2FY25 board meeting postponed",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened / track_next / timeline_entry",
+    "card_says": "Q2FY25 results board meeting postponed",
+    "pdf_says": "Meeting was to approve results for the quarter and half year ended September 30, 2025, i.e. Q2FY26.",
+    "class": "wrong_period"
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "2025-10-30: Income Tax Department survey conducted",
+    "pdf_says": "Letter dated October 30 says officials visited 'yesterday' (October 29) and the survey 'is underway'.",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters",
+    "card_says": "postponed results were expected to update net leverage (ref w_b21baf9f)",
+    "pdf_says": "Memory w_b21baf9f (net leverage) has check_in 'FY26 results', not the Q2 results; only w_f4fb6596 is tied to Q2FY26.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "bc06ae39-6af5-4682-85bb-49ea09543534",
+  "headline": "CSB Bank deposits rose 26% YoY to ₹45,415 Cr as of June 30, 2026, driven by 33% growth in term deposits",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "customer preference for higher-yielding deposits amid declining interest rates",
+    "pdf_says": "The filing is a table of provisional balances with no explanation of deposit mix or rates.",
+    "class": "invented"
+   },
+   {
+    "field": "track_next.kpis_to_verify",
+    "card_says": "NII and GNPA ratio check_in 'Q2FY27 results'",
+    "pdf_says": "The quarter ended June 30, 2026 is Q1FY27; the next results to check are Q1FY27 (the card's own missing_disclosures say Q1FY27).",
+    "class": "wrong_period"
+   }
+  ]
+ },
+ {
+  "news_id": "d6507dc6-3876-43b1-8eca-0a5b2be9ccbe",
+  "headline": "Novartis India receives service tax demand of ₹30.06 lakh for FY15-FY18",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened / track_next.risks",
+    "card_says": "Total demand ₹30.06 lakh; adverse outcome could result in outflow of ₹30.06 lakh",
+    "pdf_says": "Annexure: Service Tax ₹15,01,762, 'Interest Not Quantified', Penalty ₹15,03,762; total ₹30,05,524 excludes interest, so the exposure is higher than stated.",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters",
+    "card_says": "basis BALANCE_SHEET: demand is 0.06% of net worth",
+    "pdf_says": "Memory holds no net worth or balance sheet (and the card's own missing_disclosures says net worth is missing); the 0.08% of TTM revenue is roughly supported.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "b69a3907-5d90-4501-835a-958f69705579",
+  "headline": "Jubilant Pharmova gets USFDA approval for Line 3 at Spokane facility",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "435f98de-522c-47f7-ac84-a8d2666ff8be",
+  "headline": "Ahluwalia Contracts Q3FY25 revenue fell 7% YoY to ₹952 Cr; PAT declined 30% to ₹49 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers",
+    "card_says": "Finance Cost ₹15 Cr, +25% YoY",
+    "pdf_says": "Finance costs 1,454.89 vs 1,226.02 lakh = ₹14.55 Cr vs ₹12.26 Cr, +18.7% YoY (25% comes from the rounded 15/12); they fell QoQ from ₹16.00 Cr.",
+    "class": "arithmetic"
+   },
+   {
+    "field": "why_it_matters",
+    "card_says": "Revenue contraction aligns with seasonal slowdown in Q3 due to monsoon effects on execution (quote: 'Severe Q2 monsoon dip; Q4 execution peak')",
+    "pdf_says": "Its own sector quote puts the monsoon dip in Q2, not Q3 (Oct-Dec), and a YoY comparison does not reflect seasonality; the filing gives no reason for the decline.",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters",
+    "card_says": "Finance cost increase adds pressure on margins amid rising interest rates (basis BALANCE_SHEET)",
+    "pdf_says": "No interest-rate statement in the filing and no balance sheet in memory; finance cost was +₹2.3 Cr YoY against a ₹28.3 Cr fall in PBT.",
+    "class": "invented"
+   },
+   {
+    "field": "takeaway / core_catalyst",
+    "card_says": "softer order intake and cost pressures; lower execution and higher finance costs dragged profitability",
+    "pdf_says": "No order-intake data in the filing. The profit fall came from the Contract Work segment result (10,490.04 to 7,554.87 lakh, -28%) on 7% lower revenue, not finance costs.",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "5f89acb4-e475-4637-888c-a265f3ca196b",
+  "headline": "Kanoria Chemicals Q1FY26 revenue rose 18.1% YoY to ₹453.78 Cr; EBITDA jumped to ₹16.37 Cr from ₹1.8 Cr",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "remains loss-making due to high finance costs and tax expenses",
+    "pdf_says": "Consolidated depreciation ₹16.74 Cr is the largest charge (finance ₹10.85 Cr); the ₹10.46 Cr loss before tax exists before any tax.",
+    "class": "other"
+   },
+   {
+    "field": "signals",
+    "card_says": "Purchases stock in trade up 1575% YoY to 18.93 Cr (FY25)",
+    "pdf_says": "FY25 ₹18.93 Cr is right, but the base is memory's FY24 ₹1.13 Cr, which is below memory's own 9MFY24 ₹29.01 Cr, so the FY24 figure (and the 1575%) cannot be right; it is also a stale FY25 item on a Q1FY26 card.",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters",
+    "card_says": "basis MEMORY for EBITDA margin, finance cost and tax comparisons",
+    "pdf_says": "Memory holds no Q1FY25 or Q1FY26 figures; the numbers (correct) come from the filing/XBRL.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "bb06b92e-4fcb-4563-ba53-127411ca1784",
+  "headline": "eMudhra buys 51% of Cryptas International for €5 million upfront, upside on 10x 2026 EBITDA",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened / track_next.milestones",
+    "card_says": "put or call option on the balance 10% runs from 28 to 30 months (post-closing)",
+    "pdf_says": "Transcript says only 'from 28 to 30' with no unit; with the earn-out priced on 2026 EBITDA it may mean 2028 to 2030. 'Months' is not in the filing.",
+    "class": "invented"
+   },
+   {
+    "field": "headline",
+    "card_says": "eMudhra buys 51% of Cryptas",
+    "pdf_says": "Agreement signed June 27, 2025; money remittance and closing 'expected to take three to four weeks'.",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.updates_deal_id",
+    "card_says": "d_6dd21520",
+    "pdf_says": "Memory d_6dd21520 is a ₹193 Cr FUNDRAISE (QIP proceeds utilised at Mar-2025), not the Cryptas acquisition.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "145bb59e-db01-490b-86f5-ebe6eab36492",
+  "headline": "Heritage Foods FY26 revenue rose 9.5% to ₹4,526 Cr but PAT fell 20% to ₹150 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals (LOW_QUALITY_BEAT)",
+    "card_says": "PAT up 17% YoY but core EBITDA -30% (Q4FY26): the profit came from below the operating line",
+    "pdf_says": "Consolidated Q4 profit 239.44 vs 381.66 million = -37.3% YoY (the card's own figure). The +17% compares it with memory's standalone Q4FY25 PAT ₹20.51 Cr (standalone 205.10 million).",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "signals",
+    "card_says": "Deferred tax up 1623% YoY to 6.72 Cr (Q4FY26)",
+    "pdf_says": "Consolidated Q4FY25 deferred tax 1.55 million, so +4,235%; 1623% matches the standalone base (3.87 million).",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "signals (MARGIN_MIX)",
+    "card_says": "gross margin -209 bps, fixed-cost absorption -56 bps (Q4FY26)",
+    "pdf_says": "Materials + purchases + inventory change: 8,985.71/11,575.61 vs 8,016.37/10,484.66 million, gross margin 22.4% vs 23.5% = about -117 bps; the parts (-265 bps) do not add to the EBITDA margin fall (7.47% to 4.51%, -296 bps).",
+    "class": "arithmetic"
+   },
+   {
+    "field": "signals (RECURRING_ONE_OFFS / METRIC_SHIFT)",
+    "card_says": "Exceptional items in Q1FY25, Q2FY25, Q3FY25 ...; Exceptional items up 274% YoY to 9.36 Cr (9MFY26)",
+    "pdf_says": "Consolidated FY25 exceptional items (-87.07 million) equal Q4FY25 alone, so 9MFY25 had none (net); neither the three FY25 quarters nor a 274% base is supported.",
+    "class": "other"
+   },
+   {
+    "field": "signals (WATCH_RESOLVED)",
+    "card_says": "POSITIVE: KPI check met: gross debt level ... ₹324.13 Cr, up from ₹136.39 Cr",
+    "pdf_says": "Borrowings rose 138% (1,363.94 to 3,241.33 million); marking it POSITIVE / 'met' contradicts the card's own NEGATIVE notable change.",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "Sales grew on volume and feed consolidation",
+    "pdf_says": "No volume data in the filing (the card lists it as missing). Feed segment revenue grew organically (1,849.27 to 2,454.45 million); the FY26 consolidation was HNFL, a dairy JV.",
+    "class": "invented"
+   },
+   {
+    "field": "signals (GUIDANCE_BREACH)",
+    "card_says": "Milk procurement to reach 2 MLPD by FY26 (g_1dda8bc2)",
+    "pdf_says": "g_1dda8bc2 is not among the guidance items in memory.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "9c65c052-d4bb-4147-9337-3311f9954d57",
+  "headline": "Shivam Autotech seeks nod for ₹120 Cr OCDs to Alpha Fund, convertible at ₹28.81 into 4.17 Cr shares",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes",
+    "card_says": "Full conversion of OCDs dilutes promoters by about a sixth of their stake",
+    "pdf_says": "69.52% to 52.80% is a 24% cut in the promoters' share (about a quarter); 16.72 is percentage points.",
+    "class": "arithmetic"
+   },
+   {
+    "field": "missing_disclosures",
+    "card_says": "Use of proceeds and ... security offered on the OCDs not disclosed",
+    "pdf_says": "Objects are stated (repayment of NCDs issued to the Proposed Allottee, and long-term working capital) and the security is listed (share pledge, mortgage over Rohtak, Kolar and Haridwar plants, DMIPL corporate and Neeraj Munjal personal guarantees, escrow).",
+    "class": "other"
+   },
+   {
+    "field": "event_type",
+    "card_says": "CORPORATE_ACTION",
+    "pdf_says": "A preferential OCD fundraise (memory files the same deal's board approval as FUNDRAISE).",
+    "class": "event_type"
+   },
+   {
+    "field": "why_it_matters",
+    "card_says": "₹120 Cr is ... 25.5% of market cap (basis BALANCE_SHEET)",
+    "pdf_says": "No market capitalisation or share price in the filing or memory.",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters",
+    "card_says": "Fifth fundraise ... (₹25 Cr, ₹225 Cr, ₹245 Cr, ₹105 Cr, now ₹120 Cr), all still at approval stage",
+    "pdf_says": "Memory d_478ca68b (₹25 Cr) is COMPLETED, and the entities list says those OCDs were converted to equity.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "0877bc4b-a9fb-4f9e-a102-3fce112f5e94",
+  "headline": "Heritage Foods gets ₹77.95 Lakh GST refund order for Tamil Nadu flavoured milk",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "The refund represents 0.18% of the company's net worth (₹971.96 Cr)",
+    "pdf_says": "Refund Rs.77.95 lakh = ₹0.78 Cr; 0.7795 / 971.96 = 0.08% of net worth, not 0.18%",
+    "class": "arithmetic"
+   }
+  ]
+ },
+ {
+  "news_id": "087abfee-b96d-4df9-bd25-238c51c2646f",
+  "headline": "eMudhra denies 3i Infotech fraud complaint alleging over ₹128 Cr, says barred by limitation",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "The ₹128 Cr claim is 15.7% of net worth and 35.3% of TTM revenue",
+    "pdf_says": "Filing has no revenue. 35.3% implies TTM revenue of ~₹363 Cr, but memory holds Q3FY26 revenue ₹188 Cr and H1FY26 revenue ~₹325 Cr (guidance quote), so TTM is above ₹513 Cr and the claim is at most ~25% (likely ~20%) of TTM revenue. The 15.7% of net worth (₹812.92 Cr, Q2FY26) is right.",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "gross debt only ₹16.5 Cr at H1FY26",
+    "pdf_says": "Memory holds two gross-debt figures for the same Sep-2025 date: H1FY26 ₹16.5 Cr and Q2FY26 ₹97.88 Cr; the card picks the lower without noting the conflict",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[2].memory_refs",
+    "card_says": "memory already records that former name (ref t_3c5f5931)",
+    "pdf_says": "t_3c5f5931 is the AI Cyber Forge merger; the former name 3i Consumer Services is in memory's former_names, not that entry",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "4812e706-084e-4559-9568-d7f2a95f3401",
+  "headline": "SML Mahindra February 2026 sales rose 15% YoY to 1,415 commercial vehicles",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "KPI check met: February 2026 sales volume ... February 2026 sales volume of 1,503 units reported in filing",
+    "pdf_says": "Filing reports Feb '26 sales of 1,415 units (Feb '25: 1,229); 1,503 is from an earlier update held in memory, not this filing, and contradicts the card's own headline",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "Higher domestic demand for commercial vehicles drove monthly sales growth",
+    "pdf_says": "Filing gives only production, sales and export totals; no reason for growth and no domestic/export demand commentary",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "589304c3-8965-4689-a65d-829f1b1b352c",
+  "headline": "Infomerics rates long-term bank facilities IVR BBB-/Stable and short-term IVR A3",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "599c85e9-3b71-40cc-a991-7ea1dca6fec7",
+  "headline": "Shivam Autotech FY26 loss widens to ₹81 Cr; net worth turns negative at ₹41 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "WATCH_RESOLVED, POSITIVE: KPI check met: \"Net worth turning positive\". Net worth was negative ₹40.68 Cr at 31 March 2026.",
+    "pdf_says": "Net worth (4,068.21) lakh = -₹40.68 Cr, worse than -₹22.83 Cr in Dec-2025; the KPI is missed (as the card's own why_it_matters[0] says), not met",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Non-current borrowings jumped to ₹285.67 Cr from ₹118.72 Cr as part of debt reclassification",
+    "pdf_says": "Figures right, but no reclassification is stated: cash flow shows net long-term borrowings raised ₹166.12 Cr and net short-term repaid ₹101.50 Cr (refinancing); total borrowings rose to ₹398.79 Cr from ₹333.35 Cr",
+    "class": "invented"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "Heavy finance cost of ₹68 Cr on non-current borrowings of ₹286 Cr",
+    "pdf_says": "Finance cost ₹67.92 Cr is on total borrowings of ₹398.79 Cr (non-current 28,566.55 lakh + current 11,312.18 lakh), not on non-current borrowings alone",
+    "class": "other"
+   },
+   {
+    "field": "signals[6] (AUDIT_FLAG)",
+    "card_says": "Deferred tax assets of ₹19.89 Cr not recognised after March 2021",
+    "pdf_says": "The ₹19.89 Cr (1,989.25 lakh) DTA is recognised on the balance sheet (created till 31 Mar 2021); what is not recognised is any further DTA after that date",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "64a8b148-d1fa-4741-a2d4-ab9339c0b74c",
+  "headline": "Ahluwalia Contracts secures ₹2,089 Cr order from DLF Limited for 'The Dahlias' DLF5, Gurugram housing project",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "The order adds ~13% to FY25 revenue",
+    "pdf_says": "₹2,089 Cr / FY25 revenue ₹4,098.62 Cr = 51% (as the card's own why_it_matters[1] and SCALE signal say); ~13% is the share of the FY25 order book (₹15,775 Cr)",
+    "class": "arithmetic"
+   },
+   {
+    "field": "track_next.kpis_to_verify[0]",
+    "card_says": "Order inflow, metric order_book, FY26, >= 7500 (target ₹7,000-8,000 Cr)",
+    "pdf_says": "The guidance is order inflow; checking order_book (already ₹15,775 Cr at FY25) against 7,500 would pass automatically and tests nothing",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "deal_value.stage",
+    "card_says": "LOI",
+    "pdf_says": "Filing says the company \"has secured an order\" (Recent Awards); no letter of intent or pending formal contract is mentioned",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[2].memory_refs",
+    "card_says": "order book ₹15,775 Cr as of FY25 (ref t_fdd354e1)",
+    "pdf_says": "Figure matches memory's order_book FY25 ₹15,775.1 Cr, but t_fdd354e1 is the June 2025 ₹1,103.56 Cr order win, not the order-book record",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "69fcd7b6-1c83-4570-a015-4bc20e55031a",
+  "headline": "CSB Bank Q3FY25 PAT rose 1.1% YoY to ₹151.63 Cr; GNPA ratio increased to 1.58%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "GNPA ratio at 1.58% is the highest since Q2FY24, indicating rising asset quality stress",
+    "pdf_says": "Filing's own previous-quarter column: GNPA 1.68% at 30.09.2024 (Q2FY25), so 1.58% is down QoQ (NNPA 0.69% -> 0.64%); it is up only YoY (1.22%). Not the highest since Q2FY24.",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[1].memory_refs",
+    "card_says": "basis MEMORY, ref t_558f9d20",
+    "pdf_says": "t_558f9d20 is the Q3FY25 business update (deposits, advances, CASA); memory holds no GNPA history to support the claim",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[0]; notable_changes[2].why; track_next.risks[1]",
+    "card_says": "Other income growth was driven by treasury gains and forex earnings ... Strong treasury and forex gains boosted non-interest income",
+    "pdf_says": "Note 6 only lists what other income includes (fees, commission, forex, third-party products, investment gains); it does not attribute the growth to treasury or forex",
+    "class": "invented"
+   },
+   {
+    "field": "signals[0]",
+    "card_says": "KPI check met: \"CASA ratio in Q3FY25 results\" ... disclosed in the filing (though exact figure not in this filing)",
+    "pdf_says": "The results filing contains no CASA ratio; the watch item cannot be met by this filing",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "signals[2], signals[3]",
+    "card_says": "Provisions up 1713% YoY to 50.5 Cr (9MFY25); Provisions up 464% YoY to 16.53 Cr (Q3FY25)",
+    "pdf_says": "Year-ago provisions were net write-backs, (313) and (454) lakh = -₹3.13 Cr and -₹4.54 Cr; a percentage change off a negative base is meaningless (swing is +₹53.6 Cr and +₹21.1 Cr)",
+    "class": "arithmetic"
+   }
+  ]
+ },
+ {
+  "news_id": "b7ce5a9b-d95f-4539-9312-9b2a4a01ed50",
+  "headline": "Jubilant HollisterStier launches third sterile fill-finish line at Spokane, adding 50% capacity",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "PRODUCT_LAUNCH",
+    "pdf_says": "The filing is the commissioning of a US$132 million manufacturing line adding 50% capacity (the card's own deal_value is CAPEX / BROWNFIELD); it is a capacity expansion, not a product launch",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "beec330c-d761-413d-95c9-42af5370c643",
+  "headline": "Prism Johnson gets ₹28.2 Cr income tax demand for AY2024-25, plans appeal",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway; why_it_matters[0]; quantified_impact[0]",
+    "card_says": "The demand is about 11% of net worth (₹253.66 Cr net worth in memory)",
+    "pdf_says": "Demand Rs.28,23,82,920 = ₹28.24 Cr is right, but memory holds net worth ₹1,461.12 Cr (Q2FY26) and ₹1,768.06 Cr (Mar-2025), not ₹253.66 Cr; the demand is ~1.6-1.9% of net worth",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "e4a61c7f-b1f2-4962-a228-dde49a0e791c",
+  "headline": "Novartis India FY25 revenue rose 6.3% YoY to ₹356.27 Cr; PAT up 18.4% to ₹100.9 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[0]",
+    "card_says": "deferred_tax ₹0.02 Cr (FY24) -> -₹0.44 Cr (FY25), change +2100% YoY, direction NEGATIVE, why: boosted PAT",
+    "pdf_says": "Deferred tax 0.2 -> (4.4) ₹ million: change is -2300% (as the card's own quote says), not +2100%; and a credit that boosted PAT is labelled NEGATIVE. Immaterial (₹0.44 Cr on ₹100.9 Cr PAT).",
+    "class": "arithmetic"
+   },
+   {
+    "field": "notable_changes[2].why",
+    "card_says": "Lower inventory build suggests improved working capital management",
+    "pdf_says": "Changes in inventories of stock-in-trade were +98.6 (FY24) and +37.5 (FY25) ₹ million, i.e. inventory drawdowns in both years (inventories 448.6 -> 411.1); FY25 had less destocking, not a lower build",
+    "class": "direction"
+   },
+   {
+    "field": "track_next.risks",
+    "card_says": "US price erosion in generic portfolio; Dependence on imported APIs from China",
+    "pdf_says": "Not in the filing; Novartis India reports a single Indian pharmaceuticals segment selling purchased stock-in-trade, with no US generics portfolio or API manufacturing disclosed",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "0f500b08-ef66-4098-b8b9-a4bf97c9e368",
+  "headline": "SML Mahindra Q3FY26 PAT rose 3209% YoY to ₹17.54 Cr; revenue up 62.5% to ₹539.27 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "Low base effect from prior year's minimal profit due to tax adjustments",
+    "pdf_says": "Q3FY25 profit before tax was only ₹0.75 Cr (tax ₹0.22 Cr; the prior-period tax adjustment line is nil for that quarter). The low base was operating, not tax.",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "near-zero base in Q3FY25 (₹0.53 Cr) due to prior-period tax adjustments",
+    "pdf_says": "PAT ₹0.53 Cr is right, but Q3FY25 shows no prior-period tax adjustment; PBT itself was ₹0.75 Cr.",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0].memory_refs",
+    "card_says": "t_159b96d7 cited for the tax explanation",
+    "pdf_says": "Memory t_159b96d7 is Navodya Enterprises' sale of 9,751 shares; it says nothing about tax.",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "sustained improvement after a weak H1FY26 impacted by deferred tax swings",
+    "pdf_says": "Memory: H1FY26 PAT ₹88.01 Cr vs H1FY25 ₹68.19 Cr (9M 68.72 less Q3 0.53), about +29%; H1FY26 deferred tax was a ₹1.34 Cr credit. H1 was strong; Q3 is the weaker period.",
+    "class": "memory"
+   },
+   {
+    "field": "notable_changes[inventory_change].why",
+    "card_says": "Inventory drawdown accelerated, suggesting possible production cuts or demand lag",
+    "pdf_says": "Changes in inventories (119.29) is negative in the expense line, i.e. closing stock exceeded opening: an inventory build-up of about ₹119 Cr, the opposite of a drawdown.",
+    "class": "direction"
+   },
+   {
+    "field": "notable_changes[current_tax].why",
+    "card_says": "Tax expense jumped sharply due to reversal of prior-period benefits",
+    "pdf_says": "No reversal is disclosed; current tax rose with PBT (₹0.75 Cr to ₹23.52 Cr).",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[deferred_tax].change",
+    "card_says": "-84.2%",
+    "pdf_says": "0.19 to (0.03) is -115.8% (the card's own quote says YoY -115.8%).",
+    "class": "arithmetic"
+   },
+   {
+    "field": "signals (current tax 9MFY26 / H1FY26)",
+    "card_says": "Current tax up 4172% YoY to 37.17 Cr (9MFY26); up 3610% to 31.16 Cr (H1FY26)",
+    "pdf_says": "Statement's 9MFY25 current tax is ₹1.18 Cr (prior-period adjustment of (0.31) shown separately), so +3050%; the signal used ₹0.87 Cr, current tax net of the adjustment. Same for H1 (₹1.15 Cr, not ₹0.84 Cr).",
+    "class": "other"
+   },
+   {
+    "field": "track_next.kpis_to_verify[0]",
+    "card_says": "Revenue growth: revenue Q4FY26 >= 0.0, target 'positive'",
+    "pdf_says": "Revenue >= 0 is always met; this is not a growth test.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "248997b2-8036-45c1-b26f-d642ad398988",
+  "headline": "Ahluwalia Contracts Q2FY26 revenue rose 16.4% YoY to ₹1,177 Cr; PAT up 106% to ₹79 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[working_capital_days]",
+    "card_says": "95 days (Jun-2026) -> 87 days (Sep-2026)",
+    "pdf_says": "November 2025 call: '87 days approximately from 95 days as on 30th June', i.e. Jun-2025 to Sep-2025.",
+    "class": "wrong_period"
+   },
+   {
+    "field": "track_next.kpis_to_verify[EBITDA margin]",
+    "card_says": "EBITDA margin double-digit, period FY27, check in Q3FY27 results",
+    "pdf_says": "The double-digit margin was promised 'for the entire year' (FY26); only the 15-20% revenue growth was extended to FY27. A full-year target cannot be checked at Q3 results.",
+    "class": "wrong_period"
+   }
+  ]
+ },
+ {
+  "news_id": "30294f46-9fe6-4903-985f-8b72b6035190",
+  "headline": "eMudhra arm to buy 51% of Austria's Cryptas for €5 million cash, target revenue ₹97 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "The target's ₹97 Cr revenue is 28.4% of eMudhra's ₹341 Cr TTM revenue, so this adds scale abroad rather than a bolt-on",
+    "pdf_says": "The filing gives no eMudhra revenue (basis says FILING). Memory has no ₹341 Cr: standalone FY25 revenue is ₹202.96 Cr and management guided ₹510-520 Cr (Feb 2025). Against roughly ₹500+ Cr the target is about 18-19%, not 28%.",
+    "class": "invented"
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "€5 million (₹46 Cr)",
+    "pdf_says": "The filing gives no INR figure for the consideration; its own conversion (EUR 9.7m about INR 97 Cr) implies €5m is about ₹50 Cr.",
+    "class": "arithmetic"
+   },
+   {
+    "field": "track_next.catalysts",
+    "card_says": "Cryptas EBITDA in 2026 above expectations, lifting the earnout value of the retained 49%",
+    "pdf_says": "The 2026 EBITDA earn-out is part of the price of the 51%. The 49% put/call (2028-2030) is priced on the four quarters before exercise. A higher earn-out is a cost to eMudhra, not a catalyst.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "371cb9bc-f292-4354-b7ae-eed09d194101",
+  "headline": "Kanoria Chemicals Q3FY26 PAT ₹3.55 Cr vs ₹28.63 Cr loss YoY; revenue fell 23.5% to ₹265.82 Cr",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "headline / what_happened[1] / key_numbers[Revenue] / notable_changes[revenue]",
+    "card_says": "revenue fell 23.5% YoY to ₹265.82 Cr from ₹347.52 Cr",
+    "pdf_says": "The consolidated statement restates Q3FY25 with APAG in discontinued operations: ₹18,035 lakh = ₹180.35 Cr, so revenue rose 47.4% YoY. ₹347.52 Cr is the old pre-restatement figure.",
+    "class": "wrong_column"
+   },
+   {
+    "field": "what_happened[2] / key_numbers[EBITDA] / notable_changes[ebitda]",
+    "card_says": "EBITDA turned positive at ₹19.88 Cr from ₹-0.44 Cr in Q3FY25",
+    "pdf_says": "Restated Q3FY25: ₹1,618 lakh less other income ₹106 lakh = ₹15.12 Cr, so +31.5% YoY, not a turnaround. -0.44 is memory's pre-restatement figure.",
+    "class": "wrong_column"
+   },
+   {
+    "field": "why_it_matters[2] / key_numbers[EBITDA Margin]",
+    "card_says": "7.48% vs -0.13% in Q3FY25 ... the highest of the three periods shown",
+    "pdf_says": "Restated Q3FY25 margin is 8.38% (15.12/180.35), so the margin fell about 90 bps YoY and Q3FY26 is not the highest.",
+    "class": "wrong_column"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "core segment grew 20.8% QoQ even as it fell 23.5% YoY",
+    "pdf_says": "Alco Chemicals ₹23,058 lakh vs ₹16,239 lakh: +42.0% YoY. The 23.5% was total revenue on the wrong base anyway.",
+    "class": "direction"
+   },
+   {
+    "field": "notable_changes[revenue].why / track_next.risks",
+    "card_says": "Alco Chemicals revenue fell YoY; risk of continued YoY decline in Alco Chemicals revenue",
+    "pdf_says": "Alco Chemicals revenue rose 42.0% YoY.",
+    "class": "direction"
+   },
+   {
+    "field": "takeaway / core_catalyst / timeline_entry / notable_changes[pat].why",
+    "card_says": "₹97.66 Cr gain on loss of control of APAG lifted profit; discontinued-operations gains lifted PAT",
+    "pdf_says": "The ₹9,766 lakh gain sits in the quarter ended 30.09.2025 (Q2FY26). In Q3FY26 discontinued operations are nil; the ₹3.55 Cr PAT is all continuing operations.",
+    "class": "wrong_period"
+   },
+   {
+    "field": "signals[EBITDA METRIC_SHIFT]",
+    "card_says": "EBITDA up 4618% YoY to 19.88 Cr",
+    "pdf_says": "+31.5% against the statement's restated Q3FY25 EBITDA of ₹15.12 Cr.",
+    "class": "wrong_column"
+   },
+   {
+    "field": "signals[MARGIN_MIX]",
+    "card_says": "POSITIVE: gross margin -381 bps, fixed-cost absorption +1142 bps",
+    "pdf_says": "On the restated base, gross margin is 26.2% vs 33.0% (-677 bps) and the EBITDA margin fell about 90 bps. This is not a positive mix signal.",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "signals[CAPITAL_COMPOUNDER]",
+    "card_says": "EBITDA run-rate +16.3 Cr on -374.2 Cr of capital added. Growth funded from internal accruals.",
+    "pdf_says": "The capital fall is the APAG deconsolidation (discontinued-operations assets of ₹47,053 lakh gone), and the EBITDA base is pre-restatement. The verdict does not follow.",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "377f0ebe-9f00-46c3-b426-f2f177db92df",
+  "headline": "Heritage Foods completes 51% acquisition of Get-A-Way brand",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "track_next.kpis_to_verify[0]",
+    "card_says": "Get-A-Way revenue consolidation, check in Q3FY26 results",
+    "pdf_says": "The shares were credited on 8 January 2026, so the first consolidation is Q4FY26; Q3 (Oct-Dec 2025) predates completion.",
+    "class": "wrong_period"
+   },
+   {
+    "field": "core_catalyst / takeaway",
+    "card_says": "Strategic entry into healthy desserts and ice creams segment; diversify product portfolio beyond dairy",
+    "pdf_says": "The filing gives no rationale. Memory shows Heritage already makes ice cream (ice-cream plant expansion, g_b9c82dc6), and Get-A-Way ice cream is not 'beyond dairy'.",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "58df06b2-f420-4258-9511-f0b104a986c3",
+  "headline": "RBI lets ICICI Prudential AMC buy up to 9.95% of CSB Bank",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "why_it_matters[0] / quantified_impact[0]",
+    "card_says": "₹5,392 Cr market cap, source FILING",
+    "pdf_says": "The filing has no market cap. Per the input note it is a SCALE-block figure dated 2026-10-15, five weeks after the 8 Sep 2026 filing, so it is mislabelled FILING.",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "India Ratings affirmed IND A with a Stable outlook in August",
+    "pdf_says": "Memory t_5774ccb7: IND A affirmed, but the outlook was revised to Stable from Positive, a step down that the card omits.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "a7fee163-fe38-4b08-bdd9-d2e4398a0bfc",
+  "headline": "Jubilant Pharmova Q1FY27 revenue rose 17.3% YoY to ₹2,229 Cr; EBITDA fell 14.4% to ₹248 Cr",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "Revenue growth driven by volume and price",
+    "pdf_says": "There is no volume/price split. Segments show Radiopharma +17.7% and CDMO-SI +32.4% revenue; the margin fall comes from the CDMO-SI segment result (₹43.1 Cr to ₹7.3 Cr) and a Generics loss.",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "basis MEMORY, no refs: margin 11.12% vs 15.24% in Q1FY26",
+    "pdf_says": "Memory holds no Q1FY26 margin (only H1FY26 16.32%). 15.24% is right per the filing (₹289.6 Cr / ₹1,900.7 Cr) but not supported by memory.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "ae3cd354-a4ee-4e2c-ac6b-a3f4e084ba0e",
+  "headline": "Prism Johnson shareholders approve ₹500 Cr fundraise resolution",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "headline / what_happened[0] / takeaway / timeline_entry",
+    "card_says": "Shareholders approved raising up to ₹500 Cr",
+    "pdf_says": "The filing only says e-voting closed on 20 Sep 2025. The scrutiniser reports within 2 working days and the company 'will separately intimate the voting results'. No outcome is stated.",
+    "class": "invented"
+   },
+   {
+    "field": "deal_value.stage",
+    "card_says": "SHAREHOLDER_APPROVED",
+    "pdf_says": "Voting results are pending; the card's own milestones list 'Voting results disclosure' as still to come.",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Fulfills Q2FY26 guidance to raise ₹300 Cr long-term debt; additional ₹200 Cr provides flexibility",
+    "pdf_says": "Memory g_6beed300 is a separate plan to borrow ₹300 Cr long-term. An enabling resolution for ₹500 Cr of securities raises nothing and fulfils nothing.",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[0] / core_catalyst",
+    "card_says": "₹500 Cr fundraise to improve debt maturity profile",
+    "pdf_says": "Memory d_39bc2025 states no purpose, and the filing gives no use of proceeds. The debt-maturity aim belongs to the separate ₹300 Cr debt plan.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "c0844272-bb61-422b-a67b-2bf344b61965",
+  "headline": "Novartis India open offer at ₹860.64 per share for 26% stake, max consideration ₹552.5 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "Acquirers seek to increase holding from 70.68% to up to 96.68% post-offer",
+    "pdf_says": "The acquirers hold nil today. The 70.68% is under an SPA whose Closing depends on conditions precedent and happens after the open-offer consideration is paid (Section III(A) para 3).",
+    "class": "other"
+   },
+   {
+    "field": "missing_disclosures / track_next.milestones",
+    "card_says": "Exact timeline for tendering period and payment not disclosed; escrow details beyond bank guarantee and SPA conditions precedent not disclosed; tendering and payment milestones dated null",
+    "pdf_says": "The letter gives tendering 11-24 June 2026 and payment by 9 July 2026, a ₹5.57 Cr cash escrow with HSBC plus the ₹130.25 Cr bank guarantee and funding commitments, and lists the key SPA conditions precedent (a)-(e).",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.kind",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "This is a mandatory open offer by the acquirers (an acquisition of shares); the company raises no money.",
+    "class": "event_type"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Consideration of ₹552.5 Cr is 1.56x TTM revenue (₹354.33 Cr) and 67.6% of net worth (₹817.83 Cr)",
+    "pdf_says": "The acquirers pay the consideration to public shareholders; it is not Novartis India's outflow, so comparing it with the company's revenue and net worth means nothing. The arithmetic itself is correct.",
+    "class": "other"
+   },
+   {
+    "field": "signals[SCALE]",
+    "card_says": "₹552.5 Cr deal = 12% of market cap (₹4,783 Cr)",
+    "pdf_says": "There is no market cap in the filing. ₹4,783 Cr over 2,46,90,797 shares implies about ₹1,937 a share, against the ₹860.64 offer and the ₹803.57 60-day VWAP. At the offer price the ₹552.5 Cr is 26% of the equity.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "f07f505e-678c-428f-9748-153bb31c7969",
+  "headline": "Shivam Autotech board approves ₹120 Cr rights issue; terms, price and record date still to come",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[Net debt] / why_it_matters[1] / core_catalyst / quantified_impact[1]",
+    "card_says": "Net debt ₹398.65 Cr at Mar-2026 (source MEMORY, ref t_b3c43978)",
+    "pdf_says": "Not in the filing. Memory has no Mar-2026 debt figure (only gross debt ₹333-345 Cr for FY25 and cash ₹0.14 Cr at Mar-2026), and t_b3c43978 does not mention debt.",
+    "class": "memory"
+   },
+   {
+    "field": "track_next.kpis_to_verify[1]",
+    "card_says": "Gross debt <= ₹195.89 Cr by Q3FY27",
+    "pdf_says": "Neither the filing nor memory gives a basis for ₹195.89 Cr (even ₹398.65 Cr less ₹120 Cr is about ₹279 Cr).",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "040f5fb3-39ce-4665-bdd8-76adbb3a1e71",
+  "headline": "SML Mahindra December 2025 sales rose 77% YoY to 1,019 units",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0] (ref volumes)",
+    "card_says": "Volumes up 77% YoY to 1,019 UNITS (DEC-2025), stored against the 'volumes' metric",
+    "pdf_says": "1,019 is the Sales column, shown apart from Export (25 vs 50). Memory's 'volumes' DEC-2025 is the total incl. exports, 1,044 (+67% from 626 = 576+50); the signal puts a domestic-only figure on the total-volume metric",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "1,019 units represent the highest monthly sales in memory, exceeding the prior peak of 1,044 units in December 2025",
+    "pdf_says": "Memory t_77985f9b holds Dec-2025 total sales of 1,044 (= 1,019 domestic + 25 exports), the same month, not a prior peak; 1,019 does not exceed 1,044, and no 'highest in memory' claim is supported",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "13f9f37c-2f9e-4df2-baf5-ac4d1c6db813",
+  "headline": "Jubilant Pharmova to slump-sell ₹609 Cr API business to wholly owned Jubilant Biosys",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "WARNING: Revenue down 91% YoY to 609 Cr (FY25)",
+    "pdf_says": "₹609 Cr is the FY25 turnover of the API unit being transferred (8.35% of consolidated turnover); group revenue did not fall. The segment figure was stored as company revenue",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "headline",
+    "card_says": "to slump-sell ₹609 Cr API business",
+    "pdf_says": "₹609 Cr is the unit's FY25 turnover; the consideration is not stated (book value under Rule 11UAE, paid mainly in shares). The headline reads as a deal size",
+    "class": "other"
+   },
+   {
+    "field": "track_next.kpis_to_verify",
+    "card_says": "API revenue 2x FY24 and API EBITDA margin >= 15%, checked at FY27 against metrics 'revenue' and 'ebitda_margin'",
+    "pdf_says": "Vision 2030 targets are for FY30, not FY27, and apply to the API business; the checks are set on group-level metrics (group margin already ~17%), so they would resolve against the wrong entity and period",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters[2] (basis BALANCE_SHEET)",
+    "card_says": "modest against the ₹14,943 Cr market cap",
+    "pdf_says": "No market cap in memory or filing",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "39aa2ab9-4fa2-4a2b-91eb-053e17cc77ab",
+  "headline": "Heritage Foods fined ₹0.10 Cr by UP authority for 2018 paneer sample; company to appeal",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "6d00e8d5-012d-4d69-bc31-3cb0f4ca7a26",
+  "headline": "Navodya Enterprises sells 9,751 SML Mahindra shares, stake slips to 14.99%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value / event_type",
+    "card_says": "M_AND_A; deal_value DIVESTMENT, stage COMPLETED, segment commercial vehicles",
+    "pdf_says": "A non-promoter shareholder's 0.0674% open-market sale under SAST Reg 29(2); the company divests nothing, so recording a company DIVESTMENT deal is misleading",
+    "class": "event_type"
+   },
+   {
+    "field": "why_it_matters[0] memory_refs",
+    "card_says": "promoter stake of about 59% held via Mahindra & Mahindra (ref t_3539bae4)",
+    "pdf_says": "t_3539bae4 is the November 2025 sales update; the 58.96% figure is supported by memory's ownership entry, not the cited ref",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "aba33138-38b4-406d-924c-ca54050f0842",
+  "headline": "Ahluwalia wins ₹396.5 Cr Godrej housing order, 5.1% of order book",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Domestic order from private developer diversifies revenue source beyond government projects",
+    "pdf_says": "Filing only says the order is domestic, housing (residential); nothing on diversification away from government work",
+    "class": "invented"
+   },
+   {
+    "field": "quantified_impact[0].interpretation",
+    "card_says": "Annualized revenue potential of ₹190.32 Cr, about 20% of Q3FY25 revenue",
+    "pdf_says": "Compares a 12-month figure with one quarter's revenue (₹951.96 Cr); against annual revenue (~₹3,800 Cr) it is ~5%",
+    "class": "wrong_period"
+   },
+   {
+    "field": "headline / why_it_matters[0]",
+    "card_says": "5.1% of FY25 order book of ₹7,794 Cr (ref t_e786058c)",
+    "pdf_says": "t_e786058c holds no order book figure. Memory also holds order book Dec-2024 ₹16,258 Cr; a book less than half that three months later is implausible, so ₹7,794 Cr looks like FY25 order inflow. Against ₹16,258 Cr the order is ~2.4%",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "ac702bba-0efe-4d7d-9087-817badfbd3b1",
+  "headline": "Shivam Autotech seeks shareholder approval to raise authorised capital to ₹44 Cr and issue ₹160 Cr via QIP",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "missing_disclosures",
+    "card_says": "Intended use of proceeds from the QIP (not disclosed)",
+    "pdf_says": "Explanatory statement Item 2 gives the objects: retire high-cost debt, long-term working capital, line-balancing capex and future upscaling",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "The QIP includes a lock-in preventing promoter allotment",
+    "pdf_says": "It is the ICDR Reg 179 bar on allotment to promoter-related QIBs, not a lock-in",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0] (basis FILING)",
+    "card_says": "₹160 Cr QIP is 40.9% of current market cap and 33.5% of TTM revenue",
+    "pdf_says": "Neither market cap nor TTM revenue is in the filing; not verifiable from filing or memory",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Funds from the NCD issuance approved in January 2025 were largely utilised for debt repayment (ref d_57a52fce)",
+    "pdf_says": "d_57a52fce is a ₹105 Cr Modulus facility (dated 4 Jan 2025, ~₹70 Cr undisbursed); the NCD approved in January is the separate ₹50 Cr private placement of 18 Jan (d_29b229e8). The card conflates the two, and its 'quote' is memory text, not filing text",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "c1617387-828c-4ba0-be4b-3ee6e47ecbf8",
+  "headline": "CSB Bank Q4FY25 PAT rose 26% YoY to ₹190 Cr; ROA at 1.79% for the quarter",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[1].change",
+    "card_says": "Operating Profit ₹317 Cr, +39% QoQ",
+    "pdf_says": "'growth of 17% and 39% on a FY and quarterly basis' = Q4FY25 vs Q4FY24 (memory: 316.75 Cr, YoY +38.9%); against Q3FY25 operating profit of 220.65 Cr the QoQ rise is ~+44%",
+    "class": "wrong_period"
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "operating profit of ₹317 Cr (up 39% QoQ)",
+    "pdf_says": "39% is year-on-year for the quarter",
+    "class": "wrong_period"
+   },
+   {
+    "field": "notable_changes[0]",
+    "card_says": "other_income previous ₹381.47 Cr (Q4FY25); change +94% QoQ",
+    "pdf_says": "₹381.47 Cr is the current quarter, not the previous one; 94% is Q4 vs Q4 (FY growth 66%); QoQ vs Q3FY25 other income ₹219.37 Cr (590.59-371.22) is ~+74%",
+    "class": "wrong_period"
+   }
+  ]
+ },
+ {
+  "news_id": "cc896891-fd7f-4f3d-86d5-6731d6a648d0",
+  "headline": "eMudhra Q2FY26 revenue rose 22.6% YoY to ₹174.9 Cr; PAT up 18.6% to ₹26.4 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[3] / why_it_matters[1]",
+    "card_says": "EBITDA margin 24.8%, +1.3 pp QoQ; improves upon Q1FY26's 23.54%, showing margin recovery",
+    "pdf_says": "Filing's EBITDA % row: Q2FY26 24.8%, Q1FY26 25.2% (QoQ -0.4 pp), Q2FY25 23.7%. 23.54% is a Q1 margin on a different (ex-other-income) basis; on the filing's own basis margin fell QoQ",
+    "class": "direction"
+   },
+   {
+    "field": "what_happened[1]",
+    "card_says": "EBITDA increased 27.4% YoY to ₹433.3 million",
+    "pdf_says": "433.3 vs 338.3 = +28.1% YoY as printed; 27.4% belongs to the ex-other-income EBITDA (₹41.25 Cr)",
+    "class": "arithmetic"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "22.6% YoY growth exceeds the ₹675-700 Cr FY26 guidance implied run-rate, on track to meet or surpass",
+    "pdf_says": "FY25 revenue ₹527.84 Cr, so ₹675-700 Cr needs 28-33% growth; Q2 grew 22.6%. H1FY26 is ₹325.57 Cr, so H2 must reach ₹349-374 Cr (₹175-187 Cr a quarter) against Q2's ₹174.95 Cr. 'On track to surpass' is not supported",
+    "class": "arithmetic"
+   },
+   {
+    "field": "signals[1], signals[2]",
+    "card_says": "Current tax up 386% vs Q1FY26 to 5.73 Cr; WARNING Raw material cost up 375% vs Q1FY26 to 65.52 Cr",
+    "pdf_says": "Q1FY26 bases (1.18 Cr, 13.8 Cr) are memory's standalone figures (memory Q1FY26 revenue 55.51 Cr vs consolidated ~₹150 Cr in this filing); consolidated Q2 is compared with standalone Q1",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "signals[0] / notable_changes[1]",
+    "card_says": "Inventory change down 1347% vs Q1FY26 (-0.19 Cr to -2.75 Cr)",
+    "pdf_says": "-0.19 Cr is memory's standalone Q1FY26 figure; same standalone-vs-consolidated mismatch",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "signals[3] PREDICTION_RESOLVED",
+    "card_says": "Missed: EBITDA margin Q1FY26 target >= 25; actual 17.57",
+    "pdf_says": "17.57% is the standalone Q1 margin; this filing shows consolidated Q1FY26 EBITDA % of 25.2%, which meets the >= 25 target",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "notable_changes[0] / track_next.risks",
+    "card_says": "finance cost rise likely due to debt taken for acquisitions; high finance cost may sustain if debt levels remain elevated",
+    "pdf_says": "Nothing in the filing on debt; memory gross debt ₹0 at Mar-2025; ₹0.91 Cr finance cost is trivial against ₹175 Cr revenue",
+    "class": "invented"
+   },
+   {
+    "field": "key_numbers[0] vs headline",
+    "card_says": "Revenue ₹172.88 Cr (key_numbers) vs ₹174.9 Cr (headline, timeline)",
+    "pdf_says": "Filing prints 1,749.5 mn; 172.88 is the XBRL revenue (174.95 - 2.07 other income). The card gives two revenue figures for the same quarter without saying why",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1] (ref g_89eaec93)",
+    "card_says": "moves toward the 20-25% range guided for 2-3 years",
+    "pdf_says": "Memory guidance says 'at least 20%' EBITDA margin in 2-3 years (given at the Cryptas acquisition); no 20-25% range, and the group is already above 20%",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "da4c5d6d-c258-4899-8cb8-d30d33613b81",
+  "headline": "Prism Johnson says Income Tax Section 133A survey concluded, no material impact on operations",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "fa3c490f-5c45-425d-98d0-04e0f61288f6",
+  "headline": "Jubilant Pharmova seeks member approval for up to ₹2,500 Cr NCD issuance, 35% of net worth",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.amount_cr / signals[0] / timeline_entry",
+    "card_says": "deal_value ₹2,500 Cr; '₹2,500 Cr raise = 17% of market cap'; 'Board approved issuance of up to ₹2,500 Cr NCDs'",
+    "pdf_says": "The board approved an issue of up to ₹800 Cr (80,000 NCDs of ₹1 lakh). ₹2,500 Cr is an enabling limit outstanding at any time over one year, still pending members' approval, so it is not the raise",
+    "class": "other"
+   },
+   {
+    "field": "core_catalyst / deal_value.segment",
+    "card_says": "to raise funds for general corporate purposes",
+    "pdf_says": "Filing states no purpose for the NCDs (the takeaway itself says no use of proceeds is disclosed)",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "10c51926-50a5-47ff-b97f-b72c1a6a8d67",
+  "headline": "SML Mahindra June sales 1,930 units, +3% YoY; cargo vehicles -26%",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_note": "Routine monthly volume release with +3% total growth; nothing that changes the earnings or balance-sheet view (the same system rates the +36% October 2025 update LOW).",
+  "issues": []
+ },
+ {
+  "news_id": "2cd1a396-a5b1-4032-ace1-19e7ce65819a",
+  "headline": "Prism Johnson buys 8.5% more of Samini Ceramics for ₹15.3 Cr, stake now 98.5%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "the ₹15.3 Cr outlay is 1.0% of revenue and 5.1% of net worth",
+    "pdf_says": "₹15.31 Cr / ₹7,731 Cr TTM revenue = 0.2%; ₹15.31 Cr / ₹1,528.2 Cr net worth (memory, Mar-2026) = 1.0% (the card's own quantified_impact computes 1.0% of net worth). Both ratios are wrong; the conclusion (a small deal) is unchanged.",
+    "class": "arithmetic"
+   },
+   {
+    "field": "quantified_impact[1].interpretation",
+    "card_says": "₹29 per ₹10 face-value share, a 2.9x book-value multiple on face value",
+    "pdf_says": "₹15,30,76,500 / 52,78,500 shares = ₹29 per share, i.e. 2.9x face value. Face value is not book value; the filing gives no book value for Samini.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "31998b2d-beef-472e-8c9c-573fa75fa9f5",
+  "headline": "Heritage Foods wins Supreme Court case on flavoured milk GST, entitled to refund of ₹4.53 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "3d4bf4b5-34b3-4103-b30b-985e5c4f9fed",
+  "headline": "Shivam Autotech approves up to ₹120 Cr OCD issue to Alpha Alternative Fund, subject to shareholder vote",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "Board approved preferential issue of up to 12,000 OCDs at ₹1 lakh each to address liquidity needs",
+    "pdf_says": "The filing states no purpose or use of proceeds (the card's own missing_disclosures lists 'Use of proceeds' as not disclosed). 'Liquidity needs' comes from an earlier NCD filing, not this one.",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "69fded40-6704-414f-bae3-9cdc2e8ed053",
+  "headline": "SML Mahindra October 2025 commercial vehicle sales rose 36% YoY to 995 units",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] / why_it_matters[1]",
+    "card_says": "October 2025 sales growth of 36% YoY exceeds the 32% YoY growth reported for September 2025 in prior memory; 995 units are the highest since September 2025's 812 units",
+    "pdf_says": "Memory t_2e95dbdb is October 2025 (1,059 units incl. exports, +32% YoY), not September. September 2025 in memory is 812 units, -17.8% YoY. The comparison sets this filing's 995 (sales excluding the 64 exports; 995 + 64 = 1,059) against the same month's total.",
+    "class": "memory"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "October 2025 sales improved YoY, continuing the recovery trend seen in recent months",
+    "pdf_says": "Memory shows September 2025 volumes down 17.8% YoY; no recovery trend in recent months is recorded.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "9753177e-fbc2-40bc-ab81-bc01cda4c81f",
+  "headline": "Prism Johnson concludes arbitration with Doosan Power Systems, to recover ₹8.87 Cr by May 27, 2026",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Recovery of ₹8.87 Cr represents 3.5% of Q3FY26 revenue",
+    "pdf_says": "₹8.87 Cr / ₹1,843.96 Cr Q3FY26 revenue (memory) = 0.48%. The card's own SCALE signal rounds it to 0%.",
+    "class": "arithmetic"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Amount recovered is 1.4% of net worth (₹253.66 Cr)",
+    "pdf_says": "Memory holds net worth of ₹1,461.12 Cr (Sep-2025) and ₹1,768.06 Cr (Mar-2025); ₹253.66 Cr is not a Prism Johnson net worth anywhere in memory. ₹8.87 Cr is about 0.6% of ₹1,461 Cr (and 8.87/253.66 would be 3.5%, not 1.4%).",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "b108d6ed-e351-4747-96ff-8f66a698516d",
+  "headline": "Jubilant Biosys gets GST demand order of ₹6.65 Cr tax, ₹4.32 Cr interest, ₹0.66 Cr penalty",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "b5b9d96b-7d82-4d46-9f54-af3f807c0b00",
+  "headline": "Shivam Autotech shareholders pass authorised capital increase and QIP by postal ballot",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_note": "A postal-ballot result for an enabling resolution with promoters holding ~70%; the outcome was a formality, and no QIP size, price or timing is disclosed.",
+  "issues": []
+ },
+ {
+  "news_id": "c083410d-e567-49c6-83f6-e22c34a5a418",
+  "headline": "Shivam Autotech gets Haryana GST show cause notice for ₹0.96 Cr tax, ₹0.76 Cr penalty",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "f6e17477-7d05-4fda-9da4-9f3fde729713",
+  "headline": "Jubilant Pharmova FY25 PAT rose to ₹836.3 Cr from ₹72.7 Cr on ₹359.5 Cr SOFIE gain",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway / what_happened[2]",
+    "card_says": "core segments grew except Generics, which swung to a segment loss; Generics swung to a segment loss of ₹23.2 Cr in FY25 from a ₹224.4 Cr loss in FY24",
+    "pdf_says": "Segment results (₹ million): Generics (232) FY25 against (2,244) FY24. The loss narrowed by about ₹201 Cr (90%). It did not swing to a loss; the segment improved sharply.",
+    "class": "direction"
+   },
+   {
+    "field": "headline / timeline_entry",
+    "card_says": "PAT rose ... on ₹359.5 Cr SOFIE gain; driven by ₹359.5 Cr exceptional gain from SOFIE stake sale",
+    "pdf_says": "₹359.5 Cr (3,595 million) is the net of all exceptional items. Note 7: the SOFIE gain is ₹671.5 Cr (6,715 million), offset by ₹312 Cr of charges (Salisbury closure 916, slow-moving inventory 953, Montreal OAI 534, litigation 283, asset write-off 241, debt costs 193 million).",
+    "class": "other"
+   },
+   {
+    "field": "takeaway / why_it_matters[0]",
+    "card_says": "FY25 profit is mostly the one-time SOFIE sale gain",
+    "pdf_says": "Profit before exceptional items and tax rose to ₹621.1 Cr from ₹339.4 Cr (+83%). The net exceptional gain of ₹359.5 Cr is about 37% of PBT of ₹980.6 Cr. The card's own quantified_impact puts profit before the net exceptional gain at ₹476.8 Cr, more than half of PAT, though that figure subtracts a pre-tax item from post-tax PAT.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "0b57c09a-a313-4082-aae4-8a3a3192b54c",
+  "headline": "Shivam Autotech GST demand of ₹50.1 Cr dropped",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "demand equivalent to approximately 11.6% of FY25 revenue",
+    "pdf_says": "₹50.10 Cr / FY25 revenue ₹453.98 Cr (memory) = 11.0% (10.98% of total income); demand plus equal penalty = 22%",
+    "class": "arithmetic"
+   },
+   {
+    "field": "signals[0]",
+    "card_says": "AUDIT_FLAG: DTA ₹1,989.25 lakh and MAT credit ₹619.86 lakh not recognised for earlier years",
+    "pdf_says": "Not in this GST-order filing; copied from memory's auditor note. The FY25 annual report's emphasis of matter says DTA was recognised up to Mar-2021 and not since (MAT credit ₹880.57 lakh), so the statement is also inverted",
+    "class": "other"
+   }
+  ],
+  "impact_reason": "Dropped ₹50.1 Cr demand plus ₹50.1 Cr penalty plus interest is over 3x the ₹31.48 Cr net worth of a loss-making, highly geared company; removing it changes the balance-sheet view"
+ },
+ {
+  "news_id": "0c580e96-0f96-4320-ace6-19a0c1a122ba",
+  "headline": "SML Mahindra May 2025 sales: Cargo Vehicles up 29.9% YoY to 413 units, Passenger Vehicles down 9.2% to 1130 units",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "2f62d6b8-2f78-4c7d-8a20-7be63b93ef7b",
+  "headline": "Shivam Autotech board approves ₹160 Cr QIP and ₹125 Cr rights issue",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Board approval of a QIP and rights issue: FUNDRAISE (the card's own deal_value kind)",
+    "class": "event_type"
+   },
+   {
+    "field": "quantified_impact[1].interpretation",
+    "card_says": "₹28.5 Cr a year interest saved, about twice the Q2FY25 finance cost of ₹14.65 Cr annualised",
+    "pdf_says": "Q2FY25 finance cost annualised is ₹58.6 Cr; ₹28.5 Cr would be about half of it, not twice (an annual saving compared with a quarterly cost)",
+    "class": "arithmetic"
+   },
+   {
+    "field": "why_it_matters[0] / takeaway",
+    "card_says": "₹285 Cr is 73% of the ₹391.58 Cr market cap and 60% of TTM revenue (basis FILING)",
+    "pdf_says": "Neither market cap nor TTM revenue is in the filing or memory, so the figure cannot be checked; it is labelled FILING",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "an equity infusion is the lever the CARE rating rationale flagged as needed",
+    "pdf_says": "Memory t_57a52fce says the reaffirmation cited past fund infusion and promoter support as positives and high gearing as a weakness; it does not say the rationale required an equity infusion",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "58449781-a954-452d-82b2-be21c9eff11c",
+  "headline": "SML Mahindra November 2025 commercial vehicle sales rose 94% YoY to 952 units",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "94% YoY growth exceeds the 102% YoY total sales growth",
+    "pdf_says": "94% is lower than 102%",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "102% growth reported in the prior month's update",
+    "pdf_says": "Memory t_0937266b is the same month (Nov 2025, 1,087 units = 952 domestic + 135 export), filed 1 Dec; it is not a prior month",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "6ba47fe0-ddd8-4664-93c8-725fc33d634d",
+  "headline": "ICRA reaffirmed A1+ for ₹250 Cr short-term banking facilities and AA+ (Stable) for ₹391 Cr long-term facilities; assigned A1+ for ₹200 Cr commercial papers",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "₹391 Cr long-term facilities = 88.1% of net worth, indicating moderate reliance on bank borrowing",
+    "pdf_says": "₹391 Cr is the rated (sanctioned) limit, not borrowing; memory gross debt Sep-2025 is ₹248.79 Cr (56% of net worth). The arithmetic 391/443.83 is right",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "a205b304-cc35-44e8-ba9b-5661809edad2",
+  "headline": "Shivam Autotech FY25 standalone revenue fell 3.3% YoY to ₹453.98 Cr; net loss narrowed to ₹48.04 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[debt]",
+    "card_says": "Debt ₹344.55 Cr (FY25) -> ₹333.35 Cr (Mar-2025), -3.2%, 'decreased slightly year-on-year'",
+    "pdf_says": "Balance sheet (₹ lakh): borrowings 11,872.19 + 21,462.32 = ₹333.35 Cr at 31 Mar 2025 against 17,878.51 + 20,475.30 = ₹383.54 Cr at 31 Mar 2024: -13.1% YoY. The ₹344.55 Cr base is also an FY25 figure",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Gross debt ₹333.35 Cr at FY25-end, down from ₹344.55 Cr in FY25 per prior memory",
+    "pdf_says": "Both figures are for FY25-end; the prior-year figure is ₹383.54 Cr",
+    "class": "wrong_period"
+   },
+   {
+    "field": "notable_changes[debt]",
+    "card_says": "previous ₹344.55 Cr",
+    "pdf_says": "Memory holds ₹344.55 Cr as FY25 (same period), not the prior year",
+    "class": "memory"
+   },
+   {
+    "field": "missing_disclosures[0]",
+    "card_says": "Consolidated financial statements for FY25 missing",
+    "pdf_says": "The company has no subsidiaries, joint ventures or associates (Board's report, CARO), so no consolidated statements are required",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "c7c335d3-48b8-47fb-bc44-4f2029547cc1",
+  "headline": "Shivam Autotech gets BSE, NSE in-principle approval for 12,000 OCDs convertible into 4.17 Cr shares",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [],
+  "impact_reason": "Exchange in-principle approval is a procedural step for a ₹120 Cr OCD issue that shareholders had already approved; the HIGH-impact event was the issue itself"
+ },
+ {
+  "news_id": "c895275b-e900-4856-a93b-c5df8fd8b128",
+  "headline": "Shivam Autotech Q1 loss widens to ₹17.66 Cr; margin falls to 5.9%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Finance cost of ₹12.9 Cr is higher than the ₹10.33 Cr PAT loss, indicating a net cash burn",
+    "pdf_says": "₹10.33 Cr is Q1FY25's loss (June 2024 column); the Q1FY26 loss is ₹17.66 Cr, which exceeds the finance cost",
+    "class": "wrong_column"
+   },
+   {
+    "field": "signals[MARGIN_MIX]",
+    "card_says": "gross margin +692 bps YoY (spread, pricing, mix), fixed-cost absorption -1225 bps",
+    "pdf_says": "Stores & spares (₹10.76 Cr) was deducted in Q1FY25 but not in Q1FY26. Like for like: materials + inventory change 64.90% -> 62.30% (-260 bps); including stores in both years 55.38% -> 55.50% (+12 bps). +692 bps is an artefact",
+    "class": "arithmetic"
+   },
+   {
+    "field": "signals[EPS]",
+    "card_says": "EPS down 570% vs Q4FY25 to -1.34",
+    "pdf_says": "Uses the printed Q4FY25 EPS of (0.20), which does not fit the Q4 loss of ₹14.76 Cr (about -1.12 a share; FY -3.89 less 9M -2.72 = -1.17); the real QoQ change is about -15% to -20%",
+    "class": "other"
+   },
+   {
+    "field": "signals[inventory_change]",
+    "card_says": "Inventory change up 664% YoY to 3.16 Cr; down 175% YoY to -6.28 Cr (FY25)",
+    "pdf_says": "Percentages across a sign change (-0.56 -> +3.16) mean nothing; the FY25 signal is stale on a Q1FY26 card",
+    "class": "other"
+   },
+   {
+    "field": "track_next.kpis_to_verify[0]",
+    "card_says": "Finance cost, check in Q2FY27, no target",
+    "pdf_says": "No target, and the check-in is a year late (copied from memory's watchlist); the next check is Q2FY26",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "e2c0dc3c-e85f-4b01-8b7c-ad8a1f0c9ae4",
+  "headline": "SML Mahindra Oct sales rose 32% YoY to 1,059 units",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "takeaway / core_catalyst",
+    "card_says": "Cargo vehicle sales growth outpaces passenger segment; strong cargo demand driving growth",
+    "pdf_says": "October: cargo +29% (394 -> 507, +113 units), passenger +36% (407 -> 552, +145 units); passenger grew faster and added more units. Cargo leads only year to date (29% vs 2%)",
+    "class": "direction"
+   },
+   {
+    "field": "signals[WATCH_RESOLVED]",
+    "card_says": "Monthly domestic sales recovery met: 1,059 units >= 812",
+    "pdf_says": "1,059 includes exports (memory: 995 sales + 64 exports); domestic was 995. The target is still met, so the verdict stands",
+    "class": "other"
+   }
+  ],
+  "impact_reason": "A routine monthly volume update; the company's other monthly updates are rated LOW"
+ }
+]

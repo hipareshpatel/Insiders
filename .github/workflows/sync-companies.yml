@@ -1,0 +1,46 @@
+# Daily refresh of the company master from NSE (owner, 2026-10-19: everything on NSE): NSE's main-board equity
+# list, so a company listed today is in the master before its first filing is discovered; current symbols, ISINs
+# and names; and an industry from NSE's own data for companies without one (company_master.py). It then rebuilds
+# the universe file the pipeline reads. A few NSE requests and a handful of row writes a day.
+# 01:45 UTC = 07:15 IST, Monday to Friday, before the market opens and the day's first filings.
+#
+# Like the pipeline, the schedule runs only once the owner switches the pipeline on (PIPELINE_SCHEDULE = "on");
+# before that the platform's secrets are not set.
+name: Sync companies
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "45 1 * * 1-5"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bse-sync-companies
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.event_name != 'schedule' || vars.PIPELINE_SCHEDULE == 'on'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+      UNIVERSE_MIN_MCAP_CR: ${{ vars.UNIVERSE_MIN_MCAP_CR || '500' }}
+    steps:
+      - uses: actions/checkout@v4
+      # GitHub-hosted runners get Python from setup-python; a self-hosted runner uses its own python3.
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel sync-companies --source nse'

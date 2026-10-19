@@ -1,0 +1,95 @@
+"""Several filings' pass-2 requests in one call (ai/packer.py)."""
+
+from __future__ import annotations
+
+import re
+import threading
+
+from bse_intel.ai.gateway import AIResult
+from bse_intel.ai.packer import Packer, PackedItem, PackedReply
+from bse_intel.models import Pass1Result
+
+
+class FakeGateway:
+    def __init__(self, skip: set[str] = frozenset()):
+        self.calls, self.skip = [], skip
+
+    def complete_json(self, route, system, user, schema):
+        self.calls.append((route, user))
+        if schema is PackedReply:
+            ids = re.findall(r'<task id="(t\d+)">', user)
+            items = [PackedItem(task_id=t, answer={"is_material": True, "event_type": "ORDER_WIN", "reason": f"from {t}"})
+                     for t in ids if t not in self.skip]
+            return AIResult(PackedReply(results=items), "gemini", "gemini-3.6-flash", 1.0)
+        return AIResult(schema(is_material=False, event_type="OTHER", reason="own route"), "nvidia", "nemotron", 1.0)
+
+
+def _run(packer, n):
+    out = [None] * n
+
+    def work(i):
+        out[i] = packer.complete("pass2", f"instructions {i}", f"filing {i}", Pass1Result)
+
+    threads = [threading.Thread(target=work, args=(i,)) for i in range(n)]
+    for th in threads:
+        th.start()
+    for th in threads:
+        th.join()
+    return out
+
+
+def test_three_workers_share_one_call_and_each_gets_its_own_answer():
+    gw = FakeGateway()
+    results = _run(Packer(gw, size=3, wait_s=5), 3)
+    packed = [c for c in gw.calls if c[0] == "pass2_packed"]
+    assert len(packed) == 1 and all(f"filing {i}" in packed[0][1] for i in range(3))
+    assert sorted(r.value.reason for r in results) == ["from t1", "from t2", "from t3"]
+    assert all(r.model_label == "gemini/gemini-3.6-flash" for r in results)
+
+
+def test_a_missing_answer_goes_to_its_own_route_and_a_lone_request_is_sent_after_the_wait():
+    gw = FakeGateway(skip={"t2"})
+    results = _run(Packer(gw, size=2, wait_s=5), 2)
+    assert sorted(r.model_label for r in results) == ["gemini/gemini-3.6-flash", "nvidia/nemotron"]
+    gw = FakeGateway()
+    (lone,) = _run(Packer(gw, size=5, wait_s=0.2), 1)
+    assert lone.model_label == "gemini/gemini-3.6-flash" and len(gw.calls) == 1
+
+
+def test_a_pack_is_sent_before_the_runs_deadline_and_records_its_members():
+    """Online, a run with one or two new filings must send its pack before its time budget ends (owner, 2026-10-19)."""
+    import time
+
+    gw = FakeGateway()
+    gw.deadline = time.monotonic() + 120.5          # the packer keeps 120 s for the call itself
+    packer = Packer(gw, size=6, wait_s=600)
+    started = time.monotonic()
+    (lone,) = [packer.complete("pass2", "instructions", "filing", Pass1Result, "nse-1")]
+    assert time.monotonic() - started < 5 and lone.model_label == "gemini/gemini-3.6-flash"
+    assert lone.pack["members"] == ["nse-1"] and len(lone.pack["id"]) == 12
+
+
+def test_a_pack_out_of_quota_goes_to_its_own_route_and_a_quota_failure_there_reaches_the_caller():
+    """With Nemotron 3 Super off the card routes, a packed filing whose Gemini models are all out of quota goes to the
+    regular writers; if they are out of quota too, the gateway's failure reaches the pipeline, which leaves the filing
+    queued with no attempt spent (test_pipeline.test_packed_filings_stay_queued_when_every_writer_is_out_of_quota)."""
+    import pytest
+
+    from bse_intel.ai.gateway import CEILING, AllProvidersFailed
+
+    class OutOfQuota(FakeGateway):
+        def __init__(self, own_route_too):
+            super().__init__()
+            self.own_route_too = own_route_too
+
+        def complete_json(self, route, system, user, schema):
+            self.calls.append((route, user))
+            if route == "pass2_packed" or self.own_route_too:
+                raise AllProvidersFailed(route, [("gemini:gemini-3.7-flash", CEILING, "daily quota")])
+            return AIResult(schema(is_material=False, event_type="OTHER", reason="own route"), "zai", "glm-4.5-flash", 1.0)
+
+    (r,) = _run(Packer(OutOfQuota(False), size=1, wait_s=1), 1)
+    assert r.model_label == "zai/glm-4.5-flash"
+    with pytest.raises(AllProvidersFailed) as info:
+        Packer(OutOfQuota(True), size=1, wait_s=1).complete("pass2", "i", "f", Pass1Result)
+    assert info.value.quota_exhausted

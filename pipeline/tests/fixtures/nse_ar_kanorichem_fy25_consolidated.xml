@@ -1,0 +1,1677 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xbrli:xbrl xmlns:in-ca="http://www.icai.org/xbrl/taxonomy/2017-03-31/in-ca" xmlns:ind-as="http://www.icai.org/xbrl/taxonomy/2017-03-31/ind-as" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xbrldi="http://xbrl.org/2006/xbrldi" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <link:schemaRef xlink:type="simple" xlink:href="https://www.mca.gov.in/V3XBRL/2017/07/16/Taxonomy/Ind/in-ci-ent-2017-03-31.xsd" />
+ <xbrli:context id="D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+ </xbrli:context>
+ <xbrli:context id="D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+ </xbrli:context>
+ <xbrli:context id="I2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2025-03-31</xbrli:instant>
+  </xbrli:period>
+ </xbrli:context>
+ <xbrli:context id="I2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2024-03-31</xbrli:instant>
+  </xbrli:period>
+ </xbrli:context>
+ <xbrli:unit id="CHF">
+  <xbrli:measure>iso4217:CHF</xbrli:measure>
+ </xbrli:unit>
+ <xbrli:unit id="ETB">
+  <xbrli:measure>iso4217:ETB</xbrli:measure>
+ </xbrli:unit>
+ <xbrli:unit id="INR">
+  <xbrli:measure>iso4217:INR</xbrli:measure>
+ </xbrli:unit>
+ <xbrli:unit id="INRPerShare">
+  <xbrli:divide>
+   <xbrli:unitNumerator>
+    <xbrli:measure>iso4217:INR</xbrli:measure>
+   </xbrli:unitNumerator>
+   <xbrli:unitDenominator>
+    <xbrli:measure>shares</xbrli:measure>
+   </xbrli:unitDenominator>
+  </xbrli:divide>
+ </xbrli:unit>
+ <xbrli:context id="EquityShares1Member_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfEquityShareCapitalAxis">ind-as:EquityShares1Member</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="EquityShares1Member_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfEquityShareCapitalAxis">ind-as:EquityShares1Member</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="NonControllingInterestsMember_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ComponentsOfEquityAxis">ind-as:NonControllingInterestsMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="OtherRetainedEarningMember_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ComponentsOfEquityAxis">ind-as:OtherRetainedEarningMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="OtherRetainedEarningMember_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ComponentsOfEquityAxis">ind-as:OtherRetainedEarningMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="NonControllingInterestsMember_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ComponentsOfEquityAxis">ind-as:NonControllingInterestsMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="Tot_ComponentsOfEquity_RetainedEarningsMember_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ComponentsOfEquityAxis">ind-as:RetainedEarningsMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="Tot_ComponentsOfEquity_ReservesMember_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ComponentsOfEquityAxis">ind-as:ReservesMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="Tot_ComponentsOfEquity_EquityAttributableToTheEquityHoldersOfTheParentMember_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ComponentsOfEquityAxis">ind-as:EquityAttributableToTheEquityHoldersOfTheParentMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="Tot_ComponentsOfEquity_RetainedEarningsMember_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ComponentsOfEquityAxis">ind-as:RetainedEarningsMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="Tot_ComponentsOfEquity_ReservesMember_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ComponentsOfEquityAxis">ind-as:ReservesMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="Tot_ComponentsOfEquity_EquityAttributableToTheEquityHoldersOfTheParentMember_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ComponentsOfEquityAxis">ind-as:EquityAttributableToTheEquityHoldersOfTheParentMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_1_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>10</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_1_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>10</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_2_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>11</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_2_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>11</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_3_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>12</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_3_I2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2025-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>12</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_3_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>12</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_3_I2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2024-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>12</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_4_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>13</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_4_I2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2025-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>13</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_4_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>13</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_4_I2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2024-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>13</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_5_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>14</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_5_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>14</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_6_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>15</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_6_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>15</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_7_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>16</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_7_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>16</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_8_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>17</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_8_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>17</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="OtherRelatedPartiesMember_RelatedPartyDomain_RelatedPartyAxis_9_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:OtherRelatedPartiesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>18</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="OtherRelatedPartiesMember_RelatedPartyDomain_RelatedPartyAxis_9_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:OtherRelatedPartiesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>18</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_10_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>19</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_10_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>19</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>1</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_I2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2025-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>1</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>1</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_I2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2024-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>1</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_12_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>20</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_12_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>20</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_13_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>21</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_13_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>21</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_14_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>22</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_14_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>22</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_15_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>23</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_15_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>23</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_16_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>24</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_16_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>24</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_17_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>25</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_17_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:SubsidiariesMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>25</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_18_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>3</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_18_I2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2025-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>3</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_18_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>3</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_19_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>4</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_19_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>4</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="ParentMember_RelatedPartyDomain_RelatedPartyAxis_20_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:ParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>5</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="ParentMember_RelatedPartyDomain_RelatedPartyAxis_20_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:ParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>5</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="ParentMember_RelatedPartyDomain_RelatedPartyAxis_20_I2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2024-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:ParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>5</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_21_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>6</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_21_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>6</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_22_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>7</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_22_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>7</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_23_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>26</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_23_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>8</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_23_I2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2024-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>8</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_24_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:KeyManagementPersonnelOfEntityOrParentMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>27</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_25_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>28</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_25_I2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2025-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:CategoriesOfRelatedPartiesAxis">ind-as:JointControlOrSignificantInfluenceMember</xbrldi:explicitMember>
+   <xbrldi:typedMember dimension="ind-as:RelatedPartyAxis">
+    <ind-as:RelatedPartyDomain>28</ind-as:RelatedPartyDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_1_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:typedMember dimension="ind-as:SignificantInvestmentsInSubsidiariesAxis">
+    <ind-as:SignificantInvestmentsInSubsidiariesDomain>1</ind-as:SignificantInvestmentsInSubsidiariesDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_1_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:typedMember dimension="ind-as:SignificantInvestmentsInSubsidiariesAxis">
+    <ind-as:SignificantInvestmentsInSubsidiariesDomain>1</ind-as:SignificantInvestmentsInSubsidiariesDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_2_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:typedMember dimension="ind-as:SignificantInvestmentsInSubsidiariesAxis">
+    <ind-as:SignificantInvestmentsInSubsidiariesDomain>2</ind-as:SignificantInvestmentsInSubsidiariesDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_2_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:typedMember dimension="ind-as:SignificantInvestmentsInSubsidiariesAxis">
+    <ind-as:SignificantInvestmentsInSubsidiariesDomain>2</ind-as:SignificantInvestmentsInSubsidiariesDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="OtherContingentLiabilitiesOthersMember_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:OtherContingentLiabilitiesOthersMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="OtherContingentLiabilitiesOthersMember_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:OtherContingentLiabilitiesOthersMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="OtherContingentLiabilitiesOthersMember_I2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2024-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:OtherContingentLiabilitiesOthersMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="ContingentLiabilityOnDisputedExciseDemandsMember_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:ContingentLiabilityOnDisputedExciseDemandsMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="ContingentLiabilityOnDisputedExciseDemandsMember_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:ContingentLiabilityOnDisputedExciseDemandsMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="ContingentLiabilityOnDisputedIncomeTaxMember_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:ContingentLiabilityOnDisputedIncomeTaxMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="ContingentLiabilityOnDisputedIncomeTaxMember_I2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2025-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:ContingentLiabilityOnDisputedIncomeTaxMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="ContingentLiabilityOnDisputedIncomeTaxMember_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:ContingentLiabilityOnDisputedIncomeTaxMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="ContingentLiabilityOnDisputedIncomeTaxMember_I2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2024-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:ContingentLiabilityOnDisputedIncomeTaxMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="OtherGuaranteesGivenMember_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:OtherGuaranteesGivenMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="OtherGuaranteesGivenMember_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:OtherGuaranteesGivenMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="OtherGuaranteesGivenMember_I2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2024-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:OtherGuaranteesGivenMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="TaxContingentLiabilityMember_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:TaxContingentLiabilityMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="TaxContingentLiabilityMember_I2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2025-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:TaxContingentLiabilityMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="TaxContingentLiabilityMember_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:TaxContingentLiabilityMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="TaxContingentLiabilityMember_I2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2024-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:TaxContingentLiabilityMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="Tot_ContingentLiabilities_ContingentLiabilitiesMember_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:OtherContingentLiabilitiesMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="Tot_ContingentLiabilities_ContingentLiabilitiesMember_I2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2025-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:OtherContingentLiabilitiesMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="Tot_ContingentLiabilities_ContingentLiabilitiesMember_D2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2023-04-01</xbrli:startDate>
+   <xbrli:endDate>2024-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:OtherContingentLiabilitiesMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="Tot_ContingentLiabilities_ContingentLiabilitiesMember_I2024">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2024-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:explicitMember dimension="ind-as:ClassesOfContingentLiabilitiesAxis">ind-as:OtherContingentLiabilitiesMember</xbrldi:explicitMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="EntitiesConsolidatedDomain_EntitiesConsolidatedAxis_1_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:typedMember dimension="ind-as:EntitiesConsolidatedAxis">
+    <ind-as:EntitiesConsolidatedDomain>Kanoria Africa Textiles PLC</ind-as:EntitiesConsolidatedDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="EntitiesConsolidatedDomain_EntitiesConsolidatedAxis_1_I2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2025-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:typedMember dimension="ind-as:EntitiesConsolidatedAxis">
+    <ind-as:EntitiesConsolidatedDomain>Kanoria Africa Textiles PLC</ind-as:EntitiesConsolidatedDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="EntitiesConsolidatedDomain_EntitiesConsolidatedAxis_2_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:typedMember dimension="ind-as:EntitiesConsolidatedAxis">
+    <ind-as:EntitiesConsolidatedDomain>APAG Holding AG</ind-as:EntitiesConsolidatedDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="EntitiesConsolidatedDomain_EntitiesConsolidatedAxis_2_I2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:instant>2025-03-31</xbrli:instant>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:typedMember dimension="ind-as:EntitiesConsolidatedAxis">
+    <ind-as:EntitiesConsolidatedDomain>APAG Holding AG</ind-as:EntitiesConsolidatedDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <xbrli:context id="AuditorsDomain_AuditorsAxis_1_D2025">
+  <xbrli:entity>
+   <xbrli:identifier scheme="http://www.mca.gov.in/CIN">L24110WB1960PLC024910</xbrli:identifier>
+  </xbrli:entity>
+  <xbrli:period>
+   <xbrli:startDate>2024-04-01</xbrli:startDate>
+   <xbrli:endDate>2025-03-31</xbrli:endDate>
+  </xbrli:period>
+  <xbrli:scenario>
+   <xbrldi:typedMember dimension="in-ca:AuditorsAxis">
+    <in-ca:AuditorsDomain>Singhi &amp; Co</in-ca:AuditorsDomain>
+   </xbrldi:typedMember>
+  </xbrli:scenario>
+ </xbrli:context>
+ <ind-as:CashAndCashEquivalents id="CYTAG26" decimals="-4" contextRef="I2025" unitRef="INR">80910000</ind-as:CashAndCashEquivalents>
+ <ind-as:CashAndCashEquivalents id="PYTAG26" decimals="-4" contextRef="I2024" unitRef="INR">112220000</ind-as:CashAndCashEquivalents>
+ <ind-as:Assets id="CYTAG36" decimals="-4" contextRef="I2025" unitRef="INR">14982830000</ind-as:Assets>
+ <ind-as:Assets id="PYTAG36" decimals="-4" contextRef="I2024" unitRef="INR">14903820000</ind-as:Assets>
+ <ind-as:EquityAttributableToOwnersOfParent id="CYTAG42" decimals="-4" contextRef="I2025" unitRef="INR">5208220000</ind-as:EquityAttributableToOwnersOfParent>
+ <ind-as:EquityAttributableToOwnersOfParent id="PYTAG42" decimals="-4" contextRef="I2024" unitRef="INR">6012740000</ind-as:EquityAttributableToOwnersOfParent>
+ <ind-as:Equity id="CYTAG44" decimals="-4" contextRef="I2025" unitRef="INR">5103630000</ind-as:Equity>
+ <ind-as:Equity id="PYTAG44" decimals="-4" contextRef="I2024" unitRef="INR">6176040000</ind-as:Equity>
+ <ind-as:BorrowingsNoncurrent id="CYTAG48" decimals="-4" contextRef="I2025" unitRef="INR">3436230000</ind-as:BorrowingsNoncurrent>
+ <ind-as:BorrowingsNoncurrent id="PYTAG48" decimals="-4" contextRef="I2024" unitRef="INR">2970680000</ind-as:BorrowingsNoncurrent>
+ <ind-as:BorrowingsCurrent id="CYTAG59" decimals="-4" contextRef="I2025" unitRef="INR">2504960000</ind-as:BorrowingsCurrent>
+ <ind-as:BorrowingsCurrent id="PYTAG59" decimals="-4" contextRef="I2024" unitRef="INR">2096540000</ind-as:BorrowingsCurrent>
+ <ind-as:RevenueFromOperations id="CYTAG79" decimals="-4" contextRef="D2025" unitRef="INR">15367160000</ind-as:RevenueFromOperations>
+ <ind-as:RevenueFromOperations id="PYTAG79" decimals="-4" contextRef="D2024" unitRef="INR">14750510000</ind-as:RevenueFromOperations>
+ <ind-as:OtherIncome id="CYTAG80" decimals="-4" contextRef="D2025" unitRef="INR">92080000</ind-as:OtherIncome>
+ <ind-as:OtherIncome id="PYTAG80" decimals="-4" contextRef="D2024" unitRef="INR">192490000</ind-as:OtherIncome>
+ <ind-as:Income id="CYTAG81" decimals="-4" contextRef="D2025" unitRef="INR">15459240000</ind-as:Income>
+ <ind-as:Income id="PYTAG81" decimals="-4" contextRef="D2024" unitRef="INR">14943000000</ind-as:Income>
+ <ind-as:FinanceCosts id="CYTAG87" decimals="-4" contextRef="D2025" unitRef="INR">457860000</ind-as:FinanceCosts>
+ <ind-as:FinanceCosts id="PYTAG87" decimals="-4" contextRef="D2024" unitRef="INR">430170000</ind-as:FinanceCosts>
+ <ind-as:DepreciationDepletionAndAmortisationExpense id="CYTAG88" decimals="-4" contextRef="D2025" unitRef="INR">626050000</ind-as:DepreciationDepletionAndAmortisationExpense>
+ <ind-as:DepreciationDepletionAndAmortisationExpense id="PYTAG88" decimals="-4" contextRef="D2024" unitRef="INR">593150000</ind-as:DepreciationDepletionAndAmortisationExpense>
+ <ind-as:Expenses id="CYTAG91" decimals="-4" contextRef="D2025" unitRef="INR">16137340000</ind-as:Expenses>
+ <ind-as:Expenses id="PYTAG91" decimals="-4" contextRef="D2024" unitRef="INR">15250940000</ind-as:Expenses>
+ <ind-as:ExceptionalItemsBeforeTax id="CYTAG93" decimals="-4" contextRef="D2025" unitRef="INR">-294440000</ind-as:ExceptionalItemsBeforeTax>
+ <ind-as:ExceptionalItemsBeforeTax id="PYTAG93" decimals="-4" contextRef="D2024" unitRef="INR">0</ind-as:ExceptionalItemsBeforeTax>
+ <ind-as:ProfitBeforeTax id="CYTAG94" decimals="-4" contextRef="D2025" unitRef="INR">-972540000</ind-as:ProfitBeforeTax>
+ <ind-as:ProfitBeforeTax id="PYTAG94" decimals="-4" contextRef="D2024" unitRef="INR">-307940000</ind-as:ProfitBeforeTax>
+ <ind-as:TaxExpense id="CYTAG98" decimals="-4" contextRef="D2025" unitRef="INR">117910000</ind-as:TaxExpense>
+ <ind-as:TaxExpense id="PYTAG98" decimals="-4" contextRef="D2024" unitRef="INR">209160000</ind-as:TaxExpense>
+ <ind-as:ProfitOrLossAttributableToOwnersOfParent id="CYTAG107" decimals="-4" contextRef="D2025" unitRef="INR">-835970000</ind-as:ProfitOrLossAttributableToOwnersOfParent>
+ <ind-as:ProfitOrLossAttributableToOwnersOfParent id="PYTAG107" decimals="-4" contextRef="D2024" unitRef="INR">-383960000</ind-as:ProfitOrLossAttributableToOwnersOfParent>
+ <ind-as:BasicEarningsLossPerShare id="CY1TAG288" decimals="2" contextRef="EquityShares1Member_D2025" unitRef="INRPerShare">-19.13</ind-as:BasicEarningsLossPerShare>
+ <ind-as:BasicEarningsLossPerShare id="PY1TAG288" decimals="2" contextRef="EquityShares1Member_D2024" unitRef="INRPerShare">-8.79</ind-as:BasicEarningsLossPerShare>
+ <ind-as:CashFlowsFromUsedInOperatingActivities id="CYTAG441" decimals="-4" contextRef="D2025" unitRef="INR">202820000</ind-as:CashFlowsFromUsedInOperatingActivities>
+ <ind-as:CashFlowsFromUsedInOperatingActivities id="PYTAG441" decimals="-4" contextRef="D2024" unitRef="INR">375910000</ind-as:CashFlowsFromUsedInOperatingActivities>
+ <ind-as:ProfitLossForPeriod id="PY1TAG757" decimals="-4" contextRef="NonControllingInterestsMember_D2024" unitRef="INR">-168830000</ind-as:ProfitLossForPeriod>
+ <ind-as:ProfitLossForPeriod id="CY2TAG757" decimals="-4" contextRef="OtherRetainedEarningMember_D2025" unitRef="INR">-835970000</ind-as:ProfitLossForPeriod>
+ <ind-as:ProfitLossForPeriod id="PY3TAG757" decimals="-4" contextRef="OtherRetainedEarningMember_D2024" unitRef="INR">-383960000</ind-as:ProfitLossForPeriod>
+ <ind-as:ProfitLossForPeriod id="CY6TAG757" decimals="-4" contextRef="NonControllingInterestsMember_D2025" unitRef="INR">-245500000</ind-as:ProfitLossForPeriod>
+ <ind-as:ProfitLossForPeriod id="CYREM5_2" decimals="-4" contextRef="Tot_ComponentsOfEquity_RetainedEarningsMember_D2025" unitRef="INR">-835970000</ind-as:ProfitLossForPeriod>
+ <ind-as:ProfitLossForPeriod id="CYRM5_2" decimals="-4" contextRef="Tot_ComponentsOfEquity_ReservesMember_D2025" unitRef="INR">-835970000</ind-as:ProfitLossForPeriod>
+ <ind-as:ProfitLossForPeriod id="CYEAEHM5_2" decimals="-4" contextRef="Tot_ComponentsOfEquity_EquityAttributableToTheEquityHoldersOfTheParentMember_D2025" unitRef="INR">-835970000</ind-as:ProfitLossForPeriod>
+ <ind-as:ProfitLossForPeriod id="CYEquityMember_CYP5_2" decimals="-4" contextRef="D2025" unitRef="INR">-1081470000</ind-as:ProfitLossForPeriod>
+ <ind-as:ProfitLossForPeriod id="PYREM5_3" decimals="-4" contextRef="Tot_ComponentsOfEquity_RetainedEarningsMember_D2024" unitRef="INR">-383960000</ind-as:ProfitLossForPeriod>
+ <ind-as:ProfitLossForPeriod id="PYRM5_3" decimals="-4" contextRef="Tot_ComponentsOfEquity_ReservesMember_D2024" unitRef="INR">-383960000</ind-as:ProfitLossForPeriod>
+ <ind-as:ProfitLossForPeriod id="PYEAEHM5_3" decimals="-4" contextRef="Tot_ComponentsOfEquity_EquityAttributableToTheEquityHoldersOfTheParentMember_D2024" unitRef="INR">-383960000</ind-as:ProfitLossForPeriod>
+ <ind-as:ProfitLossForPeriod id="PYEquityMember_PYP5_3" decimals="-4" contextRef="D2024" unitRef="INR">-552790000</ind-as:ProfitLossForPeriod>
+ <ind-as:ContingentLiabilities id="CYTAG1828" decimals="-4" contextRef="I2025" unitRef="INR">0</ind-as:ContingentLiabilities>
+ <ind-as:ContingentLiabilities id="PYTAG1828" decimals="-4" contextRef="I2024" unitRef="INR">0</ind-as:ContingentLiabilities>
+ <in-ca:GrossValueOfTransactionsWithRelatedParties id="CYTAG2008" decimals="-4" contextRef="D2025" unitRef="INR">0</in-ca:GrossValueOfTransactionsWithRelatedParties>
+ <in-ca:GrossValueOfTransactionsWithRelatedParties id="PYTAG2008" decimals="-4" contextRef="D2024" unitRef="INR">1308600000</in-ca:GrossValueOfTransactionsWithRelatedParties>
+ <ind-as:RemunerationToDirectors id="CYTAG2153" decimals="-4" contextRef="D2025" unitRef="INR">0</ind-as:RemunerationToDirectors>
+ <ind-as:RemunerationToDirectors id="PYTAG2153" decimals="-4" contextRef="D2024" unitRef="INR">0</ind-as:RemunerationToDirectors>
+ <ind-as:ManagerialRemuneration id="CYTAG2159" decimals="-4" contextRef="D2025" unitRef="INR">0</ind-as:ManagerialRemuneration>
+ <ind-as:ManagerialRemuneration id="PYTAG2159" decimals="-4" contextRef="D2024" unitRef="INR">0</ind-as:ManagerialRemuneration>
+ <ind-as:ExceptionalItems id="CYTAG2403" decimals="-4" contextRef="D2025" unitRef="INR">-294440000</ind-as:ExceptionalItems>
+ <ind-as:ExceptionalItems id="PYTAG2403" decimals="-4" contextRef="D2024" unitRef="INR">0</ind-as:ExceptionalItems>
+ <ind-as:WhetherThereAreAnyRelatedPartyTransactionsDuringYear id="CYTAG2947" contextRef="D2025">true</ind-as:WhetherThereAreAnyRelatedPartyTransactionsDuringYear>
+ <ind-as:WhetherThereAreAnyRelatedPartyTransactionsDuringYear id="PYTAG2947" contextRef="D2024">true</ind-as:WhetherThereAreAnyRelatedPartyTransactionsDuringYear>
+ <ind-as:NameOfRelatedParty id="CY1TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_1_D2025">Mr. Sidharth K Birla</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY1TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_1_D2025" unitRef="INR">280000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="PY1TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_1_D2024">Mr. Sidharth K Birla</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY1TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_1_D2024" unitRef="INR">390000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="CY2TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_2_D2025">Mrs. Suhana Murshed</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY2TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_2_D2025" unitRef="INR">250000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="PY2TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_2_D2024">Mrs. Suhana Murshed</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY2TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_2_D2024" unitRef="INR">250000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="CY3TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_3_D2025">Mr. R. V. Kanoria</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY3TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_3_D2025" unitRef="INR">31500000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:AmountsPayableRelatedPartyTransactions id="CY3TAG2996" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_3_I2025" unitRef="INR">160000</ind-as:AmountsPayableRelatedPartyTransactions>
+ <ind-as:NameOfRelatedParty id="PY3TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_3_D2024">Mr. R. V. Kanoria</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY3TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_3_D2024" unitRef="INR">580000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:AmountsPayableRelatedPartyTransactions id="PY3TAG2996" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_3_I2024" unitRef="INR">130000</ind-as:AmountsPayableRelatedPartyTransactions>
+ <ind-as:NameOfRelatedParty id="CY4TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_4_D2025">Mr. S. V. Kanoria</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY4TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_4_D2025" unitRef="INR">19510000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:AmountsPayableRelatedPartyTransactions id="CY4TAG2996" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_4_I2025" unitRef="INR">140000</ind-as:AmountsPayableRelatedPartyTransactions>
+ <ind-as:NameOfRelatedParty id="PY4TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_4_D2024">Mr. S. V. Kanoria</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY4TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_4_D2024" unitRef="INR">17690000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:AmountsPayableRelatedPartyTransactions id="PY4TAG2996" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_4_I2024" unitRef="INR">140000</ind-as:AmountsPayableRelatedPartyTransactions>
+ <ind-as:NameOfRelatedParty id="CY5TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_5_D2025">Mr. A. Vellayan</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY5TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_5_D2025" unitRef="INR">140000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="PY5TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_5_D2024">Mr. A. Vellayan</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY5TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_5_D2024" unitRef="INR">270000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="CY6TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_6_D2025">Mrs. M. Kanoria</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY6TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_6_D2025" unitRef="INR">210000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="PY6TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_6_D2024">Mrs. M. Kanoria</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY6TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_6_D2024" unitRef="INR">260000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="CY7TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_7_D2025">Mr. A. V. Kanoria</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY7TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_7_D2025" unitRef="INR">28090000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:OtherRelatedPartyTransactionsContributionMade id="CY7TAG2993" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_7_D2025" unitRef="INR">97990000</ind-as:OtherRelatedPartyTransactionsContributionMade>
+ <ind-as:NameOfRelatedParty id="PY7TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_7_D2024">Mr. A. V. Kanoria</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY7TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_7_D2024" unitRef="INR">24950000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="CY8TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_8_D2025">Mr. Amitav Kothari</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY8TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_8_D2025" unitRef="INR">140000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="PY8TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_8_D2024">Mr. Amitav Kothari</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY8TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_8_D2024" unitRef="INR">360000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="CY9TAG2962" contextRef="OtherRelatedPartiesMember_RelatedPartyDomain_RelatedPartyAxis_9_D2025">Kanoria Employees' Provident Fund Trust</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsContributionMade id="CY9TAG2993" decimals="-4" contextRef="OtherRelatedPartiesMember_RelatedPartyDomain_RelatedPartyAxis_9_D2025" unitRef="INR">7980000</ind-as:OtherRelatedPartyTransactionsContributionMade>
+ <ind-as:NameOfRelatedParty id="PY9TAG2962" contextRef="OtherRelatedPartiesMember_RelatedPartyDomain_RelatedPartyAxis_9_D2024">Kanoria Employees' Provident Fund Trust</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsContributionMade id="PY9TAG2993" decimals="-4" contextRef="OtherRelatedPartiesMember_RelatedPartyDomain_RelatedPartyAxis_9_D2024" unitRef="INR">4390000</ind-as:OtherRelatedPartyTransactionsContributionMade>
+ <ind-as:NameOfRelatedParty id="CY10TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_10_D2025">APAG Elektronik AG, Switzerland</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="PY10TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_10_D2024">APAG Elektronik AG, Switzerland</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="CY11TAG2962" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2025">KPL International Limited</ind-as:NameOfRelatedParty>
+ <ind-as:PurchasesOfGoodsRelatedPartyTransactions id="CY11TAG2970" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2025" unitRef="INR">359410000</ind-as:PurchasesOfGoodsRelatedPartyTransactions>
+ <ind-as:PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions id="CY11TAG2972" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2025" unitRef="INR">170000</ind-as:PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY11TAG2991" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2025" unitRef="INR">3850000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:OtherRelatedPartyTransactionsIncome id="CY11TAG2992" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2025" unitRef="INR">1200000</ind-as:OtherRelatedPartyTransactionsIncome>
+ <ind-as:AmountsPayableRelatedPartyTransactions id="CY11TAG2996" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_I2025" unitRef="INR">131620000</ind-as:AmountsPayableRelatedPartyTransactions>
+ <ind-as:NameOfRelatedParty id="PY11TAG2962" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2024">KPL International Limited</ind-as:NameOfRelatedParty>
+ <ind-as:PurchasesOfGoodsRelatedPartyTransactions id="PY11TAG2970" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2024" unitRef="INR">221330000</ind-as:PurchasesOfGoodsRelatedPartyTransactions>
+ <ind-as:PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions id="PY11TAG2972" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2024" unitRef="INR">127550000</ind-as:PurchasesOfPropertyAndOtherAssetsRelatedPartyTransactions>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY11TAG2991" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2024" unitRef="INR">2240000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:OtherRelatedPartyTransactionsIncome id="PY11TAG2992" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_D2024" unitRef="INR">1200000</ind-as:OtherRelatedPartyTransactionsIncome>
+ <ind-as:AmountsPayableRelatedPartyTransactions id="PY11TAG2996" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_11_I2024" unitRef="INR">85050000</ind-as:AmountsPayableRelatedPartyTransactions>
+ <ind-as:NameOfRelatedParty id="CY12TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_12_D2025">APAG Elektronik Corp., Canada</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="PY12TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_12_D2024">APAG Elektronik Corp., Canada</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="CY13TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_13_D2025">APAG Elektronik LLC, USA</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="PY13TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_13_D2024">APAG Elektronik LLC, USA</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="CY14TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_14_D2025">APAG Elektronik s.r.o., Czech Republic</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="PY14TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_14_D2024">APAG Elektronik s.r.o., Czech Republic</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="CY15TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_15_D2025">CoSyst Control Systems GmbH, Germany</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="PY15TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_15_D2024">CoSyst Control Systems GmbH, Germany</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="CY16TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_16_D2025">Kanoria Africa Textiles Plc,Ethiopia</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="PY16TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_16_D2024">Kanoria Africa Textiles Plc,Ethiopia</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="CY17TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_17_D2025">APAG Holding AG ,Switzerland</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="PY17TAG2962" contextRef="SubsidiariesMember_RelatedPartyDomain_RelatedPartyAxis_17_D2024">APAG Holding AG ,Switzerland</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="CY18TAG2962" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_18_D2025">FYTOMAX NUTRITION PRIVATE LIMITED</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsIncome id="CY18TAG2992" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_18_D2025" unitRef="INR">500000</ind-as:OtherRelatedPartyTransactionsIncome>
+ <ind-as:AmountsReceivableRelatedPartyTransactions id="CY18TAG2997" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_18_I2025" unitRef="INR">40000</ind-as:AmountsReceivableRelatedPartyTransactions>
+ <ind-as:NameOfRelatedParty id="PY18TAG2962" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_18_D2024">FYTOMAX NUTRITION PRIVATE LIMITED</ind-as:NameOfRelatedParty>
+ <ind-as:SalesOfPropertyAndOtherAssetsRelatedPartyTransactions id="PY18TAG2973" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_18_D2024" unitRef="INR">60000000</ind-as:SalesOfPropertyAndOtherAssetsRelatedPartyTransactions>
+ <ind-as:OtherRelatedPartyTransactionsIncome id="PY18TAG2992" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_18_D2024" unitRef="INR">50000</ind-as:OtherRelatedPartyTransactionsIncome>
+ <ind-as:NameOfRelatedParty id="CY19TAG2962" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_19_D2025">KIRTIVARDHAN FINVEST SERVICES LIMITED</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="PY19TAG2962" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_19_D2024">KIRTIVARDHAN FINVEST SERVICES LIMITED</ind-as:NameOfRelatedParty>
+ <ind-as:NameOfRelatedParty id="CY20TAG2962" contextRef="ParentMember_RelatedPartyDomain_RelatedPartyAxis_20_D2025">VARDHAN LTD.</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY20TAG2991" decimals="-4" contextRef="ParentMember_RelatedPartyDomain_RelatedPartyAxis_20_D2025" unitRef="INR">17790000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:OtherRelatedPartyTransactionsContributionReceived id="CY20TAG2994" decimals="-4" contextRef="ParentMember_RelatedPartyDomain_RelatedPartyAxis_20_D2025" unitRef="INR">295000000</ind-as:OtherRelatedPartyTransactionsContributionReceived>
+ <ind-as:NameOfRelatedParty id="PY20TAG2962" contextRef="ParentMember_RelatedPartyDomain_RelatedPartyAxis_20_D2024">VARDHAN LTD.</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY20TAG2991" decimals="-4" contextRef="ParentMember_RelatedPartyDomain_RelatedPartyAxis_20_D2024" unitRef="INR">12410000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:OtherRelatedPartyTransactionsContributionMade id="PY20TAG2993" decimals="-4" contextRef="ParentMember_RelatedPartyDomain_RelatedPartyAxis_20_D2024" unitRef="INR">145000000</ind-as:OtherRelatedPartyTransactionsContributionMade>
+ <ind-as:OtherRelatedPartyTransactionsContributionReceived id="PY20TAG2994" decimals="-4" contextRef="ParentMember_RelatedPartyDomain_RelatedPartyAxis_20_D2024" unitRef="INR">145000000</ind-as:OtherRelatedPartyTransactionsContributionReceived>
+ <ind-as:AmountsPayableRelatedPartyTransactions id="PY20TAG2996" decimals="-4" contextRef="ParentMember_RelatedPartyDomain_RelatedPartyAxis_20_I2024" unitRef="INR">125000000</ind-as:AmountsPayableRelatedPartyTransactions>
+ <ind-as:NameOfRelatedParty id="CY21TAG2962" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_21_D2025">R V Investment &amp; Dealers Limited</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY21TAG2991" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_21_D2025" unitRef="INR">6060000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:OtherRelatedPartyTransactionsContributionMade id="CY21TAG2993" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_21_D2025" unitRef="INR">125000000</ind-as:OtherRelatedPartyTransactionsContributionMade>
+ <ind-as:OtherRelatedPartyTransactionsContributionReceived id="CY21TAG2994" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_21_D2025" unitRef="INR">125000000</ind-as:OtherRelatedPartyTransactionsContributionReceived>
+ <ind-as:NameOfRelatedParty id="PY21TAG2962" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_21_D2024">R V Investment &amp; Dealers Limited</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY21TAG2991" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_21_D2024" unitRef="INR">530000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:OtherRelatedPartyTransactionsContributionMade id="PY21TAG2993" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_21_D2024" unitRef="INR">70000000</ind-as:OtherRelatedPartyTransactionsContributionMade>
+ <ind-as:OtherRelatedPartyTransactionsContributionReceived id="PY21TAG2994" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_21_D2024" unitRef="INR">70000000</ind-as:OtherRelatedPartyTransactionsContributionReceived>
+ <ind-as:NameOfRelatedParty id="CY22TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_22_D2025">Mr. H.K. Khaitan</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY22TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_22_D2025" unitRef="INR">310000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="PY22TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_22_D2024">Mr. H.K. Khaitan</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY22TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_22_D2024" unitRef="INR">420000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="CY23TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_23_D2025">Meeta Makhan</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY23TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_23_D2025" unitRef="INR">180000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="PY23TAG2962" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_23_D2024">Cosyst Holding AG</ind-as:NameOfRelatedParty>
+ <ind-as:SalesOfPropertyAndOtherAssetsRelatedPartyTransactions id="PY23TAG2973" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_23_D2024" unitRef="INR">223820000</ind-as:SalesOfPropertyAndOtherAssetsRelatedPartyTransactions>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="PY23TAG2991" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_23_D2024" unitRef="INR">900000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:OtherRelatedPartyTransactionsContributionReceived id="PY23TAG2994" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_23_D2024" unitRef="INR">562380000</ind-as:OtherRelatedPartyTransactionsContributionReceived>
+ <ind-as:AmountsPayableRelatedPartyTransactions id="PY23TAG2996" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_23_I2024" unitRef="INR">93300000</ind-as:AmountsPayableRelatedPartyTransactions>
+ <ind-as:NameOfRelatedParty id="CY24TAG2962" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_24_D2025">Sumanta Chaudhuri</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY24TAG2991" decimals="-4" contextRef="KeyManagementPersonnelOfEntityOrParentMember_RelatedPartyDomain_RelatedPartyAxis_24_D2025" unitRef="INR">70000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:NameOfRelatedParty id="CY25TAG2962" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_25_D2025">Cosyst Holding AG</ind-as:NameOfRelatedParty>
+ <ind-as:OtherRelatedPartyTransactionsExpense id="CY25TAG2991" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_25_D2025" unitRef="INR">9330000</ind-as:OtherRelatedPartyTransactionsExpense>
+ <ind-as:OtherRelatedPartyTransactionsContributionReceived id="CY25TAG2994" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_25_D2025" unitRef="INR">679810000</ind-as:OtherRelatedPartyTransactionsContributionReceived>
+ <ind-as:AmountsPayableRelatedPartyTransactions id="CY25TAG2996" decimals="-4" contextRef="JointControlOrSignificantInfluenceMember_RelatedPartyDomain_RelatedPartyAxis_25_I2025" unitRef="INR">780360000</ind-as:AmountsPayableRelatedPartyTransactions>
+ <ind-as:NameOfSubsidiary id="CY1TAG4607" contextRef="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_1_D2025">APAG Holding AG(consolidated)</ind-as:NameOfSubsidiary>
+ <ind-as:NameOfSubsidiary id="PY1TAG4607" contextRef="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_1_D2024">APAG Holding AG(consolidated)</ind-as:NameOfSubsidiary>
+ <in-ca:TurnoverOfSubsidiary id="PY1TAG4632" decimals="-4" contextRef="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_1_D2024" unitRef="CHF">7900750000</in-ca:TurnoverOfSubsidiary>
+ <in-ca:ProfitAfterTaxOfSubsidiary id="PY1TAG4635" decimals="-4" contextRef="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_1_D2024" unitRef="CHF">-375170000</in-ca:ProfitAfterTaxOfSubsidiary>
+ <ind-as:NameOfSubsidiary id="CY2TAG4607" contextRef="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_2_D2025">Kanoria Africa Textiles PLC</ind-as:NameOfSubsidiary>
+ <ind-as:NameOfSubsidiary id="PY2TAG4607" contextRef="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_2_D2024">Kanoria Africa Textiles PLC</ind-as:NameOfSubsidiary>
+ <in-ca:TurnoverOfSubsidiary id="PY2TAG4632" decimals="-4" contextRef="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_2_D2024" unitRef="ETB">1081150000</in-ca:TurnoverOfSubsidiary>
+ <in-ca:ProfitAfterTaxOfSubsidiary id="PY2TAG4635" decimals="-4" contextRef="SignificantInvestmentsInSubsidiariesDomain_SignificantInvestmentsInSubsidiariesAxis_2_D2024" unitRef="ETB">-166480000</in-ca:ProfitAfterTaxOfSubsidiary>
+ <ind-as:WhetherThereAreAnyContingentLiabilities id="CYTAG5044" contextRef="D2025">true</ind-as:WhetherThereAreAnyContingentLiabilities>
+ <ind-as:WhetherThereAreAnyContingentLiabilities id="PYTAG5044" contextRef="D2024">true</ind-as:WhetherThereAreAnyContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="CY1TAG5087" contextRef="OtherContingentLiabilitiesOthersMember_D2025">Other claims being disputed by the Company</ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="PY1TAG5087" contextRef="OtherContingentLiabilitiesOthersMember_D2024">Other claims being disputed by the Company</ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:EstimatedFinancialEffectOfContingentLiabilities id="PY1TAG5089" decimals="-4" contextRef="OtherContingentLiabilitiesOthersMember_I2024" unitRef="INR">5560000</ind-as:EstimatedFinancialEffectOfContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="CY2TAG5087" contextRef="ContingentLiabilityOnDisputedExciseDemandsMember_D2025">Excise Duty demands</ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="PY2TAG5087" contextRef="ContingentLiabilityOnDisputedExciseDemandsMember_D2024">Excise Duty demands</ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="CY3TAG5087" contextRef="ContingentLiabilityOnDisputedIncomeTaxMember_D2025">Income Tax demands</ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:EstimatedFinancialEffectOfContingentLiabilities id="CY3TAG5089" decimals="-4" contextRef="ContingentLiabilityOnDisputedIncomeTaxMember_I2025" unitRef="INR">58370000</ind-as:EstimatedFinancialEffectOfContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="PY3TAG5087" contextRef="ContingentLiabilityOnDisputedIncomeTaxMember_D2024">Income Tax demands</ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:EstimatedFinancialEffectOfContingentLiabilities id="PY3TAG5089" decimals="-4" contextRef="ContingentLiabilityOnDisputedIncomeTaxMember_I2024" unitRef="INR">103240000</ind-as:EstimatedFinancialEffectOfContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="CY4TAG5087" contextRef="OtherGuaranteesGivenMember_D2025">Outstanding Bank Guarantees</ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="PY4TAG5087" contextRef="OtherGuaranteesGivenMember_D2024">Outstanding Bank Guarantees</ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:EstimatedFinancialEffectOfContingentLiabilities id="PY4TAG5089" decimals="-4" contextRef="OtherGuaranteesGivenMember_I2024" unitRef="INR">49820000</ind-as:EstimatedFinancialEffectOfContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="CY5TAG5087" contextRef="TaxContingentLiabilityMember_D2025">Service Tax Demands, Sales Tax demands (paid Rs. 0.43 million), Customs &amp; Central Tax Demands (paid Rs. 0.13 million)</ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:EstimatedFinancialEffectOfContingentLiabilities id="CY5TAG5089" decimals="-4" contextRef="TaxContingentLiabilityMember_I2025" unitRef="INR">9820000</ind-as:EstimatedFinancialEffectOfContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="PY5TAG5087" contextRef="TaxContingentLiabilityMember_D2024">Service Tax Demands, Sales Tax demands (paid Rs. 0.43 million), Customs &amp; Central Tax Demands (paid Rs. 0.13 million)</ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:EstimatedFinancialEffectOfContingentLiabilities id="PY5TAG5089" decimals="-4" contextRef="TaxContingentLiabilityMember_I2024" unitRef="INR">9820000</ind-as:EstimatedFinancialEffectOfContingentLiabilities>
+ <ind-as:EstimatedFinancialEffectOfContingentLiabilities id="CYOCL2_1" decimals="-4" contextRef="Tot_ContingentLiabilities_ContingentLiabilitiesMember_I2025" unitRef="INR">58370000</ind-as:EstimatedFinancialEffectOfContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="CYOCL5" contextRef="Tot_ContingentLiabilities_ContingentLiabilitiesMember_D2025">
+ </ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:EstimatedFinancialEffectOfContingentLiabilities id="PYOCL2_1" decimals="-4" contextRef="Tot_ContingentLiabilities_ContingentLiabilitiesMember_I2024" unitRef="INR">158620000</ind-as:EstimatedFinancialEffectOfContingentLiabilities>
+ <ind-as:DescriptionOfNatureOfObligationContingentLiabilities id="PYOCL5" contextRef="Tot_ContingentLiabilities_ContingentLiabilitiesMember_D2024">
+ </ind-as:DescriptionOfNatureOfObligationContingentLiabilities>
+ <ind-as:IncomeTaxExpenseContinuingOperations id="CYTAG5676" decimals="-4" contextRef="D2025" unitRef="INR">117910000</ind-as:IncomeTaxExpenseContinuingOperations>
+ <ind-as:IncomeTaxExpenseContinuingOperations id="PYTAG5676" decimals="-4" contextRef="D2024" unitRef="INR">193140000</ind-as:IncomeTaxExpenseContinuingOperations>
+ <ind-as:BasicEarningsLossPerShare id="CYTAG5901" decimals="2" contextRef="D2025" unitRef="INRPerShare">-19.13</ind-as:BasicEarningsLossPerShare>
+ <ind-as:BasicEarningsLossPerShare id="PYTAG5901" decimals="2" contextRef="D2024" unitRef="INRPerShare">-8.79</ind-as:BasicEarningsLossPerShare>
+ <ind-as:NameOfEntityConsolidated id="CY1TAG6100" contextRef="EntitiesConsolidatedDomain_EntitiesConsolidatedAxis_1_D2025">Kanoria Africa Textiles PLC</ind-as:NameOfEntityConsolidated>
+ <ind-as:TypeOfEntityConsolidated id="CY1TAG6101" contextRef="EntitiesConsolidatedDomain_EntitiesConsolidatedAxis_1_D2025">Foreign Subsidiary</ind-as:TypeOfEntityConsolidated>
+ <ind-as:AmountOfShareInProfitOrLossOfEntityConsolidated id="CY1TAG6104" decimals="-4" contextRef="EntitiesConsolidatedDomain_EntitiesConsolidatedAxis_1_I2025" unitRef="INR">-255900000</ind-as:AmountOfShareInProfitOrLossOfEntityConsolidated>
+ <ind-as:NameOfEntityConsolidated id="CY2TAG6100" contextRef="EntitiesConsolidatedDomain_EntitiesConsolidatedAxis_2_D2025">APAG Holding AG</ind-as:NameOfEntityConsolidated>
+ <ind-as:TypeOfEntityConsolidated id="CY2TAG6101" contextRef="EntitiesConsolidatedDomain_EntitiesConsolidatedAxis_2_D2025">Foreign Subsidiary</ind-as:TypeOfEntityConsolidated>
+ <ind-as:AmountOfShareInProfitOrLossOfEntityConsolidated id="CY2TAG6104" decimals="-4" contextRef="EntitiesConsolidatedDomain_EntitiesConsolidatedAxis_2_I2025" unitRef="INR">-278910000</ind-as:AmountOfShareInProfitOrLossOfEntityConsolidated>
+ <in-ca:DateOfEndOfReportingPeriod id="CYTAG6217" contextRef="D2025">2025-03-31</in-ca:DateOfEndOfReportingPeriod>
+ <in-ca:DateOfEndOfReportingPeriod id="PYTAG6217" contextRef="D2024">2024-03-31</in-ca:DateOfEndOfReportingPeriod>
+ <in-ca:NatureOfReportStandaloneConsolidated id="CYTAG6218" contextRef="D2025">Consolidated</in-ca:NatureOfReportStandaloneConsolidated>
+ <in-ca:LevelOfRoundingUsedInFinancialStatements id="CYTAG6221" contextRef="D2025">Millions</in-ca:LevelOfRoundingUsedInFinancialStatements>
+ <in-ca:DisclosureInAuditorsReportExplanatory id="CYTAG6259" contextRef="D2025">&lt;span&gt;
+&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;INDEPENDENT AUDITOR’S REPORT&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;TO THE MEMBERS OF KANORIA CHEMICALS &amp;amp; INDUSTRIES LIMITED&lt;/span&gt;&lt;br /&gt;&lt;span&gt;REPORT ON THEAUDIT OF THE CONSOLIDATED FINANCIAL STATEMENTS&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;OPINION&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;We have audited the accompanying consolidatedfinancial statements of &lt;/span&gt;&lt;span&gt;M/S. KANORIA CHEMICALS &amp;amp; INDUSTRIES LIMITED&lt;/span&gt;&lt;span&gt;(hereinafter referred to as “theParent Company”) and its subsidiaries (collectively referred to as ‘the Group’)comprisingof the Consolidated Balance Sheet as at March 31, 2025, the Consolidated Statement of Profit and Loss (including other comprehensive income), Consolidated Statement of Changes in Equity andConsolidated Statement of Cash Flowsfor the year then ended, and a summary of material accounting policies and other explanatory information (hereinafter referred to as “the ConsolidatedFinancial Statements”). &lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;In our opinion and to the best of our information and according to the explanations given to us and&amp;nbsp;based on the consideration of reports of other auditors on separate financial statements and on the other financial information of the subsidiaries, the aforesaid consolidated&amp;nbsp;financial statements give the information required by the Act in the manner so required and give a true and fair view in conformity with the accounting principles generally accepted in India, of the consolidated state of affairs of the Group as at March 31, 2025 and their consolidated lossand other comprehensive income, their consolidated statement of changes in equity and their consolidated cash flows for the year ended on that date.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;BASIS FOR OPINION&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;We conducted our audit in accordance with the Standards on Auditing (SAs) specified under section 143(10) of the CompaniesAct, 2013 (“the Act”). Our responsibilities under those Standards are further described in the ‘Auditor’s Responsibilities for the Audit of the Consolidated Financial Statements’ section of our report. We are independent of the Group in accordance with the ‘Code of Ethics’ issued by the Institute of Chartered Accountants of India (ICAI) together with the ethical requirements that are relevant to our audit of the consolidated financial statements under the provisions of the Act and the Rules there under, and we have fulfilled our other ethical responsibilities in accordance with these requirements and the ICAI’s Code of Ethics. We believe that the audit evidence we have obtained, and the audit evidence obtained by the other auditors in terms of their reports referred to in other matter paragraph below is sufficient and appropriate to provide a basis for our audit opinion on the consolidated financial statements.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;KEY AUDIT MATTERS&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Key audit matters are those matters that, in our professional judgment, were of most significance in our audit of the consolidated financial statements for the financial year ended March 31, 2025. These matters were addressed in the context of our audit of the consolidated financial statements as a whole, and in forming our opinion thereon, and we do not provide a separate opinion on these matters. We have determined that there are no key audit matters to be communicated in our report.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;INFORMATION OTHER THAN THE CONSOLIDATED FINANCIAL STATEMENTS AND AUDITORS’ REPORT THEREON&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;The Parent Company’s Board of Directors is responsible for the preparation of the other information. The other information comprises the information included in the annual report, but does not include the standalone financial statements and our auditor’s report thereon. The annual report is expected to be made available to us after the date of this auditor's report. Our opinion on the financial statements does not cover the other information and we will not express any form of assurance conclusion thereon. In connection with our audit of the financial statements, our responsibility is to read the other information identified above when it becomes available and, in doing so, consider whether the other information is materially inconsistent with the financial statements or our knowledge obtained in the audit, or otherwise appears to be materially misstated. When we read the annual report, if we conclude that there is a material misstatement therein, we are required to communicate the matter to those charged with governance.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;RESPONSIBILITIES OF THE MANAGEMENT AND THOSE CHARGED WITH GOVERNANCE FOR THE CONSOLIDATED FINANCIAL STATEMENTS&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;The Parent Company’s Board of Directors is responsible for preparation of theseconsolidatedfinancial statements in terms of the requirements of the Act that give a true and fair view of the consolidated financial position, consolidated financial performance including other comprehensive income, consolidated changes in equity consolidated cash flowsof the Group in accordance with the Rs.accounting principles generally accepted in India, including the Indian Accounting Standards (Ind AS)prescribed under Section 133 of the Act, read with the relevant rules issued thereunder. The respective Board of Directors / Management of the companies included in the Group is responsible for maintenance of adequate accounting records in accordance with the provisions of the Act for safeguarding the assets of the Group and for preventing and detecting frauds and other irregularities; selection and application of appropriate accounting policies; making judgments and estimates that are reasonable and prudent;and the design, implementation and maintenance of adequate internal financial controls, that were operating effectively for ensuring the accuracy and completeness of the accounting records, relevant to the preparation and presentation of the consolidated financial statements that give a true and fair view and are free from material misstatement, whether due to fraud or error, which have been used for the purpose of preparation of the consolidatedfinancial statements by the Directors of theParent Company, as aforesaid.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;In preparing the consolidated financial statements, the respective Board of Directors of the companies included in the Group are responsible for assessing the Group’s ability to continue as a going concern, disclosing, as applicable, matters related to going concern and using the going concern basis of accounting unless management either intends to liquidate the Group or to cease operations, or has no realistic alternative but to do so.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;The respective Board of Directors of the companies included in the Group are also responsible for overseeing the financial reporting process of the Group&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;AUDITOR’S RESPONSIBILITIES FOR THE AUDIT OF THE CONSOLIDATED FINANCIAL STATEMENTS&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Our objectives are to obtain reasonable assurance about whether the consolidated financial statements as a whole are free from material misstatement, whether due to fraud or error, and to issue an auditor’s report that includes our opinion. Reasonable assurance is a high level of assurance, but is not a guarantee that an audit conducted in accordance with SAs will always detect a material misstatement when it exists. Misstatements can arise from fraud or error and are considered material if, individually or in the aggregate, they could reasonably be expected to influence the economic decisions of users taken on the basis of these consolidated financial statements.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;As part of an audit in accordance with SAs, we exercise professional judgment and maintain professional skepticism throughout the audit. We also:&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Identify and assess the risks of material misstatement of the consolidated financial statements, whether due to fraud or error, design and perform audit procedures responsive to those risks, and obtain audit evidence that is sufficient and appropriate to provide a basis for our opinion. The risk of not detecting a material misstatement resulting from fraud is higher than for one resulting from error, as fraud may involve collusion, forgery, intentional omissions, misrepresentations, or the override of internal control.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Obtain an understanding of internal control relevant to the audit in order to design audit procedures that are appropriate in the circumstances. Under section 143(3)(i) of the Act, we are also responsible for expressing our opinion on whether the Parent Company has adequate internal financial controls system in place and the operating effectiveness of such controls.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Evaluate the appropriateness of accounting policies used and the reasonableness of accounting estimates and related disclosures made by management.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Conclude on the appropriateness of management’s use of the going concern basis of accounting and, based on the audit evidence obtained, whether a material uncertainty exists related to events or conditions that may cast significant doubt on the Group’s ability to continue as a going concern. If we conclude that a material uncertainty exists, we are required to draw attention in our auditor’s report to the related disclosures in the consolidated financial statements or, if such disclosures are inadequate, to modify our opinion. Our conclusions are based on the audit evidence obtained up to the date of our auditor’s report. However, future events or conditions may cause the Group to cease to continue as a going concern.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Evaluate the overall presentation, structure and content of the consolidated financial statements, including the disclosures, and whether the consolidated financial statements represent the underlying transactions and events in a manner that achieves fair presentation.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Obtain sufficient appropriate audit evidence regarding the financial information of the entities or business activities within the Group, to express an opinion on the consolidated financial statements. We are responsible for the direction, supervision and performance of the audit of the financial statements of such entities included in the consolidated financial statements of which we are the independent auditors. For the other entities included in the consolidated financial statements, which have been audited by other auditors, such other auditors remain responsible for the direction, supervision and performance of the audits carried out by them. We remain solely responsible for our audit opinion.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Materiality is the magnitude of misstatements in the consolidated financial statements that, individually or in aggregate, makes it probable that the economic decisions of a reasonably knowledgeable user of the consolidated financial statements may be influenced. We consider quantitative materiality and qualitative factors in (i) planning the scope of our audit work and in evaluating the results of our work; and (ii) to evaluate the effect of any identified misstatements in the consolidated financial statements.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;We communicate with those charged with governance of the Parent Company included in the consolidated financial statements of which we are the independent auditors regarding, among other matters, the planned scope and timing of the audit and significant audit findings, including any significant deficiencies in internal control that we identify during our audit.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;We also provide those charged with governance with a statement that we have complied with relevant ethical requirements regarding independence, and to communicate with them all relationships and other matters that may reasonably be thought to bear on our independence, and where applicable, related safeguards.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;From the matters communicated with those charged with governance, we determine those matters that were of most significance in the audit of the consolidated financial statements for the financial year ended March 31, 2025 and are therefore the key audit matters. We describe these matters in our auditor’s report unless law or regulation precludes public disclosure of about the matter or when, in extremely rare circumstances, we determine that a matter should not be communicated in our report because the adverse consequences of doing so would reasonably be expected to outweigh the public interests of such communication.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;OTHER MATTERS&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;We did not audit the consolidated financial statements of APAG Holding AG and standalone financial statements of Kanoria Africa Textiles PLC, the foreign subsidiaries of Parent Company whose financial statements and other financial information reflect total assets of Rs 8,545.60million as at March 31, 2025, and total revenues of Rs.8,682.36 million, total net loss after tax of Rs. 857.09million, total comprehensive income of Rs. (872.26) million for the year ended on that date and net cash outflows of Rs. 48.18 million for the year ended March 31, 2025, as considered in the financial statements which have been audited by their respective independent auditors.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;The independent auditor’s report on the financial statements of these entities have been furnished to us by the Management and our opinion on the financial statements in so far as it relates to the amounts and disclosures included in respect of these subsidiaries is based solely on the reports of such auditors and the procedures performed by us as stated in paragraph below.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Both the subsidiaries are located outside India whose financial statements and other financial information have been prepared in accordance with accounting principles generally accepted in their respective countries and which have been audited by other auditors under generally accepted auditing standards applicable in their respective countries. The Parent Company’s management has converted the financial statements of such subsidiaries located outside India from accounting principles generally accepted in their respective countries to accounting principles generally accepted in India. We have audited these conversion adjustments made by the Parent Company’s management. Our opinion in so far as it relates to the balances and affairs of such subsidiaries located outside India is based on the report of other auditors and the conversion adjustments prepared by the management of the Parent Company and audited by us.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Our report on the consolidatedfinancial statement is not modified in respect of the above matter.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;REPORT ON OTHER LEGAL AND REGULATORY REQUIREMENTS&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;As required by the Companies (Auditor’s Report) Order, 2020 (“the Order”), issued by the Central Government of India in terms of sub-section (11) of Section 143 of the Act, based on our audit and on the consideration of report of the other auditors on separate financial statements and the other financial information of the subsidiary companies, incorporated in India, we give in the “Annexure A” a statement on the matters specified in paragraph 3(xxi) of the Order.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;As required by Section 143 (3) of the Act, we report, to the extent applicable, that:&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;We have sought and obtained all the information and explanations which to the best of our knowledge and belief were necessary for the purposes of our audit of the aforesaid consolidated financial statements&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;In our opinion proper books of account as required by law relating to preparation of the aforesaid consolidated financial statements have been kept so far as it appears from our examination of those books and the reports of the other auditors; except for the matters stated in the paragraph 2(i)(vi) below on reporting under Rule 11(g) of the Companies (Audit and Auditors) Rules, 2014;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;The consolidated balance sheet, the consolidated statement of profit and loss (including other comprehensive income),the consolidated statement of changes in equity and the consolidated cash flow statement dealt with by this Report are in agreement with the relevant books of account maintained for the purpose of preparation of the consolidated financial statements.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;In our opinion, the aforesaid consolidated financial statements comply with the Indian Accounting Standards specified under Section 133 of the Act read with complies (Indian accounting standards) Rules,2015,as amended from time to time.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;On the basis of the written representations received from thedirectors of the ParentCompany as on&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;March 31&lt;/span&gt;&lt;span&gt;, 2025 taken on record by the Board of Directors of the Parent Company,none of the directors of the Group companies incorporated in India is disqualified as on&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;March 31&lt;/span&gt;&lt;span&gt;, 2025from being appointed as a director in terms of Section 164 (2) of the Act&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;The modifications relating to the maintenance of accounts and other matters connected therewith are as stated in the paragraph (b) above on reporting under Section 143(3)(b) of the Act and paragraph 2(i)(vi) below on reporting under Rule 11(g) of the Companies (Audit and Auditors) Rules, 2014;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;With respect to the adequacy of the internal financial controls with reference tothe consolidated financial statement of the Group and the operating effectiveness of such controls, refer to our separate Report in Annexure ‘B’.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;According to the information and explanations given to us and based on our examination of the records of the ParentCompany, theParent Company has paid/ provided for managerial remuneration in accordance with the requisite approvals mandated by the provisions of section 197 read with Schedule V to the Act.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;With respect to the other matters to be included in the Auditor’s Report in accordance with Rule 11 of the Companies (Audit and Auditors) Rules, 2014, (as amended), in our opinion and to the best of our information and according to the explanations given to us and based on the consideration of the report of the other auditors on separate financial statements and also the other financial information of the subsidiaries, as noted in the ‘Other matter’ paragraph:&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;The Group has disclosed the impact of pending litigationson its financial position in its consol&lt;/span&gt;&lt;span&gt;i&lt;/span&gt;&lt;span&gt;dated financial statements&lt;/span&gt;&lt;span&gt;– Refer Note 34 to&lt;/span&gt;&lt;span&gt; the consolid&lt;/span&gt;&lt;span&gt;a&lt;/span&gt;&lt;span&gt;ted financial statements&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;The Group did not have any &lt;/span&gt;&lt;span&gt;material foreseeable losses on long-term contracts including derivative contracts.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;There has been no delay in transferring amounts, required to be transferred, to the Investor Education and Protection Fund by the Parent Company except for Rs&lt;/span&gt;&lt;span&gt;1.80&lt;/span&gt;&lt;span&gt;million which is held in abeyance due to pending legal cases.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;(a) The respective management of the Parent Company and its subsidiaries which are companies incorporated in India whose financial statements have been audited under the Act, have represented to us and the other auditors of such subsidiaries, respectively to the extent applicable that, to the best of ourknowledge and belief, as disclosed in the notes to accounts, during the year no funds have been advanced or loaned or invested (either from borrowed funds or share premium or any other sources or kind of funds) by the Parent Company or any of such subsidiaries to or in any other persons or entities, including foreign entities (“Intermediaries”), with the understanding whether recorded in writing or otherwise , that the intermediary shall, whether directly or indirectly lend or invest in other persons or entities identified in any manner whatsoever by or behalf of the Parent Company or any of such subsidiaries (Ultimate beneficiaries) or provide any guarantee, security or the like on behalf of the ultimate beneficiaries (Refer Note 50 to the consolidated financial statements).&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;(b) The respective managementof the Parent Company and its subsidiaries which are companies incorporated in India whose financial statements have been audited under the Act,&amp;nbsp;have represented to us and the other auditors of such subsidiaries, respectively to the extent applicable that, to the best of ourknowledge and belief, as disclosed in the notes to the accounts, during the year no funds have been received by the Parent Company or any of such subsidiaries from any persons or entities, including foreign entities (“Funding Parties”), with the understanding, whether recorded in writing or otherwise, that the Company shall, whether, directly or indirectly, lend or invest in other persons or entities identified in any manner whatsoever by or on behalf of the Funding Party (“Ultimate Beneficiaries”) or provide any guarantee, security or the like on behalf of the Ultimate Beneficiaries (Refer Note 51 to the consolidated financial statements).&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;(c) ) Based on the audit procedures, that has been considered reasonable and appropriate in the circumstances, performed by us and those performed by the auditors of the subsidiaries which are companies incorporated in India whose financial statements have been audited under the Act to the extent applicable, nothing has come to our or other auditors’ notice that has caused us or the other auditors to believe that the representations under sub-clause (i) and (ii) of Rule 11(e) as provided under paragraph (1) (i) (iv) (a) &amp;amp; (b) above, contain any material mis-statement.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;TheParentCompany has not declared any dividend in previous financial year which has been paid in current year. Further, no dividend has been declared in current year. Accordingly, the provision of section 123 of the Act is not applicable to the Company&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Based on our examination which included test checks, except for the instances mentioned below, the Parent Company has used accounting softwares for maintaining its books of account, which have a feature of recording audit trail (edit log) facility and the same has operated throughout the year for all relevant transactions recorded in the respective software&lt;/span&gt;&lt;span&gt;and we did not come across any instances of audit trail feature being tampered with during the course of our audit&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;a. &lt;/span&gt;&lt;span&gt;The feature of recording audit trail (edit log) is not enabled at the application layer of the software for payroll management.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;The feature of recording audit trail (edit log) facility was not enabled at the database level to log any direct data changes for the accounting softwares used for maintaining the books of account&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Additionally, the audit trail has been preserved by the Company as per the statutory requirements for record retention except for the exceptions mentioned above.&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;For SINGHI &amp;amp; CO&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Chartered Accountants&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Firm Registration No. 302049E&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;(&lt;/span&gt;&lt;span&gt;Rahul Bothra)&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Partner &lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Membership No. 067330&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;UDIN:&lt;/span&gt;&lt;span&gt;25067330BMLGPF6646&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Place: New Delhi&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Dated: May 21, 2025&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;ANNEXURE - A TO THE INDEPENDENT AUDITOR’S REPORT&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;(Referred to in paragraph 1under ‘Report on Other Legal and Regulatory Requirements’ section of our report of even date)&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;In terms of the information and explanations sought by us and given by the Parent Company and the books of account and records examined by us in the normal course of audit and to the best of our knowledge and belief, we state that:&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;(xxi) Unfavorable answers or qualifications or adverse remarks given by us in the respective Companies (Auditors Report) Order (CARO) reports included in the consolidated financial statements are:&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;
+&lt;table class="bordered"&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;p&gt;&lt;span&gt;SL No&lt;/span&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;&lt;span&gt;Name&lt;/span&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;&lt;span&gt;CIN&lt;/span&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;&lt;span&gt;Parent Company / Subsidiary&lt;/span&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;&lt;span&gt;Clause number of the CARO report which is qualified or is adverse&lt;/span&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;p&gt;&lt;span&gt;1&lt;/span&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;&lt;span&gt;KANORIA CHEMICALS &amp;amp; INDUSTRIES LIMITED&lt;/span&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;&lt;span&gt;L2411&lt;/span&gt;&lt;span&gt;0&lt;/span&gt;&lt;span&gt;WB1960PLC024910&lt;/span&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;&lt;span&gt;Parent Company&lt;/span&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;&lt;span&gt;iii (c) and iii ( e )&lt;/span&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;For SINGHI &amp;amp; CO&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Chartered Accountants&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Firm Registration No. 302049E&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;(Rahul Bothra)&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Partner &lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Membership No. 067330&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&amp;nbsp; UDIN:&lt;/span&gt;&lt;span&gt;25067330BMLGPF6646&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Place: New Delhi&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Dated: May 21, 2025&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;ANNEXURE - BTO THE INDEPENDENT AUDITOR’S REPORT&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Report on the Internal Financial Controls with reference to the consolidated financial statement under Clause (i) of Sub-section 3 of Section 143 of the Companies Act, 2013 (“the Act”)&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;W&lt;/span&gt;&lt;span&gt;e have audited theinternal financial controls with reference to the consolidated financial statement of &lt;/span&gt;&lt;span&gt;M/S.KANORIA CHEMICALS &amp;amp; INDUSTRIES LIMITED&lt;/span&gt;&lt;span&gt; (“&lt;/span&gt;&lt;span&gt;the Parent Company&lt;/span&gt;&lt;span&gt;”) as of and for the year endedMarch 31, 2025 in conjunction with our audit of the consolidated financial statements of the Group.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;MANAGEMENT’S RESPONSIBILITY FOR INTERNAL FINANCIAL CONTROLSWITH REFERENCE TO THE CONSOLIDATED FINANCIAL STATEMENT&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;The Board of Directors of the Parent Companyis responsible for establishing and maintaining internal financial controls based on the internal financial control over financial reporting criteria established by the covered entities considering the essential components of internal control stated in the Guidance Note on Audit of Internal Financial Controls over Financial Reporting (“the Guidance Note”) issued by the Institute of Chartered Accountants of India (‘ICAI’). These responsibilities include the design, implementation and maintenance of adequate internal financial controls that were operating effectively for ensuring the orderly and efficient conduct of its business, including adherence to covered entities’ policies, the safeguarding of its assets, the prevention and detection of frauds and errors, the accuracy and completeness of the accounting records, and the timely preparation of reliable financial information, as required under the Companies Act, 2013.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;AUDITOR’S RESPONSIBILITY&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Our responsibility is to express an opinion on theinternal financial controls with reference to the consolidated financial statement of the ParentCompanybased on our audit. We conducted our audit in accordance with the Guidance Note and the Standards on Auditing, issued by ICAI and deemed to be prescribed under section 143 (10) of the Companies Act, 2013, to the extent applicable to an audit of internal financial controls. Those Standards and the Guidance Note require that we comply with ethical requirements and plan and perform the audit to obtain reasonable assurance about whether adequate internal financial controls with reference to the consolidated financial statement was established and maintained and if such controls operated effectively in all material respects.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Our audit involves performing procedures to obtain audit evidence about the adequacy of the internal financial controls with reference to the consolidated financial statement and their operating effectiveness. Our audit of internal financial controls with reference to the consolidated financial statement included obtaining an understanding of internal financial controls with reference to the consolidated financial statement, assessing the risk that a material weakness exists, and testing and evaluating the design and operating effectiveness of internal control based on the assessed risk. The procedures selected depend on the auditor’s judgment, including the assessment of the risks of material misstatement of the consolidated financial statements, whether due to fraud or error.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;We believe that the audit evidence we have obtained is sufficient and appropriate to provide a basis for our audit opinion on the ParentCompany’s internal financial controls with reference to the consolidated financial statement&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;MEANING OF INTERNAL FINANCIAL CONTROLSWITH REFERENCE TO THE CONSOLIDATED FINANCIAL STATEMENT&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;A Company's internal financial control with reference to the consolidated financial statement is a process designed to provide reasonable assurance regarding the reliability of financial reporting and the preparation of consolidated financial statements for external purposes in accordance with generally accepted accounting principles. A Company's internal financial control with reference to the consolidated financial statement includes those policies and procedures that (1) pertain to the maintenance of records that, in reasonable detail, accurately and fairly reflect the&amp;nbsp;transactions and dispositions of the assets of the Company; (2) provide reasonable assurance that transactions are recorded as necessary to permit preparation of consolidated financial statements in accordance with generally accepted accounting principles, and that receipts and expenditures of the Company are being made only in accordance with authorizations of management and directors of the Company; and (3) provide reasonable assurance regarding prevention or timely detection of unauthorized acquisition, use, or disposition of the Company's assets that could have a material effect on the consolidated financial statements.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;INHERENT LIMITATIONS OF INTERNAL FINANCIAL CONTROLSWITH REFERENCE TO THE CONSOLIDATED FINANCIAL STATEMENT&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Because of the inherent limitations of internal financial controls with reference to the consolidated financial statement, including the possibility of collusion or improper management override of controls, material misstatements due to error or fraud may occur and not be detected. Also, projections of any evaluation of the internal financial controls with reference to the consolidated financial statement to future periods are subject to the risk that the internal financial control with reference to the consolidated financial statement may become inadequate because of changes in conditions, or that the degree of compliance with the policies or procedures may deteriorate.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;OPINION&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;In our opinion, the ParentCompany has in all material respects, an adequate internal financial controlswith reference to the consolidated financial statement and such internal financial controls with reference to the consolidated financial statement were operating effectively as at March 31, 2025, based on the internal control over financial reporting criteria established by the ParentCompany considering the essential components of internal control stated in the Guidance Note.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;OTHER MATTER&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;The subsidiaries of the ParentCompany are either incorporated outside India or provisions of section 143(3) are not applicable to them.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;For SINGHI &amp;amp; CO&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Chartered Accountants&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Firm Registration No. 302049E&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;(Rahul Bothra)&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Partner &lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Membership No. 067330&lt;/span&gt;&lt;br /&gt;&lt;span&gt;UDIN:&lt;/span&gt;&lt;span&gt;25067330BMLGPF6646&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Place: New Delhi&lt;/span&gt;&lt;br /&gt;&lt;span&gt;Dated: May 21, 2025&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;/span&gt;
+</in-ca:DisclosureInAuditorsReportExplanatory>
+ <in-ca:WhetherAuditorsReportHasBeenQualifiedOrHasAnyReservationsOrContainsAdverseRemarks id="CYTAG6261" contextRef="D2025">false</in-ca:WhetherAuditorsReportHasBeenQualifiedOrHasAnyReservationsOrContainsAdverseRemarks>
+ <in-ca:NameOfAuditFirm id="CY1TAG6302" contextRef="AuditorsDomain_AuditorsAxis_1_D2025">Singhi &amp; Co</in-ca:NameOfAuditFirm>
+ <in-ca:NameOfAuditorSigningReport id="CY1TAG6303" contextRef="AuditorsDomain_AuditorsAxis_1_D2025">RAHUL BOTHRA</in-ca:NameOfAuditorSigningReport>
+ <in-ca:FirmsRegistrationNumberOfAuditFirm id="CY1TAG6304" contextRef="AuditorsDomain_AuditorsAxis_1_D2025">302049E</in-ca:FirmsRegistrationNumberOfAuditFirm>
+ <in-ca:DateOfSigningAuditReportByAuditors id="CY1TAG6309" contextRef="AuditorsDomain_AuditorsAxis_1_D2025">2025-05-21</in-ca:DateOfSigningAuditReportByAuditors>
+ </xbrli:xbrl>

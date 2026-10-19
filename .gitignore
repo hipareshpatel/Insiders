@@ -5,7 +5,8 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 
-# Local pipeline data (LocalSink)
+# Local data: wrangler's local D1/R2, the text cache, dry-run sink, sync progress (never commit)
+/data/
 .local-data/
 
 # Node / Cloudflare (see web/.gitignore)

@@ -1,0 +1,77 @@
+# Runs the filings pipeline: live filings first, then historical backfill,
+# within a time budget. State lives in D1, so every run resumes where the
+# last one stopped.
+#
+# Source: NSE (owner, 2026-10-18: online-only, NSE only). NSE answers every call the pipeline makes from a
+# GitHub-hosted runner (measured 2026-10-18 with online-probe.yml), so ubuntu-latest is the runner; the
+# repository variable PIPELINE_RUNNER_LABELS can still point it elsewhere. BSE's API refuses GitHub's
+# addresses and is off this path (DISCOVERY_SOURCE=bse is kept only as a backup).
+#
+# Triggers: cron-job.org (every 15-30 min) calls the workflow_dispatch API. The schedule below is a
+# fallback that runs only when the repository variable PIPELINE_SCHEDULE is "on", so nothing starts on
+# its own before the owner switches the pipeline on (go-live needs 95% of published cards right).
+#
+# An NSE refusal (401/403/429) or five attachment downloads failing on the network in a row stop the run
+# with the work still queued; no filing's attempts are spent on either.
+name: Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: live, backfill or all
+        default: all
+        type: choice
+        options: [all, live, backfill]
+      time_budget:
+        description: seconds of work before the run stops picking up filings
+        default: "2400"  # leaves 15 minutes before the 55-minute job timeout
+  repository_dispatch:
+    types: [run-pipeline]
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bse-pipeline
+  cancel-in-progress: false
+
+jobs:
+  run:
+    if: github.event_name != 'schedule' || vars.PIPELINE_SCHEDULE == 'on'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 55
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      DISCOVERY_SOURCE: nse
+      UNIVERSE_MIN_MCAP_CR: ${{ vars.UNIVERSE_MIN_MCAP_CR || '500' }}
+      BACKFILL_START: ${{ vars.BACKFILL_START || '2026-04-19' }}  # 6 months back (owner, 2026-10-18)
+      # Packed Gemini: up to 6 filings' cards in one request (ai/packer.py; rounds 5B and 6: Gemini 3 of 55 WRONG).
+      # A filing waits at most PASS2_PACK_WAIT seconds for others, and never past the run's deadline.
+      PASS2_PACK: ${{ vars.PASS2_PACK || '6' }}
+      PASS2_PACK_WAIT: ${{ vars.PASS2_PACK_WAIT || '60' }}
+    steps:
+      - uses: actions/checkout@v4
+      # GitHub-hosted runners get Python from setup-python; a self-hosted runner (a laptop or a
+      # Raspberry Pi on an Indian network) uses its own python3, which setup-python may not support.
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
+      - name: Run pipeline
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel run --mode "${{ inputs.mode || ''all'' }}" --time-budget "${{ inputs.time_budget || ''2400'' }}"'

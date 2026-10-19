@@ -1,0 +1,23 @@
+# Market-data enrichment (post-close job).
+#
+# Size tiers by market cap in ₹ crore (blueprint §8: Microcap < ₹500 Cr, Smallcap ₹500-5,000 Cr,
+# Midcap ₹5,000-20,000 Cr, Largecap > ₹20,000 Cr).
+[size_buckets]
+LARGE = 20000
+MID = 5000
+SMALL = 500
+# anything below SMALL is MICRO
+
+[yfinance]
+batch = 100              # tickers per bulk price download
+max_companies = 3000     # companies enriched per run (those with cards, most recent first)
+shares_refresh_days = 7  # refresh shares outstanding weekly
+max_share_lookups = 150  # per-ticker share-count lookups per run (no cap with --all)
+turnover_days = 30       # median daily traded value over this many sessions (liquidity floor)
+
+# Loop 1 price post-mortem (blueprint §12.1). Excess return is measured against the first benchmark
+# that returns data (Nifty Smallcap 250, then Nifty Smallcap 100, then Nifty 50); the one used is
+# recorded on each card. Yahoo index symbols change now and then: edit here, no code change.
+[learning]
+benchmarks = ["NIFTYSMLCAP250.NS", "^CNXSC", "^NSEI"]
+batch = 100

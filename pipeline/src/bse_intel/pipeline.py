@@ -282,6 +282,46 @@ def _card_texts(out: Pass2Output) -> list[str]:
     return [t for t in texts if t]
 
 
+_FOREIGN_CRORE = re.compile(r"\b(USD|US\$|EUR|GBP|THB|AED|SAR|JPY|SGD|NGN|CHF|AUD|CAD|OMR|QAR|KWD)\s*([\d,]+(?:\.\d+)?)\s*(cr\b|crores?\b)",
+                            re.I)
+
+
+def fix_foreign_crore(out: Pass2Output, text: str) -> list[str]:
+    """A foreign amount written in crore that is the filing's figure read at another size: Clean Max's "Thai Baht
+    1,250,000" (12.5 lakh, 0.125 crore) on its card as "THB 1.25 Cr" (round 6, 2026-10-19). The crore figure is kept
+    when the filing has the amount at that size; when it has it ten or a hundred times smaller, it is set right."""
+    card = out.card
+    if card is None or not text:
+        return []
+    figures = [v for v, _, _, _, _ in _tokens(text) if v >= 1000]
+    fixes: dict[str, str] = {}
+    for m in _FOREIGN_CRORE.finditer(" ".join(_card_texts(out))):
+        written = float(m.group(2).replace(",", ""))
+        if any(abs(f / 1e7 - written) <= 0.005 * written + 1e-9 for f in figures):
+            continue                                         # the filing has it at that size
+        for scale in (1e6, 1e5):                             # read as million, or as lakh
+            right = next((f / 1e7 for f in figures if abs(f / scale - written) <= 0.005 * written + 1e-9), None)
+            if right is not None:
+                fixes[m.group(0)] = f"{m.group(1)} {right:,.4f}".rstrip("0").rstrip(".") + f" {m.group(3)}"
+                break
+    if not fixes:
+        return []
+    pattern = re.compile("|".join(re.escape(k) for k in sorted(fixes, key=len, reverse=True)))
+
+    def fix(value):
+        return pattern.sub(lambda x: fixes[x.group(0)], value) if value else value
+
+    card.headline, card.takeaway, card.core_catalyst = fix(card.headline), fix(card.takeaway) or "", fix(card.core_catalyst)
+    for fact in card.what_happened:
+        fact.text = fix(fact.text) or fact.text
+    for insight in card.why_it_matters:
+        insight.text = fix(insight.text)
+    for key in card.key_numbers:
+        key.value, key.change = fix(key.value), fix(key.change)
+    out.timeline_entry = fix(out.timeline_entry) or ""
+    return [f"foreign amount set right: {k} -> {v}" for k, v in fixes.items()]
+
+
 def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...]) -> dict[str, str]:
     """Correct, in code, card amounts that are a statement figure read at the wrong unit (grounding.
     unit_slips): in the card's text, its key numbers and changes, the timeline entry, and the reply's
@@ -2356,8 +2396,9 @@ class Pipeline:
                                         results_card.history_from_view(view))
                      if tagged and "RESULTS" in (event_type, candidate.event_type) else [])
             units = fix_unit_slips(candidate, sources)
+            foreign_fixes = fix_foreign_crore(candidate, filed_text)
             counts = fix_count_millions(candidate, sources)
-            changes = built + fix_change_percentages(candidate, sources) + counts
+            changes = built + fix_change_percentages(candidate, sources) + counts + foreign_fixes
             changes += apply_deal_guards(candidate, filing, history, dossier.get("balance_sheet", []), text)
             changes += deal_echo_slips(candidate, filed_text)
             changes += continued_deal(candidate, view, filed_text)

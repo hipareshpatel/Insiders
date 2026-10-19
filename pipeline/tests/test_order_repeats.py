@@ -171,3 +171,21 @@ def test_a_call_card_keeps_only_changes_whose_figures_the_call_states():
             "575,000 tonnes for FY27, against 650,000 to 700,000 tonnes earlier.")
     assert call_changes(out, "CONCALL_PRESENTATION", call)
     assert [c.metric for c in out.card.notable_changes] == ["Volume guidance"]
+
+
+def test_a_foreign_amount_written_in_crore_at_the_wrong_size_is_set_right():
+    """Clean Max (round 6): "Thai Baht 1,250,000" (12.5 lakh) on the card as "THB 1.25 Cr"."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import fix_foreign_crore
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A", "timeline_entry": "Buys Massmunch for THB 1.25 Cr",
+        "card": {"impact_level": "LOW", "headline": "Clean Max buys Massmunch for THB 1.25 Cr",
+                 "what_happened": ["Consideration THB 1.25 Cr"]}})
+    text = "The consideration is Thai Baht 1,250,000 for 100% of the shares."
+    assert fix_foreign_crore(out, text)
+    assert out.card.headline == "Clean Max buys Massmunch for THB 0.125 Cr" and out.timeline_entry.endswith("THB 0.125 Cr")
+    ok = Pass2Output.model_validate({
+        "is_material": True, "event_type": "ORDER_WIN",
+        "card": {"impact_level": "LOW", "headline": "Order of USD 13.5 Cr", "what_happened": ["USD 13.5 Cr order"]}})
+    assert fix_foreign_crore(ok, "An order of USD 135,000,000.") == []    # 135 million is 13.5 crore: right as written

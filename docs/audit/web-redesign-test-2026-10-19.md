@@ -69,3 +69,26 @@ Content problems seen on the way (pipeline, not web; they go to the accuracy loo
 2. **Two results cards disagree.** Heritage Q2FY27 has two timeline entries with different figures: revenue +19% against +16% YoY, and PAT −39%; the scorecard says +21.0% and −36.2%. Q2FY26 is ₹1,090 Cr in memory and ₹1,113 Cr on its own card, which may be a restatement.
 3. **Promises and guidance.** Overdue promises lists a rating agency's expectations as the company's promises (Prism Johnson, "Ind-Ra expects ..."), and calls "due FY26-FY27" 202 days overdue. Heritage's Q2FY27 targets are still Open after its Q2FY27 results, and the same metric appears three times with different targets.
 4. **Group entities and calendar.** The group-entities list includes a lawsuit's defendants (Meta, Google, X Corp, a ministry) and a plant. The calendar shows Shivam Autotech's rights issue opening three times (Rights Open, Milestone, Other).
+
+## Re-check on efbe96b (2026-10-19 22:45 IST)
+
+621 pipeline tests pass (one more than the cloud's 620); `npm run typecheck` is clean.
+
+**The five page bugs are fixed.** 7 days: Filings read 208 (127 filings + 81 noise, as in the database), noise 81
+(39%); the headline, For you and Today's mix say 32 with the 11 held shown only as "To verify"; `/company/519552?tab=results`
+at 390 px has scrollWidth 390; Business mix lists each segment with "the cuts overlap" and no total; the header at
+1,009 px has no sideways scroll. New, minor: at 390 px the bar chart's quarter labels are cut ("Q3FY…").
+
+**The five filings re-processed** (`process --news-ids`, FREE_ONLY, after `/api/owner/requeue`). Cards before the run
+are kept locally in `data/audit/newblocks/before.json`.
+
+| Card | news_id | Result |
+|---|---|---|
+| CSB Bank Q1FY27 (bank) | 33717cd4-0f00-47c3-9a26-9c79acb7b4d4 | Right: headline "net profit ₹150.04 Cr (+26.5% YoY); net NPA 0.39%, gross 1.75%"; the table has interest earned, NII, operating profit, provisions, PBT, PAT, gross/net NPA, RoA and EPS with Q4FY26 and Q1FY26 columns; since the filing ₹370.15 → ₹310.8 (−16.0%); run-rate P/E 9.0x. **Wrong: "Management said, Nov 2025: credit cost 40-50 bps · by FY26"**: that target was due before this Q1FY27 card, so it is stale. The recall should skip guidance already due (or show its outcome). Its second recalled item is an RoA explanation from the call, not guidance (hidden on the card, but it is in `guidance_recall`). |
+| Ramco Cements Q1FY27 | nse-106731799 | Right: revenue, EBITDA, margin, exceptional items, PBT, PAT and EPS with both comparison columns; recurring one-offs line; run-rate P/E 148.9x = 18,602 ÷ (31.24 × 4). |
+| Ceigall ₹214.52 Cr LoI (order) | nse-106801864 | Right: the size against Q1FY27 (22%) and FY26 revenue (5.3%); the 5-year term (the filing says "for a period of five years") gives 1.1% of FY26 revenue a year; the stage moves from other to LOI. Minor: the label reads "Complete by 05 years"; "Over 5 years" would read better. |
+| Hind Copper ICRA upgrade (rating) | 1a84a2bd-b7a2-440a-90b6-528b621ce310 | **Regression: the card was published and is now held.** The new `scale` block treats the ₹2,100 Cr of rated facilities as a "deal" (224% of Q1 revenue), and the figure check then holds it: "₹2100 Cr appears in the filing only in a clause about instruments, not as the deal's consideration or value". A rating card's rated amount is not a deal size. **And `rating_change.before` is null, so no ladder or notches**, though the filing says "upgraded the Long-term rating to [ICRA]AAA (Stable) ... from [ICRA]AA+ (Stable)". The agency's square brackets around its name probably defeat the match. Two quote-contract holds also appeared ("Short-term rating", "Upgrade to AAA is the highest rating..."). |
+| Dabur USFDA warning letter (case) | nse-106729432 | The block shows Form 483 → Warning letter → Import alert → Closed, at "Warning letter". **Wrong for this case**: the import alert came first (June), and the warning letter followed it (July), as the card's own previous headline said. A fixed linear ladder puts the import alert ahead of the company when it has already happened. The steps need to come from what the filing and memory say happened, or the ladder should mark each step separately. |
+
+The "Since the filing" and "Management said" lines appear on CSB and Ceigall (Ceigall: "Revenue growth guidance for
+FY27 (minimum 15%) · by FY27", right).

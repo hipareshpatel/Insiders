@@ -177,6 +177,10 @@ From a Google Cloud address (Columbus, US; a data-centre IP like a GitHub runner
 `market-data` job online for the ~1,778-company universe; NSE's bhavcopy (PLAN B5) is a quality choice, not a need.
 The runner probe (`runner-probe.yml`) now repeats the 400-symbol check on a GitHub runner on every change to it.
 
+Same address, same evening: the online path without AI - `sync-companies --source nse` (2,619 listed, 47 s), then
+`discover` for 2026-10-16 (515 new filings: 308 queued, 207 noise) and 2026-10-19 to 22:38 IST (249 queued, 135 noise),
+every list call answered, 241 of 249 with an attachment link. Not measured here: attachments, XBRL and AI (no keys).
+
 ## Still open
 
 - BSE's announcement API does carry an XBRL identity we had missed, but it is not a link. The beta

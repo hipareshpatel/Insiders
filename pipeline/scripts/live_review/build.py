@@ -10,11 +10,11 @@ UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.3
 def get(url):
     return json.load(urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60))
 
-feed = json.load(open(SP.parent / "live" / "feed.json"))
+feed = json.load(open(SP.parent / (sys.argv[3] if len(sys.argv) > 3 else "live") / "feed.json"))
 plan = {"RESULTS": 4, "M_AND_A": 3, "LITIGATION_REGULATORY": 3, "ORDER_WIN": 3, "CONCALL_PRESENTATION": 2, "DEBT_RATINGS": 2,
         "GOVERNANCE": 1, "MONTHLY_BUSINESS_UPDATE": 1, "FUNDRAISE": 1, "MANAGEMENT_CHANGE": 1, "CAPEX": 1, "PRODUCT_LAUNCH": 1,
         "OTHER": 1}
-rng = random.Random(20261020)
+rng = random.Random(int(sys.argv[2]) if len(sys.argv) > 2 else 20261020)
 sample = []
 for kind, n in plan.items():
     pool = sorted((c for c in feed if c.get("event_category") == kind and c.get("pdf_url")), key=lambda c: c["news_id"])

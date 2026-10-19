@@ -124,7 +124,9 @@ async function snapshot(c: Context<AppEnv>): Promise<Snapshot | null> {
   });
 }
 
-api.get("/feed", async (c) => {
+// withHeld: the owner's private view (/api/owner/feed, behind OWNER_TOKEN and outside the edge cache) also
+// lists the cards held back from the public feed, so the owner can review them (owner, 2026-10-19).
+export async function feed(c: Context<AppEnv>, withHeld = false) {
   const q = c.req.query();
   // from_at: since a moment ("since yesterday's 15:30 close", the Today page); else from a day
   const from = q.from_at && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(q.from_at) ? q.from_at : isDate(q.from) ? q.from : "2000-01-01";
@@ -135,7 +137,7 @@ api.get("/feed", async (c) => {
 
   // The default first page comes from the R2 snapshot when it was built for the same window.
   const keys = Object.keys(q).filter((k) => q[k] !== "" && !["from", "to", "limit", "page"].includes(k));
-  if (!keys.length && (page ?? 1) === 1 && !cursorAt) {
+  if (!withHeld && !keys.length && (page ?? 1) === 1 && !cursorAt) {
     const snap = await snapshot(c);
     if (snap && snap.from === q.from && snap.limit === limit && q.to === todayIst()) {
       return c.json({ cards: snap.feed.cards, page: 1, pages: Math.max(1, Math.ceil(snap.feed.total / limit)),
@@ -150,7 +152,7 @@ api.get("/feed", async (c) => {
   // held = 0: a card whose numbers a second provider could not verify stays out of the feed rather
   // than appearing with an "Unverified" warning (migration 0009). It is still in the table, for the
   // review queue and the audit export.
-  const where = [`c.held = 0`, `c.filed_at >= ${p(from)}`, `c.filed_at <= ${p(upper)}`];
+  const where = [...(withHeld ? [] : [`c.held = 0`]), `c.filed_at >= ${p(from)}`, `c.filed_at <= ${p(upper)}`];
   const impact = listParam(q.impact, IMPACTS);
   const category = listParam(q.category);
   const size = listParam(q.size, SIZES);
@@ -166,6 +168,7 @@ api.get("/feed", async (c) => {
   if (q.watch === "1") where.push("co.watchlist = 1");
   if (cursorAt) where.push(`(c.filed_at, c.news_id) < (${p(cursorAt)}, ${p(cursorId ?? "")})`);
   if (q.review === "0") where.push("c.needs_review = 0");
+  if (withHeld && q.held === "only") where.push("c.held = 1");
   // A text filter starts from the 500 best matches instead of testing every card in the window.
   const source = fts
     ? `(SELECT rowid AS rid FROM cards_fts WHERE cards_fts MATCH ${p(fts)} ORDER BY rank LIMIT 500) f
@@ -194,7 +197,9 @@ api.get("/feed", async (c) => {
     ...(page ? { page, pages: Math.max(1, Math.ceil((result.total ?? 0) / limit)), total: result.total,
       total_capped: (result.total ?? 0) >= PAGE_COUNT_CAP } : {}),
   });
-});
+}
+
+api.get("/feed", (c) => feed(c));
 
 const todayIst = () => new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10);
 

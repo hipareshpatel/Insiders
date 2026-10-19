@@ -7,7 +7,7 @@ import { flushSync } from "react-dom";
 import { useQueryState } from "../lib/url";
 import type { CallRead, CardBody, CardRow, Fact, Impact, PriceReaction, Technicals, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
-import { useRatings } from "../lib/owner";
+import { useRatings, useVerdicts, type Verdict } from "../lib/owner";
 import { copyNodeAsPng } from "../lib/png";
 import { cr, formatKpi, istDate, istDateTime, listing, marketSession, pct, relativeTime, signClass, titleCase } from "../lib/format";
 import { EVENT_LABELS, SECTORS, TONE_STRIPE, type Tone } from "../lib/taxonomy";
@@ -226,6 +226,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
   const revenue = card.fundamentals?.revenue;
   const footer = footerMetrics(card);
   const review = !!row.needs_review;
+  // Held cards reach only the owner's feed (private launch, owner 2026-10-19).
+  const held = !!row.held;
   const g = card.grounding;
   const allMatched = g.ungrounded.length === 0 && !g.math_mismatches && !(g.unsupported_claims ?? []).length;
   // A garbled scan or an owner's hold outlives a correction: it is why a corrected card is still unverified.
@@ -271,7 +273,18 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           </p>
         )}
 
-        {review && !exporting && (
+        {held && !exporting && (
+          <div className="-mt-1 mb-3 rounded-lg border border-neg/40 bg-neg-soft px-3 py-2 text-[12.5px] leading-relaxed text-neg" data-noexport="true">
+            <p className="flex items-center gap-2 font-semibold">
+              <ShieldAlert className="h-3.5 w-3.5 shrink-0" /> Held: not on the public feed. Only you see this card.
+            </p>
+            <ul className="mt-1 list-disc space-y-0.5 pl-5">
+              {(issues.length ? issues : ["The checks could not verify this card."]).map((p, i) => <li key={i}>{p}</li>)}
+            </ul>
+          </div>
+        )}
+
+        {review && !held && !exporting && (
           <p className="-mt-1 mb-3 flex items-start gap-2 rounded-lg bg-warn-soft px-3 py-2 text-[12.5px] leading-relaxed text-warn" data-noexport="true">
             <AlertTriangle className="mt-[2px] h-3.5 w-3.5 shrink-0" />
             <span><span className="font-semibold">Unverified.</span> {issues[0] ?? "Some numbers could not be matched to the filing."}
@@ -431,12 +444,50 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           </div>
         )}
       </div>
+      {!exporting && <VerdictBar newsId={row.news_id} />}
       {open && !exporting && (
         <DeepDive row={row} card={card} shown={box.insights.length} shownSignal={box.signal}
           moreFacts={unique.slice(factLimit)}
           keyNumbers={tilesFor && card.key_numbers.length >= 2 ? [] : card.key_numbers} />
       )}
     </article>
+  );
+}
+
+const VERDICTS: { v: Verdict; label: string; on: string }[] = [
+  { v: "RIGHT", label: "Right", on: "border-pos bg-pos/10 text-pos" },
+  { v: "MINOR", label: "Minor issue", on: "border-warn bg-warn-soft text-warn" },
+  { v: "WRONG", label: "Wrong", on: "border-neg bg-neg-soft text-neg" },
+];
+
+/** The owner's verdict on the card and a note on what is wrong, stored with the card as judged (owner only). */
+function VerdictBar({ newsId }: { newsId: string }) {
+  const { token, verdicts, judge } = useVerdicts();
+  const mine = verdicts[newsId];
+  const [note, setNote] = useState<string | null>(null);
+  if (!token) return null;
+  const text = note ?? mine?.note ?? "";
+  const pick = (v: Verdict) => {
+    void judge(newsId, mine?.verdict === v ? "CLEAR" : v, text);
+  };
+  const save = () => {
+    if (mine && note !== null && note !== mine.note) void judge(newsId, mine.verdict, note);
+  };
+  return (
+    <div className="flex flex-wrap items-center gap-2 border-t border-line px-5 py-2.5 sm:px-6" data-noexport="true">
+      <span className="text-[12px] font-medium text-ink-3">Your verdict</span>
+      {VERDICTS.map(({ v, label, on }) => (
+        <button key={v} type="button" onClick={() => pick(v)} aria-pressed={mine?.verdict === v}
+          className={cn("rounded-full border px-2.5 py-[3px] text-[12px] font-medium", mine?.verdict === v ? on : "border-line text-ink-2 hover:bg-surface-2")}>
+          {label}
+        </button>
+      ))}
+      <input value={text} onChange={(e) => setNote(e.target.value)} onBlur={save}
+        onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
+        placeholder={mine ? "What is wrong? (saved when you leave the box)" : "Pick a verdict, then add a note"}
+        disabled={!mine} maxLength={1000}
+        className="h-8 min-w-0 flex-1 basis-48 rounded-lg border border-line bg-surface px-2.5 text-[12.5px] text-ink placeholder:text-ink-3 focus:border-accent focus:outline-none disabled:opacity-60" />
+    </div>
   );
 }
 

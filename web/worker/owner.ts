@@ -4,7 +4,7 @@
 import { Hono, type MiddlewareHandler } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import type { AppEnv } from "./env";
-import { isCompanyKey } from "./public";
+import { feed, isCompanyKey } from "./public";
 
 export const owner = new Hono<AppEnv>();
 
@@ -56,6 +56,45 @@ owner.post("/requeue", async (c) => {
     "UPDATE filings SET status = 'PENDING', attempts = 0, last_error = 'requeued by owner', updated_at = ?2 WHERE news_id = ?1")
     .bind(body.news_id, new Date().toISOString()).run();
   return c.json({ ok: (result.meta.changes ?? 0) > 0 });
+});
+
+// The owner's own feed: the public one plus the cards held back from it (private launch, owner 2026-10-19).
+owner.get("/feed", async (c) => {
+  const res = await feed(c, true);
+  res.headers.set("Cache-Control", "private, no-store");
+  return res;
+});
+
+// The owner's verdict on a card (RIGHT, MINOR or WRONG, with a note), kept with the card as it was judged;
+// CLEAR removes it. Read back by GET /verdicts and by the pipeline's audit tally.
+owner.post("/verdict", async (c) => {
+  const body = await c.req.json<{ news_id?: string; verdict?: string; note?: string }>().catch(() => null);
+  const verdict = body?.verdict?.toUpperCase();
+  if (!body?.news_id || !verdict || !["RIGHT", "MINOR", "WRONG", "CLEAR"].includes(verdict)) {
+    return c.json({ error: "news_id and verdict (RIGHT, MINOR, WRONG or CLEAR) required" }, 400);
+  }
+  if (verdict === "CLEAR") {
+    await c.env.DB.prepare("DELETE FROM card_verdicts WHERE news_id = ?1").bind(body.news_id).run();
+    return c.json({ ok: true });
+  }
+  const card = await c.env.DB.prepare("SELECT scrip_code, event_category, held, card_json FROM cards WHERE news_id = ?1")
+    .bind(body.news_id).first<{ scrip_code: string; event_category: string; held: number; card_json: string }>();
+  if (!card) return c.json({ error: "card not found" }, 404);
+  await c.env.DB.prepare(`
+    INSERT INTO card_verdicts (news_id, scrip_code, event_category, verdict, note, held, card_json_snapshot, created_at)
+    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
+    ON CONFLICT (news_id) DO UPDATE SET verdict = excluded.verdict, note = excluded.note, held = excluded.held,
+      card_json_snapshot = excluded.card_json_snapshot, created_at = excluded.created_at`)
+    .bind(body.news_id, card.scrip_code, card.event_category, verdict, (body.note ?? "").slice(0, 1000),
+      card.held ? 1 : 0, card.card_json, new Date().toISOString())
+    .run();
+  return c.json({ ok: true });
+});
+
+owner.get("/verdicts", async (c) => {
+  const { results } = await c.env.DB.prepare(
+    "SELECT news_id, verdict, note, held, created_at FROM card_verdicts ORDER BY created_at DESC LIMIT 1000").all();
+  return c.json({ verdicts: results });
 });
 
 owner.get("/feedback", async (c) => {

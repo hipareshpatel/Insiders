@@ -11,6 +11,7 @@ import { Button } from "../components/ui/button";
 import { api, type FeedFilters } from "../lib/api";
 import { cn } from "../lib/cn";
 import { HISTORY_START } from "../lib/config";
+import { ownerApi, useOwnerToken } from "../lib/owner";
 import { addDays, istDate, istDateTime, num, titleCase, todayIST } from "../lib/format";
 import { catalystFamily, FEED_TABS, SECTORS, SIZES } from "../lib/taxonomy";
 import { useQueryState } from "../lib/url";
@@ -43,6 +44,7 @@ export function FeedView() {
     review: params.get("verified") === "1" ? "0" : undefined,
     session: params.get("session") ?? undefined,
     watch: params.get("verified") === "watch" ? "1" : undefined,
+    held: params.get("verified") === "held" ? "only" : undefined,
   };
   const page = Math.max(1, Number.parseInt(params.get("page") ?? "1", 10) || 1);
 
@@ -93,6 +95,7 @@ export function FeedView() {
 function FilterBar({ params, setParams: setRaw }: { params: URLSearchParams; setParams: ReturnType<typeof useQueryState>[1] }) {
   // Any filter change starts again at page 1.
   const setParams = (changes: Record<string, string | null>) => setRaw({ ...changes, page: null });
+  const owner = useOwnerToken();
   const [text, setText] = useState(params.get("q") ?? "");
   const q = params.get("q") ?? "";
   useEffect(() => setText(q), [q]);
@@ -124,6 +127,7 @@ function FilterBar({ params, setParams: setRaw }: { params: URLSearchParams; set
         <option value="">All cards</option>
         <option value="1">Verified only</option>
         <option value="watch">★ Watchlist only</option>
+        {owner && <option value="held">Held for review only</option>}
       </Select>
       <label className="relative col-span-2 min-w-0 sm:flex-1 sm:basis-56">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-3" />
@@ -146,9 +150,11 @@ const PAGE_SIZE = 50;
 function CardList({ filters, rangeLabel, view, page, onPage }: {
   filters: FeedFilters; rangeLabel: string; view: View; page: number; onPage: (n: number) => void;
 }) {
+  const owner = useOwnerToken();
   const query = useQuery({
-    queryKey: ["feed", filters, page],
-    queryFn: () => api.feedPage(filters, page, PAGE_SIZE),
+    // The owner's feed also lists the cards held back from the public, marked on each card (private launch).
+    queryKey: ["feed", filters, page, !!owner],
+    queryFn: () => owner ? ownerApi.feedPage(owner, filters, page, PAGE_SIZE) : api.feedPage(filters, page, PAGE_SIZE),
     placeholderData: keepPreviousData,
   });
   if (query.isPending) return <Loading />;

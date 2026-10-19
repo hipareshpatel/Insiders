@@ -1,5 +1,10 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useSyncExternalStore } from "react";
+import type { FeedResponse } from "../../shared/types";
+import type { FeedFilters } from "./api";
+
+/** The owner's verdict on a card, in the blind audit's own words. */
+export type Verdict = "RIGHT" | "MINOR" | "WRONG";
 
 // The owner's token for the few writes the site allows (watchlist, Star/Noise). Kept in this
 // browser only; anyone else sees the site read-only.
@@ -46,6 +51,15 @@ export const ownerApi = {
   requeue: (token: string, newsId: string) =>
     call<{ ok: boolean }>(token, "/requeue", { method: "POST", body: JSON.stringify({ news_id: newsId }) }),
   ratings: (token: string) => call<{ ratings: { news_id: string; rating: string }[] }>(token, "/feedback"),
+  /** The feed with the cards held back from the public (private launch); held=only lists just those. */
+  feedPage: (token: string, filters: FeedFilters, page: number, limit = 50) => {
+    const qs = new URLSearchParams();
+    for (const [k, v] of Object.entries({ ...filters, page, limit })) if (v !== undefined && v !== null && v !== "") qs.set(k, String(v));
+    return call<FeedResponse>(token, `/feed?${qs.toString()}`);
+  },
+  verdict: (token: string, newsId: string, verdict: Verdict | "CLEAR", note = "") =>
+    call<{ ok: boolean }>(token, "/verdict", { method: "POST", body: JSON.stringify({ news_id: newsId, verdict, note }) }),
+  verdicts: (token: string) => call<{ verdicts: { news_id: string; verdict: Verdict; note: string | null }[] }>(token, "/verdicts"),
 };
 
 /** The owner's Star/Noise ratings, keyed by card, and a setter that updates them optimistically. */
@@ -64,4 +78,23 @@ export function useRatings() {
     await ownerApi.rate(token, newsId, next);
   }, [token, query.data, client]);
   return { token, ratings: query.data ?? {}, rate };
+}
+
+/** The owner's RIGHT / MINOR / WRONG verdicts with notes, keyed by card, and a setter (same verdict again clears it). */
+export function useVerdicts() {
+  const token = useOwnerToken();
+  const client = useQueryClient();
+  const query = useQuery({
+    queryKey: ["verdicts", token], enabled: !!token, staleTime: 300_000,
+    queryFn: async () => Object.fromEntries((await ownerApi.verdicts(token!)).verdicts.map((v) => [v.news_id, { verdict: v.verdict, note: v.note ?? "" }])) as Record<string, { verdict: Verdict; note: string }>,
+  });
+  const judge = useCallback(async (newsId: string, verdict: Verdict | "CLEAR", note = "") => {
+    if (!token) return;
+    const next = { ...(query.data ?? {}) };
+    if (verdict === "CLEAR") delete next[newsId];
+    else next[newsId] = { verdict, note };
+    client.setQueryData(["verdicts", token], next);
+    await ownerApi.verdict(token, newsId, verdict, note);
+  }, [token, query.data, client]);
+  return { token, verdicts: query.data ?? {}, judge };
 }

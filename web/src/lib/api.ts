@@ -31,6 +31,8 @@ export interface FeedFilters {
   review?: string;
   session?: string;
   watch?: string;
+  /** Owner feed only: "only" lists just the cards held back from the public. */
+  held?: string;
 }
 
 export const api = {

@@ -61,6 +61,25 @@ second opinion → later: re-read when XBRL lands, price reaction T+1/3/5, gover
 
 ## 4. Go-live checklist (after 95%)
 
+**Private launch first (owner, 2026-10-19; D36).** The owner asked to "go live first and solve problems from the live
+cards"; agreed as a private launch: "it will be not shared with anyone, and i want you to highlight cards which are
+held so i can also review and give feedback". The steps are G1-G4, G6 and G7 below; the 95% gate still decides
+when the site is shared. Built for it:
+- **Held cards in the owner's feed.** With the owner token entered on the site, the feed comes from
+  `/api/owner/feed` (behind `OWNER_TOKEN`, never edge-cached): it lists the held cards too, each with a red
+  "Held: not on the public feed" banner and every reason the checks gave. "Held for review only" in the
+  Verification filter lists just those. The public feed and its cache are unchanged.
+- **A verdict on any card.** Right / Minor issue / Wrong and a note, under each card (owner only); stored in
+  `card_verdicts` (migration 0010) with the card as judged. `python -I -X utf8 scripts/owner_verdicts.py`
+  tallies them like a blind round (WRONG share of published and of held, per event type, every note); each
+  WRONG goes through the routine in docs/DATA_QUALITY.md.
+- **Unshared is not private.** Anyone who finds the workers.dev address can read the published cards (not the
+  held ones, the verdicts or the owner routes). To lock the whole site, Cloudflare Access (free for up to 50
+  users) can put an email sign-in in front of it: optional, owner's choice.
+- Locally the owner token is `OWNER_TOKEN` in `web/.dev.vars` (ignored by git); on the deployed Worker it is
+  the secret set in G1 (`npx wrangler secret put OWNER_TOKEN`).
+
+
 | # | Step | Who |
 |---|---|---|
 | G1 | Cloudflare (free plan): D1 `bse-index`, R2 `bse-intelligence`, an API token; Worker secrets `INGEST_TOKEN`, `OWNER_TOKEN` | Owner |

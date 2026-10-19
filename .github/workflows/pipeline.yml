@@ -59,6 +59,10 @@ jobs:
       DISCOVERY_SOURCE: nse
       UNIVERSE_MIN_MCAP_CR: ${{ vars.UNIVERSE_MIN_MCAP_CR || '500' }}
       BACKFILL_START: ${{ vars.BACKFILL_START || '2026-04-19' }}  # 6 months back (owner, 2026-10-18)
+      # Packed Gemini: up to 6 filings' cards in one request (ai/packer.py; rounds 5B and 6: Gemini 3 of 55 WRONG).
+      # A filing waits at most PASS2_PACK_WAIT seconds for others, and never past the run's deadline.
+      PASS2_PACK: ${{ vars.PASS2_PACK || '6' }}
+      PASS2_PACK_WAIT: ${{ vars.PASS2_PACK_WAIT || '60' }}
     steps:
       - uses: actions/checkout@v4
       # GitHub-hosted runners get Python from setup-python; a self-hosted runner (a laptop or a

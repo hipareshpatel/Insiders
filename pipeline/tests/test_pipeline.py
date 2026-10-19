@@ -73,10 +73,17 @@ PASS2 = {
 }
 
 
+TRIAL_WRITERS = ("minimax/minimax-m3.1-flash:free", "google/gemma-4-31b-it:free")
+
+
 def build(settings, filings, pdfs, script, env=None):
     sink = LocalSink(settings)
     fake = FakeProvider(script)
     config = settings.load_toml("providers.toml")
+    # The writers on trial in an audit round (round 7: MiniMax, Gemma) are measured there, not here: these tests script
+    # the regular writers, and a share for an unscripted model would make the weighted rotation call it
+    for route in config["routes"].values():
+        route[:] = [e for e in route if e["model"] not in TRIAL_WRITERS]
     gateway = AIGateway(config, client_factory=lambda *a: fake,
                         env=env if env is not None else {"GROQ_API_KEY": "g", "NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline = Pipeline(settings, sink, gateway, bse=FakeBse(filings, pdfs), sleep=lambda s: None)
@@ -761,3 +768,29 @@ def test_an_annual_report_inside_an_agm_notice_takes_the_annual_report_path(sett
     (row,) = rows(sink, "select status, event_type, reason from filings where news_id = 'n-agm'")
     assert not (row["reason"] or "").startswith("pass1"), row
     assert all(c["model"] != "openai/gpt-oss-20b" for c in fake.calls)
+
+
+def test_packed_filings_stay_queued_when_every_writer_is_out_of_quota(settings):
+    """With Nemotron 3 Super off the card routes (round 6), a pack that finds every Gemini model at its daily limit and
+    no other writer free leaves its filings queued with no attempt spent; they are written after Gemini's reset."""
+    from dataclasses import replace
+
+    from bse_intel.ai.gateway import _day_function
+
+    settings = replace(settings, pass2_pack=2, pass2_pack_wait_s=1)
+    now = now_ist() - timedelta(minutes=30)
+    filings = [_filing(f"q{i}", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result",
+                       scrip=f"99900{i}") for i in range(2)]
+    pacific = _day_function("America/Los_Angeles")()
+    usage = [{"day": pacific, "provider": "gemini", "model": m, "requests": 20}
+             for m in ("gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.8-flash")]
+    fake = FakeProvider({})
+    gateway = AIGateway(settings.load_toml("providers.toml"), usage_today=usage, client_factory=lambda *a: fake,
+                        env={"GEMINI_API_KEY": "g"})
+    sink = LocalSink(settings)
+    pipeline = Pipeline(settings, sink, gateway, bse=FakeBse(filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings}),
+                        sleep=lambda s: None)
+    pipeline.run("live", time_budget_s=60)
+    states = {r["news_id"]: (r["status"], r["attempts"]) for r in rows(sink, "select news_id, status, attempts from filings")}
+    assert states == {"q0": ("PENDING", 0), "q1": ("PENDING", 0)} and fake.calls == []
+    assert all("quota" in (r["last_error"] or "") for r in rows(sink, "select last_error from filings"))

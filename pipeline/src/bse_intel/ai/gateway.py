@@ -119,6 +119,7 @@ class AIResult:
     model: str
     latency_s: float
     raw_text: str = ""
+    pack: dict | None = None   # a packed answer: {"id", "members"} - the filings that shared its request (ai/packer.py)
 
     @property
     def model_label(self) -> str:

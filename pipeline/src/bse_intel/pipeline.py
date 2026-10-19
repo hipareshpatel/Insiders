@@ -2361,7 +2361,7 @@ class Pipeline:
         if (len(system) + len(user)) / 4 > LONG_PROMPT_TOKENS and self.gateway.has_route("pass2_long"):
             route = "pass2_long"  # a transcript or presentation: long-context models only
         if self._packer is not None and route in ("pass2", "pass2_bulk"):
-            result = self._packer.complete(route, system, user, Pass2Output)   # several filings, one Gemini call
+            result = self._packer.complete(route, system, user, Pass2Output, filing.news_id)   # several filings, one Gemini call
         else:
             result = self.gateway.complete_json(route, system, user, Pass2Output)
         out: Pass2Output = result.value
@@ -2514,6 +2514,7 @@ class Pipeline:
                           "quotes_paraphrased": checks.quote_style or None, "out_of_fit": checks.scale or None},
             "review": review,
             "model": result.model_label,
+            "pack": result.pack,
         }
         needs_review = checks.needs_review
         # A card the checks faulted, that a second provider was asked to correct and that still

@@ -15,6 +15,7 @@ import json
 import logging
 import threading
 import time
+import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -24,6 +25,8 @@ from ..models import _Lenient
 from .gateway import AIResult
 
 log = logging.getLogger(__name__)
+
+DEADLINE_MARGIN_S = 120   # a packed call took up to ~60 s (round 6); room for it before the run ends
 
 PACK_SYSTEM = (
     "You will receive several independent tasks, each inside <task id=\"...\"> ... </task>. Each task has its own "
@@ -49,6 +52,7 @@ class _Job:
     system: str
     user: str
     schema: type
+    tag: str = ""
     done: threading.Event = field(default_factory=threading.Event)
     result: AIResult | None = None
 
@@ -63,8 +67,8 @@ class Packer:
         self._pending: list[_Job] = []
         self.stats = {"calls": 0, "tasks": 0, "fallbacks": 0}
 
-    def complete(self, fallback_route: str, system: str, user: str, schema: type) -> AIResult:
-        job = _Job(system, user, schema)
+    def complete(self, fallback_route: str, system: str, user: str, schema: type, tag: str = "") -> AIResult:
+        job = _Job(system, user, schema, tag)
         batch = None
         with self._lock:
             self._pending.append(job)
@@ -72,7 +76,7 @@ class Packer:
                 batch, self._pending = self._pending, []
         if batch:
             self._send(batch)
-        elif not job.done.wait(self.wait_s):
+        elif not job.done.wait(self._wait()):
             with self._lock:
                 if job in self._pending:   # nobody filled the pack in time: send what there is
                     batch, self._pending = self._pending, []
@@ -85,6 +89,14 @@ class Packer:
             self.stats["fallbacks"] += 1
         return self.gateway.complete_json(fallback_route, system, user, schema)
 
+    def _wait(self) -> float:
+        """How long a filing waits for others: the set wait, but never past the run's deadline (less a margin for the
+        call itself), so a run with one or two new filings sends its pack before it ends instead of losing it."""
+        deadline = getattr(self.gateway, "deadline", None)
+        if deadline is None:
+            return self.wait_s
+        return max(0.0, min(self.wait_s, deadline - time.monotonic() - DEADLINE_MARGIN_S))
+
     def _chars(self) -> int:
         return sum(len(j.system) + len(j.user) for j in self._pending)
 
@@ -93,6 +105,8 @@ class Packer:
         user = "\n\n".join(f"<task id=\"{tid}\">\n<instructions>\n{job.system}\n</instructions>\n<input>\n{job.user}\n"
                            f"</input>\n</task>" for tid, job in ids.items())
         started = time.monotonic()
+        # which filings shared this request, so a card's facts can be checked against the others' (audit: pack bleed)
+        pack = {"id": uuid.uuid4().hex[:12], "members": [job.tag for job in batch if job.tag]}
         try:
             reply = self.gateway.complete_json(self.route, PACK_SYSTEM, user, PackedReply)
             answers = {item.task_id: item.answer for item in reply.value.results}
@@ -106,7 +120,8 @@ class Packer:
                     log.info("packed answer %s not valid (%s); that filing goes to its own route", tid, str(exc)[:160])
                     continue
                 job.result = AIResult(value=value, provider=reply.provider, model=reply.model,
-                                      latency_s=round(time.monotonic() - started, 1), raw_text=json.dumps(answer)[:20000])
+                                      latency_s=round(time.monotonic() - started, 1), raw_text=json.dumps(answer)[:20000],
+                                      pack=pack)
             with self._lock:
                 self.stats["calls"] += 1
                 self.stats["tasks"] += sum(1 for j in batch if j.result is not None)

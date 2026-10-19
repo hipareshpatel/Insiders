@@ -42,13 +42,22 @@ second opinion → later: re-read when XBRL lands, price reaction T+1/3/5, gover
 
 ## 3. Now: reach 95% right
 
-1. Round 6 (running): review blind; pass mark WRONG ≤ 5% of published, MISSED ≤ 2 of ~50.
-2. Below 5%? Fix the commonest WRONG classes in code, measure on round 6's own cards, then a fresh round 7. Classes
-   still open after round 5 arm B: results without an XBRL file read from memory's other quarters; a model takeaway
-   giving a cause the statement contradicts (results takeaway now from the file's profit bridge); impact level too
-   high on routine filings.
-3. Measure before relying on them: the unit check on computed impacts (done, 3 true flips of 383); packing bleed
-   between filings in one Gemini request; per-writer WRONG each round (Gemini 3.7/3.8 have small samples).
+1. Round 6 done (`docs/audit/round-6.md`): 17% of published WRONG, nearly all from a spare writer when Gemini's quota ran
+   out (Gemini 3 of 55); recall 0 MISSED of 50. Its classes fixed in code (TRACKER F77).
+2. Round 7 (`docs/audit/round-7.md`, scheduled 2026-10-20 12:40 IST after Gemini's reset): 20 more unseen companies;
+   pass mark WRONG ≤ 5% of published, MISSED ≤ 2 of ~50. Below 5%? Fix the commonest classes in code, then round 8.
+3. Measured or being measured:
+   - the unit check on computed impacts (done: 3 true flips of 383, no true card held);
+   - **packing bleed** (round 7): every packed card records its pack's members, and `scripts/audit_round7/pack_bleed.py`
+     lists each figure, name or date on a card that is not in its own filing but is in another filing of its pack;
+     pass mark 0 bled facts on published cards, and the reviewers get a "fact from another filing" label;
+   - per-writer WRONG each round (Gemini 3.7/3.8 have small samples); round 7 also gives MiniMax M3.1 Flash and Gemma 4
+     31B (OpenRouter, free) a share, probed right on 2026-10-19; NVIDIA's DeepSeek V4.1 Flash and GLM-5.3 timed out,
+     Kimi K2.6 is listed but not served (404), GLM-5.3 Flash wrote revenue 10x too high: retried off-peak before use.
+4. Packing online: `pipeline.yml` sets `PASS2_PACK` 6 and `PASS2_PACK_WAIT` 60 (repository variables override); a pack
+   waits at most its wait and never past the run's deadline (less 120 s for the call), so a run with one or two new
+   filings sends its pack before it ends; tested. Out of quota: a packed filing whose Gemini models are all at their
+   daily limit goes to the regular writers, and if they are out too it stays queued with no attempt spent; tested.
 
 ## 4. Go-live checklist (after 95%)
 

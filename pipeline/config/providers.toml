@@ -293,7 +293,29 @@ weight = 5
 json_mode = true
 max_tokens = 8000
 context_tokens = 250000
-limits = { rpm = 10 }
+limits = { rpm = 8 }
+
+# Probed 2026-10-19 on a lakh-to-crore, YoY and direction question: MiniMax M3.1 Flash and Gemma 4 31B (OpenRouter,
+# free) both right in 3-4 s; on NVIDIA DeepSeek V4.1 Flash and GLM-5.3 timed out, Kimi K2.6 is listed but not served
+# (404), GLM-5.3 Flash wrote revenue 10x too high. Given a share in round 7 to be measured per writer, like the rest;
+# the three OpenRouter entries keep the route under its 20 a minute.
+[[routes.pass2]]
+provider = "openrouter"
+model = "minimax/minimax-m3.1-flash:free"
+weight = 3
+json_mode = true
+max_tokens = 8000
+context_tokens = 120000
+limits = { rpm = 6 }
+
+[[routes.pass2]]
+provider = "openrouter"
+model = "google/gemma-4-31b-it:free"
+weight = 2
+json_mode = false   # it answers in a fenced block; the reply is parsed as for other models
+max_tokens = 8000
+context_tokens = 120000
+limits = { rpm = 6 }
 
 [[routes.pass2_bulk]]
 provider = "zai"
@@ -342,12 +364,35 @@ weight = 4
 json_mode = true
 max_tokens = 8000
 context_tokens = 250000
-limits = { rpm = 10 }
+limits = { rpm = 8 }
 
 # Pass 2 packed (PASS2_PACK=N, ai/packer.py): N filings in one request, so a free model with few requests a day can
 # write a regular share of cards. Gemini 3.6 Flash wrote the best free cards in round 4 (11% WRONG on 9) but allows 20
 # requests a day, each Gemini model counted apart (measured 2026-10-19): three models packed 6 to a request is ~360
 # cards a day. In order; a model out of its day's quota hands the pack to the next.
+
+# Probed 2026-10-19 on a lakh-to-crore, YoY and direction question: MiniMax M3.1 Flash and Gemma 4 31B (OpenRouter,
+# free) both right in 3-4 s; on NVIDIA DeepSeek V4.1 Flash and GLM-5.3 timed out, Kimi K2.6 is listed but not served
+# (404), GLM-5.3 Flash wrote revenue 10x too high. Given a share in round 7 to be measured per writer, like the rest;
+# the three OpenRouter entries keep the route under its 20 a minute.
+[[routes.pass2_bulk]]
+provider = "openrouter"
+model = "minimax/minimax-m3.1-flash:free"
+weight = 3
+json_mode = true
+max_tokens = 8000
+context_tokens = 120000
+limits = { rpm = 6 }
+
+[[routes.pass2_bulk]]
+provider = "openrouter"
+model = "google/gemma-4-31b-it:free"
+weight = 2
+json_mode = false   # it answers in a fenced block; the reply is parsed as for other models
+max_tokens = 8000
+context_tokens = 120000
+limits = { rpm = 6 }
+
 [[routes.pass2_packed]]
 provider = "gemini"
 model = "gemini-3.6-flash"

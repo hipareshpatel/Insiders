@@ -20,8 +20,14 @@ providers only), started after Gemini's quota reset (12:30 IST), on the start co
 published and held card reviewed blind by independent agents with `REVIEWER_PROMPT_ROUND4.md` word for word (the
 missed-news prompt with round 6's one change: a set-aside call transcript is MISSED). ~50 set-aside filings.
 
+Added before the run (2026-10-19): two OpenRouter free writers on trial, MiniMax M3.1 Flash and Gemma 4 31B, with a
+share of the regular pass-2 routes, reported per writer like the rest; and the **pack bleed check** -
+`scripts/audit_round7/pack_bleed.py` after the run (every packed card records its pack's members), with the reviewers'
+issue class `other` labelled "fact from another filing" when a card states a fact that belongs to another filing.
+
 ## Pass marks, set before any processing or review
 
 - **Go-live: WRONG at most 5% of published cards** (owner). Beside it, 15%.
 - Recall: at most 2 MISSED of ~50.
 - Reported per event type (RESULTS, ORDER_WIN, CAPEX first) and per writer.
+- Pack bleed: 0 facts from another filing on published cards.

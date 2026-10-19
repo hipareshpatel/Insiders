@@ -82,7 +82,9 @@ Files you may change: none. Report: here (the seed's JSON summary line and each 
 Measured 2026-10-20 (owner's screenshot): the Worker `insiders` is deployed on insiders.reply-bd3.workers.dev with
 **0 bindings** (no D1, no R2), uploaded 4 days ago. The owner is creating D1 `bse-index` and R2 `bse-intelligence` in the
 dashboard and the GitHub secrets. When the owner says they exist (or `npx wrangler d1 list` shows `bse-index`):
-1. Put its id in `web/wrangler.jsonc` (`database_id`); `cd web; npm run db:migrate:remote`.
+1. Put its id in `web/wrangler.jsonc` (`database_id` only; `preview_database_id` stays the placeholder, so `npm run dev`
+   keeps reading your local database: checked in the cloud, 13 local cards read back with a real-looking id), or set it
+   as the repository variable `D1_DATABASE_ID`, which deploy-web.yml uses; `cd web; npm run db:migrate:remote`.
 2. `npx wrangler secret put INGEST_TOKEN` and `npx wrangler secret put OWNER_TOKEN`, values from the owner's keys file
    (never printed or committed).
 3. `npm run deploy` (or the repo's deploy script); then check the dashboard shows 3 bindings (DB, VAULT, AI) and

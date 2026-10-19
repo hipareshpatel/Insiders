@@ -62,6 +62,27 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T18 · P1 · laptop · OPEN — live review 2's classes in your files, and re-running stale cards
+
+From `docs/audit/live/2026-10-20-review2.md` (10 of 24 WRONG; 17 of 48 over both reviews). The headline figures were
+mostly right; the WRONG verdicts come from text around them. Yours:
+1. **Rating text against `rating_change`:** eMudhra's reaffirmation (grade unchanged) called "a one-notch upgrade", with
+   "short-term also upgraded" invented. Rule: a headline or takeaway that says upgrade/downgrade when the block shows no
+   change is held (or the words follow the block).
+2. **Notable-change lines on the wrong statement line:** CSB's year-ago other income equal to this year's (+0%, right
+   +75%); Ahluwalia's "other expenses fell 93.5%" from the sum of three lines; Ahluwalia's JV share as exceptional items;
+   inventory and deferred-tax % across a change of sign ("+268%"): name the turn, as `results_snapshot` now does.
+3. **Inventory direction** again (SML Q3FY26: a negative change in inventories is a build).
+4. **Invented facts and causes:** an ₹800 Cr NCD issue (Jubilant), Isuzu "exits as promoter" (SML), a deal valued at the
+   open-offer price instead of the SPA price (SML/M&M), a tax cause and a "weak quarter" the filing does not state
+   (SML, Shivam), "volume and price" growth (Jubilant), a peer launch (LTM).
+5. **A memory EPS stored without its minus** (Shivam H1FY24 -2.28 stored +2.27): find where (OCR bracket, card,
+   seed) and fix the class.
+6. **Re-run the stale cards** whose fault the code already fixes: the two Magellanic 16 Oct LOA cards (same-deal check
+   of 18 Oct merges them now), the market-cap cards (Novartis x3, SML/M&M, NLC: `prices.as_of` of 222bd2d), Lehar's
+   and Jubilant's rating cards (no deal block on ratings since 19 Oct), LTM's (after T13's re-seed).
+Files you may change: your files, their tests, `docs/audit/live/`. Report: here, per class.
+
 ## T17 · P1 · laptop · OPEN — the WRONG classes of the first live review that are in your files
 
 From `docs/audit/live/2026-10-20.md` (7 of 24 WRONG; the cloud fixed its own classes in the commit after it). Yours, by

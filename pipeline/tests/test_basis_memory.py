@@ -85,3 +85,31 @@ def test_guidance_said_twice_is_one_and_past_its_deadline_is_never_on_track():
     missed = late | {"status": "MISSED", "evidence": "1.6 MLPD in FY26"}
     d = merge(d, _card_out(updates=[missed]), _filing("r2", "2026-10-16T10:00:00+05:30"), None, "now")
     assert next(x for x in d["guidance"] if x["id"] == gid)["status"] == "MISSED"
+
+
+def test_target_checks_read_the_target_the_way_it_was_given():
+    """Live review 2 (2026-10-20): CSB's GNPA 1.81% "missed" against "at or below 1.84%"; a full-year RoA target judged on
+    one quarter; SML's "revenue >= 0"."""
+    d = new_dossier(_filing("a", "2025-11-13T10:00:00+05:30"))
+    kpis = [{"kpi": "GNPA at or below 1.84%", "metric": "gnpa_pct", "period": "Q2FY26", "value": 1.84},
+            {"kpi": "RoA of ~1.5% average for the year FY26", "metric": "roa_pct", "period": "Q2FY26", "value": 1.5},
+            {"kpi": "Revenue growth", "metric": "revenue", "period": "Q3FY26", "value": 0}]
+    d = merge(d, _card_out("CONCALL_PRESENTATION", kpis), _filing("c1", "2025-08-13T10:00:00+05:30", "CONCALL_PRESENTATION"), None, "now")
+    preds = {p["metric"]: p for p in d["predictions"]}
+    assert preds["gnpa_pct"]["comparison"] == "<=" and preds["roa_pct"]["period"] == "FY26" and "revenue" not in preds
+    results = _card_out(metrics=[{"metric": "gnpa_pct", "period": "Q2FY26", "value": 1.81, "unit": "PCT"},
+                                 {"metric": "roa_pct", "period": "Q2FY26", "value": 1.33, "unit": "PCT"}])
+    d = merge(d, results, _filing("r1", "2025-10-20T10:00:00+05:30"), None, "now")
+    preds = {p["metric"]: p for p in d["predictions"]}
+    assert preds["gnpa_pct"]["status"] == "MET" and preds["roa_pct"]["status"] == "OPEN"
+
+
+def test_fundamentals_show_the_latest_periods_balance_sheet_not_the_latest_filed():
+    """Kellton (live review 2): an annual report restating FY25, filed after the FY26 figures, put FY25 on the card."""
+    from bse_intel.dossier import latest_fundamentals
+
+    d = {"financial_metrics": [], "balance_sheet": [
+        {"period": "FY26", "gross_debt_cr": 178.63, "net_worth_cr": 807.26, "as_of": "2026-05-20T10:00:00+05:30"},
+        {"period": "FY25", "gross_debt_cr": 156.94, "net_worth_cr": 535.3, "as_of": "2026-08-01T10:00:00+05:30"}]}
+    out = latest_fundamentals(d)
+    assert out["debt"] == {"period": "FY26", "value": 178.63} and out["net_worth"]["value"] == 807.26

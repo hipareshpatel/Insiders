@@ -623,8 +623,15 @@ def _forget(dossier: dict, news_id: str) -> None:
     dossier["predictions"] = predictions
 
 
-_LOWER_IS_BETTER = re.compile(r"\b(?:reduc\w*|declin\w*|lower\w*|cut\w*|deleverag\w*|debt|npa|cost[- ]to[- ]income|"
-                              r"leverage|losses?)\b", re.I)
+# gnpa_pct, "GNPA", "credit cost", "slippages" too: CSB's gross NPA 1.81% was "missed" against "at or below 1.84%"
+# (live review 2, 2026-10-20)
+_LOWER_IS_BETTER = re.compile(r"(?:\b|_)(?:reduc\w*|declin\w*|lower\w*|cut\w*|deleverag\w*|debt|[gn]?npa|cost[- ]to[- ]income|"
+                              r"leverage|losses?|credit[ _-]?costs?|slippages?|cost[ _-]of[ _-](?:funds|borrowing)|attrition|churn|"
+                              r"opex[ _-]ratio|expense[ _-]ratio|combined[ _-]ratio)(?:\b|_)", re.I)
+_AT_MOST = re.compile(r"\b(?:at\s+or\s+below|or\s+(?:lower|less|below)|not\s+(?:to\s+)?exceed\w*|at\s+most|below|under|"
+                      r"maximum|max\.?|up\s+to|within)\b|≤|<=", re.I)
+_FULL_YEAR = re.compile(r"\b(?:full[- ]year|for\s+the\s+(?:full\s+)?year|annual(?:ised)?|year[- ]end|FY\s*'?\d{2}(?:-\d{2})?\s+"
+                        r"(?:target|guidance|average)|average\s+for\s+(?:the\s+)?(?:year|FY))\b", re.I)
 
 
 def _plausible_target(d: dict, metric: str, value: float) -> bool:
@@ -849,8 +856,14 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             if not (k.metric and k.period and k.value is not None):
                 continue
             comparison = k.comparison or ">="
-            if comparison == ">=" and _LOWER_IS_BETTER.search(f"{k.kpi} {k.metric}"):
+            if comparison == ">=" and (_LOWER_IS_BETTER.search(f"{k.kpi} {k.metric}") or _AT_MOST.search(k.kpi or "")):
                 comparison = "<="  # "Net debt reduction ... target >= 1,200" meant at most 1,200
+            if comparison == ">=" and not k.value:
+                continue  # "revenue >= 0": any figure passes, no target (SML, live review 2)
+            if _period(k.period).startswith("Q") and _FULL_YEAR.search(k.kpi or ""):
+                # a full-year target is judged on the year, not one quarter (CSB's "~1.5% RoA for FY26, building through
+                # the year" marked missed at Q2's 1.33%, live review 2)
+                k = k.model_copy(update={"period": "FY" + _period(k.period)[-2:]})
             if not _plausible_target(d, _norm(k.metric), k.value):
                 continue  # "Net worth target >= 128.1" (a refund) for a ₹1,357 Cr net worth
             pid = "p_" + _hash(filing.scrip_code, _norm(k.metric), _period(k.period), f"{k.value:g}")
@@ -1140,9 +1153,13 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
     balance = dossier.get("balance_sheet", [])
     for key, names, field in (("debt", ("gross_debt", "borrowings", "total_debt"), "gross_debt_cr"),
                               ("net_worth", ("net_worth", "total_equity"), "net_worth_cr")):
-        snap = next((b for b in reversed(balance) if b.get(field) is not None), None)
+        # the latest period's balance sheet, not the latest filed: a later filing restating FY25 hid Kellton's FY26
+        # (live review 2, 2026-10-20)
+        snap = max((b for b in balance if b.get(field) is not None),
+                   key=lambda b: (str(due_date(b.get("period")) or ""), b.get("as_of") or ""), default=None)
         metric = latest(names)
-        if snap and (not metric or snap["as_of"] >= metric["as_of"]):
+        snap_end, metric_end = (str(due_date(x.get("period")) or "") if x else "" for x in (snap, metric))
+        if snap and (not metric or (snap_end, snap["as_of"]) >= (metric_end, metric["as_of"])):
             out[key] = {"period": snap.get("period"), "value": snap[field]}
         elif metric:
             out[key] = {"period": metric["period"], "value": metric["value"]}

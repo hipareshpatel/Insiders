@@ -1,9 +1,9 @@
-"""Yahoo Finance tickers for BSE companies, and one batched download with fallbacks.
+"""Yahoo Finance tickers for the companies, and one batched download with fallbacks.
 
-Yahoo answers BSE listings by trading symbol (``RELIANCE.BO``); the numeric scrip code
-(``500325.BO``) mostly returns nothing now. Each company is tried as ``SYMBOL.BO``, then
-``SYMBOL.NS`` (the NSE listing, same company and share count when the symbols match), then
-``SCRIP.BO``; each round downloads only the companies still missing.
+The platform reads NSE only (owner, 2026-10-19), so each company is tried on its NSE listing first
+(``RELIANCE.NS``), then on BSE by symbol (``RELIANCE.BO``, the same company and share count), then by its
+BSE scrip code (``500325.BO``) when its key is one; each round downloads only the companies still missing.
+A company added from NSE's list has its NSE symbol as its key, so it has no scrip-code ticker.
 """
 
 from __future__ import annotations
@@ -17,8 +17,8 @@ log = logging.getLogger(__name__)
 def candidates(company: dict) -> list[str]:
     scrip = str(company["scrip_code"])
     symbol = re.sub(r"[^A-Z0-9&-]", "", str(company.get("symbol") or "").upper())
-    out = [f"{symbol}.BO", f"{symbol}.NS"] if symbol and not symbol.isdigit() else []
-    return out + [f"{scrip}.BO"]
+    out = [f"{symbol}.NS", f"{symbol}.BO"] if symbol and not symbol.isdigit() else []
+    return out + ([f"{scrip}.BO"] if scrip.isdigit() else [])
 
 
 def _frame(data, ticker: str, single: bool):

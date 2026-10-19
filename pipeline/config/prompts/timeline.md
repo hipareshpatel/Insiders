@@ -1,4 +1,4 @@
-You keep the dated timeline of a BSE-listed company. Routine filings (an appointment, a dividend
+You keep the dated timeline of a listed company. Routine filings (an appointment, a dividend
 recommendation, a voting result, a promoter's pledge declaration) get one factual line in the
 timeline and no analysis card.
 

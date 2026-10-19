@@ -9,7 +9,7 @@ import { parseCard, SIGNAL } from "../components/FilingCard";
 import { Badge, TabStrip } from "../components/ui/badge";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
-import { cr, istDate, num, pct, rupees, signClass, titleCase, todayIST } from "../lib/format";
+import { cr, istDate, listing, num, pct, rupees, signClass, titleCase, todayIST } from "../lib/format";
 import { periodEnd, periodKind } from "../lib/periods";
 import { EVENT_LABELS, SECTORS, TONE_CHIP, TONE_LABEL, TONE_STRIPE, verdict, type Tone } from "../lib/taxonomy";
 import { ownerApi, useOwnerToken } from "../lib/owner";
@@ -43,7 +43,7 @@ export function CompanyPage() {
   if (query.isPending) return <Loading />;
   if (query.isError) return <div className="mx-auto max-w-[1200px] p-6"><Empty title="Couldn't load this company" body={String(query.error)} /></div>;
   const { company, cards, dossier } = query.data;
-  if (!company && !dossier) return <div className="mx-auto max-w-[1200px] p-6"><Empty title={`No company with BSE code ${scrip}`} /></div>;
+  if (!company && !dossier) return <div className="mx-auto max-w-[1200px] p-6"><Empty title={`No company ${scrip}`} /></div>;
   const name = company?.company_name ?? dossier?.company_name ?? scrip!;
   const symbol = company?.symbol ?? dossier?.symbol ?? null;
 
@@ -57,7 +57,7 @@ export function CompanyPage() {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <Avatar name={name} symbol={symbol} size={36} />
             <h1 className="font-display text-[32px] leading-none text-ink">{symbol ?? name}</h1>
-            <span className="text-[15px] text-ink-2">{name} <span className="text-[12px] text-ink-3">· BSE {scrip}</span></span>
+            <span className="text-[15px] text-ink-2">{name} <span className="text-[12px] text-ink-3">· {listing(symbol, scrip)}</span></span>
           </div>
           <div className="num mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
             <span className="text-[26px] font-bold text-ink">{rupees(company?.last_price)}</span>
@@ -102,7 +102,7 @@ export function CompanyPage() {
           </div>
         )}
       </div>
-      <p className="mt-10 text-center text-[11px] text-ink-3">AI summaries of public BSE filings, refreshed with every new filing. Not investment advice.</p>
+      <p className="mt-10 text-center text-[11px] text-ink-3">AI summaries of public NSE filings, refreshed with every new filing. Not investment advice.</p>
     </div>
   );
 }

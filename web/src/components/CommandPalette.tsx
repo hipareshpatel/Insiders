@@ -79,7 +79,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
               autoFocus
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Company, symbol, BSE code or headline…"
+              placeholder="Company, NSE symbol or headline…"
               className="h-12 flex-1 bg-transparent text-[14px] text-ink placeholder:text-ink-3 focus:outline-none focus-visible:outline-none"
             />
             {query.isFetching && <Loader2 className="h-4 w-4 animate-spin text-ink-3" />}

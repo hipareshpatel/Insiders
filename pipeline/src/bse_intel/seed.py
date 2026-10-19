@@ -100,7 +100,9 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     archive said the files existed. The same quarters from NSE parse with the tag map already here: 0
     bytes against 23 metrics, measured 2026-10-16 (PLAN item 1i).
     """
-    links = [link for link in bse.results_xbrl(scrip) if link.filed_at[:10] >= since]
+    # NSE is the source (owner, 2026-10-19: everything on NSE); BSE's archive is read only when a BSE client is
+    # given (`seed-memory --source bse`, on an Indian address), for a company NSE does not list
+    links = [link for link in bse.results_xbrl(scrip) if link.filed_at[:10] >= since] if bse is not None else []
     # Every quarter is read before any is written, so a file tagged in the wrong unit can be told by the
     # company's other quarters and put right before it reaches memory (xbrl.fix_scale).
     found: dict[str, tuple[str, str, object, bool]] = {}     # period -> (filed on, url, parsed, from NSE only)
@@ -142,8 +144,9 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
             parsed = _parse_results(data, stats)
             if parsed:
                 found[period] = (row.filed_at[:10], row.xbrl_url, parsed, True)
-                log.info("seed %s %s: BSE's archive did not list this quarter, NSE did (%s)",
-                         scrip, period, row.taxonomy or "template not stated")
+                if bse is not None:
+                    log.info("seed %s %s: BSE's archive did not list this quarter, NSE did (%s)",
+                             scrip, period, row.taxonomy or "template not stated")
 
     for period, (filed_on, url, parsed, _) in found.items():
         others = [m for other, (_, _, result, _) in found.items() if other != period for m in result.metrics]

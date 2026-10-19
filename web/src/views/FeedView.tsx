@@ -51,7 +51,7 @@ export function FeedView() {
       <header className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-[30px] leading-tight text-ink">Live filings</h1>
-          <p className="mt-1 text-sm text-ink-2">Every material BSE filing, read against what each company said and did before.</p>
+          <p className="mt-1 text-sm text-ink-2">Every material NSE filing, read against what each company said and did before.</p>
         </div>
         {tab.key !== "noise" && (
           <div role="radiogroup" aria-label="Layout" className="inline-flex rounded-lg border border-line bg-surface p-0.5">

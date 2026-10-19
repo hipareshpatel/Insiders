@@ -46,7 +46,7 @@ export function Logo() {
         <path d="M7 15.5l3.2-3.4 2.6 2.4L17 9.5" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
       <span className="text-[17px] font-semibold tracking-tight text-ink">
-        Insiders<span className="ml-1 text-[11px] font-medium text-ink-3">BSE</span>
+        Insiders<span className="ml-1 text-[11px] font-medium text-ink-3">NSE</span>
       </span>
     </Link>
   );

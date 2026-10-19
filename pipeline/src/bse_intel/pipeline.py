@@ -1213,8 +1213,9 @@ class Pipeline:
         self._prices = PriceStore(settings.price_dir) if settings.price_dir and settings.price_dir.is_dir() else None
         self._buckets = settings.load_toml("market.toml")["size_buckets"]
         self.gateway = gateway
-        self.bse = bse or BseClient()
-        raw.attach(self.bse, sink, "bse", settings)
+        # BSE is a backup source only (owner, 2026-10-19: everything on NSE): its client is made the first time
+        # something asks for it (DISCOVERY_SOURCE=bse, a BSE attachment), so an NSE run never calls BSE at all
+        self._bse = bse
         # NSE discovery and attachments, and annual reports' XBRL (annual_xbrl). None with BSE discovery reads annual
         # reports from the PDF alone, as tests do.
         self.nse = nse
@@ -1343,6 +1344,17 @@ class Pipeline:
                 queued += [f.news_id for f in freed]
             start = end + timedelta(days=1)
         return queued
+
+    @property
+    def bse(self) -> BseClient:
+        if self._bse is None:
+            self._bse = BseClient()
+            raw.attach(self._bse, self.sink, "bse", self.settings)
+        return self._bse
+
+    @bse.setter
+    def bse(self, client: BseClient) -> None:
+        self._bse = client
 
     def _on_nse(self) -> bool:
         return self.settings.discovery_source == "nse"
@@ -2089,7 +2101,7 @@ class Pipeline:
                 data = None
         if data is None:
             try:
-                data = self.bse.download(filing.xbrl_url, max_bytes=8_000_000)
+                data = self._attachment(filing.xbrl_url, 8_000_000)   # NSE's archive for an NSE file
             except AttachmentError:
                 if strict:
                     raise

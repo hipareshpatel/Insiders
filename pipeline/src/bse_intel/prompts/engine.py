@@ -108,6 +108,22 @@ def _examples_text(examples: dict[str, list[dict]]) -> str:
     return "\n\n".join(parts)
 
 
+def _listing(filing: Filing) -> str:
+    """How the prompt names the company's listing: "NSE TATATECH", with the BSE code when the company has one."""
+    symbol = (filing.symbol or "").strip()
+    scrip = str(filing.scrip_code or "")
+    parts = [f"NSE {symbol}"] if symbol else []
+    if scrip.isdigit():
+        parts.append(f"BSE {scrip}")
+    return " / ".join(parts) or scrip
+
+
+def _subject(filing: Filing) -> str:
+    """The exchange's subject for the filing: NSE's ("Outcome of Board Meeting"), or BSE's category / subcategory."""
+    parts = [p for p in (filing.category, filing.subcategory) if p and p.strip()]
+    return " / ".join(dict.fromkeys(parts)) or "-"
+
+
 @dataclass(frozen=True)
 class SectorModule:
     name: str
@@ -158,7 +174,7 @@ class PromptEngine:
             ))
 
     def sector_for(self, industry: str | None) -> SectorModule:
-        """The lens for a BSE industry. A classification path ("Consumer Discretionary > Automobile
+        """The lens for a company's industry. A classification path ("Consumer Discretionary > Automobile
         and Auto Components > Auto Components > Auto Components & Equipments") is read from its most
         specific level up, so the sub-group decides before the broad sector does."""
         default = next((s for s in self.sectors if s.name == "default"), None)
@@ -184,8 +200,8 @@ class PromptEngine:
         already = "\n".join(f"- {str(t.get('date', ''))[:10]}: {str(t.get('summary', ''))[:160]}"
                             for t in (recent or [])) or "Nothing on file yet."
         user = (
-            f"Company: {filing.company_name} (BSE {filing.scrip_code})\n"
-            f"BSE category: {filing.category or '-'} / {filing.subcategory or '-'}\n"
+            f"Company: {filing.company_name} ({_listing(filing)})\n"
+            f"Exchange subject: {_subject(filing)}\n"
             f"Headline: {filing.headline}\n"
             f"Subject: {filing.subject}\n\n"
             f"ALREADY IN THE FEED (this company, most recent last)\n{already}\n\n"
@@ -200,8 +216,8 @@ class PromptEngine:
         already = "\n".join(f"- {str(t.get('date', ''))[:10]}: {str(t.get('summary', ''))[:160]}"
                             for t in recent) or "Nothing on file yet."
         user = (
-            f"Company: {filing.company_name} (BSE {filing.scrip_code})\n"
-            f"BSE category: {filing.category or '-'} / {filing.subcategory or '-'}\n"
+            f"Company: {filing.company_name} ({_listing(filing)})\n"
+            f"Exchange subject: {_subject(filing)}\n"
             f"Headline: {filing.headline}\n"
             f"Subject: {filing.subject}\n"
             f"Filed: {filing.filed_at}\n\n"
@@ -214,9 +230,9 @@ class PromptEngine:
         """The prompt for a routine filing that gets a timeline line instead of a card."""
         system = self._timeline.safe_substitute(event_types=", ".join(EVENT_TYPES))
         user = (
-            f"Company: {filing.company_name} (BSE {filing.scrip_code})\n"
+            f"Company: {filing.company_name} ({_listing(filing)})\n"
             f"Filed: {filing.filed_at}\n"
-            f"BSE category: {filing.category or '-'} / {filing.subcategory or '-'}\n"
+            f"Exchange subject: {_subject(filing)}\n"
             f"Headline: {filing.headline}\n"
             f"Subject: {filing.subject}\n"
             f"Suggested event type: {filing.event_type or '-'}\n\n"
@@ -251,12 +267,10 @@ class PromptEngine:
         )
         user = self._pass2_user.safe_substitute(
             company_name=filing.company_name,
-            scrip_code=filing.scrip_code,
-            symbol=f" / {filing.symbol}" if filing.symbol else "",
+            listing=_listing(filing),
+            exchange_subject=_subject(filing),
             industry=industry or "unknown",
             filed_at=filing.filed_at,
-            category=filing.category or "-",
-            subcategory=filing.subcategory or "-",
             headline=filing.headline,
             memory=json.dumps(memory, ensure_ascii=False, separators=(",", ":")) if memory else "No prior memory.",
             scale=scale or "Not known for this company yet: give no proportions of revenue, market cap or net worth.",

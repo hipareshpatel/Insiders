@@ -1,4 +1,5 @@
 import { cn } from "../lib/cn";
+import { listing } from "../lib/format";
 
 const PALETTE = ["#2563eb", "#7c3aed", "#db2777", "#ea580c", "#059669", "#0891b2", "#4f46e5", "#ca8a04", "#dc2626", "#0d9488"];
 
@@ -30,7 +31,7 @@ export function TickerChip({ name, symbol, scrip, onClick }: { name: string; sym
       type="button"
       onClick={(e) => { e.stopPropagation(); onClick?.(); }}
       className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-1.5 py-0.5 text-xs font-semibold text-ink hover:border-accent-line hover:text-accent"
-      title={`${name} · BSE ${scrip}`}
+      title={`${name} · ${listing(symbol, scrip)}`}
     >
       <Avatar name={name} symbol={symbol} size={16} />
       {symbol ?? scrip}

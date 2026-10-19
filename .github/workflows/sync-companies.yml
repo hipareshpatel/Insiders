@@ -1,13 +1,17 @@
-# Weekly refresh of the company master: every active BSE equity with its industry (which picks the
-# sector lens for prompts and the card footer) and market cap. Runs before the week's backfill
-# and live runs depend on it (blueprint: run sync-companies before backfill).
-# 20:30 UTC Friday = 02:00 IST Saturday.
+# Daily refresh of the company master from NSE (owner, 2026-10-19: everything on NSE): NSE's main-board equity
+# list, so a company listed today is in the master before its first filing is discovered; current symbols, ISINs
+# and names; and an industry from NSE's own data for companies without one (company_master.py). It then rebuilds
+# the universe file the pipeline reads. A few NSE requests and a handful of row writes a day.
+# 01:45 UTC = 07:15 IST, Monday to Friday, before the market opens and the day's first filings.
+#
+# Like the pipeline, the schedule runs only once the owner switches the pipeline on (PIPELINE_SCHEDULE = "on");
+# before that the platform's secrets are not set.
 name: Sync companies
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 20 * * 5"
+    - cron: "45 1 * * 1-5"
 
 permissions:
   contents: read
@@ -18,11 +22,9 @@ concurrency:
 
 jobs:
   sync:
-    # BSE's scrip list: BSE refuses GitHub's addresses, so the weekly run is off unless BSE_SYNC is "on" (owner,
-    # 2026-10-18: BSE stays in the repo as a backup, off the daily path, until the online run has been green a week)
-    if: github.event_name != 'schedule' || vars.BSE_SYNC == 'on'
+    if: github.event_name != 'schedule' || vars.PIPELINE_SCHEDULE == 'on'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
-    timeout-minutes: 30
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: pipeline
@@ -30,14 +32,15 @@ jobs:
       BSE_INTEL_SINK: platform
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+      UNIVERSE_MIN_MCAP_CR: ${{ vars.UNIVERSE_MIN_MCAP_CR || '500' }}
     steps:
       - uses: actions/checkout@v4
-      # GitHub-hosted runners get Python from setup-python; a self-hosted runner (a laptop or a
-      # Raspberry Pi on an Indian network) uses its own python3, which setup-python may not support.
+      # GitHub-hosted runners get Python from setup-python; a self-hosted runner uses its own python3.
       - uses: actions/setup-python@v5
         if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
         with:
           python-version: "3.12"
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
-      - run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel sync-companies'
+      - run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel sync-companies --source nse'

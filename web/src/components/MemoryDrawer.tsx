@@ -6,7 +6,7 @@ import { Link } from "wouter";
 import type { CardBody, CardRow, PriceReaction, Roiic } from "../../shared/types";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
-import { istDate, istDateTime, rupees, titleCase } from "../lib/format";
+import { istDate, istDateTime, listing, rupees, titleCase } from "../lib/format";
 import { EVENT_LABELS, SECTORS } from "../lib/taxonomy";
 import { useQueryState } from "../lib/url";
 import { DealsAndNotes, IdentityAndOwnership, MetricsPanel, Panel, promiseStats } from "../views/CompanyPage";
@@ -63,7 +63,7 @@ function DrawerBody({ scrip, verify, tab, onTab, onClose }: {
         <div className="min-w-0 flex-1">
           <Dialog.Title className="font-display text-[22px] leading-tight text-ink">{symbol ?? name}</Dialog.Title>
           <p className="truncate text-[13px] text-ink-2">
-            {name} · BSE {scrip}
+            {name} · {listing(symbol, scrip)}
             {company?.sector ? ` · ${SECTORS[company.sector] ?? titleCase(company.sector)}` : ""}
             {company?.median_turnover_cr != null ? ` · 💧 ₹${company.median_turnover_cr.toFixed(2)} Cr/day` : ""}
           </p>
@@ -215,7 +215,7 @@ function MarkedPlain({ text, ungrounded }: { text: string; ungrounded: Set<strin
   return <>{parts.map((p, i) => <Fragment key={i}>{p}</Fragment>)}</>;
 }
 
-/** Split screen: the official BSE PDF beside the card's figures and the math working. */
+/** Split screen: the official NSE PDF beside the card's figures and the math working. */
 function Verifier({ row, newsId }: { row: CardRow | null; newsId: string }) {
   const card: CardBody | null = row ? parseCard(row) : null;
   if (!row || !card) return <Empty title="This card is not in the company's last 60 filings" body={newsId} />;
@@ -228,17 +228,17 @@ function Verifier({ row, newsId }: { row: CardRow | null; newsId: string }) {
           <span>Official filing · {istDateTime(row.filed_at)}</span>
           {row.pdf_url && (
             <a href={row.pdf_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-accent hover:underline">
-              Open on BSE <ExternalLink className="h-3.5 w-3.5" />
+              Open on NSE <ExternalLink className="h-3.5 w-3.5" />
             </a>
           )}
         </header>
         {row.pdf_url ? (
-          <iframe src={row.pdf_url} title="Official BSE filing" className="min-h-[60vh] w-full flex-1 bg-white" />
+          <iframe src={row.pdf_url} title="Official NSE filing" className="min-h-[60vh] w-full flex-1 bg-white" />
         ) : (
           <Empty title="No PDF attached to this filing" />
         )}
         <p className="border-t border-line px-3 py-1.5 text-[11px] text-ink-3">
-          If BSE does not allow the PDF to show here, use "Open on BSE".
+          If NSE does not allow the PDF to show here, use "Open on NSE".
         </p>
       </section>
       <section className="space-y-4">

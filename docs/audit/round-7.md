@@ -44,6 +44,25 @@ before the restart: long documents now go to all five Flash models, then Lite, V
 written are kept in `data/audit/round7/cards_first_start.json`, not reviewed. Round 7 runs again at 12:40 IST on
 2026-10-20 with Gemini's full daily quota.
 
+Added 2026-10-20 01:50 IST (TASKS T3): **the card blocks are part of the card.** Since efbe96b a card's face carries the
+results table (`results` with `lines`, previous-quarter and year-ago columns), the size of an order or deal (`scale`),
+the rating move (`rating_change`), the case steps (`case_stage`), "Management said" (`guidance_recall`) and the
+"For the decision" lines computed from `priced_at_filing` (since the filing, run-rate P/E). `audit_export.py` leaves
+these out, so the round exports with `scripts/audit_round7/export.py` (the same script with those fields kept; same
+arguments). The reviewers get round 4's prompt word for word, plus this one paragraph at its end:
+
+> The card also carries computed blocks: `results` (a table of the statement's lines with the previous quarter and
+> the year-ago quarter, and YoY/QoQ), `scale` (the order or deal size against revenue, market cap or net worth, and per
+> year of its term), `rating_change` (the agency's grade before and after, and notches), `case_stage` (where a
+> regulatory case stands), `guidance_recall` (what management said earlier, with its date and deadline) and
+> `fundamentals`. They are shown on the card as published. Judge them like any other figure: a wrong figure, period,
+> comparison, grade or stage in a block makes the card WRONG; a block that does not belong to this event (an order
+> size on a rating card, guidance already past its deadline shown as current) is at least MINOR. A block that is
+> absent is not an error.
+
+The start commit goes in the report when the run starts (the scheduled task runs on whatever is checked out; at
+01:50 IST that is a1ed393 or later, after ae73b45 as T3 asks).
+
 ## Pass marks, set before any processing or review
 
 - **Go-live: WRONG at most 5% of published cards** (owner). Beside it, 15%.

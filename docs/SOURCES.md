@@ -35,6 +35,24 @@ Banking and the two insurance maps are overlays on the commercial one, because t
 different things: `ProvisionForTax` is a general insurer's tax on profit and a life insurer's
 *policyholders'* tax, twenty times larger and unrelated to the result it would be read against.
 
+**Bank ratios (`PercentageOfGrossNpa`, `PercentageOfNpa`, `ReturnOnAssets`): measured 2026-10-20** on the latest NSE
+`INTEGRATED_FILING_BANKING` file of 8 banks (TASKS T2; raw values and contexts in `docs/TASKS.md`, T2 report).
+- **Unit:** every value is a fraction with `unitRef="pure"`, `decimals="INF"` (CSB Q1FY27 0.0175, UCO Q2FY27 0.0196).
+  None was written already as a percentage; `xbrl.parse` gives 1.75 and 1.96.
+- **Standalone files carry the ratios and match the bank's own statement.** UCO Q2FY27 1.96% / 0.18% / RoA 0.80% and
+  PSB Q2FY27 2.09% / 0.61% / RoA 0.88% are the figures in each bank's board outcome ("% of Gross NPA 1.96%"; "Return
+  on Assets (Annualised) 0.88"). CSB Q1FY27 1.75 / 0.39 / 1.06; SBI Q1FY27 1.47 / 0.38 / 1.11; HDFC Bank Q2FY27
+  1.11 / 0.37; IDFC First Q1FY27 1.51 / 0.44 / 1.05; KVB Q2FY27 0.69 / 0.18 / 2.10; J&K Bank Q1FY27 2.37 / 0.60 / 0.87.
+- **Consolidated files carry 0 for all three** at SBI (Q1FY27), HDFC Bank (Q2FY27) and IDFC First (Q1FY27): a
+  filler, not a value. `xbrl.parse` reads it as 0.0%, and a consolidated-first reader would put "gross NPA 0%" on
+  the card. J&K Bank's consolidated file repeats the standalone ratios. Rule: a bank's asset-quality ratios come
+  from the standalone file (RBI states them for the bank), and a 0 ratio is no value.
+- **RoA is annualised in most files, not all.** UCO and PSB label it "(Annualised)" in the statement and the file
+  matches. KVB's quarter (0.0210) equals its half-year (0.0211), which fits an annualised figure. HDFC Bank's quarter
+  is 0.0045 against 0.0091 for the half-year (about twice as much), so its file looks un-annualised: the period's
+  return. Assumption until checked against HDFC Bank's own statement. A quarter's RoA is not comparable across banks
+  unless annualised: x4 when the file's quarter is about half its half-year figure, or taken from the PDF's line.
+
 ## Annual reports
 
 Read since 2026-10-18 (`annual_xbrl.py`, `NseClient.annual_reports`; to-do item 4, TRACKER F57). The endpoint

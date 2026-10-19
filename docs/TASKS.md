@@ -131,7 +131,7 @@ On two linked companies' pages (`/company/<scrip>`) check the "Trade remedies" p
 and its date against the case page.
 Files you may change: none. Report: here.
 
-## T2 · P1 · laptop · OPEN — measure the bank ratio scale before it is trusted (CLAUDE.md rule 0)
+## T2 · P1 · laptop · DONE — measure the bank ratio scale before it is trusted (CLAUDE.md rule 0)
 
 The pipeline now reads `PercentageOfGrossNpa`, `PercentageOfNpa` and `ReturnOnAssets` from the banking results XBRL
 as fractions (CSB Bank Q3FY25 files 0.0158 for 1.58%) and keeps a value above 1 as already a percentage. That is
@@ -141,9 +141,29 @@ For each: the raw value and `unitRef` of the three tags in the file, the figures
 results PDF, and what `python -m bse_intel analyze-pdf` (or `xbrl.parse` on the downloaded file) gives as `gnpa_pct`,
 `nnpa_pct`, `roa_pct`. Is RoA annualised in the file?
 Files you may change: `docs/SOURCES.md` (a "measured 2026-10-2x: ..." line for these tags).
-Report:
+Report: measured 2026-10-20 on each bank's latest NSE `INTEGRATED_FILING_BANKING` file; written into `docs/SOURCES.md`
+("Bank ratios ... measured 2026-10-20"). All values are fractions, `unitRef="pure"`, `decimals="INF"`; none already a percentage.
+| Bank | File | GNPA | NNPA | RoA (quarter / half-year) | Parsed |
+|---|---|---|---|---|---|
+| SBIN Q1FY27 | standalone | 0.0147 | 0.0038 | 0.0111 | 1.47 / 0.38 / 1.11 |
+| SBIN Q1FY27 | consolidated | **0** | **0** | **0** | **0.0 / 0.0 / 0.0** |
+| PSB Q2FY27 | standalone | 0.0209 | 0.0061 | 0.0088 / 0.0081 | 2.09 / 0.61 / 0.88; board outcome: 2.09, 0.61, "Return on Assets (Annualised) 0.88" |
+| CSBBANK Q1FY27 | standalone | 0.0175 | 0.0039 | 0.0106 | 1.75 / 0.39 / 1.06 |
+| HDFCBANK Q2FY27 | standalone | 0.0111 | 0.0037 | 0.0045 / 0.0091 | 1.11 / 0.37 / 0.45 |
+| HDFCBANK Q2FY27 | consolidated | **0** | **0** | **0** | **0.0** |
+| IDFCFIRSTB Q1FY27 | standalone | 0.0151 | 0.0044 | 0.0105 | 1.51 / 0.44 / 1.05 |
+| IDFCFIRSTB Q1FY27 | consolidated | **0** | **0** | **0** | **0.0** |
+| J&KBANK Q1FY27 | both | 0.0237 | 0.006 | 0.0087 | 2.37 / 0.60 / 0.87 |
+| KARURVYSYA Q2FY27 | standalone | 0.0069 | 0.0018 | 0.0210 / 0.0211 | 0.69 / 0.18 / 2.10 |
+| UCOBANK Q2FY27 | standalone | 0.0196 | 0.0018 | 0.0080 / 0.0080 | 1.96 / 0.18 / 0.80; board outcome: "% of Gross NPA 1.96%", "% of Net NPA 0.18%", "Return on Assets (Annualised) 0.80%" |
+Findings for the cloud: (1) **consolidated bank files carry 0 as a filler for all three ratios** (SBI, HDFC Bank, IDFC First),
+and `xbrl.parse` reads it as 0.0%: take the ratios from the standalone file and treat a 0 ratio as no value. A
+consolidated-first reader would print "gross NPA 0%". (2) **RoA is annualised in most files, not in HDFC Bank's**: its
+quarter, 0.45%, is about half its half-year, 0.91% (KVB, PSB and UCO have quarter = half-year). Assumption until checked
+against HDFC Bank's own statement. Annualise a quarter whose value is about half the half-year's, or read the PDF's line.
+Raw files: the laptop's `%TEMP%/t2/xml/` (not committed). Press releases checked for UCO and PSB, not yet for the other six.
 
-## T3 · P1 · laptop · OPEN — round 7 on the current code
+## T3 · P1 · laptop · IN PROGRESS — round 7 on the current code
 
 Run round 7 as planned (`docs/audit/round-7.md`, 12:40 IST after Gemini's reset). Start it after pulling `ae73b45` or
 later so it measures the code that will go live, and write the commit in the round's report. Do not restart a round
@@ -151,7 +171,12 @@ mid-way for a later pull. The cards now carry `scale`, `rating_change`, `case_st
 table's `lines`: the reviewers judge the face as published, so the review prompt should mention the blocks and the
 "For the decision" lines as part of the card (WRONG if their figures are wrong).
 Files you may change: `docs/audit/round-7*`, `pipeline/scripts/audit_round7/`.
-Report:
+Report: ready for 12:40 IST. The round exports with `pipeline/scripts/audit_round7/export.py`
+(audit_export.py plus `results`, `scale`, `rating_change`, `case_stage`, `guidance_recall`, `priced_at_filing`, `fundamentals`,
+which audit_export's KEEP list left out, so reviewers could not have judged the blocks), tested on the five T7 cards. The
+reviewer paragraph for the blocks, added after round 4's prompt, is in `docs/audit/round-7.md` (Method, "Added 2026-10-20").
+The scheduled start (task `insiders-round7-start`, 12:40 IST) runs on the checkout, at a1ed393 or later; the start commit
+goes in the report.
 
 ## T4 · P2 · laptop · OPEN — finish the go-live load (PLAN G6a)
 
@@ -161,7 +186,7 @@ and the file failures left. Keep NSE's pace: no parallel NSE-heavy runs beside a
 Files you may change: `docs/PLAN.md` (G6a status line only).
 Report:
 
-## T5 · P2 · laptop · OPEN — diagnose three content faults from your web test (data first, no code)
+## T5 · P2 · laptop · DONE — diagnose three content faults from your web test (data first, no code)
 
 From `docs/audit/web-redesign-test-2026-10-19.md`, content items 1-3. For each, find from the local database and the
 stored raw replies where the wrong value came from, following docs/DATA_QUALITY.md:
@@ -175,7 +200,18 @@ stored raw replies where the wrong value came from, following docs/DATA_QUALITY.
    `promise_updates`.
 Files you may change: none; write the findings in `docs/audit/content-faults-2026-10-20.md`. The cloud fixes the
 classes in code from your findings, so say for each what the rule should be.
-Report:
+Report: `docs/audit/content-faults-2026-10-20.md`. (1) Heritage Q4FY26 "PAT +16.7%": **mixed basis**. The seed took
+standalone XBRL files for Q4FY25 and Q2FY26 (`Integrated_Finance_Ind_As_519552_1262025132650.xml (STANDALONE)`, a
+re-filing), and "XBRL outranks any card" let one standalone value (20.51) beat five consolidated sources (38.17), including
+the Q4FY26 filing's own year-ago column. Rules: basis on every metric source, XBRL outranks only within a basis, YoY from
+the statement's printed comparatives, no quarter P&L from non-results cards. (2) Two Q2FY27 cards: the board outcome was
+held (UNRESOLVED), so D20 let the press release carry the card, by design. But the held card's timeline entry still went
+into memory (two lines on the page), and both cards' tables use the standalone Q2FY26 from (1); the press release's
++19% / −39% are right. (3) Targets: a prediction settles only from a `financial_metrics` entry with the same key and period.
+The Q2FY27 VAP share went to `segment_mix`, and `volume_growth` was never written, so they stay OPEN. The id hashes the
+target value, so one metric gets three rows (38, 48, 49). Guidance stays ON_TRACK past its due date (2 MLPD by FY26;
+5,000 farmers by Q2FY27). **Pass-2 replies are not stored**, so `promise_updates` cannot be traced: keep them with the
+card. Rules for each in the file.
 
 ## T6 · cloud · DONE — content faults the cloud fixes in code now
 
@@ -202,4 +238,17 @@ Report: done in the commit after `eb8691a` (tests `pipeline/tests/test_content_f
 
 ## Proposed by the laptop
 
-(none yet)
+### P-L1 · check an XBRL figure against the filing's PDF before it is used (owner, 2026-10-20: "we found few issues with XBRL, how about we check pdf for those cases only ?")
+
+The XBRL faults measured tonight would each have been caught by the filing's own PDF, which the pipeline already reads
+(text layer, OCR on pages of figures):
+- consolidated bank files with 0 for gross NPA, net NPA and RoA (T2: SBI, HDFC Bank, IDFC First) where the PDF prints
+  1.47%, 1.11%, ...;
+- the seed's standalone file winning over consolidated cards (T5 item 1: Heritage Q4FY25 20.51 vs 38.17; Q2FY26);
+- RoA un-annualised in one bank's file and annualised in the others (T2: HDFC Bank 0.45% quarter vs 0.91% half-year).
+Proposal: only for those cases (an XBRL value that is 0 where a ratio is expected, a basis other than the card's, a value
+more than 1% from the statement's own printed figure, or a ratio whose period basis is unclear), check the figure in the
+PDF of the same filing; when the PDF prints it, use the PDF's value and note it on the card; when the PDF does not, keep
+the XBRL value. `xbrl.confirm` / `appears_in` already test whether figures appear in the text, and could do this per
+figure rather than per file. For memory's seed (no PDF), XBRL only within the company's basis. Owner's idea; the laptop
+can measure how often each case occurs across the universe before it is built.

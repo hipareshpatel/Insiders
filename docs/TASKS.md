@@ -62,20 +62,24 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
-## T22 · P1 · laptop · OPEN, read first — production is on: the live database is the record now (owner, 2026-10-20)
+## T22 · P1 · laptop · OPEN, do now, before anything else — last upload, then the live database is the record (owner, 2026-10-20)
 
-The owner asked to run on production now (20 Oct, ~05:05 IST). The cloud merged the PR into `main` and started
-`pipeline.yml` there; `deploy-web.yml` deploys the site on every push to `main`. From now on:
-1. **Never run `sync-to-cloud` again.** It copies the laptop's rows over the live ones and would undo what the online
-   pipeline wrote. T15 step 3 and T21 are cancelled; T20 is done by `deploy-web.yml`.
-2. The laptop writes to the live site only the way the pipeline does, through the Worker's API (`BSE_INTEL_SINK=platform`,
-   `PLATFORM_API_URL` = the live site), and only for a task that says so. Not while a `pipeline.yml` run is going
-   (GitHub's Actions tab), so two writers never edit the same company's memory.
-3. Your work: T19 (the held-card export), T18 and T17 (code fixes in your files, pushed to the branch; they reach
+The owner asked to run on production now (20 Oct, ~05:05 IST). The cloud holds the merge into `main` and the first
+`pipeline.yml` run until you report step 1 (the PR is marked ready, not merged).
+1. **One last `sync-to-cloud`** (as in T15 step 1, incremental: it copies what changed since 04:23, such as the cards
+   re-run for T17 and the seed's companies since then). Report rows and objects copied, and the live counts after it
+   (`/api/feed?range=all` published, `/api/owner/feed?held=only` held). Commit "T22: synced" and push: that is the
+   cloud's signal to merge.
+2. **After that, never run `sync-to-cloud` again.** It copies the laptop's rows over the live ones and would undo what
+   the online pipeline writes. T15 step 3 and T21 are cancelled; T20 is done by `deploy-web.yml` on the merge.
+3. **The rest of the go-live seed (T4) and T13's re-seed write straight to the live site**, the way the pipeline does:
+   `BSE_INTEL_SINK=platform`, `PLATFORM_API_URL=https://insiders.reply-bd3.workers.dev`, `INGEST_TOKEN` from the keys
+   file, then `seed-memory --universe` (resumable). Seeding is XBRL only, no AI. Run it between `pipeline.yml` runs where
+   you can (GitHub's Actions tab), so two writers rarely edit the same company's memory; report if a run collides.
+4. Your other work: T19 (the held-card export), T18 and T17 (code fixes in your files, pushed to the branch; they reach
    production through a PR to `main` that the cloud opens and merges), audit rounds on the laptop's own database.
-4. The branch stays `claude/nice-goodall-ta0sxs`; after a merge it is restarted from `main` by the cloud. `git pull` as
-   always.
-Report: here, one line that you have read it.
+5. The branch stays `claude/nice-goodall-ta0sxs`; after a merge the cloud restarts it from `main`. `git pull` as always.
+Report: here: step 1's numbers; step 3's progress (companies seeded on the live site).
 
 ## T21 · P1 · laptop · CANCELLED (T22) — drain the 561 queued filings
 

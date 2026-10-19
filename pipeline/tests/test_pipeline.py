@@ -251,6 +251,10 @@ def test_card_with_wrong_math_is_held_for_review(settings):
     assert body["review"]["status"] == "UNRESOLVED" and "formula gives 135" in body["review"]["issues"][0]
     assert body["fundamentals"]["revenue"] == {"period": "Q2FY27", "value": 120.0}
     assert body["pdf_pages"] == 1
+    # held: its figures go into memory, its line does not go into the company's story (T5, 2026-10-20)
+    memory = sink.get_dossier(f.scrip_code)
+    assert outcome.card["held"] == 1 and not any(e.get("news_id") == "n-q" for e in memory.get("timeline", []))
+    assert any(m.get("source_news_id") == "n-q" or m.get("value_news_id") == "n-q" for m in memory["financial_metrics"])
 
 
 def test_backfill_goes_company_by_company_largest_first(settings):

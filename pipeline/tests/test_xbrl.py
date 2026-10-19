@@ -616,3 +616,65 @@ def test_bank_ratios_already_in_percent_or_inconsistent_are_not_misread():
     assert ratios(bank("2.21", "0.0065")) == {"gnpa_pct": 2.21, "nnpa_pct": 0.65, "roa_pct": 1.48}   # one in percent
     assert ratios(bank("0.0221", "0.25")) == {"roa_pct": 1.48}        # net 25% above gross 2.21%: both dropped
     assert "roa_pct" not in ratios(bank("0.0221", "0.0065", roa="0.9"))  # RoA 90%: out of range
+
+
+def _bank_file(ratios: dict[str, tuple[str, str, str]]) -> bytes:
+    """A banking file with one context per period id: {"Q": (gross, net, roa), "H1": (...)} (start dates differ)."""
+    starts = {"Q": "2026-07-01", "H1": "2026-04-01"}
+    body = []
+    for cid, (gross, net, roa) in ratios.items():
+        body.append(f"""<xbrli:context id="{cid}"><xbrli:entity><xbrli:identifier scheme="x">1</xbrli:identifier></xbrli:entity>
+<xbrli:period><xbrli:startDate>{starts[cid]}</xbrli:startDate><xbrli:endDate>2026-09-30</xbrli:endDate></xbrli:period></xbrli:context>
+<in-bse-fin:InterestEarned contextRef="{cid}" unitRef="INR" decimals="-5">32133700000</in-bse-fin:InterestEarned>
+<in-bse-fin:ProfitLossForThePeriod contextRef="{cid}" unitRef="INR" decimals="-5">3315100000</in-bse-fin:ProfitLossForThePeriod>
+<in-bse-fin:PercentageOfGrossNpa contextRef="{cid}" unitRef="pure" decimals="INF">{gross}</in-bse-fin:PercentageOfGrossNpa>
+<in-bse-fin:PercentageOfNpa contextRef="{cid}" unitRef="pure" decimals="INF">{net}</in-bse-fin:PercentageOfNpa>
+<in-bse-fin:ReturnOnAssets contextRef="{cid}" unitRef="pure" decimals="INF">{roa}</in-bse-fin:ReturnOnAssets>""")
+    return f"""<xbrli:xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:in-bse-fin="http://www.bseindia.com/xbrl/fin/2020-03-31/in-bse-fin">
+<xbrli:unit id="INR"><xbrli:measure>iso4217:INR</xbrli:measure></xbrli:unit><xbrli:unit id="pure"><xbrli:measure>xbrli:pure</xbrli:measure></xbrli:unit>
+{''.join(body)}
+</xbrli:xbrl>""".encode()
+
+
+def _bank_ratios(raw: bytes) -> dict:
+    return {(m.metric, m.period): round(m.value, 2) for m in xbrl.parse(raw).metrics if m.metric.endswith("_pct")}
+
+
+def test_consolidated_bank_file_zero_ratios_are_fillers_not_values():
+    # SBI, HDFC Bank and IDFC First's consolidated files: 0 for all three (T2, measured 2026-10-20)
+    assert _bank_ratios(_bank_file({"Q": ("0", "0", "0")})) == {}
+    # a net NPA of nil beside real ratios is a value
+    assert _bank_ratios(_bank_file({"Q": ("0.0069", "0", "0.021")})) == {
+        ("gnpa_pct", "Q2FY27"): 0.69, ("nnpa_pct", "Q2FY27"): 0.0, ("roa_pct", "Q2FY27"): 2.1}
+
+
+def test_roa_put_on_a_yearly_basis_only_when_the_file_is_not():
+    # HDFC Bank Q2FY27: quarter 0.45% beside half-year 0.91% -> the period's own return; x4 and x2
+    hdfc = _bank_ratios(_bank_file({"Q": ("0.0111", "0.0037", "0.0045"), "H1": ("0.0111", "0.0037", "0.0091")}))
+    assert (hdfc[("roa_pct", "Q2FY27")], hdfc[("roa_pct", "H1FY27")]) == (1.8, 1.82)
+    # KVB Q2FY27: quarter 2.10% equals half-year 2.11% -> already annualised, left as filed
+    kvb = _bank_ratios(_bank_file({"Q": ("0.0069", "0.0018", "0.0210"), "H1": ("0.0069", "0.0018", "0.0211")}))
+    assert (kvb[("roa_pct", "Q2FY27")], kvb[("roa_pct", "H1FY27")]) == (2.1, 2.11)
+    # the quarter alone: no way to tell, left as filed
+    assert _bank_ratios(_bank_file({"Q": ("0.0111", "0.0037", "0.0045")}))[("roa_pct", "Q2FY27")] == 0.45
+
+
+def test_a_consolidated_bank_card_takes_its_ratios_from_the_standalone_file():
+    from bse_intel.models import FinancialMetric
+
+    consolidated = xbrl.XbrlResult("RESULTS", "CONSOLIDATED", "Q2FY27",
+                                   [FinancialMetric(metric="pat", period="Q2FY27", value=19000.0)], template="BANKING")
+    assert xbrl.needs_standalone_bank_ratios(consolidated)
+    standalone = xbrl.XbrlResult("RESULTS", "STANDALONE", "Q2FY27", [
+        FinancialMetric(metric="pat", period="Q2FY27", value=18000.0),
+        FinancialMetric(metric="gnpa_pct", period="Q2FY27", value=1.11, unit="PCT"),
+        FinancialMetric(metric="nnpa_pct", period="Q2FY27", value=0.37, unit="PCT"),
+        FinancialMetric(metric="gnpa_pct", period="Q2FY26", value=1.24, unit="PCT")])   # no such period in the card
+    assert xbrl.add_bank_ratios(consolidated, standalone) == 2
+    assert {m.metric for m in consolidated.metrics} == {"pat", "gnpa_pct", "nnpa_pct"}
+    assert consolidated.metrics[0].value == 19000.0   # the card's own profit stays consolidated
+    assert "gnpa_pct Q2FY27 (standalone): 1.11 %" in consolidated.table()
+    assert not xbrl.needs_standalone_bank_ratios(consolidated)
+    # not a bank, or already standalone: nothing to fetch
+    assert not xbrl.needs_standalone_bank_ratios(xbrl.XbrlResult("RESULTS", "CONSOLIDATED", "Q2FY27", [], template="INDAS"))
+    assert not xbrl.needs_standalone_bank_ratios(xbrl.XbrlResult("RESULTS", "STANDALONE", "Q2FY27", [], template="BANKING"))

@@ -1921,6 +1921,21 @@ class Pipeline:
             return max(timely, key=lambda link: link.filed_at).url
         return min(links, key=lambda link: link.filed_at).url if links else None
 
+    def _standalone_bank_ratios(self, filing: Filing, tagged) -> None:
+        """A bank's consolidated file carries no gross NPA, net NPA or RoA (0 fillers, T2 2026-10-20): the same
+        quarter's standalone file gives them. Best effort: the card goes on without them if it cannot be read."""
+        links = [link for link in self._results_links(filing)
+                 if link.period == tagged.period and link.basis == "STANDALONE"]
+        if not links:
+            return
+        link = max(links, key=lambda link: link.filed_at)
+        try:
+            standalone = xbrl_fast_path.parse(self._attachment(link.url, 8_000_000))
+        except Exception as exc:  # an extra: the consolidated card stands without the ratios
+            log.warning("standalone bank file for %s unavailable (%s)", filing.news_id, exc)
+            return
+        xbrl_fast_path.add_bank_ratios(tagged, standalone)
+
     def _timeline_flow(self, filing: Filing, company: dict, industry, doc: Document, bulk: bool, memory_complete: bool) -> Outcome:
         """A routine filing (dividend recommendation, voting result, a nil pledge declaration) gets one dated line in
         the company's timeline and no card (D22). A cheap model writes the line and asks for a full card when the
@@ -2307,6 +2322,8 @@ class Pipeline:
                         self._xbrl_links.pop(filing.scrip_code, None)   # read the list afresh next time
                     raise EventXbrlPending(f"waiting for its results XBRL ({age.total_seconds() / 60:.0f} min after the PDF)")
         tagged = self._xbrl(filing) if event_type == "RESULTS" else None
+        if xbrl_fast_path.needs_standalone_bank_ratios(tagged):
+            self._standalone_bank_ratios(filing, tagged)
         if tagged and (tagged.kind != "RESULTS" or not xbrl_fast_path.confirm(tagged, text)):
             known = (dossier_as_of(dossier, filing.filed_at, inclusive=False) or {}).get("financial_metrics")
             if tagged.kind == "RESULTS" and results_card.agrees_with_memory(tagged, known):
@@ -2502,6 +2519,11 @@ class Pipeline:
         # the laptop), else today's figures, dropped when they are too new for this filing.
         priced = point_in_time(company, filing.filed_at, self._prices, self._buckets) or priced_for(company, filing)
         signals = compute_signals(before, current, out, filing, priced) + text_signals(text, event_type)
+        if (review or {}).get("status") == "UNRESOLVED" and not checks.only_style:
+            # a held card's line stays out of the company's story: Heritage's held Q2FY27 board outcome and its
+            # published press release made two Q2FY27 results lines with different figures (T5, 2026-10-20).
+            # Its figures stay: they are the statement's own and passed memory's checks.
+            merged["timeline"] = [e for e in merged.get("timeline", []) if e.get("news_id") != filing.news_id]
         self.sink.put_dossier(filing.scrip_code, merged)
 
         card_json = {
@@ -2520,6 +2542,8 @@ class Pipeline:
             "case_stage": case_stage(event_type, card.headline, [f.text for f in card.what_happened],
                                      [w.text for w in card.why_it_matters]),
             "guidance_recall": guidance_recall(before, event_type, filing.filed_at),
+            # what pass 2 said about earlier promises, kept so a status in memory can be traced to its reply (T5)
+            "promise_updates": [u.model_dump() for u in out.dossier_delta.promise_updates] or None,
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims,

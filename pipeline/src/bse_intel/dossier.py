@@ -19,6 +19,7 @@ import logging
 import hashlib
 import json
 import re
+from datetime import timedelta
 from typing import Any
 
 from .scoring import calibration
@@ -28,6 +29,7 @@ from .periods import canonical_period, due_date, quarter_index
 SCHEMA_VERSION = 3
 MAX_TIMELINE = 600
 MAX_BALANCE_SNAPSHOTS = 16
+NOT_REPORTED_DAYS = 75   # a quarter's results are due in 45 days (60 for Q4), its call within the next two weeks
 # Periods kept per metric, by kind: a seven-year table in a presentation must not push out the
 # recent quarters, so each kind keeps its own latest periods (by period end, not by filing date).
 KEEP_PERIODS = {"Q": 12, "H": 6, "9M": 4, "FY": 6, "M": 18, "other": 8}
@@ -267,6 +269,7 @@ def _sources(entry: dict | None) -> list[dict]:
     return entry.get("sources") or [{
         "news_id": entry.get("source_news_id"), "as_of": entry["as_of"], "value": entry.get("value"),
         "unit": entry.get("unit"), "yoy_pct": entry.get("yoy_pct"), "qoq_pct": entry.get("qoq_pct"),
+        **({"basis": entry["basis"]} if entry.get("basis") else {}),
     }]
 
 
@@ -355,13 +358,22 @@ def _metric_entry(metric: str, period: str, sources: list[dict]) -> dict:
     A machine-tagged XBRL source outranks any card, however recent. The figures in an XBRL instance are
     tagged by the company's own filing agent and cannot be misread, while a card is a model reading a
     PDF; letting the newest writer win meant one card turned Jubilant's FY24 revenue from the seed's
-    exact 7,587.51 into 78.4, and every later card then compared against that (audit round 1)."""
+    exact 7,587.51 into 78.4, and every later card then compared against that (audit round 1).
+
+    Only within one basis, though: the value comes from the consolidated sources when any source is consolidated
+    (a source with no basis recorded counts with either). Heritage's standalone Q4FY25 file (PAT 20.51) outranked
+    five consolidated sources (38.17) and a card said PAT +16.7% YoY where it fell 37% (T5, 2026-10-20)."""
     sources = sorted(sources, key=lambda s: s["as_of"])
-    tagged = [s for s in sources if str(s.get("news_id", "")).startswith(XBRL_SOURCE)]
-    last = tagged[-1] if tagged else sources[-1]
+    bases = {s.get("basis") for s in sources} - {None}
+    keep = "CONSOLIDATED" if "CONSOLIDATED" in bases else next(iter(bases), None)
+    usable = [s for s in sources if s.get("basis") in (None, keep)] or sources
+    tagged = [s for s in usable if str(s.get("news_id", "")).startswith(XBRL_SOURCE)]
+    last = tagged[-1] if tagged else usable[-1]
     entry = {"metric": metric, "period": period, "value": last["value"], "unit": last.get("unit") or "INR_CR",
              "yoy_pct": last.get("yoy_pct"), "qoq_pct": last.get("qoq_pct"), "as_of": sources[0]["as_of"],
              "source_news_id": sources[0]["news_id"]}
+    if len(sources) == 1 and sources[0].get("basis"):
+        entry["basis"] = sources[0]["basis"]
     if len(sources) > 1:
         entry.update(sources=sources, updated_as_of=last["as_of"], value_news_id=last["news_id"])
     return entry
@@ -546,6 +558,13 @@ def forget_filing(dossier: dict, news_id: str) -> bool:
     return json.dumps(dossier, sort_keys=True, default=str) != before
 
 
+def forget_source(dossier: dict, news_id: str) -> bool:
+    """One source's facts out of memory (a seeded quarter the seed no longer keeps). Returns whether any were there."""
+    before = json.dumps(dossier, sort_keys=True, ensure_ascii=False)
+    _forget(dossier, news_id)
+    return json.dumps(dossier, sort_keys=True, ensure_ascii=False) != before
+
+
 def _forget(dossier: dict, news_id: str) -> None:
     metrics = []
     for e in dossier.get("financial_metrics", []):
@@ -606,8 +625,10 @@ def _plausible_target(d: dict, metric: str, value: float) -> bool:
     return ref < 1 or ref / 5 <= abs(float(value)) <= ref * 5
 
 
-def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str | None, updated_at: str) -> dict:
-    """Return the dossier with this filing's facts merged in (input is not mutated)."""
+def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str | None, updated_at: str,
+          basis: str | None = None) -> dict:
+    """Return the dossier with this filing's facts merged in (input is not mutated). `basis` is the figures'
+    (CONSOLIDATED / STANDALONE): the seed gives its file's, a card its own `basis`."""
     d = json.loads(json.dumps(dossier))  # deep copy, JSON-safe
     d.setdefault("schema_version", SCHEMA_VERSION)
     news_id, as_of = filing.news_id, filing.filed_at
@@ -618,12 +639,21 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         d["business_summary"] = {"text": delta.business_summary.strip(), "as_of": as_of, "source_news_id": news_id}
 
     metrics = {(m["metric"], m["period"]): m for m in d.get("financial_metrics", [])}
+    basis = basis or (output.card.basis if output.card is not None else None)
+    # A quarter's profit and loss comes from its results filing (or the company's XBRL); another card only fills a
+    # quarter memory has no figure for: an M&A card's "fundamentals" gave Heritage's standalone Q4FY25 revenue and
+    # profit beside five consolidated sources (T5, 2026-10-20), while a rights issue's quarter is often all there is
+    kind = output.event_type if output.event_type not in (None, "", "OTHER") else filing.event_type
+    results_source = news_id.startswith(XBRL_SOURCE) or (kind or "RESULTS") == "RESULTS"
     for m in delta.financial_metrics:
         if m.value is None:
             continue
         key = (_norm(m.metric), _period(m.period))
+        if not results_source and key[0] in FLOW_METRICS and key[1].startswith("Q") \
+                and any(s["news_id"] != news_id for s in _sources(metrics.get(key))):
+            continue
         source = {"news_id": news_id, "as_of": as_of, "value": m.value, "unit": m.unit,
-                  "yoy_pct": m.yoy_pct, "qoq_pct": m.qoq_pct}
+                  "yoy_pct": m.yoy_pct, "qoq_pct": m.qoq_pct, **({"basis": basis} if basis else {})}
         metrics[key] = _metric_entry(*key, [s for s in _sources(metrics.get(key)) if s["news_id"] != news_id] + [source])
     d["financial_metrics"] = _cap_metrics(list(metrics.values()))
 
@@ -694,6 +724,14 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if gid in guidance or third_party_view(f"{item.statement} {item.target or ''}"):
             continue
         deadline = due_date(item.due)
+        # the same target said again in other words (Heritage's ₹6,000 Cr FY27 revenue, May 2025 and May 2026): one
+        # commitment, said twice, not two (T5, 2026-10-20)
+        same = next((g for g in guidance.values() if item.metric and item.target and deadline
+                     and _norm(g.get("metric") or "") == _norm(item.metric) and _norm(g.get("target") or "") == _norm(item.target)
+                     and g.get("due_date") == deadline.isoformat()), None)
+        if same is not None:
+            same["repeated"] = [*same.get("repeated", []), {"as_of": as_of, "source_news_id": news_id}][-5:]
+            continue
         guidance[gid] = {
             "id": gid, "statement": item.statement.strip(), "metric": item.metric, "target": item.target,
             "due": item.due, "due_date": deadline.isoformat() if deadline else None,
@@ -704,6 +742,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         g = guidance.get(update.guidance_id)
         if g is None or g.get("given_on", "") >= as_of:
             continue  # unknown id (hallucinated) or guidance newer than this filing
+        if update.status == "ON_TRACK" and g.get("due_date") and g["due_date"] < as_of[:10]:
+            continue  # past its deadline a promise is delivered or missed, not on track ("2 MLPD by FY26" in Q2FY27)
         g["status_history"] = sorted(
             g.get("status_history", []) + [{
                 "status": update.status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,
@@ -800,6 +840,14 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             if not _plausible_target(d, _norm(k.metric), k.value):
                 continue  # "Net worth target >= 128.1" (a refund) for a ₹1,357 Cr net worth
             pid = "p_" + _hash(filing.scrip_code, _norm(k.metric), _period(k.period), f"{k.value:g}")
+            key = (_norm(k.metric), _period(k.period))
+            if any((m["metric"], m["period"]) == key for m in d["financial_metrics"]):
+                continue  # the period's figure is already in: nothing left to predict
+            # one open target per metric and period: a later card's number replaces the earlier one (Heritage's VAP
+            # share Q2FY27 had targets 38, 48 and 49 from three cards; T5, 2026-10-20)
+            for old in [q for q in predictions.values() if q["status"] == "OPEN" and (q["metric"], q["period"]) == key
+                        and q["id"] != pid]:
+                predictions.pop(old["id"])
             predictions.setdefault(pid, {
                 "id": pid, "metric": _norm(k.metric), "period": _period(k.period), "value": k.value,
                 "comparison": comparison, "kpi": k.kpi.strip()[:200], "created_on": as_of,
@@ -815,6 +863,12 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         hit = {">=": actual["value"] >= p["value"], "<=": actual["value"] <= p["value"],
                "=": abs(actual["value"] - p["value"]) <= abs(p["value"]) * 0.02}[p["comparison"]]
         p.update(status="MET" if hit else "MISSED", actual=actual["value"], resolved_on=as_of, resolved_by=news_id)
+    for p in predictions.values():
+        # the period's results and call came and went without the figure (a deck-only KPI, another key): not
+        # reported, rather than open for ever
+        end = due_date(p["period"])
+        if p["status"] == "OPEN" and end and (end + timedelta(days=NOT_REPORTED_DAYS)).isoformat() < as_of[:10]:
+            p.update(status="NOT_REPORTED", resolved_on=as_of)
     d["predictions"] = sorted(predictions.values(), key=lambda p: p["created_on"])[-60:]
 
     if output.is_material:

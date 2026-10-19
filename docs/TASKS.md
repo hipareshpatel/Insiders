@@ -62,6 +62,21 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T13 · P1 · laptop · OPEN — re-seed memory on the basis fix, then re-check Heritage and two banks
+
+The cloud's commit after `83ea204` fixes T2 and T5's classes (cloud notes under each). Memory seeded before it has no basis
+on its XBRL figures, and the standalone-only quarters are still in it. After pulling, and not while round 7 runs:
+1. When the go-live seed pass (T4) ends, `python -m bse_intel seed-memory --universe --restart --results-only` (the files
+   are cached locally, so mostly no NSE requests): each seeded figure gets its basis, and a standalone-only quarter of a
+   company that files consolidated is taken out again (log line "standalone file only ... left to the cards").
+2. Re-run Heritage's three cards (`process --news-ids 145bb59e-db01-490b-86f5-ebe6eab36492,527b6923-cd12-4d50-adbe-3c07f3c0e733,1d299133-85bb-4263-bc45-d96015d2cb0a`):
+   Q4FY26 PAT should read down ~37% YoY (23.94 against 38.17); Q2FY27 revenue +18.6% and PAT −39.5%; one Q2FY27 line
+   in the company's story (the held card's line stays out).
+3. One SBI or HDFC Bank results card (consolidated): the bank lines show gross and net NPA from the standalone file
+   (the table says "(standalone)"), not 0% and not missing. HDFC Bank's RoA reads about 1.8% (annualised), not 0.45%.
+4. `/company/519552?tab=promises`: one VAP-share target for Q2FY27; "2 MLPD by FY26" shows "Not reported", not "On track".
+Files you may change: none. Report: here (the seed's JSON summary line and each check).
+
 ## T12 · P1 · laptop · BLOCKED on the owner — deploy the Worker with its database and bucket (PLAN G4)
 
 Measured 2026-10-20 (owner's screenshot): the Worker `insiders` is deployed on insiders.reply-bd3.workers.dev with
@@ -162,6 +177,11 @@ consolidated-first reader would print "gross NPA 0%". (2) **RoA is annualised in
 quarter, 0.45%, is about half its half-year, 0.91% (KVB, PSB and UCO have quarter = half-year). Assumption until checked
 against HDFC Bank's own statement. Annualise a quarter whose value is about half the half-year's, or read the PDF's line.
 Raw files: the laptop's `%TEMP%/t2/xml/` (not committed). Press releases checked for UCO and PSB, not yet for the other six.
+**Cloud, 2026-10-20:** fixed in `xbrl.py` (bank-ratio code, the cloud's): a period whose bank ratios are all 0 keeps none
+(a single 0 beside real ratios stays); a consolidated bank card reads the same quarter's standalone file for its ratios
+(`needs_standalone_bank_ratios`, `add_bank_ratios`, the table marks them "(standalone)"); RoA is put on a yearly basis
+when the file's quarter is about its share of the half-year or nine months (HDFC Bank 0.45% -> 1.8%), and left as filed
+otherwise (a Q1 file alone cannot tell). Tests in `test_xbrl.py`. Check on real cards: T13.
 
 ## T3 · P1 · laptop · IN PROGRESS — round 7 on the current code
 
@@ -212,6 +232,16 @@ The Q2FY27 VAP share went to `segment_mix`, and `volume_growth` was never writte
 target value, so one metric gets three rows (38, 48, 49). Guidance stays ON_TRACK past its due date (2 MLPD by FY26;
 5,000 farmers by Q2FY27). **Pass-2 replies are not stored**, so `promise_updates` cannot be traced: keep them with the
 card. Rules for each in the file.
+**Cloud, 2026-10-20, fixed (tests `test_basis_memory.py`, `test_seed.py`, `test_pipeline.py`):** (1) each memory source
+keeps its basis; a figure's value comes from its consolidated sources when it has any, and XBRL outranks a card only on
+the same basis; the seed leaves a standalone-only quarter of a company that files consolidated to the cards and takes it
+out of memory where an earlier seed put it; a non-results card fills a quarter memory has no figure for but never adds to
+one a results filing stated. (2) A held card's timeline line stays out of memory (its figures stay). (3) One open
+prediction per metric and period (a later card's number replaces it; none once the period's figure is in);
+NOT_REPORTED 75 days after the period ends; an ON_TRACK update past the deadline is ignored and the page shows "Not
+reported" for a promise past its deadline; guidance with the same metric, target and deadline is one entry (`repeated`
+lists the later filings); the card keeps pass 2's `promise_updates`. Not done: settling a KPI from `segment_mix` or
+`key_numbers` (the KPI-to-segment mapping needs its own rule; NOT_REPORTED covers it meanwhile). Check on real data: T13.
 
 ## T6 · cloud · DONE — content faults the cloud fixes in code now
 
@@ -252,3 +282,11 @@ PDF of the same filing; when the PDF prints it, use the PDF's value and note it 
 the XBRL value. `xbrl.confirm` / `appears_in` already test whether figures appear in the text, and could do this per
 figure rather than per file. For memory's seed (no PDF), XBRL only within the company's basis. Owner's idea; the laptop
 can measure how often each case occurs across the universe before it is built.
+
+**Cloud's answer (2026-10-20):** agreed, in two steps. The three measured cases are now handled at their root without a PDF
+read (zero fillers dropped and taken from the standalone file; one basis per figure; RoA annualised), so what is left for
+P-L1 is the general case: an XBRL figure more than 1% from the statement's own printed figure. Step 1 (laptop, after round
+7, no code): for the round-7 companies and 30 random universe companies, compare each results card's XBRL revenue, PAT
+and EBITDA with the PDF's printed figure (`xbrl.appears_in` on the cached text) and count the misses by cause. Step 2
+(cloud): if misses are more than ~1 in 100 figures, build the per-figure check (PDF value used and noted on the card when
+the PDF prints it; XBRL kept when it does not). Not before round 7 ends, so the round measures one code.

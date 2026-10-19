@@ -192,3 +192,31 @@ def test_nse_pacing_is_three_to_five_seconds_unless_a_bulk_load_sets_a_range(mon
     for bad in ("0.1,0.2", "2", "fast", "3,1"):       # never faster than a second, never malformed
         monkeypatch.setenv("NSE_PAUSE_SECONDS", bad)
         assert pause_from_env() == (3.0, 5.0)
+
+
+def test_a_standalone_only_quarter_is_not_seeded_beside_consolidated_ones_and_leaves_memory():
+    """Heritage (T5, 2026-10-20): NSE listed only a standalone re-filing for Q4FY25 and Q2FY26; the seed put its PAT
+    (20.51) beside five consolidated sources (38.17), and a card said PAT +16.7% YoY where it fell 37%."""
+    seed_mod._nse_rows.cache_clear()
+
+    def xml(basis, start, end, pat):
+        return (GI_XML.decode().replace(">Standalone<", f">{basis}<").replace("2026-07-01", start).replace("2026-09-30", end)
+                .replace("9464000000", str(pat))).encode()
+
+    cons, alone = "https://nse/cons.xml", "https://nse/alone.xml"
+    rows = [ResultsFiling(period="Quarterly", consolidated=True, audited="Audited", filed_at="2026-10-14", xbrl_url=cons,
+                          is_bank=False, period_end="2026-09-30", taxonomy="GI"),
+            ResultsFiling(period="Quarterly", consolidated=False, audited="Audited", filed_at="2026-07-14", xbrl_url=alone,
+                          is_bank=False, period_end="2026-06-30", taxonomy="GI")]
+    nse = Nse(rows, {cons: xml("Consolidated", "2026-07-01", "2026-09-30", 9_464_000_000),
+                     alone: xml("Standalone", "2026-04-01", "2026-06-30", 2_051_000_000)})
+    sink, stats = Sink(), SeedStats()
+    # an earlier seed had put the standalone quarter in
+    sink.dossiers["519552"] = {"financial_metrics": [{"metric": "pat", "period": "Q1FY27", "value": 205.1, "unit": "INR_CR",
+                                                      "as_of": "2026-07-14T18:00:00+05:30",
+                                                      "source_news_id": "xbrl:res:519552:Q1FY27"}]}
+    seed_results(sink, None, "519552", "Heritage Foods", "2025-01-01", None, stats, company={}, nse=nse, symbol="HERITGFOOD")
+    periods = {m["period"] for m in sink.dossiers["519552"]["financial_metrics"]}
+    assert "Q2FY27" in periods and "Q1FY27" not in periods
+    pat = next(m for m in sink.dossiers["519552"]["financial_metrics"] if m["metric"] == "pat")
+    assert pat.get("basis") == "CONSOLIDATED"

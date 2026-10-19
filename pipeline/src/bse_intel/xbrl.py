@@ -158,6 +158,8 @@ class XbrlResult:
     balance_sheet: BalanceSheet | None = None
     ownership: Ownership | None = None
     confirmed: bool = True
+    template: str = ""                          # the SEBI template filed on: INDAS, NBFC, BANKING, GI, LI
+    ratio_basis: str | None = None              # STANDALONE when a consolidated bank file's ratios came from it
 
     def table(self) -> str:
         """The figures as text for the Pass 2 prompt (and for grounding)."""
@@ -170,7 +172,8 @@ class XbrlResult:
         for m in self.metrics:
             unit = " ₹/share" if m.unit == "INR" else " %" if m.unit == "PCT" else " Cr"
             change = "".join(f", {label} {v:+.1f}%" for label, v in (("YoY", m.yoy_pct), ("QoQ", m.qoq_pct)) if v is not None)
-            lines.append(f"- {m.metric} {m.period}: {m.value:g}{unit}{change}")
+            basis = " (standalone)" if self.ratio_basis and m.metric in BANK_RATIOS else ""
+            lines.append(f"- {m.metric} {m.period}{basis}: {m.value:g}{unit}{change}")
         if self.balance_sheet and not self.balance_sheet.is_empty():
             b = self.balance_sheet
             lines.append(f"- balance sheet {b.period}: " + ", ".join(
@@ -264,6 +267,45 @@ def period_label(info: dict) -> str | None:
 _TAXONOMY = re.compile(rb"IntegratedFinance_(\w+)")
 
 
+BANK_RATIOS = ("gnpa_pct", "nnpa_pct", "roa_pct")
+
+
+def _bank_ratio_fillers(values: dict) -> None:
+    """A bank's consolidated file carries 0 for gross NPA, net NPA and RoA alike (SBI Q1FY27, HDFC Bank Q2FY27, IDFC
+    First Q1FY27; measured 2026-10-20, docs/SOURCES.md): a filler, not a value, so a period whose bank ratios are all
+    0 keeps none of them ("gross NPA 0%" on a card otherwise). A single 0 beside real ratios (a net NPA of nil) stays."""
+    for label in {p for m, p in values if m in BANK_RATIOS}:
+        present = [values[(m, label)] for m in BANK_RATIOS if (m, label) in values]
+        if present and all(v == 0 for v in present):
+            for m in BANK_RATIOS:
+                values.pop((m, label), None)
+
+
+_YTD_MONTHS = {"H1": 6, "H2": 6, "9M": 9, "FY": 12}
+
+
+def _annualise_roa(values: dict, ends: dict) -> None:
+    """Most banks file RoA annualised (UCO, PSB and KVB: the quarter equals the half-year); HDFC Bank's Q2FY27 file
+    has 0.45% for the quarter beside 0.91% for the half-year, the period's own return (measured 2026-10-20). When a
+    file's quarter is about its share of a longer period's figure, the whole file is un-annualised: each RoA is put
+    on a yearly basis, so banks compare. A file with the quarter alone is left as filed (no way to tell)."""
+    quarter = max((p for m, p in values if m == "roa_pct" and p.startswith("Q")), key=lambda p: ends.get(p) or date.min,
+                  default=None)
+    if quarter is None or not values.get(("roa_pct", quarter)):
+        return
+    for (metric, label), longer in list(values.items()):
+        months = next((n for k, n in _YTD_MONTHS.items() if label.startswith(k)), None)
+        if metric != "roa_pct" or not months or not longer or ends.get(label) != ends.get(quarter):
+            continue
+        share = values[("roa_pct", quarter)] / longer
+        if abs(share - 3 / months) <= 0.25 * 3 / months and share < 0.8:
+            for (m, p) in list(values):
+                n = 3 if p.startswith("Q") else next((x for k, x in _YTD_MONTHS.items() if p.startswith(k)), None)
+                if m == "roa_pct" and n:
+                    values[(m, p)] *= 12 / n
+            return
+
+
 def taxonomy(data: bytes) -> str:
     """Which SEBI template this instance was filed on: INDAS, NBFC, BANKING, GI or LI ("" if it says)."""
     m = _TAXONOMY.search(data[:8000])
@@ -287,7 +329,32 @@ def parse(data: bytes) -> XbrlResult | None:
     tags = {name: metric for name, metric in tags.items() if metric}
     if any("Shareholding" in n or "Shareholder" in n for n in names) and not names & set(tags):
         return _shareholding(facts, contexts)
-    return _results(facts, contexts, units, text_facts, tags)
+    result = _results(facts, contexts, units, text_facts, tags)
+    if result:
+        result.template = taxonomy(data)
+    return result
+
+
+def needs_standalone_bank_ratios(result: "XbrlResult | None") -> bool:
+    """A bank's consolidated file without its asset-quality ratios for the quarter (SBI, HDFC Bank and IDFC First file
+    0 there, dropped as fillers): RBI states them for the bank, so they come from its standalone file."""
+    return bool(result and result.kind == "RESULTS" and result.template == "BANKING" and result.basis == "CONSOLIDATED"
+                and not any(m.metric in BANK_RATIOS and m.period == result.period for m in result.metrics))
+
+
+def add_bank_ratios(result: "XbrlResult", standalone: "XbrlResult | None") -> int:
+    """The standalone file's bank ratios added to a consolidated result, for the same periods (the table says so).
+    Returns how many were added."""
+    if not standalone or standalone.basis != "STANDALONE":
+        return 0
+    have = {(m.metric, m.period) for m in result.metrics}
+    periods = {m.period for m in result.metrics}
+    added = [m for m in standalone.metrics
+             if m.metric in BANK_RATIOS and m.period in periods and (m.metric, m.period) not in have]
+    result.metrics += added
+    if added:
+        result.ratio_basis = "STANDALONE"
+    return len(added)
 
 
 def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = None) -> XbrlResult | None:
@@ -342,6 +409,8 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
         gross, net = values.get(("gnpa_pct", label)), values.get(("nnpa_pct", label))
         if gross is not None and net is not None and net > gross + 0.005:
             values.pop(("gnpa_pct", label)), values.pop(("nnpa_pct", label))
+    _bank_ratio_fillers(values)
+    _annualise_roa(values, ends)
     # EBITDA = PBT + finance cost + depreciation - other income (exceptional items added back)
     for label in {p for _, p in values}:
         parts = [values.get((m, label)) for m in ("pbt", "finance_cost", "depreciation")]

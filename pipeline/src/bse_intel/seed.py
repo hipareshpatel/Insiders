@@ -24,7 +24,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from . import xbrl as xbrl_fast_path
-from .dossier import merge, new_dossier
+from .dossier import forget_source, merge, new_dossier
 from .models import Filing, Pass2Output
 from .nse import SourceBlockedError
 from .periods import canonical_period
@@ -149,6 +149,18 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
                     log.info("seed %s %s: BSE's archive did not list this quarter, NSE did (%s)",
                              scrip, period, row.taxonomy or "template not stated")
 
+    # A company that files consolidated results keeps that basis: a quarter NSE lists only standalone (Heritage's
+    # re-filed Q4FY25 and Q2FY26, T5 2026-10-20) is left to the cards rather than set beside consolidated quarters
+    if any(result.basis == "CONSOLIDATED" for _, _, result, _ in found.values()):
+        dropped = [p for p, (_, _, result, _) in found.items() if result.basis == "STANDALONE"]
+        for period in dropped:
+            log.info("seed %s %s: standalone file only, the company files consolidated; left to the cards", scrip, period)
+            stats.skipped += 1
+            found.pop(period)
+        # and out of memory, where an earlier seed put it
+        dossier = sink.get_dossier(scrip) if dropped else None
+        if dossier is not None and any([forget_source(dossier, f"xbrl:res:{scrip}:{period}") for period in dropped]):
+            sink.put_dossier(scrip, dossier)
     for period, (filed_on, url, parsed, _) in found.items():
         others = [m for other, (_, _, result, _) in found.items() if other != period for m in result.metrics]
         if xbrl_fast_path.fix_scale(parsed, others, scrip):
@@ -176,7 +188,7 @@ def _write_results(sink, scrip: str, name: str, company: dict | None, period: st
     if parsed.balance_sheet and not parsed.balance_sheet.is_empty():
         out.dossier_delta.balance_sheet = parsed.balance_sheet
     dossier = sink.get_dossier(scrip) or new_dossier(filing, company or {})
-    sink.put_dossier(scrip, merge(dossier, out, filing, None, now_iso()))
+    sink.put_dossier(scrip, merge(dossier, out, filing, None, now_iso(), basis=parsed.basis))
     stats.results_periods += 1
     log.info("seed %s %s: %d figures from %s (%s)", scrip, period, len(parsed.metrics), url.rsplit("/", 1)[-1],
              parsed.basis or "basis not stated")

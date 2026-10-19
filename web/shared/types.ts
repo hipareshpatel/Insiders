@@ -393,7 +393,7 @@ export interface Dossier {
     /** Quarterly governance XBRL (governance_memory.py): board, flags, penalties, related-party loans. */
     quarters?: Record<string, unknown>[] };
   predictions?: { id: string; kpi: string; metric: string; period: string; value: number; comparison: string;
-    status: "OPEN" | "MET" | "MISSED"; actual?: number; created_on: string; resolved_on?: string }[];
+    status: "OPEN" | "MET" | "MISSED" | "NOT_REPORTED"; actual?: number; created_on: string; resolved_on?: string }[];
   updated_at: string | null;
   pledges?: { events: PledgeEvent[]; summary?: { encumbered_pct: number | null; promoters: number; as_of: string } };
   trade_remedies?: TradeRemedy[];

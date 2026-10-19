@@ -289,7 +289,10 @@ export function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
   const identity = dossier?.identity;
   const owners = dossier?.ownership ?? [];
   const auditor = dossier?.governance?.auditor;
-  const predictions = [...(dossier?.predictions ?? [])].reverse().slice(0, 8);
+  // one open target per metric and period, the latest (memory stored before 2026-10-20 can hold several)
+  const predictions = [...(dossier?.predictions ?? [])].reverse()
+    .filter((p, i, all) => p.status !== "OPEN" || all.findIndex((q) => q.status === "OPEN" && q.metric === p.metric && q.period === p.period) === i)
+    .slice(0, 8);
   // the group, plants and brands only: memory written before the pipeline checked the type holds a case's other
   // parties too (Meta, Google, a ministry; laptop test, 2026-10-19). The same rule as dossier.group_entity.
   const entities = (identity?.entities ?? []).filter((e) => e.type && GROUP_TYPE.test(e.type));
@@ -334,7 +337,7 @@ export function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
                   <span className="num block text-[12px] text-ink-3">{p.period} · target {p.comparison} {p.value}{p.actual != null ? ` · actual ${p.actual}` : ""}</span>
                 </span>
                 <Badge className={p.status === "MET" ? "bg-pos-soft text-pos" : p.status === "MISSED" ? "bg-neg-soft text-neg" : "bg-surface-2 text-ink-2"}>
-                  {p.status === "OPEN" ? "Open" : p.status === "MET" ? "Met" : "Missed"}
+                  {p.status === "OPEN" ? "Open" : p.status === "MET" ? "Met" : p.status === "NOT_REPORTED" ? "Not reported" : "Missed"}
                 </Badge>
               </li>
             ))}
@@ -464,7 +467,8 @@ function PromiseTracker({ dossier }: { dossier: Dossier | null }) {
                         <div className="text-[11px] text-ink-3">{titleCase(g.source_type)}</div></td>
                       <td className="num whitespace-nowrap px-3 py-2.5 text-ink-2">{istDate(g.given_on)}</td>
                       <td className={cn("num whitespace-nowrap px-3 py-2.5", overdue ? "font-semibold text-neg" : "text-ink-2")}>{g.due ?? "—"}{overdue ? " · overdue" : ""}</td>
-                      <td className="px-3 py-2.5"><Badge className={STATUS_CHIP[g.status] ?? STATUS_CHIP.OPEN}>{titleCase(g.status)}</Badge></td>
+                      {/* past its deadline a promise is not "on track": delivered, missed, or not reported yet */}
+                      <td className="px-3 py-2.5"><Badge className={overdue ? "bg-warn-soft text-warn" : STATUS_CHIP[g.status] ?? STATUS_CHIP.OPEN}>{overdue ? "Not reported" : titleCase(g.status)}</Badge></td>
                       <td className="px-5 py-2.5 text-ink-2">{last ? <>{last.evidence} <span className="num text-[11px] text-ink-3">({istDate(last.as_of)})</span></> : "—"}</td>
                     </tr>
                   );

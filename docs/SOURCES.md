@@ -224,4 +224,8 @@ every list call answered, 241 of 249 with an attachment link. Not measured here:
   a connection now and then (2 RemoteProtocolErrors in ~60 requests); a retry answers. One anti-dumping list page end
   to end: 15 cases, 15 notices read, 211 s; applicants found on 14 (the 15th notice names none on its first pages),
   5 of them listed companies (GSFC, Reliance, DCW, ITC, GNFC). Notices misspell names ("Laxmi Organics Industries
-  Limited") and use a company's private-limited name from before its listing (Clean Science).
+  Limited") and use a company's private-limited name from before its listing (Clean Science). All three lists, pages 0-2 (2026-10-19,
+  `dgtr.sync`): 44 cases, 44 case pages and 44 notices read in 703 s, no errors; applicants named in 33, 13 links to 9
+  listed companies (GSFC, Reliance x2, DCW x4, Epigral, ITC, Laxmi Organic, GNFC, Clean Science, UPL); the
+  countervailing and safeguard lists have 1 page each (14 and 15 cases). To check by hand: CPVC's 2026 notice names
+  Epigral as an applicant where the 2019 one had it as a supporter (TASKS T10).

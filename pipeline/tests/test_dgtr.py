@@ -64,6 +64,8 @@ def test_case_list_reads_each_case_and_the_last_page():
     assert first["status"] == "Ongoing Investigation"
     assert first["countries"] == "China PR, Russia, Thailand and United States of America"
     assert (first["investigation"], first["proceeding"]) == ("Anti-dumping Investigation", "Original Investigation")
+    assert dgtr._product_from_title("Initiation of Safeguard (Quantitative Restrictions) investigation concerning imports "
+                                    "of Soda Ash into India") == "Soda Ash"
     assert dgtr.last_page(LIST_PAGE) == 41 and dgtr.last_page("<p>no pager</p>") == 0
 
 
@@ -235,6 +237,8 @@ def test_live_run_classes_2026_10_19():
     assert dgtr.named_companies("DGTR - An application has been filed by Hindusthan Chemical Company and United "
                                 "Phosphorous Limited.") == {"Hindusthan Chemical Company": "APPLICANT",
                                                             "United Phosphorous Limited": "APPLICANT"}
+    assert dgtr.named_companies("filed by UPL Limited and DGTR Superform Chemistries Limited.") == {
+        "UPL Limited": "APPLICANT", "Superform Chemistries Limited": "APPLICANT"}
     # OCR reads "M/s" as "Mis"
     assert dgtr.named_companies("Mis Clean Science and Technology Private Limited (hereinafter referred to as the "
                                 "applicant) has filed") == {"Clean Science and Technology Private Limited": "APPLICANT"}

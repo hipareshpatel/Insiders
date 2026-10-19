@@ -64,7 +64,7 @@ def parse_case_list(page: str) -> list[dict]:
 
 
 def _product_from_title(title: str) -> str:
-    m = re.search(r"(?i)imports? of\s+(.+?)\s+(?:originating|from|exported)\b", title)
+    m = re.search(r"(?i)imports? of\s+(.+?)\s+(?:originating|from|exported|into)\b", title)
     return (m.group(1) if m else title).strip(" .\"'‘’“”")
 
 
@@ -167,6 +167,7 @@ def named_companies(text: str) -> dict[str, str]:
 
 def _clean(name: str) -> str:
     name = re.sub(r"^(?:(?:the|and|by|of|on behalf of|apart from|namely)\s+)+", "", name.strip(" ,.;:-"), flags=re.I)
+    name = re.sub(r"^DGTR\b[\s-]*", "", name)   # the notice's page header, read into the line by OCR
     name = re.sub(rf"^{_MS}", "", name)
     # a clause the name ran into ("DGTR - An application has been filed by X Limited"): no name
     if re.search(r"\b(?:has|have|been|filed|application|referred|hereinafter)\b", name):

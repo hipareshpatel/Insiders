@@ -13,6 +13,11 @@ def filing(news_id: str, filed_at: str, scrip: str = "999001") -> Filing:
                   filed_at=filed_at, filing_date=filed_at[:10])
 
 
+def shp(news_id: str, filed_at: str) -> Filing:
+    """A shareholding-pattern filing: the only kind whose card may set memory's ownership."""
+    return filing(news_id, filed_at).model_copy(update={"headline": "Shareholding Pattern for the quarter"})
+
+
 def output(**delta) -> Pass2Output:
     return Pass2Output.model_validate({
         "is_material": True, "event_type": delta.pop("event_type", "RESULTS"),
@@ -75,8 +80,11 @@ def test_a_projected_or_impossible_shareholding_is_not_stored():
     assert merge(d, projected, filing("n1", Q1), "LOW", "now")["ownership"] == []
     impossible = output(event_type="RESULTS", ownership={"period": "Q1FY27", "promoter_pct": 85, "fii_pct": 10, "dii_pct": 40})
     assert merge(d, impossible, filing("n1", Q1), "LOW", "now")["ownership"] == []
-    real = output(event_type="RESULTS", ownership={"period": "Q1FY27", "promoter_pct": 58.96, "fii_pct": 0.27, "dii_pct": 12.1})
-    assert merge(d, real, filing("n1", Q1), "LOW", "now")["ownership"][0]["promoter_pct"] == 58.96
+    real = output(event_type="SHAREHOLDING", ownership={"period": "Q1FY27", "promoter_pct": 58.96, "fii_pct": 0.27, "dii_pct": 12.1})
+    assert merge(d, real, shp("n1", Q1), "LOW", "now")["ownership"][0]["promoter_pct"] == 58.96
+    # a holding a card about something else writes is not memory's (Clean Max's "20.02% pledged", round 6)
+    elsewhere = output(event_type="FUNDRAISE", ownership={"period": "Q1FY27", "promoter_pct": 49.42, "pledge_pct": 20.02})
+    assert merge(d, elsewhere, filing("n1", Q1), "LOW", "now")["ownership"] == []
 
 
 def test_merge_stamps_provenance_and_is_idempotent():
@@ -374,12 +382,12 @@ def test_monthly_volume_streak_and_quarter_preview():
 
 
 def test_auditor_qualification_and_ownership_shift():
-    d = merge(new_dossier(filing("s1", Q1)), output(ownership={"period": "Jun-2026", "promoter_pct": 55, "fii_pct": 5, "dii_pct": 4,
-                                                               "retail_holders": 40000}), filing("s1", Q1), "LOW", "now")
-    out = output(ownership={"period": "Sep-2026", "promoter_pct": 55.5, "fii_pct": 6, "dii_pct": 4.5, "retail_holders": 36000},
+    d = merge(new_dossier(filing("s1", Q1)), output(event_type="SHAREHOLDING", ownership={"period": "Jun-2026", "promoter_pct": 55, "fii_pct": 5, "dii_pct": 4,
+                                                               "retail_holders": 40000}), shp("s1", Q1), "LOW", "now")
+    out = output(event_type="SHAREHOLDING", ownership={"period": "Sep-2026", "promoter_pct": 55.5, "fii_pct": 6, "dii_pct": 4.5, "retail_holders": 36000},
                  auditor={"name": "X & Co", "opinion": "qualified", "note": "₹42 Cr receivable"})
-    after = merge(d, out, filing("s2", Q2), "HIGH", "now")
-    kinds = {s["type"]: s for s in compute(d, after, out, filing("s2", Q2), {}, every=True)}
+    after = merge(d, out, shp("s2", Q2), "HIGH", "now")
+    kinds = {s["type"]: s for s in compute(d, after, out, shp("s2", Q2), {}, every=True)}
     assert kinds["OWNERSHIP_SHIFT"]["severity"] == "POSITIVE" and kinds["AUDIT_FLAG"]["severity"] == "WARNING"
 
 

@@ -742,7 +742,13 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             entities[key] = {"name": name[:120], "type": e.type, "as_of": as_of, "source_news_id": news_id}
     identity["entities"] = list(entities.values())[-20:]
 
-    if delta.ownership and any(v is not None for k, v in delta.ownership.model_dump().items() if k != "period") \
+    # Only a shareholding pattern sets memory's ownership: Clean Max's NCD-security and share-purchase cards wrote a
+    # "20.02% pledged" holding (one as "SEP-2026"), and every later card warned of a promoter pledge that no shareholding
+    # file shows (round 6, 2026-10-19). The patterns' own XBRL comes in through seed.file_shareholding.
+    shareholding = "shareholding" in f"{filing.headline or ''} {filing.subject or ''}".lower() \
+        or output.event_type == "SHAREHOLDING"
+    if shareholding and delta.ownership \
+            and any(v is not None for k, v in delta.ownership.model_dump().items() if k != "period") \
             and _real_holding(delta.ownership):
         period = _period(delta.ownership.period)
         rows = [o for o in d.get("ownership", []) if o["period"] != period]

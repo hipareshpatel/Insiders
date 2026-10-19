@@ -204,3 +204,8 @@ def test_a_group_with_minority_interests_is_given_its_shareholders_profit():
     out = _model_card()
     results_card.build(out, tagged, "Bajaj Finserv Limited")
     assert out.card.headline == "Bajaj Finserv Q1FY27: revenue ₹38,000 Cr, net profit to shareholders ₹3,132 Cr"
+    # the shareholders' share as a loss is written as a loss, like the group's own profit line
+    tagged.metrics[2] = FinancialMetric(metric="pat_owners", period="Q1FY27", value=-120.0)
+    out = _model_card()
+    results_card.build(out, tagged, "Bajaj Finserv Limited")
+    assert out.card.headline == "Bajaj Finserv Q1FY27: revenue ₹38,000 Cr, net loss to shareholders ₹120 Cr"

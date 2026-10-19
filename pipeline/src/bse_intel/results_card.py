@@ -62,6 +62,8 @@ def _profit_words(tagged, m) -> tuple[str, str, str]:
     """(label, amount, year-ago note) for the profit line: a loss is written as a loss, never "net profit ₹-12 Cr",
     and a change against a year-ago loss, which no percentage can carry, says what it was."""
     label, amount = ("Net loss", _cr(-m.value)) if m.value < 0 else ("Net profit", _cr(m.value))
+    if m.metric == "pat_owners":
+        label += " to shareholders"
     note = ""
     before = _year_ago(tagged, m) if m.yoy_pct is None else None
     if before is not None and (before.value < 0 or m.value < 0):
@@ -259,7 +261,7 @@ def build(out, tagged, company_name: str | None, history=None) -> list[str]:
     top_word = "revenue" if top.metric == "revenue" else "interest earned" if top.metric == "interest_earned" else "total income"
 
     def phrase(m, word: str) -> str:
-        if m.metric == "pat":
+        if m.metric in ("pat", "pat_owners"):
             label, amount, note = _profit_words(tagged, m)
             change = f" ({_pct(m.yoy_pct)} YoY)" if m.yoy_pct is not None else f" ({note})" if note else ""
             return f"{label.lower()} {amount}{change}"

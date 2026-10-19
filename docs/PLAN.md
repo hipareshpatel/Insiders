@@ -73,6 +73,7 @@ when the site is shared. Built for it:
   `card_verdicts` (migration 0010) with the card as judged. `python -I -X utf8 scripts/owner_verdicts.py`
   tallies them like a blind round (WRONG share of published and of held, per event type, every note); each
   WRONG goes through the routine in docs/DATA_QUALITY.md.
+- **Kept out of search engines** while private: `robots.txt` disallows everything, the page carries `noindex, nofollow` and the API `X-Robots-Tag: noindex`. Remove all three when the site is shared (`web/public/robots.txt`, `web/index.html`, `web/worker/public.ts`).
 - **Unshared is not private.** Anyone who finds the workers.dev address can read the published cards (not the
   held ones, the verdicts or the owner routes). To lock the whole site, Cloudflare Access (free for up to 50
   users) can put an email sign-in in front of it: optional, owner's choice.

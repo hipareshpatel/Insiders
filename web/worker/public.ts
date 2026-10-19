@@ -93,6 +93,7 @@ api.use("*", async (c, next) => {
     if (hit) return hit;
   }
   await next();
+  c.res.headers.set("X-Robots-Tag", "noindex");   // private launch: the API stays out of search engines too
   if (c.req.method !== "GET" || c.res.status !== 200 || isPrivate) return;
   if (!c.res.headers.has("Cache-Control")) c.res.headers.set("Cache-Control", "public, max-age=30, s-maxage=60");
   if (cache) {

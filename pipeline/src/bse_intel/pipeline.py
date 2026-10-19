@@ -174,6 +174,7 @@ class CardChecks:
     # were held this way on 2026-10-17 with every figure verified.
     quote_style: list[str] = field(default_factory=list)
     held: list[str] = field(default_factory=list)   # reasons a second model cannot fix: garbled scan, human hold
+    form: list[str] = field(default_factory=list)   # the card's shape: a headline that does not say what happened
 
     @property
     def needs_review(self) -> bool:
@@ -184,7 +185,7 @@ class CardChecks:
     @property
     def fixable(self) -> bool:
         return (self.score < DEFAULT_THRESHOLD or self.quant.mismatches > 0 or bool(self.claims)
-                or bool(self.headline_ungrounded) or bool(self.scale) or bool(self.quotes))
+                or bool(self.headline_ungrounded) or bool(self.scale) or bool(self.quotes) or bool(self.form))
 
     @property
     def only_style(self) -> bool:
@@ -202,7 +203,8 @@ class CardChecks:
 
     @property
     def issue_count(self) -> int:
-        return len(self.ungrounded) + self.quant.mismatches + len(self.claims) + len(self.scale) + len(self.quotes)
+        return (len(self.ungrounded) + self.quant.mismatches + len(self.claims) + len(self.scale) + len(self.quotes)
+                + len(self.form))
 
     def problems(self) -> list[str]:
         out = []
@@ -213,6 +215,7 @@ class CardChecks:
         out += [f"Quantified impact \"{q['label']}\": {q.get('check_note')}" for q in self.quant.items if q.get("check") == "MISMATCH"]
         out += [f"Claim not supported by the sources: \"{c}\"" for c in self.claims]
         out += [f"Figures that do not fit (check the statement's unit and column): {s}" for s in self.scale]
+        out += self.form
         out += [f"Give each fact the filing's own sentence as its quote: {q}" for q in self.quotes]
         out += list(self.held)
         return out
@@ -907,6 +910,29 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
     return event_type
 
 
+# A headline says who did what: "WaveRise" (the acquirer's name from the exchange's subject line) was Novartis India's
+# whole headline for a change of control (live review, 2026-10-20). Four words is the shortest that does.
+HEADLINE_MIN_WORDS = 4
+
+
+def headline_form(out: Pass2Output) -> list[str]:
+    """A headline too short to say what happened, as a problem for the second provider to rewrite."""
+    headline = ((out.card.headline if out.card else "") or "").replace("**", "").strip()
+    if out.card is not None and len(headline.split()) < HEADLINE_MIN_WORDS:
+        return [f'Headline "{headline}" does not say what happened: write who did what, with the main figure']
+    return []
+
+
+# A director or KMP appointed or re-appointed, in a card's own headline. A board outcome carrying only that came as
+# OTHER and escaped D30 (CSB Bank re-appointing its MD & CEO, live review 2026-10-20); as MANAGEMENT_CHANGE it gets
+# no card unless the MD, CEO or CFO is leaving (`top_exit`).
+APPOINTMENT = re.compile(
+    r"\b(re-?appoint\w*|appoint\w*|re-?designat\w*)\b.{0,100}\b(director|managing director|\bmd\b|chief executive|"
+    r"\bceo\b|chief financial|\bcfo\b|company secretary|compliance officer|key managerial|\bkmp\b|chairman|chairperson)"
+    r"|\b(director|managing director|\bmd\b|\bceo\b|\bcfo\b|company secretary|chairman|chairperson)\b.{0,60}"
+    r"\b(re-?appoint\w*|appoint\w*)\b", re.I)
+
+
 def check_quotes(out: Pass2Output, text: str, news_id: str = "", unit: int | None = None, reading: str = "",
                  memory: str = "") -> tuple[list[str], list[str], list[str], list[str]]:
     """Every what_happened fact carries the filing's own sentence, checked in code.
@@ -1018,6 +1044,8 @@ def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None, r
             # copies is found and the card's figures are checked against that (gate.quote_near).
             near = gate.quote_near(quote, text, reading)
             if near is None:
+                near = _table_line_quoted(quote, text)
+            if near is None:
                 problems.append(f'{kind} "{label}" quotes a sentence that is not in the filing')
                 continue
             elsewhere.append(f'{kind} "{label}" quotes the filing with small differences')
@@ -1050,6 +1078,25 @@ def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None, r
             problems.append(f'{kind} "{label}" states {", ".join(dict.fromkeys(missing))[:90]}, '
                             "which its own quote does not")
     return problems, unquoted, elsewhere
+
+
+# A line of the machine-tagged XBRL table as `XbrlResult.table` writes it, and the changes a model adds after it
+_TABLE_LINE = re.compile(r"^\s*-?\s*([a-z_]+ (?:Q[1-4]|H[12]|9M)?FY\d{2}: -?[\d.,]+ ?(?:Cr|%|₹/share))\s*(.*)$")
+_ADDED_CHANGES = re.compile(r"^(?:,\s*(?:YoY|QoQ)\s*[+-]?[\d.]+\s*%)+\s*$")
+
+
+def _table_line_quoted(quote: str, text: str) -> str | None:
+    """The XBRL table's own line when a quote is that line with a YoY / QoQ change added after it, else None.
+
+    The table prints a computed line such as EBITDA with no change beside it, and the model quotes the line with
+    the change it worked out ("- ebitda Q2FY26: 23.88 Cr, QoQ -12.3%"). Novartis India's Q2FY26 card was held
+    for that alone with every figure right (live review, 2026-10-20). The figure still answers to the line;
+    a change is checked against the filing elsewhere (grounding), so only a change may follow it."""
+    m = _TABLE_LINE.match(quote or "")
+    if not m or not _ADDED_CHANGES.match(m.group(2) or ","):
+        return None
+    line = m.group(1)
+    return line if gate.quote_found(line, text) else None
 
 
 def _quoted_claims(card) -> list[tuple[str, str, str, str | None, bool]]:
@@ -2451,6 +2498,7 @@ class Pipeline:
             found.scale += period_mixups(candidate, tagged)
             found.scale += gate.stale_columns(_card_texts(candidate), filed_text)
             found.scale += foreign_as_rupees(_card_texts(candidate), filed_text)
+            found.form += headline_form(candidate)
             if not tagged and "RESULTS" in (event_type, candidate.event_type):
                 # With no XBRL the reading of the statement is all there is, so it has to add up: 27 of
                 # 68 results cards had no XBRL behind them. Reported for the second provider to fix, with
@@ -2487,6 +2535,8 @@ class Pipeline:
         elif out.event_type == "OTHER" and event_type != "OTHER":
             out.event_type = event_type  # Pass 2 left it open; Pass 1 had decided
         corrected = event_type_rules(out.event_type, filing, text, tagged)
+        if corrected == "OTHER" and out.card is not None and APPOINTMENT.search(out.card.headline or ""):
+            corrected = "MANAGEMENT_CHANGE"   # a board outcome that only (re)appoints a director or KMP (D30)
         if corrected != out.event_type:
             log.info("event type for %s: %s -> %s (rules)", filing.news_id, out.event_type, corrected)
             out.event_type = corrected
@@ -2826,6 +2876,11 @@ class Pipeline:
         self._exec("companies_upsert", [o.company for o in outcomes if o.company])
         cards = [o.card for o in outcomes if o.card]
         self._exec("cards_upsert", cards)
+        # A filing read again that now ends without a card leaves none behind: cards_upsert replaces a card but never
+        # removes one, so NHPC's restored unit (now not material) and LTM's partnership kept their old cards on the
+        # site after a re-run (live review, 2026-10-20). On a first reading there is no card and nothing is written.
+        self._exec("cards_delete", [{"news_id": o.update["news_id"]} for o in outcomes if not o.card
+                                    and o.update.get("status") in ("NOT_MATERIAL", "DUPLICATE")])
         self._archive_cards(cards)
         self._exec("catalysts_upsert", [c for o in outcomes for c in o.catalysts])
         self._exec("filings_update", [o.update for o in outcomes])

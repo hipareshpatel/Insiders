@@ -1042,3 +1042,75 @@ def test_a_later_quarter_named_in_the_covering_letter_is_not_the_statements_quar
             "48 hours after the results for the quarter ended 31 December 2026 are declared.")
     assert statement_quarter(text, "2026-11-08T17:30:00+05:30") == "Q2FY27"
     assert statement_quarter(text) == "Q3FY27"          # without the filing date the note's quarter would win
+
+
+def test_a_table_line_quoted_with_its_change_added():
+    """The XBRL table prints a computed line with no change beside it, and the model quotes the line with the
+    change it worked out: Novartis India's Q2FY26 card was held for "- ebitda Q2FY26: 23.88 Cr, QoQ -12.3%" with
+    every figure right (live review, 2026-10-20). The figure still answers to the table's line; anything other
+    than a change after it, or a figure the line does not print, still fails."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import check_quoted_numbers
+
+    text = ("Machine-tagged results (XBRL, CONSOLIDATED, ₹ crore unless noted; exact):\n"
+            "- revenue Q2FY26: 90.33 Cr, YoY +3.7%, QoQ +3.2%\n- ebitda Q2FY26: 23.88 Cr\n- ebitda_margin Q2FY26: 26.44 %\n")
+
+    def card(value, quote):
+        return Pass2Output.model_validate({
+            "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q2FY26 results",
+            "card": {"impact_level": "MODERATE", "headline": "Q2FY26 results",
+                     "what_happened": [{"text": "Revenue ₹90.33 Cr", "quote": "- revenue Q2FY26: 90.33 Cr"}],
+                     "key_numbers": [{"label": "EBITDA", "value": value, "quote": quote}]}})
+
+    problems, _, elsewhere = check_quoted_numbers(card("₹23.88 Cr", "- ebitda Q2FY26: 23.88 Cr, QoQ -12.3%"), text)
+    assert problems == [] and elsewhere, "the table's line with a change added is the table's line"
+    problems, _, _ = check_quoted_numbers(card("₹23.88 Cr", "- ebitda Q2FY26: 23.88 Cr, up on lower costs"), text)
+    assert problems and "not in the filing" in problems[0], "words after the line are not a change"
+    problems, _, _ = check_quoted_numbers(card("₹28.40 Cr", "- ebitda Q2FY26: 28.40 Cr, QoQ -12.3%"), text)
+    assert problems, "a figure the table does not print"
+
+
+def test_a_headline_that_does_not_say_what_happened():
+    """Novartis India's change of control was published under the headline "WaveRise", the acquirer's name from the
+    exchange's subject line (live review, 2026-10-20). A headline under four words goes to the second provider."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import headline_form
+
+    def out(headline):
+        return Pass2Output.model_validate({"is_material": True, "event_type": "M_AND_A", "timeline_entry": "x",
+                                           "card": {"impact_level": "HIGH", "headline": headline,
+                                                    "what_happened": [{"text": "x", "quote": "x"}]}})
+
+    assert headline_form(out("WaveRise")) and "does not say what happened" in headline_form(out("WaveRise"))[0]
+    assert headline_form(out("ChrysCapital entities complete Novartis India acquisition")) == []
+
+
+def test_a_board_outcome_that_only_reappoints_is_a_management_change():
+    """CSB Bank's board outcome re-appointing its MD & CEO came as OTHER and escaped D30 (live review, 2026-10-20)."""
+    from bse_intel.pipeline import APPOINTMENT, top_exit
+
+    assert APPOINTMENT.search("CSB Bank reappoints Pralay Mondal as MD & CEO for 3 years from Sep 2025")
+    assert APPOINTMENT.search("Board approves appointment of Ms. Rao as Independent Director")
+    assert APPOINTMENT.search("Company Secretary re-appointed for five years")
+    assert not APPOINTMENT.search("Tata Motors wins ₹500 Cr order from the Ministry of Defence")
+    assert not APPOINTMENT.search("Board appoints statutory auditor and approves dividend of ₹5")
+    # the MD, CEO or CFO leaving keeps its card (D30 amended)
+    assert top_exit("Resignation of Mr. Sharma as Chief Financial Officer") and not top_exit("reappoints MD & CEO")
+
+
+def test_a_filing_read_again_without_a_card_removes_its_old_card():
+    """NHPC's restored unit and LTM's partnership ended NOT_MATERIAL when read again and kept their old cards on
+    the site (live review, 2026-10-20): cards_upsert replaces a card but never removes one."""
+    from types import SimpleNamespace
+
+    from bse_intel.pipeline import Outcome, Pipeline
+
+    calls = []
+    fake = SimpleNamespace(_exec=lambda statement, rows: calls.append((statement, rows)) or len(rows),
+                           _archive_cards=lambda cards: None)
+    outcomes = [Outcome({"news_id": "a", "status": "NOT_MATERIAL"}), Outcome({"news_id": "b", "status": "DUPLICATE"}),
+                Outcome({"news_id": "c", "status": "FAILED"}),
+                Outcome({"news_id": "d", "status": "ANALYZED"}, card={"news_id": "d"})]
+    Pipeline._commit_rows(fake, outcomes)
+    deleted = [r["news_id"] for s, rows in calls if s == "cards_delete" for r in rows]
+    assert deleted == ["a", "b"], "only a filing that ends without a card, and not a failed one (it is tried again)"

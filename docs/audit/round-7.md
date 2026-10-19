@@ -32,6 +32,11 @@ Flash models are out for the day, under the trial writers' rule (at most about 8
 MiniMax and Gemma were planned as trial writers and taken off again before the run (their evening trial failed on
 supply, round-6.md); long documents go to Gemini 3.6 Flash first.
 
+**Started early** (owner, 2026-10-19 20:25 IST, "let's continue our round 7 audit") on the Gemini quota left of the
+Pacific day (about 19 requests on 3 Flash preview, 9 on 3.6, 4 on 3.8, none on 3.7 or 3.5 Flash, about 490 on 3.5 Flash
+Lite), so 3 Flash preview and 3.5 Flash Lite write more of it than a full day would; the per-writer report shows each.
+Writers measured besides Gemini: GLM-4.5 Flash and Nemotron 3.5 Super VL. The scheduled 12:40 start is disabled.
+
 ## Pass marks, set before any processing or review
 
 - **Go-live: WRONG at most 5% of published cards** (owner). Beside it, 15%.

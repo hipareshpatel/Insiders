@@ -62,6 +62,23 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T21 · P1 · laptop · OPEN, right after T19 and T20 — drain the 561 queued filings and put their cards on the site (owner, 2026-10-20)
+
+The System page shows 561 pending and 25 failed (screenshot by the owner, 20 Oct). Nothing on the site analyses them yet,
+by design: `pipeline.yml` runs only from `main` and with `PIPELINE_SCHEDULE = on` (G7), which wait on the accuracy gate.
+So the laptop does it:
+1. `pwsh -File pipeline\scripts\laptop.ps1 process` (5 workers, free routes first; the DeepSeek prepaid route is allowed
+   here, D24: this is backfill, not the daily path). Keep the laptop awake, check the log; fix T18's classes in batches
+   during the run, not by stopping it (owner, 2026-10-16).
+2. The 25 failed: read each one's reason. Requeue the ones that failed on a network error, a quota or the dead local site;
+   list the rest with their reasons in the report.
+3. Re-run JSL's "Chromeni Steels 40% stake" card (Needs review: "formula gives 4.55e-05, card states 45.5"): the
+   quantity check counts "million units" since 222bd2d, so a re-run clears it.
+4. Copy to the live site after every ~100 new cards and at the end (`sync-to-cloud`, as in T15 step 3), and check on
+   /system that the queue falls and "36 cards in 7 days" rises.
+Report: here: cards written, published/held, failures by reason, requests by route, filings an hour, sync times.
+Files you may change: your files (fixes during the run), their tests, this report.
+
 ## T20 · P1 · laptop · OPEN — redeploy the live site with the verified face (owner, 2026-10-20)
 
 After pulling the commit that adds the verified face: `cd web; npm run deploy` (the D1 id is in `wrangler.jsonc`), then

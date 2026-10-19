@@ -2268,8 +2268,9 @@ class Pipeline:
         if out.card is not None and out.event_type != "CONCALL_PRESENTATION":
             out.card.call_read = None  # guidance, tone and transparency describe a call, not other filings
         event_type = out.event_type
-        if event_type in NO_CARD_EVENTS:
-            # director and KMP changes get no card (owner, 2026-10-18); the rule book drops most before any model call
+        if event_type in NO_CARD_EVENTS and not top_exit(f"{filing.headline} {filing.subject} {doc.first_page_text(3000)}"):
+            # director and KMP changes get no card (owner, 2026-10-18), except the MD, CEO or CFO leaving (2026-10-19);
+            # the rule book drops most before any model call
             with self._lock:
                 self.stats.not_material += 1
             return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": event_type,
@@ -2838,6 +2839,16 @@ SECOND_OPINION_MIN_S = 300
 # the same words, and RESULTS has its own one-card-per-quarter rule (D20).
 REPEAT_DAYS = 10  # the window the fast-track repeat check looks back over, as similar_timeline_entry
 NO_CARD_EVENTS = ("MANAGEMENT_CHANGE",)
+# The MD, CEO or CFO leaving keeps a card (owner, 2026-10-19, D30 amended); the same words as the rule book's D30 rule.
+# "Not liable to retire by rotation" in an appointment letter is not an exit.
+_EXIT = r"(resign\w*|cessation|ceas(e|es|ed|ing)\b|step(s|ped|ping)?\s+down|removal|removed|retire(s|d|ment)?\b(?!\s+by\s+rotation)|superannuat\w*|demise|passed away)"
+_ROLE = r"(managing director|\bmd\b|chief executive|\bceo\b|chief financial|\bcfo\b)"
+TOP_EXIT = re.compile(rf"{_EXIT}.{{0,120}}{_ROLE}|{_ROLE}.{{0,120}}{_EXIT}", re.I | re.S)
+
+
+def top_exit(text: str | None) -> bool:
+    """Whether the text says the MD, CEO or CFO is leaving (resigning, ceasing, stepping down, removed, retiring)."""
+    return bool(TOP_EXIT.search(text or ""))
 RESULTS_XBRL_WAIT_MINUTES = 180   # a live NSE results filing waits this long for its XBRL (measured: 5 min - 2 h 40 min)   # owner, 2026-10-18: no cards for director / KMP changes
 ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE", "LITIGATION_REGULATORY", "FUNDRAISE",
                       "RIGHTS_ISSUE", "M_AND_A", "DEBT_RATINGS", "CONCALL_PRESENTATION", "ANNUAL_REPORT")

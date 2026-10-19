@@ -5,7 +5,8 @@ company's earnings, balance sheet, governance, or growth outlook.
 Usually material: financial results; earnings-call transcripts and investor presentations; order
 wins; capex and capacity additions; acquisitions, mergers, demergers; fundraises (QIP, rights,
 preferential, warrants, NCDs); credit-rating actions; a statutory auditor resigning before its
-term ends (the reasons it gives matter most); regulatory actions, penalties, tax demands, USFDA outcomes; significant litigation; dividends,
+term ends (the reasons it gives matter most); the MD, CEO or CFO resigning, ceasing, stepping down,
+being removed or retiring; regulatory actions, penalties, tax demands, USFDA outcomes; significant litigation; dividends,
 buybacks, bonus issues, splits; monthly business or volume updates.
 
 Routine but worth a dated timeline line, with no analysis card (set timeline_only to true): a
@@ -13,10 +14,12 @@ dividend recommendation on its own, a postal ballot or AGM voting result, a prom
 declaration. A pledge created or invoked, or any of these together with results, a fundraise or
 other business is not routine.
 
-Not material, no card and no timeline line: an appointment, re-appointment, resignation, cessation
-or retirement of a director, MD, CEO, CFO, company secretary or other key managerial person; an
-auditor's appointment, re-appointment, rotation or completion of its term. Only an auditor leaving
-before its term ends is material.
+Not material, no card and no timeline line: an appointment or re-appointment of anyone (a director,
+MD, CEO, CFO, company secretary or other key managerial person); the resignation, cessation or
+retirement of a director other than the MD, of a company secretary or of another key managerial
+person other than the CEO and CFO; a director retiring by rotation; an auditor's appointment,
+re-appointment, rotation or completion of its term. Only an auditor leaving before its term ends,
+and the MD, CEO or CFO leaving, are material.
 
 Usually not material: routine compliance certificates; procedural intimations with no new
 information; analyst-meet schedules; small ESOP allotments; clarifications that add nothing;

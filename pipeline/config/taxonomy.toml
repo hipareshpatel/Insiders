@@ -37,7 +37,10 @@ headline = ["\\bresign(ation|ed|s)?\\b", "\\bcessation\\b",
             "\\b(re-?)?appointment of .{0,80}(director|\\bceo\\b|\\bcfo\\b|chief|company secretary|compliance officer|key managerial|\\bkmp\\b)"]
 # A board-meeting outcome may carry other news (pass 2 still gives a director change no card); a vote is a timeline line
 exclude_headline = ["auditor", "financial results", "merger", "amalgamation", "acquisition", "\\bdefault", "insolvency",
-                    "outcome of (the )?board", "board meeting outcome", "postal ballot", "voting results?", "\\b(agm|egm)\\b"]
+                    "outcome of (the )?board", "board meeting outcome", "postal ballot", "voting results?", "\\b(agm|egm)\\b",
+                    # the MD, CEO or CFO leaving keeps a card (owner, 2026-10-19, D30 amended); the same words as
+                    # pipeline.TOP_EXIT, which keeps pass 2 from dropping it as a director change
+                    "(resign\\w*|cessation|ceas(e|es|ed|ing)\\b|step(s|ped|ping)?\\s+down|removal|removed|retire(s|d|ment)?\\b(?!\\s+by\\s+rotation)|superannuat\\w*|demise|passed away).{0,120}(managing director|\\bmd\\b|chief executive|\\bceo\\b|chief financial|\\bcfo\\b)", "(managing director|\\bmd\\b|chief executive|\\bceo\\b|chief financial|\\bcfo\\b).{0,120}(resign\\w*|cessation|ceas(e|es|ed|ing)\\b|step(s|ped|ping)?\\s+down|removal|removed|retire(s|d|ment)?\\b(?!\\s+by\\s+rotation)|superannuat\\w*|demise|passed away)"]
 
 # Auditors rotate by law (Companies Act s.139: one five-year term for an individual, two for a firm), so an appointment,
 # re-appointment or completion of term is routine (owner, 2026-10-18). A resignation before the term ends is the signal
@@ -244,6 +247,11 @@ headline = [
 ]
 exclude_headline = ["intimation", "to be held", "will be held", "trading window", "^\\W*(copy of )?(the )?news\\s?paper",
                     "voting results", "e-?voting", "postal ballot", "scrutini[sz]er"]
+
+# The MD, CEO or CFO leaving (owner, 2026-10-19, D30 amended): appointments and other directors' exits stay dropped
+[[fast_track]]
+event_type = "MANAGEMENT_CHANGE"
+headline = ["(resign\\w*|cessation|ceas(e|es|ed|ing)\\b|step(s|ped|ping)?\\s+down|removal|removed|retire(s|d|ment)?\\b(?!\\s+by\\s+rotation)|superannuat\\w*|demise|passed away).{0,120}(managing director|\\bmd\\b|chief executive|\\bceo\\b|chief financial|\\bcfo\\b)", "(managing director|\\bmd\\b|chief executive|\\bceo\\b|chief financial|\\bcfo\\b).{0,120}(resign\\w*|cessation|ceas(e|es|ed|ing)\\b|step(s|ped|ping)?\\s+down|removal|removed|retire(s|d|ment)?\\b(?!\\s+by\\s+rotation)|superannuat\\w*|demise|passed away)"]
 
 [[fast_track]]
 event_type = "CONCALL_PRESENTATION"

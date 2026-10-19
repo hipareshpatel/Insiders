@@ -280,6 +280,26 @@ def _printed(value: float, pct: float, numbers: list[float]) -> bool | None:
     return False if checked else None
 
 
+def _net_of_excise(tagged):
+    """Revenue less the excise it carries, with its year-on-year change when the file has both years' figures. Excise
+    is the government's, and a rise in it reads as growth: ITC's Q1FY27 revenue was "+27.6%" gross and about -11% net
+    (round 6, 2026-10-19). None when the file tags no excise."""
+    from .models import FinancialMetric
+    from .periods import prior_year_period
+
+    val = {(m.metric, m.period): m.value for m in tagged.metrics if m.value is not None}
+    now_rev, now_exc = val.get(("revenue", tagged.period)), val.get(("excise_duty", tagged.period))
+    if now_rev is None or not now_exc:
+        return None
+    ago = prior_year_period(tagged.period)
+    then_rev, then_exc = val.get(("revenue", ago)), val.get(("excise_duty", ago))
+    net = round(now_rev - now_exc, 2)
+    yoy = None
+    if then_rev is not None and then_exc is not None and then_rev - then_exc > 0:
+        yoy = round((net / (then_rev - then_exc) - 1) * 100, 1)
+    return FinancialMetric(metric="revenue_net_excise", period=tagged.period, value=net, yoy_pct=yoy)
+
+
 def build(out, tagged, company_name: str | None, history=None, text: str = "") -> list[str]:
     """Put the file's figures on a results card. Returns what was replaced (empty when the file cannot carry it)."""
     card = getattr(out, "card", None)
@@ -288,6 +308,9 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "") -
     unconfirmed = unconfirmed_changes(tagged, text)
     now = {m.metric: m for m in tagged.metrics if m.period == tagged.period and m.value is not None}
     top = now.get("revenue") or now.get("interest_earned") or now.get("total_income")
+    net = _net_of_excise(tagged)
+    if net is not None and top is not None and top.metric == "revenue":
+        top = net
     profit = now.get("pat")
     owners = now.get("pat_owners")
     if owners is not None and profit is not None and abs(owners.value - profit.value) > 0.005 * abs(profit.value) + 0.01:
@@ -298,7 +321,7 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "") -
     name = _short_name(company_name)
     basis = (tagged.basis or "").lower()
     period = tagged.period
-    top_word = "revenue" if top.metric == "revenue" else "interest earned" if top.metric == "interest_earned" else "total income"
+    top_word = "revenue net of excise" if top.metric == "revenue_net_excise" else "revenue" if top.metric == "revenue" else "interest earned" if top.metric == "interest_earned" else "total income"
 
     def phrase(m, word: str) -> str:
         if m.metric in ("pat", "pat_owners"):

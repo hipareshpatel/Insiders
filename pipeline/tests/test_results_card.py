@@ -228,3 +228,16 @@ def test_a_change_against_a_comparative_the_filing_does_not_print_is_left_out():
         rounded = XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q1FY27", metrics=[
             FinancialMetric(metric="pat", period="Q1FY27", value=6296.67, yoy_pct=12.3)])   # 6,296.67 / 5,604.97 - 1
         assert unconfirmed_changes(rounded, printed) == [] and rounded.metrics[0].yoy_pct == 12.3
+
+
+def test_revenue_with_excise_in_it_is_given_net_of_excise():
+    """ITC (round 6): revenue "+27.6% YoY" gross of a higher cigarette excise; net of excise it fell about 11%."""
+    from bse_intel.models import FinancialMetric
+    from bse_intel.xbrl import XbrlResult
+
+    rows = {"revenue": (29523.3, 23130.0), "excise_duty": (10409.0, 1635.0), "pat": (4508.79, 5343.0)}
+    tagged = XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q1FY27", metrics=[
+        FinancialMetric(metric=m, period=p, value=v) for m, (now, then) in rows.items() for p, v in (("Q1FY27", now), ("Q1FY26", then))])
+    out = _model_card()
+    results_card.build(out, tagged, "ITC Ltd")
+    assert out.card.headline.startswith("ITC Q1FY27: revenue net of excise ₹19,114.3 Cr (-11.1% YoY)")

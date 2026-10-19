@@ -17,7 +17,7 @@ import { ownerApi, useOwnerToken } from "../lib/owner";
 import { HISTORY_START } from "../lib/config";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading } from "./FeedView";
-import { Change } from "./ResultsView";
+import { Change, turnOf } from "./ResultsView";
 
 const TABS = [
   { key: "overview", label: "Overview" },
@@ -241,17 +241,8 @@ function Overview({ dossier, cards, onTab }: { dossier: Dossier | null; cards: C
         </div>
       </Panel>
 
-      <Panel title="What to track">
-        {tracking.length ? (
-          <ul className="divide-y divide-line">
-            {tracking.map((t, i) => (
-              <li key={i} className="grid gap-x-4 gap-y-0.5 py-2 sm:grid-cols-[140px_minmax(0,1fr)]">
-                <span className="num text-[13px] text-ink-3">{t.when}</span>
-                <span className="text-[14px] text-ink">{t.text}</span>
-              </li>
-            ))}
-          </ul>
-        ) : <p className="text-sm text-ink-3">Nothing to track yet.</p>}
+      <Panel title="What to track" hint={tracking.length > TRACK_SHOWN ? `${tracking.length} items` : undefined}>
+        {tracking.length ? <TrackList items={tracking} /> : <p className="text-sm text-ink-3">Nothing to track yet.</p>}
       </Panel>
       </div>
       <div className="min-w-0 space-y-4">
@@ -261,6 +252,31 @@ function Overview({ dossier, cards, onTab }: { dossier: Dossier | null; cards: C
       </div>
       </div>
     </div>
+  );
+}
+
+// The first few, then a button: Heritage's list made the phone Overview 10,040 px long (laptop T11, 2026-10-20)
+const TRACK_SHOWN = 8;
+
+function TrackList({ items }: { items: { when: string; text: string }[] }) {
+  const [all, setAll] = useState(false);
+  const shown = all ? items : items.slice(0, TRACK_SHOWN);
+  return (
+    <>
+      <ul className="divide-y divide-line">
+        {shown.map((t, i) => (
+          <li key={i} className="grid gap-x-4 gap-y-0.5 py-2 sm:grid-cols-[140px_minmax(0,1fr)]">
+            <span className="num text-[13px] text-ink-3">{t.when}</span>
+            <span className="text-[14px] text-ink">{t.text}</span>
+          </li>
+        ))}
+      </ul>
+      {items.length > TRACK_SHOWN && (
+        <button type="button" onClick={() => setAll(!all)} className="mt-2 text-[13px] font-semibold text-accent hover:underline">
+          {all ? "Show fewer" : `Show all ${items.length}`}
+        </button>
+      )}
+    </>
   );
 }
 
@@ -528,7 +544,7 @@ function ResultsScorecard({ cards }: { cards: CardRow[] }) {
                 {/* the statement's own first lines: revenue, EBITDA, margin, PAT for a company; a bank's NII, NPA... */}
                 {resultLines(r).filter((l) => !["exceptional_items", "pbt", "eps", "interest_earned"].includes(l.key)).slice(0, 4)
                   .map(({ label, unit, line }) => [label, unit === "cr" ? cr(line.value) : lineValue(line.value, unit),
-                    unit === "pct" ? <Change value={line.yoy_bps} unit="bp" /> : <Change value={line.yoy_pct} />] as const)
+                    unit === "pct" ? <Change value={line.yoy_bps} unit="bp" /> : <Change value={line.yoy_pct} turn={turnOf(line)} />] as const)
                   .map(([label, value, change]) => (
                   <div key={String(label)} className="rounded-lg bg-surface-2/70 px-2.5 py-2">
                     <dt className="eyebrow text-ink-3">{label}</dt>

@@ -84,6 +84,9 @@ export interface ResultLine {
   qoq_pct?: number;
   yoy_bps?: number;
   qoq_bps?: number;
+  /** a change across a loss, named instead of a % (LOSS_TO_PROFIT, PROFIT_TO_LOSS, LOSS_NARROWED, LOSS_WIDENED) */
+  yoy_turn?: string;
+  qoq_turn?: string;
 }
 
 export interface ResultsSnapshot {
@@ -96,6 +99,9 @@ export interface ResultsSnapshot {
   pbt?: ResultLine;
   pat?: ResultLine;
   eps?: ResultLine;
+  /** a bank's and an insurer's top line, in place of revenue */
+  interest_earned?: ResultLine;
+  gross_premium?: ResultLine;
   /** Which statement the table reads (company, bank, insurer) and its rows in order, the sector's KPIs last. */
   lens?: "company" | "bank" | "insurer";
   lines?: { key: string; label: string; unit: "cr" | "pct" | "inr" | "num" }[];

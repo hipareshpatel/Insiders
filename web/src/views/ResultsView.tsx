@@ -16,7 +16,23 @@ import { periodEnd } from "../lib/periods";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading } from "./FeedView";
 
-export function Change({ value, unit = "%" }: { value?: number; unit?: "%" | "bp" }) {
+const TURN: Record<string, [string, string]> = {
+  LOSS_TO_PROFIT: ["Loss to profit", "text-pos"], PROFIT_TO_LOSS: ["Profit to loss", "text-neg"],
+  LOSS_NARROWED: ["Loss narrowed", "text-pos"], LOSS_WIDENED: ["Loss widened", "text-neg"],
+};
+
+/** A change across a loss, in words: a % of a negative base means nothing (Prism Johnson's PAT "+2127%", T11). Cards
+ *  stored before the pipeline named it carry the two values, so the turn is read from them here too. */
+export function turnOf(line?: { value?: number; prev_year?: number; yoy_turn?: string } | null): string | undefined {
+  if (!line) return undefined;
+  if (line.yoy_turn) return line.yoy_turn;
+  const { value: now, prev_year: base } = line;
+  if (now == null || base == null || (now >= 0 && base >= 0)) return undefined;
+  return now >= 0 ? "LOSS_TO_PROFIT" : base >= 0 ? "PROFIT_TO_LOSS" : now > base ? "LOSS_NARROWED" : "LOSS_WIDENED";
+}
+
+export function Change({ value, unit = "%", turn }: { value?: number; unit?: "%" | "bp"; turn?: string }) {
+  if (turn && TURN[turn]) return <span className={cn("whitespace-nowrap font-semibold", TURN[turn][1])}>{TURN[turn][0]}</span>;
   if (value == null) return <span className="text-ink-3">—</span>;
   const text = unit === "bp" ? `${value > 0 ? "+" : ""}${Math.round(value)}bp` : `${value > 0 ? "+" : ""}${value.toFixed(1)}%`;
   return <span className={cn("font-semibold", value > 0 ? "text-pos" : value < 0 ? "text-neg" : "text-ink-2")}>{text}</span>;
@@ -129,10 +145,10 @@ export function ResultsView() {
                         <td className="px-3 py-3"><Badge className={TONE_CHIP[v.tone]}>{v.label}</Badge></td>
                         <td className="whitespace-nowrap px-3 py-3 text-right text-ink-2">{cr(row.market_cap_cr)}</td>
                         <td className="num whitespace-nowrap px-3 py-3 font-medium text-ink">{r?.period ?? "—"}</td>
-                        <td className="px-3 py-3 text-right"><Change value={r?.revenue?.yoy_pct} /></td>
-                        <td className="px-3 py-3 text-right"><Change value={r?.ebitda?.yoy_pct} /></td>
+                        <td className="px-3 py-3 text-right"><Change value={(r?.revenue ?? r?.interest_earned ?? r?.gross_premium)?.yoy_pct} /></td>
+                        <td className="px-3 py-3 text-right"><Change value={r?.ebitda?.yoy_pct} turn={turnOf(r?.ebitda)} /></td>
                         <td className="px-3 py-3 text-right"><Change value={r?.ebitda_margin?.yoy_bps} unit="bp" /></td>
-                        <td className="px-3 py-3 text-right"><Change value={r?.pat?.yoy_pct} /></td>
+                        <td className="px-3 py-3 text-right"><Change value={r?.pat?.yoy_pct} turn={turnOf(r?.pat)} /></td>
                         <td className="px-3 py-3 font-sans text-xs">
                           {card.signals.filter((s) => s.severity === "WARNING").length > 0 && <span className="mr-2 text-warn">⚠ {card.signals.filter((s) => s.severity === "WARNING").length}</span>}
                           {card.signals.filter((s) => s.severity === "POSITIVE").length > 0 && <span className="text-pos">✓ {card.signals.filter((s) => s.severity === "POSITIVE").length}</span>}

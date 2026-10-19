@@ -1259,6 +1259,11 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
                 continue
             if bps:
                 row[f"{label}_bps"] = round((values["value"] - base) * 100)
+            elif base < 0 or values["value"] < 0:
+                # a % across a loss means nothing (Prism Johnson's PAT "+2127%" from a small loss, T11): name the turn
+                now = values["value"]
+                row[f"{label}_turn"] = ("LOSS_TO_PROFIT" if now >= 0 else "PROFIT_TO_LOSS" if base >= 0
+                                        else "LOSS_NARROWED" if now > base else "LOSS_WIDENED")
             elif base:
                 row[f"{label}_pct"] = round((values["value"] - base) / abs(base) * 100, 1)
         return row

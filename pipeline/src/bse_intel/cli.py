@@ -257,6 +257,32 @@ def cmd_pledge_sync(args, settings, sink) -> int:
     return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
 
 
+def cmd_refresh_summaries(args, settings, sink) -> int:
+    """Each company's stored summary (overdue promises, radar, credibility) rebuilt from its memory, no AI. A rule that
+    changes what a summary holds reaches companies not processed since only this way (laptop T11, 2026-10-20: the
+    overdue list still showed "Ind-Ra expects ..." after third_party_view)."""
+    from .pipeline import _company_memory
+    from .timeutil import now_iso
+
+    wanted = {s.strip() for s in (args.scrips or "").split(",") if s.strip()}
+    scrips = sorted(wanted or sink.list_dossiers())
+    rows, written, missing = [], 0, 0
+    for scrip in scrips:
+        dossier = sink.get_dossier(scrip)
+        if not dossier:
+            missing += 1
+            continue
+        rows.append({"scrip_code": scrip, "company_name": dossier.get("company_name") or scrip, "updated_at": now_iso(),
+                     **_company_memory(dossier)})
+        if len(rows) >= 100:
+            written += sink.execute("companies_upsert", rows) or 0
+            rows = []
+    if rows:
+        written += sink.execute("companies_upsert", rows) or 0
+    print(json.dumps({"companies": len(scrips) - missing, "missing": missing, "rows_written": written}))
+    return 0
+
+
 def cmd_dgtr_sync(args, settings, sink) -> int:
     """DGTR trade-remedy cases into the memory of the companies that applied for or supported them (dgtr.py, module 8),
     no AI. --pages 42 reads every case DGTR lists (a first fill: OCR of a few hundred scanned notices, hours)."""
@@ -587,6 +613,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--scrips", help="only these companies (comma separated)")
     p.add_argument("--time-budget", type=int, default=900)
     p.set_defaults(func=cmd_pledge_sync)
+    p = sub.add_parser("refresh-summaries", help="rebuild each company's stored summary from its memory, no AI")
+    p.add_argument("--scrips", help="only these companies (comma separated); default every company with memory")
+    p.set_defaults(func=cmd_refresh_summaries)
     p = sub.add_parser("dgtr-sync", help="DGTR anti-dumping / countervailing / safeguard cases into memory, no AI (module 8)")
     p.add_argument("--pages", type=int, default=1, help="list pages per investigation type (15 cases each, ongoing first)")
     p.add_argument("--scrips", help="only these companies (comma separated)")

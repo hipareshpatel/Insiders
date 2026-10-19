@@ -75,6 +75,11 @@ on its XBRL figures, and the standalone-only quarters are still in it. After pul
 3. One SBI or HDFC Bank results card (consolidated): the bank lines show gross and net NPA from the standalone file
    (the table says "(standalone)"), not 0% and not missing. HDFC Bank's RoA reads about 1.8% (annualised), not 0.45%.
 4. `/company/519552?tab=promises`: one VAP-share target for Q2FY27; "2 MLPD by FY26" shows "Not reported", not "On track".
+5. `python -m bse_intel refresh-summaries` (new, no AI; one D1 row per company with memory): rebuilds each company's
+   stored summary, so Today's and the calendar's Overdue promises drop Prism Johnson's "Ind-Ra expects ..." items and
+   read range deadlines ("FY26-FY27") at their later end. Then check Today and `/calendar` at 390 px: UCO's 26 Oct
+   strike once; `/results`: Prism Johnson's PAT reads "Loss to profit", banks show their interest earned YoY;
+   `/system` at 390 px no wider than the screen; Heritage's Overview shows 8 "What to track" items and "Show all".
 Files you may change: none. Report: here (the seed's JSON summary line and each check).
 
 ## T12 · P1 · laptop · BLOCKED on the owner — deploy the Worker with its database and bucket (PLAN G4)

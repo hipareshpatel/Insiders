@@ -261,3 +261,18 @@ def test_asset_quality_words():
     assert asset_quality({"gnpa_pct": v(2.21)}) == "gross NPA 2.21%"
     assert asset_quality({"nnpa_pct": v(0.65)}) == "net NPA 0.65%"
     assert asset_quality({}) is None
+
+
+def test_a_change_across_a_loss_is_named_not_a_percentage():
+    """Prism Johnson Q1FY27 PAT "+2127%" from a small loss (laptop screenshots, T11 2026-10-20)."""
+    from bse_intel.dossier import results_snapshot
+
+    def snap(now, before):
+        return results_snapshot({"financial_metrics": [
+            {"metric": "pat", "period": "Q1FY27", "value": now, "source_news_id": "n2", "as_of": "b"},
+            {"metric": "pat", "period": "Q1FY26", "value": before, "source_news_id": "n1", "as_of": "a"}]}, "n2")["pat"]
+
+    assert snap(20.3, -0.91) == {"value": 20.3, "prev_year": -0.91, "yoy_turn": "LOSS_TO_PROFIT"}
+    assert snap(-5.0, 12.0)["yoy_turn"] == "PROFIT_TO_LOSS"
+    assert snap(-5.0, -12.0)["yoy_turn"] == "LOSS_NARROWED" and snap(-12.0, -5.0)["yoy_turn"] == "LOSS_WIDENED"
+    assert snap(29.4, 36.8)["yoy_pct"] == -20.1   # both profits: a percentage as before

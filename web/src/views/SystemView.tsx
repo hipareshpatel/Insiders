@@ -188,7 +188,8 @@ function ProviderRow({ usage }: { usage: ProviderUsage }) {
         <div className="truncate text-[14px] font-semibold text-ink">{PROVIDER_LABEL[usage.provider] ?? titleCase(usage.provider)}</div>
         <div className="num truncate text-[11px] text-ink-3">{usage.model}</div>
       </div>
-      <div className="space-y-1">
+      {/* min-w-0: a long one-line error must truncate, not widen the page (390 px was 822 wide, laptop T11) */}
+      <div className="min-w-0 space-y-1">
         {utilisation !== null ? <Meter value={utilisation} ceiling={CEILING} /> : <div className="text-[11px] text-ink-3">No daily limit configured (paced per minute)</div>}
         <div className="num flex flex-wrap gap-x-3 text-[11px] text-ink-2">
           <span>{num(usage.requests)}{usage.limit_rpd ? ` / ${num(usage.limit_rpd)}` : ""} req</span>
@@ -198,7 +199,7 @@ function ProviderRow({ usage }: { usage: ProviderUsage }) {
         </div>
         {usage.last_error ? <div className="truncate text-[11px] text-ink-3" title={usage.last_error}>{usage.last_error}</div> : null}
       </div>
-      <Badge className={statusStyle}>{status}</Badge>
+      <Badge className={cn("justify-self-start md:justify-self-auto", statusStyle)}>{status}</Badge>
     </li>
   );
 }

@@ -47,9 +47,11 @@ test("one event per company and day in the calendar", async () => {
     e("1", "2026-10-25", "MILESTONE"),                      // alone on its day: kept
     e("2", "2026-10-24", "OTHER"),                          // another company: kept
     e("1", "2026-10-24", "RECORD_DATE"),                    // a different named event the same day: kept
+    e("3", "2026-10-26", "OTHER"), e("3", "2026-10-26", "MILESTONE"),   // UCO's strike, two generic types: one
   ]);
   assert.deepEqual(got.map((x) => `${x.scrip_code} ${x.event_date} ${x.event_type}`), [
-    "1 2026-10-24 RIGHTS_OPEN", "1 2026-10-25 MILESTONE", "2 2026-10-24 OTHER", "1 2026-10-24 RECORD_DATE"]);
+    "1 2026-10-24 RIGHTS_OPEN", "1 2026-10-25 MILESTONE", "2 2026-10-24 OTHER", "1 2026-10-24 RECORD_DATE",
+    "3 2026-10-26 OTHER"]);
 });
 
 test("an execution term reads as a term, a date as a date", () => {

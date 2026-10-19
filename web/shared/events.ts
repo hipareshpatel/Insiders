@@ -7,7 +7,8 @@ export function dedupeEvents<T extends { scrip_code: string; event_date: string;
   return events.filter((e) => {
     const day = `${e.scrip_code}|${e.event_date}`;
     if (GENERIC_EVENTS.has(e.event_type) && named.has(day)) return false;
-    const key = `${day}|${e.event_type}`;
+    // generic events of one company and day are one ("Other" and "Milestone" for UCO Bank's 26 Oct strike, T11)
+    const key = GENERIC_EVENTS.has(e.event_type) ? `${day}|generic` : `${day}|${e.event_type}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;

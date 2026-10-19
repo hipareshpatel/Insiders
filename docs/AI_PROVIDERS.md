@@ -8,8 +8,8 @@ provider's own 429 detail, "assumption" otherwise (CLAUDE.md rule 0).
 |---|---|---|---|---|
 | Google Gemini | 3.6 / 3.7 / 3.8 Flash | 20 requests a day each, 5 a minute (measured: Google's 429 detail, `GenerateRequestsPerDayPerProjectPerModel-FreeTier` 20) | packed cards (6 filings a request), long documents | round 6: 3 WRONG of 55 published (5.5%); arm B: 3.7 Flash 0 of 33 |
 | Google Gemini | 3.5 Flash, 3 Flash preview | 20 a day each (3.5 measured by 429 detail; preview assumption) | packed cards, after the three above | new: round 7 measures |
-| Google Gemini | 3.5 Flash Lite | 500 a day (assumption from config; AI Studio's Rate Limit page shows the value), 15 a minute | pass 1; last in the packed rotation | probed right; round 7 measures |
-| Google Gemini | 3.1 Flash Lite | 500 a day (assumption), 15 a minute | pass 1, vision | probed right |
+| Google Gemini | 3.5 Flash Lite | 500 a day (measured: AI Studio Rate Limit page, owner, 2026-10-19), 15 a minute | pass 1; last in the packed rotation | probed right; round 7 measures |
+| Google Gemini | 3.1 Flash Lite | 500 a day (measured: AI Studio Rate Limit page, owner, 2026-10-19), 15 a minute | pass 1, vision | probed right |
 | Google Gemini | 3.1 Pro, pro-latest, Gemini 4 Argon, Omni Flash, Omni 1.1, Deep Research, Computer Use | **0 on the free tier** (429 at once) | - | probed 2026-10-19 |
 | Google Gemini | 2.0 / 2.5 Flash, 2.5 Pro, 2.5 Flash Lite | retired for new users (404) | - | probed |
 | Mistral | Ministral 8B | 150 a minute, 625k tokens a minute | pass 1 workhorse | 2,505 requests in 2 days, 11 failures |
@@ -23,7 +23,7 @@ provider's own 429 detail, "assumption" otherwise (CLAUDE.md rule 0).
 | Cloudflare | Llama 3.3 70B, 3.1 8B | 10k neurons a day | spares | small context |
 
 **"Google 1,500 a day"** was the free tier of the older Gemini 1.5 and 2.0 Flash, which are retired; today's Flash models
-are 20 a day each by Google's own 429 detail. Lite models are higher (configured 500; check the AI Studio Rate Limit page).
+are 20 a day each by Google's own 429 detail. Lite models are 500 a day each (AI Studio Rate Limit page, 2026-10-19).
 
 ## The combination (2026-10-19)
 

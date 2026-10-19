@@ -11,8 +11,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "bse-index",
-      // Replace with the id printed by `wrangler d1 create bse-index` (deploy-web.yml does, from the D1_DATABASE_ID
+      "database_name": "bse-index-nse",
+      // Replace with the id printed by `wrangler d1 create bse-index-nse` (deploy-web.yml does, from the D1_DATABASE_ID
       // repository variable). Local dev keeps the placeholder id, so the laptop's local database stays where it is.
       "database_id": "175e34e6-71b5-4bb0-84f3-4e9509f17637",
       "preview_database_id": "00000000-0000-0000-0000-000000000000",

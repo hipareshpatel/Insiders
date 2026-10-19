@@ -83,7 +83,7 @@ when the site is shared. Built for it:
 
 | # | Step | Who |
 |---|---|---|
-| G1 | Cloudflare (free plan): D1 `bse-index`, R2 `bse-intelligence`, an API token; Worker secrets `INGEST_TOKEN`, `OWNER_TOKEN` | Owner |
+| G1 | Cloudflare (free plan): D1 `bse-index-nse`, R2 `bse-intelligence`, an API token; Worker secrets `INGEST_TOKEN`, `OWNER_TOKEN` | Owner |
 | G2 | GitHub secrets (entered on GitHub only, never pasted in chat): `GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `INGEST_TOKEN`, `PLATFORM_API_URL`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Owner |
 | G3 | Make the repository public (GitHub's free minutes then cover the 15-30 minute runs) | Owner |
 | G4 | D1 id in `web/wrangler.jsonc`, `npm run db:migrate:remote`, deploy (https://insiders.reply-bd3.workers.dev); merge the PR so `deploy-web.yml` redeploys later changes | Laptop, then owner merges |

@@ -355,6 +355,9 @@ def test_a_banks_results_are_read_from_the_banking_template():
     assert now["eps"] == 8.74
     # the identity holds on the bank's own statement: income less expenditure, before provisions
     assert abs(now["pbt"] - (now["pre_provision_operating_profit"] - now["provisions"])) < 0.05
+    # asset quality and return, filed as fractions and read as percentages (owner, 2026-10-19: a bank's card had none)
+    assert (round(now["gnpa_pct"], 2), round(now["nnpa_pct"], 2), round(now["roa_pct"], 2)) == (1.58, 0.64, 1.48)
+    assert {m.unit for m in result.metrics if m.metric in ("gnpa_pct", "nnpa_pct")} == {"PCT"}
 
 
 def test_nse_results_rows_are_read_and_matched_by_date():

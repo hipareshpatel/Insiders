@@ -446,7 +446,8 @@ def pdf(text: str) -> bytes:
 def main() -> None:
     settings = get_settings()
     first = min(f[2] for f in FILINGS).date()
-    settings = replace(settings, backfill_start=first.isoformat(), workers=1)
+    # the demo filings come from a scripted BSE client, not NSE discovery
+    settings = replace(settings, backfill_start=first.isoformat(), workers=1, discovery_source="bse")
     sink = make_sink(settings)
     sink.execute("companies_upsert", [dict(c, updated_at=now_iso()) for c in COMPANIES])
 
@@ -471,6 +472,11 @@ def main() -> None:
     # stop at), then a live run for the latest days.
     history = pipeline.backfill_companies(sorted(NAMES), first, today_ist(), time_budget_s=300)
     print("history:", json.dumps(history.as_dict()))
+    # a second seed finds the filings done: read them again so the cards carry what the code makes now
+    if os.getenv("DEMO_RERUN") == "1":
+        import time
+        pipeline.process(first.isoformat(), today_ist().isoformat(), time.monotonic() + 300, bulk=False,
+                         only={f.news_id for f in filings})
     stats = pipeline.run("live", time_budget_s=300)
     print(json.dumps(stats.as_dict(), indent=2))
     print("Seeded FICTIONAL demo data. Open the site and set the date range to 'Since 1 Jan 2026' to see every card.")

@@ -80,6 +80,14 @@ _LABELS = (("revenue", "Revenue from operations"), ("interest_earned", "Interest
 _VIEW_LINE = re.compile(r"^\s*(Q[1-4]FY\d{2})\s*:\s*(-?\d[\d,]*(?:\.\d+)?)\s*([A-Z_]*)")
 
 
+def asset_quality(now: dict) -> str | None:
+    """A bank's bad loans as the file tags them: "net NPA 0.64%, gross 1.58%"."""
+    net, gross = now.get("nnpa_pct"), now.get("gnpa_pct")
+    parts = [f"net NPA {net.value:.2f}%" if net else None, f"gross {gross.value:.2f}%" if gross and net else
+             f"gross NPA {gross.value:.2f}%" if gross else None]
+    return ", ".join(p for p in parts if p) or None
+
+
 def history_from_view(view: dict | None) -> list[dict]:
     """Memory's quarterly figures as the card's writer was shown them ("Q1FY26: 12.3 INR_CR"): only the figures memory
     keeps after its period checks. The raw store also holds figures left out for not reconciling with their own
@@ -176,6 +184,12 @@ def memory_points(tagged, history) -> list[Insight]:
                 if streak >= 4:
                     points.append((3, f"{word.capitalize()} has {'grown' if signs[0] else 'fallen'} year on year for "
                                       f"{streak} quarters running, {tagged.period} included."))
+        if all(i in series and series[i] > 0 for i in (now_index - 1, now_index - 4, now_index - 5)):
+            g_now = (series[now_index] / series[now_index - 4] - 1) * 100
+            g_last = (series[now_index - 1] / series[now_index - 5] - 1) * 100
+            if g_now > 0 and g_last > 0 and abs(g_now - g_last) >= 5:
+                points.append((3, f"{word.capitalize()} growth {'picked up' if g_now > g_last else 'slowed'} to "
+                                  f"{g_now:+.0f}% YoY from {g_last:+.0f}% in {quarter_from_index(now_index - 1)}."))
     margin = now.get("ebitda_margin")
     if margin is not None:
         past = _quarters(history, "ebitda_margin")
@@ -332,6 +346,11 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "") -
         return f"{word} {_cr(m.value)}{change}"
 
     headline = f"{name} {period}: {phrase(top, top_word)}, {phrase(profit, profit_word)}"
+    quality = asset_quality(now) if top.metric == "interest_earned" else None
+    if quality:
+        # a bank is read on its profit and its bad loans, not on interest earned (owner, 2026-10-19: Punjab & Sind
+        # Bank's card led with "interest earned ₹3,213.37 Cr" and gave its net NPA only in the model's words)
+        headline = f"{name} {period}: {phrase(profit, profit_word)}; {quality}"
     if len(headline) > 110:
         headline = f"{name} {period}: {phrase(profit, profit_word)}"
     facts, keys = [], []

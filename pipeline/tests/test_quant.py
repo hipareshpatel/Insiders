@@ -103,7 +103,10 @@ def test_results_snapshot_for_the_results_table():
         {"metric": "ebitda", "period": "Q1FY27", "value": 73.39, "source_news_id": "n1", "as_of": "a"},
         {"metric": "ebitda", "period": "Q2FY27", "value": 67.88, "source_news_id": "n2", "as_of": "b"},
     ]}
-    assert results_snapshot(dossier, "n2") == {
+    snap = results_snapshot(dossier, "n2")
+    assert snap.pop("lens") == "company"
+    assert [line["key"] for line in snap.pop("lines")] == ["revenue", "ebitda", "ebitda_margin", "pat"]
+    assert snap == {
         "period": "Q2FY27", "prev_year_period": "Q2FY26", "prev_quarter_period": "Q1FY27",
         # no year-ago revenue in memory, so the filing's own YoY is used
         "revenue": {"value": 455.6, "prev_quarter": 412.3, "qoq_pct": 10.5, "yoy_pct": 19.6},
@@ -113,6 +116,48 @@ def test_results_snapshot_for_the_results_table():
         "pat": {"value": 29.4, "prev_year": 36.8, "yoy_pct": -20.1},
     }
     assert results_snapshot(dossier, "other") is None
+
+
+def test_a_banks_results_table_has_its_own_lines():
+    """A bank has no revenue or EBITDA, so its card had no table (owner, 2026-10-19: Punjab & Sind Bank). Net
+    interest income is interest earned less interest expended; NPA ratios move in basis points."""
+    from bse_intel.dossier import results_snapshot
+
+    def m(metric, period, value, news="n2", unit="INR_CR"):
+        return {"metric": metric, "period": period, "value": value, "unit": unit, "source_news_id": news, "as_of": "b"}
+
+    dossier = {"financial_metrics": [
+        m("interest_earned", "Q1FY27", 3213.37), m("interest_expended", "Q1FY27", 2100.0),
+        m("interest_earned", "Q1FY26", 3000.0, "n1"), m("interest_expended", "Q1FY26", 2000.0, "n1"),
+        m("pre_provision_operating_profit", "Q1FY27", 545.48), m("provisions", "Q1FY27", 93.99),
+        m("pat", "Q1FY27", 331.51), m("nnpa_pct", "Q1FY27", 0.65, unit="PCT"), m("nnpa_pct", "Q1FY26", 0.91, "n1", "PCT"),
+    ]}
+    snap = results_snapshot(dossier, "n2")
+    assert snap["nii"] == {"value": 1113.37, "prev_year": 1000.0, "yoy_pct": 11.3}
+    assert snap["nnpa_pct"] == {"value": 0.65, "prev_year": 0.91, "yoy_bps": -26}
+    assert snap["ppop"]["value"] == 545.48 and snap["provisions"]["value"] == 93.99 and "revenue" not in snap
+    assert snap["lens"] == "bank"
+    assert [line["key"] for line in snap["lines"]] == ["interest_earned", "nii", "ppop", "provisions", "pat", "nnpa_pct"]
+
+
+def test_the_results_table_takes_the_sectors_own_kpis():
+    """Not only banks: a cement maker's table carries its EBITDA a tonne beside the statement lines, with the year-ago
+    and previous quarter, from the sector's footer list (sectors.toml)."""
+    from bse_intel.dossier import results_snapshot
+
+    def m(metric, period, value, news="n2", unit="INR_CR"):
+        return {"metric": metric, "period": period, "value": value, "unit": unit, "source_news_id": news, "as_of": "b"}
+
+    dossier = {"financial_metrics": [
+        m("revenue", "Q2FY27", 455.6), m("pat", "Q2FY27", 29.4), m("revenue", "Q2FY26", 380.9, "n1"),
+        m("ebitda_per_tonne", "Q2FY27", 812.0, unit="INR"), m("ebitda_per_ton", "Q2FY26", 1010.0, "n1", "INR"),
+    ]}
+    footer = ({"metric": "ebitda_per_tonne", "label": "EBITDA/t", "format": "inr", "aliases": ["ebitda_per_ton"]},
+              {"metric": "ebitda_margin", "label": "EBITDA margin", "format": "pct"})
+    snap = results_snapshot(dossier, "n2", footer)
+    assert snap["lines"][-1] == {"key": "kpi:ebitda_per_tonne", "label": "EBITDA/t", "unit": "inr"}
+    assert snap["kpi:ebitda_per_tonne"] == {"value": 812.0, "prev_year": 1010.0, "yoy_pct": -19.6}
+    assert not any(line["key"] == "kpi:ebitda_margin" for line in snap["lines"])   # the statement already has it
 
 
 def test_card_tone_and_takeaway_defaults():

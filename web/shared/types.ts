@@ -95,6 +95,9 @@ export interface ResultsSnapshot {
   pbt?: ResultLine;
   pat?: ResultLine;
   eps?: ResultLine;
+  /** Which statement the table reads (company, bank, insurer) and its rows in order, the sector's KPIs last. */
+  lens?: "company" | "bank" | "insurer";
+  lines?: { key: string; label: string; unit: "cr" | "pct" | "inr" | "num" }[];
 }
 
 export interface DealValue {
@@ -165,6 +168,13 @@ export interface CardBody {
   xbrl?: { basis: string | null; period: string | null; figures: number } | null;
   /** Market data as it stood when the filing came out (stored price series, else recent data). */
   priced_at_filing?: { last_price?: number; price_date?: string; market_cap_cr?: number; ret_1w?: number; ret_1m?: number; point_in_time?: boolean } | null;
+  /** The event's own block on the card's face, made by code (pipeline card_context.py, signals.scale_parts). */
+  scale?: { amount_cr: number; noun: string; gst: boolean; against: { pct: number; label: string; base_cr: number }[];
+            per_year: { years: number; pct: number; label: string } | null } | null;
+  rating_change?: { agency: string | null; after: string; after_outlook: string | null; before: string | null;
+                    before_outlook: string | null; notches: number | null; as_of_before: string | null } | null;
+  case_stage?: { track: "USFDA" | "CASE"; steps: string[]; at: number } | null;
+  guidance_recall?: { statement: string; target: string | null; due: string | null; given_on: string | null; source_type: string | null; id: string }[];
 }
 
 export interface CardRow {

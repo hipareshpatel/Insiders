@@ -129,7 +129,14 @@ RATIO_TAGS = {
     "IncurredClaimRatio": "claims_ratio",
     "NetRetentionRatio": "retention_ratio",
     "ExpensesOfManagementRatio": "expense_ratio",
+    # A bank's asset quality and return, on the banking template as fractions (CSB Bank Q3FY25: 0.0158 gross NPA,
+    # 0.0064 net, 0.0148 return on assets). A bank is read on these before its profit, and its card had none of them.
+    "PercentageOfGrossNpa": "gnpa_pct",
+    "PercentageOfNpa": "nnpa_pct",
+    "ReturnOnAssets": "roa_pct",
 }
+# The range a bank ratio can take as a percentage; a filer that already wrote 1.58 for 1.58% would read as 158%.
+RATIO_BOUNDS = {"gnpa_pct": (0.0, 60.0), "nnpa_pct": (0.0, 40.0), "roa_pct": (-20.0, 20.0)}
 BALANCE_TAGS = {
     "Equity": "net_worth_cr",
     "EquityAttributableToOwnersOfParent": "net_worth_cr",
@@ -306,6 +313,9 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                 if kind != "PURE":
                     continue
                 value *= 100  # filed as a fraction, read as a percentage
+                low, high = RATIO_BOUNDS.get(metric, (-math.inf, math.inf))
+                if not low <= value <= high:
+                    continue
             else:
                 metric = tags[name]
                 if metric in PER_SHARE:

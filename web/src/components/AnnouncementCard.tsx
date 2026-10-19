@@ -1,31 +1,21 @@
 import {
-  AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, Building2, Camera, Check, ChevronDown, ChevronRight, FileSearch, FileText, Gauge,
-  Flame, Minus, RefreshCcw, Rocket, Scale, ShieldAlert, Timer, Trash2,
+  AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, BarChart3, Building2, Camera, Check, ChevronDown, ChevronRight, CircleDollarSign,
+  ClipboardCheck, FileSearch, FileText, Gauge, Flame, Minus, MoreHorizontal, RefreshCcw, Rocket, Scale, ShieldAlert, Star, Timer, Trash2,
+  type LucideIcon,
 } from "lucide-react";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { useQueryState } from "../lib/url";
 import type { CallRead, CardBody, CardRow, Fact, Impact, PriceReaction, Technicals, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
 import { useRatings, useVerdicts, type Verdict } from "../lib/owner";
 import { copyNodeAsPng } from "../lib/png";
-import { cr, formatKpi, istDate, istDateTime, listing, marketSession, pct, relativeTime, signClass, titleCase } from "../lib/format";
-import { EVENT_LABELS, SECTORS, TONE_CHIP, TONE_LABEL, type Tone } from "../lib/taxonomy";
+import { cr, formatKpi, istDate, istDateTime, pct, relativeTime, signClass, titleCase } from "../lib/format";
+import { EVENT_LABELS, TONE_LABEL, type Tone } from "../lib/taxonomy";
 import { Avatar } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL, TrackItem } from "./FilingCard";
 import { plain, RichText } from "./RichText";
 
-const IMPACT_PILL: Record<Impact, string> = {
-  HIGH: "bg-neg-soft text-impact-high",
-  MODERATE: "bg-warn-soft text-warn",
-  LOW: "bg-surface-2 text-ink-3",
-};
-/** The thin bar across the top of a card: its impact at a glance in a scrolled list. */
-const IMPACT_BAR: Record<Impact, string> = {
-  HIGH: "linear-gradient(90deg, var(--impact-high), var(--impact-moderate))",
-  MODERATE: "var(--impact-moderate)",
-  LOW: "var(--neutral-stripe)",
-};
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
 
 export const STAGE_LABEL: Record<string, string> = {
@@ -55,22 +45,13 @@ const SIGNAL_RANK: Record<string, number> = { WARNING: 0, POSITIVE: 1 };
 const INFO_RANK: Record<string, number> = { SCALE: 0, ORDER_FLOW: 1, DILUTION: 2 };
 
 /** What goes in the tinted box: up to four lines, the rest waits in "Full analysis". */
-function boxItems(card: CardBody) {
-  const signal = [...card.signals].sort((a, b) =>
+function boxItems(card: CardBody, skip: (s: Signal) => boolean = () => false) {
+  const signal = [...card.signals].filter((s) => !skip(s)).sort((a, b) =>
     (SIGNAL_RANK[a.severity] ?? 2) - (SIGNAL_RANK[b.severity] ?? 2) || (INFO_RANK[a.type] ?? 9) - (INFO_RANK[b.type] ?? 9))[0];
   const missing = card.missing_disclosures[0];
   const room = Math.max(2, 4 - (signal ? 1 : 0) - (missing ? 1 : 0));
   const insights = card.why_it_matters.slice(0, room);
   return { insights, signal, missing, fallback: insights.length === 0 ? card.takeaway : undefined };
-}
-
-function Chip({ children, tone = "accent" }: { children: ReactNode; tone?: "accent" | "neutral" | "warn" }) {
-  return (
-    <span className={cn("inline-flex items-center rounded-full px-2.5 py-[3px] text-[11px] font-semibold uppercase tracking-[0.06em]",
-      tone === "accent" ? "bg-accent-soft text-accent" : tone === "warn" ? "bg-warn-soft text-warn" : "bg-surface-2 text-ink-2")}>
-      {children}
-    </span>
-  );
 }
 
 function Point({ children, className }: { children: ReactNode; className?: string }) {
@@ -113,35 +94,66 @@ function change(line: ResultLine | undefined, kind: "yoy" | "qoq", bps: boolean)
   return <span className={cn("font-semibold", signClass(v))}>{bps ? `${v > 0 ? "+" : ""}${v} bps` : pct(v)}</span>;
 }
 
-/** A small P&L for results cards: this quarter, YoY and QoQ, computed from memory rather than prose. */
+type LineSpec = NonNullable<ResultsSnapshot["lines"]>[number];
+const DEFAULT_LINES: LineSpec[] = [
+  { key: "revenue", label: "Revenue", unit: "cr" }, { key: "ebitda", label: "EBITDA", unit: "cr" },
+  { key: "ebitda_margin", label: "EBITDA margin", unit: "pct" }, { key: "pbt", label: "PBT", unit: "cr" },
+  { key: "pat", label: "PAT", unit: "cr" }, { key: "eps", label: "EPS (₹)", unit: "inr" },
+];
+
+/** The table's rows: the statement's own lines (company, bank, insurer) and the sector's KPIs, as the pipeline chose them. */
+export function resultLines(r: ResultsSnapshot): (LineSpec & { line: ResultLine })[] {
+  const get = (key: string) => (r as unknown as Record<string, ResultLine | undefined>)[key];
+  return (r.lines?.length ? r.lines : DEFAULT_LINES).flatMap((s) => {
+    const line = get(s.key);
+    return line && typeof line.value === "number" ? [{ ...s, line }] : [];
+  });
+}
+
+export function lineValue(v: number, unit: LineSpec["unit"]): string {
+  if (unit === "pct") return `${v.toFixed(Math.abs(v) < 10 ? 2 : 1)}%`;
+  if (unit === "inr") return v.toLocaleString("en-IN", { maximumFractionDigits: 2 });
+  if (unit === "num") return v.toLocaleString("en-IN", { maximumFractionDigits: 1 });
+  return cr(v).replace(/^₹| Cr$/g, "");
+}
+
+/** A P&L for results cards in the statement's own lines: this quarter beside the previous one and a year ago. */
 function ResultsTable({ r }: { r: ResultsSnapshot }) {
-  const rows = ([
-    ["Revenue", r.revenue, false], ["EBITDA", r.ebitda, false], ["EBITDA margin", r.ebitda_margin, true], ["PAT", r.pat, false],
-  ] as const).filter(([, line]) => line);
+  const rows = resultLines(r);
   if (rows.length < 2) return null;
-  const qoq = rows.some(([, line, bps]) => (bps ? line?.qoq_bps : line?.qoq_pct) != null);
+  const has = (pick: (l: ResultLine, bps: boolean) => number | undefined) => rows.some(({ line, unit }) => pick(line, unit === "pct") != null);
+  const pq = has((l) => l.prev_quarter) && r.prev_quarter_period;
+  const py = has((l) => l.prev_year) && r.prev_year_period;
+  const qoq = has((l, bps) => (bps ? l.qoq_bps : l.qoq_pct));
+  const th = "whitespace-nowrap px-2 py-1.5 text-right text-[10.5px] font-semibold uppercase tracking-[0.08em] sm:px-3";
+  const td = "whitespace-nowrap px-2 py-1.5 text-right sm:px-3";
   return (
-    <div className="mt-3 overflow-hidden rounded-xl border border-line">
+    <div className="mt-3 overflow-x-auto rounded-xl border border-[color-mix(in_srgb,var(--fam)_28%,var(--line))]">
       <table className="num w-full text-[13px]">
-        <thead className="bg-surface-2/60 text-ink-3">
+        <thead className="text-ink-3">
           <tr>
-            <th className="whitespace-nowrap px-2 py-1.5 sm:px-3 text-left text-[10.5px] font-semibold uppercase tracking-[0.08em]">₹ Cr</th>
-            <th className="whitespace-nowrap px-2 py-1.5 sm:px-3 text-right text-[10.5px] font-semibold uppercase tracking-[0.08em]">{r.period}</th>
-            <th className="whitespace-nowrap px-2 py-1.5 sm:px-3 text-right text-[10.5px] font-semibold uppercase tracking-[0.08em]">YoY</th>
-            {qoq && <th className="whitespace-nowrap px-2 py-1.5 sm:px-3 text-right text-[10.5px] font-semibold uppercase tracking-[0.08em]">QoQ</th>}
+            <th className={cn(th, "text-left")}>₹ Cr</th>
+            <th className={cn(th, "text-ink")}>{r.period}</th>
+            {pq && <th className={th}>{r.prev_quarter_period}</th>}
+            {py && <th className={th}>{r.prev_year_period}</th>}
+            <th className={th}>YoY</th>
+            {qoq && <th className={th}>QoQ</th>}
           </tr>
         </thead>
         <tbody>
-          {rows.map(([label, line, bps]) => (
-            <tr key={label} className="border-t border-line">
-              <td className="whitespace-nowrap px-2 py-1.5 sm:px-3 font-medium text-ink">{label}</td>
-              <td className="whitespace-nowrap px-2 py-1.5 sm:px-3 text-right font-semibold text-ink">
-                {bps ? `${line!.value.toFixed(1)}%` : cr(line!.value).replace(/^₹| Cr$/g, "")}
-              </td>
-              <td className="whitespace-nowrap px-2 py-1.5 sm:px-3 text-right">{change(line, "yoy", bps)}</td>
-              {qoq && <td className="whitespace-nowrap px-2 py-1.5 sm:px-3 text-right">{change(line, "qoq", bps)}</td>}
-            </tr>
-          ))}
+          {rows.map(({ key, label, unit, line }) => {
+            const bps = unit === "pct";
+            return (
+              <tr key={key} className="border-t border-line">
+                <td className={cn(td, "text-left font-sans font-medium text-ink")}>{label}</td>
+                <td className={cn(td, "font-semibold text-ink")}>{lineValue(line.value, unit)}</td>
+                {pq && <td className={cn(td, "text-ink-2")}>{line.prev_quarter != null ? lineValue(line.prev_quarter, unit) : "—"}</td>}
+                {py && <td className={cn(td, "text-ink-2")}>{line.prev_year != null ? lineValue(line.prev_year, unit) : "—"}</td>}
+                <td className={td}>{change(line, "yoy", bps)}</td>
+                {qoq && <td className={td}>{change(line, "qoq", bps)}</td>}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -158,32 +170,46 @@ function footerMetrics(card: CardBody): { label: string; value: string; period?:
   return [];
 }
 
-const TABLE_LINES = ["revenue", "ebitda", "ebitda_margin", "pat"] as const;
-
 /** The P&L table shows only when at least two of its lines are known. */
 function tableShows(r: ResultsSnapshot | null | undefined): r is ResultsSnapshot {
-  return !!r && TABLE_LINES.filter((k) => r[k]).length >= 2;
+  return !!r && resultLines(r).length >= 2;
+}
+
+// Period labels ("Q2FY27", "Q2 FY 2026-27", "H1FY27") and years are not figures.
+const PERIOD_WORDS = /\b(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2,4}(?:-\d{2})?\b|\b(?:Q[1-4]|H[12]|9M)\b|\b20\d{2}(?:-\d{2})?\b/gi;
+
+function figures(text: string): number[] {
+  return (text.replace(PERIOD_WORDS, " ").match(/\d[\d,]*(?:\.\d+)?/g) ?? []).map((raw) => Number(raw.replace(/,/g, "")));
+}
+
+function near(n: number, known: number[], raw = ""): boolean {
+  const rounding = raw.includes(".") ? 0.051 : 0.5; // "+30%" restates 29.6%
+  return known.some((k) => Math.abs(k - n) <= Math.max(rounding, Math.abs(k) * 0.006));
 }
 
 /** A results bullet that only restates numbers the P&L table shows adds nothing; the card hides it. */
 function coveredByTable(fact: Fact, r: ResultsSnapshot): boolean {
-  const known: number[] = [];
-  for (const key of TABLE_LINES) {
-    const line = r[key];
-    if (!line) continue;
-    for (const v of [line.value, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps]) {
-      if (v != null) known.push(Math.abs(v));
-    }
-  }
-  // Period labels ("Q2FY27", "Q2 FY 2026-27", "H1FY27") and years are not figures.
-  const numbers = plain(fact)
-    .replace(/\b(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2,4}(?:-\d{2})?\b|\b(?:Q[1-4]|H[12]|9M)\b|\b20\d{2}(?:-\d{2})?\b/gi, " ")
-    .match(/\d[\d,]*(?:\.\d+)?/g) ?? [];
-  return numbers.length > 0 && numbers.every((raw) => {
-    const n = Number(raw.replace(/,/g, ""));
-    const rounding = raw.includes(".") ? 0.051 : 0.5; // "+30%" restates 29.6%
-    return known.some((k) => Math.abs(k - n) <= Math.max(rounding, k * 0.006));
-  });
+  const known = resultLines(r).flatMap(({ line }) =>
+    [line.value, line.prev_year, line.prev_quarter, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps]
+      .filter((v): v is number => v != null).map(Math.abs));
+  const raw = plain(fact).replace(PERIOD_WORDS, " ").match(/\d[\d,]*(?:\.\d+)?/g) ?? [];
+  return raw.length > 0 && raw.every((x) => near(Number(x.replace(/,/g, "")), known, x));
+}
+
+const STOP = new Set(["with", "from", "that", "this", "were", "have", "been", "which", "their", "into", "over", "under",
+  "after", "before", "about", "against", "company", "limited", "crore", "lakh", "year", "quarter", "said", "will", "also"]);
+function words(text: string): Set<string> {
+  return new Set((text.toLowerCase().match(/[a-z][a-z-]{3,}/g) ?? []).filter((w) => !STOP.has(w)));
+}
+
+/** True when `text` says nothing `of` does not: its figures are all there and most of its words, or nearly every word. */
+export function repeats(text: string, of: string): boolean {
+  const t = plain(text), o = plain(of);
+  const mine = [...words(t)], theirs = words(o);
+  const overlap = mine.length ? mine.filter((w) => theirs.has(w)).length / mine.length : 0;
+  const nums = figures(t), known = figures(o);
+  const allFigures = nums.length > 0 && nums.every((n) => near(n, known, String(n)));
+  return (allFigures && overlap >= 0.4) || overlap >= 0.8;
 }
 
 function KeyTiles({ items }: { items: CardBody["key_numbers"] }) {
@@ -212,7 +238,204 @@ function SignalLine({ s }: { s: Signal }) {
   );
 }
 
-/** One announcement as a self-contained card: what happened, why it matters, and the footer numbers. */
+/** Event families: each has its own colour and its own block on the card's face (owner, 2026-10-19). Green and red
+ * keep one meaning on every card, up or down; the family colour says what kind of news it is. */
+type Family = "res" | "ord" | "cap" | "rat" | "reg" | "oth";
+const FAMILY: Record<string, Family> = {
+  RESULTS: "res", CONCALL_PRESENTATION: "res", ANNUAL_REPORT: "res", MONTHLY_BUSINESS_UPDATE: "res",
+  ORDER_WIN: "ord", CAPEX: "ord", PRODUCT_LAUNCH: "ord",
+  RIGHTS_ISSUE: "cap", FUNDRAISE: "cap", M_AND_A: "cap", CORPORATE_ACTION: "cap",
+  DEBT_RATINGS: "rat", GOVERNANCE: "reg", MANAGEMENT_CHANGE: "reg", LITIGATION_REGULATORY: "reg",
+};
+const FAMILY_ICON: Record<Family, LucideIcon> = { res: BarChart3, ord: ClipboardCheck, cap: CircleDollarSign, rat: Star, reg: Scale, oth: FileText };
+const famStyle = (f: Family) => ({ "--fam": `var(--fam-${f})`, "--fam-soft": `var(--fam-${f}-soft)` }) as CSSProperties;
+
+const GRADE: Record<Impact, string> = { HIGH: "bg-neg-soft text-impact-high", MODERATE: "bg-warn-soft text-warn", LOW: "bg-surface-2 text-ink-3" };
+const IMPACT_SHORT: Record<Impact, string> = { HIGH: "High", MODERATE: "Moderate", LOW: "Low" };
+const DIRECTION: Record<Tone, { mark: string; cls: string } | null> = {
+  POSITIVE: { mark: "▲", cls: "text-pos" }, NEGATIVE: { mark: "▼", cls: "text-neg" }, MIXED: { mark: "◆", cls: "text-warn" }, NEUTRAL: null,
+};
+
+function BlockShell({ title, children, right }: { title: string; children: ReactNode; right?: ReactNode }) {
+  return (
+    <section className="mt-3 rounded-2xl border border-[color-mix(in_srgb,var(--fam)_28%,var(--line))] px-3.5 py-3">
+      <h4 className="mb-2.5 flex items-center gap-2 text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-[var(--fam)]">{title}{right}</h4>
+      <div className="space-y-3">{children}</div>
+    </section>
+  );
+}
+
+function Steps({ steps, at, warn }: { steps: string[]; at: number; warn?: boolean }) {
+  return (
+    <ol className="flex items-start" aria-label={`Stage: ${steps[at]}`}>
+      {steps.map((s, i) => (
+        <li key={s + i} className={cn("relative flex min-w-0 flex-1 flex-col items-center gap-1 text-center text-[11.5px] font-bold",
+          i <= at ? "text-ink" : "text-ink-3")}>
+          {i > 0 && <span aria-hidden className={cn("absolute right-1/2 top-[7px] h-[2px] w-full", i <= at ? "bg-[var(--fam)]" : "bg-line-strong")} />}
+          <span aria-hidden className={cn("relative z-[1] h-4 w-4 rounded-full border-2",
+            i <= at ? (warn && i === at ? "border-warn bg-warn" : "border-[var(--fam)] bg-[var(--fam)]") : "border-line-strong bg-surface",
+            i === at && "shadow-[0_0_0_4px_var(--fam-soft)]")} />
+          <span className="w-full truncate px-0.5">{s}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function SizeBar({ label, pct: value }: { label: string; pct: number }) {
+  return (
+    <div>
+      <div className="flex justify-between gap-3 text-[12.5px] font-semibold text-ink-2"><span>{label}</span><span className="num text-ink">{value.toFixed(value < 10 ? 1 : 0)}%</span></div>
+      <div className="mt-1 h-2 overflow-hidden rounded bg-surface-2"><i className="block h-full rounded bg-[var(--fam)]" style={{ width: `${Math.min(100, Math.max(2, value))}%` }} /></div>
+    </div>
+  );
+}
+
+const TRACKS: Record<string, { steps: string[]; at: Record<string, number> }> = {
+  ORDER: { steps: ["Award", "Contract", "Execution", "Completed"],
+           at: { LOI: 0, LOA: 0, MOU: 0, DEVELOPMENT_ORDER: 0, WORK_ORDER: 1, CONTRACT: 1, IN_PROGRESS: 2, PARTIALLY_COMPLETED: 2, COMPLETED: 3 } },
+  CAPEX: { steps: ["Proposed", "Approved", "Under way", "Completed"],
+           at: { PROPOSED: 0, BOARD_APPROVED: 1, TERMS_FINALISED: 1, SHAREHOLDER_APPROVED: 1, IN_PROGRESS: 2, PARTIALLY_COMPLETED: 2, COMPLETED: 3 } },
+  DEAL: { steps: ["Proposed", "Board", "Shareholders", "Completed"],
+          at: { PROPOSED: 0, BOARD_APPROVED: 1, TERMS_FINALISED: 1, SHAREHOLDER_APPROVED: 2, IN_PROGRESS: 2, PARTIALLY_COMPLETED: 2, COMPLETED: 3 } },
+};
+
+/** Orders, capex and capital deals: the size, against the company, over its term, and how far it has got. */
+function DealBlock({ card }: { card: CardBody }) {
+  const deal = card.deal_value, scale = card.scale;
+  if (!deal && !scale) return null;
+  const amount = scale?.amount_cr ?? deal?.amount_cr ?? null;
+  const facts = [
+    amount != null ? [deal?.includes_gst ? "Value, incl. GST" : "Value", cr(amount)] : null,
+    deal?.counterparty ? ["From", deal.counterparty] : null,
+    deal?.execution_by ? ["Complete by", deal.execution_by] : null,
+  ].filter(Boolean) as [string, string][];
+  const track = deal ? TRACKS[deal.kind === "ORDER" ? "ORDER" : deal.kind === "CAPEX" ? "CAPEX" : "DEAL"] : null;
+  const at = deal && track ? track.at[deal.stage] : undefined;
+  const steps = track && at !== undefined ? track.steps.map((s, i) => (i === 0 && deal!.kind === "ORDER" ? STAGE_LABEL[deal!.stage] ?? s : s)) : null;
+  const title = deal?.kind === "ORDER" ? "The order" : deal?.kind === "CAPEX" ? "The capex" : deal?.kind === "FUNDRAISE" ? "The raise" : "The deal";
+  return (
+    <BlockShell title={title}>
+      {facts.length > 0 && (
+        <dl className={cn("grid gap-2", facts.length === 3 ? "grid-cols-2 sm:grid-cols-3" : facts.length === 2 ? "grid-cols-2" : "grid-cols-1")}>
+          {facts.map(([k, v]) => (
+            <div key={k} className="min-w-0 rounded-xl bg-surface-2 px-2.5 py-1.5">
+              <dt className="text-[11px] font-bold text-ink-3">{k}</dt>
+              <dd className="num truncate text-[13.5px] font-bold text-ink" title={v}>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+      {(scale?.against ?? []).slice(0, 2).map((a) => <SizeBar key={a.label} label={`Against ${a.label} (${cr(a.base_cr)})`} pct={a.pct} />)}
+      {scale?.per_year && (
+        <p className="text-[12.5px] text-ink-2">Over its {scale.per_year.years}-year term: <span className="num font-bold text-ink">{scale.per_year.pct.toFixed(1)}%</span> of {scale.per_year.label} a year.</p>
+      )}
+      {deal?.stage === "CANCELLED" ? <p className="text-[12.5px] font-bold text-neg">Cancelled or withdrawn.</p>
+        : steps && <Steps steps={steps} at={at!} warn={PROVISIONAL_STAGES.has(deal!.stage)} />}
+    </BlockShell>
+  );
+}
+
+const LONG_TERM = ["AAA", "AA+", "AA", "AA-", "A+", "A", "A-", "BBB+", "BBB", "BBB-", "BB+", "BB", "BB-", "B+", "B", "B-", "C+", "C", "C-", "D"];
+
+/** A credit rating: before and after on the agency's long-term scale. */
+function RatingBlock({ rc }: { rc: NonNullable<CardBody["rating_change"]> }) {
+  const a = LONG_TERM.indexOf(rc.after), b = rc.before ? LONG_TERM.indexOf(rc.before) : -1;
+  const lo = Math.max(0, Math.min(a, b < 0 ? a : b) - 2), hi = Math.min(LONG_TERM.length - 1, Math.max(a, b) + 2);
+  const n = rc.notches;
+  const move = n == null ? "First rating in memory" : n === 0 ? "Grade unchanged" : `${Math.abs(n)} notch${Math.abs(n) > 1 ? "es" : ""} ${n > 0 ? "up" : "down"}`;
+  const down = (n ?? 0) < 0 || /negative/i.test(rc.after_outlook ?? "") && !/negative/i.test(rc.before_outlook ?? "");
+  return (
+    <BlockShell title={`Rating${rc.agency ? ` · ${rc.agency}` : ""}`}>
+      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2.5">
+        <div className="rounded-xl bg-surface-2 px-3 py-2">
+          <b className="num block text-[19px] font-extrabold">{rc.before ?? "—"}</b>
+          <span className="text-[11.5px] font-semibold text-ink-3">{rc.before_outlook ?? "before"}{rc.as_of_before ? ` · ${istDate(rc.as_of_before)}` : ""}</span>
+        </div>
+        <span className={cn("text-center text-[11.5px] font-extrabold", down ? "text-neg" : n && n > 0 ? "text-pos" : "text-ink-2")}>{move}<br />→</span>
+        <div className={cn("rounded-xl px-3 py-2", down ? "bg-neg-soft" : n && n > 0 ? "bg-pos-soft" : "bg-surface-2")}>
+          <b className={cn("num block text-[19px] font-extrabold", down ? "text-neg" : n && n > 0 ? "text-pos" : "text-ink")}>{rc.after}</b>
+          <span className="text-[11.5px] font-semibold text-ink-3">{rc.after_outlook ?? "now"}</span>
+        </div>
+      </div>
+      {a >= 0 && (
+        <div className="num flex flex-wrap gap-1 text-[11px] font-semibold text-ink-3" aria-label="Rating scale">
+          {LONG_TERM.slice(lo, hi + 1).map((g) => (
+            <span key={g} className={cn("rounded-md px-1.5 py-0.5", g === rc.after ? (down ? "bg-neg text-white" : "bg-[var(--fam)] text-white")
+              : g === rc.before ? "outline outline-[1.5px] outline-ink-3" : "bg-surface-2")}>{g}</span>
+          ))}
+        </div>
+      )}
+    </BlockShell>
+  );
+}
+
+function CaseBlock({ cs }: { cs: NonNullable<CardBody["case_stage"]> }) {
+  return (
+    <BlockShell title={cs.track === "USFDA" ? "Where the USFDA case stands" : "Where the case stands"}>
+      <Steps steps={cs.steps} at={cs.at} warn={cs.at < cs.steps.length - 1} />
+    </BlockShell>
+  );
+}
+
+/** Context for a decision, all computed from the card and memory: the price since the filing, a run-rate P/E,
+ * what management said before, and the next check. */
+function decisionLines(row: CardRow, card: CardBody, table: ResultsSnapshot | null, faceText: string) {
+  const out: { label: string; text: string; tone?: "pos" | "neg" | "warn"; computed?: boolean }[] = [];
+  const at = card.priced_at_filing;
+  const ageDays = (Date.now() - Date.parse(row.filed_at)) / 86400_000;
+  if (at?.last_price && row.last_price && ageDays > 1) {
+    const move = (row.last_price / at.last_price - 1) * 100;
+    out.push({ label: "Since the filing", text: `₹${at.last_price.toLocaleString("en-IN")} → ₹${row.last_price.toLocaleString("en-IN")}, ${move > 0 ? "+" : ""}${move.toFixed(1)}%`,
+               tone: move > 0 ? "pos" : move < 0 ? "neg" : undefined, computed: true });
+  }
+  const pat = table?.pat ?? (table as unknown as Record<string, ResultLine | undefined> | null)?.pat_owners;
+  if (table && pat && pat.value > 0 && table.period.startsWith("Q") && row.market_cap_cr) {
+    out.push({ label: "Run-rate P/E", text: `${(row.market_cap_cr / (pat.value * 4)).toFixed(1)}x (market cap ÷ this quarter's profit × 4)`, computed: true });
+  }
+  const said = (card.guidance_recall ?? []).find((g) => !repeats(`${g.statement} ${g.target ?? ""}`, faceText));
+  if (said) {
+    const when = said.given_on ? istDate(said.given_on).split(" ").slice(1).join(" ") : null;
+    out.push({ label: `Management said${when ? `, ${when}` : ""}`, text: `${said.statement}${said.target && !said.statement.includes(said.target) ? ` (${said.target})` : ""}${said.due ? ` · by ${said.due}` : ""}` });
+  }
+  const next = card.track_next?.kpis_to_verify?.find((k) => k.check_in);
+  if (next) out.push({ label: `Next check, ${next.check_in}`, text: `${next.kpi}${next.target ? ` (${next.target})` : ""}`, tone: "warn" });
+  return out;
+}
+
+/** Copy as image, verify against the PDF and the company memory: one button, not three. */
+function MoreMenu({ items }: { items: { label: string; icon: LucideIcon; onClick: () => void; hidden?: boolean }[] }) {
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent) => { if (!box.current?.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [open]);
+  return (
+    <span ref={box} className="relative">
+      <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label="More actions" title="More"
+        className="grid h-8 w-8 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
+        <MoreHorizontal className="h-4 w-4" />
+      </button>
+      {open && (
+        <span role="menu" className="absolute bottom-9 right-0 z-20 w-56 rounded-xl border border-line bg-surface p-1 shadow-lg">
+          {items.filter((i) => !i.hidden).map(({ label, icon: Icon, onClick }) => (
+            <button key={label} type="button" role="menuitem" onClick={() => { setOpen(false); onClick(); }}
+              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] font-medium text-ink hover:bg-surface-2">
+              <Icon className="h-4 w-4 text-ink-3" />{label}
+            </button>
+          ))}
+        </span>
+      )}
+    </span>
+  );
+}
+
+/** One announcement as a self-contained card. Each fact is said once (owner, 2026-10-19: "lots of repeated items"), and
+ * the card takes its event family's colour and block: the results table, the order's size and stage, the rating move,
+ * where a case stands. */
 export function AnnouncementCard({ row, defaultOpen = false, highlight = false }: { row: CardRow; defaultOpen?: boolean; highlight?: boolean }) {
   const card = useMemo(() => parseCard(row), [row]);
   const [open, setOpen] = useState(defaultOpen);
@@ -226,11 +449,9 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
 
   const tone = (card.tone ?? "NEUTRAL") as Tone;
   const event = card.event_type || row.event_category;
-  const box = boxItems(card);
+  const family = FAMILY[event] ?? "oth";
+  const FamilyIcon = FAMILY_ICON[family];
   const deal = card.deal_value;
-  const stage = deal ? STAGE_LABEL[deal.stage] : undefined;
-  const revenue = card.fundamentals?.revenue;
-  const footer = footerMetrics(card);
   const review = !!row.needs_review;
   // Held cards reach only the owner's feed (private launch, owner 2026-10-19).
   const held = !!row.held;
@@ -244,9 +465,31 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
   const longRead = event === "CONCALL_PRESENTATION" || event === "ANNUAL_REPORT";  // a 100-400 page document
   const tilesFor = longRead || (event === "RESULTS" && !card.results);
   const table = event === "RESULTS" && tableShows(card.results) ? card.results : null;
+  const dealBlock = !table && (FAMILY[event] === "ord" || FAMILY[event] === "cap") && !!(card.scale || deal?.amount_cr);
+  const rating = event === "DEBT_RATINGS" ? card.rating_change ?? null : null;
+  const caseStage = card.case_stage ?? null;
+
+  // Repeats out: a point that restates the headline, a fact the table or block already shows
+  const headline = plain(card.headline);
   const factLimit = event === "RESULTS" || longRead ? 4 : 3;
-  const unique = card.what_happened.filter((fact) => !(table && coveredByTable(fact, table)));
+  // what the event's block already shows, so a point that only restates it is left out too
+  const blockText = [
+    dealBlock ? [card.scale?.amount_cr ?? deal?.amount_cr, deal?.counterparty, deal?.execution_by].filter((x) => x != null).join(" ") : "",
+    rating ? `${rating.agency ?? ""} ${rating.after} ${rating.after_outlook ?? ""} ${rating.before ?? ""} ${rating.before_outlook ?? ""}` : "",
+  ].join(" ");
+  const unique = card.what_happened.filter((fact) => !(table && coveredByTable(fact, table)) && !repeats(plain(fact), `${headline} ${blockText}`));
   const facts = unique.slice(0, factLimit);
+  const shownText = [headline, ...facts.map(plain)].join(" ");
+  const box = boxItems(card, (s) =>
+    (s.type === "SCALE" && dealBlock) || (s.type === "RATING_LIQUIDITY" && !!rating && /outlook/i.test(s.text)) || repeats(s.text, shownText));
+  const faceText = [shownText, ...box.insights.map((i) => i.text), box.signal?.text ?? ""].join(" ");
+  const decision = decisionLines(row, card, table, faceText);
+  const footer = footerMetrics(card).filter((m) => !faceText.includes(m.value.replace(/%$/, "")) && !(table && /margin/i.test(m.label)));
+  const thin = row.median_turnover_cr != null && row.median_turnover_cr < 0.5;
+  const credibility = card.score?.credibility;
+  const familyLabel = [EVENT_LABELS[event] ?? card.category_tag, table?.period, card.basis ? BASIS_LABEL[card.basis]?.toLowerCase() : null,
+    table?.lens === "bank" ? "bank lens" : table?.lens === "insurer" ? "insurer lens" : null].filter(Boolean).join(" · ");
+  const direction = DIRECTION[tone];
 
   async function share() {
     if (!ref.current) return;
@@ -263,10 +506,9 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
   }
 
   return (
-    <article ref={ref} id={`card-${row.news_id}`}
-      className={cn("card-soft card-lift rise-in relative overflow-hidden", highlight && "ring-2 ring-accent")}>
-      <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: IMPACT_BAR[row.impact_level] }} />
-      <div className="px-5 pb-4 pt-4 sm:px-6 sm:pt-5">
+    <article ref={ref} id={`card-${row.news_id}`} style={famStyle(family)}
+      className={cn("card-soft card-lift rise-in relative", highlight && "ring-2 ring-accent")}>
+      <div className="px-5 pb-3 pt-4 sm:px-6 sm:pt-5">
         {exporting && (
           <div className="mb-3 flex items-baseline justify-between text-[12px]">
             <span className="font-semibold text-accent">Insiders · NSE</span>
@@ -300,14 +542,14 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
 
         <header className="flex items-center justify-between gap-3">
           <button type="button" onClick={() => openMemory()}
-            className="group flex min-w-0 items-center gap-3 text-left" title={`${row.company_name} · ${listing(row.symbol, row.scrip_code)}`}>
+            className="group flex min-w-0 items-center gap-3 text-left" title={`${row.company_name}: open the company memory`}>
             <Avatar name={row.company_name} symbol={row.symbol} size={44} />
             <span className="min-w-0">
               <span className="block truncate text-[16px] font-extrabold tracking-tight text-ink group-hover:text-accent">
                 {row.company_name}{formerName(row) && <span className="ml-2 text-[12px] font-semibold text-ink-3">formerly {formerName(row)}</span>}
               </span>
               <span className="num block truncate text-[12px] font-medium text-ink-3">
-                {listing(row.symbol, row.scrip_code)}
+                {row.symbol ?? row.scrip_code}
                 {row.market_cap_cr != null && <span className="font-sans font-semibold"> · {cr(row.market_cap_cr)}{row.size_category ? ` · ${titleCase(row.size_category)} cap` : ""}</span>}
               </span>
             </span>
@@ -320,48 +562,45 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           )}
         </header>
 
-        <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          {card.score && (
-            <span className="num rounded-full bg-ink px-2.5 py-[3px] text-[11.5px] font-bold text-surface"
-              title={`Actionability ${card.score.total}/100, computed from the filing and memory`}>
-              {row.is_actionable_signal ? "🔥 " : ""}{card.score.total}
-            </span>
-          )}
-          <span className={cn("rounded-full px-2.5 py-[3px] text-[11.5px] font-bold", IMPACT_PILL[row.impact_level])}>{IMPACT_WORD[row.impact_level]}</span>
-          {tone !== "NEUTRAL" && <span className={cn("rounded-full px-2.5 py-[3px] text-[11.5px] font-bold", TONE_CHIP[tone])}>{TONE_LABEL[tone]}</span>}
-          <Chip>{EVENT_LABELS[event] ?? card.category_tag}</Chip>
-          {(card.themes ?? []).map((t) => <Chip key={t}>{t}</Chip>)}
-          {stage && <Chip tone={PROVISIONAL_STAGES.has(deal!.stage) ? "warn" : "neutral"}>{stage}</Chip>}
-          {deal?.updates_deal_id && <Chip tone="neutral">Update to earlier deal</Chip>}
-          {card.basis && <Chip tone="neutral">{BASIS_LABEL[card.basis] ?? card.basis}</Chip>}
-          {card.score?.credibility != null && (
-            <Chip tone={card.score.credibility >= 75 ? "accent" : card.score.credibility < 50 ? "warn" : "neutral"}>
-              🎯 Credibility {Math.round(card.score.credibility)}%
-            </Chip>
-          )}
-          {row.median_turnover_cr != null && row.median_turnover_cr < 0.5 && <Chip tone="warn">💧 Thin liquidity</Chip>}
-          <TechnicalChips row={row} />
+        <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-[12.5px] font-bold">
+          <span className={cn("inline-flex items-center gap-1.5 rounded-full py-[3px] pl-1 pr-2.5", GRADE[row.impact_level])}
+            title={card.score ? `Actionability ${card.score.total}/100, computed from the filing and memory` : undefined}>
+            {card.score && <i className="num rounded-full bg-surface px-1.5 text-[11px] not-italic">{row.is_actionable_signal ? "🔥" : ""}{card.score.total}</i>}
+            {IMPACT_SHORT[row.impact_level]}
+          </span>
+          {direction && <span className={direction.cls}>{direction.mark} {TONE_LABEL[tone]}</span>}
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--fam-soft)] px-2.5 py-[3px] text-[var(--fam)]">
+            <FamilyIcon className="h-3.5 w-3.5" />{familyLabel}
+          </span>
+          {deal?.updates_deal_id && <span className="text-ink-3">Update to an earlier deal</span>}
+          {!dealBlock && deal && STAGE_LABEL[deal.stage] && PROVISIONAL_STAGES.has(deal.stage) && <span className="text-warn">{STAGE_LABEL[deal.stage]}</span>}
+          {credibility != null && credibility < 50 && <span className="text-warn">🎯 Credibility {Math.round(credibility)}%</span>}
+          {thin && <span className="text-warn" title="Median traded value a day">💧 ₹{row.median_turnover_cr!.toFixed(2)} Cr a day</span>}
+          <TechnicalTags row={row} />
         </div>
 
-        <h3 className="mt-3 font-display text-[18px] leading-snug text-ink sm:text-[19.5px]">{plain(card.headline)}</h3>
-        {card.core_catalyst && (
+        <h3 className="mt-3 font-display text-[18px] leading-snug text-ink sm:text-[19.5px]">{headline}</h3>
+        {card.core_catalyst && !repeats(plain(card.core_catalyst), headline) && (
           <p className="mt-1.5 text-[13.5px] leading-snug text-ink-2"><span aria-hidden>📌 </span><span className="font-semibold text-ink">Core catalyst:</span> {plain(card.core_catalyst)}</p>
         )}
 
         {card.call_read && <CallReadChips read={card.call_read} />}
         {table && <ResultsTable r={table} />}
+        {dealBlock && <DealBlock card={card} />}
+        {rating && <RatingBlock rc={rating} />}
+        {caseStage && <CaseBlock cs={caseStage} />}
         {card.volume_strip && <VolumeStrip s={card.volume_strip} />}
         {tilesFor && card.key_numbers.length >= 2 && <KeyTiles items={card.key_numbers} />}
 
-        <ul className="mt-3 space-y-2">
-          {facts.map((fact, i) => (
-            <Point key={i}><RichText text={fact} /></Point>
-          ))}
-        </ul>
+        {facts.length > 0 && (
+          <ul className="mt-3 space-y-2">
+            {facts.map((fact, i) => <Point key={i}><RichText text={fact} /></Point>)}
+          </ul>
+        )}
 
         {(box.insights.length > 0 || box.signal || box.missing || box.fallback) && (
-          <section className="mt-4 rounded-2xl bg-insight px-4 py-3">
-            <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-insight-ink">{boxLabel(event)}</h4>
+          <section className="mt-4 rounded-2xl bg-[var(--fam-soft)] px-4 py-3">
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--fam)]">{boxLabel(event)}</h4>
             <ul className="mt-2 space-y-2">
               {box.fallback && <Point>{box.fallback}</Point>}
               {box.insights.map((insight, i) => <Point key={i}><RichText text={insight.text} /></Point>)}
@@ -373,24 +612,33 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           </section>
         )}
 
-        <div className="mt-3.5 flex flex-wrap items-baseline gap-2 text-[12px] font-semibold text-ink-3">
-          {revenue && (
-            <span className="rounded-[10px] bg-surface-2 px-2.5 py-1">{revenue.period} revenue <span className="num font-bold text-ink">{cr(revenue.value)}</span></span>
-          )}
-          {footer.map((m) => (
-            <span key={m.label} className="rounded-[10px] bg-surface-2 px-2.5 py-1" title={m.period ? `${m.label}, ${m.period}` : undefined}>{m.label} <span className="num font-bold text-ink">{m.value}</span></span>
-          ))}
-          {([["1W", row.ret_1w], ["1M", row.ret_1m], ["1Y", row.ret_1y]] as const).map(([label, v]) => (
-            <span key={label} className="rounded-[10px] bg-surface-2 px-2.5 py-1">{label} <span className={cn("num font-bold", v == null ? "text-ink" : signClass(v))}>{pct(v)}</span></span>
-          ))}
-        </div>
+        {decision.length > 0 && (
+          <dl className="mt-3 grid gap-x-4 gap-y-1.5 text-[13px] sm:grid-cols-2">
+            {decision.map((d) => (
+              <div key={d.label} className="min-w-0">
+                <dt className="text-[11px] font-bold uppercase tracking-[0.06em] text-ink-3">{d.label}</dt>
+                <dd className={cn("leading-snug", d.tone === "pos" ? "text-pos" : d.tone === "neg" ? "text-neg" : "text-ink")}>
+                  {d.text}{d.computed && <span className="ml-1.5 text-[10.5px] font-medium text-ink-3">✓ computed</span>}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )}
+
+        {footer.length > 0 && (
+          <div className="mt-3 flex flex-wrap items-baseline gap-2 text-[12px] font-semibold text-ink-3">
+            {footer.map((m) => (
+              <span key={m.label} className="rounded-[10px] bg-surface-2 px-2.5 py-1" title={m.period ? `${m.label}, ${m.period}` : undefined}>{m.label} <span className="num font-bold text-ink">{m.value}</span></span>
+            ))}
+          </div>
+        )}
 
         {exporting ? (
           <p className="mt-2 text-[10.5px] text-ink-3">AI summary of a public NSE filing. Not investment advice; verify against the original filing.</p>
         ) : (
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-line pt-2.5 text-[12px] text-ink-3" data-noexport="true">
-            <span className="num" title={`${istDateTime(row.filed_at)} IST`}>
-              {istDateTime(row.filed_at).replace(/ \d{4},/, ",")} · {relativeTime(row.filed_at)}
+            <span className="num" title={`${istDateTime(row.filed_at)} IST · ${relativeTime(row.filed_at)}`}>
+              {istDateTime(row.filed_at).replace(/ \d{4},/, ",")}
               {row.market_session ? ` · ${SESSION_LABEL[row.market_session] ?? ""}` : ""}
             </span>
             {review ? (
@@ -399,11 +647,11 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
               </span>
             ) : corrected ? (
               <span className="inline-flex items-center gap-1" title={`Corrected by ${card.review?.checked_by}: ${(card.review?.fixed ?? []).join(" · ")}`}>
-                <RefreshCcw className="h-3.5 w-3.5 text-pos" /> Numbers re-checked by a second model
+                <RefreshCcw className="h-3.5 w-3.5 text-pos" /> Re-checked
               </span>
             ) : g.checked > 0 && allMatched ? (
-              <span className="inline-flex items-center gap-1" title="Every number was found in the filing or company memory">
-                <BadgeCheck className="h-3.5 w-3.5 text-pos" /> Numbers verified
+              <span className="inline-flex items-center gap-1 font-semibold text-pos" title={`All ${g.checked} numbers were found in the filing or company memory`}>
+                <BadgeCheck className="h-3.5 w-3.5" /> {g.checked} numbers verified
               </span>
             ) : g.checked > 0 ? (
               <span className="num inline-flex items-center gap-1" title={g.ungrounded.length ? `Not found: ${g.ungrounded.join(", ")}` : undefined}>
@@ -421,10 +669,6 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
                   <FileText className="h-4 w-4" />
                 </a>
               )}
-              <button type="button" onClick={share} title="Copy card as image" aria-label="Copy card as image"
-                className="grid h-8 w-8 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
-                {copy === "idle" ? <Camera className="h-4 w-4" /> : copy === "error" ? <AlertTriangle className="h-4 w-4 text-warn" /> : <Check className="h-4 w-4 text-pos" />}
-              </button>
               {owner.token && (
                 <>
                   <button type="button" onClick={() => owner.rate(row.news_id, "STARRED")} aria-pressed={owner.ratings[row.news_id] === "STARRED"}
@@ -439,16 +683,11 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
                   </button>
                 </>
               )}
-              {row.pdf_url && (
-                <button type="button" onClick={() => openMemory(row.news_id)} title="Verify against the PDF" aria-label="Verify against the PDF"
-                  className="grid h-8 w-8 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
-                  <FileSearch className="h-4 w-4" />
-                </button>
-              )}
-              <button type="button" onClick={() => openMemory()} title="360° company memory" aria-label="360° company memory"
-                className="grid h-8 w-8 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
-                <Building2 className="h-4 w-4" />
-              </button>
+              <MoreMenu items={[
+                { label: copy === "idle" ? "Copy card as image" : copy === "error" ? "Could not copy" : "Copied", icon: copy === "error" ? AlertTriangle : copy === "idle" ? Camera : Check, onClick: share },
+                { label: "Verify against the PDF", icon: FileSearch, onClick: () => openMemory(row.news_id), hidden: !row.pdf_url },
+                { label: "Company memory", icon: Building2, onClick: () => openMemory() },
+              ]} />
             </span>
           </div>
         )}
@@ -456,8 +695,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
       {!exporting && <VerdictBar newsId={row.news_id} />}
       {open && !exporting && (
         <DeepDive row={row} card={card} shown={box.insights.length} shownSignal={box.signal}
-          moreFacts={unique.slice(factLimit)}
-          keyNumbers={tilesFor && card.key_numbers.length >= 2 ? [] : card.key_numbers} />
+          moreFacts={unique.slice(factLimit)} faceText={faceText} thinShown={thin}
+          keyNumbers={tilesFor && card.key_numbers.length >= 2 ? [] : card.key_numbers.filter((k) => !faceText.includes(k.value.replace(/^₹| Cr$/g, "")))} />
       )}
     </article>
   );
@@ -510,15 +749,15 @@ function Section({ label, children }: { label: string; children: ReactNode }) {
 }
 
 /** Everything else the analysis produced: shown on demand, never in the share image. */
-function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers }: {
+function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers, faceText, thinShown }: {
   row: CardRow; card: CardBody; shown: number; shownSignal?: Signal;
-  moreFacts: Fact[]; keyNumbers: CardBody["key_numbers"];
+  moreFacts: Fact[]; keyNumbers: CardBody["key_numbers"]; faceText: string; thinShown: boolean;
 }) {
   const more = card.why_it_matters.slice(shown);
   // The summary box above already shows the top-ranked signal, so showing every signal here printed it
   // twice on one card - the Scale line read the same in both places. The card is a page in a pocket
   // diary: a line that repeats costs a reader more than it tells them.
-  const restSignals = card.signals.filter((s) => s !== shownSignal);
+  const restSignals = card.signals.filter((s) => s !== shownSignal && !repeats(s.text, faceText));
   const quant = card.quantified_impact ?? [];
   const changes = card.notable_changes ?? [];
   const track = card.track_next;
@@ -533,13 +772,6 @@ function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers }: {
 
   return (
     <div className="space-y-5 border-t border-line bg-surface-2/30 px-5 py-5 sm:px-6" data-noexport="true">
-      <p className="num flex flex-wrap gap-x-2 text-[12px] text-ink-3">
-        <span>{EVENT_LABELS[card.event_type || row.event_category] ?? card.category_tag}</span>
-        {row.sector && row.sector !== "default" && <><span>·</span><span>{SECTORS[row.sector] ?? titleCase(row.sector)} lens</span></>}
-        <span>·</span><span>{listing(row.symbol, row.scrip_code)}</span>
-        <span>·</span><span>{istDateTime(row.filed_at)} IST, {marketSession(row.filed_at).toLowerCase()}</span>
-      </p>
-
       {moreFacts.length > 0 && (
         <Section label="More from the filing">
           <ul className="space-y-2">{moreFacts.map((fact, i) => <Point key={i}><RichText text={fact} /></Point>)}</ul>
@@ -616,13 +848,13 @@ function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers }: {
           </p>
           {[...card.score.reasons, ...card.score.vetoes.map((v) => `Veto: ${v}`)].length > 0 && (
             <ul className="mt-1 space-y-0.5 text-[12.5px] text-ink-3">
-              {[...card.score.reasons, ...card.score.vetoes.map((v) => `Veto: ${v}`)].map((r, i) => <li key={i}>{r}</li>)}
+              {[...card.score.reasons.filter((r) => !(thinShown && /^thin liquidity/i.test(r))), ...card.score.vetoes.map((v) => `Veto: ${v}`)].map((r, i) => <li key={i}>{r}</li>)}
             </ul>
           )}
         </Section>
       )}
 
-      <MarketReaction raw={row.post_event_return_json} atFiling={card.priced_at_filing} />
+      <MarketReaction raw={row.post_event_return_json} atFiling={card.priced_at_filing} row={row} />
 
       {card.review && (
         <Section label="Second check">
@@ -658,14 +890,21 @@ function signedPct(v: number | undefined) {
 }
 
 /** Loop 1: what the stock did after the filing, against the index (filled nightly). */
-function MarketReaction({ raw, atFiling }: { raw?: string | null; atFiling?: CardBody["priced_at_filing"] }) {
+function MarketReaction({ raw, atFiling, row }: { raw?: string | null; atFiling?: CardBody["priced_at_filing"]; row: CardRow }) {
   let rx: PriceReaction | null = null;
   try { rx = raw ? JSON.parse(raw) : null; } catch { rx = null; }
   const points = rx ? (["t1", "t3", "t5"] as const).filter((k) => rx![k]) : [];
   const at = atFiling?.last_price !== undefined ? atFiling : null;
-  if (!points.length && !at) return null;
+  const now = ([["1W", row.ret_1w], ["1M", row.ret_1m], ["1Y", row.ret_1y]] as const).filter(([, v]) => v != null);
+  if (!points.length && !at && !now.length) return null;
   return (
     <Section label="How the market reacted">
+      {now.length > 0 && (
+        <p className="num mb-2 flex flex-wrap gap-x-4 text-[12.5px] text-ink-2">
+          <span className="font-sans">Now:</span>
+          {now.map(([label, v]) => <span key={label}>{label} <span className={cn("font-semibold", signClass(v!))}>{pct(v)}</span></span>)}
+        </p>
+      )}
       {at && (
         <p className="num mb-2 text-[12.5px] text-ink-2">
           At filing ({at.price_date}): ₹{at.last_price!.toLocaleString("en-IN")}
@@ -699,7 +938,7 @@ function MarketReaction({ raw, atFiling }: { raw?: string | null; atFiling?: Car
 }
 
 /** Price structure beside a fresh card (the tags describe the latest prices, so older cards skip them). */
-function TechnicalChips({ row }: { row: CardRow }) {
+function TechnicalTags({ row }: { row: CardRow }) {
   let tech: Technicals | null = null;
   try { tech = row.technicals_json ? JSON.parse(row.technicals_json) : null; } catch { tech = null; }
   if (!tech?.as_of) return null;
@@ -707,10 +946,9 @@ function TechnicalChips({ row }: { row: CardRow }) {
   if (days < -3 || days > 10) return null;
   return (
     <>
-      {tech.vcp && row.impact_level === "HIGH" && <Chip>⚡ Coiled spring</Chip>}
-      {tech.stage2 && <Chip tone="neutral">📈 Stage 2 trend</Chip>}
-      {tech.rs_pct != null && tech.rs_pct >= 80 && <Chip tone="neutral">RS {tech.rs_pct}</Chip>}
-      {tech.rvol != null && tech.rvol >= 2.5 && days >= 0 && days <= 2 && <Chip tone="neutral">Volume {tech.rvol.toFixed(1)}x</Chip>}
+      {tech.vcp && row.impact_level === "HIGH" && <span className="text-ink-2">⚡ Coiled spring</span>}
+      {tech.stage2 && <span className="text-ink-2">📈 Stage 2 trend</span>}
+      {tech.rvol != null && tech.rvol >= 2.5 && days >= 0 && days <= 2 && <span className="text-ink-2">Volume {tech.rvol.toFixed(1)}x</span>}
     </>
   );
 }

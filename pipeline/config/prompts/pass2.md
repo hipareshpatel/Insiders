@@ -85,7 +85,10 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   financial statements.
 - themes: up to 2 short theme tags beyond the event type, only when clearly relevant (for example
   "Renewables", "Infra / EPC", "Defence", "EV", "Exports", "Data centres"). Empty list otherwise.
-- what_happened: 2 or 3 factual bullets (4 for results), each under 30 words. In each bullet mark
+- what_happened: 2 or 3 factual bullets (4 for results), each under 30 words. Each bullet adds what the
+  headline does not say: never restate the headline's subject and figure ("Rating revised to CARE A- (Negative)"
+  under a headline that says so); write the new detail instead ("Was CARE A (Stable); one notch and the outlook in
+  one step"). The card's face hides a bullet whose figures are all in the headline. In each bullet mark
   the one or two things a reader must not miss (the counterparty, the ₹ figure, the date) with
   **double asterisks**; mark nothing else. For results, the card already shows a small P&L table
   (revenue, EBITDA, margin and PAT with YoY and QoQ) built from your financial_metrics, so extract

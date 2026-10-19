@@ -66,7 +66,7 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     signals: list[Signal] = []
     signals += _promises(before, after, output, filing)
     signals += _dilution(after, output, company)
-    signals += _scale(before, output, company)
+    signals += _scale(before, output, company, filing.filed_at)
     signals += _order_flow(before, output, filing)
     strain = _working_capital(after, filing)
     signals += strain
@@ -402,10 +402,13 @@ _CONVERSION = r"conver(?:t|ts|ted|ting|sion)\b(?!\s+(?:price|premium|ratio|optio
 _DEBT_CONVERTED = re.compile(rf"{_CONVERSION}.{{0,40}}{_DEBT_INSTRUMENT}|{_DEBT_INSTRUMENT}.{{0,40}}{_CONVERSION}", re.I)
 
 
-def _scale(before: dict | None, output: Pass2Output, company: dict | None) -> list[Signal]:
+def scale_parts(before: dict | None, output: Pass2Output, company: dict | None, filed_at: str | None = None) -> dict | None:
+    """The deal's size against the company, as figures: {amount_cr, noun, gst, against: [{pct, label, base_cr}],
+    per_year}. `per_year` spreads an order over its execution term against a year's revenue (Monarch's ₹48 Cr railway
+    order over 36 months is 9% of a year's sales a year, not 49% at once; owner's example, 2026-10-19)."""
     deal = output.card.deal_value if output.card is not None else None
     if deal is None or not deal.amount_cr or deal.amount_cr <= 0:
-        return []
+        return None
     deal_kind = deal.kind
     # A fundraise is money reaching the company. On an M_AND_A filing it is not: an open offer or a block
     # of shares bought from existing holders moves money between shareholders, and the company receives
@@ -420,23 +423,57 @@ def _scale(before: dict | None, output: Pass2Output, company: dict | None) -> li
     elif deal_kind == "FUNDRAISE" and _DEBT_CONVERTED.search(
             " ".join([output.card.headline] + [a.instrument or "" for a in output.dossier_delta.capital_actions])):
         deal_kind = "CONVERSION"
-    amount, parts = deal.amount_cr, []
+    amount, against = deal.amount_cr, []
     if deal_kind in ("ORDER", "CAPEX", "OTHER"):
         for period_kind in ("Q", "FY"):
             latest = _latest_revenue(before, period_kind)
             if latest:
-                parts.append(f"{amount / latest[1] * 100:.0f}% of {latest[0]} revenue ({_cr(latest[1])})")
+                against.append({"pct": amount / latest[1] * 100, "label": f"{latest[0]} revenue", "base_cr": latest[1]})
     market_cap = (company or {}).get("market_cap_cr")
     if deal_kind in ("FUNDRAISE", "ACQUISITION", "DIVESTMENT", "CAPEX", "CONVERSION") and market_cap:
-        parts.append(f"{amount / market_cap * 100:.0f}% of market cap ({_cr(market_cap)})")
+        against.append({"pct": amount / market_cap * 100, "label": "market cap", "base_cr": market_cap})
     net_worth = _latest_net_worth(before or {})
     if deal_kind in ("FUNDRAISE", "ACQUISITION") and net_worth and not shareholder_money:
-        parts.append(f"{amount / net_worth * 100:.0f}% of net worth ({_cr(net_worth)})")
-    if not parts:
+        against.append({"pct": amount / net_worth * 100, "label": "net worth", "base_cr": net_worth})
+    if not against:
+        return None
+    per_year = None
+    years = term_years(deal.execution_by, filed_at)
+    year_revenue = _latest_revenue(before, "FY")
+    if deal_kind == "ORDER" and years and years >= 1.5 and year_revenue:
+        per_year = {"years": round(years, 1), "pct": round(amount / years / year_revenue[1] * 100, 1),
+                    "label": f"{year_revenue[0]} revenue"}
+    return {"amount_cr": amount, "noun": _SCALE_NOUN.get(deal_kind, "deal"), "against": against, "per_year": per_year,
+            "gst": bool(deal.includes_gst and deal_kind == "ORDER")}
+
+
+def term_years(execution_by: str | None, filed_at: str | None) -> float | None:
+    """An execution term in years: "36 months", "within 3 years", or a date or period after the filing."""
+    if not execution_by:
+        return None
+    text = execution_by.lower()
+    if m := re.search(r"(\d+(?:\.\d+)?)\s*(months?|years?)", text):
+        n = float(m[1])
+        return n / 12 if m[2].startswith("month") else n
+    end = due_date(execution_by)
+    if end and filed_at:
+        try:
+            start = date.fromisoformat(filed_at[:10])
+        except ValueError:
+            return None
+        return (end - start).days / 365.25 if end > start else None
+    return None
+
+
+def _scale(before: dict | None, output: Pass2Output, company: dict | None, filed_at: str | None = None) -> list[Signal]:
+    scale = scale_parts(before, output, company, filed_at)
+    if scale is None:
         return []
-    noun = _SCALE_NOUN.get(deal_kind, "deal")
-    gst = "; the value includes GST, revenue does not" if deal.includes_gst and deal_kind == "ORDER" else ""
-    return [Signal("SCALE", "INFO", f"{_cr(amount)} {noun} = " + ", ".join(parts) + gst + ".")]
+    parts = [f"{a['pct']:.0f}% of {a['label']} ({_cr(a['base_cr'])})" for a in scale["against"]]
+    gst = "; the value includes GST, revenue does not" if scale["gst"] else ""
+    term = scale["per_year"]
+    spread = f"; over its {term['years']:g}-year term, {term['pct']:.0f}% of {term['label']} a year" if term else ""
+    return [Signal("SCALE", "INFO", f"{_cr(scale['amount_cr'])} {scale['noun']} = " + ", ".join(parts) + spread + gst + ".")]
 
 
 def _ordinal(n: int) -> str:

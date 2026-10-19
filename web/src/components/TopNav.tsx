@@ -64,12 +64,12 @@ export function TopNav({ onSearch }: { onSearch: () => void }) {
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-[1200px] items-center gap-6 px-4 sm:px-6">
+      <div className="mx-auto flex h-14 max-w-[1200px] items-center gap-4 px-4 sm:px-6 lg:gap-6">
         <Logo />
         <nav className="hidden items-center gap-1 md:flex">
           {NAV.map((item) => (
             <Link key={item.href} href={item.href}
-              className={cn("rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+              className={cn("whitespace-nowrap rounded-lg px-2 py-1.5 text-sm font-medium transition-colors lg:px-3",
                 isActive(item.href) ? "bg-accent-soft text-accent" : "text-ink-2 hover:text-ink")}>
               {item.label}
             </Link>
@@ -77,11 +77,11 @@ export function TopNav({ onSearch }: { onSearch: () => void }) {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <button type="button" onClick={onSearch}
-            className="hidden h-9 w-60 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-[13px] text-ink-3 hover:border-line-strong sm:flex">
+            className="hidden h-9 w-60 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-[13px] text-ink-3 hover:border-line-strong xl:flex">
             <Search className="h-4 w-4 shrink-0" /><span className="truncate">Search companies</span>
             <kbd className="num ml-auto rounded border border-line px-1.5 text-[10px]">⌘K</kbd>
           </button>
-          <button type="button" onClick={onSearch} aria-label="Search" className="grid h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 sm:hidden">
+          <button type="button" onClick={onSearch} aria-label="Search" className="grid h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 xl:hidden">
             <Search className="h-[18px] w-[18px]" />
           </button>
           <button type="button" onClick={() => setTheme(next[theme])} aria-label={`Theme: ${theme}`} title={`Theme: ${theme}`}

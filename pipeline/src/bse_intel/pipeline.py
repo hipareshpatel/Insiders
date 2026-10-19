@@ -54,7 +54,8 @@ from .rules import RuleBook
 from .settings import Settings
 from .forensics import text_signals
 from .scoring import score as score_card
-from .signals import compute as compute_signals, scale_block
+from .signals import compute as compute_signals, scale_block, scale_parts
+from .card_context import case_stage, guidance_recall, rating_change
 from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
@@ -2504,8 +2505,13 @@ class Pipeline:
             "signals": signals,
             "timeline_entry": out.timeline_entry,
             "fundamentals": latest_fundamentals(current, sector_module.footer),
-            "results": results_snapshot(current, filing.news_id) if event_type == "RESULTS" else None,
+            "results": results_snapshot(current, filing.news_id, sector_module.footer) if event_type == "RESULTS" else None,
             "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
+            # the event's own block on the card's face, made by code (card_context.py, signals.scale_parts)
+            "scale": scale_parts(before, out, priced, filing.filed_at),
+            "rating_change": rating_change(before, current, filing.news_id) if event_type == "DEBT_RATINGS" else None,
+            "case_stage": case_stage(event_type, card.headline, [f.text for f in card.what_happened]),
+            "guidance_recall": guidance_recall(before, event_type),
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims,

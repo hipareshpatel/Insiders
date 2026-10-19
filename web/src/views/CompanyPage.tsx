@@ -4,7 +4,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import type { CardRow, Company, Dossier, Guidance, Peer, Technicals } from "../../shared/types";
 import { Avatar } from "../components/Avatar";
-import { AnnouncementCard, PROVISIONAL_STAGES, STAGE_LABEL } from "../components/AnnouncementCard";
+import { AnnouncementCard, lineValue, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
 import { parseCard, SIGNAL } from "../components/FilingCard";
 import { Badge } from "../components/ui/badge";
 import { api } from "../lib/api";
@@ -109,7 +109,7 @@ export function CompanyPage() {
         {tab === "results" && (
           <div className="space-y-4">
             {dossier && (
-              <div className={cn("grid items-start gap-4", dossier.segment_mix?.length && "lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]")}>
+              <div className={cn("grid grid-cols-[minmax(0,1fr)] items-start gap-4", dossier.segment_mix?.length && "lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]")}>
                 <QuarterBars dossier={dossier} />
                 <SegmentMix dossier={dossier} />
               </div>
@@ -134,7 +134,7 @@ export function CompanyPage() {
 
 export function Panel({ title, children, hint, className }: { title: string; children: ReactNode; hint?: ReactNode; className?: string }) {
   return (
-    <section className={cn("card-soft rise-in", className)}>
+    <section className={cn("card-soft rise-in min-w-0", className)}>
       <header className="flex flex-wrap items-baseline justify-between gap-2 px-5 pt-4">
         <h2 className="text-[16px] font-extrabold leading-tight tracking-tight text-ink">{title}</h2>
         {hint ? <span className="text-xs text-ink-3">{hint}</span> : null}
@@ -508,12 +508,11 @@ function ResultsScorecard({ cards }: { cards: CardRow[] }) {
                   className="mt-1 text-xs font-medium text-accent hover:underline">Read the full card →</button>
               </div>
               <dl className="num grid grid-cols-4 gap-2">
-                {[
-                  ["Revenue", r.revenue ? cr(r.revenue.value) : "—", <Change value={r.revenue?.yoy_pct} />],
-                  ["EBITDA", r.ebitda ? cr(r.ebitda.value) : "—", <Change value={r.ebitda?.yoy_pct} />],
-                  ["OPM", r.ebitda_margin ? `${num(r.ebitda_margin.value)}%` : "—", <Change value={r.ebitda_margin?.yoy_bps} unit="bp" />],
-                  ["PAT", r.pat ? cr(r.pat.value) : "—", <Change value={r.pat?.yoy_pct} />],
-                ].map(([label, value, change]) => (
+                {/* the statement's own first lines: revenue, EBITDA, margin, PAT for a company; a bank's NII, NPA... */}
+                {resultLines(r).filter((l) => !["exceptional_items", "pbt", "eps", "interest_earned"].includes(l.key)).slice(0, 4)
+                  .map(({ label, unit, line }) => [label, unit === "cr" ? cr(line.value) : lineValue(line.value, unit),
+                    unit === "pct" ? <Change value={line.yoy_bps} unit="bp" /> : <Change value={line.yoy_pct} />] as const)
+                  .map(([label, value, change]) => (
                   <div key={String(label)} className="rounded-lg bg-surface-2/70 px-2.5 py-2">
                     <dt className="eyebrow text-ink-3">{label}</dt>
                     <dd className="mt-0.5 text-[14px] font-semibold text-ink">{value}</dd>
@@ -655,7 +654,7 @@ function KeyFigures({ company, dossier, cards }: { company: Company | null; doss
     <dl className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-8">
       {items.map(([label, value, sub]) => (
         <div key={label} className="card-soft rise-in rounded-2xl px-3.5 py-2.5">
-          <dt className="truncate text-[11.5px] font-bold text-ink-3">{label}</dt>
+          <dt className="text-[11.5px] font-bold leading-tight text-ink-3">{label}</dt>
           <dd className="num text-[15px] font-bold text-ink">{value}{sub && <span className="block text-[11px] font-medium text-ink-3">{sub}</span>}</dd>
         </div>
       ))}
@@ -686,15 +685,15 @@ function QuarterBars({ dossier }: { dossier: Dossier }) {
         ))}
       </span>}>
       {series.length < 2 ? <p className="text-sm text-ink-3">Not enough quarters in memory for this figure yet.</p> : (
-        <div className="flex h-[210px] items-end gap-2.5 sm:gap-4" role="img" aria-label={`${metric} by quarter`}>
+        <div className="flex h-[210px] items-end gap-1.5 sm:gap-4" role="img" aria-label={`${metric} by quarter`}>
           {series.map(([period, v], i) => {
             const last = i === series.length - 1;
             return (
               <div key={period} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1.5">
-                <span className="num text-[11.5px] font-bold text-ink">{label(v)}</span>
+                <span className="num w-full truncate text-center text-[10.5px] font-bold text-ink sm:text-[11.5px]">{label(v)}</span>
                 <span className={cn("w-full max-w-[96px] rounded-[10px]", last ? "grad-accent" : "border border-line-strong bg-surface-2")}
                   style={{ height: `${Math.max(2, ((v - lo) / (hi - lo)) * 150)}px` }} />
-                <span className="num truncate text-[11px] text-ink-3">{period}</span>
+                <span className="num w-full truncate text-center text-[10px] text-ink-3 sm:text-[11px]">{period}</span>
               </div>
             );
           })}
@@ -717,6 +716,23 @@ function SegmentMix({ dossier }: { dossier: Dossier }) {
     .filter((r) => r.share > 0).sort((a, b) => b.share - a.share).slice(0, 6);
   if (!parts.length) return null;
   const R = 50, len = 2 * Math.PI * R, sum = parts.reduce((a, p) => a + p.share, 0);
+  // Filings often give nested or alternative cuts (Dairy holds Milk; VAP with and without ghee): they add up past
+  // 100% and cannot be drawn as parts of one whole, so each is shown as its own share of revenue.
+  if (sum > 105) {
+    return (
+      <Panel title="Business mix" hint={`${latest} · each segment's share of revenue; the cuts overlap`}>
+        <ul className="space-y-2.5 text-[13.5px]">
+          {parts.map((p, i) => (
+            <li key={p.name} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_40px] items-center gap-2.5">
+              <span className="truncate">{p.name}</span>
+              <span className="h-2 overflow-hidden rounded bg-surface-2"><i className="block h-full rounded" style={{ width: `${Math.min(100, p.share)}%`, background: MIX_COLORS[i] }} /></span>
+              <span className="num text-right text-ink-2">{p.share.toFixed(0)}%</span>
+            </li>
+          ))}
+        </ul>
+      </Panel>
+    );
+  }
   let off = 0;
   return (
     <Panel title="Business mix" hint={`${latest} revenue`}>

@@ -43,7 +43,9 @@ def test_a_bank_is_read_on_its_own_lines():
     tagged = xbrl.parse((FIX / "bse_bank_542867_q3fy25.xml").read_bytes())
     out = _model_card()
     results_card.build(out, tagged, "CSB Bank Limited")
-    assert out.card.headline.startswith("CSB Bank Q3FY25: interest earned ₹919.38 Cr, net profit ₹151.63 Cr")
+    # a bank leads with its profit and its bad loans, not interest earned (owner, 2026-10-19: Punjab & Sind Bank)
+    assert out.card.headline.startswith("CSB Bank Q3FY25: net profit ₹151.63 Cr")
+    assert out.card.headline.endswith("; net NPA 0.64%, gross 1.58%")
     labels = [k.label for k in out.card.key_numbers]
     assert "Operating profit before provisions" in labels and "Provisions" in labels and "EBITDA margin" not in labels
 
@@ -241,3 +243,11 @@ def test_revenue_with_excise_in_it_is_given_net_of_excise():
     out = _model_card()
     results_card.build(out, tagged, "ITC Ltd")
     assert out.card.headline.startswith("ITC Q1FY27: revenue net of excise ₹19,114.3 Cr (-11.1% YoY)")
+
+
+def test_memory_points_say_when_growth_picks_up_or_slows():
+    """Tatva Chintan's Q2 revenue +76% YoY reads differently beside Q1's +43% (owner's example, 2026-10-19): the point
+    is made from memory's own quarters, this quarter's YoY against the last one's."""
+    history = _history("revenue", [100, 100, 100, 100, 120, 150])   # Q1FY25..Q2FY26
+    points = [p.text for p in results_card.memory_points(_tagged("Q3FY26", 10, 9, revenue=200, revenue_year_ago=100), history)]
+    assert "Revenue growth picked up to +100% YoY from +50% in Q2FY26." in points, points

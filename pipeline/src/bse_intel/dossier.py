@@ -1083,10 +1083,43 @@ _RESULT_METRICS = (
     ("pbt", ("pbt", "profit_before_tax")),
     ("pat", ("pat", "net_profit", "profit_after_tax")),
     ("eps", ("eps", "basic_eps", "diluted_eps")),
+    ("exceptional_items", ("exceptional_items",)),
+    # a bank's own lines (the banking template): its table is read on these, not on revenue and EBITDA
+    ("interest_earned", ("interest_earned",)),
+    ("nii", ("nii", "net_interest_income")),
+    ("ppop", ("pre_provision_operating_profit",)),
+    ("provisions", ("provisions",)),
+    ("gnpa_pct", ("gnpa_pct",)),
+    ("nnpa_pct", ("nnpa_pct",)),
+    ("roa_pct", ("roa_pct",)),
+    # an insurer's (the GI and LI templates)
+    ("gross_premium", ("gross_premium",)),
+    ("incurred_claims", ("incurred_claims",)),
+    ("combined_ratio", ("combined_ratio",)),
+    ("claims_ratio", ("claims_ratio",)),
+)
+# lines whose change is in basis points, not per cent
+_BPS_LINES = {"ebitda_margin", "gnpa_pct", "nnpa_pct", "roa_pct", "combined_ratio", "claims_ratio"}
+# The table's rows in the order each statement is read (owner, 2026-10-19: "do not get fixed at one sector"). The
+# statement is told apart by the lines the file tagged; the sector's own KPI rows follow (sectors.toml footer).
+_LENSES = (
+    ("bank", "interest_earned", (("interest_earned", "Interest earned", "cr"), ("nii", "Net interest income", "cr"),
+                                 ("ppop", "Operating profit", "cr"), ("provisions", "Provisions", "cr"),
+                                 ("exceptional_items", "Exceptional items", "cr"), ("pbt", "PBT", "cr"),
+                                 ("pat", "Net profit", "cr"), ("gnpa_pct", "Gross NPA", "pct"),
+                                 ("nnpa_pct", "Net NPA", "pct"), ("roa_pct", "Return on assets", "pct"),
+                                 ("eps", "EPS (₹)", "inr"))),
+    ("insurer", "gross_premium", (("gross_premium", "Gross premium", "cr"), ("revenue", "Net premium", "cr"),
+                                  ("incurred_claims", "Claims", "cr"), ("claims_ratio", "Claims ratio", "pct"),
+                                  ("combined_ratio", "Combined ratio", "pct"), ("pbt", "PBT", "cr"),
+                                  ("pat", "PAT", "cr"), ("eps", "EPS (₹)", "inr"))),
+    ("company", "revenue", (("revenue", "Revenue", "cr"), ("ebitda", "EBITDA", "cr"), ("ebitda_margin", "EBITDA margin", "pct"),
+                            ("exceptional_items", "Exceptional items", "cr"), ("pbt", "PBT", "cr"), ("pat", "PAT", "cr"),
+                            ("eps", "EPS (₹)", "inr"))),
 )
 
 
-def results_snapshot(dossier: dict, news_id: str) -> dict | None:
+def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = ()) -> dict | None:
     """This filing's latest quarter against a year ago and the previous quarter, for the results tables.
 
     Each metric carries its value, the year-ago and previous-quarter values when memory has them,
@@ -1117,22 +1150,55 @@ def results_snapshot(dossier: dict, news_id: str) -> dict | None:
         return round(ebitda / revenue * 100, 2) if ebitda is not None and revenue else None
 
     out: dict = {"period": period, "prev_year_period": periods["prev_year"], "prev_quarter_period": periods["prev_quarter"]}
-    for key, names in _RESULT_METRICS:
-        values = {slot: (margin(p) if key == "ebitda_margin" else lookup(names, p)) for slot, p in periods.items()}
+    def nii(p: str | None) -> float | None:
+        """Net interest income as stated, else interest earned less interest expended (both from the file)."""
+        stated = lookup(("nii", "net_interest_income"), p)
+        if stated is not None:
+            return stated
+        earned, expended = lookup(("interest_earned",), p), lookup(("interest_expended",), p)
+        return round(earned - expended, 2) if earned is not None and expended is not None else None
+
+    def line(pick, bps: bool) -> dict | None:
+        values = {slot: pick(p) for slot, p in periods.items()}
         if values["value"] is None:
-            continue
+            return None
         row = {slot: v for slot, v in values.items() if v is not None}
         for slot, label in (("prev_year", "yoy"), ("prev_quarter", "qoq")):
             base = values[slot]
             if base is None:
                 continue
-            if key == "ebitda_margin":
+            if bps:
                 row[f"{label}_bps"] = round((values["value"] - base) * 100)
             elif base:
                 row[f"{label}_pct"] = round((values["value"] - base) / abs(base) * 100, 1)
+        return row
+
+    for key, names in _RESULT_METRICS:
+        pick = margin if key == "ebitda_margin" else nii if key == "nii" else (lambda p, names=names: lookup(names, p))
+        row = line(pick, key in _BPS_LINES)
+        if row is None:
+            continue
         if key == "revenue" and "yoy_pct" not in row:
             stated = next((m for m in mine if m["metric"] in names and m["period"] == period and m.get("yoy_pct") is not None), None)
             if stated:
                 row["yoy_pct"] = stated["yoy_pct"]
         out[key] = row
-    return out if len(out) > 3 else None
+    if len(out) <= 3:
+        return None
+    lens, rows = next(((name, rows) for name, top, rows in _LENSES if top in out), ("company", _LENSES[-1][2]))
+    lines = [{"key": key, "label": label, "unit": unit} for key, label, unit in rows if key in out]
+    # the sector's own figures (EBITDA a tonne for cement, ARPU for telecom, occupancy for hospitals...) where memory
+    # holds them for this quarter; a KPI the statement already shows is not repeated
+    shown = {key for key, _, _ in rows}
+    for spec in footer:
+        names = (spec["metric"], *spec.get("aliases", ()))
+        if shown & set(names):
+            continue
+        unit = {"pct": "pct", "cr": "cr", "inr": "inr"}.get(spec.get("format", "num"), "num")
+        row = line(lambda p, names=names: lookup(names, p), unit == "pct")
+        if row is not None:
+            out[f"kpi:{spec['metric']}"] = row
+            lines.append({"key": f"kpi:{spec['metric']}", "label": spec["label"], "unit": unit})
+    out["lens"] = lens
+    out["lines"] = lines
+    return out

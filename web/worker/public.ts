@@ -224,11 +224,16 @@ api.get("/brief", async (c) => {
   const q = c.req.query();
   if (!q.from_at || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(q.from_at)) return c.json({ error: "from_at required" }, 400);
   const fromAt = q.from_at;
-  const days = [fromAt.slice(0, 10), todayIst()].filter((d, i, a) => a.indexOf(d) === i);
+  // every IST day from the window's first to today: a 7-day window has 8 days of filings and noise counts
+  const days: string[] = [];
+  for (let d = fromAt.slice(0, 10), end = todayIst(), n = 0; d <= end && n < 40; n++) {
+    days.push(d);
+    d = new Date(Date.parse(`${d}T00:00:00Z`) + 86400_000).toISOString().slice(0, 10);
+  }
   const body = await memoised(`brief:${fromAt}`, 60_000, async () => {
     const db = c.env.DB;
     const [cards, ledger, kv, bySector] = await db.batch([
-      db.prepare(`SELECT impact_level, sum(is_actionable_signal) AS signals, sum(held) AS held, count(*) AS n FROM cards
+      db.prepare(`SELECT impact_level, sum(is_actionable_signal * (held = 0)) AS signals, sum(held) AS held, sum(held = 0) AS n FROM cards
                    WHERE impact_level IN ('HIGH', 'MODERATE', 'LOW') AND filed_at >= ?1 GROUP BY impact_level`).bind(fromAt),
       db.prepare(`SELECT count(*) AS n FROM filings WHERE filing_date IN (SELECT value FROM json_each(?1)) AND filed_at >= ?2`)
         .bind(JSON.stringify(days), fromAt),

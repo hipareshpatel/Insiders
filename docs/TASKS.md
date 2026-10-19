@@ -62,7 +62,7 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
-## T14 · P1 · laptop · OPEN — check the owner's new Cloudflare API token (GitHub's deploy key)
+## T14 · P1 · laptop · BLOCKED on the owner — check the owner's new Cloudflare API token (GitHub's deploy key)
 
 The owner made a new API token (2026-10-20; the first one was shown in a chat and deleted), put it in GitHub as
 `CLOUDFLARE_API_TOKEN` and in the keys file as `$env:CLOUDFLARE_API_TOKEN`. GitHub cannot run `deploy-web.yml` by hand
@@ -72,7 +72,15 @@ until the workflow is on `main` (the PR is not merged), so check it from here. N
 2. `npx wrangler d1 execute bse-index-nse --remote --command "select count(*) n from sqlite_master"` (a read through the
    token, not your `wrangler login`): a number back means D1 access works. Then unset the variable.
 3. If the keys file does not have it yet, ask the owner to add the line (the value is the one in GitHub's secret).
-Files you may change: none. Report: here (works or the error line, never the token).
+Files you may change: none. Report: 2026-10-20 ~03:45 IST: **the keys file has no `$env:CLOUDFLARE_API_TOKEN` line yet**, so the token could not
+be checked (step 3). Owner: add `$env:CLOUDFLARE_API_TOKEN = "<the token in GitHub's secret>"` to the keys file, and the
+laptop runs steps 1-2.
+Also done tonight on the owner's go ("set the GitHub repository secrets ... from my keys file with gh, without printing them"):
+`gh secret set` from the keys file for GROQ_API_KEY, NVIDIA_API_KEY, MISTRAL_API_KEY, ZAI_API_KEY, GEMINI_API_KEY,
+OPENROUTER_API_KEY, INGEST_TOKEN (the Worker's, generated in T12) and PLATFORM_API_URL (`https://insiders.reply-bd3.workers.dev`).
+CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID were already there (the owner's). DEEPSEEK_API_KEY was left out on purpose: it is the paid
+key, and the daily path stays $0 (D24). SambaNova/SiliconFlow (402, no free credit) not set. The unused D1 `bse-index` was
+already deleted when the laptop went to delete it (`wrangler d1 list` shows only `bse-index-nse`).
 
 ## T13 · P1 · laptop · OPEN — re-seed memory on the basis fix, then re-check Heritage and two banks
 

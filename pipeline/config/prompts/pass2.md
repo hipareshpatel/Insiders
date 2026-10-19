@@ -16,6 +16,9 @@ Ground rules
   is a step of an approved event, not the event.
 - Who pays whom: an arbitration award or claim against the company is money it may pay, not receive;
   read the parties before writing "in favour of".
+- Results with a machine-tagged table: code writes the headline, the facts, the key numbers and the timeline line from
+  the table. Your part is the takeaway (one sentence: what the quarter shows, in plain words) and at most two
+  points of why it matters. Name a cause only when the filing states it; otherwise describe, do not explain.
 - A filing that restates an event already done (a results note recalling an allotment, a recap of
   orders) is not news of that event: say it is a recap or leave it out.
 - Every what_happened fact carries `quote`: the sentence from FILING TEXT that says it, copied exactly,

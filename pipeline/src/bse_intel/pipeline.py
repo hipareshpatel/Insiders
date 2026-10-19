@@ -61,6 +61,7 @@ from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
 from . import annual_xbrl
 from . import directions
+from . import results_card
 from . import event_xbrl
 from . import computed
 from . import trust
@@ -2205,9 +2206,12 @@ class Pipeline:
             that had been thrown away (2026-10-17: Novartis FY25 was published at the right Rs 356.27 Cr
             with a note saying it had been changed to Rs 83.88 Cr, which was the discarded card).
             """
+            # a results card with its XBRL file: code writes the figures, the model's words are cut to a line or two
+            built = (results_card.build(candidate, tagged, filing.company_name)
+                     if tagged and "RESULTS" in (event_type, candidate.event_type) else [])
             units = fix_unit_slips(candidate, sources)
             counts = fix_count_millions(candidate, sources)
-            changes = fix_change_percentages(candidate, sources) + counts
+            changes = built + fix_change_percentages(candidate, sources) + counts
             changes += apply_deal_guards(candidate, filing, history, dossier.get("balance_sheet", []), text)
             changes += deal_echo_slips(candidate, filed_text)
             changes += event_xbrl.apply_orders(candidate.card, event_orders)   # the file's figures have the last word

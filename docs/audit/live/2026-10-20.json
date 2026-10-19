@@ -1,0 +1,729 @@
+{
+ "date": "2026-10-20",
+ "sample": "seed 20261020, 24 published live cards by event type (pipeline/scripts/live_review/build.py)",
+ "reviewers": "6 independent agents, round 4's published-cards prompt + round 7's card-blocks paragraph",
+ "cards": [
+  {
+   "news_id": "5cf9aa17-da05-451c-bf62-6c4ad69bc4aa",
+   "headline": "Prism Johnson named preferred bidder for 45.21 MT Madhya Pradesh limestone block",
+   "verdict": "MINOR",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "quantified_impact[0]",
+     "card_says": "Years of limestone cover = 45.21 MT reserve / 6.6 MT FY25 cement volumes = 6.85 years",
+     "pdf_says": "Filing gives only the 45.21 MT reserve. Cement volume stands in for limestone use (limestone per tonne of cement differs from 1:1 and depends on clinker factor; part of Prism's volume is ground elsewhere). The card admits the proxy, and the arithmetic (6.85) is right. 'Years of cover' also ignores the company's existing mines.",
+     "class": "other"
+    },
+    {
+     "field": "track_next.risks[1]",
+     "card_says": "balance sheet already carrying ₹1,106 Cr net debt",
+     "pdf_says": "memory: net debt ₹1,106 Cr is MAR-2025; memory's latest figure is JUN-2025 ₹771 Cr (Q1FY26 presentation). The card gives a stale period's figure as the current one.",
+     "class": "memory"
+    },
+    {
+     "field": "why_it_matters[1].memory_refs",
+     "card_says": "EBITDA/t ₹708 Q1FY26 and 1.96 MT volumes, ref g_370d0416",
+     "pdf_says": "memory holds 708 and 1.96 for Q1FY26 (financial_metrics), but ref g_370d0416 is Crisil's 8-9% FY26 EBITDA margin guidance, not these figures",
+     "class": "memory"
+    }
+   ],
+   "reviewer": "reviewer_01",
+   "event_type": "ORDER_WIN",
+   "company": "Prism Johnson Ltd",
+   "filed_at": "2025-09-20T19:05:04+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "da4c5d6d-c258-4899-8cb8-d30d33613b81",
+   "headline": "Prism Johnson says Income Tax Section 133A survey concluded, no material impact on operations",
+   "verdict": "OK",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "why_it_matters[1]",
+     "card_says": "₹1,110 Cr net debt (Mar-2025)",
+     "pdf_says": "memory: FY25 net debt ₹1,110 Cr (Mar-2025 ₹1,106 Cr from Crisil); label is right, but memory's newer JUN-2025 net debt ₹771 Cr is not used",
+     "class": "memory"
+    }
+   ],
+   "reviewer": "reviewer_01",
+   "event_type": "LITIGATION_REGULATORY",
+   "company": "Prism Johnson Ltd",
+   "filed_at": "2025-11-06T16:50:48+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "nse-106729811",
+   "headline": "IFB Industries Q1FY27: revenue ₹1,584.74 Cr (+18.4% YoY), net profit ₹43.05 Cr (+64.6% YoY)",
+   "verdict": "WRONG",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "results.pbt",
+     "card_says": "PBT 56.87 vs prev quarter 51.69, QoQ +10.0%; vs year-ago 36.51, YoY +55.8%",
+     "pdf_says": "Consolidated p7. 56.87 (Q1FY27) and 36.51 (Q1FY26) are profit before associate share and exceptional item. The Q4FY26 figure on that same line is 52.27; 51.69 is 52.27 less the 0.58 exceptional item. Like-for-like QoQ is +8.8%. The statement's own PBT is 57.20 vs 55.79 vs 35.04 (QoQ +2.5%, YoY +63.3%). The block mixes bases and shows a PBT that is not the reported one.",
+     "class": "wrong_column"
+    },
+    {
+     "field": "why_it_matters[0]",
+     "card_says": "PAT growth of 64.6% YoY significantly exceeded the company's historical trend, with Q1FY26 PAT at ₹26.16 Cr",
+     "pdf_says": "Memory has no trend to support this, and memory_refs is empty. Memory shows Q1FY26 ₹26.16 Cr was a weak base: Q1FY25 ₹37.54 Cr, Q2FY26 ₹50.79 Cr (above this quarter's ₹43.05 Cr). QoQ growth is only +0.9%.",
+     "class": "memory"
+    },
+    {
+     "field": "signals[0]",
+     "card_says": "BOARD_DELIBERATION WARNING: 6.9-hour meeting often precedes difficult results or restructuring",
+     "pdf_says": "The meeting did run 11:00 a.m. to 5:55 p.m. (6.9 h). But the same filing reports PAT +64.6% YoY and higher margins, with no restructuring. The warning contradicts the results it sits on.",
+     "class": "signal_verdict"
+    }
+   ],
+   "reviewer": "reviewer_01",
+   "event_type": "RESULTS",
+   "company": "IFB Industries Limited",
+   "filed_at": "2026-08-06T20:28:26+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "nse-106788220",
+   "headline": "MCA fixed 28.09.2026 as hearing date for scheme of amalgamation between Jalpower Corporation Limited and NHPC Limited",
+   "verdict": "MINOR",
+   "impact_ok": false,
+   "impact_should_be": "LOW",
+   "issues": [
+    {
+     "field": "track_next.pending_approvals / takeaway",
+     "card_says": "scheme remains pending MCA, creditor, shareholder and SEBI approvals",
+     "pdf_says": "The filing names only the MCA hearing date (28.09.2026, moved from 25.08.2026). Creditor, shareholder and SEBI approvals are not in the filing. For a merger of a wholly owned subsidiary into its parent, SEBI's observation letter is not needed, and shareholder meetings are often dispensed with.",
+     "class": "invented"
+    },
+    {
+     "field": "why_it_matters[1]",
+     "card_says": "approvals all currently pending as per company memory (refs w_409182b7, w_541ca05c, w_bf0e1428, w_c055d66a)",
+     "pdf_says": "memory.json is empty ({}); none of the cited refs exists",
+     "class": "memory"
+    }
+   ],
+   "reviewer": "reviewer_01",
+   "event_type": "M_AND_A",
+   "company": "NHPC Limited",
+   "filed_at": "2026-09-22T19:09:38+05:30",
+   "memory_input_empty": true
+  },
+  {
+   "news_id": "nse-106732497",
+   "headline": "Excelsoft Q1FY27 revenue at ₹80.26 Cr; PAT dropped 44.4% QoQ to ₹9.23 Cr",
+   "verdict": "WRONG",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "results (block, basis CONSOLIDATED)",
+     "card_says": "Q1FY27 revenue 80.34, EBITDA 12.33, margin 15.34%, PBT 11.11, PAT 8.65, EPS 0.75 against Q4FY26 81.16 / 24.57 / 30.27% / 22.72 / 16.60 / 1.50; PAT QoQ -47.9%, EBITDA QoQ -49.8%, PBT -51.1%, EPS -50.0%",
+     "pdf_says": "Current-quarter values are STANDALONE (p.10-11: revenue 803.41 mn, PBT 111.09, PAT 86.48, EPS 0.75) while previous-quarter values are CONSOLIDATED (p.4-5: 811.62, 227.22, 165.99, EPS 1.50). Consolidated Q1FY27: revenue 80.26 Cr, EBITDA 13.03, margin 16.24%, PBT 11.83, PAT 9.23, EPS 0.80; PAT QoQ -44.4%. Standalone like-for-like PAT QoQ is -44.2% (86.48 vs 155.04), EPS 0.75 vs 1.39. The block contradicts the card's own text",
+     "class": "standalone_consolidated"
+    },
+    {
+     "field": "fundamentals.revenue",
+     "card_says": "Q1FY27 ₹80.34 Cr (card basis CONSOLIDATED)",
+     "pdf_says": "80.34 Cr is standalone revenue; consolidated is 80.26 Cr",
+     "class": "standalone_consolidated"
+    },
+    {
+     "field": "signals[0]",
+     "card_says": "LOW_QUALITY_BEAT: Other income ₹5.81 Cr is 52% of PBT",
+     "pdf_says": "5.81 / 52% are standalone (58.07/111.09 mn); consolidated other income 5.83 Cr is 49% of PBT 11.83 Cr. Calling it a 'beat' does not fit a quarter where PAT fell 44% QoQ",
+     "class": "signal_verdict"
+    }
+   ],
+   "reviewer": "reviewer_02",
+   "event_type": "RESULTS",
+   "company": "Excelsoft Technologies Limited",
+   "filed_at": "2026-08-07T21:43:10+05:30",
+   "memory_input_empty": true
+  },
+  {
+   "news_id": "69efa037-3fa5-4233-babd-bec8552b0e94",
+   "headline": "CRISIL upgrades Heritage Foods long-term rating to AA-/Stable; rated bank facilities up to ₹653.5 Cr",
+   "verdict": "MINOR",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "takeaway / why_it_matters[0]",
+     "card_says": "the rated debt is small against net worth; a modest slice of the balance sheet",
+     "pdf_says": "₹653.5 Cr rated facilities against net worth ₹1,009.46 Cr (card's own fundamentals) is ~65%, and 3.7x the ₹176.7 Cr debt; not small",
+     "class": "other"
+    },
+    {
+     "field": "why_it_matters[2] (MEMORY)",
+     "card_says": "watch whether it funds the VAP and ice-cream expansion guided earlier",
+     "pdf_says": "Memory g_b9c82dc6 has the ice-cream plant due Dec-2025, already past at this March 2026 filing; g_ffaeaf2d is a revenue-mix target, not a capex plan. Loosely supported",
+     "class": "memory"
+    }
+   ],
+   "reviewer": "reviewer_02",
+   "event_type": "DEBT_RATINGS",
+   "company": "Heritage Foods Ltd",
+   "filed_at": "2026-03-06T14:36:48+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "22344cf9-97a5-4f2e-bd50-5238600b67db",
+   "headline": "Lehar Footwears' bank loan facilities rated at ₹105 Cr, reaffirmed at BBB/Stable",
+   "verdict": "MINOR",
+   "impact_ok": false,
+   "impact_should_be": "LOW",
+   "issues": [
+    {
+     "field": "deal_value",
+     "card_says": "kind OTHER, ₹105 Cr, counterparty Banks, stage BOARD_APPROVED",
+     "pdf_says": "A rating letter on rated bank limits; no deal, no board approval. The block does not belong to this event",
+     "class": "event_type"
+    },
+    {
+     "field": "takeaway",
+     "card_says": "supports ongoing operations despite recent revenue decline",
+     "pdf_says": "Filing says nothing about revenue; memory is empty, so the revenue decline is unsupported",
+     "class": "invented"
+    },
+    {
+     "field": "why_it_matters[0]",
+     "card_says": "₹105 Cr facility ... providing significant operational cushion",
+     "pdf_says": "79.3% of net worth computes correctly (105/132.44), but these are rated limits, not cash; utilisation is not disclosed",
+     "class": "other"
+    }
+   ],
+   "impact_note": "Ratings reaffirmed unchanged; only the rated limit grew. Routine.",
+   "reviewer": "reviewer_02",
+   "event_type": "DEBT_RATINGS",
+   "company": "Lehar Footwears Ltd",
+   "filed_at": "2026-09-24T16:53:59+05:30",
+   "memory_input_empty": true
+  },
+  {
+   "news_id": "df53e2fe-4342-4f24-8f00-87defcd89187",
+   "headline": "CSB Bank reappoints Pralay Mondal as MD & CEO for 3 years from Sept 15, 2025",
+   "verdict": "MINOR",
+   "impact_ok": false,
+   "impact_should_be": "LOW",
+   "issues": [
+    {
+     "field": "why_it_matters[0] (MEMORY)",
+     "card_says": "RBI approved the reappointment on June 12, 2025 (memory t_f222e3a1)",
+     "pdf_says": "memory.json is empty; the filing only refers to 'our letter no. SEC/145/2025 dated June 12, 2025' and does not mention RBI",
+     "class": "memory"
+    },
+    {
+     "field": "why_it_matters[1] (MEMORY)",
+     "card_says": "Shareholder approval at the AGM pending per watchlist w_366d3233, w_0ecc2c13",
+     "pdf_says": "memory.json is empty; the filing does not mention the AGM or shareholder approval",
+     "class": "memory"
+    },
+    {
+     "field": "timeline_entry / core_catalyst / track_next.pending_approvals",
+     "card_says": "following RBI approval on June 12, 2025; shareholder approval at the AGM pending",
+     "pdf_says": "Neither RBI approval nor AGM approval is stated in the filing (plausible under banking and company law, but unsupported by filing or memory as given)",
+     "class": "invented"
+    },
+    {
+     "field": "event_type",
+     "card_says": "OTHER",
+     "pdf_says": "Reappointment of MD & CEO: a management change (director/KMP) event",
+     "class": "event_type"
+    }
+   ],
+   "impact_note": "Reappointment of the incumbent CEO is continuity, not a change in view.",
+   "reviewer": "reviewer_02",
+   "event_type": "OTHER",
+   "company": "CSB Bank Ltd",
+   "filed_at": "2025-06-24T13:29:12+05:30",
+   "memory_input_empty": true
+  },
+  {
+   "news_id": "0b57c09a-a313-4082-aae4-8a3a3192b54c",
+   "headline": "Shivam Autotech GST demand of ₹50.1 Cr dropped",
+   "verdict": "MINOR",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "signals[0]",
+     "card_says": "AUDIT_FLAG: Emphasis of matter in the audit report: deferred tax assets of ₹1,989.25 lakh and MAT credit of ₹619.86 lakh not recognised",
+     "pdf_says": "Filing is a GST closure-order disclosure; it has no audit report, no deferred tax or MAT figures",
+     "class": "invented"
+    },
+    {
+     "field": "why_it_matters[0]",
+     "card_says": "demand equivalent to approximately 11.6% of the company's FY25 revenue (basis MEMORY, no memory_refs)",
+     "pdf_says": "Filing gives no revenue; memory.json is empty and no scale_block is present, so the 11.6% is unsupported",
+     "class": "memory"
+    }
+   ],
+   "reviewer": "reviewer_03",
+   "event_type": "LITIGATION_REGULATORY",
+   "company": "Shivam Autotech Ltd",
+   "filed_at": "2025-12-22T15:11:19+05:30",
+   "memory_input_empty": true
+  },
+  {
+   "news_id": "437a6777-0443-4510-a633-155a1c43e223",
+   "headline": "Prism Johnson declared preferred bidder for Hinauti-2 limestone block, 4.419 MT reserve",
+   "verdict": "MINOR",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "why_it_matters[1] / quantified_impact[0]",
+     "card_says": "4.419 MT reserve at FY25 volumes of 6.6 MT is under a year of limestone feed (0.67 years)",
+     "pdf_says": "Memory's 6.6 MT is FY25 cement sales volume, not limestone consumption (limestone need per tonne of cement is higher); the ratio is labelled as limestone feed but divides by cement volume. Conclusion (under a year) still holds",
+     "class": "other"
+    },
+    {
+     "field": "why_it_matters[0].memory_refs",
+     "card_says": "memory ref t_a234f64f for Piparhat Kubri 45.21 MT block on September 20",
+     "pdf_says": "No timeline entry t_a234f64f in memory.json; the claim is supported by an operating note (Piparhat Kubri, 45.21 MT, as_of 2025-09-20), so content is right but the ref is dangling",
+     "class": "memory"
+    }
+   ],
+   "reviewer": "reviewer_03",
+   "event_type": "ORDER_WIN",
+   "company": "Prism Johnson Ltd",
+   "filed_at": "2025-09-23T15:17:39+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "77f2bd4b-be4d-490c-99ee-2cb722002da7",
+   "headline": "Prism Johnson appoints Sanjay Roy as CEO (RMC) and designates three senior executives as Senior Management Personnel effective March 24, 2025",
+   "verdict": "MINOR",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "takeaway",
+     "card_says": "Internal promotions to key roles in RMC, HRJ operations and emerging businesses signal continuity",
+     "pdf_says": "Sanjay Roy is an external hire: 'Prior to joining the Company, he was in Aparna Enterprises Ltd. as Head of Concrete Business'; the other three are designations of existing executives as SMP, not promotions",
+     "class": "invented"
+    },
+    {
+     "field": "headline",
+     "card_says": "appoints Sanjay Roy as CEO (RMC)",
+     "pdf_says": "Chief Executive Officer (RMC) - Designate",
+     "class": "other"
+    }
+   ],
+   "reviewer": "reviewer_03",
+   "event_type": "MANAGEMENT_CHANGE",
+   "company": "Prism Johnson Ltd",
+   "filed_at": "2025-03-24T15:23:38+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "nse-106699875",
+   "headline": "NHPC Limited resumes commercial operations of Unit#3 (170 MW) of Teesta-V Power Station on 16 July 2026",
+   "verdict": "MINOR",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "event_type / deal_value",
+     "card_says": "CAPEX, deal_value kind CAPEX",
+     "pdf_says": "Resumption of commercial generation of an existing unit after an outage (restoration of operations), not a capital expenditure or new capacity",
+     "class": "event_type"
+    },
+    {
+     "field": "why_it_matters[0]",
+     "card_says": "enhancing generation capacity",
+     "pdf_says": "'has resumed commercial generation of all its units' - restores existing 3x170 MW, no capacity addition",
+     "class": "other"
+    }
+   ],
+   "reviewer": "reviewer_03",
+   "event_type": "CAPEX",
+   "company": "NHPC Limited",
+   "filed_at": "2026-07-16T12:13:22+05:30",
+   "memory_input_empty": true
+  },
+  {
+   "news_id": "0fd4cf53-ed33-4396-ab98-5fb141ad219a",
+   "headline": "SML Mahindra August 2025 sales: cargo vehicles up 6% MoM, passenger vehicles down 24% MoM, total volumes down 15% MoM",
+   "verdict": "WRONG",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "headline / what_happened / key_numbers / notable_changes / timeline_entry",
+     "card_says": "Cargo 321 vs 303 'in July 2025' up 6% MoM; passenger 521 vs 687 'July 2025' -24% MoM; total 842 vs 990 'Jul-2025' -15% MoM",
+     "pdf_says": "Columns are August 2025-26 vs August 2024-25: 303/687/990 are August 2024, so +6%/-24%/-15% are YoY changes. July 2025 actual (memory, filing of 2025-08-01) was 1,427 total (449 cargo, 978 passenger), so true MoM is total -41%, passenger -47%, cargo -29%",
+     "class": "wrong_period"
+    },
+    {
+     "field": "signals vs headline",
+     "card_says": "Signals: volumes down 41% vs JUL-2025, passenger down 47% vs JUL-2025, while headline says -15% / -24% MoM",
+     "pdf_says": "Signals are the correct MoM figures; the card contradicts itself, and cargo is actually down MoM (449 -> 321), not up",
+     "class": "direction"
+    },
+    {
+     "field": "signals PREDICTION_RESOLVED",
+     "card_says": "Missed: Monthly total volumes target >= 1427 for AUG-2025",
+     "pdf_says": "The 'target' is just July 2025's actual volume carried forward; no company guidance of 1,427 for August exists in memory or filing",
+     "class": "signal_verdict"
+    },
+    {
+     "field": "why_it_matters (basis MEMORY)",
+     "card_says": "YTD cargo 2,052 +39%, passenger 5,143 +1%, citing memory refs t_8a3389ce, t_4972accb, t_a4204a42",
+     "pdf_says": "Figures are from the filing itself and correct; the cited memory entries are M&M's stake purchase, open offer and name change, which do not support these claims",
+     "class": "memory"
+    }
+   ],
+   "reviewer": "reviewer_04",
+   "event_type": "MONTHLY_BUSINESS_UPDATE",
+   "company": "SML Mahindra Ltd",
+   "filed_at": "2025-09-01T12:11:32+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "2706203a-1321-491c-b301-6eea5b4a1a52",
+   "headline": "Provigil Surveillance wins ₹8.90 Cr LOA from DFCCIL for IP-based CCTV surveillance on OPEX basis for 5 years",
+   "verdict": "OK",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "why_it_matters (basis MEMORY)",
+     "card_says": "Follows two similar LOAs from DFCCIL on 13 August 2026, each worth ₹3.73 Cr (refs t_2e57dc74, t_338c372b)",
+     "pdf_says": "memory.json supplied is empty ({}); the referenced entries cannot be found, claim not supported by the memory shown",
+     "class": "memory"
+    }
+   ],
+   "reviewer": "reviewer_04",
+   "event_type": "ORDER_WIN",
+   "company": "Magellanic Cloud Ltd",
+   "filed_at": "2026-08-18T09:24:49+05:30",
+   "memory_input_empty": true
+  },
+  {
+   "news_id": "b712fa79-1bc2-4348-816f-f7c4be0c2c08",
+   "headline": "Ahluwalia Contracts shareholders approve all six AGM resolutions; auditor SCV & Co. appointed",
+   "verdict": "OK",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [],
+   "reviewer": "reviewer_04",
+   "event_type": "GOVERNANCE",
+   "company": "Ahluwalia Contracts (India) Ltd",
+   "filed_at": "2025-09-29T17:52:59+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "ff8021a8-122e-4cf6-90b4-34cde950b3a4",
+   "headline": "Magellanic Cloud amends preferential issue objects to include inorganic growth",
+   "verdict": "WRONG",
+   "impact_ok": false,
+   "impact_should_be": "LOW",
+   "issues": [
+    {
+     "field": "headline / what_happened[0] / timeline_entry",
+     "card_says": "Objects amended 'to include inorganic growth'; ₹490.89 Cr allocation amended to include inorganic growth opportunities",
+     "pdf_says": "Object No. 6 (strategic acquisitions, investments, JVs etc.) was already in the EGM notice; the exchanges' observations only narrowed its wording to 'Acquisition for inorganic growth opportunities' (₹15.89 Cr). Nothing was added; the change is a rewording",
+     "class": "other"
+    },
+    {
+     "field": "track_next.risks",
+     "card_says": "Potential dilution from 12.67 million convertible warrants",
+     "pdf_says": "12,67,00,000 warrants = 12.67 crore = 126.7 million (10x understated)",
+     "class": "unit_scale"
+    },
+    {
+     "field": "deal_value.stage",
+     "card_says": "BOARD_APPROVED",
+     "pdf_says": "Shareholders approved the issue at the EGM on 24 July 2026; in-principle exchange approval pending",
+     "class": "other"
+    },
+    {
+     "field": "impact_level",
+     "card_says": "MODERATE",
+     "pdf_says": "Filing is a clarification of object wording on an already-approved issue; amounts unchanged at ₹490.89 Cr",
+     "class": "other"
+    }
+   ],
+   "reviewer": "reviewer_04",
+   "event_type": "FUNDRAISE",
+   "company": "Magellanic Cloud Ltd",
+   "filed_at": "2026-08-12T18:10:17+05:30",
+   "memory_input_empty": true
+  },
+  {
+   "news_id": "nse-106745747",
+   "headline": "Northern Arc Capital fined ₹0.06 Cr by RBI for FY25 reporting lapses",
+   "verdict": "MINOR",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "what_happened[1] / headline / core_catalyst",
+     "card_says": "Penalty relates to FY25 financial statements for under-disclosing customer complaints ('reporting lapses')",
+     "pdf_says": "Two contraventions: (i) disclosed 938 instead of 23,956 complaints in Notes to Accounts; (ii) failed to ensure auto-escalation of 11,109 partly/wholly rejected complaints to the Internal Ombudsman. The card omits the second (an operational, not a reporting, lapse).",
+     "class": "other"
+    }
+   ],
+   "reviewer": "reviewer_05",
+   "event_type": "LITIGATION_REGULATORY",
+   "company": "Northern Arc Capital Limited",
+   "filed_at": "2026-08-14T22:10:55+05:30",
+   "memory_input_empty": true
+  },
+  {
+   "news_id": "8ac076ff-9db6-45a2-8a0e-70aaea8a7227",
+   "headline": "Newgen Q1FY27 revenue up 11% to ₹357 Cr; EBITDA margin 15.7%, PAT up 26%",
+   "verdict": "MINOR",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "why_it_matters[0] / risks[1] / quantified_impact[1]",
+     "card_says": "management guides to 23-25% EBITDA margin for the full year",
+     "pdf_says": "'we usually have 23% to 25% EBITDA margin for the entire year' (a statement of the usual pattern, in a garbled answer that also says '15% for the full year'); later the CFO says 'we will surely maintain this 20% kind of number' and that it is not appropriate to comment beyond that. Calling 23-25% firm guidance overstates it.",
+     "class": "other"
+    },
+    {
+     "field": "why_it_matters[0] (basis MEMORY, ref t_9fa0b5f6)",
+     "card_says": "EBITDA margin up from 14.0% a year ago (from memory t_9fa0b5f6)",
+     "pdf_says": "memory.json is empty, so the memory ref is unsupported; the 14% figure is however stated in the call by an analyst ('expanded from 14% to about 15.7%')",
+     "class": "memory"
+    }
+   ],
+   "reviewer": "reviewer_05",
+   "event_type": "CONCALL_PRESENTATION",
+   "company": "Newgen Software Technologies Ltd",
+   "filed_at": "2026-07-21T16:14:42+05:30",
+   "memory_input_empty": true
+  },
+  {
+   "news_id": "cbd78d5c-f65d-49e7-91f3-3fd4d6254773",
+   "headline": "Ahluwalia Contracts Q1FY26 revenue rose 9.3% YoY to ₹1,005 Cr; PAT up 67% to ₹51.1 Cr",
+   "verdict": "MINOR",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "track_next.kpis_to_verify[1]",
+     "card_says": "EBITDA margin >=10% at Q2FY26 results",
+     "pdf_says": "Double-digit margin is a full-year FY26 target; management said 'Q2 would be similar to Q1 because rains have been unusually heavy', with Q3-Q4 taking off. A >=10% Q2 check contradicts the call.",
+     "class": "signal_verdict"
+    },
+    {
+     "field": "track_next.kpis_to_verify[0]",
+     "card_says": "Revenue growth 15-20% checked at Q2FY26",
+     "pdf_says": "15-20% is full-year FY26 topline guidance; H1 is said to be traditionally lower",
+     "class": "other"
+    },
+    {
+     "field": "notable_changes[1] cash",
+     "card_says": "cash ₹318.45 Cr (Mar-2025) -> ₹920 Cr (Q1FY26), +189%, 'due to strong collections and lower debt'",
+     "pdf_says": "₹920 Cr is 'cash including all the liquid investments'; memory's ₹318.45 Cr is balance-sheet cash, a different measure, so +189% is not like-for-like; the cause stated is not in the call",
+     "class": "memory"
+    },
+    {
+     "field": "notable_changes[1].why",
+     "card_says": "Cash increased significantly due to strong collections and lower debt",
+     "pdf_says": "No such explanation in the transcript",
+     "class": "invented"
+    }
+   ],
+   "reviewer": "reviewer_05",
+   "event_type": "CONCALL_PRESENTATION",
+   "company": "Ahluwalia Contracts (India) Ltd",
+   "filed_at": "2025-08-21T15:36:08+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "nse-106706599",
+   "headline": "UCO Bank Q1FY27: interest earned ₹6,996 Cr (+8.7% YoY), net profit ₹656.33 Cr (+8.0% YoY)",
+   "verdict": "MINOR",
+   "impact_ok": false,
+   "impact_should_be": "HIGH",
+   "issues": [
+    {
+     "field": "track_next.risks[0] / why_it_matters[0]",
+     "card_says": "Risk: 'Sustained high tax expense if deferred tax asset reversals continue'; one-time ₹1,237.13 Cr tax charge without its cause",
+     "pdf_says": "Note 12: the bank opted for the lower tax regime u/s 115BAA from FY2026-27; DTA remeasured at the new (lower) rate, giving a one-time charge of ₹1,237.13 Cr. Future tax rate falls, so the risk points the wrong way and the card omits the regime switch.",
+     "class": "direction"
+    },
+    {
+     "field": "fundamentals.kpis CASA",
+     "card_says": "CASA 37.96% (Q3FY25) shown on a Q1FY27 card",
+     "pdf_says": "Stale figure six quarters old from memory, not from this filing",
+     "class": "wrong_period"
+    }
+   ],
+   "impact_note": "PBT up 172% YoY and a switch to the lower 115BAA tax regime (one-off ₹1,237 Cr charge, lower tax going forward) changes the earnings view; ex-charge PAT would be about ₹1,893 Cr.",
+   "reviewer": "reviewer_05",
+   "event_type": "RESULTS",
+   "company": "UCO Bank",
+   "filed_at": "2026-07-22T16:18:53+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "7ff43daf-bef4-49ef-a471-0cb85a808e9b",
+   "headline": "WaveRise Investments Ltd and ChrysCapital entities acquire 70.68% stake in Novartis India Ltd via off-market transfer",
+   "verdict": "WRONG",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "why_it_matters[2]",
+     "card_says": "The transaction is an off-market transfer ... not involving public market or open offer, and does not require further shareholder or regulatory approvals",
+     "pdf_says": "Filing states only 'Mode of acquisition: Off-market Transfer'; it says nothing about approvals. The acquisition is the SPA closing that triggered the mandatory Reg 3(1)/4 open offer for 26% at Rs 860.64 (memory: offer closed 24 Jun 2026); Acquirer 3's 40 pre-held shares are the shares tendered in it",
+     "class": "invented"
+    },
+    {
+     "field": "deal_value.amount_cr / updates_deal_id",
+     "card_says": "amount_cr null, updates_deal_id null, missing_disclosures: consideration not stated",
+     "pdf_says": "Filing gives no price, but memory holds this exact deal (d_8dc4623f, SPA Rs 1,445.89 Cr, same three tranches); the card opens a new deal rather than updating it to COMPLETED",
+     "class": "memory"
+    },
+    {
+     "field": "priced_at_filing.market_cap_cr",
+     "card_says": "Rs 4,783.35 Cr at last price Rs 1,595.75",
+     "pdf_says": "2,46,90,797 shares x Rs 1,595.75 = Rs 3,940 Cr; the same 4,783.35 appears on cards dated Oct 2025 and Feb 2026 at other prices, so it is not a point-in-time figure",
+     "class": "wrong_period"
+    }
+   ],
+   "reviewer": "reviewer_06",
+   "event_type": "M_AND_A",
+   "company": "Novartis India Ltd",
+   "filed_at": "2026-07-29T17:15:31+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "c8de4c15-95cd-42cf-919d-1d91f28be7da",
+   "headline": "Novartis India Q2 revenue up 3.7% to ₹90.3 Cr; EBITDA margin at 26.4%",
+   "verdict": "WRONG",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "notable_changes.trade_receivables",
+     "card_says": "₹401.4 Cr (Mar-2025) -> ₹487.4 Cr (Sep-2025)",
+     "pdf_says": "Statement is in ₹ million: 401.4 mn -> 487.4 mn = ₹40.14 Cr -> ₹48.74 Cr",
+     "class": "unit_scale"
+    },
+    {
+     "field": "notable_changes.operating_cash_flow / track_next.risks",
+     "card_says": "₹431.6 Cr (H1FY25) -> ₹119.8 Cr (H1FY26)",
+     "pdf_says": "₹ million: 431.6 mn -> 119.8 mn = ₹43.16 Cr -> ₹11.98 Cr",
+     "class": "unit_scale"
+    },
+    {
+     "field": "notable_changes.inventory_change.why / quantified_impact[1].interpretation",
+     "card_says": "Inventory build reversed to a drawdown, reducing expense",
+     "pdf_says": "Change in inventories +101.0 mn (Q2FY25, a drawdown) to (35.6) mn (Q2FY26, a build); inventories rose 411.1 -> 452.9 mn. The swing is a drawdown turning into a build",
+     "class": "direction"
+    },
+    {
+     "field": "notable_changes.inventory_change.change",
+     "card_says": "-64.8%",
+     "pdf_says": "10.10 -> -3.56 Cr is -135% (the card's own quote says -135.2%)",
+     "class": "arithmetic"
+    },
+    {
+     "field": "core_catalyst / takeaway / quantified_impact[1]",
+     "card_says": "Favourable inventory swing added ₹13.66 Cr to Q2 EBITDA and lifted it 33%",
+     "pdf_says": "Purchases rose ₹15.03 Cr in the same quarter; cost of goods (purchases + inventory change) rose 491.5 -> 505.2 mn, so the swing added nothing net. The EBITDA gain of ₹5.9 Cr comes from other expenses down ₹4.16 Cr (₹5.4 Cr VAT/CST provision in the base) and gross profit up ₹1.9 Cr",
+     "class": "other"
+    },
+    {
+     "field": "notable_changes.purchases_stock_in_trade / track_next.risks[0]",
+     "card_says": "Procurement cost rose faster than revenue, pressuring gross margin",
+     "pdf_says": "Gross margin rose 43.6% -> 44.1% (the card's own MARGIN_MIX signal says +50 bps)",
+     "class": "other"
+    },
+    {
+     "field": "signals[0] WATCH_RESOLVED",
+     "card_says": "KPI check met: EBITDA margin sustainability (flagged 2025-01-28), above 25% threshold",
+     "pdf_says": "Memory: watch w_42afa3ec was for Q4FY25 results (check_by 2025-03-31, target null) and its prediction p_a3dce917 was already MET at 28.51% in May 2025; the open Q1FY26 prediction is a different item. Resolving a stale Q4FY25 watch with Q2FY26 data",
+     "class": "memory"
+    }
+   ],
+   "reviewer": "reviewer_06",
+   "event_type": "RESULTS",
+   "company": "Novartis India Ltd",
+   "filed_at": "2025-10-28T15:05:19+05:30",
+   "memory_input_empty": false
+  },
+  {
+   "news_id": "d93bec96-fd5f-4cca-8bef-27ce406a69d3",
+   "headline": "LTM collaborates with IBM, Red Hat on Lightwell for AI-driven software remediation",
+   "verdict": "MINOR",
+   "impact_ok": false,
+   "impact_should_be": "LOW",
+   "issues": [
+    {
+     "field": "event_type",
+     "card_says": "PRODUCT_LAUNCH",
+     "pdf_says": "A press release on a services collaboration with IBM and Red Hat around their product (Lightwell); LTM launches no product of its own. Partnership / other",
+     "class": "event_type"
+    },
+    {
+     "field": "why_it_matters[1]",
+     "card_says": "Aligns with LTM's focus on Business AI and application modernization capabilities mentioned in memory (t_6ae9d6dc)",
+     "pdf_says": "memory.json is empty ({}); t_6ae9d6dc is not in it. (The filing's 'About LTM' does mention Business AI)",
+     "class": "memory"
+    },
+    {
+     "field": "impact_level",
+     "card_says": "MODERATE",
+     "pdf_says": "A marketing press release with no amount, client or timeline, for a ₹1.3 lakh Cr company: routine",
+     "class": "other"
+    }
+   ],
+   "reviewer": "reviewer_06",
+   "event_type": "PRODUCT_LAUNCH",
+   "company": "LTM Ltd",
+   "filed_at": "2026-09-09T10:48:51+05:30",
+   "memory_input_empty": true
+  },
+  {
+   "news_id": "d9d631a2-1d59-47fa-94fd-3d99e54f2948",
+   "headline": "WaveRise, ChrysCapital, Two Infinity launch 26% open offer for Novartis India at ₹860.64/share",
+   "verdict": "WRONG",
+   "impact_ok": true,
+   "impact_should_be": null,
+   "issues": [
+    {
+     "field": "signals[0] SCALE / score.reasons",
+     "card_says": "₹1,446 Cr deal = 30% of market cap (₹4,783 Cr)",
+     "pdf_says": "At the card's own price of ₹830.45 x 2,46,90,797 shares, market cap is about ₹2,050 Cr, so the deal is about 70% of market cap (it buys 70.68% of the shares at ₹701-861). ₹4,783 Cr is a stale figure, repeated on the Oct 2025 and Jul 2026 cards",
+     "class": "wrong_period"
+    },
+    {
+     "field": "why_it_matters[1]",
+     "card_says": "₹26.8 Cr net cash at Q2FY26",
+     "pdf_says": "Memory: ₹26.8 Cr is cash and equivalents alone; bank balances of ₹590.5 Cr more and no borrowings, so net cash is about ₹617 Cr",
+     "class": "memory"
+    },
+    {
+     "field": "why_it_matters[2]",
+     "card_says": "The acquirers are buying at ₹860.64, the same price as the February 20 open offer announcement, so the deal terms are unchanged",
+     "pdf_says": "Only Acquirer 1 pays ₹860.64; Acquirers 2 and 3 pay ₹701.25 under the SPA. The 'earlier filing' (t_d0d77daf) is the same Public Announcement filed hours before, so this is no comparison",
+     "class": "memory"
+    },
+    {
+     "field": "why_it_matters[0]",
+     "card_says": "must cut the stake or delist later",
+     "pdf_says": "Para 6.2: the acquirers shall ensure minimum public shareholding; 6.4: no intention to delist. 'or delist' is not an option given",
+     "class": "other"
+    }
+   ],
+   "reviewer": "reviewer_06",
+   "event_type": "M_AND_A",
+   "company": "Novartis India Ltd",
+   "filed_at": "2026-02-20T07:59:41+05:30",
+   "memory_input_empty": false
+  }
+ ]
+}

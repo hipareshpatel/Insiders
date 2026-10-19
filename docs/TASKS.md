@@ -470,3 +470,4 @@ Owner's verdict on the card: theirs to record on the site.
 them, so the live site's company pages have no chart until `market-data` runs on GitHub. Measured 2026-10-20:
 `market-data --all` on the laptop wrote 3,466 charts locally (all 1,927 universe companies priced). Proposal: add
 `"chart/"` (and leave `raw/` out). The laptop can then copy them in the next sync.
+**Cloud, 2026-10-20: done** (`sync.OBJECT_PREFIXES` has `chart/`; `raw/` stays out). The next sync copies them.

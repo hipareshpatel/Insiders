@@ -227,14 +227,26 @@ withheld for group figures - open the disclosure (`attachment` in `pledges.event
 any figure the rules read wrong with the row.
 Files you may change: none. Report: here.
 
-## T9 · P3 · laptop · OPEN — fill and check the company page price charts
+## T9 · P3 · laptop · DONE — fill and check the company page price charts
 
 The company page's price chart (`6368e37`) reads `chart/<scrip>.json`, which `market-data` writes for each company it
 prices. Run `python -m bse_intel market-data` once against the local site when no audit round needs Yahoo, then on three
 company pages (one with several cards) check: the last close and date against NSE's quote page, the 1Y move against the
 1Y return in the header (both from the same closes; small differences from the session count are fine), each filing dot on
 its trading day (after-hours or holiday filings on the next session), and a click on a dot opening that card.
-Files you may change: none. Report: here.
+Files you may change: none. Report: 2026-10-20 04:00-04:10 IST. `market-data` (default) updated the 101 companies that have cards (99 in Yahoo's first round,
+101 in the second; 318 D1 rows, 101 charts); `market-data --all` for the whole universe was started after it (laptop tab).
+Checked CSB Bank, Heritage Foods and Jubilant Pharmova:
+- **Last close against NSE's own bhavcopy** (downloaded tonight by the go-live load): 16 Oct CSB 308.90, Heritage 405.40,
+  Jubilant 938.60 in both, exact. **But NSE's 19 Oct closes (312.50, 388.15, 935.80) are not in Yahoo at 03:52 IST on
+  20 Oct**, so the site ends at 16 Oct, one session behind. Suggest using the bhavcopy (already fetched daily) as the
+  close of record, with Yahoo for history.
+- **1Y move:** the chart's "-18.3% over 1Y" equals the header's 1Y -18.3% (Heritage); chart and header use the same closes.
+- **Chart file:** `chart/<scrip>.json` with 260 closes, 29 Sep 2025 to 16 Oct 2026.
+- **Filing dots:** Heritage's chart has one dot per card (15 Oct 2025 ... 14 May 2026, each a button named "Filing on
+  <date>: <headline>"). A click opens that card (`/feed?card=76f3b6ed...`, the Q2FY26 results). Three dots in one week
+  of May (results 11 May, deck 12 May, call 14 May) are three cards by design (D33). Not checked dot by dot: whether
+  an after-hours or holiday filing sits on the next session.
 
 ## T10 · P3 · laptop · OPEN — check the DGTR trade-remedy links (module 8)
 
@@ -298,12 +310,8 @@ mid-way for a later pull. The cards now carry `scale`, `rating_change`, `case_st
 table's `lines`: the reviewers judge the face as published, so the review prompt should mention the blocks and the
 "For the decision" lines as part of the card (WRONG if their figures are wrong).
 Files you may change: `docs/audit/round-7*`, `pipeline/scripts/audit_round7/`.
-Report: ready for 12:40 IST. The round exports with `pipeline/scripts/audit_round7/export.py`
-(audit_export.py plus `results`, `scale`, `rating_change`, `case_stage`, `guidance_recall`, `priced_at_filing`, `fundamentals`,
-which audit_export's KEEP list left out, so reviewers could not have judged the blocks), tested on the five T7 cards. The
-reviewer paragraph for the blocks, added after round 4's prompt, is in `docs/audit/round-7.md` (Method, "Added 2026-10-20").
-The scheduled start (task `insiders-round7-start`, 12:40 IST) runs on the checkout, at a1ed393 or later; the start commit
-goes in the report.
+Report: 2026-10-20 04:00 IST: the scheduled task `insiders-round7-start` (12:40 IST) is **disabled** (description: "Cancelled
+2026-10-20 (D37 ...)"); it will not run. `data/audit/round7/` and the scripts are kept. Nothing else was done.
 
 ## T4 · P2 · laptop · OPEN — finish the go-live load (PLAN G6a)
 

@@ -137,7 +137,7 @@ def test_the_takeaway_names_what_moved_profit_from_the_file():
             FinancialMetric(metric=m, period=p, value=v) for m, (now, then) in rows.items()
             for p, v in (("Q1FY27", now), ("Q1FY26", then))])
 
-    texmaco = file({"pat": (50.07, 29.33), "ebitda": (56.8, 70.6), "other_income": (20.0, 18.5),
+    texmaco = file({"pat": (50.07, 29.33), "ebitda": (56.8, 70.6), "other_income": (30.0, 18.5),
                     "tax_expense": (-7.57, 14.32), "finance_cost": (22.0, 23.0), "depreciation": (12.0, 11.5)})
     assert profit_driver(texmaco) == ("Q1FY27 net profit of ₹50.07 Cr against net profit of ₹29.33 Cr a year earlier; the "
                                       "largest move was a tax credit of ₹7.57 Cr against tax of ₹14.32 Cr a year earlier, "
@@ -147,3 +147,19 @@ def test_the_takeaway_names_what_moved_profit_from_the_file():
     assert profit_driver(file({"pat": (10.2, 10.0), "ebitda": (20, 19)})) is None     # profit barely moved
     bank = file({"pat": (500.0, 300.0), "interest_earned": (6996, 6436), "tax_expense": (100, 150)})
     assert profit_driver(bank) is None        # provisions move a bank's profit; the bridge does not have them
+
+
+def test_no_driver_when_the_bridge_does_not_account_for_the_profit_change():
+    """Like Siemens Q1FY27 (round 4), where total profit jumped on the demerged business's gain, outside every line of the bridge;
+    naming the line that happened to move the same way as "the largest move" would be a cause the file does not give."""
+    from bse_intel.models import FinancialMetric
+    from bse_intel.results_card import profit_driver
+    from bse_intel.xbrl import XbrlResult
+
+    # profit +60 Cr, of which +50 Cr is a discontinued business's gain; tax fell 20 Cr, EBITDA fell 5 Cr
+    rows = {"pat": (160.0, 100.0), "ebitda": (195.0, 200.0), "other_income": (10.0, 10.0), "depreciation": (30.0, 30.0),
+            "finance_cost": (5.0, 5.0), "tax_expense": (40.0, 60.0)}
+    siemens = XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q1FY27", metrics=[
+        FinancialMetric(metric=m, period=p, value=v) for m, (now, then) in rows.items()
+        for p, v in (("Q1FY27", now), ("Q1FY26", then))])
+    assert profit_driver(siemens) is None

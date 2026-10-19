@@ -81,3 +81,7 @@ What the agents found, by class, and what was done (2026-10-19, after the review
    filing of a quarter before the consolidated one, so the holding company's standalone files of 13 Jul 2026 replaced
    the consolidated quarter of May. Fixed: consolidated wins, then the later filing (`seed._nse_quarters`,
    `seed.seed_company`, test). Arm B's memory was seeded before the fix.
+10. **An annual report inside an AGM notice** (the recall review's Max Financial item). NSE's headline named only the
+    meeting; pass 1 set the 389 pages aside as a routine notice. Fixed: a document of 60+ pages that reads as an annual
+    report (`Document.kind`) takes the annual-report path before pass 1 (`pipeline._analyze_document`, test).
+11. **Call transcripts** (the recall review's Texmaco item): their own card always (owner, D33).

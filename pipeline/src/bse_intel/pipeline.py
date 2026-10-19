@@ -2123,6 +2123,14 @@ class Pipeline:
         # Before pass 1, not after it: the gatekeeper is shown what this company has already filed, so it
         # can name an event arriving again as a different document (the document rules cannot see those).
         dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
+        if filing.route == "PASS1" and doc.page_count >= ANNUAL_REPORT_MIN_PAGES and doc.kind() == "ANNUAL_REPORT":
+            # NSE's headline can name only the meeting ("Annual General Meeting ... to be held on ..."), with the annual
+            # report inside: Max Financial's 389 pages, whose auditor flagged a pending SEBI show-cause notice, were
+            # turned away by pass 1 as a routine AGM notice (round 5 recall review, 2026-10-19)
+            log.info("%s is an annual report by its own pages (%d); the annual-report path, not pass 1", filing.news_id,
+                     doc.page_count)
+            filing = filing.model_copy(update={"route": "FAST_TRACK", "event_type": "ANNUAL_REPORT"})
+            event_type = "ANNUAL_REPORT"
         if filing.route == "PASS1":
             first_page = doc.first_page_text()
             _ocr_check(doc)
@@ -2904,6 +2912,7 @@ def _still_noise(decision, filing: Filing, row: list) -> bool:
 # with no text, called not material (F57). Every other kind of filing stays under it.
 ATTACHMENT_MAX_BYTES = 30_000_000
 ANNUAL_REPORT_MAX_BYTES = 120_000_000
+ANNUAL_REPORT_MIN_PAGES = 60   # as Document.kind() reads a directors' report: an AGM notice alone runs to 10-30 pages
 
 
 def _attachment_cap(filing: Filing) -> int:

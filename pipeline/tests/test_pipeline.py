@@ -739,3 +739,25 @@ def test_an_annual_report_may_be_larger_than_other_attachments():
     report = _filing("n-ar", "34th Annual Report for FY 2025-26", when, "Company Update", "Reg. 34 (1) Annual Report")
     assert _attachment_cap(report.model_copy(update={"event_type": "ANNUAL_REPORT"})) >= 100_000_000
     assert _attachment_cap(report.model_copy(update={"event_type": "RESULTS"})) == ATTACHMENT_MAX_BYTES == 30_000_000
+
+
+def test_an_annual_report_inside_an_agm_notice_takes_the_annual_report_path(settings):
+    """Max Financial (round 5): NSE's headline named only the meeting; the 389 pages behind it were the annual report,
+    and pass 1 set them aside as a routine AGM notice."""
+    now = now_ist() - timedelta(minutes=30)
+    agm = _filing("n-agm", "Annual General Meeting of the Company to be held on Wednesday, August 19, 2026", now,
+                  "AGM/EGM", "Shareholders meeting")
+    doc = pymupdf.open()
+    for i in range(64):
+        page = doc.new_page()
+        text = ("Sub: Notice of the 38th Annual General Meeting and Annual Report for the FY 2025-26" if i == 0 else
+                f"Directors' Report and financial statements, page {i + 1}. Revenue from operations 12,000.00.")
+        page.insert_textbox(pymupdf.Rect(36, 36, 560, 800), text, fontsize=9)
+    card = {**PASS2, "event_type": "ANNUAL_REPORT", "card": {**PASS2["card"], "headline": "Demo Cement FY26 annual report"}}
+    script = {"openai/gpt-oss-20b": [{"is_material": False, "event_type": "OTHER", "reason": "AGM notice"}],
+              "nvidia/nemotron-3-super-120b-a12b": [json.dumps(card)] * 3}
+    pipeline, sink, fake = build(settings, [agm], {agm.pdf_url: doc.tobytes()}, script)
+    pipeline.run("live", time_budget_s=60)
+    (row,) = rows(sink, "select status, event_type, reason from filings where news_id = 'n-agm'")
+    assert not (row["reason"] or "").startswith("pass1"), row
+    assert all(c["model"] != "openai/gpt-oss-20b" for c in fake.calls)

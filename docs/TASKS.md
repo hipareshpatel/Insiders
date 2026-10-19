@@ -87,7 +87,7 @@ Files you may change: none. Report: here (the seed's JSON summary line and each 
 Measured 2026-10-20 (owner's screenshot): the Worker `insiders` is deployed on insiders.reply-bd3.workers.dev with
 **0 bindings** (no D1, no R2), uploaded 4 days ago. The owner is creating D1 `bse-index` and R2 `bse-intelligence` in the
 dashboard and the GitHub secrets. **The D1 name is `bse-index-nse`** (2026-10-20: Cloudflare said `bse-index` was not available); local commands name it so: `npx wrangler d1 execute bse-index-nse --local --persist-to ../data/wrangler ...`. Local data is untouched (kept by id; checked: 13 cards read back). When the owner says they exist (or `npx wrangler d1 list` shows `bse-index-nse`):
-1. Put its id in `web/wrangler.jsonc` (`database_id` only; `preview_database_id` stays the placeholder, so `npm run dev`
+1. **Done by the cloud:** the id `f1465085-72e3-4a72-a67e-1a6ca9ab202e` is in `web/wrangler.jsonc` (`database_id` only; `preview_database_id` stays the placeholder, so `npm run dev`
    keeps reading your local database: checked in the cloud, 13 local cards read back with a real-looking id), or set it
    as the repository variable `D1_DATABASE_ID`, which deploy-web.yml uses; `cd web; npm run db:migrate:remote`.
 2. `npx wrangler secret put INGEST_TOKEN` and `npx wrangler secret put OWNER_TOKEN`, values from the owner's keys file

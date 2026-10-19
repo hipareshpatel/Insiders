@@ -42,3 +42,21 @@ are 20 a day each by Google's own 429 detail. Lite models are 500 a day each (AI
   (12:30 IST).
 
 Each round reports WRONG per writer; a writer above about 8% comes off the card routes.
+
+## Decision log (newest last; each with the owner's input and what was measured)
+
+| When (IST) | Owner's input | What was done / measured | Where |
+|---|---|---|---|
+| 2026-10-19 morning | "use alternative like gemini and i gave trick for it to have bulk" | Packed Gemini built: up to 6 filings in one request (`PASS2_PACK`); arm B 10% WRONG against 23% | F75, round-5.md |
+| 2026-10-19 | quality first | Nemotron 3 Super and GLM-4.7 off every card route (round 6: 12 of 36 WRONG as a spare) | F77, round-6.md |
+| 2026-10-19 17:00 | "why don't we use DeepSeek V4.1 Flash, Kimi K2.6, GLM-5.3 (NVIDIA)" | Probed: DeepSeek and GLM-5.3 timed out, Kimi 404, GLM-5.3 Flash 10x slip; none used | this file |
+| 2026-10-19 17:30 | "another model can be from openrouter as we have good limit there" | MiniMax M3.1 Flash and Gemma 4 31B (OpenRouter free) probed right; put on trial | F78 |
+| 2026-10-19 18:20 | "test 2 best model ... compare them with round 6" | Trial on round 6's companies with only those two writing; stopped after 40 min: OpenRouter's free models failed on supply (429s, empty answers); both off the card routes | round-6.md |
+| 2026-10-19 18:45 | stricter rule (reviewer's note, adopted) | A trial writer stays only as a spare, at or below about 8% WRONG, never with more cards than Gemini | round-6.md |
+| 2026-10-19 19:20 | "each [Gemini model] is having their different quota, why don't we use another" | Gemini 3.5 Flash and 3 Flash preview added to the packed rotation: 60 -> 100 requests a day | round-7.md |
+| 2026-10-19 19:40 | "check and prob all useful models" (AI Studio list) | Every Gemini text model probed: Pro, Argon, Omni, Deep Research, Computer Use have no free quota; 2.x retired; Gemma on Gemini's API errors | this file |
+| 2026-10-19 19:50 | "if you have other model and doing the job, we can use it" | Gemini 3.5 Flash Lite last in the packed rotation, only when all Flash are out | round-7.md |
+| 2026-10-19 20:00 | "3.5 Flash lite, 3.1 flash lite - 500 RPD" (AI Studio) | Lite limits marked measured: 500 a day each | this file |
+| 2026-10-19 20:05 | "google is 1500 request per day (from gemini, not sure)" | Not today: 1,500 a day was the retired Gemini 1.5/2.0 Flash free tier; today's Flash models are 20 a day each (Google's 429 detail) | this file |
+| 2026-10-19 20:10 | added SiliconFlow and SambaNova keys | Both are sign-up credit, not free tiers, on these accounts: SiliconFlow 402 "balance insufficient" on every model (Qwen2.5 7B too, which also slipped 100x); SambaNova 402 "payment method required" on every model after two calls; no routes | this file |
+| 2026-10-19 20:15 | "continue round 7" | Round 7 started early (not 12:40 tomorrow) on what Gemini quota is left today; its scheduled start disabled | round-7.md |

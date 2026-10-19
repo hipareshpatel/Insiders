@@ -2403,7 +2403,7 @@ class Pipeline:
             """
             # a results card with its XBRL file: code writes the figures, the model's words are cut to a line or two
             built = (results_card.build(candidate, tagged, filing.company_name,
-                                        results_card.history_from_view(view))
+                                        results_card.history_from_view(view), filed_text)
                      if tagged and "RESULTS" in (event_type, candidate.event_type) else [])
             units = fix_unit_slips(candidate, sources)
             foreign_fixes = fix_foreign_crore(candidate, filed_text)

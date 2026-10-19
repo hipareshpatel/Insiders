@@ -241,11 +241,36 @@ def profit_driver(tagged) -> str | None:
             f"{driver}{contrast}.")
 
 
-def build(out, tagged, company_name: str | None, history=None) -> list[str]:
+def unconfirmed_changes(tagged, text: str) -> list[str]:
+    """Drop a change whose comparative the filing does not print. The year-ago and previous-quarter figures come from
+    those quarters' own files, which keep the figures first reported; a statement that restates them (Ambuja after the
+    Orient Cement purchase-price allocation, Titagarh) prints the restated ones, and the change against the old figure
+    was wrong (round 6, 2026-10-19). Figures too small to tell apart in the text are left as they are."""
+    from .xbrl import appears_in
+
+    if not text or tagged is None:
+        return []
+    dropped = []
+    for m in tagged.metrics:
+        if m.period != tagged.period or m.value is None or m.unit in ("PCT", "INR"):
+            continue
+        for attr, label in (("yoy_pct", "YoY"), ("qoq_pct", "QoQ")):
+            pct = getattr(m, attr)
+            if pct is None or pct <= -100:
+                continue
+            comparative = m.value / (1 + pct / 100)
+            if appears_in([comparative], text) is False:
+                setattr(m, attr, None)
+                dropped.append(f"{m.metric} {label}")
+    return dropped
+
+
+def build(out, tagged, company_name: str | None, history=None, text: str = "") -> list[str]:
     """Put the file's figures on a results card. Returns what was replaced (empty when the file cannot carry it)."""
     card = getattr(out, "card", None)
     if card is None or tagged is None or getattr(tagged, "kind", None) != "RESULTS" or not tagged.period:
         return []
+    unconfirmed = unconfirmed_changes(tagged, text)
     now = {m.metric: m for m in tagged.metrics if m.period == tagged.period and m.value is not None}
     top = now.get("revenue") or now.get("interest_earned") or now.get("total_income")
     profit = now.get("pat")
@@ -326,4 +351,6 @@ def build(out, tagged, company_name: str | None, history=None) -> list[str]:
     if context:
         replaced.append(f"{len(context)} point(s) from memory by code")
     out.timeline_entry = f"{period} results ({basis or 'basis not stated'}): {phrase(top, top_word)}, {phrase(profit, profit_word)}."
+    if unconfirmed:
+        replaced.append(f"changes left out, their comparative not in the filing: {', '.join(unconfirmed)}")
     return [f"results card from the XBRL file: {', '.join(replaced)}"]

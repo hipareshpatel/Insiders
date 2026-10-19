@@ -209,3 +209,17 @@ def test_a_group_with_minority_interests_is_given_its_shareholders_profit():
     out = _model_card()
     results_card.build(out, tagged, "Bajaj Finserv Limited")
     assert out.card.headline == "Bajaj Finserv Q1FY27: revenue ₹38,000 Cr, net loss to shareholders ₹120 Cr"
+
+
+def test_a_change_against_a_comparative_the_filing_does_not_print_is_left_out():
+    """Ambuja (round 6): year-ago profit from the year-ago file (₹969.66 Cr) after the statement restated it to ₹1,041 Cr."""
+    from bse_intel.models import FinancialMetric
+    from bse_intel.results_card import unconfirmed_changes
+    from bse_intel.xbrl import XbrlResult
+
+    tagged = XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q1FY27", metrics=[
+        FinancialMetric(metric="pat", period="Q1FY27", value=660.0, yoy_pct=-31.94),       # against 969.66
+        FinancialMetric(metric="revenue", period="Q1FY27", value=9500.0, yoy_pct=10.0)])   # against 8636.36
+    text = "Net profit 660.00 1,041.12 (restated). Revenue from operations 9,500.00 8,636.36"
+    assert unconfirmed_changes(tagged, text) == ["pat YoY"]
+    assert tagged.metrics[0].yoy_pct is None and tagged.metrics[1].yoy_pct == 10.0

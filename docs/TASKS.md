@@ -75,7 +75,7 @@ dashboard and the GitHub secrets. When the owner says they exist (or `npx wrangl
 4. Do not load data yet (G6 and `sync-to-cloud` come after); do not switch the schedule on (G7, owner).
 Files you may change: `web/wrangler.jsonc` (the id only), `docs/PLAN.md` (G1/G4 status lines). Report: here.
 
-## T11 · P1 · laptop · OPEN — screenshots of the site on real data (owner asked, 2026-10-20)
+## T11 · P1 · laptop · DONE — screenshots of the site on real data (owner asked, 2026-10-20)
 
 The owner wants to see the site as it is now with the laptop's real data; the cloud has only demo data. With the local
 site running (`npm run dev`), take full-page screenshots at **1280 px** and **390 px** (phone), light mode, plus dark mode
@@ -89,9 +89,23 @@ for the first two. Do not run anything that spends AI quota for this; round 7 co
 Save them as PNG in `docs/audit/screens-2026-10-20/` named `<nn>-<page>-<width>.png` (keep each under ~1.5 MB; a JPEG at
 quality 80 is fine for long pages), plus `index.md` with one line per shot: the URL and anything that looks wrong
 against the data (a figure, an empty panel, a cut label).
-Files you may change: `docs/audit/screens-2026-10-20/`. Report: here, with the count and the worst three problems seen.
+Files you may change: `docs/audit/screens-2026-10-20/`. Report: 42 shots in `docs/audit/screens-2026-10-20/` (20 MB, each under 1.5 MB), with `index.md` (URL and notes per shot).
+Taken through Chrome's DevTools protocol (light/dark set per shot, true page height). Cards are cropped to the card,
+and All filings is its first 5,000 px. No price chart yet: T9's `market-data` hasn't been run. Worst three:
+1. **A held card is public by link.** `/feed?card=<held id>` (`/api/cards/:id` has no held filter) shows the card with
+   the red "Held: not on the public feed. Only you see this card." banner to anyone (Hind Copper `1a84a2bd`). The card
+   endpoint should 404 a held card without the owner token, and the banner should show only in owner mode.
+2. **System page at 390 px is 822 px wide**: the "AI provider health" rows' usage/error line doesn't wrap.
+3. **Old memory summaries keep the T6 faults**: Overdue promises (Today and Calendar) still shows Prism Johnson's
+   "Ind-Ra expects ..." items with "due FY26-FY27, 203 days", because `/api/promises/overdue` reads the stored
+   `memory_summary_json`. The T6 filter runs only when a summary is rebuilt; it needs the Worker-side filter too (as
+   T6 did for the calendar), or a summary refresh for every company.
+Also seen: the Results page's Heritage +21.0% / −36.2% (T5 item 1); Prism Johnson's PAT "+2127.0%" from a loss (should
+read "loss to profit"); UCO's 26 Oct strike twice (Other + Milestone with different words); a compliance officer's
+re-appointment in the calendar (Bandhan, D30); "has informed BSE" in NSE meeting texts; Ahluwalia's promise "it would
+be about 15%." (a fragment); CSB credit-cost targets for Q4FY26/Q1FY27 still Open.
 
-## T7 · P1 · laptop · OPEN — confirm the re-check fixes on the same filings
+## T7 · P1 · laptop · DONE — confirm the re-check fixes on the same filings
 
 After pulling the commit that follows `bdd7f99`, process again (`process --news-ids`, FREE_ONLY):
 Hind Copper `1a84a2bd-b7a2-440a-90b6-528b621ce310`, Dabur `nse-106729432`, CSB Bank `33717cd4-0f00-47c3-9a26-9c79acb7b4d4`,
@@ -99,7 +113,21 @@ Ceigall `nse-106801864`, Ramco `nse-106731799`. Check: Hind Copper published (un
 report its reason), ladder AA+ -> AAA, 1 notch up, no order block; Dabur's import alert and warning letter both
 marked, the warning letter as the current step; CSB has no stale "Management said"; Ceigall "Term · 5 years"; Ramco
 has no P/E line. And `/company/519552?tab=results` at 390 px: the quarter labels whole.
-Files you may change: none. Report: here.
+Files you may change: none. Report: re-run on a1ed393, 01:40-01:54 IST, FREE_ONLY, `process --news-ids` after `/api/owner/requeue`.
+- **Hind Copper** `1a84a2bd`: ladder right: `rating_change` ICRA AA+ -> AAA (Stable), **1 notch**; no order block
+  (`scale` null). **Still held**, now only by the quote contract: three quotes "not in the filing", key numbers
+  "Short-term rating" and "Commercial paper", and why-it-matters "Short-term A1+ reaffirmed on ₹100 Cr commercial ...".
+  Those figures are in the filing's rating table ("Commercial Paper^ 100.00 [ICRA]A1+; reaffirmed"), a row rather than
+  a sentence, so a quote taken from the table does not match a sentence. Headline: "ICRA upgrades HCL long-term
+  rating to AAA (Stable) from AA+ on ₹2,100 Cr bank facilities; A1+ reaffirmed on ₹100 Cr CP".
+- **Dabur** `nse-106729432`: **not fixed.** `case_stage.reached` = [1] (warning letter only). The PDF says "US FDA had
+  issued an Import Alert (IA) 66-40 on June 10, 2026", but the card's headline and first point do not mention it, and
+  the steps are read from those alone. The steps need the filing text (or every point of the card).
+- **CSB Bank** `33717cd4`: no stale "Management said". The one recalled now is "ROA guidance maintained at 1.5-1.6% near
+  term ... by FY28" (a target and a deadline). Bank table and headline as before.
+- **Ceigall** `nse-106801864`: "Term · 5 years"; size bars 22% / 5.3%; "1.1% of FY26 revenue a year"; stage LOI.
+- **Ramco** `nse-106731799`: no P/E line; "Since the filing ₹931.6 -> ₹787.25, -15.5%".
+- `/company/519552?tab=results` at 390 px: the quarter labels are whole ("Q3" over "FY25"); no sideways scroll.
 
 ## T8 · P2 · laptop · OPEN — check the new promoter-pledge memory against filings (module 42)
 

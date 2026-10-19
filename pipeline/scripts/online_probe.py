@@ -15,7 +15,8 @@ Checks (docs/SOURCES.md "Event XBRL" and "Timing checked live"):
 8. a BSE results file on www.bseindia.com/XBRLFILES, BSE's file host rather than its refused API;
 9. the two calls BSE's Financial Results page makes for its table (NSTodayResults_ng, Result_Arch_ng);
 10. the event XBRL lag: each file against its company's nearest earlier announcement of the same subject;
-11. NSE's SAST Reg 31 encumbrance feed (promoter pledges, module 42).
+11. NSE's SAST Reg 31 encumbrance feed (promoter pledges, module 42);
+12. where a company's industry can come from on NSE (quote page, announcement rows, index constituent lists).
 
 Exit status is 0 whatever NSE answers: the report is the result. Run by online-probe.yml.
 """
@@ -233,6 +234,33 @@ def main() -> int:
             return f"{row.get('symbol')}: {len(body):,} bytes, {doc.page_count} pages, {len(text)} characters read"
 
         step("NSE announcement PDF read by the pipeline", pdf_read)
+
+        # Company master from NSE (owner, 2026-10-19: everything on NSE): where a new listing's industry can come from
+        def quote_industry():
+            got = []
+            for symbol in ("ITC", "TATATECH"):
+                r = nse._get(f"{SITE}/api/quote-equity", {"symbol": symbol}).json()
+                got.append(f"{symbol}: {r.get('industryInfo')} listed {(r.get('info') or {}).get('listingDate')} "
+                           f"issued {(r.get('securityInfo') or {}).get('issuedSize')}")
+            return "; ".join(got)
+
+        step("NSE quote: industry of a company (/api/quote-equity)", quote_industry)
+
+        def sm_industry():
+            ann = found.get("ann", [])
+            filled = collections.Counter(r.get("smIndustry") for r in ann if r.get("smIndustry"))
+            return (f"{sum(filled.values())} of {len(ann)} announcements carry smIndustry; "
+                    f"{len({r.get('symbol') for r in ann if r.get('smIndustry')})} companies; top {filled.most_common(4)}")
+
+        step("announcement rows' own industry field (smIndustry)", sm_industry)
+
+        for name in ("ind_niftytotalmarket_list.csv", "ind_niftymicrocap250_list.csv"):
+            def index_list(name=name):
+                text = nse._get(f"https://nsearchives.nseindia.com/content/indices/{name}").text
+                lines = [l for l in text.splitlines() if l.strip()]
+                return f"{len(lines) - 1} companies; header {lines[0][:120]!r}; first {lines[1][:120]!r}"
+
+            step(f"NSE index constituents with industry ({name})", index_list)
 
     def bse_xbrl():
         r = httpx.get(BSE_XBRL, headers={"User-Agent": USER_AGENT}, timeout=30)

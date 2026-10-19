@@ -1196,7 +1196,7 @@ class Pipeline:
         if settings.pass2_pack > 1 and gateway.has_route("pass2_packed"):
             from .ai.packer import Packer
 
-            self._packer = Packer(gateway, size=settings.pass2_pack)
+            self._packer = Packer(gateway, size=settings.pass2_pack, wait_s=settings.pass2_pack_wait_s)
         self._nse_refused = False                  # NSE refused the address: no more calls this run
         self.prompts = prompts or PromptEngine(settings)
         self.rules = rules or RuleBook.from_config(settings.load_toml("taxonomy.toml"))

@@ -81,6 +81,9 @@ class Settings:
     workers: int = field(default_factory=lambda: _env_int("PIPELINE_WORKERS", 3))
     # Pass 2 packed: this many filings in one request on the `pass2_packed` route (Gemini; ai/packer.py). 0 = off.
     pass2_pack: int = field(default_factory=lambda: _env_int("PASS2_PACK", 0))
+    # Seconds a filing waits for others to fill its pack. 20 s gave 1.25 filings a call on round 5's companies
+    # (2026-10-19): filings reach pass 2 one by one, and Gemini's free tier counts calls, not filings.
+    pass2_pack_wait_s: int = field(default_factory=lambda: _env_int("PASS2_PACK_WAIT", 20))
 
     def load_toml(self, name: str) -> dict:
         return _load_toml(self.config_dir / name)

@@ -83,5 +83,8 @@ Round 6's reviewed cards are kept in `data/audit/round6/cards_reviewed.json`.
 
 Same blind review (`REVIEWER_PROMPT_ROUND4.md` word for word, independent agents, one per folder; no missed-news
 review, as only the writers change). Compared with round 6 per writer: Gemini 3 of 55 published WRONG (5.5%), Nemotron 3
-Super 12 of 36. A trial writer is kept only if its published WRONG is at most Gemini's round-6 rate plus its sampling
-margin; one far above it comes off the routes.
+Super 12 of 36. Decision rule, made stricter before any trial card was reviewed (owner's reviewer, 2026-10-19 19:00 IST): a trial
+writer stays on the routes only as a spare, and only if its published WRONG is **at most about 8%**; it never gets a larger
+share than Gemini. Two caveats are read with the result: (1) the trial runs on code that already has round 6's fixes
+(ownership, foreign amounts, vote counts, results comparisons), so Gemini's 5.5% was measured on older code and a trial
+writer level with it may be a little worse; (2) with about 50 cards a writer the sampling margin is roughly ±6 points.

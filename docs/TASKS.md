@@ -62,7 +62,7 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
-## T22 · P1 · laptop · OPEN, read first — production is on; the live database is the record (owner, 2026-10-20)
+## T22 · P1 · laptop · DONE (step 1; step 3 running) — production is on; the live database is the record (owner, 2026-10-20)
 
 The owner asked to run on production now and not to wait for the laptop (20 Oct, ~05:20 IST). The cloud merged the PR
 into `main` without the last sync and started `pipeline.yml` there.
@@ -77,7 +77,23 @@ into `main` without the last sync and started `pipeline.yml` there.
 4. Your other work: T19 (the held-card export), T18 and T17 (code fixes in your files, pushed to the branch; they reach
    production through a PR to `main` that the cloud opens and merges), audit rounds on the laptop's own database.
 5. The branch stays `claude/nice-goodall-ta0sxs`; after a merge the cloud restarts it from `main`. `git pull` as always.
-Report: here: step 1's numbers; step 3's progress (companies seeded on the live site).
+Report: **synced** (2026-10-20 05:17-05:22 IST).
+1. Last `sync-to-cloud`. The sync goes by cursor, so the card, company and filing cursors were reset (object hashes kept):
+   without that, cards re-read for old filings and company prices refreshed after 04:23 sat behind the cursors. The 1,991
+   price charts not yet sent were marked as sent rather than copied (one PUT each, about 50 minutes); production's
+   `market-data` writes a company's chart when its price date moves, so they appear after the next session's close.
+   Result: `{"rows_written": 14911, "complete": true}`, 134 objects. Then cards gone on the laptop were deleted on the live
+   site: CSB's reappointment (`df53e2fe`, D30) and SML/Isuzu (`e1e7cf1b`, now a duplicate).
+   **Live counts after it: 850 published, 191 held** (the laptop: 849 / 191).
+   **A collision, my error.** A production run was already going (started 05:19:45 IST, live System page). A second run of
+   my stale-card check took its two new cards, `nse-106822656` and `nse-106822657`, for stale and deleted them. Both
+   filings were requeued on the live site at once (`/api/owner/requeue`), so production writes them again. My final sync
+   (05:17-05:22) also overlapped that run's first minutes; it wrote only the laptop's own rows (no filing newer than
+   `nse-106821339`), so production's new filings were not touched, but a filing both had could carry the laptop's status.
+   No sync or stale check will run again (step 2).
+2. Noted: no `sync-to-cloud` from now on.
+3. Running: governance and `seed-memory --universe` straight to the live site (resumes after kv `seed:universe_last`
+   = 506690), `BSE_INTEL_SINK=platform`, no AI. Progress reported here.
 
 ## T21 · P1 · laptop · CANCELLED (T22) — drain the 561 queued filings
 

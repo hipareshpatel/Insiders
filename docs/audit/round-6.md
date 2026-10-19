@@ -62,3 +62,12 @@ warning memory does not support (Clean Max twice); EPS change against a pre-bonu
 including minority interest given as the owners' (Bajaj Finserv); a foreign amount written in crore ("THB 1.25 Cr"
 for THB 12.5 lakh); a results card's quarter mislabelled (Clean Max Q1FY26 for Q1FY27); restated year-ago figures
 (Ambuja, Titagarh); excise-inflated gross revenue as growth (ITC); the missed-news export taking a filing that has a card.
+3. Memory's ownership set only by a shareholding pattern (Clean Max's invented 20.02% pledge came from two other cards).
+4. Results cards: the takeaway is always the file's (its profit bridge, else its figures); the model's own memory
+   comparisons are left off (LIC's EPS against a pre-bonus year); the shareholders' profit leads where minority
+   interests take a part (Bajaj Finserv; `ProfitOrLossAttributableToOwnersOfParent` read from the XBRL); a change whose
+   comparative the filing does not print is left out (restated year-ago figures, Ambuja).
+5. A foreign amount or a count of votes or shares written in crore at the wrong size is set right from the filing's
+   figure (Clean Max's THB 12.5 lakh as "THB 1.25 Cr"; Ambuja's 225.41 crore votes as "2,254.11 Cr").
+Still open: ITC's excise-inflated gross revenue; a results card's quarter mislabelled where no XBRL was read (Clean Max);
+the missed-news export taking a filing that got a card.

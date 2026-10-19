@@ -85,3 +85,26 @@ What the agents found, by class, and what was done (2026-10-19, after the review
     meeting; pass 1 set the 389 pages aside as a routine notice. Fixed: a document of 60+ pages that reads as an annual
     report (`Document.kind`) takes the annual-report path before pass 1 (`pipeline._analyze_document`, test).
 11. **Call transcripts** (the recall review's Texmaco item): their own card always (owner, D33).
+
+## Result, arm B (2026-10-19): the same 20 companies and 362 filings, packed Gemini writing pass 2
+
+Run on `a0b1daf` (results cards built by code F74, D30 amended, the fixes above except items 8-11 and the memory points
+of `3cf9fae`), free providers only, `PASS2_PACK=6`, `PASS2_PACK_WAIT=150`, 10 workers. 33 packed Gemini calls (5.2
+filings a call on average after the restart, 2 packs fell back). 146 cards, 34 held. Reviewed by 15 new independent
+blind agents with the same prompt word for word (`round-5b.json`; exports now show the impact the site shows).
+
+- **Published cards: 11 of 112 WRONG (10%)**, 60 MINOR, 41 OK; baseline 26 of 113 (23%). Clears the 15% mark, not 5%.
+  Held: 10 of 34 WRONG.
+- **By writer, published:** Gemini 3.7 Flash **0 of 33**; Gemini 3.8 Flash 3 of 30; Nemotron 3 Super 6 of 38 (it still
+  wrote the long documents and the second opinions); Nemotron 3.5 Super VL 0 of 5; GLM-4.7-Flash 2 of 3; GLM-4.5-Flash 0 of 3.
+- **By type, published:** RESULTS 2 of 17 (baseline 8 of 16); ORDER_WIN 3 of 21 (7 of 23); CONCALL 3 of 11; CAPEX 1 of 7;
+  GOVERNANCE 1 of 7; ANNUAL_REPORT 1 of 1; M&A 0 of 18, FUNDRAISE 0 of 8, LITIGATION 0 of 7, RATINGS 0 of 6.
+- Impact level fits 121 of 146 (baseline 91 of 140 on the writer's own call).
+
+Done after it: the writers re-weighted on these numbers (`providers.toml`): packed Gemini writes ordinary filings,
+Nemotron 3.5 Super VL takes long documents and second opinions, Nemotron 3 Super and GLM-4.7-Flash are spares.
+Classes still WRONG, for the next loop: results with no XBRL file read from memory's other quarters (Ceigall Q1, IFB
+year-ago column, Persistent standalone H1 as the quarter); a model takeaway giving a cause the statement contradicts
+(Texmaco "cost control" when a tax credit did it); orders: a lease the company pays read as an order, an acquisition
+linked onto an order (`updates_deal_id` across kinds), the order flow counting a CANCELLED tender; transcripts: a
+standalone EBITDA called consolidated; a USD amount converted 10x too high in a computed impact.

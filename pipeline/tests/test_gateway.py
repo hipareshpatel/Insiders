@@ -120,14 +120,17 @@ def test_openrouter_free_models_are_spares_under_one_daily_allowance(settings):
     assert config["providers"]["openrouter"]["limits"]["rpd"] == 1_000  # after the one-time credit purchase (D19)
     entries = [e for route in config["routes"].values() for e in route if e["provider"] == "openrouter"]
     assert entries and all(e["model"].endswith(":free") for e in entries)  # never a paid model by accident
-    for name, route in config["routes"].items():  # a regular, weighted share of pass 2 for the VL model alone (round 4:
-        for e in (e for e in route if e["provider"] == "openrouter"):  # 10% WRONG); elsewhere a spare
-            regular = name in ("pass2", "pass2_bulk") and "3.5-super-vl" in e["model"]
+    for name, route in config["routes"].items():  # a regular, weighted share of pass 2 and long documents for the VL
+        for e in (e for e in route if e["provider"] == "openrouter"):  # model alone (round 4: 10% WRONG; round 5 arm B:
+            regular = name in ("pass2", "pass2_bulk", "pass2_long") and "3.5-super-vl" in e["model"]   # 0 of 5); else spare
             assert (not e.get("spare") and e.get("weight", 1) >= 1) if regular else e.get("spare"), (name, e)
     # Ultra wrote 12 of round 4's 122 cards as a spare, 58% WRONG: it is on no card route (2026-10-19)
     assert not any("nemotron-3-ultra" in e["model"] for n, route in config["routes"].items() if n.startswith("pass2")
                    for e in route)
     assert config["gateway"]["strategies"]["pass2_bulk"] == "weighted"
+    # Nemotron 3 Super wrote 6 of arm B's 38 published cards WRONG against Gemini's 3 of 63 (2026-10-19): a spare
+    assert all(e.get("spare") for n in ("pass2", "pass2_bulk", "pass2_long") for e in config["routes"][n]
+               if "nemotron-3-super" in e["model"])
     for route in config["routes"].values():  # the free allowance is 20/min across the models of one route
         assert sum(e["limits"]["rpm"] for e in route if e["provider"] == "openrouter") <= 20
 

@@ -1,0 +1,2588 @@
+[
+ {
+  "news_id": "nse-106721243",
+  "headline": "Persistent Systems Q1FY27: revenue ₹4,303.23 Cr (+29.1% YoY), net profit ₹483.04 Cr (+13.7% YoY)",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106724033",
+  "headline": "Dabur clarifies on FSSAI prohibitory order regarding '100%' claims on select food labels",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "An FSSAI prohibitory order restricting sale/labels of flagship products (honey, ghee) moved the stock and has an open legal outcome; more than routine.",
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Peers like Heritage Foods recently received FSSAI notices over product claims",
+    "pdf_says": "Not in the filing or in memory; filing instead mentions an earlier FSSAI notice to Dabur dated April 8, 2026 (omitted by the card)",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106739596",
+  "headline": "Electrosteel Castings Q1FY27 revenue ₹1,426 Cr; EBITDA ₹139 Cr (9.5% margin); PAT ₹48.4 Cr",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "Transcript cuts FY27 DI pipe volume guidance from 650-700k t to ~575k t and guides 12-13% EBITDA margin by Q3-Q4; that changes the earnings view.",
+  "issues": [
+   {
+    "field": "notable_changes[ebitda_margin].previous",
+    "card_says": "4.14% (Q4FY26) -> 9.5% (Q1FY27)",
+    "pdf_says": "Management: 9.5% this quarter vs ~6.5% previous quarter (both incl. other income, on total income). 4.14% is memory's margin excl. other income on revenue (Q1FY27 on that basis is 7.01%); compares two bases and overstates the expansion",
+    "class": "other"
+   },
+   {
+    "field": "notable_changes[net_debt].previous",
+    "card_says": "₹1,218 Cr (Q4FY26) -> ₹876 Cr (Q1FY27)",
+    "pdf_says": "Filing gives only the 30 Jun 2026 figures (gross ₹1,658 Cr, net ₹876 Cr). ₹1,218 Cr is memory's gross debt less cash only; gross debt rose from ₹1,513 Cr, so a ₹342 Cr one-quarter fall is a basis mismatch, not deleveraging shown by the filing",
+    "class": "memory"
+   },
+   {
+    "field": "key_numbers[Revenue].quote",
+    "card_says": "Revenue ₹1,426 Cr quoted to 'Total income stood at Rs. 1,465 crore'",
+    "pdf_says": "Transcript states total income ₹1,465 Cr; ₹1,425.57 Cr revenue comes from memory/results, not the quote (figure itself is right)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106742546",
+  "headline": "Max Financial Services Q1FY27: revenue ₹14,969.51 Cr (+16.8% YoY), net profit ₹118.29 Cr (+36.8% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / key_numbers[Net profit]",
+    "card_says": "Net profit ₹118.29 Cr (+36.8% YoY)",
+    "pdf_says": "₹118.29 Cr is profit incl. non-controlling interests (₹22.73 Cr); profit attributable to owners is ₹95.56 Cr (+37.2% YoY vs ₹69.64 Cr), which is what the EPS ₹2.78 reflects",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "PAT growth of 36.8% YoY exceeds the 5-year average",
+    "pdf_says": "Memory (ref t_18869f46, a Q3FY25 result) holds no 5-year average; claim unsupported. Q4FY26 loss part is supported",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106750205",
+  "headline": "Texmaco Rail invests ₹6.88 Cr in defence arm as new investor acquires 30% stake",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106752512",
+  "headline": "ICRA reaffirms Repco Home Finance at AA- (Stable), enhances term loan limit to ₹5,000 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106768854",
+  "headline": "CRISIL reaffirms NLC India's ratings at AAA/Stable across ₹11,640 Cr facilities",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106800409",
+  "headline": "Ramco Cements expands capacity via debottlenecking at Jayanthipuram works",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106805367",
+  "headline": "UCO Bank Q2 advances surge 24.7% YoY to ₹2.88 lakh Cr; CD ratio expands to 82.37%",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106815558",
+  "headline": "Ceigall India receives Completion Certificate for ₹1,324 Cr Delhi-Saharanpur EPC project",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "Completion certificate for a project already declared fit for operation in Sept 2024 and part of the RHP; no new revenue or order; settlement terms undisclosed.",
+  "issues": [
+   {
+    "field": "signals[ORDER_FLOW]",
+    "card_says": "8th order on record since 2026-08-17 (₹5,241 Cr in total); smaller than the ₹2,150 Cr order of 2026-08-18",
+    "pdf_says": "Filing is a completion certificate for an old project (awarded April 2022, completed w.e.f. 12 Sep 2024), not an order; counting it as order inflow is wrong (and no ₹2,150 Cr order is in memory)",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "signals[SCALE]",
+    "card_says": "₹1,324 Cr order = 136% of Q1FY27 revenue, 33% of FY26 revenue",
+    "pdf_says": "Not an order; contract value of a completed project",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Project value represents 31.9% of TTM revenue and 7.1% of Ceigall's ₹18,568 Cr order book",
+    "pdf_says": "A completed project is not part of the order book; ratio implies new/outstanding work that does not exist",
+    "class": "other"
+   },
+   {
+    "field": "event_type",
+    "card_says": "CAPEX",
+    "pdf_says": "Completion certificate of an EPC contract (execution update, OTHER/ORDER execution), not the company's capex",
+    "class": "event_type"
+   },
+   {
+    "field": "key_numbers[Revised Cost].change",
+    "card_says": "₹1,659.84 Cr, 'Final cost'",
+    "pdf_says": "'Revised Estimated Project Cost' ₹1,659.84 Cr; not a final cost",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Completion within the cure period eliminates liquidated damages risk and unlocks retention money and bank guarantee limits",
+    "pdf_says": "Filing says only that the highway is fit for operation w.e.f. 12 Sep 2024 within the cure period; works excluded under a 9 Oct 2026 settlement remain; LD elimination and releases are not stated",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106712278",
+  "headline": "Balaji Amines Q1FY27: revenue ₹455.93 Cr (+27.2% YoY), net profit ₹78.12 Cr (+113.9% YoY)",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "PAT growth of 113.9% significantly exceeds the 5-year average quarterly PAT growth of ~20% seen in memory",
+    "pdf_says": "Memory holds only H1FY25-Q1FY27 figures; no 5-year history and no ~20% average quarterly PAT growth anywhere in memory or the filing. All headline figures check: revenue 455.93 vs 358.34 (+27.2%), PAT 78.12 vs 36.53 (+113.9%), EPS 23.13 vs 11.73 (+97.2%), EBITDA 115.87 (25.41%).",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106721838",
+  "headline": "Sundaram Finance re-appoints P. N. Srikant as Chief Compliance Officer for 5 years",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106740989",
+  "headline": "Lincoln Pharmaceuticals Q1FY27: revenue ₹177.28 Cr (+15.1% YoY), net profit ₹36.23 Cr (+30.9% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.risks[1]",
+    "card_says": "Inventory build-up could signal slowing demand or overproduction",
+    "pdf_says": "Changes in inventories Q1FY27 = +563.09 lakh (a charge), i.e. inventories of FG/WIP fell during the quarter; the statement shows a drawdown, not a build-up",
+    "class": "direction"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106747940",
+  "headline": "Ceigall India JV wins 4 MoRTH LOAs totaling ₹2,150 Cr, 11.6% of order book",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[1] ORDER_FLOW",
+    "card_says": "2nd order on record since 2026-08-17 (₹2,480 Cr in total); the largest so far (previous high ₹330.84 Cr on 2026-08-17)",
+    "pdf_says": "The ₹330.84 Cr Delhi PWD tender in memory has stage CANCELLED; it is not an order. Counting it gives a wrong order count and a ₹2,480 Cr total that includes a cancelled tender.",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "adding over half of trailing annual revenue",
+    "pdf_says": "₹2,149.62 Cr is the JV's total bid cost; Ceigall holds 74% (≈₹1,591 Cr, ≈38% of TTM revenue). The card shows the 74% split elsewhere, so the overstatement is partial.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106749878",
+  "headline": "IFB Industries Q1FY27 revenue rose 16.65% YoY to ₹1,529 Cr; PBDIT margin improved to 5.79%",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106757808",
+  "headline": "BSE and NSE fine NLC India ₹14.31 lakh each for board and committee non-compliance",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106787132",
+  "headline": "Siemens Energy India highlights >$300M capex commitment at JP Morgan conference",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106791287",
+  "headline": "Protean eGov Technologies shareholders passed all four AGM resolutions including dividend and auditor reappointment",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Public non-institutional dissent remained low across all resolutions, with the highest at 0.0702% for director reappointment",
+    "pdf_says": "0.0702% is the total dissent on resolution 3. Public non-institutional dissent was 3.2983% on resolution 3 (1.3122%, 1.379%, 2.5118% on the others), as the card's own quote shows",
+    "class": "other"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "no dissent exceeding from public non-institutional voters",
+    "pdf_says": "Public non-institutional holders cast the only dissent (up to 3.30% of their votes)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106809520",
+  "headline": "Granules claims potential sole first-to-file status for Ruxolitinib ER ANDA",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "PRODUCT_LAUNCH",
+    "pdf_says": "A Paragraph IV certification on a pending ANDA with a claimed first-to-file status; no product approved or launched (the filing says it must not be read as FDA approval)",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106811790",
+  "headline": "Runwal Enterprises to invest ₹175 Cr via NCDs in subsidiary for loan repayment",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "The listed company is investing ₹225 Cr in its subsidiaries' NCDs (intra-group lending); it raises no money",
+    "class": "event_type"
+   },
+   {
+    "field": "track_next.catalysts[0] / why_it_matters[0]",
+    "card_says": "Lower project finance interest drag at subsidiary level; replaces external secured bank borrowings",
+    "pdf_says": "Filing says only 'repayment of secured loan'; it gives no lender (bank or otherwise) and no rate on the existing loan, so a lower interest cost is not supported",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106720511",
+  "headline": "Max Financial arm Axis Max Life redeems ₹532.9 Cr NCDs on call option exercise",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_reason": "Pre-announced call-option redemption of ~₹496 Cr subordinated debt at the subsidiary, paid on schedule; routine for a ₹44,000 Cr company.",
+  "issues": [
+   {
+    "field": "headline",
+    "card_says": "redeems ₹532.9 Cr NCDs",
+    "pdf_says": "₹532.92 Cr (Rs 5,329,150,000) is the total of interest AND redemption amount paid on 4,960 NCDs; principal alone is not stated (likely ~₹496 Cr at ₹10 lakh face)",
+    "class": "other"
+   },
+   {
+    "field": "event_type",
+    "card_says": "DEBT_RATINGS",
+    "pdf_says": "Reg 51 intimation of interest and principal payment on called NCDs; no rating action",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106731059",
+  "headline": "Electrosteel Castings Q1FY27: revenue ₹1,425.57 Cr (-8.5% YoY), net profit ₹48.37 Cr (-45.7% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0].type",
+    "card_says": "LOW_QUALITY_BEAT",
+    "pdf_says": "PAT fell 45.7% YoY (₹48.37 Cr vs ₹89.08 Cr); there is no beat. The text (other income ₹39.24 Cr = 57% of PBT ₹68.65 Cr) is correct, only the label misleads",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106731799",
+  "headline": "The Ramco Cements Q1FY27: revenue ₹2,273.05 Cr (+9.6% YoY), net profit ₹31.24 Cr (-63.1% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "profitability declined sharply due to cost inflation and reduced other income",
+    "pdf_says": "Consolidated other income rose YoY: ₹6.74 Cr vs ₹5.98 Cr (+12.7%, as the card itself says in why_it_matters); it fell only QoQ (₹11.76 Cr)",
+    "class": "direction"
+   },
+   {
+    "field": "signals[1]",
+    "card_says": "Exceptional items in 5 of last 8 quarters: treat them as a running cost",
+    "pdf_says": "Exceptional items are gains (profit on sale of surplus land ₹12.62 Cr in Q1FY27, ₹67.90 Cr in Q4FY26), not costs",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "basis MEMORY: PAT contrasts with Q1FY26's ₹84.56 Cr, reversing the profit trend seen in prior quarters",
+    "pdf_says": "Memory holds no Q1FY26 figure (₹84.56 Cr comes from the filing's own column) and no quarterly trend supporting 'reversing the profit trend'",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106738112",
+  "headline": "IFB Q1 revenue at ₹1,310.82 Cr; inventories up 65% YoY",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[0] / key_numbers",
+    "card_says": "Revenue ₹1,310.82 Cr; PBT ₹33.93 Cr; PAT ₹25.36 Cr (as Q1FY27)",
+    "pdf_says": "These are the Q1FY26 (previous-year) standalone figures. Q1FY27: total revenue ₹1,529 Cr (trend chart 1311 -> 1529), PBDIT ₹88.46 Cr (+26.46% vs ₹69.95 Cr), PBT ₹51.54 Cr, PAT ₹38.06 Cr, EPS ₹9.39",
+    "class": "wrong_column"
+   },
+   {
+    "field": "what_happened[0].quote / key_numbers quotes",
+    "card_says": "'Revenue for quarter at ₹1,310.82 Cr (+17.4% YoY), PBT ₹33.93 Cr (+26.5% YoY)', 'PAT ₹25.36 Cr (+17.4% YoY)'",
+    "pdf_says": "No such sentences in the filing; the quotes and growth rates are fabricated",
+    "class": "invented"
+   },
+   {
+    "field": "what_happened[1]",
+    "card_says": "Net cash ₹10.49 Cr; gross debt ₹51.97 Cr",
+    "pdf_says": "Total debt ₹10.49 Cr; cash and investments ₹409.24 Cr, net cash ~₹398.75 Cr. ₹51.97 Cr is a change figure on the balance-sheet slide, not gross debt",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1] / notable_changes[1] / risks",
+    "card_says": "Receivables ₹343 Cr (+100% YoY), 'receivables have doubled'",
+    "pdf_says": "Trade receivables ₹343.38 Cr vs ₹338.86 Cr at 31 Mar 2026; no YoY doubling stated. The card's own notable_changes gives previous ₹343 Cr",
+    "class": "invented"
+   },
+   {
+    "field": "key_numbers / notable_changes[0] / signals",
+    "card_says": "Inventories ₹688.36 Cr, +65% YoY (previous ₹417.18 Cr H1FY26); 'Inventory up 65% YoY vs revenue +18%'",
+    "pdf_says": "Inventories ₹688.36 Cr vs ₹630.67 Cr at 31 Mar 2026 (+₹57.69 Cr, ~+9%). No YoY figure in the filing; ₹417.18 Cr is memory's H1FY26 purchases of stock-in-trade, a different metric",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[0].previous",
+    "card_says": "₹417.18 Cr (H1FY26) inventories",
+    "pdf_says": "memory: purchases_stock_in_trade H1FY26 417.18; memory holds no inventory balance",
+    "class": "memory"
+   },
+   {
+    "field": "notable_changes[2]",
+    "card_says": "EBITDA margin previous 5.61% (Q1FY27) -> current 5.79% (Q1FY27)",
+    "pdf_says": "5.61% is memory's consolidated Q1FY27 margin, 5.79% is the standalone PBDIT margin; same quarter, different basis, not a change. YoY standalone was 5.34% (69.95/1310.82)",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "IFB Industries Limited held its 50th Annual General Meeting on 29 July 2026",
+    "pdf_says": "This filing is the Q1FY27 investor presentation and call intimation; the AGM is a memory item from another filing",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "basis MEMORY (t_603a3297): company is investing in new capacity",
+    "pdf_says": "t_603a3297 is the Q1FY27 results summary; it says nothing about capacity or SKU rationalisation",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106747072",
+  "headline": "Protean eGov shareholders approved appointment of Ajay Rajan as MD & CEO and two directors via postal ballot",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106765250",
+  "headline": "Texmaco Rail bags ₹24.48 Cr wagon rake order from Transport Corp of India",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[1] (ORDER_FLOW)",
+    "card_says": "3rd order on record since 2026-07-30 (₹102.98 Cr in total)",
+    "pdf_says": "memory's timeline also holds a USD 135M locomotive Letter of Award dated 2026-09-01 that the count and total leave out (the deals list omits it)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106792875",
+  "headline": "NCLT approves merger of Sesa Care into Dabur India; appointed date 1 April 2026",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.stage",
+    "card_says": "COMPLETED",
+    "pdf_says": "Merger becomes effective only upon completion of statutory filings and other conditions; NCLT order not yet uploaded (card's own pending_approvals says so)",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "basis MEMORY (w_c1bf344b): fulfils management's stated strategy of deploying surplus cash into acquisitions",
+    "pdf_says": "Memory item is an analyst question on capital allocation (acquisitions incl. ₹500 Cr D2C allocation); the Sesa deal dates from Oct 2024 and this step is an amalgamation, not new cash deployment",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106794456",
+  "headline": "ICRA assigns provisional ratings to ₹78 Cr PTCs under Repco Home's Pratham securitisation",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106812808",
+  "headline": "Persistent secures 94.04% in Nagarro SE after additional acceptance period",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "basis MEMORY: shareholders approved borrowing up to $1,250M and securities up to $450M to fund the transaction",
+    "pdf_says": "Memory (t_86cace2b, t_edb67c1f) records the approvals but not their purpose; 'to fund the transaction' is an inference",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106818467",
+  "headline": "UCO Bank Q2FY27: interest earned ₹7,286.32 Cr (+11.5% YoY), net profit ₹785.64 Cr (+26.8% YoY)",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "basis MEMORY: lowest gross NPA ratio in two years",
+    "pdf_says": "Filing shows GNPA 1.96% vs 2.08% (Jun-26), 2.17% (Mar-26), 2.56% (Sep-25): lowest of the periods shown (one year); memory holds no GNPA history to support 'two years'",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106721827",
+  "headline": "Sundaram Finance Q1FY27: revenue ₹2,644.13 Cr (+12.6% YoY), net profit ₹636.19 Cr (+33.9% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "Strong growth with stable margins reflects healthy asset quality",
+    "pdf_says": "Standalone Gross Stage 3 rose to 1.71% from 1.44% QoQ (Net Stage 3 0.88% from 0.69%); improved only YoY (1.91%). Asset-quality claim omits the QoQ deterioration",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106725983",
+  "headline": "Ramco Cements realises ₹25.65 Cr from further non-core asset sales",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106729432",
+  "headline": "US FDA issues Warning Letter for Dabur's Silvassa plant following June import alert",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[0]",
+    "card_says": "US FDA issued a Warning Letter on July 24, 2026",
+    "pdf_says": "July 24, 2026 is the date of receipt (received 10.03 p.m.); the letter's issue date is not stated",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106729846",
+  "headline": "Siemens Energy India Q1FY27: revenue ₹2,485.6 Cr (+39.3% YoY), net profit ₹440.9 Cr (+67.8% YoY)",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Margin expansion to 21.9% is the highest since H2FY25",
+    "pdf_says": "21.9% is profit from operations (EBIT) margin; the Dec-2025 quarter was higher (PfO 4,285 / revenue 19,109 = 22.4%, derived from 9M and quarter columns). Filing makes no 'highest since' claim",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0] vs key_numbers",
+    "card_says": "Margin 21.9% (why_it_matters) alongside EBITDA margin 23.6% (key_numbers)",
+    "pdf_says": "Two different metrics (EBIT 21.9%, EBITDA 23.6%) presented as one margin without labelling",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "highest since H2FY25 (basis FILING)",
+    "pdf_says": "memory ebitda_margin Q3FY26 24.11% > Q1FY27 23.56%; memory contradicts the claim",
+    "class": "memory"
+   },
+   {
+    "field": "track_next.milestones",
+    "card_says": "Q4 FY26 results Feb 2027; Annual FY26 results May 2027",
+    "pdf_says": "Company's FY runs Oct-Sep (this is its Q3 FY2026 / 9M FY26); its Q4/annual FY26 results fall ~Nov 2026. On the Apr-Mar labels the card uses, Q4FY26 was already reported. Neither date fits",
+    "class": "wrong_period"
+   },
+   {
+    "field": "track_next.kpis_to_verify",
+    "card_says": "ebitda_margin >= 21.9 at Q4FY26",
+    "pdf_says": "21.9% is the EBIT (profit from operations) margin; EBITDA margin is 23.56%, so the target is set on the wrong metric",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106744681",
+  "headline": "Electrosteel Castings passes postal ballot",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[1]",
+    "card_says": "Total Voting Turnout 52.15%",
+    "pdf_says": "52.15% is turnout on resolution 2 only; resolution 1 turnout was 30.90%",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106757194",
+  "headline": "Ceigall India L1 for RECPDCL transmission project with ₹608.67 Cr annual charges for 35 yrs",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "issues": [
+   {
+    "field": "signals[0] / deal_value.amount_cr",
+    "card_says": "₹608.67 Cr order = 63% of Q1FY27 revenue; deal amount 608.67",
+    "pdf_says": "Rs 6,086.70 million is the annual transmission charge for 35 years under a TBCB transmission concession, not the order size; comparing an annual tariff to a quarter's revenue as an 'order' misstates scale",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Regulated annual transmission charges under a tariff-based contract, not merchant sales",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "formal Letter of Award and SPV acquisition terms remain pending (basis FILING)",
+    "pdf_says": "Filing mentions only L1 status; no LoA or SPV is mentioned (sector inference presented as filing)",
+    "class": "invented"
+   },
+   {
+    "field": "signals[1]",
+    "card_says": "6th order on record since 2026-08-17 (₹4,293 Cr in total)",
+    "pdf_says": "memory deals since 2026-08-18: orders 2,149.62 + 274.08 + 225 + 704.70 (+ capex 29.44); with this 608.67 the total is ~₹3,962 Cr (₹3,991 incl. capex), 5th order; ₹4,293 Cr not supported",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106770597",
+  "headline": "NLC India arm receives LoI for 275 MW / 550 MWh standalone BESS tender in Gujarat",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "BESS capacity contracted to GUVNL under tariff-based bidding, not merchant sale",
+    "class": "other"
+   },
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "Adoption of tariff by GERC",
+    "pdf_says": "Not in filing (plausible sector step, but unsourced)",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106782095",
+  "headline": "Granules allots 2.50 Cr equity shares to promoters on warrant conversion for ₹1,462 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106804541",
+  "headline": "SEBI issues warning letter to Balaji Amines over undisclosed DGFT and FDA regulatory actions",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": []
+ },
+ {
+  "news_id": "nse-106818693",
+  "headline": "Persistent Systems Q2FY27: revenue ₹4,663.9 Cr (+30.3% YoY), net profit ₹351.51 Cr (-25.4% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "issues": [
+   {
+    "field": "what_happened[1] / key_numbers",
+    "card_says": "EBITDA ₹633.48 Cr, margin 13.6%",
+    "pdf_says": "Company reports EBIT ₹697.72 Cr (INR 6,977.2 Mn) at 15.0% margin; computed 'EBITDA' is below the company's own EBIT, so the margin shown understates operating margin as the company defines it, with no explanation",
+    "class": "other"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "margin pressure from investments and integration",
+    "pdf_says": "Filing gives no reason for the profit fall",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106715694",
+  "headline": "IFB Industries Limited shareholders approved all resolutions at the 50th Annual General Meeting held on 29 July 2026",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Institutional shareholders voted unanimously in favour of all resolutions",
+    "pdf_says": "Resolution 4 (Sudip Banerjee re-appointment): Public Institutions 2,216,494 for / 5,787 against (99.7396% / 0.2604%); unanimity holds for resolutions 1, 2, 3 and 5 only",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106722370",
+  "headline": "Sundaram Finance Q1FY27 PAT rose 22% YoY to ₹522 Cr on 17% AUM growth and 19% NII growth",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106724078",
+  "headline": "Protean eGov Technologies Q1FY27: revenue ₹250.96 Cr (+19.0% YoY), net profit ₹5.86 Cr (-75.4% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "impact_why": "Net profit down 75% YoY and 81% QoQ with EBITDA margin collapsing to 5% (from 12.4% in Q4FY26) changes the earnings view.",
+  "issues": [
+   {
+    "field": "signals[1]",
+    "card_says": "DISTRESS: EBIT/interest -1.9x, operating profit does not cover interest at all",
+    "pdf_says": "Arithmetic is right ((12.42-17.53)/2.65 = -1.93x), but finance cost is ₹2.65 Cr on zero gross debt (memory: gross debt ₹0, net cash ₹48 Cr, net worth ₹1,077 Cr); a DISTRESS label overstates solvency risk for a debt-free company",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106745317",
+  "headline": "Texmaco Rail subsidiary signs pact for ₹200 Cr investment; Calculus takes 30%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "₹200 Cr raise = 5% of market cap (₹4,268 Cr)",
+    "pdf_says": "scale_block shown to the writer: market cap ₹4,598 Cr (2026-10-15), ₹200 Cr = 4.4%; why_it_matters itself uses 4.4%. The card carries two market caps",
+    "class": "other"
+   },
+   {
+    "field": "takeaway / deal_value",
+    "card_says": "Texmaco Rail brings an outside investor into its defence unit for up to ₹200 Cr (counterparty Calculus, FUNDRAISE ₹200 Cr)",
+    "pdf_says": "SSSA 'for investment up to Rs. 200 Crores'; the dilution 'is a result of further investment by ... Calculus and the Company in TDTL' - the parent also subscribes, so ₹200 Cr is not clearly Calculus's money alone",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106791247",
+  "headline": "Balaji Amines starts commercial production at Solapur ACN plant, capacity at 1,440 TPM",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106794353",
+  "headline": "Repco Home Finance allots ₹75 Cr commercial papers at 7.60% to Kotak Mahindra Bank",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "A ₹75 Cr 89-day CP within an existing ₹800 Cr rated programme is routine liability management for an HFC with ₹12,078 Cr of debt.",
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "₹75 Cr raise = 3% of market cap (₹2,175 Cr)",
+    "pdf_says": "scale_block: market cap ₹2,063 Cr (2026-10-15), 3.6%",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0].memory_refs",
+    "card_says": "₹800 Cr CP programme rated [ICRA]A1+ affirmed in August 2026 (ref t_8fc7cdd1)",
+    "pdf_says": "Supported by memory operating note of 2026-08-21, but the cited timeline entry t_8fc7cdd1 mentions only the AA- term-loan rating, not the CP",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106798861",
+  "headline": "Axis Max Life allots ₹686 Cr subordinated NCDs on private placement",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106808607",
+  "headline": "Granules India plans ₹2,000 Cr capex over 3-4 years for complex generics, oncology, peptide CDMO and US ops",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "A ₹2,000 Cr multi-year capex plan (39% of net worth) plus a USD 50M/100M peptide CDMO target is a material strategy disclosure, not routine.",
+  "issues": [
+   {
+    "field": "key_numbers[2]",
+    "card_says": "EBITDA margin 22%, change +3 pp vs FY26",
+    "pdf_says": "'Over four years ... EBITDA margin by three percentage points to 22 percent' - the +3 pp is over four years; memory FY26 EBITDA margin is 22.09%, so against FY26 it is flat",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters[2].memory_refs",
+    "card_says": "ROCE to improve as Genome Valley and peptide CDMO ramp (basis MEMORY, ref g_5644ebce)",
+    "pdf_says": "g_5644ebce is the 22-23% EBITDA margin guidance, not a ROCE statement; the claim is supported by the filing's own quote instead",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106812375",
+  "headline": "Russian Supreme Court upholds ₹44.38 Cr arbitral award against Siemens Energy India",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106812765",
+  "headline": "India Ratings reaffirms UCO Bank's Basel III Tier II bonds at AA/Stable on ₹1,500 Cr limits",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106723390",
+  "headline": "Axis Max Life redeemed ₹496 Cr subordinated NCDs (ISIN INE511N08016) and paid ₹37.2 Cr interest on call option exercise",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "DEBT_RATINGS",
+    "pdf_says": "Certificate/report on payment of interest and full redemption of NCDs on call-option exercise; no rating action (ratings listed only as Annex XIV-B fields)",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106725226",
+  "headline": "Persistent shareholders approve Nagarro SE takeover offer via Galaxy Germany Holding",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "Shareholder approval (incl. financing and corporate guarantee) clears a key condition of a large cross-border takeover; it de-risks a deal that changes the investment view, even if the offer terms are still to come.",
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "advancing Persistent's largest strategic acquisition",
+    "pdf_says": "Neither the filing nor memory (t_00c00818 only says a Business Combination Agreement with Nagarro was announced) states deal size or that it is the largest",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106731952",
+  "headline": "Ramco Cements Q1FY27 revenue rose 10% YoY to ₹2,276 Cr; PAT fell 63% YoY to ₹31.86 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106737337",
+  "headline": "Repco Home Finance Q1FY27 PAT rose 5.5% YoY to ₹114 Cr; GNPA at 2.7%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[provisions].why",
+    "card_says": "ECL provision jumped sharply YoY due to higher stage-3 assets",
+    "pdf_says": "Stage-3 fell YoY: 485 Cr / 3.3% (Jun'25) to 427 Cr / 2.7% (Jun'26); total ECL provision fell 412 -> 353. Stage-3 rose only QoQ (405 -> 427)",
+    "class": "direction"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "Profitability ... declined QoQ due to higher provisions and tax",
+    "pdf_says": "PBT flat QoQ (148 vs 148); the PAT drop 129 -> 114 is from tax (deferred tax 1 vs -12 after a one-off DTL reversal in Q4FY26), not provisions",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106749830",
+  "headline": "Ceigall JVs secure 5th Arunachal LOA of ₹274 Cr, taking two-day NH-913 wins to ₹2,424 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106763215",
+  "headline": "NLC India arm incorporates 51:49 JV with OREDA for green energy plants",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106771826",
+  "headline": "Texmaco Rail bags ₹131 Cr wagon orders, including ₹107 Cr JV related-party contract",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.updates_deal_id",
+    "card_says": "₹131.36 Cr order recorded as an update of d_4bcf0c49 (the ₹24.48 Cr TCI order of 2026-09-01)",
+    "pdf_says": "Two separate orders: TCI ₹24.48 Cr (already reported) and a new Touax Texmaco ₹106.88 Cr order; merging them into the TCI deal misstates that deal and hides that only ₹106.88 Cr is new",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106777514",
+  "headline": "UCO Bank receives UFBU strike notice for September and October 2026",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "LITIGATION_REGULATORY",
+    "pdf_says": "Notice of an industry-wide union strike (labour/operational), no litigation or regulator involved",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106785298",
+  "headline": "Electrosteel Castings completes 70% acquisition of Arabian Water Tech LLC for OMR 21,000",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106808155",
+  "headline": "Dabur expects double-digit consolidated revenue & PAT growth in Q2FY27; margins face inflation",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "A pre-results quarterly update guiding double-digit consolidated revenue and PAT growth, India FMCG's strongest run in recent quarters and margin pressure is a direct read on the quarter's earnings.",
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "HPC posted its fourth straight double-digit quarter",
+    "pdf_says": "'fourth consecutive quarter of double-digit growth' follows the Hair Oils and Shampoos sentence (high-teens); HPC as a whole is only 'expected to record double-digit growth' (expected, not posted)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106704702",
+  "headline": "Granules India Q1FY27: revenue ₹1,476.77 Cr (+22.0% YoY), net profit ₹179.96 Cr (+59.8% YoY)",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Revenue growth exceeded the 5-year average (basis MEMORY)",
+    "pdf_says": "Memory holds only FY26 quarters/periods; no 5-year growth average exists in memory or the filing",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106707022",
+  "headline": "Sundaram Finance AGM: institutional vote against re-appointing director Harsha Viji",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [],
+  "impact_note": "Routine AGM; all four resolutions passed (Harsha Viji 90.2% for overall); 27% institutional dissent is a note, not a change in view"
+ },
+ {
+  "news_id": "nse-106715462",
+  "headline": "Dabur reports Q1 revenue up 10.6% YoY to ₹3,764 Cr; India volumes grow 5%",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106724166",
+  "headline": "Protean Q1FY27 revenue rose 19% YoY to ₹251 Cr; PAT fell 75% YoY to ₹6 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[pat_margin].why",
+    "card_says": "Reflects lower EBITDA margin and higher tax expense relative to profit",
+    "pdf_says": "Tax 2 on PBT 8 (25%) vs 9 on 32 (28%) a year ago: tax was lower relative to profit, not higher",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Revenue growth of 19% YoY matches the prior quarter's growth rate (memory t_40e5bd28)",
+    "pdf_says": "t_40e5bd28 is this same Q1FY27 result (+19.0%); memory holds no Q4FY26 YoY growth rate",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106729811",
+  "headline": "IFB Industries Q1FY27: revenue ₹1,584.74 Cr (+18.4% YoY), net profit ₹43.05 Cr (+64.6% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[BOARD_DELIBERATION]",
+    "card_says": "6.9-hour board meeting; prolonged deliberation often precedes difficult results or restructuring (WARNING)",
+    "pdf_says": "Meeting 11:00-17:55 is right, but the results it approved are strong (PAT +64.6% YoY, revenue +18.4%); the warning's implication contradicts the card's own numbers",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "PAT growth significantly exceeded the company's historical trend (basis MEMORY)",
+    "pdf_says": "Memory has no Q1FY26 or multi-year PAT trend (only H1FY26, 9MFY26, FY26, Q4FY26, Q1FY27); Q1FY26 PAT 26.16 comes from the filing",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106731348",
+  "headline": "NLC India Q1FY27: revenue ₹4,716.75 Cr (+23.3% YoY), net profit ₹436.33 Cr (-48.0% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[3] / key_numbers EPS",
+    "card_says": "EPS ₹3.49 (-42.3% YoY)",
+    "pdf_says": "EPS after regulatory deferral 3.49 vs 5.75 in Q1FY26 = -39.3% YoY",
+    "class": "arithmetic"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106742593",
+  "headline": "Max Financial Services Q1FY27 revenue rose 17% YoY to ₹14,977 Cr; net profit ₹118 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[revenue].previous",
+    "card_says": "₹12,735 Cr (Q1FY26)",
+    "pdf_says": "Filing gives only ₹14,977 Cr, up 17%; no prior-year figure; 14,977/1.17 = ~₹12,800 Cr (memory implies ~₹12,816 Cr)",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106749246",
+  "headline": "Ceigall India JV secures ₹274 Cr MoRTH EPC highway order in Arunachal Pradesh",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[ORDER_FLOW]",
+    "card_says": "3rd order on record since 2026-08-17 (₹2,755 Cr in total)",
+    "pdf_says": "Total includes the ₹330.84 Cr Delhi PWD tender memory records as CANCELLED; live orders are 2 (₹2,149.62 + ₹274.08 = ₹2,424 Cr)",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106804527",
+  "headline": "Balaji Amines placed on DGFT Denied Entity List for export obligation lapse",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106818661",
+  "headline": "Persistent Q2 revenue at ₹4,494 Cr; dividend of ₹40 per share",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "impact_note": "Quarterly results after the Nagarro acquisition: consolidated PAT fell 27% QoQ and 25% YoY to ₹351.5 Cr",
+  "issues": [
+   {
+    "field": "headline / what_happened / key_numbers",
+    "card_says": "Revenue ₹4,494 Cr, profit ₹482.9 Cr for Q2FY27",
+    "pdf_says": "Those are standalone; consolidated Q2FY27 is revenue ₹4,663.9 Cr (46,639.04 mn) and profit ₹351.5 Cr (3,515.14 mn), down from ₹483.0 Cr in Q1FY27 and ₹471.5 Cr in Q2FY26",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "missing_disclosures / track_next.milestones",
+    "card_says": "Consolidated Q2FY27 results not disclosed; expected October 15, 2026",
+    "pdf_says": "The consolidated statement is in this filing (cover letter item 2; statement with revenue 46,639.04 mn)",
+    "class": "invented"
+   },
+   {
+    "field": "headline / what_happened[2] / key_numbers / timeline_entry",
+    "card_says": "Dividend of ₹40 per share (₹22 interim + ₹18 final) approved; record dividend",
+    "pdf_says": "₹40 is the FY26 (year ended 31 Mar 2026) total in the year column; no dividend declared at this meeting; 'record' unsupported",
+    "class": "wrong_period"
+   },
+   {
+    "field": "notable_changes[Cash].previous / direction",
+    "card_says": "₹6,689 Cr (Mar-2026) -> ₹1,195.6 Cr, NEGATIVE",
+    "pdf_says": "6,689.09 mn = ₹668.9 Cr at 30 Sep 2025 (Mar-2026 is ₹723.95 Cr); cash rose to ₹1,195.6 Cr",
+    "class": "unit_scale"
+   },
+   {
+    "field": "notable_changes[Profit].previous / direction",
+    "card_says": "₹4,020 Cr (Sep-2025) -> ₹482.9 Cr, NEGATIVE",
+    "pdf_says": "4,020.24 mn = ₹402.0 Cr and is the Jun-2026 quarter; Q2FY26 was ₹458.9 Cr; standalone profit rose",
+    "class": "unit_scale"
+   },
+   {
+    "field": "notable_changes[Tax expense]",
+    "card_says": "₹143.8 Cr (Sep-2025) -> ₹1,730 Cr",
+    "pdf_says": "₹173.0 Cr (1,729.79 mn) vs ₹143.8 Cr (1,438.47 mn, Jun-2026 quarter); current value 10x too large",
+    "class": "unit_scale"
+   },
+   {
+    "field": "notable_changes[Trade receivables].previous",
+    "card_says": "₹1,898.3 Cr (Mar-2026)",
+    "pdf_says": "₹1,898.3 Cr is 30 Sep 2025; 31 Mar 2026 is ₹1,998.6 Cr",
+    "class": "wrong_column"
+   },
+   {
+    "field": "quantified_impact[Annualised cash generation]",
+    "card_says": "₹661.7 Cr operating cash for Q2FY27, x2 = ₹1,323 Cr every six months",
+    "pdf_says": "6,617.07 mn is the six-month figure (H1FY27), not the quarter; doubling gives a year, not six months",
+    "class": "wrong_period"
+   },
+   {
+    "field": "quantified_impact[Dividend payout ratio]",
+    "card_says": "12.89% (40 x 155.56 / 482.89)",
+    "pdf_says": "~15.6 crore shares x ₹40 = ~₹622 Cr, i.e. ~129% of the quarter's ₹482.9 Cr; and an FY26 dividend against one quarter's profit",
+    "class": "arithmetic"
+   },
+   {
+    "field": "takeaway / signals[WATCH_RESOLVED]",
+    "card_says": "Revenue growth modest; KPI missed: Q2FY27 revenue growth 9.3% vs 16% in Q1FY27",
+    "pdf_says": "Revenue grew 28.7% YoY standalone (44,941.71 vs 34,929.47) and 30.3% consolidated (46,639.04 vs 35,807.20); 9% is QoQ",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Audited quarterly results for Q2FY27: RESULTS",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106710251",
+  "headline": "Texmaco Railcar JV Touax Texmaco allots 32% stake to TrinityRail Global; Texmaco stake dilutes to 34%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "bringing in North American railcar major TrinityRail",
+    "pdf_says": "Filing only names TrinityRail Global Inc. as new JV partner, not related to promoter; no description of it as a North American major",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Texmaco dilutes from an equal 50:50 joint venture partner",
+    "pdf_says": "Prior shareholding not stated; 50:50 is only implied by the post-issue 34%(+1)/34%(-1) split",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106711514",
+  "headline": "Granules Q1FY27 revenue rose 22% YoY to ₹1,477 Cr; PAT grew 60% to ₹180 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[net_debt_to_ebitda].previous",
+    "card_says": "0.28x (Q4FY26)",
+    "pdf_says": "No Q4FY26 ratio given; FY26-close net debt ₹402.1 Cr / FY26 EBITDA ₹1,185 Cr (memory) = ~0.34x; memory net debt ₹457.89 Cr gives ~0.39x",
+    "class": "invented"
+   },
+   {
+    "field": "track_next.kpis_to_verify[0]",
+    "card_says": "Peptide CDMO revenue >= USD 50M annualized (12.5 per quarter) checked at Q3FY27 results",
+    "pdf_says": "USD 50M run rate targeted 'somewhere in the third year from now, mid of third year' (~FY29); Q1 peptide revenue was CHF 5M - a Q3FY27 check against this target makes no sense",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106712716",
+  "headline": "Fitch Ratings assigns first-time BBB- IDR to UCO Bank with Stable Outlook",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106715454",
+  "headline": "Dabur India Q1FY27: revenue ₹3,764.39 Cr (+10.6% YoY), net profit ₹586.16 Cr (+15.3% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Revenue growth of 10.6% YoY exceeds the 5-year average and shows recovery from subdued demand in prior quarters (basis MEMORY)",
+    "pdf_says": "Memory holds only FY26 periods (H1/9M/Q3/Q4/FY26); no 5-year average and nothing on subdued demand",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "EBITDA margin expansion to 19.69% reflects operating leverage, improving from 15.2% in Q4FY26",
+    "pdf_says": "Expansion is only sequential vs a seasonally weak Q4; YoY EBITDA margin was ~19.6% (667.82/3,404.58), i.e. flat",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106731285",
+  "headline": "Protean Q1 revenue up 19% YoY to ₹251 Cr; EBITDA margin falls to 10%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[PAT margin].previous",
+    "card_says": "2.33% (Q1FY26) -> 2.2% (Q1FY27)",
+    "pdf_says": "Q1FY26 PAT margin not in the transcript; memory: Q1FY27 PAT ₹5.86 Cr was -75.4% YoY, so Q1FY26 PAT ~₹23.8 Cr on ₹211 Cr revenue = ~11.3% margin. The card turns a 75% profit collapse into a flat margin",
+    "class": "invented"
+   },
+   {
+    "field": "key_numbers[PAT].change",
+    "card_says": "null (no YoY given)",
+    "pdf_says": "Memory timeline: net profit -75.4% YoY; omission compounds the false 2.33% comparison",
+    "class": "other"
+   },
+   {
+    "field": "signals[DISTRESS]",
+    "card_says": "EBIT/interest -1.9x: operating profit does not cover interest at all",
+    "pdf_says": "Company is debt-free with >₹800 Cr cash and marketable securities; finance cost ₹2.65 Cr is not borrowing - a distress warning contradicts the filing",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "notable_changes[PAN market share].change",
+    "card_says": "+3.0 pts",
+    "pdf_says": "gained 275 basis points",
+    "class": "arithmetic"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106737202",
+  "headline": "Repco Home Finance Q1FY27: revenue ₹467.7 Cr; net profit ₹121.62 Cr (+5.6% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Q1FY27 PAT ₹121.62 Cr is in line with Q4FY26 PAT ₹135.18 Cr, showing sequential stability",
+    "pdf_says": "121.62 vs 135.18 is a 10.0% QoQ fall (card itself quotes QoQ -10.0%); not 'in line'",
+    "class": "direction"
+   },
+   {
+    "field": "what_happened[2]/key_numbers[EBITDA]",
+    "card_says": "EBITDA ₹409.21 Cr, margin 87.5%",
+    "pdf_says": "Figure is arithmetically PBT+finance cost+D&A-other income, but EBITDA adds back finance cost, which is a housing-finance lender's main operating cost; misleading metric for an HFC",
+    "class": "other"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "controlled expenses",
+    "pdf_says": "Total expenses 320.16 vs 294.37 YoY (+8.8%); impairment swung from a ₹2.69 Cr write-back to a ₹9.69 Cr charge",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106748121",
+  "headline": "Ceigall India JV receives four MoRTH LOAs worth ₹2,149.62 Cr for NH-913 EPC projects in Arunachal Pradesh",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "adding ~22 months of revenue at Q1FY27 levels",
+    "pdf_says": "₹2,149.62 Cr / Q1FY27 revenue ₹969.64 Cr = 2.2 quarters, about 6.6 months (51.7% of TTM revenue)",
+    "class": "arithmetic"
+   },
+   {
+    "field": "quantified_impact[0].construction_months",
+    "card_says": "42 months, 'weighted average of 36, 36, 48, 36'",
+    "pdf_says": "Simple average 39; value-weighted ~38.9 months; result should be ~₹490 Cr a year, not ₹454.5 Cr",
+    "class": "arithmetic"
+   },
+   {
+    "field": "what_happened[0]/timeline_entry",
+    "card_says": "LOAs received on 2026-08-17",
+    "pdf_says": "Press release dated 18 Aug 2026; no LOA date given",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[1].basis",
+    "card_says": "basis FILING: follows cancellation of a ₹330.84 Cr Delhi PWD tender",
+    "pdf_says": "Not in this filing; it is memory (t_a9a94b36), where it is supported",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106779668",
+  "headline": "India Ratings withdraws rating on Balaji Amines' ₹195 Cr bank facilities on zero bank debt",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106803684",
+  "headline": "NLC India arm wins 265 MW/530 MWh Haryana BESS LOA from SJVN at ₹2.35 lakh/MW/month",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Tariff-based VGF BESS with a fixed capacity charge awarded by SJVN - a contracted offtake, not merchant sale",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106813119",
+  "headline": "Persistent Systems rated [ICRA]AA+ on ₹5,000 Cr proposed NCDs; on Rating Watch Negative",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[RATING_LIQUIDITY]",
+    "card_says": "Rating outlook revised to Negative",
+    "pdf_says": "Issuer rating 'continues' on Rating Watch with Negative Implications (no revision in this filing); NCD rating newly assigned",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "reaffirmed Issuer Rating",
+    "pdf_says": "Issuer rating 'Continues on Rating Watch with Negative Implications' - not a reaffirmation action",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106698677",
+  "headline": "Protean eGov approves postal ballot for Ajay Rajan as MD & CEO, Saravade as Ind. Director",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Ajay Rajan brings 30+ years of digital banking experience",
+    "pdf_says": "30+ years of experience across corporate, digital, and transaction banking (digital is one strand, not the whole 30 years)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106706599",
+  "headline": "UCO Bank Q1FY27: interest earned ₹6,996 Cr (+8.7% YoY), net profit ₹656.33 Cr (+8.0% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.risks[0]",
+    "card_says": "Sustained high tax expense if deferred tax asset reversals continue",
+    "pdf_says": "Note 12: the ₹1,237.13 Cr is a one-time charge from remeasuring DTA on moving to the lower Sec 115BAA regime from FY27; the ongoing tax rate falls, so the risk is framed the wrong way round",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106721886",
+  "headline": "Dabur Q1FY27 revenue rose 10.6% YoY to ₹3,764 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[India FMCG revenue]",
+    "card_says": "₹2,758 Cr (+9.5% YoY)",
+    "pdf_says": "No India FMCG revenue figure in the transcript; ₹2,758 Cr is consolidated ₹3,764 Cr minus international ₹1,006 Cr. Memory's own note (HPC ₹1,385 Cr = 55% of domestic) puts domestic at ~₹2,520 Cr",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[volume_growth]",
+    "card_says": "previous 5 PCT (Q1FY27) -> current 'Not disclosed for Q2FY27'",
+    "pdf_says": "Not a change: compares this quarter's memory value with a quarter that has not been reported",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106733228",
+  "headline": "Axis Max Life gets ₹35.29 Cr GST show cause notice on ITC availment for FY21-FY25",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106734338",
+  "headline": "Texmaco Rail Q1FY27 EBITDA margin rose to 10.8% on cost optimization and Bright Power growth",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[1]",
+    "card_says": "PAT up 71% YoY but core EBITDA -20% (Q1FY27): the profit came from below the operating line",
+    "pdf_says": "Transcript: EBITDA ₹81 Cr 'remained in line with corresponding quarter of the previous year'; standalone PBT +4.8% to ₹44 Cr, PAT +85.9% to ₹52 Cr. The -20% is not in the filing and contradicts it (consolidated memory basis vs management's standalone)",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "notable_changes[ebitda_margin]",
+    "card_says": "previous 7.53 PCT (Q1FY27) -> current 10.8 PCT (Q1FY27), POSITIVE",
+    "pdf_says": "Same quarter on two bases: 7.53% is memory's consolidated computed margin, 10.8% management's standalone; not an improvement",
+    "class": "memory"
+   },
+   {
+    "field": "notable_changes[order_book]",
+    "card_says": "previous ₹0.74 Cr (Q4FY26, from memory deal d_bff4defc) -> ₹9,923 Cr",
+    "pdf_says": "₹0.74 Cr is a single bird-nest-mesh LoA, not the order book",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106735319",
+  "headline": "NLC India arm receives SECI LoA for 200 MW wind project in Karnataka",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Power is to be supplied to SECI under the LoA (contracted offtake), not sold on the merchant market",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106767904",
+  "headline": "Ceigall India bags ₹5,300 Cr LoI for Gujarat power transmission project",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0].quote",
+    "card_says": "'broad consideration for the order: Rs. 608.67 crores Annually ... Total Project Cost Rs. 5300 crores approx.'",
+    "pdf_says": "Text not in this press release (figures match: ₹5,300 Cr incl. GST, ₹608.67 Cr a year)",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Annual transmission charges of ₹608.67 Cr equate to 62.8% of Q1FY27 quarterly revenue",
+    "pdf_says": "Compares an annual charge with one quarter's revenue; against TTM revenue it is 14.7%",
+    "class": "arithmetic"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106779228",
+  "headline": "Granules promoter sells 1.72 Cr shares; stake falls to 31.08% to fund preferential tranche",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "Promoter sale of 1,72,00,000 shares via block deal/open market (shareholding change); the company raised nothing in this filing",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106800959",
+  "headline": "Repco Home Finance shareholders approved all resolutions at the 26th AGM, including borrowing limit increase to ₹20,000 Cr and NCD/CP issuance up to ₹1,500 Cr and ₹1,000 Cr respectively",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value",
+    "card_says": "kind FUNDRAISE, amount_cr 20000, stage SHAREHOLDER_APPROVED",
+    "pdf_says": "₹20,000 Cr is the Sec 180(1)(c) borrowing ceiling (enabling limit), not money raised or to be raised; the only issuance authority is NCD ₹1,500 Cr and CP ₹1,000 Cr",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106808882",
+  "headline": "Persistent EGM approves up to $1.7B borrowing and securities issuance",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[0..2].quote / key_numbers",
+    "card_says": "Total number of votes cast in favour... 124,627,514 (Res 2/3); 124,665,237 (Res 4)",
+    "pdf_says": "124,627,514 and 124,665,237 are remote e-voting totals (favour + against); votes in favour were 123,594,301 / 123,594,010 / 124,562,626. Percentages 99.0084/99.0082/99.7540 are right",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "The $1.7B framework is a material increase from the company's existing limits, enabling the cash tender offer for Nagarro",
+    "pdf_says": "Existing limits not stated in the filing or memory (t_edb67c1f only records the EGM)",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "clear the final shareholder approvals needed for the Nagarro acquisition",
+    "pdf_says": "Filing does not mention Nagarro; memory supports the Nagarro link and Q1 CY27 delisting target but not that these are the final approvals (watchlist still lists RBI and FDI filings)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106746932",
+  "headline": "Repco Home targets ₹5,000 Cr disbursements, AUM growth 13-14%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "quantified_impact[0].interpretation",
+    "card_says": "The target is 1069% of Q1FY27 disbursements",
+    "pdf_says": "Q1FY27 disbursements were ₹843 Cr; ₹5,000 Cr is 593% of them. 1069% is the scale block's share of Q1FY27 quarter revenue (₹467.7 Cr), not disbursements",
+    "class": "arithmetic"
+   },
+   {
+    "field": "notable_changes[2] (Spread)",
+    "card_says": "previous 3.4% (Q1FY27), current 3.4% (Q1FY27)",
+    "pdf_says": "Only the June-quarter spread of 3.4% (3.44%) is given; no previous period, so the 'previous' column repeats the current quarter",
+    "class": "wrong_period"
+   },
+   {
+    "field": "notable_changes[0].direction/why",
+    "card_says": "Disbursements POSITIVE; 'Management attributes the flat YoY growth to the annual promotion and transfer cycle'",
+    "pdf_says": "₹843 Cr vs ₹829 Cr (+1.7%), essentially flat; quote cited is a fragment about June operations. Direction label is generous but numbers correct",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106747489",
+  "headline": "Protean eGov wins ₹5.99 Cr Arunachal Pradesh digital family registry work order",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106751031",
+  "headline": "Max Financial Services Q1FY27 VNB margin rose to 23.2% from 20.3% YoY, driven by protection mix and yield curve",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] (basis MEMORY)",
+    "card_says": "VNB margin of 23.2% exceeds the guidance threshold of >=23.2% set for Q2FY27 in prior predictions",
+    "pdf_says": "Memory's p_e2c1f53e is the system's own prediction for Q2FY27, not company guidance; Q1FY27 23.2% equals (does not exceed) it and is a different quarter. The quote given is about embedded value",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106755435",
+  "headline": "SEBI disposes of SCN against Max Financial and Axis Max Life with no penalty",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106771647",
+  "headline": "NLC India approves USD 100M ECB from PNB for thermal, mining capex",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106781037",
+  "headline": "Granules India gets ₹1,093 Cr balance subscription for 2.49 Cr promoter warrants",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106787823",
+  "headline": "Persistent secures 83.25% of Nagarro, delisting by Q1 CY27",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[3] / timeline_entry",
+    "card_says": "delisting by Q1 CY27; 'intends to delist Nagarro ... by the end of Q1 CY27'",
+    "pdf_says": "Delisting to be pursued 'as soon as practicable and legally feasible'; it is the closing of the transaction that is expected by end of Q1 CY27",
+    "class": "other"
+   },
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "[] (none)",
+    "pdf_says": "Closing by end of Q1 CY27 is 'subject to only a limited number of outstanding regulatory approvals'",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[1] (basis MEMORY)",
+    "card_says": "Delisting is a key milestone for integration into Persistent's global AI-led digital engineering platform (quote: EV ~₹1,270 Cr)",
+    "pdf_says": "Memory t_6b6d763c holds only the EUR 81/share offer and an EV of ~₹1,270 Cr (itself implausible: EUR 81 x ~12.4m shares is ~EUR 1bn); nothing in memory supports the integration claim",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106793820",
+  "headline": "Ceigall approves ₹61.93 Cr equity infusion for Bihar highway SPV",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.counterparty",
+    "card_says": "National Highways Authority of India",
+    "pdf_says": "The ₹61.93 Cr is equity infused by the Company and CIPPL into their own SPV, Ceigall Sahebganj Bettiah Highway Limited; NHAI is the project authority, not the counterparty of the infusion",
+    "class": "other"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "Board approved further investment",
+    "pdf_says": "Approved by the Management Committee of the Board under delegated powers (the card's own what_happened says so)",
+    "class": "other"
+   },
+   {
+    "field": "signals[0]",
+    "card_says": "1% of market cap (₹6,709 Cr)",
+    "pdf_says": "Scale block gives market cap ₹6,764 Cr; ratio still ~1%",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106802911",
+  "headline": "Texmaco Rail defence arm acquires 100% of Indolem Technologies for ₹8 lakh",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline",
+    "card_says": "acquires 100% of Indolem Technologies",
+    "pdf_says": "Only the SPA was signed on 30 Sep 2026; ITSPL becomes a subsidiary on completion of conditions precedent and closing, within 30 business days (card body states this correctly)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106820286",
+  "headline": "UCO Bank Q2FY27 net profit rose 26.8% YoY to ₹786 Cr; advances grew 24.7% YoY to ₹2,87,690 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[0] (operating_expenses)",
+    "card_says": "previous ₹1,901.8 Cr (Q2FY27), current ₹2,061.8 Cr (other_expenses Q2FY27 + ₹160 Cr)",
+    "pdf_says": "₹1,901.8 Cr is Q2FY27's own other expenses (Q1FY27 = H1 ₹3,586.86 − Q2 ₹1,901.8 = ₹1,685 Cr). ₹2,061.8 Cr is an invented figure; the ₹160 Cr was an analyst's question, management only said opex growth is normal",
+    "class": "invented"
+   },
+   {
+    "field": "key_numbers[0] (Revenue)",
+    "card_says": "₹8,174 Cr, quote: interest earned ₹7,286.32 Cr",
+    "pdf_says": "₹8,174 Cr is Q2FY27 total income from memory; the quote states interest earned ₹7,286 Cr, so the quote does not support the figure",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0] (basis MEMORY)",
+    "card_says": "24.70% exceeded the bank's guidance of 12-14% (refs g_4a756266, g_8571c458, g_506f1648; quote about NIM guidance)",
+    "pdf_says": "Memory holds no advances guidance (the refs are NIM, credit cost, cost-to-income). The 12-14% advances guidance is in the filing itself, so the claim is true but the memory attribution is not supported",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106711743",
+  "headline": "Max Financial Services Limited to hold 38th AGM on August 19, 2026, at 10:00 A.M. via VC/OAVM",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "No material changes in related-party transactions or contingent liabilities vs prior period",
+    "pdf_says": "The filing (AGM notice + 389-page FY26 annual report) gives no such prior-period comparison; the quoted '20 parties, 92.86 Cr' line is not in the filing text, and no comparison against FY25 is made anywhere on the card",
+    "class": "invented"
+   },
+   {
+    "field": "takeaway / why_it_matters[0]",
+    "card_says": "Procedural update with no new financial or operational developments disclosed; no fresh guidance or financial updates",
+    "pdf_says": "The filing encloses the full FY26 annual report: audited standalone and consolidated statements, auditor's emphasis of matter on the SEBI show cause notice (note 50), fund raise cut from up to Rs 2,000 Cr to Rs 1,600 Cr (approved by shareholders 10 May 2026). None of it is on the card",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1].memory_refs",
+    "card_says": "basis BALANCE_SHEET, ref t_18869f46",
+    "pdf_says": "memory t_18869f46 is the Q3FY25 results entry (revenue Rs 8,923 Cr, PAT Rs 69.81 Cr); it says nothing about related-party transactions or contingent liabilities",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106716886",
+  "headline": "UCO Bank Q1FY27 net profit rose 8% YoY to ₹656 Cr; operating profit up 79.8% to ₹2,810 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[Revenue]",
+    "card_says": "₹8,682 Cr, +8.7% YoY",
+    "pdf_says": "₹8,682 Cr is total income; +8.7% is interest earned growth (₹6,996 Cr vs ₹6,436 Cr). Total income Q1FY26 = ₹7,433 Cr (memory H1FY26 14,854.6 - Q2FY26 7,421.4), so total income grew ~16.8% YoY",
+    "class": "arithmetic"
+   },
+   {
+    "field": "notable_changes[tax_expense].previous",
+    "card_says": "₹415.61 Cr (Q3FY26)",
+    "pdf_says": "Compared against Q3FY26, neither the previous quarter (Q4FY26 ₹445.96 Cr) nor the year-ago quarter (Q1FY26 ₹338.76 Cr)",
+    "class": "wrong_period"
+   },
+   {
+    "field": "track_next.milestones[0]",
+    "card_says": "Review of credit growth guidance after Q2FY27 results",
+    "pdf_says": "No guidance review announced; management kept the 12-14% guidance and said it will try to stay above it",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106734960",
+  "headline": "Texmaco Rail signs MoU with The Signalling Company Belgium for ETCS and Kavach solutions",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "Non-binding MoU with no size, commercial terms left to a definitive agreement still to be negotiated",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "ORDER_WIN",
+    "pdf_says": "A non-binding MoU to explore a collaboration; no order or contract awarded (the card's own text says so)",
+    "class": "event_type"
+   },
+   {
+    "field": "core_catalyst / why_it_matters",
+    "card_says": "Strategic entry into / expands beyond core wagon fabrication into signalling",
+    "pdf_says": "The MoU only records an intention to negotiate; memory shows Texmaco already has a rail infra and signalling business (watchlist 'Order inflows in rail infra and signalling')",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106735433",
+  "headline": "India Ratings assigns IND AAA/Stable to NLC India's ₹1,102 Cr loans, affirms existing limits",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106740026",
+  "headline": "Texmaco Rail bags ₹77.76 Cr wagon supply order from IVC Logistics",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106749432",
+  "headline": "Ceigall India approves ₹29.44 Cr equity infusion into Indore Ujjain HAM SPV",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[SCALE]",
+    "card_says": "1% of market cap (₹5,377 Cr)",
+    "pdf_says": "scale_block shown to the writer gives market cap ₹6,764 Cr and 0.4%",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.counterparty / usage",
+    "card_says": "counterparty MPRDC; usage MERCHANT_SALE",
+    "pdf_says": "The investment is into the company's own SPV; MPRDC is the project authority; a HAM project is paid by annuity, not merchant sale",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106752055",
+  "headline": "Ceigall India wins ₹225 Cr bulk drug park order in Himachal Pradesh, 23% of Q1 revenue",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "Routine order worth 1.2% of the ₹18,568 Cr order book and 5.4% of TTM revenue",
+  "issues": [
+   {
+    "field": "signals[ORDER_FLOW]",
+    "card_says": "4th order on record since 2026-08-17 (₹2,980 Cr in total)",
+    "pdf_says": "Total includes the ₹330.84 Cr Delhi PWD tender memory marks CANCELLED; live orders total ₹2,648.70 Cr across 3 orders",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106754451",
+  "headline": "UCO Bank board approves raising up to USD 1.00 Bn via foreign currency MTN programme",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Board approval of a USD 1 Bn debt fund raise (the card's own deal_value kind is FUNDRAISE)",
+    "class": "event_type"
+   },
+   {
+    "field": "quantified_impact",
+    "card_says": "~₹8,400 Cr at assumed ₹84/USD, check VERIFIED",
+    "pdf_says": "Exchange rate is an assumption, not in the filing, and below the 2026 rate (~₹88+), understating the INR value by ~5%",
+    "class": "other"
+   },
+   {
+    "field": "track_next.catalysts",
+    "card_says": "maiden overseas debt issuance",
+    "pdf_says": "Filing does not say this is the bank's first overseas issue",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106784319",
+  "headline": "Persistent fulfills minimum acceptance threshold for Nagarro SE public takeover offer",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[WATCH_RESOLVED]",
+    "card_says": "Approval partial: 'Regulatory approvals and other customary conditions' resolved by minimum acceptance fulfilled",
+    "pdf_says": "Minimum acceptance is a tender condition, not a regulatory approval; regulatory approvals remain open",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "board enabled up to USD 1,250 million fundraise in September 2026 to finance the deal",
+    "pdf_says": "memory t_3ae2cd0f records the enabling resolution but not its purpose; 'to finance the deal' is not supported",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106814789",
+  "headline": "NLC India issues ₹1,000 Cr commercial paper, 4.6% of net worth",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "routine short-term borrowing for working capital",
+    "pdf_says": "Filing gives no purpose (the card itself lists end-use as a missing disclosure)",
+    "class": "invented"
+   },
+   {
+    "field": "signals[SCALE]",
+    "card_says": "3% of market cap (₹33,924 Cr)",
+    "pdf_says": "scale_block gives market cap ₹34,846 Cr and 2.9%",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106744582",
+  "headline": "Ceigall India Q1FY27 revenue rose 15.7% YoY to ₹970 Cr; EBITDA margin improved to 13.4%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[1]",
+    "card_says": "Consolidated EBITDA for Q1 FY27 stood at INR121 crores ... margin improving to 13.4% from 11.4%",
+    "pdf_says": "The CFO gives ₹121 Cr / 13.4% as STANDALONE EBITDA (standalone revenue ₹901 Cr). Memory's consolidated Q1FY27 EBITDA is ₹143.37 Cr, a 14.79% margin",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "headline / key_numbers",
+    "card_says": "Revenue ₹970 Cr +15.7% YoY (consolidated) next to EBITDA ₹121 Cr, margin 13.4% with no basis",
+    "pdf_says": "The ₹970 Cr is consolidated and the ₹121 Cr / 13.4% are standalone. The headline puts the two bases side by side as one result",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "15.7% exceeds the upper bound of the 10%-15% guidance, indicating stronger-than-expected performance",
+    "pdf_says": "10-15% was the earlier guidance. This year's guidance is 'minimum 15%', so 15.7% only just meets it",
+    "class": "other"
+   },
+   {
+    "field": "track_next.milestones[0]",
+    "card_says": "Appointed date for VRK 11 and VRK 12 HAM projects (pending)",
+    "pdf_says": "'Subsequent to the quarter end, we received the appointed dates of VRK 11, VRK 12, Indore-Ujjain', so the milestone is already met",
+    "class": "other"
+   },
+   {
+    "field": "track_next.kpis_to_verify",
+    "card_says": "Revenue growth >= 15% and EBITDA margin 11-12.5%, both checked at Q2FY27",
+    "pdf_says": "Both are full-year FY27 guidance, not Q2 targets",
+    "class": "wrong_period"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106747090",
+  "headline": "Delhi PWD cancels ₹330.84 Cr road works tender where Ceigall India was L1 bidder",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "ORDER_WIN",
+    "pdf_says": "This is the cancellation of a tender where the company was only L1. No order was won",
+    "class": "event_type"
+   },
+   {
+    "field": "why_it_matters[0] / takeaway",
+    "card_says": "The cancelled tender accounts for 1.8% of the ₹18,568 Cr order book",
+    "pdf_says": "This is an L1 bid, not an order. The card's own next point says it never entered the order book, so 'of order book' suggests a loss from the book",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Had not converted to a formal contract or order book addition (basis MEMORY, ref g_9884423a)",
+    "pdf_says": "g_9884423a is the FY27 revenue-growth guidance, which does not support the claim. The filing itself only says the company was L1",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106759285",
+  "headline": "Texmaco Rail signs 12-month exclusive MoU with Germany's BVV for rail wheelset JV",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106763175",
+  "headline": "NLC India receives LOI for two critical mineral composite licences in Telangana",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "M_AND_A",
+    "pdf_says": "This is an LoI for composite (exploration) licences won in a mineral auction. Nothing is acquired or merged",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106767015",
+  "headline": "Persistent approves up to USD 1,250M borrowing, including up to USD 450M equity raise",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "This is board approval of debt and equity fund-raising (deal_value.kind is FUNDRAISE). It should be FUNDRAISE",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106777776",
+  "headline": "Texmaco Rail bags ₹27.82 Cr wagon order from Hindalco Industries",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[0].quote",
+    "card_says": "amount of the order: ₹27.82 crore (₹278156680)",
+    "pdf_says": "This quote is not in the filing. The filing says only 'Rs. 27.82 crores (including taxes)', and the figure 278156680 appears nowhere",
+    "class": "invented"
+   },
+   {
+    "field": "signals[1]",
+    "card_says": "4th order on record since 2026-07-30 (₹237.68 Cr in total)",
+    "pdf_says": "Memory also holds a USD 135M locomotive LoA (2026-09-01), which this count leaves out. It also counts the 2026-09-01 ₹131.36 Cr aggregate, which already includes the ₹24.48 Cr TCI order",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106783339",
+  "headline": "NLC India arm incorporates 74:26 green energy JV with PTC India",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106807440",
+  "headline": "Persistent puts $1.25B borrowing and $450M equity raise limits to EGM vote",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "M_AND_A",
+    "pdf_says": "These are proceedings of an EGM (shareholder meeting) on borrowing and issuance limits",
+    "class": "event_type"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Settles watchlist item w_07e68844 (EGM shareholder approval)",
+    "pdf_says": "The voting results are still pending: the resolutions pass only 'subject to receipt of the requisite number of votes'. The card's own signal calls the approval 'partial'",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106818534",
+  "headline": "UCO Bank Q2FY27: interest earned ₹7,286.32 Cr (+11.5% YoY), net profit ₹785.64 Cr (+26.8% YoY)",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106819733",
+  "headline": "Persistent committee approves terms for ₹8,000 Cr NCDs and ₹1,000 Cr CPs to fund Nagarro buy",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "9% of market cap (₹91,285 Cr), 93% of net worth (₹8,589 Cr)",
+    "pdf_says": "Memory's scale block gives market cap ₹92,093 Cr (8.7%). The ₹91,285 Cr figure is not in memory, though the ratio rounds the same",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106717031",
+  "headline": "Texmaco Rail bags ₹0.74 Cr bird nest prevention order from South Western Railway",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106721245",
+  "headline": "Persistent Q1FY27 revenue rose 29.1% YoY to ₹4,303 Cr; EBIT margin 16.0%, PAT margin 11.2%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[exchange_gain_loss].direction",
+    "card_says": "POSITIVE for a swing from ₹188.7 M gain to ₹1,052.7 M loss",
+    "pdf_says": "Exchange Gain/(Loss) (1,052.7) vs 188.7: a loss that cut PBT/PAT; direction is NEGATIVE",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "29.1% growth exceeds sector average ~11-18% seen in peers like Newgen and LTM",
+    "pdf_says": "No peer figures in the filing or memory (basis SECTOR, unsupported)",
+    "class": "invented"
+   },
+   {
+    "field": "notable_changes[other_income].why",
+    "card_says": "Other income doubled, contributing to EBITDA growth",
+    "pdf_says": "Other income sits below EBIT; EBITDA (memory) rose 13.9% YoY on operations, other income does not feed it",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106722051",
+  "headline": "Texmaco Rail & Engineering Q1FY27: revenue ₹756.68 Cr (-16.9% YoY), net profit ₹50.07 Cr (+70.7% YoY)",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0] / takeaway",
+    "card_says": "PAT growth indicates margin improvement from cost control; profitability improved due to cost savings and other income",
+    "pdf_says": "Consolidated PBT fell (₹4,250.31 lakh vs ₹4,365.61 lakh YoY); EBITDA -19.6% and margin 7.5% vs 7.8%; other expenses +89%. PAT rose only because of a net tax credit of ₹757.03 lakh (deferred tax credit ₹1,995.37 lakh) against a ₹1,432.07 lakh charge a year ago",
+    "class": "other"
+   },
+   {
+    "field": "signals[0]",
+    "card_says": "Other income ₹18.53 Cr is 49% of PBT",
+    "pdf_says": "PBT after JV share is ₹42.50 Cr (4,250.31 lakh): 44%; 49% uses PBT before share of JV profit (₹38.11 Cr)",
+    "class": "arithmetic"
+   },
+   {
+    "field": "signals[1]",
+    "card_says": "profit came from below the operating line",
+    "pdf_says": "Correct in direction, but the driver is the tax credit, not other income alone (other income +₹10.5 Cr; tax swing ~₹21.9 Cr)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106754033",
+  "headline": "Ceigall India JV secures ₹704.70 Cr MoRTH EPC highway order in Arunachal Pradesh",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[1] ORDER_FLOW",
+    "card_says": "5th order on record since 2026-08-17 (₹3,684 Cr in total)",
+    "pdf_says": "Memory total includes the ₹330.84 Cr PWD Delhi order whose stage is CANCELLED; live orders are 4 (₹3,353 Cr incl. this one)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106761640",
+  "headline": "NLC India arm signs 25-year captive solar PPA with NCRTC for 110 MW UP project",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[1].text",
+    "card_says": "owned ** by NIRL** and ** by NCRTC**",
+    "pdf_says": "equity participation of 74% by NIRL and 26% by NCRTC (percentages dropped from the bullet)",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0] / signals[0]",
+    "card_says": "Settles watchlist item w_6225c50e 'Signing of formal PPA and regulatory tariff adoption' (flagged 2026-07-30)",
+    "pdf_says": "Memory does not say which project that watch item concerns; nothing links it to the NNRL/NCRTC 110 MW project",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106762318",
+  "headline": "Ceigall arm commissions first 5 MW solar plant under MSKVY 2.0 ahead of schedule",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "MSKVY 2.0 plant; power sold to the state discom MSEDCL under the scheme (later filing), not merchant sale",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106763978",
+  "headline": "Texmaco Rail wins USD 135M locomotive LoA from Tsiko Africa & Barberry",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "quantified_impact[0]",
+    "card_says": "USD 135M at ₹85/USD = ~₹11,475 Cr, over 270% of trailing-12-month revenue (check VERIFIED)",
+    "pdf_says": "USD 135 M x ₹85 = ₹1,147.5 Cr (10x slip); ~27% of TTM revenue ₹4,223 Cr",
+    "class": "unit_scale"
+   },
+   {
+    "field": "quantified_impact[0].inputs.fx_inr_usd",
+    "card_says": "₹85/USD assumption",
+    "pdf_says": "Rate stale: Q1FY27 average was ~₹95/USD (another filing in this set); at 95 the order is ~₹1,280 Cr",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0].memory_refs",
+    "card_says": "order book ₹9,923 Cr cited to t_464673c9",
+    "pdf_says": "t_464673c9 is the ₹200 Cr Texmaco Defence SSSA; the order book comes from the scale block",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106785574",
+  "headline": "Persistent to acquire Nagarro SE at EUR 81 per share, ~€1.27B enterprise value",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "timeline_entry",
+    "card_says": "enterprise value of ~₹1,270 Cr",
+    "pdf_says": "EV EUR ~1.27B, i.e. roughly ₹13,000 Cr; the euro billion was written as ₹ crore (~10x+ understatement)",
+    "class": "unit_scale"
+   },
+   {
+    "field": "track_next.milestones[1]",
+    "card_says": "End of acceptance period for the open offer: 23rd September",
+    "pdf_says": "Initial acceptance period ended 17 September; an additional 2-week acceptance period runs from 23 September and ends 6 October",
+    "class": "wrong_period"
+   },
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "'Merger control filings: All* clearances obtained' listed as pending",
+    "pdf_says": "Merger control clearances obtained; minimum acceptance threshold already met (17 Sept). Card also presents the 50%+1 threshold as an open condition",
+    "class": "signal_verdict"
+   },
+   {
+    "field": "headline / timeline_entry",
+    "card_says": "announced a definitive agreement to acquire (as news)",
+    "pdf_says": "BCA signed and offer announced 26 June 2026; this is a September investor presentation recapping it",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106787323",
+  "headline": "Ceigall India arms commissions 5 MW solar in Maharashtra, reaching 10 MW of 147 MW project",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[2]",
+    "card_says": "early completion earned an early-commissioning incentive",
+    "pdf_says": "first 5 MW 'made the project eligible for the early-commissioning incentive'; nothing says it was earned or paid",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "power being sold to MSEDCL under MSKVY 2.0 (discom offtake, not merchant)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106801275",
+  "headline": "NLC India FY26 PAT rose 38.9% to ₹3,769 Cr; approves 38.5% total dividend at AGM",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / why_it_matters[0]",
+    "card_says": "approves 38.5% dividend at AGM; settles the approval tracked (w_45cca70d)",
+    "pdf_says": "CMD 'announced a total dividend payout of 38.5%'; the press release gives no shareholder vote result, so the approval is not shown as met",
+    "class": "memory"
+   },
+   {
+    "field": "event_type",
+    "card_says": "CONCALL_PRESENTATION",
+    "pdf_says": "AGM press release (CMD speech recapping FY26); AGM/OTHER fits better",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106716929",
+  "headline": "NLC India arm receives LoI from GUVNL for 900 MW solar power project",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Power 'will be procured by GUVNL' under a tariff-based competitive bid, i.e. contracted sale to a discom, not merchant sale",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Peers like Adani Power have recently inked long-term supply deals with state utilities",
+    "pdf_says": "Not in the filing or memory; unsupported sector claim",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106729355",
+  "headline": "Persistent Systems launches public takeover offer for Nagarro SE at EUR 81.00 per share, ~140% premium to June 25, 2026 closing price",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106768920",
+  "headline": "NLC India signs addendum to hive off 709 MW renewable assets to arm NIRL at book value",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106772343",
+  "headline": "Ceigall India Q1FY27: revenue ₹969.64 Cr (+15.7% YoY), net profit ₹63.75 Cr (+24.2% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.risks[1]",
+    "card_says": "Working capital pressure from rising receivables and inventory",
+    "pdf_says": "Filing has no receivables or inventory figures (P&L and segment statements only); risk not supported",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106774373",
+  "headline": "Ceigall India emerges H1 bidder for ₹214.52 Cr Bihar stone mining block",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_one_line": "A 5-year stone-block lease (a payment of ~₹29-60 Cr a year by Ceigall to the state, not revenue) at H1 stage is routine for a ₹6,764 Cr road builder.",
+  "issues": [
+   {
+    "field": "event_type / deal_value.kind / signals[SCALE]",
+    "card_says": "ORDER_WIN; '₹214.52 Cr order = 22% of Q1FY27 revenue'",
+    "pdf_says": "Allotment/Leasing of Stone Blocks (bandobasti) won as H1 (highest) bidder: the ₹28.82 Cr a year rising 20% is the settlement amount Ceigall pays the Bihar Mines Department for the lease, not contract revenue. Sizing it against revenue as an order misstates it (the company's own disclosure uses the order template, but the amount is a cost)",
+    "class": "event_type"
+   },
+   {
+    "field": "signals[ORDER_FLOW]",
+    "card_says": "7th order on record since 2026-08-17 (₹9,199 Cr in total)",
+    "pdf_says": "memory.json deals since 2026-08-17: ₹274.08, 225, 704.7, 5,300 Cr orders (+₹29.44 Cr capex) = 4 orders, ₹6,503.78 Cr (₹6,718 Cr with this one); 7 orders / ₹9,199 Cr not supported",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106775078",
+  "headline": "NLC India arm NIRL bags 200 MW wind project LoA from SJVN",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Contracted capacity of 200 MW to supply SJVN under a tariff-based bid, not merchant sale",
+    "class": "other"
+   },
+   {
+    "field": "track_next.kpis_to_verify",
+    "card_says": "installed_capacity check Q2FY27, comparison '>=', no target",
+    "pdf_says": "A wind project just awarded (LoA) cannot add capacity by Q2FY27; KPI check is meaningless",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106778942",
+  "headline": "Ceigall approves buying RECPDCL's transmission SPV and 49% stake in infra JV",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[JV Investment]",
+    "card_says": "₹0.0005 Cr",
+    "pdf_says": "Rs. 49,000 = ₹0.0049 Cr (10x slip; amount immaterial either way)",
+    "class": "unit_scale"
+   },
+   {
+    "field": "deal_value.updates_deal_id",
+    "card_says": "d_88058a9a (the ₹5,300 Cr RECPDCL transmission ORDER) updated with amount_cr 0.05, kind ACQUISITION",
+    "pdf_says": "The ₹5 lakh is the price of the SPV's shares, a different quantity from the ₹5,300 Cr project; the later memory (nse-106801864.memory.json) shows d_88058a9a now stored as ORDER ₹0.05 Cr BOARD_APPROVED - the ₹5,300 Cr order was overwritten",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106785463",
+  "headline": "Texmaco Rail AGM 2026: all resolutions passed with requisite majority, no dissent over 0.91%",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "headline / takeaway",
+    "card_says": "no dissent over 0.91%; 'Shareholder approvals were routine with minimal opposition, indicating no governance concerns'",
+    "pdf_says": "Resolutions 1 and 2 (adoption of standalone and consolidated FY26 financial statements): 199,433,113 for (86.0970%), 32,204,643 against (13.9030%); public institutions 32,202,519 of 32,231,718 votes against (99.91%)",
+    "class": "other"
+   }
+  ],
+  "impact_one_line": "Public institutions voted 99.9% against adopting both the standalone and consolidated FY26 accounts (13.9% of all votes against) - a governance signal an investor would want flagged."
+ },
+ {
+  "news_id": "nse-106800456",
+  "headline": "NLC India approves 50:50 JV with NALCO for 1,080 MW captive power plant",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106801864",
+  "headline": "Ceigall India receives LoI for ₹214.52 Cr Bihar stone block mining lease",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type / deal_value.kind / signals[SCALE] / why_it_matters[0]",
+    "card_says": "ORDER_WIN; '₹214.52 Cr order = 22% of Q1FY27 revenue'; '1.2% of the Q1FY27 order book'",
+    "pdf_says": "Stone-block lease (bandobasti) LoI: ₹214.52 Cr is the 5-year settlement amount Ceigall pays the state, not order value; comparing it to revenue or order book misstates it",
+    "class": "event_type"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Aids captive stone aggregate sourcing ... including the Bihar NH 139W highway (t_630fc472)",
+    "pdf_says": "Memory t_630fc472 only records ₹61.93 Cr equity into the NH 139W SPV; nothing links the Nawada lease to that project",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106704913",
+  "headline": "NLC India allots ₹150 Cr commercial papers at ₹5 lakh face value",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "₹150 Cr raise = 0% of market cap (₹41,100 Cr)",
+    "pdf_says": "Filing gives only the ₹150 Cr issue; scale block shows market cap ₹34,846 Cr and 0.4%, which the card's own why_it_matters uses. Two different market caps on one card and '0%' understates it.",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106733053",
+  "headline": "Ceigall India Q1FY27 revenue at ₹888.8 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[0], headline, key_numbers",
+    "card_says": "Revenue from operations ₹888.8 Cr in Q1FY27 vs ₹807.2 Cr in Q1FY26 (quote 'Revenue from operations 888.80 807.18')",
+    "pdf_says": "The extracted filing has no results table (pages 5-6 and 9-11 absent, page 12 garbled); neither 888.80 nor 807.18 nor the quoted row appears. Memory has consolidated Q1FY26 revenue ₹838.18 Cr and (later files) Q1FY27 ₹969.64 Cr; basis of 888.8 (standalone?) is unstated and unverifiable.",
+    "class": "invented"
+   },
+   {
+    "field": "what_happened[1], key_numbers PAT, timeline_entry",
+    "card_says": "PAT declined to ₹51.3 Cr in Q1FY27 from ₹58.1 Cr in Q1FY26",
+    "pdf_says": "No PAT figure in the filing text. ₹51.34 Cr is exactly memory's Q1FY26 consolidated PAT; consolidated Q1FY27 PAT is ₹63.75 Cr (memory of later filings), i.e. PAT rose ~24% YoY, not declined.",
+    "class": "wrong_period"
+   },
+   {
+    "field": "takeaway, core_catalyst",
+    "card_says": "lower profitability ... PAT decline due to increased finance cost and tax",
+    "pdf_says": "Not supported by the filing; consolidated PAT rose from ₹51.34 Cr to ₹63.75 Cr.",
+    "class": "direction"
+   },
+   {
+    "field": "what_happened[2], notable_changes",
+    "card_says": "Finance cost ₹42.0 Cr vs ₹37.3 Cr; tax ₹18.5 Cr vs ₹16.1 Cr (quotes 'Finance costs 42.01 37.29', 'Tax expense 18.50 16.09')",
+    "pdf_says": "Neither row is in the filing text. Memory: consolidated Q1FY27 finance cost ₹43.92 Cr, tax ₹31.61 Cr.",
+    "class": "invented"
+   },
+   {
+    "field": "key_numbers EBITDA",
+    "card_says": "₹109.1 Cr",
+    "pdf_says": "Not in the filing; memory consolidated Q1FY27 EBITDA ₹143.37 Cr.",
+    "class": "invented"
+   },
+   {
+    "field": "key_numbers / what_happened",
+    "card_says": "No basis stated (standalone vs consolidated)",
+    "pdf_says": "Filing has both standalone and consolidated results; card figures match neither consolidated column in memory.",
+    "class": "standalone_consolidated"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106767735",
+  "headline": "Ceigall India wins LoI for ₹5,300 Cr RECPDCL transmission project with ₹608.67 Cr annual charges",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "issues": [
+   {
+    "field": "signals[1] SCALE",
+    "card_says": "₹5,300 Cr order = 547% of Q1FY27 revenue, 132% of FY26 revenue",
+    "pdf_says": "₹5,300 Cr is the total project cost Ceigall must invest (TBCB build-own project); the consideration is ₹608.67 Cr a year of transmission charges for 35 years. Calling the capex an 'order' compared to revenue overstates revenue visibility. Arithmetic itself is right (5,300/969.64 = 547%).",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Tariff-based transmission contract with annual transmission charges (regulated, not merchant sale).",
+    "class": "other"
+   },
+   {
+    "field": "deal_value.amount_cr / signals[2]",
+    "card_says": "amount_cr 5,300 updating d_88058a9a, while the ORDER_FLOW signal says 'the ₹608.67 Cr order ... moves to LOI'",
+    "pdf_says": "Same deal recorded at two different quantities (annual charge vs project cost).",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106788774",
+  "headline": "NLC India issues ₹500 Cr commercial paper, representing 2.3% of net worth",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106814886",
+  "headline": "Ceigall India acquires 100% of JKJTL transmission SPV from RECPDCL for ₹18.40 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.updates_deal_id",
+    "card_says": "ACQUISITION ₹18.4 Cr updates d_88058a9a",
+    "pdf_says": "d_88058a9a is the transmission ORDER (₹608.67 Cr/yr, ₹5,300 Cr project). Linking the SPV share price to it overwrites the order's amount with the SPV price; memory already shows that deal at ₹0.05 Cr, the SPV's ₹5 lakh capital, from an earlier such link.",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106817577",
+  "headline": "NLC India's NIRL wins 50 MW/200 MWh BESS LOA from WBSEDCL",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": []
+ }
+]

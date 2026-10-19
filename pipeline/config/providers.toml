@@ -243,6 +243,10 @@ limits = { rpm = 60, tpd = 150_000 }
 # 24, Nemotron 3.5 Super VL 10% of 10, Gemini 11% of 9). Nemotron 3.5 Super VL
 # (33% wrong on 6 cards in round 1, 10% of 10 in round 4) takes a share of the live route too. Samples are 15-43 cards and the hard filings cluster,
 # so re-weight from each round (docs/AUDIT_LOOP.md).
+# Arm B of round 5 (2026-10-19, docs/audit/round-5.md, blind agents, published cards): Gemini 3.7 Flash 0 of 33 WRONG,
+# Gemini 3.8 Flash 3 of 30, Nemotron 3.5 Super VL 0 of 5, Nemotron 3 Super 6 of 38 (round 5 baseline 18 of 63),
+# GLM-4.7-Flash 2 of 3. Packed Gemini writes ordinary filings; Nemotron 3.5 Super VL takes the long documents and the
+# second opinions; Nemotron 3 Super and GLM-4.7-Flash are spares.
 [[routes.pass2]]
 provider = "deepseek"
 model = "deepseek-flash"
@@ -256,7 +260,7 @@ limits = { rpm = 60 }
 [[routes.pass2]]
 provider = "nvidia"
 model = "nvidia/nemotron-3-super-120b-a12b"
-weight = 5
+spare = true
 json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
 strip_reasoning = true
 extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)
@@ -295,7 +299,7 @@ limits = { rpm = 60, tpd = 60_000 }
 [[routes.pass2]]
 provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
-weight = 2
+weight = 5
 json_mode = true
 max_tokens = 8000
 context_tokens = 250000
@@ -324,7 +328,7 @@ limits = { rpm = 60 }
 [[routes.pass2_bulk]]
 provider = "nvidia"
 model = "nvidia/nemotron-3-super-120b-a12b"
-weight = 5
+spare = true
 json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
 strip_reasoning = true
 extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)
@@ -355,7 +359,7 @@ limits = { rpm = 60, tpd = 60_000 }
 [[routes.pass2_bulk]]
 provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
-weight = 1
+weight = 4
 json_mode = true
 max_tokens = 8000
 context_tokens = 250000
@@ -409,7 +413,7 @@ limits = { rpm = 60 }
 [[routes.pass2_long]]
 provider = "zai"
 model = "glm-4.7-flash"
-weight = 1
+spare = true
 json_mode = true
 max_tokens = 4000
 context_tokens = 190000
@@ -419,7 +423,7 @@ limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 [[routes.pass2_long]]
 provider = "nvidia"
 model = "nvidia/nemotron-3-super-120b-a12b"
-weight = 3
+spare = true
 json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
 strip_reasoning = true
 extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)
@@ -445,7 +449,7 @@ limits = { rpm = 50, tpm = 20_000 }
 [[routes.pass2_long]]
 provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
-spare = true
+weight = 3
 json_mode = true
 max_tokens = 8000
 context_tokens = 250000

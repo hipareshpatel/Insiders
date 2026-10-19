@@ -286,6 +286,9 @@ _FOREIGN_CRORE = re.compile(r"\b(USD|US\$|EUR|GBP|THB|AED|SAR|JPY|SGD|NGN|CHF|AU
                             re.I)
 
 
+_COUNT_CRORE = re.compile(r"(?<![\d.,])(\d[\d,]*(?:\.\d+)?)\s*(cr\b|crores?\b)(\s+(?:equity\s+)?(?:votes|shares))", re.I)
+
+
 def fix_foreign_crore(out: Pass2Output, text: str) -> list[str]:
     """A foreign amount written in crore that is the filing's figure read at another size: Clean Max's "Thai Baht
     1,250,000" (12.5 lakh, 0.125 crore) on its card as "THB 1.25 Cr" (round 6, 2026-10-19). The crore figure is kept
@@ -295,14 +298,19 @@ def fix_foreign_crore(out: Pass2Output, text: str) -> list[str]:
         return []
     figures = [v for v, _, _, _, _ in _tokens(text) if v >= 1000]
     fixes: dict[str, str] = {}
-    for m in _FOREIGN_CRORE.finditer(" ".join(_card_texts(out))):
-        written = float(m.group(2).replace(",", ""))
-        if any(abs(f / 1e7 - written) <= 0.005 * written + 1e-9 for f in figures):
+    joined = " ".join(_card_texts(out))
+    # (prefix, figure, unit, rest) for a foreign amount, and for a count of votes or shares: Ambuja's 2,254,107,305
+    # votes written "2,254.11 Cr" and 418,004 written "4.18 Cr" (round 6)
+    found = [(m.group(1) + " ", m.group(2), m.group(3), "", m.group(0)) for m in _FOREIGN_CRORE.finditer(joined)]
+    found += [("", m.group(1), m.group(2), m.group(3), m.group(0)) for m in _COUNT_CRORE.finditer(joined)]
+    for prefix, figure, unit, rest, whole in found:
+        written = float(figure.replace(",", ""))
+        if not written or any(abs(f / 1e7 - written) <= 0.005 * written + 1e-9 for f in figures):
             continue                                         # the filing has it at that size
-        for scale in (1e6, 1e5):                             # read as million, or as lakh
+        for scale in (1e6, 1e5, 1e8, 1e9):                   # read as million or lakh, or ten or a hundred times small
             right = next((f / 1e7 for f in figures if abs(f / scale - written) <= 0.005 * written + 1e-9), None)
             if right is not None:
-                fixes[m.group(0)] = f"{m.group(1)} {right:,.4f}".rstrip("0").rstrip(".") + f" {m.group(3)}"
+                fixes[whole] = f"{prefix}{right:,.4f}".rstrip("0").rstrip(".") + f" {unit}{rest}"
                 break
     if not fixes:
         return []

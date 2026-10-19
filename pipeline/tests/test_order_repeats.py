@@ -189,3 +189,17 @@ def test_a_foreign_amount_written_in_crore_at_the_wrong_size_is_set_right():
         "is_material": True, "event_type": "ORDER_WIN",
         "card": {"impact_level": "LOW", "headline": "Order of USD 13.5 Cr", "what_happened": ["USD 13.5 Cr order"]}})
     assert fix_foreign_crore(ok, "An order of USD 135,000,000.") == []    # 135 million is 13.5 crore: right as written
+
+
+def test_a_count_of_votes_written_in_crore_at_the_wrong_size_is_set_right():
+    """Ambuja (round 6): 2,254,107,305 votes for written "2,254.11 Cr votes"; 418,004 against written "4.18 Cr votes"."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import fix_foreign_crore
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A",
+        "card": {"impact_level": "LOW", "headline": "Shareholders approve the ACC merger",
+                 "what_happened": ["2,254.11 Cr votes in favour and 4.18 Cr votes against"]}})
+    text = "Votes in favour 2,254,107,305; votes against 418,004."
+    assert fix_foreign_crore(out, text)
+    assert out.card.what_happened[0].text == "225.4107 Cr votes in favour and 0.0418 Cr votes against"

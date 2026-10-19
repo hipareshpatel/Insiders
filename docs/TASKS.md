@@ -90,7 +90,7 @@ Once the live site has cards (T15, then the schedule): each day, every held card
 `docs/audit/live/<date>.json` and `.md`; WRONG classes fixed in code (or given to the laptop when they are in its files).
 The PDFs come from NSE's archive links on each card; where the cloud cannot fetch one, the laptop is asked to export it.
 
-## T15 · P1 · laptop · OPEN — load the laptop's data onto the live site (go-live, PLAN G6)
+## T15 · P1 · laptop · IN PROGRESS — load the laptop's data onto the live site (go-live, PLAN G6)
 
 The owner's choice (D37): go live and review the live cards. The live site (D1 `bse-index-nse`, R2 `bse-intelligence`) is
 deployed and empty. After T3's scheduled task is off:
@@ -103,7 +103,15 @@ deployed and empty. After T3's scheduled task is off:
 3. When T13's re-seed and `refresh-summaries` are done, sync again so the live memory carries the basis fix (move
    `data/sync_progress.json` aside first if the sync skips what it already copied; report what it did).
 4. Do not switch the schedule on (G7 is the owner's: merge the PR, then `PIPELINE_SCHEDULE = on`).
-Files you may change: `docs/PLAN.md` (G6 status line). Report: here.
+Files you may change: `docs/PLAN.md` (G6 status line). Report: steps 1-2 done 2026-10-20 03:58-04:23 IST; step 3 waits on T13.
+1. `sync-to-cloud --source http://localhost:5173` (keys from the keys file): `{"rows_written": 36036, "complete": true}`,
+   1,335 objects copied (of 1,687 in `meta/`, `memory/`, `daily_feed/`, `noise/`; the rest unchanged or empty), nothing
+   refused; one local read reset and retried. Live D1 now 10.3 MB.
+2. Live checks: `/api/feed?range=all` 855 published cards (as the local site), `/feed?range=all` 200; Heritage
+   `/api/companies/519552`: 43 cards, memory with 23 sections (12 results quarters, 6 ownership quarters); the owner token
+   on `/api/owner/feed?held=only`: **187 held cards**. **No price charts** on the live company pages: the sync does
+   not copy `chart/` (P-L3).
+3. Pending: after T13's re-seed and `refresh-summaries`, sync again.
 
 ## T14 · P1 · laptop · DONE — check the owner's new Cloudflare API token (GitHub's deploy key)
 

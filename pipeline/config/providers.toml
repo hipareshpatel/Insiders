@@ -469,15 +469,9 @@ limits = { rpm = 50, tpm = 20_000 }
 
 # The long-document spare since Ultra left the card routes (round 4): 250K window, 10% WRONG on 10 cards. Without it a
 # slow or rate-limited GLM left two long filings with no provider at all on free tiers (round 4's re-run).
-[[routes.pass2_long]]
-provider = "openrouter"
-model = "nvidia/nemotron-3.5-super-vl:free"
-weight = 3
-json_mode = true
-max_tokens = 8000
-context_tokens = 250000
-limits = { rpm = 10 }
-
+# Long documents go to Gemini's 1M-token Flash models in quota order, then Lite; Nemotron 3.5 Super VL is the last spare.
+# Round 7's first start (2026-10-19 20:30 IST): with 3.6 Flash out for the day and VL answering empty, 10 transcripts and
+# annual reports failed and spent an attempt. The Flash models share their daily quota with the packed route.
 [[routes.pass2_long]]
 provider = "gemini"
 model = "gemini-3.6-flash"  # 1M-token window for the longest annual reports
@@ -487,6 +481,65 @@ max_tokens = 6000
 context_tokens = 900000
 extra_body = { reasoning_effort = "low" }
 limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
+[[routes.pass2_long]]
+provider = "gemini"
+model = "gemini-3.7-flash"
+weight = 3
+json_mode = true
+max_tokens = 6000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
+[[routes.pass2_long]]
+provider = "gemini"
+model = "gemini-3.8-flash"
+weight = 3
+json_mode = true
+max_tokens = 6000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
+[[routes.pass2_long]]
+provider = "gemini"
+model = "gemini-3.5-flash"
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
+[[routes.pass2_long]]
+provider = "gemini"
+model = "gemini-3-flash-preview"
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
+[[routes.pass2_long]]
+provider = "gemini"
+model = "gemini-3.5-flash-lite"
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 15, tpm = 250_000, rpd = 500 }
+
+[[routes.pass2_long]]
+provider = "openrouter"
+model = "nvidia/nemotron-3.5-super-vl:free"
+spare = true
+json_mode = true
+max_tokens = 8000
+context_tokens = 250000
+limits = { rpm = 10 }
 
 [[routes.vision]]
 provider = "gemini"

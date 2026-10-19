@@ -169,6 +169,14 @@ their tables from `/api/integrated-filing-results?type=Integrated%20Filing-%20Fi
 | Annual-report XBRL | "weeks to months after the PDF" | **True**: LTM ~7 weeks, NTPC ~7.5, Newgen ~8, Hindustan Copper FY25 ~4.5 months; Capri Global FY26 not listed yet |
 | Pledged data | `/api/corporate-pledgedata` gives `percSharesPledged` (Pledged data row above) | **Not reproduced**: empty `data` with and without symbol and dates; `/api/corporate-pledge-holding` returns a count of 0. **Re-read from the page's own code 2026-10-18 (laptop, Indian IP):** the page calls exactly `/api/corporate-pledgedata?` plus `&symbol=` and dates; still empty. Its neighbour **`/api/corporate-pledgedata-sast3132?&from_date=&to_date=`** (SAST Reg 31 encumbrance disclosures) returns rows: 288 for 1 Jul-18 Oct 2026, each with company, lender (`eventDetailsEntity`), shares encumbered and % (`encumbHolding`, `encumbPerc`), event dates and the filing (`attachment`). That is a promoter-pledge source for module 42, event by event. **Reproduced on a GitHub runner 2026-10-18**: 11 rows for 11-18 Oct, same fields |
 
+## Prices from Yahoo at full size, from a data-centre address (measured 2026-10-19, cloud session)
+
+From a Google Cloud address (Columbus, US; a data-centre IP like a GitHub runner's, not a runner itself), one
+`yfinance.download` of a year of daily prices for **every NSE EQ symbol (2,351, `SYMBOL.NS`) priced all 2,351 in 205 s**;
+2,023 have 200+ days (the rest listed within the year). A sample of 400 took 38 s. So Yahoo carries the daily
+`market-data` job online for the ~1,778-company universe; NSE's bhavcopy (PLAN B5) is a quality choice, not a need.
+The runner probe (`runner-probe.yml`) now repeats the 400-symbol check on a GitHub runner on every change to it.
+
 ## Still open
 
 - BSE's announcement API does carry an XBRL identity we had missed, but it is not a link. The beta

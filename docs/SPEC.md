@@ -315,43 +315,45 @@ React + Vite + Tailwind v4 + Radix + TanStack Query/Table, served as Worker stat
 assets. The layout and density are benchmarked on EquiSense's public pages (design
 language only: no names, marks, scores or content are reused).
 
-**Look and feel.** A calm, light canvas `#F8F9FB`, white surfaces with a 1px hairline
-border and 12px radius, no shadows, one emerald accent `#059669`. Display headings in
-DM Serif Display, interface text in Lexend, numbers in Inter (tabular), working and
-formulas in JetBrains Mono. A dark theme with the same tokens follows the system
-setting, with a light/dark/system toggle. One centred column, at most 1200px wide.
+**Look and feel** (redesign approved 2026-10-19, PLAN B8). A soft canvas, white rounded cards with soft depth, one
+indigo accent, green and red only for up and down. Manrope for text and headings, JetBrains Mono for figures. Light and
+dark themes on the same tokens (`web/src/index.css`), following the system setting, with a light/dark/system toggle.
 
-**Navigation.** A sticky top bar: Top signals, Live feed, Results, Companies, Calendar,
-System. Search (Ctrl+K / ⌘K) finds companies and cards.
+**Navigation.** A sticky top bar: Today, Signals, All filings, Results, Companies, Calendar, System. Search (Ctrl+K /
+⌘K) finds companies and cards. Below 1,280 px the search box is an icon.
 
-**Top signals (home, `/`).** The morning cockpit (blueprint view 1): cards that cleared the
-four gates, best score first, for "since the 3:30 PM close" or the last 3 days, under a brief
-(filings scanned, noise filtered, dossiers updated, signals).
+**Today (home, `/`).** A greeting with the window switch (since the close, today, 7 days), a headline sentence and six
+figures from `/api/brief` (filings read, noise filtered, published cards, high impact, passed all four gates, to verify;
+held cards are not counted as published), the signals strip, story rings for the window's high-impact filings,
+sticky tabs by family with filters (size, sector, session, verified, watchlist, low impact, text), the feed (high
+impact in full, moderate paged by 20, low as rows on request) and a right column: the window's mix, the results
+scorecard, the next seven days (one event per company a day), overdue promises, the inflection radar, the watchlist and
+where the news is by sector. A footer line gives the pipeline's health.
 
-**Live feed (`/feed`).** 50 cards a page with page numbers (owner decision), filters for
-date range, size, sector, market session, verification and watchlist. Tabs by family (All, High impact, Results, Capex & orders, Capital &
-deals, Governance & regulatory, Noise audit) and one filter row (date range, market cap,
-sector, text). The default view is a column of **announcement cards**, one per filing,
-readable in about ten seconds without opening anything:
+**Signals (`/signals`)** keeps the old cockpit (cards that cleared the four gates). **All filings (`/feed`)**: 50 cards a
+page with page numbers, the same tabs and filters.
 
-1. ticker, market cap and size, and the impact pill (high / moderate / low);
-2. chips: the event, up to two themes ("Renewables", "Infra / EPC"), the deal stage
-   (LOI, LOA, MoU, development order, board approved: the provisional stages in amber)
-   and the figures' basis (consolidated, standalone, proforma);
-3. the headline: who did what, with the main figure, in proportion where memory allows;
-4. for results, a small P&L (revenue, EBITDA, margin, PAT with YoY and QoQ) computed from
-   the dossier; for concalls and presentations, the call read (guidance vs the last call,
-   management tone, transparency, story) and up to four metric tiles;
-5. two or three facts, with the key names and figures in bold (results bullets that only
-   repeat the table are hidden);
-6. a tinted box, "Why it matters" ("What these numbers mean" for results and business
-   updates): up to four lines from the memory insights, the most important computed
-   signal (marked "computed") and the first missing disclosure;
-7. a footer with the latest revenue, the sector's own figures (GNPA/NIM for a bank, EBITDA/t for
-   cement, ARPU for telecom, RevPAR for hotels…), 1W / 1M / 1Y, the time and session, the
-   verification badge, and actions: Full analysis, PDF, copy as image, company, and for the
-   owner Star signal / Mark noise. The header shows the 0–100 score (🔥 for a Top Signal),
-   credibility and a thin-liquidity warning; a 📌 core-catalyst line sits under the headline.
+**The announcement card** (owner, 2026-10-19: "lots of repeated items", "dynamic based on the event, including colours").
+Each fact is said once, and the card takes its event family's colour and block:
+
+| Family | Colour | Block on the face |
+|---|---|---|
+| Results, concalls, annual reports, business updates | indigo | the results table in the statement's own lines (company: revenue, EBITDA, margin, exceptional items, PBT, PAT, EPS; bank: interest earned, NII, operating profit, provisions, PAT, gross/net NPA, RoA; insurer: gross and net premium, claims, claims and combined ratio, PAT) plus the sector's KPIs (`sectors.toml` footer), this quarter beside the previous one and a year ago with YoY and QoQ (`results_snapshot`: `lens`, `lines`) |
+| Orders, capex, launches | teal | value, counterparty, completion date; size against the last quarter's and year's revenue; spread over its term ("9% of FY26 revenue a year over 3 years"); stage from award to completion (`card.scale`, `deal_value`) |
+| Capital and deals | violet | the same block: size against market cap and net worth, stage from proposal to completion |
+| Credit ratings | blue | before and after on the agency's long-term scale, notches and outlook, against the same agency's last rating only (`card.rating_change`) |
+| Governance and regulatory | amber | where the case stands: USFDA (Form 483, warning letter, import alert, closed) or a case (notice, order, appeal, resolved), only when a regulator, court or tax authority is in it (`card.case_stage`) |
+
+Above the block: company, ticker, market cap and size, price and 1-week move (once); one meta line with the score and
+impact as one badge, the direction (▲ ▼ ◆), the family label (with the quarter, basis and lens for results), the deal
+stage when it is provisional and there is no block, credibility below 50%, thin liquidity with its amount, and the price
+structure tags. Then the headline, the points that add to it (a point whose figures and most words are already in the
+headline or a block is hidden; `web/src/lib/cardText.ts`), "Why it matters" in the family's tint, and **For the
+decision**: the price since the filing (left out past a 60% move, likely a split), a run-rate P/E on results (market cap
+÷ the quarter's profit × 4), what management last guided that bears on the event (from memory: open, not past its
+deadline, under 18 months old, not an agency's or analyst's view), and the next check; the last two and the P/E only on
+cards up to 120 days old. A footer line has the time and session, the verification badge, Full analysis, the PDF and
+one ⋯ menu (copy as image, verify against the PDF, company memory); the owner also sees Star / Noise and a verdict bar.
 
 "Full analysis" opens the rest underneath: remaining insights with their basis, every
 quantified estimate with its working, all signals, notable changes, what to track next
@@ -367,16 +369,18 @@ and margin change in basis points, signals, PDF. Rows carry the tone stripe and 
 into the full card. Filters: quarter, verdict, size, company. The YoY figures come from
 the dossier (`results_snapshot`), not from model prose.
 
-**Company page** (`/company/:scrip`). Header with symbol, name, BSE code, last price
-and 1W/1M/1Y, sector and size. Tabs:
+**Company page** (`/company/:scrip`). A header with the name, sector and industry, size and price-structure tags, price
+and 1W/1M/1Y, Watch, Memory and Latest PDF; eight key figures (market cap, revenue, debt, net worth, average traded a day,
+promoter holding and pledge, 1-year return, filings analysed). Tabs:
 
 | Tab | Shows |
 |---|---|
-| Overview | Key stats (market cap, size, revenue, debt, net worth, filings analysed); tiles for promise record, open commitments, latest filing tone and next catalyst; The story (business summary and latest read); How the story is unfolding (timeline); The good & the bad (signals and notable changes, de-duplicated); What to track |
-| Results | Quarterly scorecard (verdict, takeaway, revenue / EBITDA / OPM / PAT YoY per quarter); financial baseline pivot by period kind; balance sheet |
-| Promise tracker | Delivered / missed / open / delivery rate; every management commitment with given date, due date, status and evidence; follow-ups from earlier cards |
-| Timeline | 2026 events, high-impact ones marked |
+| Overview | Promise record, open commitments, latest filing and next catalyst; the story; how it is unfolding (timeline); the good and the bad; what to track; promises kept; orders, deals and capex; coming up |
+| Results | Quarterly bars (revenue, profit, margin); business mix (a ring, or a list when the filing's cuts overlap); the quarterly scorecard in the statement's own lines; the financial baseline; the balance sheet |
+| Promise tracker | Delivered / missed / open and the delivery rate; every commitment with its dates, status and evidence |
+| Timeline | The year's events, high-impact ones marked |
 | Filings | The company's announcement cards |
+| Ownership & governance | Ownership by quarter (promoter, FII, DII, public) and the pledge; identity (former names; group entities, plants and brands only); the quarterly governance report and auditor; peers in the same sector nearest in market cap |
 
 **Companies.** Search, sort, size and coverage filters, A–Z; a table with sector,
 market cap, returns, filings and last filing date. A row opens the company page.

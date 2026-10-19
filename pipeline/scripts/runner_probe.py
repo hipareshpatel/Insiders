@@ -110,6 +110,21 @@ def main() -> int:
 
     step("Yahoo prices", yahoo)
 
+    # The daily market-data job asks Yahoo for every universe company (~1,778) in one run. Two tickers answering says
+    # little about that, so the probe asks for a year of 400 NSE symbols the way the job does (PLAN B5: is Yahoo enough
+    # online, or should prices come from NSE's bhavcopy?).
+    def yahoo_at_size():
+        import yfinance as yf
+        with NseClient() as nse:
+            symbols = [e.symbol for e in nse.equity_list() if e.series == "EQ"][::4][:400]
+        tickers = [f"{s}.NS" for s in symbols]
+        data = yf.download(tickers, period="1y", progress=False, group_by="ticker", threads=True)
+        priced = [t for t in tickers if t in data.columns.get_level_values(0) and data[t]["Close"].dropna().size > 0]
+        full = [t for t in priced if data[t]["Close"].dropna().size >= 200]
+        return f"{len(priced)} of {len(tickers)} priced, {len(full)} with 200+ days"
+
+    step("Yahoo at size (400 NSE symbols, 1 year)", yahoo_at_size)
+
     failed = sum(1 for r in rows if r[1] != "ok")
     lines = [f"## Runner probe: {len(rows) - failed} of {len(rows)} steps answered", "",
              "| Step | Result | Detail | Seconds |", "|---|---|---|---|"]

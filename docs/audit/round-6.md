@@ -16,7 +16,7 @@ Window: 15 July to 18 October 2026, as in rounds 2-5.
 
 ## Method
 
-As round 5's arm B, on the code at the start commit (recorded when the run starts): memory first (`seed-memory`,
+As round 5's arm B, on the code at the start commit **2aa4bf1** (run started 2026-10-19 12:09 IST in two lanes of 10 companies, each seeding then processing, so companies need not wait for all 20 to be seeded): memory first (`seed-memory`,
 `governance-sync --scrips`), then `backfill-companies` on free providers only (`FREE_ONLY=1`) with packed Gemini
 (`PASS2_PACK=6`, `PASS2_PACK_WAIT=150`, 10 workers) and the writers of `549d133`. Every published and held card reviewed
 blind by independent agents, one per folder, with `REVIEWER_PROMPT_ROUND4.md` word for word, except two things decided

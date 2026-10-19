@@ -5,7 +5,9 @@ def test_price_chart_series_is_written_once_a_day():
     the same day writes nothing, and a short or missing series none at all."""
     import json
 
-    import pandas as pd
+    import pytest
+
+    pd = pytest.importorskip("pandas")   # the [market] extra; CI installs [dev] only
 
     from bse_intel.market import chart_series, write_chart
 

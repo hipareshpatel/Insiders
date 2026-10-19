@@ -148,8 +148,16 @@ def _f(headline, category="", subcategory="", subject=""):
     ("Audited financial results for FY25 and recommendation of final dividend", "Result", "", "FAST_TRACK", "RESULTS"),
     # Owner, 2026-10-18: no cards for director / KMP changes or resignations; an auditor's resignation stays with pass 1
     ("Appointment of Mr Yasushi Nishikawa as Managing Director and CEO", "Company Update", "", "DROP", None),
-    ("Resignation of Mr X as Chief Financial Officer", "Company Update", "", "DROP", None),
     ("Resignation of Statutory Auditors", "Company Update", "", "PASS1", None),
+    # ... except the MD, CEO or CFO leaving (owner, 2026-10-19, D30 amended)
+    ("Resignation of Mr X as Chief Financial Officer", "Company Update", "", "FAST_TRACK", "MANAGEMENT_CHANGE"),
+    ("Cessation of Mr Y as Managing Director and CEO", "Company Update", "", "FAST_TRACK", "MANAGEMENT_CHANGE"),
+    ("XYZ Limited has informed the Exchange about resignation of Mr Z as Chief Executive Officer of the Company",
+     "", "Resignation of Director/KMP/SMP", "FAST_TRACK", "MANAGEMENT_CHANGE"),
+    ("Mr A steps down as CFO with effect from 31 October 2026", "Company Update", "", "FAST_TRACK", "MANAGEMENT_CHANGE"),
+    ("Resignation of Mr A as Independent Director", "Company Update", "Resignation of Director/KMP/SMP", "DROP", None),
+    ("Resignation of Company Secretary and Compliance Officer", "Company Update", "", "DROP", None),
+    ("Appointment of Mr B as Managing Director, not liable to retire by rotation", "Company Update", "Appointment", "DROP", None),
     # Owner, 2026-10-18: no newspaper publications, of results or anything else
     ("Newspaper publication of extract of Consolidated Unaudited Financial Results for the quarter and half year ended September 30, 2026.",
      "Company Update", "Copy of Newspaper Publication", "DROP", None),
@@ -568,3 +576,15 @@ def test_rerun_routes_a_reset_filing_by_todays_rules(settings):
 def test_bse_worded_board_meeting_notices_are_dates(rulebook, headline, category, subcategory, subject):
     decision = rulebook.classify(_f(headline, category, subcategory, subject=subject))
     assert (decision.action, decision.event_type) == ("CALENDAR", "BOARD_MEETING"), decision
+
+
+def test_top_exit_keeps_a_card_only_for_the_md_ceo_or_cfo_leaving():
+    """D30 as amended (owner, 2026-10-19): pass 2's MANAGEMENT_CHANGE ends without a card unless the MD, CEO or CFO is
+    leaving; an appointment letter's "not liable to retire by rotation" is not an exit."""
+    from bse_intel.pipeline import top_exit
+
+    assert top_exit("We wish to inform that Mr X has resigned from the post of Chief Financial Officer")
+    assert top_exit("Cessation of Mr Y as Managing Director on superannuation")
+    assert not top_exit("Appointment of Mr B as Managing Director and CEO, not liable to retire by rotation")
+    assert not top_exit("Resignation of Ms C as Independent Director due to personal reasons")
+    assert not top_exit("Mr D, Director, retires by rotation and offers himself for re-appointment")

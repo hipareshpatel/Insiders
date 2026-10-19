@@ -12,14 +12,17 @@ function hue(text: string): string {
 /** Letter avatar for a company (no logos: they are third-party trademarks). */
 export function Avatar({ name, symbol, size = 20, className }: { name: string; symbol?: string | null; size?: number; className?: string }) {
   const key = symbol || name;
-  const letter = (key.replace(/^(the|demo)\s+/i, "").trim()[0] ?? "?").toUpperCase();
+  // Large badges (cards, company pages) take two initials on a rounded square, as in the redesign; small ones a letter
+  const words = name.replace(/^(the|demo)\s+/i, "").replace(/\b(ltd|limited|ltd\.)\b/gi, "").trim().split(/\s+/).filter(Boolean);
+  const large = size >= 28;
+  const letters = (large && words.length > 1 ? words[0][0] + words[1][0] : (words[0]?.[0] ?? key[0] ?? "?")).toUpperCase();
   return (
     <span
       aria-hidden
-      className={cn("inline-grid shrink-0 place-items-center rounded-full font-semibold text-white", className)}
-      style={{ width: size, height: size, fontSize: Math.round(size * 0.5), background: hue(key) }}
+      className={cn("inline-grid shrink-0 place-items-center font-extrabold text-white", large ? "rounded-[30%]" : "rounded-full", className)}
+      style={{ width: size, height: size, fontSize: Math.round(size * (large ? 0.34 : 0.5)), background: hue(key) }}
     >
-      {letter}
+      {letters}
     </span>
   );
 }

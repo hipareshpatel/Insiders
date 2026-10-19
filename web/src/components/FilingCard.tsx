@@ -71,8 +71,7 @@ export function FilingRow({ row, defaultOpen = false, highlight = false }: { row
 
   return (
     <article id={`card-${row.news_id}`}
-      className={cn("relative overflow-hidden rounded-xl border bg-surface transition-colors",
-        highlight ? "border-accent-line" : "border-line", !open && "hover:border-line-strong")}>
+      className={cn("card-soft card-lift relative overflow-hidden !rounded-2xl", highlight && "ring-2 ring-accent")}>
       <span aria-hidden className={cn("absolute inset-y-0 left-0 w-[3px]", TONE_STRIPE[tone])} />
       {/* The whole header toggles; the headline is the accessible toggle button. */}
       <div onClick={() => setOpen((v) => !v)} className="cursor-pointer px-4 py-3.5 pl-5 sm:px-5 sm:pl-6">

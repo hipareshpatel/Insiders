@@ -2,11 +2,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 import { Link, useLocation, useParams } from "wouter";
-import type { CardRow, Company, Dossier, Guidance } from "../../shared/types";
+import type { CardRow, Company, Dossier, Guidance, Peer, Technicals } from "../../shared/types";
 import { Avatar } from "../components/Avatar";
 import { AnnouncementCard, PROVISIONAL_STAGES, STAGE_LABEL } from "../components/AnnouncementCard";
 import { parseCard, SIGNAL } from "../components/FilingCard";
-import { Badge, TabStrip } from "../components/ui/badge";
+import { Badge } from "../components/ui/badge";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
 import { cr, istDate, listing, num, pct, rupees, signClass, titleCase, todayIST } from "../lib/format";
@@ -24,6 +24,7 @@ const TABS = [
   { key: "promises", label: "Promise tracker" },
   { key: "timeline", label: "Timeline" },
   { key: "filings", label: "Filings" },
+  { key: "owners", label: "Ownership & governance" },
 ];
 
 const WATCH_VERB: Record<string, string> = { KPI: "Verify", APPROVAL: "Pending", CONCERN: "Analyst concern" };
@@ -52,50 +53,74 @@ export function CompanyPage() {
       <Link href="/companies" className="mb-4 inline-flex items-center gap-1 text-[13px] text-ink-3 hover:text-ink">
         <ArrowLeft className="h-3.5 w-3.5" /> Companies
       </Link>
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <Avatar name={name} symbol={symbol} size={36} />
-            <h1 className="font-display text-[32px] leading-none text-ink">{symbol ?? name}</h1>
-            <span className="text-[15px] text-ink-2">{name} <span className="text-[12px] text-ink-3">· {listing(symbol, scrip)}</span></span>
-          </div>
-          <div className="num mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <span className="text-[26px] font-bold text-ink">{rupees(company?.last_price)}</span>
-            <span className="text-[13px] text-ink-3">1W <span className={signClass(company?.ret_1w)}>{pct(company?.ret_1w)}</span></span>
-            <span className="text-[13px] text-ink-3">1M <span className={signClass(company?.ret_1m)}>{pct(company?.ret_1m)}</span></span>
-            <span className="text-[13px] text-ink-3">1Y <span className={signClass(company?.ret_1y)}>{pct(company?.ret_1y)}</span></span>
-            {company?.price_date && <span className="text-[12px] text-ink-3">as of {istDate(company.price_date)}</span>}
+      <header className="grid items-start gap-4 md:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="flex min-w-0 items-center gap-4">
+          <Avatar name={name} symbol={symbol} size={64} className="shadow-lg" />
+          <div className="min-w-0">
+            <h1 className="font-display text-[24px] leading-tight text-ink sm:text-[28px]">{name}</h1>
+            <p className="mt-0.5 text-[13.5px] font-semibold text-ink-3">
+              <span className="num">{listing(symbol, scrip)}</span>
+              {company?.sector ? ` · ${SECTORS[company.sector] ?? titleCase(company.sector)}` : ""}
+              {company?.industry ? ` › ${company.industry.split(">").pop()?.trim()}` : ""}
+            </p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {company?.size_category && <Badge className="bg-accent-soft text-accent">{titleCase(company.size_category)} cap</Badge>}
+              {company?.credibility_score != null && (
+                <Badge className={company.credibility_score >= 75 ? "bg-pos-soft text-pos" : company.credibility_score < 50 ? "bg-warn-soft text-warn" : "bg-surface-2 text-ink-2"}>
+                  🎯 Credibility {Math.round(company.credibility_score)}%
+                </Badge>
+              )}
+              {company?.median_turnover_cr != null && company.median_turnover_cr < 0.5 && <Badge className="bg-warn-soft text-warn">💧 Thin liquidity</Badge>}
+              {technicalTags(company).map((t) => <Badge key={t} className="bg-surface-2 text-ink-2">{t}</Badge>)}
+            </div>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {company && <WatchButton scrip={company.scrip_code} on={!!company.watchlist} />}
-          {company?.credibility_score != null && (
-            <Badge className={company.credibility_score >= 75 ? "bg-pos-soft text-pos" : company.credibility_score < 50 ? "bg-warn-soft text-warn" : "bg-surface-2 text-ink-2"}>
-              🎯 Credibility {Math.round(company.credibility_score)}%
-            </Badge>
-          )}
-          {company?.median_turnover_cr != null && (
-            <Badge className={company.median_turnover_cr < 0.5 ? "bg-warn-soft text-warn" : "bg-surface-2 text-ink-2"}>
-              💧 ₹{company.median_turnover_cr.toFixed(company.median_turnover_cr < 10 ? 2 : 0)} Cr/day
-            </Badge>
-          )}
-          {company?.sector && <Badge className="bg-surface-2 text-ink-2">{SECTORS[company.sector] ?? titleCase(company.sector)}</Badge>}
-          {company?.size_category && <Badge className="bg-accent-soft text-accent">{titleCase(company.size_category)}cap</Badge>}
+        <div className="md:text-right">
+          <div className="num text-[28px] font-bold tracking-tight text-ink sm:text-[32px]">{rupees(company?.last_price)}</div>
+          <div className="num flex flex-wrap gap-x-3 text-[13px] font-semibold md:justify-end">
+            {([["1W", company?.ret_1w], ["1M", company?.ret_1m], ["1Y", company?.ret_1y]] as const).map(([l, v]) => (
+              <span key={l} className="text-ink-3">{l} <span className={signClass(v)}>{pct(v)}</span></span>
+            ))}
+          </div>
+          {company?.price_date && <div className="text-[11.5px] text-ink-3">as of {istDate(company.price_date)}</div>}
+          <div className="mt-2.5 flex flex-wrap gap-2 md:justify-end">
+            {company && <WatchButton scrip={company.scrip_code} on={!!company.watchlist} />}
+            <button type="button" onClick={() => setParams({ memory: scrip })} className="card-soft h-9 rounded-xl px-4 text-[13px] font-bold text-ink hover:text-accent">◎ Memory</button>
+            {cards[0]?.pdf_url && <a href={cards[0].pdf_url} target="_blank" rel="noreferrer" className="card-soft inline-flex h-9 items-center rounded-xl px-4 text-[13px] font-bold text-ink hover:text-accent">Latest PDF</a>}
+          </div>
         </div>
       </header>
 
-      <TabStrip className="mt-6" items={TABS} value={tab} onChange={(key) => setParams({ tab: key === "overview" ? null : key })} />
+      <KeyFigures company={company} dossier={dossier} cards={cards} />
+
+      <div className="sticky top-14 z-10 -mx-4 mt-4 bg-bg px-4 py-2 sm:-mx-6 sm:px-6">
+        <div role="tablist" className="card-soft no-scrollbar inline-flex max-w-full gap-0.5 overflow-x-auto rounded-2xl p-1">
+          {TABS.map((t) => (
+            <button key={t.key} type="button" role="tab" aria-selected={tab === t.key} onClick={() => setParams({ tab: t.key === "overview" ? null : t.key })}
+              className={cn("whitespace-nowrap rounded-[10px] px-3.5 py-2 text-[13.5px] font-bold transition-colors", tab === t.key ? "grad-accent shadow-md" : "text-ink-2 hover:text-ink")}>
+              {t.key === "filings" ? `Filings · ${cards.length}` : t.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="mt-5">
-        {tab === "overview" && <Overview company={company} dossier={dossier} cards={cards} onTab={(t) => setParams({ tab: t })} />}
+        {tab === "overview" && <Overview dossier={dossier} cards={cards} onTab={(t) => setParams({ tab: t })} />}
         {tab === "results" && (
           <div className="space-y-4">
+            {dossier && (
+              <div className={cn("grid items-start gap-4", dossier.segment_mix?.length && "lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]")}>
+                <QuarterBars dossier={dossier} />
+                <SegmentMix dossier={dossier} />
+              </div>
+            )}
             <ResultsScorecard cards={cards} />
             {dossier ? <MetricsPanel dossier={dossier} /> : <Empty title="No results analysed yet" />}
           </div>
         )}
         {tab === "promises" && <PromiseTracker dossier={dossier} />}
         {tab === "timeline" && <Timeline dossier={dossier} />}
+        {tab === "owners" && <OwnersTab dossier={dossier} peers={query.data.peers ?? []} company={company} />}
         {tab === "filings" && (
           <div className="mx-auto max-w-[720px] space-y-4">
             {cards.length ? cards.map((row) => <AnnouncementCard key={row.news_id} row={row} />) : <Empty title="No material filings analysed yet" />}
@@ -109,9 +134,9 @@ export function CompanyPage() {
 
 export function Panel({ title, children, hint, className }: { title: string; children: ReactNode; hint?: ReactNode; className?: string }) {
   return (
-    <section className={cn("rounded-xl border border-line bg-surface", className)}>
+    <section className={cn("card-soft rise-in", className)}>
       <header className="flex flex-wrap items-baseline justify-between gap-2 px-5 pt-4">
-        <h2 className="font-display text-[19px] leading-tight text-ink">{title}</h2>
+        <h2 className="text-[16px] font-extrabold leading-tight tracking-tight text-ink">{title}</h2>
         {hint ? <span className="text-xs text-ink-3">{hint}</span> : null}
       </header>
       <div className="px-5 pb-5 pt-3">{children}</div>
@@ -126,11 +151,10 @@ export function promiseStats(guidance: Guidance[]) {
   return { delivered, missed, open, resolved: delivered + missed };
 }
 
-function Overview({ company, dossier, cards, onTab }: { company: Company | null; dossier: Dossier | null; cards: CardRow[]; onTab: (t: string) => void }) {
+function Overview({ dossier, cards, onTab }: { dossier: Dossier | null; cards: CardRow[]; onTab: (t: string) => void }) {
   const today = todayIST();
   const parsed = useMemo(() => cards.map((row) => ({ row, card: parseCard(row) })).filter((x) => x.card), [cards]);
   const latest = parsed[0];
-  const fundamentals = latest?.card?.fundamentals ?? {};
   const stats = promiseStats(dossier?.guidance ?? []);
   const next = (dossier?.upcoming_events ?? []).filter((e) => e.date >= today).sort((a, b) => a.date.localeCompare(b.date))[0];
 
@@ -164,23 +188,7 @@ function Overview({ company, dossier, cards, onTab }: { company: Company | null;
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
-        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3">
-          {[
-            ["Market cap", cr(company?.market_cap_cr)],
-            ["Size", company?.size_category ? `${titleCase(company.size_category)}cap` : "—"],
-            [`Revenue${fundamentals.revenue?.period ? ` · ${fundamentals.revenue.period}` : ""}`, cr(fundamentals.revenue?.value)],
-            ["Debt", cr(fundamentals.debt?.value)],
-            ["Net worth", cr(fundamentals.net_worth?.value)],
-            ["Filings analysed", num(cards.length)],
-          ].map(([label, value]) => (
-            <div key={label} className="bg-surface px-4 py-3 text-center">
-              <div className="eyebrow text-ink-3">{label}</div>
-              <div className="num mt-1 text-[15px] font-semibold text-ink">{value}</div>
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line">
+      <div className="card-soft rise-in grid grid-cols-2 gap-2.5 p-3 lg:grid-cols-4">
           <Tile label="Promise record" value={stats.resolved ? `${stats.delivered} of ${stats.resolved} delivered` : "No promises resolved yet"}
             tone={stats.resolved ? (stats.missed ? "MIXED" : "POSITIVE") : "NEUTRAL"} action="View tracker" onAction={() => onTab("promises")} />
           <Tile label="Open commitments" value={`${stats.open} tracked`} tone="NEUTRAL" action="View tracker" onAction={() => onTab("promises")} />
@@ -188,8 +196,9 @@ function Overview({ company, dossier, cards, onTab }: { company: Company | null;
             sub={latest ? `${EVENT_LABELS[latest.row.event_category] ?? ""} · ${istDate(latest.row.filed_at)}` : undefined} action="View filings" onAction={() => onTab("filings")} />
           <Tile label="Next catalyst" value={next ? titleCase(next.event_type) : "None scheduled"} tone="NEUTRAL"
             sub={next ? istDate(next.date) : undefined} />
-        </div>
       </div>
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+      <div className="min-w-0 space-y-4">
 
       <Panel title="The story">
         {dossier?.business_summary ? (
@@ -217,9 +226,6 @@ function Overview({ company, dossier, cards, onTab }: { company: Company | null;
         ) : <p className="text-sm text-ink-3">No events recorded yet.</p>}
       </Panel>
 
-      <DealsAndNotes dossier={dossier} />
-      <IdentityAndOwnership dossier={dossier} />
-
       <Panel title="The good & the bad" hint="Computed signals and notable changes from recent filings">
         <div className="grid gap-6 md:grid-cols-2">
           <GoodBad title="The good" items={good} tone="POSITIVE" />
@@ -239,6 +245,13 @@ function Overview({ company, dossier, cards, onTab }: { company: Company | null;
           </ul>
         ) : <p className="text-sm text-ink-3">Nothing to track yet.</p>}
       </Panel>
+      </div>
+      <div className="min-w-0 space-y-4">
+        <PromiseSummary dossier={dossier} />
+        <DealsAndNotes dossier={dossier} stacked />
+        <ComingUp dossier={dossier} />
+      </div>
+      </div>
     </div>
   );
 }
@@ -320,12 +333,12 @@ export function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
 }
 
 /** Each order, deal or capex plan once, at its latest stage; plus operating facts worth remembering. */
-export function DealsAndNotes({ dossier }: { dossier: Dossier | null }) {
+export function DealsAndNotes({ dossier, stacked = false }: { dossier: Dossier | null; stacked?: boolean }) {
   const deals = [...(dossier?.deals ?? [])].reverse().slice(0, 10);
   const notes = [...(dossier?.operating_notes ?? [])].reverse().slice(0, 6);
   if (!deals.length && !notes.length) return null;
   return (
-    <div className={cn("grid gap-4", deals.length && notes.length && "md:grid-cols-2")}>
+    <div className={cn("grid gap-4", !stacked && deals.length && notes.length && "md:grid-cols-2")}>
       {deals.length > 0 && (
         <Panel title="Orders, deals and capex" hint="Each deal once, at its latest stage">
           <ul className="divide-y divide-line">
@@ -364,7 +377,7 @@ export function DealsAndNotes({ dossier }: { dossier: Dossier | null }) {
 
 function Tile({ label, value, sub, tone, action, onAction }: { label: string; value: string; sub?: string; tone: Tone; action?: string; onAction?: () => void }) {
   return (
-    <div className="flex flex-col bg-surface px-4 py-3">
+    <div className="flex flex-col rounded-2xl bg-surface-2 px-4 py-3">
       <span className="eyebrow text-ink-3">{label}</span>
       <span className={cn("mt-1 text-[15px] font-semibold", tone === "POSITIVE" ? "text-pos" : tone === "NEGATIVE" ? "text-neg" : tone === "MIXED" ? "text-warn" : "text-ink")}>{value}</span>
       {sub ? <span className="text-xs text-ink-3">{sub}</span> : null}
@@ -612,5 +625,255 @@ function Timeline({ dossier }: { dossier: Dossier | null }) {
         ))}
       </ol>
     </Panel>
+  );
+}
+
+/** Price-structure tags from the market-data job, as the cards show them. */
+function technicalTags(company: Company | null): string[] {
+  let t: Technicals | null = null;
+  try { t = company?.technicals_json ? JSON.parse(company.technicals_json) : null; } catch { t = null; }
+  if (!t) return [];
+  return [t.stage2 ? "📈 Stage 2 trend" : "", t.vcp ? "⚡ Coiled spring" : "", t.rs_pct != null && t.rs_pct >= 80 ? `RS ${t.rs_pct}` : ""].filter(Boolean);
+}
+
+/** The company in eight figures under its name: size, balance sheet, liquidity, owners and how much we know. */
+function KeyFigures({ company, dossier, cards }: { company: Company | null; dossier: Dossier | null; cards: CardRow[] }) {
+  const fundamentals = cards.map(parseCard).find((c) => c?.fundamentals)?.fundamentals ?? {};
+  const own = dossier?.ownership?.[dossier.ownership.length - 1];
+  const high = cards.filter((c) => c.impact_level === "HIGH").length;
+  const items: [string, string, string?][] = [
+    ["Market cap", cr(company?.market_cap_cr)],
+    [`Revenue${fundamentals.revenue?.period ? ` · ${fundamentals.revenue.period}` : ""}`, cr(fundamentals.revenue?.value)],
+    ["Debt", cr(fundamentals.debt?.value)],
+    ["Net worth", cr(fundamentals.net_worth?.value)],
+    ["Avg traded a day", company?.median_turnover_cr != null ? `₹${company.median_turnover_cr.toFixed(company.median_turnover_cr < 10 ? 2 : 0)} Cr` : "—"],
+    ["Promoter", own?.promoter_pct != null ? `${own.promoter_pct}%` : "—", own?.pledge_pct != null ? `pledge ${own.pledge_pct}%` : undefined],
+    ["1-year return", pct(company?.ret_1y)],
+    ["Filings analysed", num(cards.length), high ? `${high} high` : undefined],
+  ];
+  return (
+    <dl className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-8">
+      {items.map(([label, value, sub]) => (
+        <div key={label} className="card-soft rise-in rounded-2xl px-3.5 py-2.5">
+          <dt className="truncate text-[11.5px] font-bold text-ink-3">{label}</dt>
+          <dd className="num text-[15px] font-bold text-ink">{value}{sub && <span className="block text-[11px] font-medium text-ink-3">{sub}</span>}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** Revenue, profit or margin for the last eight quarters in memory, as bars (the latest in the accent). */
+function QuarterBars({ dossier }: { dossier: Dossier }) {
+  const [metric, setMetric] = useState<"revenue" | "pat" | "ebitda_margin">("revenue");
+  const series = useMemo(() => {
+    const rows = dossier.financial_metrics.filter((m) => periodKind(m.period) === "Quarter" && (m.metric === metric || (metric === "pat" && m.metric === "pat_owners")));
+    const by = new Map<string, number>();
+    for (const m of rows) if (!(metric === "pat" && m.metric === "pat" && by.has(m.period))) by.set(m.period, m.value);
+    return [...by.entries()].sort((a, b) => periodEnd(a[0]).localeCompare(periodEnd(b[0]))).slice(-8);
+  }, [dossier.financial_metrics, metric]);
+  if (series.length < 2 && metric === "revenue") return null;
+  const values = series.map(([, v]) => v);
+  const lo = metric === "ebitda_margin" ? Math.min(...values) - 2 : Math.min(0, ...values);
+  const hi = Math.max(...values) * 1.08 || 1;
+  const label = (v: number) => metric === "ebitda_margin" ? `${v.toFixed(1)}%` : Math.abs(v) >= 10000 ? `${(v / 1000).toFixed(1)}k` : Math.round(v).toLocaleString("en-IN");
+  return (
+    <Panel title="Quarterly results" hint={
+      <span className="inline-flex rounded-[11px] bg-surface-2 p-[3px]">
+        {([["revenue", "Revenue"], ["pat", "Profit"], ["ebitda_margin", "Margin"]] as const).map(([k, l]) => (
+          <button key={k} type="button" onClick={() => setMetric(k)}
+            className={cn("rounded-lg px-2.5 py-1 text-[12px] font-bold", metric === k ? "bg-surface text-ink shadow-sm" : "text-ink-3")}>{l}</button>
+        ))}
+      </span>}>
+      {series.length < 2 ? <p className="text-sm text-ink-3">Not enough quarters in memory for this figure yet.</p> : (
+        <div className="flex h-[210px] items-end gap-2.5 sm:gap-4" role="img" aria-label={`${metric} by quarter`}>
+          {series.map(([period, v], i) => {
+            const last = i === series.length - 1;
+            return (
+              <div key={period} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1.5">
+                <span className="num text-[11.5px] font-bold text-ink">{label(v)}</span>
+                <span className={cn("w-full max-w-[96px] rounded-[10px]", last ? "grad-accent" : "border border-line-strong bg-surface-2")}
+                  style={{ height: `${Math.max(2, ((v - lo) / (hi - lo)) * 150)}px` }} />
+                <span className="num truncate text-[11px] text-ink-3">{period}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </Panel>
+  );
+}
+
+const MIX_COLORS = ["var(--accent)", "var(--accent-2)", "var(--teal)", "var(--impact-moderate)", "var(--violet)", "var(--neutral-stripe)"];
+
+/** Revenue by segment for the latest period memory has, as a ring. */
+function SegmentMix({ dossier }: { dossier: Dossier }) {
+  const rows = dossier.segment_mix ?? [];
+  if (!rows.length) return null;
+  const latest = [...rows].sort((a, b) => periodEnd(b.period).localeCompare(periodEnd(a.period)))[0].period;
+  const now = rows.filter((r) => r.period === latest);
+  const total = now.reduce((a, r) => a + (r.revenue_cr ?? 0), 0);
+  const parts = now.map((r) => ({ name: r.segment, share: r.share_pct ?? (total ? ((r.revenue_cr ?? 0) / total) * 100 : 0), cr: r.revenue_cr }))
+    .filter((r) => r.share > 0).sort((a, b) => b.share - a.share).slice(0, 6);
+  if (!parts.length) return null;
+  const R = 50, len = 2 * Math.PI * R, sum = parts.reduce((a, p) => a + p.share, 0);
+  let off = 0;
+  return (
+    <Panel title="Business mix" hint={`${latest} revenue`}>
+      <div className="grid items-center gap-4 sm:grid-cols-[130px_minmax(0,1fr)]">
+        <svg viewBox="0 0 130 130" className="mx-auto h-[130px] w-[130px]" role="img" aria-label="Revenue by segment">
+          {parts.map((p, i) => {
+            const seg = (p.share / sum) * len;
+            const el = <circle key={p.name} cx="65" cy="65" r={R} fill="none" stroke={MIX_COLORS[i]} strokeWidth="18" strokeDasharray={`${Math.max(0, seg - 2)} ${len}`} strokeDashoffset={-off} transform="rotate(-90 65 65)" />;
+            off += seg;
+            return el;
+          })}
+          {total > 0 && <text x="65" y="69" textAnchor="middle" fill="var(--ink)" style={{ font: "800 13px var(--font-sans)" }}>{cr(total)}</text>}
+        </svg>
+        <ul className="space-y-2 text-[13.5px]">
+          {parts.map((p, i) => (
+            <li key={p.name} className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+              <span className="truncate"><i className="mr-2 inline-block h-2.5 w-2.5 rounded-[3px]" style={{ background: MIX_COLORS[i] }} />{p.name}</span>
+              <span className="num text-ink-2">{p.share.toFixed(0)}%</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Panel>
+  );
+}
+
+/** The promise record in one number, with the latest few commitments and how they ended. */
+function PromiseSummary({ dossier }: { dossier: Dossier | null }) {
+  const guidance = dossier?.guidance ?? [];
+  const s = promiseStats(guidance);
+  if (!guidance.length) return null;
+  const rate = s.resolved ? Math.round((s.delivered / s.resolved) * 100) : null;
+  return (
+    <Panel title="Promises kept">
+      <div className="flex items-center gap-3.5">
+        <span className={cn("text-[34px] font-extrabold tracking-tight", rate == null ? "text-ink-3" : rate >= 75 ? "text-pos" : rate < 50 ? "text-warn" : "text-ink")}>{rate == null ? "—" : `${rate}%`}</span>
+        <span className="text-[13px] text-ink-2">{s.resolved ? `${s.delivered} of ${s.resolved} resolved commitments delivered` : "No commitment resolved yet"}, {s.open} open, checked against later filings.</span>
+      </div>
+      <ul className="mt-2 space-y-2">
+        {[...guidance].reverse().slice(0, 4).map((g) => (
+          <li key={g.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 text-[13.5px]">
+            <span className="text-ink">{g.statement}</span>
+            <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-bold", STATUS_CHIP[g.status] ?? "bg-surface-2 text-ink-2")}>{titleCase(g.status)}</span>
+          </li>
+        ))}
+      </ul>
+    </Panel>
+  );
+}
+
+function ComingUp({ dossier }: { dossier: Dossier | null }) {
+  const today = todayIST();
+  const events = (dossier?.upcoming_events ?? []).filter((e) => e.date >= today).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
+  if (!events.length) return null;
+  return (
+    <Panel title="Coming up">
+      <ul className="space-y-2.5">
+        {events.map((e, i) => {
+          const [day, mon] = istDate(e.date).split(" ");
+          return (
+            <li key={i} className="grid grid-cols-[52px_minmax(0,1fr)] items-center gap-2.5 text-[13.5px]">
+              <span className="num rounded-xl bg-accent-soft py-1.5 text-center text-[12px] font-extrabold leading-tight text-accent">{day}<span className="block text-[10px] font-bold uppercase">{mon}</span></span>
+              <span className="text-ink">{titleCase(e.event_type)}{e.description ? <span className="block text-[12px] text-ink-3">{e.description}</span> : null}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </Panel>
+  );
+}
+
+const OWN = [["promoter_pct", "Promoter", "var(--accent)"], ["fii_pct", "FII", "var(--accent-2)"], ["dii_pct", "DII", "var(--teal)"]] as const;
+
+/** Ownership by quarter, identity, the quarterly governance report, and the peers. */
+function OwnersTab({ dossier, peers, company }: { dossier: Dossier | null; peers: Peer[]; company: Company | null }) {
+  const own = [...(dossier?.ownership ?? [])].slice(-6).reverse();
+  const quarters = (dossier?.governance?.quarters ?? []) as Record<string, unknown>[];
+  const gov = quarters[quarters.length - 1];
+  const exceptions = (gov?.exceptions as string[] | undefined) ?? [];
+  return (
+    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+      <div className="min-w-0 space-y-4">
+        {!own.length && (gov || peers.length > 0) && <Empty title="No shareholding data yet" body="It fills in from the quarterly shareholding filings on NSE." />}
+        {own.length > 0 && (
+          <Panel title="Ownership" hint="% of shares, from the quarterly shareholding XBRL">
+            <ul className="space-y-2">
+              {own.map((o) => {
+                const pub = Math.max(0, 100 - (o.promoter_pct ?? 0) - (o.fii_pct ?? 0) - (o.dii_pct ?? 0));
+                return (
+                  <li key={o.period} className="grid grid-cols-[64px_minmax(0,1fr)] items-center gap-2.5">
+                    <span className="num text-[12px] text-ink-3">{o.period}</span>
+                    <span className="flex h-[26px] overflow-hidden rounded-[9px]">
+                      {OWN.map(([k, l, c]) => o[k] != null && o[k]! > 0 ? (
+                        <i key={k} title={`${l} ${o[k]}%`} className="num grid place-items-center text-[10.5px] font-bold not-italic text-white" style={{ width: `${o[k]}%`, background: c }}>{o[k]! >= 6 ? o[k]!.toFixed(1) : ""}</i>
+                      ) : null)}
+                      <i title={`Public ${pub.toFixed(1)}%`} className="num grid place-items-center bg-neutral-stripe text-[10.5px] font-bold not-italic text-ink" style={{ width: `${pub}%` }}>{pub >= 6 ? pub.toFixed(1) : ""}</i>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="mt-3 flex flex-wrap gap-3 text-[12px] font-semibold text-ink-3">
+              {[...OWN, ["", "Public", "var(--neutral-stripe)"] as const].map(([, l, c]) => <span key={l}><i className="mr-1.5 inline-block h-2.5 w-2.5 rounded-full" style={{ background: c }} />{l}</span>)}
+              {own[0]?.pledge_pct != null && <span className={cn("ml-auto", own[0].pledge_pct > 0 ? "text-warn" : "text-pos")}>Promoter pledge {own[0].pledge_pct}%</span>}
+            </p>
+          </Panel>
+        )}
+        <IdentityAndOwnership dossier={dossier} />
+      </div>
+      <div className="min-w-0 space-y-4">
+        {gov && (
+          <Panel title="Governance" hint={`quarter ended ${String(gov.quarter_end ?? "")}, NSE filing`}>
+            <ul className="space-y-2.5 text-[13.5px]">
+              <GovLine ok={exceptions.length === 0} text={exceptions.length === 0 ? "Nothing to flag this quarter: board, committees, penalties and related-party money within the rules" : `${exceptions.length} point${exceptions.length > 1 ? "s" : ""} to note`} />
+              {gov.board_size != null && <GovLine ok text={`Board: ${gov.board_size} directors, ${gov.independent_directors ?? "?"} independent`} />}
+              {exceptions.map((e) => <GovLine key={e} ok={false} text={e} />)}
+            </ul>
+          </Panel>
+        )}
+        {peers.length > 0 && (
+          <Panel title="Peers" hint={company?.sector ? `${SECTORS[company.sector] ?? titleCase(company.sector)}, nearest in size` : undefined}>
+            <div className="-mx-2 overflow-x-auto">
+              <table className="w-full border-separate border-spacing-y-1.5 text-[13px]">
+                <thead className="eyebrow text-ink-3"><tr><th className="px-2 text-left">Company</th><th className="px-2 text-right">Mcap</th><th className="px-2 text-right">1M</th><th className="px-2 text-right">1Y</th></tr></thead>
+                <tbody>
+                  {company && (
+                    <tr className="bg-accent-soft">
+                      <td className="rounded-l-xl px-2 py-2 font-extrabold text-ink">{company.symbol ?? company.company_name}</td>
+                      <td className="num px-2 text-right">{cr(company.market_cap_cr)}</td>
+                      <td className={cn("num px-2 text-right", signClass(company.ret_1m))}>{pct(company.ret_1m)}</td>
+                      <td className={cn("num rounded-r-xl px-2 text-right", signClass(company.ret_1y))}>{pct(company.ret_1y)}</td>
+                    </tr>
+                  )}
+                  {peers.map((pr) => (
+                    <tr key={pr.scrip_code} className="bg-surface-2">
+                      <td className="rounded-l-xl px-2 py-2"><Link href={`/company/${pr.scrip_code}`} className="font-bold text-ink hover:text-accent">{pr.symbol ?? pr.company_name}</Link></td>
+                      <td className="num px-2 text-right">{cr(pr.market_cap_cr)}</td>
+                      <td className={cn("num px-2 text-right", signClass(pr.ret_1m))}>{pct(pr.ret_1m)}</td>
+                      <td className={cn("num rounded-r-xl px-2 text-right", signClass(pr.ret_1y))}>{pct(pr.ret_1y)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Panel>
+        )}
+        {!gov && !peers.length && !own.length && <Empty title="No ownership or governance data yet" body="It fills in from the quarterly shareholding and governance filings on NSE." />}
+      </div>
+    </div>
+  );
+}
+
+function GovLine({ ok, text }: { ok: boolean; text: string }) {
+  return (
+    <li className="grid grid-cols-[26px_minmax(0,1fr)] items-start gap-2.5">
+      <span className={cn("grid h-[26px] w-[26px] place-items-center rounded-[9px] text-[13px] font-extrabold", ok ? "bg-pos-soft text-pos" : "bg-warn-soft text-warn")}>{ok ? "✓" : "!"}</span>
+      <span className="pt-0.5 text-ink">{text}</span>
+    </li>
   );
 }

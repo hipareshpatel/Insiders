@@ -222,7 +222,13 @@ export interface BriefResponse {
   noise: number;
   cards: number;
   high: number;
+  moderate?: number;
+  low?: number;
+  /** Cards held back because their figures could not be verified. */
+  held?: number;
   signals: number;
+  /** Published cards by sector and impact. */
+  sectors?: Record<string, { high: number; moderate: number; low: number }>;
 }
 
 /** The deterministic 0-100 actionability score (blueprint §11), stored in card_json.score. */
@@ -363,7 +369,9 @@ export interface Dossier {
   operating_notes?: { text: string; as_of: string; source_news_id: string }[];
   identity?: { former_names: string[]; entities: { name: string; type?: string | null; as_of: string }[] };
   ownership?: { period: string; promoter_pct?: number; pledge_pct?: number; fii_pct?: number; dii_pct?: number; retail_holders?: number; as_of: string }[];
-  governance?: { auditor: { name?: string; opinion?: string; note?: string; change?: string; as_of: string } | null };
+  governance?: { auditor: { name?: string; opinion?: string; note?: string; change?: string; as_of: string } | null;
+    /** Quarterly governance XBRL (governance_memory.py): board, flags, penalties, related-party loans. */
+    quarters?: Record<string, unknown>[] };
   predictions?: { id: string; kpi: string; metric: string; period: string; value: number; comparison: string;
     status: "OPEN" | "MET" | "MISSED"; actual?: number; created_on: string; resolved_on?: string }[];
   updated_at: string | null;
@@ -385,9 +393,16 @@ export interface DealRecord {
   history?: { stage: string; amount_cr: number | null; progress?: string | null; as_of: string; source_news_id: string }[];
 }
 
+export interface Peer {
+  scrip_code: string; symbol: string | null; company_name: string; market_cap_cr: number | null;
+  ret_1m: number | null; ret_1y: number | null; card_count: number;
+}
+
 export interface CompanyDetail {
   company: Company | null;
   cards: CardRow[];
+  /** The same sector's companies nearest in market cap. */
+  peers?: Peer[];
   dossier: Dossier | null;
 }
 

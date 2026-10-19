@@ -1,19 +1,21 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
+import type { CardRow } from "../../shared/types";
 import { AnnouncementCard } from "../components/AnnouncementCard";
-import { FilingRow } from "../components/FilingCard";
+import { Avatar } from "../components/Avatar";
+import { FilingRow, parseCard } from "../components/FilingCard";
 import { api, type FeedFilters } from "../lib/api";
 import { cn } from "../lib/cn";
-import { addDays, istDate, num, titleCase, todayIST } from "../lib/format";
-import { catalystFamily, FEED_TABS, SIZES } from "../lib/taxonomy";
+import { addDays, istDate, istDateTime, marketSession, num, pct, signClass, titleCase, todayIST } from "../lib/format";
+import { catalystFamily, FEED_TABS, SECTORS, SIZES, verdict, type Tone } from "../lib/taxonomy";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading, Pager } from "./FeedView";
 import { lastClose } from "./TopSignalsView";
 
-/** Redesign, step 1 (owner, 2026-10-19): one home page instead of "Top signals" and "Live feed". The day's
- * high-impact cards in full, everything else as rows that open in place; filters on the left, what is due and what
- * needs checking on the right. */
+/** The home page (redesign approved by the owner, 2026-10-19): the day in six numbers, the cards that cleared all
+ * four gates, the companies that filed, then the feed with every filter the old pages had, and a rail of what is due,
+ * overdue, building and watched. Everything comes from the existing endpoints. */
 
 const RANGES = [
   { key: "close", label: "Since close" },
@@ -21,14 +23,18 @@ const RANGES = [
   { key: "7d", label: "7 days" },
 ] as const;
 type RangeKey = (typeof RANGES)[number]["key"];
-
-const GROUPS = FEED_TABS.filter((t) => t.category);   // Results, Capex & orders, Capital & deals, Governance
-const ROWS_PER_PAGE = 30;
+const TABS = [{ key: "all", label: "For you" }, { key: "high", label: "High impact" }, ...FEED_TABS.filter((t) => t.category)];
+const PAGE = 20;
 
 function startOf(range: RangeKey, today: string): string {
   if (range === "today") return `${today}T00:00:00+05:30`;
   if (range === "7d") return `${addDays(today, -7)}T00:00:00+05:30`;
   return lastClose();
+}
+
+function greeting(now = new Date()): string {
+  const h = Number(new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", hour12: false }).format(now));
+  return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
 }
 
 export function TodayView() {
@@ -42,239 +48,402 @@ export function TodayView() {
   const today = todayIST();
   const range = (RANGES.find((r) => r.key === params.get("range"))?.key ?? "close") as RangeKey;
   const fromAt = startOf(range, today);
-  const group = GROUPS.find((g) => g.key === params.get("cat"));
-  const size = params.get("size") ?? undefined;
-  const watch = params.get("watch") === "1";
+  const tabKey = params.get("t") ?? "all";
+  const tab = TABS.find((t) => t.key === tabKey) ?? TABS[0];
   const withLow = params.get("low") === "1";
   const page = Math.max(1, Number.parseInt(params.get("page") ?? "1", 10) || 1);
-  const base: FeedFilters = { from_at: fromAt, category: group?.category, size, watch: watch ? "1" : undefined };
-  // Any filter change starts the list again at page 1.
+  const base: FeedFilters = {
+    from_at: fromAt, category: "category" in tab ? tab.category : undefined,
+    size: params.get("size") ?? undefined, sector: params.get("sector") ?? undefined, session: params.get("session") ?? undefined,
+    review: params.get("verified") === "1" ? "0" : undefined, watch: params.get("watch") === "1" ? "1" : undefined,
+    q: params.get("q") ?? undefined,
+  };
   const set = (changes: Record<string, string | null>) => setParams({ ...changes, page: null });
 
   const brief = useQuery({ queryKey: ["brief", fromAt], queryFn: () => api.brief(fromAt), staleTime: 60_000 });
+  const signals = useQuery({ queryKey: ["signals", fromAt], queryFn: () => api.signals({ from_at: fromAt }), staleTime: 60_000 });
   const high = useQuery({
-    queryKey: ["today-high", base], queryFn: () => api.feedPage({ ...base, impact: "HIGH" }, 1, 20),
+    queryKey: ["today-high", base], queryFn: () => api.feedPage({ ...base, impact: "HIGH" }, 1, PAGE),
     placeholderData: keepPreviousData,
   });
   const rest = useQuery({
-    queryKey: ["today-rest", base, withLow, page],
-    queryFn: () => api.feedPage({ ...base, impact: withLow ? "MODERATE,LOW" : "MODERATE" }, page, ROWS_PER_PAGE),
-    placeholderData: keepPreviousData,
+    queryKey: ["today-rest", base, page], queryFn: () => api.feedPage({ ...base, impact: "MODERATE" }, page, PAGE),
+    placeholderData: keepPreviousData, enabled: tab.key !== "high",
   });
-  const review = useQuery({ queryKey: ["review"], queryFn: () => api.review(), staleTime: 120_000 });
-  const held = (review.data?.cards ?? []).filter((c) => c.held === 1 && c.filed_at >= fromAt).length;
+  const low = useQuery({
+    queryKey: ["today-low", base], queryFn: () => api.feedPage({ ...base, impact: "LOW" }, 1, 30),
+    enabled: withLow && tab.key !== "high",
+  });
   const b = brief.data;
-
-  const filtersOn = !!(group || size || watch);
-  const rangeLabel = range === "close" ? "since the last close" : range === "today" ? "today" : "in the last 7 days";
+  const rangeLabel = range === "close" ? "since the close" : range === "today" ? "today" : "in the last 7 days";
+  const now = new Date().toISOString();
+  const cards = [...(high.data?.cards ?? []), ...(tab.key !== "high" ? rest.data?.cards ?? [] : [])];
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 py-5 sm:px-6">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="font-display text-[28px] leading-tight text-ink">Today</h1>
-          <p className="mt-0.5 text-sm text-ink-2">The day's material NSE filings, the important ones first.</p>
-        </div>
-        <div role="radiogroup" aria-label="Window" className="inline-flex rounded-lg border border-line bg-surface p-0.5">
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 sm:px-6">
+      <section className="flex flex-wrap items-center justify-between gap-3">
+        <p className="flex items-center gap-2 text-[13.5px] font-semibold text-ink-3">
+          <span className="live-dot" aria-hidden />
+          {greeting()} · {istDate(now)} · {marketSession(now).toLowerCase()} · as of {istDateTime(now).split(", ").pop()} IST
+        </p>
+        <div role="radiogroup" aria-label="Window" className="card-soft inline-flex gap-0.5 rounded-xl p-[3px]">
           {RANGES.map((r) => (
-            <button key={r.key} type="button" role="radio" aria-checked={range === r.key}
-              onClick={() => set({ range: r.key === "close" ? null : r.key })}
-              className={cn("h-8 rounded-md px-3 text-[13px] font-medium",
-                range === r.key ? "bg-accent-soft text-accent" : "text-ink-2 hover:text-ink")}>
+            <button key={r.key} type="button" role="radio" aria-checked={range === r.key} onClick={() => set({ range: r.key === "close" ? null : r.key })}
+              className={cn("rounded-[9px] px-3 py-1.5 text-[12.5px] font-bold transition-colors", range === r.key ? "bg-accent-soft text-accent" : "text-ink-2 hover:text-ink")}>
               {r.label}
             </button>
           ))}
         </div>
-      </header>
+      </section>
+      <h1 className="mt-2 font-display text-[26px] leading-tight text-ink sm:text-[30px]">
+        {b ? <>{num(b.cards)} filings worth your time {rangeLabel}{b.high ? <>, <span className="text-grad">{num(b.high)} that could move a stock.</span></> : "."}</>
+          : "The day's material NSE filings"}
+      </h1>
 
-      {/* The window in numbers */}
-      <dl className="mt-4 flex flex-wrap overflow-hidden rounded-xl border border-line bg-surface">
-        {([
-          ["Filings read", b ? num(b.scanned) : "—", ""],
-          ["Cards", b ? num(b.cards) : "—", ""],
-          ["High impact", b ? num(b.high) : "—", "text-impact-high"],
-          ["Pass all 4 gates", b ? num(b.signals) : "—", ""],
-          ["To verify", review.data ? num(held) : "—", held ? "text-warn" : ""],
-        ] as const).map(([label, value, tone]) => (
-          // four tiles on a phone (the gates count is in the rail), five from 640px
-          <div key={label} className={cn("min-w-[120px] flex-1 border-b border-r border-line px-4 py-2.5 last:border-r-0 sm:border-b-0",
-            label === "Pass all 4 gates" && "hidden sm:block")}>
-            <dd className={cn("num text-[19px] font-semibold leading-tight text-ink", tone)}>{value}</dd>
-            <dt className="eyebrow mt-0.5 text-ink-3">{label}</dt>
-          </div>
-        ))}
+      <dl className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
+        <Kpi label="Filings read" value={b ? num(b.scanned) : "—"} />
+        <Kpi label="Noise filtered" value={b && b.scanned ? `${Math.round((b.noise / b.scanned) * 100)}%` : "—"} sub={b ? `${num(b.noise)} set aside` : undefined} />
+        <Kpi label="Cards" value={b ? num(b.cards) : "—"} />
+        <Kpi label="High impact" value={b ? num(b.high) : "—"} tone="text-impact-high" />
+        <Kpi label="Pass all 4 gates" value={b ? num(b.signals) : "—"} tone="text-pos" />
+        <Kpi label="To verify" value={b ? num(b.held ?? 0) : "—"} tone={b?.held ? "text-warn" : undefined} />
       </dl>
 
-      {/* Filters as chips below 1024px; the left column takes them above */}
-      <div className="mt-4 flex gap-2 overflow-x-auto pb-1 lg:hidden">
-        <Chip on={!group} onClick={() => set({ cat: null })}>All events</Chip>
-        {GROUPS.map((g) => <Chip key={g.key} on={group?.key === g.key} onClick={() => set({ cat: group?.key === g.key ? null : g.key })}>{g.label}</Chip>)}
-        <Chip on={watch} onClick={() => set({ watch: watch ? null : "1" })}>★ Watchlist</Chip>
+      <SignalsStrip rows={signals.data?.cards ?? []} />
+      <Stories rows={cards} />
+
+      <div className="sticky top-14 z-10 -mx-4 mt-2 bg-bg px-4 pb-2 pt-3 sm:-mx-6 sm:px-6">
+        <div role="tablist" className="card-soft no-scrollbar inline-flex max-w-full gap-0.5 overflow-x-auto rounded-2xl p-1">
+          {TABS.map((t) => {
+            const on = t.key === tab.key;
+            const count = t.key === "all" ? b?.cards : t.key === "high" ? b?.high : undefined;
+            return (
+              <button key={t.key} type="button" role="tab" aria-selected={on} onClick={() => set({ t: t.key === "all" ? null : t.key })}
+                className={cn("flex items-center gap-1.5 whitespace-nowrap rounded-[10px] px-3.5 py-2 text-[13.5px] font-bold transition-colors",
+                  on ? "grad-accent shadow-md" : "text-ink-2 hover:text-ink")}>
+                {t.label}
+                {count != null && <span className={cn("num rounded-full px-1.5 text-[11px] font-semibold", on ? "bg-white/25" : "bg-surface-2 text-ink-3")}>{num(count)}</span>}
+              </button>
+            );
+          })}
+        </div>
+        <Filters params={params} set={set} withLow={withLow} noise={b?.noise} />
       </div>
 
-      <div className="mt-5 grid items-start gap-6 lg:grid-cols-[200px_minmax(0,1fr)_280px]">
-        <aside aria-label="Filters" className="sticky top-20 hidden space-y-5 lg:block">
-          <FilterGroup title="Event">
-            <Option on={!group} onClick={() => set({ cat: null })}>All events</Option>
-            {GROUPS.map((g) => <Option key={g.key} on={group?.key === g.key} onClick={() => set({ cat: g.key })}>{g.label}</Option>)}
-          </FilterGroup>
-          <FilterGroup title="Size">
-            <Option on={!size} onClick={() => set({ size: null })}>All sizes</Option>
-            {SIZES.map((s) => <Option key={s} on={size === s} onClick={() => set({ size: s })}>{titleCase(s)} cap</Option>)}
-          </FilterGroup>
-          <FilterGroup title="Only">
-            <Option on={watch} onClick={() => set({ watch: watch ? null : "1" })}>★ My watchlist</Option>
-            <Option on={withLow} onClick={() => set({ low: withLow ? null : "1" })}>Include low impact</Option>
-          </FilterGroup>
-          {filtersOn && (
-            <button type="button" onClick={() => set({ cat: null, size: null, watch: null })}
-              className="text-[13px] font-medium text-accent hover:underline">Clear filters</button>
-          )}
-        </aside>
-
+      <div className="mt-3 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_330px]">
         <main className="min-w-0 space-y-4">
-          <SectionHead title="High impact" note={high.data ? `${num(high.data.total ?? high.data.cards.length)} ${rangeLabel}` : undefined} />
-          {high.isPending ? <Loading /> : !high.data ? <Empty title="Couldn't load high-impact cards" body={String(high.error)} /> :
-            high.data.cards.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-line-strong bg-surface px-4 py-5 text-[14px] text-ink-2">
-                No high-impact filing {rangeLabel}{filtersOn ? " with these filters" : ""}.
-                {range !== "7d" && <> <button type="button" className="font-medium text-accent hover:underline" onClick={() => set({ range: "7d" })}>See the last 7 days</button>.</>}
-              </p>
-            ) : (
-              <>
-                {high.data.cards.map((row) => <AnnouncementCard key={row.news_id} row={row} />)}
-                {(high.data.total ?? 0) > high.data.cards.length && (
-                  <Link href="/feed?tab=high" className="block text-center text-[13px] font-medium text-accent hover:underline">All high-impact filings</Link>
-                )}
-              </>
-            )}
-
-          <SectionHead title={withLow ? "Everything else" : "Moderate impact"}
-            note={rest.data ? `${num(rest.data.total ?? rest.data.cards.length)} cards` : undefined}
-            action={<button type="button" onClick={() => set({ low: withLow ? null : "1" })} className="font-medium text-accent hover:underline">
-              {withLow ? "Hide low impact" : "Show low impact too"}</button>} />
-          {rest.isPending ? <Loading /> : !rest.data ? <Empty title="Couldn't load the other cards" body={String(rest.error)} /> :
-            rest.data.cards.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-line-strong bg-surface px-4 py-5 text-[14px] text-ink-2">Nothing else {rangeLabel}.</p>
-            ) : (
-              <div className="space-y-2">
-                {rest.data.cards.map((row) => <FilingRow key={row.news_id} row={row} />)}
+          {high.isPending ? <Loading /> : !high.data ? <Empty title="Couldn't load the cards" body={String(high.error)} /> : (
+            <>
+              {high.data.cards.map((row) => <AnnouncementCard key={row.news_id} row={row} />)}
+              {tab.key !== "high" && rest.data?.cards.map((row) => <AnnouncementCard key={row.news_id} row={row} />)}
+              {cards.length === 0 && (
+                <Empty title={`No material filing ${rangeLabel}`}
+                  body={range !== "7d" ? "Try the last 7 days, or clear the filters." : "Clear the filters, or open All filings for the full history."} />
+              )}
+              {withLow && (low.data?.cards.length ?? 0) > 0 && (
+                <section className="card-soft overflow-hidden">
+                  <h3 className="eyebrow px-5 pb-1 pt-4 text-ink-3">Low impact {rangeLabel}</h3>
+                  <div className="space-y-2 p-3">{low.data!.cards.map((row) => <FilingRow key={row.news_id} row={row} />)}</div>
+                </section>
+              )}
+              {tab.key !== "high" && rest.data && (
                 <Pager page={page} pages={rest.data.pages ?? 1} capped={!!rest.data.total_capped}
-                  onPage={(n) => setParams({ page: n > 1 ? String(n) : null })} />
-              </div>
-            )}
+                  onPage={(n) => { setParams({ page: n > 1 ? String(n) : null }); window.scrollTo({ top: 0 }); }} />
+              )}
+            </>
+          )}
         </main>
-
-        <Rail today={today} held={held} reviewLoaded={!!review.data} signals={b?.signals ?? 0} fromAt={fromAt} />
+        <Rail today={today} fromAt={fromAt} brief={b} />
       </div>
+      <Health />
     </div>
   );
 }
 
-function SectionHead({ title, note, action }: { title: string; note?: string; action?: React.ReactNode }) {
+function Kpi({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: string }) {
   return (
-    <div className="flex flex-wrap items-baseline justify-between gap-2 pt-1">
-      <h2 className="font-display text-[17px] text-ink">{title}</h2>
-      <span className="flex items-baseline gap-3 text-[12.5px] text-ink-3">{note && <span className="num">{note}</span>}{action}</span>
+    <div className="card-soft rise-in rounded-2xl px-4 py-2.5">
+      <dd className={cn("num text-[22px] font-bold leading-tight tracking-tight text-ink", tone)}>{value}</dd>
+      <dt className="text-[11.5px] font-semibold text-ink-3">{label}{sub && <span className="num block text-[11px] font-medium">{sub}</span>}</dt>
     </div>
   );
 }
 
-function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
+function scrollToCard(id: string, fallback: () => void) {
+  const el = document.getElementById(`card-${id}`);
+  if (el) el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+  else fallback();
+}
+
+function SignalsStrip({ rows }: { rows: CardRow[] }) {
+  const [, navigate] = useLocation();
+  if (!rows.length) return null;
   return (
-    <section>
-      <h3 className="eyebrow mb-1.5 text-ink-3">{title}</h3>
-      <div className="flex flex-col">{children}</div>
+    <section aria-label="Signals" className="mt-4 rounded-[20px] p-4 shadow-[var(--shadow-1)]"
+      style={{ background: "linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, var(--surface)), var(--surface))" }}>
+      <header className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="text-[15px] font-extrabold text-ink">🔥 Signals <span className="ml-1.5 text-[12.5px] font-semibold text-ink-3">cleared all four gates: big for the company, a real inflection, not already run up, clean checks</span></h2>
+        <Link href="/signals" className="text-[12.5px] font-bold text-accent hover:underline">All signals</Link>
+      </header>
+      <div className="mt-2.5 grid gap-2.5 md:grid-cols-3">
+        {rows.slice(0, 3).map((row) => {
+          const card = parseCard(row);
+          return (
+            <button key={row.news_id} type="button" onClick={() => scrollToCard(row.news_id, () => navigate(`/feed?card=${encodeURIComponent(row.news_id)}`))}
+              className="card-lift grid grid-cols-[40px_minmax(0,1fr)] gap-2.5 rounded-2xl bg-surface p-3 text-left">
+              <Avatar name={row.company_name} symbol={row.symbol} size={40} />
+              <span className="min-w-0">
+                <span className="block text-[13.5px] font-bold text-ink">{row.company_name} <span className="num font-semibold text-ink-3">· {card?.score?.total ?? row.actionability_score ?? ""}</span></span>
+                <span className="mt-0.5 line-clamp-2 block text-[12.5px] leading-snug text-ink-2">{card?.headline ?? row.headline}</span>
+                <span className="mt-1.5 flex flex-wrap gap-1">
+                  {["Big", "Inflection", "Not run up", "Clean"].map((g) => <span key={g} className="rounded-md bg-pos-soft px-1.5 py-px text-[10px] font-extrabold text-pos">{g}</span>)}
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
     </section>
   );
 }
 
-function Option({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
+function Stories({ rows }: { rows: CardRow[] }) {
+  const seen = new Set<string>();
+  const items = rows.filter((r) => !seen.has(r.scrip_code) && seen.add(r.scrip_code)).slice(0, 14);
+  if (!items.length) return null;
   return (
-    <button type="button" aria-pressed={on} onClick={onClick}
-      className={cn("rounded-md px-2 py-1.5 text-left text-[13.5px]", on ? "bg-accent-soft font-semibold text-accent" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}>
-      {children}
-    </button>
+    <div className="no-scrollbar mt-4 flex gap-3.5 overflow-x-auto pb-1" aria-label="Companies that filed">
+      {items.map((r) => (
+        <button key={r.scrip_code} type="button" title={r.company_name} onClick={() => scrollToCard(r.news_id, () => undefined)}
+          className="group flex w-[72px] shrink-0 flex-col items-center gap-1.5">
+          <span className="rounded-full p-[3px] transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105"
+            style={{ background: r.impact_level === "HIGH" ? "conic-gradient(var(--impact-high), var(--impact-moderate), var(--accent-2), var(--impact-high))" : "conic-gradient(var(--impact-moderate), #ffd27a, var(--impact-moderate))" }}>
+            <span className="block rounded-full border-2 border-surface"><Avatar name={r.company_name} symbol={r.symbol} size={54} className="!rounded-full" /></span>
+          </span>
+          <span className="w-full truncate text-center text-[11.5px] font-bold text-ink-2">{(r.symbol ?? r.company_name).split(" ")[0]}</span>
+        </button>
+      ))}
+    </div>
   );
 }
 
-function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button type="button" aria-pressed={on} onClick={onClick}
-      className={cn("shrink-0 rounded-full border px-3 py-1 text-[12.5px] font-semibold",
-        on ? "border-ink bg-ink text-bg" : "border-line bg-surface text-ink-2")}>
-      {children}
-    </button>
-  );
-}
-
-/** Right column: what needs checking, what is due today, and the watchlist's cards in this window. */
-function Rail({ today, held, reviewLoaded, signals, fromAt }: {
-  today: string; held: number; reviewLoaded: boolean; signals: number; fromAt: string;
+function Filters({ params, set, withLow, noise }: {
+  params: URLSearchParams; set: (c: Record<string, string | null>) => void; withLow: boolean; noise?: number;
 }) {
-  const due = useQuery({ queryKey: ["calendar", today, today], queryFn: () => api.calendar(today, today), staleTime: 300_000 });
-  const watched = useQuery({ queryKey: ["today-watch", fromAt], queryFn: () => api.feed({ from_at: fromAt, watch: "1" }, null, 8), staleTime: 60_000 });
-  const events = due.data?.events ?? [];
-  const cards = watched.data?.cards ?? [];
+  const [text, setText] = useState(params.get("q") ?? "");
+  const q = params.get("q") ?? "";
+  useEffect(() => setText(q), [q]);
+  useEffect(() => {
+    const id = setTimeout(() => { if (q !== text) set({ q: text || null }); }, 300);
+    return () => clearTimeout(id);
+  }, [text, q, set]);
+  const sel = "h-9 rounded-[11px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:border-line-strong focus:border-accent focus:outline-none";
+  const tog = (on: boolean) => cn("inline-flex h-9 items-center gap-1.5 rounded-[11px] border px-3 text-[13px] font-bold transition-colors",
+    on ? "border-transparent bg-accent-soft text-accent" : "border-line bg-surface text-ink-2 hover:text-ink");
   return (
-    <aside className="space-y-4 lg:sticky lg:top-20">
-      {signals > 0 && (
-        <Link href="/signals" className="block rounded-xl border border-accent-line bg-accent-soft px-4 py-3 hover:border-accent">
-          <span className="num text-[18px] font-semibold text-accent">{num(signals)}</span>
-          <span className="ml-2 text-[13px] text-ink-2">passed all four gates: big for the company, an inflection, not run up, clean checks</span>
-        </Link>
-      )}
-      {reviewLoaded && held > 0 && (
-        <Panel title="To verify" link={{ href: "/system", label: "Review" }}>
-          <p className="rounded-lg bg-warn-soft px-3 py-2 text-[13px] text-ink-2">
-            <span className="num mr-1.5 text-[17px] font-semibold text-warn">{num(held)}</span>
-            {held === 1 ? "card's figures" : "cards' figures"} did not fully match the filing, so {held === 1 ? "it is" : "they are"} held back.
-          </p>
+    <div className="mt-2.5 flex flex-wrap items-center gap-2">
+      <select aria-label="Size" className={sel} value={params.get("size") ?? ""} onChange={(e) => set({ size: e.target.value || null })}>
+        <option value="">All sizes</option>
+        {SIZES.map((s) => <option key={s} value={s}>{titleCase(s)} cap</option>)}
+      </select>
+      <select aria-label="Sector" className={sel} value={params.get("sector") ?? ""} onChange={(e) => set({ sector: e.target.value || null })}>
+        <option value="">All sectors</option>
+        {Object.entries(SECTORS).filter(([k]) => k !== "default").map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+      </select>
+      <select aria-label="Market session" className={sel} value={params.get("session") ?? ""} onChange={(e) => set({ session: e.target.value || null })}>
+        <option value="">All sessions</option>
+        <option value="LIVE_MARKET">Live market</option>
+        <option value="AFTER_MARKET,PRE_MARKET,NON_TRADING">After hours &amp; weekend</option>
+      </select>
+      <button type="button" aria-pressed={params.get("verified") === "1"} className={tog(params.get("verified") === "1")} onClick={() => set({ verified: params.get("verified") === "1" ? null : "1" })}>✓ Verified only</button>
+      <button type="button" aria-pressed={params.get("watch") === "1"} className={tog(params.get("watch") === "1")} onClick={() => set({ watch: params.get("watch") === "1" ? null : "1" })}>★ Watchlist</button>
+      <button type="button" aria-pressed={withLow} className={tog(withLow)} onClick={() => set({ low: withLow ? null : "1" })}>+ Low impact</button>
+      <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Filter by company or headline" aria-label="Filter by company or headline"
+        className="h-9 min-w-0 flex-1 basis-44 rounded-[11px] border border-line bg-surface px-3 text-[13px] text-ink placeholder:text-ink-3 focus:border-accent focus:outline-none" />
+      <Link href="/feed?tab=noise" className="text-[12.5px] font-bold text-accent hover:underline sm:ml-auto">
+        See what was filtered out{noise ? ` (${num(noise)})` : ""} →
+      </Link>
+    </div>
+  );
+}
+
+function Panel({ title, link, children }: { title: string; link?: { href: string; label: string }; children: ReactNode }) {
+  return (
+    <section className="card-soft rise-in flex flex-col gap-2.5 px-[18px] py-4">
+      <header className="flex items-baseline justify-between gap-2">
+        <h2 className="text-[15px] font-extrabold text-ink">{title}</h2>
+        {link && <Link href={link.href} className="text-[12.5px] font-bold text-accent hover:underline">{link.label}</Link>}
+      </header>
+      {children}
+    </section>
+  );
+}
+
+const VERDICT_CHIP: Record<Tone, string> = { POSITIVE: "bg-pos-soft text-pos", NEGATIVE: "bg-neg-soft text-neg", MIXED: "bg-warn-soft text-warn", NEUTRAL: "bg-accent-soft text-accent" };
+const FAMILY_TILE: Record<string, string> = { corp: "bg-info-soft text-info", meet: "bg-violet-soft text-violet", rights: "bg-teal-soft text-teal", exec: "bg-pos-soft text-pos", account: "bg-warn-soft text-warn", other: "bg-accent-soft text-accent" };
+
+function Rail({ today, fromAt, brief }: { today: string; fromAt: string; brief?: import("../../shared/types").BriefResponse }) {
+  const results = useQuery({ queryKey: ["today-results", fromAt], queryFn: () => api.feed({ from_at: fromAt, category: "RESULTS" }, null, 6), staleTime: 60_000 });
+  const upcoming = useQuery({ queryKey: ["calendar", today, "7d"], queryFn: () => api.calendar(today, addDays(today, 7)), staleTime: 300_000 });
+  const overdue = useQuery({ queryKey: ["overdue"], queryFn: () => api.overdue(), staleTime: 300_000 });
+  const radar = useQuery({ queryKey: ["radar", 3], queryFn: () => api.radar(3), staleTime: 300_000 });
+  const watched = useQuery({ queryKey: ["today-watch", fromAt], queryFn: () => api.feed({ from_at: fromAt, watch: "1" }, null, 6), staleTime: 60_000 });
+  const mix = brief ? [
+    { label: "High", n: brief.high, color: "var(--impact-high)" },
+    { label: "Moderate", n: brief.moderate ?? 0, color: "var(--impact-moderate)" },
+    { label: "Low", n: brief.low ?? 0, color: "var(--neutral-stripe)" },
+  ] : [];
+  const sectors = useMemo(() => Object.entries(brief?.sectors ?? {})
+    .map(([k, v]) => ({ k, ...v, total: v.high + v.moderate + v.low })).sort((a, b) => b.total - a.total).slice(0, 6), [brief]);
+  const top = Math.max(1, ...sectors.map((s) => s.total));
+  return (
+    <aside className="space-y-4 lg:sticky lg:top-36">
+      {brief && (
+        <Panel title="Today's mix" link={{ href: "/feed", label: "All filings" }}>
+          <div className="grid grid-cols-[110px_minmax(0,1fr)] items-center gap-3.5">
+            <Donut parts={mix} />
+            <ul className="space-y-1.5 text-[13px]">
+              {[...mix, { label: "To verify", n: brief.held ?? 0, color: "var(--warn)" }].map((m) => (
+                <li key={m.label} className="flex justify-between gap-2">
+                  <span><i className="mr-2 inline-block h-2.5 w-2.5 rounded-[3px]" style={{ background: m.color }} />{m.label}</span>
+                  <span className="num text-ink-3">{num(m.n)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </Panel>
       )}
-      <Panel title="Due today" link={{ href: "/calendar", label: "Calendar" }}>
-        {due.isPending ? <p className="text-[13px] text-ink-3">Loading…</p> : events.length === 0 ? (
-          <p className="text-[13px] text-ink-3">Nothing scheduled today.</p>
-        ) : (
-          <ul className="space-y-1.5">
-            {events.slice(0, 8).map((e) => (
-              <li key={e.id}>
-                <Link href={`/company/${e.scrip_code}`} className="flex items-baseline justify-between gap-3 text-[13.5px] hover:text-accent">
-                  <span className="min-w-0 truncate text-ink">{e.company_name ?? e.symbol ?? e.scrip_code}</span>
-                  <span className={cn("shrink-0 rounded px-1.5 text-[11px] font-semibold", catalystFamily(e.event_type).chip)}>{titleCase(e.event_type)}</span>
+      {(results.data?.cards.length ?? 0) > 0 && (
+        <Panel title="Results scorecard" link={{ href: "/results", label: "Results" }}>
+          <ul className="space-y-2">
+            {results.data!.cards.map((row) => {
+              const card = parseCard(row);
+              const v = verdict((card?.tone ?? "NEUTRAL") as Tone, row.impact_level);
+              const pat = card?.results?.pat?.yoy_pct;
+              return (
+                <li key={row.news_id} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 text-[13px]">
+                  <Link href={`/company/${row.scrip_code}`} className="truncate"><b className="text-ink">{row.symbol ?? row.company_name}</b> <span className="text-ink-3">{card?.results?.period ?? ""}</span></Link>
+                  <span className={cn("num", signClass(pat))}>{pat != null ? pct(pat) : ""}</span>
+                  <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-extrabold", VERDICT_CHIP[v.tone])}>{v.label}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </Panel>
+      )}
+      <Panel title="Coming up, 7 days" link={{ href: "/calendar", label: "Calendar" }}>
+        {(upcoming.data?.events ?? []).length === 0 ? <p className="text-[13px] text-ink-3">Nothing scheduled in the next 7 days.</p> : (
+          <ul className="space-y-2">
+            {upcoming.data!.events.slice(0, 6).map((e) => {
+              const [day, mon] = istDate(e.event_date).split(" ");   // "19 Oct 2026"
+              return (
+                <li key={e.id}>
+                  <Link href={`/company/${e.scrip_code}`} className="grid grid-cols-[46px_minmax(0,1fr)] items-center gap-2.5 text-[13px] hover:text-accent">
+                    <span className={cn("num rounded-[10px] py-1 text-center text-[12px] font-extrabold leading-tight", FAMILY_TILE[catalystFamily(e.event_type).key])}>
+                      {day}<span className="block text-[9.5px] font-bold uppercase tracking-wide">{mon}</span>
+                    </span>
+                    <span className="min-w-0"><span className="block truncate text-ink">{e.company_name ?? e.symbol} · {titleCase(e.event_type)}</span>
+                      {e.description && <span className="block truncate text-[11.5px] text-ink-3">{e.description}</span>}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Panel>
+      {(overdue.data?.promises.length ?? 0) > 0 && (
+        <Panel title="⚠ Overdue promises" link={{ href: "/calendar", label: "All" }}>
+          <ul className="divide-y divide-line">
+            {overdue.data!.promises.slice(0, 3).map((p) => (
+              <li key={p.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 py-1.5 text-[13px]">
+                <Link href={`/company/${p.scrip_code}?tab=promises`} className="min-w-0"><span className="text-ink">{p.symbol ?? p.company_name}: {p.statement}</span>
+                  <span className="block text-[11.5px] text-ink-3">due {p.due ?? istDate(p.due_date)}</span></Link>
+                <span className="num whitespace-nowrap text-[12px] font-bold text-warn">{p.days_overdue} days</span>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      )}
+      {(radar.data?.companies.length ?? 0) > 0 && (
+        <Panel title="🚀 Inflection radar" link={{ href: "/companies?view=radar", label: "Radar" }}>
+          <ul className="space-y-2">
+            {radar.data!.companies.slice(0, 3).map((c) => (
+              <li key={c.scrip_code}>
+                <Link href={`/company/${c.scrip_code}`} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 text-[13.5px] hover:text-accent">
+                  <span className="min-w-0"><b className="text-ink">{c.company_name}</b><span className="block truncate text-[11.5px] text-ink-3">{c.triggers.map((t) => t.text).join(" · ")}</span></span>
+                  <span className="flex gap-[3px]">{c.triggers.map((t) => <i key={t.kind} className="h-2 w-2 rounded-full bg-accent" />)}</span>
                 </Link>
               </li>
             ))}
-            {events.length > 8 && <li className="text-[12.5px] text-ink-3">+ {events.length - 8} more</li>}
           </ul>
-        )}
-      </Panel>
+        </Panel>
+      )}
       <Panel title="Watchlist" link={{ href: "/?watch=1", label: "Only these" }}>
-        {watched.isPending ? <p className="text-[13px] text-ink-3">Loading…</p> : cards.length === 0 ? (
+        {(watched.data?.cards ?? []).length === 0 ? (
           <p className="text-[13px] text-ink-3">No cards for your watchlist in this window. Star a company on its page to follow it.</p>
         ) : (
-          <ul className="space-y-1.5">
-            {cards.map((c) => (
-              <li key={c.news_id} className="flex items-baseline justify-between gap-3 text-[13.5px]">
-                <Link href={`/company/${c.scrip_code}`} className="min-w-0 truncate text-ink hover:text-accent">{c.company_name}</Link>
-                <span className="num shrink-0 text-[12px] text-ink-3">{istDate(c.filed_at).replace(/ \d{4}$/, "")}</span>
+          <ul className="space-y-2">
+            {watched.data!.cards.map((c) => (
+              <li key={c.news_id} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 text-[13.5px]">
+                <Link href={`/company/${c.scrip_code}`} className="truncate font-bold text-ink hover:text-accent">{c.company_name}</Link>
+                <span className={cn("num text-[12.5px] font-bold", signClass(c.ret_1w))}>{c.ret_1w != null ? `1W ${pct(c.ret_1w)}` : ""}</span>
               </li>
             ))}
           </ul>
         )}
       </Panel>
+      {sectors.length > 0 && (
+        <Panel title="Where the news is">
+          <ul className="space-y-1.5">
+            {sectors.map((s) => (
+              <li key={s.k} className="grid grid-cols-[100px_minmax(0,1fr)_24px] items-center gap-2 text-[12.5px] text-ink-2">
+                <span className="truncate">{SECTORS[s.k] ?? titleCase(s.k)}</span>
+                <span className="flex h-2 overflow-hidden rounded-full bg-surface-2">
+                  <i style={{ width: `${(s.high / top) * 100}%`, background: "var(--impact-high)" }} />
+                  <i style={{ width: `${(s.moderate / top) * 100}%`, background: "var(--impact-moderate)" }} />
+                  <i style={{ width: `${(s.low / top) * 100}%`, background: "var(--neutral-stripe)" }} />
+                </span>
+                <span className="num text-right text-ink-3">{s.total}</span>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      )}
     </aside>
   );
 }
 
-function Panel({ title, link, children }: { title: string; link?: { href: string; label: string }; children: React.ReactNode }) {
+function Donut({ parts }: { parts: { label: string; n: number; color: string }[] }) {
+  const total = parts.reduce((a, p) => a + p.n, 0);
+  const r = 44, len = 2 * Math.PI * r;
+  let offset = 0;
   return (
-    <section className="rounded-xl border border-line bg-surface px-4 py-3.5">
-      <header className="mb-2.5 flex items-baseline justify-between">
-        <h2 className="eyebrow text-ink-3">{title}</h2>
-        {link && <Link href={link.href} className="text-[12.5px] font-medium text-accent hover:underline">{link.label}</Link>}
-      </header>
-      {children}
-    </section>
+    <svg viewBox="0 0 110 110" className="h-[110px] w-[110px]" role="img" aria-label={parts.map((p) => `${p.n} ${p.label.toLowerCase()}`).join(", ")}>
+      <circle cx="55" cy="55" r={r} fill="none" stroke="var(--surface-2)" strokeWidth="14" />
+      {total > 0 && parts.map((p) => {
+        const seg = (p.n / total) * len;
+        const el = <circle key={p.label} cx="55" cy="55" r={r} fill="none" stroke={p.color} strokeWidth="14"
+          strokeDasharray={`${Math.max(0, seg - 2)} ${len}`} strokeDashoffset={-offset} transform="rotate(-90 55 55)" />;
+        offset += seg;
+        return el;
+      })}
+      <text x="55" y="58" textAnchor="middle" fill="var(--ink)" style={{ font: "800 20px var(--font-sans)" }}>{num(total)}</text>
+      <text x="55" y="72" textAnchor="middle" fill="var(--ink-3)" style={{ font: "600 9.5px var(--font-sans)" }}>cards</text>
+    </svg>
+  );
+}
+
+function Health() {
+  const system = useQuery({ queryKey: ["system"], queryFn: api.system, staleTime: 120_000 });
+  const run = system.data?.runs?.[0];
+  const failed = system.data?.queue?.failed ?? 0;
+  return (
+    <footer className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-line pt-3.5 text-[12.5px] text-ink-3">
+      {run && (
+        <span><b className={run.status === "OK" || run.status === "RUNNING" ? "text-pos" : "text-warn"}>●</b> Last pipeline run {istDateTime(run.started_at).split(", ").pop()} IST · {run.status.toLowerCase()}</span>
+      )}
+      {system.data && <span>{num(failed)} filings failed in the queue</span>}
+      <span>History since 1 Jan 2025 · NSE companies ≥ ₹500 Cr</span>
+    </footer>
   );
 }

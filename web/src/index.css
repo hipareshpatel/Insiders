@@ -2,116 +2,124 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* Light (blueprint §13.1): warm alabaster canvas, white cards on warm hairlines, deep forest green
-   accent, sage "why it matters" box. */
+/* Premium finance-app look (owner approved the redesign concept, 2026-10-19): a soft cool canvas, white cards with
+   soft depth, one indigo accent, green and red only for moves. */
 :root {
-  --bg: #f8f7f4;
+  --bg: #f4f6fa;
   --surface: #ffffff;
-  --surface-2: #f2f0eb;
-  --line: #e6e4dd;
-  --line-strong: #d4d1c7;
-  --ink: #1c1b17;
-  --ink-2: #4a4840;
-  --ink-3: #85827a;
-  --accent: #1b4d3e;
+  --surface-2: #f1f3f8;
+  --line: #e4e8ef;
+  --line-strong: #d3d9e3;
+  --ink: #0e1726;
+  --ink-2: #475467;
+  --ink-3: #8592a6;
+  --accent: #3b4fe4;
+  --accent-2: #6b7bf0;
   --accent-ink: #ffffff;
-  --accent-soft: #eaf2ee;
-  --accent-line: #b9d3c6;
-  --insight: #eaf2ee;
-  --insight-ink: #1b4d3e;
-  --impact-high: #0f766e;
-  --impact-moderate: #b45309;
-  --risk: #be123c;
-  --pos: #0f766e;
-  --neg: #be123c;
-  --warn: #b45309;
-  --info: #2563eb;
-  --pos-soft: #e6f3f1;
-  --neg-soft: #fcecef;
-  --warn-soft: #fbf1e4;
-  --info-soft: #edf2fd;
-  --neutral-stripe: #d4d1c7;
-  --violet: #6d28d9;
-  --violet-soft: #f3effc;
-  --teal: #0f766e;
-  --teal-soft: #e6f3f1;
+  --accent-soft: #eceefe;
+  --accent-line: #c5cbf8;
+  --insight: #f3f5ff;
+  --insight-ink: #3b4fe4;
+  --impact-high: #e0473a;
+  --impact-moderate: #f0a12b;
+  --risk: #e0473a;
+  --pos: #0f9d63;
+  --neg: #e0473a;
+  --warn: #c27a0a;
+  --info: #2754d6;
+  --pos-soft: #e3f6ec;
+  --neg-soft: #fdecea;
+  --warn-soft: #fdf3e1;
+  --info-soft: #e6eeff;
+  --neutral-stripe: #b7c0ce;
+  --violet: #6d3fd3;
+  --violet-soft: #f1ebfe;
+  --teal: #0e8a79;
+  --teal-soft: #e1f5f2;
+  --shadow-1: 0 1px 2px rgba(14, 23, 38, 0.05), 0 2px 8px rgba(14, 23, 38, 0.04);
+  --shadow-2: 0 6px 24px rgba(14, 23, 38, 0.09), 0 2px 6px rgba(14, 23, 38, 0.05);
   color-scheme: light;
 }
 
-/* Dark: OLED midnight, emerald accents. */
 :root[data-theme="dark"] {
-  --bg: #0b0f17;
-  --surface: #111827;
-  --surface-2: #172031;
-  --line: #1f2937;
-  --line-strong: #2d3a4d;
-  --ink: #e7eaf0;
-  --ink-2: #a7afbd;
-  --ink-3: #6f7889;
-  --accent: #34d399;
-  --accent-ink: #052e22;
-  --accent-soft: rgba(52, 211, 153, 0.1);
-  --accent-line: rgba(52, 211, 153, 0.35);
-  --insight: #06281e;
-  --insight-ink: #34d399;
-  --impact-high: #2dd4bf;
-  --impact-moderate: #fbbf24;
-  --risk: #fb7185;
-  --pos: #34d399;
-  --neg: #fb7185;
-  --warn: #fbbf24;
-  --info: #60a5fa;
-  --pos-soft: rgba(52, 211, 153, 0.1);
-  --neg-soft: rgba(251, 113, 133, 0.1);
-  --warn-soft: rgba(251, 191, 36, 0.1);
-  --info-soft: rgba(96, 165, 250, 0.1);
-  --neutral-stripe: #3a4352;
-  --violet: #a78bfa;
-  --violet-soft: rgba(167, 139, 250, 0.12);
-  --teal: #2dd4bf;
-  --teal-soft: rgba(45, 212, 191, 0.12);
+  --bg: #0a0e15;
+  --surface: #121823;
+  --surface-2: #19212e;
+  --line: #232d3b;
+  --line-strong: #2e3a4b;
+  --ink: #eef2f8;
+  --ink-2: #a9b4c4;
+  --ink-3: #74819a;
+  --accent: #8c9bff;
+  --accent-2: #6b7bf0;
+  --accent-ink: #0a0e15;
+  --accent-soft: #1c2347;
+  --accent-line: #3a4690;
+  --insight: #161d33;
+  --insight-ink: #a6b2ff;
+  --impact-high: #ff7468;
+  --impact-moderate: #f6b84a;
+  --risk: #ff7468;
+  --pos: #3dd68c;
+  --neg: #ff7468;
+  --warn: #f6b84a;
+  --info: #8fb0ff;
+  --pos-soft: #10291d;
+  --neg-soft: #33171a;
+  --warn-soft: #33260e;
+  --info-soft: #18244a;
+  --neutral-stripe: #455066;
+  --violet: #b9a2ff;
+  --violet-soft: #241c3d;
+  --teal: #4fd1c5;
+  --teal-soft: #0f2a28;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.45);
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0b0f17;
-    --surface: #111827;
-    --surface-2: #172031;
-    --line: #1f2937;
-    --line-strong: #2d3a4d;
-    --ink: #e7eaf0;
-    --ink-2: #a7afbd;
-    --ink-3: #6f7889;
-    --accent: #34d399;
-    --accent-ink: #052e22;
-    --accent-soft: rgba(52, 211, 153, 0.1);
-    --accent-line: rgba(52, 211, 153, 0.35);
-    --insight: #06281e;
-    --insight-ink: #34d399;
-    --impact-high: #2dd4bf;
-    --impact-moderate: #fbbf24;
-    --risk: #fb7185;
-    --pos: #34d399;
-    --neg: #fb7185;
-    --warn: #fbbf24;
-    --info: #60a5fa;
-    --pos-soft: rgba(52, 211, 153, 0.1);
-    --neg-soft: rgba(251, 113, 133, 0.1);
-    --warn-soft: rgba(251, 191, 36, 0.1);
-    --info-soft: rgba(96, 165, 250, 0.1);
-    --neutral-stripe: #3a4352;
-    --violet: #a78bfa;
-    --violet-soft: rgba(167, 139, 250, 0.12);
-    --teal: #2dd4bf;
-    --teal-soft: rgba(45, 212, 191, 0.12);
+    --bg: #0a0e15;
+    --surface: #121823;
+    --surface-2: #19212e;
+    --line: #232d3b;
+    --line-strong: #2e3a4b;
+    --ink: #eef2f8;
+    --ink-2: #a9b4c4;
+    --ink-3: #74819a;
+    --accent: #8c9bff;
+    --accent-2: #6b7bf0;
+    --accent-ink: #0a0e15;
+    --accent-soft: #1c2347;
+    --accent-line: #3a4690;
+    --insight: #161d33;
+    --insight-ink: #a6b2ff;
+    --impact-high: #ff7468;
+    --impact-moderate: #f6b84a;
+    --risk: #ff7468;
+    --pos: #3dd68c;
+    --neg: #ff7468;
+    --warn: #f6b84a;
+    --info: #8fb0ff;
+    --pos-soft: #10291d;
+    --neg-soft: #33171a;
+    --warn-soft: #33260e;
+    --info-soft: #18244a;
+    --neutral-stripe: #455066;
+    --violet: #b9a2ff;
+    --violet-soft: #241c3d;
+    --teal: #4fd1c5;
+    --teal-soft: #0f2a28;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.45);
     color-scheme: dark;
   }
 }
 
 @theme inline {
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Plus Jakarta Sans Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   --font-num: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
 
@@ -124,6 +132,7 @@
   --color-ink-2: var(--ink-2);
   --color-ink-3: var(--ink-3);
   --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
   --color-accent-line: var(--accent-line);
@@ -157,10 +166,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Headlines: Plus Jakarta Sans, semibold to bold, tight tracking. */
+/* Headlines: Manrope, extra bold, tight tracking. */
 .font-display {
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  letter-spacing: -0.025em;
 }
 .font-display.font-semibold {
   font-weight: 600;
@@ -192,4 +201,58 @@ body {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Premium surfaces: white rounded cards with soft depth, lifting on hover. */
+.card-soft {
+  background: var(--surface);
+  border-radius: 22px;
+  box-shadow: var(--shadow-1);
+}
+.card-lift {
+  transition: box-shadow 0.3s cubic-bezier(0.22, 0.9, 0.24, 1), transform 0.3s cubic-bezier(0.22, 0.9, 0.24, 1);
+}
+.card-lift:hover {
+  box-shadow: var(--shadow-2);
+  transform: translateY(-2px);
+}
+.grad-accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+}
+.text-grad {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@keyframes rise-in {
+  from {
+    transform: translateY(14px);
+  }
+}
+.rise-in {
+  animation: rise-in 0.55s cubic-bezier(0.22, 0.9, 0.24, 1) both;
+}
+@keyframes ping-dot {
+  70% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pos);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--pos) 60%, transparent);
+  animation: ping-dot 2s infinite;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

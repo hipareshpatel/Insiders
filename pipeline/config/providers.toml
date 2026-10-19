@@ -358,6 +358,18 @@ max_tokens = 8000
 context_tokens = 250000
 limits = { rpm = 10 }
 
+# Pass 2 packed (PASS2_PACK=N, ai/packer.py): N filings in one request, so a free model with few requests a day can
+# write a regular share of cards. Gemini 3.6 Flash wrote the best free cards in round 4 (11% WRONG on 9) but allows about
+# 20 requests a day; packed 6 to a request that is ~120 cards. Its limiter is shared with its other routes.
+[[routes.pass2_packed]]
+provider = "gemini"
+model = "gemini-3.6-flash"
+json_mode = true
+max_tokens = 60000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
 # ------------------------------------------------------------------ Vision OCR for scanned pages
 
 # Long documents (prompt above ~12,000 tokens: concall transcripts, investor presentations, annual

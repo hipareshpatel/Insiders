@@ -79,6 +79,8 @@ class Settings:
     max_ocr_pages: int = field(default_factory=lambda: _env_int("MAX_OCR_PAGES", 20 if _local_ocr() else 6))
     pass2_char_budget: int = field(default_factory=lambda: _env_int("PASS2_CHAR_BUDGET", 40_000))
     workers: int = field(default_factory=lambda: _env_int("PIPELINE_WORKERS", 3))
+    # Pass 2 packed: this many filings in one request on the `pass2_packed` route (Gemini; ai/packer.py). 0 = off.
+    pass2_pack: int = field(default_factory=lambda: _env_int("PASS2_PACK", 0))
 
     def load_toml(self, name: str) -> dict:
         return _load_toml(self.config_dir / name)

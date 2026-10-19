@@ -76,7 +76,11 @@ into `main` without the last sync and started `pipeline.yml` there.
    you can (GitHub's Actions tab), so two writers rarely edit the same company's memory; report if a run collides.
 4. Your other work: T19 (the held-card export), T18 and T17 (code fixes in your files, pushed to the branch; they reach
    production through a PR to `main` that the cloud opens and merges), audit rounds on the laptop's own database.
-5. The branch stays `claude/nice-goodall-ta0sxs`; after a merge the cloud restarts it from `main`. `git pull` as always.
+5. **Spend no free AI quota.** The keys are the same as GitHub's (D14), so every laptop request comes out of production's
+   day: at 05:35 IST four Gemini models already answered "429 exceeded your current quota" (the night's work spent it;
+   Gemini resets 12:30 IST). No `process`, audit round or card re-run on the free routes; tests and offline checks only.
+   Re-runs you need go in the report and the cloud requeues them on production.
+6. The branch stays `claude/nice-goodall-ta0sxs`; after a merge the cloud restarts it from `main`. `git pull` as always.
 Report: **synced** (2026-10-20 05:17-05:22 IST).
 1. Last `sync-to-cloud`. The sync goes by cursor, so the card, company and filing cursors were reset (object hashes kept):
    without that, cards re-read for old filings and company prices refreshed after 04:23 sat behind the cursors. The 1,991

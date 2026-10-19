@@ -2353,7 +2353,7 @@ class Pipeline:
             """
             # a results card with its XBRL file: code writes the figures, the model's words are cut to a line or two
             built = (results_card.build(candidate, tagged, filing.company_name,
-                                        (dossier_as_of(dossier, filing.filed_at, inclusive=False) or {}).get("financial_metrics"))
+                                        results_card.history_from_view(view))
                      if tagged and "RESULTS" in (event_type, candidate.event_type) else [])
             units = fix_unit_slips(candidate, sources)
             counts = fix_count_millions(candidate, sources)

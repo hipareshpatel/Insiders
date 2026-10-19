@@ -106,7 +106,7 @@ def test_memory_points_rank_streaks_and_margins_from_memory_alone():
         + _history("ebitda_margin", [15, 15, 15, 15, 18.0, 17.5, 18.2, 17.9], "PCT")
     points = [p.text for p in memory_points(_tagged("Q1FY27", 20, 14, revenue=120, revenue_year_ago=90, margin=14.0), history)]
     assert "Q1FY27 is the first year-on-year rise in revenue after 4 quarters of decline in memory." in points
-    assert any("net profit of ₹20 Cr is the highest of the 9 quarters memory holds since Q1FY25" in p for p in points)
+    assert any("net profit of ₹20 Cr is the highest of the 9 quarters in a row memory holds since Q1FY25" in p for p in points)
     assert len(points) == 2 and all(p for p in points)
     # the margin point names each earlier quarter's own figure
     only_margin = memory_points(_tagged("Q1FY27", 15.5, 14, margin=14.0), _history("pat", [10, 11, 12, 13, 14, 15, 16, 17])
@@ -163,3 +163,20 @@ def test_no_driver_when_the_bridge_does_not_account_for_the_profit_change():
         FinancialMetric(metric=m, period=p, value=v) for m, (now, then) in rows.items()
         for p, v in (("Q1FY27", now), ("Q1FY26", then))])
     assert profit_driver(siemens) is None
+
+
+def test_a_rank_counts_the_files_own_quarters_and_never_jumps_a_gap():
+    """Orient Bell (round 6): memory lacked Q4FY26 and the card called Q1FY27 the highest quarter, though the filing's
+    own Q4FY26 was higher. Jubilant: "highest of 6" where memory held two quarters in a row."""
+    from bse_intel.models import FinancialMetric
+    from bse_intel.results_card import history_from_view, memory_points
+
+    tagged = _tagged("Q1FY27", 14, 12)
+    tagged.metrics.append(FinancialMetric(metric="pat", period="Q4FY26", value=25))   # the file's previous quarter
+    history = _history("pat", [10, 11, 12, 13, 14, 15, 16])                           # Q1FY25..Q3FY26, Q4FY26 missing
+    assert not any("highest" in p.text for p in memory_points(tagged, history))
+    gap = _history("pat", [10, 11, 12, 13, 14, 15]) + [{"metric": "pat", "period": "Q4FY26", "value": 13, "unit": "INR_CR"}]
+    gap = [h for h in gap if h["period"] != "Q3FY26"]                                # a hole one quarter back
+    assert not any("highest" in p.text for p in memory_points(_tagged("Q1FY27", 20, 12), gap))
+    view = {"metrics": {"pat": ["Q3FY26: 15 INR_CR", "Q4FY26: 13 INR_CR", "FY26: 50 INR_CR"]}}
+    assert [(h["period"], h["value"]) for h in history_from_view(view)] == [("Q3FY26", 15.0), ("Q4FY26", 13.0)]

@@ -75,6 +75,23 @@ _LABELS = (("revenue", "Revenue from operations"), ("interest_earned", "Interest
            ("provisions", "Provisions"), ("pat", "Net profit"), ("eps", "EPS"))
 
 
+_VIEW_LINE = re.compile(r"^\s*(Q[1-4]FY\d{2})\s*:\s*(-?\d[\d,]*(?:\.\d+)?)\s*([A-Z_]*)")
+
+
+def history_from_view(view: dict | None) -> list[dict]:
+    """Memory's quarterly figures as the card's writer was shown them ("Q1FY26: 12.3 INR_CR"): only the figures memory
+    keeps after its period checks. The raw store also holds figures left out for not reconciling with their own
+    periods, and a rank read from it called Jubilant's quarter "the highest of 6" where memory showed two (round 6)."""
+    out = []
+    for metric, lines in ((view or {}).get("metrics") or {}).items():
+        for line in lines if isinstance(lines, list) else []:
+            m = _VIEW_LINE.match(str(line))
+            if m:
+                out.append({"metric": metric, "period": m.group(1), "value": float(m.group(2).replace(",", "")),
+                            "unit": m.group(3) or "INR_CR"})
+    return out
+
+
 def _quarters(history, metric: str) -> dict[int, float]:
     """Memory's quarterly values of one metric, by quarter index."""
     out = {}
@@ -119,14 +136,23 @@ def memory_points(tagged, history) -> list[Insight]:
         if m is None:
             continue
         past = {i: v for i, v in _quarters(history, metric).items() if i < now_index}
-        if len(past) >= MIN_QUARTERS:
-            first = quarter_from_index(min(past))
-            if m.value > max(past.values()):
-                points.append((2, f"{tagged.period} {word} of ₹{_value(m.value)} Cr is the highest of the {len(past) + 1} "
-                                  f"quarters memory holds since {first}."))
-            elif m.value < min(past.values()):
-                points.append((2, f"{tagged.period} {word} of ₹{_value(m.value)} Cr is the lowest of the {len(past) + 1} "
-                                  f"quarters memory holds since {first}."))
+        # the file's own earlier quarters win over memory's (Orient Bell, round 6: memory lacked Q4FY26, the filing showed
+        # it higher, and the card called Q1FY27 the highest quarter)
+        past.update({i: x.value for x in tagged.metrics if x.metric == metric and x.value is not None
+                     for i in [quarter_index(x.period or "")] if i is not None and i < now_index})
+        run = []
+        for i in range(now_index - 1, now_index - 13, -1):
+            if i not in past:
+                break
+            run.append(past[i])
+        if len(run) >= MIN_QUARTERS:
+            first = quarter_from_index(now_index - len(run))
+            if m.value > max(run):
+                points.append((2, f"{tagged.period} {word} of ₹{_value(m.value)} Cr is the highest of the {len(run) + 1} "
+                                  f"quarters in a row memory holds since {first}."))
+            elif m.value < min(run):
+                points.append((2, f"{tagged.period} {word} of ₹{_value(m.value)} Cr is the lowest of the {len(run) + 1} "
+                                  f"quarters in a row memory holds since {first}."))
         # year-on-year signs, newest first: this quarter's from the file, earlier ones from memory's own quarters
         series = {**past, now_index: m.value}
         signs = []

@@ -85,3 +85,6 @@ def test_another_entitys_rename_is_not_the_companys_former_name():
     d = merge(d, out, f, None, "now")
     assert d["identity"]["former_names"] == ["Jindal Stainless (Hisar) Limited"]
     assert not own_former_name("Utkrisht Dream Ventures Private Limited (now known as ...)", d)
+    for placeholder in ("None", "N/A", "NA", "nil", "-", "not applicable"):
+        assert not own_former_name(placeholder, d)
+    assert own_former_name("Nagarjuna Agrichem Limited", d)

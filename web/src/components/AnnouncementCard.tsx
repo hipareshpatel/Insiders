@@ -962,12 +962,15 @@ function AiReading({ catalyst, facts, insights, takeaway }: { catalyst: string |
 }
 
 export const OTHER_RENAME = /\(\s*now\b|\bnow\s+known\s+as\b|\brenamed\s+(?:as|to)\b/i;
+// a model's placeholder stored as a name ("None", "N/A"): Persistent showed "formerly None"
+const NO_NAME = /^\s*(?:none|nil|null|n[./]?\s?a\.?|not\s+applicable|-+)?\s*$/i;
+export const formerOwnName = (n: string) => !NO_NAME.test(n) && !OTHER_RENAME.test(n);
 
 function formerName(row: CardRow): string | null {
   try {
     const names = row.former_names_json ? (JSON.parse(row.former_names_json) as string[]) : [];
     // another entity's rename ("AGH Dreams Private Limited (now AGH Dreams Limited)") is not the company's former name
-    return names.find((n) => !OTHER_RENAME.test(n)) ?? null;
+    return names.find(formerOwnName) ?? null;
   } catch {
     return null;
   }

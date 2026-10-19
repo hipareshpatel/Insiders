@@ -62,6 +62,21 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T15 · P1 · laptop · OPEN — load the laptop's data onto the live site (go-live, PLAN G6)
+
+The owner's choice (D37): go live and review the live cards. The live site (D1 `bse-index-nse`, R2 `bse-intelligence`) is
+deployed and empty. After T3's scheduled task is off:
+1. Load what the laptop has now, so the live site has companies, cards and memory:
+   `$env:PLATFORM_API_URL = 'https://insiders.reply-bd3.workers.dev'; $env:INGEST_TOKEN = <the keys file's>;`
+   `python -m bse_intel sync-to-cloud --source http://localhost:5173` (resumable; stops at the D1 daily write budget, run
+   again the next day if it does). Report the JSON (rows and objects copied, anything refused).
+2. Check: `https://insiders.reply-bd3.workers.dev/feed?range=all` shows cards; a company page shows its memory; the owner
+   token opens `/api/owner/feed` with the held cards.
+3. When T13's re-seed and `refresh-summaries` are done, sync again so the live memory carries the basis fix (move
+   `data/sync_progress.json` aside first if the sync skips what it already copied; report what it did).
+4. Do not switch the schedule on (G7 is the owner's: merge the PR, then `PIPELINE_SCHEDULE = on`).
+Files you may change: `docs/PLAN.md` (G6 status line). Report: here.
+
 ## T14 · P1 · laptop · DONE — check the owner's new Cloudflare API token (GitHub's deploy key)
 
 The owner made a new API token (2026-10-20; the first one was shown in a chat and deleted), put it in GitHub as
@@ -262,7 +277,12 @@ Raw files: the laptop's `%TEMP%/t2/xml/` (not committed). Press releases checked
 when the file's quarter is about its share of the half-year or nine months (HDFC Bank 0.45% -> 1.8%), and left as filed
 otherwise (a Q1 file alone cannot tell). Tests in `test_xbrl.py`. Check on real cards: T13.
 
-## T3 · P1 · laptop · IN PROGRESS — round 7 on the current code
+## T3 · P1 · laptop · CANCELLED — round 7 on the current code
+
+**Cancelled by the owner 2026-10-20 ~04:00 IST (D37): "let's not start round 7 as we will shift to live only review".**
+**Laptop, now: disable or delete the scheduled task `insiders-round7-start` (12:40 IST) so it does not run and spend
+Gemini's quota**, and say so here. Keep `data/audit/round7/` and the scripts; nothing else to do on this task.
+
 
 Run round 7 as planned (`docs/audit/round-7.md`, 12:40 IST after Gemini's reset). Start it after pulling `ae73b45` or
 later so it measures the code that will go live, and write the commit in the round's report. Do not restart a round

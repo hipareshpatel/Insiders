@@ -50,3 +50,27 @@ def test_a_bank_is_read_on_its_own_lines():
 def test_no_file_no_change():
     out = _model_card()
     assert results_card.build(out, None, "X") == [] and out.card.headline.startswith("Ahluwalia Q3 revenue jumps")
+
+
+def test_a_loss_is_written_as_a_loss_and_a_turnaround_says_what_it_was():
+    """No "net profit ₹-12.5 Cr"; a change against a year-ago loss has no percentage (xbrl._change), so the card says
+    what the year before was instead of leaving the profit line bare."""
+    from types import SimpleNamespace
+
+    from bse_intel.models import FinancialMetric
+
+    def tagged(now, before):
+        return SimpleNamespace(kind="RESULTS", period="Q1FY27", basis="CONSOLIDATED", metrics=[
+            FinancialMetric(metric="revenue", period="Q1FY27", value=500.0, yoy_pct=10.0),
+            FinancialMetric(metric="pat", period="Q1FY27", value=now, yoy_pct=None),
+            FinancialMetric(metric="pat", period="Q1FY26", value=before, yoy_pct=None)])
+
+    out = _model_card()
+    results_card.build(out, tagged(-12.5, 8.0), "Loss Co Limited")
+    assert out.card.headline == "Loss Co Q1FY27: revenue ₹500 Cr (+10.0% YoY), net loss ₹12.5 Cr (against a profit of ₹8 Cr a year earlier)"
+    assert any(k.label == "Net loss" and k.value == "₹12.5 Cr" for k in out.card.key_numbers)
+    assert not any("-12.5" in f.text for f in out.card.what_happened)
+
+    out = _model_card()
+    results_card.build(out, tagged(20.0, -10.0), "Turn Co Limited")
+    assert out.card.headline.endswith("net profit ₹20 Cr (against a loss of ₹10 Cr a year earlier)")

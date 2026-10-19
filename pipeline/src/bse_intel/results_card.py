@@ -46,6 +46,27 @@ def _line(m) -> str:
     return f"- {m.metric} {m.period}: {m.value:g}{unit}{change}"
 
 
+def _year_ago(tagged, m):
+    """The same line a year before ("Q1FY26" for "Q1FY27", "FY26" for "FY27"), when the file carries it."""
+    match = re.fullmatch(r"(Q[1-4])?FY(\d{2})", m.period or "")
+    if not match:
+        return None
+    label = f"{match.group(1) or ''}FY{int(match.group(2)) - 1:02d}"
+    return next((x for x in tagged.metrics if x.metric == m.metric and x.period == label and x.value is not None), None)
+
+
+def _profit_words(tagged, m) -> tuple[str, str, str]:
+    """(label, amount, year-ago note) for the profit line: a loss is written as a loss, never "net profit ₹-12 Cr",
+    and a change against a year-ago loss, which no percentage can carry, says what it was."""
+    label, amount = ("Net loss", _cr(-m.value)) if m.value < 0 else ("Net profit", _cr(m.value))
+    note = ""
+    before = _year_ago(tagged, m) if m.yoy_pct is None else None
+    if before is not None and (before.value < 0 or m.value < 0):
+        was = f"a loss of {_cr(-before.value)}" if before.value < 0 else f"a profit of {_cr(before.value)}"
+        note = f"against {was} a year earlier"
+    return label, amount, note
+
+
 _LABELS = (("revenue", "Revenue from operations"), ("interest_earned", "Interest earned"),
            ("pre_provision_operating_profit", "Operating profit before provisions"), ("ebitda", "EBITDA"),
            ("provisions", "Provisions"), ("pat", "Net profit"), ("eps", "EPS"))
@@ -67,6 +88,10 @@ def build(out, tagged, company_name: str | None) -> list[str]:
     top_word = "revenue" if top.metric == "revenue" else "interest earned" if top.metric == "interest_earned" else "total income"
 
     def phrase(m, word: str) -> str:
+        if m.metric == "pat":
+            label, amount, note = _profit_words(tagged, m)
+            change = f" ({_pct(m.yoy_pct)} YoY)" if m.yoy_pct is not None else f" ({note})" if note else ""
+            return f"{label.lower()} {amount}{change}"
         change = f" ({_pct(m.yoy_pct)} YoY)" if m.yoy_pct is not None else ""
         return f"{word} {_cr(m.value)}{change}"
 
@@ -80,6 +105,9 @@ def build(out, tagged, company_name: str | None) -> list[str]:
             continue
         value = f"₹{m.value:,.2f} a share" if metric == "eps" else _cr(m.value)
         changes = _changes(m)
+        if metric == "pat":
+            label, value, note = _profit_words(tagged, m)
+            changes = ", ".join(x for x in (changes, note) if x)
         text = f"{label} {period}: {value}" + (f" ({changes})" if changes else "")
         if metric == "ebitda" and now.get("ebitda_margin") is not None:
             text += f"; margin {now['ebitda_margin'].value:.1f}%"

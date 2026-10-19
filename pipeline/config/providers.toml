@@ -259,17 +259,6 @@ extra_body = { thinking = { type = "disabled" } }  # on by default at high effor
 limits = { rpm = 60 }
 
 [[routes.pass2]]
-provider = "nvidia"
-model = "nvidia/nemotron-3-super-120b-a12b"
-spare = true
-json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
-strip_reasoning = true
-extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)
-max_tokens = 8000
-context_tokens = 120000
-limits = { rpm = 40 }
-
-[[routes.pass2]]
 provider = "zai"
 model = "glm-4.5-flash"
 weight = 4
@@ -325,17 +314,6 @@ max_tokens = 6000
 context_tokens = 900000  # 1M window: no filing is too long for it
 extra_body = { thinking = { type = "disabled" } }  # on by default at high effort
 limits = { rpm = 60 }
-
-[[routes.pass2_bulk]]
-provider = "nvidia"
-model = "nvidia/nemotron-3-super-120b-a12b"
-spare = true
-json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
-strip_reasoning = true
-extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)
-max_tokens = 8000
-context_tokens = 120000
-limits = { rpm = 40 }
 
 [[routes.pass2_bulk]]
 provider = "gemini"
@@ -410,27 +388,6 @@ max_tokens = 4000
 context_tokens = 900000  # 1M window: no filing is too long for it
 extra_body = { thinking = { type = "disabled" } }  # on by default at high effort
 limits = { rpm = 60 }
-
-[[routes.pass2_long]]
-provider = "zai"
-model = "glm-4.7-flash"
-spare = true
-json_mode = true
-max_tokens = 4000
-context_tokens = 190000
-extra_body = { thinking = { type = "disabled" } }
-limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
-
-[[routes.pass2_long]]
-provider = "nvidia"
-model = "nvidia/nemotron-3-super-120b-a12b"
-spare = true
-json_mode = false  # no JSON mode with thinking off: it answers "{}"; the reply is parsed and repaired as for other models
-strip_reasoning = true
-extra_body = { chat_template_kwargs = { enable_thinking = false } }  # owner, 2026-10-16: thinking off (D21)
-max_tokens = 8000
-context_tokens = 120000
-limits = { rpm = 40 }
 
 [[routes.vision]]
 provider = "zai"

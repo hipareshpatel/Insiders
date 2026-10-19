@@ -1,0 +1,2544 @@
+[
+ {
+  "news_id": "nse-106712090",
+  "headline": "Northern Arc Q1FY27 PAT rose 41% YoY to ₹114 Cr; net NPA improved to 0.5%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "highest-ever quarterly PAT",
+    "pdf_says": "Highest ever Q1 PAT; Q4FY26 PAT was ₹133 Cr, above Q1FY27's ₹114 Cr (consolidated income statement)",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "AUM growth of 26% YoY exceeds the company's historical trend (basis MEMORY)",
+    "pdf_says": "Memory holds no AUM history; the filing shows a 29% revenue CAGR, so no 'exceeds trend' claim is supported",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Highest-ever Q1 PAT ... building on prior quarter's performance (basis MEMORY)",
+    "pdf_says": "Memory: Q4FY26 PAT ₹132.65 Cr against Q1FY27 ₹114.1 Cr, so PAT fell QoQ",
+    "class": "memory"
+   },
+   {
+    "field": "track_next.kpis_to_verify",
+    "card_says": "NIM >= 10.2 in Q2FY27",
+    "pdf_says": "Filing's NII/avg total assets is 9.3% for Q1FY27; 10.2 is not in the filing (carried from an earlier memory prediction)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106712670",
+  "headline": "Kellton Tech Q1FY27 revenue at ₹316 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106713424",
+  "headline": "Mphasis Q1FY27 revenue grew 8.3% YoY in constant currency to $471 million; EBIT margin down 60 bps",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[EBIT margin].change",
+    "card_says": "vs Q4FY26",
+    "pdf_says": "Transcript says only 'EBIT margin was down by 60 bps' without naming the comparison period",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106719298",
+  "headline": "ITC Q1FY27: revenue ₹29,523.3 Cr (+27.6% YoY), net profit ₹4,508.79 Cr (-15.6% YoY)",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "impact_why": "A 15.6% fall in consolidated profit at India's largest FMCG/cigarette company after the excise change changes the earnings view.",
+  "issues": [
+   {
+    "field": "headline / what_happened[0] / key_numbers[Revenue]",
+    "card_says": "Revenue ₹29,523.3 Cr, +27.6% YoY, presented as growth",
+    "pdf_says": "Note 5: after the GST compensation cess ended, excise duty on cigarettes was raised from 1 Feb 2026 and is included in gross revenue, so Q1FY27 revenue is 'not strictly comparable'. Excise ₹10,408.93 Cr against ₹1,634.56 Cr; revenue net of excise ₹19,114 Cr against ₹21,495 Cr (about -11%)",
+    "class": "other"
+   },
+   {
+    "field": "key_numbers[EBITDA margin]",
+    "card_says": "17.6% (no warning)",
+    "pdf_says": "The margin is on excise-inflated revenue; not comparable with the 29.5% a year earlier",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Revenue growth exceeded Q4FY26's QoQ growth of 23.9%, showing sequential acceleration",
+    "pdf_says": "23.9% is Q1FY27's own QoQ growth (29,523.3 vs 23,821.48), not Q4FY26's; 'acceleration' is unsupported",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Revenue highest of the 6 quarters in memory",
+    "pdf_says": "True only because of the excise gross-up the filing says makes periods not comparable",
+    "class": "memory"
+   },
+   {
+    "field": "signals[RECURRING_ONE_OFFS]",
+    "card_says": "Exceptional items in 4 of the last 8 quarters: treat them as a running cost",
+    "pdf_says": "The Q1FY27 exceptional item is a ₹405.88 Cr gain (remeasurement), and Q2FY26 was also a gain; calling them a running cost misreads the sign",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106735446",
+  "headline": "Ambuja Cements arms commissions 1.2 MTPA grinding unit at Dahej, capacity at 110 MTPA",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "1.2 MTPA is about 1% of the 110 MTPA base; routine brownfield commissioning.",
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Filing gives no usage",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106743427",
+  "headline": "Man Industries gets QatarEnergy approval for LSAW pipes, coating, and bends",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "LITIGATION_REGULATORY",
+    "pdf_says": "Press release on vendor empanelment (Preferred Manufacturers List) with a customer; a business update or pre-qualification, not litigation or regulation",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106756469",
+  "headline": "Clean Max seeks shareholder approval for 32 related-party transactions up to ₹604.97 Cr with subsidiaries",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[0] / key_numbers[Largest RPT value]",
+    "card_says": "Largest RPT up to ₹604.97 Cr (Clean Max Ahhope); headline 'up to ₹604.97 Cr'",
+    "pdf_says": "Item 4: Clean Max Kenai up to ₹2,382.97 Cr; item 17 ₹2,298.75 Cr; item 7 ₹1,736.24 Cr; item 5 ₹1,604.26 Cr. The 32 resolutions total about ₹15,900 Cr",
+    "class": "other"
+   },
+   {
+    "field": "what_happened[1] / key_numbers[Second, Third largest]",
+    "card_says": "₹384.26 Cr second, ₹346.10 Cr third largest",
+    "pdf_says": "At least eight resolutions exceed ₹604.97 Cr; 384.26 and 346.10 are not second and third",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Largest transaction ₹604.97 Cr = 72.7% of quarter revenue, 10.4% of net worth",
+    "pdf_says": "The ratio arithmetic is correct for 604.97, but that is not the largest; ₹2,382.97 Cr is 41% of net worth",
+    "class": "other"
+   },
+   {
+    "field": "headline",
+    "card_says": "with subsidiaries",
+    "pdf_says": "Item 32 is with Emmvee Energy, an associate of a step-down subsidiary (₹270 Cr), not a subsidiary",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106795030",
+  "headline": "LIC MD Dinesh Pant ceases to be Managing Director upon voluntary retirement approval",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106805112",
+  "headline": "India Ratings affirms Sunteck Realty at IND AA/Stable; assigns IND A1+ to commercial paper",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106805800",
+  "headline": "Bajaj Finserv approves subscribing to ₹5,800 Cr convertible warrants in Bajaj Finance",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "to anchor its capital raise and maintain majority control",
+    "pdf_says": "Purpose is to signal support to prospective investors; nothing about maintaining control (BFL simply 'would continue to remain the subsidiary')",
+    "class": "invented"
+   },
+   {
+    "field": "track_next.catalysts",
+    "card_says": "Strengthened capital adequacy for Bajaj Finance",
+    "pdf_says": "Filing: 'The intention of the Promoter to participate is not driven on the immediate capital needs of Bajaj Finance Limited'",
+    "class": "other"
+   },
+   {
+    "field": "event_type",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "For Bajaj Finserv this is an investment (subscription to a subsidiary's warrants, filed as 'Acquisition'), not a fundraise by the company",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106728124",
+  "headline": "Suman Bansi Dhar acquired 30,07,067 shares (3.46%) of DCM Shriram International Ltd from Lala Bansi Dhar & Sons (HUF) at nil consideration on 1 August 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106736633",
+  "headline": "Orient Bell Q1FY27 revenue rose 42.6% YoY to ₹203.8 Cr; EBITDA margin expanded to 8.7%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[volume_growth]",
+    "card_says": "previous 63 lakh Sq. M. (Q1FY26), current 63 lakh Sq. M. (Q1FY27), change +0% YoY, direction NEGATIVE",
+    "pdf_says": "Q1FY27 volume 63 lakh m2, +22.9% YoY; Q1FY26 was 51 lakh m2 (volume chart). Volume rose, not flat; the card contradicts its own what_happened",
+    "class": "wrong_column"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "42.6% YoY exceeds the prior quarter's growth of 7.7% sequentially",
+    "pdf_says": "+7.7% is Q4FY26 vs Q4FY25 (YoY, 198 -> 213), not sequential; sequentially Q1FY27 revenue fell from 213 (Q4FY26) to 203",
+    "class": "wrong_period"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "EBITDA margin of 8.7% is the highest since Q4FY26 (7.0%)",
+    "pdf_says": "Filing gives only 3.9% -> 8.7% YoY; 'highest since Q4FY26' is self-contradictory (Q4FY26 was lower); memory holds Q4FY26 7.0% and Q1FY27 8.14% on its own basis, no 'highest since' support",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106745727",
+  "headline": "Poly Medicure Q1FY27 revenue rose 30.3% YoY to ₹525.38 Cr; EBITDA margin 24.1% within guided range",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106764304",
+  "headline": "Punjab & Sind Bank Q1FY27 net profit rose 23% YoY to ₹331 Cr; gross advances grew 19% YoY to ₹119,290 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[Gross Advances].quote / what_happened[1].quote",
+    "card_says": "₹119,290 Cr gross advances, quoted from 'Advances 1,17,419 97,622 ...'",
+    "pdf_says": "₹1,19,290 Cr is Total Advances (+19.35%) on the business-profile slide; 1,17,419 is net advances on the balance sheet (+20.3% YoY). Value right, quote is a different quantity",
+    "class": "other"
+   },
+   {
+    "field": "track_next.kpis_to_verify",
+    "card_says": "ROA >= 0.85-0.90% and GNPA <2.0% to check at Q2FY27 (period Q2FY27)",
+    "pdf_says": "Not in this filing; memory guidance g_d5977b06 and g_c165f449 are FY27 full-year targets, not Q2FY27 thresholds (Q1 ROA 0.73%)",
+    "class": "memory"
+   },
+   {
+    "field": "notable_changes[other_income].why",
+    "card_says": "Lower other income (469 -> 332, YoY) due to reduced recovery from written-off accounts",
+    "pdf_says": "Not in the filing; memory w_90b5701a gives that reason for the QoQ fall (₹427 Cr Q4FY26 -> ₹333 Cr), not the YoY comparison",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106764408",
+  "headline": "ITC Infotech completes amalgamation of Blazeclan and Cloudlytics units",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106770909",
+  "headline": "Kellton Tech board approves raising up to USD 50M via FCCBs on private placement",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Board recommended an FCCB fund raise up to USD 50 million (card's own deal_value.kind is FUNDRAISE); event type should be FUNDRAISE",
+    "class": "event_type"
+   },
+   {
+    "field": "impact_level",
+    "card_says": "MODERATE",
+    "pdf_says": "USD 50M (about ₹440 Cr) is roughly two-thirds of the ₹642 Cr market cap in the scale block; potential dilution of that size changes the equity view",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106780678",
+  "headline": "Titagarh Rail signs 50:50 JV with BHEL for 35-year Vande Bharat maintenance",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106780806",
+  "headline": "Supreme Infra appoints former IT Chief Commissioner Dr. Prabhakant as Independent Director",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Strengthens board oversight after Q1FY27 governance disclosures noted disqualification exceptions for three directors including the Chairman and MD",
+    "pdf_says": "Memory lists three disqualified directors (Bhawanishankar H Sharma, Vikram B Sharma, Dakshendra B Agrawal) but does not say they include the Chairman and MD; the filing does not link the appointment to them",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106791863",
+  "headline": "CARE reaffirms Jubilant Agri's bank facilities rating at CARE A+ / CARE A1+ with Stable outlook",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Procedural affirmation ... with no changes to margins or operational debt costs",
+    "pdf_says": "Filing is a one-table rating intimation; it says nothing about margins or debt costs",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106808383",
+  "headline": "Mphasis signs ~£35.4M deal extension with Social Security Scotland",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106705375",
+  "headline": "Sunteck Realty Q1FY27: revenue ₹191.56 Cr (+1.7% YoY), net profit ₹41.96 Cr (+25.5% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "PAT growth ... driven by lower total expenses and higher other income",
+    "pdf_says": "Other income fell: 1,046.67 lakh (Q1FY27) vs 1,321.29 lakh (Q1FY26), i.e. ₹10.47 Cr vs ₹13.21 Cr; total expenses did fall (150.03 vs 158.92 Cr)",
+    "class": "direction"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "EBITDA ... against ₹47.74 Cr a year earlier",
+    "pdf_says": "Q1FY26 column: PBT before JV 42.61 + finance cost 15.44 + depreciation 3.45 - other income 13.21 = ₹48.29 Cr (memory holds finance cost 14.90 for Q1FY26; the statement shows 1,544.07 lakh)",
+    "class": "arithmetic"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106711952",
+  "headline": "Northern Arc Capital Q1FY27: revenue ₹779.77 Cr (+28.8% YoY), net profit ₹114.1 Cr (+45.8% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.kpis_to_verify[0]",
+    "card_says": "net interest margin value 10.2, target maintain above 10%",
+    "pdf_says": "No NIM figure or NIM target anywhere in the filing (press release gives NII ₹394 Cr, RoA 2.7%, RoE 11.5%)",
+    "class": "invented"
+   },
+   {
+    "field": "what_happened[2] / key_numbers EBITDA",
+    "card_says": "EBITDA ₹413.35 Cr, margin 53.0%",
+    "pdf_says": "Arithmetic matches the statement (PBT + finance costs + D&A - other income), but for an NBFC this adds back interest expense, so 'EBITDA margin' is not a meaningful operating measure",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106714378",
+  "headline": "Clean Max Enviro Energy Solutions Limited held its 16th AGM on 24 July 2026 and passed all resolutions with over 99% public support",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline",
+    "card_says": "passed all resolutions with over 99% public support",
+    "pdf_says": "Resolution 2 (Manekshana re-appointment): 98.5893% overall, public institutions 93.6681% for / 6.3319% against; several RPT resolutions (e.g. items 7, 10, 12, 13): 93.2161% overall, public institutions 87.9860% for / 12.0140% against",
+    "class": "other"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "no dissent exceeding 0.2367% from public non-institutional voters",
+    "pdf_says": "0.2367% is the overall against-share on many RPT items (all categories), not the public non-institutional figure (~0.0117%); overall dissent reached 6.7839% and public-institution dissent 12.0140%",
+    "class": "other"
+   },
+   {
+    "field": "what_happened[2]",
+    "card_says": "highest dissent at 6.7839% for Resolution 12 (Clean Max Eliora Private Limited)",
+    "pdf_says": "The same ~6.78% overall dissent recurs on many RPT items (item 7 Clean Max Vayu already 6.7838%, items 10, 12, 13 and others); Resolution 12 is not uniquely the highest",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "public non-institutional voting showing minimal dissent (max 6.7839%)",
+    "pdf_says": "6.7839% is the total against-share, driven by public institutions (12.01% against); public non-institutions were 0.0116%",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106749844",
+  "headline": "Jubilant Agri gets GST SCN demanding ₹5.09 Cr for FY21-FY24, contests it",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "A ₹5.09 Crore GST show-cause notice is of net worth",
+    "pdf_says": "Sentence is missing its ratio (₹5.09 Cr is about 1.1% of the ₹459.9 Cr net worth in the scale block)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106763720",
+  "headline": "Man Industries acquired National Pipe Company (NPC) in Saudi Arabia for USD 102 Mn, adding 430,000 MTPA capacity and immediate EBITDA contribution",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "quantified_impact[0].interpretation",
+    "card_says": "NPC's CY2025 EBITDA of USD 52.5 Mn translates to ~₹438 Cr at SAR/INR 23.955",
+    "pdf_says": "EBITDA SAR 196.7 M x 23.955 = ~₹471 Cr (the filing's own conversion: revenue SAR 792.7 M = INR ~1,898.9 Cr)",
+    "class": "arithmetic"
+   },
+   {
+    "field": "deal_value.stage",
+    "card_says": "CONTRACT",
+    "pdf_says": "Acquisition completed: 'completion of 100% acquisition on 21st May 2026'; Q1FY27 already includes 40 days of NPC",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "strengthening MAN's balance sheet and reducing reliance on external financing",
+    "pdf_says": "Deal financed with USD 70 Mn debt and USD 32 Mn equity; NPC's zero debt and USD 83 Mn liquid assets are the target's; no memory support for the claim",
+    "class": "other"
+   },
+   {
+    "field": "what_happened[2]",
+    "card_says": "NPC delivering 15-18% EBITDA margin and 11-14% PAT margin",
+    "pdf_says": "15-18% / 11-14% appear in the acquire-vs-greenfield table as expected accretion; NPC's actual CY2025 margins were 24.8% EBITDA and 18.1% PAT",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106773266",
+  "headline": "Bajaj Finserv insurance arms post August premium growth: Life",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_reason": "Routine monthly IRDAI premium update for unlisted subsidiaries; does not change the earnings view of a ₹2.77 lakh Cr group.",
+  "issues": [
+   {
+    "field": "headline / timeline_entry",
+    "card_says": "'... premium growth: Life' and timeline 'In August 2026'",
+    "pdf_says": "Both truncated; the growth the filing supports (General GDP +11.1% YoY to ₹2,291 Cr; Life NBP +31.6% YoY to ₹1,953.99 Cr) is never stated",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106777407",
+  "headline": "Supreme Infra cuts guarantee exposure by 80% to ₹36.51 Cr via tollway resolution plan",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106800417",
+  "headline": "Punjab & Sind Bank approves up to USD 1 billion MTN programme for foreign currency funds",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Follows similar USD 1 billion MTN programmes approved recently by peers UCO Bank and RBL Bank",
+    "pdf_says": "Not in the filing or memory (basis SECTOR, no source)",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "basis BALANCE_SHEET: shelf to fund foreign currency assets without repeated board clearances",
+    "pdf_says": "Memory balance sheet holds only a credit rating; the filing says nothing about board clearances or foreign currency assets",
+    "class": "memory"
+   },
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Board-approved debt fund-raising programme (the card's own deal_value.kind is FUNDRAISE)",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106802347",
+  "headline": "LIC CFO Shatmanyu Shrivastava to superannuate on September 30, 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106811665",
+  "headline": "Ambuja Cements to announce Q2FY27 results on Oct 29",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Results post merger approvals of Orient Cement and ACC, expected to show combined performance",
+    "pdf_says": "Memory holds only shareholder approvals (28-29 Sep 2026); NCLT sanction is still on the watchlist, so the mergers are not effective and Q2FY27 results are not 'expected to show combined performance'",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106718710",
+  "headline": "Bajaj Finserv approves entry into re-insurance via new subsidiary, pending IRDAI",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "M_AND_A",
+    "pdf_says": "Board approval to pursue a new business (re-insurance) through a subsidiary to be incorporated; no acquisition or counterparty",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106719328",
+  "headline": "ITC Q1FY27 revenue rose 27.8% YoY to ₹29,410 Cr; PAT before exceptional items fell 23.2% YoY to ₹4,103 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway / headline / key_numbers.Revenue",
+    "card_says": "Top-line growth was strong; revenue ₹29,410 Cr +27.8% YoY",
+    "pdf_says": "₹29,410 Cr is GROSS revenue, inflated by the excise increase; consolidated Net revenue 18,955 vs 21,304 = -11.0% YoY (standalone -14.4%). The card never states the net revenue fall",
+    "class": "other"
+   },
+   {
+    "field": "what_happened[3]",
+    "card_says": "FMCG Others revenue +12% YoY, PBIT +21% (in a consolidated card)",
+    "pdf_says": "+12% / +21% are standalone; consolidated FMCG segment revenue +15%, results +22%",
+    "class": "standalone_consolidated"
+   },
+   {
+    "field": "signals[0]",
+    "card_says": "Exceptional items in 4 of 8 quarters: treat them as a running cost",
+    "pdf_says": "Q1FY27's ₹406 Cr is a remeasurement GAIN (Sproutlife), and memory's Q2FY26 item is also positive; 'running cost' does not fit",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106731032",
+  "headline": "Poly Medicure Q1FY27: revenue ₹525.38 Cr (+30.3% YoY), net profit ₹85.27 Cr (-8.4% YoY)",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106736540",
+  "headline": "Orient Bell Q1FY27: net profit ₹8.32 Cr (against a loss of ₹0.37 Cr a year earlier)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.kpis_to_verify[0]",
+    "card_says": "value 0.0, comparison >=, target 'above 20% YoY'",
+    "pdf_says": "value and target disagree (0.0 vs 20%); the KPI cannot be checked as written",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1] (MEMORY)",
+    "card_says": "Q1FY27 revenue ₹203.82 Cr is the highest of the 5 quarters memory holds since Q4FY25",
+    "pdf_says": "Memory lacks Q4FY26; the filing's own Q4FY26 consolidated revenue was ₹214.64 Cr (card itself says -5.0% QoQ), so 'highest' misleads",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106739170",
+  "headline": "LIC Q1FY27 PAT rose 22.8% YoY to ₹13,492 Cr; VNB margin improved to 22.9%",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106753854",
+  "headline": "Kellton selected to build AI claims platform for US healthcare company",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": []
+ },
+ {
+  "news_id": "nse-106765433",
+  "headline": "Mphasis partners with TechnoPro to expand enterprise AI solutions in Japan",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "M_AND_A",
+    "pdf_says": "A go-to-market / distribution partnership agreement; no acquisition, stake or consideration",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106779827",
+  "headline": "DCM Shriram settles ₹1.94 lakh exchange fines for delayed director approval compliance",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline",
+    "card_says": "DCM Shriram",
+    "pdf_says": "DCM Shriram International Limited (DCMSIL), a different listed company from DCM Shriram Ltd",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106781083",
+  "headline": "Titagarh Rail and BHEL sign contract for 35-year Vande Bharat maintenance",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value / signals[1] SCALE",
+    "card_says": "ORDER ₹24,000 Cr, stage CONTRACT; '₹24,000 Cr order = 3137% of Q1FY27 revenue'",
+    "pdf_says": "₹24,000 Cr is the earlier award to the TRSL-BHEL consortium (manufacture + 35-yr maintenance); this filing is only the maintenance agreement / 50:50 JVA. Titagarh's share is not stated and nothing new was ordered, so the scale ratio overstates it",
+    "class": "other"
+   },
+   {
+    "field": "event_type",
+    "card_says": "ORDER_WIN",
+    "pdf_says": "Execution of a JV agreement and maintenance contract under an existing order",
+    "class": "event_type"
+   },
+   {
+    "field": "signals[0] WATCH_RESOLVED",
+    "card_says": "Incorporation filings for the new JV: approval partial, resolved by the JVA",
+    "pdf_says": "The JVA was executed; JV incorporation is still pending",
+    "class": "signal_verdict"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106798961",
+  "headline": "Clean Max shareholders approved 20 material related party transactions with subsidiaries via postal ballot",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[0] / timeline_entry",
+    "card_says": "20 resolutions",
+    "pdf_says": "32 ordinary resolutions (items 1-32) in the postal ballot",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Transactions are with wholly owned or step-down subsidiaries",
+    "pdf_says": "Most are with (non-wholly-owned) subsidiaries; items 10-11 are between fellow subsidiaries; item 32 is with Emmvee Energy, an associate of a step-down subsidiary",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106710206",
+  "headline": "Alok Bansidhar Shriram to acquire 33.67% stake via inter-promoter transfer; total promoter holding unchanged",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[0] / timeline_entry",
+    "card_says": "Alok Bansidhar Shriram proposes to acquire 33.67% equity",
+    "pdf_says": "Annexure: 33.67% (2,92,94,150 shares) is Alok's holding AFTER the inter-se transfers; the blocks acquired (e.g. Lala Bansidhar Shriram HUF 89,42,142 = 10.28%, Urvashi Madhav Shriram 89,41,864 = 10.28%) are far less than 33.67%",
+    "class": "other"
+   },
+   {
+    "field": "event_type",
+    "card_says": "M_AND_A",
+    "pdf_says": "Reg 10(5) inter-se promoter gift / HUF-dissolution transfer with no change in promoter group holding (50.11%): a shareholding disclosure, not M&A",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106713511",
+  "headline": "Ambuja Cements Q1FY27 revenue fell 13% QoQ to ₹9,500 Cr; EBITDA rose 8% QoQ to ₹1,589 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[other_expenses_per_tonne]",
+    "card_says": "874 ₹/t (Q1FY26) -> 774 ₹/t (Q1FY27), -11%, POSITIVE",
+    "pdf_says": "Slide p.21 shows '-3%' QoQ and 'Cost are higher YoY' (packing cost, planned shutdowns): Q1FY26 774, Q4FY26 874, Q1FY27 850 (consolidated other expenses ₹1,488 Cr / 17.1 MnT = ~₹870/t). Cost rose ~10% YoY, it did not fall 11%",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Normalised PAT ₹595 Cr after adjusting for one-time tax reversals",
+    "pdf_says": "The deferred-tax credit (604) and tax-provision reversal (761) belong to Q4FY26; Q1FY27's adjustment is mainly interest income on an income-tax order (111)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106721001",
+  "headline": "ITC completes acquisition of Century Pulp and Paper from Aditya Birla Real Estate",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106737138",
+  "headline": "Q1FY27 revenue rose 18% YoY to ₹523.2 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[2] / notable_changes[finance_cost].why",
+    "card_says": "Finance costs rose 28% to ₹23 mn, reflecting higher debt levels / higher borrowing",
+    "pdf_says": "Finance cost 23 vs 18 (INR mn) is stated, but no higher debt: non-current borrowings nil and current 279 at FY26 (from 528), net debt/equity 0.06x",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[1].quote",
+    "card_says": "Agri Products revenue -1%, EBIT -52% (quote is the P&K Fertilizers line 1,355 vs 1,391, -3%)",
+    "pdf_says": "Agri Products 1,417 vs 1,426 (-1%), EBIT 64 vs 134 (-52%): text right, quote is a different line",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106737655",
+  "headline": "Man Industries (India) Q1FY27: revenue ₹1,053.13 Cr (+41.9% YoY), net profit ₹61.45 Cr (+122.6% YoY)",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "EBITDA ₹143.43 Cr against ₹49.11 Cr a year earlier (+192%)",
+    "pdf_says": "Consolidated Q1FY26 (₹ lakh): revenue 74,213, expenses 70,915 less finance 3,023 and depreciation 1,258 -> EBITDA ₹75.8 Cr; growth +89%, not +192%",
+    "class": "wrong_column"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "EBITDA margin expanded to 13.62% from 6.62% a year ago",
+    "pdf_says": "Year-ago margin ₹75.8 / ₹742.1 Cr = 10.2%; expansion ~3.4 pp, not 7 pp",
+    "class": "wrong_column"
+   },
+   {
+    "field": "track_next.risks[0]",
+    "card_says": "Sustained inventory build-up could strain working capital",
+    "pdf_says": "Change in inventories +17,965 lakh in Q1FY27 is a drawdown of inventory (after a 12,544 lakh build in Q4FY26)",
+    "class": "direction"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106740140",
+  "headline": "Titagarh Rail utilised ₹50 Cr of ₹199.99 Cr preferential warrants proceeds in Q1FY27",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[0] / timeline_entry",
+    "card_says": "₹50 Cr utilised in Q1FY27 for capex and general corporate purpose",
+    "pdf_says": "'No amount has been utilized during the quarter'; utilised at beginning of quarter 50.00, during 0.00; capex reimbursement 'Completed as on November 07, 2025'; 'No GCP transactions have taken place in this quarter'",
+    "class": "wrong_period"
+   },
+   {
+    "field": "takeaway / key_numbers[Total proceeds raised]",
+    "card_says": "₹199.99 Cr raised",
+    "pdf_says": "Issue size ₹199.99 Cr; only ₹50.00 Cr (25% of the warrant price) received so far",
+    "class": "other"
+   },
+   {
+    "field": "key_numbers[Amount unutilised]",
+    "card_says": "₹149.99 Cr unutilised",
+    "pdf_says": "Total unutilised amount 0.00; the remaining ₹149.99 Cr has not been received (due on warrant conversion)",
+    "class": "other"
+   },
+   {
+    "field": "signals[OWNERSHIP_SHIFT]",
+    "card_says": "promoter + FII + DII up 3.1 pp to 66.7% (Q1FY27)",
+    "pdf_says": "memory holds only Q3FY26 (63.71%) and Q4FY26 (63.58%); no Q1FY27 figure supports 66.7%",
+    "class": "memory"
+   },
+   {
+    "field": "signals[SCALE]",
+    "card_says": "market cap ₹11,262 Cr",
+    "pdf_says": "scale_block market cap ₹10,078 Cr (2026-10-15)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106745684",
+  "headline": "Supreme Infrastructure India Q1FY27: net loss ₹59.17 Cr (against a loss of ₹399.92 Cr a year earlier)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "contrasts with sequential decline in peer Ahluwalia Contracts' PAT",
+    "pdf_says": "the cited peer line says PAT fell 80% YoY, not sequentially; the peer point is not in the filing and says nothing about this company",
+    "class": "other"
+   },
+   {
+    "field": "track_next.milestones[0]",
+    "card_says": "Deadline for procedural formalities for Scheme implementation, 2026-08-17",
+    "pdf_says": "17 Aug 2026 is the Company Court hearing of the application for extension of time, not a deadline",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106763902",
+  "headline": "Orient Bell invests ₹1.07 Cr for 1 MW captive wind-solar hybrid power at Dora",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.stage",
+    "card_says": "CANCELLED",
+    "pdf_says": "'the Company has invested a sum of Rs. 1.07 Crores'; supply expected from 01.09.2026: executed, not cancelled",
+    "class": "other"
+   },
+   {
+    "field": "signals[SCALE]",
+    "card_says": "1% of Q1FY27 revenue; market cap ₹574.15 Cr",
+    "pdf_says": "1.07 / 203.82 = 0.5%; scale_block market cap ₹596.88 Cr",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "following Q1 production cost reductions (basis FILING)",
+    "pdf_says": "not in the filing; it is memory's operating note (2.3% like-for-like production cost cut): supported by memory but labelled FILING",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106792316",
+  "headline": "Sunteck Realty Chairman highlights FY26 pre-sales of ₹3,157 Cr; GDV doubles to ₹41,030 Cr",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "AGM chairman's speech restating FY26 figures already reported; only the ~₹450 Cr rental aim is forward-looking",
+  "issues": [
+   {
+    "field": "notable_changes[net_debt]",
+    "card_says": "previous ₹719.75 Cr (Q4FY26) -> current ₹266 Cr (FY26), POSITIVE",
+    "pdf_says": "Q4FY26 and FY26 end on the same date (31 Mar 2026); the filing gives only ₹266 Cr; memory's ₹719.75 Cr is another measure for the same date, so no decline is shown",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106807359",
+  "headline": "PSB gets first-time Fitch rating of BBB-/Stable; VR at bb",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "placing it in the same sovereign-linked band as other large PSBs",
+    "pdf_says": "filing calls PSB small (0.5% of system loans and deposits) and makes no comparison with large PSBs' ratings",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106704167",
+  "headline": "NCLT directs Ambuja Cements to convene shareholder meeting on Sept 28, 2026 for Orient Cement merger",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "Approval by secured and unsecured creditors of both companies",
+    "pdf_says": "Ambuja has no secured creditors; Orient's secured lenders have drawn nothing and gave 100% NOCs; the application seeks dispensation of the unsecured creditors' meetings for both companies (no creditor approvals sought)",
+    "class": "invented"
+   },
+   {
+    "field": "track_next.risks",
+    "card_says": "Objections from creditors despite prior NOCs",
+    "pdf_says": "Creditor meetings sought to be dispensed; no creditor vote in the scheme process",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106704526",
+  "headline": "Supreme Infra creates ₹120 Cr FD to settle lender dues under compromise scheme",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106708599",
+  "headline": "Kellton Q1 revenue up 6.8% to ₹316 Cr; EBITDA margin 11.1%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1] / notable_changes[0].why",
+    "card_says": "EBITDA margin contraction to 11.1% from 12.1% ... driven by higher finance costs",
+    "pdf_says": "Finance cost (55 vs 48 Mn) sits below EBITDA and cannot move EBITDA margin; EBITDA fell because total expenses rose 2,603 -> 2,813 Mn (8.1%) faster than revenue (6.8%)",
+    "class": "other"
+   },
+   {
+    "field": "notable_changes[2].why",
+    "card_says": "PAT declined ... due to higher finance costs and a higher tax rate",
+    "pdf_says": "Tax fell 43 -> 34 Mn; effective rate 13.2% (34/257) vs 15.9% (43/270), i.e. lower; PAT fell because PBT fell 270 -> 257",
+    "class": "direction"
+   },
+   {
+    "field": "notable_changes[3].why",
+    "card_says": "Tax 43 -> 34 Mn, POSITIVE: Lower tax expense contributed to the PAT decline",
+    "pdf_says": "A lower tax charge raises PAT; it cushioned, not caused, the decline",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Revenue growth of 6.8% is in line with the 6.8% YoY growth seen in Q1FY26 (memory t_80db26bf)",
+    "pdf_says": "Memory t_80db26bf is the Q1FY27 result itself (+6.8% YoY), not Q1FY26; the card compares the quarter with itself",
+    "class": "memory"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "margins have compressed ... as the company invests in AI capabilities",
+    "pdf_says": "Presentation gives no reason for the margin drop; AI investment is a general chairman remark",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106724478",
+  "headline": "Govt exercises oversubscription option in LIC OFS, raising total offer to 6.50% equity",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "Strong demand on T-day prompted the Government to exercise the greenshoe option",
+    "pdf_says": "The letter states only the intention to exercise the option; no demand/subscription figure is given",
+    "class": "invented"
+   },
+   {
+    "field": "event_type / deal_value.kind",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "Offer for sale by the promoter (President of India); LIC raises no money - a promoter stake sale, not a company fundraise",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106726248",
+  "headline": "Bajaj Finserv Q1FY27 consolidated PAT rose 18% YoY to ₹6,297 Cr on 19% revenue growth",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0].memory_refs",
+    "card_says": "w_77b26aa0 supports 24% AUM growth",
+    "pdf_says": "w_77b26aa0 is the IRDAI reinsurance-licence watchlist item; the AUM figure is in operating_notes (from this same call), so the claim is circular",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[1].memory_refs",
+    "card_says": "t_58674ef9 reports 87% VNB growth",
+    "pdf_says": "t_58674ef9 is revenue/attributable PAT (₹3,132 Cr); VNB is in operating_notes from this same call",
+    "class": "memory"
+   },
+   {
+    "field": "headline / key_numbers.Revenue",
+    "card_says": "19% revenue growth; Revenue ₹42,037 Cr",
+    "pdf_says": "₹42,037 Cr is consolidated total income (call says 'total income'); rounding of label only",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106745992",
+  "headline": "Clean Max gets BSE in-principle approval to convert ₹400 Cr NCDs to secured",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[1]",
+    "card_says": "OWNERSHIP_SHIFT WARNING: Promoter pledge up to 20.02% from 0%",
+    "pdf_says": "Filing says nothing about promoter pledges; memory ownership has no pledge_pct for Clean Max",
+    "class": "invented"
+   },
+   {
+    "field": "signals[0]",
+    "card_says": "₹400 Cr raise = 3% of market cap (₹14,691 Cr)",
+    "pdf_says": "No money is raised: existing ₹400 Cr NCDs (DTD 27 Oct 2025) change from unsecured to secured; scale block market cap is ₹14,751 Cr",
+    "class": "event_type"
+   },
+   {
+    "field": "event_type / deal_value.kind",
+    "card_says": "FUNDRAISE, amount_cr 400",
+    "pdf_says": "Modification of terms of already-issued debentures (security cover 0.7 -> 1:1), not a fundraise",
+    "class": "event_type"
+   },
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "lists NSDL/CDSL letter, SEBI, Companies Act compliance",
+    "pdf_says": "Also conditional on a certified copy of NSE's in-principle approval (omitted); not an error of fact",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106777615",
+  "headline": "Man Industries wins ₹600 Cr pipe orders, order book reaches ₹4,100 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "notable_changes[0].why",
+    "card_says": "Unexecuted order book (₹4,100 Cr) provides revenue visibility over the next 6 to 9 months",
+    "pdf_says": "Only the new ₹600 Cr orders are to be delivered within 6-9 months; no execution period is given for the ₹4,100 Cr book",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106778079",
+  "headline": "CRISIL reaffirms Punjab & Sind Bank's AA/Stable rating on ₹4,000 Cr of bonds",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "aligns with CARE's existing rating from September 2026",
+    "pdf_says": "Memory t_5148b33d: CARE reaffirmed on August 22, 2026 (on ₹1,237.30 Cr Tier-II bonds)",
+    "class": "memory"
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "On September 10, 2026, CRISIL Ratings reaffirmed",
+    "pdf_says": "Rating rationale dated September 09, 2026; bank's intimation dated September 10",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106794521",
+  "headline": "Sunteck Realty gets ₹59.44 Cr GST show-cause notice on FY23 TDR purchases; to contest",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106817591",
+  "headline": "MphasiS income tax demand revised up to ₹2,417.80 Cr on interest levy",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106708861",
+  "headline": "MphasiS Limited held its 35th AGM on July 23, 2026, and passed all resolutions with requisite majority",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "shareholder approval of routine matters without dissent",
+    "pdf_says": "Every resolution except the accounts and dividend drew votes against: 5.90% against Nitin Rakesh's re-appointment, 3.27-3.28% against the directors retiring by rotation, 2.61% against Erasmus",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Final dividend of ₹62 per share ... consistent with prior payouts",
+    "pdf_says": "The filing gives no earlier payouts; the comparison is not in the filing or memory",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106715198",
+  "headline": "ITC's ESG score falls to 67 (Strong) for FY26",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "DEBT_RATINGS",
+    "pdf_says": "An ESG score from an ESG rating provider, not a credit or debt rating (the exchange subject line says 'Credit Rating- New')",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106718789",
+  "headline": "Bajaj Finserv Q1FY27 revenue rose 19.1% YoY to ₹42,037 Cr; PAT attributable to owners up 12.3% to ₹3,132 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "broad-based revenue and profit growth in Q1FY27, with strong performance in Bajaj Finance, Bajaj Life and Bajaj General",
+    "pdf_says": "Bajaj General PAT fell 27.6% (₹660 Cr to ₹478 Cr) and Bajaj Life PAT fell 70.2% (₹171 Cr to ₹51 Cr); both blamed lower capital gains. Bajaj General's combined ratio worsened to 104.7% from 103.6%",
+    "class": "direction"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106720049",
+  "headline": "Clean Max to merge 4 wholly owned rooftop solar subsidiaries into parent entity",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.kind",
+    "card_says": "ACQUISITION",
+    "pdf_says": "An amalgamation of wholly owned subsidiaries into the parent, with no consideration; nothing is acquired",
+    "class": "other"
+   },
+   {
+    "field": "track_next.pending_approvals[1]",
+    "card_says": "Creditor and statutory regulatory consents",
+    "pdf_says": "The filing names statutory and regulatory approvals and NCLT sanction only; creditor consents are not mentioned",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106720923",
+  "headline": "Jubilant Agri and Consumer Products Limited convenes shareholder meeting on September 5, 2026 to approve demerger scheme with Jubilant Agri Solutions Limited",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.kind",
+    "card_says": "ACQUISITION",
+    "pdf_says": "A demerger of the Agri Division into a resulting company, with a mirrored 1:1 share entitlement; it is not an acquisition",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106731781",
+  "headline": "LIC launches 'New Bima Jyoti' non-par individual savings plan",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106744252",
+  "headline": "Titagarh Rail Q1FY27 revenue rose 12.6% YoY to ₹765.07 Cr; EBITDA margin improved to 12.4%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[0] / why_it_matters[0] quote",
+    "card_says": "EBITDA margin: Q1FY26: 10.47 PCT",
+    "pdf_says": "10.47% is Q2FY26 in memory. The consolidated chart gives Q1FY26 as ~11.05% (₹75 Cr on ₹679 Cr), so the gain is about 1.4 pp, not 1.9 pp. The text itself reads 'from in Q1FY26' with the figure missing",
+    "class": "wrong_period"
+   },
+   {
+    "field": "key_numbers PAT quote",
+    "card_says": "PAT: Q1FY26: 37 INR_CR",
+    "pdf_says": "₹37 Cr is Q2FY26 in memory; Q1FY26 PAT is ₹30.94 Cr",
+    "class": "wrong_period"
+   },
+   {
+    "field": "signals[0]",
+    "card_says": "promoter + FII + DII up 3.1 pp to 66.7% (Q1FY27) while small shareholders fell 6%",
+    "pdf_says": "The filing's 30 Jun 2026 pattern shows promoters flat at 40.46%, FPI at 10.87% (10.67% at Q4FY26 in memory) and MFs at 12.31% (DII 12.45%), so about 63.6%. Neither the filing nor memory supports 66.7% or +3.1 pp",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106744448",
+  "headline": "DCM Shriram International Q1FY27: revenue ₹108.59 Cr, net profit ₹0.03 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "The company turned profitable in Q1FY27 after removing the one-time stamp duty expense that weighed on Q4FY26",
+    "pdf_says": "True against Q4FY26's loss, but profit before the exceptional item fell to ₹2.07 Cr from ₹6.23 Cr QoQ and ₹4.09 Cr YoY. Consolidated PAT fell to ₹0.03 Cr from ₹3.22 Cr YoY and revenue fell 4.9% YoY (₹114.22 Cr). The card gives no YoY figures",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Finance cost more than doubled QoQ to ₹2.85 Cr due to higher average debt levels",
+    "pdf_says": "The ₹2.85 Cr against ₹1.39 Cr is right; the filing gives no reason for it",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106747876",
+  "headline": "Kellton Tech wins ADB Excellence Award, targets $5M strategic account",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106750897",
+  "headline": "India Ratings assigns IND AAA/Stable/IND A1+ to Ambuja Cements' ₹7,000 Cr bank facilities",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.milestones[0]",
+    "card_says": "Amalgamation of Orient Cement shareholder meeting, 28 September 2026",
+    "pdf_says": "Neither the filing nor memory gives a date; memory's watchlist lists the shareholder approvals with no date",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106708490",
+  "headline": "ITC Chairman’s AGM address highlighted ₹2,30,000 crore value addition to Exchequer over 5 years",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0..1]",
+    "card_says": "Exchequer contribution of Rs 2,30,000 Cr over 5 years = 317.2% of net worth; dividends of Rs 85,000 Cr over 5 years = 117.2% of net worth",
+    "pdf_says": "Both are five-year cumulative flows; the filing gives no net-worth comparison. Arithmetic matches the scale block, but setting a 5-year sum against a point-in-time net worth tells the reader little",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106708515",
+  "headline": "Kellton Tech Solutions Q1FY27: revenue ₹315.62 Cr (+6.8% YoY), net profit ₹22.32 Cr (-1.5% YoY)",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[2] / takeaway",
+    "card_says": "Revenue growth of 6.8% YoY is the first positive growth since Q4FY25, indicating a recovery; 'Revenue growth resumes'",
+    "pdf_says": "Revenue had been growing YoY all along: Q4FY26 313.89 Cr vs Q4FY25 286.33 Cr = +9.6%, FY26 1,216.94 vs FY25 1,097.82 = +10.8%. Growth slowed to 6.8% this quarter; it did not resume",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0..1]",
+    "card_says": "Q1FY27 revenue highest of the 6 quarters memory holds (stated twice)",
+    "pdf_says": "True (memory: 286.33, 295.47, 299.69, 307.89, 313.89, 315.62); the point is just duplicated",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106709216",
+  "headline": "MphasiS Limited faces ₹35,400 fine for non-compliance with Regulation 17(1) for quarter ended March 2026",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "The fine of Rs 35,400 is 0.2% of net worth and 0.6% of Q1FY27 revenue",
+    "pdf_says": "Rs 35,400 = Rs 0.0035 Cr, about 0.00003% of net worth (Rs 10,744 Cr). The 0.2% and 0.6% shares belong to the scale block's 'Rs 25 Cr' line, not to this fine (off by a factor of about 70,000)",
+    "class": "unit_scale"
+   },
+   {
+    "field": "what_happened[1]",
+    "card_says": "The non-compliance ... due to absence of a Board meeting during that time",
+    "pdf_says": "The breach is board composition under Reg 17(1) while a regular Non-Executive Chairperson was being appointed. 'No Board meeting was convened' is the Board's argument that governance was not impaired, not the cause",
+    "class": "invented"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "Regulatory notice for delayed appointment of woman director",
+    "pdf_says": "The woman-director wording is the generic description of Reg 17(1) in BSE's table; the Board's letter puts the issue down to the time taken to appoint the Chairperson and says no extra independent director was needed",
+    "class": "invented"
+   },
+   {
+    "field": "headline / what_happened[0]",
+    "card_says": "'The Exchange' levied a Rs 35,400 fine",
+    "pdf_says": "Both NSE and BSE issued notices, each for Rs 30,000 + Rs 5,400 GST = Rs 35,400 (Rs 70,800 in all)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106728028",
+  "headline": "Alok Bansidhar Shriram completes 30.92% inter-se promoter stake transfer in DCM Shriram Int",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106736931",
+  "headline": "Jubilant Agri and Consumer Products Q1FY27: revenue ₹523.18 Cr (+18.4% YoY), net profit ₹46.11 Cr (+4.5% YoY)",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "Revenue growth was broad-based across segments, with improved operating performance",
+    "pdf_says": "Consolidated segments: P&K Fertilizers revenue fell 13,911 -> 13,548 lakh YoY and its segment result fell 1,300 -> 504 lakh (-61%). The growth came from Performance Polymers (+28%). EBITDA margin fell YoY: about 13.0% against 14.3% (EBITDA 6,796 vs 6,339 lakh)",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0..1]",
+    "card_says": "Highest net profit / revenue of the 6 quarters memory holds since Q4FY25",
+    "pdf_says": "Memory holds only Q3FY26 and Q4FY26 as single quarters (plus H1FY26, 9MFY26, FY26), not 6 quarters back to Q4FY25. The claim is not supported as worded, though 46.11 Cr and 523.18 Cr do beat every quarter that can be derived",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106738702",
+  "headline": "Man Industries reports zero deviation in utilization of preferential issue funds",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "timeline_entry",
+    "card_says": "no deviation ... in Q2FY27",
+    "pdf_says": "Report for the quarter ended June 30, 2026 = Q1FY27",
+    "class": "wrong_period"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "confirming full utilization of fundraise proceeds",
+    "pdf_says": "Annexure B: Rs 128.76 Cr used against Rs 130 Cr allotted for business expansion, so not fully used. The filing confirms no deviation, not full use",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106757777",
+  "headline": "Titagarh Rail signs non-binding MoU with Siemens for international metro opportunities",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type / deal_value.kind",
+    "card_says": "ORDER_WIN; deal kind ORDER",
+    "pdf_says": "A non-binding MoU with Siemens to explore metro opportunities jointly; no order is won (the card text itself says so)",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106759015",
+  "headline": "LIC subscribes to ₹5,000 Cr NCDs of Bajaj Finance Limited",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "Fixed income deployment into AAA-rated upper-layer NBFC debt",
+    "pdf_says": "The filing gives no rating for the NCDs (it says NBFC-UL, not AAA)",
+    "class": "invented"
+   },
+   {
+    "field": "event_type",
+    "card_says": "M_AND_A",
+    "pdf_says": "A life insurer subscribing to Rs 5,000 Cr of NCDs is a treasury/debt investment, not an acquisition (it was filed on the Reg 30 acquisition template)",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106805629",
+  "headline": "Sunteck Realty approves demerger of Sunteck City 4th Ave project from arm Satguru, ~77% of FY26 sales",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "An internal demerger from a wholly owned subsidiary into the parent; consolidated earnings, balance sheet and shareholding are unchanged and no shares are issued",
+  "issues": []
+ },
+ {
+  "news_id": "nse-106821339",
+  "headline": "Punjab & Sind Bank Q2FY27 net profit rose 39.7% YoY to ₹412 Cr; gross NPA improved to 2.09%",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Gross NPA at 2.09% is now below the bank's FY27 guidance of <2.0%, showing asset quality is on track",
+    "pdf_says": "2.09% is above the <2.0% guidance (guidance slide: actual 2.09% against <2.0%); the target is not yet met",
+    "class": "direction"
+   },
+   {
+    "field": "why_it_matters[1].memory_refs",
+    "card_says": "Advances guidance 16-18% cited to memory g_862c15d3",
+    "pdf_says": "In memory, g_862c15d3 is the NIM guidance (2.60-2.65%). The 16-18% advances guidance is on the filing's guidance slide, not in memory",
+    "class": "memory"
+   },
+   {
+    "field": "track_next.kpis_to_verify[1]",
+    "card_says": "Advances growth tracked as metric 'revenue' with value 17.0",
+    "pdf_says": "Advances growth is not revenue; the KPI would be checked against the wrong series",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106629489",
+  "headline": "MphasiS promoter entities refinance loan, replacing existing share encumbrance",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106720186",
+  "headline": "Clean Max Enviro Energy Solutions Limited reported Q1FY27 revenue of ₹832.16 Cr and PAT of ₹55.17 Cr, reflecting strong YoY growth",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "Shareholder letter sets a new FY28 floor of ₹3,000 Cr reported EBITDA (2.3x FY26) and reaffirms 1.5 GW FY27 addition; guidance of that size changes the earnings view.",
+  "issues": [
+   {
+    "field": "notable_changes[operational_capacity].previous",
+    "card_says": "1,747 MW (Mar-2026), +100% YoY",
+    "pdf_says": "1,747 MW is as on June 30, 2025; Mar-2026 was 3,088 MW (QoQ +13%)",
+    "class": "wrong_period"
+   },
+   {
+    "field": "signals[OWNERSHIP_SHIFT]",
+    "card_says": "Promoter pledge up to 20.02% from 0%",
+    "pdf_says": "No pledge figure in the filing; memory ownership has only Q4FY26 with no pledge_pct",
+    "class": "invented"
+   },
+   {
+    "field": "key_numbers[Revenue/PAT].quote",
+    "card_says": "quote: 'reported Q1FY26 results with revenue of ₹832.16 Cr and PAT of ₹55.17 Cr'",
+    "pdf_says": "Sentence is not in the filing (it is memory's timeline summary, labelled Q1FY26); filing gives reported PAT ₹552 million (₹55.2 Cr) and no revenue",
+    "class": "other"
+   },
+   {
+    "field": "headline",
+    "card_says": "revenue ₹832.16 Cr ... strong YoY growth",
+    "pdf_says": "No revenue or revenue YoY in the letter; ₹832.16 Cr is memory's Q1FY27 XBRL figure; the letter's growth figures are EBITDA +68% and PAT ₹552 mn vs loss ₹166 mn",
+    "class": "other"
+   },
+   {
+    "field": "event_type",
+    "card_says": "MONTHLY_BUSINESS_UPDATE",
+    "pdf_says": "Quarterly shareholders' letter for Q1 FY2026-27 with guidance (investor presentation type)",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106730383",
+  "headline": "Bajaj Finserv July insurance update: General premium",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "timeline_entry",
+    "card_says": "In July 2026",
+    "pdf_says": "Entry is truncated; should state GDPI ₹2,375 Cr (vs ₹2,102 Cr) and life NBP ₹1,386.17 Cr (vs ₹1,151.66 Cr); headline also cut off",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106773440",
+  "headline": "Titagarh Rail to close dormant Italian JV TMPL; re-appoints Dy MD Anil Kumar Agarwal",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106778563",
+  "headline": "Kellton wins 1st prize at SEBI's Securities Market TechSprint 2026 for Agentic AI platform",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "ORDER_WIN",
+    "pdf_says": "A competition prize/award; no order, contract or customer",
+    "class": "event_type"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "does not immediately translate into TCV or revenue (basis FILING)",
+    "pdf_says": "Filing says nothing on TCV/revenue; quote given is the award-ceremony sentence (reasonable inference, wrong basis)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106798992",
+  "headline": "ITC acquires remaining in Yoga Bar maker Sproutlife for ~₹645 Cr; making it wholly owned",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106801238",
+  "headline": "Ambuja shareholders approve ACC merger, 99.98% in favour",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[2] / key_numbers[Public votes for]",
+    "card_says": "Public shareholders 99.98% in favour, 595.78 crore votes for",
+    "pdf_says": "Public votes polled 59,57,80,607 (59.58 Cr); for 59,52,32,835 (59.52 Cr) = 99.908%; 99.9758% is the total including promoters",
+    "class": "wrong_column"
+   },
+   {
+    "field": "what_happened[2]",
+    "card_says": "595.78 crore votes for",
+    "pdf_says": "595,780,607 votes = 59.58 crore (raw count misread by 10x), and that is votes polled, not for",
+    "class": "unit_scale"
+   },
+   {
+    "field": "what_happened[2]",
+    "card_says": "0.55 crore against",
+    "pdf_says": "547,772 votes against = 0.055 crore",
+    "class": "unit_scale"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "creates India's second-largest cement player with combined capacity over 110 MTPA (ref t_95b1b29d)",
+    "pdf_says": "Not in filing; ref t_95b1b29d is the Orient Cement merger meeting; memory's 110.05 MTPA is Ambuja's existing total capacity, not a combined post-merger figure; 'second-largest' unsupported",
+    "class": "memory"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "key step in the Adani Group's strategy to consolidate cement assets (ref t_95b1b29d)",
+    "pdf_says": "Ref is the Orient Cement scheme; no such statement in memory",
+    "class": "memory"
+   },
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "Approval by secured and unsecured creditors of both companies",
+    "pdf_says": "Memory watchlist item w_93204615 belongs to the Orient Cement scheme; filing does not mention creditor meetings for the ACC scheme",
+    "class": "memory"
+   },
+   {
+    "field": "event_type",
+    "card_says": "GOVERNANCE",
+    "pdf_says": "Shareholder approval of a scheme of amalgamation (M_AND_A)",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106805621",
+  "headline": "Sunteck Realty approves demerger scheme with subsidiary Satguru; appoints EY internal auditor",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER",
+    "pdf_says": "Board approval of a scheme of arrangement (demerger) under s.230-232, M_AND_A",
+    "class": "event_type"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "demerge wholly owned subsidiary Satguru Corporate Services into Sunteck",
+    "pdf_says": "Satguru is the Demerged Company and Sunteck the Resulting Company: an undertaking of Satguru moves to Sunteck, not the whole subsidiary; filing names no undertaking",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106808523",
+  "headline": "India Ratings reaffirmed Punjab & Sind Bank's infrastructure bonds at IND AA/Stable for ₹3,000 Cr",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "Reaffirmation of an existing rating with no change in rating or outlook is routine.",
+  "issues": [
+   {
+    "field": "why_it_matters[0..2].basis",
+    "card_says": "basis MEMORY, refs g_d5977b06 / g_c165f449",
+    "pdf_says": "CET-1 16.56%, GNPA 2.21%, ROA 0.79% come from the filing (the rating rationale); g_d5977b06 is FY27 ROA guidance 0.85-0.90%, g_c165f449 is a GNPA <2% target - neither holds these figures",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106812993",
+  "headline": "NCLT Allahabad issues second motion notice on Jubilant Agri demerger; hearing on Dec 3",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "follows approval of the scheme by equity shareholders and unsecured creditors in early September 2026",
+    "pdf_says": "Memory t_b7e584c2 says only that the equity shareholder meeting was held to vote; it does not record the approval (creditor approval is recorded)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106702703",
+  "headline": "Punjab & Sind Bank Q1FY27: interest earned ₹3,213.37 Cr (+10.4% YoY), net profit ₹331.51 Cr (+23.2% YoY)",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Provisions fell sharply YoY, continuing a trend from Q4FY26 when provisions were negative due to write-backs",
+    "pdf_says": "Provisions went from -73.15 Cr (Q4FY26) to 93.99 Cr (Q1FY27), a rise QoQ; memory holds no reason (write-backs) for the negative Q4 figure, so 'continuing a trend' is not supported",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106705464",
+  "headline": "Sunteck Realty's monitoring agency reports zero deviation in ₹136.25 Cr warrant proceeds",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "₹499.99 Cr raise = 11% of market cap (₹4,634 Cr), 14% of net worth (₹3,611 Cr)",
+    "pdf_says": "Scale block: market cap ₹4,010 Cr, 12.5% of market cap (the card's own why_it_matters says 12.5%); ₹4,634 Cr is not in filing or memory",
+    "class": "other"
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "received ₹136.25 Cr ... 25% of ₹499.99 Cr issue size",
+    "pdf_says": "₹125.00 Cr was the 25% upfront; ₹136.25 Cr is 27.3% of ₹499.99 Cr",
+    "class": "arithmetic"
+   },
+   {
+    "field": "deal_value.stage",
+    "card_says": "COMPLETED",
+    "pdf_says": "Only ₹136.25 Cr of ₹499.99 Cr received; balance 75% on 1,14,11,764 warrants due on conversion within 18 months",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106708987",
+  "headline": "MphasiS Q1FY27: revenue ₹4,384.05 Cr (+17.5% YoY), net profit ₹489.51 Cr (+10.8% YoY)",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0], why_it_matters[1]",
+    "card_says": "Revenue is the highest of the 6 quarters memory holds since Q4FY25",
+    "pdf_says": "Memory holds quarterly revenue only for Q2FY26-Q1FY27 (4 quarters); no Q4FY25 or Q1FY26 entry. Claim (repeated twice) is not what memory holds, though the figure is the highest of those held",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106713476",
+  "headline": "Ambuja Cements Q1FY27: revenue ₹9,500 Cr (-7.7% YoY)",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "net profit of ₹660 Cr against net profit of ₹969.66 Cr a year earlier",
+    "pdf_says": "Consolidated statement's Q1FY26 column (restated, note 3): profit after tax ₹1,041 Cr (reported ₹1,017 Cr); ₹969.66 Cr is in neither. PAT fell 36.6% YoY, not 31.9%",
+    "class": "wrong_column"
+   },
+   {
+    "field": "key_numbers[EPS].change / what_happened[3]",
+    "card_says": "EPS ₹2.32 (-27.5% YoY)",
+    "pdf_says": "Q1FY26 consolidated basic EPS ₹3.53 (restated): -34.3% YoY",
+    "class": "wrong_column"
+   },
+   {
+    "field": "signals[1]",
+    "card_says": "Exceptional items in 6 of the last 8 quarters (Q4FY25, ...)",
+    "pdf_says": "Memory holds no Q4FY25 exceptional item (FY25 only); 5 quarters Q1FY26-Q1FY27 supported",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106753189",
+  "headline": "Titagarh Rail inaugurates Design & Operations Centre at Uttarpara facility",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106762281",
+  "headline": "LIC launches two new domestic non-par plans",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106771912",
+  "headline": "Jubilant Agri concludes NCLT-convened shareholder meeting for demerger scheme",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106780291",
+  "headline": "Kellton selected to build enterprise loan integration platform for auto financier",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "track_next.risks[0]",
+    "card_says": "High customer concentration and extended DSO terms common in Kellton's enterprise customer engagements",
+    "pdf_says": "Filing silent; memory has the DSO/receivables concern but nothing on customer concentration",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106799879",
+  "headline": "CleanMax partners with Nuvoco for 46.4 MW wind-solar hybrid project in Rajasthan",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "This partnership operationalises the captive SPV equity divestment approved on 21 September 2026, where Nuvoco was listed among the client buyers",
+    "pdf_says": "Filing names no SPV; memory lists Nuvoco as a buyer of 26% stakes in SPVs Kyuu/Roku/Ilgohp but does not tie any of them to this Bhikamkhore project",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106820476",
+  "headline": "Bajaj General Sep premium to ₹2,363 Cr",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "September new business premium (₹1,830.86 Cr) shows a strong recovery compared to August 2026 (₹1,953.99 Cr total reported across two months)",
+    "pdf_says": "Memory: August NBP ₹1,953.99 Cr for the month alone (YTD ₹7,016.95 Cr); September is 6.3% lower than August, not a recovery",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106699124",
+  "headline": "Clean Max approves ₹22 Cr corporate guarantee for subsidiary Clean Max Aria",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "CAPEX",
+    "pdf_says": "Corporate guarantee for a subsidiary's term loan (Reg 30 guarantee disclosure); no capital expenditure",
+    "class": "event_type"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "term loan facility availed by wholly owned subsidiary",
+    "pdf_says": "'subsidiary company of the Company'; wholly owned is not stated",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106702749",
+  "headline": "Punjab & Sind Bank Q1FY27 net profit rose 23% YoY to ₹331 Cr; advances grew 19% YoY to ₹119,290 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[1] / notable_changes.gross_advances.previous",
+    "card_says": "Gross advances from ₹999.5 Crore in Q1FY26",
+    "pdf_says": "Gross Advances Jun'25 99950 (₹ Cr) = ₹99,950 Cr",
+    "class": "unit_scale"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Advances growth of 19% YoY is within the bank's guided range of 16-18% for FY27",
+    "pdf_says": "Guidance slide: actual 19.35% against FY27 guidance 16-18%, i.e. above the range, not within it",
+    "class": "arithmetic"
+   },
+   {
+    "field": "why_it_matters[0].basis",
+    "card_says": "MEMORY (no memory_refs)",
+    "pdf_says": "Guidance is on page 46 of this filing; memory holds no guidance",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106718699",
+  "headline": "Bajaj Finserv Q1FY27: revenue ₹42,036.9 Cr; net profit ₹6,296.67 Cr (+18.2% YoY)",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / key_numbers Net profit",
+    "card_says": "Net profit ₹6,296.67 Cr (+18.2% YoY)",
+    "pdf_says": "₹6,296.67 Cr is consolidated PAT including non-controlling interests; attributable to owners ₹3,132.35 Cr (+12% vs ₹2,789.05 Cr), which the press release also headlines; card never gives the owners' figure",
+    "class": "other"
+   },
+   {
+    "field": "key_numbers EPS change",
+    "card_says": "+12.0% YoY",
+    "pdf_says": "Basic EPS 19.60 vs 17.47 = +12.2%",
+    "class": "arithmetic"
+   },
+   {
+    "field": "deal_value",
+    "card_says": "FUNDRAISE: ESOP trust allotment of 15,11,358 shares",
+    "pdf_says": "Correct, but the Board's approval to pursue a re-insurance business via a new subsidiary (subject to IRDAI) is not mentioned anywhere",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106721040",
+  "headline": "Titagarh Rail arm launches fifth and final Diving Support Craft for Indian Navy",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "what_happened[2] / why_it_matters[0] / key_numbers",
+    "card_says": "Board approved transfer of shipbuilding business to TNSL with ~₹500 Cr order book (presented as part of this event)",
+    "pdf_says": "The ₹500 Cr order book transfer is boilerplate in the 'About TNSL' section describing an earlier in-principle approval; the news is only the launch of DSC A24",
+    "class": "other"
+   },
+   {
+    "field": "event_type",
+    "card_says": "PRODUCT_LAUNCH",
+    "pdf_says": "Ship launch (execution milestone on an existing Navy order), not a new product",
+    "class": "event_type"
+   }
+  ],
+  "impact_note": "Launch of the last of five small diving support craft on an existing order is a routine execution milestone."
+ },
+ {
+  "news_id": "nse-106722870",
+  "headline": "President of India to sell up to 31,62,49,885 LIC shares (2.5% of capital) via OFS on Aug 4-5, 2026 at floor price of ₹382",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "event_type / deal_value.kind",
+    "card_says": "FUNDRAISE",
+    "pdf_says": "Promoter (Government) offer for sale of existing shares; LIC raises no money (card's own takeaway says so)",
+    "class": "event_type"
+   }
+  ],
+  "impact_note": "A promoter sale of up to 6.5% of equity (~₹31,400 Cr at the floor price) is a material supply/overhang event for LIC holders, not routine."
+ },
+ {
+  "news_id": "nse-106724717",
+  "headline": "ICRA assigns AAA (Stable) and A1+ to Ambuja Cements' ₹7,000 Cr bank facilities",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "as the company integrates Orient Cement",
+    "pdf_says": "Memory t_f3f00ae8: merger still pending a shareholder meeting on 28 Sep 2026 (not yet integrating)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106729030",
+  "headline": "Life Insurance Corporation Of India Q1FY27: net profit ₹13,584.25 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[2] / key_numbers EPS change",
+    "card_says": "EPS ₹10.74 (-38.0% YoY, -71.1% QoQ)",
+    "pdf_says": "Consolidated EPS 10.74 vs restated 8.66 (Q1FY26) and 18.55 (Q4FY26) after the 1:1 bonus of 1 Jun 2026 (note 6): +24.0% YoY, -42.1% QoQ. Card compared against pre-bonus EPS",
+    "class": "direction"
+   },
+   {
+    "field": "key_numbers Net profit change",
+    "card_says": "null (takeaway says 'PAT growth')",
+    "pdf_says": "Consolidated PAT 13,584.25 vs 10,957.05 = +24.0% YoY; card shows a falling EPS beside a rising profit",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106772168",
+  "headline": "Jubilant Agri unsecured creditors approve demerger scheme with majority",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Debt represented ₹12.59 Cr is under half of the company's gross debt of ₹27.9 Cr",
+    "pdf_says": "₹12.59 Cr is dues to 24 unsecured (trade/group) creditors; memory's ₹27.9 Cr is gross borrowings, a different quantity",
+    "class": "memory"
+   },
+   {
+    "field": "event_type",
+    "card_says": "GOVERNANCE",
+    "pdf_says": "Creditor approval step of the demerger scheme (memory files the same scheme as M_AND_A)",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106788876",
+  "headline": "Kellton Tech board approves equity rights issue; terms to be decided",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "CORPORATE_ACTION",
+    "pdf_says": "Board approval of a rights issue to raise funds (deal_value.kind FUNDRAISE)",
+    "class": "event_type"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Kellton had net debt of ₹156.94 Cr against net worth ₹535.3 Cr",
+    "pdf_says": "Scale block: net debt ₹156.94 Cr is as of Q4FY25 (18 months old); card gives no period",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106807429",
+  "headline": "Sunteck Realty subsidiary acquires ~4.5 acres of land in Borivali West, Mumbai",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106714158",
+  "headline": "Sunteck Realty Q1FY27 presales up 20% YoY to ₹787 Cr; collections up 17% YoY to ₹409 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "20% presales growth 'puts the company on track to meet' 25-30% FY27 guidance",
+    "pdf_says": "Management concedes Q1 was 20%, below the 25-30% guidance, and says it is confident of catching up over the year; Q1 alone is behind the guided pace",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0].basis",
+    "card_says": "basis MEMORY, no memory_refs",
+    "pdf_says": "Guidance comes from this transcript; memory.json holds no presales guidance",
+    "class": "memory"
+   },
+   {
+    "field": "track_next.kpis_to_verify[0].metric",
+    "card_says": "metric 'revenue' for presales growth",
+    "pdf_says": "Presales (bookings) is a different quantity from reported revenue (₹191 Cr operating revenue in Q1)",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106719994",
+  "headline": "Clean Max Q1FY26 revenue at ₹832.16 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened / notable_changes / timeline_entry",
+    "card_says": "Q1FY26 revenue ₹832.16 Cr vs Q1FY25 ₹402.34 Cr; EBITDA, PAT likewise labelled Q1FY26 vs Q1FY25",
+    "pdf_says": "Quarter ended 30 June 2026 = Q1FY27; comparative column 30.06.2025 = Q1FY26",
+    "class": "wrong_period"
+   },
+   {
+    "field": "notable_changes[pat].why",
+    "card_says": "lower tax expense contributed to PAT recovery",
+    "pdf_says": "Total tax went from a credit of (129.42) mn in Q1FY26 to a charge of 388.22 mn in Q1FY27: tax was higher, a drag on PAT",
+    "class": "direction"
+   },
+   {
+    "field": "track_next.pending_approvals[1]",
+    "card_says": "Regulatory approvals for issuance of NCDs up to ₹25,000 million",
+    "pdf_says": "Board approved the NCD issue (up to ₹2,500 Cr); no regulatory approval for the issue is stated as pending",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106740134",
+  "headline": "TITAGARH RAIL SYSTEMS Q1FY27: revenue ₹765.07 Cr (+12.6% YoY)",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "promoter + FII + DII up 3.1 pp to 66.7% (Q1FY27) while small shareholders fell 6%",
+    "pdf_says": "memory.json holds ownership only for Q3FY26 and Q4FY26 (63.58% combined); no Q1FY27 shareholding to support 66.7% or the 6% fall",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106746763",
+  "headline": "Clean Max to sell 26% stake in Muoi and 49% in Chin subsidiaries",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106778078",
+  "headline": "Punjab & Sind Bank receives UFBU notice for nationwide strike on 11 September 2026",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "strike affects peer lenders like UCO Bank and RBL Bank on the same date",
+    "pdf_says": "Filing names no other bank; peers not in filing or memory",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "disruption is one day and digital channels limit the financial impact (basis FILING)",
+    "pdf_says": "Filing says only that branch and office functioning may be affected; nothing on digital channels or financial impact",
+    "class": "invented"
+   },
+   {
+    "field": "event_type",
+    "card_says": "LITIGATION_REGULATORY",
+    "pdf_says": "A union strike notice: an operational/general update, not litigation or regulatory action",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106799053",
+  "headline": "Ambuja shareholders approve Orient Cement merger, 99.98% in favour",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[Shares in favour]",
+    "card_says": "2,254.11 Cr shares",
+    "pdf_says": "2,254,107,305 votes = 225.41 crore shares (10x slip)",
+    "class": "unit_scale"
+   },
+   {
+    "field": "key_numbers[Shares against]",
+    "card_says": "4.18 Cr shares",
+    "pdf_says": "418,004 votes = 0.04 crore (4.18 lakh) shares (100x slip)",
+    "class": "unit_scale"
+   },
+   {
+    "field": "core_catalyst / why_it_matters[0]",
+    "card_says": "consolidation of Adani Cement assets to create a top-3 player (basis MEMORY, t_95b1b29d)",
+    "pdf_says": "Neither the filing nor memory t_95b1b29d (meeting convened for the merger) mentions a top-3 position",
+    "class": "memory"
+   },
+   {
+    "field": "event_type",
+    "card_says": "GOVERNANCE",
+    "pdf_says": "Shareholder approval of a scheme of amalgamation; M_AND_A fits better",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106803674",
+  "headline": "Ambuja Cements commissions 3.4 MTPA capacity, total now 113.45 MTPA",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106805093",
+  "headline": "Punjab & Sind Bank Q2 advances to ₹1,26,011 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106814493",
+  "headline": "LIC to launch three domestic non-par plans effective October 19, 2026",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106821210",
+  "headline": "Bajaj Finserv incorporates wholly owned subsidiary Bajaj Reinsurance Ltd with ₹1 Cr initial capital",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106712485",
+  "headline": "Punjab & Sind Bank Q1FY27 net profit rose 23% YoY to ₹331 Cr; advances grew 19% YoY to ₹119,290 Cr",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106712622",
+  "headline": "LIC held its 5th AGM on July 27, 2026; all seven resolutions passed with requisite majority",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "takeaway",
+    "card_says": "no dissent exceeded 0.01% on any resolution",
+    "pdf_says": "Resolution 6 (appointment of Shri Sanjay Lohiya as Government Nominee Director): 0.399% of all votes against, and 30.02% of public-institution votes against (49,393,046 of 164,512,328); resolution 7 (RPT with LIC MF AMC): 0.0107% against",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106717498",
+  "headline": "LIC faces ₹9.91 Cr GST penalty for FY22-23",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[0]",
+    "card_says": "demand order for GST, interest and penalty of ₹9.91 Cr",
+    "pdf_says": "GST demand INR 99,09,87,896 (₹99.10 Cr) plus interest as applicable plus penalty INR 9,90,98,790 (₹9.91 Cr); total at least ₹109 Cr. ₹9.91 Cr is the penalty alone",
+    "class": "other"
+   },
+   {
+    "field": "headline / key_numbers",
+    "card_says": "₹9.91 Cr GST penalty (the only amount given)",
+    "pdf_says": "Leaves out the ₹99.10 Cr GST demand, the larger part of the order",
+    "class": "other"
+   },
+   {
+    "field": "takeaway / timeline_entry / what_happened[1] quote",
+    "card_says": "appeal filed with Commissioner (Appeals), Jamshedpur; quote 'Corporation will file an appeal'",
+    "pdf_says": "Only 'The order is appealable before the Commissioner (Appeals), Jamshedpur'; no appeal is said to be filed or planned, and the quoted sentence is not in the filing",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106729385",
+  "headline": "LIC Q1 revenue up 6.75% to ₹1,27,250 Cr; VNB margin rises to 22.9%",
+  "verdict": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "what_happened[0] / key_numbers[1]",
+    "card_says": "Individual New Business Premium grew 8.61% to ₹51,834 Cr (from ₹47,726 Cr)",
+    "pdf_says": "₹51,834 Cr (+8.61%) is Total Group Business Premium; Individual New Business Premium is ₹14,351 Cr (+14.48% from ₹12,536 Cr)",
+    "class": "wrong_column"
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Group Business Premium fell 3.41% YoY to ₹14,351 Cr, a slowdown in the group segment",
+    "pdf_says": "Group Business Premium rose 8.61% to ₹51,834 Cr; ₹14,351 Cr is Individual NBP (+14.48%); -3.41% is the absolute fall in individual NBP market share (63.51% to 60.10%)",
+    "class": "direction"
+   },
+   {
+    "field": "notable_changes[1]",
+    "card_says": "Group Business Premium ₹12,536 Cr -> ₹14,351 Cr, +14.5%, POSITIVE, 'Group premium declined despite a higher market share'",
+    "pdf_says": "The figures are Individual NBP; the 'why' contradicts its own +14.5% change; market share fell, not rose",
+    "class": "wrong_column"
+   },
+   {
+    "field": "notable_changes[3]",
+    "card_says": "13th-month persistency 75.63% -> 75.33%, 'declined on a policy basis'",
+    "pdf_says": "75.63% -> 75.33% is the premium basis; on number of policies the 13th month rose 64.35% -> 66.45%",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[2] basis",
+    "card_says": "basis MEMORY (agency force 18.63 lakh, 52.96% over 5 years)",
+    "pdf_says": "In the filing (slide on agency force); memory holds no agency data",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106730597",
+  "headline": "Clean Max Q1FY27 revenue rose 107% YoY to ₹832 Cr; PAT at ₹55 Cr",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[2].change",
+    "card_says": "PAT ₹55 Cr, 'Turnaround from loss'",
+    "pdf_says": "Management: 'terrific growth in our profit after tax' (a growth, not a turnaround); no prior-year loss is stated",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "Credit rating upgraded to AA from A+",
+    "pdf_says": "Transcript says both 'upgraded to a AA minus' (CEO) and 'now is AA, which was a A+' (CFO); the notch is uncertain",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106750239",
+  "headline": "Titagarh Rail approved by Indian Railways for 1,200/year locomotive traction motors",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "event_type / deal_value",
+    "card_says": "ORDER_WIN; deal_value stage TERMS_FINALISED with counterparty Indian Railways",
+    "pdf_says": "Inclusion in the Approved Vendor list (capacity 1,200 a year); no order, the impact 'cannot be ascertained' and depends on future tenders",
+    "class": "event_type"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106758079",
+  "headline": "Ambuja Cements to hold shareholder meeting on Sept 28, 2026 to approve merger with Orient Cement",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "missing_disclosures",
+    "card_says": "Share exchange ratio or consideration details missing",
+    "pdf_says": "Scheme clause 2.3.1: 33 Ambuja shares for every 100 Orient Cement shares (Share Exchange Ratio), with the joint valuation report attached",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0] basis",
+    "card_says": "basis MEMORY, no refs",
+    "pdf_says": "The 72.66% holding is in the filing; memory has no such entry (supported by the filing, so no wrong fact)",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106773898",
+  "headline": "Crisil assigns AA/Stable rating to Clean Max's ₹2,500 Cr NCDs and corporate credit",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106785968",
+  "headline": "Clean Max to sell 26% stake in 3 SPVs for ₹78,000; appoints Vipin Balan as Head - Projects",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106821297",
+  "headline": "Punjab & Sind Bank Q2FY27: interest earned ₹3,394.48 Cr (+13.2% YoY), net profit ₹411.97 Cr (+39.9% YoY)",
+  "verdict": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": []
+ },
+ {
+  "news_id": "nse-106710478",
+  "headline": "Clean Max to buy 26% in Uno for ₹1.25 Cr, sell 26% stakes in Sau and Ni",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "Corporate restructuring of captive SPVs to comply with open access captive norms",
+    "pdf_says": "No reason is given for the Sau/Ni sales; the Uno purchase is 'to enable growth and further development'",
+    "class": "invented"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "divesting 26% stakes in two new SPVs to commercial C&I customers",
+    "pdf_says": "Buyers are Fortis Hospotel and Sterling Biotech; the filing does not call them customers (a plausible inference, not stated)",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106719975",
+  "headline": "LIC receives ₹95.24 Cr GST demand and equal penalty order for UP state",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[1].quote",
+    "card_says": "\"A penalty of Rs 952384119.00 was imposed for excess ITC claimed and Short tax paid\"",
+    "pdf_says": "This sentence is not in the filing; the filing lists 'Penalty - INR 95,23,84,119/-' and 'Excess ITC claimed and Short Tax paid' separately (the facts are right; the quote is made up)",
+    "class": "invented"
+   },
+   {
+    "field": "what_happened[2] / takeaway",
+    "card_says": "LIC confirmed it will file an appeal before the GST Appellate Tribunal (quote: 'Corporation will file an appeal before GST Appellate Tribunal')",
+    "pdf_says": "Only 'The order is appealable before the GST Appellate Tribunal'; there is no commitment to appeal, and the quoted sentence does not exist",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106739689",
+  "headline": "LIC Q1FY27 PAT rose 22.81% YoY to ₹13,492 Cr; VNB margin improved to 22.9%",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[0].label",
+    "card_says": "Revenue ₹1,27,250 Cr",
+    "pdf_says": "₹1,27,250 Cr is total premium income (total revenue in memory is ₹1,27,623 Cr for Q1FY27)",
+    "class": "other"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "VNB margin of 22.9% exceeds the prior guidance of >=22.9% for Q2FY27, indicating early achievement of target",
+    "pdf_says": "Management says 'We don't normally give a guidance'; the >=22.9 Q2FY27 entry in memory is the system's own prediction made from this same quarter, not guidance, and 22.9 does not 'exceed' >=22.9",
+    "class": "memory"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106753554",
+  "headline": "CARE Ratings reaffirms CARE AA; Stable rating for Punjab & Sind Bank's Tier-II bonds",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "A plain reaffirmation of an existing rating with an unchanged outlook is routine.",
+  "issues": [
+   {
+    "field": "timeline_entry",
+    "card_says": "On August 22, 2026, CARE Ratings reaffirmed",
+    "pdf_says": "CARE's press release is dated August 21, 2026; the bank's letter is August 22",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106760763",
+  "headline": "Clean Max approves term sheet to procure 1,550 MW wind turbines from Envision Energy",
+  "verdict": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.usage",
+    "card_says": "MERCHANT_SALE",
+    "pdf_says": "Not stated; the turbines are 'for the Company's wind power projects' (the company sells to C&I customers under PPAs)",
+    "class": "invented"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "secured a term sheet ... locking in equipment supply",
+    "pdf_says": "This is only a term sheet; definitive agreements are to be signed in seven phases before 31 Dec 2028, and no price is given",
+    "class": "other"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106774002",
+  "headline": "Crisil assigns CleanMax maiden 'CRISIL AA/Stable' rating for ₹2,500 Cr NCDs",
+  "verdict": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "This press release repeats a rating already disclosed the day before (t_10d76422); it adds no new information.",
+  "issues": []
+ },
+ {
+  "news_id": "nse-106797207",
+  "headline": "Clean Max allots ₹2,500 Cr green NCDs across 5 series at 8.25%–8.765% coupons",
+  "verdict": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_why": "₹2,500 Cr of new secured debt is 43% of net worth and about 18% of gross debt; it sets the company's funding cost for up to 10 years.",
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "₹2,500 Cr raise = 15% of market cap (₹16,377 Cr)",
+    "pdf_says": "Neither the filing nor memory has ₹16,377 Cr; the scale block gives a market cap of ₹14,751 Cr, which makes it 16.9%",
+    "class": "invented"
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "Refinancing and long-term debt funding",
+    "pdf_says": "The filing does not say what the proceeds are for (refinancing is not mentioned)",
+    "class": "invented"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106812992",
+  "headline": "Clean Max acquires Massmunch in Thailand for THB 1.25 Cr",
+  "verdict": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened / key_numbers",
+    "card_says": "THB 1.25 Cr (enterprise value)",
+    "pdf_says": "Thai Baht 1,250,000 (One Million Two Hundred Fifty Thousand) = THB 12.5 lakh, i.e. THB 0.125 Cr, about ₹0.35 Cr; the card overstates it 10x",
+    "class": "unit_scale"
+   },
+   {
+    "field": "headline / what_happened[0]",
+    "card_says": "acquires / acquired 100% share capital",
+    "pdf_says": "Only the SPA was signed on 9 Oct 2026; completion is expected by 31 Oct 2026",
+    "class": "other"
+   },
+   {
+    "field": "takeaway",
+    "card_says": "establish presence in Thailand",
+    "pdf_says": "The buyers are already Cleanmax's Thai subsidiaries; the target is bought 'to enable growth and further development of solar renewable energy capacity of the Company in Thailand'",
+    "class": "invented"
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Aligns with ... guidance to add over 1.5 GW in FY27",
+    "pdf_says": "Memory g_edcd1d87 is guidance for the whole company's capacity; a shell with nil turnover and THB 1.2 m net worth has no stated link to it",
+    "class": "memory"
+   }
+  ]
+ }
+]

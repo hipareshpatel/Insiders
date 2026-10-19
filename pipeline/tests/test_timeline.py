@@ -47,8 +47,8 @@ def test_a_consequential_filing_goes_back_for_a_full_card(settings):
     f = _routine("n-big", now, "Outcome of board meeting - dividend, fund raise and acquisition")
     ask = dict(LINE, needs_card=True, event_type="FUNDRAISE", reason="a fundraise in the same letter")
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(TEXT)},
-                                 {PASS1_MODEL: [json.dumps(ask)], "nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
-                                 env={"GROQ_API_KEY": "g", "NVIDIA_API_KEY": "n"})
+                                 {PASS1_MODEL: [json.dumps(ask)], "nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]},
+                                 env={"GROQ_API_KEY": "g", "NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     outcome = pipeline.analyze(f)
     assert outcome.card is not None and fake.calls[0]["model"] == PASS1_MODEL and len(fake.calls) >= 2  # the timeline call, then Pass 2
     assert pipeline.stats.timeline_only == 0
@@ -64,7 +64,7 @@ def test_a_management_change_gets_no_card_even_when_pass_2_types_it(settings):
     one["event_type"] = "MANAGEMENT_CHANGE"
     one["timeline_entry"] = "Yasushi Nishikawa appointed Managing Director and CEO from 17 April 2025, succeeding Junya Yamanishi."
     pipeline, sink, fake = build(settings, [a], {a.pdf_url: _pdf("Appointment of Managing Director and CEO")},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(one)]}, env={"NVIDIA_API_KEY": "n"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(one)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     first = pipeline.analyze(a)
     assert first.card is None and first.update["status"] == "NOT_MATERIAL"
     assert "director / KMP" in first.update["reason"]

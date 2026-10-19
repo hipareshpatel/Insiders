@@ -112,7 +112,7 @@ def test_results_card_uses_xbrl_figures_in_memory(settings):
     pass2["card"]["basis"] = "CONSOLIDATED"
     pass2["dossier_delta"]["financial_metrics"][0]["value"] = 119  # the model misread the PDF
     pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text), filing.xbrl_url: results_xml()},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(pass2)]})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(pass2)]})
     stats = pipeline.run("live", time_budget_s=60)
     assert stats.analyzed == 1 and stats.xbrl == 1
     assert "Machine-tagged results (XBRL" in fake.calls[0]["messages"][-1]["content"]
@@ -189,7 +189,7 @@ def test_results_filing_finds_its_xbrl_in_the_archive(settings):
                XbrlLink("Q2FY27", "CONSOLIDATED", "https://bse.invalid/co-late.xml", f"{day + timedelta(days=200)}T10:00:00"),
                XbrlLink("Q1FY27", "CONSOLIDATED", "https://bse.invalid/q1.xml", f"{day - timedelta(days=90)}T10:00:00")]
     pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text), "https://bse.invalid/co.xml": results_xml()},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
     pipeline.bse.archive = {"999001": archive}
     stats = pipeline.run("live", time_budget_s=60)
     assert stats.analyzed == 1 and stats.xbrl == 1
@@ -577,7 +577,7 @@ def test_a_results_file_whose_statement_the_text_lacks_is_used_when_memory_agree
 
     def run(memory_revenue):
         pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(garbled), filing.xbrl_url: results_xml()},
-                                     {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(pass2)] * 2})
+                                     {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(pass2)] * 2})
         dossier = {"financial_metrics": [{"metric": "revenue", "period": "Q2FY26", "value": memory_revenue, "unit": "INR_CR",
                                           "as_of": "2025-11-10T18:00:00+05:30"}]}
         sink.put_dossier("999001", dossier)

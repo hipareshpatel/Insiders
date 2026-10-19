@@ -195,7 +195,7 @@ def test_an_order_card_takes_its_amount_and_client_from_the_file(settings):
     out["timeline_entry"] = "RailTel received an LoA from RRB Secunderabad."
     text = "RailTel has received a Letter of Acceptance from Railway Recruitment Board Secunderabad worth Rs. 167.52 Crore (excluding taxes)."
     pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(out)] * 3}, env={"NVIDIA_API_KEY": "n"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(out)] * 3}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     file = ex.EventFile("18826", "RAILTEL", "para-b", "Bagging/Receiving of orders/contracts  (Sub-para 4-Para B)",
                         (filed + timedelta(minutes=50)).astimezone(IST), "https://nsearchives.nseindia.com/corporate/xbrl/R.xml", None, None)
     pipeline.nse = EventNse([file], (FIX / "nse_event_railtel_order_20261018.xml").read_bytes())

@@ -40,7 +40,7 @@ def test_repeat_submissions_of_one_event_are_marked_duplicate(settings, workers)
                _filing("e1", "Unaudited Financial Results", now + timedelta(minutes=3), "Result", scrip="999002",
                        name="Other Ltd")]
     pipeline, sink, fake = build(settings, filings, {f.pdf_url: _pdf(LETTER) for f in filings},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)] * 5}, env={"NVIDIA_API_KEY": "n"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)] * 5}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.run("live", time_budget_s=60)
     status = {r["news_id"]: (r["status"], r["reason"]) for r in rows(sink, "select news_id, status, reason from filings")}
     same = sorted(n for n in ("d1", "d2", "d3") if status[n][0] == "DUPLICATE")
@@ -61,8 +61,8 @@ def test_a_refiling_that_changes_any_figure_is_not_a_duplicate(settings):
     corrected = LETTER.replace("Net profit 1,500.00", "Net profit 1,350.00")
     assert corrected != LETTER
     pdfs = {filings[0].pdf_url: _pdf(LETTER), filings[1].pdf_url: _pdf(corrected)}
-    pipeline, sink, fake = build(settings, filings, pdfs, {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)] * 2},
-                                 env={"NVIDIA_API_KEY": "n"})
+    pipeline, sink, fake = build(settings, filings, pdfs, {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)] * 2},
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.run("live", time_budget_s=60)
     status = {r["news_id"]: r["status"] for r in rows(sink, "select news_id, status from filings")}
     assert status == {"f1": "ANALYZED", "f2": "ANALYZED"} and len(fake.calls) == 2
@@ -73,11 +73,11 @@ def test_a_later_run_finds_the_duplicate_through_the_text_cache(settings):
     now = now_ist() - timedelta(minutes=30)
     first = [_filing("c1", "Outcome of Board Meeting", now, "Result")]
     pipeline, sink, _ = build(settings, first, {first[0].pdf_url: _pdf(LETTER)},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.run("live", time_budget_s=60)
     later = first + [_filing("c2", "Raising of Funds", now + timedelta(minutes=26), "Result")]
     pipeline2, _, fake2 = build(settings, later, {f.pdf_url: _pdf(LETTER) for f in later},
-                                {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
+                                {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline2.run("live", time_budget_s=60)
     status = {r["news_id"]: (r["status"], r["reason"]) for r in rows(sink, "select news_id, status, reason from filings")}
     assert status["c2"] == ("DUPLICATE", "duplicate of c1 (exact match)") and fake2.calls == []
@@ -103,9 +103,9 @@ def test_template_filings_with_new_numbers_are_never_duplicates(settings):
                _filing("m2", "Monthly Business Update", now + timedelta(hours=20), "Company Update", scrip="999003")]
     pdfs = {"https://bse.invalid/o1.pdf": _pdf(LETTER), "https://bse.invalid/o2.pdf": _pdf(CORRECTED),
             "https://bse.invalid/m1.pdf": _pdf(jan), "https://bse.invalid/m2.pdf": _pdf(feb)}
-    pipeline, sink, _ = build(settings, filings, pdfs, {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)] * 4,
+    pipeline, sink, _ = build(settings, filings, pdfs, {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)] * 4,
                                                         "openai/gpt-oss-20b": [json.dumps({"is_material": True, "event_type": "MONTHLY_UPDATE"})] * 2},
-                              env={"NVIDIA_API_KEY": "n", "GROQ_API_KEY": "g"})
+                              env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "GROQ_API_KEY": "g"})
     pipeline.backfill_companies(["999001", "999003"], now.date() - timedelta(days=1), now.date() + timedelta(days=2), 60)
     status = {r["news_id"]: r["status"] for r in rows(sink, "select news_id, status from filings")}
     assert "DUPLICATE" not in status.values(), status
@@ -146,7 +146,7 @@ def test_refused_attachment_fails_one_filing_and_three_in_a_row_stop_the_run(set
     now = now_ist() - timedelta(minutes=30)
     filings = _results(5, now)
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     real = pipeline.bse.download
 
     def download(url, max_bytes=None):
@@ -170,8 +170,8 @@ def test_a_failing_history_filing_is_tried_once_per_run(settings):
     history = _filing("old", "Unaudited Financial Results", old, "Result")
     live = _filing("new", "Unaudited Financial Results", now_ist() - timedelta(minutes=5), "Result")
     pipeline, sink, _ = build(settings, [history, live], {live.pdf_url: _pdf(RESULT_TEXT)},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)], "glm-4.5-flash": [json.dumps(PASS2)]},
-                              env={"ZAI_API_KEY": "z", "NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)], "glm-4.5-flash": [json.dumps(PASS2)]},
+                              env={"ZAI_API_KEY": "z", "NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.discover(old.date())
     pipeline.bse.download = lambda url, max_bytes=None: (_ for _ in ()).throw(AttachmentError("timed out")) if "old" in url else _pdf(RESULT_TEXT)
     pipeline.run("all", time_budget_s=60, max_backfill_days=40)
@@ -189,8 +189,8 @@ def test_one_attachment_failing_run_after_run_spends_an_attempt_in_the_end(setti
     settings = replace(settings, workers=1)
     now = now_ist() - timedelta(minutes=30)
     broken = _filing("broken", "Unaudited Financial Results", now, "Result")
-    pipeline, sink, _ = build(settings, [broken], {}, {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
-                              env={"NVIDIA_API_KEY": "n"})
+    pipeline, sink, _ = build(settings, [broken], {}, {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]},
+                              env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.discover(now.date())
     pipeline.bse.download = lambda url, max_bytes=None: (_ for _ in ()).throw(AttachmentError("HTTP 500"))
     pipeline.run("live", time_budget_s=60)
@@ -210,8 +210,8 @@ def test_retryable_failures_at_the_head_of_the_queue_do_not_stop_the_rest(settin
     now = now_ist() - timedelta(minutes=30)
     filings = _results(5, now)
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings[2:]},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
-                              env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]},
+                              env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.discover(now.date())
     sink._db.execute("UPDATE filings SET status = 'FAILED', attempts = 1 WHERE news_id IN ('r0', 'r1')")
     sink._db.commit()
@@ -235,7 +235,7 @@ def test_live_filing_of_a_company_with_a_long_backlog_is_not_held_back(settings,
         return json.dumps(PASS2)
 
     pipeline, sink, _ = build(settings, old + [live], {f.pdf_url: _pdf(RESULT_TEXT) for f in old + [live]},
-                              {"nvidia/nemotron-3-super-120b-a12b": [respond]}, env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [respond]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     for f in old:
         pipeline.discover(now_ist().date().fromisoformat(f.filing_date))
     pipeline.run("live", time_budget_s=60)
@@ -252,8 +252,8 @@ def test_second_opinion_reply_with_only_a_card_keeps_the_memory(settings):
     bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
     card_only = {"is_material": True, "card": PASS2["card"]}
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"glm-4.5-flash": [json.dumps(bad)], "nvidia/nemotron-3-super-120b-a12b": [json.dumps(card_only)]},
-                              env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(card_only)]},
+                              env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert outcome.card["card"]["review"]["status"] == "CORRECTED"
     assert {m["period"] for m in sink.get_dossier("999001")["financial_metrics"]} == {"Q2FY27", "Q2FY26"}
@@ -278,7 +278,7 @@ def test_a_discovery_error_does_not_stop_processing(settings):
     now = now_ist() - timedelta(minutes=30)
     filings = _results(1, now)
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.discover(now.date())
     pipeline.bse.announcements = lambda *a, **k: (_ for _ in ()).throw(ValueError("HTML error page"))
     stats = pipeline.run("live", time_budget_s=60)
@@ -320,8 +320,8 @@ def test_extracted_text_is_cached_so_reanalysis_never_downloads_again(settings):
     now = now_ist() - timedelta(minutes=30)
     (f,) = _results(1, now)
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
-                              env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]},
+                              env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     filing = f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"})
     pipeline.analyze(filing)
     pipeline.bse.download = lambda url, max_bytes=None: (_ for _ in ()).throw(AssertionError("downloaded again"))
@@ -335,8 +335,8 @@ def test_a_text_cache_entry_from_before_reading_order_is_read_again_once(setting
     now = now_ist() - timedelta(minutes=30)
     (f,) = _results(1, now)
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)] * 3},
-                              env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)] * 3},
+                              env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     filing = f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"})
     path = pipeline._cache_path(f.news_id)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -426,8 +426,8 @@ def test_sync_to_cloud_copies_cards_state_and_objects_and_resumes(settings, tmp_
     now = now_ist() - timedelta(minutes=30)
     filings = _results(3, now)
     pipeline, source, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                                {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
-                                env={"NVIDIA_API_KEY": "n"})
+                                {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]},
+                                env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.run("live", time_budget_s=60)
     held = rows(source, "select news_id from cards")[0]["news_id"]
     source._db.execute("UPDATE cards SET held = 1 WHERE news_id = ?", [held])
@@ -449,8 +449,8 @@ def test_run_publishes_the_homepage_snapshot(settings):
     now = now_ist() - timedelta(minutes=30)
     filings = _results(2, now)
     pipeline, sink, _ = build(settings, filings, {f.pdf_url: _pdf(RESULT_TEXT) for f in filings},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
-                              env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]},
+                              env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.run("live", time_budget_s=60)
     snap = json.loads(sink.get_object("daily_feed/latest_snapshot.json"))
     assert snap["limit"] == 50 and snap["feed"]["total"] == 2 and len(snap["feed"]["cards"]) == 2
@@ -474,7 +474,7 @@ def test_owner_starred_and_noise_cards_are_shown_to_the_analyst(settings):
         return json.dumps(PASS2)
 
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"nvidia/nemotron-3-super-120b-a12b": [respond]}, env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [respond]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     starred = {"headline": "Starred example headline", "what_happened": ["fact"], "why_it_matters": [{"text": "why"}]}
     sink._db.execute("INSERT INTO card_feedback (news_id, scrip_code, sector, event_category, rating, card_json_snapshot, created_at)"
                      " VALUES ('x1', '1', 'default', 'RESULTS', 'STARRED', ?, '2026-01-01')", [json.dumps(starred)])
@@ -492,7 +492,7 @@ def test_an_unreadable_attachment_fails_before_any_card_and_an_announcement_with
     now = now_ist() - timedelta(minutes=30)
     (f,) = _results(1, now)
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: b"PK\x03\x04 not a pdf"},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
     outcome = pipeline._process_one(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}), False, True)
     assert outcome.update["status"] == "FAILED" and "no readable text in the attachment" in outcome.update["last_error"]
     assert fake.calls == []
@@ -504,7 +504,7 @@ def test_an_unreadable_attachment_fails_before_any_card_and_an_announcement_with
              "card": {"impact_level": "LOW", "headline": "Exchange seeks clarification from Demo Cement on plant report",
                       "what_happened": [{"text": "The exchange sought a clarification on a media report",
                                          "quote": "has sought clarification from Demo Cement Ltd with reference to a media report"}]}}
-    pipeline, sink, fake = build(settings, [text_only], {}, {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(reply)]})
+    pipeline, sink, fake = build(settings, [text_only], {}, {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(reply)]})
     outcome = pipeline._process_one(text_only, False, True)
     assert outcome.update["status"] == "ANALYZED"
 
@@ -533,8 +533,8 @@ def test_an_attachment_once_read_as_nothing_is_downloaded_again(settings):
     now = now_ist() - timedelta(minutes=30)
     (f,) = _results(1, now)
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
-                              env={"NVIDIA_API_KEY": "n"})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]},
+                              env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     filing = f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"})
     from bse_intel.extract import Document
     path = pipeline._cache_path(f.news_id)

@@ -18,7 +18,7 @@ from bse_intel.timeutil import IST, today_ist
 from test_annual_xbrl import ANNUAL_CARD, ANNUAL_TEXT, CONSOLIDATED, LISTING, STANDALONE
 from test_pipeline import _filing, _pdf, build, rows
 
-NEMOTRON = "nvidia/nemotron-3-super-120b-a12b"
+NEMOTRON = "nvidia/nemotron-3.5-super-vl:free"
 FILES = {"AR_XBRL_KANORICHEM_22122025122259.xml": CONSOLIDATED, "AR_XBRL_KANORICHEM_22122025122227.xml": STANDALONE}
 
 
@@ -52,7 +52,7 @@ REPORTS = [_report("n-fy25", "Annual Report for the Financial year 2024-25", (20
 def _read_the_day_they_were_filed(settings, reports=REPORTS):
     """The daily path: each report read when it was filed, when NSE listed no file for its year yet."""
     pipeline, sink, _ = build(settings, reports, {f.pdf_url: _pdf(ANNUAL_TEXT) for f in reports},
-                              {NEMOTRON: [json.dumps(ANNUAL_CARD)]}, env={"NVIDIA_API_KEY": "n"})
+                              {NEMOTRON: [json.dumps(ANNUAL_CARD)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.nse = FakeNse({})
     for day in sorted({f.filing_date for f in reports}):
         pipeline.discover(date.fromisoformat(day))
@@ -70,7 +70,7 @@ def _read_the_day_they_were_filed(settings, reports=REPORTS):
 
 def _catch_up(settings, nse, script=None, env=None, reports=REPORTS, **kwargs):
     pipeline, sink, fake = build(settings, reports, {f.pdf_url: _pdf(ANNUAL_TEXT) for f in reports},
-                                 script or {NEMOTRON: [json.dumps(ANNUAL_CARD)]}, env=env or {"NVIDIA_API_KEY": "n"})
+                                 script or {NEMOTRON: [json.dumps(ANNUAL_CARD)]}, env=env or {"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.nse = nse
     kwargs.setdefault("horizon_days", 3650)   # the files are Kanoria's FY25, for a report filed in September 2025
     report = annual_catchup.catch_up(pipeline, time.monotonic() + 60, **kwargs)
@@ -114,7 +114,7 @@ def test_the_paid_provider_is_left_out_even_with_its_key_loaded(settings):
     _read_the_day_they_were_filed(settings, reports)
     script = {NEMOTRON: [json.dumps(ANNUAL_CARD)], "deepseek-flash": [json.dumps(ANNUAL_CARD)]}
     report, _, fake = _catch_up(settings, FakeNse({"DEMOCEM": LISTING["data"], "THIRDCO": LISTING["data"]}), script,
-                                env={"NVIDIA_API_KEY": "n", "DEEPSEEK_API_KEY": "d"}, reports=reports)
+                                env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "DEEPSEEK_API_KEY": "d"}, reports=reports)
     assert report["paid_left_out"] == ["deepseek"] and len(report["rerun"]) == 2
     assert [c["model"] for c in fake.calls] == [NEMOTRON, NEMOTRON]
 
@@ -205,7 +205,7 @@ def _no_real_processes(monkeypatch):
 
 def test_a_card_read_while_nse_refused_has_no_stamp_and_takes_any_file_of_its_year(settings):
     pipeline, sink, _ = build(settings, REPORTS[:1], {REPORTS[0].pdf_url: _pdf(ANNUAL_TEXT)},
-                              {NEMOTRON: [json.dumps(ANNUAL_CARD)]}, env={"NVIDIA_API_KEY": "n"})
+                              {NEMOTRON: [json.dumps(ANNUAL_CARD)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.nse = FakeNse({"DEMOCEM": LISTING["data"]}, refuse={"DEMOCEM"})  # the file was out; NSE said no
     pipeline.discover(date.fromisoformat(REPORTS[0].filing_date))
     pipeline.process("2000-01-01", "2100-01-01", time.monotonic() + 60, bulk=False)

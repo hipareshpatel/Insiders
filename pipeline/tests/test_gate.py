@@ -64,7 +64,7 @@ def test_a_held_card_is_published_marked_for_review_without_asking_a_second_mode
     now = now_ist() - timedelta(minutes=10)
     f = _filing("n-hold", "Unaudited Financial Results for the quarter", now, "Result")
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline._holds = {"n-hold": "EBITDA is PBT in the source table"}
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     body = outcome.card["card"]
@@ -77,7 +77,7 @@ def test_a_garbled_scan_marks_the_card_for_review(settings):
     f = _filing("n-scan", "Unaudited Financial Results for the quarter", now, "Result")
     noisy = RESULT_TEXT + " " + " ".join(f"{n:,}.{n % 100:02d}" for n in range(1000, 1300)) + " l0,406.47 99S.08 (1,9S7) 763.S2"
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(noisy)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     review = outcome.card["card"]["review"]
     assert outcome.card["needs_review"] == 1 and review["status"] == "HELD" and "garbled" in review["issues"][0]
@@ -442,8 +442,8 @@ def test_a_hold_is_kept_on_the_card_when_a_second_opinion_ran(settings):
     bad = json.loads(json.dumps(PASS2))
     bad["card"]["what_happened"] = ["Revenue ₹120 Cr vs ₹90.9 Cr a year ago", "PAT ₹17.5 Cr"]  # PAT was ₹15 Cr
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(bad)]},
-                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(bad)]},
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     pipeline._holds = {"n-hold2": "EBITDA is PBT in the source table"}
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     review = outcome.card["card"]["review"]

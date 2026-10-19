@@ -321,9 +321,9 @@ def test_nemotron_super_runs_with_thinking_off_on_every_pass2_route():
     from pathlib import Path
 
     config = tomllib.loads((Path(__file__).parent.parent / "config" / "providers.toml").read_text(encoding="utf-8"))
-    entries = [t for route in ("pass2", "pass2_bulk", "pass2_long") for t in config["routes"][route]
-               if t["model"] == "nvidia/nemotron-3-super-120b-a12b"]
-    assert len(entries) == 3
+    entries = [t for route in config["routes"].values() for t in route if t["model"] == "nvidia/nemotron-3-super-120b-a12b"]
+    # off the card routes since round 6 (12 of its 36 published cards WRONG as a spare, 2026-10-19); thinking off wherever it stays
+    assert not [t for r in ("pass2", "pass2_bulk", "pass2_long") for t in config["routes"][r] if "nemotron-3-super" in t["model"]]
     for entry in entries:
         assert entry["extra_body"] == {"chat_template_kwargs": {"enable_thinking": False}} and entry["json_mode"] is False
 

@@ -78,7 +78,7 @@ def build(settings, filings, pdfs, script, env=None):
     fake = FakeProvider(script)
     config = settings.load_toml("providers.toml")
     gateway = AIGateway(config, client_factory=lambda *a: fake,
-                        env=env if env is not None else {"GROQ_API_KEY": "g", "NVIDIA_API_KEY": "n"})
+                        env=env if env is not None else {"GROQ_API_KEY": "g", "NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline = Pipeline(settings, sink, gateway, bse=FakeBse(filings, pdfs), sleep=lambda s: None)
     return pipeline, sink, fake
 
@@ -97,7 +97,7 @@ def test_live_run_end_to_end(settings):
     pdfs = {f.pdf_url: _pdf(RESULT_TEXT if f.news_id == "n-res" else "Clarification on news item. No impact.") for f in filings}
     script = {
         "openai/gpt-oss-20b": [{"is_material": False, "event_type": "OTHER", "reason": "routine clarification"}],
-        "nvidia/nemotron-3-super-120b-a12b": ["<think>checking memory</think>" + json.dumps(PASS2)],
+        "nvidia/nemotron-3.5-super-vl:free": ["<think>checking memory</think>" + json.dumps(PASS2)],
     }
     pipeline, sink, fake = build(settings, filings, pdfs, script)
     stats = pipeline.run("live", time_budget_s=60)
@@ -117,7 +117,7 @@ def test_live_run_end_to_end(settings):
     # Impact comes from the deterministic score (blueprint §11); the model's call is kept beside it.
     assert card["event_category"] == "RESULTS" and card["needs_review"] == 0
     assert card["impact_level"] == json.loads(card["card_json"])["score"]["impact"] and json.loads(card["card_json"])["model_impact"] == "HIGH"
-    assert body["category_tag"] == "RESULTS" and body["model"] == "nvidia/nvidia/nemotron-3-super-120b-a12b"
+    assert body["category_tag"] == "RESULTS" and body["model"] == "openrouter/nvidia/nemotron-3.5-super-vl:free"
     assert body["why_it_matters"][0]["memory_refs"] == []  # hallucinated memory id removed
     assert body["grounding"]["score"] >= 0.7
     assert body["notable_changes"][0]["direction"] == "POSITIVE"
@@ -141,7 +141,7 @@ def test_live_run_end_to_end(settings):
     (run,) = rows(sink, "select status, stats_json from pipeline_runs")
     assert run["status"] == "OK" and json.loads(run["stats_json"])["analyzed"] == 1
     usage = {(r["provider"], r["model"]): r["requests"] for r in rows(sink, "select * from provider_usage")}
-    assert usage == {("groq", "openai/gpt-oss-20b"): 1, ("nvidia", "nvidia/nemotron-3-super-120b-a12b"): 1}
+    assert usage == {("groq", "openai/gpt-oss-20b"): 1, ("openrouter", "nvidia/nemotron-3.5-super-vl:free"): 1}
 
     # A second run is idempotent: nothing is re-analysed or re-sent.
     pipeline2, sink2, fake2 = build(settings, filings, pdfs, script)
@@ -159,8 +159,8 @@ def test_quota_ceiling_defers_work_instead_of_failing(settings):
     pdfs = {f.pdf_url: _pdf(RESULT_TEXT) for f in filings}
     # Only NVIDIA is configured for Pass 2, and its model reports its daily quota spent.
     err = api_error(openai.RateLimitError, 429, "You exceeded your current quota for the day")
-    script = {"nvidia/nemotron-3-super-120b-a12b": [err]}
-    pipeline, sink, fake = build(settings, filings, pdfs, script, env={"NVIDIA_API_KEY": "n"})
+    script = {"nvidia/nemotron-3.5-super-vl:free": [err]}
+    pipeline, sink, fake = build(settings, filings, pdfs, script, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.discover(now.date())
     pipeline.process("2000-01-01", "2100-01-01", time.monotonic() + 30, bulk=False)
     status = {r["news_id"]: (r["status"], r["attempts"]) for r in rows(sink, "select news_id, status, attempts from filings")}
@@ -168,7 +168,7 @@ def test_quota_ceiling_defers_work_instead_of_failing(settings):
     assert pipeline.stats.deferred >= 1 and "quota" in pipeline.stats.stopped_reason
     assert pipeline.stats.failed == 0
     # one try, then the ceiling stops the run instead of hammering the provider
-    assert [c["model"] for c in fake.calls] == ["nvidia/nemotron-3-super-120b-a12b"]
+    assert [c["model"] for c in fake.calls] == ["nvidia/nemotron-3.5-super-vl:free"]
 
 
 def test_backfill_walks_days_in_order_and_marks_complete(settings):
@@ -234,8 +234,8 @@ def test_card_with_wrong_math_is_held_for_review(settings):
     }]
     # the second opinion (here the same provider's other model, the only one configured) repeats the mistake
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)]},
-                                 env={"NVIDIA_API_KEY": "n"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)]},
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     body = outcome.card["card"]
     (q,) = body["quantified_impact"]
@@ -297,8 +297,8 @@ def test_live_filing_waits_for_its_company_history(settings):
         return json.dumps(PASS2)
 
     pipeline, sink, _ = build(settings, [history, live], {f.pdf_url: _pdf(RESULT_TEXT) for f in (history, live)},
-                              {"glm-4.5-flash": [respond], "nvidia/nemotron-3-super-120b-a12b": [respond]},
-                              env={"ZAI_API_KEY": "z", "NVIDIA_API_KEY": "n"})
+                              {"glm-4.5-flash": [respond], "nvidia/nemotron-3.5-super-vl:free": [respond]},
+                              env={"ZAI_API_KEY": "z", "NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.discover(old.date())  # as an earlier backfill run would have
     sink.kv_set("backfill:discovered_through", (today - timedelta(days=1)).isoformat(), "now")
     pipeline.run("live", time_budget_s=60)
@@ -315,17 +315,17 @@ def test_second_opinion_from_another_provider_corrects_the_card(settings):
     bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
     good = json.loads(json.dumps(PASS2))
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"glm-4.5-flash": [json.dumps(bad)], "nvidia/nemotron-3-super-120b-a12b": [json.dumps(good)]},
-                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(good)]},
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     first, second = fake.calls
-    assert first["model"] == "glm-4.5-flash" and second["model"] == "nvidia/nemotron-3-super-120b-a12b"
+    assert first["model"] == "nvidia/nemotron-3.5-super-vl:free" and second["model"] == "glm-4.5-flash"
     verify_prompt = second["messages"][1]["content"]
     assert "DRAFT REPLY" in verify_prompt and "17.5" in verify_prompt and 'Claim not supported by the sources: "Record quarterly revenue' in verify_prompt
     body = outcome.card["card"]
     assert outcome.card["needs_review"] == 0 and body["what_happened"][1]["text"] == "PAT ₹15 Cr"
-    assert body["review"]["status"] == "CORRECTED" and body["review"]["checked_by"] == "nvidia/nvidia/nemotron-3-super-120b-a12b"
-    assert body["model"] == "nvidia/nvidia/nemotron-3-super-120b-a12b" and len(body["review"]["fixed"]) == 2
+    assert body["review"]["status"] == "CORRECTED" and body["review"]["checked_by"] == "zai/glm-4.5-flash"
+    assert body["model"] == "zai/glm-4.5-flash" and len(body["review"]["fixed"]) == 2
 
 
 def test_one_unmatched_amount_gets_a_second_opinion_even_above_the_review_threshold(settings):
@@ -337,8 +337,8 @@ def test_one_unmatched_amount_gets_a_second_opinion_even_above_the_review_thresh
     bad["card"]["what_happened"] = ["Revenue ₹120 Cr vs ₹90.9 Cr a year ago", "PAT ₹16.5 Cr"]  # PAT was ₹15 Cr
     good = json.loads(json.dumps(PASS2))
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"glm-4.5-flash": [json.dumps(bad)], "nvidia/nemotron-3-super-120b-a12b": [json.dumps(good)]},
-                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(good)]},
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert len(fake.calls) == 2
     assert "₹ lakh ÷ 100 = ₹ Cr" in fake.calls[1]["messages"][1]["content"]
@@ -354,7 +354,7 @@ def test_a_lakh_figure_read_at_the_wrong_scale_is_corrected_without_a_second_mod
     bad = json.loads(json.dumps(PASS2))
     bad["card"]["what_happened"] = ["Revenue ₹120 Cr vs ₹90.9 Cr a year ago", "PAT ₹150 Cr"]
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)]}, env={"NVIDIA_API_KEY": "n"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     body = outcome.card["card"]
     assert len(fake.calls) == 1 and body["review"] is None
@@ -371,7 +371,7 @@ def test_one_card_per_company_per_results_quarter(settings):
     first = _filing("q-1", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
     again = _filing("q-2", "Outcome of Board Meeting - results", now + timedelta(hours=1), "Board Meeting")
     pipeline, sink, fake = build(settings, [first, again], {f.pdf_url: _pdf(RESULT_TEXT) for f in (first, again)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
     one = pipeline.analyze(first.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     pipeline._results_quarters.clear()  # a later run: only memory knows the quarter has its card
     two = pipeline.analyze(again.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
@@ -392,9 +392,9 @@ def test_a_card_the_second_opinion_cannot_fix_is_held_back(settings):
     bad["card"]["why_it_matters"] = [{"text": "Record quarterly revenue for the company", "basis": "FILING"}]
     # both providers return the same wrong card, so the second opinion resolves nothing
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)],
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)],
                                   "glm-4.5-flash": [json.dumps(bad)]},
-                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert outcome.card is not None, "the row is still written, so the defect can be seen"
     assert outcome.card["card"]["review"]["status"] == "UNRESOLVED"
@@ -437,9 +437,9 @@ def test_a_fast_track_filing_that_is_not_a_repeat_goes_on_to_pass_2(settings):
     pipeline, sink, fake = build(
         settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
         {"ministral-8b-2512": [json.dumps({"duplicate_of": "2026-01-01", "why": "nothing on that date"})],
-         "nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)],
+         "nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)],
          "glm-4.5-flash": [json.dumps(PASS2)]},
-        env={"MISTRAL_API_KEY": "m", "NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+        env={"MISTRAL_API_KEY": "m", "NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     dossier = new_dossier(f)
     dossier["timeline"] = [{"id": "t1", "news_id": "n-other", "date": "2026-10-10T18:00:00+05:30",
                             "event_type": "GOVERNANCE", "summary": "Board meeting outcome", "tier": "TIMELINE"}]
@@ -467,9 +467,9 @@ def test_a_corrected_card_is_itself_corrected_and_checked(settings):
     second["card"]["what_happened"] = ["Revenue ₹12,000 Cr vs ₹90.9 Cr a year ago", "PAT ₹15 Cr"]
     second["card"]["headline"] = "Demo Cement Q2 revenue ₹12,000 Cr"
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(bad)],
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)],
                                   "glm-4.5-flash": [json.dumps(second)]},
-                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     body = outcome.card["card"]
     assert body["model"] == "zai/glm-4.5-flash", "the second provider's card was the one published"
@@ -516,9 +516,9 @@ def test_a_card_is_not_held_back_only_for_how_it_quoted_the_filing(settings):
     card["card"]["why_it_matters"] = [{"text": "Scale is building", "basis": "FILING",
                                        "quote": "Net profit 1,500.00"}]
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(card)],
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(card)],
                                   "glm-4.5-flash": [json.dumps(card)]},
-                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     body = outcome.card["card"]
     assert body["grounding"]["quotes_paraphrased"], "the wording is still reported"
@@ -562,8 +562,8 @@ def test_a_results_reading_that_does_not_add_up_goes_to_a_second_provider(settin
     good = json.loads(json.dumps(bad))
     good["dossier_delta"]["financial_metrics"][-1]["value"] = 15
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"glm-4.5-flash": [json.dumps(bad)], "nvidia/nemotron-3-super-120b-a12b": [json.dumps(good)]},
-                                 env={"NVIDIA_API_KEY": "n", "ZAI_API_KEY": "z"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)], "glm-4.5-flash": [json.dumps(good)]},
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert len(fake.calls) == 2, "the figures that did not add up sent the card to a second provider"
     assert "PBT 20.00 - tax 5.00 = 15.00 Cr, but PAT is given as 17.50 Cr" in fake.calls[1]["messages"][1]["content"]
@@ -618,7 +618,7 @@ def test_a_held_card_does_not_own_its_results_quarter_and_a_not_material_claim_i
     first = _filing("q-1", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
     again = _filing("q-2", "Outcome of Board Meeting - results", now + timedelta(hours=1), "Board Meeting")
     pipeline, sink, fake = build(settings, [first, again], {f.pdf_url: _pdf(RESULT_TEXT) for f in (first, again)},
-                                 {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2), json.dumps(PASS2)],
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2), json.dumps(PASS2)],
                                   "glm-4.5-flash": [json.dumps(PASS2)]})
     one = pipeline.analyze(first.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     pipeline._commit([one])
@@ -658,7 +658,7 @@ def test_a_board_meeting_notice_does_not_take_the_results_quarter(settings):
         return json.dumps(card if "November 12" in kwargs["messages"][1]["content"] else PASS2)
 
     pipeline, sink, fake = build(settings, [notice, first], {notice.pdf_url: _pdf(notice_text), first.pdf_url: _pdf(RESULT_TEXT)},
-                                 {model: [reply] * 2 for model in ("nvidia/nemotron-3-super-120b-a12b", "glm-4.5-flash")})
+                                 {model: [reply] * 2 for model in ("nvidia/nemotron-3.5-super-vl:free", "glm-4.5-flash")})
     pipeline._commit([pipeline.analyze(notice.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))])
     assert ("999001", "Q2FY27") not in pipeline._results_quarters
     two = pipeline.analyze(first.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
@@ -704,7 +704,7 @@ def test_pass_2_says_why_a_filing_is_not_material(settings):
     reply = {"is_material": False, "event_type": "OTHER", "timeline_entry": "",
              "reason": "A schedule of investor meetings; no new information about the business"}
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf("Schedule of analyst / investor meetings on 12 November.")},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(reply)], "glm-4.5-flash": [json.dumps(reply)]})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(reply)], "glm-4.5-flash": [json.dumps(reply)]})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "OTHER"}))
     assert outcome.update["status"] == "NOT_MATERIAL"
     assert outcome.update["reason"] == "pass2: not material: A schedule of investor meetings; no new information about the business"
@@ -717,7 +717,7 @@ def test_a_filing_read_again_as_not_material_takes_its_facts_out_of_memory(setti
     f = _filing("n-again", "Unaudited Financial Results for the quarter", now, "Result")
     not_material = {"is_material": False, "event_type": "RESULTS", "timeline_entry": "", "reason": "a duplicate copy"}
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)], "glm-4.5-flash": [json.dumps(PASS2)]})
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)], "glm-4.5-flash": [json.dumps(PASS2)]})
     first = pipeline._process_one(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}), False, True)
     pipeline._commit([first])
     from bse_intel.dossier import _sources
@@ -725,7 +725,7 @@ def test_a_filing_read_again_as_not_material_takes_its_facts_out_of_memory(setti
     sources = lambda: {s["news_id"] for m in sink.get_dossier("999001")["financial_metrics"] for s in _sources(m)}  # noqa: E731
     assert "n-again" in sources()
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},   # the same store, read again
-                              {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(not_material)],
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(not_material)],
                                "glm-4.5-flash": [json.dumps(not_material)]})
     again = pipeline._process_one(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}), False, True)
     assert again.update["status"] == "NOT_MATERIAL" and "n-again" not in sources()
@@ -755,7 +755,7 @@ def test_an_annual_report_inside_an_agm_notice_takes_the_annual_report_path(sett
         page.insert_textbox(pymupdf.Rect(36, 36, 560, 800), text, fontsize=9)
     card = {**PASS2, "event_type": "ANNUAL_REPORT", "card": {**PASS2["card"], "headline": "Demo Cement FY26 annual report"}}
     script = {"openai/gpt-oss-20b": [{"is_material": False, "event_type": "OTHER", "reason": "AGM notice"}],
-              "nvidia/nemotron-3-super-120b-a12b": [json.dumps(card)] * 3}
+              "nvidia/nemotron-3.5-super-vl:free": [json.dumps(card)] * 3}
     pipeline, sink, fake = build(settings, [agm], {agm.pdf_url: doc.tobytes()}, script)
     pipeline.run("live", time_budget_s=60)
     (row,) = rows(sink, "select status, event_type, reason from filings where news_id = 'n-agm'")

@@ -71,9 +71,9 @@ Read before changing anything:
 
 ## Status and next steps
 
-- Done: all blueprint modules except 8 (DGTR) and 42 (promoter-group contagion). Both have a source, measured
-  2026-10-18 (docs/SOURCES.md): DGTR publishes findings as dated PDFs per case; NSE's SAST Reg 31 encumbrance feed
-  gives promoter pledges event by event. Neither is read yet.
+- Done: all blueprint modules except 8 (DGTR). Module 42 (promoter pledges) built 2026-10-19 from NSE's SAST Reg 31
+  encumbrance feed (`pledges.py`, `pledge-sync`, TRACKER F80). DGTR has a source, measured 2026-10-18 (docs/SOURCES.md):
+  findings as dated PDFs per case; not read yet.
 - Smoke-test findings and their fixes: the table in `docs/TRACKER.md` ("Laptop smoke test").
 - **State at 2026-10-16 19:30 (laptop awake; the rebuild is running).** Round 0 checked every card of
   both smoke tests (177) against its PDF: 95 wrong, 56 minor, 26 OK. The error classes were fixed in code

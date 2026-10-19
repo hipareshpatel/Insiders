@@ -442,3 +442,11 @@ for a 24 MW captive wind-solar plant; ₹1.25 Cr now, ₹12.50 Cr committed). Th
    is involved ("No approval is required for this acquisition"; a tranche was paid). Also left out: the filing says the
    counterparty is a **related party** (Oyster Renewable, common promoter group, "at arm's length").
 Owner's verdict on the card: theirs to record on the site.
+
+### P-L3 · `sync-to-cloud` does not copy the price charts (`chart/`)
+
+`pipeline/src/bse_intel/sync.py` copies `OBJECT_PREFIXES = ("meta/", "memory/", "daily_feed/", "noise/", "learning/")`.
+`chart/<scrip>.json`, which the company page's price chart reads (`public.ts`, `VAULT.get("chart/...")`), is not among
+them, so the live site's company pages have no chart until `market-data` runs on GitHub. Measured 2026-10-20:
+`market-data --all` on the laptop wrote 3,466 charts locally (all 1,927 universe companies priced). Proposal: add
+`"chart/"` (and leave `raw/` out). The laptop can then copy them in the next sync.

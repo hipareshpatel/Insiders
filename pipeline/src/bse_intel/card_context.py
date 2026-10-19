@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import re
 
+from .dossier import third_party_view
+
 # Long-term scale shared by CRISIL, ICRA, CARE, India Ratings, Acuite, Brickwork and Infomerics, best first
 LONG_TERM = ("AAA", "AA+", "AA", "AA-", "A+", "A", "A-", "BBB+", "BBB", "BBB-", "BB+", "BB", "BB-",
              "B+", "B", "B-", "C+", "C", "C-", "D")
@@ -132,7 +134,7 @@ def guidance_recall(before: dict | None, event_type: str, filed_at: str | None =
             continue
         text = f"{g.get('statement', '')} {g.get('metric') or ''} {g.get('target') or ''}".lower()
         # an agency's or analyst's view is not the company's promise (laptop test, 2026-10-19: "Ind-Ra expects")
-        if re.search(r"\b(?:crisil|icra|care|ind-?ra|india ratings|acuite|analysts?|brokerage)\b", text):
+        if third_party_view(text):
             continue
         # whole words for the short ones ("pat" is not "patent"), a word start for the rest ("plants", "orders")
         if not any(re.search(rf"\b{w}\b" if len(w) <= 3 else rf"\b{w}", text) for w in words):

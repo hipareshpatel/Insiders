@@ -275,12 +275,17 @@ function WatchButton({ scrip, on }: { scrip: string; on: boolean }) {
 
 /** Who the company is (former names, subsidiaries, brands), who owns it, what the auditor said, and
  * the numeric targets the platform is checking against results (blueprint compartments 1, 9, 10). */
+const GROUP_TYPE = /subsidiar|step[- ]?down|\bwos\b|wholly|target\s+compan|acqui|investee|\bjv\b|joint\s+venture|associate|holding|parent|promoter|group\s+compan|sister|affiliate|\bllp\b|partnership|\bspv\b|trust|plant|factory|unit\b|facility|division|brand|branch|office|warehouse|mine|refinery|hospital|hotel|store/i;
+
 export function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
   const identity = dossier?.identity;
   const owners = dossier?.ownership ?? [];
   const auditor = dossier?.governance?.auditor;
   const predictions = [...(dossier?.predictions ?? [])].reverse().slice(0, 8);
-  if (!identity?.former_names?.length && !identity?.entities?.length && !owners.length && !auditor && !predictions.length) return null;
+  // the group, plants and brands only: memory written before the pipeline checked the type holds a case's other
+  // parties too (Meta, Google, a ministry; laptop test, 2026-10-19). The same rule as dossier.group_entity.
+  const entities = (identity?.entities ?? []).filter((e) => e.type && GROUP_TYPE.test(e.type));
+  if (!identity?.former_names?.length && !entities.length && !owners.length && !auditor && !predictions.length) return null;
   const last = owners[owners.length - 1];
   const prev = owners[owners.length - 2];
   const delta = (k: "promoter_pct" | "fii_pct" | "dii_pct" | "pledge_pct") =>
@@ -290,9 +295,9 @@ export function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
       <Panel title="Identity & governance" hint="Former names, group entities, auditor">
         <dl className="space-y-2 text-[13.5px]">
           {identity?.former_names?.length ? <div><dt className="eyebrow text-ink-3">Formerly</dt><dd className="text-ink">{identity.former_names.join(" · ")}</dd></div> : null}
-          {identity?.entities?.length ? (
-            <div><dt className="eyebrow text-ink-3">Group entities & brands</dt>
-              <dd className="text-ink">{identity.entities.map((e) => e.type ? `${e.name} (${e.type})` : e.name).join(" · ")}</dd></div>
+          {entities.length ? (
+            <div><dt className="eyebrow text-ink-3">Group entities, plants & brands</dt>
+              <dd className="text-ink">{entities.map((e) => `${e.name} (${e.type})`).join(" · ")}</dd></div>
           ) : null}
           {auditor ? (
             <div><dt className="eyebrow text-ink-3">Auditor</dt>
@@ -787,7 +792,12 @@ function PromiseSummary({ dossier }: { dossier: Dossier | null }) {
 
 function ComingUp({ dossier }: { dossier: Dossier | null }) {
   const today = todayIST();
-  const events = (dossier?.upcoming_events ?? []).filter((e) => e.date >= today).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
+  const upcoming = (dossier?.upcoming_events ?? []).filter((e) => e.date >= today);
+  // a generic entry beside a named event of the same day is the same event filed again
+  const named = new Set(upcoming.filter((e) => !["OTHER", "MILESTONE"].includes(e.event_type)).map((e) => e.date));
+  const events = upcoming.filter((e, i) => !(["OTHER", "MILESTONE"].includes(e.event_type) && named.has(e.date))
+      && upcoming.findIndex((x) => x.date === e.date && x.event_type === e.event_type) === i)
+    .sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
   if (!events.length) return null;
   return (
     <Panel title="Coming up">

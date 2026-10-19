@@ -43,11 +43,16 @@ def _day(ts: str | None) -> str | None:
 
 def open_promises(dossier: dict) -> list[dict]:
     out = []
+    from .dossier import third_party_view
+    from .periods import due_date
+
     for g in dossier.get("guidance", []):
-        if _status(g) not in OPEN:
+        if _status(g) not in OPEN or third_party_view(f"{g.get('statement', '')} {g.get('target') or ''}"):
             continue
+        # the deadline is read again from its words: memory written before ranges were read holds the early end
+        deadline = due_date(g.get("due"))
         out.append({"id": g["id"], "statement": g["statement"][:200], "due": g.get("due"),
-                    "due_date": g.get("due_date"), "given_on": _day(g.get("given_on")),
+                    "due_date": deadline.isoformat() if deadline else g.get("due_date"), "given_on": _day(g.get("given_on")),
                     "status": _status(g), "source_news_id": g.get("source_news_id")})
     out.sort(key=lambda p: (p["due_date"] or "9999", p["given_on"] or ""))
     return out[:MAX_PROMISES]

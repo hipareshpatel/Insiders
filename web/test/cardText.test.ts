@@ -37,3 +37,17 @@ test("a figure is shown only as a whole number", () => {
   assert.ok(!showsFigure("anything", ""));
   assert.ok(showsFigure("a (b) c", "(b") && !showsFigure("a b) c", "(b"));   // regex characters are escaped, not run
 });
+
+test("one event per company and day in the calendar", async () => {
+  const { dedupeEvents } = await import("../shared/events.ts");
+  const e = (scrip_code: string, event_date: string, event_type: string) => ({ scrip_code, event_date, event_type });
+  const got = dedupeEvents([
+    e("1", "2026-10-24", "RIGHTS_OPEN"), e("1", "2026-10-24", "MILESTONE"), e("1", "2026-10-24", "OTHER"),
+    e("1", "2026-10-24", "RIGHTS_OPEN"),                    // the same event from a second filing
+    e("1", "2026-10-25", "MILESTONE"),                      // alone on its day: kept
+    e("2", "2026-10-24", "OTHER"),                          // another company: kept
+    e("1", "2026-10-24", "RECORD_DATE"),                    // a different named event the same day: kept
+  ]);
+  assert.deepEqual(got.map((x) => `${x.scrip_code} ${x.event_date} ${x.event_type}`), [
+    "1 2026-10-24 RIGHTS_OPEN", "1 2026-10-25 MILESTONE", "2 2026-10-24 OTHER", "1 2026-10-24 RECORD_DATE"]);
+});

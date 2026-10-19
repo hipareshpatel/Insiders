@@ -2,6 +2,7 @@
 // D1's free tier meters rows *read* (5M/day), so each query seeks a range
 // (dates, the cursor) instead of walking a table, and hot responses are kept
 // briefly in the isolate and, on a custom domain, in Cloudflare's edge cache.
+import { dedupeEvents } from "../shared/events";
 import { Hono } from "hono";
 import type { Context } from "hono";
 import type { AppEnv } from "./env";
@@ -409,7 +410,7 @@ api.get("/calendar", async (c) => {
        AND (?3 IS NULL OR event_type IN (SELECT value FROM json_each(?3)))
      ORDER BY event_date, company_name
      LIMIT 3000`).bind(q.from, q.to, listParam(q.types)).all();
-  return c.json({ events: results });
+  return c.json({ events: dedupeEvents(results as { scrip_code: string; event_date: string; event_type: string }[]) });
 });
 
 type MemorySummary = {

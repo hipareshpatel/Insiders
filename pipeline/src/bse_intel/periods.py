@@ -115,6 +115,9 @@ def quarter_from_index(index: int) -> str:
     return f"Q{q + 1}FY{year % 100:02d}"
 
 
+_RANGE_SPLIT = re.compile(r"\s+(?:to|till|until|through|and|or)\s+|\s*[–—]\s*|\s+-\s+|(?<=\d)\s*-\s*(?=(?:Q[1-4]|H[12]|9M)?\s*FY)", re.I)
+
+
 def due_date(text: str | None) -> date | None:
     """Last day of the period a deadline or figure refers to, if parseable.
 
@@ -124,6 +127,13 @@ def due_date(text: str | None) -> date | None:
     """
     if not text:
         return None
+    # A range is due at its later end: "FY26-FY27", "Q3FY27 to Q4FY27" (laptop test, 2026-10-19: Prism Johnson's
+    # "due FY26-FY27" read as FY26 showed 202 days overdue). "FY2026-27" is one year, not a range.
+    parts = [p for p in _RANGE_SPLIT.split(text) if p.strip()]
+    if len(parts) > 1:
+        ends = [d for d in (due_date(p) for p in parts) if d]
+        if len(ends) > 1:
+            return max(ends)
     exact = explicit_date(text)
     if exact:
         return exact

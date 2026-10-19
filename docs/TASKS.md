@@ -86,7 +86,7 @@ Files you may change: none; write the findings in `docs/audit/content-faults-202
 classes in code from your findings, so say for each what the rule should be.
 Report:
 
-## T6 · cloud · IN PROGRESS — content faults the cloud fixes in code now
+## T6 · cloud · DONE — content faults the cloud fixes in code now
 
 From the same report, items 3 (part), 4 and the calendar:
 - an agency's or analyst's expectation stored as the company's guidance ("Ind-Ra expects ...");
@@ -95,7 +95,17 @@ From the same report, items 3 (part), 4 and the calendar:
 - one event in Coming up three times (Rights Open, Milestone, Other on one date).
 Files the cloud is changing: `pipeline/src/bse_intel/dossier.py` (guidance and identity merge), `periods.py`
 (`due_date`), `pipeline.py` (catalysts), `web/`. **Laptop: do not edit these functions until this task is DONE.**
-Report:
+Report: done in the commit after `eb8691a` (tests `pipeline/tests/test_content_faults.py`, `web/test/cardText.test.ts`).
+- Third-party views: `dossier.third_party_view` keeps "Ind-Ra / CRISIL / analysts expect ..." out of guidance when it is
+  stored, and out of the overdue list and "Management said" for memory already stored. Pass-2 prompt says so too.
+- Ranges: `periods.due_date` takes a range's later end ("FY26-FY27" -> 2027-03-31); "FY2026-27" stays one year. The
+  overdue list re-reads each deadline from its words, so stored memory is right without a rebuild.
+- Entities: kept only with a group, plant or brand type (`dossier.group_entity`; an acquisition target counts); the
+  company page applies the same rule to memory already stored. Prompt: not a case's other parties, customers, lenders,
+  regulators or ministries.
+- Calendar: `/api/calendar` and the company page's Coming up drop a generic "Other"/"Milestone" beside a named event of
+  the same company and day, and repeats of one event (`shared/events.ts`).
+- Not changed: guidance left OPEN after the results that settle it and repeated targets (T5 first: data, then the rule).
 
 ---
 

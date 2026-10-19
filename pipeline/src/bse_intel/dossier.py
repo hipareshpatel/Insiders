@@ -367,6 +367,33 @@ def _metric_entry(metric: str, period: str, sources: list[dict]) -> dict:
     return entry
 
 
+# Whose words a forecast is: a rating agency's or an analyst's view is not the company's promise (laptop test,
+# 2026-10-19: "Ind-Ra expects ..." listed among Prism Johnson's overdue promises)
+_THIRD_PARTY = re.compile(
+    r"^\W*(?:the\s+)?(?:rating\s+agency\s+|agency\s+)?(?:crisil|icra|care(?:\s+ratings)?|ind-?ra|india\s+ratings|acuit[eé]|brickwork|infomerics"
+    r"|moody'?s|fitch|s&p|analysts?|brokerages?|the\s+street)\b"
+    r"|\b(?:crisil|icra|care(?:\s+ratings)?|ind-?ra|india\s+ratings|acuit[eé]|brickwork|infomerics|moody'?s|fitch|s&p|analysts?|brokerages?)"
+    r"\s+(?:now\s+)?(?:expects?|believes?|projects?|estimates?|forecasts?|anticipates?|sees?|views?|opines?|assumes?)\b",
+    re.I)
+
+
+def third_party_view(text: str | None) -> bool:
+    """True for a forecast stated by a rating agency, an analyst or a broker rather than the company."""
+    return bool(text and _THIRD_PARTY.search(text))
+
+
+# The kinds of entity the company page lists as its group, plants and brands. A lawsuit's other parties, customers,
+# lenders and regulators are not (laptop test, 2026-10-19: Meta, Google, X Corp and a ministry among a company's
+# entities); an entity with no type at all says nothing about the relation and is left out too.
+_GROUP_TYPE = re.compile(r"subsidiar|step[- ]?down|\bwos\b|wholly|target\s+compan|acqui|investee|\bjv\b|joint\s+venture|associate|holding|parent|promoter"
+                         r"|group\s+compan|sister|affiliate|\bllp\b|partnership|\bspv\b|trust|plant|factory|unit\b|facility"
+                         r"|division|brand|branch|office|warehouse|mine|refinery|hospital|hotel|store", re.I)
+
+
+def group_entity(kind: str | None) -> bool:
+    return bool(kind and _GROUP_TYPE.search(kind))
+
+
 def reported_by(entry: dict, news_id: str) -> bool:
     return any(s["news_id"] == news_id for s in _sources(entry))
 
@@ -664,7 +691,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     guidance = {g["id"]: g for g in d.get("guidance", [])}
     for item in delta.guidance:
         gid = "g_" + _hash(filing.scrip_code, _norm(item.statement))
-        if gid in guidance:
+        if gid in guidance or third_party_view(f"{item.statement} {item.target or ''}"):
             continue
         deadline = due_date(item.due)
         guidance[gid] = {
@@ -738,7 +765,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     for e in delta.entities[:6]:
         name = _bare_name(e.name.strip())
         key = _norm(name)
-        if key and key not in entities:
+        if key and key not in entities and group_entity(e.type):
             entities[key] = {"name": name[:120], "type": e.type, "as_of": as_of, "source_news_id": news_id}
     identity["entities"] = list(entities.values())[-20:]
 

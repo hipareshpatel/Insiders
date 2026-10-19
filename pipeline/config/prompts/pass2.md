@@ -194,7 +194,8 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
 Memory compartments (blueprint): fill these only from this filing, null or empty otherwise
 - former_names: earlier names the filing mentions ("formerly known as Novartis India Limited").
 - entities: subsidiaries, step-down subsidiaries, JVs (with the stake when stated), plants and
-  brands that the filing names, each with its type ("100% subsidiary", "JV (51%)", "brand").
+  brands that the filing names, each with its type ("100% subsidiary", "JV (51%)", "brand"). Not the
+  other parties to a case, customers, lenders, regulators or ministries: they are not the group.
 - ownership: shareholding at a quarter-end when the filing states it (promoter %, promoter shares
   pledged as % of their holding, FII %, DII %, number of small shareholders).
 - auditor: the audit report's opinion on results or annual accounts ("UNMODIFIED",
@@ -219,7 +220,8 @@ Dossier facts (dossier_delta), only for facts stated in this filing
   and gross_debt for that date.
 - segment_mix: segment revenue or share for the period.
 - guidance: new forward-looking statements by management: statement, metric, target, due,
-  source_type ("CONCALL", "AGM", "PRESENTATION", "PRESS" or "FILING").
+  source_type ("CONCALL", "AGM", "PRESENTATION", "PRESS" or "FILING"). A rating agency's, analyst's or
+  broker's expectation is not the company's guidance: leave it out of guidance.
 - promise_updates: status changes for guidance already in memory, referencing its id, with status
   "DELIVERED", "ON_TRACK", "DELAYED", "MISSED", "REVISED" or "WITHDRAWN" and the evidence.
 - watch_updates: memory's watchlist holds items earlier cards said to track (ids like

@@ -19,6 +19,7 @@ from __future__ import annotations
 import ast
 import math
 import operator
+import re
 from dataclasses import dataclass, field
 
 from .grounding import SourceIndex
@@ -28,6 +29,36 @@ _BINARY = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul,
 _UNARY = {ast.UAdd: operator.pos, ast.USub: operator.neg}
 _FUNCS = {"abs": abs, "min": min, "max": max, "round": round}
 REL_TOLERANCE = 0.02
+
+
+# What one of each unit is in units of its currency (or of itself), so a formula over mixed units is checked in one
+# scale: Texmaco's USD 135M x ₹85 was stated as ₹11,475 Cr and passed, being 135 x 85 (round 5 arm B, 2026-10-19).
+_UNIT_SIZE = {"INR": 1, "RS": 1, "USD": 1, "EUR": 1, "GBP": 1, "JPY": 1, "AED": 1, "PCT": 1, "%": 1, "X": 1, "TIMES": 1,
+              "NUMBER": 1, "COUNT": 1, "SHARES": 1, "INR_PER_SHARE": 1,
+              "INR_CR": 1e7, "CR": 1e7, "CRORE": 1e7, "INR_LAKH": 1e5, "LAKH": 1e5, "INR_TH": 1e3, "INR_THOUSAND": 1e3,
+              "INR_M": 1e6, "INR_MN": 1e6, "INR_MILLION": 1e6, "INR_BN": 1e9, "INR_BILLION": 1e9,
+              "USD_M": 1e6, "USD_MN": 1e6, "USD_MILLION": 1e6, "USD_BN": 1e9, "USD_BILLION": 1e9, "USD_K": 1e3,
+              "EUR_M": 1e6, "EUR_MN": 1e6, "EUR_BN": 1e9, "SHARES_CR": 1e7, "SHARES_LAKH": 1e5, "SHARES_M": 1e6}
+
+
+_CONVERTS = re.compile(r"\d(?:\.\d+)?[eE]\+?[3-9]|(?<![\d.])1000+(?![\d.])")
+
+
+def _size(unit: str | None) -> float | None:
+    return _UNIT_SIZE.get(str(unit or "").strip().upper().replace(" ", "_"))
+
+
+def in_units(est: QuantifiedImpact) -> float | None:
+    """The formula evaluated with every input at its unit's size and the answer in the result's unit; None when a unit
+    is not known (then only the plain arithmetic is checked, as before)."""
+    sizes = {i.name: _size(i.unit) for i in est.inputs if i.value is not None}
+    out = _size(est.unit)
+    if out is None or not sizes or any(s is None for s in sizes.values()) or _CONVERTS.search(est.formula or ""):
+        return None   # a formula that divides by 1e7 or multiplies by 100000 converts units itself
+    try:
+        return evaluate(est.formula, {i.name: i.value * sizes[i.name] for i in est.inputs if i.value is not None}) / out
+    except (FormulaError, ZeroDivisionError, OverflowError):
+        return None
 
 
 class FormulaError(ValueError):
@@ -127,6 +158,9 @@ def check(estimates: list[QuantifiedImpact], *sources: str) -> QuantCheck:
             item.update(check="UNCHECKED", computed=None, check_note=str(exc))
             out.items.append(item)
             continue
+        scaled = in_units(est)
+        if scaled is not None and not math.isclose(scaled, computed, rel_tol=REL_TOLERANCE, abs_tol=0.05):
+            computed = scaled   # the units say what the plain product means; the stated result is held to that
         item["computed"] = round(computed, 6)
         if est.result is None:
             item.update(result=round(computed, 4), check="VERIFIED")

@@ -138,3 +138,32 @@ def test_an_estimate_may_build_on_an_earlier_verified_one():
     result = check(card.quantified_impact, filing)
     assert [i["check"] for i in result.items] == ["VERIFIED", "VERIFIED", "VERIFIED"]
     assert result.unsourced == ["x=125.5"]
+
+
+def test_a_formula_over_mixed_units_is_checked_in_the_result_unit():
+    """Texmaco (round 5 arm B): USD 135M at ₹85 stated as ₹11,475 Cr, VERIFIED because 135 x 85 = 11,475. In ₹ crore it
+    is ₹1,147.5 Cr."""
+    from bse_intel.models import QuantifiedImpact
+    from bse_intel.quant import check
+
+    def est(result):
+        return QuantifiedImpact.model_validate({
+            "label": "Order in rupees", "formula": "order_usd * fx", "result": result, "unit": "INR_CR",
+            "inputs": [{"name": "order_usd", "value": 135, "unit": "USD_M", "source": "FILING"},
+                       {"name": "fx", "value": 85, "unit": "INR", "source": "ASSUMPTION"}]})
+
+    text = "Letter of award for locomotives worth USD 135 million."
+    wrong, right = check([est(11475)], text).items[0], check([est(1147.5)], text).items[0]
+    assert wrong["check"] == "MISMATCH" and right["check"] == "VERIFIED" and right["computed"] == 1147.5
+    # same units on both sides: nothing changes (₹ crore over ₹ crore, as a share)
+    share = QuantifiedImpact.model_validate({
+        "label": "Share", "formula": "a / b * 100", "result": 25, "unit": "PCT",
+        "inputs": [{"name": "a", "value": 250, "unit": "INR_CR", "source": "FILING"},
+                   {"name": "b", "value": 1000, "unit": "INR_CR", "source": "FILING"}]})
+    assert check([share], "orders of Rs 250 crore against revenue of Rs 1,000 crore").items[0]["check"] == "VERIFIED"
+    # a formula that converts itself is checked as written (the plain product already in ₹ crore)
+    own = QuantifiedImpact.model_validate({
+        "label": "Order in rupees", "formula": "order_usd * 1000000 * fx / 10000000", "result": 1147.5, "unit": "INR_CR",
+        "inputs": [{"name": "order_usd", "value": 135, "unit": "USD_M", "source": "FILING"},
+                   {"name": "fx", "value": 85, "unit": "INR", "source": "ASSUMPTION"}]})
+    assert check([own], text).items[0]["check"] == "VERIFIED"

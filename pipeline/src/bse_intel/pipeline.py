@@ -628,6 +628,35 @@ _FIGURE_UNIT = re.compile(r"\s*(?:(?P<cr>cr\b|crores?)|(?P<lakh>lakhs?|lacs?)|(?
 _TO_CRORE = {"cr": 1, "lakh": 0.01, "mn": 0.1, "bn": 100}
 
 
+_APPROVAL_STOP = {"approval", "approvals", "pending", "required", "requirement", "regulatory", "shareholder", "shareholders",
+                  "statutory", "other", "from", "with", "under", "subject", "receipt", "necessary", "applicable", "authority",
+                  "authorities", "relevant", "including", "such", "deal", "transaction", "company"}
+
+
+def stale_approvals(out: Pass2Output, view: dict | None, filing_text: str) -> list[str]:
+    """A pending approval copied from memory's watchlist that this filing does not mention. The rule (pass2.md) is "only
+    when the filing states them"; round 5's agents found Persistent's BaFin approval listed as pending after the offer
+    document it approved was out, and NLC's watchlist items on a card about something else (2026-10-19). Only an item
+    that reads as a watchlist entry, none of whose own words the filing prints, is dropped."""
+    card = out.card
+    if card is None or not view or not card.track_next.pending_approvals:
+        return []
+    from .dossier import _timeline_words
+    watched = [_timeline_words(w.get("text", "")) for w in view.get("watchlist", [])]
+    body = " ".join(re.findall(r"[a-z0-9]+", (filing_text or "").lower()))
+    kept, dropped = [], []
+    for item in card.track_next.pending_approvals:
+        mine = _timeline_words(item)
+        own = {w for w in mine if w not in _APPROVAL_STOP}
+        copied = any(mine and w and len(mine & w) / len(mine | w) >= 0.5 for w in watched)
+        if copied and own and not any(re.search(rf"\b{re.escape(w)}\b", body) for w in own):
+            dropped.append(item)
+        else:
+            kept.append(item)
+    card.track_next.pending_approvals = kept
+    return [f"pending approval from memory's watchlist, not in this filing, dropped: {d[:80]}" for d in dropped]
+
+
 def misdated_memory_insights(out: Pass2Output, view: dict | None, filing_text: str = "") -> list[str]:
     """Memory insights that put a figure memory holds under another period: SML's August card said "July 2025,
     when sales were 842 units", and memory has 842 as August's - a right card published with a wrong point, since
@@ -2268,6 +2297,7 @@ class Pipeline:
             changes += continued_deal(candidate, view, filed_text)
             changes += event_xbrl.apply_orders(candidate.card, event_orders)   # the file's figures have the last word
             changes += misdated_memory_insights(candidate, view, filed_text)
+            changes += stale_approvals(candidate, view, filed_text)
             if tagged:
                 # against the document alone: `sources` starts with the XBRL table, so checking the
                 # table's own comparative against it would always succeed and the guard would do nothing

@@ -135,3 +135,21 @@ def test_a_call_transcript_is_never_a_repeat_of_its_results():
     assert is_transcript(filing("Texmaco Rail & Engineering Limited has informed the Exchange about Transcript"))
     assert is_transcript(filing("Transcripts of the earnings call for Q1FY27"))
     assert not is_transcript(filing("Texmaco Rail & Engineering Limited has informed the Exchange about Investor Presentation"))
+
+
+def test_a_pending_approval_copied_from_the_watchlist_is_dropped():
+    """Round 5: Persistent's BaFin approval listed as pending from a stale watchlist item on a filing about something
+    else; an approval the filing itself states stays."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import stale_approvals
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A",
+        "card": {"impact_level": "HIGH", "headline": "Minimum acceptance met", "what_happened": ["Threshold met"],
+                 "track_next": {"pending_approvals": ["BaFin approval of the offer document",
+                                                     "Merger control clearance in Austria"]}}})
+    view = {"watchlist": [{"id": "w_1", "kind": "APPROVAL", "text": "BaFin approval of the offer document"},
+                          {"id": "w_2", "kind": "APPROVAL", "text": "Merger control clearance in Austria"}]}
+    text = "The minimum acceptance threshold was met. Completion remains subject to merger control clearance in Austria."
+    assert stale_approvals(out, view, text)
+    assert out.card.track_next.pending_approvals == ["Merger control clearance in Austria"]

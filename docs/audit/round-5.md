@@ -70,7 +70,8 @@ What the agents found, by class, and what was done (2026-10-19, after the review
 6. **The writer.** Nemotron 3 Super wrote 63 of 113 published cards at 29% WRONG; GLM 4.5 Flash 9%. Arm B (below) re-runs
    the same companies with packed Gemini writing pass 2.
 7. Open, not yet fixed: impact level set too high on routine reaffirmations and procedural steps (49 of 140 off);
-   pending approvals copied from a stale memory watchlist; ratios against a holding company's standalone revenue.
+   ratios against a holding company's standalone revenue. (Pending approvals copied from a stale watchlist: fixed
+   2026-10-19, `pipeline.stale_approvals` drops a watchlist item the filing does not mention, test.)
 8. **Impact level, measured against what the site shows** (2026-10-19, after the review). The export gave reviewers
    the writer's impact; the site shows the card's score. Against the agents' calls the writer fitted 91 of 140, the
    site's score 85: it fixed overrated cards (22 shown LOW where the writer said MODERATE and the agents said LOW) but

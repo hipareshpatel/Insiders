@@ -123,3 +123,27 @@ def test_memory_points_need_memory_and_the_file_to_agree_on_the_basis():
     history = _history("pat", [10, 11, 12, 13, 14, 15, 16, 17])
     assert memory_points(_tagged("Q1FY27", 20, 1.4), history) == []      # the file's year-ago 1.4 is not memory's 14
     assert memory_points(_tagged("Q1FY27", 20, 14), history[:2]) == []   # too little memory for a rank or a run
+
+
+def test_the_takeaway_names_what_moved_profit_from_the_file():
+    """Texmaco Q1FY27 (round 5): PAT up 71% on "cost control" per the model; the file shows a tax credit while EBITDA
+    fell. Ramco: a fall put on "lower other income" when other income rose and EBITDA fell."""
+    from bse_intel.models import FinancialMetric
+    from bse_intel.results_card import profit_driver
+    from bse_intel.xbrl import XbrlResult
+
+    def file(rows):
+        return XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q1FY27", metrics=[
+            FinancialMetric(metric=m, period=p, value=v) for m, (now, then) in rows.items()
+            for p, v in (("Q1FY27", now), ("Q1FY26", then))])
+
+    texmaco = file({"pat": (50.07, 29.33), "ebitda": (56.8, 70.6), "other_income": (20.0, 18.5),
+                    "tax_expense": (-7.57, 14.32), "finance_cost": (22.0, 23.0), "depreciation": (12.0, 11.5)})
+    assert profit_driver(texmaco) == ("Q1FY27 net profit of ₹50.07 Cr against net profit of ₹29.33 Cr a year earlier; the "
+                                      "largest move was a tax credit of ₹7.57 Cr against tax of ₹14.32 Cr a year earlier, "
+                                      "while EBITDA fell to ₹56.8 Cr from ₹70.6 Cr.")
+    ramco = file({"pat": (31.0, 84.6), "ebitda": (306.5, 397.5), "other_income": (6.74, 5.98), "tax_expense": (10.0, 28.0)})
+    assert "the largest move was EBITDA of ₹306.5 Cr against ₹397.5 Cr" in profit_driver(ramco)
+    assert profit_driver(file({"pat": (10.2, 10.0), "ebitda": (20, 19)})) is None     # profit barely moved
+    bank = file({"pat": (500.0, 300.0), "interest_earned": (6996, 6436), "tax_expense": (100, 150)})
+    assert profit_driver(bank) is None        # provisions move a bank's profit; the bridge does not have them

@@ -15,7 +15,7 @@ from __future__ import annotations
 import re
 
 from .models import Fact, Insight, KeyNumber
-from .periods import quarter_from_index, quarter_index
+from .periods import prior_year_period, quarter_from_index, quarter_index
 
 MAX_WHY = 2
 MEMORY_POINTS = 2   # code's own points from memory, ahead of the model's
@@ -162,6 +162,52 @@ def memory_points(tagged, history) -> list[Insight]:
     return [Insight(text=text, basis="MEMORY") for _, text in points[:MEMORY_POINTS]]
 
 
+# Each line's pull on net profit when it moves (EBITDA here leaves out other income, as the file tags it)
+_BRIDGE = (("ebitda", +1, "EBITDA"), ("other_income", +1, "other income"), ("depreciation", -1, "depreciation"),
+           ("finance_cost", -1, "finance cost"), ("exceptional_items", +1, "exceptional items"), ("tax_expense", -1, "tax"))
+
+
+def profit_driver(tagged) -> str | None:
+    """What moved net profit year on year, read from the file: the line whose change pulled profit furthest in the
+    direction it went. The model gave causes the statement contradicts - Texmaco's profit up 71% on "cost control" when
+    a tax credit did it and EBITDA fell 20%, Ramco's fall on "lower other income" when other income rose (round 5)."""
+    if tagged is None or not tagged.period:
+        return None
+    ago = prior_year_period(tagged.period)
+    val = {(m.metric, m.period): m.value for m in tagged.metrics if m.value is not None}
+    pat, pat0 = val.get(("pat", tagged.period)), val.get(("pat", ago))
+    if pat is None or pat0 is None or abs(pat - pat0) < max(1.0, 0.05 * abs(pat0)):
+        return None
+    if ("ebitda", tagged.period) not in val or ("ebitda", ago) not in val:
+        return None   # a bank or an insurer: provisions and claims move its profit, and the bridge has neither
+    pulls = []
+    for metric, sign, word in _BRIDGE:
+        now, then = val.get((metric, tagged.period)), val.get((metric, ago))
+        if now is not None and then is not None:
+            pulls.append((sign * (now - then), metric, word, now, then))
+    up = pat > pat0
+    moving = [p for p in pulls if (p[0] > 0) == up and abs(p[0]) >= 0.25 * abs(pat - pat0)]
+    if not moving:
+        return None
+    pull, metric, word, now, then = max(moving, key=lambda p: abs(p[0]))
+    if metric == "tax_expense":
+        def tax(x):
+            return f"a tax credit of {_cr(-x)}" if x < 0 else f"tax of {_cr(x)}"
+        driver = f"{tax(now)} against {tax(then)} a year earlier"
+    elif metric == "exceptional_items":
+        driver = f"exceptional items of {_cr(now)} against {_cr(then)} a year earlier"
+    else:
+        driver = f"{word} of {_cr(now)} against {_cr(then)} a year earlier"
+    ebitda, ebitda0 = val.get(("ebitda", tagged.period)), val.get(("ebitda", ago))
+    contrast = ""
+    if metric != "ebitda" and ebitda is not None and ebitda0 and ebitda0 > 0 and (ebitda > ebitda0) != up \
+            and abs(ebitda - ebitda0) >= 0.05 * ebitda0:
+        contrast = f", while EBITDA {'fell' if up else 'rose'} to {_cr(ebitda)} from {_cr(ebitda0)}"
+    loss = lambda x: f"a net loss of {_cr(-x)}" if x < 0 else f"net profit of {_cr(x)}"  # noqa: E731
+    return (f"{tagged.period} {loss(pat)} against {loss(pat0)} a year earlier; the largest move was "
+            f"{driver}{contrast}.")
+
+
 def build(out, tagged, company_name: str | None, history=None) -> list[str]:
     """Put the file's figures on a results card. Returns what was replaced (empty when the file cannot carry it)."""
     card = getattr(out, "card", None)
@@ -222,6 +268,10 @@ def build(out, tagged, company_name: str | None, history=None) -> list[str]:
     if card.quantified_impact:
         replaced.append(f"computed impacts ({len(card.quantified_impact)}) left out")
     card.quantified_impact = []
+    driver = profit_driver(tagged)
+    if driver:
+        card.takeaway = driver   # the file says what moved profit; the model's own cause is left out
+        replaced.append("takeaway from the file's profit bridge")
     context = memory_points(tagged, history)
     # the model keeps two points, or one beside two of code's: three at most
     card.why_it_matters = context + card.why_it_matters[:min(MAX_WHY, MAX_WHY + 1 - len(context))]

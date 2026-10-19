@@ -25,6 +25,10 @@ share of the regular pass-2 routes, reported per writer like the rest; and the *
 `scripts/audit_round7/pack_bleed.py` after the run (every packed card records its pack's members), with the reviewers'
 issue class `other` labelled "fact from another filing" when a card states a fact that belongs to another filing.
 
+Also added before the run (owner, 2026-10-19 19:20 IST): Gemini 3.5 Flash and 3 Flash preview join the packed rotation
+after 3.6, 3.7 and 3.8 Flash, each with its own free daily quota (60 -> 100 packed requests a day), so a round no longer
+runs out of Gemini as round 6 did; reported per model.
+
 ## Pass marks, set before any processing or review
 
 - **Go-live: WRONG at most 5% of published cards** (owner). Beside it, 15%.

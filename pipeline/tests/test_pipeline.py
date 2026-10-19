@@ -783,7 +783,7 @@ def test_packed_filings_stay_queued_when_every_writer_is_out_of_quota(settings):
                        scrip=f"99900{i}") for i in range(2)]
     pacific = _day_function("America/Los_Angeles")()
     usage = [{"day": pacific, "provider": "gemini", "model": m, "requests": 20}
-             for m in ("gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.8-flash")]
+             for m in ("gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.8-flash", "gemini-3.5-flash", "gemini-3-flash-preview")]
     fake = FakeProvider({})
     gateway = AIGateway(settings.load_toml("providers.toml"), usage_today=usage, client_factory=lambda *a: fake,
                         env={"GEMINI_API_KEY": "g"})

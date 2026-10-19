@@ -105,8 +105,11 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     # company's other quarters and put right before it reaches memory (xbrl.fix_scale).
     found: dict[str, tuple[str, str, object, bool]] = {}     # period -> (filed on, url, parsed, from NSE only)
     by_period: dict[str, object] = {}
-    for link in sorted(links, key=lambda link: (link.filed_at, link.basis == "CONSOLIDATED")):
-        by_period[link.period] = link  # later filing, then consolidated, wins
+    # Consolidated wins over standalone whenever a quarter has both, and only then the later filing: Max Financial's
+    # standalone files of 13 Jul 2026 (the holding company's ₹17 Cr quarter) had replaced the consolidated quarter of
+    # May because they came later, and its cards measured a ₹533 Cr payment as 3135% of revenue (round 5, 2026-10-19)
+    for link in sorted(links, key=lambda link: (link.basis == "CONSOLIDATED", link.filed_at)):
+        by_period[link.period] = link  # consolidated, then the later filing, wins
     for period, link in sorted(by_period.items()):
         data = _fetch(bse, link.url, cache_root)
         if not data and nse is not None and symbol:
@@ -183,12 +186,12 @@ def _nse_quarters(nse, symbol: str, since: str, scrip: str) -> dict:
         log.info("seed %s: NSE list unavailable (%s)", scrip, type(exc).__name__)
         return {}
     best: dict = {}
-    for row in sorted(rows, key=lambda r: (r.filed_at, r.consolidated)):
+    for row in sorted(rows, key=lambda r: (r.consolidated, r.filed_at)):   # consolidated first, as in seed_company
         if not row.period_end or row.period_end < since:
             continue
         label = canonical_period(f"quarter ended {row.period_end[8:10]}.{row.period_end[5:7]}.{row.period_end[:4]}")
         if label:
-            best[label] = row  # later filing, then consolidated, wins
+            best[label] = row  # consolidated, then the later filing, wins
     return best
 
 

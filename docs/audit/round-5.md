@@ -77,3 +77,7 @@ What the agents found, by class, and what was done (2026-10-19, after the review
    site's score 85: it fixed overrated cards (22 shown LOW where the writer said MODERATE and the agents said LOW) but
    put 12 results cards at LOW. Results are now never shown LOW (`scoring.score`, test), and the export carries the
    shown impact from round 6 on (`audit_export.py`, `audit_round5/sample_cards.py`).
+9. **Memory mixing bases** (Max Financial: "₹533 Cr = 3135% of Q4FY26 revenue (₹17 Cr)"). The seed kept the later
+   filing of a quarter before the consolidated one, so the holding company's standalone files of 13 Jul 2026 replaced
+   the consolidated quarter of May. Fixed: consolidated wins, then the later filing (`seed._nse_quarters`,
+   `seed.seed_company`, test). Arm B's memory was seeded before the fix.

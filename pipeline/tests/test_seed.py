@@ -106,3 +106,20 @@ def test_a_quarter_tagged_in_the_wrong_unit_reaches_memory_put_right(monkeypatch
     assert memory[("revenue", "Q4FY24")] == 1758.6 and memory[("pat", "Q4FY24")] == -61.8
     assert memory[("revenue", "Q3FY24")] == 1677.1 and stats.rescaled == 1 and stats.results_periods == 4
     assert "1 files in the wrong unit put right" in stats.line()
+
+
+def test_a_later_standalone_file_does_not_replace_the_consolidated_quarter():
+    """Max Financial (round 5): standalone files filed in July replaced the consolidated quarter of May, so memory held
+    the holding company's ₹17 Cr quarter beside a ₹39,473 Cr twelve-month revenue."""
+    from dataclasses import replace
+
+    seed_mod._nse_rows.cache_clear()
+    cons = replace(_row("https://x/cons.xml", "2026-03-31", "2026-05-13 18:00"), consolidated=True)
+    later_standalone = _row("https://x/std.xml", "2026-03-31", "2026-07-13 18:00")
+
+    class Nse:
+        def financial_results(self, symbol):
+            return [later_standalone, cons]
+
+    best = seed_mod._nse_quarters(Nse(), "MFSL", "2025-01-01", "500271")
+    assert [r.xbrl_url for r in best.values()] == ["https://x/cons.xml"]

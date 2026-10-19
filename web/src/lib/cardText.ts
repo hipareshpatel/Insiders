@@ -43,3 +43,15 @@ export function executionFact(text: string): [string, string] {
   const term = text.match(/^\s*(?:within|over|for(?: a period of)?)?\s*0*(\d+(?:\.\d+)?)\s*(months?|years?)\b/i);
   return term ? ["Term", `${term[1]} ${term[2].toLowerCase()}`] : ["Complete by", text];
 }
+
+/** The verified face (owner, 2026-10-20, after two live reviews put 17 of 48 cards WRONG, nearly all in the prose): a
+ * fact stays on the card when code found its quoted sentence in the filing and none of its figures is among those the
+ * checks could not find. Anything else is the AI's reading and goes behind "AI reading · not verified". */
+export function verifiedFact(fact: string | { text: string; quote?: string | null }, ungrounded: string[] = []): boolean {
+  if (typeof fact === "string" || !fact.quote || !fact.quote.trim()) return false;
+  const text = plainText(fact.text);
+  return !ungrounded.some((u) => {
+    const value = String(u).split("=").pop()!.trim();
+    return value !== "" && showsFigure(text, value.replace(/^₹/, ""));
+  });
+}

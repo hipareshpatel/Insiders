@@ -15,7 +15,7 @@ import { EVENT_LABELS, TONE_LABEL, type Tone } from "../lib/taxonomy";
 import { Avatar } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL, TrackItem } from "./FilingCard";
 import { plain, RichText } from "./RichText";
-import { executionFact, near, PERIOD_WORDS, repeats, showsFigure } from "../lib/cardText";
+import { executionFact, near, PERIOD_WORDS, repeats, showsFigure, verifiedFact } from "../lib/cardText";
 
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
 
@@ -467,7 +467,9 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
     rating ? `${rating.agency ?? ""} ${rating.after} ${rating.after_outlook ?? ""} ${rating.before ?? ""} ${rating.before_outlook ?? ""}` : "",
   ].join(" ");
   const unique = card.what_happened.filter((fact) => !(table && coveredByTable(fact, table)) && !repeats(plain(fact), `${headline} ${blockText}`));
-  const facts = unique.slice(0, factLimit);
+  // the verified face: only facts whose quoted sentence code found in the filing; the rest is the AI's reading
+  const facts = unique.filter((f) => verifiedFact(f, g.ungrounded)).slice(0, factLimit);
+  const unverified = unique.filter((f) => !verifiedFact(f, g.ungrounded));
   const shownText = [headline, ...facts.map(plain)].join(" ");
   const box = boxItems(card, (s) =>
     (s.type === "SCALE" && dealBlock && !!card.scale) || (s.type === "RATING_LIQUIDITY" && !!rating && /outlook/i.test(s.text)) || repeats(s.text, shownText));
@@ -569,9 +571,6 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         </div>
 
         <h3 className="mt-3 font-display text-[18px] leading-snug text-ink sm:text-[19.5px]">{headline}</h3>
-        {card.core_catalyst && !repeats(plain(card.core_catalyst), headline) && (
-          <p className="mt-1.5 text-[13.5px] leading-snug text-ink-2"><span aria-hidden>📌 </span><span className="font-semibold text-ink">Core catalyst:</span> {plain(card.core_catalyst)}</p>
-        )}
 
         {card.call_read && <CallReadChips read={card.call_read} />}
         {table && <ResultsTable r={table} />}
@@ -587,12 +586,10 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           </ul>
         )}
 
-        {(box.insights.length > 0 || box.signal || box.missing || box.fallback) && (
+        {(box.signal || box.missing) && (
           <section className="mt-4 rounded-2xl bg-[var(--fam-soft)] px-4 py-3">
             <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--fam)]">{boxLabel(event)}</h4>
             <ul className="mt-2 space-y-2">
-              {box.fallback && <Point>{box.fallback}</Point>}
-              {box.insights.map((insight, i) => <Point key={i}><RichText text={insight.text} /></Point>)}
               {box.signal && <Point><SignalLine s={box.signal} /></Point>}
               {box.missing && (
                 <Point><span className="font-semibold text-warn">Not disclosed:</span> {box.missing}</Point>
@@ -614,6 +611,9 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
           </dl>
         )}
 
+        {!exporting && <AiReading catalyst={card.core_catalyst && !repeats(plain(card.core_catalyst), headline) ? plain(card.core_catalyst) : null}
+          facts={unverified} insights={box.insights.map((i) => i.text)} takeaway={box.fallback ?? null} />}
+
         {footer.length > 0 && (
           <div className="mt-3 flex flex-wrap items-baseline gap-2 text-[12px] font-semibold text-ink-3">
             {footer.map((m) => (
@@ -627,7 +627,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         ) : (
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-line pt-2.5 text-[12px] text-ink-3" data-noexport="true">
             <span className="num" title={`${istDateTime(row.filed_at)} IST · ${relativeTime(row.filed_at)}`}>
-              {istDateTime(row.filed_at).replace(/ \d{4},/, ",")}
+              {istDateTime(row.filed_at)}
               {row.market_session ? ` · ${SESSION_LABEL[row.market_session] ?? ""}` : ""}
             </span>
             {review ? (
@@ -939,6 +939,25 @@ function TechnicalTags({ row }: { row: CardRow }) {
       {tech.stage2 && <span className="text-ink-2">📈 Stage 2 trend</span>}
       {tech.rvol != null && tech.rvol >= 2.5 && days >= 0 && days <= 2 && <span className="text-ink-2">Volume {tech.rvol.toFixed(1)}x</span>}
     </>
+  );
+}
+
+/** The AI's own reading of the filing (its catalyst, the facts it could not quote, why it matters): useful, but not
+ *  checked, so it sits behind a tap and says so (the verified face, owner 2026-10-20). */
+function AiReading({ catalyst, facts, insights, takeaway }: { catalyst: string | null; facts: Fact[]; insights: string[]; takeaway: string | null }) {
+  const items = [...(catalyst ? [`Core catalyst: ${catalyst}`] : []), ...facts.map((f) => (typeof f === "string" ? f : f.text)),
+    ...insights, ...(takeaway && !insights.length ? [takeaway] : [])];
+  if (!items.length) return null;
+  return (
+    <details className="group mt-3 rounded-2xl border border-dashed border-line-strong px-4 py-2" data-noexport="true">
+      <summary className="cursor-pointer list-none text-[12px] font-bold text-ink-3 marker:hidden">
+        <span className="mr-1 inline-block transition-transform group-open:rotate-90">›</span>
+        AI reading · not verified against the filing ({items.length})
+      </summary>
+      <ul className="mt-2 space-y-2 pb-1">
+        {items.map((text, i) => <Point key={i} className="text-ink-2"><RichText text={text} /></Point>)}
+      </ul>
+    </details>
   );
 }
 

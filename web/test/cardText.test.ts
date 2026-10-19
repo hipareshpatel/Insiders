@@ -81,3 +81,12 @@ test("price chart: range, filings on their trading day, move", async () => {
   assert.equal(rangeMove({ d: ["x"], c: [0] }), null);
   assert.deepEqual(placeFilings({ d: [], c: [] }, [{ filed_at: "2026-10-13" }]), []);
 });
+
+test("a fact is on the verified face only with a quote from the filing and no unfound figure", async () => {
+  const { verifiedFact } = await import("../src/lib/cardText.ts");
+  assert.equal(verifiedFact({ text: "Order worth ₹29.13 Cr from Northern Railway", quote: "LOA worth Rs. 29.13 crore" }), true);
+  assert.equal(verifiedFact({ text: "Order worth ₹29.13 Cr", quote: null }), false);           // no quote: the AI's reading
+  assert.equal(verifiedFact("Isuzu exits as a promoter"), false);                                // a bare string: no quote
+  assert.equal(verifiedFact({ text: "An ₹800 Cr NCD issue", quote: "NCDs" }, ["800"]), false);  // a figure the checks did not find
+  assert.equal(verifiedFact({ text: "Revenue ₹1,800 Cr", quote: "Revenue 1,800" }, ["800"]), true); // "800" is not 1,800
+});

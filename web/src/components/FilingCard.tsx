@@ -91,7 +91,7 @@ export function FilingRow({ row, defaultOpen = false, highlight = false }: { row
           </span>
         </div>
         {card.takeaway && !open ? (
-          <p className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-ink-2 sm:line-clamp-1">{card.takeaway}</p>
+          <p className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-ink-2 sm:line-clamp-1"><span title="The AI's reading, not verified against the filing" className="mr-1.5 rounded bg-surface-2 px-1 py-px align-[1px] text-[10px] font-bold uppercase tracking-wide text-ink-3">AI</span>{card.takeaway}</p>
         ) : null}
         <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-xs text-ink-3">
           <TickerChip name={row.company_name} symbol={row.symbol} scrip={row.scrip_code} onClick={() => navigate(`/company/${row.scrip_code}`)} />
@@ -175,7 +175,7 @@ export function FilingBody({ row, card, showHeadline = false }: { row: CardRow; 
       <div className="mt-3">
         <h4 className="eyebrow text-accent">Core catalyst</h4>
         <p className="mt-1 font-display text-[21px] leading-snug text-ink">{catalyst}</p>
-        {showHeadline && card.takeaway ? <p className="mt-1 text-[14px] leading-relaxed text-ink-2">{card.takeaway}</p> : null}
+        {showHeadline && card.takeaway ? <p className="mt-1 text-[14px] leading-relaxed text-ink-2"><span title="The AI's reading, not verified against the filing" className="mr-1.5 rounded bg-surface-2 px-1 py-px align-[1px] text-[10px] font-bold uppercase tracking-wide text-ink-3">AI</span>{card.takeaway}</p> : null}
         {card.key_numbers.length > 0 && (
           <dl className="num mt-3 flex flex-wrap gap-x-6 gap-y-2">
             {card.key_numbers.slice(0, 6).map((k) => (

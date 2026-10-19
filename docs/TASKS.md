@@ -62,6 +62,14 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T20 · P1 · laptop · OPEN — redeploy the live site with the verified face (owner, 2026-10-20)
+
+After pulling the commit that adds the verified face: `cd web; npm run deploy` (the D1 id is in `wrangler.jsonc`), then
+check on https://insiders.reply-bd3.workers.dev a card or two: the face shows only facts quoted from the filing, the code
+blocks and the computed lines; "AI reading · not verified against the filing (n)" opens the rest; card dates show the
+year ("06 Aug 2026, 20:43"). Report: the deployed version id and what you saw.
+Files you may change: none.
+
 ## T19 · P1 · laptop · OPEN, do first — export the held cards for the cloud's live review (owner, 2026-10-20)
 
 The owner chose the laptop's export over giving the cloud the owner token. With the owner token from the keys file:

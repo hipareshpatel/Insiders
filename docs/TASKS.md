@@ -62,6 +62,18 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T14 · P1 · laptop · OPEN — check the owner's new Cloudflare API token (GitHub's deploy key)
+
+The owner made a new API token (2026-10-20; the first one was shown in a chat and deleted), put it in GitHub as
+`CLOUDFLARE_API_TOKEN` and in the keys file as `$env:CLOUDFLARE_API_TOKEN`. GitHub cannot run `deploy-web.yml` by hand
+until the workflow is on `main` (the PR is not merged), so check it from here. Never print the token:
+1. Dot-source the keys file, then `cd web; npx wrangler whoami` with `CLOUDFLARE_API_TOKEN` set: it should name the
+   account `bd3fb35d...` and list the token's permissions (Workers Scripts, D1, Workers R2 Storage edit).
+2. `npx wrangler d1 execute bse-index-nse --remote --command "select count(*) n from sqlite_master"` (a read through the
+   token, not your `wrangler login`): a number back means D1 access works. Then unset the variable.
+3. If the keys file does not have it yet, ask the owner to add the line (the value is the one in GitHub's secret).
+Files you may change: none. Report: here (works or the error line, never the token).
+
 ## T13 · P1 · laptop · OPEN — re-seed memory on the basis fix, then re-check Heritage and two banks
 
 The cloud's commit after `83ea204` fixes T2 and T5's classes (cloud notes under each). Memory seeded before it has no basis

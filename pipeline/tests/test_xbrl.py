@@ -563,3 +563,27 @@ def test_continuing_and_discontinued_pat_are_not_the_files_total_pat():
     assert keys["PAT (Continuing)"] != f"₹{pat.value:,.2f} Cr" or (continuing and continuing.value == pat.value)
     assert keys["PAT from discontinued operations"] == "₹1,800 Cr"
     assert keys["PAT"] == f"₹{pat.value:,.2f} Cr"      # the plain label still takes the file's PAT
+
+
+def test_a_results_file_whose_statement_the_text_lacks_is_used_when_memory_agrees(settings):
+    """Ceigall Q1FY27 (round 5 arm B): the statement's pages were missing from the text read, so the file was refused
+    and the model wrote Q1FY26's profit as Q1FY27's. When the file's own year-ago figures are memory's, it is the right
+    company, scale and basis: the card is built from it."""
+    now = now_ist() - timedelta(minutes=30)
+    filing = _filing("n-res", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    filing.xbrl_url = "https://bse.invalid/n-res.xml"
+    garbled = "Statement of unaudited consolidated financial results ... (page not readable)"
+    pass2 = json.loads(json.dumps(PASS2))
+
+    def run(memory_revenue):
+        pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(garbled), filing.xbrl_url: results_xml()},
+                                     {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(pass2)] * 2})
+        dossier = {"financial_metrics": [{"metric": "revenue", "period": "Q2FY26", "value": memory_revenue, "unit": "INR_CR",
+                                          "as_of": "2025-11-10T18:00:00+05:30"}]}
+        sink.put_dossier("999001", dossier)
+        pipeline.run("live", time_budget_s=60)
+        return fake.calls[0]["messages"][-1]["content"]
+
+    assert "Machine-tagged results (XBRL" in run(90.91)          # memory holds the file's year-ago quarter
+    # a file at another scale than memory (9.091 against 90.91) is refused as before: results_card.agrees_with_memory,
+    # test_results_card.test_memory_points_need_memory_and_the_file_to_agree_on_the_basis

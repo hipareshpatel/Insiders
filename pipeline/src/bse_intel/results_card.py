@@ -85,7 +85,7 @@ def _quarters(history, metric: str) -> dict[int, float]:
     return out
 
 
-def _same_basis(tagged, history) -> bool:
+def agrees_with_memory(tagged, history) -> bool:
     """Memory and the file agree on the file's own comparative figures: then memory's quarters are the same series. A
     standalone file against consolidated memory (Max Financial's ₹17 Cr holding-company quarter beside ₹39,473 Cr of
     group revenue, round 5) or a restated year gives no point at all."""
@@ -110,7 +110,7 @@ def memory_points(tagged, history) -> list[Insight]:
     if tagged is None or not tagged.period or not history:
         return []
     now_index = quarter_index(tagged.period)
-    if now_index is None or not _same_basis(tagged, history):
+    if now_index is None or not agrees_with_memory(tagged, history):
         return []
     now = {m.metric: m for m in tagged.metrics if m.period == tagged.period and m.value is not None}
     points: list[tuple[int, str]] = []    # (priority, text): lower first

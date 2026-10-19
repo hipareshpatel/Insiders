@@ -2217,9 +2217,17 @@ class Pipeline:
                     raise EventXbrlPending(f"waiting for its results XBRL ({age.total_seconds() / 60:.0f} min after the PDF)")
         tagged = self._xbrl(filing) if event_type == "RESULTS" else None
         if tagged and (tagged.kind != "RESULTS" or not xbrl_fast_path.confirm(tagged, text)):
-            if tagged.kind == "RESULTS":
-                log.warning("XBRL figures for %s not found in the PDF in any unit; using the PDF only", filing.news_id)
-            tagged = None
+            known = (dossier_as_of(dossier, filing.filed_at, inclusive=False) or {}).get("financial_metrics")
+            if tagged.kind == "RESULTS" and results_card.agrees_with_memory(tagged, known):
+                # The statement is not in the text read (Ceigall Q1FY27, round 5 arm B: its pages missing or garbled),
+                # but the file's own earlier quarters are memory's: right company, scale and basis. Without it the model
+                # wrote Q1FY26's profit as Q1FY27's and a fall where profit rose 24%.
+                log.info("XBRL figures for %s not in the PDF text, but its earlier quarters match memory; using the file",
+                         filing.news_id)
+            else:
+                if tagged.kind == "RESULTS":
+                    log.warning("XBRL figures for %s not found in the PDF in any unit; using the PDF only", filing.news_id)
+                tagged = None
         events_table = event_xbrl.table(events)
         if not text.strip() and not tagged and not events:
             if filing.pdf_url:

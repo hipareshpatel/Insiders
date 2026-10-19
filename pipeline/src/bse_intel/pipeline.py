@@ -89,6 +89,7 @@ LIVE_DAYS = 7            # an unfinished filing stays in the live window this lo
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
 MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing this network
 MAX_NETWORK_FAILURES = 5  # attachment downloads failing on the network in a row that mean the source is down
+MAX_DEFERRALS = 3        # runs one attachment may fail on the network, alone, before it spends an attempt
 MAX_UNREACHABLE = 3      # filings in a row the platform did not answer for: the site is down, stop
 NOISE_CHUNK = 500        # rows per noise-audit file in R2
 NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category", "subcategory",
@@ -98,6 +99,15 @@ LONG_PROMPT_TOKENS = 12_000
 SNAPSHOT_KEY = "daily_feed/latest_snapshot.json"
 SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
 SNAPSHOT_PAGE = 50        # the feed's page size
+
+
+_DEFERRED = re.compile(r"^deferred (\d+)x: attachment download failed")
+
+
+def _deferrals(last_error: str | None) -> int:
+    """How many runs in a row this filing's attachment has failed on the network, from the ledger's note."""
+    m = _DEFERRED.match(last_error or "")
+    return int(m.group(1)) if m else 0
 
 
 class EventXbrlPending(Exception):
@@ -1648,12 +1658,18 @@ class Pipeline:
                     # attempts are not spent on it (owner, 2026-10-18). Several in a row stop the run.
                     with self._lock:
                         self._network_failures += 1
+                        isolated = self._network_failures == 1
                         if self._network_failures >= MAX_NETWORK_FAILURES and not self._blocked:
                             self._blocked = SourceBlockedError(
                                 f"{self._network_failures} attachment downloads failed on the network in a row; "
                                 "stopping this run with the work still queued")
                             self.stats.stopped_reason = str(self._blocked)[:300]
-                    return self._deferred(filing, f"deferred: attachment download failed ({exc})"[:300])
+                    times = _deferrals(filing.last_error) + 1
+                    if isolated and times > MAX_DEFERRALS:
+                        # This one file has failed on several runs while the downloads around it worked: a broken
+                        # file, not an outage. It now spends an attempt, so it is not fetched forever (2026-10-19).
+                        return self._failed(filing, exc)
+                    return self._deferred(filing, f"deferred {times}x: attachment download failed ({exc})"[:300])
                 if exc.refused:
                     with self._lock:
                         self._refusals += 1

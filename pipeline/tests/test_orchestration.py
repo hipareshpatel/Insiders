@@ -183,6 +183,27 @@ def test_a_failing_history_filing_is_tried_once_per_run(settings):
     assert card["memory_complete"] == 0                # its history did not make it in
 
 
+def test_one_attachment_failing_run_after_run_spends_an_attempt_in_the_end(settings):
+    """A file that fails on the network alone, run after run, is broken, not an outage: after MAX_DEFERRALS runs it
+    spends an attempt, so it is not fetched forever (2026-10-19)."""
+    settings = replace(settings, workers=1)
+    now = now_ist() - timedelta(minutes=30)
+    broken = _filing("broken", "Unaudited Financial Results", now, "Result")
+    pipeline, sink, _ = build(settings, [broken], {}, {"nvidia/nemotron-3-super-120b-a12b": [json.dumps(PASS2)]},
+                              env={"NVIDIA_API_KEY": "n"})
+    pipeline.discover(now.date())
+    pipeline.bse.download = lambda url, max_bytes=None: (_ for _ in ()).throw(AttachmentError("HTTP 500"))
+    pipeline.run("live", time_budget_s=60)
+    (row,) = rows(sink, "select status, attempts, last_error from filings where news_id = 'broken'")
+    assert (row["status"], row["attempts"]) == ("PENDING", 0) and row["last_error"].startswith("deferred 1x:")
+    sink._db.execute("UPDATE filings SET last_error = 'deferred 3x: attachment download failed (HTTP 500)' "
+                     "WHERE news_id = 'broken'")
+    pipeline._tried.clear(); pipeline._network_failures = 0   # a later run is a new process
+    pipeline.run("live", time_budget_s=60)
+    (row,) = rows(sink, "select status, attempts from filings where news_id = 'broken'")
+    assert row == {"status": "FAILED", "attempts": 1}
+
+
 def test_retryable_failures_at_the_head_of_the_queue_do_not_stop_the_rest(settings, monkeypatch):
     monkeypatch.setattr(pipeline_module, "BATCH", 2)
     settings = replace(settings, workers=1)

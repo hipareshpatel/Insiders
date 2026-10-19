@@ -84,6 +84,7 @@ class Filing(BaseModel):
     event_type: str | None = None
     reason: str | None = None
     attempts: int = 0
+    last_error: str | None = None   # the ledger's note, read back so a repeated deferral can be counted
 
     def ledger_row(self, updated_at: str) -> dict:
         return {

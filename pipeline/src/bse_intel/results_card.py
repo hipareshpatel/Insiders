@@ -303,9 +303,20 @@ def build(out, tagged, company_name: str | None, history=None) -> list[str]:
     if driver:
         card.takeaway = driver   # the file says what moved profit; the model's own cause is left out
         replaced.append("takeaway from the file's profit bridge")
+    else:
+        # The quarter's own figures, as the headline states them: the model's takeaway set them against memory's
+        # quarters and got them wrong - LIC's EPS "-38% YoY" against a year-ago from before its 1:1 bonus, Ambuja's
+        # year-ago profit from before its restatement (round 6, 2026-10-19)
+        card.takeaway = f"{period}: {phrase(top, top_word)}, {phrase(profit, 'net profit')}."
+        replaced.append("takeaway from the file's figures")
     context = memory_points(tagged, history)
+    # The model's own memory comparisons are left out: code makes them from memory (memory_points), where the model
+    # put figures under the wrong quarters (round 5) and compared across a bonus issue or a restatement (round 6)
+    own = [w for w in card.why_it_matters if w.basis not in ("MEMORY", "BALANCE_SHEET")]
+    if len(own) < len(card.why_it_matters):
+        replaced.append(f"{len(card.why_it_matters) - len(own)} model point(s) from memory left out")
     # the model keeps two points, or one beside two of code's: three at most
-    card.why_it_matters = context + card.why_it_matters[:min(MAX_WHY, MAX_WHY + 1 - len(context))]
+    card.why_it_matters = context + own[:min(MAX_WHY, MAX_WHY + 1 - len(context))]
     if context:
         replaced.append(f"{len(context)} point(s) from memory by code")
     out.timeline_entry = f"{period} results ({basis or 'basis not stated'}): {phrase(top, top_word)}, {phrase(profit, 'net profit')}."

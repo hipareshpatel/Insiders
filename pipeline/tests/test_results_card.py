@@ -33,7 +33,8 @@ def test_code_writes_the_figures_and_the_model_keeps_a_line_or_two():
     assert any(k.label == "EBITDA margin" and k.value == "8.9%" for k in card.key_numbers)
     assert card.notable_changes == [] and card.core_catalyst is None and card.quantified_impact == []
     assert [i.text for i in card.why_it_matters] == ["One", "Two"]
-    assert card.takeaway == "Margins held up despite cost pressure." and card.basis == "STANDALONE"
+    # the takeaway is the file's own figures (no profit bridge in this file); the model's line is left out
+    assert card.takeaway == "Q3FY25: revenue ₹951.96 Cr, net profit ₹49.39 Cr." and card.basis == "STANDALONE"
     assert out.timeline_entry.startswith("Q3FY25 results (standalone): revenue ₹951.96 Cr")
     assert notes and "notable changes (1) left out" in notes[0]
 
@@ -180,3 +181,12 @@ def test_a_rank_counts_the_files_own_quarters_and_never_jumps_a_gap():
     assert not any("highest" in p.text for p in memory_points(_tagged("Q1FY27", 20, 12), gap))
     view = {"metrics": {"pat": ["Q3FY26: 15 INR_CR", "Q4FY26: 13 INR_CR", "FY26: 50 INR_CR"]}}
     assert [(h["period"], h["value"]) for h in history_from_view(view)] == [("Q3FY26", 15.0), ("Q4FY26", 13.0)]
+
+
+def test_the_models_memory_comparisons_are_left_off_a_results_card():
+    """LIC (round 6): "EPS -38% YoY" against a year-ago from before its 1:1 bonus; code makes memory's comparisons."""
+    tagged = xbrl.parse((FIX / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    out = _model_card()
+    out.card.why_it_matters[0].basis = "MEMORY"
+    results_card.build(out, tagged, "Ahluwalia Contracts (India) Limited")
+    assert [i.text for i in out.card.why_it_matters] == ["Two", "Three"]

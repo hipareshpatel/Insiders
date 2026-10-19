@@ -214,3 +214,14 @@ every list call answered, 241 of 249 with an attachment link. Not measured here:
 - DGTR (module 8): measured 2026-10-18, `dgtr.gov.in` answers; each anti-dumping case has a page listing its
   initiation, preliminary findings and final findings as dated PDF downloads, and the case list filters by date, HS
   code, country and status. A source, as PDFs; linking a product to listed companies is the open part.
+  Measured 2026-10-19 (cloud container, a non-Indian address): the lists (`/en/anti-dumping-investigation-in-india`,
+  `/en/countervailing-duty-investigation`, `/en/safe-guard-investigation-in-india`, `?page=N`) give 15 cases a page,
+  ongoing first (anti-dumping: pages 0-41); each case page has a table of documents with a label, a PDF and a
+  dd/mm/yyyy date, earlier rounds included (TDI's page lists its 2016 original beside the 2026 review). The
+  initiation notice names the applicant ("The application has been filed by Gujarat State Fertilizers & Chemicals
+  Limited"; "X (hereinafter referred to as the applicant)") and sometimes a supporter ("Epigral Limited has supported
+  the application"). 6 of the first 10 notices are scans with no text layer (OCR, ~20 s a notice). The server drops
+  a connection now and then (2 RemoteProtocolErrors in ~60 requests); a retry answers. One anti-dumping list page end
+  to end: 15 cases, 15 notices read, 211 s; applicants found on 14 (the 15th notice names none on its first pages),
+  5 of them listed companies (GSFC, Reliance, DCW, ITC, GNFC). Notices misspell names ("Laxmi Organics Industries
+  Limited") and use a company's private-limited name from before its listing (Clean Science).

@@ -30,7 +30,8 @@ export interface Signal {
   type: "PROMISE_DELIVERED" | "GUIDANCE_BREACH" | "WATCH_RESOLVED" | "DILUTION" | "SCALE" | "ORDER_FLOW" | "WORKING_CAPITAL_STRAIN" | "METRIC_SHIFT"
     | "BOARD_DELIBERATION" | "REG30_THRESHOLD" | "PREDICTION_RESOLVED" | "OWNERSHIP_SHIFT" | "AUDIT_FLAG"
     | "VOLUME_STREAK" | "QUARTER_PREVIEW" | "LOW_QUALITY_BEAT" | "MARGIN_MIX" | "JAWS" | "LOW_CASH_TAX" | "Q4_TRUE_UP"
-    | "RECURRING_ONE_OFFS" | "DEBT_CASH_PARADOX" | "DISTRESS" | "RATING_LIQUIDITY" | "FESTIVE_SEASON" | "ASSET_TURN" | "CAPITAL_COMPOUNDER" | "CAPITAL_DILUTER" | "PLEDGE";
+    | "RECURRING_ONE_OFFS" | "DEBT_CASH_PARADOX" | "DISTRESS" | "RATING_LIQUIDITY" | "FESTIVE_SEASON" | "ASSET_TURN" | "CAPITAL_COMPOUNDER" | "CAPITAL_DILUTER" | "PLEDGE"
+    | "TRADE_REMEDY";
   severity: Severity;
   text: string;
   ref?: string | null;
@@ -395,6 +396,15 @@ export interface Dossier {
     status: "OPEN" | "MET" | "MISSED"; actual?: number; created_on: string; resolved_on?: string }[];
   updated_at: string | null;
   pledges?: { events: PledgeEvent[]; summary?: { encumbered_pct: number | null; promoters: number; as_of: string } };
+  trade_remedies?: TradeRemedy[];
+}
+
+/** A DGTR anti-dumping, countervailing or safeguard case the company applied for or supported (pipeline dgtr.py, module 8). */
+export interface TradeRemedy {
+  case_url: string; product: string | null; countries: string | null; investigation: string | null;
+  proceeding: string | null; status: string | null; role: "APPLICANT" | "SUPPORTER";
+  documents: { label: string; stage: string; date: string | null; url: string }[];
+  stage: string | null; stage_on: string | null; as_of: string;
 }
 
 export interface DealRecord {

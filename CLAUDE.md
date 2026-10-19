@@ -71,9 +71,9 @@ Read before changing anything:
 
 ## Status and next steps
 
-- Done: all blueprint modules except 8 (DGTR). Module 42 (promoter pledges) built 2026-10-19 from NSE's SAST Reg 31
-  encumbrance feed (`pledges.py`, `pledge-sync`, TRACKER F80). DGTR has a source, measured 2026-10-18 (docs/SOURCES.md):
-  findings as dated PDFs per case; not read yet.
+- Done: all blueprint modules. Module 42 (promoter pledges) built 2026-10-19 from NSE's SAST Reg 31 encumbrance feed
+  (`pledges.py`, `pledge-sync`, TRACKER F80); module 8 (DGTR trade remedies) built 2026-10-19 from DGTR's case pages and
+  initiation notices (`dgtr.py`, `dgtr-sync`, TRACKER F82), linked only to companies a notice names.
 - Smoke-test findings and their fixes: the table in `docs/TRACKER.md` ("Laptop smoke test").
 - **State at 2026-10-16 19:30 (laptop awake; the rebuild is running).** Round 0 checked every card of
   both smoke tests (177) against its PDF: 95 wrong, 56 minor, 26 OK. The error classes were fixed in code

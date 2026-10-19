@@ -76,6 +76,18 @@ company pages (one with several cards) check: the last close and date against NS
 its trading day (after-hours or holiday filings on the next session), and a click on a dot opening that card.
 Files you may change: none. Report: here.
 
+## T10 · P3 · laptop · OPEN — check the DGTR trade-remedy links (module 8)
+
+After the go-live load (T4) and outside an audit round, run `python -m bse_intel dgtr-sync --pages 3` (three list pages
+per investigation type, ~135 cases; scanned notices are OCR'd, so 30-60 minutes; the site drops a connection now and then
+and each request is retried). Report the JSON it prints. Then from R2 `meta/dgtr_cases.json` (local:
+`data/wrangler`, or `python -c` over `sink.get_object`) take 10 cases with names and check against each initiation notice:
+the applicant(s) and supporter(s) it gives, whether the listed company it was linked to is the one named (not a namesake or
+a private-limited group company), and any listed applicant that was **not** linked (the master's spelling, a former name).
+On two linked companies' pages (`/company/<scrip>`) check the "Trade remedies" panel: product, countries, the latest step
+and its date against the case page.
+Files you may change: none. Report: here.
+
 ## T2 · P1 · laptop · OPEN — measure the bank ratio scale before it is trusted (CLAUDE.md rule 0)
 
 The pipeline now reads `PercentageOfGrossNpa`, `PercentageOfNpa` and `ReturnOnAssets` from the banking results XBRL

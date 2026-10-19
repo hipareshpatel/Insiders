@@ -257,6 +257,18 @@ def cmd_pledge_sync(args, settings, sink) -> int:
     return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
 
 
+def cmd_dgtr_sync(args, settings, sink) -> int:
+    """DGTR trade-remedy cases into the memory of the companies that applied for or supported them (dgtr.py, module 8),
+    no AI. --pages 42 reads every case DGTR lists (a first fill: OCR of a few hundred scanned notices, hours)."""
+    from . import dgtr
+
+    pipeline = _pipeline(settings, sink)
+    scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()} or None
+    report = dgtr.sync(pipeline, time.monotonic() + args.time_budget, pages=args.pages, scrips=scrips)
+    print(json.dumps(report, indent=2))
+    return 0
+
+
 def cmd_shareholding_sync(args, settings, sink) -> int:
     """Each universe company's quarterly shareholding XBRL into memory (governance_memory.shareholding_sync), no AI."""
     from . import governance_memory
@@ -575,6 +587,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--scrips", help="only these companies (comma separated)")
     p.add_argument("--time-budget", type=int, default=900)
     p.set_defaults(func=cmd_pledge_sync)
+    p = sub.add_parser("dgtr-sync", help="DGTR anti-dumping / countervailing / safeguard cases into memory, no AI (module 8)")
+    p.add_argument("--pages", type=int, default=1, help="list pages per investigation type (15 cases each, ongoing first)")
+    p.add_argument("--scrips", help="only these companies (comma separated)")
+    p.add_argument("--time-budget", type=int, default=1800)
+    p.set_defaults(func=cmd_dgtr_sync)
 
     p = sub.add_parser("shareholding-sync", help="quarterly shareholding XBRL into memory (promoter, pledge, FII, DII), no AI")
     p.add_argument("--days", type=int, default=10, help="days of NSE's list to read back")

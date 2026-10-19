@@ -109,7 +109,7 @@ when the site is shared. Built for it:
 | # | Item | Notes |
 |---|---|---|
 | B1 | **Module 42, promoter pledges**: NSE's SAST Reg 31 encumbrance feed into memory, a "pledge rising / invoked" signal | **built 2026-10-19** (`pledges.py`, `pledge-sync`, end of every live run; PLEDGE signal with a score penalty; company page panel). Measured on the live feed: 315 events in 120 days, 93 universe companies; to check against filings (TASKS T8) |
-| B2 | **Module 8, anti-dumping (DGTR)**: case PDFs by product, linked to companies | linking product → company needs its own accuracy check |
+| B2 | **Module 8, anti-dumping (DGTR)**: case PDFs by product, linked to companies | **built 2026-10-19** (`dgtr.py`, `dgtr-sync`, once a day in a live run; TRADE_REMEDY signal; company page "Trade remedies"). Linked only when the initiation notice names the company as applicant or supporter, never by product. To check the links on the laptop (TASKS T10) |
 | B3 | Held cards: owner **Approve / Reject** on the review queue (today only Re-run); optionally show unreviewed held cards with a "verify against the filing" banner | 34 of 146 cards held in arm B, 10 of them WRONG |
 | B4 | Company page panels from data already stored: quarterly governance (board, penalties, insider loans), peers, segment mix, auditor history, a price chart | **built 2026-10-19** (redesign; the price chart from `market-data`'s `chart/<scrip>.json`, filings marked on it) |
 | B5 | Prices from NSE's bhavcopy (official daily file) instead of Yahoo; market cap = price × shares from the shareholding XBRL | not needed to go live: Yahoo priced all 2,351 NSE EQ symbols in 205 s from a data-centre address (measured 2026-10-19, SOURCES.md); the runner probe repeats it on GitHub |

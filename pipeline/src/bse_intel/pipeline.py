@@ -2094,7 +2094,7 @@ class Pipeline:
             log.warning("event XBRL for %s unavailable (%s: %s); using the PDF", filing.news_id, type(exc).__name__, exc)
             return [], None
         if not matches and mine:
-            age = datetime.now(tz=IST) - datetime.fromisoformat(filing.filed_at)
+            age = now_ist() - datetime.fromisoformat(filing.filed_at)
             if age < timedelta(minutes=event_xbrl.WAIT_MINUTES):
                 raise EventXbrlPending(f"waiting for its event XBRL ({age.total_seconds() / 60:.0f} min after the PDF)")
         if matches:
@@ -2300,7 +2300,7 @@ class Pipeline:
             filing = filing.model_copy(update={"xbrl_url": self._results_xbrl_url(filing, text)})
             if not filing.xbrl_url and filing.news_id.startswith(nse_api.NEWS_ID_PREFIX) and self.nse is not None \
                     and not self._nse_refused:
-                age = datetime.now(tz=IST) - datetime.fromisoformat(filing.filed_at)
+                age = now_ist() - datetime.fromisoformat(filing.filed_at)
                 if age < timedelta(minutes=RESULTS_XBRL_WAIT_MINUTES):
                     # NSE's integrated-filing XBRL followed the outcome by 5 min to 2 h 40 min (measured 2026-10-18)
                     with self._lock:
@@ -2871,6 +2871,8 @@ class Pipeline:
                         synced = pledges.sync(self, live_deadline)
                         if synced["filed"] or synced["stopped"] or synced["errors"]:
                             log.info("pledge memory: %s", json.dumps(synced))
+                    if time.monotonic() < live_deadline and self._dgtr_due():
+                        self._dgtr_sync(live_deadline)
                     if time.monotonic() < live_deadline and self._annual_catchup_due():
                         self._annual_catchup(live_deadline)
             if mode in ("backfill", "all") and not self._halted(bulk=True):
@@ -2905,6 +2907,22 @@ class Pipeline:
         return (self.nse is not None and self.settings.nse_annual_xbrl
                 and (now.hour, now.minute) >= ANNUAL_CATCHUP_AFTER
                 and self.sink.kv_get(ANNUAL_CATCHUP_KEY) != now.date().isoformat())
+
+    def _dgtr_due(self) -> bool:
+        """DGTR's case lists once a day (module 8): its cases move in weeks, and its server is slow (NSE_DGTR=0 off)."""
+        import os
+
+        return (self.nse is not None and os.environ.get("NSE_DGTR", "1") != "0"
+                and self.sink.kv_get(DGTR_SYNC_KEY) != today_ist().isoformat())
+
+    def _dgtr_sync(self, deadline: float) -> None:
+        from . import dgtr
+
+        report = dgtr.sync(self, deadline)
+        if report["linked"] or report["stopped"] or report["errors"]:
+            log.info("trade remedies: %s", json.dumps(report, ensure_ascii=False))
+        if not report["stopped"] and report["cases"]:
+            self._kv_set(DGTR_SYNC_KEY, today_ist().isoformat())
 
     def _annual_catchup(self, deadline: float) -> None:
         """Annual reports read again once NSE lists their XBRL (annual_catchup.py), as part of an evening run. The
@@ -3082,6 +3100,7 @@ SECOND_OPINION_MIN_S = 300
 REPEAT_DAYS = 10  # the window the fast-track repeat check looks back over, as similar_timeline_entry
 ANNUAL_CATCHUP_AFTER = (18, 30)   # IST: the annual-report catch-up runs inside the first run after the close
 ANNUAL_CATCHUP_KEY = "annual_catchup:last_day"
+DGTR_SYNC_KEY = "dgtr_sync:last_day"
 NO_CARD_EVENTS = ("MANAGEMENT_CHANGE",)
 # The MD, CEO or CFO leaving keeps a card (owner, 2026-10-19, D30 amended); the same words as the rule book's D30 rule.
 # "Not liable to retire by rotation" in an appointment letter is not an exit.

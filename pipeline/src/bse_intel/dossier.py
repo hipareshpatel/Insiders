@@ -991,6 +991,13 @@ def dossier_as_of(dossier: dict | None, cutoff: str, inclusive: bool = True) -> 
     d["ownership"] = [o for o in dossier.get("ownership", []) if ok(o.get("as_of"))]
     if dossier.get("pledges"):
         d["pledges"] = {"events": [e for e in dossier["pledges"].get("events", []) if ok(e.get("as_of"))]}
+    if dossier.get("trade_remedies"):   # DGTR cases (dgtr.py, module 8): each step from its own date
+        remedies = []
+        for c in dossier["trade_remedies"]:
+            docs = [x for x in c.get("documents", []) if x.get("date") and ok(x["date"] + "T00:00:00+05:30")]
+            if docs:
+                remedies.append(c | {"documents": docs, "stage": docs[-1]["stage"], "stage_on": docs[-1]["date"]})
+        d["trade_remedies"] = remedies
     gov = dossier.get("governance") or {}
     history = [a for a in gov.get("auditor_history", []) if ok(a.get("as_of"))]
     d["governance"] = {"auditor": history[-1] if history else None, "auditor_history": history,

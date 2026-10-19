@@ -111,6 +111,7 @@ export function CompanyPage() {
           <div className="space-y-4">
             <PriceChart chart={query.data.chart} cards={cards} onOpen={(id) => navigate(`/feed?card=${encodeURIComponent(id)}`)} />
             <Overview dossier={dossier} cards={cards} onTab={(t) => setParams({ tab: t })} />
+            <TradeRemediesPanel dossier={dossier} />
           </div>
         )}
         {tab === "results" && (
@@ -942,6 +943,44 @@ function PledgesPanel({ dossier }: { dossier: Dossier | null }) {
                 </span>
               </span>
               <span className="num text-right font-semibold text-ink">{e.pct != null ? `${e.pct.toFixed(2)}%` : "—"}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </Panel>
+  );
+}
+
+const REMEDY_STAGE: Record<string, { word: string; cls: string }> = {
+  INITIATION: { word: "Started", cls: "bg-surface-2 text-ink-2" },
+  PRELIMINARY_FINDING: { word: "Preliminary finding", cls: "bg-warn-soft text-warn" },
+  FINAL_FINDING: { word: "Final finding", cls: "bg-pos-soft text-pos" },
+  CUSTOMS_NOTIFICATION: { word: "Duty notified", cls: "bg-pos-soft text-pos" },
+  TERMINATED: { word: "Terminated", cls: "bg-neg-soft text-neg" },
+};
+
+/** Module 8: DGTR anti-dumping, countervailing and safeguard cases the company asked for or supported, latest step
+ *  first (pipeline dgtr.py; linked only when the initiation notice names the company). */
+function TradeRemediesPanel({ dossier }: { dossier: Dossier | null }) {
+  const cases = [...(dossier?.trade_remedies ?? [])].sort((a, b) => (b.stage_on ?? "").localeCompare(a.stage_on ?? "")).slice(0, 6);
+  if (!cases.length) return null;
+  return (
+    <Panel title="Trade remedies" hint="DGTR cases the company applied for or supported · from the case pages">
+      <ul className="divide-y divide-line">
+        {cases.map((c) => {
+          const stage = REMEDY_STAGE[c.stage ?? ""] ?? { word: titleCase(c.stage ?? "Listed"), cls: "bg-surface-2 text-ink-2" };
+          return (
+            <li key={c.case_url} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 py-2 text-[13.5px]">
+              <span className="min-w-0 text-ink">
+                <a href={c.case_url} target="_blank" rel="noreferrer" className="font-semibold hover:underline">{c.product ?? "Case"}</a>
+                {c.countries ? <span className="text-ink-2"> · {c.countries}</span> : null}
+                <span className="block break-words text-[12px] text-ink-3">
+                  {[c.investigation, c.proceeding].filter(Boolean).join(" · ")}
+                  {" · "}{c.role === "APPLICANT" ? "the company applied" : "the company supported it"}
+                  {c.stage_on ? ` · ${istDate(c.stage_on)}` : ""}
+                </span>
+              </span>
+              <Badge className={stage.cls}>{stage.word}</Badge>
             </li>
           );
         })}

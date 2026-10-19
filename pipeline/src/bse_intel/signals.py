@@ -69,6 +69,7 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     signals += _scale(before, output, company, filing.filed_at)
     signals += _order_flow(before, output, filing)
     signals += _pledges(after, filing)
+    signals += _trade_remedies(after, filing)
     strain = _working_capital(after, filing)
     signals += strain
     signals += _metric_shifts(after, filing, skip={"trade_receivables", "receivables", "debtors", "inventories", "inventory"} if strain else set())
@@ -487,6 +488,14 @@ def _pledges(after: dict | None, filing: Filing) -> list[Signal]:
     from .pledges import signals as pledge_signals
 
     return [Signal("PLEDGE", severity, text) for severity, text in pledge_signals(after, filing.filed_at)]
+
+
+def _trade_remedies(after: dict | None, filing: Filing) -> list[Signal]:
+    """Module 8: a DGTR step (initiation, finding, duty notified, termination) in the last six months on a case the
+    company applied for or supported (dgtr.py), from memory as of the filing."""
+    from .dgtr import signals as dgtr_signals
+
+    return [Signal("TRADE_REMEDY", severity, text) for severity, text in dgtr_signals(after, filing.filed_at)]
 
 
 def _order_flow(before: dict | None, output: Pass2Output, filing: Filing) -> list[Signal]:

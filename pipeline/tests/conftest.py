@@ -14,10 +14,11 @@ from bse_intel.settings import Settings
 
 @pytest.fixture(autouse=True)
 def _clear_of_ist_midnight(monkeypatch):
-    """Tests date filings "minutes ago"; just after midnight IST that lands on yesterday.
-    In that window, run the clock two hours behind so every test sees one calendar day."""
+    """Tests date filings "minutes ago" or "minutes ahead"; just after midnight IST the first lands on yesterday, and
+    in the last hour before it the second lands on tomorrow. In those windows, run the clock two hours behind so every
+    test sees one calendar day."""
     real = timeutil.datetime
-    if real.now(timeutil.IST).hour >= 1:
+    if 1 <= real.now(timeutil.IST).hour < 23:
         return
 
     class Shifted(real):

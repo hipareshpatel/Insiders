@@ -303,7 +303,7 @@ XBRL_SOURCE = "xbrl:"  # the seed's synthetic ids: "xbrl:res:<scrip>:<period>"
 
 # Flows accumulate over a financial year; balances, margins and per-share figures do not.
 FLOW_METRICS = frozenset({
-    "revenue", "total_income", "total_expenses", "ebitda", "pbt", "pat", "pat_continuing", "other_income",
+    "revenue", "total_income", "total_expenses", "ebitda", "pbt", "pat", "pat_continuing", "pat_owners", "other_income",
     "employee_cost", "other_expenses", "depreciation", "finance_cost", "tax_expense", "current_tax",
     "deferred_tax", "exceptional_items", "cost_of_materials", "purchases_stock_in_trade",
     "raw_material_cost", "inventory_change", "operating_cash_flow",

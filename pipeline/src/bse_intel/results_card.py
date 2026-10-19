@@ -72,7 +72,7 @@ def _profit_words(tagged, m) -> tuple[str, str, str]:
 
 _LABELS = (("revenue", "Revenue from operations"), ("interest_earned", "Interest earned"),
            ("pre_provision_operating_profit", "Operating profit before provisions"), ("ebitda", "EBITDA"),
-           ("provisions", "Provisions"), ("pat", "Net profit"), ("eps", "EPS"))
+           ("provisions", "Provisions"), ("pat", "Net profit"), ("pat_owners", "Net profit to shareholders"), ("eps", "EPS"))
 
 
 _VIEW_LINE = re.compile(r"^\s*(Q[1-4]FY\d{2})\s*:\s*(-?\d[\d,]*(?:\.\d+)?)\s*([A-Z_]*)")
@@ -247,8 +247,12 @@ def build(out, tagged, company_name: str | None, history=None) -> list[str]:
     now = {m.metric: m for m in tagged.metrics if m.period == tagged.period and m.value is not None}
     top = now.get("revenue") or now.get("interest_earned") or now.get("total_income")
     profit = now.get("pat")
+    owners = now.get("pat_owners")
+    if owners is not None and profit is not None and abs(owners.value - profit.value) > 0.005 * abs(profit.value) + 0.01:
+        profit = owners   # minority interests take a part: the shareholders' profit is the company's (Bajaj Finserv)
     if top is None or profit is None:
         return []
+    profit_word = "net profit to shareholders" if profit.metric == "pat_owners" else "net profit"
     name = _short_name(company_name)
     basis = (tagged.basis or "").lower()
     period = tagged.period
@@ -262,9 +266,9 @@ def build(out, tagged, company_name: str | None, history=None) -> list[str]:
         change = f" ({_pct(m.yoy_pct)} YoY)" if m.yoy_pct is not None else ""
         return f"{word} {_cr(m.value)}{change}"
 
-    headline = f"{name} {period}: {phrase(top, top_word)}, {phrase(profit, 'net profit')}"
+    headline = f"{name} {period}: {phrase(top, top_word)}, {phrase(profit, profit_word)}"
     if len(headline) > 110:
-        headline = f"{name} {period}: {phrase(profit, 'net profit')}"
+        headline = f"{name} {period}: {phrase(profit, profit_word)}"
     facts, keys = [], []
     for metric, label in _LABELS:
         m = now.get(metric)
@@ -307,7 +311,7 @@ def build(out, tagged, company_name: str | None, history=None) -> list[str]:
         # The quarter's own figures, as the headline states them: the model's takeaway set them against memory's
         # quarters and got them wrong - LIC's EPS "-38% YoY" against a year-ago from before its 1:1 bonus, Ambuja's
         # year-ago profit from before its restatement (round 6, 2026-10-19)
-        card.takeaway = f"{period}: {phrase(top, top_word)}, {phrase(profit, 'net profit')}."
+        card.takeaway = f"{period}: {phrase(top, top_word)}, {phrase(profit, profit_word)}."
         replaced.append("takeaway from the file's figures")
     context = memory_points(tagged, history)
     # The model's own memory comparisons are left out: code makes them from memory (memory_points), where the model
@@ -319,5 +323,5 @@ def build(out, tagged, company_name: str | None, history=None) -> list[str]:
     card.why_it_matters = context + own[:min(MAX_WHY, MAX_WHY + 1 - len(context))]
     if context:
         replaced.append(f"{len(context)} point(s) from memory by code")
-    out.timeline_entry = f"{period} results ({basis or 'basis not stated'}): {phrase(top, top_word)}, {phrase(profit, 'net profit')}."
+    out.timeline_entry = f"{period} results ({basis or 'basis not stated'}): {phrase(top, top_word)}, {phrase(profit, profit_word)}."
     return [f"results card from the XBRL file: {', '.join(replaced)}"]

@@ -57,6 +57,9 @@ RESULT_TAGS = {
     "ProfitLossForPeriod": "pat",
     "ProfitLossForThePeriod": "pat",
     "ProfitLossForPeriodFromContinuingOperations": "pat_continuing",
+    # the shareholders' share, apart from minority interests: Bajaj Finserv's ₹6,296.67 Cr consolidated profit is
+    # ₹3,132 Cr to its owners, and the card gave the first as the company's (round 6, 2026-10-19)
+    "ProfitOrLossAttributableToOwnersOfParent": "pat_owners",
     "BasicEarningsLossPerShareFromContinuingAndDiscontinuedOperations": "eps",
     "BasicEarningsLossPerShareFromContinuingOperations": "eps",
     "BasicEarningsPerShare": "eps",

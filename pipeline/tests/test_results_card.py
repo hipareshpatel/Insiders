@@ -190,3 +190,17 @@ def test_the_models_memory_comparisons_are_left_off_a_results_card():
     out.card.why_it_matters[0].basis = "MEMORY"
     results_card.build(out, tagged, "Ahluwalia Contracts (India) Limited")
     assert [i.text for i in out.card.why_it_matters] == ["Two", "Three"]
+
+
+def test_a_group_with_minority_interests_is_given_its_shareholders_profit():
+    """Bajaj Finserv (round 6): ₹6,296.67 Cr consolidated profit given as the company's; ₹3,132 Cr is its owners'."""
+    from bse_intel.models import FinancialMetric
+    from bse_intel.xbrl import XbrlResult
+
+    tagged = XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q1FY27", metrics=[
+        FinancialMetric(metric="revenue", period="Q1FY27", value=38000.0),
+        FinancialMetric(metric="pat", period="Q1FY27", value=6296.67),
+        FinancialMetric(metric="pat_owners", period="Q1FY27", value=3132.0)])
+    out = _model_card()
+    results_card.build(out, tagged, "Bajaj Finserv Limited")
+    assert out.card.headline == "Bajaj Finserv Q1FY27: revenue ₹38,000 Cr, net profit to shareholders ₹3,132 Cr"

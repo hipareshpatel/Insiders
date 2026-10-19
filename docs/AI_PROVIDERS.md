@@ -21,7 +21,6 @@ provider's own 429 detail, "assumption" otherwise (CLAUDE.md rule 0).
 | OpenRouter | Nemotron 3.5 Super VL (free) | 1,000 a day for all free models together, 20 a minute | cards (small share), long documents (after Gemini) | round 6: 1 of 6 WRONG; **240 failures in 573 requests** (empty answers) |
 | OpenRouter | MiniMax M3.1 Flash, Gemma 4 31B (free) | inside the same 1,000 a day | off card routes | evening trial: 16 empty answers (MiniMax), 28 429s (Gemma) |
 | Cloudflare | Llama 3.3 70B, 3.1 8B | 10k neurons a day | spares | small context |
-
 | SambaNova | Gemma 4 31B | free tier: 20 a minute, 20 a day, 200k tokens a day per model (docs.sambanova.ai rate limits, read 2026-10-19) | not used yet (a 20-a-day spare at most) | probed right in 2.2 s |
 | SambaNova | DeepSeek V3.1 / V3.2, gpt-oss-120b, Llama 3.3 70B | listed at 20 a day free, but this account gets **402 PAYMENT_METHOD_REQUIRED** (V3.1 timed out) | - | probed 2026-10-19 |
 | SiliconFlow | 80 models, nearly all billed per token (L0 tier 1,000 a minute is a paid-use rate, not a free allowance) | free only for small models | - | Qwen3 8B right but 25 s; Qwen2.5 7B 100x unit slip (probed 2026-10-19) |

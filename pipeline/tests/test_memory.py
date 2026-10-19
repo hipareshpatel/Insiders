@@ -648,4 +648,15 @@ def test_jindal_period_guidance_waits_for_its_results():
                 if s["type"] == "GUIDANCE_BREACH"]
 
     assert breach("2026-10-16T18:00:00+05:30") == []
-    assert breach("2026-12-05T18:00:00+05:30")
+    # past the 60 days but its H1 results not in memory yet: still pending (owner's review, 2026-10-20)
+    assert breach("2026-12-05T18:00:00+05:30") == []
+    # the H1 results card itself is the first to hold the period: judged there
+    when = "2026-12-05T18:00:00+05:30"
+    results = output(financial_metrics=[{"metric": "revenue", "period": "Q2FY27", "value": 10000}])
+    assert [s for s in compute(d, merge(d, results, filing("q2", when), "LOW", "now"), results, filing("q2", when), {}, every=True)
+            if s["type"] == "GUIDANCE_BREACH"]
+    # no results four months after the deadline: judged without them
+    d = merge(new_dossier(filing("g", given)),
+              output(guidance=[{"statement": "EBITDA per tonne of ₹18,000-20,000 for H1FY27", "due": "H1FY27"}]),
+              filing("g", given), "LOW", "now")
+    assert breach("2027-02-05T18:00:00+05:30")

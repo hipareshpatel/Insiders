@@ -5,7 +5,7 @@ import { Link, useLocation, useParams } from "wouter";
 import type { CardRow, Company, Dossier, Guidance, Peer, Technicals } from "../../shared/types";
 import { Avatar } from "../components/Avatar";
 import { PriceChart } from "../components/PriceChart";
-import { AnnouncementCard, lineValue, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
+import { AnnouncementCard, lineValue, OTHER_RENAME, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
 import { parseCard, SIGNAL } from "../components/FilingCard";
 import { Badge } from "../components/ui/badge";
 import { api } from "../lib/api";
@@ -312,7 +312,8 @@ export function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
   // the group, plants and brands only: memory written before the pipeline checked the type holds a case's other
   // parties too (Meta, Google, a ministry; laptop test, 2026-10-19). The same rule as dossier.group_entity.
   const entities = (identity?.entities ?? []).filter((e) => e.type && GROUP_TYPE.test(e.type));
-  if (!identity?.former_names?.length && !entities.length && !owners.length && !auditor && !predictions.length) return null;
+  const ownNames = (identity?.former_names ?? []).filter((n) => !OTHER_RENAME.test(n));
+  if (!ownNames.length && !entities.length && !owners.length && !auditor && !predictions.length) return null;
   const last = owners[owners.length - 1];
   const prev = owners[owners.length - 2];
   const delta = (k: "promoter_pct" | "fii_pct" | "dii_pct" | "pledge_pct") =>
@@ -321,7 +322,7 @@ export function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
     <div className="grid gap-4 md:grid-cols-2">
       <Panel title="Identity & governance" hint="Former names, group entities, auditor">
         <dl className="space-y-2 text-[13.5px]">
-          {identity?.former_names?.length ? <div><dt className="eyebrow text-ink-3">Formerly</dt><dd className="text-ink">{identity.former_names.join(" · ")}</dd></div> : null}
+          {ownNames.length ? <div><dt className="eyebrow text-ink-3">Formerly</dt><dd className="text-ink">{ownNames.join(" · ")}</dd></div> : null}
           {entities.length ? (
             <div><dt className="eyebrow text-ink-3">Group entities, plants & brands</dt>
               <dd className="text-ink">{entities.map((e) => `${e.name} (${e.type})`).join(" · ")}</dd></div>

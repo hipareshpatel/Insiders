@@ -36,6 +36,7 @@ MAX_OVERDUE_SIGNALS = 2
 # A period's guidance is judged on its results, filed up to 45 days after a quarter and 60 after the year: Jindal's
 # H1FY27 EBITDA/tonne guidance was "Deadline passed" on 16 October, a month before its results (round-2 re-run)
 RESULTS_GRACE_DAYS = 60
+RESULTS_SILENT_DAYS = 120   # no results this long after a deadline: the promise is judged without them
 _PERIOD_DUE = re.compile(r"\s*(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2}", re.I)  # a deadline that is a date is judged on the day
 
 REVENUE = ("revenue", "revenue_from_operations", "total_revenue", "net_sales", "sales", "total_income")
@@ -309,9 +310,16 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
     # Flagged once, on the first filing after the deadline: Ahluwalia's FY25 revenue guidance was
     # "Deadline passed" on five cards in a row.
     last = max((t.get("date", "")[:10] for t in (before or {}).get("timeline", []) if t.get("date", "") < filing.filed_at), default="")
+    # The latest period whose results memory holds: guidance due at a period's end is pending until that period's
+    # results are in, whatever the date (Jindal Stainless's H1FY27 EBITDA/tonne "Deadline passed" on a card filed before
+    # its Q2 results, owner's review 2026-10-20); a company that has not reported long after is flagged all the same
+    reported = max((str(e) for e in (due_date(m.get("period")) for m in after.get("financial_metrics", [])
+                                     if m.get("metric") in ("revenue", "pat", "interest_earned")) if e), default="")
+    long_after = (date.fromisoformat(today) - timedelta(days=RESULTS_SILENT_DAYS)).isoformat()
     overdue = [
         g for g in after.get("guidance", [])
         if g.get("due_date") and g["due_date"] < (judged_by if _PERIOD_DUE.match(str(g.get("due") or "")) else today)
+        and (not _PERIOD_DUE.match(str(g.get("due") or "")) or reported >= g["due_date"] or g["due_date"] < long_after)
         and g.get("status") in ("OPEN", "ON_TRACK")
         and g["id"] not in touched and g.get("given_on", "") < filing.filed_at and not (last and last > g["due_date"])
     ]

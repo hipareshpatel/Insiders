@@ -272,9 +272,14 @@ const TRACKS: Record<string, { steps: string[]; at: Record<string, number> }> = 
            at: { LOI: 0, LOA: 0, MOU: 0, DEVELOPMENT_ORDER: 0, WORK_ORDER: 1, CONTRACT: 1, IN_PROGRESS: 2, PARTIALLY_COMPLETED: 2, COMPLETED: 3 } },
   CAPEX: { steps: ["Proposed", "Approved", "Under way", "Completed"],
            at: { PROPOSED: 0, BOARD_APPROVED: 1, TERMS_FINALISED: 1, SHAREHOLDER_APPROVED: 1, IN_PROGRESS: 2, PARTIALLY_COMPLETED: 2, COMPLETED: 3 } },
-  DEAL: { steps: ["Proposed", "Board", "Shareholders", "Completed"],
-          at: { PROPOSED: 0, BOARD_APPROVED: 1, TERMS_FINALISED: 1, SHAREHOLDER_APPROVED: 2, IN_PROGRESS: 2, PARTIALLY_COMPLETED: 2, COMPLETED: 3 } },
+  // "Approved" names the approval the stage records (board or shareholders): many deals need no shareholder vote, and a
+  // "Shareholders" step lit for a deal under way said they had voted (Jindal Stainless, owner's review 2026-10-20)
+  DEAL: { steps: ["Proposed", "Approved", "Under way", "Completed"],
+          at: { PROPOSED: 0, BOARD_APPROVED: 1, TERMS_FINALISED: 1, SHAREHOLDER_APPROVED: 1, IN_PROGRESS: 2, PARTIALLY_COMPLETED: 2, COMPLETED: 3 } },
 };
+
+// What the deal's other party is: an order's client, an acquisition's target (the company bought into, not a seller)
+const COUNTERPARTY: Record<string, string> = { ORDER: "From", ACQUISITION: "Target", DIVESTMENT: "Buyer", FUNDRAISE: "Investors", CAPEX: "Partner" };
 
 /** Orders, capex and capital deals: the size, against the company, over its term, and how far it has got. */
 function DealBlock({ card }: { card: CardBody }) {
@@ -283,12 +288,14 @@ function DealBlock({ card }: { card: CardBody }) {
   const amount = scale?.amount_cr ?? deal?.amount_cr ?? null;
   const facts = [
     amount != null ? [deal?.includes_gst ? "Value, incl. GST" : "Value", cr(amount)] : null,
-    deal?.counterparty ? ["From", deal.counterparty] : null,
+    deal?.counterparty ? [COUNTERPARTY[deal.kind] ?? "Counterparty", deal.counterparty] : null,
     deal?.execution_by ? executionFact(deal.execution_by) : null,
   ].filter(Boolean) as [string, string][];
   const track = deal ? TRACKS[deal.kind === "ORDER" ? "ORDER" : deal.kind === "CAPEX" ? "CAPEX" : "DEAL"] : null;
   const at = deal && track ? track.at[deal.stage] : undefined;
-  const steps = track && at !== undefined ? track.steps.map((s, i) => (i === 0 && deal!.kind === "ORDER" ? STAGE_LABEL[deal!.stage] ?? s : s)) : null;
+  const steps = track && at !== undefined ? track.steps.map((s, i) =>
+    (i === 0 && deal!.kind === "ORDER" ? STAGE_LABEL[deal!.stage] ?? s
+      : i === 1 && track === TRACKS.DEAL ? (deal!.stage === "SHAREHOLDER_APPROVED" ? "Shareholders" : deal!.stage === "TERMS_FINALISED" ? "Terms" : "Board") : s)) : null;
   const title = deal?.kind === "ORDER" ? "The order" : deal?.kind === "CAPEX" ? "The capex" : deal?.kind === "FUNDRAISE" ? "The raise" : "The deal";
   return (
     <BlockShell title={title}>
@@ -935,10 +942,13 @@ function TechnicalTags({ row }: { row: CardRow }) {
   );
 }
 
+export const OTHER_RENAME = /\(\s*now\b|\bnow\s+known\s+as\b|\brenamed\s+(?:as|to)\b/i;
+
 function formerName(row: CardRow): string | null {
   try {
     const names = row.former_names_json ? (JSON.parse(row.former_names_json) as string[]) : [];
-    return names[0] ?? null;
+    // another entity's rename ("AGH Dreams Private Limited (now AGH Dreams Limited)") is not the company's former name
+    return names.find((n) => !OTHER_RENAME.test(n)) ?? null;
   } catch {
     return null;
   }

@@ -67,3 +67,21 @@ def test_overdue_list_rereads_ranges_and_drops_stored_third_party_views():
     ]}
     got = open_promises(dossier)
     assert [p["id"] for p in got] == ["g2"] and got[0]["due_date"] == "2027-03-31"
+
+
+def test_another_entitys_rename_is_not_the_companys_former_name():
+    """Jindal Stainless (owner's review, 2026-10-20): its card showed "formerly AGH Dreams Private Limited (now AGH Dreams
+    Limited)", a group company's rename; Heritage's page showed its subsidiary's the same way."""
+    from bse_intel.dossier import merge, new_dossier, own_former_name
+    from bse_intel.models import Filing, Pass2Output
+
+    f = Filing(news_id="n1", scrip_code="532508", company_name="Jindal Stainless Ltd", headline="h", subject="",
+               filed_at="2026-10-15T10:00:00+05:30", filing_date="2026-10-15")
+    d = new_dossier(f)
+    out = Pass2Output.model_validate({"is_material": False, "timeline_entry": "", "dossier_delta": {
+        "former_names": ["AGH Dreams Private Limited (now AGH Dreams Limited)", "Chromeni Steels Private Limited",
+                         "Jindal Stainless (Hisar) Limited"],
+        "entities": [{"name": "Chromeni Steels Private Limited", "type": "wholly owned subsidiary"}]}})
+    d = merge(d, out, f, None, "now")
+    assert d["identity"]["former_names"] == ["Jindal Stainless (Hisar) Limited"]
+    assert not own_former_name("Utkrisht Dream Ventures Private Limited (now known as ...)", d)

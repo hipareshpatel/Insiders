@@ -62,6 +62,26 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T17 · P1 · laptop · OPEN — the WRONG classes of the first live review that are in your files
+
+From `docs/audit/live/2026-10-20.md` (7 of 24 WRONG; the cloud fixed its own classes in the commit after it). Yours, by
+D37's routine (fix the class with a test, re-run only the affected cards):
+1. **₹ million read as ₹ crore x10 in the balance-sheet and cash-flow lines** (Novartis India Q2FY26, `c8de4c15`):
+   receivables ₹401.4 Cr for ₹40.14 Cr, operating cash flow ₹431.6 Cr for ₹43.16 Cr (statement in ₹ million).
+2. **Inventory direction reversed** (same card): a build called a drawdown, with the EBITDA credit the wrong way.
+3. **A share count in crore written as million** (Magellanic Cloud `ff8021a8`: 12,67,00,000 warrants = 12.67 crore =
+   126.7 million, the card says 12.67 million).
+4. **Year-ago monthly figures labelled as last month** (SML Mahindra Aug 2025 `0fd4cf53`: Aug 2024 figures as "July",
+   YoY called MoM; a "Missed" against last month's actual).
+5. **Invented facts:** "no open offer" for the closing that triggered the 26% offer (Novartis `7ff43daf`); approvals the
+   filing does not name (NHPC `nse-106788220`, CSB `df53e2fe`); "objects amended to include" what was already there
+   (Magellanic).
+6. **Event types:** an outage restored as CAPEX (NHPC `nse-106699875`), a services partnership as PRODUCT_LAUNCH (LTM
+   `d93bec96`), an MD reappointment as OTHER (CSB `df53e2fe`); impact_level too high on routine items (6 of 24).
+7. For the next review: export the held cards with their PDFs into `data/audit/live/held-<date>/` (the cloud cannot read
+   held cards from the public site); the cloud reviews them with the published ones.
+Files you may change: your files (TASKS "Who owns what"), their tests, `docs/audit/live/`. Report: here, per class.
+
 ## T16 · P1 · cloud · OPEN — daily review of the live cards by independent agents (D37)
 
 Once the live site has cards (T15, then the schedule): each day, every held card plus a random sample of the published ones

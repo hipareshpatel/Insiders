@@ -402,6 +402,19 @@ _GROUP_TYPE = re.compile(r"subsidiar|step[- ]?down|\bwos\b|wholly|target\s+compa
                          r"|division|brand|branch|office|warehouse|mine|refinery|hospital|hotel|store", re.I)
 
 
+_OTHER_RENAME = re.compile(r"\(\s*now\b|\bnow\s+known\s+as\b|\brenamed\s+(?:as|to)\b", re.I)
+
+
+def own_former_name(name: str | None, dossier: dict) -> bool:
+    """A former name of the listed company itself, not another entity's rename: "AGH Dreams Private Limited (now AGH
+    Dreams Limited)" and "Heritage Novandie Foods Private Limited (now ...)" are a group company's, shown as Jindal
+    Stainless's and Heritage's own (owner's review, 2026-10-20), and a name that is one of its group entities is too."""
+    if not name or _OTHER_RENAME.search(name):
+        return False
+    entities = {_norm(_bare_name(e.get("name") or "")) for e in (dossier.get("identity") or {}).get("entities", [])}
+    return _norm(_bare_name(name)) not in entities
+
+
 def group_entity(kind: str | None) -> bool:
     return bool(kind and _GROUP_TYPE.search(kind))
 
@@ -797,9 +810,9 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     names = {n.lower(): n for n in identity.get("former_names", [])}
     for name in delta.former_names:
         name = " ".join(name.split())[:120]
-        if name and name.lower() != (d.get("company_name") or "").lower():
+        if name and name.lower() != (d.get("company_name") or "").lower() and own_former_name(name, d):
             names.setdefault(name.lower(), name)
-    identity["former_names"] = list(names.values())[:6]
+    identity["former_names"] = [n for n in names.values() if own_former_name(n, d)][:6]
     # The view shows entities as "Name (type)"; models copy that back as the name.
     entities = {_norm(_bare_name(e["name"])): e for e in identity.get("entities", [])}
     for e in delta.entities[:6]:
@@ -808,6 +821,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if key and key not in entities and group_entity(e.type):
             entities[key] = {"name": name[:120], "type": e.type, "as_of": as_of, "source_news_id": news_id}
     identity["entities"] = list(entities.values())[-20:]
+    identity["former_names"] = [n for n in identity["former_names"] if own_former_name(n, d)]   # against this filing's entities too
 
     # Only a shareholding pattern sets memory's ownership: Clean Max's NCD-security and share-purchase cards wrote a
     # "20.02% pledged" holding (one as "SEP-2026"), and every later card warned of a promoter pledge that no shareholding

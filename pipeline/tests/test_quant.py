@@ -276,3 +276,18 @@ def test_a_change_across_a_loss_is_named_not_a_percentage():
     assert snap(-5.0, 12.0)["yoy_turn"] == "PROFIT_TO_LOSS"
     assert snap(-5.0, -12.0)["yoy_turn"] == "LOSS_NARROWED" and snap(-12.0, -5.0)["yoy_turn"] == "LOSS_WIDENED"
     assert snap(29.4, 36.8)["yoy_pct"] == -20.1   # both profits: a percentage as before
+
+
+def test_an_input_counted_in_millions_is_scaled_before_the_formula_is_held():
+    """Jindal Stainless (owner's review, 2026-10-20): 70 million units x ₹6.5 / 1e7 = ₹45.5 Cr was held as 4.55e-05."""
+    from bse_intel.models import QuantifiedImpact
+    from bse_intel.quant import check
+
+    est = QuantifiedImpact.model_validate({
+        "label": "Annual power cost saving", "formula": "annual_units * tariff_inr / 1e7", "result": 45.5, "unit": "INR_CR",
+        "inputs": [{"name": "annual_units", "value": 70, "unit": "million units", "source": "FILING"},
+                   {"name": "tariff_inr", "value": 6.5, "unit": "INR per unit", "source": "ASSUMPTION"}]})
+    (item,) = check([est], "about 70 million units of green power a year").items
+    assert item["check"] == "VERIFIED" and item["computed"] == 45.5
+    wrong = est.model_copy(update={"result": 455.0})   # a real slip is still caught
+    assert check([wrong], "about 70 million units").items[0]["check"] == "MISMATCH"

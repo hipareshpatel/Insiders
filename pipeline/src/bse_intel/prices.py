@@ -88,10 +88,17 @@ class PriceStore:
         if traded:
             out["median_turnover_cr"] = round(statistics.median(traded) / 1e7, 3)
         shares = company.get("shares_outstanding")
+        if not shares and company.get("market_cap_cr") and company.get("last_price"):
+            # no share count stored: the one today's market cap and price imply. Without this the row kept today's market
+            # cap beside the old price (Novartis: "30% of market cap (₹4,783 Cr)" on cards at ₹858, ₹830 and ₹1,596,
+            # live review 2026-10-20)
+            shares = float(company["market_cap_cr"]) * 1e7 / float(company["last_price"])
         if shares:
             out["market_cap_cr"] = round(closes[-1] * float(shares) / 1e7, 2)
             if buckets:
                 out["size_category"] = size_bucket(out["market_cap_cr"], buckets)
+        else:
+            out["market_cap_cr"] = None   # never today's beside a past price
         return out
 
 

@@ -50,6 +50,21 @@ def _size(unit: str | None) -> float | None:
     return _UNIT_SIZE.get(str(unit or "").strip().upper().replace(" ", "_"))
 
 
+_COUNT_WORDS = (("BILLION", 1e9), ("CRORE", 1e7), ("MILLION", 1e6), ("LAKH", 1e5), ("THOUSAND", 1e3))
+
+
+def _with_counts(est: QuantifiedImpact, values: dict[str, float]) -> float | None:
+    """The formula with each input multiplied by the count word its unit spells out ("million units", "lakh tonnes");
+    None when no input has one."""
+    counts = {i.name: next((n for word, n in _COUNT_WORDS if word in str(i.unit or "").upper()), 1.0) for i in est.inputs}
+    if all(c == 1.0 for c in counts.values()):
+        return None
+    try:
+        return evaluate(est.formula, {k: v * counts.get(k, 1.0) for k, v in values.items()})
+    except (FormulaError, ZeroDivisionError, OverflowError):
+        return None
+
+
 def in_units(est: QuantifiedImpact) -> float | None:
     """The formula evaluated with every input at its unit's size and the answer in the result's unit; None when a unit
     is not known (then only the plain arithmetic is checked, as before)."""
@@ -169,6 +184,13 @@ def check(estimates: list[QuantifiedImpact], *sources: str) -> QuantCheck:
         scaled = in_units(est)
         if scaled is not None and not math.isclose(scaled, computed, rel_tol=REL_TOLERANCE, abs_tol=0.05):
             computed = scaled   # the units say what the plain product means; the stated result is held to that
+        elif scaled is None and est.result is not None \
+                and not math.isclose(computed, est.result, rel_tol=REL_TOLERANCE, abs_tol=0.05):
+            # an input's count stated in its unit ("70" "million units") and the formula's own conversion ("/ 1e7"):
+            # Jindal Stainless's 70 million units x ₹6.5 / 1e7 = ₹45.5 Cr was held as 4.55e-05 (owner's review, 2026-10-20)
+            counted = _with_counts(est, values)
+            if counted is not None and math.isclose(counted, est.result, rel_tol=REL_TOLERANCE, abs_tol=0.05):
+                computed = counted
         item["computed"] = round(computed, 6)
         if est.result is None:
             item.update(result=round(computed, 4), check="VERIFIED")

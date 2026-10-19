@@ -30,11 +30,17 @@ for i, row in enumerate(sample):
     card = {k: v for k, v in card.items() if k not in DROP}
     card.update({"company": full.get("company_name"), "symbol": full.get("symbol"), "filed_at": full.get("filed_at")})
     (folder / f"{nid}.card.json").write_text(json.dumps(card, indent=1, ensure_ascii=False))
-    company = get(f"{SITE}/api/companies/{full['scrip_code']}")
+    import time
+    for attempt in range(3):   # an empty memory is retried: the first review's 11 of 24 came back empty mid-load
+        company = get(f"{SITE}/api/companies/{full['scrip_code']}")
+        if company.get("dossier"):
+            break
+        time.sleep(70)   # past the 60 s edge cache
     memory = dossier_as_of(company.get("dossier") or {}, full["filed_at"], inclusive=False) or {}
+    memory["_input"] = "memory as of the filing" if company.get("dossier") else "NO MEMORY ON THE LIVE SITE: do not judge memory points"
     if card.get("scale"):
         memory["scale_block"] = card["scale"]
-    (folder / f"{nid}.memory.json").write_text(json.dumps(memory, indent=1, ensure_ascii=False)[:400_000])
+    (folder / f"{nid}.memory.json").write_text(json.dumps(memory, indent=1, ensure_ascii=False))   # whole: a cut file is no JSON
     pdf = folder / f"{nid}.pdf"
     subprocess.run(["curl", "-s", "--max-time", "90", "-A", UA["User-Agent"], "-o", str(pdf), full["pdf_url"]], check=False)
     manifest.append({"news_id": nid, "folder": folder.name, "event_type": row.get("event_category"), "company": full.get("company_name"),

@@ -59,3 +59,17 @@ def test_yahoo_tries_nse_then_bse_then_scrip_code():
                             {"scrip_code": "500003", "symbol": "GONE"}], batch=50, period="1mo")
     assert {s: t for s, (t, _) in found.items()} == {"500325": "RELIANCE.BO", "532540": "TCS.NS"}
     assert asked == [["RELIANCE.NS", "TCS.NS", "GONE.NS"], ["RELIANCE.BO", "GONE.BO"], ["500003.BO"]]
+
+
+def test_a_company_without_a_share_count_gets_its_market_cap_at_the_filing_price(tmp_path):
+    """Novartis India (live review 2026-10-20): no share count stored, so the row kept today's ₹4,783 Cr market cap beside
+    each filing's own price, and three cards measured deals against it."""
+    store = PriceStore(tmp_path)
+    rows = _rows(date(2025, 5, 1), [100.0 + i for i in range(40)])
+    store.save("500002", rows)
+    company = {"scrip_code": "500002", "last_price": 200.0, "market_cap_cr": 2000.0}   # implies 10 crore shares
+    live = point_in_time(company, f"{rows[30][0]}T11:00:00+05:30", store)
+    assert live["last_price"] == 129.0 and live["market_cap_cr"] == 1290.0
+    # nothing to infer the count from: no market cap at all rather than today's
+    bare = point_in_time({"scrip_code": "500002", "market_cap_cr": 2000.0}, f"{rows[30][0]}T11:00:00+05:30", store)
+    assert bare["market_cap_cr"] is None

@@ -35,7 +35,7 @@ from threading import Lock
 from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
-from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, latest_fundamentals, memory_ids, merge,
+from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, latest_fundamentals, memory_ids, merge, own_former_name,
                       new_dossier, reported_by, results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import CACHE_VERSION, FIGURE_PAGE_AMOUNTS, Document, amounts, cache_needs_ocr
 from .ocr import available as local_ocr_available
@@ -3213,5 +3213,5 @@ def _apply_xbrl(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult", news_id: 
 
 def _company_memory(dossier: dict) -> dict:
     """Company-row fields drawn from memory: former names (searchable) and the radar summary."""
-    names = (dossier.get("identity") or {}).get("former_names") or []
+    names = [n for n in (dossier.get("identity") or {}).get("former_names") or [] if own_former_name(n, dossier)]
     return {**memory_summary(dossier), **({"former_names_json": json.dumps(names, ensure_ascii=False)} if names else {})}

@@ -1120,6 +1120,11 @@ class Pipeline:
             raw.attach(nse, sink, "nse", settings)
         self._annual_lists: dict[str, tuple[list, str]] = {}   # symbol -> NSE's annual-report XBRL list and when it was read
         self._event_days: dict[str, list] = {}   # IST day -> NSE's event XBRL files broadcast that day (this run)
+        self._packer = None
+        if settings.pass2_pack > 1 and gateway.has_route("pass2_packed"):
+            from .ai.packer import Packer
+
+            self._packer = Packer(gateway, size=settings.pass2_pack)
         self._nse_refused = False                  # NSE refused the address: no more calls this run
         self.prompts = prompts or PromptEngine(settings)
         self.rules = rules or RuleBook.from_config(settings.load_toml("taxonomy.toml"))
@@ -2168,7 +2173,10 @@ class Pipeline:
         route = "pass2_bulk" if bulk else "pass2"
         if (len(system) + len(user)) / 4 > LONG_PROMPT_TOKENS and self.gateway.has_route("pass2_long"):
             route = "pass2_long"  # a transcript or presentation: long-context models only
-        result = self.gateway.complete_json(route, system, user, Pass2Output)
+        if self._packer is not None and route in ("pass2", "pass2_bulk"):
+            result = self._packer.complete(route, system, user, Pass2Output)   # several filings, one Gemini call
+        else:
+            result = self.gateway.complete_json(route, system, user, Pass2Output)
         out: Pass2Output = result.value
         if not out.is_material or out.card is None:
             with self._lock:

@@ -543,3 +543,21 @@ def test_round_4_units_million_billion_and_foreign_currency():
     assert unit_slips(["Anlon invests ₹90 Cr in Nigeria"], anlon) == []          # never "corrected" as rupees
     assert foreign_as_rupees(["Investment: ₹90 million"], anlon) == ["₹90 is the filing's NGN figure, not a rupee amount"]
     assert foreign_as_rupees(["Investment: ₹90 Cr"], anlon + " and Rs 90 crore of loans") == []   # also a rupee figure
+
+
+
+def test_round_4_rerun_units_whole_rupees_explicit_units_and_powers_of_ten():
+    """The re-run's unit slips: a figure with its own unit beats a table's declared unit (Excelsoft's "INR 3 (Three)
+    Million" still ₹3 Cr), whole-rupee amounts (Nestle "Rs 11,10,59,061" as ₹1.11 Cr; Anlon "Rs. 1,165,179,600" as
+    ₹1,165 Cr), and a declared unit read a power of ten off (RBL's billion table as ₹15,628 Cr)."""
+    from bse_intel.grounding import unit_slips, whole_rupee_crores
+
+    lakh_tables = "Statement (Rs. in lakhs)\nRevenue 12,345.67 11,000.00\nThe investment will be up to INR 3 (Three)\n Million through cash."
+    assert unit_slips(["Investment of ₹3 Cr through cash"], lakh_tables) == [("3", 3.0, 0, 0.3, 2)]
+    assert unit_slips(["Customs duty demand of ₹1.11 Cr"], "a demand of Rs 11,10,59,061 confirmed") == [("1.11", 1.11, 2, 11.11, 2)]
+    assert unit_slips(["Customs duty demand of ₹11.11 Cr"], "a demand of Rs 11,10,59,061 confirmed") == []
+    assert unit_slips(["Apiqo ₹1,165 Cr"], "consideration of Rs. 1,165,179,600 for 45,16,200 shares") == [("1,165", 1165.0, 0, 116.52, 2)]
+    assert whole_rupee_crores("Rs 5,000 lakh and Rs. 1,165,179,600/-") == [116.51796]
+    rbl = "Key business update (Rs billion)\nTotal deposits 1,562.8 1,250.2"
+    assert unit_slips(["Deposits ₹15,628 Cr"], rbl) == [("15,628", 15628.0, 0, 156280.0, 0)]
+    assert unit_slips(["Revenue ₹4,714 Cr"], "Revenue from operations (Rs. in crore) 4,714.0") == []

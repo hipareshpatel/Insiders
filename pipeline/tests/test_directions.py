@@ -73,3 +73,16 @@ def test_a_tax_rate_or_slower_growth_is_not_a_direction_of_the_line():
         assert directions.contradicted(text, figures) == [], text
     assert [n for n, _ in directions.contradicted("PAT rose on lower tax.", figures)] == ["lower tax"]
     assert [n for n, _ in directions.contradicted("EPS declined 4%.", figures)] == ["EPS fell"]
+
+
+def test_re_run_misses_reversal_wording_and_notable_change_names():
+    """Round 4's re-run: RSWM's "reversal of deferred tax of ₹7.66 Cr" (a charge), and an inventory change carried
+    in a notable change named "inventory_change" with "drawdown" when stock was built up."""
+    from bse_intel.models import NotableChange
+
+    out = _out("RSWM Q1 PAT up 135%", takeaway="PAT jumped on a reversal of deferred tax of ₹7.66 Cr.")
+    out.card.notable_changes = [NotableChange(metric="inventory_change", previous="₹4.1 Cr", current="₹(31.68) Cr",
+                                              change="drawdown improving working capital"),
+                                NotableChange(metric="revenue", previous="₹1,170 Cr", current="₹1,161 Cr", change="-0.7% YoY")]
+    directions.guard(out, _tagged(deferred_tax=(7.66, None, None), inventory_change=(-31.68, None, None)))
+    assert out.card.takeaway == "PAT jumped." and [c.metric for c in out.card.notable_changes] == ["revenue"]

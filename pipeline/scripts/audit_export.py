@@ -58,7 +58,29 @@ def _round_robin(rows: list[dict]) -> list[dict]:
     return out
 
 
-def _xbrl_note(card: dict) -> str:
+def _xbrl_table(url: str | None, news_id: str = "") -> str:
+    """The XBRL table the pipeline put in front of the card's text, rebuilt from the cached file (the pipeline's own
+    `_xbrl_file` cache); empty when the file is not in the cache."""
+    if not url and not news_id:
+        return ""
+    import hashlib
+
+    from bse_intel import xbrl  # noqa: E402
+
+    root = get_settings().text_cache_dir
+    if not root:
+        return ""
+    # a results file is cached beside the filing's text (Pipeline._xbrl), others by URL (Pipeline._xbrl_file)
+    path = root / news_id[:2] / f"{news_id}.xbrl.gz"
+    if not path.exists() and url:
+        path = root / "xbrl" / (hashlib.sha1(url.encode()).hexdigest()[:20] + ".xml.gz")
+    if not path.exists():
+        return ""
+    parsed = xbrl.parse(gzip.decompress(path.read_bytes()))
+    return parsed.table() if parsed else ""
+
+
+def _xbrl_note(card: dict, news_id: str = "") -> str:
     """The pipeline prepends the machine-tagged XBRL table to the filing text it sends the model, but the
     table is built in memory and never cached, so it cannot be exported. Without this note a reviewer reads
     only the PDF and calls an XBRL figure invented, or misses that a wrong figure came from the table rather
@@ -66,6 +88,14 @@ def _xbrl_note(card: dict) -> str:
     tagged = card.get("xbrl") or {}
     if not tagged.get("period"):
         return ""
+    table = _xbrl_table(tagged.get("url"), news_id)
+    if table:
+        # since 2026-10-19 the card records its file's URL and the pipeline caches the file: show the table itself
+        # (round 4's re-run reviewers could not check figures that came from it)
+        return ("NOTE FOR THE REVIEWER: the model was given this machine-tagged XBRL table, built from the company's own "
+                "XBRL file, and told to prefer it over figures read from the PDF. Its comparatives (YoY, QoQ) are "
+                "computed from earlier files and have sometimes been wrong: check them against the statement's own "
+                "columns.\n\n" + table + "\n\n--- filing text ---\n")
     return ("NOTE FOR THE REVIEWER: besides the text below, the model was given a machine-tagged XBRL table for "
             f"{tagged.get('basis') or 'an unstated basis'}, {tagged['period']}, holding {tagged.get('figures', '?')} "
             "figures in \u20b9 crore, and was told to prefer it over figures read from the PDF. That table is not "
@@ -140,7 +170,7 @@ def main() -> int:
                 view = {**(view or {}), "scale_block (computed by code from memory, shown to the card's writer)": scale}
             (folder / f"{row['news_id']}.memory.json").write_text(json.dumps(view, ensure_ascii=False, indent=1),
                                                                   encoding="utf-8")
-        (folder / f"{row['news_id']}.pdf.txt").write_text(_xbrl_note(card) + text, encoding="utf-8")
+        (folder / f"{row['news_id']}.pdf.txt").write_text(_xbrl_note(card, row["news_id"]) + text, encoding="utf-8")
         manifest[row["news_id"]] = {"model": card.get("model"), "scrip_code": str(row.get("scrip_code")),
                                     "event_type": card.get("event_type"), "folder": folder.name,
                                     "held": bool(row.get("held"))}   # held cards are mixed in blind (round 2)

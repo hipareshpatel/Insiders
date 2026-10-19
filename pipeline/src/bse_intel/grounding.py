@@ -615,32 +615,66 @@ def _copied_from_its_row(filing: str, raw: str, before: str, after: str = "") ->
     return False
 
 
+# A rupee amount written out in full, with no unit after it: "Rs 11,10,59,061", "Rs. 1,165,179,600" (round 4)
+_WHOLE_RUPEES = re.compile(r"(?:₹|\brs\.?|\binr)\s*(\d{1,3}(?:,\d{2,3}){2,}(?:\.\d+)?|\d{7,}(?:\.\d+)?)(?!\s*[,.]?\d)"
+                           r"(?!\s*(?:/-\s*)?(?:lakhs?|lacs?|crores?|cr\b|millions?|mn\b|billions?|bn\b|thousands?))", re.I)
+
+
+def whole_rupee_crores(filing: str) -> list[float]:
+    """The filing's amounts written in whole rupees, in ₹ crore."""
+    out = []
+    for m in _WHOLE_RUPEES.finditer(filing or ""):
+        try:
+            rupees = float(m.group(1).replace(",", ""))
+        except ValueError:
+            continue
+        if rupees >= 1e5:
+            out.append(rupees / 1e7)
+    return out
+
+
 def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, float, int, float, int]]:
-    """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct."""
+    """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct.
+
+    Three readings, in order: a figure the filing writes with its own unit ("INR 3 (Three) Million" carded "₹3 Cr",
+    Excelsoft), whatever unit the tables declare; an amount written out in whole rupees ("Rs 11,10,59,061" carded "₹1.11
+    Cr", Nestle; "Rs. 1,165,179,600" as "₹1,165 Cr", Anlon); and a table figure in the declared unit read a power of
+    ten off ("(Rs billion) 1,562.8" carded "₹15,628 Cr", RBL). A card figure the filing states in crore is never touched."""
     unit = declared_unit(filing)
     # a foreign-currency amount is no rupee figure at any unit: it is held, never "corrected" (foreign_as_rupees)
     filing = _FOREIGN.sub(" ", filing or "")
     filing_index, other_index = SourceIndex(filing), SourceIndex(*others)
-    if not unit and not any(u != 1 for u in filing_index._by_unit):
+    whole = whole_rupee_crores(filing)
+    if not unit and not whole and not any(u != 1 for u in filing_index._by_unit):
         return []
     slips: dict[str, tuple[str, float, int, float, int]] = {}
     for text in texts:
         crore_at = _crore_positions(text or "")
         for value, decimals, pos, kind, raw in _tokens(text or ""):
-            # A small figure is ambiguous against a table's unit, not against a figure that carries its own: "INR 3
-            # (Three) Million" carded as "₹3 Cr" (Excelsoft, round 4)
-            if pos not in crore_at or value < (10 if unit else 1) or raw in slips:
+            if pos not in crore_at or value < 1 or raw in slips:
                 continue
-            if filing_index.stated_crore(value, decimals, (unit,) if unit else CRORE_SCALES)                     or other_index.stated_crore(value, decimals, (1,)):
+            tolerance = 0.5 * 10 ** (-decimals) + 1e-9
+            if other_index.stated_crore(value, decimals, (1,)) or _near_amount(other_index, value) \
+                    or _near(filing_index._by_unit.get(1, []), value, tolerance):
+                continue   # memory, the scale block or the filing itself writes this many crore
+            # 1. a figure with its own unit, whatever unit the tables declare
+            fits = [(round(value / u, 2), 2) for u, values in filing_index._by_unit.items()
+                    if u != 1 and _near(values, value, tolerance)]
+            if len(fits) == 1:
+                slips[raw] = (raw, value, decimals, *fits[0])
                 continue
-            if not unit:
-                # No table unit, but figures written with their own ("INR 14,077 million" in a rating
-                # report, written "₹14,077 Cr"): the card copied the number and kept "Cr".
-                fits = [(round(value / u, 2), 2) for u, values in filing_index._by_unit.items()
-                        if u != 1 and _near(values, value, 0.5 * 10 ** (-decimals) + 1e-9)]
-                if len(fits) == 1 and not _near_amount(other_index, value):
-                    slips[raw] = (raw, value, decimals, *fits[0])
+            # a bare table figure counts in the table's declared unit, never as crore when another unit is declared
+            if filing_index.stated_crore(value, decimals, (unit,) if unit else CRORE_SCALES):
                 continue
+            # 2. a whole-rupee amount, a power of ten off
+            tolerance = 0.5 * 10 ** (-decimals) + 1e-9
+            fits = sorted({(round(c, 2), 2) for c in whole for k in (-3, -2, -1, 1, 2, 3)
+                           if abs(value - c * 10 ** k) <= max(tolerance, 0.002 * c * 10 ** k)})
+            if len(fits) == 1:
+                slips[raw] = (raw, value, decimals, *fits[0])
+                continue
+            if not unit or value < 10:
+                continue   # a small bare figure is ambiguous against a table's unit
             if (_near_amount(filing_index, value * unit) or _near_amount(other_index, value)) \
                     and not _copied_from_its_row(filing, raw, (text or "")[:pos], (text or "")[pos + len(raw):]):
                 # within 0.5% of a real figure: a rounding or a derivation ("₹955 Cr" beside ₹951.96 Cr), not a
@@ -648,11 +682,11 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
                 # some figure sits within 0.5% by chance: Jubilant's "exceptional items of ₹3,595 Cr" is the
                 # row "Exceptional items (3,595)" in ₹ million, and a 35,9xx elsewhere kept it uncorrected.
                 continue
+            # 3. the declared unit read a power of ten off: the table figure is value * 10**k in that unit's terms
             fits = []
-            for wrong in (s for s in CRORE_SCALES if s != unit):  # the model divided by `wrong`, not by `unit`
-                factor = unit / wrong                               # its figure is the true one times this
-                shift = round(math.log10(factor))
-                right, right_decimals = value / factor, max(0, decimals + shift)
+            for k in (-4, -3, -2, -1, 1, 2, 3, 4):
+                right = value * 10 ** k
+                right_decimals = max(0, decimals - k)
                 if filing_index.stated_crore(right, right_decimals, (unit,)):
                     fits.append((round(right, min(right_decimals, 2)), min(right_decimals, 2)))
             if len(fits) == 1:

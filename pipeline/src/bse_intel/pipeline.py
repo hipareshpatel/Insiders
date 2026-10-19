@@ -299,6 +299,13 @@ def fix_unit_slips(out: Pass2Output, sources: tuple[str, ...]) -> dict[str, str]
     for change in card.notable_changes:
         change.previous, change.current = fix(change.previous), fix(change.current)
     out.timeline_entry = fix(out.timeline_entry) or ""
+    deal = card.deal_value
+    if deal is not None and deal.amount_cr:
+        # the deal size field too: Excelsoft's text was corrected to ₹0.3 Cr while its deal stayed ₹3 Cr (round 4)
+        for _, value, decimals, right, _ in slips:
+            if abs(float(deal.amount_cr) - value) <= 0.5 * 10 ** (-decimals) + 1e-9:
+                deal.amount_cr = right
+                break
     for m in out.dossier_delta.financial_metrics:
         if m.value is None or (m.unit or "INR_CR") != "INR_CR":
             continue

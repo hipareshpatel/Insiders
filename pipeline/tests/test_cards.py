@@ -859,7 +859,7 @@ def test_a_row_copied_digit_for_digit_is_a_slip_whatever_happens_to_sit_near_the
     # in prose the sentence the figure ends, its naming words on the lines before it
     note = million + ("a) Net income pursuant to sale of investment in SOFIE (including waiver fee and\n"
                       "accelerated share payment) aggregating to ₹ 6,715 million.\nTotal assets 67,190 67,000\n")
-    assert ("6,715", 6715.0, 0, 671.5, 1) in unit_slips(["Mainly driven by ₹6,715 Cr gain from SOFIE sale"], note)
+    assert [s[:4] for s in unit_slips(["Mainly driven by ₹6,715 Cr gain from SOFIE sale"], note)] == [("6,715", 6715.0, 0, 671.5)]
     # a figure near a real one, copied from a row with another name, is still left alone (Ahluwalia's "₹955 Cr")
     assert unit_slips(["Revenue about ₹955 Cr"], LAKH_STATEMENT) == []
 

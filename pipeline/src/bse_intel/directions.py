@@ -26,7 +26,8 @@ RULES = (
     ("lower tax", re.compile(rf"\b{_LOWER}{_NEAR}{_TAXWORDS}\b|\b(?<!deferred ){_TAXWORDS}\s+(?:benefit|savings?)\b", re.I),
      "tax_expense", "fell"),
     ("higher tax", re.compile(rf"\b{_HIGHER}{_NEAR}{_TAXWORDS}\b", re.I), "tax_expense", "rose"),
-    ("deferred tax credit", re.compile(r"\bdeferred tax\s+(?:credit|write-?back|reversal|benefit|gain)\b", re.I),
+    ("deferred tax credit", re.compile(r"\bdeferred tax\s+(?:credit|write-?back|reversal|benefit|gain)\b"
+                                       r"|\b(?:reversal|write-?back|credit|release)\s+(?:of|in)\s+deferred tax\b", re.I),
      "deferred_tax", "negative"),
     ("deferred tax charge", re.compile(r"\bdeferred tax\s+(?:charge|expense|provision)\b", re.I), "deferred_tax", "positive"),
     ("inventory build-up", re.compile(
@@ -145,7 +146,22 @@ def guard(out, tagged) -> list[str]:
         card.what_happened = kept
     card.why_it_matters = [i for i in card.why_it_matters if (setattr(i, "text", clean(i.text, "why_it_matters")) or True)
                            and (i.text or "").strip()]
-    card.notable_changes = [c for c in card.notable_changes
-                            if not contradicted(" ".join(str(x or "") for x in (c.metric, c.previous, c.current, c.change)), figures)]
+    # a notable change names its metric as memory does ("inventory_change"): read it as words; one about inventory
+    # makes its claim anywhere in its words ("inventory_change ... drawdown improving working capital", RSWM)
+    def wrong_change(c) -> bool:
+        words = " ".join(str(x or "") for x in (c.metric, c.previous, c.current, c.change)).replace("_", " ")
+        inventory = figures.get("inventory_change")
+        if inventory is not None and inventory.value and re.search(r"inventor", str(c.metric or ""), re.I):
+            said = str(c.change or "")
+            if re.search(r"build|accumulat|pile|rose|increase", said, re.I) and inventory.value > 0:
+                return True
+            if re.search(r"draw|destock|liquidat|release|reduc|fell|declin", said, re.I) and inventory.value < 0:
+                return True
+        return bool(contradicted(words, figures))
+
+    kept_changes = [c for c in card.notable_changes if not wrong_change(c)]
+    if len(kept_changes) != len(card.notable_changes):
+        notes.append(f"notable changes: {len(card.notable_changes) - len(kept_changes)} cut (contradicted by the file's figures)")
+    card.notable_changes = kept_changes
     out.timeline_entry = clean(out.timeline_entry, "timeline") or out.timeline_entry
     return notes

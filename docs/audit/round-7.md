@@ -37,6 +37,13 @@ Pacific day (about 19 requests on 3 Flash preview, 9 on 3.6, 4 on 3.8, none on 3
 Lite), so 3 Flash preview and 3.5 Flash Lite write more of it than a full day would; the per-writer report shows each.
 Writers measured besides Gemini: GLM-4.5 Flash and Nemotron 3.5 Super VL. The scheduled 12:40 start is disabled.
 
+**First start stopped** (20:58 IST, 30 minutes in): Gemini's remaining quota could not carry it - 3.6, 3.7 and 3.5 Flash
+spent, 3.8 nearly, and 3 Flash preview answering Google's "503 high demand" until its circuit opened - so every pack
+went to 3.5 Flash Lite, and 10 long documents failed with 3.6 Flash out and Nemotron 3.5 Super VL answering empty. Fixed
+before the restart: long documents now go to all five Flash models, then Lite, VL last. Companies reset; the 13 cards
+written are kept in `data/audit/round7/cards_first_start.json`, not reviewed. Round 7 runs again at 12:40 IST on
+2026-10-20 with Gemini's full daily quota.
+
 ## Pass marks, set before any processing or review
 
 - **Go-live: WRONG at most 5% of published cards** (owner). Beside it, 15%.

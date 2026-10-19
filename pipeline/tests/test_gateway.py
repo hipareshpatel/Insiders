@@ -122,7 +122,7 @@ def test_openrouter_free_models_are_spares_under_one_daily_allowance(settings):
     assert entries and all(e["model"].endswith(":free") for e in entries)  # never a paid model by accident
     for name, route in config["routes"].items():  # a regular, weighted share of pass 2 and long documents for the VL
         for e in (e for e in route if e["provider"] == "openrouter"):  # model alone (round 4: 10% WRONG; round 5 arm B:
-            regular = name in ("pass2", "pass2_bulk", "pass2_long") and "3.5-super-vl" in e["model"]                 or name in ("pass2", "pass2_bulk") and e["model"] in ("minimax/minimax-m3.1-flash:free",
+            regular = name in ("pass2", "pass2_bulk") and "3.5-super-vl" in e["model"]                 or name in ("pass2", "pass2_bulk") and e["model"] in ("minimax/minimax-m3.1-flash:free",
                                                                        "google/gemma-4-31b-it:free")   # on trial, round 7
             assert (not e.get("spare") and e.get("weight", 1) >= 1) if regular else e.get("spare"), (name, e)
     # Ultra wrote 12 of round 4's 122 cards as a spare, 58% WRONG: it is on no card route (2026-10-19)

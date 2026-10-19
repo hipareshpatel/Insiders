@@ -1,0 +1,761 @@
+<title>Insiders Home Premium</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+/* A premium finance app home: soft canvas, white rounded cards with soft depth, one indigo accent, green/red only for
+   moves. Stories row of the day's big filings, a sticky segmented feed, rich cards that carry every piece of context the
+   current site shows (score, chips, results table, why-it-matters, returns, verification), and a market-pulse rail. */
+:root {
+  --bg: #F4F6FA; --surface: #FFFFFF; --surface-2: #F1F3F8; --line: #E4E8EF; --line-2: #D3D9E3;
+  --ink: #0E1726; --ink-2: #475467; --ink-3: #8592A6;
+  --acc: #3B4FE4; --acc-2: #6B7BF0; --acc-soft: #ECEEFE;
+  --pos: #0F9D63; --pos-soft: #E3F6EC; --neg: #E0473A; --neg-soft: #FDECEA; --warn: #C27A0A; --warn-soft: #FDF3E1;
+  --hi: #E0473A; --mo: #F0A12B; --lo: #B7C0CE;
+  --insight: #F3F5FF;
+  --shadow-1: 0 1px 2px rgba(14,23,38,.05), 0 2px 8px rgba(14,23,38,.04);
+  --shadow-2: 0 6px 24px rgba(14,23,38,.09), 0 2px 6px rgba(14,23,38,.05);
+  --f: "Manrope", "Segoe UI", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(.22,.9,.24,1);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0A0E15; --surface: #121823; --surface-2: #19212E; --line: #232D3B; --line-2: #2E3A4B;
+  --ink: #EEF2F8; --ink-2: #A9B4C4; --ink-3: #74819A; --acc: #8C9BFF; --acc-2: #6B7BF0; --acc-soft: #1C2347;
+  --pos: #3DD68C; --pos-soft: #10291D; --neg: #FF7468; --neg-soft: #33171A; --warn: #F6B84A; --warn-soft: #33260E;
+  --hi: #FF7468; --mo: #F6B84A; --lo: #455066; --insight: #161D33;
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4); --shadow-2: 0 10px 30px rgba(0,0,0,.45); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0A0E15; --surface: #121823; --surface-2: #19212E; --line: #232D3B; --line-2: #2E3A4B;
+  --ink: #EEF2F8; --ink-2: #A9B4C4; --ink-3: #74819A; --acc: #8C9BFF; --acc-2: #6B7BF0; --acc-soft: #1C2347;
+  --pos: #3DD68C; --pos-soft: #10291D; --neg: #FF7468; --neg-soft: #33171A; --warn: #F6B84A; --warn-soft: #33260E;
+  --hi: #FF7468; --mo: #F6B84A; --lo: #455066; --insight: #161D33;
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4); --shadow-2: 0 10px 30px rgba(0,0,0,.45); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 var(--f); -webkit-font-smoothing: antialiased;
+  padding-left: max(0px, env(safe-area-inset-left, 0px)); padding-right: max(0px, env(safe-area-inset-right, 0px)); padding-block: 0 48px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--surface); }
+h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: var(--acc); text-decoration: none; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; border-radius: 8px; }
+.gut { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1240px; margin: 0 auto; }
+
+/* app bar */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: saturate(1.4) blur(14px); border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; align-items: center; gap: 20px; height: 62px; }
+.logo { display: flex; align-items: center; gap: 9px; font-weight: 800; font-size: 18px; letter-spacing: -.02em; }
+.logo i { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, var(--acc), var(--acc-2)); display: grid; place-items: center; color: #fff; font: 800 13px var(--f); font-style: normal; box-shadow: 0 4px 12px color-mix(in srgb, var(--acc) 35%, transparent); }
+.nav { display: flex; gap: 2px; }
+.nav a { color: var(--ink-2); font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 10px; }
+.nav a.on { color: var(--ink); background: var(--surface-2); }
+.search { margin-left: auto; flex: 0 1 340px; min-width: 0; display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 14px; border-radius: 12px; background: var(--surface-2); color: var(--ink-3); font-size: 13.5px; }
+.search kbd { margin-left: auto; font: 600 11px var(--mono); padding: 1px 6px; border-radius: 6px; border: 1px solid var(--line-2); color: var(--ink-3); }
+.avatar-me { width: 36px; height: 36px; border-radius: 50%; background: var(--acc-soft); color: var(--acc); display: grid; place-items: center; font-weight: 800; flex: none; }
+@media (max-width: 900px) { .nav { display: none; } }
+
+/* hero */
+.hero { padding-block: 26px 6px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: end; }
+@media (max-width: 760px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+.hello { font-size: 13.5px; color: var(--ink-3); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.live { width: 8px; height: 8px; border-radius: 50%; background: var(--pos); box-shadow: 0 0 0 0 color-mix(in srgb, var(--pos) 60%, transparent); animation: ping 2s infinite; }
+@keyframes ping { 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+.hero h1 { font-size: 30px; font-weight: 800; letter-spacing: -.025em; margin-top: 6px; line-height: 1.15; }
+.hero h1 em { font-style: normal; background: linear-gradient(90deg, var(--acc), var(--acc-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.kpis { display: flex; gap: 10px; flex-wrap: wrap; }
+.kpi { background: var(--surface); border-radius: 16px; padding: 10px 16px; box-shadow: var(--shadow-1); min-width: 108px; }
+.kpi b { display: block; font: 700 22px var(--mono); letter-spacing: -.03em; }
+.kpi span { font-size: 11.5px; color: var(--ink-3); font-weight: 600; }
+
+/* stories */
+.stories { display: flex; gap: 14px; overflow-x: auto; padding-block: 18px 6px; scrollbar-width: none; }
+.stories::-webkit-scrollbar { display: none; }
+.story { flex: none; width: 76px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; }
+.ring { width: 64px; height: 64px; border-radius: 50%; padding: 3px; background: conic-gradient(var(--hi), var(--mo), var(--acc-2), var(--hi)); transition: transform .3s var(--ease); }
+.story.mod .ring { background: conic-gradient(var(--mo), #FFD27A, var(--mo)); }
+.story:hover .ring { transform: scale(1.06) rotate(-6deg); }
+.ring span { width: 100%; height: 100%; border-radius: 50%; background: var(--surface); border: 2px solid var(--surface); display: grid; place-items: center; font: 800 15px var(--f); color: var(--ink); }
+.story small { font-size: 11.5px; font-weight: 700; color: var(--ink-2); max-width: 76px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* tabs */
+.tabs-wrap { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 62px); z-index: 10; background: var(--bg); padding-block: 12px; }
+.tabs { position: relative; display: inline-flex; gap: 2px; padding: 4px; border-radius: 14px; background: var(--surface); box-shadow: var(--shadow-1); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { position: relative; z-index: 1; border: 0; background: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 13.5px; color: var(--ink-2); white-space: nowrap; display: flex; gap: 6px; align-items: center; transition: color .25s; }
+.tabs button em { font: 600 11px var(--mono); font-style: normal; color: var(--ink-3); background: var(--surface-2); padding: 1px 6px; border-radius: 999px; transition: background .25s, color .25s; }
+.tabs button[aria-selected="true"] { color: #fff; }
+.tabs button[aria-selected="true"] em { background: rgba(255,255,255,.22); color: #fff; }
+.tabs .pill { position: absolute; z-index: 0; top: 4px; bottom: 4px; border-radius: 10px; background: linear-gradient(135deg, var(--acc), var(--acc-2)); box-shadow: 0 4px 12px color-mix(in srgb, var(--acc) 30%, transparent); transition: left .45s var(--ease), width .45s var(--ease); }
+
+/* layout */
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 22px; align-items: start; padding-top: 4px; }
+@media (max-width: 1040px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.feed { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+/* the card */
+.card { background: var(--surface); border-radius: 22px; box-shadow: var(--shadow-1); padding: 18px 20px 14px; display: flex; flex-direction: column; gap: 12px; position: relative; overflow: hidden;
+  transition: box-shadow .3s var(--ease), transform .3s var(--ease); animation: up .6s var(--ease) both; }
+.card:hover { box-shadow: var(--shadow-2); transform: translateY(-2px); }
+@keyframes up { from { transform: translateY(16px); } }
+.card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--lo); }
+.card.HIGH::before { background: linear-gradient(90deg, var(--hi), var(--mo)); } .card.MOD::before { background: var(--mo); }
+.c-top { display: flex; gap: 12px; align-items: center; }
+.logo-co { width: 44px; height: 44px; border-radius: 14px; flex: none; display: grid; place-items: center; font: 800 15px var(--f); color: #fff; }
+.c-id { min-width: 0; flex: 1; }
+.c-id b { font-size: 16px; font-weight: 800; letter-spacing: -.01em; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.c-id span { font-size: 12.5px; color: var(--ink-3); font-weight: 600; }
+.c-px { text-align: right; flex: none; display: flex; align-items: center; gap: 10px; }
+.c-px svg { width: 64px; height: 26px; }
+.c-px b { display: block; font: 700 15px var(--mono); }
+.c-px small { font: 600 12px var(--mono); }
+.up { color: var(--pos); } .dn { color: var(--neg); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; display: inline-flex; gap: 5px; align-items: center; }
+.chip.imp-HIGH { background: var(--neg-soft); color: var(--hi); } .chip.imp-MOD { background: var(--warn-soft); color: var(--warn); }
+.chip.ev { background: var(--acc-soft); color: var(--acc); }
+.chip.good { background: var(--pos-soft); color: var(--pos); } .chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.score { font-family: var(--mono); background: var(--ink); color: var(--surface); }
+.c-head { font-size: 19px; font-weight: 800; letter-spacing: -.02em; line-height: 1.3; }
+.catalyst { font-size: 14px; color: var(--ink-2); display: flex; gap: 8px; }
+.catalyst b { color: var(--ink); }
+.pnl { border-radius: 16px; background: var(--surface-2); padding: 4px; }
+.pnl table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+.pnl th { font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); font-weight: 700; text-align: right; padding: 7px 10px 5px; }
+.pnl th:first-child, .pnl td:first-child { text-align: left; }
+.pnl td { padding: 8px 10px; text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; background: var(--surface); white-space: nowrap; }
+.pnl tr td:first-child { font-family: var(--f); font-weight: 700; color: var(--ink-2); border-radius: 10px 0 0 10px; }
+.pnl tr td:last-child { border-radius: 0 10px 10px 0; }
+.pnl tbody tr + tr td { border-top: 4px solid var(--surface-2); }
+.delta { display: inline-block; padding: 2px 7px; border-radius: 7px; font-weight: 700; font-size: 12px; }
+.delta.up { background: var(--pos-soft); } .delta.dn { background: var(--neg-soft); }
+.tbl-scroll { overflow-x: auto; }
+.facts { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.facts li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 6px; font-size: 14.5px; line-height: 1.5; }
+.facts li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--acc); margin: 8px 0 0 5px; }
+.why { background: var(--insight); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.why h4 { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--acc); }
+.why div { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: baseline; font-size: 14px; }
+.src { font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 6px; background: var(--surface); color: var(--ink-3); }
+.src.sig { color: var(--pos); } .src.miss { color: var(--warn); }
+.strip { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding-top: 2px; }
+.stat { display: inline-flex; gap: 6px; align-items: baseline; font-size: 12px; color: var(--ink-3); font-weight: 600; background: var(--surface-2); border-radius: 10px; padding: 5px 9px; }
+.stat b { font: 700 12.5px var(--mono); color: var(--ink); }
+.foot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 10px; font-size: 12.5px; color: var(--ink-3); }
+.ok { display: inline-flex; gap: 6px; align-items: center; color: var(--pos); font-weight: 700; }
+.ok::before { content: "✓"; width: 18px; height: 18px; border-radius: 50%; background: var(--pos-soft); display: grid; place-items: center; font-size: 11px; }
+.held { background: var(--warn-soft); color: var(--warn); border-radius: 14px; padding: 10px 12px; font-size: 13.5px; display: flex; gap: 10px; }
+.held b { color: var(--ink); }
+.acts { margin-left: auto; display: flex; gap: 4px; }
+.btn { border: 0; background: none; height: 34px; padding: 0 12px; border-radius: 10px; font-weight: 700; font-size: 13px; color: var(--ink-2); display: inline-flex; gap: 6px; align-items: center; transition: background .2s, color .2s; }
+.btn:hover { background: var(--surface-2); color: var(--ink); }
+.btn.pri { color: var(--acc); }
+.btn.pri:hover { background: var(--acc-soft); }
+.btn svg { transition: transform .35s var(--ease); }
+.card.open .btn.pri svg { transform: rotate(180deg); }
+.more { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s var(--ease); }
+.more > div { overflow: hidden; min-height: 0; }
+.card.open .more { grid-template-rows: 1fr; }
+.deep { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 4px; }
+@media (max-width: 640px) { .deep { grid-template-columns: minmax(0, 1fr); } }
+.box { background: var(--surface-2); border-radius: 16px; padding: 12px 14px; }
+.box h5 { margin: 0 0 8px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); font-weight: 800; }
+.pillar { display: grid; grid-template-columns: minmax(0, 1fr) 90px 26px; gap: 8px; align-items: center; font-size: 12.5px; margin: 5px 0; color: var(--ink-2); }
+.pillar .tr { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.pillar .tr i { display: block; height: 100%; background: linear-gradient(90deg, var(--acc), var(--acc-2)); border-radius: 3px; transform: scaleX(0); transform-origin: left; transition: transform .8s var(--ease) .15s; }
+.card.open .pillar .tr i { transform: scaleX(var(--w)); }
+.pillar .num { text-align: right; font-size: 12px; }
+.react { display: flex; gap: 8px; flex-wrap: wrap; }
+.react div { background: var(--surface); border-radius: 12px; padding: 8px 12px; min-width: 70px; }
+.react span { display: block; font-size: 11px; color: var(--ink-3); font-weight: 700; }
+.react b { font: 700 15px var(--mono); }
+.mem { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--ink-2); }
+.mem div { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 8px; }
+.mem .num { color: var(--ink-3); font-size: 11.5px; }
+
+/* compact rows */
+.rows { background: var(--surface); border-radius: 22px; box-shadow: var(--shadow-1); overflow: hidden; animation: up .6s var(--ease) both; }
+.rows h3 { font-size: 13px; font-weight: 800; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; padding: 14px 18px 4px; }
+.row { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 18px; border-top: 1px solid var(--line); transition: background .2s; cursor: pointer; }
+.row:hover { background: var(--surface-2); }
+.row .logo-co { width: 36px; height: 36px; border-radius: 11px; font-size: 12px; }
+.row b { font-size: 14px; }
+.row p { margin: 1px 0 0; font-size: 13px; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .r { text-align: right; }
+.row .r small { display: block; font: 11.5px var(--mono); color: var(--ink-3); }
+
+/* rail */
+.rail { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 140px; }
+@media (max-width: 1040px) { .rail { position: static; } }
+.panel { background: var(--surface); border-radius: 22px; box-shadow: var(--shadow-1); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; animation: up .6s var(--ease) both; }
+.panel h4 { font-size: 15px; font-weight: 800; display: flex; justify-content: space-between; align-items: baseline; }
+.panel h4 a { font-size: 12.5px; font-weight: 700; }
+.donut { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 14px; align-items: center; }
+.donut svg { width: 110px; height: 110px; }
+.donut circle { fill: none; stroke-width: 14; transition: stroke-dashoffset 1s var(--ease); }
+.donut text { fill: var(--ink); font: 800 20px var(--f); }
+.donut .lbl { fill: var(--ink-3); font: 600 9.5px var(--f); }
+.leg { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.leg div { display: flex; justify-content: space-between; gap: 8px; }
+.leg i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 7px; }
+.leg .num { color: var(--ink-3); }
+.due { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13.5px; }
+.due .t { font: 700 12px var(--mono); color: var(--acc); background: var(--acc-soft); border-radius: 8px; padding: 4px 0; text-align: center; }
+.due small { color: var(--ink-3); font-size: 12px; }
+.wl { display: grid; grid-template-columns: minmax(0, 1fr) 60px 64px; gap: 8px; align-items: center; font-size: 13.5px; }
+.wl svg { width: 60px; height: 22px; }
+.wl .num { text-align: right; font-size: 12.5px; font-weight: 700; }
+.sect { display: flex; flex-direction: column; gap: 7px; }
+.sect div { display: grid; grid-template-columns: 96px minmax(0, 1fr) 22px; gap: 8px; align-items: center; font-size: 12.5px; color: var(--ink-2); }
+.sect .tr { height: 8px; background: var(--surface-2); border-radius: 4px; overflow: hidden; display: flex; }
+.sect .tr i { display: block; height: 100%; }
+.sect .num { text-align: right; color: var(--ink-3); }
+.note { font-size: 12.5px; color: var(--ink-3); text-align: center; padding-top: 6px; }
+
+@media (max-width: 640px) {
+  .search { flex: 0 0 40px; padding: 0; justify-content: center; font-size: 0; margin-left: auto; }
+  .search kbd { display: none; }
+  .search::before { content: "⌕"; font-size: 18px; color: var(--ink-2); }
+  .bar .wrap { gap: 10px; }
+  .hero h1 { font-size: 25px; }
+  .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card { padding: 16px 14px 12px; border-radius: 20px; }
+  .c-px svg { display: none; }
+  .c-id span { display: block; }
+  .c-id span + span { display: none; }
+  .c-head { font-size: 17.5px; }
+  .pnl th, .pnl td { padding: 7px 6px; font-size: 12px; }
+  .delta { padding: 2px 5px; font-size: 11px; }
+  .acts { margin-left: 0; width: 100%; justify-content: space-between; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } .card.open .pillar .tr i { transform: scaleX(var(--w)); } }
+
+/* ---------- v2 additions ---------- */
+.hero-top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
+.win { display: inline-flex; background: var(--surface); box-shadow: var(--shadow-1); border-radius: 12px; padding: 3px; gap: 2px; }
+.win button { border: 0; background: none; padding: 6px 12px; border-radius: 9px; font-weight: 700; font-size: 12.5px; color: var(--ink-2); transition: background .25s, color .25s; }
+.win button.on { background: var(--acc-soft); color: var(--acc); }
+.kpis6 { margin-top: 16px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 900px) { .kpis6 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .kpis6 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kpis6 .kpi { min-width: 0; }
+.kpis6 .kpi small { display: block; font: 600 11px var(--mono); color: var(--ink-3); }
+.sig-strip { margin-top: 14px; background: linear-gradient(135deg, color-mix(in srgb, var(--acc) 10%, var(--surface)), var(--surface)); border-radius: 20px; box-shadow: var(--shadow-1); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.sig-strip header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.sig-strip h2 { font-size: 15px; font-weight: 800; }
+.sig-strip h2 span { font-weight: 600; color: var(--ink-3); font-size: 12.5px; margin-left: 6px; }
+.sigs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 760px) { .sigs { grid-template-columns: minmax(0, 1fr); } }
+.sig { background: var(--surface); border-radius: 16px; padding: 12px 14px; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 10px; transition: transform .25s var(--ease), box-shadow .25s; cursor: pointer; }
+.sig:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.sig .logo-co { width: 40px; height: 40px; border-radius: 12px; font-size: 13px; }
+.sig b { font-size: 13.5px; display: block; }
+.sig p { margin: 2px 0 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.4; }
+.gates { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+.gates span { font-size: 10px; font-weight: 800; letter-spacing: .04em; padding: 2px 6px; border-radius: 6px; background: var(--pos-soft); color: var(--pos); }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.sel { height: 36px; border-radius: 11px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 600 13px var(--f); padding: 0 30px 0 12px; appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-3) 50%), linear-gradient(135deg, var(--ink-3) 50%, transparent 50%); background-position: calc(100% - 15px) 15px, calc(100% - 10px) 15px; background-size: 5px 5px; background-repeat: no-repeat; }
+.tog { height: 36px; border-radius: 11px; border: 1px solid var(--line); background: var(--surface); padding: 0 12px; font-weight: 700; font-size: 13px; color: var(--ink-2); display: inline-flex; gap: 6px; align-items: center; transition: background .2s, color .2s, border-color .2s; }
+.tog[aria-pressed="true"] { background: var(--acc-soft); color: var(--acc); border-color: transparent; }
+.ftext { height: 36px; border-radius: 11px; border: 1px solid var(--line); background: var(--surface); padding: 0 12px; font: 500 13px var(--f); color: var(--ink); flex: 1 1 180px; min-width: 0; }
+.noise-link { font-size: 12.5px; font-weight: 700; margin-left: auto; }
+.trust { display: inline-flex; gap: 6px; align-items: center; font-weight: 700; }
+.trust i { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-style: normal; }
+.trust.v { color: var(--pos); } .trust.v i { background: var(--pos-soft); }
+.trust.p { color: var(--ink-2); } .trust.p i { background: var(--surface-2); }
+.trust.r { color: var(--acc); } .trust.r i { background: var(--acc-soft); }
+.trust.u { color: var(--warn); } .trust.u i { background: var(--warn-soft); }
+.iconbtn { border: 0; background: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-2); font-size: 15px; transition: background .2s, color .2s; }
+.iconbtn:hover { background: var(--surface-2); color: var(--ink); }
+.iconbtn[aria-pressed="true"] { color: var(--acc); background: var(--acc-soft); }
+.former { font-size: 12px; color: var(--ink-3); font-weight: 600; }
+.vol { display: flex; align-items: flex-end; gap: 6px; height: 64px; padding: 6px 8px 0; background: var(--surface-2); border-radius: 14px; }
+.vol div { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end; }
+.vol i { width: 100%; border-radius: 6px 6px 2px 2px; background: color-mix(in srgb, var(--acc) 35%, var(--surface)); transform-origin: bottom; animation: grow .8s var(--ease) both; }
+.vol div:last-child i { background: linear-gradient(180deg, var(--acc-2), var(--acc)); }
+.vol span { font: 600 10px var(--mono); color: var(--ink-3); padding-bottom: 4px; }
+@keyframes grow { from { transform: scaleY(0); } }
+.callread { display: flex; gap: 6px; flex-wrap: wrap; }
+.callread span { display: inline-flex; gap: 6px; align-items: baseline; border-radius: 999px; padding: 4px 11px; background: var(--surface-2); font-size: 12.5px; font-weight: 700; }
+.callread span em { font-style: normal; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+.callread .dnc { background: var(--neg-soft); color: var(--neg); }
+.deep3 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 4px; }
+@media (max-width: 640px) { .deep3 { grid-template-columns: minmax(0, 1fr); } }
+.box.wide { grid-column: 1 / -1; }
+.box ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; font-size: 13.5px; color: var(--ink-2); }
+.quant { font-size: 13.5px; display: flex; flex-direction: column; gap: 8px; }
+.quant .res { font-weight: 800; color: var(--ink); }
+.quant table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.quant td { padding: 4px 6px; border-top: 1px solid var(--line); font-family: var(--mono); }
+.quant td:first-child { font-family: var(--f); color: var(--ink-2); }
+.quant td.as { color: var(--warn); }
+.chg { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 8px; font-size: 13px; align-items: center; padding: 5px 0; border-top: 1px solid var(--line); }
+.chg:first-of-type { border-top: 0; }
+.chg .num { font-size: 12.5px; }
+.track5 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
+.track5 div { background: var(--surface); border-radius: 12px; padding: 9px 11px; font-size: 13px; color: var(--ink-2); }
+.track5 b { display: block; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.second { font-size: 13.5px; color: var(--ink-2); }
+.pager { display: flex; justify-content: center; gap: 6px; padding: 8px 0; }
+.pager button { min-width: 38px; height: 38px; border-radius: 11px; border: 1px solid var(--line); background: var(--surface); font: 700 13px var(--mono); color: var(--ink-2); }
+.pager button.on { background: linear-gradient(135deg, var(--acc), var(--acc-2)); color: #fff; border-color: transparent; }
+.cal { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 10px; align-items: center; font-size: 13px; }
+.cal .d { text-align: center; border-radius: 10px; padding: 4px 0; font: 800 12px var(--mono); line-height: 1.2; }
+.cal .d span { display: block; font: 700 9.5px var(--f); text-transform: uppercase; letter-spacing: .06em; }
+.cal small { display: block; color: var(--ink-3); font-size: 11.5px; }
+.f-corp { background: #E6EEFF; color: #2754D6; } .f-meet { background: #F1EBFE; color: #6D3FD3; } .f-rights { background: #E1F5F2; color: #0E8A79; } .f-acc { background: var(--warn-soft); color: var(--warn); } .f-res { background: var(--acc-soft); color: var(--acc); }
+:root[data-theme="dark"] .f-corp, :root[data-theme="dark"] .f-meet, :root[data-theme="dark"] .f-rights { background: var(--surface-2); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .f-corp, :root:not([data-theme="light"]) .f-meet, :root:not([data-theme="light"]) .f-rights { background: var(--surface-2); } }
+.overdue div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; font-size: 13px; padding: 6px 0; border-top: 1px solid var(--line); }
+.overdue div:first-of-type { border-top: 0; }
+.overdue small { display: block; color: var(--ink-3); font-size: 11.5px; }
+.overdue .num { color: var(--warn); font-weight: 700; font-size: 12px; white-space: nowrap; }
+.radar div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 13.5px; }
+.radar .dots { display: flex; gap: 3px; }
+.radar .dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--acc); }
+.radar small { display: block; font-size: 11.5px; color: var(--ink-3); }
+.verdicts div { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; font-size: 13px; padding: 5px 0; }
+.vd { font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+.vd.s { background: var(--pos-soft); color: var(--pos); } .vd.g { background: var(--acc-soft); color: var(--acc); } .vd.w { background: var(--neg-soft); color: var(--neg); } .vd.m { background: var(--warn-soft); color: var(--warn); }
+.health { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 14px; display: flex; gap: 10px 20px; flex-wrap: wrap; align-items: center; font-size: 12.5px; color: var(--ink-3); }
+.health b { color: var(--pos); }
+.health span:last-child { flex-basis: 100%; }
+
+/* memory drawer */
+.scrim { position: fixed; inset: 0; background: rgba(8,12,20,.45); opacity: 0; pointer-events: none; transition: opacity .3s, visibility 0s .3s; z-index: 40; visibility: hidden; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100%); background: var(--bg); z-index: 41; transform: translateX(100%); transition: transform .45s var(--ease); display: flex; flex-direction: column;
+  padding-top: env(safe-area-inset-top, 0px); padding-right: env(safe-area-inset-right, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); box-shadow: -10px 0 40px rgba(0,0,0,.15); visibility: hidden; transition: transform .45s var(--ease), visibility 0s .45s; }
+body.dr-open .scrim { opacity: 1; pointer-events: auto; visibility: visible; transition: opacity .3s; } body.dr-open .drawer { transform: none; visibility: visible; transition: transform .45s var(--ease); }
+.dr-head { display: flex; gap: 12px; align-items: center; padding: 16px 18px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.dr-head h3 { font-size: 17px; font-weight: 800; }
+.dr-head p { margin: 0; font-size: 12.5px; color: var(--ink-3); }
+.dr-tabs { display: flex; gap: 4px; padding: 10px 18px; background: var(--surface); border-bottom: 1px solid var(--line); overflow-x: auto; }
+.dr-tabs button { border: 0; background: none; padding: 7px 12px; border-radius: 10px; font-weight: 700; font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+.dr-tabs button.on { background: var(--acc-soft); color: var(--acc); }
+.dr-body { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+.pdf { background: var(--surface); border-radius: 16px; padding: 16px; font: 13px/1.7 var(--mono); color: var(--ink-2); box-shadow: var(--shadow-1); }
+.pdf mark { background: var(--pos-soft); color: var(--pos); border-radius: 4px; padding: 0 3px; font-weight: 700; }
+.pdf mark.bad { background: var(--neg-soft); color: var(--neg); }
+.close { margin-left: auto; border: 0; background: var(--surface-2); width: 34px; height: 34px; border-radius: 10px; font-size: 16px; }
+.exec { display: flex; height: 12px; border-radius: 6px; overflow: hidden; }
+.exec i { display: block; height: 100%; }
+@media (max-width: 640px) { .noise-link { margin-left: 0; } .filters .sel { flex: 1 1 140px; } }
+</style>
+<header class="bar gut">
+  <div class="wrap">
+    <div class="logo"><i>In</i>Insiders</div>
+    <nav class="nav"><a class="on" href="#feed">Today</a><a href="#signals">Signals</a><a href="#feed">All filings</a><a href="#feed">Results</a><a href="#feed">Companies</a><a href="#feed">Calendar</a></nav>
+    <div class="search">⌕ Search company, symbol or event<kbd>Ctrl K</kbd></div>
+    <button class="iconbtn" type="button" id="theme" title="Theme" aria-label="Theme" style="width:auto;padding:0 10px;font-size:13px;font-weight:700">Theme</button>
+  </div>
+</header>
+
+<div class="gut"><div class="wrap">
+  <section class="hero" style="grid-template-columns:minmax(0,1fr)">
+    <div class="hero-top">
+      <div class="hello"><span class="live"></span>Good afternoon · Mon 19 Oct · market open · updated 14:32 IST</div>
+      <div class="win" role="radiogroup" aria-label="Window"><button class="on" type="button">Since close</button><button type="button">Today</button><button type="button">7 days</button></div>
+    </div>
+    <h1>38 filings worth your time since the close, <em>6 that could move a stock.</em></h1>
+    <div class="kpis6">
+      <div class="kpi"><b class="count" data-to="412">0</b><span>Filings read</span></div>
+      <div class="kpi"><b>87%</b><span>Noise filtered</span> <small>359 set aside</small></div>
+      <div class="kpi"><b class="count" data-to="38">0</b><span>Cards</span></div>
+      <div class="kpi"><b class="count" data-to="6" style="color:var(--hi)">0</b><span>High impact</span></div>
+      <div class="kpi"><b class="count" data-to="3" style="color:var(--pos)">0</b><span>Pass all 4 gates</span></div>
+      <div class="kpi"><b class="count" data-to="2" style="color:var(--warn)">0</b><span>To verify</span></div>
+    </div>
+  </section>
+
+  <section class="sig-strip" id="signals" aria-label="Signals">
+    <header><h2>🔥 Signals <span>cleared all four gates: big for the company, a real inflection, not already run up, clean checks</span></h2><a href="#signals" style="font-size:12.5px;font-weight:700">All signals</a></header>
+    <div class="sigs" id="sigs"></div>
+  </section>
+
+  <div class="stories" id="stories" aria-label="Today's big filings"></div>
+
+  <div class="tabs-wrap" id="feed">
+    <div class="tabs" role="tablist" id="tabs"><span class="pill" id="pill"></span></div>
+    <div class="filters">
+      <select class="sel" id="f-size" aria-label="Size"><option>All sizes</option><option>Large cap</option><option>Mid cap</option><option>Small cap</option><option>Micro cap</option></select>
+      <select class="sel" id="f-sector" aria-label="Sector"><option>All sectors</option><option>Insurance</option><option>Cement</option><option>Construction & infra</option><option>Capital goods</option><option>Pharma</option><option>Automobiles</option></select>
+      <select class="sel" id="f-session" aria-label="Session"><option>All sessions</option><option>Live market</option><option>After hours</option></select>
+      <button class="tog" type="button" id="f-ver" aria-pressed="false">✓ Verified only</button>
+      <button class="tog" type="button" id="f-wl" aria-pressed="false">★ Watchlist</button>
+      <button class="tog" type="button" id="f-low" aria-pressed="false">+ Low impact</button>
+      <input class="ftext" id="f-text" placeholder="Filter by company or headline" aria-label="Filter by company or headline">
+      <a class="noise-link" href="#feed">See what was filtered out (359) →</a>
+    </div>
+  </div>
+
+  <div class="main">
+    <main class="feed" id="list" aria-live="polite"></main>
+
+    <aside class="rail">
+      <div class="panel">
+        <h4>Today's mix <a href="#feed">All filings</a></h4>
+        <div class="donut">
+          <svg viewBox="0 0 110 110" id="donut" role="img" aria-label="Cards by impact: 6 high, 13 moderate, 19 low"></svg>
+          <div class="leg">
+            <div><span><i style="background:var(--hi)"></i>High</span><span class="num">6</span></div>
+            <div><span><i style="background:var(--mo)"></i>Moderate</span><span class="num">13</span></div>
+            <div><span><i style="background:var(--lo)"></i>Low</span><span class="num">19</span></div>
+            <div><span><i style="background:var(--warn)"></i>To verify</span><span class="num">2</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h4>Results scorecard <a href="#feed">Results</a></h4>
+        <div class="verdicts">
+          <div><span><b>Bajaj Finserv</b> Q1FY27</span><span class="num up">+9.4%</span><span class="vd s">Strong</span></div>
+          <div><span><b>HDFC Life</b> Q2FY27</span><span class="num up">+14%</span><span class="vd s">Strong</span></div>
+          <div><span><b>Orient Bell</b> Q2FY27</span><span class="num up">turnaround</span><span class="vd g">Good</span></div>
+          <div><span><b>Texmaco Rail</b> Q2FY27</span><span class="num dn">−8.1%</span><span class="vd w">Weak</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--ink-3)">Due today: HDFC Life 15:00 · Tata Elxsi 15:30 · Polycab 16:00</div>
+      </div>
+      <div class="panel">
+        <h4>Coming up, 7 days <a href="#feed">Calendar</a></h4>
+        <div class="cal"><span class="d f-res">19<span>Oct</span></span><span>Tata Elxsi results<small>Board meeting · 15:30</small></span></div>
+        <div class="cal"><span class="d f-corp">21<span>Oct</span></span><span>Bajaj Auto · record date<small>Interim dividend ₹20</small></span></div>
+        <div class="cal"><span class="d f-meet">23<span>Oct</span></span><span>Ambuja Cements · NCLT hearing<small>ACC merger, stage 5</small></span></div>
+        <div class="cal"><span class="d f-rights">24<span>Oct</span></span><span>Jubilant Ingrevia · rights issue opens<small>₹480 a share</small></span></div>
+        <div class="cal"><span class="d f-acc">25<span>Oct</span></span><span>Ahluwalia · KPI check<small>Order inflow ₹4,000 Cr target</small></span></div>
+      </div>
+      <div class="panel overdue">
+        <h4>⚠ Overdue promises <a href="#feed">All</a></h4>
+        <div><span>Texmaco Rail: 1,000 wagons a month<small>said Aug 2026 · due Sep 2026</small></span><span class="num">19 days</span></div>
+        <div><span>Jubilant Pharmova: new CFO named<small>said Jul 2026 · due Sep 2026</small></span><span class="num">4 days</span></div>
+      </div>
+      <div class="panel radar">
+        <h4>🚀 Inflection radar <a href="#feed">Radar</a></h4>
+        <div><span><b>Ahluwalia Contracts</b><small>3 orders, margin up, order book 2.6x</small></span><span class="dots"><i></i><i></i><i></i><i></i></span></div>
+        <div><span><b>HDFC Life</b><small>VNB margin up 3 quarters, new channel</small></span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div><span><b>Clean Max Enviro</b><small>capacity, overseas entry, PPA wins</small></span><span class="dots"><i></i><i></i><i></i></span></div>
+      </div>
+      <div class="panel">
+        <h4>Watchlist <a href="#feed">Edit</a></h4>
+        <div id="wl" style="display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+      <div class="panel">
+        <h4>Where the news is</h4>
+        <div class="sect" id="sect"></div>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="health">
+    <span><b>●</b> Pipeline healthy · last run 14:30 IST · 0 failures today</span>
+    <span>AI quota today: 41% used</span>
+    <span>History since 1 Jan 2025 · 1,778 companies ≥ ₹500 Cr</span>
+    <span>Built from NSE corporate filings and AI analysis. Information only, not investment advice; always read the original filing before acting.</span>
+  </footer>
+  <p class="note">Version 2 concept with illustrative figures. Try: tabs, filters, "Full analysis", the memory (◎) and verify (⌕) buttons, star and noise, the window switch.</p>
+</div></div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Company memory" aria-hidden="true">
+  <div class="dr-head"><span class="logo-co" id="dr-logo">BF</span><div><h3 id="dr-name">Bajaj Finserv</h3><p id="dr-sub">NSE: BAJAJFINSV · Insurance · 360° company memory</p></div><button class="close" type="button" id="dr-close" aria-label="Close">✕</button></div>
+  <div class="dr-tabs" id="dr-tabs"><button class="on" data-t="dossier" type="button">Living dossier</button><button data-t="timeline" type="button">Timeline · 46</button><button data-t="verify" type="button">Verify against the PDF</button></div>
+  <div class="dr-body" id="dr-body"></div>
+</aside>
+
+<script>
+const CO = {
+  BAJAJFINSV: ["Bajaj Finserv", "#1F4FD8", 1912.4, 2.1, [1740, 1760, 1752, 1801, 1820, 1846, 1872, 1912], "Insurance"],
+  AMBUJACEM: ["Ambuja Cements", "#B23A48", 612.8, -0.4, [590, 602, 615, 608, 620, 618, 616, 613], "Cement"],
+  AHLUCONT: ["Ahluwalia Contracts", "#0E8A6A", 958.2, 3.4, [880, 872, 901, 899, 910, 925, 927, 958], "Construction"],
+  TEXRAIL: ["Texmaco Rail", "#7A4CC2", 198.6, -3.2, [221, 219, 214, 210, 212, 207, 205, 198], "Capital goods"],
+  MARUTI: ["Maruti Suzuki", "#0F766E", 12480, 0.9, [12010, 12100, 12230, 12180, 12300, 12390, 12370, 12480], "Automobiles"],
+  ETERNAL: ["Eternal", "#C2410C", 286.4, 1.6, [270, 272, 276, 274, 279, 281, 282, 286], "Consumer services"],
+  HDFCLIFE: ["HDFC Life", "#BE185D", 752.1, 1.2, [721, 728, 735, 731, 740, 744, 743, 752], "Insurance"],
+  CLEANMAX: ["Clean Max Enviro", "#0B7285", 1288.0, 0.6, [1250, 1262, 1270, 1268, 1275, 1281, 1280, 1288], "Power"],
+  JUBLPHARMA: ["Jubilant Pharmova", "#9D174D", 1045.5, -1.8, [1080, 1072, 1069, 1066, 1058, 1060, 1064, 1045], "Pharma"],
+  ORIENTBELL: ["Orient Bell", "#4D7C0F", 312.4, 4.9, [290, 292, 289, 295, 297, 299, 298, 312], "Building materials"],
+};
+const BASE = { react: [["T+1", "—", 0], ["T+3", "—", 0], ["T+5", "—", 0]], quant: null, changes: [], track: [], more: [], second: null };
+const CARDS = [
+  { ...BASE, sym: "BAJAJFINSV", ev: "Results", tab: "results", imp: "HIGH", t: "14:32", ago: "2m ago", mcap: "₹3.05 L Cr · Large cap", score: 86, fire: true, trust: "v",
+    chips: [["Consolidated", ""], ["🎯 Credibility 84%", "good"], ["52-week high", "good"], ["Above 200 DMA", ""]],
+    head: "Q1FY27: net profit to shareholders ₹3,132 Cr (+9.4% YoY) on revenue of ₹38,000 Cr (+11.2%)",
+    catalyst: "Insurance premiums carried the quarter while lending margins narrowed",
+    pnl: [["Revenue", "38,000", 11.2, 2.9], ["EBITDA", "9,840", 10.1, 3.4], ["EBITDA margin", "25.9%", "-20 bps", "+12 bps"], ["Profit to holders", "3,132", 9.4, 5.1]],
+    facts: ["General insurance gross premium up 18% to ₹6,920 Cr", "Bajaj Finance's loan book grew 26%; credit costs rose to 2.1%"],
+    why: [["Memory", "Highest quarterly revenue in the last 8 quarters"], ["Filing", "Minority interests take about half of group profit (Bajaj Finance, insurers)"], ["Signal", "Operating leverage: EBITDA grew in step with revenue for a 4th quarter"]],
+    strip: [["TTM revenue", "₹1.45 L Cr"], ["Combined ratio", "101.2%"], ["Solvency", "3.1x"], ["1W", "+3.8%", 1], ["1M", "+6.1%", 1], ["1Y", "+18.4%", 1]],
+    more: ["Life insurance new business premium ₹3,410 Cr (+12%)", "Board declared no interim dividend this quarter"],
+    keys: [["EPS", "₹19.62", "+9.1%"], ["Book value", "₹402", "+14%"], ["ROE (TTM)", "13.2%", "+40 bps"], ["Minority share", "50.3%", ""]],
+    changes: [["Credit cost", "1.8%", "2.1%", -1], ["Combined ratio", "100.4%", "101.2%", -1], ["VNB margin (life)", "24.8%", "26.0%", 1]],
+    track: [["KPI to verify", "Combined ratio under 100% by Q3FY27"], ["Growth catalyst", "Full ownership of both insurers from September"], ["Road blocker", "Rising credit costs in consumer lending"]],
+    pillars: [["Size vs company", 22, 30], ["Margin & leverage", 19, 25], ["Balance sheet", 16, 20], ["Credibility", 13, 15], ["Disclosure & timing", 8, 10]],
+    react: [["T+1", "+2.1%", 1], ["T+3", "—", 0], ["T+5", "—", 0]],
+    mem: [["24 Jul", "Q4FY26: revenue ₹36,900 Cr (+13.5%)"], ["02 Sep", "Allianz stake buyout completed"], ["14 Aug", "Analyst meet: targets repeated"]] },
+  { ...BASE, sym: "AMBUJACEM", ev: "M&A", tab: "deals", imp: "HIGH", t: "13:05", ago: "1h ago", mcap: "₹1.51 L Cr · Large cap", score: 78, fire: true, trust: "r",
+    chips: [["Shareholder approved", ""], ["Update to earlier deal", ""], ["🎯 Credibility 79%", "good"]],
+    head: "Shareholders approve the ACC merger with 99.6% of 225.41 crore votes cast",
+    catalyst: "The last shareholder step is done; the scheme now waits on the NCLT hearing",
+    keys: [["In favour", "99.6%", ""], ["Swap ratio", "37 : 100", "Ambuja : ACC"], ["Stage", "4 of 5", "NCLT next"], ["Synergy target", "₹1,200 Cr", "by FY28"]],
+    facts: ["Public shareholders voted 98.9% in favour; promoters abstained as required", "Appointed date for the merger is 1 April 2026"],
+    why: [["Memory", "First announced 11 Dec 2025; on schedule against the company's own timeline"], ["Not disclosed", "No date given for the NCLT hearing"]],
+    strip: [["EBITDA/t", "₹1,140"], ["Capacity", "107 MTPA"], ["1W", "−0.9%", -1], ["1M", "+1.4%", 1], ["1Y", "−6.2%", -1]],
+    quant: { res: "New ACC holders get ₹1,02,400 Cr of Ambuja shares at today's price", rows: [["ACC shares outside the group", "8.9 Cr", "FILING"], ["Swap ratio", "37 / 100", "FILING"], ["Ambuja price", "₹612.80", "MARKET"], ["Assumes no change before the record date", "", "ASSUMPTION"]] },
+    second: "A second model re-checked the vote count: the first draft said 2,254.11 Cr votes (10x); corrected to 225.41 crore.",
+    track: [["Pending approval", "NCLT Ahmedabad bench"], ["Milestone", "Record date for share swap, expected Dec 2026"]],
+    pillars: [["Size vs company", 20, 30], ["Margin & leverage", 15, 25], ["Balance sheet", 18, 20], ["Credibility", 12, 15], ["Disclosure & timing", 7, 10]],
+    mem: [["11 Dec 25", "Merger with ACC announced, ratio 37:100"], ["14 Mar 26", "Stock exchanges' no-objection"], ["22 Aug 26", "NCLT orders the shareholder meetings"]] },
+  { ...BASE, sym: "AHLUCONT", ev: "Order win", tab: "orders", imp: "MOD", t: "14:10", ago: "24m ago", mcap: "₹6,410 Cr · Small cap", score: 71, fire: true, trust: "v",
+    chips: [["Letter of award", "warn"], ["Healthcare EPC", ""], ["Above 200 DMA", "good"]],
+    head: "Wins ₹1,186 Cr hospital EPC order from a central PSU, about a third of last year's revenue",
+    catalyst: "Third hospital order this year; execution over 30 months",
+    keys: [["Order value", "₹1,186 Cr", "incl. GST"], ["vs FY26 revenue", "31%", "₹3,820 Cr"], ["Order book", "₹10,050 Cr", "2.6x revenue"], ["Duration", "30 months", ""]],
+    facts: ["Client: a central public-sector undertaking (named in the filing)", "Scope: civil, structural and MEP works for a 1,000-bed hospital"],
+    why: [["Memory", "Order inflow this year ₹3,410 Cr against ₹2,200 Cr in all of FY26"], ["Filing", "Letter of award stage: the contract is not signed yet"]],
+    strip: [["Order book", "₹10,050 Cr"], ["D/E", "0.12x"], ["1W", "+5.2%", 1], ["1M", "+8.0%", 1], ["1Y", "+31.5%", 1]],
+    quant: { res: "About ₹40 Cr of revenue a month over 30 months, ~12% of current monthly run-rate", rows: [["Order value ex-GST", "₹1,005 Cr", "FILING"], ["Execution period", "30 months", "FILING"], ["FY26 revenue", "₹3,820 Cr", "MEMORY"]] },
+    track: [["Milestone", "Contract signing, expected within 60 days"], ["KPI to verify", "Order inflow ₹4,000 Cr in FY27 (guided)"]],
+    pillars: [["Size vs company", 26, 30], ["Margin & leverage", 12, 25], ["Balance sheet", 17, 20], ["Credibility", 10, 15], ["Disclosure & timing", 6, 10]],
+    react: [["T+1", "+3.4%", 1], ["T+3", "+4.1%", 1], ["T+5", "+5.0%", 1]],
+    mem: [["02 Jun", "₹980 Cr hospital order (AIIMS)"], ["19 Aug", "₹1,240 Cr commercial complex"], ["10 Sep", "Q1 call: margin guidance 12%"]] },
+  { ...BASE, sym: "TEXRAIL", ev: "Concall", tab: "results", imp: "MOD", t: "11:52", ago: "2h ago", mcap: "₹7,940 Cr · Small cap", score: 64, trust: "u",
+    chips: [["Transcript", ""]],
+    call: [["Guidance", "Lowered", "dnc"], ["Tone", "Cautious", ""], ["Transparency", "High", ""], ["Story", "Delay, not loss", ""]],
+    head: "Management cuts FY27 wagon guidance to 8,500 from 10,000 on delayed railway tenders",
+    catalyst: "Deliveries move into FY28; margin guidance kept at 10–11%",
+    keys: [["Wagons FY27", "8,500", "was 10,000"], ["Margin", "10–11%", "unchanged"], ["Order book", "₹7,200 Cr", ""], ["Capex FY27", "₹250 Cr", ""]],
+    facts: ["Railway Board tender for 15,000 wagons pushed to Q4", "Export orders from two African railways in the pipeline"],
+    why: [["Memory", "Second guidance cut in two quarters (12,000 in May, 10,000 in Aug)"]],
+    strip: [["Order book", "₹7,200 Cr"], ["D/E", "0.41x"], ["1W", "−6.4%", -1], ["1M", "−9.8%", -1], ["1Y", "−22.1%", -1]],
+    changes: [["FY27 wagon guidance", "10,000", "8,500", -1], ["Margin guidance", "10–11%", "10–11%", 0]],
+    pillars: [["Size vs company", 18, 30], ["Margin & leverage", 14, 25], ["Balance sheet", 13, 20], ["Credibility", 7, 15], ["Disclosure & timing", 7, 10]],
+    mem: [["14 May", "FY27 guidance 12,000 wagons"], ["12 Aug", "Cut to 10,000"], ["19 Oct", "Cut to 8,500"]] },
+  { ...BASE, sym: "MARUTI", ev: "Monthly update", tab: "orders", imp: "MOD", t: "10:02", ago: "4h ago", mcap: "₹3.92 L Cr · Large cap", score: 58, trust: "p", matched: "7 of 8",
+    chips: [["Monthly sales", ""]],
+    head: "October sales 2,06,400 units (+8.1% YoY); exports a record 33,200",
+    catalyst: "Festive demand and exports offset softer small-car sales",
+    vol: [["May", 178], ["Jun", 179], ["Jul", 181], ["Aug", 186], ["Sep", 191], ["Oct", 206]],
+    facts: ["Domestic passenger vehicles 1,62,100 (+5.4%)", "Utility vehicles 68,900, now 42% of domestic sales"],
+    why: [["Memory", "Highest monthly total since March 2026"], ["Signal", "Exports above 30,000 for a 3rd month"]],
+    strip: [["Market share", "40.8%"], ["Inventory", "24 days"], ["1W", "+1.2%", 1], ["1M", "+3.0%", 1], ["1Y", "+9.6%", 1]],
+    pillars: [["Size vs company", 12, 30], ["Margin & leverage", 15, 25], ["Balance sheet", 19, 20], ["Credibility", 7, 15], ["Disclosure & timing", 5, 10]],
+    mem: [["01 Sep", "September sales 1,91,000"], ["01 Aug", "August sales 1,86,300"]] },
+  { ...BASE, sym: "ETERNAL", ev: "Fundraise", tab: "deals", imp: "MOD", t: "09:40", ago: "5h ago", mcap: "₹2.76 L Cr · Large cap", score: 55, trust: "v", former: "Zomato", thin: false,
+    chips: [["Board approved", "warn"], ["QIP", ""]],
+    head: "Board approves raising up to ₹8,500 Cr through a qualified institutional placement",
+    catalyst: "Money for quick-commerce warehouses; about 3% dilution at today's price",
+    keys: [["Size", "₹8,500 Cr", "up to"], ["Dilution", "~3.1%", "at ₹286"], ["Cash today", "₹12,800 Cr", "Sep 26"]],
+    facts: ["Shareholder approval sought by postal ballot", "Floor price to be set under SEBI's formula at launch"],
+    why: [["Memory", "Second raise in 18 months (₹8,500 Cr QIP in Nov 2024)"], ["Not disclosed", "No split of how the money will be used"]],
+    strip: [["Cash", "₹12,800 Cr"], ["Quick-commerce GOV", "+92% YoY"], ["1W", "+2.0%", 1], ["1M", "+4.4%", 1], ["1Y", "+31.0%", 1]],
+    pillars: [["Size vs company", 10, 30], ["Margin & leverage", 12, 25], ["Balance sheet", 18, 20], ["Credibility", 9, 15], ["Disclosure & timing", 6, 10]],
+    mem: [["25 Nov 24", "₹8,500 Cr QIP closed"], ["20 Mar 25", "Renamed Eternal Ltd"]] },
+];
+const ROWS = [
+  ["HDFCLIFE", "HDFC Life", "Q2FY27 value of new business ₹1,020 Cr (+14%), margin 26.1%", "15:10", "HIGH", "results"],
+  ["CLEANMAX", "Clean Max Enviro", "Buys Massmunch (Thailand) for THB 12.5 lakh: an entry vehicle", "13:48", "MOD", "deals"],
+  ["JUBLPHARMA", "Jubilant Pharmova", "CFO resigns with effect from 31 October; no successor named", "10:15", "MOD", "gov"],
+  ["ORIENTBELL", "Orient Bell", "Q2FY27 revenue ₹172 Cr (+6.0%); back in profit at ₹4.1 Cr", "12:30", "LOW", "results"],
+];
+const TABS = [["all", "For you", 38], ["high", "High impact", 6], ["results", "Results", 14], ["orders", "Orders & updates", 7], ["deals", "Capital & deals", 5], ["gov", "Governance", 5]];
+let tab = "all";
+const flags = { ver: false, wl: false, low: false, text: "" };
+const stars = {};
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+const initials = (n) => n.split(/\s+/).slice(0, 2).map((w) => w[0]).join("");
+document.head.insertAdjacentHTML("beforeend", "<style>@keyframes draw{to{stroke-dashoffset:0}}</style>");
+function spark(vals, up, w = 64, h = 26) {
+  const lo = Math.min(...vals), hi = Math.max(...vals), sx = w / (vals.length - 1);
+  const pts = vals.map((v, i) => `${(i * sx).toFixed(1)},${(h - 3 - ((v - lo) / (hi - lo || 1)) * (h - 6)).toFixed(1)}`).join(" ");
+  return `<svg viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline fill="none" stroke="${up ? "var(--pos)" : "var(--neg)"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts}" pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:${reduce ? 0 : 1};animation:draw 1.1s cubic-bezier(.22,.9,.24,1) .2s forwards"/></svg>`;
+}
+const dl = (v) => typeof v === "number" ? `<span class="delta ${v >= 0 ? "up" : "dn"}">${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(1)}%</span>` : `<span class="delta ${String(v).startsWith("-") ? "dn" : "up"}">${esc(v).replace("-", "−")}</span>`;
+const TRUST = { v: ["v", "✓", "Numbers verified against the filing"], p: ["p", "✓", "of numbers matched"], r: ["r", "↻", "Numbers re-checked by a second model"], u: ["u", "!", "Unverified: one figure not found in the filing"] };
+
+function card(c, i) {
+  const [name, col, px, chg, hist] = CO[c.sym];
+  const impWord = c.imp === "HIGH" ? "High impact" : "Moderate";
+  const keysTable = (keys) => `<div class="pnl tbl-scroll"><table><tbody><tr>${keys.map(([l, v, s]) => `<td style="text-align:left"><span style="display:block;font:700 10.5px var(--f);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)">${l}</span><b style="font-size:15px">${esc(v)}</b>${s ? `<span style="display:block;font-size:11.5px;color:var(--ink-3)">${esc(s)}</span>` : ""}</td>`).join("")}</tr></tbody></table></div>`;
+  const body = c.pnl
+    ? `<div class="pnl tbl-scroll"><table><thead><tr><th>₹ Cr</th><th>Q1FY27</th><th>YoY</th><th>QoQ</th></tr></thead><tbody>${c.pnl.map(([l, v, y, q]) => `<tr><td>${l}</td><td>${v}</td><td>${dl(y)}</td><td>${dl(q)}</td></tr>`).join("")}</tbody></table></div>`
+    : c.vol ? `<figure class="vol" style="margin:0" aria-label="Monthly sales, thousand units">${c.vol.map(([m, v]) => `<div><i style="height:${Math.round((v / 206) * 46)}px"></i><span>${m}</span></div>`).join("")}</figure>`
+    : keysTable(c.keys);
+  const [tc, ti, tt] = TRUST[c.trust];
+  const deep = `
+    <div class="box wide" style="font-size:12px;color:var(--ink-3)">${c.ev} · ${CO[c.sym][5]} lens · NSE: ${c.sym} · 19 Oct 2026, ${c.t} IST, market hours</div>
+    ${c.more.length ? `<div class="box"><h5>More from the filing</h5><ul>${c.more.map((m) => `<li>${esc(m)}</li>`).join("")}</ul></div>` : ""}
+    ${c.pnl && c.keys ? `<div class="box"><h5>Key numbers</h5>${keysTable(c.keys)}</div>` : ""}
+    ${c.quant ? `<div class="box wide"><h5>Quantified impact · computed by code</h5><div class="quant"><span class="res">${esc(c.quant.res)}</span><table>${c.quant.rows.map(([l, v, s]) => `<tr><td>${esc(l)}</td><td>${esc(v)}</td><td class="${s === "ASSUMPTION" ? "as" : ""}">${s.toLowerCase()}</td></tr>`).join("")}</table></div></div>` : ""}
+    ${c.changes.length ? `<div class="box"><h5>Notable changes</h5>${c.changes.map(([l, a, b, s]) => `<div class="chg"><span>${esc(l)}</span><span class="num" style="color:var(--ink-3)">${a}</span><span>→</span><span class="num ${s > 0 ? "up" : s < 0 ? "dn" : ""}">${b}</span></div>`).join("")}</div>` : ""}
+    ${c.track.length ? `<div class="box wide"><h5>What to track next</h5><div class="track5">${c.track.map(([l, t]) => `<div><b>${l}</b>${esc(t)}</div>`).join("")}</div></div>` : ""}
+    <div class="box"><h5>How this was scored · ${c.score}/100</h5>${c.pillars.map(([l, v, m]) => `<div class="pillar"><span>${l} (${m})</span><span class="tr"><i style="--w:${(v / m).toFixed(2)}"></i></span><span class="num">${v}</span></div>`).join("")}</div>
+    <div class="box"><h5>How the market reacted</h5><div class="react">${c.react.map(([l, v, s]) => `<div><span>${l}</span><b class="${s > 0 ? "up" : s < 0 ? "dn" : ""}">${v}</b></div>`).join("")}</div>
+      <h5 style="margin-top:12px">From memory</h5><div class="mem">${c.mem.map(([dt, t]) => `<div><span class="num">${dt}</span><span>${esc(t)}</span></div>`).join("")}</div></div>
+    ${c.second ? `<div class="box wide"><h5>Second check</h5><p class="second" style="margin:0">${esc(c.second)}</p></div>` : ""}`;
+  return `<article class="card ${c.imp}" style="animation-delay:${i * 60}ms" data-sym="${c.sym}">
+    ${c.trust === "u" ? `<div class="held"><span>⚠</span><span><b>Verify against the filing.</b> One figure on this card (8,500 wagons) was not found word for word in the transcript.</span></div>` : ""}
+    <div class="c-top">
+      <span class="logo-co" style="background:${col}">${initials(name)}</span>
+      <div class="c-id"><b>${esc(name)} ${c.former ? `<span class="former">formerly ${c.former}</span>` : ""}</b><span class="num">NSE: ${c.sym}</span> <span>· ${c.mcap}</span></div>
+      <div class="c-px">${spark(hist, chg >= 0)}<div><b>₹${px.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</b><small class="${chg >= 0 ? "up" : "dn"}">${chg >= 0 ? "▲" : "▼"} ${Math.abs(chg).toFixed(1)}%</small></div></div>
+    </div>
+    <div class="chips"><span class="chip score" title="Actionability score, computed">${c.fire ? "🔥 " : ""}${c.score}</span><span class="chip imp-${c.imp}">${impWord}</span><span class="chip ev">${c.ev}</span>${c.chips.map(([t, k]) => `<span class="chip ${k}">${esc(t)}</span>`).join("")}${c.sym === "AHLUCONT" ? `<span class="chip warn">💧 Thin liquidity</span>` : ""}</div>
+    <h3 class="c-head">${esc(c.head)}</h3>
+    <p class="catalyst" style="margin:0"><span>📌</span><span><b>Core catalyst:</b> ${esc(c.catalyst)}</span></p>
+    ${c.call ? `<div class="callread">${c.call.map(([l, v, k]) => `<span class="${k}"><em>${l}</em>${v}</span>`).join("")}</div>` : ""}
+    ${body}
+    <ul class="facts">${c.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>
+    <section class="why"><h4>${c.ev === "Results" ? "What these numbers mean" : "Why it matters"}</h4>${c.why.map(([s, t]) => `<div><span class="src ${s === "Signal" ? "sig" : s === "Not disclosed" ? "miss" : ""}">${s}</span><span>${esc(t)}</span></div>`).join("")}</section>
+    <div class="strip">${c.strip.map(([l, v, s]) => `<span class="stat">${l} <b class="${s > 0 ? "up" : s < 0 ? "dn" : ""}">${esc(v)}</b></span>`).join("")}</div>
+    <div class="more"><div><div class="deep3">${deep}</div></div></div>
+    <div class="foot">
+      <span class="num">${c.t} IST · ${c.ago} · market hours</span>
+      <span class="trust ${tc}"><i>${ti}</i>${c.trust === "p" ? `${c.matched} ${tt}` : tt}</span>
+      <span class="acts">
+        <button class="btn pri" type="button" aria-expanded="false">Full analysis <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <button class="iconbtn" type="button" data-act="verify" title="Verify against the PDF" aria-label="Verify against the PDF">⌕</button>
+        <button class="iconbtn" type="button" data-act="memory" title="360° company memory" aria-label="360° company memory">◎</button>
+        <button class="iconbtn" type="button" title="Official PDF" aria-label="Official PDF">⎙</button>
+        <button class="iconbtn" type="button" title="Copy card as image" aria-label="Copy card as image">⧉</button>
+        <button class="iconbtn" type="button" data-act="star" title="Star: more like this (owner)" aria-label="Star" aria-pressed="${stars[c.sym] === "s"}">🔥</button>
+        <button class="iconbtn" type="button" data-act="noise" title="Noise: fewer like this (owner)" aria-label="Noise" aria-pressed="${stars[c.sym] === "n"}">🗑</button>
+      </span>
+    </div>
+  </article>`;
+}
+function rows(filter) {
+  const items = ROWS.filter((r) => (filter === "all" || r[5] === filter || (filter === "high" && r[4] === "HIGH")) && (flags.low || r[4] !== "LOW"));
+  if (!items.length) return "";
+  return `<section class="rows"><h3>More since the close</h3>${items.map(([s, n, h, t, imp]) => `<div class="row" tabindex="0"><span class="logo-co" style="background:${CO[s][1]}">${initials(n)}</span><div style="min-width:0"><b>${esc(n)}</b> <span class="chip imp-${imp}" style="padding:2px 8px;font-size:10.5px">${imp === "HIGH" ? "High" : imp === "MOD" ? "Moderate" : "Low"}</span><p>${esc(h)}</p></div><div class="r"><b class="num ${CO[s][3] >= 0 ? "up" : "dn"}" style="font-size:13px">${CO[s][3] >= 0 ? "+" : "−"}${Math.abs(CO[s][3]).toFixed(1)}%</b><small>${t}</small></div></div>`).join("")}</section>`;
+}
+function render() {
+  const list = document.getElementById("list");
+  const pick = CARDS.filter((c) => (tab === "all" || c.tab === tab || (tab === "high" && c.imp === "HIGH"))
+    && (!flags.ver || c.trust === "v" || c.trust === "r") && (!flags.wl || ["BAJAJFINSV", "AMBUJACEM", "TEXRAIL"].includes(c.sym))
+    && (!flags.text || (CO[c.sym][0] + c.head).toLowerCase().includes(flags.text)));
+  list.innerHTML = (pick.length ? pick.map(card).join("") : `<div class="panel" style="text-align:center;color:var(--ink-2)">No cards match these filters since the close.</div>`)
+    + rows(tab) + `<nav class="pager" aria-label="Pages"><button class="on" type="button">1</button><button type="button">2</button><button type="button">3</button><button type="button">›</button></nav>`;
+  list.querySelectorAll(".card").forEach((el) => {
+    const sym = el.dataset.sym, b = el.querySelector(".btn.pri");
+    b.onclick = () => { const o = el.classList.toggle("open"); b.setAttribute("aria-expanded", String(o)); };
+    el.querySelector('[data-act="memory"]').onclick = () => openDrawer(sym, "dossier");
+    el.querySelector('[data-act="verify"]').onclick = () => openDrawer(sym, "verify");
+    el.querySelector('[data-act="star"]').onclick = () => { stars[sym] = stars[sym] === "s" ? null : "s"; render(); };
+    el.querySelector('[data-act="noise"]').onclick = () => { stars[sym] = stars[sym] === "n" ? null : "n"; render(); };
+  });
+  if (pick[0] && tab === "all" && !flags.text) list.querySelector(".card").classList.add("open");
+}
+function tabsUI() {
+  const host = document.getElementById("tabs"), pill = document.getElementById("pill");
+  host.querySelectorAll("button").forEach((b) => b.remove());
+  for (const [k, l, n] of TABS) {
+    const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "tab"); b.id = `tab-${k}`;
+    b.setAttribute("aria-selected", String(k === tab)); b.innerHTML = `${l}<em>${n}</em>`;
+    b.onclick = () => { tab = k; tabsUI(); render(); };
+    host.append(b);
+  }
+  const on = host.querySelector('[aria-selected="true"]');
+  requestAnimationFrame(() => { pill.style.left = `${on.offsetLeft}px`; pill.style.width = `${on.offsetWidth}px`; });
+}
+function signals() {
+  document.getElementById("sigs").innerHTML = CARDS.filter((c) => c.fire).map((c) => {
+    const [n, col] = CO[c.sym];
+    return `<div class="sig" tabindex="0" data-sym="${c.sym}"><span class="logo-co" style="background:${col}">${initials(n)}</span><div style="min-width:0"><b>${esc(n)} <span class="num" style="color:var(--ink-3);font-weight:600">· ${c.score}</span></b><p>${esc(c.head.slice(0, 90))}${c.head.length > 90 ? "…" : ""}</p><div class="gates"><span>Big</span><span>Inflection</span><span>Not run up</span><span>Clean</span></div></div></div>`;
+  }).join("");
+  document.querySelectorAll(".sig").forEach((s) => s.onclick = () => {
+    tab = "all"; tabsUI(); render();
+    const el = document.querySelector(`.card[data-sym="${s.dataset.sym}"]`); el && el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+  });
+}
+function stories() {
+  const host = document.getElementById("stories");
+  host.innerHTML = [...CARDS, ...ROWS.map(([s, , , , imp]) => ({ sym: s, imp }))].map((c) => {
+    const name = CO[c.sym][0];
+    return `<button class="story ${c.imp === "HIGH" ? "" : "mod"}" type="button" title="${esc(name)}" data-sym="${c.sym}"><span class="ring"><span>${initials(name)}</span></span><small>${esc(name.split(" ")[0])}</small></button>`;
+  }).join("");
+  host.querySelectorAll(".story").forEach((b) => b.onclick = () => {
+    tab = "all"; tabsUI(); render();
+    const el = document.querySelector(`.card[data-sym="${b.dataset.sym}"]`) || document.querySelector(".rows");
+    el && el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+  });
+}
+function rail() {
+  const r = 44, len = 2 * Math.PI * r, parts = [[6, "var(--hi)"], [13, "var(--mo)"], [19, "var(--lo)"]], tot = 38;
+  let off = 0;
+  document.getElementById("donut").innerHTML = parts.map(([v, c]) => {
+    const seg = (v / tot) * len, s = `<circle cx="55" cy="55" r="${r}" stroke="${c}" stroke-dasharray="${seg - 2} ${len}" stroke-dashoffset="${-off}" transform="rotate(-90 55 55)"/>`;
+    off += seg; return s;
+  }).join("") + `<text x="55" y="58" text-anchor="middle">38</text><text class="lbl" x="55" y="72" text-anchor="middle">cards</text>`;
+  document.getElementById("wl").innerHTML = ["BAJAJFINSV", "AMBUJACEM", "TEXRAIL", "HDFCLIFE"].map((s) => {
+    const [n, , px, chg, h] = CO[s];
+    return `<div class="wl"><span><b style="font-size:13.5px">${esc(n)}</b><br><span class="num" style="font-size:11.5px;color:var(--ink-3)">₹${px.toLocaleString("en-IN")}</span></span>${spark(h, chg >= 0, 60, 22)}<span class="num ${chg >= 0 ? "up" : "dn"}">${chg >= 0 ? "+" : "−"}${Math.abs(chg).toFixed(1)}%</span></div>`;
+  }).join("");
+  const sect = [["Insurance", 2, 1, 1], ["Cement", 1, 2, 3], ["Construction", 0, 3, 2], ["Pharma", 0, 2, 4], ["Capital goods", 1, 1, 3], ["Automobiles", 0, 2, 2]];
+  document.getElementById("sect").innerHTML = sect.map(([n, h, m, l]) => `<div><span>${n}</span><span class="tr"><i style="width:${(h / 8) * 100}%;background:var(--hi)"></i><i style="width:${(m / 8) * 100}%;background:var(--mo)"></i><i style="width:${(l / 8) * 100}%;background:var(--lo)"></i></span><span class="num">${h + m + l}</span></div>`).join("");
+}
+function openDrawer(sym, t) {
+  const [n, col] = CO[sym], c = CARDS.find((x) => x.sym === sym);
+  document.getElementById("dr-logo").textContent = initials(n); document.getElementById("dr-logo").style.background = col;
+  document.getElementById("dr-name").textContent = n;
+  document.getElementById("dr-sub").textContent = `NSE: ${sym} · ${CO[sym][5]} · 360° company memory`;
+  const show = (k) => {
+    document.querySelectorAll("#dr-tabs button").forEach((b) => b.classList.toggle("on", b.dataset.t === k));
+    const body = document.getElementById("dr-body");
+    if (k === "dossier") body.innerHTML = `
+      <div class="panel" style="animation:none"><h4>Management execution <span class="num" style="font-size:12.5px;color:var(--pos)">credibility 84%</span></h4>
+        <div class="exec"><i style="width:62%;background:var(--pos)"></i><i style="width:26%;background:var(--acc-2)"></i><i style="width:12%;background:var(--neg)"></i></div>
+        <div class="legend" style="font-size:12px;color:var(--ink-3)">5 delivered · 2 open · 1 missed or revised</div></div>
+      <div class="panel" style="animation:none"><h4>Financial baseline <span class="num" style="font-size:12px;color:var(--ink-3)">₹ Cr</span></h4>
+        <div class="qtbl"><table style="width:100%;font-size:12.5px"><tr><th style="text-align:left">Metric</th><th>Q1FY27</th><th>Q4FY26</th><th>Q1FY26</th></tr>
+        <tr><td>Revenue</td><td class="num">38,000</td><td class="num">36,900</td><td class="num">34,170</td></tr><tr><td>Profit to holders</td><td class="num">3,132</td><td class="num">2,980</td><td class="num">2,863</td></tr><tr><td>Net worth</td><td class="num">64,200</td><td class="num">61,900</td><td class="num">55,300</td></tr></table></div></div>
+      <div class="panel" style="animation:none"><h4>Orders, deals and capex</h4><div class="mem"><div><span class="num">Sep 26</span><span>Allianz buyout ₹24,180 Cr · <b>completed</b></span></div></div></div>
+      <div class="panel" style="animation:none"><h4>Operating notes</h4><div class="mem"><div><span class="num">Jul 26</span><span>Combined ratio target under 100% by FY27</span></div><div><span class="num">Apr 26</span><span>Health insurance is 31% of general premium</span></div></div></div>`;
+    else if (k === "timeline") body.innerHTML = `<div class="panel" style="animation:none"><div class="mem">${(c ? c.mem : []).map(([d, x]) => `<div><span class="num">${d}</span><span>${esc(x)}</span></div>`).join("")}<div><span class="num">19 Oct</span><span>${esc(c ? c.head : "")}</span></div></div></div>`;
+    else body.innerHTML = `<p style="margin:0;font-size:13px;color:var(--ink-2)">Each figure on the card, found (green) or not found (red) in the filing's own text. The official PDF opens beside it on a wide screen.</p>
+      <div class="pdf">${pdfText(sym)}</div>
+      ${MATH[sym] ? `<div class="panel" style="animation:none"><h4>Math working <span style="font-size:12px;color:var(--ink-3);font-weight:600">recomputed by code</span></h4><div class="mem"><div><span class="num">Check</span><span>${MATH[sym]}</span></div></div></div>` : ""}`;
+  };
+  document.querySelectorAll("#dr-tabs button").forEach((b) => b.onclick = () => show(b.dataset.t));
+  show(t);
+  document.body.classList.add("dr-open"); document.getElementById("drawer").setAttribute("aria-hidden", "false");
+  document.getElementById("dr-close").focus();
+}
+const MATH = { BAJAJFINSV: "3,132.05 ÷ 2,863.11 − 1 = <b>+9.4%</b> ✓", AHLUCONT: "1,186 ÷ 3,820 = <b>31%</b> of FY26 revenue ✓", AMBUJACEM: "224.51 ÷ 225.41 = <b>99.6%</b> ✓" };
+function pdfText(sym) {
+  const T = {
+    BAJAJFINSV: 'STATEMENT OF UNAUDITED CONSOLIDATED RESULTS, QUARTER ENDED 30 JUNE 2026 (₹ in crore)<br>Revenue from operations <mark>38,000.12</mark> … 34,170.40<br>Profit attributable to owners of the parent <mark>3,132.05</mark> … 2,863.11<br>Basic EPS (₹) <mark>19.62</mark>',
+    AMBUJACEM: 'SCRUTINIZER’S REPORT · Total votes cast <mark>225,41,07,305</mark><br>Votes in favour 224,51,02,110 (<mark>99.6%</mark>) · Votes against 90,05,195<br>Share exchange ratio: <mark>37</mark> equity shares of Ambuja for every <mark>100</mark> of ACC',
+    AHLUCONT: 'We are pleased to inform that the Company has received a Letter of Award for a value of <mark>₹1,186</mark> crore (including GST) … to be executed over <mark>30 months</mark>.',
+    TEXRAIL: 'TRANSCRIPT, Q2 FY27 EARNINGS CALL · p.6<br>"… so for the full year we now expect around eight and a half thousand wagons …"<br>Card figure <mark class="bad">8,500</mark> not found word for word · margin guidance <mark>10–11%</mark> found',
+    MARUTI: 'Total sales in October 2026: <mark>2,06,400</mark> units · Exports <mark>33,200</mark> · Domestic PV <mark>1,62,100</mark><br>Utility vehicles <mark class="bad">68,900</mark> (not found: the filing prints 68,890)',
+    ETERNAL: 'The Board approved raising funds up to <mark>₹8,500</mark> crore by way of a qualified institutions placement …',
+  };
+  return T[sym] || '';
+}
+function closeDrawer() { document.body.classList.remove("dr-open"); document.getElementById("drawer").setAttribute("aria-hidden", "true"); }
+document.getElementById("dr-close").onclick = closeDrawer; document.getElementById("scrim").onclick = closeDrawer;
+addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
+function counts() {
+  document.querySelectorAll(".count").forEach((el) => {
+    const to = +el.dataset.to;
+    if (reduce) { el.textContent = to; return; }
+    const t0 = performance.now();
+    const step = (t) => { const p = Math.min(1, (t - t0) / 900), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(to * e); if (p < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+}
+document.querySelectorAll(".win button").forEach((b) => b.onclick = () => document.querySelectorAll(".win button").forEach((x) => x.classList.toggle("on", x === b)));
+for (const [id, key] of [["f-ver", "ver"], ["f-wl", "wl"], ["f-low", "low"]]) {
+  const b = document.getElementById(id);
+  b.onclick = () => { flags[key] = !flags[key]; b.setAttribute("aria-pressed", String(flags[key])); render(); };
+}
+document.getElementById("f-text").oninput = (e) => { flags.text = e.target.value.trim().toLowerCase(); render(); };
+document.getElementById("theme").onclick = () => {
+  const r = document.documentElement, dark = r.dataset.theme === "dark" || (!r.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  r.dataset.theme = dark ? "light" : "dark";
+};
+tabsUI(); signals(); stories(); render(); rail(); counts();
+addEventListener("resize", () => tabsUI());
+</script>

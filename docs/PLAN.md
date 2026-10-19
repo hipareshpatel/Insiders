@@ -59,7 +59,7 @@ second opinion → later: re-read when XBRL lands, price reaction T+1/3/5, gover
 | G3 | Make the repository public (GitHub's free minutes then cover the 15-30 minute runs) | Owner |
 | G4 | D1 id in `web/wrangler.jsonc`, `npm run db:migrate:remote`, deploy (https://insiders.reply-bd3.workers.dev); merge the PR so `deploy-web.yml` redeploys later changes | Laptop, then owner merges |
 | G5 | Timing run on a GitHub runner: filings an hour, AI requests a filing, 429s (the audit rounds' figures are laptop figures) | Cloud / laptop |
-| G6 | `sync-companies` (NSE) once by hand, then **seed every universe company's history from XBRL** (results, shareholding, governance; no AI), so day-one cards know each company's past numbers | Laptop or a workflow run |
+| G6 | `sync-companies` (NSE) once by hand, then **seed every universe company's history from XBRL** (results, shareholding, governance; no AI), so day-one cards know each company's past numbers. On the laptop: `pwsh -File pipeline\scripts\golive_load.ps1` runs it all, resumable (`seed-memory --universe`), and also keeps NSE's raw bhavcopy, market-cap and corporate-action files (`scripts/nse_archives.py`, for B5) | Laptop or a workflow run |
 | G7 | Switch on: repository variable `PIPELINE_SCHEDULE = on`; cron-job.org calls `pipeline.yml` every 15-30 minutes | Owner |
 | G8 | Watch a week: System page (queue, failures, quotas, held cards); then delete the BSE client and `laptop.ps1` | Owner, laptop |
 | G9 | Cloudflare rate-limiting rule on the public API (one free rule, e.g. 60 requests a minute per visitor), so a scraper cannot spend the free quota | Owner |

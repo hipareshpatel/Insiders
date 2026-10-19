@@ -267,7 +267,26 @@ def cmd_seed_memory(args, settings, sink) -> int:
     from .seed import SeedStats, seed_results, seed_shareholding
 
     log = logging.getLogger("bse_intel.seed")
-    scrips = [s.strip() for s in args.scrips.split(",") if s.strip()]
+    resume_key = "seed:universe_last"
+    nse_symbols: dict[str, str] = {}   # company key -> NSE symbol, from the universe file, for rows without one
+    if args.universe:
+        # Every company in the universe file, in key order, after the last one finished (resumable: the command can
+        # be stopped and started again; --restart begins from the first company)
+        from . import universe
+
+        nse_universe = universe.load_nse(sink)
+        if not nse_universe.built:
+            print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+            return 2
+        nse_symbols = {scrip: symbol for symbol, scrip in nse_universe.symbols.items()}
+        done_through = "" if args.restart else (sink.kv_get(resume_key) or "")
+        scrips = [s for s in sorted(nse_universe.included) if s > done_through]
+        log.info("seed: %d universe companies to go (after %r)", len(scrips), done_through)
+    else:
+        scrips = [s.strip() for s in (args.scrips or "").split(",") if s.strip()]
+        if not scrips:
+            print("Name the companies with --scrips, or seed the whole universe with --universe.")
+            return 2
     stats = SeedStats()
     cache_root = settings.text_cache_dir
     with (BseClient() if args.source == "bse" else contextlib.nullcontext()) as bse, NseClient() as nse:
@@ -278,12 +297,16 @@ def cmd_seed_memory(args, settings, sink) -> int:
         for scrip in scrips:
             company = sink.company(scrip) or {}
             name = company.get("company_name") or scrip
-            symbol = (company.get("symbol") or "").strip()
+            symbol = (company.get("symbol") or "").strip() or nse_symbols.get(scrip, "")
             stats.companies += 1
             if not args.shareholding_only:
                 try:
                     seed_results(sink, bse, scrip, name, args.since, cache_root, stats, company,
                                  nse=nse, symbol=symbol)
+                except SourceBlockedError as exc:
+                    stats.failures.append(f"{scrip} results: {exc}"[:200])
+                    log.error("NSE refused the session; stopping the seed: %s", exc)
+                    break  # NSE limits by IP: stop, do not press on (a --universe run resumes at this company)
                 except Exception as exc:  # one company's archive must not end the run
                     stats.failures.append(f"{scrip} results: {type(exc).__name__}: {exc}"[:200])
                     log.warning("seed %s results failed: %s", scrip, exc)
@@ -300,6 +323,8 @@ def cmd_seed_memory(args, settings, sink) -> int:
             elif not args.results_only:
                 stats.failures.append(f"{scrip}: no NSE symbol stored")
             log.info("seed: %s", stats.line())
+            if args.universe:
+                sink.kv_set(resume_key, scrip, now_iso())
     print(json.dumps({"companies": stats.companies, "results_files": stats.results_files,
                       "results_periods": stats.results_periods, "shareholding_files": stats.shareholding_files,
                       "shareholding_periods": stats.shareholding_periods, "skipped": stats.skipped,
@@ -539,7 +564,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--time-budget", type=int, default=1800, help="seconds")
     p.set_defaults(func=cmd_shareholding_sync)
     p = sub.add_parser("seed-memory", help="financial and ownership history from NSE's XBRL, no AI (results and shareholding)")
-    p.add_argument("--scrips", required=True, help="comma-separated company keys (BSE scrip codes, or NSE symbols)")
+    p.add_argument("--scrips", help="comma-separated company keys (BSE scrip codes, or NSE symbols)")
+    p.add_argument("--universe", action="store_true",
+                   help="every company in the universe file, resuming after the last one finished (go-live history)")
+    p.add_argument("--restart", action="store_true", help="with --universe: start again from the first company")
     p.add_argument("--source", choices=("nse", "bse"), default="nse",
                    help="nse (default) or bse: also read BSE's results archive (needs an Indian address)")
     p.add_argument("--since", default="2023-01-01", help="ignore quarters filed before this date")

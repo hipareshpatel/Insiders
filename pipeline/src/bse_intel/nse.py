@@ -20,6 +20,7 @@ for cookies, 3-5 s between calls, a few retries on network errors and 5xx, and a
 from __future__ import annotations
 
 import logging
+import os
 import random
 import re
 import threading
@@ -348,8 +349,18 @@ def parse_shareholding_rows(rows: list[dict]) -> list[ShareholdingFiling]:
     return sorted(best.values(), key=lambda f: f.quarter_end, reverse=True)
 
 
+def pause_from_env() -> tuple[float, float]:
+    """Seconds between two NSE requests: 3-5 by default; NSE_PAUSE_SECONDS="1.5,2.5" sets another range for a
+    one-off bulk load on the laptop (the go-live history). The daily path keeps the default."""
+    try:
+        low, high = (float(x) for x in os.environ.get("NSE_PAUSE_SECONDS", "").split(","))
+    except ValueError:
+        return (3.0, 5.0)
+    return (low, high) if 1.0 <= low <= high else (3.0, 5.0)
+
+
 class NseClient:
-    def __init__(self, timeout: float = 45.0, pause: tuple[float, float] = (3.0, 5.0),
+    def __init__(self, timeout: float = 45.0, pause: tuple[float, float] | None = None,
                  retries: int = 3, transport: httpx.BaseTransport | None = None, sleep=time.sleep):
         self._client = httpx.Client(
             timeout=timeout,
@@ -358,7 +369,7 @@ class NseClient:
             headers={"User-Agent": USER_AGENT, "Accept": "application/json, text/plain, */*",
                      "Accept-Language": "en-US,en;q=0.9", "Referer": f"{SITE}/"},
         )
-        self._pause = pause
+        self._pause = pause or pause_from_env()
         self._retries = max(1, retries)
         self._sleep = sleep
         self._lock = threading.Lock()

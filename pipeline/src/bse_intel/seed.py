@@ -26,6 +26,7 @@ from pathlib import Path
 from . import xbrl as xbrl_fast_path
 from .dossier import merge, new_dossier
 from .models import Filing, Pass2Output
+from .nse import SourceBlockedError
 from .periods import canonical_period
 from .timeutil import now_iso
 
@@ -185,6 +186,8 @@ def _nse_quarters(nse, symbol: str, since: str, scrip: str) -> dict:
     """The newest filing NSE lists per quarter, consolidated where both bases are filed."""
     try:
         rows = _nse_rows(nse, symbol)
+    except SourceBlockedError:
+        raise  # NSE limits by IP: the caller stops the seed rather than marking the company done with nothing
     except Exception as exc:
         log.info("seed %s: NSE list unavailable (%s)", scrip, type(exc).__name__)
         return {}
@@ -211,6 +214,8 @@ def _from_nse(nse, symbol: str, period: str, link, cache_root: Path | None, stat
     row is the same filing and not merely the same company; the basis is matched where NSE states it."""
     try:
         rows = _nse_rows(nse, symbol)
+    except SourceBlockedError:
+        raise
     except Exception as exc:
         log.info("seed %s %s: NSE fallback unavailable (%s)", scrip, period, type(exc).__name__)
         return None

@@ -134,3 +134,61 @@ def test_a_later_standalone_file_does_not_replace_the_consolidated_quarter():
 
     best = seed_mod._nse_quarters(Nse(), "MFSL", "2025-01-01", "500271")
     assert [r.xbrl_url for r in best.values()] == ["https://x/cons.xml"]
+
+
+def test_the_universe_seed_resumes_after_the_last_company_and_stops_on_a_refusal(settings, monkeypatch):
+    """Go-live history (PLAN G6): `seed-memory --universe` walks every universe company in key order, records each one
+    finished, and a second run continues after it. An NSE refusal stops the run before that company is recorded."""
+    import argparse
+    import json
+
+    from bse_intel import nse as nse_mod
+    from bse_intel import universe
+    from bse_intel.cli import cmd_seed_memory
+    from bse_intel.sinks.local import LocalSink
+
+    class Client:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            pass
+
+    seen: list[str] = []
+    refuse = {"500003"}
+
+    def results(sink, bse, scrip, *a, **k):
+        if scrip in refuse:
+            raise nse_mod.SourceBlockedError("HTTP 403")
+        seen.append(scrip)
+
+    monkeypatch.setattr(nse_mod, "NseClient", Client)
+    monkeypatch.setattr(seed_mod, "seed_results", results)
+    monkeypatch.setattr(seed_mod, "seed_shareholding", lambda *a, **k: None)
+    sink = LocalSink(settings)
+    args = argparse.Namespace(scrips=None, universe=True, restart=False, source="nse", since="2024-01-01",
+                              results_only=False, shareholding_only=False)
+    assert cmd_seed_memory(args, settings, sink) == 2          # no NSE universe file yet: nothing to walk
+    sink.put_object(universe.UNIVERSE_KEY, json.dumps(
+        {"source": "nse", "included": ["500004", "500001", "500003", "500002"]}).encode())
+
+    assert cmd_seed_memory(args, settings, sink) == 0
+    assert seen == ["500001", "500002"]                         # key order; stopped at the refusal
+    refuse.clear()
+    assert cmd_seed_memory(args, settings, sink) == 0
+    assert seen == ["500001", "500002", "500003", "500004"]     # resumed at the refused company
+    assert cmd_seed_memory(args, settings, sink) == 0 and len(seen) == 4
+    args.restart = True
+    assert cmd_seed_memory(args, settings, sink) == 0 and len(seen) == 8
+
+
+def test_nse_pacing_is_three_to_five_seconds_unless_a_bulk_load_sets_a_range(monkeypatch):
+    from bse_intel.nse import pause_from_env
+
+    monkeypatch.delenv("NSE_PAUSE_SECONDS", raising=False)
+    assert pause_from_env() == (3.0, 5.0)
+    monkeypatch.setenv("NSE_PAUSE_SECONDS", "1.5,2.5")
+    assert pause_from_env() == (1.5, 2.5)
+    for bad in ("0.1,0.2", "2", "fast", "3,1"):       # never faster than a second, never malformed
+        monkeypatch.setenv("NSE_PAUSE_SECONDS", bad)
+        assert pause_from_env() == (3.0, 5.0)

@@ -9,8 +9,11 @@ pipeline last read the list in full for the card (`card_json.annual_xbrl_checked
 (NSE off, refused or failing then; cards made before the stamp). A file whose figures are not in the PDF is
 refused again on the re-run, and the card's new stamp keeps it from being tried a third time.
 
-It is a command of its own, `annual-xbrl-catchup`, run once a day after the close (PLAN, phase 5), not part of
-`run`:
+Online (owner, 2026-10-19: GitHub, no laptop) it runs inside `run`, once a day after 18:30 IST
+(`Pipeline._annual_catchup_due`): a separate GitHub job would share the pipeline's concurrency queue, where a newer
+waiting run replaces an older one, so with runs every 15-30 minutes it would keep being cancelled; inside `run` it
+never overlaps a run either. The command `annual-xbrl-catchup` stays for the laptop. Once a day, after the close,
+because:
 * NSE limits by IP address. The check is one list request per company with a card waiting, a few hundred from
   September to December, and `run` fires every 15-30 minutes and already calls NSE for every annual report it
   reads. Once a day keeps the calls few and apart; a refusal here does not cost `run` its annual-report tables.
@@ -153,7 +156,8 @@ def _verdict(outcome) -> str:
 
 
 def catch_up(pipeline, deadline: float, horizon_days: int = HORIZON_DAYS, every_days: int = EVERY_DAYS,
-             max_companies: int = MAX_COMPANIES, max_reruns: int = MAX_RERUNS, scrips: set[str] | None = None) -> dict:
+             max_companies: int = MAX_COMPANIES, max_reruns: int = MAX_RERUNS, scrips: set[str] | None = None,
+             record_writes: bool = True) -> dict:
     """Read NSE's list for the companies whose annual-report cards lack the table, and read again the reports
     whose year now has a file. With `scrips`, only those companies (a measured round leaves the others alone).
     Returns what was looked at and what each re-run made."""
@@ -218,5 +222,6 @@ def catch_up(pipeline, deadline: float, horizon_days: int = HORIZON_DAYS, every_
         pipeline._exec("cards_delete", [{"news_id": i} for i in cardless])
         report["rerun"] = {i: _verdict(outcomes.get(i)) for i in ids}
         report["stats"] = pipeline.stats.as_dict()
-    sink.add_writes(utc_day(), pipeline.stats.d1_rows_written, now_iso())
+    if record_writes:   # inside `run`, the run records its own writes once at its end
+        sink.add_writes(utc_day(), pipeline.stats.d1_rows_written, now_iso())
     return report

@@ -83,6 +83,7 @@ timeout_s = 120
 # acceptable here because BSE filings are public. gemini-4-argon and
 # gemini-3.1-pro-preview are paid-only.
 base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
+quota_tz = "America/Los_Angeles"   # its daily quotas end at midnight Pacific (12:30 IST in summer, 13:30 in winter)
 api_key_env = "GEMINI_API_KEY"
 timeout_s = 300  # a packed pass-2 request carries several filings and runs for minutes
 

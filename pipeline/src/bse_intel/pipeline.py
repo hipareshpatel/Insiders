@@ -3026,7 +3026,9 @@ def _ocr_check(doc: Document) -> None:
 def build_pipeline(settings: Settings, sink: Sink) -> Pipeline:
     month = utc_day()[:7]
     try:
-        usage_today, usage_month = sink.usage(utc_day()), sink.usage_month(month)
+        # the day before too: a provider whose quota day is Pacific (Gemini) is still on it until 07:00-08:00 UTC
+        before = (date.fromisoformat(utc_day()) - timedelta(days=1)).isoformat()
+        usage_today, usage_month = sink.usage(utc_day()) + sink.usage(before), sink.usage_month(month)
     except Exception as exc:
         log.warning("could not load AI usage; starting counters at zero: %s", exc)
         usage_today, usage_month = [], []

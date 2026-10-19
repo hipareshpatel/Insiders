@@ -329,7 +329,8 @@ def cmd_health(args, settings, sink) -> int:
     """Show which AI targets are configured and today's quota usage (no AI calls)."""
     from .ai.gateway import AIGateway
 
-    usage = sink.usage(utc_day())
+    from datetime import date, timedelta
+    usage = sink.usage(utc_day()) + sink.usage((date.fromisoformat(utc_day()) - timedelta(days=1)).isoformat())
     month = sink.usage_month(utc_day()[:7])
     gateway = AIGateway(settings.load_toml("providers.toml"), usage_today=usage, usage_month=month)
     report = {}

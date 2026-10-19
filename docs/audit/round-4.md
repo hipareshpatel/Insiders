@@ -128,3 +128,39 @@ Next: the classes above, in code first (units, directions, signals, deal arithme
 58% model off pass 2), then the prompt's limits on causes and stages; re-run these same 122 cards as a measured re-run,
 then round 5 on fresh companies.
 
+## Measured re-run on the fixes (2026-10-19, `7dc29f7` + the long-document spare `92190f3`)
+
+The 20 companies rebuilt from scratch (`audit_round4/reset.py`: cards saved to `data/audit/round4/cards_before_rerun.json`,
+deleted, all 309 filings back in the queue, memory emptied, re-seeded from XBRL and governance), then read again on free
+providers only: 50 minutes. One filing, Anlon's 13 Aug board outcome (a long document), failed twice on the
+long-document route on free tiers (no card). 120 cards (28 held), all reviewed blind by 12 new agents with the same
+prompt. Findings: `round-4-rerun.json`.
+
+| | round 4 | **re-run** | mark |
+|---|---|---|---|
+| published cards WRONG | 20 / 94 (21%) | **12 / 92 (13%)** | go-live ≤ 5% |
+| held cards WRONG | 10 / 28 | 16 / 28 | none |
+| all cards OK / MINOR / WRONG | 31 / 61 / 30 | 42 / 50 / 28 | |
+| published cards OK | 27 | 36 | |
+| impact level misfit | 38 / 122 | 34 / 120 | none |
+
+By writer: Nemotron 3 Super 80 cards, 24% WRONG (all cards); GLM-4.5-Flash 28, 25%; Nemotron 3.5 Super VL 7, 0%;
+GLM-4.7-Flash 5, 40%. The held cards now catch most WRONG ones (16 of 28 held are WRONG).
+
+What is still WRONG on published cards (reviewers' reports):
+- **Rupee amounts written out in full** ("Rs 11,10,59,061" carded as ₹1.11 Cr, Nestle; "Rs. 1,165,179,600" as ₹1,165 Cr,
+  Anlon; "Rs 85,000 million" as Rs 8,500 million, Siemens) and a statement in ₹ million read as crore (Nestle other
+  income ₹224.7 Cr for ₹22.47 Cr): the unit checks do not yet read whole-rupee figures.
+- **Units not caught where expected**: Excelsoft's "INR 3 Million" still ₹3 Cr (its deal size field is not corrected;
+  the text check did not fire on the live text); RBL's billion table now ₹15,628 Cr for ₹1,56,280 Cr.
+- **Direction claims the guard missed**: inventory read the wrong way on cards whose claim sits in a notable change or
+  without XBRL (RSWM's presentation, Sterling Tools), "reversal of deferred tax" (RSWM), "tax base effect" (AGI Infra).
+- **Invented causes and outcomes remain the largest class** (44 issues on all cards): Star Health's turnaround put on
+  underwriting when investment income drove it, McNally's creditors' money "improving liquidity", merger effects before
+  the merger (Anlon), "completes the programme" for one tranche (RBL).
+- **Metric mislabels**: gross written premium growth as revenue growth (Star Health), exports growth as a tax rate
+  (Nestle), segment margin ambition as revenue CAGR (Cyient), a pricing supplement as the issue.
+
+Next: whole-rupee amounts and the remaining unit paths, the direction guard on notable changes and without XBRL, then
+round 5 on fresh companies.
+

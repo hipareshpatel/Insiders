@@ -1000,3 +1000,25 @@ def test_adani_share_counts_printed_in_crore_are_not_read_as_millions():
     assert [f.text for f in out.card.what_happened] == ["Adani Tradeline acquired 108M shares (0.56%)", "GQG sold 5.04 million shares"]
     assert out.card.track_next.risks == ["Potential dilution from 126.7 million convertible warrants"]
     assert len(notes) == 3
+
+
+def test_order_flow_leaves_out_a_cancelled_tender_and_an_acquisition_never_moves_an_order_on():
+    """Ceigall (round 5 arm B): a cancelled ₹330.84 Cr tender counted as an order on record, and an ₹18.4 Cr purchase of
+    a project company linked to the ₹5,300 Cr order left memory holding the order at ₹0.05 Cr."""
+    d = new_dossier(filing("n0", "2026-08-01T10:00:00+05:30"))
+    d = merge(d, order(330.84, counterparty="Delhi PWD"), filing("n1", "2026-08-20T18:00:00+05:30"), "MODERATE", "now")
+    tender = d["deals"][0]["id"]
+    d = merge(d, order(330.84, counterparty="Delhi PWD", stage="CANCELLED", updates_deal_id=tender),
+              filing("n2", "2026-08-25T18:00:00+05:30"), "LOW", "now")
+    d = merge(d, order(5300, counterparty="RECPDCL"), filing("n3", "2026-09-03T18:00:00+05:30"), "HIGH", "now")
+    big = next(x for x in d["deals"] if x["amount_cr"] == 5300)["id"]
+    buy = order(18.4, counterparty="RECPDCL")
+    buy.card.deal_value.kind = "ACQUISITION"
+    buy.card.deal_value.updates_deal_id = big
+    d = merge(d, buy, filing("n4", "2026-09-20T18:00:00+05:30"), "LOW", "now")
+    assert next(x for x in d["deals"] if x["id"] == big)["amount_cr"] == 5300      # the order keeps its size
+
+    out = order(225, counterparty="NHAI")
+    f = filing("n5", "2026-10-01T18:00:00+05:30")
+    flow = next(s for s in compute(d, merge(d, out, f, "MODERATE", "now"), out, f, None) if s["type"] == "ORDER_FLOW")
+    assert flow["text"].startswith("2nd order on record since 2026-09-03 (₹5,525 Cr in total)")

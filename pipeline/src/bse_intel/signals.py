@@ -450,8 +450,8 @@ def _order_flow(before: dict | None, output: Pass2Output, filing: Filing) -> lis
     earlier, seen = [], []
     for d in (before or {}).get("deals", []):
         st = deal_state(d, filing.filed_at) if d.get("kind") == "ORDER" else None
-        if st is None or is_recap(d.get("kind"), d.get("counterparty")):
-            continue
+        if st is None or is_recap(d.get("kind"), d.get("counterparty")) or st.get("stage") == "CANCELLED":
+            continue   # a cancelled tender is no order on record (Ceigall's ₹330.84 Cr Delhi PWD bid, round 5 arm B)
         # memory written before same_deal() holds a press release's order beside its intimation's
         if same_deal(seen, "ORDER", d.get("amount_cr"), d.get("counterparty"), d["as_of"], d.get("source_news_id", "")):
             continue

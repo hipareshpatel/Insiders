@@ -631,7 +631,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         details = {k: v for k, v in deal.model_dump(include={"includes_gst", "counterparty", "segment", "execution_by", "expansion", "usage"}).items()
                    if v is not None}
         deals = d.get("deals", [])
-        target = next((x for x in deals if x["id"] == deal.updates_deal_id and x["as_of"] < as_of), None) \
+        # only a deal of the same kind moves on: Ceigall's ₹18.4 Cr purchase of a project company was linked to its
+        # ₹5,300 Cr transmission order, and memory then held the order at ₹0.05 Cr (round 5 arm B, 2026-10-19)
+        target = next((x for x in deals if x["id"] == deal.updates_deal_id and x["as_of"] < as_of
+                       and (not x.get("kind") or not deal.kind or x["kind"] == deal.kind)), None) \
             if deal.updates_deal_id else None
         target = target or same_deal(deals, deal.kind, deal.amount_cr, deal.counterparty, as_of, news_id)
         if target is None and is_recap(deal.kind, deal.counterparty):

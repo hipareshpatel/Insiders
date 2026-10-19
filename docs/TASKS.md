@@ -67,6 +67,15 @@ withheld for group figures - open the disclosure (`attachment` in `pledges.event
 any figure the rules read wrong with the row.
 Files you may change: none. Report: here.
 
+## T9 · P3 · laptop · OPEN — fill and check the company page price charts
+
+The company page's price chart (`6368e37`) reads `chart/<scrip>.json`, which `market-data` writes for each company it
+prices. Run `python -m bse_intel market-data` once against the local site when no audit round needs Yahoo, then on three
+company pages (one with several cards) check: the last close and date against NSE's quote page, the 1Y move against the
+1Y return in the header (both from the same closes; small differences from the session count are fine), each filing dot on
+its trading day (after-hours or holiday filings on the next session), and a click on a dot opening that card.
+Files you may change: none. Report: here.
+
 ## T2 · P1 · laptop · OPEN — measure the bank ratio scale before it is trusted (CLAUDE.md rule 0)
 
 The pipeline now reads `PercentageOfGrossNpa`, `PercentageOfNpa` and `ReturnOnAssets` from the banking results XBRL

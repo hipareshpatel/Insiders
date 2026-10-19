@@ -5,7 +5,7 @@ import { Link, useLocation, useParams } from "wouter";
 import type { CardRow, Company, Dossier, Guidance, Peer, Technicals } from "../../shared/types";
 import { Avatar } from "../components/Avatar";
 import { PriceChart } from "../components/PriceChart";
-import { AnnouncementCard, lineValue, OTHER_RENAME, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
+import { AnnouncementCard, lineValue, formerOwnName, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
 import { parseCard, SIGNAL } from "../components/FilingCard";
 import { Badge } from "../components/ui/badge";
 import { api } from "../lib/api";
@@ -312,7 +312,7 @@ export function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
   // the group, plants and brands only: memory written before the pipeline checked the type holds a case's other
   // parties too (Meta, Google, a ministry; laptop test, 2026-10-19). The same rule as dossier.group_entity.
   const entities = (identity?.entities ?? []).filter((e) => e.type && GROUP_TYPE.test(e.type));
-  const ownNames = (identity?.former_names ?? []).filter((n) => !OTHER_RENAME.test(n));
+  const ownNames = (identity?.former_names ?? []).filter(formerOwnName);
   if (!ownNames.length && !entities.length && !owners.length && !auditor && !predictions.length) return null;
   const last = owners[owners.length - 1];
   const prev = owners[owners.length - 2];

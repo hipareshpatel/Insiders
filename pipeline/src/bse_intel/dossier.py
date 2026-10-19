@@ -405,11 +405,15 @@ _GROUP_TYPE = re.compile(r"subsidiar|step[- ]?down|\bwos\b|wholly|target\s+compa
 _OTHER_RENAME = re.compile(r"\(\s*now\b|\bnow\s+known\s+as\b|\brenamed\s+(?:as|to)\b", re.I)
 
 
+# a model's placeholder for "no former name" ("None", "N/A", "-") stored as one: Persistent showed "formerly None"
+_NO_NAME = re.compile(r"\s*(?:none|nil|null|n[./]?\s?a\.?|not\s+applicable|-+)?\s*$", re.I)
+
+
 def own_former_name(name: str | None, dossier: dict) -> bool:
     """A former name of the listed company itself, not another entity's rename: "AGH Dreams Private Limited (now AGH
     Dreams Limited)" and "Heritage Novandie Foods Private Limited (now ...)" are a group company's, shown as Jindal
     Stainless's and Heritage's own (owner's review, 2026-10-20), and a name that is one of its group entities is too."""
-    if not name or _OTHER_RENAME.search(name):
+    if not name or _NO_NAME.match(name) or _OTHER_RENAME.search(name):
         return False
     entities = {_norm(_bare_name(e.get("name") or "")) for e in (dossier.get("identity") or {}).get("entities", [])}
     return _norm(_bare_name(name)) not in entities

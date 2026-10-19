@@ -121,7 +121,7 @@ below (keys from the keys file, 5 workers) and logs to `data\logs`.
 1. **Cloudflare.**
    ```bash
    cd web
-   npx wrangler d1 create bse-index    # put the id in wrangler.jsonc, or in the D1_DATABASE_ID repo variable
+   npx wrangler d1 create bse-index-nse    # put the id in wrangler.jsonc, or in the D1_DATABASE_ID repo variable
    npx wrangler r2 bucket create bse-intelligence
    npx wrangler secret put INGEST_TOKEN    # a long random string
    npx wrangler secret put OWNER_TOKEN     # another one: owner mode (watchlist, Star/Noise) on the site

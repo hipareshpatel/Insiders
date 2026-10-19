@@ -43,7 +43,7 @@ class Limits:
 class QuotaCounter:
     """Day and month totals against (already scaled) limits. Thread-safe."""
 
-    def __init__(self, limits: Limits, day_requests=0, day_tokens=0, month_requests=0, month_tokens=0):
+    def __init__(self, limits: Limits, day_requests=0, day_tokens=0, month_requests=0, month_tokens=0, day_of=None):
         self.limits = limits
         self.day_requests = day_requests
         self.day_tokens = day_tokens
@@ -51,8 +51,22 @@ class QuotaCounter:
         self.month_tokens = month_tokens
         self.forced_exhausted: str | None = None
         self._lock = threading.Lock()
+        # The provider's own quota day (Gemini's ends at midnight Pacific, 12:30 IST): when it changes during a run, the
+        # day's counters and a per-day 429 are cleared. Round 6 (2026-10-19) ran past the reset with Gemini still
+        # retired, and every pack fell to the spare writers.
+        self._day_of = day_of
+        self._day = day_of() if day_of else None
+
+    def _roll(self) -> None:
+        if self._day_of is None:
+            return
+        day = self._day_of()
+        if day != self._day:
+            with self._lock:
+                self._day, self.day_requests, self.day_tokens, self.forced_exhausted = day, 0, 0, None
 
     def exhausted(self, est_tokens: int = 0) -> str | None:
+        self._roll()
         lim = self.limits
         if self.forced_exhausted:
             return self.forced_exhausted
@@ -67,6 +81,7 @@ class QuotaCounter:
         return None
 
     def add(self, requests: int, tokens: int) -> None:
+        self._roll()
         with self._lock:
             self.day_requests += requests
             self.month_requests += requests

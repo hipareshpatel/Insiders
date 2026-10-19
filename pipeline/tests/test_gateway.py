@@ -365,3 +365,27 @@ def test_a_rupee_sign_garbled_by_a_provider_is_put_back():
 
     garbled = '{"headline": "eMudhra FY25 revenue â‚¹519.4 Cr â€“ up 39%", "note": "₹1 Cr"}'
     assert extract_json_object(garbled) == {"headline": "eMudhra FY25 revenue ₹519.4 Cr – up 39%", "note": "₹1 Cr"}
+
+
+def test_a_quota_day_rolls_over_at_its_providers_own_midnight():
+    """Gemini's daily quota ends at midnight Pacific (12:30 IST): round 6 (2026-10-19) ran past it with every Gemini
+    model still retired by a per-day 429 from before the reset, counted on the UTC day."""
+    from bse_intel.ai.limits import Limits, QuotaCounter
+
+    day = ["2026-10-18"]
+    quota = QuotaCounter(Limits(rpd=19), day_requests=19, day_of=lambda: day[0])
+    quota.forced_exhausted = "provider reported daily quota reached"
+    assert quota.exhausted() == "provider reported daily quota reached"
+    day[0] = "2026-10-19"                       # midnight Pacific passes during the run
+    assert quota.exhausted() is None and quota.day_requests == 0
+
+
+def test_usage_rows_count_for_their_providers_own_day(settings):
+    from bse_intel.ai.gateway import AIGateway
+
+    config = settings.load_toml("providers.toml")
+    assert config["providers"]["gemini"]["quota_tz"] == "America/Los_Angeles"
+    gw = AIGateway(config, usage_today=[
+        {"day": "1999-01-01", "provider": "gemini", "model": "gemini-3.7-flash", "requests": 20},   # another day
+    ], env={"GEMINI_API_KEY": "g"})
+    assert gw.limiters["gemini:gemini-3.7-flash"].quota.day_requests == 0

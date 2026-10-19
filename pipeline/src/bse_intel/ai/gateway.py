@@ -28,6 +28,9 @@ transient (minute limits, cooldowns: wait ~60s and retry) or a ceiling
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
 import base64
 import json
 import logging
@@ -160,6 +163,18 @@ class _WeightedRotation:
             return [self._targets[i] for i in ranked]
 
 
+def _utc_day() -> str:
+    return datetime.now(timezone.utc).date().isoformat()
+
+
+def _day_function(tz: str | None):
+    """The provider's quota day as YYYY-MM-DD: UTC unless it names its own zone (`quota_tz` in providers.toml)."""
+    if not tz:
+        return _utc_day
+    zone = ZoneInfo(tz)
+    return lambda: datetime.now(zone).date().isoformat()
+
+
 class AIGateway:
     def __init__(
         self,
@@ -189,15 +204,18 @@ class AIGateway:
         self._circuit_open_until: dict[str, float] = {}
         self.deadline: float | None = None  # time.monotonic() after which no request starts
 
-        today = {f"{u['provider']}:{u['model']}": u for u in usage_today or []}
+        providers = config.get("providers", {})
+        self._day_of = {name: _day_function(pconf.get("quota_tz")) for name, pconf in providers.items()}
+        # a ledger row counts for its provider's own day (usage rows for both the UTC day and that day may be passed)
+        today = {f"{u['provider']}:{u['model']}": u for u in usage_today or []
+                 if u.get("day") in (None, self._day_of.get(u["provider"], _utc_day)())}
         month = {f"{u['provider']}:{u['model']}": u for u in usage_month or []}
         tokens = lambda row: int(row.get("input_tokens", 0) or 0) + int(row.get("output_tokens", 0) or 0)  # noqa: E731
 
-        providers = config.get("providers", {})
         for name, pconf in providers.items():
             plimits = Limits.from_config(pconf.get("limits"))
             self.provider_quota[name] = QuotaCounter(
-                plimits.scaled(self.ceiling),
+                plimits.scaled(self.ceiling), day_of=self._day_of[name],
                 day_requests=sum(int(r.get("requests", 0)) for k, r in today.items() if k.startswith(name + ":")),
                 day_tokens=sum(tokens(r) for k, r in today.items() if k.startswith(name + ":")),
                 month_requests=sum(int(r.get("requests", 0)) for k, r in month.items() if k.startswith(name + ":")),
@@ -234,7 +252,7 @@ class AIGateway:
                     t_row, m_row = today.get(target.key, {}), month.get(target.key, {})
                     self.raw_limits[target.key] = limits
                     self.limiters[target.key] = RateLimiter(scaled, QuotaCounter(
-                        scaled,
+                        scaled, day_of=self._day_of.get(target.provider),
                         day_requests=int(t_row.get("requests", 0)), day_tokens=tokens(t_row),
                         month_requests=int(m_row.get("requests", 0)), month_tokens=tokens(m_row),
                     ))
@@ -276,8 +294,9 @@ class AIGateway:
                 continue
             provider, model = key.split(":", 1)
             limits = self.raw_limits[key]
+            own = self._day_of.get(provider)
             rows.append({
-                "day": day, "provider": provider, "model": model,
+                "day": own() if own is not None and own is not _utc_day else day, "provider": provider, "model": model,
                 "requests": usage.requests, "input_tokens": usage.input_tokens,
                 "output_tokens": usage.output_tokens, "failures": usage.failures,
                 "rate_limited": usage.rate_limited, "limit_rpd": limits.rpd, "limit_tpd": limits.tpd,

@@ -679,11 +679,14 @@ def scale_block(dossier: dict | None, company: dict | None, text: str, unit: int
         denominators.append(("market cap", float(market_cap)))
         lines.append(f"- market cap {_cr(float(market_cap))}" + (f" ({company['price_date']})" if company.get("price_date") else ""))
     ttm = ttm_revenue(dossier)
+    # Each share names its revenue: "19.5% of revenue" (twelve months) was written "19.5% of Q1FY27 revenue" when it
+    # was 72.7% of that quarter (round 5, 2026-10-19, Ceigall; also Protean, Max Financial)
     if ttm:
-        denominators.append(("revenue", ttm[0]))
-        lines.append(f"- revenue {_cr(ttm[0])} ({ttm[1]})")
+        denominators.append(("trailing-12-month revenue", ttm[0]))
+        lines.append(f"- trailing-12-month revenue {_cr(ttm[0])} ({ttm[1]})")
     quarter = _latest_revenue(dossier, "Q")
     if quarter:
+        denominators.append((f"{quarter[0]} quarter revenue", quarter[1]))
         lines.append(f"- latest quarter revenue {_cr(quarter[1])} ({quarter[0]})")
     net_worth = _latest_net_worth(dossier or {})
     if net_worth:

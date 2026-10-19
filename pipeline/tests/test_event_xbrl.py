@@ -85,6 +85,13 @@ def test_confirm_needs_the_amount_with_three_digits_or_a_name():
     director = _facts("camlin_director_20261018")
     assert ex.confirm(director, "Mr. Pradip Kanakia, Independent Director, completes his second term today")
     assert not ex.confirm(director, "Appointment of Ms. Asha Rao as Company Secretary")
+    # The company's own name is in every filing of the company: it pairs nothing (round 5, Dabur's court-stay file
+    # with its FDA letter of the day before)
+    stay = ex.EventFacts(company="Dabur India Limited",
+                         main={"NameOfTheAuthority": "Hon'ble Delhi High Court", "NameOfTheListedEntity": "Dabur India Limited"})
+    assert stay.names() == ["Hon'ble Delhi High Court"]
+    assert not ex.confirm(stay, "Dabur India Limited: US FDA warning letter for the Silvassa plant")
+    assert ex.confirm(stay, "Dabur India Limited: stay granted today by the Hon'ble Delhi High Court")
 
 
 def test_match_takes_the_same_file_then_content_within_the_window(settings):

@@ -154,7 +154,11 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   so give only stated figures. null when there is no stated size. amount_cr is the size of the deal
   itself (the consideration, the order value, the issue size): never an amount the filing gives for
   something else in the same deal (instruments the seller subscribes to, set-off, escrow, guarantee,
-  deposit, a break fee or a liability cap). For a sale or purchase of shares at stated prices, list
+  deposit, a break fee or a liability cap), an amount per year ("₹608.67 Cr annually for 35 years" is
+  a yearly charge: amount_cr null, and say "₹608.67 Cr a year for 35 years"; a project cost the
+  company must fund is not what it earns), a running total that includes orders or sales already
+  disclosed (only the part this filing adds, when stated), or an amount the company pays rather
+  than receives (a lease, royalty or bid premium paid to the state is no order win). For a sale or purchase of shares at stated prices, list
   tranches: each buyer's shares and price_per_share exactly as written, and do not multiply them (the
   system computes the consideration); leave amount_cr null when the filing states no total. progress: how much is done when
   stated ("40 MW of 60 MW commissioned"). If memory's deals already hold this deal at an earlier

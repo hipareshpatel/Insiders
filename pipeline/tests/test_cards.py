@@ -563,9 +563,11 @@ def test_the_scale_block_gives_the_model_proportions_it_must_not_compute():
                + [{"metric": "order_book", "period": "Q4FY26", "value": 25194, "unit": "INR_CR"}],
                "balance_sheet": [{"period": "Q4FY26", "net_worth_cr": 2000.0, "net_debt_cr": -304.24}]}
     block = scale_block(dossier, {"market_cap_cr": 3779.0}, "The order is valued at Rs. 396.5 crore.", None)
-    assert "revenue ₹4,600 Cr (TTM to Q4FY26)" in block and "market cap ₹3,779 Cr" in block
+    assert "trailing-12-month revenue ₹4,600 Cr (TTM to Q4FY26)" in block and "market cap ₹3,779 Cr" in block
     assert "net cash ₹304.24 Cr" in block and "order book ₹25,194 Cr" in block     # not "net debt ₹-304.24 Cr"
-    assert "₹396.5 Cr = 10.5% of market cap, 8.6% of revenue, 19.8% of net worth, 1.6% of order book" in block
+    # each share names which revenue it is of (round 5: a twelve-month share was written as the quarter's)
+    assert ("₹396.5 Cr = 10.5% of market cap, 8.6% of trailing-12-month revenue, 30.5% of Q4FY26 quarter revenue, "
+            "19.8% of net worth, 1.6% of order book") in block
     assert "give no proportions" in scale_block({}, {}, "Rs. 396.5 crore", None)   # nothing known: say so
 
 

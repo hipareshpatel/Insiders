@@ -988,6 +988,49 @@ def gate_issues(out: Pass2Output, card, sources: tuple[str, ...] = ()) -> list[s
 _RUPEE_CRORE = re.compile(r"₹\s*(\d[\d,]*(?:\.\d+)?)\s*(?=cr\b|crores?\b)", re.I)
 
 
+_MONTHS = {m: i + 1 for i, m in enumerate(("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"))}
+_CONTINUES = re.compile(r"(?:in\s+continuation\s+(?:to|of)|further\s+to|with\s+reference\s+to|in\s+furtherance\s+(?:to|of))\s+"
+                        r"(?:our|the\s+company'?s)\s+(?:earlier\s+|previous\s+)?(?:intimation|letter|disclosure|announcement)s?"
+                        r"\s+dated\s+([^;\n]{6,30})", re.I)
+_DAY_MONTH_YEAR = re.compile(r"(\d{1,2})(?:st|nd|rd|th)?[\s.\-/]+([a-z]{3,9}|\d{1,2})[\s.,\-/]+(\d{4})", re.I)
+_MONTH_DAY_YEAR = re.compile(r"([a-z]{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})", re.I)
+
+
+def _stated_date(text: str) -> date | None:
+    """A date as Indian filings write it: "08th September 2026", "8 Sep, 2026", "08.09.2026", "September 8, 2026"."""
+    for rx, order in ((_DAY_MONTH_YEAR, (0, 1, 2)), (_MONTH_DAY_YEAR, (1, 0, 2))):
+        m = rx.search(text)
+        if not m:
+            continue
+        day, month, year = (m.group(i + 1) for i in order)
+        month = int(month) if month.isdigit() else _MONTHS.get(month[:3].lower())
+        try:
+            return date(int(year), month, int(day)) if month else None
+        except ValueError:
+            return None
+    return None
+
+
+def continued_deal(out: Pass2Output, view: dict | None, text: str) -> list[str]:
+    """A filing "in continuation to our earlier intimation dated 08th September 2026" moves the deal of that date on:
+    when memory holds exactly one deal of the same kind from that day and the writer left it as a new one, it becomes
+    that deal's next stage. Round 5 (2026-10-19): Ceigall's LoI for the Bihar Lot-4 order was told as a second order
+    from the department, and the order flow counted the one order twice."""
+    deal = out.card.deal_value if out.card else None
+    if deal is None or deal.updates_deal_id or not view:
+        return []
+    m = _CONTINUES.search(text or "")
+    when = _stated_date(m.group(1)) if m else None
+    if when is None:
+        return []
+    same_day = [d for d in view.get("deals", []) if d.get("id") and d.get("kind") == deal.kind
+                and str(d.get("date") or d.get("as_of") or "")[:10] == when.isoformat()]
+    if len(same_day) != 1:
+        return []
+    deal.updates_deal_id = same_day[0]["id"]
+    return [f"deal is the next stage of {same_day[0]['id']} ({when.isoformat()}): the filing continues that intimation"]
+
+
 def deal_echo_slips(out: Pass2Output, text: str) -> list[str]:
     """A card amount that is its own deal size times 10 or 100 (or divided), printed nowhere in the filing, is the deal
     size with its decimal moved: Anlon's ₹153.3 Cr share swap was "₹1,533 Cr" in the timeline line, which memory then
@@ -2222,6 +2265,7 @@ class Pipeline:
             changes = built + fix_change_percentages(candidate, sources) + counts
             changes += apply_deal_guards(candidate, filing, history, dossier.get("balance_sheet", []), text)
             changes += deal_echo_slips(candidate, filed_text)
+            changes += continued_deal(candidate, view, filed_text)
             changes += event_xbrl.apply_orders(candidate.card, event_orders)   # the file's figures have the last word
             changes += misdated_memory_insights(candidate, view, filed_text)
             if tagged:

@@ -94,3 +94,29 @@ def test_a_deal_size_echoed_with_its_decimal_moved_is_set_back():
     # an amount the filing itself prints is left alone, however it relates to the deal
     out.timeline_entry = "Total consideration ₹1,533 Cr."
     assert deal_echo_slips(out, filing + " Total consideration Rs 1,533 crore.") == []
+
+
+def test_a_filing_that_continues_an_intimation_moves_that_deal_on():
+    """Ceigall (round 5): an LoI "in continuation to our earlier intimation dated 08th September 2026" was written as a
+    second order from the same department, and the order flow counted the one Bihar Lot-4 order twice."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import _stated_date, continued_deal
+
+    def out():
+        return Pass2Output.model_validate({
+            "is_material": True, "event_type": "ORDER_WIN",
+            "card": {"impact_level": "LOW", "headline": "Ceigall gets LoI for Bihar stone block", "what_happened": ["LoI"],
+                     "deal_value": {"kind": "ORDER", "amount_cr": 28.82, "stage": "LOI"}}})
+
+    view = {"deals": [{"id": "d_ceb282b4", "date": "2026-09-08", "kind": "ORDER", "amount_cr": 28.82, "stage": "OTHER"},
+                      {"id": "d_other", "date": "2026-08-26", "kind": "ORDER", "amount_cr": 608.67}]}
+    text = "In continuation to our earlier intimation dated 08th September 2026 and in accordance with Regulation 30"
+    card = out()
+    assert continued_deal(card, view, text) and card.card.deal_value.updates_deal_id == "d_ceb282b4"
+    # no date stated, no deal that day, or two deals that day: left as written
+    for other in ("Ceigall has received an LoI", "In continuation to our intimation dated 1st August 2026"):
+        card = out()
+        assert continued_deal(card, view, other) == [] and card.card.deal_value.updates_deal_id is None
+    twice = {"deals": view["deals"] + [{"id": "d_twin", "date": "2026-09-08", "kind": "ORDER"}]}
+    assert continued_deal(out(), twice, text) == []
+    assert str(_stated_date("September 8, 2026")) == str(_stated_date("08.09.2026")) == "2026-09-08"

@@ -155,10 +155,12 @@ class EventFacts:
         others: the company itself (an action "against the listed entity" names it, as does every filing of the
         company) and an authority (RBI, SEBI or a tax office write to a company about many things). Measured 13-18 Oct
         2026: under a generic subject both paired files with the wrong PDF (Yes Bank's ESG-rating letter, Reliance
-        Power's letter); under the event's own subject they are what identifies a regulatory action."""
+        Power's letter); under the event's own subject they are what identifies a regulatory action. The company's
+        own name is never one (round 5, 2026-10-19: Dabur's 7 Aug court-stay file paired with its 6 Aug FDA letter on
+        "Dabur India Limited" alone, and the card told of a stay granted the day after its own filing)."""
         own = _words(self.company)
         return [v for part in [self.main, *self.items] for k, v in part.items()
-                if _NAME_FIELD.search(k) and not (strict and ("Authority" in k or _words(v) == own))]
+                if _NAME_FIELD.search(k) and _words(v) != own and not (strict and "Authority" in k)]
 
 
 def xml_of(body: bytes | None) -> tuple[bytes | None, int | None]:

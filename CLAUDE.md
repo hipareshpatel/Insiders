@@ -20,6 +20,8 @@ Read before changing anything:
 
 ## Rules
 
+- **Tasks come from `docs/TASKS.md`** (the cloud session leads, owner 2026-10-19). After every `git pull`, read it
+  and work the OPEN tasks for your session in priority order; report there and commit with the task id.
 - Branch `claude/nice-goodall-ta0sxs` only; draft PR hipareshpatel/Insiders#1. Never push to
   another branch or rewrite pushed history. `git pull` before editing: another session also
   pushes to this branch.

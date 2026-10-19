@@ -28,3 +28,11 @@ set aside is MISSED (owner, D33). Missed news: ~50 set-aside filings.
 - **Go-live: WRONG at most 5% of published cards** (owner, 2026-10-18). Beside it the earlier mark, 15%.
 - Recall: at most 2 MISSED of ~50.
 - Reported per event type (RESULTS, ORDER_WIN, CAPEX first: owner, 2026-10-19) and per writer model.
+
+## Restart (2026-10-19 13:50 IST)
+
+The first run (from 2aa4bf1, 12:09) wrote 119 cards, nearly all with the spare writers: Gemini's per-day 429 from before
+its 12:30 IST reset kept all three Gemini models retired for the rest of the IST day, and the usage ledger counted
+Gemini on the UTC day. Fixed in `0d22577` (quota days follow each provider; Gemini's is Pacific), the round's cards and
+memory reset, and the round restarted at **f075647** with the same companies, window, settings and pass marks. The first
+run's cards are kept in `data/audit/round6/cards_first_attempt.json` and are not reviewed.

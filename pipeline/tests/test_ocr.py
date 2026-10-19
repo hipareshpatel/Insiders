@@ -244,7 +244,7 @@ def test_a_page_of_figures_is_read_by_ocr_first_and_a_prose_page_by_its_text_lay
         f"Total e.-.:pcnscs {chr(65 + i)} {1000 + i:,}.50 - {900 + i:,}.25 {4000 + i:,}.75" for i in range(8)), fontsize=9)
     image = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 40, 40), False)
     image.clear_with(200)
-    page.insert_image(page.rect, pixmap=image)
+    page.insert_image(page.rect, pixmap=image, keep_proportion=False)  # a scan fills its page (PyMuPDF 2.0 keeps the square)
     beneath = Document(scan.tobytes(), figure_reader=lambda png: "\n".join(
         f"Total expenses {chr(65 + i)}  {1000 + i:,}.50  {900 + i:,}.25  {4000 + i:,}.75" for i in range(8)))
     assert beneath.page_text(0).splitlines()[0] == "Total expenses A  1,000.50 - 900.25 4,000.75"

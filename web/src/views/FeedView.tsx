@@ -203,7 +203,9 @@ export function Pager({ page, pages, capped, onPage }: { page: number; pages: nu
 }
 
 function SharedCard({ id, view, onClose }: { id: string; view: View; onClose: () => void }) {
-  const query = useQuery({ queryKey: ["card", id], queryFn: () => api.card(id), retry: false });
+  const token = useOwnerToken();
+  // the owner's link also opens a held card; anyone else's gets the published card or "not found"
+  const query = useQuery({ queryKey: ["card", id, !!token], queryFn: () => (token ? ownerApi.card(token, id) : api.card(id)), retry: false });
   // A linked card opens at the top of the feed. The braces matter: window.scrollTo returns an object
   // here, and an effect that returns a non-function makes React throw "destroy is not a function".
   useEffect(() => {

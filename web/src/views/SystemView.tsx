@@ -235,7 +235,7 @@ function RunRow({ run }: { run: PipelineRun }) {
 function ReviewQueue() {
   const token = useOwnerToken();
   const [queued, setQueued] = useState<Set<string>>(new Set());
-  const query = useQuery({ queryKey: ["review"], queryFn: () => api.review() });
+  const query = useQuery({ queryKey: ["review", !!token], queryFn: () => (token ? ownerApi.review(token) : api.review()) });
   const cards = query.data?.cards ?? [];
   if (!cards.length) return null;
   const problems = (card: ReviewCard) => {

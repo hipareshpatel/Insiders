@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useSyncExternalStore } from "react";
-import type { FeedResponse } from "../../shared/types";
+import type { CardRow, FeedResponse, ReviewCard } from "../../shared/types";
 import type { FeedFilters } from "./api";
 
 /** The owner's verdict on a card, in the blind audit's own words. */
@@ -59,6 +59,8 @@ export const ownerApi = {
   },
   verdict: (token: string, newsId: string, verdict: Verdict | "CLEAR", note = "") =>
     call<{ ok: boolean }>(token, "/verdict", { method: "POST", body: JSON.stringify({ news_id: newsId, verdict, note }) }),
+  card: (token: string, id: string) => call<CardRow>(token, `/cards/${encodeURIComponent(id)}`),
+  review: (token: string) => call<{ cards: ReviewCard[] }>(token, "/review"),
   verdicts: (token: string) => call<{ verdicts: { news_id: string; verdict: Verdict; note: string | null }[] }>(token, "/verdicts"),
 };
 

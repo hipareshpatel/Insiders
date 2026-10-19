@@ -267,12 +267,17 @@ api.get("/brief", async (c) => {
   return c.json(body);
 });
 
-api.get("/cards/:id", async (c) => {
+// One card by its id. A held card is the owner's only (/api/owner/cards/:id): a shared link to it answers 404 here,
+// as the public feed never lists it (laptop's screenshots, 2026-10-20: the held banner showed to any visitor).
+export async function cardById(c: Context<AppEnv>, withHeld = false) {
   const row = await c.env.DB.prepare(
-    `SELECT ${CARD_COLUMNS} FROM cards c LEFT JOIN companies co ON co.scrip_code = c.scrip_code WHERE c.news_id = ?1`,
+    `SELECT ${CARD_COLUMNS} FROM cards c LEFT JOIN companies co ON co.scrip_code = c.scrip_code
+      WHERE c.news_id = ?1${withHeld ? "" : " AND c.held = 0"}`,
   ).bind(c.req.param("id")).first();
   return row ? c.json(row) : c.json({ error: "not found" }, 404);
-});
+}
+
+api.get("/cards/:id", (c) => cardById(c));
 
 // Noise audit: what the AI gatekeeper (D1 ledger) and the rules (one R2 file set per day, newest
 // first, NOISE_CHUNK rows each) filtered out on a given day. The first page leads with the
@@ -477,15 +482,18 @@ api.get("/promises/overdue", async (c) => {
   return c.json(body, 200, { "Cache-Control": "public, max-age=300" });
 });
 
-// Needs-review queue (View 5): cards held back by the checks, newest first (partial index).
-api.get("/review", async (c) => {
+// Needs-review queue (View 5): published cards marked for review, newest first (partial index). The held ones are the
+// owner's (/api/owner/review): the public never sees a held card's headline (private launch, 2026-10-20).
+export async function reviewQueue(c: Context<AppEnv>, withHeld = false) {
   const { results } = await c.env.DB.prepare(`
     SELECT c.news_id, c.scrip_code, c.symbol, c.company_name, c.filed_at, c.headline, c.event_category,
            json_extract(c.card_json, '$.grounding') AS grounding, json_extract(c.card_json, '$.review') AS review, c.held
-      FROM cards c WHERE c.needs_review = 1 OR c.held = 1
+      FROM cards c WHERE ${withHeld ? "c.needs_review = 1 OR c.held = 1" : "c.needs_review = 1 AND c.held = 0"}
      ORDER BY c.held DESC, c.filed_at DESC LIMIT 100`).all();
-  return c.json({ cards: results }, 200, { "Cache-Control": "public, max-age=60" });
-});
+  return c.json({ cards: results }, 200, { "Cache-Control": withHeld ? "private, no-store" : "public, max-age=60" });
+}
+
+api.get("/review", (c) => reviewQueue(c));
 
 // Counts above this are shown as "1,000+": an exact count would read every queued row.
 const QUEUE_CAP = 1000;

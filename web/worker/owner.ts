@@ -4,7 +4,7 @@
 import { Hono, type MiddlewareHandler } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import type { AppEnv } from "./env";
-import { feed, isCompanyKey } from "./public";
+import { cardById, feed, isCompanyKey, reviewQueue } from "./public";
 
 export const owner = new Hono<AppEnv>();
 
@@ -59,6 +59,14 @@ owner.post("/requeue", async (c) => {
 });
 
 // The owner's own feed: the public one plus the cards held back from it (private launch, owner 2026-10-19).
+// A card by id and the review queue with the held cards in them (the public routes leave those out)
+owner.get("/cards/:id", async (c) => {
+  const res = await cardById(c, true);
+  res.headers.set("Cache-Control", "private, no-store");
+  return res;
+});
+owner.get("/review", (c) => reviewQueue(c, true));
+
 owner.get("/feed", async (c) => {
   const res = await feed(c, true);
   res.headers.set("Cache-Control", "private, no-store");

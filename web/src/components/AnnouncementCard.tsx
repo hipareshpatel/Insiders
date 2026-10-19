@@ -15,7 +15,7 @@ import { EVENT_LABELS, TONE_LABEL, type Tone } from "../lib/taxonomy";
 import { Avatar } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL, TrackItem } from "./FilingCard";
 import { plain, RichText } from "./RichText";
-import { near, PERIOD_WORDS, repeats, showsFigure } from "../lib/cardText";
+import { executionFact, near, PERIOD_WORDS, repeats, showsFigure } from "../lib/cardText";
 
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
 
@@ -238,16 +238,18 @@ function BlockShell({ title, children, right }: { title: string; children: React
   );
 }
 
-function Steps({ steps, at: raw, warn }: { steps: string[]; at: number; warn?: boolean }) {
+function Steps({ steps, at: raw, warn, reached }: { steps: string[]; at: number; warn?: boolean; reached?: number[] }) {
   const at = Math.max(0, Math.min(steps.length - 1, raw));
+  // a stage ladder is filled up to the current step; a case marks each step that happened, in whatever order it came
+  const done = (i: number) => (reached ? reached.includes(i) || i === at : i <= at);
   return (
     <ol className="flex items-start" aria-label={`Stage: ${steps[at]}`}>
       {steps.map((s, i) => (
         <li key={s + i} className={cn("relative flex min-w-0 flex-1 flex-col items-center gap-1 text-center text-[11.5px] font-bold",
-          i <= at ? "text-ink" : "text-ink-3")}>
-          {i > 0 && <span aria-hidden className={cn("absolute right-1/2 top-[7px] h-[2px] w-full", i <= at ? "bg-[var(--fam)]" : "bg-line-strong")} />}
+          done(i) ? "text-ink" : "text-ink-3")}>
+          {i > 0 && <span aria-hidden className={cn("absolute right-1/2 top-[7px] h-[2px] w-full", done(i) && done(i - 1) ? "bg-[var(--fam)]" : "bg-line-strong")} />}
           <span aria-hidden className={cn("relative z-[1] h-4 w-4 rounded-full border-2",
-            i <= at ? (warn && i === at ? "border-warn bg-warn" : "border-[var(--fam)] bg-[var(--fam)]") : "border-line-strong bg-surface",
+            done(i) ? (warn && i === at ? "border-warn bg-warn" : "border-[var(--fam)] bg-[var(--fam)]") : "border-line-strong bg-surface",
             i === at && "shadow-[0_0_0_4px_var(--fam-soft)]")} />
           <span className="w-full truncate px-0.5">{s}</span>
         </li>
@@ -282,7 +284,7 @@ function DealBlock({ card }: { card: CardBody }) {
   const facts = [
     amount != null ? [deal?.includes_gst ? "Value, incl. GST" : "Value", cr(amount)] : null,
     deal?.counterparty ? ["From", deal.counterparty] : null,
-    deal?.execution_by ? ["Complete by", deal.execution_by] : null,
+    deal?.execution_by ? executionFact(deal.execution_by) : null,
   ].filter(Boolean) as [string, string][];
   const track = deal ? TRACKS[deal.kind === "ORDER" ? "ORDER" : deal.kind === "CAPEX" ? "CAPEX" : "DEAL"] : null;
   const at = deal && track ? track.at[deal.stage] : undefined;
@@ -347,7 +349,7 @@ function RatingBlock({ rc }: { rc: NonNullable<CardBody["rating_change"]> }) {
 function CaseBlock({ cs }: { cs: NonNullable<CardBody["case_stage"]> }) {
   return (
     <BlockShell title={cs.track === "USFDA" ? "Where the USFDA case stands" : "Where the case stands"}>
-      <Steps steps={cs.steps} at={cs.at} warn={cs.at < cs.steps.length - 1} />
+      <Steps steps={cs.steps} at={cs.at} reached={cs.reached ?? Array.from({ length: cs.at + 1 }, (_, i) => i)} warn={cs.at < cs.steps.length - 1} />
     </BlockShell>
   );
 }
@@ -367,7 +369,8 @@ function decisionLines(row: CardRow, card: CardBody, table: ResultsSnapshot | nu
   }
   const pat = table?.pat ?? (table as unknown as Record<string, ResultLine | undefined> | null)?.pat_owners;
   const pe = table && pat && pat.value > 0 && table.period.startsWith("Q") && row.market_cap_cr ? row.market_cap_cr / (pat.value * 4) : null;
-  if (recent && pe != null && pe < 500) {
+  // above 100x the quarter's profit is too small to annualise into anything a reader can use
+  if (recent && pe != null && pe <= 100) {
     out.push({ label: "Run-rate P/E", text: `${pe.toFixed(1)}x (market cap ÷ this quarter's profit × 4)`, computed: true });
   }
   const said = (card.guidance_recall ?? []).find((g) => !repeats(`${g.statement} ${g.target ?? ""}`, faceText));

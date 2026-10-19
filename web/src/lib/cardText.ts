@@ -37,3 +37,9 @@ export function repeats(text: string, of: string): boolean {
   const allFigures = nums.length > 0 && nums.every((n) => near(n, known, String(n)));
   return (allFigures && overlap >= 0.4) || overlap >= 0.8;
 }
+
+/** "36 months" or "05 years" is a term, "30 June 2027" a date (Ceigall's "Complete by 05 years", laptop re-check). */
+export function executionFact(text: string): [string, string] {
+  const term = text.match(/^\s*(?:within|over|for(?: a period of)?)?\s*0*(\d+(?:\.\d+)?)\s*(months?|years?)\b/i);
+  return term ? ["Term", `${term[1]} ${term[2].toLowerCase()}`] : ["Complete by", text];
+}

@@ -173,7 +173,8 @@ export interface CardBody {
             per_year: { years: number; pct: number; label: string } | null } | null;
   rating_change?: { agency: string | null; after: string; after_outlook: string | null; before: string | null;
                     before_outlook: string | null; notches: number | null; as_of_before: string | null } | null;
-  case_stage?: { track: "USFDA" | "CASE"; steps: string[]; at: number } | null;
+  /** `at`: the step this filing is about; `reached`: every step the card names as having happened (not always in order). */
+  case_stage?: { track: "USFDA" | "CASE"; steps: string[]; at: number; reached?: number[] } | null;
   guidance_recall?: { statement: string; target: string | null; due: string | null; given_on: string | null; source_type: string | null; id: string }[];
 }
 

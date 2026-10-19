@@ -698,7 +698,10 @@ function QuarterBars({ dossier }: { dossier: Dossier }) {
                 <span className="num w-full truncate text-center text-[10.5px] font-bold text-ink sm:text-[11.5px]">{label(v)}</span>
                 <span className={cn("w-full max-w-[96px] rounded-[10px]", last ? "grad-accent" : "border border-line-strong bg-surface-2")}
                   style={{ height: `${Math.max(2, ((v - lo) / (hi - lo)) * 150)}px` }} />
-                <span className="num w-full truncate text-center text-[10px] text-ink-3 sm:text-[11px]">{period}</span>
+                {/* "Q3" over "FY27": eight quarters fit a phone without cutting the labels */}
+                <span className="num w-full text-center text-[10px] leading-tight text-ink-3 sm:text-[11px]">
+                  {period.replace(/^(Q[1-4])(FY\d{2})$/, "$1\u200b$2").split("\u200b").map((part, k) => <span key={k} className="block">{part}</span>)}
+                </span>
               </div>
             );
           })}

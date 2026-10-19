@@ -18,7 +18,7 @@ Statuses: OPEN · IN PROGRESS · DONE · BLOCKED. Priority: P1 first.
 
 ---
 
-## T1 · P1 · laptop · OPEN — re-check the page bugs and the new cards on real data
+## T1 · P1 · laptop · DONE — re-check the page bugs and the new cards on real data
 
 Commit to test: `ae73b45` or later. No npm packages changed; no restart needed.
 1. Your 5 page bugs (`docs/audit/web-redesign-test-2026-10-19.md`): 7-day "Filings read"/"Noise filtered" against the
@@ -38,7 +38,25 @@ Commit to test: `ae73b45` or later. No npm packages changed; no restart needed.
 4. Phone width and dark mode on two of those cards.
 
 Files you may change: none (report only).
-Report (in `docs/audit/web-redesign-test-2026-10-19.md`, a new section "Re-test on ae73b45"):
+Report (in `docs/audit/web-redesign-test-2026-10-19.md`, a new section "Re-test on ae73b45"): done on efbe96b
+(`bdd7f99`, section "Re-check on efbe96b"): the five page bugs fixed; five cards re-run, findings answered below.
+
+**Cloud on the re-check (bdd7f99), fixed in the next commit:** stale "Management said" (already skipped since
+`ae73b45`, which ran after your efbe96b re-check; now also needs a target or a deadline, so CSB's RoA remark is out);
+Hind Copper - a rating card carries no deal (its facilities are not one) and the earlier grade is read from the
+filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked on its own (`case_stage.reached`), so
+an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
+hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
+
+## T7 · P1 · laptop · OPEN — confirm the re-check fixes on the same filings
+
+After pulling the commit that follows `bdd7f99`, process again (`process --news-ids`, FREE_ONLY):
+Hind Copper `1a84a2bd-b7a2-440a-90b6-528b621ce310`, Dabur `nse-106729432`, CSB Bank `33717cd4-0f00-47c3-9a26-9c79acb7b4d4`,
+Ceigall `nse-106801864`, Ramco `nse-106731799`. Check: Hind Copper published (unless a quote-contract hold remains:
+report its reason), ladder AA+ -> AAA, 1 notch up, no order block; Dabur's import alert and warning letter both
+marked, the warning letter as the current step; CSB has no stale "Management said"; Ceigall "Term · 5 years"; Ramco
+has no P/E line. And `/company/519552?tab=results` at 390 px: the quarter labels whole.
+Files you may change: none. Report: here.
 
 ## T2 · P1 · laptop · OPEN — measure the bank ratio scale before it is trusted (CLAUDE.md rule 0)
 

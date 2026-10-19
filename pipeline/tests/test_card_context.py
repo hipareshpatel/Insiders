@@ -26,7 +26,8 @@ def test_rating_change_counts_notches_against_the_last_rating_in_memory():
 
 def test_case_stage_takes_the_furthest_step_the_card_names():
     usfda = case_stage("LITIGATION_REGULATORY", "Demo Pharma gets USFDA warning letter for Unit III", [])
-    assert usfda == {"track": "USFDA", "steps": ["Form 483", "Warning letter", "Import alert", "Closed"], "at": 1}
+    assert usfda == {"track": "USFDA", "steps": ["Form 483", "Warning letter", "Import alert", "Closed"], "at": 1,
+                     "reached": [1]}
     tax = case_stage("LITIGATION_REGULATORY", "GST demand of ₹42 Cr with penalty; company to appeal", [])
     assert tax["track"] == "CASE" and tax["steps"][tax["at"]] == "Order"     # "to appeal" is not an appeal filed
     filed = case_stage("LITIGATION_REGULATORY", "Company filed an appeal against the ₹42 Cr GST order", [])
@@ -118,3 +119,31 @@ def test_order_terms_in_ranges_and_short_terms():
     assert term_years("FY28", "2026-10-19") and round(term_years("FY28", "2026-10-19"), 1) == 1.4
     assert term_years("by 2025", "2026-10-19") is None       # already past
     assert term_years("as per the schedule", "2026-10-19") is None
+
+
+
+def test_case_steps_are_marked_each_on_its_own():
+    """Dabur (laptop re-check, 2026-10-19): the import alert came in June, the warning letter in July. The card is about
+    the warning letter, and the import alert is marked as reached too, not left ahead of the company."""
+    got = case_stage("LITIGATION_REGULATORY", "Dabur gets USFDA warning letter for its Baddi unit",
+                     ["The letter follows the June import alert on the unit"], ["Exports from the unit already stopped"])
+    assert got["steps"][got["at"]] == "Warning letter" and got["reached"] == [1, 2]
+
+
+def test_a_rating_reads_its_earlier_grade_from_the_filing_when_memory_has_none():
+    """Hind Copper's ICRA upgrade: memory had no earlier rating; the filing says "from [ICRA]AA+ (Stable)"."""
+    from bse_intel.card_context import grade_before_in_text
+
+    text = ("ICRA has upgraded the Long-term rating to [ICRA]AAA (Stable) from [ICRA]AA+ (Stable) for the "
+            "Rs. 2,100 crore facilities; the short-term rating is reaffirmed at [ICRA]A1+.")
+    assert grade_before_in_text(text) == "AA+"
+    after = {"balance_sheet": [{"credit_rating": "[ICRA]AAA (Stable)", "rating_agency": "ICRA", "source_news_id": "n1"}]}
+    got = rating_change(None, after, "n1", text)
+    assert (got["before"], got["after"], got["notches"], got["as_of_before"]) == ("AA+", "AAA", 1, None)
+    assert grade_before_in_text("Rating reaffirmed at CARE A-") is None          # no "from": no earlier grade
+    assert grade_before_in_text("revised from short-term A1 to A1+") is None     # short-term only
+
+
+def test_guidance_recall_needs_a_target_or_a_deadline():
+    before = {"guidance": [{"id": "x", "statement": "RoA improved on lower credit costs", "status": "OPEN", "given_on": "2026-08-01"}]}
+    assert guidance_recall(before, "RESULTS", "2026-10-19") == []

@@ -1,7 +1,7 @@
 // The card's "say each thing once" rules (src/lib/cardText.ts). Run: npm test (node --test, types stripped).
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { figures, repeats, showsFigure } from "../src/lib/cardText.ts";
+import { executionFact, figures, repeats, showsFigure } from "../src/lib/cardText.ts";
 
 test("a point that restates the headline is a repeat", () => {
   // the owner's Punjab & Sind Bank card: headline and first point were the same figure
@@ -50,4 +50,12 @@ test("one event per company and day in the calendar", async () => {
   ]);
   assert.deepEqual(got.map((x) => `${x.scrip_code} ${x.event_date} ${x.event_type}`), [
     "1 2026-10-24 RIGHTS_OPEN", "1 2026-10-25 MILESTONE", "2 2026-10-24 OTHER", "1 2026-10-24 RECORD_DATE"]);
+});
+
+test("an execution term reads as a term, a date as a date", () => {
+  assert.deepEqual(executionFact("05 years"), ["Term", "5 years"]);
+  assert.deepEqual(executionFact("within 36 months"), ["Term", "36 months"]);
+  assert.deepEqual(executionFact("for a period of five years"), ["Complete by", "for a period of five years"]); // words kept as written
+  assert.deepEqual(executionFact("30 June 2027"), ["Complete by", "30 June 2027"]);
+  assert.deepEqual(executionFact("2.5 Years"), ["Term", "2.5 years"]);
 });

@@ -561,3 +561,18 @@ def test_round_4_rerun_units_whole_rupees_explicit_units_and_powers_of_ten():
     rbl = "Key business update (Rs billion)\nTotal deposits 1,562.8 1,250.2"
     assert unit_slips(["Deposits ₹15,628 Cr"], rbl) == [("15,628", 15628.0, 0, 156280.0, 0)]
     assert unit_slips(["Revenue ₹4,714 Cr"], "Revenue from operations (Rs. in crore) 4,714.0") == []
+
+
+def test_a_rating_card_has_no_deal(settings):
+    """Hind Copper's ICRA upgrade (laptop re-check, 2026-10-19): the ₹2,100 Cr of rated facilities was set against revenue
+    as a deal and then held as an amount from an instruments clause. A rating covers borrowing lines; it is no deal."""
+    from bse_intel.pipeline import apply_deal_guards
+    from bse_intel.models import Pass2Output
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "DEBT_RATINGS", "timeline_entry": "Upgraded",
+        "card": {"impact_level": "MODERATE", "headline": "ICRA upgrades Hindustan Copper to AAA", "what_happened": ["x"],
+                 "deal_value": {"kind": "OTHER", "amount_cr": 2100, "stage": "OTHER"}}})
+    filing = _filing("n-rating", "Credit Rating", now_ist(), "Credit Rating")
+    notes = apply_deal_guards(out, filing, [], [], "facilities of Rs. 2,100 crore")
+    assert out.card.deal_value is None and "rated facilities" in notes[0]

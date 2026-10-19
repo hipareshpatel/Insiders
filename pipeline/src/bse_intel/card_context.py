@@ -47,8 +47,22 @@ def agency_of(sheet: dict) -> str | None:
     return next((key for word, key in _AGENCY_KEYS if re.search(rf"(?<![A-Z]){re.escape(word)}(?![A-Z])", text)), None)
 
 
-def rating_change(before: dict | None, after: dict, news_id: str) -> dict | None:
-    """The rating this filing set, beside the last one memory held."""
+# "upgraded the long-term rating to [ICRA]AAA (Stable) from [ICRA]AA+ (Stable)": the earlier grade in the filing's words
+_FROM_GRADE = re.compile(r"\b(?:upgrad|downgrad|revis|reaffirm|migrat|chang)\w*\b[^.;]{0,200}?\bfrom\s+([^.;,]{1,40})", re.I)
+
+
+def grade_before_in_text(text: str | None) -> str | None:
+    """The long-term grade a rating filing says it moved from, when it says so."""
+    for m in _FROM_GRADE.finditer(text or ""):
+        grade = long_term_grade(m[1])
+        if grade:
+            return grade
+    return None
+
+
+def rating_change(before: dict | None, after: dict, news_id: str, text: str = "") -> dict | None:
+    """The rating this filing set, beside the same agency's last one in memory, else the grade the filing says it
+    moved from (memory often has no earlier rating: Hind Copper's ICRA AA+ -> AAA, laptop re-check 2026-10-19)."""
     sheets = [s for s in after.get("balance_sheet", []) if s.get("credit_rating")]
     if not sheets or sheets[-1].get("source_news_id") != news_id:
         return None
@@ -60,11 +74,14 @@ def rating_change(before: dict | None, after: dict, news_id: str) -> dict | None
     grade, was = long_term_grade(now.get("credit_rating")), long_term_grade((prev or {}).get("credit_rating"))
     if grade is None:
         return None
+    if was is None:
+        was = grade_before_in_text(text)
+        prev = {"as_of": None, "rating_outlook": None} if was else prev
     notches = LONG_TERM.index(was) - LONG_TERM.index(grade) if was else None   # positive: an upgrade
     return {
         "agency": now.get("rating_agency"), "after": grade, "after_outlook": now.get("rating_outlook"),
         "before": was, "before_outlook": (prev or {}).get("rating_outlook") if was else None,
-        "notches": notches, "as_of_before": (prev or {}).get("as_of", "")[:10] or None if was else None,
+        "notches": notches, "as_of_before": ((prev or {}).get("as_of") or "")[:10] or None if was else None,
     }
 
 
@@ -85,18 +102,25 @@ _CASE_CONTEXT = re.compile(r"\b(?:sebi|rbi|irdai|cci|court|tribunal|nclt|nclat|s
                            r"|regulator|ministry|dgtr|pollution|labour)", re.I)
 
 
-def case_stage(event_type: str, headline: str, facts: list[str]) -> dict | None:
-    """The furthest stage the card's headline and first point name, on the case's own ladder."""
+def case_stage(event_type: str, headline: str, facts: list[str], context: list[str] = ()) -> dict | None:
+    """Where a case stands. `at` is the step this filing is about (the furthest one its headline names, else its first
+    point's); `reached` is every step the card names as having happened, each on its own: a USFDA import alert can
+    come before the warning letter (Dabur, laptop re-check 2026-10-19), so the ladder is not filled up to `at`."""
     if event_type not in ("LITIGATION_REGULATORY", "GOVERNANCE"):
         return None
-    text = " ".join([headline, *facts[:1]]).lower()
-    if not _CASE_CONTEXT.search(text):
+    lead = " ".join([headline, *facts[:1]]).lower()
+    if not _CASE_CONTEXT.search(lead):
         return None
-    track, steps = ("USFDA", _USFDA) if re.search(r"\b(?:us\s*)?fda\b", text) else ("CASE", _CASE)
-    reached = [i for i, (_, pattern) in enumerate(steps) if re.search(pattern, text)]
-    if not reached:
+    track, steps = ("USFDA", _USFDA) if re.search(r"\b(?:us\s*)?fda\b", lead) else ("CASE", _CASE)
+
+    def named(text: str) -> list[int]:
+        return [i for i, (_, pattern) in enumerate(steps) if re.search(pattern, text.lower())]
+
+    current = named(headline) or named(lead)
+    if not current:
         return None
-    return {"track": track, "steps": [name for name, _ in steps], "at": max(reached)}
+    reached = sorted(set(current) | set(named(" ".join([*facts, *context]))))
+    return {"track": track, "steps": [name for name, _ in steps], "at": max(current), "reached": reached}
 
 
 _RELEVANT = {
@@ -127,6 +151,9 @@ def guidance_recall(before: dict | None, event_type: str, filed_at: str | None =
     out = []
     for g in reversed((before or {}).get("guidance", [])):
         if g.get("status") not in _OPEN:
+            continue
+        # a commitment has a target or a deadline; an explanation from the call has neither (CSB's RoA remark)
+        if not (g.get("target") or g.get("due") or g.get("due_date")):
             continue
         if today and g.get("due_date") and g["due_date"] < today.isoformat():
             continue

@@ -370,7 +370,7 @@ acquisition, not a card error.
 6. `sync-to-cloud` (several days, budget-aware), then daily live runs.
 
 ## Test plan before go-live
-- Unit/integration tests for every module (current: 633 pipeline tests, 6 web tests, typecheck and build for web).
+- Unit/integration tests for every module (current: 637 pipeline tests, 7 web tests, typecheck and build for web).
 - Fixtures from the 6 case studies (expected numbers, signals, missing disclosures).
 - Smoke test on the 5 companies with real BSE data on the laptop.
 - Website walk-through locally on desktop and phone widths.

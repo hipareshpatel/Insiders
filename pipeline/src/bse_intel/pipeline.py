@@ -1188,6 +1188,13 @@ def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], bal
     deal = out.card.deal_value if out.card else None
     if deal is None:
         return []
+    # A rating covers the company's borrowing lines: "₹2,100 Cr of facilities" is not a deal it made, and read as one
+    # it was set against revenue and then held as an amount from an instruments clause (Hind Copper's ICRA upgrade,
+    # laptop re-check 2026-10-19)
+    if out.event_type == "DEBT_RATINGS":
+        out.card.deal_value = None
+        log.info("deal guards for %s: a rating's facilities are not a deal (₹%s Cr dropped)", filing.news_id, deal.amount_cr)
+        return [f"deal value dropped: a rating card's ₹{deal.amount_cr} Cr is the rated facilities, not a deal"]
     notes = []
     known = {"financial_metrics": history + [m.model_dump() for m in out.dossier_delta.financial_metrics],
              "balance_sheet": balance_sheet}
@@ -2509,8 +2516,9 @@ class Pipeline:
             "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
             # the event's own block on the card's face, made by code (card_context.py, signals.scale_parts)
             "scale": scale_parts(before, out, priced, filing.filed_at),
-            "rating_change": rating_change(before, current, filing.news_id) if event_type == "DEBT_RATINGS" else None,
-            "case_stage": case_stage(event_type, card.headline, [f.text for f in card.what_happened]),
+            "rating_change": rating_change(before, current, filing.news_id, text) if event_type == "DEBT_RATINGS" else None,
+            "case_stage": case_stage(event_type, card.headline, [f.text for f in card.what_happened],
+                                     [w.text for w in card.why_it_matters]),
             "guidance_recall": guidance_recall(before, event_type, filing.filed_at),
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],

@@ -1022,3 +1022,13 @@ def test_order_flow_leaves_out_a_cancelled_tender_and_an_acquisition_never_moves
     f = filing("n5", "2026-10-01T18:00:00+05:30")
     flow = next(s for s in compute(d, merge(d, out, f, "MODERATE", "now"), out, f, None) if s["type"] == "ORDER_FLOW")
     assert flow["text"].startswith("2nd order on record since 2026-09-03 (₹5,525 Cr in total)")
+
+
+def test_the_statement_quarter_is_the_latest_quarter_end_the_opening_pages_name():
+    """Clean Max (round 6): the covering letter named the year-ago quarter first and the card was labelled Q1FY26."""
+    from bse_intel.periods import statement_quarter
+
+    text = ("Results for the quarter ended 30 June 2025 were reviewed earlier. The Board approved the unaudited financial "
+            "results for the quarter ended 30 June 2026 (the Statement).")
+    assert statement_quarter(text) == "Q1FY27"
+    assert statement_quarter("for the quarter and year ended 31st March, 2025") == "Q4FY25"

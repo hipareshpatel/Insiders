@@ -79,14 +79,17 @@ _STATEMENT_YEAR = re.compile(r"(?:\bYEAR|TWELVE\s+MONTHS)\s+ENDED\s+(?:ON\s+)?(.
 
 
 def statement_quarter(text: str | None) -> str | None:
-    """The quarter a results statement covers, from the first "quarter (and year) ended <date>" in
-    its opening pages: "for the quarter and year ended 31st March, 2025" -> "Q4FY25"."""
-    for m in _STATEMENT_QUARTER.finditer((text or "")[:8000]):
-        d = explicit_date(m.group(1))
-        if d and d.month in _QUARTER_END:
-            q = _QUARTER_END[d.month]
-            return f"Q{q}FY{(d.year + (0 if q == 4 else 1)) % 100:02d}"
-    return None
+    """The quarter a results statement covers, from the latest "quarter (and year) ended <date>" in its opening pages:
+    "for the quarter and year ended 31st March, 2025" -> "Q4FY25". The latest, not the first: Clean Max's covering
+    letter named the year-ago "quarter ended 30 June 2025" before the statement's own 30 June 2026, and its card was
+    labelled Q1FY26 (round 6, 2026-10-19). A statement's comparatives are always earlier than its own quarter."""
+    dates = [d for d in (explicit_date(m.group(1)) for m in _STATEMENT_QUARTER.finditer((text or "")[:8000]))
+             if d and d.month in _QUARTER_END]
+    if not dates:
+        return None
+    d = max(dates)
+    q = _QUARTER_END[d.month]
+    return f"Q{q}FY{(d.year + (0 if q == 4 else 1)) % 100:02d}"
 
 
 def statement_year(text: str | None) -> str | None:

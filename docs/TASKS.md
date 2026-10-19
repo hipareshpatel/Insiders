@@ -82,7 +82,7 @@ on its XBRL figures, and the standalone-only quarters are still in it. After pul
    `/system` at 390 px no wider than the screen; Heritage's Overview shows 8 "What to track" items and "Show all".
 Files you may change: none. Report: here (the seed's JSON summary line and each check).
 
-## T12 · P1 · laptop · BLOCKED on the owner — deploy the Worker with its database and bucket (PLAN G4)
+## T12 · P1 · laptop · DONE — deploy the Worker with its database and bucket (PLAN G4)
 
 Measured 2026-10-20 (owner's screenshot): the Worker `insiders` is deployed on insiders.reply-bd3.workers.dev with
 **0 bindings** (no D1, no R2), uploaded 4 days ago. The owner is creating D1 `bse-index` and R2 `bse-intelligence` in the
@@ -95,7 +95,23 @@ dashboard and the GitHub secrets. **The D1 name is `bse-index-nse`** (2026-10-20
 3. `npm run deploy` (or the repo's deploy script); then check the dashboard shows 3 bindings (DB, VAULT, AI) and
    `curl.exe -s -o NUL -w '%{http_code}' https://insiders.reply-bd3.workers.dev/api/feed?range=all` gives 200.
 4. Do not load data yet (G6 and `sync-to-cloud` come after); do not switch the schedule on (G7, owner).
-Files you may change: `web/wrangler.jsonc` (the id only), `docs/PLAN.md` (G1/G4 status lines). Report: here.
+Files you may change: `web/wrangler.jsonc` (the id only), `docs/PLAN.md` (G1/G4 status lines). Report: done 2026-10-20 02:40-03:15 IST on the owner's go ("Yes, create the D1 database bse-index and the R2 bucket
+bse-intelligence with wrangler, then deploy the Worker (T12)").
+- The laptop created D1 `bse-index` (21:34 UTC) and R2 `bse-intelligence` with wrangler. Four minutes later, D1
+  `bse-index-nse` (`f1465085-72e3-4a72-a67e-1a6ca9ab202e`) was created in the dashboard, presumably because Cloudflare
+  refused `bse-index` as already taken, and the cloud renamed the config to it (4bd6fd4). **The Worker now uses `bse-index-nse`**:
+  its id is `database_id` in `web/wrangler.jsonc`, migrations 0001-0010 applied (22 tables), and deployed version
+  `9a23c2f8-36b1-4ce1-9405-553869d5897a` binds `env.DB (f1465085-...)`, VAULT `bse-intelligence` and AI
+  (`wrangler versions view`). **`bse-index` (`175e34e6-...`) is now unused** (schema only, no data): the owner can delete it in the
+  dashboard, or say so and the laptop runs `wrangler d1 delete bse-index`.
+- `INGEST_TOKEN` and `OWNER_TOKEN` were not in the keys file. Generated (32 random bytes each), appended to the owner's
+  keys file, and set with `wrangler secret put` without printing. The same INGEST_TOKEN is the GitHub secret G2 needs; OWNER_TOKEN is
+  what the owner enters in the live site's owner box.
+- Live: `/` 200, `/api/feed?range=all` 200 with no cards, `/api/system` d1 217,088 bytes, `/api/owner/check` 401 without the
+  token. The local site still reads its own database (855 cards).
+- Wrangler's deploy summary prints the DB line with the placeholder id; the built `dist/insiders/wrangler.json` and the
+  deployed version both have the real one.
+- Not done (as the task says): no data loaded, schedule not switched on.
 
 ## T11 · P1 · laptop · DONE — screenshots of the site on real data (owner asked, 2026-10-20)
 

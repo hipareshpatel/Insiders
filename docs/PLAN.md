@@ -84,6 +84,7 @@ when the site is shared. Built for it:
 | # | Step | Who |
 |---|---|---|
 | G1 | Cloudflare (free plan): D1 `bse-index-nse`, R2 `bse-intelligence`, an API token; Worker secrets `INGEST_TOKEN`, `OWNER_TOKEN` | Owner |
+| G1/G4 status | **Done 2026-10-20 03:15 IST** (owner's go): D1 `bse-index-nse` (f1465085-...) migrated (0001-0010) and R2 `bse-intelligence`; Worker secrets INGEST_TOKEN and OWNER_TOKEN set (generated into the keys file); Worker deployed with DB, VAULT and AI bound; https://insiders.reply-bd3.workers.dev answers with an empty feed. An unused D1 `bse-index` (schema only) can be deleted. Still the owner's: the Cloudflare API token for `deploy-web.yml` (CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID) | Done |
 | G2 | GitHub secrets (entered on GitHub only, never pasted in chat): `GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `INGEST_TOKEN`, `PLATFORM_API_URL`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Owner |
 | G3 | Make the repository public (GitHub's free minutes then cover the 15-30 minute runs) | Owner |
 | G4 | D1 id in `web/wrangler.jsonc`, `npm run db:migrate:remote`, deploy (https://insiders.reply-bd3.workers.dev); merge the PR so `deploy-web.yml` redeploys later changes | Laptop, then owner merges |

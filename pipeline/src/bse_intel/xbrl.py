@@ -312,7 +312,10 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                 metric = RATIO_TAGS[name]
                 if kind != "PURE":
                     continue
-                value *= 100  # filed as a fraction, read as a percentage
+                # filed as a fraction, read as a percentage; a bank ratio above 1 was already written as one
+                # (assumption, not seen yet: the SEBI template asks for the fraction, CSB Bank files 0.0158)
+                if not (metric in RATIO_BOUNDS and abs(value) > 1):
+                    value *= 100
                 low, high = RATIO_BOUNDS.get(metric, (-math.inf, math.inf))
                 if not low <= value <= high:
                     continue
@@ -334,6 +337,11 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                 balance.setdefault(BALANCE_TAGS[name], value / 1e7)
     if not values:
         return None
+    # Net NPA cannot exceed gross NPA: when it does, one of the two was read at the wrong scale, so neither is kept
+    for label in {p for m, p in values if m == "nnpa_pct"}:
+        gross, net = values.get(("gnpa_pct", label)), values.get(("nnpa_pct", label))
+        if gross is not None and net is not None and net > gross + 0.005:
+            values.pop(("gnpa_pct", label)), values.pop(("nnpa_pct", label))
     # EBITDA = PBT + finance cost + depreciation - other income (exceptional items added back)
     for label in {p for _, p in values}:
         parts = [values.get((m, label)) for m in ("pbt", "finance_cost", "depreciation")]

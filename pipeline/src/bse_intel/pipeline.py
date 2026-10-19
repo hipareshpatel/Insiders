@@ -2511,7 +2511,7 @@ class Pipeline:
             "scale": scale_parts(before, out, priced, filing.filed_at),
             "rating_change": rating_change(before, current, filing.news_id) if event_type == "DEBT_RATINGS" else None,
             "case_stage": case_stage(event_type, card.headline, [f.text for f in card.what_happened]),
-            "guidance_recall": guidance_recall(before, event_type),
+            "guidance_recall": guidance_recall(before, event_type, filing.filed_at),
             "pdf_pages": doc.page_count or None,
             "grounding": {"score": score, "checked": checked, "ungrounded": ungrounded[:10],
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims,

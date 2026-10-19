@@ -65,3 +65,56 @@ def test_an_orders_term_spreads_it_over_the_years_it_runs():
     assert scale["per_year"] == {"years": 3.0, "pct": 9.3, "label": "FY26 revenue"}
     assert _scale(before, out, {}, "2026-10-19T18:15")[0].text == (
         "₹48.1 Cr order = 28% of FY26 revenue (₹172 Cr); over its 3-year term, 9% of FY26 revenue a year.")
+
+
+def test_rating_change_compares_only_with_the_same_agency():
+    """A company rated CRISIL AA and ICRA AA- has two opinions, not a downgrade between them."""
+    before = {"balance_sheet": [{"credit_rating": "CRISIL AA/Stable", "as_of": "2026-01-01"}]}
+    after = {"balance_sheet": [{"credit_rating": "[ICRA]AA-(Stable)", "rating_agency": "ICRA", "source_news_id": "n1"}]}
+    got = rating_change(before, after, "n1")
+    assert got["after"] == "AA-" and got["before"] is None and got["notches"] is None
+    before["balance_sheet"].append({"credit_rating": "ICRA A+ (Positive)", "as_of": "2026-03-01"})
+    assert rating_change(before, after, "n1")["notches"] == 1           # A+ -> AA-: one notch up, same agency
+    unknown = {"balance_sheet": [{"credit_rating": "BBB", "source_news_id": "n2"}]}
+    assert rating_change(before, unknown, "n2")["before"] == "A+"         # agency unknown: the last rating on record
+
+
+def test_long_term_grades_edge_cases():
+    assert long_term_grade("CARE BB; Stable; ISSUER NOT COOPERATING") == "BB"
+    assert long_term_grade("CRISIL AAA(SO)") == "AAA"
+    assert long_term_grade("CARE D") == "D"
+    assert long_term_grade("Withdrawn") is None
+    assert long_term_grade("") is None and long_term_grade(None) is None
+
+
+def test_case_stage_needs_a_case_and_reads_its_words_strictly():
+    assert case_stage("GOVERNANCE", "Notice of the 32nd Annual General Meeting", []) is None       # no regulator
+    assert case_stage("GOVERNANCE", "SEBI show cause notice to the managing director", [])["at"] == 0
+    in_order = case_stage("LITIGATION_REGULATORY", "Company moves court in order to protect its patent", [])
+    assert in_order is None                                                                       # no stage named
+    dismissed = case_stage("LITIGATION_REGULATORY", "Tribunal dismissed the company's appeal against the GST demand", [])
+    assert dismissed["steps"][dismissed["at"]] == "Order"       # dismissed is not "resolved"; the demand stands
+    eir = case_stage("LITIGATION_REGULATORY", "USFDA issues EIR for Unit II after zero observations", [])
+    assert eir["track"] == "USFDA" and eir["steps"][eir["at"]] == "Closed"
+    assert case_stage("LITIGATION_REGULATORY", "Receives USFDA approval for generic tablets", []) is None
+
+
+def test_guidance_recall_skips_overdue_old_and_part_word_matches():
+    before = {"guidance": [
+        {"id": "old", "statement": "Revenue of ₹500 Cr", "status": "OPEN", "given_on": "2024-01-01", "due_date": "2027-03-31"},
+        {"id": "late", "statement": "FY26 revenue of ₹900 Cr", "status": "OPEN", "given_on": "2026-02-01", "due_date": "2026-03-31"},
+        {"id": "patent", "statement": "Two patents to be filed", "status": "OPEN", "given_on": "2026-08-01"},
+        {"id": "ok", "statement": "FY27 PAT margin of 12%", "status": "ON_TRACK", "given_on": "2026-08-01", "due_date": "2027-03-31"},
+    ]}
+    assert [g["id"] for g in guidance_recall(before, "RESULTS", "2026-10-19T10:00")] == ["ok"]
+    assert [g["id"] for g in guidance_recall(before, "RESULTS", None)] == ["ok", "late"]   # no date: no age rules
+
+
+def test_order_terms_in_ranges_and_short_terms():
+    from bse_intel.signals import term_years
+
+    assert term_years("18 to 21 months", None) == 1.75      # the longer end of a range
+    assert term_years("within 6 months of the LOA", None) == 0.5
+    assert term_years("FY28", "2026-10-19") and round(term_years("FY28", "2026-10-19"), 1) == 1.4
+    assert term_years("by 2025", "2026-10-19") is None       # already past
+    assert term_years("as per the schedule", "2026-10-19") is None

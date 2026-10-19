@@ -718,7 +718,9 @@ function SegmentMix({ dossier }: { dossier: Dossier }) {
   const R = 50, len = 2 * Math.PI * R, sum = parts.reduce((a, p) => a + p.share, 0);
   // Filings often give nested or alternative cuts (Dairy holds Milk; VAP with and without ghee): they add up past
   // 100% and cannot be drawn as parts of one whole, so each is shown as its own share of revenue.
-  if (sum > 105) {
+  // ...and when only amounts are given, cuts that add up past the quarter's revenue overlap in the same way
+  const quarterRevenue = dossier.financial_metrics.find((m) => m.period === latest && m.metric === "revenue")?.value;
+  if (sum > 105 || (quarterRevenue && total > quarterRevenue * 1.05)) {
     return (
       <Panel title="Business mix" hint={`${latest} · each segment's share of revenue; the cuts overlap`}>
         <ul className="space-y-2.5 text-[13.5px]">

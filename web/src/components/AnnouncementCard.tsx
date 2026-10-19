@@ -15,6 +15,7 @@ import { EVENT_LABELS, TONE_LABEL, type Tone } from "../lib/taxonomy";
 import { Avatar } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL, TrackItem } from "./FilingCard";
 import { plain, RichText } from "./RichText";
+import { near, PERIOD_WORDS, repeats, showsFigure } from "../lib/cardText";
 
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
 
@@ -114,7 +115,7 @@ export function lineValue(v: number, unit: LineSpec["unit"]): string {
   if (unit === "pct") return `${v.toFixed(Math.abs(v) < 10 ? 2 : 1)}%`;
   if (unit === "inr") return v.toLocaleString("en-IN", { maximumFractionDigits: 2 });
   if (unit === "num") return v.toLocaleString("en-IN", { maximumFractionDigits: 1 });
-  return cr(v).replace(/^₹| Cr$/g, "");
+  return cr(v).replace("₹", "").replace(/ Cr$/, "");
 }
 
 /** A P&L for results cards in the statement's own lines: this quarter beside the previous one and a year ago. */
@@ -175,18 +176,6 @@ function tableShows(r: ResultsSnapshot | null | undefined): r is ResultsSnapshot
   return !!r && resultLines(r).length >= 2;
 }
 
-// Period labels ("Q2FY27", "Q2 FY 2026-27", "H1FY27") and years are not figures.
-const PERIOD_WORDS = /\b(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2,4}(?:-\d{2})?\b|\b(?:Q[1-4]|H[12]|9M)\b|\b20\d{2}(?:-\d{2})?\b/gi;
-
-function figures(text: string): number[] {
-  return (text.replace(PERIOD_WORDS, " ").match(/\d[\d,]*(?:\.\d+)?/g) ?? []).map((raw) => Number(raw.replace(/,/g, "")));
-}
-
-function near(n: number, known: number[], raw = ""): boolean {
-  const rounding = raw.includes(".") ? 0.051 : 0.5; // "+30%" restates 29.6%
-  return known.some((k) => Math.abs(k - n) <= Math.max(rounding, Math.abs(k) * 0.006));
-}
-
 /** A results bullet that only restates numbers the P&L table shows adds nothing; the card hides it. */
 function coveredByTable(fact: Fact, r: ResultsSnapshot): boolean {
   const known = resultLines(r).flatMap(({ line }) =>
@@ -194,22 +183,6 @@ function coveredByTable(fact: Fact, r: ResultsSnapshot): boolean {
       .filter((v): v is number => v != null).map(Math.abs));
   const raw = plain(fact).replace(PERIOD_WORDS, " ").match(/\d[\d,]*(?:\.\d+)?/g) ?? [];
   return raw.length > 0 && raw.every((x) => near(Number(x.replace(/,/g, "")), known, x));
-}
-
-const STOP = new Set(["with", "from", "that", "this", "were", "have", "been", "which", "their", "into", "over", "under",
-  "after", "before", "about", "against", "company", "limited", "crore", "lakh", "year", "quarter", "said", "will", "also"]);
-function words(text: string): Set<string> {
-  return new Set((text.toLowerCase().match(/[a-z][a-z-]{3,}/g) ?? []).filter((w) => !STOP.has(w)));
-}
-
-/** True when `text` says nothing `of` does not: its figures are all there and most of its words, or nearly every word. */
-export function repeats(text: string, of: string): boolean {
-  const t = plain(text), o = plain(of);
-  const mine = [...words(t)], theirs = words(o);
-  const overlap = mine.length ? mine.filter((w) => theirs.has(w)).length / mine.length : 0;
-  const nums = figures(t), known = figures(o);
-  const allFigures = nums.length > 0 && nums.every((n) => near(n, known, String(n)));
-  return (allFigures && overlap >= 0.4) || overlap >= 0.8;
 }
 
 function KeyTiles({ items }: { items: CardBody["key_numbers"] }) {
@@ -265,7 +238,8 @@ function BlockShell({ title, children, right }: { title: string; children: React
   );
 }
 
-function Steps({ steps, at, warn }: { steps: string[]; at: number; warn?: boolean }) {
+function Steps({ steps, at: raw, warn }: { steps: string[]; at: number; warn?: boolean }) {
+  const at = Math.max(0, Math.min(steps.length - 1, raw));
   return (
     <ol className="flex items-start" aria-label={`Stage: ${steps[at]}`}>
       {steps.map((s, i) => (
@@ -384,21 +358,24 @@ function decisionLines(row: CardRow, card: CardBody, table: ResultsSnapshot | nu
   const out: { label: string; text: string; tone?: "pos" | "neg" | "warn"; computed?: boolean }[] = [];
   const at = card.priced_at_filing;
   const ageDays = (Date.now() - Date.parse(row.filed_at)) / 86400_000;
-  if (at?.last_price && row.last_price && ageDays > 1) {
-    const move = (row.last_price / at.last_price - 1) * 100;
+  const recent = ageDays <= 120;   // a run-rate or a "next check" from an old card describes a quarter long gone
+  const move = at?.last_price && row.last_price ? (row.last_price / at.last_price - 1) * 100 : null;
+  // A move of more than 60% is more likely a split or bonus between the two prices than the market: left out
+  if (at?.last_price && row.last_price && move != null && ageDays > 1 && Math.abs(move) <= 60) {
     out.push({ label: "Since the filing", text: `₹${at.last_price.toLocaleString("en-IN")} → ₹${row.last_price.toLocaleString("en-IN")}, ${move > 0 ? "+" : ""}${move.toFixed(1)}%`,
                tone: move > 0 ? "pos" : move < 0 ? "neg" : undefined, computed: true });
   }
   const pat = table?.pat ?? (table as unknown as Record<string, ResultLine | undefined> | null)?.pat_owners;
-  if (table && pat && pat.value > 0 && table.period.startsWith("Q") && row.market_cap_cr) {
-    out.push({ label: "Run-rate P/E", text: `${(row.market_cap_cr / (pat.value * 4)).toFixed(1)}x (market cap ÷ this quarter's profit × 4)`, computed: true });
+  const pe = table && pat && pat.value > 0 && table.period.startsWith("Q") && row.market_cap_cr ? row.market_cap_cr / (pat.value * 4) : null;
+  if (recent && pe != null && pe < 500) {
+    out.push({ label: "Run-rate P/E", text: `${pe.toFixed(1)}x (market cap ÷ this quarter's profit × 4)`, computed: true });
   }
   const said = (card.guidance_recall ?? []).find((g) => !repeats(`${g.statement} ${g.target ?? ""}`, faceText));
   if (said) {
     const when = said.given_on ? istDate(said.given_on).split(" ").slice(1).join(" ") : null;
     out.push({ label: `Management said${when ? `, ${when}` : ""}`, text: `${said.statement}${said.target && !said.statement.includes(said.target) ? ` (${said.target})` : ""}${said.due ? ` · by ${said.due}` : ""}` });
   }
-  const next = card.track_next?.kpis_to_verify?.find((k) => k.check_in);
+  const next = recent ? card.track_next?.kpis_to_verify?.find((k) => k.check_in) : undefined;
   if (next) out.push({ label: `Next check, ${next.check_in}`, text: `${next.kpi}${next.target ? ` (${next.target})` : ""}`, tone: "warn" });
   return out;
 }
@@ -410,8 +387,10 @@ function MoreMenu({ items }: { items: { label: string; icon: LucideIcon; onClick
   useEffect(() => {
     if (!open) return;
     const close = (e: MouseEvent) => { if (!box.current?.contains(e.target as Node)) setOpen(false); };
+    const escape = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
     document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
+    document.addEventListener("keydown", escape);
+    return () => { document.removeEventListener("mousedown", close); document.removeEventListener("keydown", escape); };
   }, [open]);
   return (
     <span ref={box} className="relative">
@@ -481,10 +460,10 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
   const facts = unique.slice(0, factLimit);
   const shownText = [headline, ...facts.map(plain)].join(" ");
   const box = boxItems(card, (s) =>
-    (s.type === "SCALE" && dealBlock) || (s.type === "RATING_LIQUIDITY" && !!rating && /outlook/i.test(s.text)) || repeats(s.text, shownText));
+    (s.type === "SCALE" && dealBlock && !!card.scale) || (s.type === "RATING_LIQUIDITY" && !!rating && /outlook/i.test(s.text)) || repeats(s.text, shownText));
   const faceText = [shownText, ...box.insights.map((i) => i.text), box.signal?.text ?? ""].join(" ");
   const decision = decisionLines(row, card, table, faceText);
-  const footer = footerMetrics(card).filter((m) => !faceText.includes(m.value.replace(/%$/, "")) && !(table && /margin/i.test(m.label)));
+  const footer = footerMetrics(card).filter((m) => !showsFigure(faceText, m.value) && !(table && /margin/i.test(m.label)));
   const thin = row.median_turnover_cr != null && row.median_turnover_cr < 0.5;
   const credibility = card.score?.credibility;
   const familyLabel = [EVENT_LABELS[event] ?? card.category_tag, table?.period, card.basis ? BASIS_LABEL[card.basis]?.toLowerCase() : null,
@@ -696,7 +675,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
       {open && !exporting && (
         <DeepDive row={row} card={card} shown={box.insights.length} shownSignal={box.signal}
           moreFacts={unique.slice(factLimit)} faceText={faceText} thinShown={thin}
-          keyNumbers={tilesFor && card.key_numbers.length >= 2 ? [] : card.key_numbers.filter((k) => !faceText.includes(k.value.replace(/^₹| Cr$/g, "")))} />
+          keyNumbers={tilesFor && card.key_numbers.length >= 2 ? [] : card.key_numbers.filter((k) => !showsFigure(faceText, k.value))} />
       )}
     </article>
   );

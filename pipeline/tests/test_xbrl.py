@@ -590,3 +590,29 @@ def test_a_results_file_whose_statement_the_text_lacks_is_used_when_memory_agree
     assert "Machine-tagged results (XBRL" in run(90.91)          # memory holds the file's year-ago quarter
     # a file at another scale than memory (9.091 against 90.91) is refused as before: results_card.agrees_with_memory,
     # test_results_card.test_memory_points_need_memory_and_the_file_to_agree_on_the_basis
+
+
+def test_bank_ratios_already_in_percent_or_inconsistent_are_not_misread():
+    """A bank ratio above 1 was written as a percentage and is kept as one; net NPA above gross means one of them was
+    read at the wrong scale, and neither is kept (a "net NPA 25%" headline from a mis-scaled 0.25)."""
+    def bank(gross, net, roa="0.0148"):
+        return f"""<xbrli:xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:in-bse-fin="http://www.bseindia.com/xbrl/fin/2020-03-31/in-bse-fin"
+ xmlns:xbrldi="http://xbrl.org/2006/xbrldi">
+<xbrli:context id="OneD"><xbrli:entity><xbrli:identifier scheme="x">1</xbrli:identifier></xbrli:entity>
+<xbrli:period><xbrli:startDate>2026-04-01</xbrli:startDate><xbrli:endDate>2026-06-30</xbrli:endDate></xbrli:period></xbrli:context>
+<xbrli:unit id="INR"><xbrli:measure>iso4217:INR</xbrli:measure></xbrli:unit><xbrli:unit id="pure"><xbrli:measure>xbrli:pure</xbrli:measure></xbrli:unit>
+<in-bse-fin:InterestEarned contextRef="OneD" unitRef="INR" decimals="-5">32133700000</in-bse-fin:InterestEarned>
+<in-bse-fin:ProfitLossForThePeriod contextRef="OneD" unitRef="INR" decimals="-5">3315100000</in-bse-fin:ProfitLossForThePeriod>
+<in-bse-fin:PercentageOfGrossNpa contextRef="OneD" unitRef="pure" decimals="INF">{gross}</in-bse-fin:PercentageOfGrossNpa>
+<in-bse-fin:PercentageOfNpa contextRef="OneD" unitRef="pure" decimals="INF">{net}</in-bse-fin:PercentageOfNpa>
+<in-bse-fin:ReturnOnAssets contextRef="OneD" unitRef="pure" decimals="INF">{roa}</in-bse-fin:ReturnOnAssets>
+</xbrli:xbrl>""".encode()
+
+    def ratios(raw):
+        result = xbrl.parse(raw)
+        return {m.metric: round(m.value, 2) for m in result.metrics if m.metric.endswith("_pct")}
+
+    assert ratios(bank("0.0221", "0.0065")) == {"gnpa_pct": 2.21, "nnpa_pct": 0.65, "roa_pct": 1.48}
+    assert ratios(bank("2.21", "0.0065")) == {"gnpa_pct": 2.21, "nnpa_pct": 0.65, "roa_pct": 1.48}   # one in percent
+    assert ratios(bank("0.0221", "0.25")) == {"roa_pct": 1.48}        # net 25% above gross 2.21%: both dropped
+    assert "roa_pct" not in ratios(bank("0.0221", "0.0065", roa="0.9"))  # RoA 90%: out of range

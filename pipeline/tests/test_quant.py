@@ -219,3 +219,45 @@ def test_a_formula_over_mixed_units_is_checked_in_the_result_unit():
                                          {"name": "nw", "value": 18083, "unit": "INR_CR", "source": "MEMORY"}], 1.52, "PCT")):
         est = QuantifiedImpact.model_validate({"label": "x", "formula": formula, "inputs": inputs, "result": result, "unit": unit})
         assert check([est], "27,529 lakh; net worth 18,083 crore; target 6,000 crore").items[0]["check"] == "VERIFIED"
+
+
+def test_results_table_edge_cases_insurer_bank_footer_and_missing_history():
+    from bse_intel.dossier import results_snapshot
+
+    def m(metric, period, value, news="n2", unit="INR_CR"):
+        return {"metric": metric, "period": period, "value": value, "unit": unit, "source_news_id": news, "as_of": "b"}
+
+    insurer = results_snapshot({"financial_metrics": [
+        m("gross_premium", "Q2FY27", 6100.0), m("revenue", "Q2FY27", 5200.0), m("incurred_claims", "Q2FY27", 3900.0),
+        m("combined_ratio", "Q2FY27", 102.1, unit="PCT"), m("combined_ratio", "Q2FY26", 103.4, "n1", "PCT"), m("pat", "Q2FY27", 690.0),
+    ]}, "n2")
+    assert insurer["lens"] == "insurer"
+    assert [line["label"] for line in insurer["lines"]] == ["Gross premium", "Net premium", "Claims", "Combined ratio", "PAT"]
+    assert insurer["combined_ratio"]["yoy_bps"] == -130
+
+    # a bank's footer GNPA is the statement's own gross NPA line: not a second row
+    bank_footer = ({"metric": "gnpa", "label": "GNPA", "format": "pct", "aliases": ["gnpa_pct", "gross_npa"]},
+                   {"metric": "casa_ratio", "label": "CASA", "format": "pct", "aliases": []})
+    bank = results_snapshot({"financial_metrics": [
+        m("interest_earned", "Q1FY27", 3213.37), m("pat", "Q1FY27", 331.51), m("gnpa_pct", "Q1FY27", 2.21, unit="PCT"),
+        m("casa_ratio", "Q1FY27", 31.0, unit="PCT"),
+    ]}, "n2", bank_footer)
+    assert [line["key"] for line in bank["lines"]] == ["interest_earned", "pat", "gnpa_pct", "kpi:casa_ratio"]
+    assert bank["kpi:casa_ratio"] == {"value": 31.0}          # no history: the value alone, no change
+    assert "nii" not in bank                                   # no interest expended: no NII is made up
+
+    # one statement line alone is no table
+    assert results_snapshot({"financial_metrics": [m("pat", "Q1FY27", 10.0)]}, "n2") is not None
+    assert results_snapshot({"financial_metrics": [m("revenue", "FY26", 10.0)]}, "n2") is None   # no quarter
+
+
+def test_asset_quality_words():
+    from types import SimpleNamespace
+
+    from bse_intel.results_card import asset_quality
+
+    v = lambda x: SimpleNamespace(value=x)
+    assert asset_quality({"nnpa_pct": v(0.65), "gnpa_pct": v(2.21)}) == "net NPA 0.65%, gross 2.21%"
+    assert asset_quality({"gnpa_pct": v(2.21)}) == "gross NPA 2.21%"
+    assert asset_quality({"nnpa_pct": v(0.65)}) == "net NPA 0.65%"
+    assert asset_quality({}) is None

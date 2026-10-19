@@ -71,3 +71,17 @@ for THB 12.5 lakh); a results card's quarter mislabelled (Clean Max Q1FY26 for Q
    figure (Clean Max's THB 12.5 lakh as "THB 1.25 Cr"; Ambuja's 225.41 crore votes as "2,254.11 Cr").
 Still open: ITC's excise-inflated gross revenue; a results card's quarter mislabelled where no XBRL was read (Clean Max);
 the missed-news export taking a filing that got a card.
+
+## Writer trial on round 6's companies (owner, 2026-10-19 18:40 IST; written before the run)
+
+Owner: "test 2 best model ... and compare them with round 6 results". Gemini's quota was spent until 12:30 IST, so round
+6's 20 companies and 300 filings are re-run with **MiniMax M3.1 Flash and Gemma 4 31B (OpenRouter, free)** writing every
+regular card, equal shares, 10 requests a minute each; GLM-4.5-Flash a spare only (a second opinion must come from
+another provider); long documents by Nemotron 3.5 Super VL; no packing, no Gemini. Configuration:
+`round-6-trial-providers.toml` (run with `BSE_INTEL_CONFIG_DIR`). Code as at `2ebdaa0` plus the merged cloud fixes.
+Round 6's reviewed cards are kept in `data/audit/round6/cards_reviewed.json`.
+
+Same blind review (`REVIEWER_PROMPT_ROUND4.md` word for word, independent agents, one per folder; no missed-news
+review, as only the writers change). Compared with round 6 per writer: Gemini 3 of 55 published WRONG (5.5%), Nemotron 3
+Super 12 of 36. A trial writer is kept only if its published WRONG is at most Gemini's round-6 rate plus its sampling
+margin; one far above it comes off the routes.

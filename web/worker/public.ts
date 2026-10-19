@@ -379,12 +379,13 @@ api.get("/companies", async (c) => {
 api.get("/companies/:scrip", async (c) => {
   const scrip = c.req.param("scrip");
   if (!isCompanyKey(scrip)) return c.json({ error: "bad company key" }, 400);
-  const [company, cards, object] = await Promise.all([
+  const [company, cards, object, chart] = await Promise.all([
     c.env.DB.prepare(`SELECT ${COMPANY_COLUMNS} FROM companies WHERE scrip_code = ?1`).bind(scrip).first(),
     c.env.DB.prepare(`
       SELECT ${CARD_COLUMNS} FROM cards c LEFT JOIN companies co ON co.scrip_code = c.scrip_code
        WHERE c.held = 0 AND c.scrip_code = ?1 ORDER BY c.filed_at DESC LIMIT 60`).bind(scrip).all(),
     c.env.VAULT.get(`memory/${scrip}.json`),
+    c.env.VAULT.get(`chart/${scrip}.json`),   // a year of daily closes, written by market-data
   ]);
   // The dossier is spliced in as stored text: parsing and re-serialising a large one would spend
   // most of the free plan's CPU allowance.
@@ -396,7 +397,8 @@ api.get("/companies/:scrip", async (c) => {
          WHERE sector = ?1 AND scrip_code <> ?2 AND market_cap_cr IS NOT NULL
          ORDER BY abs(market_cap_cr - ?3) LIMIT 5`).bind(co.sector, scrip, co.market_cap_cr).all()).results
     : [];
-  return c.body(`{"company":${JSON.stringify(company)},"cards":${JSON.stringify(cards.results)},"peers":${JSON.stringify(peers)},"dossier":${dossier}}`, 200,
+  const series = chart ? await chart.text() : "null";
+  return c.body(`{"company":${JSON.stringify(company)},"cards":${JSON.stringify(cards.results)},"peers":${JSON.stringify(peers)},"chart":${series},"dossier":${dossier}}`, 200,
     { "Content-Type": "application/json; charset=UTF-8" });
 });
 

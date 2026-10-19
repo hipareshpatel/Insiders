@@ -424,6 +424,8 @@ export interface CompanyDetail {
   /** The same sector's companies nearest in market cap. */
   peers?: Peer[];
   dossier: Dossier | null;
+  /** A year of daily closes (market-data, R2 chart/<scrip>.json); null until the job has priced the company. */
+  chart?: { d: string[]; c: number[]; as_of: string } | null;
 }
 
 export interface SearchResponse {

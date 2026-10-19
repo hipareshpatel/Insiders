@@ -77,7 +77,7 @@ def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
     if not companies:
         log.info("no companies with cards yet; nothing to enrich")
         return 0
-    rows, share_lookups, now = [], 0, now_iso()
+    rows, share_lookups, now, charts = [], 0, now_iso(), 0
     missing: list[dict] = []  # companies Yahoo has no price for (decides whether a second source is needed)
     found = yahoo.download(yf, companies, int(yconf["batch"]), period="13mo")
     for company in companies:
@@ -92,6 +92,7 @@ def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
             continue
         row = {"scrip_code": company["scrip_code"], "last_price": round(closes[-1], 2),
                "price_date": price_date, "updated_at": now, **returns(closes)}
+        charts += write_chart(sink, str(company["scrip_code"]), frame, price_date, company.get("price_date"))
         try:
             ohlcv = frame[["High", "Low", "Close", "Volume"]].dropna(subset=["Close"])
             row["_tech"] = {**price_tags(*(ohlcv[c].astype(float).tolist() for c in ("High", "Low", "Close", "Volume"))),
@@ -131,5 +132,35 @@ def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
                     len(missing), len(companies), coverage["missing_pct"])
     written = sink.execute("companies_upsert", rows)
     sink.add_writes(utc_day(), written, now)  # counts toward the daily budget that gates backfill
-    log.info("market data: %d companies updated (%d D1 rows written)", len(rows), written)
+    log.info("market data: %d companies updated (%d D1 rows written, %d price charts)", len(rows), written, charts)
     return len(rows)
+
+
+CHART_SESSIONS = 260   # a year of trading days
+
+
+def chart_series(frame, sessions: int = CHART_SESSIONS) -> dict | None:
+    """A year of daily closes for the company page's price chart: {"d": [ISO dates], "c": [closes]}, oldest first."""
+    try:
+        closes = frame["Close"].dropna().tail(sessions)
+    except Exception:
+        return None
+    if len(closes) < 5:
+        return None
+    return {"d": [ix.date().isoformat() for ix in closes.index], "c": [round(float(v), 2) for v in closes.tolist()]}
+
+
+def write_chart(sink: Sink, scrip: str, frame, price_date: str | None, stored_date: str | None) -> int:
+    """`chart/<scrip>.json` in R2 for the company page, written only when the price moved on a day (the job runs
+    more than once a day). Returns 1 when written. A failure is logged and never stops the prices themselves."""
+    if not price_date or price_date == stored_date:
+        return 0
+    series = chart_series(frame)
+    if series is None:
+        return 0
+    try:
+        sink.put_object(f"chart/{scrip}.json", json.dumps({**series, "as_of": price_date}, separators=(",", ":")).encode())
+        return 1
+    except Exception as exc:
+        log.warning("price chart for %s not written: %s", scrip, exc)
+        return 0

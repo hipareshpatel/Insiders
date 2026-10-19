@@ -59,3 +59,23 @@ test("an execution term reads as a term, a date as a date", () => {
   assert.deepEqual(executionFact("30 June 2027"), ["Complete by", "30 June 2027"]);
   assert.deepEqual(executionFact("2.5 Years"), ["Term", "2.5 years"]);
 });
+
+test("price chart: range, filings on their trading day, move", async () => {
+  const { placeFilings, rangeMove, sliceRange } = await import("../src/lib/chart.ts");
+  const series = { d: ["2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15", "2026-10-16"], c: [100, 101, 99, 103, 110] };
+  assert.deepEqual(sliceRange(series, "1M"), series);                     // shorter than the range: all of it
+  const long = { d: Array.from({ length: 300 }, (_, i) => `d${String(i).padStart(3, "0")}`), c: Array.from({ length: 300 }, (_, i) => i + 1) };
+  assert.equal(sliceRange(long, "1Y").d.length, 250);
+  assert.equal(sliceRange(long, "1M").c[0], 280);
+  const placed = placeFilings(series, [
+    { filed_at: "2026-10-13T18:20:00+05:30", id: "a" },   // trading day itself
+    { filed_at: "2026-10-11T10:00:00+05:30", id: "b" },   // before the range: left out
+    { filed_at: "2026-10-14T09:00:00+05:30", id: "c" },
+    { filed_at: "2026-10-14T19:00:00+05:30", id: "d" },   // same day: shares the point
+    { filed_at: "2026-10-17T10:00:00+05:30", id: "e" },   // after the last close: left out
+  ]);
+  assert.deepEqual(placed.map((p) => [p.index, p.items.map((x) => x.id)]), [[1, ["a"]], [2, ["c", "d"]]]);
+  assert.equal(Math.round(rangeMove(series)!), 10);
+  assert.equal(rangeMove({ d: ["x"], c: [0] }), null);
+  assert.deepEqual(placeFilings({ d: [], c: [] }, [{ filed_at: "2026-10-13" }]), []);
+});

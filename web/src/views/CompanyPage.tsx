@@ -4,6 +4,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import type { CardRow, Company, Dossier, Guidance, Peer, Technicals } from "../../shared/types";
 import { Avatar } from "../components/Avatar";
+import { PriceChart } from "../components/PriceChart";
 import { AnnouncementCard, lineValue, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
 import { parseCard, SIGNAL } from "../components/FilingCard";
 import { Badge } from "../components/ui/badge";
@@ -38,6 +39,7 @@ export const STATUS_CHIP: Record<string, string> = {
 export function CompanyPage() {
   const { scrip } = useParams<{ scrip: string }>();
   const [params, setParams] = useQueryState();
+  const [, navigate] = useLocation();
   const tab = params.get("tab") ?? "overview";
   const query = useQuery({ queryKey: ["company", scrip], queryFn: () => api.company(scrip!), enabled: !!scrip });
 
@@ -105,7 +107,12 @@ export function CompanyPage() {
       </div>
 
       <div className="mt-5">
-        {tab === "overview" && <Overview dossier={dossier} cards={cards} onTab={(t) => setParams({ tab: t })} />}
+        {tab === "overview" && (
+          <div className="space-y-4">
+            <PriceChart chart={query.data.chart} cards={cards} onOpen={(id) => navigate(`/feed?card=${encodeURIComponent(id)}`)} />
+            <Overview dossier={dossier} cards={cards} onTab={(t) => setParams({ tab: t })} />
+          </div>
+        )}
         {tab === "results" && (
           <div className="space-y-4">
             {dossier && (

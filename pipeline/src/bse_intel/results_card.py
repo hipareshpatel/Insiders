@@ -185,6 +185,11 @@ def profit_driver(tagged) -> str | None:
         now, then = val.get((metric, tagged.period)), val.get((metric, ago))
         if now is not None and then is not None:
             pulls.append((sign * (now - then), metric, word, now, then))
+    # The bridge's lines must account for the profit change: a discontinued business's gain (Siemens' demerger, round 4)
+    # or an associate's share moves profit outside them, and then no line here is "the largest move"
+    full = {p[1] for p in pulls} >= {"ebitda", "other_income", "depreciation", "finance_cost", "tax_expense"}
+    if full and abs(sum(p[0] for p in pulls) - (pat - pat0)) > 0.25 * abs(pat - pat0) + 1.0:
+        return None
     up = pat > pat0
     moving = [p for p in pulls if (p[0] > 0) == up and abs(p[0]) >= 0.25 * abs(pat - pat0)]
     if not moving:

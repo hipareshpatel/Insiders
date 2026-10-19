@@ -876,7 +876,7 @@ _REAL_ORDER = re.compile(r"letter of (?:award|intent)|\bLoA\b|\bLoI\b|work order
                          r"contract (?:awarded|worth|valued)|lowest bidder|\bL1\b", re.I)
 
 
-def results_quarter(tagged, text: str) -> str | None:
+def results_quarter(tagged, text: str, filed_on: str | None = None) -> str | None:
     """The quarter whose results a filing carries, for D20: from its XBRL, or from a statement of results or a
     page of figures in its text. The notice of the board meeting that will consider the results names the quarter
     too ("for the quarter and nine months ended 31st December, 2024") but prints no figure, and claimed Ahluwalia's
@@ -884,7 +884,7 @@ def results_quarter(tagged, text: str) -> str | None:
     if tagged is not None and tagged.period:
         return tagged.period
     if _RESULTS_STATEMENT.search(text[:20000]) or amounts(text) >= FIGURE_PAGE_AMOUNTS:
-        return statement_quarter(text)
+        return statement_quarter(text, filed_on)
     return None
 
 
@@ -1899,7 +1899,7 @@ class Pipeline:
         links = self._results_links(filing)
         if not links:
             return None
-        quarter = statement_quarter(text)
+        quarter = statement_quarter(text, filing.filed_at)
         if quarter:
             links = [link for link in links if link.period == quarter]
         else:
@@ -2322,7 +2322,7 @@ class Pipeline:
             # those are the filing's own words, and what its quotes answer to.
             text = "\n".join(t for t in (filing.headline, filing.subject) if t)
         if event_type == "RESULTS" and self.settings.one_card_per_results_quarter:
-            earlier = self._same_results_quarter(filing, dossier, results_quarter(tagged, text))
+            earlier = self._same_results_quarter(filing, dossier, results_quarter(tagged, text, filing.filed_at))
             if earlier:
                 with self._lock:
                     self.stats.duplicates += 1
@@ -2379,7 +2379,7 @@ class Pipeline:
                 return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": out.event_type,
                                 "reason": f"duplicate of {repeat['news_id']} (same event, in other words)", "updated_at": now})
         if "RESULTS" in (event_type, out.event_type):
-            quarter = canonical_period(tagged.period) if tagged and tagged.period else statement_quarter(text)
+            quarter = canonical_period(tagged.period) if tagged and tagged.period else statement_quarter(text, filing.filed_at)
             relabel_periods(out, quarter, statement_year(text))
         # The scale block too: the market cap, revenue, net worth and debt the prompt gave the model to measure
         # the event against. Not checked against it, a card that used them was held as stating figures the

@@ -78,13 +78,16 @@ _STATEMENT_QUARTER = re.compile(r"(?:QUARTER|THREE\s+MONTHS)\s+(?:AND\s+[A-Z ]{3
 _STATEMENT_YEAR = re.compile(r"(?:\bYEAR|TWELVE\s+MONTHS)\s+ENDED\s+(?:ON\s+)?(.{6,28})", re.I)
 
 
-def statement_quarter(text: str | None) -> str | None:
+def statement_quarter(text: str | None, filed_on: str | None = None) -> str | None:
     """The quarter a results statement covers, from the latest "quarter (and year) ended <date>" in its opening pages:
     "for the quarter and year ended 31st March, 2025" -> "Q4FY25". The latest, not the first: Clean Max's covering
     letter named the year-ago "quarter ended 30 June 2025" before the statement's own 30 June 2026, and its card was
-    labelled Q1FY26 (round 6, 2026-10-19). A statement's comparatives are always earlier than its own quarter."""
+    labelled Q1FY26 (round 6, 2026-10-19). A statement's comparatives are always earlier than its own quarter.
+    With `filed_on` (the filing's ISO date), a quarter ending after it is left out: a covering letter's note on the
+    next quarter ("the trading window stays closed until the results for the quarter ended 31 December") is not this
+    statement's quarter."""
     dates = [d for d in (explicit_date(m.group(1)) for m in _STATEMENT_QUARTER.finditer((text or "")[:8000]))
-             if d and d.month in _QUARTER_END]
+             if d and d.month in _QUARTER_END and not (filed_on and d.isoformat() > filed_on[:10])]
     if not dates:
         return None
     d = max(dates)

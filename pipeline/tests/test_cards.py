@@ -1032,3 +1032,13 @@ def test_the_statement_quarter_is_the_latest_quarter_end_the_opening_pages_name(
             "results for the quarter ended 30 June 2026 (the Statement).")
     assert statement_quarter(text) == "Q1FY27"
     assert statement_quarter("for the quarter and year ended 31st March, 2025") == "Q4FY25"
+
+
+def test_a_later_quarter_named_in_the_covering_letter_is_not_the_statements_quarter():
+    """The latest quarter-end wins, but never one after the filing: a trading-window note names the next quarter."""
+    from bse_intel.periods import statement_quarter
+
+    text = ("Unaudited results for the quarter ended 30 September 2026. The trading window shall remain closed until "
+            "48 hours after the results for the quarter ended 31 December 2026 are declared.")
+    assert statement_quarter(text, "2026-11-08T17:30:00+05:30") == "Q2FY27"
+    assert statement_quarter(text) == "Q3FY27"          # without the filing date the note's quarter would win

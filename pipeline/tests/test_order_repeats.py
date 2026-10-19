@@ -153,3 +153,21 @@ def test_a_pending_approval_copied_from_the_watchlist_is_dropped():
     text = "The minimum acceptance threshold was met. Completion remains subject to merger control clearance in Austria."
     assert stale_approvals(out, view, text)
     assert out.card.track_next.pending_approvals == ["Merger control clearance in Austria"]
+
+
+def test_a_call_card_keeps_only_changes_whose_figures_the_call_states():
+    """Electrosteel's call (round 5 arm B): "EBITDA margin 4.14% (Q4FY26) -> 9.5%", the 4.14% memory's margin without
+    other income; the call said about 6.5% on its own basis."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import call_changes
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "CONCALL_PRESENTATION",
+        "card": {"impact_level": "MODERATE", "headline": "Electrosteel call: margin recovers", "what_happened": ["call"],
+                 "notable_changes": [
+                     {"metric": "EBITDA margin", "previous": "4.14% (Q4FY26)", "current": "9.5%", "direction": "POSITIVE"},
+                     {"metric": "Volume guidance", "previous": "650,000-700,000 t", "current": "575,000 t", "direction": "NEGATIVE"}]}})
+    call = ("EBITDA margin was about 9.5% this quarter against roughly 6.5% last quarter. We now guide volumes of about "
+            "575,000 tonnes for FY27, against 650,000 to 700,000 tonnes earlier.")
+    assert call_changes(out, "CONCALL_PRESENTATION", call)
+    assert [c.metric for c in out.card.notable_changes] == ["Volume guidance"]

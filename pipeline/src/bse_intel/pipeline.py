@@ -643,6 +643,27 @@ _APPROVAL_STOP = {"approval", "approvals", "pending", "required", "requirement",
                   "authorities", "relevant", "including", "such", "deal", "transaction", "company"}
 
 
+def call_changes(out: Pass2Output, event_type: str, filing_text: str) -> list[str]:
+    """On a call or presentation card, a change whose figures the call itself does not state is dropped. Its "previous"
+    came from memory on another basis: Electrosteel's margin of 4.14% (memory, without other income) against the call's
+    9.5% (with it), Texmaco's consolidated computed margin against management's standalone one, Ceigall's standalone
+    EBITDA set beside consolidated revenue (round 5 arm B, 2026-10-19). Memory's own comparisons are made by code
+    (results_card.memory_points)."""
+    card = out.card
+    if card is None or "CONCALL_PRESENTATION" not in (event_type, out.event_type) or not card.notable_changes:
+        return []
+    index = SourceIndex(filing_text or "")
+    kept, dropped = [], []
+    for change in card.notable_changes:
+        figures = [(v, d) for v, d, _, _, _ in _tokens(f"{change.previous or ''} {change.current or ''}") if v >= 1]
+        if figures and not all(index.stated(v, d) for v, d in figures):
+            dropped.append(change.metric)
+        else:
+            kept.append(change)
+    card.notable_changes = kept
+    return [f"call card: change dropped, its figures are not all in the call: {m}" for m in dropped]
+
+
 def stale_approvals(out: Pass2Output, view: dict | None, filing_text: str) -> list[str]:
     """A pending approval copied from memory's watchlist that this filing does not mention. The rule (pass2.md) is "only
     when the filing states them"; round 5's agents found Persistent's BaFin approval listed as pending after the offer
@@ -2331,6 +2352,7 @@ class Pipeline:
             changes += event_xbrl.apply_orders(candidate.card, event_orders)   # the file's figures have the last word
             changes += misdated_memory_insights(candidate, view, filed_text)
             changes += stale_approvals(candidate, view, filed_text)
+            changes += call_changes(candidate, event_type, filed_text)
             if tagged:
                 # against the document alone: `sources` starts with the XBRL table, so checking the
                 # table's own comparative against it would always succeed and the guard would do nothing

@@ -213,9 +213,11 @@ def guidance_recall(before: dict | None, event_type: str, filed_at: str | None =
 
 MEMORY_POINTS = 4
 _NOTE_DAYS = 120   # an operating note older than a quarter or so describes another quarter
+_WATCH_DAYS = 270  # a watch item raised more than three quarters ago is stale unless memory renewed it
 
-# A watch item or an operating note is shown only when it is about what this card is about (owner, 2026-10-20: the
-# points "must be useful and relevant for that card event"): the latest note on its own was any note at all.
+# A watch item or an operating note is shown only when it is both recent and about what this card is about (owner,
+# 2026-10-20: the points "must be useful and relevant for that card event", "both not either one"): the latest note
+# on its own was any note at all, and an on-topic one from a year ago describes another year.
 _TOPIC = {
     **_RELEVANT,
     "RESULTS": _RELEVANT["RESULTS"] + ("cost", "volume", "demand", "price", "realisation", "order",
@@ -303,6 +305,8 @@ def memory_context(before: dict | None, event_type: str, filed_at: str | None, n
                         "as_of": (b.get("as_of") or "")[:10] or None})
     watches = [w for w in before.get("watchlist", []) if w.get("status") == "OPEN" and w.get("source_news_id") != news_id
                and (not today or not w.get("check_by") or w["check_by"] >= today.isoformat())
+               and (not today or not w.get("created_on")
+                    or w["created_on"][:10] >= (today - timedelta(days=_WATCH_DAYS)).isoformat())
                and _on_topic(f"{w.get('text', '')} {w.get('metric') or ''}", event_type)]
     if watches:
         w = min(watches, key=lambda w: w.get("check_by") or "9999")

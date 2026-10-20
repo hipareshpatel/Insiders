@@ -454,6 +454,10 @@ def test_the_decision_box_takes_up_to_four_points_from_memory():
     assert points[3]["text"].startswith("Order inflow")
     capex = memory_context(before, "CAPEX", "2026-10-20T10:00:00+05:30", "n9")
     assert any(p["text"].startswith("New plant") for p in capex)
+    # on topic but stale: a watch item raised over three quarters ago, a note older than 120 days
+    stale = {**before, "watchlist": [{**w, "created_on": "2025-11-01"} for w in before["watchlist"]],
+             "operating_notes": [{"text": "Plant 2 running at 55% utilisation", "as_of": "2026-05-01", "source_news_id": "n0"}]}
+    assert not [p for p in memory_context(stale, "CAPEX", "2026-10-20", "n9") if p["label"].startswith(("Watching", "From memory"))]
     # an event with no topic (a board meeting notice) gets no watch item or note, only the figures and holdings
     assert [p["label"].split(",")[0] for p in memory_context(before, "OTHER", "2026-10-20", "n9")] == ["Latest quarter", "Holding"]
     assert points[1]["text"] == "revenue ₹1,200.5 Cr (+12.3% YoY), PAT ₹150 Cr"

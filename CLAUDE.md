@@ -73,6 +73,16 @@ Read before changing anything:
 
 ## Status and next steps
 
+- **Now (2026-10-20): production is live.** `pipeline.yml` on `main` every 15 min (GitHub Actions, D1 `bse-index-nse`,
+  Worker `insiders`); the live window is the last 7 days, today first; `deploy-web.yml` deploys every merge to `main`.
+  The cloud session leads: it merges green PRs from this branch to `main` (owner's approvals, `docs/APPROVALS.md`),
+  logs operations in `docs/OPS.md`, and runs no-AI maintenance from GitHub (`maintenance.yml`: refresh-card-blocks,
+  refresh-summaries, export-held, requeue-failed [--ids], seed-memory). Quality: live review 3, 7 of 27 WRONG (26%);
+  the go-live gate (≤ 5%) is not met yet. Owner rules: no AI re-runs for testing, review live cards only; any fix that
+  makes a check accept more gets the on/off audit over stored cards plus an independent sample
+  (`pipeline/scripts/audit_quote_rules.py`). What is pending: the "Pending work" list at the top of `docs/PLAN.md`.
+- Everything below is the laptop-era record (2026-10-16 to 19), kept for its findings; its "next" items are superseded.
+
 - Done: all blueprint modules. Module 42 (promoter pledges) built 2026-10-19 from NSE's SAST Reg 31 encumbrance feed
   (`pledges.py`, `pledge-sync`, TRACKER F80); module 8 (DGTR trade remedies) built 2026-10-19 from DGTR's case pages and
   initiation notices (`dgtr.py`, `dgtr-sync`, TRACKER F82), linked only to companies a notice names.

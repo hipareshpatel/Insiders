@@ -62,7 +62,7 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
-## T24 · P1 · laptop · OPEN — live review 3's classes in your files (production cards, current code)
+## T24 · P1 · laptop · DONE — live review 3's classes in your files (production cards, current code)
 
 `docs/audit/live/2026-10-20-review3.md`: 27 cards production wrote, 7 WRONG (26%), every one on the card's face. The
 cloud fixed its classes in 0b6095d and f0093eb: deal stages, the trade-remedy signal, year-ago comparatives, turns, the
@@ -81,7 +81,24 @@ case ladder and capex size. Yours, each with a test:
 6. **impact_level too high on 4 of 27** (a vendor listing, a creditors' meeting notice, the closing of an old deal, a
    subsidiary's 1.8%-of-net-worth deal). D39 now makes HIGH a code rule. MODERATE on routine steps is still the
    model's call.
-Report: here, per class. Files you may change: your files (TASKS "Who owns what"), their tests, `docs/audit/live/`.
+Report: done 2026-10-20 (commit "T24: ..."), each with a test; no AI used (T22's rule).
+1. **PBT:** `xbrl.settle_pbt` (called beside `fix_scale`): where the file tags a non-zero share of associates/JVs, PBT + the
+   share replaces the tagged PBT when the statement prints that figure to its last digit and not the tagged one
+   (`_printed_exactly`; `appears_in` rounds to whole numbers). On stored filings it changes 23 periods of 17 filings, ITC
+   Q1FY27 5,774.94 -> 5,860.85 and IFB 56.87 -> 57.20 among them; **an independent agent checked all 23 against the
+   statements: 23 right, 0 wrong** (consolidated PBT line each time; standalone never matched).
+2. **Owners' profit:** a key number labelled "to shareholders" / "attributable to owners" maps to `pat_owners`, ahead of
+   `pat` (`_KEY_METRIC`); a 0 the file carries for it beside a real PAT is a filler and left alone (Orient Bell).
+3. **RECURRING_ONE_OFFS** counts charges only (stored negative; gains positive) (`quality.py`).
+4. **Event types** (`event_type_rules`): an ESG score off DEBT_RATINGS (ITC's stored card), a vendor listing off
+   LITIGATION_REGULATORY, a captive power investment PRODUCT_LAUNCH -> M_AND_A; a demerger's deal kind ACQUISITION -> OTHER.
+5. **Wording:** pass-2 prompt: keep the filing's tense and certainty, name who decided only as the filing does, copy names
+   exactly. "non-producers" for "Non-Promoters" left to the quote check.
+6. impact_level: not changed (D39 makes HIGH a rule).
+**Held cards the current code clears (owner: "must work on Needs review items also").** Of 191 held on the laptop, 114 are
+held only by quote-contract reasons; with today's rules (F87-F90) the quote checks, run on the stored card and text, find
+nothing on **19**: `2140e1d1-0080-423a-a81c-7023461dae9b`, `nse-106808882`, `0bec302d-50e4-4d2c-ab64-a796e8c20193`, `nse-106800959`, `b7c45b2d-edce-4c18-98bf-4e9f87244b38`, `3c27b8b0-a9d1-45a3-b860-08a20e8977df`, `c993f36a-98fd-4212-a502-4aa84c9fc911`, `113d15e2-94f0-4c1a-a7e1-49e6edfe3316`, `nse-106782095`, `nse-106755576`, `965150c8-cb4c-4939-8f82-e20b6c02dce5`, `c5f4d350-80f5-4d1a-b129-db4425fc7b71`, `a34f9b08-50a8-49ee-a2c3-902186228b7f`, `nse-106715707`, `nse-106715650`, `7ff43daf-bef4-49ef-a471-0cb85a808e9b`, `nse-106715462`, `058736cc-f585-4bd0-b161-8ae520c4e9b6`, `nse-106700726`. Proposal for the cloud: re-run these first on production (they need pass 2 again only to
+write the card fresh; their figures already pass).
 
 ## T23 · P1 · cloud (moved from the laptop, 20 Oct 06:50 IST) · DONE 07:00 IST (maintenance.yml: 1,042 of 1,106 cards refreshed, 0 failed; 1,418 summaries) — fill the design blocks on the live cards (no AI)
 

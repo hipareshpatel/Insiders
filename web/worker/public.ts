@@ -511,7 +511,7 @@ async function systemStatus(c: Context<AppEnv>) {
   const yesterdayUtc = new Date(Date.now() - 86400_000).toISOString().slice(0, 10);
   const weekAgo = new Date(Date.now() + 5.5 * 3600_000 - 7 * 86400_000).toISOString().slice(0, 10);
   const db = c.env.DB;
-  const [ledger, pending, failed, cards7d, usage, runs, kv] = await db.batch([
+  const [ledger, pending, failed, cards7d, usage, runs, kv, failedList] = await db.batch([
     db.prepare("SELECT status, count(*) AS n FROM filings WHERE filing_date = ?1 GROUP BY status").bind(today),
     db.prepare(`SELECT count(*) AS n FROM (SELECT 1 FROM filings WHERE status = 'PENDING' LIMIT ${QUEUE_CAP})`),
     db.prepare(`SELECT count(*) AS n FROM (SELECT 1 FROM filings WHERE status = 'FAILED' LIMIT ${QUEUE_CAP})`),
@@ -526,6 +526,9 @@ async function systemStatus(c: Context<AppEnv>) {
                   FROM pipeline_runs ORDER BY started_at DESC LIMIT 25`),
     db.prepare(`SELECT key, value FROM kv WHERE key IN ('backfill:discovered_through', 'backfill:complete',
                   'backfill:start', 'backfill:progress', 'market:coverage', ?1, ?2)`).bind(`noise_count:${today}`, `d1_writes:${utcDay}`),
+    // which filings failed and why (owner, 2026-10-20: the count alone did not say); a range seek on (status, filed_at)
+    db.prepare(`SELECT news_id, scrip_code, symbol, company_name, headline, filed_at, attempts, substr(last_error, 1, 200) AS last_error
+                  FROM filings WHERE status = 'FAILED' AND filed_at >= ?1 ORDER BY filed_at DESC LIMIT 50`).bind(weekAgo),
   ]);
   const kvMap = Object.fromEntries((kv.results as { key: string; value: string }[]).map((r) => [r.key, r.value]));
   const count = (r: D1Result) => (r.results[0] as { n: number } | undefined)?.n ?? 0;
@@ -560,5 +563,6 @@ async function systemStatus(c: Context<AppEnv>) {
     d1: { writes_today: Number(kvMap[`d1_writes:${utcDay}`] ?? 0) || 0, size_bytes: ledger.meta?.size_after ?? null },
     usage: usage.results,
     runs: runs.results,
+    failed_recent: failedList.results,
   };
 }

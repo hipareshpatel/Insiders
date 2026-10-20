@@ -330,6 +330,19 @@ def cmd_requeue_failed(args, settings, sink) -> int:
     return 0
 
 
+def cmd_seed_calls(args, settings, sink) -> int:
+    """Each universe company's last two quarters of call transcripts or presentations into memory (call_seed.py): no
+    Gemini, no card, no ledger row; resumable."""
+    import time
+
+    from . import call_seed
+
+    pipeline = build_pipeline(settings, sink)
+    scrips = {s.strip() for s in args.scrips.split(",")} if args.scrips else None
+    print(json.dumps(call_seed.run(pipeline, time.monotonic() + args.time_budget, args.restart, scrips)))
+    return 0
+
+
 def cmd_dgtr_sync(args, settings, sink) -> int:
     """DGTR trade-remedy cases into the memory of the companies that applied for or supported them (dgtr.py, module 8),
     no AI. --pages 42 reads every case DGTR lists (a first fill: OCR of a few hundred scanned notices, hours)."""
@@ -673,6 +686,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--ids", help="instead: these filings (news ids, comma separated), whatever their status, to re-run")
     p.add_argument("--dry-run", action="store_true", help="list what would be requeued, write nothing")
     p.set_defaults(func=cmd_requeue_failed)
+    p = sub.add_parser("seed-calls", help="last two quarters of call transcripts / presentations into memory; no Gemini, no cards")
+    p.add_argument("--scrips", help="only these companies (comma separated)")
+    p.add_argument("--restart", action="store_true", help="start again from the largest company")
+    p.add_argument("--time-budget", type=int, default=2700, help="seconds")
+    p.set_defaults(func=cmd_seed_calls)
     p = sub.add_parser("refresh-card-blocks", help="rebuild every stored card's code blocks from memory, no AI")
     p.add_argument("--scrips", help="only these companies (comma separated); default every card")
     p.add_argument("--dry-run", action="store_true", help="count what would change, write nothing")
@@ -733,7 +751,7 @@ def main(argv: list[str] | None = None) -> int:
 # The scheduled jobs (workflows), each recorded when it ends so the System page shows a job that never ran or stopped
 # running (owner, 2026-10-20: market-data had never run on GitHub and nobody saw it)
 SCHEDULED = {"market-data", "post-mortem", "sync-companies", "refresh-summaries", "governance-sync", "shareholding-sync",
-             "pledge-sync", "dgtr-sync", "annual-xbrl-catchup", "backup", "refresh-card-blocks", "seed-memory"}
+             "pledge-sync", "dgtr-sync", "annual-xbrl-catchup", "backup", "refresh-card-blocks", "seed-memory", "seed-calls"}
 
 
 def _record_job(sink, command: str, code: int) -> None:

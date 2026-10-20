@@ -454,6 +454,27 @@ context_tokens = 900000  # 1M window: no filing is too long for it
 extra_body = { thinking = { type = "disabled" } }  # on by default at high effort
 limits = { rpm = 60 }
 
+# The memory seed from calls and presentations (call_seed.py; owner, 2026-10-20: no Gemini). Long transcripts need a
+# long window: Z.AI's GLM (120K) first, OpenRouter's Nemotron (250K) as the spare. Used only by `seed-calls`, never by a card route.
+[[routes.memory_seed]]
+provider = "zai"
+model = "glm-4.5-flash"
+weight = 4
+json_mode = true
+max_tokens = 5000
+context_tokens = 120000
+extra_body = { thinking = { type = "disabled" } }
+limits = { rpm = 60, concurrency = 1 }
+
+[[routes.memory_seed]]
+provider = "openrouter"
+model = "nvidia/nemotron-3.5-super-vl:free"
+spare = true   # OpenRouter's free models are spares outside the card routes (test_gateway); GLM carries the seed
+json_mode = true
+max_tokens = 8000
+context_tokens = 250000
+limits = { rpm = 10 }
+
 [[routes.vision]]
 provider = "zai"
 model = "glm-4.6v-flash"

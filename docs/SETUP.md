@@ -41,7 +41,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev,ocr]"      # ocr: RapidOCR for scanned pages (optional)
-python -m pytest -q              # 710 tests; web: npm test (card text, calendar, chart)
+python -m pytest -q              # 715 tests; web: npm test (card text, calendar, chart)
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -71,6 +71,7 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 | `python -m bse_intel governance-sync [--pages N]` | The quarterly governance XBRL of the universe's companies into memory (board, committees, SEBI flags, penalties, loans and guarantees to insiders, cyber incidents); no AI, no card. The live run does 40 a run; `--pages` reads back for the backfill |
 | `python -m bse_intel shareholding-sync [--days N]` | Each universe company's quarterly shareholding XBRL into memory (promoter, pledge, FII, DII), cross-checked against NSE's list; no AI, no card. The live run reads 10 days |
 | `pledge-sync [--days N] [--scrips a,b]` | Promoter pledge events (NSE SAST Reg 31) into memory, no AI (module 42); also at the end of every live run |
+| `seed-calls [--scrips a,b] [--restart] [--time-budget S]` | Each universe company's last two quarters of call transcripts (else presentations) into memory through the regular analysis, no Gemini (route `memory_seed`), no card, no ledger row; resumable; from GitHub `seed-calls.yml` hourly 21:45-04:45 IST until done |
 | `refresh-summaries [--scrips a,b]` | Rebuild each company's stored summary (overdue promises, radar, credibility) from its memory, no AI; run after a change to what summaries hold |
 | `requeue-failed [--since D \| --days 30] [--attempts N] [--ids a,b] [--dry-run]` | Filings that used all 3 attempts get fresh attempts (after a fix), no AI; with `--ids`, the named filings re-run whatever their status (held or stale cards); also from GitHub (Maintenance > requeue-failed). Each night after 22:00 IST a live run gives the last 7 days' failed filings one more try by itself |
 | `dgtr-sync [--pages N] [--scrips a,b]` | DGTR anti-dumping / countervailing / safeguard cases into the memory of the companies their notices name as applicant or supporter, no AI (module 8); once a day in a live run (`NSE_DGTR=0` off); `--pages 42` reads every listed case (OCR of scanned notices, hours) |

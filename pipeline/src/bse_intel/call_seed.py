@@ -80,55 +80,75 @@ def companies(pipeline) -> list[dict]:
     return sorted(rows, key=lambda r: -(r.get("market_cap_cr") or 0))
 
 
-def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | None = None) -> dict:
+def _seed_company(pipeline, company: dict, start, end, deadline: float) -> dict:
+    """One company's call documents into memory; returns its counts and whether the deadline stopped it."""
+    sink, scrip = pipeline.sink, company["scrip_code"]
+    counts = {"seeded": 0, "skipped": 0, "no_call": 0, "failed": 0, "stopped": False}
+    try:
+        found = [f for f in pipeline._company_announcements(scrip, start, end)
+                 if pipeline.rules.classify(f).event_type == "CONCALL_PRESENTATION"]
+    except Exception as exc:   # one company's list failing never stops the seed
+        log.warning("call seed: %s announcements not read: %s", scrip, exc)
+        counts["failed"] += 1
+        return counts
+    docs = pick(found)
+    if not docs:
+        counts["no_call"] += 1
+    dossier = sink.get_dossier(scrip)
+    for filing in docs:
+        if time.monotonic() > deadline:
+            counts["stopped"] = True
+            break
+        if _seeded(dossier, filing.news_id):
+            counts["skipped"] += 1
+            continue
+        filing.event_type, filing.route = "CONCALL_PRESENTATION", "FAST_TRACK"   # as the rule book routes calls
+        try:
+            outcome = pipeline.analyze(filing, bulk=True, memory_complete=True)   # memory written; card dropped
+            counts["seeded" if outcome.update.get("status") not in ("FAILED", "PENDING") else "failed"] += 1
+        except Exception as exc:
+            log.warning("call seed: %s %s not read: %s", scrip, filing.news_id, exc)
+            counts["failed"] += 1
+        dossier = sink.get_dossier(scrip)
+    return counts
+
+
+def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | None = None, workers: int = 1) -> dict:
+    """Companies in parallel (`workers`; the gateway still holds each model to its own limits: Z.AI's free model to one
+    request at a time), each company's documents in date order."""
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Lock
+
     sink = pipeline.sink
     state = {} if restart else json.loads(sink.kv_get(STATE_KEY) or "{}")
     if state.get("done") and not scrips:
         return {"done": True, "companies": 0, "seeded": 0}
     use_seed_route(pipeline.gateway)
-    order = [c for c in companies(pipeline) if not scrips or c["scrip_code"] in scrips]
     finished = set(state.get("finished", [])) if not scrips else set()
+    order = [c for c in companies(pipeline) if (not scrips or c["scrip_code"] in scrips) and c["scrip_code"] not in finished]
     start, end = today_ist() - timedelta(days=WINDOW_DAYS), today_ist()
     report = {"companies": 0, "seeded": 0, "skipped": 0, "no_call": 0, "failed": 0, "stopped": False}
-    for company in order:
-        scrip = company["scrip_code"]
-        if scrip in finished:
-            continue
+    lock = Lock()
+
+    def one(company: dict) -> None:
         if time.monotonic() > deadline:
-            report["stopped"] = True
-            break
-        report["companies"] += 1
-        try:
-            found = [f for f in pipeline._company_announcements(scrip, start, end)
-                     if pipeline.rules.classify(f).event_type == "CONCALL_PRESENTATION"]
-        except Exception as exc:   # one company's list failing never stops the seed
-            log.warning("call seed: %s announcements not read: %s", scrip, exc)
-            report["failed"] += 1
-            continue
-        docs = pick(found)
-        if not docs:
-            report["no_call"] += 1
-        dossier = sink.get_dossier(scrip)
-        for filing in docs:
-            if time.monotonic() > deadline:
+            with lock:
                 report["stopped"] = True
-                break
-            if _seeded(dossier, filing.news_id):
-                report["skipped"] += 1
-                continue
-            filing.event_type, filing.route = "CONCALL_PRESENTATION", "FAST_TRACK"   # as the rule book routes calls
-            try:
-                outcome = pipeline.analyze(filing, bulk=True, memory_complete=True)   # memory written; card dropped
-                report["seeded" if outcome.update.get("status") not in ("FAILED", "PENDING") else "failed"] += 1
-            except Exception as exc:
-                log.warning("call seed: %s %s not read: %s", scrip, filing.news_id, exc)
-                report["failed"] += 1
-            dossier = sink.get_dossier(scrip)
-        if report["stopped"]:
-            break
-        finished.add(scrip)
-        if not scrips:
-            sink.kv_set(STATE_KEY, json.dumps({"finished": sorted(finished)}), now_iso())
+            return
+        counts = _seed_company(pipeline, company, start, end, deadline)
+        with lock:
+            report["companies"] += 1
+            for k in ("seeded", "skipped", "no_call", "failed"):
+                report[k] += counts[k]
+            if counts["stopped"]:
+                report["stopped"] = True
+                return
+            finished.add(company["scrip_code"])
+            if not scrips:
+                sink.kv_set(STATE_KEY, json.dumps({"finished": sorted(finished)}), now_iso())
+
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        list(pool.map(one, order))
     if not scrips and not report["stopped"]:
         sink.kv_set(STATE_KEY, json.dumps({"finished": sorted(finished), "done": True}), now_iso())
         report["done"] = True

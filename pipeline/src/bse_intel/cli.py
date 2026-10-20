@@ -546,7 +546,27 @@ def cmd_models(args, settings, sink) -> int:
     """Ask each configured provider for its model list and flag configured IDs it no longer serves."""
     from .ai.gateway import AIGateway
 
-    gateway = AIGateway(settings.load_toml("providers.toml"))
+    config = settings.load_toml("providers.toml")
+    if args.provider:
+        # a provider with no route yet (SambaNova, SiliconFlow on 2026-10-20): its own model list, to choose from
+        import os
+
+        import openai
+
+        conf = config["providers"][args.provider]
+        key = os.environ.get(conf["api_key_env"], "").strip()
+        if not key:
+            print(json.dumps({args.provider: {"error": f"{conf['api_key_env']} not set"}}))
+            return 1
+        client = openai.OpenAI(base_url=conf["base_url"], api_key=key, timeout=60)
+        try:
+            models = sorted(m.id for m in client.models.list())
+        except Exception as exc:
+            print(json.dumps({args.provider: {"error": f"{type(exc).__name__}: {exc}"[:300]}}))
+            return 1
+        print(json.dumps({args.provider: [m for m in models if not args.filter or args.filter in m.lower()]}, indent=2))
+        return 0
+    gateway = AIGateway(config)
     targets: dict[str, dict] = {}
     for route_targets in gateway.routes.values():
         for t in route_targets:
@@ -651,6 +671,7 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("models", help="list each provider's models and flag configured IDs it no longer serves")
     p.add_argument("--filter", help="only list available models containing this text (e.g. llama, deepseek)")
     p.add_argument("--all", action="store_true", help="list every available model")
+    p.add_argument("--provider", help="list this provider's models even when no route uses it yet (sambanova, siliconflow)")
     p.set_defaults(func=cmd_models)
     p = sub.add_parser("sync-companies", help="the company master from NSE's equity list (new listings, names, industry)")
     p.add_argument("--source", choices=("nse", "bse"), default="nse",

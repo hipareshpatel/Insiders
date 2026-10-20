@@ -74,5 +74,22 @@ jobs:
           python-version: "3.12"
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
+      # The extracted text of each filing, kept from run to run: the repeat check (duplicates.py) compares a filing with
+      # the same company's earlier ones by this text, and a fresh runner has none (20 Oct 2026: Kapston's results
+      # outcome filed twice four minutes apart, the same PDF, two cards). A retry also skips the download and OCR.
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/text_cache
+          key: text-cache-${{ github.run_id }}
+          restore-keys: text-cache-
       - name: Run pipeline
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel run --mode "${{ inputs.mode || ''all'' }}" --time-budget "${{ inputs.time_budget || ''2400'' }}"'
+      - name: Keep the last 8 days of text
+        if: always()
+        working-directory: .
+        run: find data/text_cache -type f -mtime +8 -delete 2>/dev/null || true
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: data/text_cache
+          key: text-cache-${{ github.run_id }}

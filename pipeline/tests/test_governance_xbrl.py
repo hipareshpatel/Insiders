@@ -203,3 +203,10 @@ def test_shareholding_sync_files_each_quarter_once_and_refuses_a_disagreeing_fil
     assert not (sink.get_dossier("500111") or {}).get("ownership")
     again = governance_memory.shareholding_sync(pipe, time.monotonic() + 60, day_to=date(2023, 7, 20))
     assert again["filed"] == 0 and again["known"] == 1
+
+
+def test_a_penalty_in_mn_is_read_in_millions():
+    """The unit's word boundary had been written as a backspace byte, so "mn" never matched (found 2026-10-20)."""
+    from bse_intel.governance_xbrl import penalty_rupees
+
+    assert penalty_rupees("Penalty of Rs. 0.30 mn imposed") == 300_000

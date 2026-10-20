@@ -291,3 +291,10 @@ def test_a_fresh_nse_results_filing_waits_for_its_xbrl(settings):
     assert outcome.update["status"] == "PENDING" and "attempts" not in outcome.update
     assert outcome.update["last_error"].startswith("deferred: waiting for its results XBRL")
     assert ("results", "RAILTEL") in pipeline.nse.calls and fake.calls == []   # no model was asked
+
+
+def test_a_long_tag_name_is_shortened_to_a_label():
+    """"of the listed entity" had a backspace byte for its word boundaries and was never shortened (2026-10-20)."""
+    from bse_intel.event_xbrl import _label
+
+    assert _label("NameOfTheListedEntity") == "name of the company"

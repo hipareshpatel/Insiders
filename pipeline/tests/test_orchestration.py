@@ -615,3 +615,25 @@ def test_the_window_catch_up_waits_for_the_write_budget(settings):
     pipeline.process = lambda *a, **k: []
     pipeline.run(mode="live", time_budget_s=5)
     assert "window" not in calls and "day:False" in calls
+
+
+def test_near_the_free_write_cap_a_live_run_only_makes_cards(settings, monkeypatch):
+    """20 Oct 2026: 91,080 of D1's free 100,000 daily writes by 20:30 IST. Past 95% the catch-ups and memory syncs
+    wait for the reset; today's filings are still discovered and analysed."""
+    from bse_intel import event_catchup
+    from bse_intel.ai.gateway import AIGateway
+    from bse_intel.pipeline import Pipeline
+    from bse_intel.sinks.local import LocalSink
+    from conftest import FakeProvider
+
+    sink = LocalSink(settings)
+    gateway = AIGateway(settings.load_toml("providers.toml"), client_factory=lambda *a: FakeProvider({}), env={})
+    pipeline = Pipeline(settings, sink, gateway, bse=None, sleep=lambda s: None)
+    calls = []
+    monkeypatch.setattr(pipeline, "_writes_today", lambda: 96_000)
+    monkeypatch.setattr(pipeline, "_on_nse", lambda: True)
+    monkeypatch.setattr(event_catchup, "catch_up", lambda *a: calls.append("catch-up") or {"rerun": 0, "stopped": False})
+    pipeline._discover_safely = lambda day, full: calls.append("discover") or 0
+    pipeline.process = lambda *a, **k: calls.append("process") or []
+    pipeline.run(mode="live", time_budget_s=30)
+    assert "discover" in calls and "process" in calls and "catch-up" not in calls

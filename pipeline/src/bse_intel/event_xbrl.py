@@ -353,7 +353,7 @@ _SHORTER = ((re.compile(r"\s*as per regulation\s*30\s*para b of part a of schedu
             (re.compile(r"director or key managerial personnel or senior management personnel or compliance officer"),
              "director/KMP"),
             (re.compile(r"actions? (taken|initiated) or orders passed"), "action"),
-            (re.compile(r"of the listed entity"), "of the company"))
+            (re.compile(r"\bof the listed entity\b"), "of the company"))
 
 
 def _label(name: str) -> str:

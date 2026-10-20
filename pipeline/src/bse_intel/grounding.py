@@ -495,7 +495,10 @@ def scale_issues(metrics: list, history: list[dict]) -> list[str]:
         top = max(values.get("revenue") or 0, totals.get(period) or 0)
         for metric in ("ebitda", "pbt", "pat"):
             value = values.get(metric)
-            if value is not None and top >= 1 and abs(value) > top * 1.02:
+            # a profit only: a loss beyond revenue is what a distressed or pre-revenue company reports (Supreme Infra's
+            # finance cost alone was 2.5x its revenue, SPARC, McNally - all held for it, needs-review sweep 2026-10-20),
+            # and a loss read at the wrong unit is still caught by the jump against the company's own quarters below
+            if value is not None and top >= 1 and value > top * 1.02:
                 issues.append(f"{_PROFIT_LABELS[metric]} {period} ₹{value:,.2f} Cr is above revenue ₹{top:,.2f} Cr")
         here = quarter_index(period)
         for metric, value in values.items():

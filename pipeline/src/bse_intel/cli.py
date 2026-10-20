@@ -339,7 +339,7 @@ def cmd_seed_calls(args, settings, sink) -> int:
 
     pipeline = build_pipeline(settings, sink)
     scrips = {s.strip() for s in args.scrips.split(",")} if args.scrips else None
-    print(json.dumps(call_seed.run(pipeline, time.monotonic() + args.time_budget, args.restart, scrips)))
+    print(json.dumps(call_seed.run(pipeline, time.monotonic() + args.time_budget, args.restart, scrips, settings.workers)))
     return 0
 
 

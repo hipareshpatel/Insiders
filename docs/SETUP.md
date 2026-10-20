@@ -41,7 +41,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev,ocr]"      # ocr: RapidOCR for scanned pages (optional)
-python -m pytest -q              # 783 tests; web: npm test (card text, calendar, chart)
+python -m pytest -q              # 797 tests; web: npm test (card text, calendar, chart)
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -73,6 +73,7 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 | `pledge-sync [--days N] [--scrips a,b]` | Promoter pledge events (NSE SAST Reg 31) into memory, no AI (module 42); also at the end of every live run |
 | `seed-calls [--scrips a,b] [--restart] [--time-budget S]` | Each universe company's last two quarters of call transcripts (else presentations) into memory through the regular analysis, no Gemini (route `memory_seed`), no card, no ledger row; resumable; from GitHub `seed-calls.yml` hourly 21:45-04:45 IST until done |
 | `refresh-summaries [--scrips a,b]` | Rebuild each company's stored summary (overdue promises, radar, credibility) from its memory, no AI; run after a change to what summaries hold |
+| `critic-export --since YYYY-MM-DD [--until D] [--out critic.json]` | The shadow meaning critic's stored verdicts (R2 `evidence/critic/<news_id>.json`, beside the raw replies, one per live published card it judged) to a JSON file, for the daily audit to set beside the reviewers' verdicts; read only, no AI, no D1. The critic itself runs inside each live run (`critic.py`, route `critic` in providers.toml; `CRITIC=0` off, `CRITIC_MAX` cards a run, default 8, `CRITIC_MAX_S` seconds, default 180) |
 | `apply-verdicts` | The owner's standing Wrong / Right verdicts applied to the stored cards once, no AI (verdicts saved before they acted on the card, O11, never held or released it); also from GitHub (Maintenance > apply-verdicts). A re-run keeps a verdict by itself: Wrong holds the new version with the owner's note; Right releases it only if its headline is the approved card's |
 | `requeue-failed [--since D \| --days 30] [--attempts N] [--ids a,b] [--dry-run]` | Filings that used all 3 attempts get fresh attempts (after a fix), no AI; with `--ids`, the named filings re-run whatever their status (held or stale cards); also from GitHub (Maintenance > requeue-failed). Each night after 22:00 IST a live run gives the last 7 days' failed filings one more try by itself |
 | `dgtr-sync [--pages N] [--scrips a,b]` | DGTR anti-dumping / countervailing / safeguard cases into the memory of the companies their notices name as applicant or supporter, no AI (module 8); once a day in a live run (`NSE_DGTR=0` off); `--pages 42` reads every listed case (OCR of scanned notices, hours) |

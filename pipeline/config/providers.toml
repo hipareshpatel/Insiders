@@ -694,3 +694,37 @@ model = "nvidia/nemotron-3.5-super-vl:free"  # reads images; last resort for sca
 spare = true
 max_tokens = 2500
 limits = { rpm = 10 }
+
+# ------------------------------------------------------------------ Shadow meaning critic (critic.py)
+# Owner, 2026-10-21 (docs/audit/ai-quality-plan-2026-10-21.md, change 3): after a live card is committed, a model of a
+# family other than its writer's judges each point against its quote. The verdicts are only stored (R2 `evidence/critic/`, beside the raw replies), never
+# acted on. Spare free quota only: no card writer (no pass2* model, so not GLM, Nemotron, DeepSeek or Gemini Flash), no
+# paid route, no OpenRouter (its one daily allowance is shared with a writer). `max_share` stops the critic once the
+# model's (or its provider's) day or month is that full, so pass 1 and vision, which share these models and their counts,
+# keep the rest. In order; critic.py leaves out the writer's own family (a Gemini card goes to Mistral, then Groq).
+# CRITIC=0 turns it off; CRITIC_MAX cards a run (default 8).
+[[routes.critic]]
+provider = "gemini"
+model = "gemini-3.1-flash-lite"   # snapshot 2026-10-21 00:58 IST: 19 of its 475 a day used, ~450 spare
+json_mode = true
+max_tokens = 2000
+max_share = 0.6                   # stops at ~285 of the day's 475, leaving pass 1 and vision ~190
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 15, tpm = 250_000, rpd = 500 }
+
+[[routes.critic]]
+provider = "mistral"
+model = "mistral-small-2603"      # vision's model, on the Experiment tier's monthly allowance (assumption: free, as for vision)
+json_mode = true
+max_tokens = 2000
+max_share = 0.5
+limits = { rpm = 50, tpm = 20_000 }
+
+[[routes.critic]]
+provider = "groq"
+model = "openai/gpt-oss-20b"      # pass 1's first model; snapshot 2026-10-21: ~63 K of its 190 K tokens a day unused
+json_mode = true
+max_tokens = 1500
+max_share = 0.75
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 30, tpm = 8000, rpd = 1000, tpd = 200000 }

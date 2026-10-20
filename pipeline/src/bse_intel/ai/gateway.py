@@ -101,6 +101,9 @@ class Target:
     weight: int = 1
     spare: bool = False
     extra_body: dict = field(default_factory=dict)
+    # The share of the model's (and its provider's) day or month quota this route may take it up to: a route of spare
+    # quota (the shadow critic) stops at, say, 60% and leaves the rest to the routes that share the model.
+    max_share: float | None = None
 
     @property
     def key(self) -> str:
@@ -260,6 +263,7 @@ class AIGateway:
                     weight=max(1, int(entry.get("weight", 1))),
                     spare=bool(entry.get("spare", False)),
                     extra_body=dict(entry.get("extra_body", {})),
+                    max_share=float(entry["max_share"]) if entry.get("max_share") is not None else None,
                 )
                 targets.append(target)
                 if target.key not in self.limiters:
@@ -298,12 +302,13 @@ class AIGateway:
         return any(t.api_key for t in self.routes.get(route, []))
 
     def complete_json(self, route: str, system: str, user: str, schema: type[T], avoid_providers: tuple[str, ...] = (),
-                      bulk: bool = False) -> AIResult:
+                      bulk: bool = False, allow: Callable[[Target], bool] | None = None) -> AIResult:
         """One validated JSON reply. ``avoid_providers`` are tried only after every other target,
         so a second opinion comes from a different provider whenever one is available. ``bulk`` marks a backfill
-        request: it leaves the reserved models' live share alone (`[gateway.live_reserve]`)."""
+        request: it leaves the reserved models' live share alone (`[gateway.live_reserve]`). ``allow``, when given, leaves
+        out every target it refuses (the critic: never a model of the card writer's own family)."""
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
-        return self._run(route, messages, schema, avoid=avoid_providers, bulk=bulk)
+        return self._run(route, messages, schema, avoid=avoid_providers, bulk=bulk, allow=allow)
 
     def transcribe_image(self, png: bytes, route: str = "vision") -> str:
         b64 = base64.b64encode(png).decode()
@@ -407,6 +412,10 @@ class AIGateway:
             return CEILING, f"{reason} ({self.ceiling:.0%} safety limit)"
         if bulk and self.reserved_for_live(target):
             return CEILING, f"kept for live filings ({self.reserve_share:.0%} of the day)"
+        if target.max_share is not None:
+            used = max(self.limiters[target.key].quota.utilisation(), pquota.utilisation() if pquota else 0.0)
+            if used >= target.max_share:
+                return CEILING, f"route's share of the quota used ({used:.0%} of {target.max_share:.0%})"
         if self._circuit_open_until.get(target.key, 0) > time.monotonic():
             return TRANSIENT, "circuit open"
         return None
@@ -427,13 +436,16 @@ class AIGateway:
                 log.warning("circuit opened for %s after %d failures", target.key, count)
 
     def _run(self, route: str, messages: list[dict], schema: type[BaseModel] | None, image_tokens: int = 0,
-             avoid: tuple[str, ...] = (), bulk: bool = False) -> AIResult:
+             avoid: tuple[str, ...] = (), bulk: bool = False, allow: Callable[[Target], bool] | None = None) -> AIResult:
         if route not in self.routes:
             raise AIError(f"unknown route: {route}")
         prompt_chars = "".join(m["content"] if isinstance(m["content"], str) else "" for m in messages)
         est_in = estimate_tokens(prompt_chars) + image_tokens
         outcomes: list[tuple[str, str, str]] = []
         for target in self._ordered(route, avoid):
+            if allow is not None and not allow(target):
+                outcomes.append((target.key, UNAVAILABLE, "left out for this request"))
+                continue
             est = est_in + target.max_tokens
             skip = self._skip(target, est_in, est, bulk)
             if skip:

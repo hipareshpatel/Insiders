@@ -473,3 +473,24 @@ def test_the_configured_reserve_covers_every_flash_writer_and_not_the_lite_tier(
     packed = [f"{e['provider']}:{e['model']}" for e in config["routes"]["pass2_packed"]]
     assert set(reserve["models"]) == set(packed[:-1]) and packed[-1] == "gemini:gemini-3.5-flash-lite"
     assert reserve["share"] == 0.8 and all(m.startswith("gemini:") for m in reserve["models"])
+
+
+def test_a_route_of_spare_quota_stops_at_its_share_and_leaves_the_rest_to_the_models_other_routes(make_gateway):
+    config = gateway_config({"main": [{"provider": "a", "model": "m-a", "limits": {"rpd": 100}}],
+                             "spare_route": [{"provider": "a", "model": "m-a", "max_share": 0.5}]})
+    used = [{"provider": "a", "model": "m-a", "requests": 50}]   # 50 of 95 (95% of 100): past half
+    gw, fake = make_gateway(config, {"m-a": [GOOD]}, usage_today=used)
+    with pytest.raises(AllProvidersFailed) as exc:
+        gw.complete_json("spare_route", "s", "u", Pass1Result)
+    assert exc.value.quota_exhausted and fake.calls == []
+    assert gw.complete_json("main", "s", "u", Pass1Result).provider == "a"   # the model's own route is unaffected
+
+
+def test_allow_leaves_out_the_targets_it_refuses(make_gateway):
+    config = gateway_config(route({"provider": "a", "model": "m-a"}, {"provider": "b", "model": "m-b"}))
+    gw, fake = make_gateway(config, {"m-a": [GOOD], "m-b": [GOOD]})
+    assert gw.complete_json("r", "s", "u", Pass1Result, allow=lambda t: t.provider != "a").provider == "b"
+    with pytest.raises(AllProvidersFailed) as exc:
+        gw.complete_json("r", "s", "u", Pass1Result, allow=lambda t: False)
+    assert not exc.value.attempted and not exc.value.quota_exhausted
+    assert [c["model"] for c in fake.calls] == ["m-b"]

@@ -179,6 +179,18 @@ review threshold. Only the corrected card is adopted (memory stays from the
 first reply unless the verifier sent a fuller delta); it is published either way, "Verified
 after a second check" or "Unverified".
 
+**Shadow meaning critic** (`CRITIC=1`, owner 2026-10-21; `critic.py`, `config/prompts/critic.md`). After a live
+published card is committed, each point on its face (headline, takeaway, what happened, why it matters, verified call
+takeaways) goes with its quote, ~600 characters of filing around it and the memory items it cites to a model of another
+family than the writer's, which answers OK or one named fault (wrong period, entity or scope, direction, unit,
+unsupported cause, invented, overstated) with a reason and an optional narrower text. Shadow only: the verdict is stored
+in R2 (`evidence/critic/<news_id>.json`, beside the raw replies) and counted in the run's `stats_json.critic`; the card, its row and memory are never
+changed and no D1 row is written. Route `critic` uses spare free quota only, on models no card route uses (Gemini 3.1
+Flash-Lite, Mistral Small, Groq's gpt-oss-20b); each entry's `max_share` leaves it once the model's or provider's day or
+month is that full, so pass 1 and vision keep the rest. It runs after the live part of a run, at most `CRITIC_MAX` cards
+(8) and `CRITIC_MAX_S` seconds (180), and stops for the run when nothing can serve it. `critic-export --since` lists the
+verdicts for the audit.
+
 ---
 
 ## 5. Memory: Living Company Dossiers

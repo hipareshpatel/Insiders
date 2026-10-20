@@ -88,6 +88,11 @@ class Settings:
     pass2_pack_wait_s: int = field(default_factory=lambda: _env_int("PASS2_PACK_WAIT", 20))
     # Long filings (pass2_long) packed with other long ones, at most this many a request when packing is on. 1 = off.
     pass2_pack_long: int = field(default_factory=lambda: _env_int("PASS2_PACK_LONG", 3))
+    # The shadow meaning critic (critic.py): live published cards judged point by point on spare free quota after they
+    # are committed; verdicts stored, never acted on. CRITIC=0 off; at most CRITIC_MAX cards and CRITIC_MAX_S seconds a run.
+    critic: bool = field(default_factory=lambda: _env("CRITIC", "1") not in ("0", "false", "no"))
+    critic_max: int = field(default_factory=lambda: _env_int("CRITIC_MAX", 8))
+    critic_max_s: int = field(default_factory=lambda: _env_int("CRITIC_MAX_S", 180))
 
     def load_toml(self, name: str) -> dict:
         return _load_toml(self.config_dir / name)

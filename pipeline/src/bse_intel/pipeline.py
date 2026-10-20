@@ -154,6 +154,7 @@ class Stats:
     xbrl: int = 0           # filings whose figures came from their XBRL file
     duplicates: int = 0     # repeat submissions of an earlier filing's text (no AI call)
     days_discovered: list[str] = field(default_factory=list)
+    critic: dict = field(default_factory=dict)   # the shadow critic's counts this run (critic.py); empty when it did not run
     stopped_reason: str | None = None
     last_error: str | None = None
     status: str = ""
@@ -169,6 +170,7 @@ class Outcome:
     catalysts: list[dict] = field(default_factory=list)
     company: dict | None = None
     committed: bool = False
+    critic: dict | None = None   # a live published card's points for the shadow critic (critic.py); never written to D1
 
 
 @dataclass
@@ -1676,6 +1678,7 @@ class Pipeline:
         self._holds = gate.load_holds(settings.config_dir / settings.card_holds_file)  # news_id -> reason
         self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
         self._superseding: dict[str, tuple[list[str], str]] = {}  # news_id -> later filings with its quarter's card (D20)
+        self._critic_jobs: list[dict] = []   # live cards committed this run, for the shadow critic (critic.py)
 
     # ------------------------------------------------------------------ writes
 
@@ -3126,7 +3129,14 @@ class Pipeline:
             self.stats.cards_high += rated.impact == "HIGH"
             self.stats.signals += rated.actionable
             self.stats.needs_review += needs_review
+        critic_job = None
+        if self.settings.critic and not bulk and not held:
+            from . import critic   # live published cards only: a snapshot, so the critic can never touch the card
+
+            critic_job = critic.build_job(filing.news_id, card_json, result.model_label, text, view, filing.filed_at,
+                                          event_type)
         return Outcome(
+            critic=critic_job,
             update={"news_id": filing.news_id, "status": "ANALYZED", "event_type": event_type,
                     "reason": None, "last_error": None, "updated_at": now},
             card=row,
@@ -3296,6 +3306,8 @@ class Pipeline:
             return
         with self._commit_lock:
             self._commit_locked(outcomes)
+            # the shadow critic sees only what was committed, and only a card still published (not held since, D20)
+            self._critic_jobs += [o.critic for o in outcomes if o.critic and o.card and not o.card.get("held")]
 
     def _commit_locked(self, outcomes: list[Outcome]) -> None:
         try:
@@ -3425,6 +3437,7 @@ class Pipeline:
                         self._dgtr_sync(live_deadline)
                     if time.monotonic() < live_deadline and self._annual_catchup_due():
                         self._annual_catchup(live_deadline)
+                self._run_critic(live_deadline)
             if mode in ("backfill", "all") and not self._halted(bulk=True):
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
         except SourceBlockedError as exc:
@@ -3450,6 +3463,28 @@ class Pipeline:
                 log.exception("could not record run")
         log.info("run %s finished: %s %s", run_id, status, json.dumps(self.stats.as_dict()))
         return self.stats
+
+    def _run_critic(self, deadline: float) -> None:
+        """The shadow critic over this run's committed live cards (critic.py), inside the live part of the run and at most
+        CRITIC_MAX_S seconds. It writes no D1 row and changes no card; it never fails the run."""
+        jobs, self._critic_jobs = self._critic_jobs, []
+        if not jobs or not self.settings.critic or not self.gateway.has_route("critic"):
+            return
+        from . import critic
+
+        deadline = min(deadline, time.monotonic() + self.settings.critic_max_s)
+        saved = self.gateway.deadline
+        self.gateway.deadline = deadline   # no request outlives the critic's time
+        try:
+            system = (self.settings.config_dir / "prompts" / "critic.md").read_text()
+            self.stats.critic = critic.run(jobs, self.gateway, self.sink, system, deadline, self.settings.critic_max,
+                                           self.stats.critic or None)
+            log.info("shadow critic: %s", json.dumps(self.stats.critic))
+        except Exception:
+            log.exception("shadow critic failed")
+        finally:
+            self.gateway.deadline = saved
+            self._flush_usage()
 
     def _annual_catchup_due(self) -> bool:
         """The daily annual-report catch-up's slot: after 18:30 IST, once a day, with NSE's annual-report XBRL on."""

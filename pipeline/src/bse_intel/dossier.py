@@ -1230,6 +1230,8 @@ _RESULT_METRICS = (
     ("combined_ratio", ("combined_ratio",)),
     ("claims_ratio", ("claims_ratio",)),
 )
+# lines that can turn from a loss to a profit; any other line across a change of sign gets no change at all
+_TURN_LINES = {"ebitda", "pbt", "pat", "eps", "ppop", "nii"}
 # lines whose change is in basis points, not per cent
 _BPS_LINES = {"ebitda_margin", "gnpa_pct", "nnpa_pct", "roa_pct", "combined_ratio", "claims_ratio"}
 # The table's rows in the order each statement is read (owner, 2026-10-19: "do not get fixed at one sector"). The
@@ -1272,7 +1274,19 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         if not p:
             return None
         entry = next((table[(n, p)] for n in names if (n, p) in table), None)
-        return entry["value"] if entry and entry.get("value") is not None else None
+        if not entry:
+            return None
+        # the comparative this filing prints wins over what an earlier filing said for that quarter: a regrouped
+        # year-ago column (Man Industries' Q1FY26 EBITDA ₹75.80 Cr here, ₹49.11 Cr in last year's own XBRL, made
+        # +192% of +89%; live review 3)
+        sources = _sources(entry)
+        kept = {src.get("basis") for src in sources} - {None}
+        basis = "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)   # as _metric_entry keeps it
+        own = next((src for src in sources if src.get("news_id") == news_id and src.get("value") is not None
+                    and src.get("basis") in (None, basis)), None)
+        if own is not None:
+            return own["value"]
+        return entry["value"] if entry.get("value") is not None else None
 
     def margin(p: str | None) -> float | None:
         stated = lookup(_RESULT_METRICS[2][1], p)
@@ -1290,7 +1304,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         earned, expended = lookup(("interest_earned",), p), lookup(("interest_expended",), p)
         return round(earned - expended, 2) if earned is not None and expended is not None else None
 
-    def line(pick, bps: bool) -> dict | None:
+    def line(pick, bps: bool, key: str = "") -> dict | None:
         values = {slot: pick(p) for slot, p in periods.items()}
         if values["value"] is None:
             return None
@@ -1302,6 +1316,8 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             if bps:
                 row[f"{label}_bps"] = round((values["value"] - base) * 100)
             elif base < 0 or values["value"] < 0:
+                if key not in _TURN_LINES:
+                    continue   # an exceptional charge that did not recur is not "loss to profit" (live review 3)
                 # a % across a loss means nothing (Prism Johnson's PAT "+2127%" from a small loss, T11): name the turn
                 now = values["value"]
                 row[f"{label}_turn"] = ("LOSS_TO_PROFIT" if now >= 0 else "PROFIT_TO_LOSS" if base >= 0
@@ -1312,7 +1328,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
 
     for key, names in _RESULT_METRICS:
         pick = margin if key == "ebitda_margin" else nii if key == "nii" else (lambda p, names=names: lookup(names, p))
-        row = line(pick, key in _BPS_LINES)
+        row = line(pick, key in _BPS_LINES, key)
         if row is None:
             continue
         if key == "revenue" and "yoy_pct" not in row:

@@ -132,6 +132,12 @@ _CASE_CONTEXT = re.compile(r"\b(?:sebi|rbi|irdai|cci|court|tribunal|nclt|nclat|s
                            r"|regulator|ministry|dgtr|pollution|labour)", re.I)
 
 
+# a demand or penalty a show-cause notice only proposes is the notice, not an order: a ₹5.09 Cr GST show-cause notice
+# marked "Order" as reached (live review 3)
+_PROPOSED = re.compile(r"\b(?:propos\w*|show[- ]cause|scn)\b[^.;]{0,80}?\b(?:demand|penalt(?:y|ies))\b"
+                       r"|\b(?:demand|penalt(?:y|ies))\b[^.;]{0,40}?\bpropos\w*", re.I)
+
+
 def case_stage(event_type: str, headline: str, facts: list[str], context: list[str] = ()) -> dict | None:
     """Where a case stands. `at` is the step this filing is about (the furthest one its headline names, else its first
     point's); `reached` is every step the card names as having happened, each on its own: a USFDA import alert can
@@ -144,7 +150,8 @@ def case_stage(event_type: str, headline: str, facts: list[str], context: list[s
     track, steps = ("USFDA", _USFDA) if re.search(r"\b(?:us\s*)?fda\b", lead) else ("CASE", _CASE)
 
     def named(text: str) -> list[int]:
-        return [i for i, (_, pattern) in enumerate(steps) if re.search(pattern, text.lower())]
+        text = _PROPOSED.sub(" notice ", text.lower())
+        return [i for i, (_, pattern) in enumerate(steps) if re.search(pattern, text)]
 
     current = named(headline) or named(lead)
     if not current:

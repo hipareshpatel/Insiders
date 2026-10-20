@@ -291,3 +291,39 @@ def test_an_input_counted_in_millions_is_scaled_before_the_formula_is_held():
     assert item["check"] == "VERIFIED" and item["computed"] == 45.5
     wrong = est.model_copy(update={"result": 455.0})   # a real slip is still caught
     assert check([wrong], "about 70 million units").items[0]["check"] == "MISMATCH"
+
+
+def test_the_results_table_takes_the_filings_own_year_ago_column():
+    """Man Industries (live review 3): Q1FY26 EBITDA was ₹49.11 Cr in last year's own filing and ₹75.80 Cr in this
+    filing's regrouped comparative; the table showed +192% for +89%."""
+    from bse_intel.dossier import results_snapshot
+
+    def src(news_id, value, basis="CONSOLIDATED"):
+        return {"news_id": news_id, "value": value, "as_of": "2026-08-10T10:00:00+05:30", "basis": basis}
+
+    dossier = {"financial_metrics": [
+        {"metric": "revenue", "period": "Q1FY27", "value": 1053.13, "sources": [src("n2", 1053.13)]},
+        {"metric": "revenue", "period": "Q1FY26", "value": 742.0, "sources": [src("n1", 742.0), src("n2", 742.0)]},
+        {"metric": "ebitda", "period": "Q1FY27", "value": 143.4, "sources": [src("n2", 143.4)]},
+        {"metric": "ebitda", "period": "Q1FY26", "value": 49.11, "sources": [src("n1", 49.11), src("n2", 75.80)]},
+        {"metric": "pat", "period": "Q1FY27", "value": 80.0, "sources": [src("n2", 80.0)]},
+    ]}
+    snap = results_snapshot(dossier, "n2")
+    assert snap["ebitda"]["prev_year"] == 75.80 and snap["ebitda"]["yoy_pct"] == 89.2
+    # a comparative on the other basis does not replace the kept one
+    dossier["financial_metrics"][3]["sources"][1]["basis"] = "STANDALONE"
+    assert results_snapshot(dossier, "n2")["ebitda"]["prev_year"] == 49.11
+
+
+def test_an_exceptional_charge_that_did_not_recur_is_no_turn():
+    """Orient Bell, Jubilant Agri (live review 3): exceptional items "loss to profit" when a ₹1.29 Cr charge did not recur."""
+    from bse_intel.dossier import results_snapshot
+
+    m = lambda metric, period, value: {"metric": metric, "period": period, "value": value,
+                                       "sources": [{"news_id": "n2", "value": value, "as_of": "2026-08-10T10:00:00+05:30"}]}
+    dossier = {"financial_metrics": [m("revenue", "Q1FY27", 203.8), m("revenue", "Q4FY26", 190.0), m("pat", "Q1FY27", 8.3),
+                                     m("pat", "Q4FY26", -0.4), m("exceptional_items", "Q1FY27", 0.0),
+                                     m("exceptional_items", "Q4FY26", -1.29)]}
+    snap = results_snapshot(dossier, "n2")
+    assert snap["pat"]["qoq_turn"] == "LOSS_TO_PROFIT"
+    assert "qoq_turn" not in snap["exceptional_items"] and "qoq_pct" not in snap["exceptional_items"]

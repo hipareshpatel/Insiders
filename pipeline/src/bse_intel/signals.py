@@ -435,7 +435,8 @@ def scale_parts(before: dict | None, output: Pass2Output, company: dict | None, 
         deal_kind = "CONVERSION"
     amount, against = deal.amount_cr, []
     if deal_kind in ("ORDER", "CAPEX", "OTHER"):
-        for period_kind in ("Q", "FY"):
+        # a capex plan runs for years: one quarter's revenue made ITC's ₹20,000 Cr plan "84%" (live review 3)
+        for period_kind in (("Q", "FY") if deal_kind == "ORDER" else ("FY",)):
             latest = _latest_revenue(before, period_kind)
             if latest:
                 against.append({"pct": amount / latest[1] * 100, "label": f"{latest[0]} revenue", "base_cr": latest[1]})

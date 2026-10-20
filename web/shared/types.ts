@@ -344,6 +344,8 @@ export interface ReviewCard {
   headline: string; event_category: string; grounding: string | null; review: string | null;
   /** 1 when kept off the public feed (figures not verified); 0 when only flagged for review. */
   held?: number;
+  /** The filing's queue status: PENDING while a re-run waits for the next pipeline run. */
+  filing_status?: string | null;
 }
 
 export interface CompaniesResponse {

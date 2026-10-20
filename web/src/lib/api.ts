@@ -53,5 +53,5 @@ export const api = {
   system: () => get<SystemResponse>("/api/system"),
   radar: (min = 3) => get<{ since: string; min: number; companies: RadarCompany[] }>("/api/radar", { min }),
   overdue: () => get<{ today: string; promises: OverduePromise[] }>("/api/promises/overdue"),
-  review: () => get<{ cards: ReviewCard[] }>("/api/review"),
+  review: () => get<{ cards: ReviewCard[]; total?: number }>("/api/review"),
 };

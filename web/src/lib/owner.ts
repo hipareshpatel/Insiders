@@ -60,7 +60,7 @@ export const ownerApi = {
   verdict: (token: string, newsId: string, verdict: Verdict | "CLEAR", note = "") =>
     call<{ ok: boolean; held: number }>(token, "/verdict", { method: "POST", body: JSON.stringify({ news_id: newsId, verdict, note }) }),
   card: (token: string, id: string) => call<CardRow>(token, `/cards/${encodeURIComponent(id)}`),
-  review: (token: string) => call<{ cards: ReviewCard[] }>(token, "/review"),
+  review: (token: string) => call<{ cards: ReviewCard[]; total?: number }>(token, "/review"),
   verdicts: (token: string) => call<{ verdicts: OwnerVerdict[] }>(token, "/verdicts"),
 };
 

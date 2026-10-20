@@ -58,3 +58,14 @@ def test_the_nightly_requeue_gives_one_more_try_once_a_night(settings, monkeypat
     sink._db.commit()
     pipeline._requeue_failed_nightly(live_from)   # not before 22:00
     assert rows(sink, "select status from filings where news_id = 'f0'")[0]["status"] == "FAILED"
+
+
+def test_requeue_by_id_reruns_named_filings_whatever_their_status(settings):
+    """The laptop's held and stale cards (T24, T18) re-run on production after a fix."""
+    pipeline, sink, _ = _failed_filings(settings)
+    sink._db.execute("UPDATE filings SET status = 'DONE', attempts = 1 WHERE news_id = 'f2'")
+    sink._db.commit()
+    report = requeue.requeue_ids(sink, ["f2", "f2", "", "f1"], 3)
+    assert report["requeued"] == 2
+    got = {r["news_id"]: (r["status"], r["attempts"]) for r in rows(sink, "select news_id, status, attempts from filings")}
+    assert got["f2"] == ("PENDING", 0) and got["f1"] == ("PENDING", 0) and got["f0"] == ("FAILED", 3)

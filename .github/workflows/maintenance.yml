@@ -1,7 +1,8 @@
 # No-AI maintenance on the live database, started by hand (Actions > Maintenance > Run workflow):
 # - refresh-card-blocks: every stored card's code blocks rebuilt from memory by today's code (card_refresh.py);
 # - refresh-summaries: every company's stored summary (open promises, radar, credibility) rebuilt from its memory;
-# - export-held: every held card as a run artifact, for the live reviews (the public site does not serve them).
+# - export-held: every held card into docs/audit/live/ on the working branch, for the live reviews (the public site
+#   does not serve them).
 # Neither calls an AI model or NSE. It runs beside the pipeline (its own concurrency group: a shared one would
 # cancel a pending pipeline run); both only read memory, and a summary or card a run writes at the same moment is
 # rewritten by the next run.
@@ -21,7 +22,7 @@ on:
         default: false
 
 permissions:
-  contents: read
+  contents: write   # export-held commits its file to the working branch; the other commands only read the repository
 
 concurrency:
   group: bse-maintenance
@@ -55,10 +56,16 @@ jobs:
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-summaries'
       - name: Export held cards
         if: inputs.command == 'export-held'
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel export-held --out "$RUNNER_TEMP/held.json"'
-      - uses: actions/upload-artifact@v4
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel export-held --out "../docs/audit/live/held-$(date -u +%F).json"'
+      # into the working branch, as T19 planned (the owner accepted held drafts in the public repository, 2026-10-20)
+      - name: Commit the export
         if: inputs.command == 'export-held'
-        with:
-          name: held-cards
-          path: ${{ runner.temp }}/held.json
-          retention-days: 7
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch -q origin claude/nice-goodall-ta0sxs
+          git checkout -q -B claude/nice-goodall-ta0sxs origin/claude/nice-goodall-ta0sxs
+          git add docs/audit/live/held-*.json
+          git commit -qm "Held cards exported for the live review (maintenance.yml export-held)"
+          git push -q origin claude/nice-goodall-ta0sxs

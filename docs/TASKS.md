@@ -152,7 +152,7 @@ blocks and the computed lines; "AI reading · not verified against the filing (n
 year ("06 Aug 2026, 20:43"). Report: the deployed version id and what you saw.
 Files you may change: none.
 
-## T19 · P1 · laptop · OPEN, do first — export the held cards for the cloud's live review (owner, 2026-10-20)
+## T19 · P1 · cloud (moved from the laptop, 20 Oct 08:00 IST: `maintenance.yml` export-held) · IN PROGRESS — export the held cards for the cloud's live review (owner, 2026-10-20)
 
 The owner chose the laptop's export over giving the cloud the owner token. With the owner token from the keys file:
 1. Page `https://insiders.reply-bd3.workers.dev/api/owner/feed?held=only&limit=50` (header `Authorization: Bearer

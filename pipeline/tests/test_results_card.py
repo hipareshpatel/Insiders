@@ -298,3 +298,13 @@ def test_the_pbt_the_statement_prints_and_the_owners_label():
     assert first("Net profit to shareholders") == "pat_owners"
     assert first("Profit attributable to owners of the parent") == "pat_owners"
     assert first("Net profit") == "pat"
+
+
+def test_eps_takes_its_profit_sign():
+    """Shivam Autotech's file tags H1FY24 EPS 2.27 beside a ₹27.77 Cr loss (live review 2, 2026-10-20)."""
+    from bse_intel.xbrl import eps_signs
+
+    values = {("pat", "H1FY24"): -27.77, ("eps", "H1FY24"): 2.27, ("pat", "Q2FY25"): 10.0, ("eps", "Q2FY25"): 0.8,
+              ("pat", "Q3FY25"): -5.0, ("pat_owners", "Q3FY25"): -4.0, ("eps", "Q3FY25"): -0.4}
+    assert eps_signs(values) == 1
+    assert values[("eps", "H1FY24")] == -2.27 and values[("eps", "Q2FY25")] == 0.8 and values[("eps", "Q3FY25")] == -0.4

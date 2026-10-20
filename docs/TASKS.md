@@ -181,7 +181,7 @@ The owner chose the laptop's export over giving the cloud the owner token. With 
 3. Commit with "T19" first and push; the cloud reviews a sample of them with the next published sample.
 Files you may change: `docs/audit/live/held-2026-10-20.json`. Report: here (the count).
 
-## T18 · P1 · laptop · OPEN — live review 2's classes in your files, and re-running stale cards
+## T18 · P1 · laptop · DONE (item 6 to production) — live review 2's classes in your files, and re-running stale cards
 
 From `docs/audit/live/2026-10-20-review2.md` (10 of 24 WRONG; 17 of 48 over both reviews). The headline figures were
 mostly right; the WRONG verdicts come from text around them. Yours:
@@ -200,9 +200,26 @@ mostly right; the WRONG verdicts come from text around them. Yours:
 6. **Re-run the stale cards** whose fault the code already fixes: the two Magellanic 16 Oct LOA cards (same-deal check
    of 18 Oct merges them now), the market-cap cards (Novartis x3, SML/M&M, NLC: `prices.as_of` of 222bd2d), Lehar's
    and Jubilant's rating cards (no deal block on ratings since 19 Oct), LTM's (after T13's re-seed).
-Files you may change: your files, their tests, `docs/audit/live/`. Report: here, per class.
+Files you may change: your files, their tests, `docs/audit/live/`. Report: 2026-10-20, per class.
+1. Rating text against the block: `card_context.rating_word_mismatch` (F88) sends a card saying upgrade/downgrade when the
+   grade did not move (same agency in memory or the filing's "from ...") to the second provider; on stored cards it flags
+   only eMudhra `106139d0`.
+2. Notable-change lines: CSB's call `5ec9d699` and Ahluwalia `f6495f61` re-run without those lines (code-built results card;
+   the call card has none). Ahluwalia's "net profit to shareholders ₹0 Cr" was a 0 filler: ignored (F88). The % across a
+   change of sign is the cloud's `results_snapshot`.
+3. Inventory direction (SML Q3FY26 `0f500b08`): the re-run is a code-built results card, no inventory claim.
+4. Invented facts: Jubilant's ₹800 Cr NCD gone on re-run (now the ₹2,500 Cr plan in memory); SML/Isuzu `e1e7cf1b` is now a
+   DUPLICATE (card removed, also on the live site); SML/M&M `e4d8f81b` has no deal price; Shivam's TTM base gone. The
+   pass-2 prompt now says to keep the filing's tense and certainty (T24).
+5. EPS without its minus: the seed's own XBRL file (Shivam H1FY24 EPS tagged 2.27 beside a ₹27.77 Cr loss). `xbrl.eps_signs`
+   gives each period's EPS its profit's sign (owners' profit first); over 2,396 cached results files no sign disagreement is
+   left. Stored memory takes it at T13's re-seed.
+6. Re-running the stale cards: needs pass 2, so production's (T22: the laptop spends no AI quota). Filings: the two Magellanic
+   16 Oct LOAs (`0f2061e4-ad22-43e6-870d-2f38a7b20202` and its same-deal twin), Novartis's three market-cap cards, SML/M&M
+   `e4d8f81b`, NLC, Lehar `22344cf9-97a5-4f2e-bd50-5238600b67db`, Jubilant `0ccca397-6b8f-4744-8bd0-37b759631484`, LTM
+   (after T13), plus T24's 19 held cards. Proposal: the cloud requeues them on production when the quota allows.
 
-## T17 · P1 · laptop · OPEN — the WRONG classes of the first live review that are in your files
+## T17 · P1 · laptop · DONE — the WRONG classes of the first live review that are in your files
 
 From `docs/audit/live/2026-10-20.md` (7 of 24 WRONG; the cloud fixed its own classes in the commit after it). Yours, by
 D37's routine (fix the class with a test, re-run only the affected cards):
@@ -220,7 +237,22 @@ D37's routine (fix the class with a test, re-run only the affected cards):
    `d93bec96`), an MD reappointment as OTHER (CSB `df53e2fe`); impact_level too high on routine items (6 of 24).
 7. For the next review: export the held cards with their PDFs into `data/audit/live/held-<date>/` (the cloud cannot read
    held cards from the public site); the cloud reviews them with the published ones.
-Files you may change: your files (TASKS "Who owns what"), their tests, `docs/audit/live/`. Report: here, per class.
+Files you may change: your files (TASKS "Who owns what"), their tests, `docs/audit/live/`. Report: 2026-10-20, per class. The seven filings were re-run on 20 Oct's code first (before T22's no-quota rule), then fixed
+where the fault remained (F87), and re-run again.
+1. ₹ million read as crore (Novartis `c8de4c15`): the re-run is a code-built results card from the XBRL file, no balance-sheet or
+   cash-flow lines in million; published, nothing for review.
+2. Inventory direction (same card): no inventory line on the code-built card. The general guard is `directions.guard` (with
+   XBRL); the inventory % across a change of sign is the cloud's `results_snapshot` turn naming.
+3. Warrants 12.67 million (Magellanic `ff8021a8`): the re-run writes "12,67,00,000 Convertible Warrants"; held by the quote
+   contract on its objects table (rows now matched, F88 row rule; two "why it matters" sentences remain).
+4. SML's months (`0fd4cf53`): re-run writes Aug 2025 against Aug 2024, YoY, no invented target.
+5. Invented facts: Novartis's "no open offer" gone (now "completes the open offer process"); its one-word headline "WaveRise"
+   is held by `headline_form` (F87) and rewrites to "ChrysCapital consortium completes acquisition of Novartis India";
+   CSB's approvals card no longer exists (item 6).
+6. Event types: CSB's MD reappointment -> MANAGEMENT_CHANGE, no card (`APPOINTMENT`, F87; card deleted on re-run and on the
+   live site in T22); NHPC's restored unit CAPEX -> OTHER (F88 rule); LTM's partnership: the model's PRODUCT_LAUNCH, left.
+   impact_level: D39 (cloud).
+7. Held-card export: moved to the cloud (maintenance.yml export-held, T19).
 
 ## T16 · P1 · cloud · OPEN — daily review of the live cards by independent agents (D37)
 

@@ -424,6 +424,10 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                 values[("ebitda_margin", label)] = ebitda / revenue * 100
     latest = max(ends, key=lambda p: (ends[p], p.startswith("Q")))
     quarter = max((p for p in ends if p.startswith("Q")), key=lambda p: ends[p], default=None)
+    # EPS takes its period's profit sign: Shivam Autotech's file tags H1FY24 EPS 2.27 beside a loss of ₹27.77 Cr, and
+    # memory then read a fall to a loss as "EPS down 177%" (live review 2, 2026-10-20). The owners' profit decides
+    # where the file has one (a 0 there is a filler), else the group's.
+    eps_signs(values)
     metrics = []
     for (metric, label), value in sorted(values.items(), key=lambda kv: (ends.get(kv[0][1]) or date.min, kv[0][0])):
         unit = "INR" if metric in PER_SHARE else "PCT" if metric in PERCENT else "INR_CR"
@@ -443,6 +447,19 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
         if sheet.gross_debt_cr is not None and sheet.cash_cr is not None:
             sheet.net_debt_cr = _r(sheet.gross_debt_cr - sheet.cash_cr)
     return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet)
+
+
+def eps_signs(values: dict) -> int:
+    """Give each period's EPS its profit's sign, in place ({(metric, period): value}). Returns how many it changed."""
+    changed = 0
+    for (metric, label), value in list(values.items()):
+        if metric != "eps" or not value:
+            continue
+        profit = values.get(("pat_owners", label)) or values.get(("pat", label))
+        if profit and abs(profit) >= 0.01 and (profit < 0) != (value < 0):
+            values[(metric, label)] = -value
+            changed += 1
+    return changed
 
 
 def _r(v: float | None) -> float | None:

@@ -283,6 +283,16 @@ def cmd_refresh_summaries(args, settings, sink) -> int:
     return 0
 
 
+def cmd_refresh_card_blocks(args, settings, sink) -> int:
+    """Each stored card's code blocks (results table, size, rating ladder, case stage, earlier guidance, fundamentals)
+    rebuilt from memory by today's code, and signal types now off removed; no AI (card_refresh.py)."""
+    from . import card_refresh
+
+    scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()} or None
+    print(json.dumps(card_refresh.run(_pipeline(settings, sink), scrips, dry_run=args.dry_run), indent=2))
+    return 0
+
+
 def cmd_dgtr_sync(args, settings, sink) -> int:
     """DGTR trade-remedy cases into the memory of the companies that applied for or supported them (dgtr.py, module 8),
     no AI. --pages 42 reads every case DGTR lists (a first fill: OCR of a few hundred scanned notices, hours)."""
@@ -616,6 +626,10 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("refresh-summaries", help="rebuild each company's stored summary from its memory, no AI")
     p.add_argument("--scrips", help="only these companies (comma separated); default every company with memory")
     p.set_defaults(func=cmd_refresh_summaries)
+    p = sub.add_parser("refresh-card-blocks", help="rebuild every stored card's code blocks from memory, no AI")
+    p.add_argument("--scrips", help="only these companies (comma separated); default every card")
+    p.add_argument("--dry-run", action="store_true", help="count what would change, write nothing")
+    p.set_defaults(func=cmd_refresh_card_blocks)
     p = sub.add_parser("dgtr-sync", help="DGTR anti-dumping / countervailing / safeguard cases into memory, no AI (module 8)")
     p.add_argument("--pages", type=int, default=1, help="list pages per investigation type (15 cases each, ongoing first)")
     p.add_argument("--scrips", help="only these companies (comma separated)")

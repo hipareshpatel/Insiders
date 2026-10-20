@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { Flame, Sunrise } from "lucide-react";
+import { Flame } from "lucide-react";
 import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { AnnouncementCard } from "../components/AnnouncementCard";
 import { api } from "../lib/api";
-import { cn } from "../lib/cn";
 import { addDays, num, todayIST } from "../lib/format";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading } from "./FeedView";
@@ -26,18 +25,16 @@ export function lastClose(now = new Date()): string {
 /** Blueprint view 1: the morning cockpit. Cards that cleared all four gates, best score first, with
  * what came in overnight in four numbers. */
 export function TopSignalsView() {
-  const [params, setParams] = useQueryState();
+  const [params] = useQueryState();
   const [, navigate] = useLocation();
   // Links from before the feed moved to /feed (shared cards, tabs) still open where they meant to.
   useEffect(() => {
     if (params.get("card") || params.get("tab")) navigate(`/feed?${params.toString()}`, { replace: true });
   }, [params, navigate]);
-  const sinceClose = params.get("window") !== "3d";
-  const fromAt = sinceClose ? lastClose() : `${addDays(todayIST(), -3)}T00:00:00+05:30`;
-  const signals = useQuery({
-    queryKey: ["signals", fromAt],
-    queryFn: () => api.signals(sinceClose ? { from_at: fromAt } : { from: addDays(todayIST(), -3) }),
-  });
+  // one window, the last 7 days (owner, 2026-10-20): since the close or 3 days was mostly empty
+  const from = addDays(todayIST(), -7);
+  const fromAt = `${from}T00:00:00+05:30`;
+  const signals = useQuery({ queryKey: ["signals", fromAt], queryFn: () => api.signals({ from }) });
   const brief = useQuery({ queryKey: ["brief", fromAt], queryFn: () => api.brief(fromAt), staleTime: 60_000 });
   const b = brief.data;
 
@@ -50,18 +47,9 @@ export function TopSignalsView() {
             Filings that cleared all four gates: big for the company, a real inflection, a stock not already run up, and clean checks.
           </p>
         </div>
-        <div role="radiogroup" aria-label="Window" className="inline-flex rounded-lg border border-line bg-surface p-0.5">
-          {([["close", "Since 3:30 PM close", Sunrise], ["3d", "Last 3 days", Flame]] as const).map(([key, label, Icon]) => {
-            const on = key === "close" ? sinceClose : !sinceClose;
-            return (
-              <button key={key} type="button" role="radio" aria-checked={on} onClick={() => setParams({ window: key === "close" ? null : key })}
-                className={cn("inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium",
-                  on ? "bg-accent-soft text-accent" : "text-ink-2 hover:text-ink")}>
-                <Icon className="h-4 w-4" />{label}
-              </button>
-            );
-          })}
-        </div>
+        <span className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-line bg-accent-soft px-3 text-[13px] font-medium text-accent">
+          <Flame className="h-4 w-4" />Last 7 days
+        </span>
       </header>
 
       <dl className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">

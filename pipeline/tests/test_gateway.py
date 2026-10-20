@@ -390,3 +390,31 @@ def test_usage_rows_count_for_their_providers_own_day(settings):
         {"day": "1999-01-01", "provider": "gemini", "model": "gemini-3.7-flash", "requests": 20},   # another day
     ], env={"GEMINI_API_KEY": "g"})
     assert gw.limiters["gemini:gemini-3.7-flash"].quota.day_requests == 0
+
+
+def test_repeated_429s_pause_a_model_longer_and_a_success_resets_it(make_gateway):
+    """Owner, 2026-10-20: a passing 429 (Z.AI "overloaded", Mistral "Rate limit exceeded") pauses the model and the
+    run goes on with the others; one that keeps answering 429 pauses 1, 5, then 30 min, never the whole day."""
+    config = gateway_config(route({"provider": "a", "model": "m-a"}, {"provider": "b", "model": "m-b"}))
+    busy = api_error(openai.RateLimitError, 429, "The service may be temporarily overloaded")
+    gw, _ = make_gateway(config, {"m-a": [busy, busy, busy, GOOD], "m-b": [GOOD, GOOD, GOOD]})
+    limiter = gw.limiters["a:m-a"]
+    pauses = []
+    for _ in range(3):
+        limiter._blocked_until = 0
+        assert gw.complete_json("r", "s", "u", Pass1Result).provider == "b"
+        pauses.append(round(limiter._blocked_until - limiter._clock()))
+    assert pauses == [60, 300, 1800]
+    assert not limiter.quota.exhausted()
+    limiter._blocked_until = 0
+    assert gw.complete_json("r", "s", "u", Pass1Result).provider == "a"
+    assert gw._rate_hits["a:m-a"] == 0
+
+
+def test_a_bare_quota_429_pauses_but_does_not_retire_for_the_day(make_gateway):
+    config = gateway_config(route({"provider": "a", "model": "m-a"}, {"provider": "b", "model": "m-b"}))
+    err = api_error(openai.RateLimitError, 429, "Resource has been exhausted (e.g. check quota).")
+    gw, _ = make_gateway(config, {"m-a": [err], "m-b": [GOOD]})
+    gw.complete_json("r", "s", "u", Pass1Result)
+    assert not gw.limiters["a:m-a"].quota.exhausted()
+    assert gw.limiters["a:m-a"].cooling_down()

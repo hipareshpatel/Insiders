@@ -12,7 +12,7 @@ hammered), keeps "spare" targets for last, and walks it:
 * paces requests under each model's (95%-scaled) rpm/tpm limits; a long
   wait fails over instead of stalling the run;
 * fails over on 429 / timeout / connection / 5xx, honouring Retry-After as
-  a cooldown, and retires a model for the day when the provider says its
+  a cooldown (a model that keeps answering 429 pauses 1, 5, then 30 min), and retires a model for the day when the provider says its
   daily quota is spent; an outage counts as transient, so it never uses up
   a filing's attempts;
 * stops starting requests past the run's deadline (``gateway.deadline``) and
@@ -55,6 +55,10 @@ ClientFactory = Callable[[str, str, float], Any]
 
 CIRCUIT_THRESHOLD = 3
 CIRCUIT_OPEN_SECONDS = 300
+# a model that answers 429 again after its pause is paused longer, up to 30 min, and the run goes on with the other
+# models; a 429 is a day's ceiling only when it names a daily window (owner, 2026-10-20: a few passing 429s from Z.AI
+# and Mistral, or Gemini's bare "quota", left a model out of the run)
+RATE_PAUSES = (60.0, 300.0, 1800.0)
 MAX_PACING_WAIT = 30.0
 MAX_SLOT_WAIT = 10.0   # wait for a free slot on a concurrency-capped model, then try the next one
 
@@ -202,6 +206,7 @@ class AIGateway:
         self.disabled: dict[str, str] = {}
         self.disabled_providers: dict[str, str] = {}   # a rejected key disables every model on it
         self._failures: dict[str, int] = {}
+        self._rate_hits: dict[str, int] = {}
         self._circuit_open_until: dict[str, float] = {}
         self.deadline: float | None = None  # time.monotonic() after which no request starts
 
@@ -447,10 +452,11 @@ class AIGateway:
                 resp = client.chat.completions.create(**kwargs)
             except openai.RateLimitError as exc:
                 message = str(exc)
-                if _DAILY_QUOTA.search(message) or (
-                        re.search(r"quota", message, re.I) and not _MINUTE_QUOTA.search(message)):
+                if _DAILY_QUOTA.search(message):
                     limiter.quota.forced_exhausted = "provider reported daily quota reached"
-                limiter.cooldown(_retry_after(exc))
+                hits = self._rate_hits.get(target.key, 0)
+                self._rate_hits[target.key] = hits + 1
+                limiter.cooldown(max(_retry_after(exc), RATE_PAUSES[min(hits, len(RATE_PAUSES) - 1)]))
                 self._note_failure(target, f"429: {message}", rate_limited=True)
                 raise _Retryable("rate limited (429)", transient=True) from exc
             except (openai.AuthenticationError, openai.PermissionDeniedError) as exc:
@@ -520,7 +526,7 @@ class AIGateway:
                 if not text.strip():
                     self._note_failure(target, "empty response")
                     raise _Retryable("empty response")
-                self._failures[target.key] = 0
+                self._failures[target.key] = self._rate_hits[target.key] = 0
                 return AIResult(text, target.provider, target.model, latency, text)
             try:
                 value = schema.model_validate(extract_json_object(text))
@@ -541,7 +547,7 @@ class AIGateway:
                     continue
                 self._note_failure(target, f"invalid output after repair: {problem}")
                 raise _Retryable("invalid output") from exc
-            self._failures[target.key] = 0
+            self._failures[target.key] = self._rate_hits[target.key] = 0
             return AIResult(value, target.provider, target.model, latency, text)
 
 
@@ -558,9 +564,8 @@ class _Retryable(Exception):
         self.transient = transient
 
 
-# Gemini says "quota" in every 429 and names the window (PerMinute / PerDay).
-_DAILY_QUOTA = re.compile(r"per ?day|daily|\bTPD\b|\bRPD\b", re.I)
-_MINUTE_QUOTA = re.compile(r"per ?minute|\bRPM\b|\bTPM\b", re.I)
+# Gemini says "quota" in every 429 and names the window (PerMinute / PerDay); only a named day retires a model.
+_DAILY_QUOTA = re.compile(r"per ?day|for the day|daily|\bTPD\b|\bRPD\b", re.I)
 _MODEL_NOT_ALLOWED = re.compile(r"tier|not available|not allowed for (?:this )?model|model access|subscription", re.I)
 
 

@@ -566,3 +566,30 @@ def test_nse_refusal_and_network_failures_spend_no_attempts_and_stop_the_run(set
     outs = [pipeline._process_one(f, bulk=False, memory_complete=True) for f in filings[:5]]
     assert all(o.update["status"] == "PENDING" and "attempts" not in o.update for o in outs)
     assert pipeline._blocked is not None and "failed on the network" in str(pipeline._blocked)
+
+
+def test_live_window_is_the_last_seven_days_and_its_earlier_days_are_discovered():
+    """Owner, 2026-10-20: results filed 15-19 Oct sat behind the backfill because the live window began at go-live
+    (20 Oct) and the live runs read only today. The window is always the last 7 days, and the days of it no run has
+    read are discovered, newest first, two a run."""
+    from datetime import date
+    from types import SimpleNamespace
+
+    from bse_intel.pipeline import Pipeline
+
+    kv, read = {"live:since": "2026-10-20"}, []
+    fake = SimpleNamespace(sink=SimpleNamespace(kv_get=kv.get), _kv_set=kv.__setitem__,
+                           _discover_safely=lambda day, full: read.append(day.isoformat()) or 0)
+    today = date(2026, 10, 20)
+    live_from = Pipeline._live_from(fake, today)
+    assert live_from == date(2026, 10, 13)
+    Pipeline._discover_window(fake, live_from, today)
+    assert read == ["2026-10-19", "2026-10-18"] and kv["live:window_from"] == "2026-10-18"
+    for _ in range(5):
+        Pipeline._discover_window(fake, live_from, today)
+    assert read[-1] == "2026-10-13" and len(read) == 7   # each day once, then nothing more
+    # a failed discovery is not marked read and is tried again next run
+    kv.pop("live:window_from")
+    fake._discover_safely = lambda day, full: None
+    Pipeline._discover_window(fake, live_from, today)
+    assert "live:window_from" not in kv

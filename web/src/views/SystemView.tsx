@@ -80,6 +80,7 @@ export function SystemView() {
       <ScheduledJobs jobs={s.jobs ?? {}} />
       <FailedFilings rows={s.failed_recent ?? []} />
       <ReviewQueue />
+      <OwnerVerdicts />
 
       <section className="rounded-xl border border-line bg-surface">
         <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line px-4 py-3">
@@ -320,6 +321,39 @@ function FailedFilings({ rows }: { rows: FailedFiling[] }) {
                 {queued.has(f.news_id) ? "Queued for the next run" : "Re-run"}
               </button>
             )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+const VERDICT_TONE: Record<string, string> = { RIGHT: "text-pos", MINOR: "text-warn", WRONG: "text-neg" };
+const VERDICT_TEXT: Record<string, string> = { RIGHT: "Right", MINOR: "Minor issue", WRONG: "Wrong" };
+
+/** The owner's latest verdicts with their notes (owner mode), for the cloud lead to turn into fixes (O11). */
+function OwnerVerdicts() {
+  const token = useOwnerToken();
+  const query = useQuery({ queryKey: ["verdict-list", token], enabled: !!token, queryFn: () => ownerApi.verdicts(token!) });
+  const rows = (query.data?.verdicts ?? []).slice(0, 50);
+  if (!token || !rows.length) return null;
+  return (
+    <section className="rounded-xl border border-line bg-surface p-4">
+      <h2 className="text-[14px] font-semibold text-ink">Your verdicts · latest {rows.length}</h2>
+      <p className="mt-0.5 text-xs text-ink-3">A card marked Wrong is held from the public feed with your note as the reason; Right publishes it.</p>
+      <ul className="mt-3 divide-y divide-line">
+        {rows.map((v) => (
+          <li key={v.news_id} className="py-2 text-[13px]">
+            <a href={`/feed?card=${encodeURIComponent(v.news_id)}`} className="hover:underline">
+              <span className="font-semibold text-ink">{v.symbol}</span>
+              <span className="text-ink-2"> · {v.headline ?? v.news_id}</span>
+            </a>
+            <span className="num block text-xs text-ink-3">
+              <span className={cn("font-semibold", VERDICT_TONE[v.verdict])}>{VERDICT_TEXT[v.verdict] ?? v.verdict}</span>
+              {" · "}{istDateTime(v.created_at)}{v.event_category ? ` · ${titleCase(v.event_category)}` : ""}
+              {v.held_now === null ? " · card no longer stored" : v.held_now ? " · held" : " · public"}
+            </span>
+            {v.note && <span className="block text-xs text-ink-2">{v.note}</span>}
           </li>
         ))}
       </ul>

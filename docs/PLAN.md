@@ -91,7 +91,13 @@ when the site is shared. Built for it:
 - **A verdict on any card.** Right / Minor issue / Wrong and a note, under each card (owner only); stored in
   `card_verdicts` (migration 0010) with the card as judged. `python -I -X utf8 scripts/owner_verdicts.py`
   tallies them like a blind round (WRONG share of published and of held, per event type, every note); each
-  WRONG goes through the routine in docs/DATA_QUALITY.md.
+  WRONG goes through the routine in docs/DATA_QUALITY.md. Since 2026-10-20 (O11) a verdict acts: Wrong holds
+  the card from the public feed with the note as its hold reason (`review.held`, "Held by the owner (Wrong): ...");
+  Right publishes it, a card the checks held included (the owner's approve); Minor and taking the verdict back put
+  back the card's held flag from before the owner's hold. The homepage snapshot in R2 is dropped on a change so it
+  shows at once. The System page lists the latest 50 verdicts with their notes. A re-run of the filing replaces
+  the card and its hold (the verdict row keeps the card as judged); for a hold that must outlive re-runs, add the
+  filing to `pipeline/config/card_holds.txt`.
 - **Kept out of search engines** while private: `robots.txt` disallows everything, the page carries `noindex, nofollow` and the API `X-Robots-Tag: noindex`. Remove all three when the site is shared (`web/public/robots.txt`, `web/index.html`, `web/worker/public.ts`).
 - **Unshared is not private.** Anyone who finds the workers.dev address can read the published cards (not the
   held ones, the verdicts or the owner routes). To lock the whole site, Cloudflare Access (free for up to 50

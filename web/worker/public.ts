@@ -107,7 +107,7 @@ api.use("*", async (c, next) => {
 
 const SESSIONS = new Set(["LIVE_MARKET", "PRE_MARKET", "AFTER_MARKET", "NON_TRADING"]);
 const PAGE_COUNT_CAP = 2000; // "40+ pages": an exact total would read every matching card
-const SNAPSHOT_KEY = "daily_feed/latest_snapshot.json";
+export const SNAPSHOT_KEY = "daily_feed/latest_snapshot.json";
 
 interface Snapshot {
   generated_at: string;

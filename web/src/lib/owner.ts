@@ -58,11 +58,24 @@ export const ownerApi = {
     return call<FeedResponse>(token, `/feed?${qs.toString()}`);
   },
   verdict: (token: string, newsId: string, verdict: Verdict | "CLEAR", note = "") =>
-    call<{ ok: boolean }>(token, "/verdict", { method: "POST", body: JSON.stringify({ news_id: newsId, verdict, note }) }),
+    call<{ ok: boolean; held: number }>(token, "/verdict", { method: "POST", body: JSON.stringify({ news_id: newsId, verdict, note }) }),
   card: (token: string, id: string) => call<CardRow>(token, `/cards/${encodeURIComponent(id)}`),
   review: (token: string) => call<{ cards: ReviewCard[] }>(token, "/review"),
-  verdicts: (token: string) => call<{ verdicts: { news_id: string; verdict: Verdict; note: string | null }[] }>(token, "/verdicts"),
+  verdicts: (token: string) => call<{ verdicts: OwnerVerdict[] }>(token, "/verdicts"),
 };
+
+/** One of the owner's verdicts as GET /verdicts lists it; held is the card's state before the owner's own hold. */
+export interface OwnerVerdict {
+  news_id: string;
+  verdict: Verdict;
+  note: string | null;
+  held: number;
+  held_now: number | null;
+  created_at: string;
+  event_category: string | null;
+  symbol: string;
+  headline: string | null;
+}
 
 /** The owner's Star/Noise ratings, keyed by card, and a setter that updates them optimistically. */
 export function useRatings() {
@@ -82,7 +95,8 @@ export function useRatings() {
   return { token, ratings: query.data ?? {}, rate };
 }
 
-/** The owner's RIGHT / MINOR / WRONG verdicts with notes, keyed by card, and a setter (same verdict again clears it). */
+/** The owner's RIGHT / MINOR / WRONG verdicts with notes, keyed by card, and a setter (same verdict again clears it).
+ * A verdict holds or releases the card (WRONG holds it, RIGHT publishes it), so a changed verdict reloads the cards. */
 export function useVerdicts() {
   const token = useOwnerToken();
   const client = useQueryClient();
@@ -93,10 +107,14 @@ export function useVerdicts() {
   const judge = useCallback(async (newsId: string, verdict: Verdict | "CLEAR", note = "") => {
     if (!token) return;
     const next = { ...(query.data ?? {}) };
+    const changed = next[newsId]?.verdict !== (verdict === "CLEAR" ? undefined : verdict);
     if (verdict === "CLEAR") delete next[newsId];
     else next[newsId] = { verdict, note };
     client.setQueryData(["verdicts", token], next);
     await ownerApi.verdict(token, newsId, verdict, note);
+    if (changed) {
+      void client.invalidateQueries({ predicate: (q) => ["feed", "card", "review", "verdict-list"].includes(String(q.queryKey[0])) });
+    }
   }, [token, query.data, client]);
   return { token, verdicts: query.data ?? {}, judge };
 }

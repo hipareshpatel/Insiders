@@ -245,6 +245,7 @@ const SCHEDULE: { command: string; what: string; when: string; days: number }[] 
   { command: "annual-xbrl-catchup", what: "Annual reports re-read", when: "daily 06:10 IST", days: 2 },
   { command: "refresh-summaries", what: "Company summaries", when: "daily 06:10 IST", days: 2 },
   { command: "sync-companies", what: "Company master from NSE", when: "Mon-Fri 07:15 IST", days: 4 },
+  { command: "seed-calls", what: "Calls and presentations into memory", when: "hourly 21:45-04:45 IST until done", days: 2 },
   { command: "backup", what: "Memory backup", when: "Mondays 02:00 IST", days: 8 },
 ];
 

@@ -1,0 +1,58 @@
+# Each universe company's last two quarters of earnings-call transcripts or investor presentations into memory
+# (call_seed.py; owner, 2026-10-20: the dossiers were too shallow; no Gemini). No card, no ledger row, no AI beyond the
+# free Z.AI / OpenRouter models of the memory_seed route. Resumable: it stops after 40 minutes and the next run goes on
+# from the next company; once every company is done each run returns at once.
+# Hourly 16:15-23:15 UTC = 21:45-04:45 IST: Z.AI's free model takes one request at a time per key, which the live runs
+# share, so the seed runs when few filings arrive.
+name: Seed calls
+
+on:
+  workflow_dispatch:
+    inputs:
+      restart:
+        description: start again from the largest company
+        type: boolean
+        default: false
+      scrips:
+        description: only these companies (comma separated), for a trial
+        type: string
+        default: ''
+  schedule:
+    - cron: "15 16-23 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bse-seed-calls
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    if: github.event_name != 'schedule' || vars.PIPELINE_SCHEDULE == 'on'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 50
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      PASS2_PACK: "0"
+      SCRIPS: ${{ inputs.scrips }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
+      - name: Seed memory from calls and presentations
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-calls --time-budget 2400 ${SCRIPS:+--scrips "$SCRIPS"} ${{ inputs.restart && ''--restart'' || '''' }}'

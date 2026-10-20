@@ -20,6 +20,7 @@ import {
   executionFact, near, PERIOD_WORDS, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
   verifiedFact,
 } from "../lib/cardText";
+import { callTakeaways, type CallTakeawaysView } from "../lib/callTakeaways";
 import { allZero, lowerIsBetter, NO_TURN, TURN, turnOf } from "../lib/results";
 
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
@@ -565,6 +566,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
     || (s.type === "RATING_LIQUIDITY" && !!rating && /outlook/i.test(s.text)) || repeats(s.text, shownText));
   const faceText = [shownText, ...box.insights.map((i) => i.text), box.signal?.text ?? ""].join(" ");
   const decision = decisionLines(row, card, table, faceText);
+  const calls = event === "CONCALL_PRESENTATION" ? callTakeaways(card.call_takeaways, card.call_memory) : null;
   // the sector's KPI chips belong to results; on an order or a rating they said nothing about the news
   const footer = family !== "res" ? []
     : footerMetrics(card).filter((m) => !showsFigure(faceText, m.value) && !(table && /margin/i.test(m.label)));
@@ -629,7 +631,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
             <Avatar name={row.company_name} symbol={row.symbol} size={44} />
             <span className="min-w-0">
               <span className="block truncate text-[16px] font-extrabold tracking-tight text-ink group-hover:text-accent">
-                {row.company_name}{formerName(row) && <span className="ml-2 text-[12px] font-semibold text-ink-3">formerly {formerName(row)}</span>}
+                {row.company_name}
               </span>
               <span className="num block truncate text-[12px] font-medium text-ink-3">
                 {row.symbol ?? row.scrip_code}
@@ -706,8 +708,10 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
           </section>
         )}
 
+        {calls?.source && <CallTakeaways view={calls} />}
+
         {!exporting && <AiReading catalyst={card.core_catalyst && !repeats(plain(card.core_catalyst), headline) ? plain(card.core_catalyst) : null}
-          facts={unverified} insights={box.insights.map((i) => i.text)} takeaway={box.fallback ?? null} />}
+          facts={[...unverified, ...(calls?.unverified ?? [])]} insights={box.insights.map((i) => i.text)} takeaway={box.fallback ?? null} />}
 
         {footer.length > 0 && (
           <div className="mt-3 flex flex-wrap items-baseline gap-2 text-[12px] font-semibold text-ink-3">
@@ -1043,38 +1047,67 @@ function TechnicalTags({ row }: { row: CardRow }) {
   );
 }
 
-/** The AI's own reading of the filing (its catalyst, the facts it could not quote, why it matters): useful, but not
- *  checked, so it sits behind a tap and says so (the verified face, owner 2026-10-20). */
+/** The AI's own reading of the filing. Its interpretation (the catalyst, why it matters, the takeaway) sits on the
+ *  face, marked as our reading and apart from the checked facts (owner 2026-10-20: "interpretation helps"; a blind
+ *  review found 10% of such points overreach, so it is never shown as checked). Facts the checks could not quote stay
+ *  behind a tap. */
 function AiReading({ catalyst, facts, insights, takeaway }: { catalyst: string | null; facts: Fact[]; insights: string[]; takeaway: string | null }) {
-  const items = [...(catalyst ? [`Core catalyst: ${catalyst}`] : []), ...facts.map((f) => (typeof f === "string" ? f : f.text)),
-    ...insights, ...(takeaway && !insights.length ? [takeaway] : [])];
-  if (!items.length) return null;
+  const reading = [...(catalyst ? [`Core catalyst: ${catalyst}`] : []), ...insights, ...(takeaway && !insights.length ? [takeaway] : [])];
+  const unquoted = facts.map((f) => (typeof f === "string" ? f : f.text));
+  if (!reading.length && !unquoted.length) return null;
   return (
-    <details className="group mt-3 rounded-2xl border border-dashed border-line-strong px-4 py-2" data-noexport="true">
-      <summary className="cursor-pointer list-none text-[12px] font-bold text-ink-3 marker:hidden">
-        <span className="mr-1 inline-block transition-transform group-open:rotate-90">›</span>
-        AI reading · not verified against the filing ({items.length})
-      </summary>
-      <ul className="mt-2 space-y-2 pb-1">
-        {items.map((text, i) => <Point key={i} className="text-ink-2"><RichText text={text} /></Point>)}
-      </ul>
-    </details>
+    <div className="mt-3 rounded-2xl border border-dashed border-line-strong px-4 py-2" data-noexport="true">
+      {reading.length > 0 && (
+        <>
+          <p className="text-[12px] font-bold text-ink-3">Our reading · not checked against the filing</p>
+          <ul className="mt-2 space-y-2 pb-1">
+            {reading.map((text, i) => <Point key={i} className="text-ink-2"><RichText text={text} /></Point>)}
+          </ul>
+        </>
+      )}
+      {unquoted.length > 0 && (
+        <details className="group">
+          <summary className="cursor-pointer list-none py-1 text-[12px] font-bold text-ink-3 marker:hidden">
+            <span className="mr-1 inline-block transition-transform group-open:rotate-90">›</span>
+            Facts the checks could not quote ({unquoted.length})
+          </summary>
+          <ul className="mt-1 space-y-2 pb-1">
+            {unquoted.map((text, i) => <Point key={i} className="text-ink-2"><RichText text={text} /></Point>)}
+          </ul>
+        </details>
+      )}
+    </div>
   );
 }
 
 export const OTHER_RENAME = /\(\s*now\b|\bnow\s+known\s+as\b|\brenamed\s+(?:as|to)\b/i;
 // a model's placeholder stored as a name ("None", "N/A"): Persistent showed "formerly None"
 const NO_NAME = /^\s*(?:none|nil|null|n[./]?\s?a\.?|not\s+applicable|-+)?\s*$/i;
+// Former names stay in memory for search and on the company page, off the card header (owner, 2026-10-20).
 export const formerOwnName = (n: string) => !NO_NAME.test(n) && !OTHER_RENAME.test(n);
 
-function formerName(row: CardRow): string | null {
-  try {
-    const names = row.former_names_json ? (JSON.parse(row.former_names_json) as string[]) : [];
-    // another entity's rename ("AGH Dreams Private Limited (now AGH Dreams Limited)") is not the company's former name
-    return names.find(formerOwnName) ?? null;
-  } catch {
-    return null;
-  }
+/** Calls and presentations: the key takeaways under small headings. The model's takeaways that code verified against
+ *  the filing and the memory they cite, else the points memory took from this filing (no AI); either way checked
+ *  content, kept apart from the AI reading (owner, 2026-10-20). */
+function CallTakeaways({ view }: { view: CallTakeawaysView }) {
+  return (
+    <BlockShell title="Key takeaways from the call" right={<span className="ml-auto text-[10px] font-semibold normal-case tracking-normal text-ink-3">
+      {view.source === "ai" ? "checked against the filing and memory" : "from company memory"}</span>}>
+      {view.groups.map((g) => (
+        <div key={g.name}>
+          <h5 className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-ink-3">{g.name}</h5>
+          <ul className="mt-1 space-y-1.5">
+            {g.points.map((p, i) => (
+              <Point key={i}>
+                <RichText text={p.text} />
+                {p.note && <span className="ml-1.5 text-[11px] font-medium text-ink-3">· {p.note}</span>}
+              </Point>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </BlockShell>
+  );
 }
 
 /** Monthly business update: the main volume over recent months, bars scaled to the largest. */

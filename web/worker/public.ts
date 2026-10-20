@@ -3,6 +3,7 @@
 // (dates, the cursor) instead of walking a table, and hot responses are kept
 // briefly in the isolate and, on a custom domain, in Cloudflare's edge cache.
 import { dedupeEvents } from "../shared/events";
+import type { CallQuarter } from "../shared/types";
 import { Hono } from "hono";
 import type { Context } from "hono";
 import type { AppEnv } from "./env";
@@ -205,7 +206,7 @@ api.get("/feed", (c) => feed(c));
 
 const todayIst = () => new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10);
 
-// Top Signals: cards that cleared the 4 gates, best score first (partial index idx_cards_signals).
+// Top Signals: cards that cleared the 4 gates, best score first (walks idx_cards_feed_live over the range; migration 0011 dropped the unused idx_cards_signals).
 api.get("/signals", async (c) => {
   const q = c.req.query();
   const fromAt = q.from_at && /^\d{4}-\d{2}-\d{2}T/.test(q.from_at) ? q.from_at : `${isDate(q.from) ? q.from : todayIst()}`;
@@ -386,7 +387,8 @@ api.get("/companies/:scrip", async (c) => {
   const scrip = c.req.param("scrip");
   if (!isCompanyKey(scrip)) return c.json({ error: "bad company key" }, 400);
   const [company, cards, object, chart] = await Promise.all([
-    c.env.DB.prepare(`SELECT ${COMPANY_COLUMNS} FROM companies WHERE scrip_code = ?1`).bind(scrip).first(),
+    c.env.DB.prepare(`SELECT ${COMPANY_COLUMNS}, json_extract(memory_summary_json, '$.calls') AS calls_json
+      FROM companies WHERE scrip_code = ?1`).bind(scrip).first<Record<string, unknown>>(),
     c.env.DB.prepare(`
       SELECT ${CARD_COLUMNS} FROM cards c LEFT JOIN companies co ON co.scrip_code = c.scrip_code
        WHERE c.held = 0 AND c.scrip_code = ?1 ORDER BY c.filed_at DESC LIMIT 60`).bind(scrip).all(),
@@ -404,7 +406,9 @@ api.get("/companies/:scrip", async (c) => {
          ORDER BY abs(market_cap_cr - ?3) LIMIT 5`).bind(co.sector, scrip, co.market_cap_cr).all()).results
     : [];
   const series = chart ? await chart.text() : "null";
-  return c.body(`{"company":${JSON.stringify(company)},"cards":${JSON.stringify(cards.results)},"peers":${JSON.stringify(peers)},"chart":${series},"dossier":${dossier}}`, 200,
+  const { calls_json: callsJson, ...companyRow } = company ?? {};
+  const calls = await callLinks(c, parseCalls(callsJson), cards.results as { news_id: string; pdf_url: string | null }[]);
+  return c.body(`{"company":${JSON.stringify(company ? companyRow : null)},"cards":${JSON.stringify(cards.results)},"peers":${JSON.stringify(peers)},"chart":${series},"calls":${JSON.stringify(calls)},"dossier":${dossier}}`, 200,
     { "Content-Type": "application/json; charset=UTF-8" });
 });
 
@@ -420,6 +424,28 @@ api.get("/calendar", async (c) => {
      LIMIT 3000`).bind(q.from, q.to, listParam(q.types)).all();
   return c.json({ events: dedupeEvents(results as { scrip_code: string; event_date: string; event_type: string }[]) });
 });
+
+export const parseCalls = (raw: unknown): CallQuarter[] => {
+  try {
+    const v = typeof raw === "string" ? JSON.parse(raw) : null;
+    return Array.isArray(v) ? (v as CallQuarter[]) : [];
+  } catch {
+    return [];
+  }
+};
+
+/** Each call's PDF: memory keeps it for calls read since 2026-10-20; older ones from their card, else their filing row. */
+async function callLinks(c: Context<AppEnv>, calls: CallQuarter[], cards: { news_id: string; pdf_url: string | null }[]): Promise<CallQuarter[]> {
+  const known = new Map(cards.filter((r) => r.pdf_url).map((r) => [r.news_id, r.pdf_url as string]));
+  const missing = [...new Set(calls.flatMap((q) => q.sources.filter((s) => !s.pdf_url && !known.has(s.news_id)).map((s) => s.news_id)))];
+  if (missing.length) {
+    const { results } = await c.env.DB.prepare(`SELECT news_id, pdf_url FROM filings
+       WHERE news_id IN (SELECT value FROM json_each(?1)) AND pdf_url IS NOT NULL`)
+      .bind(JSON.stringify(missing.slice(0, 40))).all<{ news_id: string; pdf_url: string }>();
+    for (const r of results) known.set(r.news_id, r.pdf_url);
+  }
+  return calls.map((q) => ({ ...q, sources: q.sources.map((s) => ({ ...s, pdf_url: s.pdf_url ?? known.get(s.news_id) ?? null })) }));
+}
 
 type MemorySummary = {
   open_promises: { id: string; statement: string; due: string | null; due_date: string | null; given_on: string | null; status: string; source_news_id: string | null }[];
@@ -485,12 +511,21 @@ api.get("/promises/overdue", async (c) => {
 // Needs-review queue (View 5): published cards marked for review, newest first (partial index). The held ones are the
 // owner's (/api/owner/review): the public never sees a held card's headline (private launch, 2026-10-20).
 export async function reviewQueue(c: Context<AppEnv>, withHeld = false) {
-  const { results } = await c.env.DB.prepare(`
-    SELECT c.news_id, c.scrip_code, c.symbol, c.company_name, c.filed_at, c.headline, c.event_category,
-           json_extract(c.card_json, '$.grounding') AS grounding, json_extract(c.card_json, '$.review') AS review, c.held
-      FROM cards c WHERE ${withHeld ? "c.needs_review = 1 OR c.held = 1" : "c.needs_review = 1 AND c.held = 0"}
-     ORDER BY c.held DESC, c.filed_at DESC LIMIT 100`).all();
-  return c.json({ cards: results }, 200, { "Cache-Control": withHeld ? "private, no-store" : "public, max-age=60" });
+  const which = withHeld ? "c.needs_review = 1 OR c.held = 1" : "c.needs_review = 1 AND c.held = 0";
+  // the list shows 100, the heading the real count; a card whose filing is queued again says so (owner, 2026-10-20:
+  // "never seen anything getting reduced": the heading was the list's length, capped at 100, and the button's
+  // "queued" state lived only in the open page)
+  const [list, total] = await c.env.DB.batch([
+    c.env.DB.prepare(`
+      SELECT c.news_id, c.scrip_code, c.symbol, c.company_name, c.filed_at, c.headline, c.event_category,
+             json_extract(c.card_json, '$.grounding') AS grounding, json_extract(c.card_json, '$.review') AS review, c.held,
+             f.status AS filing_status
+        FROM cards c LEFT JOIN filings f ON f.news_id = c.news_id WHERE ${which}
+       ORDER BY c.held DESC, c.filed_at DESC LIMIT 100`),
+    c.env.DB.prepare(`SELECT count(*) AS n FROM cards c WHERE ${which}`),
+  ]);
+  return c.json({ cards: list.results, total: Number((total.results[0] as { n?: number } | undefined)?.n ?? list.results.length) },
+    200, { "Cache-Control": withHeld ? "private, no-store" : "public, max-age=60" });
 }
 
 api.get("/review", (c) => reviewQueue(c));

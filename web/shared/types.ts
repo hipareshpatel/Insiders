@@ -182,6 +182,11 @@ export interface CardBody {
   model: string;
   /** Monthly business updates: the main volume metric over recent months, from memory at the filing. */
   volume_strip?: { metric: string; unit: string | null; months: { period: string; value: number; yoy_pct: number | null }[] } | null;
+  /** Calls and presentations: the key takeaways memory took from this filing, by heading (call_summary.py, no AI). */
+  call_memory?: { name: string; points: { text: string; reiterated?: boolean }[] }[] | null;
+  /** Calls and presentations: the model's key takeaways, each checked by code (`verified`) before the face shows it. */
+  call_takeaways?: { category: string; text: string; quote?: string | null; memory_refs?: string[];
+    versus_prior?: string | null; verified?: boolean; issue?: string | null }[] | null;
   /** Set when the results figures came from the filing's XBRL file. */
   xbrl?: { basis: string | null; period: string | null; figures: number } | null;
   /** Market data as it stood when the filing came out (stored price series, else recent data). */
@@ -344,6 +349,8 @@ export interface ReviewCard {
   headline: string; event_category: string; grounding: string | null; review: string | null;
   /** 1 when kept off the public feed (figures not verified); 0 when only flagged for review. */
   held?: number;
+  /** The filing's queue status: PENDING while a re-run waits for the next pipeline run. */
+  filing_status?: string | null;
 }
 
 export interface CompaniesResponse {
@@ -455,6 +462,23 @@ export interface CompanyDetail {
   dossier: Dossier | null;
   /** A year of daily closes (market-data, R2 chart/<scrip>.json); null until the job has priced the company. */
   chart?: { d: string[]; c: number[]; as_of: string } | null;
+  /** Earnings calls by quarter, newest first: memory's key takeaways under fixed headings (pipeline call_summary.py). */
+  calls?: CallQuarter[];
+}
+
+export interface CallPoint {
+  text: string;
+  date: string;
+  news_id: string;
+  /** the same target said on an earlier call too */
+  reiterated?: boolean;
+}
+
+export interface CallQuarter {
+  quarter: string;
+  date: string;
+  sources: { news_id: string; date: string; pdf_url?: string | null }[];
+  categories: { name: string; points: CallPoint[] }[];
 }
 
 export interface SearchResponse {

@@ -213,6 +213,32 @@ def guidance_recall(before: dict | None, event_type: str, filed_at: str | None =
 
 MEMORY_POINTS = 4
 _NOTE_DAYS = 120   # an operating note older than a quarter or so describes another quarter
+_WATCH_DAYS = 270  # a watch item raised more than three quarters ago is stale unless memory renewed it
+
+# A watch item or an operating note is shown only when it is both recent and about what this card is about (owner,
+# 2026-10-20: the points "must be useful and relevant for that card event", "both not either one"): the latest note
+# on its own was any note at all, and an on-topic one from a year ago describes another year.
+_TOPIC = {
+    **_RELEVANT,
+    "RESULTS": _RELEVANT["RESULTS"] + ("cost", "volume", "demand", "price", "realisation", "order",
+                                         "utilisation", "capacity"),
+    "CONCALL_PRESENTATION": _RELEVANT["RESULTS"] + ("capex", "capacity", "order", "volume", "demand", "price"),
+    "ANNUAL_REPORT": ("auditor", "related", "contingent", "debt", "capex", "subsidiar", "pledge"),
+    "DEBT_RATINGS": ("debt", "borrow", "leverage", "rating", "liquidity", "repay", "interest", "cash"),
+    "LITIGATION_REGULATORY": ("case", "court", "tribunal", "penalt", "demand", "tax", "order", "regulat", "sebi",
+                              "usfda", "inspection", "notice", "appeal"),
+    "GOVERNANCE": ("auditor", "board", "director", "pledge", "related", "promoter", "resign"),
+    "CORPORATE_ACTION": ("buyback", "bonus", "split", "dividend", "promoter", "stake", "pledge"),
+    "PRODUCT_LAUNCH": ("launch", "product", "brand", "revenue", "market", "approval"),
+}
+
+
+def _on_topic(text: str, event_type: str) -> bool:
+    words = _TOPIC.get(event_type)
+    if not words:
+        return False
+    text = (text or "").lower()
+    return any(re.search(rf"\b{w}\b" if len(w) <= 3 else rf"\b{w}", text) for w in words)
 
 
 def _cr(value: float) -> str:
@@ -278,12 +304,16 @@ def memory_context(before: dict | None, event_type: str, filed_at: str | None, n
             out.append({"label": f"Holding, {a.get('period')} → {b.get('period')}", "text": "; ".join(moves),
                         "as_of": (b.get("as_of") or "")[:10] or None})
     watches = [w for w in before.get("watchlist", []) if w.get("status") == "OPEN" and w.get("source_news_id") != news_id
-               and (not today or not w.get("check_by") or w["check_by"] >= today.isoformat())]
+               and (not today or not w.get("check_by") or w["check_by"] >= today.isoformat())
+               and (not today or not w.get("created_on")
+                    or w["created_on"][:10] >= (today - timedelta(days=_WATCH_DAYS)).isoformat())
+               and _on_topic(f"{w.get('text', '')} {w.get('metric') or ''}", event_type)]
     if watches:
         w = min(watches, key=lambda w: w.get("check_by") or "9999")
         text = w["text"] + (f" ({w['target']})" if w.get("target") else "") + (f" · {w['check_in']}" if w.get("check_in") else "")
         out.append({"label": "Watching", "text": text, "as_of": (w.get("created_on") or "")[:10] or None})
     notes = [n for n in before.get("operating_notes", []) if n.get("text") and n.get("source_news_id") != news_id
+             and _on_topic(n["text"], event_type)
              and (not today or (str(n.get("as_of") or "")[:10] <= today.isoformat()
                                 and str(n.get("as_of") or "")[:10] >= (today - timedelta(days=_NOTE_DAYS)).isoformat()))]
     if notes:

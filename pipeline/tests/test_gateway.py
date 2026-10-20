@@ -418,3 +418,79 @@ def test_a_bare_quota_429_pauses_but_does_not_retire_for_the_day(make_gateway):
     gw.complete_json("r", "s", "u", Pass1Result)
     assert not gw.limiters["a:m-a"].quota.exhausted()
     assert gw.limiters["a:m-a"].cooling_down()
+
+
+# ------------------------------------------------------------------ live reserve (ai-quality plan item 1)
+
+def _reserve_gateway(make_gateway, used: int, hour: int):
+    from datetime import datetime
+
+    config = gateway_config(route({"provider": "a", "model": "flash", "limits": {"rpd": 20}},
+                                  {"provider": "b", "model": "lite"}),
+                            live_reserve={"share": 0.8, "bulk_hours": "21:00-09:00", "models": ["a:flash"]})
+    gw, fake = make_gateway(config, {"flash": [GOOD], "lite": [GOOD]})
+    gw.limiters["a:flash"].quota.day_requests = used          # ceiling 19 at 95%: backfill may use 3 (19 x 0.2)
+    gw.local_now = lambda: datetime(2026, 10, 21, hour, 15)
+    return gw, fake
+
+
+def test_backfill_leaves_the_best_writer_to_live_filings_once_its_share_is_used(make_gateway):
+    gw, _ = _reserve_gateway(make_gateway, used=3, hour=15)
+    assert gw.complete_json("r", "s", "u", Pass1Result, bulk=True).model == "lite"
+    assert gw.complete_json("r", "s", "u", Pass1Result).model == "flash"       # a live filing still gets it
+
+
+def test_backfill_uses_the_best_writer_below_its_share_and_in_its_hours(make_gateway):
+    gw, _ = _reserve_gateway(make_gateway, used=2, hour=15)
+    assert gw.complete_json("r", "s", "u", Pass1Result, bulk=True).model == "flash"
+    for hour in (21, 23, 3, 8):                                  # the window crosses midnight
+        gw, _ = _reserve_gateway(make_gateway, used=15, hour=hour)
+        assert gw.complete_json("r", "s", "u", Pass1Result, bulk=True).model == "flash", hour
+    gw, _ = _reserve_gateway(make_gateway, used=15, hour=9)
+    assert gw.complete_json("r", "s", "u", Pass1Result, bulk=True).model == "lite"
+
+
+def test_the_reserve_leaves_the_fallback_order_alone_when_quota_is_gone(make_gateway):
+    """Out of its day, the reserved model is skipped for live and backfill alike and the next one writes; when that one
+    is out too the failure is a quota ceiling, so the filing stays queued as before."""
+    gw, _ = _reserve_gateway(make_gateway, used=19, hour=22)
+    assert gw.complete_json("r", "s", "u", Pass1Result).model == "lite"
+    assert gw.complete_json("r", "s", "u", Pass1Result, bulk=True).model == "lite"
+    gw, _ = _reserve_gateway(make_gateway, used=5, hour=15)
+    gw.limiters["b:lite"].quota.forced_exhausted = "provider reported daily quota reached"
+    with pytest.raises(AllProvidersFailed) as info:
+        gw.complete_json("r", "s", "u", Pass1Result, bulk=True)
+    assert info.value.quota_exhausted
+    assert any("kept for live filings" in d for _, _, d in info.value.outcomes)
+
+
+def test_the_configured_reserve_covers_every_flash_writer_and_not_the_lite_tier():
+    """providers.toml: the five Gemini Flash models keep 80% for live filings; Flash-Lite, last in every pack, does not."""
+    from bse_intel.settings import Settings
+
+    config = Settings().load_toml("providers.toml")
+    reserve = config["gateway"]["live_reserve"]
+    packed = [f"{e['provider']}:{e['model']}" for e in config["routes"]["pass2_packed"]]
+    assert set(reserve["models"]) == set(packed[:-1]) and packed[-1] == "gemini:gemini-3.5-flash-lite"
+    assert reserve["share"] == 0.8 and all(m.startswith("gemini:") for m in reserve["models"])
+
+
+def test_a_route_of_spare_quota_stops_at_its_share_and_leaves_the_rest_to_the_models_other_routes(make_gateway):
+    config = gateway_config({"main": [{"provider": "a", "model": "m-a", "limits": {"rpd": 100}}],
+                             "spare_route": [{"provider": "a", "model": "m-a", "max_share": 0.5}]})
+    used = [{"provider": "a", "model": "m-a", "requests": 50}]   # 50 of 95 (95% of 100): past half
+    gw, fake = make_gateway(config, {"m-a": [GOOD]}, usage_today=used)
+    with pytest.raises(AllProvidersFailed) as exc:
+        gw.complete_json("spare_route", "s", "u", Pass1Result)
+    assert exc.value.quota_exhausted and fake.calls == []
+    assert gw.complete_json("main", "s", "u", Pass1Result).provider == "a"   # the model's own route is unaffected
+
+
+def test_allow_leaves_out_the_targets_it_refuses(make_gateway):
+    config = gateway_config(route({"provider": "a", "model": "m-a"}, {"provider": "b", "model": "m-b"}))
+    gw, fake = make_gateway(config, {"m-a": [GOOD], "m-b": [GOOD]})
+    assert gw.complete_json("r", "s", "u", Pass1Result, allow=lambda t: t.provider != "a").provider == "b"
+    with pytest.raises(AllProvidersFailed) as exc:
+        gw.complete_json("r", "s", "u", Pass1Result, allow=lambda t: False)
+    assert not exc.value.attempted and not exc.value.quota_exhausted
+    assert [c["model"] for c in fake.calls] == ["m-b"]

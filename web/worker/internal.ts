@@ -9,7 +9,8 @@ import { QUERIES, STATEMENTS } from "./sql";
 
 const MAX_BODY_BYTES = 1_000_000;
 // raw/: every BSE and NSE answer as received (pipeline raw.py, D28); refused until 2026-10-17, so none was kept.
-const OBJECT_PREFIXES = ["memory/", "daily_feed/", "backup/", "noise/", "meta/", "learning/", "raw/", "chart/"];
+// evidence/: each card's raw model reply, for audits (pipeline _save_evidence; R2 only, no D1 row).
+const OBJECT_PREFIXES = ["memory/", "daily_feed/", "backup/", "noise/", "meta/", "learning/", "raw/", "chart/", "evidence/"];
 const has = (table: Record<string, string>, key: string) => Object.hasOwn(table, key);
 
 const allowedKey = (key: string) =>

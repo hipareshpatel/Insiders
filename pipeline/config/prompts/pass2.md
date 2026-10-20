@@ -40,6 +40,12 @@ Ground rules
   regulator) only as the filing names them, and copy names and categories exactly ("Non-Promoters", not a
   near-spelling an OCR line suggests).
 - COMPANY MEMORY describes the company *before* this filing. Do not treat it as new information.
+  Read its "notes" first. "metrics_basis" (or a metric's "basis:" line) is the basis of its figures;
+  compare only figures of one basis. "restated ..., first reported X" means a later filing changed the
+  figure. An item marked "same_event" is probably this filing's own event, told days earlier in another
+  document.
+- Each "--- Page" marker names the page's heading and its own unit ("amounts in ₹ lakh", "whole rupees",
+  "scope: segment"): read every figure on that page in that unit and scope.
 - COMPANY MEMORY's governance is the company's own latest quarterly governance report: board size and
   independent directors, what it reported as not in terms of SEBI's rules, fines, money lent or
   guaranteed to promoters or directors, and who joined or left the board. Use it when this filing
@@ -64,6 +70,33 @@ Ground rules
 - Proportion before drama: when SCALE shows the event is under about 2% of revenue, market cap or net
   worth and nothing in the filing is a governance or credit concern, say plainly that it is small for
   this company. Rich memory is not a reason to make a routine filing sound important.
+
+Mistakes our reviewers found on published cards (each one cost a card; check yours against them)
+- Restated comparatives: when the filing prints a comparative column (year-ago, previous quarter, previous
+  year), its figure wins over memory's figure for that period, even when they differ: the filing has restated
+  it (discontinued operations, an Ind AS transition, a merger, a regrouping). Never compare this filing's
+  figure with memory's figure for a period the filing itself prints; when they differ, say "restated".
+- Units: read the unit from the column header or the amount itself. Indian digit grouping in rupees:
+  "INR 99,09,87,896" is ₹99.10 Cr, "Rs. 1,67,560" is ₹1.68 lakh. Demand, penalty and tax letters usually
+  state rupees in full; a statement's header says lakh, million or crore.
+- Scope: a figure from one segment's section, slide or table is that segment's, not the company's; a figure
+  for one state, region or plant is that one's ("22 mn customers in Maharashtra & Goa" is not the company's
+  customer base). Say the scope in the text.
+- Ratings: use the agency's own action for each instrument: reaffirmed, upgraded, downgraded, outlook
+  revised, withdrawn, assigned. The same grade before and after is a reaffirmation, whatever a cover letter
+  says ("upgraded from [ICRA]A to [ICRA]A" is unchanged). A total of rated facilities is the sum of several
+  instruments, including any withdrawn: never "enhanced to" that total; name what grew.
+- Signs and positions in a statement: a negative "changes in inventories" is stock built up, not drawn down;
+  tax sits below PBT, so it cannot explain PBT; an exceptional gain last year and a charge this year
+  lowered profit, it did not "boost" it. Read the line's sign in both columns before naming its effect.
+- Memory about the same event: an order, deal or approval in memory with the same counterparty and amount,
+  dated within a few days, is this same event disclosed in another filing, not an earlier one. Never present
+  it as history, a repeat or "in line with the order book". Give a memory figure only with the date or period
+  memory gives it ("₹608 Cr order in May" needs a May item in memory).
+- Consequences, purposes and causes (why_it_matters, takeaway, core_catalyst): state one only when the filing
+  or memory states it. Otherwise give the direction for shareholders and the fact behind it, without a
+  mechanism of your own. Words such as unlocks, eliminates the risk, ahead of a listing, outpacing the trend,
+  reflecting, positions the company, strengthens, signals need a source sentence that says the same.
 
 The card
 The card is read in a feed in about ten seconds: a headline, two or three facts, two or three
@@ -189,6 +222,19 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   quantified targets and answered analysts' questions directly, "LOW" when it avoided numbers or
   questions, else "MEDIUM". story: the one word that best fits the business today ("GROWTH",
   "COMPOUNDER", "TURNAROUND", "CYCLICAL", "STRESSED", "TRANSITION" or "VALUE").
+- call_takeaways: only for earnings calls and investor presentations (the shape asks for it then); leave it out
+  otherwise. Up to 8 key takeaways a shareholder needs from this call, each under one heading: "Guidance",
+  "Capex & capacity", "Demand & orders", "Margins & costs", "Balance sheet & funding", "Risks" or "Other".
+  Key takeaways only: no greetings, thanks, introductions of the management, safe-harbour statements, the call's
+  date or logistics, or what the moderator said. Prefer a takeaway with its figure ("FY27 volume growth guided at
+  12-14%") to one without. Each carries quote: the sentence from the filing that says it, copied exactly; every
+  figure in text must be in that sentence or in a memory item you cite. Connect it to COMPANY MEMORY where memory
+  allows: the previous call's guidance, the last results, recent announcements and deals; cite their ids in
+  memory_refs and say in versus_prior what changed ("raised from 10-12% in the Q1FY27 call", "commissioning moved
+  from Q3FY27 to Q1FY28", "new: no earlier target in memory", "reiterated"). versus_prior may name only a figure
+  or period that the cited memory item holds: never state an earlier figure that is not in the memory given, and
+  leave versus_prior null when memory has nothing to compare with. The system checks each takeaway against the
+  filing and memory and shows only those that pass.
 - track_next: forward-looking triggers an investor should monitor after this filing.
   milestones: future dates or execution windows stated or clearly implied (what, when as written,
   and date in ISO form when exact). kpis_to_verify: the specific metric that will show whether this

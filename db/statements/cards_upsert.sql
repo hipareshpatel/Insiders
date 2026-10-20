@@ -1,4 +1,10 @@
 -- ?1 = JSON array of card rows; `card` is the full card object.
+-- A standing owner verdict (card_verdicts, O11) outlives a re-run, read here so it costs no extra statement:
+-- WRONG keeps the new version held, with the owner's note as its hold line in review.held (until the owner looks
+-- again); RIGHT releases it only when the new version is the card the owner approved (same headline as the judged
+-- snapshot), else the checks decide, so an approval of an old version never publishes a different card the checks
+-- held. MINOR leaves it to the checks, as in the Worker (owner.ts). cards_apply_verdicts.sql applies the same rule
+-- to the stored cards.
 INSERT INTO cards (news_id, scrip_code, symbol, company_name, filing_date, filed_at, sector,
                    event_category, impact_level, headline, grounding_score, needs_review,
                    memory_complete, card_json, pdf_url, model, created_at, market_session,
@@ -16,7 +22,18 @@ SELECT json_extract(value, '$.news_id'),
        json_extract(value, '$.grounding_score'),
        coalesce(json_extract(value, '$.needs_review'), 0),
        coalesce(json_extract(value, '$.memory_complete'), 1),
-       json(json_extract(value, '$.card')),
+       CASE WHEN v.verdict = 'WRONG' THEN
+            CASE WHEN json_type(json_extract(value, '$.card'), '$.review') = 'object'
+                 THEN json_set(json_extract(value, '$.card'), '$.review.held', json((
+                        SELECT json_group_array(h) FROM (
+                          SELECT o.value AS h FROM json_each(json_extract(j.value, '$.card'), '$.review.held') AS o
+                           WHERE instr(o.value, 'Held by the owner (Wrong): ') <> 1
+                          UNION ALL
+                          SELECT 'Held by the owner (Wrong): ' || coalesce(nullif(trim(v.note, ' ' || char(9, 10, 13)), ''), 'no note yet')))))
+                 ELSE json_set(json_extract(value, '$.card'), '$.review', json_object('status', 'HELD', 'held',
+                        json_array('Held by the owner (Wrong): ' || coalesce(nullif(trim(v.note, ' ' || char(9, 10, 13)), ''), 'no note yet'))))
+            END
+            ELSE json(json_extract(value, '$.card')) END,
        json_extract(value, '$.pdf_url'),
        json_extract(value, '$.model'),
        json_extract(value, '$.created_at'),
@@ -24,8 +41,11 @@ SELECT json_extract(value, '$.news_id'),
        coalesce(json_extract(value, '$.actionability_score'), 0),
        coalesce(json_extract(value, '$.is_actionable_signal'), 0),
        json_extract(value, '$.post_event_return_json'),
-       coalesce(json_extract(value, '$.held'), 0)
-FROM json_each(?1)
+       CASE WHEN v.verdict = 'WRONG' THEN 1
+            WHEN v.verdict = 'RIGHT'
+             AND json_extract(value, '$.headline') = json_extract(v.card_json_snapshot, '$.headline') THEN 0
+            ELSE coalesce(json_extract(value, '$.held'), 0) END
+FROM json_each(?1) AS j LEFT JOIN card_verdicts AS v ON v.news_id = json_extract(value, '$.news_id')
 WHERE true
 ON CONFLICT (news_id) DO UPDATE SET
        symbol          = excluded.symbol,

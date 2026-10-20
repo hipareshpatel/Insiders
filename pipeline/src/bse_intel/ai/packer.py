@@ -61,19 +61,27 @@ class Packer:
     """Batches pass-2 requests across worker threads into one call on `route`."""
 
     def __init__(self, gateway, route: str = "pass2_packed", size: int = 6, wait_s: float = 20.0,
-                 max_chars: int = 400_000):
+                 max_chars: int = 400_000, bulk: bool = False):
         self.gateway, self.route, self.size, self.wait_s, self.max_chars = gateway, route, size, wait_s, max_chars
+        # a backfill packer: its requests leave the best writers' live reserve alone (gateway `live_reserve`)
+        self.bulk = bulk
         self._lock = threading.Lock()
         self._pending: list[_Job] = []
         self.stats = {"calls": 0, "tasks": 0, "fallbacks": 0}
 
     def complete(self, fallback_route: str, system: str, user: str, schema: type, tag: str = "") -> AIResult:
         job = _Job(system, user, schema, tag)
-        batch = None
+        batch = earlier = None
         with self._lock:
+            # long filings: a filing that would push the pack past its size goes out with the next pack, so two long
+            # documents never make one request too large for the model's minute
+            if self._pending and self._chars() + len(system) + len(user) > self.max_chars:
+                earlier, self._pending = self._pending, []
             self._pending.append(job)
             if len(self._pending) >= self.size or self._chars() >= self.max_chars:
                 batch, self._pending = self._pending, []
+        if earlier:
+            self._send(earlier)
         if batch:
             self._send(batch)
         elif not job.done.wait(self._wait()):
@@ -87,7 +95,7 @@ class Packer:
             return job.result
         with self._lock:
             self.stats["fallbacks"] += 1
-        return self.gateway.complete_json(fallback_route, system, user, schema)
+        return self.gateway.complete_json(fallback_route, system, user, schema, bulk=self.bulk)
 
     def _wait(self) -> float:
         """How long a filing waits for others: the set wait, but never past the run's deadline (less a margin for the
@@ -108,7 +116,7 @@ class Packer:
         # which filings shared this request, so a card's facts can be checked against the others' (audit: pack bleed)
         pack = {"id": uuid.uuid4().hex[:12], "members": [job.tag for job in batch if job.tag]}
         try:
-            reply = self.gateway.complete_json(self.route, PACK_SYSTEM, user, PackedReply)
+            reply = self.gateway.complete_json(self.route, PACK_SYSTEM, user, PackedReply, bulk=self.bulk)
             answers = {item.task_id: item.answer for item in reply.value.results}
             for tid, job in ids.items():
                 answer = answers.get(tid)

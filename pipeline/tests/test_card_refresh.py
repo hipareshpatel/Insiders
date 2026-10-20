@@ -119,3 +119,37 @@ def test_export_held_writes_only_held_cards(tmp_path):
     out = tmp_path / "held.json"
     assert cmd_export_held(SimpleNamespace(out=str(out)), None, Sink()) == 0
     assert [c["news_id"] for c in json.loads(out.read_text())] == ["a"]
+
+
+def test_a_refresh_without_the_text_never_brings_back_a_comparative():
+    """Review 6 (2026-10-20): a refresh rebuilt Kanoria's table with the year-ago column the pipeline had taken off as
+    restated. With no text to judge it, a comparative the stored table lacks stays out; with the cached text it is
+    judged as when the card was written."""
+    d = _dossier()
+    src = lambda news_id, value: {"news_id": news_id, "value": value, "as_of": "2026-05-01T10:00:00+05:30"}
+    d["financial_metrics"] = [
+        {"metric": metric, "period": period, "value": value, "sources": [src(n, value) for n in ids]}
+        for metric, period, value, ids in (
+            ("revenue", "Q1FY27", 304.39, ("r1",)), ("revenue", "Q1FY26", 431.42, ("n0", "r1")),
+            ("revenue", "Q4FY26", 265.82, ("n0", "r1")),
+            ("pat", "Q1FY27", 31.62, ("r1",)), ("pat", "Q1FY26", -40.11, ("n0", "r1")), ("pat", "Q4FY26", 3.55, ("n0",)))]
+    stored = {"period": "Q1FY27", "prev_year_period": "Q1FY26", "prev_quarter_period": "Q4FY26",
+              "revenue": {"value": 304.39, "prev_quarter": 265.82, "qoq_pct": 14.5},
+              "pat": {"value": 31.62, "prev_quarter": 3.55, "qoq_pct": 790.7}}
+    card = {**_card(), "event_type": "RESULTS", "deal_value": None, "results": stored}
+    filing = Filing(news_id="r1", scrip_code="500001", company_name="Demo Rail Ltd", headline="h", subject="",
+                    filed_at=FILED, filing_date=FILED[:10])
+    new, _ = card_refresh.refresh(card, d, filing, None)
+    assert "prev_year" not in new["results"]["revenue"] and "prev_year" not in new["results"]["pat"]
+    assert new["results"]["revenue"]["prev_quarter"] == 265.82
+    # the text prints memory's year-ago figures: judged, they come back
+    text = "(Rs. in lakh) Revenue 30,439 26,582 43,142\nProfit for the period 3,162 355 (4,011)"
+    new, _ = card_refresh.refresh(card, d, filing, None, printed=text)
+    assert new["results"]["revenue"]["prev_year"] == 431.42
+
+
+def test_the_refresh_reads_the_cached_text_when_there_is_one():
+    seen = []
+    pipeline = SimpleNamespace(_cached_text=lambda news_id: seen.append(news_id) or None)
+    assert card_refresh.filed_text(pipeline, "r1") is None and seen == ["r1"]
+    assert card_refresh.filed_text(SimpleNamespace(), "r1") is None   # GitHub's maintenance: no cache

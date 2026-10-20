@@ -46,7 +46,7 @@ from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
-                      quarter_index, statement_quarter, statement_year)
+                      printed_periods, quarter_index, statement_quarter, statement_year)
 from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
@@ -56,6 +56,7 @@ from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
 from .card_context import case_stage, guidance_recall, memory_context, rating_change, rating_word_mismatch
+from .call_summary import card_takeaways, check_ai_takeaways
 from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
@@ -99,6 +100,19 @@ NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category",
                 "filed_at", "reason", "pdf_url")
 DONE = ("ANALYZED", "NOT_MATERIAL", "DUPLICATE")  # DUPLICATE: a repeat submission (duplicates.py)
 LONG_PROMPT_TOKENS = 12_000
+# Long filings are packed with other long filings only (ai-quality plan item 1): at most this many characters a pack,
+# so the pack plus its 60 K reply stays inside Gemini's 250 K tokens a minute (~3 characters a token). A filing larger
+# than this goes to `pass2_long` on its own, as before.
+LONG_PACK_MAX_CHARS = 450_000
+# The model's own reply, kept beside the card for audits (ai-quality plan item 8): R2, not D1, one object a filing.
+EVIDENCE_PREFIX = "evidence/"
+EVIDENCE_MAX_CHARS = 60_000   # per reply; a packed answer is already cut to 20 K
+
+
+def evidence_key(news_id: str) -> str | None:
+    """Where a card's evidence is kept: evidence/{news_id}.json.gz (the id cut to safe characters)."""
+    safe = "".join(ch for ch in news_id if ch.isalnum() or ch in "-_")[:120]
+    return f"{EVIDENCE_PREFIX}{safe}.json.gz" if safe else None
 SNAPSHOT_KEY = "daily_feed/latest_snapshot.json"
 SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
 SNAPSHOT_PAGE = 50        # the feed's page size
@@ -140,6 +154,7 @@ class Stats:
     xbrl: int = 0           # filings whose figures came from their XBRL file
     duplicates: int = 0     # repeat submissions of an earlier filing's text (no AI call)
     days_discovered: list[str] = field(default_factory=list)
+    critic: dict = field(default_factory=dict)   # the shadow critic's counts this run (critic.py); empty when it did not run
     stopped_reason: str | None = None
     last_error: str | None = None
     status: str = ""
@@ -155,6 +170,7 @@ class Outcome:
     catalysts: list[dict] = field(default_factory=list)
     company: dict | None = None
     committed: bool = False
+    critic: dict | None = None   # a live published card's points for the shadow critic (critic.py); never written to D1
 
 
 @dataclass
@@ -917,14 +933,20 @@ def results_quarter(tagged, text: str, filed_on: str | None = None) -> str | Non
     return None
 
 
+def carries_results(event_type: str, text: str, tagged=None) -> bool:
+    """A filing typed OTHER, GOVERNANCE or CORPORATE_ACTION that carries the company's results statement (a board
+    outcome with the results and a stock split): it is the results filing, before pass 2 as after it."""
+    return event_type in ("OTHER", "GOVERNANCE", "CORPORATE_ACTION") and (
+        (tagged is not None and tagged.kind == "RESULTS") or bool(_RESULTS_STATEMENT.search(text[:20000])))
+
+
 def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
     """Event types the model got wrong in the smoke-test audit, settled from the filing itself:
     results statements typed OTHER (board outcomes carrying the results); an open offer typed as a
     rights issue or fundraise (no new shares); a promoter's Reg 29 gift typed M&A; a tax demand or
     penalty typed as an order win."""
     head = f"{filing.headline} {filing.subject} {text[:3000]}"
-    if event_type in ("OTHER", "GOVERNANCE", "CORPORATE_ACTION") and (
-            (tagged is not None and tagged.kind == "RESULTS") or _RESULTS_STATEMENT.search(text[:20000])):
+    if carries_results(event_type, text, tagged):
         return "RESULTS"
     if event_type in ("RIGHTS_ISSUE", "FUNDRAISE") and _TAKEOVER.search(head):
         return "M_AND_A"
@@ -1615,11 +1637,20 @@ class Pipeline:
             raw.attach(nse, sink, "nse", settings)
         self._annual_lists: dict[str, tuple[list, str]] = {}   # symbol -> NSE's annual-report XBRL list and when it was read
         self._event_days: dict[str, list] = {}   # IST day -> NSE's event XBRL files broadcast that day (this run)
-        self._packer = None
+        # One packer per (backfill?, long?): live and backfill filings never share a request, so a backfill pack can be
+        # kept off the best writers' live reserve (gateway `live_reserve`), and long filings are packed only with each
+        # other, a few to a request (ai-quality plan item 1: long ones fell to the weakest writer one request each).
+        self._packers: dict = {}   # (bulk, long) -> Packer
         if settings.pass2_pack > 1 and gateway.has_route("pass2_packed"):
             from .ai.packer import Packer
 
-            self._packer = Packer(gateway, size=settings.pass2_pack, wait_s=settings.pass2_pack_wait_s)
+            for bulk in (False, True):
+                self._packers[(bulk, False)] = Packer(gateway, size=settings.pass2_pack, wait_s=settings.pass2_pack_wait_s,
+                                                      bulk=bulk)
+                if settings.pass2_pack_long > 1:
+                    self._packers[(bulk, True)] = Packer(gateway, size=min(settings.pass2_pack_long, settings.pass2_pack),
+                                                         wait_s=settings.pass2_pack_wait_s, max_chars=LONG_PACK_MAX_CHARS,
+                                                         bulk=bulk)
         self._nse_refused = False                  # NSE refused the address: no more calls this run
         self.prompts = prompts or PromptEngine(settings)
         self.rules = rules or RuleBook.from_config(settings.load_toml("taxonomy.toml"))
@@ -1646,6 +1677,8 @@ class Pipeline:
         self._xbrl_links: dict[str, list[XbrlLink]] = {}  # scrip -> its results archive, read once a run
         self._holds = gate.load_holds(settings.config_dir / settings.card_holds_file)  # news_id -> reason
         self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
+        self._superseding: dict[str, tuple[list[str], str]] = {}  # news_id -> later filings with its quarter's card (D20)
+        self._critic_jobs: list[dict] = []   # live cards committed this run, for the shadow critic (critic.py)
 
     # ------------------------------------------------------------------ writes
 
@@ -1937,7 +1970,8 @@ class Pipeline:
     def _history_then(self, filings: list[Filing], history: list[Filing], deadline: float, bulk: bool,
                       discovered: bool) -> list[Outcome]:
         results = self._process_group(history, deadline, bulk=True, memory_complete=True)
-        finished = len(results) == len(history) and all(o.update.get("status") in DONE for o in results)
+        finished = ({o.update["news_id"] for o in results} >= {f.news_id for f in history}
+                    and all(o.update.get("status") in DONE for o in results))  # results may hold superseded filings (D20)
         return results + self._process_group(filings, deadline, bulk, discovered and finished)
 
     def _run_parallel(self, jobs: dict) -> dict[str, list[Outcome]]:
@@ -1965,7 +1999,8 @@ class Pipeline:
                 if filing.news_id in self._tried:  # one attempt per filing per run
                     continue
                 self._tried.add(filing.news_id)
-            results.append(self._process_one(filing, bulk, memory_complete, deadline))
+            outcome = self._process_one(filing, bulk, memory_complete, deadline)
+            results += [outcome, *self._supersede(filing, outcome)]  # committed together: never a quarter with no card
             unsaved = [o for o in results if not o.committed]
             if len(unsaved) >= COMMIT_EVERY:
                 self._commit(unsaved)
@@ -2325,14 +2360,21 @@ class Pipeline:
         if not quarter or quarter_index(quarter) is None:
             return None
         key = (filing.scrip_code, quarter)
-        done = {t["news_id"] for t in dossier.get("timeline", [])
-                if t.get("event_type") == "RESULTS" and t.get("date", "") < filing.filed_at and t.get("news_id") != filing.news_id}
-        owners = list(dict.fromkeys(n for m in dossier.get("financial_metrics", []) if m.get("period") == quarter
-                                    for n in done if reported_by(m, n)))
+        dates = {t["news_id"]: t.get("date", "") for t in dossier.get("timeline", [])
+                 if t.get("event_type") == "RESULTS" and t.get("news_id") != filing.news_id}
+        metrics = dossier.get("financial_metrics", [])
+        owners = list(dict.fromkeys(n for m in metrics if m.get("period") == quarter for n in dates if reported_by(m, n)))
+        # A results filing filed after this one also reports this quarter as its comparative: it owns the quarter only
+        # when it is its own latest quarter, the quarter of its results (Sunteck's Q1FY27 filings report Q4FY26 too).
+        later = [n for n in owners if dates[n] >= filing.filed_at
+                 and max((quarter_index(m["period"]) or -1 for m in metrics if reported_by(m, n)), default=-1)
+                 == quarter_index(quarter)]
+        owners = [n for n in owners if dates[n] < filing.filed_at]
         # An owner whose card is held out of the feed is not the quarter's card: another document of the quarter
         # may make the one that is published. 17 of the 43 quarters with D20 duplicates had their only card held
         # while the statement itself was marked a duplicate of it (funnel, 2026-10-18).
         owners = [n for n in owners if not self._card_held(n)]
+        later = [n for n in later if not self._card_held(n)]
         with self._lock:
             claimed = self._results_quarters.get(key)
             if claimed and claimed != filing.news_id:
@@ -2340,7 +2382,29 @@ class Pipeline:
             if owners:
                 return owners[0], quarter
             self._results_quarters[key] = filing.news_id
+            if later:
+                # A later document of the quarter got the card first: this one was retried after a failure or requeued
+                # by id once the later one had its card, and both stayed on the feed (Sunteck Q1FY27: the statement
+                # re-run after the press release; Sun Pharma Q4FY26: one outcome filed twice; 2026-10-20). The earlier
+                # filing - the statement, not the press release that follows it - takes the quarter, and the later
+                # one becomes its duplicate once this card is published (_supersede).
+                self._superseding[filing.news_id] = (later, quarter)
         return None
+
+    def _supersede(self, filing: Filing, outcome: Outcome) -> list[Outcome]:
+        """The later documents of a results quarter that had its card, made duplicates of this earlier filing (D20).
+        Only once this filing's card is published: a quarter never loses its only card to a failed or held one."""
+        with self._lock:
+            later, quarter = self._superseding.pop(filing.news_id, ((), ""))
+        if not later or outcome.update.get("status") != "ANALYZED" or not outcome.card or outcome.card.get("held"):
+            return []
+        dossier = self.sink.get_dossier(filing.scrip_code)
+        if dossier and any([forget_filing(dossier, n) for n in later]):
+            self.sink.put_dossier(filing.scrip_code, dossier)
+        log.info("%s takes results quarter %s from %s (D20)", filing.news_id, quarter, ", ".join(later))
+        return [Outcome({"news_id": n, "status": "DUPLICATE", "event_type": "RESULTS",
+                         "reason": f"duplicate of {filing.news_id} (same results quarter {quarter}, D20)",
+                         "updated_at": now_iso()}) for n in later]
 
     def _card_held(self, news_id: str) -> bool:
         # this run's own verdict first: its card may not be committed yet, and a re-run deleted the old one
@@ -2566,6 +2630,27 @@ class Pipeline:
         except Exception:  # a damaged cache file is re-read from BSE
             return None
 
+    def _save_evidence(self, filing: Filing, first, final, now: str) -> str | None:
+        """The model's own reply for this card, in the object store under evidence/{news_id}.json.gz (R2 online, so
+        no D1 row): a reviewer's WRONG can then be told apart as the model's reading or a code block without a re-run
+        (ai-quality plan item 8). The writer's reply and, when a second provider's card was adopted, that one too,
+        each cut to EVIDENCE_MAX_CHARS. A re-run replaces it. Saving never fails the filing."""
+        key = evidence_key(filing.news_id)
+        if not self.settings.save_evidence or not key:
+            return None
+        replies = [("writer", first)] + ([("second_opinion", final)] if final is not first else [])
+        body = {"news_id": filing.news_id, "scrip_code": filing.scrip_code, "filed_at": filing.filed_at, "saved_at": now,
+                "replies": [{"role": role, "model": r.model_label, "pack": r.pack, "latency_s": r.latency_s,
+                             "chars": len(r.raw_text or ""), "raw": (r.raw_text or "")[:EVIDENCE_MAX_CHARS]}
+                            for role, r in replies]}
+        try:
+            self.sink.put_object(key, gzip.compress(json.dumps(body, ensure_ascii=False).encode()),
+                                 content_type="application/gzip")
+            return key
+        except Exception as exc:  # evidence is for audits; the card goes on without it
+            log.warning("evidence not saved for %s: %s", filing.news_id, exc)
+            return None
+
     def _cache_text(self, news_id: str, doc: Document) -> None:
         path = self._cache_path(news_id)
         if not path:
@@ -2644,14 +2729,21 @@ class Pipeline:
                     return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": event_type,
                                     "reason": f"duplicate of {repeat.get('news_id')} (same event, another "
                                               f"document; checked before pass 2)"[:300], "updated_at": now})
-        view = view_as_of(dossier, filing.filed_at)
         # A transcript or an annual report runs to 100-400 pages: the auditor's report and the notes need room
         budget = self.settings.pass2_char_budget * (3 if event_type in ("CONCALL_PRESENTATION", "ANNUAL_REPORT") else 1)
-        text = doc.select_text(budget, self.prompts.keywords(event_type))
+        # each page headed with its heading and its own unit (``headers``): LIC's GST notice mixed rupees and lakh, and a
+        # Cyient segment slide's target was read as the company's (live reviews, 2026-10-20)
+        text = doc.select_text(budget, self.prompts.keywords(event_type), headers=True)
         # The same pages read block by block, where a cell or a column stays whole: a quote of a two-column
         # page is the filing's own words if either reading has it (gate.quote_found).
         blocks = doc.block_text(doc.selected)
         _ocr_check(doc)
+        if carries_results(event_type, text):
+            # Settled here, not only after pass 2 (event_type_rules), so the results XBRL and D20 see it too: Kapston
+            # filed its Q2FY27 outcome (results and a 5:1 split) twice, four minutes apart; the copy typed
+            # CORPORATE_ACTION skipped the quarter's claim and its XBRL and became a second results card (O3, 2026-10-20)
+            log.info("%s carries a results statement: %s -> RESULTS before pass 2", filing.news_id, event_type)
+            event_type = "RESULTS"
         subsidiary = subsidiary_results(filing, text) if event_type == "RESULTS" else None
         if subsidiary:
             # its figures are another company's: no results path (XBRL, table, quarter claim) and none into memory
@@ -2718,6 +2810,15 @@ class Pipeline:
         # The event's own structured filing: amounts, parties, dates and stage as exact fields (PLAN 18 part 3)
         if events_table:
             text = events_table + "\n\n" + text
+        # Memory as the model sees it: the periods this filing prints withheld (its own columns win, restated or not)
+        # and the items that are probably this same event marked. Code reads memory's figures from `full_view`.
+        printed = set()
+        if event_type in ("RESULTS", "ANNUAL_REPORT") or (
+                event_type == "CONCALL_PRESENTATION" and not is_transcript(filing)):   # a call prints no columns
+            printed = printed_periods(filed_text, filing.filed_at) | {
+                canonical_period(m.period) for m in (tagged.metrics if tagged else []) if m.period}
+        full_view = view_as_of(dossier, filing.filed_at)
+        view = view_as_of(dossier, filing.filed_at, printed=printed, filing_text=text)
         sector_module = self.prompts.sector_for(industry)
         sector = sector_module.name
         peers = self._peers(sector, event_type, filing)
@@ -2729,13 +2830,11 @@ class Pipeline:
                                           examples=self._owner_examples(sector, event_type),
                                           lessons=[x["lesson"] for x in learned["lessons"].get(f"{sector}|{event_type}", [])][-3:],
                                           reaction=reaction)
-        route = "pass2_bulk" if bulk else "pass2"
-        if (len(system) + len(user)) / 4 > LONG_PROMPT_TOKENS and self.gateway.has_route("pass2_long"):
-            route = "pass2_long"  # a transcript or presentation: long-context models only
-        if self._packer is not None and route in ("pass2", "pass2_bulk"):
-            result = self._packer.complete(route, system, user, Pass2Output, filing.news_id)   # several filings, one Gemini call
+        route, packer = self._pass2_writer(bulk, len(system) + len(user))
+        if packer is not None:
+            result = packer.complete(route, system, user, Pass2Output, filing.news_id)   # several filings, one Gemini call
         else:
-            result = self.gateway.complete_json(route, system, user, Pass2Output)
+            result = self.gateway.complete_json(route, system, user, Pass2Output, bulk=bulk)
         out: Pass2Output = result.value
         if not out.is_material or out.card is None:
             with self._lock:
@@ -2775,7 +2874,7 @@ class Pipeline:
             """
             # a results card with its XBRL file: code writes the figures, the model's words are cut to a line or two
             built = (results_card.build(candidate, tagged, filing.company_name,
-                                        results_card.history_from_view(view), filed_text)
+                                        results_card.history_from_view(full_view), filed_text)
                      if tagged and "RESULTS" in (event_type, candidate.event_type) else [])
             units = fix_unit_slips(candidate, sources)
             foreign_fixes = fix_foreign_crore(candidate, filed_text)
@@ -2822,10 +2921,11 @@ class Pipeline:
             return found, units, changes, missing + unquoted, dropped
 
         checks, unit_fixes, change_fixes, quotes_missing, quotes_dropped = ground(out)
+        first_reply = result
         review = None
         if checks.wants_second_opinion and self.settings.second_opinion:
             out, result, checks, review, fixes = self._second_opinion(
-                route, system, user, out, result, checks, ground)
+                route, system, user, out, result, checks, ground, bulk)
             if fixes is not None:
                 unit_fixes, change_fixes, quotes_missing, quotes_dropped = fixes
         checks.held += self._held_reasons(filing, text)
@@ -2856,6 +2956,10 @@ class Pipeline:
             deal.kind = "OTHER"   # a demerger moves a business out; it is not an acquisition (live review 3)
         if out.card is not None and out.event_type != "CONCALL_PRESENTATION":
             out.card.call_read = None  # guidance, tone and transparency describe a call, not other filings
+            out.card.call_takeaways = []
+        # each call takeaway checked on its own: a failed one goes to the AI reading and never holds the card
+        takeaway_notes = (check_ai_takeaways(out.card, text, blocks, view, declared_unit(filed_text))
+                          if out.card is not None and out.event_type == "CONCALL_PRESENTATION" else [])
         event_type = out.event_type
         if event_type in NO_CARD_EVENTS and not top_exit(f"{filing.headline} {filing.subject} {doc.first_page_text(3000)}"):
             # director and KMP changes get no card (owner, 2026-10-18), except the MD, CEO or CFO leaving (2026-10-19);
@@ -2903,6 +3007,9 @@ class Pipeline:
                         else call_results_snapshot(current, filing.filed_at, sector_module.footer)
                         if event_type == "CONCALL_PRESENTATION" else None),
             "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
+            # the key takeaways memory took from this call, by heading (call_summary.py)
+            "call_memory": (card_takeaways(current, filing.news_id, filing.filed_at)
+                               if event_type == "CONCALL_PRESENTATION" else None),
             # the event's own block on the card's face, made by code (card_context.py, signals.scale_parts)
             "scale": scale_parts(before, out, priced, filing.filed_at),
             "rating_change": rating_change(before, current, filing.news_id, text) if event_type == "DEBT_RATINGS" else None,
@@ -2917,11 +3024,15 @@ class Pipeline:
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims,
                           "unit_fixes": unit_fixes or None, "change_fixes": change_fixes or None,
                           "quotes_missing": quotes_missing or None, "quotes_dropped": quotes_dropped or None,
-                          "quotes_paraphrased": checks.quote_style or None, "out_of_fit": checks.scale or None},
+                          "quotes_paraphrased": checks.quote_style or None, "out_of_fit": checks.scale or None,
+                          "call_takeaways_unverified": takeaway_notes or None},
             "review": review,
             "model": result.model_label,
             "pack": result.pack,
         }
+        evidence = self._save_evidence(filing, first_reply, result, now)
+        if evidence:
+            card_json["grounding"]["evidence"] = evidence
         needs_review = checks.needs_review
         # A card the checks faulted, that a second provider was asked to correct and that still
         # fails, is kept out of the feed rather than published with an "Unverified" mark. On the
@@ -3018,7 +3129,14 @@ class Pipeline:
             self.stats.cards_high += rated.impact == "HIGH"
             self.stats.signals += rated.actionable
             self.stats.needs_review += needs_review
+        critic_job = None
+        if self.settings.critic and not bulk and not held:
+            from . import critic   # live published cards only: a snapshot, so the critic can never touch the card
+
+            critic_job = critic.build_job(filing.news_id, card_json, result.model_label, text, view, filing.filed_at,
+                                          event_type)
         return Outcome(
+            critic=critic_job,
             update={"news_id": filing.news_id, "status": "ANALYZED", "event_type": event_type,
                     "reason": None, "last_error": None, "updated_at": now},
             card=row,
@@ -3047,7 +3165,21 @@ class Pipeline:
                      entry.get("news_id"), str(entry.get("date", ""))[:10], said.why[:60])
         return entry
 
-    def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, ground):
+    def _pass2_writer(self, bulk: bool, prompt_chars: int):
+        """(route, packer or None) for one filing's pass 2. A live filing and a backfill one never share a pack, and a
+        long one (a transcript, presentation or annual report) is packed with other long ones only; one too large for
+        a pack goes to `pass2_long` alone. Packed or not, the fallback route and its order are the same as before."""
+        route = "pass2_bulk" if bulk else "pass2"
+        long = prompt_chars / 4 > LONG_PROMPT_TOKENS and self.gateway.has_route("pass2_long")
+        if long:
+            route = "pass2_long"  # long-context models only
+        packer = self._packers.get((bulk, long))
+        if long and prompt_chars > LONG_PACK_MAX_CHARS:
+            packer = None
+        return route, packer
+
+    def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, ground,
+                        bulk: bool = False):
         """Ask a different provider to correct a card that failed the checks, then check again.
 
         The better of the two cards is kept. Either way the card is published: a corrected one
@@ -3066,7 +3198,8 @@ class Pipeline:
         hints = [UNIT_HINT] if checks.amounts_ungrounded else []
         system2, user2 = self.prompts.verify(system, user, out.model_dump(mode="json"), problems + hints)
         try:
-            second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider,))
+            second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider,),
+                                                bulk=bulk)
         except Exception as exc:  # the first card is still published, marked unverified
             return out, result, checks, {**base, "status": "UNCHECKED", "note": f"{type(exc).__name__}: {exc}"[:200]}, None
         if not second.value.is_material or second.value.card is None:
@@ -3173,6 +3306,8 @@ class Pipeline:
             return
         with self._commit_lock:
             self._commit_locked(outcomes)
+            # the shadow critic sees only what was committed, and only a card still published (not held since, D20)
+            self._critic_jobs += [o.critic for o in outcomes if o.critic and o.card and not o.card.get("held")]
 
     def _commit_locked(self, outcomes: list[Outcome]) -> None:
         try:
@@ -3302,6 +3437,7 @@ class Pipeline:
                         self._dgtr_sync(live_deadline)
                     if time.monotonic() < live_deadline and self._annual_catchup_due():
                         self._annual_catchup(live_deadline)
+                self._run_critic(live_deadline)
             if mode in ("backfill", "all") and not self._halted(bulk=True):
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
         except SourceBlockedError as exc:
@@ -3327,6 +3463,28 @@ class Pipeline:
                 log.exception("could not record run")
         log.info("run %s finished: %s %s", run_id, status, json.dumps(self.stats.as_dict()))
         return self.stats
+
+    def _run_critic(self, deadline: float) -> None:
+        """The shadow critic over this run's committed live cards (critic.py), inside the live part of the run and at most
+        CRITIC_MAX_S seconds. It writes no D1 row and changes no card; it never fails the run."""
+        jobs, self._critic_jobs = self._critic_jobs, []
+        if not jobs or not self.settings.critic or not self.gateway.has_route("critic"):
+            return
+        from . import critic
+
+        deadline = min(deadline, time.monotonic() + self.settings.critic_max_s)
+        saved = self.gateway.deadline
+        self.gateway.deadline = deadline   # no request outlives the critic's time
+        try:
+            system = (self.settings.config_dir / "prompts" / "critic.md").read_text()
+            self.stats.critic = critic.run(jobs, self.gateway, self.sink, system, deadline, self.settings.critic_max,
+                                           self.stats.critic or None)
+            log.info("shadow critic: %s", json.dumps(self.stats.critic))
+        except Exception:
+            log.exception("shadow critic failed")
+        finally:
+            self.gateway.deadline = saved
+            self._flush_usage()
 
     def _annual_catchup_due(self) -> bool:
         """The daily annual-report catch-up's slot: after 18:30 IST, once a day, with NSE's annual-report XBRL on."""

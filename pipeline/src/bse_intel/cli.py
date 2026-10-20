@@ -314,6 +314,26 @@ def cmd_export_held(args, settings, sink) -> int:
     return 0
 
 
+def cmd_critic_export(args, settings, sink) -> int:
+    """The shadow critic's stored verdicts (R2 evidence/critic/, critic.py) since a day, to a JSON file, for the daily audit to set
+    beside the reviewers' verdicts. Read only; no AI, no D1."""
+    from . import critic
+
+    found = critic.export(sink, args.since, args.until)
+    with open(args.out, "w", encoding="utf-8") as fh:
+        json.dump(found, fh, ensure_ascii=False, indent=1)
+    flagged = sum(1 for body in found if any(p["verdict"] not in ("OK", critic.MISSING) for p in body["points"]))
+    print(json.dumps({"cards": len(found), "flagged_cards": flagged, "out": args.out}))
+    return 0
+
+
+def cmd_apply_verdicts(args, settings, sink) -> int:
+    """The owner's standing WRONG / RIGHT verdicts applied to the stored cards once (cards_apply_verdicts.sql): those
+    saved before a verdict acted on its card (O11) never held or released it. No AI; a second run writes nothing."""
+    print(json.dumps({"cards_written": sink.execute("cards_apply_verdicts", ["WRONG", "RIGHT"])}))
+    return 0
+
+
 def cmd_requeue_failed(args, settings, sink) -> int:
     """Filings that used every attempt, set PENDING again with fresh attempts (requeue.py), after a fix. No AI."""
     from datetime import timedelta
@@ -703,6 +723,13 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("export-held", help="every held card to a JSON file, for the live reviews; no AI")
     p.add_argument("--out", default="held.json")
     p.set_defaults(func=cmd_export_held)
+    p = sub.add_parser("critic-export", help="the shadow critic's verdicts since a day to a JSON file, for the audit; no AI")
+    p.add_argument("--since", required=True, help="critiqued on or after this day (YYYY-MM-DD, IST)")
+    p.add_argument("--until", help="and before this day (YYYY-MM-DD)")
+    p.add_argument("--out", default="critic.json")
+    p.set_defaults(func=cmd_critic_export)
+    p = sub.add_parser("apply-verdicts", help="apply the owner's standing Wrong / Right verdicts to the stored cards; no AI")
+    p.set_defaults(func=cmd_apply_verdicts)
     p = sub.add_parser("requeue-failed", help="give filings that used every attempt fresh attempts (after a fix); no AI")
     p.add_argument("--since", help="filed on or after this date (YYYY-MM-DD); default --days ago")
     p.add_argument("--days", type=int, default=30)
@@ -768,8 +795,20 @@ def main(argv: list[str] | None = None) -> int:
     except (AIError, SourceBlockedError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         code = 2
+    finally:
+        _record_writes(sink)
     _record_job(sink, args.command, code)
     return code
+
+
+def _record_writes(sink) -> None:
+    """Every command's D1 writes count toward the day's budget, whichever job made them."""
+    from .timeutil import now_iso, utc_day
+
+    try:
+        sink.add_uncounted_writes(utc_day(), now_iso())
+    except Exception as exc:   # D1 refusing writes (the cap) must not hide the command's own error
+        print(f"write count not recorded: {exc}", file=sys.stderr)
 
 
 # The scheduled jobs (workflows), each recorded when it ends so the System page shows a job that never ran or stopped

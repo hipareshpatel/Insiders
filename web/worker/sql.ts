@@ -1,5 +1,6 @@
 // Shared SQL, imported verbatim from ../db so the Worker and the Python
 // pipeline's LocalSink execute exactly the same statements.
+import cardsApplyVerdicts from "../../db/statements/cards_apply_verdicts.sql?raw";
 import cardsDelete from "../../db/statements/cards_delete.sql?raw";
 import cardsReaction from "../../db/statements/cards_reaction.sql?raw";
 import cardsUpsert from "../../db/statements/cards_upsert.sql?raw";
@@ -52,6 +53,7 @@ export const STATEMENTS: Record<string, string> = {
   cards_upsert: cardsUpsert,
   cards_reaction: cardsReaction,
   cards_delete: cardsDelete,
+  cards_apply_verdicts: cardsApplyVerdicts,
   companies_upsert: companiesUpsert,
   companies_seen: companiesSeen,
   catalysts_upsert: catalystsUpsert,

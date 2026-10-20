@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import re
 
+from .call_summary import summarize_calls
 from .dossier import _deal_history, period_kind
 from .periods import due_date, prior_year_period
 from .quality import roiic
@@ -163,6 +164,7 @@ def summarize(dossier: dict) -> dict:
         "gross_debt_cr": sheets[-1]["gross_debt_cr"] if sheets else None,
         "calibration": (calibration(dossier) or {}).get("rule"),
         "roiic": roiic(dossier),
+        "calls": summarize_calls(dossier),   # earnings calls by quarter, key takeaways only (O13)
     }
     return {
         "memory_summary_json": summary,

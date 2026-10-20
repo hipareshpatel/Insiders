@@ -162,12 +162,34 @@ stripped even when only the closing `</think>` is present. When nothing can serv
 wait 60 s (up to 3 times, never past the deadline) and ceilings stop the route for the run; four
 filings in a row left queued because every provider was busy stop the run (rerun later).
 
+**Live reserve and packing** (ai-quality plan item 1, 2026-10-21). `[gateway.live_reserve]` names the five Gemini
+Flash models: a backfill request (`bulk=True`: pass2_bulk, a backfill pack, a backfill long filing, its second opinion)
+skips one once its day reaches 20% of the ceiling, except 21:00-09:00 IST; live requests and every route's order are
+unchanged. With `PASS2_PACK` on there is one packer per (live/backfill, short/long): long filings (`pass2_long`) are
+packed with other long ones, `PASS2_PACK_LONG` (3) to a request and at most 450 K characters, else sent alone.
+
+**Evidence** (item 8). Each card's raw reply (the writer's, and an adopted second opinion's), cut to 60 K characters,
+is saved as `evidence/{news_id}.json.gz` in the object store (R2 online; no D1 row) and named in
+`card_json.grounding.evidence`. `SAVE_EVIDENCE=0` turns it off; a re-run replaces it.
+
 **Second opinion** (`SECOND_OPINION=1`). A card that fails the checks is sent once to a different
 provider with the problems listed. "Fails" means it needs review, or any amount on it (not a
 percentage) matches no source: a 10x unit slip in one key number leaves the match rate above the
 review threshold. Only the corrected card is adopted (memory stays from the
 first reply unless the verifier sent a fuller delta); it is published either way, "Verified
 after a second check" or "Unverified".
+
+**Shadow meaning critic** (`CRITIC=1`, owner 2026-10-21; `critic.py`, `config/prompts/critic.md`). After a live
+published card is committed, each point on its face (headline, takeaway, what happened, why it matters, verified call
+takeaways) goes with its quote, ~600 characters of filing around it and the memory items it cites to a model of another
+family than the writer's, which answers OK or one named fault (wrong period, entity or scope, direction, unit,
+unsupported cause, invented, overstated) with a reason and an optional narrower text. Shadow only: the verdict is stored
+in R2 (`evidence/critic/<news_id>.json`, beside the raw replies) and counted in the run's `stats_json.critic`; the card, its row and memory are never
+changed and no D1 row is written. Route `critic` uses spare free quota only, on models no card route uses (Gemini 3.1
+Flash-Lite, Mistral Small, Groq's gpt-oss-20b); each entry's `max_share` leaves it once the model's or provider's day or
+month is that full, so pass 1 and vision keep the rest. It runs after the live part of a run, at most `CRITIC_MAX` cards
+(8) and `CRITIC_MAX_S` seconds (180), and stops for the run when nothing can serve it. `critic-export --since` lists the
+verdicts for the audit.
 
 ---
 

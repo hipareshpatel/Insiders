@@ -367,6 +367,9 @@ function ReviewQueue() {
   const [queued, setQueued] = useState<Set<string>>(new Set());
   const query = useQuery({ queryKey: ["review", !!token], queryFn: () => (token ? ownerApi.review(token) : api.review()) });
   const cards = query.data?.cards ?? [];
+  const total = query.data?.total ?? cards.length;
+  const isQueued = (card: ReviewCard) => queued.has(card.news_id) || card.filing_status === "PENDING";
+  const waiting = cards.filter(isQueued).length;
   if (!cards.length) return null;
   const problems = (card: ReviewCard) => {
     const out: string[] = [];
@@ -389,8 +392,8 @@ function ReviewQueue() {
   };
   return (
     <section className="rounded-xl border border-line bg-surface p-4">
-      <h2 className="text-[14px] font-semibold text-ink">Needs review · {cards.length}</h2>
-      <p className="mt-0.5 text-xs text-ink-3">Cards whose figures or math the automatic checks could not confirm. They are published with an Unverified mark.</p>
+      <h2 className="text-[14px] font-semibold text-ink">Needs review · {total}{waiting ? ` · ${waiting} re-run${waiting === 1 ? "" : "s"} queued` : ""}</h2>
+      <p className="mt-0.5 text-xs text-ink-3">Cards whose figures or math the automatic checks could not confirm{total > cards.length ? ` (the latest ${cards.length} shown)` : ""}. A re-run replaces the card at the next pipeline run; it stays here when the new reading fails the checks again.</p>
       <ul className="mt-3 divide-y divide-line">
         {cards.map((card) => (
           <li key={card.news_id} className="flex flex-wrap items-start gap-3 py-2">
@@ -401,9 +404,9 @@ function ReviewQueue() {
               {problems(card).map((p, i) => <span key={i} className="block text-xs text-warn">{p}</span>)}
             </a>
             {token && (
-              <button type="button" disabled={queued.has(card.news_id)} onClick={() => requeue(card.news_id)}
+              <button type="button" disabled={isQueued(card)} onClick={() => requeue(card.news_id)}
                 className="h-7 shrink-0 rounded-md border border-line px-2.5 text-xs font-medium text-ink-2 hover:text-ink disabled:opacity-50">
-                {queued.has(card.news_id) ? "Queued for the next run" : "Re-run"}
+                {isQueued(card) ? "Queued for the next run" : "Re-run"}
               </button>
             )}
           </li>

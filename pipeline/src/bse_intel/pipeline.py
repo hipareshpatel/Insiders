@@ -1058,8 +1058,12 @@ def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None, r
                 near = _table_line_quoted(quote, text)
             if near is None and kind != "why it matters":
                 near = _row_quoted(quote, claim, text, unit)
-            if near is None:
-                near = gate.quote_scattered(quote, text, reading)   # a table cell quoted unwrapped
+            # Not for a "why it matters" sentence: it reads a table's figures into a claim (a period, a group), and two of
+            # the three wrong figures the rules let through were such sentences (independent check, 2026-10-20)
+            if near is None and kind != "why it matters" and gate.quote_scattered(quote, text, reading):
+                # a table cell quoted unwrapped: its figures are the page's (exact tokens, in the page's order), and the
+                # card's figures must be among the quote's own, not merely near it (0.0702% from the next row, 2026-10-20)
+                near = quote
             if near is None:
                 problems.append(f'{kind} "{label}" quotes a sentence that is not in the filing')
                 continue
@@ -1133,7 +1137,12 @@ def _row_quoted(quote: str, claim: str, text: str, unit: float | None) -> str | 
             continue
         inside = flat_line in flat_quote
         shared = any(" ".join(tokens[i:i + 4]) in runs for i in range(len(tokens) - 3))
-        if (inside or shared) and not gate.numbers_in_quote(claim, line, gate.quote_unit(line, text, unit)):
+        # the row's figures in the quote's order: "PPA Realisation 5.93 5.53" for the row's "5.53 5.93" made FY26 a
+        # Q1FY26 (independent check, 2026-10-20); a row's order is its columns' periods
+        quoted = [w for w in gate._norm(words)[0] if gate._has_digit(w)]
+        in_line = [w for w in gate._norm(tokens)[0] if gate._has_digit(w)]
+        if (inside or shared) and gate._in_order([w for w in quoted if w in in_line], in_line) \
+                and not gate.numbers_in_quote(claim, line, gate.quote_unit(line, text, unit)):
             return line
     return None
 

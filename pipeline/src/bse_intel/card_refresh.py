@@ -16,6 +16,7 @@ import logging
 from pydantic import ValidationError
 
 from .card_context import case_stage, guidance_recall, rating_change
+from .impact import high_reasons
 from .dossier import dossier_as_of, latest_fundamentals, results_snapshot
 from .models import Card, Filing, Pass2Output
 from .prices import point_in_time
@@ -55,7 +56,10 @@ def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, foot
 def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, footer=(), prices=None,
             buckets=None) -> tuple[dict, list[str]]:
     """The card with its blocks recomputed and signals of types now off removed; and the keys that changed."""
-    new = {**card, **blocks(card, dossier, filing, company, footer, prices, buckets)}
+    # a block today's code cannot rebuild (memory no longer holds the filing's figures) keeps its old version: a
+    # refresh never takes a table off a card
+    made = blocks(card, dossier, filing, company, footer, prices, buckets)
+    new = {**card, **{k: v for k, v in made.items() if v or not card.get(k)}}
     new["signals"] = [s for s in card.get("signals") or [] if s.get("type") not in SIGNALS_OFF]
     changed = [k for k in (*BLOCKS, "signals") if json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
     return new, changed
@@ -96,13 +100,26 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
                 failed += 1
                 log.warning("card %s not refreshed: %s", row.get("news_id"), exc)
                 continue
+            # the clear-event rule (impact.py) on the new blocks: HIGH whatever the points, never over a veto
+            facts = " ".join([new.get("headline") or ""] + [f.get("text", "") if isinstance(f, dict) else str(f)
+                                                              for f in new.get("what_happened") or []])
+            score = dict(new.get("score") or {})
+            impact = row.get("impact_level")
+            if impact != "HIGH" and not score.get("vetoes"):
+                from .pipeline import top_exit
+
+                why = high_reasons(new, new.get("event_type") or "", new["signals"], top_exit(facts))
+                if why:
+                    impact = "HIGH"
+                    new["score"] = {**score, "impact": "HIGH", "reasons": [*(score.get("reasons") or []), "Impact: " + "; ".join(why)]}
+                    changed.append("impact")
             if not changed:
                 continue
             for k in changed:
                 changed_keys[k] = changed_keys.get(k, 0) + 1
             out = dict(row)
             out.pop("card_json")
-            batch.append({**out, "card": new})
+            batch.append({**out, "impact_level": impact, "card": new})
         if batch and not dry_run:
             written += sink.execute("cards_upsert", batch) or 0
         elif batch:

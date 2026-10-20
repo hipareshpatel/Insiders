@@ -72,3 +72,35 @@ def test_run_writes_back_only_cards_that_changed():
     stored[0]["card_json"] = json.dumps(row["card"])
     sink.written = []
     assert card_refresh.run(pipeline)["changed"] == 0   # a second run finds nothing to change
+
+
+def test_a_refreshed_card_with_a_clear_event_becomes_high():
+    card = {**_card(), "event_type": "RESULTS", "deal_value": None, "signals": [],
+            "results": {"pat": {"value": 50.0, "prev_year": 30.0, "yoy_pct": 66.7}}, "score": {"vetoes": [], "reasons": []}}
+    stored = [{"news_id": "r1", "scrip_code": "500001", "symbol": "DEMO", "company_name": "Demo Rail Ltd", "impact_level": "MODERATE",
+               "filing_date": FILED[:10], "filed_at": FILED, "headline": "h", "card_json": json.dumps(card), "held": 0}]
+
+    class Sink:
+        written: list = []
+
+        def query(self, name, params):
+            return [r for r in stored if (r["filed_at"], r["news_id"]) > (params[0], params[1])]
+
+        def get_dossier(self, scrip):
+            return _dossier()
+
+        def company(self, scrip):
+            return None
+
+        def execute(self, statement, rows):
+            self.written += rows
+            return len(rows)
+
+    sink = Sink()
+    pipeline = SimpleNamespace(sink=sink, prompts=SimpleNamespace(sector_for=lambda industry: SimpleNamespace(footer=())),
+                               _prices=None, _buckets=None)
+    card_refresh.run(pipeline)
+    # memory holds no results for this filing: the old table stays, and its PAT +67% makes the card HIGH
+    (row,) = sink.written
+    assert row["card"]["results"]["pat"]["yoy_pct"] == 66.7 and row["impact_level"] == "HIGH"
+    assert row["card"]["score"]["reasons"] == ["Impact: PAT +67% YoY"]

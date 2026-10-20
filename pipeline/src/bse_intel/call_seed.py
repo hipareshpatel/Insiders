@@ -24,6 +24,7 @@ from .timeutil import now_iso, today_ist
 log = logging.getLogger(__name__)
 
 STATE_KEY = "seed_calls:state"
+SAVE_EVERY = 10
 SPEND_KEY = "seed_calls:deepseek_tokens"   # DeepSeek tokens (in + out) the seed has used, over every night
 DEEPSEEK = "deepseek:deepseek-flash"
 WINDOW_DAYS = 200     # the last quarter's calls (filed July-August for June) and the current quarter's
@@ -156,7 +157,7 @@ def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | Non
                 report["stopped"] = True
                 return
             finished.add(company["scrip_code"])
-            if not scrips:
+            if not scrips and len(finished) % SAVE_EVERY == 0:   # one D1 write per ten companies, not per company
                 sink.kv_set(STATE_KEY, json.dumps({"finished": sorted(finished)}), now_iso())
 
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
@@ -171,5 +172,7 @@ def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | Non
     if not scrips and not report["stopped"]:
         sink.kv_set(STATE_KEY, json.dumps({"finished": sorted(finished), "done": True}), now_iso())
         report["done"] = True
+    elif not scrips:
+        sink.kv_set(STATE_KEY, json.dumps({"finished": sorted(finished)}), now_iso())   # where the next run goes on
     log.info("call seed: %s", json.dumps(report))
     return report

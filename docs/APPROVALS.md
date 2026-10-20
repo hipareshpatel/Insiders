@@ -33,3 +33,4 @@ Every action taken under it is listed below with its commit or run, for the owne
 - 20 Oct 10:00-11:30 IST: PRs #10-#15 merged into `main` with CI green: the 7-day live window and 429 pauses (#10), failed filings listed and retried plus the laptop's T24/T17/T18 fixes (#11), requeue by id (#12), seed-memory from GitHub (#13), card design fixes 5 and 10 with the docs refresh (#14), fix 9's deal terms (#15).
 - 20 Oct 11:40 IST: owner approved ("YES") a live-only blind review of ~30 published cards tonight after the catch-up: independent reviewers read live cards against their PDFs; no pipeline re-runs, no AI used by the pipeline for it.
 - 20 Oct 12:00 IST: dispatched market-data.yml on main by hand (it had never run on GitHub: company pages had no price chart, no technicals, prices from 16 Oct); no AI, about 1-2k D1 writes.
+- 20 Oct 20:36 IST: dispatched maintenance.yml seed-memory (restart) on main (T13 step 1; no AI).

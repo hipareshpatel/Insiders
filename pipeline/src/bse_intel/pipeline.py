@@ -86,6 +86,7 @@ HISTORY_INLINE = 30      # history analysed ahead of a live filing; a longer bac
 MAX_ORDER = 20_000       # companies in the cached backfill order
 PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_1y",
                  "median_turnover_cr", "point_in_time")
+D1_FREE_DAILY_WRITES, D1_NEAR_CAP = 100_000, 0.95   # Cloudflare D1 free plan: rows written a day (UTC day)
 REQUEUE_AFTER_HOUR, REQUEUE_KEY = 22, "failed:requeued_on"   # the nightly extra try for failed filings
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
@@ -3129,7 +3130,13 @@ class Pipeline:
                 for day_from, day_to in ((today, today), (live_from, today - timedelta(days=1))):
                     self.process(day_from.isoformat(), day_to.isoformat(), live_deadline, bulk=False,
                                  memory_complete=backfill_done, history_first=True)
-                if self._on_nse() and time.monotonic() < live_deadline:
+                # near the free tier's 100,000 daily writes the catch-ups and memory syncs wait for the reset (05:30 IST)
+                # and the run only turns new filings into cards (20 Oct 2026: 91,080 by 20:30 IST)
+                near_cap = writes_at_start + self.stats.d1_rows_written >= D1_FREE_DAILY_WRITES * D1_NEAR_CAP
+                if near_cap:
+                    log.warning("D1 writes near the free tier's daily %d: catch-ups and memory syncs skipped this run",
+                                D1_FREE_DAILY_WRITES)
+                if self._on_nse() and time.monotonic() < live_deadline and not near_cap:
                     from . import event_catchup   # cards made before their event XBRL landed
 
                     caught = event_catchup.catch_up(self, live_deadline)

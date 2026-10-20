@@ -59,3 +59,15 @@ def test_the_seed_writes_memory_not_cards_and_resumes():
     assert analysed == [("new", "FAST_TRACK")], "the larger company first; a call already in memory is skipped"
     assert report["seeded"] == 1 and report["skipped"] == 1 and report["done"]
     assert json.loads(kv[call_seed.STATE_KEY])["done"] and again == {"done": True, "companies": 0, "seeded": 0}
+
+
+def test_the_seed_calls_command_builds_its_pipeline(monkeypatch):
+    """20 Oct 2026: both of seed-calls' first runs died at once on a NameError (`build_pipeline` not imported in cli)."""
+    from bse_intel import cli, pipeline as pipeline_module
+
+    built, ran = [], []
+    monkeypatch.setattr(pipeline_module, "build_pipeline", lambda settings, sink: built.append(sink) or "pipeline")
+    monkeypatch.setattr(call_seed, "run", lambda p, deadline, restart, scrips, workers: ran.append((p, restart, scrips)) or {})
+    args = SimpleNamespace(scrips="500001, 500002", restart=False, time_budget=60)
+    assert cli.cmd_seed_calls(args, SimpleNamespace(workers=1), "sink") == 0
+    assert built == ["sink"] and ran == [("pipeline", False, {"500001", "500002"})]

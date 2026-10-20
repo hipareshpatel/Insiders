@@ -83,7 +83,9 @@ case ladder and capex size. Yours, each with a test:
    model's call.
 Report: here, per class. Files you may change: your files (TASKS "Who owns what"), their tests, `docs/audit/live/`.
 
-## T23 · P1 · laptop · OPEN, do now — fill the design blocks on the live cards (no AI)
+## T23 · P1 · cloud (moved from the laptop, 20 Oct 06:50 IST) · IN PROGRESS — fill the design blocks on the live cards (no AI)
+
+The cloud runs it from GitHub with `maintenance.yml` (no laptop needed: the ingest token is a GitHub secret). Laptop: nothing to do here; the Adani Power former-names trace stays yours (item below).
 
 The design audit (`docs/audit/design/cards-2026-10-20.md`) found the 19 Oct card blocks on only 14 of 849 live cards:
 cards written before that day were never given them. `refresh-card-blocks` (commit eeb8944) rebuilds each stored card's

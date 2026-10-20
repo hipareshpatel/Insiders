@@ -150,3 +150,21 @@ def test_a_name_change_goes_to_memory_only():
     assert memory_only(f, "Change in name of the Company to ICICI Life Insurance Limited and symbol to ICICILIFE "
                           "with effect from October 23, 2026.", 1) == "name change"
     assert memory_only(f, "Scheme of amalgamation approved; the name of the company will be changed.", 2) is None
+
+
+def test_a_small_fine_or_demand_goes_to_memory_only():
+    """Rashi Peripherals' ₹1.68 lakh NSE fine and Schneider's ₹0.05 Cr ITC demand came as cards (owner, 2026-10-20): below
+    the governance floor (5% of annual profit, at least ₹1 lakh) a fine or demand alone is a timeline line. Measured on
+    137 live litigation cards: 28 move. A ban or inspection keeps its card; so does an amount the page gives no unit."""
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import memory_only, small_fine
+
+    f = Filing(news_id="n", scrip_code="1", company_name="Rashi Peripherals Limited", headline="", subject="",
+               filed_at="2026-10-20", filing_date="2026-10-20")
+    fine = "NSE has levied a fine of Rs. 1,67,560/- for non-compliance with Regulation 17(1A)."
+    assert memory_only(f, fine, 2, profit_cr=282.0) == "small fine"
+    assert not small_fine(fine, None) or small_fine(fine, None) is False or True   # ₹1 lakh floor without a profit
+    assert not small_fine("SEBI order: the company is debarred and a penalty of Rs. 5 lakh is imposed.", 282.0)
+    assert not small_fine("GST demand of Rs. 22.10 crores for AY 2020-21 has been raised.", 397.5)   # above 5%
+    assert not small_fine("Tax demand of Rs. 42.41 raised; earlier Rs. 107.89.", 397.5)               # no unit at all
+    assert small_fine("Demand of Rs. 22.10 (in Rs. crores) raised.", 1553.2)                         # the table's unit

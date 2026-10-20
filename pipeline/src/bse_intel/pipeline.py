@@ -980,9 +980,61 @@ _NAME_CHANGE_NOT = re.compile(r"merger|amalgamat\w*|de-?merg\w*|scheme\s+of\s+ar
                               r"buy-?back|\bbonus\b|rights\s+issue|preferential|fund\s*rais", re.I)
 
 
-def memory_only(filing: Filing, first_page: str, pages: int) -> str | None:
-    """Why this filing gets a timeline line and no card ("call logistics", "dividend", "name change"), or None."""
+# A fine, penalty or tax demand and nothing else, below the governance rule's floor (5% of annual profit, at least ₹1 lakh: owner, 2026-10-19):
+# Rashi Peripherals' ₹1.68 lakh NSE fine for Reg 17(1A) came as a card (owner, 2026-10-20), because the quarterly
+# governance report applies that floor and a standalone fine letter did not; "Schneider Electric Infra appellate
+# authority upholds ₹0.05 Cr transitional ITC demand and penalty" the same. A ban, suspension, freeze, inspection or
+# fraud keeps its card whatever the amount.
+_FINE = re.compile(r"\bfines?\b|\bpenalt(?:y|ies)\b|\bdemand\b", re.I)   # a small tax demand too (Schneider ₹0.05 Cr)
+_FINE_SEVERE = re.compile(r"debar\w*|suspen\w*|\bban(?:ned)?\b|restrain\w*|cancel\w*|revo(?:k|c)\w*|attach\w*|freez\w*|"
+                          r"prosecut\w*|fraud|arrest\w*|insolvency|usfda|warning\s+letter|import\s+alert|"
+                          r"search\s+and\s+seizure|\braid\b|licen[cs]e", re.I)
+
+
+# an amount with its digits ("Rs, " is no amount: governance_xbrl's pattern took it as ₹0), in any unit filings use
+_AMOUNT = re.compile(r"(?:\brs\.?|\binr\b|₹|\brupees\b)\s*(\d[\d,]*(?:\.\d+)?)\s*(?:/-)?\s*"
+                     r"(crores?|cr\b\.?|lakhs?|lacs?|million|mn\b)?", re.I)
+
+
+def _amount_rupees(m: re.Match) -> float:
+    value = float(m.group(1).replace(",", "") or 0)
+    unit = (m.group(2) or "").lower()
+    return value * (1e7 if unit.startswith("cr") else 1e5 if unit.startswith(("lakh", "lac")) else 1e6 if unit.startswith(("million", "mn")) else 1)
+
+
+def small_fine(first_page: str, annual_profit_cr: float | None) -> bool:
+    """A fine and nothing more, every amount on the page below governance_xbrl's floor for this company."""
+    from .governance_xbrl import MATERIAL_SHARE_OF_PROFIT, MINOR_PENALTY_RUPEES
+
     page = " ".join((first_page or "").split())
+    if not _FINE.search(page) or _FINE_SEVERE.search(page):
+        return False
+    # an amount with no unit of its own is in the unit the page's table declares ("(in Rs. crores)": Jubilant's ₹22.10 Cr
+    # demand read as ₹22.10): the largest unit the page names, so a doubt keeps the card
+    implied = 1e7 if re.search(r"\bcrores?\b|\bcr\b", page, re.I) else 1e5 if re.search(r"\blakhs?\b|\blacs?\b", page, re.I) else None
+    found = list(_AMOUNT.finditer(page))
+    if implied is None and any(not m.group(2) and "." in m.group(1) for m in found):
+        return False   # "Rs. 42.41" on a page that names no unit (Jubilant Pharmova's demand): a doubt keeps the card
+    amounts = [_amount_rupees(m) * (implied or 1 if not m.group(2) else 1) for m in found]
+    if not amounts:
+        return False   # a fine with no stated amount is raised (as the governance rule does)
+    floor = max(MINOR_PENALTY_RUPEES, (annual_profit_cr or 0) * 1e7 * MATERIAL_SHARE_OF_PROFIT)
+    return max(amounts) < floor
+
+
+def annual_profit_cr(dossier: dict | None) -> float | None:
+    """The last full year's profit memory holds (the latest FYxx PAT), for the materiality floors."""
+    years = [m for m in (dossier or {}).get("financial_metrics", []) if m.get("metric") in ("pat", "pat_owners")
+             and re.fullmatch(r"FY\d{2}", str(m.get("period") or "")) and isinstance(m.get("value"), (int, float))]
+    return max(years, key=lambda m: m["period"])["value"] if years else None
+
+
+def memory_only(filing: Filing, first_page: str, pages: int, profit_cr: float | None = None) -> str | None:
+    """Why this filing gets a timeline line and no card ("call logistics", "dividend", "name change", "small fine"), or
+    None. `profit_cr` is the company's annual profit, for the fine floor."""
+    page = " ".join((first_page or "").split())
+    if pages <= 4 and small_fine(page, profit_cr):
+        return "small fine"
     if pages <= 4 and _NAME_CHANGE.search(f"{filing.headline} {filing.subject} {page}") and not _NAME_CHANGE_NOT.search(page):
         return "name change"
     if pages <= 3 and not is_transcript(filing) and not _TRANSCRIPT.search(page) and _CALL.search(page) \
@@ -2112,7 +2164,11 @@ class Pipeline:
                     self.stats.duplicates += 1
                 return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": filing.event_type,
                                 "reason": f"duplicate of {repeat[0]} ({repeat[1]} match)", "updated_at": now_iso()})
-            why = memory_only(filing, doc.first_page_text(4000), doc.page_count) if filing.route != "TIMELINE" else None
+            why = None
+            if filing.route != "TIMELINE":
+                first = doc.select_text(6000, [])   # the first pages: an amount often sits on the order's second page
+                profit = annual_profit_cr(self.sink.get_dossier(filing.scrip_code)) if _FINE.search(first) else None
+                why = memory_only(filing, first, doc.page_count, profit)
             if why:
                 log.info("%s: %s, a timeline line and no card", filing.news_id, why)
                 filing = filing.model_copy(update={"route": "TIMELINE"})

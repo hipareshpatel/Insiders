@@ -422,14 +422,32 @@ Files you may change: none. Report: re-run on a1ed393, 01:40-01:54 IST, FREE_ONL
 - **Ramco** `nse-106731799`: no P/E line; "Since the filing ₹931.6 -> ₹787.25, -15.5%".
 - `/company/519552?tab=results` at 390 px: the quarter labels are whole ("Q3" over "FY25"); no sideways scroll.
 
-## T8 · P2 · laptop · OPEN — check the new promoter-pledge memory against filings (module 42)
+## T8 · P2 · laptop · DONE — check the new promoter-pledge memory against filings (module 42)
 
 After the go-live load (T4), run `python -m bse_intel pledge-sync --days 365` (one NSE request a month of feed; a minute
 or two). Then for 6 companies - 2 with an invocation, 2 with "up ... in 90 days", 1 released in full, 1 whose total is
 withheld for group figures - open the disclosure (`attachment` in `pledges.events`) and check: promoter, event, shares and
 % of the company, lender, and the company total on `/company/<scrip>?tab=owners` against the latest disclosures. Report
 any figure the rules read wrong with the row.
-Files you may change: none. Report: here.
+Files you may change: none. Report: 2026-10-20 11:44 IST. `pledge-sync --days 365` straight to the live site (T22's way, no AI): `{"listed": 888,
+"in_universe": 715, "filed": 715, "companies": 144, "errors": []}`. Six companies checked; live memory against NSE's feed
+(re-read for the year, 888 rows, 195 symbols) and, for two, against the disclosure PDF itself:
+| Company | Kind | Memory vs feed | Summary on the live site |
+|---|---|---|---|
+| Apollo Tyres 500877 | invoked (24,000 shares, Nuvama) | 1 of 1 events, same fields | encumbered 0.0% |
+| Hubtown 532799 | invoked (4,72,354 shares, 0.33%, Edelweiss) | 4 of 4 | 0.98%, 2 promoters |
+| Mphasis 526299 | released in full (5,82,99,642, 30.55%) | 2 of 2 | 0.0% |
+| Thyrocare 539871 | released in full (7,94,69,696, 49.93%); a group figure earlier | 5 of 5 | **withheld** (None) |
+| Raymond 500330 | released part (6,50,000, 0.98%; 5.29% left) | 7 of 7 | 5.29% |
+| Ajanta Pharma 532331 | created (4,60,000, 0.37%, CTL Trusteeship) | 33 of 33 | 33.15%, 6 promoters |
+PDFs: Ajanta's disclosure prints "pledge on total 4,60,000 equity shares", 0.37%, CTL Trusteeship Ltd, after the event
+"1,21,02,386 9.69" (% of total share capital), so `after_pct` is of the company and the 33.15% total is a sum of promoters'.
+Thyrocare's prints the release of "7,94,69,696 equity shares", 49.93% of a 51.02% holding, on 17 Aug 2026. All right.
+Notes for the cloud: (1) Thyrocare's total stays withheld after a release in full because an earlier event carried a group
+figure; after a full release by every promoter the total is 0 and could be shown. (2) The lender field holds a sentence
+where NSE's row does (Mphasis, Thyrocare: "Release of 2021 Encumbrance earlier created in favour of ..."); the page should
+show it as given or trim it. (3) The attachments are zip files with one PDF; `NseClient.download` returns nothing for them
+(a plain download works), which matters only if a card ever reads one.
 
 ## T9 · P3 · laptop · DONE — fill and check the company page price charts
 

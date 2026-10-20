@@ -50,6 +50,10 @@ jobs:
       MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       PASS2_PACK: "0"
+      # 6 companies at a time (the default is 3): DeepSeek sets no concurrency cap and its prompt cache is per account and
+      # by content, so parallel requests keep their cache hits; NSE (lists and PDFs, limited by IP) and Z.AI's one slot
+      # are what bound it, and the gateway still paces each model. 20 Oct 2026 at 3: ~50-64 companies a 40-min run.
+      PIPELINE_WORKERS: "6"
       SCRIPS: ${{ inputs.scrips }}
     steps:
       - uses: actions/checkout@v4

@@ -91,6 +91,8 @@ export interface ResultLine {
 
 export interface ResultsSnapshot {
   period: string;
+  /** On a call or presentation card: the quarter it discusses, from the results filing that reported it. */
+  discussed?: boolean;
   prev_year_period?: string | null;
   prev_quarter_period?: string | null;
   revenue?: ResultLine;
@@ -112,6 +114,9 @@ export interface DealValue {
   amount_cr: number | null;
   includes_gst?: boolean | null;
   counterparty?: string | null;
+  /** An acquisition or sale: what changes hands, and who sells it (from 2026-10-20; older cards have neither). */
+  target?: string | null;
+  seller?: string | null;
   stage: string;
   segment?: string | null;
   execution_by?: string | null;

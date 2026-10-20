@@ -11,7 +11,25 @@ The earlier plan (a Windows laptop reading BSE, phases 1-5 of 2026-10-16) is sup
 Code session on the laptop, which now builds and runs audit rounds only; **Cloud** = the cloud Claude session that
 reviews every push and fixes what it finds.
 
-## 1. Where things stand (2026-10-19)
+## Pending work (the single list; refreshed 2026-10-20 11:30 IST)
+
+Owner decisions (§7): held cards hidden / shown with a warning / approve-reject (B3); backfill pace A2 (free Gemini
+~111 days, three months only, or prepaid DeepSeek) and re-writing a company's last ~30 days after it (A3); prices from
+bhavcopy (B5; Yahoo lags NSE a session, measured T9); G8 (a week's watch, then delete the BSE client and `laptop.ps1`);
+G9 (Cloudflare rate-limit rule, owner's account); sign-in and indexing when the site is shared; whether a live-only
+blind review of ~30 cards may run (re-measures the 26% of live review 3).
+
+Cloud: T13 step 1 re-seed (`maintenance.yml` seed-memory, 20:30 IST), then Heritage's three cards re-run; re-run T24's
+19 held cards and T18 item 6's stale cards (`requeue-failed --ids`) after the 15-19 Oct catch-up; card design fixes 5
+(M&A target vs seller), 9 (case amount at stake; deal price, discount, dilution, swap ratio) and 10 (results table on
+annual-report and call cards) from `docs/audit/design/cards-2026-10-20.md`; company page parts unverified against the
+approved design (story so far, technicals 0 of 85, P/E and 52-week range, chart colour); Dabur's import alert in the
+case steps; AHLUCONT's promise fragment; repeat M&A cards the same day; the 70 "not material" reasons of pass 2.
+
+Laptop: T13 steps 3-5 (checks after the re-seed), T8 (pledge memory), T10 (DGTR links), T4 (largely replaced by the
+cloud's seed-memory). To confirm: Gemini's daily limits; `ministral-14b-2512` returning no JSON.
+
+## 1. Where things stand (2026-10-20)
 
 | | Planned | Actual |
 |---|---|---|
@@ -21,7 +39,8 @@ reviews every push and fixes what it finds.
 | Quality gate | "cards that read right" | blind agent rounds; **go-live at ≤ 5% of published cards WRONG** |
 | Accuracy | | round 0 53% wrong → round 4 21% → round 5 23% → **round 5 arm B 10%** (Gemini writing, results built by code) |
 | Missed news | | 0-2 of ~50 per round: on target |
-| Round 6 | | **running** (20 unseen companies, seed 20261022, `docs/audit/round-6.md`) |
+| Round 6 | | 17% of published WRONG (`docs/audit/round-6.md`); round 7 cancelled by the owner (D37: live reviews instead) |
+| Production | | **live since 2026-10-20 05:19 IST**: `pipeline.yml` every 15 min, live window the last 7 days; live review 3 (production cards): **7 of 27 WRONG (26%)**, its classes fixed since, not yet re-measured |
 
 How a filing flows today: NSE announcement → universe filter → rule book (noise / calendar / timeline / data-only /
 fast track / pass 1) → PDF + OCR + NSE XBRL (event: wait ≤ 90 min; results: ≤ 180 min) → card (packed Gemini; results
@@ -44,11 +63,11 @@ second opinion → later: re-read when XBRL lands, price reaction T+1/3/5, gover
 
 1. Round 6 done (`docs/audit/round-6.md`): 17% of published WRONG, nearly all from a spare writer when Gemini's quota ran
    out (Gemini 3 of 55); recall 0 MISSED of 50. Its classes fixed in code (TRACKER F77).
-2. Round 7 (`docs/audit/round-7.md`, scheduled 2026-10-20 12:40 IST after Gemini's reset): 20 more unseen companies;
-   pass mark WRONG ≤ 5% of published, MISSED ≤ 2 of ~50. Below 5%? Fix the commonest classes in code, then round 8.
+2. Round 7 was cancelled (owner, 2026-10-20, D37): production went live first and quality is measured on live cards
+   (`docs/audit/live/`); the owner's rule since: no AI re-runs for testing, live cards only. Gate unchanged: WRONG ≤ 5%.
 3. Measured or being measured:
    - the unit check on computed impacts (done: 3 true flips of 383, no true card held);
-   - **packing bleed** (round 7): every packed card records its pack's members, and `scripts/audit_round7/pack_bleed.py`
+   - **packing bleed** (was round 7's; not measured, round 7 cancelled): every packed card records its pack's members, and `scripts/audit_round7/pack_bleed.py`
      lists each figure, name or date on a card that is not in its own filing but is in another filing of its pack;
      pass mark 0 bled facts on published cards, and the reviewers get a "fact from another filing" label;
    - per-writer WRONG each round (Gemini 3.7/3.8 have small samples); round 7 also gives MiniMax M3.1 Flash and Gemma 4
@@ -94,7 +113,7 @@ when the site is shared. Built for it:
 | G6 | `sync-companies` (NSE) once by hand, then **seed every universe company's history from XBRL** (results, shareholding, governance; no AI), so day-one cards know each company's past numbers. On the laptop: `pwsh -File pipeline\scripts\golive_load.ps1` runs it all, resumable (`seed-memory --universe`), and also keeps NSE's raw bhavcopy, market-cap and corporate-action files (`scripts/nse_archives.py`, for B5) | Laptop or a workflow run |
 | G6a | **Status 2026-10-20 03:52 IST:** first pass stopped at 03:41 after 299 of 1,778 companies (1,125 results quarters, ~31 companies an hour, NSE-paced; 85 file failures): the local site had died at 03:14 when `web/wrangler.jsonc` changed under the running dev server (T12), and the seed stops when it cannot write. Site restarted; `golive_load.ps1` re-run at 03:52 (finished work skipped; steps 2-3, which failed on the network at 17:23 on 19 Oct, retried). At this pace the seed needs about two more days. **Lesson: restart `npm run dev` after any `wrangler.jsonc` change, and check the site before leaving a run.** | Laptop |
 | G7 | Switch on: repository variable `PIPELINE_SCHEDULE = on`; cron-job.org calls `pipeline.yml` every 15-30 minutes | Owner |
-| G7 status | **Done 2026-10-20 05:19 IST** (owner: "let it work on production now", before the 95% gate; live reviews 17 of 48 WRONG, the verified face D38 keeps unchecked AI text behind a tap). PR #1 merged into `main` (d346309) without the laptop's last sync (owner: no more waiting on the laptop); `pipeline.yml` run 1 started by hand; `PIPELINE_SCHEDULE = on` set by the owner (hourly at :17); `deploy-web.yml` deploys every push to `main`. The laptop no longer syncs (TASKS T22) | Done |
+| G7 status | **Done 2026-10-20 05:19 IST** (owner: "let it work on production now", before the 95% gate; live reviews 17 of 48 WRONG, the verified face D38 keeps unchecked AI text behind a tap). PR #1 merged into `main` (d346309) without the laptop's last sync (owner: no more waiting on the laptop); `pipeline.yml` run 1 started by hand; `PIPELINE_SCHEDULE = on` set by the owner (every 15 min since 2026-10-20 05:40 IST, `2,17,32,47 * * * *`); `deploy-web.yml` deploys every push to `main`. The laptop no longer syncs (TASKS T22) | Done |
 | G8 | Watch a week: System page (queue, failures, quotas, held cards); then delete the BSE client and `laptop.ps1` | Owner, laptop |
 | G9 | Cloudflare rate-limiting rule on the public API (one free rule, e.g. 60 requests a minute per visitor), so a scraper cannot spend the free quota | Owner |
 

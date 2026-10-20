@@ -421,6 +421,10 @@ class DealValue(_Lenient):
     amount_cr: Num = None
     includes_gst: bool | None = None
     counterparty: OptStr = None
+    # an acquisition or sale: what changes hands and who sells it, apart (the counterparty was either; Ceigall's card
+    # read "Target: REC Power", the seller of JKJTL, design audit 2026-10-20)
+    target: OptStr = None
+    seller: OptStr = None
     stage: Annotated[str, _enum(DEAL_STAGES, {"LETTER_OF_INTENT": "LOI", "LETTER_OF_ACCEPTANCE": "LOA",
                                                 "LETTER_OF_AWARD": "LOA", "PURCHASE_ORDER": "WORK_ORDER", "PO": "WORK_ORDER",
                                                 "AGREEMENT": "CONTRACT", "MEMORANDUM_OF_UNDERSTANDING": "MOU",

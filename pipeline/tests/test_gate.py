@@ -609,3 +609,26 @@ def test_a_capex_has_no_shareholders_on_the_other_side(settings):
     notes = apply_deal_guards(out, filing, [], [], "The Board of Directors approved a capex of Rs. 250 crore")
     assert out.card.deal_value.counterparty is None and any("holders" in n for n in notes)
     assert out.card.deal_value.stage == "BOARD_APPROVED"
+
+
+def test_an_acquisition_names_target_and_seller_only_as_the_filing_does(settings):
+    """Ceigall's card read "Target: REC Power Development and Consultancy", the seller of JKJTL (design audit,
+    2026-10-20): the deal now carries target and seller apart, each kept only when the filing names it."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import apply_deal_guards
+
+    text = ("Ceigall India Limited has entered into a share purchase agreement with REC Power Development and "
+            "Consultancy Limited to acquire 100% of JKJTL Transmission Limited (JKJTL).")
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A", "timeline_entry": "SPA",
+        "card": {"impact_level": "MODERATE", "headline": "Ceigall to buy JKJTL", "what_happened": ["x"],
+                 "deal_value": {"kind": "ACQUISITION", "amount_cr": None, "stage": "CONTRACT",
+                                "target": "JKJTL Transmission Ltd", "seller": "REC Power Development and Consultancy Ltd",
+                                "counterparty": "REC Power Development and Consultancy Ltd"}}})
+    filing = _filing("n-spa", "Acquisition", now_ist(), "Acquisition")
+    assert not [n for n in apply_deal_guards(out, filing, [], [], text) if "target" in n or "seller" in n]
+    deal = out.card.deal_value
+    assert deal.target == "JKJTL Transmission Ltd" and deal.seller.startswith("REC Power")
+    out.card.deal_value.seller = "Power Finance Corporation"   # a guess the filing does not carry
+    notes = apply_deal_guards(out, filing, [], [], text)
+    assert out.card.deal_value.seller is None and any("seller dropped" in n for n in notes)

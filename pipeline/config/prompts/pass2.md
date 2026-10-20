@@ -157,6 +157,9 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   kind, amount_cr (₹ crore, only when the filing states a ₹ value; null for a foreign-currency
   amount the filing does not convert), includes_gst (true, false, or null when not stated),
   counterparty, stage, segment (the business line, in a few words) and execution_by (as written).
+  For an acquisition or a sale also target (the company, business or asset that changes hands, as
+  named) and seller (who sells it, when the filing names one); counterparty is then the other party
+  to the company (the seller in an acquisition, the buyer in a sale). null when not named.
   The system uses it to compare the deal with revenue, market cap and the company's earlier deals,
   so give only stated figures. null when there is no stated size. amount_cr is the size of the deal
   itself (the consideration, the order value, the issue size): never an amount the filing gives for

@@ -36,7 +36,7 @@ from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, latest_fundamentals, memory_ids, merge, own_former_name,
-                      new_dossier, reported_by, results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
+                      new_dossier, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import CACHE_VERSION, FIGURE_PAGE_AMOUNTS, Document, amounts, cache_needs_ocr
 from .ocr import available as local_ocr_available
 from .ocr import page_reader, recognise
@@ -1120,6 +1120,9 @@ def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None, r
         if siblings:
             elsewhere.append(f'{kind} "{label}" also states {", ".join(dict.fromkeys(siblings))[:60]}, '
                              "from another row of the same table")
+        # Not done: reading a figure from another verified quote on the card. Tried 2026-10-20 and audited: of 20 figures
+        # it accepted, an independent check found 4 wrong (₹ million read as crore, another year's derived EBITDA, figures
+        # only in the card's own notes) - 20%, far above the gate. A figure answers to its own quote.
         if missing:
             problems.append(f'{kind} "{label}" states {", ".join(dict.fromkeys(missing))[:90]}, '
                             "which its own quote does not")
@@ -1351,9 +1354,30 @@ def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], bal
     if deal is not None and deal.kind == "CAPEX" and deal.counterparty and _HOLDERS.search(deal.counterparty):
         notes.append(f"capex counterparty dropped: {deal.counterparty!r} are holders, not a party to the capex")
         deal.counterparty = None
+    # a target or seller is a name on the card's face: kept only when the filing names it (a model's guess at who
+    # sells is worse than none)
+    for field in ("target", "seller"):
+        named = getattr(deal, field, None) if deal is not None else None
+        if named and text and not _named_in(named, text):
+            notes.append(f"deal {field} dropped: {named!r} is not named in the filing")
+            setattr(deal, field, None)
     if notes:
         log.info("deal guards for %s: %s", filing.news_id, notes)
     return notes
+
+
+_NAME_WORDS = re.compile(r"[A-Za-z0-9&]{3,}")
+_NAME_FILLER = {"the", "and", "limited", "ltd", "private", "pvt", "company", "india", "its", "from", "with"}
+
+
+def _named_in(name: str, text: str) -> bool:
+    """Whether the filing names this party: every distinctive word of the name is in the text (case and
+    punctuation aside), so "JKJTL" or "REC Power Development and Consultancy Limited" passes and an invented party does not."""
+    words = [w.lower() for w in _NAME_WORDS.findall(name) if w.lower() not in _NAME_FILLER]
+    if not words:
+        return True
+    hay = re.sub(r"[^a-z0-9&]+", " ", text.lower())
+    return all(re.search(rf"\b{re.escape(w)}\b", hay) for w in words)
 
 
 def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...], history: list[dict] | None = None) -> CardChecks:
@@ -2687,7 +2711,9 @@ class Pipeline:
             "signals": signals,
             "timeline_entry": out.timeline_entry,
             "fundamentals": latest_fundamentals(current, sector_module.footer),
-            "results": results_snapshot(current, filing.news_id, sector_module.footer) if event_type == "RESULTS" else None,
+            "results": (results_snapshot(current, filing.news_id, sector_module.footer) if event_type == "RESULTS"
+                        else call_results_snapshot(current, filing.filed_at, sector_module.footer)
+                        if event_type == "CONCALL_PRESENTATION" else None),
             "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
             # the event's own block on the card's face, made by code (card_context.py, signals.scale_parts)
             "scale": scale_parts(before, out, priced, filing.filed_at),

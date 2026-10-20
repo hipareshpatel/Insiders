@@ -496,8 +496,11 @@ Files you may change: none. Report: 2026-10-20 11:45-12:20 IST. `dgtr-sync --pag
 - **Epigral on CPVC (the cloud's question):** the case page holds three rounds (2019, 2024, 2026); names come from the latest.
   The 16 Sep 2026 notice: "DCW Limited, Epigral Limited and Lubrizol Advanced Materials India Private Limited (hereinafter
   referred to as the 'Applicants')", so APPLICANT is right; the 2019 notice named DCW only (with Kem One Chemplast, private).
-- Not checked yet: the "Trade remedies" panel on two company pages (product, countries, latest step and date against the
-  case page).
+- Two companies' trade-remedy memory (what the "Trade remedies" panel reads) against the case file: DCW 500117 (CPVC
+  INITIATION 16 Sep 2026, Soda Ash TERMINATED 27 Jan 2021, two PVC resin cases TERMINATED) and Reliance 500325 (SBR
+  CUSTOMS_NOTIFICATION, polybutadiene FINAL_FINDING, polyester textured yarn INITIATION 20 Nov 2025): each stage is the case's
+  latest staged document. Two cases carry no countries (DCW's PVC suspension grade resin, Reliance's polybutadiene rubber).
+  The panel itself was read through the API, not opened in a browser.
 
 ## T2 · P1 · laptop · DONE — measure the bank ratio scale before it is trusted (CLAUDE.md rule 0)
 

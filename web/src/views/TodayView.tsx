@@ -8,7 +8,7 @@ import { parseCard } from "../components/FilingCard";
 import { api, type FeedFilters } from "../lib/api";
 import { cn } from "../lib/cn";
 import { addDays, istDate, istDateTime, marketSession, num, pct, signClass, titleCase, todayIST } from "../lib/format";
-import { catalystFamily, FEED_TABS, SECTORS, SIZES, verdict, type Tone } from "../lib/taxonomy";
+import { catalystFamily, catalystText, FEED_TABS, SECTORS, SIZES, verdict, type Tone } from "../lib/taxonomy";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading, Pager } from "./FeedView";
 import { lastClose } from "./TopSignalsView";
@@ -350,7 +350,7 @@ function Rail({ today, fromAt, brief }: { today: string; fromAt: string; brief?:
                       {day}<span className="block text-[9.5px] font-bold uppercase tracking-wide">{mon}</span>
                     </span>
                     <span className="min-w-0"><span className="block truncate text-ink">{e.company_name ?? e.symbol} · {titleCase(e.event_type)}</span>
-                      {e.description && <span className="block truncate text-[11.5px] text-ink-3">{e.description}</span>}</span>
+                      {e.description && <span className="block truncate text-[11.5px] text-ink-3">{catalystText(e.event_type, e.description)}</span>}</span>
                   </Link>
                 </li>
               );

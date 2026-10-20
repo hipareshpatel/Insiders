@@ -83,6 +83,19 @@ export const CATALYST_FAMILIES: { key: string; label: string; types: string[]; d
   { key: "other", label: "Other", types: ["OTHER"], dot: "bg-ink-3", chip: "bg-surface-2 text-ink-2" },
 ];
 
+/** A catalyst's line for people: the exchange's "X Ltd has informed BSE that the meeting of the Board of Directors ... to
+ * consider ..." becomes "Board meeting: to consider the financial results" (design audit, 2026-10-20: the rail showed
+ * "Newgen Software Technologies Ltdhas informed BSE th…"). */
+export function catalystText(type: string, description: string | null | undefined): string {
+  let text = (description ?? "").replace(/\s+/g, " ").trim();
+  text = text.replace(/^.{0,120}?has\s+informed\s+(?:BSE|NSE|the\s+Exchanges?)\s+that\s+/i, "");
+  if (type === "BOARD_MEETING") {
+    const purpose = /\b(to\s+(?:consider|approve|discuss)\b.*)$/i.exec(text)?.[1];
+    return purpose ? `Board meeting: ${purpose.replace(/[.;,]\s*$/, "")}` : "Board meeting";
+  }
+  return text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
+}
+
 export function catalystFamily(type: string) {
   return CATALYST_FAMILIES.find((f) => f.types.includes(type)) ?? CATALYST_FAMILIES[CATALYST_FAMILIES.length - 1];
 }

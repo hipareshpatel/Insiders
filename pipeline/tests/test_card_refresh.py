@@ -104,3 +104,18 @@ def test_a_refreshed_card_with_a_clear_event_becomes_high():
     (row,) = sink.written
     assert row["card"]["results"]["pat"]["yoy_pct"] == 66.7 and row["impact_level"] == "HIGH"
     assert row["card"]["score"]["reasons"] == ["Impact: PAT +67% YoY"]
+
+
+def test_export_held_writes_only_held_cards(tmp_path):
+    from bse_intel.cli import cmd_export_held
+
+    rows = [{"news_id": "a", "scrip_code": "1", "filed_at": FILED, "held": 1, "card_json": json.dumps({"headline": "A"})},
+            {"news_id": "b", "scrip_code": "1", "filed_at": FILED, "held": 0, "card_json": json.dumps({"headline": "B"})}]
+
+    class Sink:
+        def query(self, name, params):
+            return [r for r in rows if (r["filed_at"], r["news_id"]) > (params[0], params[1])]
+
+    out = tmp_path / "held.json"
+    assert cmd_export_held(SimpleNamespace(out=str(out)), None, Sink()) == 0
+    assert [c["news_id"] for c in json.loads(out.read_text())] == ["a"]

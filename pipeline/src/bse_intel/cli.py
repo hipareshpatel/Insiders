@@ -293,6 +293,27 @@ def cmd_refresh_card_blocks(args, settings, sink) -> int:
     return 0
 
 
+def cmd_export_held(args, settings, sink) -> int:
+    """Every held card as stored (its card_json parsed) to a JSON file, for the live reviews: the public site does not
+    serve them (owner, 2026-10-20: held drafts may be exported). No AI."""
+    after, held = ["", ""], []
+    while True:
+        rows = sink.query("export_cards", [after[0], after[1], 100])
+        if not rows:
+            break
+        after = [rows[-1]["filed_at"], rows[-1]["news_id"]]
+        for row in rows:
+            if row.get("held"):
+                held.append({k: row.get(k) for k in ("news_id", "scrip_code", "symbol", "company_name", "filed_at",
+                                                    "event_category", "pdf_url")} | {"card_json": json.loads(row["card_json"])})
+        if len(rows) < 100:
+            break
+    with open(args.out, "w", encoding="utf-8") as fh:
+        json.dump(held, fh, ensure_ascii=False, indent=1)
+    print(json.dumps({"held": len(held), "out": args.out}))
+    return 0
+
+
 def cmd_dgtr_sync(args, settings, sink) -> int:
     """DGTR trade-remedy cases into the memory of the companies that applied for or supported them (dgtr.py, module 8),
     no AI. --pages 42 reads every case DGTR lists (a first fill: OCR of a few hundred scanned notices, hours)."""
@@ -626,6 +647,9 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("refresh-summaries", help="rebuild each company's stored summary from its memory, no AI")
     p.add_argument("--scrips", help="only these companies (comma separated); default every company with memory")
     p.set_defaults(func=cmd_refresh_summaries)
+    p = sub.add_parser("export-held", help="every held card to a JSON file, for the live reviews; no AI")
+    p.add_argument("--out", default="held.json")
+    p.set_defaults(func=cmd_export_held)
     p = sub.add_parser("refresh-card-blocks", help="rebuild every stored card's code blocks from memory, no AI")
     p.add_argument("--scrips", help="only these companies (comma separated); default every card")
     p.add_argument("--dry-run", action="store_true", help="count what would change, write nothing")

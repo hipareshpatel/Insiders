@@ -28,3 +28,4 @@ Every action taken under it is listed below with its commit or run, for the owne
 - 20 Oct 06:55 IST: PR #6 merged into `main` (91b832b) with CI green: `maintenance.yml`, the no-AI refreshes run from GitHub (T23 taken off the laptop). Started its dry run of `refresh-card-blocks`.
 - 20 Oct 07:00 IST: `maintenance.yml` run for real (after a clean dry run): `refresh-card-blocks` changed 1,042 of 1,106 stored cards, 0 failed (99 re-rated HIGH under D39), `refresh-summaries` rebuilt 1,418 company summaries.
 - 20 Oct 07:06 IST: PR #7 merged into `main` (d0958d8) with CI green: the capex counterparty guard, T23 records.
+- 20 Oct 07:41 IST: PR #8 merged into `main` (09fd351) with CI green: Coming up and calendar text.

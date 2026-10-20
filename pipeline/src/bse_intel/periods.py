@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import calendar
 import re
-from datetime import date
+from datetime import date, timedelta
 
 _MONTHS = {m.lower(): i for i, m in enumerate(calendar.month_abbr) if m}
 
@@ -161,6 +161,32 @@ def due_date(text: str | None) -> date | None:
     if m := re.search(r"\b(?:CY\s*)?(20\d{2})\b", upper):
         return date(int(m[1]), 12, 31)
     return None
+
+
+# SEBI LODR Reg 33(3): a quarter's (and so a half's or nine months') results are filed within 45 days of its end, the
+# year's (Q4, H2, FY) within 60. Guidance due "H1FY27" can be judged only once H1's results are due: Jindal
+# Stainless's H1FY27 EBITDA/tonne guidance was "Deadline passed" on a card filed 16 Oct 2026 (owner, 2026-10-20, O12)
+RESULTS_DAYS_QUARTER = 45
+RESULTS_DAYS_YEAR = 60
+
+
+def results_due(text: str | None) -> date | None:
+    """The first day a deadline can be judged missed: for a reporting period (Q1-Q4, H1/H2, 9M, FY) its end plus the
+    results filing window ("H1FY27" -> 2026-11-14, "Q4FY27" / "FY27" -> 2027-05-30); for a date or a month, that day
+    (``due_date``). A range is judged at its later end."""
+    end = due_date(text)
+    if end is None:
+        return None
+    parts = [p for p in _RANGE_SPLIT.split(text) if p.strip()]
+    last = max(parts, key=lambda p: due_date(p) or date.min) if len(parts) > 1 else text
+    if explicit_date(last) or due_date(last) != end:
+        return end
+    s = canonical_period(last)
+    if re.fullmatch(r"(?:Q4|H2)?FY\d{2}", s):
+        return end + timedelta(days=RESULTS_DAYS_YEAR)
+    if re.fullmatch(r"(?:Q[1-3]|H1|9M)FY\d{2}", s):
+        return end + timedelta(days=RESULTS_DAYS_QUARTER)
+    return end
 
 
 def prior_year_period(period: str) -> str | None:

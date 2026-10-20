@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 
-from .dossier import third_party_view
+from .dossier import judged_on, third_party_view
 
 # Long-term scale shared by CRISIL, ICRA, CARE, India Ratings, Acuite, Brickwork and Infomerics, best first
 LONG_TERM = ("AAA", "AA+", "AA", "AA-", "A+", "A", "A-", "BBB+", "BBB", "BBB-", "BB+", "BB", "BB-",
@@ -192,7 +192,7 @@ def guidance_recall(before: dict | None, event_type: str, filed_at: str | None =
         # a commitment has a target or a deadline; an explanation from the call has neither (CSB's RoA remark)
         if not (g.get("target") or g.get("due") or g.get("due_date")):
             continue
-        if today and g.get("due_date") and g["due_date"] < today.isoformat():
+        if today and g.get("due_date") and judged_on(g.get("due"), g["due_date"]) < today.isoformat():
             continue
         if today and g.get("given_on") and g["given_on"][:10] < (today - timedelta(days=max_age_days)).isoformat():
             continue

@@ -29,15 +29,13 @@ from datetime import date, timedelta
 
 from .dossier import approval_granted, watch_verdict, deal_state, is_recap, reported_by, same_deal
 from .models import Filing, Pass2Output
-from .periods import due_date, prior_year_period
+from .periods import due_date, prior_year_period, results_due
 
 STRAIN_GAP_PP = 15.0      # receivable/inventory growth minus revenue growth, percentage points
 MAX_OVERDUE_SIGNALS = 2
-# A period's guidance is judged on its results, filed up to 45 days after a quarter and 60 after the year: Jindal's
-# H1FY27 EBITDA/tonne guidance was "Deadline passed" on 16 October, a month before its results (round-2 re-run)
-RESULTS_GRACE_DAYS = 60
+# A period's guidance is judged on its results, filed up to 45 days after a quarter and 60 after the year
+# (``periods.results_due``); a deadline that is a date is judged on the day
 RESULTS_SILENT_DAYS = 120   # no results this long after a deadline: the promise is judged without them
-_PERIOD_DUE = re.compile(r"\s*(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2}", re.I)  # a deadline that is a date is judged on the day
 
 REVENUE = ("revenue", "revenue_from_operations", "total_revenue", "net_sales", "sales", "total_income")
 WORKING_CAPITAL = {
@@ -306,7 +304,6 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
                           + (f" {update.evidence}" if update.evidence else ""), w["id"]))
     touched = {u.guidance_id for u in output.dossier_delta.promise_updates}
     today = filing.filed_at[:10]
-    judged_by = (date.fromisoformat(today) - timedelta(days=RESULTS_GRACE_DAYS)).isoformat()
     # Flagged once, on the first filing after the deadline: Ahluwalia's FY25 revenue guidance was
     # "Deadline passed" on five cards in a row.
     last = max((t.get("date", "")[:10] for t in (before or {}).get("timeline", []) if t.get("date", "") < filing.filed_at), default="")
@@ -318,16 +315,28 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
     long_after = (date.fromisoformat(today) - timedelta(days=RESULTS_SILENT_DAYS)).isoformat()
     overdue = [
         g for g in after.get("guidance", [])
-        if g.get("due_date") and g["due_date"] < (judged_by if _PERIOD_DUE.match(str(g.get("due") or "")) else today)
-        and (not _PERIOD_DUE.match(str(g.get("due") or "")) or reported >= g["due_date"] or g["due_date"] < long_after)
+        if g.get("due_date") and _judged_on(g) < today
+        and (not _period_due(g) or reported >= g["due_date"] or g["due_date"] < long_after)
         and g.get("status") in ("OPEN", "ON_TRACK")
-        and g["id"] not in touched and g.get("given_on", "") < filing.filed_at and not (last and last > g["due_date"])
+        and g["id"] not in touched and g.get("given_on", "") < filing.filed_at and not (last and last > _judged_on(g))
     ]
     for g in sorted(overdue, key=lambda g: g["due_date"])[:MAX_OVERDUE_SIGNALS]:
         out.append(Signal("GUIDANCE_BREACH", "WARNING",
                           f"Deadline passed: \"{g['statement']}\" was due {g['due']}, with no delivery on record.",
                           g["id"]))
     return out
+
+
+def _judged_on(g: dict) -> str:
+    """The first day a guidance item can be called missed: its period's end plus the results window when it is due
+    for a reporting period ("H1FY27" -> 14 Nov, not 30 Sep: Jindal Stainless, owner 2026-10-20, O12), else its date."""
+    judged = results_due(g.get("due"))
+    return judged.isoformat() if judged else g.get("due_date") or ""
+
+
+def _period_due(g: dict) -> bool:
+    end = due_date(g.get("due"))
+    return end is not None and _judged_on(g) > end.isoformat()
 
 
 def _latest_net_worth(dossier: dict) -> float | None:

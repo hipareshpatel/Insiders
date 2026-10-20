@@ -662,6 +662,30 @@ def test_jindal_period_guidance_waits_for_its_results():
     assert breach("2027-02-05T18:00:00+05:30")
 
 
+def test_period_deadline_is_its_end_plus_the_results_window():
+    """O12 (owner, 2026-10-20): a deadline that is a reporting period passes when its results are due under LODR, 45
+    days after a quarter or half and 60 after the year, not at the period's end, wherever overdue is judged."""
+    from bse_intel.periods import results_due
+
+    assert str(results_due("H1FY27")) == "2026-11-14" and str(results_due("by H1 FY 2026-27")) == "2026-11-14"
+    assert str(results_due("Q1FY27")) == "2026-08-14" and str(results_due("9MFY27")) == "2027-02-14"
+    assert str(results_due("Q4FY27")) == str(results_due("FY27")) == str(results_due("H2FY27")) == "2027-05-30"
+    assert str(results_due("FY26-FY27")) == "2027-05-30"
+    assert str(results_due("Sep-2026")) == "2026-09-30" and str(results_due("2026-11-15")) == "2026-11-15"
+    assert results_due(None) is None
+    given, oct16 = "2026-05-15T18:00:00+05:30", "2026-10-16T18:00:00+05:30"
+    d = merge(new_dossier(filing("g", given)),
+              output(guidance=[{"statement": "EBITDA per tonne guidance of ₹18,000-20,000 for H1FY27 maintained",
+                                "due": "by H1FY27"}]),
+              filing("g", given), "LOW", "now")
+    # the memory view the model reads does not call it overdue, and no card says "Deadline passed"
+    assert "overdue" not in view_as_of(d, oct16)["guidance"][0]
+    out = output()
+    assert not [s for s in compute(d, merge(d, out, filing("n", oct16), "LOW", "now"), out, filing("n", oct16), {}, every=True)
+                if s["type"] == "GUIDANCE_BREACH"]
+    assert view_as_of(d, "2026-11-20T18:00:00+05:30")["guidance"][0]["overdue"] is True
+
+
 def test_a_watch_long_past_its_quarter_or_already_settled_is_not_resolved_again():
     """Novartis India (live review 2): a Q4FY25 EBITDA-margin watch, met in May 2025, was "met" again by the
     Q2FY26 results in Nov 2025 and shown as a signal on that card."""

@@ -24,7 +24,7 @@ from typing import Any
 
 from .scoring import calibration
 from .models import Filing, Pass2Output
-from .periods import canonical_period, due_date, quarter_index
+from .periods import canonical_period, due_date, quarter_index, results_due
 
 SCHEMA_VERSION = 3
 MAX_TIMELINE = 600
@@ -779,8 +779,9 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         g = guidance.get(update.guidance_id)
         if g is None or g.get("given_on", "") >= as_of:
             continue  # unknown id (hallucinated) or guidance newer than this filing
-        if update.status == "ON_TRACK" and g.get("due_date") and g["due_date"] < as_of[:10]:
-            continue  # past its deadline a promise is delivered or missed, not on track ("2 MLPD by FY26" in Q2FY27)
+        if update.status == "ON_TRACK" and g.get("due_date") and judged_on(g.get("due"), g["due_date"]) < as_of[:10]:
+            continue  # past its deadline a promise is delivered or missed, not on track ("2 MLPD by FY26" in Q2FY27);
+            # a period's deadline passes when its results are due, not at its end (O12, owner 2026-10-20)
         g["status_history"] = sorted(
             g.get("status_history", []) + [{
                 "status": update.status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,
@@ -938,6 +939,14 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     return d
 
 
+def judged_on(due: str | None, stored: str | None) -> str:
+    """The first day a deadline counts as passed: for a reporting period ("H1FY27") its end plus the results window
+    (``periods.results_due``), else the stored day. Jindal Stainless's H1FY27 guidance was overdue on 16 Oct, a month
+    before its results were due (O12, owner 2026-10-20)."""
+    judged = results_due(due)
+    return judged.isoformat() if judged else stored or ""
+
+
 def _guidance_status_at(g: dict, cutoff: str) -> str:
     history = [h for h in g.get("status_history", []) if h["as_of"] < cutoff]
     return history[-1]["status"] if history else "OPEN"
@@ -989,7 +998,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
         {
             "id": g["id"], "statement": g["statement"], "target": g.get("target"), "due": g.get("due"),
             "given_on": g["given_on"][:10], "status": _guidance_status_at(g, cutoff),
-            **({"overdue": True} if g.get("due_date") and g["due_date"] < cutoff[:10] else {}),
+            **({"overdue": True} if g.get("due_date") and judged_on(g.get("due"), g["due_date"]) < cutoff[:10] else {}),
         }
         for g in dossier.get("guidance", []) if before(g, "given_on")
     ]
@@ -1001,7 +1010,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
         {
             "id": w["id"], "kind": w["kind"], "text": w["text"], "check_in": w.get("check_in"),
             **({"management_said": w["response"]} if w.get("response") else {}),
-            **({"overdue": True} if w.get("check_by") and w["check_by"] < cutoff[:10] else {}),
+            **({"overdue": True} if w.get("check_by") and judged_on(w.get("check_in"), w["check_by"]) < cutoff[:10] else {}),
         }
         for w in dossier.get("watchlist", [])
         if w.get("created_on", "") < cutoff and _guidance_status_at(w, cutoff) in ("OPEN", "PENDING", "PARTIAL")

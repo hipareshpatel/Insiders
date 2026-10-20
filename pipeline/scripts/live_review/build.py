@@ -16,6 +16,10 @@ plan = {"RESULTS": 4, "M_AND_A": 3, "LITIGATION_REGULATORY": 3, "ORDER_WIN": 3, 
         "OTHER": 1}
 rng = random.Random(int(sys.argv[2]) if len(sys.argv) > 2 else 20261020)
 sample = []
+import os
+if os.environ.get("ALL"):   # every card in the feed file (live review 3: the 27 cards production wrote on 20 Oct)
+    plan = {}
+    sample = sorted((c for c in feed if c.get("pdf_url")), key=lambda c: c["news_id"])
 for kind, n in plan.items():
     pool = sorted((c for c in feed if c.get("event_category") == kind and c.get("pdf_url")), key=lambda c: c["news_id"])
     sample += rng.sample(pool, min(n, len(pool)))

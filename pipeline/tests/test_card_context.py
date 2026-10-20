@@ -147,3 +147,10 @@ def test_a_rating_reads_its_earlier_grade_from_the_filing_when_memory_has_none()
 def test_guidance_recall_needs_a_target_or_a_deadline():
     before = {"guidance": [{"id": "x", "statement": "RoA improved on lower credit costs", "status": "OPEN", "given_on": "2026-08-01"}]}
     assert guidance_recall(before, "RESULTS", "2026-10-19") == []
+
+
+def test_a_demand_a_show_cause_notice_proposes_is_the_notice():
+    """A ₹5.09 Cr GST show-cause notice had "Order" reached (live review 3)."""
+    scn = case_stage("LITIGATION_REGULATORY", "Show cause notice proposing GST demand of ₹5.09 Cr",
+                     ["The notice proposes a demand of ₹5.09 Cr for FY21 to FY24"])
+    assert scn["steps"][scn["at"]] == "Notice" and scn["reached"] == [0]

@@ -213,8 +213,19 @@ def quote_scattered(quote: str | None, text: str, *readings: str) -> str | None:
             if any(have[f] < 1 for f in figures) or any(have[t] < 1 for t in turning):
                 continue
             low = max(0, i - size + 1)
+            # The order of a table's figures carries its period or its row: "5.93 5.53" for the page's "5.53 5.93"
+            # made FY26 a Q1FY26, and "61.5% from 59.6%" took a chart's bars for quarters (independent check of
+            # 24 figures this rule accepted, 2026-10-20: 3 wrong, all this). The quote's figures keep the page's order.
+            if not _in_order([w for w in words if _has_digit(w)], [w for w in hay[low:i + 1] if _has_digit(w)]):
+                continue
             return " ".join(printed[where[low]:where[i] + 1])
     return None
+
+
+def _in_order(seq: list[str], hay: list[str]) -> bool:
+    """Whether `seq` is a subsequence of `hay` (each in turn, later than the one before)."""
+    it = iter(hay)
+    return all(any(x == y for y in it) for x in seq)
 
 
 def _has_digit(word: str) -> bool:
@@ -604,6 +615,31 @@ _TERMINATED = re.compile(r"\b(?:terminat\w+|cancel\w*|withdr[ae]w\w*|rescind\w*|
 
 def is_terminated(headline: str | None, subject: str | None = None) -> bool:
     return bool(_TERMINATED.search(f"{headline or ''} {subject or ''}"))
+
+
+# --- a deal stage the filing's own words support (live review 3: 4 of 7 WRONG cards) ----------------------------------
+_HOLDERS_APPROVED = re.compile(
+    r"\b(?:approved|passed|assented|sanctioned)\b.{0,100}\b(?:shareholders?|members|equity\s+holders|creditors)\b"
+    r"|\b(?:shareholders?|members)\b.{0,100}\b(?:approved|passed|assented)\b|requisite\s+majority", re.I | re.S)
+_VOTE_TO_COME = re.compile(r"\b(?:will|shall)\s+be\s+(?:duly\s+)?(?:announced|declared|held|convened|placed)\b"
+                           r"|\bto\s+be\s+(?:held|convened)\b|\bscheduled\s+(?:to\s+be\s+held|on|for)\b"
+                           r"|\bnotice\s+(?:of|convening)\b.{0,60}\bmeeting\b", re.I | re.S)
+_BOARD_APPROVED = re.compile(r"\bboard\b.{0,160}\b(?:approv\w*|accorded|consented|sanction\w*)\b"
+                             r"|\b(?:approv\w*|sanction\w*)\b.{0,80}\bboard\b", re.I | re.S)
+
+
+def supported_stage(stage: str | None, text: str) -> str | None:
+    """The deal stage the filing's text supports: a shareholders' approval needs the vote's result, not its notice
+    (Jubilant Agri's result "will be duly announced", JUBLCPL's meetings were weeks away); a board approval needs the
+    board approving (ITC's chairman called a ₹20,000 Cr plan "proposed"). Steps down to what the text does say; with
+    no text, the stage stands."""
+    if not stage or not text:
+        return stage
+    if stage == "SHAREHOLDER_APPROVED" and (not _HOLDERS_APPROVED.search(text) or _VOTE_TO_COME.search(text)):
+        stage = "BOARD_APPROVED"
+    if stage == "BOARD_APPROVED" and not _BOARD_APPROVED.search(text):
+        stage = "PROPOSED"
+    return stage
 
 
 # --- an issue size that does not follow from its shares and price ----------------------------------------------------

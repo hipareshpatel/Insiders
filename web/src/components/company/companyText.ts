@@ -1,7 +1,7 @@
 /** The company page's derived figures and short texts: what memory and the cards hold, cleaned and condensed for
  * the Overview (design audit 2026-10-20, fixes 4-9). No React and no imports beyond types, so `node --test` runs the
  * cases in test/company.test.ts. Every figure here comes from the data passed in; nothing is estimated. */
-import type { CardBody, DealRecord, Dossier, Guidance, PriceReaction, ResultsSnapshot, WatchItem } from "../../../shared/types";
+import type { CallQuarter, CardBody, DealRecord, Dossier, Guidance, PriceReaction, ResultsSnapshot, WatchItem } from "../../../shared/types";
 
 type Series = { d: string[]; c: number[] };
 type Metric = Dossier["financial_metrics"][number];
@@ -299,4 +299,23 @@ export function overdue(guidance: Guidance[], today: string): (Guidance & { days
   return guidance.filter((g) => !!g.due_date && g.due_date < today && ["OPEN", "ON_TRACK"].includes(g.status))
     .map((g) => ({ ...g, days: Math.round((Date.parse(today) - Date.parse(g.due_date!)) / 86400_000) }))
     .sort((a, b) => a.due_date!.localeCompare(b.due_date!));
+}
+
+/** The earnings-call quarters as the page shows them: texts cleaned of machine ids and unit codes, a point said twice
+ *  under one heading once, empty headings and quarters left out. */
+export function callQuarters(calls: CallQuarter[] | undefined): CallQuarter[] {
+  return (calls ?? []).flatMap((q) => {
+    const categories = q.categories.flatMap((c) => {
+      const seen = new Set<string>();
+      const points = c.points.flatMap((p) => {
+        const text = cleanText(p.text);
+        const key = text.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+        if (!key || seen.has(key)) return [];
+        seen.add(key);
+        return [{ ...p, text }];
+      });
+      return points.length ? [{ ...c, points }] : [];
+    });
+    return categories.length ? [{ ...q, categories }] : [];
+  });
 }

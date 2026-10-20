@@ -2,7 +2,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
-import type { CardRow, Company, Dossier, Guidance, Peer, Technicals } from "../../shared/types";
+import type { CallQuarter, CardRow, Company, Dossier, Guidance, Peer, Technicals } from "../../shared/types";
+import { EarningsCalls } from "../components/company/EarningsCalls";
 import { Avatar } from "../components/Avatar";
 import { PriceChart } from "../components/PriceChart";
 import { formerOwnName, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
@@ -144,7 +145,7 @@ export function CompanyPage() {
 
       <div className="mt-4">
         {tab === "overview" && (
-          <Overview dossier={dossier} parsed={parsed} cards={rows} chart={chart} expected={expected} focus={focus}
+          <Overview dossier={dossier} parsed={parsed} cards={rows} chart={chart} calls={query.data.calls} expected={expected} focus={focus}
             onOpen={(id) => openCard(id)} onTab={(t) => setParams({ tab: t })} />
         )}
         {tab === "results" && (
@@ -196,8 +197,8 @@ type Expected = ReturnType<typeof nextResults>;
 
 /** The approved order (design 2026-10-19): four summary tiles, then price, the story, good & bad, what to track and
  *  the cards on the left; promises, deals, notes and what is coming up on the right. */
-function Overview({ dossier, parsed, cards, chart, expected, focus, onOpen, onTab }: {
-  dossier: Dossier | null; parsed: Parsed[]; cards: CardRow[]; chart: Parameters<typeof PriceChart>[0]["chart"]; expected: Expected;
+function Overview({ dossier, parsed, cards, chart, calls, expected, focus, onOpen, onTab }: {
+  dossier: Dossier | null; parsed: Parsed[]; cards: CardRow[]; chart: Parameters<typeof PriceChart>[0]["chart"]; calls?: CallQuarter[]; expected: Expected;
   focus: { id: string; n: number } | null; onOpen: (id: string) => void; onTab: (t: string) => void;
 }) {
   const today = todayIST();
@@ -223,6 +224,7 @@ function Overview({ dossier, parsed, cards, chart, expected, focus, onOpen, onTa
           <PriceChart chart={chart} cards={cards} onOpen={onOpen} />
           <StorySoFar dossier={dossier} parsed={parsed} count={cards.length} />
           <GoodAndBad parsed={parsed} />
+          <EarningsCalls calls={calls} />
           <WhatToTrack dossier={dossier} parsed={parsed} onTracker={() => onTab("promises")} />
           {cards.length > 0 && (
             <CardList cards={cards} pageSize={4} focus={focus} header={(filters, n) => (

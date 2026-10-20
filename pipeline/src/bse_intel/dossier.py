@@ -521,6 +521,7 @@ def add_timeline_entry(dossier: dict, filing: Filing, event_type: str, entry: st
     d["timeline"] = sorted(d["timeline"] + [{
         "id": "t_" + _hash(filing.news_id), "date": filing.filed_at, "event_type": event_type, "impact_level": None,
         "summary": entry.strip(), "news_id": filing.news_id, "tier": "TIMELINE",
+        **({"pdf_url": filing.pdf_url} if filing.pdf_url else {}),
     }], key=lambda e: e["date"])[-MAX_TIMELINE:]
     d["updated_at"] = updated_at
     return d
@@ -924,6 +925,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             "impact_level": impact_level,
             "summary": output.timeline_entry.strip(),
             "news_id": news_id,
+            **({"pdf_url": filing.pdf_url} if filing.pdf_url else {}),   # the call summary links each quarter's call
         }], key=lambda e: e["date"])[-MAX_TIMELINE:]
 
     events = {(e["event_type"], e["date"]): e for e in d.get("upcoming_events", [])}

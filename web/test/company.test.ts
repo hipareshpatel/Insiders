@@ -2,7 +2,7 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import {
-  chartTags, cleanText, composeStory, dayChange, goodAndBad, impossible, metricLabel, nextResults, overdue, peTtm, short,
+  callQuarters, chartTags, cleanText, composeStory, dayChange, goodAndBad, impossible, metricLabel, nextResults, overdue, peTtm, short,
   trackTiles, yearRange,
 } from "../src/components/company/companyText.ts";
 
@@ -86,4 +86,19 @@ test("what to track shows current items only, and overdue lists promises past du
   assert.equal(tiles[2].text, null);
   const g = { id: "g", statement: "2 MLPD by FY26", due: "FY26", due_date: "2026-03-31", source_type: "CONCALL", given_on: "2025-05-01", source_news_id: "x", status: "OPEN", status_history: [] };
   assert.equal(overdue([g, { ...g, status: "DELIVERED" }], "2026-10-20")[0].days, 203);
+});
+
+test("earnings-call quarters: cleaned, each point once, empty headings and quarters dropped", () => {
+  const point = (text: string) => ({ text, date: "2026-08-14", news_id: "n1" });
+  const got = callQuarters([
+    { quarter: "Q1FY27", date: "2026-08-14", sources: [{ news_id: "n1", date: "2026-08-14" }], categories: [
+      { name: "Guidance", points: [point("Volume growth 10-12% in FY27 (guidance g_662b6e23)"), point("Volume growth 10-12% in FY27")] },
+      { name: "Other", points: [] },
+    ] },
+    { quarter: "Q4FY26", date: "2026-05-20", sources: [], categories: [{ name: "Other", points: [] }] },
+  ]);
+  assert.equal(got.length, 1);
+  assert.deepEqual(got[0].categories.map((c) => c.name), ["Guidance"]);
+  assert.deepEqual(got[0].categories[0].points.map((p) => p.text), ["Volume growth 10-12% in FY27"]);
+  assert.deepEqual(callQuarters(undefined), []);
 });

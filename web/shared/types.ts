@@ -455,6 +455,23 @@ export interface CompanyDetail {
   dossier: Dossier | null;
   /** A year of daily closes (market-data, R2 chart/<scrip>.json); null until the job has priced the company. */
   chart?: { d: string[]; c: number[]; as_of: string } | null;
+  /** Earnings calls by quarter, newest first: memory's key takeaways under fixed headings (pipeline call_summary.py). */
+  calls?: CallQuarter[];
+}
+
+export interface CallPoint {
+  text: string;
+  date: string;
+  news_id: string;
+  /** the same target said on an earlier call too */
+  reiterated?: boolean;
+}
+
+export interface CallQuarter {
+  quarter: string;
+  date: string;
+  sources: { news_id: string; date: string; pdf_url?: string | null }[];
+  categories: { name: string; points: CallPoint[] }[];
 }
 
 export interface SearchResponse {

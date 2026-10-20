@@ -1120,6 +1120,9 @@ def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None, r
         if siblings:
             elsewhere.append(f'{kind} "{label}" also states {", ".join(dict.fromkeys(siblings))[:60]}, '
                              "from another row of the same table")
+        # Not done: reading a figure from another verified quote on the card. Tried 2026-10-20 and audited: of 20 figures
+        # it accepted, an independent check found 4 wrong (₹ million read as crore, another year's derived EBITDA, figures
+        # only in the card's own notes) - 20%, far above the gate. A figure answers to its own quote.
         if missing:
             problems.append(f'{kind} "{label}" states {", ".join(dict.fromkeys(missing))[:90]}, '
                             "which its own quote does not")

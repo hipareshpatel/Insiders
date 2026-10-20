@@ -15,3 +15,4 @@ One line per lead check-in (every 15 minutes since 2026-10-20, owner): time IST,
 | 20 Oct 07:05 | Run 2 OK (06:13-06:54, 46 analysed); run 3 (scheduled, with the review-3 fixes) going since 06:54; queue at cap, 21 failed | Capex counterparty guard (1d7a297); live review 4 waits for run 3 cards |
 | 20 Oct 07:20 | Run 3 (scheduled, review-3 fixes) going since 06:54; next scheduled run queued | Correction to 07:03: bank results cards DID get the bank table (CSB Q1FY27: 11 lines, read from /api/cards); the feed had served a cached copy |
 | 20 Oct 07:42 | Run 3 OK (06:54-07:35, 20 analysed, 0 failed); run 4 since 07:35; queue at cap | Coming up / calendar text cleaned (49e505f); snapshot of 935 live cards at 07:37 for live review 4 (run 4 cards) |
+| 20 Oct 07:53 | Run 4 going since 07:35 (ends ~08:15); runs 1-3: 99 analysed, 0 failed | Waiting on run 4 for live review 4; no laptop report since F90 |

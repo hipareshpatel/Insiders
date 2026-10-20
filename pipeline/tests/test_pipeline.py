@@ -390,6 +390,30 @@ def test_one_card_per_company_per_results_quarter(settings):
     assert two.update["status"] == "DUPLICATE" and two.update["reason"] == "duplicate of q-1 (same results quarter Q2FY27, D20)"
 
 
+def test_a_board_outcome_typed_as_a_corporate_action_still_takes_part_in_d20(settings):
+    """Kapston filed its Q2FY27 board outcome (results and a 5:1 stock split) twice, four minutes apart (O3, 2026-10-20).
+    The copy typed CORPORATE_ACTION was made RESULTS only after pass 2, so it skipped the quarter's claim and the
+    results XBRL, and the feed had two results cards for one quarter. The statement in the filing now decides first."""
+    from dataclasses import replace
+
+    from bse_intel.pipeline import carries_results
+
+    assert carries_results("CORPORATE_ACTION", RESULT_TEXT) and not carries_results("ORDER_WIN", RESULT_TEXT)
+    assert not carries_results("CORPORATE_ACTION", "Board approved a 5:1 split of each equity share of Rs. 5.")
+    settings = replace(settings, one_card_per_results_quarter=True, workers=1)
+    now = now_ist() - timedelta(hours=3)
+    first = _filing("k-1", "Outcome of Board Meeting", now, "Board Meeting")
+    again = _filing("k-2", "Outcome of Board Meeting - stock split", now + timedelta(minutes=4), "Board Meeting")
+    split = RESULT_TEXT + " The Board approved the sub-division of each equity share of Rs. 5 into 5 shares of Rs. 1."
+    pipeline, sink, fake = build(settings, [first, again], {first.pdf_url: _pdf(RESULT_TEXT), again.pdf_url: _pdf(split)},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
+    one = pipeline.analyze(first.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    pipeline._results_quarters.clear()  # a later run: only memory knows the quarter has its card
+    two = pipeline.analyze(again.model_copy(update={"route": "FAST_TRACK", "event_type": "CORPORATE_ACTION"}))
+    assert one.card is not None and len(fake.calls) == 1
+    assert two.update["status"] == "DUPLICATE" and two.update["reason"] == "duplicate of k-1 (same results quarter Q2FY27, D20)"
+
+
 def test_a_card_the_second_opinion_cannot_fix_is_held_back(settings):
     """A card that failed its checks, went to a second provider and still failed used to be published with
     an "Unverified" mark, so that a material filing was never hidden. On the rebuild that was 117 of 456

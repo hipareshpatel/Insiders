@@ -917,14 +917,20 @@ def results_quarter(tagged, text: str, filed_on: str | None = None) -> str | Non
     return None
 
 
+def carries_results(event_type: str, text: str, tagged=None) -> bool:
+    """A filing typed OTHER, GOVERNANCE or CORPORATE_ACTION that carries the company's results statement (a board
+    outcome with the results and a stock split): it is the results filing, before pass 2 as after it."""
+    return event_type in ("OTHER", "GOVERNANCE", "CORPORATE_ACTION") and (
+        (tagged is not None and tagged.kind == "RESULTS") or bool(_RESULTS_STATEMENT.search(text[:20000])))
+
+
 def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
     """Event types the model got wrong in the smoke-test audit, settled from the filing itself:
     results statements typed OTHER (board outcomes carrying the results); an open offer typed as a
     rights issue or fundraise (no new shares); a promoter's Reg 29 gift typed M&A; a tax demand or
     penalty typed as an order win."""
     head = f"{filing.headline} {filing.subject} {text[:3000]}"
-    if event_type in ("OTHER", "GOVERNANCE", "CORPORATE_ACTION") and (
-            (tagged is not None and tagged.kind == "RESULTS") or _RESULTS_STATEMENT.search(text[:20000])):
+    if carries_results(event_type, text, tagged):
         return "RESULTS"
     if event_type in ("RIGHTS_ISSUE", "FUNDRAISE") and _TAKEOVER.search(head):
         return "M_AND_A"
@@ -2652,6 +2658,12 @@ class Pipeline:
         # page is the filing's own words if either reading has it (gate.quote_found).
         blocks = doc.block_text(doc.selected)
         _ocr_check(doc)
+        if carries_results(event_type, text):
+            # Settled here, not only after pass 2 (event_type_rules), so the results XBRL and D20 see it too: Kapston
+            # filed its Q2FY27 outcome (results and a 5:1 split) twice, four minutes apart; the copy typed
+            # CORPORATE_ACTION skipped the quarter's claim and its XBRL and became a second results card (O3, 2026-10-20)
+            log.info("%s carries a results statement: %s -> RESULTS before pass 2", filing.news_id, event_type)
+            event_type = "RESULTS"
         subsidiary = subsidiary_results(filing, text) if event_type == "RESULTS" else None
         if subsidiary:
             # its figures are another company's: no results path (XBRL, table, quarter claim) and none into memory

@@ -454,13 +454,12 @@ extra_body = { thinking = { type = "disabled" } }  # on by default at high effor
 limits = { rpm = 60 }
 
 # The memory seed from calls and presentations (call_seed.py; owner, 2026-10-20: no Gemini). Long transcripts need a
-# long window: the prepaid DeepSeek (1M, many requests at once; D24, the backfill's one paid route, its key set only in
-# seed-calls.yml, never the daily pipeline) when its key is there, else Z.AI's GLM (120K), OpenRouter's Nemotron (250K)
-# as the spare. Used only by `seed-calls`, never by a card route.
+# long window: Z.AI's GLM (120K) first; the prepaid DeepSeek (1M; D24, $20 balance, key only in seed-calls.yml, never
+# the daily pipeline) and OpenRouter's Nemotron (250K) as spares. Used only by `seed-calls`, never by a card route.
 [[routes.memory_seed]]
 provider = "deepseek"
 model = "deepseek-flash"
-weight = 8
+spare = true   # owner, 2026-10-20: a prepaid $20 balance; the free models go first, DeepSeek only when none can answer
 json_mode = true
 max_tokens = 6000
 context_tokens = 900000
@@ -484,6 +483,99 @@ spare = true   # OpenRouter's free models are spares outside the card routes (te
 json_mode = true
 max_tokens = 8000
 context_tokens = 250000
+limits = { rpm = 10 }
+
+# Candidates on SambaNova and SiliconFlow (owner's keys, 2026-10-20; neither account has a card, so a paid model refuses
+# and nothing is charged). No pipeline step reads this route: `ai-check` (providers-check.yml) sends each one tiny
+# request, and only the ones that answer free move to memory_seed / pass2_long as spares.
+[[routes.trial_new]]
+provider = "sambanova"
+model = "DeepSeek-V3.2"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 10 }
+
+[[routes.trial_new]]
+provider = "sambanova"
+model = "gpt-oss-120b"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 10 }
+
+[[routes.trial_new]]
+provider = "sambanova"
+model = "Meta-Llama-3.3-70B-Instruct"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 10 }
+
+[[routes.trial_new]]
+provider = "sambanova"
+model = "MiniMax-M3"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 10 }
+
+[[routes.trial_new]]
+provider = "siliconflow"
+model = "deepseek-ai/DeepSeek-V4.1-Flash"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 10 }
+
+[[routes.trial_new]]
+provider = "siliconflow"
+model = "Qwen/Qwen3.8-27B"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 10 }
+
+[[routes.trial_new]]
+provider = "siliconflow"
+model = "zai-org/GLM-4.5-Air"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 10 }
+
+[[routes.trial_new]]
+provider = "siliconflow"
+model = "Qwen/Qwen3-30B-A3B-Instruct-2507"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 10 }
+
+[[routes.trial_new]]
+provider = "siliconflow"
+model = "openai/gpt-oss-120b"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 10 }
+
+[[routes.trial_new]]
+provider = "siliconflow"
+model = "Qwen/Qwen3-8B"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
 limits = { rpm = 10 }
 
 [[routes.vision]]

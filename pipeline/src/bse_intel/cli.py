@@ -508,7 +508,9 @@ def cmd_ai_check(args, settings, sink) -> int:
 
     gateway = AIGateway(settings.load_toml("providers.toml"))
     seen, results = set(), []
-    for route_targets in gateway.routes.values():
+    for name, route_targets in gateway.routes.items():
+        if args.route and name != args.route:
+            continue
         for t in route_targets:
             if t.key in seen or (args.provider and t.provider != args.provider):
                 continue
@@ -667,6 +669,7 @@ def main(argv: list[str] | None = None) -> int:
     p.set_defaults(func=cmd_post_mortem)
     p = sub.add_parser("ai-check", help="one tiny real request to every configured AI model, with the result of each")
     p.add_argument("--provider", help="only this provider (groq, nvidia, mistral, zai, cloudflare)")
+    p.add_argument("--route", help="only this route's models (e.g. trial_new: the candidates no pipeline step uses)")
     p.set_defaults(func=cmd_ai_check)
     p = sub.add_parser("models", help="list each provider's models and flag configured IDs it no longer serves")
     p.add_argument("--filter", help="only list available models containing this text (e.g. llama, deepseek)")

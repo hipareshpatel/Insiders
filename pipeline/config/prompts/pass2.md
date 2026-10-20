@@ -65,6 +65,33 @@ Ground rules
   worth and nothing in the filing is a governance or credit concern, say plainly that it is small for
   this company. Rich memory is not a reason to make a routine filing sound important.
 
+Mistakes our reviewers found on published cards (each one cost a card; check yours against them)
+- Restated comparatives: when the filing prints a comparative column (year-ago, previous quarter, previous
+  year), its figure wins over memory's figure for that period, even when they differ: the filing has restated
+  it (discontinued operations, an Ind AS transition, a merger, a regrouping). Never compare this filing's
+  figure with memory's figure for a period the filing itself prints; when they differ, say "restated".
+- Units: read the unit from the column header or the amount itself. Indian digit grouping in rupees:
+  "INR 99,09,87,896" is ₹99.10 Cr, "Rs. 1,67,560" is ₹1.68 lakh. Demand, penalty and tax letters usually
+  state rupees in full; a statement's header says lakh, million or crore.
+- Scope: a figure from one segment's section, slide or table is that segment's, not the company's; a figure
+  for one state, region or plant is that one's ("22 mn customers in Maharashtra & Goa" is not the company's
+  customer base). Say the scope in the text.
+- Ratings: use the agency's own action for each instrument: reaffirmed, upgraded, downgraded, outlook
+  revised, withdrawn, assigned. The same grade before and after is a reaffirmation, whatever a cover letter
+  says ("upgraded from [ICRA]A to [ICRA]A" is unchanged). A total of rated facilities is the sum of several
+  instruments, including any withdrawn: never "enhanced to" that total; name what grew.
+- Signs and positions in a statement: a negative "changes in inventories" is stock built up, not drawn down;
+  tax sits below PBT, so it cannot explain PBT; an exceptional gain last year and a charge this year
+  lowered profit, it did not "boost" it. Read the line's sign in both columns before naming its effect.
+- Memory about the same event: an order, deal or approval in memory with the same counterparty and amount,
+  dated within a few days, is this same event disclosed in another filing, not an earlier one. Never present
+  it as history, a repeat or "in line with the order book". Give a memory figure only with the date or period
+  memory gives it ("₹608 Cr order in May" needs a May item in memory).
+- Consequences, purposes and causes (why_it_matters, takeaway, core_catalyst): state one only when the filing
+  or memory states it. Otherwise give the direction for shareholders and the fact behind it, without a
+  mechanism of your own. Words such as unlocks, eliminates the risk, ahead of a listing, outpacing the trend,
+  reflecting, positions the company, strengthens, signals need a source sentence that says the same.
+
 The card
 The card is read in a feed in about ten seconds: a headline, two or three facts, two or three
 reasons it matters. Write plain English for a busy investor; no adjectives such as "robust",

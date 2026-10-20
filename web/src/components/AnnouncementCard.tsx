@@ -1043,22 +1043,36 @@ function TechnicalTags({ row }: { row: CardRow }) {
   );
 }
 
-/** The AI's own reading of the filing (its catalyst, the facts it could not quote, why it matters): useful, but not
- *  checked, so it sits behind a tap and says so (the verified face, owner 2026-10-20). */
+/** The AI's own reading of the filing. Its interpretation (the catalyst, why it matters, the takeaway) sits on the
+ *  face, marked as our reading and apart from the checked facts (owner 2026-10-20: "interpretation helps"; a blind
+ *  review found 10% of such points overreach, so it is never shown as checked). Facts the checks could not quote stay
+ *  behind a tap. */
 function AiReading({ catalyst, facts, insights, takeaway }: { catalyst: string | null; facts: Fact[]; insights: string[]; takeaway: string | null }) {
-  const items = [...(catalyst ? [`Core catalyst: ${catalyst}`] : []), ...facts.map((f) => (typeof f === "string" ? f : f.text)),
-    ...insights, ...(takeaway && !insights.length ? [takeaway] : [])];
-  if (!items.length) return null;
+  const reading = [...(catalyst ? [`Core catalyst: ${catalyst}`] : []), ...insights, ...(takeaway && !insights.length ? [takeaway] : [])];
+  const unquoted = facts.map((f) => (typeof f === "string" ? f : f.text));
+  if (!reading.length && !unquoted.length) return null;
   return (
-    <details className="group mt-3 rounded-2xl border border-dashed border-line-strong px-4 py-2" data-noexport="true">
-      <summary className="cursor-pointer list-none text-[12px] font-bold text-ink-3 marker:hidden">
-        <span className="mr-1 inline-block transition-transform group-open:rotate-90">›</span>
-        AI reading · not verified against the filing ({items.length})
-      </summary>
-      <ul className="mt-2 space-y-2 pb-1">
-        {items.map((text, i) => <Point key={i} className="text-ink-2"><RichText text={text} /></Point>)}
-      </ul>
-    </details>
+    <div className="mt-3 rounded-2xl border border-dashed border-line-strong px-4 py-2" data-noexport="true">
+      {reading.length > 0 && (
+        <>
+          <p className="text-[12px] font-bold text-ink-3">Our reading · not checked against the filing</p>
+          <ul className="mt-2 space-y-2 pb-1">
+            {reading.map((text, i) => <Point key={i} className="text-ink-2"><RichText text={text} /></Point>)}
+          </ul>
+        </>
+      )}
+      {unquoted.length > 0 && (
+        <details className="group">
+          <summary className="cursor-pointer list-none py-1 text-[12px] font-bold text-ink-3 marker:hidden">
+            <span className="mr-1 inline-block transition-transform group-open:rotate-90">›</span>
+            Facts the checks could not quote ({unquoted.length})
+          </summary>
+          <ul className="mt-1 space-y-2 pb-1">
+            {unquoted.map((text, i) => <Point key={i} className="text-ink-2"><RichText text={text} /></Point>)}
+          </ul>
+        </details>
+      )}
+    </div>
   );
 }
 

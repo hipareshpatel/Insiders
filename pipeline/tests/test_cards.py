@@ -1214,3 +1214,11 @@ def test_live_review_3_event_types():
     assert rule("LITIGATION_REGULATORY", "Show-cause notice from the approved vendor cell on penalty") == "LITIGATION_REGULATORY"
     assert rule("PRODUCT_LAUNCH", "Investment in equity shares of a captive solar power SPV") == "M_AND_A"
     assert rule("PRODUCT_LAUNCH", "Launch of a new solar inverter range") == "PRODUCT_LAUNCH"
+
+
+def test_a_currency_glued_to_the_word_before_it():
+    """eMudhra's "total revenue ofRs.309.08 million" kept its ₹30.9 Cr card figure "not found" (2026-10-20)."""
+    from bse_intel.grounding import SourceIndex
+
+    assert SourceIndex("total revenue ofRs.309.08 million").stated(30.9, 1)
+    assert not SourceIndex("total revenue ofRs.309.08 million").stated(39.9, 1)

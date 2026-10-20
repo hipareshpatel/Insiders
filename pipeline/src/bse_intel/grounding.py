@@ -37,7 +37,9 @@ _IGNORE = re.compile(
 # A bare 19xx or 20xx in a source, set aside above as a year. SML's April-August cargo sales were 2052 units, and
 # "2,052" on the card, which no one writes for a year, was held as not in the filing (2026-10-18).
 _YEAR_TOKEN = re.compile(r"(?<![\d.,])(?:19|20)\d{2}(?![\d]|[.,]\d)")
-_CURRENCY = re.compile(r"(?:₹|\b(?:rs\.?|inr|usd|cad|eur|gbp)|us\$|\$)\s*", re.I)
+# and a currency glued to the word before it when a figure follows: eMudhra's "total revenue ofRs.309.08 million" kept
+# its ₹30.9 Cr card figure "not found" (held-card analysis, 2026-10-20)
+_CURRENCY = re.compile(r"(?:₹|\b(?:rs\.?|inr|usd|cad|eur|gbp)|(?<=[a-z])(?:rs\.|inr)(?=\s?\d)|us\$|\$)\s*", re.I)
 _UNIT = re.compile(r"\s*(%|per\s*cent\b|percent\b|basis\s+points?\b|bps?\b|pp\b|percentage\s+points?\b|x\b|times\b)", re.I)
 _QUANTITY = re.compile(r"\s*(?:cr\b|crores?\b|lakhs?\b|lacs?\b|mn\b|million\b|bn\b|billion\b|mw\b|gw\b|kw\b|tpd\b|mtpa\b"
                        r"|mt\b|tonnes?\b|tons?\b|units?\b|vehicles?\b|beds?\b|stores?\b|kl\b|mld\b|sq\.?\s*ft\b)", re.I)

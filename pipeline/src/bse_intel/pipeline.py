@@ -3079,7 +3079,10 @@ class Pipeline:
                 days = [today - timedelta(days=1), today] if now_ist().hour < 9 else [today]
                 for day in days:
                     self._discover_safely(day, full=False)
-                self._discover_window(live_from, today)
+                # the window's earlier days cost ~2,000 ledger writes each: under the daily write budget, like the
+                # backfill, so today's filings keep the free tier's headroom (20 Oct: 80,013 writes by 11:30 IST)
+                if writes_at_start + self.stats.d1_rows_written < self.settings.d1_daily_write_budget:
+                    self._discover_window(live_from, today)
                 self._requeue_failed_nightly(live_from)
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 backfill_done = self.sink.kv_get("backfill:complete") == "1"

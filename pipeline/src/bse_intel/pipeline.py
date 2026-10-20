@@ -1276,6 +1276,9 @@ def deal_echo_slips(out: Pass2Output, text: str) -> list[str]:
     return notes
 
 
+_HOLDERS = re.compile(r"\b(?:share|stock|unit|equity)\s*holders?\b|\bshareholders?\b|\bpromoters?\b|\bmembers\b", re.I)
+
+
 def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], balance_sheet: list[dict],
                       text: str = "") -> list[str]:
     """A deal size that is the company's own revenue, net worth or share capital is dropped; a terminated
@@ -1316,6 +1319,11 @@ def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], bal
         if stage != deal.stage:
             notes.append(f"deal stage {deal.stage} -> {stage}: the filing's text does not say so")
             deal.stage = stage
+    # a company's own capex has no shareholders on the other side: Heritage's ₹250 Cr dairy capex showed "Existing
+    # shareholders of Heritage Novandie Foods" as its counterparty (design audit, 2026-10-20)
+    if deal is not None and deal.kind == "CAPEX" and deal.counterparty and _HOLDERS.search(deal.counterparty):
+        notes.append(f"capex counterparty dropped: {deal.counterparty!r} are holders, not a party to the capex")
+        deal.counterparty = None
     if notes:
         log.info("deal guards for %s: %s", filing.news_id, notes)
     return notes

@@ -592,3 +592,20 @@ def test_a_table_cell_quoted_unwrapped():
     assert window and "3 years" in window.lower()
     assert quote_scattered(quote.replace("3 Years", "5 Years"), text) is None, "a figure the page does not carry"
     assert quote_scattered("the order is not to be executed in 3 Years by the time period", text) is None
+
+
+def test_a_capex_has_no_shareholders_on_the_other_side(settings):
+    """Heritage's ₹250 Cr dairy capex showed "Existing shareholders of Heritage Novandie Foods" as its counterparty
+    (design audit, 2026-10-20); the company's own capex has none."""
+    from bse_intel.pipeline import apply_deal_guards
+    from bse_intel.models import Pass2Output
+
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "CAPEX", "timeline_entry": "Capex",
+        "card": {"impact_level": "MODERATE", "headline": "Heritage approves ₹250 Cr dairy capex", "what_happened": ["x"],
+                 "deal_value": {"kind": "CAPEX", "amount_cr": 250, "stage": "BOARD_APPROVED",
+                                "counterparty": "Existing shareholders of Heritage Novandie Foods"}}})
+    filing = _filing("n-capex", "Capex", now_ist(), "Board meeting outcome")
+    notes = apply_deal_guards(out, filing, [], [], "The Board of Directors approved a capex of Rs. 250 crore")
+    assert out.card.deal_value.counterparty is None and any("holders" in n for n in notes)
+    assert out.card.deal_value.stage == "BOARD_APPROVED"

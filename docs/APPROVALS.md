@@ -26,3 +26,4 @@ Every action taken under it is listed below with its commit or run, for the owne
 - 20 Oct 06:52 IST: PR #4 merged into `main` (c0002ef) with CI green: live review 3 fixes.
 - 20 Oct 06:31 IST: PR #5 merged into `main` (926e2d8) with CI green: the Today footer.
 - 20 Oct 06:55 IST: PR #6 merged into `main` (91b832b) with CI green: `maintenance.yml`, the no-AI refreshes run from GitHub (T23 taken off the laptop). Started its dry run of `refresh-card-blocks`.
+- 20 Oct 07:00 IST: `maintenance.yml` run for real (after a clean dry run): `refresh-card-blocks` changed 1,042 of 1,106 stored cards, 0 failed (99 re-rated HIGH under D39), `refresh-summaries` rebuilt 1,418 company summaries.

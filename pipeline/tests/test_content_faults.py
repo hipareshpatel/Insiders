@@ -119,3 +119,22 @@ def test_a_subsidiarys_results_passed_on_by_the_parent_are_not_its_results():
     own = ("Outcome of Board Meeting: the Board approved the Unaudited Financial Results of Vedanta Limited and its "
            "subsidiaries for the quarter ended September 30, 2026.")
     assert subsidiary_results(f("Vedanta Limited"), own) is None
+
+
+def test_call_logistics_and_dividends_go_to_memory_only():
+    """Owner (2026-10-20): "Amagi schedules Q2FY27 earnings call for Nov 6" and "Hexaware declares 2nd interim dividend"
+    need no card. NSE's headlines are generic, so the first page decides. Measured on 300 live cards: 17 call notices
+    and 4 dividends move to memory; transcripts, decks, results and dividends beside other business keep their cards."""
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import memory_only
+
+    f = Filing(news_id="n", scrip_code="1", company_name="Amagi Media Labs Limited", headline="", subject="",
+               filed_at="2026-10-20", filing_date="2026-10-20")
+    assert memory_only(f, "Intimation of Earnings Call: the Company will host an earnings conference call on "
+                          "November 6, 2026 at 4 pm IST to discuss the Q2FY27 results.", 2) == "call logistics"
+    assert memory_only(f, "Audio recording of the earnings call held on May 5 is available at the web-link below.", 1) == "call logistics"
+    assert memory_only(f, "Transcript of the earnings conference call held on May 5, 2026", 3) is None
+    assert memory_only(f, "Schedule of the investor meet. Investor presentation follows.", 24) is None   # a deck
+    assert memory_only(f, "The Board declared a 2nd interim dividend of Rs 9.50 per share; record date November 4.", 1) == "dividend"
+    assert memory_only(f, "The Board approved the issue of bonds up to Rs 70,000 Cr and a final dividend.", 2) is None
+    assert memory_only(f, "Statement of Unaudited Financial Results for the quarter; interim dividend of Rs 2.", 4) is None

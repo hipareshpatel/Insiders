@@ -954,6 +954,36 @@ _SUBSIDIARY_RESULTS = re.compile(
     r"[^;]{0,400}?\bresults\b", re.S)   # "submitted: 1. Unaudited ... results": a list number is no sentence end
 
 
+# A filing that only schedules a call or links its audio, or only declares a dividend, goes to memory as a dated line
+# and gets no card (owner, 2026-10-20: "Amagi schedules Q2FY27 earnings call for Nov 6", "Hexaware declares 2nd interim
+# dividend"; 17 call-logistics and 6 dividend cards in the week). NSE's headlines are generic ("Analysts/Institutional
+# Investor Meet/Con. Call Updates", "Corporate Action-Dividend"), so the rule book's headline rules never saw the words;
+# the filing's first page decides. A transcript, a deck (more than a few pages) or results keep their card.
+_CALL = re.compile(r"(?:earnings|conference|con\.?|investors?|analysts?)\s*(?:call|meet)|analysts?\s*(?:/|and|&)\s*"
+                   r"(?:institutional\s+)?investors?\s+meet", re.I)
+_CALL_LOGISTICS = re.compile(r"\bschedul\w*|\bintimat\w*|\bwill\s+(?:be\s+)?(?:held|host\w*|organi[sz]\w*|participat\w*)|"
+                             r"\baudio\b|\brecording\b|web\s*-?\s*link|\bre-?schedul\w*|\bpostpone\w*|\bdial[- ]?in\b", re.I)
+_DIVIDEND = re.compile(r"\bdividends?\b", re.I)
+_DIVIDEND_ONLY_NOT = re.compile(r"buy-?back|\bbonus\b|\bsplit\b|sub-?division|rights\s+issue|fund\s*rais|"
+                                r"financial\s+results|results\s+for\s+the\s+(?:quarter|year|half)|\bbonds?\b|debentures?|"
+                                r"\bncds?\b|borrow\w*|capex|capital\s+expenditure|acqui\w*|merger|amalgamat\w*|"
+                                r"\binvest\w*|preferential|preference\s+shares?|\bncrps\b|\bqip\b|warrants?|"
+                                r"change\s+(?:of|in)\s+(?:the\s+)?name|name\s+change|auditors?\b|\bagm\s+(?:date|on)|"
+                                r"annual\s+general\s+meeting\s+(?:of|on|will)", re.I)
+
+
+def memory_only(filing: Filing, first_page: str, pages: int) -> str | None:
+    """Why this filing gets a timeline line and no card ("call logistics", "dividend"), or None."""
+    page = " ".join((first_page or "").split())
+    if pages <= 3 and not is_transcript(filing) and not _TRANSCRIPT.search(page) and _CALL.search(page) \
+            and _CALL_LOGISTICS.search(page):
+        return "call logistics"
+    if pages <= 4 and _DIVIDEND.search(f"{filing.headline} {filing.subject} {page}") and not _DIVIDEND_ONLY_NOT.search(page) \
+            and not _RESULTS_STATEMENT.search(page):
+        return "dividend"
+    return None
+
+
 def subsidiary_results(filing: Filing, text: str) -> str | None:
     """The subsidiary whose results this filing passes on, when its covering letter says so; None for the company's
     own results."""
@@ -2072,6 +2102,10 @@ class Pipeline:
                     self.stats.duplicates += 1
                 return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": filing.event_type,
                                 "reason": f"duplicate of {repeat[0]} ({repeat[1]} match)", "updated_at": now_iso()})
+            why = memory_only(filing, doc.first_page_text(4000), doc.page_count) if filing.route != "TIMELINE" else None
+            if why:
+                log.info("%s: %s, a timeline line and no card", filing.news_id, why)
+                filing = filing.model_copy(update={"route": "TIMELINE"})
             if filing.route == "TIMELINE":
                 return self._timeline_flow(filing, company, industry, doc, bulk, memory_complete)
             return self._analyze_document(filing, company, industry, doc, bulk, memory_complete)

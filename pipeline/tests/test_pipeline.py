@@ -712,14 +712,15 @@ def test_pass_2_says_why_a_filing_is_not_material(settings):
     """Pass 2's verdict was stored as a bare "pass2: not material", so the 70 filings it set aside in the smoke test
     could not be reviewed without reading each PDF; pass 1's reason was always kept (audit, 2026-10-18)."""
     now = now_ist() - timedelta(minutes=10)
-    f = _filing("n-nm", "Intimation of analyst meet", now, "Company Update")
+    # (a schedule of investor meetings, this test's first filing, now goes to memory before pass 2: memory_only)
+    f = _filing("n-nm", "Change in registered office address", now, "Company Update")
     reply = {"is_material": False, "event_type": "OTHER", "timeline_entry": "",
-             "reason": "A schedule of investor meetings; no new information about the business"}
-    pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf("Schedule of analyst / investor meetings on 12 November.")},
+             "reason": "A new office address; no new information about the business"}
+    pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf("The registered office moves to Plot 12, Sector 5 from 12 November.")},
                               {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(reply)], "glm-4.5-flash": [json.dumps(reply)]})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "OTHER"}))
     assert outcome.update["status"] == "NOT_MATERIAL"
-    assert outcome.update["reason"] == "pass2: not material: A schedule of investor meetings; no new information about the business"
+    assert outcome.update["reason"] == "pass2: not material: A new office address; no new information about the business"
 
 
 def test_a_filing_read_again_as_not_material_takes_its_facts_out_of_memory(settings):

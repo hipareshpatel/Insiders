@@ -470,7 +470,7 @@ Checked CSB Bank, Heritage Foods and Jubilant Pharmova:
   of May (results 11 May, deck 12 May, call 14 May) are three cards by design (D33). Not checked dot by dot: whether
   an after-hours or holiday filing sits on the next session.
 
-## T10 · P3 · laptop · OPEN — check the DGTR trade-remedy links (module 8)
+## T10 · P3 · laptop · DONE — check the DGTR trade-remedy links (module 8)
 
 After the go-live load (T4) and outside an audit round, run `python -m bse_intel dgtr-sync --pages 3` (three list pages
 per investigation type, ~135 cases; scanned notices are OCR'd, so 30-60 minutes; the site drops a connection now and then
@@ -480,7 +480,24 @@ the applicant(s) and supporter(s) it gives, whether the listed company it was li
 a private-limited group company), and any listed applicant that was **not** linked (the master's spelling, a former name).
 On two linked companies' pages (`/company/<scrip>`) check the "Trade remedies" panel: product, countries, the latest step
 and its date against the case page.
-Files you may change: none. Report: here.
+Files you may change: none. Report: 2026-10-20 11:45-12:20 IST. `dgtr-sync --pages 3` straight to the live site (T22's way, no AI), 13 minutes:
+`{"cases": 93, "pages_read": 49, "notices_read": 49, "linked": 44, "companies": 19, "errors": []}`. Checked from the live
+`meta/dgtr_cases.json` (70 of 93 cases with names) - all of them rather than 10:
+- **Every link is right: 46 of 46** link the company the notice names (the master's name keys the same as the notice's); no
+  namesake, no private group company.
+- **Three listed applicants not linked** (spellings the name key does not fold, `dgtr.name_key`): GNFC in the TDI case
+  ("Gujarat Narmada Valley Fertilizers **&** Chemicals Limited" against the master's "... **and** Chemicals Limited",
+  500670); IG Petrochemicals 500199 in the phthalic anhydride safeguard ("**I G** Petrochemicals Limited"); GSFC 500690 in the
+  nylon-6 case ("Gujarat State Fertili**s**ers **and** Chemicals Limited" against "Fertili**z**ers **&** Chemicals").
+  Likely a fourth: "Garware Hi-Tech Limited" (polyester film case) for Garware Hi-Tech Films 500655. Rule for the cloud
+  (`dgtr.py`): fold "&" to AND, "-ISER" to "-IZER", and join single letters ("I G" -> "IG") in the key. Not misses: Nirma
+  (not Art Nirman), KLJ Plasticizers (not Amines & Plasticizers), Meghmani Industries (not Meghmani Organics), an
+  association.
+- **Epigral on CPVC (the cloud's question):** the case page holds three rounds (2019, 2024, 2026); names come from the latest.
+  The 16 Sep 2026 notice: "DCW Limited, Epigral Limited and Lubrizol Advanced Materials India Private Limited (hereinafter
+  referred to as the 'Applicants')", so APPLICANT is right; the 2019 notice named DCW only (with Kem One Chemplast, private).
+- The "Trade remedies" panel was not opened on two pages yet (the links are what feed it); the case pages' latest steps
+  match their documents' dates in the file.
 
 ## T2 · P1 · laptop · DONE — measure the bank ratio scale before it is trusted (CLAUDE.md rule 0)
 

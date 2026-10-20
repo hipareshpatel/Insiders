@@ -37,3 +37,14 @@ Every action taken under it is listed below with its commit or run, for the owne
 - 20 Oct 20:50 IST: PR #22 merged into `main` (1883b5d) with CI green: DeepSeek first on the seed (cache, 40M-token cap), the near-cap guard, F94.
 - 20 Oct 21:25 IST: seed-memory step limit raised to 5 h in maintenance.yml (no AI; one D1 kv write a company); re-dispatched with restart=false.
 - 20 Oct 21:59 IST: dispatched seed-calls.yml on main by hand (its first scheduled run did not start; owner approved the DeepSeek seed with its cap).
+
+## 2026-10-21 02:30 IST: owner decisions in chat
+- Shadow critic: "shadow mode is fine, go ahead with the critic". A second model on spare free quota records per-point
+  verdicts on live cards and changes nothing; after a week the daily audit compares its verdicts with the reviewers'
+  before it may act on cards.
+- Interpretation on the card face, marked "Our reading · not checked", and the card instructions tightened from the
+  reviewers' findings.
+- Daily card audit for 200 days, 10:00-17:00 IST, from the cloud (routine "Daily card audit (200 days)"), with a
+  ledger of every change and its effect (docs/audit/ledger.md).
+- Keep about 5,000 D1 rows a day spare for spending spare free AI quota on better output.
+- Merges queued for 05:45 IST; the owner does not push them.

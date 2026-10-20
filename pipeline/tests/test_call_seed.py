@@ -87,3 +87,19 @@ def test_the_seed_route_replaces_the_rotation_too():
     for _ in range(6):
         tried = [t.provider for t in gateway._ordered("pass2_long")]
         assert "gemini" not in tried and "deepseek" not in tried and tried[0] == "zai", tried
+
+
+def test_a_run_hands_on_to_the_next_while_companies_are_left(tmp_path):
+    """GitHub dropped two of the first four scheduled seed-calls runs (20 Oct 2026): a run that stopped at its budget
+    starts the next one, at night only, and never after a run that read no company."""
+    left = {"companies": 49, "seeded": 69, "failed": 19, "stopped": True}
+    assert call_seed.next_run(left, 18)
+    assert not call_seed.next_run(left, 23) and not call_seed.next_run(left, 9)   # the night is over
+    assert not call_seed.next_run({**left, "done": True}, 18)
+    assert not call_seed.next_run({**left, "stopped": False}, 18)
+    assert not call_seed.next_run({**left, "companies": 0}, 18)                    # read nothing: no loop
+    out = tmp_path / "report.txt"
+    out.write_text("log line\n" + json.dumps(left) + "\n")
+    assert call_seed.next_run_from_output(str(out), 18)
+    out.write_text("Traceback ...\n")
+    assert not call_seed.next_run_from_output(str(out), 18)

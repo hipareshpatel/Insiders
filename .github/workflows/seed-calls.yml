@@ -2,8 +2,10 @@
 # (call_seed.py; owner, 2026-10-20: the dossiers were too shallow; no Gemini). No card, no ledger row, no AI beyond the
 # free Z.AI / OpenRouter models of the memory_seed route. Resumable: it stops after 40 minutes and the next run goes on
 # from the next company; once every company is done each run returns at once.
-# Hourly 16:15-23:15 UTC = 21:45-04:45 IST: Z.AI's free model takes one request at a time per key, which the live runs
-# share, so the seed runs when few filings arrive.
+# At night, 16:15-23:45 UTC = 21:45-05:15 IST: Z.AI's free model takes one request at a time per key, which the live runs
+# share, so the seed runs when few filings arrive. A run that stops at its budget with companies left starts the next
+# one itself (call_seed.next_run; GitHub dropped two of the first four scheduled runs, 20 Oct 2026). The schedule, twice
+# an hour, is the backstop: a run it starts while one is going waits in the concurrency group.
 name: Seed calls
 
 on:
@@ -18,10 +20,11 @@ on:
         type: string
         default: ''
   schedule:
-    - cron: "15 16-23 * * *"
+    - cron: "15,45 16-23 * * *"
 
 permissions:
   contents: read
+  actions: write   # a run starts the next one (workflow_dispatch) while companies are left
 
 concurrency:
   group: bse-seed-calls
@@ -57,4 +60,18 @@ jobs:
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
       - name: Seed memory from calls and presentations
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-calls --time-budget 2400 ${SCRIPS:+--scrips "$SCRIPS"} ${{ inputs.restart && ''--restart'' || '''' }}'
+        run: |
+          set -o pipefail
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-calls --time-budget 2400 ${SCRIPS:+--scrips "$SCRIPS"} ${{ inputs.restart && '--restart' || '' }} | tee "$RUNNER_TEMP/seed-report.txt"
+      # a trial with --scrips never hands on; a failed run neither (the schedule picks up after it)
+      - name: Start the next run
+        if: success() && env.SCRIPS == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if "$RUNNER_TEMP/venv/bin/python" -c "import sys, datetime; from bse_intel.call_seed import next_run_from_output as n; sys.exit(0 if n(sys.argv[1], datetime.datetime.now(datetime.timezone.utc).hour) else 1)" "$RUNNER_TEMP/seed-report.txt"; then
+            gh workflow run seed-calls.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f restart=false
+            echo "next run started"
+          else
+            echo "no next run: done, nothing read, or the night is over"
+          fi

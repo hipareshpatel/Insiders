@@ -34,6 +34,7 @@ from zoneinfo import ZoneInfo
 import base64
 import json
 import logging
+import math
 import os
 import re
 import threading
@@ -209,6 +210,15 @@ class AIGateway:
         self._rate_hits: dict[str, int] = {}
         self._circuit_open_until: dict[str, float] = {}
         self.deadline: float | None = None  # time.monotonic() after which no request starts
+        # Live reserve (ai-quality plan item 1): the best free writers keep most of each day's requests for live
+        # filings. A backfill request (bulk=True) may use a reserved model only while its day's requests stay under
+        # (1 - share) of its ceiling, except in `bulk_hours` (local time), once the evening flood is over.
+        reserve = gw.get("live_reserve", {})
+        self.reserved: frozenset[str] = frozenset(reserve.get("models", ()))
+        self.reserve_share = float(reserve.get("share", 0.0))
+        self._bulk_hours = _hours(reserve.get("bulk_hours"))
+        zone = ZoneInfo(reserve.get("tz", "Asia/Kolkata"))
+        self.local_now: Callable[[], datetime] = lambda: datetime.now(zone)
 
         providers = config.get("providers", {})
         self._day_of = {name: _day_function(pconf.get("quota_tz")) for name, pconf in providers.items()}
@@ -287,11 +297,13 @@ class AIGateway:
     def has_route(self, route: str) -> bool:
         return any(t.api_key for t in self.routes.get(route, []))
 
-    def complete_json(self, route: str, system: str, user: str, schema: type[T], avoid_providers: tuple[str, ...] = ()) -> AIResult:
+    def complete_json(self, route: str, system: str, user: str, schema: type[T], avoid_providers: tuple[str, ...] = (),
+                      bulk: bool = False) -> AIResult:
         """One validated JSON reply. ``avoid_providers`` are tried only after every other target,
-        so a second opinion comes from a different provider whenever one is available."""
+        so a second opinion comes from a different provider whenever one is available. ``bulk`` marks a backfill
+        request: it leaves the reserved models' live share alone (`[gateway.live_reserve]`)."""
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
-        return self._run(route, messages, schema, avoid=avoid_providers)
+        return self._run(route, messages, schema, avoid=avoid_providers, bulk=bulk)
 
     def transcribe_image(self, png: bytes, route: str = "vision") -> str:
         b64 = base64.b64encode(png).decode()
@@ -357,7 +369,24 @@ class AIGateway:
                 self._clients[key] = self._client_factory(target.base_url, target.api_key, target.timeout)
             return self._clients[key]
 
-    def _skip(self, target: Target, est_in: int, est_total: int) -> tuple[str, str] | None:
+    def reserved_for_live(self, target: Target) -> bool:
+        """True when a backfill request must leave this model to live filings for now."""
+        if target.key not in self.reserved or self.reserve_share <= 0 or self._in_bulk_hours():
+            return False
+        quota = self.limiters[target.key].quota
+        if not quota.limits.rpd:
+            return False
+        return quota.day_requests >= math.floor(quota.limits.rpd * (1 - self.reserve_share))
+
+    def _in_bulk_hours(self) -> bool:
+        if self._bulk_hours is None:
+            return False
+        start, end = self._bulk_hours
+        now = self.local_now()
+        minute = now.hour * 60 + now.minute
+        return start <= minute < end if start <= end else (minute >= start or minute < end)
+
+    def _skip(self, target: Target, est_in: int, est_total: int, bulk: bool = False) -> tuple[str, str] | None:
         if not target.api_key:
             return UNAVAILABLE, "not configured"
         if target.key in self.disabled:
@@ -376,6 +405,8 @@ class AIGateway:
         reason = reason or (pquota.exhausted(est_total) if pquota else None)
         if reason:
             return CEILING, f"{reason} ({self.ceiling:.0%} safety limit)"
+        if bulk and self.reserved_for_live(target):
+            return CEILING, f"kept for live filings ({self.reserve_share:.0%} of the day)"
         if self._circuit_open_until.get(target.key, 0) > time.monotonic():
             return TRANSIENT, "circuit open"
         return None
@@ -396,7 +427,7 @@ class AIGateway:
                 log.warning("circuit opened for %s after %d failures", target.key, count)
 
     def _run(self, route: str, messages: list[dict], schema: type[BaseModel] | None, image_tokens: int = 0,
-             avoid: tuple[str, ...] = ()) -> AIResult:
+             avoid: tuple[str, ...] = (), bulk: bool = False) -> AIResult:
         if route not in self.routes:
             raise AIError(f"unknown route: {route}")
         prompt_chars = "".join(m["content"] if isinstance(m["content"], str) else "" for m in messages)
@@ -404,7 +435,7 @@ class AIGateway:
         outcomes: list[tuple[str, str, str]] = []
         for target in self._ordered(route, avoid):
             est = est_in + target.max_tokens
-            skip = self._skip(target, est_in, est)
+            skip = self._skip(target, est_in, est, bulk)
             if skip:
                 outcomes.append((target.key, *skip))
                 continue
@@ -579,6 +610,14 @@ class _Retryable(Exception):
 # Gemini says "quota" in every 429 and names the window (PerMinute / PerDay); only a named day retires a model.
 _DAILY_QUOTA = re.compile(r"per ?day|for the day|daily|\bTPD\b|\bRPD\b", re.I)
 _MODEL_NOT_ALLOWED = re.compile(r"tier|not available|not allowed for (?:this )?model|model access|subscription", re.I)
+
+
+def _hours(spec: str | None) -> tuple[int, int] | None:
+    """ "21:00-09:00" -> (1260, 540): minutes after midnight; the window may cross midnight."""
+    if not spec:
+        return None
+    minutes = [int(h) * 60 + int(m) for h, m in (part.strip().split(":") for part in spec.split("-"))]
+    return minutes[0], minutes[1]
 
 
 def _retry_after(exc: openai.APIStatusError) -> float:

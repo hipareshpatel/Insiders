@@ -128,6 +128,15 @@ def test_live_run_end_to_end(settings):
     assert body["why_it_matters"][0]["memory_refs"] == []  # hallucinated memory id removed
     assert body["grounding"]["score"] >= 0.7
     assert body["notable_changes"][0]["direction"] == "POSITIVE"
+    # the model's own reply, kept in the object store (R2 online) beside the card, not in D1 (ai-quality plan item 8)
+    import gzip
+
+    assert body["grounding"]["evidence"] == "evidence/n-res.json.gz"
+    evidence = json.loads(gzip.decompress(sink.get_object("evidence/n-res.json.gz")))
+    (reply,) = evidence["replies"]
+    assert evidence["news_id"] == "n-res" and reply["role"] == "writer"
+    assert reply["model"] == "openrouter/nvidia/nemotron-3.5-super-vl:free" and "<think>checking memory" in reply["raw"]
+    assert "Demo Cement Q2 revenue up 32% YoY" in reply["raw"] and reply["chars"] == len(reply["raw"])
 
     dossier = sink.get_dossier("999001")
     assert {m["period"] for m in dossier["financial_metrics"]} == {"Q2FY27", "Q2FY26"}
@@ -875,3 +884,47 @@ def test_packed_filings_stay_queued_when_every_writer_is_out_of_quota(settings):
     states = {r["news_id"]: (r["status"], r["attempts"]) for r in rows(sink, "select news_id, status, attempts from filings")}
     assert states == {"q0": ("PENDING", 0), "q1": ("PENDING", 0)} and fake.calls == []
     assert all("quota" in (r["last_error"] or "") for r in rows(sink, "select last_error from filings"))
+
+
+def test_pass2_routing_keeps_live_and_backfill_apart_and_packs_long_filings(settings):
+    """ai-quality plan item 1: live and backfill filings go to separate packs (the backfill one marked bulk, so the
+    gateway keeps Flash's live reserve), long filings are packed with long ones only, and one too large for a pack, or
+    any filing with packing off, goes to its route alone as before."""
+    from dataclasses import replace
+
+    from bse_intel.pipeline import LONG_PACK_MAX_CHARS, LONG_PROMPT_TOKENS
+
+    env = {"GEMINI_API_KEY": "g", "ZAI_API_KEY": "z", "OPENROUTER_API_KEY": "o"}
+    pipeline, _, _ = build(replace(settings, pass2_pack=6, pass2_pack_wait_s=1), [], {}, {}, env=env)
+    short, long = 30_000, LONG_PROMPT_TOKENS * 4 + 1_000
+    for bulk, fallback in ((False, "pass2"), (True, "pass2_bulk")):
+        route, packer = pipeline._pass2_writer(bulk, short)
+        assert route == fallback and packer.bulk is bulk and packer.size == 6 and packer.route == "pass2_packed"
+        route, packer = pipeline._pass2_writer(bulk, long)
+        assert route == "pass2_long" and packer.bulk is bulk and packer.size == 3
+        assert packer is not pipeline._pass2_writer(bulk, short)[1] and packer.max_chars == LONG_PACK_MAX_CHARS
+        assert pipeline._pass2_writer(bulk, LONG_PACK_MAX_CHARS + 1) == ("pass2_long", None)
+    assert pipeline._pass2_writer(False, long)[1] is not pipeline._pass2_writer(True, long)[1]
+    off, _, _ = build(settings, [], {}, {}, env=env)
+    assert off._pass2_writer(False, short) == ("pass2", None) and off._pass2_writer(True, long) == ("pass2_long", None)
+
+
+def test_backfill_on_the_configured_routes_leaves_flash_to_live_filings(settings):
+    """With each Flash model at 3 of its 19 requests at 15:00 IST, a backfill request skips all five and the pack goes
+    to Flash-Lite, then to pass2_bulk's GLM; a live request still starts with Flash. After 21:00 backfill may use them."""
+    from datetime import datetime
+
+    from bse_intel.ai.gateway import _day_function
+
+    pacific = _day_function("America/Los_Angeles")()
+    usage = [{"day": pacific, "provider": "gemini", "model": m, "requests": 3}
+             for m in ("gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.8-flash", "gemini-3.5-flash", "gemini-3-flash-preview")]
+    gateway = AIGateway(settings.load_toml("providers.toml"), usage_today=usage, client_factory=lambda *a: None,
+                        env={"GEMINI_API_KEY": "g"})
+    gateway.local_now = lambda: datetime(2026, 10, 21, 15, 0)
+    packed = gateway.routes["pass2_packed"]
+    assert [t.model for t in packed if not gateway.reserved_for_live(t)] == ["gemini-3.5-flash-lite"]
+    assert all(gateway._skip(t, 1000, 2000) is None for t in packed)                  # live: every model as before
+    assert all(gateway._skip(t, 1000, 2000, bulk=True) for t in packed[:-1])
+    gateway.local_now = lambda: datetime(2026, 10, 21, 21, 30)
+    assert not any(gateway.reserved_for_live(t) for t in packed)

@@ -76,6 +76,8 @@ class Settings:
     # 6 when only the vision route can read them, since every page there is a free-tier request.
     # The exact JSON answers of BSE and NSE, saved before parsing (raw.py, docs/DATA_QUALITY.md).
     save_raw: bool = field(default_factory=lambda: _env("SAVE_RAW", "1") not in ("0", "false", "no"))
+    # Each card's raw model reply, in the object store under evidence/ (R2 online, no D1 row; pipeline._save_evidence).
+    save_evidence: bool = field(default_factory=lambda: _env("SAVE_EVIDENCE", "1") not in ("0", "false", "no"))
     max_ocr_pages: int = field(default_factory=lambda: _env_int("MAX_OCR_PAGES", 20 if _local_ocr() else 6))
     pass2_char_budget: int = field(default_factory=lambda: _env_int("PASS2_CHAR_BUDGET", 40_000))
     workers: int = field(default_factory=lambda: _env_int("PIPELINE_WORKERS", 3))
@@ -84,6 +86,8 @@ class Settings:
     # Seconds a filing waits for others to fill its pack. 20 s gave 1.25 filings a call on round 5's companies
     # (2026-10-19): filings reach pass 2 one by one, and Gemini's free tier counts calls, not filings.
     pass2_pack_wait_s: int = field(default_factory=lambda: _env_int("PASS2_PACK_WAIT", 20))
+    # Long filings (pass2_long) packed with other long ones, at most this many a request when packing is on. 1 = off.
+    pass2_pack_long: int = field(default_factory=lambda: _env_int("PASS2_PACK_LONG", 3))
 
     def load_toml(self, name: str) -> dict:
         return _load_toml(self.config_dir / name)

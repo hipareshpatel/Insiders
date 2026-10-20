@@ -30,7 +30,7 @@ from .timeutil import now_iso, today_ist, utc_day
 log = logging.getLogger(__name__)
 
 PAGE = 400
-OBJECT_PREFIXES = ("meta/", "memory/", "daily_feed/", "noise/", "learning/", "chart/")   # chart/: the price charts (P-L3)
+OBJECT_PREFIXES = ("meta/", "memory/", "daily_feed/", "noise/", "learning/", "chart/", "evidence/")   # chart/: price charts (P-L3); evidence/: raw replies
 RECENT_LEDGER_DAYS = 10
 
 

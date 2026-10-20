@@ -162,6 +162,16 @@ stripped even when only the closing `</think>` is present. When nothing can serv
 wait 60 s (up to 3 times, never past the deadline) and ceilings stop the route for the run; four
 filings in a row left queued because every provider was busy stop the run (rerun later).
 
+**Live reserve and packing** (ai-quality plan item 1, 2026-10-21). `[gateway.live_reserve]` names the five Gemini
+Flash models: a backfill request (`bulk=True`: pass2_bulk, a backfill pack, a backfill long filing, its second opinion)
+skips one once its day reaches 20% of the ceiling, except 21:00-09:00 IST; live requests and every route's order are
+unchanged. With `PASS2_PACK` on there is one packer per (live/backfill, short/long): long filings (`pass2_long`) are
+packed with other long ones, `PASS2_PACK_LONG` (3) to a request and at most 450 K characters, else sent alone.
+
+**Evidence** (item 8). Each card's raw reply (the writer's, and an adopted second opinion's), cut to 60 K characters,
+is saved as `evidence/{news_id}.json.gz` in the object store (R2 online; no D1 row) and named in
+`card_json.grounding.evidence`. `SAVE_EVIDENCE=0` turns it off; a re-run replaces it.
+
 **Second opinion** (`SECOND_OPINION=1`). A card that fails the checks is sent once to a different
 provider with the problems listed. "Fails" means it needs review, or any amount on it (not a
 percentage) matches no source: a 10x unit slip in one key number leaves the match rate above the

@@ -12,10 +12,11 @@ from bse_intel.models import Pass1Result
 
 class FakeGateway:
     def __init__(self, skip: set[str] = frozenset()):
-        self.calls, self.skip = [], skip
+        self.calls, self.skip, self.bulk = [], skip, []
 
-    def complete_json(self, route, system, user, schema):
+    def complete_json(self, route, system, user, schema, **kw):
         self.calls.append((route, user))
+        self.bulk.append(kw.get("bulk", False))
         if schema is PackedReply:
             ids = re.findall(r'<task id="(t\d+)">', user)
             items = [PackedItem(task_id=t, answer={"is_material": True, "event_type": "ORDER_WIN", "reason": f"from {t}"})
@@ -82,7 +83,7 @@ def test_a_pack_out_of_quota_goes_to_its_own_route_and_a_quota_failure_there_rea
             super().__init__()
             self.own_route_too = own_route_too
 
-        def complete_json(self, route, system, user, schema):
+        def complete_json(self, route, system, user, schema, **kw):
             self.calls.append((route, user))
             if route == "pass2_packed" or self.own_route_too:
                 raise AllProvidersFailed(route, [("gemini:gemini-3.7-flash", CEILING, "daily quota")])
@@ -93,3 +94,34 @@ def test_a_pack_out_of_quota_goes_to_its_own_route_and_a_quota_failure_there_rea
     with pytest.raises(AllProvidersFailed) as info:
         Packer(OutOfQuota(True), size=1, wait_s=1).complete("pass2", "i", "f", Pass1Result)
     assert info.value.quota_exhausted
+
+
+def test_a_backfill_packer_marks_its_requests_bulk_and_a_live_one_does_not():
+    """So the gateway keeps the best writers' live reserve out of backfill packs (ai-quality plan item 1)."""
+    gw = FakeGateway(skip={"t1"})
+    Packer(gw, size=1, wait_s=1, bulk=True).complete("pass2_bulk", "i", "f", Pass1Result)
+    assert gw.calls[0][0] == "pass2_packed" and gw.calls[1][0] == "pass2_bulk" and gw.bulk == [True, True]
+    gw = FakeGateway()
+    Packer(gw, size=1, wait_s=1).complete("pass2", "i", "f", Pass1Result)
+    assert gw.bulk == [False]
+
+
+def test_a_long_filing_that_would_overfill_the_pack_goes_in_the_next_one():
+    """Two long documents never make one request too large for Gemini's minute; each still gets its own answer."""
+    gw = FakeGateway()
+    packer = Packer(gw, size=3, wait_s=0.3, max_chars=1000)
+    out = [None, None]
+
+    def work(i):
+        out[i] = packer.complete("pass2_long", "i" * 10, f"filing {i} " + "x" * 600, Pass1Result)
+
+    import time
+
+    first = threading.Thread(target=work, args=(0,))
+    first.start()
+    time.sleep(0.05)
+    work(1)
+    first.join()
+    packed = [c for c in gw.calls if c[0] == "pass2_packed"]
+    assert len(packed) == 2 and all(r.model_label == "gemini/gemini-3.6-flash" for r in out)
+    assert "filing 0" in packed[0][1] and "filing 1" not in packed[0][1]

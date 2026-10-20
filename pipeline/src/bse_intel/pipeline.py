@@ -100,6 +100,19 @@ NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category",
                 "filed_at", "reason", "pdf_url")
 DONE = ("ANALYZED", "NOT_MATERIAL", "DUPLICATE")  # DUPLICATE: a repeat submission (duplicates.py)
 LONG_PROMPT_TOKENS = 12_000
+# Long filings are packed with other long filings only (ai-quality plan item 1): at most this many characters a pack,
+# so the pack plus its 60 K reply stays inside Gemini's 250 K tokens a minute (~3 characters a token). A filing larger
+# than this goes to `pass2_long` on its own, as before.
+LONG_PACK_MAX_CHARS = 450_000
+# The model's own reply, kept beside the card for audits (ai-quality plan item 8): R2, not D1, one object a filing.
+EVIDENCE_PREFIX = "evidence/"
+EVIDENCE_MAX_CHARS = 60_000   # per reply; a packed answer is already cut to 20 K
+
+
+def evidence_key(news_id: str) -> str | None:
+    """Where a card's evidence is kept: evidence/{news_id}.json.gz (the id cut to safe characters)."""
+    safe = "".join(ch for ch in news_id if ch.isalnum() or ch in "-_")[:120]
+    return f"{EVIDENCE_PREFIX}{safe}.json.gz" if safe else None
 SNAPSHOT_KEY = "daily_feed/latest_snapshot.json"
 SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
 SNAPSHOT_PAGE = 50        # the feed's page size
@@ -1622,11 +1635,20 @@ class Pipeline:
             raw.attach(nse, sink, "nse", settings)
         self._annual_lists: dict[str, tuple[list, str]] = {}   # symbol -> NSE's annual-report XBRL list and when it was read
         self._event_days: dict[str, list] = {}   # IST day -> NSE's event XBRL files broadcast that day (this run)
-        self._packer = None
+        # One packer per (backfill?, long?): live and backfill filings never share a request, so a backfill pack can be
+        # kept off the best writers' live reserve (gateway `live_reserve`), and long filings are packed only with each
+        # other, a few to a request (ai-quality plan item 1: long ones fell to the weakest writer one request each).
+        self._packers: dict = {}   # (bulk, long) -> Packer
         if settings.pass2_pack > 1 and gateway.has_route("pass2_packed"):
             from .ai.packer import Packer
 
-            self._packer = Packer(gateway, size=settings.pass2_pack, wait_s=settings.pass2_pack_wait_s)
+            for bulk in (False, True):
+                self._packers[(bulk, False)] = Packer(gateway, size=settings.pass2_pack, wait_s=settings.pass2_pack_wait_s,
+                                                      bulk=bulk)
+                if settings.pass2_pack_long > 1:
+                    self._packers[(bulk, True)] = Packer(gateway, size=min(settings.pass2_pack_long, settings.pass2_pack),
+                                                         wait_s=settings.pass2_pack_wait_s, max_chars=LONG_PACK_MAX_CHARS,
+                                                         bulk=bulk)
         self._nse_refused = False                  # NSE refused the address: no more calls this run
         self.prompts = prompts or PromptEngine(settings)
         self.rules = rules or RuleBook.from_config(settings.load_toml("taxonomy.toml"))
@@ -2605,6 +2627,27 @@ class Pipeline:
         except Exception:  # a damaged cache file is re-read from BSE
             return None
 
+    def _save_evidence(self, filing: Filing, first, final, now: str) -> str | None:
+        """The model's own reply for this card, in the object store under evidence/{news_id}.json.gz (R2 online, so
+        no D1 row): a reviewer's WRONG can then be told apart as the model's reading or a code block without a re-run
+        (ai-quality plan item 8). The writer's reply and, when a second provider's card was adopted, that one too,
+        each cut to EVIDENCE_MAX_CHARS. A re-run replaces it. Saving never fails the filing."""
+        key = evidence_key(filing.news_id)
+        if not self.settings.save_evidence or not key:
+            return None
+        replies = [("writer", first)] + ([("second_opinion", final)] if final is not first else [])
+        body = {"news_id": filing.news_id, "scrip_code": filing.scrip_code, "filed_at": filing.filed_at, "saved_at": now,
+                "replies": [{"role": role, "model": r.model_label, "pack": r.pack, "latency_s": r.latency_s,
+                             "chars": len(r.raw_text or ""), "raw": (r.raw_text or "")[:EVIDENCE_MAX_CHARS]}
+                            for role, r in replies]}
+        try:
+            self.sink.put_object(key, gzip.compress(json.dumps(body, ensure_ascii=False).encode()),
+                                 content_type="application/gzip")
+            return key
+        except Exception as exc:  # evidence is for audits; the card goes on without it
+            log.warning("evidence not saved for %s: %s", filing.news_id, exc)
+            return None
+
     def _cache_text(self, news_id: str, doc: Document) -> None:
         path = self._cache_path(news_id)
         if not path:
@@ -2774,13 +2817,11 @@ class Pipeline:
                                           examples=self._owner_examples(sector, event_type),
                                           lessons=[x["lesson"] for x in learned["lessons"].get(f"{sector}|{event_type}", [])][-3:],
                                           reaction=reaction)
-        route = "pass2_bulk" if bulk else "pass2"
-        if (len(system) + len(user)) / 4 > LONG_PROMPT_TOKENS and self.gateway.has_route("pass2_long"):
-            route = "pass2_long"  # a transcript or presentation: long-context models only
-        if self._packer is not None and route in ("pass2", "pass2_bulk"):
-            result = self._packer.complete(route, system, user, Pass2Output, filing.news_id)   # several filings, one Gemini call
+        route, packer = self._pass2_writer(bulk, len(system) + len(user))
+        if packer is not None:
+            result = packer.complete(route, system, user, Pass2Output, filing.news_id)   # several filings, one Gemini call
         else:
-            result = self.gateway.complete_json(route, system, user, Pass2Output)
+            result = self.gateway.complete_json(route, system, user, Pass2Output, bulk=bulk)
         out: Pass2Output = result.value
         if not out.is_material or out.card is None:
             with self._lock:
@@ -2867,10 +2908,11 @@ class Pipeline:
             return found, units, changes, missing + unquoted, dropped
 
         checks, unit_fixes, change_fixes, quotes_missing, quotes_dropped = ground(out)
+        first_reply = result
         review = None
         if checks.wants_second_opinion and self.settings.second_opinion:
             out, result, checks, review, fixes = self._second_opinion(
-                route, system, user, out, result, checks, ground)
+                route, system, user, out, result, checks, ground, bulk)
             if fixes is not None:
                 unit_fixes, change_fixes, quotes_missing, quotes_dropped = fixes
         checks.held += self._held_reasons(filing, text)
@@ -2975,6 +3017,9 @@ class Pipeline:
             "model": result.model_label,
             "pack": result.pack,
         }
+        evidence = self._save_evidence(filing, first_reply, result, now)
+        if evidence:
+            card_json["grounding"]["evidence"] = evidence
         needs_review = checks.needs_review
         # A card the checks faulted, that a second provider was asked to correct and that still
         # fails, is kept out of the feed rather than published with an "Unverified" mark. On the
@@ -3100,7 +3145,21 @@ class Pipeline:
                      entry.get("news_id"), str(entry.get("date", ""))[:10], said.why[:60])
         return entry
 
-    def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, ground):
+    def _pass2_writer(self, bulk: bool, prompt_chars: int):
+        """(route, packer or None) for one filing's pass 2. A live filing and a backfill one never share a pack, and a
+        long one (a transcript, presentation or annual report) is packed with other long ones only; one too large for
+        a pack goes to `pass2_long` alone. Packed or not, the fallback route and its order are the same as before."""
+        route = "pass2_bulk" if bulk else "pass2"
+        long = prompt_chars / 4 > LONG_PROMPT_TOKENS and self.gateway.has_route("pass2_long")
+        if long:
+            route = "pass2_long"  # long-context models only
+        packer = self._packers.get((bulk, long))
+        if long and prompt_chars > LONG_PACK_MAX_CHARS:
+            packer = None
+        return route, packer
+
+    def _second_opinion(self, route, system, user, out: Pass2Output, result, checks: CardChecks, ground,
+                        bulk: bool = False):
         """Ask a different provider to correct a card that failed the checks, then check again.
 
         The better of the two cards is kept. Either way the card is published: a corrected one
@@ -3119,7 +3178,8 @@ class Pipeline:
         hints = [UNIT_HINT] if checks.amounts_ungrounded else []
         system2, user2 = self.prompts.verify(system, user, out.model_dump(mode="json"), problems + hints)
         try:
-            second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider,))
+            second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider,),
+                                                bulk=bulk)
         except Exception as exc:  # the first card is still published, marked unverified
             return out, result, checks, {**base, "status": "UNCHECKED", "note": f"{type(exc).__name__}: {exc}"[:200]}, None
         if not second.value.is_material or second.value.card is None:

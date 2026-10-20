@@ -27,6 +27,19 @@
 [gateway]
 safety_ceiling = 0.95
 
+# Live filings keep the best free writer (docs/audit/ai-quality-plan-2026-10-21.md, item 1). On 20 Oct Gemini Flash
+# served 62 requests but wrote only ~9 of the week's 100 live cards: backfill packs spent the rest (inferred from the
+# usage and feed counts). A backfill request (pass2_bulk, a backfill pack, a backfill long filing) may use a model below
+# only while that model's day stays under (1 - share) of its ceiling - 3 of its 19 requests - except in bulk_hours
+# (IST), after the evening results flood and before the morning's filings. Otherwise backfill writes with GLM and Lite.
+# Live requests and the fallback order are unchanged.
+[gateway.live_reserve]
+share = 0.8
+bulk_hours = "21:00-09:00"
+tz = "Asia/Kolkata"
+models = ["gemini:gemini-3.6-flash", "gemini:gemini-3.7-flash", "gemini:gemini-3.8-flash", "gemini:gemini-3.5-flash",
+          "gemini:gemini-3-flash-preview"]
+
 [gateway.strategies]
 pass2 = "weighted"
 pass2_bulk = "weighted"
@@ -370,6 +383,8 @@ limits = { rpm = 10 }
 # write a regular share of cards. Gemini 3.6 Flash wrote the best free cards in round 4 (11% WRONG on 9) but allows 20
 # requests a day, each Gemini model counted apart (measured 2026-10-19): three models packed 6 to a request is ~360
 # cards a day. In order; a model out of its day's quota hands the pack to the next.
+# Since 2026-10-21 (ai-quality plan item 1) live and backfill filings are packed apart, and long filings (pass2_long)
+# are packed too, with other long ones only, PASS2_PACK_LONG (3) to a request; they fall back to pass2_long as before.
 
 # Probed 2026-10-19 on a lakh-to-crore, YoY and direction question: MiniMax M3.1 Flash and Gemma 4 31B (OpenRouter,
 # free) both right in 3-4 s; on NVIDIA DeepSeek V4.1 Flash and GLM-5.3 timed out, Kimi K2.6 is listed but not served

@@ -35,3 +35,4 @@ Every action taken under it is listed below with its commit or run, for the owne
 - 20 Oct 12:00 IST: dispatched market-data.yml on main by hand (it had never run on GitHub: company pages had no price chart, no technicals, prices from 16 Oct); no AI, about 1-2k D1 writes.
 - 20 Oct 20:36 IST: dispatched maintenance.yml seed-memory (restart) on main (T13 step 1; no AI).
 - 20 Oct 20:50 IST: PR #22 merged into `main` (1883b5d) with CI green: DeepSeek first on the seed (cache, 40M-token cap), the near-cap guard, F94.
+- 20 Oct 21:25 IST: seed-memory step limit raised to 5 h in maintenance.yml (no AI; one D1 kv write a company); re-dispatched with restart=false.

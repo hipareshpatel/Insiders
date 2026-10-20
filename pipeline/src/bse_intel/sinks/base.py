@@ -24,6 +24,7 @@ STATEMENTS = (
     "filings_import",
     "cards_reaction",
     "cards_delete",
+    "cards_apply_verdicts",
 )
 
 QUERIES = (

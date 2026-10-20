@@ -5,6 +5,8 @@
 #   does not serve them);
 # - requeue-failed: filings that used all 3 attempts in the last 30 days get fresh attempts (after a fix; requeue.py),
 #   or, with ids, the named filings are re-run whatever their status (held or stale cards);
+# - apply-verdicts: the owner's standing Wrong / Right verdicts applied to the stored cards once (verdicts saved
+#   before they acted on the card, O11, never held or released it); a re-run keeps them by itself (cards_upsert.sql);
 # - seed-memory: results history from NSE's XBRL into each universe company's memory (T13's re-seed on the basis
 #   fix), resuming after the last company finished; 5 h a pass, and a pass that runs out of time with companies left
 #   starts the next one itself. It reads NSE beside the live runs, so no pass starts itself in market hours
@@ -20,7 +22,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, requeue-failed, seed-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, requeue-failed, apply-verdicts, seed-memory]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -74,6 +76,9 @@ jobs:
         env:
           IDS: ${{ inputs.ids }}   # through the environment, never pasted into the script
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel requeue-failed ${IDS:+--ids "$IDS"} ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
+      - name: Apply the owner's verdicts
+        if: inputs.command == 'apply-verdicts' && !inputs.dry_run
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel apply-verdicts'
       - name: Seed memory from NSE's results XBRL
         id: seed
         if: inputs.command == 'seed-memory'

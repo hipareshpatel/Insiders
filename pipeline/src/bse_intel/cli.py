@@ -314,6 +314,13 @@ def cmd_export_held(args, settings, sink) -> int:
     return 0
 
 
+def cmd_apply_verdicts(args, settings, sink) -> int:
+    """The owner's standing WRONG / RIGHT verdicts applied to the stored cards once (cards_apply_verdicts.sql): those
+    saved before a verdict acted on its card (O11) never held or released it. No AI; a second run writes nothing."""
+    print(json.dumps({"cards_written": sink.execute("cards_apply_verdicts", ["WRONG", "RIGHT"])}))
+    return 0
+
+
 def cmd_requeue_failed(args, settings, sink) -> int:
     """Filings that used every attempt, set PENDING again with fresh attempts (requeue.py), after a fix. No AI."""
     from datetime import timedelta
@@ -703,6 +710,8 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("export-held", help="every held card to a JSON file, for the live reviews; no AI")
     p.add_argument("--out", default="held.json")
     p.set_defaults(func=cmd_export_held)
+    p = sub.add_parser("apply-verdicts", help="apply the owner's standing Wrong / Right verdicts to the stored cards; no AI")
+    p.set_defaults(func=cmd_apply_verdicts)
     p = sub.add_parser("requeue-failed", help="give filings that used every attempt fresh attempts (after a fix); no AI")
     p.add_argument("--since", help="filed on or after this date (YYYY-MM-DD); default --days ago")
     p.add_argument("--days", type=int, default=30)

@@ -104,12 +104,14 @@ owner.post("/verdict", async (c) => {
     if (prior?.verdict === "WRONG") held = before;
   } else {
     held = verdict === "WRONG" ? 1 : verdict === "RIGHT" ? 0 : before;
-    // a note saved under a standing WRONG keeps the card as first judged, not the one the hold rewrote
+    // a note saved under a standing WRONG keeps the card as first judged, not the one the hold rewrote; any other
+    // verdict takes the card as it is now, since a re-run releases a RIGHT only for this snapshot's headline
     statements.push(db.prepare(`
       INSERT INTO card_verdicts (news_id, scrip_code, event_category, verdict, note, held, card_json_snapshot, created_at)
       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
       ON CONFLICT (news_id) DO UPDATE SET verdict = excluded.verdict, note = excluded.note, held = excluded.held,
-        card_json_snapshot = CASE WHEN card_verdicts.verdict = 'WRONG' THEN card_verdicts.card_json_snapshot
+        card_json_snapshot = CASE WHEN card_verdicts.verdict = 'WRONG' AND excluded.verdict = 'WRONG'
+                                  THEN card_verdicts.card_json_snapshot
                                   ELSE excluded.card_json_snapshot END,
         created_at = excluded.created_at`)
       .bind(body.news_id, card!.scrip_code, card!.event_category, verdict, note, before, card!.card_json, new Date().toISOString()));

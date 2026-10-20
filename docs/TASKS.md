@@ -62,6 +62,27 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T24 · P1 · laptop · OPEN — live review 3's classes in your files (production cards, current code)
+
+`docs/audit/live/2026-10-20-review3.md`: 27 cards production wrote, 7 WRONG (26%), every one on the card's face. The
+cloud fixed its classes in 0b6095d and f0093eb: deal stages, the trade-remedy signal, year-ago comparatives, turns, the
+case ladder and capex size. Yours, each with a test:
+1. **The PBT line is not a statement line.** It is taken before the share of associates/JVs or before exceptional
+   items: Orient Bell 11.41 against a printed 11.15; Sunteck 82.59 against 82.54; ITC 5,774.94 against 5,860.85.
+   Take the PBT tag the statement prints (`xbrl.py`).
+2. **"Net profit to shareholders" includes minority interest** (Sunteck 62.83 against owners' 63.75; ITC 4,508.79
+   against 4,394.13). It is set from XBRL in `pipeline.py` "key numbers set from XBRL", from your mapping.
+3. **RECURRING_ONE_OFFS on a one-off gain** (ITC's ₹405.88 Cr remeasurement gain; Supreme's +6,466 Cr gain).
+   Count only charges (`forensics.py`).
+4. **Event types:** an ESG score is not DEBT_RATINGS; a vendor listing is not LITIGATION_REGULATORY; an investment
+   in a captive power company is not PRODUCT_LAUNCH; a demerger is not ACQUISITION (deal kind).
+5. **Invented wording:** "supply commenced" for "expected to commence"; "1 MW commissioned" for an open-access grant;
+   "board sanctions" with no board named; "non-producers" for "Non-Promoters" (a quote, so check the OCR or the quote check).
+6. **impact_level too high on 4 of 27** (a vendor listing, a creditors' meeting notice, the closing of an old deal, a
+   subsidiary's 1.8%-of-net-worth deal). D39 now makes HIGH a code rule. MODERATE on routine steps is still the
+   model's call.
+Report: here, per class. Files you may change: your files (TASKS "Who owns what"), their tests, `docs/audit/live/`.
+
 ## T23 · P1 · laptop · OPEN, do now — fill the design blocks on the live cards (no AI)
 
 The design audit (`docs/audit/design/cards-2026-10-20.md`) found the 19 Oct card blocks on only 14 of 849 live cards:

@@ -347,6 +347,116 @@ def test_the_results_table_drops_a_comparative_the_filing_does_not_print():
     assert results_snapshot(dossier(), "n2", printed="Outcome of the board meeting held today")["revenue"]["yoy_pct"] == 21.6
 
 
+def _restated_src(news_id, value):
+    return {"news_id": news_id, "value": value, "as_of": "2026-05-25T16:00:00+05:30", "basis": "CONSOLIDATED"}
+
+
+def _kanoria():
+    src = _restated_src
+    return {"financial_metrics": [
+        {"metric": "revenue", "period": "Q4FY26", "value": 304.39, "sources": [src("n2", 304.39)]},
+        {"metric": "revenue", "period": "Q4FY25", "value": 431.42, "sources": [src("n1", 431.42), src("n2", 431.42)]},
+        {"metric": "revenue", "period": "Q3FY26", "value": 265.82, "sources": [src("n0", 265.82), src("n2", 265.82)]},
+        {"metric": "ebitda", "period": "Q4FY26", "value": 27.1, "sources": [src("n2", 27.1)]},
+        {"metric": "ebitda", "period": "Q4FY25", "value": 16.99, "sources": [src("n1", 16.99), src("n2", 16.99)]},
+        {"metric": "ebitda", "period": "Q3FY26", "value": 14.2, "sources": [src("n0", 14.2)]},
+        {"metric": "ebitda_margin", "period": "Q4FY25", "value": 3.94, "sources": [src("n1", 3.94)]},
+        {"metric": "pbt", "period": "Q4FY26", "value": 17.0, "sources": [src("n2", 17.0)]},
+        {"metric": "pbt", "period": "Q4FY25", "value": -37.94, "sources": [src("n1", -37.94), src("n2", -37.94)]},
+        {"metric": "pbt", "period": "Q3FY26", "value": 5.73, "sources": [src("n0", 5.73)]},
+        {"metric": "pat", "period": "Q4FY26", "value": 31.62, "sources": [src("n2", 31.62)]},
+        {"metric": "pat", "period": "Q4FY25", "value": -40.11, "sources": [src("n1", -40.11), src("n2", -40.11)]},
+        {"metric": "pat", "period": "Q3FY26", "value": 3.55, "sources": [src("n0", 3.55)]},
+        {"metric": "exceptional_items", "period": "Q4FY26", "value": 0.0, "sources": [src("n2", 0.0)]},
+        {"metric": "exceptional_items", "period": "Q4FY25", "value": -29.44, "sources": [src("n1", -29.44)]},
+    ]}
+
+
+def test_a_restated_column_goes_whole():
+    """Review 6 (2026-10-20): Kanoria restated Q4FY25 after APAG moved to discontinued operations (revenue 21,388 lakh,
+    memory 431.42 Cr); Star Health's first Ind AS quarter restated Q1FY26 PAT to 43,818 lakh while its reconciliation
+    note still prints the previous-GAAP 26,252."""
+    from bse_intel.dossier import results_snapshot
+
+    text = ("(Rs. in lakh) Revenue from operations 30,439 26,582 21,388\n"
+            "Profit/(loss) before tax 1,700 573 (2,977)\nProfit/(loss) for the period 3,162 355 (3,640)\n"
+            "Note 17. Page 38 of 40")   # 17 and 38 used to pass for EBITDA 16.99 and PBT -37.94 at crore scale
+    snap = results_snapshot(_kanoria(), "n2", printed=text)
+    for key in ("revenue", "ebitda", "ebitda_margin", "pbt", "pat", "exceptional_items"):
+        assert "prev_year" not in snap.get(key, {}) and "yoy_pct" not in snap.get(key, {}), key
+    # the previous quarter is printed as memory has it, and stays
+    assert snap["revenue"]["prev_quarter"] == 265.82 and snap["pat"]["prev_quarter"] == 3.55
+    assert snap["ebitda"]["prev_quarter"] == 14.2
+    # a restated figure printed elsewhere (a previous-GAAP reconciliation) does not save its column
+    text2 = text + "\nNet profit as per previous GAAP 4,011"
+    assert "prev_year" not in results_snapshot(_kanoria(), "n2", printed=text2)["pat"]
+
+
+def test_a_restated_insurer_loses_both_columns():
+    """Star Health's first Ind AS quarter (review 6): both comparatives restated, the current figures stored rounded
+    (₹4,917.0 Cr, ₹549.7 Cr), and the ratios restated too; the old previous-GAAP PAT 26,252 is in the reconciliation."""
+    from bse_intel.dossier import results_snapshot
+
+    src = _restated_src
+    m = lambda metric, period, value, *ids: {"metric": metric, "period": period, "value": value,
+                                             "sources": [src(i, value) for i in ids]}
+    d = {"financial_metrics": [
+        m("gross_premium", "Q1FY27", 4210.5, "n2"), m("gross_premium", "Q1FY26", 3476.1, "n1"),
+        m("gross_premium", "Q4FY26", 4592.3, "n0"),
+        m("revenue", "Q1FY27", 4917.0, "n2"), m("revenue", "Q1FY26", 3938.26, "n1", "n2"),
+        m("revenue", "Q4FY26", 4327.15, "n0", "n2"),
+        m("pat", "Q1FY27", 549.7, "n2"), m("pat", "Q1FY26", 262.52, "n1", "n2"), m("pat", "Q4FY26", 111.33, "n0", "n2"),
+        m("combined_ratio", "Q1FY27", 98.41, "n2"), m("combined_ratio", "Q1FY26", 102.16, "n1"),
+        m("combined_ratio", "Q4FY26", 94.73, "n0"),
+        m("claims_ratio", "Q1FY27", 70.12, "n2"), m("claims_ratio", "Q1FY26", 69.55, "n1"),
+        m("claims_ratio", "Q4FY26", 64.82, "n0"),
+    ]}
+    text = ("(Rs. in Lakhs)\nNet earned premium\n491,720\n467,110\n433,642\nProfit after tax\n54,973\n(5,540)\n43,818\n"
+            "Combined ratio 98.41 88.55 92.00\nClaims ratio 70.12 64.59 68.52\n"
+            "Reconciliation with previous GAAP: Net profit as per previous GAAP 26,252")
+    snap = results_snapshot(d, "n2", printed=text)
+    for key in ("revenue", "pat", "combined_ratio", "claims_ratio", "gross_premium"):
+        for slot in ("prev_year", "prev_quarter"):
+            assert slot not in snap[key], (key, slot)
+    assert snap["revenue"]["value"] == 4917.0 and snap["pat"]["value"] == 549.7
+
+
+def test_a_statement_that_restates_nothing_keeps_every_comparative():
+    """The same table printed as memory has it: nothing goes, however tight the match."""
+    from bse_intel.dossier import results_snapshot
+
+    text = ("(Rs. in lakh) Revenue from operations 30,439 26,582 43,142\n"
+            "Profit/(loss) before tax 1,700 573 (3,794)\nProfit/(loss) for the period 3,162 355 (4,011)\n"
+            "Exceptional items - - (2,944)")
+    snap = results_snapshot(_kanoria(), "n2", printed=text)
+    assert snap == results_snapshot(_kanoria(), "n2")
+    assert snap["revenue"]["prev_year"] == 431.42 and snap["ebitda"]["prev_year"] == 16.99
+    assert snap["pbt"]["prev_year"] == -37.94 and snap["pat"]["prev_year"] == -40.11
+
+
+def test_a_cell_the_ocr_lost_is_no_restatement():
+    """UCO Bank's PBT ₹1,247.11 Cr read "1,24,7Ll", Kapston's consolidated year-ago PAT missing from its row (reviews 1
+    and 5): a line refused alone needs its row read whole, its other comparative printed beside its current figure."""
+    from bse_intel.dossier import results_snapshot
+
+    # UCO's shape: both comparatives of one row garbled
+    text = ("(Rs. in lakh) Revenue from operations 30,439 26,582 43,142\n"
+            "Profit/(loss) before tax 1,700 57E (379A)\nProfit/(loss) for the period 3,162 355 (4,011)")
+    snap = results_snapshot(_kanoria(), "n2", printed=text)
+    assert snap["pbt"]["prev_quarter"] == 5.73 and snap["pbt"]["prev_year"] == -37.94
+    # Kapston's: the year-ago cell lost, the previous quarter's garbled
+    text = ("(Rs. in lakh) Revenue from operations 30,439 26,582 43,142\n"
+            "Profit/(loss) before tax 1,700 573 (3,794)\nProfit/(loss) for the period 3,162 3S5\nEPS 2.1")
+    snap = results_snapshot(_kanoria(), "n2", printed=text)
+    assert snap["pat"]["prev_year"] == -40.11 and snap["pat"]["prev_quarter"] == 3.55
+    # a row read whole that prints another figure still loses its comparative (Bajaj Finance's revenue, above)
+    text = ("(Rs. in lakh) Revenue from operations 30,439 26,582 43,142\n"
+            "Profit/(loss) before tax 1,700 573 (3,794)\nProfit/(loss) for the period 3,162 412 (4,011)")
+    snap = results_snapshot(_kanoria(), "n2", printed=text)
+    assert "prev_quarter" not in snap["pat"] and snap["pat"]["prev_year"] == -40.11
+    assert snap["revenue"]["prev_quarter"] == 265.82   # one line refusing is no restated column
+
+
 def test_an_exceptional_charge_that_did_not_recur_is_no_turn():
     """Orient Bell, Jubilant Agri (live review 3): exceptional items "loss to profit" when a ₹1.29 Cr charge did not recur."""
     from bse_intel.dossier import results_snapshot

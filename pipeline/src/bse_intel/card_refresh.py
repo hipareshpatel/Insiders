@@ -1,4 +1,4 @@
-"""Recompute a stored card's code-made blocks from memory, with no AI and no PDF.
+"""Recompute a stored card's code-made blocks from memory, with no AI and no PDF (the cached text when there is one).
 
 The blocks on a card's face (the results table in the statement's own lines, the order or deal size, the rating
 ladder, the case stage, management's earlier guidance, the fundamentals footer) are computed by code when a card is
@@ -6,6 +6,10 @@ written. Cards written before a block existed, or before a fix to one, keep the 
 of 849 live cards carried the blocks of the 19 Oct redesign (design audit, docs/audit/design/cards-2026-10-20.md).
 This puts each card's blocks through today's code, from the company's memory as it stood at the filing, and drops
 signal types that are now off. What the model wrote is not touched.
+
+The results table's comparatives are judged against the filing's text (dossier.results_snapshot's `printed`): the
+cached text is read when this machine has it; without it a refresh never brings back a comparative the stored table
+does not have, since that is how a restated column was taken off (review 6, 2026-10-20).
 """
 
 from __future__ import annotations
@@ -28,8 +32,10 @@ BLOCKS = ("results", "volume_strip", "scale", "rating_change", "case_stage", "gu
           "fundamentals")
 
 
-def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, footer=(), prices=None, buckets=None) -> dict:
-    """The card's code blocks as today's code makes them. `card` is the stored card_json."""
+def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, footer=(), prices=None, buckets=None,
+           printed: str | None = None) -> dict:
+    """The card's code blocks as today's code makes them. `card` is the stored card_json; `printed` the filing's
+    text, when it is cached."""
     event_type = card.get("event_type") or ""
     before = dossier_as_of(dossier, filing.filed_at, inclusive=False)
     current = dossier_as_of(dossier, filing.filed_at)
@@ -44,7 +50,8 @@ def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, foot
     # earlier grade from the letter's "from [ICRA]AA+" only when memory has none)
     text = " ".join([out.card.headline, *facts])
     return {
-        "results": (results_snapshot(current, filing.news_id, footer) if event_type == "RESULTS"
+        "results": (results_snapshot(current, filing.news_id, footer, printed=printed,
+                                     like=None if printed else card.get("results")) if event_type == "RESULTS"
                     else call_results_snapshot(current, filing.filed_at, footer) if event_type == "CONCALL_PRESENTATION" else None),
         "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
         "scale": scale_parts(before, out, priced, filing.filed_at),
@@ -57,15 +64,30 @@ def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, foot
 
 
 def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, footer=(), prices=None,
-            buckets=None) -> tuple[dict, list[str]]:
+            buckets=None, printed: str | None = None) -> tuple[dict, list[str]]:
     """The card with its blocks recomputed and signals of types now off removed; and the keys that changed."""
     # a block today's code cannot rebuild (memory no longer holds the filing's figures) keeps its old version: a
     # refresh never takes a table off a card
-    made = blocks(card, dossier, filing, company, footer, prices, buckets)
+    made = blocks(card, dossier, filing, company, footer, prices, buckets, printed)
     new = {**card, **{k: v for k, v in made.items() if v or not card.get(k)}}
     new["signals"] = [s for s in card.get("signals") or [] if s.get("type") not in SIGNALS_OFF]
     changed = [k for k in (*BLOCKS, "signals") if json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
     return new, changed
+
+
+def filed_text(pipeline, news_id: str) -> str | None:
+    """The filing's cached text (the laptop's text cache; GitHub's maintenance runs have none), or None."""
+    cached = getattr(pipeline, "_cached_text", None)
+    data = cached(news_id) if cached else None
+    if not data:
+        return None
+    from .extract import Document
+
+    try:
+        return Document.from_cache(data).select_text(10_000_000, []) or None
+    except Exception:  # a damaged cache entry is the same as none
+        log.warning("cached text of %s unreadable", news_id)
+        return None
 
 
 def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: int = 50) -> dict:
@@ -98,7 +120,9 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
                                 headline=row.get("headline") or "", subject="", filed_at=row["filed_at"],
                                 filing_date=row.get("filing_date") or row["filed_at"][:10])
                 footer = pipeline.prompts.sector_for((company or {}).get("industry")).footer
-                new, changed = refresh(card, dossier, filing, company, footer, pipeline._prices, pipeline._buckets)
+                printed = filed_text(pipeline, row["news_id"]) if card.get("event_type") == "RESULTS" else None
+                new, changed = refresh(card, dossier, filing, company, footer, pipeline._prices, pipeline._buckets,
+                                       printed)
             except (ValidationError, ValueError, KeyError, TypeError) as exc:
                 failed += 1
                 log.warning("card %s not refreshed: %s", row.get("news_id"), exc)

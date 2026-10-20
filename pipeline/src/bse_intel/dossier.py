@@ -1316,33 +1316,59 @@ def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...]
 
 
 # Lines whose comparatives are looked for in the filing's own text (results_snapshot's `printed`): amounts in crore,
-# found in any unit the filing may print them in, and EPS to the paisa. Margins and ratios are derived, not printed.
+# at the unit the filing prints the line's current figure in, EPS to the paisa, and the ratios a filing states (an
+# insurer's claims and combined ratios, a bank's NPAs, a stated margin, the sector's % KPIs) as printed.
 _PRINTED_CR = {"revenue", "ebitda", "pbt", "pat", "interest_earned", "nii", "ppop", "provisions", "gross_premium",
                "incurred_claims"}
+_PRINTED_PCT = {"ebitda_margin", "gnpa_pct", "nnpa_pct", "roa_pct", "combined_ratio", "claims_ratio"}
 _UNITS = (1, 100, 10, 10_000, 1e7)   # crore, lakh, million, thousand, rupees
+# The lines whose refused comparatives tell that the filing restated that column, which then goes whole: EBITDA and
+# its margin are mostly derived, not printed, so they never count
+_RESTATED_BY = (_PRINTED_CR | _PRINTED_PCT | {"eps"}) - {"ebitda", "ebitda_margin"}
+RESTATED_LINES = 2
+ROUNDING = 0.0005   # a comparative within this share of a printed figure is that figure (as computed._base_printed)
+ROW_WINDOW = 6      # numbers either side of a figure in the text that can be cells of its row
+
+
+def _number_sequence(text: str) -> list[float]:
+    return [float(n.replace(",", "")) for n in re.findall(r"\d[\d,]*\.?\d*", text)
+            if n.replace(",", "").replace(".", "").isdigit()]
 
 
 def _printed_numbers(text: str | None) -> list[float] | None:
     if not text:
         return None
-    return sorted({float(n.replace(",", "")) for n in re.findall(r"\d[\d,]*\.?\d*", text)
-                   if n.replace(",", "").replace(".", "").isdigit()})
+    return sorted(set(_number_sequence(text)))
 
 
-def _is_printed(value: float, numbers: list[float], per_share: bool) -> bool | None:
-    """Whether the filing's text prints this figure; None when it is too small to tell apart from other numbers."""
+def _tolerance(value: float, unit: float, near: float = 0.0) -> float:
+    """How far a printed figure may be from this one at this unit: the precision it is stored at (4,917.0 Cr is
+    ±0.5 Cr, 16.99 Cr ±0.005 Cr), half a printed unit (₹0.005 Cr in crore, 0.5 in lakh) or `near` of it, whichever is
+    widest. The old match, ±0.5 Cr at every unit, let any integer near a figure pass: Kanoria's year-ago EBITDA
+    ₹16.99 Cr and PBT ₹-37.94 Cr were "printed" as a note's 17 and a page's 38 (review 6, 2026-10-20)."""
+    shown = repr(float(abs(value)))
+    decimals = 0 if shown.endswith(".0") or "e" in shown else min(len(shown.split(".")[1]), 6)
+    return max(0.5 * 10 ** -decimals * unit, 0.005 * unit if unit < 100 else 0.5, near * abs(value) * unit) + 1e-9
+
+
+def _printed_at(value: float, numbers: list[float], units=_UNITS, near: float = 0.0) -> tuple[float, ...]:
+    """The units at which the filing's text prints this figure (numbers: _printed_numbers)."""
     from bisect import bisect_left
 
-    def near(target: float, tol: float) -> bool:
+    found = []
+    for unit in units:
+        target, tol = abs(value) * unit, _tolerance(value, unit, near)
         i = bisect_left(numbers, target - tol)
-        return i < len(numbers) and numbers[i] <= target + tol
+        if i < len(numbers) and numbers[i] <= target + tol:
+            found.append(unit)
+    return tuple(found)
 
-    v = abs(value)
-    if per_share:
-        return near(v, 0.005) if v >= 1 else None
-    if v < 1:
-        return None
-    return any(near(v * unit, 0.006 * unit + 0.5) for unit in _UNITS)
+
+def _beside(a: float, b: float, sequence: list[float], unit: float, near: float = 0.0) -> bool:
+    """Whether the text prints figure b within ROW_WINDOW numbers of figure a, both at this unit: cells of one row."""
+    ta, tola, tb, tolb = abs(a) * unit, _tolerance(a, unit), abs(b) * unit, _tolerance(b, unit, near)
+    return any(abs(n - tb) <= tolb for i, m in enumerate(sequence) if abs(m - ta) <= tola
+               for n in sequence[max(0, i - ROW_WINDOW): i + ROW_WINDOW + 1])
 
 
 def _mover(out: dict, lookup, periods: dict) -> tuple[str, tuple[str, ...], str] | None:
@@ -1378,12 +1404,13 @@ def _mover(out: dict, lookup, periods: dict) -> tuple[str, tuple[str, ...], str]
 
 
 def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = (),
-                     printed: str | None = None) -> dict | None:
+                     printed: str | None = None, like: dict | None = None) -> dict | None:
     """This filing's latest quarter against a year ago and the previous quarter, for the results tables.
 
     Each metric carries its value, the year-ago and previous-quarter values when memory has them,
     and the YoY / QoQ change (in basis points for the margin, which is derived from EBITDA and
-    revenue when the filing did not state it).
+    revenue when the filing did not state it). `printed` is the filing's text, which its comparatives are judged
+    against; `like` a stored table of the same quarter, whose missing comparatives stay out.
     """
     from .periods import prior_quarter_period, prior_year_period
 
@@ -1394,14 +1421,14 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     period = max(quarters, key=due_date)
     table = {(m["metric"], m["period"]): m for m in dossier.get("financial_metrics", [])}
     periods = {"value": period, "prev_year": prior_year_period(period), "prev_quarter": prior_quarter_period(period)}
-    numbers = _printed_numbers(printed)
+    sequence = _number_sequence(printed) if printed else []
+    numbers = sorted(set(sequence)) or None
+    ratios = _PRINTED_PCT | {spec["metric"] for spec in footer if spec.get("format") == "pct"}
 
-    def lookup(names: tuple[str, ...], p: str | None) -> float | None:
-        if not p:
-            return None
-        entry = next((table[(n, p)] for n in names if (n, p) in table), None)
+    def stored(names: tuple[str, ...], p: str | None) -> tuple[dict | None, float | None]:
+        entry = next((table[(n, p)] for n in names if (n, p) in table), None) if p else None
         if not entry:
-            return None
+            return None, None
         # the comparative this filing prints wins over what an earlier filing said for that quarter: a regrouped
         # year-ago column (Man Industries' Q1FY26 EBITDA ₹75.80 Cr here, ₹49.11 Cr in last year's own XBRL, made
         # +192% of +89%; live review 3)
@@ -1410,20 +1437,46 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         basis = "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)   # as _metric_entry keeps it
         own = next((src for src in sources if src.get("news_id") == news_id and src.get("value") is not None
                     and src.get("basis") in (None, basis)), None)
-        value = own["value"] if own is not None else entry["value"] if entry.get("value") is not None else None
-        if value is not None and p != period and numbers and names[0] in _PRINTED_CR | {"eps"}:
-            # an earlier filing's figure for a quarter this statement restates: Kapston's year-ago EPS ₹3.48 before
-            # its 1:2 bonus (the statement prints ₹2.32), Bajaj Finance's year-ago revenue as first reported (live
-            # review 5, 2026-10-20). A comparative credited to this filing is judged too: the earlier quarters'
-            # files' figures are stored under the filing that read them (xbrl.add_comparatives), so Bajaj's
-            # ₹20,178.90 Cr was "its own". Judged only on a line whose current figure the text prints, so a table
-            # the text missed keeps its comparatives.
-            per_share = names[0] == "eps"
-            current = table.get((entry["metric"], period), {}).get("value")
-            if current is not None and _is_printed(current, numbers, per_share) and \
-                    _is_printed(value, numbers, per_share) is False:
-                return None
-        return value
+        return entry, own["value"] if own is not None else entry["value"] if entry.get("value") is not None else None
+
+    def refused(names: tuple[str, ...], p: str | None, alone: bool = False) -> bool:
+        """An earlier filing's figure for a quarter this statement restates: Kapston's year-ago EPS ₹3.48 before its
+        1:2 bonus (the statement prints ₹2.32), Bajaj Finance's year-ago revenue as first reported (live review 5,
+        2026-10-20). A comparative credited to this filing is judged too: the earlier quarters' files' figures are
+        stored under the filing that read them (xbrl.add_comparatives), so Bajaj's ₹20,178.90 Cr was "its own".
+        Judged only on a line whose current figure the text prints, and only at the unit it prints it in, so a table
+        the text missed keeps its comparatives; never EBITDA or its margin, which the statement mostly does not print.
+        A line refused `alone` (not as part of a restated column) also needs its row read whole: its other
+        comparative printed beside its current figure. A cell the OCR garbled or lost is no restatement: UCO Bank's
+        PBT ₹1,247.11 Cr read "1,24,7Ll", Kapston's consolidated year-ago PAT missing from its row (reviews 1, 5)."""
+        if p == period or not numbers or names[0] in ("ebitda", "ebitda_margin"):
+            return False
+        units = _UNITS if names[0] in _PRINTED_CR else (1,) if names[0] == "eps" or names[0] in ratios else ()
+        entry, value = stored(names, p)
+        current = table.get((entry["metric"], period), {}).get("value") if entry else None
+        if not units or value is None or current is None or abs(value) < 1 or abs(current) < 1:
+            return False
+        at = _printed_at(current, numbers, units)
+        if not at or _printed_at(value, numbers, at, ROUNDING):
+            return False
+        if not alone:
+            return True
+        peer = stored(names, periods["prev_quarter"] if p == periods["prev_year"] else periods["prev_year"])[1]
+        return peer is not None and any(_beside(current, peer, sequence, unit, ROUNDING) for unit in at)
+
+    # A column the filing restates goes whole (review 6, 2026-10-20): Kanoria's year-ago quarter after APAG moved to
+    # discontinued operations, Star Health's first Ind AS quarter. Memory holds the comparatives as first reported, so
+    # when two judged lines refuse the same column, every line loses it: the derived EBITDA and margin, exceptional
+    # items, a PAT whose old figure a previous-GAAP reconciliation still prints, and the mover.
+    judged = [names for key, names in _RESULT_METRICS if key in _RESTATED_BY]
+    restated = {p for slot, p in periods.items() if slot != "value" and p and numbers
+                and sum(refused(names, p) for names in judged) >= RESTATED_LINES}
+
+    def lookup(names: tuple[str, ...], p: str | None) -> float | None:
+        if not p or p in restated:
+            return None
+        value = stored(names, p)[1]
+        return None if value is None or refused(names, p, alone=True) else value
 
     def margin(p: str | None) -> float | None:
         stated = lookup(_RESULT_METRICS[2][1], p)
@@ -1441,8 +1494,18 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         earned, expended = lookup(("interest_earned",), p), lookup(("interest_expended",), p)
         return round(earned - expended, 2) if earned is not None and expended is not None else None
 
+    # a refresh without the filing's text (card_refresh) cannot judge comparatives, so it never brings back one the
+    # stored table of this quarter does not have: a line's, or a column no line has
+    kept = like if like and like.get("period") == period else None
+
+    def withheld(key: str, slot: str) -> bool:
+        if kept is None or slot == "value":
+            return False
+        row = kept.get(key)
+        return slot not in row if isinstance(row, dict) else not any(isinstance(r, dict) and slot in r for r in kept.values())
+
     def line(pick, bps: bool, key: str = "") -> dict | None:
-        values = {slot: pick(p) for slot, p in periods.items()}
+        values = {slot: None if withheld(key, slot) else pick(p) for slot, p in periods.items()}
         if values["value"] is None:
             return None
         row = {slot: v for slot, v in values.items() if v is not None}
@@ -1493,7 +1556,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         if shown & set(names):
             continue
         unit = {"pct": "pct", "cr": "cr", "inr": "inr"}.get(spec.get("format", "num"), "num")
-        row = line(lambda p, names=names: lookup(names, p), unit == "pct")
+        row = line(lambda p, names=names: lookup(names, p), unit == "pct", f"kpi:{spec['metric']}")
         if row is not None:
             out[f"kpi:{spec['metric']}"] = row
             lines.append({"key": f"kpi:{spec['metric']}", "label": spec["label"], "unit": unit})

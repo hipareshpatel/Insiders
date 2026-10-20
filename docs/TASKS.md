@@ -496,8 +496,8 @@ Files you may change: none. Report: 2026-10-20 11:45-12:20 IST. `dgtr-sync --pag
 - **Epigral on CPVC (the cloud's question):** the case page holds three rounds (2019, 2024, 2026); names come from the latest.
   The 16 Sep 2026 notice: "DCW Limited, Epigral Limited and Lubrizol Advanced Materials India Private Limited (hereinafter
   referred to as the 'Applicants')", so APPLICANT is right; the 2019 notice named DCW only (with Kem One Chemplast, private).
-- The "Trade remedies" panel was not opened on two pages yet (the links are what feed it); the case pages' latest steps
-  match their documents' dates in the file.
+- Not checked yet: the "Trade remedies" panel on two company pages (product, countries, latest step and date against the
+  case page).
 
 ## T2 · P1 · laptop · DONE — measure the bank ratio scale before it is trusted (CLAUDE.md rule 0)
 

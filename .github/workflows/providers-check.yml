@@ -1,0 +1,57 @@
+# Started by hand: which models each AI provider serves (no AI request) and, for providers already on a route, one tiny
+# request per configured model (`ai-check`: a few tokens each). Used before a provider gets a route (owner added the
+# SambaNova and SiliconFlow keys on 2026-10-20) and when a model is retired. Keys come from the repository's secrets;
+# no key or answer body is printed, only model IDs and each check's result.
+name: Providers check
+
+on:
+  workflow_dispatch:
+    inputs:
+      ai_check:
+        description: also send one tiny request to each configured model (a few tokens each)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      SAMBANOVA_API_KEY: ${{ secrets.SAMBANOVA_API_KEY }}
+      SILICONFLOW_API_KEY: ${{ secrets.SILICONFLOW_API_KEY }}
+      BSE_INTEL_SINK: local
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: SambaNova models
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel models --provider sambanova'
+      - name: SiliconFlow models
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel models --provider siliconflow'
+      - name: DeepSeek models
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel models --provider deepseek'
+      - name: Configured models still served
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel models'
+      - name: One tiny request per configured model
+        if: always() && inputs.ai_check
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel ai-check'

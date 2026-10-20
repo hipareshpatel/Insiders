@@ -183,7 +183,10 @@ export interface CardBody {
   /** Monthly business updates: the main volume metric over recent months, from memory at the filing. */
   volume_strip?: { metric: string; unit: string | null; months: { period: string; value: number; yoy_pct: number | null }[] } | null;
   /** Calls and presentations: the key takeaways memory took from this filing, by heading (call_summary.py, no AI). */
-  call_takeaways?: { name: string; points: { text: string; reiterated?: boolean }[] }[] | null;
+  call_memory?: { name: string; points: { text: string; reiterated?: boolean }[] }[] | null;
+  /** Calls and presentations: the model's key takeaways, each checked by code (`verified`) before the face shows it. */
+  call_takeaways?: { category: string; text: string; quote?: string | null; memory_refs?: string[];
+    versus_prior?: string | null; verified?: boolean; issue?: string | null }[] | null;
   /** Set when the results figures came from the filing's XBRL file. */
   xbrl?: { basis: string | null; period: string | null; figures: number } | null;
   /** Market data as it stood when the filing came out (stored price series, else recent data). */

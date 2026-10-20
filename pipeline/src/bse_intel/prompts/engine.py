@@ -75,6 +75,23 @@ PASS2_SCHEMA = {
     },
 }
 
+# Earnings calls and presentations only (the rules are in events.toml's CONCALL_PRESENTATION focus): asked of every
+# filing it would cost tokens on each card for a field only calls use.
+CALL_TAKEAWAYS_SCHEMA = [{
+    "category": "Guidance | Capex & capacity | Demand & orders | Margins & costs | Balance sheet & funding | Risks | Other",
+    "text": "one short takeaway with its figure, under 30 words",
+    "quote": "the sentence from the filing that says it, copied exactly",
+    "memory_refs": ["g_... or t_... or w_... or d_... of the memory items it is compared with, or empty"],
+    "versus_prior": "what changed against those memory items, e.g. 'raised from 10-12% in the Q1FY27 call', or null",
+}]
+
+
+def pass2_schema(event_type: str) -> dict:
+    """The reply's shape for this event type: a call or presentation also returns its key takeaways."""
+    if event_type != "CONCALL_PRESENTATION":
+        return {**PASS2_SCHEMA, "event_type": event_type}
+    return {**PASS2_SCHEMA, "event_type": event_type, "card": {**PASS2_SCHEMA["card"], "call_takeaways": CALL_TAKEAWAYS_SCHEMA}}
+
 
 def _unit_note(text: str | None) -> str:
     """A line naming the filing's unit when it is not ₹ crore: models copy "2,863" from a lakh
@@ -261,7 +278,7 @@ class PromptEngine:
             sector_kpis=", ".join(sector.kpis) + (
                 ". Name these in financial_metrics exactly as: "
                 + ", ".join(f"{f['metric']} ({f['label']})" for f in sector.footer) if sector.footer else ""),
-            schema=json.dumps({**PASS2_SCHEMA, "event_type": event_type}, ensure_ascii=False, indent=1),
+            schema=json.dumps(pass2_schema(event_type), ensure_ascii=False, indent=1),
             event_types=", ".join(EVENT_TYPES),
             memory_start=self.memory_start,
         )

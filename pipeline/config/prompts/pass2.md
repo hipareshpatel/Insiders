@@ -216,6 +216,19 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   quantified targets and answered analysts' questions directly, "LOW" when it avoided numbers or
   questions, else "MEDIUM". story: the one word that best fits the business today ("GROWTH",
   "COMPOUNDER", "TURNAROUND", "CYCLICAL", "STRESSED", "TRANSITION" or "VALUE").
+- call_takeaways: only for earnings calls and investor presentations (the shape asks for it then); leave it out
+  otherwise. Up to 8 key takeaways a shareholder needs from this call, each under one heading: "Guidance",
+  "Capex & capacity", "Demand & orders", "Margins & costs", "Balance sheet & funding", "Risks" or "Other".
+  Key takeaways only: no greetings, thanks, introductions of the management, safe-harbour statements, the call's
+  date or logistics, or what the moderator said. Prefer a takeaway with its figure ("FY27 volume growth guided at
+  12-14%") to one without. Each carries quote: the sentence from the filing that says it, copied exactly; every
+  figure in text must be in that sentence or in a memory item you cite. Connect it to COMPANY MEMORY where memory
+  allows: the previous call's guidance, the last results, recent announcements and deals; cite their ids in
+  memory_refs and say in versus_prior what changed ("raised from 10-12% in the Q1FY27 call", "commissioning moved
+  from Q3FY27 to Q1FY28", "new: no earlier target in memory", "reiterated"). versus_prior may name only a figure
+  or period that the cited memory item holds: never state an earlier figure that is not in the memory given, and
+  leave versus_prior null when memory has nothing to compare with. The system checks each takeaway against the
+  filing and memory and shows only those that pass.
 - track_next: forward-looking triggers an investor should monitor after this filing.
   milestones: future dates or execution windows stated or clearly implied (what, when as written,
   and date in ISO form when exact). kpis_to_verify: the specific metric that will show whether this

@@ -1,0 +1,108 @@
+"""The model's call takeaways (owner, 2026-10-20: "connect facts from previous calls, results, other announcements"):
+the schema, and the code checks that decide which ones the card's face shows. No model is called."""
+
+import json
+
+from bse_intel.call_summary import check_ai_takeaways
+from bse_intel.models import MAX_CALL_TAKEAWAYS, Card
+from bse_intel.prompts.engine import pass2_schema
+
+TEXT = """Earnings conference call, Q2FY27. Good morning everyone and thank you for joining us.
+For FY27 we now expect volume growth of 12-14%, supported by the new capacity in the East.
+The 2 MTPA grinding unit at Jajpur will be commissioned in Q1FY28 at a capex of Rs 650 crore.
+EBITDA per tonne was Rs 1,040 in the quarter as fuel costs eased.
+Net debt stood at Rs 1,250 crore at the end of September."""
+
+VIEW = {
+    "guidance": [
+        {"id": "g_vol", "statement": "Volume growth of 10-12% in FY27", "target": "10-12%", "due": "FY27",
+         "source_type": "CONCALL", "given_on": "2026-08-14T19:00:00+05:30", "status": "OPEN"},
+        {"id": "g_jaj", "statement": "Commission 2 MTPA grinding unit at Jajpur", "due": "Q4FY27",
+         "given_on": "2026-08-14T19:00:00+05:30", "status": "OPEN"},
+    ],
+    "recent_timeline": [{"id": "t_res", "date": "2026-10-10T16:00:00+05:30", "event_type": "RESULTS",
+                         "summary": "Q2FY27 EBITDA per tonne ₹980"}],
+    "watchlist": [], "deals": [],
+}
+
+
+def _card(*items):
+    return Card.model_validate({"impact_level": "MODERATE", "headline": "Cement X raises FY27 volume guidance to 12-14%",
+                                "what_happened": [{"text": "Volume guidance raised", "quote": "volume growth of 12-14%"}],
+                                "call_takeaways": list(items)})
+
+
+def _item(text, quote, refs=(), versus=None, category="Guidance"):
+    return {"category": category, "text": text, "quote": quote, "memory_refs": list(refs), "versus_prior": versus}
+
+
+def test_schema_asks_for_takeaways_only_on_calls():
+    assert "call_takeaways" in pass2_schema("CONCALL_PRESENTATION")["card"]
+    assert "call_takeaways" not in pass2_schema("RESULTS")["card"]
+    json.dumps(pass2_schema("CONCALL_PRESENTATION"))
+
+
+def test_model_reply_is_normalised_capped_and_never_self_verified():
+    items = [{**_item(f"Takeaway number {i} with figure {i}", "q"), "verified": True} for i in range(12)]
+    items.append("not a dict")
+    items.append({"category": "capex plans", "text": "short"})   # too short: dropped
+    card = _card(*items, {"category": "Capex plans", "text": "A long enough capex takeaway"})
+    assert len(card.call_takeaways) == MAX_CALL_TAKEAWAYS
+    assert not any(t.verified for t in card.call_takeaways)
+    assert _card({"category": "capex plans", "text": "New line at Jajpur"}).call_takeaways[0].category == "Capex & capacity"
+    assert _card({"category": "RISK", "text": "Pricing pressure in the East"}).call_takeaways[0].category == "Risks"
+    assert _card({"category": "weather", "text": "Monsoon was normal this year"}).call_takeaways[0].category == "Other"
+    assert Card.model_validate({"impact_level": "LOW", "headline": "Cement X files call transcript",
+                                "what_happened": [{"text": "x"}]}).call_takeaways == []
+
+
+def test_quoted_takeaway_compared_with_memory_is_verified():
+    card = _card(_item("FY27 volume growth guided at 12-14%", "For FY27 we now expect volume growth of 12-14%",
+                       ["g_vol"], "raised from 10-12% in the Q1FY27 call"))
+    assert check_ai_takeaways(card, TEXT, "", VIEW) == []
+    assert card.call_takeaways[0].verified and card.call_takeaways[0].issue is None
+
+
+def test_a_figure_from_a_cited_memory_item_passes():
+    card = _card(_item("EBITDA per tonne ₹1,040, up from ₹980 in the results", "EBITDA per tonne was Rs 1,040 in the quarter",
+                       ["t_res"], "₹980 in Q2FY27 results", "Margins & costs"))
+    check_ai_takeaways(card, TEXT, "", VIEW)
+    assert card.call_takeaways[0].verified
+
+
+def test_an_invented_prior_figure_is_rejected():
+    card = _card(_item("FY27 volume growth guided at 12-14%", "For FY27 we now expect volume growth of 12-14%",
+                       ["g_vol"], "raised from 8-10% in the Q1FY27 call"))
+    notes = check_ai_takeaways(card, TEXT, "", VIEW)
+    assert not card.call_takeaways[0].verified and "8" in card.call_takeaways[0].issue and notes
+    # a period memory does not hold
+    card = _card(_item("FY27 volume growth guided at 12-14%", "For FY27 we now expect volume growth of 12-14%",
+                       ["g_vol"], "raised from 10-12% in the Q4FY26 call"))
+    check_ai_takeaways(card, TEXT, "", VIEW)
+    assert "Q4FY26" in card.call_takeaways[0].issue
+    # a comparison with no memory cited, or with an id the model was not shown
+    card = _card(_item("FY27 volume growth guided at 12-14%", "For FY27 we now expect volume growth of 12-14%",
+                       ["g_made_up"], "raised from 10-12%"))
+    check_ai_takeaways(card, TEXT, "", VIEW)
+    assert not card.call_takeaways[0].verified and card.call_takeaways[0].memory_refs == []
+
+
+def test_failures_quote_figure_boilerplate():
+    card = _card(
+        _item("FY27 volume growth guided at 12-14%", "We expect volumes to grow strongly next year"),      # not in filing
+        _item("Jajpur unit capex ₹700 Cr, commissioning Q1FY28",
+              "The 2 MTPA grinding unit at Jajpur will be commissioned in Q1FY28 at a capex of Rs 650 crore",
+              category="Capex & capacity"),                                                            # 700 invented
+        _item("Thank you for joining us on the call today", "Good morning everyone and thank you for joining us."),
+        _item("Net debt ₹1,250 Cr at end-September", None, category="Balance sheet & funding"),         # no quote
+        _item("Net debt ₹1,250 Cr at end-September", "Net debt stood at Rs 1,250 crore at the end of September",
+              category="Balance sheet & funding"),
+    )
+    notes = check_ai_takeaways(card, TEXT, "", VIEW)
+    got = [(t.verified, t.issue) for t in card.call_takeaways]
+    assert got[0] == (False, "quote not in the filing")
+    assert got[1][0] is False and "700" in got[1][1]
+    assert got[2][0] is False and "greeting" in got[2][1]
+    assert got[3] == (False, "no quote")
+    assert got[4] == (True, None)
+    assert len(notes) == 4

@@ -210,5 +210,5 @@ def test_refresh_adds_the_block_to_a_stored_call_card():
     filing = Filing(news_id=T1, scrip_code="CEMX", company_name="Cement X Ltd", headline="h", subject="",
                     filed_at=FILED_T1, filing_date=FILED_T1[:10])
     new, changed = card_refresh.refresh(card, dossier(), filing, None)
-    assert "call_takeaways" in changed and new["call_takeaways"] == card_takeaways(dossier(), T1, FILED_T1)
-    assert not card_refresh.refresh({**card, "event_type": "ORDER_WIN"}, dossier(), filing, None)[0].get("call_takeaways")
+    assert "call_memory" in changed and new["call_memory"] == card_takeaways(dossier(), T1, FILED_T1)
+    assert not card_refresh.refresh({**card, "event_type": "ORDER_WIN"}, dossier(), filing, None)[0].get("call_memory")

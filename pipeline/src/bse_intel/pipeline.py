@@ -56,7 +56,7 @@ from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
 from .card_context import case_stage, guidance_recall, memory_context, rating_change, rating_word_mismatch
-from .call_summary import card_takeaways
+from .call_summary import card_takeaways, check_ai_takeaways
 from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
@@ -2901,6 +2901,10 @@ class Pipeline:
             deal.kind = "OTHER"   # a demerger moves a business out; it is not an acquisition (live review 3)
         if out.card is not None and out.event_type != "CONCALL_PRESENTATION":
             out.card.call_read = None  # guidance, tone and transparency describe a call, not other filings
+            out.card.call_takeaways = []
+        # each call takeaway checked on its own: a failed one goes to the AI reading and never holds the card
+        takeaway_notes = (check_ai_takeaways(out.card, text, blocks, view, declared_unit(filed_text))
+                          if out.card is not None and out.event_type == "CONCALL_PRESENTATION" else [])
         event_type = out.event_type
         if event_type in NO_CARD_EVENTS and not top_exit(f"{filing.headline} {filing.subject} {doc.first_page_text(3000)}"):
             # director and KMP changes get no card (owner, 2026-10-18), except the MD, CEO or CFO leaving (2026-10-19);
@@ -2949,7 +2953,7 @@ class Pipeline:
                         if event_type == "CONCALL_PRESENTATION" else None),
             "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
             # the key takeaways memory took from this call, by heading (call_summary.py)
-            "call_takeaways": (card_takeaways(current, filing.news_id, filing.filed_at)
+            "call_memory": (card_takeaways(current, filing.news_id, filing.filed_at)
                                if event_type == "CONCALL_PRESENTATION" else None),
             # the event's own block on the card's face, made by code (card_context.py, signals.scale_parts)
             "scale": scale_parts(before, out, priced, filing.filed_at),
@@ -2965,7 +2969,8 @@ class Pipeline:
                           "math_mismatches": quant.mismatches, "unsupported_claims": claims,
                           "unit_fixes": unit_fixes or None, "change_fixes": change_fixes or None,
                           "quotes_missing": quotes_missing or None, "quotes_dropped": quotes_dropped or None,
-                          "quotes_paraphrased": checks.quote_style or None, "out_of_fit": checks.scale or None},
+                          "quotes_paraphrased": checks.quote_style or None, "out_of_fit": checks.scale or None,
+                          "call_takeaways_unverified": takeaway_notes or None},
             "review": review,
             "model": result.model_label,
             "pack": result.pack,

@@ -478,6 +478,56 @@ class CallRead(_Lenient):
                                        {"RECOVERY": "TURNAROUND", "CYCLICAL_RECOVERY": "CYCLICAL", "DISTRESS": "STRESSED"})] = None
 
 
+CALL_TAKEAWAY_CATEGORIES = ("Guidance", "Capex & capacity", "Demand & orders", "Margins & costs",
+                            "Balance sheet & funding", "Risks", "Other")
+_CALL_CATEGORY_WORDS = (("guid", "Guidance"), ("outlook", "Guidance"), ("capex", "Capex & capacity"),
+                        ("capacity", "Capex & capacity"), ("demand", "Demand & orders"), ("order", "Demand & orders"),
+                        ("margin", "Margins & costs"), ("cost", "Margins & costs"), ("balance", "Balance sheet & funding"),
+                        ("fund", "Balance sheet & funding"), ("debt", "Balance sheet & funding"), ("risk", "Risks"))
+MAX_CALL_TAKEAWAYS = 8
+
+
+def _call_category(value: Any) -> str:
+    text = " ".join(str(value or "").split())
+    for name in CALL_TAKEAWAY_CATEGORIES:
+        if text.lower() == name.lower():
+            return name
+    low = text.lower()
+    return next((name for word, name in _CALL_CATEGORY_WORDS if word in low), "Other")
+
+
+class CallTakeaway(_Lenient):
+    """One key takeaway of an earnings call or presentation, under a fixed heading, with the filing's own sentence and
+    the memory items it is compared with. `verified` and `issue` are set by code (call_summary.check_ai_takeaways),
+    never taken from the model: only a verified item is shown on the card's face."""
+
+    category: Annotated[str, BeforeValidator(_call_category)] = "Other"
+    text: Annotated[str, BeforeValidator(lambda v: " ".join(str(v or "").split()))]
+    quote: OptStr = None
+    memory_refs: StrList = Field(default_factory=list)
+    versus_prior: OptStr = None   # "raised from 10-12% in the Q1FY27 call": only what the referenced memory says
+    verified: bool = False
+    issue: OptStr = None
+
+    @field_validator("text")
+    @classmethod
+    def _text(cls, value: str) -> str:
+        if len(value) < 8:
+            raise ValueError("takeaway too short")
+        return value[:240]
+
+
+def _call_takeaways(value: Any) -> list:
+    out = []
+    for item in _to_list(value):
+        try:
+            out.append(CallTakeaway.model_validate({**item, "verified": False, "issue": None}
+                                                   if isinstance(item, dict) else item))
+        except Exception:
+            continue
+    return out[:MAX_CALL_TAKEAWAYS]
+
+
 class QuantInput(_Lenient):
     name: str                   # identifier used in the formula, e.g. capacity_mw
     value: Num
@@ -567,6 +617,8 @@ class Card(_Lenient):
     basis: Annotated[str | None, _enum(("CONSOLIDATED", "STANDALONE", "PROFORMA"))] = None
     deal_value: DealValue | None = None
     call_read: CallRead | None = None
+    # earnings calls and presentations only: up to 8 key takeaways by heading, checked in code before the face shows one
+    call_takeaways: Annotated[list[CallTakeaway], BeforeValidator(_call_takeaways)] = Field(default_factory=list)
 
     @field_validator("deal_value", "call_read", mode="before")
     @classmethod

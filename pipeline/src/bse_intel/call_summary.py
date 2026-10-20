@@ -225,6 +225,111 @@ def summarize_calls(dossier: dict) -> list[dict]:
 
 CARD_PER_CATEGORY = 3
 CARD_TOTAL = 8
+MEMORY_KINDS = ("guidance", "recent_timeline", "watchlist", "deals")
+_ISO_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(?:T[\d:.+\-]+)?")
+
+
+def _memory_item(view: dict | None, ref: str) -> dict | None:
+    for kind in MEMORY_KINDS:
+        for item in (view or {}).get(kind, []):
+            if item.get("id") == ref:
+                return item
+    return None
+
+
+def _memory_text(item: dict) -> str:
+    """A memory item as text a takeaway's figures and periods are looked up in: its values, and the quarter each
+    dated part of it (a call, a results line, a deal's stage) speaks for, so "the Q1FY27 call" can be found."""
+    import json
+
+    raw = json.dumps(item, ensure_ascii=False)
+    quarters = {quarter_of(m.group(0), item.get("summary")) for m in _ISO_TIME.finditer(raw)}
+    return f"{_ISO_TIME.sub(' ', raw)} {' '.join(q for q in quarters if q)}"
+
+
+def _figures(text: str) -> list[tuple[float, int, bool]]:
+    """(value, decimals, is a percentage) of each figure a line states; period labels and dates are not figures.
+    A range's first end is a percentage when its second is ("10-12%")."""
+    from . import gate
+
+    flat = gate._PERIOD_LABEL.sub(" ", gate._WRITTEN_DATE.sub(" ", gate._flat(text or "")))
+    out = []
+    for m in gate._CLAIM_NUMBER.finditer(flat):
+        raw = m.group(0).replace(",", "").rstrip(".")
+        try:
+            value = float(raw)
+        except ValueError:
+            continue
+        after = flat[m.end():m.end() + 12]
+        pct = bool(re.match(r"\s*%|\s*(?:-|–|to)\s*\d[\d.]*\s*%", after))
+        out.append((value, len(raw.partition(".")[2]), pct))
+    return out
+
+
+def _stated_in(figure: tuple[float, int, bool], sources: list[str]) -> bool:
+    """A figure is in a source when the source prints it, or the card's figure is the source's rounded to its digits."""
+    value, decimals, _ = figure
+    tolerance = 0.5 * 10 ** -decimals + 1e-9
+    return any(abs(v - value) <= tolerance for s in sources for v, _, _ in _figures(s))
+
+
+def _periods(text: str) -> list[str]:
+    from . import gate
+
+    return [re.sub(r"[\s']", "", m.group(0)).upper() for m in gate._PERIOD_LABEL.finditer(gate._flat(text or ""))]
+
+
+def check_ai_takeaways(card, text: str, reading: str = "", view: dict | None = None, unit: int | None = None) -> list[str]:
+    """Each of the model's call takeaways checked by code; `verified` set on the ones the card's face may show.
+
+    One is verified only when its quote is in the filing (the filing's own words, or with small differences); every
+    figure its text states is in that sentence or in a memory item it cites (a crore amount at the filing's unit);
+    and its versus_prior, when given, cites memory and names only figures and periods that memory item holds. A
+    takeaway that fails is kept unverified, for the AI reading, and never holds the card. Returns the notes."""
+    from . import gate
+
+    notes: list[str] = []
+    for item in getattr(card, "call_takeaways", None) or []:
+        item.verified, item.issue = False, None
+        refs = [r for r in item.memory_refs if _memory_item(view, r)]
+        item.memory_refs = refs
+        memory = [_memory_text(_memory_item(view, r)) for r in refs]
+        issue = None
+        quote = item.quote
+        if boilerplate(item.text):
+            issue = "greeting or call logistics, not a takeaway"
+        elif not quote:
+            issue = "no quote"
+        elif not gate.quote_found(quote, text, reading):
+            quote = gate.quote_near(quote, text, reading)
+            if quote is None:
+                issue = "quote not in the filing"
+        if issue is None:
+            for figure in _figures(item.text):
+                if _stated_in(figure, [quote, *memory]):
+                    continue
+                # a crore amount read from a statement in lakh or million: the quote's figure at the filing's unit
+                shown = f"{figure[0]:.{figure[1]}f}"
+                if not figure[2] and figure[0] > 31 and not any(m.replace(",", "") == shown
+                                             for m in gate.numbers_in_quote(item.text, quote, gate.quote_unit(quote, text, unit))):
+                    continue
+                issue = f"{shown}{'%' if figure[2] else ''} is not in its quote or the memory it cites"
+                break
+        if issue is None and item.versus_prior:
+            if not memory:
+                issue = "compares with an earlier figure but cites no memory"
+            else:
+                unfound = [f for f in _figures(item.versus_prior) if not _stated_in(f, memory)]
+                periods = {p for m in memory for p in _periods(m)}
+                missing = [p for p in _periods(item.versus_prior) if p not in periods]
+                if unfound or missing:
+                    issue = ("the earlier figure or period is not in the memory it cites: "
+                             + ", ".join([*(f"{v:g}" for v, _, _ in unfound), *missing]))
+        item.issue = issue
+        item.verified = issue is None
+        if issue:
+            notes.append(f'call takeaway "{item.text[:50]}": {issue}')
+    return notes
 
 
 def card_takeaways(dossier: dict, news_id: str | None, filed_at: str) -> list[dict] | None:

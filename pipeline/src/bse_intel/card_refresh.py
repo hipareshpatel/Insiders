@@ -29,7 +29,7 @@ from .signals import SIGNALS_OFF, priced_for, scale_parts, volume_strip
 
 log = logging.getLogger(__name__)
 
-BLOCKS = ("results", "volume_strip", "call_takeaways", "scale", "rating_change", "case_stage", "guidance_recall", "memory_context",
+BLOCKS = ("results", "volume_strip", "call_memory", "scale", "rating_change", "case_stage", "guidance_recall", "memory_context",
           "fundamentals")
 
 
@@ -55,7 +55,7 @@ def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, foot
                                      like=None if printed else card.get("results")) if event_type == "RESULTS"
                     else call_results_snapshot(current, filing.filed_at, footer) if event_type == "CONCALL_PRESENTATION" else None),
         "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
-        "call_takeaways": (card_takeaways(current, filing.news_id, filing.filed_at)
+        "call_memory": (card_takeaways(current, filing.news_id, filing.filed_at)
                            if event_type == "CONCALL_PRESENTATION" else None),
         "scale": scale_parts(before, out, priced, filing.filed_at),
         "rating_change": rating_change(before, current, filing.news_id, text) if event_type == "DEBT_RATINGS" else None,

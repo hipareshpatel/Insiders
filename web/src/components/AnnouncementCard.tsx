@@ -20,6 +20,7 @@ import {
   executionFact, near, PERIOD_WORDS, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
   verifiedFact,
 } from "../lib/cardText";
+import { callTakeaways, type CallTakeawaysView } from "../lib/callTakeaways";
 import { allZero, lowerIsBetter, NO_TURN, TURN, turnOf } from "../lib/results";
 
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
@@ -565,6 +566,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
     || (s.type === "RATING_LIQUIDITY" && !!rating && /outlook/i.test(s.text)) || repeats(s.text, shownText));
   const faceText = [shownText, ...box.insights.map((i) => i.text), box.signal?.text ?? ""].join(" ");
   const decision = decisionLines(row, card, table, faceText);
+  const calls = event === "CONCALL_PRESENTATION" ? callTakeaways(card.call_takeaways, card.call_memory) : null;
   // the sector's KPI chips belong to results; on an order or a rating they said nothing about the news
   const footer = family !== "res" ? []
     : footerMetrics(card).filter((m) => !showsFigure(faceText, m.value) && !(table && /margin/i.test(m.label)));
@@ -706,10 +708,10 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
           </section>
         )}
 
-        {event === "CONCALL_PRESENTATION" && card.call_takeaways?.length ? <CallTakeaways groups={card.call_takeaways} /> : null}
+        {calls?.source && <CallTakeaways view={calls} />}
 
         {!exporting && <AiReading catalyst={card.core_catalyst && !repeats(plain(card.core_catalyst), headline) ? plain(card.core_catalyst) : null}
-          facts={unverified} insights={box.insights.map((i) => i.text)} takeaway={box.fallback ?? null} />}
+          facts={[...unverified, ...(calls?.unverified ?? [])]} insights={box.insights.map((i) => i.text)} takeaway={box.fallback ?? null} />}
 
         {footer.length > 0 && (
           <div className="mt-3 flex flex-wrap items-baseline gap-2 text-[12px] font-semibold text-ink-3">
@@ -1084,21 +1086,21 @@ const NO_NAME = /^\s*(?:none|nil|null|n[./]?\s?a\.?|not\s+applicable|-+)?\s*$/i;
 // Former names stay in memory for search and on the company page, off the card header (owner, 2026-10-20).
 export const formerOwnName = (n: string) => !NO_NAME.test(n) && !OTHER_RENAME.test(n);
 
-/** Calls and presentations: the key takeaways company memory took from this filing, under small headings. Built by
- *  code from memory's checked merge, so it is the filing's content, kept apart from the AI reading (owner O13/O4). */
-function CallTakeaways({ groups }: { groups: NonNullable<CardBody["call_takeaways"]> }) {
-  const shown = groups.filter((g) => g.points.length);
-  if (!shown.length) return null;
+/** Calls and presentations: the key takeaways under small headings. The model's takeaways that code verified against
+ *  the filing and the memory they cite, else the points memory took from this filing (no AI); either way checked
+ *  content, kept apart from the AI reading (owner, 2026-10-20). */
+function CallTakeaways({ view }: { view: CallTakeawaysView }) {
   return (
-    <BlockShell title="Key takeaways from the call" right={<span className="ml-auto text-[10px] font-semibold normal-case tracking-normal text-ink-3">from company memory</span>}>
-      {shown.map((g) => (
+    <BlockShell title="Key takeaways from the call" right={<span className="ml-auto text-[10px] font-semibold normal-case tracking-normal text-ink-3">
+      {view.source === "ai" ? "checked against the filing and memory" : "from company memory"}</span>}>
+      {view.groups.map((g) => (
         <div key={g.name}>
           <h5 className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-ink-3">{g.name}</h5>
           <ul className="mt-1 space-y-1.5">
             {g.points.map((p, i) => (
               <Point key={i}>
                 <RichText text={p.text} />
-                {p.reiterated && <span className="ml-1.5 text-[10.5px] font-medium text-ink-3">reiterated</span>}
+                {p.note && <span className="ml-1.5 text-[11px] font-medium text-ink-3">· {p.note}</span>}
               </Point>
             ))}
           </ul>

@@ -1354,6 +1354,20 @@ def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], bal
     if deal is not None and deal.kind == "CAPEX" and deal.counterparty and _HOLDERS.search(deal.counterparty):
         notes.append(f"capex counterparty dropped: {deal.counterparty!r} are holders, not a party to the capex")
         deal.counterparty = None
+    # a fundraise's or merger's terms are figures on the card's face: each kept only when the filing states it
+    if deal is not None and text and any(getattr(deal, f, None) is not None for f in ("issue_price", "discount_pct", "new_shares", "swap_ratio")):
+        from .grounding import SourceIndex
+
+        index = SourceIndex(text[:60000])
+        for field, decimals in (("issue_price", 2), ("discount_pct", 2), ("new_shares", 0)):
+            value = getattr(deal, field, None)
+            if value is not None and not index.stated(float(value), decimals, (1,)):
+                notes.append(f"deal {field} {value:g} dropped: not stated in the filing")
+                setattr(deal, field, None)
+        ratio = deal.swap_ratio
+        if ratio and not all(index.stated(float(n), 2, (1,)) for n in re.findall(r"\d+(?:\.\d+)?", ratio)):
+            notes.append(f"deal swap ratio {ratio!r} dropped: its numbers are not in the filing")
+            deal.swap_ratio = None
     # a target or seller is a name on the card's face: kept only when the filing names it (a model's guess at who
     # sells is worse than none)
     for field in ("target", "seller"):

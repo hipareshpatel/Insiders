@@ -425,6 +425,12 @@ class DealValue(_Lenient):
     # read "Target: REC Power", the seller of JKJTL, design audit 2026-10-20)
     target: OptStr = None
     seller: OptStr = None
+    # a fundraise's or a merger's terms, as stated (design audit fix 9): ₹ per share, the discount to the floor or market
+    # price in %, the number of new shares, and a swap ratio as written ("3 shares for every 2")
+    issue_price: Num = None
+    discount_pct: Num = None
+    new_shares: Num = None
+    swap_ratio: OptStr = None
     stage: Annotated[str, _enum(DEAL_STAGES, {"LETTER_OF_INTENT": "LOI", "LETTER_OF_ACCEPTANCE": "LOA",
                                                 "LETTER_OF_AWARD": "LOA", "PURCHASE_ORDER": "WORK_ORDER", "PO": "WORK_ORDER",
                                                 "AGREEMENT": "CONTRACT", "MEMORANDUM_OF_UNDERSTANDING": "MOU",

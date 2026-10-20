@@ -117,7 +117,6 @@ export function TodayView() {
       </dl>
 
       <SignalsStrip rows={signals.data?.cards ?? []} />
-      <Stories rows={cards} />
 
       <div className="sticky top-14 z-10 -mx-4 mt-2 bg-bg px-4 pb-2 pt-3 sm:-mx-6 sm:px-6">
         <div role="tablist" className="card-soft no-scrollbar inline-flex max-w-full gap-0.5 overflow-x-auto rounded-2xl p-1">
@@ -210,32 +209,6 @@ function SignalsStrip({ rows }: { rows: CardRow[] }) {
           );
         })}
       </div>
-    </section>
-  );
-}
-
-function Stories({ rows }: { rows: CardRow[] }) {
-  const seen = new Set<string>();
-  const items = rows.filter((r) => !seen.has(r.scrip_code) && seen.add(r.scrip_code)).slice(0, 14);
-  if (!items.length) return null;
-  return (
-    <section className="mt-4" aria-label="Companies with a card in this view">
-    <p className="text-[12px] font-semibold text-ink-3">
-      {items.length} {items.length === 1 ? "company" : "companies"} with a card here · tap one to jump to its card · red-violet ring: high impact, amber: the rest
-    </p>
-    <div className="no-scrollbar mt-2 flex gap-3.5 overflow-x-auto pb-1">
-      {items.map((r) => (
-        <button key={r.scrip_code} type="button" title={`${r.company_name} · ${r.impact_level === "HIGH" ? "high impact" : (r.impact_level ?? "").toLowerCase()} · jump to its card`}
-          onClick={() => scrollToCard(r.news_id, () => undefined)}
-          className="group flex w-[72px] shrink-0 flex-col items-center gap-1.5">
-          <span className="rounded-full p-[3px] transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105"
-            style={{ background: r.impact_level === "HIGH" ? "conic-gradient(var(--impact-high), var(--impact-moderate), var(--accent-2), var(--impact-high))" : "conic-gradient(var(--impact-moderate), #ffd27a, var(--impact-moderate))" }}>
-            <span className="block rounded-full border-2 border-surface"><Avatar name={r.company_name} symbol={r.symbol} size={54} className="!rounded-full" /></span>
-          </span>
-          <span className="w-full truncate text-center text-[11.5px] font-bold text-ink-2">{(r.symbol ?? r.company_name).split(" ")[0]}</span>
-        </button>
-      ))}
-    </div>
     </section>
   );
 }

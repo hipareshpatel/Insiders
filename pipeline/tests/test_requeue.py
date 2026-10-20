@@ -69,3 +69,23 @@ def test_requeue_by_id_reruns_named_filings_whatever_their_status(settings):
     assert report["requeued"] == 2
     got = {r["news_id"]: (r["status"], r["attempts"]) for r in rows(sink, "select news_id, status, attempts from filings")}
     assert got["f2"] == ("PENDING", 0) and got["f1"] == ("PENDING", 0) and got["f0"] == ("FAILED", 3)
+
+
+def test_a_scheduled_job_records_its_last_run():
+    """Owner, 2026-10-20: market-data had never run on GitHub and nothing showed it; each scheduled command records
+    when it ended and whether it succeeded (kv job:<command>), and other commands record nothing."""
+    import json
+
+    from bse_intel.cli import _record_job
+
+    written = {}
+
+    class Sink:
+        def kv_set(self, key, value, updated_at):
+            written[key] = json.loads(value)
+
+    _record_job(Sink(), "market-data", 0)
+    _record_job(Sink(), "refresh-summaries", 1)
+    _record_job(Sink(), "analyze-pdf", 0)
+    assert written["job:market-data"]["ok"] is True and written["job:refresh-summaries"]["ok"] is False
+    assert "job:analyze-pdf" not in written

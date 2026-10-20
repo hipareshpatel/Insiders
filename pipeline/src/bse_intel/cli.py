@@ -722,10 +722,30 @@ def main(argv: list[str] | None = None) -> int:
     from .bse import SourceBlockedError
 
     try:
-        return args.func(args, settings, sink)
+        code = args.func(args, settings, sink)
     except (AIError, SourceBlockedError) as exc:
         print(f"error: {exc}", file=sys.stderr)
-        return 2
+        code = 2
+    _record_job(sink, args.command, code)
+    return code
+
+
+# The scheduled jobs (workflows), each recorded when it ends so the System page shows a job that never ran or stopped
+# running (owner, 2026-10-20: market-data had never run on GitHub and nobody saw it)
+SCHEDULED = {"market-data", "post-mortem", "sync-companies", "refresh-summaries", "governance-sync", "shareholding-sync",
+             "pledge-sync", "dgtr-sync", "annual-xbrl-catchup", "backup", "refresh-card-blocks", "seed-memory"}
+
+
+def _record_job(sink, command: str, code: int) -> None:
+    if command not in SCHEDULED:
+        return
+    from .timeutil import now_iso
+
+    try:
+        now = now_iso()
+        sink.kv_set(f"job:{command}", json.dumps({"at": now, "ok": code == 0}), now)
+    except Exception as exc:   # the job's own work is done; a missing record only shows it as not run
+        print(f"job record not written: {exc}", file=sys.stderr)
 
 
 if __name__ == "__main__":

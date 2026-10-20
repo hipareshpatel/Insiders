@@ -1,0 +1,60 @@
+# The daily no-AI jobs that keep memory and the site's summaries current, on a fixed slot (owner, 2026-10-20: jobs that
+# only ran when a pipeline run had time left, or never, need a proper schedule). Each also runs inside `run` when a
+# live run has time; here they run every day whatever the queue.
+# 00:40 UTC = 06:10 IST: after NSE's and Yahoo's overnight updates, after D1's daily write allowance resets (05:30 IST),
+# before the market opens. Each command records its last run (kv job:<command>), shown on the System page.
+name: Nightly
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "40 0 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bse-nightly
+  cancel-in-progress: false
+
+jobs:
+  nightly:
+    if: github.event_name != 'schedule' || vars.PIPELINE_SCHEDULE == 'on'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 55
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      # one job's failure never stops the next (each step runs whatever came before)
+      - name: Quarterly governance reports into memory
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel governance-sync --time-budget 600'
+      - name: Shareholding patterns into memory
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel shareholding-sync --time-budget 600'
+      - name: Promoter pledge events into memory
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel pledge-sync --time-budget 300'
+      - name: DGTR trade-remedy cases into memory
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel dgtr-sync --time-budget 600'
+      - name: Annual reports re-read once their XBRL is listed
+        if: always()
+        run: timeout 12m "$RUNNER_TEMP/venv/bin/python" -m bse_intel annual-xbrl-catchup --max-companies 150 || [ $? -eq 124 ]
+      # last: summaries read the memory the steps above wrote (overdue promises move with the date, not only with filings)
+      - name: Company summaries (overdue promises, radar, credibility)
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-summaries'

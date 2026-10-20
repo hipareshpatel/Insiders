@@ -77,6 +77,7 @@ export function SystemView() {
 
       <OwnerMode />
 
+      <ScheduledJobs jobs={s.jobs ?? {}} />
       <FailedFilings rows={s.failed_recent ?? []} />
       <ReviewQueue />
 
@@ -230,6 +231,52 @@ function RunRow({ run }: { run: PipelineRun }) {
       <td className="num whitespace-nowrap px-4 py-2 text-ink-2">{duration !== null ? `${Math.floor(duration / 60)}m ${duration % 60}s` : "—"}</td>
       <td className="max-w-xs truncate px-4 py-2 text-xs text-ink-2" title={run.error ?? String(stats.stopped_reason ?? "")}>{run.error ?? String(stats.stopped_reason ?? "")}</td>
     </tr>
+  );
+}
+
+/** The schedule (workflows on GitHub) and each job's last run, so a job that never ran shows (owner, 2026-10-20). */
+const SCHEDULE: { command: string; what: string; when: string; days: number }[] = [
+  { command: "market-data", what: "Prices, charts, technicals", when: "Tue-Sat 06:05 IST", days: 4 },
+  { command: "post-mortem", what: "Price reaction after cards", when: "after market data", days: 4 },
+  { command: "governance-sync", what: "Governance reports into memory", when: "daily 06:10 IST", days: 2 },
+  { command: "shareholding-sync", what: "Shareholding into memory", when: "daily 06:10 IST", days: 2 },
+  { command: "pledge-sync", what: "Promoter pledges into memory", when: "daily 06:10 IST", days: 2 },
+  { command: "dgtr-sync", what: "Trade-remedy cases into memory", when: "daily 06:10 IST", days: 2 },
+  { command: "annual-xbrl-catchup", what: "Annual reports re-read", when: "daily 06:10 IST", days: 2 },
+  { command: "refresh-summaries", what: "Company summaries", when: "daily 06:10 IST", days: 2 },
+  { command: "sync-companies", what: "Company master from NSE", when: "Mon-Fri 07:15 IST", days: 4 },
+  { command: "backup", what: "Memory backup", when: "Mondays 02:00 IST", days: 8 },
+];
+
+function ScheduledJobs({ jobs }: { jobs: Record<string, { at: string; ok: boolean }> }) {
+  const now = Date.now();
+  return (
+    <section className="rounded-xl border border-line bg-surface p-4">
+      <h2 className="text-[14px] font-semibold text-ink">Scheduled jobs</h2>
+      <p className="mt-0.5 text-xs text-ink-3">No AI. The pipeline itself runs every 15 minutes (runs table below).</p>
+      <div className="mt-2 overflow-x-auto">
+        <table className="w-full text-[12.5px]">
+          <thead className="text-left text-ink-3">
+            <tr><th className="py-1 pr-3 font-medium">Job</th><th className="py-1 pr-3 font-medium">When</th><th className="py-1 pr-3 font-medium">Last run</th><th className="py-1 font-medium">Status</th></tr>
+          </thead>
+          <tbody>
+            {SCHEDULE.map(({ command, what, when, days }) => {
+              const last = jobs[command];
+              const late = !last || now - new Date(last.at).getTime() > days * 86400_000;
+              const status = !last ? "Never run" : !last.ok ? "Failed" : late ? "Overdue" : "OK";
+              return (
+                <tr key={command} className="border-t border-line">
+                  <td className="py-1.5 pr-3 text-ink">{what}<span className="block text-[11px] text-ink-3">{command}</span></td>
+                  <td className="py-1.5 pr-3 text-ink-2">{when}</td>
+                  <td className="num py-1.5 pr-3 text-ink-2">{last ? istDateTime(last.at) : "—"}</td>
+                  <td className={cn("py-1.5 font-semibold", status === "OK" ? "text-pos" : "text-warn")}>{status}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }
 

@@ -169,7 +169,7 @@ blocks and the computed lines; "AI reading · not verified against the filing (n
 year ("06 Aug 2026, 20:43"). Report: the deployed version id and what you saw.
 Files you may change: none.
 
-## T19 · P1 · cloud (moved from the laptop, 20 Oct 08:00 IST: `maintenance.yml` export-held) · IN PROGRESS — export the held cards for the cloud's live review (owner, 2026-10-20)
+## T19 · P1 · cloud (moved from the laptop, 20 Oct 08:00 IST: `maintenance.yml` export-held) · DONE 20 Oct 09:45 IST (223 held cards in `docs/audit/live/held-2026-10-20.json`) — export the held cards for the cloud's live review (owner, 2026-10-20)
 
 The owner chose the laptop's export over giving the cloud the owner token. With the owner token from the keys file:
 1. Page `https://insiders.reply-bd3.workers.dev/api/owner/feed?held=only&limit=50` (header `Authorization: Bearer
@@ -305,7 +305,11 @@ Workers Scripts edit is not exercised by a read; the first `deploy-web.yml` run 
 The laptop cannot read GitHub's copy back, so it rests on the owner having pasted the same value in both places.
 Earlier on this task: the GitHub secrets set from the keys file, and `bse-index` already deleted (see the git history of this file).
 
-## T13 · P1 · laptop · OPEN — re-seed memory on the basis fix, then re-check Heritage and two banks
+## T13 · P1 · laptop · OPEN (step 1 moved to the cloud, 20 Oct 11:15 IST) — re-seed memory on the basis fix, then re-check Heritage and two banks
+
+Cloud, 20 Oct: step 1 runs from GitHub now (`maintenance.yml` seed-memory, `--universe --results-only`, 45 min a
+dispatch, resumable; the first with restart). The cloud dispatches it after market hours, beside the live runs, and
+re-runs Heritage's three cards with `requeue-failed --ids`. Steps 3-5 stay yours (checks on the live site, no AI).
 
 The cloud's commit after `83ea204` fixes T2 and T5's classes (cloud notes under each). Memory seeded before it has no basis
 on its XBRL figures, and the standalone-only quarters are still in it. After pulling, and not while round 7 runs:

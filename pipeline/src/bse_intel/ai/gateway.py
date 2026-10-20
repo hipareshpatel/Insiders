@@ -272,6 +272,18 @@ class AIGateway:
 
     # ------------------------------------------------------------------ public API
 
+    def set_route(self, route: str, targets: list[Target]) -> None:
+        """Point a route at other targets for this process (call_seed.use_seed_route). A weighted route's rotation is
+        rebuilt with it: the seed replaced the card routes' lists and kept their rotations, so pass2_long still rotated
+        over Gemini and DeepSeek and never reached the seed's free models (seed-calls run 3, 2026-10-20: 22 failed)."""
+        self.routes[route] = list(targets)
+        if route in self._rotations:
+            primary = [t for t in targets if not t.spare]
+            if primary:
+                self._rotations[route] = _WeightedRotation(primary)
+            else:
+                del self._rotations[route]
+
     def has_route(self, route: str) -> bool:
         return any(t.api_key for t in self.routes.get(route, []))
 

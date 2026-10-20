@@ -33,7 +33,7 @@ export function MemoryDrawer() {
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/30 data-[state=open]:animate-in" />
         <Dialog.Content
           className={cn("fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-line bg-bg shadow-2xl focus:outline-none",
-            tab === "verify" ? "max-w-[1200px]" : "max-w-[720px]")}
+            tab === "verify" ? "max-w-[1240px]" : "max-w-[720px]")}
           aria-describedby={undefined}>
           {scrip && <DrawerBody scrip={scrip} verify={verify} tab={tab} onTab={(t) => setParams({ mtab: t })} onClose={close} />}
         </Dialog.Content>

@@ -42,7 +42,7 @@ export function TopSignalsView() {
   const b = brief.data;
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 sm:px-6">
+    <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
       <header className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-[30px] leading-tight text-ink">Top signals</h1>

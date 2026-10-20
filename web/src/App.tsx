@@ -54,13 +54,13 @@ export function App() {
           <Route path="/calendar" component={CalendarView} />
           <Route path="/system" component={SystemView} />
           <Route>
-            <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6"><Empty title="Page not found" /></div>
+            <div className="mx-auto max-w-[1240px] px-4 py-10 sm:px-6"><Empty title="Page not found" /></div>
           </Route>
         </Switch>
         </ErrorBoundary>
       </main>
       <footer className="border-t border-line">
-        <p className="mx-auto max-w-[1200px] px-4 py-5 text-xs leading-relaxed text-ink-3 sm:px-6">
+        <p className="mx-auto max-w-[1240px] px-4 py-5 text-xs leading-relaxed text-ink-3 sm:px-6">
           Built from NSE corporate filings and AI analysis. Information only, not investment advice; always read the original filing before acting.
         </p>
       </footer>

@@ -67,7 +67,7 @@ export function ResultsView() {
   const visible = rows.filter((r) => (!quarter || r.card.results?.period === quarter) && (!tone || (r.card.tone ?? "NEUTRAL") === tone));
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 sm:px-6">
+    <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
       <header className="mb-4">
         <h1 className="font-display text-[30px] leading-tight text-ink">Results</h1>
         <p className="mt-1 text-sm text-ink-2">Quarterly results with year-on-year changes, read against each company's memory. Click a row for the full card.</p>
@@ -87,7 +87,7 @@ export function ResultsView() {
         </Select>
         <Select aria-label="Market cap" value={size ?? ""} onChange={(e) => setParams({ size: e.target.value || null })}>
           <option value="">All sizes</option>
-          {SIZES.map((s) => <option key={s} value={s}>{s.charAt(0) + s.slice(1).toLowerCase()}cap</option>)}
+          {SIZES.map((s) => <option key={s} value={s}>{s.charAt(0) + s.slice(1).toLowerCase()} cap</option>)}
         </Select>
         <label className="relative min-w-0 flex-1 basis-56">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-3" />

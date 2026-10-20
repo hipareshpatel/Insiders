@@ -56,7 +56,7 @@ export function CalendarView() {
   const label = first.toLocaleDateString("en-IN", { month: "long", year: "numeric", timeZone: "UTC" });
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 sm:px-6">
+    <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
       <header className="mb-4">
         <h1 className="font-display text-[30px] leading-tight text-ink">Catalyst calendar</h1>
         <p className="mt-1 text-sm text-ink-2">Record dates, meetings, rights windows, execution milestones, and the dates promises fall due.</p>

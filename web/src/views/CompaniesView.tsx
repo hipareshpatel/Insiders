@@ -34,7 +34,7 @@ const columns = [
   col.accessor("sector", { header: "Sector", cell: (i) => <span className="text-ink-2">{i.getValue() ? SECTORS[i.getValue()!] ?? titleCase(i.getValue()!) : "—"}</span> }),
   col.accessor("market_cap_cr", {
     header: "Market cap",
-    cell: (i) => <span className="num text-ink">{cr(i.getValue())}{i.row.original.size_category ? <span className="block text-[11px] text-ink-3">{titleCase(i.row.original.size_category)}cap</span> : null}</span>,
+    cell: (i) => <span className="num text-ink">{cr(i.getValue())}{i.row.original.size_category ? <span className="block text-[11px] text-ink-3">{titleCase(i.row.original.size_category)} cap</span> : null}</span>,
   }),
   col.accessor("ret_1w", { header: "1W", cell: (i) => <span className={cn("num", signClass(i.getValue()))}>{pct(i.getValue())}</span> }),
   col.accessor("ret_1m", { header: "1M", cell: (i) => <span className={cn("num", signClass(i.getValue()))}>{pct(i.getValue())}</span> }),
@@ -152,7 +152,7 @@ export function CompaniesView() {
   const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 sm:px-6">
+    <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
       <header className="mb-4">
         <h1 className="font-display text-[30px] leading-tight text-ink">Companies</h1>
         <p className="mt-1 text-sm text-ink-2">Every company with a living memory: its story, promises and filings since {istDate(HISTORY_START)}.</p>
@@ -182,7 +182,7 @@ export function CompaniesView() {
         </Select>
         <Select aria-label="Market cap" value={size ?? ""} onChange={(e) => setParams({ size: e.target.value || null })}>
           <option value="">All sizes</option>
-          {SIZES.map((s) => <option key={s} value={s}>{titleCase(s)}cap</option>)}
+          {SIZES.map((s) => <option key={s} value={s}>{titleCase(s)} cap</option>)}
         </Select>
         <Select aria-label="Coverage" value={all ? "1" : ""} onChange={(e) => setParams({ all: e.target.value || null })}>
           <option value="">With analysed filings</option>
@@ -207,7 +207,7 @@ export function CompaniesView() {
             <table className="w-full min-w-[820px] text-[13.5px]">
               <thead className="eyebrow border-b border-line text-left text-ink-3">
                 {table.getHeaderGroups().map((hg) => (
-                  <tr key={hg.id}>{hg.headers.map((h) => <th key={h.id} className="px-4 py-3 font-semibold">{flexRender(h.column.columnDef.header, h.getContext())}</th>)}</tr>
+                  <tr key={hg.id}>{hg.headers.map((h) => <th key={h.id} className="whitespace-nowrap px-4 py-3 font-semibold">{flexRender(h.column.columnDef.header, h.getContext())}</th>)}</tr>
                 ))}
               </thead>
               <tbody>
@@ -216,7 +216,7 @@ export function CompaniesView() {
                     onClick={() => navigate(`/company/${row.original.scrip_code}`)}
                     onKeyDown={(e) => e.key === "Enter" && navigate(`/company/${row.original.scrip_code}`)}
                     className="cursor-pointer border-b border-line last:border-0 hover:bg-surface-2/60 focus:bg-surface-2/60 focus:outline-none">
-                    {row.getVisibleCells().map((cell) => <td key={cell.id} className="max-w-[18rem] px-4 py-2.5">{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>)}
+                    {row.getVisibleCells().map((cell, i) => <td key={cell.id} className={cn("max-w-[18rem] px-4 py-2.5", i > 0 && "whitespace-nowrap")}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>)}
                   </tr>
                 ))}
               </tbody>

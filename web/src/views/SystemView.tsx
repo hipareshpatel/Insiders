@@ -28,7 +28,7 @@ export function SystemView() {
   const doneDays = Math.min(totalDays, Math.max(0, Math.round((through - start) / 86400_000) + 1));
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-4 px-4 py-6 sm:px-6">
+    <div className="mx-auto w-full max-w-[1240px] space-y-4 px-4 py-6 sm:px-6">
       <header>
         <h1 className="font-display text-[30px] leading-tight text-ink">System</h1>
         <p className="mt-1 text-sm text-ink-2">Throughput, backfill progress and free-tier quota health. Refreshes every minute.</p>

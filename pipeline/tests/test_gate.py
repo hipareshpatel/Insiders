@@ -609,3 +609,49 @@ def test_a_capex_has_no_shareholders_on_the_other_side(settings):
     notes = apply_deal_guards(out, filing, [], [], "The Board of Directors approved a capex of Rs. 250 crore")
     assert out.card.deal_value.counterparty is None and any("holders" in n for n in notes)
     assert out.card.deal_value.stage == "BOARD_APPROVED"
+
+
+def test_an_acquisition_names_target_and_seller_only_as_the_filing_does(settings):
+    """Ceigall's card read "Target: REC Power Development and Consultancy", the seller of JKJTL (design audit,
+    2026-10-20): the deal now carries target and seller apart, each kept only when the filing names it."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import apply_deal_guards
+
+    text = ("Ceigall India Limited has entered into a share purchase agreement with REC Power Development and "
+            "Consultancy Limited to acquire 100% of JKJTL Transmission Limited (JKJTL).")
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "M_AND_A", "timeline_entry": "SPA",
+        "card": {"impact_level": "MODERATE", "headline": "Ceigall to buy JKJTL", "what_happened": ["x"],
+                 "deal_value": {"kind": "ACQUISITION", "amount_cr": None, "stage": "CONTRACT",
+                                "target": "JKJTL Transmission Ltd", "seller": "REC Power Development and Consultancy Ltd",
+                                "counterparty": "REC Power Development and Consultancy Ltd"}}})
+    filing = _filing("n-spa", "Acquisition", now_ist(), "Acquisition")
+    assert not [n for n in apply_deal_guards(out, filing, [], [], text) if "target" in n or "seller" in n]
+    deal = out.card.deal_value
+    assert deal.target == "JKJTL Transmission Ltd" and deal.seller.startswith("REC Power")
+    out.card.deal_value.seller = "Power Finance Corporation"   # a guess the filing does not carry
+    notes = apply_deal_guards(out, filing, [], [], text)
+    assert out.card.deal_value.seller is None and any("seller dropped" in n for n in notes)
+
+
+def test_a_fundraise_keeps_only_the_terms_the_filing_states(settings):
+    """Design audit fix 9 (2026-10-20): issue price, discount, new shares and swap ratio go on the deal block, each
+    kept only when the filing states it (OnEMI's in-principle approval: 2,64,93,882 shares at ₹314.11)."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import apply_deal_guards
+
+    text = ("NSE and BSE have granted in-principle approval to issue up to 2,64,93,882 equity shares at a price of "
+            "Rs. 314.11 per share on a preferential basis. The share exchange ratio is 3 equity shares for every 2 held.")
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "FUNDRAISE", "timeline_entry": "In-principle approval",
+        "card": {"impact_level": "MODERATE", "headline": "OnEMI gets in-principle approval", "what_happened": ["x"],
+                 "deal_value": {"kind": "FUNDRAISE", "amount_cr": 832.2, "stage": "PROPOSED", "issue_price": 314.11,
+                                "new_shares": 26493882, "discount_pct": 7.5, "swap_ratio": "3 for every 2"}}})
+    filing = _filing("n-pref", "Preferential issue", now_ist(), "Preferential Issue")
+    notes = apply_deal_guards(out, filing, [], [], text)
+    deal = out.card.deal_value
+    assert deal.issue_price == 314.11 and deal.new_shares == 26493882 and deal.swap_ratio == "3 for every 2"
+    assert deal.discount_pct is None and any("discount_pct" in n for n in notes), "7.5% is not in the filing"
+    out.card.deal_value.swap_ratio = "5 for every 4"
+    apply_deal_guards(out, filing, [], [], text)
+    assert out.card.deal_value.swap_ratio is None

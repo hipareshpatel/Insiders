@@ -36,7 +36,7 @@ from .ai.gateway import AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, latest_fundamentals, memory_ids, merge, own_former_name,
-                      new_dossier, reported_by, results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
+                      new_dossier, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import CACHE_VERSION, FIGURE_PAGE_AMOUNTS, Document, amounts, cache_needs_ocr
 from .ocr import available as local_ocr_available
 from .ocr import page_reader, recognise
@@ -1354,9 +1354,44 @@ def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], bal
     if deal is not None and deal.kind == "CAPEX" and deal.counterparty and _HOLDERS.search(deal.counterparty):
         notes.append(f"capex counterparty dropped: {deal.counterparty!r} are holders, not a party to the capex")
         deal.counterparty = None
+    # a fundraise's or merger's terms are figures on the card's face: each kept only when the filing states it
+    if deal is not None and text and any(getattr(deal, f, None) is not None for f in ("issue_price", "discount_pct", "new_shares", "swap_ratio")):
+        from .grounding import SourceIndex
+
+        index = SourceIndex(text[:60000])
+        for field, decimals in (("issue_price", 2), ("discount_pct", 2), ("new_shares", 0)):
+            value = getattr(deal, field, None)
+            if value is not None and not index.stated(float(value), decimals, (1,)):
+                notes.append(f"deal {field} {value:g} dropped: not stated in the filing")
+                setattr(deal, field, None)
+        ratio = deal.swap_ratio
+        if ratio and not all(index.stated(float(n), 2, (1,)) for n in re.findall(r"\d+(?:\.\d+)?", ratio)):
+            notes.append(f"deal swap ratio {ratio!r} dropped: its numbers are not in the filing")
+            deal.swap_ratio = None
+    # a target or seller is a name on the card's face: kept only when the filing names it (a model's guess at who
+    # sells is worse than none)
+    for field in ("target", "seller"):
+        named = getattr(deal, field, None) if deal is not None else None
+        if named and text and not _named_in(named, text):
+            notes.append(f"deal {field} dropped: {named!r} is not named in the filing")
+            setattr(deal, field, None)
     if notes:
         log.info("deal guards for %s: %s", filing.news_id, notes)
     return notes
+
+
+_NAME_WORDS = re.compile(r"[A-Za-z0-9&]{3,}")
+_NAME_FILLER = {"the", "and", "limited", "ltd", "private", "pvt", "company", "india", "its", "from", "with"}
+
+
+def _named_in(name: str, text: str) -> bool:
+    """Whether the filing names this party: every distinctive word of the name is in the text (case and
+    punctuation aside), so "JKJTL" or "REC Power Development and Consultancy Limited" passes and an invented party does not."""
+    words = [w.lower() for w in _NAME_WORDS.findall(name) if w.lower() not in _NAME_FILLER]
+    if not words:
+        return True
+    hay = re.sub(r"[^a-z0-9&]+", " ", text.lower())
+    return all(re.search(rf"\b{re.escape(w)}\b", hay) for w in words)
 
 
 def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...], history: list[dict] | None = None) -> CardChecks:
@@ -2690,7 +2725,9 @@ class Pipeline:
             "signals": signals,
             "timeline_entry": out.timeline_entry,
             "fundamentals": latest_fundamentals(current, sector_module.footer),
-            "results": results_snapshot(current, filing.news_id, sector_module.footer) if event_type == "RESULTS" else None,
+            "results": (results_snapshot(current, filing.news_id, sector_module.footer) if event_type == "RESULTS"
+                        else call_results_snapshot(current, filing.filed_at, sector_module.footer)
+                        if event_type == "CONCALL_PRESENTATION" else None),
             "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
             # the event's own block on the card's face, made by code (card_context.py, signals.scale_parts)
             "scale": scale_parts(before, out, priced, filing.filed_at),

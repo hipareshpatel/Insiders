@@ -145,7 +145,7 @@ function ResultsTable({ r, judged }: { r: ResultsSnapshot; judged: { label: stri
   const was = (v: number | undefined, unit: LineSpec["unit"]) => (v != null ? lineValue(v, unit) : "—");
   const under = "block text-[11px] font-normal text-ink-3 sm:hidden";
   return (
-    <BlockShell title={LENS_TITLE[r.lens ?? ""] ?? "Quarter in ₹ Cr"}
+    <BlockShell title={r.discussed ? `Quarter discussed · ${r.period}` : LENS_TITLE[r.lens ?? ""] ?? "Quarter in ₹ Cr"}
       right={<span className={cn("ml-auto rounded-full px-2.5 py-0.5 text-[11px] font-extrabold normal-case tracking-normal", TONE_CHIP[judged.tone])}>{judged.label}</span>}>
       <table className="num w-full text-[12.5px] sm:text-[13px]">
         <thead className="text-ink-3">
@@ -318,6 +318,15 @@ const TRACKS: Record<string, { steps: string[]; at: Record<string, number> }> = 
 // design audit 2026-10-20), so it is named only as the other party.
 const COUNTERPARTY: Record<string, string> = { ORDER: "From", ACQUISITION: "Counterparty", DIVESTMENT: "Buyer", FUNDRAISE: "Investors", CAPEX: "Funded by" };
 
+const TAKES_TARGET = new Set(["ACQUISITION", "DIVESTMENT"]);
+
+/** A share count in Indian units: 2,64,93,882 reads "2.65 Cr", 12,50,000 "12.5 lakh". */
+function sharesText(n: number): string {
+  if (n >= 1e7) return `${(n / 1e7).toLocaleString("en-IN", { maximumFractionDigits: 2 })} Cr`;
+  if (n >= 1e5) return `${(n / 1e5).toLocaleString("en-IN", { maximumFractionDigits: 2 })} lakh`;
+  return n.toLocaleString("en-IN");
+}
+
 const dealTrack = (deal: NonNullable<CardBody["deal_value"]>) => TRACKS[deal.kind === "ORDER" ? "ORDER" : deal.kind === "CAPEX" ? "CAPEX" : "DEAL"];
 
 /** The deal block's tiles: the value (or that the filing gave none), the other party, the scope and the term. A
@@ -326,11 +335,22 @@ function dealFacts(card: CardBody): { label: string; value: string; text?: boole
   const deal = card.deal_value, amount = card.scale?.amount_cr ?? deal?.amount_cr ?? null;
   const said = [plain(card.headline), ...card.what_happened.map((f) => (typeof f === "string" ? f : `${f.text} ${f.quote ?? ""}`))].join(" ");
   const value = deal?.includes_gst || card.scale?.gst ? "Value, incl. GST" : saysExGst(said) ? "Value, ex GST" : "Value";
-  const party = realValue(deal?.counterparty), scope = realValue(deal?.segment), term = realValue(deal?.execution_by);
+  const scope = realValue(deal?.segment), term = realValue(deal?.execution_by);
   const [termLabel, termValue] = term ? executionFact(term) : ["", ""];
+  // an acquisition or sale names what changes hands and the seller apart when the card has them; older cards keep
+  // the one "Counterparty"
+  const target = deal && TAKES_TARGET.has(deal.kind) ? realValue(deal.target) : null;
+  const seller = target && deal!.kind === "ACQUISITION" ? realValue(deal!.seller) ?? realValue(deal!.counterparty) : null;
+  const party = seller ? null : realValue(deal?.counterparty);
   return [
     amount != null ? { label: value, value: cr(amount) } : { label: "Value", value: "Not disclosed", none: true },
+    ...(target ? [{ label: deal!.kind === "DIVESTMENT" ? "Sold" : "Target", value: target, text: true }] : []),
+    ...(seller && seller !== target ? [{ label: "Seller", value: seller, text: true }] : []),
     ...(party ? [{ label: COUNTERPARTY[deal!.kind] ?? "Counterparty", value: party, text: true }] : []),
+    ...(deal?.issue_price != null ? [{ label: "Issue price", value: `₹${deal.issue_price.toLocaleString("en-IN", { maximumFractionDigits: 2 })}` }] : []),
+    ...(deal?.discount_pct != null ? [{ label: "Discount", value: `${deal.discount_pct}%` }] : []),
+    ...(deal?.new_shares != null ? [{ label: "New shares", value: sharesText(deal.new_shares) }] : []),
+    ...(realValue(deal?.swap_ratio) ? [{ label: "Swap ratio", value: realValue(deal?.swap_ratio)!, text: true }] : []),
     ...(scope ? [{ label: "Scope", value: scope.charAt(0).toUpperCase() + scope.slice(1), text: true }] : []),
     ...(term ? [{ label: termLabel, value: termValue }] : []),
   ];
@@ -522,7 +542,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
   const corrected = card.review?.status === "CORRECTED";
   const longRead = event === "CONCALL_PRESENTATION" || event === "ANNUAL_REPORT";  // a 100-400 page document
   const tilesFor = longRead || (event === "RESULTS" && !card.results);
-  const table = event === "RESULTS" && tableShows(card.results) ? card.results : null;
+  // a call or presentation shows the quarter it discusses, as the results filing gave it (design audit fix 10)
+  const table = (event === "RESULTS" || event === "CONCALL_PRESENTATION") && tableShows(card.results) ? card.results : null;
   const dealBlock = !table && (family === "ord" || family === "cap") && hasDealBlock(card);
   const rating = event === "DEBT_RATINGS" ? card.rating_change ?? null : null;
   const caseStage = card.case_stage ?? null;

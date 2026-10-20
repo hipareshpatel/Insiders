@@ -327,3 +327,21 @@ def test_an_exceptional_charge_that_did_not_recur_is_no_turn():
     snap = results_snapshot(dossier, "n2")
     assert snap["pat"]["qoq_turn"] == "LOSS_TO_PROFIT"
     assert "qoq_turn" not in snap["exceptional_items"] and "qoq_pct" not in snap["exceptional_items"]
+
+
+def test_a_call_card_shows_the_quarter_it_discusses():
+    """Design audit fix 10 (2026-10-20): an earnings call or presentation gets the results table of the latest quarter
+    in memory, as its results filing gave it, and nothing when that quarter ended long before the call."""
+    from bse_intel.dossier import call_results_snapshot, results_snapshot
+
+    dossier = {"financial_metrics": [
+        {"metric": "revenue", "period": "Q2FY27", "value": 455.6, "source_news_id": "n2", "as_of": "2026-10-15T16:00:00+05:30"},
+        {"metric": "pat", "period": "Q2FY27", "value": 29.4, "source_news_id": "n2", "as_of": "2026-10-15T16:00:00+05:30"},
+        {"metric": "pat", "period": "Q2FY26", "value": 36.8, "source_news_id": "n1", "as_of": "2025-10-14T16:00:00+05:30"},
+        {"metric": "revenue", "period": "Q1FY27", "value": 412.3, "source_news_id": "n1b", "as_of": "2026-07-20T16:00:00+05:30"},
+    ]}
+    snap = call_results_snapshot(dossier, "2026-10-17T11:00:00+05:30")
+    assert snap["discussed"] is True and snap["period"] == "Q2FY27"
+    assert {k: v for k, v in snap.items() if k != "discussed"} == results_snapshot(dossier, "n2")
+    assert call_results_snapshot(dossier, "2027-04-20T11:00:00+05:30") is None, "Q2FY27 ended over 120 days before"
+    assert call_results_snapshot(dossier, "2026-09-20T11:00:00+05:30")["period"] == "Q1FY27", "not a quarter still open"

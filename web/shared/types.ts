@@ -193,6 +193,8 @@ export interface CardBody {
   /** `at`: the step this filing is about; `reached`: every step the card names as having happened (not always in order). */
   case_stage?: { track: "USFDA" | "CASE"; steps: string[]; at: number; reached?: number[] } | null;
   guidance_recall?: { statement: string; target: string | null; due: string | null; given_on: string | null; source_type: string | null; id: string }[];
+  /** Up to four things memory held before this filing, made by code (card_context.memory_context). */
+  memory_context?: { label: string; text: string }[];
 }
 
 export interface CardRow {

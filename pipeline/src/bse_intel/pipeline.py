@@ -55,7 +55,7 @@ from .settings import Settings
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
-from .card_context import case_stage, guidance_recall, rating_change, rating_word_mismatch
+from .card_context import case_stage, guidance_recall, memory_context, rating_change, rating_word_mismatch
 from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
@@ -943,6 +943,120 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
     if event_type == "PRODUCT_LAUNCH" and _CAPTIVE_POWER.search(head):
         return "M_AND_A"
     return event_type
+
+
+# A listed subsidiary's results passed on by its parent (Reg 30(9)): Vedanta's letter enclosing Hindustan Zinc's Q2FY27
+# results became Vedanta's results card, HZL's revenue against Vedanta's own year-ago (-62%), and HZL's figures went into
+# Vedanta's memory (owner, 2026-10-20). The covering letter names the subsidiary before the word "results".
+_SUBSIDIARY_RESULTS = re.compile(
+    r"(?P<name>[A-Z][A-Za-z0-9&.,'\- ]{2,80}?\b(?:Limited|Ltd\.?))\s*(?:\(\s*[“\"']?[^)]{1,20}?[”\"']?\s*\))?\s*,?\s*"
+    r"(?:is\s+)?(?:a|an|the|our)\s+(?:material\s+)?(?:(?:wholly[- ]owned|listed|step[- ]down|unlisted)\s+)?subsidiar(?:y|ies)\b"
+    r"[^;]{0,400}?\bresults\b", re.S)   # "submitted: 1. Unaudited ... results": a list number is no sentence end
+
+
+# A filing that only schedules a call or links its audio, or only declares a dividend, goes to memory as a dated line
+# and gets no card (owner, 2026-10-20: "Amagi schedules Q2FY27 earnings call for Nov 6", "Hexaware declares 2nd interim
+# dividend"; 17 call-logistics and 6 dividend cards in the week). NSE's headlines are generic ("Analysts/Institutional
+# Investor Meet/Con. Call Updates", "Corporate Action-Dividend"), so the rule book's headline rules never saw the words;
+# the filing's first page decides. A transcript, a deck (more than a few pages) or results keep their card.
+_CALL = re.compile(r"(?:earnings|conference|con\.?|investors?|analysts?)\s*(?:call|meet)|analysts?\s*(?:/|and|&)\s*"
+                   r"(?:institutional\s+)?investors?\s+meet", re.I)
+_CALL_LOGISTICS = re.compile(r"\bschedul\w*|\bintimat\w*|\bwill\s+(?:be\s+)?(?:held|host\w*|organi[sz]\w*|participat\w*)|"
+                             r"\baudio\b|\brecording\b|web\s*-?\s*link|\bre-?schedul\w*|\bpostpone\w*|\bdial[- ]?in\b", re.I)
+_DIVIDEND = re.compile(r"\bdividends?\b", re.I)
+_DIVIDEND_ONLY_NOT = re.compile(r"buy-?back|\bbonus\b|\bsplit\b|sub-?division|rights\s+issue|fund\s*rais|"
+                                r"financial\s+results|results\s+for\s+the\s+(?:quarter|year|half)|\bbonds?\b|debentures?|"
+                                r"\bncds?\b|borrow\w*|capex|capital\s+expenditure|acqui\w*|merger|amalgamat\w*|"
+                                r"\binvest\w*|preferential|preference\s+shares?|\bncrps\b|\bqip\b|warrants?|"
+                                r"change\s+(?:of|in)\s+(?:the\s+)?name|name\s+change|auditors?\b|\bagm\s+(?:date|on)|"
+                                r"annual\s+general\s+meeting\s+(?:of|on|will)", re.I)
+
+
+# A change of name or symbol goes to memory too (owner, 2026-10-20: "ICICI Prudential Life to change name to ICICI Life
+# Insurance and symbol to ICICILIFE" needs no card): the timeline keeps it, and the company master takes the new name.
+_NAME_CHANGE = re.compile(r"change\s+(?:of|in)\s+(?:the\s+)?(?:name|symbol)|name\s+change|new\s+(?:name|symbol)|"
+                          r"(?:name|symbol)\s+(?:of\s+the\s+company\s+)?(?:has\s+been\s+|is\s+|will\s+be\s+)?changed", re.I)
+_NAME_CHANGE_NOT = re.compile(r"merger|amalgamat\w*|de-?merg\w*|scheme\s+of\s+arrangement|acqui\w*|financial\s+results|"
+                              r"buy-?back|\bbonus\b|rights\s+issue|preferential|fund\s*rais", re.I)
+
+
+# A fine, penalty or tax demand and nothing else, below the governance rule's floor (5% of annual profit, at least ₹1 lakh: owner, 2026-10-19):
+# Rashi Peripherals' ₹1.68 lakh NSE fine for Reg 17(1A) came as a card (owner, 2026-10-20), because the quarterly
+# governance report applies that floor and a standalone fine letter did not; "Schneider Electric Infra appellate
+# authority upholds ₹0.05 Cr transitional ITC demand and penalty" the same. A ban, suspension, freeze, inspection or
+# fraud keeps its card whatever the amount.
+_FINE = re.compile(r"\bfines?\b|\bpenalt(?:y|ies)\b|\bdemand\b", re.I)   # a small tax demand too (Schneider ₹0.05 Cr)
+_FINE_SEVERE = re.compile(r"debar\w*|suspen\w*|\bban(?:ned)?\b|restrain\w*|cancel\w*|revo(?:k|c)\w*|attach\w*|freez\w*|"
+                          r"prosecut\w*|fraud|arrest\w*|insolvency|usfda|warning\s+letter|import\s+alert|"
+                          r"search\s+and\s+seizure|\braid\b|licen[cs]e", re.I)
+
+
+# an amount with its digits ("Rs, " is no amount: governance_xbrl's pattern took it as ₹0), in any unit filings use
+_AMOUNT = re.compile(r"(?:\brs\.?|\binr\b|₹|\brupees\b)\s*(\d[\d,]*(?:\.\d+)?)\s*(?:/-)?\s*"
+                     r"(crores?|cr\b\.?|lakhs?|lacs?|million|mn\b)?", re.I)
+
+
+def _amount_rupees(m: re.Match) -> float:
+    value = float(m.group(1).replace(",", "") or 0)
+    unit = (m.group(2) or "").lower()
+    return value * (1e7 if unit.startswith("cr") else 1e5 if unit.startswith(("lakh", "lac")) else 1e6 if unit.startswith(("million", "mn")) else 1)
+
+
+def small_fine(first_page: str, annual_profit_cr: float | None) -> bool:
+    """A fine and nothing more, every amount on the page below governance_xbrl's floor for this company."""
+    from .governance_xbrl import MATERIAL_SHARE_OF_PROFIT, MINOR_PENALTY_RUPEES
+
+    page = " ".join((first_page or "").split())
+    if not _FINE.search(page) or _FINE_SEVERE.search(page):
+        return False
+    # an amount with no unit of its own is in the unit the page's table declares ("(in Rs. crores)": Jubilant's ₹22.10 Cr
+    # demand read as ₹22.10): the largest unit the page names, so a doubt keeps the card
+    implied = 1e7 if re.search(r"\bcrores?\b|\bcr\b", page, re.I) else 1e5 if re.search(r"\blakhs?\b|\blacs?\b", page, re.I) else None
+    found = list(_AMOUNT.finditer(page))
+    if implied is None and any(not m.group(2) and "." in m.group(1) for m in found):
+        return False   # "Rs. 42.41" on a page that names no unit (Jubilant Pharmova's demand): a doubt keeps the card
+    amounts = [_amount_rupees(m) * (implied or 1 if not m.group(2) else 1) for m in found]
+    if not amounts:
+        return False   # a fine with no stated amount is raised (as the governance rule does)
+    floor = max(MINOR_PENALTY_RUPEES, (annual_profit_cr or 0) * 1e7 * MATERIAL_SHARE_OF_PROFIT)
+    return max(amounts) < floor
+
+
+def annual_profit_cr(dossier: dict | None) -> float | None:
+    """The last full year's profit memory holds (the latest FYxx PAT), for the materiality floors."""
+    years = [m for m in (dossier or {}).get("financial_metrics", []) if m.get("metric") in ("pat", "pat_owners")
+             and re.fullmatch(r"FY\d{2}", str(m.get("period") or "")) and isinstance(m.get("value"), (int, float))]
+    return max(years, key=lambda m: m["period"])["value"] if years else None
+
+
+def memory_only(filing: Filing, first_page: str, pages: int, profit_cr: float | None = None) -> str | None:
+    """Why this filing gets a timeline line and no card ("call logistics", "dividend", "name change", "small fine"), or
+    None. `profit_cr` is the company's annual profit, for the fine floor."""
+    page = " ".join((first_page or "").split())
+    if pages <= 4 and small_fine(page, profit_cr):
+        return "small fine"
+    if pages <= 4 and _NAME_CHANGE.search(f"{filing.headline} {filing.subject} {page}") and not _NAME_CHANGE_NOT.search(page):
+        return "name change"
+    if pages <= 3 and not is_transcript(filing) and not _TRANSCRIPT.search(page) and _CALL.search(page) \
+            and _CALL_LOGISTICS.search(page):
+        return "call logistics"
+    if pages <= 4 and _DIVIDEND.search(f"{filing.headline} {filing.subject} {page}") and not _DIVIDEND_ONLY_NOT.search(page) \
+            and not _RESULTS_STATEMENT.search(page):
+        return "dividend"
+    return None
+
+
+def subsidiary_results(filing: Filing, text: str) -> str | None:
+    """The subsidiary whose results this filing passes on, when its covering letter says so; None for the company's
+    own results."""
+    m = _SUBSIDIARY_RESULTS.search(" ".join((text or "")[:6000].split()))
+    if not m:
+        return None
+    # the company's own words before the name ("we hereby inform that Hindustan Zinc Limited") are not its name
+    tail = re.search(r"((?:[A-Z][\w&.'\-]*\s+){0,8}(?:Limited|Ltd\.?))$", m.group("name").strip(" ,"))
+    name = (tail.group(1) if tail else m.group("name")).strip(" ,.")
+    own = re.sub(r"\W+|limited|ltd", "", (filing.company_name or "").lower())
+    return None if own and own in re.sub(r"\W+|limited|ltd", "", name.lower()) else name
 
 
 _ESG = re.compile(r"\besg\b|sustainability\s+(?:rating|score)|environmental,?\s+social", re.I)
@@ -2050,6 +2164,14 @@ class Pipeline:
                     self.stats.duplicates += 1
                 return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": filing.event_type,
                                 "reason": f"duplicate of {repeat[0]} ({repeat[1]} match)", "updated_at": now_iso()})
+            why = None
+            if filing.route != "TIMELINE":
+                first = doc.select_text(6000, [])   # the first pages: an amount often sits on the order's second page
+                profit = annual_profit_cr(self.sink.get_dossier(filing.scrip_code)) if _FINE.search(first) else None
+                why = memory_only(filing, first, doc.page_count, profit)
+            if why:
+                log.info("%s: %s, a timeline line and no card", filing.news_id, why)
+                filing = filing.model_copy(update={"route": "TIMELINE"})
             if filing.route == "TIMELINE":
                 return self._timeline_flow(filing, company, industry, doc, bulk, memory_complete)
             return self._analyze_document(filing, company, industry, doc, bulk, memory_complete)
@@ -2530,6 +2652,11 @@ class Pipeline:
         # page is the filing's own words if either reading has it (gate.quote_found).
         blocks = doc.block_text(doc.selected)
         _ocr_check(doc)
+        subsidiary = subsidiary_results(filing, text) if event_type == "RESULTS" else None
+        if subsidiary:
+            # its figures are another company's: no results path (XBRL, table, quarter claim) and none into memory
+            log.info("%s passes on %s's results: an update, not the company's own results", filing.news_id, subsidiary)
+            event_type = "OTHER"
         if event_type == "RESULTS" and not filing.xbrl_url:
             filing = filing.model_copy(update={"xbrl_url": self._results_xbrl_url(filing, text)})
             if not filing.xbrl_url and filing.news_id.startswith(nse_api.NEWS_ID_PREFIX) and self.nse is not None \
@@ -2715,6 +2842,12 @@ class Pipeline:
         corrected = event_type_rules(out.event_type, filing, text, tagged)
         if corrected == "OTHER" and out.card is not None and APPOINTMENT.search(out.card.headline or ""):
             corrected = "MANAGEMENT_CHANGE"   # a board outcome that only (re)appoints a director or KMP (D30)
+        if subsidiary:
+            # the enclosed statement is the subsidiary's: not this company's results (the rules above would read the
+            # statement and make it RESULTS), and its figures are not this company's quarter
+            corrected = "OTHER" if corrected == "RESULTS" else corrected
+            out.dossier_delta.financial_metrics = []
+            out.dossier_delta.balance_sheet = None
         if corrected != out.event_type:
             log.info("event type for %s: %s -> %s (rules)", filing.news_id, out.event_type, corrected)
             out.event_type = corrected
@@ -2776,6 +2909,7 @@ class Pipeline:
             "case_stage": case_stage(event_type, card.headline, [f.text for f in card.what_happened],
                                      [w.text for w in card.why_it_matters]),
             "guidance_recall": guidance_recall(before, event_type, filing.filed_at),
+            "memory_context": memory_context(before, event_type, filing.filed_at, filing.news_id),
             # what pass 2 said about earlier promises, kept so a status in memory can be traced to its reply (T5)
             "promise_updates": [u.model_dump() for u in out.dossier_delta.promise_updates] or None,
             "pdf_pages": doc.page_count or None,
@@ -3501,4 +3635,6 @@ def _apply_xbrl(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult", news_id: 
 def _company_memory(dossier: dict) -> dict:
     """Company-row fields drawn from memory: former names (searchable) and the radar summary."""
     names = [n for n in (dossier.get("identity") or {}).get("former_names") or [] if own_former_name(n, dossier)]
-    return {**memory_summary(dossier), **({"former_names_json": json.dumps(names, ensure_ascii=False)} if names else {})}
+    # sent even when empty: a name memory no longer holds (or that a check now refuses: Vedanta's auditor) leaves the
+    # company row with the summary that drops it (companies_upsert.sql)
+    return {**memory_summary(dossier), "former_names_json": json.dumps(names, ensure_ascii=False)}

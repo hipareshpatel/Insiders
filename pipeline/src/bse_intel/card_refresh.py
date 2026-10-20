@@ -15,7 +15,7 @@ import logging
 
 from pydantic import ValidationError
 
-from .card_context import case_stage, guidance_recall, rating_change
+from .card_context import case_stage, guidance_recall, memory_context, rating_change
 from .impact import high_reasons
 from .dossier import call_results_snapshot, dossier_as_of, latest_fundamentals, results_snapshot
 from .models import Card, Filing, Pass2Output
@@ -24,7 +24,8 @@ from .signals import SIGNALS_OFF, priced_for, scale_parts, volume_strip
 
 log = logging.getLogger(__name__)
 
-BLOCKS = ("results", "volume_strip", "scale", "rating_change", "case_stage", "guidance_recall", "fundamentals")
+BLOCKS = ("results", "volume_strip", "scale", "rating_change", "case_stage", "guidance_recall", "memory_context",
+          "fundamentals")
 
 
 def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, footer=(), prices=None, buckets=None) -> dict:
@@ -50,6 +51,7 @@ def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, foot
         "rating_change": rating_change(before, current, filing.news_id, text) if event_type == "DEBT_RATINGS" else None,
         "case_stage": case_stage(event_type, out.card.headline, facts, [w.text for w in out.card.why_it_matters]),
         "guidance_recall": guidance_recall(before, event_type, filing.filed_at),
+        "memory_context": memory_context(before, event_type, filing.filed_at, filing.news_id),
         "fundamentals": latest_fundamentals(current, footer),
     }
 

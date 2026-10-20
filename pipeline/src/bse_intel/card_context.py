@@ -209,3 +209,88 @@ def guidance_recall(before: dict | None, event_type: str, filed_at: str | None =
         if len(out) >= limit:
             break
     return out
+
+
+MEMORY_POINTS = 4
+_NOTE_DAYS = 120   # an operating note older than a quarter or so describes another quarter
+
+
+def _cr(value: float) -> str:
+    return f"₹{value:,.2f}".rstrip("0").rstrip(".") + " Cr"
+
+
+def _short_date(iso: str | None) -> str | None:
+    from datetime import date
+
+    try:
+        d = date.fromisoformat((iso or "")[:10])
+    except ValueError:
+        return None
+    return d.strftime("%b %Y")
+
+
+def memory_context(before: dict | None, event_type: str, filed_at: str | None, news_id: str | None = None) -> list[dict]:
+    """Up to four things memory held before this filing that bear on it, for the card's "For the decision" box (owner,
+    2026-10-20: "at least 3-4 points" from memory, not a run-rate P/E). Each is {label, text, as_of}, all from memory,
+    none written by a model: management's open guidance for this kind of event, the latest quarter's figures (on a card
+    that is not the results itself), the latest shift in who owns the company, an open watch item, and the latest
+    operating note. Nothing from this filing itself, and nothing past its date."""
+    from datetime import date, timedelta
+
+    from .periods import due_date
+
+    if not before:
+        return []
+    try:
+        today = date.fromisoformat((filed_at or "")[:10])
+    except ValueError:
+        today = None
+    out: list[dict] = []
+    for g in guidance_recall(before, event_type, filed_at):
+        text = g["statement"] + (f" ({g['target']})" if g.get("target") and g["target"] not in g["statement"] else "")
+        out.append({"label": "Management said", "text": text + (f" · by {g['due']}" if g.get("due") else ""),
+                    "as_of": g.get("given_on")})
+    metrics = [m for m in before.get("financial_metrics", []) if m.get("value") is not None
+               and str(m.get("period", "")).startswith("Q") and m.get("metric") in ("revenue", "pat", "pat_owners")]
+    if event_type != "RESULTS" and metrics:
+        latest = max((m["period"] for m in metrics), key=lambda p: str(due_date(p) or ""))
+        due = due_date(latest)
+        if today is None or due is None or (today - due).days <= 200:
+            parts = []
+            for metric, word in (("revenue", "revenue"), ("pat_owners", "PAT"), ("pat", "PAT")):
+                m = next((x for x in metrics if x["metric"] == metric and x["period"] == latest), None)
+                if m and not (word == "PAT" and any(word in p for p in parts)):
+                    change = f" ({m['yoy_pct']:+.1f}% YoY)" if isinstance(m.get("yoy_pct"), (int, float)) else ""
+                    parts.append(f"{word} {_cr(m['value'])}{change}")
+            if parts:
+                out.append({"label": f"Latest quarter, {latest}", "text": ", ".join(parts), "as_of": None})
+    own = sorted(before.get("ownership", []), key=lambda o: str(o.get("as_of") or ""))
+    if today:
+        own = [o for o in own if str(o.get("as_of") or "")[:10] <= today.isoformat()]
+    if len(own) >= 2:
+        a, b = own[-2], own[-1]
+        moves = []
+        for key, word, step in (("promoter_pct", "Promoters", 0.5), ("fii_pct", "FIIs", 1.0), ("dii_pct", "DIIs", 1.0)):
+            x, y = a.get(key), b.get(key)
+            if isinstance(x, (int, float)) and isinstance(y, (int, float)) and abs(y - x) >= step:
+                moves.append(f"{word} {x:.1f}% → {y:.1f}%")
+        if moves:
+            out.append({"label": f"Holding, {a.get('period')} → {b.get('period')}", "text": "; ".join(moves),
+                        "as_of": (b.get("as_of") or "")[:10] or None})
+    watches = [w for w in before.get("watchlist", []) if w.get("status") == "OPEN" and w.get("source_news_id") != news_id
+               and (not today or not w.get("check_by") or w["check_by"] >= today.isoformat())]
+    if watches:
+        w = min(watches, key=lambda w: w.get("check_by") or "9999")
+        text = w["text"] + (f" ({w['target']})" if w.get("target") else "") + (f" · {w['check_in']}" if w.get("check_in") else "")
+        out.append({"label": "Watching", "text": text, "as_of": (w.get("created_on") or "")[:10] or None})
+    notes = [n for n in before.get("operating_notes", []) if n.get("text") and n.get("source_news_id") != news_id
+             and (not today or (str(n.get("as_of") or "")[:10] <= today.isoformat()
+                                and str(n.get("as_of") or "")[:10] >= (today - timedelta(days=_NOTE_DAYS)).isoformat()))]
+    if notes:
+        n = max(notes, key=lambda n: str(n.get("as_of") or ""))
+        out.append({"label": "From memory", "text": n["text"], "as_of": (n.get("as_of") or "")[:10] or None})
+    for item in out:
+        when = _short_date(item.pop("as_of", None))
+        if when:
+            item["label"] += f", {when}"
+    return out[:MEMORY_POINTS]

@@ -61,3 +61,27 @@ def test_nse_industry_sources_parse():
     equities = parse_equity_list("SYMBOL,NAME OF COMPANY, SERIES, DATE OF LISTING, ISIN NUMBER\n"
                                  "NEWCO,New Co Limited,EQ,19-OCT-2026,INE000N01011\n")
     assert equities[0].symbol == "NEWCO" and equities[0].listed_on == "2026-10-19"
+
+
+def test_a_rename_keeps_the_company_and_its_old_name():
+    """ICICI Prudential Life -> ICICI Life Insurance (owner, 2026-10-20): the row is matched by ISIN, so its memory stays,
+    and the old name is kept for search; "Ltd" for "Limited" is no rename."""
+    from types import SimpleNamespace
+
+    from bse_intel.company_master import _keep_former_name
+
+    stored = [{"scrip_code": "540133", "symbol": "ICICIPRULI", "isin": "INE726G01019", "company_name": "ICICI Prudential Life Insurance Company Limited",
+               "industry": "Insurance", "sector": "insurance"},
+              {"scrip_code": "500180", "symbol": "HDFCBANK", "isin": "INE040A01034", "company_name": "HDFC Bank Limited",
+               "industry": "Banks", "sector": "bank"}]
+    eq = lambda symbol, isin, name: SimpleNamespace(symbol=symbol, isin=isin, name=name)  # noqa: E731
+    rows, report = plan([eq("ICICILIFE", "INE726G01019", "ICICI Life Insurance Limited"), eq("HDFCBANK", "INE040A01034", "HDFC Bank Ltd")],
+                        stored, {}, lambda i: "default", "now")
+    icici = next(r for r in rows if r["scrip_code"] == "540133")
+    assert icici["symbol"] == "ICICILIFE" and icici["company_name"] == "ICICI Life Insurance Limited"
+    assert [r[1] for r in report.renamed] == ["ICICI Prudential Life Insurance Company Limited"]   # HDFC Bank Ltd is no rename
+    dossiers = {"540133": {"identity": {"former_names": [], "entities": []}}}
+    sink = SimpleNamespace(get_dossier=dossiers.get, put_dossier=dossiers.__setitem__)
+    _keep_former_name(sink, "540133", "ICICI Prudential Life Insurance Company Limited", "now")
+    _keep_former_name(sink, "540133", "ICICI Prudential Life Insurance Company Ltd", "now")
+    assert dossiers["540133"]["identity"]["former_names"] == ["ICICI Prudential Life Insurance Company Limited"]

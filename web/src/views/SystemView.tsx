@@ -249,6 +249,11 @@ const SCHEDULE: { command: string; what: string; when: string; days: number }[] 
   { command: "backup", what: "Memory backup", when: "Mondays 02:00 IST", days: 8 },
 ];
 
+// When the schedule reached main (#17, 20 Oct 2026 17:00 IST): a job with no run yet is only "Never run" once its
+// first slot has passed; before that it is waiting for its first run (owner, 20 Oct: the panel read "Never run" for
+// jobs whose first slot was the next morning)
+const SCHEDULED_FROM = Date.parse("2026-10-20T11:30:00Z");
+
 function ScheduledJobs({ jobs }: { jobs: Record<string, { at: string; ok: boolean }> }) {
   const now = Date.now();
   return (
@@ -264,13 +269,14 @@ function ScheduledJobs({ jobs }: { jobs: Record<string, { at: string; ok: boolea
             {SCHEDULE.map(({ command, what, when, days }) => {
               const last = jobs[command];
               const late = !last || now - new Date(last.at).getTime() > days * 86400_000;
-              const status = !last ? "Never run" : !last.ok ? "Failed" : late ? "Overdue" : "OK";
+              const waiting = !last && now - SCHEDULED_FROM <= days * 86400_000;
+              const status = waiting ? "First run due" : !last ? "Never run" : !last.ok ? "Failed" : late ? "Overdue" : "OK";
               return (
                 <tr key={command} className="border-t border-line">
                   <td className="py-1.5 pr-3 text-ink">{what}<span className="block text-[11px] text-ink-3">{command}</span></td>
                   <td className="py-1.5 pr-3 text-ink-2">{when}</td>
                   <td className="num py-1.5 pr-3 text-ink-2">{last ? istDateTime(last.at) : "—"}</td>
-                  <td className={cn("py-1.5 font-semibold", status === "OK" ? "text-pos" : "text-warn")}>{status}</td>
+                  <td className={cn("py-1.5 font-semibold", status === "OK" ? "text-pos" : waiting ? "text-ink-3" : "text-warn")}>{status}</td>
                 </tr>
               );
             })}

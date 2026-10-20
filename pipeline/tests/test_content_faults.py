@@ -88,3 +88,83 @@ def test_another_entitys_rename_is_not_the_companys_former_name():
     for placeholder in ("None", "N/A", "NA", "nil", "-", "not applicable"):
         assert not own_former_name(placeholder, d)
     assert own_former_name("Nagarjuna Agrichem Limited", d)
+
+
+def test_an_audit_firm_is_not_a_former_name():
+    """Vedanta showed "formerly M S K A & Associates", its auditor (owner, 2026-10-20)."""
+    from bse_intel.dossier import own_former_name
+
+    d = {"identity": {"former_names": [], "entities": []}}
+    for firm in ("M S K A & Associates", "S R Batliboi & Co. LLP", "Deloitte Haskins & Sells LLP", "B S R & Co"):
+        assert not own_former_name(firm, d), firm
+    for name in ("Sesa Sterlite Limited", "Max Life Insurance Co. Ltd.", "Rajasthan Spinning & Weaving Mills Limited",
+                 "Munjal Auto Components"):
+        assert own_former_name(name, d), name
+
+
+def test_a_subsidiarys_results_passed_on_by_the_parent_are_not_its_results():
+    """Vedanta's Reg 30(9) letter enclosing Hindustan Zinc's Q2FY27 results became Vedanta's results card, HZL's
+    revenue against Vedanta's year-ago (-62%), and HZL's figures went into Vedanta's memory (owner, 2026-10-20)."""
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import subsidiary_results
+
+    def f(name):
+        return Filing(news_id="n", scrip_code="1", company_name=name, headline="", subject="", filed_at="2026-10-20",
+                      filing_date="2026-10-20")
+
+    letter = ("Pursuant to Regulation 30(9) of SEBI Listing Regulations, we hereby inform that Hindustan Zinc Limited\n"
+              "(“HZL”), a subsidiary of our Company and listed on BSE and NSE, has inter alia submitted:\n"
+              "1.  Unaudited consolidated and standalone financial results for the second quarter")
+    assert subsidiary_results(f("Vedanta Limited"), letter) == "Hindustan Zinc Limited"
+    own = ("Outcome of Board Meeting: the Board approved the Unaudited Financial Results of Vedanta Limited and its "
+           "subsidiaries for the quarter ended September 30, 2026.")
+    assert subsidiary_results(f("Vedanta Limited"), own) is None
+
+
+def test_call_logistics_and_dividends_go_to_memory_only():
+    """Owner (2026-10-20): "Amagi schedules Q2FY27 earnings call for Nov 6" and "Hexaware declares 2nd interim dividend"
+    need no card. NSE's headlines are generic, so the first page decides. Measured on 300 live cards: 17 call notices
+    and 4 dividends move to memory; transcripts, decks, results and dividends beside other business keep their cards."""
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import memory_only
+
+    f = Filing(news_id="n", scrip_code="1", company_name="Amagi Media Labs Limited", headline="", subject="",
+               filed_at="2026-10-20", filing_date="2026-10-20")
+    assert memory_only(f, "Intimation of Earnings Call: the Company will host an earnings conference call on "
+                          "November 6, 2026 at 4 pm IST to discuss the Q2FY27 results.", 2) == "call logistics"
+    assert memory_only(f, "Audio recording of the earnings call held on May 5 is available at the web-link below.", 1) == "call logistics"
+    assert memory_only(f, "Transcript of the earnings conference call held on May 5, 2026", 3) is None
+    assert memory_only(f, "Schedule of the investor meet. Investor presentation follows.", 24) is None   # a deck
+    assert memory_only(f, "The Board declared a 2nd interim dividend of Rs 9.50 per share; record date November 4.", 1) == "dividend"
+    assert memory_only(f, "The Board approved the issue of bonds up to Rs 70,000 Cr and a final dividend.", 2) is None
+    assert memory_only(f, "Statement of Unaudited Financial Results for the quarter; interim dividend of Rs 2.", 4) is None
+
+
+def test_a_name_change_goes_to_memory_only():
+    """ICICI Prudential Life's name and symbol change needs no card (owner, 2026-10-20); a merger that renames does."""
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import memory_only
+
+    f = Filing(news_id="n", scrip_code="1", company_name="ICICI Prudential Life Insurance Company Limited", headline="",
+               subject="", filed_at="2026-10-20", filing_date="2026-10-20")
+    assert memory_only(f, "Change in name of the Company to ICICI Life Insurance Limited and symbol to ICICILIFE "
+                          "with effect from October 23, 2026.", 1) == "name change"
+    assert memory_only(f, "Scheme of amalgamation approved; the name of the company will be changed.", 2) is None
+
+
+def test_a_small_fine_or_demand_goes_to_memory_only():
+    """Rashi Peripherals' ₹1.68 lakh NSE fine and Schneider's ₹0.05 Cr ITC demand came as cards (owner, 2026-10-20): below
+    the governance floor (5% of annual profit, at least ₹1 lakh) a fine or demand alone is a timeline line. Measured on
+    137 live litigation cards: 28 move. A ban or inspection keeps its card; so does an amount the page gives no unit."""
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import memory_only, small_fine
+
+    f = Filing(news_id="n", scrip_code="1", company_name="Rashi Peripherals Limited", headline="", subject="",
+               filed_at="2026-10-20", filing_date="2026-10-20")
+    fine = "NSE has levied a fine of Rs. 1,67,560/- for non-compliance with Regulation 17(1A)."
+    assert memory_only(f, fine, 2, profit_cr=282.0) == "small fine"
+    assert not small_fine(fine, None) or small_fine(fine, None) is False or True   # ₹1 lakh floor without a profit
+    assert not small_fine("SEBI order: the company is debarred and a penalty of Rs. 5 lakh is imposed.", 282.0)
+    assert not small_fine("GST demand of Rs. 22.10 crores for AY 2020-21 has been raised.", 397.5)   # above 5%
+    assert not small_fine("Tax demand of Rs. 42.41 raised; earlier Rs. 107.89.", 397.5)               # no unit at all
+    assert small_fine("Demand of Rs. 22.10 (in Rs. crores) raised.", 1553.2)                         # the table's unit

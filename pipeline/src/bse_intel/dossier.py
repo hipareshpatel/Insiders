@@ -416,11 +416,17 @@ _OTHER_RENAME = re.compile(r"\(\s*now\b|\bnow\s+known\s+as\b|\brenamed\s+(?:as|t
 _NO_NAME = re.compile(r"\s*(?:none|nil|null|n[./]?\s?a\.?|not\s+applicable|-+)?\s*$", re.I)
 
 
+# a professional firm is never the company's former name: Vedanta showed "formerly M S K A & Associates", its auditor
+# (owner, 2026-10-20). Measured on the 58 former names on live cards: this drops that one and no other.
+_FIRM = re.compile(r"&\s*(?:associates|co\.?)(?:\s|$)|\bassociates\b|\bLLP\b|chartered\s+accountants|"
+                   r"\b(?:advocates|solicitors|auditors?|consultants)\b", re.I)
+
+
 def own_former_name(name: str | None, dossier: dict) -> bool:
     """A former name of the listed company itself, not another entity's rename: "AGH Dreams Private Limited (now AGH
     Dreams Limited)" and "Heritage Novandie Foods Private Limited (now ...)" are a group company's, shown as Jindal
     Stainless's and Heritage's own (owner's review, 2026-10-20), and a name that is one of its group entities is too."""
-    if not name or _NO_NAME.match(name) or _OTHER_RENAME.search(name):
+    if not name or _NO_NAME.match(name) or _OTHER_RENAME.search(name) or _FIRM.search(name):
         return False
     entities = {_norm(_bare_name(e.get("name") or "")) for e in (dossier.get("identity") or {}).get("entities", [])}
     return _norm(_bare_name(name)) not in entities

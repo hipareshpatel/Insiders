@@ -23,3 +23,4 @@ Every action taken under it is listed below with its commit or run, for the owne
 - 20 Oct 05:51 IST: PR #2 merged into `main` (b143a79) with CI green; the pipeline schedule moved to every 15 minutes (c88f358); lead check-ins every 15 minutes (chained one-off check-ins: routines allow hourly at most).
 - 20 Oct 06:27 IST: PR #3 merged into `main` (1ef32e5) with CI green: the company page and the cards to the approved designs.
 - 20 Oct 06:12 IST: `pipeline.yml` run 2 started by hand (the new 15-minute schedule had not fired yet).
+- 20 Oct 06:52 IST: PR #4 merged into `main` (c0002ef) with CI green: live review 3 fixes.

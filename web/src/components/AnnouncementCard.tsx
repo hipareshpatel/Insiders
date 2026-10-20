@@ -320,6 +320,13 @@ const COUNTERPARTY: Record<string, string> = { ORDER: "From", ACQUISITION: "Coun
 
 const TAKES_TARGET = new Set(["ACQUISITION", "DIVESTMENT"]);
 
+/** A share count in Indian units: 2,64,93,882 reads "2.65 Cr", 12,50,000 "12.5 lakh". */
+function sharesText(n: number): string {
+  if (n >= 1e7) return `${(n / 1e7).toLocaleString("en-IN", { maximumFractionDigits: 2 })} Cr`;
+  if (n >= 1e5) return `${(n / 1e5).toLocaleString("en-IN", { maximumFractionDigits: 2 })} lakh`;
+  return n.toLocaleString("en-IN");
+}
+
 const dealTrack = (deal: NonNullable<CardBody["deal_value"]>) => TRACKS[deal.kind === "ORDER" ? "ORDER" : deal.kind === "CAPEX" ? "CAPEX" : "DEAL"];
 
 /** The deal block's tiles: the value (or that the filing gave none), the other party, the scope and the term. A
@@ -340,6 +347,10 @@ function dealFacts(card: CardBody): { label: string; value: string; text?: boole
     ...(target ? [{ label: deal!.kind === "DIVESTMENT" ? "Sold" : "Target", value: target, text: true }] : []),
     ...(seller && seller !== target ? [{ label: "Seller", value: seller, text: true }] : []),
     ...(party ? [{ label: COUNTERPARTY[deal!.kind] ?? "Counterparty", value: party, text: true }] : []),
+    ...(deal?.issue_price != null ? [{ label: "Issue price", value: `₹${deal.issue_price.toLocaleString("en-IN", { maximumFractionDigits: 2 })}` }] : []),
+    ...(deal?.discount_pct != null ? [{ label: "Discount", value: `${deal.discount_pct}%` }] : []),
+    ...(deal?.new_shares != null ? [{ label: "New shares", value: sharesText(deal.new_shares) }] : []),
+    ...(realValue(deal?.swap_ratio) ? [{ label: "Swap ratio", value: realValue(deal?.swap_ratio)!, text: true }] : []),
     ...(scope ? [{ label: "Scope", value: scope.charAt(0).toUpperCase() + scope.slice(1), text: true }] : []),
     ...(term ? [{ label: termLabel, value: termValue }] : []),
   ];

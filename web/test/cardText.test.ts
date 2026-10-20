@@ -90,3 +90,74 @@ test("a fact is on the verified face only with a quote from the filing and no un
   assert.equal(verifiedFact({ text: "An ₹800 Cr NCD issue", quote: "NCDs" }, ["800"]), false);  // a figure the checks did not find
   assert.equal(verifiedFact({ text: "Revenue ₹1,800 Cr", quote: "Revenue 1,800" }, ["800"]), true); // "800" is not 1,800
 });
+
+test("a point with two figures of the headline or a block is a repeat, however it is worded", () => {
+  const heritage = "Heritage Foods Q2 revenue up 19% YoY to ₹1,320 Cr; EBITDA margin recovers 98 bps QoQ to 5.6%";
+  assert.ok(repeats("Sales rose to ₹1,320 Cr in the September quarter, a 19% gain on last year", heritage));
+  assert.ok(!repeats("Exports ₹141 Cr, 19% of sales", heritage));                       // one figure shared: it adds one
+  assert.ok(!repeats("Stage 3 approval covers 2 new kilns at Satara", "Demo Cement gets Stage 3 nod for 2 units"));   // counts are not figures
+  // the table's values join the headline: UCO's point restated operating profit and provisions
+  assert.ok(repeats("Operating profit ₹1,511 Cr and provisions ₹402 Cr", "UCO Bank Q2FY27 net profit ₹807.67 Cr 1511.2 402.1 807.67"));
+});
+
+test("a figure keeps no sign or unit when it is looked for", () => {
+  assert.ok(showsFigure("EPS 0.63 vs 0.49", "₹0.63 per share"));
+  assert.ok(showsFigure("net NPA down 26 bps", "-26 bps"));
+  assert.ok(showsFigure("NNPA fell 26 bp", "−26 bp"));
+  assert.ok(showsFigure("order book 3.1x sales", "3.1 x"));
+  assert.ok(showsFigure("up 12% YoY", "+12%"));
+  assert.ok(!showsFigure("up 12.5%", "+12%"));
+});
+
+test("tiles and the Scale line leave out what the headline says", async () => {
+  const { restatesHeadline, tilesBesides } = await import("../src/lib/cardText.ts");
+  const headline = "HDFC Life Q2 VNB ₹2,037 Cr, up 12%";
+  const tiles = [{ label: "VNB", value: "₹2,037 Cr" }, { label: "VNB margin", value: "24.7%" }, { label: "APE", value: "₹8,107 Cr" }];
+  assert.deepEqual(tilesBesides(tiles, headline).map((t) => t.label), ["VNB margin", "APE"]);
+  assert.ok(restatesHeadline("Deal is 35% of net worth (₹2,400 Cr)", "Jubilant buys a stake for 35% of its net worth"));
+  assert.ok(!restatesHeadline("18% of FY26 revenue (₹1,239 Cr)", "Demo Infra arm wins ₹228 Cr wind EPC LOI"));
+  assert.ok(!restatesHeadline("2 orders in Q1", "Demo wins 2 orders"));              // a count is not the amount
+});
+
+test("more from the filing is the verified rest, never a face point or an unquoted fact", async () => {
+  const { splitFacts } = await import("../src/lib/cardText.ts");
+  const q = (text: string) => ({ text, quote: text });
+  const facts = [q("A ₹10 Cr"), "B unquoted", q("C ₹20 Cr"), q("D ₹30 Cr"), { text: "E ₹40 Cr", quote: null }, q("F ₹50 Cr")];
+  const got = splitFacts(facts, [], 2);
+  assert.deepEqual(got.face.map((f) => (typeof f === "string" ? f : f.text)), ["A ₹10 Cr", "C ₹20 Cr"]);
+  assert.deepEqual(got.more.map((f) => (typeof f === "string" ? f : f.text)), ["D ₹30 Cr", "F ₹50 Cr"]);
+  assert.deepEqual(got.unverified.map((f) => (typeof f === "string" ? f : f.text)), ["B unquoted", "E ₹40 Cr"]);
+  assert.deepEqual(splitFacts([q("G ₹800 Cr")], ["800"], 3).unverified.length, 1);   // an unfound figure: the AI's reading
+});
+
+test("deal and rating labels say only what the filing says", async () => {
+  const { ratedAmount, realValue, saysExGst } = await import("../src/lib/cardText.ts");
+  assert.equal(realValue("Investors (to be determined via private placement)"), null);   // Jubilant's placeholder
+  assert.equal(realValue("N/A"), null);
+  assert.equal(realValue(""), null);
+  assert.equal(realValue("Not disclosed"), null);
+  assert.equal(realValue("National Highways Authority of India"), "National Highways Authority of India");
+  assert.ok(saysExGst("LOA worth Rs. 228 crore (excluding GST)"));
+  assert.ok(saysExGst("contract value of ₹29.13 Cr plus applicable GST"));
+  assert.ok(saysExGst("₹29.13 Cr + GST"));
+  assert.ok(!saysExGst("worth ₹228 Cr inclusive of GST"));
+  assert.ok(!saysExGst("worth ₹228 Cr"));
+  assert.equal(ratedAmount("CARE cuts Demo Finance to A- (Negative) on ₹1,800 Cr facilities"), "₹1,800 Cr facilities");
+  assert.equal(ratedAmount("Jubilant Pharmova gets ICRA AA+ (Stable) for ₹1,400 Cr NCDs"), "₹1,400 Cr NCDs");
+  assert.equal(ratedAmount("ICRA reaffirms AA+", "Rated ₹500 crore bank loan facilities"), "₹500 Cr bank facilities");
+  assert.equal(ratedAmount("Revenue ₹1,320 Cr; rating AA"), null);                       // an amount that is not the rated one
+});
+
+test("results table: turns, lower-is-better lines and filler rows", async () => {
+  const { allZero, lowerIsBetter, turnOf } = await import("../src/lib/results.ts");
+  assert.equal(turnOf({ value: 12, prev_year: -4 }), "LOSS_TO_PROFIT");
+  assert.equal(turnOf({ value: -2, prev_quarter: 5, prev_year: -9 }, "qoq"), "PROFIT_TO_LOSS");
+  assert.equal(turnOf({ value: -2, prev_year: -9 }, "yoy"), "LOSS_NARROWED");
+  assert.equal(turnOf({ value: 3, qoq_turn: "LOSS_TO_PROFIT" }, "qoq"), "LOSS_TO_PROFIT");
+  assert.equal(turnOf({ value: 3, prev_year: 2 }), undefined);
+  for (const [key, label] of [["nnpa_pct", "Net NPA"], ["gnpa_pct", "Gross NPA"], ["provisions", "Provisions"], ["combined_ratio", "Combined ratio"],
+    ["claims_ratio", "Claims ratio"], ["incurred_claims", "Claims"], ["kpi:cost_to_income", "Cost to income"]]) assert.ok(lowerIsBetter(key, label), key);
+  for (const [key, label] of [["pat", "Net profit"], ["roa_pct", "Return on assets"], ["nii", "Net interest income"]]) assert.ok(!lowerIsBetter(key, label), key);
+  assert.ok(allZero({ value: 0, prev_year: 0, prev_quarter: 0 }));
+  assert.ok(!allZero({ value: 0, prev_year: 4 }));
+});

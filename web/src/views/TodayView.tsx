@@ -2,9 +2,9 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import type { CardRow } from "../../shared/types";
-import { AnnouncementCard } from "../components/AnnouncementCard";
+import { AnnouncementCard, AnnouncementRow } from "../components/AnnouncementCard";
 import { Avatar } from "../components/Avatar";
-import { FilingRow, parseCard } from "../components/FilingCard";
+import { parseCard } from "../components/FilingCard";
 import { api, type FeedFilters } from "../lib/api";
 import { cn } from "../lib/cn";
 import { addDays, istDate, istDateTime, marketSession, num, pct, signClass, titleCase, todayIST } from "../lib/format";
@@ -150,7 +150,7 @@ export function TodayView() {
               {withLow && (low.data?.cards.length ?? 0) > 0 && (
                 <section className="card-soft overflow-hidden">
                   <h3 className="eyebrow px-5 pb-1 pt-4 text-ink-3">Low impact {rangeLabel}</h3>
-                  <div className="space-y-2 p-3">{low.data!.cards.map((row) => <FilingRow key={row.news_id} row={row} />)}</div>
+                  <div className="space-y-2 p-3">{low.data!.cards.map((row) => <AnnouncementRow key={row.news_id} row={row} />)}</div>
                 </section>
               )}
               {tab.key !== "high" && rest.data && (

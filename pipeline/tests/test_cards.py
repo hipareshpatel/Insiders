@@ -1172,3 +1172,27 @@ def test_a_key_number_quoting_a_table_row_the_text_breaks_up():
     wrapped = "1 To invest/ infuse funds in our newly incorporated subsidiary for developing the drone facility... 150.00"
     assert check_quoted_numbers(card("₹150 Cr", wrapped), text)[0] == []
     assert check_quoted_numbers(card("₹175 Cr", wrapped.replace("150.00", "175.00")), text)[0], "an invented figure"
+
+
+def test_the_quote_rules_keep_a_table_s_order_and_leave_sentences_alone():
+    """An independent check of 24 figures the new quote rules accepted found 3 wrong (2026-10-20): "PPA Realisation 5.93
+    5.53" for the row's "5.53 5.93" (FY26 read as Q1FY26), and two "why it matters" sentences reading a table's figures
+    into a claim. A row is matched only with its figures in the page's order, and the word window is not for sentences."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import check_quoted_numbers
+
+    text = "FY22 FY23 FY24 FY25 FY26 Q1 FY27\nPPA Realisation ₹/ kWh 4.75 6.46 6 5.6 5.53 5.93 Operating Capacity\n"
+
+    def card(change_quote, why_quote=None):
+        body = {"impact_level": "MODERATE", "headline": "Realisation rises in Q1FY27",
+                "what_happened": [{"text": "PPA realisation", "quote": "PPA Realisation"}],
+                "notable_changes": [{"metric": "PPA Realisation", "previous": "₹5.53/kWh", "current": "₹5.93/kWh",
+                                     "change": "+7.2%", "quote": change_quote}]}
+        if why_quote:
+            body["why_it_matters"] = [{"text": "Realisation rose to 5.93 from 5.53", "basis": "FILING", "quote": why_quote}]
+        return Pass2Output.model_validate({"is_material": True, "event_type": "OTHER", "timeline_entry": "x", "card": body})
+
+    assert check_quoted_numbers(card("PPA Realisation ₹/ kWh 5.53 5.93"), text)[0] == []
+    assert check_quoted_numbers(card("PPA Realisation ₹/ kWh 5.93 5.53"), text)[0], "the figures in reverse order"
+    problems = check_quoted_numbers(card("PPA Realisation ₹/ kWh 5.53 5.93", "Realisation ₹/ kWh PPA 5.53 5.93 rose"), text)[0]
+    assert problems and "why it matters" in problems[0], "a sentence quotes a sentence"

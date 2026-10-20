@@ -176,3 +176,24 @@ def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | Non
         sink.kv_set(STATE_KEY, json.dumps({"finished": sorted(finished)}), now_iso())   # where the next run goes on
     log.info("call seed: %s", json.dumps(report))
     return report
+
+
+NIGHT_UTC_HOURS = range(16, 23)   # a run may start the next one until 22:59 UTC (04:29 IST); the schedule ends at 23:45
+
+
+def next_run(report: dict, utc_hour: int) -> bool:
+    """Whether a seed-calls run starts the next one (seed-calls.yml): it stopped at its budget with companies left and
+    read at least one company (a run that reads none would only start another like it), and the night lasts. GitHub
+    dropped two of the first four scheduled runs (20 Oct 2026), so each run hands on to the next; the schedule stays as
+    the backstop."""
+    more = bool(report.get("stopped")) and not report.get("done") and report.get("companies", 0) > 0
+    return more and utc_hour in NIGHT_UTC_HOURS
+
+
+def next_run_from_output(path: str, utc_hour: int) -> bool:
+    """next_run on the command's printed report: the last line of its output that is a JSON object."""
+    lines = [line for line in open(path, encoding="utf-8").read().splitlines() if line.startswith("{")]
+    try:
+        return next_run(json.loads(lines[-1]), utc_hour) if lines else False
+    except ValueError:
+        return False

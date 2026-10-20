@@ -21,3 +21,13 @@ def test_a_board_approval_needs_the_board():
     assert supported_stage("BOARD_APPROVED", outcome) == "BOARD_APPROVED"
     assert supported_stage("COMPLETED", speech) == "COMPLETED"     # other stages are left as they are
     assert supported_stage("BOARD_APPROVED", "") == "BOARD_APPROVED"  # no text, no judgement
+
+
+def test_a_deal_that_closes_later_is_not_completed():
+    """Dr. Agarwal's merger, filed 20 Oct 2026, was shown COMPLETED (live review 5); the scheme takes effect on 1 Nov."""
+    notice = ("all conditionalities specified under Clause 24 of the Scheme stand satisfied. Accordingly, the Scheme "
+              "shall become effective and operative from November 01, 2026 (Effective Date).")
+    assert supported_stage("COMPLETED", notice) == "IN_PROGRESS"
+    done = "The acquisition has been completed today. The Scheme shall become effective from 1 April for accounting."
+    assert supported_stage("COMPLETED", done) == "COMPLETED"
+    assert supported_stage("COMPLETED", "The plant was commissioned on 18 October 2026.") == "COMPLETED"

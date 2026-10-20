@@ -476,14 +476,20 @@ def term_years(execution_by: str | None, filed_at: str | None) -> float | None:
     return None
 
 
+def _share(pct: float) -> str:
+    """A share in whole percent, and under 1% with a decimal: GRP's ₹2.6 Cr solar plant read "0% of FY26 revenue, 0% of
+    market cap" for 0.48% and 0.27% (live review 5, 2026-10-20)."""
+    return f"{pct:.1f}%" if abs(pct) < 1 else f"{pct:.0f}%"
+
+
 def _scale(before: dict | None, output: Pass2Output, company: dict | None, filed_at: str | None = None) -> list[Signal]:
     scale = scale_parts(before, output, company, filed_at)
     if scale is None:
         return []
-    parts = [f"{a['pct']:.0f}% of {a['label']} ({_cr(a['base_cr'])})" for a in scale["against"]]
+    parts = [f"{_share(a['pct'])} of {a['label']} ({_cr(a['base_cr'])})" for a in scale["against"]]
     gst = "; the value includes GST, revenue does not" if scale["gst"] else ""
     term = scale["per_year"]
-    spread = f"; over its {term['years']:g}-year term, {term['pct']:.0f}% of {term['label']} a year" if term else ""
+    spread = f"; over its {term['years']:g}-year term, {_share(term['pct'])} of {term['label']} a year" if term else ""
     return [Signal("SCALE", "INFO", f"{_cr(scale['amount_cr'])} {scale['noun']} = " + ", ".join(parts) + spread + gst + ".")]
 
 

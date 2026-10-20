@@ -158,10 +158,12 @@ def quality_signals(after: dict, news_id: str) -> list[dict]:
                                    "the audited quarter may be correcting the reviewed ones."))
 
     # M22: recurring "one-offs"
-    hits = [p for p in _quarters_back(q, 8) if (get("exceptional", p) or 0) != 0]
+    # Charges only (stored negative: Heritage's -23.48 Cr impairment; a gain is positive, Ahluwalia's +194.97 Cr): a
+    # one-off gain is not a running cost, and ITC's ₹405.88 Cr remeasurement gain was counted as one (live review 3)
+    hits = [p for p in _quarters_back(q, 8) if (get("exceptional", p) or 0) < 0]
     if len(hits) >= 3:
         out.append(_signal("RECURRING_ONE_OFFS", "WARNING",
-                           f"Exceptional items in {len(hits)} of the last 8 quarters ({', '.join(reversed(hits))}): treat them as a running cost."))
+                           f"Exceptional charges in {len(hits)} of the last 8 quarters ({', '.join(reversed(hits))}): treat them as a running cost."))
 
     # M27 and M29 from the balance sheet and interest cover
     sheets = after.get("balance_sheet", [])

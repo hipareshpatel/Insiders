@@ -45,13 +45,16 @@ def test_jaws_reads_as_prelaunch_when_capex_is_under_way():
 
 def test_q4_true_up_low_tax_one_offs_and_distress():
     rows = []
-    for i, (q, exc) in enumerate((("Q1FY27", 1.0), ("Q2FY27", 0.0), ("Q3FY27", 2.0))):
+    for i, (q, exc) in enumerate((("Q1FY27", -1.0), ("Q2FY27", 0.0), ("Q3FY27", -2.0))):
         rows += _quarter(q, 100, 50, 10, 10, 30, 12, 10, tax=0.5, exc=exc)
-    rows += _quarter("Q4FY27", 100, 58, 10, 10, 22, 8, 7, fin=20, dep=5, tax=0.4, exc=3.0, news=N)
+    rows += _quarter("Q4FY27", 100, 58, 10, 10, 22, 8, 7, fin=20, dep=5, tax=0.4, exc=-3.0, news=N)
     found = kinds(quality_signals({"financial_metrics": rows, "balance_sheet": []}, N))
     assert "800 bps below" in found["Q4_TRUE_UP"]["text"]
     assert found["LOW_CASH_TAX"]["severity"] == "INFO"
     assert "3 of the last 8" in found["RECURRING_ONE_OFFS"]["text"]
+    # gains are not a running cost (ITC's remeasurement gain, live review 3): the same quarters as gains raise nothing
+    gains = [dict(r, value=-r["value"]) if r["metric"] == "exceptional_items" else r for r in rows]
+    assert "RECURRING_ONE_OFFS" not in kinds(quality_signals({"financial_metrics": gains, "balance_sheet": []}, N))
     # below 1x the operating profit covers only part of the interest; "barely covers" is for 1x to 1.5x
     assert found["DISTRESS"]["text"].startswith("EBIT/interest 0.8x")
     assert "covers only part of the interest" in found["DISTRESS"]["text"]

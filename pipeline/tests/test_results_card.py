@@ -276,3 +276,25 @@ def test_a_change_cut_from_a_pair_keeps_its_brackets():
         "EBITDA Q3FY25: ₹11.36 Cr (-7.0% QoQ); margin 10.1%."
     assert _strip("Revenue ₹90 Cr (+3.7% YoY, +3.2% QoQ).", ["+3.2%"]) == "Revenue ₹90 Cr (+3.7% YoY)."
     assert _strip("EBITDA ₹11.36 Cr (+12.3% YoY); margin 10.1%.", ["+12.3%"]) == "EBITDA ₹11.36 Cr; margin 10.1%."
+
+
+def test_the_pbt_the_statement_prints_and_the_owners_label():
+    """Orient Bell's file tags PBT 11.41 before the associates' share (-0.26), the statement prints 11.15; "net profit
+    to shareholders" was set to the group's profit, minorities included (live review 3, 2026-10-20)."""
+    from bse_intel.models import FinancialMetric
+    from bse_intel.pipeline import _KEY_METRIC
+    from bse_intel.xbrl import XbrlResult, settle_pbt
+
+    def result():
+        return XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q1FY27", metrics=[
+            FinancialMetric(metric="pbt", period="Q1FY27", value=11.41),
+            FinancialMetric(metric="share_associates", period="Q1FY27", value=-0.26)])
+
+    r = result()
+    assert settle_pbt(r, "Profit before tax 11.15 16.02") and r.metrics[0].value == 11.15
+    r = result()
+    assert settle_pbt(r, "Profit before tax 11.41 16.02") == [] and r.metrics[0].value == 11.41
+    first = lambda label: next(name for name, pattern in _KEY_METRIC if pattern.search(label))
+    assert first("Net profit to shareholders") == "pat_owners"
+    assert first("Profit attributable to owners of the parent") == "pat_owners"
+    assert first("Net profit") == "pat"

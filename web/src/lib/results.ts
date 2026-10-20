@@ -20,8 +20,14 @@ export function turnOf(line?: TurnLine | null, kind: "yoy" | "qoq" = "yoy"): str
 }
 
 // Lines where a fall is the good news: bad loans, provisions, claims and the cost ratios (CSB's NNPA -27 bps read red)
-const LOWER_IS_BETTER = /npa|provision|claim|combined|cost|expense|slippage/i;
+// and the table's mover lines (depreciation, tax; O15, owner 2026-10-20)
+const LOWER_IS_BETTER = /npa|provision|claim|combined|cost|expense|slippage|depreciation|^tax$/i;
 export const lowerIsBetter = (key: string, label = "") => LOWER_IS_BETTER.test(key) || LOWER_IS_BETTER.test(label);
+
+/** Lines a change of sign does not make a "loss to profit": a tax credit, an exceptional charge that did not recur, a
+ *  mover row (O15). The pipeline names no turn on them; nor is one read from their values. */
+export const NO_TURN = new Set(["exceptional_items", "tax_expense", "other_income", "depreciation", "finance_cost",
+  "employee_cost", "raw_material_cost"]);
 
 /** A row with nothing but zeros ("Exceptional items 0 0 0") is filler, not a figure. */
 export const allZero = (line: { value: number; prev_year?: number; prev_quarter?: number }) =>

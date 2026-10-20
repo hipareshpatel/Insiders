@@ -24,7 +24,7 @@ from typing import Any
 
 from .scoring import calibration
 from .models import Filing, Pass2Output
-from .periods import canonical_period, due_date, quarter_index
+from .periods import canonical_period, due_date, quarter_index, results_due
 
 SCHEMA_VERSION = 3
 MAX_TIMELINE = 600
@@ -779,8 +779,9 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         g = guidance.get(update.guidance_id)
         if g is None or g.get("given_on", "") >= as_of:
             continue  # unknown id (hallucinated) or guidance newer than this filing
-        if update.status == "ON_TRACK" and g.get("due_date") and g["due_date"] < as_of[:10]:
-            continue  # past its deadline a promise is delivered or missed, not on track ("2 MLPD by FY26" in Q2FY27)
+        if update.status == "ON_TRACK" and g.get("due_date") and judged_on(g.get("due"), g["due_date"]) < as_of[:10]:
+            continue  # past its deadline a promise is delivered or missed, not on track ("2 MLPD by FY26" in Q2FY27);
+            # a period's deadline passes when its results are due, not at its end (O12, owner 2026-10-20)
         g["status_history"] = sorted(
             g.get("status_history", []) + [{
                 "status": update.status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,
@@ -938,6 +939,14 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     return d
 
 
+def judged_on(due: str | None, stored: str | None) -> str:
+    """The first day a deadline counts as passed: for a reporting period ("H1FY27") its end plus the results window
+    (``periods.results_due``), else the stored day. Jindal Stainless's H1FY27 guidance was overdue on 16 Oct, a month
+    before its results were due (O12, owner 2026-10-20)."""
+    judged = results_due(due)
+    return judged.isoformat() if judged else stored or ""
+
+
 def _guidance_status_at(g: dict, cutoff: str) -> str:
     history = [h for h in g.get("status_history", []) if h["as_of"] < cutoff]
     return history[-1]["status"] if history else "OPEN"
@@ -989,7 +998,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
         {
             "id": g["id"], "statement": g["statement"], "target": g.get("target"), "due": g.get("due"),
             "given_on": g["given_on"][:10], "status": _guidance_status_at(g, cutoff),
-            **({"overdue": True} if g.get("due_date") and g["due_date"] < cutoff[:10] else {}),
+            **({"overdue": True} if g.get("due_date") and judged_on(g.get("due"), g["due_date"]) < cutoff[:10] else {}),
         }
         for g in dossier.get("guidance", []) if before(g, "given_on")
     ]
@@ -1001,7 +1010,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
         {
             "id": w["id"], "kind": w["kind"], "text": w["text"], "check_in": w.get("check_in"),
             **({"management_said": w["response"]} if w.get("response") else {}),
-            **({"overdue": True} if w.get("check_by") and w["check_by"] < cutoff[:10] else {}),
+            **({"overdue": True} if w.get("check_by") and judged_on(w.get("check_in"), w["check_by"]) < cutoff[:10] else {}),
         }
         for w in dossier.get("watchlist", [])
         if w.get("created_on", "") < cutoff and _guidance_status_at(w, cutoff) in ("OPEN", "PENDING", "PARTIAL")
@@ -1253,10 +1262,31 @@ _LENSES = (
                                   ("incurred_claims", "Claims", "cr"), ("claims_ratio", "Claims ratio", "pct"),
                                   ("combined_ratio", "Combined ratio", "pct"), ("pbt", "PBT", "cr"),
                                   ("pat", "PAT", "cr"), ("eps", "EPS (₹)", "inr"))),
+    # a company's table is the five lines that tell the quarter, plus at most one mover (owner, 2026-10-20, O15: "show
+    # only revenue, EBITDA, margin, PAT and EPS, and the one line that moved profit when it matters"); PBT and
+    # exceptional items stay in the snapshot, off the table unless exceptional items are that mover
     ("company", "revenue", (("revenue", "Revenue", "cr"), ("ebitda", "EBITDA", "cr"), ("ebitda_margin", "EBITDA margin", "pct"),
-                            ("exceptional_items", "Exceptional items", "cr"), ("pbt", "PBT", "cr"), ("pat", "PAT", "cr"),
-                            ("eps", "EPS (₹)", "inr"))),
+                            ("pat", "PAT", "cr"), ("eps", "EPS (₹)", "inr"))),
 )
+# The lines that can be a company table's mover (O15): (key, names in memory, sign of its pull on profit, label). The
+# two operating costs are judged on their change beyond what the revenue change carries, so a cost that only grew with
+# sales is no mover, and a payroll that jumped ahead of output is (a new plant staffed before it produces).
+_MOVERS = (
+    ("employee_cost", ("employee_cost", "employee_benefit_expense"), -1, "Employee cost"),
+    ("raw_material_cost", ("raw_material_cost", "cost_of_materials"), -1, "Raw material cost"),
+    ("other_income", ("other_income",), +1, "Other income"),
+    ("depreciation", ("depreciation",), -1, "Depreciation"),
+    ("finance_cost", ("finance_cost",), -1, "Finance cost"),
+    ("tax_expense", ("tax_expense",), -1, "Tax"),
+    ("exceptional_items", ("exceptional_items",), +1, "Exceptional items"),
+)
+_SCALES_WITH_REVENUE = {"employee_cost", "raw_material_cost"}
+# When a mover is shown: profit moved YoY by at least MOVER_PAT_MOVE of the year-ago PAT (and ₹1 Cr), and the line's
+# pull, in the direction profit went, is at least MOVER_SHARE of that move, ₹1 Cr and MOVER_REVENUE of the quarter's
+# revenue (a ₹2 Cr line at a ₹5,000 Cr company is not news however its small profit moved)
+MOVER_PAT_MOVE = 0.10
+MOVER_SHARE = 0.25
+MOVER_REVENUE = 0.01
 
 
 CALL_QUARTER_DAYS = 120   # a call or presentation discusses the quarter that ended at most this long before it
@@ -1313,6 +1343,38 @@ def _is_printed(value: float, numbers: list[float], per_share: bool) -> bool | N
     if v < 1:
         return None
     return any(near(v * unit, 0.006 * unit + 0.5) for unit in _UNITS)
+
+
+def _mover(out: dict, lookup, periods: dict) -> tuple[str, tuple[str, ...], str] | None:
+    """The one line that moved a company's profit most year on year, when that move is significant (O15, owner
+    2026-10-20); None when profit barely moved or no single line carried it. Values come from the table's own lookup,
+    so a comparative the filing does not print makes no mover. results_card.profit_driver reads the same bridge from
+    the tagged file for the card's words."""
+    pat = out.get("pat") or {}
+    now, then = pat.get("value"), pat.get("prev_year")
+    if now is None or then is None:
+        return None
+    moved = now - then
+    if abs(moved) < max(1.0, MOVER_PAT_MOVE * abs(then)):
+        return None
+    revenue = out.get("revenue") or {}
+    rev, rev0 = revenue.get("value"), revenue.get("prev_year")
+    floor = max(1.0, MOVER_REVENUE * abs(rev)) if rev else 1.0
+    best = None
+    for key, names, sign, label in _MOVERS:
+        a, b = lookup(names, periods["value"]), lookup(names, periods["prev_year"])
+        if a is None or b is None:
+            continue
+        if key in _SCALES_WITH_REVENUE:
+            if not rev or not rev0 or rev0 <= 0:
+                continue
+            b = b * rev / rev0   # the year-ago cost at this quarter's sales
+        pull = sign * (a - b)
+        if (pull > 0) != (moved > 0) or abs(pull) < max(floor, MOVER_SHARE * abs(moved)):
+            continue
+        if best is None or abs(pull) > best[0]:
+            best = (abs(pull), key, names, label)
+    return best[1:] if best else None
 
 
 def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = (),
@@ -1415,6 +1477,14 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         return None
     lens, rows = next(((name, rows) for name, top, rows in _LENSES if top in out), ("company", _LENSES[-1][2]))
     lines = [{"key": key, "label": label, "unit": unit} for key, label, unit in rows if key in out]
+    if lens == "company":
+        mover = _mover(out, lookup, periods)
+        if mover is not None:
+            key, names, label = mover
+            if key not in out:
+                out[key] = line(lambda p, names=names: lookup(names, p), False, key)
+            at = next((i for i, spec in enumerate(lines) if spec["key"] == "pat"), len(lines))
+            lines.insert(at, {"key": key, "label": label, "unit": "cr", "mover": True})
     # the sector's own figures (EBITDA a tonne for cement, ARPU for telecom, occupancy for hospitals...) where memory
     # holds them for this quarter; a KPI the statement already shows is not repeated
     shown = {key for key, _, _ in rows}

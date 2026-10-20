@@ -106,7 +106,8 @@ export interface ResultsSnapshot {
   gross_premium?: ResultLine;
   /** Which statement the table reads (company, bank, insurer) and its rows in order, the sector's KPIs last. */
   lens?: "company" | "bank" | "insurer";
-  lines?: { key: string; label: string; unit: "cr" | "pct" | "inr" | "num" }[];
+  /** `mover`: the one line that moved a company's profit most this quarter, shown only when significant (O15). */
+  lines?: { key: string; label: string; unit: "cr" | "pct" | "inr" | "num"; mover?: boolean }[];
 }
 
 export interface DealValue {

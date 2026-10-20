@@ -1253,6 +1253,32 @@ _LENSES = (
 )
 
 
+CALL_QUARTER_DAYS = 120   # a call or presentation discusses the quarter that ended at most this long before it
+
+
+def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...] | list[dict] = ()) -> dict | None:
+    """The results table for an earnings call or investor presentation: the latest quarter in memory, as the results
+    filing that reported it gives it (design audit 2026-10-20, fix 10). None when memory has no quarter that ended
+    within CALL_QUARTER_DAYS of the call, so a call never shows an older quarter as the one it discusses."""
+    from datetime import date as _date
+
+    filed = _date.fromisoformat(filed_at[:10])
+    latest = None
+    for m in dossier.get("financial_metrics", []):
+        if m.get("metric") not in ("revenue", "pat") or not str(m.get("period", "")).startswith("Q"):
+            continue
+        end = due_date(m["period"])
+        if end is None or end > filed or (filed - end).days > CALL_QUARTER_DAYS:
+            continue
+        reporters = [s for s in _sources(m) if s.get("news_id")]
+        if reporters and (latest is None or end > latest[0]):
+            latest = (end, min(reporters, key=lambda s: s.get("as_of") or "")["news_id"])
+    if latest is None:
+        return None
+    snap = results_snapshot(dossier, latest[1], footer)
+    return {**snap, "discussed": True} if snap else None
+
+
 def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = ()) -> dict | None:
     """This filing's latest quarter against a year ago and the previous quarter, for the results tables.
 

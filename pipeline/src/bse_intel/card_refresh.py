@@ -17,7 +17,7 @@ from pydantic import ValidationError
 
 from .card_context import case_stage, guidance_recall, rating_change
 from .impact import high_reasons
-from .dossier import dossier_as_of, latest_fundamentals, results_snapshot
+from .dossier import call_results_snapshot, dossier_as_of, latest_fundamentals, results_snapshot
 from .models import Card, Filing, Pass2Output
 from .prices import point_in_time
 from .signals import SIGNALS_OFF, priced_for, scale_parts, volume_strip
@@ -43,7 +43,8 @@ def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, foot
     # earlier grade from the letter's "from [ICRA]AA+" only when memory has none)
     text = " ".join([out.card.headline, *facts])
     return {
-        "results": results_snapshot(current, filing.news_id, footer) if event_type == "RESULTS" else None,
+        "results": (results_snapshot(current, filing.news_id, footer) if event_type == "RESULTS"
+                    else call_results_snapshot(current, filing.filed_at, footer) if event_type == "CONCALL_PRESENTATION" else None),
         "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
         "scale": scale_parts(before, out, priced, filing.filed_at),
         "rating_change": rating_change(before, current, filing.news_id, text) if event_type == "DEBT_RATINGS" else None,

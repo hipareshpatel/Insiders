@@ -454,13 +454,12 @@ extra_body = { thinking = { type = "disabled" } }  # on by default at high effor
 limits = { rpm = 60 }
 
 # The memory seed from calls and presentations (call_seed.py; owner, 2026-10-20: no Gemini). Long transcripts need a
-# long window: the prepaid DeepSeek (1M, many requests at once; D24, the backfill's one paid route, its key set only in
-# seed-calls.yml, never the daily pipeline) when its key is there, else Z.AI's GLM (120K), OpenRouter's Nemotron (250K)
-# as the spare. Used only by `seed-calls`, never by a card route.
+# long window: Z.AI's GLM (120K) first; the prepaid DeepSeek (1M; D24, $20 balance, key only in seed-calls.yml, never
+# the daily pipeline) and OpenRouter's Nemotron (250K) as spares. Used only by `seed-calls`, never by a card route.
 [[routes.memory_seed]]
 provider = "deepseek"
 model = "deepseek-flash"
-weight = 8
+spare = true   # owner, 2026-10-20: a prepaid $20 balance; the free models go first, DeepSeek only when none can answer
 json_mode = true
 max_tokens = 6000
 context_tokens = 900000

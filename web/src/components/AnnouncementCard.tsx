@@ -450,7 +450,7 @@ function CaseBlock({ cs }: { cs: NonNullable<CardBody["case_stage"]> }) {
 
 /** Context for a decision, all computed from the card and memory: the price since the filing, what management said
  * before, and the next check. */
-function decisionLines(row: CardRow, card: CardBody, table: ResultsSnapshot | null, faceText: string) {
+function decisionLines(row: CardRow, card: CardBody, _table: ResultsSnapshot | null, faceText: string) {
   const out: { label: string; text: string; tone?: "pos" | "neg" | "warn"; computed?: boolean }[] = [];
   const at = card.priced_at_filing;
   const ageDays = (Date.now() - Date.parse(row.filed_at)) / 86400_000;

@@ -221,3 +221,35 @@ def summarize_calls(dossier: dict) -> list[dict]:
                 for p in kept if p["category"] == c]} for c in CATEGORIES if count[c]],
         })
     return out
+
+
+CARD_PER_CATEGORY = 3
+CARD_TOTAL = 8
+
+
+def card_takeaways(dossier: dict, news_id: str | None, filed_at: str) -> list[dict] | None:
+    """The call card's code-made block: the key takeaways memory took from THIS filing (by its news_id), under the
+    company page's headings, at most CARD_PER_CATEGORY a heading and CARD_TOTAL in all, figures first, greetings and
+    the safe harbour dropped. [{name, points: [{text, reiterated?}]}], or None when memory took none from it.
+    Each point passed the checked memory merge, so it is the filing's own content, not the model's reading."""
+    if not news_id:
+        return None
+    points = _points(dossier, {news_id: {"date": _day(filed_at), "quarter": None}})
+    # a stated figure first, then the kind's rank (guidance before an operating note)
+    ranked = sorted(points, key=lambda p: (not re.search(r"\d", p["text"]), -p["rank"]))
+    kept: list[dict] = []
+    seen: list[set[str]] = []
+    count = dict.fromkeys(CATEGORIES, 0)
+    for p in ranked:
+        if len(kept) >= CARD_TOTAL:
+            break
+        words = _words(p["text"])
+        if count[p["category"]] >= CARD_PER_CATEGORY or any(_same(words, s) for s in seen):
+            continue
+        seen.append(words)
+        count[p["category"]] += 1
+        kept.append(p)
+    if not kept:
+        return None
+    return [{"name": c, "points": [{"text": p["text"], **({"reiterated": True} if p.get("reiterated") else {})}
+                                   for p in kept if p["category"] == c]} for c in CATEGORIES if count[c]]

@@ -706,6 +706,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
           </section>
         )}
 
+        {event === "CONCALL_PRESENTATION" && card.call_takeaways?.length ? <CallTakeaways groups={card.call_takeaways} /> : null}
+
         {!exporting && <AiReading catalyst={card.core_catalyst && !repeats(plain(card.core_catalyst), headline) ? plain(card.core_catalyst) : null}
           facts={unverified} insights={box.insights.map((i) => i.text)} takeaway={box.fallback ?? null} />}
 
@@ -1081,6 +1083,30 @@ export const OTHER_RENAME = /\(\s*now\b|\bnow\s+known\s+as\b|\brenamed\s+(?:as|t
 const NO_NAME = /^\s*(?:none|nil|null|n[./]?\s?a\.?|not\s+applicable|-+)?\s*$/i;
 // Former names stay in memory for search and on the company page, off the card header (owner, 2026-10-20).
 export const formerOwnName = (n: string) => !NO_NAME.test(n) && !OTHER_RENAME.test(n);
+
+/** Calls and presentations: the key takeaways company memory took from this filing, under small headings. Built by
+ *  code from memory's checked merge, so it is the filing's content, kept apart from the AI reading (owner O13/O4). */
+function CallTakeaways({ groups }: { groups: NonNullable<CardBody["call_takeaways"]> }) {
+  const shown = groups.filter((g) => g.points.length);
+  if (!shown.length) return null;
+  return (
+    <BlockShell title="Key takeaways from the call" right={<span className="ml-auto text-[10px] font-semibold normal-case tracking-normal text-ink-3">from company memory</span>}>
+      {shown.map((g) => (
+        <div key={g.name}>
+          <h5 className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-ink-3">{g.name}</h5>
+          <ul className="mt-1 space-y-1.5">
+            {g.points.map((p, i) => (
+              <Point key={i}>
+                <RichText text={p.text} />
+                {p.reiterated && <span className="ml-1.5 text-[10.5px] font-medium text-ink-3">reiterated</span>}
+              </Point>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </BlockShell>
+  );
+}
 
 /** Monthly business update: the main volume over recent months, bars scaled to the largest. */
 function VolumeStrip({ s }: { s: NonNullable<CardBody["volume_strip"]> }) {

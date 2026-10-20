@@ -2,8 +2,10 @@
 
 import json
 
-from bse_intel.call_summary import (CATEGORIES, PER_CATEGORY, PER_QUARTER, boilerplate, call_filings, category,
-                                    quarter_of, summarize_calls)
+from bse_intel import card_refresh
+from bse_intel.call_summary import (CARD_PER_CATEGORY, CARD_TOTAL, CATEGORIES, PER_CATEGORY, PER_QUARTER, boilerplate,
+                                    call_filings, card_takeaways, category, quarter_of, summarize_calls)
+from bse_intel.models import Filing
 from bse_intel.radar import summarize
 
 T1, T2, T3, P3, R1 = "call-q1fy27", "call-q4fy26", "call-q3fy26", "deck-q3fy26", "results-q1fy27"
@@ -151,3 +153,62 @@ def test_company_summary_carries_the_calls_and_stays_json():
     assert s["calls"][0]["quarter"] == "Q1FY27"
     json.dumps(s, ensure_ascii=False)
     assert summarize({"timeline": [], "guidance": []})["memory_summary_json"]["calls"] == []
+
+
+# --- the call card's own block: this filing's takeaways only ---
+
+FILED_T1 = "2026-08-14T19:00:00+05:30"
+
+
+def _texts(block):
+    return [p["text"] for c in block for p in c["points"]]
+
+
+def test_card_block_holds_only_this_filings_takeaways_by_heading():
+    block = card_takeaways(dossier(), T1, FILED_T1)
+    texts = _texts(block)
+    names = [c["name"] for c in block]
+    assert names == [c for c in CATEGORIES if c in names]   # the company page's order
+    assert any("2 MTPA" in t for t in texts) and any("receivables" in t for t in texts)
+    assert any(p.get("reiterated") for c in block for p in c["points"])   # FY27 volume guidance said again on T1
+    # other filings' points stay out: the Q4 call's fuel mix and balance sheet, the press release, the Q3 deck
+    assert not any("40% pet coke" in t or "press release" in t or "East region" in t or "gross debt" in t for t in texts)
+    # greetings, thanks and the call's logistics are dropped; the repeated volume note is kept once
+    assert not any(t.lower().startswith(("thank", "good morning")) or "was held" in t for t in texts)
+    assert sum("3.1 MT" in t for t in texts) == 1
+
+
+def test_card_block_figures_first_and_capped():
+    d = dossier()
+    d["operating_notes"] += [{"text": f"Plant {i} at Jajpur running at {60 + i}% of capacity", "source_news_id": T1,
+                              "as_of": FILED_T1} for i in range(6)]
+    d["operating_notes"] += [{"text": f"Management remains focused on premium brand {w} in the north", "source_news_id": T1,
+                              "as_of": FILED_T1} for w in ("Alpha", "Bravo", "Charlie", "Delta")]
+    block = card_takeaways(d, T1, FILED_T1)
+    assert all(len(c["points"]) <= CARD_PER_CATEGORY for c in block)
+    assert len(_texts(block)) == CARD_TOTAL
+    for c in block:   # within a heading a stated figure comes before words alone
+        has = [any(ch.isdigit() for ch in p["text"]) for p in c["points"]]
+        assert has == sorted(has, reverse=True)
+
+
+def test_card_block_empty_when_memory_took_nothing_from_the_filing():
+    assert card_takeaways(dossier(), "call-unknown", FILED_T1) is None
+    assert card_takeaways(dossier(), None, FILED_T1) is None
+    d = dossier()
+    d["operating_notes"] = [n for n in d["operating_notes"]
+                            if n["source_news_id"] != T1 or n["text"].startswith(("Thank", "Good morning", "The earnings"))]
+    d["guidance"] = [g for g in d["guidance"] if g["source_news_id"] != T1 and not g.get("repeated")]
+    d["watchlist"], d["deals"] = [], []
+    assert card_takeaways(d, T1, FILED_T1) is None   # only greetings and logistics were left
+
+
+def test_refresh_adds_the_block_to_a_stored_call_card():
+    card = {"event_type": "CONCALL_PRESENTATION", "impact_level": "MODERATE", "headline": "CEMX Q1FY27 call",
+            "what_happened": [{"text": "Volumes up 9% YoY", "quote": "volumes grew 9%"}], "signals": [],
+            "timeline_entry": "Q1FY27 call"}
+    filing = Filing(news_id=T1, scrip_code="CEMX", company_name="Cement X Ltd", headline="h", subject="",
+                    filed_at=FILED_T1, filing_date=FILED_T1[:10])
+    new, changed = card_refresh.refresh(card, dossier(), filing, None)
+    assert "call_takeaways" in changed and new["call_takeaways"] == card_takeaways(dossier(), T1, FILED_T1)
+    assert not card_refresh.refresh({**card, "event_type": "ORDER_WIN"}, dossier(), filing, None)[0].get("call_takeaways")

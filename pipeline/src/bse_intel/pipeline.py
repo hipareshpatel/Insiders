@@ -56,6 +56,7 @@ from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
 from .card_context import case_stage, guidance_recall, memory_context, rating_change, rating_word_mismatch
+from .call_summary import card_takeaways
 from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
@@ -2947,6 +2948,9 @@ class Pipeline:
                         else call_results_snapshot(current, filing.filed_at, sector_module.footer)
                         if event_type == "CONCALL_PRESENTATION" else None),
             "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
+            # the key takeaways memory took from this call, by heading (call_summary.py)
+            "call_takeaways": (card_takeaways(current, filing.news_id, filing.filed_at)
+                               if event_type == "CONCALL_PRESENTATION" else None),
             # the event's own block on the card's face, made by code (card_context.py, signals.scale_parts)
             "scale": scale_parts(before, out, priced, filing.filed_at),
             "rating_change": rating_change(before, current, filing.news_id, text) if event_type == "DEBT_RATINGS" else None,

@@ -359,6 +359,55 @@ def test_an_exceptional_charge_that_did_not_recur_is_no_turn():
     snap = results_snapshot(dossier, "n2")
     assert snap["pat"]["qoq_turn"] == "LOSS_TO_PROFIT"
     assert "qoq_turn" not in snap["exceptional_items"] and "qoq_pct" not in snap["exceptional_items"]
+    # the row stays in the snapshot; the table shows it only as the quarter's mover (O15)
+    assert [line["key"] for line in snap["lines"]] == ["revenue", "pat"]
+
+
+def test_a_company_table_shows_five_lines_and_the_one_that_moved_profit():
+    """Owner, 2026-10-20 (O15): Revenue, EBITDA, EBITDA margin, PAT and EPS, plus at most one line - the one that moved
+    profit most this quarter when that move is significant (a payroll ahead of a new plant's output, a tax credit)."""
+    from bse_intel.dossier import results_snapshot
+
+    def m(metric, period, value, news="n2"):
+        return {"metric": metric, "period": period, "value": value, "unit": "INR_CR", "source_news_id": news, "as_of": "b"}
+
+    def dossier(**now):
+        lines = {"revenue": (1100.0, 1000.0), "ebitda": (150.0, 160.0), "pbt": (90.0, 110.0), "pat": (70.0, 85.0),
+                 "eps": (7.0, 8.5), "employee_cost": (180.0, 120.0), "raw_material_cost": (550.0, 500.0),
+                 "depreciation": (30.0, 29.0), "finance_cost": (12.0, 11.0), "other_income": (6.0, 7.0),
+                 "tax_expense": (20.0, 25.0), "exceptional_items": (0.0, 0.0), **now}
+        return {"financial_metrics": [x for k, (a, b) in lines.items() for x in (m(k, "Q2FY27", a), m(k, "Q2FY26", b, "n1"))]}
+
+    snap = results_snapshot(dossier(), "n2")
+    # payroll +₹60 Cr on sales +10%: ₹48 Cr beyond what sales carry, more than the ₹15 Cr PAT fall; raw material grew
+    # with sales (₹550 Cr against ₹550 Cr at this quarter's sales), so it is no mover
+    assert snap["lines"] == [{"key": "revenue", "label": "Revenue", "unit": "cr"}, {"key": "ebitda", "label": "EBITDA", "unit": "cr"},
+                             {"key": "ebitda_margin", "label": "EBITDA margin", "unit": "pct"},
+                             {"key": "employee_cost", "label": "Employee cost", "unit": "cr", "mover": True},
+                             {"key": "pat", "label": "PAT", "unit": "cr"}, {"key": "eps", "label": "EPS (₹)", "unit": "inr"}]
+    assert snap["employee_cost"] == {"value": 180.0, "prev_year": 120.0, "yoy_pct": 50.0}
+    assert snap["pbt"]["value"] == 90.0 and "exceptional_items" in snap   # kept in the snapshot, off the table
+
+    # a tax credit lifting profit while EBITDA fell (Texmaco's shape, round 5)
+    snap = results_snapshot(dossier(pat=(120.0, 85.0), employee_cost=(132.0, 120.0), tax_expense=(-30.0, 25.0)), "n2")
+    (mover,) = [line for line in snap["lines"] if line.get("mover")]
+    assert mover == {"key": "tax_expense", "label": "Tax", "unit": "cr", "mover": True}
+    assert snap["tax_expense"] == {"value": -30.0, "prev_year": 25.0}   # no % across a credit
+    # an exceptional gain that made the quarter
+    snap = results_snapshot(dossier(pat=(140.0, 85.0), employee_cost=(132.0, 120.0), exceptional_items=(60.0, 0.0)), "n2")
+    assert [line["key"] for line in snap["lines"] if line.get("mover")] == ["exceptional_items"]
+
+    # no mover: profit barely moved, or no line carried a quarter of the move, or the line is small against sales
+    flat = dossier(pat=(86.0, 85.0))
+    assert not any(line.get("mover") for line in results_snapshot(flat, "n2")["lines"])
+    spread = dossier(pat=(65.0, 85.0), employee_cost=(136.0, 120.0), depreciation=(34.0, 29.0), finance_cost=(16.0, 11.0))
+    assert not any(line.get("mover") for line in results_snapshot(spread, "n2")["lines"])   # ₹4-5 Cr each of a ₹20 Cr fall
+    small = dossier(revenue=(5500.0, 5000.0), pat=(6.0, 3.0), employee_cost=(132.0, 120.0), raw_material_cost=(2750.0, 2500.0),
+                    tax_expense=(1.0, 4.0))
+    assert not any(line.get("mover") for line in results_snapshot(small, "n2")["lines"])     # ₹3 Cr at ₹5,500 Cr sales
+    # a line moving against profit is not what moved it: payroll fell while profit fell
+    against = dossier(employee_cost=(100.0, 120.0), finance_cost=(25.0, 11.0))
+    assert [line["key"] for line in results_snapshot(against, "n2")["lines"] if line.get("mover")] == ["finance_cost"]
 
 
 def test_a_call_card_shows_the_quarter_it_discusses():

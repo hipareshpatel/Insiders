@@ -20,7 +20,7 @@ import {
   executionFact, near, PERIOD_WORDS, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
   verifiedFact,
 } from "../lib/cardText";
-import { allZero, lowerIsBetter, TURN, turnOf } from "../lib/results";
+import { allZero, lowerIsBetter, NO_TURN, TURN, turnOf } from "../lib/results";
 
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
 
@@ -96,8 +96,8 @@ function CallReadChips({ read }: { read: CallRead }) {
 
 /** A change in the table: a turn across a loss in words, as on the Results page; green is the good news, so a fall in
  * bad loans or provisions is green. */
-function change(line: ResultLine | undefined, kind: "yoy" | "qoq", bps: boolean, lower: boolean) {
-  const turn = bps ? undefined : turnOf(line, kind);
+function change(line: ResultLine | undefined, kind: "yoy" | "qoq", bps: boolean, lower: boolean, key = "") {
+  const turn = bps || NO_TURN.has(key) ? undefined : turnOf(line, kind);
   if (turn && TURN[turn]) return <span className={cn("font-semibold", TURN[turn][1])}>{TURN[turn][0]}</span>;
   const v = bps ? line?.[`${kind}_bps`] : line?.[`${kind}_pct`];
   if (v == null) return <span className="text-ink-3">—</span>;
@@ -107,7 +107,7 @@ function change(line: ResultLine | undefined, kind: "yoy" | "qoq", bps: boolean,
 type LineSpec = NonNullable<ResultsSnapshot["lines"]>[number];
 const DEFAULT_LINES: LineSpec[] = [
   { key: "revenue", label: "Revenue", unit: "cr" }, { key: "ebitda", label: "EBITDA", unit: "cr" },
-  { key: "ebitda_margin", label: "EBITDA margin", unit: "pct" }, { key: "pbt", label: "PBT", unit: "cr" },
+  { key: "ebitda_margin", label: "EBITDA margin", unit: "pct" },
   { key: "pat", label: "PAT", unit: "cr" }, { key: "eps", label: "EPS (₹)", unit: "inr" },
 ];
 
@@ -166,9 +166,9 @@ function ResultsTable({ r, judged }: { r: ResultsSnapshot; judged: { label: stri
                 <td className={cn(td, "pl-0 text-left font-sans font-medium text-ink sm:pl-0")}>{label}</td>
                 <td className={cn(td, "font-semibold text-ink")}>{lineValue(line.value, unit)}</td>
                 {py && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_year, unit)}</td>}
-                {yoy && <td className={td}>{change(line, "yoy", bps, lower)}{py && <span className={under}>{was(line.prev_year, unit)}</span>}</td>}
+                {yoy && <td className={td}>{change(line, "yoy", bps, lower, key)}{py && <span className={under}>{was(line.prev_year, unit)}</span>}</td>}
                 {pq && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_quarter, unit)}</td>}
-                {qoq && <td className={cn(td, "pr-0 sm:pr-0")}>{change(line, "qoq", bps, lower)}{pq && <span className={under}>{was(line.prev_quarter, unit)}</span>}</td>}
+                {qoq && <td className={cn(td, "pr-0 sm:pr-0")}>{change(line, "qoq", bps, lower, key)}{pq && <span className={under}>{was(line.prev_quarter, unit)}</span>}</td>}
               </tr>
             );
           })}

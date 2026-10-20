@@ -1253,10 +1253,31 @@ _LENSES = (
                                   ("incurred_claims", "Claims", "cr"), ("claims_ratio", "Claims ratio", "pct"),
                                   ("combined_ratio", "Combined ratio", "pct"), ("pbt", "PBT", "cr"),
                                   ("pat", "PAT", "cr"), ("eps", "EPS (₹)", "inr"))),
+    # a company's table is the five lines that tell the quarter, plus at most one mover (owner, 2026-10-20, O15: "show
+    # only revenue, EBITDA, margin, PAT and EPS, and the one line that moved profit when it matters"); PBT and
+    # exceptional items stay in the snapshot, off the table unless exceptional items are that mover
     ("company", "revenue", (("revenue", "Revenue", "cr"), ("ebitda", "EBITDA", "cr"), ("ebitda_margin", "EBITDA margin", "pct"),
-                            ("exceptional_items", "Exceptional items", "cr"), ("pbt", "PBT", "cr"), ("pat", "PAT", "cr"),
-                            ("eps", "EPS (₹)", "inr"))),
+                            ("pat", "PAT", "cr"), ("eps", "EPS (₹)", "inr"))),
 )
+# The lines that can be a company table's mover (O15): (key, names in memory, sign of its pull on profit, label). The
+# two operating costs are judged on their change beyond what the revenue change carries, so a cost that only grew with
+# sales is no mover, and a payroll that jumped ahead of output is (a new plant staffed before it produces).
+_MOVERS = (
+    ("employee_cost", ("employee_cost", "employee_benefit_expense"), -1, "Employee cost"),
+    ("raw_material_cost", ("raw_material_cost", "cost_of_materials"), -1, "Raw material cost"),
+    ("other_income", ("other_income",), +1, "Other income"),
+    ("depreciation", ("depreciation",), -1, "Depreciation"),
+    ("finance_cost", ("finance_cost",), -1, "Finance cost"),
+    ("tax_expense", ("tax_expense",), -1, "Tax"),
+    ("exceptional_items", ("exceptional_items",), +1, "Exceptional items"),
+)
+_SCALES_WITH_REVENUE = {"employee_cost", "raw_material_cost"}
+# When a mover is shown: profit moved YoY by at least MOVER_PAT_MOVE of the year-ago PAT (and ₹1 Cr), and the line's
+# pull, in the direction profit went, is at least MOVER_SHARE of that move, ₹1 Cr and MOVER_REVENUE of the quarter's
+# revenue (a ₹2 Cr line at a ₹5,000 Cr company is not news however its small profit moved)
+MOVER_PAT_MOVE = 0.10
+MOVER_SHARE = 0.25
+MOVER_REVENUE = 0.01
 
 
 CALL_QUARTER_DAYS = 120   # a call or presentation discusses the quarter that ended at most this long before it
@@ -1313,6 +1334,38 @@ def _is_printed(value: float, numbers: list[float], per_share: bool) -> bool | N
     if v < 1:
         return None
     return any(near(v * unit, 0.006 * unit + 0.5) for unit in _UNITS)
+
+
+def _mover(out: dict, lookup, periods: dict) -> tuple[str, tuple[str, ...], str] | None:
+    """The one line that moved a company's profit most year on year, when that move is significant (O15, owner
+    2026-10-20); None when profit barely moved or no single line carried it. Values come from the table's own lookup,
+    so a comparative the filing does not print makes no mover. results_card.profit_driver reads the same bridge from
+    the tagged file for the card's words."""
+    pat = out.get("pat") or {}
+    now, then = pat.get("value"), pat.get("prev_year")
+    if now is None or then is None:
+        return None
+    moved = now - then
+    if abs(moved) < max(1.0, MOVER_PAT_MOVE * abs(then)):
+        return None
+    revenue = out.get("revenue") or {}
+    rev, rev0 = revenue.get("value"), revenue.get("prev_year")
+    floor = max(1.0, MOVER_REVENUE * abs(rev)) if rev else 1.0
+    best = None
+    for key, names, sign, label in _MOVERS:
+        a, b = lookup(names, periods["value"]), lookup(names, periods["prev_year"])
+        if a is None or b is None:
+            continue
+        if key in _SCALES_WITH_REVENUE:
+            if not rev or not rev0 or rev0 <= 0:
+                continue
+            b = b * rev / rev0   # the year-ago cost at this quarter's sales
+        pull = sign * (a - b)
+        if (pull > 0) != (moved > 0) or abs(pull) < max(floor, MOVER_SHARE * abs(moved)):
+            continue
+        if best is None or abs(pull) > best[0]:
+            best = (abs(pull), key, names, label)
+    return best[1:] if best else None
 
 
 def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = (),
@@ -1415,6 +1468,14 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         return None
     lens, rows = next(((name, rows) for name, top, rows in _LENSES if top in out), ("company", _LENSES[-1][2]))
     lines = [{"key": key, "label": label, "unit": unit} for key, label, unit in rows if key in out]
+    if lens == "company":
+        mover = _mover(out, lookup, periods)
+        if mover is not None:
+            key, names, label = mover
+            if key not in out:
+                out[key] = line(lambda p, names=names: lookup(names, p), False, key)
+            at = next((i for i, spec in enumerate(lines) if spec["key"] == "pat"), len(lines))
+            lines.insert(at, {"key": key, "label": label, "unit": "cr", "mover": True})
     # the sector's own figures (EBITDA a tonne for cement, ARPU for telecom, occupancy for hospitals...) where memory
     # holds them for this quarter; a KPI the statement already shows is not repeated
     shown = {key for key, _, _ in rows}

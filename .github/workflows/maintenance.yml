@@ -1,0 +1,54 @@
+# No-AI maintenance on the live database, started by hand (Actions > Maintenance > Run workflow):
+# - refresh-card-blocks: every stored card's code blocks rebuilt from memory by today's code (card_refresh.py);
+# - refresh-summaries: every company's stored summary (open promises, radar, credibility) rebuilt from its memory.
+# Neither calls an AI model or NSE. It runs beside the pipeline (its own concurrency group: a shared one would
+# cancel a pending pipeline run); both only read memory, and a summary or card a run writes at the same moment is
+# rewritten by the next run.
+name: Maintenance
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: what to run
+        type: choice
+        options: [refresh-card-blocks, refresh-summaries, both]
+        default: both
+      dry_run:
+        description: count what would change, write nothing (refresh-card-blocks only)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bse-maintenance
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 50
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: Refresh card blocks
+        if: inputs.command != 'refresh-summaries'
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-card-blocks ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
+      - name: Refresh company summaries
+        if: inputs.command != 'refresh-card-blocks' && !inputs.dry_run
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-summaries'

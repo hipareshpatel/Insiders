@@ -24,3 +24,4 @@ Every action taken under it is listed below with its commit or run, for the owne
 - 20 Oct 06:27 IST: PR #3 merged into `main` (1ef32e5) with CI green: the company page and the cards to the approved designs.
 - 20 Oct 06:12 IST: `pipeline.yml` run 2 started by hand (the new 15-minute schedule had not fired yet).
 - 20 Oct 06:52 IST: PR #4 merged into `main` (c0002ef) with CI green: live review 3 fixes.
+- 20 Oct 06:31 IST: PR #5 merged into `main` (926e2d8) with CI green: the Today footer.

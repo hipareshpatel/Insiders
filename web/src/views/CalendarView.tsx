@@ -9,7 +9,7 @@ import { Button } from "../components/ui/button";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
 import { addDays, istDate, titleCase, todayIST } from "../lib/format";
-import { CATALYST_FAMILIES, catalystFamily } from "../lib/taxonomy";
+import { CATALYST_FAMILIES, catalystFamily, catalystText } from "../lib/taxonomy";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading } from "./FeedView";
 
@@ -139,7 +139,7 @@ export function CalendarView() {
                         <span className="text-[13.5px] font-semibold text-ink">{e.symbol ?? e.company_name}</span>
                         <Badge className={catalystFamily(e.event_type).chip}>{titleCase(e.event_type)}</Badge>
                       </span>
-                      {e.description ? <span className="mt-0.5 block text-[13px] leading-relaxed text-ink-2">{e.description}</span> : null}
+                      {e.description ? <span className="mt-0.5 block text-[13px] leading-relaxed text-ink-2">{catalystText(e.event_type, e.description)}</span> : null}
                     </span>
                   </button>
                 </li>

@@ -161,3 +161,17 @@ test("results table: turns, lower-is-better lines and filler rows", async () => 
   assert.ok(allZero({ value: 0, prev_year: 0, prev_quarter: 0 }));
   assert.ok(!allZero({ value: 0, prev_year: 4 }));
 });
+
+test("a catalyst's line drops the exchange's preamble", async () => {
+  const { catalystText } = await import("../src/lib/taxonomy.ts");
+  assert.equal(catalystText("BOARD_MEETING", "Newgen Software Technologies Ltdhas informed BSE that the meeting of the Board of Directors of the Company is scheduled on 23/10/2026 ,inter alia, to consider and approve the financial results for the quarter ended September 30, 2026."),
+    "Board meeting: to consider and approve the financial results for the quarter ended September 30, 2026");
+  assert.equal(catalystText("BOARD_MEETING", "Capri Global Capital Ltdhas informed BSE that the meeting of the Board of Directors"), "Board meeting");
+  assert.equal(catalystText("RECORD_DATE", "Record date for interim dividend of ₹25 per equity share"), "Record date for interim dividend of ₹25 per equity share");
+});
+
+test("the exchange's preamble goes even with no space before 'has'", async () => {
+  const { catalystText } = await import("../src/lib/taxonomy.ts");
+  assert.equal(catalystText("RECORD_DATE", "L&T Technology Services Ltdhas informed BSE that the record date is October 27, 2026"),
+    "The record date is October 27, 2026");
+});

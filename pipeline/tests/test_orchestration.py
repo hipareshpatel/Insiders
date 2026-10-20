@@ -593,3 +593,25 @@ def test_live_window_is_the_last_seven_days_and_its_earlier_days_are_discovered(
     fake._discover_safely = lambda day, full: None
     Pipeline._discover_window(fake, live_from, today)
     assert "live:window_from" not in kv
+
+
+def test_the_window_catch_up_waits_for_the_write_budget(settings):
+    """20 Oct 2026: the window's earlier days took ~2,000 ledger writes each and the day reached the 80,000 budget by
+    11:30 IST; discovering them is deferred like the backfill, and today's filings are still read."""
+    from dataclasses import replace
+
+    from bse_intel.pipeline import Pipeline
+    from bse_intel.sinks.local import LocalSink
+    from conftest import FakeProvider
+    from bse_intel.ai.gateway import AIGateway
+
+    settings = replace(settings, d1_daily_write_budget=0)
+    sink = LocalSink(settings)
+    gateway = AIGateway(settings.load_toml("providers.toml"), client_factory=lambda *a: FakeProvider({}), env={})
+    pipeline = Pipeline(settings, sink, gateway, bse=None, sleep=lambda s: None)
+    calls = []
+    pipeline._discover_window = lambda live_from, today: calls.append("window")
+    pipeline._discover_safely = lambda day, full: calls.append(f"day:{full}") or 0
+    pipeline.process = lambda *a, **k: []
+    pipeline.run(mode="live", time_budget_s=5)
+    assert "window" not in calls and "day:False" in calls

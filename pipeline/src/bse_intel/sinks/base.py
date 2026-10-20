@@ -28,6 +28,7 @@ STATEMENTS = (
 
 QUERIES = (
     "filings_pending",
+    "filings_failed",
     "filings_pending_company",
     "filings_recent_company",
     "card_held",

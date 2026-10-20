@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ownerApi, setOwnerToken, useOwnerToken } from "../lib/owner";
-import type { PipelineRun, ProviderUsage, ReviewCard } from "../../shared/types";
+import type { FailedFiling, PipelineRun, ProviderUsage, ReviewCard } from "../../shared/types";
 import { Badge } from "../components/ui/badge";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
@@ -38,7 +38,7 @@ export function SystemView() {
         <Stat label="Filings today" value={discoveredToday} sub={`${count("DROPPED_RULE")} noise · ${count("NOT_MATERIAL")} not material · ${count("DUPLICATE")} duplicate`} />
         <Stat label="Analysed today" value={count("ANALYZED")} sub={`${cards7d} cards in 7 days · ${high7d} high impact`} />
         <Stat label="Queue" value={s.queue.pending} cap={s.queue.cap} sub="pending analysis" tone={s.queue.pending > 500 ? "warn" : undefined} />
-        <Stat label="Failed" value={s.queue.failed} cap={s.queue.cap} sub="retried up to 3 runs, then left for review" tone={s.queue.failed ? "warn" : undefined} />
+        <Stat label="Failed" value={s.queue.failed} cap={s.queue.cap} sub="3 tries, then one more each night" tone={s.queue.failed ? "warn" : undefined} />
       </div>
 
       <section className="rounded-xl border border-line bg-surface p-4">
@@ -77,6 +77,7 @@ export function SystemView() {
 
       <OwnerMode />
 
+      <FailedFilings rows={s.failed_recent ?? []} />
       <ReviewQueue />
 
       <section className="rounded-xl border border-line bg-surface">
@@ -229,6 +230,46 @@ function RunRow({ run }: { run: PipelineRun }) {
       <td className="num whitespace-nowrap px-4 py-2 text-ink-2">{duration !== null ? `${Math.floor(duration / 60)}m ${duration % 60}s` : "—"}</td>
       <td className="max-w-xs truncate px-4 py-2 text-xs text-ink-2" title={run.error ?? String(stats.stopped_reason ?? "")}>{run.error ?? String(stats.stopped_reason ?? "")}</td>
     </tr>
+  );
+}
+
+/** Filings of the last 7 days that failed, with why; retried up to 3 times, then once more each night after 22:00
+ * IST. The owner can re-run one now. */
+function FailedFilings({ rows }: { rows: FailedFiling[] }) {
+  const token = useOwnerToken();
+  const [queued, setQueued] = useState<Set<string>>(new Set());
+  if (!rows.length) return null;
+  const requeue = async (newsId: string) => {
+    if (!token) return;
+    await ownerApi.requeue(token, newsId);
+    setQueued((s) => new Set(s).add(newsId));
+  };
+  return (
+    <section className="rounded-xl border border-line bg-surface p-4">
+      <h2 className="text-[14px] font-semibold text-ink">Failed filings · last 7 days · {rows.length}</h2>
+      <p className="mt-0.5 text-xs text-ink-3">
+        A filing is tried up to 3 times; busy or rate-limited AI, timeouts and refusals do not count. After the third
+        failure it gets one more try each night after 22:00 IST while it is within 7 days.
+      </p>
+      <ul className="mt-3 divide-y divide-line">
+        {rows.map((f) => (
+          <li key={f.news_id} className="flex flex-wrap items-start gap-3 py-2">
+            <span className="min-w-0 flex-1 text-[13px]">
+              <span className="font-semibold text-ink">{f.symbol ?? f.scrip_code}</span>
+              <span className="text-ink-2"> · {f.headline ?? f.company_name}</span>
+              <span className="num block text-xs text-ink-3">{istDateTime(f.filed_at)} · {f.attempts} of 3 tries used</span>
+              {f.last_error && <span className="block break-words text-xs text-warn">{f.last_error}</span>}
+            </span>
+            {token && (
+              <button type="button" disabled={queued.has(f.news_id)} onClick={() => requeue(f.news_id)}
+                className="h-7 shrink-0 rounded-md border border-line px-2.5 text-xs font-medium text-ink-2 hover:text-ink disabled:opacity-50">
+                {queued.has(f.news_id) ? "Queued for the next run" : "Re-run"}
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

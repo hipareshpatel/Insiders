@@ -500,6 +500,13 @@ export interface SystemResponse {
   market_coverage?: { date: string; companies: number; priced: number; missing: number; missing_pct: number } | null;
   usage: ProviderUsage[];
   runs: PipelineRun[];
+  /** Failed filings of the last 7 days, newest first (50 at most): retried up to 3 times, once more each night. */
+  failed_recent?: FailedFiling[];
+}
+
+export interface FailedFiling {
+  news_id: string; scrip_code: string; symbol: string | null; company_name: string | null; headline: string | null;
+  filed_at: string; attempts: number; last_error: string | null;
 }
 
 /** Loop 1 price reaction after a filing (blueprint §12.1). */

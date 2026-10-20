@@ -2,7 +2,8 @@
 # - refresh-card-blocks: every stored card's code blocks rebuilt from memory by today's code (card_refresh.py);
 # - refresh-summaries: every company's stored summary (open promises, radar, credibility) rebuilt from its memory;
 # - export-held: every held card into docs/audit/live/ on the working branch, for the live reviews (the public site
-#   does not serve them).
+#   does not serve them);
+# - requeue-failed: filings that used all 3 attempts in the last 30 days get fresh attempts (after a fix; requeue.py).
 # Neither calls an AI model or NSE. It runs beside the pipeline (its own concurrency group: a shared one would
 # cancel a pending pipeline run); both only read memory, and a summary or card a run writes at the same moment is
 # rewritten by the next run.
@@ -14,10 +15,10 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, requeue-failed]
         default: both
       dry_run:
-        description: count what would change, write nothing (refresh-card-blocks only)
+        description: count what would change, write nothing (refresh-card-blocks, requeue-failed)
         type: boolean
         default: false
 
@@ -54,6 +55,9 @@ jobs:
       - name: Refresh company summaries
         if: (inputs.command == 'refresh-summaries' || inputs.command == 'both') && !inputs.dry_run
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-summaries'
+      - name: Requeue failed filings
+        if: inputs.command == 'requeue-failed'
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel requeue-failed ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
       - name: Export held cards
         if: inputs.command == 'export-held'
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel export-held --out "../docs/audit/live/held-$(date -u +%F).json"'

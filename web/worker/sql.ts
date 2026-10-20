@@ -19,6 +19,7 @@ import companiesUniverse from "../../db/queries/companies_universe.sql?raw";
 import companyGet from "../../db/queries/company_get.sql?raw";
 import backfillCompanies from "../../db/queries/backfill_companies.sql?raw";
 import filingsPending from "../../db/queries/filings_pending.sql?raw";
+import filingsFailed from "../../db/queries/filings_failed.sql?raw";
 import filingsKnownDay from "../../db/queries/filings_known_day.sql?raw";
 import filingsPendingCompany from "../../db/queries/filings_pending_company.sql?raw";
 import filingsRecentCompany from "../../db/queries/filings_recent_company.sql?raw";
@@ -62,6 +63,7 @@ export const STATEMENTS: Record<string, string> = {
 /** Read queries with positional parameters. */
 export const QUERIES: Record<string, string> = {
   filings_pending: filingsPending,
+  filings_failed: filingsFailed,
   filings_pending_company: filingsPendingCompany,
   filings_recent_company: filingsRecentCompany,
   card_held: cardHeld,

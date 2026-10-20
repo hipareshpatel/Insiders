@@ -86,6 +86,7 @@ HISTORY_INLINE = 30      # history analysed ahead of a live filing; a longer bac
 MAX_ORDER = 20_000       # companies in the cached backfill order
 PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_1y",
                  "median_turnover_cr", "point_in_time")
+REQUEUE_AFTER_HOUR, REQUEUE_KEY = 22, "failed:requeued_on"   # the nightly extra try for failed filings
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
 MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing this network
@@ -3009,6 +3010,7 @@ class Pipeline:
                 for day in days:
                     self._discover_safely(day, full=False)
                 self._discover_window(live_from, today)
+                self._requeue_failed_nightly(live_from)
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 backfill_done = self.sink.kv_get("backfill:complete") == "1"
                 # today's filings first, then the rest of the window, so a catch-up never holds today's news
@@ -3074,6 +3076,23 @@ class Pipeline:
         return (self.nse is not None and self.settings.nse_annual_xbrl
                 and (now.hour, now.minute) >= ANNUAL_CATCHUP_AFTER
                 and self.sink.kv_get(ANNUAL_CATCHUP_KEY) != now.date().isoformat())
+
+    def _requeue_failed_nightly(self, live_from: date) -> None:
+        """Once a night (after 22:00 IST): the live window's filings that used every attempt get one more try, so a
+        filing that failed on a bug fixed that day still gets its card (requeue.py)."""
+        now = now_ist()
+        if now.hour < REQUEUE_AFTER_HOUR or self.sink.kv_get(REQUEUE_KEY) == now.date().isoformat():
+            return
+        from . import requeue
+
+        try:
+            report = requeue.requeue(self.sink, live_from.isoformat(), self.settings.max_attempts, attempts_left=1)
+        except Exception:   # a Worker without the query yet: try again next run
+            log.exception("nightly requeue of failed filings failed")
+            return
+        self._kv_set(REQUEUE_KEY, now.date().isoformat())
+        if report["requeued"]:
+            log.info("nightly requeue: %d failed filings get one more try", report["requeued"])
 
     def _dgtr_due(self) -> bool:
         """DGTR's case lists once a day (module 8): its cases move in weeks, and its server is slow (NSE_DGTR=0 off)."""

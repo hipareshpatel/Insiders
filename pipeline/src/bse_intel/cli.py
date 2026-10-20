@@ -314,6 +314,18 @@ def cmd_export_held(args, settings, sink) -> int:
     return 0
 
 
+def cmd_requeue_failed(args, settings, sink) -> int:
+    """Filings that used every attempt, set PENDING again with fresh attempts (requeue.py), after a fix. No AI."""
+    from datetime import timedelta
+
+    from . import requeue
+    from .timeutil import today_ist
+
+    since = args.since or (today_ist() - timedelta(days=args.days)).isoformat()
+    print(json.dumps(requeue.requeue(sink, since, settings.max_attempts, args.attempts, args.dry_run), ensure_ascii=False))
+    return 0
+
+
 def cmd_dgtr_sync(args, settings, sink) -> int:
     """DGTR trade-remedy cases into the memory of the companies that applied for or supported them (dgtr.py, module 8),
     no AI. --pages 42 reads every case DGTR lists (a first fill: OCR of a few hundred scanned notices, hours)."""
@@ -650,6 +662,12 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("export-held", help="every held card to a JSON file, for the live reviews; no AI")
     p.add_argument("--out", default="held.json")
     p.set_defaults(func=cmd_export_held)
+    p = sub.add_parser("requeue-failed", help="give filings that used every attempt fresh attempts (after a fix); no AI")
+    p.add_argument("--since", help="filed on or after this date (YYYY-MM-DD); default --days ago")
+    p.add_argument("--days", type=int, default=30)
+    p.add_argument("--attempts", type=int, help="tries to give back (default all)")
+    p.add_argument("--dry-run", action="store_true", help="list what would be requeued, write nothing")
+    p.set_defaults(func=cmd_requeue_failed)
     p = sub.add_parser("refresh-card-blocks", help="rebuild every stored card's code blocks from memory, no AI")
     p.add_argument("--scrips", help="only these companies (comma separated); default every card")
     p.add_argument("--dry-run", action="store_true", help="count what would change, write nothing")

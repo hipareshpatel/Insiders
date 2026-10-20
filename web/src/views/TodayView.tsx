@@ -219,9 +219,14 @@ function Stories({ rows }: { rows: CardRow[] }) {
   const items = rows.filter((r) => !seen.has(r.scrip_code) && seen.add(r.scrip_code)).slice(0, 14);
   if (!items.length) return null;
   return (
-    <div className="no-scrollbar mt-4 flex gap-3.5 overflow-x-auto pb-1" aria-label="Companies that filed">
+    <section className="mt-4" aria-label="Companies with a card in this view">
+    <p className="text-[12px] font-semibold text-ink-3">
+      {items.length} {items.length === 1 ? "company" : "companies"} with a card here · tap one to jump to its card · red-violet ring: high impact, amber: the rest
+    </p>
+    <div className="no-scrollbar mt-2 flex gap-3.5 overflow-x-auto pb-1">
       {items.map((r) => (
-        <button key={r.scrip_code} type="button" title={r.company_name} onClick={() => scrollToCard(r.news_id, () => undefined)}
+        <button key={r.scrip_code} type="button" title={`${r.company_name} · ${r.impact_level === "HIGH" ? "high impact" : (r.impact_level ?? "").toLowerCase()} · jump to its card`}
+          onClick={() => scrollToCard(r.news_id, () => undefined)}
           className="group flex w-[72px] shrink-0 flex-col items-center gap-1.5">
           <span className="rounded-full p-[3px] transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105"
             style={{ background: r.impact_level === "HIGH" ? "conic-gradient(var(--impact-high), var(--impact-moderate), var(--accent-2), var(--impact-high))" : "conic-gradient(var(--impact-moderate), #ffd27a, var(--impact-moderate))" }}>
@@ -231,6 +236,7 @@ function Stories({ rows }: { rows: CardRow[] }) {
         </button>
       ))}
     </div>
+    </section>
   );
 }
 

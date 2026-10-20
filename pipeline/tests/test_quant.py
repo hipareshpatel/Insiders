@@ -315,6 +315,38 @@ def test_the_results_table_takes_the_filings_own_year_ago_column():
     assert results_snapshot(dossier, "n2")["ebitda"]["prev_year"] == 49.11
 
 
+def test_the_results_table_drops_a_comparative_the_filing_does_not_print():
+    """Live review 5 (2026-10-20): Kapston's year-ago EPS ₹3.48 was the figure before its 1:2 bonus (the statement prints
+    ₹2.32), so EPS read -20.4% for +19.4%; Bajaj Finance's year-ago revenue was the first-reported ₹20,178.90 Cr, credited
+    to this filing, where the statement prints the restated ₹19,990.42 Cr. A comparative the text does not print goes."""
+    from bse_intel.dossier import results_snapshot
+
+    def src(news_id, value):
+        return {"news_id": news_id, "value": value, "as_of": "2026-10-20T18:00:00+05:30", "basis": "CONSOLIDATED"}
+
+    def dossier():
+        return {"financial_metrics": [
+            {"metric": "revenue", "period": "Q2FY27", "value": 24546.37, "sources": [src("n2", 24546.37)]},
+            {"metric": "revenue", "period": "Q2FY26", "value": 20178.9, "sources": [src("n1", 20178.9), src("n2", 20178.9)]},
+            {"metric": "revenue", "period": "Q1FY27", "value": 23165.45, "sources": [src("n1", 23165.45)]},
+            {"metric": "pat", "period": "Q2FY27", "value": 8.41, "sources": [src("n2", 8.41)]},
+            {"metric": "eps", "period": "Q2FY27", "value": 2.77, "sources": [src("n2", 2.77)]},
+            {"metric": "eps", "period": "Q2FY26", "value": 3.48, "sources": [src("n1", 3.48)]},
+            {"metric": "eps", "period": "Q1FY27", "value": 2.79, "sources": [src("n1", 2.79)]},
+        ]}
+
+    text = ("Revenue from operations 24,546.37 23,165.45 19,990.42 47,711.82\n"
+            "Basic EPS (Rs.) 2.77 2.79 2.32 (refer note 6: restated for the bonus issue)")
+    snap = results_snapshot(dossier(), "n2", printed=text)
+    assert "prev_year" not in snap["revenue"] and "yoy_pct" not in snap["revenue"]
+    assert snap["revenue"]["prev_quarter"] == 23165.45 and snap["revenue"]["qoq_pct"] == 6.0
+    assert "prev_year" not in snap["eps"] and "yoy_pct" not in snap["eps"] and snap["eps"]["prev_quarter"] == 2.79
+    # without the text (the maintenance refresh) the table is as before
+    assert results_snapshot(dossier(), "n2")["eps"]["yoy_pct"] == -20.4
+    # a statement whose table the text missed keeps its comparatives: nothing of the current quarter is printed
+    assert results_snapshot(dossier(), "n2", printed="Outcome of the board meeting held today")["revenue"]["yoy_pct"] == 21.6
+
+
 def test_an_exceptional_charge_that_did_not_recur_is_no_turn():
     """Orient Bell, Jubilant Agri (live review 3): exceptional items "loss to profit" when a ₹1.29 Cr charge did not recur."""
     from bse_intel.dossier import results_snapshot

@@ -32,6 +32,26 @@ Who owns what (laptop's proposal, accepted by the cloud 2026-10-19):
 
 ---
 
+## T25 · P1 · laptop · OPEN — live review 5's classes in your files (today's production cards)
+
+Live review 5 (`docs/audit/live/2026-10-20-review5.md`, findings in `.json`): 5 of 32 WRONG (15.6%; review 3 was 26%).
+The cloud fixed the year-ago basis (results table) and repeats across runs. Your classes, most serious first:
+1. `quality.rating_signals`: "Rating outlook revised to Negative" when memory holds no earlier rating (UFLEX, a
+   reaffirmed AA-/Negative). With no previous outlook in memory, say the outlook is Negative, not that it changed.
+2. Call cards (HDB Financial): a KPI check whose metric and threshold have different units (loan book ₹ Cr >= 17.0),
+   an undated target given a quarter, and "0.3% of RoA" computed as 0.3% of net worth.
+3. Headline period label against the statement's period (Yes Bank: "Q2FY26" for the quarter ended 30 Sep 2026).
+4. A quote not in the filing passed the quote check (Rashi Peripherals, nse-106822805, what_happened[1]).
+5. impact_level too high on 12 of 32 (reaffirmations, notices, an already-disclosed JV, housekeeping).
+6. "Net profit to shareholders" in key_numbers including minority interest (Bajaj, UltraTech); PBT without associates
+   (Bajaj), as in review 3.
+7. Event types: client collaboration as M_AND_A, capacity start-up as ORDER_WIN, enabling fund raise as OTHER.
+
+Files: those you own (CLAUDE.md, the list above), with tests. Anything that makes a check accept more gets the
+on/off audit over stored cards plus an independent sample (owner's standing rule). No AI re-runs for testing.
+
+Report:
+
 ## T1 · P1 · laptop · DONE — re-check the page bugs and the new cards on real data
 
 Commit to test: `ae73b45` or later. No npm packages changed; no restart needed.

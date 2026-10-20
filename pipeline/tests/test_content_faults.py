@@ -100,3 +100,22 @@ def test_an_audit_firm_is_not_a_former_name():
     for name in ("Sesa Sterlite Limited", "Max Life Insurance Co. Ltd.", "Rajasthan Spinning & Weaving Mills Limited",
                  "Munjal Auto Components"):
         assert own_former_name(name, d), name
+
+
+def test_a_subsidiarys_results_passed_on_by_the_parent_are_not_its_results():
+    """Vedanta's Reg 30(9) letter enclosing Hindustan Zinc's Q2FY27 results became Vedanta's results card, HZL's
+    revenue against Vedanta's year-ago (-62%), and HZL's figures went into Vedanta's memory (owner, 2026-10-20)."""
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import subsidiary_results
+
+    def f(name):
+        return Filing(news_id="n", scrip_code="1", company_name=name, headline="", subject="", filed_at="2026-10-20",
+                      filing_date="2026-10-20")
+
+    letter = ("Pursuant to Regulation 30(9) of SEBI Listing Regulations, we hereby inform that Hindustan Zinc Limited\n"
+              "(“HZL”), a subsidiary of our Company and listed on BSE and NSE, has inter alia submitted:\n"
+              "1.  Unaudited consolidated and standalone financial results for the second quarter")
+    assert subsidiary_results(f("Vedanta Limited"), letter) == "Hindustan Zinc Limited"
+    own = ("Outcome of Board Meeting: the Board approved the Unaudited Financial Results of Vedanta Limited and its "
+           "subsidiaries for the quarter ended September 30, 2026.")
+    assert subsidiary_results(f("Vedanta Limited"), own) is None

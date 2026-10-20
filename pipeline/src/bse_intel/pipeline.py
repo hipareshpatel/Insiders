@@ -945,6 +945,28 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
     return event_type
 
 
+# A listed subsidiary's results passed on by its parent (Reg 30(9)): Vedanta's letter enclosing Hindustan Zinc's Q2FY27
+# results became Vedanta's results card, HZL's revenue against Vedanta's own year-ago (-62%), and HZL's figures went into
+# Vedanta's memory (owner, 2026-10-20). The covering letter names the subsidiary before the word "results".
+_SUBSIDIARY_RESULTS = re.compile(
+    r"(?P<name>[A-Z][A-Za-z0-9&.,'\- ]{2,80}?\b(?:Limited|Ltd\.?))\s*(?:\(\s*[“\"']?[^)]{1,20}?[”\"']?\s*\))?\s*,?\s*"
+    r"(?:is\s+)?(?:a|an|the|our)\s+(?:material\s+)?(?:(?:wholly[- ]owned|listed|step[- ]down|unlisted)\s+)?subsidiar(?:y|ies)\b"
+    r"[^;]{0,400}?\bresults\b", re.S)   # "submitted: 1. Unaudited ... results": a list number is no sentence end
+
+
+def subsidiary_results(filing: Filing, text: str) -> str | None:
+    """The subsidiary whose results this filing passes on, when its covering letter says so; None for the company's
+    own results."""
+    m = _SUBSIDIARY_RESULTS.search(" ".join((text or "")[:6000].split()))
+    if not m:
+        return None
+    # the company's own words before the name ("we hereby inform that Hindustan Zinc Limited") are not its name
+    tail = re.search(r"((?:[A-Z][\w&.'\-]*\s+){0,8}(?:Limited|Ltd\.?))$", m.group("name").strip(" ,"))
+    name = (tail.group(1) if tail else m.group("name")).strip(" ,.")
+    own = re.sub(r"\W+|limited|ltd", "", (filing.company_name or "").lower())
+    return None if own and own in re.sub(r"\W+|limited|ltd", "", name.lower()) else name
+
+
 _ESG = re.compile(r"\besg\b|sustainability\s+(?:rating|score)|environmental,?\s+social", re.I)
 _CREDIT_RATING = re.compile(r"\b(?:crisil|icra|care\s*(?:ratings|edge)?|ind-?ra|india\s+ratings|acuit[eé]|brickwork|infomerics)\b"
                             r"[^.]{0,80}\b(?:A{1,3}[+-]?|BB+[+-]?|A1\+?|D)\b", re.I)
@@ -2530,6 +2552,11 @@ class Pipeline:
         # page is the filing's own words if either reading has it (gate.quote_found).
         blocks = doc.block_text(doc.selected)
         _ocr_check(doc)
+        subsidiary = subsidiary_results(filing, text) if event_type == "RESULTS" else None
+        if subsidiary:
+            # its figures are another company's: no results path (XBRL, table, quarter claim) and none into memory
+            log.info("%s passes on %s's results: an update, not the company's own results", filing.news_id, subsidiary)
+            event_type = "OTHER"
         if event_type == "RESULTS" and not filing.xbrl_url:
             filing = filing.model_copy(update={"xbrl_url": self._results_xbrl_url(filing, text)})
             if not filing.xbrl_url and filing.news_id.startswith(nse_api.NEWS_ID_PREFIX) and self.nse is not None \
@@ -2715,6 +2742,12 @@ class Pipeline:
         corrected = event_type_rules(out.event_type, filing, text, tagged)
         if corrected == "OTHER" and out.card is not None and APPOINTMENT.search(out.card.headline or ""):
             corrected = "MANAGEMENT_CHANGE"   # a board outcome that only (re)appoints a director or KMP (D30)
+        if subsidiary:
+            # the enclosed statement is the subsidiary's: not this company's results (the rules above would read the
+            # statement and make it RESULTS), and its figures are not this company's quarter
+            corrected = "OTHER" if corrected == "RESULTS" else corrected
+            out.dossier_delta.financial_metrics = []
+            out.dossier_delta.balance_sheet = None
         if corrected != out.event_type:
             log.info("event type for %s: %s -> %s (rules)", filing.news_id, out.event_type, corrected)
             out.event_type = corrected

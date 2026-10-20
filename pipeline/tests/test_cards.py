@@ -1196,3 +1196,21 @@ def test_the_quote_rules_keep_a_table_s_order_and_leave_sentences_alone():
     assert check_quoted_numbers(card("PPA Realisation ₹/ kWh 5.93 5.53"), text)[0], "the figures in reverse order"
     problems = check_quoted_numbers(card("PPA Realisation ₹/ kWh 5.53 5.93", "Realisation ₹/ kWh PPA 5.53 5.93 rose"), text)[0]
     assert problems and "why it matters" in problems[0], "a sentence quotes a sentence"
+
+
+def test_live_review_3_event_types():
+    """An ESG score typed DEBT_RATINGS, a vendor listing typed LITIGATION_REGULATORY, an investment in a captive power
+    company typed PRODUCT_LAUNCH (live review 3, 2026-10-20); the real events keep their types."""
+    from types import SimpleNamespace
+
+    from bse_intel.pipeline import event_type_rules
+
+    def rule(event_type, headline):
+        return event_type_rules(event_type, SimpleNamespace(headline=headline, subject=""), "", None)
+
+    assert rule("DEBT_RATINGS", "CRISIL assigns ESG score of 62 to the company") == "OTHER"
+    assert rule("DEBT_RATINGS", "CRISIL reaffirms AA+ (Stable) on bank facilities; ESG disclosures noted") == "DEBT_RATINGS"
+    assert rule("LITIGATION_REGULATORY", "Company registered as an approved vendor with Indian Railways") == "OTHER"
+    assert rule("LITIGATION_REGULATORY", "Show-cause notice from the approved vendor cell on penalty") == "LITIGATION_REGULATORY"
+    assert rule("PRODUCT_LAUNCH", "Investment in equity shares of a captive solar power SPV") == "M_AND_A"
+    assert rule("PRODUCT_LAUNCH", "Launch of a new solar inverter range") == "PRODUCT_LAUNCH"

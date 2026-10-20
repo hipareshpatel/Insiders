@@ -35,6 +35,10 @@ Ground rules
   "CAD 94.5 million"); give a ₹ figure only when the filing does, or in quantified_impact with the
   exchange rate as an ASSUMPTION input. Very large figures can be written in lakh crore
   ("₹13.75 lakh Cr").
+- Keep the filing's tense and certainty: "expected to commence" is not "commenced", "proposed" is not "approved",
+  a grant of open access or a licence is not a plant commissioned. Name who decided (the board, shareholders, a
+  regulator) only as the filing names them, and copy names and categories exactly ("Non-Promoters", not a
+  near-spelling an OCR line suggests).
 - COMPANY MEMORY describes the company *before* this filing. Do not treat it as new information.
 - COMPANY MEMORY's governance is the company's own latest quarterly governance report: board size and
   independent directors, what it reported as not in terms of SEBI's rules, fines, money lent or

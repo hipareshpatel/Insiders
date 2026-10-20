@@ -511,7 +511,11 @@ def fix_change_percentages(out: Pass2Output, sources: tuple[str, ...] = ()) -> l
     return fixed
 
 
-_KEY_METRIC = (("ebitda", re.compile(r"\bebitda\b(?!.*margin)", re.I)),
+# The owners' share first: "net profit to shareholders" matched `pat` and was set to the group's profit, minorities
+# included (Sunteck 62.83 for the owners' 63.75, ITC 4,508.79 for 4,394.13; live review 3, 2026-10-20)
+_KEY_METRIC = (("pat_owners", re.compile(r"\b(?:to|for)\s+(?:the\s+)?(?:share|equity\s*)holders|attributable\s+to\s+(?:the\s+)?"
+                                         r"(?:owners|equity|shareholders)|owners\s+of\s+(?:the\s+)?(?:parent|company)", re.I)),
+               ("ebitda", re.compile(r"\bebitda\b(?!.*margin)", re.I)),
                ("pbt", re.compile(r"\bpbt\b|profit before tax", re.I)),
                ("pat", re.compile(r"\bpat\b|net profit|profit after tax|net income", re.I)),
                ("eps", re.compile(r"\beps\b|earnings per share", re.I)),
@@ -593,6 +597,9 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
         m = by_period.get(wanted, {}).get(metric) if metric else None
         if m is None or m.value is None:
             continue
+        group = by_period.get(wanted, {}).get("pat")
+        if metric == "pat_owners" and m.value == 0 and group is not None and group.value:
+            continue   # a zero the file carries for the owners' share beside a real profit is a filler (Orient Bell)
         value = f"₹{m.value:,.2f}" + (" per share" if metric == "eps" else " Cr")
         # The value is one tagged fact and is trusted; the YoY needs a second one, and a wrong period
         # match produced headline reversals in audit round 1 (Kanoria Q1FY27 revenue +129% rewritten to
@@ -910,7 +917,26 @@ def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:
         return "LITIGATION_REGULATORY"
     if event_type == "CAPEX" and _RESUMED.search(head) and not _NEW_CAPACITY.search(head):
         return "OTHER"
+    # live review 3 (2026-10-20): an ESG score typed DEBT_RATINGS, a vendor listing typed LITIGATION_REGULATORY, an
+    # investment in a captive power company typed PRODUCT_LAUNCH
+    if event_type == "DEBT_RATINGS" and _ESG.search(head) and not _CREDIT_RATING.search(head):
+        return "OTHER"
+    if event_type == "LITIGATION_REGULATORY" and _VENDOR.search(head) and not _CASE_WORDS.search(head):
+        return "OTHER"
+    if event_type == "PRODUCT_LAUNCH" and _CAPTIVE_POWER.search(head):
+        return "M_AND_A"
     return event_type
+
+
+_ESG = re.compile(r"\besg\b|sustainability\s+(?:rating|score)|environmental,?\s+social", re.I)
+_CREDIT_RATING = re.compile(r"\b(?:crisil|icra|care\s*(?:ratings|edge)?|ind-?ra|india\s+ratings|acuit[eé]|brickwork|infomerics)\b"
+                            r"[^.]{0,80}\b(?:A{1,3}[+-]?|BB+[+-]?|A1\+?|D)\b", re.I)
+_VENDOR = re.compile(r"\b(?:approved|registered|empanel\w*|enlist\w*|listed)\s+(?:as\s+(?:an?\s+)?)?(?:vendor|supplier|bidder)"
+                     r"|\bvendor\s+(?:registration|listing|approval|code)", re.I)
+_CASE_WORDS = re.compile(r"\b(?:penalt|show[- ]cause|demand|order\s+passed|court|tribunal|nclt|notice|summons|fine[ds]?\b|levied)", re.I)
+_CAPTIVE_POWER = re.compile(r"\bcaptive\b[^.]{0,60}\b(?:power|solar|wind|energy|renewable)|(?:power|solar|wind|energy)\b[^.]{0,40}"
+                            r"\b(?:spv|special purpose vehicle)\b[^.]{0,60}\b(?:invest\w*|acqui\w*|stake|shares)", re.I)
+_DEMERGER = re.compile(r"\bde-?merg\w*|\bscheme\s+of\s+arrangement\b[^.]{0,80}\bspin", re.I)
 
 
 # A unit back in service after an outage, repair or flood is not capacity added: NHPC's Teesta-V unit resuming came by
@@ -2475,6 +2501,7 @@ class Pipeline:
             # confirm() above accepts the figures at any unit, so it cannot.
             history = dossier.get("financial_metrics") or []
             xbrl_fast_path.fix_scale(tagged, history, filing.news_id)
+            xbrl_fast_path.settle_pbt(tagged, filed_text)
             self._xbrl_comparatives(filing, tagged, history)
             text = tagged.table() + "\n\n" + text  # exact figures first; they also ground the card
         # An annual report's statements as the company tagged them, in crore and on a named basis, where the PDF
@@ -2613,6 +2640,9 @@ class Pipeline:
         if corrected != out.event_type:
             log.info("event type for %s: %s -> %s (rules)", filing.news_id, out.event_type, corrected)
             out.event_type = corrected
+        deal = out.card.deal_value if out.card is not None else None
+        if deal is not None and deal.kind == "ACQUISITION" and _DEMERGER.search(f"{filing.headline} {filing.subject} {out.card.headline}"):
+            deal.kind = "OTHER"   # a demerger moves a business out; it is not an acquisition (live review 3)
         if out.card is not None and out.event_type != "CONCALL_PRESENTATION":
             out.card.call_read = None  # guidance, tone and transparency describe a call, not other filings
         event_type = out.event_type

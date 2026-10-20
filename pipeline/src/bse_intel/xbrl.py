@@ -51,6 +51,8 @@ RESULT_TAGS = {
     "ExceptionalItems": "exceptional_items",
     "ProfitBeforeTax": "pbt",
     "ProfitLossBeforeTax": "pbt",
+    # kept to settle which PBT the statement prints (`settle_pbt`): some filers tag ProfitBeforeTax before it
+    "ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod": "share_associates",
     "CurrentTax": "current_tax",
     "DeferredTax": "deferred_tax",
     "TaxExpense": "tax_expense",
@@ -422,6 +424,10 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                 values[("ebitda_margin", label)] = ebitda / revenue * 100
     latest = max(ends, key=lambda p: (ends[p], p.startswith("Q")))
     quarter = max((p for p in ends if p.startswith("Q")), key=lambda p: ends[p], default=None)
+    # EPS takes its period's profit sign: Shivam Autotech's file tags H1FY24 EPS 2.27 beside a loss of ₹27.77 Cr, and
+    # memory then read a fall to a loss as "EPS down 177%" (live review 2, 2026-10-20). The owners' profit decides
+    # where the file has one (a 0 there is a filler), else the group's.
+    eps_signs(values)
     metrics = []
     for (metric, label), value in sorted(values.items(), key=lambda kv: (ends.get(kv[0][1]) or date.min, kv[0][0])):
         unit = "INR" if metric in PER_SHARE else "PCT" if metric in PERCENT else "INR_CR"
@@ -441,6 +447,19 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
         if sheet.gross_debt_cr is not None and sheet.cash_cr is not None:
             sheet.net_debt_cr = _r(sheet.gross_debt_cr - sheet.cash_cr)
     return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet)
+
+
+def eps_signs(values: dict) -> int:
+    """Give each period's EPS its profit's sign, in place ({(metric, period): value}). Returns how many it changed."""
+    changed = 0
+    for (metric, label), value in list(values.items()):
+        if metric != "eps" or not value:
+            continue
+        profit = values.get(("pat_owners", label)) or values.get(("pat", label))
+        if profit and abs(profit) >= 0.01 and (profit < 0) != (value < 0):
+            values[(metric, label)] = -value
+            changed += 1
+    return changed
 
 
 def _r(v: float | None) -> float | None:
@@ -591,6 +610,44 @@ def scale_slip(result: XbrlResult, history) -> int:
     by_revenue = power(own[metric], [f.get(metric) for f in others])
     by_shares = power(_shares(own), [_shares(f) for f in others])
     return by_revenue if by_revenue is not None and by_revenue == by_shares else 0
+
+
+def _printed_exactly(crore: float, text: str) -> bool:
+    """Whether the text prints this ₹ crore amount to its last digit, in crore, lakh, million or thousand (appears_in
+    rounds to whole numbers, which cannot tell 11.15 from 11.41)."""
+    numbers = [float(n.replace(",", "")) for n in re.findall(r"\d[\d,]*\.\d+|\d[\d,]*", text or "")
+               if n.replace(",", "").replace(".", "").isdigit()]
+    for scale in (1, 100, 10, 10_000):   # crore, lakh, million, thousand
+        target = abs(crore) * scale
+        if any(abs(n - target) <= 0.005 * scale + 1e-9 for n in numbers):
+            return True
+    return False
+
+
+def settle_pbt(result: XbrlResult | None, text: str) -> list[str]:
+    """The profit before tax the statement prints, where the file tags it before the share of associates.
+
+    Orient Bell's Q1FY27 file tags ProfitBeforeTax 11.41 and the associates' share -0.26 apart; the statement prints
+    11.15, and the card's PBT line was the unprinted one (live review 3, 2026-10-20). Filers differ in where they tag
+    the share, so the statement decides: PBT plus the share replaces the tagged PBT only when the text prints that
+    figure and not the tagged one. Returns the periods changed."""
+    if result is None or not text:
+        return []
+    by = {}
+    for m in result.metrics:
+        by.setdefault(m.period, {})[m.metric] = m
+    changed = []
+    for period, line in by.items():
+        pbt, share = line.get("pbt"), line.get("share_associates")
+        if pbt is None or share is None or not share.value or pbt.value is None:
+            continue
+        alt = round(pbt.value + share.value, 2)
+        if _printed_exactly(alt, text) and not _printed_exactly(pbt.value, text):
+            changed.append(f"{period}: {pbt.value:g} -> {alt:g}")
+            pbt.value, pbt.yoy_pct, pbt.qoq_pct = alt, None, None
+    if changed:
+        log.info("XBRL PBT taken after the associates' share, as the statement prints it: %s", changed)
+    return changed
 
 
 def fix_scale(result: XbrlResult | None, history, source: str = "") -> int:

@@ -72,9 +72,13 @@ code blocks from memory with today's code and drops signal types now off. No AI,
 2. `python -m bse_intel refresh-card-blocks --dry-run`: report the JSON (cards, changed, failed, by_block).
 3. If `failed` is under 5% of the cards: run it again without `--dry-run`, between two `pipeline.yml` runs (they start at
    :17 each hour; it should take minutes). Report the JSON.
-4. Check three cards on the live site: a bank results card (CSB or UCO: interest earned, NII, NPA rows), an order card
+4. Then `python -m bse_intel refresh-summaries` with the same variables (no AI): 83 of the 85 live companies have no
+   `memory_summary_json`, so the Companies table reads "0 open · 0 capex" and `/api/promises/overdue` is empty. Report its JSON.
+5. Check three cards on the live site: a bank results card (CSB or UCO: interest earned, NII, NPA rows), an order card
    with an amount (the size bars), a rating card (the ladder).
-Report: here, the two JSONs and what the three cards show. Files you may change: none.
+Report: here, the three JSONs and what the three cards show. Also: Adani Power's former names on the live site read
+"Reliance Natural Resources Limited, Reliance Mineral Resources Limited" (they look like another company's); say where
+they came from (filing, memory field). Files you may change: none.
 
 ## T22 · P1 · laptop · DONE (step 1; step 3 running) — production is on; the live database is the record (owner, 2026-10-20)
 

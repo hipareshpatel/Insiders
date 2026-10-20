@@ -21,3 +21,4 @@ Every action taken under it is listed below with its commit or run, for the owne
 ### Actions taken
 - 20 Oct 05:19 IST: PR #1 merged into `main` (d346309) and `pipeline.yml` run 1 started by hand (owner's "work on production now", before this record).
 - 20 Oct 05:51 IST: PR #2 merged into `main` (b143a79) with CI green; the pipeline schedule moved to every 15 minutes (c88f358); lead check-ins every 15 minutes (chained one-off check-ins: routines allow hourly at most).
+- 20 Oct 06:27 IST: PR #3 merged into `main` (1ef32e5) with CI green: the company page and the cards to the approved designs.

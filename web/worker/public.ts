@@ -506,6 +506,9 @@ api.get("/system", async (c) => {
 async function systemStatus(c: Context<AppEnv>) {
   const today = new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10); // IST date
   const utcDay = new Date().toISOString().slice(0, 10);
+  // each provider's own quota day: Gemini's runs on Pacific time and is still yesterday (UTC) until 07:00 UTC, so
+  // "today (UTC)" alone left Gemini off the page while it served most packed calls (owner, 2026-10-20)
+  const yesterdayUtc = new Date(Date.now() - 86400_000).toISOString().slice(0, 10);
   const weekAgo = new Date(Date.now() + 5.5 * 3600_000 - 7 * 86400_000).toISOString().slice(0, 10);
   const db = c.env.DB;
   const [ledger, pending, failed, cards7d, usage, runs, kv] = await db.batch([
@@ -516,7 +519,9 @@ async function systemStatus(c: Context<AppEnv>) {
                  WHERE impact_level IN ('HIGH', 'MODERATE', 'LOW') AND filed_at >= ?1 GROUP BY impact_level`).bind(weekAgo),
     db.prepare(`SELECT day, provider, model, requests, input_tokens, output_tokens, failures, rate_limited, limit_rpd,
                        limit_tpd, substr(last_error, 1, 160) AS last_error, updated_at
-                  FROM provider_usage WHERE day = ?1 ORDER BY provider, model`).bind(utcDay),
+                  FROM provider_usage p WHERE day >= ?1
+                   AND day = (SELECT max(day) FROM provider_usage q WHERE q.provider = p.provider AND q.model = p.model)
+                 ORDER BY provider, model`).bind(yesterdayUtc),
     db.prepare(`SELECT run_id, mode, started_at, finished_at, status, stats_json, substr(error, 1, 200) AS error
                   FROM pipeline_runs ORDER BY started_at DESC LIMIT 25`),
     db.prepare(`SELECT key, value FROM kv WHERE key IN ('backfill:discovered_through', 'backfill:complete',

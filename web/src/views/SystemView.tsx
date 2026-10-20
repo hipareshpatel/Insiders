@@ -81,7 +81,7 @@ export function SystemView() {
 
       <section className="rounded-xl border border-line bg-surface">
         <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line px-4 py-3">
-          <h2 className="font-display text-[18px] text-ink">AI provider health · today (UTC)</h2>
+          <h2 className="font-display text-[18px] text-ink">AI provider health · current quota day</h2>
           <span className="text-xs text-ink-3">Models leave the pool at {CEILING * 100}% of their daily quota</span>
         </header>
         {s.usage.length === 0 ? <p className="px-4 py-4 text-sm text-ink-3">No AI calls recorded today.</p> : (

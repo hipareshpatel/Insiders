@@ -2971,13 +2971,26 @@ class Pipeline:
             return 0
 
     def _live_from(self, today: date) -> date:
-        """Start of the live window: the last LIVE_DAYS days since the pipeline went live, so a
-        filing left unfinished yesterday evening is not pushed behind the whole backfill."""
-        since = self.sink.kv_get("live:since")
-        if not since:
-            since = today.isoformat()
-            self._kv_set("live:since", since)
-        return max(date.fromisoformat(since), today - timedelta(days=LIVE_DAYS))
+        """Start of the live window: always the last LIVE_DAYS days. It used to start no earlier than the day the
+        pipeline went live, so on 20 Oct 2026 the results filed 15-19 Oct were left to the backfill, which walks
+        each company from April (owner, 2026-10-20). ``live:since`` is still recorded, for the record only."""
+        if not self.sink.kv_get("live:since"):
+            self._kv_set("live:since", today.isoformat())
+        return today - timedelta(days=LIVE_DAYS)
+
+    def _discover_window(self, live_from: date, today: date, days: int = 2) -> None:
+        """Discover the live window's earlier days that no run has read in full, newest first, ``days`` a run.
+        The live runs read only today (and yesterday before 09:00); a day before go-live, or one the runs
+        missed, would otherwise wait for the backfill's discovery, which walks forward from April."""
+        raw = self.sink.kv_get("live:window_from")
+        done = date.fromisoformat(raw) if raw else today
+        day = min(done, today) - timedelta(days=1)
+        while days > 0 and day >= live_from:
+            if self._discover_safely(day, full=True) is None:
+                return
+            self._kv_set("live:window_from", day.isoformat())
+            day -= timedelta(days=1)
+            days -= 1
 
     def run(self, mode: str = "all", time_budget_s: int = 2400, max_backfill_days: int = 5) -> Stats:
         started = time.monotonic()
@@ -2995,10 +3008,13 @@ class Pipeline:
                 days = [today - timedelta(days=1), today] if now_ist().hour < 9 else [today]
                 for day in days:
                     self._discover_safely(day, full=False)
+                self._discover_window(live_from, today)
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 backfill_done = self.sink.kv_get("backfill:complete") == "1"
-                self.process(live_from.isoformat(), today.isoformat(), live_deadline, bulk=False,
-                             memory_complete=backfill_done, history_first=True)
+                # today's filings first, then the rest of the window, so a catch-up never holds today's news
+                for day_from, day_to in ((today, today), (live_from, today - timedelta(days=1))):
+                    self.process(day_from.isoformat(), day_to.isoformat(), live_deadline, bulk=False,
+                                 memory_complete=backfill_done, history_first=True)
                 if self._on_nse() and time.monotonic() < live_deadline:
                     from . import event_catchup   # cards made before their event XBRL landed
 

@@ -62,6 +62,24 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
+## T23 · P1 · laptop · OPEN, do now — fill the design blocks on the live cards (no AI)
+
+The design audit (`docs/audit/design/cards-2026-10-20.md`) found the 19 Oct card blocks on only 14 of 849 live cards:
+cards written before that day were never given them. `refresh-card-blocks` (commit eeb8944) rebuilds each stored card's
+code blocks from memory with today's code and drops signal types now off. No AI, no PDF, no NSE request.
+1. `git pull`; dot-source the keys file; `$env:BSE_INTEL_SINK = 'platform'`;
+   `$env:PLATFORM_API_URL = 'https://insiders.reply-bd3.workers.dev'`; `$env:INGEST_TOKEN` from the keys file.
+2. `python -m bse_intel refresh-card-blocks --dry-run`: report the JSON (cards, changed, failed, by_block).
+3. If `failed` is under 5% of the cards: run it again without `--dry-run`, between two `pipeline.yml` runs (they start at
+   :17 each hour; it should take minutes). Report the JSON.
+4. Then `python -m bse_intel refresh-summaries` with the same variables (no AI): 83 of the 85 live companies have no
+   `memory_summary_json`, so the Companies table reads "0 open · 0 capex" and `/api/promises/overdue` is empty. Report its JSON.
+5. Check three cards on the live site: a bank results card (CSB or UCO: interest earned, NII, NPA rows), an order card
+   with an amount (the size bars), a rating card (the ladder).
+Report: here, the three JSONs and what the three cards show. Also: Adani Power's former names on the live site read
+"Reliance Natural Resources Limited, Reliance Mineral Resources Limited" (they look like another company's); say where
+they came from (filing, memory field). Files you may change: none.
+
 ## T22 · P1 · laptop · DONE (step 1; step 3 running) — production is on; the live database is the record (owner, 2026-10-20)
 
 The owner asked to run on production now and not to wait for the laptop (20 Oct, ~05:20 IST). The cloud merged the PR

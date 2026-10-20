@@ -29,7 +29,8 @@ on:
   repository_dispatch:
     types: [run-pipeline]
   schedule:
-    - cron: "17 * * * *"
+    # every 15 minutes (owner, 2026-10-20); the concurrency group below queues a run while one is going, never two at once
+    - cron: "2,17,32,47 * * * *"
 
 permissions:
   contents: read

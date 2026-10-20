@@ -2,9 +2,9 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import type { CardRow } from "../../shared/types";
-import { AnnouncementCard } from "../components/AnnouncementCard";
+import { AnnouncementCard, AnnouncementRow } from "../components/AnnouncementCard";
 import { Avatar } from "../components/Avatar";
-import { FilingRow, parseCard } from "../components/FilingCard";
+import { parseCard } from "../components/FilingCard";
 import { api, type FeedFilters } from "../lib/api";
 import { cn } from "../lib/cn";
 import { addDays, istDate, istDateTime, marketSession, num, pct, signClass, titleCase, todayIST } from "../lib/format";
@@ -46,7 +46,13 @@ export function TodayView() {
   }, [params, navigate]);
 
   const today = todayIST();
-  const range = (RANGES.find((r) => r.key === params.get("range"))?.key ?? "close") as RangeKey;
+  const chosen = RANGES.find((r) => r.key === params.get("range"))?.key as RangeKey | undefined;
+  // The page never opens on an empty window: with nothing published since the close (before the first run of the
+  // day, or on a holiday), it shows the last 7 days and says so (design audit, 2026-10-20: six zeros on first view).
+  const sinceClose = useQuery({ queryKey: ["brief", startOf("close", today)], queryFn: () => api.brief(startOf("close", today)),
+    staleTime: 60_000, enabled: !chosen });
+  const fellBack = !chosen && sinceClose.data?.cards === 0;
+  const range: RangeKey = chosen ?? (fellBack ? "7d" : "close");
   const fromAt = startOf(range, today);
   const tabKey = params.get("t") ?? "all";
   const tab = TABS.find((t) => t.key === tabKey) ?? TABS[0];
@@ -80,7 +86,7 @@ export function TodayView() {
   const cards = [...(high.data?.cards ?? []), ...(tab.key !== "high" ? rest.data?.cards ?? [] : [])];
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 sm:px-6">
+    <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
       <section className="flex flex-wrap items-center justify-between gap-3">
         <p className="flex items-center gap-2 text-[13.5px] font-semibold text-ink-3">
           <span className="live-dot" aria-hidden />
@@ -99,6 +105,7 @@ export function TodayView() {
         {b ? <>{num(b.cards)} filings worth your time {rangeLabel}{b.high ? <>, <span className="text-grad">{num(b.high)} that could move a stock.</span></> : "."}</>
           : "The day's material NSE filings"}
       </h1>
+      {fellBack && <p className="mt-1 text-[13px] text-ink-3">Nothing new since the last close yet; showing the last 7 days.</p>}
 
       <dl className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
         <Kpi label="Filings read" value={b ? num(b.scanned) : "—"} />
@@ -143,7 +150,7 @@ export function TodayView() {
               {withLow && (low.data?.cards.length ?? 0) > 0 && (
                 <section className="card-soft overflow-hidden">
                   <h3 className="eyebrow px-5 pb-1 pt-4 text-ink-3">Low impact {rangeLabel}</h3>
-                  <div className="space-y-2 p-3">{low.data!.cards.map((row) => <FilingRow key={row.news_id} row={row} />)}</div>
+                  <div className="space-y-2 p-3">{low.data!.cards.map((row) => <AnnouncementRow key={row.news_id} row={row} />)}</div>
                 </section>
               )}
               {tab.key !== "high" && rest.data && (

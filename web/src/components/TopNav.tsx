@@ -41,14 +41,10 @@ function useTheme() {
 
 export function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-2">
-      <svg viewBox="0 0 24 24" className="h-6 w-6 text-accent" aria-hidden>
-        <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" />
-        <path d="M7 15.5l3.2-3.4 2.6 2.4L17 9.5" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-      <span className="text-[17px] font-semibold tracking-tight text-ink">
-        Insiders<span className="ml-1 text-[11px] font-medium text-ink-3">NSE</span>
-      </span>
+    <Link href="/" className="flex shrink-0 items-center gap-[9px] text-[18px] font-extrabold tracking-[-0.02em] text-ink">
+      {/* the approved mockup's tile: indigo gradient, white "In" (docs/design/home-premium.html) */}
+      <i className="grid h-[30px] w-[30px] place-items-center rounded-[9px] bg-linear-135 from-accent to-accent-2 text-[13px] font-extrabold not-italic text-white shadow-[0_4px_12px_color-mix(in_srgb,var(--accent)_35%,transparent)]">In</i>
+      Insiders
     </Link>
   );
 }
@@ -63,25 +59,25 @@ export function TopNav({ onSearch }: { onSearch: () => void }) {
   const isActive = (href: string) => (href === "/" ? location === "/" : location.startsWith(href) || (href === "/companies" && location.startsWith("/company/")));
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-[1200px] items-center gap-4 px-4 sm:px-6 lg:gap-6">
+    <header className="sticky top-0 z-30 border-b border-line bg-surface/[.88] backdrop-blur-[14px] backdrop-saturate-[1.4]">
+      <div className="mx-auto flex h-[62px] max-w-[1240px] items-center gap-5 px-4">
         <Logo />
         <nav className="hidden items-center gap-1 md:flex">
           {NAV.map((item) => (
             <Link key={item.href} href={item.href}
-              className={cn("whitespace-nowrap rounded-lg px-2 py-1.5 text-sm font-medium transition-colors lg:px-3",
-                isActive(item.href) ? "bg-accent-soft text-accent" : "text-ink-2 hover:text-ink")}>
+              className={cn("whitespace-nowrap rounded-[10px] px-2 py-2 text-sm font-semibold transition-colors lg:px-3",
+                isActive(item.href) ? "bg-surface-2 text-ink" : "text-ink-2 hover:text-ink")}>
               {item.label}
             </Link>
           ))}
         </nav>
-        <div className="ml-auto flex items-center gap-2">
-          <button type="button" onClick={onSearch}
-            className="hidden h-9 w-60 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-[13px] text-ink-3 hover:border-line-strong xl:flex">
-            <Search className="h-4 w-4 shrink-0" /><span className="truncate">Search companies</span>
-            <kbd className="num ml-auto rounded border border-line px-1.5 text-[10px]">⌘K</kbd>
-          </button>
-          <button type="button" onClick={onSearch} aria-label="Search" className="grid h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 xl:hidden">
+        <button type="button" onClick={onSearch}
+          className="ml-auto hidden h-10 min-w-0 flex-[0_1_340px] items-center gap-2.5 rounded-xl bg-surface-2 px-3.5 text-[13.5px] text-ink-3 hover:text-ink-2 lg:flex">
+          <Search className="h-4 w-4 shrink-0" /><span className="truncate">Search company, symbol or event</span>
+          <kbd className="num ml-auto rounded-md border border-line-strong px-1.5 text-[11px] font-semibold">Ctrl K</kbd>
+        </button>
+        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          <button type="button" onClick={onSearch} aria-label="Search" className="grid h-10 w-10 place-items-center rounded-xl bg-surface-2 text-ink-2 lg:hidden">
             <Search className="h-[18px] w-[18px]" />
           </button>
           <button type="button" onClick={() => setTheme(next[theme])} aria-label={`Theme: ${theme}`} title={`Theme: ${theme}`}
@@ -98,7 +94,7 @@ export function TopNav({ onSearch }: { onSearch: () => void }) {
         <nav className="border-t border-line px-4 py-2 md:hidden">
           {NAV.map((item) => (
             <Link key={item.href} href={item.href}
-              className={cn("block rounded-lg px-3 py-2 text-sm font-medium", isActive(item.href) ? "bg-accent-soft text-accent" : "text-ink-2")}>
+              className={cn("block rounded-[10px] px-3 py-2 text-sm font-semibold", isActive(item.href) ? "bg-surface-2 text-ink" : "text-ink-2")}>
               {item.label}
             </Link>
           ))}

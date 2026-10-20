@@ -629,7 +629,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
             <Avatar name={row.company_name} symbol={row.symbol} size={44} />
             <span className="min-w-0">
               <span className="block truncate text-[16px] font-extrabold tracking-tight text-ink group-hover:text-accent">
-                {row.company_name}{formerName(row) && <span className="ml-2 text-[12px] font-semibold text-ink-3">formerly {formerName(row)}</span>}
+                {row.company_name}
               </span>
               <span className="num block truncate text-[12px] font-medium text-ink-3">
                 {row.symbol ?? row.scrip_code}
@@ -1065,17 +1065,8 @@ function AiReading({ catalyst, facts, insights, takeaway }: { catalyst: string |
 export const OTHER_RENAME = /\(\s*now\b|\bnow\s+known\s+as\b|\brenamed\s+(?:as|to)\b/i;
 // a model's placeholder stored as a name ("None", "N/A"): Persistent showed "formerly None"
 const NO_NAME = /^\s*(?:none|nil|null|n[./]?\s?a\.?|not\s+applicable|-+)?\s*$/i;
+// Former names stay in memory for search and on the company page, off the card header (owner, 2026-10-20).
 export const formerOwnName = (n: string) => !NO_NAME.test(n) && !OTHER_RENAME.test(n);
-
-function formerName(row: CardRow): string | null {
-  try {
-    const names = row.former_names_json ? (JSON.parse(row.former_names_json) as string[]) : [];
-    // another entity's rename ("AGH Dreams Private Limited (now AGH Dreams Limited)") is not the company's former name
-    return names.find(formerOwnName) ?? null;
-  } catch {
-    return null;
-  }
-}
 
 /** Monthly business update: the main volume over recent months, bars scaled to the largest. */
 function VolumeStrip({ s }: { s: NonNullable<CardBody["volume_strip"]> }) {

@@ -441,13 +441,21 @@ def test_the_decision_box_takes_up_to_four_points_from_memory():
         "ownership": [{"period": "Q4FY26", "promoter_pct": 56.4, "fii_pct": 13.9, "as_of": "2026-04-17"},
                       {"period": "Q1FY27", "promoter_pct": 54.7, "fii_pct": 15.8, "as_of": "2026-07-20"}],
         "watchlist": [{"text": "New plant commissioning", "status": "OPEN", "check_in": "Q3FY27", "check_by": "2026-12-31",
-                       "created_on": "2026-08-01", "source_news_id": "n0"}],
+                       "created_on": "2026-08-01", "source_news_id": "n0"},
+                      {"text": "Order inflow of ₹5,000 Cr in FY27", "status": "OPEN", "check_in": "Q4FY27",
+                       "check_by": "2027-03-31", "created_on": "2026-06-01", "source_news_id": "n0"}],
         "operating_notes": [{"text": "Plant 2 running at 55% utilisation", "as_of": "2026-09-01", "source_news_id": "n0"},
                             {"text": "this filing's own note", "as_of": "2026-10-20", "source_news_id": "n9"}],
     }
     points = memory_context(before, "ORDER_WIN", "2026-10-20T10:00:00+05:30", "n9")
     assert [p["label"] for p in points] == ["Management said, May 2026", "Latest quarter, Q1FY27",
-                                            "Holding, Q4FY26 → Q1FY27, Jul 2026", "Watching, Aug 2026"]
+                                            "Holding, Q4FY26 → Q1FY27, Jul 2026", "Watching, Jun 2026"]
+    # only what bears on the event: an order card watches the order inflow, not the plant; a capex card the plant
+    assert points[3]["text"].startswith("Order inflow")
+    capex = memory_context(before, "CAPEX", "2026-10-20T10:00:00+05:30", "n9")
+    assert any(p["text"].startswith("New plant") for p in capex)
+    # an event with no topic (a board meeting notice) gets no watch item or note, only the figures and holdings
+    assert [p["label"].split(",")[0] for p in memory_context(before, "OTHER", "2026-10-20", "n9")] == ["Latest quarter", "Holding"]
     assert points[1]["text"] == "revenue ₹1,200.5 Cr (+12.3% YoY), PAT ₹150 Cr"
     assert points[2]["text"] == "Promoters 56.4% → 54.7%; FIIs 13.9% → 15.8%"
     # a results card is the latest quarter itself: the note takes that place

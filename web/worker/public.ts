@@ -205,7 +205,7 @@ api.get("/feed", (c) => feed(c));
 
 const todayIst = () => new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10);
 
-// Top Signals: cards that cleared the 4 gates, best score first (partial index idx_cards_signals).
+// Top Signals: cards that cleared the 4 gates, best score first (walks idx_cards_feed_live over the range; migration 0011 dropped the unused idx_cards_signals).
 api.get("/signals", async (c) => {
   const q = c.req.query();
   const fromAt = q.from_at && /^\d{4}-\d{2}-\d{2}T/.test(q.from_at) ? q.from_at : `${isDate(q.from) ? q.from : todayIst()}`;

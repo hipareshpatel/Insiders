@@ -1,0 +1,817 @@
+[
+ {
+  "news_id": "nse-106822686",
+  "headline": "Moody's affirms Yes Bank's Ba1 deposit ratings and ba2 BCA with stable outlook",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "folder": "reviewer_01",
+  "event_type": "DEBT_RATINGS",
+  "company": "Yes Bank Limited"
+ },
+ {
+  "news_id": "nse-106822698",
+  "headline": "Indian Overseas Bank receives SEBI approval to issue up to 10 crore shares via ESPS for MPS compliance",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_note": "SEBI approving ESPS as an MPS route for up to 10 crore shares is about 0.5% of IOB's ~1,926 crore shares (paid-up capital Rs 19,257 Cr at Rs 10), with no price or timing given: a procedural approval that barely moves the 94% government holding.",
+  "issues": [],
+  "folder": "reviewer_01",
+  "event_type": "FUNDRAISE",
+  "company": "Indian Overseas Bank"
+ },
+ {
+  "news_id": "nse-106822739",
+  "headline": "Venus Pipes commences pipe spooling operations ahead of schedule, anticipating ₹185 Cr data centre LOI",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_note": "The Rs 185 Cr LOI was already disclosed on 2026-05-26 (memory d_2f9053fc) and is still an LOI; the news is only that part of a ~Rs 70 Cr spooling capacity started early, a press release with no new order.",
+  "issues": [
+   {
+    "field": "headline",
+    "card_says": "anticipating ₹185 Cr data centre LOI",
+    "pdf_says": "The Company has received a Letter of Intent (LOI) worth Rs. 185 crore ... Conversion of the LOI into firm orders is expected to commence in the coming days (the LOI is already held; what is anticipated is its conversion to firm orders)",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "signals[1]",
+    "card_says": "Stage update, not a new order: the ₹185 Cr order first reported on 2026-05-26 moves from LOI to LOI.",
+    "pdf_says": "Stage unchanged (still an LOI); 'moves from LOI to LOI' describes no stage change",
+    "class": "signal_verdict",
+    "on_face": true
+   },
+   {
+    "field": "event_type",
+    "card_says": "ORDER_WIN / ORDER WIN",
+    "pdf_says": "Press release on commencement of part of the pipe spooling capacity (a CAPEX/operations update); no new order, the LOI was disclosed in May 2026",
+    "class": "event_type",
+    "on_face": false
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "15.9% of trailing-12-month revenue",
+    "pdf_says": "15.9% is against FY26 revenue (Rs 1,166.85 Cr, scale block); FY26 is not the trailing 12 months at an October 2026 filing",
+    "class": "wrong_period",
+    "on_face": false
+   },
+   {
+    "field": "why_it_matters[1] (basis MEMORY, ref t_2f9053fc)",
+    "card_says": "ahead of the previously guided December 2026 schedule",
+    "pdf_says": "Memory t_2f9053fc records only the Q4FY26 revenue and the Rs 185 Cr LOI; no December 2026 timeline is in memory (the date comes from this filing)",
+    "class": "memory",
+    "on_face": false
+   }
+  ],
+  "folder": "reviewer_01",
+  "event_type": "ORDER_WIN",
+  "company": "Venus Pipes & Tubes Limited"
+ },
+ {
+  "news_id": "nse-106822808",
+  "headline": "Schaeffler India CEO Harsha Gopal Kadam taken into custody in factory accident probe",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "folder": "reviewer_01",
+  "event_type": "LITIGATION_REGULATORY",
+  "company": "Schaeffler India Limited"
+ },
+ {
+  "news_id": "nse-106821932",
+  "headline": "Infosys expands Truist partnership to onboard 1,000+ staff for Hyderabad GCC",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "A Build-Operate-Transfer GCC engagement of ~1,000 people with no stated value is immaterial for a company of 325,000 people and Rs 470,000 Cr market cap.",
+  "issues": [
+   {
+    "field": "event_type / category_tag",
+    "card_says": "M_AND_A / M&A",
+    "pdf_says": "Press release on an expanded client collaboration (build, operate and transfer a GCC for Truist); no acquisition or merger",
+    "class": "event_type",
+    "on_face": true
+   }
+  ],
+  "folder": "reviewer_02",
+  "event_type": "M_AND_A",
+  "company": "Infosys Limited"
+ },
+ {
+  "news_id": "nse-106822700",
+  "headline": "CRISIL reaffirms UFLEX's AA-/Negative rating on ₹4,600 Cr bank facilities",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "A reaffirmation with an unchanged grade is routine; the filing gives no change in outlook.",
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "Rating outlook revised to Negative. (WARNING)",
+    "pdf_says": "CRISIL 're-affirmed' the ratings: Crisil AA-/Negative long term, A1+ short term; no revision of outlook is stated",
+    "class": "signal_verdict",
+    "on_face": true
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Negative outlook ... contrary to the stable outlook in memory",
+    "pdf_says": "Filing says reaffirmed AA-/Negative; memory holds no earlier rating or Stable outlook for UFLEX",
+    "class": "invented",
+    "on_face": false
+   }
+  ],
+  "folder": "reviewer_02",
+  "event_type": "DEBT_RATINGS",
+  "company": "UFLEX Limited"
+ },
+ {
+  "news_id": "nse-106822750",
+  "headline": "Quality Power commences greenfield coil factory at Kupwad MIDC, Sangli",
+  "verdict": "MINOR",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "guidance_recall[1]",
+    "card_says": "Mehru planned capital expenditure of approximately ₹17.2 crore envisaged for FY 2026-27 (₹17.2 Cr, FY27)",
+    "pdf_says": "The filing is about Quality Power's own Sangli coil factory; the Mehru (subsidiary) capex plan is a different project, and shown here it reads as this factory's cost, which the filing does not give",
+    "class": "other",
+    "on_face": false
+   }
+  ],
+  "folder": "reviewer_02",
+  "event_type": "CAPEX",
+  "company": "Quality Power Electrical Equipments Limited"
+ },
+ {
+  "news_id": "nse-106822764",
+  "headline": "Amagi schedules Q2FY27 earnings call for Nov 6",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "An intimation of an earnings call date is routine.",
+  "issues": [],
+  "folder": "reviewer_02",
+  "event_type": "CONCALL_PRESENTATION",
+  "company": "Amagi Media Labs Limited"
+ },
+ {
+  "news_id": "nse-106822656",
+  "headline": "Gallantt Ispat Q2FY27: revenue ₹1,145.89 Cr (+13.1% YoY), net profit ₹60.51 Cr (-32.0% YoY)",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": false,
+  "impact_should_be": "HIGH",
+  "impact_why": "PAT -32% YoY and -51% QoQ with EBITDA margin down 659 bps QoQ (16.2% to 9.6%) changes the earnings view.",
+  "issues": [],
+  "folder": "reviewer_03",
+  "event_type": "RESULTS",
+  "company": "Gallantt Ispat Limited"
+ },
+ {
+  "news_id": "nse-106822704",
+  "headline": "Avalon Technologies incorporates Zollner Avalon JV subsidiary for EMS operations",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "Incorporation of a ₹98,000 vehicle for a JV already disclosed on 3 Sep 2026; no money or earnings effect.",
+  "issues": [
+   {
+    "field": "what_happened[1]",
+    "card_says": "Avalon initially subscribed to 9,800 equity shares ... paid-up capital of ₹98,000",
+    "pdf_says": "At the initial stage, Avalon shall subscribe to 9,800 equity shares (future tense; subscription not stated as done)",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "takeaway",
+    "card_says": "with Zollner subsequently acquiring a 51% stake",
+    "pdf_says": "Zollner shall subscribe to 51% ... subject to satisfaction of conditions set out in the JVA (not yet done)",
+    "class": "other",
+    "on_face": false
+   }
+  ],
+  "folder": "reviewer_03",
+  "event_type": "CORPORATE_ACTION",
+  "company": "Avalon Technologies Limited"
+ },
+ {
+  "news_id": "nse-106822722",
+  "headline": "HDB Financial Q2 PAT rises 34% to ₹780 Cr; NIM holds at 8.23% despite rate hike",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "quantified_impact[0]",
+    "card_says": "Fee income at risk from insurance-commission rules ≈ ₹66.46 Cr (30 bps x net worth ₹22,153 Cr)",
+    "pdf_says": "Insurance commission last year was 'around ₹455 crores, that's around 0.3% on the RoA tree' (0.3% is of assets, not net worth); card's figure is ~7x too small and contradicts the stated ₹455 Cr",
+    "class": "arithmetic",
+    "on_face": false
+   },
+   {
+    "field": "track_next.kpis_to_verify[1] / why_it_matters[2]",
+    "card_says": "management expects 17-18% AUM growth by Q4FY27; check gross_loan_book >= 17.0 at Q4FY27",
+    "pdf_says": "CFO: 'I am at 12%-13% and I am saying I will grow to 17-18' (no date) and 'hopeful that Q4 starts to show that in terms of direction'; the 17-18% question was about FY28. Also the KPI compares gross_loan_book (₹ Cr) with 17.0, a target that makes no sense",
+    "class": "wrong_period",
+    "on_face": true
+   },
+   {
+    "field": "why_it_matters[2]",
+    "card_says": "AUM growth of 11.7% lags peers like Bajaj Finance (26%)",
+    "pdf_says": "No peer or Bajaj Finance figure in the transcript",
+    "class": "invented",
+    "on_face": false
+   },
+   {
+    "field": "signals[0] WATCH_RESOLVED",
+    "card_says": "KPI check partial on 'Gross Stage 3 ratio in Q3FY27 results' ... remains stable YoY",
+    "pdf_says": "Watch is for Q3FY27 (target <= 2.40%); this is Q2 data, so nothing to resolve yet; GS3 improved YoY from 2.81% to 2.43%, not 'stable'",
+    "class": "signal_verdict",
+    "on_face": true
+   },
+   {
+    "field": "what_happened[2]",
+    "card_says": "Gross Stage 3 2.43% (vs 2.34%) primarily driven by the Commercial Vehicle portfolio",
+    "pdf_says": "CV is named as the source of the Stage 2 build-up; GS3 move is attributed to seasonality in asset finance",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "folder": "reviewer_03",
+  "event_type": "CONCALL_PRESENTATION",
+  "company": "HDB Financial Services Limited"
+ },
+ {
+  "news_id": "nse-106822772",
+  "headline": "RailTel wins ₹47.4 Cr Haryana State Electronics LoA for LAN structured cabling",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "Estimated-value rate contract (POs issued as required) equal to ~1% of FY26 revenue; routine order flow.",
+  "issues": [],
+  "folder": "reviewer_03",
+  "event_type": "ORDER_WIN",
+  "company": "Railtel Corporation Of India Limited"
+ },
+ {
+  "news_id": "nse-106822702",
+  "headline": "GRP Limited starts 8 MWp solar power units at Ankleshwar and Panoli for ₹2.6 Cr",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0] (SCALE)",
+    "card_says": "₹2.6 Cr capex = 0% of FY26 revenue (₹538 Cr), 0% of market cap (₹970.45 Cr)",
+    "pdf_says": "2.6/538 = 0.48%, 2.6/970.45 = 0.27% (scale block itself has 0.48 and 0.27); rounding to 0% reads as nil",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "less than 0.5% of trailing-12-month revenue (₹538 Cr)",
+    "pdf_says": "₹538 Cr is FY26 (Apr 2025-Mar 2026) revenue per scale_block/memory, not a trailing 12 months to Oct 2026",
+    "class": "wrong_period",
+    "on_face": false
+   },
+   {
+    "field": "track_next.milestones[0]",
+    "card_says": "Commercial solar power generation commencement, October 19, 2026 (as a next milestone)",
+    "pdf_says": "Already happened on Oct 19, 2026, the day before the filing; not a future check",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "folder": "reviewer_04",
+  "event_type": "CAPEX",
+  "company": "GRP Limited"
+ },
+ {
+  "news_id": "nse-106822709",
+  "headline": "Orchid Pharma board clears enabling resolution to raise up to ₹600 Cr",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "folder": "reviewer_04",
+  "event_type": "FUNDRAISE",
+  "company": "Orchid Pharma Limited"
+ },
+ {
+  "news_id": "nse-106822799",
+  "headline": "Kapston Services Q2FY27: revenue ₹225.37 Cr (+7.0% YoY), net profit ₹8.41 Cr (+19.1% YoY)",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[3] / key_numbers EPS / results.eps",
+    "card_says": "EPS ₹2.77 (-20.4% YoY); prev_year EPS 3.48",
+    "pdf_says": "Consolidated basic/diluted EPS Q2FY26 is ₹2.32 (restated for the 1:2 bonus, note 6); 2.77 vs 2.32 = +19.4% YoY. 3.48 is the un-restated pre-bonus figure (2.32 x 1.5), so the card shows EPS falling while it rose",
+    "class": "wrong_column",
+    "on_face": true
+   },
+   {
+    "field": "track_next.milestones[0]",
+    "card_says": "Postal ballot completion for stock split: about 2 months from shareholders' approval",
+    "pdf_says": "'About 2 months from the date of shareholders' approval' is the expected time to complete the sub-division, not the postal ballot",
+    "class": "other",
+    "on_face": false
+   },
+   {
+    "field": "track_next.kpis_to_verify[0]",
+    "card_says": "Q3FY27 revenue >= ₹230 Cr",
+    "pdf_says": "No guidance in the filing; threshold is the card's own",
+    "class": "invented",
+    "on_face": true
+   }
+  ],
+  "folder": "reviewer_04",
+  "event_type": "RESULTS",
+  "company": "Kapston Services Limited"
+ },
+ {
+  "news_id": "nse-106822815",
+  "headline": "Dr. Agarwal's Health Care sets November 18, 2026 as record date for eye hospital merger",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "impact_reason": "Procedural step (effective date, record date) of a merger already sanctioned by NCLT on Sep 30 and disclosed Oct 5; no new economics.",
+  "issues": [
+   {
+    "field": "deal_value.stage",
+    "card_says": "COMPLETED",
+    "pdf_says": "Scheme becomes effective on November 01, 2026 and consideration shares are allotted after the Nov 18 record date; not yet completed at filing (Oct 20)",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "consolidating the group's eye hospital business into the listed entity",
+    "pdf_says": "Transferor Dr. Agarwal's Eye Hospital Ltd is itself a listed company (shareholders receive 23:2 shares); filing does not describe it as unlisted",
+    "class": "other",
+    "on_face": false
+   }
+  ],
+  "folder": "reviewer_04",
+  "event_type": "M_AND_A",
+  "company": "Dr. Agarwal's Health Care Limited"
+ },
+ {
+  "news_id": "nse-106822738",
+  "headline": "Venus Pipes commences commercial production of pipe spooling facility",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.expansion",
+    "card_says": "GREENFIELD",
+    "pdf_says": "Filing only says commercial production of pipe spooling manufacturing commenced; no statement that it is a greenfield facility (memory says 'dedicated facility')",
+    "class": "invented",
+    "on_face": true
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Follows the ₹185 LOI",
+    "pdf_says": "Memory deal d_2f9053fc: ₹185 Cr LOI (unit dropped; figure supported by memory)",
+    "class": "other",
+    "on_face": false
+   }
+  ],
+  "folder": "reviewer_05",
+  "event_type": "CAPEX",
+  "company": "Venus Pipes & Tubes Limited"
+ },
+ {
+  "news_id": "nse-106822797",
+  "headline": "Vintage Coffee approves ₹325 Cr fundraise; and doubles borrowing limits",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "OTHER (category UPDATE)",
+    "pdf_says": "Board approval of a fund raise up to Rs 325 Crores via QIP/other modes; FUNDRAISE type exists and fits",
+    "class": "event_type",
+    "on_face": true
+   },
+   {
+    "field": "what_happened[1] / headline",
+    "card_says": "Borrowing limits ... were doubled from ₹500 Crores to ₹1,000 Crores; 'doubles borrowing limits'",
+    "pdf_says": "Board approved the proposals; all items go to shareholders by postal ballot (item 5), so the limits are not yet raised",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "[] (empty)",
+    "pdf_says": "Fund raise 'shall be subject to the approval of the shareholders'; postal ballot notice approved for all matters",
+    "class": "signal_verdict",
+    "on_face": true
+   },
+   {
+    "field": "what_happened[2].quote",
+    "card_says": "from the existing Rs. 5,00,00,000/- (Rupees Five Hundred Crores Only)",
+    "pdf_says": "from the existing Rs. 5,00,00,00,000/- (Rupees Five Hundred Crores Only) (quote drops a group of zeros; card text ₹500 Cr is right)",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "signals[0] (PLEDGE)",
+    "card_says": "4.21% of the company 90 days ago",
+    "pdf_says": "Memory pledge releases on 2026-10-06: 0.81% (Vishal Jethalia) + 3.35% (Balakrishna Tati) = 4.16%; small mismatch, direction right",
+    "class": "memory",
+    "on_face": true
+   }
+  ],
+  "folder": "reviewer_05",
+  "event_type": "OTHER",
+  "company": "Vintage Coffee And Beverages Limited"
+ },
+ {
+  "news_id": "nse-106822805",
+  "headline": "Rashi Peripherals fined ₹0.02 Cr by NSE for Regulation 17(1A) non-compliance",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[1].quote",
+    "card_says": "The letter was regarding the application filed by the Company seeking waiver of fines as levied by NSE for delay in compliance pertaining to Regulation 17(1A)...",
+    "pdf_says": "Not in filing; filing says 'rejection on application filed by the Company seeking waiver of fines for Non Compliance pertaining to Regulation 17(1A)'. The quote is fabricated wording; facts (Reg 17(1A), quarters ended 30 Jun and 30 Sep 2024) are right",
+    "class": "invented",
+    "on_face": true
+   },
+   {
+    "field": "what_happened[0].quote",
+    "card_says": "accordingly Company has to pay a fine of Rs. 1,42,000",
+    "pdf_says": "accordingly Company has been directed to pay a fine of Rs. 1,42,000 plus 18% GST, amounting to Rs. 1,67,560 (wording altered; figures right)",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "why_it_matters[1] / core_catalyst",
+    "card_says": "leading NSE to reject the appeal; 'board composition rules'",
+    "pdf_says": "A waiver application, not an appeal; Reg 17(1A) concerns non-executive directors over 75 (special resolution), not board composition generally",
+    "class": "other",
+    "on_face": false
+   },
+   {
+    "field": "scale.noun",
+    "card_says": "₹0.02 Cr deal = 0% of FY26 revenue",
+    "pdf_says": "It is a regulatory fine, not a deal (figure correct)",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "folder": "reviewer_05",
+  "event_type": "LITIGATION_REGULATORY",
+  "company": "Rashi Peripherals Limited"
+ },
+ {
+  "news_id": "nse-106822817",
+  "headline": "Moneyview reclassifies ₹253.15 Cr authorized share capital and updates special board rights",
+  "verdict": "MINOR",
+  "verdict_face": "OK",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "issues": [
+   {
+    "field": "takeaway / core_catalyst",
+    "card_says": "converting all preference shares into equity",
+    "pdf_says": "Only the authorised (not issued) capital's CCPS classes are reclassified into equity in the MOA capital clause; no issued preference shares are converted",
+    "class": "other",
+    "on_face": false
+   },
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "cleans up the capital structure ahead of future liquidity or listing events",
+    "pdf_says": "The company is already listed on NSE/BSE (symbol MONEYVIEW, scrip 544953); no listing event is mentioned",
+    "class": "invented",
+    "on_face": false
+   }
+  ],
+  "folder": "reviewer_05",
+  "event_type": "GOVERNANCE",
+  "company": "Moneyview Limited"
+ },
+ {
+  "news_id": "nse-106822125",
+  "headline": "Bajaj Finance Q2FY27: revenue ₹24,546.37 Cr, net profit to shareholders ₹6,266.2 Cr (+28.5% YoY)",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "results.revenue.prev_year / yoy_pct",
+    "card_says": "Year-ago (Q2FY26) revenue ₹20,178.90 Cr, YoY +21.6%",
+    "pdf_says": "Consolidated P&L (p.14) year-ago column 30.09.2025: total revenue from operations ₹19,990.42 Cr (restated comparative); YoY is 24,546.37/19,990.42 = +22.8%. ₹20,178.90 Cr does not appear in this filing (memory value from the original Q2FY26 filing)",
+    "class": "wrong_column",
+    "on_face": true
+   },
+   {
+    "field": "results.ebitda_margin.prev_year / yoy_bps",
+    "card_says": "Year-ago EBITDA margin 68.75%, +225 bps YoY",
+    "pdf_says": "On the filing's own year-ago revenue (₹19,990.42 Cr) and the card's year-ago EBITDA (₹13,872.31 Cr) the margin is 69.4%, so the gain is about +161 bps, not +225 bps; the score's 'Margin +225 bps YoY' reason inherits this",
+    "class": "arithmetic",
+    "on_face": true
+   },
+   {
+    "field": "results.pbt",
+    "card_says": "PBT ₹8,533.47 Cr (prev year ₹6,604.83 Cr, prev quarter ₹8,143.89 Cr)",
+    "pdf_says": "Printed profit before tax ₹8,537.20 / ₹6,608.13 / ₹8,149.00 Cr (the card's figures leave out the share of associates of ₹3.73 / 3.30 / 5.11 Cr); the YoY % is about the same",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "key_numbers[Net profit to shareholders]",
+    "card_says": "Net profit to shareholders ₹6,366.57 Cr, +28.7% YoY",
+    "pdf_says": "Profit attributable to owners of the Company ₹6,266.20 Cr (vs ₹4,875.36 Cr, +28.5%); ₹6,366.57 Cr is total PAT including ₹100.37 Cr non-controlling interest",
+    "class": "other",
+    "on_face": false
+   },
+   {
+    "field": "takeaway",
+    "card_says": "the largest move was EBITDA of ₹17,426.82 Cr against ₹13,872.31 Cr",
+    "pdf_says": "EBITDA +25.6% YoY was smaller than PAT +28.7% and PBT +29%; EBITDA is not a figure in the filing (computed)",
+    "class": "other",
+    "on_face": false
+   },
+   {
+    "field": "themes",
+    "card_says": "Infra / EPC",
+    "pdf_says": "Bajaj Finance is a consumer/retail NBFC; nothing in the filing about infra or EPC",
+    "class": "invented",
+    "on_face": false
+   }
+  ],
+  "folder": "reviewer_06",
+  "event_type": "RESULTS",
+  "company": "Bajaj Finance Limited"
+ },
+ {
+  "news_id": "nse-106822740",
+  "headline": "Evervie Health signs LOI with Elekta for 10 LINAC systems, 11-15 million USD",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "folder": "reviewer_06",
+  "event_type": "ORDER_WIN",
+  "company": "PVP Ventures Limited"
+ },
+ {
+  "news_id": "nse-106822793",
+  "headline": "Sun Pharma's UNLOXCYT receives NCCN Category 2A preferred designation for laCSCC patients",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_reason": "One added NCCN guideline recommendation for a niche oncology drug already FDA-approved for this indication; no figures, immaterial to a ₹4.2 lakh Cr company's earnings",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "PRODUCT_LAUNCH",
+    "pdf_says": "No launch: the press release reports that an already FDA-approved (2024) drug was added to the NCCN clinical guidelines for laCSCC (a clinical guideline update)",
+    "class": "event_type",
+    "on_face": false
+   },
+   {
+    "field": "deal_value",
+    "card_says": "deal_value block kind OTHER, stage COMPLETED, segment cutaneous oncology",
+    "pdf_says": "No deal, consideration or counterparty in the filing; the block does not belong to this event",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "folder": "reviewer_06",
+  "event_type": "PRODUCT_LAUNCH",
+  "company": "Sun Pharmaceutical Industries Limited"
+ },
+ {
+  "news_id": "nse-106822801",
+  "headline": "Kapston Services Q2FY27 consolidated revenue at ₹225.37 Cr; board approves 5:1 stock split",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.milestones[0]",
+    "card_says": "Postal ballot for stock split approval - about 2 months from date of approval",
+    "pdf_says": "Annexure B: 'Expected time of completion: About 2 months from the date of shareholders' approval' - that is when the split completes, not when the postal ballot happens (the ballot date is not given)",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "folder": "reviewer_06",
+  "event_type": "RESULTS",
+  "company": "Kapston Services Limited"
+ },
+ {
+  "news_id": "nse-106821846",
+  "headline": "UltraTech Cement Q2FY27: net profit to shareholders ₹1,493.77 Cr (+21.3% YoY)",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[3] Net profit to shareholders",
+    "card_says": "₹1,501.38 Cr (+21.3% YoY)",
+    "pdf_says": "Profit attributable to the Owners of the Parent Q2FY27 ₹1,493.77 Cr (₹1,501.38 Cr is total net profit incl. NCI 7.61)",
+    "class": "other",
+    "on_face": false
+   },
+   {
+    "field": "signals[0] RECURRING_ONE_OFFS",
+    "card_says": "Exceptional items in 5 of the last 8 quarters (Q4FY25, Q3FY26, Q4FY26, Q1FY27, Q2FY27)",
+    "pdf_says": "Six-month column H1FY26 Others 38.38 with Q2FY26 nil, so Q1FY26 also carried an exceptional item (₹38.38 Cr); count is at least 6 of 8. Direction of the warning is right.",
+    "class": "arithmetic",
+    "on_face": true
+   }
+  ],
+  "folder": "reviewer_07",
+  "event_type": "RESULTS",
+  "company": "UltraTech Cement Limited"
+ },
+ {
+  "news_id": "nse-106822684",
+  "headline": "Yes Bank clarifies audit opinion on Q2FY26 results",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[0] / timeline_entry",
+    "card_says": "Q2FY26 results",
+    "pdf_says": "quarter and half-year ended September 30, 2026 (ref YBL/CS/2026-27) = Q2FY27",
+    "class": "wrong_period",
+    "on_face": true
+   }
+  ],
+  "folder": "reviewer_07",
+  "event_type": "OTHER",
+  "company": "Yes Bank Limited"
+ },
+ {
+  "news_id": "nse-106822744",
+  "headline": "Edelweiss sets price band at ₹1,585–₹1,665/share for EAAA India Alternatives IPO",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [],
+  "impact_why": "The price band sets the valuation at which Edelweiss sells part of a key subsidiary in a ₹1,200 Cr OFS (about 10% of its market cap), which is more than routine for its investors.",
+  "folder": "reviewer_07",
+  "event_type": "CORPORATE_ACTION",
+  "company": "Edelweiss Financial Services Limited"
+ },
+ {
+  "news_id": "nse-106822774",
+  "headline": "India Ratings upgrades Karamtara Engineering bank loans to IND AA-/Stable/IND A1+",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "folder": "reviewer_07",
+  "event_type": "DEBT_RATINGS",
+  "company": "Karamtara Engineering Limited"
+ },
+ {
+  "news_id": "nse-106821837",
+  "headline": "UltraTech Cement approves corporate guarantee up to USD 55 mn for associate UHG Holdings",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "folder": "reviewer_08",
+  "event_type": "OTHER",
+  "company": "UltraTech Cement Limited"
+ },
+ {
+  "news_id": "nse-106822657",
+  "headline": "OnEMI Tech gets in-principle approval for ₹832 Cr preferential equity issue",
+  "verdict": "MINOR",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "core_catalyst",
+    "card_says": "Large primary equity infusion to fund lending growth and strengthen capital adequacy",
+    "pdf_says": "No use of proceeds stated (the card's own missing_disclosures says so)",
+    "class": "invented",
+    "on_face": false
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "Exchanges mandated undertakings ensuring proposed allottees refrain from intra-day trading",
+    "pdf_says": "The Company is advised to obtain an undertaking from the allottee(s)",
+    "class": "other",
+    "on_face": false
+   },
+   {
+    "field": "track_next.pending_approvals",
+    "card_says": "Board/Shareholder allotment approval and subsequent exchange listing/trading approval",
+    "pdf_says": "Filing names only the listing application after allotment and statutory approvals; a shareholder approval still pending is not stated",
+    "class": "other",
+    "on_face": false
+   }
+  ],
+  "folder": "reviewer_08",
+  "event_type": "FUNDRAISE",
+  "company": "OnEMI Technology Solutions Limited"
+ },
+ {
+  "news_id": "nse-106822690",
+  "headline": "EAAA India Alternatives files RHP for ₹1,200 Cr IPO opening Oct 26, OFS by Edelweiss arm",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "folder": "reviewer_08",
+  "event_type": "FUNDRAISE",
+  "company": "Edelweiss Financial Services Limited"
+ },
+ {
+  "news_id": "nse-106822819",
+  "headline": "CARE Ratings reaffirms TVS Motor's CARE AAA; Stable and CARE A1+ ratings across ₹4,858 Cr facilities",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_reason": "Reaffirmation of an unchanged AAA/A1+ rating with a routine NCRPS withdrawal after redemption does not change the view on a large-cap.",
+  "issues": [
+   {
+    "field": "headline",
+    "card_says": "ratings across ₹4,858 Cr facilities",
+    "pdf_says": "₹4,858 Cr is bank facilities only (3,241.65 + 1,008.35 + 608.00); CP ₹500 Cr and NCDs ₹1,000 Cr were also reaffirmed, so all reaffirmed ratings cover ₹6,358 Cr",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "timeline_entry",
+    "card_says": "across ₹4,858 Cr of bank facilities and debt instruments",
+    "pdf_says": "Total Facilities (1.A+2.A+2.B+3.A): Rs.4,858.00 crore = bank facilities only; debt instruments (CP 500, NCDs 1,000) are on top",
+    "class": "other",
+    "on_face": false
+   },
+   {
+    "field": "what_happened[2].quote",
+    "card_says": "\"Short Term Instruments Withdrawn (On account of full redemption) 1900.35 CARE A1+ [Note: referring to NCRPS withdrawal in text]\"",
+    "pdf_says": "Quote is not verbatim: the bracketed note is added by the writer; the company's table calls the ₹1,900.35 Cr line 'Short Term Instruments', and CARE's letter withdraws the NCRPS rating without an amount (the link is an inference)",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "fundamentals.kpis (EBITDA margin Q4FY26 13.1%)",
+    "card_says": "EBITDA margin 13.1% Q4FY26 next to consolidated revenue ₹15,052.73 Cr",
+    "pdf_says": "Memory: consolidated EBITDA margin Q4FY25 16.63, Q3FY26 15.39; the 13.1 (and FY26 revenue 47,270) carry no basis and look standalone, so the block probably mixes standalone and consolidated",
+    "class": "standalone_consolidated",
+    "on_face": true
+   },
+   {
+    "field": "core_catalyst",
+    "card_says": "Strong operational performance supporting top-tier credit profiles",
+    "pdf_says": "CARE only says the review was based on FY26 and Q1FY27 performance; it does not call the performance strong",
+    "class": "invented",
+    "on_face": false
+   }
+  ],
+  "folder": "reviewer_08",
+  "event_type": "DEBT_RATINGS",
+  "company": "TVS Motor Company Limited"
+ }
+]

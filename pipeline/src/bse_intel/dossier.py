@@ -1279,7 +1279,38 @@ def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...]
     return {**snap, "discussed": True} if snap else None
 
 
-def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = ()) -> dict | None:
+# Lines whose comparatives are looked for in the filing's own text (results_snapshot's `printed`): amounts in crore,
+# found in any unit the filing may print them in, and EPS to the paisa. Margins and ratios are derived, not printed.
+_PRINTED_CR = {"revenue", "ebitda", "pbt", "pat", "interest_earned", "nii", "ppop", "provisions", "gross_premium",
+               "incurred_claims"}
+_UNITS = (1, 100, 10, 10_000, 1e7)   # crore, lakh, million, thousand, rupees
+
+
+def _printed_numbers(text: str | None) -> list[float] | None:
+    if not text:
+        return None
+    return sorted({float(n.replace(",", "")) for n in re.findall(r"\d[\d,]*\.?\d*", text)
+                   if n.replace(",", "").replace(".", "").isdigit()})
+
+
+def _is_printed(value: float, numbers: list[float], per_share: bool) -> bool | None:
+    """Whether the filing's text prints this figure; None when it is too small to tell apart from other numbers."""
+    from bisect import bisect_left
+
+    def near(target: float, tol: float) -> bool:
+        i = bisect_left(numbers, target - tol)
+        return i < len(numbers) and numbers[i] <= target + tol
+
+    v = abs(value)
+    if per_share:
+        return near(v, 0.005) if v >= 1 else None
+    if v < 1:
+        return None
+    return any(near(v * unit, 0.006 * unit + 0.5) for unit in _UNITS)
+
+
+def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = (),
+                     printed: str | None = None) -> dict | None:
     """This filing's latest quarter against a year ago and the previous quarter, for the results tables.
 
     Each metric carries its value, the year-ago and previous-quarter values when memory has them,
@@ -1295,6 +1326,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     period = max(quarters, key=due_date)
     table = {(m["metric"], m["period"]): m for m in dossier.get("financial_metrics", [])}
     periods = {"value": period, "prev_year": prior_year_period(period), "prev_quarter": prior_quarter_period(period)}
+    numbers = _printed_numbers(printed)
 
     def lookup(names: tuple[str, ...], p: str | None) -> float | None:
         if not p:
@@ -1310,9 +1342,20 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         basis = "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)   # as _metric_entry keeps it
         own = next((src for src in sources if src.get("news_id") == news_id and src.get("value") is not None
                     and src.get("basis") in (None, basis)), None)
-        if own is not None:
-            return own["value"]
-        return entry["value"] if entry.get("value") is not None else None
+        value = own["value"] if own is not None else entry["value"] if entry.get("value") is not None else None
+        if value is not None and p != period and numbers and names[0] in _PRINTED_CR | {"eps"}:
+            # an earlier filing's figure for a quarter this statement restates: Kapston's year-ago EPS ₹3.48 before
+            # its 1:2 bonus (the statement prints ₹2.32), Bajaj Finance's year-ago revenue as first reported (live
+            # review 5, 2026-10-20). A comparative credited to this filing is judged too: the earlier quarters'
+            # files' figures are stored under the filing that read them (xbrl.add_comparatives), so Bajaj's
+            # ₹20,178.90 Cr was "its own". Judged only on a line whose current figure the text prints, so a table
+            # the text missed keeps its comparatives.
+            per_share = names[0] == "eps"
+            current = table.get((entry["metric"], period), {}).get("value")
+            if current is not None and _is_printed(current, numbers, per_share) and \
+                    _is_printed(value, numbers, per_share) is False:
+                return None
+        return value
 
     def margin(p: str | None) -> float | None:
         stated = lookup(_RESULT_METRICS[2][1], p)

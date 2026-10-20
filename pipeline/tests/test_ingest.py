@@ -588,3 +588,31 @@ def test_top_exit_keeps_a_card_only_for_the_md_ceo_or_cfo_leaving():
     assert not top_exit("Appointment of Mr B as Managing Director and CEO, not liable to retire by rotation")
     assert not top_exit("Resignation of Ms C as Independent Director due to personal reasons")
     assert not top_exit("Mr D, Director, retires by rotation and offers himself for re-appointment")
+
+
+def test_every_commands_d1_writes_count_toward_the_day():
+    """20 Oct 2026: the day's counter said 93,369 when D1 stopped taking writes at its free 100,000; the maintenance
+    commands (card blocks, summaries, requeue, seeds) wrote without adding theirs. Each command's leftover is added."""
+    import json as _json
+
+    from bse_intel.sinks.platform import PlatformSink
+
+    kv: dict[str, str] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        path = request.url.path
+        if path.endswith("/query/kv_get"):
+            key = _json.loads(request.content)["params"][0]
+            return httpx.Response(200, json={"rows": [{"value": kv[key]}] if key in kv else []})
+        if path.endswith("/exec/kv_set"):
+            for row in _json.loads(request.content):
+                kv[row["key"]] = row["value"]
+            return httpx.Response(200, json={"rows_written": 1})
+        return httpx.Response(200, json={"rows_written": 40})
+
+    sink = PlatformSink("https://example.test", "t", transport=httpx.MockTransport(handler))
+    sink.execute("cards_upsert", [{"news_id": "n1"}])
+    sink.execute("cards_upsert", [{"news_id": "n2"}])
+    sink.add_writes("2026-10-20", 40, "now")          # a job that counts its own (the pipeline run)
+    sink.add_uncounted_writes("2026-10-20", "now")     # the rest, as the command ends
+    assert int(kv["d1_writes:2026-10-20"]) == 81       # 80 card rows and the first counter write

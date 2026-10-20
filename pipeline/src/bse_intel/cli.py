@@ -768,8 +768,20 @@ def main(argv: list[str] | None = None) -> int:
     except (AIError, SourceBlockedError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         code = 2
+    finally:
+        _record_writes(sink)
     _record_job(sink, args.command, code)
     return code
+
+
+def _record_writes(sink) -> None:
+    """Every command's D1 writes count toward the day's budget, whichever job made them."""
+    from .timeutil import now_iso, utc_day
+
+    try:
+        sink.add_uncounted_writes(utc_day(), now_iso())
+    except Exception as exc:   # D1 refusing writes (the cap) must not hide the command's own error
+        print(f"write count not recorded: {exc}", file=sys.stderr)
 
 
 # The scheduled jobs (workflows), each recorded when it ends so the System page shows a job that never ran or stopped

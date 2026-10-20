@@ -140,15 +140,27 @@ class Sink(ABC):
     def kv_set(self, key: str, value: str, updated_at: str) -> int:
         return self.execute("kv_set", [{"key": key, "value": value, "updated_at": updated_at}])
 
+    # every row this process wrote through the sink (the platform sink counts what D1 reports), and how many of them a
+    # job has already added to the day's counter
+    written_total = 0
+    _recorded = 0
+
     def add_writes(self, day: str, rows_written: int, updated_at: str) -> None:
         """Add a job's D1 writes to the day's counter, which gates backfill against the free tier."""
         if rows_written <= 0:
             return
+        self._recorded += rows_written
         try:
             current = int(self.kv_get(f"d1_writes:{day}") or 0)
         except ValueError:
             current = 0
         self.kv_set(f"d1_writes:{day}", str(current + rows_written), updated_at)
+
+    def add_uncounted_writes(self, day: str, updated_at: str) -> None:
+        """Add what this process wrote that no job counted: the counter said 93,369 on 20 Oct 2026 when D1 stopped
+        taking writes at its free 100,000, because refresh-card-blocks, refresh-summaries, requeue and the seeds wrote
+        without adding theirs. Called once as every command ends."""
+        self.add_writes(day, self.written_total - self._recorded, updated_at)
 
 
 def chunk_rows(rows: list[dict], encode) -> list[list[dict]]:

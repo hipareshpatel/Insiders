@@ -72,6 +72,7 @@ class PlatformSink(Sink):
                 raise SinkRejected(f"{statement}: {resp.text[:300]}")
             resp.raise_for_status()
             written += int(resp.json().get("rows_written", 0))
+        self.written_total += written
         return written
 
     def query(self, name: str, params: list) -> list[dict]:

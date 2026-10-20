@@ -29,6 +29,7 @@ def test_the_seed_never_uses_gemini():
     gateway = SimpleNamespace(routes={"memory_seed": [t("zai"), t("openrouter")], "pass2": [t("gemini")],
                                       "pass2_bulk": [t("gemini")], "pass2_long": [t("gemini"), t("deepseek")],
                                       "pass1": [t("mistral"), t("gemini")], "pass1_bulk": [t("gemini")]})
+    gateway.set_route = lambda route, targets: gateway.routes.__setitem__(route, list(targets))
     call_seed.use_seed_route(gateway)
     assert all(x.provider != "gemini" for r in gateway.routes.values() for x in r)
     assert [x.provider for x in gateway.routes["pass2_long"]] == ["zai", "openrouter"]
@@ -44,7 +45,7 @@ def test_the_seed_writes_memory_not_cards_and_resumes():
     calls = {"500001": [_f("old", "Transcript of the call", "2026-10-10T10:00:00+05:30")],
              "500002": [_f("new", "Investor Presentation", "2026-10-12T10:00:00+05:30")]}
     pipeline = SimpleNamespace(
-        sink=sink, gateway=SimpleNamespace(routes={"memory_seed": []}),
+        sink=sink, gateway=SimpleNamespace(routes={"memory_seed": []}, set_route=lambda route, targets: None),
         rules=SimpleNamespace(classify=lambda f: SimpleNamespace(event_type="CONCALL_PRESENTATION")),
         _company_announcements=lambda scrip, a, b: calls[scrip],
         analyze=lambda f, bulk, memory_complete: analysed.append((f.news_id, f.route)) or SimpleNamespace(update={"status": "DONE"}))
@@ -71,3 +72,18 @@ def test_the_seed_calls_command_builds_its_pipeline(monkeypatch):
     args = SimpleNamespace(scrips="500001, 500002", restart=False, time_budget=60)
     assert cli.cmd_seed_calls(args, SimpleNamespace(workers=1), "sink") == 0
     assert built == ["sink"] and ran == [("pipeline", False, {"500001", "500002"})]
+
+
+def test_the_seed_route_replaces_the_rotation_too():
+    """seed-calls run 3 (2026-10-20): the card routes' lists were replaced but their weighted rotations kept, so
+    pass2_long still tried Gemini and DeepSeek first and 22 documents failed with no free model tried."""
+    from bse_intel.ai.gateway import AIGateway
+    from bse_intel.settings import Settings
+    from conftest import FakeProvider
+
+    env = {"DEEPSEEK_API_KEY": "k", "ZAI_API_KEY": "k", "OPENROUTER_API_KEY": "k", "GEMINI_API_KEY": "k"}
+    gateway = AIGateway(Settings().load_toml("providers.toml"), client_factory=lambda *a: FakeProvider({}), env=env)
+    call_seed.use_seed_route(gateway, deepseek_ok=False)
+    for _ in range(6):
+        tried = [t.provider for t in gateway._ordered("pass2_long")]
+        assert "gemini" not in tried and "deepseek" not in tried and tried[0] == "zai", tried

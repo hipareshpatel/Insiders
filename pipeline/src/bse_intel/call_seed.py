@@ -69,10 +69,10 @@ def use_seed_route(gateway, deepseek_ok: bool = True) -> None:
         raise RuntimeError(f"providers.toml has no [[routes.{SEED_ROUTE}]]")
     seed = [t for t in gateway.routes[SEED_ROUTE] if deepseek_ok or t.provider != "deepseek"]
     for route in CARD_ROUTES:
-        gateway.routes[route] = list(seed)
+        gateway.set_route(route, seed)
     for route in ("pass1", "pass1_bulk"):
         if route in gateway.routes:
-            gateway.routes[route] = [t for t in gateway.routes[route] if t.provider != "gemini"]
+            gateway.set_route(route, [t for t in gateway.routes[route] if t.provider != "gemini"])
 
 
 def companies(pipeline) -> list[dict]:

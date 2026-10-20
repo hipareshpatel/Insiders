@@ -448,19 +448,12 @@ function CaseBlock({ cs }: { cs: NonNullable<CardBody["case_stage"]> }) {
   );
 }
 
-/** Context for a decision, all computed from the card and memory: the price since the filing, what management said
- * before, and the next check. */
+/** Context for a decision, all from memory: what memory held before the filing, and the next check. */
 function decisionLines(row: CardRow, card: CardBody, _table: ResultsSnapshot | null, faceText: string) {
   const out: { label: string; text: string; tone?: "pos" | "neg" | "warn"; computed?: boolean }[] = [];
-  const at = card.priced_at_filing;
   const ageDays = (Date.now() - Date.parse(row.filed_at)) / 86400_000;
-  const recent = ageDays <= 120;   // a run-rate or a "next check" from an old card describes a quarter long gone
-  const move = at?.last_price && row.last_price ? (row.last_price / at.last_price - 1) * 100 : null;
-  // A move of more than 60% is more likely a split or bonus between the two prices than the market: left out
-  if (at?.last_price && row.last_price && move != null && ageDays > 1 && Math.abs(move) <= 60) {
-    out.push({ label: "Since the filing", text: `₹${at.last_price.toLocaleString("en-IN")} → ₹${row.last_price.toLocaleString("en-IN")}, ${move > 0 ? "+" : ""}${move.toFixed(1)}%`,
-               tone: move > 0 ? "pos" : move < 0 ? "neg" : undefined, computed: true });
-  }
+  const recent = ageDays <= 120;   // a "next check" from an old card describes a quarter long gone
+  // No "Since the filing" price line (owner, 2026-10-20): the move is tracked inside, by the price post-mortem
   // No run-rate P/E (owner, 2026-10-20: "none of the cards needs it"): the space goes to up to four things memory held
   // before this filing (memory_context: guidance, the latest quarter, a holding shift, a watch item, an operating note);
   // an older card without the block shows its guidance

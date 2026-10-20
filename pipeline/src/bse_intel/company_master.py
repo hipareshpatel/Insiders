@@ -22,6 +22,7 @@ from __future__ import annotations
 import csv
 import io
 import logging
+import re
 from dataclasses import dataclass, field
 
 log = logging.getLogger(__name__)
@@ -41,11 +42,12 @@ class SyncReport:
     updated: int = 0          # matched rows whose symbol, ISIN, name or industry changed
     industry_filled: int = 0  # companies given an industry this run
     without_industry: int = 0
+    renamed: list[tuple[str, str, str]] = field(default_factory=list)   # (scrip, old name, new name)
 
     def as_dict(self) -> dict:
         return {"listed": self.listed, "matched": self.matched, "added": len(self.added),
                 "added_sample": self.added[:20], "updated": self.updated, "industry_filled": self.industry_filled,
-                "without_industry": self.without_industry}
+                "without_industry": self.without_industry, "renamed": [f"{o} -> {n}" for _, o, n in self.renamed][:20]}
 
 
 def parse_index_list(text: str) -> dict[str, str]:
@@ -97,6 +99,10 @@ def plan(equities, stored: list[dict], industries: dict[str, str], sector_for, n
             row["isin"] = eq.isin
         if eq.name and eq.name != (company.get("company_name") or ""):
             row["company_name"] = eq.name
+            if company.get("company_name") and not _same_name(eq.name, company["company_name"]):
+                # a rename (ICICI Prudential Life -> ICICI Life Insurance, owner 2026-10-20): the row and its memory
+                # stay the company's (matched by ISIN), and the old name stays searchable as a former name
+                report.renamed.append((company["scrip_code"], company["company_name"], eq.name))
         if not company.get("industry"):
             if industry:
                 row["industry"], row["sector"] = industry, sector_for(industry)
@@ -108,6 +114,25 @@ def plan(equities, stored: list[dict], industries: dict[str, str], sector_for, n
             rows.append(row)
             report.updated += 1
     return rows, report
+
+
+def _same_name(a: str, b: str) -> bool:
+    """The same name written another way ("Ltd" for "Limited", case, punctuation): not a rename."""
+    norm = lambda x: re.sub(r"\b(limited|ltd)\b|\W+", "", x.lower())  # noqa: E731
+    return norm(a) == norm(b)
+
+
+def _keep_former_name(sink, scrip: str, old: str, now: str) -> None:
+    """The old name into memory's identity: the company row's former names follow memory (companies_upsert.sql)."""
+    dossier = sink.get_dossier(scrip)
+    if not dossier:
+        return
+    identity = dossier.setdefault("identity", {"former_names": [], "entities": []})
+    names = identity.setdefault("former_names", [])
+    if not any(_same_name(old, n) for n in names):
+        names.append(old)
+        dossier["updated_at"] = now
+        sink.put_dossier(scrip, dossier)
 
 
 def stored_companies(sink) -> list[dict]:
@@ -160,5 +185,7 @@ def sync(settings, sink, client, sector_for, now: str, today) -> SyncReport:
     written = 0
     for at in range(0, len(rows), 200):
         written += sink.execute("companies_upsert", rows[at:at + 200])
+    for scrip, old, new in report.renamed:
+        _keep_former_name(sink, scrip, old, now)
     log.info("company master from NSE: %s (%d rows written)", report.as_dict(), written)
     return report

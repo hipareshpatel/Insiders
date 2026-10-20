@@ -972,9 +972,19 @@ _DIVIDEND_ONLY_NOT = re.compile(r"buy-?back|\bbonus\b|\bsplit\b|sub-?division|ri
                                 r"annual\s+general\s+meeting\s+(?:of|on|will)", re.I)
 
 
+# A change of name or symbol goes to memory too (owner, 2026-10-20: "ICICI Prudential Life to change name to ICICI Life
+# Insurance and symbol to ICICILIFE" needs no card): the timeline keeps it, and the company master takes the new name.
+_NAME_CHANGE = re.compile(r"change\s+(?:of|in)\s+(?:the\s+)?(?:name|symbol)|name\s+change|new\s+(?:name|symbol)|"
+                          r"(?:name|symbol)\s+(?:of\s+the\s+company\s+)?(?:has\s+been\s+|is\s+|will\s+be\s+)?changed", re.I)
+_NAME_CHANGE_NOT = re.compile(r"merger|amalgamat\w*|de-?merg\w*|scheme\s+of\s+arrangement|acqui\w*|financial\s+results|"
+                              r"buy-?back|\bbonus\b|rights\s+issue|preferential|fund\s*rais", re.I)
+
+
 def memory_only(filing: Filing, first_page: str, pages: int) -> str | None:
-    """Why this filing gets a timeline line and no card ("call logistics", "dividend"), or None."""
+    """Why this filing gets a timeline line and no card ("call logistics", "dividend", "name change"), or None."""
     page = " ".join((first_page or "").split())
+    if pages <= 4 and _NAME_CHANGE.search(f"{filing.headline} {filing.subject} {page}") and not _NAME_CHANGE_NOT.search(page):
+        return "name change"
     if pages <= 3 and not is_transcript(filing) and not _TRANSCRIPT.search(page) and _CALL.search(page) \
             and _CALL_LOGISTICS.search(page):
         return "call logistics"

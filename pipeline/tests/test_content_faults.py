@@ -138,3 +138,15 @@ def test_call_logistics_and_dividends_go_to_memory_only():
     assert memory_only(f, "The Board declared a 2nd interim dividend of Rs 9.50 per share; record date November 4.", 1) == "dividend"
     assert memory_only(f, "The Board approved the issue of bonds up to Rs 70,000 Cr and a final dividend.", 2) is None
     assert memory_only(f, "Statement of Unaudited Financial Results for the quarter; interim dividend of Rs 2.", 4) is None
+
+
+def test_a_name_change_goes_to_memory_only():
+    """ICICI Prudential Life's name and symbol change needs no card (owner, 2026-10-20); a merger that renames does."""
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import memory_only
+
+    f = Filing(news_id="n", scrip_code="1", company_name="ICICI Prudential Life Insurance Company Limited", headline="",
+               subject="", filed_at="2026-10-20", filing_date="2026-10-20")
+    assert memory_only(f, "Change in name of the Company to ICICI Life Insurance Limited and symbol to ICICILIFE "
+                          "with effect from October 23, 2026.", 1) == "name change"
+    assert memory_only(f, "Scheme of amalgamation approved; the name of the company will be changed.", 2) is None

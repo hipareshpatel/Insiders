@@ -693,3 +693,15 @@ them, so the live site's company pages have no chart until `market-data` runs on
 `market-data --all` on the laptop wrote 3,466 charts locally (all 1,927 universe companies priced). Proposal: add
 `"chart/"` (and leave `raw/` out). The laptop can then copy them in the next sync.
 **Cloud, 2026-10-20: done** (`sync.OBJECT_PREFIXES` has `chart/`; `raw/` stays out). The next sync copies them.
+
+### P-L4 · re-run the cards F94 touches; the owner decides on the other 140 right but held (2026-10-20)
+
+Every needs-review card was read by hand (`docs/audit/needs-review-2026-10-20.md`, verdicts in
+`docs/audit/needs-review-2026-10-20/verdicts.json`). F94 changes `pipeline.py` (shared: `period_mixups`, `working_text`,
+`_BLANK`, `UNIT_HINT`), `xbrl.py` and `grounding.py`. Once F94 is on main, re-run these 9 filings
+(`requeue-failed --ids`): `nse-106605493`, `nse-106605518`, `a161327d-ef2c-4ed8-a17d-fc78dc92f13a`,
+`bc434117-982f-4af4-90fe-5a2249ab65ff`, `nse-106745684`, `nse-106747091`, `nse-106740331`,
+`399697e7-fc7e-43ac-b7f9-97077db4dac1`, `f6495f61-f9a4-43a0-9ac7-d1faf5fd6ca1`. The laptop checks the new cards
+against the verdicts. Not proposed without the owner: re-running the other 140 right but held cards (free quota, and no
+code change sure to release them). Also for the cloud: two results cards for one quarter when the first card is held
+(D20 and F58; seven companies in this export). A later card should replace the held one rather than sit beside it.

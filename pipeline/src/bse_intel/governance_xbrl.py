@@ -48,7 +48,7 @@ PARSER_VERSION = 4   # 3: money below a share of annual profit is not raised; 4:
 # A penalty below this is kept in memory but raised as no exception (Harsha's ₹648 GST penalty, measured 2026-10-18)
 MINOR_PENALTY_RUPEES = 100_000
 MATERIAL_SHARE_OF_PROFIT = 0.05   # owner, 2026-10-19: a governance issue under 5% of annual profit is dropped
-_RUPEES = re.compile(r"(?:rs\.?|inr|₹)\s*([\d,]+(?:\.\d+)?)\s*(crores?|cr\.?|lakhs?|lacs?|million|mn)?", re.I)
+_RUPEES = re.compile(r"(?:rs\.?|inr|₹)\s*([\d,]+(?:\.\d+)?)\s*(crores?|cr\.?|lakhs?|lacs?|million|mn\b)?", re.I)
 
 
 _PENALTY_WORDS = re.compile(r"penalt|\bfines?\b|levied|levy|imposed|compound|monetary|award", re.I)

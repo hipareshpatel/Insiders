@@ -819,7 +819,17 @@ def misdated_memory_insights(out: Pass2Output, view: dict | None, filing_text: s
     return dropped
 
 
-def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None") -> list[str]:
+_FILING_YOY = r"\s*%\s*(?:yoy\b|y-o-y|year[- ]on[- ]year|over (?:the )?(?:same|corresponding) (?:quarter|period))"
+_FILING_QOQ = r"\s*%\s*(?:qoq\b|q-o-q|quarter[- ]on[- ]quarter|sequential)"
+
+
+def _filing_labels(raw: str, filing: str, yoy: bool) -> bool:
+    """The filing itself writes this change with this label: "a growth of 5.9% YoY" (Bandhan Bank, 2026-10-20)."""
+    number = re.escape(raw.lstrip("+-−"))
+    return bool(filing) and re.search(rf"(?<![\d.]){number}{_FILING_YOY if yoy else _FILING_QOQ}", filing, re.I) is not None
+
+
+def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None", filing: str = "") -> list[str]:
     """A "% YoY" on the card that is the quarter-on-quarter change of a tagged figure (and no figure's
     YoY), or the reverse: SML's results cards called the fall from Q2 a fall from a year ago.
 
@@ -827,7 +837,11 @@ def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None") 
     just before it in its own sentence, else its key number's label, else the period the card's headline
     and timeline entry name (as xbrl_key_numbers reads them, d6e7c14). Comparing with the latest quarter
     alone held Jubilant's FY25 revenue "+7.9% YoY" as a quarter-on-quarter change; comparing with every
-    period's would let a quarter's figure pass with the year's change (loop rounds 3a-3b, 2026-10-17)."""
+    period's would let a quarter's figure pass with the year's change (loop rounds 3a-3b, 2026-10-17).
+
+    A change the filing itself writes with the same label is the company's own and is never flagged: Bandhan Bank's
+    release says NII "representing a growth of 5.9% YoY", and its card was held because the tagged file's QoQ change
+    was also near 5.9 (needs-review sweep, 2026-10-20)."""
     if out.card is None or tagged is None or tagged.kind != "RESULTS":
         return []
     by_period: dict[str, list] = {}
@@ -872,6 +886,8 @@ def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None") 
             value, label = abs(float(m.group(1).replace("−", "-"))), m.group(2).lower()
             near = lambda xs: any(abs(x - value) <= 0.6 for x in xs)  # noqa: E731
             is_yoy = label.startswith(("yoy", "y-o-y", "year"))
+            if _filing_labels(m.group(1), filing, is_yoy):
+                continue
             if is_yoy and near(qoq) and not near(yoy):
                 issues.append(f"\"{m.group(0)}\" is a quarter-on-quarter change, not year-on-year")
             elif not is_yoy and near(yoy) and not near(qoq):
@@ -959,6 +975,29 @@ def headline_form(out: Pass2Output) -> list[str]:
     if out.card is not None and len(headline.split()) < HEADLINE_MIN_WORDS:
         return [f'Headline "{headline}" does not say what happened: write who did what, with the main figure']
     return []
+
+
+# The model checking itself in the card's words: "above Q4FY26's ₹805 Cr? No, below; it is the second-highest" (SBI Life,
+# needs-review sweep 2026-10-20). A reader gets the conclusion, not the working.
+_WORKING = re.compile(r"\?\s*(?:no|yes)\b\s*[,;.]|\b(?:wait|hmm)\s*[,.]|\bactually,?\s+no\b|\blet me (?:check|recompute|re-?check)\b", re.I)
+
+
+# A figure taken out with its words left round it: "holds ** ** stake", "passed with over votes in favour", "margin moved to
+# 11.06% from in Q1FY26", "₹150 Cr NCD issuance, of net worth" - 28 sentences on 18 stored cards, all blanks (needs-review
+# sweep, 2026-10-20), most from a second opinion told to remove a figure no source carries. A label's bold next to its value
+# ("rating:** **76") is not one.
+_BLANK = re.compile(r"(?:^|\s)\*\*\s+\*\*(?=[\s,.;]|$)"
+                    r"|\b(?:with|only|over)\s+(?:over\s+)?(?:of|votes?)\b|\bto\s+via\b|\bfrom\s+in\s+(?:Q[1-4]|H[12]|FY)"
+                    r"|,\s+of\s+(?:its\s+)?(?:FY\d{2}\s+|TTM\s+|annual\s+)?(?:revenue|net worth|turnover|market cap\w*|sales)\b", re.I)
+
+
+def working_text(out: Pass2Output) -> list[str]:
+    """Sentences that show the model's working, or a figure's blank, as problems for the second provider to rewrite."""
+    texts = _card_texts(out) if out.card is not None else []
+    found = [f'"{t[:80]}" shows its working: state the conclusion only' for t in texts if _WORKING.search(t)]
+    found += [f'"{t[:80]}" has a figure missing from it: state the figure or rewrite the sentence without it'
+              for t in texts if _BLANK.search(t)]
+    return found[:3]
 
 
 # A director or KMP appointed or re-appointed, in a card's own headline. A board outcome carrying only that came as
@@ -2628,10 +2667,10 @@ class Pipeline:
             changes += computed.enforce(candidate, produced)
             changes += directions.guard(candidate, tagged)   # tax, inventory, EPS, credit cost: the file decides
             found = check_card_all(candidate, view, sources, history)
-            found.scale += period_mixups(candidate, tagged)
+            found.scale += period_mixups(candidate, tagged, filed_text)
             found.scale += gate.stale_columns(_card_texts(candidate), filed_text)
             found.scale += foreign_as_rupees(_card_texts(candidate), filed_text)
-            found.form += headline_form(candidate)
+            found.form += headline_form(candidate) + working_text(candidate)
             if candidate.card is not None and "DEBT_RATINGS" in (event_type, candidate.event_type):
                 sheet = candidate.dossier_delta.balance_sheet
                 words = " ".join([candidate.card.headline or "", *(f.text for f in candidate.card.what_happened[:2])])
@@ -3386,7 +3425,8 @@ RESULTS_XBRL_WAIT_MINUTES = 180   # a live NSE results filing waits this long fo
 ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE", "LITIGATION_REGULATORY", "FUNDRAISE",
                       "RIGHTS_ISSUE", "M_AND_A", "DEBT_RATINGS", "CONCALL_PRESENTATION", "ANNUAL_REPORT")
 UNIT_HINT = ("Convert each amount from the unit its table states: ₹ lakh ÷ 100 = ₹ Cr, ₹ million ÷ 10 = ₹ Cr, "
-             "₹ thousand ÷ 10,000 = ₹ Cr; remove a figure that matches no source at any unit")
+             "₹ thousand ÷ 10,000 = ₹ Cr; remove a figure that matches no source at any unit, rewriting its sentence "
+             "so no blank is left (not \"holds ** ** stake\" or \"passed with over votes\")")
 
 
 def _adopt_card(first: Pass2Output, second: Pass2Output) -> Pass2Output:

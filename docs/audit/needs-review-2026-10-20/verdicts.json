@@ -1,0 +1,2392 @@
+[
+ {
+  "news_id": "139e9236-8b35-498d-b61f-288086631fc1",
+  "symbol": "JUBLPHARMA",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: invented cause",
+  "note": "Headline credits Q3 PAT to the SOFIE gain; 'merger transaction closed on 31 May 2024' (Q1). Figures right (Radiopharma 8,412 mn)."
+ },
+ {
+  "news_id": "b4b09385-d472-44f7-889f-293a6ec96b23",
+  "symbol": "HERITGFOOD",
+  "event": "LITIGATION_REGULATORY",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "₹4.53 Cr = 'Rs.4,53,44,111'; held only by a reworded why-it-matters quote."
+ },
+ {
+  "news_id": "2de30253-ff87-4e70-8de5-342ea1231afd",
+  "symbol": "SMLMAH",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (sum)",
+  "note": "58.96% = 43.96% + 15% and ₹554.6 Cr = 413.5 + 141.1, both from the SPAs; ₹650 is in the filing."
+ },
+ {
+  "news_id": "db04e18b-2487-4e81-8264-bf4efac663e2",
+  "symbol": "EMUDHRA",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: computed figure (EBITDA/margin)",
+  "note": "Headline margin 25.1% (press release 1,323.8/5,278.4) vs fact 23.9% (XBRL EBITDA): two margins on one card. Cash 'INR 1 885.6 million' right."
+ },
+ {
+  "news_id": "d7ea9e10-c5d9-443d-a150-b5ca811c91c8",
+  "symbol": "HERITGFOOD",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: unit_scale",
+  "note": "'2,568.36' is ₹ million (₹256.8 Cr), card says ₹2,568 Cr; the ₹8.5 Cr consideration is not in the filing."
+ },
+ {
+  "news_id": "c5384b40-08cb-4dda-a8ee-7003a56c6c41",
+  "symbol": "KANORICHEM",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (sum)",
+  "note": "Borrowings 196.97/142.90 = current + non-current lines in lakh; revenue '1,53,671' lakh right."
+ },
+ {
+  "news_id": "f6495f61-f9a4-43a0-9ac7-d1faf5fd6ca1",
+  "symbol": "AHLUCONT",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: filler zero (owners' profit)",
+  "note": "Headline 'net profit to shareholders ₹0 Cr' beside PAT ₹83.33 Cr; fixed in code (F88), needs a re-run."
+ },
+ {
+  "news_id": "d457e58e-d4ae-4573-975b-4c954ea86831",
+  "symbol": "NOVARTIND",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "61.59 = 'Total Trade Payables 514.7 615.9' (₹ million); rest matches the statements."
+ },
+ {
+  "news_id": "106139d0-2513-4a99-99c2-517735d98b5f",
+  "symbol": "EMUDHRA",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: invented cause",
+  "note": "Filing: 'upgraded from [ICRA]A (Stable)' to A (Stable) - no move; card adds 'follows the Cryptas acquisition', not in the filing."
+ },
+ {
+  "news_id": "14dca031-09a7-4180-a49f-bcf0c71f4fbe",
+  "symbol": "CSBBANK",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: number format (crore,lakh,thousand)",
+  "note": "'5276 , 65 , 20' = ₹5,276.65 Cr forward contracts; '7368 , 08 , 33' = ₹7,368 Cr."
+ },
+ {
+  "news_id": "addef7bd-f7fa-439b-ab94-ebf7a10d1b7e",
+  "symbol": "PRSMJOHNSN",
+  "event": "RIGHTS_ISSUE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "'FY 2024-25 : ₹ 71.12 Crore'; ₹49.68 Cr = '₹ 49,68,00,000'; 50% to 90% as filed."
+ },
+ {
+  "news_id": "a1085e9e-37fe-45bb-a3a0-04a651572a8f",
+  "symbol": "JUBLPHARMA",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "'Jubilant 20,50,000 1.287% Bajaj Finance Limited 20,50,000 1.287%' per trust."
+ },
+ {
+  "news_id": "1c4e49a4-ced8-4306-869d-7102d90dcdb1",
+  "symbol": "AHLUCONT",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (ratio)",
+  "note": "1.4x = 2,507.21 / 1,798 net worth; contingent and receivable figures match the report."
+ },
+ {
+  "news_id": "1964621d-23be-4208-a6a0-055e7d10c22e",
+  "symbol": "PRSMJOHNSN",
+  "event": "RIGHTS_ISSUE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: derived figure (product)",
+  "note": "₹38.25 Cr = 2,39,09,000 x ₹16; market cap and TTM revenue labelled FILING come from memory."
+ },
+ {
+  "news_id": "21089634-f4eb-4e09-8d14-84be06bd66e5",
+  "symbol": "SMLMAH",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: invented cause",
+  "note": "Figures right; 'indicating post-acquisition business disruption' and 'first full quarter under Mahindra' not in the filing."
+ },
+ {
+  "news_id": "a43b6f5c-eab9-4d1b-b990-9783b4498177",
+  "symbol": "HERITGFOOD",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: OCR-garbled numbers",
+  "note": "OCR reads '11,19158' for 11,191.58 mn (₹1,119.16 Cr); 'Dairy 394.37' = ₹39.4 Cr."
+ },
+ {
+  "news_id": "49610313-60a8-48b6-aef7-03cb35dcaf61",
+  "symbol": "EMUDHRA",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (difference)",
+  "note": "₹167-192 Cr = guidance 675-700 less 9M ₹508.18 Cr; 'Income 1,880.10' mn = ₹188.01 Cr."
+ },
+ {
+  "news_id": "acf426c3-7e10-44c3-a103-9f519e2b1408",
+  "symbol": "EMUDHRA",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: mixed sources (press vs statement)",
+  "note": "'₹1,910.6 million (₹188.01 Cr)': 1,910.6 mn is ₹191.06 Cr; EBITDA ₹44.14 Cr fact vs ₹41.09 Cr key number; a second card for the quarter."
+ },
+ {
+  "news_id": "360aa7a9-8409-4c08-b294-036d438c7b9a",
+  "symbol": "JUBLPHARMA",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: direction",
+  "note": "'EBITDA margin of 14.6% is above the 16.3% H1FY26 level' - it is below; other figures right ('Exceptional 397')."
+ },
+ {
+  "news_id": "9124bd12-6a61-4356-b3a2-50b9e5abb8d2",
+  "symbol": "JUBLPHARMA",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: check misread the column",
+  "note": "'EBITDA 296 351 310': +4.7% YoY is right, the check called it QoQ; EBITDA ₹310 Cr (press) beside ₹289.5 Cr (XBRL)."
+ },
+ {
+  "news_id": "f56e0e64-e170-4fd1-bd77-5a9fae3cbfaf",
+  "symbol": "NOVARTIND",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (sum)",
+  "note": "14.23% = 10.32% + 3.91% for acquirers 2 and 3; 70.68% = Novartis AG's whole stake."
+ },
+ {
+  "news_id": "nse-106594580",
+  "symbol": "BAJAJFINSV",
+  "event": "MONTHLY_BUSINESS_UPDATE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "'Gross Direct Premium underwritten* 1,384.28 1,410.68 23,178.51 21,416.80' - growth stated correctly."
+ },
+ {
+  "news_id": "nse-106595352",
+  "symbol": "BHARTIARTL",
+  "event": "CAPEX",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: memory figure labelled FILING",
+  "note": "3,400+ sites and 22 million customers as filed; ₹11.88 lakh Cr market cap is memory's, labelled FILING."
+ },
+ {
+  "news_id": "nse-106599932",
+  "symbol": "RELIANCE",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "EBITDA '2,07,911 ... 13.4%', retail '3,70,026 3,30,870 12%' as in the deck."
+ },
+ {
+  "news_id": "nse-106602937",
+  "symbol": "ETERNAL",
+  "event": "FUNDRAISE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: derived figure (difference)",
+  "note": "Utilised ₹5,599.08 Cr = 8,436.12 - 2,837.04, cumulative to Q4FY26; the card says 'utilized in Q4FY26'."
+ },
+ {
+  "news_id": "nse-106603319",
+  "symbol": "CLEANMAX",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (sum)",
+  "note": "₹75,000 = INR 49,000 + INR 26,000 for the two subsidiaries."
+ },
+ {
+  "news_id": "nse-106604218",
+  "symbol": "BAJFINANCE",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: derived figure (prior year)",
+  "note": "Figures from XBRL right; an 'EBITDA margin 69.7%' for a lender says little; a second card for the same quarter (nse-106604248)."
+ },
+ {
+  "news_id": "nse-106604248",
+  "symbol": "BAJFINANCE",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: derived figure (prior year)",
+  "note": "Duplicate of nse-106604218 for Q4FY26; EBITDA and margin for an NBFC."
+ },
+ {
+  "news_id": "nse-106605418",
+  "symbol": "ULTRACEMCO",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "'Rs. 9,820 crore'; '11.24% percentage of' turnover; split ₹6,000 / ₹2,150 Cr as filed."
+ },
+ {
+  "news_id": "nse-106605493",
+  "symbol": "ADANIPORTS",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: owners' profit tag holds OCI",
+  "note": "Headline ₹1,238.67 Cr is 'Total Other Comprehensive Income ... Equity holders of the parent 1,238.67', not profit; PAT ₹3,308.3 Cr."
+ },
+ {
+  "news_id": "nse-106605518",
+  "symbol": "ADANIPORTS",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: owners' profit tag holds OCI",
+  "note": "Same headline error as nse-106605493; second card for the quarter."
+ },
+ {
+  "news_id": "nse-106605522",
+  "symbol": "ADANIPORTS",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "'Revenue (₹ Cr) CAGR 19% 38,736 91,500'; EBITDA 52,000; capex 90,000-100,000 Cr as in the deck."
+ },
+ {
+  "news_id": "nse-106605543",
+  "symbol": "BAJAJFINSV",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: computed figure (EBITDA/margin)",
+  "note": "Owners' profit ₹2,538.67 Cr from XBRL; 'EBITDA ₹14,510.72 Cr, margin 37.7%' for a financial group; duplicate card."
+ },
+ {
+  "news_id": "nse-106605583",
+  "symbol": "BAJAJFINSV",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: computed figure (EBITDA/margin)",
+  "note": "Duplicate of nse-106605543; EBITDA for a financial group."
+ },
+ {
+  "news_id": "nse-106609351",
+  "symbol": "M&M",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "'Revenue 29% 54,982 42,599'; 'PAT 42% 4,668 3,295'; FY26 '1,98,639 25 %'."
+ },
+ {
+  "news_id": "nse-106612165",
+  "symbol": "CLEANMAX",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "'shares issued of INR 4,377'; 51 MWp; Apple India 49% as filed."
+ },
+ {
+  "news_id": "nse-106614012",
+  "symbol": "LT",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure from the filing's classification table",
+  "note": "₹1,000-2,500 Cr is the 'significant' band from the release's own value table."
+ },
+ {
+  "news_id": "nse-106614413",
+  "symbol": "TITAN",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: revenue not in the filing (XBRL total)",
+  "note": "Revenue from operations Q4 = 17,730 + 6,204 = ₹23,934 Cr; card says ₹26,920 Cr (nowhere in the filing); EBITDA ₹1,937 Cr not printed. PAT ₹1,179 Cr (+35%) right."
+ },
+ {
+  "news_id": "nse-106614440",
+  "symbol": "TITAN",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "FY26 total income ₹76,078 Cr, PAT 5,073 (+52%), jewellery ₹59,643 Cr +32% as in the deck."
+ },
+ {
+  "news_id": "nse-106614459",
+  "symbol": "SBIN",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "Net profit 80,032 (+12.88%), GNPA 1.49% (-33 bps) as filed."
+ },
+ {
+  "news_id": "nse-106615379",
+  "symbol": "CLEANMAX",
+  "event": "CORPORATE_ACTION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (sum)",
+  "note": "₹338.42 Cr is the sum of the 14 guarantees listed (Louise 87.00, Gaia 41.45 ...)."
+ },
+ {
+  "news_id": "10904c45-26fd-4fe4-99b2-e85cf93328ac",
+  "symbol": "JUBLPHARMA",
+  "event": "OTHER",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: unit conversion of table figure",
+  "note": "Revenue 82,796 mn = ₹8,280 Cr, PAT 3,975 vs 8,363 (-53%) right; EBITDA ₹1,174 Cr '+0%' unsupported; results filed as OTHER."
+ },
+ {
+  "news_id": "840ace55-f9b1-4c8f-9e76-cd64546bd8d3",
+  "symbol": "JUBLPHARMA",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded",
+  "note": "Revenue ₹8,280 Cr +14% right; key number EBITDA 1,259.8 vs fact 1,326 (reported vs deck); net debt/EBITDA 0.2 vs 1.3x in the why."
+ },
+ {
+  "news_id": "0758a110-c500-406e-8d90-806e97b59ac3",
+  "symbol": "KANORICHEM",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: prior-period figure and direction wrong",
+  "note": "Revenue Q4FY26 30,439 lakh vs Q4FY25 21,388 lakh = +42%, card says -29.4% from ₹431.42 Cr; FY 98,143 vs 75,431 rose, card says -36.1% from ₹1,536.71 Cr."
+ },
+ {
+  "news_id": "6693c488-7c37-4b76-a112-b983db7ff1f0",
+  "symbol": "EMUDHRA",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: unit conversion of table figure",
+  "note": "Net debt 238.73 mn = ₹23.87 Cr; Bluesky 164.72 / 88.64 mn as filed."
+ },
+ {
+  "news_id": "b87f06c7-fca9-46a3-9dd4-052e90611a89",
+  "symbol": "SMLMAH",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "Standalone revenue 2,837.92 (+18.3%), PAT 159.75 (+31.3%), EPS 110.39 from the annual XBRL."
+ },
+ {
+  "news_id": "nse-106698132",
+  "symbol": "MANAKCOAT",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (ratio)",
+  "note": "Q4FY26 margin 15.64/227.46 = 6.9% (deck prints 6.84%); Q1 11.06% as filed."
+ },
+ {
+  "news_id": "3dffc23c-1674-432e-a109-bb4107601a9f",
+  "symbol": "HDFCLIFE",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: unit conversion of table figure",
+  "note": "Single premium 544,971 lakh = ₹5,450 Cr vs 472,191 = ₹4,722 Cr; PAT 61,142 lakh = ₹611 Cr."
+ },
+ {
+  "news_id": "ef617cfd-cc0e-4bcb-abb8-3c6afca7e0a8",
+  "symbol": "HDFCLIFE",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: unit conversion of table figure",
+  "note": "Bancassurance APE '16.8' is ₹ bn next to ₹ Cr figures in the same fact; GST impact on PAT 2.6 against formula 26.11."
+ },
+ {
+  "news_id": "nse-106699124",
+  "symbol": "CLEANMAX",
+  "event": "CORPORATE_ACTION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure in a clause misread as indemnity",
+  "note": "Guarantee 'not exceeding INR 22 Crore' as filed."
+ },
+ {
+  "news_id": "ee048089-d8ec-4e85-b37f-47f3df951cad",
+  "symbol": "NEWGEN",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: OCR separators garbled",
+  "note": "USA '9,15095' = 9,150.95 lakh = ₹91.51 Cr, '7.202 96' = ₹72.03 Cr, India '9.56113' = ₹95.61 Cr."
+ },
+ {
+  "news_id": "4f339729-d30a-47a5-9f24-dd262dda9b60",
+  "symbol": "PRSMJOHNSN",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "Net debt 565 from 636, effective 646 from 1,138 as filed; a true fact dropped."
+ },
+ {
+  "news_id": "b284676f-3984-4763-a545-85880fb1cfa0",
+  "symbol": "SKFINDIA",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: unit conversion of table figure",
+  "note": "Contingent TOTAL 2,143.8 mn = ₹214 Cr; revenue and PAT from the annual XBRL; RPT caps as proposed."
+ },
+ {
+  "news_id": "nse-106700726",
+  "symbol": "CYIENT",
+  "event": "CORPORATE_ACTION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "64,00,000 shares at ₹1,125 for INR 720,00,00,000; capital 11,11,41,804 -> 10,47,41,804."
+ },
+ {
+  "news_id": "9842ebe3-074f-4d2d-8a4b-4f6ac6fa1c7d",
+  "symbol": "BRITANNIA",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: unsourced figure",
+  "note": "Revenue, PAT, ABIL ₹808.57 Cr from the annual XBRL right; contingent-liability change '79.47' is in no source."
+ },
+ {
+  "news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
+  "symbol": "GOODYEAR",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: unit conversion of table figure",
+  "note": "Lakh: revenue 247,588 = ₹2,476 Cr, PAT 6,150 = ₹61.5 Cr, inventories 25,591 = ₹255.91 Cr; MD excess ₹2.03 Cr as filed."
+ },
+ {
+  "news_id": "nse-106703753",
+  "symbol": "NUVOCO",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: derived figure (ratio)",
+  "note": "Volume 5.3 MT +5%, EBITDA ₹572 Cr +7% as said on the call; margin '18.16%' does not equal 572/3,129 (18.3%); revenue from memory."
+ },
+ {
+  "news_id": "e7977858-883d-4f0f-9988-d83e55c20b18",
+  "symbol": "SMLMAH",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: arithmetic",
+  "note": "Headline '4.2x FY26 revenue': 12,500 / 2,838 = 4.4x; the why's '~33% a year' follows the wrong ratio."
+ },
+ {
+  "news_id": "a98480e8-a7d8-4cc3-8ce8-466c85827d80",
+  "symbol": "HERITGFOOD",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: unit conversion (million)",
+  "note": "Revenue INR 13,381 mn = ₹1,338 Cr, EBITDA 619 mn right; milk-cost impact 2.9 has no formula match; '43.61' unsourced."
+ },
+ {
+  "news_id": "a161327d-ef2c-4ed8-a17d-fc78dc92f13a",
+  "symbol": "BANDHANBNK",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: YoY/QoQ check overrules the filing's own words",
+  "note": "Filing: 'Rs.2,921 crore compared to Rs. 2,757 crore as of Q1 FY26, representing a growth of 5.9% YoY'; net revenue '1.2% YoY' likewise."
+ },
+ {
+  "news_id": "cbbd9925-2c8f-4ca4-9abc-ba59252d4193",
+  "symbol": "BANDHANBNK",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "false: unit conversion (deck in ₹ '00 Cr)",
+  "note": "Figures right; second card for the quarter; the why says Q1FY27 'follows Q1FY27's 34.9% rise' (compares the quarter with itself)."
+ },
+ {
+  "news_id": "c36f4518-b6ac-43cd-8ff9-b63f1fc03527",
+  "symbol": "MAHABANK",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (difference)",
+  "note": "₹12,000 Cr AA+ (Stable) reaffirmed; ECL 2,500 less 255 = 2,245."
+ },
+ {
+  "news_id": "nse-106706181",
+  "symbol": "NESTLEIND",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (difference)",
+  "note": "Margin change 2.53 ppt is computed from the XBRL figures."
+ },
+ {
+  "news_id": "058736cc-f585-4bd0-b161-8ae520c4e9b6",
+  "symbol": "SMLMAH",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "Dividend ₹23.50, RPT 99.9951% for, 41,269 holders as in the voting results."
+ },
+ {
+  "news_id": "dcadcb1d-5854-49c3-8087-f1ea8673522c",
+  "symbol": "ADANIPOWER",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: quantified impact formula wrong",
+  "note": "Revenue 19,322 (+32.6%), EBITDA 8,369, PAT 4,867 (+47.2%), PLF 78% right; 'PAT growth vs 3-year CAGR' impact 1,562 has no basis."
+ },
+ {
+  "news_id": "8fed834e-41f8-4372-90e8-8b1d2fa2677a",
+  "symbol": "NOVARTIND",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (average)",
+  "note": "Revenue 1,038.1 mn vs 875.5 (+19%), PAT 322.1 vs 276.2; FY26 average 3,543.3/4 = 88.6; second card for the quarter."
+ },
+ {
+  "news_id": "1387d543-2e1b-4a68-b928-ad167669b855",
+  "symbol": "NOVARTIND",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (EBITDA/margin)",
+  "note": "Same figures; prior-year EBITDA 27.2 computed; duplicate of 8fed834e."
+ },
+ {
+  "news_id": "d74653f5-1535-4390-90ca-38209ccf0234",
+  "symbol": "SBILIFE",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "Solvency 1.90x, contingent 60,483 lakh, IRDAI ₹27,529 lakh as filed."
+ },
+ {
+  "news_id": "63eedd08-5647-4f12-bf6d-9bedded01782",
+  "symbol": "BANDHANBNK",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: memory figure labelled FILING",
+  "note": "2,59,97,814 shares, 1.6137%, holding 7.1314%; market cap from memory."
+ },
+ {
+  "news_id": "a827d550-4a9b-463f-9c10-c31f82e71f89",
+  "symbol": "NTPC",
+  "event": "CAPEX",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (difference)",
+  "note": "64.76 MW commissioned; 91,030 MW installed as filed."
+ },
+ {
+  "news_id": "399697e7-fc7e-43ac-b7f9-97077db4dac1",
+  "symbol": "SBILIFE",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: model's working left in the text",
+  "note": "PAT 72,493 lakh = ₹725 Cr, FYP 4,95,493 lakh = ₹4,955 Cr right; the why reads 'above Q4FY26's ₹805 Cr? No, below; it is the second-highest.'"
+ },
+ {
+  "news_id": "nse-106710206",
+  "symbol": "DCMSIL",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "UNSURE",
+  "hold_class": "true: scan unreadable",
+  "note": "Scanned SAST form OCRs as garbage; 50.77% is nowhere in the text; hold is correct."
+ },
+ {
+  "news_id": "6593e84a-d0cf-40d0-adac-a26c8885ee2b",
+  "symbol": "NTPC",
+  "event": "MONTHLY_BUSINESS_UPDATE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: figures not in the filing (cover letter only)",
+  "note": "One-page cover letter for an 'Operational & Financial Snapshot' with no figures; the card states revenue ₹50,741 Cr and PAT ₹6,896 Cr (-35%) from nowhere."
+ },
+ {
+  "news_id": "50de8a5b-ba39-4cbc-a815-94daf4574745",
+  "symbol": "NTPC",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: OCR digit garble (S for 5)",
+  "note": "Deck prints 'INR S.97 Lakh Crore' = 5.97; 90.90 / 35.70 GW and ₹16.86 lakh Cr as filed."
+ },
+ {
+  "news_id": "0676e799-3d32-4360-828d-815584e7c7fc",
+  "symbol": "HOMEFIRST",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: unit conversion of table figure",
+  "note": "Million: revenue 5,380.11 = ₹538 Cr, PAT 1,598.51 = ₹160 Cr; second card for the quarter."
+ },
+ {
+  "news_id": "fa6015f5-3252-47ee-a02a-cf0c61e0b415",
+  "symbol": "HOMEFIRST",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: OCR table cell",
+  "note": "PAT 1,598.5 mn +34.5%, NIM 6.0%, AUM ₹16,938 Cr in the deck's grid."
+ },
+ {
+  "news_id": "d7031b42-462a-4dde-b2cf-89308ffa06f0",
+  "symbol": "CGCL",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: OCR separators garbled",
+  "note": "Prior-year revenue printed '10,009,98' = 10,009.98 mn = ₹1,001 Cr; PAT 3,533.81 mn = ₹353 Cr."
+ },
+ {
+  "news_id": "2bdfd8b6-e1fe-4e2a-a253-ae0c77a58f3d",
+  "symbol": "BANDHANBNK",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: memory compares the quarter with itself",
+  "note": "Call figures right (PAT ₹502 Cr, NII ₹2,921 Cr +6%); the why says PAT 'is flat versus Q1FY27's own ₹502 Cr'; '1,820' unsourced."
+ },
+ {
+  "news_id": "1b409681-08ef-41cf-8614-57745a2c0ef2",
+  "symbol": "CSBBANK",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "₹10,000 Cr RPT with FIH at 176% of turnover, omnibus approval as filed."
+ },
+ {
+  "news_id": "ae2f9860-f5c5-45d0-9336-261ebe86516e",
+  "symbol": "SMLMAH",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "Rs. 525 crore cash, 14,832 vehicles, turnover ₹2,989 Cr as filed."
+ },
+ {
+  "news_id": "4a7dbe26-1b72-48e8-adb3-a65c158fe317",
+  "symbol": "CGCL",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: memory compares standalone with consolidated",
+  "note": "AUM 401,116 mn = ₹40,112 Cr +62%, PAT 3,534 mn +102% right; why calls standalone Q1FY27 'the prior quarter'."
+ },
+ {
+  "news_id": "nse-106715454",
+  "symbol": "DABUR",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "XBRL revenue 3,764.39 (+10.6%), PAT 586.16; operating margin 19.69% as filed."
+ },
+ {
+  "news_id": "nse-106715462",
+  "symbol": "DABUR",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "3,764.4 vs 3,404.6 (+10.6%), operating profit 741.4, HPC ₹1,385 Cr as filed."
+ },
+ {
+  "news_id": "7ff43daf-bef4-49ef-a471-0cb85a808e9b",
+  "symbol": "NOVARTIND",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "25,47,189 and 9,65,109 shares off-market on 29 Jul 2026 as filed."
+ },
+ {
+  "news_id": "nse-106715650",
+  "symbol": "STARHEALTH",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: unit conversion of table figure",
+  "note": "Lakh: insurance revenue 4,91,720 = ₹4,917 Cr, PAT 54,973 = ₹550 Cr vs (5,540) Q4; second card for the quarter."
+ },
+ {
+  "news_id": "ee7764dd-30f2-41ec-b9ba-62cbc6d855e6",
+  "symbol": "EMUDHRA",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: currency glued to word (ofRs.)",
+  "note": "Million: 1,907.15 vs 1,472.99 (+29.5%), PAT 319.97 vs 250.24; '30.9' is 'ofRs.309.08 million'."
+ },
+ {
+  "news_id": "nse-106715707",
+  "symbol": "STARHEALTH",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: memory figure wrong",
+  "note": "Figures right; why says Q1FY26 PAT ₹263 Cr, the filing's Q1FY26 is 43,818 lakh = ₹438 Cr; duplicate card."
+ },
+ {
+  "news_id": "46662556-46f7-4f9d-8d6d-a2d136159e2d",
+  "symbol": "NOVARTIND",
+  "event": "MANAGEMENT_CHANGE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: full-rupee amount in Indian grouping",
+  "note": "'INR 13,76,88,87,281' = ₹1,376.89 Cr; 1,74,50,680 shares, 70.68%, NIL after."
+ },
+ {
+  "news_id": "nse-106716127",
+  "symbol": "STARHEALTH",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "PAT 438 -> 550 (+25%), CISR 97.0%, investment income 644 as in the deck."
+ },
+ {
+  "news_id": "479eb841-eced-4794-b0b8-3158b190a6af",
+  "symbol": "HESTERBIO",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: sanity check (profit above revenue on a one-off gain)",
+  "note": "Consolidated PAT 967.32 mn on an ₹85.3 Cr one-off exceeds revenue legitimately; standalone figures right."
+ },
+ {
+  "news_id": "nse-106716746",
+  "symbol": "AHCL",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "Lakh: revenue 8,756.27 vs 5,088.91 QoQ, PAT 828.14 vs 1,107.19, tax 537.85 as filed."
+ },
+ {
+  "news_id": "nse-106716886",
+  "symbol": "UCOBANK",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: revenue label vs figure",
+  "note": "Op profit ₹2,810 Cr +79.8%, PAT ₹656 Cr +8% as said; key number 'Revenue ₹8,682 Cr' quotes interest earned ₹6,996 Cr; 1,563 and 2,25,086 unsourced."
+ },
+ {
+  "news_id": "nse-106717353",
+  "symbol": "TORNTPHARM",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: unsourced claim",
+  "note": "XBRL figures right (4,921 vs 3,178, +54.8%); 'base business grew 17% YoY' is in no readable text (the 17.3% QoQ coincides)."
+ },
+ {
+  "news_id": "nse-106717498",
+  "symbol": "LICI",
+  "event": "LITIGATION_REGULATORY",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: unit_scale (GST demand 10x)",
+  "note": "Penalty Rs 9,90,98,790 = ₹9.91 Cr right; GST demand 'INR 99,09,87,896' = ₹99.1 Cr, the card says ₹9.91 Cr."
+ },
+ {
+  "news_id": "bf4ea3a9-cac7-4616-8626-73d264c6571d",
+  "symbol": "SBILIFE",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: unit conversion (billion)",
+  "note": "PAT INR 7.2 bn, GWP 212.9 bn (+20%), VNB margin 26.2% as said."
+ },
+ {
+  "news_id": "nse-106719238",
+  "symbol": "HUDCO",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: quantified impact formula wrong",
+  "note": "PAT ₹851 Cr, NIM ~3%, spread ~2%, disbursement ₹65,000 Cr as said; interest saving 36 vs formula 3,600; 21.5% and 16,250 unsourced."
+ },
+ {
+  "news_id": "1e8c1c2f-f9fa-4458-9fa7-7e510dc874da",
+  "symbol": "HESTERBIO",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: sanity check (profit above revenue on a one-off gain)",
+  "note": "Standalone +14% / +88%, gross margin 69% -> 78%, consolidated -8% as said on the call."
+ },
+ {
+  "news_id": "nse-106721886",
+  "symbol": "DABUR",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: unsourced figure",
+  "note": "10.6% growth, India FMCG +9.5%, volume 5% as said; key numbers carry no quote and India FMCG ₹2,758 Cr is unsourced."
+ },
+ {
+  "news_id": "nse-106723666",
+  "symbol": "NESTLEIND",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: thin card from memory",
+  "note": "Revenue and PAT restated from memory; no fact quotes the transcript; 5,094 and 647 unsourced."
+ },
+ {
+  "news_id": "a0a7660a-e703-4aff-9f55-cbc0ff45e1bb",
+  "symbol": "ANDHRAPET",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: forward-looking sentence",
+  "note": "Lakh: 1,409.06 vs 14,145.71 = -90%; plant shut on HPCL's propylene price as filed."
+ },
+ {
+  "news_id": "nse-106726733",
+  "symbol": "RSWM",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "CMD's letter: 'revenue of ₹1,161 crore, EBITDA of ₹94 crore, and PAT of ₹17 crore'."
+ },
+ {
+  "news_id": "506bd3d1-5751-4175-a92d-af2b79475beb",
+  "symbol": "KANORICHEM",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: headline figure in no source",
+  "note": "Headline 'PAT turned to ₹113.2 Cr'; the card's own key number and the filing give ₹32.39 Cr (323.85 mn)."
+ },
+ {
+  "news_id": "c41d066b-2c73-4c71-a243-18de9c5b7eba",
+  "symbol": "PRSMJOHNSN",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "Net profit 112.70 vs (5.56); revenue 1,835.23 -4.5%; EBITDA 220.51 from XBRL."
+ },
+ {
+  "news_id": "nse-106731285",
+  "symbol": "PROTEAN",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: margin check overrules management's stated figure",
+  "note": "'EBITDA ... INR28 crores with an EBITDA margin of 10%' said on the call (on total income)."
+ },
+ {
+  "news_id": "nse-106731348",
+  "symbol": "NLCINDIA",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: why figures unsourced",
+  "note": "XBRL revenue 4,716.75 (+23.3%) and PAT 436.33 (-48%) right; tax 'benefit of ₹246 Cr' and finance cost '299' are not the filing's rows."
+ },
+ {
+  "news_id": "17231652-3b84-4646-a43e-9c2cd61c4acb",
+  "symbol": "SMLMAH",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (ratio)",
+  "note": "Rs. 525 crores, RPT limit 719.51 -> 4,660 crores as filed; 158% derived."
+ },
+ {
+  "news_id": "nse-106731952",
+  "symbol": "RAMCOCEM",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: OCR table cell",
+  "note": "2,276.18 vs 2,076.61 (+10%), EBITDA 314.38 vs 404.12, PAT 31.86 vs 86.01 as in the deck."
+ },
+ {
+  "news_id": "a34f9b08-50a8-49ee-a2c3-902186228b7f",
+  "symbol": "CGCL",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: OCR table cell",
+  "note": "IVR AA/Positive -> IVR AA+/Stable on ₹9,595 Cr loans and ₹3,000 Cr NCDs."
+ },
+ {
+  "news_id": "nse-106733053",
+  "symbol": "CEIGALL",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "UNSURE",
+  "hold_class": "true: source text not stored",
+  "note": "Quotes '888.80 807.18' and '51.34 58.09' look like statement rows but the stored text has neither; cannot verify."
+ },
+ {
+  "news_id": "nse-106733412",
+  "symbol": "AHCL",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "WRONG",
+  "hold_class": "true: unit_scale (full rupees read as crore)",
+  "note": "'Rs. 1,165,179,600' = ₹116.5 Cr and 'Rs. 367,840,000' = ₹36.8 Cr; the card says ₹1,165 Cr and ₹368 Cr."
+ },
+ {
+  "news_id": "bc434117-982f-4af4-90fe-5a2249ab65ff",
+  "symbol": "SPARC",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: sanity check (a loss above revenue)",
+  "note": "Revenue 39.92, loss 20.78, other income 2,366 lakh as filed; prior-year loss exceeding revenue is real."
+ },
+ {
+  "news_id": "nse-106734846",
+  "symbol": "POLYMED",
+  "event": "FUNDRAISE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "Raised 99,999.98 lakh; utilised 52,021.92 lakh = ₹520.22 Cr; no deviation."
+ },
+ {
+  "news_id": "nse-106736846",
+  "symbol": "MBECL",
+  "event": "LITIGATION_REGULATORY",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (ratio)",
+  "note": "Release of ₹5.52 Cr ordered; 7.5% of memory's TTM revenue ₹73.52 Cr."
+ },
+ {
+  "news_id": "nse-106737753",
+  "symbol": "SIEMENS",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: unit_scale in the why",
+  "note": "Dividend Rs. 18 right; the why says RPTs up to Rs. 8,500 million, the filing says Rs. 85,000 million."
+ },
+ {
+  "news_id": "nse-106738112",
+  "symbol": "IFBIND",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: labels swapped (net cash vs debt)",
+  "note": "Revenue 1,310.82, PBT 33.93, PAT 25.36 right in a garbled text; 'net cash ₹10.49 Cr' quotes 'Total debt at ₹10.49 Cr'."
+ },
+ {
+  "news_id": "178285c3-0792-43dd-aea8-02ad754d3e3e",
+  "symbol": "MCLOUD",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (ratio)",
+  "note": "₹18.4 Cr NCR purchase orders for PNB ATM e-surveillance as filed."
+ },
+ {
+  "news_id": "nse-106738880",
+  "symbol": "AHCL",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded",
+  "note": "Total income 87.62 vs 33.31; EBITDA 15.65 vs 6.26; PAT 8.28 vs 3.55 as said."
+ },
+ {
+  "news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816",
+  "symbol": "GOODYEAR",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "MINOR",
+  "hold_class": "true: quantified impact formula wrong",
+  "note": "Lakh: revenue 77,435 vs 65,622, PAT 651 vs 1,411, EPS 2.82 right; 'underlying PAT' 1,469 vs formula -167."
+ },
+ {
+  "news_id": "ff8021a8-122e-4cf6-90b4-34cde950b3a4",
+  "symbol": "MCLOUD",
+  "event": "FUNDRAISE",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: OCR table cell",
+  "note": "Total 490.89; drone ₹150 Cr; working capital 100.00 as filed."
+ },
+ {
+  "news_id": "f67cf12c-867f-48d7-8703-7ab136406d7f",
+  "symbol": "BRITANNIA",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "author",
+  "verdict": "RIGHT",
+  "hold_class": "false: derived figure (product)",
+  "note": "Revenue ~₹4,964 Cr +9.5%; PAT 11.9% of revenue = ~₹591 Cr, card ₹593 Cr (XBRL); +13.6% as said."
+ },
+ {
+  "news_id": "2d1d8142-d323-45cc-8e60-cf8b3b466b72",
+  "symbol": "BALUFORGE",
+  "event": "FUNDRAISE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "Consolidated \"Net Profit ... 6.608.82\" lakh = ₹66.09 Cr; net worth 12,139+1,47,313 lakh = ₹1,595 Cr; OCR dots broke quote match"
+ },
+ {
+  "news_id": "66649471-a77e-44ed-be98-eaadb96ef077",
+  "symbol": "BALUFORGE",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: figure right but unit",
+  "note": "Presentation in ₹ mn (\"Revenue 3,007\", \"EBITDA 848\", \"Other Income 39\"); \"28.2% lowest since Q4FY26's 22.7%\" is illogical"
+ },
+ {
+  "news_id": "nse-106740331",
+  "symbol": "MBECL",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "UNSURE",
+  "hold_class": "false: other (loss above revenue sanity check)",
+  "note": "Statement pages are scans with no text; distressed company so loss > revenue plausible; revenue 15.05 vs 15.21 inconsistent"
+ },
+ {
+  "news_id": "nse-106742851",
+  "symbol": "FOSECOIND",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Consolidated \"Revenue fram Operations 23 140 65\" lakh, PAT 3,639.98 vs 3,348.69 (+8.7% QoQ); OCR-garbled cells"
+ },
+ {
+  "news_id": "c5f4d350-80f5-4d1a-b129-db4425fc7b71",
+  "symbol": "ADANIPOWER",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"₹ 100,000 crore (Rupees One Lakh crore only)\", \"Rs. 15,000 crore\" right; \"22.6% of net worth\" implies NW ₹4.4 lakh Cr, implausible"
+ },
+ {
+  "news_id": "nse-106744582",
+  "symbol": "CEIGALL",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Transcript: \"INR970 crores ... 15.7%\", \"guidance of around 11% to 12.5%\"; flagged quotes are paraphrases of transcript lines"
+ },
+ {
+  "news_id": "e721580d-57cd-490d-a0ac-89a596e9f311",
+  "symbol": "GYFTR",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "true: wrong_row",
+  "note": "\"Other income ₹7.47 Cr\" is other income 457.76 + fair-value gain 288.99 lakh; revenue 15,530 lakh, PAT 528.03 lakh right"
+ },
+ {
+  "news_id": "nse-106744681",
+  "symbol": "ELECTCAST",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Voting table: Todi \"Public Institutions ... 61.9909 38.0091\", total turnout 52.1457; quotes reflowed table rows"
+ },
+ {
+  "news_id": "fcdb336b-0f71-4f93-ac57-ae6ff66f95e8",
+  "symbol": "MCLOUD",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Consolidated lakh table right (revenue 18,027.63, PAT 2,370.34); \"other expenses ₹46.69 Cr\" = cost of service 2,246 + other 2,423"
+ },
+ {
+  "news_id": "965150c8-cb4c-4939-8f82-e20b6c02dce5",
+  "symbol": "SKFINDIA",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"final dividend of INR 40/- per equity share\"; \"72,125 Shareholders as on Cut-off\"; quotes are reflowed table cells"
+ },
+ {
+  "news_id": "a6245351-4db0-4d94-a318-16c6324cae4f",
+  "symbol": "SKFINDIA",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: wrong figures from memory (pre-demerger basis)",
+  "note": "Filing: \"INR 21,295\" Mn revenue, PAT continuing \"INR 1,172 Mn\", EPS \"INR 23.7\"; card shows ₹4,919.92 Cr, ₹265.94 Cr, ₹53.8"
+ },
+ {
+  "news_id": "nse-106745684",
+  "symbol": "SUPREMEINF",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (loss above revenue sanity check)",
+  "note": "\"Revenue from operations 2,412.22\" lakh, loss (5,914.31), EPS (6.07); finance cost 5,959.94 lakh explains loss > revenue"
+ },
+ {
+  "news_id": "9531823c-8413-4d7f-a647-8c46b73feb2e",
+  "symbol": "SKFINDIA",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Table in ₹ mn: \"Revenue 4,625 5,945 5,878\", \"EBITDA 787 694 1,004\"; why-it-matters calls ₹587.79 Cr (Q1FY27 itself) the base"
+ },
+ {
+  "news_id": "nse-106746932",
+  "symbol": "REPCOHOME",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (memory target figure not found)",
+  "note": "\"Rs.15,990 Crores ... 8.9%\", \"Rs.843 Crores\", \"net profit stood at Rs.114 Crores\", \"Rs.5000 Crores disbursements and 13% to 14%\""
+ },
+ {
+  "news_id": "20081adc-36fc-4338-b02a-86f34af70fbf",
+  "symbol": "ADANIPOWER",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"Long Term Bank 52,950.00 ... (Enhanced from 42,950.00)\" upgraded AA to AA+; card says \"Upgraded from ₹42,950 Cr\""
+ },
+ {
+  "news_id": "c0edddde-1692-492f-bebf-c71946bd09dc",
+  "symbol": "HINDCOPPER",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Slide text garbled but shows \"5.90\", \"4.71\", \"12.20\", \"5.00 3.00\"; 5.90/4.71 = +25%, card rounds to 26%"
+ },
+ {
+  "news_id": "nse-106748121",
+  "symbol": "CEIGALL",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: computed figure (JV share)",
+  "note": "\"aggregate bid cost of ₹2,149.62 crore\", \"74% stake\"; ₹330.84 Cr PWD cancellation tagged FILING but absent from filing"
+ },
+ {
+  "news_id": "nse-106748136",
+  "symbol": "NORTHARC",
+  "event": "CORPORATE_ACTION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"Non-Convertible Debentures ... up to 5000 Crores\"; joint auditor required at \"asset size of ₹15,000 crores and above\""
+ },
+ {
+  "news_id": "nse-106749246",
+  "symbol": "CEIGALL",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"Rs. 274.08 Crore Bid Cost (Excl. GST)\", \"48 Month Construction Period & 05 Year\"; ratios arithmetic right"
+ },
+ {
+  "news_id": "nse-106749878",
+  "symbol": "IFBIND",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"INR 1,529 crores ... 16.65%\", \"PBDIT ... INR 88.46 crores ... 5.79%\", \"INR42 crores, INR43 crores has already flowed in\""
+ },
+ {
+  "news_id": "nse-106751031",
+  "symbol": "MFSL",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"solvency ratio to a robust 198%\", \"INR381 crore\", \"116% growth\", protection \"grew 44%\"; flagged quote is a paraphrase"
+ },
+ {
+  "news_id": "74b559e5-0687-48ea-98a3-4bb6f5fed1ac",
+  "symbol": "AHLUCONT",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (finance cost figure from memory)",
+  "note": "\"INR1,125.81 crores and a PAT of INR11.42 crores ... INR1,004.88 ... INR51.11\"; order book \"INR20,663.52 crores\""
+ },
+ {
+  "news_id": "440d503e-f842-4e2e-abdb-8b220cf00522",
+  "symbol": "SKFINDIA",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"INR 5.9 billion revenue\"; ₹170-180 Cr is the part of the ₹500 Cr capex \"going to come online this year\", not FY27 capex"
+ },
+ {
+  "news_id": "nse-106752512",
+  "symbol": "REPCOHOME",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (enhancement +2,000)",
+  "note": "\"Long Term-Fund Based-Term Loan 5000 ... (Enhanced from 3000)\", NCD 500 AA-(Stable), CP 800 A1+"
+ },
+ {
+  "news_id": "8db21172-f456-459c-a870-65d9e6739b5a",
+  "symbol": "LTM",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (memory claim is in filing)",
+  "note": "\"Our earlier intimation ... dated May 22, 2026\"; SPA executed, completion subject to regulatory approvals"
+ },
+ {
+  "news_id": "f3ea7888-ec8e-4473-8d0b-3735452a19b0",
+  "symbol": "ADANIPOWER",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Slide: \"$ 2,040 Mn ... Revenue +20% YoY\", \"$ 884 Mn EBITDA +23%\", \"$ 514 Mn PAT +33%\", \"2.12x\"; quotes are cells of garbled slide text"
+ },
+ {
+  "news_id": "nse-106755576",
+  "symbol": "CYIENT",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Slide \"FY28 – FY29 ... Revenue CAGR ... EBIT: 16%+ ... 15%+\", \"EBIT: 12.2%\", \"EBIT Margin increased from 12% to 13.2%\""
+ },
+ {
+  "news_id": "nse-106757194",
+  "symbol": "CEIGALL",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"Rs. 6086.70 million Annually for 35 years\" = ₹608.67 Cr; \"36 Month of Work Execution\"; 765/400 kV, 300 km"
+ },
+ {
+  "news_id": "nse-106757760",
+  "symbol": "NESTLEIND",
+  "event": "LITIGATION_REGULATORY",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"customs duty amounting to Rs. 11,10,59,061\", \"redemption fine ... Rs. 25,00,000\", \"penalty ... Rs. 50,00,000\"; total 11.86 derived"
+ },
+ {
+  "news_id": "46363c83-93c2-4965-91b8-052e7c7962c2",
+  "symbol": "HINDCOPPER",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: figure right but unit",
+  "note": "\"Total 1223000 220140 1443140\" per exchange right; \"0.1% of net worth\" overstates (HCL net worth far above ₹144 Cr)"
+ },
+ {
+  "news_id": "1629cf52-d919-44a7-b5da-9d795f0d2db4",
+  "symbol": "PODDARMENT",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"Gross revenue was Rs. 428.29 crores\", \"net profit ... Rs. 14.76 crores ... Rs. 22.82 crores\", \"Total Equity 35,062.24\" lakh"
+ },
+ {
+  "news_id": "c371a878-6435-4ded-85f4-1f597a7abad9",
+  "symbol": "PRSMJOHNSN",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (coverage change)",
+  "note": "\"1.2x for fiscal 2026 against 2.4x\", \"Ebitda per tonne of Rs 543 against Rs 351\", \"Rs 548 crore\"; +1.45x derived"
+ },
+ {
+  "news_id": "cb43c966-e513-4101-90e7-b4d211650064",
+  "symbol": "BLIL",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Dividend \"Rs. 2.27/-\", AGM 21 Sep right; the subsidiary KAM on \"suspected fraud involving payments made to vendors\" is left out"
+ },
+ {
+  "news_id": "nse-106760259",
+  "symbol": "WEALTH",
+  "event": "OTHER",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (headline claim checker)",
+  "note": "\"convene 24th (Twenty Fourth) Annual General Meeting ... Thursday 24th, September, 2026\"; scrutinizer CS Kunal Sharma"
+ },
+ {
+  "news_id": "nse-106760671",
+  "symbol": "EXCELSOFT",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"incorporated in Canada on August 27, 2026\"; \"WOS has common directors\"; \"arm's length\"; reflowed table cells"
+ },
+ {
+  "news_id": "nse-106760870",
+  "symbol": "MBECL",
+  "event": "FUNDRAISE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Lock-in table \"28128 ... 30-Mar-2027\", \"1666667 ... 29-Aug-2027\", \"30000000 ... 29-Aug-2027\"; public \"constitute 5%\""
+ },
+ {
+  "news_id": "nse-106761640",
+  "symbol": "NLCINDIA",
+  "event": "CAPEX",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: other (text layer has no spaces)",
+  "note": "\"developing110MWSolarPowerProject ... 74%byNIRLand26%byNCRTC ... 25years ... 180MU\"; fact drops the 74%/26% split"
+ },
+ {
+  "news_id": "ae4f7998-e10e-4f72-be2f-7f9b5eb72f82",
+  "symbol": "NTPC",
+  "event": "MANAGEMENT_CHANGE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: wrong_row (garbled table)",
+  "note": "Table lists four names (Renu Narang, Rachana Singh Bhal, E Satya Phani Kumar, Dilip Kaibortta) all \"Superannuating on 31st August 2026\""
+ },
+ {
+  "news_id": "2f347f5c-26c2-4551-bdc4-d9833cff9333",
+  "symbol": "MCLOUD",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"₹3,29,01,600/- from Dedicated Freight Corridor\", \"₹3.73 crore ₹8.90 ... combined order value of over ₹15.9\"; jumbled text layer"
+ },
+ {
+  "news_id": "nse-106763720",
+  "symbol": "MANINDS",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"₹350Crs Mar 2027 ... total planned capex of ~₹600 Cr\"; FY26 \"Revenue 35,639 ... EBITDA* 4,679 3,563 31.3%\" in ₹ mn"
+ },
+ {
+  "news_id": "f2c89281-1009-485a-80c6-7d96a3c354d6",
+  "symbol": "SHIVAMAUTO",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (summed contingent total)",
+  "note": "Contingent lakh rows 23.55 + 14.16 + 1,077.01 = ₹11.15 Cr; \"cash losses of ` 3,501.99 lakhs\"; loss (8,133.16) lakh"
+ },
+ {
+  "news_id": "71ef8037-2e01-4309-8dde-b271f15924cc",
+  "symbol": "JSL",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: other (claim checker on deck description)",
+  "note": "\"3,040 2,950\" net debt, revenue \"42,955\", volume \"2,566\" right; headline and fact have blank placeholders (\"net debt/EBITDA at ** **\")"
+ },
+ {
+  "news_id": "nse-106765250",
+  "symbol": "TEXRAIL",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"Order of Rs. 24.48 crores ... 1 rake comprising Type: ACT-1\", \"Within 16 weeks from the date of LOI\""
+ },
+ {
+  "news_id": "1225fc63-22f3-418f-9286-188022ff5f5a",
+  "symbol": "AHLUCONT",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "Lakh: receivables 76,005.28, contract assets 1,13,837.13, guarantees \"57,366.24 22,451.36\", counter-claims \"I 28,515.40 ... I19,556.04\""
+ },
+ {
+  "news_id": "nse-106768854",
+  "symbol": "NLCINDIA",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (total and reduction)",
+  "note": "\"Rs. 9,140.44 Crore ... (Reduced from Rs. 10,334.7 Crore)\", NCD \"Rs. 2,500 Crore\"; total 11,640 and cut 1,194.26 derived"
+ },
+ {
+  "news_id": "5cf483eb-58ee-4383-8bd4-9d41b8a09721",
+  "symbol": "BALUFORGE",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (time 12:54 read as a figure)",
+  "note": "\"concluding at 12:54 P.M.\"; three special resolutions; the filing gives no vote outcome, as the card says"
+ },
+ {
+  "news_id": "nse-106772168",
+  "symbol": "JUBLCPL",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "Creditors' vote value \"125900064 ... 100.0000\" = ₹12.59 Cr in rupees; \"Public 24\" attended"
+ },
+ {
+  "news_id": "f10912ae-e74a-4a40-8a28-34939fa09985",
+  "symbol": "ADANIPOWER",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: wrong_period (CAGR column read as YoY)",
+  "note": "Annex \"Revenue ... 54,241 18,902 18%\": 18%/14%/27% are the FY22-26 CAGR column; slide gives revenue +33%, EBITDA +36%, PAT +47% YoY"
+ },
+ {
+  "news_id": "78d21311-09cf-481c-af39-bdcc2c3c47c6",
+  "symbol": "ADANIPOWER",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: computed figure (USD to INR)",
+  "note": "\"$ 2,040 Mn +20% YoY\", \"$ 884 Mn +23%\", \"$ 514 Mn +33%\" right; PLF \"+11 pts YoY\" is vs FY26 67%; availability FY26 is 89%, not 88%"
+ },
+ {
+  "news_id": "c5deee61-a13b-4259-8b38-fda0245af230",
+  "symbol": "BALUFORGE",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "true: standalone_consolidated",
+  "note": "Revenue ₹1,107.37 Cr and PAT ₹258.89 Cr are consolidated; net worth \"1,36,973.34\" and receivables 33,907.66 lakh are standalone, then mixed in a ratio"
+ },
+ {
+  "news_id": "bc4ebe16-46fd-47eb-aacd-5d17f900d852",
+  "symbol": "GYFTR",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"₹2,500\" RPT, \"630.74%\", \"` 168.75 Crores\" right; headline swaps the filing's 630.74% for a self-computed \"541% of TTM revenue\""
+ },
+ {
+  "news_id": "eec764fa-0fea-401c-b02c-d679e043288b",
+  "symbol": "SMLMAH",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "UNSURE",
+  "hold_class": "false: other (memory figure not in this filing)",
+  "note": "Votes \"1937847 13.3906 ... 274 99.9859\" right; ₹525 Cr deal value not in this filing; the RPT notice said \"Rs. 550 crores towards\" MTBD"
+ },
+ {
+  "news_id": "77285013-df9e-40ba-8d67-856045171ad8",
+  "symbol": "MAHABANK",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"Global Advances ... 2,919.67 3,059.64\", \"Total Deposit ... 3,505.64 3,444.93\", \"CASA % ... 52.51% 48.51%\", \"Net Profit Y-0-Y: 26.84%\""
+ },
+ {
+  "news_id": "nse-106773898",
+  "symbol": "CLEANMAX",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"Non- 2,500.00 CRISIL AA/ Stable ... Assigned\"; \"~Rs 1,100 crore ... refinancing ... remaining ~Rs 1,400 crore\""
+ },
+ {
+  "news_id": "2e4c1876-be28-49ce-a839-9df134648ee9",
+  "symbol": "JSL",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"6,41,817 0.08 0.08\", \"Market purchase\"; fact \"promoter entity holds ** ** stake\" leaves the holding blank"
+ },
+ {
+  "news_id": "e8652975-e415-4a26-b26f-a1b72d82f6c8",
+  "symbol": "SMLMAH",
+  "event": "MONTHLY_BUSINESS_UPDATE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: invented",
+  "note": "Filing shows only \"Commercial ... Sales 815 1095\" (Aug FY26 to FY27, +34%); 1,175 total, 492 cargo, 683 passenger are nowhere in it"
+ },
+ {
+  "news_id": "4526e618-7d28-4b84-b036-dee53d57bbe1",
+  "symbol": "MCLOUD",
+  "event": "ANNUAL_REPORT",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: invented (consolidated revenue)",
+  "note": "Consolidated \"Revenue from operations ... 69,787.64\" lakh = ₹697.9 Cr, not ₹714.2 Cr; borrowings 28,310.24 lakh and finance cost right"
+ },
+ {
+  "news_id": "nse-106776948",
+  "symbol": "RBLBANK",
+  "event": "FUNDRAISE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"Size of the Issue US$ 350,000,000 (United States Dollars Three Hundred and Fifty Million) 5.791%\""
+ },
+ {
+  "news_id": "b02808c0-e0e4-4aa8-9493-2c4474b63425",
+  "symbol": "NOVARTIND",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "UNSURE",
+  "hold_class": "false: figure from another row/period",
+  "note": "Deal \"INR 1,250 Cr\", \"228 Cr\", \"Net cash 668 Cr\", name change \"within 120 days\" right; the bar chart's year order for 379/356/354/335 is ambiguous"
+ },
+ {
+  "news_id": "64e7ea0c-e0d5-4bab-b7ef-d46eff52df9c",
+  "symbol": "HDFCLIFE",
+  "event": "LITIGATION_REGULATORY",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: wrong_row (penalty shown as total)",
+  "note": "\"Tax Demand – Rs 942.18 crore, Interest as applicable and Penalty – Rs 2,422.97 crore\"; total exceeds ₹3,365 Cr, not ₹2,423 Cr"
+ },
+ {
+  "news_id": "nse-106779668",
+  "symbol": "BALAMINES",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"Bank loan facilities ... 1,950 WD\" in INR million = ₹195 Cr; \"does not have any outstanding exposure to any bank\""
+ },
+ {
+  "news_id": "nse-106779827",
+  "symbol": "DCMSIL",
+  "event": "LITIGATION_REGULATORY",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (two-exchange total)",
+  "note": "\"delay of 41 days ... total fine of Rs. 96,760 per exchange\"; ₹1,93,520 total is 2 × 96,760"
+ },
+ {
+  "news_id": "nse-106782095",
+  "symbol": "GRANULES",
+  "event": "FUNDRAISE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"allotment of 2,49,82,906 ... to the members of the Promoter Group\", \"Rs. 585/-\", \"Rs. 1,461.50 Crores\", \"17,094 warrants\""
+ },
+ {
+  "news_id": "e68d30c0-3304-4182-a2c3-c8ba466e5eba",
+  "symbol": "HEGAM",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"Total ... 43,070,852 13.04%\", capital \"385,955,060\" to \"659,597,824\", Co-PMS \"3.86%\", Fund II \"3.33%\""
+ },
+ {
+  "news_id": "e91e93ad-65df-49a3-925b-0e193005f56d",
+  "symbol": "MAHABANK",
+  "event": "FUNDRAISE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (memory reference number)",
+  "note": "\"Notes amounting to USD 500 Million ... coupon of 6.112 % p.a.\"; \"MTN Programme Size\" label is loose"
+ },
+ {
+  "news_id": "f87ae14f-eb8b-436f-a2b7-4d718026965f",
+  "symbol": "NTPC",
+  "event": "CAPEX",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure from another row/period",
+  "note": "Two notices: \"10,842.86 MW ... increase to 10,911.08 MW\" then \"10,911.08 MW ... increase to 10,920.53 MW\"; 68.22 MW from 23 July"
+ },
+ {
+  "news_id": "15a51e47-a1a7-473d-99d8-a8a2eec89725",
+  "symbol": "NEWGEN",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"US Dollars 1,791,140\", \"Converted Value in INR- i.e. 17.14 Crore (Conversion rate: - 1 USD = INR 95.71)\""
+ },
+ {
+  "news_id": "nse-106787132",
+  "symbol": "ENRIN",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Slide: \"> 300 million USD ... Capex investment committed for Global Hub - Make in India\", \"1,121 GW\", \"USD 250 - 300 bn\""
+ },
+ {
+  "news_id": "113d15e2-94f0-4c1a-a7e1-49e6edfe3316",
+  "symbol": "HINDCOPPER",
+  "event": "LITIGATION_REGULATORY",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"Vide order dated 16.09.2026 (received on 21.09.2026) the Commercial Court, Jabalpur\"; 50% bank guarantee, rest bond, else attached and sold"
+ },
+ {
+  "news_id": "1a84a2bd-b7a2-440a-90b6-528b621ce310",
+  "symbol": "HINDCOPPER",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"Rs.2100 crore Bank facilities\", \"Rs.100 crore Commercial Paper\", upgraded to \"[ICRA]AAA (Stable) ... from [ICRA]AA+\""
+ },
+ {
+  "news_id": "c993f36a-98fd-4212-a502-4aa84c9fc911",
+  "symbol": "CGCL",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure from another row/period",
+  "note": "\"Convertible Debentures 1,296.12 ACUITE AA+ | Stable Reaffirmed\" and proposed \"1,553.88\"; key-number quote cites the proposed row"
+ },
+ {
+  "news_id": "nse-106754291",
+  "symbol": "STERTOOLS",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Before \"31,71,838 8.73\", acquired \"80,000 0.22\", after \"33,51,838 8.95\"; \"Inter-se transfer (by way of Gift)\""
+ },
+ {
+  "news_id": "3c27b8b0-a9d1-45a3-b860-08a20e8977df",
+  "symbol": "ANDHRAPET",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"Total 42238690 100.00% 945\" for cost auditor; promoter \"38274594 ... 100.0000\"; \"Rs.2,00,000/-\" fee"
+ },
+ {
+  "news_id": "nse-106794456",
+  "symbol": "REPCOHOME",
+  "event": "DEBT_RATINGS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (tranche total)",
+  "note": "\"Series A1 SNs 74.02 Provisional [ICRA]AAA(SO)\", \"Equity Tranche SNs 3.98 ... [ICRA]AA(SO)\"; 78 = sum"
+ },
+ {
+  "news_id": "nse-106797207",
+  "symbol": "CLEANMAX",
+  "event": "FUNDRAISE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: arithmetic",
+  "note": "Series A 200 + B 400 + C 807 + D 615 + E 478 Crore = ₹2,500 Cr allotted, not ₹2,065 Cr; Series C \"8.765%\", 60 months right"
+ },
+ {
+  "news_id": "nse-106797866",
+  "symbol": "MBECL",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Garbled OCR voting tables: \"Total 46 30523899\" for / \"Total 11 2356\" against; Poonam Singhania \"30523856\" / \"2399\"; Singhi & Co \"2397\""
+ },
+ {
+  "news_id": "nse-106798992",
+  "symbol": "ITC",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (claim checker on business description)",
+  "note": "\"acquired 13,445 Equity Shares\", \"~ ₹ 645 crores\", \"~ 47.50% to 100%\", turnover \"₹ 452 crores ... ₹ 200 ... ₹ 108\"; \"digital first brand\""
+ },
+ {
+  "news_id": "b7c45b2d-edce-4c18-98bf-4e9f87244b38",
+  "symbol": "NEWGEN",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"US Dollars 5,475,020\", \"Converted Value in INR:- i.e. Rs. 52.55\", \"time period ... : 3 Years\""
+ },
+ {
+  "news_id": "nse-106800959",
+  "symbol": "REPCOHOME",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"Enhancement of Borrowing Limits ... upto Rs.20,000 Crores\", \"NCD and CP to Rs.1500 Crores and Rs.1000 Crores\", Aparna Sudip Kumar"
+ },
+ {
+  "news_id": "6b945cdb-6737-46c7-afb4-5238f1bfd5ec",
+  "symbol": "ESDS",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"INR 133.66 crores ... 7.28%\", \"INR 29.28 crores\", \"EBITDA ... INR 559 million ... 42%\", split 51/31.31/17.55, \"down by 20.20%\""
+ },
+ {
+  "news_id": "f81c66d5-177b-4b3c-85a7-7269649cc2d4",
+  "symbol": "NTPC",
+  "event": "MANAGEMENT_CHANGE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Table lists Samanta, Vijay Goel, Abhoy Kumar Mishra, C Kumar Arora: \"Cessation- Superannuating on 30th September 2026\""
+ },
+ {
+  "news_id": "nse-106803684",
+  "symbol": "NLCINDIA",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (annual charge)",
+  "note": "\"265 MW/530 MWh ... capacity charge of Rs. 2,35,000/MW/month\"; 2.35 lakh × 265 × 12 = ₹74.7 Cr"
+ },
+ {
+  "news_id": "nse-106804541",
+  "symbol": "BALAMINES",
+  "event": "LITIGATION_REGULATORY",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (fact dropped by quote check)",
+  "note": "\"Warning cum Advisory Letter dated September 29th, 2026\"; DGFT order \"August 13, 2024\", FDA letter \"January 10, 2025\"; \"no material impact\""
+ },
+ {
+  "news_id": "6e3c474d-87f3-4052-a183-1963b1aeab0e",
+  "symbol": "NTPC",
+  "event": "CAPEX",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: figure from another row/period",
+  "note": "\"commercial capacity of NGEL group stands at 11,212.51 MW ... increases to 11,262.51 MW\"; card calls 11,262.51 installed and 11,212.51 the commercial figure"
+ },
+ {
+  "news_id": "nse-106806515",
+  "symbol": "RBLBANK",
+  "event": "MONTHLY_BUSINESS_UPDATE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: unit_scale + wrong column",
+  "note": "\"Amount in Rs. Billion ... Total Deposits ... 1,562.8\" = ₹1,56,280 Cr, not ₹15,628 Cr; CASA ratio fell to 27.2% (31.9% is Sep-25)"
+ },
+ {
+  "news_id": "0bec302d-50e4-4d2c-ab64-a796e8c20193",
+  "symbol": "HESTERBIO",
+  "event": "OTHER",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"contribution of up to INR 10.50 million ... representing 26% of the fixed capital of the LLP\" = ₹1.05 Cr"
+ },
+ {
+  "news_id": "nse-106808882",
+  "symbol": "PERSISTENT",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"USD 1,250 million\", \"USD 450 Million\", Res 2 \"99.0084\", Res 4 \"99.7540\"; fact \"passed with over support\" is blank; $1.7B adds two different limits"
+ },
+ {
+  "news_id": "nse-106810425",
+  "symbol": "CLEANMAX",
+  "event": "GOVERNANCE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (value sanity check)",
+  "note": "\"Corporate Guarantee will be extended in ... INR 45,09,00,000 (Indian Rupee Forty-Five ...\" for Clean Max Patagonia; \"at arm's length\""
+ },
+ {
+  "news_id": "ebc54c08-7bdc-49d0-9ac4-fb4d40c9cb85",
+  "symbol": "SMLMAH",
+  "event": "MONTHLY_BUSINESS_UPDATE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: invented",
+  "note": "Filing shows only \"Commercial Vehicles ... Sales 812 1071\" (Sep FY26 to FY27, +32%); 1,124 total, 516 cargo, 608 passenger not in filing"
+ },
+ {
+  "news_id": "nse-106811790",
+  "symbol": "RUNWALENTR",
+  "event": "FUNDRAISE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (derived total 225 not found)",
+  "note": "\"Size of Agreement Rs. 175 Crores Rs. 50 Crores\", \"10.50% P.A. for tenure of 10 years\", purpose \"Repayment of\" loans"
+ },
+ {
+  "news_id": "nse-106812992",
+  "symbol": "CLEANMAX",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (THB to millions)",
+  "note": "\"Thai Baht 1,250,000\", net worth \"Thai Baht 1,213,300\", \"Turnover ... Nil\", completion \"31 October 2026\""
+ },
+ {
+  "news_id": "nse-106814520",
+  "symbol": "RBLBANK",
+  "event": "OTHER",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: wrong_period (H1 as quarter) + direction",
+  "note": "Provisions \"76,653 59,928 49,970 136,581 94,202\" lakh: Q2FY26 was ₹500 Cr (942 is H1), so provisions rose; consolidated Q2FY26 PAT 19,246 lakh, not ₹179 Cr"
+ },
+ {
+  "news_id": "fbe3646f-9a19-4d6a-99f4-85cfe338c11f",
+  "symbol": "ADANIPOWER",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (claim checker on interpretation)",
+  "note": "\"LoA ... for 1,234 MW ex-bus net supply (1,320 MW installed capacity)\", \"subject to ... Section 63\", \"period of 25 years\""
+ },
+ {
+  "news_id": "fde45ccd-35d5-473a-a6ce-a4dbbffde90c",
+  "symbol": "AHLUCONT",
+  "event": "ORDER_WIN",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (fact dropped by quote check)",
+  "note": "\"Recent Award Project worth of Rs. 310.00 Crores\", \"Bennett University (The Times Group)\", \"Block - O1, O2, O3, R1, L and Q\""
+ },
+ {
+  "news_id": "2140e1d1-0080-423a-a81c-7023461dae9b",
+  "symbol": "HOMEFIRST",
+  "event": "MONTHLY_BUSINESS_UPDATE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Table \"(Rs. In Crores) ... 7.55% Quarterly ... 150.00 150.00\"; ISIN INE481N07071 issued August 2026"
+ },
+ {
+  "news_id": "nse-106818467",
+  "symbol": "UCOBANK",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (EBITDA/revenue sanity check on a bank)",
+  "note": "Lakh table: interest earned 7,28,632 vs 6,53,717 (+11.5%), provisions 80,767 vs 58,814 (+37.3%), net profit 78,564 vs 61,976 (+26.8%)"
+ },
+ {
+  "news_id": "527b6923-cd12-4d50-adbe-3c07f3c0e733",
+  "symbol": "HERITGFOOD",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: figure right but unit",
+  "note": "Consolidated ₹ mn: revenue 13,195.80 vs 11,125.17, PAT 308.57 vs 509.95, borrowings 2,736.79 + 715.46; exceptional is 93.56 mn = ₹9.36 Cr, not ₹9.6 Cr"
+ },
+ {
+  "news_id": "nse-106818661",
+  "symbol": "PERSISTENT",
+  "event": "OTHER",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: standalone_consolidated",
+  "note": "Card gives standalone revenue 44,941.71 and PAT 4,828.94 mn; consolidated is 46,639.04 and PAT 3,515.14 (down 27% QoQ); ₹40 dividend is FY26's"
+ },
+ {
+  "news_id": "nse-106819733",
+  "symbol": "PERSISTENT",
+  "event": "FUNDRAISE",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (NCD + CP total)",
+  "note": "\"(NCDs) amounting up to INR 8,000 Crores\", CP \"up to INR 1,000 Crores\", \"long term debt financing ... acquisition of Nagarro SE\""
+ },
+ {
+  "news_id": "6a904edb-ae1c-4e19-b14e-056ebfe9f73d",
+  "symbol": "LTM",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"Revenue 11,808 Crores\", EBIT 18,381, PAT 13,799 mn right; forex \"(2,664) (2,067)\" shows the loss narrowed QoQ, so it did not drive the PAT fall"
+ },
+ {
+  "news_id": "nse-106820286",
+  "symbol": "UCOBANK",
+  "event": "CONCALL_PRESENTATION",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"net profit ... Rs.786 crore ... 26.77%\", \"Rs. 2,87,690 crore\", GNPA \"1.96%\" right; 2.80-2.90% guidance is for global NIM (3%), not domestic 3.19%"
+ },
+ {
+  "news_id": "44c7bf29-865d-4176-a970-e07c7af3d3f8",
+  "symbol": "JSL",
+  "event": "M_AND_A",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (quantified impact unit)",
+  "note": "\"amount of ₹12.50 crores in Oyster Green\", \"₹1.25 crores is being invested\", \"40% equity stake\", \"net zero carbon emissions by 2050\""
+ },
+ {
+  "news_id": "nse-106821830",
+  "symbol": "ULTRACEMCO",
+  "event": "RESULTS",
+  "held": true,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Consolidated ₹ Cr: \"Revenue from Operations 23,295.07\", \"Net Profit ... 1,501.38\", owners 1,493.77; key number gives ₹1,501.38 Cr as profit to shareholders"
+ },
+ {
+  "news_id": "nse-106803674",
+  "symbol": "AMBUJACEM",
+  "event": "CAPEX",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: computed figure (capacity added)",
+  "note": "\"2.4 Million Ton ... grinding unit\" plus Kalamboli \"additional Cement Capacity 1.00 MTPA\" = 3.4; \"increased to 113.45 MTPA\""
+ },
+ {
+  "news_id": "nse-106776422",
+  "symbol": "CLEANMAX",
+  "event": "M_AND_A",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"sale consideration of INR 49,000 for sale of 4,900 shares (49% ...)\"; incorporated \"28 July 2026\"; \"On or before 31 December 2026\""
+ },
+ {
+  "news_id": "23da5d89-8bb2-47de-bf1c-3c10d3747af8",
+  "symbol": "KANORICHEM",
+  "event": "GOVERNANCE",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Voting tables give \"73.4260\" polled, \"251\" against financial statements, \"0.0044\" against Suhana Murshed; AGM \"2nd September, 2026\""
+ },
+ {
+  "news_id": "nse-106747091",
+  "symbol": "SUPREMEINF",
+  "event": "RESULTS",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (loss above revenue sanity check)",
+  "note": "Newspaper-ad repeat of the Q1 results (text garbled); figures match the statement in nse-106745684: loss (5,914.31) lakh, EPS (6.07)"
+ },
+ {
+  "news_id": "nse-106742593",
+  "symbol": "MFSL",
+  "event": "CONCALL_PRESENTATION",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure right but unit",
+  "note": "\"MFSL Consolidated Revenue ... Rs 14,977 Cr, Up 17%\", \"Profit After Tax at Rs 118 cr\", \"VNB at Rs 446 cr grew by 33%\", \"Rs 2 lakh crore\""
+ },
+ {
+  "news_id": "nse-106739596",
+  "symbol": "ELECTCAST",
+  "event": "CONCALL_PRESENTATION",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"EBITDA stood at Rs. 139 crore with an EBITDA margin of 9.5%. PAT stood at Rs. 48.4 crore\"; volumes \"around 575,000\"; \"Rs. 10,344 crore\""
+ },
+ {
+  "news_id": "f53adfdc-94c8-4192-80bc-4af64f1c8b56",
+  "symbol": "JSL",
+  "event": "ANNUAL_REPORT",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (garbled text-layer warning)",
+  "note": "Contingent rows 125.86+313.60+162.18+34.26+0.40+77.53+3.20 = 717.03; KMP \"46.50\", MD \"34.19\"; net debt \"INR 3,040 crore ... 0.55x\""
+ },
+ {
+  "news_id": "nse-106729811",
+  "symbol": "IFBIND",
+  "event": "RESULTS",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (garbled text-layer warning)",
+  "note": "Consolidated \"Revenue ... 1,584.74\", PAT \"43.05 42.67 26.15\", \"Basic (in Rs.) 10.62 10.53 6.46\"; YoY and QoQ arithmetic right"
+ },
+ {
+  "news_id": "nse-106714378",
+  "symbol": "CLEANMAX",
+  "event": "GOVERNANCE",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: miscount (resolutions)",
+  "note": "The AGM list runs to \"56. Ordinary To approve Material Related Party Transactions ...\"; card says 54; 98.5893% and Vayu \"12.0140\" right"
+ },
+ {
+  "news_id": "nse-106700431",
+  "symbol": "DCMSIL",
+  "event": "GOVERNANCE",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: other (garbled text-layer warning)",
+  "note": "Institutions on public deposits \"71.7565 28.2434\"; commission \"73.7503 26.2496\"; AGM 16.07.2026"
+ },
+ {
+  "news_id": "nse-106595328",
+  "symbol": "SKIPPER",
+  "event": "GOVERNANCE",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "UNSURE",
+  "hold_class": "false: other (no text layer)",
+  "note": "PDF has no extractable text, so 7,50,80,657 shares and zero encumbrance cannot be checked"
+ },
+ {
+  "news_id": "nse-106618259",
+  "symbol": "JSWSTEEL",
+  "event": "MONTHLY_BUSINESS_UPDATE",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "\"Indian Operations 20.40 20.56 -1%\", \"JSW Steel USA – Ohio 0.78 0.84 -7%\", \"Consolidated Production 21.18 21.40 -1%\", \"~94% ... 83%\""
+ },
+ {
+  "news_id": "nse-106613535",
+  "symbol": "HINDUNILVR",
+  "event": "CONCALL_PRESENTATION",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: figure from another row/period",
+  "note": "Transcript: \"8% Consolidated Revenue Growth\", \"EBITDA margin at 23.7%\", \"PAT before exceptional items at Rs. 2,711 crores grew 4%\", \"Rs. 63,763 crores\""
+ },
+ {
+  "news_id": "3649405a-a938-4055-8f39-5d0b4094402f",
+  "symbol": "CSBBANK",
+  "event": "RESULTS",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "MINOR",
+  "hold_class": "false: other (garbled text-layer warning)",
+  "note": "Lakh: total income \"1./r5.836\" (1,45,836) vs 1,06,423, net profit 16,033 vs 13,841 right; compares PAT growth with ROA guidance"
+ },
+ {
+  "news_id": "e87824b7-e51f-4cbe-8b8f-a18e6e043971",
+  "symbol": "HERITGFOOD",
+  "event": "RESULTS",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "RIGHT",
+  "hold_class": "false: quote reworded/table cell",
+  "note": "Consolidated ₹ mn: revenue \"10,484.66 ... 9.505.69\", PAT \"381.66 ... 404.97\", exceptional \"(87.07)\", EPS \"4.1 I\"; 71,00,000 shares buy"
+ },
+ {
+  "news_id": "85751073-120d-477c-9700-a7c4dc9fb456",
+  "symbol": "KANORICHEM",
+  "event": "RESULTS",
+  "held": false,
+  "reviewer": "agent",
+  "verdict": "WRONG",
+  "hold_class": "true: standalone_consolidated",
+  "note": "Consolidated revenue 34,752 and loss (2,863) lakh right, but the ₹20.25 Cr impairment is standalone; the consolidated statement has no exceptional item behind the loss"
+ }
+]

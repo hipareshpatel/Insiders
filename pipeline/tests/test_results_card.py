@@ -308,3 +308,19 @@ def test_eps_takes_its_profit_sign():
               ("pat", "Q3FY25"): -5.0, ("pat_owners", "Q3FY25"): -4.0, ("eps", "Q3FY25"): -0.4}
     assert eps_signs(values) == 1
     assert values[("eps", "H1FY24")] == -2.27 and values[("eps", "Q2FY25")] == 0.8 and values[("eps", "Q3FY25")] == -0.4
+
+
+def test_an_owners_profit_its_minority_share_does_not_add_up_to_is_dropped():
+    """Adani Ports' Q4FY26 file tags both shares of other comprehensive income as the shares of profit (2026-10-20)."""
+    from bse_intel.xbrl import owners_share
+
+    values = {("pat", "Q4FY26"): 3308.30, ("pat_owners", "Q4FY26"): 1238.67, ("pat_minority", "Q4FY26"): 179.14,
+              ("pat", "Q4FY25"): 6296.67, ("pat_owners", "Q4FY25"): 3132.0, ("pat_minority", "Q4FY25"): 3164.67,
+              ("pat", "FY26"): 100.0, ("pat_owners", "FY26"): 90.0,
+              ("pat", "Q1FY27"): -25.27, ("pat_owners", "Q1FY27"): -25.87, ("pat_minority", "Q1FY27"): 0.0,
+              ("pat", "Q2FY27"): 9.23, ("pat_owners", "Q2FY27"): 0.0, ("pat_minority", "Q2FY27"): 0.0}
+    assert owners_share(values) == 2
+    assert values[("pat_owners", "Q1FY27")] == -25.87 and ("pat_owners", "Q2FY27") not in values   # fillers
+    assert ("pat_owners", "Q4FY26") not in values   # 3,308.30 - 179.14 is no truer: the statement prints 3,328.96
+    assert values[("pat_owners", "Q4FY25")] == 3132.0 and values[("pat_owners", "FY26")] == 90.0   # adds up; no minority
+    assert not any(m == "pat_minority" for m, _ in values)

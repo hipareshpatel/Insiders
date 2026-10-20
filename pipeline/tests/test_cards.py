@@ -481,6 +481,9 @@ def test_scale_check_flags_a_lakh_table_read_as_crore():
                         []) == []  # no revenue, no history: nothing to compare with
     assert scale_issues(now[:1] + [FinancialMetric(metric="pat", period="Q3FY25", value=1200)], []) == [
         "PAT Q3FY25 ₹1,200.00 Cr is above revenue ₹952.00 Cr"]
+    # a loss beyond revenue is real (Supreme Infra Q1FY27: loss ₹59.14 Cr on revenue ₹24.12 Cr, 2026-10-20)
+    assert scale_issues([FinancialMetric(metric="revenue", period="Q1FY27", value=24.12),
+                         FinancialMetric(metric="pat", period="Q1FY27", value=-59.14)], []) == []
     assert scale_issues([FinancialMetric(metric="pat", period="Q3FY25", value=49.39)], history) == []
 
 
@@ -1086,6 +1089,23 @@ def test_a_headline_that_does_not_say_what_happened():
     assert headline_form(out("ChrysCapital entities complete Novartis India acquisition")) == []
 
 
+def test_a_sentence_that_shows_the_models_working_goes_back_for_a_rewrite():
+    """SBI Life's card said PAT "is the highest in memory for any quarter, above Q4FY26's ₹805 Cr? No, below; it is the
+    second-highest" (needs-review sweep, 2026-10-20)."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import working_text
+
+    def out(why):
+        return Pass2Output.model_validate({"is_material": True, "event_type": "RESULTS", "timeline_entry": "x",
+                                           "card": {"impact_level": "MODERATE", "headline": "SBI Life Q1FY27 PAT ₹725 Cr",
+                                                    "what_happened": [{"text": "x", "quote": "x"}],
+                                                    "why_it_matters": [{"text": why, "basis": "MEMORY"}]}})
+
+    assert working_text(out("PAT is above Q4FY26's ₹805 Cr? No, below; it is the second-highest."))
+    assert working_text(out("Will the payout continue? The board did not say.")) == []
+    assert working_text(out("PAT of ₹725 Cr is the second-highest quarter in memory, after Q4FY26's ₹805 Cr.")) == []
+
+
 def test_a_board_outcome_that_only_reappoints_is_a_management_change():
     """CSB Bank's board outcome re-appointing its MD & CEO came as OTHER and escaped D30 (live review, 2026-10-20)."""
     from bse_intel.pipeline import APPOINTMENT, top_exit
@@ -1222,3 +1242,17 @@ def test_a_currency_glued_to_the_word_before_it():
 
     assert SourceIndex("total revenue ofRs.309.08 million").stated(30.9, 1)
     assert not SourceIndex("total revenue ofRs.309.08 million").stated(39.9, 1)
+
+
+def test_a_sentence_with_a_figure_taken_out_goes_back_for_a_rewrite():
+    """"promoter entity holds ** ** stake", "passed with over votes in favour" (needs-review sweep, 2026-10-20)."""
+    from bse_intel.pipeline import _BLANK
+
+    for blank in ("Post-acquisition, promoter entity holds ** ** stake in Jindal Stainless",
+                  "Magellanic Cloud AGM: both resolutions passed with over votes in favour",
+                  "EBITDA margin moved to 11.06% from in Q1FY26", "Home First Finance approved ₹150 Cr NCD issuance, of net worth",
+                  "Adani Power promoters increase stake to via open market purchases"):
+        assert _BLANK.search(blank), blank
+    for fine in ("**Core ESG rating:** **76** for FY2025-26", "AGM to vote on ₹2,529 Cr of RPTs, 67% of turnover",
+                 "capacity that starts only in Q4FY27", "resolutions deemed passed subject to votes"):
+        assert not _BLANK.search(fine), fine

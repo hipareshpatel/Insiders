@@ -62,6 +62,7 @@ RESULT_TAGS = {
     # the shareholders' share, apart from minority interests: Bajaj Finserv's ₹6,296.67 Cr consolidated profit is
     # ₹3,132 Cr to its owners, and the card gave the first as the company's (round 6, 2026-10-19)
     "ProfitOrLossAttributableToOwnersOfParent": "pat_owners",
+    "ProfitOrLossAttributableToNonControllingInterests": "pat_minority",
     # excise collected for the government sits inside revenue: ITC's Q1FY27 revenue "+27.6%" was -11% net of it (round 6)
     "ExciseDuty": "excise_duty",
     "BasicEarningsLossPerShareFromContinuingAndDiscontinuedOperations": "eps",
@@ -427,6 +428,7 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     # EPS takes its period's profit sign: Shivam Autotech's file tags H1FY24 EPS 2.27 beside a loss of ₹27.77 Cr, and
     # memory then read a fall to a loss as "EPS down 177%" (live review 2, 2026-10-20). The owners' profit decides
     # where the file has one (a 0 there is a filler), else the group's.
+    owners_share(values)
     eps_signs(values)
     metrics = []
     for (metric, label), value in sorted(values.items(), key=lambda kv: (ends.get(kv[0][1]) or date.min, kv[0][0])):
@@ -447,6 +449,29 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
         if sheet.gross_debt_cr is not None and sheet.cash_cr is not None:
             sheet.net_debt_cr = _r(sheet.gross_debt_cr - sheet.cash_cr)
     return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet)
+
+
+def owners_share(values: dict) -> int:
+    """Drop, in place, an owners' profit that its own file's minority share does not add up to. Returns how many.
+
+    Adani Ports' Q4FY26 file tags ₹1,238.67 Cr as the profit attributable to owners beside a ₹3,308.30 Cr profit and a
+    ₹179.14 Cr minority share: both are the shares of its other comprehensive income (1,417.81), the statement prints
+    3,328.96 and (20.66), and the card's headline gave "net profit to shareholders ₹1,238.67 Cr (-58.9%)" (needs-review
+    sweep, 2026-10-20). Profit less that minority figure would be wrong too, so the card falls back to the group's
+    profit. The minority figure itself is not kept: no card reads it."""
+    changed = 0
+    for (metric, label), minority in list(values.items()):
+        if metric != "pat_minority":
+            continue
+        values.pop((metric, label))
+        profit, owners = values.get(("pat", label)), values.get(("pat_owners", label))
+        # a 0 is the template's filler, not a share: a 0 minority says nothing about -25.87 to owners of -25.27 (2026-10-20)
+        if profit is None or owners is None or (minority == 0 and owners != 0):
+            continue
+        if abs(owners + minority - profit) > max(0.5, 0.01 * abs(profit)):
+            values.pop(("pat_owners", label))
+            changed += 1
+    return changed
 
 
 def eps_signs(values: dict) -> int:

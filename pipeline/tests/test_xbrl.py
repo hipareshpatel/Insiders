@@ -229,6 +229,10 @@ def test_results_card_key_numbers_come_from_xbrl_and_yoy_qoq_mixups_are_flagged(
     # and a figure the company defines for itself keeps its own value (Jubilant's normalised PAT became reported PAT)
     assert keys["Normalised EBITDA"] == ("₹90 Cr", None)
     assert period_mixups(out, tagged) == [f"\"{abs(rev.qoq_pct):.1f}% YoY\" is a quarter-on-quarter change, not year-on-year"]
+    # unless the filing itself calls it that: Bandhan Bank's "representing a growth of 5.9% YoY" (2026-10-20)
+    said = f"Revenue for the quarter, representing a growth of {abs(rev.qoq_pct):.1f}% YoY."
+    assert period_mixups(out, tagged, said) == []
+    assert period_mixups(out, tagged, f"down {abs(rev.qoq_pct):.1f}% QoQ") != []
     # The same percentage as the nine months' YoY is that change, not a mislabelled QoQ (Jubilant's FY25
     # revenue "+7.9% YoY" was held because only the quarter's changes were compared).
     import copy

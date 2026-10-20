@@ -296,7 +296,7 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             continue
         if w["kind"] == "APPROVAL" and update.status == "MET" and not approval_granted(update.evidence):
             continue  # "Approval met" with evidence that it is still pending
-        status = watch_verdict(w, update.status, update.evidence)
+        status = watch_verdict(w, update.status, update.evidence, filing.filed_at)
         if status == "PENDING":
             continue  # no news, another item's news, or an earlier quarter's figure
         severity = {"MET": "POSITIVE", "MISSED": "WARNING"}.get(status, "INFO")

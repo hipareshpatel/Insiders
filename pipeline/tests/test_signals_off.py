@@ -72,3 +72,16 @@ def test_round_4_false_signals():
         {"metric": m, "period": "Q1FY27", "value": v, "unit": "INR_CR", "as_of": "2026-08-10", "source_news_id": "n"}
         for m, v in (("revenue", 3000.0), ("finance", 2000.0), ("ebitda", 2700.0), ("depreciation", 10.0))]}
     assert not [s for s in quality_signals(lender, "n") if s["type"] == "DISTRESS"]
+
+
+def test_the_site_hides_the_same_signal_types():
+    """Cards written before a type was turned off still carry it; the site drops those at parse time
+    (FilingCard.tsx SIGNALS_OFF). The two lists must match (live reviews 1-2, 2026-10-20)."""
+    import re
+    from pathlib import Path
+
+    from bse_intel.signals import SIGNALS_OFF
+
+    tsx = (Path(__file__).resolve().parents[2] / "web/src/components/FilingCard.tsx").read_text(encoding="utf-8")
+    block = re.search(r"SIGNALS_OFF = new Set<string>\(\[(.*?)\]\)", tsx, re.S).group(1)
+    assert set(re.findall(r'"([A-Z_]+)"', block)) == set(SIGNALS_OFF)

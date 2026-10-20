@@ -175,6 +175,48 @@ def quote_near(quote: str | None, text: str, *readings: str) -> str | None:
     return None
 
 
+SCATTERED_SHARE = 0.95   # of a quote's words that must stand inside one short window of the page
+
+
+def quote_scattered(quote: str | None, text: str, *readings: str) -> str | None:
+    """The stretch of a page whose words a quote uses in another order, or None.
+
+    In a two-column disclosure table (a SEBI annexure, a rating table, an NCD listing) the text layer wraps the label
+    cell and the value cell over several lines and interleaves them, and the model quotes the cell unwrapped, as a
+    clean sentence: every word is on the page, in a different order. 117 of 157 quotes held as "not in the filing"
+    had all their words in it (held-card analysis, 2026-10-20: HomeFirst's NCD listing, Hester's "INR 10.50 million",
+    Balaji Amines's rating table, Newgen's "3 Years"). Here 95% of the quote's words (at least six), and every figure in
+    it as an exact token, must fall inside a window of the page at most twice the quote's length; that window is
+    returned, so a card's figure is still asked to be in it. A turning word ("not") the window lacks fails it."""
+    from collections import Counter
+
+    words = _norm(_flat(_ELISION.sub(" ", quote or "")).split())[0]
+    if len(words) < 6:
+        return None
+    want = Counter(words)
+    figures = {w for w in words if _has_digit(w)}
+    turning = {w for w in words if w in _TURNING}
+    size = 2 * len(words)
+    for reading in (t for t in (text, *readings) if t):
+        printed = _flat(reading).split()
+        hay, where = _norm(printed)
+        have = Counter()
+        for i, w in enumerate(hay):
+            have[w] += 1
+            if i >= size:
+                have[hay[i - size]] -= 1
+            if w not in want or i + 1 < min(size, len(words)):
+                continue
+            covered = sum(min(n, have[k]) for k, n in want.items())
+            if covered < SCATTERED_SHARE * len(words):
+                continue
+            if any(have[f] < 1 for f in figures) or any(have[t] < 1 for t in turning):
+                continue
+            low = max(0, i - size + 1)
+            return " ".join(printed[where[low]:where[i] + 1])
+    return None
+
+
 def _has_digit(word: str) -> bool:
     return any(c.isdigit() for c in word)
 

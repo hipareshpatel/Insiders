@@ -292,6 +292,16 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
         # results cards shown LOW at MODERATE or HIGH (2026-10-19). The points and the actionable flag are unchanged.
         impact = "MODERATE"
         reasons.append("Impact: results are at least moderate")
+    if impact != "HIGH" and not vetoes:
+        # a clear event is HIGH whatever the points (owner, 2026-10-20: 3 of 850 cards were HIGH); never on a card
+        # whose figures or checks failed
+        from .impact import high_reasons
+        from .pipeline import top_exit
+
+        why = high_reasons(card, event_type, signals, top_exit(texts))
+        if why:
+            impact = "HIGH"
+            reasons.append("Impact: " + "; ".join(why))
     actionable = total_points >= HIGH and gates["clean"] and sum((gate1, gate2, gate3)) >= 2
     return Score(total_points, impact, actionable, pillars, gates, vetoes, reasons, cred)
 

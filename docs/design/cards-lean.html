@@ -1,0 +1,550 @@
+<title>Insiders Lean Cards</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+/* Same premium tokens as the approved Today page. Layout: each example is a pair, the card as it is now (repeats
+   numbered) beside the proposed lean card; stacked on a phone. */
+:root {
+  --bg: #F4F6FA; --surface: #FFFFFF; --surface-2: #F1F3F8; --line: #E4E8EF; --line-2: #D3D9E3;
+  --ink: #0E1726; --ink-2: #475467; --ink-3: #8592A6;
+  --acc: #3B4FE4; --acc-2: #6B7BF0; --acc-soft: #ECEEFE;
+  --pos: #0F9D63; --pos-soft: #E3F6EC; --neg: #E0473A; --neg-soft: #FDECEA; --warn: #C27A0A; --warn-soft: #FDF3E1;
+  --hi: #E0473A; --mo: #F0A12B; --lo: #B7C0CE; --insight: #F3F5FF; --rep: #E0473A; --rep-soft: #FDECEA;
+  --fam-res: #3B4FE4; --fam-res-soft: #ECEEFE; --fam-ord: #0E8A79; --fam-ord-soft: #E1F5F2; --fam-cap: #6D3FD3; --fam-cap-soft: #F1EBFE; --fam-rat: #0369A1; --fam-rat-soft: #E3F1FB; --fam-reg: #B45309; --fam-reg-soft: #FCF0E3;
+  --shadow-1: 0 1px 2px rgba(14,23,38,.05), 0 2px 8px rgba(14,23,38,.04);
+  --f: "Manrope", "Segoe UI", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0A0E15; --surface: #121823; --surface-2: #19212E; --line: #232D3B; --line-2: #2E3A4B;
+  --ink: #EEF2F8; --ink-2: #A9B4C4; --ink-3: #74819A; --acc: #8C9BFF; --acc-2: #6B7BF0; --acc-soft: #1C2347;
+  --pos: #3DD68C; --pos-soft: #10291D; --neg: #FF7468; --neg-soft: #33171A; --warn: #F6B84A; --warn-soft: #33260E;
+  --hi: #FF7468; --mo: #F6B84A; --lo: #455066; --insight: #161D33; --rep: #FF7468; --rep-soft: #3A1A1D; --fam-res: #8C9BFF; --fam-res-soft: #1C2347; --fam-ord: #3CC9B4; --fam-ord-soft: #0E2A27; --fam-cap: #B89BFF; --fam-cap-soft: #251A40; --fam-rat: #5CB8F0; --fam-rat-soft: #0E2433; --fam-reg: #F0A35C; --fam-reg-soft: #33230F;
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0A0E15; --surface: #121823; --surface-2: #19212E; --line: #232D3B; --line-2: #2E3A4B;
+  --ink: #EEF2F8; --ink-2: #A9B4C4; --ink-3: #74819A; --acc: #8C9BFF; --acc-2: #6B7BF0; --acc-soft: #1C2347;
+  --pos: #3DD68C; --pos-soft: #10291D; --neg: #FF7468; --neg-soft: #33171A; --warn: #F6B84A; --warn-soft: #33260E;
+  --hi: #FF7468; --mo: #F6B84A; --lo: #455066; --insight: #161D33; --rep: #FF7468; --rep-soft: #3A1A1D; --fam-res: #8C9BFF; --fam-res-soft: #1C2347; --fam-ord: #3CC9B4; --fam-ord-soft: #0E2A27; --fam-cap: #B89BFF; --fam-cap-soft: #251A40; --fam-rat: #5CB8F0; --fam-rat-soft: #0E2433; --fam-reg: #F0A35C; --fam-reg-soft: #33230F;
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 var(--f); -webkit-font-smoothing: antialiased;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 56px; }
+h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; border-radius: 8px; }
+.wrap { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+
+.top { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; justify-content: space-between; }
+.top h1 { font-size: 28px; font-weight: 800; letter-spacing: -.025em; }
+.top p { margin: 4px 0 0; color: var(--ink-2); max-width: 68ch; }
+.tog { height: 38px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); padding: 0 14px; font-weight: 700; font-size: 13px; color: var(--ink-2); }
+.tog[aria-pressed="true"] { background: var(--rep-soft); color: var(--rep); border-color: transparent; }
+
+.found { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow-1); padding: 16px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px 22px; }
+.found h2 { grid-column: 1 / -1; font-size: 15px; font-weight: 800; }
+.found div { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; font-size: 13px; color: var(--ink-2); }
+.found b { color: var(--ink); }
+.n { width: 20px; height: 20px; border-radius: 50%; background: var(--rep); color: #fff; font: 800 11px var(--f); display: inline-grid; place-items: center; flex: none; }
+
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 900px) { .pair { grid-template-columns: minmax(0, 1fr); } }
+.col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.lab { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); display: flex; gap: 8px; align-items: center; }
+.lab.new { color: var(--acc); }
+.lab small { text-transform: none; letter-spacing: 0; font-weight: 600; }
+
+.card { background: var(--surface); border-radius: 22px; box-shadow: var(--shadow-1); padding: 18px 20px 12px; display: flex; flex-direction: column; gap: 11px; position: relative; overflow: hidden; }
+.card.now::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--mo); }
+.card.now.HIGH::before { background: linear-gradient(90deg, var(--hi), var(--mo)); }
+.hd { display: flex; gap: 12px; align-items: center; }
+.logo-co { width: 44px; height: 44px; border-radius: 14px; flex: none; display: grid; place-items: center; font: 800 15px var(--f); color: #fff; }
+.who { min-width: 0; flex: 1; }
+.who b { display: block; font-size: 16px; font-weight: 800; letter-spacing: -.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.who span { font-size: 12px; color: var(--ink-3); font-weight: 500; }
+.px { text-align: right; flex: none; }
+.px b { display: block; font: 700 15px var(--mono); }
+.px span { font: 600 12px var(--mono); }
+.up { color: var(--pos); } .dn { color: var(--neg); }
+
+.chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.chip { font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; display: inline-flex; gap: 5px; align-items: center; }
+.chip.imp-HIGH { background: var(--neg-soft); color: var(--hi); } .chip.imp-MOD { background: var(--warn-soft); color: var(--warn); }
+.chip.ev { background: var(--acc-soft); color: var(--acc); text-transform: uppercase; letter-spacing: .03em; font-size: 11px; }
+.chip.good { background: var(--pos-soft); color: var(--pos); } .chip.bad { background: var(--neg-soft); color: var(--neg); } .chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.score { font-family: var(--mono); background: var(--ink); color: var(--surface); }
+
+/* the lean card's single meta line */
+.meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 12.5px; font-weight: 700; color: var(--ink-2); }
+.meta .sep { color: var(--line-2); }
+.grade { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 3px 10px 3px 4px; font-size: 12px; }
+.grade i { font: 800 11px var(--mono); font-style: normal; background: var(--surface); border-radius: 999px; padding: 1px 6px; }
+.grade.MOD { background: var(--warn-soft); color: var(--warn); } .grade.HIGH { background: var(--neg-soft); color: var(--hi); }
+.dir.pos { color: var(--pos); } .dir.neg { color: var(--neg); }
+.stage { color: var(--warn); }
+
+h3 { font-size: 18px; font-weight: 800; letter-spacing: -.015em; line-height: 1.3; }
+ul.pts { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+ul.pts li { position: relative; padding-left: 18px; font-size: 14px; color: var(--ink-2); }
+ul.pts li::before { content: "›"; position: absolute; left: 3px; top: -1px; color: var(--acc); font-weight: 800; }
+ul.pts li b { color: var(--ink); }
+.why { background: var(--insight); border-radius: 16px; padding: 11px 14px; display: flex; flex-direction: column; gap: 6px; }
+.why h4 { font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--acc); }
+.tag { font-weight: 800; color: var(--acc); } .tag.w { color: var(--warn); }
+.calc { font-size: 11px; color: var(--ink-3); margin-left: 4px; }
+
+.stats { display: flex; gap: 6px; flex-wrap: wrap; }
+.stat { font-size: 12px; font-weight: 600; color: var(--ink-3); background: var(--surface-2); border-radius: 10px; padding: 3px 9px; }
+.stat b { font-family: var(--mono); color: var(--ink); }
+
+.ft { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; border-top: 1px solid var(--line); padding-top: 9px; font-size: 12px; color: var(--ink-3); }
+.ft .ok { color: var(--pos); font-weight: 700; }
+.acts { margin-left: auto; display: flex; gap: 2px; align-items: center; }
+.ib { width: 32px; height: 32px; border-radius: 9px; border: 0; background: none; color: var(--ink-2); display: grid; place-items: center; font-size: 14px; }
+.ib:hover { background: var(--surface-2); }
+.btn { border: 0; background: none; color: var(--acc); font-weight: 700; font-size: 13px; padding: 6px 10px; border-radius: 9px; }
+.btn:hover { background: var(--acc-soft); }
+
+.pnl-wrap { overflow-x: auto; }
+table.pnl { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 380px; }
+.pnl th { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); font-weight: 700; text-align: right; padding: 4px 6px; }
+.pnl td.x { color: var(--ink-3); font-family: var(--f); font-size: 11px; }
+.pnl td.c { color: var(--acc); }
+.pnl td { text-align: right; padding: 6px; border-top: 1px solid var(--line); font-family: var(--mono); }
+.pnl th:first-child, .pnl td:first-child { text-align: left; font-family: var(--f); font-weight: 600; }
+
+/* repeat markers, on the "now" cards */
+.r { position: relative; }
+.r::after { content: attr(data-n); position: absolute; top: -7px; right: -9px; width: 17px; height: 17px; border-radius: 50%; background: var(--rep); color: #fff; font: 800 10px/17px var(--f); text-align: center; display: none; }
+body.show .r { outline: 2px dashed var(--rep); outline-offset: 2px; border-radius: 8px; }
+body.show .r::after { display: block; }
+li.r::after { right: auto; left: -8px; }
+
+.rules { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow-1); padding: 18px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 18px; }
+.rules h2 { grid-column: 1 / -1; font-size: 16px; font-weight: 800; }
+.rules h4 { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+.rules ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; font-size: 13.5px; color: var(--ink-2); }
+.k h4 { color: var(--pos); } .m h4 { color: var(--acc); } .x h4 { color: var(--neg); }
+
+/* event families: each proposed card takes its family's colour and its own block */
+.card.f-res { --fam: var(--fam-res); --fam-soft: var(--fam-res-soft); }
+.card.f-ord { --fam: var(--fam-ord); --fam-soft: var(--fam-ord-soft); }
+.card.f-cap { --fam: var(--fam-cap); --fam-soft: var(--fam-cap-soft); }
+.card.f-rat { --fam: var(--fam-rat); --fam-soft: var(--fam-rat-soft); }
+.card.f-reg { --fam: var(--fam-reg); --fam-soft: var(--fam-reg-soft); }
+.card[class*="f-"] .fam { display: inline-flex; align-items: center; gap: 6px; color: var(--fam); background: var(--fam-soft); border-radius: 999px; padding: 3px 10px; font-size: 12px; }
+.card[class*="f-"] .fam svg { width: 13px; height: 13px; }
+.card[class*="f-"] .why { background: var(--fam-soft); }
+.card[class*="f-"] .why h4, .card[class*="f-"] .tag:not(.w) { color: var(--fam); }
+.card[class*="f-"] ul.pts li::before { color: var(--fam); }
+.blk { border: 1px solid color-mix(in srgb, var(--fam) 28%, var(--line)); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.mod-h { font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--fam); }
+/* rating ladder */
+.ladder { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap: 10px; align-items: center; }
+.rt { border-radius: 12px; background: var(--surface-2); padding: 8px 12px; }
+.rt b { display: block; font: 800 20px var(--mono); letter-spacing: -.02em; }
+.rt span { font-size: 12px; color: var(--ink-3); font-weight: 600; }
+.rt.now { background: var(--neg-soft); } .rt.now b { color: var(--neg); }
+.arrow { font: 800 12px var(--f); color: var(--neg); text-align: center; }
+.notches { display: flex; gap: 4px; flex-wrap: wrap; font: 600 11px var(--mono); color: var(--ink-3); }
+.notches i { font-style: normal; padding: 2px 6px; border-radius: 6px; background: var(--surface-2); }
+.notches i.was { outline: 1.5px solid var(--ink-3); } .notches i.is { background: var(--neg); color: #fff; }
+/* deal / regulatory steps */
+.steps { display: flex; gap: 0; align-items: center; }
+.step { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; min-width: 0; position: relative; font-size: 11.5px; font-weight: 700; color: var(--ink-3); text-align: center; }
+.step::before { content: ""; position: absolute; top: 7px; left: -50%; width: 100%; height: 2px; background: var(--line-2); z-index: 0; }
+.step:first-child::before { display: none; }
+.step i { width: 16px; height: 16px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line-2); position: relative; z-index: 1; }
+.step.done i { background: var(--fam); border-color: var(--fam); } .step.done { color: var(--ink); }
+.step.done::before { background: var(--fam); }
+.step.here i { box-shadow: 0 0 0 4px var(--fam-soft); }
+.gauge { display: flex; flex-direction: column; gap: 5px; }
+.gauge .lbl { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--ink-2); font-weight: 600; }
+.gauge .lbl b { font-family: var(--mono); color: var(--ink); }
+.bar { height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 4px; background: var(--fam); }
+.facts3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.facts3 div { background: var(--surface-2); border-radius: 12px; padding: 7px 10px; min-width: 0; }
+.facts3 span { display: block; font-size: 11px; color: var(--ink-3); font-weight: 700; }
+.facts3 b { font: 700 14px var(--mono); }
+@media (max-width: 480px) { .facts3 { grid-template-columns: minmax(0,1fr) minmax(0,1fr); } }
+.verdict { margin-left: auto; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: var(--neg-soft); color: var(--neg); }
+.pal { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow-1); padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+.pal h2 { font-size: 15px; font-weight: 800; }
+.pal p { margin: 0; font-size: 13px; color: var(--ink-2); max-width: 80ch; }
+.pal .row { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.pal .sw { display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 10px; align-items: center; font-size: 12.5px; color: var(--ink-2); }
+.pal .sw i { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; font-style: normal; }
+.pal .sw b { display: block; color: var(--ink); font-size: 13px; }
+.note { font-size: 12px; color: var(--ink-3); text-align: center; }
+@media (max-width: 640px) { .card { padding: 16px 14px 10px; border-radius: 20px; } .acts { margin-left: 0; width: 100%; justify-content: space-between; } h3 { font-size: 17px; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Lean cards that fit the event</h1>
+      <p>Three demo filings and your Punjab &amp; Sind Bank card, as the card shows them now and as proposed. Every fact, number and check stays; each one is said once. The red numbers mark the repeats on today's card.</p>
+    </div>
+    <button class="tog" id="tog" type="button" aria-pressed="true">Showing repeats</button>
+  </header>
+
+  <section class="found" aria-label="What repeats">
+    <h2>What repeats on today's card</h2>
+    <div><span class="n">1</span><span><b>The headline, again as the first point.</b> The first bullet restates the headline with one extra word.</span></div>
+    <div><span class="n">2</span><span><b>The same figure three times.</b> "Rating revised to Negative" or "73% of Q1 revenue" appears in the headline, a point and a signal line, and the revenue again as a footer chip.</span></div>
+    <div><span class="n">3</span><span><b>1-week move twice.</b> In the header beside the price and again in the 1W / 1M / 1Y chips.</span></div>
+    <div><span class="n">4</span><span><b>Impact said three ways.</b> The coloured top bar, the "Moderate impact" pill and the score.</span></div>
+    <div><span class="n">5</span><span><b>Theme chips repeat the event.</b> ORDER WIN, INFRA / EPC, RENEWABLES and LOI for a headline that already says "wind EPC LOI"; the theme is also the tab you are on.</span></div>
+    <div><span class="n">6</span><span><b>Results said twice.</b> The table shows revenue, margin and PAT with YoY; the margin signal line and the revenue chip say it again.</span></div>
+    <div><span class="n">7</span><span><b>Four buttons to one place.</b> The company name, the memory icon and the verify icon all open the same drawer; image copy sits beside them.</span></div>
+    <div><span class="n">8</span><span><b>Full analysis starts over.</b> Its first line repeats the card's event, symbol and time; "Key numbers" repeats the four points; thin liquidity appears again under the score.</span></div>
+  </section>
+
+  <!-- 1. rating -->
+  <div class="pair">
+    <div class="col">
+      <span class="lab">Now</span>
+      <article class="card now">
+        <div class="hd">
+          <span class="logo-co" style="background:#2754D6">DF</span>
+          <span class="who"><b>Demo Finance Ltd</b><span class="num">NSE: DEMOFIN · ₹2,150 Cr · Micro cap</span></span>
+          <span class="px"><b>₹86.00</b><span class="dn r" data-n="3">▼ 3.4% 1W</span></span>
+        </div>
+        <div class="chips">
+          <span class="chip score r" data-n="4">40</span><span class="chip imp-MOD r" data-n="4">Moderate impact</span><span class="chip bad">Negative</span><span class="chip ev">Credit rating</span>
+        </div>
+        <h3>CARE cuts Demo Finance to A- (Negative) on ₹1,800 Cr facilities</h3>
+        <ul class="pts">
+          <li class="r" data-n="1">Rating revised to <b>CARE A- (Negative)</b> from CARE A (Stable) on <b>₹1,800 Cr</b> facilities</li>
+          <li>Stage 3 assets at <b>4.9%</b></li>
+        </ul>
+        <div class="why"><h4>Why it matters</h4>
+          <ul class="pts">
+            <li>Downgrade two weeks after a ₹437.5 Cr rights issue was approved: the raise looks defensive.</li>
+            <li class="r" data-n="2"><span class="tag w">Rating:</span> Rating outlook revised to Negative. <span class="calc">✓ computed</span></li>
+          </ul>
+        </div>
+        <div class="stats"><span class="stat r" data-n="3">1W <b class="dn">−3.4%</b></span><span class="stat">1M <b class="dn">−11.0%</b></span><span class="stat">1Y <b class="dn">−6.5%</b></span></div>
+        <div class="ft"><span class="num">14 Oct, 19:20 · 5d ago · After market</span><span class="ok">✓ Numbers verified</span>
+          <span class="acts"><button class="btn" type="button">Full analysis ⌄</button><button class="ib" type="button" aria-label="PDF">▤</button><button class="ib" type="button" aria-label="Copy image">◫</button><button class="ib r" data-n="7" type="button" aria-label="Verify">⌕</button><button class="ib r" data-n="7" type="button" aria-label="Memory">◎</button></span></div>
+      </article>
+    </div>
+    <div class="col">
+      <span class="lab new">Proposed <small>· 5 fewer elements, nothing lost</small></span>
+      <article class="card f-rat">
+        <div class="hd">
+          <span class="logo-co" style="background:#2754D6">DF</span>
+          <span class="who"><b>Demo Finance Ltd</b><span class="num">DEMOFIN · ₹2,150 Cr · Micro cap</span></span>
+          <span class="px"><b>₹86.00</b><span class="dn">▼ 3.4% 1W</span></span>
+        </div>
+        <div class="meta"><span class="grade MOD"><i>40</i>Moderate</span><span class="dir neg">▼ Negative</span><span class="sep">·</span><span class="fam"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1.5l1.9 4 4.3.5-3.2 2.9.9 4.3L8 11l-3.9 2.2.9-4.3L1.8 6l4.3-.5z"/></svg>Credit rating</span></div>
+        <h3>CARE cuts Demo Finance to A- (Negative) on ₹1,800 Cr facilities</h3>
+        <div class="blk"><span class="mod-h">Rating move · CARE · ₹1,800 Cr facilities</span>
+          <div class="ladder">
+            <div class="rt"><b>A</b><span>Stable · before</span></div>
+            <div class="arrow">1 notch ↓<br>outlook ↓</div>
+            <div class="rt now"><b>A-</b><span>Negative · now</span></div>
+          </div>
+          <div class="notches" aria-label="Rating scale"><i>AA</i><i>AA-</i><i>A+</i><i class="was">A</i><i class="is">A-</i><i>BBB+</i><i>BBB</i></div>
+        </div>
+        <ul class="pts"><li>Stage 3 assets at <b>4.9%</b></li></ul>
+        <div class="why"><h4>Why it matters</h4>
+          <ul class="pts"><li>Downgrade two weeks after a ₹437.5 Cr rights issue was approved: the raise looks defensive.</li></ul>
+        </div>
+        <div class="ft"><span class="num">14 Oct, 19:20 · After market</span><span class="ok">✓ Verified</span>
+          <span class="acts"><button class="btn" type="button">Full analysis ⌄</button><button class="ib" type="button" aria-label="PDF">▤</button><button class="ib" type="button" aria-label="More">⋯</button></span></div>
+      </article>
+    </div>
+  </div>
+
+  <!-- 2. order win -->
+  <div class="pair">
+    <div class="col">
+      <span class="lab">Now</span>
+      <article class="card now">
+        <div class="hd">
+          <span class="logo-co" style="background:#0E8A79">DI</span>
+          <span class="who"><b>Demo Infra Projects Ltd</b><span class="num">NSE: DEMOINFRA · ₹3,244 Cr · Small cap</span></span>
+          <span class="px"><b>₹324.40</b><span class="dn r" data-n="3">▼ 1.2% 1W</span></span>
+        </div>
+        <div class="chips">
+          <span class="chip score r" data-n="4">43</span><span class="chip imp-MOD r" data-n="4">Moderate impact</span><span class="chip good">Positive</span><span class="chip ev">Order win</span><span class="chip ev r" data-n="5">Renewables</span><span class="chip ev r" data-n="5">Infra / EPC</span><span class="chip warn">LOI</span>
+        </div>
+        <h3>Demo Infra arm wins ₹228 Cr wind EPC LOI, near three-quarters of Q1 sales</h3>
+        <ul class="pts">
+          <li class="r" data-n="1">Subsidiary <b>Demo Wind EPC</b> received an LOI from <b>Demo Renewables LLP</b> for a <b>₹228 Cr</b> turnkey wind EPC contract (excluding GST)</li>
+          <li>Covers an <b>80 MW</b> wind project at Satara, Maharashtra</li>
+          <li>Execution due by <b>30 June 2027</b></li>
+        </ul>
+        <div class="why"><h4>Why it matters</h4>
+          <ul class="pts">
+            <li>Third wind EPC win since May and the largest so far; the earlier ones were ₹142 Cr and ₹207.47 Cr.</li>
+            <li>Still a letter of intent: revenue starts only once the formal EPC contract is signed.</li>
+            <li class="r" data-n="2"><span class="tag">Scale:</span> ₹228 Cr order = 73% of Q1FY27 revenue (₹312.4 Cr), 18% of FY26 revenue (₹1,239 Cr). <span class="calc">✓ computed</span></li>
+            <li><span class="tag w">Not disclosed:</span> No expected margin or payment terms for the contract</li>
+          </ul>
+        </div>
+        <div class="stats"><span class="stat r" data-n="2">Q1FY27 revenue <b>₹312 Cr</b></span><span class="stat r" data-n="3">1W <b class="dn">−1.2%</b></span><span class="stat">1M <b class="dn">−12.0%</b></span><span class="stat">1Y <b class="dn">−26.0%</b></span></div>
+        <div class="ft"><span class="num">14 Oct, 18:20 · 5d ago · After market</span><span class="ok">✓ Numbers verified</span>
+          <span class="acts"><button class="btn" type="button">Full analysis ⌄</button><button class="ib" type="button" aria-label="PDF">▤</button><button class="ib" type="button" aria-label="Copy image">◫</button><button class="ib r" data-n="7" type="button" aria-label="Verify">⌕</button><button class="ib r" data-n="7" type="button" aria-label="Memory">◎</button></span></div>
+      </article>
+    </div>
+    <div class="col">
+      <span class="lab new">Proposed <small>· 7 fewer elements, nothing lost</small></span>
+      <article class="card f-ord">
+        <div class="hd">
+          <span class="logo-co" style="background:#0E8A79">DI</span>
+          <span class="who"><b>Demo Infra Projects Ltd</b><span class="num">DEMOINFRA · ₹3,244 Cr · Small cap</span></span>
+          <span class="px"><b>₹324.40</b><span class="dn">▼ 1.2% 1W</span></span>
+        </div>
+        <div class="meta"><span class="grade MOD"><i>43</i>Moderate</span><span class="dir pos">▲ Positive</span><span class="sep">·</span><span class="fam"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M5 1.5v3M11 1.5v3M5 9l2 2 4-4"/></svg>Order win</span></div>
+        <h3>Demo Infra arm wins ₹228 Cr wind EPC LOI, near three-quarters of Q1 sales</h3>
+        <div class="blk"><span class="mod-h">The order · Demo Renewables LLP → subsidiary Demo Wind EPC</span>
+          <div class="facts3"><div><span>Value, ex GST</span><b>₹228 Cr</b></div><div><span>Scope</span><b>80 MW wind</b></div><div><span>Complete by</span><b>30 Jun 2027</b></div></div>
+          <div class="gauge"><span class="lbl">Size against Q1FY27 revenue (₹312.4 Cr) <b>73%</b></span><span class="bar"><i style="width:73%"></i></span></div>
+          <div class="steps" aria-label="Deal stage"><span class="step done here"><i></i>LOI · 14 Oct</span><span class="step"><i></i>Contract</span><span class="step"><i></i>Execution</span><span class="step"><i></i>Revenue</span></div>
+        </div>
+        <div class="why"><h4>Why it matters</h4>
+          <ul class="pts">
+            <li>Third wind EPC win since May and the largest so far; the earlier ones were ₹142 Cr and ₹207.47 Cr.</li>
+            <li><span class="tag">Scale:</span> 18% of FY26 revenue (₹1,239 Cr). <span class="calc">✓ computed</span></li>
+            <li><span class="tag w">Not disclosed:</span> margin and payment terms.</li>
+          </ul>
+        </div>
+        <div class="ft"><span class="num">14 Oct, 18:20 · After market</span><span class="ok">✓ Verified</span>
+          <span class="acts"><button class="btn" type="button">Full analysis ⌄</button><button class="ib" type="button" aria-label="PDF">▤</button><button class="ib" type="button" aria-label="More">⋯</button></span></div>
+      </article>
+    </div>
+  </div>
+
+  <!-- 3. results -->
+  <div class="pair">
+    <div class="col">
+      <span class="lab">Now</span>
+      <article class="card now">
+        <div class="hd">
+          <span class="logo-co" style="background:#D6336C">DC</span>
+          <span class="who"><b>Demo Cement Ltd</b><span class="num">NSE: DEMOCEM · ₹4,851 Cr · Small cap</span></span>
+          <span class="px"><b>₹412.50</b><span class="dn r" data-n="3">▼ 8.9% 1W</span></span>
+        </div>
+        <div class="chips">
+          <span class="chip score r" data-n="4">52</span><span class="chip imp-MOD r" data-n="4">Moderate impact</span><span class="chip bad">Negative</span><span class="chip ev">Results</span><span class="chip">Consolidated</span>
+        </div>
+        <h3>Demo Cement Q2 revenue up 19.6% but PAT falls 20% as margin drops 370 bp</h3>
+        <div class="pnl-wrap"><table class="pnl"><thead><tr><th>₹ Cr</th><th>Q2FY27</th><th>Q2FY26</th><th>YoY</th><th>Q1FY27</th><th>QoQ</th></tr></thead><tbody>
+          <tr><td>Revenue</td><td>455.6</td><td>380.9</td><td class="up">+19.6%</td><td>412.3</td><td class="up">+10.5%</td></tr>
+          <tr><td>EBITDA</td><td>67.9</td><td>70.9</td><td class="dn">−4.2%</td><td>73.4</td><td class="dn">−7.5%</td></tr>
+          <tr><td>Margin</td><td>14.9%</td><td>18.6%</td><td class="dn">−370 bp</td><td>17.8%</td><td class="dn">−290 bp</td></tr>
+          <tr><td>PAT</td><td>29.4</td><td>36.8</td><td class="dn">−20.1%</td><td>38.2</td><td class="dn">−23.0%</td></tr></tbody></table></div>
+        <ul class="pts">
+          <li>Trade receivables <b>₹318 Cr</b> vs ₹205 Cr a year ago</li>
+          <li>Gross debt <b>₹640 Cr</b> vs ₹420 Cr</li>
+        </ul>
+        <div class="why"><h4>Results read</h4>
+          <ul class="pts">
+            <li>Growth is being bought with credit: receivables and debt rose far faster than sales.</li>
+            <li class="r" data-n="6"><span class="tag w">Margin:</span> EBITDA margin down 370 bp YoY to 14.9%. <span class="calc">✓ computed</span></li>
+          </ul>
+        </div>
+        <div class="stats"><span class="stat r" data-n="6">Q2FY27 revenue <b>₹456 Cr</b></span><span class="stat r" data-n="3">1W <b class="dn">−8.9%</b></span><span class="stat">1M <b class="dn">−4.2%</b></span><span class="stat">1Y <b class="up">+21.4%</b></span></div>
+        <div class="ft"><span class="num">13 Oct, 16:05 · 6d ago · Live market</span><span class="ok">✓ Numbers verified</span>
+          <span class="acts"><button class="btn" type="button">Full analysis ⌄</button><button class="ib" type="button" aria-label="PDF">▤</button><button class="ib" type="button" aria-label="Copy image">◫</button><button class="ib r" data-n="7" type="button" aria-label="Verify">⌕</button><button class="ib r" data-n="7" type="button" aria-label="Memory">◎</button></span></div>
+      </article>
+    </div>
+    <div class="col">
+      <span class="lab new">Proposed <small>· 5 fewer elements, nothing lost</small></span>
+      <article class="card f-res">
+        <div class="hd">
+          <span class="logo-co" style="background:#D6336C">DC</span>
+          <span class="who"><b>Demo Cement Ltd</b><span class="num">DEMOCEM · ₹4,851 Cr · Small cap</span></span>
+          <span class="px"><b>₹412.50</b><span class="dn">▼ 8.9% 1W</span></span>
+        </div>
+        <div class="meta"><span class="grade MOD"><i>52</i>Moderate</span><span class="fam"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 14h12M4 11V7M8 11V3M12 11V6"/></svg>Results · Q2FY27 · consolidated</span></div>
+        <h3>Demo Cement Q2 revenue up 19.6% but PAT falls 20% as margin drops 370 bp</h3>
+        <div class="blk"><span class="mod-h" style="display:flex">Quarter in ₹ Cr<span class="verdict">Weak</span></span><div class="pnl-wrap"><table class="pnl"><thead><tr><th>₹ Cr</th><th>Q2FY27</th><th>Q2FY26</th><th>YoY</th><th>Q1FY27</th><th>QoQ</th></tr></thead><tbody>
+          <tr><td>Revenue</td><td>455.6</td><td>380.9</td><td class="up">+19.6%</td><td>412.3</td><td class="up">+10.5%</td></tr>
+          <tr><td>EBITDA</td><td>67.9</td><td>70.9</td><td class="dn">−4.2%</td><td>73.4</td><td class="dn">−7.5%</td></tr>
+          <tr><td>Margin</td><td>14.9%</td><td>18.6%</td><td class="dn">−370 bp</td><td>17.8%</td><td class="dn">−290 bp</td></tr>
+          <tr><td>PAT</td><td>29.4</td><td>36.8</td><td class="dn">−20.1%</td><td>38.2</td><td class="dn">−23.0%</td></tr></tbody></table></div></div>
+        <ul class="pts">
+          <li>Trade receivables <b>₹318 Cr</b> vs ₹205 Cr; gross debt <b>₹640 Cr</b> vs ₹420 Cr</li>
+        </ul>
+        <div class="why"><h4>Results read</h4>
+          <ul class="pts"><li>Growth is being bought with credit: receivables and debt rose far faster than sales.</li></ul>
+        </div>
+        <div class="ft"><span class="num">13 Oct, 16:05 · Live market</span><span class="ok">✓ Verified</span>
+          <span class="acts"><button class="btn" type="button">Full analysis ⌄</button><button class="ib" type="button" aria-label="PDF">▤</button><button class="ib" type="button" aria-label="More">⋯</button></span></div>
+      </article>
+    </div>
+  </div>
+
+
+  <!-- 4. the owner's real card: Punjab & Sind Bank -->
+  <div class="pair">
+    <div class="col">
+      <span class="lab">Now <small>· the live card you sent</small></span>
+      <article class="card now">
+        <div class="hd">
+          <span class="logo-co" style="background:#C2410C">PS</span>
+          <span class="who"><b>Punjab &amp; Sind Bank</b><span class="num">NSE: PSB · ₹15,043 Cr · Mid cap</span></span>
+          <span class="px"><b>₹21.20</b><span class="up r" data-n="3">▲ 1.8% 1W</span></span>
+        </div>
+        <div class="chips">
+          <span class="chip score r" data-n="4">53</span><span class="chip imp-MOD r" data-n="4">Moderate impact</span><span class="chip good">Positive</span><span class="chip ev">Results</span><span class="chip">Standalone</span><span class="chip warn r" data-n="8">💧 Thin liquidity</span>
+        </div>
+        <h3>Punjab &amp; Sind Bank Q1FY27: interest earned ₹3,213.37 Cr</h3>
+        <ul class="pts">
+          <li class="r" data-n="1">Interest earned Q1FY27: <b>₹3,213.37 Cr</b>.</li>
+          <li class="r" data-n="8">Operating profit before provisions Q1FY27: <b>₹545.48 Cr</b> (+1.0% YoY).</li>
+          <li class="r" data-n="8">Provisions Q1FY27: <b>₹93.99 Cr</b>.</li>
+          <li class="r" data-n="8">Net profit Q1FY27: <b>₹331.51 Cr</b>.</li>
+        </ul>
+        <div class="why"><h4>What these numbers mean</h4>
+          <ul class="pts">
+            <li class="r" data-n="2">Q1FY27 interest earned of ₹3,213.37 Cr is the highest of the 6 quarters in a row memory holds since Q4FY25.</li>
+            <li>Provision coverage ratio improved to 92.33%, indicating better asset quality</li>
+            <li>Net NPA ratio fell to 0.65%, down 26 bps YoY, reflecting improved credit quality</li>
+          </ul>
+        </div>
+        <div class="stats"><span class="stat r" data-n="3">1W <b class="up">+1.8%</b></span><span class="stat">1M <b class="dn">−5.4%</b></span><span class="stat">1Y <b class="dn">−27.8%</b></span></div>
+        <div class="ft"><span class="num">18 Jul, 18:09 · 93d ago · Non-trading day</span><span class="ok">✓ Numbers verified</span>
+          <span class="acts"><button class="btn" type="button">Full analysis ⌄</button><button class="ib" type="button" aria-label="PDF">▤</button><button class="ib" type="button" aria-label="Copy image">◫</button><button class="ib r" data-n="7" type="button" aria-label="Verify">⌕</button><button class="ib r" data-n="7" type="button" aria-label="Memory">◎</button></span></div>
+      </article>
+    </div>
+    <div class="col">
+      <span class="lab new">Proposed <small>· bank lens, every figure from the filing or computed from it</small></span>
+      <article class="card f-res">
+        <div class="hd">
+          <span class="logo-co" style="background:#C2410C">PS</span>
+          <span class="who"><b>Punjab &amp; Sind Bank</b><span class="num">PSB · ₹15,043 Cr · Mid cap</span></span>
+          <span class="px"><b>₹21.20</b><span class="up">▲ 1.8% 1W</span></span>
+        </div>
+        <div class="meta"><span class="grade MOD"><i>53</i>Moderate</span><span class="dir pos">▲ Asset quality better</span><span class="sep">·</span><span class="fam"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 14h12M4 11V7M8 11V3M12 11V6"/></svg>Results · Q1FY27 · standalone · bank lens</span><span class="sep">·</span><span class="stage">💧 ₹0.28 Cr traded a day</span></div>
+        <h3>Punjab &amp; Sind Bank Q1FY27: net profit ₹331.5 Cr; net NPA down 26 bp to 0.65%, coverage 92.3%</h3>
+        <div class="blk"><span class="mod-h">Bank lens · ₹ Cr</span><div class="pnl-wrap"><table class="pnl"><thead><tr><th>₹ Cr</th><th>Q1FY27</th><th>Q1FY26</th><th>YoY</th><th>Q4FY26</th><th>QoQ</th></tr></thead><tbody>
+          <tr><td>Interest earned</td><td>3,213.4</td><td class="x">xbrl</td><td class="x">xbrl</td><td class="x">xbrl</td><td class="x">xbrl</td></tr>
+          <tr><td>Net interest income</td><td class="x">computed</td><td class="x">computed</td><td class="x">·</td><td class="x">computed</td><td class="x">·</td></tr>
+          <tr><td>Operating profit</td><td>545.5</td><td class="x">xbrl</td><td class="up">+1.0%</td><td class="x">xbrl</td><td class="x">·</td></tr>
+          <tr><td>Provisions</td><td>94.0</td><td class="x">xbrl</td><td class="x">·</td><td class="x">xbrl</td><td class="x">·</td></tr>
+          <tr><td>Net profit</td><td>331.5</td><td class="x">xbrl</td><td class="x">·</td><td class="x">xbrl</td><td class="x">·</td></tr>
+          <tr><td>Gross NPA</td><td class="x">xbrl</td><td class="x">xbrl</td><td class="x">·</td><td class="x">xbrl</td><td class="x">·</td></tr>
+          <tr><td>Net NPA</td><td>0.65%</td><td>0.91%</td><td class="up">−26 bp</td><td class="x">xbrl</td><td class="x">·</td></tr>
+          <tr><td>Return on assets</td><td class="x">xbrl</td><td class="x">xbrl</td><td class="x">·</td><td class="x">xbrl</td><td class="x">·</td></tr></tbody></table></div></div>
+        <ul class="pts">
+          <li>Provision coverage <b>92.33%</b></li>
+          <li>Operating profit flat (+1.0% YoY) while provisions were <b>₹94 Cr</b>: profit now rests on lower credit cost</li>
+        </ul>
+        <div class="why"><h4>For the decision</h4>
+          <ul class="pts">
+            <li><span class="tag">Since the filing:</span> ₹24.78 → ₹21.20, <b class="dn">−14.4%</b>; market cap ₹17,583 → ₹15,043 Cr. <span class="calc">✓ computed</span></li>
+            <li><span class="tag">Run-rate P/E:</span> 11.3x (market cap ÷ this quarter's profit × 4). <span class="calc">✓ computed</span></li>
+            <li><span class="tag w">Next check, Q2FY27:</span> gross NPA at or below 2.21%, net NPA at or below 0.65%.</li>
+          </ul>
+        </div>
+        <div class="ft"><span class="num">Sat 18 Jul, 18:09 · non-trading day</span><span class="ok">✓ 19 numbers verified</span>
+          <span class="acts"><button class="btn" type="button">Full analysis ⌄</button><button class="ib" type="button" aria-label="PDF">▤</button><button class="ib" type="button" aria-label="More">⋯</button></span></div>
+      </article>
+    </div>
+  </div>
+
+
+  <div class="pair">
+    <div class="col">
+      <span class="lab">Palette</span>
+      <section class="pal" aria-label="Event families">
+        <h2>Each event family has its own colour and its own block</h2>
+        <p>The family colour marks the event label, the block and the "why it matters" box. Green and red keep one meaning on every card: up or down, good or bad, so a negative order-win card still reads red in its direction and teal in its kind.</p>
+        <div class="row">
+          <div class="sw"><i style="background:var(--fam-res-soft);color:var(--fam-res)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 14h12M4 11V7M8 11V3M12 11V6"/></svg></i><span><b>Results</b>P&amp;L table in the sector's own lens (bank, insurer, NBFC, maker), verdict</span></div>
+          <div class="sw"><i style="background:var(--fam-ord-soft);color:var(--fam-ord)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M5 1.5v3M11 1.5v3M5 9l2 2 4-4"/></svg></i><span><b>Orders &amp; capex</b>value, size gauge against revenue, stage from LOI to revenue</span></div>
+          <div class="sw"><i style="background:var(--fam-cap-soft);color:var(--fam-cap)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6"/><path d="M8 4.5v7M10 6.2c-.4-.7-1.2-1-2-1-1.1 0-2 .6-2 1.4 0 2 4 1 4 3 0 .8-.9 1.4-2 1.4-.9 0-1.7-.4-2-1"/></svg></i><span><b>Capital &amp; deals</b>issue price, discount, dilution bar; buyer → target and the price paid</span></div>
+          <div class="sw"><i style="background:var(--fam-rat-soft);color:var(--fam-rat)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1.5l1.9 4 4.3.5-3.2 2.9.9 4.3L8 11l-3.9 2.2.9-4.3L1.8 6l4.3-.5z"/></svg></i><span><b>Credit rating</b>before → after on the agency's scale, notches and outlook</span></div>
+          <div class="sw"><i style="background:var(--fam-reg-soft);color:var(--fam-reg)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1.5L14.5 13h-13z"/><path d="M8 6v3.5M8 11.5v.5"/></svg></i><span><b>Governance &amp; regulatory</b>where the case stands on its ladder, money or revenue at stake</span></div>
+        </div>
+      </section>
+    </div>
+    <div class="col">
+      <span class="lab new">Proposed <small>· governance &amp; regulatory family</small></span>
+      <article class="card f-reg">
+        <div class="hd">
+          <span class="logo-co" style="background:#6D3FD3">DP</span>
+          <span class="who"><b>Demo Pharma Ltd</b><span class="num">DEMOPHARMA · ₹6,980 Cr · Small cap</span></span>
+          <span class="px"><b>₹1,148.00</b><span class="dn">▼ 6.1% 1W</span></span>
+        </div>
+        <div class="meta"><span class="grade HIGH"><i>71</i>High</span><span class="dir neg">▼ Negative</span><span class="sep">·</span><span class="fam"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1.5L14.5 13h-13z"/><path d="M8 6v3.5M8 11.5v.5"/></svg>USFDA</span></div>
+        <h3>Demo Pharma gets USFDA warning letter for Unit III, ~18% of US revenue</h3>
+        <div class="blk"><span class="mod-h">Where the case stands · Unit III</span>
+          <div class="steps" aria-label="Regulatory stage"><span class="step done"><i></i>Form 483</span><span class="step done here"><i></i>Warning letter</span><span class="step"><i></i>Import alert</span><span class="step"><i></i>Closed</span></div>
+          <div class="gauge"><span class="lbl">US revenue from this unit <b>~18%</b></span><span class="bar"><i style="width:18%"></i></span></div>
+        </div>
+        <div class="why"><h4>Why it matters</h4>
+          <ul class="pts"><li>New US launches from the unit wait until the letter is closed.</li>
+            <li><span class="tag w">Not disclosed:</span> the remediation timeline.</li></ul>
+        </div>
+        <div class="ft"><span class="num">12 Oct, 09:41 · Live market</span><span class="ok">✓ Verified</span>
+          <span class="acts"><button class="btn" type="button">Full analysis ⌄</button><button class="ib" type="button" aria-label="PDF">▤</button><button class="ib" type="button" aria-label="More">⋯</button></span></div>
+      </article>
+    </div>
+  </div>
+  <section class="rules" aria-label="Richer information">
+    <h2>Making the information worth a decision</h2>
+    <div class="k"><h4>Have the data now</h4><ul>
+      <li>Price and market cap since the filing: stored at filing time, shown in Full analysis today; moves to the card face for any card older than a day</li>
+      <li>Run-rate valuation from the card's own profit and the market cap, marked as computed</li>
+      <li>"Next check" from the card's track items, on the face instead of only in Full analysis</li>
+      <li>The headline leads with profit and the sector's own measure (asset quality for a bank), not the top line</li>
+    </ul></div>
+    <div class="m"><h4>Needs a pipeline change (small)</h4><ul>
+      <li>Bank results table: the banking XBRL we already download carries gross and net NPA (amount and %) and return on assets; we map only interest earned, interest expended, operating profit and provisions. Measured on the bank XBRL in our tests (542867, Q3FY25).</li>
+      <li>Net interest income = interest earned − interest expended, both already stored</li>
+      <li>YoY and QoQ for every row from the same file's prior columns and memory, as the commercial table does</li>
+      <li>Insights that compare to memory must name the comparison ("highest in 6 quarters" only when it is the point)</li>
+    </ul></div>
+    <div class="x"><h4>Not in the XBRL (check before building)</h4><ul>
+      <li>Deposits, advances, CASA and NIM: assumption, they are in the press release or investor presentation, not the results XBRL; to be checked on PSB's NSE file</li>
+      <li>Capital adequacy: the template has CET1 and Additional Tier 1 tags; whether PSB fills them is to be checked</li>
+    </ul></div>
+  </section>
+  <section class="rules" aria-label="The rules">
+    <h2>The rules behind the lean card</h2>
+    <div class="k"><h4>Stays on the card</h4><ul>
+      <li>Company, price and 1-week move, once, in the header</li>
+      <li>One meta line: score and impact as one badge, direction, and the event in its family colour</li>
+      <li>A block that fits the event: results table, deal stages and size gauge, rating ladder, case ladder</li>
+      <li>Headline, then only points that add something to it</li>
+      <li>Why it matters, the computed scale and "Not disclosed"</li>
+      <li>The results table on results cards</li>
+      <li>Time, session, verified status, Full analysis, PDF</li>
+    </ul></div>
+    <div class="m"><h4>Moves into Full analysis or ⋯</h4><ul>
+      <li>1M and 1Y returns (next to the market reaction already there)</li>
+      <li>Theme chips (they remain the tabs and filters)</li>
+      <li>Credibility, thin liquidity and price-trend chips, unless notable: credibility under 50%, liquidity thin, a Stage 2 trend</li>
+      <li>Copy as image, verify against the PDF and company memory go under ⋯; the company name still opens memory</li>
+      <li>"5d ago" becomes a tooltip on the time</li>
+      <li>Full analysis drops its repeated title line and the "Key numbers" already on the face</li>
+    </ul></div>
+    <div class="x"><h4>Dropped as a repeat</h4><ul>
+      <li>A point whose figures are all already in the headline</li>
+      <li>A signal line whose figure is in the headline, a point or the results table</li>
+      <li>A footer figure that the text already states</li>
+      <li>The coloured top bar (the badge carries impact)</li>
+      <li>At the source too: the card prompt will say the points must not restate the headline, so the model writes the new detail ("was CARE A (Stable)") instead</li>
+    </ul></div>
+  </section>
+  <p class="note">Concept. Demo companies use illustrative figures; the Punjab &amp; Sind Bank card uses only the figures on your live card, and "xbrl" or "computed" marks a cell the pipeline would fill. Use the button at the top to hide the repeat markers.</p>
+</div>
+
+<script>
+  const tog = document.getElementById("tog");
+  document.body.classList.add("show");
+  tog.addEventListener("click", () => {
+    const on = document.body.classList.toggle("show");
+    tog.setAttribute("aria-pressed", String(on));
+    tog.textContent = on ? "Showing repeats" : "Show repeats";
+  });
+</script>

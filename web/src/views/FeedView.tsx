@@ -6,7 +6,7 @@ import type { NoiseRow } from "../../shared/types";
 import { AnnouncementCard } from "../components/AnnouncementCard";
 import { Avatar } from "../components/Avatar";
 import { FilingRow } from "../components/FilingCard";
-import { Badge, Select, TabStrip } from "../components/ui/badge";
+import { Badge, Select } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { api, type FeedFilters } from "../lib/api";
 import { cn } from "../lib/cn";
@@ -49,18 +49,18 @@ export function FeedView() {
   const page = Math.max(1, Number.parseInt(params.get("page") ?? "1", 10) || 1);
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 sm:px-6">
+    <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
       <header className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-[30px] leading-tight text-ink">Live filings</h1>
+          <h1 className="font-display text-[26px] leading-tight text-ink sm:text-[30px]">All filings</h1>
           <p className="mt-1 text-sm text-ink-2">Every material NSE filing, read against what each company said and did before.</p>
         </div>
         {tab.key !== "noise" && (
-          <div role="radiogroup" aria-label="Layout" className="inline-flex rounded-lg border border-line bg-surface p-0.5">
+          <div role="radiogroup" aria-label="Layout" className="card-soft inline-flex gap-0.5 rounded-xl p-[3px]">
             {([["cards", "Cards", Rows3], ["list", "List", LayoutList]] as const).map(([key, label, Icon]) => (
               <button key={key} type="button" role="radio" aria-checked={view === key}
                 onClick={() => setParams({ view: key === "cards" ? null : key })}
-                className={cn("inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium",
+                className={cn("inline-flex h-8 items-center gap-1.5 rounded-[9px] px-3 text-[12.5px] font-bold",
                   view === key ? "bg-accent-soft text-accent" : "text-ink-2 hover:text-ink")}>
                 <Icon className="h-4 w-4" />{label}
               </button>
@@ -69,8 +69,17 @@ export function FeedView() {
         )}
       </header>
 
-      <TabStrip items={FEED_TABS.map((t) => ({ key: t.key, label: t.label }))} value={tab.key}
-        onChange={(key) => setParams({ tab: key === "all" ? null : key, card: null })} />
+      {/* the same pill tabs as the Today page (design audit, 2026-10-20: /feed still had the old underline tabs) */}
+      <div role="tablist" className="card-soft no-scrollbar inline-flex max-w-full gap-0.5 overflow-x-auto rounded-2xl p-1">
+        {FEED_TABS.map((t) => (
+          <button key={t.key} type="button" role="tab" aria-selected={t.key === tab.key}
+            onClick={() => setParams({ tab: t.key === "all" ? null : t.key, card: null })}
+            className={cn("whitespace-nowrap rounded-[10px] px-3.5 py-2 text-[13.5px] font-bold transition-colors",
+              t.key === tab.key ? "grad-accent shadow-md" : "text-ink-2 hover:text-ink")}>
+            {t.label}
+          </button>
+        ))}
+      </div>
 
       {tab.key !== "noise" && (
         <FilterBar params={params} setParams={setParams} />
@@ -79,8 +88,8 @@ export function FeedView() {
       {tab.key === "noise" ? (
         <div className="mt-4"><NoiseAudit date={params.get("date") ?? today} onDate={(d) => setParams({ date: d })} /></div>
       ) : (
-        <div className={cn("mt-5 grid gap-6", view === "cards" && "lg:grid-cols-[minmax(0,1fr)_300px]")}>
-          <div className={cn("min-w-0", view === "cards" ? "mx-auto w-full max-w-[720px] space-y-4" : "space-y-2")}>
+        <div className={cn("mt-5 grid items-start gap-6", view === "cards" && "lg:grid-cols-[minmax(0,1fr)_330px]")}>
+          <div className={cn("min-w-0", view === "cards" ? "space-y-4" : "space-y-2")}>
             {shared && <SharedCard id={shared} view={view} onClose={() => setParams({ card: null })} />}
             <CardList filters={filters} rangeLabel={range.label} view={view} page={page}
               onPage={(n) => { setParams({ page: n > 1 ? String(n) : null }); window.scrollTo({ top: 0 }); }} />
@@ -112,7 +121,7 @@ function FilterBar({ params, setParams: setRaw }: { params: URLSearchParams; set
       </Select>
       <Select aria-label="Market cap" value={params.get("size") ?? ""} onChange={(e) => setParams({ size: e.target.value || null })}>
         <option value="">All sizes</option>
-        {SIZES.map((s) => <option key={s} value={s}>{s.charAt(0) + s.slice(1).toLowerCase()}cap</option>)}
+        {SIZES.map((s) => <option key={s} value={s}>{s.charAt(0) + s.slice(1).toLowerCase()} cap</option>)}
       </Select>
       <Select aria-label="Sector" value={params.get("sector") ?? ""} onChange={(e) => setParams({ sector: e.target.value || null })}>
         <option value="">All sectors</option>

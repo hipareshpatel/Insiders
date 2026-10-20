@@ -11,7 +11,8 @@ Read before changing anything:
 - `docs/PLAN.md`: the phases from smoke test to go-live, how it runs after, open decisions and the
   single "Pending work" list. Work from that list and tick items off there.
 - `docs/TRACKER.md`: decisions D1–D28, what is built and what is not.
-- `docs/SPEC.md`: the design as built. `README.md`: setup and the CLI commands table.
+- `docs/SPEC.md`: the design as built. `docs/SETUP.md`: setup and the CLI commands table (moved from `README.md` on
+  2026-10-20, owner: the repository is public, so the README stays one neutral line with nothing about the project).
 - `docs/DATA_QUALITY.md`: the cleaning stages and **the routine when data is wrong** (fix the class in
   code with a test, re-run only the affected filings, never edit stored data by hand). Follow it.
 - `pipeline/config/providers.toml`: AI providers, models, free-tier limits and routes; `docs/SPEC.md` §4
@@ -50,7 +51,8 @@ Read before changing anything:
 4. Before committing after a `git pull` or `git stash pop`, make sure no conflict markers remain:
    `git diff --check` and `git grep -n "^<<<<<<<"` must print nothing, and the tests must pass.
    Commit with a clear message, `git push -u origin claude/nice-goodall-ta0sxs`, and watch CI on the PR.
-5. Update `README.md` / `docs/TRACKER.md` when behaviour, commands or the test count change.
+5. Update `docs/SETUP.md` / `docs/TRACKER.md` when behaviour, commands or the test count change; never put project
+   details back in `README.md`.
 
 ## Running locally (Windows laptop, D:\Insiders)
 

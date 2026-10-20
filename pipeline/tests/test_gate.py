@@ -576,3 +576,19 @@ def test_a_rating_card_has_no_deal(settings):
     filing = _filing("n-rating", "Credit Rating", now_ist(), "Credit Rating")
     notes = apply_deal_guards(out, filing, [], [], "facilities of Rs. 2,100 crore")
     assert out.card.deal_value is None and "rated facilities" in notes[0]
+
+
+def test_a_table_cell_quoted_unwrapped():
+    """A two-column disclosure table's cells reach the text interleaved, and the model quotes the cell as a clean
+    sentence: every word is on the page in another order (held-card analysis, 2026-10-20: 117 of 157 quotes held
+    as "not in the filing" had all their words in it). The window is returned; a figure or a "not" the page does
+    not carry still fails."""
+    from bse_intel.gate import quote_scattered
+
+    text = ("(vi) time period by which the : 3 Years\norder(s)/contract(s) is to be executed\n"
+            "Broad consideration or size of the Annual amount of Rs 28.82 Crore\n")
+    quote = "time period by which the order(s)/contract(s) is to be executed: 3 Years"
+    window = quote_scattered(quote, text)
+    assert window and "3 years" in window.lower()
+    assert quote_scattered(quote.replace("3 Years", "5 Years"), text) is None, "a figure the page does not carry"
+    assert quote_scattered("the order is not to be executed in 3 Years by the time period", text) is None

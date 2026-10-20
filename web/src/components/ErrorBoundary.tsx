@@ -15,7 +15,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
   render() {
     if (!this.state.error) return this.props.children;
     return (
-      <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6">
+      <div className="mx-auto max-w-[1240px] px-4 py-10 sm:px-6">
         <div className="rounded-xl border border-dashed border-line-strong bg-surface px-6 py-12 text-center">
           <p className="text-[15px] font-medium text-ink">Something went wrong on this page</p>
           <p className="mx-auto mt-1 max-w-md text-sm text-ink-2">The link may be malformed. Clear the filters or go back to the feed.</p>

@@ -62,7 +62,25 @@ filing's "from [ICRA]AA+" when memory has none; Dabur - each case step is marked
 an import alert before the warning letter shows as done; "Complete by 05 years" reads "Term · 5 years"; run-rate P/E
 hidden above 100x (Ramco's 148.9x); the phone bar labels sit on two lines ("Q3" over "FY27").
 
-## T22 · P1 · laptop · OPEN, read first — production is on; the live database is the record (owner, 2026-10-20)
+## T23 · P1 · laptop · OPEN, do now — fill the design blocks on the live cards (no AI)
+
+The design audit (`docs/audit/design/cards-2026-10-20.md`) found the 19 Oct card blocks on only 14 of 849 live cards:
+cards written before that day were never given them. `refresh-card-blocks` (commit eeb8944) rebuilds each stored card's
+code blocks from memory with today's code and drops signal types now off. No AI, no PDF, no NSE request.
+1. `git pull`; dot-source the keys file; `$env:BSE_INTEL_SINK = 'platform'`;
+   `$env:PLATFORM_API_URL = 'https://insiders.reply-bd3.workers.dev'`; `$env:INGEST_TOKEN` from the keys file.
+2. `python -m bse_intel refresh-card-blocks --dry-run`: report the JSON (cards, changed, failed, by_block).
+3. If `failed` is under 5% of the cards: run it again without `--dry-run`, between two `pipeline.yml` runs (they start at
+   :17 each hour; it should take minutes). Report the JSON.
+4. Then `python -m bse_intel refresh-summaries` with the same variables (no AI): 83 of the 85 live companies have no
+   `memory_summary_json`, so the Companies table reads "0 open · 0 capex" and `/api/promises/overdue` is empty. Report its JSON.
+5. Check three cards on the live site: a bank results card (CSB or UCO: interest earned, NII, NPA rows), an order card
+   with an amount (the size bars), a rating card (the ladder).
+Report: here, the three JSONs and what the three cards show. Also: Adani Power's former names on the live site read
+"Reliance Natural Resources Limited, Reliance Mineral Resources Limited" (they look like another company's); say where
+they came from (filing, memory field). Files you may change: none.
+
+## T22 · P1 · laptop · DONE (step 1; step 3 running) — production is on; the live database is the record (owner, 2026-10-20)
 
 The owner asked to run on production now and not to wait for the laptop (20 Oct, ~05:20 IST). The cloud merged the PR
 into `main` without the last sync and started `pipeline.yml` there.
@@ -76,8 +94,28 @@ into `main` without the last sync and started `pipeline.yml` there.
    you can (GitHub's Actions tab), so two writers rarely edit the same company's memory; report if a run collides.
 4. Your other work: T19 (the held-card export), T18 and T17 (code fixes in your files, pushed to the branch; they reach
    production through a PR to `main` that the cloud opens and merges), audit rounds on the laptop's own database.
-5. The branch stays `claude/nice-goodall-ta0sxs`; after a merge the cloud restarts it from `main`. `git pull` as always.
-Report: here: step 1's numbers; step 3's progress (companies seeded on the live site).
+5. **Spend no free AI quota.** The keys are the same as GitHub's (D14), so every laptop request comes out of production's
+   day: at 05:35 IST four Gemini models already answered "429 exceeded your current quota" (the night's work spent it;
+   Gemini resets 12:30 IST). No `process`, audit round or card re-run on the free routes; tests and offline checks only.
+   Re-runs you need go in the report and the cloud requeues them on production.
+6. The branch stays `claude/nice-goodall-ta0sxs`; after a merge the cloud restarts it from `main`. `git pull` as always.
+Report: **synced** (2026-10-20 05:17-05:22 IST).
+1. Last `sync-to-cloud`. The sync goes by cursor, so the card, company and filing cursors were reset (object hashes kept):
+   without that, cards re-read for old filings and company prices refreshed after 04:23 sat behind the cursors. The 1,991
+   price charts not yet sent were marked as sent rather than copied (one PUT each, about 50 minutes); production's
+   `market-data` writes a company's chart when its price date moves, so they appear after the next session's close.
+   Result: `{"rows_written": 14911, "complete": true}`, 134 objects. Then cards gone on the laptop were deleted on the live
+   site: CSB's reappointment (`df53e2fe`, D30) and SML/Isuzu (`e1e7cf1b`, now a duplicate).
+   **Live counts after it: 850 published, 191 held** (the laptop: 849 / 191).
+   **A collision, my error.** A production run was already going (started 05:19:45 IST, live System page). A second run of
+   my stale-card check took its two new cards, `nse-106822656` and `nse-106822657`, for stale and deleted them. Both
+   filings were requeued on the live site at once (`/api/owner/requeue`), so production writes them again. My final sync
+   (05:17-05:22) also overlapped that run's first minutes; it wrote only the laptop's own rows (no filing newer than
+   `nse-106821339`), so production's new filings were not touched, but a filing both had could carry the laptop's status.
+   No sync or stale check will run again (step 2).
+2. Noted: no `sync-to-cloud` from now on.
+3. Running: governance and `seed-memory --universe` straight to the live site (resumes after kv `seed:universe_last`
+   = 506690), `BSE_INTEL_SINK=platform`, no AI. Progress reported here.
 
 ## T21 · P1 · laptop · CANCELLED (T22) — drain the 561 queued filings
 

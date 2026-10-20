@@ -1059,6 +1059,8 @@ def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None, r
             if near is None and kind != "why it matters":
                 near = _row_quoted(quote, claim, text, unit)
             if near is None:
+                near = gate.quote_scattered(quote, text, reading)   # a table cell quoted unwrapped
+            if near is None:
                 problems.append(f'{kind} "{label}" quotes a sentence that is not in the filing')
                 continue
             elsewhere.append(f'{kind} "{label}" quotes the filing with small differences')

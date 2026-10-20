@@ -457,6 +457,33 @@ def test_a_cell_the_ocr_lost_is_no_restatement():
     assert snap["revenue"]["prev_quarter"] == 265.82   # one line refusing is no restated column
 
 
+def test_a_derived_ebitda_comparative_needs_its_parts_printed():
+    """Jubilant Agri Q1FY27 (check of 2026-10-20): the year-ago EBITDA ₹62.08 Cr was built with memory's other income
+    ₹1.90 Cr where the statement prints 59 lakh, so it showed ₹1.31 Cr low (the filing gives ₹63.39 Cr). An EBITDA
+    comparative the text does not print stays only when every part memory built it from is printed."""
+    from bse_intel.dossier import results_snapshot
+
+    src = _restated_src
+    m = lambda metric, period, value: {"metric": metric, "period": period, "value": value, "sources": [src("n2", value)]}
+    rows = {"revenue": (523.18, 441.95, 485.2), "ebitda": (67.96, 62.08, 32.53), "pbt": (61.57, 58.21, 26.59),
+            "pat": (46.11, 44.13, 19.93), "finance_cost": (1.6, 1.76, 1.56), "depreciation": (5.22, 4.01, 4.85),
+            "other_income": (0.83, 1.9, 1.66)}
+    d = {"financial_metrics": [m(metric, period, value) for metric, values in rows.items()
+                               for period, value in zip(("Q1FY27", "Q1FY26", "Q4FY26"), values)]}
+    text = ("(Rs. in lakh)\nRevenue from operations 52,318 48,520 44,195\nOther income 83 166 59\n"
+            "Finance costs 160 156 176\nDepreciation 522 485 401\nProfit before tax 6,157 2,659 5,821\n"
+            "Profit for the period 4,611 1,993 4,413")
+    snap = results_snapshot(d, "n2", printed=text)
+    assert "prev_year" not in snap["ebitda"] and "prev_year" not in snap["ebitda_margin"]
+    assert snap["ebitda"]["prev_quarter"] == 32.53 and snap["pbt"]["prev_year"] == 58.21
+    # memory's parts as printed: the comparative stays
+    d["financial_metrics"] = [e if (e["metric"], e["period"]) != ("other_income", "Q1FY26") else m("other_income", "Q1FY26", 0.59)
+                              for e in d["financial_metrics"]]
+    assert results_snapshot(d, "n2", printed=text)["ebitda"]["prev_year"] == 62.08
+    # a text without the statement judges nothing
+    assert results_snapshot(d, "n2", printed="Press release: revenue up 18%")["ebitda"]["prev_year"] == 62.08
+
+
 def test_an_exceptional_charge_that_did_not_recur_is_no_turn():
     """Orient Bell, Jubilant Agri (live review 3): exceptional items "loss to profit" when a ₹1.29 Cr charge did not recur."""
     from bse_intel.dossier import results_snapshot

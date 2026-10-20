@@ -1474,8 +1474,32 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     restated = {p for slot, p in periods.items() if slot != "value" and p and numbers
                 and sum(refused(names, p) for names in judged) >= RESTATED_LINES}
 
+    def built(p: str) -> bool:
+        """Whether a derived EBITDA comparative the text does not print is built from figures it does: each part
+        memory used (xbrl: PBT + finance cost + depreciation - other income - exceptional items) printed at the unit
+        of that part's current figure (the statement's, where its PBT is printed, when memory has none or a nil);
+        not judged when the text does not print this quarter's PBT. Jubilant Agri's year-ago EBITDA ₹62.08 Cr took other income ₹1.90 Cr from
+        memory where the statement prints 59 lakh (₹63.39 Cr; review of 2026-10-20)."""
+        value = stored(_RESULT_METRICS[1][1], p)[1]
+        if value is None or _printed_at(value, numbers, _UNITS, ROUNDING):
+            return True
+        pbt = stored(("pbt",), period)[1]
+        statement = _printed_at(pbt, numbers) if pbt else ()
+        if not statement:
+            return True   # the text missed the statement (a press release's revenue is no table): nothing to judge by
+        for part in ("pbt", "finance_cost", "depreciation", "other_income", "exceptional_items"):
+            then, now = stored((part,), p)[1], stored((part,), period)[1]
+            if not then:
+                continue   # nothing taken from memory (an exceptional item that did not occur)
+            at = _printed_at(now, numbers) if now else statement
+            if at and not _printed_at(then, numbers, at, ROUNDING):
+                return False   # a part whose current figure the text does not print cannot be judged, as any line
+        return True
+
+    unbuilt = {p for slot, p in periods.items() if slot != "value" and p and numbers and not built(p)}
+
     def lookup(names: tuple[str, ...], p: str | None) -> float | None:
-        if not p or p in restated:
+        if not p or p in restated or (p in unbuilt and names in (_RESULT_METRICS[1][1], _RESULT_METRICS[2][1])):
             return None
         value = stored(names, p)[1]
         return None if value is None or refused(names, p, alone=True) else value

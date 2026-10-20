@@ -448,8 +448,8 @@ function CaseBlock({ cs }: { cs: NonNullable<CardBody["case_stage"]> }) {
   );
 }
 
-/** Context for a decision, all computed from the card and memory: the price since the filing, a run-rate P/E,
- * what management said before, and the next check. */
+/** Context for a decision, all computed from the card and memory: the price since the filing, what management said
+ * before, and the next check. */
 function decisionLines(row: CardRow, card: CardBody, table: ResultsSnapshot | null, faceText: string) {
   const out: { label: string; text: string; tone?: "pos" | "neg" | "warn"; computed?: boolean }[] = [];
   const at = card.priced_at_filing;
@@ -461,17 +461,14 @@ function decisionLines(row: CardRow, card: CardBody, table: ResultsSnapshot | nu
     out.push({ label: "Since the filing", text: `₹${at.last_price.toLocaleString("en-IN")} → ₹${row.last_price.toLocaleString("en-IN")}, ${move > 0 ? "+" : ""}${move.toFixed(1)}%`,
                tone: move > 0 ? "pos" : move < 0 ? "neg" : undefined, computed: true });
   }
-  const pat = table?.pat ?? (table as unknown as Record<string, ResultLine | undefined> | null)?.pat_owners;
-  const pe = table && pat && pat.value > 0 && table.period.startsWith("Q") && row.market_cap_cr ? row.market_cap_cr / (pat.value * 4) : null;
-  // above 100x the quarter's profit is too small to annualise into anything a reader can use
-  if (recent && pe != null && pe <= 100) {
-    out.push({ label: "Run-rate P/E", text: `${pe.toFixed(1)}x (market cap ÷ this quarter's profit × 4)`, computed: true });
-  }
-  const said = (card.guidance_recall ?? []).find((g) => !repeats(`${g.statement} ${g.target ?? ""}`, faceText));
-  if (said) {
-    const when = said.given_on ? istDate(said.given_on).split(" ").slice(1).join(" ") : null;
-    out.push({ label: `Management said${when ? `, ${when}` : ""}`, text: `${said.statement}${said.target && !said.statement.includes(said.target) ? ` (${said.target})` : ""}${said.due ? ` · by ${said.due}` : ""}` });
-  }
+  // No run-rate P/E (owner, 2026-10-20: "none of the cards needs it"): the space goes to up to four things memory held
+  // before this filing (memory_context: guidance, the latest quarter, a holding shift, a watch item, an operating note);
+  // an older card without the block shows its guidance
+  const memory = card.memory_context?.length ? card.memory_context : (card.guidance_recall ?? []).map((g) => ({
+    label: `Management said${g.given_on ? `, ${istDate(g.given_on).split(" ").slice(1).join(" ")}` : ""}`,
+    text: `${g.statement}${g.target && !g.statement.includes(g.target) ? ` (${g.target})` : ""}${g.due ? ` · by ${g.due}` : ""}`,
+  }));
+  for (const m of memory.filter((m) => !repeats(m.text, faceText)).slice(0, 4)) out.push({ label: m.label, text: m.text });
   const next = recent ? card.track_next?.kpis_to_verify?.find((k) => k.check_in) : undefined;
   if (next) out.push({ label: `Next check, ${next.check_in}`, text: `${next.kpi}${next.target ? ` (${next.target})` : ""}`, tone: "warn" });
   return out;

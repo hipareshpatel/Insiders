@@ -51,7 +51,10 @@ ON CONFLICT (scrip_code) DO UPDATE SET
        median_turnover_cr = coalesce(excluded.median_turnover_cr, companies.median_turnover_cr),
        bse_group          = coalesce(excluded.bse_group, companies.bse_group),
        credibility_score  = coalesce(excluded.credibility_score, companies.credibility_score),
-       former_names_json  = CASE WHEN excluded.former_names_json = '[]' THEN companies.former_names_json
+       -- sent with the memory summary, memory's list is the whole list (an empty one clears a refused name: Vedanta's
+       -- auditor); without the summary an empty list says nothing and the stored names stay
+       former_names_json  = CASE WHEN excluded.memory_summary_json IS NOT NULL THEN excluded.former_names_json
+                                 WHEN excluded.former_names_json = '[]' THEN companies.former_names_json
                                  ELSE excluded.former_names_json END,
        -- the summary is sent whole with each card; due dates and trigger dates go with it
        memory_summary_json = coalesce(excluded.memory_summary_json, companies.memory_summary_json),

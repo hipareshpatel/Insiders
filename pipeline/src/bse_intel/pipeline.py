@@ -55,7 +55,7 @@ from .settings import Settings
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
-from .card_context import case_stage, guidance_recall, rating_change, rating_word_mismatch
+from .card_context import case_stage, guidance_recall, memory_context, rating_change, rating_word_mismatch
 from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
@@ -2776,6 +2776,7 @@ class Pipeline:
             "case_stage": case_stage(event_type, card.headline, [f.text for f in card.what_happened],
                                      [w.text for w in card.why_it_matters]),
             "guidance_recall": guidance_recall(before, event_type, filing.filed_at),
+            "memory_context": memory_context(before, event_type, filing.filed_at, filing.news_id),
             # what pass 2 said about earlier promises, kept so a status in memory can be traced to its reply (T5)
             "promise_updates": [u.model_dump() for u in out.dossier_delta.promise_updates] or None,
             "pdf_pages": doc.page_count or None,
@@ -3501,4 +3502,6 @@ def _apply_xbrl(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult", news_id: 
 def _company_memory(dossier: dict) -> dict:
     """Company-row fields drawn from memory: former names (searchable) and the radar summary."""
     names = [n for n in (dossier.get("identity") or {}).get("former_names") or [] if own_former_name(n, dossier)]
-    return {**memory_summary(dossier), **({"former_names_json": json.dumps(names, ensure_ascii=False)} if names else {})}
+    # sent even when empty: a name memory no longer holds (or that a check now refuses: Vedanta's auditor) leaves the
+    # company row with the summary that drops it (companies_upsert.sql)
+    return {**memory_summary(dossier), "former_names_json": json.dumps(names, ensure_ascii=False)}

@@ -88,3 +88,15 @@ def test_another_entitys_rename_is_not_the_companys_former_name():
     for placeholder in ("None", "N/A", "NA", "nil", "-", "not applicable"):
         assert not own_former_name(placeholder, d)
     assert own_former_name("Nagarjuna Agrichem Limited", d)
+
+
+def test_an_audit_firm_is_not_a_former_name():
+    """Vedanta showed "formerly M S K A & Associates", its auditor (owner, 2026-10-20)."""
+    from bse_intel.dossier import own_former_name
+
+    d = {"identity": {"former_names": [], "entities": []}}
+    for firm in ("M S K A & Associates", "S R Batliboi & Co. LLP", "Deloitte Haskins & Sells LLP", "B S R & Co"):
+        assert not own_former_name(firm, d), firm
+    for name in ("Sesa Sterlite Limited", "Max Life Insurance Co. Ltd.", "Rajasthan Spinning & Weaving Mills Limited",
+                 "Munjal Auto Components"):
+        assert own_former_name(name, d), name

@@ -377,3 +377,30 @@ def test_a_call_card_shows_the_quarter_it_discusses():
     assert {k: v for k, v in snap.items() if k != "discussed"} == results_snapshot(dossier, "n2")
     assert call_results_snapshot(dossier, "2027-04-20T11:00:00+05:30") is None, "Q2FY27 ended over 120 days before"
     assert call_results_snapshot(dossier, "2026-09-20T11:00:00+05:30")["period"] == "Q1FY27", "not a quarter still open"
+
+
+def test_the_decision_box_takes_up_to_four_points_from_memory():
+    """Owner (2026-10-20): "For the decision" needs 3-4 points from memory, not a run-rate P/E. All made by code from
+    what memory held before the filing, nothing from the filing itself."""
+    from bse_intel.card_context import memory_context
+
+    before = {
+        "guidance": [{"id": "g1", "statement": "FY27 revenue growth guided at 15%", "metric": "revenue", "target": "15%",
+                      "due": "FY27", "due_date": "2027-03-31", "given_on": "2026-05-10T10:00:00+05:30", "status": "OPEN"}],
+        "financial_metrics": [{"metric": "revenue", "period": "Q1FY27", "value": 1200.5, "yoy_pct": 12.3},
+                              {"metric": "pat", "period": "Q1FY27", "value": 150.0}],
+        "ownership": [{"period": "Q4FY26", "promoter_pct": 56.4, "fii_pct": 13.9, "as_of": "2026-04-17"},
+                      {"period": "Q1FY27", "promoter_pct": 54.7, "fii_pct": 15.8, "as_of": "2026-07-20"}],
+        "watchlist": [{"text": "New plant commissioning", "status": "OPEN", "check_in": "Q3FY27", "check_by": "2026-12-31",
+                       "created_on": "2026-08-01", "source_news_id": "n0"}],
+        "operating_notes": [{"text": "Plant 2 running at 55% utilisation", "as_of": "2026-09-01", "source_news_id": "n0"},
+                            {"text": "this filing's own note", "as_of": "2026-10-20", "source_news_id": "n9"}],
+    }
+    points = memory_context(before, "ORDER_WIN", "2026-10-20T10:00:00+05:30", "n9")
+    assert [p["label"] for p in points] == ["Management said, May 2026", "Latest quarter, Q1FY27",
+                                            "Holding, Q4FY26 → Q1FY27, Jul 2026", "Watching, Aug 2026"]
+    assert points[1]["text"] == "revenue ₹1,200.5 Cr (+12.3% YoY), PAT ₹150 Cr"
+    assert points[2]["text"] == "Promoters 56.4% → 54.7%; FIIs 13.9% → 15.8%"
+    # a results card is the latest quarter itself: the note takes that place
+    assert [p["label"] for p in memory_context(before, "RESULTS", "2026-10-20T10:00:00+05:30", "n9")][-1] == "From memory, Sep 2026"
+    assert memory_context(None, "RESULTS", "2026-10-20") == []

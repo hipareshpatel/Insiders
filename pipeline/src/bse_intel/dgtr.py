@@ -246,6 +246,10 @@ def signals(dossier: dict | None, filed_at: str, days: int = 180) -> list[tuple[
         step = steps[-1]
         who = "the company applied" if case.get("role") == "APPLICANT" else "the company supported the application"
         kind = (case.get("investigation") or "trade-remedy investigation").lower()
+        if re.search(r"sunset|\bssr\b|review", f"{case.get('proceeding') or ''} {step.get('label') or ''}", re.I):
+            # ITC's 2026-06-24 Decor Paper notice reopened an existing duty for review; "started the investigation"
+            # read as a new case (live review 3)
+            kind = f"sunset review of the {kind.replace(' investigation', '')} duty"
         where = f" ({case['countries']})" if case.get("countries") else ""
         severity = "WARNING" if step["stage"] == "TERMINATED" else "POSITIVE" if step["stage"] in (
             "FINAL_FINDING", "CUSTOMS_NOTIFICATION", "PRELIMINARY_FINDING") else "INFO"

@@ -617,6 +617,31 @@ def is_terminated(headline: str | None, subject: str | None = None) -> bool:
     return bool(_TERMINATED.search(f"{headline or ''} {subject or ''}"))
 
 
+# --- a deal stage the filing's own words support (live review 3: 4 of 7 WRONG cards) ----------------------------------
+_HOLDERS_APPROVED = re.compile(
+    r"\b(?:approved|passed|assented|sanctioned)\b.{0,100}\b(?:shareholders?|members|equity\s+holders|creditors)\b"
+    r"|\b(?:shareholders?|members)\b.{0,100}\b(?:approved|passed|assented)\b|requisite\s+majority", re.I | re.S)
+_VOTE_TO_COME = re.compile(r"\b(?:will|shall)\s+be\s+(?:duly\s+)?(?:announced|declared|held|convened|placed)\b"
+                           r"|\bto\s+be\s+(?:held|convened)\b|\bscheduled\s+(?:to\s+be\s+held|on|for)\b"
+                           r"|\bnotice\s+(?:of|convening)\b.{0,60}\bmeeting\b", re.I | re.S)
+_BOARD_APPROVED = re.compile(r"\bboard\b.{0,160}\b(?:approv\w*|accorded|consented|sanction\w*)\b"
+                             r"|\b(?:approv\w*|sanction\w*)\b.{0,80}\bboard\b", re.I | re.S)
+
+
+def supported_stage(stage: str | None, text: str) -> str | None:
+    """The deal stage the filing's text supports: a shareholders' approval needs the vote's result, not its notice
+    (Jubilant Agri's result "will be duly announced", JUBLCPL's meetings were weeks away); a board approval needs the
+    board approving (ITC's chairman called a ₹20,000 Cr plan "proposed"). Steps down to what the text does say; with
+    no text, the stage stands."""
+    if not stage or not text:
+        return stage
+    if stage == "SHAREHOLDER_APPROVED" and (not _HOLDERS_APPROVED.search(text) or _VOTE_TO_COME.search(text)):
+        stage = "BOARD_APPROVED"
+    if stage == "BOARD_APPROVED" and not _BOARD_APPROVED.search(text):
+        stage = "PROPOSED"
+    return stage
+
+
 # --- an issue size that does not follow from its shares and price ----------------------------------------------------
 
 def issue_size_mismatch(amount_cr: float | None, new_shares: float | None, issue_price: float | None,

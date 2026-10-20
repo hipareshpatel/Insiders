@@ -1302,9 +1302,20 @@ def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], bal
         notes.append(f"deal size {deal.amount_cr:g} Cr dropped: it is the company's {name}")
         out.card.deal_value = None
         deal = None
-    if deal is not None and deal.stage != "CANCELLED" and gate.is_terminated(filing.headline, filing.subject):
+    # the filing's own text must also say so: Orient Bell's ₹1.07 Cr power investment was marked cancelled from the
+    # exchange's subject line alone (live review 3)
+    if deal is not None and deal.stage != "CANCELLED" and gate.is_terminated(filing.headline, filing.subject) \
+            and (not text or gate.is_terminated(text[:20000])):
         notes.append("deal marked cancelled: the filing terminates or withdraws it")
         deal.stage = "CANCELLED"
+    if deal is not None and deal.stage == "CANCELLED" and text and not gate.is_terminated(text[:20000]):
+        notes.append("deal not cancelled: the filing's text terminates nothing")
+        deal.stage = "OTHER"
+    if deal is not None and text:
+        stage = gate.supported_stage(deal.stage, text[:40000])
+        if stage != deal.stage:
+            notes.append(f"deal stage {deal.stage} -> {stage}: the filing's text does not say so")
+            deal.stage = stage
     if notes:
         log.info("deal guards for %s: %s", filing.news_id, notes)
     return notes

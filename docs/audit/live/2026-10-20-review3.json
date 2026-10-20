@@ -1,0 +1,671 @@
+[
+ {
+  "news_id": "nse-106708490",
+  "headline": "ITC Chairman outlines ₹20,000 Cr medium-term capex plan at 115th AGM",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.stage",
+    "card_says": "BOARD_APPROVED",
+    "pdf_says": "Chairman's AGM speech: 'its proposed medium-term capex of ₹20,000 crore for the Group'; no board approval is stated anywhere in the filing",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "signals[TRADE_REMEDY]",
+    "card_says": "DGTR started the anti-dumping investigation on Decor Paper (China PR) on 2026-06-24; the company applied.",
+    "pdf_says": "Not in the filing (an AGM speech). Memory trade_remedies: the 2026-06-24 document is an 'Initiation Notification SSR' (sunset review) of a duty in place since 2021/2025 findings, not a new anti-dumping investigation; signal does not belong to this event",
+    "class": "memory",
+    "on_face": true
+   },
+   {
+    "field": "scale.against[0]",
+    "card_says": "₹20,000 Cr capex = 84% of Q4FY26 revenue (₹23,821 Cr)",
+    "pdf_says": "Capex is a multi-year 'medium-term' Group plan with no term stated; comparing it with one quarter's revenue overstates its size (arithmetic itself matches memory)",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "basis",
+    "card_says": "STANDALONE",
+    "pdf_says": "Capex is 'for the Group'; revenue base 23,821.48 / 89,913.33 is the consolidated XBRL line in memory",
+    "class": "standalone_consolidated",
+    "on_face": false
+   }
+  ],
+  "reviewer": "reviewer_01"
+ },
+ {
+  "news_id": "nse-106748248",
+  "headline": "Man Industries files transcript of analyst conference call held on August 12, 2026",
+  "verdict": "MINOR",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "call_read.story",
+    "card_says": "GROWTH (guidance NONE, tone NEUTRAL)",
+    "pdf_says": "Cover letter only, with a link to the transcript; no content of the call is in the filing to support a story label",
+    "class": "invented",
+    "on_face": false
+   },
+   {
+    "field": "takeaway/timeline_entry",
+    "card_says": "Q1FY27 analyst conference call",
+    "pdf_says": "Filing says only 'Conference Call held with analysts / investors on Wednesday, August 12, 2026'; Q1FY27 is inferred (results filed 11 Aug per memory), plausibly right",
+    "class": "other",
+    "on_face": false
+   }
+  ],
+  "reviewer": "reviewer_01"
+ },
+ {
+  "news_id": "nse-106771912",
+  "headline": "Jubilant Agri holds NCLT-convened equity shareholders meeting for demerger scheme",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.stage",
+    "card_says": "SHAREHOLDER_APPROVED",
+    "pdf_says": "Votes were cast by poll and remote e-voting; 'combined voting result ... will be duly announced' later. The approval outcome is not in the filing (memory watchlist w_b7020332 'Equity Shareholder approval' still OPEN)",
+    "class": "signal_verdict",
+    "on_face": true
+   },
+   {
+    "field": "track_next.milestones",
+    "card_says": "NCLT-convened meeting of equity shareholders, 2026-09-05",
+    "pdf_says": "The meeting is the event of this filing (already held); the open next step is the voting result, which is not listed",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_01"
+ },
+ {
+  "news_id": "nse-106777615",
+  "headline": "Man Industries wins new pipe orders of approx. ₹600 Cr",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "track_next.kpis_to_verify[order book]",
+    "card_says": "order_book Q2FY27 >= 4,100 (target text 'above 3,600 Cr')",
+    "pdf_says": "Filing gives unexecuted order book ~₹4,100 Cr; the target text (3,600, the August consolidated figure in memory) contradicts the stated value 4,100",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "basis",
+    "card_says": "STANDALONE",
+    "pdf_says": "Filing states no basis; memory's previous order book (₹3,600 Cr) was consolidated",
+    "class": "standalone_consolidated",
+    "on_face": false
+   }
+  ],
+  "reviewer": "reviewer_01"
+ },
+ {
+  "news_id": "nse-106720933",
+  "headline": "JUBLCPL sets September 5, 2026, for unsecured creditors' meeting on Agri demerger",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "A notice convening the NCLT-ordered unsecured creditors' meeting is a procedural step in a demerger already announced (scheme, ratio and exchange observation letters all earlier); it adds no new economics.",
+  "issues": [
+   {
+    "field": "deal_value.stage",
+    "card_says": "SHAREHOLDER_APPROVED",
+    "pdf_says": "Shareholder and creditor approval is still pending: the NCLT-convened meetings are scheduled for September 05, 2026 (this notice dispatched August 01, 2026); only the BSE/NSE observation letters (April 17, 2026) and the NCLT first-motion order (July 08, 2026) exist.",
+    "class": "signal_verdict",
+    "on_face": true
+   },
+   {
+    "field": "deal_value.kind",
+    "card_says": "ACQUISITION, counterparty Jubilant Agri Solutions Limited",
+    "pdf_says": "A demerger of the Agri Division into a resulting company (1:1 share entitlement, mirror shareholding); nothing is acquired.",
+    "class": "event_type",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_02"
+ },
+ {
+  "news_id": "nse-106736540",
+  "headline": "Orient Bell Q1FY27: net profit ₹8.32 Cr (against a loss of ₹0.37 Cr a year earlier)",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "results.pbt",
+    "card_says": "PBT 11.41 Cr (Q4FY26 8.24, Q1FY26 -0.82), QoQ +38.5%",
+    "pdf_says": "Consolidated Profit before tax (VII) 1,115.42 lakh = ₹11.15 Cr (Q4FY26 836.08 = ₹8.36 Cr, Q1FY26 (57.46) = ₹-0.57 Cr), QoQ +33.4%. The card's line is profit before exceptional items and before the share of associates (1,141.30 lakh), not PBT.",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "results.exceptional_items.qoq_turn",
+    "card_says": "LOSS_TO_PROFIT (-1.29 Cr to 0.00)",
+    "pdf_says": "Exceptional charge of 128.96 lakh in Q4FY26, nil in Q1FY27: a charge that did not recur, not a turn to profit.",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_02"
+ },
+ {
+  "news_id": "nse-106737655",
+  "headline": "Man Industries (India) Q1FY27: revenue ₹1,053.13 Cr (+41.9% YoY), net profit ₹61.45 Cr (+122.6% YoY)",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "results.ebitda / what_happened[1] / takeaway",
+    "card_says": "EBITDA ₹143.43 Cr against ₹49.11 Cr a year earlier, YoY +192.1%",
+    "pdf_says": "The filing's own (regrouped) Q1FY26 consolidated column: PBT 3,826 + finance 3,023 + depreciation 1,258 - other income 527 = 7,580 lakh = ₹75.80 Cr, so EBITDA YoY is +89%. 49.11 comes from last year's originally reported figures (other income 31.49 Cr, finance 29.77 Cr) that note 4 says were regrouped.",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "results.ebitda_margin / why_it_matters[1]",
+    "card_says": "Margin 13.62% from 6.62% in Q1FY26, +700 bps YoY (basis FILING)",
+    "pdf_says": "On the filing's year-ago column the margin is 75.80 / 742.13 = 10.21%, so +341 bps; 6.62% is not in the filing.",
+    "class": "arithmetic",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_02"
+ },
+ {
+  "news_id": "nse-106737779",
+  "headline": "Orient Bell holds Q1 FY27 post-earnings call; audio recording link submitted",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "reviewer": "reviewer_02"
+ },
+ {
+  "news_id": "nse-106736931",
+  "headline": "Jubilant Agri and Consumer Products Q1FY27: revenue ₹523.18 Cr (+18.4% YoY), net profit ₹46.11 Cr (+4.5% YoY)",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "results.ebitda.prev_year / yoy_pct",
+    "card_says": "Q1FY26 EBITDA ₹62.08 Cr, YoY +9.5%",
+    "pdf_says": "Filing's own Q1FY26 consolidated column (p.9, ₹ lakh): PBT before exceptional 5,821 + finance cost 176 + D&A 401 - other income 59 = 6,339 lakh = ₹63.39 Cr, so YoY +7.2%. Same method gives the card's current (67.96) and Q4FY26 (32.53) exactly; 62.08 is the Q1FY26 figure held in memory from last year's XBRL, not this filing's (regrouped) comparative",
+    "class": "wrong_column",
+    "on_face": true
+   },
+   {
+    "field": "results.ebitda_margin.prev_year / yoy_bps",
+    "card_says": "Q1FY26 margin 14.05%, -106 bps YoY",
+    "pdf_says": "63.39 / 441.95 = 14.34%, so -135 bps YoY",
+    "class": "wrong_column",
+    "on_face": true
+   },
+   {
+    "field": "results.exceptional_items.qoq_turn",
+    "card_says": "LOSS_TO_PROFIT",
+    "pdf_says": "Exceptional items: nil this quarter against a ₹1.19 Cr charge in Q4FY26; no exceptional profit, so 'loss to profit' is a misleading label",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_03"
+ },
+ {
+  "news_id": "nse-106743427",
+  "headline": "Man Industries wins QatarEnergy PML approval for LSAW pipes, coating, and bends",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_why": "Being on a vendor list only makes the company eligible to bid; there is no order, value or timeline.",
+  "issues": [
+   {
+    "field": "event_type",
+    "card_says": "LITIGATION_REGULATORY",
+    "pdf_says": "Press release about being added to a customer's preferred-vendor list (a business/order-pipeline update), not litigation or regulation",
+    "class": "event_type",
+    "on_face": false
+   },
+   {
+    "field": "deal_value.stage",
+    "card_says": "BOARD_APPROVED",
+    "pdf_says": "No board approval is involved; QatarEnergy included the company in its PML (eligible bidder, no order)",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "what_happened[0].text",
+    "card_says": "secured approval on August 14, 2026",
+    "pdf_says": "The press release is dated August 14, 2026 ('today announced its inclusion'); it does not give the date of the approval",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_03"
+ },
+ {
+  "news_id": "nse-106772166",
+  "headline": "JUBLCPL NCLT-convened meeting passes demerger scheme with 99.99% majority",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "reviewer": "reviewer_03"
+ },
+ {
+  "news_id": "nse-106791863",
+  "headline": "Jubilant Agri reaffirms **CARE A+** long term / **CARE A1+** short term credit ratings for **₹625 Cr**",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline",
+    "card_says": "Jubilant Agri reaffirms CARE A+ / CARE A1+ ratings",
+    "pdf_says": "CARE Ratings Limited reaffirmed the ratings; the company only reports it",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "takeaway",
+    "card_says": "withdrawing long-term bank facilities that were unused or no longer required",
+    "pdf_says": "The filing says only 'Long Term Bank Facilities - Withdrawn'; it gives no reason",
+    "class": "invented",
+    "on_face": false
+   }
+  ],
+  "reviewer": "reviewer_03"
+ },
+ {
+  "news_id": "nse-106715198",
+  "headline": "ITC receives ESG Score of 67 (Strong) for FY25-26 from ESG Risk Assessments & Insights",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "The ESG score slightly decreased from the 76 points reported in FY26 memory",
+    "pdf_says": "Memory t_f8ad2c03: 76 is Crisil's Core ESG rating (Crisil overall ESG score 69), a different provider and metric; the filing compares 67 only with this provider's own FY2024-25 score (down 1 point). 76 to 67 is also not a 'slight' fall",
+    "class": "memory",
+    "on_face": false
+   },
+   {
+    "field": "event_type",
+    "card_says": "DEBT_RATINGS",
+    "pdf_says": "An ESG score from an ESG rating provider; not a debt/credit rating",
+    "class": "event_type",
+    "on_face": false
+   },
+   {
+    "field": "signals[0]",
+    "card_says": "DGTR started the anti-dumping investigation on Decor Paper (China PR) on 2026-06-24; the company applied.",
+    "pdf_says": "Not in the filing (ESG score letter). Memory: the 2026-06-24 notice is the initiation of a sunset review (SSR) of duties in place since 2021/2025, not a new investigation; unrelated to this event",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_04"
+ },
+ {
+  "news_id": "nse-106738702",
+  "headline": "Man Industries reports zero deviation in fund utilisation for Q1FY27",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[1].text",
+    "card_says": "preferential issue of 7,774,383 equity shares to non-producers",
+    "pdf_says": "Preferential Issue of 7774383 Equity Shares to Non-Promoters",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_04"
+ },
+ {
+  "news_id": "nse-106747091",
+  "headline": "Supreme Infrastructure India Q1FY27: net loss ₹59.17 Cr (against a loss of ₹399.92 Cr a year earlier)",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "Exceptional items in 3 of the last 8 quarters (Q4FY25, Q2FY26, Q3FY26): treat them as a running cost.",
+    "pdf_says": "Memory XBRL: Q4FY25 -0.78 Cr, Q2FY26 +6,466.07 Cr (a one-time gain; FY26 PBT after exceptional items ₹5,79,643 lakh in the filing), Q3FY26 -0.44 Cr. The only material item was a one-off gain, not a recurring cost; the 'running cost' advice does not fit its own numbers",
+    "class": "signal_verdict",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_04"
+ },
+ {
+  "news_id": "nse-106812993",
+  "headline": "Jubilant Agri gets NCLT second motion notice order for demerger scheme, hearing set for Dec 3",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "follows shareholder and creditor approvals obtained in September 2026",
+    "pdf_says": "Memory supports shareholder approval (t_18d07ab3, 99.99%); for creditors it holds only the notice of the 5 Sep 2026 unsecured creditors' meeting (t_a87ecb16), no approval",
+    "class": "memory",
+    "on_face": false
+   }
+  ],
+  "reviewer": "reviewer_04"
+ },
+ {
+  "news_id": "nse-106763902",
+  "headline": "Orient Bell invests ₹1.07 Cr for 1 MW hybrid power, covering all plants with green energy",
+  "verdict": "WRONG",
+  "verdict_face": "WRONG",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "deal_value.stage",
+    "card_says": "CANCELLED",
+    "pdf_says": "Investment of Rs 1.07 Cr made; open access grant received; supply expected to commence w.e.f. 01.09.2026. Nothing cancelled.",
+    "class": "invented",
+    "on_face": true
+   },
+   {
+    "field": "deal_value.progress",
+    "card_says": "1.00 MW commissioned",
+    "pdf_says": "Company has received medium term open access grant for 1.00 MW; supply 'expected to commence' 01.09.2026; no commissioning stated",
+    "class": "invented",
+    "on_face": true
+   },
+   {
+    "field": "what_happened[1].text",
+    "card_says": "Supply commenced on 01.09.2026",
+    "pdf_says": "the supply of which is expected to commence w.e.f. 01.09.2026",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "what_happened[2].text",
+    "card_says": "All three manufacturing plants of the company now utilize renewable energy",
+    "pdf_says": "With the commencement of the aforesaid supply, all three plants will be utilising renewable energy",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "event_type / category_tag",
+    "card_says": "PRODUCT_LAUNCH / LAUNCH",
+    "pdf_says": "Investment (share purchase in a captive renewable power SPV with a power consumption agreement); not a product launch",
+    "class": "event_type",
+    "on_face": false
+   }
+  ],
+  "reviewer": "reviewer_05"
+ },
+ {
+  "news_id": "nse-106596060",
+  "headline": "Sunteck Realty Q4FY26: revenue ₹339.04 Cr (+64.5% YoY), net profit to shareholders ₹63.75 Cr",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[3] (Net profit to shareholders)",
+    "card_says": "₹62.83 Cr, +24.7% YoY",
+    "pdf_says": "Profit attributable to owners Q4FY26 ₹6,375.30 lakh = ₹63.75 Cr (+26.5% YoY vs ₹50.39 Cr); ₹62.83 Cr is total PAT incl. NCI",
+    "class": "other",
+    "on_face": false
+   },
+   {
+    "field": "results.pbt",
+    "card_says": "PBT 82.59 / prev year 65.76 / prev quarter 78.03, YoY +25.6%",
+    "pdf_says": "Profit before tax (after JV share) ₹8,254.30 / 6,742.72 / 7,799.98 lakh = 82.54 / 67.43 / 78.00 Cr, YoY +22.4%; 82.59/65.76/78.03 is profit before share of JV and tax",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "takeaway",
+    "card_says": "the largest move was EBITDA of ₹96.66 Cr against ₹68.68 Cr (+40.7%)",
+    "pdf_says": "Revenue moved more (+64.5% YoY)",
+    "class": "other",
+    "on_face": false
+   },
+   {
+    "field": "why_it_matters[1]",
+    "card_says": "reflecting higher project completions and execution momentum",
+    "pdf_says": "No reason for the revenue rise given in the filing",
+    "class": "invented",
+    "on_face": false
+   }
+  ],
+  "reviewer": "reviewer_05"
+ },
+ {
+  "news_id": "nse-106719298",
+  "headline": "ITC Q1FY27: revenue ₹29,523.3 Cr (+27.6% YoY), net profit to shareholders ₹4,394.13 Cr (-16.2% YoY)",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "key_numbers[3] (Net profit to shareholders)",
+    "card_says": "₹4,508.79 Cr, -15.6% YoY",
+    "pdf_says": "Owners of the parent ₹4,394.13 Cr (-16.2% YoY); ₹4,508.79 Cr is total PAT incl. NCI",
+    "class": "other",
+    "on_face": false
+   },
+   {
+    "field": "results.pbt",
+    "card_says": "PBT 5,774.94 / 7,059.25 / 7,033.05, YoY -18.2%",
+    "pdf_says": "Profit before tax ₹5,860.85 / 7,128.01 / 7,172.62 Cr (YoY -17.8%); card's figure excludes share of associates/JVs and is not a line in the statement",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "signals[RECURRING_ONE_OFFS]",
+    "card_says": "Exceptional items in 4 of last 8 quarters: treat them as a running cost",
+    "pdf_says": "Q1FY27 exceptional item is a one-off ₹405.88 Cr non-cash remeasurement GAIN on Sproutlife becoming a subsidiary (memory: Q2FY26 +88.08 also a gain); calling them a running cost misreads them",
+    "class": "signal_verdict",
+    "on_face": true
+   },
+   {
+    "field": "signals[TRADE_REMEDY]",
+    "card_says": "DGTR started the anti-dumping investigation on Decor Paper (China PR) on 2026-06-24; the company applied",
+    "pdf_says": "Not in the filing; memory shows the 2026-06-24 notice is a sunset review initiation of an existing duty (case since 2020), not a new investigation; unrelated to the results",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_05"
+ },
+ {
+  "news_id": "nse-106763029",
+  "headline": "ITC Infotech to acquire 22.1% in Happiest Minds for ₹1,330 Cr, followed by merger to list IT arm",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "MODERATE",
+  "issues": [
+   {
+    "field": "signals[TRADE_REMEDY]",
+    "card_says": "DGTR started the anti-dumping investigation on Decor Paper (China PR) on 2026-06-24; the company applied",
+    "pdf_says": "Nothing about DGTR in this M&A filing; memory shows it is a sunset review of an existing duty, not a new investigation",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "what_happened[2].text",
+    "card_says": "resulting in ITC Limited owning 73.4% and public shareholders",
+    "pdf_says": "Resultant shareholding: ITC Limited c.73.4%, Happiest Minds shareholders c.26.6% (sentence garbled, figure right)",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "impact_note": "₹1,330 Cr is 1.8% of ITC's net worth and the deal is by a subsidiary; the listing of ITC Infotech matters but does not change the view on ITC's earnings or balance sheet.",
+  "reviewer": "reviewer_05"
+ },
+ {
+  "news_id": "nse-106597426",
+  "headline": "Man Industries approves USD 70 Million corporate guarantee for Saudi subsidiary MISIC",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "what_happened[1].text",
+    "card_says": "The guarantee carries no interest for promoter or group companies",
+    "pdf_says": "Annexure A item 2: promoter/promoter group/group companies have no interest in this transaction ('No'). The filing says nothing about the guarantee being interest-free; the card's wording reads as if it were. Its quote covers only the contingent-liability sentence.",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_06"
+ },
+ {
+  "news_id": "nse-106720923",
+  "headline": "Jubilant Agri to convene shareholder meeting for Agri Division demerger on Sep 5",
+  "verdict": "OK",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [],
+  "reviewer": "reviewer_06"
+ },
+ {
+  "news_id": "nse-106721001",
+  "headline": "ITC completes acquisition of Century Pulp and Paper business on slump sale",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": false,
+  "impact_should_be": "LOW",
+  "impact_reason": "Completing a deal announced in March 2025 (about Rs 3,500 Cr against ITC's ~Rs 90,000 Cr revenue and ~Rs 72,500 Cr net worth) is a routine closing that does not change the view on ITC.",
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "DGTR started the anti-dumping investigation on Decor Paper (China PR) on 2026-06-24; the company applied.",
+    "pdf_says": "Not in the filing (a two-line completion notice). Memory's trade_remedies shows the 2026-06-24 document is an 'Initiation Notification SSR' of a Sunset Review in a case running since 2020, not a new investigation start; the signal is unrelated to this acquisition.",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_06"
+ },
+ {
+  "news_id": "nse-106736633",
+  "headline": "Orient Bell Q1FY27 revenue rises 42.6% YoY to ₹203.82 Cr; EBITDA jumps to ₹17.6 Cr",
+  "verdict": "MINOR",
+  "verdict_face": "OK",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "why_it_matters[0]",
+    "card_says": "Revenue growth of 42.6% YoY exceeds the previous tracking requirement of >= 200 Cr",
+    "pdf_says": "No '>= 200 Cr' requirement appears in the filing; memory's watchlist item 'Revenue growth' (Q2FY27 results) has target null. It also compares a growth percentage with a rupee threshold.",
+    "class": "invented",
+    "on_face": false
+   }
+  ],
+  "reviewer": "reviewer_06"
+ },
+ {
+  "news_id": "nse-106737138",
+  "headline": "Jubilant Agri Q1 revenue rose 18% YoY to ₹523.2 Cr; board sanctions ₹50 Cr brownfield SBR latex expansion",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "headline / what_happened[1] / core_catalyst",
+    "card_says": "₹50 Cr brownfield capex to add 30,000 MTPA of SBR latex capacity, slated for completion by end of Q3FY27",
+    "pdf_says": "Slide 5: ₹50 Cr brownfield capex sanctioned; 30,000 MTPA proposed capacity addition in two phases - Phase-1 Adhesives (commercial production started Q1 FY27), Phase-2 SBR Latex (to be completed by end of Q3-FY27); 'full run-rate adds 30,000 MTPA of combined capacity'. The 30,000 MTPA and ₹50 Cr are not all SBR latex, and part is already commissioned.",
+    "class": "other",
+    "on_face": true
+   },
+   {
+    "field": "headline / what_happened[1]",
+    "card_says": "board sanctions / the board sanctioned ₹50 Cr capex (presented as announced now)",
+    "pdf_says": "Slide says only 'Brownfield capex sanctioned'; no board approval or date is stated in this presentation, and Phase-1 is already in production.",
+    "class": "invented",
+    "on_face": true
+   },
+   {
+    "field": "track_next.kpis_to_verify[0]",
+    "card_says": "metric: revenue, period Q3FY27, target 'Completed by end of Q3-FY27'",
+    "pdf_says": "A completion milestone, not a revenue target; the metric/target pair does not make sense as a check.",
+    "class": "signal_verdict",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_07"
+ },
+ {
+  "news_id": "nse-106749844",
+  "headline": "Jubilant Agri receives GST show cause notice for ₹5.09 Cr covering FY21-FY24",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "case_stage",
+    "card_says": "at: 0 (Notice) but reached: [0, 1] (Notice and Order)",
+    "pdf_says": "Only a show cause notice (DRC-01) has been received; no order has been passed. 'at' is right, but 'reached' including the Order step is wrong if it is rendered as reached.",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_07"
+ },
+ {
+  "news_id": "nse-106764408",
+  "headline": "ITC completes amalgamation of step-down units Blazeclan and Cloudlytics into ITC Infotech",
+  "verdict": "MINOR",
+  "verdict_face": "MINOR",
+  "impact_ok": true,
+  "impact_should_be": null,
+  "issues": [
+   {
+    "field": "signals[0]",
+    "card_says": "DGTR started the anti-dumping investigation on Decor Paper (China PR) on 2026-06-24; the company applied.",
+    "pdf_says": "Not in the filing and unrelated to this amalgamation event. Memory (trade_remedies) shows the 2026-06-24 notice is a Sunset Review initiation of an existing anti-dumping duty (original investigation initiated 2020-09-30, final findings 2021 and 2025), not the start of the investigation.",
+    "class": "other",
+    "on_face": true
+   }
+  ],
+  "reviewer": "reviewer_07"
+ }
+]

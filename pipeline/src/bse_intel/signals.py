@@ -70,7 +70,7 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     signals += _scale(before, output, company, filing.filed_at)
     signals += _order_flow(before, output, filing)
     signals += _pledges(after, filing)
-    signals += _trade_remedies(after, filing)
+    signals += _trade_remedies(after, filing, output.event_type)
     strain = _working_capital(after, filing)
     signals += strain
     signals += _metric_shifts(after, filing, skip={"trade_receivables", "receivables", "debtors", "inventories", "inventory"} if strain else set())
@@ -498,12 +498,20 @@ def _pledges(after: dict | None, filing: Filing) -> list[Signal]:
     return [Signal("PLEDGE", severity, text) for severity, text in pledge_signals(after, filing.filed_at)]
 
 
-def _trade_remedies(after: dict | None, filing: Filing) -> list[Signal]:
-    """Module 8: a DGTR step (initiation, finding, duty notified, termination) in the last six months on a case the
-    company applied for or supported (dgtr.py), from memory as of the filing."""
+# A DGTR step is news about the company's business, not about whatever it filed next: it sat on ITC's AGM speech, an
+# acquisition's closing and an amalgamation in the same week (live review 3). It goes on the cards where a holder
+# weighs the business - results, the call, the annual report - since the last results (120 days).
+_TRADE_REMEDY_EVENTS = {"RESULTS", "CONCALL_PRESENTATION", "ANNUAL_REPORT"}
+
+
+def _trade_remedies(after: dict | None, filing: Filing, event_type: str | None = None) -> list[Signal]:
+    """Module 8: a DGTR step (initiation, finding, duty notified, termination) since the last results on a case the
+    company applied for or supported (dgtr.py), from memory as of the filing, on results-family cards."""
     from .dgtr import signals as dgtr_signals
 
-    return [Signal("TRADE_REMEDY", severity, text) for severity, text in dgtr_signals(after, filing.filed_at)]
+    if event_type not in _TRADE_REMEDY_EVENTS:
+        return []
+    return [Signal("TRADE_REMEDY", severity, text) for severity, text in dgtr_signals(after, filing.filed_at, days=120)]
 
 
 def _order_flow(before: dict | None, output: Pass2Output, filing: Filing) -> list[Signal]:

@@ -13,7 +13,7 @@ from test_pipeline import PASS2, RESULT_TEXT, _filing, _pdf, build, rows
 
 from bse_intel import pipeline as pipeline_module
 from bse_intel.bse import AttachmentError
-from bse_intel.timeutil import now_ist
+from bse_intel.timeutil import now_ist, today_ist
 
 
 def _results(n, when, scrip_base=999100):
@@ -619,7 +619,8 @@ def test_the_window_catch_up_waits_for_the_write_budget(settings):
 
 def test_near_the_free_write_cap_a_live_run_only_makes_cards(settings, monkeypatch):
     """20 Oct 2026: 91,080 of D1's free 100,000 daily writes by 20:30 IST. Past 95% the catch-ups and memory syncs
-    wait for the reset; today's filings are still discovered and analysed."""
+    wait for the reset, and so do
+    the window's earlier days; today's filings are still discovered and analysed."""
     from bse_intel import event_catchup
     from bse_intel.ai.gateway import AIGateway
     from bse_intel.pipeline import Pipeline
@@ -634,6 +635,8 @@ def test_near_the_free_write_cap_a_live_run_only_makes_cards(settings, monkeypat
     monkeypatch.setattr(pipeline, "_on_nse", lambda: True)
     monkeypatch.setattr(event_catchup, "catch_up", lambda *a: calls.append("catch-up") or {"rerun": 0, "stopped": False})
     pipeline._discover_safely = lambda day, full: calls.append("discover") or 0
-    pipeline.process = lambda *a, **k: calls.append("process") or []
+    pipeline.process = lambda day_from, day_to, *a, **k: calls.append(("process", day_from, day_to)) or []
     pipeline.run(mode="live", time_budget_s=30)
-    assert "discover" in calls and "process" in calls and "catch-up" not in calls
+    today = today_ist().isoformat()
+    assert "discover" in calls and "catch-up" not in calls
+    assert [c for c in calls if c[0] == "process"] == [("process", today, today)]   # the window's earlier days wait

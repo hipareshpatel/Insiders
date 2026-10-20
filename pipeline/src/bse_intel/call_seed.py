@@ -24,6 +24,8 @@ from .timeutil import now_iso, today_ist
 log = logging.getLogger(__name__)
 
 STATE_KEY = "seed_calls:state"
+SPEND_KEY = "seed_calls:deepseek_tokens"   # DeepSeek tokens (in + out) the seed has used, over every night
+DEEPSEEK = "deepseek:deepseek-flash"
 WINDOW_DAYS = 200     # the last quarter's calls (filed July-August for June) and the current quarter's
 PER_COMPANY = 2       # one document per quarter: the transcript, else the presentation
 SEED_ROUTE = "memory_seed"
@@ -52,12 +54,21 @@ def _seeded(dossier: dict | None, news_id: str) -> bool:
     return any(t.get("news_id") == news_id for t in (dossier or {}).get("timeline", []))
 
 
-def use_seed_route(gateway) -> None:
-    """The card routes for this process only: the seed route's models, Gemini nowhere (pass 1 included)."""
+def deepseek_budget() -> int:
+    """The DeepSeek tokens the seed may use in all (owner, 2026-10-20: a $20 prepaid balance); 0 = DeepSeek off."""
+    import os
+
+    return int(os.environ.get("SEED_DEEPSEEK_MAX_TOKENS", "40000000"))
+
+
+def use_seed_route(gateway, deepseek_ok: bool = True) -> None:
+    """The card routes for this process only: the seed route's models, Gemini nowhere (pass 1 included); DeepSeek out
+    once its token budget is spent."""
     if SEED_ROUTE not in gateway.routes:
         raise RuntimeError(f"providers.toml has no [[routes.{SEED_ROUTE}]]")
+    seed = [t for t in gateway.routes[SEED_ROUTE] if deepseek_ok or t.provider != "deepseek"]
     for route in CARD_ROUTES:
-        gateway.routes[route] = list(gateway.routes[SEED_ROUTE])
+        gateway.routes[route] = list(seed)
     for route in ("pass1", "pass1_bulk"):
         if route in gateway.routes:
             gateway.routes[route] = [t for t in gateway.routes[route] if t.provider != "gemini"]
@@ -123,7 +134,8 @@ def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | Non
     state = {} if restart else json.loads(sink.kv_get(STATE_KEY) or "{}")
     if state.get("done") and not scrips:
         return {"done": True, "companies": 0, "seeded": 0}
-    use_seed_route(pipeline.gateway)
+    spent = int(sink.kv_get(SPEND_KEY) or 0)
+    use_seed_route(pipeline.gateway, deepseek_ok=spent < deepseek_budget())
     finished = set(state.get("finished", [])) if not scrips else set()
     order = [c for c in companies(pipeline) if (not scrips or c["scrip_code"] in scrips) and c["scrip_code"] not in finished]
     start, end = today_ist() - timedelta(days=WINDOW_DAYS), today_ist()
@@ -149,6 +161,13 @@ def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | Non
 
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
         list(pool.map(one, order))
+    usage = getattr(pipeline.gateway, "usage", {}).get(DEEPSEEK)
+    used = (usage.input_tokens + usage.output_tokens) if usage else 0
+    if used:
+        sink.kv_set(SPEND_KEY, str(spent + used), now_iso())
+    report["deepseek_tokens"] = {"this_run": used, "all": spent + used, "budget": deepseek_budget()}
+    if hasattr(pipeline, "_flush_usage"):
+        pipeline._flush_usage()   # the System page shows the seed's requests and tokens by model
     if not scrips and not report["stopped"]:
         sink.kv_set(STATE_KEY, json.dumps({"finished": sorted(finished), "done": True}), now_iso())
         report["done"] = True

@@ -420,12 +420,13 @@ def test_a_fast_track_repeat_is_dropped_before_pass_2(settings):
     in - word overlap against the timeline caught 4 of 128, and the best same-domain variant caught 27
     while wrongly dropping 13 real cards - so one small call asks, and code confirms the answer."""
     now = now_ist() - timedelta(minutes=10)
+    earlier = (now - timedelta(days=3)).date().isoformat()   # relative: a fixed date fell out of the window (2026-10-20)
     f = _filing("n-deck", "Investor presentation for the quarter ended September 30, 2026", now, "Company Update")
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
-                                 {"ministral-8b-2512": [json.dumps({"duplicate_of": "2026-10-10", "why": "deck for those results"})]},
+                                 {"ministral-8b-2512": [json.dumps({"duplicate_of": earlier, "why": "deck for those results"})]},
                                  env={"MISTRAL_API_KEY": "m"})
     dossier = new_dossier(f)
-    dossier["timeline"] = [{"id": "t1", "news_id": "n-results", "date": "2026-10-10T18:00:00+05:30",
+    dossier["timeline"] = [{"id": "t1", "news_id": "n-results", "date": f"{earlier}T18:00:00+05:30",
                             "event_type": "RESULTS", "summary": "Q2FY27 results: revenue up 22.6%", "tier": "TIMELINE"}]
     sink.put_dossier(f.scrip_code, dossier)
 

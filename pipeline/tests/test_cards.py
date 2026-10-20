@@ -1256,3 +1256,10 @@ def test_a_sentence_with_a_figure_taken_out_goes_back_for_a_rewrite():
     for fine in ("**Core ESG rating:** **76** for FY2025-26", "AGM to vote on ₹2,529 Cr of RPTs, 67% of turnover",
                  "capacity that starts only in Q4FY27", "resolutions deemed passed subject to votes"):
         assert not _BLANK.search(fine), fine
+
+
+def test_a_share_under_one_percent_keeps_a_decimal():
+    """GRP's ₹2.6 Cr solar plant read "0% of FY26 revenue, 0% of market cap" for 0.48% and 0.27% (live review 5)."""
+    from bse_intel.signals import _share
+
+    assert (_share(0.48), _share(0.27), _share(6.2), _share(41.0)) == ("0.5%", "0.3%", "6%", "41%")

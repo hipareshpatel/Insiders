@@ -628,6 +628,19 @@ _BOARD_APPROVED = re.compile(r"\bboard\b.{0,160}\b(?:approv\w*|accorded|consente
                              r"|\b(?:approv\w*|sanction\w*)\b.{0,80}\bboard\b", re.I | re.S)
 
 
+# A deal the filing says closes later: "the Scheme shall become effective and operative from November 01, 2026" (Dr.
+# Agarwal's merger, filed 20 Oct, shown COMPLETED; live review 5). Measured on the 197 live COMPLETED deals of
+# 14-20 Oct 2026: 3 match with no word of completion, all three not yet done (that merger, TVS Motor's NCLT-sanctioned
+# merger "effective upon filing", ICICI Prudential Life's name change effective 23 Oct).
+_CLOSES_LATER = re.compile(r"\b(?:shall|will)\s+(?:become|be)\s+(?:effective|operative|completed|consummated)\b|"
+                           r"\b(?:is|are)\s+expected\s+to\s+(?:be\s+)?(?:complet|clos|consummat)\w*|"
+                           r"\b(?:expected|likely|proposed)\s+(?:date\s+of\s+)?(?:completion|closing)\b", re.I)
+_DONE = re.compile(r"\b(?:has|have)\s+(?:been\s+)?(?:completed|consummated|closed|become\s+effective)\b|"
+                   r"\b(?:stands?|was|were|is)\s+(?:duly\s+)?(?:completed|consummated)\b|\bbecame\s+effective\b|"
+                   r"\bcompletion\s+of\s+(?:the\s+)?(?:acquisition|transaction|sale|divestment|merger|amalgamation|allotment)\b|"
+                   r"\b(?:allotted|acquired|commissioned)\b", re.I)
+
+
 def supported_stage(stage: str | None, text: str) -> str | None:
     """The deal stage the filing's text supports: a shareholders' approval needs the vote's result, not its notice
     (Jubilant Agri's result "will be duly announced", JUBLCPL's meetings were weeks away); a board approval needs the
@@ -635,6 +648,8 @@ def supported_stage(stage: str | None, text: str) -> str | None:
     no text, the stage stands."""
     if not stage or not text:
         return stage
+    if stage == "COMPLETED" and _CLOSES_LATER.search(text) and not _DONE.search(text):
+        stage = "IN_PROGRESS"
     if stage == "SHAREHOLDER_APPROVED" and (not _HOLDERS_APPROVED.search(text) or _VOTE_TO_COME.search(text)):
         stage = "BOARD_APPROVED"
     if stage == "BOARD_APPROVED" and not _BOARD_APPROVED.search(text):

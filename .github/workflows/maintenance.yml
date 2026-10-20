@@ -44,7 +44,7 @@ concurrency:
 jobs:
   run:
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
-    timeout-minutes: 50
+    timeout-minutes: 330   # seed-memory's long step; every other command takes minutes
     defaults:
       run:
         working-directory: pipeline
@@ -74,8 +74,9 @@ jobs:
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel requeue-failed ${IDS:+--ids "$IDS"} ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
       - name: Seed memory from NSE's results XBRL
         if: inputs.command == 'seed-memory'
-        # stopped a little before the job's limit; the next dispatch resumes after the last company finished
-        run: timeout 45m "$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-memory --universe --results-only ${{ inputs.restart && '--restart' || '' }} || [ $? -eq 124 ]
+        # stopped a little before the job's limit; the next dispatch resumes after the last company finished. 20 Oct
+        # 2026: 63 companies in 45 min (~7.5 s an XBRL file), so the universe's 608 need about 7 h: 5 h a dispatch
+        run: timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-memory --universe --results-only ${{ inputs.restart && '--restart' || '' }} || [ $? -eq 124 ]
       - name: Export held cards
         if: inputs.command == 'export-held'
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel export-held --out "../docs/audit/live/held-$(date -u +%F).json"'

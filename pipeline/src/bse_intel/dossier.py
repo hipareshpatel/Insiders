@@ -954,8 +954,85 @@ def _guidance_status_at(g: dict, cutoff: str) -> str:
     return history[-1]["status"] if history else "OPEN"
 
 
-def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> dict | None:
-    """Compact memory for the prompt, containing only facts known before ``cutoff``."""
+SAME_EVENT_DAYS = 10   # a memory item this close before a filing that shares its amount may be the same event
+SAME_EVENT_NOTE = ("items with same_event: probably this same event, disclosed days earlier in another document; "
+                   "never present one as history, a repeat or part of an earlier order book")
+_TIMELINE_CRORE = re.compile(r"(?:₹|rs\.?|inr)\s*(\d[\d,]*(?:\.\d+)?)\s*(?:cr\b|crores?\b)", re.I)
+
+
+def _significant(value: float) -> int:
+    return len(f"{abs(value):.2f}".rstrip("0").rstrip(".").replace(".", "").lstrip("0"))
+
+
+def _amount_in(index, value: float | None, min_digits: int) -> bool:
+    """A crore amount the filing text states at its own precision (in crore, lakh, million or rupees)."""
+    if not value or value <= 0 or _significant(value) < min_digits:
+        return False
+    return index.stated_crore(value, len(f"{value:.2f}".rstrip("0").partition(".")[2]))
+
+
+def _party_in(words: set[str], counterparty: str | None) -> bool:
+    key = [w for w in _party(counterparty) if len(w) >= 3]
+    return bool(key) and all(w in words for w in key)
+
+
+def mark_same_event(view: dict | None, filing_text: str | None, cutoff: str, days: int = SAME_EVENT_DAYS) -> int:
+    """Mark the deals and timeline items from the few days before this filing that are probably its own event, told
+    earlier in another document (the exchange intimation before the press release, an LoI before the order): a deal
+    whose counterparty and amount this filing states (the amount alone, to four figures, when memory names no
+    counterparty), or a timeline line whose crore amount it states. Aarti's sibling filing was called "the existing
+    order book" and BEL's order a repeat (live reviews, 2026-10-20); the prompt said so in words, and this puts the
+    mark on the item itself. Returns how many items were marked."""
+    from .grounding import SourceIndex
+    start = _day(cutoff)
+    if not view or not filing_text or start is None:
+        return 0
+
+    def recent(day: str | None) -> bool:
+        d = _day(day)
+        return d is not None and 0 <= (start - d).days <= days
+
+    index = SourceIndex(filing_text)
+    words = set(re.findall(r"[a-z0-9]+", filing_text.lower()))
+    marked = 0
+    for deal in view.get("deals", []):
+        party = deal.get("counterparty")
+        if recent(deal.get("date")) and ((_party_in(words, party) and _amount_in(index, deal.get("amount_cr"), 2))
+                                         or (not _party(party) and _amount_in(index, deal.get("amount_cr"), 4))):
+            deal["same_event"] = True
+            marked += 1
+    for item in view.get("recent_timeline", []):
+        amounts = [float(m.group(1).replace(",", "")) for m in _TIMELINE_CRORE.finditer(item.get("summary") or "")]
+        if recent(item.get("date")) and any(_amount_in(index, a, 3) for a in amounts):
+            item["same_event"] = True
+            marked += 1
+    if marked:
+        view["notes"] = list(view.get("notes") or []) + [SAME_EVENT_NOTE]
+    return marked
+
+
+def _restated(entry: dict) -> str:
+    """' restated <date>, first reported <value>' when a later filing of the same basis changed memory's figure."""
+    sources = [s for s in entry.get("sources") or [] if s.get("basis") in (None, entry.get("_basis"))]
+    if len(sources) < 2 or sources[0].get("value") is None or entry.get("value") is None:
+        return ""
+    first, value = sources[0]["value"], entry["value"]
+    if abs(first - value) <= max(0.01, abs(value) * 0.005):
+        return ""
+    return f" restated {str(entry.get('updated_as_of') or '')[:10]}, first reported {first:g}"
+
+
+def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000, printed: set[str] | None = None,
+               filing_text: str | None = None) -> dict | None:
+    """Compact memory for the prompt, containing only facts known before ``cutoff``.
+
+    Each figure carries its basis (once for a metric whose figures share one, else on its line) and, when a later
+    filing of that basis changed it, the value first reported. A metric with consolidated figures shows none of its
+    standalone-only ones: Heritage's standalone PAT beside five consolidated quarters gave a card the wrong YoY.
+    With ``printed`` (the periods this filing prints, ``periods.printed_periods``) memory's figures for those periods
+    are withheld and a note says so: the filing's own column wins, restated or not (Kanoria, Star Health, Man
+    Industries). With ``filing_text``, deals and timeline items that are probably this same event are marked
+    (``mark_same_event``). Without either it is the view code reads memory's figures from (results_card)."""
 
     if not dossier:
         return None
@@ -965,7 +1042,15 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
     for m in dossier.get("financial_metrics", []):
         known = [s for s in _sources(m) if s["as_of"] < cutoff]
         if known:
-            as_known.append(_metric_entry(m["metric"], m["period"], known))
+            entry = _metric_entry(m["metric"], m["period"], known)
+            bases = {s.get("basis") for s in known} - {None}
+            entry["_basis"] = "CONSOLIDATED" if "CONSOLIDATED" in bases else next(iter(bases), None)
+            as_known.append(entry)
+    consolidated = {e["metric"] for e in as_known if e["_basis"] == "CONSOLIDATED"}
+    as_known = [e for e in as_known if not (e["metric"] in consolidated and e["_basis"] == "STANDALONE")]
+    printed = printed or set()
+    withheld = sorted({e["period"] for e in as_known if e["period"] in printed}, key=lambda p: (str(due_date(p) or ""), p))
+    as_known = [e for e in as_known if e["period"] not in printed]
     # A figure that breaks the cumulative identity never reaches the model: a wrong comparative is worse
     # than no comparative, because the card states it as fact (audit round 1).
     broken = unreconciled(as_known)
@@ -988,9 +1073,13 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
                 items.sort(key=lambda e: (str(due_date(e["period"]) or ""), e["period"]))
                 entries += items[-(periods if kind in ("Q", "M") else max(1, periods // 2)):]
             entries.sort(key=lambda e: (str(due_date(e["period"]) or ""), e["period"]))
-            out[name] = [
+            bases = {e["_basis"] for e in entries}
+            shared = next(iter(bases)) if len(bases) == 1 else None
+            out[name] = ([f"basis: {shared.lower()}"] if shared else []) + [
                 f"{e['period']}: {e['value']:g} {e['unit']}"
                 + (f" (YoY {e['yoy_pct']:+g}%)" if e.get("yoy_pct") is not None else "")
+                + (f" {e['_basis'].lower()}" if e["_basis"] and not shared else "")
+                + _restated(e)
                 for e in entries
             ]
         return out
@@ -1046,10 +1135,19 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
     summary = dossier.get("business_summary")
 
     for periods, timeline_n, guidance_n in ((6, 12, 20), (4, 8, 12), (2, 5, 8), (1, 3, 5)):
+        lines = metric_lines(periods)
+        # one basis for every metric: said once, not on each (the budget stays the same)
+        heads = {v[0] if v and v[0].startswith("basis: ") else None for v in lines.values()}
+        metrics_basis = heads.pop()[len("basis: "):] if len(heads) == 1 and None not in heads else None
+        if metrics_basis:
+            lines = {k: v[1:] for k, v in lines.items()}
         view: dict[str, Any] = {
             "company": dossier.get("company_name"),
+            "metrics_basis": metrics_basis,
+            "notes": [f"this filing prints {', '.join(withheld)}: memory's figures for these periods are withheld, "
+                      "use the filing's own columns"] if withheld else None,
             "business_summary": summary["text"] if summary and before(summary) else None,
-            "metrics": metric_lines(periods),
+            "metrics": lines,
             "balance_sheet": {k: v for k, v in balance[-1].items() if k != "source_news_id"} if balance else None,
             "guidance": [g for g in guidance if g["status"] in ("OPEN", "ON_TRACK", "DELAYED", "REVISED")][-guidance_n:],
             "watchlist": watch[-guidance_n:],
@@ -1068,6 +1166,11 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000) -> d
         view = {k: v for k, v in view.items() if v}
         if len(json.dumps(view, ensure_ascii=False)) <= budget_chars:
             break
+    if filing_text:
+        marked = mark_same_event(view, filing_text, cutoff)
+        if marked or withheld:
+            log.info("memory: %d periods withheld (the filing prints them), %d items marked as the same event",
+                     len(withheld), marked)
     return view if len(view) > 1 else None
 
 

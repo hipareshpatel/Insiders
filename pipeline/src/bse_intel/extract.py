@@ -324,7 +324,8 @@ class Document:
             return "PRESENTATION"
         return "OTHER"
 
-    def select_text(self, budget_chars: int, keywords: Iterable[str] = (), figures: bool = True) -> str:
+    def select_text(self, budget_chars: int, keywords: Iterable[str] = (), figures: bool = True,
+                    headers: bool = False) -> str:
         """Pick the most relevant pages within a character budget, kept in page order.
 
         The first two pages are always included (cover letter + headline numbers). The rest are
@@ -334,6 +335,9 @@ class Document:
         statements, segment, related-party and contingent-liability notes of an annual report.
         Disclaimers, CSR, macro and agenda pages go last. Scanned pages cannot be ranked before OCR,
         so they are taken in order once ranked pages run out.
+
+        With ``headers`` each page's marker also names the page's heading and its own unit (``page_header``), for the
+        model: one note on the whole filing's unit cannot say which page is in lakh and which in rupees.
         """
         if not self.page_count:
             return ""
@@ -353,20 +357,79 @@ class Document:
                     hits = -0.5  # after every ranked page, before scanned ones
             scored.append((hits, i))
         scored.sort(key=lambda item: (-item[0], item[1]))
-        used = sum(len(strip_boilerplate(_clean(self._digital[i]))) for i in chosen)
+        mark = HEADER_CHARS if headers else 0   # room for each page's heading and unit in its marker
+        used = sum(len(strip_boilerplate(_clean(self._digital[i]))) + mark for i in chosen)
         for _, i in scored:
-            size = len(strip_boilerplate(_clean(self._digital[i]))) if not self.is_scanned(i) else 3000
+            size = (len(strip_boilerplate(_clean(self._digital[i]))) if not self.is_scanned(i) else 3000) + mark
             if used + size > budget_chars:
                 continue
             chosen.append(i)
             used += size
         self.selected = sorted(chosen)
+        pages = [(i, strip_boilerplate(_clean(self.page_text(i, figures)))) for i in sorted(chosen)]
+        pages = [(i, text) for i, text in pages if text]
+        repeated = _running_lines([text for _, text in pages]) if headers else set()
         parts = []
-        for i in sorted(chosen):
-            text = strip_boilerplate(_clean(self.page_text(i, figures)))
-            if text:
-                parts.append(f"--- Page {i + 1} of {self.page_count} ---\n{text}")
+        for i, text in pages:
+            extra = page_header(text, repeated) if headers else ""
+            parts.append(f"--- Page {i + 1} of {self.page_count}{extra} ---\n{text}")
         return "\n\n".join(parts)[:budget_chars]
+
+
+HEADING_LINES = 8      # a page's heading is among its first lines
+HEADING_CHARS = 80
+HEADER_CHARS = 130     # what a page marker's heading and unit can add
+_PAGE_MARK = re.compile(r"^\W*(?:page\s*)?\d+(?:\s*(?:of|/)\s*\d+)?\W*$", re.I)
+_SEGMENT_HEADING = re.compile(r"\bsegment|\bdivision\b|\bbusiness\s+units?\b|\bverticals?\b", re.I)
+# a rupee amount written in full with Indian grouping, a crore or more: "INR 99,09,87,896" (LIC's GST demand)
+_FULL_RUPEES = re.compile(r"(?<![\d,.])\d{1,2}(?:,\d\d){2,},\d{3}(?![\d,])")
+_PAGE_UNIT_NAMES = {1: "₹ crore", 100: "₹ lakh", 10: "₹ million", 10_000: "₹ thousand", 0.01: "₹ billion"}
+
+
+def _heading_candidates(text: str) -> list[str]:
+    lines = [ln.strip(" \t:-–|") for ln in text.splitlines()]
+    return [ln for ln in lines if ln][:HEADING_LINES]
+
+
+def _running_lines(pages: list[str]) -> set[str]:
+    """Lines at the top of most pages (the letterhead, the company's name on every slide): no page's heading."""
+    if len(pages) < 3:
+        return set()
+    counts: dict[str, int] = {}
+    for text in pages:
+        for line in set(_heading_candidates(text)):
+            counts[line.lower()] = counts.get(line.lower(), 0) + 1
+    return {line for line, n in counts.items() if n * 2 >= len(pages)}
+
+
+def page_header(text: str, repeated: set[str] = frozenset()) -> str:
+    """What a page's marker says about it: ' · "Segment information" · scope: segment · amounts in ₹ lakh'.
+
+    The heading is the first short line of words near the top that is not a running line or a page number. The unit
+    is the one the page itself declares ("(₹ in lakh)"); a page that declares several says so, and a page that
+    declares none but writes rupees in full ("99,09,87,896") is marked as whole rupees. LIC's GST demand of INR
+    99,09,87,896 became ₹9.91 Cr where it is ₹99.10 Cr, and Cyient's segment target was read as the company's: the
+    page's own heading and unit sat far above the figure (live reviews, 2026-10-20)."""
+    from .grounding import _DECLARED_UNIT, _PER_CRORE   # the statements' unit headers, read as the checks read them
+    parts = []
+    for line in _heading_candidates(text):
+        letters = sum(ch.isalpha() for ch in line)
+        digits = sum(ch.isdigit() for ch in line)
+        if (letters >= 4 and len(line) <= HEADING_CHARS and digits <= 0.3 * len(line) and line.lower() not in repeated
+                and not _PAGE_MARK.match(line) and not _DECLARED_UNIT.fullmatch(line.strip("()[] "))):
+            parts.append(f'"{line}"')
+            if _SEGMENT_HEADING.search(line):
+                parts.append("scope: segment")
+            break
+    units = {_PER_CRORE.get(next(g for g in m.groups() if g).lower().rstrip("s")) for m in _DECLARED_UNIT.finditer(text)}
+    units.discard(None)
+    if len(units) == 1:
+        parts.append(f"amounts in {_PAGE_UNIT_NAMES.get(units.pop(), 'the unit its header names')}")
+    elif units:
+        parts.append("units vary on this page: read each table's own header")
+    elif _FULL_RUPEES.search(text):
+        parts.append("amounts in whole rupees (Indian digit grouping), not lakh or crore")
+    return "".join(f" · {p}" for p in parts)
 
 
 def _rx(*words: str) -> re.Pattern:

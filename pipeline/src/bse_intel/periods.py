@@ -104,6 +104,39 @@ def statement_year(text: str | None) -> str | None:
     return None
 
 
+_HALF_YEAR = re.compile(r"\b(?:half[- ]?year|six\s+months)\s+ended", re.I)
+_NINE_MONTHS = re.compile(r"\bnine\s+months\s+ended", re.I)
+
+
+def printed_periods(text: str | None, filed_on: str | None = None) -> set[str]:
+    """The periods a results statement prints a column for, by the layout SEBI prescribes: the quarter, the quarter
+    before it and the year-ago quarter; the half or nine months and the year-ago half or nine months; the year and
+    the year before at Q4; and every "year ended 31 March" column (Q1-Q3 statements print the previous year).
+    "quarter ended 30 September 2026" -> {Q2FY27, Q1FY27, Q2FY26, H1FY27, H1FY26 (when it says six months), FY26
+    (when it prints the year ended 31 March 2026)}. Memory's figure for such a period may predate a restatement:
+    Kanoria's and Star Health's year-ago columns were restated, and the cards set memory's old figure against the
+    filing's (live reviews, 2026-10-20)."""
+    head = (text or "")[:30000]
+    out: set[str] = set()
+    q = statement_quarter(head, filed_on)
+    if q:
+        i = quarter_index(q)
+        fy, n = q[2:], int(q[1])
+        prev = f"FY{(int(fy[2:]) - 1) % 100:02d}"
+        out |= {q, quarter_from_index(i - 1), quarter_from_index(i - 4)}
+        if n == 2 and _HALF_YEAR.search(head):
+            out |= {"H1" + fy, "H1" + prev}
+        if n == 3 and _NINE_MONTHS.search(head):
+            out |= {"9M" + fy, "9M" + prev}
+        if n == 4:
+            out |= {fy, prev}
+    for m in _STATEMENT_YEAR.finditer(head):
+        d = explicit_date(m.group(1))
+        if d and d.month == 3 and not (filed_on and d.isoformat() > filed_on[:10]):
+            out.add(f"FY{d.year % 100:02d}")
+    return out
+
+
 def quarter_index(period: str) -> int | None:
     """Q1FY26 -> 26 * 4 + 1, so quarters can be shifted by arithmetic."""
     m = re.fullmatch(r"Q([1-4])FY(\d{2})", period)

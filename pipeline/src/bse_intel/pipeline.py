@@ -46,7 +46,7 @@ from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
 from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
-                      quarter_index, statement_quarter, statement_year)
+                      printed_periods, quarter_index, statement_quarter, statement_year)
 from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
@@ -2726,10 +2726,11 @@ class Pipeline:
                     return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": event_type,
                                     "reason": f"duplicate of {repeat.get('news_id')} (same event, another "
                                               f"document; checked before pass 2)"[:300], "updated_at": now})
-        view = view_as_of(dossier, filing.filed_at)
         # A transcript or an annual report runs to 100-400 pages: the auditor's report and the notes need room
         budget = self.settings.pass2_char_budget * (3 if event_type in ("CONCALL_PRESENTATION", "ANNUAL_REPORT") else 1)
-        text = doc.select_text(budget, self.prompts.keywords(event_type))
+        # each page headed with its heading and its own unit (``headers``): LIC's GST notice mixed rupees and lakh, and a
+        # Cyient segment slide's target was read as the company's (live reviews, 2026-10-20)
+        text = doc.select_text(budget, self.prompts.keywords(event_type), headers=True)
         # The same pages read block by block, where a cell or a column stays whole: a quote of a two-column
         # page is the filing's own words if either reading has it (gate.quote_found).
         blocks = doc.block_text(doc.selected)
@@ -2806,6 +2807,15 @@ class Pipeline:
         # The event's own structured filing: amounts, parties, dates and stage as exact fields (PLAN 18 part 3)
         if events_table:
             text = events_table + "\n\n" + text
+        # Memory as the model sees it: the periods this filing prints withheld (its own columns win, restated or not)
+        # and the items that are probably this same event marked. Code reads memory's figures from `full_view`.
+        printed = set()
+        if event_type in ("RESULTS", "ANNUAL_REPORT") or (
+                event_type == "CONCALL_PRESENTATION" and not is_transcript(filing)):   # a call prints no columns
+            printed = printed_periods(filed_text, filing.filed_at) | {
+                canonical_period(m.period) for m in (tagged.metrics if tagged else []) if m.period}
+        full_view = view_as_of(dossier, filing.filed_at)
+        view = view_as_of(dossier, filing.filed_at, printed=printed, filing_text=text)
         sector_module = self.prompts.sector_for(industry)
         sector = sector_module.name
         peers = self._peers(sector, event_type, filing)
@@ -2861,7 +2871,7 @@ class Pipeline:
             """
             # a results card with its XBRL file: code writes the figures, the model's words are cut to a line or two
             built = (results_card.build(candidate, tagged, filing.company_name,
-                                        results_card.history_from_view(view), filed_text)
+                                        results_card.history_from_view(full_view), filed_text)
                      if tagged and "RESULTS" in (event_type, candidate.event_type) else [])
             units = fix_unit_slips(candidate, sources)
             foreign_fixes = fix_foreign_crore(candidate, filed_text)

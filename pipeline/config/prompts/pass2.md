@@ -40,6 +40,12 @@ Ground rules
   regulator) only as the filing names them, and copy names and categories exactly ("Non-Promoters", not a
   near-spelling an OCR line suggests).
 - COMPANY MEMORY describes the company *before* this filing. Do not treat it as new information.
+  Read its "notes" first. "metrics_basis" (or a metric's "basis:" line) is the basis of its figures;
+  compare only figures of one basis. "restated ..., first reported X" means a later filing changed the
+  figure. An item marked "same_event" is probably this filing's own event, told days earlier in another
+  document.
+- Each "--- Page" marker names the page's heading and its own unit ("amounts in ₹ lakh", "whole rupees",
+  "scope: segment"): read every figure on that page in that unit and scope.
 - COMPANY MEMORY's governance is the company's own latest quarterly governance report: board size and
   independent directors, what it reported as not in terms of SEBI's rules, fines, money lent or
   guaranteed to promoters or directors, and who joined or left the board. Use it when this filing

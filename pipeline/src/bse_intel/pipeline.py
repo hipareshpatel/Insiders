@@ -3126,16 +3126,20 @@ class Pipeline:
                 self._requeue_failed_nightly(live_from)
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 backfill_done = self.sink.kv_get("backfill:complete") == "1"
-                # today's filings first, then the rest of the window, so a catch-up never holds today's news
+                # today's filings first, then the rest of the window, so a catch-up never holds today's news. Near the
+                # free tier's 100,000 daily writes the window's earlier days, the catch-ups and the memory syncs wait for
+                # the reset (05:30 IST) and the run only turns today's filings into cards (20 Oct 2026: 91,080 by 20:30
+                # IST, ~400 writes a run on the window's backlog)
                 for day_from, day_to in ((today, today), (live_from, today - timedelta(days=1))):
+                    near_cap = writes_at_start + self.stats.d1_rows_written >= D1_FREE_DAILY_WRITES * D1_NEAR_CAP
+                    if near_cap and day_from != today:
+                        break
                     self.process(day_from.isoformat(), day_to.isoformat(), live_deadline, bulk=False,
                                  memory_complete=backfill_done, history_first=True)
-                # near the free tier's 100,000 daily writes the catch-ups and memory syncs wait for the reset (05:30 IST)
-                # and the run only turns new filings into cards (20 Oct 2026: 91,080 by 20:30 IST)
                 near_cap = writes_at_start + self.stats.d1_rows_written >= D1_FREE_DAILY_WRITES * D1_NEAR_CAP
                 if near_cap:
-                    log.warning("D1 writes near the free tier's daily %d: catch-ups and memory syncs skipped this run",
-                                D1_FREE_DAILY_WRITES)
+                    log.warning("D1 writes near the free tier's daily %d: earlier days, catch-ups and memory syncs "
+                                "skipped this run", D1_FREE_DAILY_WRITES)
                 if self._on_nse() and time.monotonic() < live_deadline and not near_cap:
                     from . import event_catchup   # cards made before their event XBRL landed
 

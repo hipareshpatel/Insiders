@@ -390,6 +390,57 @@ def test_one_card_per_company_per_results_quarter(settings):
     assert two.update["status"] == "DUPLICATE" and two.update["reason"] == "duplicate of q-1 (same results quarter Q2FY27, D20)"
 
 
+def test_an_earlier_results_filing_read_after_the_later_one_takes_the_quarter_and_leaves_one_card(settings):
+    """Sunteck's Q1FY27 statement (18:07) was read again after its press release (18:48) had the quarter's card, and
+    Sun Pharma's Q4FY26 outcome, filed twice, likewise: D20 only looked at filings filed before the one read, so both
+    copies kept a card (2026-10-20). The earlier filing now takes the quarter and the later one becomes its duplicate,
+    committed together, with its facts out of memory."""
+    from dataclasses import replace
+
+    settings = replace(settings, one_card_per_results_quarter=True, workers=1, second_opinion=False)
+    now = now_ist() - timedelta(hours=3)
+    first = _filing("q-1", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    later = _filing("q-2", "Press release on the results", now + timedelta(minutes=41), "Result")
+    pipeline, sink, fake = build(settings, [first, later], {f.pdf_url: _pdf(RESULT_TEXT) for f in (first, later)},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)] * 2, "glm-4.5-flash": [json.dumps(PASS2)] * 2})
+    pipeline._commit([pipeline.analyze(later.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))])
+    pipeline._results_quarters.clear()  # a later run: only memory knows the quarter has its card
+    outcomes = pipeline._process_group([first.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"})],
+                                       time.monotonic() + 600, False, True)
+    pipeline._commit(outcomes)
+    assert [(o.update["news_id"], o.update["status"]) for o in outcomes] == [("q-1", "ANALYZED"), ("q-2", "DUPLICATE")]
+    assert outcomes[1].update["reason"] == "duplicate of q-1 (same results quarter Q2FY27, D20)"
+    assert [r[0] for r in sink._db.execute("SELECT news_id FROM cards")] == ["q-1"]
+    assert "q-2" not in {t["news_id"] for t in sink.get_dossier("999001")["timeline"]}
+    # and the later copy read again is the duplicate of the earlier one, as before
+    pipeline._results_quarters.clear()
+    again = pipeline.analyze(later.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert again.update["status"] == "DUPLICATE" and again.update["reason"] == "duplicate of q-1 (same results quarter Q2FY27, D20)"
+
+
+def test_a_later_results_filing_owns_a_quarter_only_when_it_is_its_own(settings, monkeypatch):
+    """The next quarter's results report this quarter as their comparative: re-reading Q2's statement must not take
+    Q3's card away. A later card that is held owns nothing, and no later card is replaced by a card that is held."""
+    from bse_intel.pipeline import Outcome
+
+    pipeline, sink, _ = build(settings, [], {}, {})
+    monkeypatch.setattr(pipeline, "_card_held", lambda n: n == "q-held")
+    f = _filing("q-2", "Unaudited Financial Results", now_ist() - timedelta(days=90))
+    later = (now_ist() - timedelta(days=1)).isoformat(timespec="seconds")
+    metric = lambda period, n: {"metric": "revenue", "period": period, "value": 1.0, "unit": "INR_CR", "as_of": later,  # noqa: E731
+                                "source_news_id": n, "sources": [{"news_id": n, "as_of": later, "value": 1.0, "unit": "INR_CR"}]}
+    dossier = {"timeline": [{"news_id": n, "date": later, "event_type": "RESULTS"} for n in ("q-next", "q-held")],
+               "financial_metrics": [metric("Q2FY27", "q-next"), metric("Q3FY27", "q-next"), metric("Q2FY27", "q-held")]}
+    assert pipeline._same_results_quarter(f, dossier, "Q2FY27") is None and "q-2" not in pipeline._superseding
+    dossier["financial_metrics"].append(metric("Q2FY27", "q-copy"))
+    dossier["timeline"].append({"news_id": "q-copy", "date": later, "event_type": "RESULTS"})
+    pipeline._results_quarters.clear()
+    assert pipeline._same_results_quarter(f, dossier, "Q2FY27") is None
+    assert pipeline._superseding["q-2"] == (["q-copy"], "Q2FY27")
+    held = Outcome({"news_id": "q-2", "status": "ANALYZED"}, card={"held": 1})
+    assert pipeline._supersede(f, held) == [] and "q-2" not in pipeline._superseding
+
+
 def test_a_board_outcome_typed_as_a_corporate_action_still_takes_part_in_d20(settings):
     """Kapston filed its Q2FY27 board outcome (results and a 5:1 stock split) twice, four minutes apart (O3, 2026-10-20).
     The copy typed CORPORATE_ACTION was made RESULTS only after pass 2, so it skipped the quarter's claim and the

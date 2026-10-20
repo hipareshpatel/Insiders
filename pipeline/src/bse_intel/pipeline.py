@@ -1652,6 +1652,7 @@ class Pipeline:
         self._xbrl_links: dict[str, list[XbrlLink]] = {}  # scrip -> its results archive, read once a run
         self._holds = gate.load_holds(settings.config_dir / settings.card_holds_file)  # news_id -> reason
         self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
+        self._superseding: dict[str, tuple[list[str], str]] = {}  # news_id -> later filings with its quarter's card (D20)
 
     # ------------------------------------------------------------------ writes
 
@@ -1943,7 +1944,8 @@ class Pipeline:
     def _history_then(self, filings: list[Filing], history: list[Filing], deadline: float, bulk: bool,
                       discovered: bool) -> list[Outcome]:
         results = self._process_group(history, deadline, bulk=True, memory_complete=True)
-        finished = len(results) == len(history) and all(o.update.get("status") in DONE for o in results)
+        finished = ({o.update["news_id"] for o in results} >= {f.news_id for f in history}
+                    and all(o.update.get("status") in DONE for o in results))  # results may hold superseded filings (D20)
         return results + self._process_group(filings, deadline, bulk, discovered and finished)
 
     def _run_parallel(self, jobs: dict) -> dict[str, list[Outcome]]:
@@ -1971,7 +1973,8 @@ class Pipeline:
                 if filing.news_id in self._tried:  # one attempt per filing per run
                     continue
                 self._tried.add(filing.news_id)
-            results.append(self._process_one(filing, bulk, memory_complete, deadline))
+            outcome = self._process_one(filing, bulk, memory_complete, deadline)
+            results += [outcome, *self._supersede(filing, outcome)]  # committed together: never a quarter with no card
             unsaved = [o for o in results if not o.committed]
             if len(unsaved) >= COMMIT_EVERY:
                 self._commit(unsaved)
@@ -2331,14 +2334,21 @@ class Pipeline:
         if not quarter or quarter_index(quarter) is None:
             return None
         key = (filing.scrip_code, quarter)
-        done = {t["news_id"] for t in dossier.get("timeline", [])
-                if t.get("event_type") == "RESULTS" and t.get("date", "") < filing.filed_at and t.get("news_id") != filing.news_id}
-        owners = list(dict.fromkeys(n for m in dossier.get("financial_metrics", []) if m.get("period") == quarter
-                                    for n in done if reported_by(m, n)))
+        dates = {t["news_id"]: t.get("date", "") for t in dossier.get("timeline", [])
+                 if t.get("event_type") == "RESULTS" and t.get("news_id") != filing.news_id}
+        metrics = dossier.get("financial_metrics", [])
+        owners = list(dict.fromkeys(n for m in metrics if m.get("period") == quarter for n in dates if reported_by(m, n)))
+        # A results filing filed after this one also reports this quarter as its comparative: it owns the quarter only
+        # when it is its own latest quarter, the quarter of its results (Sunteck's Q1FY27 filings report Q4FY26 too).
+        later = [n for n in owners if dates[n] >= filing.filed_at
+                 and max((quarter_index(m["period"]) or -1 for m in metrics if reported_by(m, n)), default=-1)
+                 == quarter_index(quarter)]
+        owners = [n for n in owners if dates[n] < filing.filed_at]
         # An owner whose card is held out of the feed is not the quarter's card: another document of the quarter
         # may make the one that is published. 17 of the 43 quarters with D20 duplicates had their only card held
         # while the statement itself was marked a duplicate of it (funnel, 2026-10-18).
         owners = [n for n in owners if not self._card_held(n)]
+        later = [n for n in later if not self._card_held(n)]
         with self._lock:
             claimed = self._results_quarters.get(key)
             if claimed and claimed != filing.news_id:
@@ -2346,7 +2356,29 @@ class Pipeline:
             if owners:
                 return owners[0], quarter
             self._results_quarters[key] = filing.news_id
+            if later:
+                # A later document of the quarter got the card first: this one was retried after a failure or requeued
+                # by id once the later one had its card, and both stayed on the feed (Sunteck Q1FY27: the statement
+                # re-run after the press release; Sun Pharma Q4FY26: one outcome filed twice; 2026-10-20). The earlier
+                # filing - the statement, not the press release that follows it - takes the quarter, and the later
+                # one becomes its duplicate once this card is published (_supersede).
+                self._superseding[filing.news_id] = (later, quarter)
         return None
+
+    def _supersede(self, filing: Filing, outcome: Outcome) -> list[Outcome]:
+        """The later documents of a results quarter that had its card, made duplicates of this earlier filing (D20).
+        Only once this filing's card is published: a quarter never loses its only card to a failed or held one."""
+        with self._lock:
+            later, quarter = self._superseding.pop(filing.news_id, ((), ""))
+        if not later or outcome.update.get("status") != "ANALYZED" or not outcome.card or outcome.card.get("held"):
+            return []
+        dossier = self.sink.get_dossier(filing.scrip_code)
+        if dossier and any([forget_filing(dossier, n) for n in later]):
+            self.sink.put_dossier(filing.scrip_code, dossier)
+        log.info("%s takes results quarter %s from %s (D20)", filing.news_id, quarter, ", ".join(later))
+        return [Outcome({"news_id": n, "status": "DUPLICATE", "event_type": "RESULTS",
+                         "reason": f"duplicate of {filing.news_id} (same results quarter {quarter}, D20)",
+                         "updated_at": now_iso()}) for n in later]
 
     def _card_held(self, news_id: str) -> bool:
         # this run's own verdict first: its card may not be committed yet, and a re-run deleted the old one

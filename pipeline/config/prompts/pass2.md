@@ -83,7 +83,11 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   rescue raise to service a ₹399 Cr debt pile". No new figures beyond those in the headline or facts.
 - takeaway: one sentence (under 200 characters): the "so what", not a restated headline.
 - tone: how the filing reads for the company's fundamentals: "POSITIVE", "NEGATIVE", "MIXED" or
-  "NEUTRAL". This describes the business news, never a view on the share price.
+  "NEUTRAL". This describes the business news, never a view on the share price. Judge it for the listed
+  company's equity shareholders, not for the counterparty or the headline's wording: a ruling, order or
+  outcome in the company's favour is "POSITIVE" even when its words sound negative (a write-down upheld
+  against bondholders, a tax demand quashed, an appeal against the company dismissed). Example: "Supreme
+  Court dismisses appeals against the bank's ₹8,415 Cr AT1 bond write-down" is POSITIVE for the bank.
 - basis: "CONSOLIDATED", "STANDALONE" or "PROFORMA" for the figures you quote (prefer consolidated
   when both are given, and never mix bases in one comparison); null when the filing has no
   financial statements.

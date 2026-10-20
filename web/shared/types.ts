@@ -512,6 +512,8 @@ export interface SystemResponse {
   runs: PipelineRun[];
   /** Failed filings of the last 7 days, newest first (50 at most): retried up to 3 times, once more each night. */
   failed_recent?: FailedFiling[];
+  /** Each scheduled job's last run (command -> when it ended, and whether it succeeded). */
+  jobs?: Record<string, { at: string; ok: boolean }>;
 }
 
 export interface FailedFiling {

@@ -1,11 +1,13 @@
-# Post-close financial footer refresh: prices, 1W/1M/1Y returns, market cap
-# and size bucket for every company with cards. 10:45 UTC = 16:15 IST.
+# Prices, 1W/1M/1Y returns, market cap, size bucket, price charts and technicals for every company with cards, then
+# the price post-mortem (Loop 1). Runs the morning after each session (schedule below).
 name: Market data
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "45 10 * * 1-5"
+    # 00:35 UTC = 06:05 IST, Tuesday to Saturday: the previous session's close is on Yahoo overnight, not at 16:15 IST
+    # (owner, 2026-10-20); after D1's daily allowance resets and before the market opens
+    - cron: "35 0 * * 2-6"
 
 permissions:
   contents: read

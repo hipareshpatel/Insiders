@@ -3,7 +3,8 @@
 # - refresh-summaries: every company's stored summary (open promises, radar, credibility) rebuilt from its memory;
 # - export-held: every held card into docs/audit/live/ on the working branch, for the live reviews (the public site
 #   does not serve them);
-# - requeue-failed: filings that used all 3 attempts in the last 30 days get fresh attempts (after a fix; requeue.py).
+# - requeue-failed: filings that used all 3 attempts in the last 30 days get fresh attempts (after a fix; requeue.py),
+#   or, with ids, the named filings are re-run whatever their status (held or stale cards).
 # Neither calls an AI model or NSE. It runs beside the pipeline (its own concurrency group: a shared one would
 # cancel a pending pipeline run); both only read memory, and a summary or card a run writes at the same moment is
 # rewritten by the next run.
@@ -17,6 +18,10 @@ on:
         type: choice
         options: [refresh-card-blocks, refresh-summaries, both, export-held, requeue-failed]
         default: both
+      ids:
+        description: requeue-failed only - re-run these filings instead (news ids, comma separated)
+        type: string
+        default: ''
       dry_run:
         description: count what would change, write nothing (refresh-card-blocks, requeue-failed)
         type: boolean
@@ -57,7 +62,9 @@ jobs:
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-summaries'
       - name: Requeue failed filings
         if: inputs.command == 'requeue-failed'
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel requeue-failed ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
+        env:
+          IDS: ${{ inputs.ids }}   # through the environment, never pasted into the script
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel requeue-failed ${IDS:+--ids "$IDS"} ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
       - name: Export held cards
         if: inputs.command == 'export-held'
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel export-held --out "../docs/audit/live/held-$(date -u +%F).json"'

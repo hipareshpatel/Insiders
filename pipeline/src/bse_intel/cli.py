@@ -321,6 +321,10 @@ def cmd_requeue_failed(args, settings, sink) -> int:
     from . import requeue
     from .timeutil import today_ist
 
+    if args.ids:
+        ids = [i.strip() for i in args.ids.replace("\n", ",").split(",")]
+        print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
+        return 0
     since = args.since or (today_ist() - timedelta(days=args.days)).isoformat()
     print(json.dumps(requeue.requeue(sink, since, settings.max_attempts, args.attempts, args.dry_run), ensure_ascii=False))
     return 0
@@ -666,6 +670,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--since", help="filed on or after this date (YYYY-MM-DD); default --days ago")
     p.add_argument("--days", type=int, default=30)
     p.add_argument("--attempts", type=int, help="tries to give back (default all)")
+    p.add_argument("--ids", help="instead: these filings (news ids, comma separated), whatever their status, to re-run")
     p.add_argument("--dry-run", action="store_true", help="list what would be requeued, write nothing")
     p.set_defaults(func=cmd_requeue_failed)
     p = sub.add_parser("refresh-card-blocks", help="rebuild every stored card's code blocks from memory, no AI")

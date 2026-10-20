@@ -36,3 +36,4 @@ Every action taken under it is listed below with its commit or run, for the owne
 - 20 Oct 20:36 IST: dispatched maintenance.yml seed-memory (restart) on main (T13 step 1; no AI).
 - 20 Oct 20:50 IST: PR #22 merged into `main` (1883b5d) with CI green: DeepSeek first on the seed (cache, 40M-token cap), the near-cap guard, F94.
 - 20 Oct 21:25 IST: seed-memory step limit raised to 5 h in maintenance.yml (no AI; one D1 kv write a company); re-dispatched with restart=false.
+- 20 Oct 21:59 IST: dispatched seed-calls.yml on main by hand (its first scheduled run did not start; owner approved the DeepSeek seed with its cap).

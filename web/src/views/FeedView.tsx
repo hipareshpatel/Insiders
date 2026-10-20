@@ -3,9 +3,8 @@ import { ChevronLeft, ChevronRight, LayoutList, Loader2, Rows3, Search, X } from
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import type { NoiseRow } from "../../shared/types";
-import { AnnouncementCard } from "../components/AnnouncementCard";
+import { AnnouncementCard, AnnouncementRow } from "../components/AnnouncementCard";
 import { Avatar } from "../components/Avatar";
-import { FilingRow } from "../components/FilingCard";
 import { Badge, Select } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { api, type FeedFilters } from "../lib/api";
@@ -178,7 +177,7 @@ function CardList({ filters, rangeLabel, view, page, onPage }: {
         {total_capped ? `${total.toLocaleString("en-IN")}+` : total.toLocaleString("en-IN")} filings · page {page} of {pages}{total_capped ? "+" : ""}
         {query.isFetching ? <Loader2 className="ml-2 inline h-3.5 w-3.5 animate-spin" /> : null}
       </p>
-      {cards.map((row) => view === "cards" ? <AnnouncementCard key={row.news_id} row={row} /> : <FilingRow key={row.news_id} row={row} />)}
+      {cards.map((row) => view === "cards" ? <AnnouncementCard key={row.news_id} row={row} /> : <AnnouncementRow key={row.news_id} row={row} />)}
       <Pager page={page} pages={pages} capped={!!total_capped} onPage={onPage} />
     </>
   );
@@ -235,7 +234,7 @@ function SharedCard({ id, view, onClose }: { id: string; view: View; onClose: ()
         <span className="eyebrow text-accent">Linked filing</span>
         <Button variant="ghost" size="sm" onClick={onClose}><X className="h-3.5 w-3.5" /> Dismiss</Button>
       </div>
-      {view === "cards" ? <AnnouncementCard row={query.data} defaultOpen highlight /> : <FilingRow row={query.data} defaultOpen highlight />}
+      {view === "cards" ? <AnnouncementCard row={query.data} defaultOpen highlight /> : <AnnouncementRow row={query.data} defaultOpen highlight />}
     </div>
   );
 }

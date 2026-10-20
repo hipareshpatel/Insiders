@@ -1,21 +1,26 @@
 import {
-  AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, BarChart3, Building2, Camera, Check, ChevronDown, ChevronRight, CircleDollarSign,
-  ClipboardCheck, FileSearch, FileText, Gauge, Flame, Minus, MoreHorizontal, RefreshCcw, Rocket, Scale, ShieldAlert, Star, Timer, Trash2,
-  type LucideIcon,
+  AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, BarChart3, Building2, Camera, Check, CheckCircle2, ChevronDown, ChevronRight,
+  ChevronUp, CircleDollarSign, ClipboardCheck, FileSearch, FileText, Gauge, Flame, Minus, MoreHorizontal, RefreshCcw, Rocket, Scale,
+  ShieldAlert, Star, Timer, Trash2, type LucideIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { flushSync } from "react-dom";
+import { useLocation } from "wouter";
 import { useQueryState } from "../lib/url";
 import type { CallRead, CardBody, CardRow, Fact, Impact, PriceReaction, Technicals, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
 import { useRatings, useVerdicts, type Verdict } from "../lib/owner";
 import { copyNodeAsPng } from "../lib/png";
 import { cr, formatKpi, istDate, istDateTime, pct, relativeTime, signClass, titleCase } from "../lib/format";
-import { EVENT_LABELS, TONE_LABEL, type Tone } from "../lib/taxonomy";
-import { Avatar } from "./Avatar";
+import { EVENT_LABELS, IMPACT_LABEL, IMPACT_TEXT, TONE_CHIP, TONE_LABEL, TONE_STRIPE, verdict, type Tone } from "../lib/taxonomy";
+import { Avatar, TickerChip } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL, TrackItem } from "./FilingCard";
 import { plain, RichText } from "./RichText";
-import { executionFact, near, PERIOD_WORDS, repeats, showsFigure, verifiedFact } from "../lib/cardText";
+import {
+  executionFact, near, PERIOD_WORDS, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
+  verifiedFact,
+} from "../lib/cardText";
+import { allZero, lowerIsBetter, TURN, turnOf } from "../lib/results";
 
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
 
@@ -58,7 +63,7 @@ function boxItems(card: CardBody, skip: (s: Signal) => boolean = () => false) {
 function Point({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <li className={cn("flex gap-2 text-[14.5px] leading-relaxed text-ink", className)}>
-      <ChevronRight aria-hidden className="mt-[4px] h-4 w-4 shrink-0 text-accent" strokeWidth={2.5} />
+      <ChevronRight aria-hidden className="mt-[4px] h-4 w-4 shrink-0 text-[var(--fam,var(--accent))]" strokeWidth={2.5} />
       <span className="min-w-0">{children}</span>
     </li>
   );
@@ -89,10 +94,14 @@ function CallReadChips({ read }: { read: CallRead }) {
   );
 }
 
-function change(line: ResultLine | undefined, kind: "yoy" | "qoq", bps: boolean) {
+/** A change in the table: a turn across a loss in words, as on the Results page; green is the good news, so a fall in
+ * bad loans or provisions is green. */
+function change(line: ResultLine | undefined, kind: "yoy" | "qoq", bps: boolean, lower: boolean) {
+  const turn = bps ? undefined : turnOf(line, kind);
+  if (turn && TURN[turn]) return <span className={cn("font-semibold", TURN[turn][1])}>{TURN[turn][0]}</span>;
   const v = bps ? line?.[`${kind}_bps`] : line?.[`${kind}_pct`];
   if (v == null) return <span className="text-ink-3">—</span>;
-  return <span className={cn("font-semibold", signClass(v))}>{bps ? `${v > 0 ? "+" : ""}${v} bps` : pct(v)}</span>;
+  return <span className={cn("font-semibold", signClass(lower ? -v : v))}>{bps ? `${v > 0 ? "+" : ""}${v} bps` : pct(v)}</span>;
 }
 
 type LineSpec = NonNullable<ResultsSnapshot["lines"]>[number];
@@ -107,7 +116,7 @@ export function resultLines(r: ResultsSnapshot): (LineSpec & { line: ResultLine 
   const get = (key: string) => (r as unknown as Record<string, ResultLine | undefined>)[key];
   return (r.lines?.length ? r.lines : DEFAULT_LINES).flatMap((s) => {
     const line = get(s.key);
-    return line && typeof line.value === "number" ? [{ ...s, line }] : [];
+    return line && typeof line.value === "number" && !allZero(line) ? [{ ...s, line }] : [];
   });
 }
 
@@ -118,55 +127,64 @@ export function lineValue(v: number, unit: LineSpec["unit"]): string {
   return cr(v).replace("₹", "").replace(/ Cr$/, "");
 }
 
-/** A P&L for results cards in the statement's own lines: this quarter beside the previous one and a year ago. */
-function ResultsTable({ r }: { r: ResultsSnapshot }) {
+const LENS_TITLE: Record<string, string> = { bank: "Bank lens · ₹ Cr", insurer: "Insurer lens · ₹ Cr" };
+
+/** A P&L for results cards in the statement's own lines: this quarter, a year ago and its change, then the previous
+ * quarter and its change (the approved card's order), with the Results page's verdict. On a phone the earlier values
+ * sit under their change, so the changes stay in view without a sideways scroll. */
+function ResultsTable({ r, judged }: { r: ResultsSnapshot; judged: { label: string; tone: Tone } }) {
   const rows = resultLines(r);
   if (rows.length < 2) return null;
-  const has = (pick: (l: ResultLine, bps: boolean) => number | undefined) => rows.some(({ line, unit }) => pick(line, unit === "pct") != null);
-  const pq = has((l) => l.prev_quarter) && r.prev_quarter_period;
+  const has = (pick: (l: ResultLine, bps: boolean) => unknown) => rows.some(({ line, unit }) => pick(line, unit === "pct") != null);
   const py = has((l) => l.prev_year) && r.prev_year_period;
-  const qoq = has((l, bps) => (bps ? l.qoq_bps : l.qoq_pct));
-  const th = "whitespace-nowrap px-2 py-1.5 text-right text-[10.5px] font-semibold uppercase tracking-[0.08em] sm:px-3";
-  const td = "whitespace-nowrap px-2 py-1.5 text-right sm:px-3";
+  const pq = has((l) => l.prev_quarter) && r.prev_quarter_period;
+  const yoy = has((l, bps) => (bps ? l.yoy_bps : l.yoy_pct ?? turnOf(l, "yoy")));
+  const qoq = has((l, bps) => (bps ? l.qoq_bps : l.qoq_pct ?? turnOf(l, "qoq")));
+  const th = "px-1.5 py-1.5 text-right align-bottom text-[10.5px] font-semibold uppercase tracking-[0.08em] sm:whitespace-nowrap sm:px-3";
+  const td = "px-1.5 py-1.5 text-right align-top sm:whitespace-nowrap sm:px-3";
+  const was = (v: number | undefined, unit: LineSpec["unit"]) => (v != null ? lineValue(v, unit) : "—");
+  const under = "block text-[11px] font-normal text-ink-3 sm:hidden";
   return (
-    <div className="mt-3 overflow-x-auto rounded-xl border border-[color-mix(in_srgb,var(--fam)_28%,var(--line))]">
-      <table className="num w-full text-[13px]">
+    <BlockShell title={LENS_TITLE[r.lens ?? ""] ?? "Quarter in ₹ Cr"}
+      right={<span className={cn("ml-auto rounded-full px-2.5 py-0.5 text-[11px] font-extrabold normal-case tracking-normal", TONE_CHIP[judged.tone])}>{judged.label}</span>}>
+      <table className="num w-full text-[12.5px] sm:text-[13px]">
         <thead className="text-ink-3">
           <tr>
-            <th className={cn(th, "text-left")}>₹ Cr</th>
+            <th className={cn(th, "pl-0 text-left sm:pl-0")}>₹ Cr</th>
             <th className={cn(th, "text-ink")}>{r.period}</th>
-            {pq && <th className={th}>{r.prev_quarter_period}</th>}
-            {py && <th className={th}>{r.prev_year_period}</th>}
-            <th className={th}>YoY</th>
-            {qoq && <th className={th}>QoQ</th>}
+            {py && <th className={cn(th, "hidden sm:table-cell")}>{r.prev_year_period}</th>}
+            {yoy && <th className={th}>YoY{py && <span className={cn(under, "whitespace-nowrap normal-case tracking-normal")}>vs {r.prev_year_period}</span>}</th>}
+            {pq && <th className={cn(th, "hidden sm:table-cell")}>{r.prev_quarter_period}</th>}
+            {qoq && <th className={cn(th, "pr-0 sm:pr-0")}>QoQ{pq && <span className={cn(under, "whitespace-nowrap normal-case tracking-normal")}>vs {r.prev_quarter_period}</span>}</th>}
           </tr>
         </thead>
         <tbody>
           {rows.map(({ key, label, unit, line }) => {
-            const bps = unit === "pct";
+            const bps = unit === "pct", lower = lowerIsBetter(key, label);
             return (
               <tr key={key} className="border-t border-line">
-                <td className={cn(td, "text-left font-sans font-medium text-ink")}>{label}</td>
+                <td className={cn(td, "pl-0 text-left font-sans font-medium text-ink sm:pl-0")}>{label}</td>
                 <td className={cn(td, "font-semibold text-ink")}>{lineValue(line.value, unit)}</td>
-                {pq && <td className={cn(td, "text-ink-2")}>{line.prev_quarter != null ? lineValue(line.prev_quarter, unit) : "—"}</td>}
-                {py && <td className={cn(td, "text-ink-2")}>{line.prev_year != null ? lineValue(line.prev_year, unit) : "—"}</td>}
-                <td className={td}>{change(line, "yoy", bps)}</td>
-                {qoq && <td className={td}>{change(line, "qoq", bps)}</td>}
+                {py && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_year, unit)}</td>}
+                {yoy && <td className={td}>{change(line, "yoy", bps, lower)}{py && <span className={under}>{was(line.prev_year, unit)}</span>}</td>}
+                {pq && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_quarter, unit)}</td>}
+                {qoq && <td className={cn(td, "pr-0 sm:pr-0")}>{change(line, "qoq", bps, lower)}{pq && <span className={under}>{was(line.prev_quarter, unit)}</span>}</td>}
               </tr>
             );
           })}
         </tbody>
       </table>
-    </div>
+    </BlockShell>
   );
 }
 
 /** Footer figures follow the company's sector (GNPA for a bank, EBITDA/t for cement, ARPU for
- * telecom, RevPAR for hotels...); without one, debt to equity. */
+ * telecom, RevPAR for hotels...); without one, debt to equity, unless it rounds to nothing ("D/E 0.00x"). */
 function footerMetrics(card: CardBody): { label: string; value: string; period?: string | null }[] {
   const f = card.fundamentals ?? {};
   if (f.kpis?.length) return f.kpis.map((k) => ({ label: k.label, value: formatKpi(k), period: k.period }));
-  if (f.debt && f.net_worth && f.net_worth.value > 0) return [{ label: "D/E", value: `${(f.debt.value / f.net_worth.value).toFixed(2)}x` }];
+  const de = f.debt && f.net_worth && f.net_worth.value > 0 ? f.debt.value / f.net_worth.value : null;
+  if (de != null && de >= 0.005) return [{ label: "D/E", value: `${de.toFixed(2)}x` }];
   if (f.net_worth && f.net_worth.value < 0) return [{ label: "Net worth", value: cr(f.net_worth.value) }];
   return [];
 }
@@ -183,6 +201,23 @@ function coveredByTable(fact: Fact, r: ResultsSnapshot): boolean {
       .filter((v): v is number => v != null).map(Math.abs));
   const raw = plain(fact).replace(PERIOD_WORDS, " ").match(/\d[\d,]*(?:\.\d+)?/g) ?? [];
   return raw.length > 0 && raw.every((x) => near(Number(x.replace(/,/g, "")), known, x));
+}
+
+/** The key numbers on the card's face, as tiles inside the family's block. */
+function KeyBlock({ items }: { items: CardBody["key_numbers"] }) {
+  return (
+    <BlockShell title="Key numbers">
+      <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {items.slice(0, 4).map((k, i) => (
+          <div key={`${k.label}-${i}`} className="min-w-0 rounded-xl bg-surface-2 px-2.5 py-1.5">
+            <dt className="truncate text-[11px] font-bold text-ink-3" title={k.label}>{k.label}</dt>
+            <dd className="num text-[14px] font-bold text-ink">{k.value}</dd>
+            {k.change ? <dd className={cn("num text-[12px] font-semibold", k.change.trim().startsWith("-") || k.change.trim().startsWith("−") ? "text-neg" : "text-pos")}>{k.change}</dd> : null}
+          </div>
+        ))}
+      </dl>
+    </BlockShell>
+  );
 }
 
 function KeyTiles({ items }: { items: CardBody["key_numbers"] }) {
@@ -251,7 +286,7 @@ function Steps({ steps, at: raw, warn, reached }: { steps: string[]; at: number;
           <span aria-hidden className={cn("relative z-[1] h-4 w-4 rounded-full border-2",
             done(i) ? (warn && i === at ? "border-warn bg-warn" : "border-[var(--fam)] bg-[var(--fam)]") : "border-line-strong bg-surface",
             i === at && "shadow-[0_0_0_4px_var(--fam-soft)]")} />
-          <span className="w-full truncate px-0.5">{s}</span>
+          <span className="w-full break-words px-0.5 leading-tight">{s}</span>
         </li>
       ))}
     </ol>
@@ -278,37 +313,64 @@ const TRACKS: Record<string, { steps: string[]; at: Record<string, number> }> = 
           at: { PROPOSED: 0, BOARD_APPROVED: 1, TERMS_FINALISED: 1, SHAREHOLDER_APPROVED: 1, IN_PROGRESS: 2, PARTIALLY_COMPLETED: 2, COMPLETED: 3 } },
 };
 
-// What the deal's other party is: an order's client, an acquisition's target (the company bought into, not a seller)
-const COUNTERPARTY: Record<string, string> = { ORDER: "From", ACQUISITION: "Target", DIVESTMENT: "Buyer", FUNDRAISE: "Investors", CAPEX: "Partner" };
+// What the deal's other party is: an order's client, a divestment's buyer, what pays for a capex. An acquisition's
+// counterparty can be the seller as well as the target (Ceigall's JKJTL, bought from REC Power: "Target: REC Power",
+// design audit 2026-10-20), so it is named only as the other party.
+const COUNTERPARTY: Record<string, string> = { ORDER: "From", ACQUISITION: "Counterparty", DIVESTMENT: "Buyer", FUNDRAISE: "Investors", CAPEX: "Funded by" };
+
+const dealTrack = (deal: NonNullable<CardBody["deal_value"]>) => TRACKS[deal.kind === "ORDER" ? "ORDER" : deal.kind === "CAPEX" ? "CAPEX" : "DEAL"];
+
+/** The deal block's tiles: the value (or that the filing gave none), the other party, the scope and the term. A
+ * model's placeholder ("to be determined") is not a fact and is left out. */
+function dealFacts(card: CardBody): { label: string; value: string; text?: boolean; none?: boolean }[] {
+  const deal = card.deal_value, amount = card.scale?.amount_cr ?? deal?.amount_cr ?? null;
+  const said = [plain(card.headline), ...card.what_happened.map((f) => (typeof f === "string" ? f : `${f.text} ${f.quote ?? ""}`))].join(" ");
+  const value = deal?.includes_gst || card.scale?.gst ? "Value, incl. GST" : saysExGst(said) ? "Value, ex GST" : "Value";
+  const party = realValue(deal?.counterparty), scope = realValue(deal?.segment), term = realValue(deal?.execution_by);
+  const [termLabel, termValue] = term ? executionFact(term) : ["", ""];
+  return [
+    amount != null ? { label: value, value: cr(amount) } : { label: "Value", value: "Not disclosed", none: true },
+    ...(party ? [{ label: COUNTERPARTY[deal!.kind] ?? "Counterparty", value: party, text: true }] : []),
+    ...(scope ? [{ label: "Scope", value: scope.charAt(0).toUpperCase() + scope.slice(1), text: true }] : []),
+    ...(term ? [{ label: termLabel, value: termValue }] : []),
+  ];
+}
+
+/** An order, capex or capital deal gets its block when there is anything to put in it besides "not disclosed". */
+function hasDealBlock(card: CardBody): boolean {
+  const deal = card.deal_value;
+  if (card.scale) return true;
+  if (!deal) return false;
+  return deal.amount_cr != null || dealFacts(card).length > 1 || dealTrack(deal).at[deal.stage] !== undefined || deal.stage === "CANCELLED";
+}
 
 /** Orders, capex and capital deals: the size, against the company, over its term, and how far it has got. */
-function DealBlock({ card }: { card: CardBody }) {
+function DealBlock({ card, filedAt }: { card: CardBody; filedAt: string }) {
   const deal = card.deal_value, scale = card.scale;
   if (!deal && !scale) return null;
-  const amount = scale?.amount_cr ?? deal?.amount_cr ?? null;
-  const facts = [
-    amount != null ? [deal?.includes_gst ? "Value, incl. GST" : "Value", cr(amount)] : null,
-    deal?.counterparty ? [COUNTERPARTY[deal.kind] ?? "Counterparty", deal.counterparty] : null,
-    deal?.execution_by ? executionFact(deal.execution_by) : null,
-  ].filter(Boolean) as [string, string][];
-  const track = deal ? TRACKS[deal.kind === "ORDER" ? "ORDER" : deal.kind === "CAPEX" ? "CAPEX" : "DEAL"] : null;
+  const facts = dealFacts(card);
+  const track = deal ? dealTrack(deal) : null;
   const at = deal && track ? track.at[deal.stage] : undefined;
-  const steps = track && at !== undefined ? track.steps.map((s, i) =>
-    (i === 0 && deal!.kind === "ORDER" ? STAGE_LABEL[deal!.stage] ?? s
-      : i === 1 && track === TRACKS.DEAL ? (deal!.stage === "SHAREHOLDER_APPROVED" ? "Shareholders" : deal!.stage === "TERMS_FINALISED" ? "Terms" : "Board") : s)) : null;
+  // the first step takes the stage's own name (LOI, LOA) only while the deal is there: a contract's ladder read
+  // "Contract, Contract, Execution" (Newgen); the current step carries the filing's date
+  const when = istDate(filedAt).split(" ").slice(0, 2).join(" ");
+  const steps = deal && track && at !== undefined ? track.steps.map((s, i) => {
+    const label = i === 0 && at === 0 && deal.kind === "ORDER" ? STAGE_LABEL[deal.stage] ?? s
+      : i === 1 && at === 1 && track === TRACKS.DEAL ? (deal.stage === "SHAREHOLDER_APPROVED" ? "Shareholders" : deal.stage === "TERMS_FINALISED" ? "Terms" : "Board") : s;
+    return i === at ? `${label} · ${when}` : label;
+  }) : null;
   const title = deal?.kind === "ORDER" ? "The order" : deal?.kind === "CAPEX" ? "The capex" : deal?.kind === "FUNDRAISE" ? "The raise" : "The deal";
   return (
     <BlockShell title={title}>
-      {facts.length > 0 && (
-        <dl className={cn("grid gap-2", facts.length === 3 ? "grid-cols-2 sm:grid-cols-3" : facts.length === 2 ? "grid-cols-2" : "grid-cols-1")}>
-          {facts.map(([k, v]) => (
-            <div key={k} className="min-w-0 rounded-xl bg-surface-2 px-2.5 py-1.5">
-              <dt className="text-[11px] font-bold text-ink-3">{k}</dt>
-              <dd className="num truncate text-[13.5px] font-bold text-ink" title={v}>{v}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
+      <dl className={cn("grid gap-2", facts.length >= 4 ? "grid-cols-2 sm:grid-cols-4" : facts.length === 3 ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-2")}>
+        {facts.map((f) => (
+          <div key={f.label} className="min-w-0 rounded-xl bg-surface-2 px-2.5 py-1.5">
+            <dt className="text-[11px] font-bold text-ink-3">{f.label}</dt>
+            <dd className={cn("line-clamp-2 break-words text-[13.5px] font-bold", f.none ? "font-semibold text-ink-3" : "text-ink", !f.text && !f.none && "num")}
+              title={f.value}>{f.value}</dd>
+          </div>
+        ))}
+      </dl>
       {(scale?.against ?? []).slice(0, 2).map((a) => <SizeBar key={a.label} label={`Against ${a.label} (${cr(a.base_cr)})`} pct={a.pct} />)}
       {scale?.per_year && (
         <p className="text-[12.5px] text-ink-2">Over its {scale.per_year.years}-year term: <span className="num font-bold text-ink">{scale.per_year.pct.toFixed(1)}%</span> of {scale.per_year.label} a year.</p>
@@ -322,20 +384,25 @@ function DealBlock({ card }: { card: CardBody }) {
 const LONG_TERM = ["AAA", "AA+", "AA", "AA-", "A+", "A", "A-", "BBB+", "BBB", "BBB-", "BB+", "BB", "BB-", "B+", "B", "B-", "C+", "C", "C-", "D"];
 
 /** A credit rating: before and after on the agency's long-term scale. */
-function RatingBlock({ rc }: { rc: NonNullable<CardBody["rating_change"]> }) {
+const OUTLOOK_RANK: Record<string, number> = { negative: 0, developing: 1, watch: 1, stable: 2, positive: 3 };
+const outlookRank = (o: string | null) => (o ? Object.entries(OUTLOOK_RANK).find(([k]) => o.toLowerCase().includes(k))?.[1] : undefined);
+
+function RatingBlock({ rc, amount }: { rc: NonNullable<CardBody["rating_change"]>; amount: string | null }) {
   const a = LONG_TERM.indexOf(rc.after), b = rc.before ? LONG_TERM.indexOf(rc.before) : -1;
   const lo = Math.max(0, Math.min(a, b < 0 ? a : b) - 2), hi = Math.min(LONG_TERM.length - 1, Math.max(a, b) + 2);
   const n = rc.notches;
-  const move = n == null ? "First rating in memory" : n === 0 ? "Grade unchanged" : `${Math.abs(n)} notch${Math.abs(n) > 1 ? "es" : ""} ${n > 0 ? "up" : "down"}`;
+  const move = n == null ? "First rating in memory" : n === 0 ? "Grade unchanged" : `${Math.abs(n)} notch${Math.abs(n) > 1 ? "es" : ""} ${n > 0 ? "↑" : "↓"}`;
+  const was = outlookRank(rc.before_outlook), now = outlookRank(rc.after_outlook);
+  const outlook = rc.before && was != null && now != null && was !== now ? `outlook ${now > was ? "↑" : "↓"}` : null;
   const down = (n ?? 0) < 0 || /negative/i.test(rc.after_outlook ?? "") && !/negative/i.test(rc.before_outlook ?? "");
   return (
-    <BlockShell title={`Rating${rc.agency ? ` · ${rc.agency}` : ""}`}>
+    <BlockShell title={["Rating move", rc.agency, amount].filter(Boolean).join(" · ")}>
       <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2.5">
         <div className="rounded-xl bg-surface-2 px-3 py-2">
           <b className="num block text-[19px] font-extrabold">{rc.before ?? "—"}</b>
           <span className="text-[11.5px] font-semibold text-ink-3">{rc.before_outlook ?? "before"}{rc.as_of_before ? ` · ${istDate(rc.as_of_before)}` : ""}</span>
         </div>
-        <span className={cn("text-center text-[11.5px] font-extrabold", down ? "text-neg" : n && n > 0 ? "text-pos" : "text-ink-2")}>{move}<br />→</span>
+        <span className={cn("text-center text-[11.5px] font-extrabold", down ? "text-neg" : n && n > 0 ? "text-pos" : "text-ink-2")}>{move}{outlook && <><br />{outlook}</>}{!n && !outlook && <><br />→</>}</span>
         <div className={cn("rounded-xl px-3 py-2", down ? "bg-neg-soft" : n && n > 0 ? "bg-pos-soft" : "bg-surface-2")}>
           <b className={cn("num block text-[19px] font-extrabold", down ? "text-neg" : n && n > 0 ? "text-pos" : "text-ink")}>{rc.after}</b>
           <span className="text-[11.5px] font-semibold text-ink-3">{rc.after_outlook ?? "now"}</span>
@@ -424,8 +491,10 @@ function MoreMenu({ items }: { items: { label: string; icon: LucideIcon; onClick
 
 /** One announcement as a self-contained card. Each fact is said once (owner, 2026-10-19: "lots of repeated items"), and
  * the card takes its event family's colour and block: the results table, the order's size and stage, the rating move,
- * where a case stands. */
-export function AnnouncementCard({ row, defaultOpen = false, highlight = false }: { row: CardRow; defaultOpen?: boolean; highlight?: boolean }) {
+ * where a case stands. In a list it opens from a row, and `onCollapse` folds it back. */
+export function AnnouncementCard({ row, defaultOpen = false, highlight = false, onCollapse }: {
+  row: CardRow; defaultOpen?: boolean; highlight?: boolean; onCollapse?: () => void;
+}) {
   const card = useMemo(() => parseCard(row), [row]);
   const [open, setOpen] = useState(defaultOpen);
   const [exporting, setExporting] = useState(false);
@@ -454,28 +523,40 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
   const longRead = event === "CONCALL_PRESENTATION" || event === "ANNUAL_REPORT";  // a 100-400 page document
   const tilesFor = longRead || (event === "RESULTS" && !card.results);
   const table = event === "RESULTS" && tableShows(card.results) ? card.results : null;
-  const dealBlock = !table && (FAMILY[event] === "ord" || FAMILY[event] === "cap") && !!(card.scale || deal?.amount_cr);
+  const dealBlock = !table && (family === "ord" || family === "cap") && hasDealBlock(card);
   const rating = event === "DEBT_RATINGS" ? card.rating_change ?? null : null;
   const caseStage = card.case_stage ?? null;
 
   // Repeats out: a point that restates the headline, a fact the table or block already shows
   const headline = plain(card.headline);
   const factLimit = event === "RESULTS" || longRead ? 4 : 3;
-  // what the event's block already shows, so a point that only restates it is left out too
+  // key tiles the headline already gives are left out; the rest wait in "Full analysis"
+  const tiles = tilesFor && card.key_numbers.length >= 2 ? tilesBesides(card.key_numbers, headline).slice(0, 4) : [];
+  const rated = rating ? ratedAmount(headline, ...card.what_happened.filter((f) => verifiedFact(f, g.ungrounded)).map(plain)) : null;
+  // every figure and name the table, tiles and blocks show, so a point, a line or a chip that only restates them is
+  // left out too (UCO's Key numbers repeated the table's EPS)
   const blockText = [
-    dealBlock ? [card.scale?.amount_cr ?? deal?.amount_cr, deal?.counterparty, deal?.execution_by].filter((x) => x != null).join(" ") : "",
-    rating ? `${rating.agency ?? ""} ${rating.after} ${rating.after_outlook ?? ""} ${rating.before ?? ""} ${rating.before_outlook ?? ""}` : "",
+    table ? resultLines(table).flatMap(({ line }) => [line.value, line.prev_year, line.prev_quarter, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps])
+      .filter((v): v is number => v != null).map((v) => String(Math.abs(v))).join(" ") : "",
+    dealBlock ? [...dealFacts(card).map((f) => f.value), ...(card.scale?.against ?? []).flatMap((a) => [a.pct.toFixed(1), a.base_cr]),
+                 card.scale?.per_year?.pct.toFixed(1)].filter((x) => x != null).join(" ") : "",
+    rating ? `${rating.agency ?? ""} ${rating.after} ${rating.after_outlook ?? ""} ${rating.before ?? ""} ${rating.before_outlook ?? ""} ${rated ?? ""}` : "",
+    tiles.map((k) => `${k.label} ${k.value} ${k.change ?? ""}`).join(" "),
+    (card.volume_strip?.months ?? []).map((m) => `${m.value} ${m.yoy_pct ?? ""}`).join(" "),
   ].join(" ");
   const unique = card.what_happened.filter((fact) => !(table && coveredByTable(fact, table)) && !repeats(plain(fact), `${headline} ${blockText}`));
   // the verified face: only facts whose quoted sentence code found in the filing; the rest is the AI's reading
-  const facts = unique.filter((f) => verifiedFact(f, g.ungrounded)).slice(0, factLimit);
-  const unverified = unique.filter((f) => !verifiedFact(f, g.ungrounded));
-  const shownText = [headline, ...facts.map(plain)].join(" ");
+  const split = splitFacts(unique, g.ungrounded, factLimit);
+  const facts = split.face, unverified = split.unverified;
+  const shownText = [headline, blockText, ...facts.map(plain)].join(" ");
   const box = boxItems(card, (s) =>
-    (s.type === "SCALE" && dealBlock && !!card.scale) || (s.type === "RATING_LIQUIDITY" && !!rating && /outlook/i.test(s.text)) || repeats(s.text, shownText));
+    (s.type === "SCALE" && ((dealBlock && !!card.scale) || restatesHeadline(s.text, headline)))
+    || (s.type === "RATING_LIQUIDITY" && !!rating && /outlook/i.test(s.text)) || repeats(s.text, shownText));
   const faceText = [shownText, ...box.insights.map((i) => i.text), box.signal?.text ?? ""].join(" ");
   const decision = decisionLines(row, card, table, faceText);
-  const footer = footerMetrics(card).filter((m) => !showsFigure(faceText, m.value) && !(table && /margin/i.test(m.label)));
+  // the sector's KPI chips belong to results; on an order or a rating they said nothing about the news
+  const footer = family !== "res" ? []
+    : footerMetrics(card).filter((m) => !showsFigure(faceText, m.value) && !(table && /margin/i.test(m.label)));
   const thin = row.median_turnover_cr != null && row.median_turnover_cr < 0.5;
   const credibility = card.score?.credibility;
   const familyLabel = [EVENT_LABELS[event] ?? card.category_tag, table?.period, card.basis ? BASIS_LABEL[card.basis]?.toLowerCase() : null,
@@ -499,7 +580,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
   return (
     <article ref={ref} id={`card-${row.news_id}`} style={famStyle(family)}
       className={cn("card-soft card-lift rise-in relative", highlight && "ring-2 ring-accent")}>
-      <div className="px-5 pb-3 pt-4 sm:px-6 sm:pt-5">
+      <div className="px-3.5 pb-3 pt-4 sm:px-6 sm:pt-5">
         {exporting && (
           <div className="mb-3 flex items-baseline justify-between text-[12px]">
             <span className="font-semibold text-accent">Insiders · NSE</span>
@@ -564,7 +645,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
             <FamilyIcon className="h-3.5 w-3.5" />{familyLabel}
           </span>
           {deal?.updates_deal_id && <span className="text-ink-3">Update to an earlier deal</span>}
-          {!dealBlock && deal && STAGE_LABEL[deal.stage] && PROVISIONAL_STAGES.has(deal.stage) && <span className="text-warn">{STAGE_LABEL[deal.stage]}</span>}
+          {(family === "ord" || family === "cap") && !dealBlock && deal && STAGE_LABEL[deal.stage] && PROVISIONAL_STAGES.has(deal.stage)
+            && <span className="text-warn">{STAGE_LABEL[deal.stage]}</span>}
           {credibility != null && credibility < 50 && <span className="text-warn">🎯 Credibility {Math.round(credibility)}%</span>}
           {thin && <span className="text-warn" title="Median traded value a day">💧 ₹{row.median_turnover_cr!.toFixed(2)} Cr a day</span>}
           <TechnicalTags row={row} />
@@ -573,12 +655,12 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         <h3 className="mt-3 font-display text-[18px] leading-snug text-ink sm:text-[19.5px]">{headline}</h3>
 
         {card.call_read && <CallReadChips read={card.call_read} />}
-        {table && <ResultsTable r={table} />}
-        {dealBlock && <DealBlock card={card} />}
-        {rating && <RatingBlock rc={rating} />}
+        {table && <ResultsTable r={table} judged={verdict(tone, row.impact_level)} />}
+        {dealBlock && <DealBlock card={card} filedAt={row.filed_at} />}
+        {rating && <RatingBlock rc={rating} amount={rated} />}
         {caseStage && <CaseBlock cs={caseStage} />}
         {card.volume_strip && <VolumeStrip s={card.volume_strip} />}
-        {tilesFor && card.key_numbers.length >= 2 && <KeyTiles items={card.key_numbers} />}
+        {tiles.length > 0 && <KeyBlock items={tiles} />}
 
         {facts.length > 0 && (
           <ul className="mt-3 space-y-2">
@@ -599,16 +681,18 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
         )}
 
         {decision.length > 0 && (
-          <dl className="mt-3 grid gap-x-4 gap-y-1.5 text-[13px] sm:grid-cols-2">
-            {decision.map((d) => (
-              <div key={d.label} className="min-w-0">
-                <dt className="text-[11px] font-bold uppercase tracking-[0.06em] text-ink-3">{d.label}</dt>
-                <dd className={cn("leading-snug", d.tone === "pos" ? "text-pos" : d.tone === "neg" ? "text-neg" : "text-ink")}>
-                  {d.text}{d.computed && <span className="ml-1.5 text-[10.5px] font-medium text-ink-3">✓ computed</span>}
-                </dd>
-              </div>
-            ))}
-          </dl>
+          <section className="mt-3 rounded-2xl bg-[var(--fam-soft)] px-4 py-3">
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--fam)]">For the decision</h4>
+            <ul className="mt-2 space-y-2">
+              {decision.map((d) => (
+                <Point key={d.label}>
+                  <span className={cn("font-semibold", d.tone === "warn" ? "text-warn" : "text-[var(--fam)]")}>{d.label}:</span>{" "}
+                  <span className={cn(d.tone === "pos" ? "text-pos" : d.tone === "neg" ? "text-neg" : undefined)}>{d.text}</span>
+                  {d.computed && <span className="ml-1.5 text-[10.5px] font-medium text-ink-3">✓ computed</span>}
+                </Point>
+              ))}
+            </ul>
+          </section>
         )}
 
         {!exporting && <AiReading catalyst={card.core_catalyst && !repeats(plain(card.core_catalyst), headline) ? plain(card.core_catalyst) : null}
@@ -677,6 +761,12 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
                 { label: "Verify against the PDF", icon: FileSearch, onClick: () => openMemory(row.news_id), hidden: !row.pdf_url },
                 { label: "Company memory", icon: Building2, onClick: () => openMemory() },
               ]} />
+              {onCollapse && (
+                <button type="button" onClick={onCollapse} aria-label="Fold back into the list" title="Fold back into the list"
+                  className="grid h-8 w-8 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
+                  <ChevronUp className="h-4 w-4" />
+                </button>
+              )}
             </span>
           </div>
         )}
@@ -684,8 +774,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false }
       {!exporting && <VerdictBar newsId={row.news_id} />}
       {open && !exporting && (
         <DeepDive row={row} card={card} shown={box.insights.length} shownSignal={box.signal}
-          moreFacts={unique.slice(factLimit)} faceText={faceText} thinShown={thin}
-          keyNumbers={tilesFor && card.key_numbers.length >= 2 ? [] : card.key_numbers.filter((k) => !showsFigure(faceText, k.value))} />
+          moreFacts={split.more} faceText={faceText} thinShown={thin}
+          keyNumbers={card.key_numbers.filter((k) => !tiles.includes(k) && !showsFigure(faceText, k.value))} />
       )}
     </article>
   );
@@ -711,7 +801,7 @@ function VerdictBar({ newsId }: { newsId: string }) {
     if (mine && note !== null && note !== mine.note) void judge(newsId, mine.verdict, note);
   };
   return (
-    <div className="flex flex-wrap items-center gap-2 border-t border-line px-5 py-2.5 sm:px-6" data-noexport="true">
+    <div className="flex flex-wrap items-center gap-2 border-t border-line px-3.5 py-2.5 sm:px-6" data-noexport="true">
       <span className="text-[12px] font-medium text-ink-3">Your verdict</span>
       {VERDICTS.map(({ v, label, on }) => (
         <button key={v} type="button" onClick={() => pick(v)} aria-pressed={mine?.verdict === v}
@@ -760,7 +850,7 @@ function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers, faceTe
   const g = card.grounding;
 
   return (
-    <div className="space-y-5 border-t border-line bg-surface-2/30 px-5 py-5 sm:px-6" data-noexport="true">
+    <div className="space-y-5 border-t border-line bg-surface-2/30 px-3.5 py-5 sm:px-6" data-noexport="true">
       {moreFacts.length > 0 && (
         <Section label="More from the filing">
           <ul className="space-y-2">{moreFacts.map((fact, i) => <Point key={i}><RichText text={fact} /></Point>)}</ul>
@@ -980,13 +1070,12 @@ function formerName(row: CardRow): string | null {
 function VolumeStrip({ s }: { s: NonNullable<CardBody["volume_strip"]> }) {
   const top = Math.max(...s.months.map((m) => m.value), 1);
   return (
-    <figure className="mt-3 rounded-xl border border-line px-3 py-2.5">
-      <figcaption className="eyebrow text-ink-3">{s.metric.replace(/_/g, " ")}{s.unit && s.unit !== "INR_CR" ? ` · ${s.unit.toLowerCase()}` : ""}</figcaption>
-      <div className="mt-2 grid gap-2" style={{ gridTemplateColumns: `repeat(${s.months.length}, minmax(0, 1fr))` }}>
+    <BlockShell title={`${s.metric.replace(/_/g, " ")}${s.unit === "INR_CR" ? " · ₹ Cr" : s.unit ? ` · ${s.unit.toLowerCase()}` : ""}`}>
+      <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${s.months.length}, minmax(0, 1fr))` }}>
         {s.months.map((m, i) => (
           <div key={m.period} className="flex flex-col items-center gap-1">
             <div className="flex h-12 w-full items-end">
-              <div className={cn("w-full rounded-t", i === s.months.length - 1 ? "bg-accent" : "bg-line-strong")}
+              <div className={cn("w-full rounded-t", i === s.months.length - 1 ? "bg-[var(--fam)]" : "bg-line-strong")}
                 style={{ height: `${Math.max(6, (m.value / top) * 100)}%` }} title={`${m.period}: ${m.value.toLocaleString("en-IN")}`} />
             </div>
             <span className="num text-[11px] text-ink">{m.value.toLocaleString("en-IN", { maximumFractionDigits: 1 })}</span>
@@ -996,7 +1085,57 @@ function VolumeStrip({ s }: { s: NonNullable<CardBody["volume_strip"]> }) {
           </div>
         ))}
       </div>
-      <p className="num mt-1 text-[10.5px] text-ink-3">{s.months[0].period} to {s.months[s.months.length - 1].period} · change vs a year ago</p>
-    </figure>
+      <p className="num text-[10.5px] text-ink-3">{s.months[0].period} to {s.months[s.months.length - 1].period} · change vs a year ago</p>
+    </BlockShell>
+  );
+}
+
+/** One filing in a list (the List view, Today's low-impact rows): a compact row that opens into the card itself, so a
+ * list never draws a second, older layout of the same filing. */
+export function AnnouncementRow({ row, defaultOpen = false, highlight = false }: { row: CardRow; defaultOpen?: boolean; highlight?: boolean }) {
+  const card = useMemo(() => parseCard(row), [row]);
+  const [open, setOpen] = useState(defaultOpen);
+  const [, navigate] = useLocation();
+  if (!card) return null;
+  if (open) return <AnnouncementCard row={row} highlight={highlight} onCollapse={() => setOpen(false)} />;
+  const tone = (card.tone ?? "NEUTRAL") as Tone;
+  const warnings = card.signals.filter((s) => s.severity === "WARNING").length;
+  const positives = card.signals.filter((s) => s.severity === "POSITIVE").length;
+
+  return (
+    <article id={`card-${row.news_id}`}
+      className={cn("card-soft card-lift relative overflow-hidden !rounded-2xl", highlight && "ring-2 ring-accent")}>
+      <span aria-hidden className={cn("absolute inset-y-0 left-0 w-[3px]", TONE_STRIPE[tone])} />
+      {/* The whole row opens the card; the headline is the accessible toggle button. */}
+      <div onClick={() => setOpen(true)} className="cursor-pointer px-4 py-3.5 pl-5 sm:px-5 sm:pl-6">
+        <div className="flex items-start gap-4">
+          <h3 className="min-w-0 flex-1 font-display text-[15px] font-semibold leading-snug text-ink">
+            <button type="button" aria-expanded={false} onClick={(e) => { e.stopPropagation(); setOpen(true); }}
+              className="text-left hover:text-accent focus-visible:text-accent">
+              {plain(card.headline)}
+            </button>
+          </h3>
+          <span className="flex shrink-0 items-center gap-2 pt-0.5">
+            <span className={cn("eyebrow hidden sm:inline", IMPACT_TEXT[row.impact_level])}>{IMPACT_LABEL[row.impact_level]}</span>
+            <ChevronDown aria-hidden className="h-4 w-4 text-ink-3" />
+          </span>
+        </div>
+        {card.takeaway ? (
+          <p className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-ink-2 sm:line-clamp-1"><span title="The AI's reading, not verified against the filing" className="mr-1.5 rounded bg-surface-2 px-1 py-px align-[1px] text-[10px] font-bold uppercase tracking-wide text-ink-3">AI</span>{card.takeaway}</p>
+        ) : null}
+        <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-xs text-ink-3">
+          <TickerChip name={row.company_name} symbol={row.symbol} scrip={row.scrip_code} onClick={() => navigate(`/company/${row.scrip_code}`)} />
+          <span className="hidden text-ink-2 sm:inline">{row.company_name}</span>
+          {row.market_cap_cr != null && (
+            <span className="num">{cr(row.market_cap_cr)}{row.size_category ? ` · ${titleCase(row.size_category)}cap` : ""}</span>
+          )}
+          <span>{EVENT_LABELS[row.event_category] ?? card.category_tag}</span>
+          <span className="num" title={istDateTime(row.filed_at)}>{istDateTime(row.filed_at).split(", ").pop()} · {relativeTime(row.filed_at)}</span>
+          <span className="sm:hidden">· {IMPACT_LABEL[row.impact_level]}</span>
+          {positives > 0 && <span className="inline-flex items-center gap-1 text-pos"><CheckCircle2 className="h-3.5 w-3.5" />{positives}</span>}
+          {warnings > 0 && <span className="inline-flex items-center gap-1 text-warn"><AlertTriangle className="h-3.5 w-3.5" />{warnings}</span>}
+        </div>
+      </div>
+    </article>
   );
 }

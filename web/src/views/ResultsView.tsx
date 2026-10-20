@@ -4,7 +4,8 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import type { CardBody, CardRow } from "../../shared/types";
 import { Avatar } from "../components/Avatar";
-import { FilingBody, parseCard } from "../components/FilingCard";
+import { AnnouncementCard } from "../components/AnnouncementCard";
+import { parseCard } from "../components/FilingCard";
 import { Badge, Select } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { api } from "../lib/api";
@@ -14,22 +15,10 @@ import { cr, istDate, todayIST } from "../lib/format";
 import { SIZES, TONE_BORDER, TONE_CHIP, verdict, type Tone } from "../lib/taxonomy";
 import { periodEnd } from "../lib/periods";
 import { useQueryState } from "../lib/url";
+import { TURN, turnOf } from "../lib/results";
 import { Empty, Loading } from "./FeedView";
 
-const TURN: Record<string, [string, string]> = {
-  LOSS_TO_PROFIT: ["Loss to profit", "text-pos"], PROFIT_TO_LOSS: ["Profit to loss", "text-neg"],
-  LOSS_NARROWED: ["Loss narrowed", "text-pos"], LOSS_WIDENED: ["Loss widened", "text-neg"],
-};
-
-/** A change across a loss, in words: a % of a negative base means nothing (Prism Johnson's PAT "+2127%", T11). Cards
- *  stored before the pipeline named it carry the two values, so the turn is read from them here too. */
-export function turnOf(line?: { value?: number; prev_year?: number; yoy_turn?: string } | null): string | undefined {
-  if (!line) return undefined;
-  if (line.yoy_turn) return line.yoy_turn;
-  const { value: now, prev_year: base } = line;
-  if (now == null || base == null || (now >= 0 && base >= 0)) return undefined;
-  return now >= 0 ? "LOSS_TO_PROFIT" : base >= 0 ? "PROFIT_TO_LOSS" : now > base ? "LOSS_NARROWED" : "LOSS_WIDENED";
-}
+export { turnOf };
 
 export function Change({ value, unit = "%", turn }: { value?: number; unit?: "%" | "bp"; turn?: string }) {
   if (turn && TURN[turn]) return <span className={cn("whitespace-nowrap font-semibold", TURN[turn][1])}>{TURN[turn][0]}</span>;
@@ -164,7 +153,10 @@ export function ResultsView() {
                       </tr>
                       {isOpen && (
                         <tr className="border-b border-line">
-                          <td colSpan={11} className="p-0"><FilingBody row={row} card={card} showHeadline /></td>
+                          <td colSpan={11} className="p-0">
+                            {/* the card itself, held to the visible width while the table scrolls sideways on a phone */}
+                            <div className="sticky left-0 w-[min(820px,calc(100vw_-_2rem_-_2px))] p-2 sm:p-3"><AnnouncementCard row={row} /></div>
+                          </td>
                         </tr>
                       )}
                     </Fragment>

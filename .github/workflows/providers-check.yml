@@ -8,9 +8,13 @@ on:
   workflow_dispatch:
     inputs:
       ai_check:
-        description: also send one tiny request to each configured model (a few tokens each)
+        description: also send one tiny request to each model of the route below (a few tokens each)
         type: boolean
         default: false
+      route:
+        description: the route whose models ai-check tries (trial_new = the new candidates only; empty = every route)
+        type: string
+        default: trial_new
 
 permissions:
   contents: read
@@ -54,4 +58,6 @@ jobs:
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel models'
       - name: One tiny request per configured model
         if: always() && inputs.ai_check
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel ai-check'
+        env:
+          ROUTE: ${{ inputs.route }}
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel ai-check ${ROUTE:+--route "$ROUTE"}'

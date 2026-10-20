@@ -83,7 +83,7 @@ case ladder and capex size. Yours, each with a test:
    model's call.
 Report: here, per class. Files you may change: your files (TASKS "Who owns what"), their tests, `docs/audit/live/`.
 
-## T23 · P1 · cloud (moved from the laptop, 20 Oct 06:50 IST) · IN PROGRESS — fill the design blocks on the live cards (no AI)
+## T23 · P1 · cloud (moved from the laptop, 20 Oct 06:50 IST) · DONE 07:00 IST (maintenance.yml: 1,042 of 1,106 cards refreshed, 0 failed; 1,418 summaries) — fill the design blocks on the live cards (no AI)
 
 The cloud runs it from GitHub with `maintenance.yml` (no laptop needed: the ingest token is a GitHub secret). Laptop: nothing to do here; the Adani Power former-names trace stays yours (item below).
 

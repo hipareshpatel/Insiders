@@ -16,6 +16,7 @@ Columns:
 
 | date | class | change | on/off over stored cards | sample | published right, before → after |
 |---|---|---|---|---|---|
+| 21 Oct 15:20 | other (call-card figure against the company's XBRL) | Call cards: a quarter key number for revenue, EBITDA or PAT whose figure and stated change both contradict the results block is dropped; a headline or point repeating it sends the card to review (`results_card.call_figure_conflicts`) | 198 stored call cards with a results block: a value-only rule flagged 54 (full-year figures, segments, adjusted EBITDA, other basis); with the quarter named in the quote 7; with the stated change contradicting the filed one too, 2: Bajaj Consumer nse-106823055 (the audited slip) and LTM c707fc7d (already held) | 2 of 2 checked against their quotes and blocks | 2 of 6 right (14:07) → next audit |
 | 21 Oct 12:55 | event_type | Order releases mentioning market demand no longer turned into LITIGATION_REGULATORY; "wins … orders" / "awarded … order" read as orders (pipeline.py `_TAX_OR_PENALTY`, `_REAL_ORDER`) | 304 stored ORDER_WIN + LITIGATION cards, rule decision off/on from each filing's text: 8 change; blind reviewer: 4 are order wins (L&T nse-106822983 and nse-106619863, Suzlon nse-106635264, Man Industries nse-106743427) and become right; 3 bank strike notices and Prestige's sales update are not litigation either way (wrong before and after); 0 made wrong | blind: 8 of 8 not litigation | 0 of 12 right (12:07) → next audit |
 
 ## Daily audit totals

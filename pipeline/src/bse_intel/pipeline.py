@@ -3075,6 +3075,16 @@ class Pipeline:
             card_json["grounding"]["evidence"] = evidence
         card_json["grounding"]["prompt_variant"] = variant
         needs_review = checks.needs_review
+        # a call card's quarter figure the company's own XBRL contradicts is dropped, and a headline or point repeating it
+        # sends the card to review (Bajaj Consumer, daily audit 21 Oct 2026: a transcript slip over the filed figures)
+        conflicts = results_card.call_figure_conflicts(card_json.get("results"), card_json.get("key_numbers") or [])
+        if conflicts:
+            slipped = {c["value"] for c in conflicts}
+            card_json["key_numbers"] = [k for k in card_json["key_numbers"] if k.get("value") not in slipped]
+            card_json["grounding"]["call_figure_conflicts"] = conflicts
+            face = [card_json.get("headline") or ""] + [p.get("text") or "" for p in card_json.get("what_happened") or []]
+            if any(v in line for v in slipped for line in face):
+                needs_review = True
         # A card the checks faulted, that a second provider was asked to correct and that still
         # fails, is kept out of the feed rather than published with an "Unverified" mark. On the
         # rebuild that was 117 of 456 cards, and a flagged card was judged WRONG 52% of the time

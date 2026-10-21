@@ -38,6 +38,7 @@ import exportKv from "../../db/queries/export_kv.sql?raw";
 import snapshotFeed from "../../db/queries/snapshot_feed.sql?raw";
 import snapshotSignals from "../../db/queries/snapshot_signals.sql?raw";
 import seedPriority from "../../db/queries/seed_priority.sql?raw";
+import cardsHeldRecent from "../../db/queries/cards_held_recent.sql?raw";
 import snapshotCount from "../../db/queries/snapshot_count.sql?raw";
 import feedbackExamples from "../../db/queries/feedback_examples.sql?raw";
 import cardsAwaitingReaction from "../../db/queries/cards_awaiting_reaction.sql?raw";
@@ -97,6 +98,7 @@ export const QUERIES: Record<string, string> = {
   snapshot_feed: snapshotFeed,
   snapshot_signals: snapshotSignals,
   seed_priority: seedPriority,
+  cards_held_recent: cardsHeldRecent,
   snapshot_count: snapshotCount,
   feedback_examples: feedbackExamples,
 };

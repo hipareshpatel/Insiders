@@ -9,7 +9,7 @@
 #   or, with ids, the named filings are re-run whatever their status (held or stale cards);
 # - apply-verdicts: the owner's standing Wrong / Right verdicts applied to the stored cards once (verdicts saved
 #   before they acted on the card, O11, never held or released it); a re-run keeps them by itself (cards_upsert.sql);
-# - seed-memory: results history from NSE's XBRL into each universe company's memory, in eight parallel shards (job
+# - seed-memory: results history from NSE's XBRL into each universe company's memory, in twelve parallel shards (job
 #   `seed`), each resuming after its last company; a pass is 5 h, and one that ends with companies left starts the next.
 # - fill-memory: what the nightly run reads a few days of at a time, in one go (owner, 2026-10-21: "let it get filled
 #   today ... except where AI is required"): shareholding patterns for the last `days` (two quarters at 110), governance
@@ -150,9 +150,10 @@ jobs:
           git push -q origin claude/nice-goodall-ta0sxs
 
   # The results history, in parallel (owner, 2026-10-21: "let it get filled today", "NSE will not block it with suitable
-  # rate"): eight runners, so eight addresses, each pacing its own NSE calls (3-5 s) and walking every eighth company
-  # with its own resume point (seed:universe_last:<i>of8). From 21 Oct each company's files back to FY21 are read with
-  # the full balance sheet and cash flow; the shard keys started fresh then, so the first pass walks everyone.
+  # rate"): twelve runners, so twelve addresses, each pacing its own NSE calls (3-5 s) and walking every twelfth company
+  # with its own resume point (seed:universe_last:<i>of12). From 21 Oct each company's files back to FY21 are read with
+  # the full balance sheet and cash flow, and a consolidated filer's standalone files beside them (kept apart); the
+  # shard keys started fresh then, so the first pass walks everyone.
   seed:
     if: inputs.command == 'seed-memory'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
@@ -160,7 +161,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     defaults:
       run:
         working-directory: pipeline
@@ -182,7 +183,7 @@ jobs:
       - name: Seed this shard's companies
         run: |
           code=0
-          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-memory --universe --results-only --shard ${{ matrix.shard }}/8 ${{ inputs.restart && '--restart' || '' }} || code=$?
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-memory --universe --results-only --shard ${{ matrix.shard }}/12 ${{ inputs.restart && '--restart' || '' }} || code=$?
           mkdir -p "$RUNNER_TEMP/more"
           if [ "$code" -eq 124 ]; then echo more > "$RUNNER_TEMP/more/${{ matrix.shard }}"; elif [ "$code" -ne 0 ]; then exit "$code"; fi
       - uses: actions/upload-artifact@v4

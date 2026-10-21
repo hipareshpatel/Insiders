@@ -309,3 +309,26 @@ def test_old_years_are_read_from_their_march_files_only():
     kept = sorted(r.period_end for r in best.values())
     assert kept[-12:] == ends[-12:]
     assert kept[:-12] == [e for e in ends[:-12] if e.endswith("03-31")]
+
+
+def test_a_consolidated_filers_standalone_quarter_is_kept_apart():
+    """Owner (2026-10-21): "we have standalone vs consolidated numbers in financials". Both files of a quarter: the
+    consolidated one is memory's, the standalone one goes to dossier["standalone"] for the company page alone."""
+    seed_mod._nse_rows.cache_clear()
+
+    def xml(basis, pat):
+        return GI_XML.decode().replace(">Standalone<", f">{basis}<").replace("9464000000", str(pat)).encode()
+
+    cons, alone = "https://nse/q2-cons.xml", "https://nse/q2-alone.xml"
+    rows = [ResultsFiling(period="Quarterly", consolidated=True, audited="Audited", filed_at="2026-10-14", xbrl_url=cons,
+                          is_bank=False, period_end="2026-09-30", taxonomy="GI"),
+            ResultsFiling(period="Quarterly", consolidated=False, audited="Audited", filed_at="2026-10-14", xbrl_url=alone,
+                          is_bank=False, period_end="2026-09-30", taxonomy="GI")]
+    nse = Nse(rows, {cons: xml("Consolidated", 9_464_000_000), alone: xml("Standalone", 2_051_000_000)})
+    sink, stats = Sink(), SeedStats()
+    seed_results(sink, None, "519552", "Heritage Foods", "2025-01-01", None, stats, company={}, nse=nse, symbol="HERITGFOOD")
+    d = sink.dossiers["519552"]
+    main = next(m for m in d["financial_metrics"] if m["metric"] == "pat" and m["period"] == "Q2FY27")
+    alone_pat = next(m for m in d["standalone"]["metrics"] if m["metric"] == "pat" and m["period"] == "Q2FY27")
+    assert main["value"] == 946.4 and alone_pat["value"] == 205.1
+    assert stats.standalone_periods == 1

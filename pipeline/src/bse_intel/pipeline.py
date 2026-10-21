@@ -37,7 +37,7 @@ from .ai.gateway import CEILING, AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, latest_fundamentals, memory_ids, merge, own_former_name,
-                      new_dossier, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
+                      new_dossier, put_standalone, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import CACHE_VERSION, FIGURE_PAGE_AMOUNTS, Document, amounts, cache_needs_ocr
 from .ocr import available as local_ocr_available
 from .ocr import page_reader, recognise
@@ -161,6 +161,7 @@ class Stats:
     attachment_changed: int = 0  # known filings the exchange now serves with another file, queued again
     days_discovered: list[str] = field(default_factory=list)
     critic: dict = field(default_factory=dict)   # the shadow critic's counts this run (critic.py); empty when it did not run
+    sweep: dict = field(default_factory=dict)    # the end-of-day sweep of held cards (sweep.py); empty outside its slot
     stopped_reason: str | None = None
     last_error: str | None = None
     status: str = ""
@@ -3102,6 +3103,9 @@ class Pipeline:
         score, checked, ungrounded, quant, claims = checks.score, checks.checked, checks.ungrounded, checks.quant, checks.claims
 
         merged = merge(dossier, remembered, filing, card.impact_level, now)
+        if standalone_file is not None and standalone_file.kind == "RESULTS":
+            # the same quarter's standalone figures, for the company page's standalone view (never the card's)
+            put_standalone(merged, standalone_file.metrics, standalone_file.balance_sheet, filing.filed_at, filing.news_id)
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector), ("symbol", company.get("symbol") or filing.symbol)) if v})
         if event_type == "CONCALL_PRESENTATION":
             # the call's checked takeaways, kept for the company page's quarterly summary (owner, 2026-10-21: the
@@ -3533,6 +3537,7 @@ class Pipeline:
                 if writes_at_start + self.stats.d1_rows_written < self.settings.d1_daily_write_budget:
                     self._discover_window(live_from, today)
                 self._requeue_failed_nightly(live_from)
+                self._sweep_held()
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 backfill_done = self.sink.kv_get("backfill:complete") == "1"
                 # today's filings first, then the rest of the window, so a catch-up never holds today's news. Near the
@@ -3628,6 +3633,16 @@ class Pipeline:
         finally:
             self.gateway.deadline = saved
             self._flush_usage()
+
+    def _sweep_held(self) -> None:
+        """Once a day before Gemini's reset: held live-window cards with a writer's error read again (sweep.py)."""
+        from . import sweep
+
+        try:
+            if sweep.due(self.sink):
+                self.stats.sweep = sweep.run(self.sink, LIVE_DAYS, self.settings.max_attempts)
+        except Exception:  # the sweep never stops a run
+            log.exception("end-of-day sweep failed")
 
     def _annual_catchup_due(self) -> bool:
         """The daily annual-report catch-up's slot: after 18:30 IST, once a day, with NSE's annual-report XBRL on."""

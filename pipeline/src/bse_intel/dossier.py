@@ -451,6 +451,33 @@ def _cap_metrics(entries: list[dict]) -> list[dict]:
     return sorted(kept, key=lambda e: e["as_of"])
 
 
+STANDALONE_KEY = "standalone"
+
+
+def put_standalone(dossier: dict, metrics, balance, as_of: str, source: str) -> dict:
+    """A consolidated filer's standalone figures, kept apart (owner, 2026-10-21: "we have standalone vs consolidated
+    numbers in financials"): the company page shows either, as screener.in does. ``dossier["standalone"]`` holds
+    ``metrics`` (one per metric and period, the latest filing's) and ``balance_sheet`` snapshots; no view for the
+    model reads it, so a card never mixes the two bases. Mutates and returns ``dossier``."""
+    part = dossier.setdefault(STANDALONE_KEY, {"metrics": [], "balance_sheet": []})
+    entries = {(e["metric"], e["period"]): e for e in part.get("metrics", [])}
+    for m in metrics or []:
+        if m.value is None:
+            continue
+        key = (_norm(m.metric), _period(m.period))
+        old = entries.get(key)
+        if old and str(old.get("as_of", "")) > as_of:
+            continue
+        entries[key] = {"metric": key[0], "period": key[1], "value": m.value, "unit": m.unit, "yoy_pct": m.yoy_pct,
+                        "as_of": as_of, "source_news_id": source}
+    part["metrics"] = _cap_metrics(list(entries.values()))
+    if balance is not None and not balance.is_empty():
+        snap = {k: v for k, v in balance.model_dump().items() if v is not None} | {"as_of": as_of, "source_news_id": source}
+        kept = [b for b in part.get("balance_sheet", []) if b.get("period") != snap.get("period")]
+        part["balance_sheet"] = sorted(kept + [snap], key=lambda e: e["as_of"])[-MAX_BALANCE_SNAPSHOTS:]
+    return dossier
+
+
 _TIMELINE_STOP = {"with", "from", "that", "this", "will", "were", "been", "effective", "company", "limited", "board",
                   "approves", "approved", "appoints", "appointed", "announces", "announced", "regulation", "disclosure"}
 

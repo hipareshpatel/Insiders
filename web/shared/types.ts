@@ -407,7 +407,10 @@ export interface Dossier {
   industry?: string | null;
   sector?: string | null;
   business_summary?: { text: string; as_of: string; source_news_id: string } | null;
-  financial_metrics: { metric: string; period: string; value: number; unit: string; yoy_pct?: number | null; qoq_pct?: number | null; as_of: string; source_news_id: string }[];
+  financial_metrics: { metric: string; period: string; value: number; unit: string; yoy_pct?: number | null; qoq_pct?: number | null; as_of: string; source_news_id: string; sources?: { basis?: string | null }[] }[];
+  // a consolidated filer's standalone figures, kept apart for the company page (dossier.put_standalone)
+  standalone?: { metrics: { metric: string; period: string; value: number; unit: string; yoy_pct?: number | null; as_of: string; source_news_id: string }[];
+    balance_sheet: (Record<string, string | number | null> & { as_of: string })[] };
   segment_mix: { segment: string; period: string; revenue_cr?: number | null; share_pct?: number | null; as_of: string }[];
   balance_sheet: (Record<string, string | number | null> & { as_of: string })[];
   capital_actions?: { instrument: string; new_shares?: number | null; issue_price?: number | null; amount_cr?: number | null; as_of: string }[];

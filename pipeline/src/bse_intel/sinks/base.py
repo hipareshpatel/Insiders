@@ -57,6 +57,7 @@ QUERIES = (
     "snapshot_feed",
     "snapshot_signals",
     "seed_priority",
+    "cards_held_recent",
     "snapshot_count",
     "feedback_examples",
     "cards_awaiting_reaction",

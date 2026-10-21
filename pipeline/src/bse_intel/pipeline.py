@@ -3462,7 +3462,9 @@ class Pipeline:
                         self._dgtr_sync(live_deadline)
                     if time.monotonic() < live_deadline and self._annual_catchup_due():
                         self._annual_catchup(live_deadline)
-                self._run_critic(live_deadline)
+                # its own slot of at most CRITIC_MAX_S from the run's time, before the backfill: inside the live part it
+                # got none whenever the live filings used their share (21 Oct 05:33 IST: 6 cards queued, 0 judged)
+                self._run_critic(deadline)
             if mode in ("backfill", "all") and not self._halted(bulk=True):
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
         except SourceBlockedError as exc:
@@ -3490,8 +3492,8 @@ class Pipeline:
         return self.stats
 
     def _run_critic(self, deadline: float) -> None:
-        """The shadow critic over this run's committed live cards (critic.py), inside the live part of the run and at most
-        CRITIC_MAX_S seconds. It writes no D1 row and changes no card; it never fails the run."""
+        """The shadow critic over this run's committed live cards (critic.py), after the live part and before the
+        backfill, at most CRITIC_MAX_S seconds. It writes no D1 row and changes no card; it never fails the run."""
         jobs, self._critic_jobs = self._critic_jobs, []
         if not jobs or not self.settings.critic or not self.gateway.has_route("critic"):
             return

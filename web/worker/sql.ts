@@ -2,6 +2,7 @@
 // pipeline's LocalSink execute exactly the same statements.
 import cardsApplyVerdicts from "../../db/statements/cards_apply_verdicts.sql?raw";
 import cardsDelete from "../../db/statements/cards_delete.sql?raw";
+import cardsReleasePruned from "../../db/statements/cards_release_pruned.sql?raw";
 import cardsReaction from "../../db/statements/cards_reaction.sql?raw";
 import cardsUpsert from "../../db/statements/cards_upsert.sql?raw";
 import catalystsUpsert from "../../db/statements/catalysts_upsert.sql?raw";
@@ -56,6 +57,7 @@ export const STATEMENTS: Record<string, string> = {
   cards_upsert: cardsUpsert,
   cards_reaction: cardsReaction,
   cards_delete: cardsDelete,
+  cards_release_pruned: cardsReleasePruned,
   cards_apply_verdicts: cardsApplyVerdicts,
   companies_upsert: companiesUpsert,
   companies_seen: companiesSeen,

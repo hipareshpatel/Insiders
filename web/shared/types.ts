@@ -171,13 +171,15 @@ export interface CardBody {
   grounding: { score: number; checked: number; ungrounded: string[]; math_mismatches?: number; unsupported_claims?: string[] };
   /** Set when the first draft failed the checks and a second AI was asked to correct it. */
   review?: {
-    status: "CORRECTED" | "UNRESOLVED" | "UNCHECKED" | "HELD";
+    status: "CORRECTED" | "UNRESOLVED" | "UNCHECKED" | "HELD" | "PRUNED";
     first_model?: string;
     checked_by?: string;
     issues?: string[];
     fixed?: string[];
     /** Reasons no second AI can fix (a garbled scan, the owner's hold list), kept beside its verdict. */
     held?: string[];
+    /** Points dropped because their quote did not carry them; the rest of the card was published (prune_quote_failures). */
+    pruned?: string[];
   } | null;
   model: string;
   /** Monthly business updates: the main volume metric over recent months, from memory at the filing. */

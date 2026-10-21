@@ -11,6 +11,8 @@
 #   before they acted on the card, O11, never held or released it); a re-run keeps them by itself (cards_upsert.sql);
 # - seed-memory: results history from NSE's XBRL into each universe company's memory, in twelve parallel shards (job
 #   `seed`), each resuming after its last company; a pass is 5 h, and one that ends with companies left starts the next.
+# - release-pruned: held cards whose only faults were points their quote did not carry, published without those points
+#   (prune.py; owner, 2026-10-21: "Needs review · 475"); --dry-run counts them;
 # - fill-memory: what the nightly run reads a few days of at a time, in one go (owner, 2026-10-21: "let it get filled
 #   today ... except where AI is required"): shareholding patterns for the last `days` (two quarters at 110), governance
 #   reports (two quarters), a year of pledge events, DGTR's case lists; then the seed passes start. Not the annual-report
@@ -25,7 +27,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, apply-verdicts, seed-memory, fill-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, apply-verdicts, seed-memory, fill-memory, release-pruned]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -40,7 +42,7 @@ on:
         type: string
         default: '110'
       dry_run:
-        description: count what would change, write nothing (refresh-card-blocks, requeue-failed)
+        description: count what would change, write nothing (refresh-card-blocks, requeue-failed, release-pruned)
         type: boolean
         default: false
 
@@ -84,6 +86,9 @@ jobs:
         env:
           IDS: ${{ inputs.ids }}   # through the environment, never pasted into the script
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel requeue-failed ${IDS:+--ids "$IDS"} ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
+      - name: Publish held cards without their unquoted points
+        if: inputs.command == 'release-pruned'
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel release-pruned ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
       - name: Apply the owner's verdicts
         if: inputs.command == 'apply-verdicts' && !inputs.dry_run
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel apply-verdicts'

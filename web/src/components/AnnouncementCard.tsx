@@ -1021,10 +1021,11 @@ function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers, faceTe
           <p className="text-[12.5px] leading-relaxed text-ink-2">
             The first draft{card.review.first_model ? ` (${card.review.first_model})` : ""} failed the automatic checks
             {card.review.checked_by ? `; ${card.review.checked_by} was asked to correct it` : ", and no second AI was available"}.
-            {card.review.status === "CORRECTED" ? " The corrected card passed the number checks." : " What still fails:"}
+            {card.review.status === "CORRECTED" ? " The corrected card passed the number checks."
+              : card.review.status === "PRUNED" ? " Published without the points whose quote did not carry them:" : " What still fails:"}
           </p>
           <ul className="mt-1.5 space-y-1">
-            {(card.review.status === "CORRECTED" ? card.review.fixed ?? [] : card.review.issues ?? []).map((p, i) => (
+            {(card.review.status === "CORRECTED" ? card.review.fixed ?? [] : card.review.status === "PRUNED" ? card.review.pruned ?? [] : card.review.issues ?? []).map((p, i) => (
               <li key={i} className={cn("text-[12px]", card.review!.status === "CORRECTED" ? "text-ink-3 line-through" : "text-warn")}>{p}</li>
             ))}
             {card.review.status === "CORRECTED" && (card.review.held ?? []).map((p, i) => (

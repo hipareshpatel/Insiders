@@ -213,6 +213,14 @@ class CardChecks:
                 or bool(self.headline_ungrounded) or bool(self.scale) or bool(self.quotes) or bool(self.form))
 
     @property
+    def only_quotes(self) -> bool:
+        """Every fault is a point whose quote does not carry it: none of the card's figures was found wrong or missing,
+        no claim, scale, sum or headline failed. Such a card is published without those points (prune_quote_failures)."""
+        return (bool(self.quotes) and self.score >= DEFAULT_THRESHOLD and self.quant.mismatches == 0 and not self.claims
+                and not self.headline_ungrounded and not self.scale and not self.form and not self.amounts_ungrounded
+                and not self.held)
+
+    @property
     def only_style(self) -> bool:
         """Nothing found wrong with the card beyond how it quoted the filing."""
         return bool(self.quote_style) and not self.fixable and not self.amounts_ungrounded
@@ -1398,6 +1406,48 @@ def _row_quoted(quote: str, claim: str, text: str, unit: float | None) -> str | 
                 and not gate.numbers_in_quote(claim, line, gate.quote_unit(line, text, unit)):
             return line
     return None
+
+
+_QUOTE_POINT = re.compile(r'^(key number|notable change|why it matters) "(.*)" (?:quotes a sentence|states )', re.S)
+_QUOTE_FACT = re.compile(r'^"(.*)" states .*, which its own quote does not$', re.S)
+
+
+def prune_quote_failures(out: Pass2Output, problems: list[str]) -> list[str] | None:
+    """Drop, in place, the points whose quote does not carry them (owner, 2026-10-21: "Needs review · 475": cards held
+    while nothing on them was found wrong). The 20 Oct hand review read 108 cards held only this way: 77 right, 20
+    minor, 11 wrong (10%), against 23% of the published cards reviewed on 21 Oct; the point goes, the rest of the card
+    is published. Returns what was dropped, or None when a problem names no point that can go (the last fact, or a
+    problem of another form): then the card stays held."""
+    card = out.card
+    if card is None:
+        return None
+    dropped: list[str] = []
+    for problem in problems:
+        if problem.startswith("dropped: "):
+            continue   # already out of the card (check_quotes)
+        point, fact = _QUOTE_POINT.match(problem), _QUOTE_FACT.match(problem)
+        if point:
+            kind, label = point.group(1), point.group(2)
+            if kind == "key number":
+                kept = [k for k in card.key_numbers if (k.label or "") != label]
+                hit, card.key_numbers = len(kept) < len(card.key_numbers), kept
+            elif kind == "notable change":
+                kept = [c for c in card.notable_changes or [] if (c.metric or "") != label]
+                hit, card.notable_changes = len(kept) < len(card.notable_changes or []), kept
+            else:
+                kept = [i for i in card.why_it_matters if (i.text or "")[:48] != label]
+                hit, card.why_it_matters = len(kept) < len(card.why_it_matters), kept
+        elif fact:
+            kept = [f for f in card.what_happened if f.text.replace("**", "")[:60] != fact.group(1)]
+            hit = 0 < len(kept) < len(card.what_happened)   # never the card's last fact
+            if hit:
+                card.what_happened = kept
+        else:
+            return None
+        if not hit:
+            return None
+        dropped.append(problem)
+    return dropped
 
 
 def _quoted_claims(card) -> list[tuple[str, str, str, str | None, bool]]:
@@ -3054,6 +3104,12 @@ class Pipeline:
             if fixes is not None:
                 unit_fixes, change_fixes, quotes_missing, quotes_dropped = fixes
         checks.held += self._held_reasons(filing, text)
+        if checks.only_quotes:
+            # the points whose quote does not carry them go; the card is published without them, not held
+            pruned = prune_quote_failures(out, checks.quotes)
+            if pruned is not None:
+                checks.quotes = []
+                review = {**(review or {}), "status": "PRUNED", "pruned": pruned}
         if checks.held and review is None:
             review = {"status": "HELD", "issues": checks.held}
         elif checks.held:

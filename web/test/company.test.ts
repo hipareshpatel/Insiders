@@ -102,3 +102,20 @@ test("earnings-call quarters: cleaned, each point once, empty headings and quart
   assert.deepEqual(got[0].categories[0].points.map((p) => p.text), ["Volume growth 10-12% in FY27"]);
   assert.deepEqual(callQuarters(undefined), []);
 });
+
+test("the financial baseline reads in statement order", async () => {
+  const { inStatementOrder, statementPlace } = await import("../src/components/company/companyText.ts");
+  // TECHM's memory order (live, 2026-10-21): ebitda, ebit_margin, revenue, pat, eps, attrition, order_book, ...
+  const got = inStatementOrder([["ebitda", 1], ["ebit_margin", 2], ["revenue", 3], ["pat", 4], ["eps", 5], ["attrition", 6],
+    ["net_worth", 7], ["pbt", 8], ["mystery_kpi", 9]]).map(([m]) => m);
+  assert.deepEqual(got, ["revenue", "ebitda", "ebit_margin", "pbt", "pat", "eps", "attrition", "mystery_kpi", "net_worth"]);
+  assert.equal(statementPlace("gross_debt").section, "Cash and balance sheet");
+});
+
+test("baseline units in words and filler lines out", async () => {
+  const { unitValue, allZero } = await import("../src/components/company/companyText.ts");
+  assert.equal(unitValue("13.17", "INR"), "₹13.17");
+  assert.equal(unitValue("1,078", "USD_MN"), "$1,078 mn");
+  assert.equal(unitValue("84", "DAYS"), "84 days");
+  assert.ok(allZero([{ value: 0 }, { value: 0 }]) && !allZero([{ value: 0 }, { value: 4.2 }]));
+});

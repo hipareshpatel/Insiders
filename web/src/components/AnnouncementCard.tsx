@@ -509,7 +509,9 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
   const [copy, setCopy] = useState<"idle" | "copied" | "saved" | "error">("idle");
   const ref = useRef<HTMLElement>(null);
   const [, setParams] = useQueryState();
-  const openMemory = (verify?: string) => setParams({ memory: row.scrip_code, verify: verify ?? null, mtab: verify ? "verify" : null });
+  const [, go] = useLocation();
+  // one company view (owner, 2026-10-21): the company page holds the memory; the drawer only checks a card against its PDF
+  const openMemory = (verify?: string) => verify ? setParams({ memory: row.scrip_code, verify, mtab: "verify" }) : go(companyPath(row));
   const owner = useRatings();
   if (!card) return null;
 
@@ -628,7 +630,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
 
         <header className="flex items-center justify-between gap-3">
           <button type="button" onClick={() => openMemory()}
-            className="group flex min-w-0 items-center gap-3 text-left" title={`${row.company_name}: open the company memory`}>
+            className="group flex min-w-0 items-center gap-3 text-left" title={`${row.company_name}: open the company page`}>
             <Avatar name={row.company_name} symbol={row.symbol} size={44} />
             <span className="min-w-0">
               <span className="block truncate text-[16px] font-extrabold tracking-tight text-ink group-hover:text-accent">
@@ -778,7 +780,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
               <MoreMenu items={[
                 { label: copy === "idle" ? "Copy card as image" : copy === "error" ? "Could not copy" : "Copied", icon: copy === "error" ? AlertTriangle : copy === "idle" ? Camera : Check, onClick: share },
                 { label: "Verify against the PDF", icon: FileSearch, onClick: () => openMemory(row.news_id), hidden: !row.pdf_url },
-                { label: "Company memory", icon: Building2, onClick: () => openMemory() },
+                { label: "Company page", icon: Building2, onClick: () => openMemory() },
               ]} />
               {onCollapse && (
                 <button type="button" onClick={onCollapse} aria-label="Fold back into the list" title="Fold back into the list"

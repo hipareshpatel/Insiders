@@ -49,7 +49,7 @@ export function short(text: string, max = 110): string {
   return `${cut.slice(0, Math.max(cut.lastIndexOf(" "), max - 20)).replace(/[,;:\s]+$/, "")}…`;
 }
 
-const ACRONYM = new Set(["vap", "ebitda", "ebit", "pat", "pbt", "gnpa", "nnpa", "casa", "nim", "roa", "roe", "crar", "pcr", "eps",
+const ACRONYM = new Set(["vap", "dso", "roce", "roiic", "aum", "ape", "vnb", "usd", "ebitda", "ebit", "pat", "pbt", "gnpa", "nnpa", "casa", "nim", "roa", "roe", "crar", "pcr", "eps",
   "plf", "nii", "cet1", "aum", "arpu", "gst", "capex", "kpi"]);
 const DROP_UNIT = new Set(["pct", "cr", "mlpd", "llpd", "inr", "mn", "lakh"]);
 
@@ -58,6 +58,51 @@ export function metricLabel(metric: string): string {
   const words = metric.toLowerCase().replace(/_pct_(?=revenue|sales|income)/, "_to_").split(/[_\s]+/).filter((w) => w && !DROP_UNIT.has(w));
   const text = words.map((w) => (ACRONYM.has(w) ? w.toUpperCase() : w)).join(" ");
   return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+// ---------- the financial baseline in statement order ----------
+
+/** The order a results statement prints its lines in (owner, 2026-10-21: the company page's financials "not in the
+ * right order"): income, costs, profit down to EPS, then the bank and insurer lines, operating figures, cash and the
+ * balance sheet. A line not listed goes after the others of its section, in the order memory holds it. */
+const STATEMENT: [string, string[]][] = [
+  ["Profit and loss", ["interest_earned", "interest_expended", "net_interest_income", "gross_premium", "net_premium",
+    "first_year_premium", "renewal_premium", "single_premium", "new_business_premium", "revenue", "other_income",
+    "total_income", "raw_material_cost", "purchases_stock_in_trade", "inventory_change", "employee_cost", "commission",
+    "benefits_paid", "other_expenses", "operating_expenses", "total_expenses", "ebitda", "ebitda_margin",
+    "operating_profit", "ebit_margin", "provisions", "depreciation", "finance_cost", "exceptional_items",
+    "share_associates", "pbt", "current_tax", "deferred_tax", "tax_expense", "pat_continuing", "pat", "pat_owners",
+    "surplus", "eps"]],
+  ["Ratios and operating figures", ["nim", "gnpa", "gnpa_ratio", "nnpa", "nnpa_ratio", "pcr", "casa_ratio", "crar",
+    "roa", "roe", "cost_to_income", "advances", "deposits", "ape", "individual_ape", "vnb", "vnb_margin", "expense_ratio",
+    "solvency_ratio", "embedded_value", "operating_roev", "persistency_13m", "persistency_61m", "aum", "volumes",
+    "ebitda_per_ton", "order_book", "deal_wins_usd_mn", "attrition", "dso", "roce"]],
+  ["Cash and balance sheet", ["operating_cash_flow", "free_cash_flow", "cash_and_equivalents", "gross_debt", "net_debt",
+    "net_worth", "trade_receivables", "paid_up_capital"]],
+];
+const SECTION_OF = new Map(STATEMENT.flatMap(([section, lines], s) => lines.map((m, i) => [m, { section, s, i }] as const)));
+
+/** Each metric's section and place in it; an unknown line counts as an operating figure, after the listed ones. */
+export function statementPlace(metric: string): { section: string; s: number; i: number } {
+  return SECTION_OF.get(metric) ?? { section: STATEMENT[1][0], s: 1, i: 999 };
+}
+
+/** A stored figure with its unit in words ("13.17 INR" read as "₹13.17", "1,078 USD_MN" as "$1,078 mn", "84 DAYS"). */
+export function unitValue(text: string, unit: string): string {
+  if (unit === "INR" || unit === "INR_PER_SHARE") return `₹${text}`;
+  if (unit === "USD_MN") return `$${text} mn`;
+  if (unit === "PCT") return `${text}%`;
+  if (!unit || unit === "UNITS") return text;
+  return `${text} ${UNIT_WORDS[unit] ?? unit.replace(/_/g, " ").toLowerCase()}`;
+}
+
+/** A line whose every stored figure is zero is the XBRL's filler (an IT company's raw-material cost), not a fact. */
+export const allZero = (values: Iterable<{ value: number }>) => [...values].every((v) => v.value === 0);
+
+/** The metrics in statement order (a stable sort: unknown lines keep memory's order). */
+export function inStatementOrder<T>(rows: [string, T][]): [string, T][] {
+  return rows.map((r, k) => ({ r, k, p: statementPlace(r[0]) }))
+    .sort((a, b) => a.p.s - b.p.s || a.p.i - b.p.i || a.k - b.k).map((x) => x.r);
 }
 
 const noPeriod = (v: string) => v.replace(/\s*\([^()]*FY\d{2}[^()]*\)|\s*\([A-Z][a-z]{2}-\d{4}\)/g, "").trim();

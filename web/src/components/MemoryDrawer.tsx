@@ -1,39 +1,42 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { ExternalLink, X } from "lucide-react";
-import { Fragment, type ReactNode } from "react";
-import { Link } from "wouter";
-import type { CardBody, CardRow, PriceReaction, Roiic } from "../../shared/types";
+import { Fragment, useEffect, type ReactNode } from "react";
+import { Link, useLocation } from "wouter";
+import type { CardBody, CardRow } from "../../shared/types";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
-import { istDate, istDateTime, listing, rupees, titleCase } from "../lib/format";
-import { EVENT_LABELS, SECTORS } from "../lib/taxonomy";
+import { istDateTime, listing, rupees, titleCase } from "../lib/format";
+import { SECTORS } from "../lib/taxonomy";
 import { useQueryState } from "../lib/url";
-import { DealsAndNotes, IdentityAndOwnership, MetricsPanel, Panel, promiseStats } from "../views/CompanyPage";
+import { Panel } from "../views/CompanyPage";
 import { Empty, Loading } from "../views/FeedView";
 import { Avatar } from "./Avatar";
 import { parseCard } from "./FilingCard";
 import { TabStrip } from "./ui/badge";
 
 /**
- * The 360° memory drawer (blueprint §13.3): opens over any page from `?memory=<scrip>` (and
- * `&verify=<news_id>` for the PDF check), so the feed keeps its scroll position and the view is
- * linkable. Tabs: the living dossier, the event timeline with the market's reaction, and the
- * official PDF beside the card with every figure marked as found in the filing or not.
+ * The PDF check over any page, from `?memory=<scrip>&verify=<news_id>`: the official filing beside the card with every
+ * figure marked as found in it or not, so the feed keeps its scroll position. The company's memory itself lives on the
+ * company page (owner, 2026-10-21: one company view, no half-window); an older `?memory=` link without `verify` goes there.
  */
 export function MemoryDrawer() {
   const [params, setParams] = useQueryState();
-  const scrip = params.get("memory");
+  const [, go] = useLocation();
+  const memory = params.get("memory");
   const verify = params.get("verify");
-  const tab = params.get("mtab") ?? (verify ? "verify" : "dossier");
+  const scrip = verify ? memory : null;
+  useEffect(() => {
+    if (memory && !verify) go(`/company/${encodeURIComponent(memory)}`, { replace: true });
+  }, [memory, verify, go]);
+  const tab = "verify";
   const close = () => setParams({ memory: null, verify: null, mtab: null });
   return (
     <Dialog.Root open={!!scrip} onOpenChange={(open) => !open && close()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/30 data-[state=open]:animate-in" />
         <Dialog.Content
-          className={cn("fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-line bg-bg shadow-2xl focus:outline-none",
-            tab === "verify" ? "max-w-[1240px]" : "max-w-[720px]")}
+          className="fixed inset-y-0 right-0 z-50 flex w-full max-w-[1240px] flex-col border-l border-line bg-bg shadow-2xl focus:outline-none"
           aria-describedby={undefined}>
           {scrip && <DrawerBody scrip={scrip} verify={verify} tab={tab} onTab={(t) => setParams({ mtab: t })} onClose={close} />}
         </Dialog.Content>
@@ -51,11 +54,7 @@ function DrawerBody({ scrip, verify, tab, onTab, onClose }: {
   const cards = query.data?.cards ?? [];
   const name = company?.company_name ?? dossier?.company_name ?? scrip;
   const symbol = company?.symbol ?? dossier?.symbol ?? null;
-  const tabs = [
-    { key: "dossier", label: "Living dossier" },
-    { key: "timeline", label: "Timeline", count: dossier?.timeline?.length },
-    ...(verify ? [{ key: "verify", label: "Verify against the PDF" }] : []),
-  ];
+  const tabs = [{ key: "verify", label: "Verify against the PDF" }];
   return (
     <>
       <header className="flex items-start gap-3 border-b border-line px-5 py-4">
@@ -79,107 +78,11 @@ function DrawerBody({ scrip, verify, tab, onTab, onClose }: {
       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4" onKeyDown={(e) => e.key === "Escape" && onClose()}>
         {query.isPending ? <Loading /> : query.isError ? <Empty title="Couldn't load this company" body={String(query.error)} /> : (
           <>
-            {tab === "dossier" && (
-              <div className="space-y-4">
-                <Scorecard guidance={dossier?.guidance ?? []} credibility={company?.credibility_score ?? null} rule={company?.calibration_rule ?? null}
-                  roiic={parseRoiic(company?.roiic)} />
-                <IdentityAndOwnership dossier={dossier} />
-                {dossier ? <MetricsPanel dossier={dossier} /> : <Empty title="No financials in memory yet" />}
-                <DealsAndNotes dossier={dossier} />
-              </div>
-            )}
-            {tab === "timeline" && <ReactionTimeline dossier={dossier} cards={cards} />}
             {tab === "verify" && verify && <Verifier row={cards.find((c) => c.news_id === verify) ?? null} newsId={verify} />}
           </>
         )}
       </div>
     </>
-  );
-}
-
-/** Delivered vs open vs broken promises as one bar. */
-function parseRoiic(raw: string | null | undefined): Roiic | null {
-  try { return raw ? (JSON.parse(raw) as Roiic) : null; } catch { return null; }
-}
-
-const ROIIC_VERDICT: Record<NonNullable<Roiic["verdict"]>, { text: string; tone: string }> = {
-  COMPOUNDER: { text: "Capital compounder", tone: "text-pos" },
-  DILUTER: { text: "Capital diluter", tone: "text-neg" },
-  SELF_FUNDED: { text: "Self-funded growth", tone: "text-pos" },
-};
-
-function Scorecard({ guidance, credibility, rule, roiic }: { guidance: NonNullable<Parameters<typeof promiseStats>[0]>; credibility: number | null; rule: string | null; roiic: Roiic | null }) {
-  const s = promiseStats(guidance);
-  const total = s.delivered + s.open + s.missed;
-  if (!total && !rule && !roiic) return null;
-  const width = (n: number) => `${(n / total) * 100}%`;
-  return (
-    <Panel title="Management execution" hint={credibility != null ? `Credibility ${Math.round(credibility)}%` : undefined}>
-      {total > 0 && <>
-      <div className="flex h-2.5 overflow-hidden rounded-full bg-surface-2" role="img"
-        aria-label={`${s.delivered} delivered, ${s.open} open, ${s.missed} missed or revised`}>
-        <span className="bg-pos" style={{ width: width(s.delivered) }} />
-        <span className="bg-info" style={{ width: width(s.open) }} />
-        <span className="bg-neg" style={{ width: width(s.missed) }} />
-      </div>
-      <p className="num mt-2 text-[12.5px] text-ink-2">
-        <span className="text-pos">● {s.delivered} delivered</span> · <span className="text-info">● {s.open} open</span> ·{" "}
-        <span className="text-neg">● {s.missed} missed, delayed or withdrawn</span>
-      </p>
-      </>}
-      {rule && <p className="mt-2 rounded-lg bg-insight px-3 py-2 text-[13px] text-insight-ink">📐 {rule}</p>}
-      {roiic && (
-        <p className="num mt-2 text-[12.5px] text-ink-2">
-          {roiic.verdict && <span className={cn("font-semibold", ROIIC_VERDICT[roiic.verdict].tone)}>{ROIIC_VERDICT[roiic.verdict].text} · </span>}
-          {roiic.from} → {roiic.to}: EBITDA run-rate {roiic.ebitda_added_cr >= 0 ? "+" : ""}{rupees(roiic.ebitda_added_cr)} Cr on {rupees(roiic.capital_added_cr)} Cr of capital added
-          {roiic.pct != null && <> (ROIIC {Math.round(roiic.pct)}%)</>}
-        </p>
-      )}
-    </Panel>
-  );
-}
-
-function reactionOf(row: CardRow | undefined): PriceReaction | null {
-  try {
-    return row?.post_event_return_json ? (JSON.parse(row.post_event_return_json) as PriceReaction) : null;
-  } catch {
-    return null;
-  }
-}
-
-function move(v: number | undefined) {
-  if (v === undefined) return null;
-  return <span className={v > 0 ? "text-pos" : v < 0 ? "text-neg" : "text-ink-2"}>{v > 0 ? "+" : ""}{v.toFixed(1)}%</span>;
-}
-
-/** Every material filing since the history start, with T+1 / T+3 against the index. */
-function ReactionTimeline({ dossier, cards }: { dossier: Awaited<ReturnType<typeof api.company>>["dossier"]; cards: CardRow[] }) {
-  const events = [...(dossier?.timeline ?? [])].reverse();
-  const byId = new Map(cards.map((c) => [c.news_id, c]));
-  if (!events.length) return <Empty title="No events recorded yet" />;
-  return (
-    <ol className="relative ml-1.5 border-l border-line">
-      {events.map((e) => {
-        const rx = reactionOf(byId.get(e.news_id));
-        const t1 = rx?.t1?.excess_pct ?? rx?.t1?.return_pct;
-        const t3 = rx?.t3?.excess_pct ?? rx?.t3?.return_pct;
-        return (
-          <li key={e.id} className="relative ml-5 pb-5 last:pb-0">
-            <span className={cn("absolute -left-[26px] top-1.5 h-2.5 w-2.5 rounded-full ring-4 ring-bg",
-              e.impact_level === "HIGH" ? "bg-accent" : "bg-line-strong")} />
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="num text-ink-3">{istDate(e.date)}</span>
-              <span className="rounded bg-surface-2 px-1.5 py-0.5 text-ink-2">{EVENT_LABELS[e.event_type] ?? e.event_type}</span>
-              {e.impact_level === "HIGH" && <span className="font-semibold text-ink">High impact</span>}
-              {rx && (t1 !== undefined || t3 !== undefined) && (
-                <span className="num text-ink-3">T+1 {move(t1) ?? "–"} · T+3 {move(t3) ?? "–"}{rx.benchmark ? " vs index" : ""}</span>
-              )}
-            </div>
-            <p className="mt-1 text-[14px] leading-relaxed text-ink">{e.summary}</p>
-          </li>
-        );
-      })}
-    </ol>
   );
 }
 

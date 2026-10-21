@@ -57,7 +57,7 @@ from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
 from .card_context import case_stage, guidance_recall, memory_context, rating_change, rating_word_mismatch
-from .call_summary import card_takeaways, check_ai_takeaways
+from .call_summary import remember_call_points, card_takeaways, check_ai_takeaways
 from .prices import PriceStore, point_in_time
 from .signals import priced_for
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
@@ -3080,6 +3080,10 @@ class Pipeline:
 
         merged = merge(dossier, remembered, filing, card.impact_level, now)
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector), ("symbol", company.get("symbol") or filing.symbol)) if v})
+        if event_type == "CONCALL_PRESENTATION":
+            # the call's checked takeaways, kept for the company page's quarterly summary (owner, 2026-10-21: the
+            # summary was built from the few items memory happened to keep, not the call's analysis)
+            remember_call_points(merged, filing.news_id, filing.filed_at, card.call_takeaways)
         # Signals, footer and results table see memory as it stood at this filing, not later facts
         # that a backfill may already have stored.
         before = dossier_as_of(dossier, filing.filed_at, inclusive=False)

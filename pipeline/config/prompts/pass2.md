@@ -223,8 +223,10 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   questions, else "MEDIUM". story: the one word that best fits the business today ("GROWTH",
   "COMPOUNDER", "TURNAROUND", "CYCLICAL", "STRESSED", "TRANSITION" or "VALUE").
 - call_takeaways: only for earnings calls and investor presentations (the shape asks for it then); leave it out
-  otherwise. Up to 8 key takeaways a shareholder needs from this call, each under one heading: "Guidance",
-  "Capex & capacity", "Demand & orders", "Margins & costs", "Balance sheet & funding", "Risks" or "Other".
+  otherwise. 8 to 15 key takeaways a shareholder needs from this call (fewer only when the document says less),
+  covering every heading the call speaks to: "Guidance", "Capex & capacity", "Demand & orders", "Margins & costs",
+  "Balance sheet & funding", "Risks" (what analysts pressed on and management's answer, a pressure or a
+  headwind management named) or "Other".
   Key takeaways only: no greetings, thanks, introductions of the management, safe-harbour statements, the call's
   date or logistics, or what the moderator said. Prefer a takeaway with its figure ("FY27 volume growth guided at
   12-14%") to one without. Each carries quote: the sentence from the filing that says it, copied exactly; every

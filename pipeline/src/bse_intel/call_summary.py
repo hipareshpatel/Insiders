@@ -19,10 +19,11 @@ from .periods import due_date, quarter_index
 
 CALL_EVENT = "CONCALL_PRESENTATION"
 CALL_SOURCES = ("CONCALL", "PRESENTATION")
-CATEGORIES = ("Guidance", "Capex & capacity", "Demand & orders", "Margins & costs", "Balance sheet & funding", "Other")
+CATEGORIES = ("Guidance", "Capex & capacity", "Demand & orders", "Margins & costs", "Balance sheet & funding", "Risks", "Other")
 QUARTERS = 4
-PER_CATEGORY = 3
-PER_QUARTER = 10
+PER_CATEGORY = 4
+PER_QUARTER = 16
+CALL_POINTS_KEPT = 120   # checked takeaways kept in memory, newest calls first (about 8 quarters of 12-15)
 MAX_CHARS = 200
 
 _QUARTER = re.compile(r"\bQ([1-4])\s*FY\s*'?(\d{2})\b", re.I)
@@ -133,9 +134,29 @@ def call_filings(dossier: dict) -> dict[str, dict]:
     return calls
 
 
+def remember_call_points(dossier: dict, news_id: str, filed_at: str, takeaways) -> None:
+    """The call's verified takeaways (call_summary.check_ai_takeaways) into memory, replacing this filing's earlier
+    ones: what the quarterly summary on the company page is built from first."""
+    kept = [p for p in dossier.get("call_points", []) if p.get("news_id") != news_id]
+    for t in takeaways or []:
+        get = t.get if isinstance(t, dict) else lambda k, d=None, t=t: getattr(t, k, d)   # a stored card's, or a model's
+        if get("verified", False) and get("text"):
+            kept.append({"news_id": news_id, "date": _day(filed_at), "category": get("category") or "Other",
+                         "text": get("text"), **({"versus_prior": get("versus_prior")} if get("versus_prior") else {})})
+    kept.sort(key=lambda p: p.get("date") or "", reverse=True)
+    dossier["call_points"] = kept[:CALL_POINTS_KEPT]
+
+
 def _points(dossier: dict, calls: dict[str, dict]) -> list[dict]:
-    """Every candidate point from a call filing: text, kind, its filing and date, and a rank (figures first)."""
+    """Every candidate point from a call filing: text, kind, its filing and date, and a rank (figures first). The
+    call's own checked takeaways rank above what memory took from it."""
     out: list[dict] = []
+    for p in dossier.get("call_points", []):
+        if p.get("news_id") in calls and not boilerplate(p.get("text") or ""):
+            out.append({"text": _short(p["text"]), "category": p["category"] if p.get("category") in CATEGORIES else "Other",
+                        "news_id": p["news_id"], "date": calls[p["news_id"]]["date"],
+                        "rank": 9 + (2 if re.search(r"\d", p["text"]) else 0),
+                        **({"versus": p["versus_prior"]} if p.get("versus_prior") else {})})
 
     def add(text: str | None, kind: str, news_id: str | None, rank: int, **extra) -> None:
         if not text or news_id not in calls:
@@ -217,7 +238,8 @@ def summarize_calls(dossier: dict) -> list[dict]:
             "sources": [{"news_id": n, "date": calls[n]["date"], **({"pdf_url": calls[n]["pdf_url"]} if calls[n].get("pdf_url") else {})}
                         for n in ids],
             "categories": [{"name": c, "points": [
-                {"text": p["text"], "date": p["date"], "news_id": p["news_id"], **({"reiterated": True} if p.get("reiterated") else {})}
+                {"text": p["text"], "date": p["date"], "news_id": p["news_id"], **({"reiterated": True} if p.get("reiterated") else {}),
+                 **({"versus": p["versus"]} if p.get("versus") else {})}
                 for p in kept if p["category"] == c]} for c in CATEGORIES if count[c]],
         })
     return out
@@ -316,7 +338,10 @@ def check_ai_takeaways(card, text: str, reading: str = "", view: dict | None = N
                 issue = f"{shown}{'%' if figure[2] else ''} is not in its quote or the memory it cites"
                 break
         if issue is None and item.versus_prior:
-            if not memory:
+            prior = _figures(item.versus_prior)
+            if not memory and prior and all(_stated_in(f, [quote]) for f in prior) and not _periods(item.versus_prior):
+                pass   # the filing's own sentence gives the earlier figure: "I had guided 9-11%, revising to 11-12%"
+            elif not memory:
                 issue = "compares with an earlier figure but cites no memory"
             else:
                 unfound = [f for f in _figures(item.versus_prior) if not _stated_in(f, memory)]

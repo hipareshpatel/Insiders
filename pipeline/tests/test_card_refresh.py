@@ -153,3 +153,39 @@ def test_the_refresh_reads_the_cached_text_when_there_is_one():
     pipeline = SimpleNamespace(_cached_text=lambda news_id: seen.append(news_id) or None)
     assert card_refresh.filed_text(pipeline, "r1") is None and seen == ["r1"]
     assert card_refresh.filed_text(SimpleNamespace(), "r1") is None   # GitHub's maintenance: no cache
+
+
+def test_a_stored_call_card_gives_memory_its_checked_takeaways():
+    """Cards written before the takeaways went into memory (2026-10-21): the refresh puts their verified ones there,
+    once, for the company page's quarterly summary."""
+    card = {**_card(), "event_type": "CONCALL_PRESENTATION", "call_takeaways": [
+        {"category": "Guidance", "text": "Deposit growth guided at 11-12% for FY27", "verified": True, "versus_prior": "raised from 9-11%"},
+        {"category": "Risks", "text": "Credit cost guided below 0.5%", "verified": False}]}
+    stored = [{"news_id": "n1", "scrip_code": "500001", "symbol": "DEMO", "company_name": "Demo Rail Ltd",
+               "filing_date": FILED[:10], "filed_at": FILED, "headline": "h", "card_json": json.dumps(card), "held": 0}]
+    memory = _dossier()
+    saved: dict = {}
+
+    class Sink:
+        def query(self, name, params):
+            return [r for r in stored if (r["filed_at"], r["news_id"]) > (params[0], params[1])]
+
+        def get_dossier(self, scrip):
+            return memory
+
+        def company(self, scrip):
+            return {"scrip_code": scrip}
+
+        def execute(self, statement, rows):
+            return len(rows)
+
+        def put_dossier(self, scrip, dossier):
+            saved[scrip] = json.loads(json.dumps(dossier))
+
+    pipeline = SimpleNamespace(sink=Sink(), prompts=SimpleNamespace(sector_for=lambda industry: SimpleNamespace(footer=())),
+                               _prices=None, _buckets=None)
+    report = card_refresh.run(pipeline)
+    assert report["memories_with_call_points"] == 1
+    assert [p["text"] for p in saved["500001"]["call_points"]] == ["Deposit growth guided at 11-12% for FY27"]
+    saved.clear()
+    assert card_refresh.run(pipeline)["memories_with_call_points"] == 0 and not saved   # nothing new the second time

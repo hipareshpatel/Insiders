@@ -484,7 +484,7 @@ _CALL_CATEGORY_WORDS = (("guid", "Guidance"), ("outlook", "Guidance"), ("capex",
                         ("capacity", "Capex & capacity"), ("demand", "Demand & orders"), ("order", "Demand & orders"),
                         ("margin", "Margins & costs"), ("cost", "Margins & costs"), ("balance", "Balance sheet & funding"),
                         ("fund", "Balance sheet & funding"), ("debt", "Balance sheet & funding"), ("risk", "Risks"))
-MAX_CALL_TAKEAWAYS = 8
+MAX_CALL_TAKEAWAYS = 15
 
 
 def _call_category(value: Any) -> str:

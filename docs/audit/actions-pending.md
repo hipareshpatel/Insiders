@@ -6,8 +6,9 @@ the time and the run or PR link.
 
 ## Open
 
-- After 05:30 IST 21 Oct: requeue-failed --ids nse-106819548 (Yes Bank AT1 ruling: direction for shareholders, O17 prompt rule), nse-106822801 (Kapston duplicate, O3)
-- After 05:30 IST 21 Oct, after #32 deploys: requeue-failed --ids nse-106705473,nse-106635921,nse-106604225,nse-106606011,nse-106622331,feb1cb22-f062-4e82-90d9-434756f89309 (later copies of a results quarter that already has a card: D20 fix)
-- After 05:30 IST 21 Oct: apply-verdicts; refresh-summaries; refresh-card-blocks (one at a time, watching D1 writes)
+- requeue-failed --ids nse-106819548,nse-106822801,nse-106705473,nse-106635921,nse-106604225,nse-106606011,nse-106622331,feb1cb22-f062-4e82-90d9-434756f89309 (Yes Bank AT1 direction; 7 later copies of a results quarter: D20). Dispatched 06:31 IST, cancelled by GitHub when the next dispatch queued behind it in the same group (one pending run per group): dispatch again after run 9 ends, and from now on one dispatch at a time.
 
 ## Done
+
+- 21 Oct 06:31 IST apply-verdicts: maintenance run 7, success (https://github.com/hipareshpatel/Insiders/actions/runs/39524796716)
+- 21 Oct 06:31 IST both (refresh-card-blocks + refresh-summaries): maintenance run 9, started 06:31 (https://github.com/hipareshpatel/Insiders/actions/runs/39524816563)

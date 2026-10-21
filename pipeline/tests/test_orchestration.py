@@ -640,3 +640,38 @@ def test_near_the_free_write_cap_a_live_run_only_makes_cards(settings, monkeypat
     today = today_ist().isoformat()
     assert "discover" in calls and "catch-up" not in calls
     assert [c for c in calls if c[0] == "process"] == [("process", today, today)]   # the window's earlier days wait
+
+
+def test_a_spare_writer_failing_while_the_better_ones_are_at_their_day_waits_for_them(settings):
+    """21 Oct: with Gemini at its day until 12:30 IST, the one spare on the long route failed and 12 filings a run spent
+    an attempt. A failure while a better writer sat at its ceiling defers the filing up to MAX_DEFERRALS runs; a failure
+    with every writer tried is the filing's and spends an attempt at once."""
+    from bse_intel.ai.gateway import CEILING, FAILED, AllProvidersFailed
+
+    settings = replace(settings, workers=1)
+    now = now_ist() - timedelta(minutes=30)
+    filing = _filing("q", "Unaudited Financial Results", now, "Result")
+    pipeline, sink, _ = build(settings, [filing], {filing.pdf_url: _pdf(RESULT_TEXT)},
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]},
+                              env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
+    pipeline.discover(now.date())
+    outcomes = [("gemini:flash", CEILING, "daily request ceiling"), ("openrouter:spare", FAILED, "no JSON")]
+
+    def failing(*args, **kwargs):
+        raise AllProvidersFailed("pass2_long", outcomes)
+
+    pipeline.analyze = failing
+    pipeline.run("live", time_budget_s=60)
+    (row,) = rows(sink, "select status, attempts, last_error from filings where news_id = 'q'")
+    assert (row["status"], row["attempts"]) == ("PENDING", 0) and row["last_error"].startswith("deferred 1x: the better writers")
+    sink._db.execute("UPDATE filings SET last_error = 'deferred 3x: the better writers are at their day' WHERE news_id = 'q'")
+    pipeline._tried.clear()
+    pipeline.run("live", time_budget_s=60)
+    (row,) = rows(sink, "select status, attempts from filings where news_id = 'q'")
+    assert row == {"status": "FAILED", "attempts": 1}
+    outcomes[:] = [("openrouter:spare", FAILED, "no JSON")]
+    sink._db.execute("UPDATE filings SET status = 'PENDING', last_error = NULL WHERE news_id = 'q'")
+    pipeline._tried.clear()
+    pipeline.run("live", time_budget_s=60)
+    (row,) = rows(sink, "select status, attempts from filings where news_id = 'q'")
+    assert row == {"status": "FAILED", "attempts": 2}

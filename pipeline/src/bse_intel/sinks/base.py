@@ -37,6 +37,7 @@ QUERIES = (
     "event_cards_without_xbrl",
     "results_cards_recent",
     "filings_remaining",
+    "filings_backlog",
     "filings_known_day",
     "backfill_companies",
     "usage_for_day",
@@ -98,6 +99,15 @@ class Sink(ABC):
     def filings_remaining(self, day_from: str, day_to: str, max_attempts: int) -> bool:
         rows = self.query("filings_remaining", [day_from, day_to, max_attempts])
         return bool(rows and rows[0].get("remaining"))
+
+    def backlog(self, day_from: str, day_to: str, limit: int) -> int | None:
+        """Filings in a window still to read, counted up to ``limit``; None when the query is not available (a Worker
+        deployed before it)."""
+        try:
+            rows = self.query("filings_backlog", [day_from, day_to, limit])
+        except Exception:   # noqa: BLE001 - an older Worker refuses an unknown query; discovery then goes on as before
+            return None
+        return int(rows[0].get("n") or 0) if rows else 0
 
     def known_ids(self, day: str) -> set[str]:
         return set(self.known_sources(day))

@@ -86,6 +86,7 @@ COMMIT_EVERY = 5         # a company's results are saved this often, so a crash 
 HISTORY_LIMIT = 200      # one company's filings fetched per page (a year rarely has more)
 HISTORY_INLINE = 30      # history analysed ahead of a live filing; a longer backlog goes to the backfill
 MAX_ORDER = 20_000       # companies in the cached backfill order
+BACKLOG_MAX = 1_500      # history filings waiting to be read before backfill discovers another day
 PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_1y",
                  "median_turnover_cr", "point_in_time")
 D1_FREE_DAILY_WRITES, D1_NEAR_CAP = 100_000, 0.95   # Cloudflare D1 free plan: rows written a day (UTC day)
@@ -3600,8 +3601,17 @@ class Pipeline:
         cursor_raw = self.sink.kv_get("backfill:discovered_through")
         cursor = date.fromisoformat(cursor_raw) if cursor_raw else start - timedelta(days=1)
         days = 0
+        # Discovery stays a few days ahead of the analysis, not weeks: a day of history is about 250 filings and 5
+        # rows written each, and discovering 5 days a run while the companies' queues wait spent the day's free D1
+        # writes on filings nobody read yet (21 Oct 2026: one run discovered 2,737 filings, 7,234 rows, with
+        # analysis weeks behind). The live window is never gated.
         while cursor < yesterday and days < max_days and time.monotonic() < deadline:
             if self._over_budget(writes_at_start):
+                break
+            backlog = self.sink.backlog(start.isoformat(), history_to.isoformat(), BACKLOG_MAX)
+            if backlog is not None and backlog >= BACKLOG_MAX:
+                self.stats.stopped_reason = self.stats.stopped_reason or \
+                    f"backfill discovery paused: {backlog}+ history filings still to read"
                 break
             day = cursor + timedelta(days=1)
             found = self._discover_safely(day, full=True)

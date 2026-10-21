@@ -151,8 +151,10 @@ def shareholding_sync(pipeline, deadline: float, days: int = SHAREHOLDING_DAYS, 
         row = replace(row, filed_at=nse_api.shareholding_filed_at(row.xbrl_url) or row.filed_at)
         dossier = sink.get_dossier(scrip) or {}
         source = f"xbrl:shp:{scrip}:{row.period}"
+        # a quarter stored before the institutional detail was read (2026-10-21) is read again once, for its categories
+        # and named holders
         if any(o.get("period") == row.period and o.get("source_news_id") == source and str(o.get("as_of", "")) >= row.filed_at
-               for o in dossier.get("ownership", [])):
+               and "holders" in o for o in dossier.get("ownership", [])):
             report["known"] += 1
             continue
         try:

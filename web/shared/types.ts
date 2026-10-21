@@ -418,7 +418,12 @@ export interface Dossier {
   deals?: DealRecord[];
   operating_notes?: { text: string; as_of: string; source_news_id: string }[];
   identity?: { former_names: string[]; entities: { name: string; type?: string | null; as_of: string }[] };
-  ownership?: { period: string; promoter_pct?: number; pledge_pct?: number; fii_pct?: number; dii_pct?: number; retail_holders?: number; as_of: string }[];
+  ownership?: {
+    period: string; promoter_pct?: number; pledge_pct?: number; fii_pct?: number; dii_pct?: number; retail_holders?: number; as_of: string;
+    mf_pct?: number; insurance_pct?: number; fpi_pct?: number; aif_pct?: number; banks_pct?: number; pension_pct?: number;
+    /** named public holders of 1% or more (absent on quarters read before 21 Oct 2026) */
+    holders?: { name: string; category: string; pct: number }[];
+  }[];
   governance?: { auditor: { name?: string; opinion?: string; note?: string; change?: string; as_of: string } | null;
     /** Quarterly governance XBRL (governance_memory.py): board, flags, penalties, related-party loans. */
     quarters?: Record<string, unknown>[] };

@@ -1125,7 +1125,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000, prin
     notes = [f"{n['as_of'][:10]}: {n['text']}" for n in dossier.get("operating_notes", []) if before(n)]
     identity = dossier.get("identity") or {}
     entities = [f"{e['name']} ({e['type']})" if e.get("type") else e["name"] for e in identity.get("entities", []) if before(e)]
-    ownership = [{k: v for k, v in o.items() if k not in ("as_of", "source_news_id")}
+    ownership = [{k: v for k, v in o.items() if k not in ("as_of", "source_news_id", "holders")}   # holders: the page's
                  for o in dossier.get("ownership", []) if before(o)][-2:]
     auditors = [a for a in (dossier.get("governance") or {}).get("auditor_history", []) if before(a)]
     governance = governance_view([q for q in (dossier.get("governance") or {}).get("quarters", []) if before(q)])

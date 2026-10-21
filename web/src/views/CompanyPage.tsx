@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
 import type { CallQuarter, CardRow, Company, Dossier, Guidance, Peer, Technicals } from "../../shared/types";
 import { EarningsCalls } from "../components/company/EarningsCalls";
+import { Institutions } from "../components/company/Institutions";
 import { Avatar } from "../components/Avatar";
 import { PriceChart } from "../components/PriceChart";
 import { formerOwnName, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
@@ -938,6 +939,7 @@ function OwnersTab({ dossier, peers, company }: { dossier: Dossier | null; peers
             </p>
           </Panel>
         )}
+        <Institutions ownership={dossier?.ownership} />
         <PledgesPanel dossier={dossier} />
         <IdentityAndOwnership dossier={dossier} />
       </div>

@@ -766,6 +766,14 @@ class Ownership(_Lenient):
     fii_pct: Num = None
     dii_pct: Num = None
     retail_holders: Num = None   # number of small shareholders
+    # institutional categories, % of the company (NSE's shareholding XBRL; owner, 2026-10-21: who is buying)
+    mf_pct: Num = None           # mutual funds / UTI
+    insurance_pct: Num = None
+    fpi_pct: Num = None          # foreign portfolio investors, both categories
+    aif_pct: Num = None          # alternative investment funds
+    banks_pct: Num = None
+    pension_pct: Num = None      # provident and pension funds
+    holders: list[dict] = Field(default_factory=list)   # named public holders of 1% or more: {name, category, pct}
 
 
 def _ownership_or_none(value: Any) -> dict | None:

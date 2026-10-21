@@ -34,6 +34,7 @@ on:
 
 permissions:
   contents: read
+  actions: write   # starts a daily job GitHub did not start (watchdog.py)
 
 concurrency:
   group: bse-pipeline
@@ -84,6 +85,16 @@ jobs:
           restore-keys: text-cache-
       - name: Run pipeline
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel run --mode "${{ inputs.mode || ''all'' }}" --time-budget "${{ inputs.time_budget || ''2400'' }}"'
+      # GitHub drops scheduled runs when busy (21 Oct 2026: market-data and nightly never fired); a daily job with no run
+      # recorded 45 minutes after its slot is started here, once a day
+      - name: Start missed daily jobs
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for w in $("$RUNNER_TEMP/venv/bin/python" -m bse_intel missed-jobs 2>/dev/null); do
+            gh workflow run "$w" --repo "$GITHUB_REPOSITORY" --ref main && echo "started $w"
+          done
       - name: Keep the last 8 days of text
         if: always()
         working-directory: .

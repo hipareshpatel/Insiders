@@ -66,4 +66,17 @@ ON CONFLICT (news_id) DO UPDATE SET
        is_actionable_signal = excluded.is_actionable_signal,
        held            = excluded.held,
        -- a re-analysis keeps the measured price reaction (Loop 1); sync-to-cloud carries it over
-       post_event_return_json = coalesce(excluded.post_event_return_json, cards.post_event_return_json);
+       post_event_return_json = coalesce(excluded.post_event_return_json, cards.post_event_return_json)
+ -- A card already stored as sent is not written again (owner, 2026-10-21: D1 counts the row, its indexes and any
+ -- trigger): refresh-card-blocks, sync-to-cloud, a retried request or a re-run that ends with the same card. created_at
+ -- alone is no change; the stored one stays.
+ WHERE cards.symbol IS NOT excluded.symbol OR cards.company_name IS NOT excluded.company_name
+    OR cards.sector IS NOT excluded.sector OR cards.event_category IS NOT excluded.event_category
+    OR cards.impact_level IS NOT excluded.impact_level OR cards.headline IS NOT excluded.headline
+    OR cards.grounding_score IS NOT excluded.grounding_score OR cards.needs_review IS NOT excluded.needs_review
+    OR cards.memory_complete IS NOT excluded.memory_complete OR cards.card_json IS NOT excluded.card_json
+    OR cards.pdf_url IS NOT excluded.pdf_url OR cards.model IS NOT excluded.model
+    OR cards.market_session IS NOT excluded.market_session
+    OR cards.actionability_score IS NOT excluded.actionability_score
+    OR cards.is_actionable_signal IS NOT excluded.is_actionable_signal OR cards.held IS NOT excluded.held
+    OR cards.post_event_return_json IS NOT coalesce(excluded.post_event_return_json, cards.post_event_return_json);

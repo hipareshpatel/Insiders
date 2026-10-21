@@ -14,4 +14,7 @@ WHERE true
 ON CONFLICT (news_id) DO UPDATE SET
        status = excluded.status, event_type = excluded.event_type, reason = excluded.reason,
        attempts = excluded.attempts, last_error = excluded.last_error, updated_at = excluded.updated_at
- WHERE filings.status IS NOT excluded.status OR filings.attempts IS NOT excluded.attempts;
+ -- a row the destination already holds as sent costs no write; updated_at alone is no change
+ WHERE filings.status IS NOT excluded.status OR filings.attempts IS NOT excluded.attempts
+    OR filings.event_type IS NOT excluded.event_type OR filings.reason IS NOT excluded.reason
+    OR filings.last_error IS NOT excluded.last_error;

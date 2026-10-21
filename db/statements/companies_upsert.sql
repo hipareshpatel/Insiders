@@ -62,4 +62,34 @@ ON CONFLICT (scrip_code) DO UPDATE SET
                                   ELSE excluded.earliest_open_due END,
        inflection_last_at  = CASE WHEN excluded.memory_summary_json IS NULL THEN companies.inflection_last_at
                                   ELSE excluded.inflection_last_at END,
-       technicals_json     = coalesce(excluded.technicals_json, companies.technicals_json);
+       technicals_json     = coalesce(excluded.technicals_json, companies.technicals_json)
+ -- A company already stored as sent is not written again (owner, 2026-10-21: D1's free 100,000 rows written a day):
+ -- market-data runs more than once a day on the same closes, refresh-summaries sends every company, and each card
+ -- re-sends its company's summary. updated_at alone is no change. Each test repeats its SET expression above.
+ WHERE companies.symbol IS NOT coalesce(excluded.symbol, companies.symbol)
+    OR companies.company_name IS NOT CASE WHEN excluded.company_name = excluded.scrip_code
+                                          THEN companies.company_name ELSE excluded.company_name END
+    OR companies.isin IS NOT coalesce(excluded.isin, companies.isin)
+    OR companies.industry IS NOT coalesce(excluded.industry, companies.industry)
+    OR companies.sector IS NOT coalesce(excluded.sector, companies.sector)
+    OR companies.market_cap_cr IS NOT coalesce(excluded.market_cap_cr, companies.market_cap_cr)
+    OR companies.size_category IS NOT coalesce(excluded.size_category, companies.size_category)
+    OR companies.shares_outstanding IS NOT coalesce(excluded.shares_outstanding, companies.shares_outstanding)
+    OR companies.shares_updated_at IS NOT coalesce(excluded.shares_updated_at, companies.shares_updated_at)
+    OR companies.last_price IS NOT coalesce(excluded.last_price, companies.last_price)
+    OR companies.price_date IS NOT coalesce(excluded.price_date, companies.price_date)
+    OR companies.ret_1w IS NOT coalesce(excluded.ret_1w, companies.ret_1w)
+    OR companies.ret_1m IS NOT coalesce(excluded.ret_1m, companies.ret_1m)
+    OR companies.ret_1y IS NOT coalesce(excluded.ret_1y, companies.ret_1y)
+    OR companies.median_turnover_cr IS NOT coalesce(excluded.median_turnover_cr, companies.median_turnover_cr)
+    OR companies.bse_group IS NOT coalesce(excluded.bse_group, companies.bse_group)
+    OR companies.credibility_score IS NOT coalesce(excluded.credibility_score, companies.credibility_score)
+    OR companies.former_names_json IS NOT CASE WHEN excluded.memory_summary_json IS NOT NULL THEN excluded.former_names_json
+                                               WHEN excluded.former_names_json = '[]' THEN companies.former_names_json
+                                               ELSE excluded.former_names_json END
+    OR companies.memory_summary_json IS NOT coalesce(excluded.memory_summary_json, companies.memory_summary_json)
+    OR companies.earliest_open_due IS NOT CASE WHEN excluded.memory_summary_json IS NULL THEN companies.earliest_open_due
+                                               ELSE excluded.earliest_open_due END
+    OR companies.inflection_last_at IS NOT CASE WHEN excluded.memory_summary_json IS NULL THEN companies.inflection_last_at
+                                                ELSE excluded.inflection_last_at END
+    OR companies.technicals_json IS NOT coalesce(excluded.technicals_json, companies.technicals_json);

@@ -213,6 +213,31 @@ def test_backfill_walks_days_in_order_and_marks_complete(settings):
     assert [t["news_id"] for t in timeline] == ["h0", "h1", "h2"]
 
 
+def test_backfill_discovers_no_further_day_while_history_waits_to_be_read(settings, monkeypatch):
+    """21 Oct 2026: one run discovered 2,737 filings (7,234 D1 rows) of history while the analysis was weeks behind.
+    Discovery waits while BACKLOG_MAX history filings are still to read; the live window is not gated."""
+    from dataclasses import replace
+
+    from bse_intel import pipeline as pipeline_mod
+
+    today = now_ist().date()
+    start = today - timedelta(days=4)
+    settings = replace(settings, backfill_start=start.isoformat())
+    filings = [_filing(f"h{i}", "Unaudited Financial Results", now_ist().replace(year=d.year, month=d.month, day=d.day, hour=17),
+                       "Result") for i, d in enumerate(start + timedelta(days=k) for k in range(4))]
+    pipeline, sink, _ = build(settings, filings, {}, {})
+    monkeypatch.setattr(pipeline_mod, "BACKLOG_MAX", 1)
+    monkeypatch.setattr(pipeline, "_backfill_companies", lambda *a, **k: 1)   # no analysis: the first day stays pending
+    pipeline._backfill(today, time.monotonic() + 60, 0, 10, today - timedelta(days=1))
+    assert sink.kv_get("backfill:discovered_through") == start.isoformat()     # one day, then the backlog is full
+    pipeline._backfill(today, time.monotonic() + 60, 0, 10, today - timedelta(days=1))
+    assert sink.kv_get("backfill:discovered_through") == start.isoformat()
+    assert "backfill discovery paused" in (pipeline.stats.stopped_reason or "")
+    sink.execute("filings_update", [{"news_id": "h0", "status": "ANALYZED", "attempts": 1, "updated_at": "t"}])
+    pipeline._backfill(today, time.monotonic() + 60, 0, 10, today - timedelta(days=1))
+    assert sink.kv_get("backfill:discovered_through") == (start + timedelta(days=1)).isoformat()
+
+
 def test_retriage_queues_what_a_narrowed_rule_no_longer_drops(settings):
     """Discovery skips a filing already in its day's noise file, so the 12 annual reports the old "AGM notice"
     rule had taken stayed there after the rule was narrowed (F57). Retriage reads them again from BSE, with

@@ -13,4 +13,7 @@ ON CONFLICT (run_id) DO UPDATE SET
        finished_at = excluded.finished_at,
        status      = excluded.status,
        stats_json  = excluded.stats_json,
-       error       = excluded.error;
+       error       = excluded.error
+ -- a retried request (a timeout after D1 committed) writes nothing the second time
+ WHERE pipeline_runs.finished_at IS NOT excluded.finished_at OR pipeline_runs.status IS NOT excluded.status
+    OR pipeline_runs.stats_json IS NOT excluded.stats_json OR pipeline_runs.error IS NOT excluded.error;

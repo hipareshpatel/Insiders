@@ -41,7 +41,8 @@ def settings(tmp_path) -> Settings:
     return replace(Settings(), sink="local", local_dir=tmp_path / "local", workers=2, text_cache_dir=tmp_path / "text_cache", price_dir=tmp_path / "prices",
                    universe_min_mcap_cr=0, one_card_per_results_quarter=False,  # fixtures reuse one quarter's results text
                    discovery_source="bse",  # the BSE fakes; NSE discovery has its own tests
-                   critic=False)  # the shadow critic has its own tests (test_critic.py); scripts here are the writers'
+                   critic=False,  # the shadow critic has its own tests (test_critic.py); scripts here are the writers'
+                   prompt_short_share=0.0)  # the short prompt has its own tests (test_prompt_short.py)
 
 
 def completion(text: str, prompt_tokens: int = 100, completion_tokens: int = 50):

@@ -27,6 +27,13 @@ def _local_ocr() -> bool:
     return available()
 
 
+def _env_share(name: str, default: float) -> float:
+    try:
+        return min(1.0, max(0.0, float(_env(name, str(default)))))
+    except ValueError:
+        return default
+
+
 def _env_int(name: str, default: int) -> int:
     value = _env(name)
     return int(value) if value is not None else default
@@ -93,6 +100,9 @@ class Settings:
     critic: bool = field(default_factory=lambda: _env("CRITIC", "1") not in ("0", "false", "no"))
     critic_max: int = field(default_factory=lambda: _env_int("CRITIC_MAX", 8))
     critic_max_s: int = field(default_factory=lambda: _env_int("CRITIC_MAX_S", 180))
+    # The short pass-2 prompt (prompts/pass2_short.md, deep audit B1) on this share of live filings, chosen by news id
+    # so a re-run gets the same one; card_json.grounding.prompt_variant says which wrote a card, for the daily audit.
+    prompt_short_share: float = field(default_factory=lambda: _env_share("PROMPT_SHORT_SHARE", 0.3))
 
     def load_toml(self, name: str) -> dict:
         return _load_toml(self.config_dir / name)

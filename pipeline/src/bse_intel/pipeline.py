@@ -2851,10 +2851,11 @@ class Pipeline:
         reaction = learned["queue"].get(filing.news_id)
         # The proportions the model may use, computed here from memory as it stood before this filing.
         scale = scale_block(dossier_as_of(dossier, filing.filed_at, inclusive=False), company, text, declared_unit(text))
+        variant = prompt_variant(filing.news_id, bulk, self.settings.prompt_short_share)
         system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers, scale=scale,
                                           examples=self._owner_examples(sector, event_type),
                                           lessons=[x["lesson"] for x in learned["lessons"].get(f"{sector}|{event_type}", [])][-3:],
-                                          reaction=reaction)
+                                          reaction=reaction, variant=variant)
         route, packer = self._pass2_writer(bulk, len(system) + len(user))
         if packer is not None:
             result = packer.complete(route, system, user, Pass2Output, filing.news_id)   # several filings, one Gemini call
@@ -3058,6 +3059,7 @@ class Pipeline:
         evidence = self._save_evidence(filing, first_reply, result, now)
         if evidence:
             card_json["grounding"]["evidence"] = evidence
+        card_json["grounding"]["prompt_variant"] = variant
         needs_review = checks.needs_review
         # A card the checks faulted, that a second provider was asked to correct and that still
         # fails, is kept out of the feed rather than published with an "Unverified" mark. On the
@@ -3697,6 +3699,14 @@ class Pipeline:
         self._kv_set("backfill:progress", json.dumps({"companies_left": len(order), "companies_total": state.get("total"),
                                                       "built": state["built"], "through": through}))
         return len(order)
+
+
+def prompt_variant(news_id: str, bulk: bool, share: float) -> str:
+    """Which pass-2 prompt writes this filing: the short one on `share` of live filings, picked by a hash of the news
+    id (the same filing always gets the same one), the long one for the backfill and the rest (deep audit B1)."""
+    if bulk or share <= 0:
+        return "long"
+    return "short" if int(hashlib.sha1(news_id.encode()).hexdigest()[:8], 16) / 0xFFFFFFFF < share else "long"
 
 
 def _file_name(url: str | None) -> str:

@@ -1,0 +1,66 @@
+[
+ {
+  "news_id": "nse-106823055",
+  "symbol": "BAJAJCON",
+  "run": "14:07",
+  "verdict": "WRONG",
+  "classes": [
+   "other",
+   "arithmetic"
+  ],
+  "prompt_variant": "long",
+  "reason": "Headline and key numbers copy a call-transcript slip (Q2 revenue ₹233 Cr +2.7%, EBITDA ₹53 Cr); the card's own results block gives ₹332.83 Cr (+25.5%) and EBITDA ₹82.34 Cr"
+ },
+ {
+  "news_id": "nse-106822870",
+  "symbol": "TRANSRAILL",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "classes": [
+   "memory"
+  ],
+  "prompt_variant": "long",
+  "reason": "Filing facts right; a memory signal counts 3 orders (₹1,910 Cr) since June against the filing's ₹3,356 Cr FY27 intake, so 'largest so far' is unverified"
+ },
+ {
+  "news_id": "nse-106822793",
+  "symbol": "SUNPHARMA",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "classes": [
+   "event_type"
+  ],
+  "prompt_variant": null,
+  "reason": "Facts right; typed PRODUCT_LAUNCH for an NCCN guideline upgrade of a drug approved in 2024"
+ },
+ {
+  "news_id": "nse-106822772",
+  "symbol": "RAILTEL",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "classes": [
+   "wrong_period",
+   "other"
+  ],
+  "prompt_variant": null,
+  "reason": "LoA facts right; rate-contract estimate stated as worth; scale against Q4FY26 revenue; core catalyst not in the filing"
+ },
+ {
+  "news_id": "nse-106822750",
+  "symbol": "QPOWER",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": null,
+  "reason": "Kupwad coil factory start, products and purpose match"
+ },
+ {
+  "news_id": "nse-106822744",
+  "symbol": "EDELWEISS",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": null,
+  "reason": "Price band, face value and lot match; RHP-sourced dates and size marked as memory"
+ }
+]

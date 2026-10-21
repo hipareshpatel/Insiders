@@ -62,5 +62,108 @@
   "classes": [],
   "prompt_variant": null,
   "reason": "Price band, face value and lot match; RHP-sourced dates and size marked as memory"
+ },
+ {
+  "news_id": "nse-106823370",
+  "symbol": "HCLTECH",
+  "run": "16:07",
+  "verdict": "WRONG",
+  "classes": [
+   "unit_scale",
+   "memory"
+  ],
+  "prompt_variant": "long",
+  "reason": "Memory strip/fundamentals give Q2FY27 revenue ₹3,724 Cr and PAT ₹538 Cr, USD million figures labelled as ₹ Cr"
+ },
+ {
+  "news_id": "nse-106823352",
+  "symbol": "CEIGALL",
+  "run": "16:07",
+  "verdict": "MINOR",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "short",
+  "reason": "Financial-close facts right; scale signal calls the bid project cost the company's capex"
+ },
+ {
+  "news_id": "nse-106823292",
+  "symbol": "LMW",
+  "run": "16:07",
+  "verdict": "WRONG",
+  "classes": [
+   "arithmetic"
+  ],
+  "prompt_variant": "short",
+  "reason": "why_it_matters says PAT 'more than double' Q2FY26; 71.23/40.92 is +74%"
+ },
+ {
+  "news_id": "nse-106823287",
+  "symbol": "PARKHOTELS",
+  "run": "16:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "HMA facts match"
+ },
+ {
+  "news_id": "nse-106823286",
+  "symbol": "ABSLAMC",
+  "run": "16:07",
+  "verdict": "WRONG",
+  "classes": [
+   "unsupported_cause"
+  ],
+  "prompt_variant": "long",
+  "reason": "Figures right; PBT and net income fall put on lower other income, expenses (+21%) drove it; labour-code charge was FY26 exceptional"
+ },
+ {
+  "news_id": "nse-106823248",
+  "symbol": "MHRIL",
+  "run": "16:07",
+  "verdict": "WRONG",
+  "classes": [
+   "unit_scale"
+  ],
+  "prompt_variant": "long",
+  "reason": "Our unit fixer divided the deck's crore figures by 100 (₹395.3 Cr shown as ₹3.95 Cr): declared_unit read one 'AUR (₹ Lakh)' line as the deck's unit"
+ },
+ {
+  "news_id": "nse-106823242",
+  "symbol": "VMM",
+  "run": "16:07",
+  "verdict": "WRONG",
+  "classes": [
+   "wrong_column"
+  ],
+  "prompt_variant": "long",
+  "reason": "443 cities is the Tier III store count; the filing says 582 cities"
+ },
+ {
+  "news_id": "nse-106823239",
+  "symbol": "BEPL",
+  "run": "16:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Q2FY27 figures match"
+ },
+ {
+  "news_id": "nse-106823235",
+  "symbol": "VMM",
+  "run": "16:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Consolidated statement figures match"
+ },
+ {
+  "news_id": "nse-106823217",
+  "symbol": "PNGSREVA",
+  "run": "16:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "Festive sales and store count match"
  }
 ]

@@ -1314,3 +1314,14 @@ def test_a_call_cards_quarter_figure_the_xbrl_contradicts_is_found():
     found = call_figure_conflicts(results, keys)
     assert [(c["metric"], c["value"]) for c in found] == [("revenue", "₹233 Cr")]   # +68% is near the filed +72.2%
     assert call_figure_conflicts(None, keys) == [] and call_figure_conflicts({"period": None}, keys) == []
+
+
+def test_a_deck_in_crore_with_one_lakh_line_declares_no_single_unit():
+    """Mahindra Holidays' deck heads its tables "₹ Cr" and one per-unit line "AUR (₹ Lakh)"; read as a lakh document,
+    the unit fixer cut every crore figure 100x (₹395.3 Cr shown as ₹3.95 Cr; daily audit, 21 Oct 2026)."""
+    from bse_intel.grounding import declared_unit
+
+    deck = "Standalone Financials | Q2FY27\nIncome PAT EBITDA\n₹ Cr\n380.7 395.3\nAUR* (₹ Lakh)\n68 58\nSales Value (₹ Cr)"
+    assert declared_unit(deck) is None
+    assert declared_unit("Statement of results (₹ in Lakhs)\nRevenue 39,530.12") == 100
+    assert declared_unit("(Rs. in Cr)\nRevenue 395.30") is None

@@ -2719,6 +2719,13 @@ class Pipeline:
             filing = filing.model_copy(update={"route": "FAST_TRACK", "event_type": "ANNUAL_REPORT"})
             event_type = "ANNUAL_REPORT"
         if filing.route == "PASS1":
+            # the route was set at discovery; a filing re-queued after a rule change takes today's rules (the noise
+            # review of 2026-10-21 moved press releases, shareholder letters and monthly volumes past pass 1)
+            now_rule = self.rules.classify(filing)
+            if now_rule.action == "FAST_TRACK":
+                filing = filing.model_copy(update={"route": "FAST_TRACK", "event_type": now_rule.event_type or filing.event_type})
+                event_type = filing.event_type or "OTHER"
+        if filing.route == "PASS1":
             first_page = doc.first_page_text()
             _ocr_check(doc)
             recent = [t for t in dossier.get("timeline", []) if str(t.get("date", "")) < filing.filed_at][-8:]

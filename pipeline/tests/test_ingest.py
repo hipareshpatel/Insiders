@@ -200,6 +200,16 @@ def _f(headline, category="", subcategory="", subject=""):
     ("Transfer of equity shares to Investor Education and Protection Fund", "Company Update", "", "DROP", None),
     ("Schedule of Analyst / Institutional Investor Meet", "Company Update", "", "DROP", None),
     ("Analyst / Institutional Investor Meet - Presentation", "Company Update", "", "FAST_TRACK", "CONCALL_PRESENTATION"),
+    # Noise review, 2026-10-21 (owner): monthly volumes, press releases and shareholder letters are read, not judged on page 1
+    ("Container Corporation Of India Limited has informed the Exchange about Physical Volumes for September 2026",
+     "", "General Updates", "FAST_TRACK", "MONTHLY_BUSINESS_UPDATE"),
+    ("Bajaj Finserv Limited has informed the Exchange regarding 'information pertaining to the unlisted insurance subsidiaries of the Company'.",
+     "", "Updates", "FAST_TRACK", "MONTHLY_BUSINESS_UPDATE"),
+    ("Sales figures for the month of October 2026", "Company Update", "", "FAST_TRACK", "MONTHLY_BUSINESS_UPDATE"),
+    ('SRF Limited has informed the Exchange regarding a press release dated October 21, 2026, titled "Press release".',
+     "", "Press Release", "FAST_TRACK", None),
+    ("Press Release.", "", "Press Release / Media Release", "FAST_TRACK", None),
+    ("Eternal Limited has filed with exchange copy of shareholders letter dated October 21, 2026.", "", "General Updates", "FAST_TRACK", None),
 ])
 def test_rules(rulebook, headline, category, subcategory, action, event):
     decision = rulebook.classify(_f(headline, category, subcategory))

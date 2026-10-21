@@ -17,7 +17,7 @@ import { Avatar, TickerChip } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL } from "./FilingCard";
 import { plain, RichText } from "./RichText";
 import {
-  boxSignal, executionFact, missingOnTopic, near, PERIOD_WORDS, procedural, restates, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
+  boxSignal, changeTone, executionFact, missingOnTopic, near, PERIOD_WORDS, procedural, restates, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
   verifiedFact,
 } from "../lib/cardText";
 import { callTakeaways, type CallTakeawaysView } from "../lib/callTakeaways";
@@ -205,6 +205,8 @@ function coveredByTable(fact: Fact, r: ResultsSnapshot): boolean {
 }
 
 /** The key numbers on the card's face, as tiles inside the family's block. */
+const toneClass = (tone: "pos" | "neg" | null) => (tone === "pos" ? "text-pos" : tone === "neg" ? "text-neg" : "text-ink-3");
+
 function KeyBlock({ items }: { items: CardBody["key_numbers"] }) {
   return (
     <BlockShell title="Key numbers">
@@ -213,7 +215,7 @@ function KeyBlock({ items }: { items: CardBody["key_numbers"] }) {
           <div key={`${k.label}-${i}`} className="min-w-0 rounded-xl bg-surface-2 px-2.5 py-1.5">
             <dt className="truncate text-[11px] font-bold text-ink-3" title={k.label}>{k.label}</dt>
             <dd className="num text-[14px] font-bold text-ink">{k.value}</dd>
-            {k.change ? <dd className={cn("num text-[12px] font-semibold", k.change.trim().startsWith("-") || k.change.trim().startsWith("−") ? "text-neg" : "text-pos")}>{k.change}</dd> : null}
+            {k.change ? <dd className={cn("num text-[12px] font-semibold", toneClass(changeTone(k.label ?? "", k.change)))}>{k.change}</dd> : null}
           </div>
         ))}
       </dl>
@@ -228,7 +230,7 @@ function KeyTiles({ items }: { items: CardBody["key_numbers"] }) {
         <div key={`${k.label}-${i}`} className={cn("px-3 py-2", i % 2 === 1 && "border-l border-line", i >= 2 && "border-t border-line sm:border-t-0", i >= 1 && "sm:border-l")}>
           <dt className="truncate text-[10.5px] font-semibold uppercase tracking-[0.08em] text-ink-3">{k.label}</dt>
           <dd className="num mt-0.5 text-[15px] font-bold text-ink">{k.value}</dd>
-          {k.change ? <dd className={cn("num text-[12px] font-semibold", k.change.trim().startsWith("-") || k.change.trim().startsWith("−") ? "text-neg" : "text-pos")}>{k.change}</dd> : null}
+          {k.change ? <dd className={cn("num text-[12px] font-semibold", toneClass(changeTone(k.label ?? "", k.change)))}>{k.change}</dd> : null}
         </div>
       ))}
     </dl>
@@ -822,13 +824,14 @@ function VerdictBar({ newsId }: { newsId: string }) {
   const { token, verdicts, judge } = useVerdicts();
   const mine = verdicts[newsId];
   const [note, setNote] = useState<string | null>(null);
+  const [failed, setFailed] = useState<string | null>(null);
   if (!token) return null;
   const text = note ?? mine?.note ?? "";
   const pick = (v: Verdict) => {
-    void judge(newsId, mine?.verdict === v ? "CLEAR" : v, text);
+    void judge(newsId, mine?.verdict === v ? "CLEAR" : v, text).then(setFailed);
   };
   const save = () => {
-    if (mine && note !== null && note !== mine.note) void judge(newsId, mine.verdict, note);
+    if (mine && note !== null && note !== mine.note) void judge(newsId, mine.verdict, note).then(setFailed);
   };
   return (
     <div className="flex flex-wrap items-center gap-2 border-t border-line px-3.5 py-2.5 sm:px-6" data-noexport="true">
@@ -844,6 +847,7 @@ function VerdictBar({ newsId }: { newsId: string }) {
         placeholder={mine ? "What is wrong? (saved when you leave the box)" : "Pick a verdict, then add a note"}
         disabled={!mine} maxLength={1000}
         className="h-8 min-w-0 flex-1 basis-48 rounded-lg border border-line bg-surface px-2.5 text-[12.5px] text-ink placeholder:text-ink-3 focus:border-accent focus:outline-none disabled:opacity-60" />
+      {failed && <span role="alert" className="basis-full text-[12px] font-medium text-neg">Not saved ({failed}): sign in again on the System page and repeat it</span>}
     </div>
   );
 }

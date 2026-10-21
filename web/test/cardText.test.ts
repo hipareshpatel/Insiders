@@ -1,7 +1,7 @@
 // The card's "say each thing once" rules (src/lib/cardText.ts). Run: npm test (node --test, types stripped).
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { executionFact, figures, repeats, showsFigure } from "../src/lib/cardText.ts";
+import { changeTone, executionFact, figures, repeats, showsFigure } from "../src/lib/cardText.ts";
 
 test("a point that restates the headline is a repeat", () => {
   // the owner's Punjab & Sind Bank card: headline and first point were the same figure
@@ -193,4 +193,15 @@ test("an EGM's borrowing resolution is business, a dividend's AGM approval is pr
   const { procedural } = await import("../src/lib/cardText.ts");
   assert.ok(!procedural("EGM considered enabling resolutions for borrowing up to USD 1,250 million", "DEBT_RATINGS"));
   assert.ok(procedural("Final Dividend approval by shareholders in Annual General Meeting", "CORPORATE_ACTION"));
+});
+
+test("a key number's colour follows what the change means, not its first character (deep audit F-13)", () => {
+  assert.equal(changeTone("GNPA", "-17 bps"), "pos");
+  assert.equal(changeTone("Net NPA", "+0.2 pp"), "neg");
+  assert.equal(changeTone("Revenue", "+12.4% YoY"), "pos");
+  assert.equal(changeTone("PAT", "−8% YoY"), "neg");
+  assert.equal(changeTone("PAT", "down 8% YoY"), "neg");
+  assert.equal(changeTone("Finance cost", "+₹12 Cr"), "neg");
+  assert.equal(changeTone("Order book", "vs ₹1,200 Cr in Q1"), null);
+  assert.equal(changeTone("EBITDA margin", "flat"), null);
 });

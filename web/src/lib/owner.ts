@@ -104,17 +104,25 @@ export function useVerdicts() {
     queryKey: ["verdicts", token], enabled: !!token, staleTime: 300_000,
     queryFn: async () => Object.fromEntries((await ownerApi.verdicts(token!)).verdicts.map((v) => [v.news_id, { verdict: v.verdict, note: v.note ?? "" }])) as Record<string, { verdict: Verdict; note: string }>,
   });
-  const judge = useCallback(async (newsId: string, verdict: Verdict | "CLEAR", note = "") => {
-    if (!token) return;
+  const judge = useCallback(async (newsId: string, verdict: Verdict | "CLEAR", note = ""): Promise<string | null> => {
+    if (!token) return "not signed in";
     const next = { ...(query.data ?? {}) };
     const changed = next[newsId]?.verdict !== (verdict === "CLEAR" ? undefined : verdict);
     if (verdict === "CLEAR") delete next[newsId];
     else next[newsId] = { verdict, note };
+    const before = query.data;
     client.setQueryData(["verdicts", token], next);
-    await ownerApi.verdict(token, newsId, verdict, note);
+    // a verdict the API refused (an expired token answers 401) must not look saved (deep audit F-14)
+    try {
+      await ownerApi.verdict(token, newsId, verdict, note);
+    } catch (err) {
+      client.setQueryData(["verdicts", token], before);
+      return String((err as Error)?.message ?? err);
+    }
     if (changed) {
       void client.invalidateQueries({ predicate: (q) => ["feed", "card", "review", "verdict-list"].includes(String(q.queryKey[0])) });
     }
+    return null;
   }, [token, query.data, client]);
   return { token, verdicts: query.data ?? {}, judge };
 }

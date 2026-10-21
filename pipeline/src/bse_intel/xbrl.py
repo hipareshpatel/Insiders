@@ -201,8 +201,10 @@ def _contexts(root) -> dict[str, dict]:
                     info[name] = date.fromisoformat(el.text.strip()[:10])
                 except ValueError:
                     pass
-            elif name in ("explicitMember", "typedMember"):
+            elif name == "explicitMember":
                 info["dims"][_local(el.get("dimension", ""))] = (el.text or "").strip().rsplit(":", 1)[-1]
+            elif name == "typedMember":   # its value is a child element's text ("MutualFundsOrUTI_Context15")
+                info["dims"][_local(el.get("dimension", ""))] = "".join(el.itertext()).strip().rsplit(":", 1)[-1]
         out[ctx.get("id")] = info
     return out
 
@@ -510,6 +512,61 @@ def _change(now: float, before: float | None) -> float | None:
     return round((now / before - 1) * 100, 1)
 
 
+# Institutional categories of the public holding, by the explicit member SEBI's template gives each
+_CATEGORY_MEMBERS = {"MutualFundsOrUTIMember": "mf_pct", "InsuranceCompaniesMember": "insurance_pct",
+                     "InstitutionsForeignPortfolioInvestorCategoryOneMember": "fpi_pct",
+                     "InstitutionsForeignPortfolioInvestorCategoryTwoMember": "fpi_pct",
+                     "AlternativeInvestmentFundsMember": "aif_pct", "BanksMember": "banks_pct",
+                     "ProvidentFundsOrPensionFundsMember": "pension_pct"}
+# The axis a named holder is listed under (its typed member), as a category a reader knows
+_HOLDER_AXES = (("mutualfund", "Mutual fund"), ("insurance", "Insurer"), ("foreignportfolio", "FPI"),
+                ("institutionsforeign", "Foreign institution"), ("alternativeinvestment", "AIF"), ("bank", "Bank"),
+                ("pension", "Pension fund"), ("providentfund", "Pension fund"), ("sovereign", "Sovereign fund"),
+                ("otherinstitution", "Other institution"), ("individual", "Individual"), ("bodiescorporate", "Company"),
+                ("othersindian", "Other"), ("otherforeign", "Foreign other"))
+HOLDERS_KEPT = 25
+
+
+def _institutions(facts, contexts, scale: float) -> tuple[dict, list[dict]]:
+    """The institutional categories' % of the company, and the named public holders of 1% or more with their
+    category, from a shareholding XBRL. A holder's name sits on the quarter's duration context and its stake on the
+    instant one, both carrying the same typed member ("MutualFundsOrUTI_Context15"); a promoter-group holder (one with
+    TypeOfPromoterShareholding) is left out, as the promoter's total already says it."""
+    totals: dict[str, float] = {}
+    names: dict[tuple[str, str], str] = {}
+    stakes: dict[tuple[str, str], float] = {}
+    promoters: set[tuple[str, str]] = set()
+    for name, ctx, _unit, raw in facts:
+        info = contexts.get(ctx)
+        if info is None or len(info["dims"]) != 1:
+            continue
+        ((axis, member),) = info["dims"].items()
+        if name == "NameOfTheShareholder":
+            names[(axis, member)] = " ".join(raw.split())
+        elif name == "TypeOfPromoterShareholding":
+            promoters.add((axis, member))
+        elif name == "ShareholdingAsAPercentageOfTotalNumberOfShares":
+            value = _num(raw)
+            if value is None:
+                continue
+            if member in _CATEGORY_MEMBERS:
+                key = _CATEGORY_MEMBERS[member]
+                totals[key] = totals.get(key, 0.0) + value * scale
+            else:
+                stakes[(axis, member)] = value * scale
+    categories = {k: round(v, 2) for k, v in totals.items()}
+    named = []
+    for key, holder in names.items():
+        stake = stakes.get(key)
+        if stake is None or stake < 1.0 or key in promoters or not holder or holder.isdigit():
+            continue
+        axis = key[0].lower()
+        kind = next((label for word, label in _HOLDER_AXES if word in axis), "Other")
+        named.append({"name": holder, "category": kind, "pct": round(stake, 2)})
+    named.sort(key=lambda h: -h["pct"])
+    return categories, named[:HOLDERS_KEPT]
+
+
 def _shareholding(facts, contexts) -> XbrlResult | None:
     """Promoter / FII / DII % and small-holder count from category members."""
     pct: dict[str, list[float]] = {"promoter": [], "fii": [], "dii": [], "pledge": []}
@@ -547,9 +604,10 @@ def _shareholding(facts, contexts) -> XbrlResult | None:
         return round(max(values) * scale, 2) if values else None
 
     period = canonical_period(f"quarter ended {as_of:%d.%m.%Y}") if as_of else None
+    categories, named = _institutions(facts, contexts, scale)
     own = Ownership(period=period or "", promoter_pct=top(pct["promoter"]), fii_pct=top(pct["fii"]),
                     dii_pct=top(pct["dii"]), pledge_pct=top(pct["pledge"]),
-                    retail_holders=max(holders) if holders else None)
+                    retail_holders=max(holders) if holders else None, holders=named, **categories)
     return XbrlResult("SHAREHOLDING", period=period, ownership=own) if period else None
 
 

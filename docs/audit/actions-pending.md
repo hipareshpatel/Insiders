@@ -6,11 +6,13 @@ the time and the run or PR link.
 
 ## Open
 
-- After the next merge to main: maintenance.yml export-critic (new; the 10:07 audit asked for the critic's verdicts)
 
 - After 16:00 IST (10:30 UTC) 21 Oct: maintenance.yml seed-memory, restart off (resume after 512008; the 20 Oct pass died at the D1 cap, deep audit D1). One dispatch, nothing queued behind it
 
 ## Done
+
+- 21 Oct 10:48 IST export-critic: dispatched on main after #36 merged; it commits docs/audit/live/critic-2026-10-21.json
+- 21 Oct 10:46 IST export-held: committed docs/audit/live/held-2026-10-21.json to the branch
 
 - 21 Oct 10:45 IST export-held (asked by the 10:07 audit): dispatched on main; it commits docs/audit/live/held-2026-10-21.json
 

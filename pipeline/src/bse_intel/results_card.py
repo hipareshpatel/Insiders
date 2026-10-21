@@ -415,3 +415,40 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "") -
     if unconfirmed:
         replaced.append(f"changes left out, their comparative not in the filing: {', '.join(unconfirmed)}")
     return [f"results card from the XBRL file: {', '.join(replaced)}"]
+
+
+# A call card's key figures against the company's own XBRL for the quarter (daily audit, 21 Oct 2026: Bajaj Consumer's
+# transcript read "a revenue of INR233 crores with a growth of 2.7%" for a quarter its results file tags at ₹332.83 Cr,
+# +25.5%; the card's headline and key numbers repeated the slip while its own results block showed the filed figures).
+# Only figures for the block's quarter: a label naming a half, nine months, a year or a segment is not compared.
+_CALL_METRICS = {"revenue": ("revenue", "total income", "income from operations", "sales", "topline"),
+                 "ebitda": ("ebitda", "operating profit"), "pat": ("pat", "net profit", "profit after tax")}
+_NOT_QUARTER = re.compile(r"\b(?:h[12]|9m|nine months|fy\d*|full[- ]year|year|annual|ytd|segments?|divisions?|business|"
+                          r"subsidiar\w*|standalone|exports?|domestic|international|volumes?)\b", re.I)
+_CRORE = re.compile(r"₹\s?([\d,]+(?:\.\d+)?)\s*(?:cr|crore)\b", re.I)
+CALL_FIGURE_TOLERANCE = 0.05
+
+
+def _crore(text: str | None) -> float | None:
+    m = _CRORE.search(text or "")
+    return float(m.group(1).replace(",", "")) if m else None
+
+
+def call_figure_conflicts(results: dict | None, key_numbers: list[dict]) -> list[dict]:
+    """The key numbers of a call card whose quarter figure is none of the results block's (the quarter, its year-ago or
+    its previous quarter) for that metric: a misread or a transcription slip, not the company's filed figure."""
+    if not results or not results.get("period"):
+        return []
+    conflicts = []
+    for k in key_numbers or []:
+        label = (k.get("label") or "").lower()
+        metric = next((m for m, words in _CALL_METRICS.items() if any(w in label for w in words)), None)
+        value = _crore(k.get("value"))
+        line = results.get(metric) if metric else None
+        if line is None or value is None or _NOT_QUARTER.search(label) or not isinstance(line.get("value"), (int, float)):
+            continue
+        filed = [v for v in (line.get("value"), line.get("prev_year"), line.get("prev_quarter")) if isinstance(v, (int, float)) and v]
+        if filed and all(abs(value - v) > max(1.0, abs(v) * CALL_FIGURE_TOLERANCE) for v in filed):
+            conflicts.append({"label": k.get("label"), "value": k.get("value"), "metric": metric, "filed": line["value"],
+                              "period": results["period"]})
+    return conflicts

@@ -1289,3 +1289,20 @@ def test_a_share_under_one_percent_keeps_a_decimal():
     from bse_intel.signals import _share
 
     assert (_share(0.48), _share(0.27), _share(6.2), _share(41.0)) == ("0.5%", "0.3%", "6%", "41%")
+
+
+def test_a_call_cards_quarter_figure_the_xbrl_contradicts_is_found():
+    """Bajaj Consumer's call transcript read "a revenue of INR233 crores with a growth of 2.7%" for a quarter its XBRL
+    tags at ₹332.83 Cr (daily audit, 21 Oct 2026). A figure equal to the quarter, its year-ago or its previous quarter
+    stays, and so does a half-year or segment figure."""
+    from bse_intel.results_card import call_figure_conflicts
+
+    results = {"period": "Q2FY27", "revenue": {"value": 332.83, "prev_year": 265.27, "prev_quarter": 341.57},
+               "ebitda": {"value": 82.34, "prev_year": 47.83, "prev_quarter": 83.39},
+               "pat": {"value": 70.15, "prev_year": 42.29, "prev_quarter": 70.75}}
+    keys = [{"label": "Revenue", "value": "₹233 Cr"}, {"label": "EBITDA", "value": "₹53 Cr"},
+            {"label": "PAT", "value": "₹70 Cr"}, {"label": "H1 EBITDA", "value": "₹167 Cr"},
+            {"label": "Revenue", "value": "₹265 Cr"}, {"label": "Exports revenue", "value": "₹40 Cr"}]
+    found = call_figure_conflicts(results, keys)
+    assert [(c["metric"], c["value"]) for c in found] == [("revenue", "₹233 Cr"), ("ebitda", "₹53 Cr")]
+    assert call_figure_conflicts(None, keys) == [] and call_figure_conflicts({"period": None}, keys) == []

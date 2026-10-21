@@ -32,10 +32,13 @@ safety_ceiling = 0.95
 # usage and feed counts). A backfill request (pass2_bulk, a backfill pack, a backfill long filing) may use a model below
 # only while that model's day stays under (1 - share) of its ceiling - 3 of its 19 requests - except in bulk_hours
 # (IST), after the evening results flood and before the morning's filings. Otherwise backfill writes with GLM and Lite.
-# Live requests and the fallback order are unchanged.
+# Live requests and the fallback order are unchanged. Gemini's day ends at midnight Pacific (12:30 IST), so the bulk
+# hours share a quota day with the next morning: they keep bulk_hours_share for it (the 09:00-12:30 IST window held 15
+# of 56 live cards on 16, 19 and 20 Oct, 27%; on 21 Oct every Flash model was at its day by 08:30 IST).
 [gateway.live_reserve]
 share = 0.8
 bulk_hours = "21:00-09:00"
+bulk_hours_share = 0.3
 tz = "Asia/Kolkata"
 models = ["gemini:gemini-3.6-flash", "gemini:gemini-3.7-flash", "gemini:gemini-3.8-flash", "gemini:gemini-3.5-flash",
           "gemini:gemini-3-flash-preview"]

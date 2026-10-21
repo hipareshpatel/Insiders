@@ -450,6 +450,22 @@ def test_backfill_uses_the_best_writer_below_its_share_and_in_its_hours(make_gat
     assert gw.complete_json("r", "s", "u", Pass1Result, bulk=True).model == "lite"
 
 
+def test_the_bulk_hours_keep_the_morning_share(make_gateway):
+    """Gemini's quota day ends at 12:30 IST: overnight backfill may take the reserve only down to bulk_hours_share."""
+    from datetime import datetime
+
+    config = gateway_config(route({"provider": "a", "model": "flash", "limits": {"rpd": 20}},
+                                  {"provider": "b", "model": "lite"}),
+                            live_reserve={"share": 0.8, "bulk_hours": "21:00-09:00", "bulk_hours_share": 0.3,
+                                          "models": ["a:flash"]})
+    for used, hour, model in ((12, 23, "flash"), (13, 23, "lite"), (13, 3, "lite"), (3, 15, "lite"), (2, 15, "flash")):
+        gw, _ = make_gateway(config, {"flash": [GOOD], "lite": [GOOD]})
+        gw.limiters["a:flash"].quota.day_requests = used      # ceiling 19: backfill may use 13 overnight, 3 by day
+        gw.local_now = lambda hour=hour: datetime(2026, 10, 21, hour, 15)
+        assert gw.complete_json("r", "s", "u", Pass1Result, bulk=True).model == model, (used, hour)
+        assert gw.complete_json("r", "s", "u", Pass1Result).model == "flash"
+
+
 def test_the_reserve_leaves_the_fallback_order_alone_when_quota_is_gone(make_gateway):
     """Out of its day, the reserved model is skipped for live and backfill alike and the next one writes; when that one
     is out too the failure is a quota ceiling, so the filing stays queued as before."""
@@ -472,7 +488,7 @@ def test_the_configured_reserve_covers_every_flash_writer_and_not_the_lite_tier(
     reserve = config["gateway"]["live_reserve"]
     packed = [f"{e['provider']}:{e['model']}" for e in config["routes"]["pass2_packed"]]
     assert set(reserve["models"]) == set(packed[:-1]) and packed[-1] == "gemini:gemini-3.5-flash-lite"
-    assert reserve["share"] == 0.8 and all(m.startswith("gemini:") for m in reserve["models"])
+    assert reserve["share"] == 0.8 and reserve["bulk_hours_share"] == 0.3 and all(m.startswith("gemini:") for m in reserve["models"])
 
 
 def test_a_route_of_spare_quota_stops_at_its_share_and_leaves_the_rest_to_the_models_other_routes(make_gateway):

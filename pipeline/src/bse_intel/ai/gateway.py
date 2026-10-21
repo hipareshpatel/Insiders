@@ -219,6 +219,10 @@ class AIGateway:
         reserve = gw.get("live_reserve", {})
         self.reserved: frozenset[str] = frozenset(reserve.get("models", ()))
         self.reserve_share = float(reserve.get("share", 0.0))
+        # Gemini's day runs to midnight Pacific (12:30 IST), so the night's bulk hours and the next market morning
+        # share one quota day: releasing the whole reserve overnight left the 21 Oct morning's live filings without
+        # Flash (every Flash model at its day by 08:30 IST). The bulk hours keep this share instead.
+        self.bulk_hours_share = float(reserve.get("bulk_hours_share", 0.0))
         self._bulk_hours = _hours(reserve.get("bulk_hours"))
         zone = ZoneInfo(reserve.get("tz", "Asia/Kolkata"))
         self.local_now: Callable[[], datetime] = lambda: datetime.now(zone)
@@ -376,12 +380,13 @@ class AIGateway:
 
     def reserved_for_live(self, target: Target) -> bool:
         """True when a backfill request must leave this model to live filings for now."""
-        if target.key not in self.reserved or self.reserve_share <= 0 or self._in_bulk_hours():
+        share = self.bulk_hours_share if self._in_bulk_hours() else self.reserve_share
+        if target.key not in self.reserved or share <= 0:
             return False
         quota = self.limiters[target.key].quota
         if not quota.limits.rpd:
             return False
-        return quota.day_requests >= math.floor(quota.limits.rpd * (1 - self.reserve_share))
+        return quota.day_requests >= math.floor(quota.limits.rpd * (1 - share))
 
     def _in_bulk_hours(self) -> bool:
         if self._bulk_hours is None:

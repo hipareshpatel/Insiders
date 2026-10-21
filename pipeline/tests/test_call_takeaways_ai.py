@@ -43,7 +43,7 @@ def test_schema_asks_for_takeaways_only_on_calls():
 
 
 def test_model_reply_is_normalised_capped_and_never_self_verified():
-    items = [{**_item(f"Takeaway number {i} with figure {i}", "q"), "verified": True} for i in range(12)]
+    items = [{**_item(f"Takeaway number {i} with figure {i}", "q"), "verified": True} for i in range(20)]
     items.append("not a dict")
     items.append({"category": "capex plans", "text": "short"})   # too short: dropped
     card = _card(*items, {"category": "Capex plans", "text": "A long enough capex takeaway"})
@@ -106,3 +106,37 @@ def test_failures_quote_figure_boilerplate():
     assert got[3] == (False, "no quote")
     assert got[4] == (True, None)
     assert len(notes) == 4
+
+
+def test_an_earlier_figure_the_quote_itself_states_needs_no_memory():
+    """Indian Bank's call (live, 2026-10-21): "I had guided for deposit growth of 9-11%, and I am revising that to
+    11-12%" carries its own earlier figure; it was failed for citing no memory."""
+    card = _card(_item("Deposit growth guidance revised upward to 11-12% from 9-11%",
+                       "I had guided for deposit growth of 9-11%, and I am revising that to 11-12%.", [], "raised from 9-11%"))
+    text = "On guidance, I had guided for deposit growth of 9-11%, and I am revising that to 11-12%."
+    check_ai_takeaways(card, text, view={})
+    assert card.call_takeaways[0].verified
+    # an earlier figure the quote does not state still needs memory
+    other = _card(_item("Deposit growth guidance revised upward to 11-12%", "I am revising that to 11-12%.", [], "raised from 9-11%"))
+    check_ai_takeaways(other, "I am revising that to 11-12%.", view={})
+    assert not other.call_takeaways[0].verified
+    # nor does a "reiterated" with no figure: an earlier statement only memory can show
+    said = _card(_item("Volume growth guidance of 15% maintained", "We maintain our guidance of 15% volume growth.", [], "reiterated"))
+    check_ai_takeaways(said, "We maintain our guidance of 15% volume growth.", view={})
+    assert not said.call_takeaways[0].verified
+
+
+def test_verified_takeaways_feed_the_quarterly_summary():
+    from bse_intel.call_summary import remember_call_points, summarize_calls
+
+    card = _card(_item("Deposit growth guidance revised upward to 11-12% from 9-11%",
+                       "I had guided for deposit growth of 9-11%, and I am revising that to 11-12%.", [], "raised from 9-11%"),
+                 _item("Credit cost guided below 0.5% for FY27", "not in the filing", []))
+    text = "I had guided for deposit growth of 9-11%, and I am revising that to 11-12%."
+    check_ai_takeaways(card, text, view={})
+    d = {"timeline": [{"news_id": "c1", "date": "2026-10-21T20:18:00+05:30", "event_type": "CONCALL_PRESENTATION",
+                       "summary": "Q2FY27 earnings call transcript"}], "guidance": []}
+    remember_call_points(d, "c1", "2026-10-21T20:18:00+05:30", card.call_takeaways)
+    assert len(d["call_points"]) == 1                     # only the verified one is kept
+    points = [p for c in summarize_calls(d)[0]["categories"] for p in c["points"]]
+    assert points[0]["text"].startswith("Deposit growth") and points[0]["versus"] == "raised from 9-11%"

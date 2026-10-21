@@ -6,13 +6,12 @@ the time and the run or PR link.
 
 ## Open
 
-- When the seed-memory run ends (maintenance is one at a time; #41 merged 16:16 IST): requeue-failed --ids nse-106823248,nse-106823292,1ee7b071-567e-4f5c-b680-c819e367d372 (Mahindra Holidays, figures cut 100x by the unit fixer; LMW and Jubilant Pharmova, multiples their amounts contradict, #42)
-- After the noise-review PR merges (the same requeue run can carry both lists): requeue-failed --ids nse-106823071,nse-106820476,nse-106823357,nse-106821833,fde85502-a65c-4c38-8aba-65e32983e33f,05139211-435f-4961-bdfd-92805362c5b9,nse-106819034,nse-106823854,nse-106823380,nse-106823083 (CONCOR volumes, Bajaj Finserv insurance premiums, SRF / UltraTech / Jindal Stainless / LTM / NTPC / GMDC press releases, Eternal shareholders' letter, Unicommerce: pass 1 called them routine from page 1; owner 2026-10-21)
-
-
-
+- After hipareshpatel/Insiders#46 merges: maintenance `both` (refresh-card-blocks puts stored call cards' checked takeaways into memory; refresh-summaries rebuilds the company pages' Earnings calls), then `seed-memory` (restart off) to resume the XBRL history seed on the new order.
+- The 13 results cards made on a standalone XBRL since 20 Sep: the results catch-up reads the recent ones again once their consolidated file is listed. Older ones (more than 10 days) stay unless re-run by id after a check of which companies file consolidated.
 
 ## Done
+
+- 21 Oct 21:33 IST requeue-failed --ids (14: Mahindra Holidays, LMW, Jubilant; CONCOR, Bajaj Finserv, SRF, UltraTech, Jindal Stainless, LTM, NTPC, GMDC, Eternal, Unicommerce; Yes Bank AT1): maintenance run 16, success, after #45 merged. The seed-memory pass on the old order was cancelled for it (resumes from its saved point).
 
 - 21 Oct 16:07 IST seed-memory (restart off, resume after 512008; deep audit D1): dispatched on main; a pass that ends with companies left starts the next outside market hours
 

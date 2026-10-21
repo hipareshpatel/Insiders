@@ -19,7 +19,7 @@ import logging
 
 from pydantic import ValidationError
 
-from .call_summary import card_takeaways
+from .call_summary import card_takeaways, remember_call_points
 from .card_context import case_stage, guidance_recall, memory_context, rating_change
 from .impact import high_reasons
 from .dossier import call_results_snapshot, dossier_as_of, latest_fundamentals, results_snapshot
@@ -100,6 +100,7 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
     changed_keys: dict[str, int] = {}
     dossiers: dict[str, dict | None] = {}
     companies: dict[str, dict | None] = {}
+    dirty: set[str] = set()   # companies whose memory took call takeaways from their stored cards
     while True:
         rows = sink.query("export_cards", [after[0], after[1], page])
         if not rows:
@@ -143,6 +144,13 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
                     impact = "HIGH"
                     new["score"] = {**score, "impact": "HIGH", "reasons": [*(score.get("reasons") or []), "Impact: " + "; ".join(why)]}
                     changed.append("impact")
+            if card.get("event_type") == "CONCALL_PRESENTATION" and card.get("call_takeaways"):
+                # cards written before the takeaways went into memory (2026-10-21): their checked ones, for the
+                # company page's quarterly summary (refresh-summaries rebuilds it)
+                before = json.dumps(dossier.get("call_points", []), sort_keys=True)
+                remember_call_points(dossier, row["news_id"], row["filed_at"], card["call_takeaways"])
+                if json.dumps(dossier.get("call_points", []), sort_keys=True) != before:
+                    dirty.add(scrip)
             if not changed:
                 continue
             for k in changed:
@@ -156,4 +164,8 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
             written += len(batch)
         if len(rows) < page:
             break
-    return {"cards": seen, "changed": written, "failed": failed, "by_block": changed_keys, "dry_run": dry_run}
+    if not dry_run:
+        for scrip in dirty:
+            sink.put_dossier(scrip, dossiers[scrip])
+    return {"cards": seen, "changed": written, "failed": failed, "by_block": changed_keys, "dry_run": dry_run,
+            "memories_with_call_points": len(dirty)}

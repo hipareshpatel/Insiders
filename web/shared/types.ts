@@ -476,6 +476,8 @@ export interface CallPoint {
   news_id: string;
   /** the same target said on an earlier call too */
   reiterated?: boolean;
+  /** what changed against an earlier call or result ("raised from 9-11%"), checked against memory or the quote */
+  versus?: string;
 }
 
 export interface CallQuarter {

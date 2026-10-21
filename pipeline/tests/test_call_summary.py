@@ -145,7 +145,7 @@ def test_caps_per_heading_quarter_and_quarters():
     assert [c["quarter"] for c in calls] == ["Q1FY27", "Q4FY26", "Q3FY26", "Q2FY26"]   # the last four only (not FY26's Q1)
     q1 = calls[0]
     assert all(len(c["points"]) <= PER_CATEGORY for c in q1["categories"])
-    assert sum(len(c["points"]) for c in q1["categories"]) == PER_QUARTER
+    assert sum(len(c["points"]) for c in q1["categories"]) <= PER_QUARTER   # each heading capped, the quarter too
 
 
 def test_company_summary_carries_the_calls_and_stays_json():

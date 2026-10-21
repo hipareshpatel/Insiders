@@ -5,8 +5,9 @@ import { callQuarters } from "./companyText";
 import { dayMonth } from "./OverviewPanels";
 import { Panel } from "./Panel";
 
-/** Earnings calls by quarter (O13/O4): the key takeaways memory took from each quarter's transcript or presentation,
- *  under fixed headings, newest quarter first. Built by the pipeline (call_summary.py); hidden when there is none. */
+/** Earnings calls by quarter (O13/O4): each call's checked AI takeaways (what changed against the earlier call beside
+ *  each), then what memory took from it, under fixed headings, newest quarter first. Built by the pipeline
+ *  (call_summary.py); hidden when there is none. */
 export function EarningsCalls({ calls }: { calls: CallQuarter[] | undefined }) {
   const quarters = callQuarters(calls);
   const [pick, setPick] = useState<string | null>(null);
@@ -36,6 +37,7 @@ export function EarningsCalls({ calls }: { calls: CallQuarter[] | undefined }) {
                   <span aria-hidden className="mt-[7px] h-[5px] w-[5px] rounded-full bg-accent" />
                   <span title={`From the call filed ${dayMonth(p.date)}`}>
                     {p.text}
+                    {p.versus && <span className="mt-0.5 block text-[12px] font-medium text-[var(--accent)]">vs earlier: {p.versus}</span>}
                     {p.reiterated && <small className="ml-1.5 rounded-full bg-surface-2 px-1.5 py-px text-[10.5px] font-bold text-ink-3">reiterated</small>}
                     {several && <small className="num ml-1.5 text-[11.5px] text-ink-3">{dayMonth(p.date)}</small>}
                   </span>
@@ -46,7 +48,7 @@ export function EarningsCalls({ calls }: { calls: CallQuarter[] | undefined }) {
         ))}
       </div>
       <p className="mt-4 flex flex-wrap gap-x-3 gap-y-1 border-t border-line pt-2.5 text-[12px] text-ink-3">
-        <span>From memory of the {q.quarter} call{several ? "s and presentations" : ""}</span>
+        <span>The {q.quarter} call{several ? "s and presentations" : ""}, read by AI; each point and figure checked against the document and memory</span>
         {q.sources.map((s) => s.pdf_url ? (
           <a key={s.news_id} href={s.pdf_url} target="_blank" rel="noreferrer" className="font-bold text-accent hover:underline">⎙ Filed {dayMonth(s.date)}</a>
         ) : <span key={s.news_id}>Filed {dayMonth(s.date)}</span>)}

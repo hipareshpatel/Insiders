@@ -513,6 +513,15 @@ def cmd_backup(args, settings, sink) -> int:
     return 0
 
 
+def cmd_missed_jobs(args, settings, sink) -> int:
+    """Print the daily workflows GitHub did not start (watchdog.py), one per line, for pipeline.yml to start."""
+    from .watchdog import missed
+
+    for workflow in missed(sink):
+        print(workflow)
+    return 0
+
+
 def cmd_health(args, settings, sink) -> int:
     """Show which AI targets are configured and today's quota usage (no AI calls)."""
     from .ai.gateway import AIGateway
@@ -787,6 +796,8 @@ def main(argv: list[str] | None = None) -> int:
     p.set_defaults(func=cmd_backup)
 
     sub.add_parser("health", help="AI provider configuration and quota usage").set_defaults(func=cmd_health)
+    sub.add_parser("missed-jobs", help="daily workflows GitHub did not start, for the pipeline to start; no AI"
+                   ).set_defaults(func=cmd_missed_jobs)
 
     args = parser.parse_args(argv)
     logging.basicConfig(

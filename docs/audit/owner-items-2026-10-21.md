@@ -24,13 +24,14 @@ Status is checked against the code, not taken from earlier replies.
 | A13 | Industry path and 1W/1M/3M returns on the card | **Branch.** New `ret_3m` column (migration 0012) is filled by the next market-data run | #45 |
 | A14 | Previous quarters missing (E2E) | **Branch, partial.** A quarter is derived from H1/9M/FY. The seed now does companies reporting now first (E2E was near the end of the scrip order). The seed is still running: 423 companies this pass, next pass running | #45 |
 | A15 | Consolidated not used where it exists / mixed with standalone | **Branch, partial.** 13 of 52 results cards since 20 Sep were standalone-made. Built: (1) a consolidated statement waits for the consolidated XBRL; (2) a standalone-made card is re-read when the consolidated file lands; (3) a standalone figure on a consolidated card is a problem (the standalone file is read beside it). Already built earlier: memory shows one basis per metric and drops standalone where consolidated exists. Open: re-run the 13 standalone-made cards after the merge | #45 |
-| A16 | Earnings-call summaries on company pages shallow (UltraTech) | **Open.** It was built as a code-only list from memory, not the AI analysis asked for on 20 Oct. Plan: an AI analysis step per transcript or presentation (8-15 points under fixed headings, figures checked, "vs last call" from memory), stored per quarter, on the company page and the call card; audio-link notices dropped as sources | — |
-| A17 | BSE scrip codes on an NSE site | **Open.** Plan: NSE symbols in every URL and label (`/company/ULTRACEMCO`), the internal key unchanged, old links redirect | — |
-| A18 | "What these numbers mean", "For the decision", "Our reading" used wrongly; benchmark similar sites | **Open** | — |
+| A16 | Earnings-call summaries on company pages shallow (UltraTech) | **Live.** 8-15 checked AI takeaways per call under fixed headings (Risks included), "vs earlier" from memory, kept per quarter and shown on the company page | #46 |
+| A17 | BSE scrip codes on an NSE site | **Live.** NSE symbols in every company link; old links still resolve | #45 |
+| A18 | "What these numbers mean", "For the decision", "Our reading" used wrongly; benchmark similar sites | **PR.** Benchmarked; a rule per box. Housekeeping signals, off-topic "not disclosed" items and procedural memory lines are kept off the face; the reading prompt asks for: expected vs actual, then driver, then what it means for the shareholder. On/off over 400 live cards: 20 changed | `card-sections-2026-10-21.md` |
 | A19 | One company view: drop the half-window; company page financials complete and in order; operating notes complete | **Open** | — |
-| A20 | Explain "Recent pipeline runs" columns | **Open** | — |
+| A20 | Explain "Recent pipeline runs" columns | **Live.** Explained on the System page | #45 |
 | A21 | Read the last 5 days back and list what was missed | **Done.** This file | — |
-| A22 | Don't merge until the list is shown | Followed: nothing merged since #44 | — |
+| A22 | Don't merge until the list is shown | List shown; the owner then said to merge (#45-#47 merged) | — |
+| A23 | Institutional shareholding (FII, MF, insurers, named holders) and big changes on the company page | **Live** (#47). The whole universe's last two quarters are read in one go (maintenance `shareholding-sync`, owner: "let it get filled today"); the seed passes follow without a market-hours pause | #47 |
 
 ## B. Still open from 19-20 Oct
 

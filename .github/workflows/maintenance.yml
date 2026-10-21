@@ -11,8 +11,9 @@
 #   before they acted on the card, O11, never held or released it); a re-run keeps them by itself (cards_upsert.sql);
 # - seed-memory: results history from NSE's XBRL into each universe company's memory (T13's re-seed on the basis
 #   fix), resuming after the last company finished; 5 h a pass, and a pass that runs out of time with companies left
-#   starts the next one itself. It reads NSE beside the live runs, so no pass starts itself in market hours
-#   (02:30-10:30 UTC = 08:00-16:00 IST): then dispatch it again after the close.
+#   starts the next one itself, market hours or not (owner, 2026-10-21: fill it today, at NSE's paced rate);
+# - shareholding-sync: the universe's shareholding patterns for the last `days` (two quarters at 110) in one go,
+#   institutions and named holders included, then the seed passes start.
 # Neither calls an AI model or NSE. It runs beside the pipeline (its own concurrency group: a shared one would
 # cancel a pending pipeline run); both only read memory, and a summary or card a run writes at the same moment is
 # rewritten by the next run.
@@ -24,7 +25,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, apply-verdicts, seed-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, apply-verdicts, seed-memory, shareholding-sync]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -34,6 +35,10 @@ on:
         description: seed-memory only - start again from the first company
         type: boolean
         default: false
+      days:
+        description: shareholding-sync only - days of NSE's shareholding list to read (110 covers the last two quarters)
+        type: string
+        default: '110'
       dry_run:
         description: count what would change, write nothing (refresh-card-blocks, requeue-failed)
         type: boolean
@@ -81,6 +86,14 @@ jobs:
       - name: Apply the owner's verdicts
         if: inputs.command == 'apply-verdicts' && !inputs.dry_run
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel apply-verdicts'
+      # The whole universe's last two quarters in one go (owner, 2026-10-21: "you can do it in one go, NSE will not block
+      # it with suitable rate. let it get filled today"); the nightly run keeps it current after. Then the seed passes.
+      - name: Shareholding patterns into memory, in one go
+        id: shp
+        if: inputs.command == 'shareholding-sync'
+        env:
+          DAYS: ${{ inputs.days }}
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel shareholding-sync --days "$DAYS" --max-files 100000 --time-budget 17400'
       - name: Seed memory from NSE's results XBRL
         id: seed
         if: inputs.command == 'seed-memory'
@@ -92,18 +105,14 @@ jobs:
           code=0
           timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-memory --universe --results-only ${{ inputs.restart && '--restart' || '' }} || code=$?
           if [ "$code" -eq 124 ]; then echo "more=true" >> "$GITHUB_OUTPUT"; elif [ "$code" -ne 0 ]; then exit "$code"; fi
+      # no pause for market hours (owner, 2026-10-21: fill it today; NSE's pacing is per request in nse_api)
       - name: Start the next seed-memory pass
-        if: steps.seed.outputs.more == 'true'
+        if: steps.seed.outputs.more == 'true' || (inputs.command == 'shareholding-sync' && steps.shp.outcome == 'success')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          now=$(date -u +%H%M)
-          if [ "$now" -ge 0230 ] && [ "$now" -lt 1030 ]; then
-            echo "market hours (IST): no pass starts now; dispatch seed-memory again after the close"
-          else
-            gh workflow run maintenance.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f command=seed-memory -f restart=false
-            echo "next pass started"
-          fi
+          gh workflow run maintenance.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f command=seed-memory -f restart=false
+          echo "next pass started"
       - name: Export held cards
         if: inputs.command == 'export-held'
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel export-held --out "../docs/audit/live/held-$(date -u +%F).json"'

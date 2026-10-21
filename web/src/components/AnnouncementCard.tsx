@@ -17,7 +17,7 @@ import { Avatar, TickerChip } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL } from "./FilingCard";
 import { plain, RichText } from "./RichText";
 import {
-  executionFact, near, PERIOD_WORDS, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
+  boxSignal, executionFact, missingOnTopic, near, PERIOD_WORDS, procedural, restates, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
   verifiedFact,
 } from "../lib/cardText";
 import { callTakeaways, type CallTakeawaysView } from "../lib/callTakeaways";
@@ -53,12 +53,12 @@ const INFO_RANK: Record<string, number> = { SCALE: 0, ORDER_FLOW: 1, DILUTION: 2
 
 /** What goes in the tinted box: up to four lines, the rest waits in "Full analysis". */
 function boxItems(card: CardBody, skip: (s: Signal) => boolean = () => false) {
-  const signal = [...card.signals].filter((s) => !skip(s)).sort((a, b) =>
+  const signal = [...card.signals].filter((s) => boxSignal(s.type) && !skip(s)).sort((a, b) =>
     (SIGNAL_RANK[a.severity] ?? 2) - (SIGNAL_RANK[b.severity] ?? 2) || (INFO_RANK[a.type] ?? 9) - (INFO_RANK[b.type] ?? 9))[0];
-  const missing = card.missing_disclosures[0];
+  const missing = card.missing_disclosures.find((m) => missingOnTopic(card.event_type, m));
   const room = Math.max(2, 4 - (signal ? 1 : 0) - (missing ? 1 : 0));
   const insights = card.why_it_matters.slice(0, room);
-  return { insights, signal, missing, fallback: insights.length === 0 ? card.takeaway : undefined };
+  return { insights, signal, missing };
 }
 
 function Point({ children, className }: { children: ReactNode; className?: string }) {
@@ -459,8 +459,8 @@ function decisionLines(row: CardRow, card: CardBody, _table: ResultsSnapshot | n
     label: `Management said${g.given_on ? `, ${istDate(g.given_on).split(" ").slice(1).join(" ")}` : ""}`,
     text: `${g.statement}${g.target && !g.statement.includes(g.target) ? ` (${g.target})` : ""}${g.due ? ` · by ${g.due}` : ""}`,
   }));
-  for (const m of memory.filter((m) => !repeats(m.text, faceText)).slice(0, 4)) out.push({ label: m.label, text: m.text });
-  const next = recent ? card.track_next?.kpis_to_verify?.find((k) => k.check_in) : undefined;
+  for (const m of memory.filter((m) => !repeats(m.text, faceText) && !procedural(m.text, card.event_type)).slice(0, 4)) out.push({ label: m.label, text: m.text });
+  const next = recent ? card.track_next?.kpis_to_verify?.find((k) => k.check_in && !procedural(k.kpi, card.event_type)) : undefined;
   if (next) out.push({ label: `Next check, ${next.check_in}`, text: `${next.kpi}${next.target ? ` (${next.target})` : ""}`, tone: "warn" });
   return out;
 }
@@ -563,6 +563,10 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
     || (s.type === "RATING_LIQUIDITY" && !!rating && /outlook/i.test(s.text)) || repeats(s.text, shownText));
   const faceText = [shownText, ...box.insights.map((i) => i.text), box.signal?.text ?? ""].join(" ");
   const decision = decisionLines(row, card, table, faceText);
+  // "Our reading" never restates the headline (owner, 2026-10-21: it showed one restatement); measured over 400 live
+  // cards, checking it against the whole face also dropped readings that compare (docs/audit/card-sections-2026-10-21.md)
+  const reading = box.insights.map((i) => i.text).filter((t) => !restates(t, headline));
+  const catalyst = card.core_catalyst && !repeats(plain(card.core_catalyst), headline) ? plain(card.core_catalyst) : null;
   const calls = event === "CONCALL_PRESENTATION" ? callTakeaways(card.call_takeaways, card.call_memory) : null;
   // the sector's KPI chips belong to results; on an order or a rating they said nothing about the news
   const footer = family !== "res" ? []
@@ -711,8 +715,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
 
         {calls?.source && <CallTakeaways view={calls} />}
 
-        <AiReading catalyst={card.core_catalyst && !repeats(plain(card.core_catalyst), headline) ? plain(card.core_catalyst) : null}
-          facts={[...unverified, ...(calls?.unverified ?? [])]} insights={box.insights.map((i) => i.text)} takeaway={box.fallback ?? null}
+        <AiReading catalyst={catalyst}
+          facts={[...unverified, ...(calls?.unverified ?? [])]} insights={reading} takeaway={!reading.length && card.takeaway && !restates(card.takeaway, headline) ? card.takeaway : null}
           expanded={exporting} />
 
         {footer.length > 0 && (

@@ -175,3 +175,22 @@ test("the exchange's preamble goes even with no space before 'has'", async () =>
   assert.equal(catalystText("RECORD_DATE", "L&T Technology Services Ltdhas informed BSE that the record date is October 27, 2026"),
     "The record date is October 27, 2026");
 });
+
+test("the three analysis boxes keep housekeeping out", async () => {
+  const { boxSignal, missingOnTopic, procedural } = await import("../src/lib/cardText.ts");
+  assert.ok(!boxSignal("LOW_CASH_TAX") && !boxSignal("REG30_THRESHOLD") && boxSignal("SCALE") && boxSignal("GUIDANCE_BREACH"));
+  // Indosolar's results card: the swap ratio belongs to the merger filing
+  assert.ok(!missingOnTopic("RESULTS", "Share exchange / swap ratio for the amalgamation with Waaree Energies Limited not disclosed"));
+  assert.ok(missingOnTopic("M_AND_A", "No share exchange ratio or consideration terms for the merger are stated"));
+  assert.ok(missingOnTopic("RESULTS", "Segment revenue split for the quarter"));
+  assert.ok(procedural("Shareholders' approval for appointment of M/s N Ritesh and Associates as cost auditor for FY2026-27"));
+  assert.ok(!procedural("Shareholders' approval for appointment of a cost auditor", "GOVERNANCE"));
+  assert.ok(!procedural("EBIT margin holds at or above Q2 level (>=14.8%)"));
+  assert.ok(!procedural("Deployment of ₹5,940 Cr cash across subsidiaries for capex"));
+});
+
+test("an EGM's borrowing resolution is business, a dividend's AGM approval is procedure", async () => {
+  const { procedural } = await import("../src/lib/cardText.ts");
+  assert.ok(!procedural("EGM considered enabling resolutions for borrowing up to USD 1,250 million", "DEBT_RATINGS"));
+  assert.ok(procedural("Final Dividend approval by shareholders in Annual General Meeting", "CORPORATE_ACTION"));
+});

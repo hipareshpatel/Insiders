@@ -107,3 +107,36 @@ export function restatesHeadline(text: string, headline: string): boolean {
   const raw = plainText(text).replace(PERIOD_WORDS, " ").match(/\d[\d,]*(?:\.\d+)?/g) ?? [];
   return raw.some((x) => telling(x) && near(Number(x.replace(/,/g, "")), known, x));
 }
+
+// The three analysis boxes (owner, 2026-10-21: "What these numbers mean", "For the decision" and "Our reading" were
+// used wrongly; docs/audit/card-sections-2026-10-21.md). Earnings write-ups lead with the result against what was
+// expected, why it moved, guidance and what to watch next; housekeeping does not belong in any of the three.
+
+/** Signals that stay in "Full analysis" but never take the box: Reg 30 boilerplate (Laxmi Dental's tariff refund) and the
+ * three-quarter tax-rate check (Indosolar, a company being merged away). */
+const HOUSEKEEPING_SIGNALS = new Set(["REG30_THRESHOLD", "LOW_CASH_TAX"]);
+export const boxSignal = (type: string) => !HOUSEKEEPING_SIGNALS.has(type);
+
+// A "not disclosed" item about a deal on a card that is not about the deal: Indosolar's results did not need a swap ratio
+const DEAL_WORDS = /\b(?:amalgamat\w*|merger|swap ratio|share exchange ratio|scheme of arrangement|acquisition|demerger)\b/i;
+const NOT_DEAL_EVENTS = new Set(["RESULTS", "CONCALL_PRESENTATION", "MONTHLY_BUSINESS_UPDATE", "DEBT_RATINGS", "ANNUAL_REPORT"]);
+export const missingOnTopic = (event: string, text: string) => !(NOT_DEAL_EVENTS.has(event) && DEAL_WORDS.test(text));
+
+/** A memory item about procedure, not the business (Indosolar's results showed "Watching: shareholders' approval of a cost
+ * auditor"): appointments, meetings, votes, record dates. It is not for the decision. */
+const PROCEDURAL = /\b(?:(?:cost|statutory|secretarial|internal|branch)\s+auditors?|(?:re-?)?appoint\w*|annual general meeting|postal ballot|e-?voting|scrutini[sz]er|record date|book closure|trading window|company secretary|compliance officer|independent director|(?:shareholders?'?|members?'?)\s+approval)\b/i;
+// on a governance card the procedure is the news, and on a deal a shareholder vote is a stage of it (QPower's fundraise);
+// pipeline/src/bse_intel/card_context.py matches this
+const PROCEDURE_EVENTS = new Set(["GOVERNANCE", "MANAGEMENT_CHANGE", "ANNUAL_REPORT", "FUNDRAISE", "M_AND_A", "RIGHTS_ISSUE"]);
+export const procedural = (text: string, event = "") => !PROCEDURE_EVENTS.has(event) && PROCEDURAL.test(text);
+
+/** Stricter than `repeats`, for "Our reading": a reading that reuses the face's figures to compare them ("8.3% of market
+ * cap, 1.5% of the order book") adds something; only one with every figure on the face and most of its words is a
+ * restatement (HDFC AMC's "revenue grew 13.9% YoY to ₹1,170.22 Cr, supported by ongoing operational growth"). */
+export function restates(text: string, of: string): boolean {
+  const t = plainText(text), o = plainText(of);
+  const mine = [...words(t)], theirs = words(o);
+  const overlap = mine.length ? mine.filter((w) => theirs.has(w)).length / mine.length : 0;
+  const nums = figures(t), known = figures(o);
+  return nums.every((n) => near(n, known, String(n))) && (overlap >= 0.6 || (nums.length > 0 && overlap >= 0.45));
+}

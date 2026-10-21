@@ -619,3 +619,14 @@ def test_a_missing_previous_quarter_comes_from_the_half_year():
     assert snap["revenue"]["prev_quarter"] == 156.7 and snap["revenue"]["qoq_pct"] == 42.8
     assert snap["pat"]["prev_quarter"] == 43.9
     assert "prev_quarter" not in snap.get("eps", {})   # per share: not a sum of quarters
+
+
+def test_a_procedural_watch_item_is_not_for_the_decision():
+    """Indosolar's results card (live, 2026-10-21) showed "Watching: Shareholders' approval for appointment of ... as cost
+    auditor", on topic only through the word "cost"."""
+    from bse_intel.card_context import memory_context
+
+    before = {"watchlist": [{"text": "Shareholders' approval for appointment of M/s N Ritesh and Associates as cost auditor "
+                                     "for FY2026-27", "status": "OPEN", "created_on": "2026-08-01", "source_news_id": "n0"}]}
+    assert memory_context(before, "RESULTS", "2026-10-20", "n9") == []
+    assert [p["label"].split(",")[0] for p in memory_context(before, "GOVERNANCE", "2026-10-20", "n9")] == ["Watching"]

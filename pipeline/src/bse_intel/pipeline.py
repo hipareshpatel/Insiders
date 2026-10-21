@@ -2315,6 +2315,10 @@ class Pipeline:
         return links
 
     def _results_xbrl_url(self, filing: Filing, text: str) -> str | None:
+        link = self._results_xbrl_link(filing, text)
+        return link.url if link else None
+
+    def _results_xbrl_link(self, filing: Filing, text: str):
         """The XBRL file for a results filing, from the company's results archive: the statement's
         quarter, consolidated when the company files it (memory keeps one basis), the latest file
         (revision) filed within 45 days of the PDF, else the earliest. Without a stated quarter, the
@@ -2333,8 +2337,8 @@ class Pipeline:
         day = date.fromisoformat(filing.filed_at[:10])
         timely = [link for link in links if -2 <= (date.fromisoformat(link.filed_at[:10]) - day).days <= 45]
         if timely:
-            return max(timely, key=lambda link: link.filed_at).url
-        return min(links, key=lambda link: link.filed_at).url if links else None
+            return max(timely, key=lambda link: link.filed_at)
+        return min(links, key=lambda link: link.filed_at) if links else None
 
     def _standalone_bank_ratios(self, filing: Filing, tagged) -> None:
         """A bank's consolidated file carries no gross NPA, net NPA or RoA (0 fillers, T2 2026-10-20): the same
@@ -2796,15 +2800,21 @@ class Pipeline:
             log.info("%s passes on %s's results: an update, not the company's own results", filing.news_id, subsidiary)
             event_type = "OTHER"
         if event_type == "RESULTS" and not filing.xbrl_url:
-            filing = filing.model_copy(update={"xbrl_url": self._results_xbrl_url(filing, text)})
-            if not filing.xbrl_url and filing.news_id.startswith(nse_api.NEWS_ID_PREFIX) and self.nse is not None \
-                    and not self._nse_refused:
+            link = self._results_xbrl_link(filing, text)
+            filing = filing.model_copy(update={"xbrl_url": link.url if link else None})
+            # The statement carries consolidated results but NSE lists only the standalone file so far: wait for the
+            # consolidated one, as for a missing file. A card on the standalone file mixed the two bases on 13 of 52
+            # results cards (owner, 2026-10-21: "not using consolidated numbers where those are there")
+            standalone_only = bool(link and link.basis == "STANDALONE" and CONSOLIDATED_STATEMENT.search(text))
+            if (not filing.xbrl_url or standalone_only) and filing.news_id.startswith(nse_api.NEWS_ID_PREFIX) \
+                    and self.nse is not None and not self._nse_refused:
                 age = now_ist() - datetime.fromisoformat(filing.filed_at)
                 if age < timedelta(minutes=RESULTS_XBRL_WAIT_MINUTES):
                     # NSE's integrated-filing XBRL followed the outcome by 5 min to 2 h 40 min (measured 2026-10-18)
                     with self._lock:
                         self._xbrl_links.pop(filing.scrip_code, None)   # read the list afresh next time
-                    raise EventXbrlPending(f"waiting for its results XBRL ({age.total_seconds() / 60:.0f} min after the PDF)")
+                    what = "its consolidated results XBRL" if standalone_only else "its results XBRL"
+                    raise EventXbrlPending(f"waiting for {what} ({age.total_seconds() / 60:.0f} min after the PDF)")
         tagged = self._xbrl(filing) if event_type == "RESULTS" else None
         if xbrl_fast_path.needs_standalone_bank_ratios(tagged):
             self._standalone_bank_ratios(filing, tagged)
@@ -3814,6 +3824,11 @@ def is_transcript(filing) -> bool:
 def top_exit(text: str | None) -> bool:
     """Whether the text says the MD, CEO or CFO is leaving (resigning, ceasing, stepping down, removed, retiring)."""
     return bool(TOP_EXIT.search(text or ""))
+# A results statement headed as the group's: "Statement of Consolidated Unaudited Financial Results", "Consolidated
+# Statement of Profit and Loss", "Unaudited Consolidated Financial Results for the quarter"
+CONSOLIDATED_STATEMENT = re.compile(r"\bconsolidated\s+(?:un-?audited\s+|audited\s+)?(?:financial\s+results|statement\s+of\s+"
+                                    r"profit|results\s+for\s+the)|statement\s+of\s+consolidated\s+(?:un-?audited\s+|audited\s+)?"
+                                    r"(?:financial\s+)?results", re.I)
 RESULTS_XBRL_WAIT_MINUTES = 180   # a live NSE results filing waits this long for its XBRL (measured: 5 min - 2 h 40 min)   # owner, 2026-10-18: no cards for director / KMP changes
 ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE", "LITIGATION_REGULATORY", "FUNDRAISE",
                       "RIGHTS_ISSUE", "M_AND_A", "DEBT_RATINGS", "CONCALL_PRESENTATION", "ANNUAL_REPORT")

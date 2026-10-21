@@ -86,3 +86,22 @@ def test_re_run_misses_reversal_wording_and_notable_change_names():
                                 NotableChange(metric="revenue", previous="₹1,170 Cr", current="₹1,161 Cr", change="-0.7% YoY")]
     directions.guard(out, _tagged(deferred_tax=(7.66, None, None), inventory_change=(-31.68, None, None)))
     assert out.card.takeaway == "PAT jumped." and [c.metric for c in out.card.notable_changes] == ["revenue"]
+
+
+def test_a_multiple_in_words_its_own_amounts_contradict_is_cut():
+    """LMW's Q2FY27 card said PAT was "more than double" Q2FY26's: ₹71.23 Cr against ₹40.92 Cr is +74% (daily audit,
+    21 Oct 2026). A multiple the amounts support stays, and with an amount missing nothing is decided."""
+    from bse_intel.directions import wrong_multiples
+
+    lmw = ("Q2FY27 net profit of ₹71.23 Cr represents a significant acceleration over Q1FY27 (₹55.52 Cr) and more than "
+           "double Q2FY26 (₹40.92 Cr), reflecting strong operating leverage.")
+    assert [m.group(0) for m in wrong_multiples(lmw)] == ["more than double"]
+    assert wrong_multiples("PAT of ₹90.10 Cr more than doubled from ₹40.92 Cr a year ago.") == []
+    assert wrong_multiples("Margin of 18% is twice the 9% of last year.") == []
+    assert [m.group(0) for m in wrong_multiples("Debt of ₹60 Cr was halved from ₹100 Cr.")] == ["halved"]
+    assert wrong_multiples("Revenue doubled over three years.") == []
+    assert wrong_multiples("Orders of ₹300 Cr tripled against 40% growth.") == []   # crore against percent: not compared
+    # stored cards: the result named after "to", and a figure of another line further on
+    assert wrong_multiples("It seeks to raise up to ₹325 Cr and double its borrowing limits to ₹1,000 Cr.") == []
+    assert wrong_multiples("Profit grew only 4.7% YoY as provisions tripled and other income normalised, while the GNPA "
+                           "ratio jumped 27 bps QoQ to 1.84%.") == []

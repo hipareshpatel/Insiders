@@ -6,7 +6,7 @@ the time and the run or PR link.
 
 ## Open
 
-- After the units fix reaches main: requeue-failed --ids nse-106823248 (Mahindra Holidays, figures cut 100x by the unit fixer)
+- When the seed-memory run ends (maintenance is one at a time; #41 merged 16:16 IST): requeue-failed --ids nse-106823248 (Mahindra Holidays, figures cut 100x by the unit fixer)
 
 
 

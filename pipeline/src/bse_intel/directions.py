@@ -165,3 +165,73 @@ def guard(out, tagged) -> list[str]:
     card.notable_changes = kept_changes
     out.timeline_entry = clean(out.timeline_entry, "timeline") or out.timeline_entry
     return notes
+
+
+# "More than double" for +74% (LMW's Q2FY27 card, daily audit 21 Oct 2026): a multiple stated in words is checked against
+# the two amounts it compares, the sentence's first amount and the first one after the word, both in ₹ crore or both in
+# percent. With either amount missing nothing is decided. Applies to every card, with or without XBRL.
+_MULTIPLE = re.compile(r"\b(?:(?:more|less)\s+than\s+)?(?:doubl\w*|twice|tripl\w*|three[- ]?fold|halv\w*|half)\b", re.I)
+_AMOUNT = re.compile(r"(?:₹\s?([\d,]+(?:\.\d+)?)\s*(?:cr\b|crores?\b))|(\d+(?:\.\d+)?)\s?%", re.I)
+_MULTIPLE_TOLERANCE = 0.05
+
+
+def _multiple_wrong(sentence: str, hit: re.Match) -> bool:
+    amounts = [(m.start(), float((m.group(1) or m.group(2)).replace(",", "")), bool(m.group(1)))
+               for m in _AMOUNT.finditer(sentence)]
+    before = [a for a in amounts if a[0] < hit.start()]
+    after = [a for a in amounts if a[0] > hit.end()]
+    if not before or not after or before[0][2] != after[0][2] or not before[0][1] or not after[0][1]:
+        return False
+    # the base follows the word closely, in the same clause ("more than double Q2FY26 (₹40.92 Cr)"); "double its limits to
+    # ₹1,000 Cr" names the result, and "provisions tripled ... while the GNPA ratio ... 1.84%" another line (stored cards)
+    between = sentence[hit.end():after[0][0]]
+    if len(between) > 40 or re.search(r",|;|\bto\b", between):
+        return False
+    word = hit.group(0).lower()
+    ratio = before[0][1] / after[0][1]
+    if "half" in word or "halv" in word:
+        ratio = 1 / ratio if ratio else 0
+        need = 2.0
+    else:
+        need = 3.0 if ("tripl" in word or "three" in word) else 2.0
+    if word.startswith("less than"):
+        return ratio >= need * (1 + _MULTIPLE_TOLERANCE)
+    return ratio < need * (1 - _MULTIPLE_TOLERANCE)
+
+
+def wrong_multiples(text: str | None) -> list[re.Match]:
+    """The multiples in words ("more than double", "tripled", "halved") the sentence's own amounts contradict."""
+    found = []
+    for hit in _MULTIPLE.finditer(text or ""):
+        start = _start(text, hit.start())
+        end = min([i for i in (text.find(". ", hit.end()), text.find("; ", hit.end())) if i >= 0] or [len(text)])
+        sentence = text[start:end]
+        local = re.compile(re.escape(hit.group(0))).search(sentence, hit.start() - start)
+        if local and _multiple_wrong(sentence, local):
+            found.append(hit)
+    return found
+
+
+def multiple_guard(out) -> list[str]:
+    """Cut from the card each multiple in words its own amounts contradict. Returns what was cut."""
+    card = getattr(out, "card", None)
+    if card is None:
+        return []
+    notes: list[str] = []
+
+    def clean(text: str | None, where: str) -> str | None:
+        for _ in range(3):
+            found = wrong_multiples(text)
+            if not found:
+                break
+            notes.append(f"{where}: cut \"{found[0].group(0)}\" (the amounts it compares do not make that multiple)")
+            text = cut(text, found[0])
+        return text
+
+    card.takeaway = clean(card.takeaway, "takeaway") or ""
+    for fact in card.what_happened:
+        fact.text = clean(fact.text, "what_happened") or ""
+    card.what_happened = [f for f in card.what_happened if (f.text or "").strip()] or card.what_happened
+    card.why_it_matters = [i for i in card.why_it_matters if (setattr(i, "text", clean(i.text, "why_it_matters")) or True)
+                           and (i.text or "").strip()]
+    return notes

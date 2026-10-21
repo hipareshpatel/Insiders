@@ -2933,6 +2933,7 @@ class Pipeline:
                 changes += xbrl_key_numbers(candidate, tagged, (filed_text,))
             changes += computed.enforce(candidate, produced)
             changes += directions.guard(candidate, tagged)   # tax, inventory, EPS, credit cost: the file decides
+            changes += directions.multiple_guard(candidate)   # "more than double" for +74%: the amounts decide
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged, filed_text)
             found.scale += gate.stale_columns(_card_texts(candidate), filed_text)

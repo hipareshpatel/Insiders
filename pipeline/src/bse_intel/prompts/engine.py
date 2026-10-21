@@ -93,6 +93,44 @@ def pass2_schema(event_type: str) -> dict:
     return {**PASS2_SCHEMA, "event_type": event_type, "card": {**PASS2_SCHEMA["card"], "call_takeaways": CALL_TAKEAWAYS_SCHEMA}}
 
 
+# The short prompt (AI-quality plan item 5, deep audit B1): a card call carried ~35,800 characters of rules and shape
+# whatever the filing was, so a rating card read the deal, capex, call and quantified-impact rules too. The short one
+# keeps the shared rules and the reviewers' mistakes, and adds only the fields this kind of filing uses, with their
+# rules copied from pass2.md (one source for each rule).
+DEALS = {"ORDER_WIN", "FUNDRAISE", "RIGHTS_ISSUE", "CAPEX", "M_AND_A", "CORPORATE_ACTION", "OTHER"}
+SHORT_FIELDS = {
+    "deal_value": DEALS,
+    "quantified_impact": {"ORDER_WIN", "CAPEX", "FUNDRAISE", "RIGHTS_ISSUE", "M_AND_A", "OTHER"},
+    "notable_changes": {"RESULTS", "ANNUAL_REPORT", "CONCALL_PRESENTATION", "MONTHLY_BUSINESS_UPDATE", "OTHER"},
+    "call_read": {"CONCALL_PRESENTATION"},
+    "call_takeaways": {"CONCALL_PRESENTATION"},
+}
+
+
+def short_schema(event_type: str) -> dict:
+    """pass2_schema without the card fields this kind of filing never fills."""
+    shape = pass2_schema(event_type)
+    card = {k: v for k, v in shape["card"].items() if k not in SHORT_FIELDS or event_type in SHORT_FIELDS[k]}
+    return {**shape, "card": card}
+
+
+def field_rules(full_prompt: str, event_type: str) -> str:
+    """The rule bullets of pass2.md for the optional fields this event type uses ("- deal_value: ..." and its
+    indented lines, and "- deal_value.expansion" lines)."""
+    lines = full_prompt.splitlines()
+    keep: list[str] = []
+    for field, types in SHORT_FIELDS.items():
+        if event_type not in types:
+            continue
+        for i, line in enumerate(lines):
+            if line.startswith(f"- {field}:") or line.startswith(f"- {field}."):
+                j = i + 1
+                while j < len(lines) and lines[j].startswith("  "):
+                    j += 1
+                keep.extend(lines[i:j])
+    return "\n".join(keep)
+
+
 def _unit_note(text: str | None) -> str:
     """A line naming the filing's unit when it is not ₹ crore: models copy "2,863" from a lakh
     statement as "₹2,863 Cr". Stated in code so the model does not have to notice the header."""
@@ -171,7 +209,9 @@ class PromptEngine:
         self._pass1 = Template((prompts / "pass1.md").read_text())
         self._repeat = Template((prompts / "repeat.md").read_text())
         self._timeline = Template((prompts / "timeline.md").read_text())
-        self._pass2 = Template((prompts / "pass2.md").read_text())
+        self._pass2_text = (prompts / "pass2.md").read_text()
+        self._pass2 = Template(self._pass2_text)
+        self._pass2_short = Template((prompts / "pass2_short.md").read_text())
         self._pass2_user = Template((prompts / "pass2_user.md").read_text())
         self._verify = (prompts / "verify.md").read_text()
         self.memory_start = settings.backfill_start
@@ -268,17 +308,24 @@ class PromptEngine:
         self, filing: Filing, event_type: str, industry: str | None, memory: dict | None, text: str,
         peers: list[dict] | None = None, examples: dict[str, list[dict]] | None = None,
         lessons: list[str] | None = None, reaction: str | None = None, scale: str | None = None,
+        variant: str = "long",
     ) -> tuple[str, str]:
         sector = self.sector_for(industry)
-        system = self._pass2.safe_substitute(
+        short = variant == "short"
+        focus = self._event(event_type).get("focus", "").strip()
+        if short:
+            rules = field_rules(self._pass2_text, event_type)
+            focus = focus + ("\n\nRules for this filing's extra fields\n" + rules if rules else "")
+        system = (self._pass2_short if short else self._pass2).safe_substitute(
             event_type=event_type,
-            event_focus=self._event(event_type).get("focus", "").strip(),
+            event_focus=focus,
             sector_name=sector.name.replace("_", " "),
             sector_context=sector.lens(),
             sector_kpis=", ".join(sector.kpis) + (
                 ". Name these in financial_metrics exactly as: "
                 + ", ".join(f"{f['metric']} ({f['label']})" for f in sector.footer) if sector.footer else ""),
-            schema=json.dumps(pass2_schema(event_type), ensure_ascii=False, indent=1),
+            schema=(json.dumps(short_schema(event_type), ensure_ascii=False, separators=(",", ":")) if short
+                    else json.dumps(pass2_schema(event_type), ensure_ascii=False, indent=1)),
             event_types=", ".join(EVENT_TYPES),
             memory_start=self.memory_start,
         )

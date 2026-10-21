@@ -682,3 +682,20 @@ def test_a_consolidated_bank_card_takes_its_ratios_from_the_standalone_file():
     # not a bank, or already standalone: nothing to fetch
     assert not xbrl.needs_standalone_bank_ratios(xbrl.XbrlResult("RESULTS", "CONSOLIDATED", "Q2FY27", [], template="INDAS"))
     assert not xbrl.needs_standalone_bank_ratios(xbrl.XbrlResult("RESULTS", "STANDALONE", "Q2FY27", [], template="BANKING"))
+
+
+def test_the_half_year_file_gives_the_full_balance_sheet_and_cash_flow():
+    """Owner (2026-10-21): the company page needs the balance sheet and cash flow as on screener.in. Ahluwalia's Q2FY25
+    file: assets equal equity plus liabilities, and the H1 cash flows."""
+    from pathlib import Path
+
+    from bse_intel import xbrl
+
+    r = xbrl.parse((Path(__file__).parent / "fixtures" / "bse_main_ind_as_532811_q2fy25.xml").read_bytes())
+    b = r.balance_sheet
+    assert b.period == "Q2FY25" and b.total_assets_cr == 3392.13
+    assert round(b.net_worth_cr + b.total_liabilities_cr, 2) == b.total_assets_cr
+    assert (b.fixed_assets_cr, b.inventories_cr, b.receivables_cr, b.payables_cr) == (306.86, 326.94, 659.05, 828.82)
+    flows = {m.metric: m.value for m in r.metrics if m.period == "H1FY25"}
+    assert (flows["operating_cash_flow"], flows["investing_cash_flow"], flows["financing_cash_flow"]) == (86.01, -102.55, -36.22)
+    assert flows["capex"] == 92.39

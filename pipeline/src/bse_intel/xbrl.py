@@ -86,6 +86,13 @@ RESULT_TAGS = {
     "ProfitLossFromOrdinaryActivitiesBeforeTax": "pbt",
     "EmployeesCost": "employee_cost",
     "OperatingExpenses": "other_expenses",
+    # The cash-flow statement filed with the half-year and year results (owner, 2026-10-21: the company page needs
+    # the cash flow, as on screener.in). Only on six- and twelve-month contexts; an outflow is negative as filed.
+    "CashFlowsFromUsedInOperatingActivities": "operating_cash_flow",
+    "CashFlowsFromUsedInInvestingActivities": "investing_cash_flow",
+    "CashFlowsFromUsedInFinancingActivities": "financing_cash_flow",
+    "IncreaseDecreaseInCashAndCashEquivalents": "net_cash_flow",
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": "capex",
 }
 # Insurers file neither template above. SEBI gives them their own taxonomies and the names share almost
 # nothing with a manufacturer's: a general insurer's top line is premium earned and its profit comes out of
@@ -140,13 +147,40 @@ RATIO_TAGS = {
 }
 # The range a bank ratio can take as a percentage; a filer that already wrote 1.58 for 1.58% would read as 158%.
 RATIO_BOUNDS = {"gnpa_pct": (0.0, 60.0), "nnpa_pct": (0.0, 40.0), "roa_pct": (-20.0, 20.0)}
+# The statement of assets and liabilities (half-year and year results), in full since 2026-10-21 (owner: the company
+# page needs the balance sheet as on screener.in). Keys without `_cr` are halves summed below.
 BALANCE_TAGS = {
     "Equity": "net_worth_cr",
     "EquityAttributableToOwnersOfParent": "net_worth_cr",
     "BorrowingsNoncurrent": "debt_noncurrent",
     "BorrowingsCurrent": "debt_current",
     "CashAndCashEquivalents": "cash_cr",
+    "EquityShareCapital": "equity_capital_cr",
+    "OtherEquity": "reserves_cr",
+    "NonControllingInterest": "minority_interest_cr",
+    "Assets": "total_assets_cr",
+    "NoncurrentAssets": "noncurrent_assets_cr",
+    "CurrentAssets": "current_assets_cr",
+    "PropertyPlantAndEquipment": "fixed_assets_cr",
+    "CapitalWorkInProgress": "cwip_cr",
+    "Goodwill": "goodwill_cr",
+    "NoncurrentInvestments": "investments_noncurrent",
+    "CurrentInvestments": "investments_current",
+    "Inventories": "inventories_cr",
+    "TradeReceivablesCurrent": "receivables_current",
+    "TradeReceivablesNoncurrent": "receivables_noncurrent",
+    "Liabilities": "total_liabilities_cr",
+    "NoncurrentLiabilities": "noncurrent_liabilities_cr",
+    "CurrentLiabilities": "current_liabilities_cr",
+    "TradePayablesCurrent": "payables_current",
+    "TradePayablesNoncurrent": "payables_noncurrent",
+    "Deposits": "deposits_cr",
+    "Advances": "advances_cr",
 }
+# halves of one balance-sheet line, summed into it
+BALANCE_SUMS = {"investments_cr": ("investments_noncurrent", "investments_current"),
+                "receivables_cr": ("receivables_current", "receivables_noncurrent"),
+                "payables_cr": ("payables_current", "payables_noncurrent")}
 PER_SHARE = {"eps"}
 PERCENT = {"ebitda_margin", *RATIO_TAGS.values()}
 CONFIRM = ("revenue", "pat")  # figures looked for in the PDF text before the file is trusted
@@ -445,9 +479,12 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     sheet = None
     if balance:
         debt = [balance[k] for k in ("debt_noncurrent", "debt_current") if k in balance]
+        sums = {key: _r(sum(balance[p] for p in parts if p in balance)) for key, parts in BALANCE_SUMS.items()
+                if any(p in balance for p in parts)}
+        lines = {k: _r(v) for k, v in balance.items() if k.endswith("_cr") and k not in ("net_worth_cr", "cash_cr")}
         sheet = BalanceSheet(period=canonical_period(f"quarter ended {balance_date:%d.%m.%Y}"),
                              net_worth_cr=_r(balance.get("net_worth_cr")), cash_cr=_r(balance.get("cash_cr")),
-                             gross_debt_cr=_r(sum(debt)) if debt else None)
+                             gross_debt_cr=_r(sum(debt)) if debt else None, **lines, **sums)
         if sheet.gross_debt_cr is not None and sheet.cash_cr is not None:
             sheet.net_debt_cr = _r(sheet.gross_debt_cr - sheet.cash_cr)
     return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet)

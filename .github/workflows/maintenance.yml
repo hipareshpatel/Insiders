@@ -9,16 +9,14 @@
 #   or, with ids, the named filings are re-run whatever their status (held or stale cards);
 # - apply-verdicts: the owner's standing Wrong / Right verdicts applied to the stored cards once (verdicts saved
 #   before they acted on the card, O11, never held or released it); a re-run keeps them by itself (cards_upsert.sql);
-# - seed-memory: results history from NSE's XBRL into each universe company's memory (T13's re-seed on the basis
-#   fix), resuming after the last company finished; 5 h a pass, and a pass that runs out of time with companies left
-#   starts the next one itself, market hours or not (owner, 2026-10-21: fill it today, at NSE's paced rate);
+# - seed-memory: results history from NSE's XBRL into each universe company's memory, in eight parallel shards (job
+#   `seed`), each resuming after its last company; a pass is 5 h, and one that ends with companies left starts the next.
 # - fill-memory: what the nightly run reads a few days of at a time, in one go (owner, 2026-10-21: "let it get filled
 #   today ... except where AI is required"): shareholding patterns for the last `days` (two quarters at 110), governance
 #   reports (two quarters), a year of pledge events, DGTR's case lists; then the seed passes start. Not the annual-report
 #   catch-up: its XBRL feeds an AI re-run of the report.
-# Neither calls an AI model or NSE. It runs beside the pipeline (its own concurrency group: a shared one would
-# cancel a pending pipeline run); both only read memory, and a summary or card a run writes at the same moment is
-# rewritten by the next run.
+# None calls an AI model; seed-memory and fill-memory read NSE. It runs beside the pipeline (its own concurrency group:
+# a shared one would cancel a pending pipeline run); fill-memory pauses the AI pipeline while it writes memory.
 name: Maintenance
 
 on:
@@ -56,8 +54,9 @@ concurrency:
 
 jobs:
   run:
+    if: inputs.command != 'seed-memory'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
-    timeout-minutes: 330   # seed-memory's long step; every other command takes minutes
+    timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
       run:
         working-directory: pipeline
@@ -123,20 +122,9 @@ jobs:
       - name: Resume the AI pipeline
         if: inputs.command == 'fill-memory' && always()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel resume-ai'
-      - name: Seed memory from NSE's results XBRL
-        id: seed
-        if: inputs.command == 'seed-memory'
-        # stopped a little before the job's limit; the next pass resumes after the last company finished. 20 Oct
-        # 2026: 63 companies in 45 min (~7.5 s an XBRL file), so the universe's 608 need about 7 h: 5 h a pass.
-        # Only the timeout means companies are left: the command ends by itself when the universe is done, and when
-        # NSE refuses the session (no next pass then, so a refusal is never pressed on).
-        run: |
-          code=0
-          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-memory --universe --results-only ${{ inputs.restart && '--restart' || '' }} || code=$?
-          if [ "$code" -eq 124 ]; then echo "more=true" >> "$GITHUB_OUTPUT"; elif [ "$code" -ne 0 ]; then exit "$code"; fi
       # no pause for market hours (owner, 2026-10-21: fill it today; NSE's pacing is per request in nse_api)
       - name: Start the next seed-memory pass
-        if: steps.seed.outputs.more == 'true' || (inputs.command == 'fill-memory' && !cancelled())
+        if: inputs.command == 'fill-memory' && !cancelled()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -160,3 +148,67 @@ jobs:
           git add docs/audit/live/
           git commit -qm "${{ inputs.command }}: exported for the live review (maintenance.yml)"
           git push -q origin claude/nice-goodall-ta0sxs
+
+  # The results history, in parallel (owner, 2026-10-21: "let it get filled today", "NSE will not block it with suitable
+  # rate"): eight runners, so eight addresses, each pacing its own NSE calls (3-5 s) and walking every eighth company
+  # with its own resume point (seed:universe_last:<i>of8). From 21 Oct each company's files back to FY21 are read with
+  # the full balance sheet and cash flow; the shard keys started fresh then, so the first pass walks everyone.
+  seed:
+    if: inputs.command == 'seed-memory'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 320
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      # only the timeout means companies are left: the command ends by itself when its share is done, and when NSE
+      # refuses the session (no next pass then, so a refusal is never pressed on)
+      - name: Seed this shard's companies
+        run: |
+          code=0
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-memory --universe --results-only --shard ${{ matrix.shard }}/8 ${{ inputs.restart && '--restart' || '' }} || code=$?
+          mkdir -p "$RUNNER_TEMP/more"
+          if [ "$code" -eq 124 ]; then echo more > "$RUNNER_TEMP/more/${{ matrix.shard }}"; elif [ "$code" -ne 0 ]; then exit "$code"; fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: seed-more-${{ matrix.shard }}
+          path: ${{ runner.temp }}/more/
+          if-no-files-found: ignore
+
+  seed-next:
+    needs: seed
+    if: always() && inputs.command == 'seed-memory'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        continue-on-error: true   # no artifact at all: every shard finished
+        with:
+          pattern: seed-more-*
+          path: more
+          merge-multiple: true
+      - name: Start the next pass while any shard has companies left
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -n "$(ls -A more 2>/dev/null)" ]; then
+            gh workflow run maintenance.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f command=seed-memory -f restart=false
+            echo "next pass started for shards: $(ls more | tr '\n' ' ')"
+          else
+            echo "every shard finished its companies"
+          fi

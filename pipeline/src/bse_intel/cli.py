@@ -421,7 +421,17 @@ def cmd_seed_memory(args, settings, sink) -> int:
     from .seed import SeedStats, seed_results, seed_shareholding
 
     log = logging.getLogger("bse_intel.seed")
-    resume_key = "seed:universe_last"
+    resume_key, early_key = "seed:universe_last", "seed:universe_early"
+    shard = None
+    if getattr(args, "shard", None):
+        try:
+            index, count = (int(x) for x in args.shard.split("/"))
+            assert 0 <= index < count
+        except (ValueError, AssertionError):
+            print("--shard takes I/N with 0 <= I < N, e.g. 0/8")
+            return 2
+        shard = (index, count)
+        resume_key, early_key = f"{resume_key}:{index}of{count}", f"{early_key}:{index}of{count}"
     nse_symbols: dict[str, str] = {}   # company key -> NSE symbol, from the universe file, for rows without one
     if args.universe:
         # Every company in the universe file, in key order, after the last one finished (resumable: the command can
@@ -434,7 +444,10 @@ def cmd_seed_memory(args, settings, sink) -> int:
             return 2
         nse_symbols = {scrip: symbol for symbol, scrip in nse_universe.symbols.items()}
         done_through = "" if args.restart else (sink.kv_get(resume_key) or "")
-        scrips = [s for s in sorted(nse_universe.included) if s > done_through]
+        everyone = sorted(nse_universe.included)
+        if shard:   # every N-th company from the I-th, so each runner gets a like mix of sizes and sectors
+            everyone = everyone[shard[0]::shard[1]]
+        scrips = [s for s in everyone if s > done_through]
         # Companies reporting now first: results due in the next three weeks, or a filing in the last week, and not
         # seeded yet. They do not move the resume point, which follows the scrip order of the rest.
         today = date.today()
@@ -445,7 +458,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
             log.warning("seed: no priority list (%s)", exc)
             soon = []
         # seeded out of order on an earlier pass (a --restart walks everyone again)
-        early = set() if args.restart else set(json.loads(sink.kv_get("seed:universe_early") or "[]"))
+        early = set() if args.restart else set(json.loads(sink.kv_get(early_key) or "[]"))
         scrips = [s for s in scrips if s not in early]
         priority = [s for s in dict.fromkeys(soon) if s in set(scrips)]
         scrips = priority + [s for s in scrips if s not in set(priority)]
@@ -501,7 +514,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
             log.info("seed: %s", stats.line())
             if args.universe and scrip in priority_set:
                 early.add(scrip)   # seeded out of order: kept apart, the resume point stays with the scrip-order walk
-                sink.kv_set("seed:universe_early", json.dumps(sorted(early)), now_iso())
+                sink.kv_set(early_key, json.dumps(sorted(early)), now_iso())
                 continue
             if args.universe:
                 last_done = scrip
@@ -833,7 +846,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--restart", action="store_true", help="with --universe: start again from the first company")
     p.add_argument("--source", choices=("nse", "bse"), default="nse",
                    help="nse (default) or bse: also read BSE's results archive (needs an Indian address)")
-    p.add_argument("--since", default="2023-01-01", help="ignore quarters filed before this date")
+    p.add_argument("--since", default="2020-04-01",
+                   help="ignore quarters ending before this date (default: FY21 on, six years as memory keeps)")
+    p.add_argument("--shard", help="with --universe: I/N, this runner's share of the companies (each shard keeps its "
+                                   "own resume point; N runners on N addresses seed in parallel)")
     p.add_argument("--results-only", action="store_true")
     p.add_argument("--shareholding-only", action="store_true")
     p.set_defaults(func=cmd_seed_memory)

@@ -52,8 +52,10 @@ CRORE_SCALES = (1, 10, 100, 1e4, 1e7)
 # "('l in million)", '"in million)', "c, in million)", "{f in million)", "(fin million)", "/fin million)".
 _DECLARED_UNIT = re.compile(
     # "(Rs. In Mn.)" heads Heritage's investor decks (2026-10-18)
-    r"(?:₹|\brs\.?|\binr|\brupees?)\s*(?:in\s*)?(?:(lakhs?|lacs?|crores?|millions?|mn|billions?|bn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
-    r"|\bin\s*(?:₹|rs\.?|inr|rupees?)\s*(?:(lakhs?|lacs?|crores?|millions?|mn|billions?|bn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
+    # "₹ Cr" heads Mahindra Holidays' deck beside one "AUR (₹ Lakh)": read as lakh alone, the unit fixer cut every crore
+    # figure 100x (daily audit, 21 Oct 2026)
+    r"(?:₹|\brs\.?|\binr|\brupees?)\s*(?:in\s*)?(?:(lakhs?|lacs?|crores?|cr|millions?|mn|billions?|bn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
+    r"|\bin\s*(?:₹|rs\.?|inr|rupees?)\s*(?:(lakhs?|lacs?|crores?|cr|millions?|mn|billions?|bn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
     # "(INR Million)" read as "CINR Million )" (AGI Infra's rating letter, round 4): the bracket fused to the currency
     r"|inr\s*(millions?|billions?|lakhs?|crores?)(?![a-z])"
     # the rupee sign mangled and glued to the word, with no "in": "(XLakhs)", "( Ė Crores)". Not after a
@@ -66,7 +68,7 @@ _DECLARED_UNIT = re.compile(
 # SML writes the currency out ("(Rupees in Crores, except share data)") and some filers write thousands
 # as "(Rs. 000)" without the apostrophe; neither was read, so those statements had no unit at all.
 _PER_CRORE = {"lakh": 100, "lac": 100, "million": 10, "mn": 10, "thousand": 10_000, "'000": 10_000, "000": 10_000,
-              "crore": 1, "billion": 0.01, "bn": 0.01}   # "(Rs billion)": RBL's business update, round 4 (100x as crore)
+              "crore": 1, "cr": 1, "billion": 0.01, "bn": 0.01}   # "(Rs billion)": RBL's business update, round 4 (100x as crore)
 UNIT_NAMES = {100: "₹ lakh", 10: "₹ million", 10_000: "₹ thousand", 0.01: "₹ billion"}
 _CRORE_AFTER = re.compile(r"\s*(?:cr\b|crores?\b)", re.I)
 # The unit written right after a source figure ("INR 5445 Million", "Rs. 2,025 lakhs"), as figures

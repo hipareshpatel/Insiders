@@ -6,10 +6,11 @@ the time and the run or PR link.
 
 ## Open
 
-- After hipareshpatel/Insiders#46 merges: maintenance `both` (refresh-card-blocks puts stored call cards' checked takeaways into memory; refresh-summaries rebuilds the company pages' Earnings calls), then `seed-memory` (restart off) to resume the XBRL history seed on the new order.
 - The 13 results cards made on a standalone XBRL since 20 Sep: the results catch-up reads the recent ones again once their consolidated file is listed. Older ones (more than 10 days) stay unless re-run by id after a check of which companies file consolidated.
 
 ## Done
+
+- 21 Oct 21:44 IST maintenance `both` after #46 (run 17). 22:33 IST `fill-memory` (days 110) dispatched on main after hipareshpatel/Insiders#48: shareholding two quarters, governance, a year of pledges, DGTR, with the AI pipeline paused for those steps; it then starts the seed passes itself (replaces the separate seed-memory dispatch).
 
 - 21 Oct 21:33 IST requeue-failed --ids (14: Mahindra Holidays, LMW, Jubilant; CONCOR, Bajaj Finserv, SRF, UltraTech, Jindal Stainless, LTM, NTPC, GMDC, Eternal, Unicommerce; Yes Bank AT1): maintenance run 16, success, after #45 merged. The seed-memory pass on the old order was cancelled for it (resumes from its saved point).
 

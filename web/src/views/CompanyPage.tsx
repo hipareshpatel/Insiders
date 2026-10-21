@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
-import type { CallQuarter, CardRow, Company, Dossier, Guidance, Peer, Technicals } from "../../shared/types";
+import type { CallQuarter, CardRow, Company, Dossier, Guidance, Peer, PriceReaction, Technicals } from "../../shared/types";
 import { EarningsCalls } from "../components/company/EarningsCalls";
 import { Institutions } from "../components/company/Institutions";
 import { Avatar } from "../components/Avatar";
@@ -10,8 +10,9 @@ import { PriceChart } from "../components/PriceChart";
 import { formerOwnName, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
 import { parseCard } from "../components/FilingCard";
 import { CardList, RailTime, railDate } from "../components/company/CardList";
-import { chartTags, dayChange, nextResults, overdue, peTtm, quarterly, quarterLabel, short, yearRange } from "../components/company/companyText";
+import { chartTags, dayChange, allZero, inStatementOrder, metricLabel, nextResults, overdue, peTtm, quarterly, quarterLabel, short, statementPlace, unitValue, yearRange } from "../components/company/companyText";
 import { dayMonth, GoodAndBad, StorySoFar, WhatToTrack, type Parsed } from "../components/company/OverviewPanels";
+import { CapitalAndCalibration, parseRoiic } from "../components/company/Execution";
 import { Panel } from "../components/company/Panel";
 import { IMPACT_DOT } from "../components/PriceChart";
 import { Badge } from "../components/ui/badge";
@@ -127,7 +128,6 @@ export function CompanyPage() {
           </div>
           <div className="mt-2.5 flex flex-wrap gap-2 md:justify-end">
             {company && <WatchButton scrip={company.scrip_code} on={!!company.watchlist} />}
-            <button type="button" onClick={() => setParams({ memory: scrip })} className={btn}>◎ Memory</button>
             {rows[0]?.pdf_url && <a href={rows[0].pdf_url} target="_blank" rel="noreferrer" className={btn}>⎙ Latest PDF</a>}
           </div>
         </div>
@@ -156,18 +156,24 @@ export function CompanyPage() {
             <div className="grid items-start gap-[18px] lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
               <div className="min-w-0 space-y-[18px]">
                 {dossier && <QuarterBars dossier={dossier} />}
-                {dossier && <MetricsPanel dossier={dossier} balance={false} periods={4} keyFirst />}
               </div>
               <div className="min-w-0 space-y-[18px]">
                 <ResultsScorecard parsed={parsed} onOpen={(id) => openCard(id, "filings")} />
                 {dossier && <BalanceTiles dossier={dossier} />}
                 {dossier && <SegmentMix dossier={dossier} />}
               </div>
+              {/* the whole width: eight quarters of every line (one company view, owner 2026-10-21) */}
+              {dossier && <div className="min-w-0 lg:col-span-2"><MetricsPanel dossier={dossier} balance={false} /></div>}
             </div>
           ) : <Empty title="No results analysed yet" />
         )}
-        {tab === "promises" && <PromiseTracker dossier={dossier} />}
-        {tab === "timeline" && <Timeline dossier={dossier} />}
+        {tab === "promises" && <PromiseTracker dossier={dossier} company={company} />}
+        {tab === "timeline" && (
+          <div className="grid items-start gap-[18px] lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
+            <div className="min-w-0"><Timeline dossier={dossier} cards={rows} /></div>
+            <div className="min-w-0"><DealsAndNotes dossier={dossier} stacked /></div>
+          </div>
+        )}
         {tab === "owners" && <OwnersTab dossier={dossier} peers={query.data.peers ?? []} company={company} />}
         {tab === "filings" && (
           rows.length ? (
@@ -339,8 +345,10 @@ export function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
  *  Overview) keeps the three latest of each and leaves out "Other" records: tax orders and settlements are not deals. */
 export function DealsAndNotes({ dossier, stacked = false, compact = false }: { dossier: Dossier | null; stacked?: boolean; compact?: boolean }) {
   const deals = [...(dossier?.deals ?? [])].filter((d) => !compact || d.kind !== "OTHER")
-    .sort((a, b) => (b.updated_as_of ?? b.as_of).localeCompare(a.updated_as_of ?? a.as_of)).slice(0, compact ? 3 : 10);
-  const notes = [...(dossier?.operating_notes ?? [])].reverse().slice(0, compact ? 3 : 6);
+    .sort((a, b) => (b.updated_as_of ?? b.as_of).localeCompare(a.updated_as_of ?? a.as_of)).slice(0, compact ? 3 : undefined);
+  // the full lists on the Timeline tab (owner, 2026-10-21: "operating notes data, is that all we have?": it showed 6)
+  const notes = [...(dossier?.operating_notes ?? [])].sort((a, b) => String(b.as_of).localeCompare(String(a.as_of)))
+    .slice(0, compact ? 3 : undefined);
   if (!deals.length && !notes.length) return null;
   return (
     <div className={cn("grid gap-[18px]", !stacked && deals.length && notes.length && "md:grid-cols-2")}>
@@ -393,7 +401,7 @@ function Tile({ label, value, sub, tone, action, onAction }: { label: string; va
 const FOLLOW_SHOWN = 8;
 
 /** The commitments with their evidence, the follow-ups earlier cards set, and what is overdue. */
-function PromiseTracker({ dossier }: { dossier: Dossier | null }) {
+function PromiseTracker({ dossier, company }: { dossier: Dossier | null; company: Company | null }) {
   const guidance = [...(dossier?.guidance ?? [])].reverse();
   const stats = promiseStats(guidance);
   const today = todayIST();
@@ -413,6 +421,7 @@ function PromiseTracker({ dossier }: { dossier: Dossier | null }) {
           </div>
         ))}
       </div>
+      <CapitalAndCalibration rule={company?.calibration_rule ?? null} roiic={parseRoiic(company?.roiic)} />
       <div className="grid items-start gap-[18px] lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
         <Panel title="Management commitments" sub="from AGMs, calls, presentations and filings; status from later filings">
           {guidance.length ? (
@@ -517,13 +526,10 @@ function ResultsScorecard({ parsed, onOpen }: { parsed: Parsed[]; onOpen: (newsI
 }
 
 // The lines a reader looks for first: a company's P&L, a bank's and an insurer's
-const KEY_METRICS = ["revenue", "total_income", "interest_earned", "net_interest_income", "gross_premium", "ebitda", "ebitda_margin",
-  "operating_profit", "pbt", "pat", "pat_owners", "eps", "nim", "gnpa_ratio", "nnpa_ratio", "casa_ratio", "crar", "roa", "cost_to_income"];
-const KEY_SHOWN = 8;
-
-/** Every figure memory holds by period. `keyFirst` (the Results tab) puts the main lines first and shows eight until
- *  asked for all; `balance` adds the balance sheet below. */
-export function MetricsPanel({ dossier, balance: showBalance = true, periods = 6, keyFirst = false }: { dossier: Dossier; balance?: boolean; periods?: number; keyFirst?: boolean }) {
+/** Every figure memory holds by period, every line in statement order under its section (owner, 2026-10-21: the
+ *  drawer's baseline was complete, the page's in the wrong order; now one baseline on the page); `balance` adds the
+ *  balance sheet below. */
+export function MetricsPanel({ dossier, balance: showBalance = true, periods = 8 }: { dossier: Dossier; balance?: boolean; periods?: number }) {
   type Cell = { value: number; unit: string; yoy?: number | null };
   type Group = { periods: string[]; metrics: Map<string, Map<string, Cell>> };
   const groups = useMemo(() => {
@@ -543,11 +549,8 @@ export function MetricsPanel({ dossier, balance: showBalance = true, periods = 6
   const [kind, setKind] = useState<string | null>(null);
   const active = groups.find(([k]) => k === kind) ?? groups.find(([k]) => k === "Quarter") ?? groups[0];
   const balance = showBalance ? dossier.balance_sheet[dossier.balance_sheet.length - 1] : null;
-  const [allRows, setAllRows] = useState(!keyFirst);
-  const entries = active ? [...active[1].metrics.entries()] : [];
-  const rank = (m: string) => { const i = KEY_METRICS.indexOf(m); return i < 0 ? KEY_METRICS.length : i; };
-  if (keyFirst) entries.sort((a, b) => rank(a[0]) - rank(b[0]));
-  const rows = allRows ? entries : entries.slice(0, KEY_SHOWN);
+  const rows = inStatementOrder(active ? [...active[1].metrics.entries()].filter(([, v]) => !allZero(v.values())) : []);
+  const shown = active ? active[1].periods.slice(-periods) : [];
 
   return (
     <div className="space-y-4">
@@ -565,31 +568,31 @@ export function MetricsPanel({ dossier, balance: showBalance = true, periods = 6
             <div className="-mx-5 overflow-x-auto">
               <table className="w-full min-w-[560px] text-[13.5px]">
                 <thead className="eyebrow border-b border-line text-ink-3">
-                  <tr><th className="px-5 py-2 text-left font-semibold">Metric</th>{active[1].periods.slice(-periods).map((p) => <th key={p} className="num px-3 py-2 text-right font-semibold">{p}</th>)}</tr>
+                  <tr><th className="px-5 py-2 text-left font-semibold">Metric</th>{shown.map((p) => <th key={p} className="num px-3 py-2 text-right font-semibold">{p}</th>)}</tr>
                 </thead>
                 <tbody>
-                  {rows.map(([metric, values]) => (
-                    <tr key={metric} className="border-b border-line last:border-0">
-                      <td className="whitespace-nowrap px-5 py-2 font-medium text-ink">{titleCase(metric)}</td>
-                      {active[1].periods.slice(-periods).map((p) => {
+                  {rows.map(([metric, values], k) => (
+                    <Fragment key={metric}>
+                    {(k === 0 || statementPlace(rows[k - 1][0]).section !== statementPlace(metric).section) && (
+                      <tr><td colSpan={shown.length + 1} className="eyebrow bg-surface-2 px-5 py-1.5 text-ink-3">{statementPlace(metric).section}</td></tr>
+                    )}
+                    <tr className="border-b border-line last:border-0">
+                      <td className="whitespace-nowrap px-5 py-2 font-medium text-ink">{metricLabel(metric)}</td>
+                      {shown.map((p) => {
                         const v = values.get(p);
                         return (
                           <td key={p} className="num whitespace-nowrap px-3 py-2 text-right text-ink">
-                            {v ? (v.unit === "INR_CR" ? cr(v.value) : v.unit === "PCT" ? `${num(v.value)}%` : `${num(v.value)} ${v.unit === "UNITS" ? "" : v.unit}`) : <span className="text-ink-3">—</span>}
+                            {v ? (v.unit === "INR_CR" ? cr(v.value) : unitValue(num(v.value), v.unit)) : <span className="text-ink-3">—</span>}
                             {v?.yoy != null ? <div className={cn("text-[11px]", signClass(v.yoy))}>{pct(v.yoy)} YoY</div> : null}
                           </td>
                         );
                       })}
                     </tr>
+                    </Fragment>
                   ))}
                 </tbody>
               </table>
             </div>
-            {entries.length > KEY_SHOWN && keyFirst && (
-              <button type="button" onClick={() => setAllRows(!allRows)} className="mt-2 text-[12.5px] font-bold text-accent hover:underline">
-                {allRows ? "Show the main lines" : `Show all ${entries.length} figures`}
-              </button>
-            )}
           </>
         )}
       </Panel>
@@ -613,8 +616,9 @@ const TIMELINE_SHOWN = 20;
 
 /** How the story is unfolding: one entry per event, newest first. A filing of the same kind within two days of another
  *  (the results, their press release, the XBRL) is the same event, kept once with the fullest summary. */
-function Timeline({ dossier }: { dossier: Dossier | null }) {
+function Timeline({ dossier, cards }: { dossier: Dossier | null; cards: CardRow[] }) {
   const [all, setAll] = useState(false);
+  const byId = useMemo(() => new Map(cards.map((c) => [c.news_id, c])), [cards]);
   const events = useMemo(() => {
     const out: Dossier["timeline"] = [];
     for (const e of [...(dossier?.timeline ?? [])].sort((a, b) => b.date.localeCompare(a.date))) {
@@ -641,6 +645,7 @@ function Timeline({ dossier }: { dossier: Dossier | null }) {
                 <b className="block text-[14.5px] font-extrabold tracking-tight text-ink">{EVENT_LABELS[e.event_type] ?? titleCase(e.event_type)}{period && e.event_type === "RESULTS" ? ` · ${period}` : ""}</b>
                 {/* memory written before 2026-10-20 starts some summaries with their own date */}
                 <p className="m-0 mt-0.5 line-clamp-2 text-[13.5px] leading-snug text-ink-2">{e.summary.replace(/^\d{4}-\d{2}-\d{2}:\s*/, "")}</p>
+                <Reaction row={byId.get(e.news_id)} />
               </div>
             </li>
           );
@@ -651,6 +656,16 @@ function Timeline({ dossier }: { dossier: Dossier | null }) {
       )}
     </Panel>
   );
+}
+
+/** The market's move after the event, against the index where the post-mortem had one (from the drawer's timeline). */
+function Reaction({ row }: { row: CardRow | undefined }) {
+  let rx: PriceReaction | null = null;
+  try { rx = row?.post_event_return_json ? (JSON.parse(row.post_event_return_json) as PriceReaction) : null; } catch { rx = null; }
+  const t1 = rx?.t1?.excess_pct ?? rx?.t1?.return_pct, t3 = rx?.t3?.excess_pct ?? rx?.t3?.return_pct;
+  if (t1 === undefined && t3 === undefined) return null;
+  const move = (v: number | undefined) => v === undefined ? "–" : <span className={signClass(v)}>{pct(v)}</span>;
+  return <small className="num mt-0.5 block text-[12px] text-ink-3">T+1 {move(t1)} · T+3 {move(t3)}{rx?.benchmark ? " vs index" : ""}</small>;
 }
 
 /** Price-structure tags from the market-data job, as the cards show them. */
@@ -912,6 +927,7 @@ function OwnersTab({ dossier, peers, company }: { dossier: Dossier | null; peers
   const gov = quarters[quarters.length - 1];
   const exceptions = (gov?.exceptions as string[] | undefined) ?? [];
   return (
+    <div className="space-y-4">
     <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
       <div className="min-w-0 space-y-4">
         {!own.length && (gov || peers.length > 0) && <Empty title="No shareholding data yet" body="It fills in from the quarterly shareholding filings on NSE." />}
@@ -982,6 +998,8 @@ function OwnersTab({ dossier, peers, company }: { dossier: Dossier | null; peers
         )}
         {!gov && !peers.length && !own.length && !dossier?.pledges?.events?.length && <Empty title="No ownership or governance data yet" body="It fills in from the quarterly shareholding and governance filings on NSE." />}
       </div>
+    </div>
+    <IdentityAndOwnership dossier={dossier} />
     </div>
   );
 }

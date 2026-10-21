@@ -7,7 +7,7 @@ import json
 import logging
 import sys
 import time
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 from . import raw
@@ -413,7 +413,21 @@ def cmd_seed_memory(args, settings, sink) -> int:
         nse_symbols = {scrip: symbol for symbol, scrip in nse_universe.symbols.items()}
         done_through = "" if args.restart else (sink.kv_get(resume_key) or "")
         scrips = [s for s in sorted(nse_universe.included) if s > done_through]
-        log.info("seed: %d universe companies to go (after %r)", len(scrips), done_through)
+        # Companies reporting now first: results due in the next three weeks, or a filing in the last week, and not
+        # seeded yet. They do not move the resume point, which follows the scrip order of the rest.
+        today = date.today()
+        try:
+            soon = [r["scrip_code"] for r in sink.query("seed_priority", [(today - timedelta(days=7)).isoformat(),
+                                                                          (today + timedelta(days=21)).isoformat()])]
+        except Exception as exc:  # the order is an optimisation; the seed still covers everyone
+            log.warning("seed: no priority list (%s)", exc)
+            soon = []
+        # seeded out of order on an earlier pass (a --restart walks everyone again)
+        early = set() if args.restart else set(json.loads(sink.kv_get("seed:universe_early") or "[]"))
+        scrips = [s for s in scrips if s not in early]
+        priority = [s for s in dict.fromkeys(soon) if s in set(scrips)]
+        scrips = priority + [s for s in scrips if s not in set(priority)]
+        log.info("seed: %d universe companies to go (after %r), %d reporting now first", len(scrips), done_through, len(priority))
     else:
         scrips = [s.strip() for s in (args.scrips or "").split(",") if s.strip()]
         if not scrips:
@@ -425,6 +439,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
     # per company before 2026-10-21); a run killed outright seeds at most that many companies again, which replaces
     # their memory entries with the same figures
     last_done, saved = None, done_through if args.universe else None
+    priority_set = set(priority) if args.universe else set()
     with (BseClient() if args.source == "bse" else contextlib.nullcontext()) as bse, NseClient() as nse, \
             contextlib.ExitStack() as checkpoint:
         if args.universe:
@@ -462,6 +477,10 @@ def cmd_seed_memory(args, settings, sink) -> int:
             elif not args.results_only:
                 stats.failures.append(f"{scrip}: no NSE symbol stored")
             log.info("seed: %s", stats.line())
+            if args.universe and scrip in priority_set:
+                early.add(scrip)   # seeded out of order: kept apart, the resume point stays with the scrip-order walk
+                sink.kv_set("seed:universe_early", json.dumps(sorted(early)), now_iso())
+                continue
             if args.universe:
                 last_done = scrip
                 if stats.companies % SEED_SAVE_EVERY == 0:

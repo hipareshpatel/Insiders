@@ -182,6 +182,44 @@ def test_the_universe_seed_resumes_after_the_last_company_and_stops_on_a_refusal
     assert cmd_seed_memory(args, settings, sink) == 0 and len(seen) == 8
 
 
+def test_the_universe_seed_takes_companies_reporting_now_first(settings, monkeypatch):
+    """E2E (owner, 2026-10-21): its results card had no earlier quarter, as the seed walks scrip codes in order and had
+    not reached 544783. A company with results due (a board meeting soon) is seeded first, once, and the resume point
+    keeps following the scrip order."""
+    import argparse
+    import json
+    from datetime import date, timedelta
+
+    from bse_intel import nse as nse_mod
+    from bse_intel import universe
+    from bse_intel.cli import cmd_seed_memory
+    from bse_intel.sinks.local import LocalSink
+
+    class Client:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            pass
+
+    seen: list[str] = []
+    monkeypatch.setattr(nse_mod, "NseClient", Client)
+    monkeypatch.setattr(seed_mod, "seed_results", lambda sink, bse, scrip, *a, **k: seen.append(scrip))
+    monkeypatch.setattr(seed_mod, "seed_shareholding", lambda *a, **k: None)
+    sink = LocalSink(settings)
+    sink.put_object(universe.UNIVERSE_KEY, json.dumps(
+        {"source": "nse", "included": ["500001", "500002", "544783"]}).encode())
+    soon = (date.today() + timedelta(days=3)).isoformat()
+    sink._db.execute("INSERT INTO catalysts (id, scrip_code, company_name, event_type, event_date, description, created_at) "
+                     "VALUES ('c1', '544783', 'E2E', 'BOARD_MEETING', ?, 'results', ?)", (soon, soon))
+    args = argparse.Namespace(scrips=None, universe=True, restart=False, source="nse", since="2024-01-01",
+                              results_only=False, shareholding_only=False)
+    assert cmd_seed_memory(args, settings, sink) == 0
+    assert seen == ["544783", "500001", "500002"]
+    assert sink.kv_get("seed:universe_last") == "500002"
+    assert cmd_seed_memory(args, settings, sink) == 0 and len(seen) == 3   # nothing seeded twice
+
+
 def test_nse_pacing_is_three_to_five_seconds_unless_a_bulk_load_sets_a_range(monkeypatch):
     from bse_intel.nse import pause_from_env
 

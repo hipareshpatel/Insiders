@@ -56,6 +56,7 @@ QUERIES = (
     "export_kv",
     "snapshot_feed",
     "snapshot_signals",
+    "seed_priority",
     "snapshot_count",
     "feedback_examples",
     "cards_awaiting_reaction",

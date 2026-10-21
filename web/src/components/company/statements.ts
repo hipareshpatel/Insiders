@@ -33,13 +33,20 @@ const pct = (a: Cell, b: Cell): Cell => (a == null || b == null || b === 0 ? nul
 /** The basis of memory's main figures: consolidated when any of their sources is, else standalone (a company that files
  *  only standalone results), else not stated. */
 export function mainBasis(metrics: Metric[]): "CONSOLIDATED" | "STANDALONE" | null {
-  const bases = new Set(metrics.flatMap((m) => ((m as Metric & { sources?: { basis?: string | null }[] }).sources ?? []).map((s) => s.basis)));
+  // the metric's own basis (memory sets it from a single source) as well as its sources' (deep audit F-03)
+  const bases = new Set(metrics.flatMap((m) => {
+    const x = m as Metric & { basis?: string | null; sources?: { basis?: string | null }[] };
+    return [x.basis, ...(x.sources ?? []).map((s) => s.basis)];
+  }));
   return bases.has("CONSOLIDATED") ? "CONSOLIDATED" : bases.has("STANDALONE") ? "STANDALONE" : null;
 }
 
 /** A bank files interest earned as its top line, not revenue. */
 export function isBank(metrics: Metric[]): boolean {
-  return metrics.some((m) => m.metric === "interest_earned") && !metrics.some((m) => m.metric === "revenue");
+  // interest earned on most of its quarters: one stray "revenue" a card wrote must not flip a bank to the Sales layout
+  // (deep audit F-01: 11 of 41 banks, SBI's "Sales 1,81,079")
+  const quarters = (m: string) => new Set(metrics.filter((x) => x.metric === m).map((x) => x.period)).size;
+  return quarters("interest_earned") > 0 && quarters("interest_earned") >= quarters("revenue");
 }
 
 /** Screener's lines for one period, from memory's metrics. */
@@ -59,7 +66,8 @@ function lines(v: Values, p: string, bank: boolean): Record<string, Cell> {
   }
   const revenue = g("revenue");
   const ebitda = g("ebitda") ?? (g("pbt") != null && g("finance_cost") != null && g("depreciation") != null
-    ? g("pbt")! + g("finance_cost")! + g("depreciation")! - (g("other_income") ?? 0) - (g("exceptional_items") ?? 0) : null);
+    && g("other_income") != null   // a missing other income is not zero (deep audit F-07)
+    ? g("pbt")! + g("finance_cost")! + g("depreciation")! - g("other_income")! - (g("exceptional_items") ?? 0) : null);
   return {
     revenue, expenses: sub(revenue, ebitda), ebitda, opm: g("ebitda_margin") ?? pct(ebitda, revenue),
     other_income: g("other_income"), interest: g("finance_cost"), depreciation: g("depreciation"),
@@ -149,7 +157,8 @@ const num = (s: Snapshot, k: string): Cell => (typeof s[k] === "number" ? (s[k] 
 export function balanceSnapshots(sheets: Snapshot[]): Snapshot[] {
   const best = new Map<string, Snapshot>();
   for (const s of sheets) {
-    if (!s.period || num(s, "total_assets_cr") == null) continue;
+    // a full statement: its total, or for an insurer (whose "Assets" is not a total, A-01) its net worth and investments
+    if (!s.period || (num(s, "total_assets_cr") == null && (num(s, "net_worth_cr") == null || num(s, "investments_cr") == null))) continue;
     const key = periodEnd(String(s.period)).slice(0, 7);
     const old = best.get(key);
     const xbrl = (x: Snapshot) => String(x.source_news_id ?? "").startsWith("xbrl:");
@@ -159,23 +168,24 @@ export function balanceSnapshots(sheets: Snapshot[]): Snapshot[] {
 }
 
 /** The balance sheet as screener.in prints it: what funds the company, then what it owns. */
-export function balanceTable(sheets: Snapshot[], bank: boolean): Table {
+export function balanceTable(sheets: Snapshot[]): Table {
   const snaps = balanceSnapshots(sheets);
   const col = (f: (s: Snapshot) => Cell) => snaps.map(f);
   const debt = (s: Snapshot) => num(s, "gross_debt_cr");
   const rows: Row[] = [
     { label: "Equity capital", cells: col((s) => num(s, "equity_capital_cr")) },
     { label: "Reserves", cells: col((s) => num(s, "reserves_cr")) },
-    ...(bank ? [{ label: "Deposits", cells: col((s) => num(s, "deposits_cr")) }] : []),
+    { label: "Minority interest", cells: col((s) => num(s, "minority_interest_cr")) },   // so the side adds up (F-06)
+    { label: "Deposits", cells: col((s) => num(s, "deposits_cr")) },   // a bank's, and an NBFC's public deposits
     { label: "Borrowings", cells: col(debt) },
-    { label: "Other liabilities", cells: col((s) => sub(sub(num(s, "total_liabilities_cr"), debt(s) ?? 0), bank ? num(s, "deposits_cr") ?? 0 : 0)) },
+    { label: "Other liabilities", cells: col((s) => sub(sub(num(s, "total_liabilities_cr"), debt(s) ?? 0), num(s, "deposits_cr") ?? 0)) },
     { label: "Total liabilities", cells: col((s) => num(s, "total_assets_cr")), strong: true },
-    ...(bank ? [{ label: "Advances", cells: col((s) => num(s, "advances_cr")) }] : []),
+    { label: "Advances / loans", cells: col((s) => num(s, "advances_cr")) },
     { label: "Fixed assets", cells: col((s) => num(s, "fixed_assets_cr")) },
     { label: "CWIP", cells: col((s) => num(s, "cwip_cr")) },
     { label: "Investments", cells: col((s) => num(s, "investments_cr")) },
     { label: "Other assets", cells: col((s) => {
-      const parts = ["fixed_assets_cr", "cwip_cr", "investments_cr", ...(bank ? ["advances_cr"] : [])].map((k) => num(s, k) ?? 0);
+      const parts = ["fixed_assets_cr", "cwip_cr", "investments_cr", "advances_cr"].map((k) => num(s, k) ?? 0);
       return sub(num(s, "total_assets_cr"), parts.reduce((a, b) => a + b, 0));
     }) },
     { label: "Total assets", cells: col((s) => num(s, "total_assets_cr")), strong: true },
@@ -244,13 +254,20 @@ export function growth(metrics: Metric[], metric: string): { label: string; valu
   const v = collect(metrics);
   const years = periodsOf(metrics, /^FY\d{2}$/);
   const last = years[years.length - 1];
+  // by fiscal year, not by position: with FY24 missing, "3 years" from FY26 is still FY23 (deep audit F-04)
+  const fy = (p: string) => 2000 + Number(p.slice(2));
   const cagr = (n: number) => {
-    const from = years[years.length - 1 - n], a = from ? get(v, metric, from) : null, b = last ? get(v, metric, last) : null;
+    if (!last) return null;
+    const from = years.find((y) => fy(y) === fy(last) - n);
+    const a = from ? get(v, metric, from) : null, b = get(v, metric, last);
     return a != null && b != null && a > 0 && b > 0 ? (Math.pow(b / a, 1 / n) - 1) * 100 : null;
   };
-  const quarters = periodsOf(metrics, /^Q[1-4]FY\d{2}$/);
+  // the last eight quarters, consecutive: two windows of four a year apart (deep audit F-05)
+  const monthOf = (q: string) => { const [y, m] = periodEnd(q).split("-").map(Number); return y * 12 + m; };
+  const quarters = periodsOf(metrics, /^Q[1-4]FY\d{2}$/).slice(-8);
+  const consecutive = quarters.length === 8 && quarters.every((q, i) => i === 0 || monthOf(q) - monthOf(quarters[i - 1]) === 3);
   const sum = (qs: string[]) => (qs.length === 4 && qs.every((q) => get(v, metric, q) != null) ? qs.reduce((a, q) => a + get(v, metric, q)!, 0) : null);
-  const now = sum(quarters.slice(-4)), before = sum(quarters.slice(-8, -4));
+  const now = consecutive ? sum(quarters.slice(4)) : null, before = consecutive ? sum(quarters.slice(0, 4)) : null;
   const ttm = now != null && before != null && before > 0 ? (now / before - 1) * 100 : null;
   return [{ label: "5 years", value: cagr(5) }, { label: "3 years", value: cagr(3) }, { label: "TTM", value: ttm }].filter((g) => g.value != null);
 }

@@ -240,7 +240,8 @@ def _nse_quarters(nse, symbol: str, since: str, scrip: str) -> dict:
         log.info("seed %s: NSE list unavailable (%s)", scrip, type(exc).__name__)
         return {}
     best: dict = {}
-    for row in sorted(rows, key=lambda r: (r.consolidated, r.filed_at)):   # consolidated first, as in seed_company
+    # consolidated over standalone, the integrated filing over the older list's row, then the later filing
+    for row in sorted(rows, key=lambda r: (r.consolidated, not getattr(r, "legacy", False), r.filed_at)):
         if not row.period_end or row.period_end < since:
             continue
         label = canonical_period(f"quarter ended {row.period_end[8:10]}.{row.period_end[5:7]}.{row.period_end[:4]}")

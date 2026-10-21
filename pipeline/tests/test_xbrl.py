@@ -699,3 +699,56 @@ def test_the_half_year_file_gives_the_full_balance_sheet_and_cash_flow():
     flows = {m.metric: m.value for m in r.metrics if m.period == "H1FY25"}
     assert (flows["operating_cash_flow"], flows["investing_cash_flow"], flows["financing_cash_flow"]) == (86.01, -102.55, -36.22)
     assert flows["capex"] == 92.39
+
+
+def test_old_nse_files_give_the_year_not_the_quarter_twice():
+    """Deep audit A-03: before the integrated filing, NSE's files tag the year to date ("FourD") with the quarter's own
+    dates; Asian Paints' FY24 operating cash flow was stored as Q4FY24's."""
+    from pathlib import Path
+
+    from bse_intel import xbrl
+
+    fx = Path(__file__).parent / "fixtures"
+    r = xbrl.parse((fx / "nse_old_asianpaint_q4fy24.xml").read_bytes())
+    got = {(m.metric, m.period): m.value for m in r.metrics}
+    assert got[("revenue", "FY24")] == 35494.73 and got[("revenue", "Q4FY24")] == 8730.76
+    assert got[("operating_cash_flow", "FY24")] == 6103.6 and ("operating_cash_flow", "Q4FY24") not in got
+    h1 = {(m.metric, m.period): m.value for m in xbrl.parse((fx / "nse_old_titan_q2fy24.xml").read_bytes()).metrics}
+    assert ("revenue", "H1FY24") in h1 and ("operating_cash_flow", "Q2FY24") not in h1
+
+
+def test_bank_nbfc_and_insurer_balance_sheets():
+    """Deep audit A-01 and A-10: no bank had a net worth, Bajaj Finance no debt, and an insurer's "Assets" (net of current
+    liabilities) was stored as its total."""
+    from pathlib import Path
+
+    from bse_intel import xbrl
+
+    fx = Path(__file__).parent / "fixtures"
+    bank = xbrl.parse((fx / "nse_hdfcbank_q2fy27_cons.xml").read_bytes()).balance_sheet
+    assert bank.net_worth_cr == 603469.05 and bank.deposits_cr == 3324146.36 and bank.advances_cr == 3316057.54
+    assert round(bank.net_worth_cr + bank.total_liabilities_cr, 2) == bank.total_assets_cr
+    nbfc = xbrl.parse((fx / "nse_bajfin_q2fy27_cons.xml").read_bytes()).balance_sheet
+    assert nbfc.gross_debt_cr == 432228.16 and nbfc.advances_cr == 574174.44
+    life = xbrl.parse((fx / "nse_hdfclife_q2fy27_cons.xml").read_bytes()).balance_sheet
+    assert life.total_assets_cr is None and life.net_worth_cr == 19467.43 and life.investments_cr == 410086.96
+
+
+def test_older_results_list_rows_carry_their_quarter_but_stay_off_the_cards():
+    """Deep audit A-02: the older list's rows had no quarter end, so the seed never reached before Q4FY25."""
+    from bse_intel.nse import parse_results_rows, results_links
+
+    rows = parse_results_rows([{"xbrl": "https://x/INDAS_1.xml", "toDate": "31-Mar-2024", "fromDate": "01-Jan-2024",
+                                "consolidated": "Consolidated", "filingDate": "25-Apr-2024"}])
+    assert rows[0].period_end == "2024-03-31" and rows[0].legacy
+    assert results_links(rows) == []
+
+
+def test_nse_dates_with_hyphens_are_read():
+    """Deep audit A-05/A-06: NSE writes "21-Oct-2026"; record dates and quarter ends written so were lost."""
+    from bse_intel.periods import explicit_date, statement_quarter
+    from bse_intel.rules import extract_date
+
+    assert extract_date("Record date 21-Oct-2026 for the interim dividend", "2026-10-14") == "2026-10-21"
+    assert str(explicit_date("30-Sep-2026")) == "2026-09-30"
+    assert statement_quarter("quarter ended 30-Sep-2026") == "Q2FY27"

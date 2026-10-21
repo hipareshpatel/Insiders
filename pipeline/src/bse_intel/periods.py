@@ -39,7 +39,7 @@ def explicit_date(text: str | None) -> date | None:
             return date(int(m[1]), int(m[2]), int(m[3]))
         if m := re.search(r"\b(\d{1,2})[./-](\d{1,2})[./-](20\d{2})\b", s):  # Indian day-month-year
             return date(int(m[3]), int(m[2]), int(m[1]))
-        if m := re.search(r"\b(\d{1,2})(?:ST|ND|RD|TH)?\s+" + _MON + r",?\s+(20\d{2})\b", s):
+        if m := re.search(r"\b(\d{1,2})(?:ST|ND|RD|TH)?(?:\s+|-)" + _MON + r"(?:,?\s+|-)(20\d{2})\b", s):   # "21-OCT-2026" (A-06)
             return date(int(m[3]), _MONTHS[m[2].lower()], int(m[1]))
         if m := re.search(_MON + r"\s+(\d{1,2})(?:ST|ND|RD|TH)?,?\s+(20\d{2})\b", s):
             return date(int(m[3]), _MONTHS[m[1].lower()], int(m[2]))

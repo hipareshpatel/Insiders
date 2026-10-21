@@ -260,8 +260,15 @@ _NUMBER = re.compile(r"(?<![\w.])\d{1,3}(?:,\d{2,3})+(?:\.\d+)?|(?<![\w.])\d+(?:
 def _numbers(text: str) -> list[tuple[float, int]]:
     """Each number in the text and how many significant digits it is printed with."""
     out = []
-    for raw in _NUMBER.findall(text or ""):
+    text = text or ""
+    for m in _NUMBER.finditer(text):
+        raw = m.group(0)
         digits = raw.replace(",", "")
+        # a year or a percentage is not an amount: "2026" and "100%" confirmed ₹20.26 Cr and ₹1 Cr orders (A-04)
+        if text[m.end():m.end() + 2].lstrip().startswith("%"):
+            continue
+        if re.fullmatch(r"(19|20)\d\d", digits):
+            continue
         try:
             out.append((float(digits), len(digits.replace(".", "").lstrip("0"))))
         except ValueError:

@@ -40,3 +40,43 @@ and what was done.
 |---|---|---|---|---|---|
 | B1 | HIGH | CONFIRMED (measured) | `prompts/engine.py` `pass2`, `config/prompts/pass2.md` | Every card call sends a ~35,800-character system prompt (~9,000 tokens) before the filing: the 26.5 KB general rules, the full output schema for every event type (5.6 KB, pretty-printed), the event focus (0.6-1.4 KB) and the sector lens. A rating card gets the results, capex, deal, call and quantified-impact rules and fields it never uses; long prompts are why long filings cannot be packed and fall to the weakest model (plan item 1), and conflicting rules leave the model to choose | Built (A/B): `prompts/pass2_short.md` + `engine.short_schema` / `field_rules`: the shared rules, the reviewers' mistakes and only this filing kind's fields with their rules copied from pass2.md, 11.5-17K characters (long 35.8K). On 30% of live filings (PROMPT_SHORT_SHARE, by news-id hash; backfill keeps the long one); `card_json.grounding.prompt_variant` records which wrote a card, and the daily audit scores the two apart. Worked examples from right-judged cards to follow once the audit has rated enough |
 | B2 | LOW | CONFIRMED (measured) | `prompts/engine.py` `pass2` | The schema is pretty-printed (indent 1): 5,569 characters against 4,352 compact, ~300 tokens a call for nothing | The short prompt sends the shape compact |
+
+## A. Intake and extraction (independent reviewer, 21 Oct; `scratchpad deep-audit/A`, every file in scope read)
+
+| id | sev | status | where | finding | done |
+|---|---|---|---|---|---|
+| A-01 | HIGH | CONFIRMED | `xbrl.py` BALANCE_TAGS | An insurer's "Assets" is the application of funds net of current liabilities; ICICI Lombard's ₹20,891.52 Cr stored as total assets beside ₹64,332 Cr of investments | Fixed: insurers' totals dropped; any totals that do not add up (assets = equity (+ minority) + liabilities within 2%) refused (`_check_balance`) |
+| A-02 | MEDIUM | CONFIRMED | `nse.py` parse_results_rows | The older results list's rows had no quarter end, so the seed never reached before Q4FY25 (Titan: 6 quarters) | Fixed: `period_end` from `toDate`, rows marked `legacy`; the seed reads them (integrated filing first), cards' comparative links do not |
+| A-03 | MEDIUM | CONFIRMED | `xbrl.py` | Pre-2025 files tag the year to date ("FourD") with the quarter's dates: the year's figures lost, its cash flow stored as the quarter's (Asian Paints FY24 OCF 6,103.6 as Q4FY24) | Fixed: FourD starts on 1 April (`_legacy_year_to_date`); cash-flow lines refused on three-month contexts. FY22-era files that reference undefined contexts still do not parse (FY22 stays a gap) |
+| A-10 | MEDIUM | CONFIRMED | `xbrl.py` | Banking and NBFC templates' capital, reserves, borrowings, loans, investments and cash not mapped: no bank had a net worth, Bajaj Finance no debt | Fixed: tags mapped; a bank's net worth and liabilities derived; NBFC debt = borrowings + debt securities + subordinated |
+| A-05, A-06 | MEDIUM | CONFIRMED | `rules.py`, `periods.py` | NSE's "21-Oct-2026" not read: 26 of 27 record dates of 14-21 Oct never reached the calendar | Fixed (both patterns accept hyphens) |
+| A-04 | MEDIUM | CONFIRMED | `event_xbrl.amount_found` | A year or a percentage "confirmed" an order amount, then overwrote the deal value | Fixed: years and percentages are not amounts (accepts less) |
+| A-07 | MEDIUM | CONFIRMED | `pipeline._xbrl_comparatives` | Year-ago and previous-quarter NSE files fetched through the BSE client (no NSE pacing or refusal handling) | Fixed: NSE's client for NSE files |
+| A-08, A-09 | MEDIUM | PLAUSIBLE | `pipeline` event match, `event_catchup` | One candidate event file answering 404 aborts the match and records nothing, so the card is re-run every run for 5 days; the catch-up re-runs a published card whenever a new file of the same family appears | Open |
+| A-14 | MEDIUM | PLAUSIBLE | `raw.py` | The raw copy's key includes the fetch time, so unchanged answers are stored again every run; nothing prunes `raw/` (est. 0.5-1.5 GB a month of R2's free 10 GB) | Open: measure `raw/` size, then key by content hash |
+| A-15 | MEDIUM | PLAUSIBLE | `extract.py` | OCR failing on a document under 50% scanned makes the card from the text read, without those pages | Open |
+| A-11..A-23 | LOW | | | bank opex in other expenses, capex sign, non-March years, one page of the integrated list, empty balance-sheet snapshots (HDFC Bank 3 of 3), SBI's two bases | Open (listed in the reviewer's findings.json) |
+
+## F. Website (independent reviewer, 21 Oct; `scratchpad deep-audit/FG`, rendered at 390 and 1440 px)
+
+| id | sev | status | where | finding | done |
+|---|---|---|---|---|---|
+| F-01 | HIGH | CONFIRMED | `statements.ts` isBank | One stray "revenue" figure flipped 11 of 41 banks to the Sales/OPM layout (SBI "Sales 1,81,079") | Fixed: a bank by interest earned on most of its quarters |
+| F-02 | HIGH | CONFIRMED | memory (area D) | CSB Bank's Q1FY27 EPS 35.00 (a card's annualised figure) over its XBRL 8.65; the tables show memory's value | Open: memory should prefer the XBRL source for a period's figure |
+| F-03 | MEDIUM | CONFIRMED | `statements.ts` mainBasis | The metric's own basis field ignored: the "Consolidated" label and the switch vanished (HDFCBANK, ICICIBANK) | Fixed |
+| F-04..F-07 | MEDIUM | CONFIRMED | `statements.ts` | CAGR by array position; TTM growth across gaps; minority interest missing so the balance sheet did not add up; a missing other income counted as zero | Fixed (tests); EPS not split-adjusted stays open |
+| F-08 | MEDIUM | CONFIRMED | company page | The 60-card cap shown as the total (SMLMAH 60 of 89) | Fixed: the count is the company's, and the list says "the latest 60 of 89" |
+| F-09 | MEDIUM | CONFIRMED | `public.ts` | No index on companies.symbol or sector: two table scans per company view | Fixed: migration 0013 |
+| F-10 | MEDIUM | CONFIRMED | `public.ts` | `/company/tcs` answered 400 | Fixed: the key is upper-cased first |
+| F-11 | MEDIUM | CONFIRMED | `TodayView.tsx` | Today never reads the R2 snapshot (about 10 D1 calls a view); SPEC says it does | Open |
+| F-12 | MEDIUM | CONFIRMED | `cardText.ts` | A fact with any quote counts as verified on the face though its quote may not be in the filing (93 of 300 cards) | Open: store a per-fact `quote_found` (stricter, no audit needed) |
+| F-13, F-14 | MEDIUM | CONFIRMED | card tiles, owner verdicts | Tile colour from the first character ("GNPA -17 bps" red); a verdict that fails (401) still looks saved | Open |
+| F-15, F-16 | MEDIUM | CONFIRMED | Today on a phone; light theme | Filters take 326 of 844 px; text contrast 2.8-3.5:1 against 4.5:1 | Open |
+
+## G. Tests, docs and config truth
+
+| id | sev | status | where | finding | done |
+|---|---|---|---|---|---|
+| G-01 | MEDIUM | CONFIRMED | `docs/SPEC.md:288` | Claims Today reads the snapshot (F-11) | Open with F-11 |
+| G-05, G-06 | MEDIUM | CONFIRMED | `web/worker`, `statements.test.ts` | The Worker has no tests; the statements test missed every class above | statements tests added for F-01, F-04, F-05, F-07; Worker tests open |
+| G-02..G-04 | LOW | CONFIRMED | `docs/SETUP.md`, settings, scripts | SETUP describes a BSE self-hosted setup and "820 tests"; BACKFILL_START default 2025-01-01 against a live start of 2026-04-19; a dead script for a reverted rule | Open |

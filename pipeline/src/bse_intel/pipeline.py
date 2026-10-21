@@ -2585,7 +2585,9 @@ class Pipeline:
             same = [link for link in links if link.period == period and link.basis == (tagged.basis or link.basis)]
             if not same:
                 continue
-            data = self._xbrl_file(max(same, key=lambda link: link.filed_at).url)
+            url = max(same, key=lambda link: link.filed_at).url
+            # an NSE file through NSE's client, with its pacing and refusal handling (deep audit A-07, 2026-10-21)
+            data = self._xbrl_file(url, self.nse if self.nse is not None and "nseindia" in url else None)
             parsed = xbrl_fast_path.parse(data) if data else None
             if parsed:
                 xbrl_fast_path.fix_scale(parsed, [*history, *tagged.metrics], filing.scrip_code)

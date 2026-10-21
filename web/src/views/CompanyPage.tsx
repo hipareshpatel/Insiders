@@ -141,7 +141,7 @@ export function CompanyPage() {
           {TABS.map((t) => (
             <button key={t.key} type="button" role="tab" aria-selected={tab === t.key} onClick={() => setParams({ tab: t.key === "overview" ? null : t.key })}
               className={cn("whitespace-nowrap rounded-[10px] px-3.5 py-2 text-[13.5px] font-bold transition-colors", tab === t.key ? "grad-accent shadow-md" : "text-ink-2 hover:text-ink")}>
-              {t.key === "filings" ? `Filings · ${rows.length}` : t.label}
+              {t.key === "filings" ? `Filings · ${Math.max(rows.length, company?.card_count ?? 0)}` : t.label}
             </button>
           ))}
         </div>
@@ -186,7 +186,7 @@ export function CompanyPage() {
           rows.length ? (
             <CardList cards={rows} pageSize={20} focus={focus} header={(filters, n) => (
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h2 className="text-[16px] font-extrabold tracking-tight text-ink">All filings with a card <small className="ml-1.5 text-[12.5px] font-semibold text-ink-3">{n} · newest first</small></h2>
+                <h2 className="text-[16px] font-extrabold tracking-tight text-ink">All filings with a card <small className="ml-1.5 text-[12.5px] font-semibold text-ink-3">{n}{(company?.card_count ?? 0) > rows.length ? ` (the latest ${rows.length} of ${company!.card_count})` : ""} · newest first</small></h2>
                 {filters}
               </div>
             )} />

@@ -79,7 +79,9 @@ class RuleBook:
 _MONTHS = {m: i for i, m in enumerate(
     ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], start=1)}
 _DMY = re.compile(r"\b(\d{1,2})[./-](\d{1,2})[./-](\d{4})\b")
-_D_MON_Y = re.compile(r"\b(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,9})[,.]?\s+(\d{4})\b")
+# "21 October 2026", and NSE's "21-Oct-2026" (deep audit A-05: 26 of 27 record dates of 14-21 Oct never reached the
+# calendar)
+_D_MON_Y = re.compile(r"\b(\d{1,2})(?:st|nd|rd|th)?(?:\s+|-)([A-Za-z]{3,9})(?:[,.]?\s+|-)(\d{4})\b")
 _MON_D_Y = re.compile(r"\b([A-Za-z]{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})\b")
 
 

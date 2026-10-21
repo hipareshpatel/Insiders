@@ -706,6 +706,25 @@ class BalanceSheet(_Lenient):
     cash_cr: Num = None
     net_debt_cr: Num = None
     net_worth_cr: Num = None
+    # the rest of the statement of assets and liabilities, from the results XBRL (xbrl.BALANCE_TAGS)
+    equity_capital_cr: Num = None
+    reserves_cr: Num = None
+    minority_interest_cr: Num = None
+    total_assets_cr: Num = None
+    noncurrent_assets_cr: Num = None
+    current_assets_cr: Num = None
+    fixed_assets_cr: Num = None
+    cwip_cr: Num = None
+    goodwill_cr: Num = None
+    investments_cr: Num = None
+    inventories_cr: Num = None
+    receivables_cr: Num = None
+    total_liabilities_cr: Num = None
+    noncurrent_liabilities_cr: Num = None
+    current_liabilities_cr: Num = None
+    payables_cr: Num = None
+    deposits_cr: Num = None
+    advances_cr: Num = None
     credit_rating: OptStr = None
     rating_agency: OptStr = None
     rating_outlook: OptStr = None

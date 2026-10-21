@@ -258,3 +258,54 @@ def test_a_standalone_only_quarter_is_not_seeded_beside_consolidated_ones_and_le
     assert "Q2FY27" in periods and "Q1FY27" not in periods
     pat = next(m for m in sink.dossiers["519552"]["financial_metrics"] if m["metric"] == "pat")
     assert pat.get("basis") == "CONSOLIDATED"
+
+
+def test_shards_split_the_universe_and_keep_their_own_resume_points(settings, monkeypatch):
+    """Owner (2026-10-21): fill the history today; eight runners each take every eighth company."""
+    import argparse
+    import json
+
+    from bse_intel import nse as nse_mod
+    from bse_intel import universe
+    from bse_intel.cli import cmd_seed_memory
+    from bse_intel.sinks.local import LocalSink
+
+    class Client:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            pass
+
+    seen: list[str] = []
+    monkeypatch.setattr(nse_mod, "NseClient", Client)
+    monkeypatch.setattr(seed_mod, "seed_results", lambda sink, bse, scrip, *a, **k: seen.append(scrip))
+    monkeypatch.setattr(seed_mod, "seed_shareholding", lambda *a, **k: None)
+    sink = LocalSink(settings)
+    sink.put_object(universe.UNIVERSE_KEY, json.dumps(
+        {"source": "nse", "included": ["500001", "500002", "500003", "500004", "500005"]}).encode())
+    args = argparse.Namespace(scrips=None, universe=True, restart=False, source="nse", since="2020-04-01",
+                              results_only=True, shareholding_only=False, shard="1/2")
+    assert cmd_seed_memory(args, settings, sink) == 0
+    assert seen == ["500002", "500004"]
+    assert sink.kv_get("seed:universe_last:1of2") == "500004" and sink.kv_get("seed:universe_last") is None
+    args.shard = "0/2"
+    assert cmd_seed_memory(args, settings, sink) == 0
+    assert seen[2:] == ["500001", "500003", "500005"]
+    args.shard = "2/2"
+    assert cmd_seed_memory(args, settings, sink) == 2          # malformed: nothing walked
+
+
+def test_old_years_are_read_from_their_march_files_only():
+    """Twelve quarters as memory keeps them; before them only the March quarter, whose file carries the year."""
+    seed_mod._nse_rows.cache_clear()
+    ends = [f"{y}-{m}" for y in range(2021, 2027) for m in ("03-31", "06-30", "09-30", "12-31")][:-1]
+
+    class Nse:
+        def financial_results(self, symbol):
+            return [_row(f"https://x/{e}.xml", e, f"{e} 18:00") for e in ends]
+
+    best = seed_mod._nse_quarters(Nse(), "X", "2020-04-01", "500001")
+    kept = sorted(r.period_end for r in best.values())
+    assert kept[-12:] == ends[-12:]
+    assert kept[:-12] == [e for e in ends[:-12] if e.endswith("03-31")]

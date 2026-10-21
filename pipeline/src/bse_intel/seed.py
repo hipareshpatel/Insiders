@@ -210,7 +210,19 @@ def _nse_quarters(nse, symbol: str, since: str, scrip: str) -> dict:
         label = canonical_period(f"quarter ended {row.period_end[8:10]}.{row.period_end[5:7]}.{row.period_end[:4]}")
         if label:
             best[label] = row  # consolidated, then the later filing, wins
-    return best
+    return _recent_and_years(best)
+
+
+SEED_QUARTERS = 12   # memory keeps 12 quarters (dossier.KEEP_PERIODS); older files are read for their year only
+
+
+def _recent_and_years(best: dict) -> dict:
+    """The latest SEED_QUARTERS quarters' files, and before them only the March quarter's: its file carries the
+    year, the March balance sheet and the year's cash flow, all the annual view needs (owner, 2026-10-21: years as
+    on screener.in). A file for any other old quarter would only be cut from memory again."""
+    ends = sorted({row.period_end for row in best.values()}, reverse=True)
+    recent = set(ends[:SEED_QUARTERS])
+    return {label: row for label, row in best.items() if row.period_end in recent or row.period_end[5:7] == "03"}
 
 
 @lru_cache(maxsize=64)

@@ -28,7 +28,7 @@ from .periods import canonical_period, due_date, quarter_index, results_due
 
 SCHEMA_VERSION = 3
 MAX_TIMELINE = 600
-MAX_BALANCE_SNAPSHOTS = 16
+MAX_BALANCE_SNAPSHOTS = 30   # Mar and Sep statements back to FY21 (seed) plus the cards' own; 16 until 2026-10-21
 NOT_REPORTED_DAYS = 75   # a quarter's results are due in 45 days (60 for Q4), its call within the next two weeks
 # Periods kept per metric, by kind: a seven-year table in a presentation must not push out the
 # recent quarters, so each kind keeps its own latest periods (by period end, not by filing date).

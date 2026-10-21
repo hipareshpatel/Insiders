@@ -11,7 +11,7 @@ import { api, type FeedFilters } from "../lib/api";
 import { cn } from "../lib/cn";
 import { HISTORY_START } from "../lib/config";
 import { ownerApi, useOwnerToken } from "../lib/owner";
-import { addDays, istDate, istDateTime, num, titleCase, todayIST } from "../lib/format";
+import { addDays, istDate, istDateTime, num, titleCase, todayIST, companyPath } from "../lib/format";
 import { catalystFamily, FEED_TABS, SECTORS, SIZES } from "../lib/taxonomy";
 import { useQueryState } from "../lib/url";
 
@@ -278,7 +278,7 @@ function Rail({ today }: { today: string }) {
             <ul className="mt-2 divide-y divide-line">
               {events.map((e) => (
                 <li key={e.id}>
-                  <Link href={`/company/${e.scrip_code}`} className="flex gap-3 px-4 py-2.5 hover:bg-surface-2/50">
+                  <Link href={`${companyPath(e)}`} className="flex gap-3 px-4 py-2.5 hover:bg-surface-2/50">
                     <span className="num w-12 shrink-0 text-[12px] text-ink-3">{istDate(e.event_date).replace(/ \d{4}$/, "")}</span>
                     <span className="min-w-0">
                       <span className="flex items-center gap-1.5">

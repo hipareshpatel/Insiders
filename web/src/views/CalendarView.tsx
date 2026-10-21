@@ -8,7 +8,7 @@ import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
-import { addDays, istDate, titleCase, todayIST } from "../lib/format";
+import { addDays, istDate, titleCase, todayIST, companyPath } from "../lib/format";
 import { CATALYST_FAMILIES, catalystFamily, catalystText } from "../lib/taxonomy";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading } from "./FeedView";
@@ -131,7 +131,7 @@ export function CalendarView() {
             <ul className="divide-y divide-line">
               {agenda.map((e) => (
                 <li key={e.id}>
-                  <button type="button" onClick={() => navigate(`/company/${e.scrip_code}`)} className="flex w-full gap-3 px-4 py-3 text-left hover:bg-surface-2/50">
+                  <button type="button" onClick={() => navigate(`${companyPath(e)}`)} className="flex w-full gap-3 px-4 py-3 text-left hover:bg-surface-2/50">
                     <span className="num w-14 shrink-0 text-[12px] text-ink-3">{istDate(e.event_date).replace(/ \d{4}$/, "")}</span>
                     <span className="min-w-0 flex-1">
                       <span className="flex flex-wrap items-center gap-2">
@@ -167,7 +167,7 @@ function OverduePromises() {
       <ul className="mt-3 divide-y divide-line">
         {shown.map((p) => (
           <li key={`${p.scrip_code}-${p.id}`}>
-            <button type="button" onClick={() => navigate(`/company/${p.scrip_code}`)}
+            <button type="button" onClick={() => navigate(`${companyPath(p)}`)}
               className="flex w-full items-start gap-3 py-2 text-left hover:bg-surface-2/50">
               <Avatar name={p.company_name} symbol={p.symbol} size={24} />
               <span className="min-w-0 flex-1 text-[13px]">

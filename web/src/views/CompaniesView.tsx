@@ -9,7 +9,7 @@ import { Select } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
-import { cr, istDate, pct, signClass, titleCase } from "../lib/format";
+import { cr, istDate, pct, signClass, titleCase, companyPath } from "../lib/format";
 import { SECTORS, SIZES } from "../lib/taxonomy";
 import { HISTORY_START } from "../lib/config";
 import { useQueryState } from "../lib/url";
@@ -98,7 +98,7 @@ function InflectionRadar() {
           <ul className="mt-3 grid gap-3 sm:grid-cols-2">
             {query.data.companies.map((c: RadarCompany) => (
               <li key={c.scrip_code}>
-                <button type="button" onClick={() => navigate(`/company/${c.scrip_code}`)}
+                <button type="button" onClick={() => navigate(`${companyPath(c)}`)}
                   className="w-full rounded-xl border border-line bg-surface p-4 text-left hover:border-accent focus:border-accent focus:outline-none">
                   <span className="flex items-center gap-2.5">
                     <Avatar name={c.company_name} symbol={c.symbol} size={28} />
@@ -213,8 +213,8 @@ export function CompaniesView() {
               <tbody>
                 {table.getRowModel().rows.map((row) => (
                   <tr key={row.id} tabIndex={0}
-                    onClick={() => navigate(`/company/${row.original.scrip_code}`)}
-                    onKeyDown={(e) => e.key === "Enter" && navigate(`/company/${row.original.scrip_code}`)}
+                    onClick={() => navigate(`${companyPath(row.original)}`)}
+                    onKeyDown={(e) => e.key === "Enter" && navigate(`${companyPath(row.original)}`)}
                     className="cursor-pointer border-b border-line last:border-0 hover:bg-surface-2/60 focus:bg-surface-2/60 focus:outline-none">
                     {row.getVisibleCells().map((cell, i) => <td key={cell.id} className={cn("max-w-[18rem] px-4 py-2.5", i > 0 && "whitespace-nowrap")}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>)}
                   </tr>

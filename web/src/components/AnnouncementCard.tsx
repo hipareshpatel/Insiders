@@ -11,7 +11,7 @@ import type { CallRead, CardBody, CardRow, Fact, Impact, PriceReaction, Technica
 import { cn } from "../lib/cn";
 import { useOwnerToken, useRatings, useVerdicts, type Verdict } from "../lib/owner";
 import { copyNodeAsPng } from "../lib/png";
-import { cr, formatKpi, istDate, istDateTime, pct, relativeTime, signClass, titleCase } from "../lib/format";
+import { cr, formatKpi, istDate, istDateTime, pct, relativeTime, signClass, titleCase, companyPath } from "../lib/format";
 import { EVENT_LABELS, IMPACT_LABEL, IMPACT_TEXT, TONE_CHIP, TONE_LABEL, TONE_STRIPE, verdict, type Tone } from "../lib/taxonomy";
 import { Avatar, TickerChip } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL } from "./FilingCard";
@@ -1236,7 +1236,7 @@ export function AnnouncementRow({ row, defaultOpen = false, highlight = false }:
           <p className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-ink-2 sm:line-clamp-1"><span title="The AI's reading, not verified against the filing" className="mr-1.5 rounded bg-surface-2 px-1 py-px align-[1px] text-[10px] font-bold uppercase tracking-wide text-ink-3">AI</span>{card.takeaway}</p>
         ) : null}
         <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-xs text-ink-3">
-          <TickerChip name={row.company_name} symbol={row.symbol} scrip={row.scrip_code} onClick={() => navigate(`/company/${row.scrip_code}`)} />
+          <TickerChip name={row.company_name} symbol={row.symbol} scrip={row.scrip_code} onClick={() => navigate(`${companyPath(row)}`)} />
           <span className="hidden text-ink-2 sm:inline">{row.company_name}</span>
           {row.market_cap_cr != null && (
             <span className="num">{cr(row.market_cap_cr)}{row.size_category ? ` · ${titleCase(row.size_category)}cap` : ""}</span>

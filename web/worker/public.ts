@@ -388,8 +388,12 @@ api.get("/companies", async (c) => {
 });
 
 api.get("/companies/:scrip", async (c) => {
-  const scrip = c.req.param("scrip");
-  if (!isCompanyKey(scrip)) return c.json({ error: "bad company key" }, 400);
+  const asked = c.req.param("scrip");
+  if (!isCompanyKey(asked)) return c.json({ error: "bad company key" }, 400);
+  // an NSE symbol (the site's addresses since 2026-10-21) or the internal key (older links)
+  const scrip = /^\d+$/.test(asked) || asked.startsWith("NSE:") ? asked
+    : (await c.env.DB.prepare("SELECT scrip_code FROM companies WHERE symbol = ?1 LIMIT 1").bind(asked.toUpperCase())
+        .first<{ scrip_code: string }>())?.scrip_code ?? asked;
   const [company, cards, object, chart] = await Promise.all([
     c.env.DB.prepare(`SELECT ${COMPANY_COLUMNS}, json_extract(memory_summary_json, '$.calls') AS calls_json
       FROM companies WHERE scrip_code = ?1`).bind(scrip).first<Record<string, unknown>>(),

@@ -101,3 +101,7 @@ def test_a_multiple_in_words_its_own_amounts_contradict_is_cut():
     assert [m.group(0) for m in wrong_multiples("Debt of ₹60 Cr was halved from ₹100 Cr.")] == ["halved"]
     assert wrong_multiples("Revenue doubled over three years.") == []
     assert wrong_multiples("Orders of ₹300 Cr tripled against 40% growth.") == []   # crore against percent: not compared
+    # stored cards: the result named after "to", and a figure of another line further on
+    assert wrong_multiples("It seeks to raise up to ₹325 Cr and double its borrowing limits to ₹1,000 Cr.") == []
+    assert wrong_multiples("Profit grew only 4.7% YoY as provisions tripled and other income normalised, while the GNPA "
+                           "ratio jumped 27 bps QoQ to 1.84%.") == []

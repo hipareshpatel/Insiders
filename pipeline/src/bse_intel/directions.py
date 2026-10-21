@@ -182,6 +182,11 @@ def _multiple_wrong(sentence: str, hit: re.Match) -> bool:
     after = [a for a in amounts if a[0] > hit.end()]
     if not before or not after or before[0][2] != after[0][2] or not before[0][1] or not after[0][1]:
         return False
+    # the base follows the word closely, in the same clause ("more than double Q2FY26 (₹40.92 Cr)"); "double its limits to
+    # ₹1,000 Cr" names the result, and "provisions tripled ... while the GNPA ratio ... 1.84%" another line (stored cards)
+    between = sentence[hit.end():after[0][0]]
+    if len(between) > 40 or re.search(r",|;|\bto\b", between):
+        return False
     word = hit.group(0).lower()
     ratio = before[0][1] / after[0][1]
     if "half" in word or "halv" in word:

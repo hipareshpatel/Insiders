@@ -3618,8 +3618,10 @@ class Pipeline:
         self.gateway.deadline = deadline   # no request outlives the critic's time
         try:
             system = (self.settings.config_dir / "prompts" / "critic.md").read_text()
+            vote_path = self.settings.config_dir / "prompts" / "critic_vote.md"
+            vote_system = vote_path.read_text() if vote_path.exists() else ""
             self.stats.critic = critic.run(jobs, self.gateway, self.sink, system, deadline, self.settings.critic_max,
-                                           self.stats.critic or None)
+                                           self.stats.critic or None, vote_system=vote_system)
             log.info("shadow critic: %s", json.dumps(self.stats.critic))
         except Exception:
             log.exception("shadow critic failed")

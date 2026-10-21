@@ -240,9 +240,6 @@ function SignalLine({ s }: { s: Signal }) {
   return (
     <>
       <span className={cn("font-semibold", SEVERITY_TEXT[s.severity])}>{meta?.label ?? titleCase(s.type)}:</span> {s.text}
-      <span className="ml-1.5 inline-flex items-center gap-0.5 align-middle text-[10.5px] font-medium text-ink-3" title="Computed by code from the filing and memory, not written by the model">
-        <Check className="h-3 w-3" />computed
-      </span>
     </>
   );
 }
@@ -637,12 +634,17 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
                 {row.symbol ?? row.scrip_code}
                 {row.market_cap_cr != null && <span className="font-sans font-semibold"> · {cr(row.market_cap_cr)}{row.size_category ? ` · ${titleCase(row.size_category)} cap` : ""}</span>}
               </span>
+              {industryPath(row.industry) && <span className="block truncate text-[11.5px] font-medium text-ink-3">{industryPath(row.industry)}</span>}
             </span>
           </button>
           {row.last_price != null && (
             <span className="num shrink-0 text-right">
               <span className="block text-[15px] font-bold text-ink">₹{row.last_price.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              {row.ret_1w != null && <span className={cn("block text-[12px] font-semibold", signClass(row.ret_1w))}>{row.ret_1w >= 0 ? "▲" : "▼"} {Math.abs(row.ret_1w).toFixed(1)}% 1W</span>}
+              <span className="mt-0.5 flex justify-end gap-2.5 text-[11.5px] font-semibold">
+                {([["1W", row.ret_1w], ["1M", row.ret_1m], ["3M", row.ret_3m]] as const).filter(([, v]) => v != null).map(([label, v]) => (
+                  <span key={label} className={signClass(v!)}>{v! >= 0 ? "▲" : "▼"} {Math.abs(v!).toFixed(1)}% <span className="text-ink-3">{label}</span></span>
+                ))}
+              </span>
             </span>
           )}
         </header>
@@ -701,7 +703,6 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
                 <Point key={d.label}>
                   <span className={cn("font-semibold", d.tone === "warn" ? "text-warn" : "text-[var(--fam)]")}>{d.label}:</span>{" "}
                   <span className={cn(d.tone === "pos" ? "text-pos" : d.tone === "neg" ? "text-neg" : undefined)}>{d.text}</span>
-                  {d.computed && <span className="ml-1.5 text-[10.5px] font-medium text-ink-3">✓ computed</span>}
                 </Point>
               ))}
             </ul>
@@ -794,6 +795,14 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
       )}
     </article>
   );
+}
+
+/** "Capital Goods > Electrical Equipment > Heavy Electrical Equipment" as its broad sector and its own industry (owner,
+ *  2026-10-21: "Capital goods › Heavy Electrical Equipment" on the card). */
+function industryPath(raw?: string | null): string | null {
+  const parts = (raw ?? "").split(/\s*>\s*/).map((p) => p.trim()).filter(Boolean);
+  if (!parts.length) return null;
+  return (parts.length > 1 ? [parts[0], parts[parts.length - 1]] : parts).join(" › ");
 }
 
 const VERDICTS: { v: Verdict; label: string; on: string }[] = [
@@ -1042,12 +1051,12 @@ function MarketReaction({ raw, atFiling, row }: { raw?: string | null; atFiling?
   try { rx = raw ? JSON.parse(raw) : null; } catch { rx = null; }
   const points = rx ? (["t1", "t3", "t5"] as const).filter((k) => rx![k]) : [];
   const at = atFiling?.last_price !== undefined ? atFiling : null;
-  const now = ([["1W", row.ret_1w], ["1M", row.ret_1m], ["1Y", row.ret_1y]] as const).filter(([, v]) => v != null);
+  const now = ([["1W", row.ret_1w], ["1M", row.ret_1m], ["3M", row.ret_3m ?? null], ["1Y", row.ret_1y]] as const).filter(([, v]) => v != null);
   if (!points.length && !at && !now.length) return null;
   return (
     <Section label="How the market reacted">
       {now.length > 0 && (
-        <dl className="mb-2 grid grid-cols-3 gap-2">
+        <dl className="mb-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
           {now.map(([label, v]) => (
             <div key={label} className="rounded-xl bg-surface-2 px-3 py-1.5">
               <dt className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-ink-3">{label} now</dt>

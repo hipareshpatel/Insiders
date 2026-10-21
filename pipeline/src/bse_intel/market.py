@@ -23,7 +23,7 @@ from .timeutil import now_iso, now_ist, utc_day
 
 log = logging.getLogger(__name__)
 
-TRADING_DAYS = {"ret_1w": 5, "ret_1m": 21, "ret_1y": 250}
+TRADING_DAYS = {"ret_1w": 5, "ret_1m": 21, "ret_3m": 63, "ret_1y": 250}
 
 
 def size_bucket(market_cap_cr: float | None, buckets: dict) -> str | None:

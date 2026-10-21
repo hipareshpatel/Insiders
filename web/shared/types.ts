@@ -226,7 +226,10 @@ export interface CardRow {
   last_price: number | null;
   ret_1w: number | null;
   ret_1m: number | null;
+  ret_3m?: number | null;
   ret_1y: number | null;
+  /** The company's industry path, "Capital Goods > Electrical Equipment > Heavy Electrical Equipment". */
+  industry?: string | null;
   market_session?: "LIVE_MARKET" | "PRE_MARKET" | "AFTER_MARKET" | "NON_TRADING" | null;
   actionability_score?: number;
   is_actionable_signal?: number;
@@ -305,6 +308,7 @@ export interface Company {
   price_date: string | null;
   ret_1w: number | null;
   ret_1m: number | null;
+  ret_3m?: number | null;
   ret_1y: number | null;
   card_count: number;
   last_card_at: string | null;

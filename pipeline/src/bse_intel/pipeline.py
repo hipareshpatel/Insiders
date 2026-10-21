@@ -89,7 +89,7 @@ HISTORY_INLINE = 5       # history analysed ahead of a live filing; a longer bac
                          # 27 waiting filings; deep audit E11)
 MAX_ORDER = 20_000       # companies in the cached backfill order
 BACKLOG_MAX = 1_500      # history filings waiting to be read before backfill discovers another day
-PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_1y",
+PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_3m", "ret_1y",
                  "median_turnover_cr", "point_in_time")
 D1_FREE_DAILY_WRITES, D1_NEAR_CAP = 100_000, 0.95   # Cloudflare D1 free plan: rows written a day (UTC day)
 REQUEUE_AFTER_HOUR, REQUEUE_KEY = 22, "failed:requeued_on"   # the nightly extra try for failed filings

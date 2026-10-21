@@ -89,11 +89,15 @@ def test_results_are_sized_by_the_change_itself():
     small = score(card(20, 12), "RESULTS", [], None, company, needs_review=False, model_impact="MODERATE")
     assert not slow.gates["magnitude"] and slow.pillars["magnitude"] == 10
     assert not small.gates["magnitude"] and small.pillars["magnitude"] == 12  # sized, below the gate
-    # a narrower loss is not growth; a loss turned to profit is
+    # a narrower loss is not growth, nor a loss turned to profit (a year-ago one-off reversing, blind review)
     narrower = score(card(20, 40, prev=-50.0), "RESULTS", [], None, company, needs_review=False, model_impact="MODERATE")
     assert not narrower.gates["magnitude"]
     turned = card(20, 0)
     turned["results"]["pat"] = {"value": 12.0, "prev_year": -5.0, "yoy_pct": None}
-    assert score(turned, "RESULTS", [], None, company, needs_review=False, model_impact="MODERATE").gates["magnitude"]
+    assert not score(turned, "RESULTS", [], None, company, needs_review=False, model_impact="MODERATE").gates["magnitude"]
+    # profit halved from the last quarter: a weak year-ago base (Eimco Elecon), not a size
+    fell = card(71, 46)
+    fell["results"]["pat"]["qoq_pct"] = -49.1
+    assert not score(fell, "RESULTS", [], None, company, needs_review=False, model_impact="MODERATE").gates["magnitude"]
     # the same figures on a call card do not count twice
     assert not score(card(31, 43), "CONCALL_PRESENTATION", [], None, company, needs_review=False, model_impact="MODERATE").gates["magnitude"]

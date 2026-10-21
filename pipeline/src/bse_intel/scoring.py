@@ -123,14 +123,16 @@ def _net_worth(dossier: dict | None) -> float | None:
 
 
 def _results_size(card: dict) -> tuple[float, str] | None:
-    """A results card's size for Gate 1: PAT growth YoY when revenue grew 15% or more, a loss turned to profit as 25%;
-    None when the figures are missing or revenue grew less (a profit jump on flat sales is not a size)."""
+    """A results card's size for Gate 1: PAT growth YoY when revenue grew 15% or more and PAT did not fall more than 30%
+    from the quarter before; None otherwise. A loss turned to profit is not a size: 4 of the 5 such quarters the blind
+    review read were a year-ago one-off charge reversing (PNB Gilts, Ganesh Benzoplast, SIS, IndusInd; 2026-10-21), and
+    a sharp fall from the last quarter is a weak year-ago base, not a strong quarter (Eimco Elecon, -49% QoQ)."""
     results = card.get("results") or {}
     rev = (results.get("revenue") or {}).get("yoy_pct")
     pat = results.get("pat") or {}
-    if pat.get("value") is not None and pat.get("prev_year") is not None and pat["prev_year"] < 0 < pat["value"]:
-        return 25.0, "loss turned to profit"
-    if rev is None or rev < 15 or pat.get("yoy_pct") is None or pat["yoy_pct"] <= 0 or (pat.get("prev_year") or 0) < 0:
+    if rev is None or rev < 15 or pat.get("yoy_pct") is None or pat["yoy_pct"] <= 0 or (pat.get("prev_year") or 0) <= 0:
+        return None
+    if pat.get("qoq_pct") is not None and pat["qoq_pct"] < -30:
         return None
     return float(pat["yoy_pct"]), f"PAT {pat['yoy_pct']:+.0f}% YoY on revenue {rev:+.0f}%"
 
@@ -185,8 +187,8 @@ def score(card: dict, event_type: str, signals: list[dict], dossier: dict | None
         pillars["magnitude"] = {"HIGH": 18, "MODERATE": 10}.get(model_impact, 3)
         sized = _results_size(card) if event_type == "RESULTS" else None
         if sized:
-            # A quarter has no deal amount, so its size is the change itself: profit growth on real revenue growth, or
-            # a loss turned to profit. Without it no results card could pass Gate 1 (owner, 2026-10-21: of the 34
+            # A quarter has no deal amount, so its size is the change itself: profit growth on real revenue growth.
+            # Without it no results card could pass Gate 1 (owner, 2026-10-21: of the 34
             # high-impact cards of a week, results of +26-38% revenue stopped at 62-67 points).
             pillars["magnitude"] = max(pillars["magnitude"], _band(sized[0]))
             gate1 = sized[0] >= 25

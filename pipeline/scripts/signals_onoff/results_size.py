@@ -2,7 +2,7 @@
 
 Reads every published RESULTS card from the live API, re-scores it from its stored score (pillars and gates) with the
 rule off (as stored) and on (scoring._results_size), and lists the cards whose signal flag would change. No AI.
-Usage: python scripts/signals_onoff/results_size.py [out.json]
+Usage: python scripts/signals_onoff/results_size.py [docs/audit/signals-results-size/onoff.json]
 """
 import json
 import sys

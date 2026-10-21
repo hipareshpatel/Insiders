@@ -182,7 +182,8 @@ def test_a_live_run_stores_the_verdicts_after_the_card_and_leaves_the_card_as_wr
     (run,) = rows(sink, "select stats_json from pipeline_runs")
     assert json.loads(run["stats_json"])["critic"]["cards"] == 1
     usage = {r["model"]: r["requests"] for r in rows(sink, "select * from provider_usage")}
-    assert usage.get("gemini-3.1-flash-lite") == 1   # counted on the model's own day, with pass 1's use of it
+    # the critic call and the blind vote (plan change 6), each counted on the model's own day
+    assert usage.get("gemini-3.1-flash-lite") == 2
 
 
 def test_critic_off_switch(settings, tmp_path):
@@ -203,3 +204,20 @@ def test_the_critic_route_uses_no_card_writer_and_no_paid_or_shared_allowance(se
         assert not config["providers"][e["provider"]].get("paid")
         assert e["provider"] != "openrouter"   # one daily allowance shared with a writer
     assert critic.ROUTE == "critic" and LocalSink   # the sink the pipeline stores verdicts through
+
+
+def test_the_blind_vote_compares_enums_and_takes_the_conservative_side():
+    """Plan change 6 (shadow): a vote from the filing's opening alone; where it differs, the lower impact and the less
+    advanced deal stage; event type is only flagged."""
+    from bse_intel.critic import VoteReply, card_enums, compare_votes
+
+    card = {"event_type": "M_AND_A", "impact_level": "HIGH", "tone": "POSITIVE", "deal_value": {"stage": "COMPLETED"}}
+    enums = card_enums(card)
+    assert enums == {"event_type": "M_AND_A", "impact_level": "HIGH", "tone": "POSITIVE", "deal_stage": "COMPLETED"}
+    votes = compare_votes(enums, VoteReply.model_validate({"event_type": "m and a", "impact_level": "moderate",
+                                                           "tone": "POSITIVE", "deal_stage": "board approved"}))
+    assert votes["event_type"]["agree"] and votes["tone"]["agree"]
+    assert votes["impact_level"] == {"card": "HIGH", "vote": "MODERATE", "agree": False, "conservative": "MODERATE"}
+    assert votes["deal_stage"]["conservative"] == "BOARD_APPROVED"
+    other = compare_votes({"event_type": "RESULTS"}, VoteReply.model_validate({"event_type": "OTHER"}))
+    assert other["event_type"]["conservative"] is None

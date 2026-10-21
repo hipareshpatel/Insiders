@@ -6,6 +6,8 @@ the time and the run or PR link.
 
 ## Open
 
+- After the seed passes end (maintenance busy until then; a requeue dispatched before would be replaced in the queue): `requeue-failed --ids nse-106705473,nse-106635921,nse-106707056,nse-106597136,nse-106601360` (B3: the later card of the Sunteck Q1FY27 and Sun Pharma Q4FY26 duplicate pairs, which the one-card-per-quarter rule now marks duplicate; the three "uploads audio recording" cards, which today's rules keep out of the feed). Vedanta/HZL: no filing id found; left.
+- Standalone-made results cards, measured 21 Oct over the 30-day feed: 14 RESULTS cards on a standalone file; 4 of them for companies memory knows file consolidated (Wendt nse-106823265, HDFC Life 4af25650-945d-486d-ae4d-134cc1c6f69a, ICICI Lombard nse-106817737, ICICI Pru Life nse-106815694), all within 10 days, so the results catch-up re-reads each once its consolidated file is listed. The other 10 are checked again after the seed, when memory knows each company's basis.
 - The 13 results cards made on a standalone XBRL since 20 Sep: the results catch-up reads the recent ones again once their consolidated file is listed. Older ones (more than 10 days) stay unless re-run by id after a check of which companies file consolidated.
 
 ## Done

@@ -95,6 +95,66 @@ class CriticReply(_Lenient):
     points: Annotated[list[PointVerdict], BeforeValidator(_points)] = Field(min_length=1)
 
 
+# ------------------------------------------------------------------ the blind vote (plan change 6)
+# A second answer to the card's enumerated fields from a model that sees only the filing's opening, never the card
+# (deal stage was 4 of live review 3's 7 WRONG cards, impact_level too high on 14 of 32 in review 5). Shadow: stored
+# beside the verdicts with the conservative value where the two differ; nothing on the card changes.
+OPENING = 3000                  # characters of the filing the vote reads
+IMPACT_ORDER = ("LOW", "MODERATE", "HIGH")
+# least to most advanced: where the votes differ the less advanced stage is the conservative one
+STAGE_ORDER = ("PROPOSED", "MOU", "L1_BIDDER", "LOI", "BOARD_APPROVED", "TERMS_FINALISED", "SHAREHOLDER_APPROVED", "LOA",
+               "WORK_ORDER", "DEVELOPMENT_ORDER", "CONTRACT", "IN_PROGRESS", "PARTIALLY_COMPLETED", "COMPLETED")
+
+
+def _upper(value: Any) -> str | None:
+    text = re.sub(r"[\s/-]+", "_", str(value or "").strip().upper())
+    return text or None
+
+
+class VoteReply(_Lenient):
+    event_type: Annotated[OptStr, BeforeValidator(_upper)] = None
+    impact_level: Annotated[OptStr, BeforeValidator(_upper)] = None
+    tone: Annotated[OptStr, BeforeValidator(_upper)] = None
+    deal_stage: Annotated[OptStr, BeforeValidator(_upper)] = None
+
+
+def card_enums(card: dict) -> dict:
+    """The card's own values for the fields the vote answers (a deal's stage only when the card has a deal)."""
+    deal = card.get("deal_value") if isinstance(card.get("deal_value"), dict) else {}
+    out = {"event_type": card.get("event_type"), "impact_level": card.get("impact_level"), "tone": card.get("tone")}
+    if deal.get("stage"):
+        out["deal_stage"] = deal["stage"]
+    return {k: str(v).upper() for k, v in out.items() if v}
+
+
+def _conservative(field: str, a: str, b: str) -> str | None:
+    """The value to use when the two votes differ; None when there is no safer side (event type: flagged only)."""
+    order = IMPACT_ORDER if field == "impact_level" else STAGE_ORDER if field == "deal_stage" else None
+    if order and a in order and b in order:
+        return order[min(order.index(a), order.index(b))]
+    if field == "tone":
+        return "NEUTRAL"
+    return None
+
+
+def compare_votes(card: dict, vote: VoteReply) -> dict:
+    """{field: {card, vote, agree, conservative}} for each field both sides answered."""
+    out = {}
+    for field, mine in card.items():
+        theirs = getattr(vote, field, None)
+        if not theirs:
+            continue
+        agree = theirs == mine
+        out[field] = {"card": mine, "vote": theirs, "agree": agree,
+                      "conservative": mine if agree else _conservative(field, mine, theirs)}
+    return out
+
+
+def render_vote(job: dict) -> str:
+    fields = ", ".join(job.get("card_enums", {}))
+    return f"FILING OPENING:\n{job.get('opening') or ''}\n\nAnswer only these fields: {fields}."
+
+
 # ------------------------------------------------------------------ the job: what the critic is shown
 
 
@@ -175,7 +235,9 @@ def build_job(news_id: str, card_json: dict, writer: str, text: str, view: dict 
     while _size(points) > MAX_JOB_CHARS and any(p.get("excerpt") for p in points):
         last = max((p for p in points if p.get("excerpt")), key=lambda p: points.index(p))
         last["excerpt"], last["excerpt_note"] = None, "left out for length"
-    return {"news_id": news_id, "writer": writer, "filed_at": filed_at, "event_type": event_type, "points": points}
+    card = json.loads(json.dumps(card_json, default=str))
+    return {"news_id": news_id, "writer": writer, "filed_at": filed_at, "event_type": event_type, "points": points,
+            "opening": " ".join((text or "")[:OPENING].split()), "card_enums": card_enums(card)}
 
 
 def _size(points: list[dict]) -> int:
@@ -229,11 +291,31 @@ def record(job: dict, reply: CriticReply, critic_model: str, latency_s: float) -
 
 def new_counts() -> dict:
     return {"queued": 0, "cards": 0, "points": 0, "flagged_points": 0, "flagged_cards": 0, "by_verdict": {},
-            "by_critic": {}, "not_reached": 0, "failed": 0, "store_failed": 0, "stopped": None}
+            "by_critic": {}, "not_reached": 0, "failed": 0, "store_failed": 0, "stopped": None,
+            "votes": 0, "vote_failed": 0, "vote_disagree": {}}
+
+
+def _vote(job: dict, gateway, vote_system: str, writer: str, counts: dict) -> dict | None:
+    """The blind vote for one job, or None (no opening, nothing to vote on, or the call failed: never raises)."""
+    if not vote_system or not job.get("opening") or not job.get("card_enums"):
+        return None
+    try:
+        result = gateway.complete_json(ROUTE, vote_system, render_vote(job), VoteReply,
+                                       allow=lambda t, w=writer: family(f"{t.provider}/{t.model}") != w)
+    except Exception as exc:
+        log.info("vote for %s not taken: %s", job["news_id"], type(exc).__name__)
+        counts["vote_failed"] += 1
+        return None
+    votes = compare_votes(job["card_enums"], result.value)
+    counts["votes"] += 1
+    for field, v in votes.items():
+        if not v["agree"]:
+            counts["vote_disagree"][field] = counts["vote_disagree"].get(field, 0) + 1
+    return {"model": result.model_label, "fields": votes}
 
 
 def run(jobs: list[dict], gateway, sink, system: str, deadline: float | None, max_cards: int,
-        counts: dict | None = None, clock=time.monotonic) -> dict:
+        counts: dict | None = None, clock=time.monotonic, vote_system: str = "") -> dict:
     """Judge up to ``max_cards`` jobs; store each verdict; return the counts for the run's stats. Never raises."""
     counts = counts if counts is not None else new_counts()
     counts["queued"] += len(jobs)
@@ -269,6 +351,10 @@ def run(jobs: list[dict], gateway, sink, system: str, deadline: float | None, ma
                 counts["stopped"] = "critic calls failing"
             continue
         body = record(job, result.value, result.model_label, result.latency_s)
+        if deadline is None or clock() < deadline - MIN_LEFT_S:
+            vote = _vote(job, gateway, vote_system, writer, counts)
+            if vote:
+                body["votes"] = vote
         try:
             sink.put_object(key(job["news_id"]), json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode())
         except Exception as exc:

@@ -24,7 +24,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from . import xbrl as xbrl_fast_path
-from .dossier import forget_source, merge, new_dossier
+from .dossier import forget_source, merge, new_dossier, put_standalone
 from .models import Filing, Pass2Output
 from .nse import SourceBlockedError
 from .periods import canonical_period
@@ -43,6 +43,7 @@ class SeedStats:
     skipped: int = 0
     results_from_nse: int = 0   # quarters BSE would not serve and NSE did
     rescaled: int = 0           # files tagged in the wrong unit, put right against the company's other quarters
+    standalone_periods: int = 0  # a consolidated filer's standalone quarters, kept apart (dossier.put_standalone)
     failures: list[str] = field(default_factory=list)
 
     def line(self) -> str:
@@ -167,6 +168,41 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
             stats.rescaled += 1
     for period, (filed_on, url, parsed, _) in sorted(found.items()):
         _write_results(sink, scrip, name, company, period, filed_on, url, parsed, stats)
+    # a consolidated filer's standalone files too, kept apart for the company page's standalone view (owner,
+    # 2026-10-21); the quarters the consolidated ones cover, no more
+    consolidated = [p for p, (_, _, result, _) in found.items() if result.basis == "CONSOLIDATED"]
+    if nse is not None and symbol and consolidated:
+        _seed_standalone(sink, nse, scrip, symbol, since, set(consolidated), cache_root, stats)
+
+
+def _seed_standalone(sink, nse, scrip: str, symbol: str, since: str, periods: set[str], cache_root, stats) -> None:
+    try:
+        rows = _nse_rows(nse, symbol)
+    except SourceBlockedError:
+        raise
+    except Exception:
+        return
+    best: dict = {}
+    for row in sorted((r for r in rows if not r.consolidated), key=lambda r: r.filed_at):
+        if not row.period_end or row.period_end < since:
+            continue
+        label = canonical_period(f"quarter ended {row.period_end[8:10]}.{row.period_end[5:7]}.{row.period_end[:4]}")
+        if label in periods:
+            best[label] = row
+    if not best:
+        return
+    dossier = sink.get_dossier(scrip)
+    if dossier is None:
+        return
+    for period, row in sorted(best.items()):
+        data = _fetch(nse, row.xbrl_url, cache_root)
+        parsed = _parse_results(data, stats) if data else None
+        if parsed is None or parsed.basis == "CONSOLIDATED":
+            continue
+        put_standalone(dossier, parsed.metrics, parsed.balance_sheet, f"{row.filed_at[:10]}T18:00:00+05:30",
+                       f"xbrl:res-sa:{scrip}:{period}")
+        stats.standalone_periods += 1
+    sink.put_dossier(scrip, dossier)
 
 
 def _parse_results(data: bytes, stats: SeedStats):

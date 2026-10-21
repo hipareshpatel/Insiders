@@ -30,6 +30,13 @@ const get = (v: Values, metric: string, period: string): Cell => v.get(metric)?.
 const sub = (a: Cell, b: Cell): Cell => (a == null || b == null ? null : a - b);
 const pct = (a: Cell, b: Cell): Cell => (a == null || b == null || b === 0 ? null : (a / b) * 100);
 
+/** The basis of memory's main figures: consolidated when any of their sources is, else standalone (a company that files
+ *  only standalone results), else not stated. */
+export function mainBasis(metrics: Metric[]): "CONSOLIDATED" | "STANDALONE" | null {
+  const bases = new Set(metrics.flatMap((m) => ((m as Metric & { sources?: { basis?: string | null }[] }).sources ?? []).map((s) => s.basis)));
+  return bases.has("CONSOLIDATED") ? "CONSOLIDATED" : bases.has("STANDALONE") ? "STANDALONE" : null;
+}
+
 /** A bank files interest earned as its top line, not revenue. */
 export function isBank(metrics: Metric[]): boolean {
   return metrics.some((m) => m.metric === "interest_earned") && !metrics.some((m) => m.metric === "revenue");

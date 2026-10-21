@@ -80,3 +80,11 @@ test("a bank reads on net interest income and pre-provision profit (HDFC Bank Q4
   assert.equal(row("Operating expenses"), 43904);
   assert.equal(row("Operating profit (before provisions)"), 29378);
 });
+
+test("the main figures' basis is read from their sources", async () => {
+  const { mainBasis } = await import("../src/components/company/statements.ts");
+  const withBasis = (b: string | null) => ({ ...m("pat", "Q2FY27", 1), sources: [{ basis: b }] });
+  assert.equal(mainBasis([withBasis("STANDALONE"), withBasis("CONSOLIDATED")]), "CONSOLIDATED");
+  assert.equal(mainBasis([withBasis("STANDALONE")]), "STANDALONE");
+  assert.equal(mainBasis([m("pat", "Q2FY27", 1)]), null);
+});

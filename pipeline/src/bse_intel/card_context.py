@@ -233,9 +233,21 @@ _TOPIC = {
 }
 
 
+# Procedure, not the business (owner, 2026-10-21: Indosolar's results showed "Watching: shareholders' approval of a cost
+# auditor", on topic only through "cost"); for the decision only on a governance card, or on a deal, where a shareholder
+# vote is a stage of it. web/src/lib/cardText.ts matches it.
+_PROCEDURAL = re.compile(r"\b(?:(?:cost|statutory|secretarial|internal|branch)\s+auditors?|(?:re-?)?appoint\w*|annual general "
+                         r"meeting|postal ballot|e-?voting|scrutini[sz]er|record date|book closure|trading window|"
+                         r"company secretary|compliance officer|independent director|(?:shareholders?'?|members?'?)\s+approval)\b",
+                         re.I)
+_PROCEDURE_EVENTS = {"GOVERNANCE", "MANAGEMENT_CHANGE", "ANNUAL_REPORT", "FUNDRAISE", "M_AND_A", "RIGHTS_ISSUE"}
+
+
 def _on_topic(text: str, event_type: str) -> bool:
     words = _TOPIC.get(event_type)
     if not words:
+        return False
+    if event_type not in _PROCEDURE_EVENTS and _PROCEDURAL.search(text or ""):
         return False
     text = (text or "").lower()
     return any(re.search(rf"\b{w}\b" if len(w) <= 3 else rf"\b{w}", text) for w in words)

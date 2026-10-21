@@ -147,6 +147,11 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   trailing revenue and the company's earlier orders of the same kind ("third wind EPC win since
   May, and the largest; earlier ones were up to ₹142 Cr"), a fundraise against market cap or net
   worth, who is putting in the money (promoters or outsiders) and the stake change.
+  Each insight adds what the bullets and headline do not; never restate a fact in other words. Where the filing and
+  memory support it, cover in this order: (1) against what was expected: prior guidance, the trend, the last
+  comparable event; (2) the driver or the quality: what moved it, a one-off, who pays; (3) what it means for the
+  shareholder, or what could undo it. A procedural point (an approval, a meeting, a correction of an earlier order) is
+  not an insight: give fewer insights rather than filler.
 - Claims of "first", "maiden", "record", "all-time" or "highest-ever" only when the filing itself
   says so. Memory only covers this platform's filings since $memory_start, so "no earlier order in
   memory" does not make an order the first, and the highest figure in memory is "the highest since
@@ -165,7 +170,9 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   acquisition, no order value). Check COMPANY MEMORY first: if an earlier AGM, call or filing in
   memory already gave the figure (say the capex outlay), use it in the analysis instead of calling
   it missing. The card shows these inside "why it matters", so do not repeat
-  them in why_it_matters. Use an empty list when nothing is missing. Do not speculate.
+  them in why_it_matters. Only what this event itself should disclose: a merger's swap ratio is missing from the
+  merger filing, not from a results filing that mentions the merger. Use an empty list when nothing is missing. Do not
+  speculate.
 - key_numbers: up to 4 headline figures as {"label", "value", "change"} strings (shown as tiles on
   results and earnings-call cards), for example {"label": "PAT", "value": "₹1,901 Cr", "change": "+203% YoY"}.
 - notable_changes: think beyond any fixed checklist. Compare everything in this filing with

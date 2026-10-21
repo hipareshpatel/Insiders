@@ -23,9 +23,31 @@ def _pipeline(settings, sink):
 
 
 def cmd_run(args, settings, sink) -> int:
+    from . import pause
+
+    until = pause.paused_until(sink)
+    if until:   # the nightly memory jobs are writing memory (pause.py); the work stays queued for the next run
+        print(json.dumps({"skipped": f"paused for the nightly memory jobs until {until:%H:%M} IST"}))
+        return 0
     stats = _pipeline(settings, sink).run(args.mode, args.time_budget, args.max_backfill_days)
     print(json.dumps(stats.as_dict(), indent=2))
     return 0 if stats.status in ("OK", "PARTIAL") else 1  # a run ending in ERROR fails the workflow
+
+
+def cmd_pause_ai(args, settings, sink) -> int:
+    """No live run starts, and a running one stops between filings, until the pause ends (pause.py)."""
+    from . import pause
+
+    print(json.dumps({"paused_until": pause.pause(sink, args.minutes).isoformat(timespec="seconds")}))
+    return 0
+
+
+def cmd_resume_ai(args, settings, sink) -> int:
+    from . import pause
+
+    pause.resume(sink)
+    print(json.dumps({"paused_until": None}))
+    return 0
 
 
 def cmd_backfill_companies(args, settings, sink) -> int:
@@ -661,6 +683,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--time-budget", type=int, default=2400, help="seconds")
     p.add_argument("--max-backfill-days", type=int, default=5, help="historical days to discover per run")
     p.set_defaults(func=cmd_run)
+
+    p = sub.add_parser("pause-ai", help="pause the AI pipeline while the nightly memory jobs write (ends by itself)")
+    p.add_argument("--minutes", type=int, default=120)
+    p.set_defaults(func=cmd_pause_ai)
+    p = sub.add_parser("resume-ai", help="end the pause set by pause-ai")
+    p.set_defaults(func=cmd_resume_ai)
 
     p = sub.add_parser("backfill-companies", help="discover and analyse given companies over a range (smoke test)")
     p.add_argument("--scrips", required=True, help="comma-separated BSE scrip codes, e.g. 506525,532776")

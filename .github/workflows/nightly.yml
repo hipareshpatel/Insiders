@@ -3,6 +3,8 @@
 # live run has time; here they run every day whatever the queue.
 # 00:40 UTC = 06:10 IST: after NSE's and Yahoo's overnight updates, after D1's daily write allowance resets (05:30 IST),
 # before the market opens. Each command records its last run (kv job:<command>), shown on the System page.
+# The AI pipeline pauses while the memory jobs write (owner, 2026-10-21; pause.py): a live run holds a company's memory
+# for minutes and writes it back whole, so a job's write in between would be lost. The pause ends by itself.
 name: Nightly
 
 on:
@@ -12,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  actions: read   # sees whether a pipeline run is still going before the memory jobs start
 
 concurrency:
   group: bse-nightly
@@ -38,6 +41,19 @@ jobs:
           python-version: "3.12"
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: Pause the AI pipeline
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel pause-ai --minutes 75'
+      # a running pipeline looks for the pause once a minute and stops after the filing it is on
+      - name: Wait for a running pipeline to stop
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for i in $(seq 1 30); do
+            n=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pipeline.yml --status in_progress --json databaseId -q length)
+            [ "$n" = "0" ] && exit 0
+            sleep 30
+          done
+          echo "a pipeline run is still going after 15 min; the memory jobs start anyway"
       # one job's failure never stops the next (each step runs whatever came before)
       - name: Quarterly governance reports into memory
         if: always()
@@ -51,6 +67,10 @@ jobs:
       - name: DGTR trade-remedy cases into memory
         if: always()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel dgtr-sync --time-budget 600'
+      # before the annual-report re-runs, which are AI work themselves
+      - name: Resume the AI pipeline
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel resume-ai'
       - name: Annual reports re-read once their XBRL is listed
         if: always()
         run: timeout 12m "$RUNNER_TEMP/venv/bin/python" -m bse_intel annual-xbrl-catchup --max-companies 150 || [ $? -eq 124 ]

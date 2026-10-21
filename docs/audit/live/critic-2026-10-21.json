@@ -1,0 +1,366 @@
+[
+ {
+  "news_id": "nse-106817142",
+  "filed_at": "2026-10-14T14:10:35+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "gemini/gemini-3.8-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-21T08:15:41+05:30",
+  "latency_s": 0.7,
+  "mode": "shadow",
+  "counts": {
+   "OK": 12
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Kanohar Electricals targets ~₹950 Cr FY27 revenue; order book at ₹2,026 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Kanohar is expanding 400 kV transformer output and adding 18,000 MVA brownfield capacity for FY29, backed by an expanding order backlog.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Management guided for approximately **₹950 Cr** revenue in FY27 with an EBITDA margin profile broadly similar to FY26.",
+    "quote": "We are targeting a revenue of approximately INR950 crores with a broadly similar EBITDA margin profile as FY26.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The consolidated order book stood at **₹2,026 Cr** as of June 30, 2026, with an incremental **₹867.3 Cr** orders added in Q2.",
+    "quote": "As of June 30, 2026, our consolidated order book stood at INR2,026 odd crores, up 11% from INR1,818.3 crores as of March 31, 2026.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Planning an **18,000 MVA** brownfield expansion at Gangol to come online for FY29, funded partly through IPO proceeds.",
+    "quote": "On the capacity side, we are planning a brownfield expansion of about 18,000 MVA at our Gangol plant.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The ₹2,026 Cr order book equals 25.0% of market cap and provides visibility across the 18 to 24 month execution cycle into FY29.",
+    "quote": "The order book is expected to be executed over the next 18 to 24 months.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "High-voltage 400 kV transformers rose to 70.16% of revenue in Q1FY27, up from 52% in FY26, enriching product mix.",
+    "quote": "The contribution of 400 kV Transformers increased from 10.3% in FY24 to 52% in FY26 and stood at about 70% in Q1 of FY27.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "Railways present a ₹20,000 Cr market opportunity for traction transformers over 5 to 10 years, where Kanohar is one of two certified vendors.",
+    "quote": "And just to give a ballpark number, that that will translate into roughly INR20,000 crores of market opportunity for just for just the traction transformers in the next 5 to 10 years.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "Targeting approximately ₹950 Cr revenue in FY27 with EBITDA margins broadly similar to FY26.",
+    "quote": "We are targeting a revenue of approximately INR950 crores with a broadly similar EBITDA margin profile as FY26.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.3",
+    "field": "call_takeaways",
+    "text": "Railways envisage 1,000 traction substations requiring ~2,000 Scott transformers worth ~₹20,000 Cr over 5-10 years.",
+    "quote": "And just to give a ballpark number, that that will translate into roughly INR20,000 crores of market opportunity for just for just the traction transformers in the next 5 to 10 years.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.5",
+    "field": "call_takeaways",
+    "text": "Working capital cycle stands at roughly 120 days, comprised of 120 receivable days and 80 inventory days.",
+    "quote": "On working capital, our business carries roughly 120 days of receivables and 80 days of inventory, offset by 70 to 80 days of payables.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.6",
+    "field": "call_takeaways",
+    "text": "Supply chain planning is viewed as the primary operational risk to maintaining execution timelines.",
+    "quote": "In terms of risk, if you were to think about it, supply chain would be the key risk at this point.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106817095",
+  "filed_at": "2026-10-14T13:19:48+05:30",
+  "event_type": "RESULTS",
+  "writer": "gemini/gemini-3.5-flash-lite",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-21T08:55:14+05:30",
+  "latency_s": 0.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Elecon Engineering Company Q2FY27: revenue ₹638.94 Cr (+10.5% YoY), net profit ₹96.35 Cr (+9.8% YoY)",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Q2FY27 net profit of ₹96.35 Cr against net profit of ₹87.72 Cr a year earlier; the largest move was EBITDA of ₹147.9 Cr against ₹125.64 Cr a year earlier.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Revenue from operations Q2FY27: ₹638.94 Cr (+10.5% YoY, +22.7% QoQ).",
+    "quote": "- revenue Q2FY27: 638.94 Cr, YoY +10.5%, QoQ +22.7%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "EBITDA Q2FY27: ₹147.9 Cr (+17.7% YoY, margin 23.1%).",
+    "quote": "- ebitda Q2FY27: 147.9 Cr, YoY +17.7%, QoQ +35.5%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Net profit Q2FY27: ₹96.35 Cr (+9.8% YoY, +37.0% QoQ).",
+    "quote": "- pat Q2FY27: 96.35 Cr, YoY +9.8%, QoQ +37.0%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "EPS Q2FY27: ₹4.29 a share (+9.7% YoY, +36.6% QoQ).",
+    "quote": "- eps Q2FY27: 4.29 ₹/share, YoY +9.7%, QoQ +36.6%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Open order book expanded ~33% YoY to ₹1,635 Cr, providing strong revenue visibility for coming quarters.",
+    "quote": "The consolidated open order book stood at ₹1,635 crores as of 30th September 2026, up approximately 33% Y-o-Y, with healthy contributions from both divisions.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106822873",
+  "filed_at": "2026-10-21T09:04:51+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "gemini/gemini-3.8-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-21T10:06:58+05:30",
+  "latency_s": 0.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 10
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Tips Music Q2 revenue rose 35% YoY to ₹120 Cr; full-year content cost guided at ₹90-100 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Tips Music posted 35% YoY revenue growth in Q2 FY27 and maintained its full-year content spend cap at ₹90-100 Cr despite ₹71 Cr incurred in H1.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Q2 FY27 **revenue** rose 35% YoY to **₹120 Cr**, while **operating EBITDA** grew 25% YoY to **₹84.64 Cr** with a 70.5% margin.",
+    "quote": "Revenue for Q2 FY '27 stood at INR120 crores as compared to INR89.2 crores in Q2 FY '26, representing a year-on-year growth of 35%.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Q2 FY27 **PAT** increased 23% YoY to **₹65.5 Cr**; H1 FY27 revenue reached **₹227 Cr** (+28% YoY) with PAT of **₹109 Cr** (+11% YoY).",
+    "quote": "Profit after tax stood at INR65.5 crores, representing a growth of 23% over the previous year quarter, while PAT margin for the quarter was 54%.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The company completed an open-market **buyback** of **₹44.44 Cr** and the board declared an **interim dividend** of **₹6.50 per share**.",
+    "quote": "We have successfully completed the buyback of shares amounting to INR44.44 crores through open market buyback.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "H1 FY27 content cost reached ₹71 Cr of the ₹90-100 Cr full-year guidance, meaning H2 will be substantially lighter on content investments.",
+    "quote": "Please note, during the 6 months, the content cost was at INR71 crores, which is front-loaded, and we expect the content cost for the full year to be in the range of INR90 crores to INR100 crores only.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Management expects to exceed its baseline 20% annual top-line and bottom-line growth guidance, supported by festive seasonality in H2.",
+    "quote": "We would exceed our 20% guidance.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "Management expects to exceed 20% annual revenue and profit growth guidance, keeping conservative guidance publicly.",
+    "quote": "We would exceed our 20% guidance. We don't want to put a specific number to it.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.3",
+    "field": "call_takeaways",
+    "text": "YouTube Shorts monetisation deal remains under negotiation and is expected to be completed in Q3 FY27.",
+    "quote": "On the question of YouTube Shorts, the deal is still under negotiation. It's not been concluded.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "Catalog content acquired three or more years ago contributes around 85% of company revenue, with recent content providing 15%.",
+    "quote": "Around 85% of our revenue comes from releases which are three years and before, and 15% comes from releases in over the what we have acquired content over the last three years.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ]
+ }
+]

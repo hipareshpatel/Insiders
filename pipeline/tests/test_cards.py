@@ -1186,6 +1186,12 @@ def test_an_order_release_that_mentions_demand_stays_an_order_win():
                             None) == "LITIGATION_REGULATORY"
     assert event_type_rules("ORDER_WIN", SimpleNamespace(headline="Order", subject=""), "Penalty levied by SEBI.",
                             None) == "LITIGATION_REGULATORY"
+    # the stored cards' on/off: JSW Energy's water demand and Prism Johnson's CESTAT ruling are not orders
+    assert event_type_rules("ORDER_WIN", notice, "JMPCL has received a demand from the Water Resources Division and has "
+                            "challenged the said demand before the High Court.", None) == "LITIGATION_REGULATORY"
+    assert event_type_rules("ORDER_WIN", SimpleNamespace(headline="Prism Johnson wins CESTAT order setting aside demand",
+                                                         subject=""),
+                            "Service Tax / Excise Duty demand of Rs.34.10 Crores including penalty", None) == "LITIGATION_REGULATORY"
 
 
 def test_a_key_number_quoting_a_table_row_the_text_breaks_up():

@@ -6,6 +6,8 @@ the time and the run or PR link.
 
 ## Open
 
+- After the event-type fix reaches main: requeue-failed --ids nse-106822983,nse-106619863,nse-106635264,nse-106743427 (order wins typed litigation; re-run regenerates the cards)
+
 
 - After 16:00 IST (10:30 UTC) 21 Oct: maintenance.yml seed-memory, restart off (resume after 512008; the 20 Oct pass died at the D1 cap, deep audit D1). One dispatch, nothing queued behind it
 

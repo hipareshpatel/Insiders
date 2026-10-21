@@ -16,6 +16,7 @@ Columns:
 
 | date | class | change | on/off over stored cards | sample | published right, before → after |
 |---|---|---|---|---|---|
+| 21 Oct 12:55 | event_type | Order releases mentioning market demand no longer turned into LITIGATION_REGULATORY; "wins … orders" / "awarded … order" read as orders (pipeline.py `_TAX_OR_PENALTY`, `_REAL_ORDER`) | 304 stored ORDER_WIN + LITIGATION cards, rule decision off/on from each filing's text: 8 change; blind reviewer: 4 are order wins (L&T nse-106822983 and nse-106619863, Suzlon nse-106635264, Man Industries nse-106743427) and become right; 3 bank strike notices and Prestige's sales update are not litigation either way (wrong before and after); 0 made wrong | blind: 8 of 8 not litigation | 0 of 12 right (12:07) → next audit |
 
 ## Daily audit totals
 

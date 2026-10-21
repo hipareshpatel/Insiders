@@ -45,15 +45,17 @@ export function SystemView() {
         <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="font-display text-[18px] text-ink">Historical backfill</h2>
           <span className="num text-xs text-ink-2">
-            {s.backfill.complete ? "Complete" : `${doneDays} of ${totalDays} days discovered`} · from {s.backfill.start}
-            {s.backfill.discovered_through ? ` through ${s.backfill.discovered_through}` : ""}
+            {s.backfill.complete ? "Complete" : `Filing lists fetched for ${doneDays} of ${totalDays} days`} · {s.backfill.start}
+            {s.backfill.discovered_through ? ` to ${s.backfill.discovered_through}` : ""}
           </span>
         </div>
         <Meter value={s.backfill.complete ? 1 : doneDays / totalDays} />
         {!s.backfill.complete && s.backfill.companies_total ? (
           <div className="mt-3">
             <div className="num mb-1 text-xs text-ink-2">
-              Analysis: {num(Math.max(0, s.backfill.companies_total - (s.backfill.companies_left ?? 0)))} of {num(s.backfill.companies_total)} companies analysed (today's order)
+              {/* the list is rebuilt each morning from the companies still owing history, so this is today's progress, not the
+                  total (owner, 2026-10-21: "39 yesterday, zero this morning") */}
+              Today: {num(Math.max(0, s.backfill.companies_total - (s.backfill.companies_left ?? 0)))} of {num(s.backfill.companies_total)} companies with history still to read are done; the list restarts each morning without the finished ones
             </div>
             <Meter value={1 - (s.backfill.companies_left ?? 0) / Math.max(1, s.backfill.companies_total)} />
           </div>

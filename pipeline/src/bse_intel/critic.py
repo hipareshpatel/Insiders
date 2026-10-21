@@ -208,7 +208,7 @@ def memory_items(view: dict | None, refs: list[str]) -> list[dict]:
     if not view or not refs:
         return []
     index = {}
-    for key in ("guidance", "recent_timeline", "watchlist", "deals"):
+    for key in ("guidance", "recent_timeline", "watchlist", "deals", "previous_calls"):
         for item in view.get(key) or []:
             if isinstance(item, dict) and item.get("id"):
                 index[item["id"]] = (key, item)

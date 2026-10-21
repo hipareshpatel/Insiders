@@ -43,7 +43,12 @@ Ground rules
   Read its "notes" first. "metrics_basis" (or a metric's "basis:" line) is the basis of its figures;
   compare only figures of one basis. "restated ..., first reported X" means a later filing changed the
   figure. An item marked "same_event" is probably this filing's own event, told days earlier in another
-  document.
+  document. Its metrics include, from the half-year and year results, the cash-flow lines (operating_cash_flow,
+  investing_cash_flow, financing_cash_flow, capex); its balance_sheet is the latest statement (net worth, debt, cash,
+  total assets, receivables, inventories); its ownership has the institutional shares (mf_pct, fpi_pct,
+  insurance_pct and others) beside promoters, FIIs and DIIs. "previous_calls" are the takeaways the company's
+  earlier calls were checked to say, each with an id ("cp_1a2b3c4d"): compare this filing with them and cite the id
+  in memory_refs, as for guidance.
 - Each "--- Page" marker names the page's heading and its own unit ("amounts in ₹ lakh", "whole rupees",
   "scope: segment"): read every figure on that page in that unit and scope.
 - COMPANY MEMORY's governance is the company's own latest quarterly governance report: board size and

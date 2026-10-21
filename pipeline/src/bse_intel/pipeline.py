@@ -84,7 +84,9 @@ BUSY_STOP = 4  # filings in a row left queued because every provider was busy: s
 BATCH = 40
 COMMIT_EVERY = 5         # a company's results are saved this often, so a crash loses at most a few
 HISTORY_LIMIT = 200      # one company's filings fetched per page (a year rarely has more)
-HISTORY_INLINE = 30      # history analysed ahead of a live filing; a longer backlog goes to the backfill
+HISTORY_INLINE = 5       # history analysed ahead of a live filing; a longer backlog goes to the backfill (30 until
+                         # 21 Oct 2026: with the backfill weeks behind, 23 filings a run went to history and 1 to today's
+                         # 27 waiting filings; deep audit E11)
 MAX_ORDER = 20_000       # companies in the cached backfill order
 BACKLOG_MAX = 1_500      # history filings waiting to be read before backfill discovers another day
 PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_1y",

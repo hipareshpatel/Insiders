@@ -1293,16 +1293,24 @@ def test_a_share_under_one_percent_keeps_a_decimal():
 
 def test_a_call_cards_quarter_figure_the_xbrl_contradicts_is_found():
     """Bajaj Consumer's call transcript read "a revenue of INR233 crores with a growth of 2.7%" for a quarter its XBRL
-    tags at ₹332.83 Cr (daily audit, 21 Oct 2026). A figure equal to the quarter, its year-ago or its previous quarter
-    stays, and so does a half-year or segment figure."""
+    tags at ₹332.83 Cr, +25.5% (daily audit, 21 Oct 2026). Found only when both the figure and its stated change differ
+    from the filed ones; a figure equal to the quarter, its year-ago or its previous quarter stays, and so do a half-year,
+    segment or adjusted figure."""
     from bse_intel.results_card import call_figure_conflicts
 
-    results = {"period": "Q2FY27", "revenue": {"value": 332.83, "prev_year": 265.27, "prev_quarter": 341.57},
-               "ebitda": {"value": 82.34, "prev_year": 47.83, "prev_quarter": 83.39},
+    results = {"period": "Q2FY27", "revenue": {"value": 332.83, "prev_year": 265.27, "prev_quarter": 341.57, "yoy_pct": 25.5},
+               "ebitda": {"value": 82.34, "prev_year": 47.83, "prev_quarter": 83.39, "yoy_pct": 72.2},
                "pat": {"value": 70.15, "prev_year": 42.29, "prev_quarter": 70.75}}
-    keys = [{"label": "Revenue", "value": "₹233 Cr"}, {"label": "EBITDA", "value": "₹53 Cr"},
-            {"label": "PAT", "value": "₹70 Cr"}, {"label": "H1 EBITDA", "value": "₹167 Cr"},
-            {"label": "Revenue", "value": "₹265 Cr"}, {"label": "Exports revenue", "value": "₹40 Cr"}]
+    quarter = "In the last quarter, we delivered"
+    keys = [{"label": "Revenue", "value": "₹233 Cr", "change": "+2.7% YoY", "quote": f"{quarter} a revenue of INR233 crores"},
+            {"label": "EBITDA", "value": "₹53 Cr", "quote": f"{quarter} an EBITDA of INR53 crores"},   # no change stated
+            {"label": "EBITDA", "value": "₹60 Cr", "change": "+68% YoY", "quote": f"{quarter} an EBITDA of INR60 crores"},
+            {"label": "PAT", "value": "₹70 Cr", "quote": f"{quarter} a PAT of INR70 crores"},
+            {"label": "H1 EBITDA", "value": "₹167 Cr", "quote": "Our H1 EBITDA is INR167 crores"},
+            {"label": "Revenue", "value": "₹265 Cr", "quote": "Revenue for the quarter a year ago was INR265 crores"},
+            {"label": "Revenue", "value": "₹1,240 Cr", "quote": "For FY26 the quarter closed a year of INR1,240 crores"},
+            {"label": "Exports revenue", "value": "₹40 Cr", "quote": f"{quarter} exports of INR40 crores"},
+            {"label": "Adjusted EBITDA", "value": "₹90 Cr", "quote": f"{quarter} adjusted EBITDA of INR90 crores"}]
     found = call_figure_conflicts(results, keys)
-    assert [(c["metric"], c["value"]) for c in found] == [("revenue", "₹233 Cr"), ("ebitda", "₹53 Cr")]
+    assert [(c["metric"], c["value"]) for c in found] == [("revenue", "₹233 Cr")]   # +68% is near the filed +72.2%
     assert call_figure_conflicts(None, keys) == [] and call_figure_conflicts({"period": None}, keys) == []

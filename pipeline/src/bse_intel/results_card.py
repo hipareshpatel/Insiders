@@ -420,13 +420,22 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "") -
 # A call card's key figures against the company's own XBRL for the quarter (daily audit, 21 Oct 2026: Bajaj Consumer's
 # transcript read "a revenue of INR233 crores with a growth of 2.7%" for a quarter its results file tags at ₹332.83 Cr,
 # +25.5%; the card's headline and key numbers repeated the slip while its own results block showed the filed figures).
-# Only figures for the block's quarter: a label naming a half, nine months, a year or a segment is not compared.
-_CALL_METRICS = {"revenue": ("revenue", "total income", "income from operations", "sales", "topline"),
-                 "ebitda": ("ebitda", "operating profit"), "pat": ("pat", "net profit", "profit after tax")}
-_NOT_QUARTER = re.compile(r"\b(?:h[12]|9m|nine months|fy\d*|full[- ]year|year|annual|ytd|segments?|divisions?|business|"
-                          r"subsidiar\w*|standalone|exports?|domestic|international|volumes?)\b", re.I)
+# Compared only when the label is the plain line (not adjusted, operating, a segment or a product) and the quote speaks
+# of the quarter and of no longer period: on the 198 stored call cards with a results block, a looser rule flagged 54,
+# nearly all full-year figures labelled "Revenue", segment sales, adjusted EBITDA or the other basis; with the quarter
+# named in the quote 7 still differed, mostly a management definition or the other basis. So the stated change must
+# contradict the filed one too (more than CALL_CHANGE_GAP points): 2 of the 198, Bajaj Consumer's slip among them.
+_CALL_METRICS = {"revenue": ("revenue", "total income", "revenue from operations"), "ebitda": ("ebitda",),
+                 "pat": ("pat", "net profit", "profit after tax")}
+_PLAIN_LABEL = re.compile(r"^(?:q[1-4]\s*(?:fy\d{2})?\s*)?(?:consolidated\s+)?(?:revenue(?: from operations)?|total income|"
+                          r"ebitda|pat|net profit|profit after tax)$", re.I)
+_QUARTER_WORDS = re.compile(r"\b(?:quarter|q[1-4])\b", re.I)
+_LONGER_PERIOD = re.compile(r"\b(?:h[12]|9m|nine months|half|fy\s?\d{2,4}|full[- ]year|for the year|annual|ytd|year to date|"
+                            r"financial year)\b", re.I)
 _CRORE = re.compile(r"₹\s?([\d,]+(?:\.\d+)?)\s*(?:cr|crore)\b", re.I)
 CALL_FIGURE_TOLERANCE = 0.05
+CALL_CHANGE_GAP = 10.0
+_CHANGE = re.compile(r"([+-−]?\d+(?:\.\d+)?)\s*%\s*(yoy|y-o-y|qoq|q-o-q)", re.I)
 
 
 def _crore(text: str | None) -> float | None:
@@ -441,13 +450,22 @@ def call_figure_conflicts(results: dict | None, key_numbers: list[dict]) -> list
         return []
     conflicts = []
     for k in key_numbers or []:
-        label = (k.get("label") or "").lower()
+        label = " ".join((k.get("label") or "").lower().split())
+        quote = k.get("quote") or ""
+        if not _PLAIN_LABEL.match(label) or not _QUARTER_WORDS.search(quote) or _LONGER_PERIOD.search(quote):
+            continue
         metric = next((m for m, words in _CALL_METRICS.items() if any(w in label for w in words)), None)
         value = _crore(k.get("value"))
         line = results.get(metric) if metric else None
-        if line is None or value is None or _NOT_QUARTER.search(label) or not isinstance(line.get("value"), (int, float)):
+        if line is None or value is None or not isinstance(line.get("value"), (int, float)):
             continue
         filed = [v for v in (line.get("value"), line.get("prev_year"), line.get("prev_quarter")) if isinstance(v, (int, float)) and v]
+        stated = _CHANGE.search(k.get("change") or "")
+        filed_change = (line.get("yoy_pct") if stated and stated.group(2).lower().startswith("y") else line.get("qoq_pct")) \
+            if stated else None
+        if not isinstance(filed_change, (int, float)) \
+                or abs(float(stated.group(1).replace("−", "-")) - filed_change) <= CALL_CHANGE_GAP:
+            continue
         if filed and all(abs(value - v) > max(1.0, abs(v) * CALL_FIGURE_TOLERANCE) for v in filed):
             conflicts.append({"label": k.get("label"), "value": k.get("value"), "metric": metric, "filed": line["value"],
                               "period": results["period"]})

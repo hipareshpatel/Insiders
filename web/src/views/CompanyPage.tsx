@@ -13,6 +13,7 @@ import { CardList, RailTime, railDate } from "../components/company/CardList";
 import { chartTags, dayChange, allZero, inStatementOrder, metricLabel, nextResults, overdue, peTtm, quarterly, quarterLabel, short, statementPlace, unitValue, yearRange } from "../components/company/companyText";
 import { dayMonth, GoodAndBad, StorySoFar, WhatToTrack, type Parsed } from "../components/company/OverviewPanels";
 import { CapitalAndCalibration, parseRoiic } from "../components/company/Execution";
+import { Financials } from "../components/company/Financials";
 import { Panel } from "../components/company/Panel";
 import { IMPACT_DOT } from "../components/PriceChart";
 import { Badge } from "../components/ui/badge";
@@ -162,8 +163,14 @@ export function CompanyPage() {
                 {dossier && <BalanceTiles dossier={dossier} />}
                 {dossier && <SegmentMix dossier={dossier} />}
               </div>
-              {/* the whole width: eight quarters of every line (one company view, owner 2026-10-21) */}
-              {dossier && <div className="min-w-0 lg:col-span-2"><MetricsPanel dossier={dossier} balance={false} /></div>}
+              {/* the statements as screener.in lays them out, then every other figure the filings gave (owner, 2026-10-21) */}
+              {dossier && <div className="min-w-0 space-y-[18px] lg:col-span-2"><Financials dossier={dossier} />
+                <details className="group">
+                  <summary className="cursor-pointer list-none text-[13px] font-bold text-accent marker:hidden">
+                    <span className="mr-1 inline-block transition-transform group-open:rotate-90">›</span>Every reported figure, line by line
+                  </summary>
+                  <div className="mt-3"><MetricsPanel dossier={dossier} balance={false} /></div>
+                </details></div>}
             </div>
           ) : <Empty title="No results analysed yet" />
         )}
@@ -544,7 +551,8 @@ export function MetricsPanel({ dossier, balance: showBalance = true, periods = 8
       byKind.set(kind, g);
     }
     for (const g of byKind.values()) g.periods.sort((a, b) => periodEnd(a).localeCompare(periodEnd(b)));
-    return [...byKind.entries()];
+    // quarters and years only (owner, 2026-10-21: "what is monthly"; half-year and nine-month sums are in the years)
+    return [...byKind.entries()].filter(([k]) => k === "Quarter" || k === "Year");
   }, [dossier.financial_metrics]);
   const [kind, setKind] = useState<string | null>(null);
   const active = groups.find(([k]) => k === kind) ?? groups.find(([k]) => k === "Quarter") ?? groups[0];
@@ -554,7 +562,7 @@ export function MetricsPanel({ dossier, balance: showBalance = true, periods = 8
 
   return (
     <div className="space-y-4">
-      <Panel title="Financial baseline" sub="every figure from a filing; restatements replace older numbers">
+      <Panel title="Every reported figure" sub="each line memory holds from the filings; restatements replace older numbers">
         {!active ? <p className="text-sm text-ink-3">No financial metrics extracted yet.</p> : (
           <>
             {groups.length > 1 && (
@@ -750,7 +758,7 @@ function QuarterBars({ dossier }: { dossier: Dossier }) {
   const hi = Math.max(...values) * 1.08 || 1;
   const label = (v: number) => metric === "ebitda_margin" ? `${v.toFixed(1)}%` : Math.abs(v) >= 10000 ? `${(v / 1000).toFixed(1)}k` : Math.round(v).toLocaleString("en-IN");
   return (
-    <Panel title="Quarterly results" hint={
+    <Panel title="Quarterly trend" hint={
       <span className="inline-flex rounded-[11px] bg-surface-2 p-[3px]">
         {([["revenue", "Revenue"], ["pat", "Profit"], ["ebitda_margin", "Margin"]] as const).map(([k, l]) => (
           <button key={k} type="button" onClick={() => setMetric(k)}

@@ -744,10 +744,22 @@ def test_a_headline_number_answers_to_its_own_quote_not_the_whole_filing():
     assert problems and "458" in problems[0] and "its own quote does not" in problems[0]
     assert unquoted == []
 
-    # a quote that is not in the filing at all is its own problem
-    invented = card("₹45.79 Cr", "Finance costs rose sharply during the year under review")
-    problems, _, _ = check_quoted_numbers(invented, filing)
+    # a quote that is not the filing's own words: its figure answers to the filing's lines naming it (owner, 2026-10-21:
+    # 63 of 76 cards held for a reworded quote were right), so the right figure passes, noted ...
+    reworded = card("₹45.79 Cr", "Finance costs rose sharply during the year under review")
+    problems, _, notes = check_quoted_numbers(reworded, filing, unit)
+    assert problems == [] and "its quote is not the filing's own words" in notes[0]
+    # ... and the 10x misreading does not, though 4,583 million of plant rounds to it on another line
+    misread = card("₹458 Cr", "Finance costs rose sharply during the year under review")
+    problems, _, _ = check_quoted_numbers(misread, filing, unit)
     assert problems and "not in the filing" in problems[0]
+    # nor a figure in no line that names it
+    nowhere = card("₹12.40 Cr", "Finance costs rose sharply during the year under review")
+    assert check_quoted_numbers(nowhere, filing, unit)[0]
+    # a figure the company's memory holds, on its own line, is labelled as memory's, not the filing's
+    problems, _, notes = check_quoted_numbers(card("₹38.00 Cr", "Finance costs were higher"), filing, unit,
+                                              memory="Q1FY26 finance cost: 38.00 Cr")
+    assert problems == [] and "from company memory" in notes[0]
 
     # and a figure with no quote is reported, not failed, while the models learn the field
     none_given = card("₹45.79 Cr", None)

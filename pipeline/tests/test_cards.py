@@ -1168,6 +1168,26 @@ def test_a_unit_resuming_after_an_outage_is_not_capex():
     assert event_type_rules("CAPEX", filing("Capacity expansion resumed after the monsoon"), "", None) == "CAPEX"
 
 
+def test_an_order_release_that_mentions_demand_stays_an_order_win():
+    """L&T's order-win release (21 Oct 2026) mentioned demand for its sector and read "awarded an EPC order"; the tax rule
+    typed it LITIGATION_REGULATORY (daily audit). A tax or duty demand typed as an order still becomes litigation."""
+    from types import SimpleNamespace
+
+    from bse_intel.pipeline import event_type_rules
+
+    release = SimpleNamespace(headline="L&T Wins Orders (*Large) in New Delhi and Andhra Pradesh", subject="Press Release")
+    text = ("CPWD awarded an EPC order for the Common Central Secretariat buildings. The business sees growing demand "
+            "for public infrastructure.")
+    assert event_type_rules("ORDER_WIN", release, text, None) == "ORDER_WIN"
+    notice = SimpleNamespace(headline="Receipt of order", subject="Order")
+    assert event_type_rules("ORDER_WIN", notice, "The GST authority passed an order with a demand of Rs 4.2 crore.",
+                            None) == "LITIGATION_REGULATORY"
+    assert event_type_rules("ORDER_WIN", notice, "An assessment order raising a tax demand of Rs 1.1 crore.",
+                            None) == "LITIGATION_REGULATORY"
+    assert event_type_rules("ORDER_WIN", SimpleNamespace(headline="Order", subject=""), "Penalty levied by SEBI.",
+                            None) == "LITIGATION_REGULATORY"
+
+
 def test_a_key_number_quoting_a_table_row_the_text_breaks_up():
     """Novartis India's shareholding table reached the text as "Acquirer 2:" and "25,47,189 10.32% 10.32%" on two
     lines, and the model quoted the row whole; four right cards were held this way (live reviews 1-2, 2026-10-20).

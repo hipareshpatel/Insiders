@@ -62,6 +62,7 @@ CIRCUIT_OPEN_SECONDS = 300
 RATE_PAUSES = (60.0, 300.0, 1800.0)
 MAX_PACING_WAIT = 30.0
 MAX_SLOT_WAIT = 10.0   # wait for a free slot on a concurrency-capped model, then try the next one
+PREFER_WEIGHT = 20     # PREFER_MODEL's weight multiplier: about 9 requests in 10 on a pass-2 route
 
 UNAVAILABLE, CEILING, TRANSIENT, FAILED = "unavailable", "ceiling", "transient", "failed"
 
@@ -245,6 +246,9 @@ class AIGateway:
                 month_tokens=sum(tokens(r) for k, r in month.items() if k.startswith(name + ":")),
             )
 
+        # A dispatched drain run may favour one model on every route that has it (owner, 21 Oct 2026: "use deepseek for
+        # pending and let's clear them"): PREFER_MODEL=provider:model multiplies its weight. Scheduled runs never set it.
+        prefer = (env.get("PREFER_MODEL") or "").strip()
         for route, entries in config.get("routes", {}).items():
             targets = []
             for entry in entries:
@@ -269,6 +273,8 @@ class AIGateway:
                     extra_body=dict(entry.get("extra_body", {})),
                     max_share=float(entry["max_share"]) if entry.get("max_share") is not None else None,
                 )
+                if prefer and target.key == prefer and target.api_key:
+                    target.weight *= PREFER_WEIGHT
                 targets.append(target)
                 if target.key not in self.limiters:
                     limits = Limits.from_config(entry.get("limits"))

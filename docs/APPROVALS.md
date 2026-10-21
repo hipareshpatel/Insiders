@@ -48,3 +48,9 @@ Every action taken under it is listed below with its commit or run, for the owne
   ledger of every change and its effect (docs/audit/ledger.md).
 - Keep about 5,000 D1 rows a day spare for spending spare free AI quota on better output.
 - Merges queued for 05:45 IST; the owner does not push them.
+- 21 Oct 19:10 IST (owner, in the lead session): "use deepseek for pending and let's clear them". The prepaid DeepSeek
+  (D24) drains the pending queue on the scheduled pipeline runs while `pipeline/config/drain_until` is ahead
+  (2026-10-23 00:00 UTC): key passed, DeepSeek preferred on every route that has it (PREFER_MODEL, weight x20), 8
+  workers. The balance is prepaid with no card, so spending stops when it runs out; past the date, or with the file
+  removed, the pipeline is free-tier only again. Cards keep their model label, so the daily audit scores DeepSeek's
+  (47% WRONG in round 1, before today's checks).

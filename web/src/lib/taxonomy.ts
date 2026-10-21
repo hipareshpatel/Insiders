@@ -20,10 +20,12 @@ export const EVENT_LABELS: Record<string, string> = {
 };
 
 /** Feed tabs: each maps to API filters. */
-export const FEED_TABS: { key: string; label: string; impact?: string; category?: string }[] = [
+export const FEED_TABS: { key: string; label: string; impact?: string; category?: string; turnaround?: string }[] = [
   { key: "all", label: "All filings" },
   { key: "high", label: "High impact", impact: "HIGH" },
   { key: "results", label: "Results", category: "RESULTS,CONCALL_PRESENTATION,ANNUAL_REPORT" },
+  // a quarter's profit after a year-ago loss: not a signal (4 of 5 were a one-off reversing, 2026-10-21), so its own tab
+  { key: "turnaround", label: "Turnarounds", category: "RESULTS", turnaround: "1" },
   { key: "growth", label: "Capex & orders", category: "CAPEX,ORDER_WIN,PRODUCT_LAUNCH,MONTHLY_BUSINESS_UPDATE" },
   { key: "capital", label: "Capital & deals", category: "RIGHTS_ISSUE,FUNDRAISE,M_AND_A,CORPORATE_ACTION,DEBT_RATINGS" },
   { key: "governance", label: "Governance & regulatory", category: "GOVERNANCE,MANAGEMENT_CHANGE,LITIGATION_REGULATORY" },

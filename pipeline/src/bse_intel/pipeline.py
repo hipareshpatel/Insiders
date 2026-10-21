@@ -3609,7 +3609,7 @@ class Pipeline:
             # the same window as the feed and the Signals page ask for (it was 3 days, so the page showed none from days 4-7)
             signals = self.sink.query("snapshot_signals", [start])
             body = {"generated_at": now_iso(), "from": start, "limit": SNAPSHOT_PAGE,
-                    "feed": {"cards": cards, "total": total}, "signals": signals}
+                    "feed": {"cards": cards, "total": total}, "signals": signals, "signals_from": start}
             self.sink.put_object(SNAPSHOT_KEY, json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode())
         except Exception as exc:  # the snapshot is an optimisation; the feed falls back to D1
             log.warning("snapshot not published: %s", exc)

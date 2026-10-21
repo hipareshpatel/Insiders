@@ -116,6 +116,7 @@ interface Snapshot {
   limit: number;
   feed: { cards: unknown[]; total: number };
   signals: unknown[];
+  signals_from?: string; // the window the signals were built for (the pipeline's 7 days); older snapshots held 3
 }
 
 /** The pipeline publishes the default first page and the top signals to R2 after every run, so the
@@ -169,6 +170,9 @@ export async function feed(c: Context<AppEnv>, withHeld = false) {
   if (sector) where.push(`+c.sector IN (SELECT value FROM json_each(${p(sector)}))`);
   if (session) where.push(`+c.market_session IN (SELECT value FROM json_each(${p(session)}))`);
   if (q.watch === "1") where.push("co.watchlist = 1");
+  if (q.turnaround === "1") {
+    where.push(`json_extract(c.card_json, '$.results.pat.prev_year') < 0 AND json_extract(c.card_json, '$.results.pat.value') > 0`);
+  }
   if (cursorAt) where.push(`(c.filed_at, c.news_id) < (${p(cursorAt)}, ${p(cursorId ?? "")})`);
   if (q.review === "0") where.push("c.needs_review = 0");
   if (withHeld && q.held === "only") where.push("c.held = 1");
@@ -212,7 +216,7 @@ api.get("/signals", async (c) => {
   const fromAt = q.from_at && /^\d{4}-\d{2}-\d{2}T/.test(q.from_at) ? q.from_at : `${isDate(q.from) ? q.from : todayIst()}`;
   const toAt = q.to_at && /^\d{4}-\d{2}-\d{2}T/.test(q.to_at) ? q.to_at : `${isDate(q.to) ? q.to : "2999-12-31"}T99`;
   const snap = !q.from_at && !q.to && q.from ? await snapshot(c) : null;
-  if (snap && snap.from === q.from) return c.json({ cards: snap.signals, source: "snapshot" });
+  if (snap && snap.signals_from === q.from) return c.json({ cards: snap.signals, source: "snapshot" });
   const { results } = await c.env.DB.prepare(`
     SELECT ${CARD_COLUMNS}
       FROM cards c LEFT JOIN companies co ON co.scrip_code = c.scrip_code

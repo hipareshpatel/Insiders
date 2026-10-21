@@ -36,7 +36,7 @@ export function FeedView() {
   const view: View = params.get("view") === "list" ? "list" : "cards";
   const filters: FeedFilters = {
     from, to: today,
-    impact: tab.impact, category: tab.category,
+    impact: tab.impact, category: tab.category, turnaround: tab.turnaround,
     size: params.get("size") ?? undefined,
     sector: params.get("sector") ?? undefined,
     q: params.get("q") ?? undefined,

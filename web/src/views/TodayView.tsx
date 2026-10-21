@@ -59,7 +59,7 @@ export function TodayView() {
   const withLow = params.get("low") === "1";
   const page = Math.max(1, Number.parseInt(params.get("page") ?? "1", 10) || 1);
   const base: FeedFilters = {
-    from_at: fromAt, category: "category" in tab ? tab.category : undefined,
+    from_at: fromAt, category: "category" in tab ? tab.category : undefined, turnaround: "turnaround" in tab ? tab.turnaround : undefined,
     size: params.get("size") ?? undefined, sector: params.get("sector") ?? undefined, session: params.get("session") ?? undefined,
     review: params.get("verified") === "1" ? "0" : undefined, watch: params.get("watch") === "1" ? "1" : undefined,
     q: params.get("q") ?? undefined,

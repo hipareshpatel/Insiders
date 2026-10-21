@@ -469,7 +469,7 @@ def test_run_publishes_the_homepage_snapshot(settings):
     sink.put_object("daily_feed/latest_snapshot.json", b"{}")
     pipeline._publish_snapshot()
     snap = json.loads(sink.get_object("daily_feed/latest_snapshot.json"))
-    assert snap["from"] == start and [c["news_id"] for c in snap["signals"]] == [filings[1].news_id]
+    assert snap["from"] == snap["signals_from"] == start and [c["news_id"] for c in snap["signals"]] == [filings[1].news_id]
 
 
 def test_owner_starred_and_noise_cards_are_shown_to_the_analyst(settings):

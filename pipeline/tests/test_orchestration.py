@@ -462,6 +462,14 @@ def test_run_publishes_the_homepage_snapshot(settings):
     assert [c["news_id"] for c in sink.query("snapshot_feed", [start, 50])] == [filings[1].news_id]
     assert sink.query("snapshot_count", [start])[0]["n"] == 1
     assert filings[0].news_id not in [c["news_id"] for c in sink.query("snapshot_signals", [start])]
+    # The snapshot's signals cover the page's 7 days: they covered 3, so the Signals page showed none from days 4-7
+    # (owner, 2026-10-21: "Signals page is empty most days").
+    five_days = (now - timedelta(days=5)).isoformat()
+    sink._db.execute("UPDATE cards SET is_actionable_signal = 1, filed_at = ? WHERE news_id = ?", (five_days, filings[1].news_id))
+    sink.put_object("daily_feed/latest_snapshot.json", b"{}")
+    pipeline._publish_snapshot()
+    snap = json.loads(sink.get_object("daily_feed/latest_snapshot.json"))
+    assert snap["from"] == start and [c["news_id"] for c in snap["signals"]] == [filings[1].news_id]
 
 
 def test_owner_starred_and_noise_cards_are_shown_to_the_analyst(settings):

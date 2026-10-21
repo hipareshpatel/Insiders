@@ -3606,7 +3606,8 @@ class Pipeline:
         try:
             cards = self.sink.query("snapshot_feed", [start, SNAPSHOT_PAGE])
             total = (self.sink.query("snapshot_count", [start]) or [{"n": len(cards)}])[0]["n"]
-            signals = self.sink.query("snapshot_signals", [(today - timedelta(days=3)).isoformat()])
+            # the same window as the feed and the Signals page ask for (it was 3 days, so the page showed none from days 4-7)
+            signals = self.sink.query("snapshot_signals", [start])
             body = {"generated_at": now_iso(), "from": start, "limit": SNAPSHOT_PAGE,
                     "feed": {"cards": cards, "total": total}, "signals": signals}
             self.sink.put_object(SNAPSHOT_KEY, json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode())

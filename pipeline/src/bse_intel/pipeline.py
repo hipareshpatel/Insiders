@@ -851,6 +851,40 @@ def _filing_labels(raw: str, filing: str, yoy: bool) -> bool:
     return bool(filing) and re.search(rf"(?<![\d.]){number}{_FILING_YOY if yoy else _FILING_QOQ}", filing, re.I) is not None
 
 
+_BASIS_LINES = ("revenue", "ebitda", "pbt", "pat", "total_income", "interest_earned", "nii")
+_BASIS_LABEL = {"ebitda": "EBITDA", "pbt": "PBT", "pat": "PAT", "nii": "NII", "total_income": "total income",
+                "interest_earned": "interest earned"}
+
+
+def basis_mixups(out: Pass2Output, tagged, standalone) -> list[str]:
+    """A crore figure on a consolidated card that is the standalone file's figure for that line, not the consolidated
+    one: Ceigall's EBITDA ₹121 Cr and margin beside consolidated revenue (independent review, 2026-10-21; owner: "not
+    using consolidated numbers where those are there or mixing them with standalone"). Judged only where the two files
+    differ by more than 3% for the quarter, at the figure's own decimals."""
+    if out.card is None or tagged is None or standalone is None or tagged.basis != "CONSOLIDATED":
+        return []
+    from .grounding import _tokens
+
+    own = {m.metric: m.value for m in tagged.metrics if m.period == tagged.period and m.value is not None}
+    other = {m.metric: m.value for m in standalone.metrics if m.period == tagged.period and m.value is not None}
+    pairs = [(name, own[name], other[name]) for name in _BASIS_LINES if name in own and name in other
+             and own[name] and abs(other[name] - own[name]) > 0.03 * abs(own[name])]
+    if not pairs:
+        return []
+    found = []
+    for text in _card_texts(out):
+        clean = text.replace("**", "")
+        for value, decimals, pos, kind, raw in _tokens(clean):
+            if kind == "pct" or not re.match(r"\s*(?:cr\b|crores?\b)", clean[pos + len(raw):pos + len(raw) + 8], re.I):
+                continue
+            for name, consolidated, alone in pairs:
+                if round(abs(alone), decimals) == round(abs(value), decimals) != round(abs(consolidated), decimals):
+                    found.append(f'"{raw} Cr" is the standalone {_BASIS_LABEL.get(name, name)} '
+                                 f"({alone:,.2f} Cr); this card is consolidated ({consolidated:,.2f} Cr): use the "
+                                 "consolidated figure")
+    return list(dict.fromkeys(found))[:4]
+
+
 def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None", filing: str = "") -> list[str]:
     """A "% YoY" on the card that is the quarter-on-quarter change of a tagged figure (and no figure's
     YoY), or the reverse: SML's results cards called the fall from Q2 a fall from a year ago.
@@ -2340,20 +2374,26 @@ class Pipeline:
             return max(timely, key=lambda link: link.filed_at)
         return min(links, key=lambda link: link.filed_at) if links else None
 
-    def _standalone_bank_ratios(self, filing: Filing, tagged) -> None:
-        """A bank's consolidated file carries no gross NPA, net NPA or RoA (0 fillers, T2 2026-10-20): the same
-        quarter's standalone file gives them. Best effort: the card goes on without them if it cannot be read."""
+    def _standalone_file(self, filing: Filing, tagged):
+        """The standalone results file for the consolidated file's quarter, parsed; None when NSE lists none or it
+        cannot be read (best effort: the card goes on without it)."""
         links = [link for link in self._results_links(filing)
                  if link.period == tagged.period and link.basis == "STANDALONE"]
         if not links:
-            return
+            return None
         link = max(links, key=lambda link: link.filed_at)
         try:
-            standalone = xbrl_fast_path.parse(self._attachment(link.url, 8_000_000))
-        except Exception as exc:  # an extra: the consolidated card stands without the ratios
-            log.warning("standalone bank file for %s unavailable (%s)", filing.news_id, exc)
-            return
-        xbrl_fast_path.add_bank_ratios(tagged, standalone)
+            return xbrl_fast_path.parse(self._attachment(link.url, 8_000_000))
+        except Exception as exc:  # an extra: the consolidated card stands without it
+            log.warning("standalone results file for %s unavailable (%s)", filing.news_id, exc)
+            return None
+
+    def _standalone_bank_ratios(self, filing: Filing, tagged, standalone=None) -> None:
+        """A bank's consolidated file carries no gross NPA, net NPA or RoA (0 fillers, T2 2026-10-20): the same
+        quarter's standalone file gives them. Best effort: the card goes on without them if it cannot be read."""
+        standalone = standalone or self._standalone_file(filing, tagged)
+        if standalone is not None:
+            xbrl_fast_path.add_bank_ratios(tagged, standalone)
 
     def _timeline_flow(self, filing: Filing, company: dict, industry, doc: Document, bulk: bool, memory_complete: bool) -> Outcome:
         """A routine filing (dividend recommendation, voting result, a nil pledge declaration) gets one dated line in
@@ -2816,8 +2856,10 @@ class Pipeline:
                     what = "its consolidated results XBRL" if standalone_only else "its results XBRL"
                     raise EventXbrlPending(f"waiting for {what} ({age.total_seconds() / 60:.0f} min after the PDF)")
         tagged = self._xbrl(filing) if event_type == "RESULTS" else None
+        # the same quarter's standalone file beside a consolidated one: its figures are what a mixed card copies
+        standalone_file = self._standalone_file(filing, tagged) if tagged and tagged.basis == "CONSOLIDATED" else None
         if xbrl_fast_path.needs_standalone_bank_ratios(tagged):
-            self._standalone_bank_ratios(filing, tagged)
+            self._standalone_bank_ratios(filing, tagged, standalone_file)
         if tagged and (tagged.kind != "RESULTS" or not xbrl_fast_path.confirm(tagged, text)):
             known = (dossier_as_of(dossier, filing.filed_at, inclusive=False) or {}).get("financial_metrics")
             if tagged.kind == "RESULTS" and results_card.agrees_with_memory(tagged, known):
@@ -2953,6 +2995,7 @@ class Pipeline:
             changes += directions.multiple_guard(candidate)   # "more than double" for +74%: the amounts decide
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged, filed_text)
+            found.scale += basis_mixups(candidate, tagged, standalone_file)
             found.scale += gate.stale_columns(_card_texts(candidate), filed_text)
             found.scale += foreign_as_rupees(_card_texts(candidate), filed_text)
             found.form += headline_form(candidate) + working_text(candidate)

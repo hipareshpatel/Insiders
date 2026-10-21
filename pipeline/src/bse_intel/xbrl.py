@@ -176,12 +176,27 @@ BALANCE_TAGS = {
     "TradePayablesNoncurrent": "payables_noncurrent",
     "Deposits": "deposits_cr",
     "Advances": "advances_cr",
+    # the banking and NBFC templates (deep audit A-10, 2026-10-21: no bank had a net worth, Bajaj Finance no debt)
+    "Capital": "equity_capital_cr",
+    "ShareCapital": "equity_capital_cr",
+    "ReservesAndSurplus": "reserves_cr",
+    "ShareholdersFunds": "net_worth_cr",
+    "Borrowings": "debt_borrowings",
+    "DebtSecurities": "debt_securities",
+    "SubordinatedLiabilities": "debt_subordinated",
+    "Loans": "advances_cr",
+    "Investments": "investments_total",
+    "FixedAssets": "fixed_assets_cr",
+    "CashAndBalancesWithReserveBankOfIndia": "cash_rbi",
+    "BalancesWithBanksAndMoneyAtCallAndShortNotice": "cash_banks",
 }
+# insurers' "Assets" is the application of funds net of current liabilities (IRDAI forms; A-01): not a total
 # halves of one balance-sheet line, summed into it
 BALANCE_SUMS = {"investments_cr": ("investments_noncurrent", "investments_current"),
                 "receivables_cr": ("receivables_current", "receivables_noncurrent"),
                 "payables_cr": ("payables_current", "payables_noncurrent")}
 PER_SHARE = {"eps"}
+CASH_FLOW = {"operating_cash_flow", "investing_cash_flow", "financing_cash_flow", "net_cash_flow", "capex"}
 PERCENT = {"ebitda_margin", *RATIO_TAGS.values()}
 CONFIRM = ("revenue", "pat")  # figures looked for in the PDF text before the file is trusted
 
@@ -220,6 +235,45 @@ class XbrlResult:
 
 def _local(tag: str) -> str:
     return tag.rsplit("}", 1)[-1]
+
+
+_BALANCE_TOTALS = ("total_assets_cr", "total_liabilities_cr", "current_assets_cr", "noncurrent_assets_cr",
+                   "current_liabilities_cr", "noncurrent_liabilities_cr")
+
+
+def _check_balance(result: "XbrlResult") -> None:
+    """An insurer's totals are dropped (its "Assets" is net of current liabilities: ICICI Lombard's ₹20,891.52 Cr beside
+    ₹64,332 Cr of investments, deep audit A-01), and so are any totals that do not add up: assets must equal equity
+    (with or without minority interest) plus liabilities within 2%."""
+    sheet = result.balance_sheet
+    if sheet is None:
+        return
+    assets, worth, liabilities = sheet.total_assets_cr, sheet.net_worth_cr, sheet.total_liabilities_cr
+    off = result.template in ("GI", "LI")
+    if not off and assets and worth is not None and liabilities is not None:
+        sums = [worth + liabilities, worth + (sheet.minority_interest_cr or 0) + liabilities]
+        off = all(abs(assets - total) > 0.02 * abs(assets) for total in sums)
+        if off:
+            log.info("balance sheet totals refused: assets %s against equity %s + liabilities %s", assets, worth, liabilities)
+    if off:
+        for key in _BALANCE_TOTALS:
+            setattr(sheet, key, None)
+
+
+def _legacy_year_to_date(contexts: dict[str, dict]) -> None:
+    """NSE's results files before the integrated filing (to 2024) tag the year to date as "FourD" with the quarter's own
+    dates (Titan and Asian Paints Q4FY24, Q4FY23, Q2FY24: deep audit A-03, 2026-10-21), so the year's figures read as
+    the quarter's and its cash flow was stored under the quarter. Its start is the financial year's (1 April): from
+    a March quarter that makes it the year, from September the half year, from December nine months."""
+    quarter, ytd = contexts.get("OneD"), contexts.get("FourD")
+    if not quarter or not ytd or quarter.get("dims") or ytd.get("dims"):
+        return
+    start, end = ytd.get("startDate"), ytd.get("endDate")
+    if not start or not end or (start, end) != (quarter.get("startDate"), quarter.get("endDate")):
+        return
+    fy_start = date(end.year if end.month >= 4 else end.year - 1, 4, 1)
+    if fy_start < start:
+        ytd["startDate"] = fy_start
 
 
 def _contexts(root) -> dict[str, dict]:
@@ -360,6 +414,7 @@ def parse(data: bytes) -> XbrlResult | None:
     contexts = _contexts(root)
     if not contexts:
         return None
+    _legacy_year_to_date(contexts)
     units = _units(root)
     facts = list(_facts(root))
     names = {name for name, *_ in facts}
@@ -371,6 +426,7 @@ def parse(data: bytes) -> XbrlResult | None:
     result = _results(facts, contexts, units, text_facts, tags)
     if result:
         result.template = taxonomy(data)
+        _check_balance(result)
     return result
 
 
@@ -427,6 +483,8 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                     continue
             else:
                 metric = tags[name]
+                if metric in CASH_FLOW and label.startswith("Q"):
+                    continue   # the cash-flow statement is filed for six and twelve months, never a quarter (A-03)
                 if metric in PER_SHARE:
                     if kind != "PER_SHARE" and kind != "PURE":
                         continue
@@ -478,7 +536,17 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                                        yoy_pct=yoy, qoq_pct=qoq))
     sheet = None
     if balance:
-        debt = [balance[k] for k in ("debt_noncurrent", "debt_current") if k in balance]
+        debt = ([balance[k] for k in ("debt_noncurrent", "debt_current") if k in balance]
+                or [balance[k] for k in ("debt_borrowings", "debt_securities", "debt_subordinated") if k in balance])
+        if "cash_cr" not in balance and ("cash_rbi" in balance or "cash_banks" in balance):
+            balance["cash_cr"] = balance.get("cash_rbi", 0) + balance.get("cash_banks", 0)   # a bank's cash
+        if "investments_total" in balance and not any(k in balance for k in BALANCE_SUMS["investments_cr"]):
+            balance["investments_current"] = balance["investments_total"]
+        if "net_worth_cr" not in balance and "equity_capital_cr" in balance and "reserves_cr" in balance:
+            balance["net_worth_cr"] = balance["equity_capital_cr"] + balance["reserves_cr"]   # a bank's net worth
+        if ("total_liabilities_cr" not in balance and "total_assets_cr" in balance and "net_worth_cr" in balance
+                and "deposits_cr" in balance):
+            balance["total_liabilities_cr"] = balance["total_assets_cr"] - balance["net_worth_cr"]
         sums = {key: _r(sum(balance[p] for p in parts if p in balance)) for key, parts in BALANCE_SUMS.items()
                 if any(p in balance for p in parts)}
         lines = {k: _r(v) for k, v in balance.items() if k.endswith("_cr") and k not in ("net_worth_cr", "cash_cr")}

@@ -1049,7 +1049,23 @@ def _restated(entry: dict) -> str:
     return f" restated {str(entry.get('updated_as_of') or '')[:10]}, first reported {first:g}"
 
 
-def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000, printed: set[str] | None = None,
+# The balance-sheet lines the model is shown (the page shows the rest): the full statement is in memory since the XBRL
+# parser stores it (2026-10-21) and would crowd out the periods of the metrics
+VIEW_BALANCE = ("period", "as_of", "net_worth_cr", "gross_debt_cr", "net_debt_cr", "cash_cr", "total_assets_cr",
+                "receivables_cr", "inventories_cr", "payables_cr", "deposits_cr", "advances_cr", "credit_rating",
+                "rating_agency", "rating_outlook")
+VIEW_CALLS = 2          # earlier calls whose checked takeaways the model is shown
+VIEW_CALL_POINTS = 8    # points from each
+
+
+def call_point_id(point: dict) -> str:
+    """A stable id for a stored call takeaway, so a later card can cite it (memory_refs)."""
+    import hashlib
+
+    return "cp_" + hashlib.sha1(f"{point.get('news_id')}|{point.get('text')}".encode()).hexdigest()[:8]
+
+
+def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, printed: set[str] | None = None,
                filing_text: str | None = None) -> dict | None:
     """Compact memory for the prompt, containing only facts known before ``cutoff``.
 
@@ -1160,6 +1176,16 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000, prin
                    for p in dossier.get("predictions", []) if p.get("created_on", "") < cutoff
                    and (p["status"] == "OPEN" or (p.get("resolved_on") or "") >= cutoff)]
     summary = dossier.get("business_summary")
+    # what earlier calls said, as the call cards checked it (call_summary.remember_call_points): for "vs the last call"
+    calls_seen = []
+    for p in dossier.get("call_points", []):
+        if str(p.get("date") or "") < cutoff[:10] and p.get("news_id") not in calls_seen:
+            calls_seen.append(p.get("news_id"))
+    previous_calls = [
+        {"id": call_point_id(p), "date": p.get("date"), "category": p.get("category"), "text": p.get("text"),
+         **({"versus_prior": p["versus_prior"]} if p.get("versus_prior") else {})}
+        for news_id in calls_seen[:VIEW_CALLS]
+        for p in [q for q in dossier.get("call_points", []) if q.get("news_id") == news_id][:VIEW_CALL_POINTS]]
 
     for periods, timeline_n, guidance_n in ((6, 12, 20), (4, 8, 12), (2, 5, 8), (1, 3, 5)):
         lines = metric_lines(periods)
@@ -1175,7 +1201,8 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 6000, prin
                       "use the filing's own columns"] if withheld else None,
             "business_summary": summary["text"] if summary and before(summary) else None,
             "metrics": lines,
-            "balance_sheet": {k: v for k, v in balance[-1].items() if k != "source_news_id"} if balance else None,
+            "balance_sheet": {k: v for k, v in balance[-1].items() if k in VIEW_BALANCE and v is not None} if balance else None,
+            "previous_calls": previous_calls[:max(4, guidance_n)],
             "guidance": [g for g in guidance if g["status"] in ("OPEN", "ON_TRACK", "DELAYED", "REVISED")][-guidance_n:],
             "watchlist": watch[-guidance_n:],
             "recent_timeline": timeline[-timeline_n:],

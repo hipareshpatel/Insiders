@@ -9,7 +9,8 @@ Sources and truth
   (metrics_basis or a metric's basis line). "restated ..., first reported X" means a later filing changed the figure.
   An item marked "same_event" is probably this filing's own event told days earlier: never present it as history.
   Memory covers this platform's filings since $memory_start only: its highest figure is "the highest since <period>",
-  never a record, and no earlier order in memory does not make an order the first.
+  never a record, and no earlier order in memory does not make an order the first. "previous_calls" are what the
+  company's earlier calls were checked to say (ids "cp_..."): compare with them and cite the id in memory_refs.
 - Each "--- Page" marker names the page's heading, its unit and its scope: read every figure on that page in them.
 - Keep the filing's tense, certainty and stage: proposed is not approved, an LOI is not a contract, an agreement
   signed is not a deal completed, one approval is not the final sanction, a hearing has no outcome until the filing

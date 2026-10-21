@@ -630,3 +630,22 @@ def test_a_procedural_watch_item_is_not_for_the_decision():
                                      "for FY2026-27", "status": "OPEN", "created_on": "2026-08-01", "source_news_id": "n0"}]}
     assert memory_context(before, "RESULTS", "2026-10-20", "n9") == []
     assert [p["label"].split(",")[0] for p in memory_context(before, "GOVERNANCE", "2026-10-20", "n9")] == ["Watching"]
+
+
+def test_the_view_shows_earlier_calls_and_the_balance_sheets_key_lines():
+    """Memory now holds the whole balance sheet and each call's checked takeaways (21 Oct 2026); the model sees the
+    key balance-sheet lines and the last calls' points with ids it can cite."""
+    from bse_intel.dossier import call_point_id, view_as_of
+
+    dossier = {"company_name": "Demo", "financial_metrics": [], "balance_sheet": [
+        {"period": "Q2FY27", "as_of": "2026-10-10T18:00:00+05:30", "net_worth_cr": 1000.0, "total_assets_cr": 3000.0,
+         "fixed_assets_cr": 900.0, "cwip_cr": 12.0, "source_news_id": "x"}],
+        "call_points": [{"news_id": "c2", "date": "2026-08-10", "category": "Guidance", "text": "FY27 volume growth 10-12%"},
+                        {"news_id": "c1", "date": "2026-05-10", "category": "Capex", "text": "Plant 2 by Q3FY27"},
+                        {"news_id": "c3", "date": "2026-10-25", "category": "Guidance", "text": "after the filing"}]}
+    view = view_as_of(dossier, "2026-10-20T10:00:00+05:30")
+    assert view["balance_sheet"] == {"period": "Q2FY27", "as_of": "2026-10-10T18:00:00+05:30", "net_worth_cr": 1000.0,
+                                     "total_assets_cr": 3000.0}
+    calls = view["previous_calls"]
+    assert [c["text"] for c in calls] == ["FY27 volume growth 10-12%", "Plant 2 by Q3FY27"]
+    assert calls[0]["id"] == call_point_id(dossier["call_points"][0]) and calls[0]["id"].startswith("cp_")

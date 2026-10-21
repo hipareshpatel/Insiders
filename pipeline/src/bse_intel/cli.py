@@ -34,6 +34,15 @@ def cmd_run(args, settings, sink) -> int:
     return 0 if stats.status in ("OK", "PARTIAL") else 1  # a run ending in ERROR fails the workflow
 
 
+def cmd_release_pruned(args, settings, sink) -> int:
+    """Held cards whose only faults were points their quote did not carry, published without those points (prune.py)."""
+    from . import prune
+
+    report = prune.release(sink, dry_run=args.dry_run)
+    print(json.dumps({k: v for k, v in report.items() if k != "cards"} | {"cards": report["cards"][:50]}, ensure_ascii=False))
+    return 0
+
+
 def cmd_pause_ai(args, settings, sink) -> int:
     """No live run starts, and a running one stops between filings, until the pause ends (pause.py)."""
     from . import pause
@@ -697,6 +706,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-backfill-days", type=int, default=5, help="historical days to discover per run")
     p.set_defaults(func=cmd_run)
 
+    p = sub.add_parser("release-pruned", help="publish held cards without the points their quote did not carry, no AI")
+    p.add_argument("--dry-run", action="store_true")
+    p.set_defaults(func=cmd_release_pruned)
     p = sub.add_parser("pause-ai", help="pause the AI pipeline while the nightly memory jobs write (ends by itself)")
     p.add_argument("--minutes", type=int, default=120)
     p.set_defaults(func=cmd_pause_ai)

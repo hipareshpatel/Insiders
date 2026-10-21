@@ -187,6 +187,10 @@ def _nse_date(value: str | None) -> date | None:
         return None
 
 
+def _iso(day: date | None) -> str:
+    return day.isoformat() if day else ""
+
+
 @dataclass(frozen=True)
 class ResultsFiling:
     """One row of NSE's financial-results list: the XBRL instance and what it covers."""
@@ -200,6 +204,7 @@ class ResultsFiling:
     period_end: str = ""     # ISO date of the quarter end, where the row states it
     taxonomy: str = ""       # INDAS, NBFC_INDAS, BANKING, GI or LI, from the file name
     revised: bool = False
+    legacy: bool = False     # from the older results list (before the integrated filing): the seed reads it, cards do not
 
 
 def parse_results_rows(rows: list[dict]) -> list[ResultsFiling]:
@@ -220,6 +225,10 @@ def parse_results_rows(rows: list[dict]) -> list[ResultsFiling]:
             filed_at=filed.isoformat() if filed else "",
             xbrl_url=url,
             is_bank=str(row.get("bank") or "").strip().lower() in ("yes", "true", "1"),
+            # the quarter end, which the seed needs to reach the years before the integrated filing (deep audit A-02,
+            # 2026-10-21: without it the seed stopped at Q4FY25)
+            period_end=_iso(_nse_date(row.get("toDate"))),
+            legacy=True,
         ))
     return sorted(out, key=lambda r: r.filed_at, reverse=True)
 
@@ -232,7 +241,7 @@ def results_links(filings: list[ResultsFiling]) -> list:
 
     out = []
     for f in filings:
-        if not f.period_end:
+        if not f.period_end or f.legacy:
             continue
         end = date.fromisoformat(f.period_end)
         period = canonical_period(f"quarter ended {end:%d.%m.%Y}")

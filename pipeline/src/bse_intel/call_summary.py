@@ -247,7 +247,7 @@ def summarize_calls(dossier: dict) -> list[dict]:
 
 CARD_PER_CATEGORY = 3
 CARD_TOTAL = 8
-MEMORY_KINDS = ("guidance", "recent_timeline", "watchlist", "deals")
+MEMORY_KINDS = ("guidance", "recent_timeline", "watchlist", "deals", "previous_calls")
 _ISO_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(?:T[\d:.+\-]+)?")
 
 

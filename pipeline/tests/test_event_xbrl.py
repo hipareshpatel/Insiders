@@ -338,3 +338,12 @@ def test_a_long_tag_name_is_shortened_to_a_label():
     from bse_intel.event_xbrl import _label
 
     assert _label("NameOfTheListedEntity") == "name of the company"
+
+
+def test_a_year_or_a_percentage_does_not_confirm_an_order_amount():
+    """Deep audit A-04: a PDF printing 2026 or 100% "confirmed" ₹20.26 Cr, ₹2,026 Cr and ₹1 Cr orders."""
+    from bse_intel.event_xbrl import amount_found
+
+    assert amount_found([20.26], "Order received on 17 October 2026 for supply") is False
+    assert amount_found([1.0], "a 100% subsidiary received the order") is False
+    assert amount_found([20.26], "order value of Rs. 20.26 crore") is True

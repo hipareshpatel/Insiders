@@ -25,6 +25,7 @@ STATEMENTS = (
     "cards_reaction",
     "cards_delete",
     "cards_apply_verdicts",
+    "cards_release_pruned",
 )
 
 QUERIES = (

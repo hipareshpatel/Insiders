@@ -74,6 +74,9 @@ jobs:
       - name: Annual reports re-read once their XBRL is listed
         if: always()
         run: timeout 12m "$RUNNER_TEMP/venv/bin/python" -m bse_intel annual-xbrl-catchup --max-companies 150 || [ $? -eq 124 ]
+      - name: Held cards published without their unquoted points (prune.py)
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel release-pruned'
       # last: summaries read the memory the steps above wrote (overdue promises move with the date, not only with filings)
       - name: Company summaries (overdue promises, radar, credibility)
         if: always()

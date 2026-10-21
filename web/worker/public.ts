@@ -388,7 +388,7 @@ api.get("/companies", async (c) => {
 });
 
 api.get("/companies/:scrip", async (c) => {
-  const asked = c.req.param("scrip");
+  const asked = c.req.param("scrip").toUpperCase();   // "/company/tcs" as "TCS" (deep audit F-10)
   if (!isCompanyKey(asked)) return c.json({ error: "bad company key" }, 400);
   // an NSE symbol (the site's addresses since 2026-10-21) or the internal key (older links)
   const scrip = /^\d+$/.test(asked) || asked.startsWith("NSE:") ? asked

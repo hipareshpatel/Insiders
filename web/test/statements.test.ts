@@ -35,7 +35,7 @@ test("the balance sheet adds up, one statement a date, the filing's XBRL first",
     equity_capital_cr: 13.4, reserves_cr: 1654, net_worth_cr: 1667.4, gross_debt_cr: 10.6, total_liabilities_cr: 1724.7,
     total_assets_cr: assets, fixed_assets_cr: 306.9, cwip_cr: 0, investments_cr: 6.3, inventories_cr: 326.9, receivables_cr: 659, cash_cr: 281.7 });
   const t = balanceTable([sheet("Q2FY25", "2024-11-10", "card-1", 9999), sheet("Q2FY25", "2024-11-09", "xbrl:res:1:Q2FY25", 3392.1),
-    { period: "Sep-2024", as_of: "2024-11-12", source_news_id: "card-2", cash_cr: 280 }], false);
+    { period: "Sep-2024", as_of: "2024-11-12", source_news_id: "card-2", cash_cr: 280 }]);
   assert.deepEqual(t.columns, ["Sep 2024"]);
   const row = (l: string) => t.rows.find((r) => r.label === l)!.cells[0]!;
   assert.equal(row("Total assets"), 3392.1);
@@ -87,4 +87,20 @@ test("the main figures' basis is read from their sources", async () => {
   assert.equal(mainBasis([withBasis("STANDALONE"), withBasis("CONSOLIDATED")]), "CONSOLIDATED");
   assert.equal(mainBasis([withBasis("STANDALONE")]), "STANDALONE");
   assert.equal(mainBasis([m("pat", "Q2FY27", 1)]), null);
+});
+
+test("deep audit F-01, F-04, F-05, F-07: a stray revenue row, a missing year, gaps, a missing other income", async () => {
+  const { isBank, growth, quarterlyTable } = await import("../src/components/company/statements.ts");
+  // SBI: interest earned every quarter, one revenue figure a card wrote
+  const bank = ["Q1FY26", "Q2FY26", "Q3FY26", "Q4FY26"].map((q) => m("interest_earned", q, 100));
+  assert.ok(isBank([...bank, m("revenue", "Q4FY26", 181079)]));
+  // FY24 missing: "3 years" is FY23 to FY26 (1000 -> 1331 = 10%), not the third entry back
+  const g = growth([m("revenue", "FY22", 800), m("revenue", "FY23", 1000), m("revenue", "FY25", 1210), m("revenue", "FY26", 1331)], "revenue");
+  assert.equal(g.find((x) => x.label === "3 years")!.value!.toFixed(1), "10.0");
+  // a quarter missing in the eight: no TTM growth
+  const qs = ["Q4FY25", "Q1FY26", "Q2FY26", "Q4FY26", "Q1FY27", "Q2FY27", "Q3FY27", "Q4FY27"].map((q) => m("revenue", q, 10));
+  assert.equal(growth(qs, "revenue").find((x) => x.label === "TTM"), undefined);
+  // no other income: operating profit not computed with it as zero
+  const t = quarterlyTable([m("revenue", "Q2FY27", 100), m("pbt", "Q2FY27", 20), m("finance_cost", "Q2FY27", 2), m("depreciation", "Q2FY27", 3)]);
+  assert.ok(!t.rows.some((r) => r.label === "Operating profit"));
 });

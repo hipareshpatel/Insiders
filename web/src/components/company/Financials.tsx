@@ -20,7 +20,7 @@ export function Financials({ dossier }: { dossier: Dossier }) {
   const label = useAlone ? "Standalone" : main === "CONSOLIDATED" ? "Consolidated" : main === "STANDALONE" ? "Standalone" : null;
   const bank = isBank(metrics);
   const quarterly = quarterlyTable(metrics), annual = annualTable(metrics);
-  const balance = balanceTable(sheets, bank), cash = cashFlowTable(metrics), ratios = ratioTable(metrics, sheets);
+  const balance = balanceTable(sheets), cash = cashFlowTable(metrics), ratios = ratioTable(metrics, sheets);
   const top = bank ? "interest_earned" : "revenue";
   const boxes = [
     { title: bank ? "Compounded revenue growth" : "Compounded sales growth", rows: growth(metrics, top) },

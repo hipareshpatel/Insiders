@@ -1,0 +1,41 @@
+# Held cards whose only faults were points their quote did not carry, published without those points (release-pruned,
+# pipeline/src/bse_intel/prune.py; owner, 2026-10-21: "Needs review · 475"). No AI, no memory write: only card rows,
+# so it runs beside maintenance (its own concurrency group: maintenance keeps one pending run and the seed's
+# self-dispatch would cancel a release queued behind it). The nightly run repeats it for stragglers.
+name: Release held cards
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: count what would be released, write nothing
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bse-release-held
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: Publish held cards without their unquoted points
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel release-pruned ${{ inputs.dry_run && ''--dry-run'' || '''' }}'

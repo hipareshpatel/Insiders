@@ -95,6 +95,7 @@ D1_FREE_DAILY_WRITES, D1_NEAR_CAP = 100_000, 0.95   # Cloudflare D1 free plan: r
 REQUEUE_AFTER_HOUR, REQUEUE_KEY = 22, "failed:requeued_on"   # the nightly extra try for failed filings
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
+PAUSE_CHECK_S = 60       # how often a running pipeline looks for the nightly pause (pause.py)
 MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing this network
 MAX_NETWORK_FAILURES = 5  # attachment downloads failing on the network in a row that mean the source is down
 MAX_DEFERRALS = 3        # runs one attachment may fail on the network, alone, before it spends an attempt
@@ -1711,6 +1712,8 @@ class Pipeline:
         self._unreachable = 0
         self._busy = 0
         self._busy_halt = False
+        self._pause_checked = 0.0   # monotonic time of the last look at the nightly pause (pause.py)
+        self._paused = False
         self._blocked: SourceBlockedError | None = None
         self._usage_lock = Lock()
         self._commit_lock = Lock()  # companies commit from worker threads; the R2 day archive is read-modify-write
@@ -2076,8 +2079,28 @@ class Pipeline:
         return results
 
     def _halted(self, bulk: bool) -> bool:
-        """The analyst route for this phase has hit its quota ceilings: work stays queued."""
-        return self._busy_halt or ("pass2_bulk" if bulk else "pass2") in self._exhausted
+        """The analyst route for this phase has hit its quota ceilings, or the nightly memory jobs paused the AI
+        pipeline (pause.py): work stays queued."""
+        return self._busy_halt or ("pass2_bulk" if bulk else "pass2") in self._exhausted or self._pause_now()
+
+    def _pause_now(self) -> bool:
+        """The nightly pause, looked up at most once a minute (one kv read)."""
+        from . import pause
+
+        with self._lock:
+            if self._paused or time.monotonic() - self._pause_checked < PAUSE_CHECK_S:
+                return self._paused
+            self._pause_checked = time.monotonic()
+        try:
+            until = pause.paused_until(self.sink)
+        except Exception:  # noqa: BLE001 - a failed look is no pause
+            return False
+        if until:
+            with self._lock:
+                self._paused = True
+                self.stats.stopped_reason = self.stats.stopped_reason or \
+                    f"paused for the nightly memory jobs until {until:%H:%M} IST; work stays queued"
+        return bool(until)
 
     def _process_one(self, filing: Filing, bulk: bool, memory_complete: bool, deadline: float | None = None) -> Outcome:
         outcome = self._attempt(filing, bulk, memory_complete, deadline)

@@ -90,21 +90,39 @@ jobs:
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel apply-verdicts'
       # The whole universe's last two quarters in one go (owner, 2026-10-21: "you can do it in one go, NSE will not block
       # it with suitable rate. let it get filled today"); the nightly run keeps it current after. Then the seed passes.
+      # the AI pipeline pauses while these write memory (pause.py), as in the nightly run; it resumes before the seed
+      - name: Pause the AI pipeline
+        if: inputs.command == 'fill-memory'
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel pause-ai --minutes 330'
+      - name: Wait for a running pipeline to stop
+        if: inputs.command == 'fill-memory'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for i in $(seq 1 30); do
+            n=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pipeline.yml --status in_progress --json databaseId -q length)
+            [ "$n" = "0" ] && exit 0
+            sleep 30
+          done
+          echo "a pipeline run is still going after 15 min; the memory jobs start anyway"
       - name: Shareholding patterns into memory, in one go
         id: shp
         if: inputs.command == 'fill-memory'
         env:
           DAYS: ${{ inputs.days }}
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel shareholding-sync --days "$DAYS" --max-files 100000 --time-budget 10800'
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel shareholding-sync --days "$DAYS" --max-files 100000 --time-budget 9000'
       - name: Governance reports into memory, in one go
         if: inputs.command == 'fill-memory' && !cancelled()
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel governance-sync --pages 8 --max-files 100000 --time-budget 5400'
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel governance-sync --pages 8 --max-files 100000 --time-budget 4800'
       - name: A year of pledge events into memory
         if: inputs.command == 'fill-memory' && !cancelled()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel pledge-sync --days 365 --time-budget 1800'
       - name: DGTR cases into memory
         if: inputs.command == 'fill-memory' && !cancelled()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel dgtr-sync --pages 5 --time-budget 1200'
+      - name: Resume the AI pipeline
+        if: inputs.command == 'fill-memory' && always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel resume-ai'
       - name: Seed memory from NSE's results XBRL
         id: seed
         if: inputs.command == 'seed-memory'

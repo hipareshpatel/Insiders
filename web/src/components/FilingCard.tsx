@@ -95,7 +95,7 @@ export function QuantLine({ q }: { q: QuantifiedImpact }) {
       </button>
       {open && (
         <span className="mt-1.5 block rounded-lg bg-surface-2 px-3 py-2 text-[12.5px]">
-          <code className="block font-mono text-ink">{q.formula}</code>
+          <code className="num block text-ink">{q.formula}</code>
           {q.inputs.map((i) => (
             <span key={i.name} className="mt-1 flex flex-wrap items-baseline gap-x-2">
               <span className="num text-ink">{i.name} = {exact(i.value)}{i.unit ? ` ${i.unit}` : ""}</span>

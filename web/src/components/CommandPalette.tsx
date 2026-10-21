@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
-import { istDate } from "../lib/format";
+import { istDate, companyPath } from "../lib/format";
 import { IMPACT_LABEL, IMPACT_TEXT } from "../lib/taxonomy";
 import { Avatar } from "./Avatar";
 
@@ -38,7 +38,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
       symbol: c.symbol,
       meta: `${c.symbol ?? ""} ${c.scrip_code}`.trim(),
       extra: c.card_count ? `${c.card_count} filings` : "",
-      run: () => navigate(`/company/${c.scrip_code}`),
+      run: () => navigate(`${companyPath(c)}`),
     })),
     ...(query.data?.cards ?? []).map((c) => ({
       key: `n${c.news_id}`,

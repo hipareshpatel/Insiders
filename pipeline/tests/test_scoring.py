@@ -71,3 +71,33 @@ def test_calibration_rule_from_resolved_targets_and_dates():
     assert c["rule"].endswith("Apply that discount to new guidance.")
     assert calibration(dossier, cutoff="2026-06-01")["targets_checked"] == 1  # only what was known then
     assert calibration({}) is None
+
+
+def test_results_are_sized_by_the_change_itself():
+    # IGI's Q2FY27 (live, 2026-10-21): revenue +31%, PAT +43%, margin +343 bps scored 62 with Gate 1 shut, as a quarter
+    # has no deal amount; sized by its own change it clears 70 and three gates
+    def card(rev, pat, prev=100.0):
+        return {"headline": "Q2 results", "grounding": {"ungrounded": []}, "missing_disclosures": [],
+                "results": {"revenue": {"yoy_pct": rev}, "pat": {"value": prev * (1 + pat / 100), "prev_year": prev, "yoy_pct": pat},
+                            "ebitda_margin": {"yoy_bps": 343}}}
+    company = {"market_cap_cr": 20000, "ret_1m": 2.0, "ret_1w": 1.0, "median_turnover_cr": 50.0}
+    s = score(card(31, 43), "RESULTS", [], None, company, needs_review=False, model_impact="MODERATE")
+    assert s.gates["magnitude"] and s.pillars["magnitude"] == 26 and s.total >= 70 and s.actionable
+    assert any("PAT +43% YoY on revenue +31%" in r for r in s.reasons)
+    # a profit jump on slow sales keeps the analyst's call; a small rise gets its points but not the gate
+    slow = score(card(8, 60), "RESULTS", [], None, company, needs_review=False, model_impact="MODERATE")
+    small = score(card(20, 12), "RESULTS", [], None, company, needs_review=False, model_impact="MODERATE")
+    assert not slow.gates["magnitude"] and slow.pillars["magnitude"] == 10
+    assert not small.gates["magnitude"] and small.pillars["magnitude"] == 12  # sized, below the gate
+    # a narrower loss is not growth, nor a loss turned to profit (a year-ago one-off reversing, blind review)
+    narrower = score(card(20, 40, prev=-50.0), "RESULTS", [], None, company, needs_review=False, model_impact="MODERATE")
+    assert not narrower.gates["magnitude"]
+    turned = card(20, 0)
+    turned["results"]["pat"] = {"value": 12.0, "prev_year": -5.0, "yoy_pct": None}
+    assert not score(turned, "RESULTS", [], None, company, needs_review=False, model_impact="MODERATE").gates["magnitude"]
+    # profit halved from the last quarter: a weak year-ago base (Eimco Elecon), not a size
+    fell = card(71, 46)
+    fell["results"]["pat"]["qoq_pct"] = -49.1
+    assert not score(fell, "RESULTS", [], None, company, needs_review=False, model_impact="MODERATE").gates["magnitude"]
+    # the same figures on a call card do not count twice
+    assert not score(card(31, 43), "CONCALL_PRESENTATION", [], None, company, needs_review=False, model_impact="MODERATE").gates["magnitude"]

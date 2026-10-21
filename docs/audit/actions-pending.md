@@ -7,6 +7,7 @@ the time and the run or PR link.
 ## Open
 
 - When the seed-memory run ends (maintenance is one at a time; #41 merged 16:16 IST): requeue-failed --ids nse-106823248,nse-106823292,1ee7b071-567e-4f5c-b680-c819e367d372 (Mahindra Holidays, figures cut 100x by the unit fixer; LMW and Jubilant Pharmova, multiples their amounts contradict, #42)
+- After the noise-review PR merges (the same requeue run can carry both lists): requeue-failed --ids nse-106823071,nse-106820476,nse-106823357,nse-106821833,fde85502-a65c-4c38-8aba-65e32983e33f,05139211-435f-4961-bdfd-92805362c5b9,nse-106819034,nse-106823854,nse-106823380,nse-106823083 (CONCOR volumes, Bajaj Finserv insurance premiums, SRF / UltraTech / Jindal Stainless / LTM / NTPC / GMDC press releases, Eternal shareholders' letter, Unicommerce: pass 1 called them routine from page 1; owner 2026-10-21)
 
 
 

@@ -3,7 +3,7 @@
 -- what they know.
 INSERT INTO companies (scrip_code, symbol, company_name, isin, industry, sector, market_cap_cr,
                        size_category, shares_outstanding, shares_updated_at, last_price,
-                       price_date, ret_1w, ret_1m, ret_1y, updated_at, median_turnover_cr, bse_group,
+                       price_date, ret_1w, ret_1m, ret_1y, ret_3m, updated_at, median_turnover_cr, bse_group,
                        credibility_score, former_names_json, memory_summary_json, earliest_open_due, inflection_last_at, technicals_json)
 SELECT json_extract(value, '$.scrip_code'),
        json_extract(value, '$.symbol'),
@@ -20,6 +20,7 @@ SELECT json_extract(value, '$.scrip_code'),
        json_extract(value, '$.ret_1w'),
        json_extract(value, '$.ret_1m'),
        json_extract(value, '$.ret_1y'),
+       json_extract(value, '$.ret_3m'),
        json_extract(value, '$.updated_at'),
        json_extract(value, '$.median_turnover_cr'),
        json_extract(value, '$.bse_group'),
@@ -47,6 +48,7 @@ ON CONFLICT (scrip_code) DO UPDATE SET
        ret_1w             = coalesce(excluded.ret_1w, companies.ret_1w),
        ret_1m             = coalesce(excluded.ret_1m, companies.ret_1m),
        ret_1y             = coalesce(excluded.ret_1y, companies.ret_1y),
+       ret_3m             = coalesce(excluded.ret_3m, companies.ret_3m),
        updated_at         = coalesce(excluded.updated_at, companies.updated_at),
        median_turnover_cr = coalesce(excluded.median_turnover_cr, companies.median_turnover_cr),
        bse_group          = coalesce(excluded.bse_group, companies.bse_group),
@@ -81,6 +83,7 @@ ON CONFLICT (scrip_code) DO UPDATE SET
     OR companies.ret_1w IS NOT coalesce(excluded.ret_1w, companies.ret_1w)
     OR companies.ret_1m IS NOT coalesce(excluded.ret_1m, companies.ret_1m)
     OR companies.ret_1y IS NOT coalesce(excluded.ret_1y, companies.ret_1y)
+    OR companies.ret_3m IS NOT coalesce(excluded.ret_3m, companies.ret_3m)
     OR companies.median_turnover_cr IS NOT coalesce(excluded.median_turnover_cr, companies.median_turnover_cr)
     OR companies.bse_group IS NOT coalesce(excluded.bse_group, companies.bse_group)
     OR companies.credibility_score IS NOT coalesce(excluded.credibility_score, companies.credibility_score)

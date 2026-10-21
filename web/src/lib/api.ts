@@ -31,6 +31,8 @@ export interface FeedFilters {
   review?: string;
   session?: string;
   watch?: string;
+  /** "1": results cards whose PAT turned from a year-ago loss to a profit. */
+  turnaround?: string;
   /** Owner feed only: "only" lists just the cards held back from the public. */
   held?: string;
 }

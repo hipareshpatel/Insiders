@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { AnnouncementCard } from "../components/AnnouncementCard";
-import { Select } from "../components/ui/badge";
 import { api } from "../lib/api";
+import { cn } from "../lib/cn";
 import { addDays, num, todayIST } from "../lib/format";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading } from "./FeedView";
@@ -22,7 +22,7 @@ export function lastClose(now = new Date()): string {
   return `${day}T15:30:00+05:30`;
 }
 
-const RANGES = [{ days: 7, label: "Last 7 days" }, { days: 30, label: "Last 30 days" }];
+const RANGES = [{ days: 7, label: "7 days" }, { days: 30, label: "30 days" }];
 
 /** Blueprint view 1: the morning cockpit. Cards that cleared all four gates, best score first, with
  * what came in overnight in four numbers. */
@@ -50,9 +50,14 @@ export function TopSignalsView() {
             Filings that cleared all four gates: big for the company, a real inflection, a stock not already run up, and clean checks.
           </p>
         </div>
-        <Select aria-label="Date range" value={String(days)} onChange={(e) => setParams({ days: e.target.value === "7" ? null : e.target.value })}>
-          {RANGES.map((r) => <option key={r.days} value={r.days}>{r.label}</option>)}
-        </Select>
+        <div role="radiogroup" aria-label="Window" className="card-soft inline-flex gap-0.5 rounded-xl p-[3px]">
+          {RANGES.map((r) => (
+            <button key={r.days} type="button" role="radio" aria-checked={days === r.days} onClick={() => setParams({ days: r.days === 7 ? null : String(r.days) })}
+              className={cn("rounded-[9px] px-3 py-1.5 text-[12.5px] font-bold transition-colors", days === r.days ? "bg-accent-soft text-accent" : "text-ink-2 hover:text-ink")}>
+              {r.label}
+            </button>
+          ))}
+        </div>
       </header>
 
       <dl className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">

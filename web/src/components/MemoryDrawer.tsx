@@ -68,7 +68,7 @@ function DrawerBody({ scrip, verify, tab, onTab, onClose }: {
             {company?.median_turnover_cr != null ? ` · 💧 ₹${company.median_turnover_cr.toFixed(2)} Cr/day` : ""}
           </p>
         </div>
-        <Link href={`/company/${scrip}`} className="mt-1 inline-flex items-center gap-1 text-[12.5px] text-accent hover:underline">
+        <Link href={`/company/${encodeURIComponent(symbol ?? scrip)}`} className="mt-1 inline-flex items-center gap-1 text-[12.5px] text-accent hover:underline">
           Full page <ExternalLink className="h-3.5 w-3.5" />
         </Link>
         <Dialog.Close className="grid h-8 w-8 place-items-center rounded-lg text-ink-2 hover:bg-surface-2" aria-label="Close">

@@ -138,7 +138,7 @@ def test_discovery_from_nse_queues_our_companies_and_sets_the_rest_aside(setting
     assert pipeline.discover(date(2026, 10, 17)) == 5
     queued = {r["news_id"]: (r["scrip_code"], r["route"]) for r in
               sink._db.execute("select news_id, scrip_code, route from filings").fetchall()}
-    assert queued == {"nse-101": ("543265", "FAST_TRACK"), "nse-102": ("531112", "PASS1")}
+    assert queued == {"nse-101": ("543265", "FAST_TRACK"), "nse-102": ("531112", "FAST_TRACK")}  # a press release is read whole (2026-10-21)
     noise = json.loads(sink.get_object("noise/2026-10-17/000.json"))
     reasons = {r[0]: r[noise["fields"].index("reason")] for r in noise["rows"]}
     assert reasons["nse-103"].startswith("outside universe")

@@ -30,3 +30,4 @@ Columns:
 | 21 Oct 14:07 | 6 | 2 | 3 | 1 | 0 | 0 | 0 | WRONG: Bajaj Consumer call card took a transcript slip over its own results block. Short 0 / long 2. Critic: no verdict for any audited card |
 | 21 Oct 16:07 | 10 | 4 | 1 | 5 | 0 | 0 | 0 | WRONG: MHRIL (our unit fixer, lakh read for a crore deck), HCLTech (USD figures in memory as ₹ Cr), LMW (more than double for +74%), ABSLAMC (unsupported cause), VMM call (cities count). Short 4 (2/1/1), long 6 (2/0/4) |
 | 21 Oct (day) | 48 | 10 | 27 | 11 | 7 of 328 | 0 | 2 | 21% right, 77% right or minor; short 4 cards (2/1/1) vs long 10 (2/2/6); critic not scored (3 verdicts in two days) |
+| 21 Oct (signals) | 26 blind (v1) | 19 signal-worthy | - | 7 weak | - | - | - | Results sized by their own change: v1 +26 signals (4 turnarounds and a -49% QoQ weak); v2 shipped +20, 18 signal-worthy, 0 lost (docs/audit/signals-results-size-2026-10-21.md) |

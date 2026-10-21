@@ -1508,6 +1508,28 @@ def _mover(out: dict, lookup, periods: dict) -> tuple[str, tuple[str, ...], str]
     return best[1:] if best else None
 
 
+# Flow lines a half year or nine months adds up from its quarters (not a margin, a ratio, EPS or a balance)
+_ADDITIVE = {"revenue", "ebitda", "pbt", "pat", "exceptional_items", "interest_earned", "nii", "ppop", "provisions"}
+# a quarter as the cumulative period that ends with it, less the one before: (cumulative, earlier part)
+_FROM_CUMULATIVE = {"Q1": ("H1", "Q2"), "Q2": ("H1", "Q1"), "Q3": ("9M", "H1"), "Q4": ("FY", "9M")}
+
+
+def _quarter_from_cumulative(table: dict, names: tuple[str, ...], quarter: str) -> dict | None:
+    """Q1 as H1 - Q2, Q2 as H1 - Q1, Q3 as 9M - H1, Q4 as FY - 9M, of the same year and the same line name, when memory
+    holds both; marked derived. None otherwise."""
+    m = re.fullmatch(r"(Q[1-4])(FY\d{2})", quarter or "")
+    if not m:
+        return None
+    whole, part = _FROM_CUMULATIVE[m.group(1)]
+    fy = m.group(2)
+    for name in names:
+        a, b = table.get((name, f"{whole}{fy}" if whole != "FY" else fy)), table.get((name, f"{part}{fy}"))
+        if a and b and a.get("value") is not None and b.get("value") is not None:
+            return {"metric": name, "period": quarter, "value": round(a["value"] - b["value"], 2), "derived": True,
+                    "sources": []}
+    return None
+
+
 def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = (),
                      printed: str | None = None, like: dict | None = None) -> dict | None:
     """This filing's latest quarter against a year ago and the previous quarter, for the results tables.
@@ -1532,6 +1554,11 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
 
     def stored(names: tuple[str, ...], p: str | None) -> tuple[dict | None, float | None]:
         entry = next((table[(n, p)] for n in names if (n, p) in table), None) if p else None
+        if not entry and p and names[0] in _ADDITIVE:
+            # a quarter memory never had on its own, from the half or nine months it did: E2E's Q1FY27 revenue as its
+            # H1FY27 less Q2FY27, before the company's quarterly history was seeded (owner, 2026-10-21)
+            derived = _quarter_from_cumulative(table, names, p)
+            return (derived, derived["value"]) if derived else (None, None)
         if not entry:
             return None, None
         # the comparative this filing prints wins over what an earlier filing said for that quarter: a regrouped

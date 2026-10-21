@@ -296,7 +296,19 @@ headline = ["(bags?|receipt of|secures?|wins?|awarded).{0,40}orders?", "letter o
 
 [[fast_track]]
 event_type = "MONTHLY_BUSINESS_UPDATE"
-headline = ["(monthly|sales|production|business) (update|volumes?|numbers)", "auto sales"]
+# "Physical Volumes for September 2026" (CONCOR) and Bajaj Finserv's monthly insurance premiums went to pass 1, which read
+# page 1 and called them routine (owner, 2026-10-21: monthly updates are forward-looking, three of them call the quarter)
+headline = ["(monthly|sales|production|business) (update|volumes?|numbers)", "auto sales", "physical volumes?",
+            "(volumes?|sales|production|dispatch(es)?|disbursements?|premiums?|business) (figures |data |numbers |performance )?(for|of) (the month of )?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]* ?(20\\d\\d|'?\\d\\d)",
+            "unlisted insurance subsidiar"]
+
+# A press release or a letter to shareholders carries its news after page 1, where pass 1 cannot see it: SRF's and
+# UltraTech's press releases and Eternal's shareholders' letter (its results commentary) were turned away as routine
+# (owner, 2026-10-21). Pass 2 reads the whole document and decides; the letters about annual-report links are dropped above.
+[[fast_track]]
+reason = "press release or letter to shareholders"
+subcategories = ["press release"]
+headline = ["press release", "media release", "shareholders'? letter", "letter to (the )?shareholders"]
 
 [[fast_track]]
 event_type = "LITIGATION_REGULATORY"

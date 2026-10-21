@@ -4,8 +4,12 @@ import { toBlob } from "html-to-image";
  * Safari accepts a clipboard write only inside the click, so the image is handed over as a promise. */
 export async function copyNodeAsPng(node: HTMLElement, filename: string): Promise<"copied" | "saved"> {
   const bg = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim() || "#ffffff";
+  // 4K wide (3,840 px) whatever the screen: a 720 px card at the old 2x was 1,440 px (owner, 2026-10-21). A tall card
+  // with its full analysis is kept under the 16,384 px canvas limit browsers allow.
+  const { width, height } = node.getBoundingClientRect();
+  const pixelRatio = Math.max(2, Math.min(3840 / Math.max(width, 1), 16000 / Math.max(height, 1), 6));
   const render = toBlob(node, {
-    pixelRatio: 2, backgroundColor: bg,
+    pixelRatio, backgroundColor: bg,
     filter: (n) => !(n instanceof HTMLElement && n.dataset.noexport === "true"),
   }).then((blob) => {
     if (!blob) throw new Error("render failed");

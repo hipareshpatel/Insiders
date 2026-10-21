@@ -79,6 +79,11 @@ export function signClass(value: number | null | undefined): string {
   return value > 0 ? "text-pos" : "text-neg";
 }
 
+/** A company page's address: its NSE symbol (owner, 2026-10-21: "why are we using BSE numbers on NSE site"), else
+ *  its key for a company with no symbol stored. The Worker takes either. */
+export const companyPath = (c: { symbol?: string | null; scrip_code: string }) =>
+  `/company/${encodeURIComponent(c.symbol || c.scrip_code)}`;
+
 /** How a company's listing is shown: its NSE symbol (owner, 2026-10-19: everything on NSE), else its key. */
 export const listing = (symbol: string | null | undefined, key: string | null | undefined) =>
   symbol ? `NSE: ${symbol}` : (key ?? "");

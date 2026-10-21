@@ -127,8 +127,8 @@
 @theme inline {
   --font-sans: "Manrope Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Manrope Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
-  --font-num: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
-  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
+  --font-num: "Manrope Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -182,10 +182,13 @@ body {
   font-weight: 600;
 }
 
-/* Figures, ratios, dates and scrip codes: JetBrains Mono with tabular figures, so columns line up. */
+/* Figures, ratios, dates and scrip codes: the text face with tabular lining figures, so columns line up without a
+   typewriter face beside the prose (owner, 2026-10-21: the monospace figures looked unprofessional). */
 .num {
   font-family: var(--font-num);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  letter-spacing: -0.01em;
 }
 
 /* Small uppercase section labels. */

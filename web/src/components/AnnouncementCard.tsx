@@ -9,12 +9,12 @@ import { useLocation } from "wouter";
 import { useQueryState } from "../lib/url";
 import type { CallRead, CardBody, CardRow, Fact, Impact, PriceReaction, Technicals, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
-import { useRatings, useVerdicts, type Verdict } from "../lib/owner";
+import { useOwnerToken, useRatings, useVerdicts, type Verdict } from "../lib/owner";
 import { copyNodeAsPng } from "../lib/png";
-import { cr, formatKpi, istDate, istDateTime, pct, relativeTime, signClass, titleCase } from "../lib/format";
+import { cr, formatKpi, istDate, istDateTime, pct, relativeTime, signClass, titleCase, companyPath } from "../lib/format";
 import { EVENT_LABELS, IMPACT_LABEL, IMPACT_TEXT, TONE_CHIP, TONE_LABEL, TONE_STRIPE, verdict, type Tone } from "../lib/taxonomy";
 import { Avatar, TickerChip } from "./Avatar";
-import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL, TrackItem } from "./FilingCard";
+import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL } from "./FilingCard";
 import { plain, RichText } from "./RichText";
 import {
   executionFact, near, PERIOD_WORDS, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
@@ -240,9 +240,6 @@ function SignalLine({ s }: { s: Signal }) {
   return (
     <>
       <span className={cn("font-semibold", SEVERITY_TEXT[s.severity])}>{meta?.label ?? titleCase(s.type)}:</span> {s.text}
-      <span className="ml-1.5 inline-flex items-center gap-0.5 align-middle text-[10.5px] font-medium text-ink-3" title="Computed by code from the filing and memory, not written by the model">
-        <Check className="h-3 w-3" />computed
-      </span>
     </>
   );
 }
@@ -637,12 +634,17 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
                 {row.symbol ?? row.scrip_code}
                 {row.market_cap_cr != null && <span className="font-sans font-semibold"> · {cr(row.market_cap_cr)}{row.size_category ? ` · ${titleCase(row.size_category)} cap` : ""}</span>}
               </span>
+              {industryPath(row.industry) && <span className="block truncate text-[11.5px] font-medium text-ink-3">{industryPath(row.industry)}</span>}
             </span>
           </button>
           {row.last_price != null && (
             <span className="num shrink-0 text-right">
               <span className="block text-[15px] font-bold text-ink">₹{row.last_price.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              {row.ret_1w != null && <span className={cn("block text-[12px] font-semibold", signClass(row.ret_1w))}>{row.ret_1w >= 0 ? "▲" : "▼"} {Math.abs(row.ret_1w).toFixed(1)}% 1W</span>}
+              <span className="mt-0.5 flex justify-end gap-2.5 text-[11.5px] font-semibold">
+                {([["1W", row.ret_1w], ["1M", row.ret_1m], ["3M", row.ret_3m]] as const).filter(([, v]) => v != null).map(([label, v]) => (
+                  <span key={label} className={signClass(v!)}>{v! >= 0 ? "▲" : "▼"} {Math.abs(v!).toFixed(1)}% <span className="text-ink-3">{label}</span></span>
+                ))}
+              </span>
             </span>
           )}
         </header>
@@ -701,7 +703,6 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
                 <Point key={d.label}>
                   <span className={cn("font-semibold", d.tone === "warn" ? "text-warn" : "text-[var(--fam)]")}>{d.label}:</span>{" "}
                   <span className={cn(d.tone === "pos" ? "text-pos" : d.tone === "neg" ? "text-neg" : undefined)}>{d.text}</span>
-                  {d.computed && <span className="ml-1.5 text-[10.5px] font-medium text-ink-3">✓ computed</span>}
                 </Point>
               ))}
             </ul>
@@ -710,8 +711,9 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
 
         {calls?.source && <CallTakeaways view={calls} />}
 
-        {!exporting && <AiReading catalyst={card.core_catalyst && !repeats(plain(card.core_catalyst), headline) ? plain(card.core_catalyst) : null}
-          facts={[...unverified, ...(calls?.unverified ?? [])]} insights={box.insights.map((i) => i.text)} takeaway={box.fallback ?? null} />}
+        <AiReading catalyst={card.core_catalyst && !repeats(plain(card.core_catalyst), headline) ? plain(card.core_catalyst) : null}
+          facts={[...unverified, ...(calls?.unverified ?? [])]} insights={box.insights.map((i) => i.text)} takeaway={box.fallback ?? null}
+          expanded={exporting} />
 
         {footer.length > 0 && (
           <div className="mt-3 flex flex-wrap items-baseline gap-2 text-[12px] font-semibold text-ink-3">
@@ -721,9 +723,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
           </div>
         )}
 
-        {exporting ? (
-          <p className="mt-2 text-[10.5px] text-ink-3">AI summary of a public NSE filing. Not investment advice; verify against the original filing.</p>
-        ) : (
+        {exporting ? null : (
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-line pt-2.5 text-[12px] text-ink-3" data-noexport="true">
             <span className="num" title={`${istDateTime(row.filed_at)} IST · ${relativeTime(row.filed_at)}`}>
               {istDateTime(row.filed_at)}
@@ -787,13 +787,22 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
         )}
       </div>
       {!exporting && <VerdictBar newsId={row.news_id} />}
-      {open && !exporting && (
+      {(open || exporting) && (
+        // the share image carries the whole card, full analysis included (owner, 2026-10-21)
         <DeepDive row={row} card={card} shown={box.insights.length} shownSignal={box.signal}
-          moreFacts={split.more} faceText={faceText} thinShown={thin}
+          moreFacts={split.more} faceText={faceText} thinShown={thin} exporting={exporting}
           keyNumbers={card.key_numbers.filter((k) => !tiles.includes(k) && !showsFigure(faceText, k.value))} />
       )}
     </article>
   );
+}
+
+/** "Capital Goods > Electrical Equipment > Heavy Electrical Equipment" as its broad sector and its own industry (owner,
+ *  2026-10-21: "Capital goods › Heavy Electrical Equipment" on the card). */
+function industryPath(raw?: string | null): string | null {
+  const parts = (raw ?? "").split(/\s*>\s*/).map((p) => p.trim()).filter(Boolean);
+  if (!parts.length) return null;
+  return (parts.length > 1 ? [parts[0], parts[parts.length - 1]] : parts).join(" › ");
 }
 
 const VERDICTS: { v: Verdict; label: string; on: string }[] = [
@@ -833,20 +842,109 @@ function VerdictBar({ newsId }: { newsId: string }) {
   );
 }
 
-function Section({ label, children }: { label: string; children: ReactNode }) {
+/** A panel of the full analysis, drawn like the card's own blocks (owner, 2026-10-21: the old plain sections did not
+ *  match the site). */
+function Section({ label, children, right, tone }: { label: string; children: ReactNode; right?: ReactNode; tone?: "warn" }) {
   return (
-    <section>
-      <h4 className="mb-2 text-[11px] font-bold uppercase tracking-[0.1em] text-ink-3">{label}</h4>
+    <section className={cn("rounded-2xl border bg-surface px-4 py-3", tone === "warn" ? "border-warn/40" : "border-line")}>
+      <h4 className={cn("mb-2.5 flex items-center justify-between gap-2 text-[10.5px] font-extrabold uppercase tracking-[0.12em]",
+        tone === "warn" ? "text-warn" : "text-[var(--fam)]")}>
+        <span>{label}</span>{right}
+      </h4>
       {children}
     </section>
   );
 }
 
-/** Everything else the analysis produced: shown on demand, never in the share image. */
-function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers, faceText, thinShown }: {
-  row: CardRow; card: CardBody; shown: number; shownSignal?: Signal;
-  moreFacts: Fact[]; keyNumbers: CardBody["key_numbers"]; faceText: string; thinShown: boolean;
+const PILLAR_MAX: Record<string, number> = { magnitude: 30, margin: 25, balance_sheet: 20, credibility: 15, disclosure: 10 };
+const GATES = [["magnitude", "Size"], ["inflection", "Inflection"], ["price", "Not run up"], ["clean", "Clean checks"]] as const;
+
+/** The signal score as bars against each pillar's maximum, the four gates as chips and the reasons in a short list. */
+function ScorePanel({ score, analystImpact, impact, thinShown }: {
+  score: NonNullable<CardBody["score"]>; analystImpact?: Impact | null; impact: Impact; thinShown: boolean;
 }) {
+  const reasons = [...score.reasons.filter((r) => !(thinShown && /^thin liquidity/i.test(r))), ...score.vetoes.map((v) => `Veto: ${v}`)];
+  return (
+    <Section label="Signal score" right={<span className="num text-[13px] font-extrabold normal-case tracking-normal text-ink">{score.total}<span className="text-ink-3">/100</span></span>}>
+      <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-surface-2" aria-hidden>
+        <div className={cn("h-full rounded-full", score.total >= 70 ? "bg-pos" : "bg-[var(--fam)]")} style={{ width: `${Math.min(100, score.total)}%` }} />
+      </div>
+      <dl className="space-y-1.5">
+        {Object.entries(score.pillars).filter(([k, v]) => k !== "penalty" || v !== 0).map(([k, v]) => {
+          const max = PILLAR_MAX[k];
+          return (
+            <div key={k} className="grid grid-cols-[minmax(0,1fr)_88px_34px] items-center gap-2 text-[12.5px]">
+              <dt className="truncate text-ink-2">{(PILLAR_LABEL[k] ?? k).replace(/\s*\(\d+\)$/, "")}</dt>
+              <dd className="h-1.5 overflow-hidden rounded-full bg-surface-2" aria-hidden>
+                {max ? <div className="h-full rounded-full bg-[var(--fam)]" style={{ width: `${Math.max(0, Math.min(100, (v / max) * 100))}%` }} />
+                  : <div className="h-full rounded-full bg-neg" style={{ width: `${Math.min(100, Math.abs(v) * 2)}%` }} />}
+              </dd>
+              <dd className={cn("num text-right font-bold", v < 0 ? "text-neg" : "text-ink")}>{v}{max ? <span className="font-medium text-ink-3">/{max}</span> : null}</dd>
+            </div>
+          );
+        })}
+      </dl>
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {GATES.map(([k, label]) => (
+          <span key={k} className={cn("inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[11.5px] font-bold",
+            score.gates[k] ? "bg-pos/10 text-pos" : "bg-surface-2 text-ink-3")}>
+            {score.gates[k] ? <Check className="h-3 w-3" /> : <Minus className="h-3 w-3" />}{label}
+          </span>
+        ))}
+      </div>
+      {(reasons.length > 0 || (analystImpact && analystImpact !== impact)) && (
+        <ul className="mt-2.5 space-y-0.5 text-[12px] leading-relaxed text-ink-3">
+          {reasons.map((r, i) => <li key={i} className={r.startsWith("Veto:") ? "text-warn" : undefined}>{r}</li>)}
+          {analystImpact && analystImpact !== impact && <li>The analyst rated it {IMPACT_WORD[analystImpact].toLowerCase()}</li>}
+        </ul>
+      )}
+    </Section>
+  );
+}
+
+/** What to watch, as a short timeline: each item under its kind, with its date or check-in as a chip. */
+function TrackPanel({ track }: { track: CardBody["track_next"] }) {
+  const groups: { icon: LucideIcon; label: string; items: { text: string; when?: string | null }[]; warn?: boolean }[] = [
+    { icon: Timer, label: "Milestones", items: (track?.milestones ?? []).map((m) => ({ text: m.what, when: m.when })) },
+    { icon: Gauge, label: "KPI to verify", items: (track?.kpis_to_verify ?? []).map((k) => ({ text: `${k.kpi}${k.target ? ` · target ${k.target}` : ""}`, when: k.check_in })) },
+    { icon: Scale, label: "Pending approvals", items: (track?.pending_approvals ?? []).map((t) => ({ text: t })) },
+    { icon: Rocket, label: "Growth catalysts", items: (track?.catalysts ?? []).map((t) => ({ text: t })) },
+    { icon: ShieldAlert, label: "Risks", items: (track?.risks ?? []).map((t) => ({ text: t })), warn: true },
+  ].filter((g) => g.items.length > 0);
+  return (
+    <Section label="What to track next">
+      {groups.length ? (
+        <ol className="space-y-2.5">
+          {groups.map((g) => (
+            <li key={g.label} className="grid grid-cols-[28px_minmax(0,1fr)] gap-2.5">
+              <span className={cn("mt-0.5 grid h-7 w-7 place-items-center rounded-lg", g.warn ? "bg-warn/10 text-warn" : "bg-[var(--fam-soft)] text-[var(--fam)]")}>
+                <g.icon className="h-3.5 w-3.5" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-ink-3">{g.label}</p>
+                <ul className="mt-0.5 space-y-1">
+                  {g.items.map((it, i) => (
+                    <li key={i} className="flex flex-wrap items-baseline gap-x-2 text-[13.5px] leading-snug text-ink">
+                      <span className="min-w-0">{it.text}</span>
+                      {it.when && <span className="num rounded-md bg-surface-2 px-1.5 py-px text-[11px] font-bold text-ink-2">{it.when}</span>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
+        </ol>
+      ) : <p className="text-[13.5px] text-ink-3">Nothing dated, pending or at risk in this filing.</p>}
+    </Section>
+  );
+}
+
+/** Everything else the analysis produced: under "Full analysis", and in the share image in full (owner, 2026-10-21). */
+function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers, faceText, thinShown, exporting = false }: {
+  row: CardRow; card: CardBody; shown: number; shownSignal?: Signal;
+  moreFacts: Fact[]; keyNumbers: CardBody["key_numbers"]; faceText: string; thinShown: boolean; exporting?: boolean;
+}) {
+  const owner = useOwnerToken();
   const more = card.why_it_matters.slice(shown);
   // The summary box above already shows the top-ranked signal, so showing every signal here printed it
   // twice on one card - the Scale line read the same in both places. The card is a page in a pocket
@@ -854,18 +952,10 @@ function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers, faceTe
   const restSignals = card.signals.filter((s) => s !== shownSignal && !repeats(s.text, faceText));
   const quant = card.quantified_impact ?? [];
   const changes = card.notable_changes ?? [];
-  const track = card.track_next;
-  const trackItems = [
-    { icon: Timer, label: "Milestone dates", items: (track?.milestones ?? []).map((m) => `${m.what}${m.when ? ` · ${m.when}` : ""}`) },
-    { icon: Gauge, label: "KPI to verify", items: (track?.kpis_to_verify ?? []).map((k) => `${k.kpi}${k.target ? ` (target ${k.target})` : ""}${k.check_in ? ` · ${k.check_in}` : ""}`) },
-    { icon: Scale, label: "Pending approvals", items: track?.pending_approvals ?? [] },
-    { icon: Rocket, label: "Growth catalyst", items: track?.catalysts ?? [] },
-    { icon: ShieldAlert, label: "Road blocker", items: track?.risks ?? [] },
-  ].filter((t) => t.items.length > 0);
   const g = card.grounding;
 
   return (
-    <div className="space-y-5 border-t border-line bg-surface-2/30 px-3.5 py-5 sm:px-6" data-noexport="true">
+    <div className="space-y-3 border-t border-line bg-surface-2/40 px-3.5 py-4 sm:px-5">
       {moreFacts.length > 0 && (
         <Section label="More from the filing">
           <ul className="space-y-2">{moreFacts.map((fact, i) => <Point key={i}><RichText text={fact} /></Point>)}</ul>
@@ -878,41 +968,20 @@ function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers, faceTe
         </Section>
       )}
 
-      {(more.length > 0 || card.missing_disclosures.length > 1) && (
-        <Section label="More context">
-          <ul className="space-y-2">
-            {more.map((i, k) => (
-              <Point key={k}><RichText text={i.text} /> <span className="text-[11px] text-ink-3">· {INSIGHT_BASIS[i.basis] ?? i.basis}</span></Point>
-            ))}
-            {card.missing_disclosures.slice(1).map((m, k) => <Point key={`m${k}`}><span className="font-semibold text-warn">Not disclosed:</span> {m}</Point>)}
-          </ul>
-        </Section>
-      )}
-
-      {quant.length > 0 && (
-        <Section label="Quantified impact">
-          <ul className="space-y-2">{quant.map((q, i) => <QuantLine key={i} q={q} />)}</ul>
-        </Section>
-      )}
-
-      {restSignals.length > 0 && (
-        <Section label="Signals computed from memory">
-          <ul className="space-y-2">{restSignals.map((s, i) => <Point key={i}><SignalLine s={s} /></Point>)}</ul>
-        </Section>
-      )}
-
       {changes.length > 0 && (
         <Section label="Notable changes">
-          <ul className="divide-y divide-line border-y border-line">
+          <ul className="divide-y divide-line">
             {changes.map((c, i) => {
               const Arrow = c.direction === "POSITIVE" ? ArrowUpRight : c.direction === "NEGATIVE" ? ArrowDownRight : Minus;
               const color = c.direction === "POSITIVE" ? "text-pos" : c.direction === "NEGATIVE" ? "text-neg" : "text-ink-3";
               return (
-                <li key={i} className="grid gap-x-4 gap-y-0.5 py-2 text-[13.5px] sm:grid-cols-[minmax(0,1.3fr)_minmax(0,2fr)_auto_minmax(0,2.5fr)] sm:items-baseline">
-                  <span className="font-medium text-ink"><Arrow className={cn("mr-1 inline h-3.5 w-3.5", color)} />{titleCase(c.metric)}</span>
-                  <span className="num text-ink-2">{c.previous ?? "—"} → <span className="text-ink">{c.current ?? "—"}</span></span>
-                  <span className={cn("num font-semibold", color)}>{c.change ?? ""}</span>
-                  <span className="text-ink-2">{c.why}</span>
+                <li key={i} className="py-2 first:pt-0 last:pb-0">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-3 text-[13.5px]">
+                    <span className="font-semibold text-ink"><Arrow className={cn("mr-1 inline h-3.5 w-3.5", color)} />{titleCase(c.metric)}</span>
+                    <span className="num text-ink-2">{c.previous ?? "—"} → <span className="font-semibold text-ink">{c.current ?? "—"}</span>
+                      {c.change ? <span className={cn("ml-2 font-bold", color)}>{c.change}</span> : null}</span>
+                  </div>
+                  {c.why && <p className="mt-0.5 text-[12.5px] leading-relaxed text-ink-2">{c.why}</p>}
                 </li>
               );
             })}
@@ -920,61 +989,54 @@ function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers, faceTe
         </Section>
       )}
 
-      <Section label="What to track next">
-        {trackItems.length ? (
-          <dl className="grid gap-x-8 gap-y-3 sm:grid-cols-2">{trackItems.map((t) => <TrackItem key={t.label} {...t} />)}</dl>
-        ) : <p className="text-[13.5px] text-ink-3">Nothing dated, pending or at risk in this filing.</p>}
-      </Section>
-
-      {card.score && (
-        <Section label={`How this was scored · ${card.score.total}/100`}>
-          <dl className="num grid gap-x-6 gap-y-1 text-[13px] sm:grid-cols-2">
-            {Object.entries(card.score.pillars).filter(([k, v]) => k !== "penalty" || v !== 0).map(([k, v]) => (
-              <div key={k} className="flex justify-between gap-3 border-b border-line py-1">
-                <dt className="font-sans text-ink-2">{PILLAR_LABEL[k] ?? k}</dt><dd className="font-semibold text-ink">{v}</dd>
-              </div>
+      {(more.length > 0 || card.missing_disclosures.length > 1 || quant.length > 0 || restSignals.length > 0) && (
+        <Section label="More context">
+          <ul className="space-y-2">
+            {more.map((i, k) => (
+              <Point key={k}><RichText text={i.text} /> <span className="text-[11px] text-ink-3">· {INSIGHT_BASIS[i.basis] ?? i.basis}</span></Point>
             ))}
-          </dl>
-          <p className="mt-2 text-[12.5px] text-ink-2">
-            Gates: {([["magnitude", "size"], ["inflection", "inflection"], ["price", "price not run up"], ["clean", "clean checks"]] as const)
-              .map(([k, label]) => `${card.score!.gates[k] ? "✓" : "✗"} ${label}`).join(" · ")}
-            {card.model_impact && card.model_impact !== row.impact_level ? ` · the analyst rated it ${IMPACT_WORD[card.model_impact].toLowerCase()}` : ""}
-          </p>
-          {[...card.score.reasons, ...card.score.vetoes.map((v) => `Veto: ${v}`)].length > 0 && (
-            <ul className="mt-1 space-y-0.5 text-[12.5px] text-ink-3">
-              {[...card.score.reasons.filter((r) => !(thinShown && /^thin liquidity/i.test(r))), ...card.score.vetoes.map((v) => `Veto: ${v}`)].map((r, i) => <li key={i}>{r}</li>)}
-            </ul>
-          )}
+            {quant.map((q, i) => <QuantLine key={`q${i}`} q={q} />)}
+            {restSignals.map((s, i) => <Point key={`s${i}`}><SignalLine s={s} /></Point>)}
+            {card.missing_disclosures.slice(1).map((m, k) => <Point key={`m${k}`}><span className="font-semibold text-warn">Not disclosed:</span> {m}</Point>)}
+          </ul>
         </Section>
       )}
 
+      <div className="grid items-start gap-3 lg:grid-cols-2">
+        <TrackPanel track={card.track_next} />
+        {card.score && <ScorePanel score={card.score} analystImpact={card.model_impact} impact={row.impact_level} thinShown={thinShown} />}
+      </div>
+
       <MarketReaction raw={row.post_event_return_json} atFiling={card.priced_at_filing} row={row} />
 
-      {card.review && (
-        <Section label="Second check">
-          <p className="text-[13px] leading-relaxed text-ink-2">
+      {card.review && owner && !exporting && (
+        // the checks' workings are the owner's: a reader gets the Unverified mark and the facts it could not quote
+        <Section label="Second check · only you see this" tone={card.review.status === "CORRECTED" ? undefined : "warn"}>
+          <p className="text-[12.5px] leading-relaxed text-ink-2">
             The first draft{card.review.first_model ? ` (${card.review.first_model})` : ""} failed the automatic checks
-            {card.review.checked_by ? `, so ${card.review.checked_by} was asked to correct it` : ", and no second AI was available"}.
-            {card.review.status === "CORRECTED" ? " The corrected card passed the number checks: each figure is found in the filing. The checks do not confirm that a figure means what the card says." : " Problems that remain are listed below."}
+            {card.review.checked_by ? `; ${card.review.checked_by} was asked to correct it` : ", and no second AI was available"}.
+            {card.review.status === "CORRECTED" ? " The corrected card passed the number checks." : " What still fails:"}
           </p>
-          <ul className="mt-2 space-y-1">
+          <ul className="mt-1.5 space-y-1">
             {(card.review.status === "CORRECTED" ? card.review.fixed ?? [] : card.review.issues ?? []).map((p, i) => (
-              <li key={i} className={cn("text-[12.5px]", card.review!.status === "CORRECTED" ? "text-ink-3 line-through" : "text-warn")}>{p}</li>
+              <li key={i} className={cn("text-[12px]", card.review!.status === "CORRECTED" ? "text-ink-3 line-through" : "text-warn")}>{p}</li>
             ))}
             {card.review.status === "CORRECTED" && (card.review.held ?? []).map((p, i) => (
-              <li key={`held-${i}`} className="text-[12.5px] text-warn">{p}</li>
+              <li key={`held-${i}`} className="text-[12px] text-warn">{p}</li>
             ))}
           </ul>
         </Section>
       )}
 
-      <p className="text-[12px] leading-relaxed text-ink-3">
-        {g.checked > 0 ? `${g.checked} numbers checked against the filing and company memory` : "No numbers to check"}
-        {g.ungrounded.length ? `; not found: ${g.ungrounded.join(", ")}` : ""}
-        {g.unsupported_claims?.length ? `. Claims the sources don't support: ${g.unsupported_claims.map((c) => `"${c}"`).join(", ")}` : ""}
-        {!row.memory_complete ? ". Written before this company's history finished loading" : ""}.
-        {" "}AI summary of a public NSE filing; not investment advice.
-      </p>
+      {exporting && <p className="px-1 text-[11px] text-ink-3">AI summary of a public NSE filing. Not investment advice; verify against the original filing.</p>}
+      {!exporting && (
+        <p className="px-1 text-[11.5px] leading-relaxed text-ink-3">
+          {g.checked > 0 ? `${g.checked} numbers checked against the filing and company memory` : "No numbers to check"}
+          {g.ungrounded.length ? `; not found: ${g.ungrounded.join(", ")}` : ""}
+          {g.unsupported_claims?.length ? `. Claims the sources don't support: ${g.unsupported_claims.map((c) => `"${c}"`).join(", ")}` : ""}
+          {!row.memory_complete ? ". Written before this company's history finished loading" : ""}.
+        </p>
+      )}
     </div>
   );
 }
@@ -989,18 +1051,22 @@ function MarketReaction({ raw, atFiling, row }: { raw?: string | null; atFiling?
   try { rx = raw ? JSON.parse(raw) : null; } catch { rx = null; }
   const points = rx ? (["t1", "t3", "t5"] as const).filter((k) => rx![k]) : [];
   const at = atFiling?.last_price !== undefined ? atFiling : null;
-  const now = ([["1W", row.ret_1w], ["1M", row.ret_1m], ["1Y", row.ret_1y]] as const).filter(([, v]) => v != null);
+  const now = ([["1W", row.ret_1w], ["1M", row.ret_1m], ["3M", row.ret_3m ?? null], ["1Y", row.ret_1y]] as const).filter(([, v]) => v != null);
   if (!points.length && !at && !now.length) return null;
   return (
     <Section label="How the market reacted">
       {now.length > 0 && (
-        <p className="num mb-2 flex flex-wrap gap-x-4 text-[12.5px] text-ink-2">
-          <span className="font-sans">Now:</span>
-          {now.map(([label, v]) => <span key={label}>{label} <span className={cn("font-semibold", signClass(v!))}>{pct(v)}</span></span>)}
-        </p>
+        <dl className="mb-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {now.map(([label, v]) => (
+            <div key={label} className="rounded-xl bg-surface-2 px-3 py-1.5">
+              <dt className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-ink-3">{label} now</dt>
+              <dd className={cn("num text-[15px] font-bold", signClass(v!))}>{pct(v)}</dd>
+            </div>
+          ))}
+        </dl>
       )}
       {at && (
-        <p className="num mb-2 text-[12.5px] text-ink-2">
+        <p className="num mb-1 text-[12.5px] text-ink-2">
           At filing ({at.price_date}): ₹{at.last_price!.toLocaleString("en-IN")}
           {at.market_cap_cr !== undefined ? ` · market cap ₹${Math.round(at.market_cap_cr).toLocaleString("en-IN")} Cr` : ""}
           {at.ret_1w !== undefined ? ` · 1W ${signedPct(at.ret_1w)}` : ""}{at.ret_1m !== undefined ? ` · 1M ${signedPct(at.ret_1m)}` : ""}
@@ -1051,12 +1117,14 @@ function TechnicalTags({ row }: { row: CardRow }) {
  *  face, marked as our reading and apart from the checked facts (owner 2026-10-20: "interpretation helps"; a blind
  *  review found 10% of such points overreach, so it is never shown as checked). Facts the checks could not quote stay
  *  behind a tap. */
-function AiReading({ catalyst, facts, insights, takeaway }: { catalyst: string | null; facts: Fact[]; insights: string[]; takeaway: string | null }) {
+function AiReading({ catalyst, facts, insights, takeaway, expanded = false }: {
+  catalyst: string | null; facts: Fact[]; insights: string[]; takeaway: string | null; expanded?: boolean;
+}) {
   const reading = [...(catalyst ? [`Core catalyst: ${catalyst}`] : []), ...insights, ...(takeaway && !insights.length ? [takeaway] : [])];
   const unquoted = facts.map((f) => (typeof f === "string" ? f : f.text));
   if (!reading.length && !unquoted.length) return null;
   return (
-    <div className="mt-3 rounded-2xl border border-dashed border-line-strong px-4 py-2" data-noexport="true">
+    <div className="mt-3 rounded-2xl border border-dashed border-line-strong px-4 py-2">
       {reading.length > 0 && (
         <>
           <p className="text-[12px] font-bold text-ink-3">Our reading · not checked against the filing</p>
@@ -1066,7 +1134,7 @@ function AiReading({ catalyst, facts, insights, takeaway }: { catalyst: string |
         </>
       )}
       {unquoted.length > 0 && (
-        <details className="group">
+        <details className="group" open={expanded || undefined}>
           <summary className="cursor-pointer list-none py-1 text-[12px] font-bold text-ink-3 marker:hidden">
             <span className="mr-1 inline-block transition-transform group-open:rotate-90">›</span>
             Facts the checks could not quote ({unquoted.length})
@@ -1168,7 +1236,7 @@ export function AnnouncementRow({ row, defaultOpen = false, highlight = false }:
           <p className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-ink-2 sm:line-clamp-1"><span title="The AI's reading, not verified against the filing" className="mr-1.5 rounded bg-surface-2 px-1 py-px align-[1px] text-[10px] font-bold uppercase tracking-wide text-ink-3">AI</span>{card.takeaway}</p>
         ) : null}
         <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-xs text-ink-3">
-          <TickerChip name={row.company_name} symbol={row.symbol} scrip={row.scrip_code} onClick={() => navigate(`/company/${row.scrip_code}`)} />
+          <TickerChip name={row.company_name} symbol={row.symbol} scrip={row.scrip_code} onClick={() => navigate(`${companyPath(row)}`)} />
           <span className="hidden text-ink-2 sm:inline">{row.company_name}</span>
           {row.market_cap_cr != null && (
             <span className="num">{cr(row.market_cap_cr)}{row.size_category ? ` · ${titleCase(row.size_category)}cap` : ""}</span>

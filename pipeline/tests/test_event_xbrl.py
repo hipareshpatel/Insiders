@@ -271,6 +271,20 @@ def test_results_catch_up_reads_again_on_a_new_file_or_a_revision():
     made_from_first = {"filed_at": "2026-10-17T16:05:00+05:30", "xbrl_url": first.url, "period": "Q2FY27", "basis": "CONSOLIDATED"}
     assert event_catchup.results_due(made_from_first, [first, revised])
     assert not event_catchup.results_due(dict(made_from_first, xbrl_url=revised.url), [first, revised])
+    # a card made on the standalone file before the consolidated one was listed is read again (owner, 2026-10-21)
+    standalone = XbrlLink("Q2FY27", "STANDALONE", "https://x/s.xml", "2026-10-17")
+    made_standalone = {"filed_at": "2026-10-17T16:05:00+05:30", "xbrl_url": standalone.url, "period": "Q2FY27", "basis": "STANDALONE"}
+    assert not event_catchup.results_due(made_standalone, [standalone])
+    assert event_catchup.results_due(made_standalone, [standalone, first])
+
+
+def test_a_consolidated_statement_waits_for_its_consolidated_file():
+    from bse_intel.pipeline import CONSOLIDATED_STATEMENT
+
+    assert CONSOLIDATED_STATEMENT.search("Statement of Consolidated Unaudited Financial Results for the quarter ended")
+    assert CONSOLIDATED_STATEMENT.search("UNAUDITED CONSOLIDATED FINANCIAL RESULTS FOR THE QUARTER")
+    assert CONSOLIDATED_STATEMENT.search("Consolidated Statement of Profit and Loss")
+    assert not CONSOLIDATED_STATEMENT.search("Statement of Standalone Unaudited Financial Results; the company has no subsidiary")
 
 
 def test_a_fresh_nse_results_filing_waits_for_its_xbrl(settings):
@@ -291,6 +305,32 @@ def test_a_fresh_nse_results_filing_waits_for_its_xbrl(settings):
     assert outcome.update["status"] == "PENDING" and "attempts" not in outcome.update
     assert outcome.update["last_error"].startswith("deferred: waiting for its results XBRL")
     assert ("results", "RAILTEL") in pipeline.nse.calls and fake.calls == []   # no model was asked
+
+
+def test_a_consolidated_statement_with_only_the_standalone_file_listed_waits(settings):
+    """Owner, 2026-10-21: a card made on the standalone file mixed the bases (13 of 52 results cards). While the
+    consolidated file is not yet listed, a statement with consolidated results waits for it."""
+    from bse_intel.nse import ResultsFiling
+    from bse_intel.timeutil import now_ist
+    from test_pipeline import _pdf, build
+
+    text = ("Statement of Consolidated Unaudited Financial Results for the quarter ended 30.09.2026 (Rs. in lakhs). "
+            "Revenue from operations 12,000.00 9,090.91. Net profit 1,500.00.")
+    filing = _nse_order(now_ist() - timedelta(minutes=40)).model_copy(update={
+        "subject": "Outcome of Board Meeting", "subcategory": "Outcome of Board Meeting", "event_type": "RESULTS"})
+    pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text)}, {}, env={})
+
+    class StandaloneOnly(EventNse):
+        def financial_results(self, symbol, quarterly=True):
+            self.calls.append(("results", symbol))
+            return [ResultsFiling("Quarterly", False, "Un-Audited", now_ist().date().isoformat(),
+                                  "https://x/standalone.xml", False, "2026-09-30")]
+
+    pipeline.nse = StandaloneOnly([], b"")
+    outcome = pipeline._process_one(filing, bulk=False, memory_complete=True)
+    assert outcome.update["status"] == "PENDING"
+    assert outcome.update["last_error"].startswith("deferred: waiting for its consolidated results XBRL")
+    assert fake.calls == []   # no model was asked
 
 
 def test_a_long_tag_name_is_shortened_to_a_label():

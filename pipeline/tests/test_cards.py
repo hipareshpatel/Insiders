@@ -1325,3 +1325,26 @@ def test_a_deck_in_crore_with_one_lakh_line_declares_no_single_unit():
     assert declared_unit(deck) is None
     assert declared_unit("Statement of results (₹ in Lakhs)\nRevenue 39,530.12") == 100
     assert declared_unit("(Rs. in Cr)\nRevenue 395.30") is None
+
+
+def test_a_standalone_figure_on_a_consolidated_card_is_a_problem():
+    """Ceigall (independent review, 2026-10-21): EBITDA ₹121 Cr and margin from the standalone statement on a card
+    whose basis and revenue were consolidated (₹970 Cr, EBITDA ₹121.1 Cr standalone vs ₹121.9... in the group)."""
+    from bse_intel.models import FinancialMetric, Pass2Output
+    from bse_intel.pipeline import basis_mixups
+    from bse_intel.xbrl import XbrlResult
+
+    group = XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q1FY27", metrics=[
+        FinancialMetric(metric="revenue", period="Q1FY27", value=970.4), FinancialMetric(metric="ebitda", period="Q1FY27", value=131.2)])
+    alone = XbrlResult(kind="RESULTS", basis="STANDALONE", period="Q1FY27", metrics=[
+        FinancialMetric(metric="revenue", period="Q1FY27", value=901.3), FinancialMetric(metric="ebitda", period="Q1FY27", value=121.0)])
+
+    def card(*points):
+        return Pass2Output.model_validate({"is_material": True, "event_type": "RESULTS", "timeline_entry": "x",
+                                           "card": {"impact_level": "MODERATE", "headline": "Ceigall Q1 results",
+                                                    "what_happened": list(points)}})
+
+    mixed = basis_mixups(card("Revenue ₹970 Cr, up 15.7%", "EBITDA ₹121 Cr against ₹94 Cr"), group, alone)
+    assert len(mixed) == 1 and "standalone EBITDA" in mixed[0] and "131.20" in mixed[0]
+    assert basis_mixups(card("Revenue ₹970 Cr", "EBITDA ₹131 Cr"), group, alone) == []
+    assert basis_mixups(card("EBITDA ₹121 Cr"), alone, None) == []            # a standalone card, or no second file

@@ -45,15 +45,17 @@ export function SystemView() {
         <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="font-display text-[18px] text-ink">Historical backfill</h2>
           <span className="num text-xs text-ink-2">
-            {s.backfill.complete ? "Complete" : `${doneDays} of ${totalDays} days discovered`} · from {s.backfill.start}
-            {s.backfill.discovered_through ? ` through ${s.backfill.discovered_through}` : ""}
+            {s.backfill.complete ? "Complete" : `Filing lists fetched for ${doneDays} of ${totalDays} days`} · {s.backfill.start}
+            {s.backfill.discovered_through ? ` to ${s.backfill.discovered_through}` : ""}
           </span>
         </div>
         <Meter value={s.backfill.complete ? 1 : doneDays / totalDays} />
         {!s.backfill.complete && s.backfill.companies_total ? (
           <div className="mt-3">
             <div className="num mb-1 text-xs text-ink-2">
-              Analysis: {num(Math.max(0, s.backfill.companies_total - (s.backfill.companies_left ?? 0)))} of {num(s.backfill.companies_total)} companies analysed (today's order)
+              {/* the list is rebuilt each morning from the companies still owing history, so this is today's progress, not the
+                  total (owner, 2026-10-21: "39 yesterday, zero this morning") */}
+              Today: {num(Math.max(0, s.backfill.companies_total - (s.backfill.companies_left ?? 0)))} of {num(s.backfill.companies_total)} companies with history still to read are done; the list restarts each morning without the finished ones
             </div>
             <Meter value={1 - (s.backfill.companies_left ?? 0) / Math.max(1, s.backfill.companies_total)} />
           </div>
@@ -95,13 +97,20 @@ export function SystemView() {
       </section>
 
       <section className="overflow-hidden rounded-xl border border-line bg-surface">
-        <header className="border-b border-line px-4 py-3"><h2 className="font-display text-[18px] text-ink">Recent pipeline runs</h2></header>
+        <header className="border-b border-line px-4 py-3">
+          <h2 className="font-display text-[18px] text-ink">Recent pipeline runs</h2>
+          {/* owner, 2026-10-21: "what does this title mean" */}
+          <p className="mt-0.5 text-[12.5px] leading-relaxed text-ink-3">
+            Each row is one pass of the pipeline (GitHub Actions, every 15 minutes): it looks for new NSE filings, reads them
+            and writes cards. "All" runs do today's filings first, then history.
+          </p>
+        </header>
         {s.runs.length === 0 ? <p className="px-4 py-4 text-sm text-ink-3">No runs recorded yet.</p> : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-[13.5px]">
               <thead className="eyebrow border-b border-line text-left text-ink-3">
                 <tr>
-                  {["Started", "Mode", "Status", "Discovered", "Analysed", "High", "Unverified", "Duration", "Note"].map((h) => <th key={h} className="px-4 py-2.5 font-semibold">{h}</th>)}
+                  {RUN_COLUMNS.map(([h, help]) => <th key={h} title={help} className="cursor-help px-4 py-2.5 font-semibold">{h}</th>)}
                 </tr>
               </thead>
               <tbody>{s.runs.map((r) => <RunRow key={r.run_id} run={r} />)}</tbody>
@@ -207,6 +216,19 @@ function ProviderRow({ usage }: { usage: ProviderUsage }) {
   );
 }
 
+const RUN_COLUMNS: [string, string][] = [
+  ["Started", "When the run began (hover for the exact time)"],
+  ["Mode", "live: today's filings only; all: today's first, then history (backfill)"],
+  ["Status", "OK: finished; PARTIAL: some filings failed and will be retried; STOPPED: the runner's time limit ended it"],
+  ["New filings", "Filings seen for the first time on NSE in this run"],
+  ["Read", "Filings read and decided in this run: a card, memory only, noise or a duplicate"],
+  ["High impact", "Cards rated high impact"],
+  ["To verify", "Cards held back or marked for review by the checks"],
+  ["Took", "How long the run took"],
+  ["Why it stopped", "The reason a run ended early: its time budget, the free AI quota, or the database's daily write limit"],
+];
+
+/** A table of the run's numbers; RUN_COLUMNS says what each one counts. */
 function RunRow({ run }: { run: PipelineRun }) {
   let stats: Record<string, unknown> = {};
   try {

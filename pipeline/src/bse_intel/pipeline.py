@@ -89,7 +89,7 @@ HISTORY_INLINE = 5       # history analysed ahead of a live filing; a longer bac
                          # 27 waiting filings; deep audit E11)
 MAX_ORDER = 20_000       # companies in the cached backfill order
 BACKLOG_MAX = 1_500      # history filings waiting to be read before backfill discovers another day
-PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_1y",
+PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_3m", "ret_1y",
                  "median_turnover_cr", "point_in_time")
 D1_FREE_DAILY_WRITES, D1_NEAR_CAP = 100_000, 0.95   # Cloudflare D1 free plan: rows written a day (UTC day)
 REQUEUE_AFTER_HOUR, REQUEUE_KEY = 22, "failed:requeued_on"   # the nightly extra try for failed filings
@@ -849,6 +849,40 @@ def _filing_labels(raw: str, filing: str, yoy: bool) -> bool:
     """The filing itself writes this change with this label: "a growth of 5.9% YoY" (Bandhan Bank, 2026-10-20)."""
     number = re.escape(raw.lstrip("+-−"))
     return bool(filing) and re.search(rf"(?<![\d.]){number}{_FILING_YOY if yoy else _FILING_QOQ}", filing, re.I) is not None
+
+
+_BASIS_LINES = ("revenue", "ebitda", "pbt", "pat", "total_income", "interest_earned", "nii")
+_BASIS_LABEL = {"ebitda": "EBITDA", "pbt": "PBT", "pat": "PAT", "nii": "NII", "total_income": "total income",
+                "interest_earned": "interest earned"}
+
+
+def basis_mixups(out: Pass2Output, tagged, standalone) -> list[str]:
+    """A crore figure on a consolidated card that is the standalone file's figure for that line, not the consolidated
+    one: Ceigall's EBITDA ₹121 Cr and margin beside consolidated revenue (independent review, 2026-10-21; owner: "not
+    using consolidated numbers where those are there or mixing them with standalone"). Judged only where the two files
+    differ by more than 3% for the quarter, at the figure's own decimals."""
+    if out.card is None or tagged is None or standalone is None or tagged.basis != "CONSOLIDATED":
+        return []
+    from .grounding import _tokens
+
+    own = {m.metric: m.value for m in tagged.metrics if m.period == tagged.period and m.value is not None}
+    other = {m.metric: m.value for m in standalone.metrics if m.period == tagged.period and m.value is not None}
+    pairs = [(name, own[name], other[name]) for name in _BASIS_LINES if name in own and name in other
+             and own[name] and abs(other[name] - own[name]) > 0.03 * abs(own[name])]
+    if not pairs:
+        return []
+    found = []
+    for text in _card_texts(out):
+        clean = text.replace("**", "")
+        for value, decimals, pos, kind, raw in _tokens(clean):
+            if kind == "pct" or not re.match(r"\s*(?:cr\b|crores?\b)", clean[pos + len(raw):pos + len(raw) + 8], re.I):
+                continue
+            for name, consolidated, alone in pairs:
+                if round(abs(alone), decimals) == round(abs(value), decimals) != round(abs(consolidated), decimals):
+                    found.append(f'"{raw} Cr" is the standalone {_BASIS_LABEL.get(name, name)} '
+                                 f"({alone:,.2f} Cr); this card is consolidated ({consolidated:,.2f} Cr): use the "
+                                 "consolidated figure")
+    return list(dict.fromkeys(found))[:4]
 
 
 def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None", filing: str = "") -> list[str]:
@@ -2315,6 +2349,10 @@ class Pipeline:
         return links
 
     def _results_xbrl_url(self, filing: Filing, text: str) -> str | None:
+        link = self._results_xbrl_link(filing, text)
+        return link.url if link else None
+
+    def _results_xbrl_link(self, filing: Filing, text: str):
         """The XBRL file for a results filing, from the company's results archive: the statement's
         quarter, consolidated when the company files it (memory keeps one basis), the latest file
         (revision) filed within 45 days of the PDF, else the earliest. Without a stated quarter, the
@@ -2333,23 +2371,29 @@ class Pipeline:
         day = date.fromisoformat(filing.filed_at[:10])
         timely = [link for link in links if -2 <= (date.fromisoformat(link.filed_at[:10]) - day).days <= 45]
         if timely:
-            return max(timely, key=lambda link: link.filed_at).url
-        return min(links, key=lambda link: link.filed_at).url if links else None
+            return max(timely, key=lambda link: link.filed_at)
+        return min(links, key=lambda link: link.filed_at) if links else None
 
-    def _standalone_bank_ratios(self, filing: Filing, tagged) -> None:
-        """A bank's consolidated file carries no gross NPA, net NPA or RoA (0 fillers, T2 2026-10-20): the same
-        quarter's standalone file gives them. Best effort: the card goes on without them if it cannot be read."""
+    def _standalone_file(self, filing: Filing, tagged):
+        """The standalone results file for the consolidated file's quarter, parsed; None when NSE lists none or it
+        cannot be read (best effort: the card goes on without it)."""
         links = [link for link in self._results_links(filing)
                  if link.period == tagged.period and link.basis == "STANDALONE"]
         if not links:
-            return
+            return None
         link = max(links, key=lambda link: link.filed_at)
         try:
-            standalone = xbrl_fast_path.parse(self._attachment(link.url, 8_000_000))
-        except Exception as exc:  # an extra: the consolidated card stands without the ratios
-            log.warning("standalone bank file for %s unavailable (%s)", filing.news_id, exc)
-            return
-        xbrl_fast_path.add_bank_ratios(tagged, standalone)
+            return xbrl_fast_path.parse(self._attachment(link.url, 8_000_000))
+        except Exception as exc:  # an extra: the consolidated card stands without it
+            log.warning("standalone results file for %s unavailable (%s)", filing.news_id, exc)
+            return None
+
+    def _standalone_bank_ratios(self, filing: Filing, tagged, standalone=None) -> None:
+        """A bank's consolidated file carries no gross NPA, net NPA or RoA (0 fillers, T2 2026-10-20): the same
+        quarter's standalone file gives them. Best effort: the card goes on without them if it cannot be read."""
+        standalone = standalone or self._standalone_file(filing, tagged)
+        if standalone is not None:
+            xbrl_fast_path.add_bank_ratios(tagged, standalone)
 
     def _timeline_flow(self, filing: Filing, company: dict, industry, doc: Document, bulk: bool, memory_complete: bool) -> Outcome:
         """A routine filing (dividend recommendation, voting result, a nil pledge declaration) gets one dated line in
@@ -2719,6 +2763,13 @@ class Pipeline:
             filing = filing.model_copy(update={"route": "FAST_TRACK", "event_type": "ANNUAL_REPORT"})
             event_type = "ANNUAL_REPORT"
         if filing.route == "PASS1":
+            # the route was set at discovery; a filing re-queued after a rule change takes today's rules (the noise
+            # review of 2026-10-21 moved press releases, shareholder letters and monthly volumes past pass 1)
+            now_rule = self.rules.classify(filing)
+            if now_rule.action == "FAST_TRACK":
+                filing = filing.model_copy(update={"route": "FAST_TRACK", "event_type": now_rule.event_type or filing.event_type})
+                event_type = filing.event_type or "OTHER"
+        if filing.route == "PASS1":
             first_page = doc.first_page_text()
             _ocr_check(doc)
             recent = [t for t in dossier.get("timeline", []) if str(t.get("date", "")) < filing.filed_at][-8:]
@@ -2789,18 +2840,26 @@ class Pipeline:
             log.info("%s passes on %s's results: an update, not the company's own results", filing.news_id, subsidiary)
             event_type = "OTHER"
         if event_type == "RESULTS" and not filing.xbrl_url:
-            filing = filing.model_copy(update={"xbrl_url": self._results_xbrl_url(filing, text)})
-            if not filing.xbrl_url and filing.news_id.startswith(nse_api.NEWS_ID_PREFIX) and self.nse is not None \
-                    and not self._nse_refused:
+            link = self._results_xbrl_link(filing, text)
+            filing = filing.model_copy(update={"xbrl_url": link.url if link else None})
+            # The statement carries consolidated results but NSE lists only the standalone file so far: wait for the
+            # consolidated one, as for a missing file. A card on the standalone file mixed the two bases on 13 of 52
+            # results cards (owner, 2026-10-21: "not using consolidated numbers where those are there")
+            standalone_only = bool(link and link.basis == "STANDALONE" and CONSOLIDATED_STATEMENT.search(text))
+            if (not filing.xbrl_url or standalone_only) and filing.news_id.startswith(nse_api.NEWS_ID_PREFIX) \
+                    and self.nse is not None and not self._nse_refused:
                 age = now_ist() - datetime.fromisoformat(filing.filed_at)
                 if age < timedelta(minutes=RESULTS_XBRL_WAIT_MINUTES):
                     # NSE's integrated-filing XBRL followed the outcome by 5 min to 2 h 40 min (measured 2026-10-18)
                     with self._lock:
                         self._xbrl_links.pop(filing.scrip_code, None)   # read the list afresh next time
-                    raise EventXbrlPending(f"waiting for its results XBRL ({age.total_seconds() / 60:.0f} min after the PDF)")
+                    what = "its consolidated results XBRL" if standalone_only else "its results XBRL"
+                    raise EventXbrlPending(f"waiting for {what} ({age.total_seconds() / 60:.0f} min after the PDF)")
         tagged = self._xbrl(filing) if event_type == "RESULTS" else None
+        # the same quarter's standalone file beside a consolidated one: its figures are what a mixed card copies
+        standalone_file = self._standalone_file(filing, tagged) if tagged and tagged.basis == "CONSOLIDATED" else None
         if xbrl_fast_path.needs_standalone_bank_ratios(tagged):
-            self._standalone_bank_ratios(filing, tagged)
+            self._standalone_bank_ratios(filing, tagged, standalone_file)
         if tagged and (tagged.kind != "RESULTS" or not xbrl_fast_path.confirm(tagged, text)):
             known = (dossier_as_of(dossier, filing.filed_at, inclusive=False) or {}).get("financial_metrics")
             if tagged.kind == "RESULTS" and results_card.agrees_with_memory(tagged, known):
@@ -2936,6 +2995,7 @@ class Pipeline:
             changes += directions.multiple_guard(candidate)   # "more than double" for +74%: the amounts decide
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged, filed_text)
+            found.scale += basis_mixups(candidate, tagged, standalone_file)
             found.scale += gate.stale_columns(_card_texts(candidate), filed_text)
             found.scale += foreign_as_rupees(_card_texts(candidate), filed_text)
             found.form += headline_form(candidate) + working_text(candidate)
@@ -3609,7 +3669,7 @@ class Pipeline:
             # the same window as the feed and the Signals page ask for (it was 3 days, so the page showed none from days 4-7)
             signals = self.sink.query("snapshot_signals", [start])
             body = {"generated_at": now_iso(), "from": start, "limit": SNAPSHOT_PAGE,
-                    "feed": {"cards": cards, "total": total}, "signals": signals}
+                    "feed": {"cards": cards, "total": total}, "signals": signals, "signals_from": start}
             self.sink.put_object(SNAPSHOT_KEY, json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode())
         except Exception as exc:  # the snapshot is an optimisation; the feed falls back to D1
             log.warning("snapshot not published: %s", exc)
@@ -3807,6 +3867,11 @@ def is_transcript(filing) -> bool:
 def top_exit(text: str | None) -> bool:
     """Whether the text says the MD, CEO or CFO is leaving (resigning, ceasing, stepping down, removed, retiring)."""
     return bool(TOP_EXIT.search(text or ""))
+# A results statement headed as the group's: "Statement of Consolidated Unaudited Financial Results", "Consolidated
+# Statement of Profit and Loss", "Unaudited Consolidated Financial Results for the quarter"
+CONSOLIDATED_STATEMENT = re.compile(r"\bconsolidated\s+(?:un-?audited\s+|audited\s+)?(?:financial\s+results|statement\s+of\s+"
+                                    r"profit|results\s+for\s+the)|statement\s+of\s+consolidated\s+(?:un-?audited\s+|audited\s+)?"
+                                    r"(?:financial\s+)?results", re.I)
 RESULTS_XBRL_WAIT_MINUTES = 180   # a live NSE results filing waits this long for its XBRL (measured: 5 min - 2 h 40 min)   # owner, 2026-10-18: no cards for director / KMP changes
 ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE", "LITIGATION_REGULATORY", "FUNDRAISE",
                       "RIGHTS_ISSUE", "M_AND_A", "DEBT_RATINGS", "CONCALL_PRESENTATION", "ANNUAL_REPORT")

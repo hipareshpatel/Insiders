@@ -16,7 +16,7 @@ import { IMPACT_DOT } from "../components/PriceChart";
 import { Badge } from "../components/ui/badge";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
-import { cr, istDate, listing, num, pct, signClass, titleCase, todayIST } from "../lib/format";
+import { cr, istDate, listing, num, pct, signClass, titleCase, todayIST, companyPath } from "../lib/format";
 import { periodEnd, periodKind } from "../lib/periods";
 import { EVENT_LABELS, SECTORS, TONE_CHIP, TONE_LABEL, verdict, type Tone } from "../lib/taxonomy";
 import { ownerApi, useOwnerToken } from "../lib/owner";
@@ -52,12 +52,14 @@ const TAG_CLS = { pos: "bg-pos-soft text-pos", neg: "bg-neg-soft text-neg", neut
 const btn = "card-soft inline-flex h-[38px] items-center rounded-xl px-4 text-[13.5px] font-extrabold text-ink hover:text-accent";
 
 export function CompanyPage() {
-  const { scrip } = useParams<{ scrip: string }>();
+  // the address carries the NSE symbol (or, for older links and companies without one, the key)
+  const { scrip: key } = useParams<{ scrip: string }>();
   const [params, setParams] = useQueryState();
   const tab = params.get("tab") ?? "overview";
   // a chart dot or a scorecard tile asks for a card: its list pages to it, opens it and scrolls to it
   const [focus, setFocus] = useState<{ id: string; n: number } | null>(null);
-  const query = useQuery({ queryKey: ["company", scrip], queryFn: () => api.company(scrip!), enabled: !!scrip });
+  const query = useQuery({ queryKey: ["company", key], queryFn: () => api.company(key!), enabled: !!key });
+  const scrip = (query.data?.company?.scrip_code as string | undefined) ?? key;
   const cards = query.data?.cards;
   const parsed = useMemo(() => (cards ?? []).flatMap((row) => { const card = parseCard(row); return card ? [{ row, card }] : []; }), [cards]);
 
@@ -965,7 +967,7 @@ function OwnersTab({ dossier, peers, company }: { dossier: Dossier | null; peers
                   )}
                   {peers.map((pr) => (
                     <tr key={pr.scrip_code} className="bg-surface-2">
-                      <td className="rounded-l-xl px-2 py-2"><Link href={`/company/${pr.scrip_code}`} className="font-bold text-ink hover:text-accent">{pr.symbol ?? pr.company_name}</Link></td>
+                      <td className="rounded-l-xl px-2 py-2"><Link href={`${companyPath(pr)}`} className="font-bold text-ink hover:text-accent">{pr.symbol ?? pr.company_name}</Link></td>
                       <td className="num px-2 text-right">{cr(pr.market_cap_cr)}</td>
                       <td className={cn("num px-2 text-right", signClass(pr.ret_1m))}>{pct(pr.ret_1m)}</td>
                       <td className={cn("num rounded-r-xl px-2 text-right", signClass(pr.ret_1y))}>{pct(pr.ret_1y)}</td>

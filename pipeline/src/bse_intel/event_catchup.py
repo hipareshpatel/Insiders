@@ -94,6 +94,8 @@ def results_due(row: dict, links: list) -> bool:
     listed (filed from two days before the card to 45 days after, as Pipeline._results_xbrl_url takes it), or it was
     made from a file that a later one (a revision) has replaced for the same quarter and basis."""
     if row.get("xbrl_url"):
+        if row.get("basis") == "STANDALONE" and any(l.period == row.get("period") and l.basis == "CONSOLIDATED" for l in links):
+            return True   # made on the standalone file before the consolidated one was listed (owner, 2026-10-21)
         same = [l for l in links if l.period == row.get("period") and l.basis == (row.get("basis") or l.basis)]
         return bool(same) and max(same, key=lambda l: l.filed_at).url != row["xbrl_url"]
     day = datetime.fromisoformat(row["filed_at"]).date()

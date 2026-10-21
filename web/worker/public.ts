@@ -12,11 +12,11 @@ const CARD_COLUMNS = `
   c.news_id, c.scrip_code, c.symbol, c.company_name, c.filing_date, c.filed_at, c.sector,
   c.event_category, c.impact_level, c.headline, c.grounding_score, c.needs_review,
   c.memory_complete, c.card_json, c.pdf_url, c.market_session, c.actionability_score, c.is_actionable_signal, c.post_event_return_json, c.held,
-  co.market_cap_cr, co.size_category, co.last_price, co.ret_1w, co.ret_1m, co.ret_1y,
+  co.market_cap_cr, co.size_category, co.last_price, co.ret_1w, co.ret_1m, co.ret_3m, co.ret_1y, co.industry,
   co.median_turnover_cr, co.credibility_score, co.watchlist, co.bse_group, co.technicals_json, co.former_names_json`;
 
 const COMPANY_COLUMNS = `scrip_code, symbol, company_name, isin, industry, sector, market_cap_cr,
-  size_category, last_price, price_date, ret_1w, ret_1m, ret_1y, card_count, last_card_at,
+  size_category, last_price, price_date, ret_1w, ret_1m, ret_3m, ret_1y, card_count, last_card_at,
   watchlist, former_names_json, credibility_score, median_turnover_cr, bse_group, technicals_json,
   json_array_length(memory_summary_json, '$.open_promises') AS open_promises,
   json_extract(memory_summary_json, '$.active_capex') AS active_capex,
@@ -116,6 +116,7 @@ interface Snapshot {
   limit: number;
   feed: { cards: unknown[]; total: number };
   signals: unknown[];
+  signals_from?: string; // the window the signals were built for (the pipeline's 7 days); older snapshots held 3
 }
 
 /** The pipeline publishes the default first page and the top signals to R2 after every run, so the
@@ -169,6 +170,9 @@ export async function feed(c: Context<AppEnv>, withHeld = false) {
   if (sector) where.push(`+c.sector IN (SELECT value FROM json_each(${p(sector)}))`);
   if (session) where.push(`+c.market_session IN (SELECT value FROM json_each(${p(session)}))`);
   if (q.watch === "1") where.push("co.watchlist = 1");
+  if (q.turnaround === "1") {
+    where.push(`json_extract(c.card_json, '$.results.pat.prev_year') < 0 AND json_extract(c.card_json, '$.results.pat.value') > 0`);
+  }
   if (cursorAt) where.push(`(c.filed_at, c.news_id) < (${p(cursorAt)}, ${p(cursorId ?? "")})`);
   if (q.review === "0") where.push("c.needs_review = 0");
   if (withHeld && q.held === "only") where.push("c.held = 1");
@@ -212,7 +216,7 @@ api.get("/signals", async (c) => {
   const fromAt = q.from_at && /^\d{4}-\d{2}-\d{2}T/.test(q.from_at) ? q.from_at : `${isDate(q.from) ? q.from : todayIst()}`;
   const toAt = q.to_at && /^\d{4}-\d{2}-\d{2}T/.test(q.to_at) ? q.to_at : `${isDate(q.to) ? q.to : "2999-12-31"}T99`;
   const snap = !q.from_at && !q.to && q.from ? await snapshot(c) : null;
-  if (snap && snap.from === q.from) return c.json({ cards: snap.signals, source: "snapshot" });
+  if (snap && snap.signals_from === q.from) return c.json({ cards: snap.signals, source: "snapshot" });
   const { results } = await c.env.DB.prepare(`
     SELECT ${CARD_COLUMNS}
       FROM cards c LEFT JOIN companies co ON co.scrip_code = c.scrip_code
@@ -384,8 +388,12 @@ api.get("/companies", async (c) => {
 });
 
 api.get("/companies/:scrip", async (c) => {
-  const scrip = c.req.param("scrip");
-  if (!isCompanyKey(scrip)) return c.json({ error: "bad company key" }, 400);
+  const asked = c.req.param("scrip");
+  if (!isCompanyKey(asked)) return c.json({ error: "bad company key" }, 400);
+  // an NSE symbol (the site's addresses since 2026-10-21) or the internal key (older links)
+  const scrip = /^\d+$/.test(asked) || asked.startsWith("NSE:") ? asked
+    : (await c.env.DB.prepare("SELECT scrip_code FROM companies WHERE symbol = ?1 LIMIT 1").bind(asked.toUpperCase())
+        .first<{ scrip_code: string }>())?.scrip_code ?? asked;
   const [company, cards, object, chart] = await Promise.all([
     c.env.DB.prepare(`SELECT ${COMPANY_COLUMNS}, json_extract(memory_summary_json, '$.calls') AS calls_json
       FROM companies WHERE scrip_code = ?1`).bind(scrip).first<Record<string, unknown>>(),

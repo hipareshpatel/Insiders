@@ -7,7 +7,7 @@ import { Avatar } from "../components/Avatar";
 import { parseCard } from "../components/FilingCard";
 import { api, type FeedFilters } from "../lib/api";
 import { cn } from "../lib/cn";
-import { addDays, istDate, istDateTime, marketSession, num, pct, signClass, titleCase, todayIST } from "../lib/format";
+import { addDays, istDate, istDateTime, marketSession, num, pct, signClass, titleCase, todayIST, companyPath } from "../lib/format";
 import { catalystFamily, catalystText, FEED_TABS, SECTORS, SIZES, verdict, type Tone } from "../lib/taxonomy";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading, Pager } from "./FeedView";
@@ -59,7 +59,7 @@ export function TodayView() {
   const withLow = params.get("low") === "1";
   const page = Math.max(1, Number.parseInt(params.get("page") ?? "1", 10) || 1);
   const base: FeedFilters = {
-    from_at: fromAt, category: "category" in tab ? tab.category : undefined,
+    from_at: fromAt, category: "category" in tab ? tab.category : undefined, turnaround: "turnaround" in tab ? tab.turnaround : undefined,
     size: params.get("size") ?? undefined, sector: params.get("sector") ?? undefined, session: params.get("session") ?? undefined,
     review: params.get("verified") === "1" ? "0" : undefined, watch: params.get("watch") === "1" ? "1" : undefined,
     q: params.get("q") ?? undefined,
@@ -308,7 +308,7 @@ function Rail({ today, fromAt, brief }: { today: string; fromAt: string; brief?:
               const pat = card?.results?.pat?.yoy_pct;
               return (
                 <li key={row.news_id} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 text-[13px]">
-                  <Link href={`/company/${row.scrip_code}`} className="truncate"><b className="text-ink">{row.symbol ?? row.company_name}</b> <span className="text-ink-3">{card?.results?.period ?? ""}</span></Link>
+                  <Link href={`${companyPath(row)}`} className="truncate"><b className="text-ink">{row.symbol ?? row.company_name}</b> <span className="text-ink-3">{card?.results?.period ?? ""}</span></Link>
                   <span className={cn("num", signClass(pat))}>{pat != null ? pct(pat) : ""}</span>
                   <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-extrabold", VERDICT_CHIP[v.tone])}>{v.label}</span>
                 </li>
@@ -324,7 +324,7 @@ function Rail({ today, fromAt, brief }: { today: string; fromAt: string; brief?:
               const [day, mon] = istDate(e.event_date).split(" ");   // "19 Oct 2026"
               return (
                 <li key={e.id}>
-                  <Link href={`/company/${e.scrip_code}`} className="grid grid-cols-[46px_minmax(0,1fr)] items-center gap-2.5 text-[13px] hover:text-accent">
+                  <Link href={`${companyPath(e)}`} className="grid grid-cols-[46px_minmax(0,1fr)] items-center gap-2.5 text-[13px] hover:text-accent">
                     <span className={cn("num rounded-[10px] py-1 text-center text-[12px] font-extrabold leading-tight", FAMILY_TILE[catalystFamily(e.event_type).key])}>
                       {day}<span className="block text-[9.5px] font-bold uppercase tracking-wide">{mon}</span>
                     </span>
@@ -342,7 +342,7 @@ function Rail({ today, fromAt, brief }: { today: string; fromAt: string; brief?:
           <ul className="divide-y divide-line">
             {overdue.data!.promises.slice(0, 3).map((p) => (
               <li key={p.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 py-1.5 text-[13px]">
-                <Link href={`/company/${p.scrip_code}?tab=promises`} className="min-w-0"><span className="text-ink">{p.symbol ?? p.company_name}: {p.statement}</span>
+                <Link href={`${companyPath(p)}?tab=promises`} className="min-w-0"><span className="text-ink">{p.symbol ?? p.company_name}: {p.statement}</span>
                   <span className="block text-[11.5px] text-ink-3">due {p.due ?? istDate(p.due_date)}</span></Link>
                 <span className="num whitespace-nowrap text-[12px] font-bold text-warn">{p.days_overdue} days</span>
               </li>
@@ -355,7 +355,7 @@ function Rail({ today, fromAt, brief }: { today: string; fromAt: string; brief?:
           <ul className="space-y-2">
             {radar.data!.companies.slice(0, 3).map((c) => (
               <li key={c.scrip_code}>
-                <Link href={`/company/${c.scrip_code}`} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 text-[13.5px] hover:text-accent">
+                <Link href={`${companyPath(c)}`} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 text-[13.5px] hover:text-accent">
                   <span className="min-w-0"><b className="text-ink">{c.company_name}</b><span className="block truncate text-[11.5px] text-ink-3">{c.triggers.map((t) => t.text).join(" · ")}</span></span>
                   <span className="flex gap-[3px]">{c.triggers.map((t) => <i key={t.kind} className="h-2 w-2 rounded-full bg-accent" />)}</span>
                 </Link>
@@ -371,7 +371,7 @@ function Rail({ today, fromAt, brief }: { today: string; fromAt: string; brief?:
           <ul className="space-y-2">
             {watched.data!.cards.map((c) => (
               <li key={c.news_id} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 text-[13.5px]">
-                <Link href={`/company/${c.scrip_code}`} className="truncate font-bold text-ink hover:text-accent">{c.company_name}</Link>
+                <Link href={`${companyPath(c)}`} className="truncate font-bold text-ink hover:text-accent">{c.company_name}</Link>
                 <span className={cn("num text-[12.5px] font-bold", signClass(c.ret_1w))}>{c.ret_1w != null ? `1W ${pct(c.ret_1w)}` : ""}</span>
               </li>
             ))}

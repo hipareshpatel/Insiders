@@ -11,7 +11,7 @@ import { Button } from "../components/ui/button";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
 import { HISTORY_START } from "../lib/config";
-import { cr, istDate, todayIST } from "../lib/format";
+import { cr, istDate, todayIST, companyPath } from "../lib/format";
 import { SIZES, TONE_BORDER, TONE_CHIP, verdict, type Tone } from "../lib/taxonomy";
 import { periodEnd } from "../lib/periods";
 import { useQueryState } from "../lib/url";
@@ -147,7 +147,7 @@ export function ResultsView() {
                             <a href={row.pdf_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} aria-label="Official PDF"
                               className="mr-2 inline-grid h-7 w-7 place-items-center rounded-md text-ink-3 hover:bg-surface-2 hover:text-ink"><FileText className="h-4 w-4" /></a>
                           )}
-                          <button type="button" aria-label="Open company" onClick={(e) => { e.stopPropagation(); navigate(`/company/${row.scrip_code}`); }}
+                          <button type="button" aria-label="Open company" onClick={(e) => { e.stopPropagation(); navigate(`${companyPath(row)}`); }}
                             className="inline-grid h-7 w-7 place-items-center rounded-md text-ink-3 hover:bg-surface-2 hover:text-ink"><ArrowUpRight className="h-4 w-4" /></button>
                         </td>
                       </tr>

@@ -140,3 +140,18 @@ export function restates(text: string, of: string): boolean {
   const nums = figures(t), known = figures(o);
   return nums.every((n) => near(n, known, String(n))) && (overlap >= 0.6 || (nums.length > 0 && overlap >= 0.45));
 }
+
+// lines where a fall is the good news: asset quality, costs, debt, losses (deep audit F-13: "GNPA -17 bps" showed red)
+const LOWER_IS_BETTER = /\b(?:g?npa|nnpa|non[- ]performing|slippages?|credit\s+cost|provisions?|cost[- ]to[- ]income|expenses?|costs?|debt|borrowings?|leverage|losses?|attrition|days?\s+(?:receivable|inventory|payable)|working\s+capital\s+days|pledged?)\b/i;
+
+/** A key number's change as good (pos), bad (neg) or neither: the sign of its first figure (or up/down in words),
+ *  turned round for a line where less is better; no direction at all is neither, never green by default. */
+export function changeTone(label: string, change: string): "pos" | "neg" | null {
+  const text = change.trim();
+  const sign = text.match(/([+\-−])\s*[₹$]?\s*\d/);
+  const word = text.match(/\b(up|rose|higher|increase[sd]?|gain(?:ed)?|down|fell|lower|decrease[sd]?|decline[sd]?|drop(?:ped)?)\b/i);
+  const up = sign ? sign[1] === "+" : word ? /^(up|rose|higher|increase|gain)/i.test(word[1]) : null;
+  if (up === null) return null;
+  const good = LOWER_IS_BETTER.test(label) ? !up : up;
+  return good ? "pos" : "neg";
+}

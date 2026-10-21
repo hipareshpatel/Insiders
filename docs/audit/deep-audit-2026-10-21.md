@@ -62,7 +62,7 @@ and what was done.
 | id | sev | status | where | finding | done |
 |---|---|---|---|---|---|
 | F-01 | HIGH | CONFIRMED | `statements.ts` isBank | One stray "revenue" figure flipped 11 of 41 banks to the Sales/OPM layout (SBI "Sales 1,81,079") | Fixed: a bank by interest earned on most of its quarters |
-| F-02 | HIGH | CONFIRMED | memory (area D) | CSB Bank's Q1FY27 EPS 35.00 (a card's annualised figure) over its XBRL 8.65; the tables show memory's value | Open: memory should prefer the XBRL source for a period's figure |
+| F-02 | HIGH | CONFIRMED | memory (area D) | CSB Bank's Q1FY27 EPS 35.00 (a card's annualised figure) over its XBRL 8.65; the tables show memory's value | Fixed 22 Oct: memory already prefers XBRL, but CSB had none for Q1FY27; the 35.00 came from its concall presentation (annualised), which replaced the results card's 8.65. Per-share figures now join the flows only a results filing or the XBRL may restate for a quarter (`dossier.QUARTER_OWNED`, test). The seed adds CSB's XBRL |
 | F-03 | MEDIUM | CONFIRMED | `statements.ts` mainBasis | The metric's own basis field ignored: the "Consolidated" label and the switch vanished (HDFCBANK, ICICIBANK) | Fixed |
 | F-04..F-07 | MEDIUM | CONFIRMED | `statements.ts` | CAGR by array position; TTM growth across gaps; minority interest missing so the balance sheet did not add up; a missing other income counted as zero | Fixed (tests); EPS not split-adjusted stays open |
 | F-08 | MEDIUM | CONFIRMED | company page | The 60-card cap shown as the total (SMLMAH 60 of 89) | Fixed: the count is the company's, and the list says "the latest 60 of 89" |
@@ -70,8 +70,14 @@ and what was done.
 | F-10 | MEDIUM | CONFIRMED | `public.ts` | `/company/tcs` answered 400 | Fixed: the key is upper-cased first |
 | F-11 | MEDIUM | CONFIRMED | `TodayView.tsx` | Today never reads the R2 snapshot (about 10 D1 calls a view); SPEC says it does | Open |
 | F-12 | MEDIUM | CONFIRMED | `cardText.ts` | A fact with any quote counts as verified on the face though its quote may not be in the filing (93 of 300 cards) | Open: store a per-fact `quote_found` (stricter, no audit needed) |
-| F-13, F-14 | MEDIUM | CONFIRMED | card tiles, owner verdicts | Tile colour from the first character ("GNPA -17 bps" red); a verdict that fails (401) still looks saved | Open |
+| F-13, F-14 | MEDIUM | CONFIRMED | card tiles, owner verdicts | Tile colour from the first character ("GNPA -17 bps" red); a verdict that fails (401) still looks saved | Fixed 22 Oct: `changeTone` (sign of the first figure or up/down, turned round for NPA, costs, debt, losses; no direction is grey, not green; tests); a refused verdict rolls back and says "Not saved" |
 | F-15, F-16 | MEDIUM | CONFIRMED | Today on a phone; light theme | Filters take 326 of 844 px; text contrast 2.8-3.5:1 against 4.5:1 | Open |
+
+## H. D1 reads (found 22 Oct, after the audit)
+
+| ID | Severity | Status | Where | Finding | Resolution |
+|---|---|---|---|---|---|
+| H-01 | HIGH | MEASURED 22 Oct | `public.ts` peers, `filings_pending.sql` | D1's free 5,000,000 rows read a day ran out on 20 Oct (6,532,645) and 21 Oct (5,367,140, from 20:29 UTC): the site and every job answered 500 until 00:00 UTC. Nothing measured reads. Peers read the sector per view (6,745,950 rows in 1,220 calls); the queue listing re-read earlier pages (924,232 in 79 calls) | Both rewritten as bounded index seeks, checked equal to the old queries; `d1-usage.yml` prints D1's own rows read and written by day, hour and query (#54) |
 
 ## G. Tests, docs and config truth
 

@@ -21,3 +21,4 @@ Columns:
 
 | date | audited | right | minor | wrong | held reviewed | held released | needs-review fixed | notes |
 |---|---|---|---|---|---|---|---|---|
+| 21 Oct 10:07 | 20 | 2 | 12 | 6 | 0 (no export yet) | 0 | 0 of 4 checked | WRONG: invented or unsupported rationale 5 of 6 (HDB Financial peer comparison, Amagi FY26 profit claim, Moneyview rationale), event_type (Venus Pipes, PVP), Kapston Q2 prior-year EPS not bonus-restated (EPS direction wrong). Needs review: Kernex WRONG (order book from memory), Cleanmax and Ambuja MINOR, Supreme Infrastructure RIGHT, BHEL unread (12 MB PDF broken). Short vs long: 1 card carried a variant (long, MINOR). Critic not scored (no export). Recorded by the lead from the routine session's report: its push was refused (403, repository not attached), so its files were lost |

@@ -3,6 +3,8 @@
 # - refresh-summaries: every company's stored summary (open promises, radar, credibility) rebuilt from its memory;
 # - export-held: every held card into docs/audit/live/ on the working branch, for the live reviews (the public site
 #   does not serve them);
+# - export-critic: the shadow critic's verdicts of the last two days (R2 evidence/critic/) into docs/audit/live/, so the
+#   daily audit can score its precision and recall (the audit's sessions read neither R2 nor the internal API);
 # - requeue-failed: filings that used all 3 attempts in the last 30 days get fresh attempts (after a fix; requeue.py),
 #   or, with ids, the named filings are re-run whatever their status (held or stale cards);
 # - apply-verdicts: the owner's standing Wrong / Right verdicts applied to the stored cards once (verdicts saved
@@ -22,7 +24,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, requeue-failed, apply-verdicts, seed-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, apply-verdicts, seed-memory]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -105,15 +107,18 @@ jobs:
       - name: Export held cards
         if: inputs.command == 'export-held'
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel export-held --out "../docs/audit/live/held-$(date -u +%F).json"'
+      - name: Export the critic's verdicts
+        if: inputs.command == 'export-critic'
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel critic-export --since "$(date -u -d "-1 day" +%F)" --out "../docs/audit/live/critic-$(date -u +%F).json"'
       # into the working branch, as T19 planned (the owner accepted held drafts in the public repository, 2026-10-20)
       - name: Commit the export
-        if: inputs.command == 'export-held'
+        if: inputs.command == 'export-held' || inputs.command == 'export-critic'
         working-directory: .
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git fetch -q origin claude/nice-goodall-ta0sxs
           git checkout -q -B claude/nice-goodall-ta0sxs origin/claude/nice-goodall-ta0sxs
-          git add docs/audit/live/held-*.json
-          git commit -qm "Held cards exported for the live review (maintenance.yml export-held)"
+          git add docs/audit/live/
+          git commit -qm "${{ inputs.command }}: exported for the live review (maintenance.yml)"
           git push -q origin claude/nice-goodall-ta0sxs

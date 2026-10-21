@@ -319,6 +319,9 @@ FLOW_METRICS = frozenset({
     "raw_material_cost", "inventory_change", "operating_cash_flow",
     # the banking template's flows
     "interest_earned", "interest_expended", "pre_provision_operating_profit", "provisions"})
+# what a results filing owns for its quarter: the flows, and the per-share figures, which a presentation often gives
+# annualised (deep audit F-02: CSB Bank's Q1FY27 EPS 35.00 from its concall presentation over the results' 8.65)
+QUARTER_OWNED = FLOW_METRICS | {"eps", "basic_eps", "diluted_eps"}
 RECONCILE_TOLERANCE = 0.02  # a filing's own crore figures are rounded
 
 
@@ -714,7 +717,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if m.value is None:
             continue
         key = (_norm(m.metric), _period(m.period))
-        if not results_source and key[0] in FLOW_METRICS and key[1].startswith("Q") \
+        if not results_source and key[0] in QUARTER_OWNED and key[1].startswith("Q") \
                 and any(s["news_id"] != news_id for s in _sources(metrics.get(key))):
             continue
         source = {"news_id": news_id, "as_of": as_of, "value": m.value, "unit": m.unit,

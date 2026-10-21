@@ -408,10 +408,17 @@ api.get("/companies/:scrip", async (c) => {
   const dossier = object ? await object.text() : "null";
   // Peers: the same sector's companies nearest in market cap (the company page's peers panel)
   const co = company as { sector?: string | null; market_cap_cr?: number | null } | null;
-  const peers = co?.sector && co.sector !== "default" && co.market_cap_cr != null
-    ? (await c.env.DB.prepare(`SELECT scrip_code, symbol, company_name, market_cap_cr, ret_1m, ret_1y, card_count FROM companies
-         WHERE sector = ?1 AND scrip_code <> ?2 AND market_cap_cr IS NOT NULL
-         ORDER BY abs(market_cap_cr - ?3) LIMIT 5`).bind(co.sector, scrip, co.market_cap_cr).all()).results
+  // Two seeks on idx_companies_sector_mcap, five above the company's cap and five below, nearest five picked here:
+  // ORDER BY abs(market_cap_cr - ?) read every row of the sector (before 0013 the whole table, ~5,500 a view) and
+  // was 6.7M of the rows D1 read on 20-21 Oct 2026, when the free 5M a day ran out and the site answered 500
+  const cap = co?.market_cap_cr;
+  const peers = co?.sector && co.sector !== "default" && cap != null
+    ? ((await c.env.DB.prepare(`SELECT * FROM (SELECT scrip_code, symbol, company_name, market_cap_cr, ret_1m, ret_1y, card_count
+         FROM companies WHERE sector = ?1 AND market_cap_cr >= ?3 AND scrip_code <> ?2 ORDER BY market_cap_cr LIMIT 5)
+       UNION ALL SELECT * FROM (SELECT scrip_code, symbol, company_name, market_cap_cr, ret_1m, ret_1y, card_count
+         FROM companies WHERE sector = ?1 AND market_cap_cr < ?3 AND scrip_code <> ?2 ORDER BY market_cap_cr DESC LIMIT 5)`)
+        .bind(co.sector, scrip, cap).all()).results as { market_cap_cr: number }[])
+        .sort((a, b) => Math.abs(a.market_cap_cr - cap) - Math.abs(b.market_cap_cr - cap)).slice(0, 5)
     : [];
   const series = chart ? await chart.text() : "null";
   const { calls_json: callsJson, ...companyRow } = company ?? {};

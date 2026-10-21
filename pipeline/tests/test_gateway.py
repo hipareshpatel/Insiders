@@ -510,3 +510,19 @@ def test_allow_leaves_out_the_targets_it_refuses(make_gateway):
         gw.complete_json("r", "s", "u", Pass1Result, allow=lambda t: False)
     assert not exc.value.attempted and not exc.value.quota_exhausted
     assert [c["model"] for c in fake.calls] == ["m-b"]
+
+
+def test_a_preferred_model_takes_most_of_a_weighted_route_only_when_set():
+    """A drain run sets PREFER_MODEL (owner, 21 Oct 2026: clear the pending queue with DeepSeek); scheduled runs do not,
+    and a preferred model without its key is left as it was."""
+    from conftest import ENV
+
+    from bse_intel.ai.gateway import PREFER_WEIGHT, AIGateway
+
+    config = gateway_config({"pass2": [{"provider": "a", "model": "m-a", "weight": 4},
+                                       {"provider": "b", "model": "m-b", "weight": 3}]},
+                            strategies={"pass2": "weighted"})
+    weights = lambda env: {t.key: t.weight for t in AIGateway(config, client_factory=lambda *a: None, env=env).routes["pass2"]}  # noqa: E731
+    assert weights(ENV) == {"a:m-a": 4, "b:m-b": 3}
+    assert weights({**ENV, "PREFER_MODEL": "b:m-b"}) == {"a:m-a": 4, "b:m-b": 3 * PREFER_WEIGHT}
+    assert weights({"A_KEY": "ka", "PREFER_MODEL": "b:m-b"})["b:m-b"] == 3

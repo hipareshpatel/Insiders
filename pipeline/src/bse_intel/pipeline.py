@@ -1279,30 +1279,6 @@ def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None, r
                 # card's figures must be among the quote's own, not merely near it (0.0702% from the next row, 2026-10-20)
                 near = quote
             if near is None:
-                # The quote is the model's own sentence. Its figures then decide, each answering to its source: printed
-                # in the filing, or the company's memory (owner, 2026-10-21: of the 239 held cards read by hand on
-                # 20 Oct, 63 of the 76 held for a reworded quote were right, the rest minor). A figure in neither
-                # still holds the card.
-                # Only on the filing's lines that name what the figure is (its label, or the sentence's own words): over
-                # the whole filing a round figure lands on an unrelated row (458 Cr against 4,583 million of plant).
-                source = _scope_lines(label if kind != "why it matters" else claim, f"{text}\n{reading}" if reading else text,
-                                      2 if kind == "why it matters" else 1)
-                # Not for a quote that copies a table row's figures (two or more, three words or fewer): one that does not
-                # match its row has them in another order or column, a period read wrong (PPA realisation 5.93 5.53,
-                # 2026-10-20). A sentence carrying two figures ("rose 22% to ₹2,484 Cr") is not a row.
-                if len(re.findall(r"\d[\d,]*(?:\.\d+)?", quote)) >= 2 and len(re.findall(r"[A-Za-z]{3,}", quote)) <= 3:
-                    source = ""
-                checked, unprinted = gate.unprinted_anchors(claim, source, unit) if source else (0, [])
-                if checked and not unprinted:
-                    elsewhere.append(f'{kind} "{label}" is in the filing but its quote is not the filing\'s own words')
-                    continue
-                remembered = _scope_lines(label if kind != "why it matters" else claim, memory or "", 2 if kind == "why it matters" else 1)
-                if checked and remembered and unprinted:
-                    _, still = gate.unprinted_anchors(" ".join(unprinted), f"{source}\n{remembered}", unit)
-                    if not still:
-                        elsewhere.append(f'{kind} "{label}" states {", ".join(unprinted[:4])} from company memory, '
-                                         "not this filing")
-                        continue
                 problems.append(f'{kind} "{label}" quotes a sentence that is not in the filing')
                 continue
             elsewhere.append(f'{kind} "{label}" quotes the filing with small differences')
@@ -1386,25 +1362,6 @@ def _row_quoted(quote: str, claim: str, text: str, unit: float | None) -> str | 
                 and not gate.numbers_in_quote(claim, line, gate.quote_unit(line, text, unit)):
             return line
     return None
-
-
-_GENERIC = {"total", "rate", "ratio", "from", "with", "year", "quarter", "growth", "change", "value", "over", "than", "that",
-            "this", "which", "were", "rose", "fell", "grew", "stood", "reported", "company", "period", "compared", "against",
-            "basis", "crore", "lakh", "million", "rupees", "percent", "higher", "lower", "increase", "decrease", "while"}
-
-
-def _scope_lines(words: str, text: str, need: int) -> str:
-    """The lines (or sentences) of `text` that share `need` of the significant words of `words` (by their first five
-    letters, so "finance cost" finds "Finance costs"). Where a reworded quote's figures are looked for."""
-    stems = {w[:5] for w in re.findall(r"[a-z]{4,}", (words or "").lower()) if w not in _GENERIC}
-    if len(stems) < need or not text:
-        return ""
-    kept = []
-    for line in re.split(r"\n|(?<=\S)\.\s+(?=[A-Z])", text):
-        have = {w[:5] for w in re.findall(r"[a-z]{4,}", line.lower())}
-        if len(stems & have) >= need:
-            kept.append(line)
-    return "\n".join(kept)
 
 
 def _quoted_claims(card) -> list[tuple[str, str, str, str | None, bool]]:

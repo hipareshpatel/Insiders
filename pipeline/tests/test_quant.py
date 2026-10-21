@@ -602,3 +602,20 @@ def test_the_decision_box_takes_up_to_four_points_from_memory():
     # a results card is the latest quarter itself: the note takes that place
     assert [p["label"] for p in memory_context(before, "RESULTS", "2026-10-20T10:00:00+05:30", "n9")][-1] == "From memory, Sep 2026"
     assert memory_context(None, "RESULTS", "2026-10-20") == []
+
+
+def test_a_missing_previous_quarter_comes_from_the_half_year():
+    """E2E Networks' call card (live, 2026-10-21): memory held Q2FY27 and H1FY27 only, so the table showed no Q1FY27."""
+    from bse_intel.dossier import results_snapshot
+    dossier = {"financial_metrics": [
+        {"metric": "revenue", "period": "Q2FY27", "value": 223.8, "source_news_id": "n2", "as_of": "b"},
+        {"metric": "revenue", "period": "H1FY27", "value": 380.5, "source_news_id": "n2", "as_of": "b"},
+        {"metric": "pat", "period": "Q2FY27", "value": 72.7, "source_news_id": "n2", "as_of": "b"},
+        {"metric": "pat", "period": "H1FY27", "value": 116.6, "source_news_id": "n2", "as_of": "b"},
+        {"metric": "eps", "period": "Q2FY27", "value": 3.48, "source_news_id": "n2", "as_of": "b"},
+        {"metric": "eps", "period": "H1FY27", "value": 5.6, "source_news_id": "n2", "as_of": "b"},
+    ]}
+    snap = results_snapshot(dossier, "n2")
+    assert snap["revenue"]["prev_quarter"] == 156.7 and snap["revenue"]["qoq_pct"] == 42.8
+    assert snap["pat"]["prev_quarter"] == 43.9
+    assert "prev_quarter" not in snap.get("eps", {})   # per share: not a sum of quarters

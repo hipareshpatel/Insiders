@@ -12,8 +12,10 @@
 # - seed-memory: results history from NSE's XBRL into each universe company's memory (T13's re-seed on the basis
 #   fix), resuming after the last company finished; 5 h a pass, and a pass that runs out of time with companies left
 #   starts the next one itself, market hours or not (owner, 2026-10-21: fill it today, at NSE's paced rate);
-# - shareholding-sync: the universe's shareholding patterns for the last `days` (two quarters at 110) in one go,
-#   institutions and named holders included, then the seed passes start.
+# - fill-memory: what the nightly run reads a few days of at a time, in one go (owner, 2026-10-21: "let it get filled
+#   today ... except where AI is required"): shareholding patterns for the last `days` (two quarters at 110), governance
+#   reports (two quarters), a year of pledge events, DGTR's case lists; then the seed passes start. Not the annual-report
+#   catch-up: its XBRL feeds an AI re-run of the report.
 # Neither calls an AI model or NSE. It runs beside the pipeline (its own concurrency group: a shared one would
 # cancel a pending pipeline run); both only read memory, and a summary or card a run writes at the same moment is
 # rewritten by the next run.
@@ -25,7 +27,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, apply-verdicts, seed-memory, shareholding-sync]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, apply-verdicts, seed-memory, fill-memory]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -36,7 +38,7 @@ on:
         type: boolean
         default: false
       days:
-        description: shareholding-sync only - days of NSE's shareholding list to read (110 covers the last two quarters)
+        description: fill-memory only - days of NSE's shareholding list to read (110 covers the last two quarters)
         type: string
         default: '110'
       dry_run:
@@ -90,10 +92,19 @@ jobs:
       # it with suitable rate. let it get filled today"); the nightly run keeps it current after. Then the seed passes.
       - name: Shareholding patterns into memory, in one go
         id: shp
-        if: inputs.command == 'shareholding-sync'
+        if: inputs.command == 'fill-memory'
         env:
           DAYS: ${{ inputs.days }}
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel shareholding-sync --days "$DAYS" --max-files 100000 --time-budget 17400'
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel shareholding-sync --days "$DAYS" --max-files 100000 --time-budget 10800'
+      - name: Governance reports into memory, in one go
+        if: inputs.command == 'fill-memory' && !cancelled()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel governance-sync --pages 8 --max-files 100000 --time-budget 5400'
+      - name: A year of pledge events into memory
+        if: inputs.command == 'fill-memory' && !cancelled()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel pledge-sync --days 365 --time-budget 1800'
+      - name: DGTR cases into memory
+        if: inputs.command == 'fill-memory' && !cancelled()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel dgtr-sync --pages 5 --time-budget 1200'
       - name: Seed memory from NSE's results XBRL
         id: seed
         if: inputs.command == 'seed-memory'
@@ -107,7 +118,7 @@ jobs:
           if [ "$code" -eq 124 ]; then echo "more=true" >> "$GITHUB_OUTPUT"; elif [ "$code" -ne 0 ]; then exit "$code"; fi
       # no pause for market hours (owner, 2026-10-21: fill it today; NSE's pacing is per request in nse_api)
       - name: Start the next seed-memory pass
-        if: steps.seed.outputs.more == 'true' || (inputs.command == 'shareholding-sync' && steps.shp.outcome == 'success')
+        if: steps.seed.outputs.more == 'true' || (inputs.command == 'fill-memory' && !cancelled())
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

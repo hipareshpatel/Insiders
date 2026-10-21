@@ -31,7 +31,7 @@ Status is checked against the code, not taken from earlier replies.
 | A20 | Explain "Recent pipeline runs" columns | **Live.** Explained on the System page | #45 |
 | A21 | Read the last 5 days back and list what was missed | **Done.** This file | — |
 | A22 | Don't merge until the list is shown | List shown; the owner then said to merge (#45-#47 merged) | — |
-| A23 | Institutional shareholding (FII, MF, insurers, named holders) and big changes on the company page | **Live** (#47). The whole universe's last two quarters are read in one go (maintenance `shareholding-sync`, owner: "let it get filled today"); the seed passes follow without a market-hours pause | #47 |
+| A23 | Institutional shareholding (FII, MF, insurers, named holders) and big changes on the company page | **Live** (#47). The whole universe's last two quarters are read in one go (maintenance `fill-memory`, owner: "let it get filled today"), with governance reports, a year of pledges and DGTR cases; the seed passes follow without a market-hours pause | #47 |
 
 ## B. Still open from 19-20 Oct
 

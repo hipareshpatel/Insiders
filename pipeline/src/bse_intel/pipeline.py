@@ -33,7 +33,7 @@ from datetime import date, datetime, timedelta
 from functools import partial
 from threading import Lock
 
-from .ai.gateway import AIGateway, AllProvidersFailed
+from .ai.gateway import CEILING, AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, latest_fundamentals, memory_ids, merge, own_former_name,
@@ -120,7 +120,7 @@ SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
 SNAPSHOT_PAGE = 50        # the feed's page size
 
 
-_DEFERRED = re.compile(r"^deferred (\d+)x: attachment download failed")
+_DEFERRED = re.compile(r"^deferred (\d+)x: (?:attachment download failed|the better writers are at their day)")
 
 
 def _deferrals(last_error: str | None) -> int:
@@ -2124,6 +2124,12 @@ class Pipeline:
                                                          "work stays queued, rerun later")
                             log.warning("stopping: %s", self.stats.stopped_reason)
                     return self._deferred(filing, "deferred: providers busy")
+                # A spare writer failed while the better ones were at their day or kept for live filings: the failure
+                # is the morning's quota, not the filing (21 Oct: 12 filings a run spent an attempt this way before
+                # Gemini's 12:30 IST reset). It waits for them a few runs before it spends an attempt.
+                times = _deferrals(filing.last_error) + 1
+                if any(kind == CEILING for _, kind, _ in exc.outcomes) and times <= MAX_DEFERRALS:
+                    return self._deferred(filing, f"deferred {times}x: the better writers are at their day ({exc})"[:300])
                 return self._failed(filing, exc)
             except EventXbrlPending as exc:
                 return self._deferred(filing, f"deferred: {exc}")

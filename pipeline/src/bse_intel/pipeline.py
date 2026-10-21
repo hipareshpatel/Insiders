@@ -1287,9 +1287,10 @@ def check_quoted_numbers(out: Pass2Output, text: str, unit: int | None = None, r
                 # the whole filing a round figure lands on an unrelated row (458 Cr against 4,583 million of plant).
                 source = _scope_lines(label if kind != "why it matters" else claim, f"{text}\n{reading}" if reading else text,
                                       2 if kind == "why it matters" else 1)
-                # Not for a quote that copies a row's figures (two or more): one that does not match its row has them in
-                # another order or column, which is a period read wrong (PPA realisation 5.93 5.53, 2026-10-20)
-                if len(re.findall(r"\d[\d,]*(?:\.\d+)?", quote)) >= 2:
+                # Not for a quote that copies a table row's figures (two or more, three words or fewer): one that does not
+                # match its row has them in another order or column, a period read wrong (PPA realisation 5.93 5.53,
+                # 2026-10-20). A sentence carrying two figures ("rose 22% to ₹2,484 Cr") is not a row.
+                if len(re.findall(r"\d[\d,]*(?:\.\d+)?", quote)) >= 2 and len(re.findall(r"[A-Za-z]{3,}", quote)) <= 3:
                     source = ""
                 checked, unprinted = gate.unprinted_anchors(claim, source, unit) if source else (0, [])
                 if checked and not unprinted:

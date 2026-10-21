@@ -100,7 +100,11 @@ class Sink(ABC):
         return bool(rows and rows[0].get("remaining"))
 
     def known_ids(self, day: str) -> set[str]:
-        return {r["news_id"] for r in self.query("filings_known_day", [day])}
+        return set(self.known_sources(day))
+
+    def known_sources(self, day: str) -> dict[str, str | None]:
+        """News id -> stored attachment URL for one day's ledger rows."""
+        return {r["news_id"]: r.get("pdf_url") for r in self.query("filings_known_day", [day])}
 
     def pending_for_company(self, scrip_code: str, day_from: str, day_to: str, max_attempts: int, limit: int) -> list[dict]:
         return self.query("filings_pending_company", [scrip_code, day_from, day_to, max_attempts, limit])

@@ -386,6 +386,9 @@ def cmd_shareholding_sync(args, settings, sink) -> int:
     return 0
 
 
+SEED_SAVE_EVERY = 10   # seed-memory --universe: companies between saved resume points
+
+
 def cmd_seed_memory(args, settings, sink) -> int:
     """Financial and ownership history from XBRL, with no AI call (see seed.py). Results and shareholding come from
     NSE (owner, 2026-10-19: everything on NSE); `--source bse` adds BSE's results archive (needs an Indian address)."""
@@ -418,7 +421,14 @@ def cmd_seed_memory(args, settings, sink) -> int:
             return 2
     stats = SeedStats()
     cache_root = settings.text_cache_dir
-    with (BseClient() if args.source == "bse" else contextlib.nullcontext()) as bse, NseClient() as nse:
+    # the resume point is saved every SEED_SAVE_EVERY companies and when the loop ends however it ends (one kv write
+    # per company before 2026-10-21); a run killed outright seeds at most that many companies again, which replaces
+    # their memory entries with the same figures
+    last_done, saved = None, done_through if args.universe else None
+    with (BseClient() if args.source == "bse" else contextlib.nullcontext()) as bse, NseClient() as nse, \
+            contextlib.ExitStack() as checkpoint:
+        if args.universe:
+            checkpoint.callback(lambda: last_done and last_done != saved and sink.kv_set(resume_key, last_done, now_iso()))
         if bse is not None:
             raw.attach(bse, sink, "bse", settings)
             bse.warm_up()
@@ -453,7 +463,10 @@ def cmd_seed_memory(args, settings, sink) -> int:
                 stats.failures.append(f"{scrip}: no NSE symbol stored")
             log.info("seed: %s", stats.line())
             if args.universe:
-                sink.kv_set(resume_key, scrip, now_iso())
+                last_done = scrip
+                if stats.companies % SEED_SAVE_EVERY == 0:
+                    sink.kv_set(resume_key, scrip, now_iso())
+                    saved = scrip
     print(json.dumps({"companies": stats.companies, "results_files": stats.results_files,
                       "results_periods": stats.results_periods, "shareholding_files": stats.shareholding_files,
                       "shareholding_periods": stats.shareholding_periods, "skipped": stats.skipped,

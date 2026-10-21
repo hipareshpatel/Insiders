@@ -21,6 +21,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+import os
 import logging
 import re
 import time
@@ -153,6 +154,7 @@ class Stats:
     outside_universe: int = 0
     xbrl: int = 0           # filings whose figures came from their XBRL file
     duplicates: int = 0     # repeat submissions of an earlier filing's text (no AI call)
+    attachment_changed: int = 0  # known filings the exchange now serves with another file, queued again
     days_discovered: list[str] = field(default_factory=list)
     critic: dict = field(default_factory=dict)   # the shadow critic's counts this run (critic.py); empty when it did not run
     stopped_reason: str | None = None
@@ -1719,12 +1721,13 @@ class Pipeline:
         """
         key = day.isoformat()
         noise = self._load_noise(key)
-        known = self.sink.known_ids(key) | set(noise)
+        sources = self.sink.known_sources(key)
+        known = set(sources) | set(noise)
         if self._on_nse():
             filings = self.nse.announcements(day, scrip_for=self._nse_map().scrip_for)
         else:
             filings = self.bse.announcements(day, known=None if full else known)
-        count = self._record(key, filings, noise, known)
+        count = self._record(key, filings, noise, known, sources)
         self.stats.days_discovered.append(key)
         return count
 
@@ -1738,7 +1741,8 @@ class Pipeline:
                 by_day.setdefault(filing.filing_date, []).append(filing)
             for key, filings in sorted(by_day.items()):
                 noise = self._load_noise(key)
-                found += self._record(key, filings, noise, self.sink.known_ids(key) | set(noise))
+                sources = self.sink.known_sources(key)
+                found += self._record(key, filings, noise, set(sources) | set(noise), sources)
             start = end + timedelta(days=1)
         return found
 
@@ -1811,14 +1815,25 @@ class Pipeline:
             return self.nse.fetch(url, max_bytes=max_bytes)
         return self.bse.download(url, max_bytes=max_bytes)
 
-    def _record(self, key: str, filings, noise: dict[str, list], known: set[str]) -> int:
-        """Triage new filings of one day: noise to the day's R2 file, the rest to the ledger queue."""
+    def _record(self, key: str, filings, noise: dict[str, list], known: set[str],
+                sources: dict[str, str | None] | None = None) -> int:
+        """Triage new filings of one day: noise to the day's R2 file, the rest to the ledger queue.
+
+        A filing already known is skipped and costs no write, unless the ledger holds it (``sources``: news id ->
+        stored attachment) and the exchange now serves another file under it: then it is sent again and
+        filings_discover.sql queues it to be read again. Assumption, not measured: an exchange may replace an
+        announcement's attachment under the same id; a revision filed as a new announcement is a new filing."""
         now = now_iso()
         today = today_ist().isoformat()
         noise_before = len(noise)
         ledger, catalysts, companies = [], [], {}
+        changed = []
         for filing in filings:
             if filing.news_id in known:
+                if sources and filing.news_id in sources and _attachment_changed(sources[filing.news_id], filing.pdf_url):
+                    sources[filing.news_id] = filing.pdf_url   # once per run, however often the day is read
+                    filing.status = "PENDING"
+                    changed.append(filing.ledger_row(now))
                 continue
             known.add(filing.news_id)
             decision = self.rules.classify(filing)
@@ -1858,6 +1873,15 @@ class Pipeline:
         self.stats.discovered += len(ledger) + new_noise
         self._exec("companies_seen", list(companies.values()))
         self._exec("filings_discover", ledger)
+        if changed:
+            self.stats.attachment_changed += len(changed)
+            # counted only until a day's count shows NSE does not vary an unchanged filing's link (a systematic
+            # difference would queue a whole day's filings again): ATTACHMENT_REQUEUE=1 turns the re-read on
+            if os.environ.get("ATTACHMENT_REQUEUE") == "1":
+                self._exec("filings_discover", changed)
+                log.info("discovered %s: %d known filings with another attachment, queued again", key, len(changed))
+            else:
+                log.info("discovered %s: %d known filings with another attachment (counted, not queued)", key, len(changed))
         self._exec("catalysts_upsert", catalysts)
         if new_noise:
             self._save_noise(key, noise)
@@ -3661,6 +3685,16 @@ class Pipeline:
         self._kv_set("backfill:progress", json.dumps({"companies_left": len(order), "companies_total": state.get("total"),
                                                       "built": state["built"], "through": through}))
         return len(order)
+
+
+def _file_name(url: str | None) -> str:
+    return (url or "").split("?", 1)[0].rstrip("/").rsplit("/", 1)[-1]
+
+
+def _attachment_changed(stored: str | None, current: str | None) -> bool:
+    """Whether an exchange now serves another file under a known filing: the file name, not the URL, since BSE moves
+    an attachment from AttachLive/ to AttachHis/ under the same name. No attachment on either side is no change."""
+    return bool(stored and current) and _file_name(stored) != _file_name(current)
 
 
 def _noise_key(day: str, chunk: int) -> str:

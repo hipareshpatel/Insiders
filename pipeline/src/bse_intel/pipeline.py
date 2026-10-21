@@ -918,10 +918,16 @@ def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None", 
 _RESULTS_STATEMENT = re.compile(r"statement of (?:standalone |consolidated )?(?:un-?)?audited\b.{0,80}?financial results", re.I | re.S)
 _TAKEOVER = re.compile(r"open offer|substantial acquisition of shares|\bSAST\b|regulation 3\(1\)|regulation 4\b", re.I)
 _PROMOTER_DISCLOSURE = re.compile(r"regulation 29\b|reg\.? ?29\b|regulation 31\b|inter ?se transfer|\bgift(?:ed)?\b", re.I)
-_TAX_OR_PENALTY = re.compile(r"\b(?:demand|penalty|show[- ]cause|assessment order|tax order|adjudication|"
+# A demand is a tax or duty raised on the company, not "demand for" its products: L&T's order release (21 Oct 2026, "the
+# growing demand for ...") was typed LITIGATION_REGULATORY, and "awarded an EPC order" was not read as an order.
+_TAX_OR_PENALTY = re.compile(r"\b(?:demand\s+(?:notice|order|of\b|raised|confirmed|for\s+(?:Rs|INR|₹))|(?:raised|received)\s+a\s+demand|"
+                             r"challeng\w*\s+(?:the\s+)?(?:said\s+)?demand|"
+                             r"(?:tax|duty)\s+demand|penalty|show[- ]cause|assessment order|tax order|adjudication|"
                              r"(?:income[- ]tax|GST|CGST|service tax|customs) (?:order|notice|demand|authorit))", re.I)  # "excluding GST" is an order
 _REAL_ORDER = re.compile(r"letter of (?:award|intent)|\bLoA\b|\bLoI\b|work order|purchase order|order (?:received|bagged|secured|worth)|"
-                         r"contract (?:awarded|worth|valued)|lowest bidder|\bL1\b", re.I)
+                         r"contract (?:awarded|worth|valued)|lowest bidder|\bL1\b|\bwins?\b[^.\n]{0,40}\borders\b|"
+                         r"\b(?:wins?|secures?|bags?|receives?)\b[^.\n]{0,40}\border\s+(?:worth|from|for|valued)\b|"
+                         r"\bawarded\s+(?:an?\s+|the\s+)?(?:[\w&-]+\s+){0,3}(?:order|contract)s?\b", re.I)
 
 
 def results_quarter(tagged, text: str, filed_on: str | None = None) -> str | None:

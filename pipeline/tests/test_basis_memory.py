@@ -113,3 +113,16 @@ def test_fundamentals_show_the_latest_periods_balance_sheet_not_the_latest_filed
         {"period": "FY25", "gross_debt_cr": 156.94, "net_worth_cr": 535.3, "as_of": "2026-08-01T10:00:00+05:30"}]}
     out = latest_fundamentals(d)
     assert out["debt"] == {"period": "FY26", "value": 178.63} and out["net_worth"]["value"] == 807.26
+
+
+def test_a_presentations_annualised_eps_never_replaces_the_results_quarter():
+    """Deep audit F-02: CSB Bank's concall presentation gave Q1FY27 EPS 35.00 (annualised) over the results' 8.65."""
+    d = new_dossier(_filing("a", "2026-07-22T10:00:00+05:30"))
+    results = _out(150.04, period="Q1FY27")
+    results.dossier_delta.financial_metrics[0].metric = "eps"
+    results.dossier_delta.financial_metrics[0].value = 8.65
+    d = merge(d, results, _filing("r-1", "2026-07-22T12:52:52+05:30"), None, "now")
+    deck = _out(35.0, "CONCALL_PRESENTATION", None, period="Q1FY27")
+    deck.dossier_delta.financial_metrics[0].metric = "eps"
+    d = merge(d, deck, _filing("p-1", "2026-07-29T20:15:49+05:30", "CONCALL_PRESENTATION"), None, "now")
+    assert next(m["value"] for m in d["financial_metrics"] if m["metric"] == "eps") == 8.65

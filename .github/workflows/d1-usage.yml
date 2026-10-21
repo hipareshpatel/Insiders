@@ -1,0 +1,62 @@
+# D1's own count of rows read and written, by day and hour, and the queries that read the most (Cloudflare's GraphQL
+# analytics). The pipeline counts its own writes (d1_writes:<day>) but nothing counted reads; on 21 Oct 2026 at
+# 20:29 UTC every D1 call began answering 500 with 40,196 writes counted, so the free 5,000,000 rows read a day is
+# the suspect. Read only: prints numbers, writes nothing.
+name: D1 usage
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 23 * * *"   # 05:11 IST, before the 00:00 UTC reset
+  pull_request:
+    paths: [".github/workflows/d1-usage.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  usage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      DB_ID: ${{ vars.D1_DATABASE_ID || 'f1465085-72e3-4a72-a67e-1a6ca9ab202e' }}
+    steps:
+      - name: Rows read and written (D1 analytics)
+        run: |
+          python3 - <<'EOF'
+          import json, os, urllib.request
+          from datetime import datetime, timedelta, timezone
+          now = datetime.now(timezone.utc)
+          since_day = (now - timedelta(days=2)).date().isoformat()
+          since_hour = (now - timedelta(hours=30)).strftime("%Y-%m-%dT%H:00:00Z")
+          until = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+          acct, db = os.environ["CF_ACCOUNT"], os.environ["DB_ID"]
+          q = """query($a: String!, $db: String!, $d: Date!, $h: Time!, $u: Time!) { viewer { accounts(filter: {accountTag: $a}) {
+            days: d1AnalyticsAdaptiveGroups(limit: 10, filter: {databaseId: $db, date_geq: $d}, orderBy: [date_ASC]) {
+              dimensions { date } sum { readQueries writeQueries rowsRead rowsWritten } }
+            hours: d1AnalyticsAdaptiveGroups(limit: 40, filter: {databaseId: $db, datetimeHour_geq: $h, datetimeHour_leq: $u}, orderBy: [datetimeHour_ASC]) {
+              dimensions { datetimeHour } sum { readQueries rowsRead rowsWritten } }
+            top: d1QueriesAdaptiveGroups(limit: 25, filter: {databaseId: $db, datetime_geq: $h, datetime_leq: $u}, orderBy: [sum_rowsRead_DESC]) {
+              dimensions { query } count sum { rowsRead rowsWritten } }
+          } } }"""
+          body = json.dumps({"query": q, "variables": {"a": acct, "db": db, "d": since_day, "h": since_hour, "u": until}}).encode()
+          req = urllib.request.Request("https://api.cloudflare.com/client/v4/graphql", body,
+                                       {"Authorization": "Bearer " + os.environ["CF_TOKEN"], "Content-Type": "application/json"})
+          out = json.load(urllib.request.urlopen(req, timeout=60))
+          if out.get("errors"):
+              print("errors:", json.dumps(out["errors"])[:2000])
+          acc = ((out.get("data") or {}).get("viewer") or {}).get("accounts") or [{}]
+          acc = acc[0] if acc else {}
+          print("== by UTC day (free: 5,000,000 rows read, 100,000 rows written)")
+          for r in acc.get("days") or []:
+              s = r["sum"]; print(f'{r["dimensions"]["date"]}  read {s["rowsRead"]:>11,}  written {s["rowsWritten"]:>8,}  queries {s["readQueries"]:,}/{s["writeQueries"]:,}')
+          print("== by hour")
+          for r in acc.get("hours") or []:
+              s = r["sum"]; print(f'{r["dimensions"]["datetimeHour"]}  read {s["rowsRead"]:>11,}  written {s["rowsWritten"]:>8,}  queries {s["readQueries"]:,}')
+          print("== the queries that read the most (last 30 hours)")
+          for r in acc.get("top") or []:
+              s = r["sum"]; sql = " ".join(r["dimensions"]["query"].split())[:220]
+              print(f'read {s["rowsRead"]:>11,}  written {s["rowsWritten"]:>7,}  x{r["count"]:>6,}  {sql}')
+          EOF

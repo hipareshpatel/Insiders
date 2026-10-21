@@ -41,3 +41,15 @@ Every item the owner raised in the cloud session over the last 24 hours, read ba
 
 Found on the way: D1 stopped taking writes at 01:04 IST on 21 Oct (its free 100,000 a day) while our counter said
 93,369, because maintenance commands never added theirs; fixed on #32, writes resume at 05:30 IST.
+
+## Update 21 Oct 06:50 IST
+
+- Held cards (O9): code repair measured over all 223 held cards (no AI). Replacing a paraphrased quote with the
+  filing's own line that holds every figure releases only 6 cards; dropping the failing point to publish the rest
+  would release 15, of which a blind check against the PDFs found 3 WRONG (20%). Neither ships. Held cards are worked
+  instead by the daily audit (release candidates for the owner's Right), the owner's verdict buttons, and the planned
+  end-of-day re-write on spare free quota (docs/audit/ai-quality-plan-2026-10-21.md item 7).
+- D1 writes: no write for an unchanged row (cards, companies, filings, runs, imports); refresh-card-blocks and
+  refresh-summaries over unchanged rows now cost 0 rows (were 1,000 per 1,000), a re-run with the same card 0 (was 3),
+  seed resume points 200 per 1,000 companies (was 2,000). A changed attachment on a known filing is counted per run
+  and not yet re-queued (ATTACHMENT_REQUEUE=1 turns it on once a day's count shows NSE keeps unchanged links).

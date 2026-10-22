@@ -43,7 +43,36 @@ RULES = (
      "eps", "rose"),
     ("lower credit costs", re.compile(rf"\b{_LOWER}{_NEAR}(?:credit costs?|provisions?|provisioning|loan loss)\b", re.I),
      "provisions", "fell"),
+    # a profit or loss turn says which side of zero the period's PAT is (Sapphire Foods Q2FY27, 22 Oct 2026: "PAT turns
+    # positive" on a ₹1.51 Cr loss); a turn at another line (EBITDA, operating) is not this one, see _OTHER_LINE
+    ("return to profit", re.compile(
+        r"\b(?:return\w*|swung|swings?|turn\w*|came|comes?|bounced|got|is|was)\s+(?:back\s+)?(?:to|into|in)\s+(?:the\s+|a\s+)?"
+        r"(?:net\s+)?(?:profit(?:ability)?|black)\b|\bturn\w*\s+profitable\b|\b(?:back|swung)\s+in(?:to)?\s+(?:the\s+)?black\b"
+        r"|\b(?:pat|net profit|profit after tax|bottom[- ]line|net income)\s+(?:\w+\s+){0,2}?turn\w*\s+positive\b", re.I),
+     "pat", "positive"),
+    ("swing to loss", re.compile(
+        r"\b(?:swung|swings?|turn\w*|slipp\w*|slid|fell|plunged|pushed)\s+(?:back\s+)?(?:to|into)\s+(?:the\s+|a\s+)?(?:net\s+)?"
+        r"(?:loss|red)\b|\bturn\w*\s+loss[- ]making\b"
+        r"|\b(?:pat|net profit|profit after tax|bottom[- ]line|net income)\s+(?:\w+\s+){0,2}?turn\w*\s+negative\b", re.I),
+     "pat", "negative"),
 )
+# A period named before the claim or just after it: a turn in another period ("full-year FY26 swung to a net loss" on a
+# Q4 card, Kabra Extrusion) says nothing about this period's PAT
+_PERIOD = re.compile(r"\b(?:Q[1-4]\s?FY\s?'?\d{2,4}|[HQ][1-4]|FY\s?'?\d{2,4}|9M\w*|nine months|full[- ]year|annual|year[- ]ago|"
+                     r"last year|previous (?:year|quarter)|preceding quarter|half[- ]year)\b", re.I)
+
+
+def _other_period(window: str, period: str | None) -> bool:
+    """Whether `window` names a period other than `period` (a bare "Q2" is the same as "Q2FY27")."""
+    own = re.sub(r"[\s']", "", period or "").upper()
+    for m in _PERIOD.finditer(window):
+        token = re.sub(r"[\s']", "", m.group(0)).upper()
+        if not own or not (token == own or (re.fullmatch(r"[HQ][1-4]", token) and own.startswith(token))):
+            return True
+    return False
+
+
+_OTHER_LINE = re.compile(r"\b(?:ebitda|ebit|operating|gross|segment|cash|pbt|pre-tax|before tax)\b", re.I)
 _SEQUENTIAL = re.compile(r"\bqoq\b|sequential|quarter[- ]on[- ]quarter|previous quarter|preceding quarter|from q[1-4]", re.I)
 # The words that hang a cause on a result: the clause from here to its end is the claim
 _CONNECTOR = re.compile(r"\b(?:on|as|due to|driven by|helped by|aided by|owing to|thanks to|amid|with|while|because of|"
@@ -66,6 +95,11 @@ def contradicted(text: str, figures: dict) -> list[tuple[str, re.Match]]:
             if re.search(r"\bgrowth\b", (text or "")[hit.start():hit.end() + 10], re.I):
                 continue   # "EPS growth moderated" says growth slowed, not that EPS fell
             sentence = _sentence(text, hit.start())
+            if metric == "pat" and _OTHER_LINE.search(text[max(hit.start() - 40, 0):hit.end() + 25]):
+                continue   # "EBITDA returned to profit", "swung to an operating loss": another line's turn
+            if metric == "pat" and _other_period(text[_start(text, hit.start()):hit.end() + 30],
+                                                 getattr(m_fig, "period", None)):
+                continue
             if says in ("negative", "positive"):
                 wrong = m_fig.value > 0 if says == "negative" else m_fig.value < 0
             else:
@@ -132,7 +166,7 @@ def guard(out, tagged) -> list[str]:
             text = cut(text, hit)
         return text
 
-    headline = clean(card.headline, "headline")
+    headline = (clean(card.headline, "headline") or "").rstrip(" ;,")
     if headline and len(headline) >= 8:
         card.headline = headline
     card.takeaway = clean(card.takeaway, "takeaway") or ""
@@ -158,6 +192,16 @@ def guard(out, tagged) -> list[str]:
             if re.search(r"draw|destock|liquidat|release|reduc|fell|declin", said, re.I) and inventory.value < 0:
                 return True
         return bool(contradicted(words, figures))
+
+    # a key number's change tag reads the same way: "Turnaround YoY" on a PAT that is still a loss
+    pat = figures.get("pat")
+    if pat is not None and pat.value is not None and pat.value < 0:
+        for k in getattr(card, "key_numbers", None) or []:
+            if re.search(r"\b(?:pat|profit|net income|earnings)\b", str(k.label or ""), re.I) \
+                    and not _OTHER_LINE.search(str(k.label or "")) \
+                    and re.search(r"turnaround|turn\w* positive|return\w* to profit|profitable", str(k.change or ""), re.I):
+                notes.append(f"key number {k.label}: change \"{k.change}\" cut (the period's PAT is a loss)")
+                k.change = None
 
     kept_changes = [c for c in card.notable_changes if not wrong_change(c)]
     if len(kept_changes) != len(card.notable_changes):

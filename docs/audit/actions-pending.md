@@ -30,3 +30,4 @@ the time and the run or PR link.
 - 21 Oct 06:46-06:57 IST market-data and nightly, started by hand after their scheduled slots did not fire: all steps OK (job records on /api/system)
 
 - 21 Oct 06:31 IST apply-verdicts: maintenance run 7, success (https://github.com/hipareshpatel/Insiders/actions/runs/39524796716)
+- Re-run Sapphire Foods nse-106824614 (Q2FY27 'PAT turns positive' on a ₹1.51 Cr loss; the direction check from 22 Oct cuts it) when a slot is free.

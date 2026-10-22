@@ -492,9 +492,27 @@ def cmd_seed_memory(args, settings, sink) -> int:
         scrips = priority + [s for s in scrips if s not in set(priority)]
         log.info("seed: %d universe companies to go (after %r), %d reporting now first", len(scrips), done_through, len(priority))
     else:
-        scrips = [s.strip() for s in (args.scrips or "").split(",") if s.strip()]
-        if not scrips:
+        names = [s.strip() for s in (args.scrips or "").split(",") if s.strip()]
+        if not names:
             print("Name the companies with --scrips, or seed the whole universe with --universe.")
+            return 2
+        # a company key or an NSE symbol: reseed.yml was run with symbols (SIEMENS, ABB, ...) on 22 Oct 2026, none was a
+        # key, and all 14 seeded nothing without a word
+        from . import universe
+
+        nse_universe = universe.load_nse(sink)
+        nse_symbols = {scrip: symbol for symbol, scrip in nse_universe.symbols.items()}
+        scrips, unknown = [], []
+        for name in names:
+            key = nse_universe.symbols.get(name.upper())
+            if key:
+                scrips.append(key)
+            elif sink.company(name) or name in nse_symbols:
+                scrips.append(name)
+            else:
+                unknown.append(name)
+        if unknown:
+            print(f"Not a company key or an NSE symbol in the universe: {', '.join(unknown)}")
             return 2
     stats = SeedStats()
     cache_root = settings.text_cache_dir

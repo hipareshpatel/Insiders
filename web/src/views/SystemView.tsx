@@ -4,6 +4,7 @@ import { ownerApi, setOwnerToken, useOwnerToken } from "../lib/owner";
 import type { FailedFiling, PipelineRun, ProviderUsage, ReviewCard } from "../../shared/types";
 import { Badge } from "../components/ui/badge";
 import { api } from "../lib/api";
+import { finishEstimate } from "../lib/backfill";
 import { cn } from "../lib/cn";
 import { istDateTime, num, relativeTime, titleCase } from "../lib/format";
 import { Empty, Loading } from "./FeedView";
@@ -26,6 +27,7 @@ export function SystemView() {
   const through = s.backfill.discovered_through ? new Date(`${s.backfill.discovered_through}T00:00:00Z`).getTime() : start - 86400_000;
   const totalDays = Math.max(1, Math.round((end - start) / 86400_000) + 1);
   const doneDays = Math.min(totalDays, Math.max(0, Math.round((through - start) / 86400_000) + 1));
+  const finish = finishEstimate(s.backfill.pace, s.today);
 
   return (
     <div className="mx-auto w-full max-w-[1240px] space-y-4 px-4 py-6 sm:px-6">
@@ -54,15 +56,28 @@ export function SystemView() {
           <div className="mt-3">
             <div className="num mb-1 text-xs text-ink-2">
               {/* the list is rebuilt each morning from the companies still owing history, so this is today's progress, not the
-                  total (owner, 2026-10-21: "39 yesterday, zero this morning") */}
-              Today: {num(Math.max(0, s.backfill.companies_total - (s.backfill.companies_left ?? 0)))} of {num(s.backfill.companies_total)} companies with history still to read are done; the list restarts each morning without the finished ones
+                  total (owner, 2026-10-21: "39 yesterday, zero this morning"); companies a live filing pulls forward during
+                  the day join the total (22 Oct: 1,583 left of 1,577) */}
+              Today's reading list: {num(Math.max(0, s.backfill.companies_total - (s.backfill.companies_left ?? 0)))} of {num(s.backfill.companies_total)} companies done
             </div>
             <Meter value={1 - (s.backfill.companies_left ?? 0) / Math.max(1, s.backfill.companies_total)} />
           </div>
         ) : null}
         <p className="mt-2 text-xs text-ink-3">
-          Days are discovered oldest first; history is then analysed company by company, largest market cap first, each in date order, so early results and AGM guidance are in memory before later filings.
+          Two steps. First the day-by-day filing lists are fetched, oldest first (the bar above). Then the filings found are
+          read company by company, largest market cap first, each company in date order, so its early results and AGM
+          guidance are in memory before its later filings. A company is done when every filing it made on the days fetched so
+          far has been read; each morning the reading list is rebuilt from the companies that still owe filings, which
+          includes those whose newly fetched days added more. Fetching pauses while 1,500 fetched filings are still unread,
+          so the two steps move together.
         </p>
+        {!s.backfill.complete ? (
+          <p className="num mt-1 text-xs text-ink-2">
+            {finish
+              ? `At the last days' pace (${finish.perDay.toFixed(1)} days of history a day), the filing lists reach today in about ${num(finish.daysLeft)} day${finish.daysLeft === 1 ? "" : "s"}; reading finishes soon after.`
+              : "Finish estimate: shown once two mornings of progress are recorded."}
+          </p>
+        ) : null}
         {s.d1 ? (
           <p className="num mt-2 text-xs text-ink-3">
             D1 today: {num(s.d1.writes_today)} rows written (free tier 100,000; backfill pauses at the budget)

@@ -110,6 +110,23 @@ def test_template_filings_with_new_numbers_are_never_duplicates(settings):
     status = {r["news_id"]: r["status"] for r in rows(sink, "select news_id, status from filings")}
     assert "DUPLICATE" not in status.values(), status
     assert pipeline.stats.duplicates == 0
+    # the System page's "companies left of total": the pulled-forward companies are the total, never fewer than left
+    progress = json.loads(sink.kv_get("backfill:progress"))
+    assert progress["companies_total"] == 2 and 0 <= progress["companies_left"] <= 2
+
+
+def test_backfill_progress_counts_pulled_forward_companies_and_pace():
+    """22 Oct: the System page showed 1,583 companies left of 1,577, because companies pulled forward by a live filing
+    joined the morning's list without joining its total. And one cursor position a day feeds the finish estimate."""
+    from bse_intel.pipeline import PACE_DAYS, _pace_entry
+
+    pace = _pace_entry([], "2026-10-22", "2026-06-08")
+    assert pace == [["2026-10-22", "2026-06-08"]]
+    assert _pace_entry(pace, "2026-10-22", "2026-06-10") is pace          # first position of the day only
+    assert _pace_entry(pace, "2026-10-23", "") is pace                   # no cursor yet: nothing noted
+    for i in range(PACE_DAYS + 3):
+        pace = _pace_entry(pace, f"2026-11-{i + 1:02d}", "2026-07-01")
+    assert len(pace) == PACE_DAYS and pace[-1] == ["2026-11-11", "2026-07-01"]
 
 
 def test_duplicate_rule_exact_near_and_corrections():

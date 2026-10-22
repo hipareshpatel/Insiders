@@ -3837,7 +3837,7 @@ class Pipeline:
         for scrip in scrips:
             self.discover_company(scrip, day_from, day_to)
         self._priority = list(scrips)
-        state = {"built": today_ist().isoformat(), "through": "", "total": len(scrips), "scrips": []}
+        state = {"built": today_ist().isoformat(), "through": "", "total": 0, "scrips": []}   # they count as `extra`
         self.sink.kv_set("backfill:company_order", json.dumps(state), now_iso())  # only these companies
         self._backfill_companies(day_from.isoformat(), day_to.isoformat(), "", deadline, self._writes_today())
         self._flush_usage()
@@ -3846,6 +3846,13 @@ class Pipeline:
 
     def _known_day(self, day: date) -> bool:
         return self._noise_count(day.isoformat()) > 0 or bool(self.sink.known_ids(day.isoformat()))
+
+    def _note_pace(self, through: str) -> None:
+        raw = self.sink.kv_get("backfill:pace")
+        pace = json.loads(raw) if raw else []
+        nxt = _pace_entry(pace, today_ist().isoformat(), through)
+        if nxt is not pace:
+            self._kv_set("backfill:pace", json.dumps(nxt))
 
     def _backfill_companies(self, day_from: str, day_to: str, through: str, deadline: float,
                             writes_at_start: int) -> int:
@@ -3864,6 +3871,11 @@ class Pipeline:
             rows = self.sink.query("backfill_companies", [day_from, day_to, self.settings.max_attempts, MAX_ORDER])
             state = {"built": built, "through": through, "total": len(rows), "scrips": [r["scrip_code"] for r in rows]}
         priority = list(dict.fromkeys(self._priority + json.loads(self.sink.kv_get("backfill:priority") or "[]")))
+        # a company pulled forward by a live filing that was not on the morning's list is added work: counted in the
+        # total, or "companies left" grew past it (System page, 22 Oct: 1,583 left of 1,577)
+        extra = list(state.get("extra", []))
+        extra += [s for s in priority if s not in set(state["scrips"]) and s not in set(extra)]
+        state["extra"] = extra
         order: list[str] = priority + [s for s in state["scrips"] if s not in set(priority)]
         width = max(1, self.settings.workers) * 2
         while order and time.monotonic() < deadline and not self._halted(bulk=True) and not self._blocked:
@@ -3886,9 +3898,21 @@ class Pipeline:
         self._kv_set("backfill:company_order", json.dumps({**state, "scrips": order}))
         if priority:
             self._kv_set("backfill:priority", json.dumps([s for s in priority if s in set(order)]))
-        self._kv_set("backfill:progress", json.dumps({"companies_left": len(order), "companies_total": state.get("total"),
+        total = (state.get("total") or 0) + len(state["extra"])
+        self._kv_set("backfill:progress", json.dumps({"companies_left": len(order), "companies_total": total,
                                                       "built": state["built"], "through": through}))
+        self._note_pace(through)
         return len(order)
+
+
+PACE_DAYS = 8   # how many mornings of the discovery cursor the System page's estimate of the finish is based on
+
+
+def _pace_entry(pace: list, today: str, through: str) -> list:
+    """The cursor's first position each IST day, the last PACE_DAYS of them (System page: when the backfill ends)."""
+    if not through or (pace and pace[-1][0] == today):
+        return pace
+    return (pace + [[today, through]])[-PACE_DAYS:]
 
 
 def prompt_variant(news_id: str, bulk: bool, share: float) -> str:

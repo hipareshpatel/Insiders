@@ -584,7 +584,7 @@ async function systemStatus(c: Context<AppEnv>) {
     db.prepare(`SELECT run_id, mode, started_at, finished_at, status, stats_json, substr(error, 1, 200) AS error
                   FROM pipeline_runs ORDER BY started_at DESC LIMIT 25`),
     db.prepare(`SELECT key, value FROM kv WHERE key IN ('backfill:discovered_through', 'backfill:complete',
-                  'backfill:start', 'backfill:progress', 'market:coverage', ?1, ?2)`).bind(`noise_count:${today}`, `d1_writes:${utcDay}`),
+                  'backfill:start', 'backfill:progress', 'backfill:pace', 'market:coverage', ?1, ?2)`).bind(`noise_count:${today}`, `d1_writes:${utcDay}`),
     // which filings failed and why (owner, 2026-10-20: the count alone did not say); a range seek on (status, filed_at)
     db.prepare(`SELECT news_id, scrip_code, symbol, company_name, headline, filed_at, attempts, substr(last_error, 1, 200) AS last_error
                   FROM filings WHERE status = 'FAILED' AND filed_at >= ?1 ORDER BY filed_at DESC LIMIT 50`).bind(weekAgo),
@@ -599,6 +599,12 @@ async function systemStatus(c: Context<AppEnv>) {
     progress = kvMap["backfill:progress"] ? JSON.parse(kvMap["backfill:progress"]) : null;
   } catch {
     progress = null;
+  }
+  let pace: [string, string][] = [];
+  try {
+    pace = kvMap["backfill:pace"] ? JSON.parse(kvMap["backfill:pace"]) : [];
+  } catch {
+    pace = [];
   }
   let coverage: Record<string, unknown> | null = null;
   try {
@@ -620,6 +626,7 @@ async function systemStatus(c: Context<AppEnv>) {
       complete: kvMap["backfill:complete"] === "1",
       companies_left: progress?.companies_left ?? null,
       companies_total: progress?.companies_total ?? null,
+      pace,
     },
     d1: { writes_today: Number(kvMap[`d1_writes:${utcDay}`] ?? 0) || 0, size_bytes: ledger.meta?.size_after ?? null },
     usage: usage.results,

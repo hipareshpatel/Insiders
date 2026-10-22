@@ -5,7 +5,7 @@ import { Hono, type MiddlewareHandler } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import type { AppEnv } from "./env";
 import { withOwnerHold } from "../shared/ownerHold";
-import { cardById, feed, isCompanyKey, reviewQueue, SNAPSHOT_KEY } from "./public";
+import { cardById, feed, isCompanyKey, reviewQueue, SNAPSHOT_KEY, systemStatus } from "./public";
 
 export const owner = new Hono<AppEnv>();
 
@@ -16,6 +16,9 @@ owner.use("*", async (c, next) => {
 });
 
 owner.get("/check", (c) => c.json({ ok: true }));
+
+// the whole System page (owner, 22 Oct 2026: owner only); never cached at the edge
+owner.get("/system", async (c) => c.json(await systemStatus(c), 200, { "Cache-Control": "private, no-store" }));
 
 owner.post("/watchlist", async (c) => {
   const body = await c.req.json<{ scrip_code?: string; on?: boolean }>().catch(() => null);

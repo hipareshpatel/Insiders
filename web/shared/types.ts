@@ -538,6 +538,18 @@ export interface PipelineRun {
   error: string | null;
 }
 
+/** What the public pages show of the system (Today's footer, the feed's side rail); the full status is the owner's. */
+export interface PublicSystemResponse {
+  today: string;
+  ledger_today: { status: string; n: number }[];
+  queue: { pending: number; failed: number; cap?: number };
+  cards_7d: { impact_level: Impact; n: number }[];
+  backfill: { start: string; discovered_through: string | null; complete: boolean };
+  runs: Pick<PipelineRun, "run_id" | "mode" | "started_at" | "finished_at" | "status">[];
+  /** The day's AI requests against the models' stated daily limits, 0-1; null when no model states one. */
+  quota_used: number | null;
+}
+
 export interface SystemResponse {
   today: string;
   ledger_today: { status: string; n: number }[];

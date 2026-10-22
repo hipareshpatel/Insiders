@@ -2,6 +2,7 @@ import { Menu, Monitor, Moon, Search, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "../lib/cn";
+import { useOwnerToken } from "../lib/owner";
 
 const NAV = [
   { href: "/", label: "Today" },
@@ -10,7 +11,7 @@ const NAV = [
   { href: "/results", label: "Results" },
   { href: "/companies", label: "Companies" },
   { href: "/calendar", label: "Calendar" },
-  { href: "/system", label: "System" },
+  { href: "/system", label: "System", owner: true },   // owner only (22 Oct 2026); the owner signs in at /system
 ];
 
 type Theme = "system" | "light" | "dark";
@@ -53,6 +54,8 @@ export function TopNav({ onSearch }: { onSearch: () => void }) {
   const [location] = useLocation();
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useTheme();
+  const owner = !!useOwnerToken();
+  const nav = NAV.filter((item) => !("owner" in item) || owner);
   const next: Record<Theme, Theme> = { system: "light", light: "dark", dark: "system" };
   const ThemeIcon = theme === "light" ? Sun : theme === "dark" ? Moon : Monitor;
   useEffect(() => setOpen(false), [location]);
@@ -63,7 +66,7 @@ export function TopNav({ onSearch }: { onSearch: () => void }) {
       <div className="mx-auto flex h-[62px] max-w-[1240px] items-center gap-5 px-4">
         <Logo />
         <nav className="hidden items-center gap-1 md:flex">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <Link key={item.href} href={item.href}
               className={cn("whitespace-nowrap rounded-[10px] px-2 py-2 text-sm font-semibold transition-colors lg:px-3",
                 isActive(item.href) ? "bg-surface-2 text-ink" : "text-ink-2 hover:text-ink")}>
@@ -92,7 +95,7 @@ export function TopNav({ onSearch }: { onSearch: () => void }) {
       </div>
       {open && (
         <nav className="border-t border-line px-4 py-2 md:hidden">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <Link key={item.href} href={item.href}
               className={cn("block rounded-[10px] px-3 py-2 text-sm font-semibold", isActive(item.href) ? "bg-surface-2 text-ink" : "text-ink-2")}>
               {item.label}

@@ -13,7 +13,21 @@ const CEILING = 0.95;
 const PROVIDER_LABEL: Record<string, string> = { groq: "Groq", nvidia: "NVIDIA NIM", mistral: "Mistral", zai: "Z.AI", cloudflare: "Workers AI" };
 
 export function SystemView() {
-  const query = useQuery({ queryKey: ["system"], queryFn: api.system, refetchInterval: 60_000 });
+  const token = useOwnerToken();
+  // the owner's page (22 Oct 2026: "system page ideally should be only visible to owner"): signed out, only the sign-in
+  const query = useQuery({ queryKey: ["system-owner", token], enabled: !!token, queryFn: () => ownerApi.system(token!),
+    refetchInterval: 60_000 });
+  if (!token) {
+    return (
+      <div className="mx-auto w-full max-w-[1240px] space-y-4 px-4 py-6 sm:px-6">
+        <header>
+          <h1 className="font-display text-[30px] leading-tight text-ink">System</h1>
+          <p className="mt-1 text-sm text-ink-2">The pipeline's status is for the site's owner. Enter the owner token to see it.</p>
+        </header>
+        <OwnerMode />
+      </div>
+    );
+  }
   if (query.isPending) return <Loading />;
   if (query.isError) return <div className="p-6"><Empty title="Could not load system status" body={String(query.error)} /></div>;
   const s = query.data;
@@ -117,12 +131,14 @@ export function SystemView() {
           {/* owner, 2026-10-21: "what does this title mean" */}
           <p className="mt-0.5 text-[12.5px] leading-relaxed text-ink-3">
             Each row is one pass of the pipeline (GitHub Actions, every 15 minutes): it looks for new NSE filings, reads them
-            and writes cards. "All" runs do today's filings first, then history.
+            and writes cards. "All" runs do today's filings first, then history. Every filing read ends in one of three
+            columns: Cards, Memory only or Not news; High impact and To verify are counted within Cards. Hover a heading for
+            its meaning.
           </p>
         </header>
         {s.runs.length === 0 ? <p className="px-4 py-4 text-sm text-ink-3">No runs recorded yet.</p> : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-[13.5px]">
+            <table className="w-full min-w-[880px] text-[13.5px]">
               <thead className="eyebrow border-b border-line text-left text-ink-3">
                 <tr>
                   {RUN_COLUMNS.map(([h, help]) => <th key={h} title={help} className="cursor-help px-4 py-2.5 font-semibold">{h}</th>)}
@@ -244,9 +260,11 @@ const RUN_COLUMNS: [string, string][] = [
   ["Mode", "live: today's filings only; all: today's first, then history (backfill)"],
   ["Status", "OK: finished; PARTIAL: some filings failed and will be retried; STOPPED: the runner's time limit ended it"],
   ["New filings", "Filings seen for the first time on NSE in this run"],
-  ["Read", "Filings read and decided in this run: a card, memory only, noise or a duplicate"],
-  ["High impact", "Cards rated high impact"],
-  ["To verify", "Cards held back or marked for review by the checks"],
+  ["Cards", "Filings that became a card in this run, published or held for review"],
+  ["Memory only", "Filings kept in the company's memory without a card (dividend dates, call schedules, small fines)"],
+  ["Not news", "Filings read and set aside: not material, rejected by the first AI pass, or a repeat of an earlier filing"],
+  ["High impact", "Of the cards, those rated high impact"],
+  ["To verify", "Of the cards, those held back or marked for review by the checks"],
   ["Took", "How long the run took"],
   ["Why it stopped", "The reason a run ended early: its time budget, the free AI quota, or the database's daily write limit"],
 ];
@@ -272,6 +290,8 @@ function RunRow({ run }: { run: PipelineRun }) {
       <td className="px-4 py-2"><Badge className={tone}>{status}</Badge></td>
       <td className="num px-4 py-2 text-ink">{num(n("discovered"))}</td>
       <td className="num px-4 py-2 text-ink">{num(n("analyzed"))}</td>
+      <td className="num px-4 py-2 text-ink-2">{num(n("timeline_only"))}</td>
+      <td className="num px-4 py-2 text-ink-2">{num(n("not_material") + n("pass1_rejected") + n("duplicates"))}</td>
       <td className="num px-4 py-2 text-ink">{num(n("cards_high"))}</td>
       <td className="num px-4 py-2 text-ink">{num(n("needs_review"))}</td>
       <td className="num whitespace-nowrap px-4 py-2 text-ink-2">{duration !== null ? `${Math.floor(duration / 60)}m ${duration % 60}s` : "—"}</td>
@@ -436,8 +456,12 @@ function ReviewQueue() {
     setQueued((s) => new Set(s).add(newsId));
   };
   return (
-    <section className="rounded-xl border border-line bg-surface p-4">
-      <h2 className="text-[14px] font-semibold text-ink">Needs review · {total}{waiting ? ` · ${waiting} re-run${waiting === 1 ? "" : "s"} queued` : ""}</h2>
+    // collapsed by default (owner, 22 Oct 2026): a long list pushed the rest of the page down
+    <details className="group rounded-xl border border-line bg-surface p-4">
+      <summary className="cursor-pointer list-none text-[14px] font-semibold text-ink">
+        <span className="mr-1.5 inline-block transition-transform group-open:rotate-90">›</span>
+        Needs review · {total}{waiting ? ` · ${waiting} re-run${waiting === 1 ? "" : "s"} queued` : ""}
+      </summary>
       <p className="mt-0.5 text-xs text-ink-3">Cards whose figures or math the automatic checks could not confirm{total > cards.length ? ` (the latest ${cards.length} shown)` : ""}. A re-run replaces the card at the next pipeline run; it stays here when the new reading fails the checks again.</p>
       <ul className="mt-3 divide-y divide-line">
         {cards.map((card) => (
@@ -457,6 +481,6 @@ function ReviewQueue() {
           </li>
         ))}
       </ul>
-    </section>
+    </details>
   );
 }

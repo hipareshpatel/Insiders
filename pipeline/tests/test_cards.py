@@ -1324,6 +1324,42 @@ def test_live_review_3_event_types():
     assert rule("PRODUCT_LAUNCH", "Launch of a new solar inverter range") == "PRODUCT_LAUNCH"
 
 
+@pytest.mark.parametrize("text, value, decimals", [
+    ("INR 2,993,59,08,147.6 (Rupees Two Thousand Nine Hundred and Ninety Three Crores Fifty Nine Lakhs)", 2993.59, 2),
+    ("Rs. 92,00,00,000/- (Rupees Ninety Two Crores Only)", 92, 0),
+    ("AUM crossed Rs 2 lakh crore this quarter", 200000, 0),
+    ("Other Income | 2 642.81 | 2,311.40", 2642.81, 2),
+    ("cash and cash equivalents of INR 1 885.6 million", 188.56, 2),
+    ("Revenue from operations | 10,738 | 8,488", 10737.58, 2),
+])
+def test_amounts_in_other_groupings_are_read(text, value, decimals):
+    """Held-card audit, 22 Oct 2026: Adani Power's and Shakti Pumps' rupees in any grouping (where the document
+    declares lakh), Max Financial's "2 lakh crore", Indian Bank's and eMudhra's space separators, Adani Ports' deck
+    rounding the XBRL's ₹10,737.58 Cr to 10,738: right figures held as not in the filing."""
+    from bse_intel.grounding import SourceIndex
+
+    assert SourceIndex(text).stated_crore(value, decimals, (1,))
+
+
+def test_a_stray_space_or_a_list_of_numbers():
+    """Hero's "Rs.1, 27,000" is one price; "Regulations 30, 33, 51" and "Notes 14, 24" stay separate numbers, and a
+    bank's "3 83 509.48" is ₹3,83,509.48, never 83,509.48."""
+    from bse_intel.grounding import SourceIndex
+
+    assert SourceIndex("introductory price of Rs.1, 27,000 (Ex-showroom)").grounded(127000, 0)
+    assert not SourceIndex("Pursuant to Regulations 30, 33, 51 and 52").grounded(303351, 0)
+    index = SourceIndex("Retail Banking | 4 22 508.51 | 3 83 509.48")
+    assert index.grounded(383509.48, 2) and not index.grounded(83509.48, 2)
+
+
+def test_rounding_is_read_only_for_large_figures():
+    """A figure of a few hundred crore within 0.5 of some whole number is found in any long report (fakes, 22 Oct):
+    only from ₹1,000 Cr does the card's extra precision stand on a rounded figure."""
+    from bse_intel.grounding import SourceIndex
+
+    assert not SourceIndex("Note 301 | page 143").stated_crore(300.62, 2, (1,))
+
+
 def test_a_currency_glued_to_the_word_before_it():
     """eMudhra's "total revenue ofRs.309.08 million" kept its ₹30.9 Cr card figure "not found" (2026-10-20)."""
     from bse_intel.grounding import SourceIndex

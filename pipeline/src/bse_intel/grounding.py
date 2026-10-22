@@ -185,10 +185,36 @@ def _numbers(text: str) -> list[tuple[float, int]]:
     return [(v, d) for v, d, _, _, _ in _tokens(text)]
 
 
+# Amounts the number pattern reads wrong or not at all (held-card audit, 22 Oct 2026):
+# "INR 2,993,59,08,147.6" and "Rs. 92,00,00,000/-", rupees in any grouping, ₹ 2,993.59 Cr and ₹92 Cr even where the
+# document declares lakh; "Rs 2 lakh crore", ₹2,00,000 Cr; "Rs.1, 27,000" with a stray space after a comma (a comma group
+# or decimals must follow, so "Regulations 30, 33, 51" stays three numbers); and a space as the separator, "2 642.81",
+# "INR 1 885.6 million" and a bank's "3 83 509.48" (decimals required, so two table cells never merge).
+_RUPEES = re.compile(r"(?:₹|\brs\.?|\binr)\s*(\d[\d,]{8,}(?:\.\d+)?)(?:\s*/-)?(?!\s*(?:\.\d|[\d,]|lakh|lac|crore|cr\b|mn\b|million|bn\b|billion|thousand))", re.I)
+_LAKH_CRORE = re.compile(r"(?<![\d.,])(\d+(?:\.\d+)?)\s*lakh\s+crores?\b", re.I)
+_SPACED = re.compile(r"(?<![\d.,])(?<!\d )(\d{1,3}, \d{2,3}(?:(?:,\d{2,3})+(?:\.\d+)?|\.\d+)|\d{1,3}(?: \d{2})* \d{3}\.\d+)(?![\d,])")
+
+
+def _other_readings(text: str) -> list[tuple[float | None, float]]:
+    out: list[tuple[float | None, float]] = []
+    for m in _RUPEES.finditer(text):
+        value = float(m.group(1).replace(",", ""))
+        if value >= 1e7:
+            out.append((1e7, value))
+    out += [(1, float(m.group(1)) * 1e5) for m in _LAKH_CRORE.finditer(text)]
+    clean = _clean(text)
+    for m in _SPACED.finditer(clean):
+        value = float(m.group(1).replace(",", "").replace(" ", ""))
+        out.append((_money_unit(clean, m.end()), value))
+    return out
+
+
 class SourceIndex:
     def __init__(self, *texts: str):
         self.points = [(v, i, pos) for i, text in enumerate(texts) for v, _, pos, _, _ in _tokens(text or "") if v > 0]
-        self.values = sorted({v for v, _, _ in self.points})
+        self.values = sorted({v for v, _, _ in self.points}
+                             | {v for text in texts for m in _SPACED.finditer(_clean(text or ""))
+                                if (v := float(m.group(1).replace(",", "").replace(" ", "")))})
         self._pairs: list[tuple[float, float]] | None = None
         by_unit: dict[float | None, set[float]] = {}
         for text in texts:
@@ -200,6 +226,8 @@ class SourceIndex:
                     continue
                 if value > 0:
                     by_unit.setdefault(_money_unit(clean, m.end()), set()).add(value)
+            for unit, value in _other_readings(text or ""):
+                by_unit.setdefault(unit, set()).add(value)
         plain = by_unit.pop(None, set())
         # A figure written once with its unit ("INR 3,000 million") is that amount wherever it recurs bare.
         self._plain = sorted(plain - set().union(*by_unit.values()))
@@ -214,7 +242,14 @@ class SourceIndex:
         for per_crore, values in self._by_unit.items():
             if _near(values, value * per_crore, rounding * per_crore + abs(value * per_crore) * 1e-6):
                 return True
-        return any(_near(self._plain, value * s, rounding * s + abs(value * s) * 1e-6) for s in plain_scales)
+        if any(_near(self._plain, value * s, rounding * s + abs(value * s) * 1e-6) for s in plain_scales):
+            return True
+        # the card carries the XBRL's decimals and the filing prints the crore figure rounded: Adani Ports' deck
+        # "10,738" for ₹10,737.58 Cr, ICICI's call "₹14,755 crore" for ₹14,755.06 Cr (held-card audit, 22 Oct 2026)
+        if tolerance is None and decimals and value >= 1000:
+            whole = [v for v in (*self._by_unit.get(1, ()), *(self._plain if 1 in plain_scales else ())) if v == int(v)]
+            return any(abs(v - value) <= 0.5 + 1e-9 for v in whole)
+        return False
 
     def _has_near(self, target: float, tolerance: float) -> bool:
         i = bisect.bisect_left(self.values, target - tolerance)

@@ -38,7 +38,10 @@ reviews every push and fixes what it finds.
   out_of_fit on exceptional quarters) with on/off and a sample; then release through `release-held`.
   **Step 1 done 22 Oct night (F98):** the unit fixer keeps all 33 right fixes of the 47 stored and now blocks 9 of the 12 wrong;
   the change fixer leaves a % the filing prints. **Step 3 built:** `release-held` with `plan` (a: 100 as they stand; b: 64 of 108
-  with whole points off, 44 stay held: the fault is in a headline or takeaway). Step 2 (false holds) next.
+  with whole points off, 44 stay held: the fault is in a headline or takeaway). **Released 22 Oct night: 82 + 51 = 133 cards**
+  (30 stay held because a published card owns their quarter, D20). **Step 2, first fix (F99):** amounts in other groupings
+  and rounding read: 21 false holds freed, 0 true, fakes 70 -> 71 of 1,673. Next: computed figures (111 of the 233 false
+  holds), anchored to the point's quote, with the same on/off.
 - Siemens FY26: an 18-month year its own file dates as 12; fixed (F97), reseeded 22 Oct night; 26 more stored years disagree with their quarters
   (`docs/audit/long-years-2026-10-22.md`) to check source by source.
 

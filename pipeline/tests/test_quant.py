@@ -200,6 +200,14 @@ def test_a_formula_over_mixed_units_is_checked_in_the_result_unit():
     text = "Letter of award for locomotives worth USD 135 million."
     wrong, right = check([est(11475)], text).items[0], check([est(1147.5)], text).items[0]
     assert wrong["check"] == "MISMATCH" and right["check"] == "VERIFIED" and right["computed"] == 1147.5
+    # the rate's unit written as a rate (Sagility, live audit 22 Oct 2026: US$ 20 M x 89 stated as ₹1,780 Cr)
+    for rate_unit in ("INR/USD", "INR per USD", "INR_PER_USD"):
+        rated = QuantifiedImpact.model_validate({
+            "label": "Upfront in rupees", "formula": "upfront_usd_m * fx_inr_per_usd", "result": 1780.0, "unit": "INR_CR",
+            "inputs": [{"name": "upfront_usd_m", "value": 20.0, "unit": "USD_M", "source": "FILING"},
+                       {"name": "fx_inr_per_usd", "value": 89.0, "unit": rate_unit, "source": "ASSUMPTION"}]})
+        item = check([rated], "an upfront payment of USD 20.0 M").items[0]
+        assert item["check"] == "MISMATCH" and item["computed"] == 178.0, rate_unit
     # same units on both sides: nothing changes (₹ crore over ₹ crore, as a share)
     share = QuantifiedImpact.model_validate({
         "label": "Share", "formula": "a / b * 100", "result": 25, "unit": "PCT",

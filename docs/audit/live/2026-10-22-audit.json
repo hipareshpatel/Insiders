@@ -1,0 +1,84 @@
+[
+ {
+  "news_id": "nse-106824195",
+  "symbol": "SWASTIKAIN",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "long",
+  "reason": "Q2 revenue Rs148 Cr +42%, PAT Rs16 Cr +80%, order book Rs1,420 Cr from Rs687 Cr, ~2.8x FY26 revenue all match the press release; but the deal and scale block turns 'Order inflows of ~Rs950 Cr during the year' into one Rs950 Cr ORDER at CONTRACT stage ('Rs950 Cr order = 1617% of Q1FY27 revenue'), and 'driven by' Maharashtra entry is the card's own link, not the filing's."
+ },
+ {
+  "news_id": "nse-106824168",
+  "symbol": "MCLOUD",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "classes": [
+   "memory"
+  ],
+  "prompt_variant": "short",
+  "reason": "L1 for Bank of Maharashtra, 1,550+ sites, 'project value of approximately Rs115 Crore', subject to formal order: all match. TTM Rs714.2 Cr is right (FY26 697.88 - Q1FY26 163.96 + Q1FY27 180.28). But 'two Rs29.13 Cr Northern Railway LOAs' is one Moradabad LOA that memory stored twice (d_2ab2389e and d_55d574d2 have the same counterparty, scope and date). The card also leaves out that the filing's subject line gives a 'Bid Value of approx. Rs228 Crore'."
+ },
+ {
+  "news_id": "nse-106824164",
+  "symbol": "KROSS",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "Matches the transcript: extruded beam 'approximately 80% of our current output', trailer axles all extruded 'by Q3 or Q4', trials 'February or March of 2027', 'INR120 crores out of the INR170 crores', debt 'around INR165 crores, INR170-odd' (management agreed), seamless tubes 8-10% cheaper, 3-4% margin, H2 'always 20% up on H1', exports +45%, receivable days 110+ to ~90. The XBRL table agrees with revenue Rs235 Cr +80% and PAT Rs19.69 Cr +143%."
+ },
+ {
+  "news_id": "nse-106823977",
+  "symbol": "ALKEM",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Audit Committee approved the forensic audit on 21 Oct 2026 over 'alleged misappropriation of funds by a former employee'; Grant Thornton Bharat LLP does an ESI review of procurement; no amount is named. FY26 revenue Rs14,712 Cr (14,712.27) and the Rs3.02 lakh Chhattisgarh GST penalty are in memory; 'seven open tax litigations' is close to memory's tax_litigation list."
+ },
+ {
+  "news_id": "nse-106823961",
+  "symbol": "SAGILITY",
+  "run": "10:07",
+  "verdict": "WRONG",
+  "classes": [
+   "unit_scale"
+  ],
+  "prompt_variant": "short",
+  "reason": "Deal facts are right (100% of Chirok Health, cash, up to US$32.35 M = US$20.0 M upfront + up to US$12.35 M contingent, turnover US$12.7/8.2/9.0 M, not a related-party deal). But the computed impact 'Upfront consideration in rupees' = 20 x 89 shows 1,780 INR_CR and reads 'About Rs1,780 Cr upfront, roughly 8% of market cap'. US$20 M at Rs89 is about Rs178 Cr, so this is a 10x unit slip, and the line contradicts its own 'upfront alone is under 1%'."
+ },
+ {
+  "news_id": "nse-106823950",
+  "symbol": "TECHM",
+  "run": "10:07",
+  "verdict": "WRONG",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "short",
+  "reason": "Call facts match the transcript (US$1,693 M, 7.2% CC, INR16,180 Cr, EBIT 14.8%, ETR 29.9%/26.6%, TCV US$1,023 M, LTM US$4,270 M, DSO 88 days, FCF US$135 M, 1:1 bonus, Rs15 dividend). But the results table shows EBITDA as Rs2,387 Cr at a 14.75% margin, against Rs2,264 Cr / 14.41% the quarter before. Those are EBIT: the call says 'operating profit stood at INR2,387 crores', and memory's EBITDA for Q2FY27 is Rs2,878.5 Cr (17.79%). Lesser slips: the 15% target was set in April (g_9deaf301, given 2026-04-28), not July, and Q2 is the fourth straight quarter above US$1 bn, not the third."
+ },
+ {
+  "news_id": "nse-106823943",
+  "symbol": "MARATHON",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "classes": [
+   "direction"
+  ],
+  "prompt_variant": "long",
+  "reason": "Consolidated figures match the lakh table: revenue 12,895.26 vs 11,685.21 and 19,750.23; PAT 4,518.72 vs 6,653.58; owners 4,393.48; other income 1,574.25 vs 3,821.20; EPS 6.70 vs 9.80. Derived EBITDA Rs45.09 Cr and H1 +26.7% are right. But the risks line says profit depends on 'other income and JV share, which fell sharply this quarter'. Only other income fell: the JV share rose to 352.86 from 333.83 QoQ and 280.27 YoY."
+ },
+ {
+  "news_id": "nse-106823855",
+  "symbol": "TBOTEK",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Annexure-A: 'penalty ... INR 22,21,63,535 on the Company and INR 2,46,84,837 on each Joint Managing Director' (Rs22.22 Cr / Rs2.47 Cr), from the Special Director (Adjudication), ED, received 'October 21, 2026 at 04.00 P.M.', for FEMA s.3(c) read with s.42(1); the filing links it to the auditors' Emphasis of Matter. FY26 PAT of Rs244.31 Cr is in memory."
+ }
+]

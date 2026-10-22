@@ -38,7 +38,10 @@ _UNIT_SIZE = {"INR": 1, "RS": 1, "USD": 1, "EUR": 1, "GBP": 1, "JPY": 1, "AED": 
               "INR_CR": 1e7, "CR": 1e7, "CRORE": 1e7, "INR_LAKH": 1e5, "LAKH": 1e5, "INR_TH": 1e3, "INR_THOUSAND": 1e3,
               "INR_M": 1e6, "INR_MN": 1e6, "INR_MILLION": 1e6, "INR_BN": 1e9, "INR_BILLION": 1e9,
               "USD_M": 1e6, "USD_MN": 1e6, "USD_MILLION": 1e6, "USD_BN": 1e9, "USD_BILLION": 1e9, "USD_K": 1e3,
-              "EUR_M": 1e6, "EUR_MN": 1e6, "EUR_BN": 1e9, "SHARES_CR": 1e7, "SHARES_LAKH": 1e5, "SHARES_M": 1e6}
+              "EUR_M": 1e6, "EUR_MN": 1e6, "EUR_BN": 1e9, "SHARES_CR": 1e7, "SHARES_LAKH": 1e5, "SHARES_M": 1e6,
+              # an exchange rate is rupees per one unit of the currency: Sagility's US$ 20 M x 89 "INR/USD" was stated as
+              # ₹1,780 Cr and passed with the rate's unit unknown (live audit, 22 Oct 2026; it is ₹178 Cr)
+              **{f"{a}_PER_{b}": 1 for a in ("INR", "RS", "USD") for b in ("USD", "EUR", "GBP", "JPY", "AED", "INR")}}
 
 
 _NAMES = re.compile(r"[A-Za-z_][A-Za-z_0-9]*")
@@ -47,7 +50,7 @@ _MULTIPLIERS = {2.0, 3.0, 4.0, 12.0}   # halves, quarters and months to a year
 
 
 def _size(unit: str | None) -> float | None:
-    return _UNIT_SIZE.get(str(unit or "").strip().upper().replace(" ", "_"))
+    return _UNIT_SIZE.get(str(unit or "").strip().upper().replace(" ", "_").replace("/", "_PER_"))
 
 
 _COUNT_WORDS = (("BILLION", 1e9), ("CRORE", 1e7), ("MILLION", 1e6), ("LAKH", 1e5), ("THOUSAND", 1e3))

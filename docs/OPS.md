@@ -1,2 +1,3 @@
 
-| 22 Oct 10:45 | Item A closed | Independent review of the 45 newly accepted takeaways: 37 right / 3 minor / 5 wrong, all via the same-answer window -> dropped; DCW self-comparison -> tightened; on/off now 0 accepted / 0 refused; #65 ready to merge on green |
+| 22 Oct 10:36 | Merged #65 | CI green on b4dc364; corporate-actions.yml (2,200 days) dispatched |
+| 22 Oct 11:15 | Half-hour visit | 09:38 run OK, next running; corporate-actions history still reading; B4 built (NSE holidays in both session labels) |

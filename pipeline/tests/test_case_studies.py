@@ -152,3 +152,9 @@ def test_case_6_hariom_pipe_solar_rollout():
     out, current, signals = _run(dossier, filing, payload, {"market_cap_cr": 2410})
     g = current["guidance"][0]
     assert g["status_history"][-1]["status"] == "ON_TRACK" and out.card.deal_value.usage == "CAPTIVE"
+
+
+def test_an_exchange_holiday_is_not_a_trading_day():
+    """Data chain audit B4 (22 Oct 2026): Dussehra, 20 Oct 2026, a Tuesday, read as market hours."""
+    assert market_session("2026-10-20T11:00:00+05:30") == "NON_TRADING"
+    assert market_session("2026-10-21T11:00:00+05:30") == "LIVE_MARKET"

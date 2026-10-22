@@ -86,6 +86,31 @@ class AllProvidersFailed(AIError):
         super().__init__(f"{route}: no provider could serve the request ({detail})")
 
 
+def expand_key_aliases(config: dict, env: dict[str, str]) -> dict:
+    """A provider entry with `same_as = "<provider>"` is another key for that provider (owner, 2026-10-22: second keys for
+    Gemini, Groq, NVIDIA and Z.AI, "work load will get divided"). It takes the base provider's settings, and every route
+    entry of the base provider is repeated for it right after the original, so it has its own rate limiter, quota
+    counter and usage row (provider "gemini_2" on the System page). An alias whose key is not set adds nothing."""
+    providers = dict(config.get("providers", {}))
+    aliases = {name: conf for name, conf in providers.items() if conf.get("same_as")}
+    if not aliases:
+        return config
+    for name, conf in aliases.items():
+        base = providers.get(conf["same_as"])
+        if base is None:
+            raise ValueError(f"provider {name} is same_as unknown provider {conf['same_as']}")
+        providers[name] = {**base, **{k: v for k, v in conf.items() if k != "same_as"}}
+    live = {name for name, conf in aliases.items() if (env.get(providers[name]["api_key_env"]) or "").strip()}
+    routes = {}
+    for route, entries in config.get("routes", {}).items():
+        out = []
+        for entry in entries:
+            out.append(entry)
+            out += [{**entry, "provider": name} for name in sorted(live) if aliases[name]["same_as"] == entry["provider"]]
+        routes[route] = out
+    return {**config, "providers": {k: v for k, v in providers.items() if k not in aliases or k in live}, "routes": routes}
+
+
 @dataclass
 class Target:
     route: str
@@ -228,6 +253,7 @@ class AIGateway:
         zone = ZoneInfo(reserve.get("tz", "Asia/Kolkata"))
         self.local_now: Callable[[], datetime] = lambda: datetime.now(zone)
 
+        config = expand_key_aliases(config, env)
         providers = config.get("providers", {})
         self._day_of = {name: _day_function(pconf.get("quota_tz")) for name, pconf in providers.items()}
         # a ledger row counts for its provider's own day (usage rows for both the UTC day and that day may be passed)

@@ -189,3 +189,18 @@ def test_a_stored_call_card_gives_memory_its_checked_takeaways():
     assert [p["text"] for p in saved["500001"]["call_points"]] == ["Deposit growth guided at 11-12% for FY27"]
     saved.clear()
     assert card_refresh.run(pipeline)["memories_with_call_points"] == 0 and not saved   # nothing new the second time
+
+
+def test_every_block_the_refresh_makes_is_one_it_saves():
+    """corporate_action was made by blocks() but missing from BLOCKS, so a card whose only change was that block was
+    never written (refresh of 22 Oct 2026, after the corporate-actions history)."""
+    filing = Filing(news_id="n1", scrip_code="500001", company_name="Demo Rail Ltd", headline="h", subject="",
+                    filed_at=FILED, filing_date=FILED[:10])
+    made = card_refresh.blocks(_card(), _dossier(), filing, None)
+    assert set(made) == set(card_refresh.BLOCKS)
+    card = {**_card(), "event_type": "CORPORATE_ACTION", "headline": "Demo Rail fixes record date for 1:1 bonus"}
+    dossier = _dossier()
+    dossier["corporate_actions"] = [{"ex_date": "2026-09-25", "subject": "Bonus 1:1", "kind": "BONUS", "factor": 2.0}]
+    first, _ = card_refresh.refresh(card, dossier, filing, None)
+    again, changed = card_refresh.refresh({**first, "corporate_action": None}, dossier, filing, None)
+    assert again["corporate_action"]["factor"] == 2.0 and "corporate_action" in changed

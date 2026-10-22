@@ -30,8 +30,10 @@ from .signals import SIGNALS_OFF, priced_for, scale_parts, volume_strip
 
 log = logging.getLogger(__name__)
 
+# every key blocks() makes: one left out is rebuilt but never saved on its own (corporate_action, 22 Oct 2026: the
+# refresh after the corporate-actions history wrote it only where another block happened to change)
 BLOCKS = ("results", "volume_strip", "call_memory", "scale", "rating_change", "case_stage", "guidance_recall", "memory_context",
-          "fundamentals")
+          "fundamentals", "corporate_action")
 
 
 def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, footer=(), prices=None, buckets=None,

@@ -214,7 +214,8 @@ def main() -> int:
                 data = r.json()
                 if isinstance(data, dict) and not isinstance(data.get("data"), list):
                     sizes = {k: len(v) for k, v in data.items() if isinstance(v, list)}
-                    return f"HTTP 200, lists {sizes or sorted(data)[:8]}"
+                    first = {k: v[0] for k, v in data.items() if isinstance(v, list) and v}
+                    return f"HTTP 200, lists {sizes or sorted(data)[:8]}; first rows {str(first)[:900]}"
                 got = _list(data)
                 latest = max((str(x.get("date") or x.get("BD_DT_DATE") or x.get("acqtoDt") or x.get("intimDt") or "")
                               for x in got), default="")

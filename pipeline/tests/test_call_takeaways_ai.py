@@ -178,3 +178,14 @@ def test_an_earlier_figure_in_the_quote_may_name_the_quarter_the_quote_names():
     other = _card(_item("Deposit growth guidance revised to 11-12%", text, [], "from 9-11% in Q4FY26"))
     check_ai_takeaways(other, text, view={})
     assert not other.call_takeaways[0].verified                        # a quarter the filing does not name
+
+
+def test_an_earlier_figure_that_is_the_takeaways_own_is_no_comparison():
+    """DCW's Q4FY26 call (independent review, 22 Oct 2026): "net debt ₹71 Cr matches the FY26 call's closing figure"
+    set the call's own ₹71 Cr against itself and passed as a comparison from the quote."""
+    text = ("So, our scheduled debt repayment for next year is again Rs.130 crores. So, obviously we will be debt-free, "
+            "because we have Rs.71 crores of net debt.")
+    card = _card(_item("Net debt ₹71 Cr against ₹130 Cr FY27 repayment", text, [],
+                       "net debt ₹71 Cr matches the closing figure"))
+    check_ai_takeaways(card, text, view={})
+    assert not card.call_takeaways[0].verified

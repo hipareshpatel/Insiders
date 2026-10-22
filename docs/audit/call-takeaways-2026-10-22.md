@@ -24,3 +24,15 @@ characters, right from 8 to 1,525), nor does a question mark between figure and 
 Parts (2) and (3) only: 144 cards, 646 takeaways; verified 343 -> 345, 2 newly accepted, 0 newly refused. Metro Brands
 (versus_prior from its own sentence) was RIGHT in round 1's review; DCW's net-debt takeaway (a card since) went to an
 independent reviewer.
+independent reviewer: WRONG. Its versus_prior "net debt ₹71 Cr matches the FY26 call's closing figure" compares the
+call's own ₹71 Cr with itself (the transcript has no earlier net debt). Metro Brands' "reiterates the 1,032-store
+count" is the same shape.
+
+## Round 3: a comparison from the call itself must not say "the same"
+
+A versus_prior taken from the quote alone (no memory) that says the figure matches, reiterates, confirms or is unchanged
+now needs memory. A plain "different figure" rule was tried first and refused Indian Bank's "revised to 11-12% from
+9-11%" (its text repeats both figures), so it was not used. Over 145 cards and 647 takeaways: verified 343 -> 343,
+0 accepted, 0 refused. What the change still adds is covered by tests only: one subtraction of the quote's own
+percentages (Tech Mahindra's "within 20 bps of the 15% target") and a quarter the versus_prior names said near the
+quote. No independent sample is needed for a change that accepts nothing on stored cards.

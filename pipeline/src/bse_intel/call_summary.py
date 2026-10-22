@@ -295,6 +295,9 @@ def _stated_in(figure: tuple[float, int, bool], sources: list[str]) -> bool:
     return any(abs(v - value) <= tolerance for s in sources for v, _, _ in _figures(s))
 
 
+# a versus_prior that says the figure is the same as before: from the quote alone it compares the call with itself
+_SAME = re.compile(r"\b(?:match\w*|reiterat\w*|same as|unchanged|in line with|consistent with|confirm\w*)\b", re.I)
+
 NEAR_CHARS = 2500   # the transcript around a takeaway's quote where a quarter its versus_prior names may stand
 
 
@@ -385,9 +388,12 @@ def check_ai_takeaways(card, text: str, reading: str = "", view: dict | None = N
             prior = _figures(item.versus_prior)
             periods_named = _periods(item.versus_prior)
             if (not memory and prior and all(_stated_in(f, [quote]) for f in prior)
+                    and not _SAME.search(item.versus_prior)
                     and all(p in _periods(f"{quote} {near}") for p in periods_named)):
                 pass   # the filing's own sentence gives the earlier figure: "I had guided 9-11%, revising to 11-12%",
-                # and any quarter it names is named there too ("the 9-11% we guided in Q1FY27")
+                # and any quarter it names is named there too ("the 9-11% we guided in Q1FY27"). A "matches" or
+                # "reiterates" from the call's own sentence compares the call with itself: DCW's "net debt ₹71 Cr
+                # matches the FY26 call's closing figure" (independent review, 22 Oct 2026) needs memory
             elif not memory:
                 issue = "compares with an earlier figure but cites no memory"
             else:

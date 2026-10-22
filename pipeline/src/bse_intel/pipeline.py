@@ -1764,7 +1764,7 @@ class Pipeline:
         self._unreachable = 0
         self._busy = 0
         self._busy_halt = False
-        self._pause_checked = 0.0   # monotonic time of the last look at the nightly pause (pause.py)
+        self._pause_checked = float("-inf")   # monotonic time of the last look at the nightly pause (pause.py); -inf, not 0: a fresh runner's clock starts near 0
         self._paused = False
         self._blocked: SourceBlockedError | None = None
         self._usage_lock = Lock()

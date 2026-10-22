@@ -31,10 +31,10 @@ def test_a_live_run_does_not_start_while_paused(settings, capsys):
 
 def test_a_running_pipeline_stops_between_filings(settings):
     sink = LocalSink(settings)
-    run = SimpleNamespace(_lock=Lock(), _paused=False, _pause_checked=0.0, sink=sink,
+    run = SimpleNamespace(_lock=Lock(), _paused=False, _pause_checked=float("-inf"), sink=sink,
                           stats=SimpleNamespace(stopped_reason=None))
     assert Pipeline._pause_now(run) is False
     pause.pause(sink, 30)
     assert Pipeline._pause_now(run) is False                  # looked up at most once a minute
-    run._pause_checked = 0.0
+    run._pause_checked = float("-inf")
     assert Pipeline._pause_now(run) is True and "nightly memory jobs" in run.stats.stopped_reason

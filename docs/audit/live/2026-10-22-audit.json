@@ -309,5 +309,184 @@
   ],
   "prompt_variant": "long",
   "reason": "The facts hold: sale of the whole Sangareddy undertaking to Aparna Enterprises ('does not belong to promoter/ promoter group'), contribution in the last financial year 'NIL', proposed 15 Jul 2025 and approved at the 18th AGM on 19 Aug 2025, no consideration or completion date given; FY26 revenue ₹15.97 Cr is in memory. But the sale of a whole undertaking is filed as OTHER/UPDATE rather than M_AND_A, although its own deal block says DIVESTMENT."
+ },
+ {
+  "news_id": "nse-106824651",
+  "symbol": "J&KBANK",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Every figure is in the press release: 'net profit to Rs 546.36 Cr ... 28.8% ... 10.6%', 'Gross NPA ... 109 bps ... to 2.23%', 'Net NPA ... 0.51% against 0.76%', 'PCR ... 91.76%', 'total business ... 19.38% ... Rs 3,10,347 Cr', 'other income doubled to Rs 314.90 Cr ... from Rs 153.76 Cr', NII 'rose 5% YoY ... to Rs 1502 Cr', ROA 1.07%, CASA 41.97%."
+ },
+ {
+  "news_id": "nse-106824629",
+  "symbol": "NATCOPHARM",
+  "run": "14:07",
+  "verdict": "WRONG",
+  "classes": [
+   "arithmetic"
+  ],
+  "prompt_variant": "long",
+  "reason": "The point 'The ₹750 issue price is a significant discount to the market price of approximately ₹1,000 (based on the ₹15,395 Cr market cap and 17.9 Cr shares in memory)' is wrong arithmetic: 15,395/17.9 = about ₹860, and memory's own last_price is ₹784.8 (2026-10-15). The discount is therefore about 4-13%, not a 'significant discount' to ₹1,000."
+ },
+ {
+  "news_id": "nse-106824613",
+  "symbol": "KOPRAN",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "classes": [
+   "event_type"
+  ],
+  "prompt_variant": "long",
+  "reason": "The facts match the filing: 'inspection ... from September 18, 2026 to September 23, 2026', 'No critical observations, one major observation and some minor observations', and responses 'within a fortnight' (2026-11-05). But a concluded GMP inspection is filed as LITIGATION_REGULATORY with a case tracker at 'Notice'. The headline 'clears' and the core catalyst 'Regulatory clearance' also overstate the outcome while the one major observation is still awaiting compliance responses."
+ },
+ {
+  "news_id": "nse-106824609",
+  "symbol": "CMLL",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "classes": [
+   "event_type"
+  ],
+  "prompt_variant": "long",
+  "reason": "The content matches the filing: bulk price instead of retail, '100% of the increase', consumption norms, 'applies retrospectively from 20 March 2026', 'increased by about 86%', 'Fortnightly payments (up to 75% ...)', 8 WCL/NCL contracts running to 2031. But an amendment to mining service contracts (Schedule III Para B) is tagged CORPORATE_ACTION / 'CORP ACTION'."
+ },
+ {
+  "news_id": "nse-106824578",
+  "symbol": "MAITHANALL",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "These are on the filing: 'Total Cost of acquisition is Rs. 38.72 Crore on 19th October, 2026', '0.09% of shareholding being 439848 shares' (₹880.3/share computes), 'PAT Rs. 2 Crore', 'Networth Rs. 1526 Crore', turnover 'Rs. 2446 Crore', and 'do not intend to acquire control'. 'Additional' stake and 'minority stakes of listed telecom equipment firms' are supported by memory: 0.04% of Sterlite for ₹19.97 Cr on 16 Oct, and 0.05% of HFCL for ₹20 Cr."
+ },
+ {
+  "news_id": "nse-106824529",
+  "symbol": "REFEX",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "These are in the filing: 'Cumulative Maximum Award Value of Rs. 31,13,05,500/- (incl. GST)' = ₹31.13 Cr, 'valid for a period of one (1) year, extendable by a further period of six (6) months', and NHAI/PMGSY scope. The ₹31.45 Cr prior-day order (d_49dd4082), the 4 orders totalling ₹131.2 Cr (32.12+36.5+31.45+31.13), and Q1FY27 revenue ₹916.31 Cr are all in memory."
+ },
+ {
+  "news_id": "nse-106824625",
+  "symbol": "SAPPHIRE",
+  "run": "14:07",
+  "verdict": "WRONG",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "long",
+  "reason": "The results table shows EBITDA 128.61 vs prev_year 102.09, '+26% YoY', and margin 13.75% -> 14.5% '+75 bps'. The filing's own P&L gives 'EBITDA 1,286.06 1,061.6 21%' and 'EBITDA Margin % 14.5% 14.3%', i.e. +21% and about +20 bps. The prior-year figure is memory's XBRL EBITDA on a different definition, which mixes bases and contradicts the card's own key number (+21% YoY). The score repeats 'Margin +75 bps YoY'."
+ },
+ {
+  "news_id": "nse-106824587",
+  "symbol": "SHRIRAMPPS",
+  "run": "14:07",
+  "verdict": "WRONG",
+  "classes": [
+   "memory"
+  ],
+  "prompt_variant": "short",
+  "reason": "The point 'The board size remains at 6 directors' (basis MEMORY, no refs) is contradicted. Memory's governance XBRL has board_size 6 at Jun-2026 with no cessations, and this filing adds two directors, so the board becomes 8. The rest matches the filing: two independent directors, '5 consecutive years, effective October 22, 2026', 'former Central Board Member of the Reserve Bank of India', Deputy CAG, CAG audit reports for AP, Odisha, TN, WB and Puducherry, and 'former CEO of Doha Bank (2007 – 2022)'."
+ },
+ {
+  "news_id": "nse-106824643",
+  "symbol": "RAJRATAN",
+  "run": "14:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "memory"
+  ],
+  "prompt_variant": "short",
+  "reason": "All figures match p15 table (Revenue 37083 vs 29417 lakh +26%, EBITDA 4579 +14%, PAT 2414 +17%, volume 38605 MT +17%, margin 12.35% vs 13.60% -125bps) and Chennai/Thailand/export points are quoted; but the Chennai takeaway says 'reiterated target timeframe of Q2/Q3 FY27' and call_read guidance=MAINTAINED, while memory (2026-04-29 call) had 'expanded to 60,000 tons by Q2 FY27' - now 'by Q3 FY27', a one-quarter slip; margin also below memory's 'return to normal levels of 13% to 13.5%'. 'Continuous expansion over previous quarters in memory' is supported (294.17/301.53/314.29/318.35/370.83 Cr) but has no memory_refs (citation nit)."
+ },
+ {
+  "news_id": "nse-106824642",
+  "symbol": "SANDUMA",
+  "run": "14:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "memory"
+  ],
+  "prompt_variant": "short",
+  "reason": "Face matches the press release ('Developed land measuring 6.2 acres', 'Lease tenure of 33 years ... freehold ownership after 10 years from the date of commissioning', capex 'announced in due course'); the MEMORY point on 'evaluating medical devices under the new Royal Sandur brand architecture' is supported by memory (nse-106729813, 2026-08-06) but carries no memory_refs - citation nit only."
+ },
+ {
+  "news_id": "nse-106824623",
+  "symbol": "PATELRMART",
+  "run": "14:13 hourly",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "Ghoti (Nashik) and Mangaon/Mahad (Raigad) locations, 'currently operates a network of 54 stores', entry into Nashik / four districts, and FY26 Total Income Rs1,059.29 Cr, EBITDA Rs83.08 Cr, Net Profit Rs39.05 Cr all in the release; '51 stores in April 2026' matches memory t_25bceb0f ('opened its 51st store in Khalapur', 2026-04-24), so +3 in ~6 months computes."
+ },
+ {
+  "news_id": "nse-106824719",
+  "symbol": "J&KBANK",
+  "run": "15:13 hourly",
+  "verdict": "WRONG",
+  "classes": [
+   "standalone_consolidated"
+  ],
+  "prompt_variant": "long",
+  "reason": "Results table sets the presentation's standalone PAT 546.36 against consolidated XBRL comparatives 494.91 (Q2FY26) and 425.32 (Q1FY27) and NII 1435.37/1498.78, giving PAT +10.4% YoY / +28.5% QoQ and NII +4.7%/+0.2% where the filing's own P&L slide prints 494.11 / 424.18 / 1,433.99 / 1,497.12 and 10.6% / 28.8% / 4.8% / 0.3%; the headline's 10.6% contradicts the table's 10.4%."
+ },
+ {
+  "news_id": "nse-106824702",
+  "symbol": "NAM-INDIA",
+  "run": "15:13 hourly",
+  "verdict": "WRONG",
+  "classes": [
+   "wrong_period"
+  ],
+  "prompt_variant": "long",
+  "reason": "Results table on this Q2FY27 card is Q1FY27 (PAT 503.7, PBT 664.49, exceptional items 0.0) under a 'bank' lens with an 'Interest earned 0.0' line for an AMC, while the quarter has a ₹96.8 Cr exceptional item ('Exceptional Items 968 0 NA'); and the other-expenses note says Q1FY27 was ₹66.6 Cr when the filing prints 999 (₹99.9 Cr) ('Other Expenses 974 855 14% 999 -3%')."
+ },
+ {
+  "news_id": "nse-106824696",
+  "symbol": "HAVELLS",
+  "run": "15:13 hourly",
+  "verdict": "WRONG",
+  "classes": [
+   "invented"
+  ],
+  "prompt_variant": "long",
+  "reason": "Notable change states Lloyd Consumer Q2FY26 segment result ₹(66) Cr; the filing's segment results table prints '(99) (20.7)%' (99/479 = 20.7%), so the comparative is a figure in neither filing nor memory (direction 'loss widened' to ₹104 Cr still holds)."
+ },
+ {
+  "news_id": "nse-106824689",
+  "symbol": "MAHLIFE",
+  "run": "15:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "long",
+  "reason": "H1 GDV additions of ₹7,100 Cr are booked as a completed 'deal' and a SCALE signal says '₹7,100 Cr deal = 603% of FY26 revenue'; GDV is the projected sales value of projects added, not a transaction value."
+ },
+ {
+  "news_id": "nse-106824676",
+  "symbol": "MAHLIFE",
+  "run": "15:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "direction"
+  ],
+  "prompt_variant": "long",
+  "reason": "Tone POSITIVE and headline 'revenue rose to ₹32.42 Cr' while PAT fell to 1,634 lakh from 4,791 (-66% YoY) and 8,555 (-81% QoQ) and revenue fell from 96,213 lakh QoQ; 'lower project milestone recognitions' is the card's own explanation, not the filing's."
+ },
+ {
+  "news_id": "nse-106824694",
+  "symbol": "KSHINTL",
+  "run": "15:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "event_type"
+  ],
+  "prompt_variant": "long",
+  "reason": "Filing is a PGCIL 'Manufacturer' approval (vendor qualification) for CTC/PICC/BPICC up to 765 kV from the Supa facility; it is tagged ORDER WIN although the card itself says 'a vendor qualification rather than an immediate commercial order win'."
  }
 ]

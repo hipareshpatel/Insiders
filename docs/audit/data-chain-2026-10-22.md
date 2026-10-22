@@ -123,3 +123,19 @@ Progress on each is tracked in `docs/audit/work-2026-10-22.md` (item E).
 - **Bulk and block deals:** `/api/historical/bulk-deals` returned NSE's bot page from a cloud IP (22 Oct 2026); to be
   tried from the pipeline's NSE session on GitHub Actions.
 
+## 7. Event types: CORPORATE_ACTION is a catch-all (measured 22 Oct 2026)
+
+Of the 86 stored cards typed CORPORATE_ACTION, 45 name a dividend, bonus, split, buyback, record date, rights,
+delisting, reclassification, scheme or NCLT step; 41 (48%) do not: order wins (LTM, Advait), capacity starting
+(Jindal Paradip port), stake sales (Swiggy's Lynks, RECPDCL's SPV, AGL), regulatory approvals (Zim Labs' TGA, Jaykay's
+CDSCO licence), fundraises (Affle's warrants, Northern Arc's NCDs), a pledge release, a CP redemption (Titan), a
+financial close (Ceigall) and one results letter (Eternal). The reviewers marked the class three times today (Caliber
+Mining, Kopran, Neueon). What it costs an investor: the card gets the wrong blocks (no order size against revenue on an
+order win, no results table on Eternal's letter, no deal block on a stake sale) and sits under the wrong filter.
+
+Cause: the gatekeeper prompt (pass1.md) and pass 2 offer the event types as a bare list of names with no meaning
+attached; CORPORATE_ACTION reads as "anything the company did". **Proposed (owner's decision, not built):** one line per
+event type in both prompts ("CORPORATE_ACTION: dividend, split, bonus, buyback, record date, rights entitlement,
+delisting, name or face-value change - not an order, a stake sale, a licence or a fundraise"), measured on live cards
+the day after (the share of CORPORATE_ACTION cards that are corporate actions, now 52%), as the no-AI-for-testing rule
+allows only live measurement of a prompt change.

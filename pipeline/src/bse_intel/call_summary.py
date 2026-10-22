@@ -295,6 +295,38 @@ def _stated_in(figure: tuple[float, int, bool], sources: list[str]) -> bool:
     return any(abs(v - value) <= tolerance for s in sources for v, _, _ in _figures(s))
 
 
+NEAR_CHARS = 2500   # how much of the transcript around a takeaway's quote counts as its context (one answer, roughly)
+
+
+def _near(quote: str | None, text: str) -> str:
+    """The transcript around where the quote stands: the speaker's answer it comes from, give or take. A figure
+    the takeaway adds from that answer (an LTM total said two sentences on) is the filing's own (22 Oct 2026,
+    Tech Mahindra's US$4,270 million). '' when the quote cannot be placed."""
+    from . import gate
+
+    flat, q = gate._flat(text or ""), gate._flat(quote or "")
+    at = flat.find(q[:60]) if q else -1
+    if at < 0:
+        return ""
+    return flat[max(0, at - NEAR_CHARS):at + len(q) + NEAR_CHARS]
+
+
+def _computed(figure: tuple[float, int, bool], sources: list[str], bps: bool) -> bool:
+    """A figure the quote's own figures give by one subtraction: "within 20 bps of the 15% target" from 15% and
+    14.8% (22 Oct 2026, Tech Mahindra). Percentages only, and basis points when the takeaway says so."""
+    value, decimals, pct = figure
+    stated = [v for s in sources for v, _, is_pct in _figures(s) if is_pct]
+    if len(stated) < 2 or not (pct or bps):
+        return False
+    tolerance = 0.5 * 10 ** -decimals + 1e-9
+    for i, a in enumerate(stated):
+        for b in stated[i + 1:]:
+            gap = abs(a - b)
+            if abs((gap * 100 if bps else gap) - value) <= tolerance and gap > 0:
+                return True
+    return False
+
+
 def _periods(text: str) -> list[str]:
     from . import gate
 
@@ -326,9 +358,16 @@ def check_ai_takeaways(card, text: str, reading: str = "", view: dict | None = N
             quote = gate.quote_near(quote, text, reading)
             if quote is None:
                 issue = "quote not in the filing"
+        near = _near(quote, text) if issue is None else ""
         if issue is None:
+            bps = bool(re.search(r"\bbps\b|basis points?", item.text, re.I))
             for figure in _figures(item.text):
                 if _stated_in(figure, [quote, *memory]):
+                    continue
+                # said in the same answer, or one subtraction of the quote's own percentages (22 Oct 2026)
+                if near and _stated_in(figure, [near]) and (figure[0] >= 100 or figure[1] > 0):
+                    continue
+                if _computed(figure, [quote], bps):
                     continue
                 # a crore amount read from a statement in lakh or million: the quote's figure at the filing's unit
                 shown = f"{figure[0]:.{figure[1]}f}"
@@ -339,8 +378,11 @@ def check_ai_takeaways(card, text: str, reading: str = "", view: dict | None = N
                 break
         if issue is None and item.versus_prior:
             prior = _figures(item.versus_prior)
-            if not memory and prior and all(_stated_in(f, [quote]) for f in prior) and not _periods(item.versus_prior):
-                pass   # the filing's own sentence gives the earlier figure: "I had guided 9-11%, revising to 11-12%"
+            periods_named = _periods(item.versus_prior)
+            if (not memory and prior and all(_stated_in(f, [quote]) for f in prior)
+                    and all(p in _periods(f"{quote} {near}") for p in periods_named)):
+                pass   # the filing's own sentence gives the earlier figure: "I had guided 9-11%, revising to 11-12%",
+                # and any quarter it names is named there too ("the 9-11% we guided in Q1FY27")
             elif not memory:
                 issue = "compares with an earlier figure but cites no memory"
             else:

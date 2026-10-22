@@ -140,3 +140,40 @@ def test_verified_takeaways_feed_the_quarterly_summary():
     assert len(d["call_points"]) == 1                     # only the verified one is kept
     points = [p for c in summarize_calls(d)[0]["categories"] for p in c["points"]]
     assert points[0]["text"].startswith("Deposit growth") and points[0]["versus"] == "raised from 9-11%"
+
+
+def test_a_figure_from_the_same_answer_or_one_subtraction_is_the_filings_own():
+    """22 Oct 2026, Tech Mahindra's call: "within 20 bps of the 15% target" (15% - 14.8%) and "LTM TCV US$4,270
+    million" (said two sentences after the quote) were failed as figures not in the quote. A small figure from
+    elsewhere in the answer, or one too far away, still fails."""
+    text = ("Our EBIT margin for the quarter was 14.8%. We reiterate that we remain on track to achieve our full-year "
+            "FY27 EBIT margin target of 15%. Our total deal wins for the quarter stand at US$1,023 million. "
+            "On an LTM basis, deal wins are US$4,270 million, up 34.8% year-on-year. We added 7 new logos.")
+    margin = _card(_item("EBIT margin 14.8%, within 20 bps of the 15% FY27 target",
+                         "Our EBIT margin for the quarter was 14.8%. We reiterate that we remain on track to achieve our "
+                         "full-year FY27 EBIT margin target of 15%."))
+    check_ai_takeaways(margin, text, view={})
+    assert margin.call_takeaways[0].verified, margin.call_takeaways[0].issue
+    deals = _card(_item("Q2 deal wins of US$1,023 million; LTM TCV US$4,270 million",
+                        "Our total deal wins for the quarter stand at US$1,023 million.", category="Demand & orders"))
+    check_ai_takeaways(deals, text, view={})
+    assert deals.call_takeaways[0].verified, deals.call_takeaways[0].issue
+    small = _card(_item("Deal wins US$1,023 million with 9 new logos",
+                        "Our total deal wins for the quarter stand at US$1,023 million.", category="Demand & orders"))
+    check_ai_takeaways(small, text, view={})
+    assert not small.call_takeaways[0].verified                        # 9 is not said, and small figures need the quote
+    far = text + " " + "Filler sentence about the weather. " * 120 + "Our attrition was 11.9%."
+    away = _card(_item("Q2 deal wins of US$1,023 million; attrition 11.9%",
+                       "Our total deal wins for the quarter stand at US$1,023 million.", category="Demand & orders"))
+    check_ai_takeaways(away, far, view={})
+    assert not away.call_takeaways[0].verified                         # said, but in another part of the call
+
+
+def test_an_earlier_figure_in_the_quote_may_name_the_quarter_the_quote_names():
+    text = "In Q1FY27 I had guided for deposit growth of 9-11%, and I am revising that to 11-12%."
+    card = _card(_item("Deposit growth guidance revised to 11-12%", text, [], "from 9-11% in Q1FY27"))
+    check_ai_takeaways(card, text, view={})
+    assert card.call_takeaways[0].verified, card.call_takeaways[0].issue
+    other = _card(_item("Deposit growth guidance revised to 11-12%", text, [], "from 9-11% in Q4FY26"))
+    check_ai_takeaways(other, text, view={})
+    assert not other.call_takeaways[0].verified                        # a quarter the filing does not name

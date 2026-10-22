@@ -1,2 +1,2 @@
 
-| 22 Oct 11:45 | Half-hour visit | Corporate-actions history done (14,305 listed, 10,279 filed for 1,529 companies, 437 splits/bonuses, 0 errors, 45 min); reseed.yml dispatched for 14 non-March companies (Siemens, Siemens Energy, ABB, Gillette, P&G Hygiene, Castrol, Linde, Schaeffler, Sanofi x2, Foseco, KSB, Elantas, CRISIL); refresh-card-blocks next |
+| 22 Oct 12:00 | Missing sources | Insider trades: NSE's PIT feed is empty after 2 May 2026 (measured month by month), so not built; bulk deals blocked from a cloud IP; findings in data-chain §6 |

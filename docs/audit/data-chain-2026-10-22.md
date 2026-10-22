@@ -110,3 +110,16 @@ measured next, by a no-AI scan of stored memory and cards.
 9. Measure A3, A9 and the pledge denominator over stored memory, with no AI, before and after the fixes.
 
 Progress on each is tracked in `docs/audit/work-2026-10-22.md` (item E).
+
+## 6. Missing sources, measured (22 Oct 2026)
+
+- **Corporate actions:** added (E6). NSE `/api/corporates-corporateActions`, history read 22 Oct: 14,305 rows listed,
+  10,279 filed for 1,529 universe companies, 437 splits and bonuses, 0 errors; nightly `--days 30` after that.
+- **Insider trades (SEBI PIT Reg 7):** NSE `/api/corporates-pit` (index=equities, a month at a time), measured
+  22 Oct 2026 from a cloud IP: Feb 2026 1,279 rows, Mar 2,057, Apr 392, May 3 (last 2 May 16:46), Jun-Oct 0. Per
+  symbol the same: Reliance's latest is 18 Feb 2026. Not found by `corporates-pit` for 3 May - 21 Oct 2026. The
+  disclosures have moved somewhere this feed does not show (assumption: SEBI's system-driven disclosures through
+  the depositories); where they now are is the next thing to find, before anything is built on them.
+- **Bulk and block deals:** `/api/historical/bulk-deals` returned NSE's bot page from a cloud IP (22 Oct 2026); to be
+  tried from the pipeline's NSE session on GitHub Actions.
+

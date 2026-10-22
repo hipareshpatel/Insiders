@@ -842,3 +842,15 @@ def test_a_year_that_is_not_its_four_quarters_is_not_kept():
         if m.period == "FY26" and m.metric == "revenue":
             m.value = 17900.0
     assert xbrl.long_year(true_year, history) is None
+
+
+def test_a_lender_has_no_ebitda():
+    """Held-card audit, 22 Oct 2026: profit + finance cost + depreciation shown as EBITDA for Bajaj Finance and IRFC;
+    interest is a lender's main cost, so a bank, NBFC or insurer file gives no EBITDA or EBITDA margin."""
+    from pathlib import Path
+
+    from bse_intel.xbrl import parse
+
+    result = parse((Path(__file__).parent / "fixtures" / "nse_irfc_q4fy26_nbfc.xml").read_bytes())   # IRFC, Q4FY26
+    assert result.template == "NBFC" and any(m.metric == "pat" for m in result.metrics)
+    assert not any(m.metric in ("ebitda", "ebitda_margin") for m in result.metrics)

@@ -668,3 +668,17 @@ def test_pat_with_a_discontinued_business_adds_up():
              M(metric="pat", period="Q2FY27", value=243.69)]
     assert statement_footing(lines + [M(metric="pat_discontinued", period="Q2FY27", value=1.03)]) == []
     assert statement_footing(lines) and "PAT is given as 243.69" in statement_footing(lines)[0]
+
+
+def test_a_face_value_is_not_a_deal_price():
+    """Torrent Pharma (held-card audit, 22 Oct 2026): 4,19,22,416 shares "of Rs. 5 each" to JB Pharma's shareholders
+    became a ₹20.96 Cr deal; a price the filing writes as a price still counts."""
+    from types import SimpleNamespace as T
+
+    from bse_intel.gate import tranche_total_cr
+
+    tranche = [T(shares=41922416.0, price_per_share=5.0)]
+    assert tranche_total_cr(tranche, "allot 4,19,22,416 equity shares of Rs. 5 each to the shareholders") is None
+    assert tranche_total_cr(tranche, "allot 4,19,22,416 equity shares at a price of Rs. 5 per share") == 20.96
+    preferential = [T(shares=8533053.0, price_per_share=650.0)]
+    assert tranche_total_cr(preferential, "85,33,053 equity shares of Rs. 10 each at Rs. 650 per share") == 554.65

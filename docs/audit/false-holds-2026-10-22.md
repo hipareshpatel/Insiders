@@ -79,3 +79,37 @@ Before and after over the 132 results cards, with metrics rebuilt from each card
 - Tata Chemicals.
 
 Every one of these is a reviewer-confirmed false hold. Prism Johnson drops 1 of its 2 holds, and that card has no individual audit reason. No true hold changed.
+
+## Fix 4: garbled text on XBRL-backed cards (F102), 23 Oct, small hours
+
+**Tried and rejected: reading OCR letters as digits.** The idea was to read O/o as 0, l/I as 1, S as 5 and B as 8 inside number-like tokens, with a leading l or I read both as the rupee sign and as 1. It looked good on the first two tests and failed the third.
+
+| Measure | Result |
+|---|---|
+| Before and after over the 292 stored figures | 8 false holds freed; 1 true hold freed (NTPC 5.97, whose card is wrong in its meaning) |
+| Fakes test | 0 newly accepted |
+| Independent blind sample of 70 readings, checked against the rendered pages | 16 right, 21 harmless (labels, registration numbers), 33 wrong |
+
+Of the 33 wrong readings, 21 are outright errors, for example:
+- a leading t that was really a 1;
+- "o/o" for % and the degree sign;
+- a leading digit that the text layer split off as a separate word;
+- a letter that stood for a different digit than the mapping assumed;
+- sideways pages read upside down.
+
+Where the reviewer could check a letter swap, it gave the wrong digit as often as the right one. The fakes test missed this because random fakes rarely land on these readings, while real card figures sit right next to them. The code was removed before merge.
+
+The OCR-garbled class stays held. Its fix belongs upstream: OCR the page itself (D29) rather than repair the text layer.
+
+**Garbled text on XBRL-backed cards.** A card whose figures come from its own XBRL file, with every amount grounded, is no longer held because the PDF's text layer is garbled.
+- Stored holds: 15 such cards, every one false according to the reviewers. 13 cards are right or minor.
+- 2 cards are wrong for other reasons:
+  - CSB's headline gives the wrong quarter's NIM.
+  - DB Corp shows owners' profit that is really total comprehensive income; that is fixed below.
+
+## Mistakes in our own code (F103)
+
+- **Owners' profit above the whole profit, with no minority figure in the file, is dropped.** DB Corp tags its total comprehensive income of ₹63.98 Cr as owners' profit, beside a ₹62.19 Cr profit.
+- **No EBITDA for lenders and insurers.** On the NBFC, banking and insurance templates, EBITDA and its margin are no longer built.
+  - IRFC's Q4FY26 file gave an "EBITDA" of ₹7,218 Cr at a 98.4% margin. Bajaj Finance and Bajaj Finserv file on the NBFC template too.
+- **A face value is not a deal price.** Shares "of Rs. 5 each" no longer make a deal of shares × ₹5. Torrent's JB Pharma merger had become a "₹20.96 Cr deal".

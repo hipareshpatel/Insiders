@@ -324,3 +324,14 @@ def test_an_owners_profit_its_minority_share_does_not_add_up_to_is_dropped():
     assert ("pat_owners", "Q4FY26") not in values   # 3,308.30 - 179.14 is no truer: the statement prints 3,328.96
     assert values[("pat_owners", "Q4FY25")] == 3132.0 and values[("pat_owners", "FY26")] == 90.0   # adds up; no minority
     assert not any(m == "pat_minority" for m, _ in values)
+
+
+def test_an_owners_profit_above_the_whole_profit_with_no_minority_is_dropped():
+    """D.B. Corp Q4FY26 (held-card audit, 22 Oct 2026): ₹63.98 Cr tagged as the owners' profit is its total
+    comprehensive income; the profit is ₹62.19 Cr and the file has no minority share. Below the profit it stands."""
+    from bse_intel.xbrl import owners_share
+
+    values = {("pat", "Q4FY26"): 62.19, ("pat_owners", "Q4FY26"): 63.98,
+              ("pat", "Q3FY26"): 95.51, ("pat_owners", "Q3FY26"): 95.51}
+    assert owners_share(values) == 1
+    assert ("pat_owners", "Q4FY26") not in values and values[("pat_owners", "Q3FY26")] == 95.51

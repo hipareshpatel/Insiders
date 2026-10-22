@@ -2571,11 +2571,12 @@ class Pipeline:
                        company={"scrip_code": filing.scrip_code, "company_name": filing.company_name,
                                 "updated_at": now, **_company_memory(merged)})
 
-    def _held_reasons(self, filing: Filing, text: str) -> list[str]:
+    def _held_reasons(self, filing: Filing, text: str, xbrl_backed: bool = False) -> list[str]:
         """Reasons the card is published as unverified that no second model can fix: a scan whose text layer
-        is garbled (its table figures may be wrong), and the human hold list (config/card_holds.txt)."""
+        is garbled (its table figures may be wrong) unless the card's figures are its XBRL file's, and the human hold
+        list (config/card_holds.txt)."""
         held = []
-        if gate.text_is_garbled(text):
+        if gate.text_is_garbled(text) and not xbrl_backed:
             held.append("The filing's text layer is garbled (scan errors inside numbers): figures from its tables may be wrong")
         if filing.news_id in self._holds:
             held.append(f"Held after review: {self._holds[filing.news_id]}")
@@ -3181,7 +3182,9 @@ class Pipeline:
                 route, system, user, out, result, checks, ground, bulk)
             if fixes is not None:
                 unit_fixes, change_fixes, quotes_missing, quotes_dropped = fixes
-        checks.held += self._held_reasons(filing, text)
+        # a card whose figures are its own XBRL file's, every amount grounded: the garbled text layer cannot have
+        # given it a wrong figure (held-card audit, 22 Oct 2026: 15 such holds, all false)
+        checks.held += self._held_reasons(filing, text, xbrl_backed=bool(tagged) and not checks.amounts_ungrounded)
         if checks.only_quotes:
             # the points whose quote does not carry them go; the card is published without them, not held
             pruned = prune_quote_failures(out, checks.quotes)

@@ -5,7 +5,7 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 from bse_intel import directions
-from bse_intel.models import FinancialMetric, Pass2Output
+from bse_intel.models import FinancialMetric, KeyNumber, Pass2Output
 
 
 def _tagged(**metrics):
@@ -105,3 +105,35 @@ def test_a_multiple_in_words_its_own_amounts_contradict_is_cut():
     assert wrong_multiples("It seeks to raise up to ₹325 Cr and double its borrowing limits to ₹1,000 Cr.") == []
     assert wrong_multiples("Profit grew only 4.7% YoY as provisions tripled and other income normalised, while the GNPA "
                            "ratio jumped 27 bps QoQ to 1.84%.") == []
+
+
+def test_a_profit_turn_on_a_loss_is_cut():
+    # Sapphire Foods Q2FY27 (hourly audit 22 Oct 2026): a loss of ₹1.51 Cr, headlined "PAT turns positive"
+    out = _out("Sapphire Foods Q2 revenue rises to ₹888 Cr; PAT turns positive",
+               takeaway="Sapphire Foods returned to profitability in Q1 as revenue growth and a tax credit offset costs. "
+                        "Revenue rose 20%.",
+               why=["The return to profit is driven by a tax credit."])
+    out.card.key_numbers = [KeyNumber(label="PAT", value="₹1.51 Cr (Loss)", change="Turnaround YoY"),
+                            KeyNumber(label="Revenue", value="₹888 Cr", change="+20% YoY")]
+    notes = directions.guard(out, _tagged(pat=(-1.51, None, None)))
+    assert out.card.headline == "Sapphire Foods Q2 revenue rises to ₹888 Cr"
+    assert out.card.takeaway == "Revenue rose 20%."
+    assert out.card.key_numbers[0].change is None and out.card.key_numbers[1].change == "+20% YoY"
+    assert out.card.why_it_matters == []
+    assert len(notes) == 5   # headline, takeaway, the why point, the key number's tag, the timeline line
+
+
+def test_a_true_profit_turn_and_another_lines_turn_stand():
+    figures = directions._current(_tagged(pat=(12.4, None, None)))
+    for text in ("PAT turns positive at ₹12.4 Cr.", "The company returned to profitability.",
+                 "Swung back into the black on volume growth."):
+        assert directions.contradicted(text, figures) == [], text
+    loss = directions._current(_tagged(pat=(-5.0, None, None)))
+    for text in ("EBITDA returned to profit in Q2.", "Operating profit turns positive.",
+                 "It swung to an operating profit."):
+        assert directions.contradicted(text, loss) == [], text
+    assert [n for n, _ in directions.contradicted("The company swung to a net loss.", figures)] == ["swing to loss"]
+    # another period's turn (Kabra Extrusion's Q4 card on the full year)
+    assert directions.contradicted("Full-year FY26 performance swung to a net loss of ₹5.37 Cr.", figures) == []
+    assert [n for n, _ in directions.contradicted("PAT turned positive in Q1.", loss)] == ["return to profit"]
+    assert [n for n, _ in directions.contradicted("PAT turned positive this quarter.", loss)] == ["return to profit"]

@@ -266,3 +266,12 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* "Save as PDF" on a card (lib/png.ts printNode): only that card prints, at the page's width, its text kept as text */
+@media print {
+  body.printing-card * { visibility: hidden; }
+  body.printing-card [data-printing="true"], body.printing-card [data-printing="true"] * { visibility: visible; }
+  body.printing-card [data-printing="true"] { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; }
+  body.printing-card [data-printing="true"] [data-noexport="true"] { display: none !important; }
+  body.printing-card { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}

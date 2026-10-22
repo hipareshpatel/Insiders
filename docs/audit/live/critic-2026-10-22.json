@@ -4125,5 +4125,1118 @@
     "corrected": null
    }
   ]
+ },
+ {
+  "news_id": "nse-106824197",
+  "filed_at": "2026-10-22T09:42:49+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "gemini_2/gemini-3.7-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T10:47:21+05:30",
+  "latency_s": 0.9,
+  "mode": "shadow",
+  "counts": {
+   "OK": 14
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "SRF Q2 revenue rose 35% YoY to ₹4,904 Cr; operational EBIT rose 26% to ₹816 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "SRF delivered strong 35% revenue and 31% PAT growth in Q2FY27, supported by refrigerant pricing and volume recovery across packaging films and technical textiles.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Consolidated Q2FY27 revenue grew 35% YoY to **₹4,904.2 Cr**, while operational EBIT increased 26% to **₹816.0 Cr**.",
+    "quote": "Consolidated Financials INR Crores Building Growth | WITH PURPOSE 4",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Profit after tax for the quarter reached **₹509.1 Cr**, up 31% YoY from **₹388.2 Cr** in Q2FY26.",
+    "quote": "Consolidated Financials INR Crores Growth With| ACCOUNTABILITY 5",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Performance Films & Foil revenue surged 51% YoY to **₹2,122.4 Cr**, while Chemicals Business grew 25% YoY to **₹2,079.5 Cr**.",
+    "quote": "Consolidated Financials INR Crores CB– Chemicals Business; PFB- Performance Films & Foil Business; TTB – Technical Textiles Business; Others Driving Innovation| ACROSS BUSINESSES WE ALWAYS FIND A BETTER WAY 6",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Fluorochemicals growth was driven by higher HFC volumes and improved realisations, offsetting softness in the US market.",
+    "quote": "Strong Q2 revenue growth led by higher HFC volumes and improved realization.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Performance Films & Foil EBIT rose 73% YoY to ₹206.2 Cr, aided by capacitor-grade film commercial ramp-up following Phase 1 commissioning in May 2026.",
+    "quote": "Capacitor-grade films is scaling up well, with key customer approvals secured and commercial sales progressing.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "PVDF project final commissioning is underway and on track for Q3 FY27 capitalization.",
+    "quote": "PVDF commissioning is on track for Q3 FY27 capitalization, key customer outreach has been completed with sample approvals expected in coming months.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.1",
+    "field": "call_takeaways",
+    "text": "Fluorochemicals growth was driven by higher HFC volumes and improved realizations, offsetting US weakness.",
+    "quote": "Strong Q2 revenue growth led by higher HFC volumes and improved realization.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "Capacitor-grade film is scaling up with key customer approvals secured and commercial sales progressing.",
+    "quote": "Capacitor-grade films is scaling up well, with key customer approvals secured and commercial sales progressing.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "t_10682a28"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.3",
+    "field": "call_takeaways",
+    "text": "Commercial sales of aluminium foil for capacitors are expected to commence from Q3 FY27.",
+    "quote": "Approvals secured from key customers. Commercial sales expected from Q3 FY’27.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "Next-gen HFO refrigerants project received environmental clearance and remains on track for Q4 FY28 capitalization.",
+    "quote": "Environmental clearance received and project is on track for capitalization in Q4 FY’28.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "w_67e30e6b"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.5",
+    "field": "call_takeaways",
+    "text": "EHF project site work is underway, targeting capitalization in Q3 FY28 for semiconductor wafer cleaning.",
+    "quote": "Site work underway; Q3 FY’28 capitalization.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.6",
+    "field": "call_takeaways",
+    "text": "Aseptic packaging foil qualification with global leaders like Tetra Pak established new value-added revenue streams.",
+    "quote": "Aseptic packaging qualification with global leaders like Tetra Pak establishes revenue streams from a new value-added application.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "RESULTS",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824363",
+  "filed_at": "2026-10-22T10:39:29+05:30",
+  "event_type": "CAPEX",
+  "writer": "gemini/gemini-3.7-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T11:29:56+05:30",
+  "latency_s": 0.4,
+  "mode": "shadow",
+  "counts": {
+   "OK": 5
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Allied Blenders commences commercial ops at 4.4 mn BL/yr Telangana greenfield malt distillery",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "ABD commenced commercial operations at its ~4.4 mn BL per annum greenfield malt distillery at Rangapur, Telangana, executing on its backward integration and premiumisation strategy.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Commenced commercial operations at its greenfield malt distillery in **Rangapur, Telangana** with an approved capacity of **~4.4 million BL per annum**.",
+    "quote": "Allied Blenders and Distillers Limited (ABD), one of India’s leading spirits companies, today announced the commencement of commercial operations at its malt distillery at Rangapur, Telangana. The facility has an approved manufacturing capacity of ~ 4.4 million BL per annum.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The facility will manufacture **malt spirit in-house** for ABD's whisky portfolio, enable maturation, and craft its upcoming **homegrown single malt whisky**.",
+    "quote": "Crucially, it allows ABD to begin laying down malt spirit to craft its own homegrown single malt whisky in the coming years and support its growing Prestige & Above portfolio.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Rangapur now integrates grain distillation, PET bottle production, bottling operations, and **malt distillation** into a single hub.",
+    "quote": "With grain distillation, PET bottle production, bottling operations, and now with malt distillation, ABD has created an end-to-end, integrated manufacturing hub.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "CAPEX",
+     "vote": "CAPEX",
+     "agree": true,
+     "conservative": "CAPEX"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "COMPLETED",
+     "vote": "COMPLETED",
+     "agree": true,
+     "conservative": "COMPLETED"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824405",
+  "filed_at": "2026-10-22T10:55:39+05:30",
+  "event_type": "RIGHTS_ISSUE",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T11:30:00+05:30",
+  "latency_s": 3.2,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Ola Electric confirms 23,855,476 rights entitlements applied by specific investors",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Ola Electric confirmed that two specific investors applied for 23,855,476 rights entitlements renounced by promoter group members on the issue opening date.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Specific investors submitted applications for **23,855,476 rights entitlements** on the issue opening date of **22 October 2026** before 11:00 A.M.",
+    "quote": "Based on the confirmations received from the respective Specific Investors and/or their custodians, we wish to confirm that the following Specific Investors have submitted their applications in the Rights Issue of the Company on the Issue Opening Date, i.e., Thursday, October 22, 2026, before 11:00 A.M.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "**ANI Technologies** renounced **12,833,054 rights entitlements** to **Motilal Oswal Financial Services Limited**, which applied for the full quantity.",
+    "quote": "1. ANI Technologies Motilal Oswal Financial 12,833,054 12,833,054 Private Limited Services Limited",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "**Indus Trust** (through trustee Ankush Agarwal) renounced **11,022,422 rights entitlements** to **Calliope Capital Advisors LLP**, which applied for the full quantity.",
+    "quote": "2. Indus Trust (through its Calliope Capital Advisors 11,022,422 11,022,422 trustee Ankush LLP Agarwal)",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Procedural compliance update under Regulation 77B(2) confirming institutional participation in renounced rights entitlements on opening day.",
+    "quote": "we hereby submit the confirmation regarding applications received from the Specific Investors in compliance with Regulation 77B(2) of the SEBI ICDR Regulations.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Promoter group entities renounced their entitlements to external investors, shifting allocation from the promoter group to specific investors in the partly paid-up issue.",
+    "quote": "wherein the details of Specific Investors were disclosed in accordance with Regulation 84(1)(f)(i) of the SEBI ICDR Regulations, we hereby submit the confirmation regarding applications received from the Specific Investors in compliance with Regulation 77B(2) of the SEBI ICDR Regulations.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "RIGHTS_ISSUE",
+     "vote": "RIGHTS_ISSUE",
+     "agree": true,
+     "conservative": "RIGHTS_ISSUE"
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "MODERATE",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824508",
+  "filed_at": "2026-10-22T11:59:07+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini_2/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T13:03:43+05:30",
+  "latency_s": 10.1,
+  "mode": "shadow",
+  "counts": {
+   "OK": 13
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Ador Welding H1 revenue up 23% to ₹654 Cr; Q2 gross margin falls 440 bps",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Top-line momentum held at 23% growth and EBITDA margin stayed near 11%, but a 440 bps Q2 gross-margin fall from higher steel and raw material prices is the number to watch.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "H1FY27 revenue grew **23% YoY to ₹654 Cr**, with Q2 revenue at ₹345 Cr, also up 23%.",
+    "quote": "Ador has sustained its momentum in Q2 FY27, with revenue growing 23% YoY to Rs. 345 Cr. This takes H1 FY27 revenue to Rs. 654 Cr, also up 23% YoY.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The Board declared an **interim dividend of ₹7.50 per equity share** as the company marks 75 years.",
+    "quote": "As Ador celebrates 75 years of creating the best welding experience, the Board has declared an interim dividend of Rs. 7.50 per equity share to reward our shareholders for their continued trust.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Q2 gross margin fell to **34.2%, down 440 bps YoY**, which the company attributes to higher steel and other raw material prices.",
+    "quote": "Gross margins were 34.2% in Q2 FY27, reflecting higher steel and other raw material prices in an inflationary input environment.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "Q2 EBITDA rose 8.6% YoY to ₹38 Cr while PAT rose 7.7% to ₹27 Cr, so profit grew far slower than revenue.",
+    "quote": "EBITDA grew 9% YoY to Rs. 38 Cr in Q2 FY27, and H1 FY27 EBITDA margin held steady at around 11%.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "H1 net cash from operating activities was an outflow of ₹8.5 Cr against a ₹115.9 Cr inflow in FY26, as working capital absorbed ₹73.0 Cr.",
+    "quote": "Net Cash from Operating Activities -8.5 115.9 137.1",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Borrowings rose to ₹27.7 Cr at 30 Sep 2026 from ₹0.3 Cr at 31 Mar 2026, still small against ₹569.6 Cr of total equity.",
+    "quote": "(i) Borrowings 27.7 0.3 0.3",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "Q2 gross margin was 34.2%, down 440 bps YoY, on higher steel and raw material prices.",
+    "quote": "Gross margins were 34.2% in Q2 FY27, reflecting higher steel and other raw material prices in an inflationary input environment.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "Demand stayed healthy across infrastructure, power, oil & gas, railways, shipbuilding, defence and heavy fabrication.",
+    "quote": "Demand stayed healthy across our core user industries: infrastructure, power, oil & gas, railways, shipbuilding, defence and heavy fabrication.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.3",
+    "field": "call_takeaways",
+    "text": "The Middle East, served through the Dubai hub, remains the primary export market; the company is exploring European markets.",
+    "quote": "The Middle East, served through our Dubai hub, remains our primary export market, and we continue to monitor developments in the region closely.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.5",
+    "field": "call_takeaways",
+    "text": "Management continues to evaluate acquisition opportunities to accelerate growth in automation.",
+    "quote": "We continue to evaluate acquisition opportunities to accelerate growth in this segment.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.7",
+    "field": "call_takeaways",
+    "text": "The Board declared an interim dividend of ₹7.50 per equity share.",
+    "quote": "the Board has declared an interim dividend of Rs. 7.50 per equity share",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini_2/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824500",
+  "filed_at": "2026-10-22T11:56:41+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T13:03:59+05:30",
+  "latency_s": 6.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 13,
+   "OVERSTATED": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "LTM AI revenue reaches 13.4% of total; management sees H2FY27 stronger than H1",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "AI is now a measurable slice of revenue and BFSI has returned to growth, but FY27 growth is still tracking below FY26 and cash conversion halved on one-time outflows.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "AI revenue reached **13.4% of overall revenue**, growing 40% year-over-year; including enterprise AI, cumulative AI revenue grew 47%.",
+    "quote": "AI revenue for the quarter has reached 13.4% of our overall revenue, a growth of 40% year-over-year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Order inflow was **USD 1.3 billion**, which management said reflects short-tenured, AI-centric deals with faster revenue realisation.",
+    "quote": "Our order inflow stood at USD 1.3 billion.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Operating cash flow to PAT fell to **39% from 79% in Q1**, which the CFO attributed to advance payments and funding of a one-time gratuity provision.",
+    "quote": "The Operating cash flow to PAT ratio is at 39%, down from 79% in Q1. This is mainly due to certain advance payments and funding towards a one-time gratuity provision on account of labor laws impact.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Management said H2 will be better than H1 and that matching FY26 growth is the endeavor, after H1FY27 growth of 5.4%; memory's FY27 acceleration guidance was already marked delayed.",
+    "quote": "We delivered 5.4% year-over-year growth in H1 FY2027 and continue to expect stronger sequential growth.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "g_d82f65c0"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "EBIT margin expanded 10 bps sequentially to 15.6%, and the CFO said the company is still working towards maintaining the full-year margin at similar levels to last year, including M&A.",
+    "quote": "I think we had mentioned earlier that we are working towards maintaining our margin for this year at similar levels to previous year, and I think we are still working towards that.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "g_90d47c1f"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "Cash and investments of ₹15,300 Cr equal 59.1% of net worth, and the CFO said the payout ratio rose from around 40% to around 45% last year while M&A reinvestment continues.",
+    "quote": "Cash and investment balances stood at USD 1.6 billion or ₹15,300 Crores compared to ₹15,021 Crores in Q1 FY2027.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "Order inflow of USD 1.3 billion was mostly short-tenure AI-led deals; management will consider disclosing ACV after one more quarter.",
+    "quote": "Our order inflow stood at USD 1.3 billion.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "cp_ac91741b"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.3",
+    "field": "call_takeaways",
+    "text": "BFSI returned to year-on-year growth at 0.4% and grew 3.1% sequentially.",
+    "quote": "Financial services continued its strong momentum and delivered a robust 3.1% sequential growth. On a year-over-basis, it has returned to growth, reporting 0.4% expansion.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "Tech and services fell 4% sequentially on a seasonal renewal cycle plus the Saudi business impact.",
+    "quote": "Tech and services delivered a healthy year-over-year growth of 7%. Sequentially, revenue was lower by 4%, reflecting seasonal quarter-specific movements.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OVERSTATED",
+    "reason": "The excerpt mentions seasonal movements but does not explicitly link the 4% decline to the Saudi business impact.",
+    "corrected": "Tech and services fell 4% sequentially, reflecting seasonal quarter-specific movements."
+   },
+   {
+    "id": "call_takeaways.7",
+    "field": "call_takeaways",
+    "text": "Payout ratio rose from around 40% to around 45% last year; reinvestment in M&A and AI continues.",
+    "quote": "We do look at increasing the payout ratio and we have increased from around 40% to around 45% if you look at our payout ratio for last year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.8",
+    "field": "call_takeaways",
+    "text": "AI projects carry better gross margins than traditional services, with some investment ploughed back.",
+    "quote": "The second point is that, yes, the margin profile, the gross margin level is definitely better than traditional services.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.9",
+    "field": "call_takeaways",
+    "text": "Saudi business cost about 0.6-0.7% of quarterly growth; management sees demand elsewhere.",
+    "quote": "I think we had the gap of about 0.7% or 0.6% approximately, the growth opportunity that got missed out because of the impact that we had in the Saudi business",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini_2/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824408",
+  "filed_at": "2026-10-22T10:58:13+05:30",
+  "event_type": "CAPEX",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T13:04:10+05:30",
+  "latency_s": 6.3,
+  "mode": "shadow",
+  "counts": {
+   "OK": 8,
+   "INVENTED": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Jtekt India approves 0.8 million unit CVJ capacity addition in Gujarat by August 2028",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The company adds 0.8 million units of CVJ capacity on a base already running at about 90% utilisation, but the investment amount and its funding split are still to be approved by the Board.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Jtekt India evaluated and approved a capacity expansion for its **Constant Velocity Joint (CVJ) line** at Jalisana, Gujarat",
+    "quote": "we wish to inform you that the Company has evaluated and approved capacity expansion for Constant Velocity Joint (CVJ) line.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The addition is **0.8 million units (approx.)** on an existing capacity of **1.2 million units (approx.)**",
+    "quote": "Proposed Capacity Addition 0.8 Million (approx.)",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The capacity is to be added by **August 2028**, funded by a mix of internal accruals and borrowings",
+    "quote": "Mode of Financing Mix of internal accruals and borrowings.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "The **investment required is yet to be finalised and approved by the Board** while framing the installation capacity",
+    "quote": "Investment Required To be finalized and approved by the Board while framing the installation capacity.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Existing CVJ capacity is stated at about 90% utilisation, so the new line extends headroom rather than filling idle capacity.",
+    "quote": "Existing Capacity Utilization 90% (approx.)",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Management earlier guided CVJ sales to ₹250 Cr at 90% utilisation after the October 2026 Maruti EV MPV launch; this expansion targets the demand beyond that.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "g_9cad67d6"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "Memory holds CVJ capacity at 7.54 lakh units across two lines in May 2026; the filing's 1.2 million unit base is a different figure and the filing does not reconcile the two.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "w_89326070"
+    ],
+    "verdict": "INVENTED",
+    "reason": "The memory item w_89326070 is a watchlist item for KPI tracking, not a factual record of capacity figures.",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "CAPEX",
+     "vote": "CAPEX",
+     "agree": true,
+     "conservative": "CAPEX"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "BOARD_APPROVED",
+     "vote": "BOARD_APPROVED",
+     "agree": true,
+     "conservative": "BOARD_APPROVED"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106825290",
+  "filed_at": "2026-10-22T18:39:26+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T19:42:24+05:30",
+  "latency_s": 7.2,
+  "mode": "shadow",
+  "counts": {
+   "OK": 14
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "DLF sees revenue inflection in FY27-FY28 on ~₹75,000 Cr of launched projects; DCCDL exit rent ~₹6,800 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Management reiterated an accounting revenue inflection starting FY27-FY28 as large projects like The Arbour complete, alongside steady rental scale-up and strong collections.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Reported **Q2 collections** of **₹2,780 Cr** and operating cash flow of **₹1,858 Cr**, lifting the net cash position to **₹15,100 Cr** after a ₹1,980 Cr dividend payout.",
+    "quote": "Overall collections stood at INR 2,780 crores in the current quarter, resulting in operating cash flow of approximately INR 1,858 crores.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The **development business** holds a gross margin potential of approximately **₹40,000 Cr** and cash generation potential over **₹42,500 Cr**.",
+    "quote": "The gross margin potential of our development business continues to stand at approximately INR 40,000 crores, with a potential of cash generation of over INR 42,500 crores.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Incurred **~₹350 Cr** in land payments during Q2, consolidating a contiguous **36-acre land parcel** in Sector 61 after settling encumbrances and adding 7.48 acres.",
+    "quote": "So, eventually it will be a 36-acre land parcel, contiguous, in Sector 61 that we'll have.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Revenue remains subdued under completed-contract accounting until FY28 when The Arbour initiates recognition across a ~₹75,000 Cr launched project pipeline.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "g_1c5b0a07"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Net cash reached ₹15,100 Cr despite paying a ₹1,980 Cr dividend, backed by ₹2,780 Cr quarterly collections.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "DCCDL exit rental guided at close to ₹6,800 Cr, against memory's group-level FY27 exit rental guidance of ₹7,300–7,500 Cr.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "g_db618cbd"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "Management reaffirmed revenue inflection starting FY27-FY28 as ~₹75,000 Cr of launched projects begin receiving OCs under completed contract accounting.",
+    "quote": "This we have highlighted earlier, that our inflection point of revenue, which is almost INR 75,000 crores of launched and projects so far, the inflection point you will see in FY'27-'28, and going forward next two/four/five years, is when this entire revenue is going to get recognized.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "g_1c5b0a07"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.3",
+    "field": "call_takeaways",
+    "text": "Downtown Chennai Blocks 4 & 5 totaling 3.6 million sq ft are under construction and will become operational by calendar next year.",
+    "quote": "Block 4 and 5 is what is under construction, which is together 3.6 million square feet, which will become operational by calendar next year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "Downtown Gurgaon Blocks 5, 6, 7, 8 and Mall of India Gurugram target completion between FY28 and FY30.",
+    "quote": "And coming on to the Downtown Gurgaon, which is 5, 6, 7, 8 and the MOIG, the completion is targeted towards the end of FY28 and '29.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.5",
+    "field": "call_takeaways",
+    "text": "Upcoming launches include a Mumbai project in Q3 and an unnamed luxury-plus project in DLF Phase 4 in Q4.",
+    "quote": "So it is in DLF Phase 4 and we are scheduling a launch sometime in Q4.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.6",
+    "field": "call_takeaways",
+    "text": "Net cash reached ~₹15,100 Cr despite paying a dividend of close to ₹1,980 Cr during Q2.",
+    "quote": "Net cash position stood at approximately INR 15,100 crores, despite a very, very strong dividend payout in the current quarter of close to INR 1,980 crores.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.7",
+    "field": "call_takeaways",
+    "text": "Q3 construction outflows could face temporary challenges due to festive labor migration and typical 30-40 days of NCR GRAP anti-pollution curbs.",
+    "quote": "Typically, I mean in Gurgaon, we have seen almost 30 to 40 days of GRAP happens once those guidelines come into play, those specific thresholds are reached by them.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ]
  }
 ]

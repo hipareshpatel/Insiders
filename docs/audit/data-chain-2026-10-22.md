@@ -124,7 +124,7 @@ Progress on each is tracked in `docs/audit/work-2026-10-22.md` (item E).
   (`online-probe.yml`, check 13): `/api/historical/bulk-deals` and `/api/historical/block-deals` (7 days) return NSE's
   bot page (HTML, HTTP 200); **`/api/snapshot-capital-market-largedeal` answers JSON: today's 111 bulk deals, 4 block
   deals and 99 short-selling rows.** It holds the current session only, so history is built by storing it every
-  trading evening (next: a nightly step with retries, a table, and the deals shown on the company page).
+  trading morning: **built 22 Oct evening** (`deals-sync`, market-data and nightly, retried; TRACKER F96). Next: the deals on the company page and as a card signal.
 - **Insider trades, re-measured 22 Oct 19:20 IST from Actions:** `corporates-pit` over 7 days: 0 rows; for one symbol
   (Reliance) its default window returns 20 rows, the latest from 30 Sep 2021. `/api/corporate-sdd` (a guess at
   system-driven disclosures): 404. Still not found; next: NSE's SDD / PIT pages to find the address they call.

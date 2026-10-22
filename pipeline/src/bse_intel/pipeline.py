@@ -97,6 +97,7 @@ REQUEUE_AFTER_HOUR, REQUEUE_KEY = 22, "failed:requeued_on"   # the nightly extra
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
 PAUSE_CHECK_S = 60       # how often a running pipeline looks for the nightly pause (pause.py)
+RETURNING_PER_RUN = 5   # companies back in the universe whose set-aside filings one run looks up again
 MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing this network
 MAX_NETWORK_FAILURES = 5  # attachment downloads failing on the network in a row that mean the source is down
 MAX_DEFERRALS = 3        # runs one attachment may fail on the network, alone, before it spends an attempt
@@ -1844,13 +1845,40 @@ class Pipeline:
             start = end + timedelta(days=1)
         return found
 
-    def retriage_company(self, scrip: str, day_from: date, day_to: date) -> list[str]:
+    def retriage_returning(self, today: date, deadline: float, max_companies: int = RETURNING_PER_RUN) -> int:
+        """Companies back in the universe (universe.RETURNING_KEY, written at each rebuild): the filings they made
+        while out were set aside as "outside universe"; queue them now (owner, 22 Oct 2026). A few companies a run;
+        one is struck off the list once read, and one whose lookup fails stays for the next run. Returns how many
+        filings were queued."""
+        raw = self.sink.kv_get(universe.RETURNING_KEY)
+        waiting: dict[str, str] = json.loads(raw) if raw else {}
+        if not waiting:
+            return 0
+        earliest = self.settings.backfill_start
+        queued = 0
+        for scrip in sorted(waiting)[:max_companies]:
+            if time.monotonic() >= deadline:
+                break
+            since = max(waiting[scrip] or earliest, earliest)   # "" = out since before the backfill's start
+            try:
+                ids = self.retriage_company(scrip, date.fromisoformat(since), today, returning=True)
+            except Exception as exc:  # noqa: BLE001 - one company's lookup must not fail the run; tried again next run
+                log.warning("re-entry retriage %s failed: %s", scrip, exc)
+                continue
+            queued += len(ids)
+            log.info("%s back in the universe (out since %s): %d set-aside filings queued", scrip, since, len(ids))
+            del waiting[scrip]
+        self._kv_set(universe.RETURNING_KEY, json.dumps(waiting))
+        return queued
+
+    def retriage_company(self, scrip: str, day_from: date, day_to: date, returning: bool = False) -> list[str]:
         """Apply today's rules to one company's filings that an earlier rule left in the noise file.
 
         Discovery skips a filing already in its day's noise file, so narrowing a drop or date rule never reached
         the filings it had dropped (the "AGM notice" rule took 12 annual reports filed with their notice, F57).
         The rows are fetched again from BSE, for the subject and symbol the noise row does not keep; each one
-        today's rules no longer drop leaves the noise file and is queued. Returns their news ids."""
+        today's rules no longer drop leaves the noise file and is queued. ``returning``: the company is back in the
+        universe, so its rows set aside as outside it are freed too. Returns their news ids."""
         queued: list[str] = []
         start = day_from
         while start <= day_to:
@@ -1860,7 +1888,8 @@ class Pipeline:
                 by_day.setdefault(filing.filing_date, []).append(filing)
             for key, filings in sorted(by_day.items()):
                 noise = self._load_noise(key)
-                freed = [f for f in filings if f.news_id in noise and not _still_noise(self.rules.classify(f), f, noise[f.news_id])]
+                freed = [f for f in filings if f.news_id in noise
+                         and not _still_noise(self.rules.classify(f), f, noise[f.news_id], returning)]
                 if not freed:
                     continue
                 for filing in freed:
@@ -3598,6 +3627,8 @@ class Pipeline:
                     self._discover_window(live_from, today)
                 self._requeue_failed_nightly(live_from)
                 self._sweep_held()
+                if self._on_nse():
+                    self.retriage_returning(today, started + time_budget_s * 0.2)
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 backfill_done = self.sink.kv_get("backfill:complete") == "1"
                 # today's filings first, then the rest of the window, so a catch-up never holds today's news. Near the
@@ -3942,11 +3973,12 @@ def _noise_row(filing: Filing) -> list:
             filing.subcategory, filing.filed_at, (filing.reason or "")[:120], filing.pdf_url]
 
 
-def _still_noise(decision, filing: Filing, row: list) -> bool:
+def _still_noise(decision, filing: Filing, row: list, returning: bool = False) -> bool:
     """Whether a filing in the noise file stays there under today's rules: dropped or a date, a shareholding
-    pattern with no XBRL file, or outside the investable universe (a market-cap test, not a rule)."""
+    pattern with no XBRL file, or outside the investable universe (a market-cap test, not a rule) unless the
+    company is back in it (``returning``)."""
     return (decision.action in ("DROP", "CALENDAR") or (decision.action == "XBRL" and not filing.xbrl_url)
-            or str(row[7] or "").startswith("outside universe"))
+            or (not returning and str(row[7] or "").startswith("outside universe")))
 
 
 # An annual report runs to 300 pages and often past 30 MB: 519552's FY26 report was skipped at that cap and,

@@ -95,7 +95,10 @@ so a run can stop anywhere; each company's results are committed as soon as it f
 The **investable universe** (blueprint §15): companies with a known market cap below
 `UNIVERSE_MIN_MCAP_CR` (default ₹500 Cr since 2026-10-19; was ₹100 Cr) and not starred are skipped; their filings go to the
 day's noise file with the reason. The list is built after `market-data` / `sync-companies` into
-R2 `meta/universe.json`.
+R2 `meta/universe.json`. Since 2026-10-22 (owner) a company already in leaves only below `UNIVERSE_EXIT_MCAP_CR`
+(default 80% of the floor, ₹400 Cr), and a company that comes back is listed in kv `universe:returning` with the day it
+left: each run (`Pipeline.retriage_returning`, 5 companies a run) frees its filings set aside as "outside universe" since
+then (never before `BACKFILL_START`) and queues them. Nothing is deleted when a company leaves: its memory and cards stay.
 
 Per filing:
 
@@ -461,7 +464,7 @@ single-writer design depends on.
 | Repository secrets | `PLATFORM_API_URL`, `INGEST_TOKEN`, `GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, and for deploys `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` |
 | Repository variables | `BACKFILL_START` (default 2026-04-19), `D1_DATABASE_ID`, `PIPELINE_RUNNER_LABELS` |
 | Worker secrets | `INGEST_TOKEN`, `OWNER_TOKEN` (owner mode) |
-| Optional env | `UNIVERSE_MIN_MCAP_CR` (500), `D1_DAILY_WRITE_BUDGET` (80000), `SECOND_OPINION` (1), `TEXT_CACHE` (1), `PIPELINE_WORKERS` (3), `NSE_ANNUAL_XBRL` (1: an annual report's own XBRL from NSE in front of its text) |
+| Optional env | `UNIVERSE_MIN_MCAP_CR` (500), `UNIVERSE_EXIT_MCAP_CR` (80% of it), `D1_DAILY_WRITE_BUDGET` (80000), `SECOND_OPINION` (1), `TEXT_CACHE` (1), `PIPELINE_WORKERS` (3), `NSE_ANNUAL_XBRL` (1: an annual report's own XBRL from NSE in front of its text) |
 
 **Workflows.** `pipeline.yml` (live + backfill, 2,400 s inside a 55-minute job), `market-data.yml`
 (weekdays 16:15 IST), `sync-companies.yml` (Saturdays 02:00 IST), `deploy-web.yml`, `backup.yml`,

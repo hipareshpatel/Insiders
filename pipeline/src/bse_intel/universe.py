@@ -1,6 +1,6 @@
 """The investable universe (blueprint §15 phase 3): which companies' filings are analysed.
 
-Companies with a known market cap below ``UNIVERSE_MIN_MCAP_CR`` (default ₹100 Cr) are left out
+Companies with a known market cap below ``UNIVERSE_MIN_MCAP_CR`` (default ₹500 Cr) are left out
 unless the owner starred them; companies without a market cap yet stay in. The excluded list is
 built after each market-data or company sync (one scan of the companies table) and published to
 R2 as ``meta/universe.json``, so a pipeline run reads one small object instead of the table.
@@ -48,16 +48,23 @@ def _companies(sink: Sink) -> list[dict]:
         after = page[-1]["scrip_code"]
 
 
-def select(equities, companies: list[dict], floor: float) -> dict:
+def select(equities, companies: list[dict], floor: float, exit_floor: float = 0.0, previous: dict | None = None,
+           today: str = "") -> dict:
     """The universe file's body from NSE's equity list and our company rows (pure; ``build_nse`` adds the I/O).
 
     A company is in when NSE lists it (matched by ISIN, else by symbol), and its market cap is at least ``floor``,
-    or it is on the owner's watchlist, or it has no market cap yet (a new listing stays in until it is priced)."""
+    or it is on the owner's watchlist, or it has no market cap yet (a new listing stays in until it is priced).
+    A company already in (``previous`` file) stays in down to ``exit_floor`` (owner, 22 Oct 2026: a buffer, so one
+    near the floor does not leave and return day to day). ``excluded_since`` keeps the day each company left;
+    ``returned`` names those back in since the last build with that day, so their set-aside filings are read."""
+    previous = previous or {}
+    was_in = set(previous.get("included", []))
+    since_before: dict[str, str] = previous.get("excluded_since", {})
     by_isin = {(c.get("isin") or "").strip().upper(): c for c in companies if c.get("isin")}
     by_symbol = {(c.get("symbol") or "").strip().upper(): c for c in companies if c.get("symbol")}
     isins: dict[str, str] = {}
     symbols: dict[str, str] = {}
-    included, excluded, unpriced, nse_only = [], [], [], []
+    included, excluded, unpriced, nse_only, buffered = [], [], [], [], []
     for eq in equities:
         company = by_isin.get(eq.isin) or by_symbol.get(eq.symbol)
         if company is None:
@@ -72,18 +79,39 @@ def select(equities, companies: list[dict], floor: float) -> dict:
             included.append(scrip)
         elif mcap >= floor or company.get("watchlist"):
             included.append(scrip)
+        elif scrip in was_in and exit_floor and mcap >= exit_floor:
+            included.append(scrip)
+            buffered.append(scrip)
         else:
             excluded.append(scrip)
-    return {"source": "nse", "min_mcap_cr": floor, "included": sorted(included), "excluded": sorted(excluded),
+    # the first build with this field cannot know when the companies already out left: "" = since the backfill's start
+    first = "excluded_since" not in previous
+    excluded_since = {s: since_before.get(s) or ("" if first else today) for s in excluded}
+    returned = {s: since_before[s] for s in included if s in since_before}
+    return {"source": "nse", "min_mcap_cr": floor, "exit_mcap_cr": exit_floor, "included": sorted(included),
+            "excluded": sorted(excluded), "excluded_since": excluded_since, "returned": returned,
             "unpriced": sorted(unpriced), "nse_only": sorted(nse_only), "isins": isins, "symbols": symbols,
             "counts": {"nse_listed": len(equities), "matched": len(symbols), "included": len(included),
-                       "below_floor": len(excluded), "unpriced": len(unpriced), "nse_only": len(nse_only)}}
+                       "below_floor": len(excluded), "buffered": len(buffered), "returned": len(returned),
+                       "unpriced": len(unpriced), "nse_only": len(nse_only)}}
+
+
+RETURNING_KEY = "universe:returning"   # kv: {company: day it left} for companies back in whose filings wait to be read
 
 
 def build_nse(settings: Settings, sink: Sink, equities) -> dict:
-    """Write the NSE universe file; returns its counts."""
-    body = select(equities, _companies(sink), settings.universe_min_mcap_cr)
+    """Write the NSE universe file; returns its counts. Companies back in are added to RETURNING_KEY for the
+    pipeline to read the filings they made while out (Pipeline.retriage_returning)."""
+    from .timeutil import today_ist
+
+    body = select(equities, _companies(sink), settings.universe_min_mcap_cr, settings.universe_exit_mcap_cr,
+                  _read(sink), today_ist().isoformat())
     body["built_at"] = now_iso()
+    if body["returned"]:
+        waiting = json.loads(sink.kv_get(RETURNING_KEY) or "{}")
+        for scrip, since in body["returned"].items():
+            waiting[scrip] = min(since, waiting.get(scrip, since))
+        sink.kv_set(RETURNING_KEY, json.dumps(waiting), now_iso())
     sink.put_object(UNIVERSE_KEY, json.dumps(body, separators=(",", ":")).encode())
     log.info("universe (NSE): %s", body["counts"])
     return body["counts"]

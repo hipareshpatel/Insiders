@@ -60,6 +60,10 @@ class Settings:
     # Companies analysed: market cap at least this (₹ Cr; owner, 2026-10-19: ₹500 Cr, was 100), or unknown, or on the
     # watchlist. 0 = all.
     universe_min_mcap_cr: float = field(default_factory=lambda: float(_env("UNIVERSE_MIN_MCAP_CR", "500")))
+    # A company in the universe leaves only below this (owner, 22 Oct 2026: "go ahead with both universe changes"), so
+    # one near the floor does not drop out and back day to day. Unset: 80% of the floor (₹400 Cr at ₹500 Cr); 0 = none.
+    universe_exit_mcap_cr: float = field(default_factory=lambda: float(
+        _env("UNIVERSE_EXIT_MCAP_CR", "") or 0.8 * float(_env("UNIVERSE_MIN_MCAP_CR", "500"))))
     platform_url: str | None = field(default_factory=lambda: _env("PLATFORM_API_URL"))
     ingest_token: str | None = field(default_factory=lambda: _env("INGEST_TOKEN"))
 

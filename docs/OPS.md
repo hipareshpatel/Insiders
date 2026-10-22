@@ -1,3 +1,2 @@
 
-| 22 Oct 10:36 | Merged #65 | CI green on b4dc364; corporate-actions.yml (2,200 days) dispatched |
-| 22 Oct 11:15 | Half-hour visit | 09:38 run OK, next running; corporate-actions history still reading; B4 built (NSE holidays in both session labels) |
+| 22 Oct 12:00 | Missing sources | Insider trades: NSE's PIT feed is empty after 2 May 2026 (measured month by month), so not built; bulk deals blocked from a cloud IP; findings in data-chain §6 |

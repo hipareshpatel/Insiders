@@ -332,3 +332,36 @@ def test_a_consolidated_filers_standalone_quarter_is_kept_apart():
     alone_pat = next(m for m in d["standalone"]["metrics"] if m["metric"] == "pat" and m["period"] == "Q2FY27")
     assert main["value"] == 946.4 and alone_pat["value"] == 205.1
     assert stats.standalone_periods == 1
+
+
+def test_named_companies_may_be_nse_symbols_and_an_unknown_name_fails(settings, monkeypatch):
+    """reseed.yml run with SIEMENS, ABB, ... on 22 Oct 2026: none was a company key, and all 14 seeded nothing while
+    the job passed. A symbol now resolves through the universe file; a name that is neither fails the command."""
+    import argparse
+    import json
+
+    from bse_intel import nse as nse_mod
+    from bse_intel import universe
+    from bse_intel.cli import cmd_seed_memory
+    from bse_intel.sinks.local import LocalSink
+
+    class Client:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            pass
+
+    seen: list[tuple[str, str]] = []
+    monkeypatch.setattr(nse_mod, "NseClient", Client)
+    monkeypatch.setattr(seed_mod, "seed_results", lambda sink, bse, scrip, *a, **k: seen.append((scrip, k.get("symbol"))))
+    monkeypatch.setattr(seed_mod, "seed_shareholding", lambda *a, **k: None)
+    sink = LocalSink(settings)
+    sink.put_object(universe.UNIVERSE_KEY, json.dumps(
+        {"source": "nse", "included": ["500550"], "symbols": {"SIEMENS": "500550"}}).encode())
+    args = argparse.Namespace(scrips="siemens", universe=False, restart=False, source="nse", since="2024-01-01",
+                              results_only=True, shareholding_only=False)
+    assert cmd_seed_memory(args, settings, sink) == 0
+    assert seen == [("500550", "SIEMENS")]
+    args.scrips = "SIEMENS,NOSUCH"
+    assert cmd_seed_memory(args, settings, sink) == 2 and len(seen) == 1

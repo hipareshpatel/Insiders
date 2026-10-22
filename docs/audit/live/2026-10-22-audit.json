@@ -80,5 +80,103 @@
   "classes": [],
   "prompt_variant": "long",
   "reason": "Annexure-A: 'penalty ... INR 22,21,63,535 on the Company and INR 2,46,84,837 on each Joint Managing Director' (Rs22.22 Cr / Rs2.47 Cr), from the Special Director (Adjudication), ED, received 'October 21, 2026 at 04.00 P.M.', for FEMA s.3(c) read with s.42(1); the filing links it to the auditors' Emphasis of Matter. FY26 PAT of Rs244.31 Cr is in memory."
+ },
+ {
+  "news_id": "nse-106824405",
+  "symbol": "OLAELEC",
+  "run": "11:13 hourly",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "All figures match the Reg 77B(2) table: ANI Technologies -> Motilal Oswal 12,833,054; Indus Trust -> Calliope Capital 11,022,422; 'Total 23,855,476 23,855,476'; opening date 'Thursday, October 22, 2026, before 11:00 A.M.'; renouncers are 'member of the Promoter Group'; issue is of 'partly paid-up equity shares'."
+ },
+ {
+  "news_id": "nse-106824365",
+  "symbol": "BALKRISIND",
+  "run": "11:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "short",
+  "reason": "Facts match (50:50 JV 'incorporated by December 31, 2030', Bhuj offtake 'raw material (at actuals) plus conversion costs', service agreement, EUR 6.78 bn, offtake to 'December 31, 2031'; memory g_88f2f2e1 'PCR tyres planned for launch by end of the current calendar year' backs the MEMORY point), but the why-it-matters point and risk say BIL's no-third-party-manufacturing restriction applies 'in India'; the filing sets no geography on it ('The Company not to manufacture tyres for third parties which are comparable to or compete with Pirelli PCR tyres'); the India limit applies to Pirelli's offtake exclusivity and the framework's JV bar."
+ },
+ {
+  "news_id": "nse-106824363",
+  "symbol": "ABDL",
+  "run": "11:13 hourly",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Press release: 'commencement of commercial operations at its malt distillery at Rangapur, Telangana', 'approved manufacturing capacity of ~ 4.4 million BL per annum', 'greenfield facility', single malt 'in the coming years', integrated hub with grain distillation, PET bottles, bottling, malt; margin rationale from MD quote ('enhances operating margins'); capex amount truly undisclosed; promise update ON_TRACK on memory g_98b44c27 (backward integration margin benefit) is reasonable."
+ },
+ {
+  "news_id": "nse-106824197",
+  "symbol": "SRF",
+  "run": "11:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "unsupported_cause"
+  ],
+  "prompt_variant": "long",
+  "reason": "All figures match the presentation (revenue 3,640.2->4,904.2 +35%, op EBIT 650.1->816.0 +26%, margin 18%->17%, PBT 517.1->671.0, PAT 388.2->509.1, PFB 1,408.1->2,122.4 +51%, CB 1,666.9->2,079.5 +25%, PFB EBIT 119.0->206.2 +73%; milestones PVDF Q3FY27, foil Q3FY27, FEP Q1FY28, EHF Q3FY28, HFO Q4FY28), but the takeaway's 'volume recovery across packaging films and technical textiles' is not in the filing (films: 'Strong growth delivered across all geographies'; the only 'recovery' is agrochemical volumes), and PFB EBIT growth 'aided by capacitor-grade film ramp-up following Phase 1 commissioning in May 2026' is an inferred cause from memory t_10682a28 cited without memory_refs."
+ },
+ {
+  "news_id": "nse-106824162",
+  "symbol": "KRSNAA",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "AZmed/AZtrauma evaluation, 'more than 5 million X-rays annually', '2,000+ X-ray centres', 'subject to successful evaluation, regulatory approvals' all on p2; memory Q1FY27 revenue 235.53 and EBITDA 57.98 give the 24.62% margin."
+ },
+ {
+  "news_id": "nse-106823939",
+  "symbol": "NHPC",
+  "run": "12:07",
+  "verdict": "MINOR",
+  "classes": [
+   "unsupported_cause"
+  ],
+  "prompt_variant": "long",
+  "reason": "CoD of 'Unit# 5 (250 MW) ... from 00:00 hours on 23.10.2026', five units declared, and memory g_9c24eeab 'Subansiri balance 1,000 MW' in FY27 all hold; the risk 'Tariff finalisation delays by CERC' is not in the filing or memory."
+ },
+ {
+  "news_id": "nse-106823937",
+  "symbol": "RELIANCE",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "ICRA table: NCD 12,000 '[ICRA]AAA (Stable); reaffirmed', CP 10,000 A1+ reaffirmed, bank lines '0.00 50,000.00 ... Assigned', total 72,000; cash 2,46,791 Cr, debt 3,98,000 Cr, 'gross debt/OPBDITA remained stable 2.2x', and the downgrade trigger 'net debt/OPBITDA of more than 2.5x' all match."
+ },
+ {
+  "news_id": "nse-106823936",
+  "symbol": "PDSL",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "'PDS Sourcing ... acquired the remaining 49% equity stake in DBS Lifestyle Limited, Hong Kong ... with effect from October 20, 2026', 'USD 4,900 [~₹465,059]', turnover 0.91 Cr and net worth 0.16 Cr match Annexure I; ~₹0.05 Cr deal size computes correctly."
+ },
+ {
+  "news_id": "nse-106823878",
+  "symbol": "WAAREEINDO",
+  "run": "12:07",
+  "verdict": "MINOR",
+  "classes": [
+   "unsupported_cause"
+  ],
+  "prompt_variant": "long",
+  "reason": "Figures check out from the lakh statement (revenue 15,277.09+281.54=155.59 Cr against 202.55, PAT 501.85 against 4,633.76 lakh, EBITDA 14.82 against 70.73, EPS 1.20 against 11.14). The risk 'raw material costs continuing to depress module assembly margins' gives a cause the filing does not state."
+ },
+ {
+  "news_id": "nse-106823854",
+  "symbol": "GMDCLTD",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "'₹9.50 per equity share ... (475%)', 'total payout of ₹302.10 crore, of which ₹223.55 crore accrues to the Government of Gujarat', PAT 990.81 against 687.92, 'exceptional gain of ₹522.65 crore' match. 302.10/(990.81-522.65)=64.5% and 1,050/7,072.74=14.8% compute from filing and memory, and memory FY26 consolidated PAT 956.67 (t_1ab2e528) holds."
  }
 ]

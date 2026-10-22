@@ -80,17 +80,26 @@ Before and after over the 132 results cards, with metrics rebuilt from each card
 
 Every one of these is a reviewer-confirmed false hold. Prism Johnson drops 1 of its 2 holds, and that card has no individual audit reason. No true hold changed.
 
-## Fix 4: OCR letters read as digits, and garbled text on XBRL-backed cards (F102), 23 Oct, small hours
+## Fix 4: garbled text on XBRL-backed cards (F102), 23 Oct, small hours
 
-**OCR letters.** In a scan's OCR text layer, a number-like token with letters in it is also read with the letters as digits: O/o as 0, l/I as 1, S as 5, B as 8. Examples: Godawari's "3,35,loo", DCM's "5O.77%", Ola's "(7B5)". A leading l or I gets two readings, as the rupee sign and as a 1. SSWL's "l424.ll Cr" is ₹1,424.11 Cr, and "I24.75 crores" is ₹24.75 Cr.
+**Tried and rejected: reading OCR letters as digits.** The idea was to read O/o as 0, l/I as 1, S as 5 and B as 8 inside number-like tokens, with a leading l or I read both as the rupee sign and as 1. It looked good on the first two tests and failed the third.
 
 | Measure | Result |
 |---|---|
-| Before and after over the 292 stored figures | 8 false holds freed (Godawari, SSWL ×4, DCM, Ahluwalia ×2); 1 true hold freed: NTPC's ₹5.97 lakh Cr |
-| 1,673 fakes, as a crore figure and as a bare figure, on the same filings | accepted: 71 before, 71 after (crore); 129 before, 129 after (bare); 0 newly accepted |
-| Independent blind sample of 70 OCR readings | see the TRACKER entry |
+| Before and after over the 292 stored figures | 8 false holds freed; 1 true hold freed (NTPC 5.97, whose card is wrong in its meaning) |
+| Fakes test | 0 newly accepted |
+| Independent blind sample of 70 readings, checked against the rendered pages | 16 right, 21 harmless (labels, registration numbers), 33 wrong |
 
-On NTPC: the slide does print "S.97", so the reading is right. The card is wrong because it calls the 2027-32 capex figure renewables spend. That is a mistake of meaning, which the number check cannot catch; the "not found" hold only held it by accident.
+Of the 33 wrong readings, 21 are outright errors, for example:
+- a leading t that was really a 1;
+- "o/o" for % and the degree sign;
+- a leading digit that the text layer split off as a separate word;
+- a letter that stood for a different digit than the mapping assumed;
+- sideways pages read upside down.
+
+Where the reviewer could check a letter swap, it gave the wrong digit as often as the right one. The fakes test missed this because random fakes rarely land on these readings, while real card figures sit right next to them. The code was removed before merge.
+
+The OCR-garbled class stays held. Its fix belongs upstream: OCR the page itself (D29) rather than repair the text layer.
 
 **Garbled text on XBRL-backed cards.** A card whose figures come from its own XBRL file, with every amount grounded, is no longer held because the PDF's text layer is garbled.
 - Stored holds: 15 such cards, every one false according to the reviewers. 13 cards are right or minor.

@@ -3084,7 +3084,7 @@ class Pipeline:
             return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": out.event_type,
                             "reason": f"pass2: not material{': ' + out.reason if out.reason else ''}"[:300],
                             "updated_at": now})
-        if out.event_type in ONE_EVENT_ONE_CARD and out.timeline_entry and not is_transcript(filing):
+        if out.event_type in (*ONE_EVENT_ONE_CARD, *REPEAT_BY_WORDS) and out.timeline_entry and not is_transcript(filing):
             repeat = similar_timeline_entry(dossier, filing, out.timeline_entry)
             if repeat:  # the same event filed again in other words (BSE takes one submission per subcategory)
                 with self._lock:
@@ -4074,6 +4074,11 @@ CONSOLIDATED_STATEMENT = re.compile(r"\bconsolidated\s+(?:un-?audited\s+|audited
 RESULTS_XBRL_WAIT_MINUTES = 180   # a live NSE results filing waits this long for its XBRL (measured: 5 min - 2 h 40 min)   # owner, 2026-10-18: no cards for director / KMP changes
 ONE_EVENT_ONE_CARD = ("MANAGEMENT_CHANGE", "GOVERNANCE", "LITIGATION_REGULATORY", "FUNDRAISE",
                       "RIGHTS_ISSUE", "M_AND_A", "DEBT_RATINGS", "CONCALL_PRESENTATION", "ANNUAL_REPORT")
+# Types whose repeats only the word check after pass 2 catches (no extra model call before it). OTHER, measured over
+# the last 600 live cards (22 Oct 2026): of 51 OTHER cards, the 0.5 word overlap marks 3 as repeats (EIEL's ₹228 Cr
+# LOI typed OTHER a day after its order-win card, Urban Company's media release after its shareholders' letter, SRF's
+# results press release) and no distinct one (the nearest, SMC's warrants against its NCDs, scores 0.23)
+REPEAT_BY_WORDS = ("OTHER",)
 UNIT_HINT = ("Convert each amount from the unit its table states: ₹ lakh ÷ 100 = ₹ Cr, ₹ million ÷ 10 = ₹ Cr, "
              "₹ thousand ÷ 10,000 = ₹ Cr; remove a figure that matches no source at any unit, rewriting its sentence "
              "so no blank is left (not \"holds ** ** stake\" or \"passed with over votes\")")

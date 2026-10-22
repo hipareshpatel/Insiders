@@ -209,3 +209,21 @@ def test_a_count_of_votes_written_in_crore_at_the_wrong_size_is_set_right():
     text = "Votes in favour 2,254,107,305; votes against 418,004."
     assert fix_foreign_crore(out, text)
     assert out.card.what_happened[0].text == "225.4107 Cr votes in favour and 0.0418 Cr votes against"
+
+
+def test_an_other_card_repeating_an_earlier_card_in_other_words_is_a_duplicate():
+    """Live audit, 22 Oct 2026: EIEL's ₹228 Cr LOI came a day after its order-win card as an OTHER card, which the
+    word check after pass 2 did not look at. OTHER now goes through that check (no model call before pass 2)."""
+    from bse_intel.dossier import similar_timeline_entry
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import ONE_EVENT_ONE_CARD, REPEAT_BY_WORDS
+
+    assert "OTHER" in REPEAT_BY_WORDS and "OTHER" not in ONE_EVENT_ONE_CARD
+    dossier = {"timeline": [{"news_id": "nse-1", "date": "2026-10-14",
+                             "summary": "Suyog Urja Limited, step-down subsidiary of Enviro Infra Engineers, received a "
+                                        "₹228 Cr letter of intent from ARIE Energy for a 100 MW wind EPC project at Ajani"}]}
+    later = Filing(news_id="nse-2", scrip_code="544290", company_name="Enviro Infra Engineers Ltd", headline="h",
+                   subject="", filed_at="2026-10-15T16:12:00+05:30", filing_date="2026-10-15")
+    assert similar_timeline_entry(dossier, later, "Suyog Urja Limited, EIEL's subsidiary, received a ₹228 Cr letter of "
+                                                  "intent from ARIE Energy for the 100 MW Ajani wind EPC project")["news_id"] == "nse-1"
+    assert similar_timeline_entry(dossier, later, "CRISIL ESG Ratings assigned Enviro Infra an ESG score of 62") is None

@@ -178,5 +178,67 @@
   "classes": [],
   "prompt_variant": "long",
   "reason": "'₹9.50 per equity share ... (475%)', 'total payout of ₹302.10 crore, of which ₹223.55 crore accrues to the Government of Gujarat', PAT 990.81 against 687.92, 'exceptional gain of ₹522.65 crore' match. 302.10/(990.81-522.65)=64.5% and 1,050/7,072.74=14.8% compute from filing and memory, and memory FY26 consolidated PAT 956.67 (t_1ab2e528) holds."
+ },
+ {
+  "news_id": "nse-106824476",
+  "symbol": "BALKRISIND",
+  "run": "12:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "duplicate"
+  ],
+  "prompt_variant": "short",
+  "reason": "Every fact matches the press release ('up to 800,000 Pirelli branded tyres by 2030', '50-50 joint venture ... High Value car tyres'), but it covers the same Pirelli agreement as nse-106824365, published 50 minutes earlier. The card itself says 'Follows the Framework, Offtake, and Service Agreements disclosed earlier' (t_3751612c = nse-106824365)."
+ },
+ {
+  "news_id": "nse-106824455",
+  "symbol": "BBTC",
+  "run": "12:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "long",
+  "reason": "The figures are right: 22,45,000 shares (3.22%), 46.88% -> 50.10%, Nusli Wadia 5.06% -> 1.84%, Rs.1200 per share, 16 Oct 2026, 'internal restructuring of Promoters' Holding'. Deal size 269.4 Cr = 22.45 lakh x 1,200. Two problems: the headline 'lifts BBTC promoter stake to 50.10%' reads as the promoter group's holding when it is only the acquirer's own stake (the takeaway says the aggregate is unchanged), and M_AND_A is a loose type for an inter-se promoter transfer under SAST Reg 10(6)."
+ },
+ {
+  "news_id": "nse-106824463",
+  "symbol": "PAISALO",
+  "run": "12:13 hourly",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Every figure matches the KPI table: PAT 656 vs 515 Mn (+27%), AUM 72,659 Mn (+33%), disbursement 15,673 Mn (+42%, -9% QoQ from 17,309), total income 2,773 Mn (+24%), NIM 5.7% vs 6.5%/6.6%, GNPA/NNPA 0.66%/0.46%, CoB 10.0% (-50 bps), 420 / 6,415 touchpoints. 'Below full-year guidance of ~6.5%' comes from memory g_ad62b9f5 ('NIM to be maintained at about 6.5% in FY27')."
+ },
+ {
+  "news_id": "nse-106824477",
+  "symbol": "SHYAMMETL",
+  "run": "12:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "long",
+  "reason": "The points and numbers match the NCLT order: sanctioned 16.10.2026, appointed date 1 April 2024, turnover 41,18,15,944 -> 91,75,46,792, accumulated losses 14.87 -> 20.47 Cr, transferee PBT 578.21 / 530.68 Cr, combined net worth 5901.97 Cr, IT No Objection 15 May 2026, RD's set-off concern, no shares issued, 0.49% of FY26 revenue 18,552 Cr (memory). The deal block is wrong in two places: stage 'PROPOSED' for a scheme the tribunal has sanctioned, and the transferee 'Shyam Sel and Power' named as 'seller'."
+ },
+ {
+  "news_id": "nse-106824440",
+  "symbol": "DIACABS",
+  "run": "12:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "memory"
+  ],
+  "prompt_variant": "long",
+  "reason": "The filing's facts are right: 'Rs 25 crore including floor extension', 'Internal Accruals', 6 CCV lines ~2,000 km p.a. at 60%, delivery Aug 2027, commissioning 31 Dec 2027; the scale signal 25/1,910 = 1.3% is shown as '1%'. The memory point 'Follows the earlier board approval for a sixth CCV line' misdescribes its source: memory (nse-106752466, Aug 2026 call) has 'Sixth CCV line to be ordered this month, commissioned by December 2027', a management statement, not a board approval. The point also has no memory_refs."
+ },
+ {
+  "news_id": "nse-106824457",
+  "symbol": "INTELLECT",
+  "run": "12:13 hourly",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Everything on the card is in the media release: Jameel Finance - Egypt, eMACH.ai Lending with 'Loan Origination (LOS), Loan Management (LMS), Loan Collections, and BNPL', Auto, Consumer Durables, Two-Wheelers and BNPL, 'transformation ... in just 16 weeks'. No figure is invented, and LOW impact suits an undisclosed-value deployment."
  }
 ]

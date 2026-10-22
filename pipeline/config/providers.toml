@@ -533,6 +533,17 @@ max_tokens = 6000
 context_tokens = 120000
 limits = { rpm = 50, tpm = 250_000 }
 
+# First since 22 Oct: the one Flash model that answered every packed request on both keys that day (37 of 37);
+# 3.5-3.8 Flash were at their daily quotas by morning (owner: "go ahead with both bundling changes").
+[[routes.pass2_packed]]
+provider = "gemini"
+model = "gemini-3-flash-preview"
+json_mode = true
+max_tokens = 60000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
 [[routes.pass2_packed]]
 provider = "gemini"
 model = "gemini-3.6-flash"
@@ -562,20 +573,11 @@ limits = { rpm = 5, tpm = 250_000, rpd = 20 }
 
 # Two more Gemini Flash models, each with its own free daily quota (owner, 2026-10-19: "each one is having their
 # different quota"): 60 -> 100 packed requests a day. Probed 2026-10-19 on a lakh-to-crore task: 3 Flash preview right in
-# 4 s; 3.5 Flash busy at the time (503) but measured at 20 a day earlier. Not free: 3.1 Pro preview, pro-latest, Gemini 4
+# 4 s (first on the route since 22 Oct); 3.5 Flash busy at the time (503) but measured at 20 a day earlier. Not free: 3.1 Pro preview, pro-latest, Gemini 4
 # argon (quota 0); 2.5 Flash and Pro retired. After the three established models; round 7 reports WRONG per model.
 [[routes.pass2_packed]]
 provider = "gemini"
 model = "gemini-3.5-flash"
-json_mode = true
-max_tokens = 60000
-context_tokens = 900000
-extra_body = { reasoning_effort = "low" }
-limits = { rpm = 5, tpm = 250_000, rpd = 20 }
-
-[[routes.pass2_packed]]
-provider = "gemini"
-model = "gemini-3-flash-preview"
 json_mode = true
 max_tokens = 60000
 context_tokens = 900000

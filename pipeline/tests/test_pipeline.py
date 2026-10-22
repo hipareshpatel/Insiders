@@ -933,6 +933,9 @@ def test_pass2_routing_keeps_live_and_backfill_apart_and_packs_long_filings(sett
     assert pipeline._pass2_writer(False, long)[1] is not pipeline._pass2_writer(True, long)[1]
     off, _, _ = build(settings, [], {}, {}, env=env)
     assert off._pass2_writer(False, short) == ("pass2", None) and off._pass2_writer(True, long) == ("pass2_long", None)
+    # backfill packs wait longer than live ones (owner, 22 Oct): no reader waits for a backfill card
+    waits, _, _ = build(replace(settings, pass2_pack=6, pass2_pack_wait_s=60, pass2_pack_wait_bulk_s=180), [], {}, {}, env=env)
+    assert {bulk: waits._pass2_writer(bulk, n)[1].wait_s for bulk in (False, True) for n in (short, long)} == {False: 60, True: 180}
 
 
 def test_backfill_on_the_configured_routes_leaves_flash_to_live_filings(settings):

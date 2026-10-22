@@ -1743,11 +1743,11 @@ class Pipeline:
             from .ai.packer import Packer
 
             for bulk in (False, True):
-                self._packers[(bulk, False)] = Packer(gateway, size=settings.pass2_pack, wait_s=settings.pass2_pack_wait_s,
-                                                      bulk=bulk)
+                wait_s = settings.pass2_pack_wait_bulk_s if bulk else settings.pass2_pack_wait_s
+                self._packers[(bulk, False)] = Packer(gateway, size=settings.pass2_pack, wait_s=wait_s, bulk=bulk)
                 if settings.pass2_pack_long > 1:
                     self._packers[(bulk, True)] = Packer(gateway, size=min(settings.pass2_pack_long, settings.pass2_pack),
-                                                         wait_s=settings.pass2_pack_wait_s, max_chars=LONG_PACK_MAX_CHARS,
+                                                         wait_s=wait_s, max_chars=LONG_PACK_MAX_CHARS,
                                                          bulk=bulk)
         self._nse_refused = False                  # NSE refused the address: no more calls this run
         self.prompts = prompts or PromptEngine(settings)

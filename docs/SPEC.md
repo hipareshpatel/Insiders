@@ -72,7 +72,7 @@ The owner's master blueprint is [BLUEPRINT.md](BLUEPRINT.md); what is built and 
 left is tracked in [TRACKER.md](TRACKER.md).
 
 **Where it runs.** On an Indian connection (BSE refuses datacenter IPs). History from
-`BACKFILL_START` (default **2025-01-01**) to today is filled on the owner's laptop against
+`BACKFILL_START` (default **2026-04-19**, six months before go-live; owner, 2026-10-18) to today is filled on the owner's laptop against
 the *local* Worker (`npm run dev`, whose D1/R2 persist under `data/wrangler`): no free-tier
 limits apply there except the AI providers'. `backfill-companies` runs the 5-company smoke
 test first; once the local site looks right, `sync-to-cloud` copies everything to Cloudflare
@@ -458,7 +458,7 @@ single-writer design depends on.
 | Where | What |
 |---|---|
 | Repository secrets | `PLATFORM_API_URL`, `INGEST_TOKEN`, `GROQ_API_KEY`, `NVIDIA_API_KEY`, `MISTRAL_API_KEY`, `ZAI_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, and for deploys `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` |
-| Repository variables | `BACKFILL_START` (default 2025-01-01), `D1_DATABASE_ID`, `PIPELINE_RUNNER_LABELS` |
+| Repository variables | `BACKFILL_START` (default 2026-04-19), `D1_DATABASE_ID`, `PIPELINE_RUNNER_LABELS` |
 | Worker secrets | `INGEST_TOKEN`, `OWNER_TOKEN` (owner mode) |
 | Optional env | `UNIVERSE_MIN_MCAP_CR` (500), `D1_DAILY_WRITE_BUDGET` (80000), `SECOND_OPINION` (1), `TEXT_CACHE` (1), `PIPELINE_WORKERS` (3), `NSE_ANNUAL_XBRL` (1: an annual report's own XBRL from NSE in front of its text) |
 

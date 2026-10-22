@@ -85,4 +85,4 @@ and what was done.
 |---|---|---|---|---|---|
 | G-01 | MEDIUM | CONFIRMED | `docs/SPEC.md:288` | Claims Today reads the snapshot (F-11) | Open with F-11 |
 | G-05, G-06 | MEDIUM | CONFIRMED | `web/worker`, `statements.test.ts` | The Worker has no tests; the statements test missed every class above | statements tests added for F-01, F-04, F-05, F-07; Worker tests open |
-| G-02..G-04 | LOW | CONFIRMED | `docs/SETUP.md`, settings, scripts | SETUP describes a BSE self-hosted setup and "820 tests"; BACKFILL_START default 2025-01-01 against a live start of 2026-04-19; a dead script for a reverted rule | Open |
+| G-02..G-04 | LOW | CONFIRMED | `docs/SETUP.md`, settings, scripts | SETUP describes a BSE self-hosted setup and "820 tests"; BACKFILL_START default 2025-01-01 against a live start of 2026-04-19; a dead script for a reverted rule | Fixed 22 Oct: SETUP on NSE and GitHub's runners, test counts, missing commands, D1 limits; `BACKFILL_START` defaults to 2026-04-19 (code and SPEC); the dead script removed. The web's `HISTORY_START` stays 2025-01-01: live cards go back before 19 Apr (annual reports, call seeds), and the "all" feed starts there |

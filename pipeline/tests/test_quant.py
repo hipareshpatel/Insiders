@@ -713,3 +713,29 @@ def test_this_quarters_figure_is_the_tagged_files_over_the_cards_reading():
         {"metric": "pbt", "period": "Q2FY27", "value": 600.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"}]}
     snap = results_snapshot(dossier, "n2")
     assert snap["pat"]["value"] == 521.6 and snap["pat"]["qoq_pct"] == -14.7
+
+
+def test_a_call_table_is_the_results_filings_not_the_calls_own_reading():
+    """Garware Hi-Tech's Q2FY27 deck (live audit, 22 Oct 2026): memory's only Q2FY27 figures were the deck's own
+    (EBITDA ₹189 Cr with other income) and the call card's table set them against the filings' quarters without it.
+    The quarter the call discusses comes from memory with the call; its figures only from memory before it."""
+    from bse_intel.dossier import call_results_snapshot, dossier_as_of
+
+    def metric(name, period, value, news_id, as_of):
+        return {"metric": name, "period": period, "value": value, "unit": "INR_CR", "source_news_id": news_id, "as_of": as_of,
+                "sources": [{"news_id": news_id, "as_of": as_of, "value": value}]}
+
+    filed = "2026-10-22T12:18:00+05:30"
+    results = [metric("revenue", "Q1FY27", 633.08, "n1", "2026-08-10T18:00:00+05:30"),
+               metric("pat", "Q1FY27", 132.65, "n1", "2026-08-10T18:00:00+05:30")]
+    deck = [metric("revenue", "Q2FY27", 696.0, "deck", filed), metric("ebitda", "Q2FY27", 189.0, "deck", filed)]
+    memory = {"financial_metrics": results + deck}
+    current, before = dossier_as_of(memory, filed), dossier_as_of(memory, filed, inclusive=False)
+    assert call_results_snapshot(current, filed)["period"] == "Q2FY27"           # the call's own reading, as before
+    assert call_results_snapshot(current, filed, before=before) is None          # no results filing of Q2FY27 yet
+    # once the results filing is in memory before the call, its figures make the table
+    memory["financial_metrics"] += [metric("revenue", "Q2FY27", 695.71, "n2", "2026-10-21T16:00:00+05:30"),
+                                    metric("pat", "Q2FY27", 129.4, "n2", "2026-10-21T16:00:00+05:30")]
+    current, before = dossier_as_of(memory, filed), dossier_as_of(memory, filed, inclusive=False)
+    table = call_results_snapshot(current, filed, before=before)
+    assert table["period"] == "Q2FY27" and table["revenue"]["value"] == 695.71 and table["discussed"] is True

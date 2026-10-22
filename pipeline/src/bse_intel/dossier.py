@@ -1482,13 +1482,9 @@ MOVER_REVENUE = 0.01
 CALL_QUARTER_DAYS = 120   # a call or presentation discusses the quarter that ended at most this long before it
 
 
-def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...] | list[dict] = ()) -> dict | None:
-    """The results table for an earnings call or investor presentation: the latest quarter in memory, as the results
-    filing that reported it gives it (design audit 2026-10-20, fix 10). None when memory has no quarter that ended
-    within CALL_QUARTER_DAYS of the call, so a call never shows an older quarter as the one it discusses."""
-    from datetime import date as _date
-
-    filed = _date.fromisoformat(filed_at[:10])
+def _latest_reported(dossier: dict, filed) -> tuple | None:
+    """(quarter end, period, first reporter's news id) of the latest quarter in memory that ended within
+    CALL_QUARTER_DAYS before `filed` and has revenue or PAT from a filing."""
     latest = None
     for m in dossier.get("financial_metrics", []):
         if m.get("metric") not in ("revenue", "pat") or not str(m.get("period", "")).startswith("Q"):
@@ -1498,10 +1494,33 @@ def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...]
             continue
         reporters = [s for s in _sources(m) if s.get("news_id")]
         if reporters and (latest is None or end > latest[0]):
-            latest = (end, min(reporters, key=lambda s: s.get("as_of") or "")["news_id"])
+            latest = (end, m["period"], min(reporters, key=lambda s: s.get("as_of") or "")["news_id"])
+    return latest
+
+
+def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...] | list[dict] = (),
+                          before: dict | None = None) -> dict | None:
+    """The results table for an earnings call or investor presentation: the latest quarter in memory, as the results
+    filing that reported it gives it (design audit 2026-10-20, fix 10). None when memory has no quarter that ended
+    within CALL_QUARTER_DAYS of the call, so a call never shows an older quarter as the one it discusses.
+
+    With `before` (memory before the call) the quarter is still the one `dossier` says the call discusses, but its
+    figures are only memory's from before the call, and there is no table when memory had none of that quarter: the
+    call's own reading is not the results filing's. Garware Hi-Tech's Q2FY27 deck put EBITDA with other income (₹189
+    Cr) beside the filings' quarters without it, and Tech Mahindra's call put its EBIT (₹2,387 Cr) where the results
+    filing's EBITDA (₹2,878.5 Cr) belonged (live audits, 22 Oct 2026)."""
+    from datetime import date as _date
+
+    filed = _date.fromisoformat(filed_at[:10])
+    latest = _latest_reported(dossier, filed)
     if latest is None:
         return None
-    snap = results_snapshot(dossier, latest[1], footer)
+    if before is not None:
+        earlier = _latest_reported(before, filed)
+        if earlier is None or earlier[1] != latest[1]:
+            return None
+        dossier, latest = before, earlier
+    snap = results_snapshot(dossier, latest[2], footer)
     return {**snap, "discussed": True} if snap else None
 
 

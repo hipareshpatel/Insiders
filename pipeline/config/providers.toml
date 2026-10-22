@@ -145,6 +145,15 @@ api_key_env = "DEEPSEEK_API_KEY"
 timeout_s = 120
 paid = true  # left out of the steps that run every day (annual_catchup.py), even where the key is loaded
 
+# Cohere (owner's key, 2026-10-22: "may give some relief to other models"). OpenAI-compatible endpoint
+# (docs.cohere.com/docs/compatibility-api). A trial key allows 20 requests a minute and 1,000 calls a month
+# (docs.cohere.com/docs/rate-limits, read 22 Oct), so it is the last spare, spread to ~30 a day.
+[providers.cohere]
+base_url = "https://api.cohere.ai/compatibility/v1"
+api_key_env = "COHERE_API_KEY"
+timeout_s = 180
+limits = { rpmo = 1000, rpd = 30 }
+
 # Second keys (owner, 2026-10-22: "work load will get divided and less chances of having errors"; the owner takes the
 # risk that a provider's terms count one person's keys together). Each is a copy of its provider under its own name:
 # every route entry of the base provider is repeated for it (gateway.expand_key_aliases), with its own limits, quota
@@ -376,6 +385,15 @@ context_tokens = 120000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
 
+[[routes.pass2]]
+provider = "cohere"
+model = "command-a-03-2025"   # established Command A, 256K window; the last spare (trial key, 1,000 calls a month)
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 200000
+limits = { rpm = 15 }
+
 [[routes.pass2_bulk]]
 provider = "zai"
 model = "glm-4.5-flash"
@@ -458,6 +476,15 @@ max_tokens = 6000
 context_tokens = 120000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
+
+[[routes.pass2_bulk]]
+provider = "cohere"
+model = "command-a-03-2025"   # established Command A, 256K window; the last spare (trial key, 1,000 calls a month)
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 200000
+limits = { rpm = 15 }
 
 [[routes.pass2_packed]]
 provider = "gemini"
@@ -699,6 +726,15 @@ max_tokens = 400
 context_tokens = 32000
 limits = { rpm = 10 }
 
+[[routes.trial_new]]
+provider = "cohere"
+model = "command-a-03-2025"   # established Command A, 256K window; the last spare (trial key, 1,000 calls a month)
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 200000
+limits = { rpm = 15 }
+
 [[routes.vision]]
 provider = "zai"
 model = "glm-4.6v-flash"
@@ -808,6 +844,15 @@ max_tokens = 6000
 context_tokens = 120000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
+
+[[routes.pass2_long]]
+provider = "cohere"
+model = "command-a-03-2025"   # established Command A, 256K window; the last spare (trial key, 1,000 calls a month)
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 200000
+limits = { rpm = 15 }
 
 [[routes.vision]]
 provider = "gemini"

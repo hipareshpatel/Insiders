@@ -49,6 +49,7 @@ jobs:
       GROQ_API_KEY_2: ${{ secrets.GROQ_API_KEY_2 }}
       NVIDIA_API_KEY_2: ${{ secrets.NVIDIA_API_KEY_2 }}
       ZAI_API_KEY_2: ${{ secrets.ZAI_API_KEY_2 }}
+      COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
       ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}

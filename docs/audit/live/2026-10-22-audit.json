@@ -309,5 +309,87 @@
   ],
   "prompt_variant": "long",
   "reason": "The facts hold: sale of the whole Sangareddy undertaking to Aparna Enterprises ('does not belong to promoter/ promoter group'), contribution in the last financial year 'NIL', proposed 15 Jul 2025 and approved at the 18th AGM on 19 Aug 2025, no consideration or completion date given; FY26 revenue ₹15.97 Cr is in memory. But the sale of a whole undertaking is filed as OTHER/UPDATE rather than M_AND_A, although its own deal block says DIVESTMENT."
+ },
+ {
+  "news_id": "nse-106824651",
+  "symbol": "J&KBANK",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Every figure is in the press release: 'net profit to Rs 546.36 Cr ... 28.8% ... 10.6%', 'Gross NPA ... 109 bps ... to 2.23%', 'Net NPA ... 0.51% against 0.76%', 'PCR ... 91.76%', 'total business ... 19.38% ... Rs 3,10,347 Cr', 'other income doubled to Rs 314.90 Cr ... from Rs 153.76 Cr', NII 'rose 5% YoY ... to Rs 1502 Cr', ROA 1.07%, CASA 41.97%."
+ },
+ {
+  "news_id": "nse-106824629",
+  "symbol": "NATCOPHARM",
+  "run": "14:07",
+  "verdict": "WRONG",
+  "classes": [
+   "arithmetic"
+  ],
+  "prompt_variant": "long",
+  "reason": "The point 'The ₹750 issue price is a significant discount to the market price of approximately ₹1,000 (based on the ₹15,395 Cr market cap and 17.9 Cr shares in memory)' is wrong arithmetic: 15,395/17.9 = about ₹860, and memory's own last_price is ₹784.8 (2026-10-15). The discount is therefore about 4-13%, not a 'significant discount' to ₹1,000."
+ },
+ {
+  "news_id": "nse-106824613",
+  "symbol": "KOPRAN",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "classes": [
+   "event_type"
+  ],
+  "prompt_variant": "long",
+  "reason": "The facts match the filing: 'inspection ... from September 18, 2026 to September 23, 2026', 'No critical observations, one major observation and some minor observations', and responses 'within a fortnight' (2026-11-05). But a concluded GMP inspection is filed as LITIGATION_REGULATORY with a case tracker at 'Notice'. The headline 'clears' and the core catalyst 'Regulatory clearance' also overstate the outcome while the one major observation is still awaiting compliance responses."
+ },
+ {
+  "news_id": "nse-106824609",
+  "symbol": "CMLL",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "classes": [
+   "event_type"
+  ],
+  "prompt_variant": "long",
+  "reason": "The content matches the filing: bulk price instead of retail, '100% of the increase', consumption norms, 'applies retrospectively from 20 March 2026', 'increased by about 86%', 'Fortnightly payments (up to 75% ...)', 8 WCL/NCL contracts running to 2031. But an amendment to mining service contracts (Schedule III Para B) is tagged CORPORATE_ACTION / 'CORP ACTION'."
+ },
+ {
+  "news_id": "nse-106824578",
+  "symbol": "MAITHANALL",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "These are on the filing: 'Total Cost of acquisition is Rs. 38.72 Crore on 19th October, 2026', '0.09% of shareholding being 439848 shares' (₹880.3/share computes), 'PAT Rs. 2 Crore', 'Networth Rs. 1526 Crore', turnover 'Rs. 2446 Crore', and 'do not intend to acquire control'. 'Additional' stake and 'minority stakes of listed telecom equipment firms' are supported by memory: 0.04% of Sterlite for ₹19.97 Cr on 16 Oct, and 0.05% of HFCL for ₹20 Cr."
+ },
+ {
+  "news_id": "nse-106824529",
+  "symbol": "REFEX",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "These are in the filing: 'Cumulative Maximum Award Value of Rs. 31,13,05,500/- (incl. GST)' = ₹31.13 Cr, 'valid for a period of one (1) year, extendable by a further period of six (6) months', and NHAI/PMGSY scope. The ₹31.45 Cr prior-day order (d_49dd4082), the 4 orders totalling ₹131.2 Cr (32.12+36.5+31.45+31.13), and Q1FY27 revenue ₹916.31 Cr are all in memory."
+ },
+ {
+  "news_id": "nse-106824625",
+  "symbol": "SAPPHIRE",
+  "run": "14:07",
+  "verdict": "WRONG",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "long",
+  "reason": "The results table shows EBITDA 128.61 vs prev_year 102.09, '+26% YoY', and margin 13.75% -> 14.5% '+75 bps'. The filing's own P&L gives 'EBITDA 1,286.06 1,061.6 21%' and 'EBITDA Margin % 14.5% 14.3%', i.e. +21% and about +20 bps. The prior-year figure is memory's XBRL EBITDA on a different definition, which mixes bases and contradicts the card's own key number (+21% YoY). The score repeats 'Margin +75 bps YoY'."
+ },
+ {
+  "news_id": "nse-106824587",
+  "symbol": "SHRIRAMPPS",
+  "run": "14:07",
+  "verdict": "WRONG",
+  "classes": [
+   "memory"
+  ],
+  "prompt_variant": "short",
+  "reason": "The point 'The board size remains at 6 directors' (basis MEMORY, no refs) is contradicted. Memory's governance XBRL has board_size 6 at Jun-2026 with no cessations, and this filing adds two directors, so the board becomes 8. The rest matches the filing: two independent directors, '5 consecutive years, effective October 22, 2026', 'former Central Board Member of the Reserve Bank of India', Deputy CAG, CAG audit reports for AP, Odisha, TN, WB and Puducherry, and 'former CEO of Doha Bank (2007 – 2022)'."
  }
 ]

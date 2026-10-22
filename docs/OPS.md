@@ -1,2 +1,2 @@
 
-| 22 Oct 13:46 | Half-hour visit | #69 merged (call tables: EBITDA from the results filing only); refresh both still running (started 13:15); second Gemini key serves packed calls (12:33 run: 22 of its calls, packs of 1-3 answered in full; one bulk pack refused at the live-filing reserve); 429s only Mistral and Z.AI spares, one Gemini; queue 1,000 / 55 failed |
+| 22 Oct 14:15 | Daily audit 14:07 + #70 | 8 cards: 4 right / 2 minor / 2 wrong (+ Sapphire, fixed by E10); refresh both done (2,614 of 3,169 cards, 1,858 summaries); #70 merged (corporate_action saved by the refresh); refresh-card-blocks re-dispatched with #69 and #70 |

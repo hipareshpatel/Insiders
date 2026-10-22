@@ -185,6 +185,27 @@ def test_invalid_json_is_repaired_by_the_same_model(make_gateway):
     assert len(fake.calls) == 2 and "did not match" in fake.calls[1]["messages"][-1]["content"]
 
 
+def test_a_reply_cut_off_at_max_tokens_gets_more_room_not_a_repair(make_gateway):
+    """22 Oct: 23 of DeepSeek's 214 calls failed "no JSON object in response" after a repair in the same room."""
+    from types import SimpleNamespace
+
+    cut = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content='{"is_material": true, "event_ty'),
+                                                   finish_reason="length")],
+                          usage=SimpleNamespace(prompt_tokens=100, completion_tokens=200))
+    config = gateway_config(route({"provider": "a", "model": "m-a", "max_tokens": 200}))
+    gw, fake = make_gateway(config, {"m-a": [cut, GOOD]})
+    assert gw.complete_json("r", "s", "u", Pass1Result).value.event_type == "RESULTS"
+    assert [c["max_tokens"] for c in fake.calls] == [200, 400]
+    assert "did not match" not in fake.calls[1]["messages"][-1]["content"]
+    # cut off again with all the room it may take: a failure that says so
+    gw, fake = make_gateway(config, {"m-a": [cut, cut]})
+    try:
+        gw.complete_json("r", "s", "u", Pass1Result)
+    except Exception:
+        pass
+    assert gw.usage["a:m-a"].last_error.startswith("cut off at max_tokens 400")
+
+
 def test_reasoning_block_is_stripped(make_gateway):
     config = gateway_config(route({"provider": "a", "model": "r1", "strip_reasoning": True}))
     text = '<think>Let me consider {"is_material": false}...</think>\n```json\n{"is_material": true, "event_type": "capex"}\n```'

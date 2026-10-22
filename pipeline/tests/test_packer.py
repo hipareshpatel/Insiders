@@ -125,3 +125,15 @@ def test_a_long_filing_that_would_overfill_the_pack_goes_in_the_next_one():
     packed = [c for c in gw.calls if c[0] == "pass2_packed"]
     assert len(packed) == 2 and all(r.model_label == "gemini/gemini-3.6-flash" for r in out)
     assert "filing 0" in packed[0][1] and "filing 1" not in packed[0][1]
+
+
+def test_nothing_on_the_packed_route_can_serve_so_no_wait_and_no_pack():
+    """22 Oct: 84 packs failed in two runs with every Gemini model at its day's quota, each after a wait."""
+    import time
+
+    gw = FakeGateway()
+    gw.can_serve = lambda route: False
+    started = time.monotonic()
+    (result,) = _run(Packer(gw, size=5, wait_s=5), 1)
+    assert time.monotonic() - started < 1 and result.model_label == "nvidia/nemotron"
+    assert [c[0] for c in gw.calls] == ["pass2"]

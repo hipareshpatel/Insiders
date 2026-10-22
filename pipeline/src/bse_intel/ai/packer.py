@@ -70,6 +70,12 @@ class Packer:
         self.stats = {"calls": 0, "tasks": 0, "fallbacks": 0}
 
     def complete(self, fallback_route: str, system: str, user: str, schema: type, tag: str = "") -> AIResult:
+        # nothing on the packed route can serve (every model at its day's quota, or cooling): no wait, no failed pack
+        can_serve = getattr(self.gateway, "can_serve", None)
+        if can_serve is not None and not can_serve(self.route):
+            with self._lock:
+                self.stats["fallbacks"] += 1
+            return self.gateway.complete_json(fallback_route, system, user, schema, bulk=self.bulk)
         job = _Job(system, user, schema, tag)
         batch = earlier = None
         with self._lock:

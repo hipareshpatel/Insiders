@@ -55,6 +55,7 @@ T = TypeVar("T", bound=BaseModel)
 ClientFactory = Callable[[str, str, float], Any]
 
 CIRCUIT_THRESHOLD = 3
+MAX_OUTPUT_TOKENS = 16000  # the widest retry for a reply cut off at max_tokens
 CIRCUIT_OPEN_SECONDS = 300
 # a model that answers 429 again after its pause is paused longer, up to 30 min, and the run goes on with the other
 # models; a 429 is a day's ceiling only when it names a daily window (owner, 2026-10-20: a few passing 429s from Z.AI
@@ -375,6 +376,22 @@ class AIGateway:
             })
         return rows
 
+    def can_serve(self, route: str) -> bool:
+        """Whether any target on the route could take a request now: it has a key, is not switched off for this run,
+        has quota left for the day and is not cooling down. The packer asks before it holds a filing back to fill a
+        pack (22 Oct: 84 packs failed in two runs with every Gemini model at its day's quota)."""
+        now = time.monotonic()
+        for t in self.routes.get(route, []):
+            if not t.api_key or t.key in self.disabled or t.provider in self.disabled_providers:
+                continue
+            limiter, pquota = self.limiters[t.key], self.provider_quota.get(t.provider)
+            if limiter.quota.exhausted() or (pquota and pquota.exhausted()):
+                continue
+            if self._circuit_open_until.get(t.key, 0) > now or limiter.cooling_down():
+                continue
+            return True
+        return False
+
     def health(self) -> list[dict]:
         out = []
         for key, limiter in self.limiters.items():
@@ -524,13 +541,14 @@ class AIGateway:
         usage = self.usage[target.key]
         client = self._client(target)
         convo = list(messages)
-        repaired = json_fallback = False
-        while True:  # at most one JSON-mode fallback and one JSON repair, same model
+        repaired = json_fallback = widened = False
+        max_tokens = target.max_tokens
+        while True:  # at most one JSON-mode fallback, one wider retry and one JSON repair, same model
             kwargs: dict[str, Any] = {
                 "model": target.model,
                 "messages": convo,
                 "temperature": target.temperature,
-                "max_tokens": target.max_tokens,
+                "max_tokens": max_tokens,
             }
             if target.json_mode and schema is not None:
                 kwargs["response_format"] = {"type": "json_object"}
@@ -624,6 +642,20 @@ class AIGateway:
                 value = schema.model_validate(extract_json_object(text))
             except (ValueError, ValidationError) as exc:
                 problem = _short_error(exc)
+                # A reply cut off at max_tokens is not a malformed one: asking for a "repair" in the same room cut it off
+                # again ("no JSON object in response", 23 of DeepSeek's 214 calls on 22 Oct). It gets one try with twice
+                # the room instead (MAX_OUTPUT_TOKENS at most), and the failure says it was cut off.
+                finish = getattr(resp.choices[0], "finish_reason", None) if resp.choices else None
+                if finish == "length":
+                    if not widened and max_tokens < MAX_OUTPUT_TOKENS:
+                        widened = True
+                        max_tokens = min(max_tokens * 2, MAX_OUTPUT_TOKENS)
+                        log.info("%s stopped at its max_tokens; trying again with %d", target.key, max_tokens)
+                        if not limiter.acquire(est, max_wait=MAX_PACING_WAIT, extra_quota=extra):
+                            raise _Retryable("paced before a wider retry", transient=True) from exc
+                        continue
+                    self._note_failure(target, f"cut off at max_tokens {max_tokens}: {problem}")
+                    raise _Retryable("cut off at max_tokens") from exc
                 if not repaired:
                     repaired = True
                     log.info("%s returned invalid output (%s); asking for a repair", target.key, problem)

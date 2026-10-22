@@ -145,6 +145,15 @@ api_key_env = "DEEPSEEK_API_KEY"
 timeout_s = 120
 paid = true  # left out of the steps that run every day (annual_catchup.py), even where the key is loaded
 
+# Cohere (owner's key, 2026-10-22: "may give some relief to other models"). OpenAI-compatible endpoint
+# (docs.cohere.com/docs/compatibility-api). A trial key allows 20 requests a minute and 1,000 calls a month
+# (docs.cohere.com/docs/rate-limits, read 22 Oct), so it is the last spare, spread to ~30 a day.
+[providers.cohere]
+base_url = "https://api.cohere.ai/compatibility/v1"
+api_key_env = "COHERE_API_KEY"
+timeout_s = 180
+limits = { rpmo = 1000, rpd = 30 }
+
 # Second keys (owner, 2026-10-22: "work load will get divided and less chances of having errors"; the owner takes the
 # risk that a provider's terms count one person's keys together). Each is a copy of its provider under its own name:
 # every route entry of the base provider is repeated for it (gateway.expand_key_aliases), with its own limits, quota
@@ -187,7 +196,7 @@ timeout_s = 120
 provider = "groq"
 model = "openai/gpt-oss-20b"
 json_mode = true
-max_tokens = 200
+max_tokens = 400   # was 200: its reasoning counts against it, and a cut-off reply is Groq's 400 "Failed to generate JSON"
 extra_body = { reasoning_effort = "low" }  # its reasoning tokens count against max_tokens
 limits = { rpm = 30, tpm = 8000, rpd = 1000, tpd = 200000 }
 
@@ -242,7 +251,7 @@ limits = { rpm = 150, tpm = 625_000 }
 provider = "groq"
 model = "openai/gpt-oss-20b"
 json_mode = true
-max_tokens = 200
+max_tokens = 400   # was 200: its reasoning counts against it, and a cut-off reply is Groq's 400 "Failed to generate JSON"
 extra_body = { reasoning_effort = "low" }  # its reasoning tokens count against max_tokens
 limits = { rpm = 30, tpm = 8000, rpd = 1000, tpd = 200000 }
 
@@ -376,6 +385,15 @@ context_tokens = 120000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
 
+[[routes.pass2]]
+provider = "cohere"
+model = "command-a-03-2025"   # established Command A, 256K window; the last spare (trial key, 1,000 calls a month)
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 200000
+limits = { rpm = 15 }
+
 [[routes.pass2_bulk]]
 provider = "zai"
 model = "glm-4.5-flash"
@@ -458,6 +476,15 @@ max_tokens = 6000
 context_tokens = 120000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
+
+[[routes.pass2_bulk]]
+provider = "cohere"
+model = "command-a-03-2025"   # established Command A, 256K window; the last spare (trial key, 1,000 calls a month)
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 200000
+limits = { rpm = 15 }
 
 [[routes.pass2_packed]]
 provider = "gemini"
@@ -577,7 +604,8 @@ limits = { rpm = 10 }
 # request each, before either joins a card route. Free endpoint ~40 requests/min (assumption: NVIDIA forum and
 # third-party pages, not an official limits page; the account dashboard shows the real figure).
 # 22 Oct 07:00 IST, first check: deepseek-v4.1-flash timed out at 120 s on a one-line reply (thinking on by default;
-# NIM switches it off through the chat template), kimi-k2.6 answered 404 "not found for account" (not on this key)
+# NIM switches it off through the chat template), kimi-k2.6 and nemotron-3-super answered 404 "not found for account"
+# (not on this key): both taken off the config
 [[routes.trial_new]]
 provider = "nvidia"
 model = "deepseek-ai/deepseek-v4.1-flash"
@@ -593,16 +621,6 @@ provider = "nvidia"
 model = "z-ai/glm-5.3"
 spare = true
 json_mode = true
-max_tokens = 400
-context_tokens = 120000
-extra_body = { chat_template_kwargs = { enable_thinking = false } }
-limits = { rpm = 30 }
-
-[[routes.trial_new]]
-provider = "nvidia"
-model = "nvidia/nemotron-3-super-120b-a12b"
-spare = true
-json_mode = false   # with thinking off it answers "{}" in JSON mode (test_gateway)
 max_tokens = 400
 context_tokens = 120000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
@@ -708,6 +726,15 @@ max_tokens = 400
 context_tokens = 32000
 limits = { rpm = 10 }
 
+[[routes.trial_new]]
+provider = "cohere"
+model = "command-a-03-2025"   # established Command A, 256K window; the last spare (trial key, 1,000 calls a month)
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 200000
+limits = { rpm = 15 }
+
 [[routes.vision]]
 provider = "zai"
 model = "glm-4.6v-flash"
@@ -719,7 +746,7 @@ limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 provider = "mistral"
 model = "mistral-small-2603"  # takes images; free tier 20k tokens/min, 1 request/s
 max_tokens = 2500
-limits = { rpm = 50, tpm = 20_000 }
+limits = { rpm = 20, tpm = 20_000 }   # was 50/min: 7 429s and no request served on 22 Oct (assumption: ~1/s, unverified)
 
 # The long-document spare since Ultra left the card routes (round 4): 250K window, 10% WRONG on 10 cards. Without it a
 # slow or rate-limited GLM left two long filings with no provider at all on free tiers (round 4's re-run).
@@ -818,6 +845,15 @@ context_tokens = 120000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
 
+[[routes.pass2_long]]
+provider = "cohere"
+model = "command-a-03-2025"   # established Command A, 256K window; the last spare (trial key, 1,000 calls a month)
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 200000
+limits = { rpm = 15 }
+
 [[routes.vision]]
 provider = "gemini"
 model = "gemini-3.1-flash-lite"  # reads images; shares its daily quota with pass 1
@@ -855,7 +891,7 @@ model = "mistral-small-2603"      # vision's model, on the Experiment tier's mon
 json_mode = true
 max_tokens = 2000
 max_share = 0.5
-limits = { rpm = 50, tpm = 20_000 }
+limits = { rpm = 20, tpm = 20_000 }
 
 [[routes.critic]]
 provider = "groq"

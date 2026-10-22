@@ -691,7 +691,8 @@ def cmd_models(args, settings, sink) -> int:
     for provider, entry in sorted(targets.items()):
         t = entry["target"]
         try:
-            available = sorted(m.id for m in gateway._client(t).models.list())
+            # Gemini lists "models/gemini-3.6-flash": every configured Gemini model read as missing (22 Oct)
+            available = sorted(m.id.removeprefix("models/") for m in gateway._client(t).models.list())
         except Exception as exc:  # some providers do not serve /models; report and move on
             report[provider] = {"error": f"{type(exc).__name__}: {exc}"[:300], "configured": sorted(entry["models"])}
             continue

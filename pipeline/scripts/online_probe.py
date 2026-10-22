@@ -246,6 +246,41 @@ def main() -> int:
 
             step(f"PIT after the page: {index}{' csv' if extra else ''}, 1 Sep - today", pit_after_page)
 
+        # The owner's insider tracker (github.com/Pareshking/NSE-BSE-Insider-Tracker, scripts/nse_insider.py and
+        # insiders_clean/history.py, read 22 Oct 2026): the live list is corporates-pit-gg, one row per filing with
+        # its XBRL file; the history of bulk and block deals is historicalOR/bulk-block-short-deals
+        def pit_gg():
+            got = _list(nse._get(f"{SITE}/api/corporates-pit-gg", {"index": "equities"}).json())
+            found["pit_gg"] = got
+            dates = sorted(str(x.get("broadcastDateTime") or "")[:11] for x in got if x.get("broadcastDateTime"))
+            xml = sum(1 for x in got if x.get("xmlFileName"))
+            return (f"{len(got)} filings, {xml} with an XBRL file; broadcast {dates[:1]} .. {dates[-1:]}; "
+                    f"fields {sorted(got[0])[:14] if got else []}")
+
+        step("PIT: corporates-pit-gg (the tracker's list)", pit_gg)
+
+        def pit_xbrl():
+            first = next((x for x in found.get("pit_gg") or [] if x.get("xmlFileName")), None)
+            if not first:
+                return "no filing with an XBRL file"
+            r = nse._client.get(first["xmlFileName"], timeout=20)
+            tags = re.findall(r"<[\w-]+:(NameOfThePerson|CategoryOfPerson|SecuritiesAcquiredOrDisposedTransactionType|"
+                              r"SecuritiesAcquiredOrDisposedNumberOfSecurity|ModeOfAcquisitionOrDisposal)[^>]*>([^<]{0,80})<",
+                              r.text)
+            return f"HTTP {r.status_code}, {len(r.content)} bytes, {first.get('symbol')}: {tags[:6]}"
+
+        step("PIT: one filing's XBRL (person, category, buy/sell, quantity)", pit_xbrl)
+
+        for option in ("bulk_deals", "block_deals"):
+            def deals_history(option=option):
+                r = nse._get(f"{SITE}/api/historicalOR/bulk-block-short-deals",
+                             {"optionType": option, "from": week_ago, "to": to_day, "csv": "true"})
+                kind = r.headers.get("content-type", "")
+                lines = r.text.strip().splitlines()
+                return f"HTTP {r.status_code} {kind}, {len(lines)} lines; first {lines[:2]!r:.240}"
+
+            step(f"Deals history: historicalOR {option}, 7 days, csv", deals_history)
+
         for symbol in COMPANIES:
             def results_gap(symbol=symbol):
                 filings = _list(nse._get(f"{SITE}/api/integrated-filing-results", {"index": "equities",

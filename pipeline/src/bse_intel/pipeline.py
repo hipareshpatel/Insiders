@@ -872,7 +872,8 @@ def basis_mixups(out: Pass2Output, tagged, standalone) -> list[str]:
     """A crore figure on a consolidated card that is the standalone file's figure for that line, not the consolidated
     one: Ceigall's EBITDA ₹121 Cr and margin beside consolidated revenue (independent review, 2026-10-21; owner: "not
     using consolidated numbers where those are there or mixing them with standalone"). Judged only where the two files
-    differ by more than 3% for the quarter, at the figure's own decimals."""
+    differ by more than 1% for the quarter, at the figure's own decimals: at 3% HDFC Life's standalone PAT ₹508 Cr passed
+    as consolidated (₹521.60 Cr, 2.6% apart; hourly review, 22 Oct 2026)."""
     if out.card is None or tagged is None or standalone is None or tagged.basis != "CONSOLIDATED":
         return []
     from .grounding import _tokens
@@ -880,7 +881,7 @@ def basis_mixups(out: Pass2Output, tagged, standalone) -> list[str]:
     own = {m.metric: m.value for m in tagged.metrics if m.period == tagged.period and m.value is not None}
     other = {m.metric: m.value for m in standalone.metrics if m.period == tagged.period and m.value is not None}
     pairs = [(name, own[name], other[name]) for name in _BASIS_LINES if name in own and name in other
-             and own[name] and abs(other[name] - own[name]) > 0.03 * abs(own[name])]
+             and own[name] and abs(other[name] - own[name]) > 0.01 * abs(own[name])]
     if not pairs:
         return []
     found = []

@@ -67,8 +67,11 @@ timeout_s = 300
 base_url = "https://api.mistral.ai/v1"
 api_key_env = "MISTRAL_API_KEY"
 timeout_s = 120
-# Free "Experiment" tier monthly allowance, shared across models (check
-# admin.mistral.ai -> Limits for your workspace's current numbers).
+# Free plan, no payment method (owner, measured 22 Oct 2026 on admin.mistral.ai): $10 of API usage a month across all
+# models, resetting on the 1st; $2.81 used 1-22 Oct for ~5.9K requests (ministral 8B and 14B). Pay-as-you-go is off, so
+# past the allowance requests fail rather than bill. Rate limits are per model (Limits page): ministral-8b 625k tokens/min
+# and 3.13 requests/s; mistral-small-2603 and mistral-medium 20k tokens/min and 1 request/s, so a card-sized prompt
+# never fits them. The token cap below is a ceiling only; the dollar allowance binds first.
 limits = { tpmo = 1_000_000_000 }
 
 [providers.zai]
@@ -626,15 +629,16 @@ context_tokens = 120000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
 
-# Mistral's free Experiment tier: the provider's monthly allowance above, ~1 request/s (assumption, admin.mistral.ai)
+# Mistral Medium: 20k tokens/min and 1 request/s (Limits page, 22 Oct 2026). With no tpm set the gateway sent prompts
+# over 20k and every one came back 429; now a prompt that cannot fit goes straight to the next entry.
 [[routes.trial_new]]
 provider = "mistral"
 model = "mistral-medium-3.5"
 spare = true
 json_mode = true
 max_tokens = 400
-context_tokens = 120000
-limits = { rpm = 30 }
+context_tokens = 18000
+limits = { rpm = 30, tpm = 20_000 }
 
 [[routes.trial_new]]
 provider = "sambanova"
@@ -746,7 +750,7 @@ limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 provider = "mistral"
 model = "mistral-small-2603"  # takes images; free tier 20k tokens/min, 1 request/s
 max_tokens = 2500
-limits = { rpm = 20, tpm = 20_000 }   # was 50/min: 7 429s and no request served on 22 Oct (assumption: ~1/s, unverified)
+limits = { rpm = 20, tpm = 20_000 }   # Limits page 22 Oct: 20k tokens/min, 1 request/s
 
 # The long-document spare since Ultra left the card routes (round 4): 250K window, 10% WRONG on 10 cards. Without it a
 # slow or rate-limited GLM left two long filings with no provider at all on free tiers (round 4's re-run).
@@ -887,7 +891,7 @@ limits = { rpm = 15, tpm = 250_000, rpd = 500 }
 
 [[routes.critic]]
 provider = "mistral"
-model = "mistral-small-2603"      # vision's model, on the Experiment tier's monthly allowance (assumption: free, as for vision)
+model = "mistral-small-2603"      # vision's model, on the Free plan's $10 monthly allowance (measured 22 Oct)
 json_mode = true
 max_tokens = 2000
 max_share = 0.5

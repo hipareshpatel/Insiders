@@ -90,3 +90,4 @@ One line per lead check-in (every 15 minutes since 2026-10-20, owner): time IST,
 | 22 Oct 06:40 | Runs OK (the 05:32 run PARTIAL after the outage backlog), queue 1,000 cap, failed 57, D1 writes 2,541, seed 12 shards running | 30-min check-in: nothing to fix |
 | 22 Oct 07:10 | Runs OK (06:15 run OK), queue 1,000 cap, failed 57, none recent, D1 writes 5,868 | #59 merged (NVIDIA spares, second-key aliases); waiting on the owner's *_2 secrets; Nemotron via OpenRouter failing 33% today, DeepSeek 11% (no JSON) |
 | 22 Oct 07:45 | Hourly audit 1: 7 cards blind 3 right / 3 minor / 1 wrong (Sagility); superseded quarters made basis-aware (3 consolidated cards were hidden) | key check: all *_2 keys and Cohere OK; #60 merged |
+| 22 Oct 07:41 | Nightly pause (last run 06:45 OK), queue 1,000 cap, failed 57, none recent, D1 writes 9,642; #61 deployed 02:10Z | 30-min check-in: Nemotron/OpenRouter failing 48% (empty answers), DeepSeek 12% (no JSON); nothing to fix |

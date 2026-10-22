@@ -88,13 +88,23 @@ export const companyPath = (c: { symbol?: string | null; scrip_code: string }) =
 export const listing = (symbol: string | null | undefined, key: string | null | undefined) =>
   symbol ? `NSE: ${symbol}` : (key ?? "");
 
-/** NSE cash-market session for a timestamp (exchange holidays not modelled). */
+/** NSE cash-market trading holidays (NSE holiday-master, measured 2026-10-22); the pipeline keeps the same list
+ *  (timeutil.NSE_HOLIDAYS). A year not listed counts its weekdays as trading days. */
+export const NSE_HOLIDAYS = new Set([
+  "2026-01-15", "2026-01-26", "2026-02-15", "2026-03-03", "2026-03-21", "2026-03-26", "2026-03-31", "2026-04-03",
+  "2026-04-14", "2026-05-01", "2026-05-28", "2026-06-26", "2026-08-15", "2026-09-14", "2026-10-02", "2026-10-20",
+  "2026-11-08", "2026-11-10", "2026-11-24", "2026-12-25",
+]);
+
+/** NSE cash-market session for a timestamp: a weekend or an exchange holiday is a non-trading day. */
 export function marketSession(iso: string): "Pre-market" | "Market hours" | "Post-market" | "Non-trading day" {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: IST, weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
+    year: "numeric", month: "2-digit", day: "2-digit",
   }).formatToParts(new Date(iso));
   const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
-  if (["Sat", "Sun"].includes(get("weekday"))) return "Non-trading day";
+  const day = `${get("year")}-${get("month")}-${get("day")}`;
+  if (["Sat", "Sun"].includes(get("weekday")) || NSE_HOLIDAYS.has(day)) return "Non-trading day";
   const minutes = Number(get("hour")) * 60 + Number(get("minute"));
   if (minutes < 9 * 60 + 15) return "Pre-market";
   if (minutes <= 15 * 60 + 30) return "Market hours";

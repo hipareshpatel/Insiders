@@ -52,3 +52,58 @@ def test_a_new_card_is_pruned_the_same_way():
     assert prune_quote_failures(out, problems) is not None
     assert [k.label for k in out.card.key_numbers] == ["PAT"] and len(out.card.what_happened) == 1
     assert prune_quote_failures(out, ["something else entirely"]) is None
+
+
+def test_what_keeps_a_card_held_is_counted_by_class():
+    from bse_intel.prune import breakdown, fault_classes
+
+    held = copy.deepcopy(CARD)
+    held["grounding"] = {"ungrounded": ["7,993"], "math_mismatches": []}
+    held["review"]["issues"].append("Numbers not found in the filing text or company memory: 7,993")
+    classes = fault_classes(held)
+    assert classes[0] == "ungrounded" and "math_mismatches" not in classes
+    assert "Numbers not found in the filing text or company memory: N" in classes
+    assert 'key number "…" quotes a sentence that is not in the filing' in classes
+    other = copy.deepcopy(held)
+    other["review"]["issues"][-1] = "Numbers not found in the filing text or company memory: 12.5"
+    rows = [({"scrip_code": "1", "symbol": "AAA", "news_id": "n1"}, held), ({"scrip_code": "2", "symbol": "BBB", "news_id": "n2"}, other)]
+    top = {b["class"]: b for b in breakdown(rows)}
+    assert top["Numbers not found in the filing text or company memory: N"]["cards"] == 2
+    assert top["ungrounded"]["examples"] == ["AAA n1", "BBB n2"]
+
+
+def test_release_prunes_flagged_published_cards_and_leaves_a_quarter_that_has_a_card_held():
+    import json
+
+    from bse_intel.prune import release
+
+    published = {"event_type": "RESULTS", "results": {"period": "Q2FY27"}, "headline": "Demo Q2FY27", "review": {"status": "OK"}}
+    twin = {**copy.deepcopy(CARD), "results": {"period": "Q2FY27"}}
+    other = {**copy.deepcopy(CARD), "event_type": "ORDER_WIN"}
+    flagged = {**copy.deepcopy(CARD), "event_type": "ORDER_WIN"}
+    flagged["review"]["status"] = "UNCHECKED"   # published without a second opinion
+    rows = [{"news_id": f"n{i}", "scrip_code": "1", "symbol": "DEMO", "filed_at": f"2026-10-2{i}", "held": held,
+             "needs_review": review, "card_json": json.dumps(card)}
+            for i, (card, held, review) in enumerate([(published, 0, 0), (twin, 1, 1), (other, 1, 1), (flagged, 0, 1)])]
+
+    class Sink:
+        written = None
+
+        def query(self, name, params):
+            return rows if params[0] == "" else []
+
+        def execute(self, name, batch):
+            Sink.written = (name, [b["news_id"] for b in batch])
+            return len(batch)
+
+    report = release(Sink())
+    assert report["kept_held"] == {"other faults": 0, "quarter has a card": 1}
+    assert Sink.written == ("cards_release_pruned", ["n2", "n3"])
+    assert [c.get("published", False) for c in report["cards"]] == [False, True]
+    assert report["flagged_published"] == 0
+
+
+def test_an_unchecked_held_card_is_not_released():
+    card = copy.deepcopy(CARD)
+    card["review"]["status"] = "UNCHECKED"
+    assert prune_card(card) is None

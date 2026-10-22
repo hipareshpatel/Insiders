@@ -507,6 +507,27 @@ limits = { rpm = 10 }
 # Candidates on SambaNova and SiliconFlow (owner's keys, 2026-10-20; neither account has a card, so a paid model refuses
 # and nothing is charged). No pipeline step reads this route: `ai-check` (providers-check.yml) sends each one tiny
 # request, and only the ones that answer free move to memory_seed / pass2_long as spares.
+# NVIDIA's catalogue (owner, 2026-10-22: "add the best one or two as backup writers"): checked here first, one tiny
+# request each, before either joins a card route. Free endpoint ~40 requests/min (assumption: NVIDIA forum and
+# third-party pages, not an official limits page; the account dashboard shows the real figure).
+[[routes.trial_new]]
+provider = "nvidia"
+model = "deepseek-ai/deepseek-v4.1-flash"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+limits = { rpm = 30 }
+
+[[routes.trial_new]]
+provider = "nvidia"
+model = "moonshotai/kimi-k2.6"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+limits = { rpm = 30 }
+
 [[routes.trial_new]]
 provider = "sambanova"
 model = "DeepSeek-V3.2"

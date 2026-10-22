@@ -70,3 +70,33 @@ def test_what_keeps_a_card_held_is_counted_by_class():
     top = {b["class"]: b for b in breakdown(rows)}
     assert top["Numbers not found in the filing text or company memory: N"]["cards"] == 2
     assert top["ungrounded"]["examples"] == ["AAA n1", "BBB n2"]
+
+
+def test_release_prunes_flagged_published_cards_and_leaves_a_quarter_that_has_a_card_held():
+    import json
+
+    from bse_intel.prune import release
+
+    published = {"event_type": "RESULTS", "results": {"period": "Q2FY27"}, "headline": "Demo Q2FY27", "review": {"status": "OK"}}
+    twin = {**copy.deepcopy(CARD), "results": {"period": "Q2FY27"}}
+    other = {**copy.deepcopy(CARD), "event_type": "ORDER_WIN"}
+    flagged = {**copy.deepcopy(CARD), "event_type": "ORDER_WIN"}
+    rows = [{"news_id": f"n{i}", "scrip_code": "1", "symbol": "DEMO", "filed_at": f"2026-10-2{i}", "held": held,
+             "needs_review": review, "card_json": json.dumps(card)}
+            for i, (card, held, review) in enumerate([(published, 0, 0), (twin, 1, 1), (other, 1, 1), (flagged, 0, 1)])]
+
+    class Sink:
+        written = None
+
+        def query(self, name, params):
+            return rows if params[0] == "" else []
+
+        def execute(self, name, batch):
+            Sink.written = (name, [b["news_id"] for b in batch])
+            return len(batch)
+
+    report = release(Sink())
+    assert report["kept_held"] == {"other faults": 0, "quarter has a card": 1}
+    assert Sink.written == ("cards_release_pruned", ["n2", "n3"])
+    assert [c.get("published", False) for c in report["cards"]] == [False, True]
+    assert report["flagged_published"] == 0

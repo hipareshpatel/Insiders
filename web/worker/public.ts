@@ -526,7 +526,12 @@ api.get("/promises/overdue", async (c) => {
 // Needs-review queue (View 5): published cards marked for review, newest first (partial index). The held ones are the
 // owner's (/api/owner/review): the public never sees a held card's headline (private launch, 2026-10-20).
 export async function reviewQueue(c: Context<AppEnv>, withHeld = false) {
-  const which = withHeld ? "c.needs_review = 1 OR c.held = 1" : "c.needs_review = 1 AND c.held = 0";
+  // a held results card whose quarter a published card already owns (D20) is superseded, not waiting on anyone: 36 of
+  // the 223 in the owner's count on 22 Oct 2026 (release-pruned keeps them held for the same reason)
+  const superseded = `c.held = 1 AND c.event_category = 'RESULTS' AND EXISTS (SELECT 1 FROM cards p
+      WHERE p.scrip_code = c.scrip_code AND p.held = 0 AND p.news_id <> c.news_id AND p.event_category = 'RESULTS'
+        AND json_extract(p.card_json, '$.results.period') = json_extract(c.card_json, '$.results.period'))`;
+  const which = withHeld ? `(c.needs_review = 1 OR c.held = 1) AND NOT (${superseded})` : "c.needs_review = 1 AND c.held = 0";
   // the list shows 100, the heading the real count; a card whose filing is queued again says so (owner, 2026-10-20:
   // "never seen anything getting reduced": the heading was the list's length, capped at 100, and the button's
   // "queued" state lived only in the open page)

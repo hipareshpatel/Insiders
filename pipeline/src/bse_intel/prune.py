@@ -124,9 +124,21 @@ def release(sink, dry_run: bool = False) -> dict:
             owned.add((row["scrip_code"], quarter))
         out.append({"news_id": row["news_id"], "symbol": row.get("symbol"), "dropped": len(dropped)})
         writes.append({"news_id": row["news_id"], "card_json": json.dumps(card, ensure_ascii=False)})
+    # a published card flagged for review only for points its quote does not carry loses those points too: they are on
+    # the public site now (21 of the 61 flagged on 22 Oct 2026 had a key number its own quote does not carry)
+    flagged = []
+    for row, card in cards:
+        if row.get("held") or not row.get("needs_review"):
+            continue
+        dropped = prune_card(json.loads(json.dumps(card)))
+        if dropped is None:
+            flagged.append((row, card))
+            continue
+        prune_card(card)
+        out.append({"news_id": row["news_id"], "symbol": row.get("symbol"), "dropped": len(dropped), "published": True})
+        writes.append({"news_id": row["news_id"], "card_json": json.dumps(card, ensure_ascii=False)})
     written = 0 if dry_run or not writes else sink.execute("cards_release_pruned", writes)
     log.info("release-pruned: %d released, %s", len(out), skipped)
-    flagged = [(r, c) for r, c in cards if not r.get("held") and r.get("needs_review")]
     return {"released": len(out), "rows_written": written, "dry_run": dry_run, "kept_held": skipped,
             "kept_why": breakdown(kept), "flagged_published": len(flagged), "flagged_why": breakdown(flagged),
             "cards": out}

@@ -700,3 +700,19 @@ def test_a_spare_writer_failing_while_the_better_ones_are_at_their_day_waits_for
     pipeline.run("live", time_budget_s=60)
     (row,) = rows(sink, "select status, attempts from filings where news_id = 'q'")
     assert row == {"status": "FAILED", "attempts": 2}
+
+
+def test_a_foreign_currency_deal_gets_no_rupee_size():
+    """Data chain audit A4 (22 Oct 2026): "USD 138 million" stored as ₹13.8 Cr made the order's share of revenue and of
+    market cap ~85x too small. A size that is the filing's foreign amount, with no rupee amount of that size in the
+    filing, is dropped; one the filing also writes in rupees stays."""
+    from bse_intel.pipeline import foreign_deal_amount
+
+    text = "The Company has received an order worth USD 138 million from a customer in the Middle East."
+    assert foreign_deal_amount(13.8, text) == "USD 138 million"
+    assert foreign_deal_amount(138.0, text) == "USD 138 million"
+    both = "an order worth USD 138 million (approximately Rs 1,150 crore) and a second order of Rs 13.8 crore"
+    assert foreign_deal_amount(13.8, both) is None          # a rupee amount of that size is in the filing
+    assert foreign_deal_amount(1150.0, both) is None
+    assert foreign_deal_amount(250.0, "an order worth Rs 250 crore") is None
+    assert foreign_deal_amount(None, text) is None

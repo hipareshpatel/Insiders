@@ -1584,6 +1584,36 @@ def deal_echo_slips(out: Pass2Output, text: str) -> list[str]:
 _HOLDERS = re.compile(r"\b(?:share|stock|unit|equity)\s*holders?\b|\bshareholders?\b|\bpromoters?\b|\bmembers\b", re.I)
 
 
+_CRORE_OF = {"million": 0.1, "millions": 0.1, "mn": 0.1, "billion": 100.0, "billions": 100.0, "bn": 100.0,
+             "lakh": 0.01, "lakhs": 0.01, "crore": 1.0, "crores": 1.0, "thousand": 1e-4, "thousands": 1e-4}
+
+
+def foreign_deal_amount(amount_cr: float | None, text: str) -> str | None:
+    """The filing's foreign-currency amount a deal's ₹ crore figure is, when the filing writes no rupee amount of that
+    size: "USD 138 million" as amount_cr 13.8 (or 138). None when the amount is a rupee figure the filing states."""
+    from .grounding import _FOREIGN, _tokens
+
+    if not amount_cr or not text:
+        return None
+    close = lambda a, b: abs(a - b) <= 0.005 * max(abs(a), abs(b)) + 1e-9
+    hit = None
+    for m in _FOREIGN.finditer(text):
+        try:
+            value = float(m.group(1).replace(",", ""))
+        except ValueError:
+            continue
+        scale = _CRORE_OF.get((m.group(2) or "").lower())
+        if any(close(amount_cr, value * f) for f in {1.0, scale or 1.0}):
+            hit = " ".join(m.group(0).split())
+            break
+    if hit is None:
+        return None
+    rupees = [v for v, *_ in _tokens(_FOREIGN.sub(" ", text))]
+    if any(close(amount_cr, v * f) for v in rupees for f in (1.0, 1e-7, 0.01, 0.1, 100.0)):
+        return None   # the filing also writes it in rupees ("USD 12 mn (₹100 Cr)" style): a real ₹ figure
+    return hit
+
+
 def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], balance_sheet: list[dict],
                       text: str = "") -> list[str]:
     """A deal size that is the company's own revenue, net worth or share capital is dropped; a terminated
@@ -1599,6 +1629,12 @@ def apply_deal_guards(out: Pass2Output, filing: Filing, history: list[dict], bal
         log.info("deal guards for %s: a rating's facilities are not a deal (₹%s Cr dropped)", filing.news_id, deal.amount_cr)
         return [f"deal value dropped: a rating card's ₹{deal.amount_cr} Cr is the rated facilities, not a deal"]
     notes = []
+    foreign = foreign_deal_amount(deal.amount_cr, text)
+    if foreign:
+        # "USD 138 million" stored as ₹13.8 Cr: every proportion of it (of revenue, of market cap) ~85x small (data
+        # chain audit A4, 22 Oct 2026). No ₹ size then: the card's facts keep the amount in its own currency.
+        notes.append(f"deal size ₹{deal.amount_cr:g} Cr dropped: it is the filing's {foreign}, not a rupee amount")
+        deal.amount_cr = None
     known = {"financial_metrics": history + [m.model_dump() for m in out.dossier_delta.financial_metrics],
              "balance_sheet": balance_sheet}
     computed = gate.tranche_total_cr(deal.tranches, text)

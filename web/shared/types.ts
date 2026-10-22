@@ -193,6 +193,15 @@ export interface CardBody {
     versus_prior?: string | null; verified?: boolean; issue?: string | null }[] | null;
   /** Set when the results figures came from the filing's XBRL file. */
   xbrl?: { basis: string | null; period: string | null; figures: number } | null;
+  /** An annual report's red-flag check, made by code from its tagged XBRL (annual_xbrl.card_block, 22 Oct 2026). */
+  annual_checks?: {
+    fy: string; basis?: string; opinion?: string; auditors?: string[]; matters?: string[];
+    caro?: { clause: string; text: string }[]; caro_count?: number;
+    contingent_cr?: number; contingent_top?: { what: string; cr: number }[];
+    related_gross_cr?: number; related_top?: { party: string; nature: string; cr: number }[];
+    loss_entities?: number; loss_entities_cr?: number; kmp_top?: { name: string; role: string; cr: number }[];
+    revenue_cr?: number; net_worth_cr?: number;
+  } | null;
   /** Market data as it stood when the filing came out (stored price series, else recent data). */
   priced_at_filing?: { last_price?: number; price_date?: string; market_cap_cr?: number; ret_1w?: number; ret_1m?: number; point_in_time?: boolean } | null;
   /** The event's own block on the card's face, made by code (pipeline card_context.py, signals.scale_parts). */

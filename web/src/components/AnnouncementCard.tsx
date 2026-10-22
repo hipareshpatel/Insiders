@@ -710,6 +710,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
         {rating && <RatingBlock rc={rating} amount={rated} />}
         {caseStage && <CaseBlock cs={caseStage} />}
         {card.volume_strip && <VolumeStrip s={card.volume_strip} />}
+        {event === "ANNUAL_REPORT" && card.annual_checks && <AnnualChecks a={card.annual_checks} />}
         {tiles.length > 0 && <KeyBlock items={tiles} />}
 
         {facts.length > 0 && (
@@ -1215,6 +1216,53 @@ function CallTakeaways({ view }: { view: CallTakeawaysView }) {
           </ul>
         </div>
       ))}
+    </BlockShell>
+  );
+}
+
+/** An annual report read for its red flags (owner, 22 Oct 2026), from the company's tagged file: the auditor's opinion
+ * and what it raises, adverse CARO remarks, contingent liabilities against net worth, related-party dealings against
+ * revenue, loss-making group entities. A flag is coloured; a clean line says so plainly. */
+function AnnualChecks({ a }: { a: NonNullable<CardBody["annual_checks"]> }) {
+  const share = (part?: number, whole?: number) => (part && whole && whole > 0 ? (part / whole) * 100 : null);
+  const contingentPct = share(a.contingent_cr, a.net_worth_cr);
+  const relatedPct = share(a.related_gross_cr, a.revenue_cr);
+  const clean = !a.opinion || /unmodified|unqualified/i.test(a.opinion);
+  const rows: { label: string; text: ReactNode; flag?: "neg" | "warn" }[] = [];
+  if (a.opinion || a.auditors?.length) {
+    rows.push({ label: "Auditor", flag: clean ? undefined : "neg",
+      text: <>{a.opinion ? <span className="font-semibold">{titleCase(a.opinion)} opinion</span> : "Opinion not tagged"}{a.auditors?.[0] ? ` · ${a.auditors[0].split(" (")[0]}` : ""}</> });
+  }
+  if (a.matters?.length) rows.push({ label: "Raised in the report", text: a.matters.join(" · "), flag: a.matters.some((m) => /qualif|adverse|disclaim|emphasis|going concern/i.test(m)) ? "warn" : undefined });
+  if (a.caro?.length) rows.push({ label: "CARO remarks", flag: "neg", text: a.caro.map((c) => `${c.clause}: ${c.text}`).join(" · ") });
+  else if (a.caro_count) rows.push({ label: "CARO", text: `${a.caro_count} clauses read, none adverse` });
+  if (a.contingent_cr != null) {
+    rows.push({ label: "Contingent liabilities", flag: contingentPct != null && contingentPct >= 50 ? "neg" : contingentPct != null && contingentPct >= 25 ? "warn" : undefined,
+      text: <>{cr(a.contingent_cr)}{contingentPct != null ? ` = ${contingentPct.toFixed(contingentPct < 10 ? 1 : 0)}% of net worth` : ""}
+        {a.contingent_top?.length ? <span className="text-ink-3"> · {a.contingent_top.map((c) => `${c.what} ${cr(c.cr)}`).join("; ")}</span> : null}</> });
+  }
+  if (a.related_top?.length || a.related_gross_cr) {
+    rows.push({ label: "Related parties", flag: relatedPct != null && relatedPct >= 10 ? "warn" : undefined,
+      text: <>{a.related_gross_cr ? `${cr(a.related_gross_cr)} in all${relatedPct != null ? ` = ${relatedPct.toFixed(1)}% of revenue` : ""}` : ""}
+        {a.related_top?.length ? <span className="text-ink-3">{a.related_gross_cr ? " · " : ""}{a.related_top.map((r) => `${r.party} (${r.nature}) ${cr(r.cr)}`).join("; ")}</span> : null}</> });
+  }
+  if (a.loss_entities) rows.push({ label: "Loss-making group entities", flag: "warn",
+    text: `${a.loss_entities}${a.loss_entities_cr ? `, ${cr(Math.abs(a.loss_entities_cr))} of losses to the group` : ""}` });
+  if (a.kmp_top?.length) rows.push({ label: "Top pay", text: a.kmp_top.map((k) => `${k.name} (${k.role}) ${cr(k.cr)}`).join("; ") });
+  if (!rows.length) return null;
+  return (
+    <BlockShell title={`Annual report check · ${a.fy}${a.basis ? ` · ${a.basis.toLowerCase()}` : ""}`}
+      right={<span className="ml-auto text-[10px] font-semibold normal-case tracking-normal text-ink-3">from the company's tagged filing</span>}>
+      <ul className="space-y-1.5">
+        {rows.map((r) => (
+          <li key={r.label} className="text-[13px] leading-relaxed text-ink-2">
+            <span className={cn("mr-1.5 font-semibold", r.flag === "neg" ? "text-neg" : r.flag === "warn" ? "text-warn" : "text-ink")}>
+              {r.flag ? "⚑ " : ""}{r.label}:
+            </span>
+            {r.text}
+          </li>
+        ))}
+      </ul>
     </BlockShell>
   );
 }

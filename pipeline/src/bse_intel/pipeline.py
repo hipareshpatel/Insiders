@@ -3333,6 +3333,7 @@ class Pipeline:
         if annual:
             card_json["annual_xbrl"] = {"bases": [r.basis for r in annual], "period": annual[0].fy,
                                         "figures": sum(r.figures() for r in annual)}
+            card_json["annual_checks"] = annual_xbrl.card_block(annual)
         if annual_checked:
             card_json["annual_xbrl_checked"] = annual_checked  # NSE's list as of then: annual_catchup.py
         if events_checked is not None:

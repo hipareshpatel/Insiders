@@ -211,3 +211,26 @@ def test_listing_rows_for_one_basis_keep_the_latest_file():
                                          fileName=BASE + "AR_XBRL_KANORICHEM_05012026100000.xml")]
     (only,) = parse_annual_report_rows(rows)
     assert isinstance(only, AnnualReportFiling) and only.xbrl_url.endswith("_05012026100000.xml")
+
+
+def test_the_card_block_names_the_red_flags_from_the_tagged_files():
+    """Owner, 22 Oct 2026: an annual report card is read for its red flags. The block is the files' own: opinion, CARO,
+    contingent liabilities, related parties, loss-making entities, consolidated first and the standalone filling in."""
+    block = annual_xbrl.card_block([annual_xbrl.parse(STANDALONE), annual_xbrl.parse(CONSOLIDATED)])
+    assert block["basis"] == "CONSOLIDATED" and block["fy"].startswith("FY")
+    assert "opinion" in block or "auditors" in block
+    assert block.get("caro_count", 0) >= 1                      # the standalone file carries CARO (test above)
+    if "contingent_cr" in block:
+        assert block["contingent_cr"] == round(sum(c["cr"] for c in block["contingent_top"]), 2) or len(block["contingent_top"]) == 3
+    assert annual_xbrl.card_block([]) is None
+
+
+def test_only_a_caro_remark_that_something_is_wrong_is_a_flag():
+    clean = ["The Company has been regular in depositing undisputed statutory dues.",
+             "The Company has not defaulted in repayment of loans or other borrowings.",
+             "no fraud by the Company or on the Company has been noticed or reported during the year."]
+    adverse = ["The Company has not been regular in depositing undisputed statutory dues, including GST.",
+               "The Company has defaulted in repayment of loans to a bank: Rs 12.4 crore overdue for 90 days.",
+               "Undisputed dues of Rs 3.2 crore were outstanding for a period of more than six months from the date they became payable."]
+    assert not any(annual_xbrl.caro_adverse(t) for t in clean)
+    assert all(annual_xbrl.caro_adverse(t) for t in adverse)

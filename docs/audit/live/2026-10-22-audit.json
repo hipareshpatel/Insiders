@@ -391,5 +391,36 @@
   ],
   "prompt_variant": "short",
   "reason": "The point 'The board size remains at 6 directors' (basis MEMORY, no refs) is contradicted. Memory's governance XBRL has board_size 6 at Jun-2026 with no cessations, and this filing adds two directors, so the board becomes 8. The rest matches the filing: two independent directors, '5 consecutive years, effective October 22, 2026', 'former Central Board Member of the Reserve Bank of India', Deputy CAG, CAG audit reports for AP, Odisha, TN, WB and Puducherry, and 'former CEO of Doha Bank (2007 – 2022)'."
+ },
+ {
+  "news_id": "nse-106824643",
+  "symbol": "RAJRATAN",
+  "run": "14:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "memory"
+  ],
+  "prompt_variant": "short",
+  "reason": "All figures match p15 table (Revenue 37083 vs 29417 lakh +26%, EBITDA 4579 +14%, PAT 2414 +17%, volume 38605 MT +17%, margin 12.35% vs 13.60% -125bps) and Chennai/Thailand/export points are quoted; but the Chennai takeaway says 'reiterated target timeframe of Q2/Q3 FY27' and call_read guidance=MAINTAINED, while memory (2026-04-29 call) had 'expanded to 60,000 tons by Q2 FY27' - now 'by Q3 FY27', a one-quarter slip; margin also below memory's 'return to normal levels of 13% to 13.5%'. 'Continuous expansion over previous quarters in memory' is supported (294.17/301.53/314.29/318.35/370.83 Cr) but has no memory_refs (citation nit)."
+ },
+ {
+  "news_id": "nse-106824642",
+  "symbol": "SANDUMA",
+  "run": "14:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "memory"
+  ],
+  "prompt_variant": "short",
+  "reason": "Face matches the press release ('Developed land measuring 6.2 acres', 'Lease tenure of 33 years ... freehold ownership after 10 years from the date of commissioning', capex 'announced in due course'); the MEMORY point on 'evaluating medical devices under the new Royal Sandur brand architecture' is supported by memory (nse-106729813, 2026-08-06) but carries no memory_refs - citation nit only."
+ },
+ {
+  "news_id": "nse-106824623",
+  "symbol": "PATELRMART",
+  "run": "14:13 hourly",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "Ghoti (Nashik) and Mangaon/Mahad (Raigad) locations, 'currently operates a network of 54 stores', entry into Nashik / four districts, and FY26 Total Income Rs1,059.29 Cr, EBITDA Rs83.08 Cr, Net Profit Rs39.05 Cr all in the release; '51 stores in April 2026' matches memory t_25bceb0f ('opened its 51st store in Khalapur', 2026-04-24), so +3 in ~6 months computes."
  }
 ]

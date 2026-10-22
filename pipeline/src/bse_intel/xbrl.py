@@ -49,6 +49,9 @@ RESULT_TAGS = {
     "Expenses": "total_expenses",
     "ExceptionalItemsBeforeTax": "exceptional_items",
     "ProfitBeforeExceptionalItemsAndTax": "pbt_before_exceptional",   # for EBITDA only; not kept in memory
+    # a consolidated bank's net profit after minority interest and its associates' share, which its EPS is on (Indian
+    # Bank Q4FY26: ₹3,173.05 Cr where ProfitLossForThePeriod, before both, is ₹3,115.2 Cr; hourly review, 22 Oct 2026)
+    "ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates": "pat_group",
     "ExceptionalItems": "exceptional_items",
     "ProfitBeforeTax": "pbt",
     "ProfitLossBeforeTax": "pbt",
@@ -523,6 +526,10 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
         gross, net = values.get(("gnpa_pct", label)), values.get(("nnpa_pct", label))
         if gross is not None and net is not None and net > gross + 0.005:
             values.pop(("gnpa_pct", label)), values.pop(("nnpa_pct", label))
+    for label in {p for m, p in values if m == "pat_group"}:
+        group = values.pop(("pat_group", label))
+        if group or values.get(("pat", label)) is None:   # a 0 there is the template's filler
+            values[("pat", label)] = group
     _bank_ratio_fillers(values)
     _annualise_roa(values, ends)
     # EBITDA = profit before exceptional items and tax + finance cost + depreciation - other income. From the file's

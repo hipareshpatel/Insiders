@@ -798,3 +798,18 @@ def test_ebitda_comes_from_profit_before_exceptional_items_whatever_the_charges_
     again = xbrl.parse(charged.encode())
     assert next(m.value for m in again.metrics if m.metric == "ebitda" and m.period == again.period) == ebitda
     assert not any(m.metric == "pbt_before_exceptional" for m in again.metrics)   # used, not kept
+
+
+def test_a_consolidated_banks_profit_is_after_minorities_and_associates():
+    """Indian Bank Q4FY26 (hourly review, 22 Oct 2026): the table's net profit was ProfitLossForThePeriod (₹3,115.2 Cr,
+    before minority interest and the associates' share); its EPS is on the group's ₹3,173.05 Cr."""
+    from pathlib import Path
+
+    from bse_intel import xbrl
+
+    raw = (Path(__file__).parent / "fixtures" / "nse_hdfcbank_q2fy27_cons.xml").read_text(encoding="utf-8")
+    tag = '<in-capmkt:ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates contextRef="OneD" decimals="-5" unitRef="INR">207000300000<'
+    assert tag in raw
+    moved = xbrl.parse(raw.replace(tag, tag.replace("207000300000", "212000300000"), 1).encode())
+    assert next(m.value for m in moved.metrics if m.metric == "pat" and m.period == moved.period) == 21200.03
+    assert not any(m.metric == "pat_group" for m in moved.metrics)

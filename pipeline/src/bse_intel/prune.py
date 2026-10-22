@@ -103,8 +103,7 @@ def _superseded(owned: dict, scrip: str, quarter: str, card: dict) -> bool:
     return not (card.get("basis") == "CONSOLIDATED" and "CONSOLIDATED" not in bases)
 
 
-def release(sink, dry_run: bool = False) -> dict:
-    """Every held card that pruning releases, written (or only counted with ``dry_run``)."""
+def _stored(sink) -> list[tuple[dict, dict]]:
     after, rows = ["", ""], []
     while True:
         page = sink.query("export_cards", [after[0], after[1], 100])
@@ -114,7 +113,12 @@ def release(sink, dry_run: bool = False) -> dict:
         rows += page
         if len(page) < 100:
             break
-    cards = [(r, json.loads(r["card_json"] or "{}")) for r in rows]
+    return [(r, json.loads(r["card_json"] or "{}")) for r in rows]
+
+
+def release(sink, dry_run: bool = False) -> dict:
+    """Every held card that pruning releases, written (or only counted with ``dry_run``)."""
+    cards = _stored(sink)
     # a published card already owns its results quarter (D20): a held one for the same quarter stays held
     owned: dict[tuple[str, str], set] = {}
     for r, c in cards:
@@ -161,3 +165,108 @@ def release(sink, dry_run: bool = False) -> dict:
     return {"released": len(out), "rows_written": written, "dry_run": dry_run, "kept_held": skipped,
             "kept_why": breakdown(kept), "flagged_published": len(flagged), "flagged_why": breakdown(flagged),
             "cards": out, "rerun_ids": [r["news_id"] for r, _ in kept + flagged]}
+
+
+# A reviewed release (owner, 22 Oct 2026: "Release the 100 cards, then the 108 with their named points removed, through
+# the existing release path. No stored data is edited by hand."): a plan file in docs/audit/live names each card a blind
+# review read against its PDF, and the whole points to take off it. Only whole list items go, never words in a sentence;
+# each named item must still read as the reviewer saw it, so a card re-run since the review is left alone.
+_PATH = re.compile(r"^(?:(track_next)\.)?(\w+)(?:\[(\d+)\])?$")
+_DROPPABLE = ("what_happened", "why_it_matters", "key_numbers", "notable_changes", "quantified_impact", "signals",
+              "missing_disclosures")
+
+
+def _item_text(item) -> str:
+    if isinstance(item, dict):
+        return str(item.get("text") or item.get("label") or item.get("metric") or item.get("type") or item.get("value") or "")
+    return str(item)
+
+
+def drop_named(card: dict, drops: list[dict]) -> list[str] | None:
+    """Take, in place, each named whole item off a card; None (card untouched) when a path is not a whole item, an item
+    no longer reads as ``expect``, or the card's last fact would go."""
+    work = json.loads(json.dumps(card))
+    lists: dict[tuple, list] = {}
+    gone: list[tuple[tuple, int | str]] = []
+    for drop in drops:
+        m = _PATH.match(drop.get("path") or "")
+        if not m:
+            return None
+        nested, field, index = m.group(1), m.group(2), m.group(3)
+        expect = (drop.get("expect") or "").replace("**", "").strip()
+        if nested:
+            items = (work.get("track_next") or {}).get(field)
+        elif field in _DROPPABLE:
+            items = work.get(field)
+        else:
+            return None   # a headline, takeaway or other sentence is never cut: the card stays held
+        if index is None or not isinstance(items, list) or int(index) >= len(items):
+            return None
+        if expect and not _item_text(items[int(index)]).replace("**", "").startswith(expect[:40]):
+            return None
+        lists[(nested, field)] = items
+        gone.append(((nested, field), int(index)))
+    for key, index in sorted(set(gone), key=lambda g: -g[1]):
+        del lists[key][index]
+    if not work.get("what_happened"):
+        return None
+    card.clear()
+    card.update(work)
+    return [f'{d["path"]}: {d.get("expect") or ""}'.rstrip(": ") for d in drops]
+
+
+def drop_results_lines(card: dict, drops: list[dict]) -> tuple[list[dict], list[str]] | None:
+    """Split off ``results.<line>`` drops (a line of the results strip, e.g. results.eps) and take them off."""
+    rest, gone = [], []
+    for drop in drops:
+        path = drop.get("path") or ""
+        if path.startswith("results."):
+            line = path.split(".", 1)[1]
+            if not isinstance((card.get("results") or {}).get(line), dict):
+                return None
+            gone.append(line)
+        else:
+            rest.append(drop)
+    for line in gone:
+        card["results"].pop(line, None)
+    return rest, ["results." + g for g in gone]
+
+
+def release_reviewed(sink, plan: list[dict], reviewed: str, dry_run: bool = False) -> dict:
+    """Held or flagged cards a blind review cleared, published (or kept published, unflagged) with the named whole points
+    taken off (plan: news_id, action, drops). The D20 rule still holds: a held results card whose quarter a published card owns stays held."""
+    cards = {r["news_id"]: (r, c) for r, c in _stored(sink)}
+    owned: dict[tuple[str, str], set] = {}
+    for r, c in cards.values():
+        if not r.get("held") and _results_quarter(c):
+            owned.setdefault((r["scrip_code"], _results_quarter(c)), set()).add(c.get("basis"))
+    out, kept, writes = [], [], []
+    for entry in plan:
+        news_id = entry["news_id"]
+        if entry.get("action") != "release":
+            kept.append({"news_id": news_id, "why": "review: " + str(entry.get("reason") or "keep held")[:120]})
+            continue
+        if news_id not in cards or not (cards[news_id][0].get("held") or cards[news_id][0].get("needs_review")):
+            kept.append({"news_id": news_id, "why": "not held or flagged now"})
+            continue
+        row, card = cards[news_id]
+        quarter = _results_quarter(card) if row.get("held") else None   # a flagged card is already the published one
+        if quarter and (row["scrip_code"], quarter) in owned:
+            kept.append({"news_id": news_id, "why": "quarter has a card"})
+            continue
+        work = json.loads(json.dumps(card))
+        split = drop_results_lines(work, entry.get("drops") or [])
+        dropped = None if split is None else drop_named(work, split[0])
+        if dropped is None:
+            kept.append({"news_id": news_id, "why": "a named point is not a whole item or no longer reads as reviewed"})
+            continue
+        review = work.get("review") or {}
+        work["review"] = {**review, "status": "PRUNED", "released_by": reviewed,
+                          "pruned": [*(review.get("pruned") or []), *split[1], *dropped]}
+        if quarter:
+            owned.setdefault((row["scrip_code"], quarter), set()).add(work.get("basis"))
+        out.append({"news_id": news_id, "symbol": row.get("symbol"), "dropped": len(dropped) + len(split[1])})
+        writes.append({"news_id": news_id, "card_json": json.dumps(work, ensure_ascii=False)})
+    written = 0 if dry_run or not writes else sink.execute("cards_release_pruned", writes)
+    log.info("release-reviewed %s: %d released, %d kept", reviewed, len(out), len(kept))
+    return {"released": len(out), "rows_written": written, "dry_run": dry_run, "kept": kept, "cards": out}

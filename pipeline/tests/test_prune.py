@@ -130,3 +130,65 @@ def test_a_held_consolidated_card_is_not_superseded_by_a_published_standalone_on
     report = release(Sink())
     assert report["kept_held"]["quarter has a card"] == 0
     assert report["kept_held"]["consolidated behind a standalone card"] == 1 and "n1" in report["rerun_ids"]
+
+
+def _reviewed_rows():
+    import json
+
+    held = copy.deepcopy(CARD)
+    held["what_happened"] = [{"text": "Order of ₹120 Cr won"}, {"text": "Delivery over 18 months"}]
+    held["why_it_matters"] = [{"text": "The order is 4% of revenue"}, {"text": "Margins improve to 30%"}]
+    held["results"] = {"eps": {"value": 3.1}}
+    return [{"news_id": "n1", "scrip_code": "1", "symbol": "DEMO", "filed_at": "2026-10-21", "held": 1, "needs_review": 1,
+             "card_json": json.dumps(held)},
+            {"news_id": "n2", "scrip_code": "1", "symbol": "DEMO", "filed_at": "2026-10-22", "held": 1, "needs_review": 1,
+             "card_json": json.dumps(copy.deepcopy(CARD))}]
+
+
+def test_a_reviewed_release_takes_off_only_the_named_whole_points():
+    """Held audit, 22 Oct 2026: the blind review named the points to take off each card it cleared."""
+    import json
+
+    from bse_intel.prune import release_reviewed
+
+    rows = _reviewed_rows()
+
+    class Sink:
+        written = []
+
+        def query(self, name, params):
+            return rows if params[0] == "" else []
+
+        def execute(self, name, batch):
+            Sink.written = batch
+            return len(batch)
+
+    plan = [{"news_id": "n1", "action": "release",
+             "drops": [{"path": "why_it_matters[1]", "expect": "Margins improve"}, {"path": "results.eps"}]},
+            {"news_id": "n2", "action": "keep_held", "reason": "headline names the wrong period"}]
+    report = release_reviewed(Sink(), plan, "held-audit-2026-10-22")
+    assert report["released"] == 1 and [k["news_id"] for k in report["kept"]] == ["n2"]
+    card = json.loads(Sink.written[0]["card_json"])
+    assert [w["text"] for w in card["why_it_matters"]] == ["The order is 4% of revenue"]
+    assert "eps" not in card["results"] and len(card["what_happened"]) == 2
+    assert card["review"]["status"] == "PRUNED" and card["review"]["released_by"] == "held-audit-2026-10-22"
+
+
+def test_a_reviewed_release_never_cuts_a_sentence_or_a_point_that_changed():
+    from bse_intel.prune import release_reviewed
+
+    rows = _reviewed_rows()
+
+    class Sink:
+        def query(self, name, params):
+            return rows if params[0] == "" else []
+
+        def execute(self, name, batch):
+            raise AssertionError("nothing may be written")
+
+    plan = [{"news_id": "n1", "action": "release", "drops": [{"path": "headline"}]},
+            {"news_id": "n1", "action": "release", "drops": [{"path": "why_it_matters[0]", "expect": "Margins"}]},
+            {"news_id": "n1", "action": "release",
+             "drops": [{"path": "what_happened[0]"}, {"path": "what_happened[1]"}]}]
+    report = release_reviewed(Sink(), plan, "x")
+    assert report["released"] == 0 and len(report["kept"]) == 3

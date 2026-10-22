@@ -11,6 +11,10 @@ on:
         description: count what would be released, write nothing
         type: boolean
         default: true
+      plan:
+        description: a reviewed release plan in docs/audit/live (empty = the quote-only prune)
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -38,4 +42,11 @@ jobs:
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
       - name: Publish held cards without their unquoted points
+        if: inputs.plan == ''
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel release-pruned ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
+      - name: Publish held cards a blind review cleared, without the points it named
+        if: inputs.plan != ''
+        env:
+          PLAN: ${{ inputs.plan }}
+          DRY: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel release-reviewed --plan "../$PLAN" $DRY'

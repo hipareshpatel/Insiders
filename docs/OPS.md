@@ -9,3 +9,4 @@
 | 22 Oct 17:41 | Visit (last of the day) | Health OK (17:38 run going, earlier PARTIAL on the history backlog; queue 1,000 / 56 failed); day's docs merged to main; evening report sent; half-hour visits end |
 | 22 Oct 18:20 | Hourly audit 12 (last) | 13 new cards, 5 reviewed: 1/2/2 (Cyient E13, CIE E14 new); prunes 2 of 2 dropped true points; d1-usage dispatched; hourly routine disabled |
 | 22 Oct 20:15 | Owner session | #75 open (event-type definitions, deals-sync, probe: insider trades via corporates-pit-gg per the owner's tracker); Siemens FY26 is an 18-month year its own XBRL dates as 12 (fix tomorrow); hourly checks scheduled 23 Oct 10:07-18:07 IST (trig_01HBPHhE3BYZeXc6TDZkmJkq) |
+| 22 Oct 23:55 | Owner session | Step 1 of the held-card plan (F98): unit fixer keeps 33/33 right stored fixes, blocks 9/12 wrong; change fixer leaves a printed %; release-reviewed built, plans a (100) and b (64 of 108) ready for a dry run |

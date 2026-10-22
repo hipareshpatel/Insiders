@@ -777,3 +777,24 @@ def test_a_year_not_ending_in_march_keeps_quarters_only():
     assert not march_year(d) and drop_off_year_periods(d) == 4
     assert [m["period"] for m in d["financial_metrics"]] == ["Q2FY27"]
     assert march_year({}) and drop_off_year_periods({"financial_metrics": [{"period": "FY26"}]}) == 0
+
+
+def test_ebitda_comes_from_profit_before_exceptional_items_whatever_the_charges_sign():
+    """Data chain audit A9 (22 Oct 2026): EBITDA as PBT less the exceptional items depends on the sign a filer gives a
+    charge; one tagged positive took EBITDA down by twice it. The file's own profit before exceptional items decides."""
+    from pathlib import Path
+
+    from bse_intel import xbrl
+
+    raw = (Path(__file__).parent / "fixtures" / "bse_main_ind_as_532811_q2fy25.xml").read_text(encoding="utf-8")
+    base = xbrl.parse(raw.encode())
+    ebitda = next(m.value for m in base.metrics if m.metric == "ebitda" and m.period == base.period)
+    # a ₹10 Cr charge tagged positive, with PBT after it: EBITDA does not move
+    charged = raw.replace('<in-bse-fin:ExceptionalItemsBeforeTax contextRef="OneD" unitRef="INR" decimals="-5">0<',
+                          '<in-bse-fin:ExceptionalItemsBeforeTax contextRef="OneD" unitRef="INR" decimals="-5">100000000<', 1)
+    charged = charged.replace('<in-bse-fin:ProfitBeforeTax contextRef="OneD" unitRef="INR" decimals="-3">525064000<',
+                              '<in-bse-fin:ProfitBeforeTax contextRef="OneD" unitRef="INR" decimals="-3">425064000<', 1)
+    assert charged != raw
+    again = xbrl.parse(charged.encode())
+    assert next(m.value for m in again.metrics if m.metric == "ebitda" and m.period == again.period) == ebitda
+    assert not any(m.metric == "pbt_before_exceptional" for m in again.metrics)   # used, not kept

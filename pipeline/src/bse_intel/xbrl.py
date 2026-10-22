@@ -48,6 +48,7 @@ RESULT_TAGS = {
     "OtherExpenses": "other_expenses",
     "Expenses": "total_expenses",
     "ExceptionalItemsBeforeTax": "exceptional_items",
+    "ProfitBeforeExceptionalItemsAndTax": "pbt_before_exceptional",   # for EBITDA only; not kept in memory
     "ExceptionalItems": "exceptional_items",
     "ProfitBeforeTax": "pbt",
     "ProfitLossBeforeTax": "pbt",
@@ -524,11 +525,16 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
             values.pop(("gnpa_pct", label)), values.pop(("nnpa_pct", label))
     _bank_ratio_fillers(values)
     _annualise_roa(values, ends)
-    # EBITDA = PBT + finance cost + depreciation - other income (exceptional items added back)
+    # EBITDA = profit before exceptional items and tax + finance cost + depreciation - other income. From the file's
+    # own profit before exceptional items when it tags one: PBT less the exceptional items depends on the sign a filer
+    # gives a charge, and a charge tagged positive took EBITDA down by twice it (data chain audit A9, 22 Oct 2026)
     for label in {p for _, p in values}:
-        parts = [values.get((m, label)) for m in ("pbt", "finance_cost", "depreciation")]
+        before = values.pop(("pbt_before_exceptional", label), None)
+        parts = [before if before is not None else values.get(("pbt", label)), values.get(("finance_cost", label)),
+                 values.get(("depreciation", label))]
         if all(v is not None for v in parts):
-            ebitda = sum(parts) - (values.get(("other_income", label)) or 0) - (values.get(("exceptional_items", label)) or 0)
+            ebitda = sum(parts) - (values.get(("other_income", label)) or 0) \
+                - (0 if before is not None else values.get(("exceptional_items", label)) or 0)
             values[("ebitda", label)] = ebitda
             revenue = values.get(("revenue", label))
             if revenue:

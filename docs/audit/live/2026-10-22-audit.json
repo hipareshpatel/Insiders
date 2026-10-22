@@ -711,5 +711,60 @@
   "prompt_variant": "long",
   "reason": "All figures match (PAT ₹2,247 Cr, GRM, dividend, throughput); only the timeline entry credits Q2 profit to a price revision gain the filing books in Q1.",
   "run": "17:13 hourly"
+ },
+ {
+  "news_id": "nse-106825071",
+  "symbol": "CYIENT",
+  "verdict": "WRONG",
+  "classes": [
+   "wrong_column",
+   "other"
+  ],
+  "prompt_variant": "short",
+  "reason": "Text figures match the release (DET revenue ₹1,664 Cr +15.7% YoY, EBIT 14.2%), but the results table sets DET-segment revenue against whole-group priors (₹1,781 / ₹2,075.7 Cr): -6.6% YoY and -19.8% QoQ, the opposite of the filing; table PAT, EBITDA and margin are not DET figures.",
+  "run": "18:13 hourly"
+ },
+ {
+  "news_id": "nse-106825109",
+  "symbol": "INNOVISION",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "NHAI award for Limha Fee Plaza, ₹94.97 Cr over 1 year, matches Annexure A; scale signal consistent with memory.",
+  "run": "18:13 hourly"
+ },
+ {
+  "news_id": "nse-106824957",
+  "symbol": "ACCELYA",
+  "verdict": "MINOR",
+  "classes": [
+   "wrong_period"
+  ],
+  "prompt_variant": "short",
+  "reason": "Every consolidated figure checks (revenue ₹137.65 Cr, PAT ₹28.85 Cr); the Sept quarter is labelled Q2FY27 where the June-year company calls it Q1; 'stable demand' is a gloss.",
+  "run": "18:13 hourly"
+ },
+ {
+  "news_id": "nse-106825022",
+  "symbol": "IRFC",
+  "verdict": "MINOR",
+  "classes": [
+   "unsupported_cause"
+  ],
+  "prompt_variant": "short",
+  "reason": "PAT record, 6.55% WACC, ₹5 lakh Cr AUM target and margins match the transcript; 'robust asset quality' in the headline is never said by management. Prune dropped a supported point (WACC and the 54EC bonds).",
+  "run": "18:13 hourly"
+ },
+ {
+  "news_id": "nse-106824995",
+  "symbol": "CIEINDIA",
+  "verdict": "WRONG",
+  "classes": [
+   "wrong_period",
+   "memory"
+  ],
+  "prompt_variant": "long",
+  "reason": "Headline and key numbers right (revenue ₹2,633.18 Cr +11%, PAT ₹243.69 Cr), but the results table shows ₹2,540 Cr revenue and ₹420 Cr EBITDA, stale July-call values memory stored under Q2FY27; a memory point turns 12-15% growth seen in Q1-Q2 CY26 into FY27 guidance. Prune dropped a true margin point.",
+  "run": "18:13 hourly"
  }
 ]

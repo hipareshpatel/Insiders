@@ -204,3 +204,16 @@ def test_every_block_the_refresh_makes_is_one_it_saves():
     first, _ = card_refresh.refresh(card, dossier, filing, None)
     again, changed = card_refresh.refresh({**first, "corporate_action": None}, dossier, filing, None)
     assert again["corporate_action"]["factor"] == 2.0 and "corporate_action" in changed
+
+
+def test_a_call_cards_table_of_another_quarter_is_taken_off():
+    """E11 (22 Oct 2026): Nippon Life AMC's Q2FY27 call carried Q1FY27's table. The refresh keeps a table it cannot
+    rebuild, except a call card's table of a quarter the call does not discuss."""
+    filed = "2026-10-22T14:19:00+05:30"
+    filing = Filing(news_id="n9", scrip_code="500001", company_name="Demo Rail Ltd", headline="h", subject="",
+                    filed_at=filed, filing_date=filed[:10])
+    call = {**_card(), "event_type": "CONCALL_PRESENTATION", "results": {"period": "Q1FY27", "revenue": {"value": 100.0}}}
+    new, changed = card_refresh.refresh(call, _dossier(), filing, None)
+    assert new["results"] is None and "results" in changed
+    kept = {**call, "results": {"period": "Q2FY27", "revenue": {"value": 100.0}}}
+    assert card_refresh.refresh(kept, _dossier(), filing, None)[0]["results"]["period"] == "Q2FY27"

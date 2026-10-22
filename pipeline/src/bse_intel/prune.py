@@ -19,14 +19,16 @@ from .pipeline import _QUOTE_FACT, _QUOTE_POINT
 log = logging.getLogger(__name__)
 
 PREFIX = "Give each fact the filing's own sentence as its quote: "
+PUBLISHED_STATUSES = ("UNRESOLVED", "UNCHECKED")
 
 
-def prune_card(card: dict) -> list[str] | None:
+def prune_card(card: dict, statuses: tuple[str, ...] = ("UNRESOLVED",)) -> list[str] | None:
     """Drop, in place, the points a held card's issues name; None when an issue is not of this kind, the card's last
-    fact would go, or the card is held for a reason of its own."""
+    fact would go, or the card is held for a reason of its own. A published card may also be UNCHECKED (published
+    without a second opinion, the flagged ones of 22 Oct 2026): pruning it only takes points off the public site."""
     review = card.get("review") or {}
     issues = review.get("issues") or []
-    if review.get("status") != "UNRESOLVED" or review.get("held") or not issues:
+    if review.get("status") not in statuses or review.get("held") or not issues:
         return None
     dropped = []
     for issue in issues:
@@ -130,11 +132,11 @@ def release(sink, dry_run: bool = False) -> dict:
     for row, card in cards:
         if row.get("held") or not row.get("needs_review"):
             continue
-        dropped = prune_card(json.loads(json.dumps(card)))
+        dropped = prune_card(json.loads(json.dumps(card)), PUBLISHED_STATUSES)
         if dropped is None:
             flagged.append((row, card))
             continue
-        prune_card(card)
+        prune_card(card, PUBLISHED_STATUSES)
         out.append({"news_id": row["news_id"], "symbol": row.get("symbol"), "dropped": len(dropped), "published": True})
         writes.append({"news_id": row["news_id"], "card_json": json.dumps(card, ensure_ascii=False)})
     written = 0 if dry_run or not writes else sink.execute("cards_release_pruned", writes)

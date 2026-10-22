@@ -81,6 +81,7 @@ def test_release_prunes_flagged_published_cards_and_leaves_a_quarter_that_has_a_
     twin = {**copy.deepcopy(CARD), "results": {"period": "Q2FY27"}}
     other = {**copy.deepcopy(CARD), "event_type": "ORDER_WIN"}
     flagged = {**copy.deepcopy(CARD), "event_type": "ORDER_WIN"}
+    flagged["review"]["status"] = "UNCHECKED"   # published without a second opinion
     rows = [{"news_id": f"n{i}", "scrip_code": "1", "symbol": "DEMO", "filed_at": f"2026-10-2{i}", "held": held,
              "needs_review": review, "card_json": json.dumps(card)}
             for i, (card, held, review) in enumerate([(published, 0, 0), (twin, 1, 1), (other, 1, 1), (flagged, 0, 1)])]
@@ -100,3 +101,9 @@ def test_release_prunes_flagged_published_cards_and_leaves_a_quarter_that_has_a_
     assert Sink.written == ("cards_release_pruned", ["n2", "n3"])
     assert [c.get("published", False) for c in report["cards"]] == [False, True]
     assert report["flagged_published"] == 0
+
+
+def test_an_unchecked_held_card_is_not_released():
+    card = copy.deepcopy(CARD)
+    card["review"]["status"] = "UNCHECKED"
+    assert prune_card(card) is None

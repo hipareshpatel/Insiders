@@ -187,7 +187,7 @@ timeout_s = 120
 provider = "groq"
 model = "openai/gpt-oss-20b"
 json_mode = true
-max_tokens = 200
+max_tokens = 400   # was 200: its reasoning counts against it, and a cut-off reply is Groq's 400 "Failed to generate JSON"
 extra_body = { reasoning_effort = "low" }  # its reasoning tokens count against max_tokens
 limits = { rpm = 30, tpm = 8000, rpd = 1000, tpd = 200000 }
 
@@ -242,7 +242,7 @@ limits = { rpm = 150, tpm = 625_000 }
 provider = "groq"
 model = "openai/gpt-oss-20b"
 json_mode = true
-max_tokens = 200
+max_tokens = 400   # was 200: its reasoning counts against it, and a cut-off reply is Groq's 400 "Failed to generate JSON"
 extra_body = { reasoning_effort = "low" }  # its reasoning tokens count against max_tokens
 limits = { rpm = 30, tpm = 8000, rpd = 1000, tpd = 200000 }
 
@@ -577,7 +577,8 @@ limits = { rpm = 10 }
 # request each, before either joins a card route. Free endpoint ~40 requests/min (assumption: NVIDIA forum and
 # third-party pages, not an official limits page; the account dashboard shows the real figure).
 # 22 Oct 07:00 IST, first check: deepseek-v4.1-flash timed out at 120 s on a one-line reply (thinking on by default;
-# NIM switches it off through the chat template), kimi-k2.6 answered 404 "not found for account" (not on this key)
+# NIM switches it off through the chat template), kimi-k2.6 and nemotron-3-super answered 404 "not found for account"
+# (not on this key): both taken off the config
 [[routes.trial_new]]
 provider = "nvidia"
 model = "deepseek-ai/deepseek-v4.1-flash"
@@ -593,16 +594,6 @@ provider = "nvidia"
 model = "z-ai/glm-5.3"
 spare = true
 json_mode = true
-max_tokens = 400
-context_tokens = 120000
-extra_body = { chat_template_kwargs = { enable_thinking = false } }
-limits = { rpm = 30 }
-
-[[routes.trial_new]]
-provider = "nvidia"
-model = "nvidia/nemotron-3-super-120b-a12b"
-spare = true
-json_mode = false   # with thinking off it answers "{}" in JSON mode (test_gateway)
 max_tokens = 400
 context_tokens = 120000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
@@ -719,7 +710,7 @@ limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 provider = "mistral"
 model = "mistral-small-2603"  # takes images; free tier 20k tokens/min, 1 request/s
 max_tokens = 2500
-limits = { rpm = 50, tpm = 20_000 }
+limits = { rpm = 20, tpm = 20_000 }   # was 50/min: 7 429s and no request served on 22 Oct (assumption: ~1/s, unverified)
 
 # The long-document spare since Ultra left the card routes (round 4): 250K window, 10% WRONG on 10 cards. Without it a
 # slow or rate-limited GLM left two long filings with no provider at all on free tiers (round 4's re-run).
@@ -855,7 +846,7 @@ model = "mistral-small-2603"      # vision's model, on the Experiment tier's mon
 json_mode = true
 max_tokens = 2000
 max_share = 0.5
-limits = { rpm = 50, tpm = 20_000 }
+limits = { rpm = 20, tpm = 20_000 }
 
 [[routes.critic]]
 provider = "groq"

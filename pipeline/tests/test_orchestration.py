@@ -718,3 +718,21 @@ def test_a_foreign_currency_deal_gets_no_rupee_size():
     assert foreign_deal_amount(1150.0, both) is None
     assert foreign_deal_amount(250.0, "an order worth Rs 250 crore") is None
     assert foreign_deal_amount(None, text) is None
+
+
+def test_a_garbled_scan_does_not_hold_a_card_built_from_its_xbrl_file(settings):
+    """Held-card audit, 22 Oct 2026: 15 cards held for a garbled text layer had every amount grounded and their
+    figures from the filing's own XBRL file; the reviewers found the hold false on all 15. Without the file it holds."""
+    from bse_intel.ai.gateway import AIGateway
+    from bse_intel.models import Filing
+    from bse_intel.pipeline import Pipeline
+    from bse_intel.sinks.local import LocalSink
+    from conftest import FakeProvider
+
+    gateway = AIGateway(settings.load_toml("providers.toml"), client_factory=lambda *a: FakeProvider({}), env={})
+    pipeline = Pipeline(settings, LocalSink(settings), gateway, bse=None, sleep=lambda s: None)
+    filing = Filing(news_id="n1", scrip_code="1", company_name="Demo", headline="Results", filed_at="2026-10-22T10:00:00+05:30",
+                    filing_date="2026-10-22", pdf_url="https://bse.invalid/n1.pdf")
+    text = "Revenue 1,2O4.5 3,4l2.0 EBITDA 2O1.3 PAT 9S.2l " * 3
+    assert pipeline._held_reasons(filing, text) and "garbled" in pipeline._held_reasons(filing, text)[0]
+    assert pipeline._held_reasons(filing, text, xbrl_backed=True) == []

@@ -592,6 +592,21 @@ def deal_amount_context(amount_cr: float | None, text: str | None) -> str | None
     return None
 
 
+_RUPEE = r"(?:₹|rs\.?|inr|rupees?)\s*"
+
+
+def _face_value_only(price: float, text: str) -> bool:
+    """The filing writes this price only as the shares' face value ("equity shares of Rs. 5 each", "face value of ₹5"),
+    never as a price paid: Torrent's JB Pharma merger, 4,19,22,416 shares "of Rs. 5 each" made a ₹20.96 Cr "deal"
+    (held-card audit, 22 Oct 2026)."""
+    p = f"{price:g}".replace(".", r"\.")
+    figure = rf"{_RUPEE}{p}(?:\.0+)?(?![\d.])"
+    face = re.search(rf"face\s+value\s+(?:of\s+)?{figure}|of\s+{figure}\s*(?:/-\s*)?(?:each|per\s+share\s+fully\s+paid)",
+                     text, re.I)
+    paid = re.search(rf"(?:price|premium|consideration|issue\s+price|offer\s+price|at)\s+(?:of\s+)?{figure}", text, re.I)
+    return bool(face) and not paid
+
+
 def tranche_total_cr(tranches: list, text: str | None) -> float | None:
     """Σ shares x price per share in ₹ crore, only when every tranche has both numbers and both are in the filing."""
     if not tranches or not text:
@@ -602,7 +617,7 @@ def tranche_total_cr(tranches: list, text: str | None) -> float | None:
     total = 0.0
     for t in tranches:
         if not t.shares or not t.price_per_share or not index.stated(float(t.shares), 0, (1,)) \
-                or not index.stated(float(t.price_per_share), 2, (1,)):
+                or not index.stated(float(t.price_per_share), 2, (1,)) or _face_value_only(float(t.price_per_share), text):
             return None
         total += float(t.shares) * float(t.price_per_share) / 1e7
     return round(total, 2)

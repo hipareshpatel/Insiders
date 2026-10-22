@@ -196,8 +196,40 @@ _LAKH_CRORE = re.compile(r"(?<![\d.,])(\d+(?:\.\d+)?)\s*lakh\s+crores?\b", re.I)
 _SPACED = re.compile(r"(?<![\d.,])(?<!\d )(\d{1,3}, \d{2,3}(?:(?:,\d{2,3})+(?:\.\d+)?|\.\d+)|\d{1,3}(?: \d{2})* \d{3}\.\d+)(?![\d,])")
 
 
+# a scan's OCR text layer with letters for digits (held-card audit, 22 Oct 2026, 23 figures): Godawari's "3,35,loo"
+# shares, DCM's "5O.77%", SSWL's "t500.85 Cr" and "l424.ll Cr" (the rupee sign read as t or l), Ola's "(7B5)"
+_OCR_TOKEN = re.compile(r"(?<![\w.,])([tlfz]?)([\dOolIS](?:[\d,.OolISB]*[\dOolISB])?)(?![\w])")
+_OCR_DIGITS = str.maketrans("OolISB", "001158")
+
+
+def _ocr_readings(text: str) -> list[tuple[float, int]]:
+    """(value, end position) of each number-like token with letters in it, read with the letters as digits."""
+    out = []
+    for m in _OCR_TOKEN.finditer(text):
+        prefix, core = m.group(1), m.group(2)
+        if not re.search(r"[OolISB]", core) and not prefix:
+            continue
+        if sum(ch.isdigit() for ch in core) < 2:
+            continue
+        # a leading l or I is the rupee sign as often as a 1: "I24.75 crores" is ₹24.75 Cr, "l424.ll" ₹1,424.11 Cr
+        if core[0] in "lI" and len(core) > 1:
+            bodies = [core[1:], "1" + core[1:]]
+        elif prefix == "l":
+            bodies = [core, "1" + core]
+        else:
+            bodies = [core]
+        for body in bodies:
+            try:
+                out.append((float(body.translate(_OCR_DIGITS).replace(",", "")), m.end()))
+            except ValueError:
+                pass
+    return out
+
+
 def _other_readings(text: str) -> list[tuple[float | None, float]]:
     out: list[tuple[float | None, float]] = []
+    clean_ocr = _clean(text)
+    out += [(_money_unit(clean_ocr, end), value) for value, end in _ocr_readings(text) if value > 0]
     for m in _RUPEES.finditer(text):
         value = float(m.group(1).replace(",", ""))
         if value >= 1e7:
@@ -215,7 +247,8 @@ class SourceIndex:
         self.points = [(v, i, pos) for i, text in enumerate(texts) for v, _, pos, _, _ in _tokens(text or "") if v > 0]
         self.values = sorted({v for v, _, _ in self.points}
                              | {v for text in texts for m in _SPACED.finditer(_clean(text or ""))
-                                if (v := float(m.group(1).replace(",", "").replace(" ", "")))})
+                                if (v := float(m.group(1).replace(",", "").replace(" ", "")))}
+                             | {v for text in texts for v, _ in _ocr_readings(text or "") if v > 0})
         self._pairs: list[tuple[float, float]] | None = None
         by_unit: dict[float | None, set[float]] = {}
         for text in texts:

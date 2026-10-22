@@ -79,3 +79,28 @@ Before and after over the 132 results cards, with metrics rebuilt from each card
 - Tata Chemicals.
 
 Every one of these is a reviewer-confirmed false hold. Prism Johnson drops 1 of its 2 holds, and that card has no individual audit reason. No true hold changed.
+
+## Fix 4: OCR letters read as digits, and garbled text on XBRL-backed cards (F102), 23 Oct, small hours
+
+**OCR letters.** In a scan's OCR text layer, a number-like token with letters in it is also read with the letters as digits: O/o as 0, l/I as 1, S as 5, B as 8. Examples: Godawari's "3,35,loo", DCM's "5O.77%", Ola's "(7B5)". A leading l or I gets two readings, as the rupee sign and as a 1. SSWL's "l424.ll Cr" is ₹1,424.11 Cr, and "I24.75 crores" is ₹24.75 Cr.
+
+| Measure | Result |
+|---|---|
+| Before and after over the 292 stored figures | 8 false holds freed (Godawari, SSWL ×4, DCM, Ahluwalia ×2); 1 true hold freed: NTPC's ₹5.97 lakh Cr |
+| 1,673 fakes, as a crore figure and as a bare figure, on the same filings | accepted: 71 before, 71 after (crore); 129 before, 129 after (bare); 0 newly accepted |
+| Independent blind sample of 70 OCR readings | see the TRACKER entry |
+
+On NTPC: the slide does print "S.97", so the reading is right. The card is wrong because it calls the 2027-32 capex figure renewables spend. That is a mistake of meaning, which the number check cannot catch; the "not found" hold only held it by accident.
+
+**Garbled text on XBRL-backed cards.** A card whose figures come from its own XBRL file, with every amount grounded, is no longer held because the PDF's text layer is garbled.
+- Stored holds: 15 such cards, every one false according to the reviewers. 13 cards are right or minor.
+- 2 cards are wrong for other reasons:
+  - CSB's headline gives the wrong quarter's NIM.
+  - DB Corp shows owners' profit that is really total comprehensive income; that is fixed below.
+
+## Mistakes in our own code (F103)
+
+- **Owners' profit above the whole profit, with no minority figure in the file, is dropped.** DB Corp tags its total comprehensive income of ₹63.98 Cr as owners' profit, beside a ₹62.19 Cr profit.
+- **No EBITDA for lenders and insurers.** On the NBFC, banking and insurance templates, EBITDA and its margin are no longer built.
+  - IRFC's Q4FY26 file gave an "EBITDA" of ₹7,218 Cr at a 98.4% margin. Bajaj Finance and Bajaj Finserv file on the NBFC template too.
+- **A face value is not a deal price.** Shares "of Rs. 5 each" no longer make a deal of shares × ₹5. Torrent's JB Pharma merger had become a "₹20.96 Cr deal".

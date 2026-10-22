@@ -441,8 +441,16 @@ def parse(data: bytes) -> XbrlResult | None:
     result = _results(facts, contexts, units, text_facts, tags)
     if result:
         result.template = taxonomy(data)
+        if result.template in LENDER_TEMPLATES:
+            # interest is a lender's cost of goods: profit + finance cost + depreciation is no EBITDA for a bank, an NBFC
+            # or an insurer (held-card audit, 22 Oct 2026: Bajaj Finance's ₹12,430.66 Cr, IRFC's, held or shown as
+            # its "EBITDA" and margin)
+            result.metrics = [m for m in result.metrics if m.metric not in ("ebitda", "ebitda_margin")]
         _check_balance(result)
     return result
+
+
+LENDER_TEMPLATES = ("NBFC", "BANKING", "GI", "LI")
 
 
 def needs_standalone_bank_ratios(result: "XbrlResult | None") -> bool:
@@ -599,6 +607,16 @@ def owners_share(values: dict) -> int:
     sweep, 2026-10-20). Profit less that minority figure would be wrong too, so the card falls back to the group's
     profit. The minority figure itself is not kept: no card reads it."""
     changed = 0
+    # with no minority share in the file, owners cannot have more than the whole profit: D.B. Corp's Q4FY26 file tags
+    # its total comprehensive income ₹63.98 Cr as the owners' profit beside a ₹62.19 Cr profit (held-card audit,
+    # 22 Oct 2026: the card's headline said "net profit to shareholders ₹63.98 Cr")
+    with_minority = {label for metric, label in values if metric == "pat_minority"}
+    for (metric, label), owners in list(values.items()):
+        profit = values.get(("pat", label))
+        if metric == "pat_owners" and label not in with_minority and profit is not None and profit > 0 \
+                and owners - profit > max(0.5, 0.01 * profit):
+            values.pop((metric, label))
+            changed += 1
     for (metric, label), minority in list(values.items()):
         if metric != "pat_minority":
             continue

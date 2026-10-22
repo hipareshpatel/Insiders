@@ -20,6 +20,7 @@ import logging
 from pydantic import ValidationError
 
 from .call_summary import card_takeaways, remember_call_points
+from .corporate_actions import card_block as corporate_action_block
 from .card_context import case_stage, guidance_recall, memory_context, rating_change
 from .impact import high_reasons
 from .dossier import call_results_snapshot, dossier_as_of, latest_fundamentals, results_snapshot
@@ -63,6 +64,9 @@ def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, foot
         "guidance_recall": guidance_recall(before, event_type, filing.filed_at),
         "memory_context": memory_context(before, event_type, filing.filed_at, filing.news_id),
         "fundamentals": latest_fundamentals(current, footer),
+        # the action itself from NSE's feed (corporate_actions.py): ratio, ex and record dates, a dividend's yield
+        "corporate_action": (corporate_action_block(dossier, filing.filed_at, text, (priced or {}).get("last_price"))
+                             if event_type == "CORPORATE_ACTION" else None),
     }
 
 

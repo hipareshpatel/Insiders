@@ -205,3 +205,13 @@ test("a key number's colour follows what the change means, not its first charact
   assert.equal(changeTone("Order book", "vs ₹1,200 Cr in Q1"), null);
   assert.equal(changeTone("EBITDA margin", "flat"), null);
 });
+
+test("governance flags: exits, orders, defaults; never an appointment", async () => {
+  const { governanceFlags } = await import("../src/lib/cardText.ts");
+  assert.deepEqual(governanceFlags("Statutory auditor Deloitte resigns citing lack of information"), ["Auditor exit"]);
+  assert.deepEqual(governanceFlags("CFO Rajesh Kumar resigned with effect from 30 Oct"), ["CFO exit"]);
+  assert.deepEqual(governanceFlags("SEBI passes order debarring promoters for two years"), ["Regulator action"]);
+  assert.deepEqual(governanceFlags("Company defaulted on interest on NCDs due 15 Oct"), ["Default"]);
+  assert.deepEqual(governanceFlags("Board appoints M/s ABC & Co as statutory auditors for five years"), []);
+  assert.deepEqual(governanceFlags("No fraud was reported by the auditors"), []);
+});

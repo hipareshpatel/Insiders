@@ -16,7 +16,7 @@ import { EVENT_LABELS, IMPACT_LABEL, IMPACT_TEXT, TONE_CHIP, TONE_LABEL, TONE_ST
 import { Avatar, TickerChip } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL } from "./FilingCard";
 import { plain, RichText } from "./RichText";
-import {
+import { governanceFlags,
   boxSignal, changeTone, executionFact, missingOnTopic, near, PERIOD_WORDS, procedural, restates, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
   verifiedFact,
 } from "../lib/cardText";
@@ -590,6 +590,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
   const familyLabel = [EVENT_LABELS[event] ?? card.category_tag, table?.period ?? strip?.period, card.basis ? BASIS_LABEL[card.basis]?.toLowerCase() : null,
     table?.lens === "bank" ? "bank lens" : table?.lens === "insurer" ? "insurer lens" : null].filter(Boolean).join(" · ");
   const direction = DIRECTION[tone];
+  // an auditor's or CFO's exit, a regulator's order, a default (lib/cardText governanceFlags), on the card's own words
+  const govFlags = governanceFlags([headline, ...card.what_happened.map(plain)].join(". "));
 
   async function share() {
     if (!ref.current) return;
@@ -700,6 +702,11 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
         </div>
 
         <h3 className="mt-3 font-display text-[18px] leading-snug text-ink sm:text-[19.5px]">{headline}</h3>
+        {family === "reg" && govFlags.length > 0 && (
+          <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[12.5px] font-semibold text-neg">
+            <ShieldAlert className="h-3.5 w-3.5" />Governance flag: {govFlags.join(" · ")}
+          </p>
+        )}
 
         {card.call_read && <CallReadChips read={card.call_read} />}
         {strip && <ResultsStrip r={strip} />}
@@ -711,6 +718,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
         {caseStage && <CaseBlock cs={caseStage} />}
         {card.volume_strip && <VolumeStrip s={card.volume_strip} />}
         {event === "ANNUAL_REPORT" && card.annual_checks && <AnnualChecks a={card.annual_checks} />}
+        {card.corporate_action && <CorporateActionBlock ca={card.corporate_action} />}
         {tiles.length > 0 && <KeyBlock items={tiles} />}
 
         {facts.length > 0 && (
@@ -1216,6 +1224,23 @@ function CallTakeaways({ view }: { view: CallTakeawaysView }) {
           </ul>
         </div>
       ))}
+    </BlockShell>
+  );
+}
+
+/** The corporate action itself, from NSE's feed: what a shareholder gets and when (owner, 22 Oct 2026). */
+function CorporateActionBlock({ ca }: { ca: NonNullable<CardBody["corporate_action"]> }) {
+  const what = ca.kind === "BONUS" || ca.kind === "SPLIT" || ca.kind === "CONSOLIDATION"
+    ? `${ca.subject ?? titleCase(ca.kind)}${ca.factor ? ` · each share becomes ${ca.factor % 1 ? ca.factor.toFixed(2) : ca.factor}` : ""}`
+    : ca.per_share != null ? `₹${ca.per_share.toLocaleString("en-IN")} a share${ca.yield_pct != null ? ` · ${ca.yield_pct}% of the price at filing` : ""}`
+    : ca.subject ?? titleCase(ca.kind);
+  return (
+    <BlockShell title={titleCase(ca.kind)} right={<span className="ml-auto text-[10px] font-semibold normal-case tracking-normal text-ink-3">NSE corporate actions</span>}>
+      <p className="text-[13.5px] font-semibold text-ink">{what}</p>
+      <p className="num text-[12.5px] text-ink-2">
+        Ex-date {istDate(ca.ex_date)}{ca.record_date && ca.record_date !== ca.ex_date ? ` · record date ${istDate(ca.record_date)}` : ""}
+        {ca.factor ? " · per-share figures before this date are divided by the factor on the company page" : ""}
+      </p>
     </BlockShell>
   );
 }

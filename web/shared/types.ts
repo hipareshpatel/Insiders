@@ -193,6 +193,9 @@ export interface CardBody {
     versus_prior?: string | null; verified?: boolean; issue?: string | null }[] | null;
   /** Set when the results figures came from the filing's XBRL file. */
   xbrl?: { basis: string | null; period: string | null; figures: number } | null;
+  /** The corporate action the card is about, from NSE's feed (corporate_actions.card_block): ratio, dates, yield. */
+  corporate_action?: { kind: string; subject?: string; ex_date: string; record_date?: string; factor?: number;
+    per_share?: number; yield_pct?: number } | null;
   /** An annual report's red-flag check, made by code from its tagged XBRL (annual_xbrl.card_block, 22 Oct 2026). */
   annual_checks?: {
     fy: string; basis?: string; opinion?: string; auditors?: string[]; matters?: string[];

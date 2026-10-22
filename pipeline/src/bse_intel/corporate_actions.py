@@ -159,3 +159,30 @@ def sync(pipeline, deadline: float, days: int = LIVE_DAYS, scrips: set[str] | No
             report["splits_bonuses"] += sum(1 for a in actions if a.get("factor"))
     report["errors"] = report["errors"][:20]
     return report
+
+
+_KIND_WORDS = {"BONUS": r"\bbonus\b", "SPLIT": r"\bsplit\b|sub-?\s*division", "CONSOLIDATION": r"\bconsolidation\b",
+               "BUYBACK": r"buy-?\s*back", "RIGHTS": r"\brights?\s+(?:issue|entitlement)", "DEMERGER": r"\bdemerger\b",
+               "DIVIDEND": r"\bdividend\b"}
+
+
+def card_block(dossier: dict | None, filed_at: str, text: str, price: float | None = None) -> dict | None:
+    """A corporate-action card's own block from memory's actions (owner, 22 Oct 2026: ratio, record date, yield): the
+    action the card is about, the first one of its kind with an ex-date from the filing day to 120 days after it. A
+    dividend's yield is on the price when the filing came out."""
+    from datetime import date as _date
+
+    actions = (dossier or {}).get(KEY) or []
+    day = filed_at[:10]
+    try:
+        last = (_date.fromisoformat(day) + timedelta(days=120)).isoformat()
+    except ValueError:
+        return None
+    kinds = [k for k, words in _KIND_WORDS.items() if re.search(words, text or "", re.I)]
+    for a in sorted(actions, key=lambda a: a.get("ex_date", "")):
+        if a.get("kind") in kinds and day <= a.get("ex_date", "") <= last:
+            block = {k: a[k] for k in ("kind", "subject", "ex_date", "record_date", "factor", "per_share") if a.get(k) is not None}
+            if a.get("per_share") and price:
+                block["yield_pct"] = round(a["per_share"] / price * 100, 2)
+            return block
+    return None

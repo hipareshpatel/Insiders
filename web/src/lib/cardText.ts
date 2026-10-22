@@ -155,3 +155,19 @@ export function changeTone(label: string, change: string): "pos" | "neg" | null 
   const good = LOWER_IS_BETTER.test(label) ? !up : up;
   return good ? "pos" : "neg";
 }
+
+// A governance event an investor must not read past (owner, 22 Oct 2026: governance flags blended in with routine
+// news): an auditor's or CFO's exit, a regulator's order, a forensic audit, a fraud, a default. Matched on the card's
+// own headline and facts, worded tightly so an auditor's appointment or a routine SEBI letter is no flag.
+const GOVERNANCE_FLAGS: [RegExp, string][] = [
+  [/\b(?:statutory\s+|secretarial\s+|internal\s+)?auditors?\b[^.]{0,60}\b(?:resign|resigned|resignation|quit|steps?\s+down)|\bresign(?:ed|ation)\b[^.]{0,60}\bauditors?\b/i, "Auditor exit"],
+  [/\b(?:chief\s+financial\s+officer|cfo)\b[^.]{0,50}\b(?:resign|resigned|resignation|steps?\s+down|exit)|\bresign(?:ed|ation)\b[^.]{0,40}\b(?:chief\s+financial\s+officer|cfo)\b/i, "CFO exit"],
+  [/\bforensic\s+audit\b/i, "Forensic audit"],
+  [/(?<!\bno\s)(?<!\bnot\s)\bfraud\b(?![^.]{0,30}\b(?:no|not)\b)/i, "Fraud"],
+  [/\b(?:sebi|rbi|sfio|enforcement\s+directorate|\bed\b)\b[^.]{0,60}\b(?:order|penalty|debar|barred|show\s+cause|attach|search|raid)/i, "Regulator action"],
+  [/\bdefault(?:ed|s)?\b[^.]{0,40}\b(?:interest|principal|repayment|ncds?|debentures?|loans?)\b/i, "Default"],
+];
+
+export function governanceFlags(text: string): string[] {
+  return GOVERNANCE_FLAGS.filter(([re]) => re.test(text)).map(([, label]) => label);
+}

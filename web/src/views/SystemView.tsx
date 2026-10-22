@@ -192,8 +192,16 @@ function ProviderRow({ usage }: { usage: ProviderUsage }) {
   const tokens = usage.input_tokens + usage.output_tokens;
   const ratios = [usage.limit_rpd ? usage.requests / usage.limit_rpd : null, usage.limit_tpd ? tokens / usage.limit_tpd : null].filter((r): r is number => r !== null);
   const utilisation = ratios.length ? Math.max(...ratios) : null;
-  const status = utilisation !== null && utilisation >= CEILING ? "At ceiling" : usage.rate_limited > 0 ? "Rate limited" : usage.failures > 0 ? "Errors" : "Healthy";
-  const statusStyle = status === "Healthy" ? "bg-pos-soft text-pos" : status === "At ceiling" ? "bg-neg-soft text-neg" : "bg-warn-soft text-warn";
+  // by share of attempts, not by any one error: Gemini Flash-Lite served 472 requests on 21 Oct with 60 failures and was
+  // shown as "Errors" all day, which read as a model switched off (owner, 2026-10-22). No model is switched off by an
+  // error: the gateway skips it for 5 minutes after 3 failures in a row, for the day only on a stated daily quota.
+  const attempts = usage.requests + usage.failures;
+  const failRate = attempts ? usage.failures / attempts : 0;
+  const status = utilisation !== null && utilisation >= CEILING ? "At ceiling"
+    : attempts === 0 && usage.rate_limited > 0 ? "Rate limited"
+    : attempts >= 5 && failRate >= 0.25 ? `Errors ${Math.round(failRate * 100)}%`
+    : usage.requests > 0 ? "Working" : "Idle";
+  const statusStyle = status === "Working" ? "bg-pos-soft text-pos" : status === "Idle" ? "bg-surface-2 text-ink-3" : status === "At ceiling" ? "bg-neg-soft text-neg" : "bg-warn-soft text-warn";
   return (
     <li className="grid gap-2 px-4 py-3 md:grid-cols-[minmax(0,1.2fr)_minmax(0,2fr)_auto] md:items-center">
       <div className="min-w-0">
@@ -207,7 +215,7 @@ function ProviderRow({ usage }: { usage: ProviderUsage }) {
           <span>{num(usage.requests)}{usage.limit_rpd ? ` / ${num(usage.limit_rpd)}` : ""} req</span>
           <span>{num(tokens)}{usage.limit_tpd ? ` / ${num(usage.limit_tpd)}` : ""} tok</span>
           {usage.rate_limited ? <span className="text-warn">{usage.rate_limited} × 429</span> : null}
-          {usage.failures ? <span className="text-neg">{usage.failures} errors</span> : null}
+          {usage.failures ? <span className={failRate >= 0.25 ? "text-neg" : "text-ink-3"}>{usage.failures} errors ({Math.round(failRate * 100)}% of attempts)</span> : null}
         </div>
         {usage.last_error ? <div className="truncate text-[11px] text-ink-3" title={usage.last_error}>{usage.last_error}</div> : null}
       </div>

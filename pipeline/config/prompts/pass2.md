@@ -170,6 +170,19 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
 - For results, look beyond the headline lines: changes in inventories, other income, exceptional
   items, an unusual tax rate, or a one-off in employee costs can flatter or depress margins. When
   one does, quantify it in bps or ₹ in notable_changes or quantified_impact.
+- What a reader would otherwise miss (blind review, 22 Oct: each of these was in the filing and left off the card):
+  - When PAT and PBT move apart by 10 points or more, give both changes and the tax charge in both periods, as
+    figures from the statement; a one-time tax charge in the comparison period (a new tax regime, a deferred tax
+    write-off) is named, since it inflates the change. This is arithmetic, not a stated cause: do not say why tax moved.
+  - Notes to the results that change the risk: an insolvency or winding-up petition admitted or stayed, an auditor's
+    qualification or emphasis of matter, a regulator's order, a fraud or a material litigation. Each is a fact with
+    its quote, whatever else the card is about.
+  - A segment whose margin or revenue moved by 3 points or 15% when the filing gives segment figures, with both
+    periods.
+  - A board decision that still needs shareholders: the headline says "board approves" and the card says the vote
+    is pending; every other item on the same notice or postal ballot is listed in one fact.
+  - An order sized only by the company's own value bands (L&T's "*Large" with a footnote table): give the band's
+    range as the order size and never call the value smaller, larger or unknown.
 - missing_disclosures: what management would normally disclose for this kind of event but did
   not (for example no timeline or funding plan for a capex, no revenue guidance after a large
   acquisition, no order value). Check COMPANY MEMORY first: if an earlier AGM, call or filing in

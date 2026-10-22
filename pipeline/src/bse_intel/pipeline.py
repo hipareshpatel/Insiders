@@ -42,6 +42,7 @@ from .extract import CACHE_VERSION, FIGURE_PAGE_AMOUNTS, Document, amounts, cach
 from .ocr import available as local_ocr_available
 from .ocr import page_reader, recognise
 from . import raw
+from . import order_band
 from . import gate
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
@@ -3058,6 +3059,7 @@ class Pipeline:
             changes += apply_deal_guards(candidate, filing, history, dossier.get("balance_sheet", []), text)
             changes += deal_echo_slips(candidate, filed_text)
             changes += continued_deal(candidate, view, filed_text)
+            changes += order_band.apply(candidate, filed_text)
             changes += event_xbrl.apply_orders(candidate.card, event_orders)   # the file's figures have the last word
             changes += misdated_memory_insights(candidate, view, filed_text)
             changes += stale_approvals(candidate, view, filed_text)

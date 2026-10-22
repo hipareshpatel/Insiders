@@ -143,4 +143,4 @@ def release(sink, dry_run: bool = False) -> dict:
     log.info("release-pruned: %d released, %s", len(out), skipped)
     return {"released": len(out), "rows_written": written, "dry_run": dry_run, "kept_held": skipped,
             "kept_why": breakdown(kept), "flagged_published": len(flagged), "flagged_why": breakdown(flagged),
-            "cards": out}
+            "cards": out, "rerun_ids": [r["news_id"] for r, _ in kept + flagged]}

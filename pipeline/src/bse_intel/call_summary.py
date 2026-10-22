@@ -333,6 +333,11 @@ def _periods(text: str) -> list[str]:
     return [re.sub(r"[\s']", "", m.group(0)).upper() for m in gate._PERIOD_LABEL.finditer(gate._flat(text or ""))]
 
 
+# Bumped when the check accepts more (22 Oct 2026: a figure from the same answer, one subtraction, a quarter the quote
+# names); refresh-card-blocks re-checks a stored call card checked under an earlier version (card_refresh.recheck_calls).
+TAKEAWAY_CHECK_VERSION = 2
+
+
 def check_ai_takeaways(card, text: str, reading: str = "", view: dict | None = None, unit: int | None = None) -> list[str]:
     """Each of the model's call takeaways checked by code; `verified` set on the ones the card's face may show.
 

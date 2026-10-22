@@ -93,6 +93,49 @@ def filed_text(pipeline, news_id: str) -> str | None:
         return None
 
 
+def recheck_calls(card: dict, text: str | None) -> bool:
+    """A stored call card's takeaways under today's check (call_summary.TAKEAWAY_CHECK_VERSION), by code, no AI. Only
+    ever adds: a takeaway the earlier check passed stays passed (its memory citations were checked then, against the
+    memory of the day, which is not at hand here); one it refused is passed when today's check, on the filing alone,
+    passes it. Returns whether any takeaway changed. Without the filing's text nothing changes and the card is tried
+    again on the next refresh."""
+    from .call_summary import TAKEAWAY_CHECK_VERSION, check_ai_takeaways
+    from .grounding import declared_unit
+
+    items = card.get("call_takeaways") or []
+    if (card.get("takeaway_check") or 1) >= TAKEAWAY_CHECK_VERSION or not items or not text:
+        return False
+    try:
+        shell = Card.model_validate({"impact_level": card.get("impact_level") or "LOW", "headline": card.get("headline") or "",
+                                     "what_happened": [], "call_takeaways": items})
+    except ValidationError:
+        return False
+    check_ai_takeaways(shell, text, "", {}, declared_unit(text))
+    changed = False
+    for stored, now in zip(items, shell.call_takeaways):
+        if not stored.get("verified") and now.verified:
+            stored["verified"], stored["issue"] = True, None
+            changed = True
+    card["takeaway_check"] = TAKEAWAY_CHECK_VERSION
+    return changed
+
+
+def _call_text(pipeline, row: dict) -> str | None:
+    """A call's text for the re-check: the cache when it has it, else the transcript from the exchange (text layer
+    only; a scanned transcript stays as it was)."""
+    text = filed_text(pipeline, row["news_id"])
+    if text or not row.get("pdf_url"):
+        return text
+    from .extract import Document
+
+    try:
+        pdf = pipeline._attachment(row["pdf_url"], 30_000_000)
+        return Document(pdf, max_ocr_pages=0).select_text(10_000_000, []) or None if pdf else None
+    except Exception as exc:  # noqa: BLE001 - one unreachable transcript must not stop the refresh
+        log.warning("call %s: transcript not read for the re-check: %s", row["news_id"], exc)
+        return None
+
+
 def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: int = 50) -> dict:
     """Every stored card (or the given companies'), in date order, written back when a block changed."""
     sink = pipeline.sink
@@ -101,6 +144,7 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
     dossiers: dict[str, dict | None] = {}
     companies: dict[str, dict | None] = {}
     dirty: set[str] = set()   # companies whose memory took call takeaways from their stored cards
+    rechecks = 0              # call cards whose takeaways today's check passed more of (recheck_calls)
     while True:
         rows = sink.query("export_cards", [after[0], after[1], page])
         if not rows:
@@ -145,10 +189,18 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
                     new["score"] = {**score, "impact": "HIGH", "reasons": [*(score.get("reasons") or []), "Impact: " + "; ".join(why)]}
                     changed.append("impact")
             if card.get("event_type") == "CONCALL_PRESENTATION" and card.get("call_takeaways"):
+                from .call_summary import TAKEAWAY_CHECK_VERSION
+
+                if (new.get("takeaway_check") or 1) < TAKEAWAY_CHECK_VERSION:
+                    rechecked = recheck_calls(new, _call_text(pipeline, row))
+                    if new.get("takeaway_check") == TAKEAWAY_CHECK_VERSION:
+                        changed.append("call_takeaways")
+                        if rechecked:
+                            rechecks += 1
                 # cards written before the takeaways went into memory (2026-10-21): their checked ones, for the
                 # company page's quarterly summary (refresh-summaries rebuilds it)
                 before = json.dumps(dossier.get("call_points", []), sort_keys=True)
-                remember_call_points(dossier, row["news_id"], row["filed_at"], card["call_takeaways"])
+                remember_call_points(dossier, row["news_id"], row["filed_at"], new["call_takeaways"])
                 if json.dumps(dossier.get("call_points", []), sort_keys=True) != before:
                     dirty.add(scrip)
             if not changed:
@@ -168,4 +220,4 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
         for scrip in dirty:
             sink.put_dossier(scrip, dossiers[scrip])
     return {"cards": seen, "changed": written, "failed": failed, "by_block": changed_keys, "dry_run": dry_run,
-            "memories_with_call_points": len(dirty)}
+            "memories_with_call_points": len(dirty), "call_cards_rechecked": rechecks}

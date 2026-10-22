@@ -665,7 +665,12 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
             </span>
           </button>
           {row.last_price != null && (
-            <span className="num shrink-0 text-right">
+            // today's price and returns: on an older card they are not the filing's reaction, so they say "now"
+            // (data chain audit B1, 22 Oct 2026; the price at filing is under Full analysis)
+            <span className="num shrink-0 text-right" title="Latest close and returns to it, not the price when this was filed">
+              {Date.now() - new Date(row.filed_at).getTime() > 7 * 86400_000 && (
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-3">Now</span>
+              )}
               <span className="block text-[15px] font-bold text-ink">₹{row.last_price.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               <span className="mt-0.5 flex justify-end gap-2.5 text-[11.5px] font-semibold">
                 {([["1W", row.ret_1w], ["1M", row.ret_1m], ["3M", row.ret_3m]] as const).filter(([, v]) => v != null).map(([label, v]) => (

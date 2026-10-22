@@ -166,6 +166,7 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
         others = [m for other, (_, _, result, _) in found.items() if other != period for m in result.metrics]
         if xbrl_fast_path.fix_scale(parsed, others, scrip):
             stats.rescaled += 1
+        xbrl_fast_path.drop_long_year(parsed, others, scrip)   # an 18-month "year" dated as twelve (Siemens)
     for period, (filed_on, url, parsed, _) in sorted(found.items()):
         _write_results(sink, scrip, name, company, period, filed_on, url, parsed, stats)
     # a consolidated filer's standalone files too, kept apart for the company page's standalone view (owner,

@@ -120,8 +120,23 @@ Progress on each is tracked in `docs/audit/work-2026-10-22.md` (item E).
   symbol the same: Reliance's latest is 18 Feb 2026. Not found by `corporates-pit` for 3 May - 21 Oct 2026. The
   disclosures have moved somewhere this feed does not show (assumption: SEBI's system-driven disclosures through
   the depositories); where they now are is the next thing to find, before anything is built on them.
-- **Bulk and block deals:** `/api/historical/bulk-deals` returned NSE's bot page from a cloud IP (22 Oct 2026); to be
-  tried from the pipeline's NSE session on GitHub Actions.
+- **Bulk and block deals:** measured 22 Oct 2026 19:20 IST from the Actions runner with the pipeline's NSE session
+  (`online-probe.yml`, check 13): `/api/historical/bulk-deals` and `/api/historical/block-deals` (7 days) return NSE's
+  bot page (HTML, HTTP 200); **`/api/snapshot-capital-market-largedeal` answers JSON: today's 111 bulk deals, 4 block
+  deals and 99 short-selling rows.** It holds the current session only, so history is built by storing it every
+  trading morning: **built 22 Oct evening** (`deals-sync`, market-data and nightly, retried; TRACKER F96). Next: the deals on the company page and as a card signal.
+- **Insider trades, re-measured 22 Oct 19:20 IST from Actions:** `corporates-pit` over 7 days: 0 rows; for one symbol
+  (Reliance) its default window returns 20 rows, the latest from 30 Sep 2021. `/api/corporate-sdd` (a guess at
+  system-driven disclosures): 404. Still not found; the owner pointed (22 Oct evening) at the page NSE's own insider-trading listing uses (`/companies-listing/corporate-filings-insider-trading`, calling `corporates-pit` with a dated window): the probe now opens that page first for its cookies, then asks 1 Sep - today for equities, SME and the CSV export.
+
+- **Found via the owner's tracker (github.com/Pareshking/NSE-BSE-Insider-Tracker), measured 22 Oct 20:10 IST from the
+  Actions runner:** `corporates-pit` answers an empty list for any window (also after opening the insider-trading page;
+  its CSV export gave 30 lines), so it is not the live source. **`/api/corporates-pit-gg?index=equities`: 3,204 filings,
+  each with its XBRL file** (appId, symbol, broadcastDateTime, xmlFileName, typeOfSubmission, prevAppId); a filing's
+  XBRL carries each person's CategoryOfPerson, NameOfThePerson, buy/sell, quantity, mode (Karur Vysya: promoter
+  G Rajasekaran, market sale of 2,000 shares). **Deals history: `/api/historicalOR/bulk-block-short-deals?optionType=
+  bulk_deals|block_deals&from=&to=&csv=true`** answers CSV (7 days: 695 bulk rows, 16 block rows). Next (hourly checks,
+  23 Oct): the insider-trade collector (list, then each new filing's XBRL, retried) and the deals history backfill.
 
 ## 7. Event types: CORPORATE_ACTION is a catch-all (measured 22 Oct 2026)
 
@@ -139,3 +154,10 @@ event type in both prompts ("CORPORATE_ACTION: dividend, split, bonus, buyback, 
 delisting, name or face-value change - not an order, a stake sale, a licence or a fundraise"), measured on live cards
 the day after (the share of CORPORATE_ACTION cards that are corporate actions, now 52%), as the no-AI-for-testing rule
 allows only live measurement of a prompt change.
+
+**Shipped 22 Oct evening (owner: "go ahead, ship the prompt definitions").** `models.EVENT_DEFINITIONS`: one line per
+type, in the gatekeeper (pass1) and both card prompts (pass2, pass2_short) through `$event_definitions`; CORPORATE_ACTION
+is "a shareholder entitlement or capital change only ... not an order, a stake sale, a licence, a fundraise, a merger
+or results"; licences and approvals go to LITIGATION_REGULATORY, stake sales to M_AND_A, results letters to RESULTS.
+About 400 more prompt tokens a filing. **To measure from 23 Oct on live cards:** the share of CORPORATE_ACTION cards
+that are corporate actions (52% before), and results press releases typed OTHER (JSL, Tinna on 22 Oct).

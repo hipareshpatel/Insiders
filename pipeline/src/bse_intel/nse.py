@@ -67,6 +67,7 @@ BLOCKING_STATUS = (401, 403, 429)
 # Measured 2026-10-18: 2,605 rows; 2,477 of them are among our 5,111 companies by ISIN.
 EQUITY_LIST_URL = "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv"
 ENCUMBRANCE_ENDPOINT = "https://www.nseindia.com/api/corporate-pledgedata-sast3132"
+LARGE_DEALS_ENDPOINT = "https://www.nseindia.com/api/snapshot-capital-market-largedeal"
 # Every announcement of a day (about 500-600 on a weekday, measured 12-16 Oct 2026), all in one answer, each
 # with its PDF and whether event XBRL exists. Read from the "Corporate Filings - Announcements" page's own call.
 ANNOUNCEMENTS_ENDPOINT = f"{SITE}/api/corporate-announcements"
@@ -516,6 +517,12 @@ class NseClient:
         data = self._get(ENCUMBRANCE_ENDPOINT, {"from_date": day_from.strftime("%d-%m-%Y"), "to_date": day_to.strftime("%d-%m-%Y")}).json()
         rows = data.get("data") if isinstance(data, dict) else data
         return rows if isinstance(rows, list) else []
+
+    def large_deals(self) -> dict:
+        """The latest session's bulk, block and short-selling deals as NSE's lists (deals.py; measured 22 Oct 2026 from
+        the Actions runner: BULK_DEALS_DATA 111, BLOCK_DEALS_DATA 4, SHORT_DEALS_DATA 99 rows)."""
+        data = self._get(LARGE_DEALS_ENDPOINT).json()
+        return data if isinstance(data, dict) else {}
 
     def integrated_list(self, kind: str, page: int = 1, size: int = 500) -> list[dict]:
         """One page of NSE's all-company integrated-filing list ("Integrated Filing- Financials" or "...- Governance"),

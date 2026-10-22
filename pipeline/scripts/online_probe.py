@@ -16,7 +16,8 @@ Checks (docs/SOURCES.md "Event XBRL" and "Timing checked live"):
 9. the two calls BSE's Financial Results page makes for its table (NSTodayResults_ng, Result_Arch_ng);
 10. the event XBRL lag: each file against its company's nearest earlier announcement of the same subject;
 11. NSE's SAST Reg 31 encumbrance feed (promoter pledges, module 42);
-12. where a company's industry can come from on NSE (quote page, announcement rows, index constituent lists).
+12. where a company's industry can come from on NSE (quote page, announcement rows, index constituent lists);
+13. the missing sources (data chain audit §6): bulk and block deals, insider trades (PIT) and where they moved.
 
 Exit status is 0 whatever NSE answers: the report is the result. Run by online-probe.yml.
 """
@@ -190,6 +191,95 @@ def main() -> int:
             return f"{len(got)} rows over 7 days; fields: {', '.join(keys)}"
 
         step("SAST Reg 31 encumbrance feed (pledges)", pledges)
+
+        # Missing sources (data chain audit §6, 22 Oct 2026): bulk and block deals returned NSE's bot page to a plain
+        # cloud request; insider trades (PIT Reg 7) list nothing after 2 May 2026. Each address is tried on its own.
+        for name, path, params in (
+                ("bulk deals, 7 days (historical/bulk-deals)", "/api/historical/bulk-deals",
+                 {"from": week_ago, "to": to_day}),
+                ("block deals, 7 days (historical/block-deals)", "/api/historical/block-deals",
+                 {"from": week_ago, "to": to_day}),
+                ("large deals snapshot (snapshot-capital-market-largedeal)",
+                 "/api/snapshot-capital-market-largedeal", {}),
+                ("insider trades, 7 days (corporates-pit)", "/api/corporates-pit",
+                 {"index": "equities", "from_date": week_ago, "to_date": to_day}),
+                ("insider trades, one company (corporates-pit, RELIANCE)", "/api/corporates-pit",
+                 {"index": "equities", "symbol": "RELIANCE"}),
+                ("system-driven disclosures, 7 days (corporate-sdd, assumption)", "/api/corporate-sdd",
+                 {"index": "equities", "from_date": week_ago, "to_date": to_day})):
+            def source(path=path, params=params):
+                r = nse._get(f"{SITE}{path}", params)
+                if "json" not in r.headers.get("content-type", ""):
+                    return f"HTTP {r.status_code} {r.headers.get('content-type', '')}: {r.text[:80]!r}"
+                data = r.json()
+                if isinstance(data, dict) and not isinstance(data.get("data"), list):
+                    sizes = {k: len(v) for k, v in data.items() if isinstance(v, list)}
+                    first = {k: v[0] for k, v in data.items() if isinstance(v, list) and v}
+                    return f"HTTP 200, lists {sizes or sorted(data)[:8]}; first rows {str(first)[:900]}"
+                got = _list(data)
+                latest = max((str(x.get("date") or x.get("BD_DT_DATE") or x.get("acqtoDt") or x.get("intimDt") or "")
+                              for x in got), default="")
+                return f"HTTP 200, {len(got)} rows; fields {sorted(got[0])[:10] if got else []}; latest {latest[:20]}"
+
+            step(f"Missing source: {name}", source)
+
+        # The owner's note (22 Oct 2026): the insider-trading page sets the cookies its own API call expects, so open
+        # it first, then ask for 1 Sep - today (equities, SME, and the CSV export)
+        def pit_page():
+            r = nse._client.get(f"{SITE}/companies-listing/corporate-filings-insider-trading",
+                                headers={"Accept": "text/html"})
+            return f"HTTP {r.status_code}, cookies now {sorted(nse._client.cookies.keys())[:8]}"
+
+        step("PIT: the insider-trading page first", pit_page)
+        for index, extra in (("equities", {}), ("sme", {}), ("equities", {"csv": "true"})):
+            def pit_after_page(index=index, extra=extra):
+                r = nse._client.get(f"{SITE}/api/corporates-pit", params={
+                    "index": index, "from_date": "01-09-2026", "to_date": to_day, **extra},
+                    headers={"Referer": f"{SITE}/companies-listing/corporate-filings-insider-trading"})
+                kind = r.headers.get("content-type", "")
+                if "json" in kind:
+                    got = _list(r.json())
+                    latest = max((str(x.get("intimDt") or x.get("date") or "") for x in got), default="")
+                    return f"HTTP {r.status_code} JSON, {len(got)} rows; latest {latest[:20]}"
+                lines = r.text.strip().splitlines()
+                return f"HTTP {r.status_code} {kind}, {len(lines)} lines; first {lines[:2]!r:.200}"
+
+            step(f"PIT after the page: {index}{' csv' if extra else ''}, 1 Sep - today", pit_after_page)
+
+        # The owner's insider tracker (github.com/Pareshking/NSE-BSE-Insider-Tracker, scripts/nse_insider.py and
+        # insiders_clean/history.py, read 22 Oct 2026): the live list is corporates-pit-gg, one row per filing with
+        # its XBRL file; the history of bulk and block deals is historicalOR/bulk-block-short-deals
+        def pit_gg():
+            got = _list(nse._get(f"{SITE}/api/corporates-pit-gg", {"index": "equities"}).json())
+            found["pit_gg"] = got
+            dates = sorted(str(x.get("broadcastDateTime") or "")[:11] for x in got if x.get("broadcastDateTime"))
+            xml = sum(1 for x in got if x.get("xmlFileName"))
+            return (f"{len(got)} filings, {xml} with an XBRL file; broadcast {dates[:1]} .. {dates[-1:]}; "
+                    f"fields {sorted(got[0])[:14] if got else []}")
+
+        step("PIT: corporates-pit-gg (the tracker's list)", pit_gg)
+
+        def pit_xbrl():
+            first = next((x for x in found.get("pit_gg") or [] if x.get("xmlFileName")), None)
+            if not first:
+                return "no filing with an XBRL file"
+            r = nse._client.get(first["xmlFileName"], timeout=20)
+            tags = re.findall(r"<[\w-]+:(NameOfThePerson|CategoryOfPerson|SecuritiesAcquiredOrDisposedTransactionType|"
+                              r"SecuritiesAcquiredOrDisposedNumberOfSecurity|ModeOfAcquisitionOrDisposal)[^>]*>([^<]{0,80})<",
+                              r.text)
+            return f"HTTP {r.status_code}, {len(r.content)} bytes, {first.get('symbol')}: {tags[:6]}"
+
+        step("PIT: one filing's XBRL (person, category, buy/sell, quantity)", pit_xbrl)
+
+        for option in ("bulk_deals", "block_deals"):
+            def deals_history(option=option):
+                r = nse._get(f"{SITE}/api/historicalOR/bulk-block-short-deals",
+                             {"optionType": option, "from": week_ago, "to": to_day, "csv": "true"})
+                kind = r.headers.get("content-type", "")
+                lines = r.text.strip().splitlines()
+                return f"HTTP {r.status_code} {kind}, {len(lines)} lines; first {lines[:2]!r:.240}"
+
+            step(f"Deals history: historicalOR {option}, 7 days, csv", deals_history)
 
         for symbol in COMPANIES:
             def results_gap(symbol=symbol):

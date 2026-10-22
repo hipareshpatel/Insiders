@@ -79,7 +79,8 @@ If the filing holds nothing decision-relevant, return
 {"is_material": false, "event_type": "<type>", "timeline_entry": "", "reason": "<15 words or fewer>"}.
 
 Event focus ($event_type)
-Use "$event_type" as triaged, unless the filing is clearly another of: $event_types.
+Use "$event_type" as triaged, unless the filing is clearly another of these (each type means only what it says):
+$event_definitions
 $event_focus
 
 Sector lens ($sector_name): $sector_context

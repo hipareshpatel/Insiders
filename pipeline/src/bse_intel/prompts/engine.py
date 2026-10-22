@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from string import Template
 
 from ..grounding import UNIT_NAMES, declared_unit, explicit_units
-from ..models import EVENT_TYPES, Filing
+from ..models import EVENT_TYPES, Filing, event_definitions
 from ..settings import Settings
 
 PASS2_SCHEMA = {
@@ -253,7 +253,7 @@ class PromptEngine:
         """The gatekeeper. `recent` is the company's latest timeline entries, so it can say that this
         filing is an event already in the feed arriving as a different document, which the document-level
         duplicate rules cannot see (one event, several submissions)."""
-        system = self._pass1.safe_substitute(event_types=", ".join(EVENT_TYPES))
+        system = self._pass1.safe_substitute(event_types=", ".join(EVENT_TYPES), event_definitions=event_definitions())
         already = "\n".join(f"- {str(t.get('date', ''))[:10]}: {str(t.get('summary', ''))[:160]}"
                             for t in (recent or [])) or "Nothing on file yet."
         user = (
@@ -285,7 +285,7 @@ class PromptEngine:
 
     def timeline(self, filing: Filing, text: str) -> tuple[str, str]:
         """The prompt for a routine filing that gets a timeline line instead of a card."""
-        system = self._timeline.safe_substitute(event_types=", ".join(EVENT_TYPES))
+        system = self._timeline.safe_substitute(event_types=", ".join(EVENT_TYPES), event_definitions=event_definitions())
         user = (
             f"Company: {filing.company_name} ({_listing(filing)})\n"
             f"Filed: {filing.filed_at}\n"
@@ -327,6 +327,7 @@ class PromptEngine:
             schema=(json.dumps(short_schema(event_type), ensure_ascii=False, separators=(",", ":")) if short
                     else json.dumps(pass2_schema(event_type), ensure_ascii=False, indent=1)),
             event_types=", ".join(EVENT_TYPES),
+            event_definitions=event_definitions(),
             memory_start=self.memory_start,
         )
         user = self._pass2_user.safe_substitute(

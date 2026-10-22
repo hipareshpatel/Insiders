@@ -11,7 +11,28 @@ The earlier plan (a Windows laptop reading BSE, phases 1-5 of 2026-10-16) is sup
 Code session on the laptop, which now builds and runs audit rounds only; **Cloud** = the cloud Claude session that
 reviews every push and fixes what it finds.
 
-## Pending work (the single list; refreshed 2026-10-20 11:30 IST)
+## Pending work (the single list; refreshed 2026-10-20 11:30 IST, 22 Oct block added 18:40 IST)
+
+**22 Oct 2026 (owner's day plan: the data chain audit, then fixes; details in `docs/audit/work-2026-10-22.md`,
+`docs/audit/data-chain-2026-10-22.md`, the day's card audit in `docs/audit/live/2026-10-22-audit.md`).**
+- Done (merged #65-#74): the data chain fix plan §5 items 1-8: years not ending in March, derived quarters marked,
+  one basis per comparison, foreign-currency deals, stale YoY removed, corporate actions (a new NSE source: 10,279
+  actions for 1,529 companies, nightly 30 days), EBITDA from the file's own lines, dates and denominators on the card
+  and company page; a price older than a week refused; NSE holidays; a bank's group profit; exchange-rate units; call
+  tables from the results filing and only for the quarter the call discusses (live-checked); call takeaways that
+  say "unchanged" need memory; profit/loss turns checked against the period's PAT. Card audit: 74 cards, 35% right,
+  23% WRONG (21 Oct: 21% / 23%).
+- Open, in order: **E13** a press release's own-definition figure (operational, adjusted, a segment) against statutory
+  comparatives in the results table (Adani Energy Solutions, Swiggy, Cyient: the commonest WRONG at the end of the
+  day; rule drafted, its on/off needs the filings' text from the Actions cache); **E14** a December-year company's call
+  figures stored under the wrong quarter (CIE Automotive); **G** the prune drops true points (3 of 3 on 22 Oct);
+  §5 item 9 (measure A3, A9 and the pledge denominator over stored memory); missing sources §6: **bulk and block
+  deals built 22 Oct evening** (`deals-sync` from NSE's large-deals snapshot, each trading morning and the nightly,
+  retried; TRACKER F96), their display on the company page next; insider trades (PIT) still not found after 2 May 2026
+  (`corporates-pit` empty from Actions too; next: the address NSE's own PIT page calls).
+- Event-type definitions in the prompts: shipped 22 Oct evening (owner's go-ahead); measured on 23 Oct's live cards
+  (CORPORATE_ACTION cards that are corporate actions, 52% before; data chain §7).
+- Owner decisions: Siemens FY26 revenue ₹24,845.6 Cr questioned.
 
 Owner decisions (§7): held cards hidden / shown with a warning / approve-reject (B3); backfill pace A2 (free Gemini
 ~111 days, three months only, or prepaid DeepSeek) and re-writing a company's last ~30 days after it (A3); prices from

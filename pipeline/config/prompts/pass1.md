@@ -37,5 +37,8 @@ approval to issue, a result after guidance) is NOT a repeat: it carries somethin
 filing that reports the same kind of event with different figures, such as the next month's sales or
 another order. Leave duplicate_of empty unless you can point at the entry.
 
+Event types (the one whose meaning fits; CORPORATE_ACTION only for a shareholder entitlement or capital change):
+$event_definitions
+
 Reply with only this JSON object:
 {"is_material": true, "event_type": "<one of: $event_types>", "confidence": 0.0, "reason": "<15 words or fewer>", "timeline_only": false, "duplicate_of": ""}

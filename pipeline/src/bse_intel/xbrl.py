@@ -888,6 +888,57 @@ def fix_scale(result: XbrlResult | None, history, source: str = "") -> int:
     return k
 
 
+_YEAR_GAP = 0.15        # a year's revenue this far from the sum of its four quarters is not their year
+_QUARTER_BAND = (0.3, 2.0)   # with one quarter unknown, the one the year implies against the median of the others
+
+
+def long_year(result: XbrlResult | None, history) -> str | None:
+    """Why a results file's year is not its four quarters, or None when it is or there is too little to tell.
+
+    Siemens moved its year end from September to March: its "year" to March 2026 is 18 months (October 2024 - March
+    2026, ₹24,845.6 Cr of revenue), yet its own Q4 file dates the year-to-date context 1 April 2025 - 31 March 2026
+    (owner's check against Screener's 18M column, 22 Oct 2026). Memory took the dates and stored the 18 months as
+    a 12-month FY26. A year is its four quarters (Q1-Q4 of the same FY, the file's own quarter and memory's): with all
+    four, its revenue is within 15% of their sum; with three, the fourth it implies is within 0.3-2x the median of
+    the three."""
+    if result is None or result.kind != "RESULTS":
+        return None
+    years = {m.period for m in result.metrics if re.fullmatch(r"FY\d\d", m.period or "")}
+    if not years:
+        return None
+    quarters = _quarters([*(history or []), *result.metrics])
+    for year in years:
+        revenue = next((m.value for m in result.metrics if m.period == year and m.metric == "revenue"
+                        and isinstance(m.value, (int, float))), None)
+        if not revenue or revenue <= 0:
+            continue
+        known = [quarters[q]["revenue"] for q in (f"Q{i}{year}" for i in range(1, 5))
+                 if q in quarters and quarters[q].get("revenue", 0) > 0]
+        if len(known) == 4:
+            total = sum(known)
+            if abs(revenue / total - 1) > _YEAR_GAP:
+                return f"{year} revenue ₹{revenue:,.1f} Cr against its four quarters' ₹{total:,.1f} Cr"
+        elif len(known) == 3:
+            implied, median = revenue - sum(known), statistics.median(known)
+            if not _QUARTER_BAND[0] * median <= implied <= _QUARTER_BAND[1] * median:
+                return (f"{year} revenue ₹{revenue:,.1f} Cr leaves ₹{implied:,.1f} Cr for its fourth quarter, against "
+                        f"a median quarter of ₹{median:,.1f} Cr")
+    return None
+
+
+def drop_long_year(result: XbrlResult | None, history, source: str = "") -> str | None:
+    """Take a year that is not its four quarters (long_year) out of a results file, every figure of it, so memory
+    keeps the quarters and no year. Returns why, None when nothing was taken."""
+    why = long_year(result, history)
+    if not why:
+        return None
+    years = {m.period for m in result.metrics if re.fullmatch(r"FY\d\d", m.period or "")}
+    result.metrics = [m for m in result.metrics if m.period not in years]
+    log.warning("XBRL %s %s: its year is not twelve months of quarters (%s); the year's figures are not kept",
+                source, result.period, why)
+    return why
+
+
 def add_comparatives(result: XbrlResult, *earlier: XbrlResult) -> int:
     """YoY and QoQ for a results file from the year-ago and previous quarters' own files. BSE's files
     carry only the current quarter and the year to date (Ahluwalia Q3FY25: Q3FY25 and 9MFY25), so the

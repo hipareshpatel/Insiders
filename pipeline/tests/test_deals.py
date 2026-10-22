@@ -1,0 +1,70 @@
+"""Bulk and block deals from NSE's large-deals snapshot (deals.py). Rows as NSE served them on 22 Oct 2026."""
+
+from bse_intel.deals import merge, parse_row
+
+RAVITA_BULK = {"buySell": "BUY", "clientName": "YASH HITESH PATEL", "date": "22-Oct-2026",
+               "name": "Ravita Engineering Ser L", "qty": "529200", "remarks": "-", "symbol": "RAVITA", "watp": "112"}
+CAPINVIT_BLOCK = {"buySell": "BUY", "clientName": "LARSEN & TOUBRO LIMITED", "date": "22-Oct-2026",
+                  "name": "Capital Infra Trust", "qty": "6644519", "remarks": None, "symbol": "CAPINVIT", "watp": "75.59"}
+SHORT_ROW = {"buySell": None, "clientName": None, "date": "21-Oct-2026", "name": "ADITYA BIRLA CAPITAL LIMITED",
+             "qty": "400", "remarks": None, "symbol": "ABCAPITAL", "watp": None}
+
+
+def test_a_snapshot_row_becomes_a_deal():
+    e = parse_row(RAVITA_BULK, "BULK")
+    assert (e["kind"], e["symbol"], e["date"], e["side"], e["client"]) == (
+        "BULK", "RAVITA", "2026-10-22", "BUY", "YASH HITESH PATEL")
+    assert (e["qty"], e["price"], e["value_cr"], e["remarks"]) == (529200.0, 112.0, 5.93, None)
+    block = parse_row(CAPINVIT_BLOCK, "BLOCK")
+    assert block["value_cr"] == 50.23 and block["client"] == "LARSEN & TOUBRO LIMITED"
+    assert parse_row(SHORT_ROW, "BULK") is None          # a short-selling row: no side, no price
+    assert parse_row({**RAVITA_BULK, "watp": "-"}, "BULK")["value_cr"] is None
+
+
+def test_deals_are_kept_once_and_in_order():
+    d = {}
+    assert merge(d, [parse_row(RAVITA_BULK, "BULK")]) == 1
+    assert merge(d, [parse_row(RAVITA_BULK, "BULK")]) == 0                  # the morning read and the nightly read
+    sell = {**RAVITA_BULK, "buySell": "SELL", "clientName": "SOME FUND", "date": "21-Oct-2026"}
+    assert merge(d, [parse_row(sell, "BULK")]) == 1
+    assert [(e["date"], e["side"]) for e in d["deals"]["events"]] == [("2026-10-21", "SELL"), ("2026-10-22", "BUY")]
+
+
+def test_sync_files_universe_companies_and_fails_on_a_bot_page(monkeypatch):
+    from types import SimpleNamespace
+
+    from bse_intel import deals
+
+    class Sink:
+        def __init__(self):
+            self.dossiers = {"543000": {"scrip_code": "543000"}}
+
+        def get_dossier(self, scrip):
+            return self.dossiers.get(scrip)
+
+        def put_dossier(self, scrip, d):
+            self.dossiers[scrip] = d
+
+        def company(self, scrip):
+            return None
+
+    class Nse:
+        def large_deals(self):
+            return {"BULK_DEALS_DATA": [RAVITA_BULK, {"symbol": "BROKEN"}], "BLOCK_DEALS_DATA": [CAPINVIT_BLOCK],
+                    "SHORT_DEALS_DATA": [SHORT_ROW]}
+
+    class BotPage:
+        def large_deals(self):
+            raise ValueError("Expecting value: line 2 column 1")   # NSE's HTML page where JSON was asked for
+
+    universe = SimpleNamespace(built=True, symbols={"RAVITA": "543000"}, included={"543000"})
+    monkeypatch.setattr(deals.universe, "load_nse", lambda s: universe)
+    sink = Sink()
+    report = deals.sync(SimpleNamespace(nse=Nse(), sink=sink), deadline=1e12)
+    assert (report["listed"], report["in_universe"], report["filed"], report["companies"]) == (3, 1, 1, 1)
+    assert report["sessions"] == ["2026-10-22"] and len(report["errors"]) == 1   # the broken row; short rows not read
+    assert sink.dossiers["543000"]["deals"]["events"][0]["client"] == "YASH HITESH PATEL"
+    again = deals.sync(SimpleNamespace(nse=Nse(), sink=sink), deadline=1e12)
+    assert again["filed"] == 0
+    failed = deals.sync(SimpleNamespace(nse=BotPage(), sink=sink), deadline=1e12)
+    assert failed["stopped"].startswith("snapshot unreadable")

@@ -288,6 +288,19 @@ def cmd_pledge_sync(args, settings, sink) -> int:
     return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
 
 
+def cmd_deals_sync(args, settings, sink) -> int:
+    """The latest session's bulk and block deals (NSE's large-deals snapshot) into memory (deals.py), no AI."""
+    from . import deals
+
+    pipeline = _pipeline(settings, sink)
+    scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()} or None
+    report = deals.sync(pipeline, time.monotonic() + args.time_budget, scrips=scrips)
+    print(json.dumps(report, indent=2))
+    stopped = report["stopped"] or ""
+    # a session read neither time is lost (the snapshot holds one session), so a failed read fails the job for its retry
+    return 2 if stopped.startswith("NSE refused") else 1 if stopped.startswith("snapshot unreadable") else 0
+
+
 def cmd_corporate_actions_sync(args, settings, sink) -> int:
     """Splits, bonuses, dividends, rights and buybacks (NSE's corporate-actions feed) into memory (corporate_actions.py)."""
     from . import corporate_actions
@@ -849,6 +862,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--scrips", help="only these companies (comma separated)")
     p.add_argument("--time-budget", type=int, default=900)
     p.set_defaults(func=cmd_pledge_sync)
+    p = sub.add_parser("deals-sync", help="the latest session's bulk and block deals (NSE) into memory, no AI")
+    p.add_argument("--scrips", help="only these companies (comma separated)")
+    p.add_argument("--time-budget", type=int, default=300)
+    p.set_defaults(func=cmd_deals_sync)
     p = sub.add_parser("corporate-actions-sync", help="splits, bonuses, dividends, rights, buybacks (NSE) into memory, no AI")
     p.add_argument("--days", type=int, default=30, help="days of ex-dates to read back (2200 for six years)")
     p.add_argument("--scrips", help="only these companies (comma separated)")
@@ -958,7 +975,7 @@ def _record_writes(sink) -> None:
 # The scheduled jobs (workflows), each recorded when it ends so the System page shows a job that never ran or stopped
 # running (owner, 2026-10-20: market-data had never run on GitHub and nobody saw it)
 SCHEDULED = {"market-data", "post-mortem", "sync-companies", "refresh-summaries", "governance-sync", "shareholding-sync",
-             "pledge-sync", "dgtr-sync", "annual-xbrl-catchup", "backup", "refresh-card-blocks", "seed-memory", "seed-calls"}
+             "pledge-sync", "deals-sync", "dgtr-sync", "annual-xbrl-catchup", "backup", "refresh-card-blocks", "seed-memory", "seed-calls"}
 
 
 def _record_job(sink, command: str, code: int) -> None:

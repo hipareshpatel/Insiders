@@ -1355,3 +1355,20 @@ def test_a_standalone_figure_on_a_consolidated_card_is_a_problem():
                             metrics=[FinancialMetric(metric="pat", period="Q2FY27", value=508.32)])
     assert "standalone PAT" in basis_mixups(card("Net profit ₹508 Cr"), life, life_alone)[0]
     assert basis_mixups(card("Net profit ₹522 Cr"), life, life_alone) == []
+
+
+def test_prompts_carry_what_each_event_type_means(settings):
+    # CORPORATE_ACTION as a catch-all (data chain audit §7, 22 Oct 2026: 41 of 86 such cards were order wins, stake
+    # sales, licences): the gatekeeper and both card prompts now say what each type means
+    from bse_intel.models import EVENT_DEFINITIONS, EVENT_TYPES
+    from bse_intel.prompts.engine import PromptEngine
+
+    assert set(EVENT_DEFINITIONS) == set(EVENT_TYPES)
+    f = Filing(news_id="d1", scrip_code="999001", company_name="Demo Ltd", headline="Order",
+               filed_at="2026-10-22T17:00:00+05:30", filing_date="2026-10-22")
+    engine = PromptEngine(settings)
+    for system in (engine.pass1(f, "text")[0], engine.pass2(f, "ORDER_WIN", None, None, "text")[0],
+                   engine.pass2(f, "ORDER_WIN", None, None, "text", variant="short")[0]):
+        assert "$event_definitions" not in system
+        assert "- CORPORATE_ACTION: a shareholder entitlement or capital change only" in system
+        assert "not an order, a stake sale" in system

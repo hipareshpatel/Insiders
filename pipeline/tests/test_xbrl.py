@@ -813,3 +813,32 @@ def test_a_consolidated_banks_profit_is_after_minorities_and_associates():
     moved = xbrl.parse(raw.replace(tag, tag.replace("207000300000", "212000300000"), 1).encode())
     assert next(m.value for m in moved.metrics if m.metric == "pat" and m.period == moved.period) == 21200.03
     assert not any(m.metric == "pat_group" for m in moved.metrics)
+
+
+def test_a_year_that_is_not_its_four_quarters_is_not_kept():
+    # Siemens' Q4FY26 file (consolidated, read 22 Oct 2026): the year to March 2026 is 18 months, dated 1 Apr 2025 -
+    # 31 Mar 2026; memory holds Q1, Q2 and Q4 of FY26 (Q3 missing)
+    from bse_intel.models import FinancialMetric as FM
+
+    def result():
+        return xbrl.XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q4FY26", metrics=[
+            FM(metric="revenue", period="Q4FY26", value=4617.5), FM(metric="pat", period="Q4FY26", value=370.4),
+            FM(metric="revenue", period="FY26", value=24845.6), FM(metric="pat", period="FY26", value=2754.1),
+            FM(metric="eps", period="FY26", value=64.12, unit="INR")])
+
+    history = [{"metric": "revenue", "period": "Q1FY26", "value": 3830.7}]
+    assert xbrl.long_year(result(), history) is None                       # Q1 and the file's Q4: too little to tell
+    history += [{"metric": "revenue", "period": "Q2FY26", "value": 5171.2},
+                {"metric": "revenue", "period": "Q3FY26", "value": 4100.0}]
+    r = result()
+    why = xbrl.drop_long_year(r, history, "500550")
+    assert why and "FY26" in why                                           # four known: 24,845.6 against 17,719.4
+    assert {m.period for m in r.metrics} == {"Q4FY26"}                     # the quarter stays, the year goes
+    why = xbrl.long_year(result(), history[:2])                            # Siemens as memory holds it: Q1, Q2, Q4
+    assert why and "fourth quarter" in why                                 # it leaves ₹11,226 Cr for Q3
+    # a true year stands: within 15% of its four quarters
+    true_year = result()
+    for m in true_year.metrics:
+        if m.period == "FY26" and m.metric == "revenue":
+            m.value = 17900.0
+    assert xbrl.long_year(true_year, history) is None

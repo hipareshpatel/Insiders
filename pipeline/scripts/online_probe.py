@@ -16,7 +16,8 @@ Checks (docs/SOURCES.md "Event XBRL" and "Timing checked live"):
 9. the two calls BSE's Financial Results page makes for its table (NSTodayResults_ng, Result_Arch_ng);
 10. the event XBRL lag: each file against its company's nearest earlier announcement of the same subject;
 11. NSE's SAST Reg 31 encumbrance feed (promoter pledges, module 42);
-12. where a company's industry can come from on NSE (quote page, announcement rows, index constituent lists).
+12. where a company's industry can come from on NSE (quote page, announcement rows, index constituent lists);
+13. the missing sources (data chain audit §6): bulk and block deals, insider trades (PIT) and where they moved.
 
 Exit status is 0 whatever NSE answers: the report is the result. Run by online-probe.yml.
 """
@@ -190,6 +191,36 @@ def main() -> int:
             return f"{len(got)} rows over 7 days; fields: {', '.join(keys)}"
 
         step("SAST Reg 31 encumbrance feed (pledges)", pledges)
+
+        # Missing sources (data chain audit §6, 22 Oct 2026): bulk and block deals returned NSE's bot page to a plain
+        # cloud request; insider trades (PIT Reg 7) list nothing after 2 May 2026. Each address is tried on its own.
+        for name, path, params in (
+                ("bulk deals, 7 days (historical/bulk-deals)", "/api/historical/bulk-deals",
+                 {"from": week_ago, "to": to_day}),
+                ("block deals, 7 days (historical/block-deals)", "/api/historical/block-deals",
+                 {"from": week_ago, "to": to_day}),
+                ("large deals snapshot (snapshot-capital-market-largedeal)",
+                 "/api/snapshot-capital-market-largedeal", {}),
+                ("insider trades, 7 days (corporates-pit)", "/api/corporates-pit",
+                 {"index": "equities", "from_date": week_ago, "to_date": to_day}),
+                ("insider trades, one company (corporates-pit, RELIANCE)", "/api/corporates-pit",
+                 {"index": "equities", "symbol": "RELIANCE"}),
+                ("system-driven disclosures, 7 days (corporate-sdd, assumption)", "/api/corporate-sdd",
+                 {"index": "equities", "from_date": week_ago, "to_date": to_day})):
+            def source(path=path, params=params):
+                r = nse._get(f"{SITE}{path}", params)
+                if "json" not in r.headers.get("content-type", ""):
+                    return f"HTTP {r.status_code} {r.headers.get('content-type', '')}: {r.text[:80]!r}"
+                data = r.json()
+                if isinstance(data, dict) and not isinstance(data.get("data"), list):
+                    sizes = {k: len(v) for k, v in data.items() if isinstance(v, list)}
+                    return f"HTTP 200, lists {sizes or sorted(data)[:8]}"
+                got = _list(data)
+                latest = max((str(x.get("date") or x.get("BD_DT_DATE") or x.get("acqtoDt") or x.get("intimDt") or "")
+                              for x in got), default="")
+                return f"HTTP 200, {len(got)} rows; fields {sorted(got[0])[:10] if got else []}; latest {latest[:20]}"
+
+            step(f"Missing source: {name}", source)
 
         for symbol in COMPANIES:
             def results_gap(symbol=symbol):

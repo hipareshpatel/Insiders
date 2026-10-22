@@ -424,8 +424,7 @@ function Health() {
   const run = system.data?.runs?.[0];
   const failed = system.data?.queue?.failed ?? 0;
   // the day's AI requests against the models' stated daily limits (models with no limit are left out)
-  const limited = (system.data?.usage ?? []).filter((u) => u.limit_rpd);
-  const quota = limited.length ? limited.reduce((n, u) => n + u.requests, 0) / limited.reduce((n, u) => n + (u.limit_rpd ?? 0), 0) : null;
+  const quota = system.data?.quota_used ?? null;
   const start = system.data?.backfill?.start;
   return (
     <footer className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-line pt-3.5 text-[12.5px] text-ink-3">

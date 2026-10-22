@@ -538,6 +538,18 @@ export interface PipelineRun {
   error: string | null;
 }
 
+/** What the public pages show of the system (Today's footer, the feed's side rail); the full status is the owner's. */
+export interface PublicSystemResponse {
+  today: string;
+  ledger_today: { status: string; n: number }[];
+  queue: { pending: number; failed: number; cap?: number };
+  cards_7d: { impact_level: Impact; n: number }[];
+  backfill: { start: string; discovered_through: string | null; complete: boolean };
+  runs: Pick<PipelineRun, "run_id" | "mode" | "started_at" | "finished_at" | "status">[];
+  /** The day's AI requests against the models' stated daily limits, 0-1; null when no model states one. */
+  quota_used: number | null;
+}
+
 export interface SystemResponse {
   today: string;
   ledger_today: { status: string; n: number }[];
@@ -547,6 +559,8 @@ export interface SystemResponse {
   backfill: {
     start: string; discovered_through: string | null; complete: boolean;
     companies_left?: number | null; companies_total?: number | null;
+    /** The discovery cursor's first position on each of the last few IST days, [day, through], for the finish estimate. */
+    pace?: [string, string][];
   };
   d1?: { writes_today: number; size_bytes: number | null };
   /** Companies Yahoo Finance had a price for at the last market-data run. */

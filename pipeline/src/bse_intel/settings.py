@@ -93,6 +93,10 @@ class Settings:
     # Seconds a filing waits for others to fill its pack. 20 s gave 1.25 filings a call on round 5's companies
     # (2026-10-19): filings reach pass 2 one by one, and Gemini's free tier counts calls, not filings.
     pass2_pack_wait_s: int = field(default_factory=lambda: _env_int("PASS2_PACK_WAIT", 20))
+    # The same for backfill filings, which no reader is waiting for: longer, so packs fill (owner, 22 Oct: "go ahead"; a
+    # 60 s wait gave 2 filings a pack on 22 Oct 05:33 IST). Unset = the live wait.
+    pass2_pack_wait_bulk_s: int = field(default_factory=lambda: _env_int("PASS2_PACK_WAIT_BULK",
+                                                                         _env_int("PASS2_PACK_WAIT", 20)))
     # Long filings (pass2_long) packed with other long ones, at most this many a request when packing is on. 1 = off.
     pass2_pack_long: int = field(default_factory=lambda: _env_int("PASS2_PACK_LONG", 3))
     # The shadow meaning critic (critic.py): live published cards judged point by point on spare free quota after they

@@ -320,10 +320,11 @@ Public, read-only:
 | `GET /api/search?q=` | Companies and cards (Ctrl+K) |
 | `GET /api/companies`, `/api/companies/:scrip` | Directory; company, cards and dossier |
 | `GET /api/calendar?from&to` | Catalysts |
-| `GET /api/system` | Monitor: queue (capped), backfill companies, D1 writes and size, providers, runs |
+| `GET /api/system` | Public summary for the footer and side rail: today's ledger, queue (capped), 7-day cards, backfill dates, run statuses, AI quota used. The full monitor is the owner's (`/api/owner/system`, 22 Oct 2026) |
 
 Owner (`Authorization: Bearer OWNER_TOKEN`): `POST /api/owner/watchlist`, `POST/GET
-/api/owner/feedback`, `GET /api/owner/check`.
+/api/owner/feedback`, `GET /api/owner/check`, `GET /api/owner/system` (the System page: providers, run stats, failed filings,
+backfill progress, D1). The System page and its nav link show only in owner mode; the owner signs in at `/system`.
 
 Internal (`Bearer INGEST_TOKEN`): `POST /exec/:statement`, `POST /query/:name` (whitelisted SQL;
 constraint errors return 400), R2 `GET/PUT /objects/{memory,daily_feed,backup,noise,meta}/…` and

@@ -3,7 +3,7 @@
 // (dates, the cursor) instead of walking a table, and hot responses are kept
 // briefly in the isolate and, on a custom domain, in Cloudflare's edge cache.
 import { dedupeEvents } from "../shared/events";
-import type { CallQuarter } from "../shared/types";
+import type { CallQuarter, PublicSystemResponse } from "../shared/types";
 import { Hono } from "hono";
 import type { Context } from "hono";
 import type { AppEnv } from "./env";
@@ -557,12 +557,29 @@ api.get("/review", (c) => reviewQueue(c));
 // Counts above this are shown as "1,000+": an exact count would read every queued row.
 const QUEUE_CAP = 1000;
 
+// The System page is the owner's (owner, 22 Oct 2026: "system page ideally should be only visible to owner not public"):
+// /api/owner/system has everything; this public one only what the public pages show, and the recover job's health probe.
 api.get("/system", async (c) => {
   const body = await memoised("system", 30_000, () => systemStatus(c));
-  return c.json(body, 200, { "Cache-Control": "public, max-age=15, s-maxage=30" });
+  return c.json(publicSystem(body), 200, { "Cache-Control": "public, max-age=15, s-maxage=30" });
 });
 
-async function systemStatus(c: Context<AppEnv>) {
+export function publicSystem(s: Awaited<ReturnType<typeof systemStatus>>): PublicSystemResponse {
+  const limited = (s.usage as { requests: number; limit_rpd: number | null }[]).filter((u) => u.limit_rpd);
+  const allowed = limited.reduce((n, u) => n + (u.limit_rpd ?? 0), 0);
+  return {
+    today: s.today,
+    ledger_today: s.ledger_today,
+    queue: s.queue,
+    cards_7d: s.cards_7d as PublicSystemResponse["cards_7d"],
+    backfill: { start: s.backfill.start, discovered_through: s.backfill.discovered_through, complete: s.backfill.complete },
+    runs: (s.runs as PublicSystemResponse["runs"]).map(({ run_id, mode, started_at, finished_at, status }) =>
+      ({ run_id, mode, started_at, finished_at, status })),
+    quota_used: allowed ? limited.reduce((n, u) => n + u.requests, 0) / allowed : null,
+  };
+}
+
+export async function systemStatus(c: Context<AppEnv>) {
   const today = new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10); // IST date
   const utcDay = new Date().toISOString().slice(0, 10);
   // each provider's own quota day: Gemini's runs on Pacific time and is still yesterday (UTC) until 07:00 UTC, so
@@ -584,7 +601,7 @@ async function systemStatus(c: Context<AppEnv>) {
     db.prepare(`SELECT run_id, mode, started_at, finished_at, status, stats_json, substr(error, 1, 200) AS error
                   FROM pipeline_runs ORDER BY started_at DESC LIMIT 25`),
     db.prepare(`SELECT key, value FROM kv WHERE key IN ('backfill:discovered_through', 'backfill:complete',
-                  'backfill:start', 'backfill:progress', 'market:coverage', ?1, ?2)`).bind(`noise_count:${today}`, `d1_writes:${utcDay}`),
+                  'backfill:start', 'backfill:progress', 'backfill:pace', 'market:coverage', ?1, ?2)`).bind(`noise_count:${today}`, `d1_writes:${utcDay}`),
     // which filings failed and why (owner, 2026-10-20: the count alone did not say); a range seek on (status, filed_at)
     db.prepare(`SELECT news_id, scrip_code, symbol, company_name, headline, filed_at, attempts, substr(last_error, 1, 200) AS last_error
                   FROM filings WHERE status = 'FAILED' AND filed_at >= ?1 ORDER BY filed_at DESC LIMIT 50`).bind(weekAgo),
@@ -599,6 +616,12 @@ async function systemStatus(c: Context<AppEnv>) {
     progress = kvMap["backfill:progress"] ? JSON.parse(kvMap["backfill:progress"]) : null;
   } catch {
     progress = null;
+  }
+  let pace: [string, string][] = [];
+  try {
+    pace = kvMap["backfill:pace"] ? JSON.parse(kvMap["backfill:pace"]) : [];
+  } catch {
+    pace = [];
   }
   let coverage: Record<string, unknown> | null = null;
   try {
@@ -620,6 +643,7 @@ async function systemStatus(c: Context<AppEnv>) {
       complete: kvMap["backfill:complete"] === "1",
       companies_left: progress?.companies_left ?? null,
       companies_total: progress?.companies_total ?? null,
+      pace,
     },
     d1: { writes_today: Number(kvMap[`d1_writes:${utcDay}`] ?? 0) || 0, size_bytes: ledger.meta?.size_after ?? null },
     usage: usage.results,

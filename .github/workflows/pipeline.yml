@@ -70,6 +70,8 @@ jobs:
       # A filing waits at most PASS2_PACK_WAIT seconds for others, and never past the run's deadline.
       PASS2_PACK: ${{ vars.PASS2_PACK || '6' }}
       PASS2_PACK_WAIT: ${{ vars.PASS2_PACK_WAIT || '60' }}
+      # Backfill filings wait longer: no reader waits for them, and Gemini's free tier counts requests, not filings.
+      PASS2_PACK_WAIT_BULK: ${{ vars.PASS2_PACK_WAIT_BULK || '180' }}
     steps:
       - uses: actions/checkout@v4
       # GitHub-hosted runners get Python from setup-python; a self-hosted runner (a laptop or a

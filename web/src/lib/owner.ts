@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useSyncExternalStore } from "react";
-import type { CardRow, FeedResponse, ReviewCard } from "../../shared/types";
+import type { CardRow, FeedResponse, ReviewCard, SystemResponse } from "../../shared/types";
 import type { FeedFilters } from "./api";
 
 /** The owner's verdict on a card, in the blind audit's own words. */
@@ -44,6 +44,7 @@ async function call<T>(token: string, path: string, init?: RequestInit): Promise
 
 export const ownerApi = {
   check: (token: string) => call<{ ok: boolean }>(token, "/check"),
+  system: (token: string) => call<SystemResponse>(token, "/system"),
   watch: (token: string, scrip: string, on: boolean) =>
     call<{ ok: boolean }>(token, "/watchlist", { method: "POST", body: JSON.stringify({ scrip_code: scrip, on }) }),
   rate: (token: string, newsId: string, rating: "STARRED" | "NOISE" | "CLEAR") =>

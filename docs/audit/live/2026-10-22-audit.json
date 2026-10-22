@@ -488,5 +488,128 @@
   ],
   "prompt_variant": "long",
   "reason": "Filing is a PGCIL 'Manufacturer' approval (vendor qualification) for CTC/PICC/BPICC up to 765 kV from the Supa facility; it is tagged ORDER WIN although the card itself says 'a vendor qualification rather than an immediate commercial order win'."
+ },
+ {
+  "news_id": "nse-106824769",
+  "symbol": "LGEINDIA",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Press release confirms Great Place to Work certification for the third year and the National Best Employer Brand award; LOW impact and tone fit.",
+  "run": "16:07"
+ },
+ {
+  "news_id": "nse-106824764",
+  "symbol": "ADANIPORTS",
+  "verdict": "MINOR",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "long",
+  "reason": "Face matches Annexure A (Indian Ocean Gateway Terminal, Oman, 100 shares of OMR 5,000 = OMR 5,00,000), but the attached quotes read 'OMR 5,000,000', ten times the stated capital.",
+  "run": "16:07"
+ },
+ {
+  "news_id": "nse-106824751",
+  "symbol": "DALMIASUG",
+  "verdict": "MINOR",
+  "classes": [
+   "attribution"
+  ],
+  "prompt_variant": "long",
+  "reason": "Loan of $87.5M from CRDB, 51% SBLC and the US$132M project are right, but the headline names the borrower 'Dalmia Agrotech' where the filing says Eagle Agrotech Tanzania Limited.",
+  "run": "16:07"
+ },
+ {
+  "news_id": "nse-106824745",
+  "symbol": "GUJALKALI",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "Ground-breaking of the 33,870 TPA phosphoric acid plant PPA-II at Dahej confirmed, no cost or timeline disclosed; LOW impact fits.",
+  "run": "16:07"
+ },
+ {
+  "news_id": "nse-106824708",
+  "symbol": "NAM-INDIA",
+  "verdict": "WRONG",
+  "classes": [
+   "invented",
+   "arithmetic"
+  ],
+  "prompt_variant": "long",
+  "reason": "Takeaway says the ₹588.85 Cr IPO proceeds were 'fully utilized' with 'no unutilized proceeds', but the filing shows ₹401.36 Cr used, the ₹165 Cr inorganic-growth object unspent; the Nil deviation itself is right.",
+  "run": "16:07"
+ },
+ {
+  "news_id": "nse-106824520",
+  "symbol": "BETA",
+  "verdict": "WRONG",
+  "classes": [
+   "wrong_period"
+  ],
+  "prompt_variant": "long",
+  "reason": "Headline 'EBITDA margin expands to 23.2%' compares with 22.4%, which is H1FY25; the deck puts H1FY26 at 23.1%, so the gain is ~10 bps, not 80; other figures right.",
+  "run": "16:07"
+ },
+ {
+  "news_id": "nse-106824518",
+  "symbol": "BANSALWIRE",
+  "verdict": "MINOR",
+  "classes": [
+   "unsupported_cause"
+  ],
+  "prompt_variant": "short",
+  "reason": "Standalone and consolidated Q2FY27 figures match, but the capacity/gas-headwind catalyst and 'steady volume execution' are not in this filing, and one point ends in a broken sentence.",
+  "run": "16:07"
+ },
+ {
+  "news_id": "nse-106824515",
+  "symbol": "GRWRHITECH",
+  "verdict": "MINOR",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "long",
+  "reason": "NSE serves a truncated outcome PDF; against the press release and deck all figures match (revenue ₹696 Cr, EBITDA ₹189 Cr, 27.2% margin, PAT ₹129 Cr), but the takeaway calls the old 23-27% band the 'raised' one (new 25-29%).",
+  "run": "16:07"
+ },
+ {
+  "news_id": "nse-106824508",
+  "symbol": "ADOR",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "All figures match the consolidated presentation: Q2 revenue ₹344.74 Cr (+22.6%), H1 ₹654 Cr, gross margin 34.2% (-440 bps), EBITDA ₹38 Cr, PAT ₹27 Cr, ₹7.50 interim dividend, cash flow, borrowings and inventories.",
+  "run": "16:07"
+ },
+ {
+  "news_id": "nse-106824490",
+  "symbol": "JNPR",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "33 MW wind commissioned 21 Oct, project at 467.35 of 550.6 MWp, group ~2,844 MWp; memory items agree with the dossier.",
+  "run": "16:07"
+ },
+ {
+  "news_id": "nse-106824471",
+  "symbol": "APOLLO",
+  "verdict": "MINOR",
+  "classes": [
+   "memory"
+  ],
+  "prompt_variant": "long",
+  "reason": "Silo facts right (9,000 MT Bolkunda, 8.4 acres, ECL/CCL), but a point says IDL is not in memory's entity list when memory lists IDL Explosives as a subsidiary.",
+  "run": "16:07"
+ },
+ {
+  "news_id": "nse-106824458",
+  "symbol": "MAHSCOOTER",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Bajaj Nivesh is the new name; standalone Q2FY27 lakh figures correctly in crore (revenue ₹297.36 Cr, PAT ₹293.27 Cr, EPS 256.61), ₹160 interim dividend and book value as disclosed.",
+  "run": "16:07"
  }
 ]

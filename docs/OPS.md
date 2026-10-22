@@ -108,3 +108,4 @@ One line per lead check-in (every 15 minutes since 2026-10-20, owner): time IST,
 | 22 Oct 09:33 | Item F | Nightly / market-data / company-sync commands retry once after a fast failure (scripts/retry.sh); last night's jobs all succeeded; corporate actions and insider trades proposed as missing sources |
 | 22 Oct 09:37 | E6 | Corporate actions as a new source (NSE feed): splits/bonuses adjust EPS history on the company page; share count re-read on a split-like price jump; nightly step + corporate-actions.yml for the history |
 | 22 Oct 09:40 | C | Annual report card: red-flag block from the tagged XBRL (opinion, matters, adverse CARO only, contingent vs net worth, related parties vs revenue, loss entities, top pay) |
+| 22 Oct 09:58 | Half-hour visit | Site healthy (09:38 run running, queue 1,000 pending / 55 failed); #65 green on 1a0189d, held for the takeaway review; A7 built: a close over a week older than the filing is not used as its price (pytest 889) |

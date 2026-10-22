@@ -54,10 +54,67 @@ def test_universe_joins_by_isin_and_applies_the_floor():
     assert body["excluded"] == ["500001"]                          # ₹40 Cr is below the ₹100 Cr floor
     assert body["nse_only"] == ["NSEONLY"]                         # on NSE, not in our master
     assert body["symbols"]["BALUFORGE"] == "531112"                # matched by ISIN though the stored symbol differs
-    assert body["counts"] == {"nse_listed": 5, "matched": 4, "included": 3, "below_floor": 1, "unpriced": 1, "nse_only": 1}
+    assert body["counts"] == {"nse_listed": 5, "matched": 4, "included": 3, "below_floor": 1, "buffered": 0, "returned": 0,
+                              "unpriced": 1, "nse_only": 1}
     # The owner's watchlist keeps a small company in
     starred = [dict(c, watchlist=1) if c["scrip_code"] == "500001" else c for c in COMPANIES]
     assert "500001" in universe.select(parse_equity_list(EQUITY_CSV), starred, 100)["included"]
+
+
+def test_universe_buffer_and_companies_coming_back():
+    """Owner, 22 Oct 2026: a company already in leaves only below the exit floor, so one near the floor does not drop
+    out and back day to day; one that left is named when it returns, with the day it left, so its set-aside filings
+    are read."""
+    equities = parse_equity_list(EQUITY_CSV)
+    at = lambda cap: [dict(c, market_cap_cr=cap) if c["scrip_code"] == "543265" else c for c in COMPANIES]
+    day1 = universe.select(equities, at(12000.0), 500, 400, {}, "2026-10-20")
+    assert "543265" in day1["included"] and day1["counts"]["buffered"] == 0
+    day2 = universe.select(equities, at(450.0), 500, 400, day1, "2026-10-21")      # below the floor, above the exit
+    assert "543265" in day2["included"] and day2["counts"]["buffered"] == 1
+    fresh = universe.select(equities, at(450.0), 500, 400, {}, "2026-10-21")       # never in: ₹450 Cr does not join
+    assert "543265" in fresh["excluded"]
+    day3 = universe.select(equities, at(350.0), 500, 400, day2, "2026-10-22")      # below the exit: out, and when
+    assert "543265" in day3["excluded"] and day3["excluded_since"]["543265"] == "2026-10-22"
+    day4 = universe.select(equities, at(380.0), 500, 400, day3, "2026-10-23")      # still out: keeps the first day
+    assert day4["excluded_since"]["543265"] == "2026-10-22" and not day4["returned"]
+    day5 = universe.select(equities, at(520.0), 500, 400, day4, "2026-10-24")      # back above the floor
+    assert "543265" in day5["included"] and day5["returned"] == {"543265": "2026-10-22"}
+    assert "543265" not in day5["excluded_since"]
+    assert universe.select(equities, at(520.0), 500, 400, day5, "2026-10-25")["returned"] == {}   # named once
+    # the first build with the field: a company already out has no known day, so all its set-aside history is read
+    first = universe.select(equities, at(300.0), 500, 400, {"included": []}, "2026-10-22")
+    assert first["excluded_since"]["543265"] == ""
+    assert universe.select(equities, at(600.0), 500, 400, first, "2026-10-23")["returned"] == {"543265": ""}
+
+
+def test_returning_companies_have_their_set_aside_filings_read(settings):
+    from bse_intel.pipeline import _still_noise
+
+    class Decision:
+        action = "ANALYZE"
+
+    row = ["x", "", "", "", "", "", "", "outside universe (market cap below ₹500 Cr)"]
+    assert _still_noise(Decision(), None, row) and not _still_noise(Decision(), None, row, returning=True)
+    sink = LocalSink(settings)
+    sink.kv_set(universe.RETURNING_KEY, json.dumps({"543265": "2026-05-01", "500002": ""}), "now")
+    pipeline = Pipeline.__new__(Pipeline)
+    pipeline.sink, pipeline.settings = sink, settings
+    pipeline._kv_set = lambda key, value: sink.kv_set(key, value, "now")
+    calls = []
+
+    def retriage(scrip, day_from, day_to, returning=False):
+        calls.append((scrip, day_from.isoformat(), returning))
+        if scrip == "500002":
+            raise RuntimeError("NSE refused")
+        return ["n1", "n2"]
+
+    pipeline.retriage_company = retriage
+    import time as _time
+    from datetime import date as _date
+    assert pipeline.retriage_returning(_date(2026, 10, 22), _time.monotonic() + 60) == 2
+    # the window never starts before the backfill's start; a failed lookup stays listed for the next run
+    assert ("500002", settings.backfill_start, True) in calls and ("543265", "2026-05-01", True) in calls
+    assert json.loads(sink.kv_get(universe.RETURNING_KEY)) == {"500002": ""}
 
 
 def test_railtel_order_row_becomes_a_filing_on_our_key():

@@ -49,7 +49,7 @@ jobs:
               print("errors:", json.dumps(out["errors"])[:2000])
           acc = ((out.get("data") or {}).get("viewer") or {}).get("accounts") or [{}]
           acc = acc[0] if acc else {}
-          print("== by UTC day (free: 5,000,000 rows read, 100,000 rows written)")
+          print("== by UTC day (Workers Paid since 22 Oct 2026: 25B rows read and 50M rows written a month included)")
           for r in acc.get("days") or []:
               s = r["sum"]; print(f'{r["dimensions"]["date"]}  read {s["rowsRead"]:>11,}  written {s["rowsWritten"]:>8,}  queries {s["readQueries"]:,}/{s["writeQueries"]:,}')
           print("== by hour")

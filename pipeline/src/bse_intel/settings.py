@@ -70,8 +70,8 @@ class Settings:
     backfill_start: str = field(default_factory=lambda: _env("BACKFILL_START", "2026-04-19"))
     max_attempts: int = field(default_factory=lambda: _env_int("MAX_ATTEMPTS", 3))
     # Stop discovering backfill days once this many D1 rows were written today
-    # (free tier allows 100k/day; live processing is never throttled by this).
-    d1_daily_write_budget: int = field(default_factory=lambda: _env_int("D1_DAILY_WRITE_BUDGET", 80_000))
+    # (Workers Paid since 22 Oct 2026: 50M a month included, about 1.6M a day; live processing is never throttled).
+    d1_daily_write_budget: int = field(default_factory=lambda: _env_int("D1_DAILY_WRITE_BUDGET", 1_500_000))
     # A card that fails the number, claim or math checks gets a second opinion from another provider.
     second_opinion: bool = field(default_factory=lambda: _env("SECOND_OPINION", "1") not in ("0", "false", "no"))
     # Human hold list (gate.load_holds): cards named there are published as "held after review".

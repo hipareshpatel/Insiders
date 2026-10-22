@@ -656,7 +656,9 @@ def test_near_the_free_write_cap_a_live_run_only_makes_cards(settings, monkeypat
     gateway = AIGateway(settings.load_toml("providers.toml"), client_factory=lambda *a: FakeProvider({}), env={})
     pipeline = Pipeline(settings, sink, gateway, bse=None, sleep=lambda s: None)
     calls = []
-    monkeypatch.setattr(pipeline, "_writes_today", lambda: 96_000)
+    from bse_intel.pipeline import D1_FREE_DAILY_WRITES   # the plan's daily share since Workers Paid (D40)
+
+    monkeypatch.setattr(pipeline, "_writes_today", lambda: int(D1_FREE_DAILY_WRITES * 0.96))
     monkeypatch.setattr(pipeline, "_on_nse", lambda: True)
     monkeypatch.setattr(event_catchup, "catch_up", lambda *a: calls.append("catch-up") or {"rerun": 0, "stopped": False})
     pipeline._discover_safely = lambda day, full: calls.append("discover") or 0

@@ -1,2 +1,2 @@
 
-| 22 Oct 15:05 | Event types | 41 of 86 CORPORATE_ACTION cards are not corporate actions (orders, stake sales, licences, fundraises): prompt definitions proposed for the owner (data chain §7), not built |
+| 22 Oct 15:30 | Hourly audit 9 | 7 new cards: 3 wrong (two call tables: basis label, older quarter; Havells OCR 9->6) / 3 minor; E11 in #71; d1-usage dispatched |

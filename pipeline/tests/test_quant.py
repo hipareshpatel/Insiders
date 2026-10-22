@@ -674,3 +674,34 @@ def test_the_view_shows_earlier_calls_and_the_balance_sheets_key_lines():
     calls = view["previous_calls"]
     assert [c["text"] for c in calls] == ["FY27 volume growth 10-12%", "Plant 2 by Q3FY27"]
     assert calls[0]["id"] == call_point_id(dossier["call_points"][0]) and calls[0]["id"].startswith("cp_")
+
+
+def test_a_comparison_never_crosses_bases():
+    """Data chain audit A3 (22 Oct 2026): a group that begins consolidating had its consolidated quarter set against a
+    standalone year-ago; memory picks consolidated per metric and period, not to match the current figure."""
+    from bse_intel.dossier import results_snapshot
+    rows = lambda yb: {"financial_metrics": [
+        {"metric": "revenue", "period": "Q2FY27", "value": 1200.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"},
+        {"metric": "revenue", "period": "Q2FY26", "value": 700.0, "basis": yb, "source_news_id": "n1", "as_of": "a"},
+        {"metric": "pat", "period": "Q2FY27", "value": 100.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"},
+        {"metric": "pat", "period": "Q2FY26", "value": 60.0, "basis": yb, "source_news_id": "n1", "as_of": "a"},
+        {"metric": "pbt", "period": "Q2FY27", "value": 130.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"}]}
+    crossed = results_snapshot(rows("STANDALONE"), "n2")
+    assert "prev_year" not in crossed["revenue"] and "yoy_pct" not in crossed["pat"]
+    same = results_snapshot(rows("CONSOLIDATED"), "n2")
+    assert same["revenue"]["yoy_pct"] == 71.4 and same["pat"]["prev_year"] == 60.0
+
+
+def test_this_quarters_figure_is_the_tagged_files_over_the_cards_reading():
+    """HDFC Life (hourly review, 22 Oct 2026): the card read the standalone PAT ₹508 Cr from the PDF while memory held the
+    consolidated file's ₹521.60 Cr and consolidated comparatives, so the table set standalone against consolidated."""
+    from bse_intel.dossier import results_snapshot
+    dossier = {"financial_metrics": [
+        {"metric": "pat", "period": "Q2FY27", "value": 521.6, "source_news_id": "n2", "as_of": "b",
+         "sources": [{"news_id": "n2", "as_of": "b", "value": 508.0},
+                     {"news_id": "xbrl:res:540777:Q2FY27", "as_of": "b", "value": 521.6, "basis": "CONSOLIDATED"}]},
+        {"metric": "pat", "period": "Q1FY27", "value": 611.19, "basis": "CONSOLIDATED", "source_news_id": "n1", "as_of": "a"},
+        {"metric": "revenue", "period": "Q2FY27", "value": 20000.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"},
+        {"metric": "pbt", "period": "Q2FY27", "value": 600.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"}]}
+    snap = results_snapshot(dossier, "n2")
+    assert snap["pat"]["value"] == 521.6 and snap["pat"]["qoq_pct"] == -14.7

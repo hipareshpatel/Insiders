@@ -1667,6 +1667,11 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         basis = "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)   # as _metric_entry keeps it
         own = next((src for src in sources if src.get("news_id") == news_id and src.get("value") is not None
                     and src.get("basis") in (None, basis)), None)
+        if p == period and any(str(src.get("news_id", "")).startswith(XBRL_SOURCE) for src in sources):
+            # this quarter's own figure: the company's tagged file over the card's reading of the PDF. HDFC Life's card
+            # read the standalone PAT ₹508 Cr where the consolidated file says ₹521.60 Cr, against consolidated
+            # comparatives (hourly review, 22 Oct 2026)
+            own = None
         return entry, own["value"] if own is not None else entry["value"] if entry.get("value") is not None else None
 
     def refused(names: tuple[str, ...], p: str | None, alone: bool = False) -> bool:
@@ -1729,7 +1734,13 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     def lookup(names: tuple[str, ...], p: str | None) -> float | None:
         if not p or p in restated or (p in unbuilt and names in (_RESULT_METRICS[1][1], _RESULT_METRICS[2][1])):
             return None
-        value = stored(names, p)[1]
+        entry, value = stored(names, p)
+        if value is not None and p != period and entry is not None:
+            # one basis per comparison: a consolidated quarter against a standalone year-ago (a group that began
+            # consolidating) is no change (data chain audit A3, 22 Oct 2026)
+            now = stored(names, period)[0]
+            if now is not None and _entry_basis(now) and _entry_basis(entry) and _entry_basis(now) != _entry_basis(entry):
+                return None
         return None if value is None or refused(names, p, alone=True) else value
 
     def margin(p: str | None) -> float | None:

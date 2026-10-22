@@ -120,8 +120,14 @@ Progress on each is tracked in `docs/audit/work-2026-10-22.md` (item E).
   symbol the same: Reliance's latest is 18 Feb 2026. Not found by `corporates-pit` for 3 May - 21 Oct 2026. The
   disclosures have moved somewhere this feed does not show (assumption: SEBI's system-driven disclosures through
   the depositories); where they now are is the next thing to find, before anything is built on them.
-- **Bulk and block deals:** `/api/historical/bulk-deals` returned NSE's bot page from a cloud IP (22 Oct 2026); to be
-  tried from the pipeline's NSE session on GitHub Actions.
+- **Bulk and block deals:** measured 22 Oct 2026 19:20 IST from the Actions runner with the pipeline's NSE session
+  (`online-probe.yml`, check 13): `/api/historical/bulk-deals` and `/api/historical/block-deals` (7 days) return NSE's
+  bot page (HTML, HTTP 200); **`/api/snapshot-capital-market-largedeal` answers JSON: today's 111 bulk deals, 4 block
+  deals and 99 short-selling rows.** It holds the current session only, so history is built by storing it every
+  trading evening (next: a nightly step with retries, a table, and the deals shown on the company page).
+- **Insider trades, re-measured 22 Oct 19:20 IST from Actions:** `corporates-pit` over 7 days: 0 rows; for one symbol
+  (Reliance) its default window returns 20 rows, the latest from 30 Sep 2021. `/api/corporate-sdd` (a guess at
+  system-driven disclosures): 404. Still not found; next: NSE's SDD / PIT pages to find the address they call.
 
 ## 7. Event types: CORPORATE_ACTION is a catch-all (measured 22 Oct 2026)
 

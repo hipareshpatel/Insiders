@@ -700,7 +700,8 @@ _FOOTING_NAMES = {
     "other_income": "other_income", "total_income": "total_income", "total_revenue": "total_income",
     "total_expenses": "total_expenses", "expenses": "total_expenses", "exceptional_items": "exceptional_items",
     "pbt": "pbt", "profit_before_tax": "pbt", "tax_expense": "tax_expense", "tax": "tax_expense",
-    "total_tax": "tax_expense", "pat_continuing": "pat_continuing",
+    "total_tax": "tax_expense", "pat_continuing": "pat_continuing", "pat_discontinued": "pat_discontinued",
+    "profit_from_discontinued_operations": "pat_discontinued", "discontinued_operations": "pat_discontinued",
     "pat": "pat", "net_profit": "pat", "profit_after_tax": "pat", "profit_for_the_period": "pat",
 }
 
@@ -739,7 +740,9 @@ def statement_footing(metrics) -> list[str]:
                             + (f" (exceptional {ex:,.2f})" if ex else "") + f", but PBT is given as {pbt:,.2f} Cr")
         pat = f.get("pat_continuing", f.get("pat"))
         tax = f.get("tax_expense")
-        if None not in (pbt, tax, pat) and off(pbt - tax, pat):
+        # PAT including a discontinued business's result is continuing PAT plus that result
+        discontinued = 0.0 if "pat_continuing" in f else f.get("pat_discontinued") or 0.0
+        if None not in (pbt, tax, pat) and off(pbt - tax, pat) and off(pbt - tax + discontinued, pat):
             problems.append(f"{period}: PBT {pbt:,.2f} - tax {tax:,.2f} = {pbt - tax:,.2f} Cr, "
                             f"but PAT is given as {pat:,.2f} Cr")
     return problems

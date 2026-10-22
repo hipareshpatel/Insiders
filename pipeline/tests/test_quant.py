@@ -754,3 +754,16 @@ def test_a_call_table_is_the_quarter_that_ended_last_before_the_call():
     assert _discussed(date(2026, 6, 30), date(2026, 10, 10))            # ten days after Q2 ended: Q1's call is late
     assert not _discussed(date(2025, 12, 31), date(2026, 4, 28))        # an April call is about Q4, not Q3
     assert _discussed(date(2025, 12, 31), date(2026, 1, 5)) and _discussed(date(2025, 9, 30), date(2026, 1, 5))
+
+
+def test_a_share_stated_as_a_percentage_of_a_fraction_formula_is_verified():
+    """Novartis's customer concentration 53.29 / 103.81 = 0.513, the card's 51.3% (unit PCT); Kilitch's 40.4% (owner's
+    review queue, 22 Oct 2026). Only exactly 100x with a PCT unit: a 10x gap stays a mismatch (HDFC Life's GST impact)."""
+    inputs = [{"name": "top_customer", "value": 53.29, "source": "FILING"}, {"name": "revenue", "value": 103.81, "source": "FILING"}]
+    share = estimate(label="Customer concentration", formula="top_customer / revenue", inputs=inputs, result=51.3, unit="PCT")
+    filing = "Top customer 53.29 of revenue 103.81"
+    assert check(share, filing).items[0]["check"] == "VERIFIED"
+    assert check(estimate(label="x", formula="top_customer / revenue", inputs=inputs, result=5.13, unit="PCT"),
+                 filing).items[0]["check"] == "MISMATCH"
+    assert check(estimate(label="x", formula="top_customer / revenue", inputs=inputs, result=51.3, unit="INR_CR"),
+                 filing).items[0]["check"] == "MISMATCH"

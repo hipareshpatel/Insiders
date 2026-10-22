@@ -199,6 +199,13 @@ def check(estimates: list[QuantifiedImpact], *sources: str) -> QuantCheck:
             item.update(result=round(computed, 4), check="VERIFIED")
         elif math.isclose(computed, est.result, rel_tol=REL_TOLERANCE, abs_tol=0.05):
             item["check"] = "VERIFIED"
+        elif str(est.unit or "").upper() in ("PCT", "%") and math.isclose(computed * 100, est.result, rel_tol=REL_TOLERANCE,
+                                                                         abs_tol=0.05):
+            # a share written as a percentage of a formula that gives the fraction: Novartis's 53.29 / 103.81 = 0.513, the
+            # card's 51.3%, DLF's -0.71%, Kilitch's 40.4% (held-card audit and the owner's review queue, 22 Oct 2026: 4 of
+            # the stored 100x mismatches, every one in PCT and none a true error; the 10x ones stay held, half are real)
+            item["computed"] = round(computed * 100, 6)
+            item["check"] = "VERIFIED"
         else:
             item["check"] = "MISMATCH"
             item["check_note"] = f"formula gives {computed:,.4g}, card states {est.result:,.4g}"

@@ -1360,6 +1360,35 @@ def test_rounding_is_read_only_for_large_figures():
     assert not SourceIndex("Note 301 | page 143").stated_crore(300.62, 2, (1,))
 
 
+def test_a_sum_of_the_points_own_quote_is_grounded():
+    """Held-card audit, 22 Oct 2026: Britannia's contingent liabilities ₹79.47 Cr (claims 20.11 + guarantees 59.36),
+    Kernex's ₹660 Cr of rated limits under "(Rs. In Crore)" in a filing that declares lakh, Nestlé's +2.53 pts margin,
+    each the sum or difference of its own quote's figures."""
+    from bse_intel.grounding import check_card
+
+    card = Card.model_validate({"impact_level": "LOW", "headline": "Contingent liabilities and rated limits",
+        "what_happened": [{"text": "Contingent liabilities of ₹79.47 Cr",
+                           "quote": "Claims not acknowledged as debts 20.11 ; Guarantees and letters of credit 59.36"}],
+        "notable_changes": [{"metric": "EBITDA margin", "previous": "21.59%", "current": "24.12%", "change": "+2.53 pp",
+                             "quote": "ebitda_margin Q1FY27: 24.12 %; ebitda_margin Q1FY26: 21.59 %"}]})
+    assert check_card(card, "Note 37 (₹ in crores) Claims 20.11 Guarantees 59.36 ... 24.12 21.59").ungrounded == []
+    # a quote's own "(Rs. In Crore)" beats the lakh the filing declares
+    kernex = Card.model_validate({"impact_level": "LOW", "headline": "Kernex's bank limits rated",
+        "what_happened": [{"text": "Total rated limits of ₹660 Cr",
+                           "quote": "Facilities Amount (Rs. In Crore) 125.00 ... 10.00 ... 525.00"}]})
+    assert check_card(kernex, "(Rs. in lakh) Revenue 4,512.20 ... Amount (Rs. In Crore) 125.00 10.00 525.00").ungrounded == []
+
+
+def test_a_sum_at_the_wrong_unit_stays_held():
+    """Zydus: ₹38.65 mn + ₹90.18 mn is ₹12.88 Cr; the card's ₹128.83 Cr (a 10x slip) is not the quote's sum."""
+    from bse_intel.grounding import check_card
+
+    card = Card.model_validate({"impact_level": "LOW", "headline": "Zydus completes its investment",
+        "what_happened": [{"text": "Total investment of ₹128.83 Cr", "quote": "invested an aggregate amount of Rs. 38.65 "
+                           "million under Tranche 1 and the remaining Rs. 90.18 million under Tranche 2"}]})
+    assert check_card(card, "invested Rs. 38.65 million ... Rs. 90.18 million").ungrounded == ["128.83"]
+
+
 def test_a_currency_glued_to_the_word_before_it():
     """eMudhra's "total revenue ofRs.309.08 million" kept its ₹30.9 Cr card figure "not found" (2026-10-20)."""
     from bse_intel.grounding import SourceIndex
@@ -1470,3 +1499,36 @@ def test_prompts_carry_what_each_event_type_means(settings):
         assert "$event_definitions" not in system
         assert "- CORPORATE_ACTION: a shareholder entitlement or capital change only" in system
         assert "not an order, a stake sale" in system
+
+
+def test_a_profit_above_revenue_from_an_exceptional_gain_is_real():
+    """Jaykay Q4FY26 (held-card audit, 22 Oct 2026): PBT ₹178.90 Cr on ₹61.16 Cr revenue, with an ₹181.83 Cr
+    exceptional gain; Hester's PAT ₹96.73 Cr with its ₹85.35 Cr loan-waiver gain, also 5x its quarters. Without the
+    gain both stay held, and an EBITDA above revenue stays held whatever the exceptional items."""
+    from types import SimpleNamespace as M
+
+    from bse_intel.grounding import scale_issues
+
+    jaykay = [M(metric="revenue", period="Q4FY26", value=61.16), M(metric="pbt", period="Q4FY26", value=178.90),
+              M(metric="exceptional_items", period="Q4FY26", value=181.83)]
+    assert scale_issues(jaykay, []) == []
+    assert scale_issues(jaykay[:2], []) == ["PBT Q4FY26 ₹178.90 Cr is above revenue ₹61.16 Cr"]
+    hester = [M(metric="revenue", period="Q1FY27", value=77.24), M(metric="pat", period="Q1FY27", value=96.73),
+              M(metric="exceptional_items", period="Q1FY27", value=85.35)]
+    history = [{"metric": "pat", "period": p, "value": v} for p, v in (("Q4FY26", 17.3), ("Q3FY26", 12.1))]
+    assert scale_issues(hester, history) == []
+    ebitda = [M(metric="revenue", period="Q1FY27", value=77.24), M(metric="ebitda", period="Q1FY27", value=111.81),
+              M(metric="exceptional_items", period="Q1FY27", value=85.35)]
+    assert scale_issues(ebitda, []) == ["EBITDA Q1FY27 ₹111.81 Cr is above revenue ₹77.24 Cr"]
+
+
+def test_a_margin_on_total_income_fits():
+    """Adani Power's deck: EBITDA margin 43% for Q1FY27 = 8,369 / total income 19,322 (on revenue 18,902 it is 44.3%)."""
+    from types import SimpleNamespace as M
+
+    from bse_intel.grounding import margin_issues
+
+    lines = [M(metric="revenue", period="Q1FY27", value=18902), M(metric="ebitda", period="Q1FY27", value=8369),
+             M(metric="ebitda_margin", period="Q1FY27", value=43)]
+    assert margin_issues(lines + [M(metric="total_income", period="Q1FY27", value=19322)]) == []
+    assert margin_issues(lines)

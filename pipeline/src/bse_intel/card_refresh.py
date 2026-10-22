@@ -79,6 +79,17 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
     # refresh never takes a table off a card
     made = blocks(card, dossier, filing, company, footer, prices, buckets, printed)
     new = {**card, **{k: v for k, v in made.items() if v or not card.get(k)}}
+    # except a call card's table of a quarter the call does not discuss (E11, 22 Oct 2026): that one was never right
+    stored = card.get("results") or {}
+    if card.get("event_type") == "CONCALL_PRESENTATION" and stored and not made.get("results"):
+        from datetime import date as _date
+
+        from .dossier import _discussed
+        from .periods import due_date
+
+        end = due_date(stored.get("period"))
+        if end and not _discussed(end, _date.fromisoformat(filing.filed_at[:10])):
+            new["results"] = None
     new["signals"] = [s for s in card.get("signals") or [] if s.get("type") not in SIGNALS_OFF]
     changed = [k for k in (*BLOCKS, "signals") if json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
     return new, changed

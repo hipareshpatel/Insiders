@@ -376,6 +376,7 @@ limits = { rpm = 10 }
 provider = "nvidia"
 model = "deepseek-ai/deepseek-v4.1-flash"
 spare = true
+timeout_s = 150   # 22 Oct: a one-word check hung 300 s on both keys twice; a stuck spare must not hold a filing 5 min
 json_mode = true
 max_tokens = 6000
 context_tokens = 120000
@@ -487,6 +488,7 @@ limits = { rpm = 10 }
 provider = "nvidia"
 model = "deepseek-ai/deepseek-v4.1-flash"
 spare = true
+timeout_s = 150   # 22 Oct: a one-word check hung 300 s on both keys twice; a stuck spare must not hold a filing 5 min
 json_mode = true
 max_tokens = 6000
 context_tokens = 120000
@@ -655,6 +657,7 @@ limits = { rpm = 10 }
 provider = "nvidia"
 model = "deepseek-ai/deepseek-v4.1-flash"
 spare = true
+timeout_s = 150   # 22 Oct: a one-word check hung 300 s on both keys twice; a stuck spare must not hold a filing 5 min
 json_mode = true
 max_tokens = 400
 context_tokens = 120000
@@ -875,6 +878,7 @@ limits = { rpm = 10 }
 provider = "nvidia"
 model = "deepseek-ai/deepseek-v4.1-flash"
 spare = true
+timeout_s = 150   # 22 Oct: a one-word check hung 300 s on both keys twice; a stuck spare must not hold a filing 5 min
 json_mode = true
 max_tokens = 6000
 context_tokens = 120000

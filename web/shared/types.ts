@@ -406,6 +406,8 @@ export interface PledgeEvent {
 export interface Dossier {
   /** The month the company's financial year ends (3 = March), from its results XBRL; another month keeps quarters only. */
   fy_end_month?: number | null;
+  /** Splits, bonuses, dividends and other actions from NSE (corporate_actions.py); `factor` = shares one share became. */
+  corporate_actions?: { ex_date: string; kind: string; factor?: number; subject?: string; per_share?: number; record_date?: string }[];
   schema_version: number;
   scrip_code: string;
   company_name: string;

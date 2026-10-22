@@ -64,6 +64,9 @@ jobs:
       - name: Promoter pledge events into memory
         if: always()
         run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel pledge-sync --time-budget 300'
+      - name: Corporate actions (splits, bonuses, dividends) into memory
+        if: always()
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel corporate-actions-sync --days 30 --time-budget 300'
       - name: DGTR trade-remedy cases into memory
         if: always()
         run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel dgtr-sync --time-budget 600'

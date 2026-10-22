@@ -601,6 +601,25 @@ def test_a_corrected_card_is_itself_corrected_and_checked(settings):
         "the record beside the card describes the card that was published"
 
 
+def test_a_change_the_filing_prints_is_never_recomputed():
+    """Greenply's MDF revenue "+39.6% YoY" (the deck prints it) became -70.2%: the card set the quarter against the full
+    year, and the fixer recomputed the change from those two figures (held-card audit, 22 Oct 2026)."""
+    from bse_intel.models import Pass2Output
+    from bse_intel.pipeline import fix_change_percentages
+
+    source = "MDF revenue Q2FY27 300.4, FY26 1,008.2 (Rs in crore). MDF revenue grew 39.6% YoY."
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q2 results",
+        "card": {"impact_level": "MODERATE", "headline": "Greenply Q2", "what_happened": ["MDF grew"],
+                 "notable_changes": [{"metric": "mdf_revenue", "previous": "₹1,008.2 Cr", "current": "₹300.4 Cr",
+                                      "change": "+39.6% YoY", "direction": "POSITIVE"}]}})
+    assert fix_change_percentages(out, (source,)) == []
+    assert out.card.notable_changes[0].change == "+39.6% YoY"
+    # a % the filing does not print is still recomputed from its two figures
+    out.card.notable_changes[0].change = "+45% YoY"
+    assert fix_change_percentages(out, (source,)) == ["mdf_revenue: +45% YoY -> -70.2% YoY"]
+
+
 def test_a_change_of_more_than_a_thousand_percent_is_read_whole():
     """Jubilant's FY25 net profit rose from Rs 72.7 Cr to Rs 836.3 Cr, which the model wrote as
     "+1,050%". The pattern could not read the thousands separator, so it took the change for 50%,

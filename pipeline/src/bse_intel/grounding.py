@@ -54,8 +54,8 @@ _DECLARED_UNIT = re.compile(
     # "(Rs. In Mn.)" heads Heritage's investor decks (2026-10-18)
     # "₹ Cr" heads Mahindra Holidays' deck beside one "AUR (₹ Lakh)": read as lakh alone, the unit fixer cut every crore
     # figure 100x (daily audit, 21 Oct 2026)
-    r"(?:₹|\brs\.?|\binr|\brupees?)\s*(?:in\s*)?(?:(lakhs?|lacs?|crores?|cr|millions?|mn|billions?|bn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
-    r"|\bin\s*(?:₹|rs\.?|inr|rupees?)\s*(?:(lakhs?|lacs?|crores?|cr|millions?|mn|billions?|bn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
+    r"(?:₹|\brs\.?|\binr|\brupees?)\s*(?:in\s*)?(?:(lakhs?|lacs?|crores?|crs?|millions?|mn|mm|billions?|bn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
+    r"|\bin\s*(?:₹|rs\.?|inr|rupees?)\s*(?:(lakhs?|lacs?|crores?|crs?|millions?|mn|billions?|bn|thousands?)(?![a-z])|('?000)s?(?![\d,a-z]))"
     # "(INR Million)" read as "CINR Million )" (AGI Infra's rating letter, round 4): the bracket fused to the currency
     r"|inr\s*(millions?|billions?|lakhs?|crores?)(?![a-z])"
     # the rupee sign mangled and glued to the word, with no "in": "(XLakhs)", "( Ė Crores)". Not after a
@@ -67,15 +67,15 @@ _DECLARED_UNIT = re.compile(
 # scanned headers as "(,\mount in millions of Z unless otherwise stated)" and "(Amount 111 millions oft"
 # SML writes the currency out ("(Rupees in Crores, except share data)") and some filers write thousands
 # as "(Rs. 000)" without the apostrophe; neither was read, so those statements had no unit at all.
-_PER_CRORE = {"lakh": 100, "lac": 100, "million": 10, "mn": 10, "thousand": 10_000, "'000": 10_000, "000": 10_000,
+_PER_CRORE = {"lakh": 100, "lac": 100, "million": 10, "mn": 10, "mm": 10, "thousand": 10_000, "'000": 10_000, "000": 10_000,
               "crore": 1, "cr": 1, "billion": 0.01, "bn": 0.01}   # "(Rs billion)": RBL's business update, round 4 (100x as crore)
 UNIT_NAMES = {100: "₹ lakh", 10: "₹ million", 10_000: "₹ thousand", 0.01: "₹ billion"}
-_CRORE_AFTER = re.compile(r"\s*(?:cr\b|crores?\b)", re.I)
+_CRORE_AFTER = re.compile(r"\s*(?:crs?\b|crores?\b)", re.I)
 # The unit written right after a source figure ("INR 5445 Million", "Rs. 2,025 lakhs"), as figures
 # per ₹ crore. Kanoria's RPT notice (Apr 2025) mixes million, lakh and crore, so no single declared
 # unit exists; "5445 Million" was still written as "₹5,445 Cr".
 # The amount spelt out in brackets may come between ("INR 3 (Three) Million": Excelsoft, round 4, carded as ₹3 Cr)
-_MONEY_AFTER = re.compile(r"\s*(?:\([A-Za-z][A-Za-z ,-]{0,60}\)\s*)?(lakhs?|lacs?|crores?|cr|millions?|mn|billions?|bn|thousands?)(?![a-z])",
+_MONEY_AFTER = re.compile(r"\s*(?:\([A-Za-z][A-Za-z ,-]{0,60}\)\s*)?(lakhs?|lacs?|crores?|crs?|millions?|mn|billions?|bn|thousands?)(?![a-z])",
                           re.I)
 _PER_CRORE_WORD = {"lakh": 100, "lac": 100, "crore": 1, "cr": 1, "million": 10, "mn": 10,
                    "billion": 0.01, "bn": 0.01, "thousand": 10_000}
@@ -524,7 +524,7 @@ def scale_issues(metrics: list, history: list[dict]) -> list[str]:
 _MARGINS = {"ebitda_margin": "ebitda", "ebitda_margin_pct": "ebitda", "pat_margin": "pat", "pat_margin_pct": "pat",
             "net_margin": "pat", "net_profit_margin": "pat", "pbt_margin": "pbt", "pbt_margin_pct": "pbt"}
 MARGIN_TOLERANCE_PP = 1.0
-_KEY_AMOUNT = re.compile(r"(-?\(?[\d,]+(?:\.\d+)?\)?)\s*(?:cr\b|crores?\b)", re.I)
+_KEY_AMOUNT = re.compile(r"(-?\(?[\d,]+(?:\.\d+)?\)?)\s*(?:crs?\b|crores?\b)", re.I)
 _KEY_PCT = re.compile(r"(-?[\d.]+)\s*%")
 
 
@@ -640,6 +640,70 @@ def whole_rupee_crores(filing: str) -> list[float]:
     return out
 
 
+_UNIT_WORD = re.compile(r"(?<![a-z])(lakhs?|lacs?|millions?|mn|billions?|bn|thousands?)(?![a-z])", re.I)
+
+
+class _ReadAtUnit:
+    """Whether a card's crore figure is already the right reading of a figure the filing prints at that figure's own unit.
+
+    The unit fixer turned right figures wrong (held-card audit, 22 Oct 2026): Newgen's employee cost ₹190.10 Cr (19,010 in
+    ₹ lakh) became ₹19,010 Cr, Tinna Rubber's EBITDA ₹30.18 Cr (3,018 lakh) ₹301.8 Cr, Sudarshan's ₹247 Cr (a slide "In ₹
+    Cr") ₹24.7 Cr because another slide was in ₹ Mn, Heritage's ₹62.11 Cr (621.1 million) ₹6,211 Cr, Jaykay's ₹262.66 Cr
+    ₹2.63 Cr. Each time the corrected figure fitted the filing at one unit while the card's own fitted it at the unit its
+    page declares. A unit is the one declared last before the figure on its page (`unit_before`); on a page that declares
+    none (or whose header the OCR garbled, Tinna's "fRl. in lakh"), any unit the document writes anywhere."""
+
+    def __init__(self, filing: str):
+        self.filing = filing or ""
+        self._tokens = None
+
+    def _prepare(self) -> None:
+        raw = self.filing
+        text = _clean(raw)   # figures from the cleaned text, unit headers from the raw one: _clean keeps positions
+        self.pages = [m.start() for m in re.finditer(r"--- Page", raw)]
+        self.decls = [(m.start(), _PER_CRORE.get(next(g for g in m.groups() if g).lower().rstrip("s")))
+                      for m in _DECLARED_UNIT.finditer(raw)]
+        self.decl_pos = [p for p, _ in self.decls]
+        words = {w.lower().rstrip("s") for w in _UNIT_WORD.findall(raw)}
+        # only a document of one unit says which unit an undeclared page is in: Goodyear's annual report writes lakh,
+        # million, thousand and billion, and its "15,287" (lakh) read as million fitted the card's wrong ₹1,528.7 Cr
+        units = {_PER_CRORE_WORD[w] for w in words if w in _PER_CRORE_WORD} - {1}
+        self.document = units if len(units) == 1 else set()
+        # (figure, its own unit or None, position); a figure's own unit word wins over its page's: Jaykay's corrigendum
+        # "Rs. 26,265.71 Lakh was inadvertently mentioned as Rs. 262.66 Lakh" on a page declared in million
+        self._tokens = []
+        for m in _NUMBER.finditer(text):
+            try:
+                value = abs(float(m.group(0).replace(",", "").strip("+").strip("()")))
+            except ValueError:
+                continue
+            if value >= 1:
+                self._tokens.append((value, _money_unit(text, m.end()), m.start()))
+        # a decimal point the text layer turned into a space: Heritage's "7,480 10" is 7,480.10 (₹ million)
+        for m in re.finditer(r"(?<![\d.,])(\d[\d,]*) (\d{2})(?![\d.,])", text):
+            self._tokens.append((float(m.group(1).replace(",", "") + "." + m.group(2)), None, m.start()))
+
+    def _unit_at(self, pos: int) -> float | None:
+        i = bisect.bisect_left(self.decl_pos, pos) - 1
+        if i < 0:
+            return None
+        start, unit = self.decls[i]
+        page = self.pages[bisect.bisect_right(self.pages, pos) - 1] if self.pages and self.pages[0] <= pos else 0
+        return unit if start >= max(page, pos - 8000) else None
+
+    def __call__(self, value: float, decimals: int) -> bool:
+        if self._tokens is None:
+            self._prepare()
+        tolerance = min(0.5 * 10 ** (-decimals), 0.002 * value) + 1e-9
+        for figure, own, pos in self._tokens:
+            page_unit = self._unit_at(pos)
+            units = {own} if own is not None else {page_unit} if page_unit is not None else self.document
+            for unit in units:
+                if unit and abs(figure / unit - value) <= tolerance:
+                    return True
+        return False
+
+
 def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, float, int, float, int]]:
     """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct.
 
@@ -655,6 +719,7 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
     if not unit and not whole and not any(u != 1 for u in filing_index._by_unit):
         return []
     slips: dict[str, tuple[str, float, int, float, int]] = {}
+    read_right = _ReadAtUnit(filing)
     for text in texts:
         crore_at = _crore_positions(text or "")
         for value, decimals, pos, kind, raw in _tokens(text or ""):
@@ -664,6 +729,8 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
             if other_index.stated_crore(value, decimals, (1,)) or _near_amount(other_index, value) \
                     or _near(filing_index._by_unit.get(1, []), value, tolerance):
                 continue   # memory, the scale block or the filing itself writes this many crore
+            if read_right(value, decimals):
+                continue   # already the right reading of a figure at its own page's unit: never "corrected"
             # 1. a figure with its own unit, whatever unit the tables declare
             fits = [(round(value / u, 2), 2) for u, values in filing_index._by_unit.items()
                     if u != 1 and _near(values, value, tolerance)]

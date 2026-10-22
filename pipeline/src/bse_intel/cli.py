@@ -43,6 +43,18 @@ def cmd_release_pruned(args, settings, sink) -> int:
     return 0
 
 
+def cmd_release_reviewed(args, settings, sink) -> int:
+    """Held cards a blind review cleared, published without the whole points it named (prune.release_reviewed)."""
+    from pathlib import Path
+
+    from . import prune
+
+    plan = json.loads(Path(args.plan).read_text(encoding="utf-8"))
+    report = prune.release_reviewed(sink, plan, Path(args.plan).stem, dry_run=args.dry_run)
+    print(json.dumps(report, ensure_ascii=False))
+    return 0
+
+
 def cmd_pause_ai(args, settings, sink) -> int:
     """No live run starts, and a running one stops between filings, until the pause ends (pause.py)."""
     from . import pause
@@ -760,6 +772,10 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("release-pruned", help="publish held cards without the points their quote did not carry, no AI")
     p.add_argument("--dry-run", action="store_true")
     p.set_defaults(func=cmd_release_pruned)
+    p = sub.add_parser("release-reviewed", help="publish held cards a blind review cleared, without the points it named")
+    p.add_argument("--plan", required=True, help="plan file, e.g. docs/audit/live/release-2026-10-22.json")
+    p.add_argument("--dry-run", action="store_true")
+    p.set_defaults(func=cmd_release_reviewed)
     p = sub.add_parser("pause-ai", help="pause the AI pipeline while the nightly memory jobs write (ends by itself)")
     p.add_argument("--minutes", type=int, default=120)
     p.set_defaults(func=cmd_pause_ai)

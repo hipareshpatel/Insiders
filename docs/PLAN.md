@@ -36,6 +36,9 @@ reviews every push and fixes what it finds.
   reasons were the checks' own mistakes; 100 cards releasable as they stand, 108 without named points, 28 stay held. Next, in order:
   stop our unit and change fixers making right figures wrong; the commonest false holds (computed figures, other units, table rows,
   out_of_fit on exceptional quarters) with on/off and a sample; then release through `release-held`.
+  **Step 1 done 22 Oct night (F98):** the unit fixer keeps all 33 right fixes of the 47 stored and now blocks 9 of the 12 wrong;
+  the change fixer leaves a % the filing prints. **Step 3 built:** `release-held` with `plan` (a: 100 as they stand; b: 64 of 108
+  with whole points off, 44 stay held: the fault is in a headline or takeaway). Step 2 (false holds) next.
 - Siemens FY26: an 18-month year its own file dates as 12; fixed (F97), reseeded 22 Oct night; 26 more stored years disagree with their quarters
   (`docs/audit/long-years-2026-10-22.md`) to check source by source.
 

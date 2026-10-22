@@ -529,6 +529,10 @@ def fix_change_percentages(out: Pass2Output, sources: tuple[str, ...] = ()) -> l
         # decimals it never matched, so a whole-crore change was never corrected (audit, 2026-10-18)
         if index and not all(index.stated_crore(abs(v), _decimals_of(t)) for v, t in ((a, before), (b, after))):
             continue  # one side is not in the filing, so the % computed from it would be worse
+        # a change the filing itself prints stands: Greenply's MDF revenue "+39.6% YoY" became -70.2% because the card's
+        # two figures were the quarter and the year (held-card audit, 22 Oct 2026); the figures were the slip, not the %
+        if any(re.search(rf"(?<![\d.,]){re.escape(m.group(2))}\s*%", src or "") for src in sources):
+            continue
         real = (b - a) / abs(a) * 100
         claimed = float(m.group(2).replace(",", "")) * (-1 if m.group(1) in ("-", "−") else 1)
         if not m.group(1) and re.search(r"\b(?:down|fell|lower|decline)", stated, re.I):

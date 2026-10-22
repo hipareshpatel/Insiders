@@ -526,6 +526,68 @@ def test_unit_slips_need_a_declared_unit_and_a_single_fit():
     assert unit_slips(["Revenue about ₹955 Cr"], LAKH_STATEMENT) == []
 
 
+# Tinna Rubber's Q2FY27 statement (held-card audit, 22 Oct 2026): the lakh header garbled by OCR ("fRl. in lakh"), one
+# note declared in million on another page; EBITDA 3,018.12 lakh is ₹30.18 Cr, carded right and "corrected" to ₹301.8 Cr
+# HDFC AMC's deck: the quarterly table is "(₹ mm)", Revenue from Operations 10,260 (₹1,026 Cr); the QAAUM slide is in
+# ₹ billion. The fixer read 1,026 as billions and wrote ₹1,026,000 Cr.
+HDFCAMC_LIKE = ("--- Page 1 ---\nQAAUM ₹9,691 bn, up 18%\n--- Page 2 ---\nSummary – Quarterly Earnings\n(₹ mm)\n"
+                "Particulars Q2 FY 27 Q2 FY 26 Change\nRevenue from Operations 11,689 10,260 14%\n")
+# Sudarshan's deck: the slide with Business EBITDA is "In ₹ Cr"; another slide writes ₹ Mn, one of them "₹247 Mn"
+SUDARSHAN_LIKE = ("--- Page 1 ---\nQuarterly results (In ₹ Cr)\nBusiness EBITDA 127 148 247\n"
+                  "--- Page 2 ---\nGlobal pigments (₹ Mn)\nFreight cost ₹247 Mn\nRevenue 5,400 6,100\n")
+
+
+@pytest.mark.parametrize("text, card, figure", [
+    (SUDARSHAN_LIKE, "Business EBITDA ₹247 Cr", "247"),
+])
+def test_a_figure_already_right_at_its_own_pages_unit_is_never_corrected(text, card, figure, monkeypatch):
+    """The unit fixer turned right figures wrong (held-card audit, 22 Oct 2026: Newgen, Tinna, Sudarshan, Heritage,
+    Jaykay, ICICI Lombard): a card figure that is the right reading of a figure at the unit its page declares (or, on a
+    page that declares none, a unit the document writes) stays as it is."""
+    from bse_intel import grounding
+    from bse_intel.pipeline import fix_unit_slips
+
+    out = _results_reply([card], [])
+    assert fix_unit_slips(out, (text, "", "")) == {}
+    assert out.card.what_happened[0].text == card
+    # without the guard the old fixer made the wrong "correction": the test reproduces the defect
+    monkeypatch.setattr(grounding._ReadAtUnit, "__call__", lambda self, value, decimals: False)
+    out = _results_reply([card], [])
+    assert figure in fix_unit_slips(out, (text, "", ""))
+
+
+def test_the_guard_reads_rupee_mm_and_crs_as_units():
+    """HDFC AMC's "(₹ mm)" table (10,260 mm is the card's right ₹1,026 Cr; the fixer wrote ₹1,026,000 Cr) and Beta's
+    "Invested ~35 Crs." (₹35 Cr; the fixer wrote ₹3.5 Cr): blind review of the 47 stored unit fixes, 22 Oct 2026."""
+    from bse_intel.grounding import _ReadAtUnit
+
+    assert _ReadAtUnit(HDFCAMC_LIKE)(1026, 0)
+    assert _ReadAtUnit("--- Page 1 ---\nInvested ~35 Crs. towards expansion of API capacity\nLyo 35 mn vials/annum\n")(35, 0)
+
+
+def test_a_right_correction_in_a_document_of_many_units_still_goes_through():
+    """Goodyear's annual report (the 22 Oct review's one right fix the first guard would have blocked): its contingent
+    tax claim "15,287" is lakh on a page that declares no unit, and the report writes lakh and million elsewhere, so
+    15,287 read as million fitted the card's wrong ₹1,528.7 Cr. Only a one-unit document lends its unit to such a page."""
+    from bse_intel.grounding import _ReadAtUnit
+
+    page = ("--- Page 2 ---\n32 Contingent liabilities\nAs at March 31, 2026 As at March 31, 2025\n"
+            "B. Income tax matters* (refer note (i) below)\n 15,287 \n 14,525 \n")
+    lakh = "The Company has income tax demand of INR 6,895 lakhs for FY 2016-17\n"
+    assert not _ReadAtUnit("--- Page 1 ---\nLTIFR (per one million-person hours worked) 0.12\n" + page + lakh)(1528.7, 1)
+    # a document in million alone does lend its unit: Heritage's deck, "621.13" on a page whose header the text lost
+    assert _ReadAtUnit("--- Page 1 ---\n(Rs. In Mn.)\n" + page)(1528.7, 1)
+
+
+def test_a_true_slip_at_its_pages_unit_is_still_corrected():
+    """The guard protects right readings only: a lakh figure copied as crore ("₹4,939.22 Cr" for 4,939.22 lakh) is
+    not the right reading of anything at its page's unit, so it is still set right."""
+    from bse_intel.pipeline import fix_unit_slips
+
+    out = _results_reply(["PAT ₹4,939.22 Cr"], [])
+    assert fix_unit_slips(out, ("--- Page 1 ---\n" + LAKH_STATEMENT, "", "")) == {"4,939.22": "49.39"}
+
+
 def test_margin_that_does_not_fit_its_figures_is_flagged():
     """Ahluwalia's card: EBITDA "₹756 Cr" on ₹952 Cr revenue "at a 7.9% margin" (756 / 952 is 79%)."""
     from bse_intel.grounding import margin_issues

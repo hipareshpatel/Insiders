@@ -53,6 +53,11 @@ jobs:
       - name: DeepSeek models
         if: always()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel models --provider deepseek'
+      # the keyed providers with no writer on the card routes yet (owner, 2026-10-22: add one or two backup writers)
+      - name: NVIDIA, Groq and Mistral models
+        if: always()
+        run: |
+          for p in nvidia groq mistral; do "$RUNNER_TEMP/venv/bin/python" -m bse_intel models --provider "$p" || true; done
       - name: Configured models still served
         if: always()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel models'

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 
 from .pipeline import _QUOTE_FACT, _QUOTE_POINT
 
@@ -59,6 +60,34 @@ def prune_card(card: dict) -> list[str] | None:
     return dropped
 
 
+GROUNDING_CLASSES = ("ungrounded", "math_mismatches", "unsupported_claims", "out_of_fit", "call_figure_conflicts")
+_DIGITS = re.compile(r"[\d.,]+")
+
+
+def fault_classes(card: dict) -> list[str]:
+    """What keeps a card held or flagged, by class: the checks' grounding keys that are not empty, the owner's hold,
+    and each review issue with its figures and quoted text taken out (so like issues count together)."""
+    review, grounding = card.get("review") or {}, card.get("grounding") or {}
+    out = [key for key in GROUNDING_CLASSES if grounding.get(key)]
+    if review.get("held"):
+        out.append("owner: " + str(review["held"])[:40])
+    for issue in review.get("issues") or []:
+        text = issue[len(PREFIX):] if issue.startswith(PREFIX) else issue
+        text = re.sub(r'"[^"]*"', '"…"', _DIGITS.sub("N", text))
+        out.append(text[:70])
+    return out or ["no fault recorded"]
+
+
+def breakdown(cards: list[tuple[dict, dict]], top: int = 25) -> list[dict]:
+    """The commonest fault classes over (row, card) pairs, each with its count and three example cards."""
+    tally: dict[str, list[str]] = {}
+    for row, card in cards:
+        for name in dict.fromkeys(fault_classes(card)):
+            tally.setdefault(name, []).append(f"{row.get('symbol') or row['scrip_code']} {row['news_id']}")
+    ranked = sorted(tally.items(), key=lambda kv: -len(kv[1]))[:top]
+    return [{"class": name, "cards": len(ids), "examples": ids[:3]} for name, ids in ranked]
+
+
 def _results_quarter(card: dict) -> str | None:
     return (card.get("results") or {}).get("period") if card.get("event_type") == "RESULTS" else None
 
@@ -77,7 +106,7 @@ def release(sink, dry_run: bool = False) -> dict:
     cards = [(r, json.loads(r["card_json"] or "{}")) for r in rows]
     # a published card already owns its results quarter (D20): a held one for the same quarter stays held
     owned = {(r["scrip_code"], _results_quarter(c)) for r, c in cards if not r.get("held") and _results_quarter(c)}
-    out, skipped, writes = [], {"other faults": 0, "quarter has a card": 0}, []
+    out, skipped, writes, kept = [], {"other faults": 0, "quarter has a card": 0}, [], []
     for row, card in cards:
         if not row.get("held"):
             continue
@@ -85,14 +114,19 @@ def release(sink, dry_run: bool = False) -> dict:
         if quarter and (row["scrip_code"], quarter) in owned:
             skipped["quarter has a card"] += 1
             continue
-        dropped = prune_card(card)
+        dropped = prune_card(json.loads(json.dumps(card)))
         if dropped is None:
             skipped["other faults"] += 1
+            kept.append((row, card))
             continue
+        prune_card(card)
         if quarter:
             owned.add((row["scrip_code"], quarter))
         out.append({"news_id": row["news_id"], "symbol": row.get("symbol"), "dropped": len(dropped)})
         writes.append({"news_id": row["news_id"], "card_json": json.dumps(card, ensure_ascii=False)})
     written = 0 if dry_run or not writes else sink.execute("cards_release_pruned", writes)
     log.info("release-pruned: %d released, %s", len(out), skipped)
-    return {"released": len(out), "rows_written": written, "dry_run": dry_run, "kept_held": skipped, "cards": out}
+    flagged = [(r, c) for r, c in cards if not r.get("held") and r.get("needs_review")]
+    return {"released": len(out), "rows_written": written, "dry_run": dry_run, "kept_held": skipped,
+            "kept_why": breakdown(kept), "flagged_published": len(flagged), "flagged_why": breakdown(flagged),
+            "cards": out}

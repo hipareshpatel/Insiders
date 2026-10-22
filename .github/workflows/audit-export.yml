@@ -1,0 +1,58 @@
+# The daily audit's inputs, beside Maintenance rather than in it: the held cards and the shadow critic's verdicts of the
+# last two days into docs/audit/live/ on the working branch (owner, 2026-10-22: "shadow card audit"). Its own
+# concurrency group: Maintenance keeps one pending run, and a seed pass's self-dispatch would cancel an export queued
+# behind it. No AI, no D1 writes.
+name: Audit export
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "21 4 * * *"   # 09:51 IST, before the 10:07 audit run
+
+permissions:
+  contents: write   # commits the export to the working branch
+
+concurrency:
+  group: audit-export
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: Held cards and what keeps them
+        run: |
+          mkdir -p ../docs/audit/live
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel export-held --out "../docs/audit/live/held-$(date -u +%F).json"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel release-pruned --dry-run > "../docs/audit/live/held-why-$(date -u +%F).json"
+      - name: The shadow critic's verdicts
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel critic-export --since "$(date -u -d "-1 day" +%F)" --out "../docs/audit/live/critic-$(date -u +%F).json"'
+      - name: Commit the export
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          files=$(ls docs/audit/live/held-*$(date -u +%F)*.json docs/audit/live/critic-$(date -u +%F).json 2>/dev/null)
+          cp $files "$RUNNER_TEMP/"
+          git fetch -q origin claude/nice-goodall-ta0sxs
+          git checkout -q -B claude/nice-goodall-ta0sxs origin/claude/nice-goodall-ta0sxs
+          mkdir -p docs/audit/live
+          for f in $files; do cp "$RUNNER_TEMP/$(basename "$f")" "$f"; done
+          git add docs/audit/live/
+          git diff --cached --quiet && { echo "nothing new"; exit 0; }
+          git commit -qm "audit-export: held cards, what keeps them, and the critic's verdicts for the live review"
+          git push -q origin claude/nice-goodall-ta0sxs

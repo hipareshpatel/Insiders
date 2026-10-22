@@ -52,3 +52,21 @@ def test_a_new_card_is_pruned_the_same_way():
     assert prune_quote_failures(out, problems) is not None
     assert [k.label for k in out.card.key_numbers] == ["PAT"] and len(out.card.what_happened) == 1
     assert prune_quote_failures(out, ["something else entirely"]) is None
+
+
+def test_what_keeps_a_card_held_is_counted_by_class():
+    from bse_intel.prune import breakdown, fault_classes
+
+    held = copy.deepcopy(CARD)
+    held["grounding"] = {"ungrounded": ["7,993"], "math_mismatches": []}
+    held["review"]["issues"].append("Numbers not found in the filing text or company memory: 7,993")
+    classes = fault_classes(held)
+    assert classes[0] == "ungrounded" and "math_mismatches" not in classes
+    assert "Numbers not found in the filing text or company memory: N" in classes
+    assert 'key number "…" quotes a sentence that is not in the filing' in classes
+    other = copy.deepcopy(held)
+    other["review"]["issues"][-1] = "Numbers not found in the filing text or company memory: 12.5"
+    rows = [({"scrip_code": "1", "symbol": "AAA", "news_id": "n1"}, held), ({"scrip_code": "2", "symbol": "BBB", "news_id": "n2"}, other)]
+    top = {b["class"]: b for b in breakdown(rows)}
+    assert top["Numbers not found in the filing text or company memory: N"]["cards"] == 2
+    assert top["ungrounded"]["examples"] == ["AAA n1", "BBB n2"]

@@ -694,13 +694,16 @@ function KeyFigures({ company, dossier, cards, chart, today }: { company: Compan
   const range = yearRange(chart);
   const px = (v: number) => v.toLocaleString("en-IN", { maximumFractionDigits: v < 100 ? 2 : 0 });
   const items: [string, string, string?][] = [
-    ["Market cap", crShort(company?.market_cap_cr)],
+    // each figure with its as-of (data chain audit B2, 22 Oct 2026): the close it is priced at, the quarter it is to,
+    // the balance sheet it is from
+    ["Market cap", crShort(company?.market_cap_cr), company?.price_date ? `at ${istDate(company.price_date).replace(/ \d{4}$/, "")} close` : undefined],
     ["P/E (TTM)", pe ? `${pe.pe.toFixed(1)}x` : "—", pe ? `to ${pe.through}` : undefined],
-    ["Debt", crShort(fundamentals.debt?.value)],
-    ["Net worth", crShort(fundamentals.net_worth?.value)],
+    ["Debt", crShort(fundamentals.debt?.value), fundamentals.debt?.period ?? undefined],
+    ["Net worth", crShort(fundamentals.net_worth?.value), fundamentals.net_worth?.period ?? undefined],
     ["Traded a day", company?.median_turnover_cr != null ? `₹${company.median_turnover_cr.toFixed(company.median_turnover_cr < 10 ? 2 : 0)} Cr` : "—", company?.median_turnover_cr != null ? "median" : undefined],
     ["52-week range", range ? `${px(range.lo)}–${px(range.hi)}` : "—"],
-    ["Promoter", own?.promoter_pct != null ? `${own.promoter_pct}%` : "—", own?.pledge_pct != null ? `pledge ${own.pledge_pct}%` : undefined],
+    ["Promoter", own?.promoter_pct != null ? `${own.promoter_pct}%` : "—",
+      [own?.period, own?.pledge_pct != null ? `${own.pledge_pct}% of it pledged` : null].filter(Boolean).join(" · ") || undefined],
     ["Filings analysed", num(cards.length), high ? `${high} high` : undefined],
   ];
   return (

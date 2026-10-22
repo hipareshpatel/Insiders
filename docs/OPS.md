@@ -1,2 +1,2 @@
 
-| 22 Oct 12:45 | Hourly audit 6 | 7 new cards; sample 2 right / 4 minor / 0 wrong; OTHER repeats now go through the word check (3 of 51 caught, 0 distinct dropped); reseed of 14 non-March companies running with symbols resolved |
+| 22 Oct 13:30 | Hourly audit 7 + visits | Reseed of 14 non-March companies done (129 quarters, 0 failures); #68 merged; refresh both dispatched; sample of 7: 4 right / 1 minor / 2 wrong (Garware call table, HUDCO fine total); call-table EBITDA fix (E10) on/off 13 of 461 changed, all removals |

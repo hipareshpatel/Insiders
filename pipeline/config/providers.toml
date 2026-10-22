@@ -510,6 +510,8 @@ limits = { rpm = 10 }
 # NVIDIA's catalogue (owner, 2026-10-22: "add the best one or two as backup writers"): checked here first, one tiny
 # request each, before either joins a card route. Free endpoint ~40 requests/min (assumption: NVIDIA forum and
 # third-party pages, not an official limits page; the account dashboard shows the real figure).
+# 22 Oct 07:00 IST, first check: deepseek-v4.1-flash timed out at 120 s on a one-line reply (thinking on by default;
+# NIM switches it off through the chat template), kimi-k2.6 answered 404 "not found for account" (not on this key)
 [[routes.trial_new]]
 provider = "nvidia"
 model = "deepseek-ai/deepseek-v4.1-flash"
@@ -517,11 +519,32 @@ spare = true
 json_mode = true
 max_tokens = 400
 context_tokens = 120000
+extra_body = { chat_template_kwargs = { thinking = false } }
 limits = { rpm = 30 }
 
 [[routes.trial_new]]
 provider = "nvidia"
-model = "moonshotai/kimi-k2.6"
+model = "z-ai/glm-5.3"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
+limits = { rpm = 30 }
+
+[[routes.trial_new]]
+provider = "nvidia"
+model = "nvidia/nemotron-3-super-120b-a12b"
+spare = true
+max_tokens = 400
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
+limits = { rpm = 30 }
+
+# Mistral's free Experiment tier: the provider's monthly allowance above, ~1 request/s (assumption, admin.mistral.ai)
+[[routes.trial_new]]
+provider = "mistral"
+model = "mistral-medium-3.5"
 spare = true
 json_mode = true
 max_tokens = 400

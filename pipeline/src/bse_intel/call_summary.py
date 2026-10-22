@@ -295,13 +295,12 @@ def _stated_in(figure: tuple[float, int, bool], sources: list[str]) -> bool:
     return any(abs(v - value) <= tolerance for s in sources for v, _, _ in _figures(s))
 
 
-NEAR_CHARS = 2500   # how much of the transcript around a takeaway's quote counts as its context (one answer, roughly)
+NEAR_CHARS = 2500   # the transcript around a takeaway's quote where a quarter its versus_prior names may stand
 
 
 def _near(quote: str | None, text: str) -> str:
-    """The transcript around where the quote stands: the speaker's answer it comes from, give or take. A figure
-    the takeaway adds from that answer (an LTM total said two sentences on) is the filing's own (22 Oct 2026,
-    Tech Mahindra's US$4,270 million). '' when the quote cannot be placed."""
+    """The transcript around where the quote stands: the speaker's answer it comes from, give or take, where the
+    quarter a versus_prior names may be said. '' when the quote cannot be placed."""
     from . import gate
 
     flat, q = gate._flat(text or ""), gate._flat(quote or "")
@@ -369,9 +368,10 @@ def check_ai_takeaways(card, text: str, reading: str = "", view: dict | None = N
             for figure in _figures(item.text):
                 if _stated_in(figure, [quote, *memory]):
                     continue
-                # said in the same answer, or one subtraction of the quote's own percentages (22 Oct 2026)
-                if near and _stated_in(figure, [near]) and (figure[0] >= 100 or figure[1] > 0):
-                    continue
+                # one subtraction of the quote's own percentages (22 Oct 2026). A figure said elsewhere in the same
+                # answer is not accepted: of 45 takeaways it let through on stored cards, an independent review found 5
+                # wrong (an analyst's figure, another column of a slide, another company's call) and no distance or
+                # shape that tells them from the 37 right ones (docs/audit/call-takeaways-2026-10-22.md)
                 if _computed(figure, [quote], bps):
                     continue
                 # a crore amount read from a statement in lakh or million: the quote's figure at the filing's unit

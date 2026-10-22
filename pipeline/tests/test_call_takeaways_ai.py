@@ -142,10 +142,11 @@ def test_verified_takeaways_feed_the_quarterly_summary():
     assert points[0]["text"].startswith("Deposit growth") and points[0]["versus"] == "raised from 9-11%"
 
 
-def test_a_figure_from_the_same_answer_or_one_subtraction_is_the_filings_own():
-    """22 Oct 2026, Tech Mahindra's call: "within 20 bps of the 15% target" (15% - 14.8%) and "LTM TCV US$4,270
-    million" (said two sentences after the quote) were failed as figures not in the quote. A small figure from
-    elsewhere in the answer, or one too far away, still fails."""
+def test_one_subtraction_is_the_filings_own_a_figure_from_elsewhere_in_the_answer_is_not():
+    """22 Oct 2026, Tech Mahindra's call: "within 20 bps of the 15% target" (15% - 14.8%) was failed as a figure not in
+    the quote; it is one subtraction of the quote's own figures. A figure said elsewhere in the answer ("LTM TCV
+    US$4,270 million", two sentences on) stays unverified: accepting such figures let through an analyst's number, a
+    slide's other column and another company's dividend (independent review of 45, 22 Oct 2026)."""
     text = ("Our EBIT margin for the quarter was 14.8%. We reiterate that we remain on track to achieve our full-year "
             "FY27 EBIT margin target of 15%. Our total deal wins for the quarter stand at US$1,023 million. "
             "On an LTM basis, deal wins are US$4,270 million, up 34.8% year-on-year. We added 7 new logos.")
@@ -157,7 +158,7 @@ def test_a_figure_from_the_same_answer_or_one_subtraction_is_the_filings_own():
     deals = _card(_item("Q2 deal wins of US$1,023 million; LTM TCV US$4,270 million",
                         "Our total deal wins for the quarter stand at US$1,023 million.", category="Demand & orders"))
     check_ai_takeaways(deals, text, view={})
-    assert deals.call_takeaways[0].verified, deals.call_takeaways[0].issue
+    assert not deals.call_takeaways[0].verified
     small = _card(_item("Deal wins US$1,023 million with 9 new logos",
                         "Our total deal wins for the quarter stand at US$1,023 million.", category="Demand & orders"))
     check_ai_takeaways(small, text, view={})

@@ -1,2 +1,2 @@
 
-| 22 Oct 12:00 | Missing sources | Insider trades: NSE's PIT feed is empty after 2 May 2026 (measured month by month), so not built; bulk deals blocked from a cloud IP; findings in data-chain §6 |
+| 22 Oct 12:45 | Hourly audit 6 | 7 new cards; sample 2 right / 4 minor / 0 wrong; OTHER repeats now go through the word check (3 of 51 caught, 0 distinct dropped); reseed of 14 non-March companies running with symbols resolved |

@@ -1,3 +1,2 @@
 
-| 22 Oct 10:36 | Merged #65 | CI green on b4dc364; corporate-actions.yml (2,200 days) dispatched |
-| 22 Oct 11:15 | Half-hour visit | 09:38 run OK, next running; corporate-actions history still reading; B4 built (NSE holidays in both session labels) |
+| 22 Oct 11:15 | Hourly audit 5 | 4 new cards: 2 right / 2 minor; both prunes dropped true points (item G); release-held dry run 0 of 170 releasable |

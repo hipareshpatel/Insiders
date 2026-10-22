@@ -240,5 +240,74 @@
   "classes": [],
   "prompt_variant": "long",
   "reason": "Everything on the card is in the media release: Jameel Finance - Egypt, eMACH.ai Lending with 'Loan Origination (LOS), Loan Management (LMS), Loan Collections, and BNPL', Auto, Consumer Durables, Two-Wheelers and BNPL, 'transformation ... in just 16 weeks'. No figure is invented, and LOW impact suits an undisclosed-value deployment."
+ },
+ {
+  "news_id": "nse-106824500",
+  "symbol": "LTM",
+  "run": "13:13 hourly",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "Every face figure is in the Q2FY27 transcript: 'AI revenue ... 13.4% ... growth of 40%', 'order inflow stood at USD 1.3 billion', 'OCF to PAT ratio is at 39%, down from 79% in Q1', 'H2 will be better than H1', EBIT 15.6% +10 bps; results table matches memory XBRL (revenue 11,807.6, PAT 1,379.9, EPS 47.15); 15,300/25,874 net worth = 59.1%."
+ },
+ {
+  "news_id": "nse-106824530",
+  "symbol": "GRWRHITECH",
+  "run": "13:13 hourly",
+  "verdict": "WRONG",
+  "classes": [
+   "wrong_period"
+  ],
+  "prompt_variant": "long",
+  "reason": "'H1FY27 PAT to ₹256.3 Cr' is wrong: 256.3 is H1FY26 EBITDA ('EBITDA Bridge - H1 FY27: 256.3 ... 380.7, H1 FY26 ... H1 FY27'); H1FY27 PAT is 262 (PAT bars '174 262', 19.7% of 1,329; memory Q1 132.65 + Q2 129). The results table also mixes bases: Q2FY27 EBITDA 189 includes other income but prior year 119.44 and prior quarter 172 exclude it (deck: '133 ... 189', Q1FY27 192), so EBITDA +58.2% YoY / +9.9% QoQ and margin +619 bps / -1 bp should be about +42% / -2% and +380 bps / -310 bps."
+ },
+ {
+  "news_id": "nse-106824516",
+  "symbol": "HUDCO",
+  "run": "13:13 hourly",
+  "verdict": "WRONG",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "long",
+  "reason": "Card says 'NSE and BSE have levied fines totaling ₹11,71,740', but each exchange levied that amount separately: NSE annexure 'Total Fine Payable (Inclusive of GST) 1171740' and BSE email 'Total 993000 178740 1171740'. The combined fine is about ₹23.43 lakh, and memory records past fines per exchange (NSE 5,42,800 and BSE 5,42,800 for Dec-2025)."
+ },
+ {
+  "news_id": "nse-106824496",
+  "symbol": "MPHASIS",
+  "run": "13:13 hourly",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "All figures quoted from the press release: 'reduce absolute Scope 1 and Scope 2 GHG emissions by 66.01% by FY 2036 from FY 2025 base year', 'net-zero ... by FY 2050', 'carbon neutrality ... by FY 2030', 'CRISIL Core ESG score of 73 in FY 2026, up from 69'."
+ },
+ {
+  "news_id": "nse-106824549",
+  "symbol": "AURIONPRO",
+  "run": "13:13 hourly",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "short",
+  "reason": "Points are the release's own words ('building on its partnership with Mastercard to support public transport agencies ... across North America', 'easier to evaluate, procure, and deploy', 'Merchant Cloud's gateway capabilities'); the Finland/Europe entry is in memory t_907a7329 ('marking the company's entry into the European market')."
+ },
+ {
+  "news_id": "nse-106824491",
+  "symbol": "360ONE",
+  "run": "13:13 hourly",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Filing: '2,05,02,939 equity shares ... at an issue price of Rs. 1,030', 'receipt of Rs. 1583,85,20,377.50/- i.e. the balance 75%', 'aggregate consideration of Rs. 2111,80,27,170', '(~4.8%)', share capital 40,79,14,200 -> 42,84,17,139; dilution 4.79% computes; net worth ₹10,360.59 Cr (SEP-2026) and the UBS $500-600 mn AUM exchange (g_6db8478e) are in memory."
+ },
+ {
+  "news_id": "nse-106824492",
+  "symbol": "NEUEON",
+  "run": "13:13 hourly",
+  "verdict": "MINOR",
+  "classes": [
+   "event_type"
+  ],
+  "prompt_variant": "long",
+  "reason": "The facts hold: sale of the whole Sangareddy undertaking to Aparna Enterprises ('does not belong to promoter/ promoter group'), contribution in the last financial year 'NIL', proposed 15 Jul 2025 and approved at the 18th AGM on 19 Aug 2025, no consideration or completion date given; FY26 revenue ₹15.97 Cr is in memory. But the sale of a whole undertaking is filed as OTHER/UPDATE rather than M_AND_A, although its own deal block says DIVESTMENT."
  }
 ]

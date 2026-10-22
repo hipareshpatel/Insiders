@@ -372,6 +372,14 @@ def cmd_requeue_failed(args, settings, sink) -> int:
     from . import requeue
     from .timeutil import today_ist
 
+    if getattr(args, "needs_review", False):
+        # every card the review queue still holds for a fault of its own, held or published and flagged (superseded
+        # quarters excluded: a re-run cannot publish them), re-run by today's prompt and checks (owner, 2026-10-22)
+        from . import prune
+
+        ids = prune.release(sink, dry_run=True)["rerun_ids"] + [i.strip() for i in (args.ids or "").split(",") if i.strip()]
+        print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
+        return 0
     if args.ids:
         ids = [i.strip() for i in args.ids.replace("\n", ",").split(",")]
         print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
@@ -829,6 +837,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--days", type=int, default=30)
     p.add_argument("--attempts", type=int, help="tries to give back (default all)")
     p.add_argument("--ids", help="instead: these filings (news ids, comma separated), whatever their status, to re-run")
+    p.add_argument("--needs-review", action="store_true",
+                   help="instead: every card the review queue holds for a fault of its own (held or flagged), plus --ids")
     p.add_argument("--dry-run", action="store_true", help="list what would be requeued, write nothing")
     p.set_defaults(func=cmd_requeue_failed)
     p = sub.add_parser("seed-calls", help="last two quarters of call transcripts / presentations into memory; no Gemini, no cards")

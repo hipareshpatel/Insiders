@@ -127,7 +127,7 @@ Progress on each is tracked in `docs/audit/work-2026-10-22.md` (item E).
   trading morning: **built 22 Oct evening** (`deals-sync`, market-data and nightly, retried; TRACKER F96). Next: the deals on the company page and as a card signal.
 - **Insider trades, re-measured 22 Oct 19:20 IST from Actions:** `corporates-pit` over 7 days: 0 rows; for one symbol
   (Reliance) its default window returns 20 rows, the latest from 30 Sep 2021. `/api/corporate-sdd` (a guess at
-  system-driven disclosures): 404. Still not found; next: NSE's SDD / PIT pages to find the address they call.
+  system-driven disclosures): 404. Still not found; the owner pointed (22 Oct evening) at the page NSE's own insider-trading listing uses (`/companies-listing/corporate-filings-insider-trading`, calling `corporates-pit` with a dated window): the probe now opens that page first for its cookies, then asks 1 Sep - today for equities, SME and the CSV export.
 
 ## 7. Event types: CORPORATE_ACTION is a catch-all (measured 22 Oct 2026)
 
@@ -145,3 +145,10 @@ event type in both prompts ("CORPORATE_ACTION: dividend, split, bonus, buyback, 
 delisting, name or face-value change - not an order, a stake sale, a licence or a fundraise"), measured on live cards
 the day after (the share of CORPORATE_ACTION cards that are corporate actions, now 52%), as the no-AI-for-testing rule
 allows only live measurement of a prompt change.
+
+**Shipped 22 Oct evening (owner: "go ahead, ship the prompt definitions").** `models.EVENT_DEFINITIONS`: one line per
+type, in the gatekeeper (pass1) and both card prompts (pass2, pass2_short) through `$event_definitions`; CORPORATE_ACTION
+is "a shareholder entitlement or capital change only ... not an order, a stake sale, a licence, a fundraise, a merger
+or results"; licences and approvals go to LITIGATION_REGULATORY, stake sales to M_AND_A, results letters to RESULTS.
+About 400 more prompt tokens a filing. **To measure from 23 Oct on live cards:** the share of CORPORATE_ACTION cards
+that are corporate actions (52% before), and results press releases typed OTHER (JSL, Tinna on 22 Oct).

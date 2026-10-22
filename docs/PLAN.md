@@ -30,8 +30,9 @@ reviews every push and fixes what it finds.
   deals built 22 Oct evening** (`deals-sync` from NSE's large-deals snapshot, each trading morning and the nightly,
   retried; TRACKER F96), their display on the company page next; insider trades (PIT) still not found after 2 May 2026
   (`corporates-pit` empty from Actions too; next: the address NSE's own PIT page calls).
-- Owner decisions: event-type definitions in the prompts (CORPORATE_ACTION is a catch-all, 41 of 86, data chain §7);
-  Siemens FY26 revenue ₹24,845.6 Cr questioned.
+- Event-type definitions in the prompts: shipped 22 Oct evening (owner's go-ahead); measured on 23 Oct's live cards
+  (CORPORATE_ACTION cards that are corporate actions, 52% before; data chain §7).
+- Owner decisions: Siemens FY26 revenue ₹24,845.6 Cr questioned.
 
 Owner decisions (§7): held cards hidden / shown with a warning / approve-reject (B3); backfill pace A2 (free Gemini
 ~111 days, three months only, or prepaid DeepSeek) and re-writing a company's last ~30 days after it (A3); prices from

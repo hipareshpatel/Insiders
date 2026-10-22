@@ -223,6 +223,29 @@ def main() -> int:
 
             step(f"Missing source: {name}", source)
 
+        # The owner's note (22 Oct 2026): the insider-trading page sets the cookies its own API call expects, so open
+        # it first, then ask for 1 Sep - today (equities, SME, and the CSV export)
+        def pit_page():
+            r = nse._client.get(f"{SITE}/companies-listing/corporate-filings-insider-trading",
+                                headers={"Accept": "text/html"})
+            return f"HTTP {r.status_code}, cookies now {sorted(nse._client.cookies.keys())[:8]}"
+
+        step("PIT: the insider-trading page first", pit_page)
+        for index, extra in (("equities", {}), ("sme", {}), ("equities", {"csv": "true"})):
+            def pit_after_page(index=index, extra=extra):
+                r = nse._client.get(f"{SITE}/api/corporates-pit", params={
+                    "index": index, "from_date": "01-09-2026", "to_date": to_day, **extra},
+                    headers={"Referer": f"{SITE}/companies-listing/corporate-filings-insider-trading"})
+                kind = r.headers.get("content-type", "")
+                if "json" in kind:
+                    got = _list(r.json())
+                    latest = max((str(x.get("intimDt") or x.get("date") or "") for x in got), default="")
+                    return f"HTTP {r.status_code} JSON, {len(got)} rows; latest {latest[:20]}"
+                lines = r.text.strip().splitlines()
+                return f"HTTP {r.status_code} {kind}, {len(lines)} lines; first {lines[:2]!r:.200}"
+
+            step(f"PIT after the page: {index}{' csv' if extra else ''}, 1 Sep - today", pit_after_page)
+
         for symbol in COMPANIES:
             def results_gap(symbol=symbol):
                 filings = _list(nse._get(f"{SITE}/api/integrated-filing-results", {"index": "equities",

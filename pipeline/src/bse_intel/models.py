@@ -33,6 +33,43 @@ EVENT_TYPES = (
     "OTHER",
 )
 
+# What each event type means, in the gatekeeper's and the card writer's prompts (owner, 22 Oct 2026: the types were a
+# bare list of names, and CORPORATE_ACTION read as "anything the company did": 41 of 86 such cards were order wins,
+# stake sales, licences, fundraises; data chain audit §7). Measured on live cards after it ships: the share of
+# CORPORATE_ACTION cards that are corporate actions, 52% before.
+EVENT_DEFINITIONS = {
+    "RESULTS": "a quarter's, half-year's or year's financial results: the statement, its press release or a results "
+               "letter, whether or not the filing calls it an update",
+    "CONCALL_PRESENTATION": "an earnings call transcript or recording, or an investor or analyst presentation",
+    "ANNUAL_REPORT": "the annual report, or the annual report filed with its AGM notice",
+    "RIGHTS_ISSUE": "a rights issue: its approval, letter of offer, record date, allotment",
+    "FUNDRAISE": "raising money: QIP, preferential issue, warrants, IPO or OFS, NCDs, bonds, commercial paper, a loan "
+                 "facility, and their allotment",
+    "CAPEX": "building or buying capacity: a plant, line, expansion, land, a project's start or commissioning",
+    "M_AND_A": "buying, selling or merging a business or a stake in one: acquisitions, stake sales, a subsidiary or JV "
+               "set up or wound up, schemes of amalgamation or demerger",
+    "ORDER_WIN": "an order, contract, letter of award or tender the company won from a customer",
+    "MONTHLY_BUSINESS_UPDATE": "monthly or quarterly operating figures: sales volumes, deposits, AUM, production",
+    "DEBT_RATINGS": "a credit rating assigned, reaffirmed, upgraded, downgraded or withdrawn",
+    "CORPORATE_ACTION": "a shareholder entitlement or capital change only: dividend, split, bonus, buyback, record "
+                        "date, rights entitlement, delisting, face-value or name change; not an order, a stake sale, "
+                        "a licence, a fundraise, a merger or results",
+    "GOVERNANCE": "board and shareholder matters: meeting outcomes not covered above, AGM/EGM/postal ballot results, "
+                  "auditors, related-party approvals, promoter or insider trades and pledges",
+    "MANAGEMENT_CHANGE": "a director, CEO, CFO, KMP or senior officer appointed, resigning or re-appointed",
+    "LITIGATION_REGULATORY": "a court or tribunal case, a regulator's order, notice, penalty, inspection or search, "
+                             "and a regulatory approval or licence (a drug approval, a CDSCO or TGA licence)",
+    "PRODUCT_LAUNCH": "a new product, brand, service or drug launched in the market",
+    "OTHER": "anything none of the above describes",
+}
+
+
+
+def event_definitions() -> str:
+    """The event types with what each means, one line each, for the prompts."""
+    return "\n".join(f"- {name}: {EVENT_DEFINITIONS[name]}" for name in EVENT_TYPES)
+
+
 EVENT_TAGS = {
     "RESULTS": "RESULTS",
     "CONCALL_PRESENTATION": "CONCALL",

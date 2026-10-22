@@ -1,2 +1,2 @@
 
-| 22 Oct 13:30 | Hourly audit 7 + visits | Reseed of 14 non-March companies done (129 quarters, 0 failures); #68 merged; refresh both dispatched; sample of 7: 4 right / 1 minor / 2 wrong (Garware call table, HUDCO fine total); call-table EBITDA fix (E10) on/off 13 of 461 changed, all removals |
+| 22 Oct 13:46 | Half-hour visit | #69 merged (call tables: EBITDA from the results filing only); refresh both still running (started 13:15); second Gemini key serves packed calls (12:33 run: 22 of its calls, packs of 1-3 answered in full; one bulk pack refused at the live-filing reserve); 429s only Mistral and Z.AI spares, one Gemini; queue 1,000 / 55 failed |

@@ -26,9 +26,10 @@ reviews every push and fixes what it finds.
   comparatives in the results table (Adani Energy Solutions, Swiggy, Cyient: the commonest WRONG at the end of the
   day; rule drafted, its on/off needs the filings' text from the Actions cache); **E14** a December-year company's call
   figures stored under the wrong quarter (CIE Automotive); **G** the prune drops true points (3 of 3 on 22 Oct);
-  §5 item 9 (measure A3, A9 and the pledge denominator over stored memory); missing sources §6: bulk and block deals
-  and where insider trades (PIT) went after 2 May 2026, checked from the Actions runner by `online-probe.yml`
-  (added 22 Oct), then built into the nightly with retries when a source answers.
+  §5 item 9 (measure A3, A9 and the pledge denominator over stored memory); missing sources §6: **bulk and block
+  deals built 22 Oct evening** (`deals-sync` from NSE's large-deals snapshot, each trading morning and the nightly,
+  retried; TRACKER F96), their display on the company page next; insider trades (PIT) still not found after 2 May 2026
+  (`corporates-pit` empty from Actions too; next: the address NSE's own PIT page calls).
 - Owner decisions: event-type definitions in the prompts (CORPORATE_ACTION is a catch-all, 41 of 86, data chain §7);
   Siemens FY26 revenue ₹24,845.6 Cr questioned.
 

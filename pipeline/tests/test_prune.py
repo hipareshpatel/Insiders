@@ -107,3 +107,26 @@ def test_an_unchecked_held_card_is_not_released():
     card = copy.deepcopy(CARD)
     card["review"]["status"] = "UNCHECKED"
     assert prune_card(card) is None
+
+
+def test_a_held_consolidated_card_is_not_superseded_by_a_published_standalone_one():
+    """Hourly audit, 22 Oct: SMLMAH, PVR INOX and Bandhan's consolidated cards were hidden behind standalone ones."""
+    import json
+
+    from bse_intel.prune import release
+
+    published = {"event_type": "RESULTS", "results": {"period": "Q2FY27"}, "basis": "STANDALONE", "review": {"status": "OK"}}
+    held = {**copy.deepcopy(CARD), "results": {"period": "Q2FY27"}, "basis": "CONSOLIDATED"}
+    rows = [{"news_id": f"n{i}", "scrip_code": "1", "symbol": "DEMO", "filed_at": f"2026-10-2{i}", "held": h,
+             "needs_review": h, "card_json": json.dumps(c)} for i, (c, h) in enumerate([(published, 0), (held, 1)])]
+
+    class Sink:
+        def query(self, name, params):
+            return rows if params[0] == "" else []
+
+        def execute(self, name, batch):
+            raise AssertionError("nothing may be written")
+
+    report = release(Sink())
+    assert report["kept_held"]["quarter has a card"] == 0
+    assert report["kept_held"]["consolidated behind a standalone card"] == 1 and "n1" in report["rerun_ids"]

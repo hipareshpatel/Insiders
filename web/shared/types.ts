@@ -402,6 +402,8 @@ export interface PledgeEvent {
 }
 
 export interface Dossier {
+  /** The month the company's financial year ends (3 = March), from its results XBRL; another month keeps quarters only. */
+  fy_end_month?: number | null;
   schema_version: number;
   scrip_code: string;
   company_name: string;

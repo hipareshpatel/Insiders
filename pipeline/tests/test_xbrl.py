@@ -752,3 +752,28 @@ def test_nse_dates_with_hyphens_are_read():
     assert extract_date("Record date 21-Oct-2026 for the interim dividend", "2026-10-14") == "2026-10-21"
     assert str(explicit_date("30-Sep-2026")) == "2026-09-30"
     assert statement_quarter("quarter ended 30-Sep-2026") == "Q2FY27"
+
+
+def test_a_year_not_ending_in_march_keeps_quarters_only():
+    """22 Oct 2026, Siemens (year to September) in memory: its October-March half stored as FY23 and its full year as
+    H1FY24, because every label assumes an April-March year. Quarters are named by calendar months and stay; a half
+    year, nine months or year of such a company gets no label, in the parser and in memory."""
+    from datetime import date
+
+    from bse_intel.dossier import drop_off_year_periods, march_year
+    from bse_intel.xbrl import fy_end_month, period_label
+
+    def ctx(start, end):
+        return {"startDate": start, "endDate": end, "dims": False}
+
+    assert fy_end_month({"DateOfEndOfFinancialYear": "2026-09-30"}) == 9
+    assert fy_end_month({"DateOfEndOfFinancialYear": "2027-03-31"}) == 3 and fy_end_month({}) is None
+    assert period_label(ctx(date(2026, 7, 1), date(2026, 9, 30)), 9) == "Q2FY27"         # a calendar quarter
+    assert period_label(ctx(date(2025, 10, 1), date(2026, 9, 30)), 9) is None           # Siemens' year
+    assert period_label(ctx(date(2025, 10, 1), date(2026, 3, 31)), 9) is None           # Siemens' first half
+    assert period_label(ctx(date(2026, 4, 1), date(2026, 9, 30)), 3) == "H1FY27"        # a March year unchanged
+    d = {"fy_end_month": 9, "financial_metrics": [{"metric": "revenue", "period": p, "value": 1.0}
+                                                  for p in ("FY23", "H1FY24", "Q2FY27", "Q1CY26", "9MFY26")]}
+    assert not march_year(d) and drop_off_year_periods(d) == 4
+    assert [m["period"] for m in d["financial_metrics"]] == ["Q2FY27"]
+    assert march_year({}) and drop_off_year_periods({"financial_metrics": [{"period": "FY26"}]}) == 0

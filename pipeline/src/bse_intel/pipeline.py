@@ -3191,7 +3191,8 @@ class Pipeline:
             _apply_xbrl(remembered, tagged, filing.news_id)
         score, checked, ungrounded, quant, claims = checks.score, checks.checked, checks.ungrounded, checks.quant, checks.claims
 
-        merged = merge(dossier, remembered, filing, card.impact_level, now)
+        merged = merge(dossier, remembered, filing, card.impact_level, now,
+                       fy_end_month=getattr(tagged, "fy_end_month", None) if tagged else None)
         if standalone_file is not None and standalone_file.kind == "RESULTS":
             # the same quarter's standalone figures, for the company page's standalone view (never the card's)
             put_standalone(merged, standalone_file.metrics, standalone_file.balance_sheet, filing.filed_at, filing.news_id)

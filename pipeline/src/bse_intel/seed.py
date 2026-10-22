@@ -224,7 +224,8 @@ def _write_results(sink, scrip: str, name: str, company: dict | None, period: st
     if parsed.balance_sheet and not parsed.balance_sheet.is_empty():
         out.dossier_delta.balance_sheet = parsed.balance_sheet
     dossier = sink.get_dossier(scrip) or new_dossier(filing, company or {})
-    sink.put_dossier(scrip, merge(dossier, out, filing, None, now_iso(), basis=parsed.basis))
+    sink.put_dossier(scrip, merge(dossier, out, filing, None, now_iso(), basis=parsed.basis,
+                                  fy_end_month=getattr(parsed, "fy_end_month", None)))
     stats.results_periods += 1
     log.info("seed %s %s: %d figures from %s (%s)", scrip, period, len(parsed.metrics), url.rsplit("/", 1)[-1],
              parsed.basis or "basis not stated")

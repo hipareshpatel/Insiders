@@ -473,6 +473,8 @@ def put_standalone(dossier: dict, metrics, balance, as_of: str, source: str) -> 
             continue
         entries[key] = {"metric": key[0], "period": key[1], "value": m.value, "unit": m.unit, "yoy_pct": m.yoy_pct,
                         "as_of": as_of, "source_news_id": source}
+    if not march_year(dossier):   # as for the main figures: quarters only (drop_off_year_periods)
+        entries = {k: e for k, e in entries.items() if _CALENDAR_QUARTER.fullmatch(k[1])}
     part["metrics"] = _cap_metrics(list(entries.values()))
     if balance is not None and not balance.is_empty():
         snap = {k: v for k, v in balance.model_dump().items() if v is not None} | {"as_of": as_of, "source_news_id": source}
@@ -693,12 +695,36 @@ def _plausible_target(d: dict, metric: str, value: float) -> bool:
     return ref < 1 or ref / 5 <= abs(float(value)) <= ref * 5
 
 
+_CALENDAR_QUARTER = re.compile(r"Q[1-4]FY\d{2}")   # "Q1CY26", a filer's own calendar-year name, is not one
+
+
+def march_year(d: dict) -> bool:
+    """Whether the company's financial year ends in March (or is not known yet): every period label here assumes it."""
+    return d.get("fy_end_month") in (None, 3)
+
+
+def drop_off_year_periods(d: dict) -> int:
+    """For a company whose year does not end in March: memory's half-year, nine-month and full-year figures, whose
+    labels name the wrong months (Siemens' FY23 was its October-March half, its H1FY24 a whole year; 22 Oct 2026).
+    Quarters stay: they are named by their calendar months. Returns how many figures were dropped."""
+    if march_year(d):
+        return 0
+    before = d.get("financial_metrics", [])
+    kept = [m for m in before if _CALENDAR_QUARTER.fullmatch(str(m.get("period", "")))]
+    d["financial_metrics"] = kept
+    return len(before) - len(kept)
+
+
 def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str | None, updated_at: str,
-          basis: str | None = None) -> dict:
+          basis: str | None = None, fy_end_month: int | None = None) -> dict:
     """Return the dossier with this filing's facts merged in (input is not mutated). `basis` is the figures'
-    (CONSOLIDATED / STANDALONE): the seed gives its file's, a card its own `basis`."""
+    (CONSOLIDATED / STANDALONE): the seed gives its file's, a card its own `basis`. `fy_end_month`: the month the
+    company's year ends, from its results XBRL; a year not ending in March keeps quarters only (march_year)."""
     d = json.loads(json.dumps(dossier))  # deep copy, JSON-safe
     d.setdefault("schema_version", SCHEMA_VERSION)
+    if fy_end_month:
+        d["fy_end_month"] = fy_end_month
+    drop_off_year_periods(d)
     news_id, as_of = filing.news_id, filing.filed_at
     _forget(d, news_id)
     delta = output.dossier_delta
@@ -717,6 +743,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if m.value is None:
             continue
         key = (_norm(m.metric), _period(m.period))
+        if not march_year(d) and not _CALENDAR_QUARTER.fullmatch(key[1]):
+            continue   # a half year or year of a company whose year does not end in March: wrongly named here
         if not results_source and key[0] in QUARTER_OWNED and key[1].startswith("Q") \
                 and any(s["news_id"] != news_id for s in _sources(metrics.get(key))):
             continue

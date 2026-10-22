@@ -44,6 +44,11 @@ reviews every push and fixes what it finds.
   holds), anchored to the point's quote, with the same on/off. **Done 22 Oct night (F100):** 17 freed, 0 true, 0 fakes, sample
   125/127. **F101** (the owner's queue examples: PCT impacts, discontinued PAT, exceptional quarters): 9 freed, all false holds.
   Next: OCR-garbled quotes (23), the garbled-text flag on XBRL-backed cards, quote paraphrase; then a release-pruned dry run.
+  **23 Oct small hours (F102, F103, merged #80):** garbled text no longer holds an XBRL-backed card (15 stored, all false); owners'
+  profit above the whole profit dropped, no EBITDA for lenders/insurers, a face value never a deal price. **Rejected:** reading OCR
+  letters as digits (blind sample 33 of 70 wrong). Still held and why: cards held before these fixes stay held until re-run (an AI
+  call each: owner's decision); 44 cards whose fault is in a headline or takeaway; OCR-garbled scans (fix upstream: OCR the page);
+  quote paraphrase and figures computed outside the point's quote. Next: the 23 Oct hourly audit measures the live cards.
 - Siemens FY26: an 18-month year its own file dates as 12; fixed (F97), reseeded 22 Oct night; 26 more stored years disagree with their quarters
   (`docs/audit/long-years-2026-10-22.md`) to check source by source.
 

@@ -713,3 +713,29 @@ def test_this_quarters_figure_is_the_tagged_files_over_the_cards_reading():
         {"metric": "pbt", "period": "Q2FY27", "value": 600.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"}]}
     snap = results_snapshot(dossier, "n2")
     assert snap["pat"]["value"] == 521.6 and snap["pat"]["qoq_pct"] == -14.7
+
+
+
+def test_a_call_tables_ebitda_is_the_results_filings_not_the_calls_own_reading():
+    """Garware Hi-Tech's Q2FY27 deck (live audit, 22 Oct 2026): memory's only Q2FY27 EBITDA was the deck's own (₹189 Cr,
+    with other income), set against the filings' quarters without it. A call table's EBITDA and margin are memory's
+    from before the call, or not shown; revenue and profit read the same in a call and stay."""
+    from bse_intel.dossier import call_results_snapshot, dossier_as_of
+
+    def metric(name, period, value, news_id, as_of):
+        return {"metric": name, "period": period, "value": value, "unit": "INR_CR", "source_news_id": news_id, "as_of": as_of,
+                "sources": [{"news_id": news_id, "as_of": as_of, "value": value}]}
+
+    filed = "2026-10-22T12:18:00+05:30"
+    q1 = "2026-08-10T18:00:00+05:30"
+    memory = {"financial_metrics": [
+        metric("revenue", "Q1FY27", 633.08, "n1", q1), metric("pat", "Q1FY27", 132.65, "n1", q1),
+        metric("ebitda", "Q1FY27", 172.0, "n1", q1),
+        metric("revenue", "Q2FY27", 696.0, "deck", filed), metric("pat", "Q2FY27", 129.0, "deck", filed),
+        metric("ebitda", "Q2FY27", 189.0, "deck", filed)]}
+    current, before = dossier_as_of(memory, filed), dossier_as_of(memory, filed, inclusive=False)
+    assert call_results_snapshot(current, filed)["ebitda"]["value"] == 189.0           # the call's own, as before
+    table = call_results_snapshot(current, filed, before=before)
+    assert table["period"] == "Q2FY27" and table["pat"]["value"] == 129.0 and table["revenue"]["value"] == 696.0
+    assert "ebitda" not in table and "ebitda_margin" not in table
+    assert all(line["key"] not in ("ebitda", "ebitda_margin") for line in table["lines"])

@@ -1482,13 +1482,9 @@ MOVER_REVENUE = 0.01
 CALL_QUARTER_DAYS = 120   # a call or presentation discusses the quarter that ended at most this long before it
 
 
-def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...] | list[dict] = ()) -> dict | None:
-    """The results table for an earnings call or investor presentation: the latest quarter in memory, as the results
-    filing that reported it gives it (design audit 2026-10-20, fix 10). None when memory has no quarter that ended
-    within CALL_QUARTER_DAYS of the call, so a call never shows an older quarter as the one it discusses."""
-    from datetime import date as _date
-
-    filed = _date.fromisoformat(filed_at[:10])
+def _latest_reported(dossier: dict, filed) -> tuple | None:
+    """(quarter end, period, first reporter's news id) of the latest quarter in memory that ended within
+    CALL_QUARTER_DAYS before `filed` and has revenue or PAT from a filing."""
     latest = None
     for m in dossier.get("financial_metrics", []):
         if m.get("metric") not in ("revenue", "pat") or not str(m.get("period", "")).startswith("Q"):
@@ -1498,11 +1494,51 @@ def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...]
             continue
         reporters = [s for s in _sources(m) if s.get("news_id")]
         if reporters and (latest is None or end > latest[0]):
-            latest = (end, min(reporters, key=lambda s: s.get("as_of") or "")["news_id"])
+            latest = (end, m["period"], min(reporters, key=lambda s: s.get("as_of") or "")["news_id"])
+    return latest
+
+
+# Lines a call states on its own definition: EBITDA with or without other income, EBIT for EBITDA. Revenue, profit and
+# a bank's NPA ratios read the same in a call as in the filing (independent check of 6 changed call tables, 22 Oct 2026)
+CALL_OWN_DEFINITION = ("ebitda", "ebitda_margin")
+
+
+def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...] | list[dict] = (),
+                          before: dict | None = None) -> dict | None:
+    """The results table for an earnings call or investor presentation: the latest quarter in memory, as the results
+    filing that reported it gives it (design audit 2026-10-20, fix 10). None when memory has no quarter that ended
+    within CALL_QUARTER_DAYS of the call, so a call never shows an older quarter as the one it discusses.
+
+    With `before` (memory before the call), EBITDA and its margin are memory's from before the call, or not shown: a
+    call's EBITDA is often on its own definition, set beside the filings' comparatives. Garware Hi-Tech's Q2FY27 deck
+    put EBITDA with other income (₹189 Cr) beside quarters without it, Tech Mahindra's call its EBIT (₹2,387 Cr) for the
+    filing's EBITDA (₹2,878.5 Cr), MHRIL's +8% a year where the company reports -5% (live audits, 22 Oct 2026). The
+    other lines stay: taking every line from before the call lost Indian Bank's NPA ratios and MHRIL's profit, right
+    in the call and the filing alike, and made Senores' margin from the call's EBITDA over the filing's revenue."""
+    from datetime import date as _date
+
+    filed = _date.fromisoformat(filed_at[:10])
+    latest = _latest_reported(dossier, filed)
     if latest is None:
         return None
-    snap = results_snapshot(dossier, latest[1], footer)
-    return {**snap, "discussed": True} if snap else None
+    snap = results_snapshot(dossier, latest[2], footer)
+    if not snap:
+        return None
+    if before is not None:
+        earlier = _latest_reported(before, filed)
+        prior = results_snapshot(before, earlier[2], footer) if earlier and earlier[1] == latest[1] else None
+        same = prior and prior.get("ebitda") and snap.get("ebitda") \
+            and prior["ebitda"].get("value") == snap["ebitda"].get("value")
+        # the call left memory's EBITDA as it was: its margin over the call's revenue stays (Senores' 32.7%, the call's
+        # own words; over the filing's revenue it would be 35.39%, a figure in no filing)
+        for key in () if same else CALL_OWN_DEFINITION:
+            if prior and prior.get(key):
+                snap[key] = prior[key]
+            else:
+                snap.pop(key, None)
+        snap["lines"] = [line for line in snap.get("lines", []) if line.get("key") not in CALL_OWN_DEFINITION
+                         or snap.get(line.get("key"))]
+    return {**snap, "discussed": True}
 
 
 # Lines whose comparatives are looked for in the filing's own text (results_snapshot's `printed`): amounts in crore,

@@ -1,0 +1,63 @@
+# Starts again what a D1 outage stops and nothing else restarts (owner, 2026-10-22: "in future also such things may
+# happen, it should start automatically"). On 21 Oct D1's free 5M rows read a day ran out at 20:29 UTC; the pipeline
+# and the call seed came back by their own schedules at the 00:00 UTC reset, but the memory seed's chain had ended
+# (all twelve shards failed, so no next pass) and the deploy of two merged fixes had failed on the limit. Runs just
+# after the reset and on dispatch; reads the site's health, then:
+# - re-runs the latest deploy of main if it failed;
+# - starts seed-memory again if its last pass failed or was cancelled and no Maintenance run is going.
+# No AI, no D1 writes of its own.
+name: Recover
+
+on:
+  schedule:
+    - cron: "7 0 * * *"    # 05:37 IST, seven minutes after D1's daily limits reset
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: recover
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      SITE: ${{ secrets.PLATFORM_API_URL }}
+    steps:
+      - name: The site answers
+        run: |
+          for i in 1 2 3 4 5 6; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE/api/system" || echo 000)
+            [ "$code" = 200 ] && { echo "site answers"; exit 0; }
+            echo "site answered $code; waiting"; sleep 60
+          done
+          echo "::error::the site still does not answer: nothing restarted"; exit 1
+      - name: Re-run a failed deploy of main
+        run: |
+          read -r id concl <<<"$(gh run list -R "$REPO" -w deploy-web.yml -b main -L 1 --json databaseId,conclusion -q '.[0] | "\(.databaseId) \(.conclusion)"')"
+          if [ "$concl" = failure ]; then gh run rerun "$id" -R "$REPO" && echo "deploy $id re-run"; else echo "last deploy: ${concl:-none}"; fi
+      - name: Start the memory seed again if its chain stopped
+        run: |
+          if [ -n "$(gh run list -R "$REPO" -w maintenance.yml -L 20 --json status -q '.[] | select(.status != "completed") | .status')" ]; then
+            echo "a Maintenance run is going: left alone"; exit 0
+          fi
+          # the latest Maintenance run that ran the seed's shards (job "seed (0)")
+          for id in $(gh run list -R "$REPO" -w maintenance.yml -L 20 --json databaseId -q '.[].databaseId'); do
+            if gh run view "$id" -R "$REPO" --json jobs -q '.jobs[].name' | grep -qx 'seed (0)'; then
+              concl=$(gh run view "$id" -R "$REPO" --json conclusion -q .conclusion)
+              if [ "$concl" = failure ] || [ "$concl" = cancelled ]; then
+                gh workflow run maintenance.yml -R "$REPO" --ref main -f command=seed-memory -f restart=false
+                echo "seed run $id ended $concl: next pass started (each shard resumes after its last company)"
+              else
+                echo "seed run $id ended $concl: nothing to restart"
+              fi
+              exit 0
+            fi
+          done
+          echo "no seed run in the last 20 Maintenance runs"

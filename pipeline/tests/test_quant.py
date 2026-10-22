@@ -739,3 +739,18 @@ def test_a_call_tables_ebitda_is_the_results_filings_not_the_calls_own_reading()
     assert table["period"] == "Q2FY27" and table["pat"]["value"] == 129.0 and table["revenue"]["value"] == 696.0
     assert "ebitda" not in table and "ebitda_margin" not in table
     assert all(line["key"] not in ("ebitda", "ebitda_margin") for line in table["lines"])
+
+
+def test_a_call_table_is_the_quarter_that_ended_last_before_the_call():
+    """Nippon Life AMC's Q2FY27 call (live audit, 22 Oct 2026) showed Q1FY27's table, memory having no Q2 filing yet;
+    April's Q4FY26 calls showed Q3FY26 tables. A call shows the quarter that ended last before it, or the one before
+    within CALL_GRACE_DAYS of a quarter's end; otherwise no table."""
+    from datetime import date
+
+    from bse_intel.dossier import _discussed
+
+    assert _discussed(date(2026, 9, 30), date(2026, 10, 22))
+    assert not _discussed(date(2026, 6, 30), date(2026, 10, 22))        # Q1 on a call three weeks after Q2 ended
+    assert _discussed(date(2026, 6, 30), date(2026, 10, 10))            # ten days after Q2 ended: Q1's call is late
+    assert not _discussed(date(2025, 12, 31), date(2026, 4, 28))        # an April call is about Q4, not Q3
+    assert _discussed(date(2025, 12, 31), date(2026, 1, 5)) and _discussed(date(2025, 9, 30), date(2026, 1, 5))

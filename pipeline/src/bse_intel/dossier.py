@@ -1480,6 +1480,7 @@ MOVER_REVENUE = 0.01
 
 
 CALL_QUARTER_DAYS = 120   # a call or presentation discusses the quarter that ended at most this long before it
+CALL_GRACE_DAYS = 20      # ...and that is the quarter that ended last before it, or the one before when it came this soon
 
 
 def _latest_reported(dossier: dict, filed) -> tuple | None:
@@ -1496,6 +1497,25 @@ def _latest_reported(dossier: dict, filed) -> tuple | None:
         if reporters and (latest is None or end > latest[0]):
             latest = (end, m["period"], min(reporters, key=lambda s: s.get("as_of") or "")["news_id"])
     return latest
+
+
+def _discussed(end, filed) -> bool:
+    """Whether a quarter ending on `end` is the one a call on `filed` discusses: the quarter that ended last before the
+    call, or the one before it within CALL_GRACE_DAYS of a quarter's end. Nippon Life AMC's Q2FY27 call showed Q1FY27's
+    table, as memory had no Q2 filing yet (live audit, 22 Oct 2026); with no table for the quarter, there is none."""
+    from datetime import date as _date, timedelta
+
+    last = filed
+    while not (last.month in (3, 6, 9, 12) and (last + timedelta(days=1)).day == 1):
+        last -= timedelta(days=1)
+    if last == filed:
+        last -= timedelta(days=1)
+        while not (last.month in (3, 6, 9, 12) and (last + timedelta(days=1)).day == 1):
+            last -= timedelta(days=1)
+    if end == last:
+        return True
+    before = _date(last.year, last.month - 2, 1) - timedelta(days=1) if last.month > 3 else _date(last.year - 1, 12, 31)
+    return end == before and (filed - last).days < CALL_GRACE_DAYS
 
 
 # Lines a call states on its own definition: EBITDA with or without other income, EBIT for EBITDA. Revenue, profit and
@@ -1519,7 +1539,7 @@ def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...]
 
     filed = _date.fromisoformat(filed_at[:10])
     latest = _latest_reported(dossier, filed)
-    if latest is None:
+    if latest is None or not _discussed(latest[0], filed):
         return None
     snap = results_snapshot(dossier, latest[2], footer)
     if not snap:

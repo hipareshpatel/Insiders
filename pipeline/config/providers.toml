@@ -86,7 +86,7 @@ base_url = "https://api.z.ai/api/paas/v4"
 # 1305 "overloaded", not 1302 concurrency. With several workers the gateway waits up to 10 s for a slot, then moves on.
 # 2026-10-16 (owner): GLM-4.5-Flash replaces GLM-4.7-Flash on Pass 1 and Pass 2. Head to head on tiny calls: 4.5 answered 20 of 20,
 # 4.7 only 4 of 20 (errors 1302 concurrency, 1305 overloaded, 1234 server); on real Pass 2 prompts 4.5 answered every filing so far at
-# 12-96 s. 4.7 stays on pass2_long only, because 4.5's window is 128K against 4.7's 200K.
+# 12-96 s. 4.7-Flash came back 22 Oct as a spare on the card routes (one test is one moment for a free model).
 api_key_env = "ZAI_API_KEY"
 timeout_s = 120
 
@@ -393,6 +393,16 @@ extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
 
 [[routes.pass2]]
+provider = "zai"
+model = "glm-4.7-flash"   # free, 200K window, 1 in flight (Z.AI Rate Limits page, 22 Oct). Back as a spare (owner, 22 Oct:
+spare = true              # "free models test are wired because we do not know when it works"): 4 of 20 on 16 Oct was one
+json_mode = true          # moment; as a spare it costs a failed try at most, and the breaker skips it for 5 min after 3 failures
+max_tokens = 5000
+context_tokens = 190000
+extra_body = { thinking = { type = "disabled" } }
+limits = { rpm = 30, concurrency = 1 }
+
+[[routes.pass2]]
 provider = "cohere"
 model = "command-a-03-2025"   # established Command A, 256K window; the last spare (trial key, 1,000 calls a month)
 spare = true
@@ -483,6 +493,16 @@ max_tokens = 6000
 context_tokens = 120000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
+
+[[routes.pass2_bulk]]
+provider = "zai"
+model = "glm-4.7-flash"   # free, 200K window, 1 in flight (Z.AI Rate Limits page, 22 Oct). Back as a spare (owner, 22 Oct:
+spare = true              # "free models test are wired because we do not know when it works"): 4 of 20 on 16 Oct was one
+json_mode = true          # moment; as a spare it costs a failed try at most, and the breaker skips it for 5 min after 3 failures
+max_tokens = 5000
+context_tokens = 190000
+extra_body = { thinking = { type = "disabled" } }
+limits = { rpm = 30, concurrency = 1 }
 
 [[routes.pass2_bulk]]
 provider = "cohere"
@@ -852,6 +872,16 @@ max_tokens = 6000
 context_tokens = 120000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
+
+[[routes.pass2_long]]
+provider = "zai"
+model = "glm-4.7-flash"   # free, 200K window, 1 in flight (Z.AI Rate Limits page, 22 Oct). Back as a spare (owner, 22 Oct:
+spare = true              # "free models test are wired because we do not know when it works"): 4 of 20 on 16 Oct was one
+json_mode = true          # moment; as a spare it costs a failed try at most, and the breaker skips it for 5 min after 3 failures
+max_tokens = 5000
+context_tokens = 190000
+extra_body = { thinking = { type = "disabled" } }
+limits = { rpm = 30, concurrency = 1 }
 
 [[routes.pass2_long]]
 provider = "cohere"

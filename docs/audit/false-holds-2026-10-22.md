@@ -45,3 +45,37 @@ The fix reads five forms of amount that the number pattern read wrongly or not a
 ## Next: computed figures (111)
 
 Most computed figures are a sum or difference of two to four figures printed close together, such as two guarantees, two borrowing lines or a limit raised from X to Y. F93 found that accepting any sum of two filing figures lets 56% of fakes through. So this check will accept only figures close to the point's own quote in the filing, and it gets the same three measurements before it ships.
+
+## Fix 2: a sum of the point's own quote (F100)
+
+A card figure is grounded when it is the sum of 2 to 4 figures in its own point's quote, or the difference of 2 of them. The quote checks find that quote in the filing.
+- **Units:** each part is read at its own unit. A bare part takes the unit the quote declares before it, otherwise the filing's unit.
+- **Margins:** a change in points or basis points is grounded when it is the difference of two of the quote's percentages.
+- **Repeats:** a figure grounded this way also stands where the card repeats it, for example in the headline.
+
+| Measure | Result |
+|---|---|
+| Before and after over the 292 stored figures | 17 false holds freed (Repco, Prism, Kernex ×4, M&M Finance ×7, NLC, Novartis, Swiggy, Britannia); 0 true holds freed; 0 newly held |
+| 3,632 fakes, each placed on a point that carries the real quote | 0 newly accepted |
+| Independent blind sample: every figure the rule grounds on the 236 cards (127) | 125 right; 2 wrong, neither let through by the sum (both are printed in their quotes and wrong for another reason: a standalone figure compared with a consolidated one, and a wrong column); 1 right only by coincidence (Heritage 41% = 39 + 2, which the filing also states) |
+
+The first version without units freed one true hold. Zydus's ₹38.65 mn + ₹90.18 mn is ₹12.88 Cr, which the card wrote as ₹128.83 Cr, a 10× slip. Reading each part at its own unit keeps it held, and a test guards this.
+
+## Fix 3: three check mistakes from the review queue (F101)
+
+**Quantified impact.** A share stated as a percentage, where the formula gives the fraction, now passes. Examples: Novartis 0.513 against 51.3%, DLF −0.71%, and Kilitch's 40.4%, which the owner sent from the queue. Among the stored mismatches, every exact 100× gap with unit PCT was a false hold (4). A 10× gap stays a mismatch, because half of those are real (HDFC Life, Transrail).
+
+**Footing.** PAT may include a discontinued business's result. CIE's 243.69 is 242.66 plus 1.03, which the owner also sent. XBRL `ProfitLossFromDiscontinuedOperationsAfterTax` is now read as `pat_discontinued`.
+
+**Fit.** A PBT or PAT above revenue, or above 5× the company's recent quarters, now passes when the same period's exceptional items, other income, associates' share or a tax credit account for it. EBITDA gets no such allowance (Hester's EBITDA with its exceptional gain inside was a true hold). A margin may also be on total income (Adani Power's 43%, GMR's 25%).
+
+Before and after over the 132 results cards, with metrics rebuilt from each card's results block, the fit change freed:
+- Kiri;
+- Jaykay (2 cards);
+- DLF;
+- Hester;
+- Tata Teleservices;
+- Swan;
+- Tata Chemicals.
+
+Every one of these is a reviewer-confirmed false hold. Prism Johnson drops 1 of its 2 holds, and that card has no individual audit reason. No true hold changed.

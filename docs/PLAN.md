@@ -41,7 +41,9 @@ reviews every push and fixes what it finds.
   with whole points off, 44 stay held: the fault is in a headline or takeaway). **Released 22 Oct night: 82 + 51 = 133 cards**
   (30 stay held because a published card owns their quarter, D20). **Step 2, first fix (F99):** amounts in other groupings
   and rounding read: 21 false holds freed, 0 true, fakes 70 -> 71 of 1,673. Next: computed figures (111 of the 233 false
-  holds), anchored to the point's quote, with the same on/off.
+  holds), anchored to the point's quote, with the same on/off. **Done 22 Oct night (F100):** 17 freed, 0 true, 0 fakes, sample
+  125/127. **F101** (the owner's queue examples: PCT impacts, discontinued PAT, exceptional quarters): 9 freed, all false holds.
+  Next: OCR-garbled quotes (23), the garbled-text flag on XBRL-backed cards, quote paraphrase; then a release-pruned dry run.
 - Siemens FY26: an 18-month year its own file dates as 12; fixed (F97), reseeded 22 Oct night; 26 more stored years disagree with their quarters
   (`docs/audit/long-years-2026-10-22.md`) to check source by source.
 

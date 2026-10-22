@@ -19,6 +19,7 @@ earlier order there never makes an order the first.
 from __future__ import annotations
 
 import bisect
+import itertools
 import math
 import re
 from dataclasses import dataclass, field
@@ -453,16 +454,30 @@ def check_card(card: Card, *sources: str, derived=()) -> GroundingResult:
     filing_scales, other_scales = ((unit,), (1,)) if unit else (CRORE_SCALES, CRORE_SCALES)
     texts = [("headline", card.headline), ("takeaway", card.takeaway), *(("fact", f.text) for f in card.what_happened),
              *(("insight", i.text) for i in card.why_it_matters)]
+    # each point's own quote, which the quote checks find in the filing: a figure that is a sum or difference of its
+    # figures is grounded through it (`quote_sum`)
+    quote_of = {2 + k: f.quote for k, f in enumerate(card.what_happened)}
+    quote_of |= {2 + len(card.what_happened) + k: i.quote for k, i in enumerate(card.why_it_matters)}
     if card.deal_value and card.deal_value.amount_cr:
         texts.append(("deal", f"{card.deal_value.amount_cr:g} Cr"))
+    quote_of |= {len(texts) + k: kn.quote for k, kn in enumerate(card.key_numbers)}
     texts += [("key", f"{k.value} {k.change or ''}") for k in card.key_numbers]
     sides: dict[int, tuple[str | None, str | None, int]] = {}   # a change line: its previous, current, and where its change starts
     for c in card.notable_changes:
         head = f"{c.previous or ''} ; {c.current or ''} ; "
         sides[len(texts)] = (c.previous, c.current, len(head))
+        quote_of[len(texts)] = c.quote
         texts.append(("change", head + (c.change or "")))
     track = card.track_next
     texts += [("track", f"{k.kpi} {k.target or ''}") for k in track.kpis_to_verify]
+    # a figure one point grounds through its own quote's sum stands wherever the card repeats it (the headline, the
+    # takeaway): Kernex's ₹660 Cr of limits headed the card as well as its key number
+    summed = set()
+    for n, quote in quote_of.items():
+        if quote and n < len(texts):
+            crore_here = _crore_positions(texts[n][1] or "")
+            summed |= {(kind, round(value, decimals)) for value, decimals, pos, kind, _ in _tokens(texts[n][1] or "")
+                       if quote_sum(value, decimals, kind, pos in crore_here, quote, unit)}
     checked, ungrounded, headline_bad, amounts_bad = 0, [], [], []
     for n, (where, text) in enumerate(texts):
         tokens = _tokens(text or "")
@@ -481,6 +496,8 @@ def check_card(card: Card, *sources: str, derived=()) -> GroundingResult:
                     continue
             elif index.grounded(value, decimals, kind=kind) or _from_line(value, decimals, kind, line_amounts, line_pcts, index):
                 continue
+            if (kind, round(value, decimals)) in summed:
+                continue
             if "," in raw and not decimals and kind in ("plain", "qty") and int(value) in year_like:
                 continue  # "2,052 units" is the table's 2052, which the sources set aside as a year
             label = raw.strip("()-") + {"pct": "%", "bps": " bps", "pp": " pp", "x": "x"}.get(kind, "")
@@ -492,6 +509,43 @@ def check_card(card: Card, *sources: str, derived=()) -> GroundingResult:
     if checked == 0:
         return GroundingResult(1.0, 0, [])
     return GroundingResult(round(1 - len(ungrounded) / checked, 3), checked, ungrounded, headline_bad, amounts_bad)
+
+
+def quote_sum(value: float, decimals: int, kind: str, crore: bool, quote: str, unit: float | None = None) -> bool:
+    """A card figure that is the sum of two to four figures of its own quote, or the difference of two (held-card audit,
+    22 Oct 2026: 111 of 233 false holds were such sums, "₹400 Cr + ₹390 Cr of guarantees = ₹790 Cr", "borrowings 7,877 +
+    11,820 lakh = ₹196.97 Cr"). Only the point's quote, which the quote checks find in the filing, lends its figures: any
+    two figures of the whole filing summed to a random fake 56% of the time (F93), the quote's 0.3% (6 of 2,330). Each
+    part is read at its own unit ("Rs. 38.65 million + Rs 90.18 million" is ₹12.88 Cr, never Zydus's ₹128.83 Cr), a
+    bare part at the filing's declared unit, else as crore; a percentage only from percentages."""
+    clean = _clean(quote)
+    if kind in ("pp", "bps"):
+        # a margin's change: the difference of two of the quote's percentages (Nestlé's "24.12 %" and "21.59 %", +2.53 pts)
+        pcts = [v for v, _, _, k, _ in _tokens(quote) if k == "pct"][:12]
+        points = value / 100 if kind == "bps" else value
+        tolerance = 0.5 * 10 ** (-decimals) * (0.01 if kind == "bps" else 1) + 1e-9
+        return any(abs(abs(a - b) - points) <= tolerance for a, b in itertools.combinations(pcts, 2))
+    parts = []
+    for v, _, pos, k, raw in _tokens(quote):
+        if v <= 0 or (k == "pct") != (kind == "pct") or k in ("bps", "pp", "x"):
+            continue
+        if crore and k != "pct":
+            end = pos + len(raw)
+            own = _money_unit(clean, end)
+            # a bare part: the unit the quote itself declares before it (Kernex's "Amount (Rs. In Crore) 125.00 ..."),
+            # else the filing's
+            declared = None
+            for m in _DECLARED_UNIT.finditer(quote, 0, pos):
+                declared = _PER_CRORE.get(next(g for g in m.groups() if g).lower().rstrip("s"))
+            v = v / (own if own is not None else declared or unit or 1)
+        parts.append(v)
+    parts = parts[:12]
+    tolerance = 0.5 * 10 ** (-decimals) + 1e-9
+    for r in (2, 3, 4):
+        for combo in itertools.combinations(parts, r):
+            if abs(sum(combo) - value) <= tolerance or (r == 2 and abs(abs(combo[0] - combo[1]) - value) <= tolerance):
+                return True
+    return False
 
 
 def _from_line(value: float, decimals: int, kind: str, amounts: list[float], pcts: list[float], index: SourceIndex) -> bool:
@@ -527,16 +581,30 @@ def scale_issues(metrics: list, history: list[dict]) -> list[str]:
         if m.metric in SCALE_METRICS and m.value is not None and quarter_index(m.period) is not None:
             now.setdefault(m.period, {})[m.metric] = float(m.value)
     totals = {m.period: float(m.value) for m in metrics if m.metric == "total_income" and m.value is not None}
+    # what lifts a profit above revenue for real (held-card audit, 22 Oct 2026: 14 of the 16 "above revenue" and
+    # "over 5x" holds were real): Jaykay's ₹181.83 Cr exceptional gain, Hester's loan-waiver gain, DLF's other income
+    # and JV share, Kiri's tax credit. Not for EBITDA, which leaves them out (Hester's ₹111.81 Cr with its exceptional
+    # gain inside was a true hold).
+    extra: dict[str, float] = {}
+    for m in metrics:
+        if m.value is None:
+            continue
+        if m.metric in ("exceptional_items", "other_income", "share_associates"):
+            extra[m.period] = extra.get(m.period, 0.0) + abs(float(m.value))
+        elif m.metric == "tax_expense" and float(m.value) < 0:
+            extra[m.period] = extra.get(m.period, 0.0) - float(m.value)
     issues = []
     for period, values in now.items():
         top = max(values.get("revenue") or 0, totals.get(period) or 0)
         for metric in ("ebitda", "pbt", "pat"):
             value = values.get(metric)
+            if value is not None and metric != "ebitda":
+                value -= extra.get(period, 0.0)
             # a profit only: a loss beyond revenue is what a distressed or pre-revenue company reports (Supreme Infra's
             # finance cost alone was 2.5x its revenue, SPARC, McNally - all held for it, needs-review sweep 2026-10-20),
             # and a loss read at the wrong unit is still caught by the jump against the company's own quarters below
             if value is not None and top >= 1 and value > top * 1.02:
-                issues.append(f"{_PROFIT_LABELS[metric]} {period} ₹{value:,.2f} Cr is above revenue ₹{top:,.2f} Cr")
+                issues.append(f"{_PROFIT_LABELS[metric]} {period} ₹{values[metric]:,.2f} Cr is above revenue ₹{top:,.2f} Cr")
         here = quarter_index(period)
         for metric, value in values.items():
             past = sorted(((quarter_index(h["period"]), abs(float(h["value"]))) for h in history
@@ -547,7 +615,8 @@ def scale_issues(metrics: list, history: list[dict]) -> list[str]:
             if len(sizes) < 2:
                 continue
             label = _PROFIT_LABELS[metric]
-            if abs(value) > SCALE_JUMP * max(sizes):
+            beyond = abs(value) - (extra.get(period, 0.0) if metric in ("pbt", "pat") else 0.0)
+            if beyond > SCALE_JUMP * max(sizes):
                 issues.append(f"{label} {period} ₹{value:,.2f} Cr is over {SCALE_JUMP}x the company's recent quarters "
                               f"(at most ₹{max(sizes):,.2f} Cr)")
             elif metric == "revenue" and abs(value) < min(sizes) / SCALE_JUMP:
@@ -608,7 +677,9 @@ def margin_issues(metrics: list, key_numbers: list = ()) -> list[str]:
             if name not in values or amount is None:
                 continue
             implied = amount / revenue * 100
-            if abs(implied - margin) > MARGIN_TOLERANCE_PP:
+            # a company's own margin on total income (Adani Power's 43% = 8,369 / 19,322, GMR's 25%; held-card audit)
+            on_total = amount / values["total_income"] * 100 if (values.get("total_income") or 0) > 0 else None
+            if abs(implied - margin) > MARGIN_TOLERANCE_PP and (on_total is None or abs(on_total - margin) > MARGIN_TOLERANCE_PP):
                 issue = (f"{base.upper()} ₹{amount:,.2f} Cr on revenue ₹{revenue:,.2f} Cr is a {implied:.1f}% margin, "
                          f"not the stated {margin:g}% ({period})")
                 if issue not in issues:

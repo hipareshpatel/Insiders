@@ -655,3 +655,16 @@ def test_a_fundraise_keeps_only_the_terms_the_filing_states(settings):
     out.card.deal_value.swap_ratio = "5 for every 4"
     apply_deal_guards(out, filing, [], [], text)
     assert out.card.deal_value.swap_ratio is None
+
+
+def test_pat_with_a_discontinued_business_adds_up():
+    """CIE Automotive Q2FY27 (held-card audit and the owner's review queue, 22 Oct 2026): PBT 321.57 - tax 78.91 =
+    242.66, and PAT 243.69 is that plus the discontinued business's 1.03; without that line the gap is still held."""
+    from types import SimpleNamespace as M
+
+    from bse_intel.gate import statement_footing
+
+    lines = [M(metric="pbt", period="Q2FY27", value=321.57), M(metric="tax_expense", period="Q2FY27", value=78.91),
+             M(metric="pat", period="Q2FY27", value=243.69)]
+    assert statement_footing(lines + [M(metric="pat_discontinued", period="Q2FY27", value=1.03)]) == []
+    assert statement_footing(lines) and "PAT is given as 243.69" in statement_footing(lines)[0]

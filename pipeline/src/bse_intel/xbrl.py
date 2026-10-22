@@ -63,6 +63,9 @@ RESULT_TAGS = {
     "ProfitLossForPeriod": "pat",
     "ProfitLossForThePeriod": "pat",
     "ProfitLossForPeriodFromContinuingOperations": "pat_continuing",
+    # the discontinued business's own after-tax result, which a statement adds to continuing PAT (CIE's Q2FY27: 2,426.61
+    # + 10.25 = 2,436.86 ₹ mn; the footing check held it as PBT - tax missing PAT, held-card audit, 22 Oct 2026)
+    "ProfitLossFromDiscontinuedOperationsAfterTax": "pat_discontinued",
     # the shareholders' share, apart from minority interests: Bajaj Finserv's ₹6,296.67 Cr consolidated profit is
     # ₹3,132 Cr to its owners, and the card gave the first as the company's (round 6, 2026-10-19)
     "ProfitOrLossAttributableToOwnersOfParent": "pat_owners",

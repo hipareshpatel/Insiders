@@ -116,6 +116,10 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   "Demo Cement Q2 revenue rose 20% YoY to ₹456 Cr; margin fell to 14.9%"
   "Demo Infra arm wins ₹186 Cr wind EPC LOI, over half its last quarter's revenue"
   "Demo Tubes approves ₹75 Cr warrant issue at ₹150, promoters taking two-thirds"
+  For an earnings call or presentation, the headline is what management said about what comes next, not the
+  quarter's results (the results card already carries them): guidance raised, cut or held, a capex or capacity
+  plan, a demand or margin outlook. "Demo Bank raises FY27 advances growth guidance to 13-14% from 11-13%", not
+  "Demo Bank Q2 profit rises 15%". Only when the call gives no forward view does the headline take its main figure.
 - core_catalyst: one line (under 140 characters) naming the economic driver behind the news, e.g.
   "Brownfield specialty ester capacity shifting the mix away from bulk chemicals" or "Dilutive
   rescue raise to service a ₹399 Cr debt pile". No new figures beyond those in the headline or facts.

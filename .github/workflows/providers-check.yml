@@ -32,6 +32,10 @@ jobs:
       MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
       ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+      GROQ_API_KEY_2: ${{ secrets.GROQ_API_KEY_2 }}
+      NVIDIA_API_KEY_2: ${{ secrets.NVIDIA_API_KEY_2 }}
+      ZAI_API_KEY_2: ${{ secrets.ZAI_API_KEY_2 }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
       SAMBANOVA_API_KEY: ${{ secrets.SAMBANOVA_API_KEY }}
@@ -53,6 +57,11 @@ jobs:
       - name: DeepSeek models
         if: always()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel models --provider deepseek'
+      # the keyed providers with no writer on the card routes yet (owner, 2026-10-22: add one or two backup writers)
+      - name: NVIDIA, Groq and Mistral models
+        if: always()
+        run: |
+          for p in nvidia groq mistral; do "$RUNNER_TEMP/venv/bin/python" -m bse_intel models --provider "$p" || true; done
       - name: Configured models still served
         if: always()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel models'

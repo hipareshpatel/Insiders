@@ -173,10 +173,11 @@ def test_quota_ceiling_defers_work_instead_of_failing(settings):
     filings = [_filing(f"n{i}", "Unaudited Financial Results for the quarter", now + timedelta(seconds=i), "Result",
                        scrip=str(999000 + i)) for i in range(3)]
     pdfs = {f.pdf_url: _pdf(RESULT_TEXT) for f in filings}
-    # Only NVIDIA is configured for Pass 2, and its model reports its daily quota spent.
+    # Only Nemotron (through OpenRouter) is configured for Pass 2, and it reports its daily quota spent. No NVIDIA key:
+    # NVIDIA's own models are spare writers since 22 Oct.
     err = api_error(openai.RateLimitError, 429, "You exceeded your current quota for the day")
     script = {"nvidia/nemotron-3.5-super-vl:free": [err]}
-    pipeline, sink, fake = build(settings, filings, pdfs, script, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
+    pipeline, sink, fake = build(settings, filings, pdfs, script, env={"OPENROUTER_API_KEY": "o"})
     pipeline.discover(now.date())
     pipeline.process("2000-01-01", "2100-01-01", time.monotonic() + 30, bulk=False)
     status = {r["news_id"]: (r["status"], r["attempts"]) for r in rows(sink, "select news_id, status, attempts from filings")}
@@ -276,7 +277,7 @@ def test_card_with_wrong_math_is_held_for_review(settings):
     # the second opinion (here the same provider's other model, the only one configured) repeats the mistake
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
                                  {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(bad)]},
-                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
+                                 env={"OPENROUTER_API_KEY": "o"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     body = outcome.card["card"]
     (q,) = body["quantified_impact"]

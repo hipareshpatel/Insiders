@@ -145,6 +145,26 @@ api_key_env = "DEEPSEEK_API_KEY"
 timeout_s = 120
 paid = true  # left out of the steps that run every day (annual_catchup.py), even where the key is loaded
 
+# Second keys (owner, 2026-10-22: "work load will get divided and less chances of having errors"; the owner takes the
+# risk that a provider's terms count one person's keys together). Each is a copy of its provider under its own name:
+# every route entry of the base provider is repeated for it (gateway.expand_key_aliases), with its own limits, quota
+# and System-page row. Nothing changes until the secret is set.
+[providers.gemini_2]
+same_as = "gemini"
+api_key_env = "GEMINI_API_KEY_2"
+
+[providers.groq_2]
+same_as = "groq"
+api_key_env = "GROQ_API_KEY_2"
+
+[providers.nvidia_2]
+same_as = "nvidia"
+api_key_env = "NVIDIA_API_KEY_2"
+
+[providers.zai_2]
+same_as = "zai"
+api_key_env = "ZAI_API_KEY_2"
+
 [providers.siliconflow]
 # Owner's key, from the international site (owner, 2026-10-20), so the .com endpoint. Measured 2026-10-20 (providers
 # check run 2): the key lists ~80 models, but all six candidates tried (DeepSeek-V4.1-Flash, Qwen3.8-27B, GLM-4.5-Air,
@@ -333,6 +353,29 @@ limits = { rpm = 10 }
 # free) both right in 3-4 s; on NVIDIA DeepSeek V4.1 Flash and GLM-5.3 timed out, Kimi K2.6 is listed but not served
 # (404), GLM-5.3 Flash wrote revenue 10x too high. Given a share in round 7 to be measured per writer, like the rest;
 # the three OpenRouter entries keep the route under its 20 a minute.
+# NVIDIA backup writers (owner, 2026-10-22: "add the best one or two as backup writers"): ai-check 22 Oct 07:05 IST
+# answered OK, DeepSeek V4.1 Flash in 57 s and GLM-5.3 in 30 s for a one-line reply, so spares only, after the
+# primaries; ~40 requests/min free (assumption, see trial_new). Thinking off, as for every Pass 2 model (D21).
+[[routes.pass2]]
+provider = "nvidia"
+model = "deepseek-ai/deepseek-v4.1-flash"
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { thinking = false } }
+limits = { rpm = 30 }
+
+[[routes.pass2]]
+provider = "nvidia"
+model = "z-ai/glm-5.3"
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
+limits = { rpm = 30 }
+
 [[routes.pass2_bulk]]
 provider = "zai"
 model = "glm-4.5-flash"
@@ -393,6 +436,29 @@ limits = { rpm = 10 }
 # free) both right in 3-4 s; on NVIDIA DeepSeek V4.1 Flash and GLM-5.3 timed out, Kimi K2.6 is listed but not served
 # (404), GLM-5.3 Flash wrote revenue 10x too high. Given a share in round 7 to be measured per writer, like the rest;
 # the three OpenRouter entries keep the route under its 20 a minute.
+# NVIDIA backup writers (owner, 2026-10-22: "add the best one or two as backup writers"): ai-check 22 Oct 07:05 IST
+# answered OK, DeepSeek V4.1 Flash in 57 s and GLM-5.3 in 30 s for a one-line reply, so spares only, after the
+# primaries; ~40 requests/min free (assumption, see trial_new). Thinking off, as for every Pass 2 model (D21).
+[[routes.pass2_bulk]]
+provider = "nvidia"
+model = "deepseek-ai/deepseek-v4.1-flash"
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { thinking = false } }
+limits = { rpm = 30 }
+
+[[routes.pass2_bulk]]
+provider = "nvidia"
+model = "z-ai/glm-5.3"
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
+limits = { rpm = 30 }
+
 [[routes.pass2_packed]]
 provider = "gemini"
 model = "gemini-3.6-flash"
@@ -507,6 +573,51 @@ limits = { rpm = 10 }
 # Candidates on SambaNova and SiliconFlow (owner's keys, 2026-10-20; neither account has a card, so a paid model refuses
 # and nothing is charged). No pipeline step reads this route: `ai-check` (providers-check.yml) sends each one tiny
 # request, and only the ones that answer free move to memory_seed / pass2_long as spares.
+# NVIDIA's catalogue (owner, 2026-10-22: "add the best one or two as backup writers"): checked here first, one tiny
+# request each, before either joins a card route. Free endpoint ~40 requests/min (assumption: NVIDIA forum and
+# third-party pages, not an official limits page; the account dashboard shows the real figure).
+# 22 Oct 07:00 IST, first check: deepseek-v4.1-flash timed out at 120 s on a one-line reply (thinking on by default;
+# NIM switches it off through the chat template), kimi-k2.6 answered 404 "not found for account" (not on this key)
+[[routes.trial_new]]
+provider = "nvidia"
+model = "deepseek-ai/deepseek-v4.1-flash"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { thinking = false } }
+limits = { rpm = 30 }
+
+[[routes.trial_new]]
+provider = "nvidia"
+model = "z-ai/glm-5.3"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
+limits = { rpm = 30 }
+
+[[routes.trial_new]]
+provider = "nvidia"
+model = "nvidia/nemotron-3-super-120b-a12b"
+spare = true
+json_mode = false   # with thinking off it answers "{}" in JSON mode (test_gateway)
+max_tokens = 400
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
+limits = { rpm = 30 }
+
+# Mistral's free Experiment tier: the provider's monthly allowance above, ~1 request/s (assumption, admin.mistral.ai)
+[[routes.trial_new]]
+provider = "mistral"
+model = "mistral-medium-3.5"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+limits = { rpm = 30 }
+
 [[routes.trial_new]]
 provider = "sambanova"
 model = "DeepSeek-V3.2"
@@ -683,6 +794,29 @@ json_mode = true
 max_tokens = 8000
 context_tokens = 250000
 limits = { rpm = 10 }
+
+# NVIDIA backup writers (owner, 2026-10-22: "add the best one or two as backup writers"): ai-check 22 Oct 07:05 IST
+# answered OK, DeepSeek V4.1 Flash in 57 s and GLM-5.3 in 30 s for a one-line reply, so spares only, after the
+# primaries; ~40 requests/min free (assumption, see trial_new). Thinking off, as for every Pass 2 model (D21).
+[[routes.pass2_long]]
+provider = "nvidia"
+model = "deepseek-ai/deepseek-v4.1-flash"
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { thinking = false } }
+limits = { rpm = 30 }
+
+[[routes.pass2_long]]
+provider = "nvidia"
+model = "z-ai/glm-5.3"
+spare = true
+json_mode = true
+max_tokens = 6000
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
+limits = { rpm = 30 }
 
 [[routes.vision]]
 provider = "gemini"

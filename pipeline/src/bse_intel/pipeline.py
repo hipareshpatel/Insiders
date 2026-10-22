@@ -2658,6 +2658,7 @@ class Pipeline:
             parsed = xbrl_fast_path.parse(data) if data else None
             if parsed:
                 xbrl_fast_path.fix_scale(parsed, [*history, *tagged.metrics], filing.scrip_code)
+                xbrl_fast_path.drop_long_year(parsed, [*history, *tagged.metrics], filing.scrip_code)
                 earlier.append(parsed)
         if earlier:
             xbrl_fast_path.add_comparatives(tagged, *earlier)
@@ -3039,6 +3040,7 @@ class Pipeline:
             # confirm() above accepts the figures at any unit, so it cannot.
             history = dossier.get("financial_metrics") or []
             xbrl_fast_path.fix_scale(tagged, history, filing.news_id)
+            xbrl_fast_path.drop_long_year(tagged, history, filing.news_id)   # an 18-month "year" dated as twelve
             xbrl_fast_path.settle_pbt(tagged, filed_text)
             self._xbrl_comparatives(filing, tagged, history)
             text = tagged.table() + "\n\n" + text  # exact figures first; they also ground the card

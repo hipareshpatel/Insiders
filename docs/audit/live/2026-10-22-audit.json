@@ -622,5 +622,94 @@
   ],
   "prompt_variant": "long",
   "reason": "'PAT turns positive' / 'returned to profitability' / 'Turnaround YoY' while the statement shows a loss of ₹1.51 Cr (Q1FY27 profit ₹14.02 Cr, Q2FY26 loss ₹12.79 Cr); the results table itself is right."
+ },
+ {
+  "news_id": "nse-106824911",
+  "symbol": "TEJASNET",
+  "verdict": "RIGHT",
+  "classes": [],
+  "prompt_variant": "long",
+  "reason": "Call figures match the transcript (revenue ₹406 Cr +55%, order book ₹2,315 Cr, net debt, inventory, 18,685-site BSNL LoI); the guidance-vs-delivery signal shows the gap correctly.",
+  "run": "17:13 hourly"
+ },
+ {
+  "news_id": "nse-106824853",
+  "symbol": "JSL",
+  "verdict": "MINOR",
+  "classes": [
+   "event_type"
+  ],
+  "prompt_variant": "short",
+  "reason": "All figures match the press release (revenue ₹12,874 Cr, EBITDA ₹1,433 Cr, PAT ₹898 Cr, net debt), but a quarterly results press release is typed OTHER instead of RESULTS.",
+  "run": "17:13 hourly"
+ },
+ {
+  "news_id": "nse-106824673",
+  "symbol": "MAHLIFE",
+  "verdict": "MINOR",
+  "classes": [
+   "other"
+  ],
+  "prompt_variant": "short",
+  "reason": "Results right, but the low-quality-beat signal calls profit before associates (₹6.61 Cr) 'PBT' (filing PBT ₹49.50 Cr) and labels construction expenses 'raw material cost'.",
+  "run": "17:13 hourly"
+ },
+ {
+  "news_id": "nse-106824890",
+  "symbol": "TINNARUBR",
+  "verdict": "MINOR",
+  "classes": [
+   "event_type"
+  ],
+  "prompt_variant": "long",
+  "reason": "H1 figures match; results press release typed OTHER, ₹1,000 Cr target called 'nearly double' TTM (1.75x), interest cover tied to the upgrade without support.",
+  "run": "17:13 hourly"
+ },
+ {
+  "news_id": "nse-106824838",
+  "symbol": "SWIGGY",
+  "verdict": "WRONG",
+  "classes": [
+   "wrong_period",
+   "direction",
+   "wrong_column"
+  ],
+  "prompt_variant": "short",
+  "reason": "QC contribution margin said to slip from -0.2% a year ago when the filing says it improved 157 bps YoY (-0.2% was Q1FY27); the results table sets adjusted EBITDA -760 against reported-basis priors (-798/-650) and shows LOSS_NARROWED against the headline's 'widened'. Prune dropped a true point (QC loss ₹895 Cr) whose quote lacked the figure.",
+  "run": "17:13 hourly"
+ },
+ {
+  "news_id": "nse-106824938",
+  "symbol": "FAIRCHEMOR",
+  "verdict": "MINOR",
+  "classes": [
+   "unsupported_cause"
+  ],
+  "prompt_variant": "long",
+  "reason": "Every figure checks against the standalone lakh statement; the margin recovery is put down to efficiency and realizations, which the filing does not state.",
+  "run": "17:13 hourly"
+ },
+ {
+  "news_id": "nse-106824806",
+  "symbol": "ADANIENSOL",
+  "verdict": "WRONG",
+  "classes": [
+   "wrong_column",
+   "standalone_consolidated"
+  ],
+  "prompt_variant": "long",
+  "reason": "Results table sets the press release's operational revenue ₹7,167 Cr and EBITDA ₹3,548 Cr against statutory XBRL priors (₹6,595.83 / ₹2,289.07 Cr): +8.7% and +55% shown where the filing says +51% and +67%; margin 49.5% vs 34.7% made up.",
+  "run": "17:13 hourly"
+ },
+ {
+  "news_id": "nse-106824653",
+  "symbol": "CHENNPETRO",
+  "verdict": "MINOR",
+  "classes": [
+   "unsupported_cause"
+  ],
+  "prompt_variant": "long",
+  "reason": "All figures match (PAT ₹2,247 Cr, GRM, dividend, throughput); only the timeline entry credits Q2 profit to a price revision gain the filing books in Q1.",
+  "run": "17:13 hourly"
  }
 ]

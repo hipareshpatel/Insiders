@@ -110,3 +110,4 @@ One line per lead check-in (every 15 minutes since 2026-10-20, owner): time IST,
 | 22 Oct 09:40 | C | Annual report card: red-flag block from the tagged XBRL (opinion, matters, adverse CARO only, contingent vs net worth, related parties vs revenue, loss entities, top pay) |
 | 22 Oct 09:58 | Half-hour visit | Site healthy (09:38 run running, queue 1,000 pending / 55 failed); #65 green on 1a0189d, held for the takeaway review; A7 built: a close over a week older than the filing is not used as its price (pytest 889) |
 | 22 Oct 10:20 | Daily card audit 10:07 | 8 new cards blind-reviewed: 3 right / 3 minor / 2 wrong; exchange-rate units now checked (Sagility 10x, Capri Global 100x); Tech Mahindra call table heals on the card refresh after #65 |
+| 22 Oct 10:20 | Hourly audit 4 | 3 new cards (all in the 10:07 blind sample: 1 right, 2 minor); release-held dry run dispatched; no rule side effects |

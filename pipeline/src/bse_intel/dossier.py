@@ -1610,9 +1610,19 @@ def _quarter_from_cumulative(table: dict, names: tuple[str, ...], quarter: str) 
     for name in names:
         a, b = table.get((name, f"{whole}{fy}" if whole != "FY" else fy)), table.get((name, f"{part}{fy}"))
         if a and b and a.get("value") is not None and b.get("value") is not None:
+            if _entry_basis(a) and _entry_basis(b) and _entry_basis(a) != _entry_basis(b):
+                return None   # a consolidated half less a standalone quarter is no quarter (data chain audit, 22 Oct)
             return {"metric": name, "period": quarter, "value": round(a["value"] - b["value"], 2), "derived": True,
                     "sources": []}
     return None
+
+
+def _entry_basis(entry: dict) -> str | None:
+    """The basis a memory figure's value is on: its own, else as _metric_entry chose among its sources."""
+    if entry.get("basis"):
+        return entry["basis"]
+    kept = {src.get("basis") for src in entry.get("sources") or []} - {None}
+    return "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)
 
 
 def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = (),
@@ -1636,6 +1646,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     sequence = _number_sequence(printed) if printed else []
     numbers = sorted(set(sequence)) or None
     ratios = _PRINTED_PCT | {spec["metric"] for spec in footer if spec.get("format") == "pct"}
+    derived_used: set[tuple[str, str]] = set()   # (line, period) worked out from cumulative periods, shown as such
 
     def stored(names: tuple[str, ...], p: str | None) -> tuple[dict | None, float | None]:
         entry = next((table[(n, p)] for n in names if (n, p) in table), None) if p else None
@@ -1643,6 +1654,8 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             # a quarter memory never had on its own, from the half or nine months it did: E2E's Q1FY27 revenue as its
             # H1FY27 less Q2FY27, before the company's quarterly history was seeded (owner, 2026-10-21)
             derived = _quarter_from_cumulative(table, names, p)
+            if derived:
+                derived_used.add((names[0], p))
             return (derived, derived["value"]) if derived else (None, None)
         if not entry:
             return None, None
@@ -1772,10 +1785,16 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         row = line(pick, key in _BPS_LINES, key)
         if row is None:
             continue
-        if key == "revenue" and "yoy_pct" not in row:
+        # the file's own YoY only when memory has no year-ago figure at all: when it has one and the table refused it
+        # (restated, or not what this statement prints), that YoY rests on the refused base (data chain audit A8)
+        if key == "revenue" and "yoy_pct" not in row and stored(names, periods["prev_year"])[1] is None:
             stated = next((m for m in mine if m["metric"] in names and m["period"] == period and m.get("yoy_pct") is not None), None)
             if stated:
                 row["yoy_pct"] = stated["yoy_pct"]
+        parts = {"ebitda_margin": ("ebitda", "revenue"), "nii": ("interest_earned", "interest_expended")}.get(key, (names[0],))
+        slots = sorted(slot for slot, p in periods.items() if p and slot in row and any((n, p) in derived_used for n in parts))
+        if slots:
+            row["derived"] = slots   # worked out from cumulative periods (H1 less Q1, ...), not reported as a quarter
         out[key] = row
     if len(out) <= 3:
         return None

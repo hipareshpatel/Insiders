@@ -144,6 +144,11 @@ function ResultsTable({ r, judged }: { r: ResultsSnapshot; judged: { label: stri
   const th = "px-1.5 py-1.5 text-right align-bottom text-[10.5px] font-semibold uppercase tracking-[0.08em] sm:whitespace-nowrap sm:px-3";
   const td = "px-1.5 py-1.5 text-right align-top sm:whitespace-nowrap sm:px-3";
   const was = (v: number | undefined, unit: LineSpec["unit"]) => (v != null ? lineValue(v, unit) : "—");
+  // a figure worked out from cumulative periods (a quarter as H1 less Q1) says so (data chain audit, 22 Oct 2026)
+  const mark = (line: ResultLine, slot: "value" | "prev_year" | "prev_quarter") => line.derived?.includes(slot)
+    ? <sup className="ml-0.5 cursor-help text-[9px] font-bold text-ink-3" title="Worked out from the half-year or year figures, not reported as a quarter">d</sup>
+    : null;
+  const anyDerived = rows.some(({ line }) => line.derived?.length);
   const under = "block text-[11px] font-normal text-ink-3 sm:hidden";
   return (
     <BlockShell title={r.discussed ? `Quarter discussed · ${r.period}` : LENS_TITLE[r.lens ?? ""] ?? "Quarter in ₹ Cr"}
@@ -165,16 +170,17 @@ function ResultsTable({ r, judged }: { r: ResultsSnapshot; judged: { label: stri
             return (
               <tr key={key} className="border-t border-line">
                 <td className={cn(td, "pl-0 text-left font-sans font-medium text-ink sm:pl-0")}>{label}</td>
-                <td className={cn(td, "font-semibold text-ink")}>{lineValue(line.value, unit)}</td>
-                {py && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_year, unit)}</td>}
+                <td className={cn(td, "font-semibold text-ink")}>{lineValue(line.value, unit)}{mark(line, "value")}</td>
+                {py && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_year, unit)}{mark(line, "prev_year")}</td>}
                 {yoy && <td className={td}>{change(line, "yoy", bps, lower, key)}{py && <span className={under}>{was(line.prev_year, unit)}</span>}</td>}
-                {pq && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_quarter, unit)}</td>}
+                {pq && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_quarter, unit)}{mark(line, "prev_quarter")}</td>}
                 {qoq && <td className={cn(td, "pr-0 sm:pr-0")}>{change(line, "qoq", bps, lower, key)}{pq && <span className={under}>{was(line.prev_quarter, unit)}</span>}</td>}
               </tr>
             );
           })}
         </tbody>
       </table>
+      {anyDerived && <p className="text-[11px] text-ink-3"><sup className="font-bold">d</sup> worked out from the half-year or year figures, not reported as a quarter</p>}
     </BlockShell>
   );
 }

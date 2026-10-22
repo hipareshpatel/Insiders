@@ -87,6 +87,8 @@ export interface ResultLine {
   /** a change across a loss, named instead of a % (LOSS_TO_PROFIT, PROFIT_TO_LOSS, LOSS_NARROWED, LOSS_WIDENED) */
   yoy_turn?: string;
   qoq_turn?: string;
+  /** slots worked out from cumulative periods (a quarter as H1 less Q1), not reported as a quarter */
+  derived?: ("value" | "prev_year" | "prev_quarter")[];
 }
 
 export interface ResultsSnapshot {

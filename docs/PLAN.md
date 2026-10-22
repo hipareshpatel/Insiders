@@ -32,7 +32,12 @@ reviews every push and fixes what it finds.
   (`corporates-pit` empty from Actions too; next: the address NSE's own PIT page calls).
 - Event-type definitions in the prompts: shipped 22 Oct evening (owner's go-ahead); measured on 23 Oct's live cards
   (CORPORATE_ACTION cards that are corporate actions, 52% before; data chain §7).
-- Owner decisions: Siemens FY26 revenue ₹24,845.6 Cr questioned.
+- **Held-card audit (22 Oct night, `docs/audit/held-audit-2026-10-22.md`):** 236 held or flagged cards, card by card: 81% of hold
+  reasons were the checks' own mistakes; 100 cards releasable as they stand, 108 without named points, 28 stay held. Next, in order:
+  stop our unit and change fixers making right figures wrong; the commonest false holds (computed figures, other units, table rows,
+  out_of_fit on exceptional quarters) with on/off and a sample; then release through `release-held`.
+- Siemens FY26: an 18-month year its own file dates as 12; fixed (F97), reseeded 22 Oct night; 26 more stored years disagree with their quarters
+  (`docs/audit/long-years-2026-10-22.md`) to check source by source.
 
 Owner decisions (§7): held cards hidden / shown with a warning / approve-reject (B3); backfill pace A2 (free Gemini
 ~111 days, three months only, or prepaid DeepSeek) and re-writing a company's last ~30 days after it (A3); prices from

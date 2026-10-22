@@ -94,7 +94,7 @@ export function SystemView() {
         ) : null}
         {s.d1 ? (
           <p className="num mt-2 text-xs text-ink-3">
-            D1 today: {num(s.d1.writes_today)} rows written (free tier 100,000; backfill pauses at the budget)
+            D1 today: {num(s.d1.writes_today)} rows written (Workers Paid: 50M a month included, ~1.6M a day; backfill pauses at 1.5M)
             {s.d1.size_bytes ? ` · database ${(s.d1.size_bytes / 1e6).toFixed(1)} MB of 500 MB` : ""}
           </p>
         ) : null}

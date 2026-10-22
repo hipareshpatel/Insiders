@@ -92,7 +92,9 @@ MAX_ORDER = 20_000       # companies in the cached backfill order
 BACKLOG_MAX = 1_500      # history filings waiting to be read before backfill discovers another day
 PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_3m", "ret_1y",
                  "median_turnover_cr", "point_in_time")
-D1_FREE_DAILY_WRITES, D1_NEAR_CAP = 100_000, 0.95   # Cloudflare D1 free plan: rows written a day (UTC day)
+# Cloudflare Workers Paid (owner, 22 Oct 2026): 50M rows written a month included, no daily cap; the day's share of
+# the month (D1_DAILY_WRITE_CAP) is where the window's earlier days and the catch-ups wait (was the free 100,000)
+D1_FREE_DAILY_WRITES, D1_NEAR_CAP = int(os.environ.get("D1_DAILY_WRITE_CAP", "1600000")), 0.95
 REQUEUE_AFTER_HOUR, REQUEUE_KEY = 22, "failed:requeued_on"   # the nightly extra try for failed filings
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
@@ -3673,7 +3675,7 @@ class Pipeline:
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 backfill_done = self.sink.kv_get("backfill:complete") == "1"
                 # today's filings first, then the rest of the window, so a catch-up never holds today's news. Near the
-                # free tier's 100,000 daily writes the window's earlier days, the catch-ups and the memory syncs wait for
+                # day's share of the plan's writes (D1_DAILY_WRITE_CAP) the window's earlier days, the catch-ups and the memory syncs wait for
                 # the reset (05:30 IST) and the run only turns today's filings into cards (20 Oct 2026: 91,080 by 20:30
                 # IST, ~400 writes a run on the window's backlog)
                 for day_from, day_to in ((today, today), (live_from, today - timedelta(days=1))):

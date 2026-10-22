@@ -295,10 +295,49 @@ def _stated_in(figure: tuple[float, int, bool], sources: list[str]) -> bool:
     return any(abs(v - value) <= tolerance for s in sources for v, _, _ in _figures(s))
 
 
+# a versus_prior that says the figure is the same as before: from the quote alone it compares the call with itself
+_SAME = re.compile(r"\b(?:match\w*|reiterat\w*|same as|unchanged|in line with|consistent with|confirm\w*)\b", re.I)
+
+NEAR_CHARS = 2500   # the transcript around a takeaway's quote where a quarter its versus_prior names may stand
+
+
+def _near(quote: str | None, text: str) -> str:
+    """The transcript around where the quote stands: the speaker's answer it comes from, give or take, where the
+    quarter a versus_prior names may be said. '' when the quote cannot be placed."""
+    from . import gate
+
+    flat, q = gate._flat(text or ""), gate._flat(quote or "")
+    at = flat.find(q[:60]) if q else -1
+    if at < 0:
+        return ""
+    return flat[max(0, at - NEAR_CHARS):at + len(q) + NEAR_CHARS]
+
+
+def _computed(figure: tuple[float, int, bool], sources: list[str], bps: bool) -> bool:
+    """A figure the quote's own figures give by one subtraction: "within 20 bps of the 15% target" from 15% and
+    14.8% (22 Oct 2026, Tech Mahindra). Percentages only, and basis points when the takeaway says so."""
+    value, decimals, pct = figure
+    stated = [v for s in sources for v, _, is_pct in _figures(s) if is_pct]
+    if len(stated) < 2 or not (pct or bps):
+        return False
+    tolerance = 0.5 * 10 ** -decimals + 1e-9
+    for i, a in enumerate(stated):
+        for b in stated[i + 1:]:
+            gap = abs(a - b)
+            if abs((gap * 100 if bps else gap) - value) <= tolerance and gap > 0:
+                return True
+    return False
+
+
 def _periods(text: str) -> list[str]:
     from . import gate
 
     return [re.sub(r"[\s']", "", m.group(0)).upper() for m in gate._PERIOD_LABEL.finditer(gate._flat(text or ""))]
+
+
+# Bumped when the check accepts more (22 Oct 2026: a figure from the same answer, one subtraction, a quarter the quote
+# names); refresh-card-blocks re-checks a stored call card checked under an earlier version (card_refresh.recheck_calls).
+TAKEAWAY_CHECK_VERSION = 2
 
 
 def check_ai_takeaways(card, text: str, reading: str = "", view: dict | None = None, unit: int | None = None) -> list[str]:
@@ -326,9 +365,17 @@ def check_ai_takeaways(card, text: str, reading: str = "", view: dict | None = N
             quote = gate.quote_near(quote, text, reading)
             if quote is None:
                 issue = "quote not in the filing"
+        near = _near(quote, text) if issue is None else ""
         if issue is None:
+            bps = bool(re.search(r"\bbps\b|basis points?", item.text, re.I))
             for figure in _figures(item.text):
                 if _stated_in(figure, [quote, *memory]):
+                    continue
+                # one subtraction of the quote's own percentages (22 Oct 2026). A figure said elsewhere in the same
+                # answer is not accepted: of 45 takeaways it let through on stored cards, an independent review found 5
+                # wrong (an analyst's figure, another column of a slide, another company's call) and no distance or
+                # shape that tells them from the 37 right ones (docs/audit/call-takeaways-2026-10-22.md)
+                if _computed(figure, [quote], bps):
                     continue
                 # a crore amount read from a statement in lakh or million: the quote's figure at the filing's unit
                 shown = f"{figure[0]:.{figure[1]}f}"
@@ -339,8 +386,14 @@ def check_ai_takeaways(card, text: str, reading: str = "", view: dict | None = N
                 break
         if issue is None and item.versus_prior:
             prior = _figures(item.versus_prior)
-            if not memory and prior and all(_stated_in(f, [quote]) for f in prior) and not _periods(item.versus_prior):
-                pass   # the filing's own sentence gives the earlier figure: "I had guided 9-11%, revising to 11-12%"
+            periods_named = _periods(item.versus_prior)
+            if (not memory and prior and all(_stated_in(f, [quote]) for f in prior)
+                    and not _SAME.search(item.versus_prior)
+                    and all(p in _periods(f"{quote} {near}") for p in periods_named)):
+                pass   # the filing's own sentence gives the earlier figure: "I had guided 9-11%, revising to 11-12%",
+                # and any quarter it names is named there too ("the 9-11% we guided in Q1FY27"). A "matches" or
+                # "reiterates" from the call's own sentence compares the call with itself: DCW's "net debt ₹71 Cr
+                # matches the FY26 call's closing figure" (independent review, 22 Oct 2026) needs memory
             elif not memory:
                 issue = "compares with an earlier figure but cites no memory"
             else:

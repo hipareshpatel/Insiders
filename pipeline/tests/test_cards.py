@@ -1348,3 +1348,10 @@ def test_a_standalone_figure_on_a_consolidated_card_is_a_problem():
     assert len(mixed) == 1 and "standalone EBITDA" in mixed[0] and "131.20" in mixed[0]
     assert basis_mixups(card("Revenue ₹970 Cr", "EBITDA ₹131 Cr"), group, alone) == []
     assert basis_mixups(card("EBITDA ₹121 Cr"), alone, None) == []            # a standalone card, or no second file
+    # HDFC Life Q2FY27: the two files 2.6% apart, the card's PAT the standalone one (hourly review, 22 Oct 2026)
+    life = XbrlResult(kind="RESULTS", basis="CONSOLIDATED", period="Q2FY27",
+                      metrics=[FinancialMetric(metric="pat", period="Q2FY27", value=521.60)])
+    life_alone = XbrlResult(kind="RESULTS", basis="STANDALONE", period="Q2FY27",
+                            metrics=[FinancialMetric(metric="pat", period="Q2FY27", value=508.32)])
+    assert "standalone PAT" in basis_mixups(card("Net profit ₹508 Cr"), life, life_alone)[0]
+    assert basis_mixups(card("Net profit ₹522 Cr"), life, life_alone) == []

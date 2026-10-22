@@ -43,4 +43,4 @@ jobs:
           python-version: "3.12"
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
-      - run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel sync-companies --source nse'
+      - run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel sync-companies --source nse'

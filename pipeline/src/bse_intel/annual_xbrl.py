@@ -416,6 +416,57 @@ def confirm(report: AnnualReport, text: str) -> bool:
     return appears_in([report.current[m] for m in CONFIRM if m in report.current], text) is not False
 
 
+# A CARO clause is mostly the auditor confirming nothing is wrong ("has been regular in depositing", "has not
+# defaulted", "no fraud ... has been noticed"); only a remark that something is wrong is a red flag.
+_CARO_CLEAN = re.compile(r"\b(?:has|have)\s+been\s+regular|(?<!not been )\bregular\s+in\s+depositing|\b(?:has|have)\s+not\s+defaulted|"
+                         r"\bno\s+(?:fraud|default|material\s+fraud)|\bnot\s+applicable\b|\bno\s+such\b|\bnil\b", re.I)
+_CARO_ADVERSE = re.compile(r"\bnot\s+(?:been\s+)?regular|\bhas\s+defaulted|\bdefaults?\s+in\s+(?:repayment|payment)|"
+                           r"\bdelays?\s+in\s+(?:depositing|repayment)|\b(?:not|have\s+not)\s+been\s+deposited|"
+                           r"\boutstanding\s+for\s+a\s+period\s+of\s+more\s+than\s+six\s+months|\bexcept\s+for\b|"
+                           r"\bfraud\b[^.]{0,80}\b(?:has|was|were)\s+(?:been\s+)?(?:noticed|reported)(?![^.]{0,40}\bno\b)", re.I)
+
+
+def caro_adverse(text: str) -> bool:
+    """Whether the auditor's words under a CARO clause say something is wrong."""
+    return bool(_CARO_ADVERSE.search(text or "")) and not (_CARO_CLEAN.search(text or "") and not re.search(r"\bexcept\b", text or "", re.I))
+
+
+def card_block(reports: list[AnnualReport]) -> dict | None:
+    """The annual report card's own block, made by code from the company's tagged file (owner, 22 Oct 2026: an annual
+    report is read for its red flags, not as a results card): the auditor's opinion and the matters it raises, CARO
+    remarks, contingent liabilities against net worth, related-party dealings against revenue, loss-making group
+    entities and the best-paid KMP. Consolidated leads; the standalone file fills what it alone carries."""
+    if not reports:
+        return None
+    reports = sorted(reports, key=lambda r: r.basis != "CONSOLIDATED")
+    main = reports[0]
+    first = lambda pick: next((v for r in reports if (v := pick(r))), None)
+    opinion = main.opinion or first(lambda r: r.opinion)
+    qualified = first(lambda r: r.qualified_flag)
+    contingent = first(lambda r: r.contingent) or []
+    flows = first(lambda r: r.related_flows) or []
+    block = {
+        "fy": main.fy, "basis": main.basis,
+        "opinion": opinion or ("qualified or with reservations" if qualified else None),
+        "auditors": (first(lambda r: r.auditors) or [])[:2],
+        "matters": [heading for heading, _ in (first(lambda r: r.report_notes) or [])][:4],
+        "caro": [{"clause": c, "text": t[:180]} for c, t in (first(lambda r: r.caro) or []) if caro_adverse(t)][:3],
+        "caro_count": len(first(lambda r: r.caro) or []),
+        "contingent_cr": round(sum(v for _, v in contingent), 2) if contingent else None,
+        "contingent_top": [{"what": w[:80], "cr": round(v, 2)} for w, v in sorted(contingent, key=lambda x: -x[1])[:3]],
+        "related_gross_cr": first(lambda r: r.related_gross),
+        "related_top": [{"party": p[:60], "nature": n[:50], "cr": round(v, 2)}
+                        for p, _, n, v in sorted(flows, key=lambda x: -abs(x[3]))[:3]],
+        "loss_entities": len(first(lambda r: r.loss_entities) or []),
+        "loss_entities_cr": round(sum(v for _, _, v in (first(lambda r: r.loss_entities) or []) if v < 0), 2) or None,
+        "kmp_top": [{"name": n[:50], "role": d[:40], "cr": round(v, 2)}
+                    for n, d, v in sorted(first(lambda r: r.kmp_pay) or [], key=lambda x: -x[2])[:2]],
+        "revenue_cr": main.current.get("revenue"),
+        "net_worth_cr": main.current.get("net_worth") or main.current.get("equity"),
+    }
+    return {k: v for k, v in block.items() if v not in (None, [], 0)} | {"fy": main.fy}
+
+
 def table(reports: list[AnnualReport]) -> str:
     """The reports (one per basis, the same year) as the lines put in front of the annual report's text. The
     consolidated instance leads; the standalone one adds its headline figures and what only it carries."""

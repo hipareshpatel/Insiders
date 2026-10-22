@@ -48,6 +48,10 @@ RESULT_TAGS = {
     "OtherExpenses": "other_expenses",
     "Expenses": "total_expenses",
     "ExceptionalItemsBeforeTax": "exceptional_items",
+    "ProfitBeforeExceptionalItemsAndTax": "pbt_before_exceptional",   # for EBITDA only; not kept in memory
+    # a consolidated bank's net profit after minority interest and its associates' share, which its EPS is on (Indian
+    # Bank Q4FY26: ₹3,173.05 Cr where ProfitLossForThePeriod, before both, is ₹3,115.2 Cr; hourly review, 22 Oct 2026)
+    "ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates": "pat_group",
     "ExceptionalItems": "exceptional_items",
     "ProfitBeforeTax": "pbt",
     "ProfitLossBeforeTax": "pbt",
@@ -212,6 +216,7 @@ class XbrlResult:
     confirmed: bool = True
     template: str = ""                          # the SEBI template filed on: INDAS, NBFC, BANKING, GI, LI
     ratio_basis: str | None = None              # STANDALONE when a consolidated bank file's ratios came from it
+    fy_end_month: int | None = None             # the company's year end, from DateOfEndOfFinancialYear (3 = March)
 
     def table(self) -> str:
         """The figures as text for the Pass 2 prompt (and for grounding)."""
@@ -341,12 +346,19 @@ def _fy_end(d: date) -> int:
     return d.year if d.month <= 3 else d.year + 1
 
 
-def period_label(info: dict) -> str | None:
+def period_label(info: dict, fy_end_month: int | None = None) -> str | None:
+    """A context's period on the April-March convention every label here uses. A quarter is named by its calendar
+    months whatever the company's year (Q2FY27 is July-September 2026 for Siemens too), so it is the same row for
+    every company. A half year, nine months or year is not: for a company whose year ends in another month
+    (Siemens in September, Gillette in June) "FY" and "H1" would name the wrong months, its full year stored as
+    H1FY24 and its half year as FY23 (Siemens' memory, 22 Oct 2026). Those periods get no label, and are not kept."""
     months, end = _months(info), info.get("endDate")
     if not end or months is None:
         return None
     if months == 3:
         return canonical_period(f"quarter ended {end:%d.%m.%Y}")
+    if fy_end_month not in (None, 3):
+        return None
     fy = f"FY{_fy_end(end) % 100:02d}"
     if months == 12 and end.month == 3:
         return fy
@@ -452,10 +464,18 @@ def add_bank_ratios(result: "XbrlResult", standalone: "XbrlResult | None") -> in
     return len(added)
 
 
+def fy_end_month(text_facts: dict) -> int | None:
+    """The month the company's financial year ends, from the file's DateOfEndOfFinancialYear ("2026-09-30" -> 9)."""
+    raw = str(text_facts.get("DateOfEndOfFinancialYear") or "").strip()
+    m = re.match(r"(20\d{2})-(\d{2})-\d{2}", raw)
+    return int(m[2]) if m and 1 <= int(m[2]) <= 12 else None
+
+
 def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = None) -> XbrlResult | None:
     nature = " ".join(v for k, v in text_facts.items() if "Standalone" in k or "Consolidated" in k or k == "NatureOfReport").lower()
     basis = "CONSOLIDATED" if "consolidated" in nature else "STANDALONE" if "standalone" in nature else None
     tags = tags or RESULT_TAGS
+    year_end = fy_end_month(text_facts)
     values: dict[tuple[str, str], float] = {}
     ends: dict[str, date] = {}
     balance: dict[str, float] = {}
@@ -467,7 +487,7 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
             continue  # segment and other dimensional facts are not totals
         kind = units.get(unit or "", "PURE")
         if name in tags or name in RATIO_TAGS:
-            label = period_label(info)
+            label = period_label(info, year_end)
             if not label:
                 continue
             if name in RATIO_TAGS:
@@ -506,13 +526,22 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
         gross, net = values.get(("gnpa_pct", label)), values.get(("nnpa_pct", label))
         if gross is not None and net is not None and net > gross + 0.005:
             values.pop(("gnpa_pct", label)), values.pop(("nnpa_pct", label))
+    for label in {p for m, p in values if m == "pat_group"}:
+        group = values.pop(("pat_group", label))
+        if group or values.get(("pat", label)) is None:   # a 0 there is the template's filler
+            values[("pat", label)] = group
     _bank_ratio_fillers(values)
     _annualise_roa(values, ends)
-    # EBITDA = PBT + finance cost + depreciation - other income (exceptional items added back)
+    # EBITDA = profit before exceptional items and tax + finance cost + depreciation - other income. From the file's
+    # own profit before exceptional items when it tags one: PBT less the exceptional items depends on the sign a filer
+    # gives a charge, and a charge tagged positive took EBITDA down by twice it (data chain audit A9, 22 Oct 2026)
     for label in {p for _, p in values}:
-        parts = [values.get((m, label)) for m in ("pbt", "finance_cost", "depreciation")]
+        before = values.pop(("pbt_before_exceptional", label), None)
+        parts = [before if before is not None else values.get(("pbt", label)), values.get(("finance_cost", label)),
+                 values.get(("depreciation", label))]
         if all(v is not None for v in parts):
-            ebitda = sum(parts) - (values.get(("other_income", label)) or 0) - (values.get(("exceptional_items", label)) or 0)
+            ebitda = sum(parts) - (values.get(("other_income", label)) or 0) \
+                - (0 if before is not None else values.get(("exceptional_items", label)) or 0)
             values[("ebitda", label)] = ebitda
             revenue = values.get(("revenue", label))
             if revenue:
@@ -555,7 +584,7 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                              gross_debt_cr=_r(sum(debt)) if debt else None, **lines, **sums)
         if sheet.gross_debt_cr is not None and sheet.cash_cr is not None:
             sheet.net_debt_cr = _r(sheet.gross_debt_cr - sheet.cash_cr)
-    return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet)
+    return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet, fy_end_month=year_end)
 
 
 def owners_share(values: dict) -> int:

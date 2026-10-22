@@ -200,6 +200,14 @@ def test_a_formula_over_mixed_units_is_checked_in_the_result_unit():
     text = "Letter of award for locomotives worth USD 135 million."
     wrong, right = check([est(11475)], text).items[0], check([est(1147.5)], text).items[0]
     assert wrong["check"] == "MISMATCH" and right["check"] == "VERIFIED" and right["computed"] == 1147.5
+    # the rate's unit written as a rate (Sagility, live audit 22 Oct 2026: US$ 20 M x 89 stated as ₹1,780 Cr)
+    for rate_unit in ("INR/USD", "INR per USD", "INR_PER_USD"):
+        rated = QuantifiedImpact.model_validate({
+            "label": "Upfront in rupees", "formula": "upfront_usd_m * fx_inr_per_usd", "result": 1780.0, "unit": "INR_CR",
+            "inputs": [{"name": "upfront_usd_m", "value": 20.0, "unit": "USD_M", "source": "FILING"},
+                       {"name": "fx_inr_per_usd", "value": 89.0, "unit": rate_unit, "source": "ASSUMPTION"}]})
+        item = check([rated], "an upfront payment of USD 20.0 M").items[0]
+        assert item["check"] == "MISMATCH" and item["computed"] == 178.0, rate_unit
     # same units on both sides: nothing changes (₹ crore over ₹ crore, as a share)
     share = QuantifiedImpact.model_validate({
         "label": "Share", "formula": "a / b * 100", "result": 25, "unit": "PCT",
@@ -619,6 +627,31 @@ def test_a_missing_previous_quarter_comes_from_the_half_year():
     assert snap["revenue"]["prev_quarter"] == 156.7 and snap["revenue"]["qoq_pct"] == 42.8
     assert snap["pat"]["prev_quarter"] == 43.9
     assert "prev_quarter" not in snap.get("eps", {})   # per share: not a sum of quarters
+    # shown as worked out, not reported (data chain audit, 22 Oct 2026); and never across two bases
+    assert snap["revenue"]["derived"] == ["prev_quarter"] and snap["pat"]["derived"] == ["prev_quarter"]
+    mixed = {"financial_metrics": [dict(m, basis="STANDALONE" if m["period"] == "Q2FY27" else "CONSOLIDATED")
+                                   for m in dossier["financial_metrics"]]}
+    assert "prev_quarter" not in (results_snapshot(mixed, "n2") or {}).get("revenue", {})
+
+
+def test_a_revenue_yoy_never_rests_on_a_refused_year_ago():
+    """Data chain audit A8 (22 Oct 2026): with the year-ago revenue refused (the statement prints another figure), the
+    stored XBRL YoY was put back on the row, a change against the very base the table had just refused."""
+    from bse_intel.dossier import results_snapshot
+    dossier = {"financial_metrics": [
+        {"metric": "revenue", "period": "Q2FY27", "value": 1200.0, "yoy_pct": 20.0, "source_news_id": "n2", "as_of": "b"},
+        {"metric": "revenue", "period": "Q2FY26", "value": 1000.0, "source_news_id": "n1", "as_of": "a"},
+        {"metric": "pat", "period": "Q2FY27", "value": 100.0, "source_news_id": "n2", "as_of": "b"},
+        {"metric": "pat", "period": "Q2FY26", "value": 80.0, "source_news_id": "n1", "as_of": "a"},
+        {"metric": "pbt", "period": "Q2FY27", "value": 130.0, "source_news_id": "n2", "as_of": "b"},
+        {"metric": "pbt", "period": "Q2FY26", "value": 105.0, "source_news_id": "n1", "as_of": "a"},
+    ]}
+    printed = "Revenue 1,200.00 1,050.00 Profit before tax 130.00 110.00 Profit 100.00 85.00"   # a restated column
+    snap = results_snapshot(dossier, "n2", printed=printed)
+    assert "prev_year" not in snap["revenue"] and "yoy_pct" not in snap["revenue"]
+    alone = {"financial_metrics": [m for m in dossier["financial_metrics"] if m["period"] == "Q2FY27"]
+             + [m for m in dossier["financial_metrics"] if m["metric"] != "revenue" and m["period"] == "Q2FY26"]}
+    assert results_snapshot(alone, "n2")["revenue"]["yoy_pct"] == 20.0   # no year-ago in memory: the file's own YoY
 
 
 def test_a_procedural_watch_item_is_not_for_the_decision():
@@ -649,3 +682,34 @@ def test_the_view_shows_earlier_calls_and_the_balance_sheets_key_lines():
     calls = view["previous_calls"]
     assert [c["text"] for c in calls] == ["FY27 volume growth 10-12%", "Plant 2 by Q3FY27"]
     assert calls[0]["id"] == call_point_id(dossier["call_points"][0]) and calls[0]["id"].startswith("cp_")
+
+
+def test_a_comparison_never_crosses_bases():
+    """Data chain audit A3 (22 Oct 2026): a group that begins consolidating had its consolidated quarter set against a
+    standalone year-ago; memory picks consolidated per metric and period, not to match the current figure."""
+    from bse_intel.dossier import results_snapshot
+    rows = lambda yb: {"financial_metrics": [
+        {"metric": "revenue", "period": "Q2FY27", "value": 1200.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"},
+        {"metric": "revenue", "period": "Q2FY26", "value": 700.0, "basis": yb, "source_news_id": "n1", "as_of": "a"},
+        {"metric": "pat", "period": "Q2FY27", "value": 100.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"},
+        {"metric": "pat", "period": "Q2FY26", "value": 60.0, "basis": yb, "source_news_id": "n1", "as_of": "a"},
+        {"metric": "pbt", "period": "Q2FY27", "value": 130.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"}]}
+    crossed = results_snapshot(rows("STANDALONE"), "n2")
+    assert "prev_year" not in crossed["revenue"] and "yoy_pct" not in crossed["pat"]
+    same = results_snapshot(rows("CONSOLIDATED"), "n2")
+    assert same["revenue"]["yoy_pct"] == 71.4 and same["pat"]["prev_year"] == 60.0
+
+
+def test_this_quarters_figure_is_the_tagged_files_over_the_cards_reading():
+    """HDFC Life (hourly review, 22 Oct 2026): the card read the standalone PAT ₹508 Cr from the PDF while memory held the
+    consolidated file's ₹521.60 Cr and consolidated comparatives, so the table set standalone against consolidated."""
+    from bse_intel.dossier import results_snapshot
+    dossier = {"financial_metrics": [
+        {"metric": "pat", "period": "Q2FY27", "value": 521.6, "source_news_id": "n2", "as_of": "b",
+         "sources": [{"news_id": "n2", "as_of": "b", "value": 508.0},
+                     {"news_id": "xbrl:res:540777:Q2FY27", "as_of": "b", "value": 521.6, "basis": "CONSOLIDATED"}]},
+        {"metric": "pat", "period": "Q1FY27", "value": 611.19, "basis": "CONSOLIDATED", "source_news_id": "n1", "as_of": "a"},
+        {"metric": "revenue", "period": "Q2FY27", "value": 20000.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"},
+        {"metric": "pbt", "period": "Q2FY27", "value": 600.0, "basis": "CONSOLIDATED", "source_news_id": "n2", "as_of": "b"}]}
+    snap = results_snapshot(dossier, "n2")
+    assert snap["pat"]["value"] == 521.6 and snap["pat"]["qoq_pct"] == -14.7

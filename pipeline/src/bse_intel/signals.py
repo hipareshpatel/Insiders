@@ -244,16 +244,19 @@ def _volumes(after: dict, filing: Filing) -> list[Signal]:
 
 
 PRICE_STALE_DAYS = 10
+PRICE_LAG_DAYS = 7   # a close this much older than the filing is a feed that stopped (Yahoo failing for the ticker)
 
 
 def priced_for(company: dict | None, filing: Filing) -> dict:
-    """The company row without today's price and market cap when the filing is older than that price:
-    a May card must not compare an issue price with October's close."""
+    """The company row without its price and market cap when that price is not the filing's: a May card must not
+    compare an issue price with October's close, nor an October card with a close from August that a failing feed
+    left in place (data chain audit A7, 22 Oct 2026). A week covers a weekend with the longest exchange holidays."""
     company = dict(company or {})
     price_date = company.get("price_date")
     try:
-        stale = not price_date or (date.fromisoformat(str(price_date)[:10]) - date.fromisoformat(filing.filing_date)).days > PRICE_STALE_DAYS
-    except ValueError:
+        gap = (date.fromisoformat(str(price_date)[:10]) - date.fromisoformat(filing.filing_date)).days
+        stale = gap > PRICE_STALE_DAYS or gap < -PRICE_LAG_DAYS
+    except (TypeError, ValueError):
         stale = True
     if stale:
         for key in ("last_price", "market_cap_cr", "ret_1w", "ret_1m", "ret_1y", "median_turnover_cr"):

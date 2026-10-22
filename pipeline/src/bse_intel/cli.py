@@ -288,6 +288,17 @@ def cmd_pledge_sync(args, settings, sink) -> int:
     return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
 
 
+def cmd_corporate_actions_sync(args, settings, sink) -> int:
+    """Splits, bonuses, dividends, rights and buybacks (NSE's corporate-actions feed) into memory (corporate_actions.py)."""
+    from . import corporate_actions
+
+    pipeline = _pipeline(settings, sink)
+    scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()} or None
+    report = corporate_actions.sync(pipeline, time.monotonic() + args.time_budget, days=args.days, scrips=scrips)
+    print(json.dumps(report, indent=2))
+    return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
+
+
 def cmd_refresh_summaries(args, settings, sink) -> int:
     """Each company's stored summary (overdue promises, radar, credibility) rebuilt from its memory, no AI. A rule that
     changes what a summary holds reaches companies not processed since only this way (laptop T11, 2026-10-20: the
@@ -820,6 +831,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--scrips", help="only these companies (comma separated)")
     p.add_argument("--time-budget", type=int, default=900)
     p.set_defaults(func=cmd_pledge_sync)
+    p = sub.add_parser("corporate-actions-sync", help="splits, bonuses, dividends, rights, buybacks (NSE) into memory, no AI")
+    p.add_argument("--days", type=int, default=30, help="days of ex-dates to read back (2200 for six years)")
+    p.add_argument("--scrips", help="only these companies (comma separated)")
+    p.add_argument("--time-budget", type=int, default=600)
+    p.set_defaults(func=cmd_corporate_actions_sync)
     p = sub.add_parser("refresh-summaries", help="rebuild each company's stored summary from its memory, no AI")
     p.add_argument("--scrips", help="only these companies (comma separated); default every company with memory")
     p.set_defaults(func=cmd_refresh_summaries)

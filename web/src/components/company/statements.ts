@@ -12,6 +12,23 @@ export type Cell = number | null;
 export type Row = { label: string; cells: Cell[]; kind?: "pct" | "days" | "ratio" | "per_share"; strong?: boolean };
 export type Table = { columns: string[]; rows: Row[] };
 
+export type CorporateAction = { ex_date: string; kind: string; factor?: number; subject?: string };
+const PER_SHARE = new Set(["eps", "basic_eps", "diluted_eps"]);
+
+/** Per-share figures on today's share count: a period ending before a split or bonus has its EPS divided by the shares
+ * one share became (corporate_actions.py), so a quarter before LIC's 1:1 bonus is not twice the one after it and a TTM
+ * EPS sums like with like (data chain audit, 22 Oct 2026). Every other figure is untouched. */
+export function adjustPerShare(metrics: Metric[], actions: CorporateAction[] | undefined | null): Metric[] {
+  const steps = (actions ?? []).filter((a) => a.factor && a.factor > 0 && a.factor !== 1 && a.ex_date);
+  if (!steps.length) return metrics;
+  return metrics.map((m) => {
+    if (!PER_SHARE.has(m.metric) || typeof m.value !== "number") return m;
+    const end = periodEnd(String(m.period));
+    const factor = steps.filter((a) => a.ex_date > end).reduce((f, a) => f * (a.factor as number), 1);
+    return factor === 1 ? m : { ...m, value: Math.round((m.value / factor) * 100) / 100 };
+  });
+}
+
 const QUARTERS = 12;
 const YEARS = 6;
 

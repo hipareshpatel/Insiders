@@ -140,3 +140,52 @@ def test_verified_takeaways_feed_the_quarterly_summary():
     assert len(d["call_points"]) == 1                     # only the verified one is kept
     points = [p for c in summarize_calls(d)[0]["categories"] for p in c["points"]]
     assert points[0]["text"].startswith("Deposit growth") and points[0]["versus"] == "raised from 9-11%"
+
+
+def test_one_subtraction_is_the_filings_own_a_figure_from_elsewhere_in_the_answer_is_not():
+    """22 Oct 2026, Tech Mahindra's call: "within 20 bps of the 15% target" (15% - 14.8%) was failed as a figure not in
+    the quote; it is one subtraction of the quote's own figures. A figure said elsewhere in the answer ("LTM TCV
+    US$4,270 million", two sentences on) stays unverified: accepting such figures let through an analyst's number, a
+    slide's other column and another company's dividend (independent review of 45, 22 Oct 2026)."""
+    text = ("Our EBIT margin for the quarter was 14.8%. We reiterate that we remain on track to achieve our full-year "
+            "FY27 EBIT margin target of 15%. Our total deal wins for the quarter stand at US$1,023 million. "
+            "On an LTM basis, deal wins are US$4,270 million, up 34.8% year-on-year. We added 7 new logos.")
+    margin = _card(_item("EBIT margin 14.8%, within 20 bps of the 15% FY27 target",
+                         "Our EBIT margin for the quarter was 14.8%. We reiterate that we remain on track to achieve our "
+                         "full-year FY27 EBIT margin target of 15%."))
+    check_ai_takeaways(margin, text, view={})
+    assert margin.call_takeaways[0].verified, margin.call_takeaways[0].issue
+    deals = _card(_item("Q2 deal wins of US$1,023 million; LTM TCV US$4,270 million",
+                        "Our total deal wins for the quarter stand at US$1,023 million.", category="Demand & orders"))
+    check_ai_takeaways(deals, text, view={})
+    assert not deals.call_takeaways[0].verified
+    small = _card(_item("Deal wins US$1,023 million with 9 new logos",
+                        "Our total deal wins for the quarter stand at US$1,023 million.", category="Demand & orders"))
+    check_ai_takeaways(small, text, view={})
+    assert not small.call_takeaways[0].verified                        # 9 is not said, and small figures need the quote
+    far = text + " " + "Filler sentence about the weather. " * 120 + "Our attrition was 11.9%."
+    away = _card(_item("Q2 deal wins of US$1,023 million; attrition 11.9%",
+                       "Our total deal wins for the quarter stand at US$1,023 million.", category="Demand & orders"))
+    check_ai_takeaways(away, far, view={})
+    assert not away.call_takeaways[0].verified                         # said, but in another part of the call
+
+
+def test_an_earlier_figure_in_the_quote_may_name_the_quarter_the_quote_names():
+    text = "In Q1FY27 I had guided for deposit growth of 9-11%, and I am revising that to 11-12%."
+    card = _card(_item("Deposit growth guidance revised to 11-12%", text, [], "from 9-11% in Q1FY27"))
+    check_ai_takeaways(card, text, view={})
+    assert card.call_takeaways[0].verified, card.call_takeaways[0].issue
+    other = _card(_item("Deposit growth guidance revised to 11-12%", text, [], "from 9-11% in Q4FY26"))
+    check_ai_takeaways(other, text, view={})
+    assert not other.call_takeaways[0].verified                        # a quarter the filing does not name
+
+
+def test_an_earlier_figure_that_is_the_takeaways_own_is_no_comparison():
+    """DCW's Q4FY26 call (independent review, 22 Oct 2026): "net debt ₹71 Cr matches the FY26 call's closing figure"
+    set the call's own ₹71 Cr against itself and passed as a comparison from the quote."""
+    text = ("So, our scheduled debt repayment for next year is again Rs.130 crores. So, obviously we will be debt-free, "
+            "because we have Rs.71 crores of net debt.")
+    card = _card(_item("Net debt ₹71 Cr against ₹130 Cr FY27 repayment", text, [],
+                       "net debt ₹71 Cr matches the closing figure"))
+    check_ai_takeaways(card, text, view={})
+    assert not card.call_takeaways[0].verified

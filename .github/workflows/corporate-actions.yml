@@ -1,0 +1,42 @@
+# Corporate actions (splits, bonuses, dividends, rights, buybacks) read back from NSE into memory, no AI. The nightly
+# run reads the last 30 days and the next 60; this reads further back once, so EPS history before an old split or bonus
+# is adjusted too (corporate_actions.py, data chain audit 22 Oct 2026).
+name: Corporate actions
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: days of ex-dates to read back (2200 is six years, as memory keeps)
+        type: string
+        default: '2200'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: corporate-actions
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+      DAYS: ${{ inputs.days }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: Read the actions
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel corporate-actions-sync --days "$DAYS" --time-budget 3000'

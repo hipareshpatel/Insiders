@@ -103,7 +103,12 @@ def enrich(settings: Settings, sink: Sink, all_companies: bool = False) -> int:
         if turnover is not None:
             row["median_turnover_cr"] = turnover
         shares = company.get("shares_outstanding")
-        if _stale(company.get("shares_updated_at"), int(yconf["shares_refresh_days"])) \
+        # a split or bonus moves the price at once while a share count up to a week old does not: the market cap halved
+        # for days after a 1:1 bonus, moving the size bucket, the universe exit and every "% of market cap" (data chain
+        # audit A6, 22 Oct 2026). A jump like one (the close at under 0.6x or over 1.6x its level five sessions before)
+        # looks the count up again now.
+        jumped = len(closes) >= 6 and closes[-6] > 0 and not 0.6 <= closes[-1] / closes[-6] <= 1.6
+        if (jumped or _stale(company.get("shares_updated_at"), int(yconf["shares_refresh_days"]))) \
                 and share_lookups < max_lookups:
             share_lookups += 1
             try:

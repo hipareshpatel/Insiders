@@ -87,6 +87,8 @@ export interface ResultLine {
   /** a change across a loss, named instead of a % (LOSS_TO_PROFIT, PROFIT_TO_LOSS, LOSS_NARROWED, LOSS_WIDENED) */
   yoy_turn?: string;
   qoq_turn?: string;
+  /** slots worked out from cumulative periods (a quarter as H1 less Q1), not reported as a quarter */
+  derived?: ("value" | "prev_year" | "prev_quarter")[];
 }
 
 export interface ResultsSnapshot {
@@ -191,6 +193,18 @@ export interface CardBody {
     versus_prior?: string | null; verified?: boolean; issue?: string | null }[] | null;
   /** Set when the results figures came from the filing's XBRL file. */
   xbrl?: { basis: string | null; period: string | null; figures: number } | null;
+  /** The corporate action the card is about, from NSE's feed (corporate_actions.card_block): ratio, dates, yield. */
+  corporate_action?: { kind: string; subject?: string; ex_date: string; record_date?: string; factor?: number;
+    per_share?: number; yield_pct?: number } | null;
+  /** An annual report's red-flag check, made by code from its tagged XBRL (annual_xbrl.card_block, 22 Oct 2026). */
+  annual_checks?: {
+    fy: string; basis?: string; opinion?: string; auditors?: string[]; matters?: string[];
+    caro?: { clause: string; text: string }[]; caro_count?: number;
+    contingent_cr?: number; contingent_top?: { what: string; cr: number }[];
+    related_gross_cr?: number; related_top?: { party: string; nature: string; cr: number }[];
+    loss_entities?: number; loss_entities_cr?: number; kmp_top?: { name: string; role: string; cr: number }[];
+    revenue_cr?: number; net_worth_cr?: number;
+  } | null;
   /** Market data as it stood when the filing came out (stored price series, else recent data). */
   priced_at_filing?: { last_price?: number; price_date?: string; market_cap_cr?: number; ret_1w?: number; ret_1m?: number; point_in_time?: boolean } | null;
   /** The event's own block on the card's face, made by code (pipeline card_context.py, signals.scale_parts). */
@@ -402,6 +416,10 @@ export interface PledgeEvent {
 }
 
 export interface Dossier {
+  /** The month the company's financial year ends (3 = March), from its results XBRL; another month keeps quarters only. */
+  fy_end_month?: number | null;
+  /** Splits, bonuses, dividends and other actions from NSE (corporate_actions.py); `factor` = shares one share became. */
+  corporate_actions?: { ex_date: string; kind: string; factor?: number; subject?: string; per_share?: number; record_date?: string }[];
   schema_version: number;
   scrip_code: string;
   company_name: string;

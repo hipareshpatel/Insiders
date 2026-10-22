@@ -57,27 +57,30 @@ jobs:
       # one job's failure never stops the next (each step runs whatever came before)
       - name: Quarterly governance reports into memory
         if: always()
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel governance-sync --time-budget 600'
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel governance-sync --time-budget 600'
       - name: Shareholding patterns into memory
         if: always()
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel shareholding-sync --days 25 --time-budget 900'   # 25 days: a quarter's patterns come over three weeks; ones read before 21 Oct are read again once for their institutional detail
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel shareholding-sync --days 25 --time-budget 900'   # 25 days: a quarter's patterns come over three weeks; ones read before 21 Oct are read again once for their institutional detail
       - name: Promoter pledge events into memory
         if: always()
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel pledge-sync --time-budget 300'
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel pledge-sync --time-budget 300'
+      - name: Corporate actions (splits, bonuses, dividends) into memory
+        if: always()
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel corporate-actions-sync --days 30 --time-budget 300'
       - name: DGTR trade-remedy cases into memory
         if: always()
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel dgtr-sync --time-budget 600'
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel dgtr-sync --time-budget 600'
       # before the annual-report re-runs, which are AI work themselves
       - name: Resume the AI pipeline
         if: always()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel resume-ai'
       - name: Annual reports re-read once their XBRL is listed
         if: always()
-        run: timeout 12m "$RUNNER_TEMP/venv/bin/python" -m bse_intel annual-xbrl-catchup --max-companies 150 || [ $? -eq 124 ]
+        run: timeout 12m bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel annual-xbrl-catchup --max-companies 150 || [ $? -eq 124 ]
       - name: Held cards published without their unquoted points (prune.py)
         if: always()
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel release-pruned'
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel release-pruned'
       # last: summaries read the memory the steps above wrote (overdue promises move with the date, not only with filings)
       - name: Company summaries (overdue promises, radar, credibility)
         if: always()
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-summaries'
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-summaries'

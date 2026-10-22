@@ -1,6 +1,6 @@
 import {
   AlertTriangle, ArrowDownRight, ArrowUpRight, BadgeCheck, BarChart3, Building2, Camera, Check, CheckCircle2, ChevronDown, ChevronRight,
-  ChevronUp, CircleDollarSign, ClipboardCheck, FileSearch, FileText, Gauge, Flame, Minus, MoreHorizontal, RefreshCcw, Rocket, Scale,
+  ChevronUp, CircleDollarSign, ClipboardCheck, FileSearch, FileText, Gauge, Flame, Minus, Mic, MoreHorizontal, RefreshCcw, Rocket, Scale,
   ShieldAlert, Star, Timer, Trash2, type LucideIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
@@ -16,7 +16,7 @@ import { EVENT_LABELS, IMPACT_LABEL, IMPACT_TEXT, TONE_CHIP, TONE_LABEL, TONE_ST
 import { Avatar, TickerChip } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL } from "./FilingCard";
 import { plain, RichText } from "./RichText";
-import {
+import { governanceFlags,
   boxSignal, changeTone, executionFact, missingOnTopic, near, PERIOD_WORDS, procedural, restates, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
   verifiedFact,
 } from "../lib/cardText";
@@ -144,6 +144,11 @@ function ResultsTable({ r, judged }: { r: ResultsSnapshot; judged: { label: stri
   const th = "px-1.5 py-1.5 text-right align-bottom text-[10.5px] font-semibold uppercase tracking-[0.08em] sm:whitespace-nowrap sm:px-3";
   const td = "px-1.5 py-1.5 text-right align-top sm:whitespace-nowrap sm:px-3";
   const was = (v: number | undefined, unit: LineSpec["unit"]) => (v != null ? lineValue(v, unit) : "—");
+  // a figure worked out from cumulative periods (a quarter as H1 less Q1) says so (data chain audit, 22 Oct 2026)
+  const mark = (line: ResultLine, slot: "value" | "prev_year" | "prev_quarter") => line.derived?.includes(slot)
+    ? <sup className="ml-0.5 cursor-help text-[9px] font-bold text-ink-3" title="Worked out from the half-year or year figures, not reported as a quarter">d</sup>
+    : null;
+  const anyDerived = rows.some(({ line }) => line.derived?.length);
   const under = "block text-[11px] font-normal text-ink-3 sm:hidden";
   return (
     <BlockShell title={r.discussed ? `Quarter discussed · ${r.period}` : LENS_TITLE[r.lens ?? ""] ?? "Quarter in ₹ Cr"}
@@ -165,16 +170,17 @@ function ResultsTable({ r, judged }: { r: ResultsSnapshot; judged: { label: stri
             return (
               <tr key={key} className="border-t border-line">
                 <td className={cn(td, "pl-0 text-left font-sans font-medium text-ink sm:pl-0")}>{label}</td>
-                <td className={cn(td, "font-semibold text-ink")}>{lineValue(line.value, unit)}</td>
-                {py && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_year, unit)}</td>}
+                <td className={cn(td, "font-semibold text-ink")}>{lineValue(line.value, unit)}{mark(line, "value")}</td>
+                {py && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_year, unit)}{mark(line, "prev_year")}</td>}
                 {yoy && <td className={td}>{change(line, "yoy", bps, lower, key)}{py && <span className={under}>{was(line.prev_year, unit)}</span>}</td>}
-                {pq && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_quarter, unit)}</td>}
+                {pq && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_quarter, unit)}{mark(line, "prev_quarter")}</td>}
                 {qoq && <td className={cn(td, "pr-0 sm:pr-0")}>{change(line, "qoq", bps, lower, key)}{pq && <span className={under}>{was(line.prev_quarter, unit)}</span>}</td>}
               </tr>
             );
           })}
         </tbody>
       </table>
+      {anyDerived && <p className="text-[11px] text-ink-3"><sup className="font-bold">d</sup> worked out from the half-year or year figures, not reported as a quarter</p>}
     </BlockShell>
   );
 }
@@ -248,14 +254,16 @@ function SignalLine({ s }: { s: Signal }) {
 
 /** Event families: each has its own colour and its own block on the card's face (owner, 2026-10-19). Green and red
  * keep one meaning on every card, up or down; the family colour says what kind of news it is. */
-type Family = "res" | "ord" | "cap" | "rat" | "reg" | "oth";
+type Family = "res" | "call" | "ord" | "cap" | "rat" | "reg" | "oth";
+// a call or presentation is its own family (owner, 22 Oct 2026: it read as a second results card, though its news is
+// what management said about what comes next)
 const FAMILY: Record<string, Family> = {
-  RESULTS: "res", CONCALL_PRESENTATION: "res", ANNUAL_REPORT: "res", MONTHLY_BUSINESS_UPDATE: "res",
+  RESULTS: "res", CONCALL_PRESENTATION: "call", ANNUAL_REPORT: "res", MONTHLY_BUSINESS_UPDATE: "res",
   ORDER_WIN: "ord", CAPEX: "ord", PRODUCT_LAUNCH: "ord",
   RIGHTS_ISSUE: "cap", FUNDRAISE: "cap", M_AND_A: "cap", CORPORATE_ACTION: "cap",
   DEBT_RATINGS: "rat", GOVERNANCE: "reg", MANAGEMENT_CHANGE: "reg", LITIGATION_REGULATORY: "reg",
 };
-const FAMILY_ICON: Record<Family, LucideIcon> = { res: BarChart3, ord: ClipboardCheck, cap: CircleDollarSign, rat: Star, reg: Scale, oth: FileText };
+const FAMILY_ICON: Record<Family, LucideIcon> = { res: BarChart3, call: Mic, ord: ClipboardCheck, cap: CircleDollarSign, rat: Star, reg: Scale, oth: FileText };
 const famStyle = (f: Family) => ({ "--fam": `var(--fam-${f})`, "--fam-soft": `var(--fam-${f}-soft)` }) as CSSProperties;
 
 const GRADE: Record<Impact, string> = { HIGH: "bg-neg-soft text-impact-high", MODERATE: "bg-warn-soft text-warn", LOW: "bg-surface-2 text-ink-3" };
@@ -535,7 +543,9 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
   const longRead = event === "CONCALL_PRESENTATION" || event === "ANNUAL_REPORT";  // a 100-400 page document
   const tilesFor = longRead || (event === "RESULTS" && !card.results);
   // a call or presentation shows the quarter it discusses, as the results filing gave it (design audit fix 10)
-  const table = (event === "RESULTS" || event === "CONCALL_PRESENTATION") && tableShows(card.results) ? card.results : null;
+  const table = event === "RESULTS" && tableShows(card.results) ? card.results : null;
+  // the call's quarter in one line: the results card already shows the table in full
+  const strip = event === "CONCALL_PRESENTATION" && tableShows(card.results) ? card.results : null;
   const dealBlock = !table && (family === "ord" || family === "cap") && hasDealBlock(card);
   const rating = event === "DEBT_RATINGS" ? card.rating_change ?? null : null;
   const caseStage = card.case_stage ?? null;
@@ -577,9 +587,11 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
     : footerMetrics(card).filter((m) => !showsFigure(faceText, m.value) && !(table && /margin/i.test(m.label)));
   const thin = row.median_turnover_cr != null && row.median_turnover_cr < 0.5;
   const credibility = card.score?.credibility;
-  const familyLabel = [EVENT_LABELS[event] ?? card.category_tag, table?.period, card.basis ? BASIS_LABEL[card.basis]?.toLowerCase() : null,
+  const familyLabel = [EVENT_LABELS[event] ?? card.category_tag, table?.period ?? strip?.period, card.basis ? BASIS_LABEL[card.basis]?.toLowerCase() : null,
     table?.lens === "bank" ? "bank lens" : table?.lens === "insurer" ? "insurer lens" : null].filter(Boolean).join(" · ");
   const direction = DIRECTION[tone];
+  // an auditor's or CFO's exit, a regulator's order, a default (lib/cardText governanceFlags), on the card's own words
+  const govFlags = governanceFlags([headline, ...card.what_happened.map(plain)].join(". "));
 
   async function share() {
     if (!ref.current) return;
@@ -655,7 +667,12 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
             </span>
           </button>
           {row.last_price != null && (
-            <span className="num shrink-0 text-right">
+            // today's price and returns: on an older card they are not the filing's reaction, so they say "now"
+            // (data chain audit B1, 22 Oct 2026; the price at filing is under Full analysis)
+            <span className="num shrink-0 text-right" title="Latest close and returns to it, not the price when this was filed">
+              {Date.now() - new Date(row.filed_at).getTime() > 7 * 86400_000 && (
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-3">Now</span>
+              )}
               <span className="block text-[15px] font-bold text-ink">₹{row.last_price.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               <span className="mt-0.5 flex justify-end gap-2.5 text-[11.5px] font-semibold">
                 {([["1W", row.ret_1w], ["1M", row.ret_1m], ["3M", row.ret_3m]] as const).filter(([, v]) => v != null).map(([label, v]) => (
@@ -685,13 +702,23 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
         </div>
 
         <h3 className="mt-3 font-display text-[18px] leading-snug text-ink sm:text-[19.5px]">{headline}</h3>
+        {family === "reg" && govFlags.length > 0 && (
+          <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[12.5px] font-semibold text-neg">
+            <ShieldAlert className="h-3.5 w-3.5" />Governance flag: {govFlags.join(" · ")}
+          </p>
+        )}
 
         {card.call_read && <CallReadChips read={card.call_read} />}
+        {strip && <ResultsStrip r={strip} />}
+        {calls?.source && <CallTakeaways view={calls} />}
+        {event === "CONCALL_PRESENTATION" && <WatchNext track={card.track_next} filedAt={row.filed_at} />}
         {table && <ResultsTable r={table} judged={verdict(tone, row.impact_level)} />}
         {dealBlock && <DealBlock card={card} filedAt={row.filed_at} />}
         {rating && <RatingBlock rc={rating} amount={rated} />}
         {caseStage && <CaseBlock cs={caseStage} />}
         {card.volume_strip && <VolumeStrip s={card.volume_strip} />}
+        {event === "ANNUAL_REPORT" && card.annual_checks && <AnnualChecks a={card.annual_checks} />}
+        {card.corporate_action && <CorporateActionBlock ca={card.corporate_action} />}
         {tiles.length > 0 && <KeyBlock items={tiles} />}
 
         {facts.length > 0 && (
@@ -725,8 +752,6 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
             </ul>
           </section>
         )}
-
-        {calls?.source && <CallTakeaways view={calls} />}
 
         <AiReading catalyst={catalyst}
           facts={[...unverified, ...(calls?.unverified ?? [])]} insights={reading} takeaway={!reading.length && card.takeaway && !restates(card.takeaway, headline) ? card.takeaway : null}
@@ -1184,7 +1209,7 @@ export const formerOwnName = (n: string) => !NO_NAME.test(n) && !OTHER_RENAME.te
  *  content, kept apart from the AI reading (owner, 2026-10-20). */
 function CallTakeaways({ view }: { view: CallTakeawaysView }) {
   return (
-    <BlockShell title="Key takeaways from the call" right={<span className="ml-auto text-[10px] font-semibold normal-case tracking-normal text-ink-3">
+    <BlockShell title="What management said" right={<span className="ml-auto text-[10px] font-semibold normal-case tracking-normal text-ink-3">
       {view.source === "ai" ? "checked against the filing and memory" : "from company memory"}</span>}>
       {view.groups.map((g) => (
         <div key={g.name}>
@@ -1199,6 +1224,113 @@ function CallTakeaways({ view }: { view: CallTakeawaysView }) {
           </ul>
         </div>
       ))}
+    </BlockShell>
+  );
+}
+
+/** The corporate action itself, from NSE's feed: what a shareholder gets and when (owner, 22 Oct 2026). */
+function CorporateActionBlock({ ca }: { ca: NonNullable<CardBody["corporate_action"]> }) {
+  const what = ca.kind === "BONUS" || ca.kind === "SPLIT" || ca.kind === "CONSOLIDATION"
+    ? `${ca.subject ?? titleCase(ca.kind)}${ca.factor ? ` · each share becomes ${ca.factor % 1 ? ca.factor.toFixed(2) : ca.factor}` : ""}`
+    : ca.per_share != null ? `₹${ca.per_share.toLocaleString("en-IN")} a share${ca.yield_pct != null ? ` · ${ca.yield_pct}% of the price at filing` : ""}`
+    : ca.subject ?? titleCase(ca.kind);
+  return (
+    <BlockShell title={titleCase(ca.kind)} right={<span className="ml-auto text-[10px] font-semibold normal-case tracking-normal text-ink-3">NSE corporate actions</span>}>
+      <p className="text-[13.5px] font-semibold text-ink">{what}</p>
+      <p className="num text-[12.5px] text-ink-2">
+        Ex-date {istDate(ca.ex_date)}{ca.record_date && ca.record_date !== ca.ex_date ? ` · record date ${istDate(ca.record_date)}` : ""}
+        {ca.factor ? " · per-share figures before this date are divided by the factor on the company page" : ""}
+      </p>
+    </BlockShell>
+  );
+}
+
+/** An annual report read for its red flags (owner, 22 Oct 2026), from the company's tagged file: the auditor's opinion
+ * and what it raises, adverse CARO remarks, contingent liabilities against net worth, related-party dealings against
+ * revenue, loss-making group entities. A flag is coloured; a clean line says so plainly. */
+function AnnualChecks({ a }: { a: NonNullable<CardBody["annual_checks"]> }) {
+  const share = (part?: number, whole?: number) => (part && whole && whole > 0 ? (part / whole) * 100 : null);
+  const contingentPct = share(a.contingent_cr, a.net_worth_cr);
+  const relatedPct = share(a.related_gross_cr, a.revenue_cr);
+  const clean = !a.opinion || /unmodified|unqualified/i.test(a.opinion);
+  const rows: { label: string; text: ReactNode; flag?: "neg" | "warn" }[] = [];
+  if (a.opinion || a.auditors?.length) {
+    rows.push({ label: "Auditor", flag: clean ? undefined : "neg",
+      text: <>{a.opinion ? <span className="font-semibold">{titleCase(a.opinion)} opinion</span> : "Opinion not tagged"}{a.auditors?.[0] ? ` · ${a.auditors[0].split(" (")[0]}` : ""}</> });
+  }
+  if (a.matters?.length) rows.push({ label: "Raised in the report", text: a.matters.join(" · "), flag: a.matters.some((m) => /qualif|adverse|disclaim|emphasis|going concern/i.test(m)) ? "warn" : undefined });
+  if (a.caro?.length) rows.push({ label: "CARO remarks", flag: "neg", text: a.caro.map((c) => `${c.clause}: ${c.text}`).join(" · ") });
+  else if (a.caro_count) rows.push({ label: "CARO", text: `${a.caro_count} clauses read, none adverse` });
+  if (a.contingent_cr != null) {
+    rows.push({ label: "Contingent liabilities", flag: contingentPct != null && contingentPct >= 50 ? "neg" : contingentPct != null && contingentPct >= 25 ? "warn" : undefined,
+      text: <>{cr(a.contingent_cr)}{contingentPct != null ? ` = ${contingentPct.toFixed(contingentPct < 10 ? 1 : 0)}% of net worth` : ""}
+        {a.contingent_top?.length ? <span className="text-ink-3"> · {a.contingent_top.map((c) => `${c.what} ${cr(c.cr)}`).join("; ")}</span> : null}</> });
+  }
+  if (a.related_top?.length || a.related_gross_cr) {
+    rows.push({ label: "Related parties", flag: relatedPct != null && relatedPct >= 10 ? "warn" : undefined,
+      text: <>{a.related_gross_cr ? `${cr(a.related_gross_cr)} in all${relatedPct != null ? ` = ${relatedPct.toFixed(1)}% of revenue` : ""}` : ""}
+        {a.related_top?.length ? <span className="text-ink-3">{a.related_gross_cr ? " · " : ""}{a.related_top.map((r) => `${r.party} (${r.nature}) ${cr(r.cr)}`).join("; ")}</span> : null}</> });
+  }
+  if (a.loss_entities) rows.push({ label: "Loss-making group entities", flag: "warn",
+    text: `${a.loss_entities}${a.loss_entities_cr ? `, ${cr(Math.abs(a.loss_entities_cr))} of losses to the group` : ""}` });
+  if (a.kmp_top?.length) rows.push({ label: "Top pay", text: a.kmp_top.map((k) => `${k.name} (${k.role}) ${cr(k.cr)}`).join("; ") });
+  if (!rows.length) return null;
+  return (
+    <BlockShell title={`Annual report check · ${a.fy}${a.basis ? ` · ${a.basis.toLowerCase()}` : ""}`}
+      right={<span className="ml-auto text-[10px] font-semibold normal-case tracking-normal text-ink-3">from the company's tagged filing</span>}>
+      <ul className="space-y-1.5">
+        {rows.map((r) => (
+          <li key={r.label} className="text-[13px] leading-relaxed text-ink-2">
+            <span className={cn("mr-1.5 font-semibold", r.flag === "neg" ? "text-neg" : r.flag === "warn" ? "text-warn" : "text-ink")}>
+              {r.flag ? "⚑ " : ""}{r.label}:
+            </span>
+            {r.text}
+          </li>
+        ))}
+      </ul>
+    </BlockShell>
+  );
+}
+
+/** A call's quarter in one line (revenue, profit, a margin with their changes): the call card leads with what
+ * management said; the full table is on the results card. */
+function ResultsStrip({ r }: { r: ResultsSnapshot }) {
+  const rows = resultLines(r).slice(0, 4);
+  if (!rows.length) return null;
+  return (
+    <p className="num mt-3 flex flex-wrap gap-x-4 gap-y-1 rounded-xl bg-surface-2/70 px-3 py-2 text-[12.5px] text-ink-2">
+      <span className="font-semibold text-ink-3">{r.period ?? "The quarter"}</span>
+      {rows.map(({ key, label, unit, line }) => {
+        const bps = unit === "pct";
+        const v = bps ? line.yoy_bps : line.yoy_pct;
+        return (
+          <span key={key}>
+            {label} <span className="font-semibold text-ink">{unit === "cr" ? cr(line.value) : lineValue(line.value, unit)}</span>
+            {v != null && <span className={cn("ml-1", signClass(v))}>{bps ? `${v > 0 ? "+" : ""}${v} bps` : pct(v)} YoY</span>}
+          </span>
+        );
+      })}
+    </p>
+  );
+}
+
+/** What to watch after the call: its dated milestones and the figures to check next quarter, at most four. */
+function WatchNext({ track, filedAt }: { track: CardBody["track_next"]; filedAt: string }) {
+  const day = filedAt.slice(0, 10);
+  const items = [
+    ...(track?.milestones ?? []).filter((m) => m.what && (!m.date || m.date >= day))
+      .map((m) => ({ text: m.what, when: m.date ? istDate(m.date) : m.when ?? null })),
+    ...(track?.kpis_to_verify ?? []).filter((k) => k.kpi)
+      .map((k) => ({ text: `${k.kpi}${k.target ? ` (target ${k.target})` : ""}`, when: k.check_in ?? null })),
+  ].slice(0, 4);
+  if (!items.length) return null;
+  return (
+    <BlockShell title="Watch next">
+      <ul className="space-y-1.5">
+        {items.map((i, n) => (
+          <Point key={n}>{i.when && <span className="num mr-1.5 font-semibold text-[var(--fam)]">{i.when}</span>}<RichText text={i.text} /></Point>
+        ))}
+      </ul>
     </BlockShell>
   );
 }

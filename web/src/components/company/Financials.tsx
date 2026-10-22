@@ -2,12 +2,16 @@ import { useState, type ReactNode } from "react";
 import type { Dossier } from "../../../shared/types";
 import { cn } from "../../lib/cn";
 import {
+  adjustPerShare,
   annualTable, balanceTable, cashFlowTable, formatCell, growth, isBank, mainBasis, quarterlyTable, ratioTable, statementDate, type Table,
 } from "./statements";
 import { Panel } from "./Panel";
 
 /** The statements as screener.in lays them out (owner, 2026-10-21): quarterly results, profit and loss by year with
  *  TTM, the balance sheet, cash flows and ratios, each a plain table in ₹ Cr. Built in statements.ts from memory. */
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+  "November", "December"];
+
 export function Financials({ dossier }: { dossier: Dossier }) {
   // consolidated and standalone, as screener.in switches them (owner, 2026-10-21); memory's main figures are the
   // consolidated ones for a group that files both, its standalone file is kept apart (dossier.put_standalone)
@@ -15,7 +19,9 @@ export function Financials({ dossier }: { dossier: Dossier }) {
   const alone = dossier.standalone?.metrics?.length ? dossier.standalone : null;
   const [basis, setBasis] = useState<"main" | "standalone">("main");
   const useAlone = basis === "standalone" && alone;
-  const metrics = (useAlone ? alone.metrics : dossier.financial_metrics) as Dossier["financial_metrics"];
+  const metrics = adjustPerShare((useAlone ? alone.metrics : dossier.financial_metrics) as Dossier["financial_metrics"],
+    dossier.corporate_actions);
+  const reshaped = (dossier.corporate_actions ?? []).filter((a) => a.factor && a.factor !== 1);
   const sheets = useAlone ? alone.balance_sheet ?? [] : dossier.balance_sheet;
   const label = useAlone ? "Standalone" : main === "CONSOLIDATED" ? "Consolidated" : main === "STANDALONE" ? "Standalone" : null;
   const bank = isBank(metrics);
@@ -27,8 +33,23 @@ export function Financials({ dossier }: { dossier: Dossier }) {
     { title: "Compounded profit growth", rows: growth(metrics, "pat") },
   ].filter((b) => b.rows.length);
   const sub = `${label ? `${label} · ` : ""}₹ Cr · from the NSE filings`;
+  const yearEnd = dossier.fy_end_month && dossier.fy_end_month !== 3 ? MONTHS[dossier.fy_end_month - 1] : null;
   return (
     <div className="space-y-[18px]">
+      {yearEnd && (
+        // a year not ending in March (Siemens: September): its quarters are named by calendar months, and its
+        // half-year and year figures are not kept, as their labels would name the wrong months (22 Oct 2026)
+        <p className="rounded-xl border border-warn/40 bg-warn-soft px-3.5 py-2.5 text-[12.5px] leading-relaxed text-warn">
+          This company's financial year ends in {yearEnd}. Quarters here are named by calendar months on the April-March
+          convention (Q2FY27 = July-September 2026), not by the company's own numbering; its half-year and full-year
+          figures are left out, so the yearly tables and growth rates are not shown.
+        </p>
+      )}
+      {reshaped.length > 0 && (
+        <p className="text-[12px] text-ink-3">
+          EPS is on today's share count, adjusted for {reshaped.map((a) => `${a.subject ?? a.kind} (ex ${a.ex_date})`).join("; ")}.
+        </p>
+      )}
       {alone && main === "CONSOLIDATED" && (
         <div role="tablist" className="inline-flex gap-0.5 rounded-xl bg-surface-2 p-0.5">
           {([["main", "Consolidated"], ["standalone", "Standalone"]] as const).map(([key, text]) => (

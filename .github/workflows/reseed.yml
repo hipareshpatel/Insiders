@@ -1,0 +1,43 @@
+# Results history read again from NSE's XBRL for named companies, beside the universe seed (its own concurrency group:
+# the seed's self-dispatch would cancel a run queued behind it in Maintenance). No AI. First use (22 Oct 2026):
+# companies whose year does not end in March, so memory records their year end and drops the half-year and year
+# figures their labels misnamed (dossier.drop_off_year_periods).
+name: Reseed
+
+on:
+  workflow_dispatch:
+    inputs:
+      scrips:
+        description: company keys or NSE symbols, comma separated
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reseed
+  cancel-in-progress: false
+
+jobs:
+  reseed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+      SCRIPS: ${{ inputs.scrips }}   # through the environment, never pasted into the script
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: Seed the named companies
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-memory --scrips "$SCRIPS" --results-only'

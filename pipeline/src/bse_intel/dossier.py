@@ -473,6 +473,8 @@ def put_standalone(dossier: dict, metrics, balance, as_of: str, source: str) -> 
             continue
         entries[key] = {"metric": key[0], "period": key[1], "value": m.value, "unit": m.unit, "yoy_pct": m.yoy_pct,
                         "as_of": as_of, "source_news_id": source}
+    if not march_year(dossier):   # as for the main figures: quarters only (drop_off_year_periods)
+        entries = {k: e for k, e in entries.items() if _CALENDAR_QUARTER.fullmatch(k[1])}
     part["metrics"] = _cap_metrics(list(entries.values()))
     if balance is not None and not balance.is_empty():
         snap = {k: v for k, v in balance.model_dump().items() if v is not None} | {"as_of": as_of, "source_news_id": source}
@@ -693,12 +695,36 @@ def _plausible_target(d: dict, metric: str, value: float) -> bool:
     return ref < 1 or ref / 5 <= abs(float(value)) <= ref * 5
 
 
+_CALENDAR_QUARTER = re.compile(r"Q[1-4]FY\d{2}")   # "Q1CY26", a filer's own calendar-year name, is not one
+
+
+def march_year(d: dict) -> bool:
+    """Whether the company's financial year ends in March (or is not known yet): every period label here assumes it."""
+    return d.get("fy_end_month") in (None, 3)
+
+
+def drop_off_year_periods(d: dict) -> int:
+    """For a company whose year does not end in March: memory's half-year, nine-month and full-year figures, whose
+    labels name the wrong months (Siemens' FY23 was its October-March half, its H1FY24 a whole year; 22 Oct 2026).
+    Quarters stay: they are named by their calendar months. Returns how many figures were dropped."""
+    if march_year(d):
+        return 0
+    before = d.get("financial_metrics", [])
+    kept = [m for m in before if _CALENDAR_QUARTER.fullmatch(str(m.get("period", "")))]
+    d["financial_metrics"] = kept
+    return len(before) - len(kept)
+
+
 def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str | None, updated_at: str,
-          basis: str | None = None) -> dict:
+          basis: str | None = None, fy_end_month: int | None = None) -> dict:
     """Return the dossier with this filing's facts merged in (input is not mutated). `basis` is the figures'
-    (CONSOLIDATED / STANDALONE): the seed gives its file's, a card its own `basis`."""
+    (CONSOLIDATED / STANDALONE): the seed gives its file's, a card its own `basis`. `fy_end_month`: the month the
+    company's year ends, from its results XBRL; a year not ending in March keeps quarters only (march_year)."""
     d = json.loads(json.dumps(dossier))  # deep copy, JSON-safe
     d.setdefault("schema_version", SCHEMA_VERSION)
+    if fy_end_month:
+        d["fy_end_month"] = fy_end_month
+    drop_off_year_periods(d)
     news_id, as_of = filing.news_id, filing.filed_at
     _forget(d, news_id)
     delta = output.dossier_delta
@@ -717,6 +743,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if m.value is None:
             continue
         key = (_norm(m.metric), _period(m.period))
+        if not march_year(d) and not _CALENDAR_QUARTER.fullmatch(key[1]):
+            continue   # a half year or year of a company whose year does not end in March: wrongly named here
         if not results_source and key[0] in QUARTER_OWNED and key[1].startswith("Q") \
                 and any(s["news_id"] != news_id for s in _sources(metrics.get(key))):
             continue
@@ -1582,9 +1610,19 @@ def _quarter_from_cumulative(table: dict, names: tuple[str, ...], quarter: str) 
     for name in names:
         a, b = table.get((name, f"{whole}{fy}" if whole != "FY" else fy)), table.get((name, f"{part}{fy}"))
         if a and b and a.get("value") is not None and b.get("value") is not None:
+            if _entry_basis(a) and _entry_basis(b) and _entry_basis(a) != _entry_basis(b):
+                return None   # a consolidated half less a standalone quarter is no quarter (data chain audit, 22 Oct)
             return {"metric": name, "period": quarter, "value": round(a["value"] - b["value"], 2), "derived": True,
                     "sources": []}
     return None
+
+
+def _entry_basis(entry: dict) -> str | None:
+    """The basis a memory figure's value is on: its own, else as _metric_entry chose among its sources."""
+    if entry.get("basis"):
+        return entry["basis"]
+    kept = {src.get("basis") for src in entry.get("sources") or []} - {None}
+    return "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)
 
 
 def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = (),
@@ -1608,6 +1646,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     sequence = _number_sequence(printed) if printed else []
     numbers = sorted(set(sequence)) or None
     ratios = _PRINTED_PCT | {spec["metric"] for spec in footer if spec.get("format") == "pct"}
+    derived_used: set[tuple[str, str]] = set()   # (line, period) worked out from cumulative periods, shown as such
 
     def stored(names: tuple[str, ...], p: str | None) -> tuple[dict | None, float | None]:
         entry = next((table[(n, p)] for n in names if (n, p) in table), None) if p else None
@@ -1615,6 +1654,8 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             # a quarter memory never had on its own, from the half or nine months it did: E2E's Q1FY27 revenue as its
             # H1FY27 less Q2FY27, before the company's quarterly history was seeded (owner, 2026-10-21)
             derived = _quarter_from_cumulative(table, names, p)
+            if derived:
+                derived_used.add((names[0], p))
             return (derived, derived["value"]) if derived else (None, None)
         if not entry:
             return None, None
@@ -1626,6 +1667,11 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         basis = "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)   # as _metric_entry keeps it
         own = next((src for src in sources if src.get("news_id") == news_id and src.get("value") is not None
                     and src.get("basis") in (None, basis)), None)
+        if p == period and any(str(src.get("news_id", "")).startswith(XBRL_SOURCE) for src in sources):
+            # this quarter's own figure: the company's tagged file over the card's reading of the PDF. HDFC Life's card
+            # read the standalone PAT ₹508 Cr where the consolidated file says ₹521.60 Cr, against consolidated
+            # comparatives (hourly review, 22 Oct 2026)
+            own = None
         return entry, own["value"] if own is not None else entry["value"] if entry.get("value") is not None else None
 
     def refused(names: tuple[str, ...], p: str | None, alone: bool = False) -> bool:
@@ -1688,7 +1734,13 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     def lookup(names: tuple[str, ...], p: str | None) -> float | None:
         if not p or p in restated or (p in unbuilt and names in (_RESULT_METRICS[1][1], _RESULT_METRICS[2][1])):
             return None
-        value = stored(names, p)[1]
+        entry, value = stored(names, p)
+        if value is not None and p != period and entry is not None:
+            # one basis per comparison: a consolidated quarter against a standalone year-ago (a group that began
+            # consolidating) is no change (data chain audit A3, 22 Oct 2026)
+            now = stored(names, period)[0]
+            if now is not None and _entry_basis(now) and _entry_basis(entry) and _entry_basis(now) != _entry_basis(entry):
+                return None
         return None if value is None or refused(names, p, alone=True) else value
 
     def margin(p: str | None) -> float | None:
@@ -1744,10 +1796,16 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         row = line(pick, key in _BPS_LINES, key)
         if row is None:
             continue
-        if key == "revenue" and "yoy_pct" not in row:
+        # the file's own YoY only when memory has no year-ago figure at all: when it has one and the table refused it
+        # (restated, or not what this statement prints), that YoY rests on the refused base (data chain audit A8)
+        if key == "revenue" and "yoy_pct" not in row and stored(names, periods["prev_year"])[1] is None:
             stated = next((m for m in mine if m["metric"] in names and m["period"] == period and m.get("yoy_pct") is not None), None)
             if stated:
                 row["yoy_pct"] = stated["yoy_pct"]
+        parts = {"ebitda_margin": ("ebitda", "revenue"), "nii": ("interest_earned", "interest_expended")}.get(key, (names[0],))
+        slots = sorted(slot for slot, p in periods.items() if p and slot in row and any((n, p) in derived_used for n in parts))
+        if slots:
+            row["derived"] = slots   # worked out from cumulative periods (H1 less Q1, ...), not reported as a quarter
         out[key] = row
     if len(out) <= 3:
         return None

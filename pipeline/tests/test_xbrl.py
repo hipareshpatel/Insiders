@@ -752,3 +752,64 @@ def test_nse_dates_with_hyphens_are_read():
     assert extract_date("Record date 21-Oct-2026 for the interim dividend", "2026-10-14") == "2026-10-21"
     assert str(explicit_date("30-Sep-2026")) == "2026-09-30"
     assert statement_quarter("quarter ended 30-Sep-2026") == "Q2FY27"
+
+
+def test_a_year_not_ending_in_march_keeps_quarters_only():
+    """22 Oct 2026, Siemens (year to September) in memory: its October-March half stored as FY23 and its full year as
+    H1FY24, because every label assumes an April-March year. Quarters are named by calendar months and stay; a half
+    year, nine months or year of such a company gets no label, in the parser and in memory."""
+    from datetime import date
+
+    from bse_intel.dossier import drop_off_year_periods, march_year
+    from bse_intel.xbrl import fy_end_month, period_label
+
+    def ctx(start, end):
+        return {"startDate": start, "endDate": end, "dims": False}
+
+    assert fy_end_month({"DateOfEndOfFinancialYear": "2026-09-30"}) == 9
+    assert fy_end_month({"DateOfEndOfFinancialYear": "2027-03-31"}) == 3 and fy_end_month({}) is None
+    assert period_label(ctx(date(2026, 7, 1), date(2026, 9, 30)), 9) == "Q2FY27"         # a calendar quarter
+    assert period_label(ctx(date(2025, 10, 1), date(2026, 9, 30)), 9) is None           # Siemens' year
+    assert period_label(ctx(date(2025, 10, 1), date(2026, 3, 31)), 9) is None           # Siemens' first half
+    assert period_label(ctx(date(2026, 4, 1), date(2026, 9, 30)), 3) == "H1FY27"        # a March year unchanged
+    d = {"fy_end_month": 9, "financial_metrics": [{"metric": "revenue", "period": p, "value": 1.0}
+                                                  for p in ("FY23", "H1FY24", "Q2FY27", "Q1CY26", "9MFY26")]}
+    assert not march_year(d) and drop_off_year_periods(d) == 4
+    assert [m["period"] for m in d["financial_metrics"]] == ["Q2FY27"]
+    assert march_year({}) and drop_off_year_periods({"financial_metrics": [{"period": "FY26"}]}) == 0
+
+
+def test_ebitda_comes_from_profit_before_exceptional_items_whatever_the_charges_sign():
+    """Data chain audit A9 (22 Oct 2026): EBITDA as PBT less the exceptional items depends on the sign a filer gives a
+    charge; one tagged positive took EBITDA down by twice it. The file's own profit before exceptional items decides."""
+    from pathlib import Path
+
+    from bse_intel import xbrl
+
+    raw = (Path(__file__).parent / "fixtures" / "bse_main_ind_as_532811_q2fy25.xml").read_text(encoding="utf-8")
+    base = xbrl.parse(raw.encode())
+    ebitda = next(m.value for m in base.metrics if m.metric == "ebitda" and m.period == base.period)
+    # a ₹10 Cr charge tagged positive, with PBT after it: EBITDA does not move
+    charged = raw.replace('<in-bse-fin:ExceptionalItemsBeforeTax contextRef="OneD" unitRef="INR" decimals="-5">0<',
+                          '<in-bse-fin:ExceptionalItemsBeforeTax contextRef="OneD" unitRef="INR" decimals="-5">100000000<', 1)
+    charged = charged.replace('<in-bse-fin:ProfitBeforeTax contextRef="OneD" unitRef="INR" decimals="-3">525064000<',
+                              '<in-bse-fin:ProfitBeforeTax contextRef="OneD" unitRef="INR" decimals="-3">425064000<', 1)
+    assert charged != raw
+    again = xbrl.parse(charged.encode())
+    assert next(m.value for m in again.metrics if m.metric == "ebitda" and m.period == again.period) == ebitda
+    assert not any(m.metric == "pbt_before_exceptional" for m in again.metrics)   # used, not kept
+
+
+def test_a_consolidated_banks_profit_is_after_minorities_and_associates():
+    """Indian Bank Q4FY26 (hourly review, 22 Oct 2026): the table's net profit was ProfitLossForThePeriod (₹3,115.2 Cr,
+    before minority interest and the associates' share); its EPS is on the group's ₹3,173.05 Cr."""
+    from pathlib import Path
+
+    from bse_intel import xbrl
+
+    raw = (Path(__file__).parent / "fixtures" / "nse_hdfcbank_q2fy27_cons.xml").read_text(encoding="utf-8")
+    tag = '<in-capmkt:ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates contextRef="OneD" decimals="-5" unitRef="INR">207000300000<'
+    assert tag in raw
+    moved = xbrl.parse(raw.replace(tag, tag.replace("207000300000", "212000300000"), 1).encode())
+    assert next(m.value for m in moved.metrics if m.metric == "pat" and m.period == moved.period) == 21200.03
+    assert not any(m.metric == "pat_group" for m in moved.metrics)

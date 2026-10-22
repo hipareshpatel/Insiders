@@ -1,7 +1,7 @@
 // The company page's screener-style statements (src/components/company/statements.ts). Run: npm test.
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { annualTable, balanceTable, cashFlowTable, formatCell, growth, quarterlyTable, ratioTable, ttmQuarters } from "../src/components/company/statements.ts";
+import { adjustPerShare, annualTable, balanceTable, cashFlowTable, formatCell, growth, quarterlyTable, ratioTable, ttmQuarters } from "../src/components/company/statements.ts";
 
 const m = (metric: string, period: string, value: number) => ({ metric, period, value, unit: "INR_CR", as_of: "2026-10-15", source_news_id: "xbrl:res:1:x" });
 const quarter = (q: string, rev: number, pat: number) => [m("revenue", q, rev), m("pbt", q, pat * 1.3), m("finance_cost", q, 10), m("depreciation", q, 20),
@@ -103,4 +103,12 @@ test("deep audit F-01, F-04, F-05, F-07: a stray revenue row, a missing year, ga
   // no other income: operating profit not computed with it as zero
   const t = quarterlyTable([m("revenue", "Q2FY27", 100), m("pbt", "Q2FY27", 20), m("finance_cost", "Q2FY27", 2), m("depreciation", "Q2FY27", 3)]);
   assert.ok(!t.rows.some((r) => r.label === "Operating profit"));
+});
+
+test("EPS before a split or bonus is put on today's share count; nothing else moves", () => {
+  const actions = [{ ex_date: "2026-05-29", kind: "BONUS", factor: 2 }, { ex_date: "2026-09-04", kind: "SPLIT", factor: 5 },
+    { ex_date: "2026-07-20", kind: "DIVIDEND" }];
+  const got = adjustPerShare([m("eps", "Q4FY26", 20), m("eps", "Q1FY27", 10), m("eps", "Q2FY27", 2), m("pat", "Q4FY26", 500)], actions);
+  assert.deepEqual(got.map((x) => x.value), [2, 2, 2, 500]);   // Q4FY26 / (2 x 5), Q1FY27 (Jun) / 5, Q2FY27 after both
+  assert.equal(adjustPerShare([m("eps", "Q1FY27", 10)], []).at(0)?.value, 10);
 });

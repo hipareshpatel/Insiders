@@ -94,6 +94,15 @@ def _results_quarter(card: dict) -> str | None:
     return (card.get("results") or {}).get("period") if card.get("event_type") == "RESULTS" else None
 
 
+def _superseded(owned: dict, scrip: str, quarter: str, card: dict) -> bool:
+    """A published card owns the quarter, unless the held one is consolidated and the published one is not: the
+    consolidated card is the better one, and stays in the review queue (hourly audit, 22 Oct 2026)."""
+    bases = owned.get((scrip, quarter))
+    if bases is None:
+        return False
+    return not (card.get("basis") == "CONSOLIDATED" and "CONSOLIDATED" not in bases)
+
+
 def release(sink, dry_run: bool = False) -> dict:
     """Every held card that pruning releases, written (or only counted with ``dry_run``)."""
     after, rows = ["", ""], []
@@ -107,14 +116,22 @@ def release(sink, dry_run: bool = False) -> dict:
             break
     cards = [(r, json.loads(r["card_json"] or "{}")) for r in rows]
     # a published card already owns its results quarter (D20): a held one for the same quarter stays held
-    owned = {(r["scrip_code"], _results_quarter(c)) for r, c in cards if not r.get("held") and _results_quarter(c)}
+    owned: dict[tuple[str, str], set] = {}
+    for r, c in cards:
+        if not r.get("held") and _results_quarter(c):
+            owned.setdefault((r["scrip_code"], _results_quarter(c)), set()).add(c.get("basis"))
     out, skipped, writes, kept = [], {"other faults": 0, "quarter has a card": 0}, [], []
     for row, card in cards:
         if not row.get("held"):
             continue
         quarter = _results_quarter(card)
-        if quarter and (row["scrip_code"], quarter) in owned:
+        if quarter and _superseded(owned, row["scrip_code"], quarter, card):
             skipped["quarter has a card"] += 1
+            continue
+        if quarter and (row["scrip_code"], quarter) in owned:
+            # consolidated behind a published standalone card: never published beside it (D20), kept for review
+            skipped["consolidated behind a standalone card"] = skipped.get("consolidated behind a standalone card", 0) + 1
+            kept.append((row, card))
             continue
         dropped = prune_card(json.loads(json.dumps(card)))
         if dropped is None:
@@ -123,7 +140,7 @@ def release(sink, dry_run: bool = False) -> dict:
             continue
         prune_card(card)
         if quarter:
-            owned.add((row["scrip_code"], quarter))
+            owned.setdefault((row["scrip_code"], quarter), set()).add(card.get("basis"))
         out.append({"news_id": row["news_id"], "symbol": row.get("symbol"), "dropped": len(dropped)})
         writes.append({"news_id": row["news_id"], "card_json": json.dumps(card, ensure_ascii=False)})
     # a published card flagged for review only for points its quote does not carry loses those points too: they are on

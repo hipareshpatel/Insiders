@@ -528,9 +528,13 @@ api.get("/promises/overdue", async (c) => {
 export async function reviewQueue(c: Context<AppEnv>, withHeld = false) {
   // a held results card whose quarter a published card already owns (D20) is superseded, not waiting on anyone: 36 of
   // the 223 in the owner's count on 22 Oct 2026 (release-pruned keeps them held for the same reason)
+  // Basis counts: a held consolidated card is not superseded by a published standalone one for the same quarter, the
+  // consolidated one is the better card (hourly audit 22 Oct: SMLMAH Q2FY26, PVR INOX Q4FY26, Bandhan Q1FY27 were hidden)
   const superseded = `c.held = 1 AND c.event_category = 'RESULTS' AND EXISTS (SELECT 1 FROM cards p
       WHERE p.scrip_code = c.scrip_code AND p.held = 0 AND p.news_id <> c.news_id AND p.event_category = 'RESULTS'
-        AND json_extract(p.card_json, '$.results.period') = json_extract(c.card_json, '$.results.period'))`;
+        AND json_extract(p.card_json, '$.results.period') = json_extract(c.card_json, '$.results.period')
+        AND NOT (json_extract(c.card_json, '$.basis') = 'CONSOLIDATED'
+                 AND coalesce(json_extract(p.card_json, '$.basis'), '') <> 'CONSOLIDATED'))`;
   const which = withHeld ? `(c.needs_review = 1 OR c.held = 1) AND NOT (${superseded})` : "c.needs_review = 1 AND c.held = 0";
   // the list shows 100, the heading the real count; a card whose filing is queued again says so (owner, 2026-10-20:
   // "never seen anything getting reduced": the heading was the list's length, capped at 100, and the button's

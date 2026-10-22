@@ -63,7 +63,8 @@ CIRCUIT_OPEN_SECONDS = 300
 RATE_PAUSES = (60.0, 300.0, 1800.0)
 MAX_PACING_WAIT = 30.0
 MAX_SLOT_WAIT = 10.0   # wait for a free slot on a concurrency-capped model, then try the next one
-PREFER_WEIGHT = 20     # PREFER_MODEL's weight multiplier: about 9 requests in 10 on a pass-2 route
+PREFER_WEIGHT = 5      # PREFER_MODEL's weight multiplier: about 6 requests in 10 on a pass-2 route. Was 20 (9 in 10), which
+                       # left the free Z.AI slots, two keys since 22 Oct, almost idle during the drain (owner, 22 Oct)
 
 UNAVAILABLE, CEILING, TRANSIENT, FAILED = "unavailable", "ceiling", "transient", "failed"
 

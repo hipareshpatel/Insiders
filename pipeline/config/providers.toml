@@ -411,6 +411,15 @@ max_tokens = 6000
 context_tokens = 200000
 limits = { rpm = 15 }
 
+[[routes.pass2]]
+provider = "mistral"
+model = "mistral-large-2512"   # the last resort (owner, 22 Oct). Free plan: 250k tokens/min, 1 request/s (Limits page, 22 Oct),
+spare = true                   # paid for from the plan's $10 a month that pass 1's ministral also uses; past it requests fail,
+json_mode = true               # nothing is billed (no payment method)
+max_tokens = 6000
+context_tokens = 120000
+limits = { rpm = 50, tpm = 250_000 }
+
 [[routes.pass2_bulk]]
 provider = "zai"
 model = "glm-4.5-flash"
@@ -512,6 +521,15 @@ json_mode = true
 max_tokens = 6000
 context_tokens = 200000
 limits = { rpm = 15 }
+
+[[routes.pass2_bulk]]
+provider = "mistral"
+model = "mistral-large-2512"   # the last resort (owner, 22 Oct). Free plan: 250k tokens/min, 1 request/s (Limits page, 22 Oct),
+spare = true                   # paid for from the plan's $10 a month that pass 1's ministral also uses; past it requests fail,
+json_mode = true               # nothing is billed (no payment method)
+max_tokens = 6000
+context_tokens = 120000
+limits = { rpm = 50, tpm = 250_000 }
 
 [[routes.pass2_packed]]
 provider = "gemini"
@@ -891,6 +909,15 @@ json_mode = true
 max_tokens = 6000
 context_tokens = 200000
 limits = { rpm = 15 }
+
+[[routes.pass2_long]]
+provider = "mistral"
+model = "mistral-large-2512"   # the last resort (owner, 22 Oct). Free plan: 250k tokens/min, 1 request/s (Limits page, 22 Oct),
+spare = true                   # paid for from the plan's $10 a month that pass 1's ministral also uses; past it requests fail,
+json_mode = true               # nothing is billed (no payment method)
+max_tokens = 6000
+context_tokens = 120000
+limits = { rpm = 50, tpm = 250_000 }
 
 [[routes.vision]]
 provider = "gemini"

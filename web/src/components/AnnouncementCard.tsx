@@ -10,7 +10,7 @@ import { useQueryState } from "../lib/url";
 import type { CallRead, CardBody, CardRow, Fact, Impact, PriceReaction, Technicals, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
 import { useOwnerToken, useRatings, useVerdicts, type Verdict } from "../lib/owner";
-import { copyNodeAsPng } from "../lib/png";
+import { copyNodeAsPng, printNode } from "../lib/png";
 import { cr, formatKpi, istDate, istDateTime, pct, relativeTime, signClass, titleCase, companyPath } from "../lib/format";
 import { EVENT_LABELS, IMPACT_LABEL, IMPACT_TEXT, TONE_CHIP, TONE_LABEL, TONE_STRIPE, verdict, type Tone } from "../lib/taxonomy";
 import { Avatar, TickerChip } from "./Avatar";
@@ -586,13 +586,22 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
     const node = ref.current;
     flushSync(() => setExporting(true));
     try {
-      setCopy(await copyNodeAsPng(node, `${row.symbol ?? row.scrip_code}-${row.filing_date}.png`));
+      const done = await copyNodeAsPng(node, `${row.symbol ?? row.scrip_code}-${row.filing_date}.png`);
+      setCopy(done === "shared" ? "copied" : done);
     } catch {
       setCopy("error");
     } finally {
       setExporting(false);
       setTimeout(() => setCopy("idle"), 2000);
     }
+  }
+
+  // the same face as the image, as a PDF whose text stays sharp at any zoom (owner, 2026-10-22: blurred on WhatsApp)
+  function savePdf() {
+    if (!ref.current) return;
+    const node = ref.current;
+    flushSync(() => setExporting(true));
+    printNode(node, () => setExporting(false));
   }
 
   return (
@@ -721,7 +730,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
 
         <AiReading catalyst={catalyst}
           facts={[...unverified, ...(calls?.unverified ?? [])]} insights={reading} takeaway={!reading.length && card.takeaway && !restates(card.takeaway, headline) ? card.takeaway : null}
-          expanded={exporting} />
+          exporting={exporting} />
 
         {footer.length > 0 && (
           <div className="mt-3 flex flex-wrap items-baseline gap-2 text-[12px] font-semibold text-ink-3">
@@ -780,7 +789,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
                 </>
               )}
               <MoreMenu items={[
-                { label: copy === "idle" ? "Copy card as image" : copy === "error" ? "Could not copy" : "Copied", icon: copy === "error" ? AlertTriangle : copy === "idle" ? Camera : Check, onClick: share },
+                { label: copy === "idle" ? "Share card as image" : copy === "error" ? "Could not make the image" : copy === "saved" ? "Image saved" : "Done", icon: copy === "error" ? AlertTriangle : copy === "idle" ? Camera : Check, onClick: share },
+                { label: "Save card as PDF", icon: FileText, onClick: savePdf },
                 { label: "Verify against the PDF", icon: FileSearch, onClick: () => openMemory(row.news_id), hidden: !row.pdf_url },
                 { label: "Company page", icon: Building2, onClick: () => openMemory() },
               ]} />
@@ -795,8 +805,11 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
         )}
       </div>
       {!exporting && <VerdictBar newsId={row.news_id} />}
-      {(open || exporting) && (
-        // the share image carries the whole card, full analysis included (owner, 2026-10-21)
+      {exporting && (
+        <p className="px-3.5 pb-3 text-[11px] text-ink-3 sm:px-6">AI summary of a public NSE filing. Not investment advice; verify against the original filing.</p>
+      )}
+      {open && !exporting && (
+        // the share image is the card's face only: what waits under "Full analysis" stays out (owner, 2026-10-22)
         <DeepDive row={row} card={card} shown={box.insights.length} shownSignal={box.signal}
           moreFacts={split.more} faceText={faceText} thinShown={thin} exporting={exporting}
           keyNumbers={card.key_numbers.filter((k) => !tiles.includes(k) && !showsFigure(faceText, k.value))} />
@@ -1128,11 +1141,12 @@ function TechnicalTags({ row }: { row: CardRow }) {
  *  face, marked as our reading and apart from the checked facts (owner 2026-10-20: "interpretation helps"; a blind
  *  review found 10% of such points overreach, so it is never shown as checked). Facts the checks could not quote stay
  *  behind a tap. */
-function AiReading({ catalyst, facts, insights, takeaway, expanded = false }: {
-  catalyst: string | null; facts: Fact[]; insights: string[]; takeaway: string | null; expanded?: boolean;
+function AiReading({ catalyst, facts, insights, takeaway, exporting = false }: {
+  catalyst: string | null; facts: Fact[]; insights: string[]; takeaway: string | null; exporting?: boolean;
 }) {
   const reading = [...(catalyst ? [`Core catalyst: ${catalyst}`] : []), ...insights, ...(takeaway && !insights.length ? [takeaway] : [])];
-  const unquoted = facts.map((f) => (typeof f === "string" ? f : f.text));
+  // what waits behind a tap stays out of the shared image and PDF (owner, 2026-10-22)
+  const unquoted = exporting ? [] : facts.map((f) => (typeof f === "string" ? f : f.text));
   if (!reading.length && !unquoted.length) return null;
   return (
     <div className="mt-3 rounded-2xl border border-dashed border-line-strong px-4 py-2">
@@ -1145,7 +1159,7 @@ function AiReading({ catalyst, facts, insights, takeaway, expanded = false }: {
         </>
       )}
       {unquoted.length > 0 && (
-        <details className="group" open={expanded || undefined}>
+        <details className="group">
           <summary className="cursor-pointer list-none py-1 text-[12px] font-bold text-ink-3 marker:hidden">
             <span className="mr-1 inline-block transition-transform group-open:rotate-90">›</span>
             Facts the checks could not quote ({unquoted.length})

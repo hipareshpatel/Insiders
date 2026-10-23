@@ -116,7 +116,8 @@ def test_order_terms_in_ranges_and_short_terms():
 
     assert term_years("18 to 21 months", None) == 1.75      # the longer end of a range
     assert term_years("within 6 months of the LOA", None) == 0.5
-    assert term_years("FY28", "2026-10-19") and round(term_years("FY28", "2026-10-19"), 1) == 1.4
+    assert round(term_years("by FY28", "2026-10-19"), 1) == 1.4
+    assert term_years("FY28", "2026-10-19") is None          # executed in FY28 or by it: no per-year spread claimed
     assert term_years("by 2025", "2026-10-19") is None       # already past
     assert term_years("as per the schedule", "2026-10-19") is None
 

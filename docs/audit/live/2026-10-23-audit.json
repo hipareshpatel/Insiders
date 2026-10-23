@@ -338,5 +338,53 @@
    "case_stage block: at 'Form 483' (reached [0]) - inspection concluded with zero Form 483 observations"
   ],
   "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826077",
+  "symbol": "GODREJPROP",
+  "run": "13:07",
+  "verdict": "WRONG",
+  "error_class": "other",
+  "reason": "Headline, what_happened and key numbers match the Q2 FY27 presentation (H1 booking value 16,659 +7%, Q2 8,008 -6%, PAT 154 vs 405 -62%, PBT 98 -83%, Total Income 2,575 +38%, collections 9,666 +25%, net debt 7,908 vs 6,414, BD 15,500 = 78% of 20,000). Three things on the card's face mislead. (1) The results block sets Q2 'Revenue' to 2,575, which is Total Income (it includes 637 of interest and other income), but compares it with revenue from operations from memory (Q2FY26 740.38, Q1FY27 506.17), so it shows +247.8% YoY and +408.7% QoQ. The filing gives +38% YoY and +93% QoQ on a like-for-like basis (memory's own consolidated total income for Q2FY26 is 1,950). (2) deal_value calls the Marine Lines project an ₹6,000 Cr ACQUISITION, and the SCALE signal says 'deal = 12% of market cap, 30% of net worth (₹20,000 Cr)'. But 6,000 is the project's expected booking value under a revenue-share model, not a price paid, and net worth is 19,359 (₹20,000 Cr is the BD guidance). This false deal size also feeds the HIGH impact score ('Deal 12% of market cap'). (3) quantified_impact 'H2 Pre-sales Potential' of 40,589 Cr adds the H2 launch value (32,000) to H1 sustenance sales. The filing itself guides H2 bookings at 22,500-25,000 Cr. Smaller problems: the call takeaway 'Construction and related outflow rose 42% YoY' has no YoY figure in the filing (-2,121 is Q2 and -4,365 is H1). The net-debt 'why' (land and construction ahead of H2 launches) is the card's own inference. The memory refs (39,000 booking guidance, 20,000 BD, 10,000 net-debt cap) check out.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "results.revenue: value 2575.0 vs prev_year 740.38 / prev_quarter 506.17, yoy_pct 247.8, qoq_pct 408.7 - mixes Total Income with revenue from operations; the filing shows Total Income +38% YoY, +93% QoQ",
+   "deal_value: kind ACQUISITION, amount_cr 6000.0 - 6,000 Cr is the expected booking value of a revenue-share project added through business development, not a deal value",
+   "signal SCALE: '₹6,000 Cr deal = 12% of market cap (₹48,292 Cr), 30% of net worth (₹20,000 Cr).' - not a deal, and net worth is 19,359 Cr per the filing",
+   "quantified_impact 'H2 Pre-sales Potential' = 32,000 + 8,589 = 40,589 Cr - launch value is not bookings; the filing guides H2 bookings at 22,500-25,000 Cr",
+   "call_takeaway: 'Construction and related outflow rose 42% YoY in H1 to ₹4,365 Cr.' - the filing gives no YoY comparison; 42% is invented"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826071",
+  "symbol": "LOKESHMACH",
+  "run": "13:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "The order of Rs 3,13,57,320 (₹3.14 Cr, including duties and taxes) from HQ Eastern Command for 9 MM Carbine Machine Guns, its execution by 21 Apr 2027 and the earlier Northern Command delivery in September 2024 all match the filing. The scale percentages match memory: Q1FY27 revenue 55.46 gives 5.7%, FY26 revenue 208.56 gives 1.5%, and TTM revenue of about 216 Cr also gives about 1.5%. Calling this the 'second active command order' is a fair reading of the filing's 'presence in two active commands'. The model's impact_level of MODERATE is generous for a 1.5%-of-revenue order, but the published score is LOW.",
+  "event_type": "ORDER_WIN",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826035",
+  "symbol": "NAUKRI",
+  "run": "13:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "This is a one-page Reg 30 intimation. Psila Tech, in which Info Edge holds 13.38% (fully diluted and converted) through its wholly owned subsidiary Redstart, is undertaking a capital reduction. Redstart's holding goes to 0%, and Psila stops being an indirect investee. The card states all of this correctly, notes rightly that no consideration is disclosed, and reasonably classes the filing as an M&A divestment with LOW impact and NEUTRAL tone.",
+  "event_type": "M_AND_A",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
  }
 ]

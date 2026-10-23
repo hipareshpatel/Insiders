@@ -88,6 +88,34 @@ def same_deal(deals: list[dict], kind: str | None, amount: float | None, counter
     return None
 
 
+def _quarter_back(period: str, back: int) -> str | None:
+    m = re.fullmatch(r"Q([1-4])FY(\d{2})", period or "")
+    if not m:
+        return None
+    n = int(m[2]) * 4 + int(m[1]) - 1 - back
+    return f"Q{n % 4 + 1}FY{n // 4:02d}"
+
+
+def other_definition(metrics: dict, key: tuple[str, str], value: float | None, unit: str | None,
+                     yoy_pct: float | None, qoq_pct: float | None) -> bool:
+    """A quarter's amount from a call or a deck whose own stated change does not follow from memory's comparatives for
+    that line: the figure is on another definition. Godrej Properties' Q2FY27 deck gave Total Income ₹2,575 Cr
+    (+38% YoY, +93% QoQ); stored as revenue beside the filings' revenue from operations (₹740 Cr, ₹506 Cr) the card
+    showed +248% YoY (hourly review 23 Oct 2026). Every stated change must disagree, by more than 15 points and half
+    the change, before the figure is refused."""
+    if unit != "INR_CR" or not value or value <= 0:
+        return False
+    checked = []
+    for pct, back in ((yoy_pct, 4), (qoq_pct, 1)):
+        base_period = _quarter_back(key[1], back) if pct is not None else None
+        base = (metrics.get((key[0], base_period)) or {}).get("value") if base_period else None
+        if not base or base <= 0:
+            continue
+        implied = (value / base - 1) * 100
+        checked.append(abs(implied - pct) > max(15.0, 0.5 * abs(pct)))
+    return bool(checked) and all(checked)
+
+
 def repeated_order(deals: list[dict], deal, as_of: str, news_id: str) -> dict | None:
     """The order on record that this card's deal only repeats: the same client and amount (same_deal) at the same stage,
     from another filing. The press release beside an order's own intimation, filed minutes later, was published as a
@@ -773,6 +801,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             continue   # a half year or year of a company whose year does not end in March: wrongly named here
         if not results_source and key[0] in QUARTER_OWNED and key[1].startswith("Q") \
                 and any(s["news_id"] != news_id for s in _sources(metrics.get(key))):
+            continue
+        if not results_source and other_definition(metrics, key, m.value, m.unit, m.yoy_pct, m.qoq_pct):
+            log.info("memory: %s %s %s from %s refused: its own change does not follow from memory's comparatives",
+                     key[0], key[1], m.value, news_id)
             continue
         source = {"news_id": news_id, "as_of": as_of, "value": m.value, "unit": m.unit,
                   "yoy_pct": m.yoy_pct, "qoq_pct": m.qoq_pct, **({"basis": basis} if basis else {})}

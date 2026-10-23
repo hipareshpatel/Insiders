@@ -31,3 +31,5 @@ the time and the run or PR link.
 
 - 21 Oct 06:31 IST apply-verdicts: maintenance run 7, success (https://github.com/hipareshpatel/Insiders/actions/runs/39524796716)
 - Re-run Sapphire Foods nse-106824614 (Q2FY27 'PAT turns positive' on a ₹1.51 Cr loss; the direction check from 22 Oct cuts it) when a slot is free.
+
+- **23 Oct, trades fill remainder** (after the market close, one at a time: it pauses the AI pipeline): `insider-sync --days 180` reads only the 656 filings not yet read (it skips read ones); `deals-backfill --days 62` covers 22 Aug - 21 Oct (the first run reached 21 Aug). Dispatch maintenance `fill-trades` again, or run the two commands with those days.

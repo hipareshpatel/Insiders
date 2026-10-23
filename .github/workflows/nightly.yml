@@ -67,6 +67,9 @@ jobs:
       - name: Bulk and block deals into memory (a second read; each deal is filed once)
         if: always()
         run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel deals-sync'
+      - name: Insider trades (SEBI PIT Reg 7) into memory
+        if: always()
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel insider-sync --days 3 --time-budget 600'
       - name: Corporate actions (splits, bonuses, dividends) into memory
         if: always()
         run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel corporate-actions-sync --days 30 --time-budget 300'

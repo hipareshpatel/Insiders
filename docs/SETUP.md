@@ -41,7 +41,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev,ocr]"      # ocr: RapidOCR for scanned pages (optional)
-python -m pytest -q              # 904 tests; web: npm test (47: card text, company statements, owner holds, call takeaways)
+python -m pytest -q              # 938 tests; web: npm test (47: card text, company statements, owner holds, call takeaways)
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -73,6 +73,8 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 | `python -m bse_intel pause-ai [--minutes N]` / `resume-ai` | Pause the AI pipeline while memory jobs write (kv `pause:ai`): no live run starts and a running one stops between filings, the work stays queued; the pause ends by itself. The nightly job and maintenance `fill-memory` use it |
 | `pledge-sync [--days N] [--scrips a,b]` | Promoter pledge events (NSE SAST Reg 31) into memory, no AI (module 42); also at the end of every live run |
 | `deals-sync [--scrips a,b]` | The latest session's bulk and block deals (NSE's large-deals snapshot) into memory, no AI; each trading morning in market-data and again in the nightly, with a retry (the snapshot holds one session) |
+| `deals-backfill [--days 180] [--scrips a,b]` | Past bulk and block deals from NSE's deals history (CSV, a week at a time) into the same memory as `deals-sync`, no AI; maintenance `fill-trades` |
+| `insider-sync [--days 3] [--scrips a,b]` | Insider trades (SEBI PIT Reg 7 filings, each read from its XBRL) into memory, no AI; nightly with a retry, 180 days by maintenance `fill-trades` |
 | `seed-calls [--scrips a,b] [--restart] [--time-budget S]` | Each universe company's last two quarters of call transcripts (else presentations) into memory through the regular analysis, no Gemini (route `memory_seed`), no card, no ledger row; resumable; from GitHub `seed-calls.yml` twice an hour 21:45-05:15 IST until done |
 | `refresh-summaries [--scrips a,b]` | Rebuild each company's stored summary (overdue promises, radar, credibility) from its memory, no AI; run after a change to what summaries hold |
 | `release-pruned [--dry-run]` | Held cards whose only faults were points their quote did not carry, published without those points (owner, 2026-10-21); no AI. Also from GitHub (`release-held.yml`, dry run by default) and nightly |

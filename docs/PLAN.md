@@ -28,8 +28,9 @@ reviews every push and fixes what it finds.
   figures stored under the wrong quarter (CIE Automotive); **G** the prune drops true points (3 of 3 on 22 Oct);
   §5 item 9 (measure A3, A9 and the pledge denominator over stored memory); missing sources §6: **bulk and block
   deals built 22 Oct evening** (`deals-sync` from NSE's large-deals snapshot, each trading morning and the nightly,
-  retried; TRACKER F96), their display on the company page next; insider trades (PIT) still not found after 2 May 2026
-  (`corporates-pit` empty from Actions too; next: the address NSE's own PIT page calls).
+  retried; TRACKER F96), their display on the company page next; **insider trades and the deals history built 23 Oct** (`insider-sync` from
+  NSE's `corporates-pit-gg` and each filing's XBRL, nightly; `deals-backfill`; maintenance `fill-trades` for 180 days;
+  TRACKER F104); display of both on the company page next.
 - Event-type definitions in the prompts: shipped 22 Oct evening (owner's go-ahead); measured on 23 Oct's live cards
   (CORPORATE_ACTION cards that are corporate actions, 52% before; data chain §7).
 - **Held-card audit (22 Oct night, `docs/audit/held-audit-2026-10-22.md`):** 236 held or flagged cards, card by card: 81% of hold

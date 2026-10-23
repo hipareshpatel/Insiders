@@ -68,6 +68,8 @@ BLOCKING_STATUS = (401, 403, 429)
 EQUITY_LIST_URL = "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv"
 ENCUMBRANCE_ENDPOINT = "https://www.nseindia.com/api/corporate-pledgedata-sast3132"
 LARGE_DEALS_ENDPOINT = "https://www.nseindia.com/api/snapshot-capital-market-largedeal"
+PIT_ENDPOINT = "https://www.nseindia.com/api/corporates-pit-gg"
+DEALS_HISTORY_ENDPOINT = "https://www.nseindia.com/api/historicalOR/bulk-block-short-deals"
 # Every announcement of a day (about 500-600 on a weekday, measured 12-16 Oct 2026), all in one answer, each
 # with its PDF and whether event XBRL exists. Read from the "Corporate Filings - Announcements" page's own call.
 ANNOUNCEMENTS_ENDPOINT = f"{SITE}/api/corporate-announcements"
@@ -523,6 +525,21 @@ class NseClient:
         the Actions runner: BULK_DEALS_DATA 111, BLOCK_DEALS_DATA 4, SHORT_DEALS_DATA 99 rows)."""
         data = self._get(LARGE_DEALS_ENDPOINT).json()
         return data if isinstance(data, dict) else {}
+
+    def insider_filings(self, day_from: date, day_to: date) -> list[dict]:
+        """SEBI PIT Regulation 7 disclosures broadcast between the two dates, one row per filing with its XBRL file
+        (`xmlFileName`) (insider.py; measured 23 Oct 2026 from a cloud session: 9 filings for 20-22 Oct, and 3,204 for
+        Aug-Oct without dates, every one with its XBRL)."""
+        data = self._get(PIT_ENDPOINT, {"index": "equities", "from_date": day_from.strftime("%d-%m-%Y"),
+                                        "to_date": day_to.strftime("%d-%m-%Y")}).json()
+        rows = data.get("data") if isinstance(data, dict) else data
+        return rows if isinstance(rows, list) else []
+
+    def deals_history(self, kind: str, day_from: date, day_to: date) -> str:
+        """NSE's bulk or block deals (``kind`` "bulk_deals" or "block_deals") between the two dates as its CSV (deals.py
+        backfill; measured 22 Oct 2026 from the Actions runner: 696 bulk and 17 block lines for 7 days)."""
+        return self._get(DEALS_HISTORY_ENDPOINT, {"optionType": kind, "from": day_from.strftime("%d-%m-%Y"),
+                                                  "to": day_to.strftime("%d-%m-%Y"), "csv": "true"}).text
 
     def integrated_list(self, kind: str, page: int = 1, size: int = 500) -> list[dict]:
         """One page of NSE's all-company integrated-filing list ("Integrated Filing- Financials" or "...- Governance"),

@@ -470,11 +470,19 @@ def scale_parts(before: dict | None, output: Pass2Output, company: dict | None, 
             "gst": bool(deal.includes_gst and deal_kind == "ORDER")}
 
 
+# a bare financial year or quarter ("FY29", "FY 2029", "during the financial year 2026-27", "Q2 2027") names when the
+# order is executed, not when a term that starts today ends (hourly review 23 Oct 2026)
+_EXECUTED_IN = re.compile(r"(?:(?:during|in)\s+)?(?:the\s+)?(?:fy\s*'?\d{2,4}(?:-\d{2,4})?|financial\s+year\s+\d{4}(?:-\d{2,4})?"
+                          r"|q[1-4]\s*(?:fy\s*)?'?\d{2,4}(?:-\d{2,4})?)")
+
+
 def term_years(execution_by: str | None, filed_at: str | None) -> float | None:
     """An execution term in years: "36 months", "within 3 years", or a date or period after the filing."""
     if not execution_by:
         return None
     text = execution_by.lower()
+    if _EXECUTED_IN.fullmatch(text.strip(" .")):
+        return None   # the period it is executed in, not a term from today: Welspun's "FY29" order read "over its 2.4-year term"
     if m := re.search(r"(\d+(?:\.\d+)?)\s*(months?|years?)", text):
         n = float(m[1])
         return n / 12 if m[2].startswith("month") else n

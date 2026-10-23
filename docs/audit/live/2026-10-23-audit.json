@@ -1,0 +1,158 @@
+[
+ {
+  "news_id": "nse-106825776",
+  "symbol": "VIKRAMSOLR",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "All facts (9 GW TOPCon cells first output Dec 2026, VSL Green Power WOS, 200-acre campus, 12 GW expansion, 6 GW module plant Aug 2026, 9 GW ingot/wafer FY29, ALMM List-II) match the press release.",
+  "event_type": "CAPEX",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": null
+ },
+ {
+  "news_id": "nse-106825532",
+  "symbol": "ACI",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "error_class": "attribution",
+  "reason": "Rating action, Rs 1,531 Cr (from 265) facilities, 3.50-3.80x net debt/EBITDA, SiC cost 2,500 from 2,100, 425 spent, cash 75/265/408, pledge 24.5% from 17.3%, margins 20.6/23.5/28.4 all match the CRISIL letter (scanned pages, OCR); only slip is the margin point tagged basis MEMORY though it comes from the filing.",
+  "event_type": "DEBT_RATINGS",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": "CORRECTED",
+  "wrong_points": [
+   "why_it_matters point on operating margin labelled basis MEMORY; it is from the filing's CRISIL rationale"
+  ],
+  "pruned_points_true": null
+ },
+ {
+  "news_id": "nse-106825446",
+  "symbol": "NLCINDIA",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "error_class": "event_type",
+  "reason": "MoU facts (3,200 MW USC plant, Rs 35,000 Cr potential investment, Rs 2,000 Cr beach sand facility, coal gasification-fertilizer study) and the SCALE signal (FY26 revenue 17,490 Cr, mcap 33,092 Cr from memory) are right, but a capex MoU is typed OTHER while its deal_value is CAPEX.",
+  "event_type": "OTHER",
+  "event_type_ok": false,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "event_type OTHER for a capex MoU (deal_value.kind is CAPEX)",
+   "deal usage MERCHANT_SALE not stated in the filing (reasonable inference)"
+  ],
+  "pruned_points_true": null
+ },
+ {
+  "news_id": "nse-106825268",
+  "symbol": "PITTIENG",
+  "run": "10:07",
+  "verdict": "WRONG",
+  "error_class": "restated",
+  "reason": "Q2FY27 standalone figures (revenue 578.44, PAT 33.89, EPS 9.18, EBITDA 88.88) are right, but PAT -4.7% YoY / +62.6% QoQ and EPS -4.1% YoY / +62.5% QoQ use pre-amalgamation reported bases (35.58, 20.84 Cr); the filing restates comparatives (Q2FY26 PAT 40.09, Q1FY27 29.50, EPS 10.78/7.99), so like-for-like PAT is -15.5% YoY and +14.9% QoQ.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": null,
+  "wrong_points": [
+   "headline/takeaway/key number: net profit -4.7% YoY; restated like-for-like is -15.5% (40.09 Cr in Q2FY26)",
+   "PAT QoQ +62.6% vs restated Q1FY27 29.50 Cr is +14.9%",
+   "EPS -4.1% YoY / +62.5% QoQ vs restated 10.78 / 7.99 is -14.8% / +14.9%"
+  ],
+  "pruned_points_true": null
+ },
+ {
+  "news_id": "nse-106825286",
+  "symbol": "BLUESTONE",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Consolidated Q2FY27: revenue 745.03 (+45.1% YoY, +1.1% QoQ), computed EBITDA 94.9 vs 41.68, PAT -4.37 vs -52.1, owners -3.23 vs -51.75, EPS -0.21 vs -3.73 and Q1 profit 5.96 all match the statement; EBIT/interest 0.5x and Rs 300 Cr NCD approval are supported. Results-block pbt -2.97 is the pre-associate line (PBT is -4.37) but is not displayed.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "PRUNED",
+  "wrong_points": [],
+  "pruned_points_true": null
+ },
+ {
+  "news_id": "nse-106825737",
+  "symbol": "JYOTISTRUC",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "error_class": "arithmetic",
+  "reason": "Order facts (GETCO LoA, 765kV DC Pachchham-Saykha line, Rs 689.93 Cr excl GST, 42 months) all match the letter; TTM 845.38 Cr, FY26 750.87 Cr, Q1FY27 251.46 Cr and the Rs 67.96 Cr May order match memory, but the takeaway calls the order 'equivalent of TTM revenue' when it is 82% of it.",
+  "event_type": "ORDER_WIN",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "takeaway: 'equivalent of TTM revenue' (689.93 vs TTM 845.38 = 82%)"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825470",
+  "symbol": "SOUTHBANK",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Transcript of the 16 Oct call: PAT 426 Cr +21% vs 351, deposits 1,37,279 Cr and advances 1,09,517 Cr +19%, NII 1,116 Cr +38%, NIM 3.33% +10 bps vs ~3.25% guidance, CAR 19.40%/Tier 1 18.71%, GNPA 2.93->1.24% all match; the results block matches the 15 Oct results in memory. Small slips only: the guidance is tied to 'the first half' and the timeline dates the results to 16 Oct, which is the call date (results were filed 15 Oct).",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825319",
+  "symbol": "NUVOCO",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Consolidated statement matches: revenue 2,789.97/3,128.71/2,457.57 Cr, PAT 64.79/159.63/36.43, owners 65.28, EPS 1.81/4.47/1.02, finance cost 71.88/70.28/101.56; EBITDA 408.30/568.24/366.99 recomputes exactly (PBT+finance+D&A-other income). The filing gives no volumes, so the signal's 'per-tonne not computable' note is correct. The takeaway's 'largest move was EBITDA' is odd wording but does not mislead.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825627",
+  "symbol": "SWELECTES",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Investment Committee on 22 Oct 2026 approved buying 100% (10,000 shares) of Sushma Solar for not more than Rs 2,27,24,000 in cash; incorporated 18 May 2025, nil turnover, 50 MW group-captive plant all match. 'Plant in Rajasthan' is an inference: the filing says only that the target is Rajasthan-based.",
+  "event_type": "M_AND_A",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "PRUNED",
+  "wrong_points": [],
+  "pruned_points_true": [
+   "why it matters: 'Sushma Solar will set up a solar power plant with an initial capacity of 50 MW' - TRUE (page 2: 'Sushma Solar will set-up a Solar Power Plant with an initial capacity of 50 MW under group captive scheme'); the prune was a false alarm, and the same fact still appears under what happened"
+  ]
+ },
+ {
+  "news_id": "nse-106825350",
+  "symbol": "BLUESTONE",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "error_class": "standalone_consolidated",
+  "reason": "All press-release figures are right (revenue 738 Cr +43.9%, EBITDA 97.1 Cr +127%, margin 13.2% +483 bps, H1 1,471 Cr and 207.3 Cr, 10,24,220 customers, 379 stores/146 cities). But the card is tagged CONSOLIDATED while the release's figures are standalone (standalone revenue ~738.1 Cr; consolidated 745.03 Cr). Its 'fourth consecutive quarter of profitability' holds only standalone (PAT Rs 1.75 Cr); the same-day consolidated results show a net loss of Rs 4.37 Cr. Typed OTHER although it is the Q2 results press release.",
+  "event_type": "OTHER",
+  "event_type_ok": false,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "basis: CONSOLIDATED (the release's figures are standalone)",
+   "why it matters: 'fourth consecutive quarter of profitability' shown under the consolidated label, when consolidated Q2FY27 PAT was a loss of Rs 4.37 Cr (true only standalone)"
+  ],
+  "pruned_points_true": []
+ }
+]

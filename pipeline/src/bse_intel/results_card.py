@@ -255,6 +255,10 @@ def profit_driver(tagged) -> str | None:
             f"{driver}{contrast}.")
 
 
+_RESTATED = re.compile(r"(?:comparative|previous|prior|corresponding)[^.]{0,160}?\b(?:have\s+been|has\s+been|are|were|is|was)\s+"
+                       r"restated\b|\brestated\s+to\s+(?:give|reflect|include)", re.I | re.S)
+
+
 def unconfirmed_changes(tagged, text: str) -> list[str]:
     """Drop a change whose comparative the filing does not print. The year-ago and previous-quarter figures come from
     those quarters' own files, which keep the figures first reported; a statement that restates them (Ambuja after the
@@ -262,17 +266,22 @@ def unconfirmed_changes(tagged, text: str) -> list[str]:
     was wrong (round 6, 2026-10-19). Figures too small to tell apart in the text are left as they are."""
     if not text or tagged is None:
         return []
+    # a statement that says its comparatives were restated prints the first-reported figures too, in its reconciliation
+    # (Pitti's amalgamation, Q2FY27: "Profit after tax 3,558.25 | 451.17 | 4,009.42", as reported, the merged companies,
+    # restated), so the old comparative is "printed" and a change against it passed: the card read PAT -4.7% YoY for
+    # -15.5% (daily audit, 23 Oct 2026). Memory keeps the first-reported figures, so no change against it stands.
+    restated = bool(_RESTATED.search(text))
     numbers = sorted({float(n.replace(",", "")) for n in re.findall(r"\d[\d,]*\.?\d*", text)
                       if n.replace(",", "").replace(".", "").isdigit()})
     dropped = []
     for m in tagged.metrics:
-        if m.period != tagged.period or m.value is None or m.unit in ("PCT", "INR"):
-            continue
+        if m.period != tagged.period or m.value is None or m.unit == "PCT" or (m.unit == "INR" and not restated):
+            continue   # a per-share figure cannot be looked for in the text, but against a restated year it goes too
         for attr, label in (("yoy_pct", "YoY"), ("qoq_pct", "QoQ")):
             pct = getattr(m, attr)
             if pct is None or pct <= -99.95:
                 continue
-            if _printed(m.value, pct, numbers) is False:
+            if restated or _printed(m.value, pct, numbers) is False:
                 setattr(m, attr, None)
                 dropped.append(f"{m.metric} {label}")
     return dropped

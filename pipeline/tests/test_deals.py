@@ -27,7 +27,7 @@ def test_deals_are_kept_once_and_in_order():
     assert merge(d, [parse_row(RAVITA_BULK, "BULK")]) == 0                  # the morning read and the nightly read
     sell = {**RAVITA_BULK, "buySell": "SELL", "clientName": "SOME FUND", "date": "21-Oct-2026"}
     assert merge(d, [parse_row(sell, "BULK")]) == 1
-    assert [(e["date"], e["side"]) for e in d["deals"]["events"]] == [("2026-10-21", "SELL"), ("2026-10-22", "BUY")]
+    assert [(e["date"], e["side"]) for e in d["market_deals"]["events"]] == [("2026-10-21", "SELL"), ("2026-10-22", "BUY")]
 
 
 def test_sync_files_universe_companies_and_fails_on_a_bot_page(monkeypatch):
@@ -63,8 +63,17 @@ def test_sync_files_universe_companies_and_fails_on_a_bot_page(monkeypatch):
     report = deals.sync(SimpleNamespace(nse=Nse(), sink=sink), deadline=1e12)
     assert (report["listed"], report["in_universe"], report["filed"], report["companies"]) == (3, 1, 1, 1)
     assert report["sessions"] == ["2026-10-22"] and len(report["errors"]) == 1   # the broken row; short rows not read
-    assert sink.dossiers["543000"]["deals"]["events"][0]["client"] == "YASH HITESH PATEL"
+    assert sink.dossiers["543000"]["market_deals"]["events"][0]["client"] == "YASH HITESH PATEL"
     again = deals.sync(SimpleNamespace(nse=Nse(), sink=sink), deadline=1e12)
     assert again["filed"] == 0
     failed = deals.sync(SimpleNamespace(nse=BotPage(), sink=sink), deadline=1e12)
     assert failed["stopped"].startswith("snapshot unreadable")
+
+
+def test_market_deals_leave_the_m_and_a_deals_list_alone():
+    """A company's memory already holds "deals", the list of its M&A and order deals: the first deals-sync runs (23 Oct
+    2026, market-data and nightly) failed on every company with "'list' object has no attribute 'get'"."""
+    d = {"deals": [{"deal_id": "d1", "kind": "ORDER_WIN", "amount_cr": 120.0}]}
+    assert merge(d, [parse_row(RAVITA_BULK, "BULK")]) == 1
+    assert d["deals"] == [{"deal_id": "d1", "kind": "ORDER_WIN", "amount_cr": 120.0}]
+    assert len(d["market_deals"]["events"]) == 1

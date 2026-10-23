@@ -69,7 +69,7 @@ def other_runs(log_dir: Path, processes=None, now: float | None = None) -> list[
     pipeline script among the running processes, or a command's log in `log_dir` written in the last QUIET_MINUTES.
     Empty when the slot is free."""
     busy = []
-    mine = {os.getpid(), os.getppid()}   # a venv's python.exe starts the real interpreter as its child
+    mine = _ancestors()   # a venv's python.exe starts the real interpreter as its child
     for pid, command in (processes or _python_processes)():
         if pid not in mine and _PIPELINE_CMD.search(command):
             busy.append(f"process {pid}: {command[:200]}")
@@ -82,6 +82,21 @@ def other_runs(log_dir: Path, processes=None, now: float | None = None) -> list[
             if age < QUIET_MINUTES * 60:
                 busy.append(f"log {path.name} written {age / 60:.0f} min ago")
     return busy
+
+
+def _ancestors() -> set[int]:
+    """This process and every process above it: on GitHub Actions the step runs `timeout 12m bash scripts/retry.sh
+    python -m bse_intel annual-xbrl-catchup`, and the timeout two levels up named this very command, so the nightly
+    run of 23 Oct 2026 skipped the catch-up as "another run" (exit 3, twice)."""
+    mine, pid = {os.getpid()}, os.getppid()
+    while pid > 1 and pid not in mine:
+        mine.add(pid)
+        try:
+            stat = Path(f"/proc/{pid}/stat").read_text()
+            pid = int(stat.rsplit(")", 1)[1].split()[1])   # the field after the state is the parent's pid
+        except (OSError, ValueError, IndexError):
+            break   # no /proc (Windows): the parent alone, as before
+    return mine
 
 
 def _python_processes() -> list[tuple[int, str]]:

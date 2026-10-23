@@ -5,7 +5,7 @@ a company's shares in a day), block deals (a single trade of ₹10 Cr or more in
 rows (measured 22 Oct 2026 from the Actions runner: 111 bulk, 4 block, 99 short; data chain audit §6). The historical
 lists (`/api/historical/bulk-deals`, `/block-deals`) answer a cloud session with NSE's bot page, so the history is
 built here: each trading morning the snapshot is read and each deal of a universe company not yet in memory is filed
-under `dossier["deals"]["events"]`. The snapshot holds one session only, so a missed morning is a missed session;
+under `dossier["market_deals"]["events"]` (not "deals": that is the M&A and order deals list). The snapshot holds one session only, so a missed morning is a missed session;
 the job runs in market-data.yml and the nightly, with retries, and a deal is filed once however often it is read.
 Short-selling rows carry no client or price and are not filed. No card is made.
 """
@@ -75,7 +75,7 @@ def _key(e: dict) -> tuple:
 
 def merge(dossier: dict, events: list[dict]) -> int:
     """Deals into memory, each once, oldest first. Returns how many were new."""
-    box = dossier.setdefault("deals", {"events": []})
+    box = dossier.setdefault("market_deals", {"events": []})
     known = {_key(e) for e in box.get("events", [])}
     new = []
     for e in events:

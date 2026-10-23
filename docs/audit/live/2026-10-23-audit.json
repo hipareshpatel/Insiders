@@ -991,5 +991,59 @@
   "duplicate_of": null,
   "pruned_points_true": [],
   "pruned_points_false": []
+ },
+ {
+  "news_id": "nse-106826336",
+  "symbol": "PNB",
+  "run": "17:07",
+  "verdict": "WRONG",
+  "error_class": "standalone_consolidated",
+  "reason": "The commentary points check out against the transcript: the 7-9 bps NIM add-on from the 25 bps repo hike on a 56% repo-linked book, ECL down to about Rs 8,000 Cr from 9-10k, Rs 2.5 lakh Cr of H1 sanctions, CDs cut from 60k to 40k, credit cost of 0.25-0.30%, gold loans up from 18,300 to 36,000, recoveries of 12-13k, PCR 97.32% and gross business of 31.18 lakh Cr up 11.9%. The results block is the problem. It is labelled STANDALONE, but its figures are not the bank's standalone numbers that the call states. It shows PAT 5,561.14 (+8.5% YoY, -4.4% QoQ), NII 11,803 (+7.2% QoQ), operating profit 7,563.63 and provisions 75.37. The call says net profit 5,532 (+12.8% YoY), NII 11,601 (+10.8% YoY, +7.4% QoQ), operating profit 7,532 and provisions 97. Standalone XBRL in memory gives 5,532.23 against 5,253.29 in Q1, so PAT rose 5.3% QoQ, not -4.4%. The block's comparatives (5,125.28 and 5,814.72) match neither the standalone nor the consolidated memory series. The headline and the first point are also garbled after the unit was stripped ('7- margin boost', 'expects a 7 to further expansion'), which hides that the figure is 7-9 bps.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "PRUNED",
+  "wrong_points": [
+   "results block (basis STANDALONE): PAT 5,561.14 prev_year 5,125.28 (+8.5% YoY) prev_quarter 5,814.72 (-4.4% QoQ); NII 11,803.19; PPOP 7,563.63; provisions 75.37. These are not the standalone figures (call and XBRL: PAT 5,532, +12.8% YoY and +5.3% QoQ; NII 11,601; operating profit 7,532; provisions 97). The comparatives match no series in memory, and the QoQ direction is reversed.",
+   "headline: 'PNB sees 7- margin boost from repo hike' is garbled. The call guides 7-9 bps of NIM.",
+   "what_happened: 'Management expects a **7** to further expansion in NIM in Q3' is garbled because the unit and the range were removed.",
+   "why_it_matters: 'Credit cost guidance reaffirmed at 0.25-0.30% ... aligning with market expectations of sustained sub-0.4% credit costs' is a small issue. Memory's earlier guidance was below 0.4%, so 0.25-0.30% including ECL is a tightening, not a reaffirmation, and the 'market expectations' claim is unsupported."
+  ],
+  "pruned_points_true": [
+   "key number \"Corporate Sanctions H1\" 2,50,000 (crore): true. The quote's 'INR 2.5 lakh crores' is Rs 2,50,000 Cr, and the MD also says 'we have sanctioned 2,50,000 of corporate loan book'."
+  ],
+  "pruned_points_false": []
+ },
+ {
+  "news_id": "nse-106826325",
+  "symbol": "JSFB",
+  "run": "17:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "All figures match the press release: PBT/PAT 170 Cr against 75 (+127%), FY27 PAT guidance raised to +100%, H1 PBT equal to FY26 PBT, GLP Rs 38,752 Cr (+22% YoY), secured 73.7% (+24%), GNPA 2.17% and NNPA 1.08% (below 1% after the Rs 68 Cr guarantee claim), NIM 6.5% to 7.5% (flat QoQ), CASA 18.3% to 17.6%, NII 819, operating margin 374 and C/D 92.7%. The GNPA prior-year figure of 2.87% matches stored XBRL (the release rounds it to 2.8%). The memory claim of a prior 80%+ PAT guidance given on 6 May 2026 matches g_4fd23a61. RESULTS fits a results press release.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": []
+ },
+ {
+  "news_id": "nse-106826203",
+  "symbol": "GNA",
+  "run": "17:07",
+  "verdict": "MINOR",
+  "error_class": "standalone_consolidated",
+  "reason": "The card is consolidated, and revenue 521.15 (+49.8% YoY, +10.8% QoQ), PAT 44.07 (+41.3% YoY, +15.2% QoQ), PBT 60.57, derived EBITDA 81.50 against 61.14 and 72.25, margin 15.64% against 17.57%, raw material cost 329.15, debt 202.91 and net worth 1,073.58 all match the consolidated statement. EPS 10.27 against 8.93 is the standalone EPS; consolidated is 10.26 against 8.91. The memory claims (highest PAT and revenue of the 5 quarters since Q2FY26) are true by stored figures. The takeaway's 'the largest move was EBITDA' is odd, since revenue grew faster, but it is not misleading.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "EPS Q2FY27: Rs 10.27 a share (+41.3% YoY, +15.0% QoQ). That is the standalone EPS on a consolidated card. Consolidated is 10.26 (prior quarter 8.91, so +15.2% QoQ). Off by one paisa."
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": []
  }
 ]

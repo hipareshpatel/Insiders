@@ -248,5 +248,95 @@
    "Signal: 'smaller than the ₹115 Cr order of 2026-10-22': that filing was L1-bidder status, not an order, and it inflates the ₹255.27 Cr 18-order total"
   ],
   "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825938",
+  "symbol": "HERITGFOOD",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Board approved amalgamation of wholly-owned subsidiary Heritage Novandie Foods into Heritage Foods; transferor FY26 turnover Rs 4.05 Cr, net worth Rs 17.62 Cr, transferee turnover Rs 4,415.07 Cr, no cash consideration, shares cancelled, no new issue, NCLT/shareholder approvals pending - all match Annexure I. LOW impact and neutral tone fit. (Internal deal_value.kind 'ACQUISITION' is not on the card face.)",
+  "event_type": "M_AND_A",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825922",
+  "symbol": "LTM",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Press release on launch of BlueVerse Industrial AI Lab in Chennai; capabilities listed match the release; no figures claimed; investment not disclosed is correctly flagged. LOW impact fits.",
+  "event_type": "PRODUCT_LAUNCH",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825916",
+  "symbol": "ZYDUSWELL",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Clarification to exchanges on Firstpost report: FSSAI notice received 24 Sep 2026, response sent 4 Oct 2026, labels stated factual and scientifically substantiated, material impact 'None', Nestle India named in the article caption - all match. A 22 Oct card on an earlier filing said the response was awaited; this filing carries the substantive answer, so not a duplicate.",
+  "event_type": "LITIGATION_REGULATORY",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825773",
+  "symbol": "PARKHOSPS",
+  "run": "12:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "Face text is right: the PDF gives verification 12-17 Oct 2026, no impact on operations; the 14 subsidiaries, Dr. Ajit Gupta, Dr. Ankit Gupta, CFO Rajesh Sharma, 'search or seizure' and 'No order has been passed as of now' come from the filing's own event XBRL (AIATOP_25783, 14 subsidiaries listed). Only issue: the case_stage block marks steps 0 and 1 ('Notice','Order') as reached although the filing says no order has been passed.",
+  "event_type": "LITIGATION_REGULATORY",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "case_stage block: reached [0,1] i.e. 'Order' reached - filing/XBRL say no order has been passed"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825770",
+  "symbol": "WELCORP",
+  "run": "12:07",
+  "verdict": "MINOR",
+  "error_class": "arithmetic",
+  "reason": "Order ~Rs 5,500 Cr to Welspun Tubular LLC for Permian gas pipeline, hyperscaler data-centre anchor customer, execution during FY29, global order book ~USD 5.25 bn (~Rs 50,000 Cr) all match; Rs 42,000 Cr Aug-2026 order book matches memory (CARE rating card t_b207acd7); 31.8% of TTM and 32.8% of FY26 revenue check out. But the SCALE signal spreads the order over a '2.4-year term' (14% of revenue a year) when the filing says it executes during FY29 alone - understates the yearly weight; does not change the overall picture.",
+  "event_type": "ORDER_WIN",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "signal: 'over its 2.4-year term, 14% of FY26 revenue a year' - filing says execution during FY29 (a single year), so it is ~33% of FY26 revenue in that year"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825743",
+  "symbol": "CIPLA",
+  "run": "12:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "Routine cGMP USFDA inspection at InvaGen, Hauppauge NY, 19-22 Oct 2026, zero Form 483 observations - matches the one-page letter. Memory links valid: watch w_10b33fe1 'USFDA resolution of Form 483 at Invagen NY' and guidance g_3adfbb8b/g_a0717b37 '$1 bn US exit run-rate FY27'. Only issue: the USFDA case_stage block shows the facility at step 0 'Form 483' (reached [0]) although the inspection ended with zero 483s.",
+  "event_type": "LITIGATION_REGULATORY",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "case_stage block: at 'Form 483' (reached [0]) - inspection concluded with zero Form 483 observations"
+  ],
+  "pruned_points_true": []
  }
 ]

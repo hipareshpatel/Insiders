@@ -1,0 +1,4800 @@
+[
+ {
+  "news_id": "nse-106818469",
+  "filed_at": "2026-10-15T13:17:27+05:30",
+  "event_type": "PRODUCT_LAUNCH",
+  "writer": "gemini/gemini-3.5-flash-lite",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T05:58:00+05:30",
+  "latency_s": 0.7,
+  "mode": "shadow",
+  "counts": {
+   "MISSING": 2,
+   "OK": 2,
+   "UNSUPPORTED_CAUSE": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Karnataka Bank unveils 'Nava Dhamaka 2026' digital and retail banking product suite",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "MISSING",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Karnataka Bank launched nine new digital and lending solutions under 'Nava Dhamaka 2026' to enhance customer experience.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "MISSING",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Bank unveiled **nine key solutions** spanning investments, digital banking, payments, customer engagement, and lending under **Nava Dhamaka 2026**.",
+    "quote": "Under Nava Dhamaka 2026, the Bank unveiled nine key solutions spanning investments, digital banking, payments, customer engagement and lending.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Offerings include a composite online trading and wealth management platform, upgraded retail internet banking, and **KBL Startup Finance**.",
+    "quote": "These include; ✓ A composite online trading and wealth management platform integrating demat and brokerage facilities with wealth management solutions; ✓ A revamped Retail Internet Banking platform with an enhanced user interface and user experience; ✓ Enhanced KBL Mobile Banking features, including Soulabhya Plus Deposits and improved FASTag services ✓ UPI services for eligible NRI customers holding NRE/NRO accounts ✓ PIN-less transactions through the Central Bank Digital Currency (CBDC) platform. ✓ A comprehensive Point of Sale (POS) solution for temples, mutts, trusts and other religious institutions to facilitate secure and transparent digital collections ✓ An AI-enabled Voice Bot for Lead Validation to improve customer outreach and lead management ✓ The Drop Line Facility under KBL Micromitra to support business improvement and ✓ KBL Startup Finance, a dedicated credit scheme for startups and emerging entrepreneurs.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Routine product launch initiatives of this nature have negligible immediate financial impact relative to the bank's ₹12,497 Cr market cap.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "No excerpt or quote supports the claim of negligible impact",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "PRODUCT_LAUNCH",
+     "vote": "PRODUCT_LAUNCH",
+     "agree": true,
+     "conservative": "PRODUCT_LAUNCH"
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "LOW",
+     "agree": true,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "POSITIVE",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    },
+    "deal_stage": {
+     "card": "COMPLETED",
+     "vote": "OTHER",
+     "agree": false,
+     "conservative": null
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818467",
+  "filed_at": "2026-10-15T13:16:26+05:30",
+  "event_type": "RESULTS",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T05:58:22+05:30",
+  "latency_s": 20.2,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "UCO Bank Q2FY27: net profit ₹785.64 Cr (+26.8% YoY); net NPA 0.18%, gross 1.96%",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Q2FY27: interest earned ₹7,286.32 Cr (+11.5% YoY), net profit ₹785.64 Cr (+26.8% YoY).",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Interest earned Q2FY27: ₹7,286.32 Cr (+11.5% YoY, +4.1% QoQ).",
+    "quote": "- interest_earned Q2FY27: 7286.32 Cr, YoY +11.5%, QoQ +4.1%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Operating profit before provisions Q2FY27: ₹1,872.36 Cr (+16.1% YoY, -33.4% QoQ).",
+    "quote": "- pre_provision_operating_profit Q2FY27: 1872.36 Cr, YoY +16.1%, QoQ -33.4%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Provisions Q2FY27: ₹807.67 Cr (+37.3% YoY, +244.3% QoQ).",
+    "quote": "- provisions Q2FY27: 807.67 Cr, YoY +37.3%, QoQ +244.3%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "Net profit Q2FY27: ₹785.64 Cr (+26.8% YoY, +19.7% QoQ).",
+    "quote": "- pat Q2FY27: 785.64 Cr, YoY +26.8%, QoQ +19.7%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "RESULTS",
+     "vote": "RESULTS",
+     "agree": true,
+     "conservative": "RESULTS"
+    },
+    "impact_level": {
+     "card": "HIGH",
+     "vote": "HIGH",
+     "agree": true,
+     "conservative": "HIGH"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818441",
+  "filed_at": "2026-10-15T12:58:53+05:30",
+  "event_type": "RESULTS",
+  "writer": "gemini/gemini-3.5-flash-lite",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T05:58:46+05:30",
+  "latency_s": 1.0,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6,
+   "INVENTED": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Polycab India Q2FY27: revenue ₹9,898.9 Cr (+52.8% YoY), net profit to shareholders ₹977.37 Cr (+42.6% YoY)",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Q2FY27 net profit of ₹990 Cr against net profit of ₹692.96 Cr a year earlier; the largest move was EBITDA of ₹1,422.5 Cr against ₹1,020.75 Cr a year earlier.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Revenue from operations Q2FY27: ₹9,898.9 Cr (+52.8% YoY, +20.6% QoQ).",
+    "quote": "- revenue Q2FY27: 9898.9 Cr, YoY +52.8%, QoQ +20.6%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "EBITDA Q2FY27: ₹1,422.5 Cr; margin 14.4%.",
+    "quote": "- ebitda Q2FY27: 1422.5 Cr",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Net profit Q2FY27: ₹990 Cr (+42.9% YoY, +24.3% QoQ).",
+    "quote": "- pat Q2FY27: 990 Cr, YoY +42.9%, QoQ +24.3%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "Net profit to shareholders Q2FY27: ₹977.37 Cr (+42.6% YoY, +24.6% QoQ).",
+    "quote": "- pat_owners Q2FY27: 977.37 Cr, YoY +42.6%, QoQ +24.6%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Wires & Cables segment revenue surged 47% YoY to ₹83,768 million, remaining the primary growth engine.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "No excerpt or quote supports the Wires & Cables segment claim",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "RESULTS",
+     "vote": "RESULTS",
+     "agree": true,
+     "conservative": "RESULTS"
+    },
+    "impact_level": {
+     "card": "HIGH",
+     "vote": "HIGH",
+     "agree": true,
+     "conservative": "HIGH"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "COMPLETED",
+     "vote": "OTHER",
+     "agree": false,
+     "conservative": null
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818476",
+  "filed_at": "2026-10-15T13:24:41+05:30",
+  "event_type": "LITIGATION_REGULATORY",
+  "writer": "openrouter/nvidia/nemotron-3.5-super-vl:free",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T05:59:20+05:30",
+  "latency_s": 18.5,
+  "mode": "shadow",
+  "counts": {
+   "OK": 4
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "NSE fines M TEK COPPER ₹10,000 plus ₹1,800 GST for late XBRL voting results filing",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Fine of ₹10,000 plus ₹1,800 GST; company says no material impact and already filed the XBRL results",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "NSE levied a fine of **₹10,000** plus **₹1,800 GST** for delay in filing XBRL voting results for the quarter ended September 30, 2026.",
+    "quote": "NSE has levied a fine of Rs. 10,000/- plus 18% GST 1800/- for non-compliance with Regulation 44(3) of SEBI LODR Regulations, 2015 for the quarter ended September 30, 2026.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Company says it filed XBRL voting results on **October 13, 2026**; NSE notice dated **October 14, 2026**.",
+    "quote": "The Company would like to inform that the aforesaid non-compliance has already been duly rectified and the Company has filed Voting Results in XBRL format dated 13th October, 2026, thereby ensuring compliance with Regulation 44(3) of SEBI LODR Regulations.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "LITIGATION_REGULATORY",
+     "vote": "LITIGATION_REGULATORY",
+     "agree": true,
+     "conservative": "LITIGATION_REGULATORY"
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "LOW",
+     "agree": true,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEGATIVE",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818501",
+  "filed_at": "2026-10-15T13:56:24+05:30",
+  "event_type": "RESULTS",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T06:00:46+05:30",
+  "latency_s": 0.6,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Indian Bank Q2 net profit rose 14.7% YoY to ₹3,462 Cr; GNPA fell to 1.61%",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Profit grew on 17.8% higher net interest income and 59% higher non-interest income, while slippages stayed low and coverage held at 98.22%.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Net interest income rose **17.83% YoY to ₹7,719 Cr**; non-interest income grew **59% YoY to ₹3,953 Cr** for the quarter.",
+    "quote": "Net Interest Income increased by 17.83% YoY to ₹7719 Cr in Sep'26 from ₹6551 Cr in Sep'25",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "**RAM advances** grew 17.74% YoY to ₹4,42,302 Cr and made up **67.04%** of gross domestic advances.",
+    "quote": "RAM (Retail, Agriculture & MSME) advances grew by 17.74% YoY to ₹442302 Cr in Sep'26 from 375660 Cr in Sep'25",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Cost-to-income improved **555 bps QoQ to 39.25%**; bulk deposits (incl. CD) cut 5.60% QoQ to ₹1.52 lakh Cr.",
+    "quote": "Bank strategically reduced its Bulk deposit (including CD) by 5.60% on QoQ basis, from ₹1.62 lakh Cr in Jun'26 to ₹1.52 lakh Cr in Sep'26",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "**PCR including TWO** stood at 98.22% and slippage ratio at 0.69% against 0.79% a year earlier.",
+    "quote": "Provision Coverage Ratio (PCR, including TWO) stood at 98.22% in Sep'26",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "UCO Bank and RBL Bank both moved on foreign-currency medium-term note programmes in the past two months; Indian Bank instead raised ₹22,486 Cr of FCNR(B) deposits and ₹3,806 Cr of OFCB.",
+    "quote": "Bank has mobilized fresh FCNR(B) Deposits amounting to ₹22486 Cr. It has also raised OFCB of ₹3806 Cr",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106818761",
+  "filed_at": "2026-10-15T16:41:33+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "cloudflare/@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T06:39:15+05:30",
+  "latency_s": 8.3,
+  "mode": "shadow",
+  "counts": {
+   "OK": 9
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Cyient DLM Q2FY27: Revenue Up 26.5% YoY To ₹393.1 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Company sees continued growth momentum",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Revenue grew 26.5% YoY to ₹393.1 Cr",
+    "quote": "Revenue 3,931 3,106 26.5%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Order book reached an all-time high of ₹2,813.7 Cr",
+    "quote": "Order Book (INR Mn) 28,137",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "**Normalized PAT grew 25.8% YoY to ₹15.8 Cr**",
+    "quote": "Normalized PAT 158 126 25.8%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Revenue growth driven by healthy order book",
+    "quote": "Strong performance driven by healthy order book and revenue growth.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Company sees continued growth momentum",
+    "quote": "Strong H1 performance with revenue up 30.2% YoY, driven by healthy order book.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "Order book conversion and quarterly revenue growth are key metrics to watch",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "w_167c07a5"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "Revenue growth expected to continue",
+    "quote": "Strong H1 performance with revenue up 30.2% YoY, driven by healthy order book.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "w_167c07a5"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818795",
+  "filed_at": "2026-10-15T16:54:51+05:30",
+  "event_type": "RESULTS",
+  "writer": "zai/glm-4.5-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T06:39:49+05:30",
+  "latency_s": 22.6,
+  "mode": "shadow",
+  "counts": {
+   "OK": 3,
+   "UNSUPPORTED_CAUSE": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "OHL Q2FY27 revenue at ₹117 Cr; RevPAR grew 9%",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Q2FY27 performance shows continued RevPAR growth and improved profitability with higher renewable energy usage",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "The excerpt does not mention renewable energy usage as a driver for profitability.",
+    "corrected": "Q2FY27 performance shows continued RevPAR growth and profitability."
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "**Q2FY27 revenue** of ₹117 Cr",
+    "quote": "Q2 FY 2026 -2027 INR 117 Cr",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "**RevPAR grew 9%** in Q2FY27",
+    "quote": "OHL reported an operating revenue of INR 117 crores driven by an 9% growth in RevPAR",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "RESULTS",
+     "vote": "RESULTS",
+     "agree": true,
+     "conservative": "RESULTS"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818649",
+  "filed_at": "2026-10-15T15:47:35+05:30",
+  "event_type": "RESULTS",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T06:40:32+05:30",
+  "latency_s": 27.3,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7,
+   "WRONG_PERIOD": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Wipro Q2FY27 revenue ₹24,818 Cr; PBT ₹4,205 Cr as finance costs jump",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Revenue with Europe and APMEA up sharply",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "**IT Services revenue** was ₹24,667 Cr, with **Europe** at ₹6,755 Cr and **APMEA** at ₹3,095 Cr, both up YoY.",
+    "quote": "Total of IT Services 246,670 244,529 226,405 491,199 447,205 921,153",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "**Finance expenses** rose to ₹545 Cr from ₹361 Cr a year ago, while **finance and other income** fell to ₹677 Cr from ₹846 Cr.",
+    "quote": "Finance expenses (5,454) (4,728) (3,612) (10,182) (7,220) (14,577)",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "**IT Products** segment posted a loss of ₹7 Cr versus a ₹10 Cr profit a year ago.",
+    "quote": "IT Products (72) 16 101 (56) 121 559",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "**Amortisation and impairment** on intangibles in IT Services rose to ₹284 Cr from ₹167 Cr a year ago.",
+    "quote": "Amortization and impairment expenses on intangible assets 2,840 2.407 1,670 5,247 3,295 7.787",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "The excerpt shows 2,840 (₹284 Cr) and 1,670 (₹167 Cr), but the point misstates the unit as Cr instead of Lakhs.",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Europe segment result nearly doubled YoY to ₹1,131 Cr from ₹696 Cr, the strongest swing among the four strategic market units.",
+    "quote": "Europe 11,309 9,047 6,962 20,356 12,988 31,083",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Finance expenses of ₹545 Cr this quarter compare with ₹370 Cr in Q4FY26, a rising drag on PBT as other income also fell.",
+    "quote": "Finance expenses (5,454) (4,728) (3,612) (10,182) (7,220) (14,577)",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "WRONG_PERIOD",
+    "reason": "The excerpt does not contain Q4FY26 data; it shows Q1FY27 (June 30, 2026) as 4,728 (₹473 Cr).",
+    "corrected": "Finance expenses of ₹545 Cr this quarter compare with ₹473 Cr in the previous quarter, a rising drag on PBT as other income also fell."
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "RESULTS",
+     "vote": "RESULTS",
+     "agree": true,
+     "conservative": "RESULTS"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "HIGH",
+     "agree": false,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "MIXED",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818738",
+  "filed_at": "2026-10-15T16:31:28+05:30",
+  "event_type": "LITIGATION_REGULATORY",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T06:40:57+05:30",
+  "latency_s": 15.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 9
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "NPPA demands ₹52.75 Cr from Akums' subsidiary Pure & Cure over Lanol 1000 mg injection pricing",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The ₹52.75 Cr demand names Akums' wholly owned subsidiary as manufacturer, but the company says its supply agreement puts the liability on marketer Hetero; at 0.6% of net worth it is small.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "NPPA issued a **₹52.75 Cr demand notice** dated 13 Oct 2026 against Hetero Healthcare (marketer), **Pure and Cure Healthcare (Akums' wholly owned subsidiary, manufacturer)** and Abaris Healthcare.",
+    "quote": "NPPA has issued a Demand Notice of Rs. 52,74,68,193/- on October 13, 2026 against the below mentioned Parties:",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The demand covers **₹18.95 Cr overcharging** for batches made Dec 2017–Aug 2024, **₹18.95 Cr penalty** (100% of overcharge) and **₹14.85 Cr interest** to 30 Oct 2026.",
+    "quote": "Total Impact on the parties will be of Rs. 52,74,68,193/- including overcharging amount of Rs. 18,94,80,649/- for the batches manufactured during December 2017 to August 2024 and penalty amount of Rs. 18,94,80,649/- being 100% of the overcharged amount along with interest amount of Rs. 14,85,06,895/- up to October 30, 2026.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The alleged violation is fixing the price of **Lanol 1000 mg injection 100ml** without prior price approval under Section 15 of DPCO 2013; no suspension or closure order was passed.",
+    "quote": "Notice has been issued for fixation of price of the product without obtaining prior price approval from Government of India as specified under Section 15 of The Drugs (Prices Control) Order, 2013",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "Akums says its supply agreements make the **marketer solely liable** for DPCO violations, and Hetero carries the prime responsibility to respond.",
+    "quote": "The subsidiary of the Company has executed an agreement with the marketing Company containg a clause that the marketing company shall be solely held liable for violation of DPCO provisions; including any penalty, fine, interest and other amount in this regard.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "At ₹52.75 Cr the demand is 0.6% of net worth and 0.2% of market cap; the filing says no financial impact is expected on the subsidiary given the indemnity clause.",
+    "quote": "In view of the said agreement, no finan",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "This adds to a run of pricing and regulatory penalties in memory (NPPA overcharging, CGWA, legal metrology), though each has been small.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "No operational sanction was imposed: the filing states no suspension, debarment or closure order against Pure and Cure.",
+    "quote": "No action or oder is passed against Pure and Cure Healthcare Private Limited for suspension, settlement of proceedings, debarment, disqualification, closure of operations, sanctions imposed, warning or caution",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "LITIGATION_REGULATORY",
+     "vote": "LITIGATION_REGULATORY",
+     "agree": true,
+     "conservative": "LITIGATION_REGULATORY"
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "HIGH",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEGATIVE",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818743",
+  "filed_at": "2026-10-15T16:33:11+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T06:41:21+05:30",
+  "latency_s": 15.6,
+  "mode": "shadow",
+  "counts": {
+   "OK": 11,
+   "INVENTED": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Swan Defence order book ~₹6,500 Cr, TTM revenue; H1FY27 PAT ₹525 Cr on tax credit",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Order book of ~₹6,500 Cr trailing revenue) gives multi-year visibility; but H1 profit is a tax credit; not operations: EBITDA was still negative and deliveries start only FY28.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Firm order book stands at **~₹6,500 Cr**, equal to 1902.8% of trailing-12-month revenue of ₹341.61 Cr.",
+    "quote": "FIRM ORDER BOOK OF ~ ₹6,500 CR AND ONGOING PROJECT PIPELINE VALIDATE THE EXECUTION RESTART AND PROVIDES REVENUE VISBILITY",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "H1FY27 PAT of **₹524.78 Cr** against a PBT loss of ₹38.37 Cr, so the profit comes from a tax line, not operations.",
+    "quote": "PBT (38.37) (3.48) 3.29 (41.66) 5.79",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Q2FY27 revenue ₹68.85 Cr versus ₹39.57 Cr a year ago; H1 revenue ₹99.46 Cr versus ₹39.99 Cr.",
+    "quote": "Revenue from Operations 99.46 39.99 68.85 30.61 39.57",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "New export wins: 4 ammonia dual-fuel bulk carriers (Energy ONE) and 4 tugs (Svitzer); deliveries scheduled to commence in FY30 and early 2028 respectively.",
+    "quote": "Deliveries for the order are scheduled to commence in FY30",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "The excerpt does not contain the delivery schedule for the specific orders mentioned.",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Net debt of ₹1,057 Cr against ₹2,262 Cr net worth; a ₹1,150 Cr NaBFID term loan at 8.85%, cut to 5.85% effective by 3% interest subvention, funds the ramp-up.",
+    "quote": "₹1,150 Cr 8.85% 3% 5.85%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "H1FY27 EBITDA was -₹38.03 Cr in memory, so the ₹524.78 Cr PAT rests on a ₹563.15 Cr tax credit, not on shipbuilding margins.",
+    "quote": "PAT 524.78 (15.17) 566.44 (41.66) (0.55)",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "Firm order book of ~₹6,500 Cr, inclusive of government subsidy, at USDINR 95.15.",
+    "quote": "~ ₹6,500 Cr order book is inclusive of government subsidy, and all numbers are denoted at USDINR = 95.15",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "₹1,150 Cr NaBFID term loan at 8.85%, cut to 5.85% effective by 3% interest subvention.",
+    "quote": "₹1,150 Cr 8.85% 3% 5.85%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.7",
+    "field": "call_takeaways",
+    "text": "Resolution plan closed and CoC obligations prepaid, clearing the company out of CIRP.",
+    "quote": "SDHI has completed the resolution-plan, cleared out of CIRP thereby creating a stronger base for scale-up",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.9",
+    "field": "call_takeaways",
+    "text": "CEO expects domestic shipbuilding demand to pick up only over the next 12 to 18 months.",
+    "quote": "we expect domestic shipbuilding demand to pick up over the next 12 to 18 months",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824162",
+  "filed_at": "2026-10-22T07:37:36+05:30",
+  "event_type": "OTHER",
+  "writer": "gemini/gemini-3.7-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T08:36:40+05:30",
+  "latency_s": 0.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Krsnaa Diagnostics partners with AZmed to evaluate radiology AI for X-ray reporting",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "An exploratory tech collaboration to evaluate AI software on high-volume X-ray operations; financial impact is non-quantified and subject to successful evaluation.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Partnered with Paris-based **AZmed** to evaluate its **AZtrauma** solution (Rayvolve AI suite) for detecting fractures, effusions, and dislocations on X-rays.",
+    "quote": "The collaboration will evaluate AZmed’s AZtrauma solution, part of its Rayvolve AI suite, for the detection and triage of fractures, joint effusions, and dislocations on X-rays.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The evaluation leverages Krsnaa's diagnostic scale of reporting **over 5 million X-rays annually** across 2,000+ centres.",
+    "quote": "With one of India’s largest X-ray reporting operations, processing more than 5 million X-rays annually, Krsnaa is well positioned to evaluate the potential of AI-assisted radiology at scale.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The agreement is an exploratory evaluation, with implementation subject to technical outcome and regulatory approvals; no commercial terms or costs are disclosed.",
+    "quote": "Over time, these efficiencies could provide additional headroom to support business expansion and contribute to unlock operating leverage, subject to successful evaluation, regulatory approvals and implementation.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Targets operational leverage across its extensive network of 190+ CT/MRI centres and 2,000+ X-ray centres operating primarily under a PPP framework.",
+    "quote": "Krsnaa Diagnostics delivers diagnostic imaging, pathology and teleradiology services across 19 states and union territories through 190+ CT and MRI centres, 2,000+ X-ray centres, 212 pathology laboratories and more than 4,700 patient collection centres.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "OTHER",
+     "vote": "OTHER",
+     "agree": true,
+     "conservative": "OTHER"
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "MODERATE",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818533",
+  "filed_at": "2026-10-15T14:22:37+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T08:36:44+05:30",
+  "latency_s": 3.5,
+  "mode": "shadow",
+  "counts": {
+   "OK": 10,
+   "WRONG_ENTITY_OR_SCOPE": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Tips Music Q2FY27 revenue rose 35% YoY to ₹120.1 Cr, but EBITDA margin fell 550 bps to 70.5%",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Revenue growth accelerated to 35% YoY",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "**Content cost** jumped to **₹26.2 Cr** from ₹13.3 Cr a year ago, while Q1FY27's ₹44.6 Cr fell to ₹26.2 Cr.",
+    "quote": "Content Cost 26.2 13.3 %L6 44.6 -41% 70.8 36.8 %ε%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "**PAT** rose 23% YoY to **₹65.5 Cr**; tax was ₹22.3 Cr against ₹18.5 Cr, so PAT grew slower than PBT's 23%.",
+    "quote": "Tax 22.3 18.5 14.6 36.9 34.0",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "**H1FY27** revenue ₹226.6 Cr (+28% YoY) with EBITDA margin **61.0%**, down 910 bps from H1FY26's.",
+    "quote": "H1FY26 H1FY27 H1FY26 H1FY27 H1FY26 H1FY27",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "**Trade receivables** rose to **₹48.2 Cr** from ₹34.3 Cr in March 2026; cash and equivalents ₹8.5 Cr, investments ₹211.0 Cr.",
+    "quote": "(ii) Trade receivables 48.2 34.3",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Q2FY27 EBITDA margin of 70.5% is inside the 65-70% band only at the top edge; H1FY27's 61.0% is below it.",
+    "quote": "Op. EBITDA % 70.5% %092 50.3% 61.0% %1·02",
+    "excerpt_found": true,
+    "memory_refs": [
+     "g_13161c14"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Receivables of ₹48.2 Cr are up 41% since March 2026 while H1 revenue grew 28% YoY, a working-capital build to watch.",
+    "quote": "(ii) Trade receivables 48.2 34.3",
+    "excerpt_found": true,
+    "memory_refs": [
+     "w_43cba428"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.5",
+    "field": "call_takeaways",
+    "text": "H1FY27 total payout was ₹127.1 Cr including buyback, with a Q2FY27 interim dividend of ₹6.5 per share.",
+    "quote": "Q2FY27 Interim Dividend of Rs 6.5 per share, Total Payout for H1FY27 stood at Rs 127.1 Cr (including buyback)",
+    "excerpt_found": true,
+    "memory_refs": [
+     "cp_19c0be9e"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.8",
+    "field": "call_takeaways",
+    "text": "Shorts monetisation is expected to migrate from a fixed price model to share of advertising revenue.",
+    "quote": "Current fixed price model will migrate to share of advertising revenue",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.9",
+    "field": "call_takeaways",
+    "text": "Public performance rights revenue is expected to surpass ₹2,500-3,000 crore over the next five years.",
+    "quote": "Industry Revenue is growing at approx. 40-50% CAGR and expected to surpass INR 2,500-3,000",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "WRONG_ENTITY_OR_SCOPE",
+    "reason": "The excerpt refers to the 'Industry Revenue', not Tips Music's specific revenue.",
+    "corrected": "Industry revenue for public performance rights is expected to surpass ₹2,500-3,000 crore over the next five years."
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "MIXED",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818930",
+  "filed_at": "2026-10-15T17:42:22+05:30",
+  "event_type": "LITIGATION_REGULATORY",
+  "writer": "gemini_2/gemini-3-flash-preview",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T08:36:48+05:30",
+  "latency_s": 0.5,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Ador Welding pays ₹0.34 Cr fine to settle BIS compliance matter",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The company has settled a minor regulatory contravention regarding BIS licensing with a ₹0.34 Cr fine, which is immaterial to its financials.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "The Hon’ble Bhiwandi Court imposed a **fine of ₹0.34 Cr** on Ador Welding for contravening the Bureau of Indian Standards Act 2016.",
+    "quote": "the BIS matter has been disposed by the Hon’ble Bhiwandi Court by its order dated 13th October, 2026 after imposing a fine of Rs. 34 lakhs.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The violation involved **possession of welding wire-flux cored** without a valid authorization or license under Section 17 (3) of the BIS Act.",
+    "quote": "Contravention of provisions of Section 17 (3) of the Bureau of Indian Standards Act 2016: Possessed welding wire-flux cored without holding any valid authorization / license.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The company has already **paid the fine** in court on October 13, 2026.",
+    "quote": "The aforesaid amount of Rs. 34,00,000/- was paid on 13th October, 2026 in the court.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Management confirmed there is no material impact on the company's operations or other activities.",
+    "quote": "There is no material impact on financials or operations or other activities of the Company.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "LITIGATION_REGULATORY",
+     "vote": "LITIGATION_REGULATORY",
+     "agree": true,
+     "conservative": "LITIGATION_REGULATORY"
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "LOW",
+     "agree": true,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818553",
+  "filed_at": "2026-10-15T14:39:59+05:30",
+  "event_type": "OTHER",
+  "writer": "gemini_2/gemini-3-flash-preview",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T08:36:50+05:30",
+  "latency_s": 1.0,
+  "mode": "shadow",
+  "counts": {
+   "MISSING": 2,
+   "OK": 2,
+   "INVENTED": 4
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Jain Resource Recycling expands business scope to mining and automated vending",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "MISSING",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The company is significantly broadening its legal mandate to include mining, mineral processing, and automated vending technology, signaling a move beyond core metal recycling.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "MISSING",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "The Board approved a major **alteration of the Memorandum of Association** to include mining, mineral extraction, and processing of coal and other natural resources.",
+    "quote": "To carry on, whether directly or through contractors, the business of prospecting, exploration, extraction, mining, quarrying, excavation, winning, raising, processing, beneficiation, transportation, storage, handling, distribution, marketing and sale of coal and other minerals",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The company is entering the **automated retail and vending machine** sector, including IoT solutions and digital payment systems.",
+    "quote": "To carry on the business of manufacturing, designing, developing, assembling, fabricating... all kinds of machinery... including complete, semi-knocked down (SKD) and completely knocked down (CKD) machines, vending machines, automated retail and dispensing machines",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "Quote does not mention IoT solutions or digital payment systems",
+    "corrected": "The company is entering the automated retail and vending machine sector, including vending machines."
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The Board also approved the **appointment of two Independent Directors**, Mr. Prakash Kumar Behera and Ms. Kajal Mayur Saiya, to fill casual vacancies.",
+    "quote": "Appointment of Mr. Prakash Kumar Behera (DIN: 11878579) as an Independent Director... Appointment of Ms. Kajal Mayur Saiya (DIN: 11319429) as an Independent Director",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The expansion into mining and mineral processing aligns with the company's existing metals focus but suggests a move toward backward integration or larger-scale resource management.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "No source provided to support the claim",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "The move into automated vending and IoT technology represents a significant diversification into high-tech retail infrastructure, moving beyond industrial recycling.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "No source provided to support the claim",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "This follows management's earlier guidance on diversifying into telecom infrastructure (w_01764f47), indicating a broader strategy to leverage its logistics and contracting capabilities.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "w_01764f47"
+    ],
+    "verdict": "INVENTED",
+    "reason": "No source provided to support the claim",
+    "corrected": null
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106819182",
+  "filed_at": "2026-10-15T19:20:36+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T09:22:53+05:30",
+  "latency_s": 83.5,
+  "mode": "shadow",
+  "counts": {
+   "UNIT": 2,
+   "OK": 8
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Cordelia Sky delivered early, lifting fleet capacity 126%; H1 revenue rose 16% to ₹323 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "UNIT",
+    "reason": "The excerpt states H1 revenue is Rs. 3,230 million (323 Cr), not 323 Cr as written.",
+    "corrected": "Cordelia Sky delivered early, lifting fleet capacity 126%; H1 revenue rose 16% to ₹3,230 million"
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Cordelia Sky adds 126% capacity and starts sailing on 23 October, while fuel costs ran about ₹28 Cr higher in H1 than a year earlier.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "**Cordelia Sky** arrived in Mumbai on 9 October 2026 with **2,400 guests** across 1,002 staterooms, lifting overall capacity by about **126%**; sailing starts 23 October.",
+    "quote": "With a capacity of 2,400 guests across 1,002 staterooms, Sky will increase our overall capacity by approximately 126%.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Received **USD 5.2 million** from Norwegian Sky Limited as compensation for the vessel's early handover on 10 September 2026, ahead of the 30 September delivery date.",
+    "quote": "During the quarter, the company has received USD 5.2 million in compensation from Norwegian Sky Limited for the early handover of the vessel Sky on September 10, 2026, ahead of its original delivery date of 30th September 2026.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Sky's revenue starts in H2FY27 and builds as utilisation ramps; the filing gives no target for how much of the 126% capacity it expects to fill.",
+    "quote": "Revenue from Sky will start contributing from second half of this financial year with the larger benefits building progressively as utilization ramps up.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Sky carries a $16 million annual lease, treated as an operating cost in projections and below the EBITDA line under Ind AS.",
+    "quote": "In terms of Sky, we are paying $16 million every year and our projections and numbers are considering those lease costs as operating costs.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.1",
+    "field": "call_takeaways",
+    "text": "Sister ship SUN is confirmed for delivery in 11 months, the same date next year.",
+    "quote": "So, that ship is coming in 11 months to us, exactly same date next year, that's already confirmed.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "₹429 Cr has been advanced towards new vessels, routed through a subsidiary to a mediator as an interest-bearing advance.",
+    "quote": "And in line with this, we have advanced Rs.4,290 million towards the acquisition of new vessels.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "UNIT",
+    "reason": "The excerpt states Rs. 4,290 million (429 Cr), not 4,290 Cr.",
+    "corrected": "₹429 Cr has been advanced towards new vessels, routed through a subsidiary to a mediator as an interest-bearing advance."
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "Sky carries a $16 million annual lease, treated as an operating cost in projections and below EBITDA under Ind AS.",
+    "quote": "In terms of Sky, we are paying $16 million every year and our projections and numbers are considering those lease costs as operating costs.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.6",
+    "field": "call_takeaways",
+    "text": "Average revenue per passenger rose to ₹13,645 in Q2FY27 from ₹10,349 in Q2FY26.",
+    "quote": "Average revenue per passenger stood at Rs. 13,645 in Quarter 2, financial year 27, compared with Rs. 10,349 in Quarter 2, Financial Year ‘26.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini_2/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818989",
+  "filed_at": "2026-10-15T18:03:59+05:30",
+  "event_type": "MANAGEMENT_CHANGE",
+  "writer": "gemini/gemini-3.5-flash-lite",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T09:22:58+05:30",
+  "latency_s": 0.6,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Jyoti Structures CFO Abdul Hameed Khan relinquishes office; continues as Whole-time Director",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Abdul Hameed Khan stepped down as CFO while retaining his Whole-time Director post until June 2028.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Mr. Abdul Hameed Khan **relinquished his position as CFO** effective October 15, 2026, to focus on his whole-time directorship.",
+    "quote": "Pursuant to the above-referred provisions of the SEBI Listing Regulations, we wish to inform you that Mr. Abdul Hameed Khan has relinquished his position as Chief Financial Officer (CFO) and Key Managerial Personnel (KMP) of the Company to devote his full attention to his responsibilities as Whole-time Director of the Company up to June 30, 2028, pursuant to his resignation letter dated October 15, 2026.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "He **will continue to serve as Whole-time Director** up to **June 30, 2028**.",
+    "quote": "Mr. Abdul Hameed Khan will continue to serve as Whole-time Director of the Company up to June 30, 2028.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "This formalizes the CFO transition following the recent appointment of Deepak Dinkar Salunke as CFO on the same date, completing the leadership restructuring.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "t_b93d0ed2"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "The change is internal and administrative, with no disruption to board oversight as Khan remains on the board as Whole-time Director.",
+    "quote": "I look forward to continuing to serve the Company in my capacity as Whole-time Director and contributing to its continued success.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "MANAGEMENT_CHANGE",
+     "vote": "CORPORATE_ACTION",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824168",
+  "filed_at": "2026-10-22T09:19:39+05:30",
+  "event_type": "ORDER_WIN",
+  "writer": "gemini_2/gemini-3.6-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T10:02:58+05:30",
+  "latency_s": 1.0,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6,
+   "INVENTED": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Magellanic Cloud subsidiary Provigil emerges L1 bidder for ₹115 Cr e-surveillance project",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Provigil Surveillance has emerged as the L1 bidder for a ₹115 Cr Bank of Maharashtra e-surveillance project; pending a formal order.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Subsidiary Provigil Surveillance emerged as **L1 bidder** in Bank of Maharashtra's tender for **1,550+ sites**.",
+    "quote": "Provigil Surveillance Limited, has emerged as the L1 (lowest) bidder in the tender issued by Bank of Maharashtra for the provision of e-surveillance solutions across 1,550+ sites, with a project value of approximately ₹115 Crore.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Scope includes supply, installation, commissioning of AI e-surveillance and operation of a **24/7 Central Monitoring Station**.",
+    "quote": "The scope of work under the tender includes the supply, installation, and commissioning of e-surveillance systems with advanced AI features, along with the operation of a 24/7 Central Monitoring Station.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Contract award is **subject to formal order** issuance by Bank of Maharashtra.",
+    "quote": "The award of the contract remains subject to the issuance of a formal order by Bank of Maharashtra.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The ₹115 Cr project value represents 16.1% of trailing-12-month revenue (₹714.2 Cr) and 63.8% of Q1FY27 quarterly revenue.",
+    "quote": "with a project value of approximately ₹115 Crore.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "Source does not provide the 16.1% or 63.8% figures",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Follows recent railway e-surveillance order wins including two ₹29.13 Cr Northern Railway LOAs in October 2026.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "d_2ab2389e",
+     "d_55d574d2"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "ORDER_WIN",
+     "vote": "ORDER_WIN",
+     "agree": true,
+     "conservative": "ORDER_WIN"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "OTHER",
+     "vote": "L1_BIDDER",
+     "agree": false,
+     "conservative": null
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824195",
+  "filed_at": "2026-10-22T09:34:12+05:30",
+  "event_type": "OTHER",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T10:03:14+05:30",
+  "latency_s": 14.0,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Swastika Infra Q2 revenue rose 42% to ₹148 Cr; order book reaches ₹1,420 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Execution rebounded strongly in Q2 after Q1 geopolitical supply disruption, pushing the order book to 2.8x FY26 sales with 79% multilateral funding.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Unexecuted order book more than doubled to **₹1,420 Cr** (2.8x FY26 revenue), up from **₹687 Cr** on March 31, 2026.",
+    "quote": "Unexecuted order book more than doubled to ₹1,420 Cr, from ₹687 Cr as on Mar 31,2026.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Year-to-date order inflows reached **~₹950 Cr**, driven by geographic expansion into **Maharashtra** across 9 operating states.",
+    "quote": "Order inflows of ~₹950 Cr during the year, indicating strong business momentum.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Q2 execution recovered from Q1 supply bottlenecks, lifting revenue 42% YoY to **₹148 Cr** and PAT 80% to **₹16 Cr**.",
+    "quote": "Swastika Infra Delivers Powerful Q2 FY27 Performance: Revenue Surges 42%, PAT Jumps 80%; Order Book More Than Doubles To ₹1,420 Crore",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Management expects full-year EBITDA margins to remain in line with last year as execution accelerates in H2 to offset the Q1 slowdown.",
+    "quote": "On full-year basis, the Company expects EBITDA margins to remain in line with the previous year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Finance costs are guided lower in H2FY27 following the recent fund raise, supporting sustainable PAT margin expansion over FY26's 8.2%.",
+    "quote": "Finance cost is expected to be lower in H2FY27, supported by the proceeds of the recent fund raise",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "OTHER",
+     "vote": "RESULTS",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "CONTRACT",
+     "vote": "OTHER",
+     "agree": false,
+     "conservative": null
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824164",
+  "filed_at": "2026-10-22T09:01:22+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T10:03:40+05:30",
+  "latency_s": 24.3,
+  "mode": "shadow",
+  "counts": {
+   "OK": 13
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Kross targets 100% extruded axles in H2; seamless tube trials planned by Q4",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Management expects Q3 and Q4 to outpace Q1-Q2 with backward integration in seamless tubes starting trials in Q4, but raw material inflation remains a quarterly headwind.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Extruded axle beam commercial output started, now at **80% of current trailer axle output**, with full conversion planned by Q3 or Q4.",
+    "quote": "Commercial production of our extruded axle beam has commenced and the capacity utilization of this is approximately 80% of our current output.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Seamless tube facility sizing and straightening mills are installed; production trials are slated for **February or March 2027**.",
+    "quote": "The sizing mill and straightening mills have been received and installed, and we plan to undertake production trials in February or March of 2027.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Overall seamless project capex is **₹170 Cr**, with **₹120 Cr** already spent and the remaining ₹50 Cr expected in H2.",
+    "quote": "So if you have to see how much we have spent, our own contribution is about INR60 crores, okay, INR60 crores plus INR50 crores -- INR70 crores, we have taken as our -- from the term loan, INR70 crores plus INR50 crores, INR120 crores out of the INR170 crores.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Management expects H2 volumes to rise 20% over H1, with Q3 and Q4 volumes guided stronger than Q2 across CV and trailer segments.",
+    "quote": "Overall volumes and historically also H2 is always 20% up on H1.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Backward integration into seamless tubes is guided to yield 8% to 10% lower costs than market procurement, aiding trailer axle margins by 3-4%.",
+    "quote": "And then on -- basically on our axle front, we should be having -- on the overall business, we should be having a margin of approximately 3% to 4% once we use our own seamless tubes for it.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "Borrowings will peak near ₹165-170 Cr as the remaining ₹50 Cr term loan is drawn for seamless tubes, with no further debt planned.",
+    "quote": "The term loan we have available is of approximately INR110 crores, INR120 crores only. So that's the only debt that we would be looking at for this financial year if all the equipment that we have to receive is within the stipulated time.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.1",
+    "field": "call_takeaways",
+    "text": "Historically and on current OEM indications, H2 volumes are expected to be 20% higher than H1.",
+    "quote": "Overall volumes and historically also H2 is always 20% up on H1.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "Extruded axle beam commercial output commenced, currently accounting for 80% of trailer axle output.",
+    "quote": "Commercial production of our extruded axle beam has commenced and the capacity utilization of this is approximately 80% of our current output.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "Company is investing ₹20-25 Cr in forward integration into cold drawn tubes for captive and merchant precision applications.",
+    "quote": "and we will be spending close to, I think, it's about INR24 crores, INR25, INR20-odd crores in this area, in this cold drawn tube and the metal treatment involved with it.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.7",
+    "field": "call_takeaways",
+    "text": "Receivable days dropped from over 110 days in H1 last year to around 90 days in H1FY27.",
+    "quote": "But if you look into our receivable days, which was in H1 of last year, they were in excess of 110 days. And if you look into -- for the quarter, it's almost come down back to around 81 days. And overall for H1 period, it's at around 90 days.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.9",
+    "field": "call_takeaways",
+    "text": "Steel and consumable cost increases are recurring quarterly, with price settlements lagging but compensated retrospectively.",
+    "quote": "Steel has been increasing, you could say, every quarter. There has been only a part of the compensation on steel as a commodity, which we have received in quarter 1.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106819338",
+  "filed_at": "2026-10-15T22:16:23+05:30",
+  "event_type": "OTHER",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T10:04:03+05:30",
+  "latency_s": 17.7,
+  "mode": "shadow",
+  "counts": {
+   "OK": 8
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "ArMee Infotech drops ₹740.97 Cr Bondada solar EPC LOA as fixed prices turned unviable",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "ArMee Infotech exited a ₹740.97 Cr (incl. GST) solar EPC order it had accepted in June 2026; cutting its disclosed order book by that amount",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "ArMee Infotech told the exchange it cannot proceed with the **₹740.97 Cr** (inclusive of GST) EPC project awarded by **Bondada Engineering Limited** for NTPC Renewable Energy.",
+    "quote": "In view of the continued cost escalation and the resulting commercial constraints, the Company has communicated its inability to proceed with the project under the existing terms.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The LOAs, dated **June 26, 2026**, covered Supply, Services and three years of paid O&M for Block-1 (300 MW AC) and Block-3 (300 MW AC) at Fatehgarh, Rajasthan.",
+    "quote": "Domestic orders for the Amended EPC Balance of System (BOS) Packages, comprising Supply, Services (inland transportation and transit insurance, installation, civil and allied works and safety compliance) and Operation & Maintenance (three years paid O&M including AMC of specified equipment), for Block-1 (300 MW AC) and Block-3 (300 MW AC) of the Grid Connected Solar PV Project of NTPC Renewable Energy Limited at Fatehgarh, Rajasthan.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "**The outstanding order book shall stand reduced by the order value**; other financial implications will be disclosed later.",
+    "quote": "Impact: The outstanding order book of the Company shall stand reduced by the aforesaid order value of Rs. 7,40,97,14,623/-",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The contract price was firm and fixed with no escalation payable, so the company says the project became commercially unviable once raw material costs rose.",
+    "quote": "As the contract price under the LOAs was firm and fixed with no price escalation payable, the project became commercially unviable under the originally agreed terms.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "The order was on a back-to-back basis under BEL's main contract with NTPC Renewable Energy, so the end client sits behind the awarding entity.",
+    "quote": "The End Client of the project is NTPC Renewable Energy Limited, which had awarded the main contract to BEL; the orders awarded to the Company were on a back-to-back basis with the said main contract.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "The filing gives no other financial implication and defers them to later disclosures, so any cost already incurred on the project is not quantified here.",
+    "quote": "Other financial implications, if any, shall be appropriately disclosed by the Company in its subsequent disclosures.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "OTHER",
+     "vote": "ORDER_WIN",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "HIGH",
+     "vote": "HIGH",
+     "agree": true,
+     "conservative": "HIGH"
+    },
+    "tone": {
+     "card": "NEGATIVE",
+     "vote": "NEGATIVE",
+     "agree": true,
+     "conservative": "NEGATIVE"
+    },
+    "deal_stage": {
+     "card": "CANCELLED",
+     "vote": "CANCELLED",
+     "agree": true,
+     "conservative": "CANCELLED"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106818939",
+  "filed_at": "2026-10-15T17:46:16+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "gemini/gemini-3.7-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T10:04:09+05:30",
+  "latency_s": 0.9,
+  "mode": "shadow",
+  "counts": {
+   "OK": 5
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Angel One Q2 PAT rises 58% YoY to ₹335 Cr; client funding book reaches ₹8,212 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Angel One posted 58% YoY PAT growth in Q2 FY27 driven by strong margin trading funding book expansion to ₹8,212 Cr, despite broking orders softening 10% QoQ to 366 million.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Period-ending client funding book expanded to **₹8,212 Cr** (₹82.1 Bn), with average funding book at **₹7,450 Cr** (+21.4% QoQ).",
+    "quote": "Period ending client funding book ₹ 82.1 Bn",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Total broking orders dropped 9.8% QoQ to **366 Mn**, with retail equity turnover market share dipping 51 bps QoQ to **19.7%**.",
+    "quote": "Number of Orders 366 Mn (-9.8% QoQ)",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Standalone EBDAT margin expanded to 48.9%, comfortably above the guided 40-45% band, aided by lower employee costs post headcount optimisation.",
+    "quote": "Strong performance, beyond the guided range of 40-45% despite headwinds",
+    "excerpt_found": true,
+    "memory_refs": [
+     "g_60a3edfd"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106819328",
+  "filed_at": "2026-10-15T21:45:34+05:30",
+  "event_type": "M_AND_A",
+  "writer": "gemini_2/gemini-3.5-flash-lite",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T10:04:15+05:30",
+  "latency_s": 0.7,
+  "mode": "shadow",
+  "counts": {
+   "OK": 3,
+   "INVENTED": 3
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Fairfax declared strategic buyer for 60.72% stake in IDBI Bank; plans to contribute Digit Insurance",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Fairfax's selection as strategic buyer for IDBI Bank sets up the proposed contribution of Digit Insurance to the combined banking platform, pending regulatory approvals.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Government of India declared a wholly-owned subsidiary of Fairfax Financial Holdings Limited as the **'Strategic Buyer'** for a **60.72% equity stake** in **IDBI Bank Limited**.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "No excerpt or quote supports the claim of Fairfax being declared strategic buyer",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Fairfax proposes to contribute **Go Digit General Insurance Limited** and Go Digit Life Insurance Limited to IDBI Bank to create a unified Indian financial services company.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "No excerpt or quote supports the contribution of Go Digit entities",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Purchase price for the IDBI Bank stake is **INR 81 per share** for approximately **₹528.78 billion** (approximately **US$5.6 billion**).",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "No excerpt or quote supports the purchase price details",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The proposed contribution of Digit Insurance to IDBI Bank requires approvals from the RBI, SEBI, and IRDAI, and no definitive agreements have been entered into yet.",
+    "quote": "Among other necessary approvals, the approval of the Reserve Bank of India will be required in connection with the proposed contribution of Digit (the “Digit Contribution”)...",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824197",
+  "filed_at": "2026-10-22T09:42:49+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "gemini_2/gemini-3.7-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T10:47:21+05:30",
+  "latency_s": 0.9,
+  "mode": "shadow",
+  "counts": {
+   "OK": 14
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "SRF Q2 revenue rose 35% YoY to ₹4,904 Cr; operational EBIT rose 26% to ₹816 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "SRF delivered strong 35% revenue and 31% PAT growth in Q2FY27, supported by refrigerant pricing and volume recovery across packaging films and technical textiles.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Consolidated Q2FY27 revenue grew 35% YoY to **₹4,904.2 Cr**, while operational EBIT increased 26% to **₹816.0 Cr**.",
+    "quote": "Consolidated Financials INR Crores Building Growth | WITH PURPOSE 4",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Profit after tax for the quarter reached **₹509.1 Cr**, up 31% YoY from **₹388.2 Cr** in Q2FY26.",
+    "quote": "Consolidated Financials INR Crores Growth With| ACCOUNTABILITY 5",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Performance Films & Foil revenue surged 51% YoY to **₹2,122.4 Cr**, while Chemicals Business grew 25% YoY to **₹2,079.5 Cr**.",
+    "quote": "Consolidated Financials INR Crores CB– Chemicals Business; PFB- Performance Films & Foil Business; TTB – Technical Textiles Business; Others Driving Innovation| ACROSS BUSINESSES WE ALWAYS FIND A BETTER WAY 6",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Fluorochemicals growth was driven by higher HFC volumes and improved realisations, offsetting softness in the US market.",
+    "quote": "Strong Q2 revenue growth led by higher HFC volumes and improved realization.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Performance Films & Foil EBIT rose 73% YoY to ₹206.2 Cr, aided by capacitor-grade film commercial ramp-up following Phase 1 commissioning in May 2026.",
+    "quote": "Capacitor-grade films is scaling up well, with key customer approvals secured and commercial sales progressing.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "PVDF project final commissioning is underway and on track for Q3 FY27 capitalization.",
+    "quote": "PVDF commissioning is on track for Q3 FY27 capitalization, key customer outreach has been completed with sample approvals expected in coming months.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.1",
+    "field": "call_takeaways",
+    "text": "Fluorochemicals growth was driven by higher HFC volumes and improved realizations, offsetting US weakness.",
+    "quote": "Strong Q2 revenue growth led by higher HFC volumes and improved realization.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "Capacitor-grade film is scaling up with key customer approvals secured and commercial sales progressing.",
+    "quote": "Capacitor-grade films is scaling up well, with key customer approvals secured and commercial sales progressing.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "t_10682a28"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.3",
+    "field": "call_takeaways",
+    "text": "Commercial sales of aluminium foil for capacitors are expected to commence from Q3 FY27.",
+    "quote": "Approvals secured from key customers. Commercial sales expected from Q3 FY’27.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "Next-gen HFO refrigerants project received environmental clearance and remains on track for Q4 FY28 capitalization.",
+    "quote": "Environmental clearance received and project is on track for capitalization in Q4 FY’28.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "w_67e30e6b"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.5",
+    "field": "call_takeaways",
+    "text": "EHF project site work is underway, targeting capitalization in Q3 FY28 for semiconductor wafer cleaning.",
+    "quote": "Site work underway; Q3 FY’28 capitalization.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.6",
+    "field": "call_takeaways",
+    "text": "Aseptic packaging foil qualification with global leaders like Tetra Pak established new value-added revenue streams.",
+    "quote": "Aseptic packaging qualification with global leaders like Tetra Pak establishes revenue streams from a new value-added application.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "RESULTS",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824363",
+  "filed_at": "2026-10-22T10:39:29+05:30",
+  "event_type": "CAPEX",
+  "writer": "gemini/gemini-3.7-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-22T11:29:56+05:30",
+  "latency_s": 0.4,
+  "mode": "shadow",
+  "counts": {
+   "OK": 5
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Allied Blenders commences commercial ops at 4.4 mn BL/yr Telangana greenfield malt distillery",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "ABD commenced commercial operations at its ~4.4 mn BL per annum greenfield malt distillery at Rangapur, Telangana, executing on its backward integration and premiumisation strategy.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Commenced commercial operations at its greenfield malt distillery in **Rangapur, Telangana** with an approved capacity of **~4.4 million BL per annum**.",
+    "quote": "Allied Blenders and Distillers Limited (ABD), one of India’s leading spirits companies, today announced the commencement of commercial operations at its malt distillery at Rangapur, Telangana. The facility has an approved manufacturing capacity of ~ 4.4 million BL per annum.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The facility will manufacture **malt spirit in-house** for ABD's whisky portfolio, enable maturation, and craft its upcoming **homegrown single malt whisky**.",
+    "quote": "Crucially, it allows ABD to begin laying down malt spirit to craft its own homegrown single malt whisky in the coming years and support its growing Prestige & Above portfolio.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Rangapur now integrates grain distillation, PET bottle production, bottling operations, and **malt distillation** into a single hub.",
+    "quote": "With grain distillation, PET bottle production, bottling operations, and now with malt distillation, ABD has created an end-to-end, integrated manufacturing hub.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "CAPEX",
+     "vote": "CAPEX",
+     "agree": true,
+     "conservative": "CAPEX"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "COMPLETED",
+     "vote": "COMPLETED",
+     "agree": true,
+     "conservative": "COMPLETED"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824405",
+  "filed_at": "2026-10-22T10:55:39+05:30",
+  "event_type": "RIGHTS_ISSUE",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T11:30:00+05:30",
+  "latency_s": 3.2,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Ola Electric confirms 23,855,476 rights entitlements applied by specific investors",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Ola Electric confirmed that two specific investors applied for 23,855,476 rights entitlements renounced by promoter group members on the issue opening date.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Specific investors submitted applications for **23,855,476 rights entitlements** on the issue opening date of **22 October 2026** before 11:00 A.M.",
+    "quote": "Based on the confirmations received from the respective Specific Investors and/or their custodians, we wish to confirm that the following Specific Investors have submitted their applications in the Rights Issue of the Company on the Issue Opening Date, i.e., Thursday, October 22, 2026, before 11:00 A.M.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "**ANI Technologies** renounced **12,833,054 rights entitlements** to **Motilal Oswal Financial Services Limited**, which applied for the full quantity.",
+    "quote": "1. ANI Technologies Motilal Oswal Financial 12,833,054 12,833,054 Private Limited Services Limited",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "**Indus Trust** (through trustee Ankush Agarwal) renounced **11,022,422 rights entitlements** to **Calliope Capital Advisors LLP**, which applied for the full quantity.",
+    "quote": "2. Indus Trust (through its Calliope Capital Advisors 11,022,422 11,022,422 trustee Ankush LLP Agarwal)",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Procedural compliance update under Regulation 77B(2) confirming institutional participation in renounced rights entitlements on opening day.",
+    "quote": "we hereby submit the confirmation regarding applications received from the Specific Investors in compliance with Regulation 77B(2) of the SEBI ICDR Regulations.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Promoter group entities renounced their entitlements to external investors, shifting allocation from the promoter group to specific investors in the partly paid-up issue.",
+    "quote": "wherein the details of Specific Investors were disclosed in accordance with Regulation 84(1)(f)(i) of the SEBI ICDR Regulations, we hereby submit the confirmation regarding applications received from the Specific Investors in compliance with Regulation 77B(2) of the SEBI ICDR Regulations.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "RIGHTS_ISSUE",
+     "vote": "RIGHTS_ISSUE",
+     "agree": true,
+     "conservative": "RIGHTS_ISSUE"
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "MODERATE",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824508",
+  "filed_at": "2026-10-22T11:59:07+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini_2/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T13:03:43+05:30",
+  "latency_s": 10.1,
+  "mode": "shadow",
+  "counts": {
+   "OK": 13
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Ador Welding H1 revenue up 23% to ₹654 Cr; Q2 gross margin falls 440 bps",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Top-line momentum held at 23% growth and EBITDA margin stayed near 11%, but a 440 bps Q2 gross-margin fall from higher steel and raw material prices is the number to watch.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "H1FY27 revenue grew **23% YoY to ₹654 Cr**, with Q2 revenue at ₹345 Cr, also up 23%.",
+    "quote": "Ador has sustained its momentum in Q2 FY27, with revenue growing 23% YoY to Rs. 345 Cr. This takes H1 FY27 revenue to Rs. 654 Cr, also up 23% YoY.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The Board declared an **interim dividend of ₹7.50 per equity share** as the company marks 75 years.",
+    "quote": "As Ador celebrates 75 years of creating the best welding experience, the Board has declared an interim dividend of Rs. 7.50 per equity share to reward our shareholders for their continued trust.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Q2 gross margin fell to **34.2%, down 440 bps YoY**, which the company attributes to higher steel and other raw material prices.",
+    "quote": "Gross margins were 34.2% in Q2 FY27, reflecting higher steel and other raw material prices in an inflationary input environment.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "Q2 EBITDA rose 8.6% YoY to ₹38 Cr while PAT rose 7.7% to ₹27 Cr, so profit grew far slower than revenue.",
+    "quote": "EBITDA grew 9% YoY to Rs. 38 Cr in Q2 FY27, and H1 FY27 EBITDA margin held steady at around 11%.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "H1 net cash from operating activities was an outflow of ₹8.5 Cr against a ₹115.9 Cr inflow in FY26, as working capital absorbed ₹73.0 Cr.",
+    "quote": "Net Cash from Operating Activities -8.5 115.9 137.1",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Borrowings rose to ₹27.7 Cr at 30 Sep 2026 from ₹0.3 Cr at 31 Mar 2026, still small against ₹569.6 Cr of total equity.",
+    "quote": "(i) Borrowings 27.7 0.3 0.3",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "Q2 gross margin was 34.2%, down 440 bps YoY, on higher steel and raw material prices.",
+    "quote": "Gross margins were 34.2% in Q2 FY27, reflecting higher steel and other raw material prices in an inflationary input environment.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "Demand stayed healthy across infrastructure, power, oil & gas, railways, shipbuilding, defence and heavy fabrication.",
+    "quote": "Demand stayed healthy across our core user industries: infrastructure, power, oil & gas, railways, shipbuilding, defence and heavy fabrication.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.3",
+    "field": "call_takeaways",
+    "text": "The Middle East, served through the Dubai hub, remains the primary export market; the company is exploring European markets.",
+    "quote": "The Middle East, served through our Dubai hub, remains our primary export market, and we continue to monitor developments in the region closely.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.5",
+    "field": "call_takeaways",
+    "text": "Management continues to evaluate acquisition opportunities to accelerate growth in automation.",
+    "quote": "We continue to evaluate acquisition opportunities to accelerate growth in this segment.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.7",
+    "field": "call_takeaways",
+    "text": "The Board declared an interim dividend of ₹7.50 per equity share.",
+    "quote": "the Board has declared an interim dividend of Rs. 7.50 per equity share",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini_2/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824500",
+  "filed_at": "2026-10-22T11:56:41+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T13:03:59+05:30",
+  "latency_s": 6.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 13,
+   "OVERSTATED": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "LTM AI revenue reaches 13.4% of total; management sees H2FY27 stronger than H1",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "AI is now a measurable slice of revenue and BFSI has returned to growth, but FY27 growth is still tracking below FY26 and cash conversion halved on one-time outflows.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "AI revenue reached **13.4% of overall revenue**, growing 40% year-over-year; including enterprise AI, cumulative AI revenue grew 47%.",
+    "quote": "AI revenue for the quarter has reached 13.4% of our overall revenue, a growth of 40% year-over-year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Order inflow was **USD 1.3 billion**, which management said reflects short-tenured, AI-centric deals with faster revenue realisation.",
+    "quote": "Our order inflow stood at USD 1.3 billion.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Operating cash flow to PAT fell to **39% from 79% in Q1**, which the CFO attributed to advance payments and funding of a one-time gratuity provision.",
+    "quote": "The Operating cash flow to PAT ratio is at 39%, down from 79% in Q1. This is mainly due to certain advance payments and funding towards a one-time gratuity provision on account of labor laws impact.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Management said H2 will be better than H1 and that matching FY26 growth is the endeavor, after H1FY27 growth of 5.4%; memory's FY27 acceleration guidance was already marked delayed.",
+    "quote": "We delivered 5.4% year-over-year growth in H1 FY2027 and continue to expect stronger sequential growth.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "g_d82f65c0"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "EBIT margin expanded 10 bps sequentially to 15.6%, and the CFO said the company is still working towards maintaining the full-year margin at similar levels to last year, including M&A.",
+    "quote": "I think we had mentioned earlier that we are working towards maintaining our margin for this year at similar levels to previous year, and I think we are still working towards that.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "g_90d47c1f"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "Cash and investments of ₹15,300 Cr equal 59.1% of net worth, and the CFO said the payout ratio rose from around 40% to around 45% last year while M&A reinvestment continues.",
+    "quote": "Cash and investment balances stood at USD 1.6 billion or ₹15,300 Crores compared to ₹15,021 Crores in Q1 FY2027.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "Order inflow of USD 1.3 billion was mostly short-tenure AI-led deals; management will consider disclosing ACV after one more quarter.",
+    "quote": "Our order inflow stood at USD 1.3 billion.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "cp_ac91741b"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.3",
+    "field": "call_takeaways",
+    "text": "BFSI returned to year-on-year growth at 0.4% and grew 3.1% sequentially.",
+    "quote": "Financial services continued its strong momentum and delivered a robust 3.1% sequential growth. On a year-over-basis, it has returned to growth, reporting 0.4% expansion.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "Tech and services fell 4% sequentially on a seasonal renewal cycle plus the Saudi business impact.",
+    "quote": "Tech and services delivered a healthy year-over-year growth of 7%. Sequentially, revenue was lower by 4%, reflecting seasonal quarter-specific movements.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OVERSTATED",
+    "reason": "The excerpt mentions seasonal movements but does not explicitly link the 4% decline to the Saudi business impact.",
+    "corrected": "Tech and services fell 4% sequentially, reflecting seasonal quarter-specific movements."
+   },
+   {
+    "id": "call_takeaways.7",
+    "field": "call_takeaways",
+    "text": "Payout ratio rose from around 40% to around 45% last year; reinvestment in M&A and AI continues.",
+    "quote": "We do look at increasing the payout ratio and we have increased from around 40% to around 45% if you look at our payout ratio for last year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.8",
+    "field": "call_takeaways",
+    "text": "AI projects carry better gross margins than traditional services, with some investment ploughed back.",
+    "quote": "The second point is that, yes, the margin profile, the gross margin level is definitely better than traditional services.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.9",
+    "field": "call_takeaways",
+    "text": "Saudi business cost about 0.6-0.7% of quarterly growth; management sees demand elsewhere.",
+    "quote": "I think we had the gap of about 0.7% or 0.6% approximately, the growth opportunity that got missed out because of the impact that we had in the Saudi business",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini_2/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824408",
+  "filed_at": "2026-10-22T10:58:13+05:30",
+  "event_type": "CAPEX",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T13:04:10+05:30",
+  "latency_s": 6.3,
+  "mode": "shadow",
+  "counts": {
+   "OK": 8,
+   "INVENTED": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Jtekt India approves 0.8 million unit CVJ capacity addition in Gujarat by August 2028",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The company adds 0.8 million units of CVJ capacity on a base already running at about 90% utilisation, but the investment amount and its funding split are still to be approved by the Board.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Jtekt India evaluated and approved a capacity expansion for its **Constant Velocity Joint (CVJ) line** at Jalisana, Gujarat",
+    "quote": "we wish to inform you that the Company has evaluated and approved capacity expansion for Constant Velocity Joint (CVJ) line.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The addition is **0.8 million units (approx.)** on an existing capacity of **1.2 million units (approx.)**",
+    "quote": "Proposed Capacity Addition 0.8 Million (approx.)",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The capacity is to be added by **August 2028**, funded by a mix of internal accruals and borrowings",
+    "quote": "Mode of Financing Mix of internal accruals and borrowings.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "The **investment required is yet to be finalised and approved by the Board** while framing the installation capacity",
+    "quote": "Investment Required To be finalized and approved by the Board while framing the installation capacity.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Existing CVJ capacity is stated at about 90% utilisation, so the new line extends headroom rather than filling idle capacity.",
+    "quote": "Existing Capacity Utilization 90% (approx.)",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Management earlier guided CVJ sales to ₹250 Cr at 90% utilisation after the October 2026 Maruti EV MPV launch; this expansion targets the demand beyond that.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "g_9cad67d6"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "Memory holds CVJ capacity at 7.54 lakh units across two lines in May 2026; the filing's 1.2 million unit base is a different figure and the filing does not reconcile the two.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "w_89326070"
+    ],
+    "verdict": "INVENTED",
+    "reason": "The memory item w_89326070 is a watchlist item for KPI tracking, not a factual record of capacity figures.",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "CAPEX",
+     "vote": "CAPEX",
+     "agree": true,
+     "conservative": "CAPEX"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "BOARD_APPROVED",
+     "vote": "BOARD_APPROVED",
+     "agree": true,
+     "conservative": "BOARD_APPROVED"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106825290",
+  "filed_at": "2026-10-22T18:39:26+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T19:42:24+05:30",
+  "latency_s": 7.2,
+  "mode": "shadow",
+  "counts": {
+   "OK": 14
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "DLF sees revenue inflection in FY27-FY28 on ~₹75,000 Cr of launched projects; DCCDL exit rent ~₹6,800 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Management reiterated an accounting revenue inflection starting FY27-FY28 as large projects like The Arbour complete, alongside steady rental scale-up and strong collections.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Reported **Q2 collections** of **₹2,780 Cr** and operating cash flow of **₹1,858 Cr**, lifting the net cash position to **₹15,100 Cr** after a ₹1,980 Cr dividend payout.",
+    "quote": "Overall collections stood at INR 2,780 crores in the current quarter, resulting in operating cash flow of approximately INR 1,858 crores.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The **development business** holds a gross margin potential of approximately **₹40,000 Cr** and cash generation potential over **₹42,500 Cr**.",
+    "quote": "The gross margin potential of our development business continues to stand at approximately INR 40,000 crores, with a potential of cash generation of over INR 42,500 crores.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Incurred **~₹350 Cr** in land payments during Q2, consolidating a contiguous **36-acre land parcel** in Sector 61 after settling encumbrances and adding 7.48 acres.",
+    "quote": "So, eventually it will be a 36-acre land parcel, contiguous, in Sector 61 that we'll have.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Revenue remains subdued under completed-contract accounting until FY28 when The Arbour initiates recognition across a ~₹75,000 Cr launched project pipeline.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "g_1c5b0a07"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Net cash reached ₹15,100 Cr despite paying a ₹1,980 Cr dividend, backed by ₹2,780 Cr quarterly collections.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "DCCDL exit rental guided at close to ₹6,800 Cr, against memory's group-level FY27 exit rental guidance of ₹7,300–7,500 Cr.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "g_db618cbd"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "Management reaffirmed revenue inflection starting FY27-FY28 as ~₹75,000 Cr of launched projects begin receiving OCs under completed contract accounting.",
+    "quote": "This we have highlighted earlier, that our inflection point of revenue, which is almost INR 75,000 crores of launched and projects so far, the inflection point you will see in FY'27-'28, and going forward next two/four/five years, is when this entire revenue is going to get recognized.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "g_1c5b0a07"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.3",
+    "field": "call_takeaways",
+    "text": "Downtown Chennai Blocks 4 & 5 totaling 3.6 million sq ft are under construction and will become operational by calendar next year.",
+    "quote": "Block 4 and 5 is what is under construction, which is together 3.6 million square feet, which will become operational by calendar next year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "Downtown Gurgaon Blocks 5, 6, 7, 8 and Mall of India Gurugram target completion between FY28 and FY30.",
+    "quote": "And coming on to the Downtown Gurgaon, which is 5, 6, 7, 8 and the MOIG, the completion is targeted towards the end of FY28 and '29.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.5",
+    "field": "call_takeaways",
+    "text": "Upcoming launches include a Mumbai project in Q3 and an unnamed luxury-plus project in DLF Phase 4 in Q4.",
+    "quote": "So it is in DLF Phase 4 and we are scheduling a launch sometime in Q4.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.6",
+    "field": "call_takeaways",
+    "text": "Net cash reached ~₹15,100 Cr despite paying a dividend of close to ₹1,980 Cr during Q2.",
+    "quote": "Net cash position stood at approximately INR 15,100 crores, despite a very, very strong dividend payout in the current quarter of close to INR 1,980 crores.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.7",
+    "field": "call_takeaways",
+    "text": "Q3 construction outflows could face temporary challenges due to festive labor migration and typical 30-40 days of NCR GRAP anti-pollution curbs.",
+    "quote": "Typically, I mean in Gurgaon, we have seen almost 30 to 40 days of GRAP happens once those guidelines come into play, those specific thresholds are reached by them.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106825509",
+  "filed_at": "2026-10-22T21:49:37+05:30",
+  "event_type": "DEBT_RATINGS",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T23:02:39+05:30",
+  "latency_s": 2.4,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "CARE assigns A+; Stable to Juniper Green unit's ₹472 Cr long-term bank facilities",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "A first-time A+ rating on one subsidiary's ₹472 Cr loan, supported by parent support and early commissioning; small next to the group's ₹11,217 Cr debt.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "CARE assigned **CARE A+; Stable** to the **₹472.16 Cr** long-term bank facilities of **Juniper Green Spark Ten**, a step-down wholly owned subsidiary.",
+    "quote": "Juniper Green Spark Ten Long-term bank facilities 472.16 A+; Stable Assigned",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The SPV runs a **100 MW** solar-wind hybrid project in Maharashtra (75 MW AC solar, 25 MW wind) under a **25-year PPA with MSEDCL at ₹3.60/kWh**.",
+    "quote": "The long-term PPA with MSEDCL for 75-MW solar wind hybrid capacity at a fixed tariff of ₹3.60/kWh for 25 years from the scheduled COD (SCOD) leads to revenue visibility.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Full capacity was commissioned by **September 2026**, ahead of the November 2026 COD; management sees at least **₹50 Cr** lower project cost and **~₹30 Cr** extra power-sale revenue till September 2026.",
+    "quote": "Since the project was commissioned before the PPA timelines, the management has indicated a reduction in the overall project cost of at least ₹50 crore, which is expected to lower debt and equity requirement in the ratio of 80:20.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The rated ₹472 Cr is a single SPV's loan against group gross debt of ₹11,217 Cr (Jun-2026); the rating covers that project, not the parent's borrowings.",
+    "quote": "The total debt/earnings before interest, taxation, depreciation, and amortisation (TD/EBITDA) is expected to remain above 5.5x over the medium term.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "The rating rests on parent support: CARE cites JGEL's ₹1,800 Cr August 2026 IPO and ~2.5 GWp operating fleet, so a weaker parent credit profile is a stated negative factor.",
+    "quote": "Weakening of the credit profile of the parent or change in linkages/support philosophy of JGEL towards JGST.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "DEBT_RATINGS",
+     "vote": "DEBT_RATINGS",
+     "agree": true,
+     "conservative": "DEBT_RATINGS"
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "LOW",
+     "agree": true,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106825502",
+  "filed_at": "2026-10-22T21:40:45+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T23:02:44+05:30",
+  "latency_s": 1.7,
+  "mode": "shadow",
+  "counts": {
+   "OK": 12
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Fairchem Q2 revenue rose 49.7% to ₹166.9 Cr; EBITDA margin 10.51% vs 3.77%",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "H1FY27 margin of 10.32% is already above the 8% FY27 target management set in May, on revenue up 41.4%.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "H1FY27 EBITDA margin was **10.32%** against 3.87% a year earlier; the filing credits **better domestic realisation due to lower imports**.",
+    "quote": "EBITDA margin improved to 10.32% in H1 FY27 due to better realization in domestic market due to lower imports",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Finance cost rose **87.5%** to ₹3.0 Cr in H1FY27 and borrowings were **₹68.6 Cr** at Sep-2026, against ₹83.7 Cr at FY26-end.",
+    "quote": "Finance Cost 30 16 87.5%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Management cites the **US tariff at **, proposed EU/UK FTA and the **import duty cut on crude soya oil from 16.5% to 11.0%** as supports for raw-material availability and utilisation.",
+    "quote": "While the macros are uncertain due to middle east crisis, we are consciously optimistic due to lower tariff in US, FTA/Likely FTA with UK and EU, recent reduction in import duty on crude soya oil from 16.5% to 11.0% likely to improve the availability of raw material and in turn our capacity utilization during the year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The 8% FY27 EBITDA margin target set on the May call is already beaten at 10.32% for H1FY27, though the filing gives no full-year margin guidance.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "The bypass fat plant guided to start in June with revenue from Q3 is not mentioned in this presentation; the new-product slide lists bypass fat only as a plan.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "Receivables rose to ₹100.2 Cr at Sep-2026 from ₹68.1 Cr at FY26-end while revenue grew, and the cash conversion cycle stretched to 128 days from 99.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.1",
+    "field": "call_takeaways",
+    "text": "H1FY27 revenue rose 41.4% on higher price realisation from costlier raw material and imported finished product.",
+    "quote": "Revenue from operations for H1 FY27 improved by 41.4% Y-o-Y basis on account of higher price realization primarily due to higher raw material cost and higher import finished product cost.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "Management is 'consciously optimistic' on utilisation for the year, citing the US tariff, EU/UK FTA and the soya oil duty cut.",
+    "quote": "While the macros are uncertain due to middle east crisis, we are consciously optimistic due to lower tariff in US, FTA/Likely FTA with UK and EU, recent reduction in import duty on crude soya oil from 16.5% to 11.0% likely to improve the availability of raw material and in turn our capacity utilization during the year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "Exports are targeted to rise initially by 25% and eventually to 50% of sales, helped by the US tariff and proposed EU/UK FTA.",
+    "quote": "With current level playing tariff with US and proposed FTA with EU/UK, we aim to increase the export to initially by 25% and eventually at 50% of the sales.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.7",
+    "field": "call_takeaways",
+    "text": "Management flags uncertain macros from the Middle East crisis while staying optimistic on tariffs and FTAs.",
+    "quote": "While the macros are uncertain due to middle east crisis, we are consciously optimistic due to lower tariff in US, FTA/Likely FTA with UK and EU, recent reduction in import duty on crude soya oil from 16.5% to 11.0% likely to improve the availability of raw material and in turn our capacity utilization during the year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini_2/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106825498",
+  "filed_at": "2026-10-22T21:35:12+05:30",
+  "event_type": "M_AND_A",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-22T23:38:35+05:30",
+  "latency_s": 7.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "NRB Bearings to sell of Amplus Ampere for ₹1.46 Cr; keeping 5.93%",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "A ₹1.46 Cr stake sale in a solar investee is immaterial to NRB's ₹962.63 Cr net worth; it trims the holding to 5.93% and leaves the core bearing business untouched.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Board approved selling **7,20,000 AAPL shares (1.27%)** to **Apcotex Industries** for **₹72 lakh**; the AIL SPSA is executed.",
+    "quote": "Under the AIL SPSA, the Company has agreed to sell 7,20,000 (Seven Lakh Twenty Thousand) equity shares held in the Amplus Ampere Private Limited (“AAPL”), representing 1.27% of the equity share capital of the AAPL, out of the total 48,00,000 (Forty-Eight Lakh) equity shares held in the AAPL to AIL, for an aggregate consideration of ₹72,00,000/- (Indian Rupees Seventy-Two Lakh only); and",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "A second SPSA with **Deepak Novochem Technologies** for **7,36,000 shares (1.30%)** at **₹73.60 lakh** is yet to be executed.",
+    "quote": "After the execution of the DNTL SPSA, the Company will sell 7,36,000 (Seven Lakh Thirty-Six Thousand) equity shares held in the Amplus Ampere Private Limited (“AAPL”), representing 1.30% of the equity share capital of the AAPL, out of the total 48,00,000 (Forty-Eight Lakh) equity shares held in the AAPL to DNTL, for an aggregate consideration of ₹73,60,000/- (Indian Rupees Seventy Three Lakhs Sixty Thousand only).",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "NRB holds **8.50%** of AAPL; after both sales it will hold **5.93%**. Neither buyer is a promoter-group entity or a related party.",
+    "quote": "Upon completion of the transaction with the AIL & DNTL, the Company will continue to hold 5.93% of the share capital of the AAPL.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The filing gives no book value or gain/loss on the AAPL stake, so the P&L effect of the sale cannot be sized from this disclosure.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini_2/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "M_AND_A",
+     "vote": "M_AND_A",
+     "agree": true,
+     "conservative": "M_AND_A"
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "LOW",
+     "agree": true,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    },
+    "deal_stage": {
+     "card": "CONTRACT",
+     "vote": "CONTRACT",
+     "agree": true,
+     "conservative": "CONTRACT"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106822983",
+  "filed_at": "2026-10-21T09:46:52+05:30",
+  "event_type": "LITIGATION_REGULATORY",
+  "writer": "deepseek/deepseek-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-23T01:03:39+05:30",
+  "latency_s": 31.3,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6,
+   "INVENTED": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "L&T wins **Large** orders for Common Central Secretariat and Amaravati towers",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "L&T's Public Spaces, Airports & Health business secured two large government infrastructure orders for New Delhi and Amaravati.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Secured an order from CPWD to construct **Common Central Secretariat buildings 4 and 5** along Kartavya Path in New Delhi, covering **32.8 lakh sq. ft.** built-up area.",
+    "quote": "Awarded by the Central Public Works Department, the first order pertains to the construction of Government of India’s Common Central Secretariat buildings 4 and 5 along Kartavya Path in New Delhi.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Won a second order from the Government of Andhra Pradesh to construct **two office towers** near the Amaravati Quantum Computing Centre, spanning **37.5 lakh sq. ft.**",
+    "quote": "The second order, awarded by the Government of Andhra Pradesh, pertains to the construction of two office towers on either side of the Amaravati Quantum Computing Centre at Amaravati.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The company classes the orders as 'Large': **₹2,500-5,000 Cr** in its own value bands",
+    "quote": "2,500 to 5,000",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Both orders fall within L&T's 'Large' classification band representing order values between **₹2,500 Cr and ₹5,000 Cr**, reinforcing order inflows.",
+    "quote": "Classification Significant Large Major Mega Ultra-Mega",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "The orders bolster the infrastructure order book, which stood at **₹740,327 Cr** at the end of FY26.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "The provided excerpt does not contain the figure ₹740,327 Cr or any mention of the order book size.",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "LITIGATION_REGULATORY",
+     "vote": "ORDER_WIN",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "CONTRACT",
+     "vote": "WORK_ORDER",
+     "agree": false,
+     "conservative": "WORK_ORDER"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106820232",
+  "filed_at": "2026-10-16T16:24:02+05:30",
+  "event_type": "RESULTS",
+  "writer": "gemini/gemini-3.8-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-23T07:42:50+05:30",
+  "latency_s": 0.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 8
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Punjab National Bank Q2FY27: net profit ₹5,898.37 Cr (+15.1% YoY); net NPA 0.25%, gross 2.55%",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Q2FY27: interest earned ₹35,267.24 Cr (+8.5% YoY), net profit ₹5,898.37 Cr (+15.1% YoY).",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Interest earned Q2FY27: ₹35,267.24 Cr (+8.5% YoY, +5.0% QoQ).",
+    "quote": "- interest_earned Q2FY27: 35267.2 Cr, YoY +8.5%, QoQ +5.0%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Operating profit before provisions Q2FY27: ₹7,563.63 Cr (+5.7% YoY, -1.3% QoQ).",
+    "quote": "- pre_provision_operating_profit Q2FY27: 7563.63 Cr, YoY +5.7%, QoQ -1.3%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Provisions Q2FY27: ₹75.37 Cr (-88.0% YoY, -86.4% QoQ).",
+    "quote": "- provisions Q2FY27: 75.37 Cr, YoY -88.0%, QoQ -86.4%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "Net profit Q2FY27: ₹5,898.37 Cr (+15.1% YoY, +1.4% QoQ).",
+    "quote": "- pat Q2FY27: 5898.37 Cr, YoY +15.1%, QoQ +1.4%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Provisions plummeted sharply to ₹75.37 Cr compared to ₹627.80 Cr in Q2FY26 and ₹554.70 Cr in Q1FY27, significantly aiding pre-tax profit growth.",
+    "quote": "Provisions (other than tax) and contingencies 9727 54119 64308 63846 96618 253993 7537 55470 62780 63007 97291 248328",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Asset quality continued its improving trajectory with net NPA standing at 0.25%, keeping credit quality well within comfortable levels for public sector banks.",
+    "quote": "% of Net NPAs 0.25 0.28 0.36 0.25 0.36 0.29",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "RESULTS",
+     "vote": "RESULTS",
+     "agree": true,
+     "conservative": "RESULTS"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106820239",
+  "filed_at": "2026-10-16T16:27:30+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "gemini_2/gemini-3.6-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-23T07:42:52+05:30",
+  "latency_s": 0.5,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "PNB targets FY27 credit growth of 12-13% and RoA above 1%; Q2 PAT up 12.8% YoY",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "PNB's Q2 FY27 presentation reiterates strong asset quality recovery with guided RoA above 1% and credit cost below 0.4%.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "**FY27 Growth Guidance:** Management guides for **12%-13%** credit growth and **9%-10%** deposit growth for FY27.",
+    "quote": "Credit Growth % (YoY) 12%-13% 14.7% 14.7%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "**Profitability & Margins:** Targeted FY27 **NIM** at **2.60%-2.70%** with **RoA** target **Above 1%** (achieved **1.05%** in Q2 FY27).",
+    "quote": "RoA % Above 1% 1.05% 1.04%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "**Asset Quality Targets:** **Gross NPA** guided below **2.50%** (2.55% in Q2) and **Net NPA** below **0.3%** (**0.25%** in Q2).",
+    "quote": "Gross NPA % < 2.50% 2.55% 2.55%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "GNPA ratio of **2.55%** in Q2 FY27 matches memory predictions and shows continuous improvement down 90 bps YoY.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "w_bc1461ae"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Targeted recovery of over **₹13,000 Cr** for FY27 provides substantial provisioning relief as credit cost remains low at **0.25%** in Q2.",
+    "quote": "Total Recovery (Amount) > Rs. 13,000 Crores Rs. 2805 Crores Rs. 5594 Crores",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106825737",
+  "filed_at": "2026-10-23T08:58:30+05:30",
+  "event_type": "ORDER_WIN",
+  "writer": "gemini/gemini-3.7-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-23T09:55:47+05:30",
+  "latency_s": 0.9,
+  "mode": "shadow",
+  "counts": {
+   "OK": 3,
+   "UNSUPPORTED_CAUSE": 2,
+   "WRONG_PERIOD": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Jyoti Structures wins ₹689.93 Cr 765kV DC turnkey line order from GETCO",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The ₹689.93 Cr turnkey transmission contract from GETCO is equivalent of TTM revenue and provides strong revenue visibility over its 42-month schedule.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "Takeaway claims TTM revenue equivalence not stated in excerpt",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Awarded by **Gujarat Energy Transmission Corporation Limited** on **October 22, 2026** for the **765kV DC Pachchham - Saykha Transmission line** in Gujarat.",
+    "quote": "Pursuant to Regulation 30 of the SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015, we wish to inform you that the Company has received a Letter of Award from Gujarat Energy Transmission Corporation Limited as per details given below.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "WRONG_PERIOD",
+    "reason": "Excerpt date is October 23, 2026, not October 22, 2026",
+    "corrected": "Awarded by Gujarat Energy Transmission Corporation Limited on October 23, 2026 for the 765kV DC Pachchham - Saykha Transmission line in Gujarat."
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Scope spans **design, supply, erection, testing and commissioning** on a total turnkey basis, valued at **₹689.93 Crores excluding GST**.",
+    "quote": "(d) Value Rs. 689.93 Crores excluding GST",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The contract completion period is **42 Months from the date of LOA**.",
+    "quote": "(e) Completion Period 42 Months from the date of LOA",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Substantially larger than the company's prior disclosed orders, including the ₹67.96 Cr Sri Lanka transmission JV win in May 2026.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "No source cites the ₹67.96 Cr Sri Lanka order",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "ORDER_WIN",
+     "vote": "ORDER_WIN",
+     "agree": true,
+     "conservative": "ORDER_WIN"
+    },
+    "impact_level": {
+     "card": "HIGH",
+     "vote": "MODERATE",
+     "agree": false,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "LOA",
+     "vote": "CONTRACT",
+     "agree": false,
+     "conservative": "LOA"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106825743",
+  "filed_at": "2026-10-23T09:03:45+05:30",
+  "event_type": "LITIGATION_REGULATORY",
+  "writer": "gemini/gemini-3.7-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-23T09:55:50+05:30",
+  "latency_s": 0.9,
+  "mode": "shadow",
+  "counts": {
+   "OK": 5,
+   "UNSUPPORTED_CAUSE": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Cipla's US InvaGen facility clears routine USFDA cGMP inspection with zero Form 483 observations",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Cipla's US manufacturing site InvaGen cleared a 4-day routine USFDA inspection without any observations, eliminating near-term compliance overhangs.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "The USFDA conducted a routine cGMP inspection at **InvaGen Pharmaceuticals Inc.** in Hauppauge, New York from **19th October to 22nd October 2026**.",
+    "quote": "Pursuant to Regulation 30 of the SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015, we hereby notify that an inspection was conducted by the United States Food and Drug Administration (USFDA) at the manufacturing facility of InvaGen Pharmaceuticals Inc. (InvaGen) (wholly owned subsidiary of the Company) located in Hauppauge, Long Island, New York, USA from 19th October, 2026 to 22nd October 2026 (ET).",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The audit concluded with **zero Form 483 observations**.",
+    "quote": "The inspection concluded with zero Form 483 observations.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Directly settles the open watchlist tracking resolution of Form 483 at the InvaGen New York facility.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "w_10b33fe1"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "A clean inspection supports Cipla's guided $1 billion exit run-rate target for the US business by FY27.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "g_3adfbb8b",
+     "g_a0717b37"
+    ],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "Excerpt and memory do not state that a clean inspection supports the $1B exit run‑rate target",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "LITIGATION_REGULATORY",
+     "vote": "OTHER",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106825773",
+  "filed_at": "2026-10-23T09:18:37+05:30",
+  "event_type": "LITIGATION_REGULATORY",
+  "writer": "gemini/gemini-3.7-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-23T09:55:52+05:30",
+  "latency_s": 0.8,
+  "mode": "shadow",
+  "counts": {
+   "WRONG_ENTITY_OR_SCOPE": 1,
+   "INVENTED": 4,
+   "OK": 2
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Income Tax Department conducts 6-day search/verification across Park Medi World and 14 subsidiaries",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "WRONG_ENTITY_OR_SCOPE",
+    "reason": "source lists only 3 subsidiaries, not 14",
+    "corrected": "Income Tax Department conducts 6‑day verification across Park Medi World and some of its subsidiaries"
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The Income Tax Department conducted verification across premises of Park Medi World, 14 subsidiaries, promoters and KMPs; company reports zero operational impact and no order passed.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "promoters and KMPs not mentioned in source",
+    "corrected": "The Income Tax Department conducted verification across premises of Park Medi World, its subsidiaries, and officials; company reports zero operational impact and no order passed."
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "The **Income Tax department** conducted verification from **October 12, 2026 to October 17, 2026** at premises related to the company, subsidiaries, and officials.",
+    "quote": "In continuation to our previous disclosure dated October 14, 2026, we wish to inform you that verification has been conducted by the Income Tax Department from October 12, 2026 to October 17, 2026, at some of the premises inter-alia related to the Company, some of its subsidiaries and officials.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The search covered **14 subsidiaries**, Chairman **Dr. Ajit Gupta**, MD **Dr. Ankit Gupta**, CFO **Rajesh Sharma**, and other employees.",
+    "quote": "Income Tax department conducted verification from October 12, 2026 to October 17, 2026, at some of the premises inter alia related to the Company, some of its subsidiaries and officials. No order has been passed as of now, also there has been no impact on our operations, commitments and expansion pl",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "source does not list 14 subsidiaries or specific officers",
+    "corrected": "The search covered some of the company’s subsidiaries and officials."
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The company stated that **no order has been passed** and there has been **no impact** on operations, commitments, or expansion plans.",
+    "quote": "There has been no impact on our operations, commitments and expansion plans.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Covers top promoter leadership and 14 subsidiaries across the operating hospital network; outcome and any potential tax demand remain undetermined.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "no evidence of promoters or KMPs coverage",
+    "corrected": "The search involved the company’s subsidiaries and officials; outcome and potential tax demand remain undetermined."
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Follows initial intimation dated October 14, confirming conclusion of the 6-day department action on October 17, 2026.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "no source confirming conclusion date",
+    "corrected": "The action concluded on October 17, 2026, following the initial intimation on October 14, 2026."
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "LITIGATION_REGULATORY",
+     "vote": "LITIGATION_REGULATORY",
+     "agree": true,
+     "conservative": "LITIGATION_REGULATORY"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ }
+]

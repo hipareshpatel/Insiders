@@ -976,3 +976,18 @@ def test_backfill_on_the_configured_routes_leaves_flash_to_live_filings(settings
     assert all(gateway._skip(t, 1000, 2000, bulk=True) for t in packed[:-1])
     gateway.local_now = lambda: datetime(2026, 10, 21, 21, 30)
     assert not any(gateway.reserved_for_live(t) for t in packed)
+
+
+def test_an_order_repeat_needs_a_card_in_the_feed_for_the_order(settings, monkeypatch):
+    """A press release repeating an order is a duplicate only when the order's own filing has a card in the feed:
+    published this run, or a card row that is not held (MCLOUD's ₹7.64 Cr LOA had no card of its own)."""
+    from bse_intel.pipeline import Outcome
+
+    pipeline, sink, _ = build(settings, [], {}, {})
+    monkeypatch.setattr(pipeline, "_attempt", lambda f, *a, **k: Outcome({"news_id": f.news_id, "status": "ANALYZED"}, card={"held": 0}))
+    pipeline._process_one(_filing("o-1", "Receipt of order", now_ist()), False, True)
+    assert pipeline._card_shown("o-1"), "published this run, before its card is committed"
+    assert not pipeline._card_shown("o-none"), "no card at all"
+    monkeypatch.setattr(pipeline, "_attempt", lambda f, *a, **k: Outcome({"news_id": f.news_id, "status": "ANALYZED"}, card={"held": 1}))
+    pipeline._process_one(_filing("o-2", "Receipt of order", now_ist()), False, True)
+    assert not pipeline._card_shown("o-2"), "a held card is not in the feed"

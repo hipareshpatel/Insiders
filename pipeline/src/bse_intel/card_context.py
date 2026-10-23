@@ -138,6 +138,15 @@ _PROPOSED = re.compile(r"\b(?:propos\w*|show[- ]cause|scn)\b[^.;]{0,80}?\b(?:dem
                        r"|\b(?:demand|penalt(?:y|ies))\b[^.;]{0,40}?\bpropos\w*", re.I)
 
 
+# a step the card says did not happen is not reached: "no order has been passed" (Park Medi World's tax search) and
+# "zero Form 483 observations" (Cipla's clean inspection) were marked Order and Form 483 (hourly review, 23 Oct 2026)
+# ("any potential tax demand remains undetermined" is not a demand; "no import alert or warning letter follows" is neither)
+_STEP_WORDS = r"(?:form\s*)?483(?:\s+observations?)?|observations?|orders?|demands?|penalt(?:y|ies)|warning\s+letters?|import\s+alerts?"
+_NEGATED = re.compile(r"\b(?:no|zero|nil|without|not\s+(?:any|an?|yet)|any|potential|possible|likely|future)\s+(?:\w+\s+){0,2}?"
+                      r"(?:%s)(?:\s*(?:,|or|nor|and)\s+(?:%s))*\b"
+                      r"|\b(?:orders?|demands?|penalt(?:y|ies))\s+(?:has|have)\s+not\s+been\s+(?:passed|issued|raised|imposed)\b" % ((_STEP_WORDS,) * 2), re.I)
+
+
 def case_stage(event_type: str, headline: str, facts: list[str], context: list[str] = ()) -> dict | None:
     """Where a case stands. `at` is the step this filing is about (the furthest one its headline names, else its first
     point's); `reached` is every step the card names as having happened, each on its own: a USFDA import alert can
@@ -150,7 +159,7 @@ def case_stage(event_type: str, headline: str, facts: list[str], context: list[s
     track, steps = ("USFDA", _USFDA) if re.search(r"\b(?:us\s*)?fda\b", lead) else ("CASE", _CASE)
 
     def named(text: str) -> list[int]:
-        text = _PROPOSED.sub(" notice ", text.lower())
+        text = _PROPOSED.sub(" notice ", _NEGATED.sub(" ", text.lower().replace("**", "")))
         return [i for i, (_, pattern) in enumerate(steps) if re.search(pattern, text)]
 
     current = named(headline) or named(lead)

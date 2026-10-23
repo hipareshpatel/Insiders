@@ -37,7 +37,7 @@ from .ai.gateway import CEILING, AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, latest_fundamentals, memory_ids, merge, own_former_name,
-                      new_dossier, put_standalone, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
+                      new_dossier, put_standalone, repeated_order, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import CACHE_VERSION, FIGURE_PAGE_AMOUNTS, Document, amounts, cache_needs_ocr
 from .ocr import available as local_ocr_available
 from .ocr import page_reader, recognise
@@ -1818,6 +1818,7 @@ class Pipeline:
         self._learned: dict | None = None   # Loop 1 state: post-mortem queue, lessons, dampened categories
         self._bodies: dict[str, list[tuple[str, str, duplicates.Body]]] = {}  # scrip -> (filed_at, news_id, body) this run
         self._held_this_run: set[str] = set()   # news_ids whose card this run held (D20: not the quarter's card)
+        self._shown_this_run: set[str] = set()  # news_ids whose card this run published (repeated_order)
         self._xbrl_links: dict[str, list[XbrlLink]] = {}  # scrip -> its results archive, read once a run
         self._holds = gate.load_holds(settings.config_dir / settings.card_holds_file)  # news_id -> reason
         self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
@@ -2233,6 +2234,9 @@ class Pipeline:
         if held:
             with self._lock:
                 self._held_this_run.add(filing.news_id)
+        elif status == "ANALYZED" and outcome.card:
+            with self._lock:
+                self._shown_this_run.add(filing.news_id)
         if status != "ANALYZED" or held:
             # a held card is no more the quarter's card in this run than in memory (_same_results_quarter)
             self._release_claims(filing.news_id, status)
@@ -2636,6 +2640,16 @@ class Pipeline:
         return [Outcome({"news_id": n, "status": "DUPLICATE", "event_type": "RESULTS",
                          "reason": f"duplicate of {filing.news_id} (same results quarter {quarter}, D20)",
                          "updated_at": now_iso()}) for n in later]
+
+    def _card_shown(self, news_id: str) -> bool:
+        """Whether a filing has a card in the feed: published this run, or a card row that is not held."""
+        with self._lock:
+            if news_id in self._shown_this_run:
+                return True
+            if news_id in self._held_this_run:
+                return False
+        rows = self.sink.query("card_held", [news_id]) or []
+        return bool(rows) and not rows[0].get("held")
 
     def _card_held(self, news_id: str) -> bool:
         # this run's own verdict first: its card may not be committed yet, and a re-run deleted the old one
@@ -3100,6 +3114,16 @@ class Pipeline:
                     self.stats.duplicates += 1
                 return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": out.event_type,
                                 "reason": f"duplicate of {repeat['news_id']} (same event, in other words)", "updated_at": now})
+        known = repeated_order(dossier.get("deals", []), out.card.deal_value, filing.filed_at, filing.news_id) \
+            if out.event_type == "ORDER_WIN" else None
+        if known and self._card_shown(str(known.get("repeats") or "")):
+            # the same order at the same stage, told again (a press release beside its intimation); when the first
+            # filing has no card in the feed (MCLOUD's ₹7.64 Cr LOA, census 23 Oct), this one is the order's card
+            with self._lock:
+                self.stats.duplicates += 1
+            return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": out.event_type,
+                            "reason": f"duplicate of {known.get('repeats')} (same order {known.get('id')}, "
+                                      f"same stage {known.get('stage')})"[:300], "updated_at": now})
         if "RESULTS" in (event_type, out.event_type):
             quarter = canonical_period(tagged.period) if tagged and tagged.period else statement_quarter(text, filing.filed_at)
             relabel_periods(out, quarter, statement_year(text))

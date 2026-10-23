@@ -36,6 +36,7 @@ KEEP_PERIODS = {"Q": 12, "H": 6, "9M": 4, "FY": 6, "M": 18, "other": 8}
 
 
 SAME_DEAL_DAYS = 45
+REPEAT_ORDER_DAYS = 10   # an order told again as a new card: its press release, a day or a week later
 _PARTY_FILLER = {"limited", "ltd", "private", "pvt", "india", "of", "the", "and", "co", "company", "corporation", "corp",
                  "inc", "llc", "plc", "division", "unit", "group", "govt", "government"}
 
@@ -85,6 +86,31 @@ def same_deal(deals: list[dict], kind: str | None, amount: float | None, counter
                 and abs(x["amount_cr"] - amount) <= max(0.01, 0.005 * amount):
             return x
     return None
+
+
+def repeated_order(deals: list[dict], deal, as_of: str, news_id: str) -> dict | None:
+    """The order on record that this card's deal only repeats: the same client and amount (same_deal) at the same stage,
+    from another filing. The press release beside an order's own intimation, filed minutes later, was published as a
+    second "wins" card although memory merged the two into one deal (MCLOUD's ₹3.16 Cr DFCCIL LOA, hourly review
+    23 Oct 2026). A later stage of that order (LOI -> contract) is news and is not a repeat, and so is a filing more
+    than REPEAT_ORDER_DAYS after the order's latest one (Venus Pipes' spooling start, linked to its LOI of 147 days
+    before, census of stored orders 23 Oct)."""
+    if deal is None or not deal.amount_cr or deal.kind != "ORDER":
+        return None
+    target = next((x for x in deals if deal.updates_deal_id and x.get("id") == deal.updates_deal_id), None) \
+        or same_deal(deals, deal.kind, deal.amount_cr, deal.counterparty, as_of, news_id)
+    if target is None or target.get("source_news_id") == news_id or not target.get("amount_cr") \
+            or abs(target["amount_cr"] - deal.amount_cr) > max(0.01, 0.005 * deal.amount_cr):
+        return None
+    latest = _deal_history(target)[-1] if _deal_history(target) else {}
+    gap = (_day(as_of) - _day(latest.get("as_of") or target.get("as_of"))).days \
+        if _day(as_of) and _day(latest.get("as_of") or target.get("as_of")) else None
+    if gap is None or not 0 <= gap <= REPEAT_ORDER_DAYS:
+        return None
+    stage = latest.get("stage") or target.get("stage")
+    # the filing this one repeats is the one that told the order's current stage
+    return {**target, "repeats": latest.get("source_news_id") or target.get("source_news_id")} \
+        if stage and stage == deal.stage else None
 
 
 def _day(text: str | None):

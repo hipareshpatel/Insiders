@@ -154,3 +154,18 @@ def test_a_demand_a_show_cause_notice_proposes_is_the_notice():
     scn = case_stage("LITIGATION_REGULATORY", "Show cause notice proposing GST demand of ₹5.09 Cr",
                      ["The notice proposes a demand of ₹5.09 Cr for FY21 to FY24"])
     assert scn["steps"][scn["at"]] == "Notice" and scn["reached"] == [0]
+
+
+def test_case_stage_does_not_mark_a_step_the_card_says_did_not_happen():
+    park = case_stage("LITIGATION_REGULATORY", "Income Tax Department conducts 6-day search across Park Medi World",
+                      ["The company stated that **no order has been passed** and there has been **no impact**."],
+                      ["Outcome and any potential tax demand remain undetermined."])
+    assert park["reached"] == [0]                                       # a search, no order
+    assert case_stage("LITIGATION_REGULATORY", "Cipla's InvaGen facility clears USFDA inspection with zero Form 483 "
+                      "observations", ["The audit concluded with **zero Form 483 observations**."]) is None
+    vai = case_stage("LITIGATION_REGULATORY", "USFDA classifies the Spokane facility as Voluntary Action Indicated (VAI)",
+                     [], ["VAI is mild, so no import alert or warning letter follows."])
+    assert vai["reached"] == [3]
+    appeal = case_stage("LITIGATION_REGULATORY", "ICICI Prudential Life gets ₹278.9 Cr tax demand reduction",
+                        ["Company has filed an **appeal** against the order"])
+    assert appeal["reached"] == [1, 2]                                  # bold markers do not hide a step

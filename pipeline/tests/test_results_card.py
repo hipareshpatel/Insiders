@@ -335,3 +335,20 @@ def test_an_owners_profit_above_the_whole_profit_with_no_minority_is_dropped():
               ("pat", "Q3FY26"): 95.51, ("pat_owners", "Q3FY26"): 95.51}
     assert owners_share(values) == 1
     assert ("pat_owners", "Q4FY26") not in values and values[("pat_owners", "Q3FY26")] == 95.51
+
+
+def test_no_change_against_memory_when_the_filing_restates_its_comparatives():
+    """Pitti Engineering Q2FY27 (daily audit, 23 Oct 2026): the amalgamation note says the comparatives "have been
+    restated", and the reconciliation prints the first-reported PAT 3,558.25 lakh beside the restated 4,009.42; the
+    card's "PAT -4.7% YoY" was against the old figure (restated: -15.5%)."""
+    from bse_intel.models import FinancialMetric
+    from bse_intel.results_card import unconfirmed_changes
+    from bse_intel.xbrl import XbrlResult
+
+    tagged = XbrlResult(kind="RESULTS", basis="STANDALONE", period="Q2FY27", metrics=[
+        FinancialMetric(metric="pat", period="Q2FY27", value=33.89, yoy_pct=-4.7, qoq_pct=62.6),
+        FinancialMetric(metric="eps", period="Q2FY27", value=9.18, unit="INR", yoy_pct=-4.1)])
+    text = ("the comparative financial information for the previous periods presented have been restated to reflect "
+            "the impact of the amalgamation. Profit after tax 2,084.15 866.04 2,950.19 3,558.25 451.17 4,009.42")
+    assert unconfirmed_changes(tagged, text) == ["pat YoY", "pat QoQ", "eps YoY"]
+    assert tagged.metrics[0].yoy_pct is None and tagged.metrics[0].qoq_pct is None

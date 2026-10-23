@@ -971,6 +971,14 @@ def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None", 
 
 
 _RESULTS_STATEMENT = re.compile(r"statement of (?:standalone |consolidated )?(?:un-?)?audited\b.{0,80}?financial results", re.I | re.S)
+# A board outcome whose covering letter submits the results, the statement itself far down the file: Atul's outcome put
+# the buyback's terms first and its statement at character 34,452, with the XBRL filed separately, so it was a
+# CORPORATE_ACTION card that left out a 37% fall in profit (hourly review 23 Oct 2026). Read on the letter's first page
+# only; a newspaper extract of the results or a notice of the meeting that will consider them is not the results.
+_RESULTS_COVER = re.compile(r"\b(?:submit\w*|enclos\w*|attach\w*|furnish\w*)\b[^.]{0,160}?\b(?:un-?)?audited\b[^.]{0,80}?"
+                            r"\bfinancial\s+results\b", re.I | re.S)
+_RESULTS_COVER_NOT = re.compile(r"newspaper|advertis\w*|publication|published|extract|to\s+consider|will\s+be\s+considered|"
+                                r"trading\s+window", re.I)
 _TAKEOVER = re.compile(r"open offer|substantial acquisition of shares|\bSAST\b|regulation 3\(1\)|regulation 4\b", re.I)
 _PROMOTER_DISCLOSURE = re.compile(r"regulation 29\b|reg\.? ?29\b|regulation 31\b|inter ?se transfer|\bgift(?:ed)?\b", re.I)
 # A demand is a tax or duty raised on the company, not "demand for" its products: L&T's order release (21 Oct 2026, "the
@@ -1001,7 +1009,18 @@ def carries_results(event_type: str, text: str, tagged=None) -> bool:
     """A filing typed OTHER, GOVERNANCE or CORPORATE_ACTION that carries the company's results statement (a board
     outcome with the results and a stock split): it is the results filing, before pass 2 as after it."""
     return event_type in ("OTHER", "GOVERNANCE", "CORPORATE_ACTION") and (
-        (tagged is not None and tagged.kind == "RESULTS") or bool(_RESULTS_STATEMENT.search(text[:20000])))
+        (tagged is not None and tagged.kind == "RESULTS") or bool(_RESULTS_STATEMENT.search(text[:20000]))
+        or results_cover(text))
+
+
+def results_cover(text: str) -> bool:
+    """The covering letter submits the company's results (`_RESULTS_COVER`), on its first page."""
+    head = (text or "")[:4000]
+    for m in _RESULTS_COVER.finditer(head):
+        # the words around the sentence decide, not a buyback's "publication fees" further down the letter
+        if not _RESULTS_COVER_NOT.search(head[max(0, m.start() - 150):m.end() + 40]):
+            return True
+    return False
 
 
 def event_type_rules(event_type: str, filing: Filing, text: str, tagged) -> str:

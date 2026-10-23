@@ -991,3 +991,19 @@ def test_an_order_repeat_needs_a_card_in_the_feed_for_the_order(settings, monkey
     monkeypatch.setattr(pipeline, "_attempt", lambda f, *a, **k: Outcome({"news_id": f.news_id, "status": "ANALYZED"}, card={"held": 1}))
     pipeline._process_one(_filing("o-2", "Receipt of order", now_ist()), False, True)
     assert not pipeline._card_shown("o-2"), "a held card is not in the feed"
+
+
+def test_a_board_outcome_whose_letter_submits_the_results_is_the_results_filing():
+    """Atul's outcome put its buyback first and its statement at character 34,452, the XBRL filed separately."""
+    from bse_intel.pipeline import carries_results
+
+    letter = ("Sub: Outcome of the Board meeting\n1. Financial results\nPursuant to Regulation 30 and 33(1) ..., we are "
+              "submitting the following as Annexure A for the second quarter | six months ended on September 30, 2026:\n"
+              "a) unaudited standalone and consolidated financial results.\n2. Buy-back of shares ... excluding transaction "
+              "costs viz. brokerage, public announcement publication fees, filing fees ...")
+    assert carries_results("CORPORATE_ACTION", letter + " x" * 20000)
+    assert not carries_results("ORDER_WIN", letter)                         # only the types the rule corrects
+    newspaper = "Please find enclosed copies of the newspaper advertisement of the unaudited financial results for Q2."
+    assert not carries_results("OTHER", newspaper)
+    notice = "We enclose the notice of the Board meeting to consider the unaudited financial results for the quarter."
+    assert not carries_results("OTHER", notice)

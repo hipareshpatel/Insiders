@@ -601,5 +601,97 @@
    "core_catalyst: \"Strong volume growth offset by elevated fuel prices and lower realisations\" - the filing blames only fuel prices; revenue +24% on volume +14% means realisation rose"
   ],
   "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826241",
+  "symbol": "TEMBO",
+  "run": "15:07",
+  "verdict": "MINOR",
+  "error_class": "memory",
+  "reason": "Filing facts (Bhoomi Poojan, TCEPL, MHA ammunition and small-arms licences) are right; Q1FY28 commercial-production target is supported by the 15 Oct 2026 press release (t_419bed24). Memory point dates the Amravati factory inauguration to Oct 23, but the inauguration filing (nse-106826133) says it took place on 22 Oct 2026 (filed 23 Oct). Small date slip that does not mislead.",
+  "event_type": "OTHER",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "This ceremony follows the inauguration of a factory unit at Amravati MIDC on Oct 23, signaling rapid execution of the defence strategy. -- the unit was inaugurated on 22 Oct 2026 (filed 23 Oct)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": []
+ },
+ {
+  "news_id": "nse-106826234",
+  "symbol": "5PAISA",
+  "run": "15:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "All figures match the Q2FY27 call transcript: net worth ₹1,136 Cr from ₹650 Cr (+74.8%), ₹62 million (₹6.2 Cr) capitalised, MF assets ₹2,095 Cr (memory Q1 ₹2,073 Cr), funding book ₹480 Cr, PAT ₹7.1 Cr lower than Q1, 95% DIY onboarding, and Trendlyne approved end-July and not yet closed. The results block matches the stored Q2FY27 XBRL. 'Nearly doubled' for +75% is loose wording, not an error.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": []
+ },
+ {
+  "news_id": "nse-106826222",
+  "symbol": "ATUL",
+  "run": "15:07",
+  "verdict": "WRONG",
+  "error_class": "event_type",
+  "reason": "The filing is the board-meeting outcome whose item 1 is the Q2FY27 standalone and consolidated results (Annexure A); the buyback and auditor change are items 2-3. The card is typed CORPORATE_ACTION with POSITIVE tone and says nothing about the quarter, in which consolidated PAT fell to ₹158.71 Cr from ₹253.93 Cr QoQ (-37%) and ₹182.37 Cr YoY (-13%). No other Q2FY27 results card exists in memory. The buyback facts (₹90 Cr, ≤₹7,500, 1,20,000 shares/0.41%, 1.72%/1.69% of capital+free reserves, promoters excluded) and the PwC appointment from the 2027 AGM are correct. The takeaway is also garbled ('represents under of market cap;') after a figure was stripped.",
+  "event_type": "CORPORATE_ACTION",
+  "event_type_ok": false,
+  "prompt_variant": "long",
+  "review_status": "CORRECTED",
+  "wrong_points": [
+   "event_type CORPORATE_ACTION / tone POSITIVE -- the filing carries the Q2FY27 results (consolidated PAT -37% QoQ, -13% YoY), which the card omits entirely",
+   "The open-market buyback of up to ₹90 Cr represents under of market cap; with promoters abstaining. -- garbled sentence"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": []
+ },
+ {
+  "news_id": "nse-106826208",
+  "symbol": "CSBBANK",
+  "run": "15:07",
+  "verdict": "WRONG",
+  "error_class": "wrong_column",
+  "reason": "Headline figures are right (PAT ₹183 Cr +14% YoY, NII ₹510 Cr +20%, gold ₹22,303 Cr +36% and 53% of advances, Net NPA 0.33% vs 0.52%, PCR 87.65%, deposits ₹46,889 Cr +18%, fee income 275 vs 343, 872 vs 838 branches, the Q3FY27 IT milestones). Two errors. (1) A call takeaway says cost of deposits rose to 7.40% from 6.42%: 7.40% is the Q2FY27 cost of borrowings and 6.42% is the Q4FY26 cost of funds. The deck's cost of deposits is 6.43% in Q2FY27 against 6.37% in Q2FY26, roughly flat, so the card invents a 98 bps rise. (2) It says CASA 'moderated to 18.96% from 20.55%' in a YoY sentence, but 20.55% is Q3FY26. Q2FY26 was 21.17%, so the YoY fall is 221 bps, not 159 bps. The call takeaway's 'below target of 19.41%' is also wrong: 19.41% is the Q1FY27 ratio, not a target.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "PRUNED",
+  "wrong_points": [
+   "Cost of deposits rose to 7.40% in Q2FY27 from 6.42% a year ago. -- 7.40% is cost of borrowings (Q2FY27), 6.42% is cost of funds (Q4FY26); cost of deposits was 6.43% vs 6.37% YoY",
+   "Total deposits grew 18% YoY to ₹46,889 Cr, though the CASA ratio moderated to 18.96% from 20.55%. -- 20.55% is Q3FY26; Q2FY26 CASA was 21.17%",
+   "CASA ratio moderated to 18.96% as term deposits grew faster at 22% YoY. (versus_prior 'below target of 19.41%') -- 19.41% is the Q1FY27 ratio, not a target"
+  ],
+  "pruned_points_true": [
+   "key number \"NIM\" (3.81%, flat YoY at 3.81%, up from 3.66% QoQ - value true)",
+   "key number \"GNPA\" (1.58% true; its earlier '-38 bps YoY' change, already removed, was false: YoY is -23 bps from 1.81%)",
+   "key number \"CASA Ratio\" (18.96% true; its earlier '-159 bps YoY' change, already removed, was false: YoY is -221 bps from 21.17%)"
+  ],
+  "pruned_points_false": [
+   "notable change \"Cost of Deposits\" (+98 bps, 6.42% -> 7.40%) -- false: cost of deposits 6.43% vs 6.37% YoY; 7.40% is cost of borrowings"
+  ]
+ },
+ {
+  "news_id": "nse-106826109",
+  "symbol": "KEC",
+  "run": "15:07",
+  "verdict": "MINOR",
+  "error_class": "wrong_period",
+  "reason": "Filing facts are right: ₹1,006 Cr orders, Oman 400 kV line, tower supply in the Americas, a repeat hospital order in Eastern India, YTD intake above ₹10,600 Cr. Scale (20% of Q1FY27 revenue ₹5,024 Cr; 4% of FY26 ₹23,506 Cr) and order flow (1,002+1,303+1,006 = ₹3,311 Cr) check out against memory. One memory point says the rise from the ₹6,303 Cr YTD reported on 10 Aug to ₹10,600 Cr shows 'strong momentum in Q3', but Q3 began on 1 Oct, only 23 days before the filing. Most of that intake came in Q2.",
+  "event_type": "ORDER_WIN",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "YTD intake of ₹10,600 Cr is a significant jump from the ₹6,303 Cr reported as of August 10, indicating strong momentum in Q3. -- the gap mostly spans Q2 (Jul-Sep); Q3 had only 23 days by the filing date"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": []
  }
 ]

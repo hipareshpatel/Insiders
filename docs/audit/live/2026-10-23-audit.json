@@ -386,5 +386,220 @@
   "review_status": null,
   "wrong_points": [],
   "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826187",
+  "symbol": "SHREDIGCEM",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "All figures match the 1-page press release (in Rs lacs): revenue 27,931 vs 16,135 (+73%), EBITDA (130) vs 2,048, EBITDA/t (26) vs 692, PBT (2,206) vs 1,365, PAT (1,627) vs 1,023, volumes 5.10 lakh t incl. 212,549 MT Hi-Bond; margin -0.47% correct; Q2FY27 period right. The Shree Cement peer point is not in the filing or memory but is borne out by Shree Cement's same-day Q2 press release (EBITDA Rs1,016 Cr, Rs966/t). Nits: basis CONSOLIDATED is not stated in the release; PAT prev_year 10.22 vs 10.23 rounding.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826173",
+  "symbol": "ONGC",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "error_class": "unsupported_cause",
+  "reason": "Facts match the MoPNG/ACC letter (Sunil Kumar, ED, chairman from on/after 07.12.2026, superannuation 31.12.2028, combined 3-year tenure). Memory does show 0 independent directors and NSE/BSE LODR fines, and Rs7.04 lakh Cr TTM revenue is correct from memory (Q2FY26-Q1FY27), but saying an executive chairman appointment 'addresses a governance gap' of missing independent directors is an unsupported link; the TTM figure is tagged basis FILING though it comes from memory.",
+  "event_type": "GOVERNANCE",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "The appointment addresses a governance gap; memory shows the board currently has 0 independent directors and has faced multiple SEBI compliance exceptions. -- appointing a whole-time chairman does nothing for the independent-director shortfall; causal link unsupported"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826171",
+  "symbol": "STLTECH",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Matches the CARE monitoring agency report for Q2FY27: Rs1,500 Cr QIP, 1,103.77 Cr debt repayment, 371.43 Cr GCP (incl. issue-expense savings), 22.12 Cr issue expenses, 1,497.32 Cr used, 2.68 Cr in escrow. Net debt Rs1,128 Cr FY26 and the 27%+ FY29 margin target are in memory; 66.1% of net worth (2,268) correct; interest saving labelled as an assumption. The MA's inability to verify use due to commingling is mentioned only as a risk, somewhat understated, but not misleading.",
+  "event_type": "FUNDRAISE",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826133",
+  "symbol": "TEMBO",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "error_class": "memory",
+  "reason": "Filing facts right (subsidiary Tembo Classic Engineering inaugurated Amravati MIDC defence unit on 22 Oct 2026; commercial production to be intimated). Pages 2-3 are image-only (photos/scan, no text). Memory supports Q1FY28 production target, small-arms (Dec 2025) and ammunition (Apr 2026) licences, Lachaussee tie-up. But the card marks the FY27 '5-10% of revenue from defence' guidance ON_TRACK and sets a Q4FY27 defence-revenue KPI while memory says commercial production is only targeted for Q1FY28 - an inaugration with no production is not evidence of FY27 defence revenue.",
+  "event_type": "CAPEX",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "promise_updates: g_917704ff ON_TRACK 'Inauguration of Amravati factory unit intended for defence manufacturing' -- contradicts memory's Q1FY28 production target; status unsupported"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826132",
+  "symbol": "PNBHOUSING",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Matches the allotment intimation: 25,365 secured NCDs of Rs1 lakh = Rs253.65 Cr via NSE EBP on 23 Oct 2026, 8.4552% p.a., 5 years to 23 Oct 2031, exclusive charge on book debts 1x, WDM listing. Annual interest Rs21.45 Cr correct; Q1 finance cost 1,338.63 Cr is in memory. Signal says '1% of net worth' where 1.28% (rounding).",
+  "event_type": "FUNDRAISE",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826120",
+  "symbol": "GKENERGY",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "error_class": "memory",
+  "reason": "Filing facts right (MSEDCL LoA, 14,000 5HP off-grid DC solar pumps, Magel Tyala, Rs330.29 Cr incl. GST, 60 days from NTP). 65.4% of Q1FY27 revenue (505.19) and 17.4% of TTM (1,895.7) are correct from memory, though tagged basis FILING. The ORDER_FLOW signal calls the May 2026 Rs710 Cr figure an 'order'; memory has it as the order book (which included a Rs350 Cr Magel Tyala order), so 'Rs1,040 Cr in total' across two orders overstates order flow slightly.",
+  "event_type": "ORDER_WIN",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "2nd order on record since 2026-05-19 (₹1,040 Cr in total); smaller than the ₹710 Cr order of 2026-05-19. -- ₹710 Cr was the March-2026 order book, not a single order"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826113",
+  "symbol": "WESTLIFE",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "error_class": "event_type",
+  "reason": "Figures all match the Q2FY27 press release (revenue Rs7.47 bn = 747 Cr +16%, SSSG 10.1%, op. EBITDA Rs981 mn +29%, 13.1% margin, cash PAT Rs526 mn, 11 adds to 492 restaurants, digital >75%); Q1 SSSG 4.3% and 5 Q1 openings (16 in H1) are in memory. But a quarterly results press release is typed OTHER/UPDATE instead of RESULTS, so it gets no results block. 'On track' for 60+ openings with 16 in H1 is a generous reading.",
+  "event_type": "OTHER",
+  "event_type_ok": false,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "event_type OTHER / category UPDATE -- this is the Q2FY27 results press release; should be RESULTS"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826107",
+  "symbol": "KSOLVES",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "All figures match the consolidated table in the press release (Q2FY27 revenue 37.80 vs 39.67/41.44, EBITDA 9.73, PBT 9.08, PAT 7.25, margins 25.7/30.3/30.4, H1 PAT 16.45 +10.9%). Dividend ₹1, total FY27 interim ₹5 per the headline. Memory claim of a second straight QoQ decline holds (consolidated revenue Q4FY26 43.03 > Q1FY27 41.44 > Q2FY27 37.80; PAT 9.69 > 9.21 > 7.25). Negative tone fits.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826103",
+  "symbol": "TATACOMM",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "₹300 Cr CP, issued 22 Oct 2026, redeemed 23 Nov 2026, discount 6.75% p.a. and NSE listing on 23 Oct all match. The scale against memory checks out: Q2FY27 consolidated revenue 6,687.89 (4.5%), net worth 3,401.18 (8.8%). FUNDRAISE, LOW and NEUTRAL fit a routine short-term CP.",
+  "event_type": "FUNDRAISE",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826097",
+  "symbol": "HTEL",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "Figures are right: ₹905.02 lakh total and ₹102.45 lakh a year, valid 1 Jan 2024 to 31 Oct 2032, for capex made in 2021-23 under the Maharashtra PSI 2019. But the headline says the company 'receives ₹9.05 Cr subsidy' when it received only an Eligibility Certificate (the body says so correctly). The track_next milestone 'First subsidy payment receipt, From 01/01/2024' is the start of the validity window, not an upcoming payment. CAPEX is a borderline type for a capital-investment incentive but acceptable.",
+  "event_type": "CAPEX",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "Headline: \"Hy-Tech Engineers receives ₹9.05 Cr subsidy for Shirwal plant\" - only an eligibility certificate was received; no money is stated as received",
+   "track_next milestone: \"First subsidy payment receipt\" when \"From 01/01/2024\" - that is the validity start date, not a payment date in the filing"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826093",
+  "symbol": "SOLEX",
+  "run": "14:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "TAPI RQ quarter-cell N-type TOPCon module, 670 Wp, 24.80%, IP68, REI 22-24 Oct, third straight year of launches, and Vision 2030 (10 GW cell, 10 GWh BESS, 2 GW wafer/ingot, ₹14,300 Cr) all match. The memory point (May 2026 Gujarat MoU of ₹4,000 Cr, deal d_a1b82454 dated 2026-05-01) is confirmed in memory and repeated in the filing. 'Unveiled' versus the release's 'set to unveil' is immaterial because the expo was running.",
+  "event_type": "PRODUCT_LAUNCH",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826083",
+  "symbol": "SWSOLAR",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "Transcript figures are accurate: order book 12,481 (+34%, 56/44 split), H1 revenue 3,118 (-11%), receivable days 176 from 138, NWC -301, net debt 601, O&M 18.9 GW from 13.5, 8 projects yet to start (PPA and financing delays), Minya NTP received, bid pipeline 34 GW (74% India), 35 GW cell versus 200 GW module capacity, ₹156 Cr indemnity, Adani 1.2 GW RFQ. The implied H2 arithmetic (7,548x1.1-3,118 = 5,185, about 66% above H1) holds. Memory g_97dcc353 (15% in April) supports the 'narrowed from 15%' point. The headline and call_read.guidance=MAINTAINED repeat management's word 'maintaining', yet an analyst on the call shows the prior guidance was 10-15% and 'up to 10%' is a cut. The card also marks the same guidance REVISED in promise_updates, so it contradicts itself, but the body tells the reader. In the results block, EBITDA YoY +1,331% (from 3.92) sits against management's own like-for-like operational EBITDA of ₹56 Cr versus ₹62 Cr a year ago (down), so that strip overstates the improvement.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "Headline: \"SWSOLAR maintains 10% FY27 revenue growth guidance\" - the guidance was cut from 10-15% to 'up to 10%' (analyst on the call; the card's own promise_updates says REVISED)",
+   "results.ebitda yoy_pct 1331.1 (prev_year 3.92) - transcript: operational EBITDA ₹56 Cr vs ₹62 Cr in Q2FY26"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826082",
+  "symbol": "GODREJPROP",
+  "run": "14:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "Bookings 8,008 / 16,659 (+7%, highest H1), collections 5,318 (+31%), OCF 1,584 (+297% QoQ), 4 BD projects worth ₹15,500 Cr (78% of the ₹20,000 Cr guidance in memory), EBITDA 171 vs 614 and PAT 154 vs 405 all match. The FY27 targets of ₹24,000 Cr collections and ₹9,000 Cr OCF are in memory (g_16c20c6d, g_a6fbfc8f). The exceptional-items signal (Q4FY25, Q1FY26, Q3FY26, Q1FY27) matches memory. Two problems: the results block labels Total Income (₹2,575 Cr, 'Total Income grew by 38%') as Revenue and computes the EBITDA margin on it; and the headline and POSITIVE tone leave out the 72% EBITDA and 62% PAT falls (shown only in notable changes), although the operating metrics are strong.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": null,
+  "wrong_points": [
+   "results.revenue 2575.0 labelled 'Revenue' - the filing's ₹2,575 Cr is Total Income, not revenue from operations"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106826079",
+  "symbol": "SHREECEM",
+  "run": "14:07",
+  "verdict": "WRONG",
+  "error_class": "event_type",
+  "reason": "This is the Q2FY27 results press release, but the card is typed OTHER / UPDATE instead of RESULTS. The figures are right: consolidated revenue 5,897 vs 4,761 (+24%), EBITDA 1,016 vs 974, EBITDA/t 966 vs 1,055, volumes 10.52 MT (+14%), premium share 28.7%, UAE 3.0 MTPA mill. The margin 20.4% to 17.2% computes from the table, and the memory points (Q1FY27 volumes +15%, EBITDA/t 1,111 Q1FY27 and 1,161 FY26, 2.5 MT UAE guidance) all hold. However, core_catalyst gives 'lower realisations' as a cause. The filing says no such thing, and its own figures imply higher realisation (revenue +24% on volume +14%). The card also never mentions that consolidated PAT fell to 263 from 310 YoY and from 531 QoQ.",
+  "event_type": "OTHER",
+  "event_type_ok": false,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "event_type \"OTHER\" / category_tag \"UPDATE\" - a quarterly results press release is RESULTS",
+   "core_catalyst: \"Strong volume growth offset by elevated fuel prices and lower realisations\" - the filing blames only fuel prices; revenue +24% on volume +14% means realisation rose"
+  ],
+  "pruned_points_true": []
  }
 ]

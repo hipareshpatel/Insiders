@@ -251,3 +251,20 @@ def test_a_catch_up_cut_short_stays_due_for_the_next_run_that_evening(settings, 
     monkeypatch.setattr(pipeline_mod, "now_ist", lambda: datetime(2026, 10, 19, 19, 0, tzinfo=IST))
     pipeline._annual_catchup(time.monotonic() + 60)
     assert pipeline._annual_catchup_due()
+
+
+def test_the_wrapper_processes_above_this_run_are_not_another_run(tmp_path):
+    """Nightly, 23 Oct 2026: `timeout 12m bash retry.sh python -m bse_intel annual-xbrl-catchup` was its own blocker.
+    A child started under two wrappers sees none of them as busy; an unrelated pipeline process still counts."""
+    import subprocess
+    import sys
+
+    code = ("import json, sys; sys.path.insert(0, 'src'); from pathlib import Path; "
+            "from bse_intel import annual_catchup as a; "
+            "print(json.dumps(sorted(a._ancestors())))")
+    wrapped = subprocess.run(["bash", "-c", f"bash -c \"{sys.executable} -c \\\"{code}\\\"\""],
+                             capture_output=True, text=True, cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))), timeout=60)
+    ancestors = __import__("json").loads(wrapped.stdout)
+    assert os.getpid() in ancestors   # this test's own process is above the two shells
+    assert len(ancestors) >= 4
+    assert annual_catchup.other_runs(tmp_path, lambda: [(4242, "python -m bse_intel run")], 0.0)

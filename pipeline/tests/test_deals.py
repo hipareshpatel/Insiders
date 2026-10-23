@@ -77,3 +77,54 @@ def test_market_deals_leave_the_m_and_a_deals_list_alone():
     assert merge(d, [parse_row(RAVITA_BULK, "BULK")]) == 1
     assert d["deals"] == [{"deal_id": "d1", "kind": "ORDER_WIN", "amount_cr": 120.0}]
     assert len(d["market_deals"]["events"]) == 1
+
+
+HISTORY_CSV = ('﻿"Date ","Symbol ","Security Name ","Client Name ","Buy / Sell ","Quantity Traded ",'
+               '"Trade Price / Wght. Avg. Price ","Remarks "\n'
+               '"21-OCT-2026","ABH","ABH Healthcare Limited","RIKHAV SECURITIES LIMITED","SELL","88,800","42.08","-"\n')
+
+
+def test_a_history_csv_line_becomes_the_same_deal_as_a_snapshot_row():
+    from bse_intel.deals import csv_rows
+
+    rows = csv_rows(HISTORY_CSV)
+    e = parse_row(rows[0], "BULK")
+    assert (e["symbol"], e["date"], e["client"], e["side"], e["qty"], e["price"], e["value_cr"]) == (
+        "ABH", "2026-10-21", "RIKHAV SECURITIES LIMITED", "SELL", 88800.0, 42.08, 0.37)
+    snap = {"buySell": "SELL", "clientName": "RIKHAV SECURITIES LIMITED", "date": "21-Oct-2026", "qty": "88800",
+            "symbol": "ABH", "watp": "42.08"}
+    d = {}
+    assert merge(d, [e]) == 1 and merge(d, [parse_row(snap, "BULK")]) == 0   # the backfill and the morning read agree
+
+
+def test_the_backfill_walks_the_history_a_week_at_a_time(monkeypatch):
+    from datetime import date
+    from types import SimpleNamespace
+
+    from bse_intel import deals
+
+    asked = []
+
+    class Nse:
+        def deals_history(self, kind, start, stop):
+            asked.append((kind, start, stop))
+            return HISTORY_CSV if kind == "bulk_deals" else '"Date ","Symbol "\n'
+
+    class Sink:
+        dossiers = {}
+
+        def get_dossier(self, scrip):
+            return self.dossiers.get(scrip)
+
+        def put_dossier(self, scrip, dossier):
+            self.dossiers[scrip] = dossier
+
+        def company(self, scrip):
+            return {}
+
+    nse_map = SimpleNamespace(built=True, symbols={"ABH": "1"}, included={"1"})
+    monkeypatch.setattr(deals.universe, "load_nse", lambda sink: nse_map)
+    report = deals.backfill(SimpleNamespace(nse=Nse(), sink=Sink()), float("inf"), days=13, today=date(2026, 10, 22))
+    assert report["windows"] == 2 and len(asked) == 4
+    assert asked[0][1:] == (date(2026, 10, 9), date(2026, 10, 15)) and asked[2][1:] == (date(2026, 10, 16), date(2026, 10, 22))
+    assert report["filed"] == 1 and report["in_universe"] == 2 and not report["errors"]

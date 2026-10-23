@@ -154,5 +154,99 @@
    "why it matters: 'fourth consecutive quarter of profitability' shown under the consolidated label, when consolidated Q2FY27 PAT was a loss of Rs 4.37 Cr (true only standalone)"
   ],
   "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825908",
+  "symbol": "CYIENTDLM",
+  "run": "11:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Every figure matches the Q2FY27 call transcript and memory: revenue 393.09 (+26.5% YoY), EBITDA 34.2 Cr / 8.7% (-135 bps), reported PAT 34.0 Cr incl. 18.2 Cr earn-out reversal, normalized 15.8 Cr (+25.8%), order book 2,813 Cr (28.1 bn), book-to-bill 1.6x, pipeline >$1 bn, FY27 margin '9% to 10%', H2 'above 30%', double-digit from FY28; TTM 1,439 Cr = sum of last four quarters in memory.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825836",
+  "symbol": "ASIANENE",
+  "run": "11:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Facts match the filing: OEPL executed the RSC on 22 Oct 2026 for GK/OSDSF/GKOSN/2025 (DSF IV), 50% PI and operator, LOA of 31 Aug 2026, NCLT sanction 29 Sep 2026, vesting subject to approvals and the scheme becoming effective.",
+  "event_type": "M_AND_A",
+  "event_type_ok": false,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "event_type M_AND_A does not fit: the filing is about an upstream block contract (RSC) being signed by the holding company. The merger is only background. ORDER_WIN/OTHER would fit better."
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825832",
+  "symbol": "MCLOUD",
+  "run": "11:07",
+  "verdict": "WRONG",
+  "error_class": "duplicate",
+  "reason": "This is the press-release copy of the same DFCCIL Jaipur LOA (₹3,16,00,452.60) already carded from the 09:37 intimation (nse-106825823). It is published as a second 'wins' card, and its ORDER_FLOW signal calls it a stage update 'from LOA to LOA', which makes no sense.",
+  "event_type": "ORDER_WIN",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "Headline 'wins ₹3.16 Cr ... LOA' repeats an order already carded 12 minutes earlier (same LOA, same value, same scope)",
+   "Signal: 'Stage update, not a new order: ... moves from LOA to LOA' (no stage change; it is the same event)"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825831",
+  "symbol": "OIL",
+  "run": "11:07",
+  "verdict": "MINOR",
+  "error_class": "memory",
+  "reason": "The discovery facts match the press release (Godavari-1 appraisal well, Matsyapuri formation, KG-DSF/GSKW/2018, about 1 lakh SCMD and a maximum of 2 lakh). But the why-it-matters point calls the earlier CBM RSC a 'Rajasthan CBM block' when memory shows it was the Singrauli special CBM block (SR-ONHP-(CBM)-2026/1). The point is also labelled basis FILING although the filing does not mention it.",
+  "event_type": "OTHER",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "why_it_matters: 'following the Rajasthan CBM block RSC signing': the RSC (18 Oct card) was for the Singrauli CBM block, not Rajasthan; labelled FILING but not in the filing",
+   "core_catalyst 'adding new hydrocarbon reserves' overstates a test-flow discovery (no reserves stated); negligible"
+  ],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825824",
+  "symbol": "KELLTONTEC",
+  "run": "11:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Matches the press release: Kellton takes end-to-end ownership of a centralised engineering function for a leading Middle East airline (web/mobile, SDLC). No value is given and the card invents none. The memory reference to a UAE enterprise-group win (26 May 2026, Q1FY27) is correct.",
+  "event_type": "ORDER_WIN",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": []
+ },
+ {
+  "news_id": "nse-106825823",
+  "symbol": "MCLOUD",
+  "run": "11:07",
+  "verdict": "MINOR",
+  "error_class": "memory",
+  "reason": "The order facts match the intimation (Provigil LOA from DFCCIL CGM Jaipur, ₹3,16,00,452.6 incl. duties/taxes, CCTV on WDFC, 90-day commissioning, 5-year OPEX O&M). The scale figures are right (2% of Q1FY27 ₹180.28 Cr, 0.5% of FY26 ₹697.88 Cr, 0.44% of TTM ₹714.2 Cr). But the ORDER_FLOW signal counts the 22 Oct ₹115 Cr L1-bidder status as an 'order' and includes it in the ₹255.27 Cr total. MODERATE impact is generous for a 0.44%-of-revenue order.",
+  "event_type": "ORDER_WIN",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": null,
+  "wrong_points": [
+   "Signal: 'smaller than the ₹115 Cr order of 2026-10-22': that filing was L1-bidder status, not an order, and it inflates the ₹255.27 Cr 18-order total"
+  ],
+  "pruned_points_true": []
  }
 ]

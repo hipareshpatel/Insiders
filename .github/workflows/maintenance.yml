@@ -27,7 +27,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, apply-verdicts, seed-memory, fill-memory, release-pruned]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -96,10 +96,10 @@ jobs:
       # it with suitable rate. let it get filled today"); the nightly run keeps it current after. Then the seed passes.
       # the AI pipeline pauses while these write memory (pause.py), as in the nightly run; it resumes before the seed
       - name: Pause the AI pipeline
-        if: inputs.command == 'fill-memory'
+        if: inputs.command == 'fill-memory' || inputs.command == 'fill-trades'
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel pause-ai --minutes 330'
       - name: Wait for a running pipeline to stop
-        if: inputs.command == 'fill-memory'
+        if: inputs.command == 'fill-memory' || inputs.command == 'fill-trades'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -124,8 +124,15 @@ jobs:
       - name: DGTR cases into memory
         if: inputs.command == 'fill-memory' && !cancelled()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel dgtr-sync --pages 5 --time-budget 1200'
+      # six months of insider trades (SEBI PIT Reg 7 filings, each with its XBRL) and of bulk and block deals (owner)
+      - name: Six months of insider trades into memory
+        if: inputs.command == 'fill-trades' && !cancelled()
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel insider-sync --days 180 --time-budget 9000'
+      - name: Six months of bulk and block deals into memory
+        if: inputs.command == 'fill-trades' && !cancelled()
+        run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel deals-backfill --days 180 --time-budget 2400'
       - name: Resume the AI pipeline
-        if: inputs.command == 'fill-memory' && always()
+        if: (inputs.command == 'fill-memory' || inputs.command == 'fill-trades') && always()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel resume-ai'
       # no pause for market hours (owner, 2026-10-21: fill it today; NSE's pacing is per request in nse_api)
       - name: Start the next seed-memory pass

@@ -132,7 +132,7 @@ This is how WRONG comes down. Each step was agreed with the owner, and none may 
 
 ## 3. The scheduled routine, and what changes when the account changes
 
-**Active:** "Daily card audit (200 days, in the lead session)", trigger `trig_016w88QsTBpwiUbY8a7PCmzC`.
+**Disabled by the owner on 24 Oct 2026, 20:13 IST (before the account switch); recreate it on the new account:** "Daily card audit (200 days, in the lead session)", trigger `trig_016w88QsTBpwiUbY8a7PCmzC`.
 - Cron `CRON_TZ=Asia/Kolkata 7 10,12,14,16 * * *`; runs until 2027-05-08.
 - It fires into this session (`session_01CKTcRXiDuaCJ9ffRDZzVvq`) on the **current account**.
 
@@ -140,8 +140,7 @@ This is how WRONG comes down. Each step was agreed with the owner, and none may 
 1. Get the repository attached. Read `mcp__claude-code-remote__read_documentation` topic `github.access`; the GitHub App
    must be installed for `hipareshpatel/Insiders`, with push access.
 2. Recreate the routine with `create_trigger`, bound to the new session, using the same cron and the prompt below.
-3. Ask the owner whether to disable the old routine on the old account. It would keep firing into a session nobody
-   reads; it does no harm, but it is noise.
+3. The old routine is already disabled (24 Oct, owner), so nothing fires on the old account.
 
 Disabled routines, kept for the record:
 - `trig_01HBPHhE3BYZeXc6TDZkmJkq`: hourly checks, 23 Oct.
@@ -360,7 +359,6 @@ Earlier: E1-E14 (22 Oct, #65-#74), F98-F103 (fixers and false holds, 22-23 Oct),
 - **G8:** after a week's watch, delete the BSE client and `laptop.ps1`.
 - **G9:** a Cloudflare rate-limit rule.
 - Sign-in and indexing when the site is shared.
-- Whether to disable the old account's routine (section 3).
 
 ### Still to confirm (assumptions)
 

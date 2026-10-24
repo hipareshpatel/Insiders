@@ -83,6 +83,24 @@ def test_a_later_run_finds_the_duplicate_through_the_text_cache(settings):
     assert status["c2"] == ("DUPLICATE", "duplicate of c1 (exact match)") and fake2.calls == []
 
 
+def test_an_original_read_after_its_repeat_is_the_duplicate(settings):
+    """Panache filed one results PDF at 20:13 and again at 20:19 (23 Oct 2026); the later one got its card first
+    (the original listed late or retried), then the original got a second card. Whichever is read second is the
+    duplicate."""
+    settings = replace(settings, workers=1)
+    now = now_ist() - timedelta(minutes=30)
+    repeat = [_filing("p2", "Outcome of Board Meeting", now + timedelta(minutes=6), "Result")]
+    pipeline, sink, _ = build(settings, repeat, {repeat[0].pdf_url: _pdf(LETTER)},
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
+    pipeline.run("live", time_budget_s=60)
+    both = [_filing("p1", "Unaudited Financial Results", now, "Result")] + repeat
+    pipeline2, _, fake2 = build(settings, both, {f.pdf_url: _pdf(LETTER) for f in both},
+                                {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
+    pipeline2.run("live", time_budget_s=60)
+    status = {r["news_id"]: (r["status"], r["reason"]) for r in rows(sink, "select news_id, status, reason from filings")}
+    assert status["p1"] == ("DUPLICATE", "duplicate of p2 (exact match)") and fake2.calls == []
+    assert [r["news_id"] for r in rows(sink, "select news_id from cards")] == ["p2"]
+
 MONTHLY = ("SML Mahindra Limited sales and production for the month of {month} 2025. Particulars: Cargo vehicles"
            " sales {cargo} units against {cargo_ly} units in the same month last year. Passenger vehicles sales"
            " {pax} units against {pax_ly} units. Total sales {total} units, production {prod} units. The figures are"

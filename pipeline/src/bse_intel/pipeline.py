@@ -2461,23 +2461,26 @@ class Pipeline:
             doc.close()
 
     def _duplicate_of(self, filing: Filing, doc: Document) -> tuple[str, str] | None:
-        """(news_id, "exact" | "near") of an earlier filing by the same company, within
-        duplicates.DAYS, that this one repeats (see duplicates.py); None when there is none.
-        Filings of this run are registered before they are analysed, so parallel workers cannot both
-        analyse one event. Corrections are never duplicates."""
+        """(news_id, "exact" | "near") of another filing by the same company, within duplicates.DAYS either side,
+        that this one repeats (see duplicates.py); None when there is none. A later filing counts once it is done:
+        NSE can list the original after its repeat, or a failed original is retried after the repeat got its card
+        (Panache's results, 23 Oct 2026, filed twice six minutes apart, two cards). Filings of this run are
+        registered before they are analysed, so parallel workers cannot both analyse one event. Corrections are
+        never duplicates."""
         if duplicates.is_correction(filing.headline, filing.subject):
             return None
         mine = duplicates.body(doc.select_text(duplicates.CHARS, figures=False))
         if not mine.matchable:
             return None
-        since = (datetime.fromisoformat(filing.filed_at) - timedelta(days=duplicates.DAYS)).isoformat()
-        earlier = lambda at, news_id: since <= at < filing.filed_at or (at == filing.filed_at and news_id < filing.news_id)
+        filed = datetime.fromisoformat(filing.filed_at)
+        since = (filed - timedelta(days=duplicates.DAYS)).isoformat()
+        until = (filed + timedelta(days=duplicates.DAYS)).isoformat()
         with self._lock:
             seen = list(self._bodies.get(filing.scrip_code, []))
             self._bodies.setdefault(filing.scrip_code, []).append((filing.filed_at, filing.news_id, mine))
-        candidates = [(n, b) for at, n, b in seen if earlier(at, n)]
+        candidates = [(n, b) for at, n, b in seen if since <= at < until and n != filing.news_id]
         known = {n for _, n, _ in seen}
-        for row in self.sink.query("filings_recent_company", [filing.scrip_code, since, filing.filed_at, 20]):
+        for row in self.sink.query("filings_recent_company", [filing.scrip_code, since, until, 40]):
             if row["news_id"] in known or row["news_id"] == filing.news_id:
                 continue
             cached = self._cached_text(row["news_id"])

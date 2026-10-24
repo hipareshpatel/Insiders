@@ -1,4 +1,5 @@
--- ?1 = scrip code, ?2 = from filed_at (inclusive), ?3 = to filed_at (exclusive), ?4 = limit.
+-- ?1 = scrip code, ?2 = from filed_at (inclusive), ?3 = to filed_at (exclusive), ?4 = limit. The window spans both sides of the
+-- filing being checked: a repeat analysed before its original (listed late, or retried) still counts.
 -- A company's recently finished filings, newest first, for the duplicate check (index idx_filings_scrip).
 SELECT news_id, filed_at
   FROM filings

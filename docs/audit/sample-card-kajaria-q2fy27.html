@@ -1,0 +1,234 @@
+<title>Kajaria Q2FY27 Card Proposal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: the site's own card, centred, with a source tag on every line and a margin column that says how each part is made */
+:root {
+  --bg: #f4f6fa; --surface: #ffffff; --surface-2: #f1f3f8; --line: #e4e8ef; --line-strong: #d3d9e3;
+  --ink: #0e1726; --ink-2: #475467; --ink-3: #8592a6;
+  --accent: #3b4fe4; --accent-soft: #eceefe; --insight: #f3f5ff; --insight-ink: #3b4fe4;
+  --pos: #0f9d63; --pos-soft: #e3f6ec; --neg: #e0473a; --neg-soft: #fdecea; --warn: #c27a0a; --warn-soft: #fdf3e1;
+  --teal: #0e8a79; --teal-soft: #e1f5f2; --violet: #6d3fd3; --violet-soft: #f1ebfe; --moderate: #f0a12b;
+  --shadow: 0 1px 2px rgba(14,23,38,.05), 0 2px 8px rgba(14,23,38,.04);
+  --sans: "Manrope", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0a0e15; --surface: #121823; --surface-2: #19212e; --line: #232d3b; --line-strong: #2e3a4b;
+  --ink: #eef2f8; --ink-2: #a9b4c4; --ink-3: #74819a;
+  --accent: #8c9bff; --accent-soft: #1c2347; --insight: #161d33; --insight-ink: #a6b2ff;
+  --pos: #3dd68c; --pos-soft: #10291d; --neg: #ff7468; --neg-soft: #33171a; --warn: #f6b84a; --warn-soft: #33260e;
+  --teal: #4fd1c5; --teal-soft: #0f2a28; --violet: #b9a2ff; --violet-soft: #241c3d; --moderate: #f6b84a;
+  --shadow: 0 1px 2px rgba(0,0,0,.3); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0a0e15; --surface: #121823; --surface-2: #19212e; --line: #232d3b; --line-strong: #2e3a4b;
+  --ink: #eef2f8; --ink-2: #a9b4c4; --ink-3: #74819a;
+  --accent: #8c9bff; --accent-soft: #1c2347; --insight: #161d33; --insight-ink: #a6b2ff;
+  --pos: #3dd68c; --pos-soft: #10291d; --neg: #ff7468; --neg-soft: #33171a; --warn: #f6b84a; --warn-soft: #33260e;
+  --teal: #4fd1c5; --teal-soft: #0f2a28; --violet: #b9a2ff; --violet-soft: #241c3d; --moderate: #f6b84a;
+  --shadow: 0 1px 2px rgba(0,0,0,.3); color-scheme: dark }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 14px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px; }
+.page { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; align-items: start; }
+@media (max-width: 900px) { .page { grid-template-columns: minmax(0, 1fr); } }
+.intro { grid-column: 1 / -1; display: grid; gap: 6px; max-width: 72ch; }
+.intro h1 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
+.intro p { margin: 0; color: var(--ink-2); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; min-width: 0; }
+.card-head { padding: 18px 20px 14px; display: grid; gap: 10px; border-bottom: 1px solid var(--line); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 12px; color: var(--ink-3); }
+.chip { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .02em; }
+.chip.fam { background: var(--accent-soft); color: var(--accent); }
+.chip.mod { background: var(--warn-soft); color: var(--warn); }
+.chip.pos { background: var(--pos-soft); color: var(--pos); }
+.sym { font-weight: 800; color: var(--ink); }
+.headline { font-size: 19px; font-weight: 800; line-height: 1.3; margin: 0; text-wrap: balance; }
+.takeaway { margin: 0; color: var(--ink-2); font-size: 14px; }
+
+.sec { padding: 16px 20px; border-bottom: 1px solid var(--line); display: grid; gap: 10px; }
+.sec:last-child { border-bottom: 0; }
+.sec h2 { margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.facts li { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.facts .new { position: relative; }
+.facts .new::after { content: "new"; position: absolute; left: -2px; top: -12px; font-size: 9px; font-weight: 800; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--pos); }
+.src { font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 2px 6px; border-radius: 5px; text-align: center; white-space: nowrap; }
+.src.stmt { background: var(--accent-soft); color: var(--accent); }
+.src.calc { background: var(--teal-soft); color: var(--teal); }
+.src.quote { background: var(--violet-soft); color: var(--violet); }
+.src.mem { background: var(--warn-soft); color: var(--warn); }
+.q { display: block; margin-top: 3px; font-size: 12px; color: var(--ink-3); font-style: italic; }
+.num { font-variant-numeric: tabular-nums; font-weight: 700; }
+
+.keys { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.key { border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; display: grid; gap: 2px; background: var(--surface); }
+.key .l { font-size: 11px; color: var(--ink-3); font-weight: 600; }
+.key .v { font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.key .c { font-size: 11px; font-weight: 700; color: var(--pos); font-variant-numeric: tabular-nums; }
+.key .c.flat { color: var(--ink-3); }
+
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 13px; min-width: 440px; }
+th, td { text-align: right; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+thead th { font-size: 11px; color: var(--ink-3); font-weight: 700; }
+td.up { color: var(--pos); font-weight: 700; }
+td.dn { color: var(--neg); font-weight: 700; }
+
+.reading { background: var(--insight); }
+.reading h2 { color: var(--insight-ink); }
+.reading ul { margin: 0; padding-left: 18px; display: grid; gap: 7px; color: var(--ink); }
+.reading .ref { font-size: 11px; color: var(--ink-3); }
+
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 560px) { .two { grid-template-columns: minmax(0, 1fr); } }
+.box { border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; display: grid; gap: 4px; }
+.box .t { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.box.go .t { color: var(--pos); }
+.box.stop .t { color: var(--neg); }
+.box p { margin: 0; }
+
+.watch { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.watch li { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.when { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+aside { display: grid; gap: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+@media (max-width: 900px) { aside { position: static; } }
+.note { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; }
+.note h3 { margin: 0; font-size: 13px; font-weight: 800; }
+.note ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; color: var(--ink-2); font-size: 13px; }
+.legend { display: grid; gap: 7px; font-size: 12.5px; color: var(--ink-2); }
+.legend div { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 8px; align-items: baseline; }
+</style>
+
+<div class="page">
+  <header class="intro">
+    <h1>Proposed results card: Kajaria Ceramics, Q2 FY27</h1>
+    <p>A sample built by hand from the live card, the company's investor release of 24 Oct 2026 and our memory of the company, laid out the way the new code would produce it. Every line carries its source. Lines marked <strong style="color:var(--pos)">new</strong> are missing from today's live card.</p>
+  </header>
+
+  <article class="card" aria-label="Sample card">
+    <div class="card-head">
+      <div class="meta">
+        <span class="sym">KAJARIACER</span>
+        <span class="chip fam">Results</span>
+        <span class="chip mod">Moderate impact</span>
+        <span class="chip pos">Positive</span>
+        <span>Consolidated</span>
+        <span>Filed 24 Oct 2026, 19:19 IST</span>
+      </div>
+      <p class="headline">Kajaria Ceramics Q2FY27: revenue ₹1,468.26 Cr (+23.8% YoY), net profit to shareholders ₹189.52 Cr (+42.5% YoY)</p>
+      <p class="takeaway">Profit rose faster than sales: EBITDA was ₹286.61 Cr against ₹213.45 Cr a year earlier, the largest move behind the profit change. The company puts the growth down to 10% higher volumes and price hikes.</p>
+    </div>
+
+    <section class="sec">
+      <h2>What happened · checked</h2>
+      <ul class="facts">
+        <li><span class="src stmt">Statement</span><span>Revenue from operations <span class="num">₹1,468.26 Cr</span> (+23.8% YoY).</span></li>
+        <li><span class="src stmt">Statement</span><span>EBITDA <span class="num">₹286.61 Cr</span> (+34.3% YoY, +10.1% QoQ); margin <span class="num">19.5%</span> against 18.0% a year earlier (up 152 bps).</span></li>
+        <li><span class="src stmt">Statement</span><span>Net profit to shareholders <span class="num">₹189.52 Cr</span> (+42.5% YoY); EPS ₹12.03 (+43.4%).</span></li>
+        <li class="new"><span class="src quote">Filing</span><span>Tile volumes rose 10%, and revenue was helped by price hikes.<span class="q">"we achieved 10% YoY volume growth, led by better demand and gain in market share … supported by healthy volumes and the market's positive response to price hikes"</span></span></li>
+        <li class="new"><span class="src calc">Computed</span><span>H1 cash from operations <span class="num">₹371.03 Cr</span>, <span class="num">103%</span> of net profit (₹361.75 Cr); capex ₹99.94 Cr; free cash flow <span class="num">₹271.09 Cr</span>.</span></li>
+        <li class="new"><span class="src quote">Filing</span><span>Net cash <span class="num">₹635 Cr</span> at September (₹793 Cr at March); working capital <span class="num">48 days</span> against 57 a year earlier.<span class="q">Key ratios, p. 8-9: "Net Debt (Rs.Crore) * … -793 -635"</span></span></li>
+        <li class="new"><span class="src calc">Computed</span><span>Effective tax rate 25.4% against 26.0%; other income was 6.2% of profit before tax against 8.5%, so the gain came from operations.</span></li>
+        <li class="new"><span class="src quote">Filing</span><span>Srikalahasti expansion raised to 12.50 MSM at <span class="num">₹340 Cr</span> (was 10 MSM at ₹210 Cr), due June 2027; Gailpur 11 MSM at ₹180 Cr (was ₹165 Cr), due April 2027; a new ₹34 Cr adhesive plant at Durgapur, due December 2027.<span class="q">"The increase in cost is primarily attributable to the higher production capacity, bigger shed for future expansion and new warehouse."</span></span></li>
+        <li class="new"><span class="src quote">Filing</span><span>Bought WestBridge's 15% stake (CCPS) in Kajaria Bathware for ₹50 Cr, completed in the quarter.</span></li>
+        <li class="new"><span class="src quote">Filing</span><span>Exports stayed weak.<span class="q">"export demand in H1FY27 remained subdued, with elevated freight rates and limited container availability continuing to pose challenges for manufacturers in Morbi"</span></span></li>
+      </ul>
+    </section>
+
+    <section class="sec">
+      <h2>Key numbers</h2>
+      <div class="keys">
+        <div class="key"><span class="l">Revenue</span><span class="v">₹1,468.26 Cr</span><span class="c">+23.8% YoY</span></div>
+        <div class="key"><span class="l">EBITDA margin</span><span class="v">19.5%</span><span class="c">+152 bps YoY</span></div>
+        <div class="key"><span class="l">Net profit to shareholders</span><span class="v">₹189.52 Cr</span><span class="c">+42.5% YoY</span></div>
+        <div class="key"><span class="l">H1 cash conversion</span><span class="v">103%</span><span class="c flat">of net profit</span></div>
+        <div class="key"><span class="l">Net cash</span><span class="v">₹635 Cr</span><span class="c flat">Sep 2026</span></div>
+        <div class="key"><span class="l">Tile capacity</span><span class="v">82.70 MSM</span><span class="c flat">+23.50 MSM by Jun 2027</span></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>Results · Q2FY27 against Q2FY26 (₹ Cr)</h2>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Line</th><th>Q2FY27</th><th>Q2FY26</th><th>Q1FY27</th><th>YoY</th></tr></thead>
+          <tbody>
+            <tr><td>Revenue</td><td>1,468.26</td><td>1,186.01</td><td>1,328.08</td><td class="up">+23.8%</td></tr>
+            <tr><td>EBITDA</td><td>286.61</td><td>213.45</td><td>260.38</td><td class="up">+34.3%</td></tr>
+            <tr><td>EBITDA margin</td><td>19.52%</td><td>18.00%</td><td>19.61%</td><td class="up">+152 bps</td></tr>
+            <tr><td>Raw material cost</td><td>288.18</td><td>253.88</td><td>252.81</td><td class="dn">+13.5%</td></tr>
+            <tr><td>Profit before tax</td><td>252.44</td><td>181.25</td><td>230.28</td><td class="up">+39.3%</td></tr>
+            <tr><td>Net profit</td><td>190.72</td><td>133.98</td><td>171.03</td><td class="up">+42.3%</td></tr>
+            <tr><td>EPS (₹)</td><td>12.03</td><td>8.39</td><td>10.64</td><td class="up">+43.4%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec reading">
+      <h2>Our reading · not checked against the filing</h2>
+      <ul>
+        <li>Ahead of its own guidance: the H1 EBITDA margin of 19.56% is above the 18-19% given for FY27, and H1 EBITDA of ₹546.99 Cr is 55% of the "₹1,000 Cr plus" target. <span class="ref">Memory: Aug 2026 call, g_f9f80c85, g_3937bdcc</span></li>
+        <li>Volumes rose 10%, as the "double-digit volume growth" promised on the August call had it. <span class="ref">Memory: g_4f9ebc83</span></li>
+        <li>Money returned to shareholders in the half: a ₹296.7 Cr buyback at ₹1,380 a share (record date 29 Jun 2026) and a ₹6 dividend (record date 21 Sep 2026). Net cash fell to ₹635 Cr from ₹793 Cr while borrowings rose to ₹305.6 Cr from ₹130.32 Cr. <span class="ref">Memory: buyback nse-106637565; corporate actions; XBRL balance sheets</span></li>
+        <li>Srikalahasti now costs ₹27.2 Cr per MSM against ₹21.0 Cr in the April plan, 30% more per unit of capacity. The filing gives the reason: a bigger shed and a new warehouse. <span class="ref">Computed from memory's deal history</span></li>
+        <li>The promoter group's holding fell to 46.74% from 47.69% in the quarter. The filing gives no reason. <span class="ref">Shareholding XBRL</span></li>
+      </ul>
+      <div class="two">
+        <div class="box go"><span class="t">Growth catalyst</span><p>Capacity grows 28% (23.50 MSM) by mid-2027 at Gailpur and Srikalahasti, two plants already running at 100%. <span class="ref" style="font-size:11px;color:var(--ink-3)">Memory: board notice of 24 Oct, nse-106827738</span></p></div>
+        <div class="box stop"><span class="t">Road blocker</span><p>Weak exports from Morbi, where freight and containers are the stated constraint, can push Morbi's output into the domestic market. <span class="ref" style="font-size:11px;color:var(--ink-3)">Filing, chairman's message</span></p></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>What to watch</h2>
+      <ul class="watch">
+        <li><span class="when">Apr 2027</span><span>Gailpur 11 MSM GVT line due</span></li>
+        <li><span class="when">Jun 2027</span><span>Srikalahasti 12.50 MSM GVT line due</span></li>
+        <li><span class="when">Dec 2027</span><span>Durgapur adhesive plant (9,000 MT a month) due</span></li>
+        <li><span class="when">Q3FY27</span><span>EBITDA margin within 18-19%; FY27 EBITDA on course for ₹1,000 Cr plus</span></li>
+        <li><span class="when">Signal</span><span>Exceptional charges in 3 of the last 8 quarters (₹1.55 Cr this quarter)</span></li>
+      </ul>
+    </section>
+  </article>
+
+  <aside>
+    <div class="note">
+      <h3>Where each line comes from</h3>
+      <div class="legend">
+        <div><span class="src stmt">Statement</span><span>The company's filed XBRL figures, written by code. The headline stays code's.</span></div>
+        <div><span class="src calc">Computed</span><span>Worked out by code from the filed figures (new: facts.py). The AI never calculates.</span></div>
+        <div><span class="src quote">Filing</span><span>The AI picks it; code checks its quote is in the filing word for word, or it goes behind the tap.</span></div>
+        <div><span class="src mem">Memory</span><span>Only in "Our reading", and only with the memory id it came from.</span></div>
+      </div>
+    </div>
+    <div class="note">
+      <h3>Today's live card has</h3>
+      <ul>
+        <li>4 code lines and 1 point. EBITDA's +34.3% YoY was removed, because the release prints its own year-ago EBITDA (₹212.90 Cr, not the XBRL's ₹213.45 Cr). Fixing that is a separate small change.</li>
+        <li>No driver, cash flow, net cash, capex revision, bathware deal or guidance check.</li>
+      </ul>
+    </div>
+    <div class="note">
+      <h3>Left out on purpose</h3>
+      <ul>
+        <li>Valuation (P/E): you asked for none.</li>
+        <li>Gas prices, the ₹12 dividend and ₹785 Cr of bank balances on the other site's card: not in this release. They would come from the board outcome, the statement or the call, and appear only once we have read one.</li>
+        <li>ROE and ROCE: the release prints both as charts and the text does not say which line is which.</li>
+      </ul>
+    </div>
+    <div class="note">
+      <h3>Code changes this needs</h3>
+      <ul>
+        <li>Built, off: computed lines and kept quoted facts (RESULTS_FACTS, RESULTS_RICH).</li>
+        <li>To build: a check of progress against guidance, the cost per unit of capacity from deal history, the balance sheet against the same quarter a year earlier, and keeping a code-made change where the filing prints its own comparative a little differently.</li>
+      </ul>
+    </div>
+  </aside>
+</div>

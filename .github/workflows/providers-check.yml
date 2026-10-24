@@ -97,6 +97,15 @@ jobs:
           print(json.dumps({k: data.get(k) for k in ("usage", "usage_daily", "limit", "limit_remaining", "is_free_tier",
                                                      "rate_limit", "is_provisioning_key")}, indent=2))
           EOF
+      - name: DeepSeek balance (prepaid amount only)
+        if: always()
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" - <<'EOF'
+          import json, os, urllib.request
+          req = urllib.request.Request("https://api.deepseek.com/user/balance",
+                                       headers={"Authorization": "Bearer " + os.environ["DEEPSEEK_API_KEY"].strip()})
+          print(json.dumps(json.load(urllib.request.urlopen(req, timeout=30)), indent=2))
+          EOF
       # Named models on stored filings before they go on a route (owner, 24 Oct 2026: Gemma 4): the local sink, so
       # nothing is published; ONLY_MODEL sends every route that has one of them to it alone
       - name: Model trial on stored filings

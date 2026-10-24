@@ -42,6 +42,7 @@ def settings(tmp_path) -> Settings:
                    universe_min_mcap_cr=0, one_card_per_results_quarter=False,  # fixtures reuse one quarter's results text
                    discovery_source="bse",  # the BSE fakes; NSE discovery has its own tests
                    critic=False,  # the shadow critic has its own tests (test_critic.py); scripts here are the writers'
+                   backfill_cards_from=None,  # memory-only backfill has its own tests (test_memory_only.py)
                    prompt_short_share=0.0)  # the short prompt has its own tests (test_prompt_short.py)
 
 

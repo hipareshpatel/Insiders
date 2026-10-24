@@ -393,7 +393,7 @@ Earlier: E1-E14 (22 Oct, #65-#74), F98-F103 (fixers and false holds, 22-23 Oct),
 | Plan and pending list | `docs/PLAN.md` |
 | Decisions and findings (D1-D40, F1-F111) | `docs/TRACKER.md` |
 | Design as built | `docs/SPEC.md`; spec by module `docs/BLUEPRINT.md` |
-| Setup, commands, test count (977) | `docs/SETUP.md` |
+| Setup, commands, test count (981) | `docs/SETUP.md` |
 | The routine when data is wrong | `docs/DATA_QUALITY.md` |
 | Owner approvals | `docs/APPROVALS.md` |
 | Operations log | `docs/OPS.md` |

@@ -35,3 +35,4 @@
 | 24 Oct 21:45 | Owner session | Branch claude/gracious-goodall-jn9buu confirmed by the owner (exports go there); public cards keep their check details; Workers Paid bought for one month: D1_PLAN switch (F115), renew or set D1_PLAN=free before ~21 Nov; audit rates pooled with 95% intervals (rates.py): 21-24 Oct WRONG 22% (17%-28%) |
 | 24 Oct 22:30 | Owner decisions | D41 shadow critic off; D42 go-live bar = WRONG on the checked face <= 5% pooled (interval top), "Our reading" behind a tap, pruned points kept behind the tap (F116) |
 | 24 Oct 22:30 | Routine | Daily card audit recreated on the new account (trig_01JtXb9RSm63zmvoar8VyXsx, 10:07/12:07/14:07/16:07 IST, prompt in HANDOVER §3); "Our reading" kept open (owner); #97 to merge when green |
+| 24 Oct 23:05 | Owner session | F117: backfill filings before 1 Aug 2026 go into memory only (no card, slimmer prompt; BACKFILL_CARDS_FROM); live and recent filings unchanged |

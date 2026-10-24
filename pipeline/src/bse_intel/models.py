@@ -892,3 +892,27 @@ class Pass2Output(_Lenient):
         if self.is_material and not self.timeline_entry.strip():
             self.timeline_entry = self.card.headline if self.card else ""
         return self
+
+
+class MemoryOutput(Pass2Output):
+    """The memory-only reading of an older backfill filing (owner, 24 Oct 2026; prompts.engine.MEMORY_SCHEMA): the
+    memory delta, the deal and what to track, and no card. The deal and what to track ride on a stand-in card that is
+    never written, so memory's merge, trust and deal checks read them where they read a card's."""
+
+    deal_value: DealValue | None = None
+    track_next: Annotated[TrackNext, BeforeValidator(lambda v: v if isinstance(v, dict) else {})] = Field(default_factory=TrackNext)
+
+    @field_validator("deal_value", mode="before")
+    @classmethod
+    def _optional_deal(cls, value: Any) -> Any:
+        return value if isinstance(value, dict) and any(v not in (None, "", []) for v in value.values()) else None
+
+    @model_validator(mode="after")
+    def _card_required(self) -> "MemoryOutput":
+        if self.is_material:
+            line = self.timeline_entry.strip() or self.reason or "memory update"
+            self.timeline_entry = line
+            self.card = Card.model_construct(impact_level="LOW", headline=line[:220],
+                                             what_happened=[Fact.model_construct(text=line, quote=None)],
+                                             deal_value=self.deal_value, track_next=self.track_next)
+        return self

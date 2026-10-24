@@ -916,4 +916,3 @@ class MemoryOutput(Pass2Output):
                                              what_happened=[Fact.model_construct(text=line, quote=None)],
                                              deal_value=self.deal_value, track_next=self.track_next)
         return self
-

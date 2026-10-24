@@ -106,8 +106,11 @@ def _base_printed(index: SourceIndex | None, base: float) -> bool:
 
 
 def build_pool(filed_text: str, tagged=None, annual_table: str = "", history: list[dict] | None = None,
-               scale: str = "", ownership: dict | None = None) -> Pool:
+               scale: str = "", ownership: dict | None = None, facts: list | None = None) -> Pool:
     pool = Pool()
+    for fact in facts or []:   # computed in code from the filing's statements, with their direction (facts.py)
+        if fact.kind in ("pct", "bps"):
+            getattr(pool, fact.kind).append((fact.value, fact.sign))
     pool.add_printed(filed_text)
     pool.add_bare(filed_text)
     printed = Pool()   # the filing's own text alone: where a like-for-like base margin must be printed

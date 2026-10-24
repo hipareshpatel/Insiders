@@ -69,6 +69,7 @@ from . import directions
 from . import results_card
 from . import event_xbrl
 from . import computed
+from . import facts as code_facts
 from . import trust
 from . import nse as nse_api
 from . import xbrl as xbrl_fast_path
@@ -3145,7 +3146,12 @@ class Pipeline:
             return self._memory_flow(filing, company, industry, event_type, dossier, read, view, text, filed_text, tagged,
                                      standalone_file, scale, events, now)
         variant = prompt_variant(filing.news_id, bulk, self.settings.prompt_short_share)
-        system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers, scale=scale,
+        # The cost shares, margins, tax rate and cash conversion a results card may state, computed here (facts.py)
+        found_facts = code_facts.results_facts(tagged, filed_text, (dossier_as_of(dossier, filing.filed_at, inclusive=False)
+                                                                    or {}).get("balance_sheet")) \
+            if tagged and event_type == "RESULTS" and self.settings.results_facts else []
+        prompt_scale = "\n\n".join(x for x in (scale, code_facts.block(found_facts)) if x)
+        system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers, scale=prompt_scale,
                                           examples=self._owner_examples(sector, event_type),
                                           lessons=[x["lesson"] for x in learned["lessons"].get(f"{sector}|{event_type}", [])][-3:],
                                           reaction=reaction, variant=variant)
@@ -3184,13 +3190,13 @@ class Pipeline:
         # The scale block too: the market cap, revenue, net worth and debt the prompt gave the model to measure
         # the event against. Not checked against it, a card that used them was held as stating figures the
         # filing does not print - 40 of the 77 cards held only for an unfound amount (funnel, 2026-10-18).
-        sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False), scale)
+        sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False), prompt_scale)
         history = dossier.get("financial_metrics", [])
         event_orders = event_xbrl.orders(events)
         # Code computes, the model describes (audit round 2): the changes, margins and ratios a card may state
         produced = computed.build_pool(filed_text, tagged, "\n".join(x for x in (annual_xbrl.table(annual) if annual else "",
                                                                                   events_table) if x), history, scale,
-                                       (view or {}).get("ownership"))
+                                       (view or {}).get("ownership"), found_facts)
         def ground(candidate: Pass2Output):
             """Correct a card where the filing can settle it, then check what is left.
 
@@ -3240,7 +3246,7 @@ class Pipeline:
                 # 68 results cards had no XBRL behind them. Reported for the second provider to fix, with
                 # the exact gap; never corrected here, since a sum cannot say which line is wrong.
                 found.scale += gate.statement_footing(candidate.dossier_delta.financial_metrics)
-            known = f"{sources[3]}\n{scale}"   # memory and the scale block: the figures a fact may compare with
+            known = f"{sources[3]}\n{prompt_scale}"   # memory and the scale block: the figures a fact may compare with
             quote_problems, missing, dropped, paraphrased = check_quotes(
                 candidate, text, filing.news_id, declared_unit(filed_text), blocks, known)
             found.quotes += quote_problems

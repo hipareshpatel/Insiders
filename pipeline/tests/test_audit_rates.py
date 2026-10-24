@@ -32,3 +32,9 @@ def test_days_are_pooled_and_short_and_long_kept_apart(tmp_path):
     assert pooled["variants"]["short"]["WRONG"] == 1 and sum(pooled["variants"]["long"].values()) == 3
     text = rates.report(days, window=2)
     assert "(pooled)" in text and "| all | 5 |" in text
+
+
+def test_the_go_live_rate_leaves_out_faults_only_in_our_reading(tmp_path):
+    rows = [{"verdict": "WRONG", "reading_only": True}, {"verdict": "WRONG", "reading_only": False},
+            {"verdict": "WRONG"}, {"verdict": "RIGHT"}]
+    assert rates.summary(rows)["face_wrong"] == 2   # an older row without the flag counts as on the face

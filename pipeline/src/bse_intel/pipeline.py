@@ -1443,16 +1443,19 @@ _QUOTE_POINT = re.compile(r'^(key number|notable change|why it matters) "(.*)" (
 _QUOTE_FACT = re.compile(r'^"(.*)" states .*, which its own quote does not$', re.S)
 
 
-def prune_quote_failures(out: Pass2Output, problems: list[str]) -> list[str] | None:
-    """Drop, in place, the points whose quote does not carry them (owner, 2026-10-21: "Needs review · 475": cards held
-    while nothing on them was found wrong). The 20 Oct hand review read 108 cards held only this way: 77 right, 20
-    minor, 11 wrong (10%), against 23% of the published cards reviewed on 21 Oct; the point goes, the rest of the card
-    is published. Returns what was dropped, or None when a problem names no point that can go (the last fact, or a
-    problem of another form): then the card stays held."""
+def prune_quote_failures(out: Pass2Output, problems: list[str], moved: list[str] | None = None) -> list[str] | None:
+    """Take off the face, in place, the points whose quote does not carry them (owner, 2026-10-21: "Needs review · 475":
+    cards held while nothing on them was found wrong). The 20 Oct hand review read 108 cards held only this way: 77
+    right, 20 minor, 11 wrong (10%), against 23% of the published cards reviewed on 21 Oct; the point goes, the rest of
+    the card is published. Returns what was dropped, or None when a problem names no point that can go (the last fact,
+    or a problem of another form): then the card stays held. Each point taken off is added to ``moved`` as text: the
+    card shows it behind the tap "Facts the checks could not quote", not deleted (owner, 24 Oct 2026: the daily audits
+    found 32 of 34 pruned points true)."""
     card = out.card
     if card is None:
         return None
     dropped: list[str] = []
+    taken: list[str] = []
     for problem in problems:
         if problem.startswith("dropped: "):
             continue   # already out of the card (check_quotes)
@@ -1461,24 +1464,37 @@ def prune_quote_failures(out: Pass2Output, problems: list[str]) -> list[str] | N
             kind, label = point.group(1), point.group(2)
             if kind == "key number":
                 kept = [k for k in card.key_numbers if (k.label or "") != label]
+                taken += [_point_text(k.label, k.value, k.change) for k in card.key_numbers if k not in kept]
                 hit, card.key_numbers = len(kept) < len(card.key_numbers), kept
             elif kind == "notable change":
                 kept = [c for c in card.notable_changes or [] if (c.metric or "") != label]
+                taken += [_point_text(c.metric, " → ".join(x for x in (c.previous, c.current) if x), c.change)
+                          for c in card.notable_changes or [] if c not in kept]
                 hit, card.notable_changes = len(kept) < len(card.notable_changes or []), kept
             else:
                 kept = [i for i in card.why_it_matters if (i.text or "")[:48] != label]
+                taken += [i.text for i in card.why_it_matters if i not in kept and i.text]
                 hit, card.why_it_matters = len(kept) < len(card.why_it_matters), kept
         elif fact:
             kept = [f for f in card.what_happened if f.text.replace("**", "")[:60] != fact.group(1)]
             hit = 0 < len(kept) < len(card.what_happened)   # never the card's last fact
             if hit:
+                taken += [f.text for f in card.what_happened if f not in kept]
                 card.what_happened = kept
         else:
             return None
         if not hit:
             return None
         dropped.append(problem)
+    if moved is not None:
+        moved += [t for t in dict.fromkeys(taken) if t]
     return dropped
+
+
+def _point_text(label: str | None, value: str | None, change: str | None) -> str:
+    """A key number or notable change as one line for the card's "could not quote" list."""
+    text = ": ".join(x for x in (label, value) if x)
+    return f"{text} ({change})" if change else text
 
 
 def _quoted_claims(card) -> list[tuple[str, str, str, str | None, bool]]:
@@ -3242,9 +3258,10 @@ class Pipeline:
         # a card whose figures are its own XBRL file's, every amount grounded: the garbled text layer cannot have
         # given it a wrong figure (held-card audit, 22 Oct 2026: 15 such holds, all false)
         checks.held += self._held_reasons(filing, text, xbrl_backed=bool(tagged) and not checks.amounts_ungrounded)
+        unchecked: list[str] = []
         if checks.only_quotes:
-            # the points whose quote does not carry them go; the card is published without them, not held
-            pruned = prune_quote_failures(out, checks.quotes)
+            # the points whose quote does not carry them leave the face, behind a tap; the card is published, not held
+            pruned = prune_quote_failures(out, checks.quotes, unchecked)
             if pruned is not None:
                 checks.quotes = []
                 review = {**(review or {}), "status": "PRUNED", "pruned": pruned}
@@ -3365,6 +3382,9 @@ class Pipeline:
         if evidence:
             card_json["grounding"]["evidence"] = evidence
         card_json["grounding"]["prompt_variant"] = variant
+        # set by code only, never read from the model's reply: the points the prune took off the face (shown behind
+        # "Facts the checks could not quote"); a model's own "unchecked" key is overwritten here
+        card_json["unchecked"] = unchecked or None
         needs_review = checks.needs_review
         # a call card's quarter figure the company's own XBRL contradicts is dropped, and a headline or point repeating it
         # sends the card to review (Bajaj Consumer, daily audit 21 Oct 2026: a transcript slip over the filed figures)

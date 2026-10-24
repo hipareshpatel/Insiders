@@ -8,6 +8,7 @@ For each card:
 3. Read the company memory: `curl -s https://insiders.reply-bd3.workers.dev/api/companies/<scrip_code>`. Its `cards` list shows the company's other published cards. Use the memory to check claims the card attributes to memory or history.
 4. Judge the card's face: headline, points, tables, blocks (results, scale, case_stage, order flow and the like), "Our reading" / takeaway, direction (positive or negative for shareholders), impact level and event_type.
    - Verdict: RIGHT (no material error), MINOR (small issue that does not mislead an investor) or WRONG (a fact, figure, period, entity, direction or duplicate that misleads, or a card for a filing with no news, such as a call's audio link).
+   - reading_only: true when every fault you found is in "Our reading" (the AI's interpretation, marked not checked) or in the facts listed behind "Facts the checks could not quote" / `unchecked`, and the checked face (headline, quoted points, tables, blocks, key numbers) is right; false otherwise (null if RIGHT). The go-live bar counts WRONG on the checked face (owner, 24 Oct 2026).
    - Error class, one of: wrong_period, unit_scale, restated, standalone_consolidated, wrong_column, invented, arithmetic, direction, duplicate, event_type, memory, attribution, unsupported_cause, noise, other (null if RIGHT).
    - Rounding differences and reasonable AI interpretation of the details given are NOT errors.
    - Also say whether event_type fits (event_type_ok), and list each wrong point verbatim with why.
@@ -15,4 +16,4 @@ For each card:
 6. Broken text: also note any sentence on the card left broken where a figure was removed (e.g. "a 7- boost", "represents under of market cap").
 EXTRA
 
-Write the results to WORKDIR/out_XX.json: a JSON list of {"news_id", "symbol", "verdict", "error_class", "reason", "event_type_ok", "wrong_points": [..], "pruned_points_true": [..], "pruned_points_false": [..], "broken_text": [..]FIELDS}. Do not modify any file in <repo>. Your final reply is a short summary of the verdicts with the key reason for each MINOR/WRONG.
+Write the results to WORKDIR/out_XX.json: a JSON list of {"news_id", "symbol", "verdict", "error_class", "reading_only", "reason", "event_type_ok", "wrong_points": [..], "pruned_points_true": [..], "pruned_points_false": [..], "broken_text": [..]FIELDS}. Do not modify any file in <repo>. Your final reply is a short summary of the verdicts with the key reason for each MINOR/WRONG.

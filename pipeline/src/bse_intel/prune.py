@@ -30,7 +30,7 @@ def prune_card(card: dict, statuses: tuple[str, ...] = ("UNRESOLVED",)) -> list[
     issues = review.get("issues") or []
     if review.get("status") not in statuses or review.get("held") or not issues:
         return None
-    dropped = []
+    dropped, taken = [], []
     for issue in issues:
         if not issue.startswith(PREFIX):
             return None
@@ -47,6 +47,7 @@ def prune_card(card: dict, statuses: tuple[str, ...] = ("UNRESOLVED",)) -> list[
             kept = [x for x in items if not (isinstance(x, dict) and key(x) == label)]
             if len(kept) == len(items):
                 return None
+            taken += [_text(kind, x) for x in items if x not in kept]
             card[field] = kept
         elif fact:
             items = card.get("what_happened") or []
@@ -54,12 +55,27 @@ def prune_card(card: dict, statuses: tuple[str, ...] = ("UNRESOLVED",)) -> list[
             kept = [x for x in items if text(x) != fact.group(1)]
             if not 0 < len(kept) < len(items):
                 return None
+            taken += [x.get("text") if isinstance(x, dict) else str(x) for x in items if x not in kept]
             card["what_happened"] = kept
         else:
             return None
         dropped.append(problem)
     card["review"] = {**review, "status": "PRUNED", "pruned": dropped}
+    # behind the tap "Facts the checks could not quote", not deleted (owner, 24 Oct 2026; pipeline.prune_quote_failures)
+    card["unchecked"] = list(dict.fromkeys([*(card.get("unchecked") or []), *(t for t in taken if t)])) or None
     return dropped
+
+
+def _text(kind: str, item: dict) -> str:
+    """A pruned key number, notable change or insight as one line (pipeline._point_text)."""
+    if kind == "why it matters":
+        return item.get("text") or ""
+    if kind == "key number":
+        label, value = item.get("label"), item.get("value")
+    else:
+        label, value = item.get("metric"), " → ".join(str(x) for x in (item.get("previous"), item.get("current")) if x)
+    text = ": ".join(str(x) for x in (label, value) if x)
+    return f"{text} ({item['change']})" if item.get("change") else text
 
 
 GROUNDING_CLASSES = ("ungrounded", "math_mismatches", "unsupported_claims", "out_of_fit", "call_figure_conflicts")

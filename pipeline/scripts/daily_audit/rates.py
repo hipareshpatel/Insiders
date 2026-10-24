@@ -56,7 +56,11 @@ def summary(rows: list[dict]) -> dict:
                       else len(r["pruned_points_true"]) for r in rows)
     pruned_false = sum(int(r.get("pruned_points_false") or 0) if not isinstance(r.get("pruned_points_false"), list)
                        else len(r["pruned_points_false"]) for r in rows)
-    return {"n": len(rows), "counts": counts, "variants": variants, "pruned": (pruned_true, pruned_false)}
+    # the go-live bar (owner, 24 Oct 2026): WRONG on the checked face, a fault only in "Our reading" or behind the tap not
+    # counted; rows from before reviewers recorded reading_only count as on the face
+    face_wrong = sum(1 for r in rows if str(r["verdict"]).upper() == "WRONG" and r.get("reading_only") is not True)
+    return {"n": len(rows), "counts": counts, "variants": variants, "pruned": (pruned_true, pruned_false),
+            "face_wrong": face_wrong}
 
 
 def line(label: str, s: dict) -> str:
@@ -64,13 +68,15 @@ def line(label: str, s: dict) -> str:
     short, long_ = s["variants"]["short"], s["variants"]["long"]
     pt, pf = s["pruned"]
     return (f"| {label} | {n} | {rate(c['RIGHT'], n)} | {rate(c['RIGHT'] + c['MINOR'], n)} | {rate(c['WRONG'], n)} | "
+            f"{rate(s['face_wrong'], n)} | "
             f"{rate(short['WRONG'], sum(short.values()))} | {rate(long_['WRONG'], sum(long_.values()))} | "
             f"{f'{pt} of {pt + pf}' if pt + pf else '-'} |")
 
 
 def report(days: dict[str, list[dict]], window: int) -> str:
-    out = ["| Days | Cards | Right | Right or minor | WRONG | WRONG, short prompt | WRONG, long prompt | Pruned points true |",
-           "|---|---|---|---|---|---|---|---|"]
+    out = ["| Days | Cards | Right | Right or minor | WRONG | WRONG on the checked face | WRONG, short prompt | "
+           "WRONG, long prompt | Pruned points true |",
+           "|---|---|---|---|---|---|---|---|---|"]
     names = list(days)
     for day in names:
         out.append(line(day, summary(days[day])))
@@ -83,7 +89,8 @@ def report(days: dict[str, list[dict]], window: int) -> str:
     if total:
         low, high = wilson(round(total * 0.05), total)
         out += ["", f"With {total} cards, a true 5% WRONG rate would read anywhere in {low:.0%}-{high:.0%}: the go-live bar "
-                    "(WRONG <= 5%) is shown met only when the pooled WRONG interval's top is at or below 5%."]
+                    "(WRONG on the checked face <= 5%, owner 24 Oct 2026) is shown met only when that pooled interval's top "
+                    "is at or below 5%."]
     return "\n".join(out)
 
 

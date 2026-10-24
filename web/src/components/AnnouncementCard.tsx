@@ -754,7 +754,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
         )}
 
         <AiReading catalyst={catalyst}
-          facts={[...unverified, ...(calls?.unverified ?? [])]} insights={reading} takeaway={!reading.length && card.takeaway && !restates(card.takeaway, headline) ? card.takeaway : null}
+          facts={[...unverified, ...(card.unchecked ?? []), ...(calls?.unverified ?? [])]} insights={reading} takeaway={!reading.length && card.takeaway && !restates(card.takeaway, headline) ? card.takeaway : null}
           exporting={exporting} />
 
         {footer.length > 0 && (
@@ -1162,26 +1162,29 @@ function TechnicalTags({ row }: { row: CardRow }) {
   );
 }
 
-/** The AI's own reading of the filing. Its interpretation (the catalyst, why it matters, the takeaway) sits on the
- *  face, marked as our reading and apart from the checked facts (owner 2026-10-20: "interpretation helps"; a blind
- *  review found 10% of such points overreach, so it is never shown as checked). Facts the checks could not quote stay
- *  behind a tap. */
+/** The AI's own reading of the filing: its interpretation (the catalyst, why it matters, the takeaway) and the facts
+ *  the checks could not quote, both behind a tap, apart from the checked face (owner 2026-10-20: "interpretation
+ *  helps"; owner 2026-10-24: the go-live bar counts the checked face, so the reading, where most MINOR faults sit, is
+ *  not on it). A blind review found 10% of such points overreach, so none of it is ever shown as checked. */
 function AiReading({ catalyst, facts, insights, takeaway, exporting = false }: {
   catalyst: string | null; facts: Fact[]; insights: string[]; takeaway: string | null; exporting?: boolean;
 }) {
-  const reading = [...(catalyst ? [`Core catalyst: ${catalyst}`] : []), ...insights, ...(takeaway && !insights.length ? [takeaway] : [])];
   // what waits behind a tap stays out of the shared image and PDF (owner, 2026-10-22)
+  const reading = exporting ? [] : [...(catalyst ? [`Core catalyst: ${catalyst}`] : []), ...insights, ...(takeaway && !insights.length ? [takeaway] : [])];
   const unquoted = exporting ? [] : facts.map((f) => (typeof f === "string" ? f : f.text));
   if (!reading.length && !unquoted.length) return null;
   return (
     <div className="mt-3 rounded-2xl border border-dashed border-line-strong px-4 py-2">
       {reading.length > 0 && (
-        <>
-          <p className="text-[12px] font-bold text-ink-3">Our reading · not checked against the filing</p>
-          <ul className="mt-2 space-y-2 pb-1">
+        <details className="group">
+          <summary className="cursor-pointer list-none py-1 text-[12px] font-bold text-ink-3 marker:hidden">
+            <span className="mr-1 inline-block transition-transform group-open:rotate-90">›</span>
+            Our reading · not checked against the filing ({reading.length})
+          </summary>
+          <ul className="mt-1 space-y-2 pb-1">
             {reading.map((text, i) => <Point key={i} className="text-ink-2"><RichText text={text} /></Point>)}
           </ul>
-        </>
+        </details>
       )}
       {unquoted.length > 0 && (
         <details className="group">

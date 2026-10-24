@@ -188,6 +188,8 @@ export interface CardBody {
   volume_strip?: { metric: string; unit: string | null; months: { period: string; value: number; yoy_pct: number | null }[] } | null;
   /** Calls and presentations: the key takeaways memory took from this filing, by heading (call_summary.py, no AI). */
   call_memory?: { name: string; points: { text: string; reiterated?: boolean }[] }[] | null;
+  // points the quote check took off the face, shown behind "Facts the checks could not quote" (owner, 24 Oct 2026)
+  unchecked?: string[] | null;
   /** Calls and presentations: the model's key takeaways, each checked by code (`verified`) before the face shows it. */
   call_takeaways?: { category: string; text: string; quote?: string | null; memory_refs?: string[];
     versus_prior?: string | null; verified?: boolean; issue?: string | null }[] | null;

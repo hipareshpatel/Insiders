@@ -18,8 +18,12 @@ These are the platform's two jobs until go-live. Everything else serves them.
 
 ### Task A: the right-card requirement (the go-live gate)
 
-**Target:** 95% of published cards RIGHT when an independent blind reviewer checks them against the filing PDF and the
-company's memory. WRONG must be ≤ 5% (owner, 18 Oct). The go-live bar is **not met**.
+**Target (owner, 24 Oct 2026, D42; replaces "95% RIGHT" of 18 Oct):** WRONG on the checked face at or below 5% of
+published cards, read pooled over days with the 95% interval's top at or below 5% (`rates.py`), when an independent
+blind reviewer checks them against the filing PDF and the company's memory. The checked face is the headline, the
+quoted points, the tables and blocks and the key numbers; the model's interpretation ("Our reading") and the facts the
+checks could not quote sit behind a tap, marked not checked, and a fault only there is MINOR (`reading_only`). The bar
+is **not met** (21-24 Oct pooled: 22%, 17%-28%).
 
 | Day | Audited | RIGHT | MINOR | WRONG | Right | Right or minor | WRONG |
 |---|---|---|---|---|---|---|---|
@@ -160,10 +164,10 @@ The routine's prompt, verbatim:
 ```
 Daily card audit (owner, 20 Oct: 200 days, 10:07/12:07/14:07/16:07 IST, at least 20 cards a day; moved into the lead session on 21 Oct because routine sessions could not push). If today (IST) is after 2027-05-08, disable this routine and stop. Otherwise, in this session (git pull first; branch claude/gracious-goodall-jn9buu):
 1. Published cards from /api/feed newest first, those not yet in today's docs/audit/live/<date>-audit.json (at least 5 a run): give them in batches to independent general-purpose subagents (you do not grade your own fixes). Each downloads the filing PDF into its own new directory, extracts text with `python -I`, and judges the card's face (headline, points, tables, blocks, "Our reading", direction, impact) RIGHT / MINOR / WRONG with the error class (wrong_period, unit_scale, restated, standalone_consolidated, wrong_column, invented, arithmetic, direction, duplicate, event_type, memory, attribution, unsupported_cause, other) and a one-line reason. Record each card's prompt_variant (card_json.grounding.prompt_variant).
-2. First run of the day: dispatch maintenance.yml export-held and export-critic (one at a time); review a sample of held cards (release candidate or not) and score the critic (docs/audit/live/critic-<date>.json) against the reviewers' WRONG points: precision and recall.
+2. First run of the day: dispatch maintenance.yml export-held; review a sample of held cards (release candidate or not). (The shadow critic is off since 24 Oct, D41: no export-critic or critic scoring until it is rebuilt.)
 3. /api/review: check the flagged cards the same way.
 4. Fix: the commonest WRONG class with a root cause in code or prompt, with a test; on/off over stored cards (no AI) and ship only if more cards become right and none wrong; an independent subagent blind-checks a sample of the changed cards. Any fix that makes a check accept more gets that audit before it is called done. Re-runs or refreshes needed go to docs/audit/actions-pending.md or are dispatched one at a time (D1 writes below 85,000).
-5. Save judgements to docs/audit/live/<date>-audit.json, append the ledger rows (docs/audit/ledger.md: per change and the daily totals, incl. short vs long and critic precision/recall), commit and push.
+5. Save judgements to docs/audit/live/<date>-audit.json (each with reading_only: true when every fault is in "Our reading" or behind the tap), append the ledger rows (docs/audit/ledger.md: per change and the daily totals, incl. short vs long and WRONG on the checked face), commit and push.
 6. 16:07 run only: the day's summary at the top of docs/audit/live/<date>-audit.md (audited, right/minor/wrong, share right vs the 95% bar, short vs long, critic, fixes and their effect, held released, open classes) with the pooled rates and their 95% intervals from `python -I pipeline/scripts/daily_audit/rates.py --window 3` (a day alone cannot show a fix worked), then a short summary for the owner.
 Rules: no AI for testing; never edit stored data by hand or hand-delete live data; $0 (no paid routes beyond the owner's DeepSeek seed use); no keys printed; no AI model names in commits or PR text.
 ```
@@ -330,10 +334,10 @@ Earlier: E1-E14 (22 Oct, #65-#74), F98-F103 (fixers and false holds, 22-23 Oct),
 
 ### Shadow critic
 
-- In shadow mode (no holds, no edits).
-- 22 Oct: point precision 12%, recall 10%. 24 Oct: precision 9%, recall 12%, and 40% on the lines it reads.
-- It needs the whole filing, not an excerpt, before its INVENTED verdicts mean anything. Keep scoring it daily; do not
-  switch it on.
+- **Off since 24 Oct 2026 (owner, D41; `CRITIC` defaults to 0).** 22 Oct: point precision 12%, recall 10%. 24 Oct:
+  precision 9%, recall 12%, and 40% on the lines it reads; it used up to 3 minutes of every run and spare quota.
+- Before it comes back it needs the whole filing, not a 600-character excerpt, for its INVENTED verdicts to mean
+  anything; then a week in shadow mode scored against the reviewers.
 
 ### From `docs/PLAN.md`'s list (22-23 Oct blocks)
 
@@ -384,7 +388,7 @@ Earlier: E1-E14 (22 Oct, #65-#74), F98-F103 (fixers and false holds, 22-23 Oct),
 | Plan and pending list | `docs/PLAN.md` |
 | Decisions and findings (D1-D40, F1-F111) | `docs/TRACKER.md` |
 | Design as built | `docs/SPEC.md`; spec by module `docs/BLUEPRINT.md` |
-| Setup, commands, test count (975) | `docs/SETUP.md` |
+| Setup, commands, test count (977) | `docs/SETUP.md` |
 | The routine when data is wrong | `docs/DATA_QUALITY.md` |
 | Owner approvals | `docs/APPROVALS.md` |
 | Operations log | `docs/OPS.md` |

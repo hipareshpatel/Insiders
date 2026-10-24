@@ -115,7 +115,10 @@ class Settings:
     pass2_pack_long: int = field(default_factory=lambda: _env_int("PASS2_PACK_LONG", 3))
     # The shadow meaning critic (critic.py): live published cards judged point by point on spare free quota after they
     # are committed; verdicts stored, never acted on. CRITIC=0 off; at most CRITIC_MAX cards and CRITIC_MAX_S seconds a run.
-    critic: bool = field(default_factory=lambda: _env("CRITIC", "1") not in ("0", "false", "no"))
+    # Off since 24 Oct 2026 (owner, D41): 9% precision and 12% recall against the blind reviewers on a 600-character
+    # excerpt, for up to CRITIC_MAX_S of every run and spare quota; CRITIC=1 runs it, until it is rebuilt to read the
+    # whole filing.
+    critic: bool = field(default_factory=lambda: _env("CRITIC", "0") not in ("0", "false", "no"))
     critic_max: int = field(default_factory=lambda: _env_int("CRITIC_MAX", 8))
     critic_max_s: int = field(default_factory=lambda: _env_int("CRITIC_MAX_S", 180))
     # The short pass-2 prompt (prompts/pass2_short.md, deep audit B1) on this share of live filings, chosen by news id

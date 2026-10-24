@@ -47,6 +47,23 @@ def agency_of(sheet: dict) -> str | None:
     return next((key for word, key in _AGENCY_KEYS if re.search(rf"(?<![A-Z]){re.escape(word)}(?![A-Z])", text)), None)
 
 
+# A global-scale rating (S&P, Moody's, Fitch, CareEdge Global) is on another scale from India's: its BB- is not nine
+# notches below a domestic AA- (Muthoot Microfin, 24 Oct 2026)
+_GLOBAL_SCALE = re.compile(r"GLOBAL|S\s*&\s*P\b|STANDARD\s*&\s*POOR|MOODY|FITCH", re.I)
+
+
+def _same_agency(prev: dict, now: dict, agency: str | None) -> bool:
+    """Whether a stored rating is the same agency's opinion on the same scale as this one. An agency the code does not
+    know is matched by its own name only; a rating with no agency named is set beside the last one on record."""
+    names = lambda s: f"{s.get('rating_agency') or ''} {s.get('credit_rating') or ''}"
+    if bool(_GLOBAL_SCALE.search(names(prev))) != bool(_GLOBAL_SCALE.search(names(now))):
+        return False
+    if agency is None:
+        key = lambda s: " ".join(str(s.get("rating_agency") or "").upper().split())
+        return not key(now) or key(prev) == key(now)
+    return agency_of(prev) in (agency, None)
+
+
 # "upgraded the long-term rating to [ICRA]AAA (Stable) from [ICRA]AA+ (Stable)": the earlier grade in the filing's words
 _FROM_GRADE = re.compile(r"\b(?:upgrad|downgrad|revis|reaffirm|migrat|chang)\w*\b[^.;]{0,200}?\bfrom\s+([^.;,]{1,40})", re.I)
 
@@ -70,7 +87,7 @@ def rating_change(before: dict | None, after: dict, news_id: str, text: str = ""
     agency = agency_of(now)
     # the last rating by the same agency: CRISIL AA beside ICRA AA- is two opinions, not a downgrade
     prev = next((s for s in reversed((before or {}).get("balance_sheet", []))
-                 if s.get("credit_rating") and (agency is None or agency_of(s) in (agency, None))), None)
+                 if s.get("credit_rating") and _same_agency(s, now, agency)), None)
     grade, was = long_term_grade(now.get("credit_rating")), long_term_grade((prev or {}).get("credit_rating"))
     if grade is None:
         return None

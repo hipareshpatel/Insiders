@@ -37,3 +37,4 @@
 | 24 Oct 22:30 | Routine | Daily card audit recreated on the new account (trig_01JtXb9RSm63zmvoar8VyXsx, 10:07/12:07/14:07/16:07 IST, prompt in HANDOVER §3); "Our reading" kept open (owner); #97 to merge when green |
 | 24 Oct 23:05 | Owner session | F117: backfill filings before 1 Aug 2026 go into memory only (no card, slimmer prompt; BACKFILL_CARDS_FROM); live and recent filings unchanged |
 | 24 Oct 23:20 | Owner correction | F117 memory-only backfill switched off by default (owner: "let current flow remains"); filings it read in the meantime requeued for cards |
+| 24 Oct 23:55 | Code audit | Six independent reviewers over main; report docs/audit/code-audit-2026-10-24.md (accuracy A1-A14, quota/lost work R1-R12, site S1-S6, flow verdicts); nothing changed, fixes wait for the owner |

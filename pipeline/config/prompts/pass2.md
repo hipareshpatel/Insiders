@@ -26,8 +26,9 @@ Ground rules
   fact whose quote is not found is dropped. A fact that rests on COMPANY MEMORY rather than this
   filing belongs in why_it_matters with basis MEMORY, not in what_happened.
 - Every figure in headline, what_happened, why_it_matters and key_numbers is checked against the
-  sources. Use figures as stated, or a simple share, change or multiple of two of them written in the
-  same sentence ("₹80 Cr LoI, 18% of FY26 sales" when memory holds FY26 sales). Anything you compute
+  sources. Use figures as stated, a change between two of them written in the same sentence, or a
+  proportion exactly as the SCALE block gives it ("₹80 Cr LoI, 18% of FY26 sales" when SCALE says so).
+  A share or ratio you work out yourself is removed in code. Anything you compute
   further (an EBITDA the filing does not state, an annualised figure, savings, dilution maths) goes
   in quantified_impact with its formula, where the arithmetic is re-checked.
 - Express money in ₹ crore (from ₹ lakh divide by 100, from ₹ million divide by 10) and keep only
@@ -110,8 +111,8 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
 - event_type: as triaged (named under "Event focus" below), unless the filing is clearly another
   of the types listed there.
 - headline: at most 110 characters (aim for 80), active voice: who did what, with the main figure. Put the
-  figure in proportion when memory allows ("…, nearly its last quarter's revenue", "…, 18% of FY26
-  sales"). Never a generic line such as "X posts a key update" or "X announces results": say what
+  figure in proportion when the SCALE block gives one ("…, 18% of FY26 sales"); never a proportion of
+  your own. Never a generic line such as "X posts a key update" or "X announces results": say what
   the results or update actually showed. Examples:
   "Demo Cement Q2 revenue rose 20% YoY to ₹456 Cr; margin fell to 14.9%"
   "Demo Infra arm wins ₹186 Cr wind EPC LOI, over half its last quarter's revenue"
@@ -153,9 +154,9 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   flow or ratings (basis "BALANCE_SHEET"), sector context (basis "SECTOR"), or the filing alone
   (basis "FILING"). No generic statements. Good insights compare: growth against the previous
   quarter's growth, a figure against the highest or lowest stored period, an order against
-  trailing revenue and the company's earlier orders of the same kind ("third wind EPC win since
+  trailing revenue (as SCALE gives it) and the company's earlier orders of the same kind ("third wind EPC win since
   May, and the largest; earlier ones were up to ₹142 Cr"), a fundraise against market cap or net
-  worth, who is putting in the money (promoters or outsiders) and the stake change.
+  worth (from SCALE), who is putting in the money (promoters or outsiders) and the stake change.
   Each insight adds what the bullets and headline do not; never restate a fact in other words. Where the filing and
   memory support it, cover in this order: (1) against what was expected: prior guidance, the trend, the last
   comparable event; (2) the driver or the quality: what moved it, a one-off, who pays; (3) what it means for the
@@ -195,8 +196,9 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   them in why_it_matters. Only what this event itself should disclose: a merger's swap ratio is missing from the
   merger filing, not from a results filing that mentions the merger. Use an empty list when nothing is missing. Do not
   speculate.
-- key_numbers: up to 4 headline figures as {"label", "value", "change"} strings (shown as tiles on
-  results and earnings-call cards), for example {"label": "PAT", "value": "₹1,901 Cr", "change": "+203% YoY"}.
+- key_numbers: up to 4 headline figures as {"label", "value", "change", "quote"} strings (shown as tiles on
+  results and earnings-call cards), for example {"label": "PAT", "value": "₹1,901 Cr", "change": "+203% YoY",
+  "quote": the filing's row or sentence that states it, copied exactly}.
 - notable_changes: think beyond any fixed checklist. Compare everything in this filing with
   COMPANY MEMORY (prior periods, guidance, balance sheet, timeline) and with what is normal for
   this sector and event type, and list up to 5 changes a careful analyst would flag: for example

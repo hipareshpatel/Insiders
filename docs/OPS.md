@@ -31,3 +31,4 @@
 | 24 Oct 14:20 | Daily audit 3 (ship) | #94 merged (F111); maintenance.yml refresh-card-blocks dispatched on main so stored rating cards drop cross-agency comparisons |
 | 24 Oct 16:30 | Daily audit 4 + day summary | 10 cards: 3 right / 4 minor / 3 wrong. Day: 65 cards, 38% right, 23% WRONG (bar 95%). F111 refresh confirmed (Muthoot shows no notch change). Summary in docs/audit/live/2026-10-24-audit.md |
 | 24 Oct 16:50 | Handover | docs/HANDOVER.md written for the owner's account switch (state, the two main tasks, routine to recreate with its prompt, open classes, all pending). Audit tools copied to pipeline/scripts/daily_audit/. CLAUDE.md, PLAN, SETUP point to it |
+| 24 Oct 19:30 | Survey fixes (new account, branch claude/gracious-goodall-jn9buu) | Code survey of the whole repo; fixes F112-F114 (AI layer checks, lost work and memory, site and schedules) with tests: 966 pipeline (6 skip), 55 web. Migration 0014 applies on deploy |

@@ -204,7 +204,7 @@ def test_the_universe_seed_saves_its_resume_point_every_ten_companies_and_at_the
                                                                 real(key, value, at))[1])
     args = argparse.Namespace(scrips=None, universe=True, restart=False, source="nse", since="2024-01-01",
                               results_only=False, shareholding_only=False)
-    assert cmd_seed_memory(args, settings, sink) == 0
+    assert cmd_seed_memory(args, settings, sink) == 2   # stopped by a refusal
     assert saved == ["500010", "500020", "500022"]                 # every ten, then the last one done before the stop
     stop_at.clear()
     assert cmd_seed_memory(args, settings, sink) == 0

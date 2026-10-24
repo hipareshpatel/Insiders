@@ -30,8 +30,15 @@ internal.use("*", async (c, next) => {
 internal.post("/exec/:statement", async (c) => {
   const name = c.req.param("statement");
   if (!has(STATEMENTS, name)) return c.json({ error: "unknown statement" }, 404);
+  // The cap is in bytes: a declared length over it is refused unread, and the text is measured as UTF-8, since
+  // body.length counted UTF-16 units and let a body of Devanagari or ₹ signs through at up to three times the cap
+  // (survey, 24 Oct 2026)
+  const declared = Number(c.req.header("Content-Length") ?? "");
+  if (declared > MAX_BODY_BYTES) return c.json({ error: "payload too large" }, 413);
   const body = await c.req.text();
-  if (body.length > MAX_BODY_BYTES) return c.json({ error: "payload too large" }, 413);
+  if (body.length > MAX_BODY_BYTES || new TextEncoder().encode(body).byteLength > MAX_BODY_BYTES) {
+    return c.json({ error: "payload too large" }, 413);
+  }
   if (!body.startsWith("[")) return c.json({ error: "body must be a JSON array" }, 400);
   try {
     const result = await c.env.DB.prepare(STATEMENTS[name]).bind(body).run();

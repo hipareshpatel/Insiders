@@ -26,6 +26,7 @@ from types import SimpleNamespace
 from . import nse as nse_api
 from . import universe
 from .dossier import new_dossier
+from .timeutil import today_ist
 
 log = logging.getLogger(__name__)
 
@@ -152,7 +153,7 @@ def backfill(pipeline, deadline: float, days: int = 180, scrips: set[str] | None
     if not nse_map.built:
         report["stopped"] = "no NSE universe file yet"
         return report
-    end = today or date.today()
+    end = today or today_ist()   # IST: the runner's date.today() is UTC, a day behind after 18:30 UTC
     start = end - timedelta(days=days)
     while start <= end and not report["stopped"]:
         stop = min(start + timedelta(days=6), end)

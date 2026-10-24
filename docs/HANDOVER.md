@@ -69,7 +69,7 @@ This is how WRONG comes down. Each step was agreed with the owner, and none may 
        so the rule was narrowed to 3.
      - F108's first regex flagged 390 texts; it was tightened to 3.
 4. **Apply.**
-   - PR from `claude/nice-goodall-ta0sxs` to `main`; merge when CI is green (the owner's standing approval,
+   - PR from `claude/gracious-goodall-jn9buu` (since 24 Oct; was `claude/nice-goodall-ta0sxs`) to `main`; merge when CI is green (the owner's standing approval,
      `docs/APPROVALS.md`).
    - Then dispatch the refresh or re-run that heals stored cards, e.g. `maintenance.yml refresh-card-blocks`, one
      dispatch at a time, with D1 writes below 85,000 a day.
@@ -101,7 +101,7 @@ This is how WRONG comes down. Each step was agreed with the owner, and none may 
 - **Stored data:** never edit stored data by hand and never hand-delete live data. Fix the class in code and re-run
   (`docs/DATA_QUALITY.md`).
 - **Git:**
-  - Branch `claude/nice-goodall-ta0sxs` only.
+  - Branch `claude/gracious-goodall-jn9buu` only (owner, 24 Oct 2026; was `claude/nice-goodall-ta0sxs`).
   - `git pull` before editing.
   - Never force-push or rewrite pushed history.
   - Run `git diff --check` and check for conflict markers before committing.
@@ -126,7 +126,7 @@ This is how WRONG comes down. Each step was agreed with the owner, and none may 
 | Public API | `/api/system` (runs, queue, failures, D1 writes), `/api/feed?range=7d&limit=N` (`{cards, next_cursor}`; `card_json.grounding.prompt_variant`, `card_json.review.status` PRUNED/CORRECTED/HELD), `/api/cards/<news_id>`, `/api/companies/<scrip or symbol>` (`{company, cards, dossier, ...}`), `/api/review` (published cards the checks flagged; 51 on 24 Oct) |
 | Owner API | `/api/owner/feed?held=only`, `/api/owner/review`, `/api/owner/cards/:id` (needs the owner token, which lives in the keys file) |
 | Universe | 1,778 NSE companies ≥ ₹500 Cr (D31) |
-| D1 budget | Workers Paid; keep bulk writes below ~85,000 a day (`/api/system` → `d1.writes_today`) |
+| D1 budget | Workers Paid (D40): the code's daily budget is 1.5M (`D1_DAILY_WRITE_BUDGET`); the ~85,000 a day kept for bulk dispatches is the lead session's own margin from the free-tier days, not a limit (`/api/system` → `d1.writes_today`) |
 
 ---
 
@@ -151,7 +151,7 @@ Disabled routines, kept for the record:
 The routine's prompt, verbatim:
 
 ```
-Daily card audit (owner, 20 Oct: 200 days, 10:07/12:07/14:07/16:07 IST, at least 20 cards a day; moved into the lead session on 21 Oct because routine sessions could not push). If today (IST) is after 2027-05-08, disable this routine and stop. Otherwise, in this session (git pull first; branch claude/nice-goodall-ta0sxs):
+Daily card audit (owner, 20 Oct: 200 days, 10:07/12:07/14:07/16:07 IST, at least 20 cards a day; moved into the lead session on 21 Oct because routine sessions could not push). If today (IST) is after 2027-05-08, disable this routine and stop. Otherwise, in this session (git pull first; branch claude/gracious-goodall-jn9buu):
 1. Published cards from /api/feed newest first, those not yet in today's docs/audit/live/<date>-audit.json (at least 5 a run): give them in batches to independent general-purpose subagents (you do not grade your own fixes). Each downloads the filing PDF into its own new directory, extracts text with `python -I`, and judges the card's face (headline, points, tables, blocks, "Our reading", direction, impact) RIGHT / MINOR / WRONG with the error class (wrong_period, unit_scale, restated, standalone_consolidated, wrong_column, invented, arithmetic, direction, duplicate, event_type, memory, attribution, unsupported_cause, other) and a one-line reason. Record each card's prompt_variant (card_json.grounding.prompt_variant).
 2. First run of the day: dispatch maintenance.yml export-held and export-critic (one at a time); review a sample of held cards (release candidate or not) and score the critic (docs/audit/live/critic-<date>.json) against the reviewers' WRONG points: precision and recall.
 3. /api/review: check the flagged cards the same way.
@@ -377,7 +377,7 @@ Earlier: E1-E14 (22 Oct, #65-#74), F98-F103 (fixers and false holds, 22-23 Oct),
 | Plan and pending list | `docs/PLAN.md` |
 | Decisions and findings (D1-D40, F1-F111) | `docs/TRACKER.md` |
 | Design as built | `docs/SPEC.md`; spec by module `docs/BLUEPRINT.md` |
-| Setup, commands, test count (948) | `docs/SETUP.md` |
+| Setup, commands, test count (966) | `docs/SETUP.md` |
 | The routine when data is wrong | `docs/DATA_QUALITY.md` |
 | Owner approvals | `docs/APPROVALS.md` |
 | Operations log | `docs/OPS.md` |

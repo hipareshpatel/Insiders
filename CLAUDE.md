@@ -23,9 +23,9 @@ Read before changing anything:
 
 - **Tasks come from `docs/TASKS.md`** (the cloud session leads, owner 2026-10-19). After every `git pull`, read it
   and work the OPEN tasks for your session in priority order; report there and commit with the task id.
-- Branch `claude/nice-goodall-ta0sxs` only; draft PR hipareshpatel/Insiders#1. Never push to
-  another branch or rewrite pushed history. `git pull` before editing: another session also
-  pushes to this branch.
+- Branch `claude/gracious-goodall-jn9buu` only (owner, 24 Oct 2026, after the account switch; it was
+  `claude/nice-goodall-ta0sxs`). PRs go from it to `main`. Never push to another branch or rewrite pushed history.
+  `git pull` before editing: another session may also push to this branch.
 - API keys live only in `C:\Users\Quali\insiders-keys.ps1` (outside the repo). Never print,
   log, commit or paste a key. Dot-source the file in each new shell: `. C:\Users\Quali\insiders-keys.ps1`.
 - Don't work around BSE's firewall. BSE blocks non-Indian IPs, which is why BSE work runs here.
@@ -51,7 +51,7 @@ Read before changing anything:
    `npx tsc -p . --noEmit` in `web/` for Worker or React changes.
 4. Before committing after a `git pull` or `git stash pop`, make sure no conflict markers remain:
    `git diff --check` and `git grep -n "^<<<<<<<"` must print nothing, and the tests must pass.
-   Commit with a clear message, `git push -u origin claude/nice-goodall-ta0sxs`, and watch CI on the PR.
+   Commit with a clear message, `git push -u origin claude/gracious-goodall-jn9buu`, and watch CI on the PR.
 5. Update `docs/SETUP.md` / `docs/TRACKER.md` when behaviour, commands or the test count change; never put project
    details back in `README.md`.
 

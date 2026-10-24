@@ -95,3 +95,25 @@ def test_apply_verdicts_applies_standing_verdicts_once(settings, capsys):
     sink._db.commit()
     assert sink.execute("cards_apply_verdicts", ["WRONG", "RIGHT"]) == 1
     assert _stored(sink, "w")[1]["review"]["held"] == [OWNER + "wrong year"]
+
+
+def test_a_card_held_by_apply_verdicts_leaves_the_homepage_snapshot_at_once(settings):
+    """apply-verdicts (and release-pruned, refresh-card-blocks) changed stored cards without rebuilding the R2 snapshot,
+    which a run rebuilt only when it analysed a filing: a card held here stayed on the homepage and Signals page."""
+    from datetime import timedelta
+
+    from bse_intel.pipeline import SNAPSHOT_KEY, publish_snapshot
+    from bse_intel.timeutil import now_ist
+
+    sink = LocalSink(settings)
+    card = _card("s", "Demo Ltd wins a ₹120 Cr order")
+    card["filed_at"] = (now_ist() - timedelta(hours=2)).isoformat(timespec="seconds")
+    card["filing_date"] = card["filed_at"][:10]
+    sink.execute("cards_upsert", [card])
+    assert publish_snapshot(sink)
+    shown = lambda: [c["news_id"] for c in json.loads(sink.get_object(SNAPSHOT_KEY))["feed"]["cards"]]  # noqa: E731
+    assert shown() == ["s"]
+    assert not publish_snapshot(sink, force=False)       # same day, nothing forced: left as it is
+    _verdict(sink, "s", "WRONG", "the order is the subsidiary's", "Demo Ltd wins a ₹120 Cr order")
+    cmd_apply_verdicts(argparse.Namespace(), settings, sink)
+    assert shown() == []

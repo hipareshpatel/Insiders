@@ -18,6 +18,7 @@ import logging
 import time
 from datetime import timedelta
 
+from .bse import SourceBlockedError
 from .models import Filing
 from .timeutil import now_iso, today_ist
 
@@ -95,13 +96,20 @@ def companies(pipeline) -> list[dict]:
 def _seed_company(pipeline, company: dict, start, end, deadline: float) -> dict:
     """One company's call documents into memory; returns its counts and whether the deadline stopped it."""
     sink, scrip = pipeline.sink, company["scrip_code"]
-    counts = {"seeded": 0, "skipped": 0, "no_call": 0, "failed": 0, "stopped": False}
+    counts = {"seeded": 0, "skipped": 0, "no_call": 0, "failed": 0, "stopped": False, "refused": False}
     try:
         found = [f for f in pipeline._company_announcements(scrip, start, end)
                  if pipeline.rules.classify(f).event_type == "CONCALL_PRESENTATION"]
+    except SourceBlockedError as exc:
+        # NSE refused the session: the seed stops and the company is not finished (it was marked finished with nothing
+        # read, and so was every company after it, while the workers kept asking NSE: survey, 24 Oct 2026)
+        log.warning("call seed: NSE refused (%s); stopping", exc)
+        counts["refused"] = counts["stopped"] = True
+        return counts
     except Exception as exc:   # one company's list failing never stops the seed
         log.warning("call seed: %s announcements not read: %s", scrip, exc)
         counts["failed"] += 1
+        counts["unread"] = True   # not finished: a later run reads its list again
         return counts
     docs = pick(found)
     if not docs:
@@ -118,6 +126,10 @@ def _seed_company(pipeline, company: dict, start, end, deadline: float) -> dict:
         try:
             outcome = pipeline.analyze(filing, bulk=True, memory_complete=True)   # memory written; card dropped
             counts["seeded" if outcome.update.get("status") not in ("FAILED", "PENDING") else "failed"] += 1
+        except SourceBlockedError as exc:
+            log.warning("call seed: NSE refused %s (%s); stopping", filing.news_id, exc)
+            counts["refused"] = counts["stopped"] = True
+            break
         except Exception as exc:
             log.warning("call seed: %s %s not read: %s", scrip, filing.news_id, exc)
             counts["failed"] += 1
@@ -144,7 +156,7 @@ def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | Non
     lock = Lock()
 
     def one(company: dict) -> None:
-        if time.monotonic() > deadline:
+        if time.monotonic() > deadline or report.get("refused"):
             with lock:
                 report["stopped"] = True
             return
@@ -153,8 +165,13 @@ def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | Non
             report["companies"] += 1
             for k in ("seeded", "skipped", "no_call", "failed"):
                 report[k] += counts[k]
+            if counts["refused"]:
+                report["refused"] = True
             if counts["stopped"]:
                 report["stopped"] = True
+                return
+            if counts.get("unread"):
+                report["unread"] = report.get("unread", 0) + 1
                 return
             finished.add(company["scrip_code"])
             if not scrips and len(finished) % SAVE_EVERY == 0:   # one D1 write per ten companies, not per company
@@ -169,7 +186,8 @@ def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | Non
     report["deepseek_tokens"] = {"this_run": used, "all": spent + used, "budget": deepseek_budget()}
     if hasattr(pipeline, "_flush_usage"):
         pipeline._flush_usage()   # the System page shows the seed's requests and tokens by model
-    if not scrips and not report["stopped"]:
+    # done only once every company's list was read: one whose list failed is read again by the next run
+    if not scrips and not report["stopped"] and not report.get("unread"):
         sink.kv_set(STATE_KEY, json.dumps({"finished": sorted(finished), "done": True}), now_iso())
         report["done"] = True
     elif not scrips:
@@ -186,7 +204,9 @@ def next_run(report: dict, utc_hour: int) -> bool:
     read at least one company (a run that reads none would only start another like it), and the night lasts. GitHub
     dropped two of the first four scheduled runs (20 Oct 2026), so each run hands on to the next; the schedule stays as
     the backstop."""
-    more = bool(report.get("stopped")) and not report.get("done") and report.get("companies", 0) > 0
+    # a run NSE refused does not start another at once: the schedule tries again later
+    more = (bool(report.get("stopped")) and not report.get("done") and not report.get("refused")
+            and report.get("companies", 0) > 0)
     return more and utc_hour in NIGHT_UTC_HOURS
 
 

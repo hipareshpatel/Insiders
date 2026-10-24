@@ -36,7 +36,8 @@ from threading import Lock
 from .ai.gateway import CEILING, AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
-from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, latest_fundamentals, memory_ids, merge, own_former_name,
+from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, keep_concurrent_writes, latest_fundamentals, memory_ids, merge,
+                      own_former_name,
                       new_dossier, put_standalone, repeated_order, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import CACHE_VERSION, FIGURE_PAGE_AMOUNTS, Document, amounts, cache_needs_ocr
 from .ocr import available as local_ocr_available
@@ -2941,6 +2942,7 @@ class Pipeline:
         # Before pass 1, not after it: the gatekeeper is shown what this company has already filed, so it
         # can name an event arriving again as a different document (the document rules cannot see those).
         dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
+        read = json.loads(json.dumps(dossier))   # memory as read, for keep_concurrent_writes when it is written back
         if filing.route == "PASS1" and doc.page_count >= ANNUAL_REPORT_MIN_PAGES and doc.kind() == "ANNUAL_REPORT":
             # NSE's headline can name only the meeting ("Annual General Meeting ... to be held on ..."), with the annual
             # report inside: Max Financial's 389 pages, whose auditor flagged a pending SEBI show-cause notice, were
@@ -3308,6 +3310,10 @@ class Pipeline:
             # published press release made two Q2FY27 results lines with different figures (T5, 2026-10-20).
             # Its figures stay: they are the statement's own and passed memory's checks.
             merged["timeline"] = [e for e in merged.get("timeline", []) if e.get("news_id") != filing.news_id]
+        # memory was read before the AI call, minutes ago: what a memory job stored since is kept, not overwritten
+        kept = keep_concurrent_writes(merged, read, self.sink.get_dossier(filing.scrip_code))
+        if kept:
+            log.info("%s: memory written meanwhile by another job kept: %s", filing.news_id, ", ".join(kept))
         self.sink.put_dossier(filing.scrip_code, merged)
 
         card_json = {
@@ -3417,11 +3423,12 @@ class Pipeline:
             }
             for ev in out.dossier_delta.upcoming_events if ev.date >= filing.filing_date
         ]
-        for deadline, text in warrant_deadlines(out, filing):  # module 31: the 18-month warrant clock
+        # not `text`: that name holds the filing's text, which the critic reads below
+        for deadline, note in warrant_deadlines(out, filing):  # module 31: the 18-month warrant clock
             catalysts.append({
                 "id": _catalyst_id(filing.scrip_code, "WARRANT_EXPIRY", deadline), "scrip_code": filing.scrip_code,
                 "company_name": filing.company_name, "symbol": row["symbol"], "event_type": "WARRANT_EXPIRY",
-                "event_date": deadline, "description": text[:300], "source_news_id": filing.news_id, "created_at": now,
+                "event_date": deadline, "description": note[:300], "source_news_id": filing.news_id, "created_at": now,
             })
         for g in out.dossier_delta.guidance:
             deadline = due_date(g.due)
@@ -3526,7 +3533,7 @@ class Pipeline:
         hints = [UNIT_HINT] if checks.amounts_ungrounded else []
         system2, user2 = self.prompts.verify(system, user, out.model_dump(mode="json"), problems + hints)
         try:
-            second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider,),
+            second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider, result.model_label),
                                                 bulk=bulk)
         except Exception as exc:  # the first card is still published, marked unverified
             return out, result, checks, {**base, "status": "UNCHECKED", "note": f"{type(exc).__name__}: {exc}"[:200]}, None
@@ -3886,24 +3893,7 @@ class Pipeline:
     def _publish_snapshot(self) -> None:
         """The homepage's default first page and the top signals, as one R2 object (blueprint §3.3):
         visitors read it instead of D1. Rebuilt when this run wrote cards or the day changed."""
-        today = today_ist()
-        start = (today - timedelta(days=SNAPSHOT_DAYS)).isoformat()
-        try:
-            current = json.loads(self.sink.get_object(SNAPSHOT_KEY) or b"{}")
-        except Exception:
-            current = {}
-        if not self.stats.analyzed and current.get("from") == start:
-            return
-        try:
-            cards = self.sink.query("snapshot_feed", [start, SNAPSHOT_PAGE])
-            total = (self.sink.query("snapshot_count", [start]) or [{"n": len(cards)}])[0]["n"]
-            # the same window as the feed and the Signals page ask for (it was 3 days, so the page showed none from days 4-7)
-            signals = self.sink.query("snapshot_signals", [start])
-            body = {"generated_at": now_iso(), "from": start, "limit": SNAPSHOT_PAGE,
-                    "feed": {"cards": cards, "total": total}, "signals": signals, "signals_from": start}
-            self.sink.put_object(SNAPSHOT_KEY, json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode())
-        except Exception as exc:  # the snapshot is an optimisation; the feed falls back to D1
-            log.warning("snapshot not published: %s", exc)
+        publish_snapshot(self.sink, force=bool(self.stats.analyzed))
 
     def _over_budget(self, writes_at_start: int) -> bool:
         budget = self.settings.d1_daily_write_budget
@@ -4161,6 +4151,34 @@ def _ocr_check(doc: Document) -> None:
         if isinstance(doc.ocr_error, AllProvidersFailed):
             raise doc.ocr_error
         raise RuntimeError(f"OCR failed on a scanned document: {doc.ocr_error}")
+
+
+def publish_snapshot(sink: Sink, force: bool = True) -> bool:
+    """Write the homepage's snapshot (the default feed page and the top signals) to R2. Without ``force`` it is rebuilt
+    only when the day changed. A command that holds, releases or rewrites stored cards (apply-verdicts, release-pruned,
+    release-reviewed, refresh-card-blocks) forces it: a card it held stayed on the homepage and the Signals page until a
+    later run happened to analyse something (survey, 24 Oct 2026). True when written."""
+    today = today_ist()
+    start = (today - timedelta(days=SNAPSHOT_DAYS)).isoformat()
+    if not force:
+        try:
+            current = json.loads(sink.get_object(SNAPSHOT_KEY) or b"{}")
+        except Exception:
+            current = {}
+        if current.get("from") == start:
+            return False
+    try:
+        cards = sink.query("snapshot_feed", [start, SNAPSHOT_PAGE])
+        total = (sink.query("snapshot_count", [start]) or [{"n": len(cards)}])[0]["n"]
+        # the same window as the feed and the Signals page ask for (it was 3 days, so the page showed none from days 4-7)
+        signals = sink.query("snapshot_signals", [start])
+        body = {"generated_at": now_iso(), "from": start, "limit": SNAPSHOT_PAGE,
+                "feed": {"cards": cards, "total": total}, "signals": signals, "signals_from": start}
+        sink.put_object(SNAPSHOT_KEY, json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode())
+        return True
+    except Exception as exc:  # the snapshot is an optimisation; the feed falls back to D1
+        log.warning("snapshot not published: %s", exc)
+        return False
 
 
 def build_pipeline(settings: Settings, sink: Sink) -> Pipeline:

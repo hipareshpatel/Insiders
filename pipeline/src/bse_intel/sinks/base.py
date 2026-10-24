@@ -21,6 +21,7 @@ STATEMENTS = (
     "runs_upsert",
     "usage_add",
     "kv_set",
+    "kv_add",
     "filings_import",
     "cards_reaction",
     "cards_delete",
@@ -67,7 +68,7 @@ QUERIES = (
 
 # Statements that add to what is stored: repeating one after an ambiguous failure (a timeout after
 # D1 committed) would count twice, so they are retried only when the request never got through.
-NOT_IDEMPOTENT = frozenset({"usage_add"})
+NOT_IDEMPOTENT = frozenset({"usage_add", "kv_add"})
 
 # Keep each JSON payload comfortably under D1's per-value size limit.
 MAX_PAYLOAD_BYTES = 900_000
@@ -168,11 +169,9 @@ class Sink(ABC):
         if rows_written <= 0:
             return
         self._recorded += rows_written
-        try:
-            current = int(self.kv_get(f"d1_writes:{day}") or 0)
-        except ValueError:
-            current = 0
-        self.kv_set(f"d1_writes:{day}", str(current + rows_written), updated_at)
+        # added in the database (kv_add), not read here and written back: the pipeline, nightly and market-data end
+        # together and each overwrote the others' additions (survey, 24 Oct 2026)
+        self.execute("kv_add", [{"key": f"d1_writes:{day}", "value": rows_written, "updated_at": updated_at}])
 
     def add_uncounted_writes(self, day: str, updated_at: str) -> None:
         """Add what this process wrote that no job counted: the counter said 93,369 on 20 Oct 2026 when D1 stopped
@@ -182,10 +181,11 @@ class Sink(ABC):
 
 
 def chunk_rows(rows: list[dict], encode) -> list[list[dict]]:
-    """Split rows into batches whose encoded size stays under MAX_PAYLOAD_BYTES."""
+    """Split rows into batches whose encoded size stays under MAX_PAYLOAD_BYTES, in UTF-8 bytes: the Worker's cap is in
+    bytes, and a batch of ₹ signs or Devanagari measured in characters could be up to three times larger."""
     batches, batch, size = [], [], 2
     for row in rows:
-        row_size = len(encode(row)) + 1
+        row_size = len(encode(row).encode("utf-8")) + 1
         if batch and size + row_size > MAX_PAYLOAD_BYTES:
             batches.append(batch)
             batch, size = [], 2

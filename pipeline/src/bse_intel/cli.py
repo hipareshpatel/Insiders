@@ -34,11 +34,21 @@ def cmd_run(args, settings, sink) -> int:
     return 0 if stats.status in ("OK", "PARTIAL") else 1  # a run ending in ERROR fails the workflow
 
 
+def _cards_changed(sink, written: int) -> None:
+    """Stored cards were held, released or rewritten: the homepage snapshot is rebuilt now, not at the next run that
+    happens to analyse a filing (a card held here stayed on the homepage and Signals page until then)."""
+    if written:
+        from .pipeline import publish_snapshot
+
+        publish_snapshot(sink)
+
+
 def cmd_release_pruned(args, settings, sink) -> int:
     """Held cards whose only faults were points their quote did not carry, published without those points (prune.py)."""
     from . import prune
 
     report = prune.release(sink, dry_run=args.dry_run)
+    _cards_changed(sink, 0 if args.dry_run else report.get("rows_written", 0))
     print(json.dumps({k: v for k, v in report.items() if k != "cards"} | {"cards": report["cards"][:50]}, ensure_ascii=False))
     return 0
 
@@ -51,6 +61,7 @@ def cmd_release_reviewed(args, settings, sink) -> int:
 
     plan = json.loads(Path(args.plan).read_text(encoding="utf-8"))
     report = prune.release_reviewed(sink, plan, Path(args.plan).stem, dry_run=args.dry_run)
+    _cards_changed(sink, 0 if args.dry_run else report.get("rows_written", 0))
     print(json.dumps(report, ensure_ascii=False))
     return 0
 
@@ -75,7 +86,7 @@ def cmd_backfill_companies(args, settings, sink) -> int:
     scrips = [s.strip() for s in args.scrips.split(",") if s.strip()]
     stats = _pipeline(settings, sink).backfill_companies(
         scrips, date.fromisoformat(args.date_from or settings.backfill_start),
-        date.fromisoformat(args.date_to) if args.date_to else date.today(), args.time_budget)
+        date.fromisoformat(args.date_to) if args.date_to else today_ist(), args.time_budget)
     print(json.dumps(stats.as_dict(), indent=2))
     return 0 if stats.status in ("OK", "PARTIAL") else 1
 
@@ -100,7 +111,7 @@ def cmd_sync_to_cloud(args, settings, sink) -> int:
 def cmd_retriage(args, settings, sink) -> int:
     pipeline = _pipeline(settings, sink)
     day_from = date.fromisoformat(args.date_from or settings.backfill_start)
-    day_to = date.fromisoformat(args.date_to) if args.date_to else date.today()
+    day_to = date.fromisoformat(args.date_to) if args.date_to else today_ist()
     queued = {scrip: pipeline.retriage_company(scrip, day_from, day_to)
               for scrip in (s.strip() for s in args.scrips.split(",")) if scrip}
     print(json.dumps({"queued": queued, "count": sum(len(v) for v in queued.values())}, indent=2))
@@ -277,6 +288,12 @@ def cmd_sync_universe(args, settings, sink) -> int:
     return 0
 
 
+def _refused_code(report: dict) -> int:
+    """2 when NSE refused the session, as pledge-sync and deals-sync answer: these two returned 0, so a refusal looked
+    like a good night and scripts/retry.sh could not tell it from one (survey, 24 Oct 2026)."""
+    return 2 if str(report.get("stopped") or "").startswith("NSE refused") else 0
+
+
 def cmd_governance_sync(args, settings, sink) -> int:
     """The quarterly governance XBRL of the universe's companies into memory (governance_memory.py), no AI."""
     from . import governance_memory
@@ -286,7 +303,7 @@ def cmd_governance_sync(args, settings, sink) -> int:
     report = governance_memory.sync(pipeline, time.monotonic() + args.time_budget, pages=args.pages, max_files=args.max_files,
                                     scrips=scrips)
     print(json.dumps(report))
-    return 0
+    return _refused_code(report)
 
 
 def cmd_pledge_sync(args, settings, sink) -> int:
@@ -379,7 +396,9 @@ def cmd_refresh_card_blocks(args, settings, sink) -> int:
     from . import card_refresh
 
     scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()} or None
-    print(json.dumps(card_refresh.run(_pipeline(settings, sink), scrips, dry_run=args.dry_run), indent=2))
+    report = card_refresh.run(_pipeline(settings, sink), scrips, dry_run=args.dry_run)
+    _cards_changed(sink, 0 if args.dry_run else report.get("changed", 0))
+    print(json.dumps(report, indent=2))
     return 0
 
 
@@ -420,7 +439,9 @@ def cmd_critic_export(args, settings, sink) -> int:
 def cmd_apply_verdicts(args, settings, sink) -> int:
     """The owner's standing WRONG / RIGHT verdicts applied to the stored cards once (cards_apply_verdicts.sql): those
     saved before a verdict acted on its card (O11) never held or released it. No AI; a second run writes nothing."""
-    print(json.dumps({"cards_written": sink.execute("cards_apply_verdicts", ["WRONG", "RIGHT"])}))
+    written = sink.execute("cards_apply_verdicts", ["WRONG", "RIGHT"])
+    _cards_changed(sink, written)
+    print(json.dumps({"cards_written": written}))
     return 0
 
 
@@ -481,7 +502,7 @@ def cmd_shareholding_sync(args, settings, sink) -> int:
     report = governance_memory.shareholding_sync(pipeline, time.monotonic() + args.time_budget, days=args.days,
                                                  max_files=args.max_files)
     print(json.dumps(report))
-    return 0
+    return _refused_code(report)
 
 
 SEED_SAVE_EVERY = 10   # seed-memory --universe: companies between saved resume points
@@ -526,7 +547,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
         scrips = [s for s in everyone if s > done_through]
         # Companies reporting now first: results due in the next three weeks, or a filing in the last week, and not
         # seeded yet. They do not move the resume point, which follows the scrip order of the rest.
-        today = date.today()
+        today = today_ist()   # IST, as everything else: the runner's date.today() is UTC, a day behind after 18:30 UTC
         try:
             soon = [r["scrip_code"] for r in sink.query("seed_priority", [(today - timedelta(days=7)).isoformat(),
                                                                           (today + timedelta(days=21)).isoformat()])]
@@ -569,6 +590,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
     # their memory entries with the same figures
     last_done, saved = None, done_through if args.universe else None
     priority_set = set(priority) if args.universe else set()
+    refused = False
     with (BseClient() if args.source == "bse" else contextlib.nullcontext()) as bse, NseClient() as nse, \
             contextlib.ExitStack() as checkpoint:
         if args.universe:
@@ -589,6 +611,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
                 except SourceBlockedError as exc:
                     stats.failures.append(f"{scrip} results: {exc}"[:200])
                     log.error("NSE refused the session; stopping the seed: %s", exc)
+                    refused = True
                     break  # NSE limits by IP: stop, do not press on (a --universe run resumes at this company)
                 except Exception as exc:  # one company's archive must not end the run
                     stats.failures.append(f"{scrip} results: {type(exc).__name__}: {exc}"[:200])
@@ -599,6 +622,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
                 except SourceBlockedError as exc:
                     stats.failures.append(f"{scrip} shareholding: {exc}"[:200])
                     log.error("NSE refused the session; stopping the shareholding seed: %s", exc)
+                    refused = True
                     break  # NSE limits by IP: stop, do not press on
                 except Exception as exc:
                     stats.failures.append(f"{scrip} shareholding: {type(exc).__name__}: {exc}"[:200])
@@ -618,8 +642,10 @@ def cmd_seed_memory(args, settings, sink) -> int:
     print(json.dumps({"companies": stats.companies, "results_files": stats.results_files,
                       "results_periods": stats.results_periods, "shareholding_files": stats.shareholding_files,
                       "shareholding_periods": stats.shareholding_periods, "skipped": stats.skipped,
-                      "failures": stats.failures[:20]}, ensure_ascii=False))
-    return 0
+                      "failures": stats.failures[:20], "refused": refused}, ensure_ascii=False))
+    # 2 when NSE refused, as the other NSE syncs: it returned 0, the shard wrote no "more" marker and the job record said
+    # ok, so the seed chain stopped with nothing to show for it (survey, 24 Oct 2026)
+    return 2 if refused else 0
 
 
 def cmd_price_history(args, settings, sink) -> int:
@@ -662,9 +688,12 @@ def cmd_backup(args, settings, sink) -> int:
 
 
 def cmd_missed_jobs(args, settings, sink) -> int:
-    """Print the daily workflows GitHub did not start (watchdog.py), one per line, for pipeline.yml to start."""
-    from .watchdog import missed
+    """Print the daily workflows GitHub did not start (watchdog.py), one per line, for pipeline.yml to start; with
+    --started W, record that W was dispatched (after `gh workflow run` succeeded)."""
+    from .watchdog import mark_started, missed
 
+    if getattr(args, "started", None):
+        return 0 if mark_started(sink, args.started) else 2
     for workflow in missed(sink):
         print(workflow)
     return 0
@@ -982,8 +1011,9 @@ def main(argv: list[str] | None = None) -> int:
     p.set_defaults(func=cmd_backup)
 
     sub.add_parser("health", help="AI provider configuration and quota usage").set_defaults(func=cmd_health)
-    sub.add_parser("missed-jobs", help="daily workflows GitHub did not start, for the pipeline to start; no AI"
-                   ).set_defaults(func=cmd_missed_jobs)
+    p = sub.add_parser("missed-jobs", help="daily workflows GitHub did not start, for the pipeline to start; no AI")
+    p.add_argument("--started", help="record that this workflow file was dispatched today")
+    p.set_defaults(func=cmd_missed_jobs)
 
     args = parser.parse_args(argv)
     logging.basicConfig(
@@ -1024,7 +1054,7 @@ def _record_writes(sink) -> None:
 # The scheduled jobs (workflows), each recorded when it ends so the System page shows a job that never ran or stopped
 # running (owner, 2026-10-20: market-data had never run on GitHub and nobody saw it)
 SCHEDULED = {"market-data", "post-mortem", "sync-companies", "refresh-summaries", "governance-sync", "shareholding-sync",
-             "pledge-sync", "deals-sync", "deals-backfill", "insider-sync", "dgtr-sync", "annual-xbrl-catchup", "backup", "refresh-card-blocks", "seed-memory", "seed-calls"}
+             "pledge-sync", "deals-sync", "deals-backfill", "insider-sync", "corporate-actions-sync", "dgtr-sync", "annual-xbrl-catchup", "backup", "refresh-card-blocks", "seed-memory", "seed-calls"}
 
 
 def _record_job(sink, command: str, code: int) -> None:

@@ -172,7 +172,7 @@ def test_the_universe_seed_resumes_after_the_last_company_and_stops_on_a_refusal
     sink.put_object(universe.UNIVERSE_KEY, json.dumps(
         {"source": "nse", "included": ["500004", "500001", "500003", "500002"]}).encode())
 
-    assert cmd_seed_memory(args, settings, sink) == 0
+    assert cmd_seed_memory(args, settings, sink) == 2          # refused: 2, as the other NSE syncs
     assert seen == ["500001", "500002"]                         # key order; stopped at the refusal
     refuse.clear()
     assert cmd_seed_memory(args, settings, sink) == 0

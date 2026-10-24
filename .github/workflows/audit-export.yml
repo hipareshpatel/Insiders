@@ -43,16 +43,18 @@ jobs:
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel critic-export --since "$(date -u -d "-1 day" +%F)" --out "../docs/audit/live/critic-$(date -u +%F).json"'
       - name: Commit the export
         working-directory: .
+        env:
+          BRANCH: ${{ vars.AUDIT_BRANCH || 'claude/gracious-goodall-jn9buu' }}   # the lead session's working branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           files=$(ls docs/audit/live/held-*$(date -u +%F)*.json docs/audit/live/critic-$(date -u +%F).json 2>/dev/null)
           cp $files "$RUNNER_TEMP/"
-          git fetch -q origin claude/nice-goodall-ta0sxs
-          git checkout -q -B claude/nice-goodall-ta0sxs origin/claude/nice-goodall-ta0sxs
+          git fetch -q origin "$BRANCH"
+          git checkout -q -B "$BRANCH" "origin/$BRANCH"
           mkdir -p docs/audit/live
           for f in $files; do cp "$RUNNER_TEMP/$(basename "$f")" "$f"; done
           git add docs/audit/live/
           git diff --cached --quiet && { echo "nothing new"; exit 0; }
           git commit -qm "audit-export: held cards, what keeps them, and the critic's verdicts for the live review"
-          git push -q origin claude/nice-goodall-ta0sxs
+          git push -q origin "$BRANCH"

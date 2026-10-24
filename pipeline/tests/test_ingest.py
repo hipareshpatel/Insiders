@@ -618,6 +618,10 @@ def test_every_commands_d1_writes_count_toward_the_day():
             for row in _json.loads(request.content):
                 kv[row["key"]] = row["value"]
             return httpx.Response(200, json={"rows_written": 1})
+        if path.endswith("/exec/kv_add"):
+            for row in _json.loads(request.content):
+                kv[row["key"]] = str(int(kv.get(row["key"], 0)) + int(row["value"]))
+            return httpx.Response(200, json={"rows_written": 1})
         return httpx.Response(200, json={"rows_written": 40})
 
     sink = PlatformSink("https://example.test", "t", transport=httpx.MockTransport(handler))
@@ -626,3 +630,51 @@ def test_every_commands_d1_writes_count_toward_the_day():
     sink.add_writes("2026-10-20", 40, "now")          # a job that counts its own (the pipeline run)
     sink.add_uncounted_writes("2026-10-20", "now")     # the rest, as the command ends
     assert int(kv["d1_writes:2026-10-20"]) == 81       # 80 card rows and the first counter write
+
+
+@pytest.mark.parametrize("failure", ["read_timeout", "write_timeout", "bad_gateway"])
+def test_a_platform_that_times_out_or_errors_through_every_retry_is_unavailable_not_a_failed_filing(failure, monkeypatch):
+    """A ReadTimeout or a 5xx after the retries was raised as itself, reached the pipeline's generic handler and spent one
+    of the filing's attempts; it is the site's failure, so it is SinkUnavailable (the filing stays queued)."""
+    from bse_intel.sinks import platform
+    from bse_intel.sinks.base import SinkUnavailable
+
+    monkeypatch.setattr(platform.time, "sleep", lambda s: None)
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if failure == "read_timeout":
+            raise httpx.ReadTimeout("read timed out", request=request)
+        if failure == "write_timeout":
+            raise httpx.WriteTimeout("write timed out", request=request)
+        return httpx.Response(502, text="bad gateway")
+
+    sink = platform.PlatformSink("https://example.test", "t", transport=httpx.MockTransport(handler))
+    with pytest.raises(SinkUnavailable):
+        sink.query("kv_get", ["x"])
+
+
+def test_jobs_ending_together_both_add_to_the_days_write_counter(settings):
+    """The counter was read, added to and written back by each job, so of two jobs ending together the last one won and
+    the other's writes were lost; kv_add adds in the database itself (real SQL, the same file D1 runs)."""
+    from bse_intel.sinks.local import LocalSink
+
+    first, second = LocalSink(settings), LocalSink(settings)
+    first.add_writes("2026-10-24", 100, "t1")
+    second.add_writes("2026-10-24", 250, "t2")      # a second job on the same database, not a fresh read of the first
+    first.add_writes("2026-10-24", 5, "t3")
+    assert first.kv_get("d1_writes:2026-10-24") == "355"
+    first.kv_set("other", "7", "t")
+    first.execute("kv_add", [{"key": "other", "value": 3, "updated_at": "t"}])
+    assert first.kv_get("other") == "10"
+
+
+def test_batches_are_measured_in_bytes_like_the_workers_cap():
+    """The Worker refuses a body over 1,000,000 UTF-8 bytes; batches were measured in characters, so rows of ₹ signs or
+    Devanagari (three bytes each) could make a batch the Worker refused."""
+    from bse_intel.sinks.base import MAX_PAYLOAD_BYTES, chunk_rows
+    from bse_intel.sinks.platform import _encode
+
+    rows = [{"news_id": str(i), "headline": "₹" * 50_000} for i in range(40)]
+    batches = chunk_rows(rows, _encode)
+    assert sum(len(b) for b in batches) == 40
+    assert all(len(_encode(b).encode("utf-8")) <= MAX_PAYLOAD_BYTES for b in batches)

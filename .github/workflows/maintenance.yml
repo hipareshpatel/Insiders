@@ -152,14 +152,25 @@ jobs:
       - name: Commit the export
         if: inputs.command == 'export-held' || inputs.command == 'export-critic'
         working-directory: .
+        # the files are copied aside and back, as audit-export.yml does: written in main's tree, a file the branch
+        # already has (audit-export's held-<date>.json the same day) made the checkout refuse; nothing new is no commit
+        env:
+          BRANCH: ${{ vars.AUDIT_BRANCH || 'claude/gracious-goodall-jn9buu' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch -q origin claude/nice-goodall-ta0sxs
-          git checkout -q -B claude/nice-goodall-ta0sxs origin/claude/nice-goodall-ta0sxs
+          files=$(git ls-files --others --modified docs/audit/live/)
+          [ -n "$files" ] || { echo "nothing exported"; exit 0; }
+          for f in $files; do cp "$f" "$RUNNER_TEMP/$(basename "$f")"; done
+          git reset -q --hard && git clean -qf docs/audit/live/
+          git fetch -q origin "$BRANCH"
+          git checkout -q -B "$BRANCH" "origin/$BRANCH"
+          mkdir -p docs/audit/live
+          for f in $files; do cp "$RUNNER_TEMP/$(basename "$f")" "$f"; done
           git add docs/audit/live/
+          git diff --cached --quiet && { echo "nothing new"; exit 0; }
           git commit -qm "${{ inputs.command }}: exported for the live review (maintenance.yml)"
-          git push -q origin claude/nice-goodall-ta0sxs
+          git push -q origin "$BRANCH"
 
   # The results history, in parallel (owner, 2026-10-21: "let it get filled today", "NSE will not block it with suitable
   # rate"): twelve runners, so twelve addresses, each pacing its own NSE calls (3-5 s) and walking every twelfth company

@@ -18,6 +18,8 @@ concurrency:
 
 jobs:
   refresh:
+    # off with the schedule switch, as the pipeline and the nightly are (a dispatch, the watchdog's included, still runs)
+    if: github.event_name != 'schedule' || vars.PIPELINE_SCHEDULE == 'on'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 40
     defaults:

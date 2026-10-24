@@ -44,18 +44,20 @@ class PlatformSink(Sink):
             except httpx.TransportError as exc:
                 # A connect failure never reached the Worker; anything later may have been applied.
                 if attempt == 3 or not (idempotent or isinstance(exc, (httpx.ConnectError, httpx.ConnectTimeout))):
-                    if isinstance(exc, (httpx.ConnectError, httpx.ConnectTimeout, httpx.RemoteProtocolError,
-                                        httpx.ReadError)):
-                        raise SinkUnavailable(f"the platform API at {self._http.base_url} did not answer "
-                                              f"({type(exc).__name__}: {exc})") from exc
-                    raise
+                    # Any transport failure is the site's, not the filing's: a read or write timeout raised as itself
+                    # reached the pipeline's generic handler and spent one of the filing's attempts, so a slow Worker
+                    # could use up a filing's three (survey, 24 Oct 2026). A filing's writes are idempotent (a re-run
+                    # replaces its card and memory), so leaving it queued is safe even if this one was applied.
+                    raise SinkUnavailable(f"the platform API at {self._http.base_url} did not answer "
+                                          f"({type(exc).__name__}: {exc})") from exc
                 log.warning("platform API %s %s failed (%s); retrying", method, url, exc)
                 time.sleep(2 ** (attempt + 1))
                 continue
             # 429 and 503 mean the request was not processed; other 5xx may have been applied.
             if resp.status_code in (429, 503) or (resp.status_code >= 500 and idempotent):
                 if attempt == 3:
-                    resp.raise_for_status()
+                    raise SinkUnavailable(f"the platform API at {self._http.base_url} answered {resp.status_code} "
+                                          f"through every retry: {resp.text[:200]}")
                 time.sleep(2 ** (attempt + 1))
                 continue
             return resp

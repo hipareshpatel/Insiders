@@ -20,6 +20,7 @@ from types import SimpleNamespace
 from . import nse as nse_api
 from . import universe
 from .dossier import new_dossier
+from .timeutil import today_ist
 
 log = logging.getLogger(__name__)
 
@@ -139,7 +140,7 @@ def sync(pipeline, deadline: float, days: int = 3, scrips: set[str] | None = Non
     if not nse_map.built:
         report["stopped"] = "no NSE universe file yet"
         return report
-    end = today or date.today()
+    end = today or today_ist()   # IST: the runner's date.today() is UTC, a day behind after 18:30 UTC
     rows: list[dict] = []
     start = end - timedelta(days=days)
     while start <= end:   # NSE's list is read a month at a time

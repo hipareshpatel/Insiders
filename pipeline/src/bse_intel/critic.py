@@ -30,7 +30,7 @@ from typing import Annotated, Any
 
 from pydantic import BeforeValidator, Field
 
-from .ai.gateway import AllProvidersFailed
+from .ai.gateway import AllProvidersFailed, model_family
 from .models import OptStr, _Lenient
 from .timeutil import now_iso
 
@@ -51,19 +51,9 @@ MAX_JOB_CHARS = 12_000         # the points, their windows and memory: Groq's mo
 MIN_LEFT_S = 45                # no critic call starts with less of the run's time than this
 MAX_FAILURES = 2               # calls that went out and failed, before the critic stops for the run
 
-# Model families by name: the critic is never of the writer's family, so the two do not share one blind spot.
-_FAMILIES = (("gemini", "gemini"), ("gemma", "gemma"), ("glm", "glm"), ("nemotron", "nemotron"), ("deepseek", "deepseek"),
-             ("llama", "llama"), ("gpt-oss", "gpt-oss"), ("ministral", "mistral"), ("mistral", "mistral"),
-             ("qwen", "qwen"), ("minimax", "minimax"), ("kimi", "kimi"))
-
-
 def family(model_label: str | None) -> str:
-    """'gemini/gemini-3.6-flash' -> 'gemini'; 'openrouter/nvidia/nemotron-3.5-super-vl:free' -> 'nemotron'."""
-    low = (model_label or "").lower()
-    for word, name in _FAMILIES:
-        if word in low:
-            return name
-    return low.split("/", 1)[0] or "unknown"
+    """'gemini/gemini-3.6-flash' -> 'gemini' (ai.gateway.model_family): the critic is never of the writer's family."""
+    return model_family(model_label)
 
 
 def _verdict(value: Any) -> str:

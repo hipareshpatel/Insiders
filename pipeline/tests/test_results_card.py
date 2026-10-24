@@ -412,3 +412,23 @@ def test_points_set_against_memory_go_to_our_reading_with_their_id():
     point = next(w for w in out.card.why_it_matters if w.memory_refs == ["g_1"])
     assert point.basis == "MEMORY" and point.text.startswith("9MFY25 EBITDA ₹300 Cr is 75%")
     assert not any("guidance" in f.text for f in out.card.what_happened)
+
+
+def test_a_rich_card_keeps_no_model_fact_whose_amounts_code_already_shows():
+    """Sampling re-run, 24 Oct 2026: "EBITDA ₹111.18 Cr, up 87.8% YoY" and "borrowings ₹938.96 Cr" repeated code's lines
+    once a later step had re-pointed their quotes; finance cost and the dividend, in no code line, stay."""
+    from bse_intel.facts import Fact as Computed
+    tagged = xbrl.parse((FIX / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    ebitda = next(m for m in tagged.metrics if m.metric == "ebitda" and m.period == tagged.period)
+    out = Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "x",
+        "card": {"impact_level": "MODERATE", "headline": "Ahluwalia Q3 results card", "what_happened": [
+            {"text": f"EBITDA for the quarter stood at ₹{ebitda.value:,.2f} Cr.", "quote": "EBITDA for the quarter stood at"},
+            {"text": "Borrowings rose to ₹938.96 Cr.", "quote": "borrowings increased"},
+            {"text": "Finance cost rose to ₹18.85 Cr.", "quote": "Finance costs 18.85 14.57"},
+            {"text": "Paid a final dividend of ₹12.34 Cr.", "quote": "final dividend of Rs 1 per share"}]}})
+    facts = [Computed("Balance sheet Q3FY25: borrowings ₹938.96 Cr")]
+    results_card.build(out, tagged, "Ahluwalia Contracts (India) Limited", facts=facts, rich=True)
+    texts = [f.text for f in out.card.what_happened]
+    assert "Finance cost rose to ₹18.85 Cr." in texts and "Paid a final dividend of ₹12.34 Cr." in texts
+    assert not any(t.startswith(("EBITDA for the quarter", "Borrowings rose")) for t in texts)

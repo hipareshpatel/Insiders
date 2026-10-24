@@ -24,7 +24,9 @@ blind reviewer checks them against the filing PDF and the company's memory. The 
 quoted points, the tables and blocks and the key numbers; the model's interpretation sits open beside it in its own box,
 "Our reading · not checked against the filing" (owner: kept readable), and the facts the checks could not quote sit
 behind a tap; a fault only in those is MINOR (`reading_only`). The bar
-is **not met** (21-24 Oct pooled: 22%, 17%-28%).
+is **not met** (21-24 Oct pooled: 22%, 17%-28%). Richness is measured beside it (owner, 24 Oct 2026, D43): reviewers list
+the key points a source states that the card left out (`missed_key_points`, coverage FULL / PARTIAL / THIN), so a fix
+that lowers WRONG by saying less shows in `rates.py`.
 
 | Day | Audited | RIGHT | MINOR | WRONG | Right | Right or minor | WRONG |
 |---|---|---|---|---|---|---|---|
@@ -80,7 +82,7 @@ This is how WRONG comes down. Each step was agreed with the owner, and none may 
      dispatch at a time, with D1 writes below 85,000 a day.
    - Never hand-edit or hand-delete stored data.
 5. **Record.**
-   - Verdicts go to `docs/audit/live/<date>-audit.json`.
+   - Verdicts go to `docs/audit/live/<date>-audit.json`, with each card's `missed_key_points` and `coverage` (D43).
    - The change row and day totals go to `docs/audit/ledger.md`.
    - Add one line to `docs/OPS.md`.
    - Add a TRACKER `F<n>` row.
@@ -168,12 +170,12 @@ The routine's prompt, verbatim:
 
 ```
 Daily card audit (owner, 20 Oct: 200 days, 10:07/12:07/14:07/16:07 IST, at least 20 cards a day; moved into the lead session on 21 Oct because routine sessions could not push). If today (IST) is after 2027-05-08, disable this routine and stop. Otherwise, in this session (git pull first; branch claude/gracious-goodall-jn9buu):
-1. Published cards from /api/feed newest first, those not yet in today's docs/audit/live/<date>-audit.json (at least 5 a run): give them in batches to independent general-purpose subagents with pipeline/scripts/daily_audit/reviewer_prompt.txt (you do not grade your own fixes). Each downloads the filing PDF into its own new directory, extracts text with `python -I`, and judges the card's face (headline, points, tables, blocks, "Our reading", direction, impact) RIGHT / MINOR / WRONG with the error class (wrong_period, unit_scale, restated, standalone_consolidated, wrong_column, invented, arithmetic, direction, duplicate, event_type, memory, attribution, unsupported_cause, other) and a one-line reason. Record each card's prompt_variant (card_json.grounding.prompt_variant).
+1. Published cards from /api/feed newest first, those not yet in today's docs/audit/live/<date>-audit.json (at least 5 a run): give them in batches to independent general-purpose subagents with pipeline/scripts/daily_audit/reviewer_prompt.txt (you do not grade your own fixes). Each downloads the filing PDF into its own new directory, extracts text with `python -I`, and judges the card's face (headline, points, tables, blocks, "Our reading", direction, impact) RIGHT / MINOR / WRONG with the error class (wrong_period, unit_scale, restated, standalone_consolidated, wrong_column, invented, arithmetic, direction, duplicate, event_type, memory, attribution, unsupported_cause, other) and a one-line reason, and lists the key points the filing or memory states that the card left out (missed_key_points, coverage FULL / PARTIAL / THIN; D43, richness beside WRONG). Record each card's prompt_variant (card_json.grounding.prompt_variant).
 2. First run of the day: dispatch maintenance.yml export-held; review a sample of held cards (release candidate or not). (The shadow critic is off since 24 Oct, D41: no export-critic or critic scoring until it is rebuilt.)
 3. /api/review: check the flagged cards the same way.
 4. Fix: the commonest WRONG class with a root cause in code or prompt, with a test; on/off over stored cards (no AI) and ship only if more cards become right and none wrong; an independent subagent blind-checks a sample of the changed cards. Any fix that makes a check accept more gets that audit before it is called done. Re-runs or refreshes needed go to docs/audit/actions-pending.md or are dispatched one at a time (D1 writes below 85,000).
-5. Save judgements to docs/audit/live/<date>-audit.json (each with reading_only: true when every fault is in "Our reading" or behind the tap), append the ledger rows (docs/audit/ledger.md: per change and the daily totals, incl. short vs long and WRONG on the checked face), commit and push.
-6. 16:07 run only: the day's summary at the top of docs/audit/live/<date>-audit.md (audited, right/minor/wrong, WRONG on the checked face vs the 5% bar (D42), short vs long, fixes and their effect, held released, open classes) with the pooled rates and their 95% intervals from `python -I pipeline/scripts/daily_audit/rates.py --window 3` (a day alone cannot show a fix worked), then a short summary for the owner.
+5. Save judgements to docs/audit/live/<date>-audit.json (each with reading_only: true when every fault is in "Our reading" or behind the tap), append the ledger rows (docs/audit/ledger.md: per change and the daily totals, incl. short vs long, WRONG on the checked face, and missed key points a card / THIN share), commit and push.
+6. 16:07 run only: the day's summary at the top of docs/audit/live/<date>-audit.md (audited, right/minor/wrong, WRONG on the checked face vs the 5% bar (D42), missed key points a card and the THIN share (D43), short vs long, fixes and their effect, held released, open classes) with the pooled rates and their 95% intervals from `python -I pipeline/scripts/daily_audit/rates.py --window 3` (a day alone cannot show a fix worked), then a short summary for the owner.
 Rules: no AI for testing; never edit stored data by hand or hand-delete live data; $0 (no paid routes beyond the owner's DeepSeek seed use); no keys printed; no AI model names in commits or PR text.
 ```
 

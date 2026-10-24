@@ -19,26 +19,26 @@ caught. Most of the "partly" points need a different source, such as the filing'
 rather than a second reader. Several cards had already changed since review, and some errors were fixed by later
 code (Sagility's INR/USD unit, 22 Oct), so the trace overstates what is still open.
 
-## Check A: a comparative against the filings' stated change (`dossier.contradicted`)
-A results-table comparative is removed when its change disagrees with every change the quarter's own filings state
-for that line. The threshold is more than 1 point and more than 10% of the stated change. The check is not applied
-across a loss or to basis-point lines.
+## Check A: a comparative against the filings' stated change (rejected)
+The first sample was 12 lines over 3 days: 9 WRONG, 3 RIGHT. That was too few to judge. The check was then judged on all
+1,986 stored tables against pass marks set first (`PASS_MARKS.md`). It removed 90 distinct comparatives
+(`onoff_stated_full.json`).
 
-**On/off result.** Over 153 stored RESULTS and call tables from 22-25 Oct (`onoff_stated.json`), the check removed
-comparatives in 11 tables, 12 distinct lines.
+**Blind review** (`onoff_stated_full_review.json`):
+- WRONG 59, RIGHT 26, UNSURE 5: 66% WRONG, 95% CI 55-75%. The mark was 80%.
+- 29% of removals dropped a right figure, against a limit of 20%.
+- Counting EBITDA on our own definition as WRONG: 77% (67-84%), still a fail.
 
-**Blind review against the PDFs** (`onoff_stated_review.json`): 9 WRONG, 3 RIGHT.
-- WRONG (9):
-  - PNB: profit before associates set against profit after associates.
-  - Geojit: the pre-restatement year-ago figure, which flipped the sign of the change.
-  - Dr Reddy's ×4: comparatives taken from scanned pages.
-  - STL: the wrong quarter.
-  - Indorama: a different EBITDA definition.
-- RIGHT (3):
-  - Godrej Properties ×2: the "stated" +38% was another measure, so two correct comparatives were lost.
-  - CIE: the comparative was right but the current figure was not, so its +7.1% was wrong anyway.
+So the check is not shipped.
 
-The mover line (employee cost) goes with a removed year-ago revenue, because it is scaled by that revenue.
+**What the reviews show instead: the results table's own defects.** The table sets one line against another:
+- profit before associates against profit after (Union Bank, PNB, Canara, ICICI Bank);
+- standalone against consolidated (PNB, Federal Bank);
+- gross income against net (RBL);
+- EBITDA computed without other income, against companies that print it with other income (Lumax, Bansal Wire,
+  Solara, MHRIL, Manaksia, Juniper).
+
+These are fixes at source, not a filter after the fact.
 
 ## Check B: words against the card's own figures (rejected)
 On the first sample (218 audited cards) it flagged only 3, too few to judge. Judged on all 5,344 stored cards against

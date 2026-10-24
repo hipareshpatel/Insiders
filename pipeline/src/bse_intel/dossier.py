@@ -1686,10 +1686,6 @@ _RESTATED_BY = (_PRINTED_CR | _PRINTED_PCT | {"eps"}) - {"ebitda", "ebitda_margi
 RESTATED_LINES = 2
 ROUNDING = 0.0005   # a comparative within this share of a printed figure is that figure (as computed._base_printed)
 ROW_WINDOW = 6      # numbers either side of a figure in the text that can be cells of its row
-# A comparative whose change disagrees with every change the quarter's own filings state for that line is on another
-# base (a restated or regrouped column, another definition): off by more than this many points and this share of it
-STATED_POINTS = 1.0
-STATED_SHARE = 0.1
 
 
 def _number_sequence(text: str) -> list[float]:
@@ -1913,25 +1909,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             now = stored(names, period)[0]
             if now is not None and _entry_basis(now) and _entry_basis(entry) and _entry_basis(now) != _entry_basis(entry):
                 return None
-        return None if value is None or refused(names, p, alone=True) or contradicted(names, p, value) else value
-
-    def contradicted(names: tuple[str, ...], p: str, base: float) -> bool:
-        """Whether the change against this comparative disagrees with every change the quarter's filings state for the
-        line: the stated YoY is on the filing's own (restated) base, memory's year-ago is as first reported. Geojit's
-        Q2FY27 revenue +2.55% YoY on a restated ₹161.69 Cr, where memory's ₹169.8 Cr (treasury income since moved to
-        other income) made -2.3%; Godrej Properties' revenue +161% from Total Income for the filing's +38% (wrong-card
-        trace, 25 Oct 2026). Not judged across a loss, or on a line whose change is in basis points."""
-        slot = "yoy" if p == periods["prev_year"] else "qoq" if p == periods["prev_quarter"] else None
-        entry, now = stored(names, period)
-        if slot is None or entry is None or now is None or names[0] in _BPS_LINES or base <= 0 or now < 0:
-            return False
-        basis = _entry_basis(entry)
-        # a quarter worked out from cumulative periods is stored flat, with no date (_quarter_from_cumulative)
-        stated = [src[f"{slot}_pct"] for src in entry.get("sources") or [entry]
-                  if isinstance(src.get(f"{slot}_pct"), (int, float)) and src.get("basis") in (None, basis)
-                  and not str(src.get("news_id") or src.get("source_news_id") or "").startswith(XBRL_SOURCE)]
-        change = (now - base) / base * 100
-        return bool(stated) and all(abs(change - s) > max(STATED_POINTS, STATED_SHARE * abs(s)) for s in stated)
+        return None if value is None or refused(names, p, alone=True) else value
 
     def margin(p: str | None) -> float | None:
         stated = lookup(_RESULT_METRICS[2][1], p)

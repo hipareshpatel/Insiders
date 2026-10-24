@@ -122,9 +122,13 @@ def test_openrouter_free_models_are_spares_under_one_daily_allowance(settings):
     assert entries and all(e["model"].endswith(":free") for e in entries)  # never a paid model by accident
     for name, route in config["routes"].items():  # a regular, weighted share of pass 2 and long documents for the VL
         for e in (e for e in route if e["provider"] == "openrouter"):  # model alone (round 4: 10% WRONG; round 5 arm B:
-            regular = name in ("pass2", "pass2_bulk") and "3.5-super-vl" in e["model"]                 or name in ("pass2", "pass2_bulk") and e["model"] in ("minimax/minimax-m3.1-flash:free",
-                                                                       "google/gemma-4-31b-it:free")   # on trial, round 7
+            # Gemma 4 (31B for cards, 26B for level 1) is a named spare (owner, 24 Oct 2026), never the auto router
+            regular = name in ("pass2", "pass2_bulk") and "3.5-super-vl" in e["model"]
             assert (not e.get("spare") and e.get("weight", 1) >= 1) if regular else e.get("spare"), (name, e)
+            assert not e["model"].startswith("openrouter/"), (name, e)
+            if "3.5-super-vl" in e["model"] and name.startswith(("pass2", "memory_seed")):
+                # thinking off, as for every writer (D21): with it on, the VL spent its 8,000 tokens and answered empty
+                assert e.get("extra_body", {}).get("reasoning") == {"enabled": False}, (name, e)
     # Ultra wrote 12 of round 4's 122 cards as a spare, 58% WRONG: it is on no card route (2026-10-19)
     assert not any("nemotron-3-ultra" in e["model"] for n, route in config["routes"].items() if n.startswith("pass2")
                    for e in route)
@@ -547,6 +551,26 @@ def test_a_preferred_model_takes_most_of_a_weighted_route_only_when_set():
     assert weights(ENV) == {"a:m-a": 4, "b:m-b": 3}
     assert weights({**ENV, "PREFER_MODEL": "b:m-b"}) == {"a:m-a": 4, "b:m-b": 3 * PREFER_WEIGHT}
     assert weights({"A_KEY": "ka", "PREFER_MODEL": "b:m-b"})["b:m-b"] == 3
+
+
+def test_a_model_trial_sends_routes_that_have_the_model_to_it_alone():
+    """ONLY_MODEL (scripts/model_trial.py, owner 24 Oct 2026: try Gemma on stored filings before it goes live): every
+    route with that model uses it alone, spare or not; a route without it is unchanged."""
+    from conftest import ENV
+
+    from bse_intel.ai.gateway import AIGateway
+
+    config = gateway_config({"pass2": [{"provider": "a", "model": "m-a", "weight": 4},
+                                       {"provider": "b", "model": "m-b", "spare": True}],
+                             "pass1": [{"provider": "a", "model": "m-a"}]},
+                            strategies={"pass2": "weighted"})
+    gw = AIGateway(config, client_factory=lambda *a: None, env={**ENV, "ONLY_MODEL": "b:m-b"})
+    assert [(t.key, t.spare) for t in gw.routes["pass2"]] == [("b:m-b", False)]
+    assert [t.key for t in gw.routes["pass1"]] == ["a:m-a"]
+    both = AIGateway(config, client_factory=lambda *a: None, env={**ENV, "ONLY_MODEL": "b:m-b, a:m-a"})
+    assert [t.key for t in both.routes["pass2"]] == ["a:m-a", "b:m-b"] and [t.key for t in both.routes["pass1"]] == ["a:m-a"]
+    plain = AIGateway(config, client_factory=lambda *a: None, env=ENV)
+    assert [t.key for t in plain.routes["pass2"]] == ["a:m-a", "b:m-b"]
 
 
 # ------------------------------------------------------------------ second keys and the second opinion (survey, 24 Oct 2026)

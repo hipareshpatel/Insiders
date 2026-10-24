@@ -49,6 +49,11 @@ def _env_int(name: str, default: int) -> int:
     return int(value) if value is not None else default
 
 
+def _cards_from() -> str | None:
+    value = (_env("BACKFILL_CARDS_FROM", "2026-08-01") or "").strip()
+    return None if value.lower() in ("off", "none", "0", "") else value
+
+
 @dataclass(frozen=True)
 class Settings:
     config_dir: Path = field(default_factory=lambda: Path(_env("BSE_INTEL_CONFIG_DIR", str(_PIPELINE_DIR / "config"))))
@@ -79,6 +84,10 @@ class Settings:
 
     backfill_start: str = field(default_factory=lambda: _env("BACKFILL_START", "2026-04-19"))
     max_attempts: int = field(default_factory=lambda: _env_int("MAX_ATTEMPTS", 3))
+    # Backfill filings before this day go into memory only, with no card (owner, 24 Oct 2026): a slimmer AI reading of
+    # the memory delta, the deal and what to track. Live filings, and any filing that already has a card, always get a
+    # card. "off" makes cards for the whole backfill. Repository variable BACKFILL_CARDS_FROM.
+    backfill_cards_from: str | None = field(default_factory=lambda: _cards_from())
     # Stop discovering backfill days once this many D1 rows were written today
     # (Workers Paid since 22 Oct 2026: 50M a month included, about 1.6M a day; live processing is never throttled).
     d1_daily_write_budget: int = field(default_factory=lambda: _env_int("D1_DAILY_WRITE_BUDGET", d1_plan()[0]))

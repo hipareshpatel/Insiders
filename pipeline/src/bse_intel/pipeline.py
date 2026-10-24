@@ -47,7 +47,7 @@ from . import order_band
 from . import gate
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
-from .models import EVENT_TAGS, Filing, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
+from .models import EVENT_TAGS, Filing, MemoryOutput, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
                       printed_periods, quarter_index, statement_quarter, statement_year)
 from .prompts.engine import PromptEngine
@@ -165,6 +165,7 @@ class Stats:
     outside_universe: int = 0
     xbrl: int = 0           # filings whose figures came from their XBRL file
     duplicates: int = 0     # repeat submissions of an earlier filing's text (no AI call)
+    memory_only: int = 0    # older backfill filings read into memory with no card (settings.backfill_cards_from)
     attachment_changed: int = 0  # known filings the exchange now serves with another file, queued again
     days_discovered: list[str] = field(default_factory=list)
     critic: dict = field(default_factory=dict)   # the shadow critic's counts this run (critic.py); empty when it did not run
@@ -3019,7 +3020,8 @@ class Pipeline:
         # must never be dropped, and results have their own one-card-per-quarter rule. This keeps the
         # extra call off most filings - free-tier requests were what tripped the breaker, so spending one
         # everywhere would trade a paid call for the scarcer thing.
-        if filing.route != "PASS1" and event_type in ONE_EVENT_ONE_CARD and not is_transcript(filing):
+        memory_only = self._memory_only(filing, bulk)
+        if filing.route != "PASS1" and event_type in ONE_EVENT_ONE_CARD and not is_transcript(filing) and not memory_only:
             # Only entries close enough to be the same event: with nothing within the window there is
             # nothing to repeat, so the call is not made at all. Most filings never reach it.
             since = (datetime.fromisoformat(filing.filed_at) - timedelta(days=REPEAT_DAYS)).isoformat()
@@ -3139,6 +3141,9 @@ class Pipeline:
         reaction = learned["queue"].get(filing.news_id)
         # The proportions the model may use, computed here from memory as it stood before this filing.
         scale = scale_block(dossier_as_of(dossier, filing.filed_at, inclusive=False), company, text, declared_unit(text))
+        if memory_only:
+            return self._memory_flow(filing, company, industry, event_type, dossier, read, view, text, filed_text, tagged,
+                                     standalone_file, scale, events, now)
         variant = prompt_variant(filing.news_id, bulk, self.settings.prompt_short_share)
         system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers, scale=scale,
                                           examples=self._owner_examples(sector, event_type),
@@ -3509,6 +3514,81 @@ class Pipeline:
                      "symbol": row["symbol"], "sector": sector, "updated_at": now,
                      **({"credibility_score": rated.credibility} if rated.credibility is not None else {}),
                      **_company_memory(merged)},
+        )
+
+    def _memory_only(self, filing: Filing, bulk: bool) -> bool:
+        """An older backfill filing with no card yet is read into memory only (settings.backfill_cards_from)."""
+        cut = self.settings.backfill_cards_from
+        if not bulk or not cut or filing.filed_at[:10] >= cut:
+            return False
+        # a filing that already has a card keeps getting one: a re-read never leaves a card's filing without it
+        return not (self._card_shown(filing.news_id) or self._card_held(filing.news_id))
+
+    def _memory_flow(self, filing: Filing, company: dict, industry, event_type: str, dossier: dict, read: dict,
+                     view: dict | None, text: str, filed_text: str, tagged, standalone_file, scale: str, events: list,
+                     now: str) -> Outcome:
+        """An older backfill filing into memory with no card (owner, 24 Oct 2026): one slimmer AI reading of the memory
+        delta, the deal and what to track (prompts.memory, MemoryOutput), then the same event-type rules, deal guards,
+        memory trust checks, XBRL figures and merge a card's memory gets. Nothing is written to the cards table."""
+        system, user = self.prompts.memory(filing, event_type, industry, view, text, scale=scale)
+        route, packer = self._pass2_writer(True, len(system) + len(user))
+        if packer is not None:
+            result = packer.complete(route, system, user, MemoryOutput, filing.news_id)
+        else:
+            result = self.gateway.complete_json(route, system, user, MemoryOutput, bulk=True)
+        out: MemoryOutput = result.value
+        if not out.is_material:
+            with self._lock:
+                self.stats.not_material += 1
+            return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": out.event_type,
+                            "reason": f"memory: not material{': ' + out.reason if out.reason else ''}"[:300],
+                            "updated_at": now})
+        if out.event_type in (*ONE_EVENT_ONE_CARD, *REPEAT_BY_WORDS) and not is_transcript(filing):
+            repeat = similar_timeline_entry(dossier, filing, out.timeline_entry)
+            if repeat:
+                with self._lock:
+                    self.stats.duplicates += 1
+                return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": out.event_type,
+                                "reason": f"duplicate of {repeat['news_id']} (same event, in other words)", "updated_at": now})
+        if filing.route == "FAST_TRACK" and filing.event_type:
+            out.event_type = filing.event_type   # rules know the event type better than the model
+        elif out.event_type == "OTHER" and event_type != "OTHER":
+            out.event_type = event_type
+        out.event_type = event_type_rules(out.event_type, filing, text, tagged)
+        history = dossier.get("financial_metrics", [])
+        apply_deal_guards(out, filing, history, dossier.get("balance_sheet", []), text)
+        event_xbrl.apply_orders(out.card, event_xbrl.orders(events))   # the event file's figures have the last word
+        remembered, _ = trust.for_memory(out, filed_text, company, dossier)
+        if tagged:
+            _apply_xbrl(remembered, tagged, filing.news_id)
+        merged = merge(dossier, remembered, filing, None, now,
+                       fy_end_month=getattr(tagged, "fy_end_month", None) if tagged else None)
+        if standalone_file is not None and standalone_file.kind == "RESULTS":
+            put_standalone(merged, standalone_file.metrics, standalone_file.balance_sheet, filing.filed_at, filing.news_id)
+        sector = self.prompts.sector_for(industry).name
+        merged.update({k: v for k, v in (("industry", industry), ("sector", sector),
+                                         ("symbol", company.get("symbol") or filing.symbol)) if v})
+        kept = keep_concurrent_writes(merged, read, self.sink.get_dossier(filing.scrip_code))
+        if kept:
+            log.info("%s: memory written meanwhile by another job kept: %s", filing.news_id, ", ".join(kept))
+        self.sink.put_dossier(filing.scrip_code, merged)
+        self._save_evidence(filing, result, result, now)
+        symbol = company.get("symbol") or filing.symbol
+        catalysts = [
+            {"id": _catalyst_id(filing.scrip_code, ev.event_type, ev.date), "scrip_code": filing.scrip_code,
+             "company_name": filing.company_name, "symbol": symbol, "event_type": ev.event_type, "event_date": ev.date,
+             "description": ev.description[:300], "source_news_id": filing.news_id, "created_at": now}
+            for ev in out.dossier_delta.upcoming_events if ev.date >= filing.filing_date
+        ]
+        with self._lock:
+            self.stats.memory_only += 1
+        return Outcome(
+            update={"news_id": filing.news_id, "status": "ANALYZED", "event_type": out.event_type,
+                    "reason": f"memory only: a backfill filing before {self.settings.backfill_cards_from}, no card",
+                    "last_error": None, "updated_at": now},
+            catalysts=catalysts,
+            company={"scrip_code": filing.scrip_code, "company_name": filing.company_name, "symbol": symbol,
+                     "sector": sector, "updated_at": now, **_company_memory(merged)},
         )
 
     def _repeat_check(self, filing, recent: list[dict], dossier: dict, bulk: bool, opening: str = "") -> dict | None:

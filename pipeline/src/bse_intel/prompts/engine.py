@@ -131,6 +131,41 @@ def field_rules(full_prompt: str, event_type: str) -> str:
     return "\n".join(keep)
 
 
+# The memory-only reading of an older backfill filing (owner, 24 Oct 2026): the memory delta, the deal and what to track,
+# no card fields. Its rules are pass2.md's own blocks (one source for each rule).
+MEMORY_SCHEMA = {
+    "is_material": True,
+    "event_type": "string",
+    "timeline_entry": "one sentence for the company's chronological timeline, with the event's main figure",
+    "deal_value": PASS2_SCHEMA["card"]["deal_value"],
+    "track_next": PASS2_SCHEMA["card"]["track_next"],
+    "dossier_delta": PASS2_SCHEMA["dossier_delta"],
+}
+# bullets of pass2.md's ground rules that are about the card's words, not the facts
+_CARD_ONLY = re.compile(r"\b(?:headline|takeaway|card|why_it_matters|what_happened|key_numbers|quote)\b", re.I)
+
+
+def prompt_block(full_prompt: str, title: str) -> str:
+    """The block of pass2.md that starts with the line ``title`` (up to the next blank line)."""
+    blocks = full_prompt.split("\n\n")
+    return next((b.strip() for b in blocks if b.lstrip().startswith(title)), "")
+
+
+def _bullets(block: str, keep) -> str:
+    """A block's heading line and the bullets (with their indented lines) ``keep`` accepts."""
+    lines, out, current = block.splitlines(), [], []
+    if not lines:
+        return ""
+    head, body = lines[0], lines[1:]
+    for line in body + ["- "]:
+        if line.startswith("- ") and current:
+            if keep("\n".join(current)):
+                out.extend(current)
+            current = []
+        current.append(line)
+    return "\n".join([head, *out])
+
+
 def _unit_note(text: str | None) -> str:
     """A line naming the filing's unit when it is not ₹ crore: models copy "2,863" from a lakh
     statement as "₹2,863 Cr". Stated in code so the model does not have to notice the header."""
@@ -213,6 +248,7 @@ class PromptEngine:
         self._pass2 = Template(self._pass2_text)
         self._pass2_short = Template((prompts / "pass2_short.md").read_text())
         self._pass2_user = Template((prompts / "pass2_user.md").read_text())
+        self._memory = Template((prompts / "memory.md").read_text())
         self._verify = (prompts / "verify.md").read_text()
         self.memory_start = settings.backfill_start
         self.events: dict = settings.load_toml("events.toml")
@@ -303,6 +339,48 @@ class PromptEngine:
             f"{user}\n\nDRAFT REPLY\n{json.dumps(draft, ensure_ascii=False)}\n\nPROBLEMS\n"
             + "\n".join(f"- {p}" for p in problems)
         )
+
+    def memory(self, filing: Filing, event_type: str, industry: str | None, memory: dict | None, text: str,
+               scale: str | None = None) -> tuple[str, str]:
+        """The memory-only reading of an older backfill filing: pass2.md's ground rules (less those about a card's words),
+        its memory compartments and dossier facts, the deal and what-to-track rules, and MEMORY_SCHEMA; the user message
+        is pass 2's own (memory, filing, scale, text)."""
+        sector = self.sector_for(industry)
+        full = self._pass2_text
+        ground = _bullets(prompt_block(full, "Ground rules"), lambda b: not _CARD_ONLY.search(b))
+        compartments = _bullets(prompt_block(full, "Memory compartments"),
+                                lambda b: not b.startswith("- deal_value.") and not b.startswith("- kpis_to_verify"))
+        facts = prompt_block(full, "Dossier facts")
+        lines = full.splitlines()
+        keep: list[str] = []
+        for start in ("- track_next:", "- kpis_to_verify:"):
+            for i, line in enumerate(lines):
+                if line.startswith(start):
+                    j = i + 1
+                    while j < len(lines) and lines[j].startswith("  "):
+                        j += 1
+                    keep.extend(lines[i:j])
+        deal_rules = "Deal and what to track\n" + "\n".join(
+            [line for line in field_rules(full, "ORDER_WIN").splitlines() if not line.startswith("- quantified_impact")
+             and not line.startswith("- notable_changes")] + keep)
+        system = self._memory.safe_substitute(
+            ground_rules=ground, memory_rules=f"{compartments}\n\n{facts}", deal_rules=deal_rules,
+            event_type=event_type, event_definitions=event_definitions(),
+            sector_name=sector.name.replace("_", " "), sector_context=sector.lens(),
+            sector_kpis=", ".join(sector.kpis) + (
+                ". Name these in financial_metrics exactly as: "
+                + ", ".join(f"{f['metric']} ({f['label']})" for f in sector.footer) if sector.footer else ""),
+            schema=json.dumps(MEMORY_SCHEMA, ensure_ascii=False, separators=(",", ":")),
+        )
+        user = self._pass2_user.safe_substitute(
+            company_name=filing.company_name, listing=_listing(filing), exchange_subject=_subject(filing),
+            industry=industry or "unknown", filed_at=filing.filed_at, headline=filing.headline,
+            memory=json.dumps(memory, ensure_ascii=False, separators=(",", ":")) if memory else "No prior memory.",
+            scale=scale or "Not known for this company yet: give no proportions of revenue, market cap or net worth.",
+            peers="None.",
+            text=_unit_note(text) + (text or "(attachment had no extractable text; rely on the headline)"),
+        )
+        return system, user
 
     def pass2(
         self, filing: Filing, event_type: str, industry: str | None, memory: dict | None, text: str,

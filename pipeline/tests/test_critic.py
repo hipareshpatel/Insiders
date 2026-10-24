@@ -166,7 +166,9 @@ def _live(settings, on: bool):
     script = {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)],
               "gemini-3.1-flash-lite": [{"points": [{"id": "headline", "verdict": "OVERSTATED", "reason": "x"}]}]}
     pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(RESULT_TEXT)}, script,
-                                 env={"GROQ_API_KEY": "g", "OPENROUTER_API_KEY": "o", "GEMINI_API_KEY": "k"})
+                                 env={"GROQ_API_KEY": "g", "OPENROUTER_API_KEY": "o", "GEMINI_API_KEY": "k",
+                                      # the writer of another family than the critic's, now that it is a spare
+                                      "ONLY_MODEL": "openrouter:nvidia/nemotron-3.5-super-vl:free"})
     stats = pipeline.run("live", time_budget_s=120)
     return stats, sink, fake
 

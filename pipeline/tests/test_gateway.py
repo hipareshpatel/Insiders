@@ -123,8 +123,9 @@ def test_openrouter_free_models_are_spares_under_one_daily_allowance(settings):
     for name, route in config["routes"].items():  # a regular, weighted share of pass 2 and long documents for the VL
         for e in (e for e in route if e["provider"] == "openrouter"):  # model alone (round 4: 10% WRONG; round 5 arm B:
             # Gemma 4 (31B for cards, 26B for level 1) is a named spare (owner, 24 Oct 2026), never the auto router
-            regular = name in ("pass2", "pass2_bulk") and "3.5-super-vl" in e["model"]
-            assert (not e.get("spare") and e.get("weight", 1) >= 1) if regular else e.get("spare"), (name, e)
+            # every OpenRouter free model is a spare: Nemotron 3.5 Super VL too since its trial cards were 2 of 5 WRONG
+            # (owner, 24 Oct 2026)
+            assert e.get("spare"), (name, e)
             assert not e["model"].startswith("openrouter/"), (name, e)
             if "3.5-super-vl" in e["model"] and name.startswith(("pass2", "memory_seed")):
                 # thinking off, as for every writer (D21): with it on, the VL spent its 8,000 tokens and answered empty

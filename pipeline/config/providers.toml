@@ -374,7 +374,7 @@ limits = { rpm = 60, tpd = 60_000 }
 [[routes.pass2]]
 provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
-weight = 2
+spare = true   # owner, 24 Oct 2026: thinking off it answers, but its trial cards were 2 of 5 WRONG (model-trial-2026-10-24)
 json_mode = true
 max_tokens = 8000
 context_tokens = 250000
@@ -505,7 +505,7 @@ limits = { rpm = 60, tpd = 60_000 }
 [[routes.pass2_bulk]]
 provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
-weight = 2
+spare = true   # owner, 24 Oct 2026: thinking off it answers, but its trial cards were 2 of 5 WRONG (model-trial-2026-10-24)
 json_mode = true
 max_tokens = 8000
 context_tokens = 250000

@@ -1142,7 +1142,7 @@ def memory_only(filing: Filing, first_page: str, pages: int, profit_cr: float | 
         return "small fine"
     if pages <= 4 and _NAME_CHANGE.search(f"{filing.headline} {filing.subject} {page}") and not _NAME_CHANGE_NOT.search(page):
         return "name change"
-    if pages <= 3 and not is_transcript(filing) and not _TRANSCRIPT.search(page) and _CALL.search(page) \
+    if pages <= 3 and not is_transcript(filing) and not _TRANSCRIPT.search(_TRANSCRIPT_LATER.sub(" ", page)) and _CALL.search(page) \
             and _CALL_LOGISTICS.search(page):
         return "call logistics"
     if pages <= 4 and _DIVIDEND.search(f"{filing.headline} {filing.subject} {page}") and not _DIVIDEND_ONLY_NOT.search(page) \
@@ -4107,6 +4107,10 @@ TOP_EXIT = re.compile(rf"{_EXIT}.{{0,120}}{_ROLE}|{_ROLE}.{{0,120}}{_EXIT}", re.
 
 
 _TRANSCRIPT = re.compile(r"\btranscripts?\b", re.I)
+# A transcript the letter only promises is not in it: Shriram Finance's audio-link letter ("The transcript of the
+# aforementioned call will be uploaded in due course") became a card (daily audit, 24 Oct 2026)
+_TRANSCRIPT_LATER = re.compile(r"[^.]*\btranscripts?\b[^.]*?(?:\b(?:will|shall)\s+be\s+(?:uploaded|made\s+available|hosted|"
+                               r"shared|placed|published|submitted|disseminated)|\bin\s+due\s+course)[^.]*\.?", re.I)
 
 
 def is_transcript(filing) -> bool:

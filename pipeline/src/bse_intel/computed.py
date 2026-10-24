@@ -218,9 +218,16 @@ def _strip(text: str, figures: list[str]) -> str:
 
 # A word left without its object once a figure is removed: "increase stake to via open market", "Only of votes
 # cast", "approved ₹150 Cr NCD issuance, of net worth", "holds but can vote" (round-2 re-run)
-_DANGLING = re.compile(r"\b(?:to|of|at|about|over|only|by|holds?|than|nearly|around|approximately)\s+"
+# A range left without its upper end ("7-9 bps" less "9 bps": "a 7- margin boost", "a 7 to further expansion", PNB call,
+# 23 Oct 2026) and a share left without its figure ("represents under 1% of market cap" less "1%", Atul) are broken too.
+_DANGLING = re.compile(r"\b(?:to|of|at|about|over|only|by|holds?|than|nearly|around|approximately|under|below|above|"
+                       r"almost|just|roughly)\s+"
                        r"(?=(?:via|of|in|and|from|against|votes?|with|but|while|the\s+(?:highest|lowest))\b)"
-                       r"|(?:^|[,;]\s*)of\b[^,;]*|\b(?:to|of|at|about|over|by|than)\s*(?=[,;.:)]|$)", re.I)
+                       r"|(?:^|[,;]\s*)of\b[^,;]*|\b(?:to|of|at|about|over|by|than)\s*(?=[,;.:)]|$)"
+                       r"|\b(?:represents?|equals?|accounts?\s+for)\s+of\b[^,;.]*"
+                       r"|\b(?:is|was)\s+of\s+(?:FY\d{2}\s+)?(?:revenue|sales|profit|PAT|EBITDA|net\s+worth|market\s+cap)\b[^,;.]*"
+                       r"|(?<![\d.,])\d+(?:\.\d+)?\*{0,2}\s*[-–]\*{0,2}\s+(?=(?-i:[a-z]))"
+                       r"|(?<![\d.,])\d+(?:\.\d+)?\*{0,2}\s+to\s+(?=further\b)", re.I)
 
 
 def broken(text: str) -> bool:
@@ -229,7 +236,11 @@ def broken(text: str) -> bool:
 
 def _repair(text: str) -> str:
     """A headline keeps its subject: the dangling word goes, and so does a clause left as "of net worth"."""
-    return re.sub(r"\s{2,}", " ", _DANGLING.sub(" ", text)).strip(" ,;")
+    for _ in range(3):   # "represents under of market cap": the dangling "under" first, then "represents of ..."
+        if not broken(text):
+            break
+        text = re.sub(r"\s{2,}", " ", _DANGLING.sub(" ", text)).strip(" ,;")
+    return text
 
 
 def _clauses(text: str, pool: Pool) -> tuple[str, list[str]]:

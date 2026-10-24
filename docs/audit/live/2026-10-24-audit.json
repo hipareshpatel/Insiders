@@ -1,0 +1,268 @@
+[
+ {
+  "news_id": "nse-106827304",
+  "symbol": "RAILTEL",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "LoI from Munitions India, Rs 20,04,04,809 incl. tax (Rs 20.04 Cr), scope (DC & DR on IaaS for Q-Shakti, 6+3 years, 13 locations), go-live 4 months + 6 years, quarterly invoice, PBG 5% and execution date 28-FEB-27 all match the Annexure-A. The FY27 Rs 300 Cr data-centre target matches memory guidance g_ac124cd7 (concall 2026-08-05). The scale is right (2.2% of Q1FY27 revenue of Rs 893 Cr). The order-flow note matches the stored cards (Rs 197.18 Cr SBI order on 2026-10-14). LOW impact and positive tone fit.",
+  "event_type": "ORDER_WIN",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827243",
+  "symbol": "BPCL",
+  "run": "10:07",
+  "verdict": "WRONG",
+  "error_class": "standalone_consolidated",
+  "reason": "The investor handout gives STANDALONE figures: PBT 6,686 / PAT 4,993 Cr, which match memory's dossier.standalone (pbt 6686.11, pat 4993.17), not the consolidated 6,234.56 / 4,863.05. The card labels its basis CONSOLIDATED and shows a consolidated results table (PBT 6,234.56, PAT 4,863.05) beside a headline and points of PBT 6,686 / PAT 4,993 with no basis given. The reader sees two different Q2FY27 PBT/PAT figures, both presented as consolidated. The handout's own figures (PBT, PAT, GRM 32.53 vs 10.78, throughput 10.41 vs 9.82, inventory loss (330) vs gain 895) are transcribed correctly. Smaller issues: the takeaway blames 'inventory and forex movements' for the YoY fall, but the forex loss narrowed ((397) vs (561)), so forex did not lower profit YoY. A POSITIVE tone is debatable when PBT is -22% and PAT -22.5% YoY.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "basis: CONSOLIDATED - the handout's PBT 6,686 / PAT 4,993 are standalone (memory standalone pbt 6686.11, pat 4993.17); the card's results table shows the consolidated PBT 6,234.56 / PAT 4,863.05, so the card contradicts itself",
+   "takeaway: 'profitability moderated YoY due to inventory and forex movements' - the forex loss was smaller than a year ago ((397) vs (561) Cr), so forex is not a cause of the decline; only the inventory swing is"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827198",
+  "symbol": "SHRIRAMFIN",
+  "run": "10:07",
+  "verdict": "WRONG",
+  "error_class": "noise",
+  "reason": "The filing only gives the link to the Q2 FY27 earnings call audio and says the transcript will follow. It carries no news, so it should not have a card. The card is accurate as a description of the filing, but a card for an audio link is noise. The results card already exists (nse-106826252).",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": false,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "The whole card: a procedural audio-recording link with no information for investors"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827183",
+  "symbol": "RAYMONDREL",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "BSE (LOD/PREF/PB/FIP/997/2026-27) and NSE (NSE/LIST/57488) gave in-principle approval on 23 Oct 2026 for 66,57,373 warrants convertible into equity shares of Rs 10 each, at not less than Rs 614, to promoters. The BSE letter is on scanned pages 3-4, read from page images. The listing application is due within 20 days of allotment (BSE letter). 66,57,373 x 614 = Rs 408.76 Cr; 408.76 Cr is 10.5% of the Rs 3,886 Cr market cap and 26% of the Rs 1,567 Cr net worth (memory, Mar-2026). Only a small wording slip: 'up to Rs 408.76 Cr' should read 'at least' because Rs 614 is a floor price, and that is not material. LOW impact and neutral tone fit a procedural approval.",
+  "event_type": "FUNDRAISE",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827180",
+  "symbol": "HDFCBANK",
+  "run": "10:07",
+  "verdict": "WRONG",
+  "error_class": "unit_scale",
+  "reason": "The headline and first point give quarterly PAT as Rs 1,950 Cr, taken from the transcript's 'Rs 19.5 billion'. That is a slip in the transcript: Q2FY27 standalone PAT is Rs 19,509.96 Cr (memory xbrl:res-sa) and consolidated is Rs 20,700 Cr, as the card's own results table shows. The headline is 10x too small. The 'why it matters' point says GNPA 1.11% 'meets the earlier prediction stored in memory for Q2FY27 (p_d48ef89e)', but p_d48ef89e is a Q3FY27 prediction (status OPEN), created on 17 Oct from these same Q2 results. The theme 'Infra / EPC' does not fit a bank. The other figures check against the transcript: GNPA 1.11% (-13 bps YoY), credit cost 44 bps, ROA 1.8%, retail disbursements above Rs 90,000 Cr vs Rs 76,000 Cr, deposits +18.8% with a 4 pp FCNR lift, NIM 3.32% (an analyst's line in the transcript), and Anup Bagchi's strategy expected in about a month.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": null,
+  "wrong_points": [
+   "headline: 'HDFC Bank Q2FY27 PAT rises 12.7% YoY excluding trading gains to Rs 1,950 Cr' - the PAT is about Rs 19,510 Cr standalone; the transcript's 'Rs 19.5 billion' is a slip for Rs 195 billion",
+   "what_happened: '**Quarterly PAT** was **Rs 1,950 Cr** (Rs 19.5 billion)...' - the same 10x error",
+   "why_it_matters: 'GNPA ratio of 1.11% meets the earlier prediction stored in memory for Q2FY27 (p_d48ef89e target <= 1.11)' - p_d48ef89e is for Q3FY27, is still open, and was created from these same Q2 results",
+   "themes: 'Infra / EPC' - wrong for a bank"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827163",
+  "symbol": "SOBHA",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "Facts match the 1-page filing: Commissioner (Appeals), Kochi order received 23 Oct 2026; tax Rs 297.59 million (= Rs 29.76 Cr) plus interest and penalty; issue is valuation of capital goods supplied to distinct persons; company will appeal to GSTAT; no impact on operations. Small issues: the milestone 'File appeal before GSTAT - within 90 days from receipt of order' borrows the filing's 'Due date of payment: 90 days' (the filing gives the appeal only 'within the prescribed timelines'); the card does not say this order came on the department's appeal and reverses an earlier adjudication in Sobha's favour, so case_stage at 'Order' understates that it is already an appellate stage. Neither changes the investor read (a ~Rs 30 Cr contested GST demand, ~0.24% of Rs 12,243 Cr market cap). NEGATIVE/MODERATE is reasonable, perhaps generous on impact.",
+  "event_type": "LITIGATION_REGULATORY",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "track_next milestone 'File appeal before GSTAT - Within 90 days from receipt of order': 90 days is the filing's payment due date, not the appeal deadline"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827127",
+  "symbol": "RECLTD",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "The scanned-text filing (text layer from OCR, readable) confirms RECPDCL, a wholly owned subsidiary of REC, incorporated Bikaner V Part D, Bikaner V Part C and YEIDA Power Transmission Ltd on 23 Oct 2026, each with Rs 5,00,000 authorised and paid-up capital and no turnover yet. They are BPC SPVs for the Rajasthan REZ Ph-IV inter-state schemes and a UP intra-state (YEIDA Sector-28 GIS substation) scheme, to be transferred to the successful TBCB bidder. Net worth Rs 85,054 Cr matches memory. LOW/NEUTRAL fits. M_AND_A is acceptable for incorporating subsidiaries and matches REC's earlier SPV cards (nse-106615855). This is a new set of SPVs, not a duplicate.",
+  "event_type": "M_AND_A",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": "PRUNED",
+  "wrong_points": [],
+  "pruned_points_true": [
+   "why it matters 'Setting up project-specific SPVs is a procedural...' - true in substance: the SPVs are routine BPC vehicles with Rs 5 lakh capital each, to be handed to bidders (only the quote was not the filing's own words)"
+  ],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827120",
+  "symbol": "SIS",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "error_class": "memory",
+  "reason": "Every face figure matches the filing: 3,28,540 shares (FV Rs 5) bought back 1-16 Oct 2026 and extinguished; post-extinguishment capital 13,88,49,242 shares / Rs 69,42,46,210 (Rs 69.42 Cr); public announcement 6 Aug, buyback started 13 Aug. The CDSL letter shows the extinguishment took effect on 21 Oct. Small issues: timeline_entry calls the buyback 'ongoing', but the company's memory (nse-106820889) shows it closed on 16 Oct, and 21,74,134 + 3,28,540 = 25,02,674, the full number bought back, so this is the final extinguishment; the card never says so. The 'Post-Buyback Share Capital' label also includes 44,273 ESOP shares added since. Not misleading for an investor.",
+  "event_type": "CORPORATE_ACTION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "CORRECTED",
+  "wrong_points": [
+   "timeline_entry '...as part of its ongoing open-market buyback': the buyback closed on 16 Oct 2026 (memory card nse-106820889); this is its final extinguishment"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827119",
+  "symbol": "LEMONTREE",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Matches the filing and press release: a licence agreement for Keys Lite by Lemon Tree Hotels, Bhilwara, managed by WOS Carnation Hotels; 63 rooms, restaurant, banquet, fitness centre, meeting room; 14 operational + 10 upcoming = 24 hotels in Rajasthan; the textile and industrial hub quote is accurate. 'Management agreement' and 'asset-light / minimal capital' are reasonable readings of a managed licence deal. LOW/POSITIVE fits. ORDER_WIN is acceptable for a management contract, though earlier similar signings for this company were typed OTHER (inconsistent, not wrong).",
+  "event_type": "ORDER_WIN",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827118",
+  "symbol": "NETWORK18",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "error_class": "direction",
+  "reason": "Facts are correct: NCLT Mumbai sanctioned the amalgamation of WOS News18 Marathi Pvt Ltd with Network18 by an order dated 22 Oct 2026; it follows the 25 Mar 2026 disclosure; the scheme becomes effective when the conditions precedent are met; stage PROPOSED (not yet effective) is fine. Minor: tone POSITIVE for an intra-group merger of a wholly owned subsidiary, with no share issue or economic change, is better read as NEUTRAL; LOW impact is right.",
+  "event_type": "M_AND_A",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "tone POSITIVE: a merger of a wholly owned subsidiary has no shareholder economic effect; NEUTRAL fits better"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827109",
+  "symbol": "YESBANK",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "error_class": "event_type",
+  "reason": "Filing is the Q2FY27 earnings-call transcript (call of 19 Oct 2026). All figures check out: SC upheld the Bombay HC setting aside of the Rs 8,415 Cr AT-1 write-down; ~240 bps pro forma CET-1 impact, Tier 1 ~13.7%, pro forma CET-1 ~11.4%; NP Rs 1,080 Cr +65%, NII Rs 2,822 Cr +22.7%, op profit Rs 1,678 Cr +29.4%; FCNR(B) Rs 18,575 Cr and FCTL Rs 15,215 Cr; NIM 2.6% with RIDF run-off and the repo increase named as tailwinds. Problems: event_type/category RESULTS for a call transcript (CONCALL fits better); tone POSITIVE sits awkwardly with a headline and takeaway about a ~240 bps CET-1 hit and a possible capital raise (the quarter itself was strong, so the mix is arguable); 'confirms the financial impact previewed in management's recent disclosures' is unsupported, since the 15 Oct memory card said the order had not been examined and gave no impact. Not a duplicate: the earlier cards are the SC-ruling notice (15 Oct) and the results (17 Oct).",
+  "event_type": "RESULTS",
+  "event_type_ok": false,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "The SC ruling confirms the financial impact previewed in management's recent disclosures, bringing pro forma CET-1 to ~11.4%. -- the 'previewed in recent disclosures' part is unsupported; the 15 Oct disclosure gave no impact (11.4% itself is right)",
+   "tone POSITIVE -- the card's subject (240 bps CET-1 hit, a possible capital raise) is negative for shareholders, though the quarter's operating numbers were positive"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827106",
+  "symbol": "DOMS",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Matches the filing: WOS DOMS Seven Pvt Ltd incorporated 22 Oct 2026 in India for premium bags and backpacks (back-to-school), Rs 1,00,000 cash for 10,000 shares of Rs 10, 100% held. Low impact and neutral tone fit. Only the theme tag 'Infra / EPC' is off (stationery and bags), which is metadata and does not mislead.",
+  "event_type": "M_AND_A",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827095",
+  "symbol": "GESHIP",
+  "run": "10:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Matches the letter and press release: contracted 23 Oct 2026 to buy a 2015-built secondhand VLGC of about 82,000 cbm, joining in Q3 FY27, funded from internal accruals; current owned fleet of 40 vessels (25 tankers, 15 dry bulk). Value not disclosed, so it is correctly listed as missing. Not a duplicate of earlier cards. The deal_value usage 'MERCHANT_SALE' and expansion 'BROWNFIELD' are odd labels but do not appear as claims on the card.",
+  "event_type": "M_AND_A",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827093",
+  "symbol": "SPLPETRO",
+  "run": "10:07",
+  "verdict": "MINOR",
+  "error_class": "wrong_period",
+  "reason": "The Q2/H1-FY27 presentation checks out: debt free, Rs 886 Cr investable surplus at end Sep 2026; Rs 900 Cr for the four Amdoshi projects (Mar 2027, Sep 2027, Dec 2028, Mar 2029); export volumes lower on freight, voyage time and styrene supply. But the first point says the 95,242 MT sales volume was Q1FY27. That copies a typo in the filing's text: its own chart puts 95,242 MT in Q2-FY27 (76,962 MT in Q2-FY26, +24%), and the card's own memory has Q1FY27 at 70,842 MT. Also, the results block holds consolidated XBRL figures (revenue Rs 1,983.51 Cr, PAT Rs 97.15 Cr, EPS 5.12) while the card's basis is STANDALONE and the deck is standalone (revenue Rs 1,956.7 Cr, PAT Rs 94.9 Cr, EPS 5.05). The gap is small and the figures are right on their own basis.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "Total sales volume of manufactured products in Q1FY27 was **95,242 MT**, up 24.0% YoY and 34.7% QoQ. -- the quarter is Q2FY27 (the filing's chart shows Q2-FY27 95,242 against Q2-FY26 76,962; memory has Q1FY27 at 70,842 MT); the period label is copied from a typo in the filing"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827073",
+  "symbol": "TRUALT",
+  "run": "10:07",
+  "verdict": "WRONG",
+  "error_class": "attribution",
+  "reason": "Headline figures match the deck's consolidated highlights: total income Rs 823.74 Cr against Rs 129.56 Cr (+536%), PAT Rs 34.99 Cr against a loss of Rs 37.99 Cr, EBITDA Rs 101.16 Cr, margin 12.47%; the maize price rise from Rs 18 to 25/kg; the CBG commissioning targets for Nov/Dec 2026; Phase I CBG outlay Rs 340 Cr (4 x Rs 85 Cr). But a why_it_matters point says the company has an installed ethanol capacity of about 1,992 crore litres a year. That figure is all-India installed capacity from the deck's ESY 2026-27 industry outlook. TruAlt's own capacity is 2,000 KLPD (1,300 KLPD dual-feed, about 65%), roughly 66 crore litres a year, so the card overstates it about 30-fold. This misleads on scale. Minor: '+2324% YoY' EBITDA growth from a negative base is meaningless (the deck prints it); theme 'Infra / EPC' is off.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "The company maintains an installed annual ethanol production capacity of approximately 1,992 crore litres, with dual-feed capabilities covering about 65% of capacity. -- 1,992 crore litres is India's total installed ethanol capacity (industry outlook); TruAlt's own capacity is 2,000 KLPD, about 65% of it dual-feed",
+   "EBITDA change '+2324% YoY' -- the prior-year base was a loss (Rs -4.55 Cr), so a percentage growth is meaningless (the deck prints it, labelled QoQ)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ }
+]

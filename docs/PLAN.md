@@ -13,6 +13,10 @@ reviews every push and fixes what it finds.
 
 ## Pending work (the single list; refreshed 2026-10-20 11:30 IST, 22 Oct block added 18:40 IST)
 
+**24 Oct 2026 evening (new account, branch `claude/gracious-goodall-jn9buu`):** code survey fixes F112-F114 (#97). Workers
+Paid was bought for one month (22 Oct): before ~21 Nov renew, or set the repository variable `D1_PLAN=free`. Audit rates
+are read pooled with 95% intervals (`pipeline/scripts/daily_audit/rates.py`): 21-24 Oct, 218 cards, WRONG 22% (17%-28%).
+
 **24 Oct 2026 (handover before the owner's account switch): read `docs/HANDOVER.md` first.** Daily audit 65 cards: 38% right,
 23% WRONG (bar 95% right). Shipped F108-F111 (#91-#94): broken text and audio-link letters, EBITDA told two ways, a
 repeat read before its original, ratings beside the same agency only. Open, commonest first: model misreads of deck/call/

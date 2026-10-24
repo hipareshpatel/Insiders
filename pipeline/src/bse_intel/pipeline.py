@@ -54,7 +54,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings
+from .settings import Settings, d1_plan
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -94,8 +94,9 @@ BACKLOG_MAX = 1_500      # history filings waiting to be read before backfill di
 PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_3m", "ret_1y",
                  "median_turnover_cr", "point_in_time")
 # Cloudflare Workers Paid (owner, 22 Oct 2026): 50M rows written a month included, no daily cap; the day's share of
-# the month (D1_DAILY_WRITE_CAP) is where the window's earlier days and the catch-ups wait (was the free 100,000)
-D1_FREE_DAILY_WRITES, D1_NEAR_CAP = int(os.environ.get("D1_DAILY_WRITE_CAP", "1600000")), 0.95
+# the month (D1_DAILY_WRITE_CAP, else by D1_PLAN: settings.d1_plan) is where the window's earlier days and the
+# catch-ups wait; the free tier's 100,000 with D1_PLAN=free. An empty value takes the plan's.
+D1_FREE_DAILY_WRITES, D1_NEAR_CAP = int(os.environ.get("D1_DAILY_WRITE_CAP") or d1_plan()[1]), 0.95
 REQUEUE_AFTER_HOUR, REQUEUE_KEY = 22, "failed:requeued_on"   # the nightly extra try for failed filings
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this

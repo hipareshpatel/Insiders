@@ -83,6 +83,13 @@ This is how WRONG comes down. Each step was agreed with the owner, and none may 
    - At 16:07, write the day summary at the top of `docs/audit/live/<date>-audit.md`.
 6. **Next day:** the new audit fills the previous change's "after" figure in the ledger.
 
+**Reading the numbers (code survey, 24 Oct 2026).** One day is 60-75 cards, so a day's WRONG share carries a 95%
+interval of about +/-10 points (24 Oct: 23%, 15%-35%). A day-to-day move says nothing about a fix: judge a fix by its
+on/off over stored cards, and the audit rate over pooled days with intervals:
+`python -I pipeline/scripts/daily_audit/rates.py --window 3`. 21-24 Oct pooled: 218 cards, WRONG 22% (17%-28%), right
+39% (32%-45%); short and long prompts 21% and 23%, no difference; the prune removed 32 true points of 34. The go-live
+bar is shown met only when the pooled WRONG interval's top is at or below 5%.
+
 ---
 
 ## 1. Owner rules (verbatim where quoted, all still in force)
@@ -126,7 +133,7 @@ This is how WRONG comes down. Each step was agreed with the owner, and none may 
 | Public API | `/api/system` (runs, queue, failures, D1 writes), `/api/feed?range=7d&limit=N` (`{cards, next_cursor}`; `card_json.grounding.prompt_variant`, `card_json.review.status` PRUNED/CORRECTED/HELD), `/api/cards/<news_id>`, `/api/companies/<scrip or symbol>` (`{company, cards, dossier, ...}`), `/api/review` (published cards the checks flagged; 51 on 24 Oct) |
 | Owner API | `/api/owner/feed?held=only`, `/api/owner/review`, `/api/owner/cards/:id` (needs the owner token, which lives in the keys file) |
 | Universe | 1,778 NSE companies ≥ ₹500 Cr (D31) |
-| D1 budget | Workers Paid (D40): the code's daily budget is 1.5M (`D1_DAILY_WRITE_BUDGET`); the ~85,000 a day kept for bulk dispatches is the lead session's own margin from the free-tier days, not a limit (`/api/system` → `d1.writes_today`) |
+| D1 budget | Workers Paid (D40), bought for one month on 22 Oct 2026 (owner, 24 Oct: "$5 plan for one month now"): the code's daily budget is 1.5M. **Before ~21 Nov:** the owner renews, or the repository variable `D1_PLAN` is set to `free`, which puts every job under the free tier's 100,000 writes a day (budget 80,000); left at the paid budgets on the free tier, D1 would refuse writes mid-run. Keep bulk dispatches near ~85,000 a day so either plan holds (`/api/system` → `d1.writes_today`) |
 
 ---
 
@@ -157,7 +164,7 @@ Daily card audit (owner, 20 Oct: 200 days, 10:07/12:07/14:07/16:07 IST, at least
 3. /api/review: check the flagged cards the same way.
 4. Fix: the commonest WRONG class with a root cause in code or prompt, with a test; on/off over stored cards (no AI) and ship only if more cards become right and none wrong; an independent subagent blind-checks a sample of the changed cards. Any fix that makes a check accept more gets that audit before it is called done. Re-runs or refreshes needed go to docs/audit/actions-pending.md or are dispatched one at a time (D1 writes below 85,000).
 5. Save judgements to docs/audit/live/<date>-audit.json, append the ledger rows (docs/audit/ledger.md: per change and the daily totals, incl. short vs long and critic precision/recall), commit and push.
-6. 16:07 run only: the day's summary at the top of docs/audit/live/<date>-audit.md (audited, right/minor/wrong, share right vs the 95% bar, short vs long, critic, fixes and their effect, held released, open classes), then a short summary for the owner.
+6. 16:07 run only: the day's summary at the top of docs/audit/live/<date>-audit.md (audited, right/minor/wrong, share right vs the 95% bar, short vs long, critic, fixes and their effect, held released, open classes) with the pooled rates and their 95% intervals from `python -I pipeline/scripts/daily_audit/rates.py --window 3` (a day alone cannot show a fix worked), then a short summary for the owner.
 Rules: no AI for testing; never edit stored data by hand or hand-delete live data; $0 (no paid routes beyond the owner's DeepSeek seed use); no keys printed; no AI model names in commits or PR text.
 ```
 
@@ -377,7 +384,7 @@ Earlier: E1-E14 (22 Oct, #65-#74), F98-F103 (fixers and false holds, 22-23 Oct),
 | Plan and pending list | `docs/PLAN.md` |
 | Decisions and findings (D1-D40, F1-F111) | `docs/TRACKER.md` |
 | Design as built | `docs/SPEC.md`; spec by module `docs/BLUEPRINT.md` |
-| Setup, commands, test count (972) | `docs/SETUP.md` |
+| Setup, commands, test count (975) | `docs/SETUP.md` |
 | The routine when data is wrong | `docs/DATA_QUALITY.md` |
 | Owner approvals | `docs/APPROVALS.md` |
 | Operations log | `docs/OPS.md` |

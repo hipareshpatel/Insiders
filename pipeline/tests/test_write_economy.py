@@ -209,3 +209,19 @@ def test_the_universe_seed_saves_its_resume_point_every_ten_companies_and_at_the
     stop_at.clear()
     assert cmd_seed_memory(args, settings, sink) == 0
     assert saved[3:] == ["500025"]                                  # 500023-500025: three companies, saved once
+
+
+def test_the_d1_plan_switch_sets_the_write_budget(monkeypatch):
+    """Workers Paid was bought for a month (owner, 24 Oct 2026): D1_PLAN=free puts every job back under the free
+    tier's 100,000 writes a day instead of D1 refusing writes mid-run; empty or unset is the paid plan."""
+    from bse_intel.settings import Settings, d1_plan
+
+    for value, expected in (("", (1_500_000, 1_600_000)), ("paid", (1_500_000, 1_600_000)), ("free", (80_000, 100_000)),
+                            ("FREE ", (80_000, 100_000)), ("unknown", (1_500_000, 1_600_000))):
+        monkeypatch.setenv("D1_PLAN", value)
+        assert d1_plan() == expected, value
+    monkeypatch.setenv("D1_PLAN", "free")
+    monkeypatch.delenv("D1_DAILY_WRITE_BUDGET", raising=False)
+    assert Settings().d1_daily_write_budget == 80_000
+    monkeypatch.setenv("D1_DAILY_WRITE_BUDGET", "50000")     # an explicit budget still wins
+    assert Settings().d1_daily_write_budget == 50_000

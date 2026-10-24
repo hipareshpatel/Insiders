@@ -34,6 +34,16 @@ def _env_share(name: str, default: float) -> float:
         return default
 
 
+# D1's write allowance by plan (repository variable D1_PLAN): Workers Paid since 22 Oct 2026 (D40, bought for a month)
+# includes 50M rows written a month, about 1.6M a day; "free" is the free tier's hard 100,000 a day. If the plan is
+# not renewed, D1_PLAN=free keeps every job under the free cap instead of D1 refusing writes mid-run.
+D1_PLANS = {"paid": (1_500_000, 1_600_000), "free": (80_000, 100_000)}   # (backfill budget, day's cap)
+
+
+def d1_plan() -> tuple[int, int]:
+    return D1_PLANS.get((_env("D1_PLAN", "paid") or "paid").strip().lower(), D1_PLANS["paid"])
+
+
 def _env_int(name: str, default: int) -> int:
     value = _env(name)
     return int(value) if value is not None else default
@@ -71,7 +81,7 @@ class Settings:
     max_attempts: int = field(default_factory=lambda: _env_int("MAX_ATTEMPTS", 3))
     # Stop discovering backfill days once this many D1 rows were written today
     # (Workers Paid since 22 Oct 2026: 50M a month included, about 1.6M a day; live processing is never throttled).
-    d1_daily_write_budget: int = field(default_factory=lambda: _env_int("D1_DAILY_WRITE_BUDGET", 1_500_000))
+    d1_daily_write_budget: int = field(default_factory=lambda: _env_int("D1_DAILY_WRITE_BUDGET", d1_plan()[0]))
     # A card that fails the number, claim or math checks gets a second opinion from another provider.
     second_opinion: bool = field(default_factory=lambda: _env("SECOND_OPINION", "1") not in ("0", "false", "no"))
     # Human hold list (gate.load_holds): cards named there are published as "held after review".

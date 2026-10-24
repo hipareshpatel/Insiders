@@ -20,6 +20,7 @@ jobs:
     timeout-minutes: 30
     env:
       BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
     steps:

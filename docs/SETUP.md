@@ -41,7 +41,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev,ocr]"      # ocr: RapidOCR for scanned pages (optional)
-python -m pytest -q              # 972 tests (6 skip without the ocr extra); web: npm test (55: card text, company statements, owner holds, call takeaways, company keys)
+python -m pytest -q              # 975 tests (6 skip without the ocr extra); web: npm test (55: card text, company statements, owner holds, call takeaways, company keys)
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -166,4 +166,5 @@ below (keys from the keys file, 5 workers) and logs to `data\logs`.
 
 `pipeline/scripts/daily_audit/`: `reviewer_prompt.txt` (the blind reviewer's instructions; placeholders WORKDIR, XX,
 `<repo>`, EXTRA, FIELDS), `ext.py` (PDF text by page, run with `python -I`), `onoff_duplicates.py <workdir>` (F110 on/off over
-card pairs), `onoff_ratings.py <feed.json>...` (F111 on/off over rating cards). How a run is done: `docs/HANDOVER.md` §4.
+card pairs), `onoff_ratings.py <feed.json>...` (F111 on/off over rating cards), `rates.py [--window 3]` (each day and pooled
+days with 95% intervals; a single day cannot show a fix worked). How a run is done: `docs/HANDOVER.md` §4.

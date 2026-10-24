@@ -174,7 +174,7 @@ def cmd_analyze_pdf(args, settings, sink) -> int:
     if args.industry:
         sink.execute("companies_upsert", [{"scrip_code": args.scrip, "company_name": args.company,
                                            "industry": args.industry, "updated_at": now_iso()}])
-    pipeline.bse.download = lambda url: Path(args.pdf).read_bytes()  # type: ignore[method-assign]
+    pipeline.bse.download = lambda url, **_: Path(args.pdf).read_bytes()  # type: ignore[method-assign]  # max_bytes too
     filing.pdf_url = f"file://{Path(args.pdf).resolve()}"
     outcome = pipeline.analyze(filing)
     pipeline._commit([outcome])

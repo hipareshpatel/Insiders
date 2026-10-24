@@ -248,6 +248,14 @@ json_mode = true
 max_tokens = 400
 limits = { rpm = 4 }
 
+# Gemma 4 26B on Google's own API, as above
+[[routes.pass1]]
+provider = "gemini"
+model = "gemma-4-26b-a4b-it"
+spare = true
+max_tokens = 400
+limits = { rpm = 10, rpd = 1000 }   # assumption, not measured
+
 [[routes.pass1]]
 provider = "cloudflare"
 model = "@cf/meta/llama-3.1-8b-instruct-fp8"  # the plain 8B was deprecated on 2026-05-30
@@ -385,6 +393,16 @@ max_tokens = 6000
 context_tokens = 120000
 limits = { rpm = 8 }
 
+# The same Gemma 4 31B on Google's own API with our Gemini key: its own quota, not OpenRouter's shared free pool, which
+# was "temporarily rate-limited upstream" on 24 Oct. Server errors twice on 2026-10-19; tried again before going live.
+[[routes.pass2]]
+provider = "gemini"
+model = "gemma-4-31b-it"
+spare = true
+max_tokens = 6000
+context_tokens = 120000
+limits = { rpm = 10, rpd = 1000 }   # assumption, not measured: Google publishes no Gemma daily limit here
+
 # Writer trial of 2026-10-19 evening (docs/audit/round-6.md): OpenRouter's free models could not carry a lane - 24 429s,
 # MiniMax 16 empty answers, Nemotron 3.5 Super VL 240 failures in 573 requests over two days, Gemma 28 429s - so MiniMax
 # and Gemma are off the card routes again and VL keeps a small share; long documents go to Gemini 3.6 Flash first.
@@ -505,6 +523,16 @@ json_mode = true
 max_tokens = 6000
 context_tokens = 120000
 limits = { rpm = 8 }
+
+# The same Gemma 4 31B on Google's own API with our Gemini key: its own quota, not OpenRouter's shared free pool, which
+# was "temporarily rate-limited upstream" on 24 Oct. Server errors twice on 2026-10-19; tried again before going live.
+[[routes.pass2_bulk]]
+provider = "gemini"
+model = "gemma-4-31b-it"
+spare = true
+max_tokens = 6000
+context_tokens = 120000
+limits = { rpm = 10, rpd = 1000 }   # assumption, not measured: Google publishes no Gemma daily limit here
 
 # Pass 2 packed (PASS2_PACK=N, ai/packer.py): N filings in one request, so a free model with few requests a day can
 # write a regular share of cards. Gemini 3.6 Flash wrote the best free cards in round 4 (11% WRONG on 9) but allows 20
@@ -922,6 +950,16 @@ json_mode = true
 max_tokens = 6000
 context_tokens = 120000
 limits = { rpm = 8 }
+
+# The same Gemma 4 31B on Google's own API with our Gemini key: its own quota, not OpenRouter's shared free pool, which
+# was "temporarily rate-limited upstream" on 24 Oct. Server errors twice on 2026-10-19; tried again before going live.
+[[routes.pass2_long]]
+provider = "gemini"
+model = "gemma-4-31b-it"
+spare = true
+max_tokens = 6000
+context_tokens = 120000
+limits = { rpm = 10, rpd = 1000 }   # assumption, not measured: Google publishes no Gemma daily limit here
 
 # NVIDIA backup writers (owner, 2026-10-22: "add the best one or two as backup writers"): ai-check 22 Oct 07:05 IST
 # answered OK, DeepSeek V4.1 Flash in 57 s and GLM-5.3 in 30 s for a one-line reply, so spares only, after the

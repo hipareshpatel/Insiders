@@ -919,6 +919,8 @@ def test_packed_filings_stay_queued_when_every_writer_is_out_of_quota(settings):
     pacific = _day_function("America/Los_Angeles")()
     usage = [{"day": pacific, "provider": "gemini", "model": m, "requests": 500}
              for m in ("gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.8-flash", "gemini-3.5-flash", "gemini-3-flash-preview", "gemini-3.5-flash-lite")]
+    # Gemma 4 on the same key is a free spare writer too (owner, 24 Oct 2026): at its own day's limit here
+    usage += [{"day": pacific, "provider": "gemini", "model": m, "requests": 1000} for m in ("gemma-4-31b-it", "gemma-4-26b-a4b-it")]
     fake = FakeProvider({})
     gateway = AIGateway(settings.load_toml("providers.toml"), usage_today=usage, client_factory=lambda *a: fake,
                         env={"GEMINI_API_KEY": "g"})

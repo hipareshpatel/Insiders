@@ -93,3 +93,15 @@ def test_block_and_nothing_for_other_files():
     assert results_facts(XbrlResult(kind="SHAREHOLDING"), STATEMENT) == []
     text = block(results_facts(_tagged(revenue=(1200, 1000), raw_material_cost=(456, 400)), STATEMENT))
     assert text.startswith("Computed by the system") and "- Cost of materials" in text
+
+
+def test_the_scale_block_takes_no_net_debt_from_the_results_xbrl():
+    from bse_intel.signals import scale_block, stated_net_debt
+    xbrl_snap = {"period": "Q2FY27", "gross_debt_cr": 305.6, "cash_cr": 13.62, "net_debt_cr": 291.98,
+                 "source_news_id": "xbrl:res:500233:Q2FY27"}
+    text = scale_block({"balance_sheet": [xbrl_snap]}, {"market_cap_cr": 20000.0}, "")
+    assert "gross debt ₹305.6" in text.replace(",", "") and "net debt" not in text
+    # a filing that states its net cash keeps it
+    stated = {"period": "Sep-26", "net_debt_cr": -635.0, "source_news_id": "nse-106827741"}
+    assert stated_net_debt(stated) == -635.0 and stated_net_debt(xbrl_snap) is None
+    assert "net cash" in scale_block({"balance_sheet": [stated]}, {"market_cap_cr": 20000.0}, "")

@@ -758,6 +758,15 @@ def _reversal(entries: list[dict], current: dict) -> str | None:
 _ORDER_BOOK = ("order_book", "order_book_outstanding", "unexecuted_order_book")
 
 
+def stated_net_debt(snap: dict) -> float | None:
+    """A balance sheet's net debt as a filing stated it. Not one from the results XBRL: that was borrowings less cash and
+    cash equivalents alone, without bank deposits and liquid investments (Kajaria Q2FY27: "net debt ₹291.98 Cr" for a
+    stated net cash of ₹635 Cr), and snapshots in memory still carry it."""
+    if str(snap.get("source_news_id") or "").startswith("xbrl:"):
+        return None
+    return snap.get("net_debt_cr")
+
+
 def scale_block(dossier: dict | None, company: dict | None, text: str, unit: int | None = None, top: int = 4) -> str:
     """The proportions for the Pass 2 prompt, computed in code (owner's note, 2026-10-16: the model must
     not work out shares of revenue or market cap; the audit found "41% of FY25 revenue" where it was 7.3%
@@ -791,8 +800,8 @@ def scale_block(dossier: dict | None, company: dict | None, text: str, unit: int
         denominators.append(("net worth", net_worth))
         lines.append(f"- net worth {_cr(net_worth)}")
     for snap in reversed((dossier or {}).get("balance_sheet", [])):
-        if snap.get("net_debt_cr") is not None or snap.get("gross_debt_cr") is not None:
-            debt = snap.get("net_debt_cr")
+        debt = stated_net_debt(snap)
+        if debt is not None or snap.get("gross_debt_cr") is not None:
             if debt is not None and debt < 0:
                 lines.append(f"- net cash {_cr(-debt)} ({snap.get('period', 'latest')})")
             else:

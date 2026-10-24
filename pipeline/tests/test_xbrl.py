@@ -75,7 +75,8 @@ def test_results_xbrl_gives_exact_crore_figures_with_changes():
     # EBITDA = PBT 20 + finance 3 + depreciation 5 - other income 2 = 26; margin 21.67%
     assert by[("ebitda", "Q2FY27")].value == 26.0 and by[("ebitda_margin", "Q2FY27")].value == 21.67
     assert r.balance_sheet.net_worth_cr == 500.0 and r.balance_sheet.gross_debt_cr == 100.0
-    assert r.balance_sheet.net_debt_cr == 60.0 and r.balance_sheet.period == "Q2FY27"
+    # no net debt from cash and cash equivalents alone: bank deposits and liquid investments are not in it (Kajaria)
+    assert r.balance_sheet.net_debt_cr is None and r.balance_sheet.cash_cr == 40.0 and r.balance_sheet.period == "Q2FY27"
     assert "revenue Q2FY27: 120 Cr, YoY +32.0%" in r.table()
 
 

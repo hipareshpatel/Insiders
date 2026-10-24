@@ -593,8 +593,9 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
         sheet = BalanceSheet(period=canonical_period(f"quarter ended {balance_date:%d.%m.%Y}"),
                              net_worth_cr=_r(balance.get("net_worth_cr")), cash_cr=_r(balance.get("cash_cr")),
                              gross_debt_cr=_r(sum(debt)) if debt else None, **lines, **sums)
-        if sheet.gross_debt_cr is not None and sheet.cash_cr is not None:
-            sheet.net_debt_cr = _r(sheet.gross_debt_cr - sheet.cash_cr)
+        # No net debt: the file's cash is cash and cash equivalents alone, without bank deposits and liquid investments,
+        # and Kajaria's Q2FY27 came out at "net debt ₹291.98 Cr" where its release states net cash of ₹635 Cr (owner,
+        # 24 Oct 2026). A filing that states its net debt gives it; signals.stated_net_debt ignores the old derived ones.
     return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet, fy_end_month=year_end)
 
 

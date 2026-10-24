@@ -71,3 +71,15 @@ def test_a_memory_reading_not_material_and_its_stand_in_card():
     out = MemoryOutput.model_validate(MEMORY)
     assert out.card is not None and out.card.deal_value.amount_cr == 120 and out.card.track_next.milestones
     assert MemoryOutput.model_validate({"is_material": False, "event_type": "OTHER", "reason": "routine"}).card is None
+
+
+def test_memory_only_is_off_unless_a_date_is_set(monkeypatch):
+    """Owner, 24 Oct 2026: the current flow stays; every backfill filing gets its card unless a date is set."""
+    from bse_intel.settings import Settings
+
+    monkeypatch.delenv("BACKFILL_CARDS_FROM", raising=False)
+    assert Settings().backfill_cards_from is None
+    monkeypatch.setenv("BACKFILL_CARDS_FROM", "")
+    assert Settings().backfill_cards_from is None
+    monkeypatch.setenv("BACKFILL_CARDS_FROM", "2026-08-01")
+    assert Settings().backfill_cards_from == "2026-08-01"

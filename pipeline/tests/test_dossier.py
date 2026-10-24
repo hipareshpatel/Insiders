@@ -37,3 +37,24 @@ def test_a_call_figure_on_another_definition_is_not_stored_as_the_line():
     assert not other_definition(memory, ("revenue", "Q2FY27"), 2575.0, "INR_CR", None, None)  # nothing stated
     assert not other_definition(memory, ("revenue", "Q2FY27"), 2575.0, "INR_CR", 38.0, 409.0)  # one change follows
     assert not other_definition({}, ("revenue", "Q2FY27"), 2575.0, "INR_CR", 38.0, 93.0)       # no comparatives
+
+
+def test_an_ebitda_its_own_filings_tell_two_ways_has_no_changes():
+    """Shree Cement Q2FY27: the statement's EBITDA with other income (₹1,128.74 Cr) and the press release's without it
+    (₹1,016 Cr), beside XBRL comparatives without it: the card said +15.9% YoY for -2.1% (daily audit, 23 Oct 2026)."""
+    from bse_intel.dossier import results_snapshot
+
+    def m(metric, period, value, *sources):
+        srcs = [{"news_id": n, "as_of": "2026-10-23T12:00:00+05:30", "value": v, "unit": "INR_CR"} for n, v in sources]
+        return {"metric": metric, "period": period, "value": value, "unit": "INR_CR", "as_of": "2026-10-23T12:00:00+05:30",
+                "source_news_id": sources[0][0] if sources else "xbrl:res:500387:" + period, "sources": srcs}
+
+    rows = [m(k, p, v) for p, vals in {"Q2FY26": (4761.07, 973.96, 309.82, 60.0), "Q1FY27": (6233.13, 1272.2, 531.12, 70.0)}.items()
+            for k, v in zip(("revenue", "ebitda", "pat", "eps"), vals)]
+    rows += [m("revenue", "Q2FY27", 5896.51, ("nse-1", 5896.51)), m("pat", "Q2FY27", 263.46, ("nse-1", 263.46)),
+             m("eps", "Q2FY27", 72.56, ("nse-1", 72.56))]
+    two = m("ebitda", "Q2FY27", 1128.74, ("nse-1", 1128.74), ("nse-2", 1016.0))
+    snap = results_snapshot({"financial_metrics": rows + [two]}, "nse-1")
+    assert snap["ebitda"] == {"value": 1128.74} and "yoy_pct" in snap["revenue"]
+    one = m("ebitda", "Q2FY27", 1016.0, ("nse-1", 1016.0))
+    assert "yoy_pct" in results_snapshot({"financial_metrics": rows + [one]}, "nse-1")["ebitda"]   # one reading keeps its changes

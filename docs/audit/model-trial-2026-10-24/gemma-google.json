@@ -1,0 +1,37 @@
+[
+ {
+  "news_id": "nse-106605175",
+  "stored_event_type": "ORDER_WIN",
+  "only_model": "gemini:gemma-4-26b-a4b-it,gemini:gemma-4-31b-it",
+  "seconds": 31.9,
+  "error": "\u001b[0;93m2026-10-24 20:24:16.682612456 [W:onnxruntime:Default, device_discovery.cc:95 GetPciBusId] Skipping pci_bus_id for PCI path at \"/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/5620e0c7-8062-4dce-aeb7-520c7ef76171\" because filename \"5620e0c7-8062-4dce-aeb7-520c7ef76171\" did not match expected pattern of [0-9a-f]+:[0-9a-f]+:[0-9a-f]+[.][0-9a-f]+\u001b[m\n2026-10-24 20:24:20,046 INFO httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions \"HTTP/1.1 200 OK\"\n2026-10-24 20:24:48,351 INFO httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions \"HTTP/1.1 503 Service Unavailable\"\nerror: pass2: no provider could serve the request (gemini:gemma-4-31b-it: InternalServerError)\n"
+ },
+ {
+  "news_id": "nse-106825336",
+  "stored_event_type": "FUNDRAISE",
+  "only_model": "gemini:gemma-4-26b-a4b-it,gemini:gemma-4-31b-it",
+  "seconds": 3.2,
+  "error": "\u001b[0;93m2026-10-24 20:24:49.183999612 [W:onnxruntime:Default, device_discovery.cc:95 GetPciBusId] Skipping pci_bus_id for PCI path at \"/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/5620e0c7-8062-4dce-aeb7-520c7ef76171\" because filename \"5620e0c7-8062-4dce-aeb7-520c7ef76171\" did not match expected pattern of [0-9a-f]+:[0-9a-f]+:[0-9a-f]+[.][0-9a-f]+\u001b[m\n2026-10-24 20:24:51,993 INFO httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions \"HTTP/1.1 200 OK\"\n2026-10-24 20:24:52,150 INFO httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions \"HTTP/1.1 429 Too Many Requests\"\nerror: pass2: no provider could serve the request (gemini:gemma-4-31b-it: rate limited (429))\n"
+ },
+ {
+  "news_id": "nse-106824471",
+  "stored_event_type": "CAPEX",
+  "only_model": "gemini:gemma-4-26b-a4b-it,gemini:gemma-4-31b-it",
+  "seconds": 3.3,
+  "error": "\u001b[0;93m2026-10-24 20:24:54.000380279 [W:onnxruntime:Default, device_discovery.cc:95 GetPciBusId] Skipping pci_bus_id for PCI path at \"/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/5620e0c7-8062-4dce-aeb7-520c7ef76171\" because filename \"5620e0c7-8062-4dce-aeb7-520c7ef76171\" did not match expected pattern of [0-9a-f]+:[0-9a-f]+:[0-9a-f]+[.][0-9a-f]+\u001b[m\n2026-10-24 20:24:56,893 INFO httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions \"HTTP/1.1 200 OK\"\n2026-10-24 20:24:57,068 INFO httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions \"HTTP/1.1 429 Too Many Requests\"\nerror: pass2_long: no provider could serve the request (gemini:gemma-4-31b-it: rate limited (429))\n"
+ },
+ {
+  "news_id": "nse-106824721",
+  "stored_event_type": "M_AND_A",
+  "only_model": "gemini:gemma-4-26b-a4b-it,gemini:gemma-4-31b-it",
+  "seconds": 3.0,
+  "error": "\u001b[0;93m2026-10-24 20:24:58.483509388 [W:onnxruntime:Default, device_discovery.cc:95 GetPciBusId] Skipping pci_bus_id for PCI path at \"/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/5620e0c7-8062-4dce-aeb7-520c7ef76171\" because filename \"5620e0c7-8062-4dce-aeb7-520c7ef76171\" did not match expected pattern of [0-9a-f]+:[0-9a-f]+:[0-9a-f]+[.][0-9a-f]+\u001b[m\n2026-10-24 20:25:01,080 INFO httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions \"HTTP/1.1 200 OK\"\n2026-10-24 20:25:01,254 INFO httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions \"HTTP/1.1 429 Too Many Requests\"\nerror: pass2: no provider could serve the request (gemini:gemma-4-31b-it: rate limited (429))\n"
+ },
+ {
+  "news_id": "nse-106826969",
+  "stored_event_type": "CONCALL_PRESENTATION",
+  "only_model": "gemini:gemma-4-26b-a4b-it,gemini:gemma-4-31b-it",
+  "seconds": 38.3,
+  "error": "\u001b[0;93m2026-10-24 20:25:02.985505153 [W:onnxruntime:Default, device_discovery.cc:95 GetPciBusId] Skipping pci_bus_id for PCI path at \"/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/5620e0c7-8062-4dce-aeb7-520c7ef76171\" because filename \"5620e0c7-8062-4dce-aeb7-520c7ef76171\" did not match expected pattern of [0-9a-f]+:[0-9a-f]+:[0-9a-f]+[.][0-9a-f]+\u001b[m\n2026-10-24 20:25:18,538 INFO httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions \"HTTP/1.1 200 OK\"\n2026-10-24 20:25:18,543 INFO bse_intel.ai.gateway: gemini:gemma-4-26b-a4b-it stopped at its max_tokens; trying again with 800\n2026-10-24 20:25:35,637 INFO httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions \"HTTP/1.1 200 OK\"\n2026-10-24 20:25:40,946 INFO httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions \"HTTP/1.1 429 Too Many Requests\"\nerror: pass2_long: no provider could serve the request (gemini:gemma-4-31b-it: rate limited (429))\n"
+ }
+]

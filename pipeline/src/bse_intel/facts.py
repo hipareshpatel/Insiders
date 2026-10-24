@@ -119,7 +119,10 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
                 out.append(Fact("", "pct", round(margin0, 1)))
                 out.append(Fact(f"EBITDA margin {now_p}: {margin:.1f}% against {margin0:.1f}% in {ago_p} "
                                 f"({_word(sign)} {move} bps)", "bps", move, sign))
-        share("Net profit", get("pat", now_p), get("pat", ago_p), ("pat",))
+        # the shareholders' profit where the file gives it, as the headline does (on-off review: Varmora 3.1% beside a
+        # headline whose profit gives 4.0%)
+        profit = "pat_owners" if get("pat_owners", now_p) else "pat"
+        share("Net profit", get(profit, now_p), get(profit, ago_p), (profit,))
 
     pbt, pbt0 = get("pbt", now_p), get("pbt", ago_p)
 
@@ -150,8 +153,10 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
 
     # Cash flow: filed for six and twelve months only, so the latest such period in the file; not a lender's, whose
     # operating cash flow is its lending
-    periods = sorted({p for m, p in val if m == "operating_cash_flow" and p[:2] in ("H1", "FY", "H2")},
-                     key=lambda p: (p[-2:], p.startswith("FY")), reverse=True)[:1]
+    # only this period's own half or year: the latest one present was the year-ago half where the current one was
+    # missing (SRF's Q2FY27 card read H1FY26's cash flow, on-off review 24 Oct 2026)
+    own_cash = {"Q2": "H1", "Q4": ""}.get(now_p[:2])
+    periods = [p for p in (f"{own_cash}{now_p[2:]}",) if own_cash is not None and get("operating_cash_flow", p) is not None]
     for period in [] if lender else periods:
         cfo, capex, pat = get("operating_cash_flow", period), get("capex", period), get("pat", period)
         parts = [f"cash from operations {_cr(cfo)}"]

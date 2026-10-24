@@ -177,3 +177,11 @@ def test_no_ratio_that_means_nothing():
     assert "Cash flow H1FY27: cash from operations -₹42 Cr" in texts and "% of net profit" not in texts
     assert "capex" not in texts
     assert "Employee cost Q2FY27: 9.2% of revenue\n" in texts + "\n"   # 9.18% against 9.17%: no move given
+
+
+def test_cash_flow_only_for_the_cards_own_half():
+    tagged = _tagged(revenue=(1200, 1000))
+    # the current half missing, the year-ago half present (SRF's Q2FY27 card read H1FY26)
+    tagged.metrics += [FinancialMetric(metric="operating_cash_flow", period="H1FY26", value=1060.96),
+                       FinancialMetric(metric="pat", period="H1FY26", value=820.5)]
+    assert not any(f.text.startswith("Cash flow") for f in results_facts(tagged, STATEMENT))

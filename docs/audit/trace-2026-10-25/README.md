@@ -40,16 +40,11 @@ comparatives in 11 tables, 12 distinct lines.
 
 The mover line (employee cost) goes with a removed year-ago revenue, because it is scaled by that revenue.
 
-## Check B: words against the card's own figures (`consistency.py`)
-The check looks for four kinds of conflict:
-- a turn to profit or loss that the PAT row does not show;
-- a direction ("rises", "falls") against every comparison the words could mean;
-- a direction word between two figures the sentence states;
-- a "doubled", "tripled" or "halved" the YoY change does not bear out.
+## Check B: words against the card's own figures (rejected)
+On the first sample (218 audited cards) it flagged only 3, too few to judge. Judged on all 5,344 stored cards against
+pass marks set first (`PASS_MARKS.md`): 88 sentences flagged (`consistency_all.json`). Blind review against the PDFs
+(`consistency_review.json`) found 8 WRONG and 80 RIGHT, a precision of 9% against a mark of 85%, so the check is not
+shipped.
 
-A faulted point is dropped. A faulted headline sends the card to review.
-
-**Results:**
-- On the 218 audited cards (`consistency_audited.json`), it flags 3: 2 WRONG (Sapphire, TruAlt) and 1 MINOR.
-- On the 240 newest live cards (`consistency_live.json`), it flags 2.
-- The yield is small: most writer errors are semantic (a role, a cause, a target), which no pattern rule catches.
+The 69 direction flags where the sentence was right are a lead, not yet a finding. In each, the code-built results
+table disagreed with a correct sentence. Either the table was wrong, or the two covered different periods or bases.

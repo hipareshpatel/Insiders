@@ -3147,8 +3147,10 @@ class Pipeline:
                                      standalone_file, scale, events, now)
         variant = prompt_variant(filing.news_id, bulk, self.settings.prompt_short_share)
         # The cost shares, margins, tax rate and cash conversion a results card may state, computed here (facts.py)
-        found_facts = code_facts.results_facts(tagged, filed_text, (dossier_as_of(dossier, filing.filed_at, inclusive=False)
-                                                                    or {}).get("balance_sheet")) \
+        before_filing = dossier_as_of(dossier, filing.filed_at, inclusive=False) or {}
+        found_facts = (code_facts.results_facts(tagged, filed_text, before_filing.get("balance_sheet"))
+                       + code_facts.guidance_facts(tagged, before_filing.get("guidance"))
+                       + code_facts.capex_revisions(before_filing.get("deals"), filing.filed_at)) \
             if tagged and event_type == "RESULTS" and self.settings.results_facts else []
         if found_facts:
             # in front of the text, as the XBRL table is: the model reads them as the filing's own figures, and a

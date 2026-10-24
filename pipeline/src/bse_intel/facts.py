@@ -13,7 +13,9 @@ its figure and sign, so the pool accepts "fell 178 bps" and not "rose 178 bps".
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 
 from .grounding import SourceIndex
 from .periods import prior_year_period
@@ -36,6 +38,7 @@ class Fact:
     value: float = 0.0
     sign: int = 0       # +1 up, -1 down, 0 a level
     base: str = ""      # "revenue" for a share of revenue: computed.py checks a share against its base
+    memory_ref: str = ""  # a point set against memory (guidance, a deal): goes to "Our reading" citing this id
 
 
 def _cr(value: float) -> str:
@@ -146,11 +149,16 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
             now_v = getattr(sheet, field, None)
             if now_v is None:
                 continue
-            # the latest earlier statement that carries this line (a quarter's snapshot can be empty)
-            earlier = next((s for s in reversed(balance_history or []) if s.get(field)
-                            and s.get("period") and s.get("period") != sheet.period), None)
-            then = (earlier or {}).get(field)
-            if then and then > 0 and _printed(index, then):
+            # the file's own earlier date (March for a half year), like for like by construction; else the latest
+            # earlier statement in memory that carries the line, only when this filing prints it
+            own = getattr(tagged, "balance_prior", None)
+            then = getattr(own, field, None) if own is not None else None
+            earlier = {"period": own.period} if then else None
+            if not then:
+                rows = [s for s in balance_history or [] if s.get(field) and s.get("period") and s.get("period") != sheet.period]
+                earlier = rows[-1] if rows and _printed(index, rows[-1][field]) else None
+                then = (earlier or {}).get(field)
+            if then and then > 0:
                 change = (now_v - then) / then * 100
                 parts.append(f"{word} {_cr(now_v)} against {_cr(then)} at {earlier['period']} ({change:+.0f}%)")
                 out.append(Fact("", "pct", round(abs(change)), (change > 0) - (change < 0)))
@@ -162,10 +170,69 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
     return sorted(out, key=lambda f: next((i for i, lead in enumerate(_ORDER) if f.text.startswith(lead)), len(_ORDER)))
 
 
+# the year to date a quarter closes: the period guidance for the year is measured against
+_TO_DATE = {"Q1": "Q1", "Q2": "H1", "Q3": "9M", "Q4": ""}
+_AMOUNT = re.compile(r"([\d,]+(?:\.\d+)?)\s*(\+)?\s*INR_CR", re.I)
+_RANGE = re.compile(r"([\d.]+)\s*(?:-|to|–)\s*([\d.]+)\s*%")
+_WORDS = {"ebitda": "EBITDA", "revenue": "revenue", "pat": "net profit"}
+
+
+def guidance_facts(tagged, guidance: list[dict] | None) -> list[Fact]:
+    """The year to date against the year's guidance in memory: "H1FY27 EBITDA ₹546.99 Cr is 55% of the FY27 guidance of
+    ₹1,000 Cr plus"; "H1FY27 EBITDA margin 19.56%, above the 18-19% guided". Only guidance for this year, read from its
+    stored target, and only for a figure the file carries for the year to date."""
+    m = re.fullmatch(r"(Q[1-4])(FY\d{2})", (getattr(tagged, "period", None) or "")) if tagged is not None else None
+    if not m:
+        return []
+    to_date = f"{_TO_DATE[m.group(1)]}{m.group(2)}"
+    val = {(x.metric, x.period): x.value for x in tagged.metrics if x.value is not None}
+    out = []
+    for g in guidance or []:
+        if (g.get("due") or "").upper() != m.group(2) or not g.get("id"):
+            continue
+        metric, target = g.get("metric") or "", str(g.get("target") or "")
+        given = (g.get("given_on") or "")[:10]
+        if metric in _WORDS and (amount := _AMOUNT.search(target)) and (now := val.get((metric, to_date))) is not None:
+            goal = float(amount.group(1).replace(",", ""))
+            if goal > 0:
+                share = now / goal * 100
+                plus = " plus" if amount.group(2) else ""
+                out.append(Fact(f"{to_date} {_WORDS[metric]} {_cr(now)} is {share:.0f}% of the {m.group(2)} guidance of "
+                                f"{_cr(goal)}{plus} (given {given})", "pct", round(share), memory_ref=g["id"]))
+        elif metric == "ebitda_margin" and (band := _RANGE.search(target)) \
+                and (now := val.get(("ebitda_margin", to_date))) is not None:
+            low, high = sorted((float(band.group(1)), float(band.group(2))))
+            where = "above" if now > high else "below" if now < low else "within"
+            out.append(Fact(f"{to_date} EBITDA margin {now:.2f}%, {where} the {low:g}-{high:g}% guided for {m.group(2)} "
+                            f"(given {given})", "pct", round(now, 2), memory_ref=g["id"]))
+    return out
+
+
+def capex_revisions(deals: list[dict] | None, filed_at: str, days: int = 120) -> list[Fact]:
+    """A capex plan in memory whose cost changed lately: "Srikalahasti Plant capex ₹340 Cr against ₹210 Cr first
+    approved (+62%)". The first and latest amounts of its own history, so no figure is the model's."""
+    try:
+        since = (datetime.fromisoformat(filed_at) - timedelta(days=days)).isoformat()
+    except (TypeError, ValueError):
+        return []
+    out = []
+    for d in deals or []:
+        history = [h for h in d.get("history") or [] if h.get("amount_cr")]
+        if d.get("kind") != "CAPEX" or not d.get("id") or len(history) < 2 or (history[-1].get("as_of") or "") < since:
+            continue
+        first, last = history[0]["amount_cr"], history[-1]["amount_cr"]
+        if first > 0 and abs(last - first) >= 0.05 * first:
+            change = (last - first) / first * 100
+            name = d.get("counterparty") or d.get("segment") or "capex plan"
+            out.append(Fact(f"{name} capex {_cr(last)} against {_cr(first)} first approved ({change:+.0f}%)", "pct",
+                            round(abs(change)), (change > 0) - (change < 0), memory_ref=d["id"]))
+    return out
+
+
 def block(facts: list[Fact]) -> str:
     """The facts as the prompt's block. Empty when there are none."""
     lines = [f"- {f.text}" for f in facts if f.text]
     if not lines:
         return ""
-    return ("Computed by the system from this filing's statements (use these figures as given, never your own; say "
-            "what moved them only as the filing or memory states it):\n" + "\n".join(lines))
+    return ("Computed by the system from this filing's statements and the company's memory (use these figures as "
+            "given, never your own; say what moved them only as the filing or memory states it):\n" + "\n".join(lines))

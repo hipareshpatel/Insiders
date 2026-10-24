@@ -408,7 +408,10 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
         keys.append(KeyNumber(label="EBITDA margin", value=f"{margin.value:.1f}%", change=None, quote=_line(margin)))
     replaced = ["headline", "what_happened", "key_numbers", "timeline"]
     card.headline = headline
-    computed_lines = [Fact(text=f.text + ".", quote=f.text) for f in facts_found]
+    computed_lines = [Fact(text=f.text + ".", quote=f.text) for f in facts_found if not f.memory_ref]
+    # set against memory (guidance, a deal's history): "Our reading", citing the memory it used
+    against_memory = [Insight(text=f.text + ".", basis="MEMORY", memory_refs=[f.memory_ref])
+                      for f in facts_found if f.memory_ref]
     own_facts = _model_facts(card, tagged, facts_found) if rich else []
     card.what_happened = (lines[:4] + computed_lines[:MAX_COMPUTED] + own_facts[:MAX_OWN_FACTS]) or card.what_happened
     if own_facts:
@@ -418,7 +421,7 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
         card.basis = basis.upper()
     if rich:
         return _rich_rest(out, card, tagged, history, period, basis, phrase, top, top_word, profit, profit_word,
-                          replaced, unconfirmed)
+                          replaced, unconfirmed, against_memory)
     if card.notable_changes:
         replaced.append(f"notable changes ({len(card.notable_changes)}) left out")
     card.notable_changes = []
@@ -445,7 +448,8 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
     if len(own) < len(card.why_it_matters):
         replaced.append(f"{len(card.why_it_matters) - len(own)} model point(s) from memory left out")
     # the model keeps two points, or one beside two of code's: three at most
-    card.why_it_matters = context + own[:min(MAX_WHY, MAX_WHY + 1 - len(context))]
+    context = context + against_memory[:2]
+    card.why_it_matters = context + own[:max(0, min(MAX_WHY, MAX_WHY + 1 - len(context)))]
     if context:
         replaced.append(f"{len(context)} point(s) from memory by code")
     out.timeline_entry = f"{period} results ({basis or 'basis not stated'}): {phrase(top, top_word)}, {phrase(profit, profit_word)}."
@@ -455,7 +459,7 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
 
 
 def _rich_rest(out, card, tagged, history, period, basis, phrase, top, top_word, profit, profit_word, replaced,
-               unconfirmed) -> list[str]:
+               unconfirmed, against_memory=()) -> list[str]:
     """The rest of a rich results card: the takeaway from the file, code's memory points, and the model's notable
     changes, core catalyst and points (memory ones too: those cite their memory ids and are checked against memory)."""
     driver = profit_driver(tagged)
@@ -464,7 +468,7 @@ def _rich_rest(out, card, tagged, history, period, basis, phrase, top, top_word,
     if card.quantified_impact:
         replaced.append(f"computed impacts ({len(card.quantified_impact)}) left out")
     card.quantified_impact = []
-    context = memory_points(tagged, history)
+    context = memory_points(tagged, history) + list(against_memory)[:3]
     # a point from memory must name the memory it comes from: one without an id is the model's own recollection
     own = [w for w in card.why_it_matters if w.basis not in ("MEMORY", "BALANCE_SHEET") or w.memory_refs]
     if len(own) < len(card.why_it_matters):

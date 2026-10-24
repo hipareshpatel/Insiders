@@ -101,8 +101,18 @@ class Pool:
             and any(abs(b - value) <= tolerance or 0 <= b - value < step for b in self.bare)
 
 
-def _base_printed(index: SourceIndex | None, base: float) -> bool:
-    return bool(index) and base > 0 and index.stated_crore(round(base, 2), 2, tolerance=max(0.006, base * 0.0005))
+def _base_printed(index: SourceIndex | None, base: float, metric: str = "") -> bool:
+    if not index or base <= 0:
+        return False
+    if index.stated_crore(round(base, 2), 2, tolerance=max(0.006, base * 0.0005)):
+        return True
+    # EBITDA is code's own sum of the file's lines, and a release prints its own by its own definition: Kajaria's
+    # Q2FY26 EBITDA is ₹213.45 Cr from the file and ₹212.90 Cr in the release, and the card lost a right "+34.3% YoY"
+    # (owner, 24 Oct 2026). Within half a percent the change moves by less than its rounding
+    return metric in _DERIVED and index.stated_crore(round(base, 2), 2, tolerance=base * 0.005)
+
+
+_DERIVED = {"ebitda"}
 
 
 def build_pool(filed_text: str, tagged=None, annual_table: str = "", history: list[dict] | None = None,
@@ -150,7 +160,7 @@ def build_pool(filed_text: str, tagged=None, annual_table: str = "", history: li
             if base is None and stated is not None and stated != -100:
                 base = m.value / (1 + stated / 100)
             # only a like-for-like base: the filing prints its own comparative, not a pre-restatement or other-basis one
-            if base is None or base <= 0 or m.value < 0 or not _base_printed(index, base):
+            if base is None or base <= 0 or m.value < 0 or not _base_printed(index, base, m.metric):
                 continue
             change = (m.value - base) / base * 100
             pool.pct.append((abs(change), 1 if change > 0 else -1))

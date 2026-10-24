@@ -855,3 +855,10 @@ def test_a_lender_has_no_ebitda():
     result = parse((Path(__file__).parent / "fixtures" / "nse_irfc_q4fy26_nbfc.xml").read_bytes())   # IRFC, Q4FY26
     assert result.template == "NBFC" and any(m.metric == "pat" for m in result.metrics)
     assert not any(m.metric in ("ebitda", "ebitda_margin") for m in result.metrics)
+
+
+def test_the_files_own_earlier_balance_sheet_date_is_kept():
+    r = xbrl.parse((FIXTURES / "nse_ar_kanorichem_fy25_consolidated.xml").read_bytes())
+    assert (r.balance_sheet.period, r.balance_prior.period) == ("Q4FY25", "Q4FY24")
+    assert (r.balance_sheet.gross_debt_cr, r.balance_prior.gross_debt_cr) == (594.12, 506.72)
+    assert xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q2fy25.xml").read_bytes()).balance_prior is None   # one date only

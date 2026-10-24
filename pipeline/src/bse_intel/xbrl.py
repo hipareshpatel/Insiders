@@ -215,6 +215,7 @@ class XbrlResult:
     period: str | None = None                   # the latest period reported
     metrics: list[FinancialMetric] = field(default_factory=list)
     balance_sheet: BalanceSheet | None = None
+    balance_prior: BalanceSheet | None = None    # the file's own earlier balance-sheet date (March for a half year)
     ownership: Ownership | None = None
     confirmed: bool = True
     template: str = ""                          # the SEBI template filed on: INDAS, NBFC, BANKING, GI, LI
@@ -482,6 +483,31 @@ def fy_end_month(text_facts: dict) -> int | None:
     return int(m[2]) if m and 1 <= int(m[2]) <= 12 else None
 
 
+def _balance_sheet(balance: dict[str, float], balance_date: date) -> BalanceSheet:
+    """One date's statement of assets and liabilities from its tagged lines (crore)."""
+    debt = ([balance[k] for k in ("debt_noncurrent", "debt_current") if k in balance]
+            or [balance[k] for k in ("debt_borrowings", "debt_securities", "debt_subordinated") if k in balance])
+    if "cash_cr" not in balance and ("cash_rbi" in balance or "cash_banks" in balance):
+        balance["cash_cr"] = balance.get("cash_rbi", 0) + balance.get("cash_banks", 0)   # a bank's cash
+    if "investments_total" in balance and not any(k in balance for k in BALANCE_SUMS["investments_cr"]):
+        balance["investments_current"] = balance["investments_total"]
+    if "net_worth_cr" not in balance and "equity_capital_cr" in balance and "reserves_cr" in balance:
+        balance["net_worth_cr"] = balance["equity_capital_cr"] + balance["reserves_cr"]   # a bank's net worth
+    if ("total_liabilities_cr" not in balance and "total_assets_cr" in balance and "net_worth_cr" in balance
+            and "deposits_cr" in balance):
+        balance["total_liabilities_cr"] = balance["total_assets_cr"] - balance["net_worth_cr"]
+    sums = {key: _r(sum(balance[p] for p in parts if p in balance)) for key, parts in BALANCE_SUMS.items()
+            if any(p in balance for p in parts)}
+    lines = {k: _r(v) for k, v in balance.items() if k.endswith("_cr") and k not in ("net_worth_cr", "cash_cr")}
+    sheet = BalanceSheet(period=canonical_period(f"quarter ended {balance_date:%d.%m.%Y}"),
+                         net_worth_cr=_r(balance.get("net_worth_cr")), cash_cr=_r(balance.get("cash_cr")),
+                         gross_debt_cr=_r(sum(debt)) if debt else None, **lines, **sums)
+    # No net debt: the file's cash is cash and cash equivalents alone, without bank deposits and liquid investments,
+    # and Kajaria's Q2FY27 came out at "net debt ₹291.98 Cr" where its release states net cash of ₹635 Cr (owner,
+    # 24 Oct 2026). A filing that states its net debt gives it; signals.stated_net_debt ignores the old derived ones.
+    return sheet
+
+
 def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = None) -> XbrlResult | None:
     nature = " ".join(v for k, v in text_facts.items() if "Standalone" in k or "Consolidated" in k or k == "NatureOfReport").lower()
     basis = "CONSOLIDATED" if "consolidated" in nature else "STANDALONE" if "standalone" in nature else None
@@ -489,8 +515,7 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     year_end = fy_end_month(text_facts)
     values: dict[tuple[str, str], float] = {}
     ends: dict[str, date] = {}
-    balance: dict[str, float] = {}
-    balance_date: date | None = None
+    instants: dict[date, dict[str, float]] = {}   # balance-sheet lines by date: the latest, and the file's comparative
     for name, ctx, unit, raw in facts:
         info = contexts.get(ctx)
         value = _num(raw)
@@ -526,10 +551,7 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
             values.setdefault((metric, label), value)
             ends[label] = info["endDate"]
         elif name in BALANCE_TAGS and kind == "MONEY" and info.get("instant"):
-            if balance_date is None or info["instant"] > balance_date:
-                balance, balance_date = {}, info["instant"]
-            if info["instant"] == balance_date:
-                balance.setdefault(BALANCE_TAGS[name], value / 1e7)
+            instants.setdefault(info["instant"], {}).setdefault(BALANCE_TAGS[name], value / 1e7)
     if not values:
         return None
     # Net NPA cannot exceed gross NPA: when it does, one of the two was read at the wrong scale, so neither is kept
@@ -574,29 +596,11 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                 qoq = _change(value, _match(values, ends, metric, label, months=3))
         metrics.append(FinancialMetric(metric=metric, period=label, value=round(value, 2), unit=unit,
                                        yoy_pct=yoy, qoq_pct=qoq))
-    sheet = None
-    if balance:
-        debt = ([balance[k] for k in ("debt_noncurrent", "debt_current") if k in balance]
-                or [balance[k] for k in ("debt_borrowings", "debt_securities", "debt_subordinated") if k in balance])
-        if "cash_cr" not in balance and ("cash_rbi" in balance or "cash_banks" in balance):
-            balance["cash_cr"] = balance.get("cash_rbi", 0) + balance.get("cash_banks", 0)   # a bank's cash
-        if "investments_total" in balance and not any(k in balance for k in BALANCE_SUMS["investments_cr"]):
-            balance["investments_current"] = balance["investments_total"]
-        if "net_worth_cr" not in balance and "equity_capital_cr" in balance and "reserves_cr" in balance:
-            balance["net_worth_cr"] = balance["equity_capital_cr"] + balance["reserves_cr"]   # a bank's net worth
-        if ("total_liabilities_cr" not in balance and "total_assets_cr" in balance and "net_worth_cr" in balance
-                and "deposits_cr" in balance):
-            balance["total_liabilities_cr"] = balance["total_assets_cr"] - balance["net_worth_cr"]
-        sums = {key: _r(sum(balance[p] for p in parts if p in balance)) for key, parts in BALANCE_SUMS.items()
-                if any(p in balance for p in parts)}
-        lines = {k: _r(v) for k, v in balance.items() if k.endswith("_cr") and k not in ("net_worth_cr", "cash_cr")}
-        sheet = BalanceSheet(period=canonical_period(f"quarter ended {balance_date:%d.%m.%Y}"),
-                             net_worth_cr=_r(balance.get("net_worth_cr")), cash_cr=_r(balance.get("cash_cr")),
-                             gross_debt_cr=_r(sum(debt)) if debt else None, **lines, **sums)
-        # No net debt: the file's cash is cash and cash equivalents alone, without bank deposits and liquid investments,
-        # and Kajaria's Q2FY27 came out at "net debt ₹291.98 Cr" where its release states net cash of ₹635 Cr (owner,
-        # 24 Oct 2026). A filing that states its net debt gives it; signals.stated_net_debt ignores the old derived ones.
-    return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet, fy_end_month=year_end)
+    dates = sorted(instants)
+    sheet = _balance_sheet(instants[dates[-1]], dates[-1]) if dates else None
+    # the file's own earlier date (March for a half year): like for like by construction, what facts.py compares with
+    prior = _balance_sheet(instants[dates[-2]], dates[-2]) if len(dates) > 1 else None
+    return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet, fy_end_month=year_end, balance_prior=prior)
 
 
 def owners_share(values: dict) -> int:

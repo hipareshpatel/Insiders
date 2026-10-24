@@ -400,3 +400,15 @@ def test_without_rich_the_card_is_as_before():
     results_card.build(out, tagged, "Ahluwalia Contracts (India) Limited")
     assert out.card.core_catalyst is None and out.card.notable_changes == []
     assert not any("dividend" in f.text for f in out.card.what_happened)
+
+
+def test_points_set_against_memory_go_to_our_reading_with_their_id():
+    from bse_intel.facts import Fact
+    tagged = xbrl.parse((FIX / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    out = _rich_model_card()
+    facts = [Fact("9MFY25 EBITDA ₹300 Cr is 75% of the FY25 guidance of ₹400 Cr (given 2024-08-01)", "pct", 75,
+                  memory_ref="g_1")]
+    results_card.build(out, tagged, "Ahluwalia Contracts (India) Limited", facts=facts, rich=True)
+    point = next(w for w in out.card.why_it_matters if w.memory_refs == ["g_1"])
+    assert point.basis == "MEMORY" and point.text.startswith("9MFY25 EBITDA ₹300 Cr is 75%")
+    assert not any("guidance" in f.text for f in out.card.what_happened)

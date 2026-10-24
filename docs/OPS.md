@@ -30,3 +30,4 @@
 | 24 Oct 14:50 | Daily audit 3 | 20 cards: 10 right / 7 minor / 3 wrong (day 55: 22/21/12). #93 merged (F110). F111: rating before from the same agency and scale (on/off 9 of 21 cross-agency comparisons removed, none wrong) |
 | 24 Oct 14:20 | Daily audit 3 (ship) | #94 merged (F111); maintenance.yml refresh-card-blocks dispatched on main so stored rating cards drop cross-agency comparisons |
 | 24 Oct 16:30 | Daily audit 4 + day summary | 10 cards: 3 right / 4 minor / 3 wrong. Day: 65 cards, 38% right, 23% WRONG (bar 95%). F111 refresh confirmed (Muthoot shows no notch change). Summary in docs/audit/live/2026-10-24-audit.md |
+| 24 Oct 16:50 | Handover | docs/HANDOVER.md written for the owner's account switch (state, the two main tasks, routine to recreate with its prompt, open classes, all pending). Audit tools copied to pipeline/scripts/daily_audit/. CLAUDE.md, PLAN, SETUP point to it |

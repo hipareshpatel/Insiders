@@ -54,7 +54,7 @@ def main() -> None:
                 rows.append({**row, "error": (run.stderr or run.stdout)[-1500:]})
                 continue
             card = result.get("card") or {}
-            body = card.get("card_json")
+            body = card.get("card_json") or card.get("card")   # the D1 row keeps the card body under "card"
             body = json.loads(body) if isinstance(body, str) else (body or card)
             status = result.get("status") or {}
             row.update({"status": status.get("status") if isinstance(status, dict) else status,

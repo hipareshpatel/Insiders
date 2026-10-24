@@ -144,7 +144,11 @@ bar is shown met only when the pooled WRONG interval's top is at or below 5%.
 
 ## 3. The scheduled routine, and what changes when the account changes
 
-**Active:** "Daily card audit (200 days, in the lead session)", trigger `trig_016w88QsTBpwiUbY8a7PCmzC`.
+**Active (new account, recreated 24 Oct 2026 22:27 IST):** "Daily card audit (200 days, in the lead session)", trigger
+`trig_01JtXb9RSm63zmvoar8VyXsx`, bound to session `session_01VQVLJ154mWQVPxa8jEJTWY`, the prompt below; first run
+25 Oct 10:07 IST. The old account's routine `trig_016w88QsTBpwiUbY8a7PCmzC` (below) is the owner's to disable.
+
+**Old account:** "Daily card audit (200 days, in the lead session)", trigger `trig_016w88QsTBpwiUbY8a7PCmzC`.
 - Cron `CRON_TZ=Asia/Kolkata 7 10,12,14,16 * * *`; runs until 2027-05-08.
 - It fires into this session (`session_01CKTcRXiDuaCJ9ffRDZzVvq`) on the **current account**.
 
@@ -164,12 +168,12 @@ The routine's prompt, verbatim:
 
 ```
 Daily card audit (owner, 20 Oct: 200 days, 10:07/12:07/14:07/16:07 IST, at least 20 cards a day; moved into the lead session on 21 Oct because routine sessions could not push). If today (IST) is after 2027-05-08, disable this routine and stop. Otherwise, in this session (git pull first; branch claude/gracious-goodall-jn9buu):
-1. Published cards from /api/feed newest first, those not yet in today's docs/audit/live/<date>-audit.json (at least 5 a run): give them in batches to independent general-purpose subagents (you do not grade your own fixes). Each downloads the filing PDF into its own new directory, extracts text with `python -I`, and judges the card's face (headline, points, tables, blocks, "Our reading", direction, impact) RIGHT / MINOR / WRONG with the error class (wrong_period, unit_scale, restated, standalone_consolidated, wrong_column, invented, arithmetic, direction, duplicate, event_type, memory, attribution, unsupported_cause, other) and a one-line reason. Record each card's prompt_variant (card_json.grounding.prompt_variant).
+1. Published cards from /api/feed newest first, those not yet in today's docs/audit/live/<date>-audit.json (at least 5 a run): give them in batches to independent general-purpose subagents with pipeline/scripts/daily_audit/reviewer_prompt.txt (you do not grade your own fixes). Each downloads the filing PDF into its own new directory, extracts text with `python -I`, and judges the card's face (headline, points, tables, blocks, "Our reading", direction, impact) RIGHT / MINOR / WRONG with the error class (wrong_period, unit_scale, restated, standalone_consolidated, wrong_column, invented, arithmetic, direction, duplicate, event_type, memory, attribution, unsupported_cause, other) and a one-line reason. Record each card's prompt_variant (card_json.grounding.prompt_variant).
 2. First run of the day: dispatch maintenance.yml export-held; review a sample of held cards (release candidate or not). (The shadow critic is off since 24 Oct, D41: no export-critic or critic scoring until it is rebuilt.)
 3. /api/review: check the flagged cards the same way.
 4. Fix: the commonest WRONG class with a root cause in code or prompt, with a test; on/off over stored cards (no AI) and ship only if more cards become right and none wrong; an independent subagent blind-checks a sample of the changed cards. Any fix that makes a check accept more gets that audit before it is called done. Re-runs or refreshes needed go to docs/audit/actions-pending.md or are dispatched one at a time (D1 writes below 85,000).
 5. Save judgements to docs/audit/live/<date>-audit.json (each with reading_only: true when every fault is in "Our reading" or behind the tap), append the ledger rows (docs/audit/ledger.md: per change and the daily totals, incl. short vs long and WRONG on the checked face), commit and push.
-6. 16:07 run only: the day's summary at the top of docs/audit/live/<date>-audit.md (audited, right/minor/wrong, share right vs the 95% bar, short vs long, critic, fixes and their effect, held released, open classes) with the pooled rates and their 95% intervals from `python -I pipeline/scripts/daily_audit/rates.py --window 3` (a day alone cannot show a fix worked), then a short summary for the owner.
+6. 16:07 run only: the day's summary at the top of docs/audit/live/<date>-audit.md (audited, right/minor/wrong, WRONG on the checked face vs the 5% bar (D42), short vs long, fixes and their effect, held released, open classes) with the pooled rates and their 95% intervals from `python -I pipeline/scripts/daily_audit/rates.py --window 3` (a day alone cannot show a fix worked), then a short summary for the owner.
 Rules: no AI for testing; never edit stored data by hand or hand-delete live data; $0 (no paid routes beyond the owner's DeepSeek seed use); no keys printed; no AI model names in commits or PR text.
 ```
 

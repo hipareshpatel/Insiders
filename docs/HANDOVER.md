@@ -21,8 +21,9 @@ These are the platform's two jobs until go-live. Everything else serves them.
 **Target (owner, 24 Oct 2026, D42; replaces "95% RIGHT" of 18 Oct):** WRONG on the checked face at or below 5% of
 published cards, read pooled over days with the 95% interval's top at or below 5% (`rates.py`), when an independent
 blind reviewer checks them against the filing PDF and the company's memory. The checked face is the headline, the
-quoted points, the tables and blocks and the key numbers; the model's interpretation ("Our reading") and the facts the
-checks could not quote sit behind a tap, marked not checked, and a fault only there is MINOR (`reading_only`). The bar
+quoted points, the tables and blocks and the key numbers; the model's interpretation sits open beside it in its own box,
+"Our reading · not checked against the filing" (owner: kept readable), and the facts the checks could not quote sit
+behind a tap; a fault only in those is MINOR (`reading_only`). The bar
 is **not met** (21-24 Oct pooled: 22%, 17%-28%).
 
 | Day | Audited | RIGHT | MINOR | WRONG | Right | Right or minor | WRONG |

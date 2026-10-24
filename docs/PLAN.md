@@ -17,8 +17,8 @@ reviews every push and fixes what it finds.
 Paid was bought for one month (22 Oct): before ~21 Nov renew, or set the repository variable `D1_PLAN=free`. Audit rates
 are read pooled with 95% intervals (`pipeline/scripts/daily_audit/rates.py`): 21-24 Oct, 218 cards, WRONG 22% (17%-28%).
 Owner decisions the same evening: **the go-live bar is WRONG on the checked face ≤ 5%** (pooled, interval top; D42,
-replaces 95% RIGHT), "Our reading" and the facts the checks could not quote behind a tap, pruned points kept there
-instead of deleted (F116); **the shadow critic is off** (D41).
+replaces 95% RIGHT; "Our reading" stays open and labelled not checked, a fault only there is MINOR), pruned points kept
+behind the tap "Facts the checks could not quote" instead of deleted (F116); **the shadow critic is off** (D41).
 
 **24 Oct 2026 (handover before the owner's account switch): read `docs/HANDOVER.md` first.** Daily audit 65 cards: 38% right,
 23% WRONG (bar 95% right). Shipped F108-F111 (#91-#94): broken text and audio-link letters, EBITDA told two ways, a

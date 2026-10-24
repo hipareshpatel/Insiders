@@ -15,6 +15,10 @@ on:
         description: the route whose models ai-check tries (trial_new = the new candidates only; all = every route)
         type: string
         default: trial_new
+      provider:
+        description: ai-check only this provider's configured models (e.g. openrouter); empty = every provider of the route
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -63,6 +67,10 @@ jobs:
         if: always()
         run: |
           for p in nvidia groq mistral; do "$RUNNER_TEMP/venv/bin/python" -m bse_intel models --provider "$p" || true; done
+      # OpenRouter's free models (":free"), to choose a fixed named one from (owner, 24 Oct 2026)
+      - name: OpenRouter free models
+        if: always()
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel models --provider openrouter --filter ":free"'
       - name: Configured models still served
         if: always()
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel models'
@@ -70,5 +78,6 @@ jobs:
         if: always() && inputs.ai_check
         env:
           ROUTE: ${{ inputs.route }}
+          PROVIDER: ${{ inputs.provider }}
         # "all": every route (an empty input fell back to the default, trial_new, on 22 Oct)
-        run: '[ "$ROUTE" = all ] && ROUTE=; "$RUNNER_TEMP/venv/bin/python" -m bse_intel ai-check ${ROUTE:+--route "$ROUTE"}'
+        run: '[ "$ROUTE" = all ] && ROUTE=; "$RUNNER_TEMP/venv/bin/python" -m bse_intel ai-check ${ROUTE:+--route "$ROUTE"} ${PROVIDER:+--provider "$PROVIDER"}'

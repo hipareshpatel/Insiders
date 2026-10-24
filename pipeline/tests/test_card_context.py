@@ -80,6 +80,22 @@ def test_rating_change_compares_only_with_the_same_agency():
     assert rating_change(before, unknown, "n2")["before"] == "A+"         # agency unknown: the last rating on record
 
 
+def test_a_global_scale_rating_is_not_set_beside_a_domestic_one():
+    """Muthoot Microfin (24 Oct 2026): CareEdge Global's BB- (Positive) was shown as nine notches down from CRISIL's
+    domestic AA-. A global-scale rating and an agency the code does not know are compared with their own only."""
+    before = {"balance_sheet": [{"credit_rating": "AA-", "rating_agency": "CRISIL", "as_of": "2026-08-12"}]}
+    after = {"balance_sheet": [{"credit_rating": "CareEdge BB-", "rating_agency": "CareEdge Global",
+                                "rating_outlook": "Positive", "source_news_id": "n1"}]}
+    got = rating_change(before, after, "n1")
+    assert got["after"] == "BB-" and got["before"] is None and got["notches"] is None
+    before["balance_sheet"].append({"credit_rating": "CareEdge BB-", "rating_agency": "CareEdge Global", "as_of": "2026-09-01"})
+    assert rating_change(before, after, "n1")["notches"] == 0
+    fitch = {"balance_sheet": [{"credit_rating": "BBB-", "rating_agency": "Fitch Ratings", "source_news_id": "n2"}]}
+    assert rating_change({"balance_sheet": before["balance_sheet"][:1]}, fitch, "n2")["before"] is None
+    crisil = {"balance_sheet": [{"credit_rating": "CRISIL AA", "rating_agency": "CRISIL", "source_news_id": "n3"}]}
+    assert rating_change(before, crisil, "n3")["notches"] == 1             # the global rating is passed over
+
+
 def test_long_term_grades_edge_cases():
     assert long_term_grade("CARE BB; Stable; ISSUER NOT COOPERATING") == "BB"
     assert long_term_grade("CRISIL AAA(SO)") == "AAA"

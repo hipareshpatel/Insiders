@@ -3150,8 +3150,11 @@ class Pipeline:
         found_facts = code_facts.results_facts(tagged, filed_text, (dossier_as_of(dossier, filing.filed_at, inclusive=False)
                                                                     or {}).get("balance_sheet")) \
             if tagged and event_type == "RESULTS" and self.settings.results_facts else []
-        prompt_scale = "\n\n".join(x for x in (scale, code_facts.block(found_facts)) if x)
-        system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers, scale=prompt_scale,
+        if found_facts:
+            # in front of the text, as the XBRL table is: the model reads them as the filing's own figures, and a
+            # card line quoting one is found (results_card.build puts them on a rich card)
+            text = code_facts.block(found_facts) + "\n\n" + text
+        system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers, scale=scale,
                                           examples=self._owner_examples(sector, event_type),
                                           lessons=[x["lesson"] for x in learned["lessons"].get(f"{sector}|{event_type}", [])][-3:],
                                           reaction=reaction, variant=variant)
@@ -3190,7 +3193,7 @@ class Pipeline:
         # The scale block too: the market cap, revenue, net worth and debt the prompt gave the model to measure
         # the event against. Not checked against it, a card that used them was held as stating figures the
         # filing does not print - 40 of the 77 cards held only for an unfound amount (funnel, 2026-10-18).
-        sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False), prompt_scale)
+        sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False), scale)
         history = dossier.get("financial_metrics", [])
         event_orders = event_xbrl.orders(events)
         # Code computes, the model describes (audit round 2): the changes, margins and ratios a card may state
@@ -3209,7 +3212,8 @@ class Pipeline:
             """
             # a results card with its XBRL file: code writes the figures, the model's words are cut to a line or two
             built = (results_card.build(candidate, tagged, filing.company_name,
-                                        results_card.history_from_view(full_view), filed_text)
+                                        results_card.history_from_view(full_view), filed_text, found_facts,
+                                        self.settings.results_rich)
                      if tagged and "RESULTS" in (event_type, candidate.event_type) else [])
             units = fix_unit_slips(candidate, sources)
             foreign_fixes = fix_foreign_crore(candidate, filed_text)
@@ -3246,7 +3250,7 @@ class Pipeline:
                 # 68 results cards had no XBRL behind them. Reported for the second provider to fix, with
                 # the exact gap; never corrected here, since a sum cannot say which line is wrong.
                 found.scale += gate.statement_footing(candidate.dossier_delta.financial_metrics)
-            known = f"{sources[3]}\n{prompt_scale}"   # memory and the scale block: the figures a fact may compare with
+            known = f"{sources[3]}\n{scale}"   # memory and the scale block: the figures a fact may compare with
             quote_problems, missing, dropped, paraphrased = check_quotes(
                 candidate, text, filing.news_id, declared_unit(filed_text), blocks, known)
             found.quotes += quote_problems

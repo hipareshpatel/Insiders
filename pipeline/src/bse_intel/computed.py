@@ -111,6 +111,8 @@ def build_pool(filed_text: str, tagged=None, annual_table: str = "", history: li
     for fact in facts or []:   # computed in code from the filing's statements, with their direction (facts.py)
         if fact.kind in ("pct", "bps"):
             getattr(pool, fact.kind).append((fact.value, fact.sign))
+        if fact.base:
+            pool.shares.append((fact.value, fact.base))
     pool.add_printed(filed_text)
     pool.add_bare(filed_text)
     printed = Pool()   # the filing's own text alone: where a like-for-like base margin must be printed

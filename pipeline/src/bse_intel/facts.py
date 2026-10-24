@@ -24,6 +24,9 @@ _MATERIALS = ("raw_material_cost", "purchases_stock_in_trade", "inventory_change
 _BALANCE = (("inventories_cr", "inventories"), ("receivables_cr", "trade receivables"), ("cash_cr", "cash and bank"),
             ("gross_debt_cr", "borrowings"))
 
+_ORDER = ("EBITDA margin", "Cost of materials", "Cash flow", "Balance sheet", "Employee cost", "Net profit",
+          "Effective tax rate", "Other income")
+
 
 @dataclass
 class Fact:
@@ -31,6 +34,7 @@ class Fact:
     kind: str = ""      # "pct" or "bps": the figure the pool takes, when the fact has one
     value: float = 0.0
     sign: int = 0       # +1 up, -1 down, 0 a level
+    base: str = ""      # "revenue" for a share of revenue: computed.py checks a share against its base
 
 
 def _cr(value: float) -> str:
@@ -77,11 +81,11 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
         if part_now is None or not revenue or revenue <= 0:
             return
         level = part_now / revenue * 100
-        out.append(Fact("", "pct", round(level, 1)))
+        out.append(Fact("", "pct", round(level, 1), base="revenue"))
         if part_ago is not None and revenue0 and revenue0 > 0 and like_for_like("revenue", *inputs):
             before = part_ago / revenue0 * 100
             move, sign = _bps(level, before)
-            out.append(Fact("", "pct", round(before, 1)))
+            out.append(Fact("", "pct", round(before, 1), base="revenue"))
             out.append(Fact(f"{label} {now_p}: {level:.1f}% of revenue against {before:.1f}% in {ago_p} "
                             f"({_word(sign)} {move} bps)", "bps", move, sign))
         else:
@@ -154,7 +158,8 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
             parts.append(f"net cash {_cr(cash - debt)}" if cash >= debt else f"net debt {_cr(debt - cash)}")
         if parts:
             out.append(Fact(f"Balance sheet {sheet.period or now_p}: " + "; ".join(parts)))
-    return out
+    # the lines a reader looks for first lead, so a card that shows only some shows these
+    return sorted(out, key=lambda f: next((i for i, lead in enumerate(_ORDER) if f.text.startswith(lead)), len(_ORDER)))
 
 
 def block(facts: list[Fact]) -> str:

@@ -1,0 +1,402 @@
+[
+ {
+  "news_id": "nse-106823292",
+  "symbol": "LMW",
+  "event_type": "RESULTS",
+  "points": [
+   {
+    "wrong_point": "why_it_matters says PAT 'more than double' (71.23/40.92 is +74%)",
+    "stage": "WRITER",
+    "evidence": "Live card has no 'double' wording (grep 0); card now says +74.1% YoY, correct vs filing consolidated PAT 71.23 / 40.92 (p.~10). Reviewer's version not verifiable.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Same figures in any reading; error is wording/arithmetic on right inputs",
+    "better_check": "Recompute growth words ('double', 'more than') from stated figures; ban qualitative magnitude words not backed by the computed pct"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106823242",
+  "symbol": "VMM",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "'443 cities' (Tier III store count); filing says 582 cities",
+    "stage": "WRITER",
+    "evidence": "p.5 text: '582 / # Cities' adjacent; '204 197 443 ... Tier I Tier III' is the tier chart. Card quote ('26 Gross New stores...') contains neither number.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both 582 and 443 are in the text of either engine; the AI chose the wrong one",
+    "better_check": "Require every figure in a point to appear in that point's own quote; label adjacency check (number next to the noun it is attached to)"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824530",
+  "symbol": "GRWRHITECH",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "'H1FY27 PAT to Rs256.3 Cr': 256.3 is H1FY26 EBITDA",
+    "stage": "INPUT_AMBIGUOUS",
+    "evidence": "p.8 text: 'EBITDA Bridge H1 FY27: 256.3 12.0 153.7 ... 380.7, H1 FY26 ... H1 FY27' (first value is H1FY26). PAT bars on p.7 come as '174 262' with labels listed 'H1FY27 H1FY26' (label order reversed vs value order). Card quote 'H1FY27 PAT 256.3' is not in the text layer.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "Chart values are detached from labels in the text layer; an OCR/geometry engine could pair bar to axis label, but only if it uses coordinates. Same text-order reading would repeat the swap.",
+    "better_check": "Reject a quote that is not a literal substring of page text; require the number's label (PAT vs EBITDA) within the quote"
+   },
+   {
+    "wrong_point": "Results table mixes bases (Q2 EBITDA 189 incl other income vs prior 119.44/172 excl.)",
+    "stage": "CODE",
+    "evidence": "Live block now uses deck figures (189.0 vs 133.0 / 192.0, +42.1% YoY, -1.6% QoQ, margin +380/-310 bps), i.e. already fixed after the review; deck p.7 '133 189', p.8 bridge 133.3 -> 189.0.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Mix of XBRL priors and deck current; not a reading error",
+    "better_check": "Take current and priors from one source/definition; reject a block whose growth disagrees with the filing's own stated change"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824625",
+  "symbol": "SAPPHIRE",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Results EBITDA 128.61 vs 102.09 (+26% YoY) and margin +75 bps; filing says +21% and ~+20 bps",
+    "stage": "CODE",
+    "evidence": "Filing p.~25 (lines 577-587): 'EBITDA 1,286.06 1,061.6 21%', 'EBITDA Margin % 14.5% 14.3%'. Prior 102.09 came from memory XBRL on another definition. Live block now has no EBITDA line (fixed/removed).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Prior-year comes from XBRL, not from the PDF; both PDF engines would read 1,061.6",
+    "better_check": "Compare block growth with the filing's stated % (21%) and with the card's own key number; same-source rule for current and prior"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824702",
+  "symbol": "NAM-INDIA",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Results table shows Q1FY27 (PAT 503.7...) under a 'bank' lens with Interest earned 0.0, missing the Rs96.8 Cr exceptional",
+    "stage": "CODE",
+    "evidence": "Live block is Q2FY27 PAT 324.37 vs prev quarter 503.7, lens 'company' (appears fixed). Exceptional 968 Mn is in the filing table (p.~35) and in a notable_change, not in the block.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Period/lens selection and XBRL join are code",
+    "better_check": "Check block period label against the filing's period; lens must match sector (AMC is not a bank)"
+   },
+   {
+    "wrong_point": "Other expenses note: Q1FY27 was Rs66.6 Cr; filing prints 999 (Rs99.9 Cr)",
+    "stage": "WRITER",
+    "evidence": "p.35 table clean: 'Other Expenses 974 855 14% 999 -3% 1,973 ...'. Card quote reads '974 855 14% 666 -3%' which is not in the text (666 appears elsewhere on another page).",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "Text is clean in both engines; a quote-vs-text and arithmetic check catches it with one engine (974/999 = -2.5%, 974/666 = +46%, not -3%)",
+    "better_check": "Quote must be a literal substring of page text; recompute the printed % from the two figures"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824520",
+  "symbol": "BETA",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "'EBITDA margin 23.2% vs 22.4%': 22.4% is H1FY25, H1FY26 is 23.1%",
+    "stage": "WRITER",
+    "evidence": "p.~11 and p.22 text: '22.4% 23.1% 23.2%' with axis 'H1 FY25 H1 FY26 H1 FY27' in order. Card quote supporting the sentence is the gross-margin line and contains neither figure.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Three clean values with three period labels in the same order in both engines; the AI paired the wrong two",
+    "better_check": "Require period label on each comparative; quote must contain both figures"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824806",
+  "symbol": "ADANIENSOL",
+  "event_type": null,
+  "points": [
+   {
+    "wrong_point": "Results table sets press-release operational revenue 7,167 / EBITDA 3,548 against statutory XBRL priors (6,595.83 / 2,289.07): +8.7%/+55% instead of +51%/+67%; margin 49.5% vs 34.7% made up",
+    "stage": "CODE",
+    "evidence": "Card is gone (404; the live results card for this company is nse-106824728), PDF not fetched. Reviewer text only, unverified.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Current from press release, priors from XBRL: a mixed-basis block, not a reading error",
+    "better_check": "Same-source and same-basis rule (operational vs statutory); compare growth with the filing's stated +51% / +67%"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106825268",
+  "symbol": "PITTIENG",
+  "event_type": "RESULTS",
+  "points": [
+   {
+    "wrong_point": "Headline/key number net profit -4.7% YoY (restated like-for-like -15.5%)",
+    "stage": "CODE",
+    "evidence": "Live headline still '-4.7% YoY'; EPS line 'YoY -4.1%, QoQ +62.5%' from the same data. Filing: restated Q2FY26 PAT 40.09 Cr.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "The restated comparatives are printed cleanly in the PDF (reconciliation table, 'Profit after tax 2,084.15 ... 2,950.19 ... 3,558.25 ... 4,009.42' in lakh, p.~13) while the card's prior came from stored reported XBRL. A second reading of the PDF compared with the XBRL prior would disagree; but two readings of the same PDF compared with each other would not.",
+    "better_check": "Cross-check XBRL prior vs the comparative column printed in the filing; honour 'restated' flag when filing says comparatives were restated"
+   },
+   {
+    "wrong_point": "PAT QoQ +62.6% vs restated Q1FY27 29.50 Cr (+14.9%)",
+    "stage": "CODE",
+    "evidence": "Reported Q1 PAT 20.84 Cr used; filing restated 29.50 (2,950.19 lakh).",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "The restated comparatives are printed cleanly in the PDF (reconciliation table, 'Profit after tax 2,084.15 ... 2,950.19 ... 3,558.25 ... 4,009.42' in lakh, p.~13) while the card's prior came from stored reported XBRL. A second reading of the PDF compared with the XBRL prior would disagree; but two readings of the same PDF compared with each other would not.",
+    "better_check": "Cross-check XBRL prior vs the comparative column printed in the filing; honour 'restated' flag when filing says comparatives were restated"
+   },
+   {
+    "wrong_point": "EPS -4.1% YoY / +62.5% QoQ vs restated 10.78 / 7.99",
+    "stage": "CODE",
+    "evidence": "Filing p.~9 prints EPS 9.18 | 7.99 | 10.78 (text layer partly OCR-garbled, e.g. '9 18'), so OCR on this page matters.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "The restated comparatives are printed cleanly in the PDF (reconciliation table, 'Profit after tax 2,084.15 ... 2,950.19 ... 3,558.25 ... 4,009.42' in lakh, p.~13) while the card's prior came from stored reported XBRL. A second reading of the PDF compared with the XBRL prior would disagree; but two readings of the same PDF compared with each other would not.",
+    "better_check": "Cross-check XBRL prior vs the comparative column printed in the filing; honour 'restated' flag when filing says comparatives were restated"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106826079",
+  "symbol": "SHREECEM",
+  "event_type": "OTHER",
+  "points": [
+   {
+    "wrong_point": "event_type OTHER / UPDATE; should be RESULTS",
+    "stage": "CODE",
+    "evidence": "Filing is a cover letter plus 'Press Release ... Shree Cement announces Q2'FY27 results' with a financial-highlights table (p.2); cover subject line is 'Press Release'. Live card still OTHER.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Classification decision, text is clean",
+    "better_check": "Rule: press release whose body has a results table / 'announces ... results' is RESULTS"
+   },
+   {
+    "wrong_point": "core_catalyst 'lower realisations' not in filing; figures imply higher realisation",
+    "stage": "WRITER",
+    "evidence": "p.2: EBITDA/t decline 'primarily due to elevated fuel prices'; revenue +24% on volume +14%. No mention of realisations.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Invented cause on clean text",
+    "better_check": "Causal claims must be in the quote; sanity check: revenue growth > volume growth contradicts 'lower realisations'"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106826278",
+  "symbol": "BAJFINANCE",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Results block 'NIM 7.31%' is cost of funds",
+    "stage": "WRITER",
+    "evidence": "Transcript line: 'Cost of funds came down sequentially by 9 basis points and came in at 7.31%.' Live block has kpi:nim 7.31. Origin (model-extracted KPI mapped by code) not verifiable from the card.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Label is adjacent to the figure in clean text; the mislabel happened after reading",
+    "better_check": "KPI label must appear next to the value in its quote (the card's own call_takeaways quote says 'Cost of funds')"
+   },
+   {
+    "wrong_point": "'total overlay provision stands at Rs512 crore' mixes management overlay 512 with macro 337/226",
+    "stage": "WRITER",
+    "evidence": "Transcript Q&A: 'macro provision stands at about INR226 crores ... management overlay ... INR512 crores, INR185 crores last quarter and INR327 crores'. Card carries verified:false, issue '512 is not in its quote'.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both figures are in the clean text; the pipeline itself flagged the unverified claim but published",
+    "better_check": "Drop or block points marked verified:false; keep each provision type separate"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106826336",
+  "symbol": "PNB",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Results block (STANDALONE) PAT 5,561.14 / priors 5,125.28 / 5,814.72, NII 11,803, PPOP 7,563.63, provisions 75.37 are not the stated standalone numbers",
+    "stage": "CODE",
+    "evidence": "Transcript text: 'net profit of INR 5,532 crores', NII '11,601 crores ... 10.8% ... 7.4%', operating profit 7,532. Live block still shows the 5,561.14 series.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "Figures come from XBRL/memory, not the call; the call's own figures are clean text, so comparing block with figures stated in the filing would disagree",
+    "better_check": "Block PAT must match a figure the filing states for the same basis; reject series not found in standalone or consolidated memory"
+   },
+   {
+    "wrong_point": "Headline 'PNB sees 7- margin boost' garbled (should be 7-9 bps)",
+    "stage": "CODE",
+    "evidence": "Transcript: 'around 7 basis points to 9 basis points addition'. Live headline still garbled. Cause (a text sanitiser stripping the unit?) is a guess, not verified.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Source text is clean; damage is after reading",
+    "better_check": "Post-process must not drop units/ranges; check numerals in headline against quote"
+   },
+   {
+    "wrong_point": "what_happened 'expects a **7** to further expansion in NIM'",
+    "stage": "CODE",
+    "evidence": "Same source line as above; the quote in the card is intact, the text is garbled.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Same as above",
+    "better_check": "Compare card text numerals to quote numerals"
+   },
+   {
+    "wrong_point": "'Credit cost guidance reaffirmed 0.25-0.30% ... market expectations of sustained sub-0.4%' (tightening; unsupported)",
+    "stage": "WRITER",
+    "evidence": "Transcript: credit cost 'will remain between 0.25% to 0.30%'. 'Market expectations' has basis SECTOR with no quote.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Unsupported claim on clean text",
+    "better_check": "Require a quote for SECTOR claims; flag 'reaffirmed' without matching memory guidance"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827180",
+  "symbol": "HDFCBANK",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Headline and first point PAT Rs1,950 Cr (10x too small)",
+    "stage": "INPUT_SOURCE_ERROR",
+    "evidence": "Transcript text p.~5 literally says 'quarterly PAT of Rs 19.5 billion' (speaker slip; true 19,509.96 Cr). The card converted correctly. Not an AI misread: the source is wrong.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both engines read 'Rs 19.5 billion'",
+    "better_check": "Sanity check against the card's own XBRL results block (PAT 20,700 / 19,509.96 Cr) and flag 10x disagreement"
+   },
+   {
+    "wrong_point": "Same 10x in what_happened",
+    "stage": "INPUT_SOURCE_ERROR",
+    "evidence": "Same line.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Same",
+    "better_check": "Same"
+   },
+   {
+    "wrong_point": "GNPA 1.11% 'meets the earlier prediction p_d48ef89e for Q2FY27' (it is a Q3FY27 prediction created from these results)",
+    "stage": "MEMORY_CONTEXT",
+    "evidence": "memory_refs empty on the point; reviewer says prediction is Q3FY27 and OPEN. Memory record not accessible here.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Not a reading issue",
+    "better_check": "Check the prediction's target period equals the card period and its creation date precedes the filing"
+   },
+   {
+    "wrong_point": "themes 'Infra / EPC' for a bank",
+    "stage": "WRITER",
+    "evidence": "Card themes ['Infra / EPC'], model gemini-3.5-flash-lite; sector is banking.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Model output unrelated to text",
+    "better_check": "Theme must be consistent with the company's sector field"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827030",
+  "symbol": "JINDALPHOT",
+  "event_type": "CORPORATE_ACTION",
+  "points": [
+   {
+    "wrong_point": "Acquirer named 'Saffron Private Limited'; Saffron Capital Advisors is Manager to the Offer, Acquirer 1 is Concatenate Power Advest",
+    "stage": "WRITER",
+    "evidence": "p.1 text clean: 'issued by Saffron / Capital Advisors Private Limited, Manager to the Offer, for and on behalf of Concatenate Power Advest / Private Limited (Acquirer 1) and Concatenate Advest Advisory ...'. Card quote splices out the middle words and is not a contiguous substring.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Clean text; the quote check passed on a spliced string",
+    "better_check": "Quote must be an exact contiguous substring (no ellipsis/splice, only whitespace normalisation)"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824929",
+  "symbol": "CYIENT",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Results block EBIT margin prev_quarter 13.2%, -300 bps QoQ (group Q1 was 9.7%)",
+    "stage": "MEMORY_CONTEXT",
+    "evidence": "p.32 group table: 'EBIT margin % 10.2% 9.7% 9.4%'; the DET segment table has '14.2% 13.2% 12.2%'. Block value 10.2 with prior 13.2 mixes group and segment. Reviewer traces 13.2 to a memory card (not checked).",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "The PDF's group table prints 9.7; a reading of that table compared with the block would disagree, but not a second reading of the same text",
+    "better_check": "Prior must be the same segment/basis; compare with Q1 column of the same table in the filing"
+   },
+   {
+    "wrong_point": "'$121 Mn' for Rs121.4 Cr",
+    "stage": "WRITER",
+    "evidence": "p.14: '121Cr\u20b9' and p.32 '1,214 \u20b9 Mn' clean. Card text '(**$121 Mn** stated as \u20b91,214 Mn)'.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Clean text, wrong currency symbol in the card",
+    "better_check": "Currency symbol and unit must equal the quote's"
+   },
+   {
+    "wrong_point": "'led by Aerospace and Industrial' is Cyient DLM's, not the group's",
+    "stage": "INPUT_AMBIGUOUS",
+    "evidence": "p.9 'UPDATES FOR THE GROUP' has several sub-blocks (page has 3 images); the DLM sub-block text 'Strong revenue growth of 26.5% ... led by Aerospace and Industrial' appears without a text-layer heading (DLM name is also in p.? line 384). OCR of the images might expose the heading.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "A layout-aware second read that returns the block heading would disambiguate; text-order reading would not",
+    "better_check": "Attribute segment statements only when the segment heading is in the same block"
+   },
+   {
+    "wrong_point": "Results block EBITDA/PAT (132.5 vs 142.9, -7.3%) on XBRL definition conflicts with headline PAT -4.8% (listed in reason, not in wrong_points)",
+    "stage": "CODE",
+    "evidence": "Live block PAT 132.5/142.9 -7.3%; headline PAT 121.4, -4.8%; p.32 '1,214 1,141 1,275'.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Different definitions across sources",
+    "better_check": "Flag two different PAT changes on one card; use filing's stated change"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827362",
+  "symbol": "UTIAMC",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Monthly gross SIP inflow Rs947 Cr in September 2026 (Sep'26 is 982; 947 is Feb'26)",
+    "stage": "INPUT_AMBIGUOUS",
+    "evidence": "p.10 text: values '992 989 957 1016 999 947 1004 967 970 983 1004 994 982' then labels \"Sep'25 Oct'25 ... Sep'26\" listed separately; 13 values map by position, 947 is 6th (Feb'26). Pipeline flagged verified:false '947 is not in its quote' but still published.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "Chart with value list and label list detached; coordinate/geometry-aware reading would pair them, text order only by counting",
+    "better_check": "Re-pair chart values to labels by x-coordinate; block unverified points"
+   },
+   {
+    "wrong_point": "call takeaway 'SIP inflows Rs947 Cr in September 2026'",
+    "stage": "INPUT_AMBIGUOUS",
+    "evidence": "Same chart.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "Same",
+    "better_check": "Same"
+   },
+   {
+    "wrong_point": "Results block PAT 132.31 vs prev-year 132.2 (+0.1%) where filing says 132 vs 113 (+17%)",
+    "stage": "CODE",
+    "evidence": "PDF has 'PAT for the Owners 132 113'; 132.2 not found in the text layer, so the origin of the prior (XBRL) was not verified. Block's own EPS 8.82 to 10.29 is +16.7%, contradicting PAT +0.1%.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Prior not from the PDF",
+    "better_check": "Internal consistency: PAT growth vs EPS growth; match against filing's printed comparative"
+   },
+   {
+    "wrong_point": "core_catalyst '15% lower employee benefit costs'",
+    "stage": "WRITER",
+    "evidence": "Filing: employee cost 128 vs 159 (-19% consolidated), -30% standalone, H1 -13%; no 15%. Pipeline flagged '19% is not in its quote'.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Clean numbers; AI wrote a figure not in the filing",
+    "better_check": "Every % in prose must trace to a filing figure or computed line"
+   },
+   {
+    "wrong_point": "Results block uses 'bank' lens with Interest earned for an AMC",
+    "stage": "CODE",
+    "evidence": "Live block lens 'bank', interest_earned 12.17/11.15 (filing 'Interest & Dividend Income 12 11').",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Lens template choice",
+    "better_check": "Lens must match sector/industry"
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827476",
+  "symbol": "GEOJITFSL",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Results block revenue 165.82 vs 169.8 (-2.3%); filing restated Q2FY26 revenue 161.69 (+2.55%)",
+    "stage": "CODE",
+    "evidence": "Filing text lines ~1766/1917: '165.82 161.69'. 169.8 = old XBRL prior (161.69 + 8.12 treasury income reclassified). Card's key number says +2.6%, block says -2.3%.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "Restated comparative is clean in the PDF; a PDF-based reading compared with the XBRL prior would disagree",
+    "better_check": "Cross-check XBRL prior vs the comparative printed in the filing; flag block vs key number conflict"
+   },
+   {
+    "wrong_point": "Results block EBITDA 30.34 vs 38.95 (-22.1%), margin -464 bps vs filing 36.70 vs 43.38 (-15.4%), -366 bps",
+    "stage": "CODE",
+    "evidence": "Filing p.~25: 'EBITDA 36.70 ... 43.38 ... (15.40%)'. Block EBITDA 30.34 is a different definition.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "Same as above",
+    "better_check": "Same"
+   }
+  ]
+ }
+]

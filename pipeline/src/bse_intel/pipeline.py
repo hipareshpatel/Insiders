@@ -45,6 +45,7 @@ from .ocr import page_reader, recognise
 from . import raw
 from . import order_band
 from . import gate
+from . import consistency
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
 from .models import EVENT_TAGS, Filing, MemoryOutput, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
@@ -3413,6 +3414,15 @@ class Pipeline:
             face = [card_json.get("headline") or ""] + [p.get("text") or "" for p in card_json.get("what_happened") or []]
             if any(v in line for v in slipped for line in face):
                 needs_review = True
+        # the card's words against its own results table and the figures each sentence states (consistency.py): a
+        # faulted point goes, a faulted headline sends the card to review (wrong-card trace, 25 Oct 2026)
+        faults = consistency.conflicts(card_json)
+        if faults["points"]:
+            dropped = {i for i, _ in faults["points"]}
+            card_json["what_happened"] = [p for i, p in enumerate(card_json.get("what_happened") or []) if i not in dropped]
+        if faults["headline"] or faults["points"]:
+            card_json["grounding"]["consistency"] = {"headline": faults["headline"], "points": [w for _, w in faults["points"]]}
+            needs_review = needs_review or bool(faults["headline"])
         # A card the checks faulted, that a second provider was asked to correct and that still
         # fails, is kept out of the feed rather than published with an "Unverified" mark. On the
         # rebuild that was 117 of 456 cards, and a flagged card was judged WRONG 52% of the time

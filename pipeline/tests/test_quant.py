@@ -323,6 +323,43 @@ def test_the_results_table_takes_the_filings_own_year_ago_column():
     assert results_snapshot(dossier, "n2")["ebitda"]["prev_year"] == 49.11
 
 
+def test_the_results_table_drops_a_comparative_against_the_filings_stated_change():
+    """Wrong-card trace (25 Oct 2026): Geojit's Q2FY27 revenue was +2.55% YoY on the restated year-ago ₹161.69 Cr, but
+    memory's ₹169.8 Cr (as first reported, before treasury income moved to other income) made -2.3%. A comparative whose
+    change disagrees with every change the quarter's filings state goes; one that agrees, or a line no filing states a
+    change for, stays."""
+    from bse_intel.dossier import results_snapshot
+
+    def src(news_id, value, yoy=None, qoq=None):
+        return {"news_id": news_id, "value": value, "as_of": "2026-10-23T18:00:00+05:30", "basis": "CONSOLIDATED",
+                "yoy_pct": yoy, "qoq_pct": qoq}
+
+    def dossier(stated_yoy):
+        return {"financial_metrics": [
+            {"metric": "revenue", "period": "Q2FY27", "value": 165.82,
+             "sources": [src("n1", 165.82, qoq=3.4), src("n2", 165.82, yoy=stated_yoy, qoq=3.39)]},
+            {"metric": "revenue", "period": "Q2FY26", "value": 169.8, "sources": [src("xbrl:res:1:Q2FY26", 169.8)]},
+            {"metric": "revenue", "period": "Q1FY27", "value": 160.4, "sources": [src("xbrl:res:1:Q1FY27", 160.4)]},
+            {"metric": "ebitda", "period": "Q2FY27", "value": 30.34, "sources": [src("n2", 30.34)]},
+            {"metric": "ebitda", "period": "Q2FY26", "value": 38.95, "sources": [src("xbrl:res:1:Q2FY26", 38.95)]},
+            {"metric": "pat", "period": "Q2FY27", "value": 16.28, "sources": [src("n2", 16.28)]},
+            {"metric": "pat", "period": "Q2FY26", "value": 23.47, "sources": [src("xbrl:res:1:Q2FY26", 23.47)]},
+        ]}
+
+    snap = results_snapshot(dossier(2.57), "n2")
+    assert "prev_year" not in snap["revenue"] and "yoy_pct" not in snap["revenue"]
+    assert snap["revenue"]["qoq_pct"] == 3.4                          # agrees with the stated +3.39%
+    assert "prev_year" not in snap["ebitda_margin"]                   # the margin's year-ago rested on that revenue
+    assert snap["pat"]["yoy_pct"] == -30.6                            # no change stated: kept
+    kept = results_snapshot(dossier(-2.0), "n2")                      # within a point of -2.3%: kept
+    assert kept["revenue"]["prev_year"] == 169.8 and kept["revenue"]["yoy_pct"] == -2.3
+    # a quarter worked out from the half year less the first quarter (stored flat, with no date) is judged without error
+    derived = dossier(2.57)
+    derived["financial_metrics"][0] = {"metric": "revenue", "period": "H1FY27", "value": 326.22, "unit": "INR_CR",
+                                       "as_of": "2026-10-23T18:00:00+05:30", "source_news_id": "n2"}
+    assert results_snapshot(derived, "n2")["revenue"]["value"] == 165.82
+
+
 def test_the_results_table_drops_a_comparative_the_filing_does_not_print():
     """Live review 5 (2026-10-20): Kapston's year-ago EPS ₹3.48 was the figure before its 1:2 bonus (the statement prints
     ₹2.32), so EPS read -20.4% for +19.4%; Bajaj Finance's year-ago revenue was the first-reported ₹20,178.90 Cr, credited

@@ -1,0 +1,134 @@
+[
+ {
+  "news_id": "nse-106826336",
+  "symbol": "PNB",
+  "line": "pat",
+  "slot": "prev_year",
+  "verdict": "WRONG",
+  "printed_comparative": 4903.73,
+  "printed_change": "+12.8% standalone (5,532.23 vs 4,903.73); consolidated 5,898.37 vs 5,125.28 = +15.1%",
+  "basis": "consolidated/standalone mismatch (card basis STANDALONE)",
+  "evidence": "Results filing nse-106820232 p2: consolidated Q2FY26 PAT incl. associates 512528 lakh; standalone Q2FY26 490373, Q2FY27 553223; call deck: net profit 5,532 vs 4,904. Card value 5,561.14 is consolidated pre-associates (556114), comparative is post-associates"
+ },
+ {
+  "news_id": "nse-106826336",
+  "symbol": "PNB",
+  "line": "pat",
+  "slot": "prev_quarter",
+  "verdict": "WRONG",
+  "printed_comparative": 5253.29,
+  "printed_change": "standalone 5,532.23 vs 5,253.29 = +5.3%; consolidated 5,898.37 vs 5,814.72 = +1.4%",
+  "basis": "consolidated/standalone mismatch",
+  "evidence": "Results filing p2: Q1FY27 standalone 525329 lakh; consolidated 581472 after associates (533915 before). Card compares 5,561.14 with 5,814.72 (different lines), shows -4.4%"
+ },
+ {
+  "news_id": "nse-106826077",
+  "symbol": "GODREJPROP",
+  "line": "revenue",
+  "slot": "prev_year",
+  "verdict": "RIGHT",
+  "printed_comparative": 740.38,
+  "printed_change": "n/a (consolidated 1,935.17 vs 740.38)",
+  "basis": "consolidated",
+  "evidence": "Results filing nse-106826072 consolidated statement: Revenue from operations 1,935.17 | 506.17 | 740.38"
+ },
+ {
+  "news_id": "nse-106826077",
+  "symbol": "GODREJPROP",
+  "line": "revenue",
+  "slot": "prev_quarter",
+  "verdict": "RIGHT",
+  "printed_comparative": 506.17,
+  "printed_change": "n/a (1,935.17 vs 506.17)",
+  "basis": "consolidated",
+  "evidence": "Results filing nse-106826072 consolidated statement: Revenue from operations 1,935.17 | 506.17 | 740.38"
+ },
+ {
+  "news_id": "nse-106826835",
+  "symbol": "INDORAMA",
+  "line": "ebitda",
+  "slot": "prev_quarter",
+  "verdict": "WRONG",
+  "printed_comparative": 108.0,
+  "printed_change": "deck/statement print 117.7 vs 108.0 (about +9%); card 111.75 vs 101.57 (+10.0%)",
+  "basis": "consolidated; card EBITDA = PBT+dep+finance minus other income (excludes other income, FX loss included), not company-printed definition",
+  "evidence": "Deck p19 (and results filing nse-106820069 row 5): EBITDA 117.7 / 108.0 / 80.4. Low severity: change close, but comparative and value both differ from printed"
+ },
+ {
+  "news_id": "nse-106826923",
+  "symbol": "GEOJITFSL",
+  "line": "revenue",
+  "slot": "prev_year",
+  "verdict": "WRONG",
+  "printed_comparative": 161.68,
+  "printed_change": "+2.57% YoY",
+  "basis": "consolidated",
+  "evidence": "Press release: Revenue from Operations Q2 FY27 165.83, Q2 FY26 161.68, YoY 2.57%. Card shows 169.8 and -2.3% (wrong sign)"
+ },
+ {
+  "news_id": "nse-106826874",
+  "symbol": "DRREDDY",
+  "line": "ebitda",
+  "slot": "prev_year",
+  "verdict": "WRONG",
+  "printed_comparative": 2351.1,
+  "printed_change": "Q2FY26 EBITDA INR 23,511 Mn, 26.7% margin; change about -24.2%",
+  "basis": "consolidated IFRS",
+  "evidence": "Press release p3 EBITDA computation: Q2FY27 17,828 Mn; Q2FY26 23,511 Mn; Q1FY27 10,088 Mn. Card has 2009.9"
+ },
+ {
+  "news_id": "nse-106826874",
+  "symbol": "DRREDDY",
+  "line": "ebitda",
+  "slot": "prev_quarter",
+  "verdict": "WRONG",
+  "printed_comparative": 1008.8,
+  "printed_change": "Q1FY27 EBITDA 10,088 Mn (12.5%); change about +76.7%",
+  "basis": "consolidated IFRS",
+  "evidence": "Press release p3: Q1FY27 EBITDA 10,088 Mn. Card has 859.9, +107.3%"
+ },
+ {
+  "news_id": "nse-106826874",
+  "symbol": "DRREDDY",
+  "line": "pat",
+  "slot": "prev_year",
+  "verdict": "WRONG",
+  "printed_comparative": 1437.2,
+  "printed_change": "-36% YoY (9,250 vs 14,372 Mn, attributable to equity holders)",
+  "basis": "consolidated IFRS",
+  "evidence": "Press release p3: Attributable to Equity holders Q2FY26 14,372 Mn, YoY (36)%. Card has 1336.8, -30.8%"
+ },
+ {
+  "news_id": "nse-106826874",
+  "symbol": "DRREDDY",
+  "line": "eps",
+  "slot": "prev_year",
+  "verdict": "WRONG",
+  "printed_comparative": 17.26,
+  "printed_change": "-36% YoY (diluted EPS 11.10 vs about 17.26)",
+  "basis": "consolidated IFRS",
+  "evidence": "Press release p3: Diluted EPS Q2FY27 11.10, Q2FY26 about 17.26 (image text smudged), YoY (36)%. Card has 16.18, -31.4%"
+ },
+ {
+  "news_id": "nse-106826123",
+  "symbol": "STLTECH",
+  "line": "ebitda",
+  "slot": "prev_year",
+  "verdict": "WRONG",
+  "printed_comparative": 141.0,
+  "printed_change": "about +500% (846 vs 141)",
+  "basis": "consolidated",
+  "evidence": "Press release financials table: EBITDA Q2FY27 846, Q1 397, Q2FY26 141; statement Total EBITDA 846/397/141. 129 is Q3FY26 in deck p25. Card has 129, +555.8%"
+ },
+ {
+  "news_id": "nse-106824995",
+  "symbol": "CIEINDIA",
+  "line": "revenue",
+  "slot": "prev_year",
+  "verdict": "RIGHT",
+  "printed_comparative": 2371.84,
+  "printed_change": "statement +11.0% (26,331.80 vs 23,718.44); deck sales +11%",
+  "basis": "consolidated",
+  "evidence": "Results statement in filing: Revenue from operations 26,331.80 | 26,205.51 | 23,718.44 INR mn, so comparative 2,371.84 matches. CAVEAT: card current value 2,540.0 is not printed (statement 2,633.18), so shown +7.1% is wrong; printed is +11%"
+ }
+]

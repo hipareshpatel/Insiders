@@ -1,0 +1,314 @@
+[
+ {
+  "news_id": "nse-106823055",
+  "symbol": "BAJAJCON",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Headline and key numbers: Q2 revenue Rs233 Cr +2.7%, EBITDA Rs53 Cr (card's own results block: 332.83 Cr +25.5%, EBITDA 82.34)",
+    "stage": "INPUT_AMBIGUOUS",
+    "evidence": "Transcript p.~3, CEO opening: 'quarter two FY24 call ... revenue of INR233 crores with a growth of 2.7%'. Text is clean; the speaker's own figures are wrong/stale (a template slip). Writer copied faithfully. Closest stage is a source error, not a reading error.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both engines read 'INR233 crores' identically.",
+    "better_check": "Compare every prose headline figure with the code-built results block (XBRL) for the same period/metric; disagreement over ~5% means hold or prefer XBRL. Also flag a transcript that names the wrong fiscal year ('FY24')."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106823286",
+  "symbol": "ABSLAMC",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "PBT/net income fall attributed to 'lower other income' (and labour-code charge)",
+    "stage": "WRITER",
+    "evidence": "Filing p.23: Other income 424 vs 452 (-28 mn, -6%); Total expenses 2,300 vs 1,909 (+391 mn, +21%); Employee cost +33%. Labour-code charge note is FY26 exceptional (2.82 cr), not this quarter. Figures were right; the cause is not in the filing.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Table is clean text; both engines see identical numbers.",
+    "better_check": "Reject causal words ('due to', 'driven by') not backed by a quote; or compute the contribution of each line to the delta and require the named driver to be the largest."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106823961",
+  "symbol": "SAGILITY",
+  "event_type": "ACQUISITION (deal)",
+  "points": [
+   {
+    "wrong_point": "Computed impact 'Upfront consideration in rupees' = 20 x 89 = 1,780 INR_CR (~8% of market cap); true is ~Rs178 Cr",
+    "stage": "WRITER",
+    "evidence": "Card quantified_impact: formula upfront_usd_m * fx_inr_per_usd, inputs 20.0 USD_M and 89.0 INR/USD (ASSUMPTION), result 1780.0 unit INR_CR, check 'VERIFIED'. Filing p.2: 'Upfront payment of US$ 20.0 M'. Inputs are right; the formula omitted USD_M x INR/USD = INR million -> /10 for crore. Code 'VERIFIED' only re-multiplies. Also contradicts its own text 'upfront alone is under 1%'.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "The inputs are read correctly by any engine; the bug is the formula/unit.",
+    "better_check": "Dimensional check: USD_M x INR/USD gives INR_M, require x0.1 for INR_CR; and sanity check the interpretation text against the computed % of market cap (8% vs 'under 1%')."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824516",
+  "symbol": "HUDCO",
+  "event_type": "GOVERNANCE",
+  "points": [
+   {
+    "wrong_point": "'NSE and BSE have levied fines totaling Rs11,71,740' (each exchange levied that amount separately; combined ~Rs23.43 lakh)",
+    "stage": "WRITER",
+    "evidence": "PDF text: NSE annexure 'Total Fine Payable (Inclusive of GST) 1171740*' (p.4) and BSE email table 'Total 993000 178740 1171740' (p.6). Both totals are in clean text, identical amounts. Writer summed up wrongly (treated one figure as joint). Headline 'Exchanges levy 11.72 lakh' has the same ambiguity. Page 5 is an image (bank details) and irrelevant.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both engines see both identical totals in clean text.",
+    "better_check": "Require per-exchange attribution of a figure when the same total appears in two exchange documents; or total check: if the same amount appears twice, never describe it as 'totaling'."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824587",
+  "symbol": "SHRIRAMPPS",
+  "event_type": "GOVERNANCE",
+  "points": [
+   {
+    "wrong_point": "'The board size remains at 6 directors' (basis MEMORY, no memory_refs)",
+    "stage": "MEMORY_CONTEXT",
+    "evidence": "Filing p.1: two additional directors appointed effective Oct 22, 2026. Memory governance XBRL had board_size 6 (Jun-2026); the writer stated memory's count as unchanged and ignored the filing's two additions. Point has basis MEMORY with empty memory_refs and quote null, so nothing could check it.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Filing text is clean; the error is a stale memory figure applied after the event.",
+    "better_check": "Reject MEMORY-basis points with no memory_refs; for board size, compute memory size +appointments -cessations from the filing instead of restating memory."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824696",
+  "symbol": "HAVELLS",
+  "event_type": "RESULTS (investor update)",
+  "points": [
+   {
+    "wrong_point": "Lloyd Consumer Q2FY26 segment result Rs(66) Cr (filing prints (99), -20.7%)",
+    "stage": "INPUT_UNREADABLE",
+    "evidence": "Text layer p.6 (clean, cell per line): 'Lloyd Consumer (104) (16.9)% (99) (20.7)% (51) (3.5)%'; 99/479=20.7%. The card quote reads '(104) (16.9)%) (66) (20.7)%) (51) (3.5)%)', which is not in the text layer, so the figure arrived via the pipeline's OCR row for this figure-heavy page (OCR-first is used here per project notes) and 99 was probably misread as 66 (classic 9/6 confusion). I could not run OCR or open the card's stored evidence (evidence file not exposed), so the OCR origin is inferred, not verified. If instead the writer invented 66, it is WRITER.",
+    "would_dual_engine_catch": "yes",
+    "catch_reason": "The text layer says (99); OCR said (66). A cell-by-cell comparison, which the pipeline already does for rows, would disagree on this cell. Note that the pipeline's own text-layer check did not catch it, so the check apparently accepted the OCR row.",
+    "better_check": "Require every figure in a quoted table row to appear as a token in the text layer when a text layer exists; check segment % against value (99/479 = 20.7% but 66/479 = 13.8%)."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824614",
+  "symbol": "SAPPHIRE",
+  "event_type": "RESULTS",
+  "points": [
+   {
+    "wrong_point": "'PAT turns positive' / 'returned to profitability' / 'Turnaround YoY' while Q2 shows a loss of Rs1.51 Cr",
+    "stage": "WRITER",
+    "evidence": "Card key number quote '(Loss)/Profit after tax (15.13) 140.22 (127.87)' (Rs mn). Card's own results block: pat -1.51, prev_year -12.79 (yoy_turn LOSS_NARROWED), prev_quarter 14.02 (qoq_turn PROFIT_TO_LOSS). Writer read the Q1 profit column as current. Table text is clean.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Text layer is clean; engines agree on the numbers. The error is the verdict.",
+    "better_check": "Compare headline/takeaway direction words ('turns positive', 'turnaround', 'returned to profit') with the code-built results block's yoy_turn/qoq_turn; reject if not LOSS_TO_PROFIT."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106825071",
+  "symbol": "CYIENT",
+  "event_type": "RESULTS (segment, DET)",
+  "points": [
+   {
+    "wrong_point": "Results table sets DET-segment revenue (Rs1,664 Cr) against whole-group priors (Rs1,781 / 2,075.7 Cr): -6.6% YoY, -19.8% QoQ; PAT/EBITDA/margin are not DET figures",
+    "stage": "CODE",
+    "evidence": "Card is gone (404) and the PDF URL could not be recovered, so this rests on the reviewer text only: text figures match the release (DET revenue 1,664, +15.7% YoY, EBIT 14.2%) while the results block mixes a segment current value with group priors. A results block that joins current from one entity/basis with comparatives from another is code-built.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both engines would read the same release text; the mismatch is between segment current and group comparatives.",
+    "better_check": "Basis/entity guard: current and prior must come from the same source and scope; if the filing states its own YoY (+15.7%) it must agree in sign with the computed YoY; suppress the results table for segment-only releases."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106825832",
+  "symbol": "MCLOUD",
+  "event_type": "ORDER_WIN",
+  "points": [
+   {
+    "wrong_point": "Headline repeats an order already carded 12 minutes earlier (same LOA, same value, same scope)",
+    "stage": "CODE",
+    "evidence": "Card deal_value: updates_deal_id 'd_31c72c9f', stage LOA, amount 3.16 Cr, same as nse-106825823 (filed 09:37, stage LOA, amount 3.16). Filing p.1 is the press-release cover for the same LOA Rs3,16,00,452.60. Dedupe linked the deal (and grounding dropped a point as 'same_event in memory') but the card was still published as a new 'wins' card.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both engines read identical text; this is event dedupe.",
+    "better_check": "Suppress or mark as repeat when updates_deal_id matches an existing deal with identical amount/counterparty/stage."
+   },
+   {
+    "wrong_point": "Signal 'Stage update, not a new order: ... moves from LOA to LOA'",
+    "stage": "CODE",
+    "evidence": "ORDER_FLOW signal text built from deal linkage with stage LOA both before and after.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Not a reading issue.",
+    "better_check": "Emit a stage-change signal only when the stage actually differs; otherwise emit a 'repeat of earlier filing' note."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106826222",
+  "symbol": "ATUL",
+  "event_type": "CORPORATE_ACTION",
+  "points": [
+   {
+    "wrong_point": "event_type CORPORATE_ACTION / POSITIVE, results (Q2FY27 PAT -37% QoQ, -13% YoY) omitted",
+    "stage": "CODE",
+    "evidence": "Filing p.1: item 1 'Financial results', Annexure A with standalone and consolidated results (22 pages, clean text); items 2-3 buyback and auditor change. Card has results null. The event classifier picked a single type and the results path was not triggered for a mixed board outcome.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Text is clean and complete; no reading disagreement. A second engine on the same input does not change event routing.",
+    "better_check": "If the filing text contains a results annexure (Regulation 33) alongside other items, run the results path as well (multi-event) and show the PAT change."
+   },
+   {
+    "wrong_point": "'The open-market buyback of up to Rs90 Cr represents under of market cap; with promoters abstaining.' (garbled)",
+    "stage": "CODE",
+    "evidence": "grounding.change_fixes: 'takeaway: removed 1%' and 'point dropped (1.4%): The Rs90 Cr buyback is small relative to ... market cap'. A code fixer removed the percentage and left a broken sentence.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Not a reading issue.",
+    "better_check": "After any figure strip, re-validate the sentence (no dangling 'under of'); drop or regenerate the sentence instead of leaving it."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106826271",
+  "symbol": "NEWGEN",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Key number 'SaaS Growth 45.3% YoY' (filing: 36.4% SaaS growth; 45.3% is employee cost % of revenue)",
+    "stage": "INPUT_AMBIGUOUS",
+    "evidence": "Slide text p.18 order: '45.3% | Employee costs as a % of revenue | Improvement over 47.1% ... | 36.4% | SaaS growth'. Big number comes before its label, so the next label after 45.3% is not its own; the card quote '45.3% SaaS growth' is stitched across tiles and is not a contiguous string in the text. Both numbers are present.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "A reading-order OCR may give a different tile order, but a tile slide is ambiguous to both engines; a second engine that groups number with label in the same tile would catch it. A contiguity check on the quote would catch it with one engine.",
+    "better_check": "Require the quote to be a contiguous substring of one text block/line; on tile slides pair number with the label from its own bounding box."
+   },
+   {
+    "wrong_point": "Call memory 'SaaS revenue grew 45.3% YoY' (same error)",
+    "stage": "INPUT_AMBIGUOUS",
+    "evidence": "Same slide; the memory line derives from the card's wrong key number.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "Same as above; propagates downstream.",
+    "better_check": "Memory writes must copy only checked figures; run the quote contiguity check before writing memory."
+   },
+   {
+    "wrong_point": "pending_approvals 'NCLT for pending schemes' (not in the filing)",
+    "stage": "WRITER",
+    "evidence": "grep of the presentation text for NCLT/scheme/tribunal/amalgam finds nothing; unverified whether it came from memory (I could not read memory). Card model gemini-3.5-flash-lite.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Absence from the text is something the writer invented or took from elsewhere; a second reader of the same pages changes nothing.",
+    "better_check": "Every pending_approvals entry needs a quote or memory_ref present in evidence; drop otherwise."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827243",
+  "symbol": "BPCL",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "basis: CONSOLIDATED while the handout's PBT 6,686 / PAT 4,993 are standalone; results table (consolidated 6,234.56 / 4,863.05) beside them",
+    "stage": "CODE",
+    "evidence": "Handout p.2 text ('Profit before tax Rs crores 6,686 8,596 ...') never names standalone or consolidated (basis is not in the document, so the input is silent). Card results block (XBRL consolidated) shows pbt 6234.56, pat 4863.05. Reviewer notes memory's standalone dossier equals 6686.11 / 4993.17. Basis was set to CONSOLIDATED by default and the XBRL block was attached without reconciling it with the headline figures.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both engines would read 6,686 and 4,993; the document does not say the basis.",
+    "better_check": "Match the filing's headline PBT/PAT against both standalone and consolidated XBRL values (it matches standalone within rounding) and set basis from the match, or flag a conflict with the attached results block."
+   },
+   {
+    "wrong_point": "Takeaway blames 'inventory and forex movements' for the YoY fall, but forex loss narrowed ((397) vs (561))",
+    "stage": "WRITER",
+    "evidence": "Handout p.2: 'Forex Fluctuation gain/(loss) (397) (561)'; 'Marketing Inventory Gain/(Loss) (330) 895'. Figures clean.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Table is clean in the text layer.",
+    "better_check": "Check causal claims against the sign of the YoY change of the named driver."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827073",
+  "symbol": "TRUALT",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "'installed annual ethanol production capacity of approximately 1,992 crore litres' as the company's own (it is India's)",
+    "stage": "WRITER",
+    "evidence": "Deck p.~8 text: 'Against installed annual ethanol production capacity of approximately 1,992 crore litres, the indicative industry assessment projects supply of ... 1,204 crore litres'. TruAlt's own: '2,000 KLPD, ~1,300 KLPD dual-feed' (lines 217, 351). Both present in clean text.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both engines read the same sentence; the error is attribution.",
+    "better_check": "Entity attribution check: a capacity figure from an industry-outlook paragraph must not be assigned to the company; compare against company-own capacity (KLPD) for 100x scale mismatch."
+   },
+   {
+    "wrong_point": "EBITDA '+2324% YoY' from a loss base",
+    "stage": "WRITER",
+    "evidence": "Deck prints '2324% (QoQ)' next to EBITDA 101.16; card's own results block: ebitda prev_year -4.55, yoy_turn LOSS_TO_PROFIT, qoq_pct -23.8. Writer relabelled the deck's 'QoQ' as YoY and published a % against a negative base.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Text is read identically.",
+    "better_check": "Compare key_number change % with the results block; forbid % change where the prior is <= 0 and use the turn label."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827017",
+  "symbol": "CRISIL",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "'Revenue growth accelerated to 20.2% in Q3 2026, outperforming the 9M growth rate of 25.7%' (20.2 < 25.7, decelerated; cause unsupported)",
+    "stage": "WRITER",
+    "evidence": "Deck p.9: 'Income from operations 20.2% Q3 2026 ... 25.7% 9M 2026' and 'The revenue growth moderated during Q3 2026' (coalition Greenwich). Both numbers cleanly labelled. Point has quote null.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both numbers are read identically; the error is in the comparison word.",
+    "better_check": "Numeric comparison for comparative words (accelerated/outperforming): compute sign from the two figures; require a quote for each why-it-matters point."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827464",
+  "symbol": "KPIL",
+  "event_type": "FUNDRAISE",
+  "points": [
+   {
+    "wrong_point": "deal_value amount_cr 8.64 and scale 'Rs 8.64 Cr sale = 0.0% of market cap' (really SEK 86.4 Mn, about Rs80+ Cr)",
+    "stage": "CODE",
+    "evidence": "grounding.change_fixes: 'deal size set to Rs8.64 Cr from the buyers' shares x price (the model gave None)'. Filing: 1,877,911 shares at 'SEK 46' (text clean). Code multiplied shares by 46, treated it as rupees, then /1e7. Tranches carry price_per_share 46.0 with no currency.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Text is clean; both engines read 46 and SEK the same way. The code ignored the currency.",
+    "better_check": "Carry currency on tranche prices; only convert to INR_CR when the currency is INR (or convert with a stated FX and mark it an assumption)."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827580",
+  "symbol": "DYNAMATECH",
+  "event_type": "FUNDRAISE",
+  "points": [
+   {
+    "wrong_point": "Dynauton issues 89,90,000 shares at Rs50 incl. to ESOP trust (ESOP trust's 10,00,000 are at Rs10; one promoter)",
+    "stage": "INPUT_UNREADABLE",
+    "evidence": "Page 1 is a full-page scan with an OCR text layer: 'priced at U0 per share' (Rs10 garbled: Rs symbol read as U and the 1 dropped), 'face value t 10/-', 'minimum price of tb per share' (Rs50 garbled), and the subscriber table is out of order ('Dr. Udayant Malhoutra... 5,00,000 5.56', no Dynamatic row). The sentence 'first two proposed subscriptions are priced at 50' is readable and the writer ignored its limit. Aggravated by the writer (WRITER).",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "A second engine (OCR on the scan) would likely read Rs10 / Rs 50 differently from the garbled layer, and a table reader would give the subscriber rows. I could not run OCR to verify. The pipeline's OCR may already have run on p.1; the card shows it did not recover it.",
+    "better_check": "Tranche-sum check: price x shares per subscriber must sum to the total; if only two of three prices are known, hold the total; flag a price token with no currency/digits ('U0')."
+   },
+   {
+    "wrong_point": "Quantified impact 'Total fundraise for Dynauton' = 89,90,000 x Rs50 = Rs44.95 Cr (actual Rs40.95 Cr)",
+    "stage": "WRITER",
+    "evidence": "Formula total_shares * issue_price / 1e7 with a single price. Text p.1 says the first two subscriptions are at 50 and ESOP at a different price; p.2 has Rs37,45,00,000 = 74,90,000 x 50.",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "A second read that recovers Rs10 would make a per-tranche sum possible; with the same garbled text it would agree with the wrong number.",
+    "better_check": "Compute from per-subscriber tranches, not total x one price."
+   },
+   {
+    "wrong_point": "timeline_entry 'a Rs 45 Cr preferential issue'",
+    "stage": "WRITER",
+    "evidence": "Derived from the same wrong total (44.95).",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "Same as above.",
+    "better_check": "Derive timeline numbers only from verified computed values."
+   },
+   {
+    "wrong_point": "takeaway 'bringing in promoter capital' (most is Dynamatic's own Rs37.45 Cr; promoter Rs2.5 Cr; 'promoters' plural)",
+    "stage": "WRITER",
+    "evidence": "Filing p.2: Investment of Rs37,45,00,000 by the Company; Malhoutra 5,00,000 shares.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Framing issue; text is readable.",
+    "better_check": "Check named subscribers vs plural claims."
+   }
+  ]
+ }
+]

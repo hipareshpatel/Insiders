@@ -1905,11 +1905,27 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
                 row[f"{label}_pct"] = round((values["value"] - base) / abs(base) * 100, 1)
         return row
 
+    def two_definitions(p: str | None) -> bool:
+        """The quarter's EBITDA told two ways by its own filings, none of them the company's XBRL: Shree Cement's
+        results card read the statement's EBITDA with other income (₹1,128.74 Cr), its press release ₹1,016 Cr without
+        it, and the card set the first beside XBRL comparatives without it: +15.9% YoY for -2.1% (daily audit,
+        23 Oct 2026). An EBITDA with one reading is kept with its changes: all 10 of a blind sample of such cards
+        had their changes right (24 Oct)."""
+        entry = stored(_RESULT_METRICS[1][1], p)[0] if p else None
+        values = [src.get("value") for src in _sources(entry or {}) if isinstance(src.get("value"), (int, float))]
+        if not entry or any(str(src.get("news_id", "")).startswith(XBRL_SOURCE) for src in _sources(entry)) or len(values) < 2:
+            return False
+        return max(values) - min(values) > 0.03 * max(abs(v) for v in values)
+
+    ebitda_mixed = two_definitions(period)
+
     for key, names in _RESULT_METRICS:
         pick = margin if key == "ebitda_margin" else nii if key == "nii" else (lambda p, names=names: lookup(names, p))
         row = line(pick, key in _BPS_LINES, key)
         if row is None:
             continue
+        if ebitda_mixed and key in ("ebitda", "ebitda_margin"):
+            row = {k: v for k, v in row.items() if k == "value"}
         # the file's own YoY only when memory has no year-ago figure at all: when it has one and the table refused it
         # (restated, or not what this statement prints), that YoY rests on the refused base (data chain audit A8)
         if key == "revenue" and "yoy_pct" not in row and stored(names, periods["prev_year"])[1] is None:

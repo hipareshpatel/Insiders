@@ -21,8 +21,9 @@ from .periods import prior_year_period
 # Cost of goods: materials consumed, goods bought for resale, and the change in inventories of goods
 _MATERIALS = ("raw_material_cost", "purchases_stock_in_trade", "inventory_change")
 # Balance-sheet lines worth a comparison with the last statement in memory
-_BALANCE = (("inventories_cr", "inventories"), ("receivables_cr", "trade receivables"), ("cash_cr", "cash and bank"),
-            ("gross_debt_cr", "borrowings"))
+# Not cash, nor net debt from it: the file's cash is cash and cash equivalents alone, without bank deposits and liquid
+# investments, and Kajaria's Q2FY27 read "net debt ₹291.98 Cr" where its release states net cash of ₹635 Cr
+_BALANCE = (("inventories_cr", "inventories"), ("receivables_cr", "trade receivables"), ("gross_debt_cr", "borrowings"))
 
 _ORDER = ("EBITDA margin", "Cost of materials", "Cash flow", "Balance sheet", "Employee cost", "Net profit",
           "Effective tax rate", "Other income")
@@ -140,12 +141,14 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
 
     sheet = getattr(tagged, "balance_sheet", None)
     if sheet is not None and not sheet.is_empty():
-        earlier = next((s for s in reversed(balance_history or []) if s.get("period") and s.get("period") != sheet.period), None)
         parts = []
         for field, word in _BALANCE:
             now_v = getattr(sheet, field, None)
             if now_v is None:
                 continue
+            # the latest earlier statement that carries this line (a quarter's snapshot can be empty)
+            earlier = next((s for s in reversed(balance_history or []) if s.get(field)
+                            and s.get("period") and s.get("period") != sheet.period), None)
             then = (earlier or {}).get(field)
             if then and then > 0 and _printed(index, then):
                 change = (now_v - then) / then * 100
@@ -153,9 +156,6 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
                 out.append(Fact("", "pct", round(abs(change)), (change > 0) - (change < 0)))
             else:
                 parts.append(f"{word} {_cr(now_v)}")
-        cash, debt = sheet.cash_cr, sheet.gross_debt_cr
-        if cash is not None and debt is not None:
-            parts.append(f"net cash {_cr(cash - debt)}" if cash >= debt else f"net debt {_cr(debt - cash)}")
         if parts:
             out.append(Fact(f"Balance sheet {sheet.period or now_p}: " + "; ".join(parts)))
     # the lines a reader looks for first lead, so a card that shows only some shows these

@@ -69,12 +69,14 @@ def test_cash_conversion_capex_and_free_cash_flow():
 
 
 def test_balance_sheet_against_the_last_statement_in_memory():
-    sheet = BalanceSheet(period="SEP-2026", inventories_cr=300.0, cash_cr=785.0, gross_debt_cr=100.0)
+    sheet = BalanceSheet(period="SEP-2026", inventories_cr=300.0, cash_cr=13.62, gross_debt_cr=305.6)
+    # the latest earlier statement with the line, past an empty snapshot
     facts = results_facts(_tagged(sheet, revenue=(1200, 1000)), STATEMENT,
-                          [{"period": "MAR-2026", "inventories_cr": 330.0}])
+                          [{"period": "MAR-2026", "inventories_cr": 330.0}, {"period": "JUN-2026"}])
     line = next(f.text for f in facts if f.text.startswith("Balance sheet"))
     assert "inventories ₹300 Cr against ₹330 Cr at MAR-2026 (-9%)" in line
-    assert "net cash ₹685 Cr" in line
+    # cash and cash equivalents leave out bank deposits: no cash or net debt line (Kajaria, net cash ₹635 Cr)
+    assert "borrowings ₹305.6 Cr" in line and "cash" not in line and "net debt" not in line
 
 
 def test_pool_takes_the_figures_with_their_direction():

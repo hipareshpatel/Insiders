@@ -15,7 +15,8 @@ Sources and truth
 - Keep the filing's tense, certainty and stage: proposed is not approved, an LOI is not a contract, an agreement
   signed is not a deal completed, one approval is not the final sanction, a hearing has no outcome until the filing
   gives one. Name who decided only as the filing names them.
-- Say why a figure moved only when the filing says why, in words. Otherwise give the figures and no cause.
+- Say what moved a figure whenever the filing (as a fact with its quote) or a memory item (cited in memory_refs)
+  says it; never a cause of your own. With no stated reason, give the figures and say the filing gives no reason.
 - The SCALE block holds every proportion computed in code (share of revenue, market cap, net worth, order book). Use
   those as given and compute no ratio or change of your own (a change stands only when the filing prints it or the
   tables in front of you give it); anything you compute goes in quantified_impact with its formula. Under about 2% of revenue, market cap or net worth,

@@ -3,7 +3,8 @@
 One day's audit is 60-75 cards: a WRONG share of 23% then has a 95% interval of about +/-10 points, so a day-to-day
 move from 15% to 23% is within noise and one day cannot say whether a fix worked (code survey, 24 Oct 2026). This
 prints each day, then the last WINDOW days pooled, with Wilson 95% intervals, short against long prompt, and the
-pruned points the reviewers found true. A fix is judged by its on/off over stored cards; the audit rate is judged
+pruned points the reviewers found true, and richness: the key points a source states that each card left out
+(missed_key_points, coverage FULL / PARTIAL / THIN; owner 24 Oct 2026), so a fix that cuts WRONG by saying less shows. A fix is judged by its on/off over stored cards; the audit rate is judged
 over pooled days, and a change is real only when the intervals of the two periods do not overlap.
 
     python -I scripts/daily_audit/rates.py [--dir ../docs/audit/live] [--window 3] [--since 2026-10-21]
@@ -19,6 +20,7 @@ from collections import Counter
 from pathlib import Path
 
 VERDICTS = ("RIGHT", "MINOR", "WRONG")
+COVERAGE = ("FULL", "PARTIAL", "THIN")
 Z = 1.96
 
 
@@ -59,24 +61,31 @@ def summary(rows: list[dict]) -> dict:
     # the go-live bar (owner, 24 Oct 2026): WRONG on the checked face, a fault only in "Our reading" or behind the tap not
     # counted; rows from before reviewers recorded reading_only count as on the face
     face_wrong = sum(1 for r in rows if str(r["verdict"]).upper() == "WRONG" and r.get("reading_only") is not True)
+    # richness beside WRONG (owner, 24 Oct 2026): the key points a source states that the card left out; rows from
+    # before reviewers recorded them are not counted
+    rich = [r for r in rows if str(r.get("coverage", "")).upper() in COVERAGE]
+    missed = sum(len(r.get("missed_key_points") or []) for r in rich)
+    thin = sum(1 for r in rich if str(r["coverage"]).upper() == "THIN")
     return {"n": len(rows), "counts": counts, "variants": variants, "pruned": (pruned_true, pruned_false),
-            "face_wrong": face_wrong}
+            "face_wrong": face_wrong, "rich": (len(rich), missed, thin)}
 
 
 def line(label: str, s: dict) -> str:
     n, c = s["n"], s["counts"]
     short, long_ = s["variants"]["short"], s["variants"]["long"]
     pt, pf = s["pruned"]
+    judged, missed, thin = s["rich"]
     return (f"| {label} | {n} | {rate(c['RIGHT'], n)} | {rate(c['RIGHT'] + c['MINOR'], n)} | {rate(c['WRONG'], n)} | "
             f"{rate(s['face_wrong'], n)} | "
             f"{rate(short['WRONG'], sum(short.values()))} | {rate(long_['WRONG'], sum(long_.values()))} | "
-            f"{f'{pt} of {pt + pf}' if pt + pf else '-'} |")
+            f"{f'{pt} of {pt + pf}' if pt + pf else '-'} | "
+            f"{f'{missed / judged:.1f}' if judged else '-'} | {rate(thin, judged)} |")
 
 
 def report(days: dict[str, list[dict]], window: int) -> str:
     out = ["| Days | Cards | Right | Right or minor | WRONG | WRONG on the checked face | WRONG, short prompt | "
-           "WRONG, long prompt | Pruned points true |",
-           "|---|---|---|---|---|---|---|---|---|"]
+           "WRONG, long prompt | Pruned points true | Missed key points a card | Thin (3+ missed) |",
+           "|---|---|---|---|---|---|---|---|---|---|---|"]
     names = list(days)
     for day in names:
         out.append(line(day, summary(days[day])))

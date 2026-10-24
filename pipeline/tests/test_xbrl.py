@@ -75,7 +75,8 @@ def test_results_xbrl_gives_exact_crore_figures_with_changes():
     # EBITDA = PBT 20 + finance 3 + depreciation 5 - other income 2 = 26; margin 21.67%
     assert by[("ebitda", "Q2FY27")].value == 26.0 and by[("ebitda_margin", "Q2FY27")].value == 21.67
     assert r.balance_sheet.net_worth_cr == 500.0 and r.balance_sheet.gross_debt_cr == 100.0
-    assert r.balance_sheet.net_debt_cr == 60.0 and r.balance_sheet.period == "Q2FY27"
+    # no net debt from cash and cash equivalents alone: bank deposits and liquid investments are not in it (Kajaria)
+    assert r.balance_sheet.net_debt_cr is None and r.balance_sheet.cash_cr == 40.0 and r.balance_sheet.period == "Q2FY27"
     assert "revenue Q2FY27: 120 Cr, YoY +32.0%" in r.table()
 
 
@@ -854,3 +855,10 @@ def test_a_lender_has_no_ebitda():
     result = parse((Path(__file__).parent / "fixtures" / "nse_irfc_q4fy26_nbfc.xml").read_bytes())   # IRFC, Q4FY26
     assert result.template == "NBFC" and any(m.metric == "pat" for m in result.metrics)
     assert not any(m.metric in ("ebitda", "ebitda_margin") for m in result.metrics)
+
+
+def test_the_files_own_earlier_balance_sheet_date_is_kept():
+    r = xbrl.parse((FIXTURES / "nse_ar_kanorichem_fy25_consolidated.xml").read_bytes())
+    assert (r.balance_sheet.period, r.balance_prior.period) == ("Q4FY25", "Q4FY24")
+    assert (r.balance_sheet.gross_debt_cr, r.balance_prior.gross_debt_cr) == (594.12, 506.72)
+    assert xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q2fy25.xml").read_bytes()).balance_prior is None   # one date only

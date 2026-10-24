@@ -14,10 +14,16 @@ from __future__ import annotations
 
 import re
 
+from . import gate
 from .models import Fact, Insight, KeyNumber
 from .periods import prior_year_period, quarter_from_index, quarter_index
 
 MAX_WHY = 2
+# a rich results card (RESULTS_RICH): the computed lines and the model's own quoted facts beside the file's four lines,
+# and up to four of the model's points beside code's from memory
+MAX_COMPUTED = 5
+MAX_OWN_FACTS = 4
+MAX_WHY_RICH = 4
 MEMORY_POINTS = 2   # code's own points from memory, ahead of the model's
 MIN_QUARTERS = 4    # a rank or a streak needs this many earlier quarters in memory
 _LEGAL = re.compile(r"\s+(?:limited|ltd\.?|corporation of india limited)$", re.I)
@@ -323,8 +329,22 @@ def _net_of_excise(tagged):
     return FinancialMetric(metric="revenue_net_excise", period=tagged.period, value=net, yoy_pct=yoy)
 
 
-def build(out, tagged, company_name: str | None, history=None, text: str = "") -> list[str]:
-    """Put the file's figures on a results card. Returns what was replaced (empty when the file cannot carry it)."""
+def _model_facts(card, tagged, facts) -> list[Fact]:
+    """The model's own quoted facts that say what the file's figures do not: a driver, cash, capital, capex or capacity
+    in the filing's words. A fact quoting the XBRL table or the computed block repeats code's lines and is left out."""
+    table = tagged.table()
+    block = "\n".join(f.text for f in facts or [] if f.text)
+    return [f for f in card.what_happened
+            if f.quote and not gate.quote_found(f.quote, table) and not (block and gate.quote_found(f.quote, block))]
+
+
+def build(out, tagged, company_name: str | None, history=None, text: str = "", facts=None, rich: bool = False) -> list[str]:
+    """Put the file's figures on a results card. Returns what was replaced (empty when the file cannot carry it).
+
+    `rich` (RESULTS_RICH, owner 24 Oct 2026: "so much of information which is missing"): the figures computed in code
+    (`facts`, facts.py) join the file's lines, and the model keeps its quoted facts, its points from memory, its
+    notable changes and its core catalyst. Every one still goes through the quote, grounding and computed checks after
+    this, as any other card's do; only the headline, the key numbers and the takeaway stay code's alone."""
     card = getattr(out, "card", None)
     if card is None or tagged is None or getattr(tagged, "kind", None) != "RESULTS" or not tagged.period:
         return []
@@ -366,7 +386,8 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "") -
         headline = f"{name} {period}: {phrase(profit, profit_word)}; {quality}"
     if len(headline) > 110:
         headline = f"{name} {period}: {phrase(profit, profit_word)}"
-    facts, keys = [], []
+    facts_found = [f for f in facts or [] if f.text]
+    lines, keys = [], []
     for metric, label in _LABELS:
         m = now.get(metric)
         if m is None or (metric == "provisions" and "interest_earned" not in now):
@@ -379,7 +400,7 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "") -
         text = f"{label} {period}: {value}" + (f" ({changes})" if changes else "")
         if metric == "ebitda" and now.get("ebitda_margin") is not None:
             text += f"; margin {now['ebitda_margin'].value:.1f}%"
-        facts.append(Fact(text=text + ".", quote=_line(m)))
+        lines.append(Fact(text=text + ".", quote=_line(m)))
         keys.append(KeyNumber(label=label, value=value, change=(f"{_pct(m.yoy_pct)} YoY" if m.yoy_pct is not None else None),
                               quote=_line(m)))
     margin = now.get("ebitda_margin")
@@ -387,10 +408,20 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "") -
         keys.append(KeyNumber(label="EBITDA margin", value=f"{margin.value:.1f}%", change=None, quote=_line(margin)))
     replaced = ["headline", "what_happened", "key_numbers", "timeline"]
     card.headline = headline
-    card.what_happened = facts[:4] or card.what_happened
+    computed_lines = [Fact(text=f.text + ".", quote=f.text) for f in facts_found if not f.memory_ref]
+    # set against memory (guidance, a deal's history): "Our reading", citing the memory it used
+    against_memory = [Insight(text=f.text + ".", basis="MEMORY", memory_refs=[f.memory_ref])
+                      for f in facts_found if f.memory_ref]
+    own_facts = _model_facts(card, tagged, facts_found) if rich else []
+    card.what_happened = (lines[:4] + computed_lines[:MAX_COMPUTED] + own_facts[:MAX_OWN_FACTS]) or card.what_happened
+    if own_facts:
+        replaced.append(f"{len(own_facts[:MAX_OWN_FACTS])} quoted fact(s) of the model kept")
     card.key_numbers = keys[:6]
     if basis in ("consolidated", "standalone"):
         card.basis = basis.upper()
+    if rich:
+        return _rich_rest(out, card, tagged, history, period, basis, phrase, top, top_word, profit, profit_word,
+                          replaced, unconfirmed, against_memory)
     if card.notable_changes:
         replaced.append(f"notable changes ({len(card.notable_changes)}) left out")
     card.notable_changes = []
@@ -417,13 +448,38 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "") -
     if len(own) < len(card.why_it_matters):
         replaced.append(f"{len(card.why_it_matters) - len(own)} model point(s) from memory left out")
     # the model keeps two points, or one beside two of code's: three at most
-    card.why_it_matters = context + own[:min(MAX_WHY, MAX_WHY + 1 - len(context))]
+    context = context + against_memory[:2]
+    card.why_it_matters = context + own[:max(0, min(MAX_WHY, MAX_WHY + 1 - len(context)))]
     if context:
         replaced.append(f"{len(context)} point(s) from memory by code")
     out.timeline_entry = f"{period} results ({basis or 'basis not stated'}): {phrase(top, top_word)}, {phrase(profit, profit_word)}."
     if unconfirmed:
         replaced.append(f"changes left out, their comparative not in the filing: {', '.join(unconfirmed)}")
     return [f"results card from the XBRL file: {', '.join(replaced)}"]
+
+
+def _rich_rest(out, card, tagged, history, period, basis, phrase, top, top_word, profit, profit_word, replaced,
+               unconfirmed, against_memory=()) -> list[str]:
+    """The rest of a rich results card: the takeaway from the file, code's memory points, and the model's notable
+    changes, core catalyst and points (memory ones too: those cite their memory ids and are checked against memory)."""
+    driver = profit_driver(tagged)
+    card.takeaway = driver or f"{period}: {phrase(top, top_word)}, {phrase(profit, profit_word)}."
+    replaced.append("takeaway from the file's profit bridge" if driver else "takeaway from the file's figures")
+    if card.quantified_impact:
+        replaced.append(f"computed impacts ({len(card.quantified_impact)}) left out")
+    card.quantified_impact = []
+    context = memory_points(tagged, history) + list(against_memory)[:3]
+    # a point from memory must name the memory it comes from: one without an id is the model's own recollection
+    own = [w for w in card.why_it_matters if w.basis not in ("MEMORY", "BALANCE_SHEET") or w.memory_refs]
+    if len(own) < len(card.why_it_matters):
+        replaced.append(f"{len(card.why_it_matters) - len(own)} model point(s) from memory without an id left out")
+    card.why_it_matters = context + own[:MAX_WHY_RICH]
+    if context:
+        replaced.append(f"{len(context)} point(s) from memory by code")
+    out.timeline_entry = f"{period} results ({basis or 'basis not stated'}): {phrase(top, top_word)}, {phrase(profit, profit_word)}."
+    if unconfirmed:
+        replaced.append(f"changes left out, their comparative not in the filing: {', '.join(unconfirmed)}")
+    return [f"results card from the XBRL file (rich): {', '.join(replaced)}"]
 
 
 # A call card's key figures against the company's own XBRL for the quarter (daily audit, 21 Oct 2026: Bajaj Consumer's

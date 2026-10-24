@@ -16,6 +16,7 @@ from datetime import date
 
 from .dossier import _deal_history
 from .periods import due_date, quarter_index
+from .signals import stated_net_debt
 
 CALL_EVENT = "CONCALL_PRESENTATION"
 CALL_SOURCES = ("CONCALL", "PRESENTATION")
@@ -194,9 +195,11 @@ def _points(dossier: dict, calls: dict[str, dict]) -> list[dict]:
         bits = [a.get("instrument"), f"₹{a['amount_cr']:,.0f} Cr" if a.get("amount_cr") else None, a.get("ratio")]
         add(" ".join(str(b) for b in bits if b) + " planned", "funding", a.get("source_news_id"), 3)
     for s in dossier.get("balance_sheet", []):
+        net = stated_net_debt(s)
+        cash = "cash and cash equivalents" if str(s.get("source_news_id") or "").startswith("xbrl:") else "cash"
         bits = [f"gross debt ₹{s['gross_debt_cr']:,.0f} Cr" if s.get("gross_debt_cr") is not None else None,
-                f"net debt ₹{s['net_debt_cr']:,.0f} Cr" if s.get("net_debt_cr") is not None else None,
-                f"cash ₹{s['cash_cr']:,.0f} Cr" if s.get("cash_cr") is not None else None,
+                f"net debt ₹{net:,.0f} Cr" if net is not None else None,
+                f"{cash} ₹{s['cash_cr']:,.0f} Cr" if s.get("cash_cr") is not None else None,
                 f"rated {s['credit_rating']}" if s.get("credit_rating") else None]
         bits = [b for b in bits if b]
         if bits:

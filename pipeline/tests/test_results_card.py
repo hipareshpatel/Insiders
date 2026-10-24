@@ -352,3 +352,63 @@ def test_no_change_against_memory_when_the_filing_restates_its_comparatives():
             "the impact of the amalgamation. Profit after tax 2,084.15 866.04 2,950.19 3,558.25 451.17 4,009.42")
     assert unconfirmed_changes(tagged, text) == ["pat YoY", "pat QoQ", "eps YoY"]
     assert tagged.metrics[0].yoy_pct is None and tagged.metrics[0].qoq_pct is None
+
+
+def _rich_model_card():
+    return Pass2Output.model_validate({
+        "is_material": True, "event_type": "RESULTS", "timeline_entry": "Q3 results",
+        "card": {"impact_level": "MODERATE", "headline": "Ahluwalia Q3", "takeaway": "Profit rose.",
+                 "core_catalyst": "New orders of ₹1,200 Cr in the quarter",
+                 "what_happened": [
+                     {"text": "The board declared an interim dividend of ₹2 a share.",
+                      "quote": "declared an interim dividend of Rs 2 per share"},
+                     {"text": "Revenue ₹951.96 Cr.", "quote": "revenue Q3FY25: 951.96"},   # the table: code's line
+                     {"text": "Orders rose", "quote": None}],
+                 "why_it_matters": [{"text": "Buyback of ₹296.7 Cr completed", "basis": "MEMORY", "memory_refs": ["E12"]},
+                                    {"text": "Margins best in years", "basis": "MEMORY"},   # no memory id
+                                    {"text": "Orders from the filing", "basis": "FILING"}],
+                 "notable_changes": [{"metric": "employee_cost", "previous": "50", "current": "60", "change": "up"}],
+                 "key_numbers": [{"label": "Revenue", "value": "₹1,952 Cr"}]}})
+
+
+def test_a_rich_card_keeps_computed_lines_and_the_models_quoted_facts():
+    from bse_intel import computed
+    from bse_intel.facts import Fact
+    tagged = xbrl.parse((FIX / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    facts = [Fact("", "pct", 38.0, base="revenue"), Fact("", "pct", 40.0, base="revenue"),
+             Fact("Cost of materials and goods Q3FY25: 38.0% of revenue against 40.0% in Q3FY24 (down 200 bps)",
+                  "bps", 200, -1)]
+    out = _rich_model_card()
+    notes = results_card.build(out, tagged, "Ahluwalia Contracts (India) Limited", facts=facts, rich=True)
+    card = out.card
+    texts = [f.text for f in card.what_happened]
+    assert card.headline.startswith("Ahluwalia Contracts (India) Q3FY25:")      # still code's
+    assert "Cost of materials and goods Q3FY25: 38.0% of revenue against 40.0% in Q3FY24 (down 200 bps)." in texts
+    assert "The board declared an interim dividend of ₹2 a share." in texts
+    assert "Revenue ₹951.96 Cr." not in texts and "Orders rose" not in texts      # repeats the table / no quote
+    assert [w.text for w in card.why_it_matters][-2:] == ["Buyback of ₹296.7 Cr completed", "Orders from the filing"]
+    assert card.core_catalyst and card.notable_changes and "(rich)" in notes[0]
+    # the computed line survives the computed-figure rule, with a scale block's shares in the pool too
+    pool = computed.build_pool("", tagged, scale="- ₹10 Cr = 1.0% of trailing-12-month revenue", facts=facts)
+    computed.enforce(out, pool)
+    assert any("38.0% of revenue against 40.0%" in f.text and "200 bps" in f.text for f in card.what_happened)
+
+
+def test_without_rich_the_card_is_as_before():
+    tagged = xbrl.parse((FIX / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    out = _rich_model_card()
+    results_card.build(out, tagged, "Ahluwalia Contracts (India) Limited")
+    assert out.card.core_catalyst is None and out.card.notable_changes == []
+    assert not any("dividend" in f.text for f in out.card.what_happened)
+
+
+def test_points_set_against_memory_go_to_our_reading_with_their_id():
+    from bse_intel.facts import Fact
+    tagged = xbrl.parse((FIX / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
+    out = _rich_model_card()
+    facts = [Fact("9MFY25 EBITDA ₹300 Cr is 75% of the FY25 guidance of ₹400 Cr (given 2024-08-01)", "pct", 75,
+                  memory_ref="g_1")]
+    results_card.build(out, tagged, "Ahluwalia Contracts (India) Limited", facts=facts, rich=True)
+    point = next(w for w in out.card.why_it_matters if w.memory_refs == ["g_1"])
+    assert point.basis == "MEMORY" and point.text.startswith("9MFY25 EBITDA ₹300 Cr is 75%")
+    assert not any("guidance" in f.text for f in out.card.what_happened)

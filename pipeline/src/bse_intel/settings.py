@@ -96,6 +96,14 @@ class Settings:
     # Human hold list (gate.load_holds): cards named there are published as "held after review".
     card_holds_file: str = "card_holds.txt"
     # Decision D20: one card per company per results quarter; later documents of that quarter are linked to it.
+    # results cards get cost shares, margins in bps, tax rate, cash conversion and balance-sheet moves computed in code
+    # (facts.py, owner 24 Oct 2026). On since the on/off over 25 stored cards (105 right, 5 wrong, all 5 fixed) and the
+    # owner's go; RESULTS_FACTS=0 turns it off
+    results_facts: bool = field(default_factory=lambda: _env("RESULTS_FACTS", "1") not in ("0", "false", "no"))
+    # results cards keep the model's quoted facts, memory points with their ids, notable changes and core catalyst
+    # beside code's figures (results_card.build, owner 24 Oct 2026: sample card approved, then switched on for the
+    # sampling re-run); RESULTS_RICH=0 turns it off
+    results_rich: bool = field(default_factory=lambda: _env("RESULTS_RICH", "1") not in ("0", "false", "no"))
     one_card_per_results_quarter: bool = field(default_factory=lambda: _env("ONE_CARD_PER_RESULTS_QUARTER", "1") not in ("0", "false", "no"))
     # An annual report's own XBRL from NSE, as a table in front of its text (annual_xbrl.py). Off where NSE is
     # not reachable or another run on the same address is already calling it (NSE limits by IP).

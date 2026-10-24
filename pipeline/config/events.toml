@@ -5,15 +5,15 @@
 [RESULTS]
 focus = """
 This is a periodic financial result. Extract revenue from operations, EBITDA (or operating profit),
-PAT, EPS for the latest period and the comparable period, and compute YoY (and QoQ for quarters)
-when both figures are present. State whether figures are standalone or consolidated and their unit
+PAT, EPS for the latest period and the comparable period; the changes (YoY, QoQ, margins) are computed
+in code and given in the table in front of the text, so use those and compute none yourself. State whether figures are standalone or consolidated and their unit
 in the source (₹ lakh / ₹ crore / ₹ million); convert to ₹ crore. Note exceptional items, auditor
 qualifications, and segment results. Compare against guidance in memory where one exists.
 Forensic reading (blueprint §9): name other income, treasury or forex gains, write-backs and asset
 sales when they lift profit; note capitalised R&D or intangibles under development growing faster
 than EBITDA; isolate PLI, RoDTEP or state subsidy income if disclosed; note contract assets or
-unbilled revenue growing faster than revenue; quote operating cash flow against EBITDA when the
-half-year or annual cash flow is given; quote contingent liabilities and corporate guarantees
+unbilled revenue growing faster than revenue; give operating cash flow and EBITDA when the half-year
+or annual cash flow is given (the system sets one against the other); quote contingent liabilities and corporate guarantees
 against net worth when stated; flag MSME payables or LC acceptances if called out. In a Q4 result,
 note a provision or cost line that is far out of line with the first three quarters.
 """
@@ -58,8 +58,8 @@ investments in them impaired; (6) guidance from the management discussion (capac
 targets) as guidance items.
 Forensic reading: an auditor's report that is unmodified and has no emphasis of matter is worth one
 plain line, not a paragraph. If none of (1)-(6) stands out, the card is short and its impact LOW: say
-the audit is clean and give the related-party and contingent-liability totals against revenue and net
-worth, as the baseline later filings are read against.
+the audit is clean and give the related-party and contingent-liability totals (the system sets them
+against revenue and net worth), as the baseline later filings are read against.
 """
 keywords = ["independent auditor", "opinion", "emphasis of matter", "going concern", "key audit matter", "caro",
             "related party", "contingent liabilit", "guarantee", "remuneration", "subsidiar", "impairment",
@@ -69,7 +69,7 @@ keywords = ["independent auditor", "opinion", "emphasis of matter", "going conce
 focus = """
 This is a rights issue. Extract issue size, rights price and discount to market price, entitlement
 ratio, record date, issue open/close dates, and stated use of proceeds. Add every dated milestone
-to upcoming_events. Connect the raise to leverage and capex in memory.
+to upcoming_events. Connect the raise to leverage and capex only as memory states them.
 Forensic reading: state whether the full price is paid on application or in calls (partly paid),
 and whether promoters subscribe by converting their own unsecured loans (this cuts debt but brings
 no fresh cash). Give the issue price and entitlement so the system can compute dilution and the
@@ -94,13 +94,11 @@ This is a capital expenditure or capacity announcement. A unit resuming after an
 capacity added: say it restores output that had stopped, never that it adds capacity. Extract project cost, capacity added,
 funding mix (debt / internal accruals / equity), commissioning timeline and expected revenue
 potential. Flag a missing timeline or funding plan as a missing disclosure.
-Forensic reading: convert per-day capacity to a year at 330 operating days for continuous process
-plants and about 275 for batch plants, unless the filing states the annual figure. Mark the project
+Forensic reading: give capacity as the filing states it (per day or per year); do not convert it. Mark the project
 BROWNFIELD or GREENFIELD and CAPTIVE or MERCHANT_SALE (deal_value.expansion, deal_value.usage).
-When a plant is commissioned, note that depreciation and interest move from work in progress to
-the P&L at once, so early quarters can show lower profit until utilisation passes roughly 40-50%.
-For pharma, food-grade chemicals and auto components, expect a qualification period (stability
-batches, DMF, PPAP) of 1-2 quarters before bulk sales. For chemical, pharma or metal plants, say
+When a plant is commissioned and the filing or memory says how profit or sales will ramp up (depreciation,
+interest, a qualification period such as stability batches, DMF or PPAP), give that as stated; never
+assume a ramp-up the sources do not state. For chemical, pharma or metal plants, say
 whether environmental clearance and consent to establish or operate are in hand; a missing
 clearance is a missing disclosure. If guided revenue implies an asset turnover far above what
 the sector's machinery usually produces, say so and check for contract manufacturing.
@@ -113,7 +111,7 @@ This is an acquisition, merger, demerger or scheme of arrangement. Extract count
 consideration form, valuation (EV, multiples if stated), swap ratio, target's revenue/profit, and
 approvals still required with expected dates.
 Forensic reading: from the Reg 30 Annexure A, quote the target's last three years' turnover and
-compute what was paid against sales or EBITDA when the figures are given; state plainly whether the
+give the price, sales and EBITDA as stated (the system sets them against each other); state plainly whether the
 deal is a related-party transaction or involves promoter interest. For a demerger, say whether
 shareholders get shares in the new company directly (mirror shareholding) or the parent becomes a
 holding company. For a deal inside a subsidiary, say what share the listed company owns.
@@ -123,7 +121,7 @@ keywords = ["acquisition", "consideration", "swap ratio", "enterprise value", "t
 [ORDER_WIN]
 focus = """
 This is an order win. Extract order value, client (domestic/international, government/private),
-execution period, and the order's size relative to trailing revenue or order book in memory.
+execution period; its size against revenue or the order book is the SCALE block's, never your own.
 Forensic reading: split the order into supply or EPC value and operations-and-maintenance value with
 their periods, so the yearly run-rate is clear (a ₹500 Cr order of which ₹350 Cr is 15 years of O&M
 adds about ₹23 Cr a year). Say whether it is an L1 position, an LoI or a firm LoA or work order; a
@@ -138,9 +136,10 @@ keywords = ["order", "contract", "letter of award", "value", "execution", "clien
 [MONTHLY_BUSINESS_UPDATE]
 focus = """
 This is a monthly or periodic business update (volumes, sales, disbursements, AUM). Extract each
-reported volume with YoY and MoM change, and compare with the trend in memory.
-Forensic reading: for October and November, also give the two months together against the same
-two months last year, since Diwali moves between them.
+reported volume as stated, with a YoY or MoM change only when the filing prints it (the system computes the
+rest), and compare with the trend in memory.
+Forensic reading: in October and November, say that Diwali moves between the two months when one month is set
+against the same month last year.
 """
 keywords = ["units", "volume", "sales", "yoy", "domestic", "exports", "disbursement", "aum"]
 
@@ -191,8 +190,8 @@ keywords = ["resignation", "appointment", "effective", "reason", "chief", "manag
 [LITIGATION_REGULATORY]
 focus = """
 This is a legal, tax or regulatory matter (demand order, USFDA observation, penalty, license).
-Extract the amount at stake, authority, status and next steps, and its size relative to net worth
-in memory.
+Extract the amount at stake, authority, status and next steps; its size against net worth is the SCALE
+block's, never your own.
 Forensic reading: give the demand or penalty in ₹ Cr so the system can put it against profit; a
 routine fine with no operational restriction is minor, while a plant closure, licence suspension,
 pollution board order or USFDA action is not. For a pollution board closure, say how long and which

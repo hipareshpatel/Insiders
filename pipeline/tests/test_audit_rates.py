@@ -38,3 +38,13 @@ def test_the_go_live_rate_leaves_out_faults_only_in_our_reading(tmp_path):
     rows = [{"verdict": "WRONG", "reading_only": True}, {"verdict": "WRONG", "reading_only": False},
             {"verdict": "WRONG"}, {"verdict": "RIGHT"}]
     assert rates.summary(rows)["face_wrong"] == 2   # an older row without the flag counts as on the face
+
+
+def test_richness_is_counted_beside_wrong():
+    rows = [{"verdict": "RIGHT", "coverage": "THIN", "missed_key_points": [{"point": "capex"}, {"point": "buyback"},
+                                                                           {"point": "cash flow"}]},
+            {"verdict": "WRONG", "coverage": "full", "missed_key_points": []},
+            {"verdict": "MINOR"}]                    # before reviewers recorded coverage: not counted
+    s = rates.summary(rows)
+    assert s["rich"] == (2, 3, 1)
+    assert rates.line("x", s).endswith("| 1.5 | 50% (9%-91%) |")

@@ -69,6 +69,7 @@ from . import directions
 from . import results_card
 from . import event_xbrl
 from . import computed
+from . import facts as code_facts
 from . import trust
 from . import nse as nse_api
 from . import xbrl as xbrl_fast_path
@@ -3145,6 +3146,16 @@ class Pipeline:
             return self._memory_flow(filing, company, industry, event_type, dossier, read, view, text, filed_text, tagged,
                                      standalone_file, scale, events, now)
         variant = prompt_variant(filing.news_id, bulk, self.settings.prompt_short_share)
+        # The cost shares, margins, tax rate and cash conversion a results card may state, computed here (facts.py)
+        before_filing = dossier_as_of(dossier, filing.filed_at, inclusive=False) or {}
+        found_facts = (code_facts.results_facts(tagged, filed_text, before_filing.get("balance_sheet"))
+                       + code_facts.guidance_facts(tagged, before_filing.get("guidance"))
+                       + code_facts.capex_revisions(before_filing.get("deals"), filing.filed_at)) \
+            if tagged and event_type == "RESULTS" and self.settings.results_facts else []
+        if found_facts:
+            # in front of the text, as the XBRL table is: the model reads them as the filing's own figures, and a
+            # card line quoting one is found (results_card.build puts them on a rich card)
+            text = code_facts.block(found_facts) + "\n\n" + text
         system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers, scale=scale,
                                           examples=self._owner_examples(sector, event_type),
                                           lessons=[x["lesson"] for x in learned["lessons"].get(f"{sector}|{event_type}", [])][-3:],
@@ -3190,7 +3201,7 @@ class Pipeline:
         # Code computes, the model describes (audit round 2): the changes, margins and ratios a card may state
         produced = computed.build_pool(filed_text, tagged, "\n".join(x for x in (annual_xbrl.table(annual) if annual else "",
                                                                                   events_table) if x), history, scale,
-                                       (view or {}).get("ownership"))
+                                       (view or {}).get("ownership"), found_facts)
         def ground(candidate: Pass2Output):
             """Correct a card where the filing can settle it, then check what is left.
 
@@ -3203,7 +3214,8 @@ class Pipeline:
             """
             # a results card with its XBRL file: code writes the figures, the model's words are cut to a line or two
             built = (results_card.build(candidate, tagged, filing.company_name,
-                                        results_card.history_from_view(full_view), filed_text)
+                                        results_card.history_from_view(full_view), filed_text, found_facts,
+                                        self.settings.results_rich)
                      if tagged and "RESULTS" in (event_type, candidate.event_type) else [])
             units = fix_unit_slips(candidate, sources)
             foreign_fixes = fix_foreign_crore(candidate, filed_text)

@@ -18,7 +18,12 @@ Paid was bought for one month (22 Oct): before ~21 Nov renew, or set the reposit
 are read pooled with 95% intervals (`pipeline/scripts/daily_audit/rates.py`): 21-24 Oct, 218 cards, WRONG 22% (17%-28%).
 Owner decisions the same evening: **the go-live bar is WRONG on the checked face ≤ 5%** (pooled, interval top; D42,
 replaces 95% RIGHT; "Our reading" stays open and labelled not checked, a fault only there is MINOR), pruned points kept
-behind the tap "Facts the checks could not quote" instead of deleted (F116); **the shadow critic is off** (D41). Memory-only backfill (F117) is built but **off** (owner: the current flow
+behind the tap "Facts the checks could not quote" instead of deleted (F116); **the shadow critic is off** (D41);
+**richness is measured beside WRONG** (D43: reviewers list the key points a source states that the card left out;
+`rates.py` prints missed points a card and the THIN share). **Richer results cards are on** (F119-F121: figures computed in
+code, the model's quoted facts and memory points kept, no net debt from XBRL cash; `RESULTS_FACTS` / `RESULTS_RICH`
+repository variables set to `0` turn them off); sampled by re-running 12 filings of Apollo Micro Systems, Shakti Pumps
+and BlueStone (`docs/audit/sampling-2026-10-24/`). Memory-only backfill (F117) is built but **off** (owner: the current flow
 stays; every backfill filing gets its card); a date in the repository variable `BACKFILL_CARDS_FROM` would switch it on.
 
 **24 Oct 2026 (handover before the owner's account switch): read `docs/HANDOVER.md` first.** Daily audit 65 cards: 38% right,

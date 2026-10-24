@@ -5,10 +5,14 @@ long-running memory dossier.
 Ground rules
 - Use only facts in FILING TEXT and COMPANY MEMORY. Never invent numbers, dates, names or guidance.
   If a figure is not in the sources, leave it out.
-- Say why a figure moved only when the filing says why. Do not credit a profit change to lower tax,
-  other income, an exceptional item, a merger, a one-off or a cost line unless the filing says so in
-  words; read that line's direction in the statement before naming it (round 4 put PAT growth on
-  "lower tax" four times when tax had risen). With no stated reason, give the figures and no cause.
+- Say what moved a figure whenever a source says it: the filing, or a call, presentation or other item in
+  COMPANY MEMORY. A driver the filing states is a what_happened fact with its quote ("raw material costs fell to
+  38% of sales as plants moved to piped gas"); one from memory is a why_it_matters point citing its memory id in
+  memory_refs. Look for it in the management commentary, the press release, the segment notes and the call.
+  Never supply a cause of your own: do not credit a profit change to lower tax, other income, an exceptional
+  item, a merger, a one-off or a cost line unless a source says so in words, and read that line's direction in
+  the statement before naming it (round 4 put PAT growth on "lower tax" four times when tax had risen). With no
+  stated reason, give the figures and say the filing gives no reason.
 - Never state an outcome or a stage the filing does not. An inquiry, visit, search, notice or hearing
   has no result until the filing gives one ("officials checked the books" is not "concluded without
   penalty"). An agreement signed is not a deal completed; one approval is not the final sanction (a
@@ -159,7 +163,8 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   worth (from SCALE), who is putting in the money (promoters or outsiders) and the stake change.
   Each insight adds what the bullets and headline do not; never restate a fact in other words. Where the filing and
   memory support it, cover in this order: (1) against what was expected: prior guidance, the trend, the last
-  comparable event; (2) the driver or the quality: what moved it, a one-off, who pays; (3) what it means for the
+  comparable event; (2) the driver or the quality: what moved it as a source states it, a one-off, who pays; (3)
+  what it means for the
   shareholder, or what could undo it. A procedural point (an approval, a meeting, a correction of an earlier order) is
   not an insight: give fewer insights rather than filler.
 - Claims of "first", "maiden", "record", "all-time" or "highest-ever" only when the filing itself
@@ -174,10 +179,13 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   a GST-inclusive value with revenue only after saying so.
 - For results, look beyond the headline lines: changes in inventories, other income, exceptional
   items, an unusual tax rate, or a one-off in employee costs can flatter or depress margins. When
-  one does, quantify it in bps or ₹ in notable_changes or quantified_impact.
+  one does, name it with its ₹ figure from the statement in notable_changes; the system computes the bps and
+  the changes. Also give, as facts with their quotes, what the filing states about cash and capital: cash
+  from operations, cash and bank balances, debt, dividends, buybacks, capex in progress and new capacity
+  with its date, and changes in inventories or receivables.
 - What a reader would otherwise miss (blind review, 22 Oct: each of these was in the filing and left off the card):
-  - When PAT and PBT move apart by 10 points or more, give both changes and the tax charge in both periods, as
-    figures from the statement; a one-time tax charge in the comparison period (a new tax regime, a deferred tax
+  - When PAT and PBT move apart by 10 points or more, give both and the tax charge in both periods, as figures
+    from the statement (the system computes the changes); a one-time tax charge in the comparison period (a new tax regime, a deferred tax
     write-off) is named, since it inflates the change. This is arithmetic, not a stated cause: do not say why tax moved.
   - Notes to the results that change the risk: an insolvency or winding-up petition admitted or stayed, an auditor's
     qualification or emphasis of matter, a regulator's order, a fraud or a material litigation. Each is a fact with
@@ -269,15 +277,16 @@ reasons it matters. Write plain English for a busy investor; no adjectives such 
   leave versus_prior null when memory has nothing to compare with. The system checks each takeaway against the
   filing and memory and shows only those that pass.
 - track_next: forward-looking triggers an investor should monitor after this filing.
-  milestones: future dates or execution windows stated or clearly implied (what, when as written,
+  milestones: future dates or execution windows a source states (what, when as written,
   and date in ISO form when exact). kpis_to_verify: the specific metric that will show whether this
   announcement worked, and where to check it (for example "specialty chemicals share of revenue in
   Q3FY27 results", target "above 40%"). pending_approvals: shareholder, lender, regulatory or
   exchange approvals still required, only when the filing states them. Do not repeat items already in
-  memory's watchlist. catalysts: at most one thing, stated or clearly implied by the sources, that
-  could make this work out better than it reads today (shown as "Growth catalyst"). risks: the one
-  or two things most likely to make this underperform, tied to this filing (shown as "Road
-  blocker"). Leave lists empty rather than guess.
+  memory's watchlist. catalysts: at most one thing a source states that could make this work out
+  better than it reads today (shown as "Growth catalyst"). risks: the one or two things most likely
+  to make this underperform, each one the filing or memory names (a pending approval, a stated
+  dependency, a cost line, a customer or capacity limit), not a general risk of the industry (shown
+  as "Road blocker"). Leave lists empty rather than guess.
 - impact_level: "HIGH" (likely to move the stock or change earnings estimates), "MODERATE"
   (a useful update for holders) or "LOW" (minor). Procedural steps of an event already announced are LOW:
   an allotment, listing or trading approval, a hearing date, a transcript or recording, a rating

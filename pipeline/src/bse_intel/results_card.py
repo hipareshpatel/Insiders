@@ -329,13 +329,30 @@ def _net_of_excise(tagged):
     return FinancialMetric(metric="revenue_net_excise", period=tagged.period, value=net, yoy_pct=yoy)
 
 
-def _model_facts(card, tagged, facts) -> list[Fact]:
+_AMOUNT = re.compile(r"\d[\d,]*\.\d+|\d{1,3}(?:,\d{2,3})+|\d{3,}")
+
+
+def _amounts(text: str) -> set[str]:
+    return {m.replace(",", "") for m in _AMOUNT.findall(text or "")}
+
+
+def _model_facts(card, tagged, facts, shown: str = "") -> list[Fact]:
     """The model's own quoted facts that say what the file's figures do not: a driver, cash, capital, capex or capacity
-    in the filing's words. A fact quoting the XBRL table or the computed block repeats code's lines and is left out."""
+    in the filing's words. A fact quoting the XBRL table or the computed block repeats code's lines and is left out, and
+    so is one whose every amount is already in code's lines: a later step re-points a quote at the nearest table line,
+    so the quote alone let "EBITDA ₹111.18 Cr, up 87.8%" and "borrowings ₹938.96 Cr" repeat code's (sampling, 24 Oct)."""
     table = tagged.table()
     block = "\n".join(f.text for f in facts or [] if f.text)
-    return [f for f in card.what_happened
-            if f.quote and not gate.quote_found(f.quote, table) and not (block and gate.quote_found(f.quote, block))]
+    known = _amounts(f"{table}\n{block}\n{shown}")
+    out = []
+    for f in card.what_happened:
+        if not f.quote or gate.quote_found(f.quote, table) or (block and gate.quote_found(f.quote, block)):
+            continue
+        said = _amounts(f.text)
+        if said and said <= known:
+            continue
+        out.append(f)
+    return out
 
 
 def build(out, tagged, company_name: str | None, history=None, text: str = "", facts=None, rich: bool = False) -> list[str]:
@@ -412,7 +429,7 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
     # set against memory (guidance, a deal's history): "Our reading", citing the memory it used
     against_memory = [Insight(text=f.text + ".", basis="MEMORY", memory_refs=[f.memory_ref])
                       for f in facts_found if f.memory_ref]
-    own_facts = _model_facts(card, tagged, facts_found) if rich else []
+    own_facts = _model_facts(card, tagged, facts_found, " ".join(f.text for f in lines)) if rich else []
     card.what_happened = (lines[:4] + computed_lines[:MAX_COMPUTED] + own_facts[:MAX_OWN_FACTS]) or card.what_happened
     if own_facts:
         replaced.append(f"{len(own_facts[:MAX_OWN_FACTS])} quoted fact(s) of the model kept")

@@ -1,0 +1,159 @@
+[
+ {
+  "news_id": "nse-106824721",
+  "symbol": "SHAKTIPUMP",
+  "event_type": "M_AND_A",
+  "old": {
+   "verdict": "RIGHT",
+   "error_class": null,
+   "reading_only": false,
+   "reason": "₹12 Cr for 1.2 crore shares, ₹92 Cr cumulative, turnover ₹24.25/3.73/4.30 Cr, assets ₹128.57 Cr, not a related-party deal, same-day completion: all match the filing. The memory claim (FY26 group revenue ₹2,698 Cr) is right.",
+   "missed_key_points": [],
+   "coverage": "FULL"
+  },
+  "new": {
+   "verdict": "MINOR",
+   "error_class": "impact_overstated",
+   "reading_only": false,
+   "reason": "Facts are right, but a ₹12 Cr top-up (0.25% of market cap, 0.7% of net worth) is rated MODERATE/POSITIVE where the old card said LOW/NEUTRAL. The takeaway only repeats the headline.",
+   "missed_key_points": [
+    "Subsidiary total assets ₹128.57 Cr at 31 Mar 2026",
+    "Business line: EV motors for 2W/3W/4W and EV chargers (core_catalyst only, not in the points)",
+    "Not a related-party transaction; no approvals needed; completes the same day"
+   ],
+   "coverage": "THIN"
+  },
+  "comparison": "WORSE",
+  "comparison_reason": "Both are accurate, but the new card drops the target's assets and business and the deal terms. It also rates the impact too high and leaks markdown into the headline.",
+  "no_card_ok": null,
+  "notes": "New headline has literal markdown: 'invests **₹12 Cr** ... **₹92 Cr**'. Both versions put ** inside the what_happened text. The cumulative ₹92 Cr does not tie to the April card (₹65 Cr after ₹10 Cr) plus ₹12 Cr, but ₹92 Cr is what the filing says."
+ },
+ {
+  "news_id": "nse-106605175",
+  "symbol": "SHAKTIPUMP",
+  "event_type": "ORDER_WIN",
+  "old": {
+   "verdict": "RIGHT",
+   "error_class": null,
+   "reading_only": false,
+   "reason": "6,580 pumps, MSEDCL, ₹155.24 Cr with GST / ₹142.55 Cr without, 3/5/7.5 HP and the 60-day window (in reading and track_next) all match. 6.2% of trailing revenue checks against memory.",
+   "missed_key_points": [],
+   "coverage": "FULL"
+  },
+  "new": {
+   "verdict": "RIGHT",
+   "error_class": null,
+   "reading_only": false,
+   "reason": "All figures match the filing. Q2FY26 inventories of ₹467.11 Cr match the stored balance sheet. The scale block correctly uses the ex-GST value.",
+   "missed_key_points": [],
+   "coverage": "FULL"
+  },
+  "comparison": "BETTER",
+  "comparison_reason": "Equally accurate. The new card puts the 60-day window and scope in the points, lists the base value and unit count as key numbers, and measures scale on the ex-GST value (the old one used the GST-inclusive value).",
+  "no_card_ok": null,
+  "notes": "The new why_it_matters still compares GST-inclusive ₹155.24 Cr with revenue, though it says so. No markdown leak in the headline. Both versions have ** in the point text."
+ },
+ {
+  "news_id": "nse-106825286",
+  "symbol": "BLUESTONE",
+  "event_type": "RESULTS",
+  "old": {
+   "verdict": "MINOR",
+   "error_class": "definition_mismatch",
+   "reading_only": false,
+   "reason": "Revenue ₹745.03 Cr, PAT -₹4.37 Cr, owners -₹3.23 Cr (-₹51.75 Cr a year ago), EPS -0.21 and RM cost ₹588.02 Cr are right. EBITDA ₹94.9 Cr / 12.7% leaves out the ₹1.4 Cr JV loss: the company's own consolidated EBITDA is ₹93.5 Cr / 12.5%. The results block's 'PBT' of -₹2.97 Cr is the pre-JV figure; reported PBT is -₹4.37 Cr.",
+   "missed_key_points": [
+    "Same-store sales growth 28% (H1 32.9%); 27 stores added to 379",
+    "Gross margin fell to 37.6% from 39.9% YoY (consolidated)",
+    "₹300 Cr NCD raise approved (only in a milestone and the scale block)",
+    "Consolidated net debt up to ₹532.8 Cr from ₹335.4 Cr in March",
+    "Adjusted PAT ₹19.6 Cr against a ₹26.8 Cr loss (standalone)"
+   ],
+   "coverage": "THIN"
+  },
+  "new": null,
+  "comparison": null,
+  "comparison_reason": "Not processed yet; only the old card is judged.",
+  "no_card_ok": null,
+  "notes": "Broken takeaway: 'Q2FY27 a net loss of ₹4.37 Cr...' has no verb. The press release says 'profitable for the fourth consecutive quarter' (standalone PAT ₹1.7 Cr). The card's consolidated loss is correct, but the gap is not explained. The published Q2 results card for this company is nse-106825350 (standalone ₹738 Cr), so the two would overlap under D20."
+ },
+ {
+  "news_id": "nse-106825336",
+  "symbol": "BLUESTONE",
+  "event_type": "FUNDRAISE",
+  "old": {
+   "verdict": "MINOR",
+   "error_class": "wrong_base",
+   "reading_only": true,
+   "reason": "Facts match the filing. The reading's '₹827.49 Cr net debt' is gross debt minus cash; the company reports consolidated net debt of ₹532.8 Cr (memory agrees), so ₹300 Cr is more than half of it, not 'about a third'.",
+   "missed_key_points": [],
+   "coverage": "FULL"
+  },
+  "new": {
+   "verdict": "RIGHT",
+   "error_class": null,
+   "reading_only": false,
+   "reason": "₹300 Cr NCD private placement in tranches, refinancing plus capex and working capital, 2.6% of market cap and 16.3% of net worth: all correct.",
+   "missed_key_points": [
+    "Operations Committee will fix the terms; coupon and tenure not yet disclosed",
+    "Full Reg 30 disclosure only at issue or allotment"
+   ],
+   "coverage": "PARTIAL"
+  },
+  "comparison": "SAME",
+  "comparison_reason": "The new card removes the old card's disputable net-debt figure but is thinner: it drops the Operations Committee and undisclosed-terms points and leaks markdown into the headline. Net, the same.",
+  "no_card_ok": null,
+  "notes": "New headline has literal markdown: 'raising up to **₹300 Cr**'. The same approval is item 2 of the board outcome (nse-106825286), but it is a separate Reg 30 filing and fair to keep as its own card."
+ },
+ {
+  "news_id": "nse-106825337",
+  "symbol": "BLUESTONE",
+  "event_type": "MONTHLY_BUSINESS_UPDATE",
+  "old": {
+   "verdict": "MINOR",
+   "error_class": "mixed_basis",
+   "reading_only": false,
+   "reason": "Consolidated revenue ₹745 Cr +45.1%, 27 stores to 379 in 146 cities, SSSG 28% against 39%, and EBITDA margin 12.5% against 8.1% are right. Pre-IndAS EBITDA ₹53.5 Cr +234.2% is a standalone figure shown under a CONSOLIDATED basis. Event type MONTHLY_BUSINESS_UPDATE is wrong: this is the quarterly results commentary.",
+   "missed_key_points": [
+    "Adjusted PAT ₹19.6 Cr against a ₹26.8 Cr loss a year earlier",
+    "Gross margin compressed to 36.6% from 39.5% (standalone)",
+    "Net debt rose to ₹539.5 Cr from ₹453.6 Cr QoQ",
+    "Reported consolidated PAT loss ₹4.4 Cr",
+    "A&P 6.0% of revenue, against 8.2% a year ago"
+   ],
+   "coverage": "THIN"
+  },
+  "new": null,
+  "comparison": null,
+  "comparison_reason": "Ended without a card on re-run.",
+  "no_card_ok": true,
+  "notes": "Ending without a card is right. This filing repeats pages 5-12 of the board outcome PDF (nse-106825286) word for word, and the quarter already has the published results card nse-106825350 ('BlueStone Q2FY27 revenue rises 43.9% YoY to ₹738 Cr; EBITDA up 127% to ₹97.1 Cr'). Its unique KPIs (SSSG, adjusted PAT, net debt) belong in that results card."
+ },
+ {
+  "news_id": "nse-106827418",
+  "symbol": "BLUESTONE",
+  "event_type": "LITIGATION_REGULATORY",
+  "old": {
+   "verdict": "RIGHT",
+   "error_class": null,
+   "reading_only": false,
+   "reason": "₹4,000 + GST NSE fine, 2-day delay on the June-quarter shareholding pattern (filed 23 Jul, due 21 Jul), misinterpretation of integrated filing, paid 23 Oct, maker-checker steps and the Board's advice all match.",
+   "missed_key_points": [],
+   "coverage": "FULL"
+  },
+  "new": {
+   "verdict": "RIGHT",
+   "error_class": null,
+   "reading_only": false,
+   "reason": "Fine, delay, reason, payment date and the Board's 22 Oct noting are correct.",
+   "missed_key_points": [
+    "Corrective steps: compliance calendar, maker-checker review by the CS"
+   ],
+   "coverage": "PARTIAL"
+  },
+  "comparison": "WORSE",
+  "comparison_reason": "Both are accurate. The new card drops the corrective steps, the Board's advice and the fine key number.",
+  "no_card_ok": null,
+  "notes": "Both versions' case_stage stops at 'Order' though the fine is paid; the card text says it is settled. memory_context mixes standalone revenue (₹738 Cr) with consolidated owners' PAT (-₹3.23 Cr). No headline markdown; ** appears in the point text."
+ }
+]

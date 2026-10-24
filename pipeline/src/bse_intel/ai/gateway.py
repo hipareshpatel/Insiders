@@ -300,6 +300,7 @@ class AIGateway:
         # A dispatched drain run may favour one model on every route that has it (owner, 21 Oct 2026: "use deepseek for
         # pending and let's clear them"): PREFER_MODEL=provider:model multiplies its weight. Scheduled runs never set it.
         prefer = (env.get("PREFER_MODEL") or "").strip()
+        only = {k.strip() for k in (env.get("ONLY_MODEL") or "").split(",") if k.strip()}
         for route, entries in config.get("routes", {}).items():
             targets = []
             for entry in entries:
@@ -341,6 +342,12 @@ class AIGateway:
                 concurrency = (entry.get("limits") or {}).get("concurrency")
                 if concurrency and target.key not in self.slots:
                     self.slots[target.key] = threading.BoundedSemaphore(int(concurrency))
+            # A model trial (scripts/model_trial.py) sends every route that has the model to it alone, spare or not:
+            # ONLY_MODEL=provider:model[,provider:model]. Scheduled runs never set it.
+            if only and any(t.key in only for t in targets):
+                targets = [t for t in targets if t.key in only]
+                for t in targets:
+                    t.spare = False
             self.routes[route] = targets
             if strategies.get(route) == "weighted":
                 self._rotations[route] = _WeightedRotation([t for t in targets if not t.spare])

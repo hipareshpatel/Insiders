@@ -52,8 +52,8 @@ jobs:
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
       BACKFILL_CARDS_FROM: ${{ vars.BACKFILL_CARDS_FROM }}   # a date: backfill before it goes into memory only (F117); unset = off, cards as before
-      RESULTS_FACTS: ${{ vars.RESULTS_FACTS || '0' }}   # 1: results cards get figures computed in code (facts.py)
-      RESULTS_RICH: ${{ vars.RESULTS_RICH || '0' }}     # 1: results cards keep the model's quoted facts and memory points
+      RESULTS_FACTS: ${{ vars.RESULTS_FACTS || '1' }}   # 0: results cards without the figures computed in code (facts.py)
+      RESULTS_RICH: ${{ vars.RESULTS_RICH || '1' }}     # 0: results cards without the model's quoted facts and memory points
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}

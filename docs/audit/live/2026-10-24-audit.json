@@ -264,5 +264,420 @@
   "pruned_points_true": [],
   "pruned_points_false": [],
   "broken_text": []
+ },
+ {
+  "news_id": "nse-106827060",
+  "symbol": "GUFICBIO",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "USFDA pre-approval inspection at the Pithampur (Indore) plant 15-23 Oct 2026 with 3 Form 483 observations, all as filed. Neutral tone, MODERATE impact and Form 483 case stage are reasonable.",
+  "event_type": "LITIGATION_REGULATORY",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827050",
+  "symbol": "PERSISTENT",
+  "run": "12:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "The transcript facts are right: USD 487.6M (+20% YoY), ₹4,663.9 Cr (+30.3%), EBIT ₹697.7 Cr (+19.5%), 15% margin (-130 bps), operating PAT ₹495.2 Cr (+5%), reported PAT ₹351.5 Cr (-25.4%), Nagarro costs ₹185.34 Cr (~$19-20M, ~3.1% PAT impact), headcount, attrition, TCV and closing timing. Three small problems. (1) The results block shows EBITDA ₹633.5 Cr at a 13.58% margin (-550 bps YoY), which is below the ₹697.7 Cr EBIT on the same card. It is computed after the one-time Nagarro costs and the FX loss, so it overstates the operating margin decline, and the impact score uses it. (2) call_read guidance is 'MAINTAINED', but management said 'We don't give forward looking guidance' (16-17% is only an aspiration). (3) The wage hike and amortisation explain the 100 bps QoQ margin decline, but the card attaches them to the 130 bps YoY decline.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "PRUNED",
+  "wrong_points": [
+   "results.ebitda 633.48 Cr / ebitda_margin 13.58% (-550 bps YoY): below the stated EBIT of ₹697.7 Cr because one-time Nagarro transaction costs and the FX loss are included, so it misstates the operating margin trend",
+   "call_read.guidance 'MAINTAINED': the company gives no guidance"
+  ],
+  "pruned_points_true": [
+   "key number \"Revenue\" states 4,664 (Rs.46,639 million = ₹4,663.9 Cr, true)"
+  ],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827045",
+  "symbol": "OFSS",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Consolidated Q2FY27 figures match the statement: revenue ₹19,066M (+6.6% YoY, -39% QoQ), PAT ₹7,024M (+28.6%), EPS 80.66 and EBITDA ₹925.6 Cr (48.55% against 42.22%). The QoQ drop comes from Q1's one-time ₹9,353M licence deal, which the card does not explain. That is an omission, not an error. 'Sustained demand for banking software' is mild interpretation.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827041",
+  "symbol": "URBANCO",
+  "run": "12:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "The H1FY27 presentation figures are right: NTV ₹2,897 Cr (+40.6%), revenue ₹1,066 Cr (+42.6%), adjusted EBITDA ex-Insta ₹97 Cr (3.5% of NTV, +₹57 Cr), consolidated adjusted EBITDA ₹(209) Cr, InstaHelp 6.23M orders and ₹(173.7) Cr in Q2, cash ₹1,901 Cr, and ICS contribution margin 21.7%. Two small problems. (1) The notable change for adjusted EBITDA ex-Insta (₹40 Cr to ₹97 Cr) gives its change as '+152 bps YoY'. That is the change in margin, not in the absolute figure. (2) call_read guidance is 'MAINTAINED', but the presentation gives no guidance. The card is not a duplicate: earlier cards covered the Q2 results, and this one covers H1 metrics.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "PRUNED",
+  "wrong_points": [
+   "notable_changes Adjusted EBITDA (Ex Insta) ₹40 Cr -> ₹97 Cr with change '+152 bps YoY': the bps figure is the margin change, not the change in the absolute value",
+   "call_read.guidance 'MAINTAINED': no guidance given in the presentation"
+  ],
+  "pruned_points_true": [
+   "\"Annual Transacting Users (ATUs) reached 10.0 million...\" (page 7: 10.0M, +2.6M / 34.5% YoY)",
+   "key number \"H1FY27 Revenue\" (₹1,066 Cr, +42.6% YoY on page 7/8/45)",
+   "key number \"Annual Transacting Users\" 10.0 (page 7)"
+  ],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827040",
+  "symbol": "ACMESOLAR",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "All facts match the filing: 17.91 MW / 74.323 MWh commissioned of the 250 MW / 1069 MWh FDRE project, COD 25 Oct 2026, and 71.640 MW / 297.292 MWh cumulative at ACME Sigma Urja. The deal_value.usage field 'MERCHANT_SALE' is not supported, because an FDRE project is normally contracted, but that is a block field and not a claim on the card's face.",
+  "event_type": "CAPEX",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827039",
+  "symbol": "TRIVENIPT",
+  "run": "12:07",
+  "verdict": "WRONG",
+  "error_class": "duplicate",
+  "reason": "Every figure on the card matches the press release: Q2 revenue Rs116 Cr +5.7% YoY, EBITDA Rs42 Cr at 36.1%, PAT Rs26 Cr, H1 revenue Rs189 Cr +17.8%, H1 PAT Rs41 Cr, H1 bookings Rs330 Cr +94.7%, order book Rs626 Cr +57.2%, defence 3.3x in Q2. But it is the third published card for the same Q2FY27 results on the same evening: the results card nse-106826851 (18:30) and the investor-presentation card nse-106826987 (19:56) have a near-identical headline ('Q2FY27 revenue rose 5.7% YoY to Rs116 Cr; EBITDA margin at 36.1%') and the same order-book point. The press release adds only H1 figures. Also, the results block mixes bases. Q2 EBITDA is the company's figure (Rs42 Cr, 36.1%), but Q1 is the XBRL-derived figure (Rs24.18 Cr, 33.29%), so the block shows +281 bps and +73.7% QoQ. The company's own numbers imply Q1 EBITDA of about Rs25 Cr (H1 Rs67 Cr minus Q2 Rs42 Cr), so the like-for-like change is about +170 bps and about +68%. The results card puts the XBRL Q2 EBITDA at Rs38.79 Cr, 33.4%.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "Card as a whole: a third card for the Q2FY27 results already carried by nse-106826851 and nse-106826987",
+   "results block ebitda_margin qoq_bps 281 / ebitda qoq_pct 73.7: Q2 uses the company's EBITDA (Rs42 Cr) against Q1 on the XBRL basis (Rs24.18 Cr); not like for like"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827037",
+  "symbol": "PFC",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Two SPVs (Solapur SEZ Power Transmission Ltd, Karur REZ Power Transmission Ltd) incorporated as wholly owned subsidiaries of PFC Consulting, which is BPC under TBCB. The names and purposes match the filing. No earlier card covers these SPVs (the May cards were other SPVs). OTHER / LOW / NEUTRAL fit. The deal_value internal fields (usage MERCHANT_SALE, GREENFIELD) are odd but not shown as facts.",
+  "event_type": "OTHER",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827030",
+  "symbol": "JINDALPHOT",
+  "run": "12:07",
+  "verdict": "WRONG",
+  "error_class": "attribution",
+  "reason": "Floor price Rs1,119.50, indicative price Rs1,120, bid window 2 to 6 Nov 2026, and the 90% success threshold are all correct. But the first point names the wrong acquirer: it says 'Saffron Private Limited' is Acquirer 1. The filing says the LOF was issued by Saffron Capital Advisors Pvt Ltd, the Manager to the Offer, on behalf of Concatenate Power Advest Pvt Ltd (Acquirer 1) and Concatenate Advest Advisory Pvt Ltd (Acquirer 2), with Jindal India Power Ltd as PAC. The card's quote was altered to drop 'Capital Advisors Private Limited, Manager to the Offer, for and on behalf of Concatenate Power Advest', so the quote check passed on text that is not in the filing.",
+  "event_type": "CORPORATE_ACTION",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": null,
+  "wrong_points": [
+   "**Acquirers** Saffron Private Limited and Concatenate Advest Advisory Private Limited along with PAC Jindal India Power Limited issued the **Letter of Offer** for voluntary delisting. -- Saffron Capital Advisors is the Manager to the Offer; Acquirer 1 is Concatenate Power Advest Private Limited (the quote was edited to support this)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827017",
+  "symbol": "CRISIL",
+  "run": "12:07",
+  "verdict": "WRONG",
+  "error_class": "arithmetic",
+  "reason": "The headline and figures are right: income from operations Rs1,095 Cr +20.2% (from Rs911 Cr), PBT Rs276 Cr +5.3%, PAT Rs205 Cr +5.9%, interim dividend Rs17 vs Rs16, and the lower FX gain in the Research, Analytics & Solutions segment. But one 'why it matters' point says Q3 revenue growth 'accelerated to 20.2% ... outperforming the 9M 2026 growth rate of 25.7%'. 20.2% is below 25.7%, so growth slowed in Q3. The presentation itself says Coalition Greenwich growth 'moderated during Q3 2026'. The point also adds a cause the filing does not give ('due to sustained demand across core segments'). An investor would read slowing growth as speeding up.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "PRUNED",
+  "wrong_points": [
+   "Revenue growth accelerated to 20.2% in Q3 2026, outperforming the 9M 2026 growth rate of 25.7% due to sustained demand across core segments. -- 20.2% < 25.7%: growth decelerated; the cause is unsupported"
+  ],
+  "pruned_points_true": [
+   "key number \"Revenue\" (Rs1,095 Cr, +20.2% YoY: on the filing's p.10 chart, quote not verbatim)",
+   "key number \"PAT\" (Rs205 Cr, +5.9% YoY: on p.10)",
+   "key number \"PBT\" (Rs276 Cr, +5.3% YoY: on p.8 and p.10)"
+  ],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827016",
+  "symbol": "PANACHE",
+  "run": "12:07",
+  "verdict": "WRONG",
+  "error_class": "duplicate",
+  "reason": "This PDF is byte-identical (4,573,836 bytes, same text) to the 20:04 filing PANACHE_23102026200441_NSEOutcome_Q2_Signed.pdf, which already has the published card nse-106827008 ('Panache Digilife Q2FY27: revenue Rs129.6 Cr'). So this is a second card for the same board outcome. The figures themselves are right: consolidated revenue Rs129.60 Cr, total PAT Rs9.26 Cr (Rs7.70 Cr to owners), diluted EPS Rs4.90, EBITDA Rs12.38 Cr / 9.55%, and the warrant conversion (1,60,300 shares at Rs263, Rs3.16 Cr balance 75% received, paid-up capital Rs16.17 Cr). Also, the notable change labels the prior-year Rs39.06 Cr as Q2FY25; the filing's column is 30-09-2025, which is Q2FY26. The board-length signal (7.2 h, 11:30 am to 6:40 pm) is right as a fact, but its 'often precedes difficult results' warning reads oddly beside results up 232% YoY.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "CORRECTED",
+  "wrong_points": [
+   "Card as a whole: duplicate of nse-106827008 (the same PDF refiled)",
+   "notable change previous: \"₹39.06 Cr (Q2FY25)\" -- the column is the quarter ended 30-09-2025 = Q2FY26"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827008",
+  "symbol": "PANACHE",
+  "run": "12:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "All figures match the consolidated Q2FY27 statement (Rs lakh): revenue 12,959.85 = Rs129.6 Cr (Q2FY26 3,906.02, Q1FY27 5,083.82), PAT 925.61 = 9.26 Cr (142.03 / 361.67), owners 769.58 = 7.70 Cr, basic EPS 5.78 (0.94 / 2.26), PBT 12.37 Cr; EBITDA 12.38 Cr = PBT + finance cost + depreciation - other income (prev year 2.51). Debt 540 + 2,847.92 lakh = 33.88 Cr and net worth 117.04 Cr also check. The memory claim (highest of the 5 quarters since Q2FY26) is true (39.06, 74.47, 99.9, 50.84, 129.6). Small issues: the themes 'Infra / EPC' and 'Renewables' do not fit an ESDM/DLM electronics maker, and the takeaway calls EBITDA 'the largest move' although PAT grew faster (+552% vs +393%). Neither misleads on the facts.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": null,
+  "wrong_points": [
+   "themes: 'Infra / EPC', 'Renewables' - the company is an ESDM design- and contract-manufacturing firm (memory business summary), not infra or renewables",
+   "takeaway: 'the largest move was EBITDA of ₹12.38 Cr against ₹2.51 Cr' - PAT (+552%) and PBT (+558%) moved more in % terms; a debatable choice, not a false figure"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827004",
+  "symbol": "KISSHT",
+  "run": "12:07",
+  "verdict": "MINOR",
+  "error_class": "unsupported_cause",
+  "reason": "The allotment facts are right: 2,64,93,882 shares at Rs314.11 (premium Rs313.11) for Rs8,32,19,93,275.02 (checks: shares x price), 34 investors, and paid-up capital rising from 17.81 Cr to 20.46 Cr (difference = shares allotted). The scale signal's arithmetic is right against memory's net worth of 1,342.78 Cr. One why-it-matters point reads the premium over the Re 1 face value as a 'steep premium ... reflecting strong valuation backing'. A premium over face value says nothing about valuation, and the issue price is about the market price (market cap 5,548 Cr / 17.81 Cr shares = about Rs311). Also, '34 institutional and non-promoter investors' includes individuals; acceptable.",
+  "event_type": "FUNDRAISE",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "why_it_matters: 'The issue price of ₹314.11 per share includes a steep premium of ₹313.11 per share, reflecting strong valuation backing from incoming funds.' - the premium is over the Re 1 face value, not over the market price (the issue price is about the market price); 'steep premium' and 'strong valuation backing' are unsupported"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106826988",
+  "symbol": "AEROENTER",
+  "run": "12:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Matches the filing. Aeroflex Neu (the company's material subsidiary) completed the acquisition of 7,27,040 Stilonn shares, through a share purchase plus a subscription, taking it to 51.01%; Stilonn is now a subsidiary, as part of the AI infra / data-centre platform plan. It correctly continues deal d_27eac791 (the 15 Oct card, Rs16 Cr). Memory context (Q1FY27 revenue 189 Cr, PAT to owners 96.5 Cr) matches stored memory. M_AND_A fits.",
+  "event_type": "M_AND_A",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106826987",
+  "symbol": "TRIVENIPT",
+  "run": "12:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "The presentation figures are right: Q2 revenue Rs116 Cr +5.7% YoY, EBITDA margin 36.1%, PAT Rs26 Cr, order booking Rs126 Cr +47.7%, closing order book Rs626 Cr +57.2%, and defence revenue 3.3x YoY. The results block (XBRL, QoQ only) agrees with the deck's QoQ chart (revenue 73 -> 116, PAT 15 -> 26). Problems: (1) the quarter's total order booking is stored as a single deal_value (kind ORDER, stage CONTRACT, Rs126 Cr). It also shows as a scale signal '₹126 Cr order = 108% of Q2FY27 revenue' and a call-memory point 'Power transmission, ₹126 Cr, contract', which suggests one large contract win when it is the quarter's normal order intake (book-to-bill of about 1.08). (2) The headline's EBITDA margin of 36.1% (company definition, EBITDA Rs42 Cr) sits beside a results block showing EBITDA 38.79 Cr and margin 33.4% (excluding other income), with no note on the difference. The call takeaway 'despite moderation from previous periods' is loose (the margin rose QoQ from 35.2% and fell YoY from 45.8%), but acceptable.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "PRUNED",
+  "wrong_points": [
+   "deal_value / signal: '₹126 Cr order = 108% of Q2FY27 revenue' with stage CONTRACT - the Rs126 Cr is total Q2 order booking across many orders, not a single order or contract",
+   "call_memory: 'Power transmission, ₹126 Cr, contract' - same misreading",
+   "results block EBITDA margin 33.4% vs headline 36.1% - two definitions shown side by side without a label (not false, but inconsistent)"
+  ],
+  "pruned_points_true": [
+   "key number \"EBITDA\" - the deck states Q2 EBITDA Rs42 Cr at a 36.1% margin (true by the filing, assuming the pruned value was this; its exact text is not in the card)",
+   "key number \"PAT\" - the deck states Q2 PAT Rs26 Cr at a 22.4% margin (true by the filing, same caveat)",
+   "why it matters \"The company maintained a strong return profile w...\" - the deck shows ROCE 24.2% and ROE 18.2% (H1 FY27, annualised) with nearly nil leverage, so a strong return profile is supported (only the truncated text is available)"
+  ],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106826982",
+  "symbol": "CROMPTON",
+  "run": "12:07",
+  "verdict": "MINOR",
+  "error_class": "invented",
+  "reason": "The two Hyderabad District Consumer Commission orders are reported correctly: gas stove refund Rs14,886 + 9% interest + Rs5,000 compensation (+ Rs3,000 costs), impact Rs22,886; chimney refund Rs21,999 + 12% interest + Rs5,000 compensation + Rs5,000 costs, impact Rs31,999. LOW impact and NEUTRAL tone are right; net worth 3,033 Cr and revenue 2,263 Cr match memory. But the point 'The company stated that no action is being taken...' quotes 'No action being taken by the Company', which is not in this filing; its disclosure table has no actions-taken row. The second what-happened point leaves out the Rs5,000 litigation costs; trivial. The orders are immaterial (about Rs55k), but this is a Reg 30 disclosure correctly marked LOW, so it is not counted as noise.",
+  "event_type": "LITIGATION_REGULATORY",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "CORRECTED",
+  "wrong_points": [
+   "why_it_matters: 'The company stated that no action is being taken with respect to the communications received from the statutory authority.' - the quoted text 'No action being taken by the Company' does not appear in the filing; invented (likely carried over from a template or another filing)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106824929",
+  "symbol": "CYIENT",
+  "run": "12:07 review",
+  "verdict": "WRONG",
+  "error_class": "memory",
+  "reason": "Headline, revenue (Rs 22,350 Mn = Rs 2,235 Cr, +25.5% YoY), PAT to owners (Rs 1,214 Mn, -4.8% YoY) and EBIT margin 10.2% vs 9.4% all match the Group income statement (p.32) and highlights (p.14). But the results block's EBIT margin line shows prev_quarter 13.2% and -300 bps QoQ: 13.2% is the DET segment's Q1FY27 EBIT margin (from memory card nse-106708356); the Group's Q1FY27 EBIT margin was 9.7%, so the margin actually rose ~50 bps QoQ. The block's EBITDA/PAT (132.5 vs 142.9, -7.3%) are XBRL reported figures on a different definition from the headline's 121.4 (-4.8%), so the card shows two conflicting PAT changes. One point also states '$121 Mn', which is wrong (it is Rs 121 Cr). The takeaway's 'led by Aerospace and Industrial' is the DLM subsidiary's line, not the group's. The card also repeats the headline of the results card filed three minutes earlier (nse-106824917), so it mostly duplicates that card apart from the call takeaways.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "UNCHECKED",
+  "wrong_points": [
+   "results block kpi:ebit_margin prev_quarter 13.2, qoq_bps -300: the Group's Q1FY27 EBIT margin is 9.7% (p.32); 13.2% is the DET segment's",
+   "Profit after tax attributable to owners came in at ₹121.4 Cr ($121 Mn stated as ₹1,214 Mn): '$121 Mn' is wrong; the figure is ₹1,214 Mn = ₹121.4 Cr",
+   "Takeaway 'robust revenue growth led by Aerospace and Industrial segments': the filing says this about Cyient DLM, not the Group (minor attribution)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [
+   "(**$121 Mn** stated as ₹1,214 Mn) is garbled currency text"
+  ],
+  "flags_true": [
+   "Unverified figures (score veto): the results block does carry a wrong figure (EBIT margin prev quarter)"
+  ],
+  "flags_false": [
+   "out_of_fit: '₹2,235 is the filing's $ figure, not a rupee amount': false; ₹22,350 Mn = ₹2,235 Cr, and the $ figure is 233.9 Mn",
+   "quotes_dropped: interim dividend ₹12 per share 'not in the filing': false; p.14 'Interim Dividend 12₹' and p.19 'the Board has declared an interim dividend of ₹12 per share'",
+   "change_fixes: EBIT +36.5% YoY removed: the change was right (2,284 vs 1,673 ₹ Mn)"
+  ]
+ },
+ {
+  "news_id": "nse-106824435",
+  "symbol": "BETA",
+  "run": "12:07 review",
+  "verdict": "MINOR",
+  "error_class": "unsupported_cause",
+  "reason": "H1FY27 revenue ₹263.04 Cr vs ₹203.6 Cr, EBITDA ₹61 Cr, PAT ₹34.3 Cr vs ₹23.9 Cr (FY26 ₹41.4 Cr), gross margin 56.21% vs 51.35%, net cash ₹55 Cr, API backward integration Q4FY27, FY27 guide ₹535+ Cr and ~15 launches by FY28 all match pp.2-4. One point inverts the cause: the filing says Branded Oncology grew 17% but its growth was held back by the Adley plant shutdown and platin API shortages; the card says it grew 'due to' them. The takeaway's 'maintained full-year revenue and margin guidance' is loose: the filing maintains the Oncology/CMO growth guidance and gives FY27 ₹535+ Cr with 23-24% EBITDA, against May's 20-25% growth guide. The memory signal (Azerbaijan GMP deadline passed) matches the stored guidance g_aaa71ea3. Another card on the same results also exists (nse-106824520, filed 12:11).",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "CORRECTED",
+  "wrong_points": [
+   "Branded Oncology grew in H1 due to a plant shutdown for debottlenecking and API supply constraints, with orders shifting to H2: the shutdown and API constraints held growth back (filing: 'The growth was impacted by production shutdown...'); they did not cause it"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "flags_true": [
+   "quotes_paraphrased on the Branded Oncology point: the paraphrase is also wrong in substance"
+  ],
+  "flags_false": [
+   "held: 'text layer is garbled (scan errors inside numbers)': the layer is garbled ('29.200/o', '17o/o'), but every figure on the card is right"
+  ]
+ },
+ {
+  "news_id": "nse-106822718",
+  "symbol": "VEDL",
+  "run": "12:07 review",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "Vedanta's Reg 30(9) letter enclosing subsidiary Hindustan Zinc's Q2FY27 results. Net profit ₹6,412 Cr (vs ₹5,469 Cr QoQ, ₹2,649 Cr YoY), Zinc-Lead-Silver segment result ₹8,329 Cr vs ₹3,602 Cr, net worth ₹29,966 Cr vs ₹13,697 Cr, D/E 0.21 vs 0.78 and EBIT/revenue 55% vs 42% all match pp.6-10. The ₹14,582 Cr labelled 'Revenue from operations' is line (a) 'Revenue' only; total revenue from operations is ₹15,093 Cr (vs ₹8,549 Cr). The HINDZINC card uses ₹15,093 Cr, so the two cards disagree. The card never says what this means for Vedanta (HZL is its subsidiary). OTHER for subsidiary results relayed by the parent is acceptable.",
+  "event_type": "OTHER",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": "CORRECTED",
+  "wrong_points": [
+   "Revenue from operations for Q2FY27 was ₹14,582 Cr, against ₹8,282 Cr: that is the 'a. Revenue' sub-line; Total revenue from operations is ₹15,093 Cr vs ₹8,549 Cr (label slip, small)"
+  ],
+  "pruned_points_true": [
+   "(grounding 'point dropped', status CORRECTED not PRUNED) 'Debt-equity fell to 0.21 times at Sep-2026 from 0.78 times': true per the Reg 52(4) ratios"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "flags_true": [
+   "change_fixes: D/E change '-57 bps' removed: the unit was wrong, so removing it was right",
+   "review fixed: the ₹21/share ₹4,018 Cr interim dividend point was from April FY26 news, not this filing's news; dropping it was reasonable"
+  ],
+  "flags_false": [
+   "held: 'text layer is garbled': garbled ('13°03', 'fi,412'), but the card's figures are all right",
+   "change_fixes removed true changes: revenue +76% YoY (14,582/8,282), net profit +142% YoY, EBIT margin +1,300 bps (55% vs 42%)"
+  ]
+ },
+ {
+  "news_id": "nse-106822361",
+  "symbol": "IREDA",
+  "run": "12:07 review",
+  "verdict": "MINOR",
+  "error_class": "noise",
+  "reason": "Built from XBRL: revenue ₹2,345.86 Cr (+14.0% YoY, +4.3% QoQ), interest earned ₹2,319.1 Cr, PAT ₹552.17 Cr (consolidated extract 552.14; Q1 338.53, Q2FY26 549.33), EPS ₹1.97 all agree with the filing. Fraud note (three cases, ₹672.74 Cr, vs one of ₹7.80 Cr; 100% ECL already provided) and the audit emphasis of matter (audit committee constitution, opinion not modified) are accurate. The card does not say the Gensol frauds were disclosed before, and leading with 'EBITDA ₹2,091 Cr, margin 89.1%' is not a meaningful measure for a lender. The risk 'finance cost rising faster than interest income' is not supported: finance cost +13.5% YoY vs interest +14.1%. The impairment half of that risk is true (₹186.8 Cr vs ₹64.9 Cr).",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "CORRECTED",
+  "wrong_points": [
+   "EBITDA Q2FY27: ₹2,091.01 Cr; margin 89.1%: an EBITDA margin is not meaningful for an NBFC (noise, not a false figure)",
+   "Risk 'Impairment on financial instruments and finance cost rising faster than interest income': finance cost (1,376.48 vs 1,212.96, +13.5%) did not outpace interest income (2,316.97 vs 2,030.10, +14.1%)"
+  ],
+  "pruned_points_true": [
+   "(grounding 'point dropped', status CORRECTED) 'Profit growth of 0.5% YoY lagged revenue growth of 14.0%': true"
+  ],
+  "pruned_points_false": [
+   "(review fixed) 'Gross NPA ratio improved to 1.37%': not in the filing; dropping it was right"
+  ],
+  "broken_text": [],
+  "flags_true": [
+   "review fixed: 1.37% not in filing (correctly removed)"
+  ],
+  "flags_false": [
+   "held: 'text layer is garbled': garbled, but the card's figures come from XBRL and are right",
+   "change_fixes removed true +0.5% PAT YoY and +0.0% EPS YoY changes"
+  ]
+ },
+ {
+  "news_id": "nse-106821930",
+  "symbol": "HINDZINC",
+  "run": "12:07 review",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Built from XBRL. Revenue from operations ₹15,093 Cr (+76.5% YoY vs 8,549; +9.8% QoQ vs 13,747), net profit ₹6,412 Cr (+142.1% / +17.2%), EPS ₹15.18 (vs 6.27 / 12.94) and EBITDA ₹9,248 Cr (PBT 8,572 + finance 88 + D&A 962 - other income 374), margin 61.3%, vs ₹4,445 Cr a year earlier, all check against the consolidated statement. The risk about the ED search is backed by the results note on the FEMA search. Small point: the KPI 'Silver segment revenue >= ₹4,111 Cr' is filed under metric 'revenue', which will be compared with total revenue.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": "HELD",
+  "wrong_points": [],
+  "pruned_points_true": [
+   "(grounding 'point dropped') peers point (Jindal Saw, etc.): not from this filing; dropping it was right"
+  ],
+  "pruned_points_false": [],
+  "broken_text": [],
+  "flags_true": [],
+  "flags_false": [
+   "HELD: 'The filing's text layer is garbled (scan errors inside numbers)': true of the PDF, but every figure on the card is right (from XBRL); the hold is a false alarm"
+  ]
  }
 ]

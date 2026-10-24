@@ -81,3 +81,14 @@ def test_keep_concurrent_writes_is_a_three_way_merge():
     assert figures == {("revenue", "Q1FY27"): 1, ("revenue", "Q2FY27"): 2, ("pat", "Q1FY27"): 9}   # mine wins a clash
     assert "pledges" in kept and "governance.quarters" in kept
     assert keep_concurrent_writes(mine, read, read) == [] and keep_concurrent_writes(mine, read, None) == []
+
+
+def test_keep_concurrent_writes_adds_the_other_writers_timeline_lines_by_id():
+    from bse_intel.dossier import keep_concurrent_writes
+
+    line = lambda i, d: {"id": i, "date": d, "news_id": None, "summary": i}  # noqa: E731
+    read = {"timeline": [line("t1", "2026-10-01")]}
+    mine = {"timeline": [line("t1", "2026-10-01"), line("t3", "2026-10-20")]}
+    theirs = {"timeline": [line("t1", "2026-10-01"), line("t2", "2026-10-10"), line("t2b", "2026-10-10")]}
+    keep_concurrent_writes(mine, read, theirs)
+    assert [t["id"] for t in mine["timeline"]] == ["t1", "t2", "t2b", "t3"]   # same day, no news id: both kept, in order

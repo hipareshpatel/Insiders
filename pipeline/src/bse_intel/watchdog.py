@@ -20,6 +20,10 @@ DAILY = {
     "market-data.yml": ("market-data", (0, 35), (1, 2, 3, 4, 5), GRACE),      # 06:05 IST Tuesday to Saturday
     "nightly.yml": ("refresh-summaries", (0, 40), (0, 1, 2, 3, 4, 5, 6), timedelta(minutes=110)),   # 06:10 IST
 }
+# A job that records its start (`job-started <workflow>`, the nightly's first step) is not missed while it may still be
+# running: GitHub often starts a scheduled run 15-60 minutes late, past a grace counted from the slot (survey review)
+RUN_LIMIT = timedelta(minutes=110)
+STARTED_KEY = "started:{}"
 
 
 def missed(sink, now: datetime | None = None) -> list[str]:
@@ -36,6 +40,9 @@ def missed(sink, now: datetime | None = None) -> list[str]:
         last = _ran_at(sink.kv_get(f"job:{command}"))
         if last is not None and last >= slot:
             continue
+        started = _ran_at(sink.kv_get(STARTED_KEY.format(workflow)))
+        if started is not None and started >= slot and now < started + RUN_LIMIT:
+            continue   # started today and may still be running
         due.append(workflow)
     return due
 
@@ -57,3 +64,10 @@ def _ran_at(raw: str | None) -> datetime | None:
     except (ValueError, KeyError, TypeError):
         return None
     return at.astimezone(timezone.utc) if at and at.tzinfo else None
+
+
+def record_start(sink, workflow: str, now: datetime | None = None) -> None:
+    """The workflow's run has begun (its first step), so `missed` leaves it alone while it may still be running."""
+    now = now or datetime.now(timezone.utc)
+    stamp = now.isoformat(timespec="seconds")
+    sink.kv_set(STARTED_KEY.format(workflow), json.dumps({"at": stamp}), stamp)

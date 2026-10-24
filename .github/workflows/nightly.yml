@@ -44,6 +44,9 @@ jobs:
           python-version: "3.12"
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      # so the pipeline's watchdog does not start a second nightly while this one (perhaps started late) still runs
+      - name: Record the start
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel missed-jobs --running nightly.yml || true'
       - name: Pause the AI pipeline
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel pause-ai --minutes 90'
       # a running pipeline looks for the pause once a minute and stops after the filing it is on

@@ -185,3 +185,15 @@ def test_an_id_answered_twice_is_no_answer():
              PackedItem(task_id="t1", answer=_answer("second", ALPHA)),
              PackedItem(task_id="t2", answer=_answer("beta card", BETA))]
     assert _send(twice) == [None, "beta card"]
+
+
+def test_a_generic_quote_shared_by_filings_does_not_send_a_paraphrased_answer_away():
+    """An answer that paraphrased its own quotes and also quoted a line common to both filings was sent to the slower
+    route: only a quote found in exactly one task's input decides."""
+    from bse_intel.ai.packer import misplaced
+
+    common = "Outcome of the Board Meeting held on 23 October 2026"
+    own, other = f"{common}. {ALPHA}", f"{common}. {BETA}"
+    answer = {"card": {"what_happened": [{"quote": common}, {"quote": "Alpha won a large railway signalling order today"}]}}
+    assert not misplaced(answer, own, [other])
+    assert misplaced({"card": {"what_happened": [{"quote": common}, {"quote": BETA}]}}, own, [other])

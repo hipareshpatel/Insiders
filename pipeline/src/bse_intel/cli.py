@@ -15,6 +15,10 @@ from .settings import get_settings
 from .sinks import make_sink
 from .timeutil import now_iso, today_ist, utc_day
 
+# The exit code of a command NSE (or BSE) refused (401/403/429), apart from 2, which argparse and an AI error also
+# give: scripts/retry.sh never retries a refusal and skips the job's later NSE steps (survey review, 24 Oct 2026)
+REFUSED = 75
+
 
 def _pipeline(settings, sink):
     from .pipeline import build_pipeline
@@ -150,7 +154,7 @@ def cmd_annual_xbrl_catchup(args, settings, sink) -> int:
                                      horizon_days=args.days, every_days=args.every, max_companies=args.max_companies,
                                      max_reruns=args.max_reruns, scrips=scrips)
     print(json.dumps(report, indent=2, ensure_ascii=False))
-    return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
+    return REFUSED if (report["stopped"] or "").startswith("NSE refused") else 0
 
 
 def cmd_analyze_pdf(args, settings, sink) -> int:
@@ -289,9 +293,9 @@ def cmd_sync_universe(args, settings, sink) -> int:
 
 
 def _refused_code(report: dict) -> int:
-    """2 when NSE refused the session, as pledge-sync and deals-sync answer: these two returned 0, so a refusal looked
-    like a good night and scripts/retry.sh could not tell it from one (survey, 24 Oct 2026)."""
-    return 2 if str(report.get("stopped") or "").startswith("NSE refused") else 0
+    """REFUSED when NSE refused the session, as pledge-sync and deals-sync answer: these two returned 0, so a refusal
+    looked like a good night and scripts/retry.sh could not tell it from one (survey, 24 Oct 2026)."""
+    return REFUSED if str(report.get("stopped") or "").startswith("NSE refused") else 0
 
 
 def cmd_governance_sync(args, settings, sink) -> int:
@@ -314,7 +318,7 @@ def cmd_pledge_sync(args, settings, sink) -> int:
     scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()} or None
     report = pledges.sync(pipeline, time.monotonic() + args.time_budget, days=args.days, scrips=scrips)
     print(json.dumps(report, indent=2))
-    return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
+    return REFUSED if (report["stopped"] or "").startswith("NSE refused") else 0
 
 
 def cmd_deals_sync(args, settings, sink) -> int:
@@ -327,7 +331,7 @@ def cmd_deals_sync(args, settings, sink) -> int:
     print(json.dumps(report, indent=2))
     stopped = report["stopped"] or ""
     # a session read neither time is lost (the snapshot holds one session), so a failed read fails the job for its retry
-    return 2 if stopped.startswith("NSE refused") else 1 if stopped.startswith("snapshot unreadable") else 0
+    return REFUSED if stopped.startswith("NSE refused") else 1 if stopped.startswith("snapshot unreadable") else 0
 
 
 def cmd_deals_backfill(args, settings, sink) -> int:
@@ -338,7 +342,7 @@ def cmd_deals_backfill(args, settings, sink) -> int:
     scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()} or None
     report = deals.backfill(pipeline, time.monotonic() + args.time_budget, days=args.days, scrips=scrips)
     print(json.dumps(report, indent=2))
-    return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
+    return REFUSED if (report["stopped"] or "").startswith("NSE refused") else 0
 
 
 def cmd_insider_sync(args, settings, sink) -> int:
@@ -350,7 +354,7 @@ def cmd_insider_sync(args, settings, sink) -> int:
     report = insider.sync(pipeline, time.monotonic() + args.time_budget, days=args.days, scrips=scrips)
     print(json.dumps(report, indent=2))
     stopped = report["stopped"] or ""
-    return 2 if stopped.startswith("NSE refused") else 1 if stopped.startswith("list unreadable") else 0
+    return REFUSED if stopped.startswith("NSE refused") else 1 if stopped.startswith("list unreadable") else 0
 
 
 def cmd_corporate_actions_sync(args, settings, sink) -> int:
@@ -361,7 +365,7 @@ def cmd_corporate_actions_sync(args, settings, sink) -> int:
     scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()} or None
     report = corporate_actions.sync(pipeline, time.monotonic() + args.time_budget, days=args.days, scrips=scrips)
     print(json.dumps(report, indent=2))
-    return 2 if (report["stopped"] or "").startswith("NSE refused") else 0
+    return REFUSED if (report["stopped"] or "").startswith("NSE refused") else 0
 
 
 def cmd_refresh_summaries(args, settings, sink) -> int:
@@ -643,9 +647,9 @@ def cmd_seed_memory(args, settings, sink) -> int:
                       "results_periods": stats.results_periods, "shareholding_files": stats.shareholding_files,
                       "shareholding_periods": stats.shareholding_periods, "skipped": stats.skipped,
                       "failures": stats.failures[:20], "refused": refused}, ensure_ascii=False))
-    # 2 when NSE refused, as the other NSE syncs: it returned 0, the shard wrote no "more" marker and the job record said
-    # ok, so the seed chain stopped with nothing to show for it (survey, 24 Oct 2026)
-    return 2 if refused else 0
+    # REFUSED when NSE refused, as the other NSE syncs: it returned 0, the shard wrote no "more" marker and the job
+    # record said ok, so the seed chain stopped with nothing to show for it (survey, 24 Oct 2026)
+    return REFUSED if refused else 0
 
 
 def cmd_price_history(args, settings, sink) -> int:
@@ -694,6 +698,11 @@ def cmd_missed_jobs(args, settings, sink) -> int:
 
     if getattr(args, "started", None):
         return 0 if mark_started(sink, args.started) else 2
+    if getattr(args, "running", None):
+        from .watchdog import record_start
+
+        record_start(sink, args.running)
+        return 0
     for workflow in missed(sink):
         print(workflow)
     return 0
@@ -1013,6 +1022,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("health", help="AI provider configuration and quota usage").set_defaults(func=cmd_health)
     p = sub.add_parser("missed-jobs", help="daily workflows GitHub did not start, for the pipeline to start; no AI")
     p.add_argument("--started", help="record that this workflow file was dispatched today")
+    p.add_argument("--running", help="record that this workflow file's run has begun (its first step)")
     p.set_defaults(func=cmd_missed_jobs)
 
     args = parser.parse_args(argv)
@@ -1032,7 +1042,10 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         code = args.func(args, settings, sink)
-    except (AIError, SourceBlockedError) as exc:
+    except SourceBlockedError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        code = REFUSED
+    except AIError as exc:
         print(f"error: {exc}", file=sys.stderr)
         code = 2
     finally:

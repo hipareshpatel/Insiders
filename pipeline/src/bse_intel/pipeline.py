@@ -128,7 +128,8 @@ SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
 SNAPSHOT_PAGE = 50        # the feed's page size
 
 
-_DEFERRED = re.compile(r"^deferred (\d+)x: (?:attachment download failed|the better writers are at their day)")
+_DEFERRED = re.compile(r"^deferred (\d+)x: (?:attachment download failed|the better writers are at their day|"
+                       r"the platform did not answer)")
 
 
 def _deferrals(last_error: str | None) -> int:
@@ -2309,13 +2310,20 @@ class Pipeline:
                 # attempts, and stop the run after a few: every further filing would fail the same way.
                 with self._lock:
                     self._unreachable += 1
+                    isolated = self._unreachable == 1   # the filing before it was written: the site is up
                     if self._unreachable >= MAX_UNREACHABLE and not self._blocked:
                         self._blocked = SourceBlockedError(
                             f"the platform API did not answer for {self._unreachable} filings in a row; "
                             f"stopping this run with the work still queued. Is the web server running? ({exc})")
                         self.stats.stopped_reason = str(self._blocked)[:300]
                         log.error("stopping: %s", self._blocked)
-                return self._deferred(filing, "deferred: the platform did not answer")
+                # A filing whose own write fails run after run while the site answers others (a memory too large to
+                # write in time) would spend its AI calls every 15 minutes for ever: after MAX_DEFERRALS such runs it
+                # spends an attempt (survey review, 24 Oct 2026). A site that is down spends none.
+                times = _deferrals(filing.last_error) + 1
+                if isolated and times > MAX_DEFERRALS:
+                    return self._failed(filing, exc)
+                return self._deferred(filing, f"deferred {times}x: the platform did not answer ({exc})"[:300])
             except AllProvidersFailed as exc:
                 if exc.quota_exhausted:
                     with self._lock:

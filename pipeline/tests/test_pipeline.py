@@ -1064,3 +1064,27 @@ def test_memory_a_job_writes_while_the_card_is_being_written_is_kept(settings):
     periods = {m["period"] for m in memory["financial_metrics"]}
     assert {"Q1FY27", "Q2FY27"} <= periods                                      # its figure beside the card's own
     assert any(t.get("news_id") == "n-race" for t in memory["timeline"])        # and the card's own line
+
+
+def test_a_filing_whose_own_write_keeps_failing_spends_an_attempt_in_the_end(settings, monkeypatch):
+    """A timeout or 5xx is the site's (no attempt spent), but a filing whose own write fails run after run while the site
+    answers others would spend its AI calls every 15 minutes for ever: after MAX_DEFERRALS runs it spends one."""
+    from bse_intel.pipeline import MAX_DEFERRALS
+    from bse_intel.sinks.base import SinkUnavailable
+
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-slow", "Order win", now, "Company Update")
+    pipeline, sink, fake = build(settings, [f], {}, {})
+
+    def unavailable(*a, **k):
+        raise SinkUnavailable("the platform API answered 500 through every retry")
+
+    monkeypatch.setattr(pipeline, "analyze", unavailable)
+    first = pipeline._attempt(f, bulk=False, memory_complete=True)
+    assert first.update["status"] == "PENDING" and first.update["last_error"].startswith("deferred 1x: the platform")
+    pipeline._unreachable = 0   # another filing was written meanwhile: the site is up
+    worn = f.model_copy(update={"last_error": f"deferred {MAX_DEFERRALS}x: the platform did not answer (500)"})
+    assert pipeline._attempt(worn, bulk=False, memory_complete=True).update["status"] == "FAILED"
+    # the site down for everyone (the filing before also failed): no attempt spent however many times
+    pipeline._unreachable = 1
+    assert pipeline._attempt(worn, bulk=False, memory_complete=True).update["status"] == "PENDING"

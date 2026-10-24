@@ -49,7 +49,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           files=$(ls docs/audit/live/held-*$(date -u +%F)*.json docs/audit/live/critic-$(date -u +%F).json 2>/dev/null)
+          [ -n "$files" ] || { echo "nothing exported"; exit 0; }
           cp $files "$RUNNER_TEMP/"
+          # out of the tree before the checkout: the branch may already have today's file (an earlier run, or
+          # maintenance.yml's export), and the checkout refuses to overwrite an untracked one
+          git reset -q --hard && git clean -qf docs/audit/live/
           git fetch -q origin "$BRANCH"
           git checkout -q -B "$BRANCH" "origin/$BRANCH"
           mkdir -p docs/audit/live

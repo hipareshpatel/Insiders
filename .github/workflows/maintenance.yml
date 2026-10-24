@@ -152,7 +152,7 @@ jobs:
       - name: Commit the export
         if: inputs.command == 'export-held' || inputs.command == 'export-critic'
         working-directory: .
-        # the files are copied aside and back, as audit-export.yml does: written in main's tree, a file the branch
+        # the files are copied aside and back (audit-export.yml does the same): written in main's tree, a file the branch
         # already has (audit-export's held-<date>.json the same day) made the checkout refuse; nothing new is no commit
         env:
           BRANCH: ${{ vars.AUDIT_BRANCH || 'claude/gracious-goodall-jn9buu' }}
@@ -202,7 +202,8 @@ jobs:
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
       # only the timeout means companies are left: the command ends by itself when its share is done, and when NSE
-      # refuses the session (no next pass then, so a refusal is never pressed on)
+      # refuses the session (exit 75: the shard fails, no next pass now, so a refusal is never pressed on; recover.yml
+      # starts the seed again once the next morning)
       - name: Seed this shard's companies
         run: |
           code=0

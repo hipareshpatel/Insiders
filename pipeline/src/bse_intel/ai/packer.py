@@ -66,14 +66,16 @@ def _quotes(answer: Any) -> list[str]:
 
 
 def misplaced(answer: dict, own: str, others: list[str]) -> bool:
-    """True when the answer's quotes are found more often in another task's input than in its own: the model wrote that
-    task's card under this id. An answer with no quotes, or quotes shared alike, is not judged."""
-    quotes = _quotes(answer)
-    if not quotes:
-        return False
-    hits = lambda text: sum(q in text for q in quotes)  # noqa: E731
-    mine = hits(_flat(own))
-    return any(hits(_flat(other)) > mine for other in others)
+    """True when more of the answer's quotes are found only in one other task's input than only in its own: the model
+    wrote that task's card under this id. Only a quote found in exactly one input counts, so a generic line common to
+    filings ("Outcome of the Board Meeting held on ...") never decides; an answer with none such is not judged."""
+    texts = [_flat(own)] + [_flat(other) for other in others]
+    counts = [0] * len(texts)
+    for quote in _quotes(answer):
+        where = [i for i, text in enumerate(texts) if quote in text]
+        if len(where) == 1:
+            counts[where[0]] += 1
+    return any(n > counts[0] for n in counts[1:])
 
 
 class PackedItem(_Lenient):

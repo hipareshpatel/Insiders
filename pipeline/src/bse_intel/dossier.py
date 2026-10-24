@@ -515,7 +515,7 @@ STANDALONE_KEY = "standalone"
 _KEYED_LISTS = {
     "financial_metrics": lambda e: (e.get("metric"), e.get("period")),
     "ownership": lambda e: e.get("period"),
-    "timeline": lambda e: (e.get("news_id"), e.get("date")),
+    "timeline": lambda e: e.get("id") or (e.get("news_id"), e.get("date"), e.get("summary")),
 }
 
 
@@ -559,7 +559,7 @@ def keep_concurrent_writes(merged: dict, read: dict | None, fresh: dict | None) 
                 elif key == "ownership":
                     rows = sorted(rows, key=lambda o: (str(due_date(o.get("period")) or ""), str(o.get("as_of") or "")))[-8:]
                 else:
-                    rows = sorted(rows, key=lambda t: str(t.get("date") or ""))
+                    rows = sorted(rows, key=lambda t: str(t.get("date") or ""))[-MAX_TIMELINE:]
                 merged[key] = rows
                 kept.append(f"{key} (+{len(added)})")
     return kept

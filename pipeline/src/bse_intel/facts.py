@@ -27,6 +27,11 @@ _MATERIALS = ("raw_material_cost", "purchases_stock_in_trade", "inventory_change
 # investments, and Kajaria's Q2FY27 read "net debt ₹291.98 Cr" where its release states net cash of ₹635 Cr
 _BALANCE = (("inventories_cr", "inventories"), ("receivables_cr", "trade receivables"), ("gross_debt_cr", "borrowings"))
 
+MIN_BPS = 10        # a smaller move of a share or margin is rounding
+MAX_TAX = 60        # an effective rate above it (or below zero) is a small or one-off profit, not a rate
+LENDER_TEMPLATES = {"BANKING", "NBFC", "GI", "LI"}
+_LENDER_LINES = {"interest_earned", "interest_expended", "gnpa_pct", "nnpa_pct", "provisions", "gross_premium",
+                 "net_premium", "incurred_claims"}
 _ORDER = ("EBITDA margin", "Cost of materials", "Cash flow", "Balance sheet", "Employee cost", "Net profit",
           "Effective tax rate", "Other income")
 
@@ -71,6 +76,8 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
     index = SourceIndex(filed_text) if filed_text else None
     now_p, ago_p = tagged.period, prior_year_period(tagged.period) or ""
     out: list[Fact] = []
+    # a bank, lender or insurer: no cost of goods, EBITDA, cash conversion or working capital means anything there
+    lender = getattr(tagged, "template", "") in LENDER_TEMPLATES or any(m in _LENDER_LINES for m, _ in val)
 
     def get(metric: str, period: str) -> float | None:
         return val.get((metric, period))
@@ -82,13 +89,15 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
     revenue, revenue0 = get("revenue", now_p), get("revenue", ago_p)
 
     def share(label: str, part_now: float | None, part_ago: float | None, inputs: tuple[str, ...]) -> None:
-        if part_now is None or not revenue or revenue <= 0:
+        # a zero is the template's filler (a services company's "cost of materials 0.0%"), and a loss is no margin
+        if not part_now or part_now < 0 or not revenue or revenue <= 0:
             return
         level = part_now / revenue * 100
         out.append(Fact("", "pct", round(level, 1), base="revenue"))
-        if part_ago is not None and revenue0 and revenue0 > 0 and like_for_like("revenue", *inputs):
-            before = part_ago / revenue0 * 100
-            move, sign = _bps(level, before)
+        before = part_ago / revenue0 * 100 if part_ago and part_ago > 0 and revenue0 and revenue0 > 0 else None
+        move, sign = _bps(level, before) if before is not None else (0, 0)
+        # a move under 10 bps is rounding, not news ("up 2 bps", "unchanged 0 bps")
+        if before is not None and move >= MIN_BPS and like_for_like("revenue", *inputs):
             out.append(Fact("", "pct", round(before, 1), base="revenue"))
             out.append(Fact(f"{label} {now_p}: {level:.1f}% of revenue against {before:.1f}% in {ago_p} "
                             f"({_word(sign)} {move} bps)", "bps", move, sign))
@@ -99,55 +108,68 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
         parts = [get(m, period) for m in metrics]
         return sum(p for p in parts if p is not None) if parts[0] is not None else None
 
-    share("Cost of materials and goods", total(_MATERIALS, now_p), total(_MATERIALS, ago_p),
-          tuple(m for m in _MATERIALS if get(m, ago_p)))
-    share("Employee cost", get("employee_cost", now_p), get("employee_cost", ago_p), ("employee_cost",))
-
-    margin, margin0 = get("ebitda_margin", now_p), get("ebitda_margin", ago_p)
-    if margin is not None and margin0 is not None and like_for_like("revenue", "pbt"):
-        move, sign = _bps(margin, margin0)
-        out.append(Fact("", "pct", round(margin0, 1)))
-        out.append(Fact(f"EBITDA margin {now_p}: {margin:.1f}% against {margin0:.1f}% in {ago_p} ({_word(sign)} {move} bps)",
-                        "bps", move, sign))
-    share("Net profit", get("pat", now_p), get("pat", ago_p), ("pat",))
+    if not lender:
+        share("Cost of materials and goods", total(_MATERIALS, now_p), total(_MATERIALS, ago_p),
+              tuple(m for m in _MATERIALS if get(m, ago_p)))
+        share("Employee cost", get("employee_cost", now_p), get("employee_cost", ago_p), ("employee_cost",))
+        margin, margin0 = get("ebitda_margin", now_p), get("ebitda_margin", ago_p)
+        if margin is not None and margin0 is not None and margin > 0 and margin0 > 0 and like_for_like("revenue", "pbt"):
+            move, sign = _bps(margin, margin0)
+            if move >= MIN_BPS:
+                out.append(Fact("", "pct", round(margin0, 1)))
+                out.append(Fact(f"EBITDA margin {now_p}: {margin:.1f}% against {margin0:.1f}% in {ago_p} "
+                                f"({_word(sign)} {move} bps)", "bps", move, sign))
+        share("Net profit", get("pat", now_p), get("pat", ago_p), ("pat",))
 
     pbt, pbt0 = get("pbt", now_p), get("pbt", ago_p)
-    other, other0 = get("other_income", now_p), get("other_income", ago_p)
-    if pbt and pbt > 0 and other is not None and other > 0:
-        level = other / pbt * 100
-        text = f"Other income {now_p}: {level:.1f}% of profit before tax"
-        if pbt0 and pbt0 > 0 and other0 is not None and like_for_like("pbt", "other_income"):
-            text += f" against {other0 / pbt0 * 100:.1f}% in {ago_p}"
-            out.append(Fact("", "pct", round(other0 / pbt0 * 100, 1)))
-        out.append(Fact(text, "pct", round(level, 1)))
-    tax, tax0 = get("tax_expense", now_p), get("tax_expense", ago_p)
-    if pbt and pbt > 0 and tax is not None:
-        text = f"Effective tax rate {now_p}: {tax / pbt * 100:.1f}%"
-        if pbt0 and pbt0 > 0 and tax0 is not None and like_for_like("pbt", "tax_expense"):
-            text += f" against {tax0 / pbt0 * 100:.1f}% in {ago_p}"
-            out.append(Fact("", "pct", round(tax0 / pbt0 * 100, 1)))
-        out.append(Fact(text, "pct", round(tax / pbt * 100, 1)))
 
-    # Cash flow: filed for six and twelve months only, so the latest such period in the file
-    for period in sorted({p for m, p in val if m == "operating_cash_flow" and p[:2] in ("H1", "FY", "H2")},
-                         key=lambda p: (p[-2:], p.startswith("FY")), reverse=True)[:1]:
+    def ratio(part: float | None, whole: float | None, top: float) -> float | None:
+        """part / whole in %, only where it means something: a profit before tax, and a share within 0-top."""
+        if part is None or not whole or whole <= 0:
+            return None
+        value = part / whole * 100
+        return value if 0 <= value <= top else None
+
+    # a lender's other income is its fee income, most of its profit, and no sign of quality
+    other_now = None if lender else ratio(get("other_income", now_p), pbt, 100)
+    if other_now and other_now >= 0.5:
+        text = f"Other income {now_p}: {other_now:.1f}% of profit before tax"
+        other_then = ratio(get("other_income", ago_p), pbt0, 100)
+        if other_then is not None and like_for_like("pbt", "other_income"):
+            text += f" against {other_then:.1f}% in {ago_p}"
+            out.append(Fact("", "pct", round(other_then, 1)))
+        out.append(Fact(text, "pct", round(other_now, 1)))
+    tax_now = ratio(get("tax_expense", now_p), pbt, MAX_TAX)
+    if tax_now and tax_now >= 0.5:
+        text = f"Effective tax rate {now_p}: {tax_now:.1f}%"
+        tax_then = ratio(get("tax_expense", ago_p), pbt0, MAX_TAX)
+        if tax_then is not None and like_for_like("pbt", "tax_expense"):
+            text += f" against {tax_then:.1f}% in {ago_p}"
+            out.append(Fact("", "pct", round(tax_then, 1)))
+        out.append(Fact(text, "pct", round(tax_now, 1)))
+
+    # Cash flow: filed for six and twelve months only, so the latest such period in the file; not a lender's, whose
+    # operating cash flow is its lending
+    periods = sorted({p for m, p in val if m == "operating_cash_flow" and p[:2] in ("H1", "FY", "H2")},
+                     key=lambda p: (p[-2:], p.startswith("FY")), reverse=True)[:1]
+    for period in [] if lender else periods:
         cfo, capex, pat = get("operating_cash_flow", period), get("capex", period), get("pat", period)
         parts = [f"cash from operations {_cr(cfo)}"]
-        if pat and pat > 0:
+        if cfo > 0 and pat and pat > 0:   # a conversion of a negative cash flow says nothing a reader can use
             conversion = cfo / pat * 100
             parts.append(f"{conversion:.0f}% of net profit {_cr(pat)}")
             out.append(Fact("", "pct", round(conversion)))
-        if capex is not None:
+        if capex:   # a zero is the template's filler
             spend = abs(capex)   # filed as an outflow, with either sign
             parts += [f"capex {_cr(spend)}", f"free cash flow {_cr(cfo - spend)}"]
         out.append(Fact(f"Cash flow {period}: " + ", ".join(parts)))
 
     sheet = getattr(tagged, "balance_sheet", None)
-    if sheet is not None and not sheet.is_empty():
+    if sheet is not None and not sheet.is_empty() and not lender:
         parts = []
         for field, word in _BALANCE:
             now_v = getattr(sheet, field, None)
-            if now_v is None:
+            if not now_v or now_v < 0:   # a zero is the template's filler
                 continue
             # the file's own earlier date (March for a half year), like for like by construction; else the latest
             # earlier statement in memory that carries the line, only when this filing prints it

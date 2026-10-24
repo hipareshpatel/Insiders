@@ -158,3 +158,22 @@ def test_ebitda_change_stands_against_a_release_printing_its_own_ebitda():
         if m.period == "Q2FY27":
             m.yoy_pct = 24.9
     assert not computed.build_pool("Total Sales 1,468.26 1,180.00", tagged2).has("pct", 24.9, 1, 1)
+
+
+def test_no_ratio_that_means_nothing():
+    # a lender (on-off run, 24 Oct: YES Bank "other income 142.9% of profit", "cash conversion 17%")
+    bank = _tagged(revenue=(1000, 900), pbt=(100, 90), other_income=(143, 170), tax_expense=(20, 23),
+                   operating_cash_flow=(371, None), pat_h1=(2156, None))
+    bank.template = "BANKING"
+    texts = [f.text for f in results_facts(bank, STATEMENT) if f.text]
+    assert texts == ["Effective tax rate Q2FY27: 20.0%"]
+    # filler zeros, a loss margin, a negative tax rate, a negative cash conversion, a move under 10 bps
+    odd = _tagged(revenue=(1200, 1000), raw_material_cost=(0, 0), pat=(-80, 60), pbt=(10, 160), tax_expense=(-22, 38),
+                  other_income=(64, 15), employee_cost=(110.2, 91.7), operating_cash_flow=(-42, None), capex=(0, None),
+                  pat_h1=(97, None))
+    texts = "\n".join(f.text for f in results_facts(odd, STATEMENT) if f.text)
+    assert "Cost of materials" not in texts and "Net profit" not in texts and "tax rate" not in texts
+    assert "Other income" not in texts                       # 640% of a small profit
+    assert "Cash flow H1FY27: cash from operations -₹42 Cr" in texts and "% of net profit" not in texts
+    assert "capex" not in texts
+    assert "Employee cost Q2FY27: 9.2% of revenue\n" in texts + "\n"   # 9.18% against 9.17%: no move given

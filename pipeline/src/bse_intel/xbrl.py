@@ -100,6 +100,10 @@ RESULT_TAGS = {
     "CashFlowsFromUsedInFinancingActivities": "financing_cash_flow",
     "IncreaseDecreaseInCashAndCashEquivalents": "net_cash_flow",
     "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": "capex",
+    # capitalised R&D and software: Tejas Networks' H1FY27 intangible spend (₹358.59 Cr) was nine times its plant and
+    # equipment, and free cash flow without it read half the burn (on-off review, 24 Oct 2026)
+    "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": "capex_intangible",
+    "PurchaseOfIntangibleAssetsUnderDevelopment": "capex_intangible_wip",
 }
 # Insurers file neither template above. SEBI gives them their own taxonomies and the names share almost
 # nothing with a manufacturer's: a general insurer's top line is premium earned and its profit comes out of
@@ -203,7 +207,8 @@ BALANCE_SUMS = {"investments_cr": ("investments_noncurrent", "investments_curren
                 "receivables_cr": ("receivables_current", "receivables_noncurrent"),
                 "payables_cr": ("payables_current", "payables_noncurrent")}
 PER_SHARE = {"eps"}
-CASH_FLOW = {"operating_cash_flow", "investing_cash_flow", "financing_cash_flow", "net_cash_flow", "capex"}
+CASH_FLOW = {"operating_cash_flow", "investing_cash_flow", "financing_cash_flow", "net_cash_flow", "capex", "capex_intangible",
+             "capex_intangible_wip"}
 PERCENT = {"ebitda_margin", *RATIO_TAGS.values()}
 CONFIRM = ("revenue", "pat")  # figures looked for in the PDF text before the file is trusted
 

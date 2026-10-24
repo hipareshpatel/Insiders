@@ -87,12 +87,16 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
         return all(_printed(index, get(m, ago_p)) for m in metrics if get(m, ago_p))
 
     revenue, revenue0 = get("revenue", now_p), get("revenue", ago_p)
+    # revenue that is not the business: GOCL's ₹4.1 Cr against ₹62.65 Cr of other income gave "net margin 985%"
+    token_revenue = bool(revenue) and (get("other_income", now_p) or 0) > 0.5 * revenue
 
     def share(label: str, part_now: float | None, part_ago: float | None, inputs: tuple[str, ...]) -> None:
         # a zero is the template's filler (a services company's "cost of materials 0.0%"), and a loss is no margin
-        if not part_now or part_now < 0 or not revenue or revenue <= 0:
+        if not part_now or part_now < 0 or not revenue or revenue <= 0 or token_revenue:
             return
         level = part_now / revenue * 100
+        if level > 100:
+            return
         out.append(Fact("", "pct", round(level, 1), base="revenue"))
         before = part_ago / revenue0 * 100 if part_ago and part_ago > 0 and revenue0 and revenue0 > 0 else None
         move, sign = _bps(level, before) if before is not None else (0, 0)
@@ -164,9 +168,12 @@ def results_facts(tagged, filed_text: str, balance_history: list[dict] | None = 
             conversion = cfo / pat * 100
             parts.append(f"{conversion:.0f}% of net profit {_cr(pat)}")
             out.append(Fact("", "pct", round(conversion)))
-        if capex:   # a zero is the template's filler
-            spend = abs(capex)   # filed as an outflow, with either sign
-            parts += [f"capex {_cr(spend)}", f"free cash flow {_cr(cfo - spend)}"]
+        # filed as outflows, with either sign; intangibles (capitalised R&D, software) are capex too
+        intangible = sum(abs(get(m, period) or 0) for m in ("capex_intangible", "capex_intangible_wip"))
+        if capex or intangible:   # a zero is the template's filler
+            spend = abs(capex or 0) + intangible
+            what = f"capex {_cr(spend)}" + (f" (of which intangible assets {_cr(intangible)})" if intangible else "")
+            parts += [what, f"free cash flow {_cr(cfo - spend)}"]
         out.append(Fact(f"Cash flow {period}: " + ", ".join(parts)))
 
     sheet = getattr(tagged, "balance_sheet", None)

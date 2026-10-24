@@ -185,3 +185,13 @@ def test_cash_flow_only_for_the_cards_own_half():
     tagged.metrics += [FinancialMetric(metric="operating_cash_flow", period="H1FY26", value=1060.96),
                        FinancialMetric(metric="pat", period="H1FY26", value=820.5)]
     assert not any(f.text.startswith("Cash flow") for f in results_facts(tagged, STATEMENT))
+
+
+def test_intangible_capex_counts_and_token_revenue_gives_no_shares():
+    tagged = _tagged(revenue=(1200, 1000), operating_cash_flow=(-311.93, None), capex=(-38.59, None))
+    tagged.metrics.append(FinancialMetric(metric="capex_intangible_wip", period="H1FY27", value=358.59))
+    line = next(f.text for f in results_facts(tagged, STATEMENT) if f.text.startswith("Cash flow"))
+    assert line == ("Cash flow H1FY27: cash from operations -₹311.93 Cr, capex ₹397.18 Cr (of which intangible assets "
+                    "₹358.59 Cr), free cash flow -₹709.11 Cr")
+    gocl = _tagged(revenue=(4.11, 30), pat=(40.5, 10), other_income=(62.65, 20), employee_cost=(3.38, 21.9))
+    assert not any("of revenue" in f.text for f in results_facts(gocl, STATEMENT))

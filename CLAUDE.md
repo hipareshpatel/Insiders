@@ -74,6 +74,10 @@ Read before changing anything:
 
 ## Status and next steps
 
+- **Start here (24 Oct 2026, account switch): `docs/HANDOVER.md`.** It holds the state, the two main tasks (the 95%-right
+  go-live gate and the wrong-card audit loop: audit, fix the class, on/off over stored cards, blind sample, ship, record),
+  the daily routine to recreate on the new account (its prompt verbatim), the open WRONG classes and every pending item.
+  Latest day: 65 cards, 38% right, 23% WRONG (24 Oct); fixes F108-F111 merged (#91-#94).
 - **Now (2026-10-20): production is live.** `pipeline.yml` on `main` every 15 min (GitHub Actions, D1 `bse-index-nse`,
   Worker `insiders`); the live window is the last 7 days, today first; `deploy-web.yml` deploys every merge to `main`.
   The cloud session leads: it merges green PRs from this branch to `main` (owner's approvals, `docs/APPROVALS.md`),

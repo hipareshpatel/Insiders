@@ -161,3 +161,9 @@ below (keys from the keys file, 5 workers) and logs to `data\logs`.
 | `pipeline/config/sectors.toml` | Sector lenses and KPIs |
 | `pipeline/config/prompts/*.md` | Prompt templates |
 | `pipeline/config/market.toml` | Size buckets, market-data limits |
+
+## Daily card audit tools
+
+`pipeline/scripts/daily_audit/`: `reviewer_prompt.txt` (the blind reviewer's instructions; placeholders WORKDIR, XX,
+`<repo>`, EXTRA, FIELDS), `ext.py` (PDF text by page, run with `python -I`), `onoff_duplicates.py <workdir>` (F110 on/off over
+card pairs), `onoff_ratings.py <feed.json>...` (F111 on/off over rating cards). How a run is done: `docs/HANDOVER.md` §4.

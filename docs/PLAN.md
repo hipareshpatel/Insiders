@@ -13,6 +13,14 @@ reviews every push and fixes what it finds.
 
 ## Pending work (the single list; refreshed 2026-10-20 11:30 IST, 22 Oct block added 18:40 IST)
 
+**24 Oct 2026 (handover before the owner's account switch): read `docs/HANDOVER.md` first.** Daily audit 65 cards: 38% right,
+23% WRONG (bar 95% right). Shipped F108-F111 (#91-#94): broken text and audio-link letters, EBITDA told two ways, a
+repeat read before its original, ratings beside the same agency only. Open, commonest first: model misreads of deck/call/
+chart figures (incl. currency and "billion" slips), repeat cards for one event from different documents, results blocks
+mixing bases (Geojit restated), attribution, event types (buyback as RIGHTS, stake sale as FUNDRAISE), arithmetic words
+("accelerated"), the prune dropping true points (15 of 16 true). Waiting: fill-trades remainder, the requeue list in
+`docs/audit/actions-pending.md`, owner decisions B3/A2/A3/B5/G8/G9, recreating the daily routine on the new account.
+
 **22 Oct 2026 (owner's day plan: the data chain audit, then fixes; details in `docs/audit/work-2026-10-22.md`,
 `docs/audit/data-chain-2026-10-22.md`, the day's card audit in `docs/audit/live/2026-10-22-audit.md`).**
 - Done (merged #65-#74): the data chain fix plan §5 items 1-8: years not ending in March, derived quarters marked,

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pytest
-from conftest import api_error, completion, gateway_config, openai
+from conftest import ENV, api_error, completion, gateway_config, openai
 
 from bse_intel.ai.gateway import AllProvidersFailed
 from bse_intel.models import Pass1Result
@@ -547,3 +547,57 @@ def test_a_preferred_model_takes_most_of_a_weighted_route_only_when_set():
     assert weights(ENV) == {"a:m-a": 4, "b:m-b": 3}
     assert weights({**ENV, "PREFER_MODEL": "b:m-b"}) == {"a:m-a": 4, "b:m-b": 3 * PREFER_WEIGHT}
     assert weights({"A_KEY": "ka", "PREFER_MODEL": "b:m-b"})["b:m-b"] == 3
+
+
+# ------------------------------------------------------------------ second keys and the second opinion (survey, 24 Oct 2026)
+
+def _two_key_providers():
+    providers = {name: {"base_url": f"https://{name}.invalid/v1", "api_key_env": f"{name.upper()}_KEY"}
+                 for name in ("a", "b", "c")}
+    providers["a_2"] = {"same_as": "a", "api_key_env": "A2_KEY"}
+    return providers
+
+
+def test_a_second_opinion_is_not_the_writers_model_on_its_second_key(make_gateway):
+    """A card written on the second key's Gemini was re-checked by the first key's same model: 'another provider' by
+    name only. Now the writer's provider by any key, and its model family on any provider, go last."""
+    config = gateway_config(route({"provider": "a", "model": "gemini-flash"}, {"provider": "b", "model": "llama-70b"}),
+                            providers=_two_key_providers())
+    gw, _ = make_gateway(config, {"gemini-flash": [GOOD, GOOD], "llama-70b": [GOOD]}, env={**ENV, "A2_KEY": "k2"})
+    assert [t.key for t in gw.routes["r"]] == ["a:gemini-flash", "a_2:gemini-flash", "b:llama-70b"]
+    second = gw.complete_json("r", "s", "u", Pass1Result, avoid_providers=("a_2", "a_2/gemini-flash"))
+    assert second.provider == "b"
+    # and the other way round: written on the first key, the second key is avoided too
+    assert [t.key for t in gw._ordered("r", ("a", "a/gemini-flash"))][-2:] == ["a:gemini-flash", "a_2:gemini-flash"]
+
+
+def test_a_second_opinion_avoids_the_writers_model_family_on_another_provider(make_gateway):
+    config = gateway_config(route({"provider": "a", "model": "glm-4.5-flash"}, {"provider": "c", "model": "glm-5.3"},
+                                  {"provider": "b", "model": "llama-70b"}))
+    gw, _ = make_gateway(config, {"llama-70b": [GOOD]})
+    order = [t.key for t in gw._ordered("r", ("a", "a/glm-4.5-flash"))]
+    assert order == ["b:llama-70b", "a:glm-4.5-flash", "c:glm-5.3"]
+    # a provider name alone still avoids only that provider (no family to match)
+    assert [t.key for t in gw._ordered("r", ("a",))] == ["c:glm-5.3", "b:llama-70b", "a:glm-4.5-flash"]
+    assert gw.complete_json("r", "s", "u", Pass1Result, avoid_providers=("a", "a/glm-4.5-flash")).provider == "b"
+
+
+def test_the_live_reserve_covers_a_second_key_of_a_reserved_model(make_gateway):
+    from datetime import datetime
+
+    config = gateway_config(route({"provider": "a", "model": "flash", "limits": {"rpd": 20}},
+                                  {"provider": "b", "model": "lite"}),
+                            providers=_two_key_providers(),
+                            live_reserve={"share": 0.8, "bulk_hours": "21:00-09:00", "models": ["a:flash"]})
+    gw, _ = make_gateway(config, {"flash": [GOOD], "lite": [GOOD]}, env={**ENV, "A2_KEY": "k2"})
+    assert "a_2:flash" in gw.reserved
+    gw.limiters["a:flash"].quota.day_requests = 3
+    gw.limiters["a_2:flash"].quota.day_requests = 3
+    gw.local_now = lambda: datetime(2026, 10, 21, 15, 15)
+    assert gw.complete_json("r", "s", "u", Pass1Result, bulk=True).model == "lite"
+
+
+def test_a_backfill_pack_is_not_held_for_models_kept_for_live_filings(make_gateway):
+    gw, _ = _reserve_gateway(make_gateway, used=3, hour=15)
+    gw.routes["only_flash"] = [t for t in gw.routes["r"] if t.model == "flash"]
+    assert gw.can_serve("only_flash") and not gw.can_serve("only_flash", bulk=True)

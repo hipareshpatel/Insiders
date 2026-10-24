@@ -192,3 +192,22 @@ def test_a_reviewed_release_never_cuts_a_sentence_or_a_point_that_changed():
              "drops": [{"path": "what_happened[0]"}, {"path": "what_happened[1]"}]}]
     report = release_reviewed(Sink(), plan, "x")
     assert report["released"] == 0 and len(report["kept"]) == 3
+
+
+def test_pruned_points_are_kept_behind_the_tap_not_deleted():
+    """Owner, 24 Oct 2026: the daily audits found 32 of 34 pruned points true; a point the quote check cannot carry
+    leaves the face for "Facts the checks could not quote" instead of being deleted."""
+    card = copy.deepcopy(CARD)
+    prune_card(card)
+    assert card["unchecked"] == ["Order book: ₹5,000 Cr", "other_income: ₹9 Cr",
+                                 "Margin expanded on lower raw material costs this quarter", "Order book ₹5,000 Cr in the quarter"]
+    out = Pass2Output.model_validate({"is_material": True, "card": {
+        "impact_level": "MODERATE", "headline": CARD["headline"], "what_happened": CARD["what_happened"],
+        "key_numbers": CARD["key_numbers"], "why_it_matters": CARD["why_it_matters"],
+        "notable_changes": [{"metric": "other_income", "previous": "₹4 Cr", "current": "₹9 Cr", "change": "+125%"}]}})
+    moved: list[str] = []
+    assert prune_quote_failures(out, [i[len(PREFIX):] for i in CARD["review"]["issues"]], moved) is not None
+    assert moved == ["Order book: ₹5,000 Cr", "other_income: ₹4 Cr → ₹9 Cr (+125%)",
+                     "Margin expanded on lower raw material costs this quarter", "Order book ₹5,000 Cr in the quarter"]
+    kept: list[str] = []
+    assert prune_quote_failures(out, ["something else entirely"], kept) is None and kept == []

@@ -511,6 +511,60 @@ def _cap_metrics(entries: list[dict]) -> list[dict]:
 STANDALONE_KEY = "standalone"
 
 
+# Lists another writer may add entries to while the pipeline holds a dossier, and how an entry is told apart
+_KEYED_LISTS = {
+    "financial_metrics": lambda e: (e.get("metric"), e.get("period")),
+    "ownership": lambda e: e.get("period"),
+    "timeline": lambda e: e.get("id") or (e.get("news_id"), e.get("date"), e.get("summary")),
+}
+
+
+def keep_concurrent_writes(merged: dict, read: dict | None, fresh: dict | None) -> list[str]:
+    """Carry into ``merged`` (in place) what another writer stored after ``read`` was taken; returns the parts kept.
+
+    A live card holds its company's memory for minutes (the AI call) and writes it back whole, so a memory job that wrote
+    in between (deals, insider trades, pledges, corporate actions, DGTR, governance, a seed) was lost. The nightly pauses
+    the pipeline for its jobs; market-data's deals step, the seed shards and the other workflows did not (survey, 24 Oct
+    2026). A three-way merge on the stored copy: a part only the other writer changed is theirs; a part only this card
+    changed is ours; where both changed it, a dict is merged a level down and a keyed list gains the other writer's new
+    entries (financial figures, ownership quarters, timeline lines), this card's own entries winning a clash."""
+    if not fresh or fresh == read:
+        return []
+    read = read or {}
+    kept = []
+    for key, theirs in fresh.items():
+        if key == "updated_at":
+            continue
+        base, mine = read.get(key), merged.get(key)
+        if theirs == base or theirs == mine:
+            continue
+        if mine == base:
+            merged[key] = theirs
+            kept.append(key)
+        elif isinstance(theirs, dict) and isinstance(mine, dict):
+            base = base if isinstance(base, dict) else {}
+            for sub, value in theirs.items():
+                if value != base.get(sub) and mine.get(sub) == base.get(sub) and value != mine.get(sub):
+                    mine[sub] = value
+                    kept.append(f"{key}.{sub}")
+        elif key in _KEYED_LISTS and isinstance(theirs, list) and isinstance(mine, list):
+            ident = _KEYED_LISTS[key]
+            before = {ident(e) for e in base or [] if isinstance(e, dict)}
+            have = {ident(e) for e in mine if isinstance(e, dict)}
+            added = [e for e in theirs if isinstance(e, dict) and ident(e) not in before and ident(e) not in have]
+            if added:
+                rows = mine + added
+                if key == "financial_metrics":
+                    rows = _cap_metrics(rows)
+                elif key == "ownership":
+                    rows = sorted(rows, key=lambda o: (str(due_date(o.get("period")) or ""), str(o.get("as_of") or "")))[-8:]
+                else:
+                    rows = sorted(rows, key=lambda t: str(t.get("date") or ""))[-MAX_TIMELINE:]
+                merged[key] = rows
+                kept.append(f"{key} (+{len(added)})")
+    return kept
+
+
 def put_standalone(dossier: dict, metrics, balance, as_of: str, source: str) -> dict:
     """A consolidated filer's standalone figures, kept apart (owner, 2026-10-21: "we have standalone vs consolidated
     numbers in financials"): the company page shows either, as screener.in does. ``dossier["standalone"]`` holds

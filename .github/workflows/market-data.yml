@@ -18,6 +18,8 @@ concurrency:
 
 jobs:
   refresh:
+    # off with the schedule switch, as the pipeline and the nightly are (a dispatch, the watchdog's included, still runs)
+    if: github.event_name != 'schedule' || vars.PIPELINE_SCHEDULE == 'on'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 40
     defaults:
@@ -25,6 +27,7 @@ jobs:
         working-directory: pipeline
     env:
       BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
     steps:

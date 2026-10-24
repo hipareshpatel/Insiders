@@ -591,9 +591,14 @@ class NseClient:
         raise problem or AttachmentError(f"attachment download failed: {url}")
 
     def download(self, url: str, max_bytes: int = 8_000_000) -> bytes | None:
-        """One XBRL file. None when NSE serves something that is not XML."""
+        """One XBRL file. None when NSE serves something that is not XML, or a file over ``max_bytes``."""
         response = self._get(url)
-        body = response.content[:max_bytes]
+        body = response.content
+        if len(body) > max_bytes:
+            # cut at the cap it was well-formed at its start and failed later as a parse error; a file this large is
+            # skipped as the PDF downloads are
+            log.warning("XBRL file over %d bytes, skipped: %s", max_bytes, url)
+            return None
         return body if body.lstrip()[:200].lower().lstrip(b"\xef\xbb\xbf").startswith((b"<?xml", b"<xbrl")) else None
 
 

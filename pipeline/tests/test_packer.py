@@ -132,8 +132,68 @@ def test_nothing_on_the_packed_route_can_serve_so_no_wait_and_no_pack():
     import time
 
     gw = FakeGateway()
-    gw.can_serve = lambda route: False
+    gw.can_serve = lambda route, bulk=False: False
     started = time.monotonic()
     (result,) = _run(Packer(gw, size=5, wait_s=5), 1)
     assert time.monotonic() - started < 1 and result.model_label == "nvidia/nemotron"
     assert [c[0] for c in gw.calls] == ["pass2"]
+
+
+class _ScriptedGateway:
+    """Answers a pack with the items given, whatever the tasks were."""
+
+    def __init__(self, items):
+        self.items, self.calls = items, []
+
+    def complete_json(self, route, system, user, schema, **kw):
+        self.calls.append(route)
+        if schema is PackedReply:
+            return AIResult(PackedReply(results=self.items), "gemini", "gemini-3.6-flash", 1.0)
+        return AIResult(schema(is_material=False, event_type="OTHER", reason="own route"), "nvidia", "nemotron", 1.0)
+
+
+ALPHA = "Alpha Ltd has received an order worth Rs 120 crore from the Railways for signalling works."
+BETA = "Beta Ltd board approved the acquisition of a 51% stake in Gamma Pvt Ltd for Rs 45 crore."
+
+
+def _answer(reason, quote):
+    return {"is_material": True, "event_type": "ORDER_WIN", "reason": reason, "card": {"what_happened": [{"quote": quote}]}}
+
+
+def _send(items):
+    from bse_intel.ai.packer import _Job
+
+    jobs = [_Job("instructions", f"FILING TEXT:\n{ALPHA}", Pass1Result), _Job("instructions", f"FILING TEXT:\n{BETA}", Pass1Result)]
+    Packer(_ScriptedGateway(items), size=2)._send(jobs)
+    return [j.result.value.reason if j.result else None for j in jobs]
+
+
+def test_swapped_answers_are_not_put_on_the_other_companys_filing():
+    """The model answered t1 with t2's card and t2 with t1's: matched by id alone, Alpha's filing got Beta's card."""
+    swapped = [PackedItem(task_id="t1", answer=_answer("beta card", BETA)),
+               PackedItem(task_id="t2", answer=_answer("alpha card", ALPHA))]
+    assert _send(swapped) == [None, None]          # both go to their own route
+    right = [PackedItem(task_id="t1", answer=_answer("alpha card", ALPHA)),
+             PackedItem(task_id="t2", answer=_answer("beta card", BETA))]
+    assert _send(right) == ["alpha card", "beta card"]
+    no_quotes = [PackedItem(task_id="t1", answer={"is_material": True, "event_type": "ORDER_WIN", "reason": "a"})]
+    assert _send(no_quotes) == ["a", None]          # nothing to judge by: kept
+
+
+def test_an_id_answered_twice_is_no_answer():
+    twice = [PackedItem(task_id="t1", answer=_answer("first", ALPHA)),
+             PackedItem(task_id="t1", answer=_answer("second", ALPHA)),
+             PackedItem(task_id="t2", answer=_answer("beta card", BETA))]
+    assert _send(twice) == [None, "beta card"]
+
+
+def test_a_generic_quote_shared_by_filings_does_not_send_a_paraphrased_answer_away():
+    """An answer that paraphrased its own quotes and also quoted a line common to both filings was sent to the slower
+    route: only a quote found in exactly one task's input decides."""
+    from bse_intel.ai.packer import misplaced
+
+    common = "Outcome of the Board Meeting held on 23 October 2026"
+    own, other = f"{common}. {ALPHA}", f"{common}. {BETA}"
+    answer = {"card": {"what_happened": [{"quote": common}, {"quote": "Alpha won a large railway signalling order today"}]}}
+    assert not misplaced(answer, own, [other])
+    assert misplaced({"card": {"what_happened": [{"quote": common}, {"quote": BETA}]}}, own, [other])

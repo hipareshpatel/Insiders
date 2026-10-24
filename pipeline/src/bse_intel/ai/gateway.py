@@ -88,6 +88,22 @@ class AllProvidersFailed(AIError):
         super().__init__(f"{route}: no provider could serve the request ({detail})")
 
 
+# Model families by name: a second opinion, and the critic, are not of the writer's family, so the two do not share one
+# blind spot (a second key's "gemini_2" is still Gemini).
+_FAMILIES = (("gemini", "gemini"), ("gemma", "gemma"), ("glm", "glm"), ("nemotron", "nemotron"), ("deepseek", "deepseek"),
+             ("llama", "llama"), ("gpt-oss", "gpt-oss"), ("ministral", "mistral"), ("mistral", "mistral"),
+             ("qwen", "qwen"), ("minimax", "minimax"), ("kimi", "kimi"))
+
+
+def model_family(model_label: str | None) -> str:
+    """'gemini/gemini-3.6-flash' -> 'gemini'; 'openrouter/nvidia/nemotron-3.5-super-vl:free' -> 'nemotron'."""
+    low = (model_label or "").lower()
+    for word, name in _FAMILIES:
+        if word in low:
+            return name
+    return low.split("/", 1)[0] or "unknown"
+
+
 def expand_key_aliases(config: dict, env: dict[str, str]) -> dict:
     """A provider entry with `same_as = "<provider>"` is another key for that provider (owner, 2026-10-22: second keys for
     Gemini, Groq, NVIDIA and Z.AI, "work load will get divided"). It takes the base provider's settings, and every route
@@ -255,8 +271,15 @@ class AIGateway:
         zone = ZoneInfo(reserve.get("tz", "Asia/Kolkata"))
         self.local_now: Callable[[], datetime] = lambda: datetime.now(zone)
 
+        # a second key ("gemini_2", same_as = "gemini") is the same provider and the same models: what is avoided or
+        # reserved for its base is avoided or reserved for it too
+        self._base_provider = {name: conf["same_as"] for name, conf in config.get("providers", {}).items()
+                               if conf.get("same_as")}
         config = expand_key_aliases(config, env)
         providers = config.get("providers", {})
+        self.reserved = self.reserved | frozenset(
+            f"{alias}:{key.split(':', 1)[1]}" for alias, base in self._base_provider.items()
+            for key in self.reserved if key.split(":", 1)[0] == base)
         self._day_of = {name: _day_function(pconf.get("quota_tz")) for name, pconf in providers.items()}
         # a ledger row counts for its provider's own day (usage rows for both the UTC day and that day may be passed)
         today = {f"{u['provider']}:{u['model']}": u for u in usage_today or []
@@ -341,8 +364,9 @@ class AIGateway:
 
     def complete_json(self, route: str, system: str, user: str, schema: type[T], avoid_providers: tuple[str, ...] = (),
                       bulk: bool = False, allow: Callable[[Target], bool] | None = None) -> AIResult:
-        """One validated JSON reply. ``avoid_providers`` are tried only after every other target,
-        so a second opinion comes from a different provider whenever one is available. ``bulk`` marks a backfill
+        """One validated JSON reply. ``avoid_providers`` (provider names or model labels, see `_avoided`) are tried
+        only after every other target, so a second opinion comes from another provider and model family whenever one
+        is available. ``bulk`` marks a backfill
         request: it leaves the reserved models' live share alone (`[gateway.live_reserve]`). ``allow``, when given, leaves
         out every target it refuses (the critic: never a model of the card writer's own family)."""
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
@@ -377,13 +401,16 @@ class AIGateway:
             })
         return rows
 
-    def can_serve(self, route: str) -> bool:
+    def can_serve(self, route: str, bulk: bool = False) -> bool:
         """Whether any target on the route could take a request now: it has a key, is not switched off for this run,
-        has quota left for the day and is not cooling down. The packer asks before it holds a filing back to fill a
-        pack (22 Oct: 84 packs failed in two runs with every Gemini model at its day's quota)."""
+        has quota left for the day and is not cooling down, and for a backfill request (``bulk``) is not kept for live
+        filings. The packer asks before it holds a filing back to fill a pack (22 Oct: 84 packs failed in two runs with
+        every Gemini model at its day's quota; a backfill pack waited for models only live filings could use)."""
         now = time.monotonic()
         for t in self.routes.get(route, []):
             if not t.api_key or t.key in self.disabled or t.provider in self.disabled_providers:
+                continue
+            if bulk and self.reserved_for_live(t):
                 continue
             limiter, pquota = self.limiters[t.key], self.provider_quota.get(t.provider)
             if limiter.quota.exhausted() or (pquota and pquota.exhausted()):
@@ -419,7 +446,22 @@ class AIGateway:
         rotation = self._rotations.get(route)
         primary = rotation.order() if rotation else [t for t in targets if not t.spare]
         ordered = primary + [t for t in targets if t.spare]
-        return [t for t in ordered if t.provider not in avoid] + [t for t in ordered if t.provider in avoid]
+        if not avoid:
+            return ordered
+        avoided = [t for t in ordered if self._avoided(t, avoid)]
+        return [t for t in ordered if t not in avoided] + avoided
+
+    def base_provider(self, provider: str) -> str:
+        return self._base_provider.get(provider, provider)
+
+    def _avoided(self, target: Target, avoid: tuple[str, ...]) -> bool:
+        """``avoid`` holds provider names and model labels ("gemini_2/gemini-3.6-flash"): a target is avoided when it is
+        the same provider by any of its keys, or, for a label, a model of the same family on any provider (a second
+        opinion from the writer's own model on a second key checked nothing: AI-layer survey, 24 Oct 2026)."""
+        bases = {self.base_provider(a.split("/", 1)[0]) for a in avoid}
+        families = {model_family(a) for a in avoid if "/" in a}
+        return (self.base_provider(target.provider) in bases
+                or bool(families) and model_family(f"{target.provider}/{target.model}") in families)
 
     def _client(self, target: Target):
         with self._lock:

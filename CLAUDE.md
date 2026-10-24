@@ -23,9 +23,9 @@ Read before changing anything:
 
 - **Tasks come from `docs/TASKS.md`** (the cloud session leads, owner 2026-10-19). After every `git pull`, read it
   and work the OPEN tasks for your session in priority order; report there and commit with the task id.
-- Branch `claude/nice-goodall-ta0sxs` only; draft PR hipareshpatel/Insiders#1. Never push to
-  another branch or rewrite pushed history. `git pull` before editing: another session also
-  pushes to this branch.
+- Branch `claude/gracious-goodall-jn9buu` only (owner, 24 Oct 2026, after the account switch; it was
+  `claude/nice-goodall-ta0sxs`). PRs go from it to `main`. Never push to another branch or rewrite pushed history.
+  `git pull` before editing: another session may also push to this branch.
 - API keys live only in `C:\Users\Quali\insiders-keys.ps1` (outside the repo). Never print,
   log, commit or paste a key. Dot-source the file in each new shell: `. C:\Users\Quali\insiders-keys.ps1`.
 - Don't work around BSE's firewall. BSE blocks non-Indian IPs, which is why BSE work runs here.
@@ -51,7 +51,7 @@ Read before changing anything:
    `npx tsc -p . --noEmit` in `web/` for Worker or React changes.
 4. Before committing after a `git pull` or `git stash pop`, make sure no conflict markers remain:
    `git diff --check` and `git grep -n "^<<<<<<<"` must print nothing, and the tests must pass.
-   Commit with a clear message, `git push -u origin claude/nice-goodall-ta0sxs`, and watch CI on the PR.
+   Commit with a clear message, `git push -u origin claude/gracious-goodall-jn9buu`, and watch CI on the PR.
 5. Update `docs/SETUP.md` / `docs/TRACKER.md` when behaviour, commands or the test count change; never put project
    details back in `README.md`.
 
@@ -77,7 +77,9 @@ Read before changing anything:
 - **Start here (24 Oct 2026, account switch): `docs/HANDOVER.md`.** It holds the state, the two main tasks (the 95%-right
   go-live gate and the wrong-card audit loop: audit, fix the class, on/off over stored cards, blind sample, ship, record),
   the daily routine to recreate on the new account (its prompt verbatim), the open WRONG classes and every pending item.
-  Latest day: 65 cards, 38% right, 23% WRONG (24 Oct); fixes F108-F111 merged (#91-#94).
+  Latest day: 65 cards, 38% right, 23% WRONG (24 Oct); fixes F108-F111 merged (#91-#94). **Go-live bar since 24 Oct
+  (owner, D42): WRONG on the checked face ≤ 5%, pooled with its 95% interval (`pipeline/scripts/daily_audit/rates.py`);
+  the shadow critic is off (D41).**
 - **Now (2026-10-20): production is live.** `pipeline.yml` on `main` every 15 min (GitHub Actions, D1 `bse-index-nse`,
   Worker `insiders`); the live window is the last 7 days, today first; `deploy-web.yml` deploys every merge to `main`.
   The cloud session leads: it merges green PRs from this branch to `main` (owner's approvals, `docs/APPROVALS.md`),

@@ -754,7 +754,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
         )}
 
         <AiReading catalyst={catalyst}
-          facts={[...unverified, ...(calls?.unverified ?? [])]} insights={reading} takeaway={!reading.length && card.takeaway && !restates(card.takeaway, headline) ? card.takeaway : null}
+          facts={[...unverified, ...(card.unchecked ?? []), ...(calls?.unverified ?? [])]} insights={reading} takeaway={!reading.length && card.takeaway && !restates(card.takeaway, headline) ? card.takeaway : null}
           exporting={exporting} />
 
         {footer.length > 0 && (
@@ -1163,8 +1163,9 @@ function TechnicalTags({ row }: { row: CardRow }) {
 }
 
 /** The AI's own reading of the filing. Its interpretation (the catalyst, why it matters, the takeaway) sits on the
- *  face, marked as our reading and apart from the checked facts (owner 2026-10-20: "interpretation helps"; a blind
- *  review found 10% of such points overreach, so it is never shown as checked). Facts the checks could not quote stay
+ *  face, marked as our reading and apart from the checked facts (owner 2026-10-20: "interpretation helps"; owner
+ *  2026-10-24: it stays open and readable, and a fault only here does not count against the go-live bar, D42). A blind
+ *  review found 10% of such points overreach, so it is never shown as checked. Facts the checks could not quote stay
  *  behind a tap. */
 function AiReading({ catalyst, facts, insights, takeaway, exporting = false }: {
   catalyst: string | null; facts: Fact[]; insights: string[]; takeaway: string | null; exporting?: boolean;

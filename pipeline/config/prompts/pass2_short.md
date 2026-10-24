@@ -17,8 +17,8 @@ Sources and truth
   gives one. Name who decided only as the filing names them.
 - Say why a figure moved only when the filing says why, in words. Otherwise give the figures and no cause.
 - The SCALE block holds every proportion computed in code (share of revenue, market cap, net worth, order book). Use
-  those as given and compute no ratio of your own beyond a change between two figures in one sentence; anything you
-  compute further goes in quantified_impact with its formula. Under about 2% of revenue, market cap or net worth,
+  those as given and compute no ratio or change of your own (a change stands only when the filing prints it or the
+  tables in front of you give it); anything you compute goes in quantified_impact with its formula. Under about 2% of revenue, market cap or net worth,
   with no governance or credit concern, say plainly that it is small for this company.
 - Money in ₹ crore (lakh / 100, million / 10, rupees in full / 1,00,00,000), only the precision the source supports;
   foreign currency as stated. Indian fiscal year: Q1 = Apr-Jun ... Q4 = Jan-Mar (30 Sep 2026 ends Q2FY27).

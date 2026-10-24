@@ -58,3 +58,37 @@ def test_an_ebitda_its_own_filings_tell_two_ways_has_no_changes():
     assert snap["ebitda"] == {"value": 1128.74} and "yoy_pct" in snap["revenue"]
     one = m("ebitda", "Q2FY27", 1016.0, ("nse-1", 1016.0))
     assert "yoy_pct" in results_snapshot({"financial_metrics": rows + [one]}, "nse-1")["ebitda"]   # one reading keeps its changes
+
+
+def test_keep_concurrent_writes_is_a_three_way_merge():
+    from bse_intel.dossier import keep_concurrent_writes
+
+    read = {"pledges": None, "governance": {"auditor": "A", "quarters": []}, "guidance": [1],
+            "financial_metrics": [{"metric": "revenue", "period": "Q1FY27", "value": 1, "as_of": "a"}]}
+    mine = {"pledges": None, "governance": {"auditor": "B", "quarters": []}, "guidance": [1, 2],
+            "financial_metrics": [{"metric": "revenue", "period": "Q1FY27", "value": 1, "as_of": "a"},
+                                  {"metric": "revenue", "period": "Q2FY27", "value": 2, "as_of": "b"}]}
+    theirs = {"pledges": {"events": [1]}, "governance": {"auditor": "A", "quarters": [{"q": 1}]}, "guidance": [1],
+              "financial_metrics": [{"metric": "revenue", "period": "Q1FY27", "value": 1, "as_of": "a"},
+                                    {"metric": "pat", "period": "Q1FY27", "value": 9, "as_of": "c"},
+                                    {"metric": "revenue", "period": "Q2FY27", "value": 99, "as_of": "c"}],
+              "insider_trades": {"filings": ["x"]}}
+    kept = keep_concurrent_writes(mine, read, theirs)
+    assert mine["pledges"] == {"events": [1]} and mine["insider_trades"] == {"filings": ["x"]}   # only theirs changed
+    assert mine["governance"] == {"auditor": "B", "quarters": [{"q": 1}]}                       # merged a level down
+    assert mine["guidance"] == [1, 2]                                                            # only mine changed
+    figures = {(m["metric"], m["period"]): m["value"] for m in mine["financial_metrics"]}
+    assert figures == {("revenue", "Q1FY27"): 1, ("revenue", "Q2FY27"): 2, ("pat", "Q1FY27"): 9}   # mine wins a clash
+    assert "pledges" in kept and "governance.quarters" in kept
+    assert keep_concurrent_writes(mine, read, read) == [] and keep_concurrent_writes(mine, read, None) == []
+
+
+def test_keep_concurrent_writes_adds_the_other_writers_timeline_lines_by_id():
+    from bse_intel.dossier import keep_concurrent_writes
+
+    line = lambda i, d: {"id": i, "date": d, "news_id": None, "summary": i}  # noqa: E731
+    read = {"timeline": [line("t1", "2026-10-01")]}
+    mine = {"timeline": [line("t1", "2026-10-01"), line("t3", "2026-10-20")]}
+    theirs = {"timeline": [line("t1", "2026-10-01"), line("t2", "2026-10-10"), line("t2b", "2026-10-10")]}
+    keep_concurrent_writes(mine, read, theirs)
+    assert [t["id"] for t in mine["timeline"]] == ["t1", "t2", "t2b", "t3"]   # same day, no news id: both kept, in order

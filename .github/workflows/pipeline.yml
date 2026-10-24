@@ -50,6 +50,7 @@ jobs:
         working-directory: pipeline
     env:
       BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -111,8 +112,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          for w in $("$RUNNER_TEMP/venv/bin/python" -m bse_intel missed-jobs 2>/dev/null); do
-            gh workflow run "$w" --repo "$GITHUB_REPOSITORY" --ref main && echo "started $w"
+          # marked started only once the dispatch went through, so a failed one is tried again by the next run
+          for w in $("$RUNNER_TEMP/venv/bin/python" -m bse_intel missed-jobs); do
+            if gh workflow run "$w" --repo "$GITHUB_REPOSITORY" --ref main; then
+              echo "started $w" && "$RUNNER_TEMP/venv/bin/python" -m bse_intel missed-jobs --started "$w"
+            else
+              echo "::warning::could not start $w; the next run tries again"
+            fi
           done
       - name: Keep the last 8 days of text
         if: always()

@@ -1,6 +1,7 @@
 # Each universe company's last two quarters of earnings-call transcripts or investor presentations into memory
-# (call_seed.py; owner, 2026-10-20: the dossiers were too shallow; no Gemini). No card, no ledger row, no AI beyond the
-# free Z.AI / OpenRouter models of the memory_seed route. Resumable: it stops after 40 minutes and the next run goes on
+# (call_seed.py; owner, 2026-10-20: the dossiers were too shallow; no Gemini). No card, no ledger row. The memory_seed
+# route: the prepaid DeepSeek first while its secret is set (D24, the owner's approved seed with its cap), else the
+# free Z.AI / OpenRouter models. Resumable: it stops after 40 minutes and the next run goes on
 # from the next company; once every company is done each run returns at once.
 # At night, 16:15-23:45 UTC = 21:45-05:15 IST: Z.AI's free model takes one request at a time per key, which the live runs
 # share, so the seed runs when few filings arrive. A run that stops at its budget with companies left starts the next
@@ -40,6 +41,7 @@ jobs:
         working-directory: pipeline
     env:
       BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       DISCOVERY_SOURCE: nse

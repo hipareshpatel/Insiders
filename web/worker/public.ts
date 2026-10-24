@@ -3,6 +3,7 @@
 // (dates, the cursor) instead of walking a table, and hot responses are kept
 // briefly in the isolate and, on a custom domain, in Cloudflare's edge cache.
 import { dedupeEvents } from "../shared/events";
+import { isCompanyKey } from "../shared/companyKey";
 import type { CallQuarter, PublicSystemResponse } from "../shared/types";
 import { Hono } from "hono";
 import type { Context } from "hono";
@@ -75,9 +76,7 @@ function listParam(value: string | undefined, allowed?: Set<string>): string | n
 const IMPACTS = new Set(["HIGH", "MODERATE", "LOW"]);
 const SIZES = new Set(["LARGE", "MID", "SMALL", "MICRO"]);
 const isDate = (s: string | undefined) => !!s && /^\d{4}-\d{2}-\d{2}$/.test(s);
-// A company's key: its BSE scrip code, or for a company never on BSE (a listing after the move to NSE,
-// 2026-10-19) its NSE symbol ("TATATECH", "M&M", "BAJAJ-AUTO")
-export const isCompanyKey = (s: string | undefined) => !!s && /^(\d{3,8}|[A-Z0-9][A-Z0-9&-]{0,19})$/.test(s);
+export { isCompanyKey };   // shared/companyKey.ts: a scrip code, an NSE symbol or "NSE:<symbol>"
 const clamp = (v: string | undefined, def: number, max: number) =>
   Math.min(Math.max(Number.parseInt(v ?? "", 10) || def, 1), max);
 
@@ -108,6 +107,7 @@ api.use("*", async (c, next) => {
 
 const SESSIONS = new Set(["LIVE_MARKET", "PRE_MARKET", "AFTER_MARKET", "NON_TRADING"]);
 const PAGE_COUNT_CAP = 2000; // "40+ pages": an exact total would read every matching card
+const MAX_OFFSET = 10_000;
 export const SNAPSHOT_KEY = "daily_feed/latest_snapshot.json";
 
 interface Snapshot {
@@ -136,7 +136,9 @@ export async function feed(c: Context<AppEnv>, withHeld = false) {
   const from = q.from_at && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(q.from_at) ? q.from_at : isDate(q.from) ? q.from : "2000-01-01";
   const to = `${isDate(q.to) ? q.to : "2999-12-31"}T99`; // filed_at is "YYYY-MM-DDTHH:MM:SS+05:30"
   const limit = clamp(q.limit, 20, 50);
-  const page = q.page ? clamp(q.page, 1, 400) : null;
+  // OFFSET reads every row it skips: at most MAX_OFFSET of them (400 pages of 50 allowed 19,950; the pager stops at
+  // PAGE_COUNT_CAP, 2,000 cards) (survey, 24 Oct 2026)
+  const page = q.page ? clamp(q.page, 1, Math.floor(MAX_OFFSET / limit) + 1) : null;
   const [cursorAt, cursorId] = (q.cursor ?? "").split("|");
 
   // The default first page comes from the R2 snapshot when it was built for the same window.
@@ -227,10 +229,17 @@ api.get("/signals", async (c) => {
 });
 
 // Pre-market brief: what came in since a moment (by default yesterday's 15:30 IST close).
+const BRIEF_DAYS = 31;
 api.get("/brief", async (c) => {
   const q = c.req.query();
-  if (!q.from_at || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(q.from_at)) return c.json({ error: "from_at required" }, 400);
-  const fromAt = q.from_at;
+  const asked = q.from_at ?? "";
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}:\d{2})?$/.test(asked) || Number.isNaN(Date.parse(asked))) {
+    return c.json({ error: "from_at (YYYY-MM-DDTHH:MM[:SS][+05:30]) required" }, 400);
+  }
+  // No earlier than BRIEF_DAYS back (the pages ask for the close, today, 7 days and, on Top Signals, 30 days): an old
+  // from_at counted the whole cards table, and each new value missed both caches (survey, 24 Oct 2026)
+  const floor = `${istDay(-BRIEF_DAYS)}T00:00:00+05:30`;
+  const fromAt = Date.parse(asked) < Date.parse(floor) ? floor : asked;
   // every IST day from the window's first to today: a 7-day window has 8 days of filings and noise counts
   const days: string[] = [];
   for (let d = fromAt.slice(0, 10), end = todayIst(), n = 0; d <= end && n < 40; n++) {
@@ -357,7 +366,8 @@ const SORTS = new Map<string, string>([
 api.get("/companies", async (c) => {
   const q = c.req.query();
   const limit = clamp(q.limit, 60, 200);
-  const offset = Math.max(Number.parseInt(q.offset ?? "0", 10) || 0, 0);
+  // the table holds ~5,500 companies (all=1), so no list runs past this; an unbounded OFFSET read every row it skipped
+  const offset = Math.min(Math.max(Number.parseInt(q.offset ?? "0", 10) || 0, 0), 10_000);
   const letter = (q.letter ?? "").toUpperCase();
   let lo: string | null = null;
   let hi: string | null = null;
@@ -535,21 +545,29 @@ export async function reviewQueue(c: Context<AppEnv>, withHeld = false) {
         AND json_extract(p.card_json, '$.results.period') = json_extract(c.card_json, '$.results.period')
         AND NOT (json_extract(c.card_json, '$.basis') = 'CONSOLIDATED'
                  AND coalesce(json_extract(p.card_json, '$.basis'), '') <> 'CONSOLIDATED'))`;
-  const which = withHeld ? `(c.needs_review = 1 OR c.held = 1) AND NOT (${superseded})` : "c.needs_review = 1 AND c.held = 0";
+  // A window on filed_at (idx_cards_feed, idx_cards_feed_live) instead of the whole table, which both queries walked
+  // once 0011 dropped idx_cards_review: the public list covers the live window, the owner's a month; an older held card
+  // is still in the owner's feed under "Held for review only" (survey, 24 Oct 2026)
+  const since = istDay(withHeld ? -30 : -8);
+  const which = withHeld ? `c.filed_at >= ?1 AND (c.needs_review = 1 OR c.held = 1) AND NOT (${superseded})`
+    : "c.filed_at >= ?1 AND c.needs_review = 1 AND c.held = 0";
   // the list shows 100, the heading the real count; a card whose filing is queued again says so (owner, 2026-10-20:
   // "never seen anything getting reduced": the heading was the list's length, capped at 100, and the button's
   // "queued" state lived only in the open page)
-  const [list, total] = await c.env.DB.batch([
-    c.env.DB.prepare(`
-      SELECT c.news_id, c.scrip_code, c.symbol, c.company_name, c.filed_at, c.headline, c.event_category,
-             json_extract(c.card_json, '$.grounding') AS grounding, json_extract(c.card_json, '$.review') AS review, c.held,
-             f.status AS filing_status
-        FROM cards c LEFT JOIN filings f ON f.news_id = c.news_id WHERE ${which}
-       ORDER BY c.held DESC, c.filed_at DESC LIMIT 100`),
-    c.env.DB.prepare(`SELECT count(*) AS n FROM cards c WHERE ${which}`),
-  ]);
-  return c.json({ cards: list.results, total: Number((total.results[0] as { n?: number } | undefined)?.n ?? list.results.length) },
-    200, { "Cache-Control": withHeld ? "private, no-store" : "public, max-age=60" });
+  const load = async () => {
+    const [list, total] = await c.env.DB.batch([
+      c.env.DB.prepare(`
+        SELECT c.news_id, c.scrip_code, c.symbol, c.company_name, c.filed_at, c.headline, c.event_category,
+               json_extract(c.card_json, '$.grounding') AS grounding, json_extract(c.card_json, '$.review') AS review, c.held,
+               f.status AS filing_status
+          FROM cards c LEFT JOIN filings f ON f.news_id = c.news_id WHERE ${which}
+         ORDER BY c.held DESC, c.filed_at DESC LIMIT 100`).bind(since),
+      c.env.DB.prepare(`SELECT count(*) AS n FROM cards c WHERE ${which}`).bind(since),
+    ]);
+    return { cards: list.results, total: Number((total.results[0] as { n?: number } | undefined)?.n ?? list.results.length) };
+  };
+  const body = withHeld ? await load() : await memoised(`review:${since}`, 60_000, load);
+  return c.json(body, 200, { "Cache-Control": withHeld ? "private, no-store" : "public, max-age=60" });
 }
 
 api.get("/review", (c) => reviewQueue(c));
@@ -571,7 +589,9 @@ export function publicSystem(s: Awaited<ReturnType<typeof systemStatus>>): Publi
     today: s.today,
     ledger_today: s.ledger_today,
     queue: s.queue,
-    cards_7d: s.cards_7d as PublicSystemResponse["cards_7d"],
+    // published cards only: the held ones are the owner's, as on the feed (survey, 24 Oct 2026)
+    cards_7d: (s.cards_7d as { impact_level: string; published: number | null }[])
+      .map((r) => ({ impact_level: r.impact_level, n: r.published ?? 0 })) as PublicSystemResponse["cards_7d"],
     backfill: { start: s.backfill.start, discovered_through: s.backfill.discovered_through, complete: s.backfill.complete },
     runs: (s.runs as PublicSystemResponse["runs"]).map(({ run_id, mode, started_at, finished_at, status }) =>
       ({ run_id, mode, started_at, finished_at, status })),
@@ -591,7 +611,7 @@ export async function systemStatus(c: Context<AppEnv>) {
     db.prepare("SELECT status, count(*) AS n FROM filings WHERE filing_date = ?1 GROUP BY status").bind(today),
     db.prepare(`SELECT count(*) AS n FROM (SELECT 1 FROM filings WHERE status = 'PENDING' LIMIT ${QUEUE_CAP})`),
     db.prepare(`SELECT count(*) AS n FROM (SELECT 1 FROM filings WHERE status = 'FAILED' LIMIT ${QUEUE_CAP})`),
-    db.prepare(`SELECT impact_level, count(*) AS n FROM cards
+    db.prepare(`SELECT impact_level, count(*) AS n, sum(held = 0) AS published FROM cards
                  WHERE impact_level IN ('HIGH', 'MODERATE', 'LOW') AND filed_at >= ?1 GROUP BY impact_level`).bind(weekAgo),
     db.prepare(`SELECT day, provider, model, requests, input_tokens, output_tokens, failures, rate_limited, limit_rpd,
                        limit_tpd, substr(last_error, 1, 160) AS last_error, updated_at

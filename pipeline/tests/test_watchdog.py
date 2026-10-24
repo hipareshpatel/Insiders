@@ -3,7 +3,7 @@
 import json
 from datetime import datetime, timezone
 
-from bse_intel.watchdog import missed
+from bse_intel.watchdog import mark_started, missed, record_start
 
 
 class Kv:
@@ -25,8 +25,13 @@ def at(day, hour, minute):
 def test_a_daily_job_with_no_run_since_its_slot_is_started_once_after_the_grace():
     sink = Kv(**{"job:market-data": json.dumps({"at": "2026-10-20T06:28:27+05:30", "ok": True})})
     assert missed(sink, at(21, 1, 0)) == []                                # Wednesday 06:30 IST: still within the grace
-    assert missed(sink, at(21, 1, 30)) == ["market-data.yml", "nightly.yml"]
-    assert missed(sink, at(21, 1, 45)) == []                               # started once today, not again
+    assert missed(sink, at(21, 1, 30)) == ["market-data.yml"]              # the nightly may still be running
+    assert missed(sink, at(21, 2, 31)) == ["market-data.yml", "nightly.yml"]   # past its 100-minute timeout
+    assert missed(sink, at(21, 2, 40)) == ["market-data.yml", "nightly.yml"]   # dispatch failed: asked again
+    for workflow in ("market-data.yml", "nightly.yml"):
+        assert mark_started(sink, workflow, at(21, 2, 41))
+    assert missed(sink, at(21, 2, 45)) == []                               # started once today, not again
+    assert not mark_started(sink, "unknown.yml")
     # tomorrow, after both ran on time
     sink.kv["job:market-data"] = json.dumps({"at": "2026-10-22T06:07:00+05:30", "ok": True})
     sink.kv["job:refresh-summaries"] = json.dumps({"at": "2026-10-22T06:20:00+05:30", "ok": True})
@@ -36,4 +41,15 @@ def test_a_daily_job_with_no_run_since_its_slot_is_started_once_after_the_grace(
 def test_market_data_is_not_due_on_sunday_or_monday_utc():
     sink = Kv(**{"job:refresh-summaries": json.dumps({"at": "2026-10-25T06:20:00+05:30", "ok": True})})
     assert missed(sink, at(25, 2, 0)) == []        # Sunday: no market data for Saturday's session
-    assert missed(sink, at(26, 2, 0)) == ["nightly.yml"]   # Monday UTC (no close since Friday's job ran on Saturday)
+    assert missed(sink, at(26, 2, 31)) == ["nightly.yml"]  # Monday UTC (no close since Friday's job ran on Saturday)
+
+
+def test_a_nightly_started_late_is_not_started_again_while_it_may_still_run():
+    """GitHub started the 00:40 UTC nightly at 01:10; at 02:31 (past the 110-minute grace from the slot) it was still
+    running and the watchdog would start another, pausing the AI pipeline past the market open."""
+    sink = Kv(**{"job:market-data": json.dumps({"at": "2026-10-21T06:07:00+05:30", "ok": True})})
+    record_start(sink, "nightly.yml", at(21, 1, 10))
+    assert missed(sink, at(21, 2, 31)) == []
+    assert missed(sink, at(21, 3, 1)) == ["nightly.yml"]       # 110 minutes after its start: taken as died
+    record_start(sink, "nightly.yml", at(20, 0, 41))             # yesterday's start does not count for today
+    assert missed(sink, at(21, 2, 31)) == ["nightly.yml"]

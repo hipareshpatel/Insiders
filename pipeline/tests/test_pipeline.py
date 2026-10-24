@@ -1007,3 +1007,84 @@ def test_a_board_outcome_whose_letter_submits_the_results_is_the_results_filing(
     assert not carries_results("OTHER", newspaper)
     notice = "We enclose the notice of the Board meeting to consider the unaudited financial results for the quarter."
     assert not carries_results("OTHER", notice)
+
+
+def test_the_critic_reads_the_filing_on_a_card_with_warrants(settings):
+    """The warrant-deadline loop reused the name `text`, so on a card with warrants the shadow critic was handed the
+    deadline sentence instead of the filing and judged every point without its excerpt (survey, 24 Oct 2026)."""
+    from dataclasses import replace
+
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-warr", "Outcome of Board Meeting - allotment of warrants", now, "Company Update")
+    filing_text = ("The Board allotted 10,00,000 convertible warrants on a preferential basis at Rs 120 each, "
+                   "aggregating Rs 12 crore, with 25% received on allotment.")
+    reply = {
+        "is_material": True, "event_type": "FUNDRAISE",
+        "card": {"impact_level": "MODERATE", "headline": "Demo Cement allots 10 lakh warrants at ₹120 for ₹12 Cr",
+                 "what_happened": [{"text": "10 lakh warrants allotted at ₹120 each, ₹12 Cr",
+                                    "quote": "aggregating Rs 12 crore, with 25% received on allotment."}],
+                 "why_it_matters": [{"text": "Promoters add capital", "basis": "FILING"}]},
+        "dossier_delta": {"capital_actions": [{"instrument": "Convertible warrants", "new_shares": 1000000,
+                                               "issue_price": 120, "amount_cr": 12}]},
+    }
+    pipeline, sink, fake = build(replace(settings, critic=True), [f], {f.pdf_url: _pdf(filing_text)},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(reply)] * 2},
+                                 env={"OPENROUTER_API_KEY": "o"})
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "FUNDRAISE"}))
+    assert any(c["event_type"] == "WARRANT_EXPIRY" for c in outcome.catalysts)
+    job = outcome.critic
+    assert job is not None and "convertible warrants" in job["opening"].lower()
+    assert "18-month warrant conversion deadline" not in job["opening"]
+
+
+def test_memory_a_job_writes_while_the_card_is_being_written_is_kept(settings):
+    """A live card reads its company's memory, spends minutes on the AI and writes the memory back whole: a pledge event
+    (or deals, insider trades, a seed's figures) stored meanwhile by a memory job outside the nightly pause was lost."""
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-race", "Unaudited Financial Results for the quarter", now, "Result")
+    holder = {}
+
+    def reply_after_a_job_wrote(kwargs):
+        sink = holder["sink"]
+        stored = sink.get_dossier("999001")
+        stored["pledges"] = {"events": [{"seq_id": "p1", "event": "PLEDGE", "pct": 4.0, "as_of": now.isoformat()}]}
+        stored["financial_metrics"] = stored.get("financial_metrics", []) + [
+            {"metric": "revenue", "period": "Q1FY27", "value": 110.0, "as_of": now.isoformat(), "source_news_id": "xbrl:seed"}]
+        sink.put_dossier("999001", stored)
+        return json.dumps(PASS2)
+
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [reply_after_a_job_wrote]},
+                                 env={"OPENROUTER_API_KEY": "o"})
+    holder["sink"] = sink
+    sink.put_dossier("999001", new_dossier(f))
+    pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    memory = sink.get_dossier("999001")
+    assert memory["pledges"]["events"][0]["seq_id"] == "p1"                     # the job's part, kept
+    periods = {m["period"] for m in memory["financial_metrics"]}
+    assert {"Q1FY27", "Q2FY27"} <= periods                                      # its figure beside the card's own
+    assert any(t.get("news_id") == "n-race" for t in memory["timeline"])        # and the card's own line
+
+
+def test_a_filing_whose_own_write_keeps_failing_spends_an_attempt_in_the_end(settings, monkeypatch):
+    """A timeout or 5xx is the site's (no attempt spent), but a filing whose own write fails run after run while the site
+    answers others would spend its AI calls every 15 minutes for ever: after MAX_DEFERRALS runs it spends one."""
+    from bse_intel.pipeline import MAX_DEFERRALS
+    from bse_intel.sinks.base import SinkUnavailable
+
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-slow", "Order win", now, "Company Update")
+    pipeline, sink, fake = build(settings, [f], {}, {})
+
+    def unavailable(*a, **k):
+        raise SinkUnavailable("the platform API answered 500 through every retry")
+
+    monkeypatch.setattr(pipeline, "analyze", unavailable)
+    first = pipeline._attempt(f, bulk=False, memory_complete=True)
+    assert first.update["status"] == "PENDING" and first.update["last_error"].startswith("deferred 1x: the platform")
+    pipeline._unreachable = 0   # another filing was written meanwhile: the site is up
+    worn = f.model_copy(update={"last_error": f"deferred {MAX_DEFERRALS}x: the platform did not answer (500)"})
+    assert pipeline._attempt(worn, bulk=False, memory_complete=True).update["status"] == "FAILED"
+    # the site down for everyone (the filing before also failed): no attempt spent however many times
+    pipeline._unreachable = 1
+    assert pipeline._attempt(worn, bulk=False, memory_complete=True).update["status"] == "PENDING"

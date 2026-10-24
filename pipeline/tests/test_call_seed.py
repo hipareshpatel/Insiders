@@ -103,3 +103,38 @@ def test_a_run_hands_on_to_the_next_while_companies_are_left(tmp_path):
     assert call_seed.next_run_from_output(str(out), 18)
     out.write_text("Traceback ...\n")
     assert not call_seed.next_run_from_output(str(out), 18)
+
+
+def test_a_refused_seed_stops_and_marks_no_company_finished(monkeypatch):
+    """NSE refusing the list was caught as one company's failure and the company marked finished; the workers kept asking
+    NSE and every company after it was marked finished with nothing read, then the seed saved itself done."""
+    from bse_intel.bse import SourceBlockedError
+
+    kv, asked = {}, []
+    sink = SimpleNamespace(kv_get=kv.get, kv_set=lambda k, v, at: kv.__setitem__(k, v), get_dossier=lambda s: {},
+                           query=lambda name, args: [{"scrip_code": s, "market_cap_cr": 1e5 - i}
+                                                     for i, s in enumerate(("500001", "500002", "500003"))]
+                           if args[0] == "" else [])
+
+    def announcements(scrip, a, b):
+        asked.append(scrip)
+        raise SourceBlockedError("NSE answered 403")
+
+    pipeline = SimpleNamespace(sink=sink, gateway=SimpleNamespace(routes={"memory_seed": []}, set_route=lambda r, t: None),
+                               rules=SimpleNamespace(classify=lambda f: SimpleNamespace(event_type="CONCALL_PRESENTATION")),
+                               _company_announcements=announcements)
+    import bse_intel.universe as universe
+
+    monkeypatch.setattr(universe, "load_nse", lambda s: SimpleNamespace(included={"500001", "500002", "500003"}))
+    report = call_seed.run(pipeline, time.monotonic() + 30)
+    state = json.loads(kv[call_seed.STATE_KEY])
+    assert report["refused"] and report["stopped"] and not report.get("done")
+    assert state["finished"] == [] and not state.get("done")
+    assert asked == ["500001"]                       # one worker: no further company asked once refused
+    assert not call_seed.next_run(report, utc_hour=18)   # and no next run started at once
+    # a list failing for another reason leaves that company to a later run, not finished
+    pipeline._company_announcements = lambda scrip, a, b: (_ for _ in ()).throw(RuntimeError("bad JSON"))
+    kv.clear()
+    report = call_seed.run(pipeline, time.monotonic() + 30)
+    state = json.loads(kv[call_seed.STATE_KEY])
+    assert report["failed"] == 3 and state["finished"] == [] and not state.get("done") and not report.get("done")

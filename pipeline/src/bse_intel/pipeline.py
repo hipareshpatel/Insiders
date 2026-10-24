@@ -36,7 +36,8 @@ from threading import Lock
 from .ai.gateway import CEILING, AIGateway, AllProvidersFailed
 from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
-from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, latest_fundamentals, memory_ids, merge, own_former_name,
+from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, keep_concurrent_writes, latest_fundamentals, memory_ids, merge,
+                      own_former_name,
                       new_dossier, put_standalone, repeated_order, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import CACHE_VERSION, FIGURE_PAGE_AMOUNTS, Document, amounts, cache_needs_ocr
 from .ocr import available as local_ocr_available
@@ -53,7 +54,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings
+from .settings import Settings, d1_plan
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -93,8 +94,9 @@ BACKLOG_MAX = 1_500      # history filings waiting to be read before backfill di
 PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "ret_1w", "ret_1m", "ret_3m", "ret_1y",
                  "median_turnover_cr", "point_in_time")
 # Cloudflare Workers Paid (owner, 22 Oct 2026): 50M rows written a month included, no daily cap; the day's share of
-# the month (D1_DAILY_WRITE_CAP) is where the window's earlier days and the catch-ups wait (was the free 100,000)
-D1_FREE_DAILY_WRITES, D1_NEAR_CAP = int(os.environ.get("D1_DAILY_WRITE_CAP", "1600000")), 0.95
+# the month (D1_DAILY_WRITE_CAP, else by D1_PLAN: settings.d1_plan) is where the window's earlier days and the
+# catch-ups wait; the free tier's 100,000 with D1_PLAN=free. An empty value takes the plan's.
+D1_FREE_DAILY_WRITES, D1_NEAR_CAP = int(os.environ.get("D1_DAILY_WRITE_CAP") or d1_plan()[1]), 0.95
 REQUEUE_AFTER_HOUR, REQUEUE_KEY = 22, "failed:requeued_on"   # the nightly extra try for failed filings
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
@@ -127,7 +129,8 @@ SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
 SNAPSHOT_PAGE = 50        # the feed's page size
 
 
-_DEFERRED = re.compile(r"^deferred (\d+)x: (?:attachment download failed|the better writers are at their day)")
+_DEFERRED = re.compile(r"^deferred (\d+)x: (?:attachment download failed|the better writers are at their day|"
+                       r"the platform did not answer)")
 
 
 def _deferrals(last_error: str | None) -> int:
@@ -1440,16 +1443,19 @@ _QUOTE_POINT = re.compile(r'^(key number|notable change|why it matters) "(.*)" (
 _QUOTE_FACT = re.compile(r'^"(.*)" states .*, which its own quote does not$', re.S)
 
 
-def prune_quote_failures(out: Pass2Output, problems: list[str]) -> list[str] | None:
-    """Drop, in place, the points whose quote does not carry them (owner, 2026-10-21: "Needs review · 475": cards held
-    while nothing on them was found wrong). The 20 Oct hand review read 108 cards held only this way: 77 right, 20
-    minor, 11 wrong (10%), against 23% of the published cards reviewed on 21 Oct; the point goes, the rest of the card
-    is published. Returns what was dropped, or None when a problem names no point that can go (the last fact, or a
-    problem of another form): then the card stays held."""
+def prune_quote_failures(out: Pass2Output, problems: list[str], moved: list[str] | None = None) -> list[str] | None:
+    """Take off the face, in place, the points whose quote does not carry them (owner, 2026-10-21: "Needs review · 475":
+    cards held while nothing on them was found wrong). The 20 Oct hand review read 108 cards held only this way: 77
+    right, 20 minor, 11 wrong (10%), against 23% of the published cards reviewed on 21 Oct; the point goes, the rest of
+    the card is published. Returns what was dropped, or None when a problem names no point that can go (the last fact,
+    or a problem of another form): then the card stays held. Each point taken off is added to ``moved`` as text: the
+    card shows it behind the tap "Facts the checks could not quote", not deleted (owner, 24 Oct 2026: the daily audits
+    found 32 of 34 pruned points true)."""
     card = out.card
     if card is None:
         return None
     dropped: list[str] = []
+    taken: list[str] = []
     for problem in problems:
         if problem.startswith("dropped: "):
             continue   # already out of the card (check_quotes)
@@ -1458,24 +1464,37 @@ def prune_quote_failures(out: Pass2Output, problems: list[str]) -> list[str] | N
             kind, label = point.group(1), point.group(2)
             if kind == "key number":
                 kept = [k for k in card.key_numbers if (k.label or "") != label]
+                taken += [_point_text(k.label, k.value, k.change) for k in card.key_numbers if k not in kept]
                 hit, card.key_numbers = len(kept) < len(card.key_numbers), kept
             elif kind == "notable change":
                 kept = [c for c in card.notable_changes or [] if (c.metric or "") != label]
+                taken += [_point_text(c.metric, " → ".join(x for x in (c.previous, c.current) if x), c.change)
+                          for c in card.notable_changes or [] if c not in kept]
                 hit, card.notable_changes = len(kept) < len(card.notable_changes or []), kept
             else:
                 kept = [i for i in card.why_it_matters if (i.text or "")[:48] != label]
+                taken += [i.text for i in card.why_it_matters if i not in kept and i.text]
                 hit, card.why_it_matters = len(kept) < len(card.why_it_matters), kept
         elif fact:
             kept = [f for f in card.what_happened if f.text.replace("**", "")[:60] != fact.group(1)]
             hit = 0 < len(kept) < len(card.what_happened)   # never the card's last fact
             if hit:
+                taken += [f.text for f in card.what_happened if f not in kept]
                 card.what_happened = kept
         else:
             return None
         if not hit:
             return None
         dropped.append(problem)
+    if moved is not None:
+        moved += [t for t in dict.fromkeys(taken) if t]
     return dropped
+
+
+def _point_text(label: str | None, value: str | None, change: str | None) -> str:
+    """A key number or notable change as one line for the card's "could not quote" list."""
+    text = ": ".join(x for x in (label, value) if x)
+    return f"{text} ({change})" if change else text
 
 
 def _quoted_claims(card) -> list[tuple[str, str, str, str | None, bool]]:
@@ -2308,13 +2327,20 @@ class Pipeline:
                 # attempts, and stop the run after a few: every further filing would fail the same way.
                 with self._lock:
                     self._unreachable += 1
+                    isolated = self._unreachable == 1   # the filing before it was written: the site is up
                     if self._unreachable >= MAX_UNREACHABLE and not self._blocked:
                         self._blocked = SourceBlockedError(
                             f"the platform API did not answer for {self._unreachable} filings in a row; "
                             f"stopping this run with the work still queued. Is the web server running? ({exc})")
                         self.stats.stopped_reason = str(self._blocked)[:300]
                         log.error("stopping: %s", self._blocked)
-                return self._deferred(filing, "deferred: the platform did not answer")
+                # A filing whose own write fails run after run while the site answers others (a memory too large to
+                # write in time) would spend its AI calls every 15 minutes for ever: after MAX_DEFERRALS such runs it
+                # spends an attempt (survey review, 24 Oct 2026). A site that is down spends none.
+                times = _deferrals(filing.last_error) + 1
+                if isolated and times > MAX_DEFERRALS:
+                    return self._failed(filing, exc)
+                return self._deferred(filing, f"deferred {times}x: the platform did not answer ({exc})"[:300])
             except AllProvidersFailed as exc:
                 if exc.quota_exhausted:
                     with self._lock:
@@ -2941,6 +2967,7 @@ class Pipeline:
         # Before pass 1, not after it: the gatekeeper is shown what this company has already filed, so it
         # can name an event arriving again as a different document (the document rules cannot see those).
         dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
+        read = json.loads(json.dumps(dossier))   # memory as read, for keep_concurrent_writes when it is written back
         if filing.route == "PASS1" and doc.page_count >= ANNUAL_REPORT_MIN_PAGES and doc.kind() == "ANNUAL_REPORT":
             # NSE's headline can name only the meeting ("Annual General Meeting ... to be held on ..."), with the annual
             # report inside: Max Financial's 389 pages, whose auditor flagged a pending SEBI show-cause notice, were
@@ -3231,9 +3258,10 @@ class Pipeline:
         # a card whose figures are its own XBRL file's, every amount grounded: the garbled text layer cannot have
         # given it a wrong figure (held-card audit, 22 Oct 2026: 15 such holds, all false)
         checks.held += self._held_reasons(filing, text, xbrl_backed=bool(tagged) and not checks.amounts_ungrounded)
+        unchecked: list[str] = []
         if checks.only_quotes:
-            # the points whose quote does not carry them go; the card is published without them, not held
-            pruned = prune_quote_failures(out, checks.quotes)
+            # the points whose quote does not carry them leave the face, behind a tap; the card is published, not held
+            pruned = prune_quote_failures(out, checks.quotes, unchecked)
             if pruned is not None:
                 checks.quotes = []
                 review = {**(review or {}), "status": "PRUNED", "pruned": pruned}
@@ -3308,6 +3336,10 @@ class Pipeline:
             # published press release made two Q2FY27 results lines with different figures (T5, 2026-10-20).
             # Its figures stay: they are the statement's own and passed memory's checks.
             merged["timeline"] = [e for e in merged.get("timeline", []) if e.get("news_id") != filing.news_id]
+        # memory was read before the AI call, minutes ago: what a memory job stored since is kept, not overwritten
+        kept = keep_concurrent_writes(merged, read, self.sink.get_dossier(filing.scrip_code))
+        if kept:
+            log.info("%s: memory written meanwhile by another job kept: %s", filing.news_id, ", ".join(kept))
         self.sink.put_dossier(filing.scrip_code, merged)
 
         card_json = {
@@ -3350,6 +3382,9 @@ class Pipeline:
         if evidence:
             card_json["grounding"]["evidence"] = evidence
         card_json["grounding"]["prompt_variant"] = variant
+        # set by code only, never read from the model's reply: the points the prune took off the face (shown behind
+        # "Facts the checks could not quote"); a model's own "unchecked" key is overwritten here
+        card_json["unchecked"] = unchecked or None
         needs_review = checks.needs_review
         # a call card's quarter figure the company's own XBRL contradicts is dropped, and a headline or point repeating it
         # sends the card to review (Bajaj Consumer, daily audit 21 Oct 2026: a transcript slip over the filed figures)
@@ -3417,11 +3452,12 @@ class Pipeline:
             }
             for ev in out.dossier_delta.upcoming_events if ev.date >= filing.filing_date
         ]
-        for deadline, text in warrant_deadlines(out, filing):  # module 31: the 18-month warrant clock
+        # not `text`: that name holds the filing's text, which the critic reads below
+        for deadline, note in warrant_deadlines(out, filing):  # module 31: the 18-month warrant clock
             catalysts.append({
                 "id": _catalyst_id(filing.scrip_code, "WARRANT_EXPIRY", deadline), "scrip_code": filing.scrip_code,
                 "company_name": filing.company_name, "symbol": row["symbol"], "event_type": "WARRANT_EXPIRY",
-                "event_date": deadline, "description": text[:300], "source_news_id": filing.news_id, "created_at": now,
+                "event_date": deadline, "description": note[:300], "source_news_id": filing.news_id, "created_at": now,
             })
         for g in out.dossier_delta.guidance:
             deadline = due_date(g.due)
@@ -3526,7 +3562,7 @@ class Pipeline:
         hints = [UNIT_HINT] if checks.amounts_ungrounded else []
         system2, user2 = self.prompts.verify(system, user, out.model_dump(mode="json"), problems + hints)
         try:
-            second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider,),
+            second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider, result.model_label),
                                                 bulk=bulk)
         except Exception as exc:  # the first card is still published, marked unverified
             return out, result, checks, {**base, "status": "UNCHECKED", "note": f"{type(exc).__name__}: {exc}"[:200]}, None
@@ -3886,24 +3922,7 @@ class Pipeline:
     def _publish_snapshot(self) -> None:
         """The homepage's default first page and the top signals, as one R2 object (blueprint §3.3):
         visitors read it instead of D1. Rebuilt when this run wrote cards or the day changed."""
-        today = today_ist()
-        start = (today - timedelta(days=SNAPSHOT_DAYS)).isoformat()
-        try:
-            current = json.loads(self.sink.get_object(SNAPSHOT_KEY) or b"{}")
-        except Exception:
-            current = {}
-        if not self.stats.analyzed and current.get("from") == start:
-            return
-        try:
-            cards = self.sink.query("snapshot_feed", [start, SNAPSHOT_PAGE])
-            total = (self.sink.query("snapshot_count", [start]) or [{"n": len(cards)}])[0]["n"]
-            # the same window as the feed and the Signals page ask for (it was 3 days, so the page showed none from days 4-7)
-            signals = self.sink.query("snapshot_signals", [start])
-            body = {"generated_at": now_iso(), "from": start, "limit": SNAPSHOT_PAGE,
-                    "feed": {"cards": cards, "total": total}, "signals": signals, "signals_from": start}
-            self.sink.put_object(SNAPSHOT_KEY, json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode())
-        except Exception as exc:  # the snapshot is an optimisation; the feed falls back to D1
-            log.warning("snapshot not published: %s", exc)
+        publish_snapshot(self.sink, force=bool(self.stats.analyzed))
 
     def _over_budget(self, writes_at_start: int) -> bool:
         budget = self.settings.d1_daily_write_budget
@@ -4161,6 +4180,34 @@ def _ocr_check(doc: Document) -> None:
         if isinstance(doc.ocr_error, AllProvidersFailed):
             raise doc.ocr_error
         raise RuntimeError(f"OCR failed on a scanned document: {doc.ocr_error}")
+
+
+def publish_snapshot(sink: Sink, force: bool = True) -> bool:
+    """Write the homepage's snapshot (the default feed page and the top signals) to R2. Without ``force`` it is rebuilt
+    only when the day changed. A command that holds, releases or rewrites stored cards (apply-verdicts, release-pruned,
+    release-reviewed, refresh-card-blocks) forces it: a card it held stayed on the homepage and the Signals page until a
+    later run happened to analyse something (survey, 24 Oct 2026). True when written."""
+    today = today_ist()
+    start = (today - timedelta(days=SNAPSHOT_DAYS)).isoformat()
+    if not force:
+        try:
+            current = json.loads(sink.get_object(SNAPSHOT_KEY) or b"{}")
+        except Exception:
+            current = {}
+        if current.get("from") == start:
+            return False
+    try:
+        cards = sink.query("snapshot_feed", [start, SNAPSHOT_PAGE])
+        total = (sink.query("snapshot_count", [start]) or [{"n": len(cards)}])[0]["n"]
+        # the same window as the feed and the Signals page ask for (it was 3 days, so the page showed none from days 4-7)
+        signals = sink.query("snapshot_signals", [start])
+        body = {"generated_at": now_iso(), "from": start, "limit": SNAPSHOT_PAGE,
+                "feed": {"cards": cards, "total": total}, "signals": signals, "signals_from": start}
+        sink.put_object(SNAPSHOT_KEY, json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode())
+        return True
+    except Exception as exc:  # the snapshot is an optimisation; the feed falls back to D1
+        log.warning("snapshot not published: %s", exc)
+        return False
 
 
 def build_pipeline(settings: Settings, sink: Sink) -> Pipeline:

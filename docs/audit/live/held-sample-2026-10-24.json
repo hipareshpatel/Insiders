@@ -1,0 +1,38 @@
+[
+ {"news_id":"nse-106826393","symbol":"TMCV","verdict":"WRONG","error_class":"other",
+  "reason":"Revenue 25,338, PAT 1,254 vs loss 867, owners' PAT 1,257, EPS 3.41 and all QoQ % match the consolidated P&L. But EBITDA is mis-derived: 1,940 = PBT before share/exceptional 1,737 + finance 100 + D&A 539 - other income 436, which leaves in the ₹708 Cr fair-value loss on Tata Capital shares (₹2,027 Cr a year earlier). That gives the false '₹1,940 Cr, +11311.8% YoY against ₹17 Cr', margin 7.7%, and a takeaway built on it. The filing's own release states consolidated EBITDA ₹2.8K Cr (+31%) with a 10.9% margin (-40 bps). The EBITDA point, key number, takeaway and margin are all wrong. EBITDA is the card's headline 'largest move'.",
+  "hold_reasons":[
+   {"reason":"Numbers not found in the filing text or company memory: 1,940.00","true_or_false":"TRUE","why":"The filing never states 1,940. It can be computed from P&L lines, but only by including a ₹708 Cr mark-to-market loss on investments. The filing's own EBITDA is ₹2.8K Cr, so 1,940 as 'EBITDA' is unsupported. The hold is right."},
+   {"reason":"Net profit point states 867, which its own quote does not","true_or_false":"FALSE","why":"The consolidated P&L shows Q2FY26 profit of (867), so the figure is in the filing. This is only a quote-format complaint."}
+  ],
+  "releasable":false},
+ {"news_id":"nse-106826865","symbol":"IFBIND","verdict":"RIGHT","error_class":null,
+  "reason":"The filing table matches: the ₹50 Cr and ₹450 Cr NCDs were upgraded from Crisil AA-/Positive to Crisil AA/Stable, and the ₹50 Cr CP was reaffirmed at A1+. ₹500 Cr is the sum of the two NCD lines. Net debt ₹41.48 Cr and net worth ₹994.86 Cr come from company memory. The 'lowers borrowing costs' line is reasonable interpretation.",
+  "hold_reasons":[
+   {"reason":"Numbers not found in the filing text or company memory: 500","true_or_false":"FALSE","why":"500 = ₹50 Cr + ₹450 Cr NCDs, both stated in the filing's table."},
+   {"reason":"Point states 450, which its own quote does not","true_or_false":"FALSE","why":"'Rs.450 Crore Non-Convertible Debentures ... Crisil AA/Stable (Upgraded)' is the next row of the same table. The quote covers only the ₹50 Cr row."}
+  ],
+  "releasable":true},
+ {"news_id":"nse-106826170","symbol":"STLTECH","verdict":"MINOR","error_class":"duplicate",
+  "reason":"The facts are right. The CARE monitoring report shows issue size ₹498.30 Cr, 4,53,00,000 warrants at ₹110, ₹124.58 Cr (25%) received in Q4FY26, ₹111.30 Cr used for debt repayment and ₹13.28 Cr for GCP, all of it utilised, and an 18-month exercise window from 30 Mar 2026. 5.5% of net worth (124.58/2268) and 22% / 1% scale are correct. Minor issues: the report says nothing happened during Q2FY27 ('No funds were received'), so the news repeats the 29 Apr 2026 card 'deploys ₹124.58 Cr warrant proceeds'. deal_value.stage 'COMPLETED' is loose, since 75% is still unpaid.",
+  "hold_reasons":[
+   {"reason":"Numbers not found in the filing text or company memory: 373.72","true_or_false":"FALSE","why":"498.30 - 124.58 = 373.72, which also equals ₹82.50 balance x 4.53 Cr warrants, both stated in the filing. The filing also lists ₹373.73 Cr as the debt-repayment object cost."}
+  ],
+  "releasable":true},
+ {"news_id":"nse-106826022","symbol":"SSWL","verdict":"WRONG","error_class":"invented",
+  "reason":"The scanned PDF's text layer is garbled, so I read the page images. The consolidated figures are right: revenue ₹1,929.92 Cr (1,92,992.15 lakh), PBT ₹156.34 Cr, PAT ₹116.95 Cr vs ₹35.52 Cr, EPS 7.44, FY26 PAT ₹190.22 Cr. The capex of ₹815 / ₹410 / ₹175 Cr (₹1,400 Cr total), the 1.3 million strokes and the 60 months are also right, and 45.2% of FY26 net worth (1,804.81) and 54% of Q1 revenue are correct. But the dividend record date is wrong: the card says 5 November 2026, while the letter says the record date is 30 October 2026 (Friday), with payment on or before 21 November 2026.",
+  "hold_reasons":[
+   {"reason":"Why-it-matters point states 815, which its own quote does not","true_or_false":"FALSE","why":"₹815 Cr is in Annexure-C ('initial estimated capex of Rs. 815 crores'). Only the quote choice is at fault."},
+   {"reason":"held: The filing's text layer is garbled (scan errors inside numbers): figures from its tables may be wrong","true_or_false":"TRUE","why":"The text layer really is garbled. The table figures turned out right, but the record date was misread from the garbled cover letter, so the hold caught a real error."}
+  ],
+  "releasable":false},
+ {"news_id":"nse-106826200","symbol":"NEWGEN","verdict":"WRONG","error_class":"unit_scale",
+  "reason":"The merger facts are right: NCTL is a wholly owned subsidiary (hardware/peripherals objects), there is no consideration or shares, appointed date 1 Apr 2026, nil turnover, net worth ₹0.85 Cr, and NCLT and shareholder approvals are pending. Consolidated Q2 revenue ₹422.24 Cr (42,224.06 lakh) and PAT ₹86.88 Cr (8,688.20 lakh) are right. But the notable change says other income was '₹365.27 Cr (Q1FY27)'. The filing shows 3,627.27 lakh = ₹36.27 Cr: a misread of a garbled number, a 10x slip. Secondary issue: the filing is mainly the Q2 results, yet the card is framed as M&A with no results comparison.",
+  "hold_reasons":[
+   {"reason":"Numbers not found in the filing text or company memory: 422.24","true_or_false":"FALSE","why":"Consolidated revenue from operations is 42,224.06 lakh = ₹422.24 Cr. The text layer garbles it as '42,22406'."},
+   {"reason":"Key number 'Q2FY27 Revenue' states 422.24, which its own quote does not","true_or_false":"FALSE","why":"Same figure, in lakh. The quote is the garbled text-layer row."},
+   {"reason":"Key number 'Q2FY27 PAT' states 86.88, which its own quote does not","true_or_false":"FALSE","why":"Net profit 8,688.20 lakh = ₹86.88 Cr, in the filing."},
+   {"reason":"Notable change 'Other income' states 11.44, which its own quote does not","true_or_false":"FALSE","why":"1,143.80 lakh = ₹11.44 Cr is in the filing. The real error in that item is the unflagged ₹365.27 Cr Q1 figure (actually ₹36.27 Cr)."}
+  ],
+  "releasable":false}
+]

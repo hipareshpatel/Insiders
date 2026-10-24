@@ -176,3 +176,19 @@ def test_a_table_rows_columns_count_as_printed_shares():
     pool = computed.build_pool("(b) Gross NPA % 1.30 1.45 2.78 1.45\nNet NPA % 0.37 0.39 0.45 0.39")
     assert computed.unproduced("Gross NPA improved to 1.30% (vs 1.45% and 2.78%); Net NPA 0.37%", pool) == []
     assert computed.unproduced("Gross NPA improved to 1.31%", pool) == ["1.31%"]
+
+
+def test_a_range_or_share_left_without_its_figure_is_broken():
+    """PNB's "7-9 bps" less "9 bps" and Atul's "under 1% of market cap" less "1%" (live review, 23 Oct 2026)."""
+    from bse_intel.computed import _repair, broken
+
+    assert broken("PNB sees 7- margin boost from repo hike")
+    assert _repair("PNB sees 7- margin boost from repo hike") == "PNB sees margin boost from repo hike"
+    assert broken("**Management** expects a **7** to further expansion in NIM in Q3")
+    assert _repair("The open-market buyback of up to ₹90 Cr represents under of market cap") == \
+        "The open-market buyback of up to ₹90 Cr"
+    assert broken("The penalty is of FY26 profit and of net worth")
+    for whole in ("an 18 to 24 month execution window", "a 5-year OPEX contract", "April 2020 – March 2021",
+                  "an ESG score of 56 to the company", "in the form of non-convertible debentures",
+                  "swung from a loss in Q2FY26 to a net profit", "Capacity to rise 20 to 30 MTPA"):
+        assert not broken(whole), whole

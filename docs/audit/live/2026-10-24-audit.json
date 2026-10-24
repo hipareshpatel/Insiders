@@ -1026,5 +1026,189 @@
   "pruned_points_true": [],
   "pruned_points_false": [],
   "broken_text": []
+ },
+ {
+  "news_id": "nse-106827580",
+  "symbol": "DYNAMATECH",
+  "run": "16:07",
+  "verdict": "WRONG",
+  "error_class": "arithmetic",
+  "reason": "Page 1 table: of the 89,90,000 Dynauton shares, 74,90,000 (Dynamatic) and 5,00,000 (Dr. Malhoutra) are at Rs 50, but the 10,00,000 for the Dynauton ESOP Trust are at Rs 10 ('The shares proposed to be subscribed to by the Dynauton ESOP Trust ... are priced at Rs 10 per share'). The card prices all 89.9 lakh shares at Rs 50 and computes a Rs 44.95 Cr fundraise (timeline: 'a Rs 45 Cr preferential issue'); the filing's figures give 37.45 + 2.50 + 1.00 = Rs 40.95 Cr, of which Rs 37.45 Cr is the listed company's own money. Slump sale Rs 29.18 Cr, 83.33% / 5.56% / 11.11% stakes, nil turnover and the 31 Dec 2026 completion date are right. 'Promoters' is plural, but only one promoter subscribes. The event type is borderline: this is mainly an intra-group carve-out (slump sale plus subsidiary capitalisation), closer to M_AND_A than to FUNDRAISE.",
+  "event_type": "FUNDRAISE",
+  "event_type_ok": false,
+  "prompt_variant": "long",
+  "review_status": "CORRECTED",
+  "wrong_points": [
+   "Dynauton will issue 89,90,000 equity shares at Rs 50 per share (including Rs 40 premium) to the company, promoters, and an ESOP trust -- the ESOP Trust's 10,00,000 shares are priced at Rs 10, not Rs 50; one promoter, not promoters",
+   "Quantified impact 'Total fundraise for Dynauton' = 89,90,000 x Rs 50 = Rs 44.95 Cr -- actual Rs 40.95 Cr (74.9 lakh x 50 + 5 lakh x 50 + 10 lakh x 10)",
+   "timeline_entry: '... and a Rs 45 Cr preferential issue in the subsidiary' -- about Rs 41 Cr by the filing",
+   "takeaway 'bringing in promoter capital' -- most of the capital (Rs 37.45 Cr) comes from Dynamatic itself; the promoter puts in Rs 2.5 Cr (minor framing)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827546",
+  "symbol": "VRLLOG",
+  "run": "16:07",
+  "verdict": "WRONG",
+  "error_class": "event_type",
+  "reason": "Every figure is right: 87,50,000 shares (5%) at Rs 320, Rs 28,000 lakh = Rs 280 Cr, 24.51% of paid-up capital plus free reserves, promoters not participating, tender 27 Oct to 2 Nov, settlement 9 Nov. But the card is tagged RIGHTS / RIGHTS_ISSUE on a tender-offer buyback, the opposite capital action, which the project's own definitions file under CORPORATE_ACTION. The company's previous card (nse-106820959, 17 Oct, CORPORATE_ACTION) already gave the size, price and tender dates. This letter of offer adds little (settlement date, promoter non-participation), yet the headline 'to buy back 5% ...' presents it as a new announcement. The WATCH_RESOLVED signal on tonnage growth is noise.",
+  "event_type": "RIGHTS_ISSUE",
+  "event_type_ok": false,
+  "prompt_variant": "long",
+  "review_status": "CORRECTED",
+  "wrong_points": [
+   "category_tag RIGHTS / event_type RIGHTS_ISSUE -- the filing is a buyback letter of offer (CORPORATE_ACTION)",
+   "headline 'VRL Logistics to buy back 5% of shares at Rs 320 via tender offer' -- reads as a fresh announcement; the terms and tender window were already on the 17 Oct card (near-duplicate)",
+   "signal WATCH_RESOLVED 'KPI check partial: Tonnage growth ... results pending' -- unrelated to a buyback letter of offer (noise)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827537",
+  "symbol": "SANGAMIND",
+  "run": "16:07",
+  "verdict": "MINOR",
+  "error_class": "attribution",
+  "reason": "The rating action is right: IND A-/A2+ to IND A/Stable/A1 on Rs 1,765 Cr, Rs 1,005 Cr newly rated, Rs 2,770 Cr in total; net leverage 3.04x (FY26 3.62x); EBITDA margin 12.2% (FY26 9.9%); Rs 15,000 mn capex over three years; Rs 700 mn power savings; Rs 150 mn RPSF savings. One why-it-matters point is labelled MEMORY with g_bbff5577, but its Rs 70 Cr and 70% figures come from the rating rationale. The memory guidance says 70%+ in five quarters adding Rs 50-60 Cr of EBITDA, so 'validates management's FY27 strategy' conflates two sources. The 'driven by backward integration' wording is a slight paraphrase: the filing credits the margin to operating leverage and cost optimisation. The kpi_to_verify stores a leverage ratio of 3.62 under metric net_debt_cr. None of this misleads.",
+  "event_type": "DEBT_RATINGS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "The upgrade validates management's FY27 strategy of using renewables to boost EBITDA; power savings of Rs 70 Cr are expected as renewable share hits 70%. -- labelled MEMORY (g_bbff5577), but the figure is the filing's Rs 700 mn; the memory guidance said Rs 50-60 Cr EBITDA in five quarters",
+   "kpis_to_verify: metric 'net_debt_cr' with value 3.62 -- a leverage multiple, not net debt in crore"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827531",
+  "symbol": "CHEMBONDCH",
+  "run": "16:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "The H1 figures are right against the deck: revenue Rs 182.25 Cr +32%, EBITDA Rs 22.55 Cr +2%, PBT Rs 19.79 Cr +2%, EBITDA margin 12% vs 16% (page 23: 2,254.6 / 18,225.2 lakh), Distribution +86%, Cleaning & Hygiene +59%. The memory claims check out: FY26 revenue +12% (t_8a2d6a8c) and the 3% margin hit from input costs on the May 2026 call. However, the '28%' beside Water Technologies sits in the segment revenue-growth list under the revenue line, with 'Order book growth momentum' given as its reason. The card's call takeaway and call memory turn it into '28% order book growth', a figure the deck does not state. Construction Chemicals +30% is left out. The earnings-call date of 24 Oct is not stated in this filing.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": null,
+  "wrong_points": [
+   "Water Technologies segment maintains strong order book growth momentum at 28%. -- 28% is the segment's H1 revenue growth; order book momentum is the stated reason, not a 28% order book figure (also repeated in call_memory)",
+   "track_next milestone 'Earnings call for H1 FY2026-27 results, October 24, 2026' -- the date is not in this filing (the cover letter refers to an earlier intimation)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827527",
+  "symbol": "GAEL",
+  "run": "16:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "The consolidated Q2FY27 figures match the statement: revenue 1,450.73 (Q2FY26 1,486.69; Q1 1,594.22), PBT 177.19 (50.79; 235.28), tax 45.40 (12.77), PAT 131.79 (38.02; 176.77), EPS 2.87 (0.83; 3.85), no exceptional item. EBITDA of 197.34 / 75.85 / 231.93 checks as PBT + finance cost + depreciation - other income. Memory confirms the 'lowest of 5 quarters' point (Q3FY26 1,484.17, Q4FY26 1,466.51). The Himmatnagar 900 TPD (2027), 1,20,000 TPA by CY2028 and Maize segment Rs 1,212.26 Cr are in the deck. One why-it-matters point has its logic backwards: PAT +247% did not 'far outpace' PBT +249%; it grew slightly less, because tax rose 255%.",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "The sharp jump in PAT (+247%) far outpaced the PBT growth (+249%) due to a 255% increase in tax expense to Rs 45.40 Cr from Rs 12.77 Cr YoY. -- PAT growth (246.6%) trailed PBT growth (248.9%); a higher tax rate holds PAT back rather than making it outpace PBT"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827521",
+  "symbol": "SBFC",
+  "run": "16:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "Every face figure matches the Q2 FY27 investor presentation: PAT Rs139 Cr +27% YoY, AUM Rs12,592 Cr +27% YoY / +6% QoQ, opex to AAUM 4.1% (-33 bps YoY, 4.4% in Q2FY26), GNPA 2.6% (-13 bps YoY), PCR 42.2%, RoATE 15.0%, RoA 4.6%. The results block (total income 547 +33%, PAT 139 vs 130) and call memory (co-origination Rs1,746 Cr / 18%, borrowings 9,338, cash 1,455, ATS Rs10.78 lakh = 855 Cr / 7,939 loans, 257 branches) also match. The memory points are backed by g_510a69ad (opex to AUM <=4% by end of FY27) and the Q1FY27 trend. One small issue off the face: the fundamentals list NIM 10.6% as Q1FY27, but 10.6% is H1FY27 (Q1FY27 was 10.7%).",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": "CORRECTED",
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827509",
+  "symbol": "BAJAJHFL",
+  "run": "16:07",
+  "verdict": "MINOR",
+  "error_class": "other",
+  "reason": "The figures and call takeaways are in the 16 Oct call transcript: PAT Rs757 Cr +18% YoY, RoA 2.2%, AUM Rs1.58 lakh Cr +25%, cost of funds down 17 bps from 7.2% to about 7% because fixed-rate NCDs were converted to floating, Sambhav run rate Rs500 Cr a month and Rs600 Cr by year-end, guidance kept at 21-23%, 80-82% of repo hikes passing through to cost of funds, the PLR raised 15 bps effective 16 Oct, the developer finance book to grow to 15-17%, a 6-7% PBT hit from insurance commission caps, and Kalani's resignation effective 22 Jan 2027 (from memory). One small error: a why-it-matters point says the 25% AUM growth is 'at the upper end' of the 21-23% guidance, but 25% is above that range. Also, the headline repeats the 16 Oct presentation card (nse-106820218, 'Q2 PAT rises 18% YoY to Rs757 Cr'). The transcript does add new call content, so this is not a misleading duplicate.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": "PRUNED",
+  "wrong_points": [
+   "AUM growth of 25% remains at the upper end of management's 21-23% annual guidance despite high industry attrition -- 25% is above the 21-23% range, not at its upper end (transcript: 'we have not even changed our yearly guidance, 21% to 23% ... we are as of now 25%')"
+  ],
+  "pruned_points_true": [
+   "key number \"AUM\" states 1,58,205 -- the transcript says 'Total AUM stood at INR1.58 lakh crores as of 30th September', and memory t_80c44d4d gives Rs1,58,205 Cr; the value is true, only the exact figure is not in this transcript"
+  ],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827504",
+  "symbol": "SESHAPAPER",
+  "run": "16:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "The consolidated column matches: revenue Rs503.06 Cr against 346.32 (+45.3%) and 492.08 (+2.2%); PAT 42.31 against 22.41 / 31.91; EPS 7.03 against 3.72 / 5.30. EBITDA 46.89 (PBT before associate 46.82 + finance cost 0.34 + D&A 11.62 - other income 11.89) and its 9.32% margin are correct, as is raw material 315.89 against 268.24 (+17.8%). Consolidated operating cash flow for H1 is 39.49 against -72.93. The NCLAT appeal is reserved for orders, as the filing says, and the Dec-2026 copier capex date comes from memory (6 months from June 2026). Not an error: part of the PAT jump comes from the associate's share (7.30 against 4.64 YoY and -0.34 QoQ); standalone PAT is 34.96 (+96% YoY).",
+  "event_type": "RESULTS",
+  "event_type_ok": true,
+  "prompt_variant": "short",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827502",
+  "symbol": "LUPIN",
+  "run": "16:07",
+  "verdict": "RIGHT",
+  "error_class": null,
+  "reason": "The filing says the USFDA inspected the Goa facility from 19 to 23 Oct 2026 and issued a Form-483 with one observation, and the card states exactly that. The sector comparison holds: Gland Pharma got 4 observations (Dundigal, 23 Oct) and Gufic got 3 (Indore, 23 Oct), per their own published cards. A positive tone for a single observation is a reasonable reading. Small point: the case_stage marks both 'Form 483' and 'Closed' as reached. The inspection did close, but the observation is still open until Lupin responds.",
+  "event_type": "LITIGATION_REGULATORY",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
+ },
+ {
+  "news_id": "nse-106827476",
+  "symbol": "GEOJITFSL",
+  "run": "16:07",
+  "verdict": "WRONG",
+  "error_class": "restated",
+  "reason": "The text figures match the presentation: revenue Rs165.82 Cr +2.55% YoY, EBITDA 36.70 -15.40%, PAT 16.28 -30.66%, EBITDA margin 21.42% against 25.08%, ARR net flows Rs322 Cr +353%, recurring income ~40% against 24% in FY23, customer assets Rs1.12 lakh Cr, 2,003 sales staff, Rs9.57 Cr per person, cash Rs32.50 Cr. The results block on the face does not. It takes the Q2FY26 comparison from the old Q2FY26 XBRL: revenue 169.8, which is the restated 161.69 plus treasury income 8.12, since reclassified into other income. So the block shows revenue -2.3% YoY where the filing reports +2.55% on its own restated base. It also shows EBITDA 30.34 against 38.95 (-22.1%) and margin -464 bps, where the filing gives 36.70 against 43.38 (-15.4%) and -366 bps. The card therefore shows revenue rising in its key numbers and falling in its results block. Also: the 'Geojit DIFC operational Q4 FY26' milestone is already past, and the headline repeats the 23 Oct results card nse-106826923.",
+  "event_type": "CONCALL_PRESENTATION",
+  "event_type_ok": true,
+  "prompt_variant": "long",
+  "review_status": null,
+  "wrong_points": [
+   "results block: revenue 165.82 vs prev_year 169.8, yoy -2.3% -- the filing's restated Q2FY26 revenue from operations is 161.69 (+2.55% YoY); 169.8 is last year's XBRL figure before treasury income was moved to other income",
+   "results block: EBITDA 30.34 vs 38.95 (-22.1%), margin 18.3% vs 22.94% (-464 bps) -- the prior-year EBITDA is on the old classification and does not match the card's own key number (36.70, -15.4%, -366 bps)"
+  ],
+  "pruned_points_true": [],
+  "pruned_points_false": [],
+  "broken_text": []
  }
 ]

@@ -28,3 +28,5 @@
 | 24 Oct 11:15 | Daily audit 1 (fixes) | #91 merged (F108). F109: EBITDA told two ways shows no change; a broader rule was rejected after a blind check (10 of 10 changes right), narrowed to 3 cards of 489 |
 | 24 Oct 13:30 | Daily audit 2 | 20 cards: 6 right / 9 minor / 5 wrong (review queue 5: 1 right, 3 minor, 1 wrong). Critic scored: 2 of 23 flags true, stays shadow. F110: a filing read after its repeat is the duplicate (on/off 17 of 892 pairs, all byte-identical) |
 | 24 Oct 14:50 | Daily audit 3 | 20 cards: 10 right / 7 minor / 3 wrong (day 55: 22/21/12). #93 merged (F110). F111: rating before from the same agency and scale (on/off 9 of 21 cross-agency comparisons removed, none wrong) |
+| 24 Oct 14:20 | Daily audit 3 (ship) | #94 merged (F111); maintenance.yml refresh-card-blocks dispatched on main so stored rating cards drop cross-agency comparisons |
+| 24 Oct 16:30 | Daily audit 4 + day summary | 10 cards: 3 right / 4 minor / 3 wrong. Day: 65 cards, 38% right, 23% WRONG (bar 95%). F111 refresh confirmed (Muthoot shows no notch change). Summary in docs/audit/live/2026-10-24-audit.md |

@@ -68,3 +68,4 @@ right. Everything the 2026-10-20 approval leaves to the owner still goes to the 
   CLAUDE.md rule on cheaper subagents.
 - 25 Oct 08:46 UTC: PR #106 merged into `main` (02ead06) with CI green: this standing approval.
 - 25 Oct 11:37 UTC: PR #112 merged into `main` (67d3126) with CI green: this standing approval.
+- 25 Oct 11:58 UTC: PR #113 merged into `main` (a34cec8) with CI green: this standing approval.

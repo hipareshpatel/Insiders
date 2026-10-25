@@ -266,10 +266,11 @@ def capex_revisions(deals: list[dict] | None, filed_at: str, days: int = 120) ->
     return out
 
 
-def block(facts: list[Fact]) -> str:
+def block(facts: list[Fact], basis: str | None = None) -> str:
     """The facts as the prompt's block. Empty when there are none."""
     lines = [f"- {f.text}" for f in facts if f.text]
     if not lines:
         return ""
-    return ("Computed by the system from this filing's statements and the company's memory (use these figures as "
+    named = f" ({basis}, ₹ crore)" if basis else ""   # CARD_CONSOLIDATED_ONLY: the block says its basis
+    return (f"Computed by the system from this filing's statements{named} and the company's memory (use these figures as "
             "given, never your own; say what moved them only as the filing or memory states it):\n" + "\n".join(lines))

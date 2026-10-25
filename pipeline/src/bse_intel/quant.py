@@ -22,6 +22,7 @@ import operator
 import re
 from dataclasses import dataclass, field
 
+from .currency import CODES as CURRENCY_CODES
 from .grounding import SourceIndex
 from .models import QuantifiedImpact
 
@@ -41,7 +42,12 @@ _UNIT_SIZE = {"INR": 1, "RS": 1, "USD": 1, "EUR": 1, "GBP": 1, "JPY": 1, "AED": 
               "EUR_M": 1e6, "EUR_MN": 1e6, "EUR_BN": 1e9, "SHARES_CR": 1e7, "SHARES_LAKH": 1e5, "SHARES_M": 1e6,
               # an exchange rate is rupees per one unit of the currency: Sagility's US$ 20 M x 89 "INR/USD" was stated as
               # ₹1,780 Cr and passed with the rate's unit unknown (live audit, 22 Oct 2026; it is ₹178 Cr)
-              **{f"{a}_PER_{b}": 1 for a in ("INR", "RS", "USD") for b in ("USD", "EUR", "GBP", "JPY", "AED", "INR")}}
+              **{f"{a}_PER_{b}": 1 for a in ("INR", "RS", "USD") for b in (*CURRENCY_CODES, "INR")}}
+# every currency of the shared list (SEK, THB, ...) alone and by the million / billion / thousand
+for _c in CURRENCY_CODES:
+    _UNIT_SIZE.setdefault(_c, 1)
+    for _suffix, _size in (("M", 1e6), ("MN", 1e6), ("MILLION", 1e6), ("BN", 1e9), ("BILLION", 1e9), ("K", 1e3)):
+        _UNIT_SIZE.setdefault(f"{_c}_{_suffix}", _size)
 
 
 _NAMES = re.compile(r"[A-Za-z_][A-Za-z_0-9]*")

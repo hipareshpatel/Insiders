@@ -425,13 +425,13 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
     if v2:
         # ONE profit line (TODO 15): the one the company headlines in its release, else the shareholders' profit
         picked = {k: now[k].value for k in ("pat", "pat_owners") if k in now}
-        metric, profit_label = printed_figures.choose_profit(picked, text)
+        metric, profit_label = printed_figures.choose_profit(picked, text, tagged.basis)
         if metric is not None:
             profit = now[metric]
             other_profit = next((v for k, v in picked.items() if k != metric), None)
         # the company's printed EBITDA beside ours (TODO 11, 14); a lender has no EBITDA of ours, so none here either
         if "ebitda" in now and "interest_earned" not in now:
-            printed = printed_figures.printed_ebitda(text, tagged.period, now["ebitda"].value)
+            printed = printed_figures.printed_ebitda(text, tagged.period, now["ebitda"].value, tagged.basis)
     if top is None or profit is None:
         return []
     profit_word = (profit_label if v2 and profit_label else

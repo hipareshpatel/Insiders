@@ -223,6 +223,18 @@ export interface CardBody {
   guidance_recall?: { statement: string; target: string | null; due: string | null; given_on: string | null; source_type: string | null; id: string }[];
   /** Up to four things memory held before this filing, made by code (card_context.memory_context). */
   memory_context?: { label: string; text: string }[];
+  /** CARD_TWO_PARTS (F152): which part each line is in. Part 1 "From the filing (checked)", part 2 "Our reading (AI)";
+   *  the index lists point at this card's own lists. `hidden` is what part 2 took off (audit only, never shown). */
+  parts?: CardParts | null;
+}
+
+export interface CardParts {
+  v: number;
+  part1: { headline?: boolean; what_happened?: number[]; key_numbers?: number[]; quantified_impact?: number[]; blocks?: string[] };
+  part2: { takeaway?: boolean; core_catalyst?: boolean; what_happened?: number[]; key_numbers?: number[]; quantified_impact?: number[];
+    why_it_matters?: number[]; notable_changes?: number[]; missing_disclosures?: number[]; call_takeaways?: number[];
+    track_next?: boolean; blocks?: string[] };
+  hidden?: { field: string; text: string; why: string }[];
 }
 
 export interface CardRow {

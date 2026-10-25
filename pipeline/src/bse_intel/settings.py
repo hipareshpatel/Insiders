@@ -44,11 +44,33 @@ def d1_plan() -> tuple[int, int]:
     return D1_PLANS.get((_env("D1_PLAN", "paid") or "paid").strip().lower(), D1_PLANS["paid"])
 
 
+def quote_exact_numbers() -> bool:
+    """QUOTE_EXACT_NUMBERS (default off; F156): a figure of a card's claim matches the quote's figure token for token
+    (grouping commas and the claim's own rounding allowed), never as the front digits of a longer one ("95" of 951.96).
+    Read at the call, so a script can run the same check on and off."""
+    return (_env("QUOTE_EXACT_NUMBERS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_ebitda_profit_v2() -> bool:
     """CARD_EBITDA_PROFIT_V2 (default off; TODO 11, 14, 15, F151): a results card shows the company's printed EBITDA first
     and ours as "Operating EBITDA (calculated)", and one profit line only. Read at the call, so a script can run the same
     card code with the switch off and on."""
     return (_env("CARD_EBITDA_PROFIT_V2", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+def card_two_parts() -> bool:
+    """CARD_TWO_PARTS (default off; TODO 21, F152): a card carries a `parts` block that sorts every line into part 1,
+    "From the filing (checked)", or part 2, "Our reading (AI)", by a code rule, and a part 2 line whose figure or claim
+    fails the existing checks is hidden alone instead of the card being held. Read at the call."""
+    return (_env("CARD_TWO_PARTS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+def card_consolidated_only() -> bool:
+    """CARD_CONSOLIDATED_ONLY (default off; TODO 44, F154; owner, 25 Oct 2026: consolidated first, standalone kept from the
+    AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the
+    pass-2 prompt says to state consolidated figures only, and a standalone figure the model writes on a consolidated card
+    is taken out. Turned on together with CARD_EBITDA_PROFIT_V2 for the release check. Read at the call."""
+    return (_env("CARD_CONSOLIDATED_ONLY", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
 def _env_int(name: str, default: int) -> int:

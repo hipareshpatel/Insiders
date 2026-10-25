@@ -248,6 +248,7 @@ class PromptEngine:
         self._pass2 = Template(self._pass2_text)
         self._pass2_short = Template((prompts / "pass2_short.md").read_text())
         self._pass2_user = Template((prompts / "pass2_user.md").read_text())
+        self._consolidated_only = (prompts / "consolidated_only.md").read_text().strip()
         self._memory = Template((prompts / "memory.md").read_text())
         self._verify = (prompts / "verify.md").read_text()
         self.memory_start = settings.backfill_start
@@ -386,7 +387,7 @@ class PromptEngine:
         self, filing: Filing, event_type: str, industry: str | None, memory: dict | None, text: str,
         peers: list[dict] | None = None, examples: dict[str, list[dict]] | None = None,
         lessons: list[str] | None = None, reaction: str | None = None, scale: str | None = None,
-        variant: str = "long",
+        variant: str = "long", consolidated_only: bool = False,
     ) -> tuple[str, str]:
         sector = self.sector_for(industry)
         short = variant == "short"
@@ -422,6 +423,8 @@ class PromptEngine:
             ) or "None.",
             text=_unit_note(text) + (text or "(attachment had no extractable text; rely on the headline)"),
         )
+        if consolidated_only:   # CARD_CONSOLIDATED_ONLY (F154); off, the prompt is byte for byte as before
+            system += "\n\n" + self._consolidated_only
         shown = _examples_text(examples or {})
         if shown:
             user = shown + "\n\n" + user

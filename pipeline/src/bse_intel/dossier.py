@@ -1304,7 +1304,7 @@ def call_point_id(point: dict) -> str:
 
 
 def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, printed: set[str] | None = None,
-               filing_text: str | None = None) -> dict | None:
+               filing_text: str | None = None, consolidated_only: bool = False) -> dict | None:
     """Compact memory for the prompt, containing only facts known before ``cutoff``.
 
     Each figure carries its basis (once for a metric whose figures share one, else on its line) and, when a later
@@ -1329,6 +1329,8 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
             as_known.append(entry)
     consolidated = {e["metric"] for e in as_known if e["_basis"] == "CONSOLIDATED"}
     as_known = [e for e in as_known if not (e["metric"] in consolidated and e["_basis"] == "STANDALONE")]
+    if consolidated_only:   # CARD_CONSOLIDATED_ONLY (F154): a consolidated filer's standalone figures are not shown to the model
+        as_known = [e for e in as_known if e["_basis"] != "STANDALONE"]
     printed = printed or set()
     withheld = sorted({e["period"] for e in as_known if e["period"] in printed}, key=lambda p: (str(due_date(p) or ""), p))
     as_known = [e for e in as_known if e["period"] not in printed]
@@ -1889,7 +1891,8 @@ def _entry_basis(entry: dict) -> str | None:
     return "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)
 
 
-def _ebitda_lines_v2(out: dict, lines: list[dict], lookup, period: str, printed: str | None, kept: dict | None) -> None:
+def _ebitda_lines_v2(out: dict, lines: list[dict], lookup, period: str, printed: str | None, kept: dict | None,
+                     basis: str | None = None) -> None:
     """The table's EBITDA rows with CARD_EBITDA_PROFIT_V2 on (F151): the company's own printed EBITDA first, labelled
     "Filing" with its own name, and ours beneath it, "Operating EBITDA (calculated)", with the other income it leaves
     out. The year-ago figure and change of the company's own only where the filing prints them; ours is against ours.
@@ -1897,7 +1900,7 @@ def _ebitda_lines_v2(out: dict, lines: list[dict], lookup, period: str, printed:
     from . import printed_figures
 
     ours = out["ebitda"]
-    theirs = printed_figures.printed_ebitda(printed, period, ours["value"]) if printed else None
+    theirs = printed_figures.printed_ebitda(printed, period, ours["value"], basis) if printed else None
     other = lookup(("other_income",), period)
     spec_ours = next(spec for spec in lines if spec["key"] == "ebitda")
     spec_ours["label"] = "Operating EBITDA (calculated)"
@@ -2110,7 +2113,9 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     if v2:
         from . import printed_figures
         cands = {k: v for k in ("pat", "pat_owners") if (v := lookup((k,), period)) is not None}
-        profit_metric, profit_label = printed_figures.choose_profit(cands, printed)
+        card_basis = next((b for names in (("pat",), ("pat_owners",), _RESULT_METRICS[0][1])
+                           if (e := stored(names, period)[0]) and (b := _entry_basis(e))), None)
+        profit_metric, profit_label = printed_figures.choose_profit(cands, printed, card_basis)
         stored_pat = (like or {}).get("pat") if not printed and like and like.get("period") == period else None
         if stored_pat:
             # a refresh without the filing's text keeps the profit line the stored table chose, and the company's name for it
@@ -2172,5 +2177,5 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     out["lens"] = lens
     out["lines"] = lines
     if v2 and lens == "company" and "ebitda" in out:
-        _ebitda_lines_v2(out, lines, lookup, period, printed, kept)
+        _ebitda_lines_v2(out, lines, lookup, period, printed, kept, card_basis if v2 else None)
     return out

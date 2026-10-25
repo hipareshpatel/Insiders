@@ -91,7 +91,7 @@ Fixes to the sample itself, found on review:
 | 14 | Show both EBITDA figures: the company's printed one leads (label "Filing"), ours beneath it (label "Computed"). Year-on-year only within one definition: theirs against their year-ago, ours against ours. When the company prints none, ours alone | The sample marks our EBITDA ₹286.61 Cr as "Statement" while the release prints its own (year-ago ₹212.90 Cr against our ₹213.45 Cr) | Yes (25 Oct) | Built behind `CARD_EBITDA_PROFIT_V2` (F151); release check pending |
 | 15 | One profit line everywhere: the one the company headlines in its own release, with its label; with no release, profit attributable to shareholders (the line EPS is on) | Two profit figures on one card read as a mistake | Yes (25 Oct) | Built behind `CARD_EBITDA_PROFIT_V2` (F151); release check pending |
 | 16 | A figure computed from memory (cost per MSM from deal history) only when every input is an exchange-file or quoted-filing item (item 10's tags) | Otherwise "Computed" hides an AI-read input | Yes (25 Oct) | With items 3 and 10 |
-| 21 | Two parts on every card. Part 1 "From the filing (checked)": exchange-file figures, code calculations, quotes; every line checked, a failed line removed; graded right / WRONG against the 5% bar. Part 2 "Our reading (AI)": interpretation, past promises, what to watch; opinions allowed and graded reasonable / unreasonable on their own bar (10% proposed, owner to set); any number or fact in it must still be right and cite its source, a failed line is hidden, not the card | A wrong opinion and a wrong figure are different faults; readers still judge the whole card | Yes (25 Oct); part 2 bar 30% for now | To build |
+| 21 | Two parts on every card. Part 1 "From the filing (checked)": exchange-file figures, code calculations, quotes; every line checked, a failed line removed; graded right / WRONG against the 5% bar. Part 2 "Our reading (AI)": interpretation, past promises, what to watch; opinions allowed and graded reasonable / unreasonable on their own bar (10% proposed, owner to set); any number or fact in it must still be right and cite its source, a failed line is hidden, not the card | A wrong opinion and a wrong figure are different faults; readers still judge the whole card | Yes (25 Oct); part 2 bar 30% for now | Built behind CARD_TWO_PARTS (F152); release check pending |
 | 17 | Measure what more lines cost: a card is WRONG if any one line is wrong, so ~25 lines need each line right about 99.8% of the time to keep cards at 95% | The richer the card, the harder the 95% bar | – | Measured 25 Oct (docs/audit/line-accuracy-2026-10-25.md): median 13 lines a card; 2.7% of lines wrong (2.0-3.6%); faults cluster, so cards are 21% WRONG not 31-40%; 95% at 13 lines needs 0.39% of lines wrong |
 
 ## Parked (owner, 25 Oct 2026: stopped, kept for later)
@@ -171,6 +171,7 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
 | 40 | Capacity coming online next quarter, from management's stated dates (a forward list; today only finished capacity counts on the Radar) | Not built | Later (owner, 25 Oct: after the 95% gate) | Not started |
 | 41 | Customer dependence from annual reports (a customer at 10% or more of revenue must be disclosed; link to the customer company only when it is named), e.g. "ABC Auto: 70% from Hero; watch Hero's numbers" | Customers are left out of memory today (a laptop test filled the list with lawsuit parties) | Later (owner, 25 Oct: after the 95% gate) | Not started |
 | 42 | Faster NSE history loads: read file links from NSE's all-company results list (about 30 calls) instead of each company's page (about 1,150 calls for 576 companies), with a 1.5-2.5 s pause for one-off loads; the daily results check could use the same list | memory-gaps-fill, 25 Oct: about 1-1.5 h on 4 machines at 3-5 s a call | Proposed (owner to decide) | Proposed |
+| 44 | Consolidated first: standalone kept from the AI. The model sees consolidated figures only, each block naming its basis; a printed EBITDA or headline profit is taken only on the card's basis; a standalone figure the model writes on a consolidated card is removed (standalone only for a company that files standalone alone) | Cards quoting the company-alone EBITDA or profit from a release that prints both | Yes (owner, 25 Oct) | Built behind `CARD_CONSOLIDATED_ONLY` and `CARD_EBITDA_PROFIT_V2` (F154); release check pending |
 
 ### Owner's answers on memory labels (items 3, 10, 16), 25 Oct 2026 evening
 
@@ -187,3 +188,23 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
   shown as our estimate with both inputs named. Rules: only orders filed after the slide's date, each order once,
   restarted at the next slides or call; it is not reduced for work done since, and says so.
 - **Item 4:** keep filing texts 6 months, then delete automatically (owner, 25 Oct); built (F147).
+
+### Owner's decisions, 25 Oct 2026 late evening
+
+- **Longer cards stay** (owner: "I need longer cards only"). Consequence, from item 17: at about 20 lines a card each line
+  must be right about 99.75% of the time for 95% right cards, so root-cause errors must fall about 5-6 times. The
+  root-cause list from every past audit (`docs/audit/root-causes-2026-10-25.md`, in progress) sets the order of work.
+- **Order of work:** root-cause triage of all past audit findings first (it also says how much of WRONG comes from data
+  extraction vs card writing), then fix the top causes in order, mostly expected in extraction (results table, units,
+  basis, periods). Cards and extraction are worked from that one list.
+- **EPS growth (row 43):** kept. Adjusted for splits, bonuses and consolidations on record (NSE corporate actions;
+  `corporate_actions.share_factor_after` was built 22 Oct but never called: the live bug). A share-count change from a
+  preferential allotment, rights issue, QIP, ESOPs or a merger is real dilution: the actual reported growth is shown.
+  Blank only when the share count moved by an exact split/bonus ratio with no action on record ("possible bonus or
+  split not on record").
+- **Consolidated first (row 44):** the AI sees consolidated figures only, each block naming its basis; code removes a
+  standalone figure the AI writes on a consolidated card; the company's printed EBITDA is used only from a section of
+  the card's basis. Standalone only for companies that file standalone alone.
+- **Card switches waiting for the release check (on/off over stored cards + blind sample):** `CARD_EBITDA_PROFIT_V2`
+  (rows 11, 14, 15; first run 190 cards: 147 changed, 12 printed EBITDA found, 10 lost a profit year-ago), 
+  `CARD_TWO_PARTS` (row 21), `CARD_CONSOLIDATED_ONLY` (row 44), `EPS_SHARE_ADJUST` (row 43, being built).

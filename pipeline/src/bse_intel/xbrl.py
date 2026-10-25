@@ -227,14 +227,18 @@ class XbrlResult:
     ratio_basis: str | None = None              # STANDALONE when a consolidated bank file's ratios came from it
     fy_end_month: int | None = None             # the company's year end, from DateOfEndOfFinancialYear (3 = March)
 
-    def table(self) -> str:
-        """The figures as text for the Pass 2 prompt (and for grounding)."""
+    def table(self, explicit_basis: bool = False) -> str:
+        """The figures as text for the Pass 2 prompt (and for grounding). `explicit_basis` (CARD_CONSOLIDATED_ONLY, F154)
+        names the basis and the period in the header: "Consolidated, ₹ crore, quarter ended 30 Sep 2026"."""
         if self.kind == "SHAREHOLDING" and self.ownership:
             o = self.ownership
             parts = [f"{k}: {v}" for k, v in o.model_dump().items() if v is not None]
             return "Shareholding pattern (XBRL, exact): " + "; ".join(parts)
         lines = [f"Machine-tagged results (XBRL, {self.basis or 'basis not stated'}, ₹ crore unless noted; exact, "
                  "prefer these over figures read from the PDF):"]
+        if explicit_basis and self.basis:
+            lines[0] = (f"Machine-tagged results (XBRL, {self.basis.capitalize()}, ₹ crore unless noted{_period_words(self.period)}; "
+                        "exact, prefer these over figures read from the PDF):")
         for m in self.metrics:
             unit = " ₹/share" if m.unit == "INR" else " %" if m.unit == "PCT" else " Cr"
             change = "".join(f", {label} {v:+.1f}%" for label, v in (("YoY", m.yoy_pct), ("QoQ", m.qoq_pct)) if v is not None)
@@ -245,6 +249,18 @@ class XbrlResult:
             lines.append(f"- balance sheet {b.period}: " + ", ".join(
                 f"{k} {v:g}" for k, v in b.model_dump().items() if isinstance(v, float)))
         return "\n".join(lines)
+
+
+def _period_words(period: str | None) -> str:
+    """", quarter ended 30 Sep 2026" for Q2FY27; "" when the period is not one the date can be read from."""
+    from .periods import due_date
+
+    day = due_date(period) if period else None
+    if day is None:
+        return ""
+    kind = "quarter" if re.match(r"Q[1-4]", period) else "half year" if period.startswith("H") else \
+        "nine months" if period.startswith("9M") else "year" if period.startswith("FY") else None
+    return f", {kind} ended {day.day} {day.strftime('%b %Y')}" if kind else ""
 
 
 def _local(tag: str) -> str:

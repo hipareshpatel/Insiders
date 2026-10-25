@@ -79,3 +79,10 @@ def test_local_sink_never_touches_r2(settings):
     p = _pipe(settings, LocalSink(settings))
     p._cache_text("n4", _doc())
     assert p._cached_text("n4") is not None and p._cached_text("zz") is None
+
+
+def test_a_text_missing_from_r2_is_looked_up_once_a_run(settings):
+    sink = FakeSink()
+    p = _pipe(settings, sink)
+    assert p._cached_text("never-read") is None and p._cached_text("never-read") is None
+    assert sink.gets == 1

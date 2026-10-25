@@ -3085,10 +3085,15 @@ class Pipeline:
                 pass
         if not self._durable_text():
             return None
-        # Not on this runner (the GitHub cache keeps 8 days): the durable copy in R2, kept 6 months (F147)
+        # Not on this runner (the GitHub cache keeps 8 days): the durable copy in R2, kept 6 months (F147). A miss is
+        # remembered for the run: the repeat checks look up to 40 recent filings a filing, most with no text at all.
+        misses = self.__dict__.setdefault("_text_misses", set())
+        if news_id in misses:
+            return None
         try:
             body = self.sink.get_object(text_key(news_id))
             if not body:
+                misses.add(news_id)
                 return None
             entry = json.loads(gzip.decompress(body))
         except Exception as exc:  # R2 is the second layer: a miss or a failure re-reads the filing

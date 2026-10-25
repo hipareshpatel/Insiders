@@ -66,3 +66,4 @@ right. Everything the 2026-10-20 approval leaves to the owner still goes to the 
 ### Actions taken
 - 25 Oct 08:43 UTC: PR #105 merged into `main` (6bdf77f) with CI green, on the owner's "Merge it, do not ask": the
   CLAUDE.md rule on cheaper subagents.
+- 25 Oct 08:46 UTC: PR #106 merged into `main` (02ead06) with CI green: this standing approval.

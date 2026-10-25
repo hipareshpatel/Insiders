@@ -47,3 +47,8 @@ read. In the fresh run, 249 lines changed in 109 of 223 tables, 171 of them remo
 
 Review sample: a random 150 of the distinct changed lines (seed 2511), each in two versions X and Y. A removed version
 shows as null.
+
+## Stricter removal limit (owner's engineering handover, adopted before any fresh-set verdict was read, 25 Oct 2026)
+The owner's handover sets "correct-content removal ≤ 5%", and says stricter thresholds win. It replaces the 20% limit in
+item 4 of the section above: **at most 5% of removed lines may have been RIGHT off.** It was adopted before any of the
+four reviewers' verdicts existed (no `verdicts_*.json` file had been written).

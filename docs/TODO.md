@@ -108,3 +108,27 @@ Fixes to the sample itself, found on review:
 | # | Improvement | What it fixes | Owner | State |
 |---|---|---|---|---|
 | 24 | **Audit pending.** Run the full audit once every item above is built: part 1 (checked) right / WRONG against the 5% bar; part 2 (AI reading) reasonable / unreasonable against **30%** for now. The owner will set the final part 2 bar from that audit's results | We do not yet know where the new card stands | 30% for now (owner, 25 Oct) | Audit pending, last |
+
+## Other work the owner asked for (25 Oct 2026)
+
+| # | Improvement | Owner | State |
+|---|---|---|---|
+| 27 | Port the reference repository's BSE client as an off-path adapter (TASKS T26) | Asked | Built (F138), PR #111. Its headless-browser fallback left out (CLAUDE.md). With BSE's own page headers the API answers a US machine (measured) |
+
+## Item 13 measured (25 Oct 2026): what "hold a line the PDF does not print" would do
+
+38 Sep-2026 results, 438 official lines from the figure files, PDF text layer only (no OCR), every miss classified by
+an independent agent (`scratchpad` table summarised here):
+- 308 lines (70%) the PDF prints exactly.
+- 130 not found: 81 the PDF's statement page has no usable text (scans, garbled layers: OCR would read most; the
+  pipeline OCRs figure pages, this measurement did not), 24 printed in a form our matcher misses ("1.253.52",
+  "935,20", letters for digits), 10 a wrong PDF (a voting result), **15 real definition differences, 0 different
+  figures for the same line**.
+- The 15 real ones would put a wrong line on a card: "other expenses" tagged as the sum of several printed expense
+  lines (Wipro ₹5,008 Cr where the statement's "Other expenses" is (174); Shree Cement, NELCO, NECC, OFSS, MHRIL), profit
+  before tax before the associates' share where the statement prints it after (Bajaj Finance, ixigo), and tax given as
+  one total where the statement prints current and deferred tax only (Oberoi Realty, Heritage, CCL, HFCL, GNA).
+- So the rule as written would hold about 8 right lines for each wrong one. Next, before it is switched on: OCR for
+  the figure pages (as the pipeline already does), a number normaliser for the matcher misses, and per line: "other
+  expenses" shown only when the statement prints that figure, tax as current + deferred when that is what is printed,
+  profit before tax as printed (`settle_pbt` already does this for the card's line).

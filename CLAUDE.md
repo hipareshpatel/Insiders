@@ -30,7 +30,10 @@ Read before changing anything:
   `docs/TODO.md`). Never rewrite another branch's pushed history. `git pull` before editing.
 - API keys live only in `C:\Users\Quali\insiders-keys.ps1` (outside the repo). Never print,
   log, commit or paste a key. Dot-source the file in each new shell: `. C:\Users\Quali\insiders-keys.ps1`.
-- Don't work around BSE's firewall. BSE blocks non-Indian IPs, which is why BSE work runs here.
+- Don't work around BSE's firewall. Measured 25 Oct 2026: BSE's API answers a US machine (this session and GitHub's
+  runners) with 200 when the request carries the headers BSE's own pages send (Origin, Referer, Sec-Fetch-Site,
+  Accept-Language: `pipeline/src/bse_intel/adapters/bse.py`), and 403 "Access Denied" without them. Ordinary browser
+  headers are fine; never a headless browser, a disguised automation or a proxy to get past a refusal.
 - Cloudflare is on Workers Paid ($5 a month, owner, 22 Oct 2026, D40): D1's write and read budgets follow the plan, not the free
   tier. Every other paid upgrade must stay off, with one exception the owner chose: the prepaid DeepSeek balance
   (`DEEPSEEK_API_KEY`, decision D24) that speeds up the backfill. The steady state must still cost $0,

@@ -12,6 +12,7 @@ installed, and checked cell by cell against the text layer (FIGURE_PAGE_AMOUNTS,
 
 from __future__ import annotations
 
+import hashlib
 import io
 import logging
 import re
@@ -213,6 +214,8 @@ class Document:
         self._blocks: list[str] = []
         self._blocks_read = True  # an old cache entry kept as a fallback has none, and must stay marked so
         self.selected: list[int] = []   # the pages the last select_text took
+        # of the file as downloaded, kept in the text cache: a later filing with the same bytes is a repeat (pipeline._same_file)
+        self.sha256: str | None = hashlib.sha256(pdf_bytes).hexdigest() if pdf_bytes else None
         if not pdf_bytes:
             self.error = "no attachment"
             return
@@ -247,7 +250,8 @@ class Document:
         """Everything read from the PDF (digital text and the pages OCR'd so far), for the text cache."""
         return {"v": self.cache_version, "error": self.error, "digital": self._digital, "has_image": self._has_image,
                 "ocr": {str(k): v for k, v in self._ocr_cache.items()}, "unreadable_checked": self.unreadable_checked,
-                "local_ocr": self.local_ocr, "ocr_cap": self.ocr_cap, **({"blocks": self._blocks} if self._blocks_read else {})}
+                "local_ocr": self.local_ocr, "ocr_cap": self.ocr_cap, **({"blocks": self._blocks} if self._blocks_read else {}),
+                **({"sha256": self.sha256} if self.sha256 else {})}
 
     def keep_ocr(self, data: dict) -> None:
         """Reuse the pages an older cache entry already OCR'd: re-reading the text layer does not change them.
@@ -270,6 +274,7 @@ class Document:
         doc._blocks = list(data.get("blocks") or [])
         doc._blocks_read = "blocks" in data
         doc.ocr_cap = data.get("ocr_cap", 6)
+        doc.sha256 = data.get("sha256")
         doc._ocr_cache = {int(k): v for k, v in (data.get("ocr") or {}).items()}
         return doc
 

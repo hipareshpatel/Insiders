@@ -112,6 +112,7 @@ MAX_DEFERRALS = 3        # runs one attachment may fail on the network, alone, b
 # most after three 15-minute waits against a once-a-day reset)
 MAX_QUOTA_DEFERRALS = 40
 MAX_UNREACHABLE = 3      # filings in a row the platform did not answer for: the site is down, stop
+SAME_FILE_MIN_BYTES = 1_000   # a file smaller than this (a stub, an error page) is never matched as the same file
 NOISE_CHUNK = 500        # rows per noise-audit file in R2
 NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category", "subcategory",
                 "filed_at", "reason", "pdf_url")
@@ -1877,6 +1878,7 @@ class Pipeline:
         self._universe: tuple[set[str], float] | None = None
         self._examples: dict[tuple[str, str], dict[str, list[dict]]] = {}
         self._learned: dict | None = None   # Loop 1 state: post-mortem queue, lessons, dampened categories
+        self._files: dict[str, list[tuple[str, str, str]]] = {}   # scrip -> (filed_at, news_id, sha256 of the file) this run
         self._bodies: dict[str, list[tuple[str, str, duplicates.Body]]] = {}  # scrip -> (filed_at, news_id, body) this run
         self._held_this_run: set[str] = set()   # news_ids whose card this run held (D20: not the quarter's card)
         self._shown_this_run: set[str] = set()  # news_ids whose card this run published (repeated_order)
@@ -2347,7 +2349,8 @@ class Pipeline:
         """What an earlier analysis of this filing put in memory, taken out now that it ends without a card."""
         self._forget_pending(filing.scrip_code, (filing.news_id,))
         try:
-            dossier = self.sink.get_dossier(filing.scrip_code)
+            with stages.stage("sink_read"):
+                dossier = self.sink.get_dossier(filing.scrip_code)
             if dossier and forget_filing(dossier, filing.news_id):
                 with stages.stage("memory_write"):
                     self.sink.put_dossier(filing.scrip_code, dossier)
@@ -2370,6 +2373,8 @@ class Pipeline:
             if status in ("FAILED", "PENDING"):
                 for scrip, bodies in self._bodies.items():
                     self._bodies[scrip] = [b for b in bodies if b[1] != news_id]
+                for scrip, files in self._files.items():
+                    self._files[scrip] = [f for f in files if f[1] != news_id]
 
     def _attempt(self, filing: Filing, bulk: bool, memory_complete: bool, deadline: float | None = None) -> Outcome:
         pass1 = "pass1_bulk" if bulk else "pass1"
@@ -2411,7 +2416,8 @@ class Pipeline:
                 waited_out = deadline is not None and time.monotonic() + TRANSIENT_WAIT_S >= deadline
                 if exc.transient and attempt < TRANSIENT_RETRIES and not waited_out:
                     log.info("all providers busy for %s; waiting %ds", filing.news_id, TRANSIENT_WAIT_S)
-                    self._sleep(TRANSIENT_WAIT_S)
+                    with stages.stage("retry_wait"):
+                        self._sleep(TRANSIENT_WAIT_S)
                     continue
                 if exc.transient:
                     with self._lock:
@@ -2498,7 +2504,8 @@ class Pipeline:
 
     def analyze(self, filing: Filing, bulk: bool = False, memory_complete: bool = True) -> Outcome:
         """Run Pass 1 (if needed), extraction, Pass 2, grounding, merge and signals for one filing."""
-        company = self.sink.company(filing.scrip_code) or {}
+        with stages.stage("sink_read"):
+            company = self.sink.company(filing.scrip_code) or {}
         if filing.route == "XBRL":
             return self._xbrl_memory(filing, company)
         industry = company.get("industry")
@@ -2538,6 +2545,13 @@ class Pipeline:
             self._refusals = self._network_failures = 0
             if filing.pdf_url and not pdf:   # a 404, or an empty file (XTRANET's of 23 Oct is still 0 bytes)
                 _attachment_missing(filing)
+            # before any page is read (OCR is lazy, 70-129 s on three filings that then ended as repeats)
+            same = self._same_file(filing, pdf) if pdf else None
+            if same:
+                with self._lock:
+                    self.stats.duplicates += 1
+                return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": filing.event_type,
+                                "reason": f"duplicate of {same} (same file)", "updated_at": now_iso()})
             with stages.stage("read"):
                 doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
         try:
@@ -2565,6 +2579,40 @@ class Pipeline:
                 self._cache_text(filing.news_id, doc)
             doc.close()
 
+    @stages.timed("dup_check")
+    def _same_file(self, filing: Filing, pdf: bytes) -> str | None:
+        """The news id of another filing by the same company, within duplicates.DAYS either side, whose downloaded file
+        has exactly these bytes (sha256); None when there is none. Checked before the pages are read, so a repeat costs
+        no OCR. Only identical bytes count: a repeat in other words is _duplicate_of's. Only OTHER news ids are compared,
+        so a filing read again on purpose (a requeue, the re-read when its PDF arrives) never repeats itself. Like
+        _duplicate_of: this run's filings are registered at once (parallel workers), earlier runs' only once finished
+        (the text cache keeps each file's hash), and a correction is never a repeat."""
+        if len(pdf) < SAME_FILE_MIN_BYTES:
+            return None
+        digest = hashlib.sha256(pdf).hexdigest()
+        filed = datetime.fromisoformat(filing.filed_at)
+        since = (filed - timedelta(days=duplicates.DAYS)).isoformat()
+        until = (filed + timedelta(days=duplicates.DAYS)).isoformat()
+        with self._lock:
+            seen = list(self._files.get(filing.scrip_code, []))
+            self._files.setdefault(filing.scrip_code, []).append((filing.filed_at, filing.news_id, digest))
+        if duplicates.is_correction(filing.headline, filing.subject):
+            return None
+        for at, news_id, theirs in seen:
+            if theirs == digest and news_id != filing.news_id and since <= at < until:
+                log.info("%s is the same file as %s (same company, sha256)", filing.news_id, news_id)
+                return news_id
+        known = {n for _, n, _ in seen}
+        for row in self.sink.query("filings_recent_company", [filing.scrip_code, since, until, 40]):
+            if row["news_id"] in known or row["news_id"] == filing.news_id:
+                continue
+            cached = self._cached_text(row["news_id"])
+            if cached is not None and cached.get("sha256") == digest:
+                log.info("%s is the same file as %s (same company, sha256)", filing.news_id, row["news_id"])
+                return row["news_id"]
+        return None
+
+    @stages.timed("dup_check")
     def _duplicate_of(self, filing: Filing, doc: Document) -> tuple[str, str] | None:
         """(news_id, "exact" | "near") of another filing by the same company, within duplicates.DAYS either side,
         that this one repeats (see duplicates.py); None when there is none. A later filing counts once it is done:
@@ -2598,6 +2646,7 @@ class Pipeline:
                 return news_id, kind
         return None
 
+    @stages.timed("xbrl")
     def _results_links(self, filing: Filing) -> list[XbrlLink]:
         """The company's results XBRL files as quarter links, read once a run: NSE's integrated filing (and its
         older results list) for an NSE filing, BSE's results archive otherwise. NSE's rows are the latest file per
@@ -2652,6 +2701,7 @@ class Pipeline:
             return max(timely, key=lambda link: link.filed_at)
         return min(links, key=lambda link: link.filed_at) if links else None
 
+    @stages.timed("xbrl")
     def _standalone_file(self, filing: Filing, tagged):
         """The standalone results file for the consolidated file's quarter, parsed; None when NSE lists none or it
         cannot be read (best effort: the card goes on without it)."""
@@ -2689,7 +2739,8 @@ class Pipeline:
             filing = filing.model_copy(update={"route": "FAST_TRACK", "event_type": verdict.event_type if verdict.event_type != "OTHER" else filing.event_type})
             return self._analyze_document(filing, company, industry, doc, bulk, memory_complete)
         event_type = verdict.event_type if verdict.event_type != "OTHER" else (filing.event_type or "OTHER")
-        dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
+        with stages.stage("sink_read"):
+            dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
         repeat = similar_timeline_entry(dossier, filing, verdict.entry)
         if repeat:
             with self._lock:
@@ -2774,6 +2825,7 @@ class Pipeline:
                          "reason": f"duplicate of {filing.news_id} (same results quarter {quarter}, D20)",
                          "updated_at": now_iso()}) for n in later]
 
+    @stages.timed("sink_read")
     def _card_shown(self, news_id: str) -> bool:
         """Whether a filing has a card in the feed: published this run, or a card row that is not held."""
         with self._lock:
@@ -2784,6 +2836,7 @@ class Pipeline:
         rows = self.sink.query("card_held", [news_id]) or []
         return bool(rows) and not rows[0].get("held")
 
+    @stages.timed("sink_read")
     def _card_held(self, news_id: str) -> bool:
         # this run's own verdict first: its card may not be committed yet, and a re-run deleted the old one
         with self._lock:
@@ -2792,6 +2845,7 @@ class Pipeline:
         rows = self.sink.query("card_held", [news_id]) or []
         return bool(rows and rows[0].get("held"))
 
+    @stages.timed("xbrl")
     def _xbrl_comparatives(self, filing: Filing, tagged: "xbrl_fast_path.XbrlResult", history=()) -> None:
         """Year-ago and previous-quarter figures for a results file, from those quarters' files in the
         company's results archive (cached by URL). Best effort: a missing file leaves the change out. An
@@ -2861,6 +2915,7 @@ class Pipeline:
         with self._lock:
             return [f for d in days for f in self._event_days.get(d.isoformat(), [])]
 
+    @stages.timed("xbrl")
     def _event_xbrl(self, filing: Filing, doc: Document) -> tuple[list, list[str] | None]:
         """The filing's event XBRL from NSE (event_xbrl.py): its matches, and the app ids of the company's files looked
         at (None when NSE was not asked: not an NSE filing, not an event filed with XBRL, refused or failing).
@@ -2902,6 +2957,7 @@ class Pipeline:
             log.info("event XBRL for %s: %s", filing.news_id, ", ".join(f"{m.file.app_id} ({m.how})" for m in matches))
         return matches, checked
 
+    @stages.timed("xbrl")
     def _annual_report_xbrl(self, filing: Filing, company: dict,
                             doc: Document) -> tuple[list[annual_xbrl.AnnualReport], str | None]:
         """The annual report's own XBRL from NSE (annual_xbrl), for the year the report closes: consolidated first,
@@ -3013,6 +3069,7 @@ class Pipeline:
         except Exception:  # a damaged cache file is re-read from BSE
             return None
 
+    @stages.timed("card_write")
     def _save_evidence(self, filing: Filing, first, final, now: str) -> str | None:
         """The model's own reply for this card, in the object store under evidence/{news_id}.json.gz (R2 online, so
         no D1 row): a reviewer's WRONG can then be told apart as the model's reading or a code block without a re-run
@@ -3034,6 +3091,7 @@ class Pipeline:
             log.warning("evidence not saved for %s: %s", filing.news_id, exc)
             return None
 
+    @stages.timed("card_write")
     def _cache_text(self, news_id: str, doc: Document) -> None:
         path = self._cache_path(news_id)
         if not path:
@@ -3293,6 +3351,7 @@ class Pipeline:
         produced = computed.build_pool(filed_text, tagged, "\n".join(x for x in (annual_xbrl.table(annual) if annual else "",
                                                                                   events_table) if x), history, scale,
                                        (view or {}).get("ownership"), found_facts)
+        @stages.timed("checks")
         def ground(candidate: Pass2Output):
             """Correct a card where the filing can settle it, then check what is left.
 
@@ -3775,6 +3834,7 @@ class Pipeline:
                                             "issues": checks2.problems()}, fixes2
         return out, result, checks, {**base, "status": "UNRESOLVED", "checked_by": second.model_label}, None
 
+    @stages.timed("sink_read")
     def _learning(self) -> dict:
         """Loop 1 state, read once per run: filings queued for a post-mortem re-analysis (with their
         reaction), lessons learnt per sector and event, and categories whose HIGH cards did not move prices."""
@@ -3814,6 +3874,7 @@ class Pipeline:
         self._kv_set("learning:postmortem_done", json.dumps((done + [news_id])[-500:]))
         self._kv_set("learning:postmortem_queue", queue)
 
+    @stages.timed("sink_read")
     def _owner_examples(self, sector: str, event_type: str) -> dict[str, list[dict]]:
         """The owner's two latest starred cards and latest noise card for this sector and event
         (blueprint Loop 3), read once per run per kind of filing."""
@@ -3832,6 +3893,7 @@ class Pipeline:
             self._examples[key] = found
         return found
 
+    @stages.timed("sink_read")
     def _peers(self, sector: str, event_type: str, filing: Filing) -> list[dict]:
         if sector == "default":
             return []
@@ -3857,6 +3919,7 @@ class Pipeline:
             except Exception as exc:  # the archive is a backup; never fail the run for it
                 log.warning("card archive for %s failed: %s", day, exc)
 
+    @stages.timed("sink_read")
     def _memory(self, scrip: str) -> dict | None:
         """A company's memory as this run knows it: its latest card's memory not yet written, else the store's."""
         with self._lock:
@@ -4393,7 +4456,8 @@ def _log_timing(filing: Filing, total: float, times: dict, outcome: "Outcome | N
     try:
         # stage times are exclusive (stages.stage): OCR inside the reading or a prompt's text, the packed wait inside
         # pass 2, each counted once
-        order = ("download", "xbrl", "read", "ocr", "pass1", "pack_wait", "pass2", "memory_write")
+        order = ("download", "xbrl", "read", "ocr", "pass1", "pack_wait", "pass2", "dup_check", "checks", "sink_read",
+                 "card_write", "retry_wait", "memory_write")
         parts = [f"{k} {times[k]:.0f}s" + (f" ({times.get('ocr_pages', 0):.0f} pages)" if k == "ocr" else "")
                  for k in order if times.get(k, 0.0) >= 0.5]
         other = total - sum(times.get(k, 0.0) for k in order)

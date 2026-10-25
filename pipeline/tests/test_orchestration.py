@@ -965,3 +965,78 @@ def test_ocr_pages_and_seconds_reach_the_timing_line(caplog):
         _log_timing(filing, 0.7, times, None)
     assert "ocr 1s (2 pages)" in caplog.text and "-> ERROR" in caplog.text
     assert _ocr_timed(None) is None
+
+
+def test_the_new_stages_reach_the_timing_line_and_other_keeps_the_rest(caplog):
+    """Time once lost to "other" (57-88 s on some filings) is named: sink reads, checks, the same-file check, the card's
+    own writes; a decorated function counts toward its stage and the rest stays "other"."""
+    from bse_intel import stages
+    from bse_intel.pipeline import _log_timing
+
+    @stages.timed("sink_read")
+    def read_memory():
+        time.sleep(0.6)
+
+    stages.start()
+    read_memory()
+    with stages.stage("checks"):
+        time.sleep(0.55)
+    times = stages.finish()
+    assert times["sink_read"] >= 0.6 and times["checks"] >= 0.55
+    with caplog.at_level("INFO", logger="bse_intel.pipeline"):
+        _log_timing(_filing("r0", "Results", now_ist()), 3.0, times, None)
+    line = next(r.getMessage() for r in caplog.records if r.getMessage().startswith("timing r0"))
+    assert "checks 1s" in line and "sink_read 1s" in line and "other 2s" in line
+    assert line.index("checks") < line.index("sink_read") < line.index("other")
+
+
+def _big(text: str) -> bytes:
+    """A PDF as a real one is: over the size below which two files are never called the same (a stub, an error page)."""
+    return _pdf(text) + b"\n%" + b"x" * 2000
+
+
+def test_the_same_file_under_another_news_id_is_a_repeat_before_any_page_is_read(settings, monkeypatch):
+    from bse_intel import extract
+
+    settings = replace(settings, workers=1)
+    now = now_ist() - timedelta(minutes=30)
+    filings = [_filing("s1", "Outcome of Board Meeting", now, "Result"),
+               _filing("s2", "Unaudited Financial Results", now + timedelta(minutes=5), "Result"),
+               _filing("s3", "Revised Financial Results", now + timedelta(minutes=8), "Result"),
+               _filing("t1", "Unaudited Financial Results", now + timedelta(minutes=3), "Result", scrip="999002",
+                       name="Other Ltd")]
+    blob = _big(LETTER)   # one download, as NSE serves a repeat: the same bytes
+    pdfs = {f.pdf_url: blob for f in filings}
+    pipeline, sink, fake = build(settings, filings, pdfs, {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)] * 4},
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
+    reads = []
+    real = extract.Document.__init__
+    monkeypatch.setattr(extract.Document, "__init__",
+                        lambda self, pdf, *a, **k: (reads.append(1), real(self, pdf, *a, **k))[1])
+    pipeline.run("live", time_budget_s=60)
+    status = {r["news_id"]: (r["status"], r["reason"]) for r in rows(sink, "select news_id, status, reason from filings")}
+    assert status["s1"][0] == "ANALYZED"
+    assert status["s2"] == ("DUPLICATE", "duplicate of s1 (same file)")
+    assert status["s3"][0] == "ANALYZED"   # a correction is never a repeat
+    assert status["t1"][0] == "ANALYZED"   # another company's identical file is not one either
+    assert len(reads) == 3                 # s2's pages were never opened
+
+
+def test_a_filing_read_again_on_purpose_is_not_a_repeat_of_itself_and_a_later_run_finds_the_file(settings):
+    settings = replace(settings, workers=1)
+    now = now_ist() - timedelta(minutes=30)
+    blob = _big(LETTER)
+    first = _filing("u1", "Outcome of Board Meeting", now, "Result")
+    pipeline, sink, _ = build(settings, [first], {first.pdf_url: blob},
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)] * 2},
+                              env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
+    pipeline.run("live", time_budget_s=60)
+    again = pipeline._process_one(first, False, True)   # a requeue: the same news id, the same bytes
+    assert "same file" not in str(again.update.get("reason"))
+    later = [first, _filing("u2", "Raising of Funds", now + timedelta(minutes=26), "Result")]
+    pipeline2, _, fake2 = build(settings, later, {f.pdf_url: blob for f in later},
+                                {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]},
+                                env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
+    pipeline2.run("live", time_budget_s=60)
+    status = {r["news_id"]: (r["status"], r["reason"]) for r in rows(sink, "select news_id, status, reason from filings")}
+    assert status["u2"] == ("DUPLICATE", "duplicate of u1 (same file)") and fake2.calls == []

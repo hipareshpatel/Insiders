@@ -56,6 +56,7 @@ from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
 from .settings import Settings, card_ebitda_profit_v2, card_two_parts, d1_plan
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, d1_plan
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -953,6 +954,74 @@ def basis_mixups(out: Pass2Output, tagged, standalone) -> list[str]:
                                  f"({alone:,.2f} Cr); this card is consolidated ({consolidated:,.2f} Cr): use the "
                                  "consolidated figure")
     return list(dict.fromkeys(found))[:4]
+
+
+_PROFIT_GROUP = ("pat", "pat_owners")
+
+
+def _standalone_hits(text: str, lines: list[tuple[tuple[str, ...], list[float], list[float]]]) -> list[tuple[str, str]]:
+    """(figure as written, line) for each crore figure in `text` that equals a standalone value of a line (to the
+    figure's own decimals) and none of the consolidated values of the same line group."""
+    from .grounding import _tokens
+
+    clean = text.replace("**", "")
+    found = []
+    for value, decimals, pos, kind, raw in _tokens(clean):
+        if kind == "pct" or not re.match(r"\s*(?:cr\b|crores?\b)", clean[pos + len(raw):pos + len(raw) + 8], re.I):
+            continue
+        for names, consolidated, alone in lines:
+            if any(round(abs(a), decimals) == round(abs(value), decimals) for a in alone) \
+                    and not any(round(abs(c), decimals) == round(abs(value), decimals) for c in consolidated):
+                found.append((raw, names[0]))
+    return found
+
+
+def standalone_figures_removed(out: Pass2Output, tagged, standalone) -> list[str]:
+    """CARD_CONSOLIDATED_ONLY (F154; owner, 25 Oct 2026: consolidated first, standalone kept from the AI). On a
+    consolidated card, a revenue / EBITDA / PBT / profit figure in the model's words that is the standalone file's value
+    for that line and period but not the consolidated one is taken out: a fact, point, key number or change that states
+    it is hidden, a sentence of the takeaway, catalyst, headline or timeline line that states it is cut (kept as it is when
+    nothing would be left, for the number checks to judge). The profit lines are one group: the standalone PAT written
+    as "profit to shareholders", or the reverse, is caught too. The card is not held. Returns what was removed."""
+    if out.card is None or tagged is None or standalone is None or tagged.basis != "CONSOLIDATED":
+        return []
+    own = {m.metric: m.value for m in tagged.metrics if m.period == tagged.period and m.value is not None}
+    other = {m.metric: m.value for m in standalone.metrics if m.period == tagged.period and m.value is not None}
+    lines = []
+    for names in [(n,) for n in _BASIS_LINES if n not in _PROFIT_GROUP] + [_PROFIT_GROUP]:
+        differing = [other[n] for n in names if n in other and n in own and own[n]
+                     and abs(other[n] - own[n]) > 0.01 * abs(own[n])]
+        if differing:
+            lines.append((names, [own[n] for n in names if n in own], differing))
+    if not lines:
+        return []
+    notes: list[str] = []
+
+    def hits(text, where: str) -> bool:
+        found = _standalone_hits(str(text or ""), lines)
+        for raw, name in found[:1]:
+            notes.append(f'{where}: standalone figure on a consolidated card: "{raw} Cr" ({_BASIS_LABEL.get(name, name)}) removed')
+        return bool(found)
+
+    def clean(text: str | None, where: str) -> str | None:
+        if not text or not hits(text, where):
+            return text
+        parts = re.split(r"(?<=[.;])\s+", text)
+        kept = [x for x in parts if not _standalone_hits(x, lines)]
+        return " ".join(kept) if kept else text
+
+    card = out.card
+    card.headline = clean(card.headline, "headline") or card.headline
+    card.takeaway = clean(card.takeaway, "takeaway") or card.takeaway
+    card.core_catalyst = clean(card.core_catalyst, "core_catalyst")
+    card.what_happened = [f for f in card.what_happened if not hits(f.text, "what_happened")] or card.what_happened
+    card.why_it_matters = [i for i in card.why_it_matters if not hits(i.text, "why_it_matters")]
+    card.key_numbers = [k for k in card.key_numbers if not hits(f"{k.value} {k.change or ''}", "key_numbers")]
+    card.notable_changes = [c for c in card.notable_changes if not hits(f"{c.previous or ''} ; {c.current or ''}", "notable_changes")]
+    out.timeline_entry = clean(out.timeline_entry, "timeline") or out.timeline_entry
+    for note in notes:
+        log.info("%s", note)
+    return notes
 
 
 def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None", filing: str = "") -> list[str]:
@@ -3341,7 +3410,7 @@ class Pipeline:
             xbrl_fast_path.drop_long_year(tagged, history, filing.news_id)   # an 18-month "year" dated as twelve
             xbrl_fast_path.settle_pbt(tagged, filed_text)
             self._xbrl_comparatives(filing, tagged, history)
-            text = tagged.table() + "\n\n" + text  # exact figures first; they also ground the card
+            text = tagged.table(explicit_basis=card_consolidated_only()) + "\n\n" + text  # exact figures first; they also ground the card
         # An annual report's statements as the company tagged them, in crore and on a named basis, where the PDF
         # prints lakh or million with standalone and consolidated side by side (12 of 31 cards held, round 3d).
         # Its lines are the filing's own figures, so a card may quote them as it quotes the results table.
@@ -3358,8 +3427,10 @@ class Pipeline:
                 event_type == "CONCALL_PRESENTATION" and not is_transcript(filing)):   # a call prints no columns
             printed = printed_periods(filed_text, filing.filed_at) | {
                 canonical_period(m.period) for m in (tagged.metrics if tagged else []) if m.period}
+        # CARD_CONSOLIDATED_ONLY (F154): a consolidated filer's card is stated on the consolidated basis alone
+        consolidated_only = bool(card_consolidated_only() and event_type == "RESULTS" and tagged and tagged.basis == "CONSOLIDATED")
         full_view = view_as_of(dossier, filing.filed_at)
-        view = view_as_of(dossier, filing.filed_at, printed=printed, filing_text=text)
+        view = view_as_of(dossier, filing.filed_at, printed=printed, filing_text=text, consolidated_only=consolidated_only)
         sector_module = self.prompts.sector_for(industry)
         sector = sector_module.name
         peers = self._peers(sector, event_type, filing)
@@ -3380,11 +3451,13 @@ class Pipeline:
         if found_facts:
             # in front of the text, as the XBRL table is: the model reads them as the filing's own figures, and a
             # card line quoting one is found (results_card.build puts them on a rich card)
-            text = code_facts.block(found_facts) + "\n\n" + text
+            text = code_facts.block(found_facts, "Consolidated" if consolidated_only else None) + "\n\n" + text
         system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers, scale=scale,
                                           examples=self._owner_examples(sector, event_type),
                                           lessons=[x["lesson"] for x in learned["lessons"].get(f"{sector}|{event_type}", [])][-3:],
-                                          reaction=reaction, variant=variant)
+                                          reaction=reaction, variant=variant,
+                                          consolidated_only=consolidated_only or bool(
+                                              card_consolidated_only() and event_type == "RESULTS" and not tagged))
         route, packer = self._pass2_writer(bulk, len(system) + len(user))
         with stages.stage("pass2"):
             if packer is not None:
@@ -3470,6 +3543,8 @@ class Pipeline:
                 two_hidden[id(candidate)] = two_parts.hide_part2(
                     candidate.card, sources, text=text, reading=blocks, known=f"{sources[3]}\n{scale}",
                     unit=declared_unit(filed_text))
+            if consolidated_only:
+                changes += standalone_figures_removed(candidate, tagged, standalone_file)
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged, filed_text)
             found.scale += basis_mixups(candidate, tagged, standalone_file)

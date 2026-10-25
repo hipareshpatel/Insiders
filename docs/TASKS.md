@@ -39,9 +39,10 @@ into `pipeline/src/bse_intel/adapters/bse.py`: endpoints and parameters, headers
 raw copy, JSON and inline-XBRL parsing as written; typing, logged failures and `safely()` for batch runners added. Left
 out: the reference's headless-Chrome fallback after a refusal (a way round BSE's refusal, against CLAUDE.md). Nothing
 on the NSE path calls it. Test: `tests/test_bse_adapter.py` (request contract, headers, pacing, retries, stops,
-parsing). Measured 25 Oct from a US machine: with these headers announcements and bulk deals answer 200; without
-Origin/Sec-Fetch-Site, 403. Not yet measured: whether BSE keeps answering under a run's load, and from GitHub's runners
-with these headers (`probe-bse` sent the old headers).
+parsing). Measured 25 Oct: from the cloud session's machine (US), with these headers announcements and bulk deals
+answer 200, without Origin/Sec-Fetch-Site 403; from GitHub's runners (`probe-bse` with these headers) 403 "Access
+Denied" either way. So the adapter serves a machine BSE lets in (a laptop in India, a self-hosted runner), not the
+GitHub pipeline.
 
 ## T25 · P1 · laptop · OPEN — live review 5's classes in your files (today's production cards)
 

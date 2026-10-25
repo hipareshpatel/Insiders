@@ -113,7 +113,7 @@ Fixes to the sample itself, found on review:
 
 | # | Improvement | Owner | State |
 |---|---|---|---|
-| 27 | Port the reference repository's BSE client as an off-path adapter (TASKS T26) | Asked | Built (F138), PR #111. Its headless-browser fallback left out (CLAUDE.md). With BSE's own page headers the API answers a US machine (measured) |
+| 27 | Port the reference repository's BSE client as an off-path adapter (TASKS T26) | Asked | Built (F138), PR #111. Its headless-browser fallback left out (CLAUDE.md). Measured: GitHub's runners are refused even with BSE's own page headers; the cloud session's machine is let in with them. Usable from a machine BSE lets in, not from the GitHub pipeline |
 
 ## Item 13 measured (25 Oct 2026): what "hold a line the PDF does not print" would do
 

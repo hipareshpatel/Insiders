@@ -188,3 +188,23 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
   shown as our estimate with both inputs named. Rules: only orders filed after the slide's date, each order once,
   restarted at the next slides or call; it is not reduced for work done since, and says so.
 - **Item 4:** keep filing texts 6 months, then delete automatically (owner, 25 Oct); built (F147).
+
+### Owner's decisions, 25 Oct 2026 late evening
+
+- **Longer cards stay** (owner: "I need longer cards only"). Consequence, from item 17: at about 20 lines a card each line
+  must be right about 99.75% of the time for 95% right cards, so root-cause errors must fall about 5-6 times. The
+  root-cause list from every past audit (`docs/audit/root-causes-2026-10-25.md`, in progress) sets the order of work.
+- **Order of work:** root-cause triage of all past audit findings first (it also says how much of WRONG comes from data
+  extraction vs card writing), then fix the top causes in order, mostly expected in extraction (results table, units,
+  basis, periods). Cards and extraction are worked from that one list.
+- **EPS growth (row 43):** kept. Adjusted for splits, bonuses and consolidations on record (NSE corporate actions;
+  `corporate_actions.share_factor_after` was built 22 Oct but never called: the live bug). A share-count change from a
+  preferential allotment, rights issue, QIP, ESOPs or a merger is real dilution: the actual reported growth is shown.
+  Blank only when the share count moved by an exact split/bonus ratio with no action on record ("possible bonus or
+  split not on record").
+- **Consolidated first (row 44):** the AI sees consolidated figures only, each block naming its basis; code removes a
+  standalone figure the AI writes on a consolidated card; the company's printed EBITDA is used only from a section of
+  the card's basis. Standalone only for companies that file standalone alone.
+- **Card switches waiting for the release check (on/off over stored cards + blind sample):** `CARD_EBITDA_PROFIT_V2`
+  (rows 11, 14, 15; first run 190 cards: 147 changed, 12 printed EBITDA found, 10 lost a profit year-ago), 
+  `CARD_TWO_PARTS` (row 21), `CARD_CONSOLIDATED_ONLY` (row 44), `EPS_SHARE_ADJUST` (row 43, being built).

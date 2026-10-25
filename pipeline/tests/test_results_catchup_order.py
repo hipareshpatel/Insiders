@@ -29,3 +29,12 @@ def test_sek_amount_is_not_rupees():
     assert foreign_as_rupees(["order of ₹120 million"], "order worth SEK 120 million")
     assert gate.numbers_in_quote("SEK 9.7 million order", "order SEK 9.7 million") == []
     assert gate._FOREIGN.search("sek ") and gate._FOREIGN.search("thb ")
+
+
+def test_a_currency_code_inside_a_word_is_not_a_currency():
+    import re
+    from bse_intel.currency import TAIL_PATTERN
+    tail = re.compile(TAIL_PATTERN)
+    for text in ("revenue in the country ", "our brand ", "pipeline details ", "the cop ", "pen "):
+        assert (tail.search(text) is not None) == (text.strip() in ("the cop", "pen")), text
+    assert tail.search("sek ") and tail.search("thb ") and tail.search("us$")

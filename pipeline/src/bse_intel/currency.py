@@ -14,4 +14,5 @@ _codes = "|".join(CODES)
 # the code or "US$" or a symbol, for the amount finders (case-insensitive use); grounding, deal checks
 CODE_PATTERN = rf"(?:\b(?:{_codes}|US\$)|[{SYMBOLS}])"
 # a currency right before a figure, on lower-cased text: gate
-TAIL_PATTERN = rf"(?:{'|'.join(c.lower() for c in CODES)}|{'|'.join(WORDS)}|us\$|[{SYMBOLS}])\s*$"
+# a code or word only as a whole word: "country 120" is not TRY, "brand 5" not rand
+TAIL_PATTERN = rf"(?:\b(?:{'|'.join(c.lower() for c in CODES)}|{'|'.join(WORDS)})|us\$|[{SYMBOLS}])\s*$"

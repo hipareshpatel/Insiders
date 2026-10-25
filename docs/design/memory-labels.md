@@ -1,6 +1,6 @@
 # Labels on every memory item (TODO items 3, 10, 16): design, 25 Oct 2026
 
-Status: step 1 built (F144, 25 Oct 2026): every writer labels what it writes, readers unchanged; steps 2-5 not built. Drafted by a helper from the code (references checked by the lead session:
+Status: step 1 built (F144, 25 Oct 2026): every writer labels what it writes, readers unchanged; step 2 built (F150, 25 Oct 2026): the `label-memory` job labels old memory (dry run first, no card change), not run yet; steps 3-5 not built. Drafted by a helper from the code (references checked by the lead session:
 dossier.py `new_dossier` :290, `_metric_entry` :419, `put_standalone` :569, `merge` :827, `view_as_of` :1212,
 `latest_fundamentals` :1467, `results_snapshot` :1798; pipeline.py `_apply_xbrl` :3427-3428, :3672; web/worker/public.ts :413).
 

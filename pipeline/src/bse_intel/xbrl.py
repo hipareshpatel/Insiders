@@ -398,26 +398,31 @@ def _bank_ratio_fillers(values: dict) -> None:
 _YTD_MONTHS = {"H1": 6, "H2": 6, "9M": 9, "FY": 12}
 
 
-def _annualise_roa(values: dict, ends: dict) -> None:
+def _annualise_roa(values: dict, ends: dict) -> dict[tuple[str, str], list[str]]:
     """Most banks file RoA annualised (UCO, PSB and KVB: the quarter equals the half-year); HDFC Bank's Q2FY27 file
     has 0.45% for the quarter beside 0.91% for the half-year, the period's own return (measured 2026-10-20). When a
     file's quarter is about its share of a longer period's figure, the whole file is un-annualised: each RoA is put
-    on a yearly basis, so banks compare. A file with the quarter alone is left as filed (no way to tell)."""
+    on a yearly basis, so banks compare. A file with the quarter alone is left as filed (no way to tell). Returns the
+    RoA figures this changed with their input (our own arithmetic on the filed quarterly RoA: memory label `calc`)."""
     quarter = max((p for m, p in values if m == "roa_pct" and p.startswith("Q")), key=lambda p: ends.get(p) or date.min,
                   default=None)
     if quarter is None or not values.get(("roa_pct", quarter)):
-        return
+        return {}
     for (metric, label), longer in list(values.items()):
         months = next((n for k, n in _YTD_MONTHS.items() if label.startswith(k)), None)
         if metric != "roa_pct" or not months or not longer or ends.get(label) != ends.get(quarter):
             continue
         share = values[("roa_pct", quarter)] / longer
         if abs(share - 3 / months) <= 0.25 * 3 / months and share < 0.8:
+            scaled = {}
             for (m, p) in list(values):
                 n = 3 if p.startswith("Q") else next((x for k, x in _YTD_MONTHS.items() if p.startswith(k)), None)
                 if m == "roa_pct" and n:
                     values[(m, p)] *= 12 / n
-            return
+                    if n != 12:
+                        scaled[(m, p)] = [f"roa_pct_quarterly:{quarter}"]   # the filed (un-annualised) quarter's RoA
+            return scaled
+    return {}
 
 
 def taxonomy(data: bytes) -> str:
@@ -597,11 +602,12 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
         if group or values.get(("pat", label)) is None:   # a 0 there is the template's filler
             values[("pat", label)] = group
     _bank_ratio_fillers(values)
-    _annualise_roa(values, ends)
+    annualised = _annualise_roa(values, ends)
     # EBITDA = profit before exceptional items and tax + finance cost + depreciation - other income. From the file's
     # own profit before exceptional items when it tags one: PBT less the exceptional items depends on the sign a filer
     # gives a charge, and a charge tagged positive took EBITDA down by twice it (data chain audit A9, 22 Oct 2026)
     derived: dict[tuple[str, str], list[str]] = {}   # figures our code worked out, and the lines they came from (memory label)
+    derived.update(annualised)   # the yearly RoA is our arithmetic on the filed quarterly one, not the file's own figure
     for label in {p for _, p in values}:
         before = values.pop(("pbt_before_exceptional", label), None)
         start = before if before is not None else _pbt_without_associates(values, label)

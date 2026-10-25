@@ -157,7 +157,21 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
   NSE copy was not found under the symbol TATAMOTORS (likely renamed after its demerger), so it was not compared.
 - So BSE's results files carry the same figures as NSE's: no new information for results; useful only as a backup
   source. 16 calls is not a load test: a full backfill (thousands of calls) is unmeasured.
-| 29 | Quick run only: cut the wait to share a request from 60 s to 10 s (`PASS2_PACK_WAIT` in pipeline-today.yml; the main run keeps 60 s) | Measured 25 Oct, quick run 40191102782: 3 of 3 filings waited 60-66 s of their 97-185 s for others to share a request, with only 3 filings live. Cost: on a busy hour fewer filings share one request, so more AI requests | Owner: Yes / No / Later | Proposed |
-| 30 | Time the steps still unmeasured (the checks after pass 2, building the card, sending it to the site) | Main run 40192588628: "other" (time outside every measured step) was 57-88 s on 8 filings, so a minute a filing is still unexplained. Logging only, no card change | Owner: Yes / No / Later | Proposed |
-| 31 | Find why pass 2 took 13-18 minutes on some filings (retries, a slow provider or long waits for the rate limit) | Main run 40192588628: pass 2 983 s (LICI), 941 s (ROHLTD), 1,062 s (ZEEL), 772 s (NTPC); each ties up a worker. Diagnosis first, no change yet | Owner: Yes / No / Later | Proposed |
-| 32 | Skip OCR on a filing that is an exact repeat of one already read (same file), before reading its pages | Main run 40192588628: 3 filings OCR'd 7-15 pages (70-129 s each) and then were dropped as repeats (ITC nse-106633666, GOLDIAM nse-106643200 and nse-106643216). Only a same-file repeat can be caught before reading; a same-content repeat still needs the text | Owner: Yes / No / Later | Proposed |
+| 29 | Quick run only: cut the wait to share a request from 60 s to 10 s (`PASS2_PACK_WAIT` in pipeline-today.yml; the main run keeps 60 s) | Measured 25 Oct, quick run 40191102782: 3 of 3 filings waited 60-66 s of their 97-185 s for others to share a request, with only 3 filings live. Cost: on a busy hour fewer filings share one request, so more AI requests | No (owner, 25 Oct: keep 60 s) | Not built |
+| 30 | Time the steps still unmeasured (the checks after pass 2, building the card, sending it to the site) | Main run 40192588628: "other" (time outside every measured step) was 57-88 s on 8 filings, so a minute a filing is still unexplained. Logging only, no card change | Yes (owner, 25 Oct) | To build |
+| 31 | Find why pass 2 took 13-18 minutes on some filings (retries, a slow provider or long waits for the rate limit) | Main run 40192588628: pass 2 983 s (LICI), 941 s (ROHLTD), 1,062 s (ZEEL), 772 s (NTPC); each ties up a worker. Diagnosis first, no change yet | Yes (owner, 25 Oct) | To build |
+| 32 | Skip OCR on a filing that is an exact repeat of one already read (same file), before reading its pages | Main run 40192588628: 3 filings OCR'd 7-15 pages (70-129 s each) and then were dropped as repeats (ITC nse-106633666, GOLDIAM nse-106643200 and nse-106643216). Only a same-file repeat can be caught before reading; a same-content repeat still needs the text | Yes (owner, 25 Oct) | To build |
+
+### Owner's answers on memory labels (items 3, 10, 16), 25 Oct 2026 evening
+
+- **Q1 Yes:** an AI-read figure counts as a fact when code finds it on a results or annual-report page with its column
+  heading (the period) above it; never from slides or call notes.
+- **Q2 Yes:** a year-ago figure that cannot be checked is left blank. Owner: fill them from the exchange files for every
+  company once. The seed (`seed-memory`, 21-22 Oct) already read every universe company's results files back to FY21;
+  the dry run (build step 2) counts the companies and quarters it still lacks, and those are fetched once before the
+  blank rule goes on.
+- **Q3 Yes, with a running estimate:** slide and call figures show as "said on <date>". Kept and wanted (owner): a
+  running order book, e.g. ₹5,000 Cr in the slides of 21 Oct plus ₹2,000 Cr of orders filed since = about ₹7,000 Cr,
+  shown as our estimate with both inputs named. Rules: only orders filed after the slide's date, each order once,
+  restarted at the next slides or call; it is not reduced for work done since, and says so.
+- **Item 4 reopened as a question:** space for keeping filing texts longer (estimate in the reply of 25 Oct).

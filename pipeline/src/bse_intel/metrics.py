@@ -30,6 +30,8 @@ _LENDER_METRICS = {"interest_earned", "interest_expended", "pre_provision_operat
 # A discontinued business's result sits in the headline profit but not in a continuing EPS (HUL Q3FY26: profit 6,603
 # against continuing 2,125); the two differ by more than this share of the profit (associates' share is far smaller).
 _DISCONTINUED_TOLERANCE = 0.02
+# implied share counts (profit / EPS) further apart than this are a bonus, split or issue: EPS is not comparable
+SHARE_COUNT_TOLERANCE = 0.10
 
 COST_TO_INCOME_NOTE = ("not given on the consolidated basis: a group's other income carries its insurance "
                        "subsidiaries' premium income and its costs their claims (SBI group 60-71% against 47-55% for "
@@ -210,7 +212,31 @@ def table(dossier: dict | None, basis: str) -> list[dict]:
             return None
         return pat - continuing
 
+    def implied_shares(period: str | None):
+        """The profit EPS is on over EPS: crore shares. Continuing profit where a discontinued operation sits in the
+        headline, else the owners' profit, else the profit (a lender's: its profit to shareholders)."""
+        eps = stored("eps", period, "INR")
+        if not eps:
+            return None
+        if lender:
+            profit = line("profit_to_shareholders", period)[0]
+        elif discontinued(period) is not None:
+            profit = stored("pat_continuing", period)
+        else:
+            profit = stored("pat_owners", period)
+            profit = stored("pat", period) if profit is None else profit
+        return abs(profit / eps) if profit else None
+
+    def share_count_changed(periods: list) -> bool:
+        counts = [implied_shares(p) for p in periods if p]
+        counts = [c for c in counts if c]
+        return len(counts) > 1 and max(counts) > min(counts) * (1 + SHARE_COUNT_TOLERANCE)
+
     def growth(metric: str, period: str, prior: str | None):
+        if metric == "eps" and prior and share_count_changed([period, prior]):
+            return _cell(None, "PCT", None, [period, prior],
+                         note=f"share count changed between {prior} and {period} (bonus, split or issue); "
+                              "EPS not comparable")
         if not lender and metric in ("pat", "pat_owners") and (discontinued(period) or discontinued(prior)):
             # a change that runs through a demerger or sale gain is no growth: read pat_continuing_*
             return _cell(None, "PCT", None, [period, prior],
@@ -334,7 +360,12 @@ def table(dossier: dict | None, basis: str) -> list[dict]:
             wanted = consecutive(period)
             eps = [stored("eps", p, "INR") for p in wanted] if wanted else []
             if wanted and all(v is not None for v in eps):
-                row["ttm_eps"] = _cell(sum(eps), "INR", "computed", wanted)
+                if share_count_changed(wanted):
+                    row["ttm_eps"] = _cell(None, "INR", None, wanted,
+                                           note=f"share count changed between {wanted[-1]} and {wanted[0]} (bonus, "
+                                                "split or issue); EPS not comparable")
+                else:
+                    row["ttm_eps"] = _cell(sum(eps), "INR", "computed", wanted)
             row["ttm_ebitda_margin"] = _empty("PCT")
             if row["ttm_ebitda"]["value"] is not None and row["ttm_revenue"]["value"]:
                 row["ttm_ebitda_margin"] = _cell(row["ttm_ebitda"]["value"] / row["ttm_revenue"]["value"] * 100, "PCT",

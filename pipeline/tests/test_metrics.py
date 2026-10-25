@@ -125,8 +125,8 @@ def test_cli_renders(tmp_path, capsys):
 
 
 def test_eps_growth_is_computed_from_per_share_figures():
-    rows = metrics.table(_dossier({"Q1FY26": _q(100, 20, 10, eps=2.0), "Q4FY26": _q(100, 20, 10, eps=2.5),
-                                   "Q1FY27": _q(100, 20, 10, eps=3.0)}), "CONSOLIDATED")
+    rows = metrics.table(_dossier({"Q1FY26": _q(100, 20, 20, eps=2.0), "Q4FY26": _q(100, 20, 25, eps=2.5),
+                                   "Q1FY27": _q(100, 20, 30, eps=3.0)}), "CONSOLIDATED")
     r = row(rows, "Q1FY27")
     assert r["eps_yoy"]["value"] == 50.0 and r["eps_qoq"]["value"] == 20.0
     assert r["eps_yoy"]["inputs"] == ["Q1FY27", "Q1FY26"]
@@ -194,6 +194,46 @@ def test_render_columns_fit_wide_values():
     text = metrics.render(metrics.table(_dossier(big), "CONSOLIDATED"))
     line = next(x for x in text.splitlines() if x.startswith("revenue "))
     assert line.split() == ["revenue", "311,850.00", "298,621.00"]
+
+
+def _shares(counts):
+    """period -> a quarter whose profit is 1,000 and EPS 1,000 / share count (crore shares)."""
+    return {p: _q(10000, 2000, 1000, eps=1000 / n) for p, n in counts.items()}
+
+
+def test_eps_growth_blank_across_a_bonus_issue():
+    # Reliance: a 1:1 bonus in Oct 2024 halves EPS with the profit unchanged (Q2FY26 eps_yoy was -45%)
+    d = _dossier(_shares({"Q2FY25": 676, "Q3FY25": 1353, "Q4FY25": 1353, "Q1FY26": 1353, "Q2FY26": 1353,
+                          "Q3FY26": 1353}))
+    rows = metrics.table(d, "CONSOLIDATED")
+    r = row(rows, "Q2FY26")
+    assert r["eps_yoy"]["value"] is None and "share count changed between Q2FY25 and Q2FY26" in r["eps_yoy"]["note"]
+    assert "EPS not comparable" in r["eps_yoy"]["note"]
+    assert row(rows, "Q3FY25")["eps_qoq"]["value"] is None            # the span Q2FY25 to Q3FY25
+    assert row(rows, "Q4FY25")["eps_qoq"]["value"] == 0.0             # both sides after the bonus
+    assert row(rows, "Q3FY26")["eps_yoy"]["value"] == 0.0
+    assert row(rows, "Q2FY26")["pat_yoy"]["value"] is not None        # profit growth is untouched
+    d2 = _dossier(_shares({"Q1FY25": 676, "Q2FY25": 676, "Q3FY25": 1353, "Q4FY25": 1353, "Q1FY26": 1353}))
+    r = row(metrics.table(d2, "CONSOLIDATED"), "Q1FY26")
+    assert r["ttm_eps"]["value"] is None and "share count changed" in r["ttm_eps"]["note"]
+
+
+def test_eps_growth_kept_across_a_small_issue():
+    # a 5% QIP: the implied count moves 5%, inside the 10% tolerance
+    d = _dossier(_shares({"Q1FY26": 1000, "Q4FY26": 1050, "Q1FY27": 1050}))
+    r = row(metrics.table(d, "CONSOLIDATED"), "Q1FY27")
+    assert r["eps_yoy"]["value"] is not None and r["eps_qoq"]["value"] == 0.0
+    assert "note" not in r["eps_yoy"]
+
+
+def test_eps_share_count_uses_continuing_profit_and_lender_profit():
+    # HUL shape: EPS is on continuing profit, so a demerger gain in the headline is no share change
+    r = row(metrics.table(_dossier(_hul()), "CONSOLIDATED"), "Q3FY26")
+    assert r["eps_yoy"]["value"] is not None
+    q = {"interest_earned": 1000, "interest_expended": 600, "pre_provision_operating_profit": 250, "other_income": 100}
+    d = _dossier({"Q1FY26": {**q, "pat": 100, "eps": 10.0}, "Q1FY27": {**q, "pat": 100, "eps": 5.0}})
+    d["financial_metrics"].append(_entry("gnpa_pct", "Q1FY27", 2.1, unit="PCT"))
+    assert row(metrics.table(d, "CONSOLIDATED"), "Q1FY27")["eps_yoy"]["value"] is None
 
 
 def test_render_lists_notes():

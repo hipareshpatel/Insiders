@@ -891,3 +891,30 @@ def test_our_ebitda_is_not_shown_where_the_filing_prints_another():
     assert "ebitda" not in other and "ebitda_margin" not in other
     assert results_snapshot(memory, "n", printed="EBITDA 30.34 38.95")["ebitda"]["prev_year"] == 38.95
     assert "ebitda" in results_snapshot(memory, "n", printed="PAT 16.28")
+
+
+def test_our_ebitda_counts_as_printed_at_the_companys_rounding():
+    """Fresh review of the narrowed fix (25 Oct 2026): right EBITDA lines were removed because the company rounds.
+    Half the printed figure's last digit plus ROUNDING; a plain share would also pass Patel Retail's wrong ₹17.35 Cr
+    against its printed ₹17.33 Cr."""
+    from bse_intel.dossier import _ebitda_printed
+
+    assert _ebitda_printed(147.39, "EBITDA 147.4 177.6 -17.0% 154.6")                 # Jyoti CNC's deck
+    assert _ebitda_printed(235.92, "EBITDA(1) 1,958 2,360 21%")                       # IGI, in Mn
+    assert _ebitda_printed(123.66, "EBITDA\n1,236\n960\n1,236")                        # Ahluwalia, one cell a line
+    assert _ebitda_printed(161.18, "translated into EBITDA of INR 1.61\nbillion, growing over 20.3%")   # Affle's call
+    assert _ebitda_printed(92.26, "Operating EBITDA 482 511 922")                       # Sambhv: operating counts here
+    assert _ebitda_printed(92.26, "Total EBITDA\nINR 922 Mn")
+    assert not _ebitda_printed(17.35, "EBITDA 17.33 15.10")                           # Patel Retail: another figure
+    assert not _ebitda_printed(112.51, "EBITDA 112.91 98.20")                         # Gravita
+    assert not _ebitda_printed(50.0, "Adjusted EBITDA 50.0")                          # adjusted is not ours
+
+
+def test_a_ratio_row_does_not_stand_against_our_ebitda():
+    """Bharat Forge's ratios page ("EBITDA/Finance cost 0.20 4.67") removed its right EBITDA (fresh review)."""
+    from bse_intel.dossier import _contradicting_ebitda
+
+    assert not _contradicting_ebitda(778.21, "EBITDA/F|nance cost for the period\n0.20\n4.67\n7.46")
+    assert not _contradicting_ebitda(92.26, "Net Debt / Op. EBITDA 0.59x\nEBITDA CAGR 33%\nOp. EBITDA per ton 1,549")
+    assert _contradicting_ebitda(30.34, "EBITDA\n₹ 36.70\n(15.40%) YoY")                # Geojit's deck
+    assert _contradicting_ebitda(358.23, "EBITDA grew to Rs 362 crore in the quarter")  # a call's sentence counts

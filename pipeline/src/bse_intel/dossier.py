@@ -1733,39 +1733,67 @@ def _beside(a: float, b: float, sequence: list[float], unit: float, near: float 
                for n in sequence[max(0, i - ROW_WINDOW): i + ROW_WINDOW + 1])
 
 
-def _row_figures(text: str, word: str) -> list[list[float]]:
-    """The figures of each row the text labels with `word`: those after the label on its line, then on the purely numeric
-    lines right below it (a PDF's text layer often gives a table one cell a line: "EBITDA" then "₹ 36.70"). A margin
-    or an adjusted, normalised, pro-forma, core or operating figure is not the plain one: "EBITDA margin 22.4%",
-    "Adjusted EBITDA 503.6"."""
+def _row_cells(text: str, word: str, plain: bool = True) -> list[tuple[str, list[tuple[float, float]]]]:
+    """Each row the text labels with `word`: its label line and its figures, each with half its last printed digit
+    (1,236 is ±0.5, 147.4 ±0.05). The figures are those after the label on its line, then on the purely numeric lines
+    right below it (a PDF's text layer often gives a table one cell a line: "EBITDA" then "₹ 36.70"). A margin is never
+    the figure; with `plain` neither is an adjusted, normalised, pro-forma, core or operating one ("Adjusted EBITDA
+    503.6"). A figure followed by "billion" or "bn" counts at that scale (Affle's call: "EBITDA of INR 1.61 billion")."""
     rows, lines = [], text.splitlines()
+    skip = r"margin|adjusted|normali[sz]ed|pro[\s-]?forma|\bcore\b|operating" if plain else \
+        r"margin|adjusted|normali[sz]ed|pro[\s-]?forma|\bcore\b"
     for i, line in enumerate(lines):
         low = line.lower()
         at = low.find(word)
-        if at < 0 or re.search(r"margin|adjusted|normali[sz]ed|pro[\s-]?forma|\bcore\b|operating",
-                               low[max(0, at - 25):at + len(word) + 12]):
+        if at < 0 or re.search(skip, low[max(0, at - 25):at + len(word) + 12]):
             continue
         cells = [line[at + len(word):]]
         for nxt in lines[i + 1:i + 7]:
-            if re.search(r"[a-z]{3,}", nxt.lower()) and not re.fullmatch(r"\s*[₹(\-\d.,%)\s]*(yoy|qoq|bps|cr|crore)?\s*", nxt.lower()):
+            if re.search(r"[a-z]{3,}", nxt.lower()) and not re.fullmatch(r"\s*(inr|rs\.?)?[₹(\-\d.,%)\s]*(yoy|qoq|bps|cr|crore|mn|million|bn|billion)?\.?\s*", nxt.lower()):
                 break
             cells.append(nxt)
+        joined = "\n".join(cells + lines[i + len(cells):i + len(cells) + 1])
         figures = []
-        for cell in cells:
-            for m in re.finditer(r"\d[\d,]*\.?\d*", cell):
-                try:
-                    figures.append(float(m.group(0).replace(",", "")))
-                except ValueError:
-                    pass
+        for m in re.finditer(r"\d[\d,]*\.?\d*", joined[:sum(len(c) + 1 for c in cells)]):
+            digits = m.group(0).replace(",", "").rstrip(".")
+            try:
+                figure = float(digits)
+            except ValueError:
+                continue
+            half = 0.5 * 10 ** -(len(digits.split(".")[1]) if "." in digits else 0)
+            if re.match(r"\s*(billion|bn)\b", joined[m.end():], re.I):
+                figure, half = figure * 100, half * 100
+            figures.append((figure, half))
         if figures:
-            rows.append(figures)
+            rows.append((line, figures))
     return rows
+
+
+def _row_figures(text: str, word: str) -> list[list[float]]:
+    """The figures of each row the text labels with `word` (_row_cells), plain figures only."""
+    return [[figure for figure, _ in cells] for _, cells in _row_cells(text, word)]
 
 
 def _printed_with(value: float, text: str, word: str) -> bool:
     """Whether a row the text labels with `word` prints this figure, at any unit (_row_figures)."""
     return any(abs(n - abs(value) * unit) <= _tolerance(value, unit)
                for row in _row_figures(text, word) for n in row for unit in _UNITS)
+
+
+def _ebitda_printed(value: float, text: str) -> bool:
+    """Whether the filing prints this EBITDA as the company rounds it: within half the printed figure's last digit, plus
+    ROUNDING for our sum of rounded lines, in a plain or operating EBITDA row (Jyoti CNC's deck prints ₹147.4 Cr for our
+    ₹147.39 Cr; IGI 2,360 Mn for our ₹235.92 Cr; Sambhv's "Operating EBITDA 922" for our ₹92.26 Cr). A share tolerance
+    alone would not do: Patel Retail's printed ₹17.33 Cr is 0.12% from our wrong ₹17.35 Cr (fresh review, 25 Oct 2026)."""
+    return any(abs(n - abs(value) * unit) <= half + abs(value) * unit * ROUNDING
+               for _, cells in _row_cells(text, "ebitda", plain=False) for n, half in cells for unit in _UNITS)
+
+
+def _contradicting_ebitda(value: float, text: str) -> bool:
+    """Whether the filing prints a plain EBITDA row that can stand against ours: not a ratio ("Net debt / EBITDA",
+    "EBITDA/Finance cost", "EBITDA per ton", "EBITDA CAGR"), whose figures are no EBITDA (Bharat Forge's ratios page,
+    fresh review, 25 Oct 2026). A call's sentence counts: most companies state their EBITDA only there."""
+    return any(not re.search(r"/|\bper\b|cagr|coverage", label.lower()) for label, _ in _row_cells(text, "ebitda"))
 
 
 def _kept_basis(sources: list[dict]) -> str | None:
@@ -2103,8 +2131,8 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     # 25 Oct 2026). Until memory keeps the company's reading, neither it nor its margin is shown.
     shown_ebitda = (out.get("ebitda") or {}).get("value")
     if shown_ebitda is not None and not company_ebitda() and (ebitda_text or printed) \
-            and _row_figures(ebitda_text or printed or "", "ebitda") \
-            and not _printed_with(shown_ebitda, ebitda_text or printed or "", "ebitda"):
+            and _contradicting_ebitda(shown_ebitda, ebitda_text or printed or "") \
+            and not _ebitda_printed(shown_ebitda, ebitda_text or printed or ""):
         out.pop("ebitda", None)
         out.pop("ebitda_margin", None)
     if len(out) <= 3:

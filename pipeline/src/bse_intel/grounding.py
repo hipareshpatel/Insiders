@@ -226,7 +226,7 @@ class SourceIndex:
                     value = abs(float(m.group(0).replace(",", "").strip("+").strip("()")))
                 except ValueError:
                     continue
-                if value > 0:
+                if value > 0 and math.isfinite(value):   # a 400-digit run (LTF's deck) reads as infinity
                     by_unit.setdefault(_money_unit(clean, m.end()), set()).add(value)
             for unit, value in _other_readings(text or ""):
                 by_unit.setdefault(unit, set()).add(value)
@@ -249,7 +249,7 @@ class SourceIndex:
         # the card carries the XBRL's decimals and the filing prints the crore figure rounded: Adani Ports' deck
         # "10,738" for ₹10,737.58 Cr, ICICI's call "₹14,755 crore" for ₹14,755.06 Cr (held-card audit, 22 Oct 2026)
         if tolerance is None and decimals and value >= 1000:
-            whole = [v for v in (*self._by_unit.get(1, ()), *(self._plain if 1 in plain_scales else ())) if v == int(v)]
+            whole = [v for v in (*self._by_unit.get(1, ()), *(self._plain if 1 in plain_scales else ())) if math.isfinite(v) and v == int(v)]
             return any(abs(v - value) <= 0.5 + 1e-9 for v in whole)
         return False
 
@@ -696,7 +696,7 @@ def _near_amount(index: SourceIndex, target: float) -> bool:
     """A source figure within 0.5% of target, years (1990–2100) aside."""
     lo, hi = target * 0.995, target * 1.005
     i = bisect.bisect_left(index.values, lo)
-    return any(not (1990 <= v <= 2100 and v == int(v)) for v in index.values[i:bisect.bisect_right(index.values, hi)])
+    return any(not (1990 <= v <= 2100 and math.isfinite(v) and v == int(v)) for v in index.values[i:bisect.bisect_right(index.values, hi)])
 
 
 _LABEL_STOP = {"from", "with", "were", "this", "that", "year", "quarter", "rupees", "crore", "crores", "lakh", "lakhs",

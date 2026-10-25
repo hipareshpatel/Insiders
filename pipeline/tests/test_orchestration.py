@@ -755,3 +755,17 @@ def test_a_garbled_scan_does_not_hold_a_card_built_from_its_xbrl_file(settings):
     text = "Revenue 1,2O4.5 3,4l2.0 EBITDA 2O1.3 PAT 9S.2l " * 3
     assert pipeline._held_reasons(filing, text) and "garbled" in pipeline._held_reasons(filing, text)[0]
     assert pipeline._held_reasons(filing, text, xbrl_backed=True) == []
+
+
+def test_a_file_over_the_size_cap_fails_once_with_its_reason(settings):
+    """Owner, 25 Oct 2026: NHPC's results PDF was skipped at the cap and failed three times as "no readable text"."""
+    from bse_intel.bse import AttachmentTooLarge
+    from test_pipeline import _filing as make, build
+
+    filing = make("n-big", "Audited Financial Results", now_ist() - timedelta(hours=2), "Company Update")
+    pipeline, sink, fake = build(settings, [filing], {}, {})
+    pipeline.bse.download = lambda url, max_bytes=None: (_ for _ in ()).throw(AttachmentTooLarge(url, max_bytes))
+    out = pipeline._process_one(filing, bulk=False, memory_complete=True)
+    assert out.update["status"] == "FAILED" and out.update["attempts"] == settings.max_attempts
+    assert out.update["last_error"].startswith("AttachmentTooLarge: file too large (over 120 MB)")
+    assert pipeline._blocked is None   # one large file does not stop the run

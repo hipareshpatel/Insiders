@@ -34,7 +34,7 @@ from functools import partial
 from threading import Lock
 
 from .ai.gateway import CEILING, AIGateway, AllProvidersFailed
-from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
+from .bse import AttachmentError, AttachmentTooLarge, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, keep_concurrent_writes, latest_fundamentals, memory_ids, merge,
                       own_former_name,
@@ -2025,11 +2025,17 @@ class Pipeline:
             return []
         return self.nse.announcements(start, end, symbol=symbol, scrip_for=nse_map.scrip_for)
 
-    def _attachment(self, url: str, max_bytes: int) -> bytes | None:
-        """A filing's attachment from whichever exchange serves it."""
-        if self.nse is not None and "nseindia.com" in url:
-            return self.nse.fetch(url, max_bytes=max_bytes)
-        return self.bse.download(url, max_bytes=max_bytes)
+    def _attachment(self, url: str, max_bytes: int, document: bool = False) -> bytes | None:
+        """A filing's attachment from whichever exchange serves it. A file over the cap raises AttachmentTooLarge for
+        the filing's own document (it fails once, with that reason, and is not retried); any other file is None."""
+        try:
+            if self.nse is not None and "nseindia.com" in url:
+                return self.nse.fetch(url, max_bytes=max_bytes)
+            return self.bse.download(url, max_bytes=max_bytes)
+        except AttachmentTooLarge:
+            if document:
+                raise
+            return None
 
     def _record(self, key: str, filings, noise: dict[str, list], known: set[str],
                 sources: dict[str, str | None] | None = None) -> int:
@@ -2387,6 +2393,9 @@ class Pipeline:
                 return self._failed(filing, exc)
             except EventXbrlPending as exc:
                 return self._deferred(filing, f"deferred: {exc}")
+            except AttachmentTooLarge as exc:
+                # the same file stays too large on every run: fail once with the reason, every attempt spent
+                return self._failed(filing, exc, final=True)
             except SourceBlockedError as exc:
                 # NSE answered 401, 403 or 429 (or BSE refused): stop the run politely; the work stays queued and no
                 # filing's attempt is spent (owner, 2026-10-18)
@@ -2432,11 +2441,12 @@ class Pipeline:
             self.stats.deferred += 1
         return Outcome({"news_id": filing.news_id, "status": "PENDING", "updated_at": now_iso(), "last_error": reason})
 
-    def _failed(self, filing: Filing, exc: Exception) -> Outcome:
+    def _failed(self, filing: Filing, exc: Exception, final: bool = False) -> Outcome:
         with self._lock:
             self.stats.failed += 1
         # The attempt count is sent as a value, not an increment, so a retried write cannot count twice.
-        return Outcome({"news_id": filing.news_id, "status": "FAILED", "attempts": filing.attempts + 1,
+        attempts = max(filing.attempts + 1, self.settings.max_attempts) if final else filing.attempts + 1
+        return Outcome({"news_id": filing.news_id, "status": "FAILED", "attempts": attempts,
                         "last_error": f"{type(exc).__name__}: {exc}"[:500], "updated_at": now_iso()})
 
     def analyze(self, filing: Filing, bulk: bool = False, memory_complete: bool = True) -> Outcome:
@@ -2467,14 +2477,14 @@ class Pipeline:
             # Written before the text layer was read in reading order: read the PDF again, keeping the
             # pages already OCR'd; if BSE will not serve it now, the old text is still better than none.
             try:
-                pdf = self._attachment(filing.pdf_url, _attachment_cap(filing))
+                pdf = self._attachment(filing.pdf_url, _attachment_cap(filing), document=True)
                 self._refusals = self._network_failures = 0
                 doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
                 doc.keep_ocr(cached)
-            except AttachmentError:
+            except (AttachmentError, AttachmentTooLarge):
                 doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         if doc is None:
-            pdf = self._attachment(filing.pdf_url, _attachment_cap(filing)) if filing.pdf_url else None
+            pdf = self._attachment(filing.pdf_url, _attachment_cap(filing), document=True) if filing.pdf_url else None
             self._refusals = self._network_failures = 0
             doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
         try:
@@ -2763,7 +2773,7 @@ class Pipeline:
             # an event XBRL file comes as a zip of the XML and its PDF on some rows (event_xbrl.xml_of)
             fetch = client.fetch if url.lower().endswith(".zip") and hasattr(client, "fetch") else client.download
             data = fetch(url, max_bytes=max_bytes)
-        except AttachmentError:
+        except (AttachmentError, AttachmentTooLarge):
             return None
         if data and path:
             try:

@@ -89,3 +89,18 @@ def test_a_scheduled_job_records_its_last_run():
     _record_job(Sink(), "analyze-pdf", 0)
     assert written["job:market-data"]["ok"] is True and written["job:refresh-summaries"]["ok"] is False
     assert "job:analyze-pdf" not in written
+
+
+def test_failed_report_groups_failures_by_reason_and_the_requeue_skips_files_too_large(settings):
+    """Owner, 25 Oct 2026: why do filings fail? And a file over the size cap is not downloaded again for nothing."""
+    pipeline, sink, now = _failed_filings(settings)
+    sink._db.execute("UPDATE filings SET last_error = 'AttachmentTooLarge: file too large (over 120 MB): "
+                     "https://nsearchives.nseindia.com/x.pdf' WHERE news_id = 'f0'")
+    sink._db.execute("UPDATE filings SET attempts = 1 WHERE news_id = 'f2'")
+    sink._db.commit()
+    since = (now - timedelta(days=30)).date().isoformat()
+    report = requeue.report(sink, since)
+    assert report["failed"] == 3 and report["reasons"][0] == {
+        "reason": "ValidationError: x", "count": 2, "examples": report["reasons"][0]["examples"]}
+    assert report["reasons"][1]["reason"].startswith("AttachmentTooLarge: file too large (over <n> MB): <url>")
+    assert requeue.requeue(sink, since, 3)["requeued"] == 1   # f1 only: f0 is too large, f2 has attempts left

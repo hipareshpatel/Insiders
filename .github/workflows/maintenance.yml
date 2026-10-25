@@ -27,7 +27,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -87,6 +87,9 @@ jobs:
         env:
           IDS: ${{ inputs.ids }}   # through the environment, never pasted into the script
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel requeue-failed ${IDS:+--ids "$IDS"} ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
+      - name: Failed filings by reason (reads only)
+        if: inputs.command == 'failed-report'
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel failed-report'
       - name: Publish held cards without their unquoted points
         if: inputs.command == 'release-pruned'
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel release-pruned ${{ inputs.dry_run && ''--dry-run'' || '''' }}'

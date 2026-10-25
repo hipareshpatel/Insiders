@@ -26,6 +26,7 @@ from typing import Any
 
 from pydantic import Field, ValidationError
 
+from .. import stages
 from ..models import _Lenient
 from .gateway import AIResult
 
@@ -130,13 +131,20 @@ class Packer:
             self._send(earlier)
         if batch:
             self._send(batch)
-        elif not job.done.wait(self._wait()):
-            with self._lock:
-                if job in self._pending:   # nobody filled the pack in time: send what there is
-                    batch, self._pending = self._pending, []
-            if batch:
-                self._send(batch)
-            job.done.wait()
+        else:
+            # the wait for other filings (or for another thread's send) is this filing's own time; the send itself,
+            # run on this thread when the pack was not filled, is not
+            waited = time.monotonic()
+            if not job.done.wait(self._wait()):
+                with self._lock:
+                    if job in self._pending:   # nobody filled the pack in time: send what there is
+                        batch, self._pending = self._pending, []
+                stages.add("pack_wait", time.monotonic() - waited)
+                if batch:
+                    self._send(batch)
+                waited = time.monotonic()
+                job.done.wait()
+            stages.add("pack_wait", time.monotonic() - waited)
         if job.result is not None:
             return job.result
         with self._lock:

@@ -882,3 +882,86 @@ def test_a_pdf_cut_short_on_nse_waits_and_then_fails_with_that_reason(settings):
     out = pipeline._process_one(old, bulk=False, memory_complete=True)
     assert out.update["status"] == "FAILED" and out.update["attempts"] == settings.max_attempts
     assert "cut short on NSE" in out.update["last_error"]
+
+
+def test_each_filing_logs_one_timing_line_with_its_outcome(settings, caplog):
+    """A slow run is diagnosed from one line per filing: stage seconds and how it ended."""
+    import logging
+
+    settings = replace(settings, workers=1)
+    now = now_ist() - timedelta(minutes=30)
+    (f,) = _results(1, now)
+    pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(LETTER)},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]},
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
+    with caplog.at_level(logging.INFO, logger=pipeline_module.log.name):
+        pipeline.run("live", time_budget_s=60)
+    lines = [r.getMessage() for r in caplog.records if r.getMessage().startswith("timing ")]
+    assert len(lines) == 1 and lines[0].startswith("timing r0 (") and " -> ANALYZED card" in lines[0], lines
+    print(lines[0])
+
+
+def test_a_deferred_filing_logs_its_reason(settings, caplog):
+    import logging
+    from bse_intel.nse import SourceBlockedError as NseRefused
+
+    now = now_ist() - timedelta(hours=2)
+    (f,) = _results(1, now)
+    pipeline, sink, fake = build(settings, [f], {}, {})
+    pipeline.bse.download = lambda url, max_bytes=None: (_ for _ in ()).throw(NseRefused("NSE refused the attachment (HTTP 403)"))
+    with caplog.at_level(logging.INFO, logger=pipeline_module.log.name):
+        pipeline._process_one(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}), False, True)
+    text = [r.getMessage() for r in caplog.records]
+    assert any(m.startswith("deferred r0: ") and "refused" in m for m in text), text
+    assert any(m.startswith("timing r0 (") and "-> PENDING: " in m and "refused" in m for m in text), text
+
+
+def test_stage_timer_is_a_no_op_outside_a_filing_and_counts_nesting_once():
+    from bse_intel import stages
+
+    with stages.stage("pass2"):   # no filing active: nothing happens, nothing raises
+        stages.add("pack_wait", 5)
+    assert stages.finish() == {}
+    stages.start()
+    with stages.stage("pass2"):
+        with stages.stage("pass2"):
+            time.sleep(0.02)
+    stages.add("pack_wait", 0.5)
+    times = stages.finish()
+    assert 0.02 <= times["pass2"] < 0.2 and times["pack_wait"] == 0.5
+    with stages.stage("read"):   # finished: inactive again
+        pass
+    assert stages.finish() == {}
+
+
+def test_stage_times_are_exclusive_so_they_add_up_to_the_total():
+    from bse_intel import stages
+
+    stages.start()
+    with stages.stage("pass1"):
+        time.sleep(0.02)
+        with stages.stage("ocr"):   # OCR while pass 1's text is read: pass 1 pauses
+            time.sleep(0.05)
+        time.sleep(0.02)
+    with stages.stage("pass2"):
+        stages.add("pack_wait", 0.03)   # a wait measured inside pass 2 is taken out of it
+        time.sleep(0.04)
+    times = stages.finish()
+    assert 0.04 <= times["ocr"] < 0.1 and 0.035 <= times["pass1"] < 0.05
+    assert times["pack_wait"] == 0.03 and 0.0 < times["pass2"] < 0.02
+
+
+def test_ocr_pages_and_seconds_reach_the_timing_line(caplog):
+    from bse_intel import stages
+    from bse_intel.pipeline import _log_timing, _ocr_timed
+
+    read = _ocr_timed(lambda png: (time.sleep(0.3), "text")[1])
+    stages.start()
+    for _ in range(2):
+        read(b"png")
+    times = stages.finish()
+    filing = _filing("r0", "Results", now_ist())
+    with caplog.at_level("INFO", logger="bse_intel.pipeline"):
+        _log_timing(filing, 0.7, times, None)
+    assert "ocr 1s (2 pages)" in caplog.text and "-> ERROR" in caplog.text
+    assert _ocr_timed(None) is None

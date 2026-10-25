@@ -43,6 +43,7 @@ from .extract import CACHE_VERSION, FIGURE_PAGE_AMOUNTS, Document, amounts, cach
 from .ocr import available as local_ocr_available
 from .ocr import page_reader, recognise
 from . import raw
+from . import stages
 from . import order_band
 from . import gate
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
@@ -2310,7 +2311,12 @@ class Pipeline:
         return bool(until)
 
     def _process_one(self, filing: Filing, bulk: bool, memory_complete: bool, deadline: float | None = None) -> Outcome:
-        outcome = self._attempt(filing, bulk, memory_complete, deadline)
+        began = time.monotonic()
+        stages.start()
+        try:
+            outcome = self._attempt(filing, bulk, memory_complete, deadline)
+        finally:
+            _log_timing(filing, time.monotonic() - began, stages.finish(), locals().get("outcome"))
         status = outcome.update.get("status")
         held = bool(outcome.card and outcome.card.get("held"))
         if held:
@@ -2343,7 +2349,8 @@ class Pipeline:
         try:
             dossier = self.sink.get_dossier(filing.scrip_code)
             if dossier and forget_filing(dossier, filing.news_id):
-                self.sink.put_dossier(filing.scrip_code, dossier)
+                with stages.stage("memory_write"):
+                    self.sink.put_dossier(filing.scrip_code, dossier)
                 log.info("memory: %s's facts taken out; it now ends without a card", filing.news_id)
         except Exception as exc:  # memory hygiene must not fail the filing; a later run tries again
             log.warning("could not take %s's facts out of memory: %s", filing.news_id, exc)
@@ -2477,6 +2484,7 @@ class Pipeline:
     def _deferred(self, filing: Filing, reason: str) -> Outcome:
         with self._lock:
             self.stats.deferred += 1
+        log.info("deferred %s: %s", filing.news_id, reason)
         return Outcome({"news_id": filing.news_id, "status": "PENDING", "updated_at": now_iso(), "last_error": reason})
 
     def _failed(self, filing: Filing, exc: Exception, final: bool = False, where: str = "") -> Outcome:
@@ -2494,10 +2502,10 @@ class Pipeline:
         if filing.route == "XBRL":
             return self._xbrl_memory(filing, company)
         industry = company.get("industry")
-        ocr = page_reader(self.gateway.transcribe_image if self.gateway.has_route("vision") else None)
+        ocr = _ocr_timed(page_reader(self.gateway.transcribe_image if self.gateway.has_route("vision") else None))
         # Pages of figures are read by local OCR first, the text layer putting back the nils it drops
         # (extract.figure_page); never by the vision route, which costs quota and swaps digits.
-        figures = recognise if local_ocr_available() else None
+        figures = _ocr_timed(recognise if local_ocr_available() else None)
         cached = self._cached_text(filing.news_id)
         doc = None
         # A page whose text layer is unreadable and was never OCR'd is read again from the PDF, once, so
@@ -2516,18 +2524,22 @@ class Pipeline:
             # Written before the text layer was read in reading order: read the PDF again, keeping the
             # pages already OCR'd; if BSE will not serve it now, the old text is still better than none.
             try:
-                pdf = self._attachment(filing.pdf_url, _attachment_cap(filing), document=True)
+                with stages.stage("download"):
+                    pdf = self._attachment(filing.pdf_url, _attachment_cap(filing), document=True)
                 self._refusals = self._network_failures = 0
-                doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
+                with stages.stage("read"):
+                    doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
                 doc.keep_ocr(cached)
             except (AttachmentError, AttachmentTooLarge):
                 doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         if doc is None:
-            pdf = self._attachment(filing.pdf_url, _attachment_cap(filing), document=True) if filing.pdf_url else None
+            with stages.stage("download"):
+                pdf = self._attachment(filing.pdf_url, _attachment_cap(filing), document=True) if filing.pdf_url else None
             self._refusals = self._network_failures = 0
             if filing.pdf_url and not pdf:   # a 404, or an empty file (XTRANET's of 23 Oct is still 0 bytes)
                 _attachment_missing(filing)
-            doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
+            with stages.stage("read"):
+                doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
         try:
             repeat = self._duplicate_of(filing, doc)
             if repeat:
@@ -2649,7 +2661,9 @@ class Pipeline:
             return None
         link = max(links, key=lambda link: link.filed_at)
         try:
-            return xbrl_fast_path.parse(self._attachment(link.url, 8_000_000))
+            with stages.stage("xbrl"):
+                data = self._attachment(link.url, 8_000_000)
+            return xbrl_fast_path.parse(data)
         except Exception as exc:  # an extra: the consolidated card stands without it
             log.warning("standalone results file for %s unavailable (%s)", filing.news_id, exc)
             return None
@@ -2669,7 +2683,8 @@ class Pipeline:
         first = doc.select_text(6000, [])
         _ocr_check(doc)
         system, user = self.prompts.timeline(filing, first)
-        verdict: TimelineVerdict = self.gateway.complete_json("pass1_bulk" if bulk else "pass1", system, user, TimelineVerdict).value
+        with stages.stage("pass1"):
+            verdict: TimelineVerdict = self.gateway.complete_json("pass1_bulk" if bulk else "pass1", system, user, TimelineVerdict).value
         if verdict.needs_card or not verdict.entry.strip():
             filing = filing.model_copy(update={"route": "FAST_TRACK", "event_type": verdict.event_type if verdict.event_type != "OTHER" else filing.event_type})
             return self._analyze_document(filing, company, industry, doc, bulk, memory_complete)
@@ -2682,7 +2697,8 @@ class Pipeline:
             return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": event_type,
                             "reason": f"duplicate of {repeat['news_id']} (same timeline event)", "updated_at": now})
         merged = add_timeline_entry(dossier, filing, event_type, verdict.entry, now)
-        self.sink.put_dossier(filing.scrip_code, merged)
+        with stages.stage("memory_write"):
+            self.sink.put_dossier(filing.scrip_code, merged)
         with self._lock:
             self.stats.timeline_only += 1
         return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": event_type,
@@ -2751,7 +2767,8 @@ class Pipeline:
         self._forget_pending(filing.scrip_code, later)
         dossier = self.sink.get_dossier(filing.scrip_code)
         if dossier and any([forget_filing(dossier, n) for n in later]):
-            self.sink.put_dossier(filing.scrip_code, dossier)
+            with stages.stage("memory_write"):
+                self.sink.put_dossier(filing.scrip_code, dossier)
         log.info("%s takes results quarter %s from %s (D20)", filing.news_id, quarter, ", ".join(later))
         return [Outcome({"news_id": n, "status": "DUPLICATE", "event_type": "RESULTS",
                          "reason": f"duplicate of {filing.news_id} (same results quarter {quarter}, D20)",
@@ -2943,7 +2960,8 @@ class Pipeline:
                 data = None
         if data is None:
             try:
-                data = self._attachment(filing.xbrl_url, 8_000_000)   # NSE's archive for an NSE file
+                with stages.stage("xbrl"):
+                    data = self._attachment(filing.xbrl_url, 8_000_000)   # NSE's archive for an NSE file
             except AttachmentError:
                 if strict:
                     raise
@@ -2972,7 +2990,8 @@ class Pipeline:
         out = Pass2Output(is_material=False, timeline_entry="")
         out.dossier_delta.ownership = tagged.ownership
         merged = merge(dossier, out, filing, None, now)
-        self.sink.put_dossier(filing.scrip_code, merged)
+        with stages.stage("memory_write"):
+            self.sink.put_dossier(filing.scrip_code, merged)
         own = tagged.ownership
         return Outcome({"news_id": filing.news_id, "status": "NOT_MATERIAL", "event_type": "SHAREHOLDING",
                         "reason": f"xbrl: shareholding {own.period} saved to memory (promoter {own.promoter_pct}%)"[:300],
@@ -3056,7 +3075,8 @@ class Pipeline:
             _ocr_check(doc)
             recent = [t for t in dossier.get("timeline", []) if str(t.get("date", "")) < filing.filed_at][-8:]
             system, user = self.prompts.pass1(filing, first_page, recent)
-            verdict: Pass1Result = self.gateway.complete_json("pass1_bulk" if bulk else "pass1", system, user, Pass1Result).value
+            with stages.stage("pass1"):
+                verdict: Pass1Result = self.gateway.complete_json("pass1_bulk" if bulk else "pass1", system, user, Pass1Result).value
             if not verdict.is_material:
                 with self._lock:
                     self.stats.pass1_rejected += 1
@@ -3231,10 +3251,11 @@ class Pipeline:
                                           lessons=[x["lesson"] for x in learned["lessons"].get(f"{sector}|{event_type}", [])][-3:],
                                           reaction=reaction, variant=variant)
         route, packer = self._pass2_writer(bulk, len(system) + len(user))
-        if packer is not None:
-            result = packer.complete(route, system, user, Pass2Output, filing.news_id)   # several filings, one Gemini call
-        else:
-            result = self.gateway.complete_json(route, system, user, Pass2Output, bulk=bulk)
+        with stages.stage("pass2"):
+            if packer is not None:
+                result = packer.complete(route, system, user, Pass2Output, filing.news_id)   # several filings, one Gemini call
+            else:
+                result = self.gateway.complete_json(route, system, user, Pass2Output, bulk=bulk)
         out: Pass2Output = result.value
         if not out.is_material or out.card is None:
             with self._lock:
@@ -3619,10 +3640,11 @@ class Pipeline:
         memory trust checks, XBRL figures and merge a card's memory gets. Nothing is written to the cards table."""
         system, user = self.prompts.memory(filing, event_type, industry, view, text, scale=scale)
         route, packer = self._pass2_writer(True, len(system) + len(user))
-        if packer is not None:
-            result = packer.complete(route, system, user, MemoryOutput, filing.news_id)
-        else:
-            result = self.gateway.complete_json(route, system, user, MemoryOutput, bulk=True)
+        with stages.stage("pass2"):
+            if packer is not None:
+                result = packer.complete(route, system, user, MemoryOutput, filing.news_id)
+            else:
+                result = self.gateway.complete_json(route, system, user, MemoryOutput, bulk=True)
         out: MemoryOutput = result.value
         if not out.is_material:
             with self._lock:
@@ -3658,7 +3680,8 @@ class Pipeline:
         kept = keep_concurrent_writes(merged, read, self.sink.get_dossier(filing.scrip_code))
         if kept:
             log.info("%s: memory written meanwhile by another job kept: %s", filing.news_id, ", ".join(kept))
-        self.sink.put_dossier(filing.scrip_code, merged)
+        with stages.stage("memory_write"):
+            self.sink.put_dossier(filing.scrip_code, merged)
         self._save_evidence(filing, result, result, now)
         symbol = company.get("symbol") or filing.symbol
         catalysts = [
@@ -3686,7 +3709,8 @@ class Pipeline:
         notice for FY22 to repeat a ₹2.64 Cr one for FY20, and a completed acquisition to repeat its signing."""
         system, user = self.prompts.repeat(filing, recent, opening)
         try:
-            said = self.gateway.complete_json("pass1_bulk" if bulk else "pass1", system, user, RepeatVerdict).value
+            with stages.stage("pass1"):
+                said = self.gateway.complete_json("pass1_bulk" if bulk else "pass1", system, user, RepeatVerdict).value
         except Exception as exc:
             log.info("repeat check skipped for %s: %s", filing.news_id, type(exc).__name__)
             return None
@@ -3729,8 +3753,9 @@ class Pipeline:
         hints = [UNIT_HINT] if checks.amounts_ungrounded else []
         system2, user2 = self.prompts.verify(system, user, out.model_dump(mode="json"), problems + hints)
         try:
-            second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider, result.model_label),
-                                                bulk=bulk)
+            with stages.stage("pass2"):
+                second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider, result.model_label),
+                                                    bulk=bulk)
         except Exception as exc:  # the first card is still published, marked unverified
             return out, result, checks, {**base, "status": "UNCHECKED", "note": f"{type(exc).__name__}: {exc}"[:200]}, None
         if not second.value.is_material or second.value.card is None:
@@ -3856,7 +3881,8 @@ class Pipeline:
             kept = keep_concurrent_writes(merged, read, self.sink.get_dossier(scrip))
             if kept:
                 log.info("%s: memory written meanwhile by another job kept: %s", news_id, ", ".join(kept))
-            self.sink.put_dossier(scrip, merged)
+            with stages.stage("memory_write"):
+                self.sink.put_dossier(scrip, merged)
 
     def _drop_memory(self, news_id: str) -> None:
         """A card the database refused leaves no memory either."""
@@ -4360,6 +4386,44 @@ def _attachment_missing(filing: Filing, why: str = "") -> None:
         raise AttachmentNotYet(f"the file is {why or 'not on NSE yet, or empty'} ({filing.pdf_url})")
     raise NoTextAttachment(f"the file was {why or 'missing or empty on NSE'} {int(age.total_seconds() // 3600)} h after "
                            f"the filing ({filing.pdf_url})")
+
+
+def _log_timing(filing: Filing, total: float, times: dict, outcome: "Outcome | None") -> None:
+    """One line per filing: where its seconds went and how it ended. Never raises."""
+    try:
+        # stage times are exclusive (stages.stage): OCR inside the reading or a prompt's text, the packed wait inside
+        # pass 2, each counted once
+        order = ("download", "xbrl", "read", "ocr", "pass1", "pack_wait", "pass2", "memory_write")
+        parts = [f"{k} {times[k]:.0f}s" + (f" ({times.get('ocr_pages', 0):.0f} pages)" if k == "ocr" else "")
+                 for k in order if times.get(k, 0.0) >= 0.5]
+        other = total - sum(times.get(k, 0.0) for k in order)
+        if other >= 0.5:
+            parts.append(f"other {other:.0f}s")
+        update = outcome.update if outcome is not None else {}
+        status = update.get("status") or "ERROR"
+        end = status
+        if status in ("PENDING", "FAILED"):
+            end += f": {str(update.get('last_error') or '')[:200]}"
+        elif status == "ANALYZED":
+            end += " card" if outcome.card else ""
+        log.info("timing %s (%s, filed %s): %.0fs = %s -> %s", filing.news_id, filing.symbol or filing.company_name,
+                 (filing.filed_at or "")[:10], total, ", ".join(parts) or "no stage over 0.5s", end)
+    except Exception:  # noqa: BLE001 - a log line must never fail a filing
+        pass
+
+
+def _ocr_timed(read):
+    """An OCR function whose pages and seconds go into the filing's timing line (OCR is lazy: it runs when a page's
+    text is first wanted, inside the reading, pass 1's prompt or pass 2's)."""
+    if read is None:
+        return None
+
+    def timed(png: bytes) -> str:
+        stages.count("ocr_pages")
+        with stages.stage("ocr"):
+            return read(png)
+
+    return timed
 
 
 def _attachment_cap(filing: Filing) -> int:

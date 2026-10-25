@@ -906,13 +906,6 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     news_id, as_of = filing.news_id, filing.filed_at
     _forget(d, news_id)
     delta = output.dossier_delta
-
-    if delta.business_summary and not d.get("business_summary"):
-        d["business_summary"] = {"text": delta.business_summary.strip(), "as_of": as_of, "source_news_id": news_id,
-                                 "lab": text_lab()}
-
-    metrics = {(m["metric"], m["period"]): m for m in d.get("financial_metrics", [])}
-    basis = basis or (output.card.basis if output.card is not None else None)
     # A quarter's profit and loss comes from its results filing (or the company's XBRL); another card only fills a
     # quarter memory has no figure for: an M&A card's "fundamentals" gave Heritage's standalone Q4FY25 revenue and
     # profit beside five consolidated sources (T5, 2026-10-20), while a rights issue's quarter is often all there is
@@ -921,8 +914,15 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     item_by = by or ("file" if news_id.startswith(XBRL_SOURCE) else "ai")
     doc = doc_kind(kind, filing)
 
-    def text_lab() -> dict:
+    def text_lab() -> dict:   # defined before the business summary uses it (JSWENERGY's call, 11 May, failed on it)
         return label(item_by, doc, updated_at)
+
+    if delta.business_summary and not d.get("business_summary"):
+        d["business_summary"] = {"text": delta.business_summary.strip(), "as_of": as_of, "source_news_id": news_id,
+                                 "lab": text_lab()}
+
+    metrics = {(m["metric"], m["period"]): m for m in d.get("financial_metrics", [])}
+    basis = basis or (output.card.basis if output.card is not None else None)
     for m in delta.financial_metrics:
         if m.value is None:
             continue

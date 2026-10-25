@@ -55,3 +55,13 @@ The last trace of 48 wrong cards (95 faults) found: our own code 40, the AI writ
   8-day cache), so any card can be checked again later. Assumption, to measure before building: about 20 KB of
   compressed text per filing, so storage stays small.
 - **R3.** Read the unit that the machine-readable file states. Use the guess only when the file states none.
+
+### Step 1 findings and decisions (25 Oct 2026)
+
+- Of the 95 wrong points in the 25 Oct trace, 1 started at fetching (Panache filed the same PDF twice and the repeat
+  check, which needs the first filing's text, did not catch it). The 12 "input" points are reading problems (slides
+  whose numbers and labels come out apart, poor scans: step 2) and two speakers' own slips.
+- We skipped large PDFs: a 30 MB cap for everything but annual reports. NHPC's FY26 results (nse-106633606) was
+  skipped on 25 Oct and failed as "no readable text". **Decided (owner): 120 MB for every filing** (F130).
+- Open, not yet measured: why the other failed filings failed (70 on 25 Oct); whether NSE's one-call-a-day list holds
+  every filing on a busy day; runs take about 41 minutes, so the 15-minute schedule really runs every ~42 minutes.

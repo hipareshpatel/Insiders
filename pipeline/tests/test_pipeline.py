@@ -877,14 +877,16 @@ def test_a_filing_read_again_as_not_material_takes_its_facts_out_of_memory(setti
     assert again.update["status"] == "NOT_MATERIAL" and "n-again" not in sources()
 
 
-def test_an_annual_report_may_be_larger_than_other_attachments():
-    """519552's FY26 annual report was skipped at the 30 MB cap and, read as nothing, called not material (F57)."""
+def test_every_attachment_may_be_as_large_as_an_annual_report():
+    """519552's FY26 annual report (F57) and NHPC's FY26 results PDF were both skipped at a 30 MB cap; every
+    filing now gets the same 120 MB (owner, 25 Oct 2026)."""
     from bse_intel.pipeline import ATTACHMENT_MAX_BYTES, _attachment_cap
 
     when = now_ist()
     report = _filing("n-ar", "34th Annual Report for FY 2025-26", when, "Company Update", "Reg. 34 (1) Annual Report")
-    assert _attachment_cap(report.model_copy(update={"event_type": "ANNUAL_REPORT"})) >= 100_000_000
-    assert _attachment_cap(report.model_copy(update={"event_type": "RESULTS"})) == ATTACHMENT_MAX_BYTES == 30_000_000
+    assert ATTACHMENT_MAX_BYTES == 120_000_000
+    for kind in ("ANNUAL_REPORT", "RESULTS", "OTHER"):
+        assert _attachment_cap(report.model_copy(update={"event_type": kind})) == ATTACHMENT_MAX_BYTES
 
 
 def test_an_annual_report_inside_an_agm_notice_takes_the_annual_report_path(settings):

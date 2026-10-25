@@ -4247,15 +4247,15 @@ def _still_noise(decision, filing: Filing, row: list, returning: bool = False) -
             or (not returning and str(row[7] or "").startswith("outside universe")))
 
 
-# An annual report runs to 300 pages and often past 30 MB: 519552's FY26 report was skipped at that cap and,
-# with no text, called not material (F57). Every other kind of filing stays under it.
-ATTACHMENT_MAX_BYTES = 30_000_000
-ANNUAL_REPORT_MAX_BYTES = 120_000_000
+# One cap for every attachment. An annual report runs to 300 pages and often past 30 MB (519552's FY26 report was
+# skipped at that cap and called not material, F57), and so can a full-year results filing: NHPC's FY26 results PDF
+# (nse-106633606) was skipped at 30 MB on 25 Oct 2026 and failed as "no readable text" (owner: 120 MB for all).
+ATTACHMENT_MAX_BYTES = 120_000_000
 ANNUAL_REPORT_MIN_PAGES = 60   # as Document.kind() reads a directors' report: an AGM notice alone runs to 10-30 pages
 
 
 def _attachment_cap(filing: Filing) -> int:
-    return ANNUAL_REPORT_MAX_BYTES if filing.event_type == "ANNUAL_REPORT" else ATTACHMENT_MAX_BYTES
+    return ATTACHMENT_MAX_BYTES
 
 
 SECOND_OPINION_MIN_S = 300

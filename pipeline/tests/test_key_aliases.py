@@ -31,3 +31,21 @@ def test_no_second_key_changes_nothing():
     out = expand_key_aliases(CONFIG, {"GEMINI_API_KEY": "a"})
     assert [e["provider"] for e in out["routes"]["pass2"]] == ["gemini", "zai"]
     assert "gemini_2" not in out["providers"]
+
+
+def test_every_second_key_in_the_config_follows_its_provider():
+    """Owner, 25 Oct 2026: Groq, Z.AI, Mistral, Gemini and NVIDIA each have two keys; every route entry of the base
+    provider is repeated for the second key once its secret is set, and nothing changes while it is not."""
+    import tomllib
+    from pathlib import Path
+
+    config = tomllib.loads((Path(__file__).parents[1] / "config" / "providers.toml").read_text(encoding="utf-8"))
+    pairs = {"groq": "GROQ_API_KEY_2", "zai": "ZAI_API_KEY_2", "mistral": "MISTRAL_API_KEY_2",
+             "gemini": "GEMINI_API_KEY_2", "nvidia": "NVIDIA_API_KEY_2"}
+    for base, env_name in pairs.items():
+        alias = f"{base}_2"
+        assert config["providers"][alias] == {"same_as": base, "api_key_env": env_name}
+        out = expand_key_aliases(config, {env_name: "k"})
+        for route, entries in out["routes"].items():
+            assert sum(e["provider"] == alias for e in entries) == sum(e["provider"] == base for e in entries), route
+        assert alias not in expand_key_aliases(config, {})["providers"]

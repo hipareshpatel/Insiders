@@ -39,3 +39,16 @@ Build order (decided 25 Oct 2026, the owner left it to the lead session): **batc
 
 Not taken: EBITDA from Yahoo (the owner's note mentions it). It is not an exchange file (item 3), and Yahoo's own
 definition is not published.
+
+## The card we are building towards
+
+The owner's target card (25 Oct 2026): `docs/design/target-card-kajaria-q2fy27.md` (Kajaria Ceramics Q2FY27, every
+line with its source: Statement, Computed, Filing, Memory). Items 3, 10, 11, 12 and 13 are the groundwork for it.
+Fixes to the sample itself, found on review:
+
+| # | Improvement | What it fixes | Owner | State |
+|---|---|---|---|---|
+| 14 | EBITDA and its margin carry the label "Computed" (ours) or "Filing" (the company's printed figure), never "Statement": EBITDA is not a statement line | The sample marks our EBITDA ₹286.61 Cr as "Statement" while the release prints its own (year-ago ₹212.90 Cr against our ₹213.45 Cr) | – | With item 11 |
+| 15 | One profit line, named the same everywhere: the headline's "net profit to shareholders ₹189.52 Cr" and the table's "Net profit ₹190.72 Cr" are two different lines (after and before minority interest) | Two profit figures on one card read as a mistake | – | Proposed |
+| 16 | A figure computed from memory (cost per MSM from deal history) only when every input is an exchange-file or quoted-filing item (item 10's tags) | Otherwise "Computed" hides an AI-read input | – | With items 3 and 10 |
+| 17 | Measure what more lines cost: a card is WRONG if any one line is wrong, so ~25 lines need each line right about 99.8% of the time to keep cards at 95% | The richer the card, the harder the 95% bar | – | Measure before go-live |

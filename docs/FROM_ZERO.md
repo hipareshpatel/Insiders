@@ -43,9 +43,9 @@ The last trace of 48 wrong cards (95 faults) found: our own code 40, the AI writ
 3. **We guess the unit of machine-readable files.** The XBRL file states its own unit, but our reader does not look at
    it (`xbrl.py` never reads `decimals` or `scale`). It guesses by comparing revenue or profit with the PDF. When the
    guess fails, a figure can be 10 or 100 times off (this happened: Jubilant, F54).
-4. **Some filings never reach us.** Companies listed only on NSE are set aside as "not in the company master", and NSE
-   shareholding rows are set aside because the list never carries the file's link. These are gaps in what we cover,
-   not wrong cards, but they are invisible unless someone looks.
+4. **Some filings never reach us.** Companies listed only on NSE are set aside as "not in the company master". These
+   are gaps in what we cover, not wrong cards, but they are invisible unless someone looks. (Shareholding filings are
+   set aside from the card path, but a separate daily job reads every company's shareholding file into memory: no gap.)
 
 ### The rules proposed for step 1 (waiting for the owner)
 

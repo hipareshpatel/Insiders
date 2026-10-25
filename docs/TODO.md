@@ -17,11 +17,11 @@ This list holds only the first-principles review's items (`docs/FROM_ZERO.md`). 
 | # | Improvement | What it fixes | Owner | State |
 |---|---|---|---|---|
 | 1 | One 120 MB size limit for every filing | Big results PDFs (NHPC FY26) were skipped at 30 MB and failed | Yes | Built, PR #108 (not merged) |
-| 2 | When a file is still too large, say "file too large (X MB)" and do not retry it | Today it says "no readable text" and downloads the file 3 times for nothing | – | Proposed |
-| 3 | R1: card figures come only from exchange files, never from what our AI wrote before | Old mistakes in our memory repeat on every later card | – | Proposed |
-| 4 | R2: keep the text and figure files of every filing for good (not 8 days) | We cannot re-check old cards; the repeat-filing check misses repeats once the text is gone | – | Proposed; measure the storage size first |
-| 5 | R3: read the unit the XBRL file states | We guess the unit today; a wrong guess makes a figure 10 or 100 times off | – | Proposed |
-| 6 | List the failed filings by reason (70 on 25 Oct) | We do not know how many filings we lose, or why | – | Proposed (a check, no code) |
-| 7 | Check one busy day's NSE list against a second count | We have never checked that NSE gives us every filing | – | Proposed (a check, no code) |
-| 8 | Look at why each run takes ~41 minutes | The "every 15 minutes" schedule really runs every ~42 minutes, so cards come late | – | Proposed (a check first) |
-| 9 | Cover companies listed only on NSE, and shareholding filings | These filings are set aside today, so they get no card | – | Proposed; decide if wanted |
+| 2 | When a file is still too large, say "file too large (X MB)" and do not retry it | Today it says "no readable text" and downloads the file 3 times for nothing | Yes | To build |
+| 3 | R1: card figures come only from exchange files, never from what our AI wrote before | Old mistakes in our memory repeat on every later card | Discuss | Owner wants examples first (CIE India, HCL Tech given 25 Oct) |
+| 4 | R2: keep the text and figure files of every filing for good (not 8 days) | We cannot re-check old cards; the repeat-filing check misses repeats once the text is gone | No | Owner: no change (25 Oct) |
+| 5 | R3: read the unit the XBRL file states | We guess the unit today; a wrong guess makes a figure 10 or 100 times off | Yes | To build |
+| 6 | List the failed filings by reason (70 on 25 Oct) | We do not know how many filings we lose, or why | Yes | To do (a check, no code) |
+| 7 | Check one busy day's NSE list against a second count | We have never checked that NSE gives us every filing | Yes | To do (a check, no code) |
+| 8 | Look at why each run takes ~41 minutes | The "every 15 minutes" schedule really runs every ~42 minutes, so cards come late | Later | Owner: when we reach the AI step (most of a run's time is AI calls) |
+| 9 | Cover companies listed only on NSE | Their filings are set aside today, so they get no card | Yes | To build; count them first. (Shareholding is already collected by its own daily job into memory; it gets no card by design, so it is not part of this item.) |

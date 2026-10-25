@@ -13,14 +13,11 @@ from bse_intel.settings import Settings
 
 
 @pytest.fixture(autouse=True)
-def _sums_off_unless_asked(request, monkeypatch):
-    """The hand-made XBRL files of older tests are partial and do not add up; the sums check (F140) is tested in
-    test_xbrl_sums.py, which switches it on."""
+def _sums_off_for_partial_files(request, monkeypatch):
+    """The hand-made XBRL files of test_xbrl and test_seed are partial and do not add up (3 tests fail with the sums
+    check on); every other module runs with it on, as production does (F140)."""
     from bse_intel.settings import get_settings
-    if request.module.__name__.endswith("test_xbrl_sums"):
-        monkeypatch.setenv("XBRL_SUMS", "1")
-    else:
-        monkeypatch.setenv("XBRL_SUMS", "0")
+    monkeypatch.setenv("XBRL_SUMS", "0" if request.module.__name__.endswith(("test_xbrl", "test_seed")) else "1")
     get_settings.cache_clear()
     yield
     monkeypatch.undo()

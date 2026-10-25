@@ -76,3 +76,4 @@ right. Everything the 2026-10-20 approval leaves to the owner still goes to the 
 - 25 Oct 15:32 UTC: PR #118 merged into `main` (a60c911) with CI green: this standing approval. No card change (measurement, a memory job not yet run, the metrics table not on cards).
 - 25 Oct 15:36 UTC: PR #119 merged into `main` (e3379cb) with CI green: this standing approval. F151 is behind CARD_EBITDA_PROFIT_V2, off; turning it on waits for the release check.
 - 25 Oct 16:05 UTC: PR #120 merged into `main` (53ef3b9) with CI green: this standing approval. F152/F154/QUOTE_EXACT_NUMBERS are off; live changes: newest-first results catch-up and the shared currency list (bug fixes).
+- 25 Oct 16:18 UTC: PR #121 merged into `main` (f8a5eec) with CI green: this standing approval. F155's two memory guards are live (they refuse bad figures on new writes only); the PBT and EBITDA-change parts are behind switches.

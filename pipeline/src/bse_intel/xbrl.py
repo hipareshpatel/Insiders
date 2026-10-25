@@ -243,7 +243,8 @@ class XbrlResult:
             unit = " ₹/share" if m.unit == "INR" else " %" if m.unit == "PCT" else " Cr"
             change = "".join(f", {label} {v:+.1f}%" for label, v in (("YoY", m.yoy_pct), ("QoQ", m.qoq_pct)) if v is not None)
             basis = " (standalone)" if self.ratio_basis and m.metric in BANK_RATIOS else ""
-            lines.append(f"- {m.metric} {m.period}{basis}: {m.value:g}{unit}{change}")
+            note = f" ({m.eps_note})" if m.eps_note else ""   # EPS_SHARE_ADJUST only
+            lines.append(f"- {m.metric} {m.period}{basis}: {m.value:g}{unit}{change}{note}")
         if self.balance_sheet and not self.balance_sheet.is_empty():
             b = self.balance_sheet
             lines.append(f"- balance sheet {b.period}: " + ", ".join(

@@ -46,6 +46,8 @@ def _pct(value: float | None) -> str | None:
 
 def _changes(m) -> str:
     parts = [f"{p} YoY" for p in (_pct(m.yoy_pct),) if p] + [f"{p} QoQ" for p in (_pct(m.qoq_pct),) if p]
+    if getattr(m, "eps_note", None):
+        parts.append(m.eps_note)   # EPS_SHARE_ADJUST only: "adjusted for bonus 1:1 on <date>" or why it is left out
     return ", ".join(parts)
 
 
@@ -53,7 +55,8 @@ def _line(m) -> str:
     """The table line for this metric exactly as `XbrlResult.table()` writes it (the quote a fact carries)."""
     unit = " ₹/share" if m.unit == "INR" else " %" if m.unit == "PCT" else " Cr"
     change = "".join(f", {label} {v:+.1f}%" for label, v in (("YoY", m.yoy_pct), ("QoQ", m.qoq_pct)) if v is not None)
-    return f"- {m.metric} {m.period}: {m.value:g}{unit}{change}"
+    note = f" ({m.eps_note})" if getattr(m, "eps_note", None) else ""
+    return f"- {m.metric} {m.period}: {m.value:g}{unit}{change}{note}"
 
 
 def _year_ago(tagged, m):
@@ -487,7 +490,8 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
             other = now.get("other_income")
             text += f"; leaves out other income {_cr(other.value)}" if other is not None else "; leaves out other income"
         lines.append(Fact(text=text + ".", quote=_line(m)))
-        keys.append(KeyNumber(label=label, value=value, change=(f"{_pct(m.yoy_pct)} YoY" if m.yoy_pct is not None else None),
+        keys.append(KeyNumber(label=label, value=value, change=((f"{_pct(m.yoy_pct)} YoY" + (f", {m.eps_note}" if getattr(m, "eps_note", None) else ""))
+                                      if m.yoy_pct is not None else None),
                               quote=_line(m)))
     margin = now.get("ebitda_margin")
     if margin is not None:

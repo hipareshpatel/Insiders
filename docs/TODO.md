@@ -172,6 +172,7 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
 | 41 | Customer dependence from annual reports (a customer at 10% or more of revenue must be disclosed; link to the customer company only when it is named), e.g. "ABC Auto: 70% from Hero; watch Hero's numbers" | Customers are left out of memory today (a laptop test filled the list with lawsuit parties) | Later (owner, 25 Oct: after the 95% gate) | Not started |
 | 42 | Faster NSE history loads: read file links from NSE's all-company results list (about 30 calls) instead of each company's page (about 1,150 calls for 576 companies), with a 1.5-2.5 s pause for one-off loads; the daily results check could use the same list | memory-gaps-fill, 25 Oct: about 1-1.5 h on 4 machines at 3-5 s a call | Proposed (owner to decide) | Proposed |
 | 44 | Consolidated first: standalone kept from the AI. The model sees consolidated figures only, each block naming its basis; a printed EBITDA or headline profit is taken only on the card's basis; a standalone figure the model writes on a consolidated card is removed (standalone only for a company that files standalone alone) | Cards quoting the company-alone EBITDA or profit from a release that prints both | Yes (owner, 25 Oct) | Built behind `CARD_CONSOLIDATED_ONLY` and `CARD_EBITDA_PROFIT_V2` (F154); release check pending |
+| 43 | EPS across splits and bonuses: the older period's EPS is put on today's share count (recorded split, bonus or consolidation, "adjusted for bonus 1:1 on <date>") before any EPS growth, TTM EPS or EPS signal; real dilution (allotment, rights, QIP, ESOPs, merger) keeps its reported change; with no record only an exact split/bonus ratio of the share count blanks it ("possible bonus or split not on record"). Switch `EPS_SHARE_ADJUST` (default off) | Reliance Q2FY26 EPS -45% beside profit +14% across its Oct 2024 1:1 bonus; LIC -38% (F153) | Yes (owner, 25 Oct: implied by the bug report). Fix of a live bug; release check pending | Built (F153); ON in the workflows from 25 Oct (live-bug fix: 29 published cards stated EPS changes across a split or bonus, e.g. Kotak -74.7% for +26.4%); EPS_SHARE_ADJUST=0 repository variable turns it off |
 
 ### Owner's answers on memory labels (items 3, 10, 16), 25 Oct 2026 evening
 
@@ -208,3 +209,12 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
 - **Card switches waiting for the release check (on/off over stored cards + blind sample):** `CARD_EBITDA_PROFIT_V2`
   (rows 11, 14, 15; first run 190 cards: 147 changed, 12 printed EBITDA found, 10 lost a profit year-ago), 
   `CARD_TWO_PARTS` (row 21), `CARD_CONSOLIDATED_ONLY` (row 44), `EPS_SHARE_ADJUST` (row 43, being built).
+- **Re-seed after tonight's memory-gaps fill** (F155, stored memory still holds the bad figures): owners' profit mis-tag
+  `seed-memory --scrips 524208,531179,500493,506395,500097,532848,543272,532424,532482,509488,532181,533047,544026,500878`;
+  unfinished-quarter figures `532756,500002,524208`. Scan of the full universe still to run (`scripts/scan_memory_f155.py`
+  covered 400 companies).
+- **10 PM IST check, 25 Oct (re-queued filings):** of the 7 with known ids, 2 have cards (MODIS nse-106827416, ARIS
+  nse-106826901); 5 show no card on the public site (PGEL nse-106827461, XTRANET nse-106826490 - its NSE file is 0
+  bytes, BETA nse-106825182, CGCL nse-106815515, NHPC nse-106633606). The public site cannot tell held from failed, so
+  the final state comes from maintenance `failed-report` (queued behind the memory-gaps fill: same concurrency group).
+  The 12 listed by company only (KRSNAA ... RBLBANK) need their news ids from the requeue run to be judged.

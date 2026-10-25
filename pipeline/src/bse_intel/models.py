@@ -704,6 +704,8 @@ class FinancialMetric(_Lenient):
     by: str | None = Field(default=None, exclude=True)
     derived_from: list[str] | None = Field(default=None, exclude=True)
     file_basis: str | None = Field(default=None, exclude=True)   # CONSOLIDATED / STANDALONE as the file states it
+    # EPS only (eps_adjust.py, EPS_SHARE_ADJUST): why its YoY / QoQ is adjusted for a bonus or split, or left out
+    eps_note: str | None = Field(default=None, exclude=True)
 
 
 class SegmentShare(_Lenient):

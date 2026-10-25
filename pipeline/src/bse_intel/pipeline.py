@@ -46,6 +46,7 @@ from . import raw
 from . import stages
 from . import order_band
 from . import gate, two_parts
+from .currency import CODES as CURRENCY_CODES
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
 from .models import EVENT_TAGS, DossierDelta, Filing, MemoryOutput, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
@@ -372,7 +373,7 @@ def _card_texts(out: Pass2Output) -> list[str]:
     return [t for t in texts if t]
 
 
-_FOREIGN_CRORE = re.compile(r"\b(USD|US\$|EUR|GBP|THB|AED|SAR|JPY|SGD|NGN|CHF|AUD|CAD|OMR|QAR|KWD)\s*([\d,]+(?:\.\d+)?)\s*(cr\b|crores?\b)",
+_FOREIGN_CRORE = re.compile(r"\b(" + "|".join(CURRENCY_CODES) + r"|US\$)\s*([\d,]+(?:\.\d+)?)\s*(cr\b|crores?\b)",
                             re.I)
 
 

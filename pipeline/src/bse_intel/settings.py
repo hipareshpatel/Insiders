@@ -44,6 +44,13 @@ def d1_plan() -> tuple[int, int]:
     return D1_PLANS.get((_env("D1_PLAN", "paid") or "paid").strip().lower(), D1_PLANS["paid"])
 
 
+def quote_exact_numbers() -> bool:
+    """QUOTE_EXACT_NUMBERS (default off; F156): a figure of a card's claim matches the quote's figure token for token
+    (grouping commas and the claim's own rounding allowed), never as the front digits of a longer one ("95" of 951.96).
+    Read at the call, so a script can run the same check on and off."""
+    return (_env("QUOTE_EXACT_NUMBERS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_ebitda_profit_v2() -> bool:
     """CARD_EBITDA_PROFIT_V2 (default off; TODO 11, 14, 15, F151): a results card shows the company's printed EBITDA first
     and ours as "Operating EBITDA (calculated)", and one profit line only. Read at the call, so a script can run the same

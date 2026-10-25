@@ -24,6 +24,7 @@ import math
 import re
 from dataclasses import dataclass, field
 
+from .currency import CODE_PATTERN
 from .models import Card
 from .periods import quarter_index
 
@@ -876,7 +877,7 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
 
 # An amount the filing writes in another currency ("NGN 90 million", "USD 350 mn", "EUR 15.37 lakh"). Anlon's card gave a
 # Nigerian subsidiary's NGN 90 million as "₹90 million" (round 4): no rupee unit can correct that, so the card is held.
-_FOREIGN = re.compile(r"(?:\b(?:USD|US\$|NGN|EUR|GBP|AED|SGD|JPY|CHF|CAD|AUD|SAR|QAR|KES|ZAR)|[$€£¥₦])\s*"
+_FOREIGN = re.compile(CODE_PATTERN + r"\s*"
                       r"(\d[\d,]*(?:\.\d+)?)\s*(millions?|mn|billions?|bn|lakhs?|crores?|thousands?)?", re.I)
 
 

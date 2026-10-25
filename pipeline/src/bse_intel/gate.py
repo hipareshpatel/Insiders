@@ -11,6 +11,9 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from .currency import TAIL_PATTERN
+from .settings import quote_exact_numbers
+
 # --- garbled text (a bad scan or OCR layer): every figure read from it is suspect -------------------------------------
 
 # A digit run with a stray letter inside or at its end ("2J9,51o", "1O5.4", "4,l35"): the letters an OCR mistakes for digits.
@@ -315,8 +318,9 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
             card_unit = None   # "EUR 9.7 million" is the euro amount as written, not rupees (eMudhra's Cryptas)
         # The same digits only count when the card wrote no unit: "₹3,595 Cr" is not the 3,595 of a statement
         # in million, and "458 Cr" is not "4583" (Jubilant FY25, loop round 3c).
-        if card_unit is None and (value in digits or any(d.startswith(value) or value.startswith(d) for d in digits)):
-            continue
+        if card_unit is None and (value in digits or (not quote_exact_numbers() and any(
+                d.startswith(value) or value.startswith(d) for d in digits))):
+            continue   # QUOTE_EXACT_NUMBERS: the digit-prefix match ("95" of "951.96") is off; rounding is tried below
         try:
             number = float(value)
         except ValueError:
@@ -345,7 +349,7 @@ def numbers_in_quote(claim: str, quote: str, unit: int | None = None) -> list[st
 # thousands group), "INR 1 885.6 million" for 1,885.6 (Ahluwalia's segment row, eMudhra's cash; 2026-10-18)
 _DECIMAL_COMMA = re.compile(r"(?<![\d,])(\d{3,}),(\d{2})(?![\d,.])")
 _SPACED_THOUSANDS = re.compile(r"((?:inr|rs\.?|₹|usd|us\$|eur|€)\s*\d{1,3}) (\d{3})(?=[.,]\d|\b)")
-_FOREIGN = re.compile(r"(?:eur|euro|euros|usd|us\$|\$|€|gbp|£|jpy|¥|chf|aed|sgd)\s*$")
+_FOREIGN = re.compile(TAIL_PATTERN)
 
 
 _UNIT_WORD = re.compile(r"\s*(crores?|cr\b|lakhs?|lacs?|millions?|mn\b|billions?|bn\b|thousands?)")

@@ -41,7 +41,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev,ocr]"      # ocr: RapidOCR for scanned pages (optional)
-python -m pytest -q              # 1,150 tests (2 skip without the ocr extra); web: npm test (59: card text, company statements, owner holds, call takeaways, company keys, card parts)
+python -m pytest -q              # 1,153 tests (2 skip without the ocr extra); web: npm test (59: card text, company statements, owner holds, call takeaways, company keys, card parts)
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \

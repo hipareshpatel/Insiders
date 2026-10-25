@@ -47,12 +47,11 @@ Read before changing anything:
   `docs/TODO.md`). Never rewrite another branch's pushed history. `git pull` before editing.
 - API keys live only in `C:\Users\Quali\insiders-keys.ps1` (outside the repo). Never print,
   log, commit or paste a key. Dot-source the file in each new shell: `. C:\Users\Quali\insiders-keys.ps1`.
-- Don't work around BSE's firewall. Measured 25 Oct 2026: from a GitHub runner the ported adapter
+- BSE (measured 25 Oct 2026): from a GitHub runner the ported adapter
   (`pipeline/src/bse_intel/adapters/bse.py`, Python requests with BSE's own page headers) got 200 on all 16 calls of
   `bse-results-test` (maintenance run 40189201441); a bare curl probe with similar headers got 403 an hour earlier.
-  So BSE is reachable from GitHub through the adapter, but it stays an off-path backup (its results figures match
-  NSE's, 7 of 7 companies). Ordinary browser headers are fine; never a headless browser, a disguised automation or a
-  proxy to get past a refusal.
+  BSE stays an off-path backup (its results figures match NSE's, 7 of 7 companies). The old ban on a headless-browser
+  fallback was removed by the owner (25 Oct 2026); the adapter-fidelity rules at the top of this file apply.
 - Cloudflare is on Workers Paid ($5 a month, owner, 22 Oct 2026, D40): D1's write and read budgets follow the plan, not the free
   tier. Every other paid upgrade must stay off, with one exception the owner chose: the prepaid DeepSeek balance
   (`DEEPSEEK_API_KEY`, decision D24) that speeds up the backfill. The steady state must still cost $0,

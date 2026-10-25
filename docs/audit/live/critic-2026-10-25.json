@@ -1,0 +1,3379 @@
+[
+ {
+  "news_id": "nse-106827304",
+  "filed_at": "2026-10-24T07:50:13+05:30",
+  "event_type": "ORDER_WIN",
+  "writer": "gemini/gemini-3.7-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T09:52:39+05:30",
+  "latency_s": 0.9,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "RailTel bags ₹20.04 Cr LoI from Munitions India for DC & DR Center on IaaS platform",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "RailTel secured a small ₹20.04 Cr LoI from Munitions India for DC and DR infrastructure",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "RailTel received a Letter of Intent from **Munitions India Limited** for an estimated size of **₹20.04 Cr** (including tax).",
+    "quote": "The Estimated Size of Order as per LoI is Rs. 20,04,04,809/- (Including Tax)",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Scope covers setting up **DC & DR Center on IaaS platform** for Q-Shakti (QA4.0) project supporting MIL across 13 locations, with execution targeted by **28-FEB-27**.",
+    "quote": "Nature of order(s)] contract(s); Setting up DC & DR Center on IaaS platform for Q-Shakti (QA4.0) project for 6 years, extendable by 3 years, to support MIL across 13 locations",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Contract terms specify go-live in 4 months followed by 6 years of service, **5% PBG**, and quarterly invoice payments.",
+    "quote": "Significant terms and conditions order(s)/contract (s) awarded in brief; Contract period - Go live (4 months)+6 years ; Payment Terms :Quarterly Invoice ;PBG 5%",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Supports management's guided expansion into data centre and cloud services, where the company targeted ₹300 Cr revenue for FY27.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "g_ac124cd7"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "ORDER_WIN",
+     "vote": "ORDER_WIN",
+     "agree": true,
+     "conservative": "ORDER_WIN"
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "MODERATE",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "LOI",
+     "vote": "LOI",
+     "agree": true,
+     "conservative": "LOI"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827336",
+  "filed_at": "2026-10-24T10:51:37+05:30",
+  "event_type": "OTHER",
+  "writer": "gemini/gemini-3.6-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T11:21:51+05:30",
+  "latency_s": 1.2,
+  "mode": "shadow",
+  "counts": {
+   "OK": 5,
+   "OVERSTATED": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Ashoka Buildcon subsidiary receives Provisional Certificate for 47.2 KM Karnataka HAM project",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Ashoka Buildcon has secured the final provisional COD for its Karnataka HAM project, completing full project COD requirements.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OVERSTATED",
+    "reason": "source states provisional certificate, not final COD",
+    "corrected": "Ashoka Buildcon received provisional certificate for 4.221 KMs of its Karnataka HAM project."
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Subsidiary **Ashoka Banwara Bettadahalli Road Private Limited** received Provisional Certificate for 4.221 KMs on **October 13, 2026**.",
+    "quote": "Ashoka Buildcon Limited (“the Company”) informs the declaration of October 13, 2026 as the Commercial Operation Date (CoD) for stretch of 4.221 KMs vide letter issued by Independent Engineer on October 23, 2026",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Aggregate completed length reached **47.196 KMs** (revised after de-scoping) across three phases for the **Tumkur Shivamogga Package-III** project.",
+    "quote": "The Company also announces that the said SPV has received a Provisional Certificate/s for completion of total length of 47.196 KMs in aggregate (revised after de-scoping) for Project.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The SPV is already eligible for **15-year semi-annual annuity payments** from **NHAI** following the first CoD in October 2023.",
+    "quote": "Further to inform that consequent upon the declaration of First CoD, the SPV is already eligible for receipt of Annuity payments from NHAI for the operation period of 15 years at the interval of every 6 months from the date of achievement of First CoD, i.e. October 17, 2023.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Securing provisional certificates and commercial operations date (PCOD) for HAM assets is a critical step towards finalizing monetization of HAM SPVs.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "w_6a95007c"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "OTHER",
+     "vote": "CAPEX",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "HIGH",
+     "agree": false,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "COMPLETED",
+     "vote": "COMPLETED",
+     "agree": true,
+     "conservative": "COMPLETED"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827338",
+  "filed_at": "2026-10-24T10:52:51+05:30",
+  "event_type": "LITIGATION_REGULATORY",
+  "writer": "zai/glm-4.5-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-24T12:50:01+05:30",
+  "latency_s": 1.1,
+  "mode": "shadow",
+  "counts": {
+   "OK": 3
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "DIC India receives transfer pricing order reducing AY 2023-24 adjustment to ₹3.74 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The income tax authority reduced the transfer pricing adjustment for AY 2023-24 from ₹3.84 Cr to ₹3.74 Cr, with the company evaluating further appeal options.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "**DIC India** received a final order reducing the upward adjustment in income to **₹3,74,35,142** for AY 2023-24 following DRP directions.",
+    "quote": "In terms of the said order of AO, the upward adjustment in income of Rs. 3,84,17,653/- determined vide order dated 22nd January, 2026 has been recomputed and reduced to Rs. 3,74,35,142/-.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "LITIGATION_REGULATORY",
+     "vote": "LITIGATION_REGULATORY",
+     "agree": true,
+     "conservative": "LITIGATION_REGULATORY"
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "LOW",
+     "agree": true,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "POSITIVE",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827381",
+  "filed_at": "2026-10-24T11:59:20+05:30",
+  "event_type": "DEBT_RATINGS",
+  "writer": "gemini_2/gemini-3.5-flash-lite",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T12:50:05+05:30",
+  "latency_s": 1.6,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "CRISIL places IDBI Bank's long-term debt on 'Watch Positive'; reaffirms A1+ short-term rating",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "CRISIL placed IDBI Bank's long-term ratings on watch positive following the CCEA approval of Fairfax Financial Holdings as the strategic buyer.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "CRISIL placed IDBI Bank's long-term debt instruments on 'Crisil AA/Watch Positive'.",
+    "quote": "Crisil Ratings has placed its rating on the long-term debt instruments of IDBI Bank Limited (IDBI Bank) on ‘Rating Watch with Positive Implications’ and has reaffirmed its ‘Crisil A1+’ rating on the certificate of deposit programme.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The short-term rating on the certificate of deposit programme of **₹40,000 crore** was reaffirmed at 'Crisil A1+'.",
+    "quote": "Crisil Ratings has placed its rating on the long-term debt instruments of IDBI Bank Limited (IDBI Bank) on ‘Rating Watch with Positive Implications’ and has reaffirmed its ‘Crisil A1+’ rating on the certificate of deposit programme.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Ratings on **₹5 crore** of Omni Bonds were withdrawn upon redemption.",
+    "quote": "Crisil Ratings has also withdrawn its ratings on Rs 5 crore of Omni Bonds on redemption.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The rating watch reflects potential benefits from Fairfax Financial Holdings' proposed majority ownership and strategic commitment following the CCEA approval.",
+    "quote": "The rating action follows the announcement made by IDBI Bank on October 14, 2026, that the Cabinet Committee on Economic Affairs (CCEA) has approved Fairfax Financial Holdings Limited (Fairfax; rated 'A-/Stable' by S&P Global Ratings [S&P Global]), as the strategic buyer for acquisition of a 60.72% stake in the bank.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "The bank maintains strong capitalisation with a total CAR of 27.1% and net worth of ₹71,551 crore as of September 30, 2026.",
+    "quote": "The bank remains well-capitalised, marked by Tier-I and overall capital adequacy ratio (CAR; under Basel III) of 26.6% and 27.1%, respectively, as on September 30, 2026...",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "DEBT_RATINGS",
+     "vote": "OTHER",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827405",
+  "filed_at": "2026-10-24T12:36:43+05:30",
+  "event_type": "ORDER_WIN",
+  "writer": "gemini_2/gemini-3-flash-preview",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T13:32:57+05:30",
+  "latency_s": 0.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6,
+   "UNSUPPORTED_CAUSE": 2
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "B. L. Kashyap wins ₹496 Cr residential-commercial order",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "This large win significantly bolsters the order book and provides high revenue visibility for the next three years.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Secured a **₹495.86 Cr** (Excl. GST) order from **Signature Global (India) Limited** for civil and MEP works",
+    "quote": "B.L. Kashyap and Sons Limited has secured an order worth ₹ 495.86 Crores as per details given below",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The project involves **4 towers and basements** for a residential and commercial ancillary building",
+    "quote": "Civil Structure and Part MEP Works for 4 Towers and Basements, Residential and Commercial Ancillary Building",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Execution is expected over approximately **40 months** from the handover of sites",
+    "quote": "40 months approx. from hand over of sites",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The order is massive for the company, representing 144% of its last quarter's revenue and 36% of its trailing-12-month revenue.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "No source supports 144% or 36% revenue claims",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "This is the third major order win reported since May 2026, following wins of ₹180 Cr and ₹200 Cr, showing strong momentum in commercial/residential EPC.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "d_ed1b2dde",
+     "d_9564d577"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "The 40-month execution period provides a steady revenue run-rate of approximately ₹149 Cr per year.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "No source for ₹149 Cr per year run‑rate",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "ORDER_WIN",
+     "vote": "ORDER_WIN",
+     "agree": true,
+     "conservative": "ORDER_WIN"
+    },
+    "impact_level": {
+     "card": "HIGH",
+     "vote": "MODERATE",
+     "agree": false,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "OTHER",
+     "vote": "BOARD_APPROVED",
+     "agree": false,
+     "conservative": null
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827418",
+  "filed_at": "2026-10-24T12:57:41+05:30",
+  "event_type": "LITIGATION_REGULATORY",
+  "writer": "gemini_2/gemini-3-flash-preview",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T13:33:00+05:30",
+  "latency_s": 0.7,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "BlueStone Jewellery pays ₹4,000 fine for 2-day delay in shareholding filing",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "A minor procedural penalty with no material impact on operations or financials, now settled by the company.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "NSE imposed a **₹4,000 fine** plus GST for a **2-day delay** in submitting the Q1FY27 shareholding pattern",
+    "quote": "The Company filed it on July 23, 2026, a delay of 2 days.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The delay was attributed to a **misinterpretation** of integrated filing framework applicability by the filing team",
+    "quote": "The delay was inadvertent and occurred as a result of misinterpretation of the applicability of the integrated filing provisions on whether the Shareholding Pattern is/is not covered under the integrated filing framework.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The company **paid the fine** on October 23, 2026, and implemented a maker-checker review process to prevent recurrence",
+    "quote": "The Company has paid the fine of Rs. 4,000 plus GST on October 23, 2026 levied vide your notice dated October 19, 2026.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The fine is negligible for a company with a ₹11,623 Cr market cap and ₹1,836 Cr net worth.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "The Board has formally advised management to ensure strict adherence to regulatory timelines following this lapse.",
+    "quote": "The Board advised the Management to be careful and cautious in interpreting the applicability of filing provisions, and to ensure strict adherence to regulatory timelines going forward.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "LITIGATION_REGULATORY",
+     "vote": "CORPORATE_ACTION",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "LOW",
+     "agree": true,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827467",
+  "filed_at": "2026-10-24T13:46:13+05:30",
+  "event_type": "DEBT_RATINGS",
+  "writer": "gemini_2/gemini-3.6-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T14:17:22+05:30",
+  "latency_s": 0.7,
+  "mode": "shadow",
+  "counts": {
+   "MISSING": 2,
+   "OK": 6,
+   "WRONG_PERIOD": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "ICRA and CARE reaffirm ICICI Bank's AAA ratings; withdraw matured instruments",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "MISSING",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The reaffirmations confirm ICICI Bank's top-tier credit standing, backed by its status as a D-SIB and healthy capital buffers.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "MISSING",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "**ICRA** reaffirmed **[ICRA]AAA (Stable)** for the bank's issuer rating and infrastructure bonds, and **[ICRA]AA+ (Stable)** for Basel III Tier I bonds.",
+    "quote": "ICRA Limited (“ICRA”) and CARE Ratings Limited (“CARE Ratings”) have, vide emails received by ICICI Bank Limited (the Bank) yesterday at 3:58 p.m. and 7:47 p.m. respectively, informed the Bank that they have vide press releases dated October 23, 2026, re-affirmed the credit ratings of the Bank’s Facilities/Instruments.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "**CARE Ratings** reaffirmed **CARE AAA; Stable** for infrastructure and Tier II bonds, and **CARE AA+; Stable** for Tier I bonds.",
+    "quote": "CARE Ratings Limited (CareEdge Ratings) has reaffirmed the rating assigned to the various debt instruments of ICICI Bank Limited (IBL).",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Ratings were **withdrawn** for matured instruments including ₹6,500 Cr of infrastructure bonds and ₹945 Cr of Basel III Tier II bonds.",
+    "quote": "ICICI Bank Limited: Ratings reaffirmed and withdrawn for matured instruments",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "The bank's **consolidated daily average LCR** stood at **123.75%** for Q2FY27, well above the 100% regulatory requirement.",
+    "quote": "The bank’s consolidated daily average liquidity coverage ratio was 123.75% for the quarter ended Sep 30, 2026 (123.62% in Q4 FY2026, 125.40% in Q2 FY2026)",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "WRONG_PERIOD",
+    "reason": "excerpt gives Q2FY26, not Q2FY27",
+    "corrected": "The bank’s consolidated daily average LCR stood at 123.75% for Q2FY26, well above the 100% regulatory requirement."
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The bank maintains its status as one of three Domestic Systemically Important Banks (D-SIB), which underpins the highest possible credit ratings.",
+    "quote": "The rating reaffirmation factors in IBLs position as the second-largest private-sector bank and the third-largest bank in India in terms of business, as well as its designation by the Reserve Bank of India (RBI) as a Domestic Systemically Important Bank (D-SIB).",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Asset quality remains a monitorable due to geopolitical uncertainties in West Asia, despite GNPA moving to 1.20% in H1FY27 from 1.40% in FY26.",
+    "quote": "The asset quality trajectory, however, would continue to be monitorable amid persistent uncertainties arising from the West Asia conflict.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "The bank continues to maintain contingency provisions of ₹13,100 Cr as a prudent buffer, which management considers adequate.",
+    "quote": "The bank also continues to maintain contingency provisions of ₹13,100 crore as a prudent buffer, which the management considers adequate.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "DEBT_RATINGS",
+     "vote": "OTHER",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "LOW",
+     "agree": true,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827392",
+  "filed_at": "2026-10-24T12:17:08+05:30",
+  "event_type": "LITIGATION_REGULATORY",
+  "writer": "zai/glm-4.5-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-24T14:17:27+05:30",
+  "latency_s": 2.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 4,
+   "INVENTED": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Sahajanand Medical receives GST summons from DGGI Mumbai",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "No material financial impact stated; company cooperating with ongoing DGGI inquiry",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Summons dated **16 October 2026** received from **DGGI Mumbai** under Section 70 of CGST Act",
+    "quote": "the Company has received a Summons dated October 16,2026 (received on 23rd October 2026) issued under Section 70 of the Central Goods and Services Tax Act, 2017 by the Superintendent/ Appraiser/ Senior Intelligence Officer of DGGI, Mumbai Zonal Unit, Mumbai.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Summons seeks verification of books for **GST compliance on reimbursements to foreign subsidiaries** for clinical trials",
+    "quote": "The Summons does not specify violations. It states to give evidence in relation to GST compliance for re-imbursements made to foreign subsidiaries for clinical trials",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "The excerpt does not mention reimbursements to foreign subsidiaries or clinical trials.",
+    "corrected": "The summons requires the company to provide evidence in relation to an inquiry under the Central Goods and Services Tax Act, 2017."
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Company states no material financial impact at this stage, but outcome could affect financials if violations are found",
+    "quote": "This Summons does not have any material financial impact on the Company.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini_2/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "LITIGATION_REGULATORY",
+     "vote": "LITIGATION_REGULATORY",
+     "agree": true,
+     "conservative": "LITIGATION_REGULATORY"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEGATIVE",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827443",
+  "filed_at": "2026-10-24T13:27:01+05:30",
+  "event_type": "GOVERNANCE",
+  "writer": "gemini_2/gemini-3.6-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T14:17:35+05:30",
+  "latency_s": 0.5,
+  "mode": "shadow",
+  "counts": {
+   "OK": 5
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "NSE approves reclassification of Deval Energy Resources from Promoter to Public category",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "NSE has approved the reclassification of Deval Energy Resources Private Limited from the promoter group to the public shareholder category.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "The company received approval from **NSE** on October 23, 2026, to reclassify **Deval Energy Resources Private Limited** from promoter group to public category.",
+    "quote": "We wish to inform you that the Company has received approval from National Stock Exchange of India Limited (“NSE”) vide letter No. NSE/LIST/COMP/AAKASH/629/2026-2027 dated October 23, 2026, for the reclassification of the M/s. Deval Energy Resources Private Limited outgoing Promoter shareholder as a Public Shareholder in accordance with Regulation 31A of the SEBI LODR Regulations",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "This approval follows the company's application submitted to the exchange on **August 13, 2026**.",
+    "quote": "This is in reference to your application dated August 13, 2026, requesting a no-objection letter for the reclassification of promoter group under Regulation 31A of SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "This is a procedural governance transition with no direct impact on the company's operational execution or balance sheet.",
+    "quote": "Based on the submission made by the Listed Entity, the Exchange grants no-objection letter for the reclassification application dated August 13, 2026, for the following promoter group in accordance with Regulation 31A of SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "GOVERNANCE",
+     "vote": "CORPORATE_ACTION",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "MODERATE",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827502",
+  "filed_at": "2026-10-24T14:26:03+05:30",
+  "event_type": "LITIGATION_REGULATORY",
+  "writer": "gemini/gemini-3-flash-preview",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T14:58:34+05:30",
+  "latency_s": 0.6,
+  "mode": "shadow",
+  "counts": {
+   "OK": 4,
+   "UNSUPPORTED_CAUSE": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Lupin Goa plant inspection closes with one USFDA observation",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The Goa facility has cleared a five-day USFDA inspection with a single observation, a relatively clean outcome for a major plant.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "The **U.S. FDA** concluded an inspection at the **Goa** manufacturing facility on October 23, 2026.",
+    "quote": "The inspection was conducted from October 19, 2026, to October 23, 2026, and closed with the issuance of a Form-483 with one observation.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The inspection closed with the issuance of a **Form-483** containing **one observation**.",
+    "quote": "The inspection was conducted from October 19, 2026, to October 23, 2026, and closed with the issuance of a Form-483 with one observation.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "A single observation is a minor regulatory hurdle compared to recent peer outcomes, where Gland and Gufic received 3-4 observations each.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "No source supports the comparison to Gland and Gufic.",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "LITIGATION_REGULATORY",
+     "vote": "LITIGATION_REGULATORY",
+     "agree": true,
+     "conservative": "LITIGATION_REGULATORY"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEGATIVE",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827476",
+  "filed_at": "2026-10-24T14:11:45+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "gemini/gemini-3-flash-preview",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T14:58:37+05:30",
+  "latency_s": 1.2,
+  "mode": "shadow",
+  "counts": {
+   "WRONG_DIRECTION": 1,
+   "OK": 7,
+   "INVENTED": 2
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Geojit Q2 profit falls 31% to ₹16.3 Cr; recurring revenue share rises to 40%",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "WRONG_DIRECTION",
+    "reason": "PAT decline shown as 15.4% YoY, not 31%",
+    "corrected": "Geojit Q2 profit falls 15.4% to ₹16.3 Cr; recurring revenue share rises to 40%"
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "While investments in sales force and IT are depressing current profits, the company is successfully shifting its mix toward stable recurring revenue.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "**Recurring income** now accounts for **40%** of revenue, up from 24% in FY23.",
+    "quote": "Recurring now ~40% of revenue",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "No source confirms 40% recurring income or 24% FY23",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "**Asset Management ARR net flows** jumped 353% YoY to **₹322 Cr**.",
+    "quote": "A key highlight during the quarter was the strong growth in Asset Management ARR net flows, which increased by 353% YoY to ₹322 crore in Q2 FY27, compared to ₹71 crore in Q2 FY26",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "**EBITDA** declined 15.4% YoY to **₹36.7 Cr** due to higher IT and field-force costs.",
+    "quote": "However, EBITDA declined to ₹36.71 crore and PAT to ₹16.28 crore, reflecting higher operating costs, including continued investments in IT infrastructure and field-force costs.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The 31% PAT drop reflects the 'investment phase' management previously guided, with 2,003 sales professionals now in place to drive future productivity.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "w_ebb7c23c"
+    ],
+    "verdict": "INVENTED",
+    "reason": "No source cites 31% PAT drop or 2,003 sales professionals",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "Operating leverage expected to emerge as investments in distribution and IT begin to yield productivity gains.",
+    "quote": "Looking ahead, Geojit remains focused on deepening customer relationships, expanding its distribution network, increasing SIP penetration and leveraging technology to improve operating productivity.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "g_213fbd1e"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.1",
+    "field": "call_takeaways",
+    "text": "Asset Management ARR net flows grew 353% YoY to ₹322 Cr, showing strong momentum in the PMS and AIF business.",
+    "quote": "A key highlight during the quarter was the strong growth in Asset Management ARR net flows, which increased by 353% YoY to ₹322 crore in Q2 FY27, compared to ₹71 crore in Q2 FY26",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "EBITDA and PAT declines reflect continued heavy investment in IT infrastructure and expanding the field force.",
+    "quote": "However, EBITDA declined to ₹36.71 crore and PAT to ₹16.28 crore, reflecting higher operating costs, including continued investments in IT infrastructure and field-force costs.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "g_0236102a"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.3",
+    "field": "call_takeaways",
+    "text": "Customer assets remained stable at ₹1.12 lakh Cr as inflows were offset by negative market-linked mark-to-market movements.",
+    "quote": "The Company's customer assets stood at ₹1.12 lakh crore as of September 30, 2026, remaining broadly stable sequentially as healthy inflows were offset by market-linked mark-to-market (MTM) movements.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "RESULTS",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "MIXED",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827509",
+  "filed_at": "2026-10-24T14:45:09+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "gemini/gemini-3-flash-preview",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T15:41:34+05:30",
+  "latency_s": 0.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 11
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Bajaj Housing Finance Q2 profit rises 18% to ₹757 Cr; AUM crosses ₹1.5 lakh Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Bajaj Housing Finance is successfully scaling its higher-margin Sambhav segment to 16% of originations while maintaining pristine asset quality and stable spreads.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Profit after tax grew 18% YoY to **₹757 crore** in Q2FY27, with RoA maintained at 2.2%",
+    "quote": "PAT increased by 18% Y-o-Y to INR757 crores from INR643 crores in the same quarter last year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "AUM crossed the **₹1.5 lakh crore** milestone, growing 25% YoY to ₹1.58 lakh crore",
+    "quote": "We crossed landmark INR1.5 lakh crores AUM driven by strong and diversified growth.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Cost of funds fell **17 bps** sequentially to 7.0% due to conversion of fixed-rate NCDs to floating-rate",
+    "quote": "The cost of funds reduced by 17 bps on sequential basis from 7.2% in Q1 to close to 7% in Q2 FY27.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "The **Sambhav housing** segment reached a monthly disbursement run rate of ₹500 crore",
+    "quote": "Sambhav loans crossed monthly disbursement run rate of INR500 crores during the quarter.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "AUM growth of 25% remains at the upper end of management's 21-23% annual guidance despite high industry attrition",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "t_80c44d4d"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Gross spreads improved 7 bps sequentially as the 17 bps drop in funding costs more than offset a 10 bps yield compression",
+    "quote": "Total gross spreads improved by 7 bps driven largely by COF moderation of 17 bps, thereby it was able to offset 10 bps portfolio yield reduction",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.0",
+    "field": "call_takeaways",
+    "text": "AUM growth guidance maintained at 21-23% despite current 25% run rate due to potential BT-out pressure.",
+    "quote": "We have not even changed our yearly guidance, 21% to 23%, what we have done, while in the quarter one we were 24% and we are as of now 25%.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "Sambhav segment to reach ₹600 Cr monthly disbursement run rate by end of FY27.",
+    "quote": "we had already in the year beginning had said that by year-end we should be at INR600 crores monthly disbursal run rate.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "g_f3557046"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.5",
+    "field": "call_takeaways",
+    "text": "Potential 6-7% PBT impact from proposed insurance commission caps, with only partial offset possible.",
+    "quote": "Balance 6%-7% impact on the PBT is likely to be there, which will also have an impact on opex to NTI in the next year.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827521",
+  "filed_at": "2026-10-24T15:03:53+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "gemini_2/gemini-3.6-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T15:41:37+05:30",
+  "latency_s": 0.6,
+  "mode": "shadow",
+  "counts": {
+   "OK": 9
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "SBFC Finance Q2 PAT rises 27% YoY to ₹139 Cr; AUM grows 27% to ₹12,592 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "SBFC continues its steady growth trajectory with improving return ratios and stable asset quality, supported by expanding operating efficiency in core secured MSME lending.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Profit after tax grew 27% YoY to **₹139 crore** for the quarter ended September 2026",
+    "quote": "Profit after tax grew 27% YoY to ₹139 crore for the quarter.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "AUM reached **₹12,592 crore**, up 27% YoY and 6% QoQ, driven by secured MSME loan demand",
+    "quote": "AUM grew 27% YoY and 6% QoQ to ₹12,592 crore.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Operating efficiency improved as the **Cost-to-AUM ratio** dropped 33 bps YoY to 4.1%",
+    "quote": "Cost-to-AUM ratio improved by 33 bps YoY to 4.1%.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "Asset quality remained stable with **Gross NPA at 2.6%** and a Provision Coverage Ratio of 42.2%",
+    "quote": "Gross NPA at 2.6% with PCR of 42%.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "AUM growth of 27% YoY to ₹12,592 Cr maintains steady expansion momentum from previous quarters.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "t_9679172b"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "The 4.1% Cost-to-AUM ratio moves closer to management's stated FY27 target of 4% or below as newer branches mature.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "g_510a69ad"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "Return on Average Tangible Equity (RoATE) reached 15.0% for the quarter alongside a 4.6% RoA.",
+    "quote": "RoA of 4.6% and RoE of 15.0% for the quarter.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "CONCALL_PRESENTATION",
+     "agree": true,
+     "conservative": "CONCALL_PRESENTATION"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827504",
+  "filed_at": "2026-10-24T14:30:07+05:30",
+  "event_type": "RESULTS",
+  "writer": "gemini/gemini-3-flash-preview",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T16:22:48+05:30",
+  "latency_s": 0.7,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Seshasayee Paper and Boards Q2FY27: revenue ₹503.06 Cr (+45.3% YoY), net profit ₹42.31 Cr (+88.8% YoY)",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Q2FY27 net profit of ₹42.31 Cr against net profit of ₹22.41 Cr a year earlier; the largest move was EBITDA of ₹46.89 Cr against ₹26.3 Cr a year earlier.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Revenue from operations Q2FY27: ₹503.06 Cr (+45.3% YoY, +2.2% QoQ).",
+    "quote": "- revenue Q2FY27: 503.06 Cr, YoY +45.3%, QoQ +2.2%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "EBITDA Q2FY27: ₹46.89 Cr (+6.8% QoQ); margin 9.3%.",
+    "quote": "- ebitda Q2FY27: 46.89 Cr, YoY +78.3%, QoQ +6.8%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Net profit Q2FY27: ₹42.31 Cr (+88.8% YoY, +32.6% QoQ).",
+    "quote": "- pat Q2FY27: 42.31 Cr, YoY +88.8%, QoQ +32.6%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "EPS Q2FY27: ₹7.03 a share (+89.0% YoY, +32.6% QoQ).",
+    "quote": "- eps Q2FY27: 7.03 ₹/share, YoY +89.0%, QoQ +32.6%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Operating cash flow turned positive at ₹39.49 Cr for H1FY27, a significant improvement from the negative ₹72.93 Cr in the year-ago period.",
+    "quote": "operating_cash_flow H1FY26: -72.93 Cr",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "RESULTS",
+     "vote": "RESULTS",
+     "agree": true,
+     "conservative": "RESULTS"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827546",
+  "filed_at": "2026-10-24T15:37:17+05:30",
+  "event_type": "RIGHTS_ISSUE",
+  "writer": "gemini_2/gemini-3.5-flash-lite",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T16:22:50+05:30",
+  "latency_s": 0.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "VRL Logistics to buy back 5% of shares at ₹320 via tender offer",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "VRL Logistics is returning ₹280 Cr to shareholders through a tender offer buyback of 87.5 lakh shares at ₹320 each, representing 5% of its paid-up capital.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "VRL Logistics has submitted a letter of offer to buy back up to **87,50,000 equity shares** at **₹320 per share**.",
+    "quote": "Submission of Letter of Offer pertaining to buyback of not exceeding 87,50,000 (Eighty Seven Lakh Fifty Thousand) fully paid-up equity shares of Company having face value of ₹10/- (Indian Rupees Ten only) each... at a price of ₹320/- (Indian Rupees three hundred twenty only) per equity share",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The total buyback size is **₹280 Cr**, representing **24.51%** of the company's paid-up share capital and free reserves as of March 31, 2026.",
+    "quote": "The Buyback Offer Size (as defined hereinafter) represents 24.51% of the aggregate of the total paid-up share capital and free reserves of the Company based on the latest audited financial statements of the Company as at March 31, 2026.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The **Promoters and Promoter Group** have declared their intention to **not participate** in the buyback.",
+    "quote": "Since the Promoters and Promoter Group of the Company have declared their intention to not participate in the Buyback, all outstanding Equity Shares held by them has not been considered for the purposes of computing the Buyback entitlement ratio.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "The buyback window will be open from **October 27, 2026** to **November 2, 2026**.",
+    "quote": "Date of opening of Buyback October 27 2026 Tuesday Date of closing of Buyback November 2 2026 Monday",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The buyback is priced at ₹320 per share, payable in cash for an aggregate amount not exceeding ₹28,000 lakhs.",
+    "quote": "at a price of ₹320/- (Indian Rupees three hundred twenty only) per equity share, payable in cash, for an aggregate maximum amount not exceeding ₹28,000 lakhs (Indian Rupees twenty eight thousand lakhs only) excluding transaction costs.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "RIGHTS_ISSUE",
+     "vote": "CORPORATE_ACTION",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    },
+    "deal_stage": {
+     "card": "TERMS_FINALISED",
+     "vote": "BOARD_APPROVED",
+     "agree": false,
+     "conservative": "BOARD_APPROVED"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827439",
+  "filed_at": "2026-10-24T13:25:13+05:30",
+  "event_type": "RESULTS",
+  "writer": "gemini_2/gemini-3.7-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T16:59:25+05:30",
+  "latency_s": 1.5,
+  "mode": "shadow",
+  "counts": {
+   "OK": 8
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "SBFC Finance Q2FY27 net profit at ₹138.87 Cr; GNPA improves to 2.64%",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The quarter shows steady top-line growth and asset quality stability, with credit cost remaining in line with guided ranges.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Total revenue from operations rose to **₹546.39 Cr** in Q2FY27, driven by **₹513.01 Cr** in interest income.",
+    "quote": "Total revenue from operations 5,463.87 4,914.64 4,107.84 10,378.51 7,992.22 16,788.21",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Net profit grew to **₹138.87 Cr** in Q2FY27 from ₹109.14 Cr in Q2FY25.",
+    "quote": "(VII) Net profit for the period/year (V - VI) 1,388.74 1,301.23 1,091.35 2,689.97 2,100.26 4,508.33",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Gross NPA improved to **2.64%** from 2.66% in Q1FY27 and 2.77% in Q2FY25; Net NPA held flat QoQ at **1.54%**.",
+    "quote": "20 Gross non performing asset (GNPA %) Gross Stage III Loans/ Gross Loans 2.64% 2.66% 2.77% 2.64% 2.77% 2.61%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "During Q2FY27, the company transferred **₹55.39 Cr** of stressed loans to ARCs for an aggregate consideration of **₹36.00 Cr**.",
+    "quote": "Aggregate consideration 360.00",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "GNPA at 2.64% met prediction p_dc05d3e0 (target <=2.66%), reflecting controlled slippages supported by ARC loan sales.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Capital adequacy remains strong at 31.27% (CRAR) and liquidity coverage ratio stands comfortably high at 193.85%.",
+    "quote": "23 Capital to risk assets ratio 31.27% 31.95% 34.05% 31.27% 34.05% 32.84%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "RESULTS",
+     "vote": "RESULTS",
+     "agree": true,
+     "conservative": "RESULTS"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827433",
+  "filed_at": "2026-10-24T13:17:22+05:30",
+  "event_type": "RESULTS",
+  "writer": "gemini_2/gemini-3.7-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T16:59:27+05:30",
+  "latency_s": 1.0,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Kotak Mahindra Bank Q2FY27 consolidated PAT at ₹5,645 Cr; standalone GNPA down to 1.04%",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The quarter shows healthy double-digit earnings growth and improving asset quality, bolstered by the integration of acquired KMIL loan portfolios.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Consolidated **profit after tax** reached **₹5,645.38 Cr** in Q2FY27, up from ₹4,468.27 Cr in Q2FY26.",
+    "quote": "17 Profit after tax (14-15+16) 5,645.38 5,480.46 4,468.27 11,125.84 8,940.45 19,287.89",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Consolidated **interest earned** rose to **₹19,855.87 Cr** in Q2FY27 from ₹17,198.74 Cr in the year-ago period.",
+    "quote": "1 Interest earned (a+b+c+d) 19,855.87 18,354.57 17,198.74 38,210.44 34,447.05 69,781.21",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Standalone gross NPA ratio improved to **1.04%**, with net NPA dropping to **0.24%**.",
+    "quote": "c) % of Gross NPA to Gross Advances 1.04 1.18 1.39 1.04 1.39 1.20",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "With effect from **1 July 2026**, the bank acquired loan assets aggregating **₹9,587.62 Cr** from subsidiary Kotak Mahindra Investments Limited.",
+    "quote": "14. Pursuant to the RBI Directions and as part of the Kotak Group's simplification and operational synergy initiatives, with effect from 1 July 2026, the Bank acquired loan assets aggregating to ~9,587.62 crore (including premium) from Kotak Mahindra Investments Limited.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "RESULTS",
+     "vote": "RESULTS",
+     "agree": true,
+     "conservative": "RESULTS"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    },
+    "deal_stage": {
+     "card": "COMPLETED",
+     "vote": "BOARD_APPROVED",
+     "agree": false,
+     "conservative": "BOARD_APPROVED"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827611",
+  "filed_at": "2026-10-24T16:35:37+05:30",
+  "event_type": "OTHER",
+  "writer": "gemini/gemini-3-flash-preview",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T17:49:30+05:30",
+  "latency_s": 1.1,
+  "mode": "shadow",
+  "counts": {
+   "OK": 3,
+   "INVENTED": 1,
+   "UNSUPPORTED_CAUSE": 2
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "JK Cement Q2 security cover certificate confirms compliance with NCD covenants",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The company maintains a healthy security cover for its outstanding NCDs; well above the required 1.20x covenant.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "The company reported a **security cover ratio** of for its listed NCDs as of September 30, 2026.",
+    "quote": "Cover on Book Value 3.76",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "INVENTED",
+    "reason": "Point omits the figure; source gives 3.76",
+    "corrected": "reported a security cover ratio of 3.76"
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Outstanding **NCDs** stood at **₹37.57 Cr** (including accrued interest) against an original issue of ₹100 Cr.",
+    "quote": "Debt Securities to which this certificate pertains as mentioned above includes outstanding balances of NCDs (as defined in Independent Auditor's Report) of Rs. 37.50 Crores and interest accrued of Rs. 0.07 Crores as on September 30, 2026.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The **Debt Service Coverage Ratio (DSCR)** was **2.12x**, exceeding the minimum requirement of 1.10x.",
+    "quote": "The Debt Service Coverage Ratio is 2.12 times as per the unaudited standalone financial result of the Company as at and for the period ended September 30, 2026",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "Source does not state the 1.10x minimum",
+    "corrected": "DSCR was 2.12x"
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Total Outside Liabilities to Tangible Net Worth stood at 1.72x, well within the maximum limit of 4.00x.",
+    "quote": "The Total Outside Liabilities/Tangible Net Worth is 1.72 times... which is in compliance with required covenants",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "Source does not mention the 4.00x limit",
+    "corrected": "Total Outside Liabilities/Tangible Net Worth was 1.72x"
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "OTHER",
+     "vote": "CORPORATE_ACTION",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "LOW",
+     "vote": "LOW",
+     "agree": true,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827651",
+  "filed_at": "2026-10-24T17:14:11+05:30",
+  "event_type": "DEBT_RATINGS",
+  "writer": "gemini_2/gemini-3.7-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T17:49:33+05:30",
+  "latency_s": 0.7,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "CRISIL revises Go Digit CCR outlook to Positive from Developing; AA- reaffirmed",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "CRISIL has revised Go Digit's AA- Corporate Credit Rating watch to Positive Implications from Developing Implications, signaling potential upward rating momentum.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "CRISIL Ratings reaffirmed the **Corporate Credit Rating (CCR)** of Go Digit at **AA-**.",
+    "quote": "Crisil Ratings has, after due consideration, reaffirmed its Crisil AA- (pronounced as Crisil double A minus rating) rating to Go Digit General Insurance Limited and revised Rating Watch to Positive implications from Developing implications.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The rating watch was revised to **Rating Watch with Positive Implications** from **Rating Watch with Developing Implications** on **23 October 2026**.",
+    "quote": "CRISIL Ratings Limited vide its letter dated 23rd October 2026 has re-affirmed the Corporate Credit Rating (CCR) of the Company as AA- (pronounced as double A minus rating) with a revised outlook from ‘Rating Watch with Developing Implications to ‘Rating Watch with Positive Implications’.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Revision follows the September 2026 reaffirmation at Developing Implications, pointing to improved credit expectations around corporate developments.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "t_bc34aeb0"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Provides positive credit standing as the company heads into its 5 November 2026 shareholder vote for the amalgamation with Go Digit Infoworks.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "t_17869c67"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "DEBT_RATINGS",
+     "vote": "OTHER",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827612",
+  "filed_at": "2026-10-24T16:38:14+05:30",
+  "event_type": "OTHER",
+  "writer": "gemini_2/gemini-3.5-flash-lite",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T17:49:36+05:30",
+  "latency_s": 0.5,
+  "mode": "shadow",
+  "counts": {
+   "OK": 5
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Modis Navnirman H1 FY27 revenue jumps 53% YoY to ₹127.64 Cr and PAT rises 59% to ₹19.08 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Robust financial performance with accelerated sales and margin expansion highlights strong operational momentum.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "H1 FY27 **revenue from operations** rose **53.06% YoY** to **₹127.64 Cr**.",
+    "quote": "Revenue from Operations 127.64 83.39 53.06%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "H1 FY27 **PAT** grew **59% YoY** to **₹19.08 Cr** with basic EPS at **₹9.72**.",
+    "quote": "Profit After Tax (PAT) 19.08 12.00 %%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "**EBITDA** increased **63.17% YoY** to **₹26.19 Cr** with margin expanding by **127 bps** to **20.52%**.",
+    "quote": "EBITDA 26.19 16.05 63.17%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "OTHER",
+     "vote": "RESULTS",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "HIGH",
+     "vote": "MODERATE",
+     "agree": false,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827657",
+  "filed_at": "2026-10-24T17:21:42+05:30",
+  "event_type": "LITIGATION_REGULATORY",
+  "writer": "gemini/gemini-3.7-flash",
+  "critic": "groq/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T18:23:46+05:30",
+  "latency_s": 0.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Yes Bank evaluates coupon discretion on AT-1 bonds following Supreme Court ruling",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Yes Bank clarified that it holds discretion over AT-1 coupon payments, deferring any payment decision past the scheduled 18 October 2026 date pending legal evaluation.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Yes Bank affirmed that under the terms of its **AT-1 Bonds**, it retains the right to exercise **coupon discretion**.",
+    "quote": "While the Bank continues assessing all available options and suitable actions/ steps going forward in respect of the judgement, the Bank hereby informs that under the terms of the AT- 1 Bonds (as disclosed in their respective Information Memoranda), the Bank retains the right to exercise coupon discretion in respect of the Bonds.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The **9% YBL AT-1 Bonds** had a coupon payment date of **18 October 2026** under the October 17, 2017 Information Memorandum.",
+    "quote": "Further, as per the terms of the Information Memorandum dated October 17, 2017, the 9% YBL AT-1 Bonds had a coupon payment date of 18 October 2026.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "A decision on whether to exercise **coupon discretion** will be communicated after completing its ongoing **legal and regulatory assessment**.",
+    "quote": "Given that the Bank has not completed the evaluation and assessment, the Bank will communicate its decision, if any, on whether or not exercise of coupon discretion is required in respect of the AT-1 Bonds after it has completed the evaluation and assessment, which it expects to complete in due course.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Directly addresses the watchlist concern regarding coupon payments; while principal write-back is a reserve shift, paying coupons would generate actual P&L cash outflows.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "w_3d3ce490"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Exercising coupon discretion allows the bank to avoid or defer cash payouts, safeguarding capital adequacy while reviewing options post the Supreme Court ruling.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "LITIGATION_REGULATORY",
+     "vote": "LITIGATION_REGULATORY",
+     "agree": true,
+     "conservative": "LITIGATION_REGULATORY"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "LOW",
+     "agree": false,
+     "conservative": "LOW"
+    },
+    "tone": {
+     "card": "NEUTRAL",
+     "vote": "NEUTRAL",
+     "agree": true,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827654",
+  "filed_at": "2026-10-24T17:18:59+05:30",
+  "event_type": "CONCALL_PRESENTATION",
+  "writer": "gemini/gemini-3.7-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T18:23:49+05:30",
+  "latency_s": 1.0,
+  "mode": "shadow",
+  "counts": {
+   "OK": 13
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Crompton maintains medium-term double-digit growth trajectory on pricing and solar ramp-up",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Management reaffirmed its Crompton 2.0 plan with 80% cost pass-through achieved, strong solar rooftop rollout, and greenfield plant evaluations in advanced stages.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Consolidated Q2 revenue rose 18.2% YoY to **₹2,263 Cr**, marking the third consecutive quarter of double-digit revenue growth.",
+    "quote": "Revenue grew by an impressive 18.2% YoY to Rs.2,263 Crores.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Executed over 50% of the **AP government solar rooftop** order, installing **20,000 units** of the total **38,000 units**.",
+    "quote": "In Andhra Pradesh, we have an order for 38,000 units, out of which 20,000 units have been installed by Crompton.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Management confirmed that evaluation of a **Greenfield manufacturing plant** for fans, appliances, and wires is in **advanced stages**.",
+    "quote": "Evaluation of Greenfield manufacturing plant is in advanced stages.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Execution of the ~₹500 Cr solar rooftop order is on track, with half of the AP order book already completed across Q1 and Q2.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Cumulative price hikes of 11-15% across businesses (17-18% in fans) have offset about 80% of commodity inflation, protecting core gross margins.",
+    "quote": "About 80% of the cost increases have been passed on.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.2",
+    "field": "why_it_matters",
+    "text": "Restructuring LKA to share Butterfly's operational backbone aims to eliminate annual EBITDA drag of ₹16-25 Cr.",
+    "quote": "To give you a sense, at various points in time, disclosed the EBITDA loss that that business was making. was between Rs. 16 – Rs 25 Crores.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.1",
+    "field": "call_takeaways",
+    "text": "Passed on ~80% of raw material cost inflation across categories through cumulative price hikes.",
+    "quote": "About 80% of the cost increases have been passed on.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.2",
+    "field": "call_takeaways",
+    "text": "Cumulative price hikes in fans reached 17–18% over the past nine months to mitigate input inflation.",
+    "quote": "For fans, if you have to look at it, it is somewhere around 17–18% is what would have taken cumulatively in the last nine months.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.4",
+    "field": "call_takeaways",
+    "text": "Evaluation of greenfield manufacturing plant for fans, appliances, and wires is in advanced stages.",
+    "quote": "Evaluation of Greenfield manufacturing plant is in advanced stages.",
+    "excerpt_found": true,
+    "memory_refs": [
+     "cp_947d9fa1"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.6",
+    "field": "call_takeaways",
+    "text": "Identified the domestic solar rooftop addressable market size at ₹26,000 Cr.",
+    "quote": "Solar rooftops by themselves are Rs.26,000 crore business.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "call_takeaways.7",
+    "field": "call_takeaways",
+    "text": "LKA business restructuring under Butterfly leadership aims to reverse its ₹16-25 Cr EBITDA loss.",
+    "quote": "To give you a sense, at various points in time, disclosed the EBITDA loss that that business was making. was between Rs. 16 – Rs 25 Crores.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "CONCALL_PRESENTATION",
+     "vote": "RESULTS",
+     "agree": false,
+     "conservative": null
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827534",
+  "filed_at": "2026-10-24T15:26:10+05:30",
+  "event_type": "RESULTS",
+  "writer": "gemini/gemini-3.5-flash-lite",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T19:06:58+05:30",
+  "latency_s": 0.9,
+  "mode": "shadow",
+  "counts": {
+   "MISSING": 2,
+   "OK": 4
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "AU Small Finance Bank Q2 FY27 PAT rises to ₹858 Cr with GNPA at 1.99%",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "MISSING",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "AU Small Finance Bank delivered robust Q2 FY27 earnings with net profit; supported by improved asset quality and healthy loan book expansion.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "MISSING",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Net profit for the period to **₹857.69 Cr** (**₹85,768.99 lakh**).",
+    "quote": "Net Profit for the period (12)-(13) 85,768.99 79,595.29 56,087.03 1,65,364.28 1,14,172.85 2,64,125.43",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Gross NPA ratio improved to **1.99%** from 2.41% a year ago.",
+    "quote": "% of Gross NPAs to Gross Advances 1.99% 2.10% 2.41% 1.99% 2.41% 2.03%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Total income reached **₹6,381.99 Cr** for the quarter,.",
+    "quote": "Total Income (1)+(2) 6,38,198.97 5,99,195.79 5,22,386.55 12,37,394.76 10,41,291.46 21,61,427.76",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "Provisions (other than tax) and contingencies decreased to ₹359.40 Cr compared to ₹480.83 Cr in Q2 FY25, aiding net profit growth.",
+    "quote": "Provisions (other than tax) and Contingencies 35,939.61 37,148.81 48,082.92 73,088.42 1,01,413.58 1,61,471.43",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "RESULTS",
+     "vote": "RESULTS",
+     "agree": true,
+     "conservative": "RESULTS"
+    },
+    "impact_level": {
+     "card": "HIGH",
+     "vote": "MODERATE",
+     "agree": false,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827715",
+  "filed_at": "2026-10-24T18:44:50+05:30",
+  "event_type": "RESULTS",
+  "writer": "gemini/gemini-3.5-flash-lite",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T19:55:26+05:30",
+  "latency_s": 0.7,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "German Green Steel and Power Q1FY27: revenue ₹463.06 Cr, net profit ₹21.64 Cr",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Q1FY27: revenue ₹463.06 Cr, net profit ₹21.64 Cr.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Revenue from operations Q1FY27: ₹463.06 Cr.",
+    "quote": "- revenue Q1FY27: 463.06 Cr",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "EBITDA Q1FY27: ₹44.5 Cr; margin 9.6%.",
+    "quote": "- ebitda Q1FY27: 44.5 Cr",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Net profit Q1FY27: ₹21.64 Cr.",
+    "quote": "- pat Q1FY27: 21.64 Cr",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "Net profit to shareholders Q1FY27: ₹21.54 Cr.",
+    "quote": "- pat_owners Q1FY27: 21.54 Cr",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The results reflect the operational performance for the first quarter of FY27, showcasing steady revenue generation in the steel and metal products segment.",
+    "quote": "The Group is engaged in the business of manufacturing iron and steel products, mainly TMT bars, MS billets and sponge iron.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "RESULTS",
+     "vote": "RESULTS",
+     "agree": true,
+     "conservative": "RESULTS"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "NEUTRAL",
+     "agree": false,
+     "conservative": "NEUTRAL"
+    },
+    "deal_stage": {
+     "card": "OTHER",
+     "vote": "OTHER",
+     "agree": true,
+     "conservative": "OTHER"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827750",
+  "filed_at": "2026-10-24T19:43:46+05:30",
+  "event_type": "ORDER_WIN",
+  "writer": "gemini/gemini-3.5-flash-lite",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T20:36:39+05:30",
+  "latency_s": 0.5,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Ramky Infra wins ₹588.57 Cr RVNL residential EPC order",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The company secured a ₹588.57 crore EPC contract from Rail Vikas Nigam Limited for residential and infrastructure works in Chhattisgarh, adding over 30% to trailing-12-month revenue.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Ramky Infrastructure entered into a contract agreement with **Rail Vikas Nigam Limited** for **₹588.57 crores** (inclusive of GST).",
+    "quote": "The Total Contract Price is INR 588.57 Crores (approx.) (inclusive of GST).",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The scope involves construction of residential towers, shopping complex, and associated infrastructure in Existing **NMDC Township, Bacheli, Chhattisgarh** on an **EPC basis**.",
+    "quote": "Construction of 15 Nos. Type—IIl Residential Towers (S+l0) (600 Units), 01 No. Type-IV Residential Tower (S+I0) (40 units), NO. Type-V Residential Tower (S+0) (30 Units), 01 No. HOP Bungalow Type-VII (G+1), 01 No. Shopping Complex & cafeteria (G+l) and Associated External Development & Infrastructure Works in Existing NMDC Township, Bacheli, Chhattisgarh on Engineering, Procurement & Construction (EPC) basis.",
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "The execution period is within **30 months** from the Appointed Date, with a defect liability period of **12 months**.",
+    "quote": "Construction period: within 30 months from the Appointed Date and the defect liability period is 12 months from date of completion of work",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The order value of ₹588.57 Cr amounts to 30.4% of trailing-12-month revenue of ₹1,938 Cr, supporting order book expansion.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "The contract is awarded by Rail Vikas Nigam Limited, a domestic public sector undertaking, in the ordinary course of business.",
+    "quote": "Whether order is awarded by domestic or international entity: Domestic",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "ORDER_WIN",
+     "vote": "ORDER_WIN",
+     "agree": true,
+     "conservative": "ORDER_WIN"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "CONTRACT",
+     "vote": "CONTRACT",
+     "agree": true,
+     "conservative": "CONTRACT"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827724",
+  "filed_at": "2026-10-24T18:56:52+05:30",
+  "event_type": "ORDER_WIN",
+  "writer": "gemini/gemini-3.5-flash-lite",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T20:36:42+05:30",
+  "latency_s": 0.8,
+  "mode": "shadow",
+  "counts": {
+   "OK": 5
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Indo Tech Transformers wins ₹47.48 Cr domestic power transformer order from Shyam Sel and Power",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "The order adds to order book visibility, representing 20.8% of Q1FY27 revenue.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Received a purchase order from **Shyam SEL & Power Limited** worth **₹47.485 Crores** plus applicable taxes for a steel plant in the Eastern region.",
+    "quote": "These prestigious orders have an aggregate value of ₹47.485 Crores plus applicable taxes.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "The contract entails the manufacture and supply of **4 Number of power transformers**, to be executed within **12 months** from the date of drawing approval.",
+    "quote": "Nature of order(s) / contract(s) Manufacture and supply of 4 Number of power transformers",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The ₹47.48 Cr order equals 20.8% of Q1FY27 revenue (₹227.89 Cr), providing meaningful top-line support for the capital goods business.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827761",
+  "filed_at": "2026-10-24T20:12:51+05:30",
+  "event_type": "MONTHLY_BUSINESS_UPDATE",
+  "writer": "gemini_2/gemini-3.6-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T21:21:50+05:30",
+  "latency_s": 1.0,
+  "mode": "shadow",
+  "counts": {
+   "OK": 6
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Ritco Logistics secures ₹119.55 Cr contract wins in Sept 2026, led by BCPL and HRRL",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Ritco secured ₹119.55 Cr contracts in Sept 2026, led by 3-year deals with BCPL and HRRL, while step-down arm TrucksUp saw ₹54 Cr FASTag GMV.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Secured new business worth **₹119.55 crore** in September 2026 across diverse transportation requirements and customer segments.",
+    "quote": "Ritco Logistics Ltd. Secures New Business Worth ₹119.55 Crore in September 2026, Led by Major BCPL and HRRL Contracts",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "Won a 3-year contract worth **₹73.67 crore** from **BCPL Dibrugarh** and a 3-year contract worth **₹35.34 crore** from **HRRL Barmer**.",
+    "quote": "Ritco Logistics secured a three-year transportation contract from BCPL (Brahmaputra Cracker and Polymer Limited), Dibrugarh valued at approximately ₹73.67 crore.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Step-down arm **Trucksup Solution Private Limited** issued **9,926 FASTags** with **₹54 crore** GMV and disbursed **₹3.78 crore** in vehicle financing in September.",
+    "quote": "FASTag – TrucksUp issued approximately 9,926 FASTags during the month of September, with a GMV of approximately ₹54 Crore.",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "The ₹35.34 Cr HRRL order comes in addition to an earlier work order of ₹334 Cr, deepening relationship with the energy player.",
+    "quote": "This is in addition to the earlier work order of ₹334 Crore",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "MONTHLY_BUSINESS_UPDATE",
+     "vote": "MONTHLY_BUSINESS_UPDATE",
+     "agree": true,
+     "conservative": "MONTHLY_BUSINESS_UPDATE"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "CONTRACT",
+     "vote": "COMPLETED",
+     "agree": false,
+     "conservative": "CONTRACT"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106827783",
+  "filed_at": "2026-10-24T21:48:04+05:30",
+  "event_type": "FUNDRAISE",
+  "writer": "zai/glm-4.5-flash",
+  "critic": "gemini/gemini-3.1-flash-lite",
+  "critiqued_at": "2026-10-24T22:43:41+05:30",
+  "latency_s": 4.3,
+  "mode": "shadow",
+  "counts": {
+   "OK": 3,
+   "UNSUPPORTED_CAUSE": 2,
+   "OVERSTATED": 1
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Jio Platforms IPO priced at ₹1,119 per share",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Jio Platforms' IPO pricing unlocks value for Reliance shareholders through a subsidiary listing",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "The filing does not state that the IPO unlocks value for shareholders; it is a factual disclosure of the issue price.",
+    "corrected": "Jio Platforms IPO priced at ₹1,119 per share"
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "**Jio Platforms IPO** finalized at **₹1,119** per share",
+    "quote": "JPL has today finalised the Issue Price (including the anchor investor issue price) at ₹1,119 per Equity Share of face value of ₹10 each",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "IPO subscribed for **27 crore equity shares** of Jio Platforms",
+    "quote": "Initial Public Offer by way of a fresh issue of up to 27,00,00,000 (Twenty seven crore) equity shares",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OVERSTATED",
+    "reason": "The excerpt states the IPO is a fresh issue of 'up to' 27 crore shares, not that it was subscribed for that amount.",
+    "corrected": "IPO is a fresh issue of up to 27 crore equity shares of Jio Platforms"
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "IPO pricing represents significant monetization of Reliance's digital assets",
+    "quote": "This is for information and record",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "UNSUPPORTED_CAUSE",
+    "reason": "The filing does not mention monetization of digital assets; it is a standard regulatory disclosure.",
+    "corrected": "Jio Platforms finalized the IPO issue price at ₹1,119 per share"
+   },
+   {
+    "id": "why_it_matters.1",
+    "field": "why_it_matters",
+    "text": "Follows previous Jio Platforms IPO announcement on October 14, 2026",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [
+     "t_96844362"
+    ],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "gemini/gemini-3.1-flash-lite",
+   "fields": {
+    "event_type": {
+     "card": "FUNDRAISE",
+     "vote": "FUNDRAISE",
+     "agree": true,
+     "conservative": "FUNDRAISE"
+    },
+    "impact_level": {
+     "card": "HIGH",
+     "vote": "HIGH",
+     "agree": true,
+     "conservative": "HIGH"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    },
+    "deal_stage": {
+     "card": "COMPLETED",
+     "vote": "TERMS_FINALISED",
+     "agree": false,
+     "conservative": "TERMS_FINALISED"
+    }
+   }
+  }
+ },
+ {
+  "news_id": "nse-106824672",
+  "filed_at": "2026-10-22T13:58:59+05:30",
+  "event_type": "RESULTS",
+  "writer": "gemini_2/gemini-3.6-flash",
+  "critic": "groq_2/openai/gpt-oss-20b",
+  "critiqued_at": "2026-10-24T22:43:46+05:30",
+  "latency_s": 0.7,
+  "mode": "shadow",
+  "counts": {
+   "OK": 7
+  },
+  "points": [
+   {
+    "id": "headline",
+    "field": "headline",
+    "text": "Havells India Q2FY27: revenue ₹6,431.99 Cr (+34.6% YoY), net profit ₹349.22 Cr (+9.7% YoY)",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "takeaway",
+    "field": "takeaway",
+    "text": "Q2FY27 net profit of ₹349.22 Cr against net profit of ₹318.28 Cr a year earlier; the largest move was EBITDA of ₹573.33 Cr against ₹438.43 Cr a year earlier.",
+    "quote": null,
+    "excerpt_found": false,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.0",
+    "field": "what_happened",
+    "text": "Revenue from operations Q2FY27: ₹6,431.99 Cr (+34.6% YoY, -1.3% QoQ).",
+    "quote": "- revenue Q2FY27: 6431.99 Cr, YoY +34.6%, QoQ -1.3%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.1",
+    "field": "what_happened",
+    "text": "EBITDA Q2FY27: ₹573.33 Cr; margin 8.9%.",
+    "quote": "- ebitda Q2FY27: 573.33 Cr, YoY +30.8%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.2",
+    "field": "what_happened",
+    "text": "Net profit Q2FY27: ₹349.22 Cr (+9.7% YoY, +20.5% QoQ).",
+    "quote": "- pat Q2FY27: 349.22 Cr, YoY +9.7%, QoQ +20.5%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "what_happened.3",
+    "field": "what_happened",
+    "text": "Net profit to shareholders Q2FY27: ₹349.52 Cr (+9.6% YoY, +20.4% QoQ).",
+    "quote": "- pat_owners Q2FY27: 349.52 Cr, YoY +9.6%, QoQ +20.4%",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   },
+   {
+    "id": "why_it_matters.0",
+    "field": "why_it_matters",
+    "text": "EBITDA margin contracted slightly YoY to 8.91% in Q2FY27 from 9.17% in Q2FY26, affected by lower other income of ₹32.61 Cr vs ₹86.26 Cr.",
+    "quote": "ebitda_margin Q2FY27: 8.91 %",
+    "excerpt_found": true,
+    "memory_refs": [],
+    "verdict": "OK",
+    "reason": "",
+    "corrected": null
+   }
+  ],
+  "votes": {
+   "model": "groq_2/openai/gpt-oss-20b",
+   "fields": {
+    "event_type": {
+     "card": "RESULTS",
+     "vote": "RESULTS",
+     "agree": true,
+     "conservative": "RESULTS"
+    },
+    "impact_level": {
+     "card": "MODERATE",
+     "vote": "MODERATE",
+     "agree": true,
+     "conservative": "MODERATE"
+    },
+    "tone": {
+     "card": "POSITIVE",
+     "vote": "POSITIVE",
+     "agree": true,
+     "conservative": "POSITIVE"
+    }
+   }
+  }
+ }
+]

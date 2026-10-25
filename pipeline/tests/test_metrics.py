@@ -207,7 +207,7 @@ def test_eps_growth_blank_across_a_bonus_issue():
                           "Q3FY26": 1353}))
     rows = metrics.table(d, "CONSOLIDATED")
     r = row(rows, "Q2FY26")
-    assert r["eps_yoy"]["value"] is None and "share count changed between Q2FY25 and Q2FY26" in r["eps_yoy"]["note"]
+    assert r["eps_yoy"]["value"] is None and "between Q2FY25 and Q2FY26" in r["eps_yoy"]["note"]
     assert "EPS not comparable" in r["eps_yoy"]["note"]
     assert row(rows, "Q3FY25")["eps_qoq"]["value"] is None            # the span Q2FY25 to Q3FY25
     assert row(rows, "Q4FY25")["eps_qoq"]["value"] == 0.0             # both sides after the bonus
@@ -215,11 +215,18 @@ def test_eps_growth_blank_across_a_bonus_issue():
     assert row(rows, "Q2FY26")["pat_yoy"]["value"] is not None        # profit growth is untouched
     d2 = _dossier(_shares({"Q1FY25": 676, "Q2FY25": 676, "Q3FY25": 1353, "Q4FY25": 1353, "Q1FY26": 1353}))
     r = row(metrics.table(d2, "CONSOLIDATED"), "Q1FY26")
-    assert r["ttm_eps"]["value"] is None and "share count changed" in r["ttm_eps"]["note"]
+    assert r["ttm_eps"]["value"] is None and "possible bonus or split not on record" in r["ttm_eps"]["note"]
+
+
+def test_eps_growth_kept_across_an_issue():
+    # a 15% preferential allotment is real dilution: the reported growth shows (owner, 25 Oct 2026)
+    d = _dossier(_shares({"Q1FY26": 1000, "Q4FY26": 1150, "Q1FY27": 1150}))
+    r = row(metrics.table(d, "CONSOLIDATED"), "Q1FY27")
+    assert round(r["eps_yoy"]["value"], 1) == -13.0 and "note" not in r["eps_yoy"]
 
 
 def test_eps_growth_kept_across_a_small_issue():
-    # a 5% QIP: the implied count moves 5%, inside the 10% tolerance
+    # a 5% QIP: the implied count moves 5%
     d = _dossier(_shares({"Q1FY26": 1000, "Q4FY26": 1050, "Q1FY27": 1050}))
     r = row(metrics.table(d, "CONSOLIDATED"), "Q1FY27")
     assert r["eps_yoy"]["value"] is not None and r["eps_qoq"]["value"] == 0.0

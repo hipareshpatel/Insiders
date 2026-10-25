@@ -27,6 +27,7 @@ import re
 from dataclasses import asdict, dataclass
 from datetime import date, timedelta
 
+from . import eps_adjust
 from .dossier import approval_granted, watch_verdict, deal_state, is_recap, reported_by, same_deal
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period, results_due
@@ -697,11 +698,16 @@ def _metric_shifts(after: dict, filing: Filing, skip: set[str]) -> list[Signal]:
             and e.get("as_of", "") <= m["as_of"] and (pe := due_date(e["period"])) and pe < end
         ]
         comparisons = []
+        if m["metric"] == "eps" and eps_adjust.enabled():
+            # EPS_SHARE_ADJUST (F153): older EPS on today's share count; a comparison with no basis is not made
+            same_kind = _eps_bases(same_kind, m, after, by_metric)
         prev_year = prior_year_period(m["period"])
         base = next((e for e in same_kind if e["period"] == prev_year), None)
         if base:
             comparisons.append(("YoY", base))
-        elif m.get("yoy_pct") is not None and m.get("unit") != "PCT" and m["yoy_pct"] > -100 and m["value"] > 0:
+        elif m.get("yoy_pct") is not None and m.get("unit") != "PCT" and m["yoy_pct"] > -100 and m["value"] > 0 \
+                and not (m["metric"] == "eps" and eps_adjust.enabled() and prev_year
+                         and eps_adjust.factor_between(after, prev_year, m["period"]) != 1):
             comparisons.append(("YoY", {"value": m["value"] / (1 + m["yoy_pct"] / 100), "unit": m.get("unit")}))
         if kind in ("Q", "M") and same_kind:
             latest = max(same_kind, key=lambda e: due_date(e["period"]))
@@ -736,6 +742,25 @@ def _metric_shifts(after: dict, filing: Filing, skip: set[str]) -> list[Signal]:
         found.append((abs(best[0]), Signal("METRIC_SHIFT", severity, text, m["metric"])))
     found.sort(key=lambda item: -item[0])
     return [s for _, s in found[:MAX_SHIFT_SIGNALS]]
+
+
+def _eps_bases(older: list[dict], current: dict, after: dict, by_metric: dict) -> list[dict]:
+    """The earlier EPS entries a shift is measured against, on the current period's share count (eps_adjust.py,
+    EPS_SHARE_ADJUST): adjusted for a split or bonus between, and left out where the share count changed with no record."""
+    profit = {}
+    for name in ("pat", "pat_owners"):   # the owners' profit wins where memory has it
+        for e in by_metric.get(name, []):
+            if e.get("value") is not None:
+                profit[e["period"]] = e["value"]
+    out = []
+    for e in older:
+        result = eps_adjust.compare(after, current["period"], e["period"], current["value"], e.get("value"),
+                                    profit.get(current["period"]), profit.get(e["period"]))
+        if result.kind == "same":
+            out.append(e)
+        elif result.kind == "adjusted":
+            out.append({**e, "value": result.eps_old})
+    return out
 
 
 def _reversal(entries: list[dict], current: dict) -> str | None:

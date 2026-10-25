@@ -1310,6 +1310,35 @@ def call_point_id(point: dict) -> str:
     return "cp_" + hashlib.sha1(f"{point.get('news_id')}|{point.get('text')}".encode()).hexdigest()[:8]
 
 
+def _eps_on_one_basis(dossier: dict, entries: list[dict], known: list[dict]) -> list[dict]:
+    """Memory's EPS lines with their stored YoY put on one share count (eps_adjust.py): an EPS from before a split or bonus
+    shows the change on today's count, or none and a note. Copies only the entries it changes; off, the entries as they are."""
+    from . import eps_adjust
+    from .periods import prior_year_period
+
+    if not eps_adjust.enabled():
+        return entries
+    value = {(e["metric"], e["period"]): e["value"] for e in known if e.get("value") is not None}
+
+    def profit(p: str):
+        return value.get(("pat_owners", p)) or value.get(("pat", p))
+
+    out = []
+    for e in entries:
+        back = prior_year_period(e["period"])
+        old = value.get(("eps", back)) if back else None
+        if e.get("yoy_pct") is None or old is None:
+            out.append(e)
+            continue
+        result = eps_adjust.compare(dossier, e["period"], back, e["value"], old, profit(e["period"]), profit(back))
+        if result.kind == "same":
+            out.append(e)
+            continue
+        pct = round((e["value"] / result.eps_old - 1) * 100, 1) if result.kind == "adjusted" and result.eps_old > 0 else None
+        out.append({**e, "yoy_pct": pct, "eps_note": result.note})
+    return out
+
+
 def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, printed: set[str] | None = None,
                filing_text: str | None = None, consolidated_only: bool = False) -> dict | None:
     """Compact memory for the prompt, containing only facts known before ``cutoff``.
@@ -1365,9 +1394,12 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
             entries.sort(key=lambda e: (str(due_date(e["period"]) or ""), e["period"]))
             bases = {e["_basis"] for e in entries}
             shared = next(iter(bases)) if len(bases) == 1 else None
+            if name == "eps":
+                entries = _eps_on_one_basis(dossier, entries, as_known)   # EPS_SHARE_ADJUST (F153); a no-op when off
             out[name] = ([f"basis: {shared.lower()}"] if shared else []) + [
                 f"{e['period']}: {e['value']:g} {e['unit']}"
                 + (f" (YoY {e['yoy_pct']:+g}%)" if e.get("yoy_pct") is not None else "")
+                + (f" ({e['eps_note']})" if e.get("eps_note") else "")
                 + (f" {e['_basis'].lower()}" if e["_basis"] and not shared else "")
                 + _restated(e)
                 for e in entries
@@ -2171,6 +2203,10 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             continue
         if ebitda_mixed and key in ("ebitda", "ebitda_margin"):
             row = {k: v for k, v in row.items() if k == "value"}
+        if key == "eps":
+            # EPS_SHARE_ADJUST (F153): the changes on one share count; the profit EPS is on is the owners', else the total
+            from . import eps_adjust
+            row = eps_adjust.snapshot_row(row, dossier, periods, lambda p: lookup(("pat_owners",), p) or lookup(("pat",), p))
         # the file's own YoY only when memory has no year-ago figure at all: when it has one and the table refused it
         # (restated, or not what this statement prints), that YoY rests on the refused base (data chain audit A8)
         if key == "revenue" and "yoy_pct" not in row and stored(names, periods["prev_year"])[1] is None:

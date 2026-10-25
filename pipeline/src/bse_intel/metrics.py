@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import re
 
+from . import eps_adjust
 from .dossier import STANDALONE_KEY, XBRL_SOURCE, _entry_basis, _norm
 from .periods import prior_quarter_period, prior_year_period, quarter_from_index, quarter_index
 
@@ -30,8 +31,8 @@ _LENDER_METRICS = {"interest_earned", "interest_expended", "pre_provision_operat
 # A discontinued business's result sits in the headline profit but not in a continuing EPS (HUL Q3FY26: profit 6,603
 # against continuing 2,125); the two differ by more than this share of the profit (associates' share is far smaller).
 _DISCONTINUED_TOLERANCE = 0.02
-# implied share counts (profit / EPS) further apart than this are a bonus, split or issue: EPS is not comparable
-SHARE_COUNT_TOLERANCE = 0.10
+# EPS across a split or bonus: adjusted with the recorded factor, blank only for an exact unrecorded ratio; an issue
+# shows its reported growth (eps_adjust.py, F153, owner 25 Oct 2026)
 
 COST_TO_INCOME_NOTE = ("not given on the consolidated basis: a group's other income carries its insurance "
                        "subsidiaries' premium income and its costs their claims (SBI group 60-71% against 47-55% for "
@@ -212,31 +213,33 @@ def table(dossier: dict | None, basis: str) -> list[dict]:
             return None
         return pat - continuing
 
-    def implied_shares(period: str | None):
-        """The profit EPS is on over EPS: crore shares. Continuing profit where a discontinued operation sits in the
-        headline, else the owners' profit, else the profit (a lender's: its profit to shareholders)."""
-        eps = stored("eps", period, "INR")
-        if not eps:
-            return None
+    def eps_profit(period: str | None):
+        """The profit EPS is on: continuing profit where a discontinued operation sits in the headline, else the owners'
+        profit, else the profit (a lender's: its profit to shareholders)."""
         if lender:
-            profit = line("profit_to_shareholders", period)[0]
-        elif discontinued(period) is not None:
-            profit = stored("pat_continuing", period)
-        else:
-            profit = stored("pat_owners", period)
-            profit = stored("pat", period) if profit is None else profit
-        return abs(profit / eps) if profit else None
+            return line("profit_to_shareholders", period)[0]
+        if discontinued(period) is not None:
+            return stored("pat_continuing", period)
+        profit = stored("pat_owners", period)
+        return stored("pat", period) if profit is None else profit
 
-    def share_count_changed(periods: list) -> bool:
-        counts = [implied_shares(p) for p in periods if p]
-        counts = [c for c in counts if c]
-        return len(counts) > 1 and max(counts) > min(counts) * (1 + SHARE_COUNT_TOLERANCE)
+    def eps_vs(period: str, other: str | None):
+        """How another quarter's EPS stands against this one's: as stated, on this share count, or not comparable
+        (eps_adjust.compare: a recorded split or bonus adjusts it, an unrecorded jump of the implied share count blanks it)."""
+        eps_now, eps_other = stored("eps", period, "INR"), stored("eps", other, "INR") if other else None
+        if eps_now is None or eps_other is None:
+            return eps_adjust.Compare("same")
+        return eps_adjust.compare(dossier, period, other, eps_now, eps_other, eps_profit(period), eps_profit(other))
 
     def growth(metric: str, period: str, prior: str | None):
-        if metric == "eps" and prior and share_count_changed([period, prior]):
-            return _cell(None, "PCT", None, [period, prior],
-                         note=f"share count changed between {prior} and {period} (bonus, split or issue); "
-                              "EPS not comparable")
+        if metric == "eps" and prior:
+            versus = eps_vs(period, prior)
+            if versus.kind == "blank":
+                return _cell(None, "PCT", None, [period, prior], note=versus.note)
+            if versus.kind == "adjusted":
+                value = _pct_change(stored("eps", period, "INR"), versus.eps_old)
+                return (_cell(value, "PCT", "computed", [period, prior], note=versus.note) if value is not None
+                        else _empty("PCT"))
         if not lender and metric in ("pat", "pat_owners") and (discontinued(period) or discontinued(prior)):
             # a change that runs through a demerger or sale gain is no growth: read pat_continuing_*
             return _cell(None, "PCT", None, [period, prior],
@@ -360,12 +363,15 @@ def table(dossier: dict | None, basis: str) -> list[dict]:
             wanted = consecutive(period)
             eps = [stored("eps", p, "INR") for p in wanted] if wanted else []
             if wanted and all(v is not None for v in eps):
-                if share_count_changed(wanted):
+                versus = [eps_vs(period, p) for p in wanted[1:]]
+                if any(v.kind == "blank" for v in versus):
                     row["ttm_eps"] = _cell(None, "INR", None, wanted,
-                                           note=f"share count changed between {wanted[-1]} and {wanted[0]} (bonus, "
-                                                "split or issue); EPS not comparable")
+                                           note=next(v.note for v in versus if v.kind == "blank"))
                 else:
-                    row["ttm_eps"] = _cell(sum(eps), "INR", "computed", wanted)
+                    # older quarters on the newest quarter's share count
+                    total = eps[0] + sum(v.eps_old if v.kind == "adjusted" else e for v, e in zip(versus, eps[1:]))
+                    notes = list(dict.fromkeys(v.note for v in versus if v.kind == "adjusted"))
+                    row["ttm_eps"] = _cell(total, "INR", "computed", wanted, note="; ".join(notes) or None)
             row["ttm_ebitda_margin"] = _empty("PCT")
             if row["ttm_ebitda"]["value"] is not None and row["ttm_revenue"]["value"]:
                 row["ttm_ebitda_margin"] = _cell(row["ttm_ebitda"]["value"] / row["ttm_revenue"]["value"] * 100, "PCT",

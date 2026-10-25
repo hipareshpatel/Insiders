@@ -41,6 +41,7 @@ This list holds only the first-principles review's items (`docs/FROM_ZERO.md`). 
 
 | # | Improvement | What it fixes | Owner | State |
 |---|---|---|---|---|
+| 22 | A per-company metrics table, worked out by code from the exchange files for every quarter (growth YoY and QoQ, margins, cost shares, last-four-quarters totals, EPS; balance-sheet ratios at each half-year; bank metrics for lenders), one table per basis. The AI never types a past number: it names the cell (metric, period, basis) and code writes the value | Wrong past numbers on cards (CIE India, HCL Tech) | Owner's idea, 25 Oct | Proposed; needs items 10, 11, 15 first (definitions) |
 | 18 | Open ZIP attachments and read the PDF inside (and its XML); an audio ZIP is set aside as "audio, no text" | 18 filings lost, including an auditor's resignation | – | Proposed |
 | 19 | A filing whose PDF is not there yet waits and is tried again over the next day, instead of three tries in about two hours | Filings given up while NSE was still uploading the file | – | Proposed (check first how quickly NSE adds files) |
 | 20 | Fix the 4 code crashes, each with a test | 4 filings with no card, from our own bugs | – | Proposed |
@@ -66,7 +67,8 @@ Fixes to the sample itself, found on review:
 
 | # | Improvement | What it fixes | Owner | State |
 |---|---|---|---|---|
-| 14 | EBITDA and its margin carry the label "Computed" (ours) or "Filing" (the company's printed figure), never "Statement": EBITDA is not a statement line | The sample marks our EBITDA ₹286.61 Cr as "Statement" while the release prints its own (year-ago ₹212.90 Cr against our ₹213.45 Cr) | – | With item 11 |
-| 15 | One profit line, named the same everywhere: the headline's "net profit to shareholders ₹189.52 Cr" and the table's "Net profit ₹190.72 Cr" are two different lines (after and before minority interest) | Two profit figures on one card read as a mistake | – | Proposed |
-| 16 | A figure computed from memory (cost per MSM from deal history) only when every input is an exchange-file or quoted-filing item (item 10's tags) | Otherwise "Computed" hides an AI-read input | – | With items 3 and 10 |
+| 14 | Show both EBITDA figures: the company's printed one leads (label "Filing"), ours beneath it (label "Computed"). Year-on-year only within one definition: theirs against their year-ago, ours against ours. When the company prints none, ours alone | The sample marks our EBITDA ₹286.61 Cr as "Statement" while the release prints its own (year-ago ₹212.90 Cr against our ₹213.45 Cr) | Yes (25 Oct) | With item 11 |
+| 15 | One profit line everywhere: the one the company headlines in its own release, with its label; with no release, profit attributable to shareholders (the line EPS is on) | Two profit figures on one card read as a mistake | Yes (25 Oct) | To build |
+| 16 | A figure computed from memory (cost per MSM from deal history) only when every input is an exchange-file or quoted-filing item (item 10's tags) | Otherwise "Computed" hides an AI-read input | Yes (25 Oct) | With items 3 and 10 |
+| 21 | Two parts on every card. Part 1 "From the filing (checked)": exchange-file figures, code calculations, quotes; every line checked, a failed line removed; graded right / WRONG against the 5% bar. Part 2 "Our reading (AI)": interpretation, past promises, what to watch; opinions allowed and graded reasonable / unreasonable on their own bar (10% proposed, owner to set); any number or fact in it must still be right and cite its source, a failed line is hidden, not the card | A wrong opinion and a wrong figure are different faults; readers still judge the whole card | Yes (25 Oct; the part 2 bar to set) | To build |
 | 17 | Measure what more lines cost: a card is WRONG if any one line is wrong, so ~25 lines need each line right about 99.8% of the time to keep cards at 95% | The richer the card, the harder the 95% bar | – | Measure before go-live |

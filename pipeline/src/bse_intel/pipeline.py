@@ -33,7 +33,7 @@ from datetime import date, datetime, timedelta
 from functools import partial
 from threading import Lock
 
-from .ai.gateway import CEILING, AIGateway, AllProvidersFailed
+from .ai.gateway import CEILING, TRANSIENT, AIGateway, AllProvidersFailed
 from .bse import AttachmentError, AttachmentTooLarge, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, keep_concurrent_writes, latest_fundamentals, memory_ids, merge,
@@ -106,6 +106,10 @@ RETURNING_PER_RUN = 5   # companies back in the universe whose set-aside filings
 MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing this network
 MAX_NETWORK_FAILURES = 5  # attachment downloads failing on the network in a row that mean the source is down
 MAX_DEFERRALS = 3        # runs one attachment may fail on the network, alone, before it spends an attempt
+# runs a filing waits for the better writers' daily quota, or for busy ones, before it spends an attempt: about a day at a
+# run every 30-40 minutes, so it outlasts Gemini's daily reset (owner, 25 Oct 2026: 28 filings failed on AI capacity,
+# most after three 15-minute waits against a once-a-day reset)
+MAX_QUOTA_DEFERRALS = 40
 MAX_UNREACHABLE = 3      # filings in a row the platform did not answer for: the site is down, stop
 NOISE_CHUNK = 500        # rows per noise-audit file in R2
 NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category", "subcategory",
@@ -131,7 +135,7 @@ SNAPSHOT_PAGE = 50        # the feed's page size
 
 
 _DEFERRED = re.compile(r"^deferred (\d+)x: (?:attachment download failed|the better writers are at their day|"
-                       r"the platform did not answer)")
+                       r"the platform did not answer|AI busy)")
 
 
 def _deferrals(last_error: str | None) -> int:
@@ -155,6 +159,8 @@ class NoTextAttachment(Exception):
 
 
 ATTACHMENT_WAIT = timedelta(hours=24)
+MEMORY_SYNC_KEY = "memory_syncs:last"
+MEMORY_SYNC_EVERY = timedelta(minutes=55)
 
 
 @dataclass
@@ -2402,8 +2408,13 @@ class Pipeline:
                 # is the morning's quota, not the filing (21 Oct: 12 filings a run spent an attempt this way before
                 # Gemini's 12:30 IST reset). It waits for them a few runs before it spends an attempt.
                 times = _deferrals(filing.last_error) + 1
-                if any(kind == CEILING for _, kind, _ in exc.outcomes) and times <= MAX_DEFERRALS:
+                kinds = {kind for _, kind, _ in exc.outcomes}
+                if CEILING in kinds and times <= MAX_QUOTA_DEFERRALS:
                     return self._deferred(filing, f"deferred {times}x: the better writers are at their day ({exc})"[:300])
+                # a writer busy or rate-limited beside one that failed: the capacity, not the filing (gemma 429s, Z.AI's
+                # concurrency limit; 25 Oct 2026 report)
+                if TRANSIENT in kinds and times <= MAX_QUOTA_DEFERRALS:
+                    return self._deferred(filing, f"deferred {times}x: AI busy ({exc})"[:300])
                 return self._failed(filing, exc)
             except EventXbrlPending as exc:
                 return self._deferred(filing, f"deferred: {exc}")
@@ -3937,11 +3948,13 @@ class Pipeline:
                     self._discover_safely(day, full=False)
                 # the window's earlier days cost ~2,000 ledger writes each: under the daily write budget, like the
                 # backfill, so today's filings keep the free tier's headroom (20 Oct: 80,013 writes by 11:30 IST)
-                if writes_at_start + self.stats.d1_rows_written < self.settings.d1_daily_write_budget:
+                today_only = os.environ.get("PIPELINE_TODAY") == "only"   # the quick run: today's filings and nothing else
+                if writes_at_start + self.stats.d1_rows_written < self.settings.d1_daily_write_budget and not today_only:
                     self._discover_window(live_from, today)
-                self._requeue_failed_nightly(live_from)
-                self._sweep_held()
-                if self._on_nse():
+                if not today_only:
+                    self._requeue_failed_nightly(live_from)
+                    self._sweep_held()
+                if self._on_nse() and not today_only:
                     self.retriage_returning(today, started + time_budget_s * 0.2)
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 backfill_done = self.sink.kv_get("backfill:complete") == "1"
@@ -3949,7 +3962,17 @@ class Pipeline:
                 # day's share of the plan's writes (D1_DAILY_WRITE_CAP) the window's earlier days, the catch-ups and the memory syncs wait for
                 # the reset (05:30 IST) and the run only turns today's filings into cards (20 Oct 2026: 91,080 by 20:30
                 # IST, ~400 writes a run on the window's backlog)
-                for day_from, day_to in ((today, today), (live_from, today - timedelta(days=1))):
+                # PIPELINE_TODAY splits the work between two workflows (owner, 25 Oct 2026: a filing waited ~42 min for the
+                # next 41-minute run): "only" reads today's filings and stops (pipeline-today.yml, every 15 min); "skip"
+                # (pipeline.yml) reads the window's earlier days first and today last, a safety net for quick runs
+                # GitHub drops: today's filings are normally done by then. Unset: today first, as before.
+                split = os.environ.get("PIPELINE_TODAY", "")
+                days_to_read = [(today, today), (live_from, today - timedelta(days=1))]
+                if split == "only":
+                    days_to_read = days_to_read[:1]
+                elif split == "skip":
+                    days_to_read = days_to_read[::-1]
+                for day_from, day_to in days_to_read:
                     near_cap = writes_at_start + self.stats.d1_rows_written >= D1_FREE_DAILY_WRITES * D1_NEAR_CAP
                     if near_cap and day_from != today:
                         break
@@ -3959,7 +3982,7 @@ class Pipeline:
                 if near_cap:
                     log.warning("D1 writes near the free tier's daily %d: earlier days, catch-ups and memory syncs "
                                 "skipped this run", D1_FREE_DAILY_WRITES)
-                if self._on_nse() and time.monotonic() < live_deadline and not near_cap:
+                if self._on_nse() and time.monotonic() < live_deadline and not near_cap and split != "only":
                     from . import event_catchup   # cards made before their event XBRL landed
 
                     caught = event_catchup.catch_up(self, live_deadline)
@@ -3968,7 +3991,9 @@ class Pipeline:
                     caught = event_catchup.results_catch_up(self, live_deadline)
                     if caught["rerun"] or caught["stopped"]:
                         log.info("results XBRL catch-up: %s", json.dumps(caught))
-                    if time.monotonic() < live_deadline:
+                    # at most hourly: the three sweeps took ~17 of a run's 24 live minutes and mostly filed nothing (25 Oct
+                    # 2026: shareholding "filed": 5 of 1,069 companies looked at)
+                    if time.monotonic() < live_deadline and self._memory_syncs_due():
                         from . import governance_memory   # quarterly governance reports into memory, no card
 
                         synced = governance_memory.sync(self, live_deadline)
@@ -3988,8 +4013,9 @@ class Pipeline:
                         self._annual_catchup(live_deadline)
                 # its own slot of at most CRITIC_MAX_S from the run's time, before the backfill: inside the live part it
                 # got none whenever the live filings used their share (21 Oct 05:33 IST: 6 cards queued, 0 judged)
-                self._run_critic(deadline)
-            if mode in ("backfill", "all") and not self._halted(bulk=True):
+                if split != "only":
+                    self._run_critic(deadline)
+            if mode in ("backfill", "all") and not self._halted(bulk=True) and os.environ.get("PIPELINE_TODAY") != "only":
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
         except SourceBlockedError as exc:
             status, error = "ERROR", str(exc)
@@ -4072,6 +4098,18 @@ class Pipeline:
         self._kv_set(REQUEUE_KEY, now.date().isoformat())
         if report["requeued"]:
             log.info("nightly requeue: %d failed filings get one more try", report["requeued"])
+
+    def _memory_syncs_due(self) -> bool:
+        """The governance, shareholding and pledge sweeps at most once in MEMORY_SYNC_EVERY (they mostly file nothing)."""
+        last = self.sink.kv_get(MEMORY_SYNC_KEY)
+        now = now_ist()
+        try:
+            if last and now - datetime.fromisoformat(last) < MEMORY_SYNC_EVERY:
+                return False
+        except ValueError:
+            pass
+        self._kv_set(MEMORY_SYNC_KEY, now.isoformat(timespec="seconds"))
+        return True
 
     def _dgtr_due(self) -> bool:
         """DGTR's case lists once a day (module 8): its cases move in weeks, and its server is slow (NSE_DGTR=0 off)."""

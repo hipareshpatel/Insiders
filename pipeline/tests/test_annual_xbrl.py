@@ -170,7 +170,8 @@ def _annual(settings, files):
     when = datetime(2025, 9, 2, 15, 46, 49, tzinfo=IST)
     f = _filing("n-ar", "Annual Report for the Financial year 2024-25", when, "AGM/EGM", "Reg. 34 (1) Annual Report")
     pipeline, sink, fake = build(settings, [f], {f.pdf_url: _pdf(ANNUAL_TEXT)},
-                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(ANNUAL_CARD)]}, env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(ANNUAL_CARD)], "deepseek-ai/deepseek-v4.1-flash": [json.dumps(ANNUAL_CARD)]},
+                                 env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o"})
     pipeline.nse = FakeNse(files)
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "ANNUAL_REPORT"}))
     return outcome, fake, pipeline.nse

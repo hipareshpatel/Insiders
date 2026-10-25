@@ -78,3 +78,4 @@ right. Everything the 2026-10-20 approval leaves to the owner still goes to the 
 - 25 Oct 16:05 UTC: PR #120 merged into `main` (53ef3b9) with CI green: this standing approval. F152/F154/QUOTE_EXACT_NUMBERS are off; live changes: newest-first results catch-up and the shared currency list (bug fixes).
 - 25 Oct 16:18 UTC: PR #121 merged into `main` (f8a5eec) with CI green: this standing approval. F155's two memory guards are live (they refuse bad figures on new writes only); the PBT and EBITDA-change parts are behind switches.
 - 25 Oct 17:00 UTC: PR #122 merged into `main` (c59e338) with CI green: this standing approval. F153 switched on as a fix of live wrong cards (owner's rule).
+- 25 Oct 17:49 UTC: PR #123 merged into `main` (b4f7eb0) with CI green: this standing approval. F157 changes what the seed writes to memory (derived quarters labelled calc; mis-dated files refused).

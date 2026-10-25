@@ -74,8 +74,10 @@ Almost everything comes from NSE. Two things come from elsewhere: share prices (
   whose numbers and labels come out apart, poor scans: step 2) and two speakers' own slips.
 - We skipped large PDFs: a 30 MB cap for everything but annual reports. NHPC's FY26 results (nse-106633606) was
   skipped on 25 Oct and failed as "no readable text". **Decided (owner): 120 MB for every filing** (F130).
-- Open, not yet measured: why the other failed filings failed (70 on 25 Oct); whether NSE's one-call-a-day list holds
-  every filing on a busy day; runs take about 41 minutes, so the 15-minute schedule really runs every ~42 minutes.
+- NSE's one-call-a-day list, measured 25 Oct for 23 Oct (601 filings): 120 companies asked one by one gave 113
+  filings, all in the list. No gap found; repeat on a peak results day.
+- NSE-only companies: none set aside (company-list job, 23 Oct: 2,613 listings, all matched).
+- Open: why the failed filings failed (70 on 25 Oct; `failed-report` after batch 1); runs take about 41 minutes, so the 15-minute schedule really runs every ~42 minutes.
 
 ### Past results history (checked 25 Oct 2026)
 

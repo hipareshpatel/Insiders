@@ -212,3 +212,8 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
   `seed-memory --scrips 524208,531179,500493,506395,500097,532848,543272,532424,532482,509488,532181,533047,544026,500878`;
   unfinished-quarter figures `532756,500002,524208`. Scan of the full universe still to run (`scripts/scan_memory_f155.py`
   covered 400 companies).
+- **10 PM IST check, 25 Oct (re-queued filings):** of the 7 with known ids, 2 have cards (MODIS nse-106827416, ARIS
+  nse-106826901); 5 show no card on the public site (PGEL nse-106827461, XTRANET nse-106826490 - its NSE file is 0
+  bytes, BETA nse-106825182, CGCL nse-106815515, NHPC nse-106633606). The public site cannot tell held from failed, so
+  the final state comes from maintenance `failed-report` (queued behind the memory-gaps fill: same concurrency group).
+  The 12 listed by company only (KRSNAA ... RBLBANK) need their news ids from the requeue run to be judged.

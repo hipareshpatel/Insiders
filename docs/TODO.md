@@ -142,3 +142,17 @@ an independent agent (`scratchpad` table summarised here):
 
 Both stay off until the check reads figure pages as images (as the pipeline already does) and the number matcher reads
 "1.253.52", "935,20" and letters in place of digits.
+
+### BSE results XBRL through the adapter, tested (owner, 25 Oct 2026)
+
+Run from the cloud session's machine (BSE refuses GitHub's runners), 8 dual-listed companies, the adapter's own pace:
+- 16 calls (8 results lists `Result_Arch_ng`, 8 figure files), **all 200**, no refusal, no dropped connection; lists
+  99-142 KB (182-272 rows, 62-67 quarter files each), figure files 35-152 KB; four list calls took ~6 s at BSE's end,
+  the rest under 0.5 s.
+- Every file parsed with our reader (`xbrl.parse`), both formats: Ind AS (TCS, Infosys, Reliance, Wipro, HUL, Tata
+  Motors) and banking (HDFC Bank, ICICI Bank).
+- **7 of 7 comparable companies: revenue, total income, profit before tax, profit and EPS identical to NSE's file for
+  the same quarter and basis** (Reliance, HUL and Tata Motors' latest is Jun 2026, the others Sep 2026). Tata Motors'
+  NSE copy was not found under the symbol TATAMOTORS (likely renamed after its demerger), so it was not compared.
+- So BSE's results files carry the same figures as NSE's: no new information for results; useful only as a backup
+  source from a machine BSE lets in. 16 calls is not a load test: a full backfill (thousands of calls) is unmeasured.

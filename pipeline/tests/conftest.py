@@ -13,6 +13,21 @@ from bse_intel.settings import Settings
 
 
 @pytest.fixture(autouse=True)
+def _sums_off_unless_asked(request, monkeypatch):
+    """The hand-made XBRL files of older tests are partial and do not add up; the sums check (F140) is tested in
+    test_xbrl_sums.py, which switches it on."""
+    from bse_intel.settings import get_settings
+    if request.module.__name__.endswith("test_xbrl_sums"):
+        monkeypatch.setenv("XBRL_SUMS", "1")
+    else:
+        monkeypatch.setenv("XBRL_SUMS", "0")
+    get_settings.cache_clear()
+    yield
+    monkeypatch.undo()
+    get_settings.cache_clear()
+
+
+@pytest.fixture(autouse=True)
 def _clear_of_ist_midnight(monkeypatch):
     """Tests date filings "minutes ago" or "minutes ahead"; just after midnight IST the first lands on yesterday, and
     in the last hour before it the second lands on tomorrow. In those windows, run the clock two hours behind so every

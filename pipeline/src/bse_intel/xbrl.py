@@ -426,8 +426,34 @@ def taxonomy(data: bytes) -> str:
     return m.group(1).decode("ascii", "ignore").upper() if m else ""
 
 
-def parse(data: bytes) -> XbrlResult | None:
-    """Parse an XBRL instance; None when it is not one or holds nothing we use."""
+def untrusted_lines(data: bytes, contexts: dict, year_end: int | None, tags: dict[str, str],
+                    news_id: str = "") -> set[tuple[str, str]]:
+    """(metric, period) of every figure in a sum that does not add up on SEBI's own rules (xbrl_sums, item 23, owner
+    25 Oct 2026): the total and its items, in the failing context only. A hold, not a repair: they are left off and
+    the rest of the file is used. One warning per file. Empty with XBRL_SUMS=0."""
+    from . import xbrl_sums
+    from .settings import get_settings
+    if not get_settings().xbrl_sums:
+        return set()
+    report = xbrl_sums.check(data)
+    if not report or report.ok:
+        return set()
+    out: set[tuple[str, str]] = set()
+    for miss in report.mismatches:
+        label = period_label(contexts.get(miss.context) or {}, year_end)
+        names = [miss.total, *(item for item, _ in xbrl_sums.sums_for(report.template).get(miss.total, []))]
+        metrics = sorted({tags[n] for n in names if n in tags})
+        if label:
+            out.update((m, label) for m in metrics)
+        log.warning("xbrl sums: %s %s: %s filed %s adds up to %s (%s) -> left off: %s", news_id, report.template,
+                    miss.total, round(miss.filed), round(miss.adds_up_to), label or miss.context,
+                    ", ".join(metrics) or "nothing we use")
+    return out
+
+
+def parse(data: bytes, news_id: str = "") -> XbrlResult | None:
+    """Parse an XBRL instance; None when it is not one or holds nothing we use. Figures in a sum that fails SEBI's own
+    rules are left off (untrusted_lines), here at the one place every card, fact and table reads them from."""
     try:
         root = ET.fromstring(data)
     except ET.ParseError:
@@ -444,7 +470,8 @@ def parse(data: bytes) -> XbrlResult | None:
     tags = {name: metric for name, metric in tags.items() if metric}
     if any("Shareholding" in n or "Shareholder" in n for n in names) and not names & set(tags):
         return _shareholding(facts, contexts)
-    result = _results(facts, contexts, units, text_facts, tags)
+    untrusted = untrusted_lines(data, contexts, fy_end_month(text_facts), tags, news_id)
+    result = _results(facts, contexts, units, text_facts, tags, untrusted)
     if result:
         result.template = taxonomy(data)
         if result.template in LENDER_TEMPLATES:
@@ -513,7 +540,8 @@ def _balance_sheet(balance: dict[str, float], balance_date: date) -> BalanceShee
     return sheet
 
 
-def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = None) -> XbrlResult | None:
+def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = None,
+             untrusted: set[tuple[str, str]] = frozenset()) -> XbrlResult | None:
     nature = " ".join(v for k, v in text_facts.items() if "Standalone" in k or "Consolidated" in k or k == "NatureOfReport").lower()
     basis = "CONSOLIDATED" if "consolidated" in nature else "STANDALONE" if "standalone" in nature else None
     tags = tags or RESULT_TAGS
@@ -584,6 +612,16 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
             revenue = values.get(("revenue", label))
             if revenue:
                 values[("ebitda_margin", label)] = ebitda / revenue * 100
+    if untrusted:
+        # before the changes are worked out, so none is built on a left-off figure; a derived EBITDA goes with its parts
+        parts = {"pbt", "pbt_before_exceptional", "finance_cost", "depreciation", "other_income", "exceptional_items",
+                 "revenue"}
+        for key in [k for k in values if k in untrusted
+                    or (k[0] in ("ebitda", "ebitda_margin") and any(p == k[1] and m in parts for m, p in untrusted))]:
+            del values[key]
+        if not values:
+            return None
+        ends = {p: e for p, e in ends.items() if any(label == p for _, label in values)}
     latest = max(ends, key=lambda p: (ends[p], p.startswith("Q")))
     quarter = max((p for p in ends if p.startswith("Q")), key=lambda p: ends[p], default=None)
     # EPS takes its period's profit sign: Shivam Autotech's file tags H1FY24 EPS 2.27 beside a loss of ₹27.77 Cr, and

@@ -208,3 +208,7 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
 - **Card switches waiting for the release check (on/off over stored cards + blind sample):** `CARD_EBITDA_PROFIT_V2`
   (rows 11, 14, 15; first run 190 cards: 147 changed, 12 printed EBITDA found, 10 lost a profit year-ago), 
   `CARD_TWO_PARTS` (row 21), `CARD_CONSOLIDATED_ONLY` (row 44), `EPS_SHARE_ADJUST` (row 43, being built).
+- **Re-seed after tonight's memory-gaps fill** (F155, stored memory still holds the bad figures): owners' profit mis-tag
+  `seed-memory --scrips 524208,531179,500493,506395,500097,532848,543272,532424,532482,509488,532181,533047,544026,500878`;
+  unfinished-quarter figures `532756,500002,524208`. Scan of the full universe still to run (`scripts/scan_memory_f155.py`
+  covered 400 companies).

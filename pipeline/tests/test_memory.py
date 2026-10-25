@@ -696,3 +696,24 @@ def test_a_watch_long_past_its_quarter_or_already_settled_is_not_resolved_again(
     assert watch_verdict(w, "MET", "EBITDA margin 27.5%", "2025-05-20T17:00:00+05:30") == "MET"
     assert watch_verdict(w, "MET", "EBITDA margin 27.5%", "2025-11-10T17:00:00+05:30") == "PENDING"
     assert watch_verdict({**w, "status": "MET"}, "MET", "EBITDA margin 27.5%", "2025-05-21T17:00:00+05:30") == "PENDING"
+
+
+def test_memory_grounds_only_the_lines_that_rest_on_memory():
+    """Architecture audit (owner, 25 Oct 2026): with the whole memory view as a source, a figure from another quarter
+    of memory passed as this quarter's. Memory now grounds only an insight that says it rests on memory (or the
+    balance sheet) and the targets to track; this filing's figures must be found in the filing."""
+    from bse_intel.grounding import check_card
+    from bse_intel.models import Card
+
+    filing = "Revenue from operations for Q2FY27 was Rs 456 crore."
+    memory = '{"financial_metrics": [{"metric": "revenue", "period": "Q2FY26", "value": 391.0}]}'
+    stale = Card.model_validate({"impact_level": "HIGH", "headline": "Revenue at ₹391 Cr",
+                                 "what_happened": ["Revenue ₹456 Cr"]})
+    assert "391" in check_card(stale, filing, memory=memory).ungrounded       # the old quarter as this one's
+    assert check_card(stale, filing, memory).ungrounded == []                  # as a plain source it passed, as before
+    recall = Card.model_validate({"impact_level": "HIGH", "headline": "Revenue ₹456 Cr", "what_happened": ["Revenue ₹456 Cr"],
+                                  "why_it_matters": [{"text": "Up from ₹391 Cr a year ago", "basis": "MEMORY"}]})
+    assert check_card(recall, filing, memory=memory).ungrounded == []          # a memory insight may cite memory
+    plain = Card.model_validate({"impact_level": "HIGH", "headline": "Revenue ₹456 Cr", "what_happened": ["Revenue ₹456 Cr"],
+                                 "why_it_matters": [{"text": "Up from ₹391 Cr a year ago", "basis": "FILING"}]})
+    assert "391" in check_card(plain, filing, memory=memory).ungrounded       # a filing insight may not

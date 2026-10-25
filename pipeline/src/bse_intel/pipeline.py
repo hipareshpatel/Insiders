@@ -1752,7 +1752,8 @@ def _named_in(name: str, text: str) -> bool:
     return all(re.search(rf"\b{re.escape(w)}\b", hay) for w in words)
 
 
-def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...], history: list[dict] | None = None) -> CardChecks:
+def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...], history: list[dict] | None = None,
+                   memory: str | None = None) -> CardChecks:
     """Memory-id hygiene, then the number, math, claim and scale checks (`history`: the dossier's
     stored financial metrics, which the reply's quarterly figures are compared with)."""
     card = out.card
@@ -1770,7 +1771,9 @@ def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...]
                if i.get("check") == "VERIFIED" and not i.get("unsourced_inputs") and i.get("computed") is not None]
     if card.deal_value and card.deal_value.tranches and sources:
         derived.append(gate.tranche_total_cr(card.deal_value.tranches, sources[0]))
-    grounding = check_card(card, *sources, derived=derived)
+    # the memory view (one of `sources`) grounds only the lines that rest on memory (grounding.MEMORY_GROUNDED)
+    card_sources = tuple(src for src in sources if memory is None or src is not memory)
+    grounding = check_card(card, *card_sources, derived=derived, memory=memory)
     checked = grounding.checked + quant.checked_inputs
     ungrounded = grounding.ungrounded + quant.unsourced
     score = 1.0 if checked == 0 else round(1 - len(ungrounded) / checked, 3)
@@ -3195,7 +3198,8 @@ class Pipeline:
         # The scale block too: the market cap, revenue, net worth and debt the prompt gave the model to measure
         # the event against. Not checked against it, a card that used them was held as stating figures the
         # filing does not print - 40 of the 77 cards held only for an unfound amount (funnel, 2026-10-18).
-        sources = (text, filing.headline, filing.subject, json.dumps(view or {}, ensure_ascii=False), scale)
+        memory_json = json.dumps(view or {}, ensure_ascii=False)
+        sources = (text, filing.headline, filing.subject, memory_json, scale)
         history = dossier.get("financial_metrics", [])
         event_orders = event_xbrl.orders(events)
         # Code computes, the model describes (audit round 2): the changes, margins and ratios a card may state
@@ -3236,7 +3240,7 @@ class Pipeline:
             changes += computed.enforce(candidate, produced)
             changes += directions.guard(candidate, tagged)   # tax, inventory, EPS, credit cost: the file decides
             changes += directions.multiple_guard(candidate)   # "more than double" for +74%: the amounts decide
-            found = check_card_all(candidate, view, sources, history)
+            found = check_card_all(candidate, view, sources, history, memory=memory_json)
             found.scale += period_mixups(candidate, tagged, filed_text)
             found.scale += basis_mixups(candidate, tagged, standalone_file)
             found.scale += gate.stale_columns(_card_texts(candidate), filed_text)

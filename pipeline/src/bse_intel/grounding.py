@@ -434,7 +434,13 @@ def change_derived(previous: str | None, current: str | None, change: str | None
     return bool(tokens) and all(change_follows(previous, current, v, d, kind) for v, d, _, kind, _ in tokens)
 
 
-def check_card(card: Card, *sources: str, derived=()) -> GroundingResult:
+# Where memory may ground a figure (owner, 25 Oct 2026, after the architecture audit): an insight the card says rests on
+# memory or the balance sheet, and the targets to track. Any other figure is this filing's and must be found in it: with
+# the whole memory as a source, a figure from another quarter of memory passed as this quarter's.
+MEMORY_GROUNDED = ("insight_memory", "track")
+
+
+def check_card(card: Card, *sources: str, derived=(), memory: str | None = None) -> GroundingResult:
     """Every figure on the card against the sources. A figure derived on the card (a share, a change,
     a multiple) passes when it follows from another figure on the same line and a source figure, and a
     notable change's change when it follows from its own previous and current (change_follows); any other
@@ -444,16 +450,24 @@ def check_card(card: Card, *sources: str, derived=()) -> GroundingResult:
     A ₹ crore figure must match a source figure at the unit written beside it ("INR 5445 Million"
     is ₹544.5 Cr, never ₹5,445 Cr). A bare figure (a table) matches at the filing's declared unit
     when it declares one ("(INR in Lakhs)": ₹28.63 Cr = 2,863), otherwise at any scale; the other
-    sources (headline, memory) are already in crore when the filing declares a unit."""
+    sources (headline, memory) are already in crore when the filing declares a unit.
+
+    `memory` (the memory view's JSON) grounds only the figures of MEMORY_GROUNDED lines; given as one of `sources` instead
+    it grounds every figure, as before."""
     computed = " ; ".join(f"{v:.2f}" for v in derived if v is not None)
     index = SourceIndex(*sources, computed)
     unit = declared_unit(sources[0]) if sources else None
     filing_index = SourceIndex(sources[0] if sources else "")
     other_index = SourceIndex(*sources[1:], computed)
+    memory_index = SourceIndex(memory) if memory else None
     year_like = {int(m.group(0)) for text in sources for m in _YEAR_TOKEN.finditer(text or "")}
     filing_scales, other_scales = ((unit,), (1,)) if unit else (CRORE_SCALES, CRORE_SCALES)
-    texts = [("headline", card.headline), ("takeaway", card.takeaway), *(("fact", f.text) for f in card.what_happened),
-             *(("insight", i.text) for i in card.why_it_matters)]
+    # a takeaway that is a memory insight's own words (the default when the model gives none) rests on memory as it does
+    recalled = {i.text for i in card.why_it_matters if i.basis in ("MEMORY", "BALANCE_SHEET")}
+    texts = [("headline", card.headline), ("insight_memory" if card.takeaway in recalled else "takeaway", card.takeaway),
+             *(("fact", f.text) for f in card.what_happened),
+             *(("insight_memory" if i.basis in ("MEMORY", "BALANCE_SHEET") else "insight", i.text)
+               for i in card.why_it_matters)]
     # each point's own quote, which the quote checks find in the filing: a figure that is a sum or difference of its
     # figures is grounded through it (`quote_sum`)
     quote_of = {2 + k: f.quote for k, f in enumerate(card.what_happened)}
@@ -497,6 +511,9 @@ def check_card(card: Card, *sources: str, derived=()) -> GroundingResult:
             elif index.grounded(value, decimals, kind=kind) or _from_line(value, decimals, kind, line_amounts, line_pcts, index):
                 continue
             if (kind, round(value, decimals)) in summed:
+                continue
+            if memory_index is not None and where in MEMORY_GROUNDED and (
+                    memory_index.grounded(value, decimals, kind=kind) or memory_index.stated_crore(value, decimals, other_scales)):
                 continue
             if "," in raw and not decimals and kind in ("plain", "qty") and int(value) in year_like:
                 continue  # "2,052 units" is the table's 2052, which the sources set aside as a year

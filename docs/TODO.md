@@ -27,6 +27,24 @@ This list holds only the first-principles review's items (`docs/FROM_ZERO.md`). 
 | 8 | Look at why each run takes ~41 minutes | The "every 15 minutes" schedule really runs every ~42 minutes, so cards come late | Later | Owner: when we reach the AI step (most of a run's time is AI calls) |
 | 9 | Cover companies listed only on NSE | Thought to be set aside | Yes | **No work needed**: measured 23 Oct (company-list job log): 2,613 NSE listings, all 2,613 matched, `nse_only` 0; the company master adds NSE listings itself. A company listed after the morning sync is matched the next weekday |
 
+
+### What the failed-filings report found (run 25 Oct 2026 after batch 1: 71 failed since 19 Apr)
+
+| Reason | Filings | What it really is |
+|---|---|---|
+| The file could not be opened ("Failed to open stream") | 18 | Checked 2 of them: both are **ZIP files**, not PDFs. PGEL's is an **auditor's resignation** (a PDF and an XML inside the ZIP), so real news was lost; BETA's is call audio |
+| "No attachment" | 17 | Checked 2: ARIS's is an 85 MB PDF (the old 30 MB limit; now read). CGCL's 0.75 MB PDF downloads fine today, so it was probably not there yet when we tried: three quick tries and it was given up |
+| AI providers busy or out of daily quota | 28 | AI step (item 8) |
+| Our own code crashed | 4 | KeyError 'as_of' (PNC Infra, 2 calls), a missing number in a results calculation (MODIS, 24 Oct), a division giving infinity (L&T Finance) |
+| Empty file | 3 | Not looked at yet |
+| Too large | 1 | NHPC (batch 1 fixed it) |
+
+| # | Improvement | What it fixes | Owner | State |
+|---|---|---|---|---|
+| 18 | Open ZIP attachments and read the PDF inside (and its XML); an audio ZIP is set aside as "audio, no text" | 18 filings lost, including an auditor's resignation | – | Proposed |
+| 19 | A filing whose PDF is not there yet waits and is tried again over the next day, instead of three tries in about two hours | Filings given up while NSE was still uploading the file | – | Proposed (check first how quickly NSE adds files) |
+| 20 | Fix the 4 code crashes, each with a test | 4 filings with no card, from our own bugs | – | Proposed |
+
 Build order (decided 25 Oct 2026, the owner left it to the lead session): **batch 1** = items 1, 2, 6, 7 (small, independent; 5 moved to step 2, 9 needed no work); **batch 2** = items 10 then 3 (they change how memory works, so they are built and measured on their own).
 
 ## Step 2: reading the file (to discuss)

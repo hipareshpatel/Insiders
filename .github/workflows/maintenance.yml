@@ -102,7 +102,10 @@ jobs:
           for u in "https://www.bseindia.com/" \
                    "https://api.bseindia.com/BseIndiaAPI/api/AnnSubCategoryGetData/w?pageno=1&strCat=-1&strPrevDate=20261023&strScrip=&strSearch=P&strToDate=20261023&strType=C&subcategory=-1" \
                    "https://api.bseindia.com/BseIndiaAPI/api/Result_Arch_ng/w?scripcode=500325"; do
-            curl -s -A "$ua" -H "Referer: https://www.bseindia.com/" --max-time 25 -o /tmp/b.out -w "%{http_code} %{size_download} $u\n" "$u" || echo "failed $u"
+            # the headers BSE's own pages send (adapters/bse.py); without Origin and Sec-Fetch-Site the API answers 403
+            curl -s -A "$ua" -H "Referer: https://www.bseindia.com/" -H "Origin: https://www.bseindia.com" \
+                 -H "Accept: application/json, text/plain, */*" -H "Accept-Language: en-US,en;q=0.5" -H "Sec-Fetch-Site: same-site" \
+                 --max-time 25 -o /tmp/b.out -w "%{http_code} %{size_download} $u\n" "$u" || echo "failed $u"
             head -c 150 /tmp/b.out; echo
           done
       - name: Failed filings by reason (reads only)

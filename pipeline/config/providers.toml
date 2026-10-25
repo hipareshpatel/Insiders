@@ -360,6 +360,7 @@ extra_body = { thinking = { type = "disabled" } }
 limits = { rpm = 60, concurrency = 1 }  # free GLM: one request at a time
 
 [[routes.pass2]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "gemini"
 model = "gemini-3.6-flash"  # an established model, not the newest (3.8 is often overloaded); 5 requests/min measured, ~20/day unconfirmed, so a spare
 spare = true
@@ -378,6 +379,7 @@ spare = true
 limits = { rpm = 60, tpd = 60_000 }
 
 [[routes.pass2]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
 spare = true   # owner, 24 Oct 2026: thinking off it answers, but its trial cards were 2 of 5 WRONG (model-trial-2026-10-24)
@@ -391,6 +393,7 @@ limits = { rpm = 10 }
 # for when Gemini's day is spent. Probed right 2026-10-19; off the card routes then for supply (28 429s in 40 min),
 # which a spare with its circuit breaker tolerates. Measured per writer by the daily audit (card_json.model).
 [[routes.pass2]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "openrouter"
 model = "google/gemma-4-31b-it:free"
 spare = true
@@ -402,6 +405,7 @@ limits = { rpm = 8 }
 # The same Gemma 4 31B on Google's own API with our Gemini key: its own quota, not OpenRouter's shared free pool, which
 # was "temporarily rate-limited upstream" on 24 Oct. Server errors twice on 2026-10-19; tried again before going live.
 [[routes.pass2]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "gemini"
 model = "gemma-4-31b-it"
 spare = true
@@ -420,10 +424,10 @@ limits = { rpm = 10, rpd = 1000 }   # assumption, not measured: Google publishes
 # answered OK, DeepSeek V4.1 Flash in 57 s and GLM-5.3 in 30 s for a one-line reply, so spares only, after the
 # primaries; ~40 requests/min free (assumption, see trial_new). Thinking off, as for every Pass 2 model (D21).
 [[routes.pass2]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "nvidia"
 model = "deepseek-ai/deepseek-v4.1-flash"
 spare = true
-timeout_s = 150   # 22 Oct: a one-word check hung 300 s on both keys twice; a stuck spare must not hold a filing 5 min
 json_mode = true
 max_tokens = 6000
 context_tokens = 120000
@@ -431,6 +435,7 @@ extra_body = { chat_template_kwargs = { thinking = false } }
 limits = { rpm = 30 }
 
 [[routes.pass2]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "nvidia"
 model = "z-ai/glm-5.3"
 spare = true
@@ -451,6 +456,7 @@ extra_body = { thinking = { type = "disabled" } }
 limits = { rpm = 30, concurrency = 1 }
 
 [[routes.pass2]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "cohere"
 model = "command-a-03-2025"   # established Command A, 256K window; the last spare (trial key, 1,000 calls a month)
 spare = true
@@ -489,6 +495,7 @@ extra_body = { thinking = { type = "disabled" } }  # on by default at high effor
 limits = { rpm = 60 }
 
 [[routes.pass2_bulk]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "gemini"
 model = "gemini-3.6-flash"  # an established model, not the newest (3.8 is often overloaded); 5 requests/min measured, ~20/day unconfirmed, so a spare
 spare = true
@@ -509,6 +516,7 @@ limits = { rpm = 60, tpd = 60_000 }
 # Backfill only: with 1,000 free requests a day the two OpenRouter models take a regular share
 # (weight 1 each, about 2 in 7 analyses at today's weights); everywhere else they stay spares.
 [[routes.pass2_bulk]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "openrouter"
 model = "nvidia/nemotron-3.5-super-vl:free"
 spare = true   # owner, 24 Oct 2026: thinking off it answers, but its trial cards were 2 of 5 WRONG (model-trial-2026-10-24)
@@ -522,6 +530,7 @@ limits = { rpm = 10 }
 # for when Gemini's day is spent. Probed right 2026-10-19; off the card routes then for supply (28 429s in 40 min),
 # which a spare with its circuit breaker tolerates. Measured per writer by the daily audit (card_json.model).
 [[routes.pass2_bulk]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "openrouter"
 model = "google/gemma-4-31b-it:free"
 spare = true
@@ -533,6 +542,7 @@ limits = { rpm = 8 }
 # The same Gemma 4 31B on Google's own API with our Gemini key: its own quota, not OpenRouter's shared free pool, which
 # was "temporarily rate-limited upstream" on 24 Oct. Server errors twice on 2026-10-19; tried again before going live.
 [[routes.pass2_bulk]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "gemini"
 model = "gemma-4-31b-it"
 spare = true
@@ -555,10 +565,10 @@ limits = { rpm = 10, rpd = 1000 }   # assumption, not measured: Google publishes
 # answered OK, DeepSeek V4.1 Flash in 57 s and GLM-5.3 in 30 s for a one-line reply, so spares only, after the
 # primaries; ~40 requests/min free (assumption, see trial_new). Thinking off, as for every Pass 2 model (D21).
 [[routes.pass2_bulk]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "nvidia"
 model = "deepseek-ai/deepseek-v4.1-flash"
 spare = true
-timeout_s = 150   # 22 Oct: a one-word check hung 300 s on both keys twice; a stuck spare must not hold a filing 5 min
 json_mode = true
 max_tokens = 6000
 context_tokens = 120000
@@ -566,6 +576,7 @@ extra_body = { chat_template_kwargs = { thinking = false } }
 limits = { rpm = 30 }
 
 [[routes.pass2_bulk]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "nvidia"
 model = "z-ai/glm-5.3"
 spare = true
@@ -586,6 +597,7 @@ extra_body = { thinking = { type = "disabled" } }
 limits = { rpm = 30, concurrency = 1 }
 
 [[routes.pass2_bulk]]
+timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
 provider = "cohere"
 model = "command-a-03-2025"   # established Command A, 256K window; the last spare (trial key, 1,000 calls a month)
 spare = true

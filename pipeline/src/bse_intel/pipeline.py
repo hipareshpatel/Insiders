@@ -45,7 +45,7 @@ from .ocr import page_reader, recognise
 from . import raw
 from . import stages
 from . import order_band
-from . import gate
+from . import gate, two_parts
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
 from .models import EVENT_TAGS, DossierDelta, Filing, MemoryOutput, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
@@ -55,7 +55,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_ebitda_profit_v2, d1_plan
+from .settings import Settings, card_ebitda_profit_v2, card_two_parts, d1_plan
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -3429,6 +3429,7 @@ class Pipeline:
         produced = computed.build_pool(filed_text, tagged, "\n".join(x for x in (annual_xbrl.table(annual) if annual else "",
                                                                                   events_table) if x), history, scale,
                                        (view or {}).get("ownership"), found_facts)
+        two_hidden: dict[int, list[dict]] = {}   # CARD_TWO_PARTS: what part 2 hid, by candidate card
         @stages.timed("checks")
         def ground(candidate: Pass2Output):
             """Correct a card where the filing can settle it, then check what is left.
@@ -3464,6 +3465,11 @@ class Pipeline:
             changes += computed.enforce(candidate, produced)
             changes += directions.guard(candidate, tagged)   # tax, inventory, EPS, credit cost: the file decides
             changes += directions.multiple_guard(candidate)   # "more than double" for +74%: the amounts decide
+            if card_two_parts() and candidate.card is not None:
+                # part 2 lines that fail the checks are hidden one by one, before the whole-card checks (F152)
+                two_hidden[id(candidate)] = two_parts.hide_part2(
+                    candidate.card, sources, text=text, reading=blocks, known=f"{sources[3]}\n{scale}",
+                    unit=declared_unit(filed_text))
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged, filed_text)
             found.scale += basis_mixups(candidate, tagged, standalone_file)
@@ -3655,6 +3661,9 @@ class Pipeline:
         # ...unless all that is left is how the card quoted the filing. Its figures were each found in
         # the document; only the sentence around them is the model's wording. Prism Johnson's three
         # segment facts were held that way on 2026-10-17 with every figure verified.
+        if card_two_parts():
+            # every line sorted into part 1 or part 2 by code, after every edit above (indexes point at the final lists)
+            card_json["parts"] = two_parts.split_card(card_json, text, blocks, two_hidden.get(id(out)))
         held = (review or {}).get("status") == "UNRESOLVED" and not checks.only_style
         # A held card is one for review whatever made it so: a card held only for an unfound amount had
         # needs_review = 0, so it escaped the review count and the scoring veto (76 of 118 held cards in the

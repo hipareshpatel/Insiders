@@ -51,6 +51,13 @@ def card_ebitda_profit_v2() -> bool:
     return (_env("CARD_EBITDA_PROFIT_V2", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_two_parts() -> bool:
+    """CARD_TWO_PARTS (default off; TODO 21, F152): a card carries a `parts` block that sorts every line into part 1,
+    "From the filing (checked)", or part 2, "Our reading (AI)", by a code rule, and a part 2 line whose figure or claim
+    fails the existing checks is hidden alone instead of the card being held. Read at the call."""
+    return (_env("CARD_TWO_PARTS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def _env_int(name: str, default: int) -> int:
     value = _env(name)
     return int(value) if value is not None else default

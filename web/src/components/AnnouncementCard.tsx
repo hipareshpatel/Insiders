@@ -21,6 +21,7 @@ import { governanceFlags,
   verifiedFact,
 } from "../lib/cardText";
 import { callTakeaways, type CallTakeawaysView } from "../lib/callTakeaways";
+import { partsView, PART1_TITLE, PART2_TITLE } from "../lib/cardParts";
 import { allZero, lowerIsBetter, NO_TURN, TURN, turnOf } from "../lib/results";
 
 const IMPACT_WORD: Record<Impact, string> = { HIGH: "High impact", MODERATE: "Moderate impact", LOW: "Low impact" };
@@ -593,6 +594,8 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
   const familyLabel = [EVENT_LABELS[event] ?? card.category_tag, table?.period ?? strip?.period, card.basis ? BASIS_LABEL[card.basis]?.toLowerCase() : null,
     table?.lens === "bank" ? "bank lens" : table?.lens === "insurer" ? "insurer lens" : null].filter(Boolean).join(" · ");
   const direction = DIRECTION[tone];
+  // CARD_TWO_PARTS (F152): a card that carries `parts` shows two headed sections; an older card renders as before
+  const two = partsView(card);
   // an auditor's or CFO's exit, a regulator's order, a default (lib/cardText governanceFlags), on the card's own words
   const govFlags = governanceFlags([headline, ...card.what_happened.map(plain)].join(". "));
 
@@ -711,6 +714,39 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
           </p>
         )}
 
+        {two ? (
+          <>
+            <section className="mt-3" aria-label={PART1_TITLE} data-part="1">
+              <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-pos">{PART1_TITLE}</h4>
+              {strip && <ResultsStrip r={strip} />}
+              {table && <ResultsTable r={table} judged={verdict(tone, row.impact_level)} />}
+              {dealBlock && <DealBlock card={card} filedAt={row.filed_at} />}
+              {rating && <RatingBlock rc={rating} amount={rated} />}
+              {card.volume_strip && <VolumeStrip s={card.volume_strip} />}
+              {event === "ANNUAL_REPORT" && card.annual_checks && <AnnualChecks a={card.annual_checks} />}
+              {card.corporate_action && <CorporateActionBlock ca={card.corporate_action} />}
+              {two.part1.keyNumbers.length > 0 && <KeyBlock items={two.part1.keyNumbers} />}
+              {(two.part1.facts.length > 0 || two.part1.estimates.length > 0) && (
+                <ul className="mt-3 space-y-2">
+                  {[...two.part1.facts, ...two.part1.estimates].map((t, i) => <Point key={i}><RichText text={t} /></Point>)}
+                </ul>
+              )}
+            </section>
+            <section className="mt-4 rounded-2xl border border-dashed border-line-strong px-4 py-2" aria-label={PART2_TITLE} data-part="2">
+              <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-ink-3">{PART2_TITLE}</h4>
+              {card.call_read && <CallReadChips read={card.call_read} />}
+              {calls?.source && <CallTakeaways view={calls} />}
+              {caseStage && <CaseBlock cs={caseStage} />}
+              {(two.part2.lines.length > 0 || box.signal) && (
+                <ul className="mt-2 space-y-2 pb-1">
+                  {two.part2.lines.map((t, i) => <Point key={i} className="text-ink-2"><RichText text={t} /></Point>)}
+                  {box.signal && <Point className="text-ink-2"><SignalLine s={box.signal} /></Point>}
+                </ul>
+              )}
+              {event === "CONCALL_PRESENTATION" && <WatchNext track={card.track_next} filedAt={row.filed_at} />}
+            </section>
+          </>
+        ) : (<>
         {card.call_read && <CallReadChips read={card.call_read} />}
         {strip && <ResultsStrip r={strip} />}
         {calls?.source && <CallTakeaways view={calls} />}
@@ -759,6 +795,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
         <AiReading catalyst={catalyst}
           facts={[...unverified, ...(card.unchecked ?? []), ...(calls?.unverified ?? [])]} insights={reading} takeaway={!reading.length && card.takeaway && !restates(card.takeaway, headline) ? card.takeaway : null}
           exporting={exporting} />
+        </>)}
 
         {footer.length > 0 && (
           <div className="mt-3 flex flex-wrap items-baseline gap-2 text-[12px] font-semibold text-ink-3">

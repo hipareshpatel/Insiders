@@ -55,8 +55,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_ebitda_profit_v2, card_two_parts, d1_plan
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, d1_plan
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_two_parts, d1_plan
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts

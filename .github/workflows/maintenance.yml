@@ -27,7 +27,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -92,6 +92,19 @@ jobs:
           IDS: ${{ inputs.ids }}   # through the environment, never pasted into the script
           SINCE: ${{ inputs.since }}
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel requeue-failed ${IDS:+--ids "$IDS"} ${SINCE:+--since "$SINCE"} ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
+      # owner, 25 Oct 2026: can GitHub's machines reach BSE at all? (reads three public BSE addresses; no AI, no writes)
+      - name: Probe BSE from GitHub
+        if: inputs.command == 'probe-bse'
+        working-directory: .
+        run: |
+          ua="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+          echo "runner country: $(curl -s --max-time 10 https://ipinfo.io/country)"
+          for u in "https://www.bseindia.com/" \
+                   "https://api.bseindia.com/BseIndiaAPI/api/AnnSubCategoryGetData/w?pageno=1&strCat=-1&strPrevDate=20261023&strScrip=&strSearch=P&strToDate=20261023&strType=C&subcategory=-1" \
+                   "https://api.bseindia.com/BseIndiaAPI/api/Result_Arch_ng/w?scripcode=500325"; do
+            curl -s -A "$ua" -H "Referer: https://www.bseindia.com/" --max-time 25 -o /tmp/b.out -w "%{http_code} %{size_download} $u\n" "$u" || echo "failed $u"
+            head -c 150 /tmp/b.out; echo
+          done
       - name: Failed filings by reason (reads only)
         if: inputs.command == 'failed-report'
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel failed-report'

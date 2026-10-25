@@ -74,3 +74,4 @@ right. Everything the 2026-10-20 approval leaves to the owner still goes to the 
 - 25 Oct 15:10 UTC: PR #116 merged into `main` (68315b1) with CI green: this standing approval.
 - 25 Oct 15:28 UTC: PR #117 merged into `main` (c5de004) with CI green: this standing approval. F149 changes timing only, not card content.
 - 25 Oct 15:32 UTC: PR #118 merged into `main` (a60c911) with CI green: this standing approval. No card change (measurement, a memory job not yet run, the metrics table not on cards).
+- 25 Oct 15:36 UTC: PR #119 merged into `main` (e3379cb) with CI green: this standing approval. F151 is behind CARD_EBITDA_PROFIT_V2, off; turning it on waits for the release check.

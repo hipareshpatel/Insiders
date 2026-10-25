@@ -33,6 +33,10 @@ on:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
         type: string
         default: ''
+      since:
+        description: requeue-failed only - failed filings filed on or after this date (YYYY-MM-DD); default the last 30 days
+        type: string
+        default: ''
       restart:
         description: seed-memory only - start again from the first company
         type: boolean

@@ -170,6 +170,7 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
 | 39 | Run-rate estimate: e.g. H1 is 65% of last full year and management expects the same run rate, so the year grows ~30%; always "our estimate" with inputs named; seasonality warning | Not built | Later (owner, 25 Oct: after the 95% gate; after 38) | Not started |
 | 40 | Capacity coming online next quarter, from management's stated dates (a forward list; today only finished capacity counts on the Radar) | Not built | Later (owner, 25 Oct: after the 95% gate) | Not started |
 | 41 | Customer dependence from annual reports (a customer at 10% or more of revenue must be disclosed; link to the customer company only when it is named), e.g. "ABC Auto: 70% from Hero; watch Hero's numbers" | Customers are left out of memory today (a laptop test filled the list with lawsuit parties) | Later (owner, 25 Oct: after the 95% gate) | Not started |
+| 42 | Faster NSE history loads: read file links from NSE's all-company results list (about 30 calls) instead of each company's page (about 1,150 calls for 576 companies), with a 1.5-2.5 s pause for one-off loads; the daily results check could use the same list | memory-gaps-fill, 25 Oct: about 1-1.5 h on 4 machines at 3-5 s a call | Proposed (owner to decide) | Proposed |
 
 ### Owner's answers on memory labels (items 3, 10, 16), 25 Oct 2026 evening
 

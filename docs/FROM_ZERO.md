@@ -19,16 +19,26 @@ The last trace of 48 wrong cards (95 faults) found: our own code 40, the AI writ
 
 ## Step 1: what we collect, and from where
 
-### What comes in
+### What comes in (from the code, 25 Oct 2026)
 
-| What | Where from | What we keep |
-|---|---|---|
-| The list of new filings | NSE's announcements page, checked every 15 minutes | A row in our database (D1) for each filing |
-| The filing itself (PDF) | NSE's link in that list | Only the text we read from it, for 8 days. The PDF is not kept. |
-| Results figures in a machine-readable file (XBRL) | NSE's results files | The figures, in our company memory |
-| Other machine-readable files | NSE: event files, annual-report files, shareholding | The figures, in our company memory |
-| Share prices | Yahoo | Prices on the company page |
-| Company memory | **Our own earlier cards and files** | One file per company in storage (R2) |
+Almost everything comes from NSE. Two things come from elsewhere: share prices (Yahoo) and trade-remedy cases (DGTR).
+
+| # | What | From where | How often | Used for |
+|---|---|---|---|---|
+| 1 | The company list | NSE's list of listed shares (EQUITY_L.csv); we keep companies worth ₹500 Cr or more | Weekdays | Which companies we cover |
+| 2 | The list of new filings | NSE "Corporate announcements" | Every run | Finding each new filing, its title and its PDF link |
+| 3 | The filing itself (PDF) | NSE's archive, from the link in 2 | Each filing | The card's text: results, slides, call transcripts, orders, and so on |
+| 4 | Results figures (XBRL) | NSE "Financial results" and "Integrated filing" pages | Each results filing | The results table's current quarter |
+| 5 | Event figures (XBRL) | NSE "Announcements XBRL" (three kinds: announcements, Reg 30 events, corporate actions) | Each filing that has one | Orders, deals, actions |
+| 6 | Annual-report figures (XBRL) | NSE "Annual reports XBRL" | Daily catch-up | Annual-report cards |
+| 7 | Shareholding (XBRL) | NSE "Shareholding pattern" | Daily | Memory only: promoter, FII, DII holdings |
+| 8 | Governance reports | NSE | Daily | Memory only: board, auditor |
+| 9 | Promoter pledges | NSE SAST Reg 31 list | Daily | Pledge news |
+| 10 | Insider trades | NSE PIT Reg 7 list | Daily | Insider news |
+| 11 | Bulk and block deals | NSE large deals | Daily | Deal news |
+| 12 | Trade-remedy cases | DGTR's website | Daily | Linked only to companies a notice names |
+| 13 | Share prices | Yahoo | Daily | Company page, price at the time of a filing |
+| 14 | Company memory | **Our own earlier cards and the files above** | Each card | Last quarter's and last year's figures, guidance, orders, notes |
 
 ### What first principles say is wrong here (checked in the code on 25 Oct 2026)
 

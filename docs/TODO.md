@@ -55,7 +55,7 @@ Build order (owner, 25 Oct 2026): next batch = items 18, 19, 20 (small); then **
 |---|---|---|---|---|
 | 11 | EBITDA: when the company prints EBITDA (press release or slides), show theirs with its own label; when it does not, show ours marked "calculated by us". Our formula stays: profit before exceptional items and tax + interest + depreciation − other income (the owner's note of 25 Oct gives the same formula); none for banks and NBFCs | Cards set our EBITDA against a company's printed one with a different definition (Lumax, Bansal Wire, Solara and others) | Yes (owner, 25 Oct): label ours "Operating EBITDA (calculated)" and show what it leaves out (other income ₹X Cr) | Step 2 |
 | 12 | Group EBITDA leaves out the share of associates' and joint ventures' profit (owner's note, 25 Oct: Ind AS 28, they are not line-by-line). Subtract it only when the profit we start from includes it, which differs by file; check that per file, never assume | "Profit before vs after associates" was one of the results-table mistakes | Yes (owner, 25 Oct) | Step 2 |
-| 13 | Official lines (revenue, profit, interest, tax) come from the figure file; our PDF reading checks them and a disagreement holds the figure | 98.5% per figure is about 64% for a 30-figure table to be all right; the figure file is exact | – | Discuss in step 2 |
+| 13 | Official lines (revenue, profit, interest, tax): the owner's rule (25 Oct) is **PDF always**, with care for the unit (lakh or crore) and the basis (standalone or consolidated); the figure file is the cross-check. Open point put to the owner: when the PDF and the figure file disagree, publish the PDF's figure, or hold the line until they agree | 98.5% per figure is about 64% for a 30-figure table to be all right; the figure file is exact | PDF always (owner, 25 Oct) | With item 23; the disagreement rule to confirm |
 
 Not taken: EBITDA from Yahoo (the owner's note mentions it). It is not an exchange file (item 3), and Yahoo's own
 definition is not published.
@@ -71,5 +71,20 @@ Fixes to the sample itself, found on review:
 | 14 | Show both EBITDA figures: the company's printed one leads (label "Filing"), ours beneath it (label "Computed"). Year-on-year only within one definition: theirs against their year-ago, ours against ours. When the company prints none, ours alone | The sample marks our EBITDA ₹286.61 Cr as "Statement" while the release prints its own (year-ago ₹212.90 Cr against our ₹213.45 Cr) | Yes (25 Oct) | With item 11 |
 | 15 | One profit line everywhere: the one the company headlines in its own release, with its label; with no release, profit attributable to shareholders (the line EPS is on) | Two profit figures on one card read as a mistake | Yes (25 Oct) | To build |
 | 16 | A figure computed from memory (cost per MSM from deal history) only when every input is an exchange-file or quoted-filing item (item 10's tags) | Otherwise "Computed" hides an AI-read input | Yes (25 Oct) | With items 3 and 10 |
-| 21 | Two parts on every card. Part 1 "From the filing (checked)": exchange-file figures, code calculations, quotes; every line checked, a failed line removed; graded right / WRONG against the 5% bar. Part 2 "Our reading (AI)": interpretation, past promises, what to watch; opinions allowed and graded reasonable / unreasonable on their own bar (10% proposed, owner to set); any number or fact in it must still be right and cite its source, a failed line is hidden, not the card | A wrong opinion and a wrong figure are different faults; readers still judge the whole card | Yes (25 Oct; the part 2 bar to set) | To build |
+| 21 | Two parts on every card. Part 1 "From the filing (checked)": exchange-file figures, code calculations, quotes; every line checked, a failed line removed; graded right / WRONG against the 5% bar. Part 2 "Our reading (AI)": interpretation, past promises, what to watch; opinions allowed and graded reasonable / unreasonable on their own bar (10% proposed, owner to set); any number or fact in it must still be right and cite its source, a failed line is hidden, not the card | A wrong opinion and a wrong figure are different faults; readers still judge the whole card | Yes (25 Oct); part 2 bar 30% for now | To build |
 | 17 | Measure what more lines cost: a card is WRONG if any one line is wrong, so ~25 lines need each line right about 99.8% of the time to keep cards at 95% | The richer the card, the harder the 95% bar | – | Measure before go-live |
+
+## Parked (owner, 25 Oct 2026: stopped, kept for later)
+
+- F126d, the EBITDA check (removes our EBITDA where the company prints a different one), and its blind review of
+  ~200 unseen tables (52 collected). Replaced in the plan by items 11, 14 and 23.
+- The narrowed grounding (memory grounds only memory-type points; 1,018 of 5,226 cards, 19.5%) and its 150-figure
+  blind review. Replaced in the plan by items 3 and 10.
+- Both live on the branch `claude/gracious-goodall-jn9buu` (with `docs/ARCHITECTURE_AS_BUILT.md` and the 25 Oct trace
+  files), not on `main`.
+
+## Last item: the audit after all the improvements
+
+| # | Improvement | What it fixes | Owner | State |
+|---|---|---|---|---|
+| 24 | **Audit pending.** Run the full audit once every item above is built: part 1 (checked) right / WRONG against the 5% bar; part 2 (AI reading) reasonable / unreasonable against **30%** for now. The owner will set the final part 2 bar from that audit's results | We do not yet know where the new card stands | 30% for now (owner, 25 Oct) | Audit pending, last |

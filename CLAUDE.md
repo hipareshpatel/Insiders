@@ -23,9 +23,11 @@ Read before changing anything:
 
 - **Tasks come from `docs/TASKS.md`** (the cloud session leads, owner 2026-10-19). After every `git pull`, read it
   and work the OPEN tasks for your session in priority order; report there and commit with the task id.
-- Branch `claude/gracious-goodall-jn9buu` only (owner, 24 Oct 2026, after the account switch; it was
-  `claude/nice-goodall-ta0sxs`). PRs go from it to `main`. Never push to another branch or rewrite pushed history.
-  `git pull` before editing: another session may also push to this branch.
+- One working branch at a time, the one the session is given (25 Oct 2026, owner left it to the lead session: the
+  session branch `ccr-b604559f-45p2yh` replaced `claude/gracious-goodall-jn9buu`). PRs go from it to `main`; once a PR
+  is merged, restart the branch from `main`. `claude/gracious-goodall-jn9buu` is parked, not deleted: it holds the
+  unmerged F126d EBITDA check, the narrowed-grounding change and their audit files (owner: stopped, parked for later,
+  `docs/TODO.md`). Never rewrite another branch's pushed history. `git pull` before editing.
 - API keys live only in `C:\Users\Quali\insiders-keys.ps1` (outside the repo). Never print,
   log, commit or paste a key. Dot-source the file in each new shell: `. C:\Users\Quali\insiders-keys.ps1`.
 - Don't work around BSE's firewall. BSE blocks non-Indian IPs, which is why BSE work runs here.
@@ -64,7 +66,7 @@ Read before changing anything:
    `npx tsc -p . --noEmit` in `web/` for Worker or React changes.
 4. Before committing after a `git pull` or `git stash pop`, make sure no conflict markers remain:
    `git diff --check` and `git grep -n "^<<<<<<<"` must print nothing, and the tests must pass.
-   Commit with a clear message, `git push -u origin claude/gracious-goodall-jn9buu`, and watch CI on the PR.
+   Commit with a clear message, `git push -u origin <your branch>`, and watch CI on the PR.
 5. Update `docs/SETUP.md` / `docs/TRACKER.md` when behaviour, commands or the test count change; never put project
    details back in `README.md`.
 

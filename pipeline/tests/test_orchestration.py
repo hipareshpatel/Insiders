@@ -291,6 +291,7 @@ def test_second_opinion_reply_with_only_a_card_keeps_the_memory(settings):
                               env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert outcome.card["card"]["review"]["status"] == "CORRECTED"
+    pipeline._commit([outcome])   # memory is written with the card's row (owner, 25 Oct 2026)
     assert {m["period"] for m in sink.get_dossier("999001")["financial_metrics"]} == {"Q2FY27", "Q2FY26"}
     assert outcome.card["event_category"] == "RESULTS"
 

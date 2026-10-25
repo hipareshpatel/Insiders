@@ -2069,9 +2069,16 @@ class Pipeline:
         today = today_ist().isoformat()
         noise_before = len(noise)
         ledger, catalysts, companies = [], [], {}
-        changed = []
+        changed, added = [], []
         for filing in filings:
             if filing.news_id in known:
+                if sources and filing.news_id in sources and not sources[filing.news_id] and filing.pdf_url:
+                    # listed first without a file, which NSE added later: read again with it (owner, 25 Oct 2026; its
+                    # card, if any, came from the title alone)
+                    sources[filing.news_id] = filing.pdf_url
+                    filing.status = "PENDING"
+                    added.append(filing.ledger_row(now))
+                    continue
                 if sources and filing.news_id in sources and _attachment_changed(sources[filing.news_id], filing.pdf_url):
                     sources[filing.news_id] = filing.pdf_url   # once per run, however often the day is read
                     filing.status = "PENDING"
@@ -2115,6 +2122,10 @@ class Pipeline:
         self.stats.discovered += len(ledger) + new_noise
         self._exec("companies_seen", list(companies.values()))
         self._exec("filings_discover", ledger)
+        if added:
+            self.stats.attachment_changed += len(added)
+            self._exec("filings_discover", added)
+            log.info("discovered %s: %d known filings whose file NSE added later, queued again", key, len(added))
         if changed:
             self.stats.attachment_changed += len(changed)
             # counted only until a day's count shows NSE does not vary an unchanged filing's link (a systematic
@@ -3152,6 +3163,8 @@ class Pipeline:
                 # alone cannot be checked against anything. Failed, so a later run tries the file again.
                 if doc.error and doc.error.startswith(("audio only", "a ZIP with no PDF")):
                     raise NoTextAttachment(doc.error)
+                if doc.error and doc.error.startswith("cut short"):
+                    _attachment_missing(filing, f"cut short on NSE ({doc.error[11:]})")
                 raise RuntimeError(f"no readable text in the attachment ({doc.error or 'empty'})")
             # No attachment by design - an exchange's clarification request is its headline and subject - so
             # those are the filing's own words, and what its quotes answer to.
@@ -4336,17 +4349,17 @@ def _crash_site(exc: BaseException) -> str:
     return site
 
 
-def _attachment_missing(filing: Filing) -> None:
-    """A listed file NSE does not serve (404) or serves empty: wait for it within ATTACHMENT_WAIT of the filing, then
-    fail for good."""
+def _attachment_missing(filing: Filing, why: str = "") -> None:
+    """A listed file NSE does not serve (404), serves empty or serves cut short: wait for it within ATTACHMENT_WAIT of
+    the filing, then fail for good with the reason."""
     try:
         age = now_ist() - datetime.fromisoformat(filing.filed_at)
     except (TypeError, ValueError):
         age = ATTACHMENT_WAIT
     if age < ATTACHMENT_WAIT:
-        raise AttachmentNotYet(f"the file is not on NSE yet, or empty ({filing.pdf_url})")
-    raise NoTextAttachment(f"the file was missing or empty on NSE {int(age.total_seconds() // 3600)} h after the filing "
-                           f"({filing.pdf_url})")
+        raise AttachmentNotYet(f"the file is {why or 'not on NSE yet, or empty'} ({filing.pdf_url})")
+    raise NoTextAttachment(f"the file was {why or 'missing or empty on NSE'} {int(age.total_seconds() // 3600)} h after "
+                           f"the filing ({filing.pdf_url})")
 
 
 def _attachment_cap(filing: Filing) -> int:

@@ -32,6 +32,7 @@ ON CONFLICT (news_id) DO UPDATE SET
        last_error = 'attachment changed: ' || coalesce(filings.pdf_url, ''),
        updated_at = excluded.updated_at
  -- the file name after the last '/': BSE moves an attachment from AttachLive/ to AttachHis/ under the same name
- WHERE excluded.pdf_url IS NOT NULL AND filings.pdf_url IS NOT NULL
-   AND substr(filings.pdf_url, length(rtrim(filings.pdf_url, replace(filings.pdf_url, '/', ''))) + 1)
-       IS NOT substr(excluded.pdf_url, length(rtrim(excluded.pdf_url, replace(excluded.pdf_url, '/', ''))) + 1);
+ -- or the filing had no file and now has one (NSE added it after listing the filing; owner, 25 Oct 2026)
+ WHERE excluded.pdf_url IS NOT NULL AND (filings.pdf_url IS NULL OR filings.pdf_url = ''
+   OR substr(filings.pdf_url, length(rtrim(filings.pdf_url, replace(filings.pdf_url, '/', ''))) + 1)
+       IS NOT substr(excluded.pdf_url, length(rtrim(excluded.pdf_url, replace(excluded.pdf_url, '/', ''))) + 1));

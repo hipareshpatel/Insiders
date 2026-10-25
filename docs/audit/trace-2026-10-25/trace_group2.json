@@ -1,0 +1,386 @@
+[
+ {
+  "news_id": "nse-106823370",
+  "symbol": "HCLTECH",
+  "event_type": "PRODUCT_LAUNCH (live card)",
+  "points": [
+   {
+    "wrong_point": "Memory strip showed Q2FY27 revenue 3,724 Cr / PAT 538 Cr (USD million labelled Rs Cr)",
+    "stage": "MEMORY_CONTEXT",
+    "evidence": "Filing (3-page press release) has no results at all; only 'Consolidated revenues of 12 months ending September 2026 totaled $14.8 billion'. Live card memory_context now reads revenue 35,620 Cr / PAT 5,132 Cr, so it has been corrected since review (could not see the reviewed version).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "The filing is not the source; both engines read the same release.",
+    "better_check": "Carry the currency/unit with every memory fact and refuse USD figures in a Cr slot; sanity-check memory revenue vs market cap/prior quarter."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106823248",
+  "symbol": "MHRIL",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Standalone revenue shown as Rs 3.95 Cr instead of Rs 395.3 Cr (unit fixer divided by 100)",
+    "stage": "CODE",
+    "evidence": "Text layer p11: 'Standalone Financials ... Income ... Rs Cr 380.7 395.3'; p12 has one unrelated 'AUR* (Rs Lakh)' chart (text lines 327,366). Live card now shows 395.3 Cr with unit_fixes null, so already fixed or regenerated (reviewed version not seen). 11 of 31 pages are low-text (charts).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both engines would read '395.3' and '₹ Cr' correctly; the damage was done after extraction by declared_unit.",
+    "better_check": "Never rescale a figure that appears verbatim in the filing next to a Cr label; declared unit must be per page/table, not one 'Lakh' line for the whole deck."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106823950",
+  "symbol": "TECHM",
+  "event_type": "CONCALL transcript",
+  "points": [
+   {
+    "wrong_point": "Results table EBITDA Rs 2,387 Cr at 14.75% margin (against 2,264 / 14.41% prior quarter): these are EBIT",
+    "stage": "CODE",
+    "evidence": "Call text p10: 'EBIT ... US$250 million with an EBIT margin of 14.8% ... In rupee terms, operating profit stood at INR2,387 crores'. 2,387/16,180 = 14.75%. Live results block now shows EBITDA 2,878.5 (17.79%), so changed since the review (not verifiable).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Transcript text is clean; 'operating profit' is a semantic label problem, not a reading problem.",
+    "better_check": "Cross-check: a claimed EBITDA margin that equals the stated EBIT margin (14.8%) is a label error; prefer XBRL/results-statement EBITDA over call prose."
+   },
+   {
+    "wrong_point": "15% FY27 margin target described as set in July (card why_it_matters), memory says April 2026",
+    "stage": "WRITER",
+    "evidence": "Card cites g_9deaf301 (given 2026-04-28 per reviewer). Call p11 only says 'we reiterate ... target of 15%'. The grounder flagged 'verified:false' on this takeaway ('20 is not in its quote or the memory it cites').",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Date comes from memory, not from the filing text.",
+    "better_check": "Render the date from the memory item's own date field instead of letting the writer state it."
+   },
+   {
+    "wrong_point": "'Third straight quarter above US$1 billion' (reviewer: fourth)",
+    "stage": "WRITER",
+    "evidence": "Transcript: 'total deal wins for the quarter were US$1.023 billion' and 'new deal wins exceeding $1 billion'; no count of consecutive quarters in the filing. Count not verifiable from filing; memory ref g_9deaf301 does not carry it.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "The count is not in the PDF at all.",
+    "better_check": "Require a streak claim to be backed by listed memory quarters; recompute the streak in code from stored TCV by quarter."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824629",
+  "symbol": "NATCOPHARM",
+  "event_type": "RIGHTS_ISSUE closure intimation",
+  "points": [
+   {
+    "wrong_point": "'Rs 750 issue price is a significant discount to market price of approx Rs 1,000 (based on Rs 15,395 Cr market cap and 17.9 Cr shares)'",
+    "stage": "WRITER",
+    "evidence": "One-page letter (Rs 750, Rs 12,794 millions, issue closes 22 Oct) has no market price. Card's own priced_at_filing: last_price 784.8, market_cap 15,395.26. 15,395/17.9 = about 860, so the writer's 1,000 is wrong arithmetic on memory inputs; basis MEMORY with memory_refs empty.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Not in the filing; the filing text is trivially clean.",
+    "better_check": "Compute discount in code from last_price (784.8 -> -4.4%); reject MEMORY-basis numeric claims with no memory_refs."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824719",
+  "symbol": "J&KBANK",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Results table: PAT 546.36 vs XBRL comparatives 494.91 / 425.32 and NII 1435.37 / 1498.78 (PAT +10.4% / +28.5%, NII +4.7% / +0.2%), contradicting headline 10.6%",
+    "stage": "CODE",
+    "evidence": "Text layer P&L slide: 'Net Interest Income 1,433.99 1,497.12 1,502.31 4.8% 0.3%'; 'Net Profit 494.11 424.18 546.36 10.6% 28.8%'. Live results block still shows 494.91 / 425.32 / 1435.37 / 1498.78 and yoy 10.4%, qoq 28.5%, so the error is live. The deck text carries no 'standalone' word, so the basis is not stated in the text (consolidated XBRL vs deck basis mismatch).",
+    "would_dual_engine_catch": "no (same-PDF engines); yes for a cross-source check",
+    "catch_reason": "Both engines read the deck's own 494.11 correctly; the wrong priors come from the XBRL source, not from OCR. A second engine on the PDF would not help.",
+    "better_check": "Compare results-block YoY/QoQ with the filing's own printed % (10.6 vs 10.4 and 28.8 vs 28.5 disagree); if XBRL priors differ from the deck's priors by >0.1%, use the deck's or drop the block."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824708",
+  "symbol": "NAM-INDIA",
+  "event_type": "Reg 32 statement of deviation",
+  "points": [
+   {
+    "wrong_point": "Takeaway/why_it_matters: Rs 588.85 Cr proceeds 'fully utilized', 'no unutilized proceeds'",
+    "stage": "WRITER",
+    "evidence": "p3 table (clean text): total allocation 588.85, funds utilised total 401.36; 'Funding inorganic growth and strategic initiatives ... 165.00 ... ---' (nothing utilised), setting up branches 38.31 vs 15.82 utilised. 'Nil' deviation (p2) is a different thing from utilisation.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "All figures are cleanly present in the text; the AI conflated 'no deviation' with 'fully used'.",
+    "better_check": "Code check: sum utilised vs allocated column and reject 'fully utilized' when 401.36 < 588.85; require number-bearing support for 'no unutilized'."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824838",
+  "symbol": "SWIGGY",
+  "event_type": "RESULTS / shareholder letter",
+  "points": [
+   {
+    "wrong_point": "Why-it-matters: QC contribution margin 'slipped to -1.0% from -0.2% a year ago'",
+    "stage": "WRITER",
+    "evidence": "Text p~5/p~12: 'Contribution margin improved 157bps YoY to reach -1.0% of GOV (-82bps QoQ)'; so -0.2% is Q1FY27. The card's own notable_change quote says 'improved 157bps YoY' while its text says 'previous -0.2% (Q2FY26)'. PDF (40 pages) was truncated by the proxy at 12.9 MB; re-fetched via Range to 17,363,369 bytes.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Quote and right figure sit side by side in clean text; the model mislabelled the period and direction.",
+    "better_check": "Check that the card's direction word agrees with the verb in its own quote ('improved' vs 'slipped'); derive previous = current + stated bps change and compare."
+   },
+   {
+    "wrong_point": "Results block: adjusted EBITDA -760 vs reported-basis priors -798 / -650, giving LOSS_NARROWED; headline says widened",
+    "stage": "CODE",
+    "evidence": "Filing 5-quarter table: 'Consolidated Adjusted EBITDA -695 -712 -652 -651 -760' and text 'decreased by INR 64 Cr YoY, to a loss of INR 760 Cr' (so prior year 696/695). -798/-650 are not in the deck; they are reported EBITDA from XBRL. Live card still shows -798/-650 and LOSS_NARROWED.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Current value from the deck, priors from XBRL on another basis; the deck text is clean and has the right priors.",
+    "better_check": "Same-basis rule (adjusted vs reported); compare the block's YoY direction with the filing's 'decreased by INR 64 Cr' and with the card's own headline verb."
+   },
+   {
+    "wrong_point": "Prune dropped a true point (QC loss Rs 895 Cr) because its quote lacked the figure",
+    "stage": "CODE",
+    "evidence": "Filing: 'Adjusted EBITDA losses rose by INR 46 Cr YoY to INR 895 Cr'; '-895' in QC table. Live card's what_happened mentions 895 (QoQ +118), so I cannot tell which dropped point is meant.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Quote-contract false negative in code; the text was readable.",
+    "better_check": "Match numbers in a point against the whole page, not only the quote string."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106824995",
+  "symbol": "CIEINDIA",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Results block revenue Rs 2,540 Cr and EBITDA Rs 420 Cr (stale July-call values stored in memory under Q2FY27); headline/key numbers right",
+    "stage": "MEMORY_CONTEXT",
+    "evidence": "Live results block: revenue 2,540.0 (prior 2,371.84), EBITDA 420.0 while key_numbers say 2,633.2 and 417.8. Filing statement p~30 (INR million): 'Revenue from operations 26,331.80 26,205.51 23,718.44', deck 'EBITDA 4,178 11% 3,748 4,183' (a quarter-end CY label 'Q3 CY26' vs company FY label 'Q2FY27'). Right figure is present in clean text.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "The wrong values never came from this PDF.",
+    "better_check": "Current-period values in results block must come from this filing (statement or XBRL), never memory; reconcile block with key_numbers."
+   },
+   {
+    "wrong_point": "Why-it-matters: memory growth 12-15% seen in Q1-Q2 CY26 turned into FY27 guidance",
+    "stage": "MEMORY_CONTEXT",
+    "evidence": "Card cites g_fbcf2d56; '12-15' is not in the filing text (the only 12% figures are segment growth rows).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Claim originates from memory, not the filing.",
+    "better_check": "Require the guidance item's period/type fields to match before a memory item is called 'guided FY27'."
+   },
+   {
+    "wrong_point": "Prune dropped a true margin point",
+    "stage": "CODE",
+    "evidence": "Not located (reviewer text only; low-text pages 2,3,4,6,10,14,16,18,19,27,31 are chart slides).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Code-side drop, not a reading error.",
+    "better_check": "Same as above: support check on the page, not on the quote."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106826077",
+  "symbol": "GODREJPROP",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Results block Revenue vs memory priors (Q2 'Revenue' = Total Income compared with revenue from ops, +247.8% YoY / +408.7% QoQ)",
+    "stage": "CODE",
+    "evidence": "Deck: 'Total Income 2,575 1,867 38% 1,337 93%' and 'Interest and other Income 637'. Live block still shows revenue 1,935.17 vs prior 740.38 / 506.17 = +161% / +282% (changed from reviewer's 2,575 but still not like for like). Filing text is clean and carries the like-for-like +38% / +93%.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Priors come from memory/XBRL of another basis.",
+    "better_check": "Reject growth > ~100% when the filing prints a different %; compare block YoY to the filing's own printed 38%."
+   },
+   {
+    "wrong_point": "deal_value: Marine Lines called an Rs 6,000 Cr ACQUISITION, SCALE signal '12% of market cap, 30% of net worth', HIGH impact score",
+    "stage": "WRITER",
+    "evidence": "p20: 'Marine Lines, Mumbai 1.10 ... Estimated booking value (INR Crores) 6,000 ... Business development ... Revenue Share - 86.4%'. 'Estimated booking value' is not a price paid. Live deal_value is still kind ACQUISITION, amount 6,000.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Clean text; semantic mis-typing. The score then inherits it in code.",
+    "better_check": "Rule: a deal amount tagged ACQUISITION needs words like 'acquire/consideration/purchase price'; revenue-share projects and 'booking value' map to OTHER."
+   },
+   {
+    "wrong_point": "SCALE signal's net worth Rs 20,000 Cr (filing net worth 19,359)",
+    "stage": "CODE",
+    "evidence": "Deck p~24: 'Networth (INR Cr) 19,359 19,505 19,156'. 20,000 is the BD guidance (reviewer; memory ref). Which input fed the signal could not be verified from the card.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Right number is in clean text; the signal took another value.",
+    "better_check": "Compute net-worth ratios only from the balance-sheet fields (fundamentals.net_worth), not from memory guidance items."
+   },
+   {
+    "wrong_point": "quantified_impact 'H2 Pre-sales Potential' 40,589 Cr (32,000 launch value + 8,589 H1 sustenance)",
+    "stage": "WRITER",
+    "evidence": "p14: 'Bookings of INR 22,500-25,000 crores expected in H2'; launch value is ~32,000 (a different quantity); 8,589 is H1 sustenance sales. The card's check says VERIFIED because arithmetic is right.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Arithmetic verified, semantics wrong; filing states the answer.",
+    "better_check": "Compare any 'H2 potential' result to the filing's own stated range; flag results outside it."
+   },
+   {
+    "wrong_point": "Call takeaway 'Construction and related outflow rose 42% YoY' (no YoY figure in the filing)",
+    "stage": "WRITER",
+    "evidence": "Quote 'Construction & related outflow -2,121 -4,365' (Q2 and H1); 42% is not in the text. Card's own grounding marks it verified:false ('42% is not in its quote').",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Computed from mismatched columns; both engines read the same two numbers.",
+    "better_check": "Publish gate: drop a takeaway that the grounder itself marked verified:false."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106826208",
+  "symbol": "CSBBANK",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Cost of deposits 'rose to 7.40% from 6.42% a year ago'",
+    "stage": "INPUT_AMBIGUOUS",
+    "evidence": "p25 text layer: series come out as bare lines: 'Cost of Fund 6.53% 6.46% 6.42% 6.55% 6.55%', 'Cost of Borrowings 7.86% 7.34% 7.01% 7.17% 7.40%', and 'Cost of Deposits' appears AFTER the previous chart's numbers, then '6.37% 6.35% 6.33% 6.46% 6.43%'. Chart data: title/value adjacency is positional, so the writer attached the neighbouring series. OCR on the chart page may preserve the title above its bars (not run).",
+    "would_dual_engine_catch": "partly",
+    "catch_reason": "A layout-aware engine (OCR) might order title and series differently; if the two give different title-to-series mappings the check would fire. If both give the same adjacency, they agree and are both wrong.",
+    "better_check": "Require the values to be taken as a labelled series with 5 quarter labels, and have the quote contain the title; the card's quote 'Cost of Deposits 7.40% Q2 FY26 6.42%' is not in the filing (grounder flagged 'quote not in the filing')."
+   },
+   {
+    "wrong_point": "CASA 'moderated to 18.96% from 20.55%' as a YoY sentence (20.55% is Q3FY26; Q2FY26 was 21.17%)",
+    "stage": "WRITER",
+    "evidence": "p~19 series: '21.17% 20.55% 19.96% 19.41% 18.96%' under 'Q2 FY26 ... Q2 FY27'. Positions are clear; model took the second value as the prior year.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Both engines would give the same 5-number series; the pick was wrong.",
+    "better_check": "Code: map the series to its quarter labels and derive YoY from the first and last; compare to the stated bps."
+   },
+   {
+    "wrong_point": "'below target of 19.41%' (19.41% is the Q1FY27 ratio, not a target)",
+    "stage": "WRITER",
+    "evidence": "Same CASA series: 4th value is Q1FY27 = 19.41%.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Invented relationship from a neighbouring number.",
+    "better_check": "Verify 'target/guidance' wording against a filing sentence containing 'target'."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106826054",
+  "symbol": "SHREECEM",
+  "event_type": "RESULTS",
+  "points": [
+   {
+    "wrong_point": "Results block EBITDA 1,128.74 vs prev year 973.96 (+15.9%) and prev quarter 1,272.2: filing says 1,152.88 and 1,483.91 (-2.1% / -23.9%)",
+    "stage": "CODE",
+    "evidence": "Text layer line: 'Earnings before Interest, Taxes, Depreciation and Amortisation (EBITDA) 1128.74 1483.91 1152.88 ...'. Live block shows priors 973.96 / 1272.2 (derived excluding other income 178.92 / 211.71). The pipeline's own grounder logged 'key number EBITDA: change -2.1% YoY removed'.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Right priors are on the same row as the current figure in clean text; wrong priors were built by code from XBRL.",
+    "better_check": "Prefer the filing's own same-row comparatives; flag when current and prior EBITDA differ in definition (other income included); the grounder already computed -2.1% and the block should not disagree."
+   },
+   {
+    "wrong_point": "EBITDA margin 19.14% vs 20.46% prior year (mixed bases)",
+    "stage": "CODE",
+    "evidence": "Same cause: 1,128.74/5,896.51 = 19.14% (incl. other income) vs 973.96/4,761.07 = 20.46% (excl.).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Same as above.",
+    "better_check": "Recompute the margin from the same-row EBITDA and revenue."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827198",
+  "symbol": "SHRIRAMFIN",
+  "event_type": "CONCALL_PRESENTATION",
+  "points": [
+   {
+    "wrong_point": "Whole card: procedural audio link for the earnings call with no information; results card exists (nse-106826252)",
+    "stage": "CODE",
+    "evidence": "One-page letter: 'audio link of the said call is uploaded ... The transcript ... will be uploaded in due course.' Card figures: none. Card is faithful but should not exist (relevance gate / event triage).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Nothing to disagree on; the filing was read perfectly.",
+    "better_check": "Rule-based skip: one-page letters with a media link and no numbers under CONCALL_PRESENTATION, or an unchanged-content test vs the same-day results card."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827039",
+  "symbol": "TRIVENIPT",
+  "event_type": "RESULTS",
+  "points": [
+   {
+    "wrong_point": "Third card for the same Q2FY27 results the same evening (nse-106826851, nse-106826987)",
+    "stage": "CODE",
+    "evidence": "Live card pack members: nse-106826982, nse-106827039, nse-106826988 (the pack did not include 106826851/106826987 as named by the reviewer). Press release matches the other cards ('Q2 revenue stood at 116 crores, up 5.7%').",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Not an extraction issue; dedupe of same-event cards.",
+    "better_check": "Dedupe by company+period+event: when a results card exists for that quarter, merge later filings in as follow-ups."
+   },
+   {
+    "wrong_point": "results block ebitda margin qoq_bps 281 / ebitda qoq 73.7% (Q2 company EBITDA vs Q1 XBRL-derived)",
+    "stage": "CODE",
+    "evidence": "Press release: 'consolidated EBITDA was Rs 42 crores, margin 36.1%'; H1 EBITDA Rs 67 crores -> Q1 about 25 Cr. Live results block now shows ebitda {value 42.0} with no prior, so already changed (reviewed version not seen).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Bases differ between sources, not a reading issue.",
+    "better_check": "Show a QoQ for a line only when both values share the basis; compare with H1 minus Q2."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827016",
+  "symbol": "PANACHE",
+  "event_type": "RESULTS",
+  "points": [
+   {
+    "wrong_point": "Card as a whole is a duplicate of nse-106827008 (same PDF refiled)",
+    "stage": "CODE",
+    "evidence": "SHA-256 of both URLs' PDFs is identical (ab4cb136...2b50; verified, also 4,573,836 bytes).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Not a reading issue.",
+    "better_check": "Hash the PDF and skip the card when a published card exists for the same hash."
+   },
+   {
+    "wrong_point": "Notable change previous '39.06 Cr (Q2FY25)': the column is 30-09-2025 = Q2FY26",
+    "stage": "WRITER",
+    "evidence": "p2-p3 text: columns '30-09-2026 | 30-06-2026 | 30-09-2025 | ...'; consolidated 'Revenue From Operations 12,959.85 5,083.82 3,906.02'. Right column present with date headers; the model mislabelled the period (also unit: Lacs, card shows 129.60 Cr, which is right).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Column header text is clean.",
+    "better_check": "Derive the period label from the column's date header in code; require label == mapped quarter."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827430",
+  "symbol": "MUTHOOTMF",
+  "event_type": "DEBT_RATINGS",
+  "points": [
+   {
+    "wrong_point": "rating_change block AA- -> BB- (notches -9) comparing CRISIL domestic with CareEdge Global foreign-currency rating",
+    "stage": "MEMORY_CONTEXT",
+    "evidence": "Filing: 'CareEdge Global Ratings has reaffirmed the long-term foreign currency rating ... at CareEdge BB-, while revising the outlook to Positive from Stable'. Live rating_change now has before=null, notches=null, so the block was fixed; the live score reason still says 'Rating moved 9 notches'.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "The wrong 'before' came from memory, not from the filing.",
+    "better_check": "Compare ratings only on the same agency AND scale (domestic vs international) and never when the filing says 'reaffirmed'."
+   },
+   {
+    "wrong_point": "Score reason 'Impact: Rating moved 9 notches' (impact HIGH)",
+    "stage": "CODE",
+    "evidence": "Live score reasons still contain 'Impact: Rating moved 9 notches' and impact HIGH although rating_change.notches is now null (stale score).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Downstream of the false memory comparison.",
+    "better_check": "Recompute the score after any change to the block; reject a notch claim when the filing text says 'reaffirmed'."
+   }
+  ]
+ },
+ {
+  "news_id": "nse-106827546",
+  "symbol": "VRLLOG",
+  "event_type": "RIGHTS_ISSUE (wrong)",
+  "points": [
+   {
+    "wrong_point": "category_tag RIGHTS / event_type RIGHTS_ISSUE on a buyback letter of offer",
+    "stage": "WRITER",
+    "evidence": "Letter p1: 'Submission of Letter of Offer pertaining to buyback of not exceeding 87,50,000 ... through the tender offer'. Live card: category_tag RIGHTS, event_type RIGHTS_ISSUE. Unverified whether the tag came from a rule or the model.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Plain text says buyback; a classification error, not a reading error.",
+    "better_check": "Keyword guard: 'buyback' + 'tender offer' in the filing forbids RIGHTS_ISSUE."
+   },
+   {
+    "wrong_point": "Headline reads as a new announcement; terms were already on the 17 Oct card (near-duplicate)",
+    "stage": "CODE",
+    "evidence": "Live headline 'VRL Logistics to buy back 5% of shares at Rs 320 via tender offer'; the earlier card nse-106820959 is the reviewer's reference (not re-fetched).",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Dedupe/novelty issue.",
+    "better_check": "Compare with earlier card's deal_value (size, price); mark as follow-up with only the new fields."
+   },
+   {
+    "wrong_point": "Signal WATCH_RESOLVED 'KPI check partial: Tonnage growth ... results pending' on a buyback letter",
+    "stage": "CODE",
+    "evidence": "Live signals: WATCH_RESOLVED w_d18c3975 'Tonnage growth'.",
+    "would_dual_engine_catch": "no",
+    "catch_reason": "Memory watch-item matcher fired on an unrelated filing.",
+    "better_check": "Resolve a watch only when the filing contains a figure for that KPI."
+   }
+  ]
+ }
+]

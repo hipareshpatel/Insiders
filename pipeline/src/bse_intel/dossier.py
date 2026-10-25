@@ -328,7 +328,7 @@ def _sources(entry: dict | None) -> list[dict]:
     if not entry:
         return []
     return entry.get("sources") or [{
-        "news_id": entry.get("source_news_id"), "as_of": entry["as_of"], "value": entry.get("value"),
+        "news_id": entry.get("source_news_id"), "as_of": entry.get("as_of"), "value": entry.get("value"),
         "unit": entry.get("unit"), "yoy_pct": entry.get("yoy_pct"), "qoq_pct": entry.get("qoq_pct"),
         **({"basis": entry["basis"]} if entry.get("basis") else {}),
     }]

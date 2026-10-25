@@ -1,0 +1,794 @@
+[
+ {
+  "news_id": "nse-106631479",
+  "symbol": "OLAELEC",
+  "where": "headline",
+  "sentence": "Ola Electric Q4 revenue ₹265 Cr; operating cash flow turns positive at ₹91 Cr",
+  "verdict": "RIGHT",
+  "reason": "Revenue 265 Cr and first positive CFO 91 Cr",
+  "evidence": "p2: 'consolidated CFO of ₹91 Cr'; 'revenue from operations stood at ₹265 Cr in Q4 FY26'"
+ },
+ {
+  "news_id": "nse-106598572",
+  "symbol": "BLUESTONE",
+  "where": "headline",
+  "sentence": "BlueStone Q4 standalone revenue rose 49% to ₹688 Cr; first full year of reported PAT",
+  "verdict": "RIGHT",
+  "reason": "Standalone Q4 revenue 687.7 Cr +49.1%; first full year of positive PAT",
+  "evidence": "p2: 'Standalone Revenue at INR 688 crores, up 49% YoY'; 'first full year of reported PAT'"
+ },
+ {
+  "news_id": "9531823c-8413-4d7f-a647-8c46b73feb2e",
+  "symbol": "SKFINDIA",
+  "where": "point",
+  "sentence": "Revenue from operations rose **27.1% YoY** to **₹5,878 mn** in Q1FY27, down 1.1% QoQ.",
+  "verdict": "RIGHT",
+  "reason": "Matches table",
+  "evidence": "p9: Revenue from Operations 4,625 / 5,945 / 5,878; 27.1% YoY, -1.1% QoQ"
+ },
+ {
+  "news_id": "nse-106598378",
+  "symbol": "SWSOLAR",
+  "where": "headline",
+  "sentence": "Sterling and Wilson FY26 revenue rose 20% YoY to ₹7,548 Cr; operational EBITDA jumped 53% to ₹444 Cr",
+  "verdict": "RIGHT",
+  "reason": "Revenue +20%, op EBITDA +53%",
+  "evidence": "p: 'FY26 Revenue of INR 7,548 crore (+20% YoY)'; 'Operational EBITDA reached INR 444 crore ... growth of 53% YoY'"
+ },
+ {
+  "news_id": "nse-106631264",
+  "symbol": "AMAGI",
+  "where": "point",
+  "sentence": "**FY26 revenue** reached **₹1,506 Cr**, up 30% year-on-year, while adjusted EBITDA rose 563% to **₹155.7 Cr**.",
+  "verdict": "RIGHT",
+  "reason": "Revenue 1,506 +30%, adj EBITDA 155.7 +563%",
+  "evidence": "slide: '₹1,506 Cr ▲+30% Y/Y'; '₹155.7 Cr ▲+563% Y/Y'"
+ },
+ {
+  "news_id": "f3ea7888-ec8e-4473-8d0b-3735452a19b0",
+  "symbol": "ADANIPOWER",
+  "where": "point",
+  "sentence": "**Net debt/continuing EBITDA** fell to **2.12x** in Jun'26 from 9.75x in FY19; **CareEdge** upgraded to **AA+/Stable** in August 2026.",
+  "verdict": "RIGHT",
+  "reason": "Ratio and CareEdge upgrade confirmed",
+  "evidence": "p24: 9.75x FY19 -> 2.12x Jun'26 TTM; CareEdge AA/Stable (Mar25) -> AA+/Stable (Aug 2026)"
+ },
+ {
+  "news_id": "c5384b40-08cb-4dda-a8ee-7003a56c6c41",
+  "symbol": "KANORICHEM",
+  "where": "point",
+  "sentence": "**Electronic Automotive** revenue fell to ₹782.40 Cr and the segment lost **₹39.47 Cr**, against a ₹3.73 Cr loss in FY24.",
+  "verdict": "RIGHT",
+  "reason": "Segment table in lakh: FY25 revenue 78,240 (FY24 79,008), result (3,947) vs (373)",
+  "evidence": "segment table: Electronic Automotive 78,240 / 79,008; results (3,947) / (373) lakh"
+ },
+ {
+  "news_id": "2531d7cc-e12d-4592-aa55-675116460d1a",
+  "symbol": "SHIVAMAUTO",
+  "where": "point",
+  "sentence": "**Q4FY25 EBITDA** fell 45.1% YoY to ₹8.2 Cr; **FY25 EBITDA** rose 2.6% YoY to ₹44.41 Cr",
+  "verdict": "RIGHT",
+  "reason": "EBITDA derived (PBT before exceptional + depreciation + finance cost - other income): Q4FY25 820 lakh vs Q4FY24 1,493 (-45.1%); FY25 4,441 vs 4,330 (+2.6%)",
+  "evidence": "p6 results table in Rs lakh; no EBITDA printed, computed"
+ },
+ {
+  "news_id": "nse-106827073",
+  "symbol": "TRUALT",
+  "where": "point",
+  "sentence": "EBITDA for Q2FY27 surged to **₹101.16 Cr** with an EBITDA margin of **12.47%**.",
+  "verdict": "RIGHT",
+  "reason": "Q2 FY27 consolidated EBITDA 101.16 Cr, margin 12.47%",
+  "evidence": "p12: '₹ 101.16 Cr. (Q2 FY 27)', '12.47% (Q2 FY 27)'"
+ },
+ {
+  "news_id": "nse-106607340",
+  "symbol": "EPIGRAL",
+  "where": "point",
+  "sentence": "FY2026 revenue dropped by **1%** to **₹2,542 Crore** due to a **4%** drop in sales volume.",
+  "verdict": "RIGHT",
+  "reason": "Matches",
+  "evidence": "'Revenue dropped by 1% to ₹ 2,542 Crore due to a 4% drop in sales volume'"
+ },
+ {
+  "news_id": "nse-106650869",
+  "symbol": "PINELABS",
+  "where": "headline",
+  "sentence": "Pine Labs Q4 FY26 earnings transcript: FY27 revenue growth guided at 21-23.5%",
+  "verdict": "RIGHT",
+  "reason": "Guidance 21-23.5% stated",
+  "evidence": "transcript: 'grow at about 21% to 23.5% on a year-on-year basis'"
+ },
+ {
+  "news_id": "nse-106608126",
+  "symbol": "CRAMC",
+  "where": "headline",
+  "sentence": "Canara Robeco FY26 revenue rose 17% to ₹424.9 Cr, PAT up 7% to ₹203.8 Cr",
+  "verdict": "RIGHT",
+  "reason": "Revenue 424.9 vs 364.5 (+17.0%); PAT 203.8 vs 190.7 (+7%)",
+  "evidence": "transcript: 'INR424.9 crores ... 17.0% year-on-year'; 'PAT ... INR203.8 crores ... 7%'"
+ },
+ {
+  "news_id": "dbdc0579-702d-4c79-9f40-cf6ee7528705",
+  "symbol": "JSL",
+  "where": "point",
+  "sentence": "**Finished goods sales volume fell 7.3% YoY** as industrial gas shortages and Middle East logistics issues hit the first weeks of Q1.",
+  "verdict": "RIGHT",
+  "reason": "Volumes down 7.3% YoY due to gas crisis in first weeks",
+  "evidence": "'finished goods sales volume, which were down by 7.3% year-on-year'"
+ },
+ {
+  "news_id": "1e8c1c2f-f9fa-4458-9fa7-7e510dc874da",
+  "symbol": "HESTERBIO",
+  "where": "point",
+  "sentence": "**Standalone revenue** grew **14%** and PAT **88%** YoY; gross margin rose from **69% to 78%** on product mix.",
+  "verdict": "RIGHT",
+  "reason": "Standalone figures as stated (quarter YoY)",
+  "evidence": "'On a standalone basis, revenue grew by 14% and PAT increased by 88% ... Gross margins improved from 69% to 78%'"
+ },
+ {
+  "news_id": "nse-106601280",
+  "symbol": "LTTS",
+  "where": "point",
+  "sentence": "Total revenue for FY26 grew 5% to **$1,321 Mn** as indicated in the previous quarter.",
+  "verdict": "RIGHT",
+  "reason": "Includes discontinued operations (qualifier omitted, minor)",
+  "evidence": "'total revenue, including continued and discontinued operations, grew 5% to $1,321 Mn'"
+ },
+ {
+  "news_id": "nse-106819995",
+  "symbol": "SOLARA",
+  "where": "point",
+  "sentence": "**Net debt** reduced by ₹114.10 Cr in H1FY27 to **₹500.00 Cr** (INR 5,000 Mn), bringing net debt to EBITDA down to 1.8x.",
+  "verdict": "RIGHT",
+  "reason": "1,141 Mn = 114.1 Cr; 5,000 Mn = 500 Cr; 1.8x",
+  "evidence": "'Net debt reduced by INR 1,141 Mn in H1'27 to INR 5,000 Mn; ... ~1.8x'"
+ },
+ {
+  "news_id": "nse-106619118",
+  "symbol": "SAGILITY",
+  "where": "point",
+  "sentence": "**Top-3 client share** of revenue fell to **59.9%** in FY26 from 66.2% in FY25; active client groups rose to 82 from 75.",
+  "verdict": "RIGHT",
+  "reason": "Matches annual KPIs",
+  "evidence": "p6: Top 3 client 59.9% vs 66.2%; Active client groups 82 vs 75"
+ },
+ {
+  "news_id": "nse-106801275",
+  "symbol": "NLCINDIA",
+  "where": "headline",
+  "sentence": "NLC India FY26 PAT rose 38.9% to ₹3,769 Cr; approves 38.5% total dividend at AGM",
+  "verdict": "RIGHT",
+  "reason": "Consolidated PAT 3,769 Cr +38.91%; total dividend 38.5%",
+  "evidence": "p2: 'PAT of ₹3,769 Crore ... 38.91 %'; '38.5% (~533.86 Crore)'"
+ },
+ {
+  "news_id": "nse-106607646",
+  "symbol": "SMCGLOBAL",
+  "where": "point",
+  "sentence": "**FY26 full-year PAT** declined **29.7% YoY to ₹103.2 Cr** due to softer derivatives activity and regulatory changes in the F&O segment.",
+  "verdict": "RIGHT",
+  "reason": "Consolidated FY26 PAT 103.2 Cr, -29.7%",
+  "evidence": "p6: 'PAT INR 103.2 Crores -29.7%'; F&O regulatory changes cited"
+ },
+ {
+  "news_id": "nse-106632500",
+  "symbol": "ALLCARGO",
+  "where": "point",
+  "sentence": "Consultative Logistics Q4 revenue grew **3%** YoY to **₹151 Cr** with total warehouse space under management at **8 million square feet**.",
+  "verdict": "RIGHT",
+  "reason": "Matches",
+  "evidence": "'warehouse space ... 8 million square feet'; 'Revenue for Q4 FY26 was INR151 crores ... growth of 3% year-on-year'"
+ },
+ {
+  "news_id": "nse-106608535",
+  "symbol": "NATIONALUM",
+  "where": "headline",
+  "sentence": "Nalco FY26 PAT rose 9.2% YoY to ₹5,816 Cr on record physical performance",
+  "verdict": "RIGHT",
+  "reason": "PAT 5,325 -> 5,816 Cr, +9.22%; best-ever performance",
+  "evidence": "'PAT from Rs.5,325 crores to Rs.5,816 crores, around 9.22%'"
+ },
+ {
+  "news_id": "nse-106818537",
+  "symbol": "ORIENTELEC",
+  "where": "headline",
+  "sentence": "Orient Electric Q2FY27 revenue up 25.2% to ₹879 Cr, PAT up 124.4%; gross margin fell 251 bps",
+  "verdict": "RIGHT",
+  "reason": "Revenue 879.3 +25.2%, PAT +124.4%, gross margin -251 bps",
+  "evidence": "p2 table: Revenue 879.3 vs 702.6 25.2%; PAT 27.1 vs 12.1 124.4%; Gross Margin -251 bps"
+ },
+ {
+  "news_id": "nse-106818511",
+  "symbol": "TIPSMUSIC",
+  "where": "point",
+  "sentence": "Op. EBITDA margin fell to **70.5% from 76.0% YoY**, though it recovered sharply from 50.3% in Q1FY27.",
+  "verdict": "RIGHT",
+  "reason": "Op. EBITDA % 70.5 vs 76.0 YoY, 50.3 in Q1",
+  "evidence": "p2 table: Op. EBITDA % 70.5% / 76.0% / 50.3%"
+ },
+ {
+  "news_id": "nse-106639265",
+  "symbol": "GRASIM",
+  "where": "point",
+  "sentence": "Birla Pivot B2B e-commerce revenue **more than doubled** on a YoY basis in **Q4 FY26**.",
+  "verdict": "RIGHT",
+  "reason": "Management said Pivot Q4 revenue more than doubled YoY",
+  "evidence": "'revenue for quarter four FY '26 more than doubled on Y-o-Y basis'"
+ },
+ {
+  "news_id": "nse-106622418",
+  "symbol": "BETA",
+  "where": "headline",
+  "sentence": "Beta Drugs FY26 revenue rises 7.4% to ₹396 Cr; PAT falls to ₹41.5 Cr on CCD finance costs",
+  "verdict": "RIGHT",
+  "reason": "Revenue 396.0 +7.4%; net profit 41.5 vs 42.4, drop due to CCD finance cost",
+  "evidence": "p: 'total revenues of Rs 396.0 crores ... 7.4%'; 'Net profit of INR 41.5 Crs ... compared to INR 42.4 Crs'"
+ },
+ {
+  "news_id": "6a904edb-ae1c-4e19-b14e-056ebfe9f73d",
+  "symbol": "LTM",
+  "where": "point",
+  "sentence": "**Financial Services** segment result fell to **₹640 Cr** from ₹671 Cr YoY even as revenue rose to ₹4,092 Cr from ₹3,763 Cr.",
+  "verdict": "RIGHT",
+  "reason": "Segment result 6,395 vs 6,710 Rs mn; revenue 40,919 vs 37,628",
+  "evidence": "segment table Q2 vs Q2 prior year: Financial Services revenue 40,919/37,628; results 6,395/6,710"
+ },
+ {
+  "news_id": "nse-106824696",
+  "symbol": "HAVELLS",
+  "where": "point",
+  "sentence": "**Renewables** revenue more than doubled to **₹329 Cr** (up 147.8%) and its segment result rose to **₹27 Cr** from ₹5 Cr.",
+  "verdict": "RIGHT",
+  "reason": "Renewables revenue 329 vs 133 (+147.8%), result 27 vs 5",
+  "evidence": "segment tables: 'Renewables 329 133 147.8%'; result '27 ... 5'"
+ },
+ {
+  "news_id": "nse-106824614",
+  "symbol": "SAPPHIRE",
+  "where": "headline",
+  "sentence": "Sapphire Foods Q2 revenue rises to ₹888 Cr; PAT turns positive",
+  "verdict": "WRONG",
+  "reason": "Q2 PAT was a loss, not positive: standalone loss 57.02 mn (~5.7 Cr), consolidated loss 15.13 mn (H1 PAT positive, Q1 positive)",
+  "evidence": "p results: '7 (Loss)/Profit after tax (57.02) 128.67 (173.02)'; revenue 8,880.27 mn = 888 Cr"
+ },
+ {
+  "news_id": "nse-106628282",
+  "symbol": "STYLEBAAZA",
+  "where": "point",
+  "sentence": "**Store count** rose to **263** at 31-Mar-26 from 214, with rental area up 28% to 2.46 Mn sq ft.",
+  "verdict": "RIGHT",
+  "reason": "Stores 214 -> 263, rental area 2.46 Mn sq ft +28%",
+  "evidence": "slide: '263 Stores (31-Mar-26)', 214/263; '2.46 ... 28%'"
+ },
+ {
+  "news_id": "nse-106718579",
+  "symbol": "AHCL",
+  "where": "headline",
+  "sentence": "Anlon Healthcare Q1FY27 revenue rose 163% YoY to ₹87.62 Cr; PAT up 133% to ₹8.28 Cr",
+  "verdict": "RIGHT",
+  "reason": "Consolidated Total income 33.31 -> 87.62 (+163.02%), PAT 3.55 -> 8.28 (+133.13%); figure is total income, called revenue",
+  "evidence": "p2 table: Total Income 87.62, PAT 8.28"
+ },
+ {
+  "news_id": "nse-106818660",
+  "symbol": "HDFCLIFE",
+  "where": "headline",
+  "sentence": "HDFC Life Q2 PAT rises to ₹508 Cr; board approves ₹500 Cr NCD issue",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "p6 standalone Q2 PAT 50,800 lakh (Rs 508 Cr) vs 44,715 Sep-25; NCD up to Rs 500 crore (p1)"
+ },
+ {
+  "news_id": "nse-106627493",
+  "symbol": "VRLLOG",
+  "where": "point",
+  "sentence": "Profit after tax (PAT) for FY26 increased by 29% year-on-year to **₹237 Cr** from **₹183 Cr** in FY25.",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "p5-6 PAT FY26 237 vs FY25 183, +29%"
+ },
+ {
+  "news_id": "nse-106826083",
+  "symbol": "SWSOLAR",
+  "where": "headline",
+  "sentence": "SWSOLAR maintains 10% FY27 revenue growth guidance; Q4 expected to be strongest",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "'maintaining our guidance of up to 10% revenue growth for FY27'; 'Q4 to be our strongest'"
+ },
+ {
+  "news_id": "0148a4c9-459c-430e-ba54-d57a0d67c5b2",
+  "symbol": "BALUFORGE",
+  "where": "headline",
+  "sentence": "Balu Forge Q1FY27 revenue rose 29% YoY to ₹300.71 Cr; EBITDA margin fell to 28.2%",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "Revenue from ops 3,007 Mn (+29.0% YoY); EBITDA margin 28.2% vs 31.0%"
+ },
+ {
+  "news_id": "nse-106606152",
+  "symbol": "CENTRALBK",
+  "where": "headline",
+  "sentence": "Central Bank FY26 net profit rose 15.4% to ₹4,369 Cr; Q4 fell to ₹724 Cr on ₹632 Cr DTA hit",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "p2-3 FY26 net profit +15.43% to 4,369; Q4 724 vs 1,034 on Rs 632 Cr DTA impact"
+ },
+ {
+  "news_id": "440d503e-f842-4e2e-abdb-8b220cf00522",
+  "symbol": "SKFINDIA",
+  "where": "headline",
+  "sentence": "SKF India Q1FY27 revenue rose 27% YoY to ₹5.9 billion; guides FY27 growth near 20%",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "'revenue growth of 27% YoY with INR 5.9 billion'; 'range close to 20%' for the year"
+ },
+ {
+  "news_id": "1d36b5ce-0973-46cc-b79a-7bbe4b58b885",
+  "symbol": "HERITGFOOD",
+  "where": "headline",
+  "sentence": "Heritage Foods FY25 revenue rose 9% YoY to ₹4,134.6 Cr; PAT jumped 77% YoY to ₹188.3 Cr",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "p10 operating income 41,346 Mn +9%; PAT 1,883 Mn +77%"
+ },
+ {
+  "news_id": "nse-106657380",
+  "symbol": "CYIENT",
+  "where": "point",
+  "sentence": "Two earnout tranches over two years post-closing, tied to **EBITDA growth**; management incentive and retention is **under 5% of deal value**.",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "'2 earnouts across 2 years... EBITDA growth'; 'less than 5% of the overall deal value'"
+ },
+ {
+  "news_id": "nse-106639657",
+  "symbol": "PINELABS",
+  "where": "headline",
+  "sentence": "Pine Labs guides 21-23.5% revenue growth; FY26 PAT ₹113 Cr, up ₹258 Cr",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "FY26 PAT ~Rs 113 Cr, '+Rs 258 Cr YoY' (swung from loss); guidance 21-23.5%"
+ },
+ {
+  "news_id": "nse-106599932",
+  "symbol": "RELIANCE",
+  "where": "point",
+  "sentence": "Consumer segments drove **>55% of consolidated EBITDA** in FY26, supporting an **18% PAT growth** to **₹95,754 Cr**.",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "p7 '>55% consol. EBITDA'; PAT 95,754, 17.8% (slide says 18%)"
+ },
+ {
+  "news_id": "nse-106650869",
+  "symbol": "PINELABS",
+  "where": "point",
+  "sentence": "**FY2027 revenue growth** is guided at **21% to 23.5%** on a year-on-year basis.",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "'grow at about 21% to 23.5% on a year-on-year basis'"
+ },
+ {
+  "news_id": "nse-106633992",
+  "symbol": "JSWDULUX",
+  "where": "point",
+  "sentence": "**Volume growth of 23%** in FY26 was blended across decorative and industrial, while revenue grew **6.2%** as price and mix fell.",
+  "verdict": "WRONG",
+  "reason": "Volume +23% and revenue +6.2% are Q4 FY26 figures, not FY26",
+  "evidence": "p3: 'So coming to the performance of the quarter... record volume growth of 23%... we've had a 6.2% revenue growth'; call is 'Q4 FY26 Earnings Conference Call'"
+ },
+ {
+  "news_id": "nse-106734338",
+  "symbol": "TEXRAIL",
+  "where": "headline",
+  "sentence": "Texmaco Rail Q1FY27 EBITDA margin rose to 10.8% on cost optimization and Bright Power growth",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "EBITDA Rs 81 Cr on Rs 753 Cr = 10.8%; EBITDA flat YoY on lower revenue, cost optimization, Bright Power +76.8%"
+ },
+ {
+  "news_id": "nse-106713511",
+  "symbol": "AMBUJACEM",
+  "where": "point",
+  "sentence": "Trade sales share increased by **4 pp YoY** to **78%** during the quarter.",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "Q1FY26 74%, Q4FY26 74%, Q1FY27 78%; 'Trade Share up by 4 pp YoY'"
+ },
+ {
+  "news_id": "nse-106721245",
+  "symbol": "PERSISTENT",
+  "where": "point",
+  "sentence": "PAT increased 13.7% YoY to ₹4,830.4 million in Q1FY27, though PAT margin declined to 11.2% from 12.7% YoY",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "PAT 4,830.4 vs 4,249.4 (+13.7%); PAT margin 11.2% vs 12.7% in Q1FY26"
+ },
+ {
+  "news_id": "nse-106819864",
+  "symbol": "ANANDRATHI",
+  "where": "headline",
+  "sentence": "Anand Rathi Wealth Q2 PAT rises 22% YoY to ₹122 Cr on steady equity net inflows",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "Q2 FY27 net profit Rs 122 Cr, +22% YoY; net flows discussed (Rs 4,000 Cr in quarter)"
+ },
+ {
+  "news_id": "nse-106605519",
+  "symbol": "IDBI",
+  "where": "headline",
+  "sentence": "IDBI Bank FY26 net profit rises 27% to ₹9,513 Cr; GNPA falls to 2.32%",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "p2 FY26 net profit Rs 9,513 Cr, +27%; GNPA 2.32% from 2.98%"
+ },
+ {
+  "news_id": "nse-106622714",
+  "symbol": "HERITGFOOD",
+  "where": "point",
+  "sentence": "**Bulk fat sales** fell for FY26, while consumer fats (ghee, salted butter) grew 48% to near ₹300 Cr.",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "'bulk fats have declined by about 70%... Rs 125 Cr to Rs 38 Cr; consumer fats close to Rs 300 Cr, grown at 48%'"
+ },
+ {
+  "news_id": "nse-106607520",
+  "symbol": "HSCL",
+  "where": "point",
+  "sentence": "**FY28 PAT target:** management reaffirmed doubling FY25's **₹555 Cr** PAT to **₹1,100 Cr+** in FY28, and said FY27 will show top-line and bottom-line growth.",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "'FY25 PAT of INR 555 crores. Committed to double... FY28 to INR 1,100 plus crores'; FY27 top and bottom line growth"
+ },
+ {
+  "news_id": "nse-106641812",
+  "symbol": "IRCON",
+  "where": "headline",
+  "sentence": "Ircon guides FY27 revenue flat at ~₹9,000 Cr, standalone core EBITDA margin down to 4.0-4.2%",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "'guidance of 10-11,000 cr... sitting at about 9,000'; next year similar; standalone core EBITDA 4.0-4.2%"
+ },
+ {
+  "news_id": "nse-106608535",
+  "symbol": "NATIONALUM",
+  "where": "point",
+  "sentence": "**FY26 revenue** from operations rose 6.28% YoY to **₹17,843 Cr**, while **PAT** increased 9.22% YoY to **₹5,816 Cr**.",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "Revenue 16,788 to 17,843 (+6.28%); PAT 5,325 to 5,816 (+9.22%)"
+ },
+ {
+  "news_id": "nse-106818533",
+  "symbol": "TIPSMUSIC",
+  "where": "headline",
+  "sentence": "Tips Music Q2FY27 revenue rose 35% YoY to ₹120.1 Cr, but EBITDA margin fell 550 bps to 70.5%",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "p15 revenue 89.2 to 120.1 +35%; Op. EBITDA margin 76.0 to 70.5, -550 bps"
+ },
+ {
+  "news_id": "nse-106825370",
+  "symbol": "MARATHON",
+  "where": "headline",
+  "sentence": "Marathon Nextgen Q2 pre-sales ₹154 Cr, up 79% QoQ; adds ₹900 Cr GDV Versova, Sewri projects",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "Release title 'Pre-sales Up 79% QoQ'; pre-sales Rs 154 Cr; Versova and Sewri GDV Rs 900 Cr"
+ },
+ {
+  "news_id": "nse-106650438",
+  "symbol": "CYIENT",
+  "where": "point",
+  "sentence": "The deal comprises an upfront payment of **USD 130 million** (~60% of total) and two earnout tranches across **2 years** linked to EBITDA growth.",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "'Upfront ($130M, ~60%)... 2 Earnout tranches across 2 years... EBITDA growth'"
+ },
+ {
+  "news_id": "nse-106622418",
+  "symbol": "BETA",
+  "where": "point",
+  "sentence": "Net profit dropped to **₹41.5 Cr** from ₹42.4 Cr in FY25 due to interest on CCDs; normalized profit without CCD interest was **₹48 Cr**.",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "'Net profit INR 41.5 Crs vs 42.4 Crs in FY25... CCDs... would have been 48 crores'"
+ },
+ {
+  "news_id": "28cecc26-5dcf-4bf1-9a50-8bb15be45952",
+  "symbol": "JUBLPHARMA",
+  "where": "point",
+  "sentence": "Normalised PAT rose 48% YoY to ₹103 Cr in Q1FY26",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "'Normalised PAT grew by 48% to Rs. 103 Cr' Q1 FY26"
+ },
+ {
+  "news_id": "nse-106824679",
+  "symbol": "NAM-INDIA",
+  "where": "headline",
+  "sentence": "Nippon Life India Q2 revenue rises 21% YoY to ₹796 Cr; PAT up 2% to ₹324 Cr",
+  "verdict": "WRONG",
+  "reason": "PAT fell YoY, not up 2%; revenue +21% is right",
+  "evidence": "Consolidated PAT 324.37 vs 344.64 (Sep-25); release: 'Q2 FY27 PROFIT AFTER TAX AT INR 3.24 BN: -6% YoY'; revenue 795.75 vs 658.12"
+ },
+ {
+  "news_id": "nse-106636236",
+  "symbol": "PITTIENG",
+  "where": "point",
+  "sentence": "**Q4 drag:** About **₹20 Cr** of export sales slipped on March energy and container issues; Q1FY27 will stay slow, not worse than Q4.",
+  "verdict": "RIGHT",
+  "reason": "Matches filing",
+  "evidence": "'around INR20-odd crores of sales have not taken place' (containers, March); 'will not be worse than Q4'"
+ },
+ {
+  "news_id": "a7ba6e2e-0412-4530-82e7-6f1752c76a66",
+  "symbol": "JUBLPHARMA",
+  "where": "point",
+  "sentence": "**Radiopharma revenue:** Expected to more than double by FY30 to ₹952 Cr, EBITDA margin >50%",
+  "verdict": "WRONG",
+  "reason": "Rs 952 Cr is the FY24 base; FY30 is 'more than 2x of FY24', so over ~Rs 1,900 Cr",
+  "evidence": "p21 radiopharma slide: FY23 Rs 872 Cr/53%; FY24 Rs 952 Cr/50%; FY30 'Revenue: More than 2x of FY24, EBITDA margin more than 50%'"
+ },
+ {
+  "news_id": "nse-106612826",
+  "symbol": "APOLLOPIPE",
+  "where": "point",
+  "sentence": "FY26 sales volume rose 4% to **1,03,752 MT** while revenue fell 6% to **₹1,104.9 Cr**",
+  "verdict": "RIGHT",
+  "reason": "FY26 consolidated glance matches",
+  "evidence": "p8: Rs 1,104.9 Cr revenue 6% YoY decrease; 1,03,752 MT sales volume 4% YoY increase"
+ },
+ {
+  "news_id": "9531823c-8413-4d7f-a647-8c46b73feb2e",
+  "symbol": "SKFINDIA",
+  "where": "headline",
+  "sentence": "SKF India Q1FY27 revenue rose 27.1% YoY to ₹5,878 mn; EBITDA margin 17.1%",
+  "verdict": "RIGHT",
+  "reason": "Matches results table",
+  "evidence": "p8: Revenue 4,625 -> 5,878, 27.1% YoY; EBITDA % 17.1%"
+ },
+ {
+  "news_id": "nse-106826083",
+  "symbol": "SWSOLAR",
+  "where": "point",
+  "sentence": "Management maintained **FY27 revenue growth guidance** at up to **10%**, despite a transitionary H1 where revenue fell 11% YoY.",
+  "verdict": "RIGHT",
+  "reason": "Guidance up to 10% kept; H1 revenue ~11% lower",
+  "evidence": "Transcript: 'about 11% lower than H1 FY26'; 'maintaining our guidance of up to 10% revenue growth for FY27'"
+ },
+ {
+  "news_id": "0148a4c9-459c-430e-ba54-d57a0d67c5b2",
+  "symbol": "BALUFORGE",
+  "where": "point",
+  "sentence": "**EBITDA margin** fell to **28.2%** from 31.0% a year ago, even as EBITDA rose 17.3% YoY to **₹84.77 Cr**.",
+  "verdict": "RIGHT",
+  "reason": "EBITDA 848 Mn = 84.8 Cr, +17.3%; margin 28.2% vs 31.0%",
+  "evidence": "p5: EBITDA 848 vs 723, 17.3%; margin 28.2% vs 31.0% (84.77 not printed, rounding only)"
+ },
+ {
+  "news_id": "nse-106605961",
+  "symbol": "NATIONALUM",
+  "where": "point",
+  "sentence": "**Full-year FY26 PAT** increased **9.22% YoY** to **₹5,816 Cr** from ₹5,325 Cr in FY25.",
+  "verdict": "RIGHT",
+  "reason": "PAT 5,816 vs 5,325, +9.22%",
+  "evidence": "p9: PAT 5,816 | 5,325 | 9.22 (Rs Crore)"
+ },
+ {
+  "news_id": "440d503e-f842-4e2e-abdb-8b220cf00522",
+  "symbol": "SKFINDIA",
+  "where": "point",
+  "sentence": "Revenue grew **27% YoY** to **₹5.9 billion**, while it was **minus 1% QoQ**",
+  "verdict": "RIGHT",
+  "reason": "Transcript states these figures",
+  "evidence": "'revenue growth of 27% YoY with INR 5.9 billion revenue, while it was minus 1% QoQ'"
+ },
+ {
+  "news_id": "1d36b5ce-0973-46cc-b79a-7bbe4b58b885",
+  "symbol": "HERITGFOOD",
+  "where": "point",
+  "sentence": "FY25 PAT rose **77% YoY to ₹188.3 Cr**; Q4FY25 PAT fell **6% YoY to ₹38.2 Cr** after an **₹8.7 Cr exceptional item**",
+  "verdict": "RIGHT",
+  "reason": "FY25 PAT 1,883 mn +77%; Q4 382 vs 405 mn -6%; exceptional 87 mn",
+  "evidence": "Consolidated P&L: Exceptional Item 87; Profit After Tax 1,883 / 1,066 77%; 382 / 405 (6)%"
+ },
+ {
+  "news_id": "nse-106621537",
+  "symbol": "JSWDULUX",
+  "where": "headline",
+  "sentence": "JSW Dulux Q4 revenue ₹883 Cr, up 6% on like-for-like basis; PAT ₹126 Cr, up 52%",
+  "verdict": "WRONG",
+  "reason": "PAT +52% is only on the excl. carved-out basis; reported PAT +16% (108.4 -> 125.7) and reported revenue -13% (1,014.4 -> 883.3). Headline presents +52% unqualified",
+  "evidence": "p9: PAT 82.9->125.7 52% (excl carved-out); p10 reported: PAT 108.4->125.7 16%, Revenue -13%"
+ },
+ {
+  "news_id": "nse-106639657",
+  "symbol": "PINELABS",
+  "where": "point",
+  "sentence": "**FY26 revenue ₹2,711 Cr**, up 19% YoY; **adjusted EBITDA ₹559 Cr**, up 57%, margin 21% versus 16%",
+  "verdict": "RIGHT",
+  "reason": "Revenue 2,274->2,711 (+19%); adj EBITDA 357->559 (+57%); margin 21% vs 16%",
+  "evidence": "p12 charts: Revenue 2,274/2,711, Adj EBITDA 357/559, margin 16%/21%; p6 '19% YoY','57% YoY'"
+ },
+ {
+  "news_id": "nse-106651120",
+  "symbol": "SSWL",
+  "where": "headline",
+  "sentence": "Steel Strips Wheels FY26 revenue rose 17% to ₹5,183 Cr; EBITDA margin fell to 9.9%",
+  "verdict": "RIGHT",
+  "reason": "Standalone FY26 revenue 5,183 +17%; EBITDA margin 11.0% -> 9.9%",
+  "evidence": "p22: 4,429 -> 5,183 +17.0%; EBITDA margins 11.0% / 9.9%"
+ },
+ {
+  "news_id": "nse-106649473",
+  "symbol": "AEGISLOG",
+  "where": "point",
+  "sentence": "**Liquid division EBITDA** fell 5% to **₹472 Cr** in FY26 even as its revenue rose to **₹644 Cr** from ₹650 Cr.",
+  "verdict": "WRONG",
+  "reason": "Liquid division revenue fell (650 -> 644), not rose; EBITDA 498->472 is -5%",
+  "evidence": "p7/p20: Liquids Revenue FY25 650, FY26 644; EBITDA 498 -> 472"
+ },
+ {
+  "news_id": "nse-106655250",
+  "symbol": "AXISCADES",
+  "where": "point",
+  "sentence": "**FY26 consolidated revenue** reached **₹1,159 crores**, up **12.4% YoY**, with EBITDA rising **24.6%** to **₹178 crores**.",
+  "verdict": "RIGHT",
+  "reason": "Transcript states these figures",
+  "evidence": "'Revenue was at 1,159 crores (12.4% growth year-on-year), and EBITDA was at 178 crores (24.6% growth)'"
+ },
+ {
+  "news_id": "nse-106623862",
+  "symbol": "ABDL",
+  "where": "headline",
+  "sentence": "ABD FY26 EBITDA up 25.8% to ₹568 Cr, PAT up 13%; Q4 PAT fell 52.1% to ₹38 Cr",
+  "verdict": "RIGHT",
+  "reason": "Matches press release table",
+  "evidence": "p2: EBITDA 568 vs 451 +25.8%; PAT 220 vs 195 +13.0%; Q4 PAT 38 vs 79 -52.1%"
+ },
+ {
+  "news_id": "nse-106645499",
+  "symbol": "LGEINDIA",
+  "where": "point",
+  "sentence": "**FY27 guidance:** mid-teen revenue growth and early double-digit EBITDA margins, better than FY26's 9.8%.",
+  "verdict": "RIGHT",
+  "reason": "Guidance and FY26 margin match",
+  "evidence": "'FY27 targeting mid-teen revenue growth and early double-digit EBITDA margins'; FY26 EBITDA margin 9.8%"
+ },
+ {
+  "news_id": "1baf7eb0-6507-4f22-a5b1-ac18f9e156a9",
+  "symbol": "EXXARO",
+  "where": "point",
+  "sentence": "**Power & fuel** cost jumped to **₹37.24 Cr** from ₹25.20 Cr YoY, and other expenses rose to ₹5.71 Cr from ₹6.27 Cr.",
+  "verdict": "RIGHT",
+  "reason": "Consolidated Q1FY27 vs Q1FY26 (scanned page, read from image)",
+  "evidence": "p6: Power & Fuel 3,724.31 vs 2,519.53 lakh; Other expenses 570.54 vs 626.96 lakh"
+ },
+ {
+  "news_id": "nse-106619323",
+  "symbol": "ARIS",
+  "where": "headline",
+  "sentence": "Arisinfra FY26 revenue rises 39% to ₹1,068 Cr; EBITDA doubles to ₹101 Cr",
+  "verdict": "RIGHT",
+  "reason": "Revenue +39% to 1,068; EBITDA doubled to 101",
+  "evidence": "Transcript: 'revenue 1,068 crores, growth of 39%. EBITDA doubled year-on-year to INR 101 crores'"
+ },
+ {
+  "news_id": "nse-106605519",
+  "symbol": "IDBI",
+  "where": "point",
+  "sentence": "Full-year **net profit** grew 27% to **₹9,513 Cr**, while total business crossed the **₹6 Trillion** mark.",
+  "verdict": "RIGHT",
+  "reason": "Press release",
+  "evidence": "p1: 'Net Profit surges to Rs 9,513 Crore for FY26, growth of 27%'; 'Total business crossed Rs 6 Trillion'"
+ },
+ {
+  "news_id": "nse-106639013",
+  "symbol": "JTEKTINDIA",
+  "where": "point",
+  "sentence": "**FY26 sales grew 11%** against 9% passenger-vehicle market growth; **Maruti Suzuki's share rose to 60% from 56%**, Honda fell to 5% from 8%.",
+  "verdict": "RIGHT",
+  "reason": "Transcript states these",
+  "evidence": "'sales growth of 11% compared to PV market growth of 9%'; 'Maruti Suzuki went up from 56% to 60%. Honda declined from 8% to 5%'"
+ },
+ {
+  "news_id": "nse-106632500",
+  "symbol": "ALLCARGO",
+  "where": "point",
+  "sentence": "Full-year FY26 consolidated revenue rose **5%** YoY to **₹2,058 Cr** with EBITDA growing **16%** to **₹233 Cr**.",
+  "verdict": "RIGHT",
+  "reason": "Consolidated FY26",
+  "evidence": "'revenue INR2,058 crores, growth of 5%; EBITDA INR233 crores, growth of 16%'"
+ },
+ {
+  "news_id": "nse-106608542",
+  "symbol": "UNIECOM",
+  "where": "headline",
+  "sentence": "Unicommerce FY26 revenue rose 51.6% YoY to ₹204.3 Cr; adjusted EBITDA up 54.5% to ₹43.9 Cr",
+  "verdict": "RIGHT",
+  "reason": "Transcript",
+  "evidence": "'Revenue grew 51.6% to INR204.3 crores. Adjusted EBITDA grew 54.5% to INR43.9 crores'"
+ },
+ {
+  "news_id": "nse-106610480",
+  "symbol": "DCW",
+  "where": "point",
+  "sentence": "**Specialty Chemicals EBITDA fell 5%** in FY26, margin **29.7%** against **35.3%**, on a sharp fall in **CPVC net realisations**.",
+  "verdict": "RIGHT",
+  "reason": "Release states segment EBITDA de-grew 5%, margin 29.7% vs 35.3%",
+  "evidence": "'Specialty Chemicals EBITDA de-grew by 5%, with margins at 29.7% down from 35.3%. sharp fall in CPVC net realisations'"
+ },
+ {
+  "news_id": "nse-106818511",
+  "symbol": "TIPSMUSIC",
+  "where": "point",
+  "sentence": "PAT grew **23% YoY to ₹65.5 Cr**, but PAT margin slipped to 54.6% from 59.6% a year ago.",
+  "verdict": "RIGHT",
+  "reason": "Q2 FY27 PAT 65.5 vs 53.2 +23%; margin 54.6% vs 59.6%",
+  "evidence": "p2 table: PAT 65.5 53.2 23%; PAT Margin 54.6% 59.6%"
+ },
+ {
+  "news_id": "nse-106825370",
+  "symbol": "MARATHON",
+  "where": "point",
+  "sentence": "Residential pre-sales grew **70% QoQ**; affordable and mid-income rose **155%**, Monte South **16%**.",
+  "verdict": "RIGHT",
+  "reason": "Matches CMD quote",
+  "evidence": "p2: 'pre-sales growing 70% QoQ ... affordable and mid-income 155% ... Monte South 16%'"
+ },
+ {
+  "news_id": "nse-106730597",
+  "symbol": "CLEANMAX",
+  "where": "point",
+  "sentence": "**Profit after tax** reached **₹55 crores** for the first quarter of FY27, driven by doubled revenues, improved EBITDA margins, and lower interest costs.",
+  "verdict": "RIGHT",
+  "reason": "Transcript",
+  "evidence": "'profit after tax, which was at INR55 crores ... doubling of revenues ...'"
+ },
+ {
+  "news_id": "6a904edb-ae1c-4e19-b14e-056ebfe9f73d",
+  "symbol": "LTM",
+  "where": "point",
+  "sentence": "**Forex** swung to a **₹207 Cr loss** from a ₹65 Cr gain in Q2FY26, and other income fell to ₹298 Cr from ₹235 Cr.",
+  "verdict": "WRONG",
+  "reason": "Forex figures right (Q2FY26 +652 mn, Q2FY27 -2,067 mn) but other income ROSE to 298 Cr from 235 Cr, not fell",
+  "evidence": "p40 income statement: Other Income Q2FY26 2,352; Q2FY27 2,982 (INR mn)"
+ },
+ {
+  "news_id": "nse-106620189",
+  "symbol": "DCW",
+  "where": "point",
+  "sentence": "Specialty EBITDA fell 6.5% to ₹177 Cr as **C-PVC realisations dropped 22%** with no matching fall in PVC input prices.",
+  "verdict": "RIGHT",
+  "reason": "Transcript",
+  "evidence": "'annual EBITDA Rs.177 crores for specialty as against Rs.189 crores, de-growth by 6.5%'; 'reduction in NR by 22% in C-PVC with no commensurate reduction in PVC input prices'"
+ },
+ {
+  "news_id": "nse-106824679",
+  "symbol": "NAM-INDIA",
+  "where": "point",
+  "sentence": "Net profit rose only 2% YoY to **₹324.37 Cr** due to a **₹96.76 Cr** exceptional item",
+  "verdict": "WRONG",
+  "reason": "Q2 FY27 net profit 324.37 Cr FELL ~6% YoY (344.64 prior year), not rose 2%; exceptional item 96.76 Cr correct",
+  "evidence": "Consolidated results: Net profit 324.37 | 503.70 | 344.64; release: 'PAT INR 3.24 BN: -6% YoY'"
+ },
+ {
+  "news_id": "nse-106647409",
+  "symbol": "ZOTA",
+  "where": "headline",
+  "sentence": "Zota Health Care FY26 revenue rose 84% YoY to ₹539 Cr; EBITDA turns positive to ₹26 Cr",
+  "verdict": "RIGHT",
+  "reason": "Consol revenue 53,865 lakh +83.86%; EBITDA 2,597 lakh vs negative",
+  "evidence": "Transcript p4: 'robust Y-o-Y growth of 83.86%'; 'positive EBITDA INR 2,597 lakhs compared to negative in FY25'"
+ },
+ {
+  "news_id": "nse-106644483",
+  "symbol": "AXISCADES",
+  "where": "point",
+  "sentence": "FY26 EBITDA rose 24.6% to **₹178 Cr**; margin expanded about **150 bps** to 15.3% on better mix and operating leverage.",
+  "verdict": "RIGHT",
+  "reason": "Press release",
+  "evidence": "p2: EBITDA Rs 178 Cr +24.6%; margin 15.3% +150 bps"
+ }
+]

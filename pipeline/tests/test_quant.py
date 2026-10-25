@@ -767,3 +767,22 @@ def test_a_share_stated_as_a_percentage_of_a_fraction_formula_is_verified():
                  filing).items[0]["check"] == "MISMATCH"
     assert check(estimate(label="x", formula="top_customer / revenue", inputs=inputs, result=51.3, unit="INR_CR"),
                  filing).items[0]["check"] == "MISMATCH"
+
+
+def test_the_results_table_survives_a_quarter_worked_out_from_the_half_year():
+    """A quarter's EBITDA memory holds only as the half year less the first quarter is stored flat with no date; the
+    two-definitions check read its date and raised, so the whole table failed (full on/off run, 25 Oct 2026)."""
+    from bse_intel.dossier import results_snapshot
+
+    def src(news_id, value):
+        return {"news_id": news_id, "value": value, "as_of": "2026-10-23T18:00:00+05:30", "basis": "CONSOLIDATED"}
+
+    dossier = {"financial_metrics": [
+        {"metric": "revenue", "period": "Q2FY27", "value": 500.0, "sources": [src("n2", 500.0)]},
+        {"metric": "ebitda", "period": "H1FY27", "value": 180.0, "sources": [src("n2", 180.0)]},
+        {"metric": "ebitda", "period": "Q1FY27", "value": 80.0, "sources": [src("n1", 80.0)]},
+        {"metric": "pat", "period": "Q2FY27", "value": 60.0, "sources": [src("n2", 60.0)]},
+        {"metric": "pat", "period": "Q2FY26", "value": 50.0, "sources": [src("n0", 50.0)]},
+    ]}
+    snap = results_snapshot(dossier, "n2")
+    assert snap["ebitda"]["value"] == 100.0 and "value" in snap["ebitda"]["derived"]

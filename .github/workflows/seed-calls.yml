@@ -46,8 +46,9 @@ jobs:
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       DISCOVERY_SOURCE: nse
-      # the prepaid DeepSeek (D24) only here, never in pipeline.yml; without the secret the seed stays on the free models
-      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      # the prepaid DeepSeek (D24) is kept for the next phase (owner, 25 Oct 2026: "stop DeepSeek from regular job"): no
+      # key here, so the seed stays on the free models. Put `${{ secrets.DEEPSEEK_API_KEY }}` back to use it again.
+      DEEPSEEK_API_KEY: ''
       GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
       GROQ_API_KEY_2: ${{ secrets.GROQ_API_KEY_2 }}
       MISTRAL_API_KEY_2: ${{ secrets.MISTRAL_API_KEY_2 }}

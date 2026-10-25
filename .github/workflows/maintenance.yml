@@ -17,7 +17,13 @@
 #   today ... except where AI is required"): shareholding patterns for the last `days` (two quarters at 110), governance
 #   reports (two quarters), a year of pledge events, DGTR's case lists; then the seed passes start. Not the annual-report
 #   catch-up: its XBRL feeds an AI re-run of the report.
-# None calls an AI model; seed-memory and fill-memory read NSE. It runs beside the pipeline (its own concurrency group:
+# - memory-gaps: reads every universe company's memory (no NSE, no writes) and counts the quarters (last 8 past their
+#   filing deadline) lacking an NSE-XBRL revenue or PAT, and whether the year-ago quarter of the latest is there; the JSON
+#   and CSV go up as the artifact `memory-gaps`. memory-gaps-fill: the same, then the seed's results step for the companies
+#   with gaps only, in four shards (job `gaps`, 5 h, resumes by itself: a company already tried is not tried again;
+#   `restart` tries them all again), and the before / after counts. It reads NSE like seed-memory and shares its group,
+#   so it never runs beside a seed pass; do not start it while a seed pass is queued (the group keeps one waiting run).
+# None calls an AI model; seed-memory, memory-gaps-fill and fill-memory read NSE. It runs beside the pipeline (its own concurrency group:
 # a shared one would cancel a pending pipeline run); fill-memory pauses the AI pipeline while it writes memory.
 name: Maintenance
 
@@ -27,7 +33,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -38,7 +44,7 @@ on:
         type: string
         default: ''
       restart:
-        description: seed-memory only - start again from the first company
+        description: seed-memory only - start again from the first company; memory-gaps-fill - try the companies an earlier pass tried
         type: boolean
         default: false
       days:
@@ -60,7 +66,7 @@ concurrency:
 
 jobs:
   run:
-    if: inputs.command != 'seed-memory'
+    if: inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -113,6 +119,19 @@ jobs:
         run: |
           "$RUNNER_TEMP/venv/bin/pip" install -q "requests>=2.31"
           "$RUNNER_TEMP/venv/bin/python" scripts/bse_results_test.py /tmp/bse_results.json
+      - name: Memory gaps (reads only)
+        if: inputs.command == 'memory-gaps'
+        run: |
+          code=0
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel memory-gaps --json "$RUNNER_TEMP/memory-gaps.json" --csv "$RUNNER_TEMP/memory-gaps.csv" || code=$?
+          mkdir -p "$RUNNER_TEMP/gaps" && cp "$RUNNER_TEMP"/memory-gaps.* "$RUNNER_TEMP/gaps/" || true
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'memory-gaps'
+        with:
+          name: memory-gaps
+          path: ${{ runner.temp }}/gaps/
+          if-no-files-found: ignore
       - name: Failed filings by reason (reads only)
         if: inputs.command == 'failed-report'
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel failed-report'
@@ -264,6 +283,75 @@ jobs:
         run: |
           if [ -n "$(ls -A more 2>/dev/null)" ]; then
             gh workflow run maintenance.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f command=seed-memory -f restart=false
+            echo "next pass started for shards: $(ls more | tr '\n' ' ')"
+          else
+            echo "every shard finished its companies"
+          fi
+
+  # Fills the gaps memory-gaps finds: the seed's results step (NSE XBRL, no AI) for the companies with gaps only. Four
+  # runners, so four addresses, each pacing its own NSE calls and taking every fourth company with gaps; each saves the
+  # companies it tried (kv memgaps:fill_tried:<i>of4), so a pass that ends on its time budget (exit 124) resumes next time.
+  # NSE refusing the session (exit 75) fails the shard and starts nothing more.
+  gaps:
+    if: inputs.command == 'memory-gaps-fill'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 320
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: Fill this shard's gaps
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/gaps" "$RUNNER_TEMP/more"
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel memory-gaps --fill --shard ${{ matrix.shard }}/4 --time-budget 17400 ${{ inputs.restart && '--restart' || '' }} --json "$RUNNER_TEMP/gaps/memory-gaps-${{ matrix.shard }}.json" --csv "$RUNNER_TEMP/gaps/memory-gaps-${{ matrix.shard }}.csv" || code=$?
+          if [ "$code" -eq 124 ]; then echo more > "$RUNNER_TEMP/more/${{ matrix.shard }}"; elif [ "$code" -ne 0 ]; then exit "$code"; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: memory-gaps-fill-${{ matrix.shard }}
+          path: ${{ runner.temp }}/gaps/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gaps-more-${{ matrix.shard }}
+          path: ${{ runner.temp }}/more/
+          if-no-files-found: ignore
+
+  gaps-next:
+    needs: gaps
+    if: always() && inputs.command == 'memory-gaps-fill'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        continue-on-error: true   # no artifact at all: every shard finished
+        with:
+          pattern: gaps-more-*
+          path: more
+          merge-multiple: true
+      - name: Start the next pass while any shard has companies left
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -n "$(ls -A more 2>/dev/null)" ]; then
+            gh workflow run maintenance.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f command=memory-gaps-fill -f restart=false
             echo "next pass started for shards: $(ls more | tr '\n' ' ')"
           else
             echo "every shard finished its companies"

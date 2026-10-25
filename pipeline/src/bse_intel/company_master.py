@@ -25,6 +25,8 @@ import logging
 import re
 from dataclasses import dataclass, field
 
+from .dossier import section_label
+
 log = logging.getLogger(__name__)
 
 # NSE's index constituent lists (static files on nsearchives), each with an Industry column per ISIN
@@ -131,6 +133,7 @@ def _keep_former_name(sink, scrip: str, old: str, now: str) -> None:
     names = identity.setdefault("former_names", [])
     if not any(_same_name(old, n) for n in names):
         names.append(old)
+        section_label(dossier, "former_names", now)   # the exchange's own master list (memory label: file)
         dossier["updated_at"] = now
         sink.put_dossier(scrip, dossier)
 

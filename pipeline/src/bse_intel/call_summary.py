@@ -14,7 +14,8 @@ from __future__ import annotations
 import re
 from datetime import date
 
-from .dossier import _deal_history
+from .dossier import _deal_history, label
+from .timeutil import now_iso
 from .periods import due_date, quarter_index
 from .signals import stated_net_debt
 
@@ -143,7 +144,9 @@ def remember_call_points(dossier: dict, news_id: str, filed_at: str, takeaways) 
         get = t.get if isinstance(t, dict) else lambda k, d=None, t=t: getattr(t, k, d)   # a stored card's, or a model's
         if get("verified", False) and get("text"):
             kept.append({"news_id": news_id, "date": _day(filed_at), "category": get("category") or "Other",
-                         "text": get("text"), **({"versus_prior": get("versus_prior")} if get("versus_prior") else {})})
+                         "text": get("text"), **({"versus_prior": get("versus_prior")} if get("versus_prior") else {}),
+                         # what the call said, as our AI read it and our checks passed; no page or quote yet (memory label)
+                         "lab": label("ai", "call", now_iso(), ok=True)})
     kept.sort(key=lambda p: p.get("date") or "", reverse=True)
     dossier["call_points"] = kept[:CALL_POINTS_KEPT]
 

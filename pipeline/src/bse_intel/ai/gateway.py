@@ -252,6 +252,7 @@ class AIGateway:
         self.provider_quota: dict[str, QuotaCounter] = {}
         self.usage: dict[str, Usage] = {}
         self.disabled: dict[str, str] = {}
+        self.unavailable_at_start: dict[str, str] = {}   # target key -> why it cannot be called at all (no key / URL)
         self.disabled_providers: dict[str, str] = {}   # a rejected key disables every model on it
         self._failures: dict[str, int] = {}
         self._rate_hits: dict[str, int] = {}
@@ -308,6 +309,11 @@ class AIGateway:
                 if pconf is None:
                     raise ValueError(f"route {route} references unknown provider {entry['provider']}")
                 base_url = _interpolate(pconf["base_url"], env)
+                reason = None
+                if not base_url:
+                    reason = f"not configured: base_url {pconf['base_url']} has an unset variable"
+                elif not (env.get(pconf["api_key_env"]) or "").strip():
+                    reason = f"not configured: {pconf['api_key_env']} is not set"
                 target = Target(
                     route=route,
                     provider=entry["provider"],
@@ -328,6 +334,8 @@ class AIGateway:
                 if prefer and target.key == prefer and target.api_key:
                     target.weight *= PREFER_WEIGHT
                 targets.append(target)
+                if reason:
+                    self.unavailable_at_start[target.key] = reason
                 if target.key not in self.limiters:
                     limits = Limits.from_config(entry.get("limits"))
                     scaled = limits.scaled(self.ceiling)
@@ -349,6 +357,10 @@ class AIGateway:
                 for t in targets:
                     t.spare = False
             self.routes[route] = targets
+            down = [f"{t.key} ({self.unavailable_at_start[t.key]})" for t in targets
+                    if not t.spare and t.key in self.unavailable_at_start]
+            if down:  # one line a route, only when a primary cannot be called (the DeepSeek gap of run 40192588628)
+                log.info("gateway %s: primary targets unavailable: %s", route, ", ".join(down))
             if strategies.get(route) == "weighted":
                 self._rotations[route] = _WeightedRotation([t for t in targets if not t.spare])
 
@@ -573,7 +585,10 @@ class AIGateway:
                     outcomes.append((target.key, TRANSIENT, "paced"))
                     continue
                 try:
-                    return self._call_target(target, messages, schema, est, extra)
+                    result = self._call_target(target, messages, schema, est, extra)
+                    if outcomes:  # off its first choice: say which targets were passed over and why (TODO 33)
+                        log.info("%s", _fallback_line(route, target.key, outcomes))
+                    return result
                 except _Retryable as exc:
                     kind = TRANSIENT if exc.transient else FAILED
                     outcomes.append((target.key, kind, str(exc)))
@@ -651,6 +666,11 @@ class AIGateway:
                 # An outage, not a problem with the filing: fail over, and if nothing else can
                 # serve it the filing waits for a later run without losing an attempt.
                 self._note_failure(target, f"{type(exc).__name__}: {exc}")
+                if isinstance(exc, openai.APITimeoutError):  # httpx logs only responses that arrive (TODO 33)
+                    limit = float(kwargs.get("timeout", target.timeout))
+                    elapsed = time.monotonic() - started
+                    log.warning("gateway call timed out: %s after %.0f s (limit %.0f s)", target.key, elapsed, limit)
+                    raise _Retryable(f"timeout after {limit:.0f}s", transient=True) from exc
                 raise _Retryable(type(exc).__name__, transient=True) from exc
             except openai.APIStatusError as exc:
                 if exc.status_code == 410:  # the provider retired the model
@@ -730,6 +750,13 @@ class AIGateway:
 _JSON_MODE_UNSUPPORTED = re.compile(r"response_format.*(?:not supported|unsupported|invalid|unknown)|"
                                     r"(?:not supported|unsupported|unknown).*response_format|json_object.*not supported",
                                     re.I | re.S)
+
+
+def _fallback_line(route: str, served: str, outcomes: list[tuple[str, str, str]], max_reason: int = 80) -> str:
+    """One line for a request that was not served by its first-choice target (TODO 33)."""
+    passed = ", ".join(
+        f"{key} ({kind}: {' '.join(str(detail).split())[:max_reason]})" for key, kind, detail in outcomes)
+    return f"gateway {route}: served by {served} after {passed}"
 
 
 class _Retryable(Exception):

@@ -465,7 +465,7 @@ def apply_orders(card, found: list[Order]) -> list[str]:
     if deal is None:
         card.deal_value = DealValue(kind="ORDER" if order.received else "OTHER", amount_cr=order.amount_cr,
                                     counterparty=order.counterparty, includes_gst=order.includes_gst,
-                                    execution_by=order.execution_by)
+                                    execution_by=order.execution_by, amount_by="file")
         return [f"deal: ₹{order.amount_cr:g} Cr from the event XBRL"]
     if deal.amount_cr is None or abs(deal.amount_cr - order.amount_cr) > max(0.01, 0.005 * order.amount_cr):
         notes.append(f"deal amount {deal.amount_cr} -> {order.amount_cr:g} Cr (event XBRL)")
@@ -480,6 +480,7 @@ def apply_orders(card, found: list[Order]) -> list[str]:
         deal.execution_by = order.execution_by
     if order.received and deal.kind == "OTHER":
         deal.kind = "ORDER"
+    deal.amount_by = "file"   # the amount now equals the event file's: memory labels it so
     return notes
 
 

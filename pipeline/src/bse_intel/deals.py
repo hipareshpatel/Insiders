@@ -25,8 +25,8 @@ from types import SimpleNamespace
 
 from . import nse as nse_api
 from . import universe
-from .dossier import new_dossier
-from .timeutil import today_ist
+from .dossier import new_dossier, section_label
+from .timeutil import now_iso, today_ist
 
 log = logging.getLogger(__name__)
 
@@ -91,6 +91,7 @@ def merge(dossier: dict, events: list[dict]) -> int:
             new.append(e)
     if new:
         box["events"] = sorted(box.get("events", []) + new, key=lambda e: (e["date"], e["kind"], e.get("client") or ""))[-MAX_EVENTS:]
+        section_label(dossier, "market_deals", now_iso())   # NSE's own deals feed (memory label: file)
     return len(new)
 
 

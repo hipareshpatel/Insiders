@@ -93,7 +93,8 @@ def test_merge_stamps_provenance_and_is_idempotent():
     d1 = merge(d0, out, filing("n1", Q1), "HIGH", "now")
     (metric,) = d1["financial_metrics"]
     assert metric == {"metric": "revenue", "period": "Q1FY27", "value": 110.5, "unit": "INR_CR", "yoy_pct": None,
-                      "qoq_pct": None, "as_of": Q1, "source_news_id": "n1"}
+                      "qoq_pct": None, "as_of": Q1, "source_news_id": "n1",
+                      "lab": {"by": "ai", "doc": "results", "unit": "INR_CR", "at": "now", "ok": True}}
     assert d1["timeline"][0]["news_id"] == "n1"
     assert d0["financial_metrics"] == []  # input not mutated
     d2 = merge(d1, out, filing("n1", Q1), "HIGH", "now")

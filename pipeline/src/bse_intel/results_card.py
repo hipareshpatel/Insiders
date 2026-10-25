@@ -326,7 +326,8 @@ def _net_of_excise(tagged):
     yoy = None
     if then_rev is not None and then_exc is not None and then_rev - then_exc > 0:
         yoy = round((net / (then_rev - then_exc) - 1) * 100, 1)
-    return FinancialMetric(metric="revenue_net_excise", period=tagged.period, value=net, yoy_pct=yoy)
+    return FinancialMetric(metric="revenue_net_excise", period=tagged.period, value=net, yoy_pct=yoy, by="calc",
+                           derived_from=[f"revenue:{tagged.period}", f"excise_duty:{tagged.period}"])
 
 
 _AMOUNT = re.compile(r"\d[\d,]*\.\d+|\d{1,3}(?:,\d{2,3})+|\d{3,}")

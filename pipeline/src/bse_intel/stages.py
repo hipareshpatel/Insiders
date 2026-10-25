@@ -7,6 +7,7 @@ filing's total. The same stage inside itself (a retry wrapper, a nested call) is
 
 from __future__ import annotations
 
+import functools
 import threading
 import time
 from contextlib import contextmanager
@@ -63,3 +64,14 @@ def count(name: str) -> None:
     times = getattr(_local, "times", None)
     if times is not None:
         times[name] = times.get(name, 0.0) + 1
+
+
+def timed(name: str):
+    """A function whose whole run counts toward stage `name` (the same rules as `stage`)."""
+    def wrap(fn):
+        @functools.wraps(fn)
+        def inner(*args, **kwargs):
+            with stage(name):
+                return fn(*args, **kwargs)
+        return inner
+    return wrap

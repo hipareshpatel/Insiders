@@ -626,3 +626,61 @@ def test_a_backfill_pack_is_not_held_for_models_kept_for_live_filings(make_gatew
     gw, _ = _reserve_gateway(make_gateway, used=3, hour=15)
     gw.routes["only_flash"] = [t for t in gw.routes["r"] if t.model == "flash"]
     assert gw.can_serve("only_flash") and not gw.can_serve("only_flash", bulk=True)
+
+
+def test_a_request_served_off_its_first_choice_logs_one_line_naming_what_was_passed_over(make_gateway, caplog):
+    """TODO 33 (F145): which targets were skipped or failed, and why, in one INFO line; nothing on the happy path."""
+    config = gateway_config(route(
+        {"provider": "a", "model": "m-a"}, {"provider": "b", "model": "m-b"}, {"provider": "c", "model": "m-c"},
+    ))
+    gw, _ = make_gateway(config, {"m-b": [api_error(openai.InternalServerError, 502)], "m-c": [GOOD]},
+                         env={"B_KEY": "kb", "C_KEY": "kc"})  # a has no key
+    with caplog.at_level("INFO", logger="bse_intel.ai.gateway"):
+        gw.complete_json("r", "s", "u", Pass1Result)
+    lines = [r.getMessage() for r in caplog.records if r.getMessage().startswith("gateway r: served by")]
+    assert len(lines) == 1
+    assert lines[0] == ("gateway r: served by c:m-c after a:m-a (unavailable: not configured), "
+                        "b:m-b (transient: InternalServerError)")
+
+    caplog.clear()
+    gw2, _ = make_gateway(config, {"m-a": [GOOD]})
+    with caplog.at_level("INFO", logger="bse_intel.ai.gateway"):
+        gw2.complete_json("r", "s", "u", Pass1Result)
+    assert not [r for r in caplog.records if "served by" in r.getMessage()]
+
+
+def test_a_timed_out_call_logs_a_warning_with_target_limit_and_seconds(make_gateway, caplog):
+    config = gateway_config(route({"provider": "a", "model": "m-a", "timeout_s": 77}, {"provider": "b", "model": "m-b"}))
+    timeout = openai.APITimeoutError(request=__import__("httpx").Request("POST", "https://a.invalid"))
+    gw, _ = make_gateway(config, {"m-a": [timeout], "m-b": [GOOD]})
+    with caplog.at_level("INFO", logger="bse_intel.ai.gateway"):
+        gw.complete_json("r", "s", "u", Pass1Result)
+    warned = [r for r in caplog.records if r.levelname == "WARNING" and "timed out" in r.getMessage()]
+    assert len(warned) == 1 and "a:m-a" in warned[0].getMessage() and "limit 77 s" in warned[0].getMessage()
+    assert "a:m-a (transient: timeout after 77s)" in caplog.text
+
+
+def test_unavailable_primaries_are_logged_once_per_route_at_construction(make_gateway, caplog):
+    config = gateway_config({
+        "r": [{"provider": "a", "model": "m-a"}, {"provider": "b", "model": "m-b"},
+              {"provider": "c", "model": "m-c", "spare": True}],
+        "ok": [{"provider": "b", "model": "m-b"}],
+    })
+    with caplog.at_level("INFO", logger="bse_intel.ai.gateway"):
+        make_gateway(config, {}, env={"B_KEY": "kb"})  # a and c have no key
+    lines = [r.getMessage() for r in caplog.records if "primary targets unavailable" in r.getMessage()]
+    assert lines == ["gateway r: primary targets unavailable: a:m-a (not configured: A_KEY is not set)"]
+    assert "kb" not in caplog.text
+
+
+def test_no_card_writing_spare_waits_more_than_120_seconds():
+    """TODO 34 (F146, 25 Oct 2026): a filing that walks the spares must not spend 13-18 minutes on timeouts."""
+    import tomllib
+    from pathlib import Path
+
+    config = tomllib.loads((Path(__file__).parent.parent / "config" / "providers.toml").read_text(encoding="utf-8"))
+    for name in ("pass2", "pass2_bulk"):
+        for entry in config["routes"][name]:
+            if entry.get("spare"):
+                timeout = entry.get("timeout_s", config["providers"][entry["provider"]].get("timeout_s", 60))
+                assert timeout <= 120, (name, entry["provider"], entry["model"], timeout)

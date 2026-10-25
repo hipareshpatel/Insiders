@@ -22,8 +22,8 @@ from types import SimpleNamespace
 
 from . import nse as nse_api
 from . import universe
-from .dossier import new_dossier
-from .timeutil import IST, iso_ist, today_ist
+from .dossier import new_dossier, section_label
+from .timeutil import IST, iso_ist, now_iso, today_ist
 
 log = logging.getLogger(__name__)
 
@@ -105,6 +105,7 @@ def merge(dossier: dict, events: list[dict]) -> int:
         now = summary(dossier)
         # the company page shows this as it stands; cards read the events as of their filing instead
         box["summary"] = {"encumbered_pct": now["encumbered_pct"], "promoters": now["promoters"], "as_of": box["events"][-1]["as_of"]}
+        section_label(dossier, "pledges", now_iso())   # NSE's SAST Reg 31 feed (memory label: file)
     return len(new)
 
 

@@ -660,6 +660,85 @@ def cmd_seed_memory(args, settings, sink) -> int:
     return REFUSED if refused else 0
 
 
+MORE_LEFT = 124   # memory-gaps --fill: the time budget ended the run with companies left (as `timeout` exits)
+
+
+def cmd_memory_gaps(args, settings, sink) -> int:
+    """Which universe companies lack exchange-XBRL results quarters in memory (memory_gaps.py); --fill seeds those
+    companies' results from NSE (the seed's per-company function) and re-checks. No AI."""
+    from . import memory_gaps, universe
+    from .nse import NseClient, SourceBlockedError
+
+    log = logging.getLogger("bse_intel.memory_gaps")
+    shard = None
+    if args.shard:
+        try:
+            index, count = (int(x) for x in args.shard.split("/"))
+            assert 0 <= index < count
+        except (ValueError, AssertionError):
+            print("--shard takes I/N with 0 <= I < N, e.g. 0/4")
+            return 2
+        shard = (index, count)
+    nse_universe = universe.load_nse(sink)
+    if args.scrips:
+        scrips = [nse_universe.symbols.get(name.upper()) or name for name in (s.strip() for s in args.scrips.split(",")) if name]
+    elif nse_universe.built:
+        scrips = sorted(nse_universe.included)
+    else:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    today = date.fromisoformat(args.as_of) if args.as_of else today_ist()
+    before = memory_gaps.survey(sink, scrips, today, args.quarters)
+    print(memory_gaps.render(before))
+    final, outcome, refused = before, None, False
+    after = None
+    if args.fill:
+        from .seed import SeedStats, seed_results
+
+        nse_symbols = {scrip: symbol for symbol, scrip in nse_universe.symbols.items()}
+        stats = SeedStats()
+        with NseClient() as nse:
+            raw.attach(nse, sink, "nse", settings)
+
+            def seed_one(scrip: str, since: str) -> None:
+                company = sink.company(scrip) or {}
+                symbol = (company.get("symbol") or "").strip() or nse_symbols.get(scrip, "")
+                seed_results(sink, None, scrip, company.get("company_name") or scrip, since, settings.text_cache_dir,
+                             stats, company, nse=nse, symbol=symbol)
+                log.info("memory-gaps fill: %s %s", scrip, stats.line())
+
+            try:
+                outcome = memory_gaps.fill(sink, before, seed_one, args.time_budget, args.restart, shard)
+            except SourceBlockedError as exc:
+                log.error("NSE refused the session; stopping the fill: %s", exc)
+                refused = True
+                outcome = {"attempted": [], "failed": [f"NSE refused: {exc}"[:200]], "more": False}
+        touched = [s for s in scrips if s in set(outcome["attempted"])]
+        redone = memory_gaps.survey(sink, touched, today, args.quarters)
+        print(f"\nthe {len(touched)} companies the fill tried, before:")
+        print(json.dumps(memory_gaps.summarise({s: before["companies"][s] for s in touched})))
+        print("after:")
+        print(json.dumps(redone["summary"]))
+        print(f"fill: {len(outcome['attempted'])} tried, {len(outcome['failed'])} failed, more left: {outcome['more']}")
+        for line in outcome["failed"][:20]:
+            print(f"  {line}")
+        merged = {**before["companies"], **redone["companies"]}   # untouched companies keep their earlier check
+        after = {**before, "summary": memory_gaps.summarise(merged), "companies": merged}
+        final = after
+        print("whole universe after the fill:")
+        print(memory_gaps.render(after))
+    if args.json:
+        body = {"as_of": final["as_of"], "latest_quarter": final["latest_quarter"], "quarters": final["quarters"],
+                "before": before["summary"], "after": after["summary"] if after else None, "fill": outcome,
+                "gaps": memory_gaps.gap_rows(final)}
+        Path(args.json).write_text(json.dumps(body, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(memory_gaps.to_csv(final), encoding="utf-8")
+    if refused:
+        return REFUSED
+    return MORE_LEFT if outcome and outcome["more"] else 0
+
+
 def cmd_price_history(args, settings, sink) -> int:
     from datetime import date, timedelta
 
@@ -1053,6 +1132,18 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--results-only", action="store_true")
     p.add_argument("--shareholding-only", action="store_true")
     p.set_defaults(func=cmd_seed_memory)
+
+    p = sub.add_parser("memory-gaps", help="universe companies lacking exchange-XBRL results quarters in memory; --fill seeds them (no AI)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--quarters", type=int, default=8, help="quarters checked, ending at the latest past its filing deadline")
+    p.add_argument("--as-of", help="YYYY-MM-DD, instead of today (IST)")
+    p.add_argument("--json", help="write the summary and the gap list to this file")
+    p.add_argument("--csv", help="write the gap list to this file")
+    p.add_argument("--fill", action="store_true", help="seed the results of the companies with gaps from NSE, then re-check")
+    p.add_argument("--restart", action="store_true", help="with --fill: try companies an earlier pass already tried")
+    p.add_argument("--shard", help="with --fill: I/N, this runner's share of the companies with gaps")
+    p.add_argument("--time-budget", type=int, default=17400, help="with --fill: seconds; exit 124 if companies are left")
+    p.set_defaults(func=cmd_memory_gaps)
 
     p = sub.add_parser("backup", help="export dossiers as JSON files")
     p.add_argument("--out", required=True)

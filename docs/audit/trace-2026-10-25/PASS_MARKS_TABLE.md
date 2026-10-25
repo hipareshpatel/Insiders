@@ -32,3 +32,18 @@ rebuilt off and on with each filing's PyMuPDF text.
 
 **Pass marks.** The same three apply unchanged: ON ≥ 85% right (lower bound ≥ 75%), ON beats OFF by ≥ 20 points,
 right-to-wrong ≤ 5%.
+
+## How a removed line counts (set before reviewing the fresh set, 25 Oct 2026)
+The narrowed fix also removes lines it cannot show honestly: our EBITDA where the filing prints another, or a comparative
+the text contradicts. The three marks above did not say how a removed line scores, so this is fixed before any verdict is
+read. In the fresh run, 249 lines changed in 109 of 223 tables, 171 of them removed.
+
+1. **Mark 1** (ON ≥ 85% right, lower bound ≥ 75%) is computed over the ON lines still shown.
+2. **Mark 2** (ON beats OFF by ≥ 20 points) is computed as the share of changed lines that end up RIGHT or removed-
+   while-OFF-was-WRONG, against the share that were RIGHT off.
+3. **Mark 3** (right-to-wrong ≤ 5%) counts a shown line that goes from RIGHT to WRONG.
+4. **A new limit on removals:** at most 20% of removed lines may have been RIGHT off (the same limit check A had). Above
+   it, the fix throws away too much.
+
+Review sample: a random 150 of the distinct changed lines (seed 2511), each in two versions X and Y. A removed version
+shows as null.

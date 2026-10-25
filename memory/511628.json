@@ -1,0 +1,365 @@
+{
+ "balance_sheet": [],
+ "business_summary": null,
+ "capital_actions": [],
+ "company_name": "Fedders Holding Limited",
+ "deals": [],
+ "financial_metrics": [],
+ "governance": {
+  "auditor": null,
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-04-22T12:24:15+05:30",
+    "board": [
+     {
+      "appointed": "2020-11-02",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "VISHAL SINGHAL",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-02-13",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SONAL SINGHAL",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-05-08",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "NANDAN MOHANTY",
+      "role": null,
+      "tenure_months": 60.0
+     },
+     {
+      "appointed": "2025-05-08",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "NIHAR RANJAN SATAPATHY",
+      "role": null,
+      "tenure_months": 60.0
+     }
+    ],
+    "board_size": 4,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "VISHAL SINGHAL",
+      "NANDAN MOHANTY",
+      "NIHAR RANJAN SATAPATHY"
+     ],
+     "nomination and remuneration committee": [
+      "SONAL SINGHAL",
+      "NIHAR RANJAN SATAPATHY",
+      "NANDAN MOHANTY"
+     ],
+     "stakeholders relationship committee": [
+      "VISHAL SINGHAL",
+      "NANDAN MOHANTY",
+      "NIHAR RANJAN SATAPATHY"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": false,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [
+     "board composition not in terms of SEBI's rules"
+    ],
+    "gaps": {
+     "audit committee": 91.0,
+     "board": 91.0
+    },
+    "independent_directors": 3,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-03-31",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1657020_22042026122416_WEB.xml",
+    "tax_litigation": []
+   }
+  ]
+ },
+ "guidance": [],
+ "identity": {
+  "entities": [],
+  "former_names": []
+ },
+ "industry": "Financial Services > Finance > Non Banking Financial Company (NBFC)",
+ "last_filed_at": null,
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-06-04T15:30:00+05:30",
+    "client": "RAGA TRADECON PRIVATE LIMITED",
+    "date": "2026-06-04",
+    "kind": "BULK",
+    "price": 35.46,
+    "qty": 2500000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 8.87
+   },
+   {
+    "as_of": "2026-06-04T15:30:00+05:30",
+    "client": "VISHAL SINGHAL",
+    "date": "2026-06-04",
+    "kind": "BULK",
+    "price": 35.46,
+    "qty": 1800000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 6.38
+   },
+   {
+    "as_of": "2026-07-15T15:30:00+05:30",
+    "client": "BULLPULSE MARKETEDGE PRIVATE LIMITED",
+    "date": "2026-07-15",
+    "kind": "BULK",
+    "price": 47.15,
+    "qty": 1635195.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 7.71
+   },
+   {
+    "as_of": "2026-07-15T15:30:00+05:30",
+    "client": "BULLPULSE MARKETEDGE PRIVATE LIMITED",
+    "date": "2026-07-15",
+    "kind": "BULK",
+    "price": 48.22,
+    "qty": 1635195.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 7.88
+   },
+   {
+    "as_of": "2026-07-20T15:30:00+05:30",
+    "client": "BULLPULSE MARKETEDGE PRIVATE LIMITED",
+    "date": "2026-07-20",
+    "kind": "BULK",
+    "price": 48.07,
+    "qty": 1168080.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 5.61
+   },
+   {
+    "as_of": "2026-07-20T15:30:00+05:30",
+    "client": "BULLPULSE MARKETEDGE PRIVATE LIMITED",
+    "date": "2026-07-20",
+    "kind": "BULK",
+    "price": 47.83,
+    "qty": 1168084.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 5.59
+   },
+   {
+    "as_of": "2026-07-21T15:30:00+05:30",
+    "client": "BULLPULSE MARKETEDGE PRIVATE LIMITED",
+    "date": "2026-07-21",
+    "kind": "BULK",
+    "price": 51.32,
+    "qty": 1066674.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 5.47
+   },
+   {
+    "as_of": "2026-07-21T15:30:00+05:30",
+    "client": "BULLPULSE MARKETEDGE PRIVATE LIMITED",
+    "date": "2026-07-21",
+    "kind": "BULK",
+    "price": 51.36,
+    "qty": 1076022.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 5.53
+   },
+   {
+    "as_of": "2026-07-22T15:30:00+05:30",
+    "client": "BULLPULSE MARKETEDGE PRIVATE LIMITED",
+    "date": "2026-07-22",
+    "kind": "BULK",
+    "price": 51.2,
+    "qty": 2641691.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 13.53
+   },
+   {
+    "as_of": "2026-07-22T15:30:00+05:30",
+    "client": "BULLPULSE MARKETEDGE PRIVATE LIMITED",
+    "date": "2026-07-22",
+    "kind": "BULK",
+    "price": 52.22,
+    "qty": 2643154.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 13.8
+   },
+   {
+    "as_of": "2026-07-22T15:30:00+05:30",
+    "client": "HJS SECURITIES PRIVATE LIMITED",
+    "date": "2026-07-22",
+    "kind": "BULK",
+    "price": 51.45,
+    "qty": 1062201.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 5.47
+   },
+   {
+    "as_of": "2026-07-22T15:30:00+05:30",
+    "client": "HJS SECURITIES PRIVATE LIMITED",
+    "date": "2026-07-22",
+    "kind": "BULK",
+    "price": 50.81,
+    "qty": 1143729.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 5.81
+   },
+   {
+    "as_of": "2026-07-22T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-07-22",
+    "kind": "BULK",
+    "price": 50.43,
+    "qty": 1277350.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 6.44
+   },
+   {
+    "as_of": "2026-07-22T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-07-22",
+    "kind": "BULK",
+    "price": 50.3,
+    "qty": 1305061.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 6.56
+   },
+   {
+    "as_of": "2026-07-22T15:30:00+05:30",
+    "client": "PARNIT VENTURES PRIVATE LIMITED",
+    "date": "2026-07-22",
+    "kind": "BULK",
+    "price": 51.8,
+    "qty": 1089729.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 5.64
+   },
+   {
+    "as_of": "2026-07-22T15:30:00+05:30",
+    "client": "PARNIT VENTURES PRIVATE LIMITED",
+    "date": "2026-07-22",
+    "kind": "BULK",
+    "price": 51.8,
+    "qty": 1089729.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 5.64
+   },
+   {
+    "as_of": "2026-07-22T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-07-22",
+    "kind": "BULK",
+    "price": 50.85,
+    "qty": 1463737.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 7.44
+   },
+   {
+    "as_of": "2026-07-22T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-07-22",
+    "kind": "BULK",
+    "price": 50.42,
+    "qty": 1471911.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 7.42
+   },
+   {
+    "as_of": "2026-07-23T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-07-23",
+    "kind": "BULK",
+    "price": 51.01,
+    "qty": 1225176.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 6.25
+   },
+   {
+    "as_of": "2026-07-23T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-07-23",
+    "kind": "BULK",
+    "price": 51.26,
+    "qty": 1233840.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "FEDDERSHOL",
+    "value_cr": 6.32
+   }
+  ]
+ },
+ "operating_notes": [],
+ "ownership": [],
+ "predictions": [],
+ "schema_version": 3,
+ "scrip_code": "511628",
+ "sector": "nbfc",
+ "segment_mix": [],
+ "symbol": "FEDDERSHOL",
+ "timeline": [],
+ "upcoming_events": [],
+ "updated_at": null,
+ "watchlist": []
+}

@@ -1,0 +1,775 @@
+{
+ "balance_sheet": [],
+ "business_summary": null,
+ "capital_actions": [],
+ "company_name": "RIR Power Electronics Limited",
+ "corporate_actions": [
+  {
+   "ex_date": "2026-09-22",
+   "kind": "DIVIDEND",
+   "per_share": 0.1,
+   "record_date": "2026-09-22",
+   "subject": "Dividend - Re 0.10 Per Share"
+  }
+ ],
+ "deals": [],
+ "financial_metrics": [
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.95,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.06,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.34,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q1FY27",
+     "finance_cost:Q1FY27",
+     "depreciation:Q1FY27",
+     "other_income:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 3.98,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY27",
+     "revenue:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "PCT",
+   "value": 14.66,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 4.35,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR",
+   "value": 0.39,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.26,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.35,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.83,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.77,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 15.91,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 3.14,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 3.14,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 4.15,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.86,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 14.78,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 27.16,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 23.78,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-10T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T21:02:15+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:517035:Q1FY27",
+   "unit": "INR_CR",
+   "value": 27.94,
+   "yoy_pct": null
+  }
+ ],
+ "fy_end_month": 3,
+ "governance": {
+  "auditor": null,
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-07-25T13:13:30+05:30",
+    "board": [
+     {
+      "appointed": "2025-05-29",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "HARSHAD MEHTA",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2005-09-18",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "BHAVNA HARSHAD MEHTA",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2026-02-11",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "RAMESH KUMAR NARSINGHBHAN",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2023-02-07",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "MADHAV DEVIDAS MANJREKAR",
+      "role": null,
+      "tenure_months": 41.0
+     },
+     {
+      "appointed": "2024-11-14",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "RAJIV KISAN CHOKSEY",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-05-24",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SONALI HARSHAD MEHTA",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-11-06",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "KUSH GUPTA",
+      "role": null,
+      "tenure_months": 8.0
+     },
+     {
+      "appointed": "2026-05-29",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "VIJAY ANANT CHAVAN",
+      "role": null,
+      "tenure_months": 1.0
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "MADHAV DEVIDAS MANJREKAR",
+      "HARSHAD MEHTA",
+      "KUSH GUPTA"
+     ],
+     "nomination and remuneration committee": [
+      "MADHAV DEVIDAS MANJREKAR",
+      "HARSHAD MEHTA",
+      "KUSH GUPTA"
+     ],
+     "stakeholders relationship committee": [
+      "BHAVNA HARSHAD MEHTA",
+      "MADHAV DEVIDAS MANJREKAR",
+      "SONALI HARSHAD MEHTA"
+     ]
+    },
+    "complaints": {
+     "disposed": 1.0,
+     "pending": 0.0,
+     "received": 1.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 107.0,
+     "board": 107.0,
+     "stakeholders relationship committee": 41.0
+    },
+    "independent_directors": 7,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-06-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1701440_25072026011332_WEB.xml",
+    "tax_litigation": []
+   },
+   {
+    "as_of": "2026-10-15T16:45:11+05:30",
+    "board": [
+     {
+      "appointed": "2025-05-29",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "HARSHAD MEHTA",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2005-09-18",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "BHAVNA HARSHAD MEHTA",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2026-02-11",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "RAMESH KUMAR NARSINGHBHAN",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2023-02-07",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "MADHAV DEVIDAS MANJREKAR",
+      "role": null,
+      "tenure_months": 44.0
+     },
+     {
+      "appointed": "2024-11-14",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "RAJIV KISAN CHOKSEY",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-05-24",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SONALI HARSHAD MEHTA",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-11-06",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "KUSH GUPTA",
+      "role": null,
+      "tenure_months": 11.0
+     },
+     {
+      "appointed": "2026-05-29",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "VIJAY ANANT CHAVAN",
+      "role": null,
+      "tenure_months": 4.0
+     },
+     {
+      "appointed": "2026-08-10",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "VIVEK SATISHBHAI PATEL",
+      "role": null,
+      "tenure_months": 1.0
+     }
+    ],
+    "board_size": 9,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "MADHAV DEVIDAS MANJREKAR",
+      "HARSHAD MEHTA",
+      "KUSH GUPTA"
+     ],
+     "nomination and remuneration committee": [
+      "MADHAV DEVIDAS MANJREKAR",
+      "HARSHAD MEHTA",
+      "KUSH GUPTA"
+     ],
+     "stakeholders relationship committee": [
+      "BHAVNA HARSHAD MEHTA",
+      "MADHAV DEVIDAS MANJREKAR",
+      "SONALI HARSHAD MEHTA"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [
+     "fine or penalty: BOMBAY STOCK EXCHANGE (Fines)"
+    ],
+    "gaps": {
+     "audit committee": 73.0,
+     "board": 73.0,
+     "stakeholders relationship committee": 27.0
+    },
+    "independent_directors": 8,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [
+     {
+      "amount_rupees": null,
+      "authority": "BOMBAY STOCK EXCHANGE",
+      "details": "Fines",
+      "impact": "NOT APPLICABLE",
+      "received": "2026-08-25"
+     }
+    ],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1739001_15102026044755_WEB.xml",
+    "tax_litigation": []
+   }
+  ]
+ },
+ "guidance": [],
+ "identity": {
+  "entities": [],
+  "former_names": []
+ },
+ "industry": "Industrials > Capital Goods > Electrical Equipment > Other Electrical Equipment",
+ "last_filed_at": "2026-08-10T18:00:00+05:30",
+ "operating_notes": [],
+ "ownership": [],
+ "predictions": [],
+ "schema_version": 3,
+ "scrip_code": "517035",
+ "sector": "capital_goods",
+ "segment_mix": [],
+ "symbol": "RIR",
+ "timeline": [],
+ "upcoming_events": [],
+ "updated_at": "2026-10-25T21:02:15+05:30",
+ "watchlist": []
+}

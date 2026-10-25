@@ -1,0 +1,1298 @@
+{
+ "balance_sheet": [
+  {
+   "as_of": "2026-09-10T12:02:41+05:30",
+   "gross_debt_cr": 220.0,
+   "period": "Jun-2026",
+   "source_news_id": "nse-106777499"
+  }
+ ],
+ "business_summary": {
+  "as_of": "2026-09-10T12:02:41+05:30",
+  "source_news_id": "nse-106777499",
+  "text": "Dhoot Transmission is an auto components maker supplying wiring harnesses and non-wiring harness products such as battery packs, controllers, sensors and switches, primarily to two-wheeler OEMs."
+ },
+ "capital_actions": [],
+ "company_name": "Dhoot Transmission Limited",
+ "deals": [],
+ "financial_metrics": [
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "metric": "ebitda_margin",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "sources": [
+    {
+     "as_of": "2026-09-04T18:00:00+05:30",
+     "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-25T22:28:13+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "ebitda:Q1FY27",
+       "revenue:Q1FY27"
+      ],
+      "ok": true,
+      "unit": "PCT"
+     },
+     "news_id": "xbrl:res:544867:Q1FY27",
+     "qoq_pct": null,
+     "unit": "PCT",
+     "value": 15.1,
+     "yoy_pct": null
+    },
+    {
+     "as_of": "2026-09-10T12:02:41+05:30",
+     "basis": "CONSOLIDATED",
+     "news_id": "nse-106777499",
+     "qoq_pct": null,
+     "unit": "PCT",
+     "value": 15.0,
+     "yoy_pct": null
+    }
+   ],
+   "unit": "PCT",
+   "updated_as_of": "2026-09-04T18:00:00+05:30",
+   "value": 15.1,
+   "value_news_id": "xbrl:res:544867:Q1FY27",
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 28.19,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 13.09,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 39.64,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q1FY27",
+     "finance_cost:Q1FY27",
+     "depreciation:Q1FY27",
+     "other_income:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 218.43,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 114.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR",
+   "value": 7.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": -3.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 15.49,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": -6.67,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 127.32,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 13.65,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 37.69,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 132.67,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 132.67,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_owners",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 132.66,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 173.95,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 993.32,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1446.41,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 41.28,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1283.12,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-04T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:28:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544867:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1460.07,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-10T12:02:41+05:30",
+   "basis": "CONSOLIDATED",
+   "metric": "gross_debt",
+   "period": "JUN-2026",
+   "qoq_pct": null,
+   "source_news_id": "nse-106777499",
+   "unit": "INR_CR",
+   "value": 220.0,
+   "yoy_pct": null
+  }
+ ],
+ "fy_end_month": 3,
+ "governance": {
+  "auditor": null,
+  "auditor_history": []
+ },
+ "guidance": [
+  {
+   "due": "FY27",
+   "due_date": "2027-03-31",
+   "given_on": "2026-09-10T12:02:41+05:30",
+   "id": "g_65236c3f",
+   "metric": "revenue_growth",
+   "source_news_id": "nse-106777499",
+   "source_type": "CONCALL",
+   "statement": "Confident of delivering 25-30% revenue growth for FY27.",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "25-30%"
+  },
+  {
+   "due": "FY27",
+   "due_date": "2027-03-31",
+   "given_on": "2026-09-10T12:02:41+05:30",
+   "id": "g_e3ab7031",
+   "metric": "ebitda_margin",
+   "source_news_id": "nse-106777499",
+   "source_type": "CONCALL",
+   "statement": "EBITDA margin guidance of 15-16% for the full year.",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "15-16%"
+  },
+  {
+   "due": "FY29",
+   "due_date": "2029-03-31",
+   "given_on": "2026-09-10T12:02:41+05:30",
+   "id": "g_317b83cd",
+   "metric": "ev_revenue_share",
+   "source_news_id": "nse-106777499",
+   "source_type": "CONCALL",
+   "statement": "Expects EV revenue share to exceed 30-32% in 2-3 years.",
+   "status": "OPEN",
+   "status_history": [],
+   "target": ">30-32%"
+  },
+  {
+   "due": "FY27",
+   "due_date": "2027-03-31",
+   "given_on": "2026-09-10T12:02:41+05:30",
+   "id": "g_5d66ae2c",
+   "metric": "multilink_growth",
+   "source_news_id": "nse-106777499",
+   "source_type": "CONCALL",
+   "statement": "Multilink to grow 25-30% with margins in line with Dhoot.",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "25-30%"
+  }
+ ],
+ "identity": {
+  "entities": [
+   {
+    "as_of": "2026-09-10T12:02:41+05:30",
+    "name": "Multilink",
+    "source_news_id": "nse-106777499",
+    "type": "acquired business"
+   },
+   {
+    "as_of": "2026-09-10T12:02:41+05:30",
+    "name": "Dhoot Autocomponents",
+    "source_news_id": "nse-106777499",
+    "type": "subsidiary"
+   },
+   {
+    "as_of": "2026-09-10T12:02:41+05:30",
+    "name": "Ride Vision",
+    "source_news_id": "nse-106777499",
+    "type": "JV (forming)"
+   }
+  ],
+  "former_names": []
+ },
+ "industry": "Consumer Discretionary > Automobile and Auto Components > Auto Components > Auto Components & Equipments",
+ "last_filed_at": "2026-10-17T04:13:28+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-17T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-17",
+    "kind": "BULK",
+    "price": 1171.15,
+    "qty": 1123089.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "DHOOTTRANS",
+    "value_cr": 131.53
+   },
+   {
+    "as_of": "2026-08-17T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-17",
+    "kind": "BULK",
+    "price": 1171.71,
+    "qty": 1123089.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "DHOOTTRANS",
+    "value_cr": 131.59
+   }
+  ]
+ },
+ "operating_notes": [
+  {
+   "as_of": "2026-09-10T12:02:41+05:30",
+   "source_news_id": "nse-106777499",
+   "text": "Copper accounts for about 20-23% of BOM cost, and price pass-through to customers lags by three months."
+  },
+  {
+   "as_of": "2026-09-10T12:02:41+05:30",
+   "source_news_id": "nse-106777499",
+   "text": "Wiring harness content per EV is 1.5-2.5x that of ICE, and up to 4x if all products are adopted."
+  },
+  {
+   "as_of": "2026-09-10T12:02:41+05:30",
+   "source_news_id": "nse-106777499",
+   "text": "Dhoot Autocomponents, a subsidiary, does about ₹1,200 Cr of business for group companies, which is self-consumption and not reflected in overall sales."
+  }
+ ],
+ "ownership": [
+  {
+   "aif_pct": 0.21,
+   "as_of": "2026-10-17T04:13:28+05:30",
+   "banks_pct": 0.0,
+   "dii_pct": 12.94,
+   "fii_pct": 2.17,
+   "fpi_pct": 2.17,
+   "holders": [
+    {
+     "category": "Mutual fund",
+     "name": "HSBC MUTUAL FUND - HSBC AGGRESSIVE HYBRID FUND",
+     "pct": 3.68
+    },
+    {
+     "category": "Mutual fund",
+     "name": "SBI SMALL CAP FUND",
+     "pct": 2.32
+    },
+    {
+     "category": "Mutual fund",
+     "name": "AXIS MUTUAL FUND TRUSTEE LTD. A/C AXIS MUTUAL FUND",
+     "pct": 2.13
+    }
+   ],
+   "insurance_pct": 1.15,
+   "mf_pct": 11.58,
+   "period": "Q2FY27",
+   "promoter_pct": 82.78,
+   "retail_holders": 123969.0,
+   "source_news_id": "xbrl:shp:544867:Q2FY27"
+  }
+ ],
+ "pledges": {
+  "events": [
+   {
+    "after_pct": 0.0,
+    "after_shares": 0.0,
+    "as_of": "2026-08-24T15:20:04+05:30",
+    "attachment": "https://nsearchives.nseindia.com/corporate/Dhoot_08242026152004.zip",
+    "before_pct": 0.0,
+    "event": "CREATED",
+    "event_on": "2025-03-17",
+    "lender": "Agent and Security Agent for the benefit of the Lenders",
+    "pct": 0.0,
+    "promoter": "BC Asia Investments XV Limited",
+    "promoter_pct": 42.84,
+    "reported_on": "2026-08-19",
+    "seq_id": "43448",
+    "shares": 0.0,
+    "symbol": "DHOOTTRANS",
+    "type": "Others"
+   }
+  ],
+  "summary": {
+   "as_of": "2026-08-24T15:20:04+05:30",
+   "encumbered_pct": 0.0,
+   "promoters": 1
+  }
+ },
+ "predictions": [
+  {
+   "comparison": ">=",
+   "created_on": "2026-09-10T12:02:41+05:30",
+   "id": "p_babe731d",
+   "kpi": "EBITDA margin",
+   "metric": "ebitda_margin",
+   "period": "FY27",
+   "source_news_id": "nse-106777499",
+   "status": "OPEN",
+   "value": 15.5
+  },
+  {
+   "comparison": ">=",
+   "created_on": "2026-09-10T12:02:41+05:30",
+   "id": "p_47e9380f",
+   "kpi": "EV share of revenue",
+   "metric": "ev_revenue_share",
+   "period": "FY29",
+   "source_news_id": "nse-106777499",
+   "status": "OPEN",
+   "value": 30.0
+  }
+ ],
+ "schema_version": 3,
+ "scrip_code": "544867",
+ "sector": "auto_components",
+ "segment_mix": [
+  {
+   "as_of": "2026-09-10T12:02:41+05:30",
+   "period": "Q1FY27",
+   "revenue_cr": 1090.0,
+   "segment": "Wiring harness",
+   "share_pct": null,
+   "source_news_id": "nse-106777499"
+  },
+  {
+   "as_of": "2026-09-10T12:02:41+05:30",
+   "period": "Q1FY27",
+   "revenue_cr": 358.0,
+   "segment": "Non-wiring harness",
+   "share_pct": null,
+   "source_news_id": "nse-106777499"
+  }
+ ],
+ "standalone": {
+  "balance_sheet": [],
+  "metrics": [
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "current_tax",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 14.44,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "deferred_tax",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 5.48,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "depreciation",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 20.97,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "calc",
+     "doc": "results",
+     "from": [
+      "pbt_before_exceptional:Q1FY27",
+      "finance_cost:Q1FY27",
+      "depreciation:Q1FY27",
+      "other_income:Q1FY27"
+     ],
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "ebitda",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 103.84,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "calc",
+     "doc": "results",
+     "from": [
+      "ebitda:Q1FY27",
+      "revenue:Q1FY27"
+     ],
+     "ok": true,
+     "unit": "PCT"
+    },
+    "metric": "ebitda_margin",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "PCT",
+    "value": 9.64,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "employee_cost",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 57.7,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR",
+    "value": 3.04,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "exceptional_items",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": -2.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "finance_cost",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 8.88,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "inventory_change",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 4.85,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "other_expenses",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 76.27,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "other_income",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 5.16,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "paid_up_capital",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 37.69,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 57.24,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat_continuing",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 57.24,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pbt",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 77.16,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "purchases_stock_in_trade",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "raw_material_cost",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 834.77,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "revenue",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 1077.43,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "share_associates",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "tax_expense",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 19.92,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "total_expenses",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 1003.43,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "total_income",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 1082.59,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-04T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:28:19+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat_discontinued",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544867:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   }
+  ]
+ },
+ "symbol": "DHOOTTRANS",
+ "timeline": [
+  {
+   "date": "2026-09-10T12:02:41+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_b3f28fea",
+   "impact_level": "MODERATE",
+   "news_id": "nse-106777499",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/DTL_10092026120212_DTL_SE_Earning_transcript_sd.pdf",
+   "summary": "On its first post-listing earnings call, Dhoot Transmission guided FY27 revenue growth of 25-30% and a 15-16% EBITDA margin, after Q1 revenue rose nearly 50% YoY with EV at 27% of sales."
+  }
+ ],
+ "upcoming_events": [],
+ "updated_at": "2026-10-25T22:28:13+05:30",
+ "watchlist": [
+  {
+   "check_by": "2026-09-30",
+   "check_in": "Q2FY27 results",
+   "created_on": "2026-09-10T12:02:41+05:30",
+   "id": "w_9d8e7219",
+   "kind": "KPI",
+   "source_news_id": "nse-106777499",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "25-30% YoY for FY27",
+   "text": "Revenue growth"
+  },
+  {
+   "check_by": "2026-09-30",
+   "check_in": "Q2FY27 results",
+   "created_on": "2026-09-10T12:02:41+05:30",
+   "id": "w_c98cd000",
+   "kind": "KPI",
+   "source_news_id": "nse-106777499",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "15-16% for FY27",
+   "text": "EBITDA margin"
+  },
+  {
+   "check_by": "2026-09-30",
+   "check_in": "Q2FY27 results",
+   "created_on": "2026-09-10T12:02:41+05:30",
+   "id": "w_32adb438",
+   "kind": "KPI",
+   "source_news_id": "nse-106777499",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "above 30-32% in 2-3 years",
+   "text": "EV share of revenue"
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-09-10T12:02:41+05:30",
+   "id": "w_81092621",
+   "kind": "CONCERN",
+   "response": "Management declined to give an exact breakup, citing customer concentration with a single customer.",
+   "source_news_id": "nse-106777499",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Analyst asked for the breakup of non-wiring hardware revenue by product (sensors, controllers, battery packs)."
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-09-10T12:02:41+05:30",
+   "id": "w_6b972682",
+   "kind": "CONCERN",
+   "response": "Management denied losing market share and said it would reconcile the numbers separately; later stated ICE revenue grew 52.6%.",
+   "source_news_id": "nse-106777499",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Analyst asked whether the company is losing ICE market share, given ICE volumes grew 70% while the company grew 17%."
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-09-10T12:02:41+05:30",
+   "id": "w_c6e1cef4",
+   "kind": "CONCERN",
+   "response": "Management declined to disclose, citing a confidentiality agreement with the single customer.",
+   "source_news_id": "nse-106777499",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Analyst asked for the value addition percentage in the battery pack business."
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-09-10T12:02:41+05:30",
+   "id": "w_40c8cfb8",
+   "kind": "CONCERN",
+   "response": "Management said it depends on features and declined to comment, offering to connect the analyst with the CEO separately.",
+   "source_news_id": "nse-106777499",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Analyst asked for the cost impact of ADAS on an entry-level two-wheeler."
+  }
+ ]
+}

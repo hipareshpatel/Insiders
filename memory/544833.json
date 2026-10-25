@@ -1,0 +1,1815 @@
+{
+ "balance_sheet": [],
+ "business_summary": null,
+ "capital_actions": [],
+ "company_name": "Caliber Mining and Logistics Limited",
+ "deals": [],
+ "financial_metrics": [
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.48,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 8.25,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 45.23,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q1FY27",
+     "finance_cost:Q1FY27",
+     "depreciation:Q1FY27",
+     "other_income:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 110.37,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY27",
+     "revenue:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "PCT",
+   "value": 16.8,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 60.75,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR",
+   "value": 5.53,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.44,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 28.03,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.66,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 485.24,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.93,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 55.94,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 29.76,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 29.76,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 39.48,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 657.05,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 9.72,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 619.94,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-11T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T22:25:51+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544833:Q1FY27",
+   "unit": "INR_CR",
+   "value": 658.98,
+   "yoy_pct": null
+  }
+ ],
+ "fy_end_month": 3,
+ "governance": {
+  "auditor": null,
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-07-30T14:24:06+05:30",
+    "board": [
+     {
+      "appointed": "2014-07-03",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Mohit Satishkumar Chadda",
+      "role": "Chairperson",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2014-07-03",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rahul Roshanlal Chadda",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2017-03-29",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Manish Krishanlal Chadda",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-09-02",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Kawal K Jaggi",
+      "role": null,
+      "tenure_months": 21.0
+     },
+     {
+      "appointed": "2024-11-13",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Kumar Anil Jha",
+      "role": null,
+      "tenure_months": 19.0
+     },
+     {
+      "appointed": "2024-11-13",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Priya Anuj Chadda",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-09-02",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rajendra Prasad Shukla",
+      "role": null,
+      "tenure_months": 21.0
+     },
+     {
+      "appointed": "2025-04-26",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Balasubramanyam Danturti",
+      "role": null,
+      "tenure_months": 14.0
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Rajendra Prasad Shukla",
+      "Balasubramanyam Danturti",
+      "Manish Krishanlal Chadda"
+     ],
+     "corporate social responsibility committee": [
+      "Rahul Roshanlal Chadda",
+      "Kumar Anil Jha",
+      "Priya Anuj Chadda",
+      "Manish Krishanlal Chadda"
+     ],
+     "nomination and remuneration committee": [
+      "Kumar Anil Jha",
+      "Rajendra Prasad Shukla",
+      "Kawal K Jaggi"
+     ],
+     "other committee": [
+      "Priya Anuj Chadda",
+      "Rajendra Prasad Shukla",
+      "Kawal K Jaggi",
+      "Mohit Satishkumar Chadda",
+      "Rahul Roshanlal Chadda",
+      "Manish Krishanlal Chadda"
+     ],
+     "stakeholders relationship committee": [
+      "Rajendra Prasad Shukla",
+      "Manish Krishanlal Chadda",
+      "Rahul Roshanlal Chadda"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 41.0,
+     "board": 23.0
+    },
+    "independent_directors": 4,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-06-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1704965_30072026022413_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "Open",
+      "initiated": "2026-06-19",
+      "opposing_party": "Income Tax Department, Ministry of Finance",
+      "status": "scrutiny notice issued; no further order received to date"
+     }
+    ]
+   }
+  ]
+ },
+ "guidance": [],
+ "identity": {
+  "entities": [
+   {
+    "as_of": "2026-10-22T13:04:08+05:30",
+    "name": "Western Coalfields Limited",
+    "source_news_id": "nse-106824609",
+    "type": "Customer (CIL Subsidiary)"
+   },
+   {
+    "as_of": "2026-10-22T13:04:08+05:30",
+    "name": "Northern Coalfields Limited",
+    "source_news_id": "nse-106824609",
+    "type": "Customer (CIL Subsidiary)"
+   }
+  ],
+  "former_names": [
+   "Caliber Mercantile Private Limited"
+  ]
+ },
+ "industry": "Energy > Oil, Gas & Consumable Fuels > Consumable Fuels > Coal",
+ "last_filed_at": "2026-10-22T13:04:08+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "CARNELIAN ASSET MANAGEMENT & ADVISORS PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 494.85,
+    "qty": 2000000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 98.97
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 496.92,
+    "qty": 458265.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 22.77
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 497.4,
+    "qty": 479265.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 23.84
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 498.36,
+    "qty": 449943.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 22.42
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 498.56,
+    "qty": 457643.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 22.82
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "GOLDMAN SACHS BANK EUROPE SE ODI",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 497.94,
+    "qty": 334487.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 16.66
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 502.58,
+    "qty": 485397.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 24.4
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 502.33,
+    "qty": 485397.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 24.38
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 500.7,
+    "qty": 356845.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 17.87
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 499.11,
+    "qty": 557828.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 27.84
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 499.09,
+    "qty": 368187.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 18.38
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 498.09,
+    "qty": 368187.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 18.34
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 506.71,
+    "qty": 548979.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 27.82
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 507.0,
+    "qty": 548979.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 27.83
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 498.89,
+    "qty": 918541.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 45.83
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 498.63,
+    "qty": 918541.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 45.8
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "PRB SECURITIES PVT LTD",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 492.25,
+    "qty": 34702.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 1.71
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "PRB SECURITIES PVT LTD",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 494.61,
+    "qty": 386273.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 19.11
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "TWO ROADS TRADING PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 494.66,
+    "qty": 343854.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 17.01
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "TWO ROADS TRADING PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 494.81,
+    "qty": 343854.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 17.01
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 507.6,
+    "qty": 490776.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 24.91
+   },
+   {
+    "as_of": "2026-07-24T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-07-24",
+    "kind": "BULK",
+    "price": 500.23,
+    "qty": 538890.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 26.96
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 583.39,
+    "qty": 612674.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 35.74
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 583.78,
+    "qty": 622614.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 36.35
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 578.32,
+    "qty": 398591.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 23.05
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 578.43,
+    "qty": 405571.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 23.46
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 581.38,
+    "qty": 479676.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 27.89
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 586.23,
+    "qty": 568563.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 33.33
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 585.22,
+    "qty": 450823.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 26.38
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 587.35,
+    "qty": 450823.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 26.48
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 584.11,
+    "qty": 445251.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 26.01
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 584.33,
+    "qty": 462064.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 27.0
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 580.47,
+    "qty": 387792.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 22.51
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "MARWADI CHANDARANA INTERMEDIARIES BROKERS PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 581.2,
+    "qty": 387792.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 22.54
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 585.57,
+    "qty": 793924.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 46.49
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 584.81,
+    "qty": 793924.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 46.43
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 587.23,
+    "qty": 1378385.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 80.94
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 587.71,
+    "qty": 1378385.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 81.01
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 581.96,
+    "qty": 829857.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 48.29
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 581.69,
+    "qty": 829857.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 48.27
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 589.93,
+    "qty": 396977.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 23.42
+   },
+   {
+    "as_of": "2026-07-27T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-07-27",
+    "kind": "BULK",
+    "price": 590.19,
+    "qty": 396977.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 23.43
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 584.9,
+    "qty": 535832.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 31.34
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 586.39,
+    "qty": 535832.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 31.42
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 592.12,
+    "qty": 436209.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 25.83
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 592.11,
+    "qty": 439209.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 26.01
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 593.12,
+    "qty": 312152.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 18.51
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 594.29,
+    "qty": 410706.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 24.41
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 590.19,
+    "qty": 540052.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 31.87
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 590.54,
+    "qty": 548308.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 32.38
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 589.86,
+    "qty": 834074.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 49.2
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 590.37,
+    "qty": 834074.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 49.24
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 592.46,
+    "qty": 684198.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "CMLL",
+    "value_cr": 40.54
+   },
+   {
+    "as_of": "2026-07-28T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-07-28",
+    "kind": "BULK",
+    "price": 592.73,
+    "qty": 684198.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "CMLL",
+    "value_cr": 40.55
+   }
+  ]
+ },
+ "operating_notes": [
+  {
+   "as_of": "2026-10-22T13:04:08+05:30",
+   "source_news_id": "nse-106824609",
+   "text": "Diesel compensation mechanism shifted from retail to bulk pricing for CIL subsidiary contracts."
+  },
+  {
+   "as_of": "2026-10-22T13:04:08+05:30",
+   "source_news_id": "nse-106824609",
+   "text": "Revised mechanism includes 100% compensation of price increases over tender levels based on standard consumption norms."
+  }
+ ],
+ "ownership": [
+  {
+   "aif_pct": 8.28,
+   "as_of": "2026-10-21T07:18:48+05:30",
+   "dii_pct": 10.85,
+   "fii_pct": 1.11,
+   "fpi_pct": 1.11,
+   "holders": [
+    {
+     "category": "AIF",
+     "name": "ABAKKUS FOUR2EIGHT OPPORTUNITIES FUND",
+     "pct": 3.55
+    },
+    {
+     "category": "AIF",
+     "name": "ANCHORAGE CAPITAL FUND - ANCHORAGE CAPITAL SCHEME",
+     "pct": 2.71
+    },
+    {
+     "category": "Mutual fund",
+     "name": "QUANT MUTUAL FUND - QSIF EQUITY EX TOP 100 LONG-SHORT FUND",
+     "pct": 1.87
+    },
+    {
+     "category": "AIF",
+     "name": "BARING PRIVATE EQUITY INDIA FUND 6",
+     "pct": 1.26
+    }
+   ],
+   "mf_pct": 2.57,
+   "period": "Q2FY27",
+   "promoter_pct": 74.18,
+   "retail_holders": 27869.0,
+   "source_news_id": "xbrl:shp:544833:Q2FY27"
+  }
+ ],
+ "predictions": [
+  {
+   "comparison": ">=",
+   "created_on": "2026-10-22T13:04:08+05:30",
+   "id": "p_59923a95",
+   "kpi": "EBITDA margin improvement from retrospective diesel recovery",
+   "metric": "ebitda_margin",
+   "period": "Q3FY27",
+   "source_news_id": "nse-106824609",
+   "status": "OPEN",
+   "value": 16.8
+  }
+ ],
+ "schema_version": 3,
+ "scrip_code": "544833",
+ "sector": "oil_gas",
+ "segment_mix": [],
+ "standalone": {
+  "balance_sheet": [],
+  "metrics": [
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "current_tax",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 1.48,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "deferred_tax",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 8.25,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "depreciation",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 45.23,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "calc",
+     "doc": "results",
+     "from": [
+      "pbt_before_exceptional:Q1FY27",
+      "finance_cost:Q1FY27",
+      "depreciation:Q1FY27",
+      "other_income:Q1FY27"
+     ],
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "ebitda",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 110.34,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "calc",
+     "doc": "results",
+     "from": [
+      "ebitda:Q1FY27",
+      "revenue:Q1FY27"
+     ],
+     "ok": true,
+     "unit": "PCT"
+    },
+    "metric": "ebitda_margin",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "PCT",
+    "value": 16.8,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "employee_cost",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 60.67,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR",
+    "value": 5.52,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "exceptional_items",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.44,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "finance_cost",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 28.03,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "inventory_change",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.66,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "other_expenses",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 485.24,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "other_income",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 1.92,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "paid_up_capital",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 55.94,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 29.72,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat_continuing",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 29.72,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pbt",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 39.44,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "purchases_stock_in_trade",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.02,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "raw_material_cost",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "revenue",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 656.93,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "share_associates",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "tax_expense",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 9.72,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "total_expenses",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 619.85,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "total_income",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 658.86,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-08-11T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T22:25:57+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat_discontinued",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544833:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   }
+  ]
+ },
+ "symbol": "CMLL",
+ "timeline": [
+  {
+   "date": "2026-10-22T13:04:08+05:30",
+   "event_type": "CORPORATE_ACTION",
+   "id": "t_82621611",
+   "impact_level": "HIGH",
+   "news_id": "nse-106824609",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/CMLL_22102026130346_Intimation_Amendment_to_Contract_signed.pdf",
+   "summary": "Coal India subsidiaries revised the diesel compensation mechanism for mining contracts, linking it to bulk prices and actual consumption norms retrospective to March 2026."
+  }
+ ],
+ "upcoming_events": [],
+ "updated_at": "2026-10-25T22:25:51+05:30",
+ "watchlist": [
+  {
+   "check_by": "2026-12-31",
+   "check_in": "Q3FY27 results",
+   "created_on": "2026-10-22T13:04:08+05:30",
+   "id": "w_6aad4b10",
+   "kind": "KPI",
+   "source_news_id": "nse-106824609",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "EBITDA margin improvement from retrospective diesel recovery"
+  }
+ ]
+}

@@ -1,0 +1,1658 @@
+{
+ "balance_sheet": [],
+ "business_summary": null,
+ "capital_actions": [],
+ "company_name": "Technocraft Ventures Limited",
+ "deals": [],
+ "financial_metrics": [
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 3.82,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": -0.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.41,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q1FY27",
+     "finance_cost:Q1FY27",
+     "depreciation:Q1FY27",
+     "other_income:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 17.96,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY27",
+     "revenue:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "PCT",
+   "value": 19.37,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 3.33,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR",
+   "value": 3.55,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 3.62,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 31.61,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.5,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 30.1,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 10.69,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 10.65,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 14.43,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 38.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 92.7,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 3.78,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 78.77,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-25T23:11:13+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544864:Q1FY27",
+   "unit": "INR_CR",
+   "value": 93.2,
+   "yoy_pct": null
+  }
+ ],
+ "fy_end_month": 3,
+ "governance": {
+  "auditor": null,
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-10-22T19:34:37+05:30",
+    "board": [
+     {
+      "appointed": "2007-04-02",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SANJAY TYAGI",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "1998-10-21",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "REKHA TYAGI",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2023-05-29",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "KARTIKEY TYAGI",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-06-10",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "MUKESH KUMAR GARG",
+      "role": null,
+      "tenure_months": 15.21
+     },
+     {
+      "appointed": "2024-07-15",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "SHRUTI GUPTA",
+      "role": null,
+      "tenure_months": 26.17
+     },
+     {
+      "appointed": "2024-07-15",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "BHAWNA SAUNKHIYA",
+      "role": null,
+      "tenure_months": 26.17
+     }
+    ],
+    "board_size": 6,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "BHAWNA SAUNKHIYA",
+      "SHRUTI GUPTA",
+      "SANJAY TYAGI"
+     ],
+     "corporate social responsibility committee": [
+      "BHAWNA SAUNKHIYA",
+      "SANJAY TYAGI",
+      "KARTIKEY TYAGI"
+     ],
+     "nomination and remuneration committee": [
+      "SHRUTI GUPTA",
+      "MUKESH KUMAR GARG",
+      "BHAWNA SAUNKHIYA"
+     ],
+     "risk management committee": [
+      "SANJAY TYAGI",
+      "KARTIKEY TYAGI",
+      "SHRUTI GUPTA"
+     ],
+     "stakeholders relationship committee": [
+      "BHAWNA SAUNKHIYA",
+      "SANJAY TYAGI",
+      "KARTIKEY TYAGI"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 90.0,
+     "board": 55.0,
+     "corporate social responsibility committee": 151.0,
+     "nomination and remuneration committee": 2.0
+    },
+    "independent_directors": 3,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1744223_22102026073453_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "Technocraft Ventures Limited (“Petitioner”) has filed a writ petition bearing number 10144/2025 before the Hon’ble High Court of Rajasthan against the Union of India and others (“Respondent”), challenging adverse GST orders and parallel tax proceedings. The core issue revolves around the applicability of the GST exemption under Entry 3B of Notification No. 13/2023-CT (Rate) dated October 19, 2023, which exempts services related to sanitation conservancy provided to governmental authorities. The Petitioner contends that its services, involving design, construction, and operation of sewerage treatment plants, fall squarely within this exemption. However, the Appellate Authority for Advance Ruling (AAAR), while overturning prior favourable observations, introduced a new, unargued ground denying the exemption by narrowly interpreting \"sanitation conservancy,\" thus violating natural justice. Concurrently, two wings of the SGST department initiated coercive, parallel proceedings alleging tax evasion on the same subject matter, resulting in forced GST deposits under protest totaling approximately ₹36.98 million (inclusive of interest amount of ₹21.70 million) despite the Petitioner’s claim of statutory exemption. The Petitioner had also paid ₹131.00 million as GST through GSTR-3B in FY2023-24 and FY2024-25. The Petitioner seeks quashing of the impugned order, refund of deposited GST, and cessation of parallel coercive actions.",
+      "initiated": "2024-11-22",
+      "opposing_party": "Union of India and others (AAAR, Rajasthan & SGST Department)",
+      "status": "Notices have been issued to the Respondents, and the Respondents have filed their reply. The matter is pending for subsequent arguments before the Hon’ble High Court of Rajasthan. The next date of hearing has not been updated by the High Court registry."
+     },
+     {
+      "as_last_disclosed": "Technocraft Ventures Limited (“Petitioner”) has filed a writ petition bearing number 7862/2025 before the Hon’ble High Court of Rajasthan against the Union of India and others (“Respondent”) challenging the order dated November 22, 2024 passed by the Appellate Authority for Advance Ruling (AAAR), Rajasthan GST, along with coercive and parallel proceedings initiated by different wings of the State GST Department in relation to the same subject matter. The dispute concerns the applicability of GST exemption under Entry 3B of Notification No. 13/2023-CT dated October 19, 2023, which exempts services relating to sanitation conservancy provided to governmental authorities. The Petitioner contends that the contract awarded by the Municipal Council, Kotputli under the AMRUT 2.0 scheme involving design, construction, installation, commissioning, and operation of sewerage systems and sewage treatment infrastructure squarely falls within the scope of sanitation conservancy services and is therefore exempt from GST. However, the AAAR dismissed the appeal against the AAR order dated July 26, 2024, by introducing a new ground, holding that the services do not qualify as sanitation conservancy, without providing prior notice or an opportunity of hearing, thereby allegedly violating the principles of natural justice. Simultaneously, the Enforcement Wing and Assessment Wing of the SGST Department initiated parallel proceedings, including inspections, summons, show-cause notices, and summary demand orders for alleged GST evasion on the same contract. As a result of these proceedings, the Petitioner deposited approximately ₹36.98 million under protest, while also paying approximately ₹115.83 million as GST during FY 2023-24 and FY 2024-25 through regular filings. The Petitioner seeks quashing of the impugned AAAR order, refund of GST deposited under protest, and setting aside of the parallel coercive proceedings.",
+      "initiated": "2024-11-22",
+      "opposing_party": "Union of India and others (AAAR, Rajasthan & SGST Department)",
+      "status": "The matter is pending before the Hon’ble High Court of Rajasthan for filing of reply and subsequent arguments. The next date of hearing has not been updated by the High Court registry."
+     },
+     {
+      "as_last_disclosed": "Technocraft Ventures Limited (“Petitioner”) has filed a writ petition bearing number 7962/2025 before the Hon’ble High Court of Rajasthan against the Union of India and others (“Respondent”) challenging the order dated November 22, 2024 passed by the Appellate Authority for Advance Ruling (‘AAAR’), Rajasthan GST, along with parallel proceedings initiated by different wings of the State GST Department concerning the same subject matter. The dispute concerns the applicability of GST exemption under Entry 3B of Notification No. 13/2023-CT (Rate) dated October 19, 2023, which exempts services relating to sanitation conservancy provided to governmental authorities. The Petitioner contends that the contract awarded under the AMRUT 2.0 scheme for design, construction, and operation of sewerage systems and sewage treatment plants falls squarely within the scope of sanitation conservancy services and should therefore be exempt from GST. However, the AAAR dismissed the appeal against the AAR order dated July 26, 2024 by introducing a new ground that the services do not qualify as sanitation conservancy, without providing the Petitioner an opportunity to respond, thereby allegedly violating principles of natural justice and exceeding appellate jurisdiction. Simultaneously, the Enforcement Wing and Assessment Wing of the SGST Department initiated parallel proceedings, including inspections, summons, show cause notices, and demand orders alleging GST evasion on the same contract, resulting in the Petitioner depositing approximately ₹36.98 million under protest (including interest of approximately ₹21.70 million), despite claiming exemption. The Petitioner had also paid approximately ₹104.88 million as GST through GSTR-3B during FY 2023-24 and FY 2024-25. The Petitioner seeks quashing of the impugned AAAR order, refund of GST deposited under protest, and setting aside of the parallel coercive proceedings. registry.",
+      "initiated": "2024-11-22",
+      "opposing_party": "Union of India & Others / AAAR Rajasthan GST",
+      "status": "The matter is pending before the Hon’ble High Court of Rajasthan for filing of reply and subsequent arguments. The next date of hearing has not been updated by the High Court registry."
+     },
+     {
+      "as_last_disclosed": "Technocraft Ventures Limited (“Petitioner”) has filed a writ petition before the Hon’ble High Court of Rajasthan, against the Union of India and others (“Respondent”) bearing number 11423/2025, challenging the order dated June 19, 2025, passed by the Appellate Authority, State Tax, Jaipur-II, which confirmed a demand of interest amounting to ₹ 21.70 million on retrospective tax payments, despite the dispute being interpretational in nature. The Petitioner alleges that the tax authorities issued a summary order (Form GST DRC-07) on October 10, 2024, without a prior show-cause notice or an opportunity for a personal hearing, which they argue is a gross violation of the principles of natural justice and Section 75(4) of the GST Act. Furthermore, the Petitioner contends that the initial summary order was unsigned, unreasoned, and calculated interest on the gross tax liability including tax paid through credits which they claim is contrary to established law. The petition also challenges associated recovery proceedings, including the issuance of a recovery notice dated July 14, 2025, under Section 79 of the RGST Act, as being premature and contrary to CBIC Circular No. 224/18/2024-GST, in view of the non-constitution of the GST Appellate Tribunal.",
+      "initiated": "2025-06-19",
+      "opposing_party": "Union of India & Others. / Appellate Authority, State Tax, Jaipur-II",
+      "status": "The Hon’ble High Court of Rajasthan granted an interim stay vide order dated July 29, 2025, directing that the recovery notices not be acted upon. The interim directions were subsequently affirmed and made absolute vide order dated October 7, 2025, until disposal of the petition. The matter remains pending adjudication, and the next date of hearing has not been updated by the High Court registry."
+     },
+     {
+      "as_last_disclosed": "Technocraft Ventures Limited (“Appellant”) has filed an appeal before the appropriate appellate authority against the Order-in-Original dated December 10, 2025 passed by the Assistant Commissioner, CGST Division-VI, Ghaziabad, pursuant to a Show Cause Notice dated June 30, 2025 issued on the basis of a DGARM report dated July 18, 2022, alleging mismatches in Input Tax Credit (ITC) claimed in GSTR-3B vis-à-vis GSTR-2A and discrepancies in GSTR-9 for the financial years 2018-19 to 2020-21. The order confirmed a tax demand of ₹17.18 million (CGST, SGST and IGST) along with an equivalent penalty under Section 74 of the CGST Act, 2017, aggregating to a total demand of approximately ₹34.37 million. The Appellant contends that the invocation of Section 74 is erroneous in the absence of any allegation or evidence of fraud, wilful misstatement or suppression of facts, and that the proceedings are time-barred and in violation of principles of natural justice, including denial of a proper opportunity of hearing. The Appellant has also made a statutory pre-deposit of approximately ₹17.19 million and seeks quashing of the impugned order and penalty.",
+      "initiated": "2025-12-10",
+      "opposing_party": "Assistant Commissioner, CGST Division-VI, Ghaziabad",
+      "status": "Additional Submissions filed on September 25, 2026 and the matter is reserved for orders."
+     },
+     {
+      "as_last_disclosed": "Technocraft Ventures Limited (“Noticee”) is subject to proceedings initiated pursuant to a Show Cause Notice issued by the Directorate General of GST Intelligence (DGGI), Meerut Zonal Unit, concerning the applicable GST rate on Works Contract Services provided to the Uttar Pradesh Jal Nigam (UPJN) during January 2022 to December 2022. The department has alleged that the Noticee incorrectly applied a concessional GST rate of 12% instead of 18% following amendments effective January 1, 2022, contending that UPJN does not qualify as a “Local Authority” under Section 2(69) of the CGST Act, 2017 and therefore the concessional rate is not applicable. Accordingly, the SCN proposes a differential tax demand of approximately ₹31.51 million (CGST and SGST combined) to be paid by the Noticee. The Noticee has contested the proceedings on several grounds, including lack of jurisdiction of DGGI officers to issue the notice, parallel proceedings by multiple authorities, and the classification of UPJN as a “Local Authority” under the UP Water Supply and Sewerage Act, 1975, which would entitle the services to the concessional GST rate. The Noticee has also alleged coercive recovery of approximately ₹4.00 million during the investigation and has sought refund of the same. The demand raised in the Show Cause Notice has been confirmed u/s 73 of CGST Act, 2017 vide Order-in-Original dated 29.12.2025, against which the Company has filed a writ petition bearing number 1999/2026 before the Hon’ble High Court, Allahabad.",
+      "initiated": "2025-12-29",
+      "opposing_party": "Directorate General of GST Intelligence (DGGI), Meerut Zonal Unit & Others",
+      "status": "Notices have been issued in the writ petition and the demand has been stayed vide order dated May 13, 2026. The matter is now pending for reply."
+     }
+    ]
+   }
+  ]
+ },
+ "guidance": [],
+ "identity": {
+  "entities": [],
+  "former_names": []
+ },
+ "industry": "Utilities > Other Utilities > Water Supply & Management",
+ "last_filed_at": "2026-10-12T06:00:47+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 306.87,
+    "qty": 530800.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 16.29
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 307.0,
+    "qty": 530800.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 16.3
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 309.33,
+    "qty": 263506.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 8.15
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 309.51,
+    "qty": 264006.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 8.17
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 311.36,
+    "qty": 288769.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 8.99
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 310.63,
+    "qty": 300579.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.34
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 313.07,
+    "qty": 440776.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 13.8
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "GOLDMINE STOCKS PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 313.2,
+    "qty": 440776.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 13.81
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 310.14,
+    "qty": 707488.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 21.94
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 309.95,
+    "qty": 707488.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 21.93
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 308.44,
+    "qty": 541300.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 16.7
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 307.66,
+    "qty": 630239.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 19.39
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 312.3,
+    "qty": 417946.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 13.05
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 312.15,
+    "qty": 417946.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 13.05
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 309.58,
+    "qty": 952985.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 29.5
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 309.17,
+    "qty": 977309.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 30.22
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "LAKSHMISHREE INVESTMENT & SECURITIES LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 308.18,
+    "qty": 200000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 6.16
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "LAKSHMISHREE INVESTMENT & SECURITIES LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 306.29,
+    "qty": 200000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 6.13
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 314.47,
+    "qty": 289005.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.09
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 314.51,
+    "qty": 289005.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.09
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 308.85,
+    "qty": 1346080.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 41.57
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 308.67,
+    "qty": 1346080.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 41.55
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 309.88,
+    "qty": 322967.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 10.01
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "PLUTUS WEALTH MANAGEMENT LLP",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 309.98,
+    "qty": 322967.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 10.01
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 312.61,
+    "qty": 416886.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 13.03
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 312.46,
+    "qty": 416886.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 13.03
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "SANJAY POPATLAL JAIN",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 307.42,
+    "qty": 100000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 3.07
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "SANJAY POPATLAL JAIN",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 292.71,
+    "qty": 200000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 5.85
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "SPRING VENTURES",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 293.53,
+    "qty": 400000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 11.74
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "SPRING VENTURES",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 310.1,
+    "qty": 400000.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 12.4
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "TWO ROADS TRADING PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 307.01,
+    "qty": 348682.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 10.7
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "TWO ROADS TRADING PRIVATE LIMITED",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 307.1,
+    "qty": 348682.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 10.71
+   },
+   {
+    "as_of": "2026-08-17T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-17",
+    "kind": "BULK",
+    "price": 305.05,
+    "qty": 231285.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 7.06
+   },
+   {
+    "as_of": "2026-08-17T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-17",
+    "kind": "BULK",
+    "price": 304.82,
+    "qty": 231285.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 7.05
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "GOVIND JI GUPTA",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 315.96,
+    "qty": 200277.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 6.33
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 315.53,
+    "qty": 227722.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 7.19
+   },
+   {
+    "as_of": "2026-08-19T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-08-19",
+    "kind": "BULK",
+    "price": 314.97,
+    "qty": 228389.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 7.19
+   },
+   {
+    "as_of": "2026-08-20T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-20",
+    "kind": "BULK",
+    "price": 327.9,
+    "qty": 276651.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.07
+   },
+   {
+    "as_of": "2026-08-20T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-20",
+    "kind": "BULK",
+    "price": 327.95,
+    "qty": 282937.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.28
+   },
+   {
+    "as_of": "2026-08-20T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-08-20",
+    "kind": "BULK",
+    "price": 326.65,
+    "qty": 208942.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 6.83
+   },
+   {
+    "as_of": "2026-08-20T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-08-20",
+    "kind": "BULK",
+    "price": 325.74,
+    "qty": 209264.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 6.82
+   },
+   {
+    "as_of": "2026-10-22T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-22",
+    "kind": "BULK",
+    "price": 493.36,
+    "qty": 199889.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.86
+   },
+   {
+    "as_of": "2026-10-22T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-22",
+    "kind": "BULK",
+    "price": 493.33,
+    "qty": 199889.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 9.86
+   },
+   {
+    "as_of": "2026-10-23T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-23",
+    "kind": "BULK",
+    "price": 484.67,
+    "qty": 274393.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 13.3
+   },
+   {
+    "as_of": "2026-10-23T15:30:00+05:30",
+    "client": "ACME CAPITAL MARKET LIMITED",
+    "date": "2026-10-23",
+    "kind": "BULK",
+    "price": 482.32,
+    "qty": 274393.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "TECHNOCRAF",
+    "value_cr": 13.23
+   }
+  ]
+ },
+ "operating_notes": [],
+ "ownership": [
+  {
+   "aif_pct": 1.72,
+   "as_of": "2026-10-12T06:00:47+05:30",
+   "banks_pct": 0.0,
+   "dii_pct": 4.5,
+   "fii_pct": 3.71,
+   "fpi_pct": 3.7,
+   "holders": [
+    {
+     "category": "Other",
+     "name": "LRSD SECURITIES PVT LTD",
+     "pct": 2.77
+    },
+    {
+     "category": "AIF",
+     "name": "NAKSHATRA BHARAT VANTAGE FUND",
+     "pct": 1.64
+    },
+    {
+     "category": "FPI",
+     "name": "VIKASA INDIA EIF I FUND- SHARE CLASS P",
+     "pct": 1.4
+    },
+    {
+     "category": "FPI",
+     "name": "VENUS INVESTMENTS VCC - VENUS STELLAR FUND",
+     "pct": 1.29
+    }
+   ],
+   "insurance_pct": 0.0,
+   "period": "Q2FY27",
+   "promoter_pct": 70.0,
+   "retail_holders": 20445.0,
+   "source_news_id": "xbrl:shp:544864:Q2FY27"
+  }
+ ],
+ "predictions": [],
+ "schema_version": 3,
+ "scrip_code": "544864",
+ "sector": "default",
+ "segment_mix": [],
+ "standalone": {
+  "balance_sheet": [],
+  "metrics": [
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "current_tax",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 3.82,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "deferred_tax",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": -0.04,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "depreciation",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.41,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "calc",
+     "doc": "results",
+     "from": [
+      "pbt_before_exceptional:Q1FY27",
+      "finance_cost:Q1FY27",
+      "depreciation:Q1FY27",
+      "other_income:Q1FY27"
+     ],
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "ebitda",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 17.96,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "calc",
+     "doc": "results",
+     "from": [
+      "ebitda:Q1FY27",
+      "revenue:Q1FY27"
+     ],
+     "ok": true,
+     "unit": "PCT"
+    },
+    "metric": "ebitda_margin",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "PCT",
+    "value": 19.37,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "employee_cost",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 3.33,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR",
+    "value": 3.55,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "exceptional_items",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "finance_cost",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 3.62,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "inventory_change",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 31.61,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "other_expenses",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 1.81,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "other_income",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.54,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "paid_up_capital",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 30.1,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 10.69,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat_continuing",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 10.69,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pbt",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 14.47,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "purchases_stock_in_trade",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "raw_material_cost",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 38.01,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "revenue",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 92.7,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "share_associates",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "tax_expense",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 3.78,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "total_expenses",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 78.77,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "total_income",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 93.24,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-02T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-25T23:11:18+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR_CR"
+    },
+    "metric": "pat_discontinued",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544864:Q1FY27",
+    "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   }
+  ]
+ },
+ "symbol": "TECHNOCRAF",
+ "timeline": [],
+ "upcoming_events": [],
+ "updated_at": "2026-10-25T23:11:13+05:30",
+ "watchlist": []
+}

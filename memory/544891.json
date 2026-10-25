@@ -1,0 +1,708 @@
+{
+ "balance_sheet": [],
+ "business_summary": null,
+ "capital_actions": [],
+ "company_name": "Hy-Tech Engineers Limited",
+ "deals": [
+  {
+   "amount_cr": 9.05,
+   "as_of": "2026-10-23T12:40:42+05:30",
+   "counterparty": "Government of Maharashtra",
+   "discount_pct": null,
+   "execution_by": "31/10/2032",
+   "expansion": null,
+   "history": [
+    {
+     "amount_cr": 9.05,
+     "as_of": "2026-10-23T12:40:42+05:30",
+     "progress": null,
+     "source_news_id": "nse-106826097",
+     "stage": "OTHER"
+    }
+   ],
+   "id": "d_9fb98b1e",
+   "includes_gst": null,
+   "issue_price": null,
+   "kind": "OTHER",
+   "new_shares": null,
+   "progress": null,
+   "segment": "manufacturing plant",
+   "seller": null,
+   "source_news_id": "nse-106826097",
+   "stage": "OTHER",
+   "swap_ratio": null,
+   "target": null,
+   "tranches": [],
+   "updated_as_of": "2026-10-23T12:40:42+05:30",
+   "usage": null
+  }
+ ],
+ "financial_metrics": [
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.61,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": -0.1,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 2.34,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q1FY27",
+     "finance_cost:Q1FY27",
+     "depreciation:Q1FY27",
+     "other_income:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 8.44,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY27",
+     "revenue:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "PCT",
+   "value": 19.6,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 6.82,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR",
+   "value": 0.55,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.55,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": -4.12,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 14.47,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.57,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 41.77,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 4.6,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 4.6,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 6.11,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 17.44,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 43.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.51,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 37.5,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-18T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T23:12:36+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544891:Q1FY27",
+   "unit": "INR_CR",
+   "value": 43.61,
+   "yoy_pct": null
+  }
+ ],
+ "fy_end_month": 3,
+ "governance": {
+  "auditor": null,
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-10-21T15:23:12+05:30",
+    "board": [
+     {
+      "appointed": "1979-01-15",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Hemant Tukaram Mondkar",
+      "role": "Chairperson",
+      "tenure_months": 6.0
+     },
+     {
+      "appointed": "2021-03-31",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Surekha Hemant Mondkar",
+      "role": null,
+      "tenure_months": 6.0
+     },
+     {
+      "appointed": "2026-07-18",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sunil Prabhakar Sathe",
+      "role": null,
+      "tenure_months": 2.3
+     },
+     {
+      "appointed": "2021-05-27",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ashwin Hemant Mondkar",
+      "role": null,
+      "tenure_months": 64.3
+     },
+     {
+      "appointed": "2021-09-16",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Vivek Sadashiv Patwardhan",
+      "role": null,
+      "tenure_months": 18.0
+     },
+     {
+      "appointed": "2022-04-08",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Chetan Ramesh Sapre",
+      "role": null,
+      "tenure_months": 18.0
+     },
+     {
+      "appointed": "2022-06-30",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Satish Prabhakar Kulkarni",
+      "role": null,
+      "tenure_months": 18.0
+     },
+     {
+      "appointed": "2025-07-22",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Nandeeta Vengsarkar Wagh",
+      "role": null,
+      "tenure_months": 12.0
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Chetan Ramesh Sapre",
+      "Satish Prabhakar Kulkarni",
+      "Hemant Tukaram Mondkar"
+     ],
+     "corporate social responsibility committee": [
+      "Surekha Hemant Mondkar",
+      "Ashwin Hemant Mondkar",
+      "Vivek Sadashiv Patwardhan"
+     ],
+     "nomination and remuneration committee": [
+      "Vivek Sadashiv Patwardhan",
+      "Satish Prabhakar Kulkarni",
+      "Chetan Ramesh Sapre",
+      "Hemant Tukaram Mondkar"
+     ],
+     "risk management committee": [
+      "Satish Prabhakar Kulkarni",
+      "Hemant Tukaram Mondkar",
+      "Ashwin Hemant Mondkar",
+      "Sunil Satwani",
+      "Sandeep Rane"
+     ],
+     "stakeholders relationship committee": [
+      "Satish Prabhakar Kulkarni",
+      "Chetan Ramesh Sapre",
+      "Hemant Tukaram Mondkar"
+     ]
+    },
+    "complaints": {
+     "disposed": 6.0,
+     "pending": 3.0,
+     "received": 9.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 33.0,
+     "board": 20.0,
+     "nomination and remuneration committee": 20.0,
+     "stakeholders relationship committee": 65.0
+    },
+    "independent_directors": 5,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1742852_21102026032406_WEB.xml",
+    "tax_litigation": []
+   }
+  ]
+ },
+ "guidance": [],
+ "identity": {
+  "entities": [],
+  "former_names": []
+ },
+ "industry": "Industrials > Capital Goods > Industrial Products > Other Industrial Products",
+ "last_filed_at": "2026-10-23T12:40:42+05:30",
+ "operating_notes": [],
+ "ownership": [
+  {
+   "aif_pct": 2.14,
+   "as_of": "2026-10-12T06:05:03+05:30",
+   "dii_pct": 5.38,
+   "fii_pct": 0.45,
+   "fpi_pct": 0.45,
+   "holders": [
+    {
+     "category": "Mutual fund",
+     "name": "WHITEOAK CAPITAL MULTI CAP FUND",
+     "pct": 2.62
+    },
+    {
+     "category": "Company",
+     "name": "WINRO COMMERCIAL (INDIA) LTD",
+     "pct": 2.39
+    }
+   ],
+   "insurance_pct": 0.02,
+   "mf_pct": 2.62,
+   "period": "Q2FY27",
+   "promoter_pct": 71.36,
+   "retail_holders": 35224.0,
+   "source_news_id": "xbrl:shp:544891:Q2FY27"
+  }
+ ],
+ "predictions": [],
+ "schema_version": 3,
+ "scrip_code": "544891",
+ "sector": "capital_goods",
+ "segment_mix": [],
+ "symbol": "HTEL",
+ "timeline": [
+  {
+   "date": "2026-10-23T12:40:42+05:30",
+   "event_type": "CAPEX",
+   "id": "t_9fb98b1e",
+   "impact_level": "MODERATE",
+   "news_id": "nse-106826097",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/HYTECH_23102026124001_Shirwal_Subsidy.pdf",
+   "summary": "Hy-Tech Engineers received eligibility certificate for ₹9.05 Cr government subsidy for Shirwal plant (2026-10-23)"
+  }
+ ],
+ "upcoming_events": [],
+ "updated_at": "2026-10-25T23:12:36+05:30",
+ "watchlist": []
+}

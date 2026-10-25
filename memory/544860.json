@@ -1,0 +1,788 @@
+{
+ "balance_sheet": [],
+ "business_summary": null,
+ "capital_actions": [],
+ "company_name": "Ardee Industries Limited",
+ "deals": [],
+ "financial_metrics": [
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 6.89,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": -0.11,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 2.75,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q1FY27",
+     "finance_cost:Q1FY27",
+     "depreciation:Q1FY27",
+     "other_income:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 33.53,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY27",
+     "revenue:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "PCT",
+   "value": 9.9,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 8.11,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR",
+   "value": 0.78,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 4.33,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 14.24,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 19.23,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.23,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 50.97,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 19.9,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 19.9,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 26.68,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 263.7,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 338.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 6.77,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 312.36,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:35:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544860:Q1FY27",
+   "unit": "INR_CR",
+   "value": 339.04,
+   "yoy_pct": null
+  }
+ ],
+ "fy_end_month": 3,
+ "governance": {
+  "auditor": null,
+  "auditor_history": []
+ },
+ "guidance": [],
+ "identity": {
+  "entities": [],
+  "former_names": []
+ },
+ "industry": "Commodities > Metals & Mining > Diversified Metals",
+ "last_filed_at": "2026-10-15T12:27:49+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 69.5,
+    "qty": 2168999.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARDEE",
+    "value_cr": 15.07
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "BLITZQUANT RESEARCH LLP",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 69.54,
+    "qty": 2168999.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARDEE",
+    "value_cr": 15.08
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 69.15,
+    "qty": 2100995.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARDEE",
+    "value_cr": 14.53
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 69.22,
+    "qty": 2100995.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARDEE",
+    "value_cr": 14.54
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 68.78,
+    "qty": 2833324.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARDEE",
+    "value_cr": 19.49
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 69.56,
+    "qty": 4860002.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARDEE",
+    "value_cr": 33.81
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 68.1,
+    "qty": 2335589.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARDEE",
+    "value_cr": 15.91
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 68.21,
+    "qty": 2335589.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARDEE",
+    "value_cr": 15.93
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 67.95,
+    "qty": 2819748.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARDEE",
+    "value_cr": 19.16
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 67.92,
+    "qty": 2819748.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARDEE",
+    "value_cr": 19.15
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 69.57,
+    "qty": 6591781.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARDEE",
+    "value_cr": 45.86
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 69.52,
+    "qty": 6591781.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARDEE",
+    "value_cr": 45.83
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 68.38,
+    "qty": 1675107.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARDEE",
+    "value_cr": 11.45
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 68.5,
+    "qty": 1705516.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARDEE",
+    "value_cr": 11.68
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "TWO ROADS TRADING PRIVATE LIMITED",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 70.11,
+    "qty": 1633707.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARDEE",
+    "value_cr": 11.45
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "TWO ROADS TRADING PRIVATE LIMITED",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 70.06,
+    "qty": 1633707.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARDEE",
+    "value_cr": 11.45
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "VINOD MANJIBHAI CHAUHAN",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 69.23,
+    "qty": 1045334.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARDEE",
+    "value_cr": 7.24
+   },
+   {
+    "as_of": "2026-08-12T15:30:00+05:30",
+    "client": "VINOD MANJIBHAI CHAUHAN",
+    "date": "2026-08-12",
+    "kind": "BULK",
+    "price": 69.1,
+    "qty": 2350334.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARDEE",
+    "value_cr": 16.24
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "VINOD MANJIBHAI CHAUHAN",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 59.47,
+    "qty": 359661.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "ARDEE",
+    "value_cr": 2.14
+   },
+   {
+    "as_of": "2026-08-14T15:30:00+05:30",
+    "client": "VINOD MANJIBHAI CHAUHAN",
+    "date": "2026-08-14",
+    "kind": "BULK",
+    "price": 59.35,
+    "qty": 1664661.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "ARDEE",
+    "value_cr": 9.88
+   }
+  ]
+ },
+ "operating_notes": [],
+ "ownership": [
+  {
+   "aif_pct": 3.74,
+   "as_of": "2026-10-15T12:27:49+05:30",
+   "dii_pct": 5.24,
+   "fii_pct": 0.67,
+   "fpi_pct": 0.67,
+   "holders": [
+    {
+     "category": "Company",
+     "name": "WINRO COMMERCIAL (INDIA) LTD",
+     "pct": 1.65
+    },
+    {
+     "category": "Mutual fund",
+     "name": "BANK OF INDIA SMALL CAP FUND",
+     "pct": 1.5
+    },
+    {
+     "category": "AIF",
+     "name": "THE WEALTH COMPANY ALTERNATES TRUST-BHARAT VALUE F",
+     "pct": 1.5
+    },
+    {
+     "category": "Company",
+     "name": "BENGAL FINANCE AND INVESTMENT PVT LTD",
+     "pct": 1.38
+    },
+    {
+     "category": "AIF",
+     "name": "THE WEALTH COMPANY ALTERNATES TRUST-BHARAT VALUE F",
+     "pct": 1.2
+    },
+    {
+     "category": "Individual",
+     "name": "ASHISH KACHOLIA",
+     "pct": 1.2
+    }
+   ],
+   "mf_pct": 1.5,
+   "period": "Q2FY27",
+   "promoter_pct": 67.62,
+   "retail_holders": 84231.0,
+   "source_news_id": "xbrl:shp:544860:Q2FY27"
+  }
+ ],
+ "predictions": [],
+ "schema_version": 3,
+ "scrip_code": "544860",
+ "sector": "metals",
+ "segment_mix": [],
+ "symbol": "ARDEE",
+ "timeline": [],
+ "upcoming_events": [],
+ "updated_at": "2026-10-25T22:35:54+05:30",
+ "watchlist": []
+}

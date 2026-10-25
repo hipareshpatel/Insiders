@@ -1,0 +1,1659 @@
+{
+ "balance_sheet": [
+  {
+   "as_of": "2026-09-01T16:24:19+05:30",
+   "period": "Sep-2026",
+   "source_news_id": "nse-106764346"
+  }
+ ],
+ "business_summary": {
+  "as_of": "2026-09-01T16:24:19+05:30",
+  "source_news_id": "nse-106764346",
+  "text": "Rail-based technology company focusing on rail propulsion systems and electrical hardware systems for overhead electrification"
+ },
+ "call_points": [],
+ "capital_actions": [],
+ "company_name": "MV Electrosystems Limited",
+ "deals": [
+  {
+   "amount_cr": 1000.0,
+   "as_of": "2026-09-01T16:24:19+05:30",
+   "counterparty": "Indian Railways",
+   "discount_pct": null,
+   "execution_by": "March 2027",
+   "expansion": null,
+   "history": [
+    {
+     "amount_cr": 1000.0,
+     "as_of": "2026-09-01T16:24:19+05:30",
+     "progress": "564 propulsion systems in hand",
+     "source_news_id": "nse-106764346",
+     "stage": "IN_PROGRESS"
+    }
+   ],
+   "id": "d_5df23422",
+   "includes_gst": null,
+   "issue_price": null,
+   "kind": "ORDER",
+   "new_shares": null,
+   "progress": "564 propulsion systems in hand",
+   "segment": "rail propulsion systems",
+   "seller": null,
+   "source_news_id": "nse-106764346",
+   "stage": "IN_PROGRESS",
+   "swap_ratio": null,
+   "target": null,
+   "tranches": [],
+   "updated_as_of": "2026-09-01T16:24:19+05:30",
+   "usage": null
+  }
+ ],
+ "financial_metrics": [
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": -1.15,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.51,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q1FY27",
+     "finance_cost:Q1FY27",
+     "depreciation:Q1FY27",
+     "other_income:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": -5.38,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY27",
+     "revenue:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "PCT",
+   "value": -42.09,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 4.35,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR",
+   "value": -3.38,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.18,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": -0.68,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 2.15,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.03,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 13.64,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": -6.89,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": -6.89,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": -8.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 12.33,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 12.77,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": -1.15,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 20.84,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:26:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544851:Q1FY27",
+   "unit": "INR_CR",
+   "value": 12.8,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-01T16:24:19+05:30",
+   "basis": "STANDALONE",
+   "metric": "order_book",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "nse-106764346",
+   "unit": "INR_CR",
+   "value": 1000.0,
+   "yoy_pct": null
+  }
+ ],
+ "fy_end_month": 3,
+ "governance": {
+  "auditor": null,
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-10-12T13:04:26+05:30",
+    "board": [
+     {
+      "appointed": "2025-09-27",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sanjeev Mehta",
+      "role": "Chairperson",
+      "tenure_months": 12.0
+     },
+     {
+      "appointed": "2025-10-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Pankaj Rastogi",
+      "role": null,
+      "tenure_months": 12.0
+     },
+     {
+      "appointed": "2025-09-27",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Vipin Sharma",
+      "role": null,
+      "tenure_months": 12.0
+     },
+     {
+      "appointed": "2025-09-27",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Kanika Bhutani",
+      "role": null,
+      "tenure_months": 12.0
+     },
+     {
+      "appointed": "2009-07-03",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Mohit Vohra",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2023-07-10",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Amit Dhawan",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2018-10-20",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sumit Dhawan",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2019-05-15",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rahul Dhawan",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2023-08-24",
+      "category": "Non-Executive - Nominee Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sanjay Kumar Singh",
+      "role": null,
+      "tenure_months": null
+     }
+    ],
+    "board_size": 9,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "Vipin Sharma",
+      "Sanjeev Mehta",
+      "Amit Dhawan"
+     ],
+     "nomination and remuneration committee": [
+      "Kanika Bhutani",
+      "Vipin Sharma",
+      "Sanjeev Mehta"
+     ],
+     "stakeholders relationship committee": [
+      "Kanika Bhutani",
+      "Sumit Dhawan",
+      "Rahul Dhawan"
+     ]
+    },
+    "complaints": {
+     "disposed": 10.0,
+     "pending": 0.0,
+     "received": 10.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 32.0,
+     "board": 66.0
+    },
+    "independent_directors": 6,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1735922_12102026010536_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "The company is listed on 06-08-2026, therefore no last disclosure was made",
+      "initiated": "2024-10-08",
+      "opposing_party": "Central goods and services tax",
+      "status": "The appeal filed by the MV Electrosystems Limited is allowed on merit and therefore, the order-in-original is hereby set aside on dated 31.08.2026."
+     }
+    ]
+   }
+  ]
+ },
+ "guidance": [
+  {
+   "due": "FY27",
+   "due_date": "2027-03-31",
+   "given_on": "2026-09-01T16:24:19+05:30",
+   "id": "g_b7c96905",
+   "metric": "revenue",
+   "source_news_id": "nse-106764346",
+   "source_type": "CONCALL",
+   "statement": "FY27 revenue target",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "₹400 Cr"
+  },
+  {
+   "due": "FY27",
+   "due_date": "2027-03-31",
+   "given_on": "2026-09-01T16:24:19+05:30",
+   "id": "g_fa729ae1",
+   "metric": "pat_margin",
+   "source_news_id": "nse-106764346",
+   "source_type": "CONCALL",
+   "statement": "PAT margin at full scale",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "10%+"
+  },
+  {
+   "due": "January 2027",
+   "due_date": "2027-01-31",
+   "given_on": "2026-09-01T16:24:19+05:30",
+   "id": "g_a53ffc46",
+   "metric": "production_run_rate",
+   "source_news_id": "nse-106764346",
+   "source_type": "CONCALL",
+   "statement": "Monthly production run rate",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "40 systems"
+  },
+  {
+   "due": "FY27",
+   "due_date": "2027-03-31",
+   "given_on": "2026-09-01T16:24:19+05:30",
+   "id": "g_798ecc84",
+   "metric": "rd_expense",
+   "source_news_id": "nse-106764346",
+   "source_type": "CONCALL",
+   "statement": "Annual R&D expenses",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "₹9 Cr"
+  }
+ ],
+ "identity": {
+  "entities": [],
+  "former_names": []
+ },
+ "industry": "Industrials > Capital Goods > Industrial Manufacturing > Industrial Products",
+ "last_filed_at": "2026-09-01T16:24:19+05:30",
+ "market_deals": {
+  "events": [
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 586.22,
+    "qty": 250571.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 14.69
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 586.05,
+    "qty": 265191.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 15.54
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 570.13,
+    "qty": 273742.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 15.61
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "GRT STRATEGIC VENTURES LLP",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 570.42,
+    "qty": 273849.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 15.62
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 566.2,
+    "qty": 597360.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 33.82
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 567.33,
+    "qty": 732564.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 41.56
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 573.73,
+    "qty": 279402.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 16.03
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 571.54,
+    "qty": 280026.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 16.0
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "K RAJ BUSINESS VENTURE PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 576.98,
+    "qty": 124641.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 7.19
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "K RAJ BUSINESS VENTURE PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 579.88,
+    "qty": 139641.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 8.1
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 587.09,
+    "qty": 457398.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 26.85
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 586.83,
+    "qty": 457398.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 26.84
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 565.85,
+    "qty": 785827.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 44.47
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 566.15,
+    "qty": 786184.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 44.51
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "PATRONUS TRADETECH LLP",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 559.89,
+    "qty": 164350.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 9.2
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "PATRONUS TRADETECH LLP",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 557.41,
+    "qty": 168166.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 9.37
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 574.78,
+    "qty": 343204.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 19.73
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 575.4,
+    "qty": 354735.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 20.41
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "SANJAY POPATLAL JAIN",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 541.36,
+    "qty": 200000.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 10.83
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "SECURE SHANTI ADVISORY LLP",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 572.67,
+    "qty": 181795.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 10.41
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "SECURE SHANTI ADVISORY LLP",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 570.94,
+    "qty": 191656.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 10.94
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "SILVER LINE VENTURES PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 562.94,
+    "qty": 103412.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 5.82
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "SILVER LINE VENTURES PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 578.78,
+    "qty": 168412.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 9.75
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 576.02,
+    "qty": 228880.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 13.18
+   },
+   {
+    "as_of": "2026-08-06T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-06",
+    "kind": "BULK",
+    "price": 582.28,
+    "qty": 388880.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 22.64
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 658.14,
+    "qty": 220109.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 14.49
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 651.51,
+    "qty": 237609.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 15.48
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 660.6,
+    "qty": 301243.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 19.9
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 655.27,
+    "qty": 310632.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 20.35
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 652.17,
+    "qty": 205810.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 13.42
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "IRAGE BROKING SERVICES LLP",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 657.52,
+    "qty": 272365.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 17.91
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 658.72,
+    "qty": 318801.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 21.0
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 659.28,
+    "qty": 318801.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 21.02
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 654.38,
+    "qty": 237909.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 15.57
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 654.28,
+    "qty": 249024.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 16.29
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 657.16,
+    "qty": 302592.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 19.89
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 655.97,
+    "qty": 302592.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 19.85
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 653.94,
+    "qty": 533674.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 34.9
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 653.73,
+    "qty": 533674.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 34.89
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 659.05,
+    "qty": 504543.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 33.25
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 659.37,
+    "qty": 504543.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 33.27
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 652.91,
+    "qty": 371339.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 24.25
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "PLUTUS RESEARCH PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 652.54,
+    "qty": 371339.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 24.23
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 653.36,
+    "qty": 308336.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 20.15
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "PURE BROKING PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 654.11,
+    "qty": 314549.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 20.57
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "SANJAY POPATLAL JAIN",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 651.69,
+    "qty": 150001.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 9.78
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 651.7,
+    "qty": 117781.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 7.68
+   },
+   {
+    "as_of": "2026-08-07T15:30:00+05:30",
+    "client": "YUGA STOCKS AND COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-07",
+    "kind": "BULK",
+    "price": 662.87,
+    "qty": 273669.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 18.14
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 625.4,
+    "qty": 195209.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 12.21
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "DIPAN MEHTA COMMODITIES PRIVATE LIMITED",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 625.47,
+    "qty": 203709.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 12.74
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 625.8,
+    "qty": 239970.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 15.02
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 624.97,
+    "qty": 253970.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 15.87
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 624.47,
+    "qty": 143684.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 8.97
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "JUNOMONETA FINSOL PRIVATE LIMITED",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 624.51,
+    "qty": 144797.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 9.04
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 624.9,
+    "qty": 184485.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 11.53
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 624.77,
+    "qty": 186299.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 11.64
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 625.96,
+    "qty": 163059.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 10.21
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "MICROCURVES TRADING PRIVATE LIMITED",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 625.86,
+    "qty": 163059.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 10.21
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 623.61,
+    "qty": 157561.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 9.83
+   },
+   {
+    "as_of": "2026-08-10T15:30:00+05:30",
+    "client": "QE SECURITIES LLP",
+    "date": "2026-08-10",
+    "kind": "BULK",
+    "price": 624.27,
+    "qty": 160437.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 10.02
+   },
+   {
+    "as_of": "2026-08-13T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-08-13",
+    "kind": "BULK",
+    "price": 613.25,
+    "qty": 160895.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 9.87
+   },
+   {
+    "as_of": "2026-08-13T15:30:00+05:30",
+    "client": "MATHISYS QUANTCAP LLP",
+    "date": "2026-08-13",
+    "kind": "BULK",
+    "price": 612.37,
+    "qty": 161372.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 9.88
+   },
+   {
+    "as_of": "2026-10-22T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-22",
+    "kind": "BULK",
+    "price": 855.02,
+    "qty": 154771.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "MVELECTRO",
+    "value_cr": 13.23
+   },
+   {
+    "as_of": "2026-10-22T15:30:00+05:30",
+    "client": "HRTI PRIVATE LIMITED",
+    "date": "2026-10-22",
+    "kind": "BULK",
+    "price": 846.32,
+    "qty": 161692.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "MVELECTRO",
+    "value_cr": 13.68
+   }
+  ]
+ },
+ "operating_notes": [
+  {
+   "as_of": "2026-09-01T16:24:19+05:30",
+   "source_news_id": "nse-106764346",
+   "text": "Average realization per propulsion system: ₹1.67 Cr"
+  },
+  {
+   "as_of": "2026-09-01T16:24:19+05:30",
+   "source_news_id": "nse-106764346",
+   "text": "Working capital cycle: 85 days"
+  },
+  {
+   "as_of": "2026-09-01T16:24:19+05:30",
+   "source_news_id": "nse-106764346",
+   "text": "R&D expenses: ₹9 Cr/year, targeting 3-4% of revenue"
+  }
+ ],
+ "ownership": [],
+ "predictions": [
+  {
+   "comparison": ">=",
+   "created_on": "2026-09-01T16:24:19+05:30",
+   "id": "p_8aaa1f96",
+   "kpi": "PAT Margin",
+   "metric": "pat_margin",
+   "period": "Q4FY27",
+   "source_news_id": "nse-106764346",
+   "status": "OPEN",
+   "value": 10.0
+  }
+ ],
+ "schema_version": 3,
+ "scrip_code": "544851",
+ "sector": "capital_goods",
+ "segment_mix": [
+  {
+   "as_of": "2026-09-01T16:24:19+05:30",
+   "period": "Q1FY27",
+   "revenue_cr": 0.0,
+   "segment": "locomotive propulsion systems",
+   "share_pct": 0.0,
+   "source_news_id": "nse-106764346"
+  },
+  {
+   "as_of": "2026-09-01T16:24:19+05:30",
+   "period": "Q1FY27",
+   "revenue_cr": 0.0,
+   "segment": "EMU propulsion systems",
+   "share_pct": 0.0,
+   "source_news_id": "nse-106764346"
+  }
+ ],
+ "symbol": "MVELECTRO",
+ "timeline": [
+  {
+   "date": "2026-09-01T16:24:19+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_5df23422",
+   "impact_level": "HIGH",
+   "news_id": "nse-106764346",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/MVELECTROSYSTEMS_01092026162353_Covering_with_Transcript_of_call.pdf",
+   "summary": "MV Electrosystems held Q1FY27 earnings call, outlining production ramp-up to 40 systems/month by January 2027, targeting ₹400 Cr revenue and 10%+ PAT margin in FY27"
+  }
+ ],
+ "upcoming_events": [
+  {
+   "as_of": "2026-09-01T16:24:19+05:30",
+   "date": "2026-09-30",
+   "description": "First 10 propulsion systems delivery",
+   "event_type": "BOARD_MEETING",
+   "source_news_id": "nse-106764346"
+  },
+  {
+   "as_of": "2026-09-01T16:24:19+05:30",
+   "date": "2026-11-30",
+   "description": "Production ramp-up to 25 systems/month",
+   "event_type": "BOARD_MEETING",
+   "source_news_id": "nse-106764346"
+  },
+  {
+   "as_of": "2026-09-01T16:24:19+05:30",
+   "date": "2027-01-31",
+   "description": "Production ramp-up to 40 systems/month",
+   "event_type": "BOARD_MEETING",
+   "source_news_id": "nse-106764346"
+  }
+ ],
+ "updated_at": "2026-10-25T22:26:52+05:30",
+ "watchlist": [
+  {
+   "check_by": "2026-09-30",
+   "check_in": "Q2FY27 results",
+   "created_on": "2026-09-01T16:24:19+05:30",
+   "id": "w_16b5bbbe",
+   "kind": "KPI",
+   "source_news_id": "nse-106764346",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "₹100 Cr",
+   "text": "Revenue"
+  },
+  {
+   "check_by": "2027-03-31",
+   "check_in": "Q4FY27 results",
+   "created_on": "2026-09-01T16:24:19+05:30",
+   "id": "w_1b1739cb",
+   "kind": "KPI",
+   "source_news_id": "nse-106764346",
+   "status": "OPEN",
+   "status_history": [],
+   "target": "10%+",
+   "text": "PAT Margin"
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-09-01T16:24:19+05:30",
+   "id": "w_445b06fd",
+   "kind": "APPROVAL",
+   "source_news_id": "nse-106764346",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "RDSO approval for MEMU propulsion system"
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-09-01T16:24:19+05:30",
+   "id": "w_5f8444ad",
+   "kind": "CONCERN",
+   "response": "10 months for EMU development, then approval; similar for Vande Bharat",
+   "source_news_id": "nse-106764346",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Timeline for Vande Bharat approval"
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-09-01T16:24:19+05:30",
+   "id": "w_84e9ac6a",
+   "kind": "CONCERN",
+   "response": "85-day cycle, payments within 15 days post-dispatch",
+   "source_news_id": "nse-106764346",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Working capital days"
+  }
+ ]
+}

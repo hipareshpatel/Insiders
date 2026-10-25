@@ -1,0 +1,4582 @@
+{
+ "balance_sheet": [
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "cash_cr": 103.19,
+   "current_assets_cr": 532.2,
+   "current_liabilities_cr": 113.65,
+   "cwip_cr": 25.46,
+   "equity_capital_cr": 27.63,
+   "fixed_assets_cr": 49.99,
+   "goodwill_cr": 0.0,
+   "gross_debt_cr": 67.53,
+   "inventories_cr": 177.96,
+   "investments_cr": 0.0,
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true
+   },
+   "net_worth_cr": 563.71,
+   "noncurrent_assets_cr": 149.32,
+   "noncurrent_liabilities_cr": 4.16,
+   "payables_cr": 30.66,
+   "period": "Q2FY26",
+   "receivables_cr": 151.74,
+   "reserves_cr": 536.08,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "total_assets_cr": 681.52,
+   "total_liabilities_cr": 117.81
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "cash_cr": 5.79,
+   "current_assets_cr": 560.79,
+   "current_liabilities_cr": 112.48,
+   "cwip_cr": 9.13,
+   "equity_capital_cr": 27.63,
+   "fixed_assets_cr": 69.41,
+   "goodwill_cr": 0.0,
+   "gross_debt_cr": 45.43,
+   "inventories_cr": 192.05,
+   "investments_cr": 0.0,
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true
+   },
+   "net_worth_cr": 590.37,
+   "noncurrent_assets_cr": 146.26,
+   "noncurrent_liabilities_cr": 4.21,
+   "payables_cr": 42.82,
+   "period": "Q4FY26",
+   "receivables_cr": 204.4,
+   "reserves_cr": 562.74,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "total_assets_cr": 707.05,
+   "total_liabilities_cr": 116.69
+  }
+ ],
+ "business_summary": null,
+ "capital_actions": [],
+ "company_name": "Mangal Electrical Industries Limited",
+ "deals": [],
+ "financial_metrics": [
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 1.54,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": -0.2,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 1.21,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q1FY26",
+     "finance_cost:Q1FY26",
+     "depreciation:Q1FY26",
+     "other_income:Q1FY26"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 9.97,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY26",
+     "revenue:Q1FY26"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "PCT",
+   "value": 11.12,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 6.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR",
+   "value": 1.82,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 3.94,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": -19.78,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 6.82,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 0.25,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 20.5,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 3.73,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 3.73,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 5.07,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 1.16,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 84.49,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 89.66,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 1.34,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 84.84,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 89.91,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-09-16T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:26+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 4.46,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 0.06,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 1.34,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q2FY26",
+     "finance_cost:Q2FY26",
+     "depreciation:Q2FY26",
+     "other_income:Q2FY26"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 21.84,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q2FY26",
+     "revenue:Q2FY26"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "PCT",
+   "value": 14.15,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 6.26,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR",
+   "value": 5.96,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 3.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": -8.09,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 9.65,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 1.31,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 27.63,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 13.3,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 13.3,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 17.83,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 12.05,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 112.6,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 154.33,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 4.52,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 137.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 155.64,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 30.23,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible_wip",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 6.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": -0.14,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 2.55,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:H1FY26",
+     "finance_cost:H1FY26",
+     "depreciation:H1FY26",
+     "other_income:H1FY26"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 31.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:H1FY26",
+     "revenue:H1FY26"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "PCT",
+   "value": 13.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 13.26,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR",
+   "value": 7.78,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 7.93,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "financing_cash_flow",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 291.2,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": -27.86,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "investing_cash_flow",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": -28.71,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "net_cash_flow",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 102.75,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "operating_cash_flow",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": -159.75,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 16.47,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 1.56,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 27.63,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 17.03,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 17.03,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 22.9,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 13.22,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 197.09,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 243.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 5.86,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 222.65,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:30+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q2FY26",
+   "unit": "INR_CR",
+   "value": 245.55,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 5.22,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": -0.6,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 1.74,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q3FY26",
+     "finance_cost:Q3FY26",
+     "depreciation:Q3FY26",
+     "other_income:Q3FY26"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 18.88,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q3FY26",
+     "revenue:Q3FY26"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "PCT",
+   "value": 12.08,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 7.51,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR",
+   "value": 5.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 1.88,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 21.58,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 17.56,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 2.74,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 27.63,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 13.39,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 13.39,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 18.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 15.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 74.94,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 156.27,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 4.62,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 141.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 159.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 11.23,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": -0.74,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 4.29,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:9MFY26",
+     "finance_cost:9MFY26",
+     "depreciation:9MFY26",
+     "other_income:9MFY26"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 50.69,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:9MFY26",
+     "revenue:9MFY26"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "PCT",
+   "value": 12.67,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 20.76,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR",
+   "value": 12.79,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 9.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": -6.28,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 34.03,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 4.3,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 27.63,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 30.42,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 30.42,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 40.9,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 29.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 272.03,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 400.26,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 10.48,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 363.66,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-02T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:31+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q3FY26",
+   "unit": "INR_CR",
+   "value": 404.56,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 4.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 0.42,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 1.64,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q4FY26",
+     "finance_cost:Q4FY26",
+     "depreciation:Q4FY26",
+     "other_income:Q4FY26"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 17.66,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q4FY26",
+     "revenue:Q4FY26"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "PCT",
+   "value": 9.84,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 7.72,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR",
+   "value": 4.68,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 1.82,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 7.14,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 5.92,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 3.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 27.63,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 12.75,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 12.75,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 17.21,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 1.58,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 139.4,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 179.42,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 4.46,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 165.21,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 182.42,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 36.93,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible_wip",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 15.27,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": -0.32,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 5.92,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:FY26",
+     "finance_cost:FY26",
+     "depreciation:FY26",
+     "other_income:FY26"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 68.35,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:FY26",
+     "revenue:FY26"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "PCT",
+   "value": 11.79,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 28.48,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR",
+   "value": 17.46,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 11.62,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "financing_cash_flow",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 264.41,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 0.86,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "investing_cash_flow",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": -157.71,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "net_cash_flow",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 5.35,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "operating_cash_flow",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": -101.35,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 39.95,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 7.31,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 27.63,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 43.17,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 43.17,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 58.12,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 30.6,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 411.43,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 579.68,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 14.94,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 528.87,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:33+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q4FY26",
+   "unit": "INR_CR",
+   "value": 586.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.65,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.93,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q1FY27",
+     "finance_cost:Q1FY27",
+     "depreciation:Q1FY27",
+     "other_income:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 11.13,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY27",
+     "revenue:Q1FY27"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "PCT",
+   "value": 8.85,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 7.56,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR",
+   "value": 2.72,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.86,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.41,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 6.61,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 1.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 27.63,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 7.52,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 7.52,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 10.1,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 5.51,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 94.61,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 125.83,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 2.58,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 117.54,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 127.64,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-06T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-25T22:17:28+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544492:Q1FY27",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  }
+ ],
+ "fy_end_month": 3,
+ "governance": {
+  "auditor": null,
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-04-09T15:23:24+05:30",
+    "board": [
+     {
+      "appointed": "2008-04-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rahul Mangal",
+      "role": "Chairperson related to Promoter",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2008-04-01",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ashish Mangal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2019-03-25",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sumer Singh Punia",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2019-09-02",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ompal Sharma",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2022-09-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Aniketa Mangal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ram Karan Aameria",
+      "role": null,
+      "tenure_months": 18.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sandeep Purohit",
+      "role": null,
+      "tenure_months": 18.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Tanvi Surana",
+      "role": null,
+      "tenure_months": 18.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Manoj Maheshwari",
+      "role": null,
+      "tenure_months": 18.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Apaar Kasliwal",
+      "role": null,
+      "tenure_months": 18.0
+     }
+    ],
+    "board_size": 10,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Apaar Kasliwal",
+      "Tanvi Surana",
+      "Ashish Mangal"
+     ],
+     "corporate social responsibility committee": [
+      "Aniketa Mangal",
+      "Ashish Mangal",
+      "Sandeep Purohit"
+     ],
+     "nomination and remuneration committee": [
+      "Manoj Maheshwari",
+      "Tanvi Surana",
+      "Ashish Mangal"
+     ],
+     "other committee": [
+      "Rahul Mangal",
+      "Ashish Mangal",
+      "Aniketa Mangal"
+     ],
+     "stakeholders relationship committee": [
+      "Ashish Mangal",
+      "Aniketa Mangal",
+      "Tanvi Surana"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 44.0,
+     "board": 44.0,
+     "nomination and remuneration committee": 44.0
+    },
+    "independent_directors": 6,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-03-31",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1647942_09042026032324_WEB.xml",
+    "tax_litigation": []
+   },
+   {
+    "as_of": "2026-07-15T17:23:52+05:30",
+    "board": [
+     {
+      "appointed": "2008-04-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rahul Mangal",
+      "role": "Chairperson related to Promoter",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2008-04-01",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ashish Mangal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2019-03-25",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sumer Singh Punia",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2019-09-02",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ompal Sharma",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2022-09-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Aniketa Mangal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ram Karan Aameria",
+      "role": null,
+      "tenure_months": 21.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sandeep Purohit",
+      "role": null,
+      "tenure_months": 21.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Tanvi Surana",
+      "role": null,
+      "tenure_months": 21.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Manoj Maheshwari",
+      "role": null,
+      "tenure_months": 21.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Apaar Kasliwal",
+      "role": null,
+      "tenure_months": 21.0
+     }
+    ],
+    "board_size": 10,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Apaar Kasliwal",
+      "Tanvi Surana",
+      "Ashish Mangal"
+     ],
+     "corporate social responsibility committee": [
+      "Aniketa Mangal",
+      "Ashish Mangal",
+      "Sandeep Purohit"
+     ],
+     "nomination and remuneration committee": [
+      "Manoj Maheshwari",
+      "Tanvi Surana",
+      "Ashish Mangal"
+     ],
+     "other committee": [
+      "Rahul Mangal",
+      "Ashish Mangal",
+      "Aniketa Mangal"
+     ],
+     "stakeholders relationship committee": [
+      "Ashish Mangal",
+      "Aniketa Mangal",
+      "Tanvi Surana"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [
+     "fine or penalty: Office of the Appellate Authority ( Government of Rajasthan) State Tax, Jaipur-First, Jaipur (Order passed under the provisions of the GST Act, 2017 pertaining to input tax credit / tax demand)"
+    ],
+    "gaps": {
+     "audit committee": 104.0,
+     "board": 104.0,
+     "other committee": 47.0
+    },
+    "independent_directors": 6,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [
+     {
+      "amount_rupees": null,
+      "authority": "Office of the Appellate Authority ( Government of Rajasthan) State Tax, Jaipur-First, Jaipur",
+      "details": "Order passed under the provisions of the GST Act, 2017 pertaining to input tax credit / tax demand",
+      "impact": "Approx. Rs.55.73 lakhs (including tax, interest and penalty). Based on the merits of the matter and factual position and prevailing law and the advice of the counsel/consultant, the Company shall be filing an appeal to this order with factual position and proper documentation before the Appellate Tribunal. Any material development on this matter will be informed to the Stock Exchanges in terms of Regulation 30(7) of the SEBI Listing Regulations.",
+      "received": "2026-04-08"
+     }
+    ],
+    "quarter_end": "2026-06-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1693387_15072026052351_WEB.xml",
+    "tax_litigation": []
+   },
+   {
+    "as_of": "2026-10-14T12:33:19+05:30",
+    "board": [
+     {
+      "appointed": "2008-04-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Rahul Mangal",
+      "role": "Chairperson related to Promoter",
+      "tenure_months": null
+     },
+     {
+      "appointed": "2008-04-01",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ashish Mangal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2019-03-25",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sumer Singh Punia",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2019-09-02",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ompal Sharma",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2022-09-01",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Aniketa Mangal",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Ram Karan Aameria",
+      "role": null,
+      "tenure_months": 24.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sandeep Purohit",
+      "role": null,
+      "tenure_months": 24.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": "2026-09-18",
+      "cessation_reason": "Others",
+      "name": "Tanvi Surana",
+      "role": null,
+      "tenure_months": 24.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Manoj Maheshwari",
+      "role": null,
+      "tenure_months": 24.0
+     },
+     {
+      "appointed": "2024-09-25",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Apaar Kasliwal",
+      "role": null,
+      "tenure_months": 24.0
+     },
+     {
+      "appointed": "2026-07-29",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Neha Rathi",
+      "role": null,
+      "tenure_months": 2.0
+     }
+    ],
+    "board_size": 10,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Apaar Kasliwal",
+      "Ashish Mangal",
+      "Neha Rathi"
+     ],
+     "corporate social responsibility committee": [
+      "Aniketa Mangal",
+      "Ashish Mangal",
+      "Sandeep Purohit"
+     ],
+     "nomination and remuneration committee": [
+      "Manoj Maheshwari",
+      "Ashish Mangal",
+      "Neha Rathi"
+     ],
+     "other committee": [
+      "Rahul Mangal",
+      "Ashish Mangal",
+      "Aniketa Mangal"
+     ],
+     "stakeholders relationship committee": [
+      "Ashish Mangal",
+      "Aniketa Mangal",
+      "Neha Rathi"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 76.0,
+     "board": 76.0,
+     "nomination and remuneration committee": 75.0,
+     "other committee": 47.0
+    },
+    "independent_directors": 6,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1737477_14102026123417_WEB.xml",
+    "tax_litigation": []
+   }
+  ]
+ },
+ "guidance": [],
+ "identity": {
+  "entities": [],
+  "former_names": []
+ },
+ "industry": "Industrials > Capital Goods > Electrical Equipment > Other Electrical Equipment",
+ "last_filed_at": "2026-10-13T05:22:34+05:30",
+ "operating_notes": [],
+ "ownership": [
+  {
+   "aif_pct": 3.56,
+   "as_of": "2026-10-13T05:22:34+05:30",
+   "dii_pct": 3.57,
+   "fii_pct": 0.08,
+   "fpi_pct": 0.08,
+   "holders": [
+    {
+     "category": "AIF",
+     "name": "ABAKKUS DIVERSIFIED ALPHA FUND",
+     "pct": 2.89
+    }
+   ],
+   "period": "Q2FY27",
+   "promoter_pct": 74.79,
+   "retail_holders": 50741.0,
+   "source_news_id": "xbrl:shp:544492:Q2FY27"
+  }
+ ],
+ "predictions": [],
+ "schema_version": 3,
+ "scrip_code": "544492",
+ "sector": "capital_goods",
+ "segment_mix": [],
+ "symbol": "MEIL",
+ "timeline": [],
+ "upcoming_events": [],
+ "updated_at": "2026-10-25T22:17:33+05:30",
+ "watchlist": []
+}

@@ -132,3 +132,13 @@ an independent agent (`scratchpad` table summarised here):
   the figure pages (as the pipeline already does), a number normaliser for the matcher misses, and per line: "other
   expenses" shown only when the statement prints that figure, tax as current + deferred when that is what is printed,
   profit before tax as printed (`settle_pbt` already does this for the card's line).
+
+### Item 13: final design (owner, 25 Oct 2026: OK)
+
+| Lines | When the PDF and the figure file disagree |
+|---|---|
+| Tier 1: revenue, profit before tax as the statement prints it, profit, EPS | Hold that line |
+| Tier 2: other expenses, tax, finance cost, materials and the rest | Leave that line out, or show the statement's own lines (e.g. current + deferred tax) |
+
+Both stay off until the check reads figure pages as images (as the pipeline already does) and the number matcher reads
+"1.253.52", "935,20" and letters in place of digits.

@@ -80,6 +80,8 @@ def card_consolidated_only() -> bool:
     pass-2 prompt says to state consolidated figures only, and a standalone figure the model writes on a consolidated card
     is taken out. Turned on together with CARD_EBITDA_PROFIT_V2 for the release check. Read at the call."""
     return (_env("CARD_CONSOLIDATED_ONLY", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def eps_share_adjust() -> bool:
     """EPS_SHARE_ADJUST (default off; F153, TODO 43): an EPS change on a card is worked out on today's share count (the older
     period's EPS divided by the split, bonus or consolidation factor between the two periods), or left out where the share

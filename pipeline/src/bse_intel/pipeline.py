@@ -3411,9 +3411,8 @@ class Pipeline:
             xbrl_fast_path.drop_long_year(tagged, history, filing.news_id)   # an 18-month "year" dated as twelve
             xbrl_fast_path.settle_pbt(tagged, filed_text)
             self._xbrl_comparatives(filing, tagged, history)
-            text = tagged.table(explicit_basis=card_consolidated_only()) + "\n\n" + text  # exact figures first; they also ground the card
             eps_adjust.adjust_result(tagged, dossier)   # EPS_SHARE_ADJUST (F153): EPS changes on one share count
-            text = tagged.table() + "\n\n" + text  # exact figures first; they also ground the card
+            text = tagged.table(explicit_basis=card_consolidated_only()) + "\n\n" + text  # exact figures first; they also ground the card
         # An annual report's statements as the company tagged them, in crore and on a named basis, where the PDF
         # prints lakh or million with standalone and consolidated side by side (12 of 31 cards held, round 3d).
         # Its lines are the filing's own figures, so a card may quote them as it quotes the results table.

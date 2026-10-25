@@ -1,0 +1,1502 @@
+[
+ {
+  "item": 0,
+  "news_id": "nse-106640910",
+  "symbol": "LT",
+  "field": "notable_changes[0].previous",
+  "figure": "740,327",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106609798 (2026-05-05)",
+  "evidence": "FY26 results press release: 'consolidated order book as on March 31, 2026, stood at an all-time high of ₹ 740,327 crore'"
+ },
+ {
+  "item": 1,
+  "news_id": "nse-106646912",
+  "symbol": "GUJALKALI",
+  "field": "why_it_matters[1].text",
+  "figure": "3.7%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Rs 42 Cr annual sales (this filing p1: 'contribute to the annual sales revenue by approx. Rs. 42 crores') / Q4FY26 revenue from operations Rs 1,12,531 lakh = Rs 1,125.31 Cr (earlier filing nse-106646873, same day, results p.?: 'Revenue from Operations 1,12,531') = 3.73%"
+ },
+ {
+  "item": 2,
+  "news_id": "cbd78d5c-f65d-49e7-91f3-3fd4d6254773",
+  "symbol": "AHLUCONT",
+  "field": "notable_changes[1].previous",
+  "figure": "318.45",
+  "verdict": "RIGHT",
+  "source": "earlier filing f6495f61 (Q4FY25 results, 30 May 2025)",
+  "evidence": "Consolidated statement of assets & liabilities as at 31/03/2025 (Rs lakh): 'Cash and cash equivalents 31845.06' = Rs 318.45 Cr. Note: the card compares it with Rs 920 Cr 'cash including all the liquid investments' (call), which also counts bank balances (64,590 lakh at Mar-25), so the +189% change is not like-for-like"
+ },
+ {
+  "item": 3,
+  "news_id": "nse-106823907",
+  "symbol": "PERSISTENT",
+  "field": null,
+  "figure": "4264.61",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106823856 (2026-10-21 19:16)",
+  "evidence": "Figure is deal_value.amount_cr (QIP size). Earlier same-day QIP opening letter p.2: 'USD 450 million equivalent to INR 42,646.10 million' = ₹4,264.61 Cr"
+ },
+ {
+  "item": 4,
+  "news_id": "nse-106820572",
+  "symbol": "TEJASNET",
+  "field": "key_numbers",
+  "figure": "307",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p2 (image) press release table: 'PAT (207) Q2-FY27, (307) Q2-FY26' - prior-year quarter loss Rs 307 Cr"
+ },
+ {
+  "item": 5,
+  "news_id": "e87824b7-e51f-4cbe-8b8f-a18e6e043971",
+  "symbol": "HERITGFOOD",
+  "field": "takeaway",
+  "figure": "94.40%",
+  "verdict": "RIGHT",
+  "source": "earlier same-day filing d7ea9e10 (board outcome, Annexure-C, 16 May 2025)",
+  "evidence": "'shareholding of the Company increasing from 50% to 94.40% in HNFPL'; this results filing note 5: SPA to acquire 71,00,000 shares of the JV for Rs 85.00 mn"
+ },
+ {
+  "item": 6,
+  "news_id": "nse-106606001",
+  "symbol": "RESPONIND",
+  "field": "what_happened",
+  "figure": "2.80%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p.3 (scanned Reg 31 table), Fairpoint Tradecom LLP (Promoter Group) post-event encumbered: 74,69,971, 2.80% of total share capital"
+ },
+ {
+  "item": 7,
+  "news_id": "nse-106599418",
+  "symbol": "ZENSARTECH",
+  "field": "takeaway",
+  "figure": "212.5",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p14 consolidated, Q4FY25 column: PBT before exceptional 2,298 + finance costs 49 + D&A 238 - other income 460 = Rs 2,125 mn = Rs 212.5 Cr (same method gives Q4FY26 2,356 mn = 235.6 Cr)"
+ },
+ {
+  "item": 8,
+  "news_id": "nse-106632422",
+  "symbol": "HITECHCORP",
+  "field": "takeaway",
+  "figure": "15.76",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Consolidated Q4FY25 (Rs lakh): PBT before exceptional 319.41 + finance costs 419.87 + D&A 963.29 - other income 126.24 = 1,576.33 lakh = Rs 15.76 Cr (Q4FY26: 959.28+466.40+1,001.56-291.32 = 21.36 Cr)"
+ },
+ {
+  "item": 9,
+  "news_id": "nse-106631260",
+  "symbol": "REFEX",
+  "field": "why_it_matters[0].text",
+  "figure": "3.5%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "₹20.27 Cr / Q3FY26 consolidated revenue ₹576.01 Cr (₹57,601.22 lakh, Dec 31 2025 column; filed with Q3 results Jan 2026, repeated in Q4 results nse-106640981 consolidated statement) = 3.52%"
+ },
+ {
+  "item": 10,
+  "news_id": "nse-106612406",
+  "symbol": "CLEANMAX",
+  "field": "why_it_matters[0].text",
+  "figure": "5.9%",
+  "verdict": "WRONG",
+  "source": "computed",
+  "evidence": "Rs 100 Cr / TTM revenue. Consolidated revenue (results nse-106619404 p.? and Q3FY26 XBRL): 9MFY26 Rs 1,355.41 Cr + Q4FY25 Rs 10,392.05 mn (445.51 Cr) = TTM Rs 1,800.9 Cr -> 5.6%, not 5.9% (5.9% matches Q3FY26 422.46 x 4 annualised, not trailing 12 months)"
+ },
+ {
+  "item": 11,
+  "news_id": "nse-106617043",
+  "symbol": "SATIN",
+  "field": "takeaway",
+  "figure": "288.05",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "p.18 consolidated Q4FY25 (Rs lakh): PBT 1,822.89 + interest cost 25,973.85 + FX effect 394.52 + D&A 757.73 - other income 144.18 = 28,804.81 lakh = Rs 288.05 Cr (Q4FY26 same method = 599.03)"
+ },
+ {
+  "item": 12,
+  "news_id": "nse-106633355",
+  "symbol": "VINCOFE",
+  "field": "takeaway",
+  "figure": "19.35",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.4 consolidated, quarter ended 31-03-2025 (₹ lakh): PBT 1,722.42 + finance cost 163.85 + depreciation 171.69 - other income 122.80 = 1,935.16 lakh = ₹19.35 Cr (same definition gives Q4FY26 ₹30.57 Cr)"
+ },
+ {
+  "item": 13,
+  "news_id": "nse-106597966",
+  "symbol": "UNIONBANK",
+  "field": "what_happened",
+  "figure": "8.5%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p4 (scan) consolidated: Net profit for the period 5,50,361 lakh (Q4FY26) vs 5,07,269 lakh (Q3FY26) -> +8.49% QoQ"
+ },
+ {
+  "item": 14,
+  "news_id": "nse-106617170",
+  "symbol": "HFCL",
+  "field": "why_it_matters[0].text",
+  "figure": "21,200",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106615236 (Q4FY26 call transcript, 8 May 2026)",
+  "evidence": "'The Company's order book stands at Rs.21,200 crore including export order worth Rs. 12,250 crore'; 183.95/21,200 = 0.87%"
+ },
+ {
+  "item": 15,
+  "news_id": "nse-106608526",
+  "symbol": "TATACHEM",
+  "field": "notable_changes[1].current",
+  "figure": "12.38%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.3 Consolidated Highlights FY26: 'Revenue from operations at ₹ 14,584 Cr' and 'EBITDA at ₹ 1,805 Cr'; 1,805/14,584 = 12.38%"
+ },
+ {
+  "item": 16,
+  "news_id": "nse-106648391",
+  "symbol": "IREDA",
+  "field": "what_happened",
+  "figure": "85.8%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p8/consolidated statement Q4FY26: PBT 619.14 + finance cost 1,240.86 + D&A 12.54 - other income 5.95 = 1,866.59 Cr; / revenue from operations 2,175.33 = 85.8% (standalone gives 85.83%)"
+ },
+ {
+  "item": 17,
+  "news_id": "nse-106815742",
+  "symbol": "AARON",
+  "field": "takeaway",
+  "figure": "92",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106626077 (FY26 results, 16 May 2026)",
+  "evidence": "Standalone, year ended 31.03.2026: Revenue from operations 9,200.50 lakh = Rs 92.0 Cr"
+ },
+ {
+  "item": 18,
+  "news_id": "nse-106632511",
+  "symbol": "POWERMECH",
+  "field": "why_it_matters[2].text",
+  "figure": "12.09%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.15 consolidated (₹ Cr): FY26 PBT before JV 560.13 + finance 115.64 + D&A 74.51 - other income 45.68 = 704.60; Q4 187.56+27.92+21.34-9.94 = 226.88; 9M = 477.72 on revenue 6,061.57-2,110.73 = 3,950.84 -> 12.09%"
+ },
+ {
+  "item": 19,
+  "news_id": "faa3b692-3f9e-458f-950d-8f6e9b54f970",
+  "symbol": "HERITGFOOD",
+  "field": "notable_changes[3].previous",
+  "figure": "324.13",
+  "verdict": "RIGHT",
+  "source": "earlier filing 145bb59e-db01-490b-86f5-ebe6eab36492 (2026-05-11)",
+  "evidence": "p13 consolidated balance sheet 31 Mar 2026: non-current borrowings 2,230.33 + current borrowings 1,011.00 = Rs 3,241.33 mn = Rs 324.13 Cr gross debt"
+ },
+ {
+  "item": 20,
+  "news_id": "nse-106599389",
+  "symbol": "RPEL",
+  "field": "what_happened",
+  "figure": "49.3%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p.16 statement: Basic/Diluted EPS 3.30 (Q4FY26), 3.08 (Q3FY26), 2.21 (Q4FY25): +49.3% YoY, +7.1% QoQ"
+ },
+ {
+  "item": 21,
+  "news_id": "nse-106597966",
+  "symbol": "UNIONBANK",
+  "field": "what_happened",
+  "figure": "226.1%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.4 Consolidated results (₹ lakh): Provisions and Contingencies (other than tax) Q4FY26 1,05,031 vs Q3FY26 32,209 -> 1,050.31/322.09 = +226.1% QoQ (card figures are the consolidated basis throughout)"
+ },
+ {
+  "item": 22,
+  "news_id": "nse-106626212",
+  "symbol": "IDBI",
+  "field": "why_it_matters[0].text",
+  "figure": "14.6%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "10,000 / 68,564 = 14.58%. Rs 68,564 Cr = consolidated capital 10,752.40 + reserves 57,811.76 at 31.03.2026 (earlier filing nse-106605498, 2026-04-30, consolidated balance sheet). Note: the bank press release nse-106605519 states regulatory Net Worth Rs 55,749 Cr; on that basis it would be 17.9%"
+ },
+ {
+  "item": 23,
+  "news_id": "nse-106619239",
+  "symbol": "SUBEXLTD",
+  "field": "what_happened",
+  "figure": "1.3%",
+  "verdict": "WRONG",
+  "source": "this filing (consolidated results, 12 May 2026)",
+  "evidence": "Q4FY26 EBITDA = PBT before exceptional 1,296 + finance 80 + D&A 291 - other income 751 = 916 lakh (9.16 Cr, right). But the filing's Dec-25 column (restated: other income 445, other expenses 2,140) gives 1,026+66+237-445 = 884 lakh = 8.84 Cr, so QoQ is +3.6%. The +1.3% uses 9.04 Cr from the Q3 filing as first reported (other income 425), a superseded figure"
+ },
+ {
+  "item": 24,
+  "news_id": "1e8c1c2f-f9fa-4458-9fa7-7e510dc874da",
+  "symbol": "HESTERBIO",
+  "field": "notable_changes[1].current",
+  "figure": "77.24",
+  "verdict": "RIGHT",
+  "source": "earlier filing 479eb841-eced-4794-b0b8-3158b190a6af (2026-07-30)",
+  "evidence": "Q1FY27 results, consolidated statement (INR million): Revenue from Operations quarter ended 30-06-2026 772.44 = ₹77.24 Cr (Q4FY26 1,001.10, Q1FY26 841.05; -8% matches the call)"
+ },
+ {
+  "item": 25,
+  "news_id": "caf6462e-58c9-4474-88b9-789c6d5b6c00",
+  "symbol": "HEGAM",
+  "field": "takeaway",
+  "figure": "8.2%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "217.56 / TTM consolidated revenue at Q1FY27 (FY26 2,568.50 - Q1FY26 616.93 + Q1FY27 680.79 = 2,632.4 Cr; Q1FY27 680.79 from earlier filing ef8fc04d (2026-07-22) consolidated p10) = 8.26%; card shows 8.2% (truncated, within rounding)"
+ },
+ {
+  "item": 26,
+  "news_id": "nse-106826280",
+  "symbol": "CMPDI",
+  "field": "what_happened",
+  "figure": "67.6%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p.4 (Rs Cr): Profit for the period 194.84 (30.09.2026) vs 116.27 (30.06.2026): +67.6%"
+ },
+ {
+  "item": 27,
+  "news_id": "nse-106825470",
+  "symbol": "SOUTHBANK",
+  "field": "key_numbers",
+  "figure": "426.34",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106818473 (2026-10-15)",
+  "evidence": "Q2FY27 results p.13 consolidated (₹ lakh): Net profit for the period quarter ended 30.09.2026 42,634 = ₹426.34 Cr (standalone 42,613); transcript p.? 'net profit of INR426 crores'"
+ },
+ {
+  "item": 28,
+  "news_id": "nse-106653603",
+  "symbol": "MODIS",
+  "field": "key_numbers",
+  "figure": "132%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "GDV Rs 250 Cr (this filing) / FY26 revenue Rs 189.31 Cr (earlier filing nse-106625500, 2026-05-15: \"highest-ever annual revenue of Rs 189.31 crore in FY26\") = 132.1%"
+ },
+ {
+  "item": 29,
+  "news_id": "9f5de8ca-d905-46ca-a1de-25932d665daf",
+  "symbol": "EMUDHRA",
+  "field": "takeaway",
+  "figure": "4.7%",
+  "verdict": "RIGHT",
+  "source": "computed; earlier filing 5156c7ba (FY25 results, 6 May 2025)",
+  "evidence": "Consolidated balance sheet 31.03.2025 (INR mn): equity share capital 406.62 + other equity 7,046.64 = 7,453.26 mn = Rs 745.33 Cr; Rs 35.0 Cr facilities (this filing) / 745.33 = 4.70%"
+ },
+ {
+  "item": 30,
+  "news_id": "nse-106603248",
+  "symbol": "ORIENTCEM",
+  "field": "takeaway",
+  "figure": "25.8",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p.8 (scanned, ₹ lacs), corresponding 3 months ended 31-03-2025: total tax expense 2,580.24 (current 3,216.42, deferred (636.18)) = ₹25.80 Cr; PBT 6,787.24 - tax = PAT 4,207.00"
+ },
+ {
+  "item": 31,
+  "news_id": "nse-106718579",
+  "symbol": "AHCL",
+  "field": "notable_changes[0].previous",
+  "figure": "53.15",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106646645 (2026-05-29, Q4FY26 results)",
+  "evidence": "p7 balance sheet / results (Rs in Lacs): Equity Share Capital 5,315.15 lakh = Rs 53.15 Cr at 31.03.2026"
+ },
+ {
+  "item": 32,
+  "news_id": "nse-106632004",
+  "symbol": "GPTINFRA",
+  "field": "takeaway",
+  "figure": "59.24",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Consolidated Q4FY26 (Rs lakh): PBT 4,131.13 + finance costs 950.01 + D&A 740.90 - other income (102.36) = 5,924.40 lakh = Rs 59.24 Cr (Q4FY25: 2,863.59+564.55+495.32-64.92 = 38.59 Cr)"
+ },
+ {
+  "item": 33,
+  "news_id": "nse-106627837",
+  "symbol": "GNFC",
+  "field": "takeaway",
+  "figure": "240",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.4 standalone (₹ Cr), quarter ended 31-03-2025: PBT 287 + finance costs 1 + D&A 74 - other income 122 = 240 (Q4FY26: 526+2+79-125 = 482); net profit ₹211 Cr is also standalone"
+ },
+ {
+  "item": 34,
+  "news_id": "nse-106648038",
+  "symbol": "TI",
+  "field": "takeaway",
+  "figure": "154.58",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Standalone results Q4FY26 (Rs lakh): PBT before exceptional 4,715.21 + finance costs 6,890.84 + D&A 4,552.31 - other income 700.59 = 15,457.77 lakh = Rs 154.58 Cr (Q4FY25 same method 78.42 Cr)"
+ },
+ {
+  "item": 35,
+  "news_id": "nse-106604266",
+  "symbol": "BANSALWIRE",
+  "field": "why_it_matters[0].text",
+  "figure": "23.3%",
+  "verdict": "RIGHT",
+  "source": "computed; same-day results filing nse-106603938",
+  "evidence": "Consolidated (INR mn): share capital 782.78 + other equity 13,523.94 = 14,306.72 mn = Rs 1,430.67 Cr; net cash from operating activities FY26 3,330.81 mn (press release 'Rs 333 crore'); 333/1,430.67 = 23.3%. (Side note: the same cash flow shows FY25 at (1,533.04) mn, not the Rs -150.96 Cr in the sentence)"
+ },
+ {
+  "item": 36,
+  "news_id": "nse-106637843",
+  "symbol": "SARDAEN",
+  "field": "takeaway",
+  "figure": "270.6",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Consolidated statement (₹ Cr), quarter ended 31-03-2025: profit before exceptional items 160.75 + finance costs 70.03 + D&A 86.62 - other income 46.80 = 270.60 (same method gives Q4FY26 347.56)"
+ },
+ {
+  "item": 37,
+  "news_id": "nse-106598067",
+  "symbol": "AURUM",
+  "field": "takeaway",
+  "figure": "75.9%",
+  "verdict": "WRONG",
+  "source": "this filing",
+  "evidence": "p11 (scan) consolidated, INR lakh: revenue from operations 12,385 (Q4FY26) vs 6,775 (Q4FY25, restated for discontinued ops) = +82.8% YoY, not +75.9%; the card net-loss comparator (987) is on the restated basis, so 75.9% mixes bases"
+ },
+ {
+  "item": 38,
+  "news_id": "nse-106614569",
+  "symbol": "KSL",
+  "field": "why_it_matters[0].text",
+  "figure": "372.99",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Consolidated FY25 (Rs mn): PBT before exceptional 3,463.08 + finance costs 185.66 + D&A 633.88 - other income 552.73 = 3,729.89 mn = Rs 372.99 Cr (FY26 same method 361.29; -3.1%)"
+ },
+ {
+  "item": 39,
+  "news_id": "fa3c490f-5c45-425d-98d0-04e0f61288f6",
+  "symbol": "JUBLPHARMA",
+  "field": "why_it_matters[0].text",
+  "figure": "35.2%",
+  "verdict": "RIGHT",
+  "source": "earlier filing 71c41390-27f9-42c8-b3aa-cb97cfcd6632 (FY26 annual report, 2026-08-01)",
+  "evidence": "Consolidated balance sheet 31 Mar 2026 (₹ million): equity attributable to owners 70,928, total equity 70,956; ₹2,500 Cr / ₹7,093 Cr = 35.2% (35.2% also on total equity)"
+ },
+ {
+  "item": 40,
+  "news_id": "nse-106639007",
+  "symbol": "TEMBO",
+  "field": "takeaway",
+  "figure": "15.62",
+  "verdict": "RIGHT",
+  "source": "earlier filing (Q4FY25 consolidated results XBRL, 2025-05-22)",
+  "evidence": "Originally reported Q4FY25 consolidated PAT Rs 15.62 Cr (xbrl:res:544987:Q4FY25). This filing p2 (scan) shows the Q4FY25 comparative restated as 1,555.24 lakh = 15.55 Cr; the gap is a small restatement, not a misread"
+ },
+ {
+  "item": 41,
+  "news_id": "ef8fc04d-1bf6-4fbd-b14a-a3a25aace583",
+  "symbol": "HEGAM",
+  "field": "what_happened",
+  "figure": "17.18",
+  "verdict": "WRONG",
+  "source": "this filing",
+  "evidence": "Consolidated p.11, quarter ended 30-06-2025: current tax 16.31 (continuing operations; deferred 5.21; discontinued-ops tax 1.12); standalone p.4 shows 16.28. 17.18 is not in this filing; it appears to be Q1FY26 as first reported, before the discontinued-operations restatement (the card's 22.63 total tax is likewise not this filing's 21.52 for continuing operations)"
+ },
+ {
+  "item": 42,
+  "news_id": "nse-106596338",
+  "symbol": "BETA",
+  "field": "why_it_matters[1].text",
+  "figure": "362.36",
+  "verdict": "RIGHT",
+  "source": "earlier filing BETA FY25 results 2025-05-15 (BETA_15052025152632_FINANCIAL_RESULTS.PDF, from NSE announcements)",
+  "evidence": "Audited consolidated results, Revenue from operations year ended 31-03-2025: ₹3,62,35,57,190.75 = ₹362.36 Cr"
+ },
+ {
+  "item": 43,
+  "news_id": "nse-106620799",
+  "symbol": "DICIND",
+  "field": "takeaway",
+  "figure": "6.79",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p3 results (Rs lakh), corresponding quarter Q4FY25: PBT 352.15 + finance costs 33.06 + D&A 436.96 - other income 143.07 = 679.10 lakh = Rs 6.79 Cr"
+ },
+ {
+  "item": 44,
+  "news_id": "nse-106825532",
+  "symbol": "ACI",
+  "field": "why_it_matters[0].text",
+  "figure": "75",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "CRISIL rationale p.3: 'cash surpluses at ~Rs 75 crore as on March 31, 2026, compared with Rs 265 crore and Rs 408 crore at the end of fiscal 2025 and fiscal 2024 respectively ... scheduled debt repayments of Rs 60-65 crore each in fiscals 2027 and 2028'"
+ },
+ {
+  "item": 45,
+  "news_id": "nse-106826875",
+  "symbol": "GEOJITFSL",
+  "field": "why_it_matters[1].text",
+  "figure": "10.8%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.6 consolidated (₹ lakh): Employee benefits expense Q2FY27 (30 Sep 2026) 8,356.56 vs Q2FY26 (30 Sep 2025) 7,540.10 -> +10.8%, ₹83.57 Cr"
+ },
+ {
+  "item": 46,
+  "news_id": "nse-106818603",
+  "symbol": "IRFC",
+  "field": "what_happened",
+  "figure": "4.8%",
+  "verdict": "RIGHT",
+  "source": "this filing (press release copy nse-106818643, same results) + earlier filing nse-106717041 (2026-07-30)",
+  "evidence": "Total revenue from operations Q2FY27 7,866.41 vs Q1FY27 8,261.11 Cr (both in the Q2 statement; Q1 also in Jul-30 results) = -4.78% QoQ. Note: the card pdf (outcomeofmeeting 151912) downloads truncated (4,030,464 bytes, no xref), so the same results attached to the 15:39 press release were read"
+ },
+ {
+  "item": 47,
+  "news_id": "9b63a70f-8ed6-4da6-8e3e-dbfae1f8f1d3",
+  "symbol": "HEGAM",
+  "field": "takeaway",
+  "figure": "217.56",
+  "verdict": "RIGHT",
+  "source": "earlier filing caf6462e (order intimation re-filed, 18 Sep 2026)",
+  "evidence": "Replus Engitech received orders from Indus Towers for lithium-ion battery banks: 'Rs. 217.56 (Rupees Two Hundred Seventeen Crore Fifty Six Lakh only), inclusive of GST'"
+ },
+ {
+  "item": 48,
+  "news_id": "nse-106827535",
+  "symbol": "CHEMBONDCH",
+  "field": "takeaway",
+  "figure": "10.68",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.5 consolidated (₹ lakh), quarter ended 30.09.2025: profit before associate 961.74 + finance 15.07 + D&A 131.52 - other income 40.74 = 1,067.59 = ₹10.68 Cr"
+ },
+ {
+  "item": 49,
+  "news_id": "nse-106632511",
+  "symbol": "POWERMECH",
+  "field": "what_happened",
+  "figure": "949.47",
+  "verdict": "RIGHT",
+  "source": "earlier filing NSE seq 106435685 (Q2FY26 results, 2025-11-10)",
+  "evidence": "p10 (scan) consolidated Statement of Assets and Liabilities at 30-09-2025: long-term borrowings 67.11 + short-term borrowings 882.36 = Rs 949.47 Cr"
+ },
+ {
+  "item": 50,
+  "news_id": "2f62d6b8-2f78-4c7d-8a20-7be63b93ef7b",
+  "symbol": "SHIVAMAUTO",
+  "field": "key_numbers",
+  "figure": "40.9%",
+  "verdict": "WRONG",
+  "source": "computed; NSE price history; earlier filing e9ae2c81 (Q3FY25 results)",
+  "evidence": "Paid-up capital 2,444.44 lakh at Rs 2 face = 12.22 Cr shares; NSE close on 22-Jan-2025 Rs 40.26 (21-Jan 41.40) -> market cap ~Rs 492 Cr; 160/492 = 32.5%. The card's Rs 391.58 Cr market cap (40.9%) does not match the filing date"
+ },
+ {
+  "item": 51,
+  "news_id": "nse-106740989",
+  "symbol": "LINCOLN",
+  "field": "what_happened",
+  "figure": "211.5%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Results statement (₹ lakh): Net profit Q1FY27 3,623.45 vs Q4FY26 1,163.46 -> +211.4% exact, +211.5% on the rounded ₹36.23/₹11.63 Cr; within rounding"
+ },
+ {
+  "item": 52,
+  "news_id": "nse-106633758",
+  "symbol": "DOLATALGO",
+  "field": "takeaway",
+  "figure": "68.61",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Results (Rs mn), statement with revenue 1,258.92 (group basis per note 3), Q4FY25 column: PBT 559.21 + finance cost 120.23 + D&A 6.83 - other income 0.19 = 686.08 mn = Rs 68.61 Cr"
+ },
+ {
+  "item": 53,
+  "news_id": "c8de4c15-95cd-42cf-919d-1d91f28be7da",
+  "symbol": "NOVARTIND",
+  "field": "what_happened",
+  "figure": "3.2%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Annexure-I (Rs mn): Revenue from Operations 903.3 (Q2FY26), 875.5 (Q1FY26), 871.0 (Q2FY25): +3.2% QoQ, +3.7% YoY"
+ },
+ {
+  "item": 54,
+  "news_id": "nse-106609617",
+  "symbol": "SRF",
+  "field": "takeaway",
+  "figure": "957.41",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Consolidated statement (₹ Cr), quarter ended 31-Mar-25: profit before exceptional items 707.36 + finance costs 89.39 + D&A 195.15 - other income 34.49 = 957.41"
+ },
+ {
+  "item": 55,
+  "news_id": "nse-106608056",
+  "symbol": "ORIENTHOT",
+  "field": "takeaway",
+  "figure": "19.41",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Consolidated results (Rs lakh): Profit after taxes and share of associates and JV - Q4FY26 3241, Q4FY25 1941 = Rs 19.41 Cr"
+ },
+ {
+  "item": 56,
+  "news_id": "nse-106712278",
+  "symbol": "BALAMINES",
+  "field": "what_happened",
+  "figure": "115.87",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Consolidated Q1FY27 (Rs lakh): PBT before exceptional 10,620.36 + finance costs 141.22 + D&A 1,378.24 - other income 552.49 = 11,587.33 lakh = Rs 115.87 Cr; /revenue 45,592.56 = 25.4%"
+ },
+ {
+  "item": 57,
+  "news_id": "nse-106604257",
+  "symbol": "JSFB",
+  "field": "why_it_matters[2].text",
+  "figure": "1,433",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p.10 note d) 'Details of ratings of Security Receipts (SRs) outstanding as on March 31, 2026' (₹ in crores): Total gross value of outstanding SRs 1,433.09"
+ },
+ {
+  "item": 58,
+  "news_id": "nse-106636116",
+  "symbol": "CENTURYPLY",
+  "field": "notable_changes[2].previous",
+  "figure": "896.64",
+  "verdict": "RIGHT",
+  "source": "earlier filing NSE seq 106439109 (Q2FY26 results, 2025-11-12)",
+  "evidence": "Statement of assets and liabilities (Rs lakh) as at 30.09.2025: Inventories 89,664.26 lakh = Rs 896.64 Cr (31.03.2025: 98,655.34)"
+ },
+ {
+  "item": 59,
+  "news_id": "c1617387-828c-4ba0-be4b-3ee6e47ecbf8",
+  "symbol": "CSBBANK",
+  "field": "notable_changes[0].previous",
+  "figure": "381.47",
+  "verdict": "RIGHT",
+  "source": "earlier filing bf811f12 (Q4FY25 results, 28 Apr 2025)",
+  "evidence": "'2. Other income 38,147' (Rs lakh, quarter ended 31.03.2025) = Rs 381.47 Cr. (Labelling it 'previous' against a Q4FY25 'current' is odd, and 38,147 vs 19,651 is +94% YoY, not QoQ, but the figure is right)"
+ },
+ {
+  "item": 60,
+  "news_id": "nse-106604906",
+  "symbol": "DELTACORP",
+  "field": "why_it_matters[0].text",
+  "figure": "688",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106597315 (Q4FY26 results, 2026-04-22)",
+  "evidence": "Consolidated segment/results table: 'a) Net Sales/ Revenue from Operations ... 688.46' for year ended 31-03-2026 (₹ Cr); TTM = FY26 = ₹688 Cr"
+ },
+ {
+  "item": 61,
+  "news_id": "1387d543-2e1b-4a68-b928-ad167669b855",
+  "symbol": "NOVARTIND",
+  "field": "notable_changes[2].current",
+  "figure": "4.7",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p3 (scan) statement, Rs million: (c) Employee Benefits Expense 47.2 for 3 months ended 30.06.2026 = Rs 4.72 Cr"
+ },
+ {
+  "item": 62,
+  "news_id": "nse-106827318",
+  "symbol": "KEC",
+  "field": "why_it_matters[0].text",
+  "figure": "7.6%",
+  "verdict": "RIGHT",
+  "source": "earlier filing (KEC Q1FY27 investor presentation, 10 Aug 2026)",
+  "evidence": "PPT p.20 'Order Intake & Order Book (Consolidated) - YTD FY27 ... Order Book Rs 37,697 Cr.'; 2,872/37,697 = 7.62%"
+ },
+ {
+  "item": 63,
+  "news_id": "e7c950e6-5017-4c70-92e9-0219f135f1e4",
+  "symbol": "SHIVAMAUTO",
+  "field": "why_it_matters[2].text",
+  "figure": "90.73",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Results statement (₹ lakh): nine months to Dec 31 2025 revenue 30,014.98 - Q3 9,618.47 - Q2 11,323.36 = Q1FY26 9,073.15 = ₹90.73 Cr. Figure is right, but the sentence's comparison is wrong: ₹96.18 Cr is above ₹90.73 Cr, not below"
+ },
+ {
+  "item": 64,
+  "news_id": "acf426c3-7e10-44c3-a103-9f519e2b1408",
+  "symbol": "EMUDHRA",
+  "field": "what_happened",
+  "figure": "37.4%",
+  "verdict": "WRONG",
+  "source": "this filing",
+  "evidence": "p2 Key Financial Highlights (consolidated, Rs mn): EBITDA Q3FY26 441.4 vs Q3FY25 319.4, YoY growth printed 38.2% (441.4/319.4 = +38.2%), not 37.4%"
+ },
+ {
+  "item": 65,
+  "news_id": "nse-106822216",
+  "symbol": "MGEL",
+  "field": "takeaway",
+  "figure": "22.54",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Consolidated Q2FY27 (Rs lakh): PBT before exceptional 1,227.27 + finance costs 987.16 + D&A 95.77 - other income 56.62 = 2,253.58 lakh = Rs 22.54 Cr"
+ },
+ {
+  "item": 66,
+  "news_id": "nse-106632422",
+  "symbol": "HITECHCORP",
+  "field": "takeaway",
+  "figure": "21.36",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Consolidated statement (₹ lakh), quarter ended 31.03.2026: profit before exceptional items 959.28 + finance costs 466.40 + D&A 1,001.56 - other income 291.32 = 2,135.92 = ₹21.36 Cr"
+ },
+ {
+  "item": 67,
+  "news_id": "966105f7-eed4-4025-9eda-84fbc65db05b",
+  "symbol": "PODDARMENT",
+  "field": "notable_changes[4].previous",
+  "figure": "0.83",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p3 (scan, Rs lakh): Changes in inventories of FG/WIP/stock-in-trade for quarter ended 30-Jun-25: (83.13) = -Rs 0.83 Cr"
+ },
+ {
+  "item": 68,
+  "news_id": "nse-106656375",
+  "symbol": "IXIGO",
+  "field": "why_it_matters[0].text",
+  "figure": "5.4%",
+  "verdict": "RIGHT",
+  "source": "computed; earlier filing nse-106634124 (FY26 results, 21 May 2026)",
+  "evidence": "FY26 revenue from operations INR 12,280.39 mn = Rs 1,228.04 Cr; 65.69/1,228.04 = 5.35% -> 5.4%"
+ },
+ {
+  "item": 69,
+  "news_id": "nse-106597966",
+  "symbol": "UNIONBANK",
+  "field": "what_happened",
+  "figure": "14.6%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.4 Consolidated results (₹ lakh): Operating Profit (A-B) Q4FY26 7,97,585 vs Q3FY26 6,95,985 -> +14.6% QoQ"
+ },
+ {
+  "item": 70,
+  "news_id": "64e7ea0c-e0d5-4bab-b7ef-d46eff52df9c",
+  "symbol": "HDFCLIFE",
+  "field": "takeaway",
+  "figure": "12.4%",
+  "verdict": "WRONG",
+  "source": "computed",
+  "evidence": "2,423 / net worth Rs 19,509.21 Cr (Jun-2026, Q1FY27 filing 3dffc23c) = 12.4%, but this filing p1 says Rs 2,422.97 Cr is the Penalty only; the confirmed demand is tax Rs 942.18 Cr + interest + penalty Rs 2,422.97 Cr (>= Rs 3,365 Cr, >= 17.2% of net worth). The input labelled confirmed GST liability is wrong"
+ },
+ {
+  "item": 71,
+  "news_id": "e0e0ef91-6c54-4bd6-98e9-19ea60164763",
+  "symbol": "NTPC",
+  "field": "what_happened",
+  "figure": "16,231",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Consolidated Q1FY27 (Rs Cr): PBT before RDA & JV 8,011.40 + finance costs 3,386.04 + D&A 5,233.70 - other income 400.55 = 16,230.59; /revenue 50,740.96 = 31.99%"
+ },
+ {
+  "item": 72,
+  "news_id": "1ee7b071-567e-4f5c-b680-c819e367d372",
+  "symbol": "JUBLPHARMA",
+  "field": "takeaway",
+  "figure": "5.8",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p.10 consolidated (₹ million), quarter ended 30 Sep 2025: 'Exceptional expenses/(income) 58' = ₹5.8 Cr; net profit 1,199 vs 1,025 (+17%)"
+ },
+ {
+  "item": 73,
+  "news_id": "10cf8d99-3503-472f-996f-a4cf4a069b0b",
+  "symbol": "NOVARTIND",
+  "field": "why_it_matters[1].text",
+  "figure": "27.51%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p2 (scan, Rs mn) Q3FY25 column: PBT 352.9 + finance costs 3.6 + depreciation 5.3 - other income 106.0 = 255.8 / revenue 930.0 = 27.51% (Q3FY26: 223.6/859.0 = 26.03%)"
+ },
+ {
+  "item": 74,
+  "news_id": "nse-106621352",
+  "symbol": "QPOWER",
+  "field": "takeaway",
+  "figure": "16.28",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Consolidated Q4FY25 (Rs mn): PBT 359.68 + finance costs 0.26 + D&A 18.58 - other income 215.72 = 162.80 mn = Rs 16.28 Cr"
+ },
+ {
+  "item": 75,
+  "news_id": "f6495f61-f9a4-43a0-9ac7-d1faf5fd6ca1",
+  "symbol": "AHLUCONT",
+  "field": "what_happened",
+  "figure": "27.7%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.3 standalone results (scanned, Rs lakhs): revenue from operations quarter ended 31/03/2025 121,583.63 vs 31/12/2024 95,195.79 -> +27.7% QoQ (card's ₹1,215.84 Cr is the standalone figure)"
+ },
+ {
+  "item": 76,
+  "news_id": "nse-106618203",
+  "symbol": "SAKAR",
+  "field": "takeaway",
+  "figure": "15.72",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Standalone/consolidated results (Rs lakh), Q4FY25 column: PBT 623.65 + finance costs 419.34 + D&A 547.70 - other income 18.22 = 1,572.47 lakh = Rs 15.72 Cr"
+ },
+ {
+  "item": 77,
+  "news_id": "nse-106618698",
+  "symbol": "DRREDDY",
+  "field": "takeaway",
+  "figure": "1,997.9",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Ind AS consolidated Q4FY25 (Rs mn): PBT before equity share 19,997 + finance costs 656 + D&A 4,547 - other income 5,221 = 19,979 mn = Rs 1,997.9 Cr (same method gives Q4FY26 382.5)"
+ },
+ {
+  "item": 78,
+  "news_id": "26915066-2fbc-4a7d-b684-834daf004933",
+  "symbol": "HERITGFOOD",
+  "field": "why_it_matters[1].text",
+  "figure": "11.8%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Consolidated statement (₹ million): employee benefits expense Q1FY26 (30.06.2025) 841.67 vs Q1FY25 (30.06.2024) 752.86 -> +11.8% (card's figures are consolidated; standalone would be 806.52 vs 728.36 = +10.7%)"
+ },
+ {
+  "item": 79,
+  "news_id": "nse-106630138",
+  "symbol": "PTC",
+  "field": "key_numbers",
+  "figure": "69.3%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Results: EPS (continuing) basic 3.56 Q4FY26 vs 11.60 Q4FY25 -> -69.3% YoY"
+ },
+ {
+  "item": 80,
+  "news_id": "nse-106607479",
+  "symbol": "SMCGLOBAL",
+  "field": "what_happened",
+  "figure": "89.71",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Consolidated Q4FY26 (Rs lakh): PBT 2,931.71 + finance cost 5,727.50 + D&A 729.77 - other income 417.86 = 8,971.12 lakh = Rs 89.71 Cr; /revenue 51,694.34 = 17.35%"
+ },
+ {
+  "item": 81,
+  "news_id": "nse-106630374",
+  "symbol": "PIIND",
+  "field": "takeaway",
+  "figure": "336.9",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Consolidated statement (₹ million), quarter ended 31.03.2026: profit before exceptional items 3,025 - JV/associate share 4 + finance cost 37 + D&A 1,067 - other income 756 = 3,369 = ₹336.9 Cr (Q4FY25 same method 4,556 = ₹455.6 Cr)"
+ },
+ {
+  "item": 82,
+  "news_id": "65388da0-4fcd-46b5-8bd2-7cdfeddbab3c",
+  "symbol": "HERITGFOOD",
+  "field": "why_it_matters[0].text",
+  "figure": "2.3%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Rs ~100 Cr ice-cream revenue (this filing p1) / consolidated TTM revenue to Dec-2025: 9MFY26 Rs 3,368.43 Cr (Q3FY26 results, 2026-01-28) + Q4FY25 ~Rs 1,052 Cr (Q4FY26 1,157.56 Cr reported +10% YoY) = ~Rs 4,420 Cr -> 2.26%, rounds to 2.3%"
+ },
+ {
+  "item": 83,
+  "news_id": "nse-106616045",
+  "symbol": "TATACHEM",
+  "field": "why_it_matters[0].text",
+  "figure": "1,956",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106608526 (Q4 results release, 4 May 2026)",
+  "evidence": "FY26 section: 'An exceptional charge of Rs 1,956 Cr is provided on account of impairment of goodwill in US, ...'; Q4: Rs 1,837 Cr goodwill impairment"
+ },
+ {
+  "item": 84,
+  "news_id": "2b34d1d0-500b-461d-8b92-9fab392729e8",
+  "symbol": "NOVARTIND",
+  "field": "why_it_matters[2].text",
+  "figure": "12%",
+  "verdict": "WRONG",
+  "source": "computed",
+  "evidence": "p.1: offer for 64,19,608 shares = 26% of voting capital, so total shares = 2,46,90,800; offer value 64,19,608 x ₹860.64 = ₹552.49 Cr (right). At the card's own 16 Jun 2026 price ₹1,321.4 (or the IDC's ₹1,351.20) market cap is about ₹3,263-3,336 Cr, so the offer is about 16.6-16.9% of market cap, not 12%. The 12% comes from the card's stored market cap of ₹4,783 Cr, which does not match the filed share count"
+ },
+ {
+  "item": 85,
+  "news_id": "nse-106818577",
+  "symbol": "BUTTERFLY",
+  "field": "takeaway",
+  "figure": "17",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p4 (scan, Rs lakh): Net profit for quarter ended 30.09.2025 = 1,699.69 lakh = Rs 17.0 Cr"
+ },
+ {
+  "item": 86,
+  "news_id": "nse-106619875",
+  "symbol": "REFEX",
+  "field": "what_happened",
+  "figure": "468",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Annexure A p.5 board comments: 'allotment of 1,11,70,000 convertible warrants ... issue price of Rs 468/- per warrant ... stood lapsed upon expiry of the exercise period on May 06, 2026'"
+ },
+ {
+  "item": 87,
+  "news_id": "nse-106722051",
+  "symbol": "TEXRAIL",
+  "field": "what_happened",
+  "figure": "13.4%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.2 (scanned) consolidated basic EPS: 30-Jun-2026 ₹1.23 vs 31-Mar-2026 ₹1.42 -> -13.4% QoQ"
+ },
+ {
+  "item": 88,
+  "news_id": "76718bcc-e722-4501-a7c7-51203e5a1905",
+  "symbol": "SMLMAH",
+  "field": "why_it_matters[0].text",
+  "figure": "0.3%",
+  "verdict": "WRONG",
+  "source": "computed",
+  "evidence": "Order Rs 24.71 Cr (this filing p2). SML Isuzu traded ~Rs 1,116-1,230 on 7-12 Mar 2025 (NSE close via Yahoo SMLMAH.NS) x 1.447 Cr shares = market cap ~Rs 1,700 Cr -> order ~1.4-1.5% of market cap, not 0.3% (0.3% implies ~Rs 8,200 Cr, above even the Oct-2026 market cap of Rs 7,009 Cr)"
+ },
+ {
+  "item": 89,
+  "news_id": "nse-106634574",
+  "symbol": "CHEMCON",
+  "field": "takeaway",
+  "figure": "8.89",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Standalone Q4FY26 (Rs lakh): PBT 879.26 + finance costs 101.21 + D&A 323.90 - other income 415.55 = 888.82 lakh = Rs 8.89 Cr"
+ },
+ {
+  "item": 90,
+  "news_id": "nse-106630181",
+  "symbol": "UNITEDPOLY",
+  "field": "takeaway",
+  "figure": "11.16",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Standalone statement (Rs lakh), quarter ended 31-03-2025: PBT 533.00 + finance costs 271.11 + D&A 340.42 - other income 28.08 = 1,116.45 = ₹11.16 Cr (card uses standalone; revenue 17,203.00 matches ₹172.03 Cr)"
+ },
+ {
+  "item": 91,
+  "news_id": "nse-106636428",
+  "symbol": "MODISONLTD",
+  "field": "what_happened",
+  "figure": "79.4%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p7 (scan) consolidated: Basic/Diluted EPS 11.09 (Q4FY26) vs 6.18 (Q3FY26) -> +79.4% QoQ"
+ },
+ {
+  "item": 92,
+  "news_id": "nse-106638109",
+  "symbol": "SAMMAANCAP",
+  "field": null,
+  "figure": "8850",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106632486 (press release, 20 May 2026)",
+  "evidence": "'IHC invests total of USD 1 billion (Rs 8,850 crore)'; this transcript: ~Rs 5,652 Cr received + ~Rs 3,200 Cr due on warrant conversion"
+ },
+ {
+  "item": 93,
+  "news_id": "nse-106646767",
+  "symbol": "REFEX",
+  "field": "why_it_matters[0].text",
+  "figure": "1.6%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "₹36.91 Cr / FY26 consolidated revenue ₹2,276.74 Cr (₹2,27,673.51 lakh, Q4FY26 results nse-106640981 of 2026-05-26, consolidated statement) = 1.62%"
+ },
+ {
+  "item": 94,
+  "news_id": "nse-106609432",
+  "symbol": "RAYMOND",
+  "field": "key_numbers",
+  "figure": "94.3%",
+  "verdict": "WRONG",
+  "source": "this filing",
+  "evidence": "Consolidated results: EPS continuing basic 0.17 Q4FY26 vs 3.11 Q4FY25 (total incl. discontinued 19.95) -> -94.5% YoY, not -94.3%; -94.3% comes from a Q4FY25 base of 3.0 (stored XBRL), which the filing does not print"
+ },
+ {
+  "item": 95,
+  "news_id": "nse-106614299",
+  "symbol": "PAISALO",
+  "field": "takeaway",
+  "figure": "1,666",
+  "verdict": "RIGHT",
+  "source": "earlier filing (revised Q2FY26 results, 11 Nov 2025)",
+  "evidence": "Consolidated statement of assets & liabilities 30.09.2025: equity 9,095.84 + other equity 157,508.07 = 166,603.91 lakh = Rs 1,666.04 Cr"
+ },
+ {
+  "item": 96,
+  "news_id": "nse-106622241",
+  "symbol": "NIITLTD",
+  "field": "what_happened",
+  "figure": "1.45",
+  "verdict": "WRONG",
+  "source": "this filing",
+  "evidence": "Press release p.4 table (Rs mn): 'EBITDA (0.2)' for Q4 FY'26, i.e. about ₹-0.02 Cr ('EBITDA was near breakeven at Rs. (0.2) million'). The card's ₹-1.45 Cr appears to be its own formula (PBT before exceptional -0.62 + finance + D&A - other income 8.56), which is not in this filing and contradicts the company's stated EBITDA"
+ },
+ {
+  "item": 97,
+  "news_id": "nse-106606142",
+  "symbol": "AEROENTER",
+  "field": "notable_changes[0].previous",
+  "figure": "227.42",
+  "verdict": "RIGHT",
+  "source": "earlier filing NSE seq 106604460 (board outcome, 2026-04-29)",
+  "evidence": "Board approved sale of 68% MRO stake to Ingersoll-Rand for a sale consideration of Rs 22,742 lakhs = Rs 227.42 Cr"
+ },
+ {
+  "item": 98,
+  "news_id": "nse-106606001",
+  "symbol": "RESPONIND",
+  "field": "key_numbers",
+  "figure": "0.11%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Annexure II p.5: 'No. of shares: 3,00,000 / % of total share capital: 0.11%'"
+ },
+ {
+  "item": 99,
+  "news_id": "e25c1aa7-cf4b-42df-8af8-aac8bd5b62b9",
+  "symbol": "HERITGFOOD",
+  "field": "notable_changes[0].change",
+  "figure": "54",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Filing: 'revised relieving date will now be October 15, 2025, instead of the earlier communicated date August 22, 2025'; 22 Aug to 15 Oct 2025 = 54 days"
+ },
+ {
+  "item": 100,
+  "news_id": "nse-106639914",
+  "symbol": "SIGMAADV",
+  "field": "takeaway",
+  "figure": "90.64",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Consolidated results (Rs lakh) Q4FY26: Total revenue 41,345.87 - revenue from operations 32,281.54 = other income 9,064.33 lakh = Rs 90.64 Cr (Profit on sale 214.30 + rental 257.56 + others 8,592.46)"
+ },
+ {
+  "item": 101,
+  "news_id": "nse-106636599",
+  "symbol": "KOLTEPATIL",
+  "field": "what_happened",
+  "figure": "65.4%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Consolidated revenue from operations Q4FY26 24,861 lakh vs Q4FY25 71,867 lakh: -65.4%"
+ },
+ {
+  "item": 102,
+  "news_id": "b96d5057-270d-4ef8-bbdc-4001a9cf1568",
+  "symbol": "HERITGFOOD",
+  "field": "why_it_matters[1].text",
+  "figure": "56.5%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.2 Crisil letter 29 Mar 2025: 'Total Bank Loan Facilities Rated Rs.503.5 Crore'; net worth ₹891.49 Cr = consolidated balance sheet 30 Sep 2024 (equity 46.4 + reserves 845.09, xbrl:res:519552:Q2FY25, the latest one before 30 Mar 2025); 503.5/891.49 = 56.5%. Net worth taken from the stored XBRL balance sheet, PDF not re-read"
+ },
+ {
+  "item": 103,
+  "news_id": "nse-106820959",
+  "symbol": "VRLLOG",
+  "field": "what_happened",
+  "figure": "28,000",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p2 (image) corrigendum preamble: buy-back up to 87,50,000 shares at Rs 320 per share for an aggregate consideration of up to Rs 28,000 lakhs"
+ },
+ {
+  "item": 104,
+  "news_id": "nse-106736931",
+  "symbol": "JUBLCPL",
+  "field": "what_happened",
+  "figure": "131.4%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Consolidated net profit Q1FY27 4,611 lakh vs Q4FY26 1,993 lakh: +131.4%"
+ },
+ {
+  "item": 105,
+  "news_id": "8a997b8b-9760-4e0e-8e38-32872167a45b",
+  "symbol": "SHIVAMAUTO",
+  "field": "takeaway",
+  "figure": "31",
+  "verdict": "RIGHT",
+  "source": "earlier filing 2531d7cc-e12d-4592-aa55-675116460d1a (Q4FY25 results, 2025-05-12)",
+  "evidence": "Balance sheet as at 31 Mar 2025 (Rs lakh): equity share capital 2,629.90 + other equity 518.25 = total equity 3,148.15 = ₹31.48 Cr, the latest balance sheet before this 8 Aug 2025 filing"
+ },
+ {
+  "item": 106,
+  "news_id": "nse-106643970",
+  "symbol": "SUPRIYA",
+  "field": "takeaway",
+  "figure": "97.62",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Standalone results (Rs mn) Q4FY26: PBT 921.29 + finance cost 4.68 + D&A 84.98 - other income 34.78 = 976.17 mn = Rs 97.62 Cr (Q4FY25: 640.62+4.17+60.81-29.75 = 675.85 mn = Rs 67.59 Cr)"
+ },
+ {
+  "item": 107,
+  "news_id": "nse-106823907",
+  "symbol": "PERSISTENT",
+  "field": "takeaway",
+  "figure": "5,550",
+  "verdict": "RIGHT",
+  "source": "earlier filing (QIP opening outcome, 21 Oct 2026 19:16)",
+  "evidence": "'Approving the floor price for the Issue, being INR 5,550 per Equity Share'; this update sets INR 5,761.00"
+ },
+ {
+  "item": 108,
+  "news_id": "nse-106822799",
+  "symbol": "KAPSTON",
+  "field": "what_happened",
+  "figure": "0.7%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.11 consolidated basic EPS: Q2FY27 ₹2.77 vs Q1FY27 ₹2.79 -> -0.7% QoQ. Figure is right, but the same sentence's '-20.4% YoY' is wrong: the filing's restated (post-bonus) Q2FY26 EPS is ₹2.32, so YoY is +19.4%; the card's ₹3.48 is the pre-bonus figure"
+ },
+ {
+  "item": 109,
+  "news_id": "nse-106629866",
+  "symbol": "DBOL",
+  "field": null,
+  "figure": "305",
+  "verdict": "RIGHT",
+  "source": "earlier filing NSE seq 106594645 (board outcome, 2026-04-20)",
+  "evidence": "Figure is deal_value.amount_cr. Slump sale of Meerganj sugar unit to Forever Global Enterprises: consideration aggregates to a net amount not exceeding INR 305,00,00,000 (Rs 305 Cr)"
+ },
+ {
+  "item": 110,
+  "news_id": "nse-106597966",
+  "symbol": "UNIONBANK",
+  "field": "key_numbers",
+  "figure": "9.9%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Consolidated p.4 'Basic and Diluted EPS ... *7.21 (Q4FY26), *6.56 (Q4FY25)': +9.9%"
+ },
+ {
+  "item": 111,
+  "news_id": "nse-106821337",
+  "symbol": "ZENTEC",
+  "field": "why_it_matters[1].text",
+  "figure": "10.9%",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106720387 (Q1FY27 call transcript, 2026-07-31, ZENTEC_31072026231004_Transcripts_Signed.pdf)",
+  "evidence": "Transcript: 'The consolidated order book stood at Rs.1239 Crores as of June 30,2026'; this filing: consideration 'not exceeding Rs. 135.15 crore'; 135.15/1,239 = 10.9%"
+ },
+ {
+  "item": 112,
+  "news_id": "nse-106822656",
+  "symbol": "GALLANTT",
+  "field": "why_it_matters[0].text",
+  "figure": "16.16%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Results (Rs lakh) quarter ended 30 June 2026: PBT 16,481.45 + finance costs 847.35 + D&A 3,011.47 - other income 1,830.99 = 18,509.28 / revenue 1,14,566.71 = 16.16% (Q2FY27: 10,969.41/1,14,589.15 = 9.57%)"
+ },
+ {
+  "item": 113,
+  "news_id": "nse-106626483",
+  "symbol": "MAHSEAMLES",
+  "field": "score.reasons[0]",
+  "figure": "0.005",
+  "verdict": "WRONG",
+  "source": "this filing",
+  "evidence": "Subscription is 'paid-up share capital of Rs.5,00,000/-' = Rs 5 lakh = Rs 0.05 Cr, not 0.005 Cr (10x unit slip)"
+ },
+ {
+  "item": 114,
+  "news_id": "fde45ccd-35d5-473a-a6ce-a4dbbffde90c",
+  "symbol": "AHLUCONT",
+  "field": "why_it_matters[0].text",
+  "figure": "8.3%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Filing: 'Rs. 310.00 Crores (Inclusive of GST)'. Shares 6,69,87,500 (paid-up ₹1,339.75 lakh at ₹2 face, Q4FY25 results); x card's price ₹555.25 (19 Oct 2026) = ₹3,719.5 Cr market cap; 310/3,719.5 = 8.3%. Caveat: that price is 5 days after the 14 Oct filing; at the 13 Oct close (₹565.20) it is 8.2%, at the 14 Oct close (₹579.70) 8.0%. Immaterial, but the price is not point-in-time, and the order value includes GST"
+ },
+ {
+  "item": 115,
+  "news_id": "da6d4904-acdf-41c5-bf37-01270e4695a0",
+  "symbol": "PRSMJOHNSN",
+  "field": "why_it_matters[0].text",
+  "figure": "2.1%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Rs 165.91 Cr (this filing) / consolidated TTM revenue to Sep-2025 = H1FY26 3,776.85 (Q2FY26 results 2025-11-07) + Q3FY25 1,858.54 + Q4FY25 2,102.33 = Rs 7,737.72 Cr -> 2.14%; FY25 7,310.21 gives 2.27%. 2.1% holds on TTM"
+ },
+ {
+  "item": 116,
+  "news_id": "nse-106824574",
+  "symbol": "TTML",
+  "field": "takeaway",
+  "figure": "424.99",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p.6 statement (Rs Cr): Finance costs (191.49) Q2FY27, (424.99) quarter ended Sep 30, 2025"
+ },
+ {
+  "item": 117,
+  "news_id": "nse-106718710",
+  "symbol": "BAJAJFINSV",
+  "field": "why_it_matters[1].text",
+  "figure": "1.5",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Filing: 'Approved the issue of 15,11,358 equity shares of face value of Re.1 ... to Bajaj Finserv ESOP Trust' = 1.51 million, stated as 1.5 million (the sentence's 'against a paid-up capital base' gives no figure)"
+ },
+ {
+  "item": 118,
+  "news_id": "nse-106602095",
+  "symbol": "INFOBEAN",
+  "field": "why_it_matters[0].text",
+  "figure": "128.2%",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Consolidated results (Rs lakh): profit for the year FY26 8,666 vs FY25 3,797 -> +128.2%; revenue 51,357 vs 39,478 (+30.1%)"
+ },
+ {
+  "item": 119,
+  "news_id": "nse-106822033",
+  "symbol": "SMLMAH",
+  "field": "why_it_matters[0].text",
+  "figure": "146.93",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "(Rs Cr) half year ended 30.09.2025: PBT 117.83 + finance cost 7.96 + D&A 25.32 - other income 4.18 = 146.93 (H1FY27: 101.13+3.64+26.63-2.79 = 128.61, -12.5%; revenue 1,627.33 vs 1,401.00, +16.2%)"
+ },
+ {
+  "item": 120,
+  "news_id": "nse-106620289",
+  "symbol": "KIRLOSBROS",
+  "field": "takeaway",
+  "figure": "137.8",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p.11 consolidated (₹ million, scanned), quarter ended 31.03.2025: 'Net Profit/(Loss) from continuing operations (9+10) 1,378' = ₹137.8 Cr (1,371 to parent)"
+ },
+ {
+  "item": 121,
+  "news_id": "nse-106819267",
+  "symbol": "CCL",
+  "field": "takeaway",
+  "figure": "212.09",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Consolidated results (Rs lakh) Q2FY27: PBT 15,086.29 + finance costs 2,598.08 + depreciation 4,047.24 - other income 523.01 = 21,208.60 lakh = Rs 212.09 Cr (Q2FY26: 12,709.25+3,262.56+3,889.15-148.41 = Rs 197.13 Cr)"
+ },
+ {
+  "item": 122,
+  "news_id": "nse-106816387",
+  "symbol": "AFCONS",
+  "field": "why_it_matters[0].text",
+  "figure": "0.1%",
+  "verdict": "RIGHT",
+  "source": "earlier filing (Q1FY27 earnings call transcript, 13 Aug 2026)",
+  "evidence": "'our order book stood at INR43,290 crores at the end of the quarter'; 35/43,290 = 0.08% -> 0.1%"
+ },
+ {
+  "item": 123,
+  "news_id": "5ea83de7-7319-4699-b774-130f222437f5",
+  "symbol": "PRSMJOHNSN",
+  "field": "what_happened",
+  "figure": "1,835.23",
+  "verdict": "RIGHT",
+  "source": "earlier filing, same day (Q1FY27 results, PRSMJOHNSN_07082026120858_SEIntimationUFR06082026.pdf, from NSE announcements)",
+  "evidence": "p.9 consolidated (₹ Cr), continuing operations, June 30 2026: net sales 1,811.36 + other operating income 23.87 = revenue from operations 1,835.23; other income 22.05. Figure is right, but the same sentence's 'fell 4.5% YoY' is wrong: the restated continuing-operations Q1FY26 revenue is 1,780.72 + 8.59 = 1,789.31, so YoY is +2.6%; the card's ₹1,921.75 Cr prior year still includes the divested insurance business (RQBE). This investor update itself shows ex-RQBE revenue ₹1,844 Cr, +2.7% YoY"
+ },
+ {
+  "item": 124,
+  "news_id": "nse-106634229",
+  "symbol": "AGARWALEYE",
+  "field": "takeaway",
+  "figure": "130.99",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Consolidated results (Rs Cr) Q4FY25: company EBITDA 146.42 (footnote: PBT + D&A + finance costs, includes other income) less other income 15.43 = Rs 130.99 Cr; Q4FY26 174.05 - 12.58 = 161.47. Figure is EBITDA excluding other income, not the company-labelled EBITDA (174.05 vs 146.42)"
+ },
+ {
+  "item": 125,
+  "news_id": "nse-106606486",
+  "symbol": "TECHM",
+  "field": "why_it_matters[0].text",
+  "figure": "0.7%",
+  "verdict": "WRONG",
+  "source": "computed; this filing + earlier filing nse-106596816 (FY26 results, 22 Apr 2026)",
+  "evidence": "This filing's own rate (CAD 58.64 mn = Rs 406.96 Cr, i.e. Rs 69.4/CAD) makes CAD 28 mn about Rs 194 Cr. FY26 consolidated revenue is Rs 56,815 Cr (press release), so 194/56,815 = 0.34%, not ~0.7%"
+ },
+ {
+  "item": 126,
+  "news_id": "nse-106820047",
+  "symbol": "MODISONLTD",
+  "field": "takeaway",
+  "figure": "18.45",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Consolidated statement (₹ lakh), quarter ended 30-09-2025: profit before exceptional items 1,464.91 + finance cost 163.09 + D&A 240.16 - other income 22.92 = 1,845.24 = ₹18.45 Cr"
+ },
+ {
+  "item": 127,
+  "news_id": "5ec1e490-1194-438c-877f-5d428f011275",
+  "symbol": "JUBLPHARMA",
+  "field": "takeaway",
+  "figure": "0.6%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Rs 35.90 Cr demand (this filing) / consolidated net worth Mar-2025 Rs 6,254.9 Cr (Q4FY25 results, 2025-05-16) = 0.57% -> 0.6%"
+ },
+ {
+  "item": 128,
+  "news_id": "1ee7b071-567e-4f5c-b680-c819e367d372",
+  "symbol": "JUBLPHARMA",
+  "field": "notable_changes[3].current",
+  "figure": "9.8",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p.10 consolidated (Rs mn): Other income 98 (Q2FY26), 120 (Q1FY26), 217 (Q2FY25) -> Rs 9.8 Cr"
+ },
+ {
+  "item": 129,
+  "news_id": "nse-106818603",
+  "symbol": "IRFC",
+  "field": "what_happened",
+  "figure": "1.6%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.3 extract of results (₹ Cr; the PDF is truncated and has no xref, so it was read from its embedded page images): net profit after tax Q2FY27 (30 Sep 2026) 1,958.48 vs Q1FY27 (30 Jun 2026) 1,927.21 -> +1.6% QoQ"
+ },
+ {
+  "item": 130,
+  "news_id": "nse-106632169",
+  "symbol": "SHOPERSTOP",
+  "field": "why_it_matters[1].text",
+  "figure": "7.5%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "GSSBBL FY25-26 turnover Rs 379.75 Cr (this filing) / Shoppers Stop consolidated FY26 revenue Rs 5,043.32 Cr (FY26 results nse-106609751, 2026-05-05) = 7.53%"
+ },
+ {
+  "item": 131,
+  "news_id": "nse-106604203",
+  "symbol": "SCHAEFFLER",
+  "field": "why_it_matters[1].text",
+  "figure": "18.07%",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Consolidated quarter ended Mar-2025 (Rs mn): PBT 3,417.3 + finance costs 15.6 + D&A 831.0 - other income 335.5 = 3,928.4; /revenue 21,744.1 = 18.07% (Mar-2026: 4,783.2/25,856.4 = 18.50%)"
+ },
+ {
+  "item": 132,
+  "news_id": "nse-106614339",
+  "symbol": "CERA",
+  "field": "what_happened",
+  "figure": "9.2%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Results statement (₹ lakh): Q4FY26 employee benefits 5,943.85 / revenue 64,381.58 = 9.23%; Q4FY25 6,047.33 / 57,797.36 = 10.46%; down 123 bps"
+ },
+ {
+  "item": 133,
+  "news_id": "nse-106620245",
+  "symbol": "ONESOURCE",
+  "field": "why_it_matters[0].text",
+  "figure": "1,422",
+  "verdict": "RIGHT",
+  "source": "earlier filing NSE seq 106620198 (FY26 results, 2026-05-13 12:59, same day before this filing)",
+  "evidence": "p19 (scan) consolidated results, Rs million: revenue from operations year ended 31-Mar-2026 14,215.90 mn = Rs 1,421.59 Cr -> Rs 1,422 Cr"
+ },
+ {
+  "item": 134,
+  "news_id": "nse-106645693",
+  "symbol": "KABRAEXTRU",
+  "field": "what_happened",
+  "figure": "2.96",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "p.6 consolidated Q4FY26 (Rs lakh): PBT before exceptional 902.56 + finance cost 308.52 + D&A 791.64 - other income 1,707.09 = 295.63 lakh = Rs 2.96 Cr; /revenue 12,014.50 = 2.46%"
+ },
+ {
+  "item": 135,
+  "news_id": "nse-106657368",
+  "symbol": "WAAREERTL",
+  "field": "why_it_matters[0].text",
+  "figure": "350",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106628181 (2026-05-18, WAAREERTL_18052026192112_Intimation-s.pdf)",
+  "evidence": "Awarding entity 'Waaree Forever Energies Private Limited (WFEPL)'; 'EPC for 350MW/1400MWh grid connected BESS'; 'WFEPL is the subsidiary company of holding company'; related party transaction: 'Yes'"
+ },
+ {
+  "item": 136,
+  "news_id": "nse-106638240",
+  "symbol": "STUDDS",
+  "field": "what_happened",
+  "figure": "31.32",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Consolidated results (Rs mn) Q4FY26: PBT 289.19 + finance cost 2.22 + D&A 53.73 - other income 31.99 = 313.15 mn = Rs 31.32 Cr; / revenue 1,675.42 = 18.7%"
+ },
+ {
+  "item": 137,
+  "news_id": "nse-106635198",
+  "symbol": "TARIL",
+  "field": "why_it_matters[0].text",
+  "figure": "2,509",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106595588 (Q4FY26 results, 21 Apr 2026)",
+  "evidence": "Consolidated (Rs Cr) year ended 31.03.2026: Revenue from Operations 2,508.80; 228.26/2,508.80 = 9.1%"
+ },
+ {
+  "item": 138,
+  "news_id": "nse-106617240",
+  "symbol": "MANORAMA",
+  "field": "takeaway",
+  "figure": "61.25",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "p.11 consolidated (₹ lacs), 3 months ended 31.03.2025: profit before exceptional items 5,240.78 + finance cost 1,196.30 + D&A 640.18 - other income 952.11 = 6,125.15 = ₹61.25 Cr. Figure is right. Side note: the same takeaway's 'net profit of ₹52.46 Cr' for Q4FY26 matches neither consolidated (4,248.13 lacs = ₹42.48 Cr) nor standalone (5,951.68 lacs = ₹59.52 Cr) on this filing"
+ },
+ {
+  "item": 139,
+  "news_id": "nse-106595720",
+  "symbol": "CYIENTDLM",
+  "field": "takeaway",
+  "figure": "57.41",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "Consolidated results (Rs mn) Q4FY25: PBT 416.65 + finance costs 85.90 + D&A 104.77 - other income 33.17 = 574.15 mn = Rs 57.415 Cr (57.41 is a half-up rounding edge; 57.42 also correct)"
+ },
+ {
+  "item": 140,
+  "news_id": "nse-106611788",
+  "symbol": "EMUDHRA",
+  "field": "takeaway",
+  "figure": "42.01",
+  "verdict": "RIGHT",
+  "source": "computed from this filing",
+  "evidence": "Consolidated Q4FY26 (INR mn): PBT 331.25 + finance costs 28.74 + D&A 91.68 - other income 31.54 = 420.13 mn = Rs 42.01 Cr (Q4FY25: 312.12-1.09+60.61-23.82 = 34.78 Cr)"
+ },
+ {
+  "item": 141,
+  "news_id": "nse-106608441",
+  "symbol": "AFCONS",
+  "field": "takeaway",
+  "figure": "3.0%",
+  "verdict": "RIGHT",
+  "source": "computed",
+  "evidence": "Filing: 'EPC order worth Rs 373 crore'. TTM consolidated revenue at filing (4 May 2026, before Q4FY26 results) = Q4FY25 3,223.27 + 9MFY26 9,334.54 = ₹12,557.81 Cr -> 2.97%; the card's own base, FY25 ₹12,548.42 Cr, also gives 2.97% = 3.0%. Revenue bases taken from the stored results XBRL (xbrl:res:544280:Q4FY25 / Q3FY26); PDFs not re-read"
+ },
+ {
+  "item": 142,
+  "news_id": "nse-106643906",
+  "symbol": "KAPSTON",
+  "field": "why_it_matters[0].text",
+  "figure": "28.13",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p16 (scan) consolidated results (Rs lakh): net profit after tax year ended 31.03.2026 2,813.17 vs 1,783.65 -> Rs 28.13 Cr, +57.7% (standalone 2,802.40 vs 1,783.38 = +57.1%)"
+ },
+ {
+  "item": 143,
+  "news_id": "nse-106820610",
+  "symbol": "URBANCO",
+  "field": "why_it_matters[0].text",
+  "figure": "126.3%",
+  "verdict": "RIGHT",
+  "source": "same-day results filing (Q2FY27 board outcome, 16 Oct 2026)",
+  "evidence": "Consolidated statement of assets & liabilities at 30.09.2026 (Rs Cr): equity share capital 148.28 + other equity 1,831.56 = Total Equity 1,979.84; 2,500/1,979.84 = 126.3%"
+ },
+ {
+  "item": 144,
+  "news_id": "nse-106825498",
+  "symbol": "NRBBEARING",
+  "field": "takeaway",
+  "figure": "962.63",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106613639 (Q4FY26 board outcome, 2026-05-07)",
+  "evidence": "Consolidated balance sheet 31 Mar 2026 (₹ lakh): 'Equity attributable to owners of parent 96,263' = ₹962.63 Cr (total equity incl. NCI 98,304; standalone total equity 90,169 = ₹901.69 Cr), the latest balance sheet before this 22 Oct 2026 filing"
+ },
+ {
+  "item": 145,
+  "news_id": "nse-106611685",
+  "symbol": "JIOFIN",
+  "field": "why_it_matters[0].text",
+  "figure": "0.3%",
+  "verdict": "WRONG",
+  "source": "computed",
+  "evidence": "Rs 300 Cr infusion (this filing) / net worth Rs 133,853.59 Cr (Mar-2026, Q4FY26 results 2026-04-17) = 0.22%, which rounds to 0.2%, not 0.3%"
+ },
+ {
+  "item": 146,
+  "news_id": "nse-106823988",
+  "symbol": "OMNI",
+  "field": "why_it_matters[0].text",
+  "figure": "511.3",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106643134 (FY26 investor presentation, 27 May 2026)",
+  "evidence": "p.5 'Outstanding Results for period of Q4FY26 & FY26 (Consolidated) Revenue INR 5113.0 Mn' = Rs 511.3 Cr"
+ },
+ {
+  "item": 147,
+  "news_id": "nse-106600379",
+  "symbol": "ASAL",
+  "field": "takeaway",
+  "figure": "4.93",
+  "verdict": "RIGHT",
+  "source": "this filing",
+  "evidence": "p.6 results statement (INR lakh, scanned), quarter ended March 31, 2025: 'Profit for the period / year (5-6) 493.50' = ₹4.935 Cr, shown as ₹4.93 Cr (within rounding)"
+ },
+ {
+  "item": 148,
+  "news_id": "nse-106601460",
+  "symbol": "JKCEMENT",
+  "field": "why_it_matters[1].text",
+  "figure": "6,481",
+  "verdict": "RIGHT",
+  "source": "earlier filing (Q2FY26 results XBRL, 2025-11-01)",
+  "evidence": "Consolidated net worth at 30-Sep-2025 Rs 6,481.35 Cr (equity 77.27 + reserves 6,404.08), the latest balance sheet before this 27-Apr-2026 filing (Mar-2026 Rs 7,037.25 Cr came on 2026-05-23)"
+ },
+ {
+  "item": 149,
+  "news_id": "nse-106778942",
+  "symbol": "CEIGALL",
+  "field": "takeaway",
+  "figure": "5,300",
+  "verdict": "RIGHT",
+  "source": "earlier filing nse-106767904 (press release, 3 Sep 2026)",
+  "evidence": "'Ceigall India Receives LOI of Rs 5,300 Crore for Transmission Project ... valued at approximately Rs 5,300 crore (inclusive of GST)'; this filing: SPA for 100% of the JKJTL SPV + 49% subscription in a JV"
+ }
+]

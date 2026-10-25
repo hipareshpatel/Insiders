@@ -47,7 +47,7 @@ from . import order_band
 from . import gate
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
-from .models import EVENT_TAGS, Filing, MemoryOutput, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
+from .models import EVENT_TAGS, DossierDelta, Filing, MemoryOutput, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
                       printed_periods, quarter_index, statement_quarter, statement_year)
 from .prompts.engine import PromptEngine
@@ -1864,6 +1864,11 @@ class Pipeline:
         self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
         self._superseding: dict[str, tuple[list[str], str]] = {}  # news_id -> later filings with its quarter's card (D20)
         self._critic_jobs: list[dict] = []   # live cards committed this run, for the shadow critic (critic.py)
+        # A card's memory waits for its card row (owner, 25 Oct 2026, after the architecture audit): written to the store
+        # only once the batch holding the card is committed, so a run cut short or a rejected row leaves no memory
+        # without its card. Until then the company's later filings in this run read it from here (one company's
+        # filings run in order in one job). {scrip: [(news_id, memory, memory as read)]}
+        self._pending_memory: dict[str, list[tuple[str, dict, dict]]] = {}
 
     # ------------------------------------------------------------------ writes
 
@@ -2287,8 +2292,17 @@ class Pipeline:
             self._forget_in_memory(filing)
         return outcome
 
+    def _forget_pending(self, scrip: str, news_ids) -> bool:
+        """The same filings taken out of memory still waiting for its card rows (_pending_memory)."""
+        changed = False
+        with self._lock:
+            for _, merged, _ in self._pending_memory.get(scrip, []):
+                changed = any([forget_filing(merged, n) for n in news_ids]) or changed
+        return changed
+
     def _forget_in_memory(self, filing: Filing) -> None:
         """What an earlier analysis of this filing put in memory, taken out now that it ends without a card."""
+        self._forget_pending(filing.scrip_code, (filing.news_id,))
         try:
             dossier = self.sink.get_dossier(filing.scrip_code)
             if dossier and forget_filing(dossier, filing.news_id):
@@ -2473,7 +2487,7 @@ class Pipeline:
             why = None
             if filing.route != "TIMELINE":
                 first = doc.select_text(6000, [])   # the first pages: an amount often sits on the order's second page
-                profit = annual_profit_cr(self.sink.get_dossier(filing.scrip_code)) if _FINE.search(first) else None
+                profit = annual_profit_cr(self._memory(filing.scrip_code)) if _FINE.search(first) else None
                 why = memory_only(filing, first, doc.page_count, profit)
             if why:
                 log.info("%s: %s, a timeline line and no card", filing.news_id, why)
@@ -2683,6 +2697,7 @@ class Pipeline:
             later, quarter = self._superseding.pop(filing.news_id, ((), ""))
         if not later or outcome.update.get("status") != "ANALYZED" or not outcome.card or outcome.card.get("held"):
             return []
+        self._forget_pending(filing.scrip_code, later)
         dossier = self.sink.get_dossier(filing.scrip_code)
         if dossier and any([forget_filing(dossier, n) for n in later]):
             self.sink.put_dossier(filing.scrip_code, dossier)
@@ -2968,7 +2983,7 @@ class Pipeline:
         events, events_checked = self._event_xbrl(filing, doc)
         # Before pass 1, not after it: the gatekeeper is shown what this company has already filed, so it
         # can name an event arriving again as a different document (the document rules cannot see those).
-        dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
+        dossier = self._memory(filing.scrip_code) or new_dossier(filing, company)
         read = json.loads(json.dumps(dossier))   # memory as read, for keep_concurrent_writes when it is written back
         if filing.route == "PASS1" and doc.page_count >= ANNUAL_REPORT_MIN_PAGES and doc.kind() == "ANNUAL_REPORT":
             # NSE's headline can name only the meeting ("Annual General Meeting ... to be held on ..."), with the annual
@@ -3325,6 +3340,13 @@ class Pipeline:
         # Memory takes only figures confirmed at the filing's unit and the company's scale (audit round 2); the
         # card keeps what it read. XBRL figures go into both, unfiltered.
         remembered, _ = trust.for_memory(out, filed_text, company, dossier)
+        # A held card's own reading stays out of memory: its figures, notes, deals and guidance did not pass the checks.
+        # Only the exchange file's figures are kept (owner, 25 Oct 2026, reversing T5 of 20 Oct, which kept a held card's
+        # figures as "the statement's own")
+        held_now = (review or {}).get("status") == "UNRESOLVED" and not checks.only_style
+        if held_now:
+            remembered = out.model_copy(deep=True)
+            remembered.dossier_delta = DossierDelta()
         if tagged:
             _apply_xbrl(out, tagged, filing.news_id)
             _apply_xbrl(remembered, tagged, filing.news_id)
@@ -3336,7 +3358,7 @@ class Pipeline:
             # the same quarter's standalone figures, for the company page's standalone view (never the card's)
             put_standalone(merged, standalone_file.metrics, standalone_file.balance_sheet, filing.filed_at, filing.news_id)
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector), ("symbol", company.get("symbol") or filing.symbol)) if v})
-        if event_type == "CONCALL_PRESENTATION":
+        if event_type == "CONCALL_PRESENTATION" and not held_now:
             # the call's checked takeaways, kept for the company page's quarterly summary (owner, 2026-10-21: the
             # summary was built from the few items memory happened to keep, not the call's analysis)
             remember_call_points(merged, filing.news_id, filing.filed_at, card.call_takeaways)
@@ -3353,11 +3375,9 @@ class Pipeline:
             # published press release made two Q2FY27 results lines with different figures (T5, 2026-10-20).
             # Its figures stay: they are the statement's own and passed memory's checks.
             merged["timeline"] = [e for e in merged.get("timeline", []) if e.get("news_id") != filing.news_id]
-        # memory was read before the AI call, minutes ago: what a memory job stored since is kept, not overwritten
-        kept = keep_concurrent_writes(merged, read, self.sink.get_dossier(filing.scrip_code))
-        if kept:
-            log.info("%s: memory written meanwhile by another job kept: %s", filing.news_id, ", ".join(kept))
-        self.sink.put_dossier(filing.scrip_code, merged)
+        # written with the card's row, not before it (_write_memory, which also keeps what other jobs stored meanwhile)
+        with self._lock:
+            self._pending_memory.setdefault(filing.scrip_code, []).append((filing.news_id, merged, read))
 
         card_json = {
             "category_tag": EVENT_TAGS.get(event_type, "UPDATE"),
@@ -3757,6 +3777,42 @@ class Pipeline:
             except Exception as exc:  # the archive is a backup; never fail the run for it
                 log.warning("card archive for %s failed: %s", day, exc)
 
+    def _memory(self, scrip: str) -> dict | None:
+        """A company's memory as this run knows it: its latest card's memory not yet written, else the store's."""
+        with self._lock:
+            pending = self._pending_memory.get(scrip)
+            if pending:
+                return json.loads(json.dumps(pending[-1][1]))
+        return self.sink.get_dossier(scrip)
+
+    def _write_memory(self, outcomes: list[Outcome]) -> None:
+        """The memory of committed cards, in the order they were made, each merged with what other jobs stored meanwhile."""
+        committed = {o.update.get("news_id") for o in outcomes}
+        with self._lock:
+            ready = []
+            for scrip, entries in list(self._pending_memory.items()):
+                ready += [(scrip, e) for e in entries if e[0] in committed]
+                rest = [e for e in entries if e[0] not in committed]
+                if rest:
+                    self._pending_memory[scrip] = rest
+                else:
+                    del self._pending_memory[scrip]
+        for scrip, (news_id, merged, read) in ready:
+            kept = keep_concurrent_writes(merged, read, self.sink.get_dossier(scrip))
+            if kept:
+                log.info("%s: memory written meanwhile by another job kept: %s", news_id, ", ".join(kept))
+            self.sink.put_dossier(scrip, merged)
+
+    def _drop_memory(self, news_id: str) -> None:
+        """A card the database refused leaves no memory either."""
+        with self._lock:
+            for scrip, entries in list(self._pending_memory.items()):
+                rest = [e for e in entries if e[0] != news_id]
+                if rest:
+                    self._pending_memory[scrip] = rest
+                else:
+                    del self._pending_memory[scrip]
+
     def _commit(self, outcomes: list[Outcome]) -> None:
         if not outcomes:
             return
@@ -3768,6 +3824,7 @@ class Pipeline:
     def _commit_locked(self, outcomes: list[Outcome]) -> None:
         try:
             self._commit_rows(outcomes)
+            self._write_memory(outcomes)
         except SinkRejected as exc:
             # One bad row must not block the batch (and get its filings analysed again on every
             # run): commit filing by filing, and mark the ones the database refuses as FAILED.
@@ -3775,8 +3832,10 @@ class Pipeline:
             for outcome in outcomes:
                 try:
                     self._commit_rows([outcome])
+                    self._write_memory([outcome])
                 except SinkRejected as one:
                     news_id = outcome.update["news_id"]
+                    self._drop_memory(news_id)
                     self._exec("filings_update", [{"news_id": news_id, "status": "FAILED", "attempts": self.settings.max_attempts,
                                                    "last_error": f"rejected by the database: {one}"[:500], "updated_at": now_iso()}])
         self._flush_usage()

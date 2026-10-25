@@ -925,3 +925,15 @@ def test_only_a_row_of_the_same_quarter_and_basis_judges_our_ebitda():
     assert _ebitda_check(30.34, "=== page 3\nConsolidated Q2 FY27\nEBITDA 36.70", "CONSOLIDATED") == "other"
     assert _ebitda_check(30.34, "EBITDA 30.34 38.95", None, (38.95, None)) == "printed"   # no period: two of our figures
     assert _ebitda_check(30.34, "EBITDA 30.34 41.00", None, (38.95, None)) is None
+
+
+def test_a_calls_transcript_is_no_source_for_the_ebitda_check():
+    """Owner, 25 Oct 2026: management speaks in round and forward-looking figures; only the results and the deck count."""
+    from bse_intel.dossier import _ebitda_check
+
+    call = ("=== page 4\nModerator:\nThank you. The next question is from the line of Ravi.\nCFO Name:\n"
+            "For the quarter, EBITDA came in at about INR 250 crores\n")
+    assert _ebitda_check(230.12, call) is None
+    deck = "=== page 4\nKey Highlights:\nQ4 FY26 performance\nSegment Highlights:\nEBITDA 250.4 201.3\n"
+    assert _ebitda_check(230.12, deck) == "other"                      # a deck's headings are not speakers
+    assert _ebitda_check(230.12, call + deck) == "other"               # the deck's page still counts

@@ -67,7 +67,10 @@ tables no version was tuned on, under the same four marks.
   its page, else (a single figure) the two lines before it. Only "Q" or "QY" rows count; "Y" rows and rows with no
   period never remove ours, and a row with no period confirms ours only when it also prints one of our comparatives;
 - a row on the other basis (the last "consolidated" or "standalone" on its page up to it) counts neither way;
-- a row stands against ours only with a figure between half and twice ours at some unit.
+- a row stands against ours only with a figure between half and twice ours at some unit;
+- **amended before any of the new batch was measured (owner, 25 Oct 2026):** a page of a call's transcript is never a
+  source (a "Moderator:", or two speakers' names with a question or a thank-you). Management speaks in round and
+  forward-looking figures; only the results and the deck count. The frozen rule is the commit that adds this line.
 
 **Population.** Every RESULTS and CONCALL_PRESENTATION table on the live API whose news_id is in none of the earlier
 sets (`all_stored.json` of 25 Oct morning, the first measurement's cards, `fresh_cards.json`), taken once at least 200

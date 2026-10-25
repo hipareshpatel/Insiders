@@ -1801,10 +1801,23 @@ def _period_of(text: str) -> str | None:
     return ("Q" if quarter else "") + ("Y" if year else "") or None
 
 
+_SPEAKER = re.compile(r"^\s*(moderator|management|participant|analyst|[A-Z][a-z]+(?:\s+[A-Z][a-z.]+){0,3})\s*:\s*$")
+
+
+def _spoken(page: list[str]) -> bool:
+    """A page of a call's transcript: a "Moderator:", or two speakers' names on their own line with a question or a
+    thank-you (a deck's "Key Highlights:" headings are not speakers). Management speaks in
+    round and forward-looking figures ("15% EBITDA", "EBITDA should be 14% to 15%", "about ₹250 crore"), so a call is
+    never the filing's printed EBITDA (owner, 25 Oct 2026); the results and the deck are."""
+    low = "\n".join(page).lower()
+    return "moderator:" in low or (sum(bool(_SPEAKER.match(line)) for line in page) >= 2
+                                   and bool(re.search(r"question|thank you|ladies and gentlemen", low)))
+
+
 def _ebitda_rows(text: str) -> list[dict]:
     """Each EBITDA row of the filing's text (_row_cells: plain or operating, never a margin, adjusted, core, normalised
-    or pro-forma figure, nor a ratio such as "Net debt / EBITDA", "EBITDA per ton" or "EBITDA CAGR"), with the period
-    and basis it is printed for.
+    or pro-forma figure, nor a ratio such as "Net debt / EBITDA", "EBITDA per ton" or "EBITDA CAGR", nor a line of a
+    call's transcript, _spoken), with the period and basis it is printed for.
     - period: the row's own line names it ("EBITDA (Q4 FY 26)", "EBITDA FY26"), else the nearest line above it that
       names one. For a row of two or more figures (a table) that is every period named above it on its page, where the
       column header is, often one cell a line ("Q4' FY26", "Q3' FY26", "FY26": "QY"); for a single figure (a call's
@@ -1812,6 +1825,8 @@ def _ebitda_rows(text: str) -> list[dict]:
     - basis: the last "consolidated" or "standalone" on the page up to the row; None when the page names neither."""
     lines = text.splitlines()
     starts = [i for i, line in enumerate(lines) if _PAGE_START.match(line)]
+    bounds = list(zip([0] + starts, starts + [len(lines)]))
+    spoken = {i for a, b in bounds if _spoken(lines[a:b]) for i in range(a, b)}
     found = _row_cells(text, "ebitda", plain=False)
     rows, at = [], 0
     for label, figures in found:
@@ -1831,7 +1846,7 @@ def _ebitda_rows(text: str) -> list[dict]:
                 basis = "CONSOLIDATED"
             elif "standalone" in low and "consolidated" not in low:
                 basis = "STANDALONE"
-        if not _RATIO.search(label):
+        if not _RATIO.search(label) and at not in spoken:
             rows.append({"label": label, "figures": figures, "period": period, "basis": basis})
         at += 1
     return rows

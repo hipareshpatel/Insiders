@@ -113,3 +113,16 @@ What it settles, read from the calculation linkbase:
   when a filer tags it that way (Orient Bell), and EBITDA falls back to that figure when no before-exceptional profit
   is tagged. That is where item 12's error can enter.
 - Every file can be checked against these sums: a file whose lines do not add up was tagged wrongly.
+
+### An outside review of step 1 (Gemini, shared by the owner 25 Oct 2026), checked against the code
+
+- "Add BSE as a source; its event XBRL is more mature": not possible from where the pipeline runs. BSE refuses
+  non-Indian IPs and the pipeline runs on GitHub's US machines (CLAUDE.md; D34); the BSE code is an off-path backup.
+  The results taxonomy is common to NSE and BSE (NSE circular, 2 May 2018). Whether BSE has event files NSE lacks is an
+  assumption, not checked.
+- "Keep management claims (calls, slides) apart from the audited figures": agreed, and already the plan: item 10 tags
+  every memory item with its document kind, item 3 keeps call and slide figures out of tables and key numbers, item
+  21 puts them in the card's second part.
+- "No adjustment for splits and bonuses": already built. `corporate_actions.py` reads NSE's corporate-actions feed and
+  turns each split, bonus and consolidation into a factor that EPS and share counts are adjusted by (LIC's 1:1 bonus,
+  Kapston's 1:2).

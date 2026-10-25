@@ -90,7 +90,8 @@ jobs:
         if: inputs.command == 'requeue-failed'
         env:
           IDS: ${{ inputs.ids }}   # through the environment, never pasted into the script
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel requeue-failed ${IDS:+--ids "$IDS"} ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
+          SINCE: ${{ inputs.since }}
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel requeue-failed ${IDS:+--ids "$IDS"} ${SINCE:+--since "$SINCE"} ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
       - name: Failed filings by reason (reads only)
         if: inputs.command == 'failed-report'
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel failed-report'

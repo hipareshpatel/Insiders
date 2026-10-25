@@ -73,3 +73,4 @@ right. Everything the 2026-10-20 approval leaves to the owner still goes to the 
 - 25 Oct 14:52 UTC: PR #115 merged into `main` (f073b6f) with CI green: this standing approval. Includes DeepSeek off on regular jobs (owner).
 - 25 Oct 15:10 UTC: PR #116 merged into `main` (68315b1) with CI green: this standing approval.
 - 25 Oct 15:28 UTC: PR #117 merged into `main` (c5de004) with CI green: this standing approval. F149 changes timing only, not card content.
+- 25 Oct 15:32 UTC: PR #118 merged into `main` (a60c911) with CI green: this standing approval. No card change (measurement, a memory job not yet run, the metrics table not on cards).

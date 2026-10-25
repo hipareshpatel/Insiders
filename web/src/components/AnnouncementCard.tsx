@@ -165,11 +165,14 @@ function ResultsTable({ r, judged }: { r: ResultsSnapshot; judged: { label: stri
           </tr>
         </thead>
         <tbody>
-          {rows.map(({ key, label, unit, line }) => {
+          {rows.map(({ key, label, unit, line, note }) => {
             const bps = unit === "pct", lower = lowerIsBetter(key, label);
             return (
               <tr key={key} className="border-t border-line">
-                <td className={cn(td, "pl-0 text-left font-sans font-medium text-ink sm:pl-0")}>{label}</td>
+                <td className={cn(td, "pl-0 text-left font-sans font-medium text-ink sm:pl-0")}>
+                  {label}
+                  {note && <span className="block text-[11px] font-normal text-ink-3">{note}</span>}
+                </td>
                 <td className={cn(td, "font-semibold text-ink")}>{lineValue(line.value, unit)}{mark(line, "value")}</td>
                 {py && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_year, unit)}{mark(line, "prev_year")}</td>}
                 {yoy && <td className={td}>{change(line, "yoy", bps, lower, key)}{py && <span className={under}>{was(line.prev_year, unit)}</span>}</td>}

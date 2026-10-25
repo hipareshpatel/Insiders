@@ -3369,7 +3369,7 @@ class Pipeline:
             "fundamentals": latest_fundamentals(current, sector_module.footer),
             "results": (results_snapshot(current, filing.news_id, sector_module.footer, printed=filed_text)
                         if event_type == "RESULTS"
-                        else call_results_snapshot(current, filing.filed_at, sector_module.footer, before)
+                        else call_results_snapshot(current, filing.filed_at, sector_module.footer, before, text=filed_text)
                         if event_type == "CONCALL_PRESENTATION" else None),
             "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
             # the key takeaways memory took from this call, by heading (call_summary.py)

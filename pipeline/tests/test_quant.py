@@ -810,7 +810,11 @@ def test_the_results_table_takes_a_lines_three_columns_from_one_source():
     ]}
     snap = results_snapshot(dossier, "n")
     assert (snap["pat"]["value"], snap["pat"]["prev_year"], snap["pat"]["prev_quarter"]) == (5570.4, 4281.27, 5368.17)
+    assert (snap["ebitda"]["value"], snap["ebitda"]["prev_year"]) == (160.0, 120.0)      # no text prints the reading
+    printed = "Key figures (Rs Cr)  EBITDA 208.0 166.0 25%  PBT 150.2"
+    snap = results_snapshot(dossier, "n", printed=printed)
     assert (snap["ebitda"]["value"], snap["ebitda"]["prev_year"]) == (208.0, 166.0)      # the company's printed EBITDA
+    assert results_snapshot(dossier, "n", printed="PBT 208.0 166.0")["ebitda"]["value"] == 160.0   # not labelled EBITDA
     # a comparative the chosen source lacks is not taken from the other when both give the quarter differently
     dossier["financial_metrics"][1]["sources"] = [src("n", 4425.95)]
     assert "prev_year" not in results_snapshot(dossier, "n")["pat"]

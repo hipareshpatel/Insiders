@@ -16,3 +16,19 @@ random 150. Independent agents judge both versions against the filing PDF, blind
 3. At most 5% of changed lines go from RIGHT (off) to WRONG (on).
 
 **Otherwise** the fix does not ship as it is: it is narrowed and re-measured on tables not used to tune it, or dropped.
+
+## Re-measure of the narrowed fix (set before measuring, 25 Oct 2026)
+The first version failed: ON 71.8% right, +31.5 points over OFF, 11.4% right-to-wrong (`table_fix_review.json`). It
+was narrowed on what broke:
+- the company's EBITDA is used only when the filing's text prints that figure with "EBITDA" just before it;
+- that EBITDA's comparatives must be printed beside it;
+- its margin is computed from it, never a rounded printed margin.
+
+**Population.** Only tables filed after the narrowing (`onoff_table.py --since`), which played no part in tuning,
+rebuilt off and on with each filing's PyMuPDF text.
+
+**Review.** Changed lines are reviewed blind exactly as before, once there are at least 100; if there are more than
+150, a random 150.
+
+**Pass marks.** The same three apply unchanged: ON ≥ 85% right (lower bound ≥ 75%), ON beats OFF by ≥ 20 points,
+right-to-wrong ≤ 5%.

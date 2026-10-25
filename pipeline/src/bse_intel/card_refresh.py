@@ -56,7 +56,7 @@ def blocks(card: dict, dossier: dict, filing: Filing, company: dict | None, foot
     return {
         "results": (results_snapshot(current, filing.news_id, footer, printed=printed,
                                      like=None if printed else card.get("results")) if event_type == "RESULTS"
-                    else call_results_snapshot(current, filing.filed_at, footer, before) if event_type == "CONCALL_PRESENTATION" else None),
+                    else call_results_snapshot(current, filing.filed_at, footer, before, text=printed) if event_type == "CONCALL_PRESENTATION" else None),
         "volume_strip": volume_strip(current, filing.news_id) if event_type == "MONTHLY_BUSINESS_UPDATE" else None,
         "call_memory": (card_takeaways(current, filing.news_id, filing.filed_at)
                            if event_type == "CONCALL_PRESENTATION" else None),

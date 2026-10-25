@@ -1636,7 +1636,7 @@ CALL_OWN_DEFINITION = ("ebitda", "ebitda_margin")
 
 
 def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...] | list[dict] = (),
-                          before: dict | None = None) -> dict | None:
+                          before: dict | None = None, text: str | None = None) -> dict | None:
     """The results table for an earnings call or investor presentation: the latest quarter in memory, as the results
     filing that reported it gives it (design audit 2026-10-20, fix 10). None when memory has no quarter that ended
     within CALL_QUARTER_DAYS of the call, so a call never shows an older quarter as the one it discusses.
@@ -1653,12 +1653,12 @@ def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...]
     latest = _latest_reported(dossier, filed)
     if latest is None or not _discussed(latest[0], filed):
         return None
-    snap = results_snapshot(dossier, latest[2], footer)
+    snap = results_snapshot(dossier, latest[2], footer, ebitda_text=text)
     if not snap:
         return None
     if before is not None:
         earlier = _latest_reported(before, filed)
-        prior = results_snapshot(before, earlier[2], footer) if earlier and earlier[1] == latest[1] else None
+        prior = results_snapshot(before, earlier[2], footer, ebitda_text=text) if earlier and earlier[1] == latest[1] else None
         same = prior and prior.get("ebitda") and snap.get("ebitda") \
             and prior["ebitda"].get("value") == snap["ebitda"].get("value")
         # the call left memory's EBITDA as it was: its margin over the call's revenue stays (Senores' 32.7%, the call's
@@ -1727,6 +1727,21 @@ def _beside(a: float, b: float, sequence: list[float], unit: float, near: float 
     ta, tola, tb, tolb = abs(a) * unit, _tolerance(a, unit), abs(b) * unit, _tolerance(b, unit, near)
     return any(abs(n - tb) <= tolb for i, m in enumerate(sequence) if abs(m - ta) <= tola
                for n in sequence[max(0, i - ROW_WINDOW): i + ROW_WINDOW + 1])
+
+
+def _printed_with(value: float, text: str, word: str, before: int = 160) -> bool:
+    """Whether the text prints this figure (at any unit) with `word` within `before` characters ahead of it."""
+    low = text.lower()
+    for m in re.finditer(r"\d[\d,]*\.?\d*", text):
+        raw = m.group(0).replace(",", "")
+        try:
+            n = float(raw)
+        except ValueError:
+            continue
+        if any(abs(n - abs(value) * unit) <= _tolerance(value, unit) for unit in _UNITS) \
+                and word in low[max(0, m.start() - before):m.start()]:
+            return True
+    return False
 
 
 def _from_source(sources: list[dict], source: str, news_id: str, basis: str | None) -> float | None:
@@ -1805,13 +1820,14 @@ def _entry_basis(entry: dict) -> str | None:
 
 
 def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = (),
-                     printed: str | None = None, like: dict | None = None) -> dict | None:
+                     printed: str | None = None, like: dict | None = None, ebitda_text: str | None = None) -> dict | None:
     """This filing's latest quarter against a year ago and the previous quarter, for the results tables.
 
     Each metric carries its value, the year-ago and previous-quarter values when memory has them,
     and the YoY / QoQ change (in basis points for the margin, which is derived from EBITDA and
     revenue when the filing did not state it). `printed` is the filing's text, which its comparatives are judged
-    against; `like` a stored table of the same quarter, whose missing comparatives stay out.
+    against; `like` a stored table of the same quarter, whose missing comparatives stay out; `ebitda_text` the text a
+    company's own EBITDA must be printed in to be shown (the filing's, else `printed`).
     """
     from .periods import prior_quarter_period, prior_year_period
 
@@ -1854,6 +1870,11 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         basis = "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)   # as _metric_entry keeps it
         source = line_source(names)
         value = _from_source(sources, source, news_id, basis)
+        if value is not None and p != period and names[0] == "ebitda" and company_ebitda():
+            now = _from_source(current_sources(names), "filing", news_id, None)
+            text_seq = _number_sequence(ebitda_text or printed or "")
+            if now is None or not any(_beside(now, value, text_seq, unit, ROUNDING) for unit in _UNITS):
+                return entry, None   # the company's EBITDA against a comparative its text does not print beside it
         if value is None and p != period:
             other = "filing" if source == "xbrl" else "xbrl"
             alt = _from_source(sources, other, news_id, basis)
@@ -1873,9 +1894,19 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         srcs = current_sources(names)
         filing = any(src.get("news_id") == news_id and src.get("value") is not None for src in srcs)
         tagged = any(str(src.get("news_id") or "").startswith(XBRL_SOURCE) and src.get("value") is not None for src in srcs)
-        if names[0] in CALL_OWN_DEFINITION and filing:
+        if names[0] == "ebitda" and company_ebitda():
             return "filing"
         return "xbrl" if tagged else "filing"
+
+    def company_ebitda() -> bool:
+        return labelled()
+
+    def labelled() -> bool:
+        """Whether this filing's EBITDA is the company's printed one: its figure printed with "EBITDA" just before it.
+        The model's reading is not enough: it gave Aster's pro-forma ₹517 Cr, Trent's profit before tax ₹534.95 Cr and
+        Heritage's ₹823 Cr for ₹74 Cr as EBITDA (blind review of the first version, 25 Oct 2026)."""
+        value = _from_source(current_sources(("ebitda", "operating_profit")), "filing", news_id, None)
+        return value is not None and _printed_with(value, ebitda_text or printed or "", "ebitda")
 
     def differ(names: tuple[str, ...]) -> bool:
         """Whether both sources give this quarter and give it differently: two definitions of the line."""
@@ -1953,7 +1984,9 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         return None if value is None or refused(names, p, alone=True) else value
 
     def margin(p: str | None) -> float | None:
-        stated = lookup(_RESULT_METRICS[2][1], p)
+        # the company's own EBITDA makes its margin over the same revenue, never a rounded printed margin beside
+        # unrounded comparatives (Leela's 46% against 44.40%: +160 bps for the printed +118; review, 25 Oct 2026)
+        stated = None if company_ebitda() else lookup(_RESULT_METRICS[2][1], p)
         if stated is not None:
             return stated
         ebitda, revenue = lookup(_RESULT_METRICS[1][1], p), lookup(_RESULT_METRICS[0][1], p)

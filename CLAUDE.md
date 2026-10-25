@@ -59,6 +59,8 @@ Read before changing anything:
   A plain 403 (or 503) is not a JavaScript requirement: it usually means wrong headers or rate limiting, and header
   diagnosis comes first. A refusal counts only when its body is a Cloudflare/Akamai JavaScript challenge page. This rule
   overrides the copy-exactly rule above for browser automation (owner, 25 Oct 2026).
+  When both conditions hold, switch that adapter to the fallback without asking the owner first (owner, 25 Oct
+  2026); record the switch in `docs/OPS.md` with the challenge page as the evidence.
 - Cloudflare is on Workers Paid ($5 a month, owner, 22 Oct 2026, D40): D1's write and read budgets follow the plan, not the free
   tier. Every other paid upgrade must stay off, with one exception the owner chose: the prepaid DeepSeek balance
   (`DEEPSEEK_API_KEY`, decision D24) that speeds up the backfill. The steady state must still cost $0,

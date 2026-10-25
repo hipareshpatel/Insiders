@@ -47,12 +47,20 @@ Read before changing anything:
   `docs/TODO.md`). Never rewrite another branch's pushed history. `git pull` before editing.
 - API keys live only in `C:\Users\Quali\insiders-keys.ps1` (outside the repo). Never print,
   log, commit or paste a key. Dot-source the file in each new shell: `. C:\Users\Quali\insiders-keys.ps1`.
-- Don't work around BSE's firewall. Measured 25 Oct 2026: from a GitHub runner the ported adapter
+- BSE (measured 25 Oct 2026): from a GitHub runner the ported adapter
   (`pipeline/src/bse_intel/adapters/bse.py`, Python requests with BSE's own page headers) got 200 on all 16 calls of
   `bse-results-test` (maintenance run 40189201441); a bare curl probe with similar headers got 403 an hour earlier.
-  So BSE is reachable from GitHub through the adapter, but it stays an off-path backup (its results figures match
-  NSE's, 7 of 7 companies). Ordinary browser headers are fine; never a headless browser, a disguised automation or a
-  proxy to get past a refusal.
+  BSE stays an off-path backup (its results figures match NSE's, 7 of 7 companies).
+- Headless browser automation (Selenium/Chrome) is prohibited by default, to save runner resources and run time
+  (owner, 25 Oct 2026). It is permitted only as an isolated fallback for one specific source, and only if:
+  1. standard HTTP with valid browser headers consistently fails because the source requires client-side JavaScript
+     to run, and
+  2. the exception is explicitly scoped to that one adapter.
+  A plain 403 (or 503) is not a JavaScript requirement: it usually means wrong headers or rate limiting, and header
+  diagnosis comes first. A refusal counts only when its body is a Cloudflare/Akamai JavaScript challenge page. This rule
+  overrides the copy-exactly rule above for browser automation (owner, 25 Oct 2026).
+  When both conditions hold, switch that adapter to the fallback without asking the owner first (owner, 25 Oct
+  2026); record the switch in `docs/OPS.md` with the challenge page as the evidence.
 - Cloudflare is on Workers Paid ($5 a month, owner, 22 Oct 2026, D40): D1's write and read budgets follow the plan, not the free
   tier. Every other paid upgrade must stay off, with one exception the owner chose: the prepaid DeepSeek balance
   (`DEEPSEEK_API_KEY`, decision D24) that speeds up the backfill. The steady state must still cost $0,

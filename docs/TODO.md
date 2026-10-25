@@ -114,6 +114,7 @@ Fixes to the sample itself, found on review:
 | # | Improvement | Owner | State |
 |---|---|---|---|
 | 27 | Port the reference repository's BSE client as an off-path adapter (TASKS T26) | Asked | Built (F138), PR #111. Its headless-browser fallback left out (CLAUDE.md). Measured: from GitHub the adapter got 200 on 16 of 16 calls (run 40189201441); an earlier bare curl probe got 403 |
+| 28 | One timing line per filing (where its seconds went: download, XBRL, reading, OCR with its page count, pass 1, waiting to share a request, pass 2, memory writes) and the reason every deferral is logged | The first quick run (25 Oct, 11:30 UTC) took 11 min for 3 filings with two silent ~3-min gaps; a deferred filing left no reason in the log | Yes (owner, 25 Oct: "add the logging"; download-first only if the timings show downloads are slow) | Built (F139). Next: read a few quick runs' timing lines; first suspect the 60-s wait to share a request when only 2-3 filings are live |
 
 ## Item 13 measured (25 Oct 2026): what "hold a line the PDF does not print" would do
 

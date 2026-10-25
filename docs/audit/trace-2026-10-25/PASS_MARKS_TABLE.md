@@ -52,3 +52,34 @@ shows as null.
 The owner's handover sets "correct-content removal ≤ 5%", and says stricter thresholds win. It replaces the 20% limit in
 item 4 of the section above: **at most 5% of removed lines may have been RIGHT off.** It was adopted before any of the
 four reviewers' verdicts existed (no `verdicts_*.json` file had been written).
+
+## Third independent measurement: the period- and basis-aware EBITDA check (set before measuring, 25 Oct 2026)
+The 223-table fresh set is spent: it was used to develop this version (F126d) and proves nothing about it. The owner's
+instruction of 25 Oct: fix rounding, operating EBITDA and annual-against-quarterly rows; freeze; measure on about 200
+tables no version was tuned on, under the same four marks.
+
+**The rule, frozen at the commit that adds this section** (`dossier._ebitda_check`, `_ebitda_rows`, `_at_rounding`):
+- a printed figure is ours when it is within half its last printed digit plus `ROUNDING` (0.05%) of ours, at one of
+  the units crore, lakh, million, thousand, rupees, or billion when the word follows it;
+- plain and operating EBITDA rows count; margin, adjusted, core, normalised and pro-forma rows do not, nor ratio rows
+  (a "/", "per", "CAGR", "coverage" in the label); a period's name, a year or a rate is not a figure;
+- a row's period is what its own line names, else (a table row of two or more figures) every period named above it on
+  its page, else (a single figure) the two lines before it. Only "Q" or "QY" rows count; "Y" rows and rows with no
+  period never remove ours, and a row with no period confirms ours only when it also prints one of our comparatives;
+- a row on the other basis (the last "consolidated" or "standalone" on its page up to it) counts neither way;
+- a row stands against ours only with a figure between half and twice ours at some unit.
+
+**Population.** Every RESULTS and CONCALL_PRESENTATION table on the live API whose news_id is in none of the earlier
+sets (`all_stored.json` of 25 Oct morning, the first measurement's cards, `fresh_cards.json`), taken once at least 200
+such tables exist. The card list, each company's memory (`onoff_table.py --memory-dir`) and the run's output are kept,
+so the run can be repeated on the same inputs.
+
+**Review.** `table_review.py sample`: a random 150 of the changed lines (all when fewer; at least 100 are needed, as
+before), seed 2511, X and Y in random order, four independent reviewers blind to which is which. Reviewers also name,
+for every line they judge, the basis and definition the company prints, so false removals can be classed (rounding,
+operating EBITDA, annual against quarterly, standalone against consolidated, other).
+
+**Pass marks, unchanged** (`table_review.py score`, which reproduces F126b's 52/58, +32 points, 1/150 and 28/92 from its
+files): 1. ON shown lines RIGHT ≥ 85%, Wilson low ≥ 75%; 2. ON beats OFF by ≥ 20 points; 3. right-to-wrong ≤ 5%;
+4. removed lines that were RIGHT ≤ 5%. UNSURE counts as not RIGHT and is reported. Any fail: not shipped, diagnosed, and
+the next version is measured on another unseen batch.

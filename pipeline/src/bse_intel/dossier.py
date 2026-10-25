@@ -1733,12 +1733,18 @@ def _beside(a: float, b: float, sequence: list[float], unit: float, near: float 
                for n in sequence[max(0, i - ROW_WINDOW): i + ROW_WINDOW + 1])
 
 
+# what is printed in a row but is no amount: a period's name ("Q4 FY26", "FY2026", "Q4"), a year, a rate ("11.8%")
+_NOT_AMOUNTS = re.compile(r"(?:fy\s*)?\b(?:19|20)\d{2}\s*[–-]\s*\d{2,4}\b|\bq[1-4]\s*['’]?\s*fy\s*['’]?\s*\d{2,4}\b|\b[1-4]q\s*fy\s*['’]?\d{2,4}\b|\bfy\s*['’]?\s*\d{2,4}\b|\bq[1-4]\b|"
+                          r"\b(?:19|20)\d{2}\b(?![.,]\d)|\(?-?\d+(?:\.\d+)?\)?\s*%", re.I)
+
+
 def _row_cells(text: str, word: str, plain: bool = True) -> list[tuple[str, list[tuple[float, float]]]]:
     """Each row the text labels with `word`: its label line and its figures, each with half its last printed digit
     (1,236 is ±0.5, 147.4 ±0.05). The figures are those after the label on its line, then on the purely numeric lines
     right below it (a PDF's text layer often gives a table one cell a line: "EBITDA" then "₹ 36.70"). A margin is never
     the figure; with `plain` neither is an adjusted, normalised, pro-forma, core or operating one ("Adjusted EBITDA
-    503.6"). A figure followed by "billion" or "bn" counts at that scale (Affle's call: "EBITDA of INR 1.61 billion")."""
+    503.6"). A period's name, a year or a rate is no figure (_NOT_AMOUNTS). A figure followed by "billion" or "bn" counts at
+    that scale (Affle's call: "EBITDA of INR 1.61 billion")."""
     rows, lines = [], text.splitlines()
     skip = r"margin|adjusted|normali[sz]ed|pro[\s-]?forma|\bcore\b|operating" if plain else \
         r"margin|adjusted|normali[sz]ed|pro[\s-]?forma|\bcore\b"
@@ -1752,7 +1758,7 @@ def _row_cells(text: str, word: str, plain: bool = True) -> list[tuple[str, list
             if re.search(r"[a-z]{3,}", nxt.lower()) and not re.fullmatch(r"\s*(inr|rs\.?)?[₹(\-\d.,%)\s]*(yoy|qoq|bps|cr|crore|mn|million|bn|billion)?\.?\s*", nxt.lower()):
                 break
             cells.append(nxt)
-        joined = "\n".join(cells + lines[i + len(cells):i + len(cells) + 1])
+        joined = _NOT_AMOUNTS.sub(lambda m: " " * len(m.group(0)), "\n".join(cells + lines[i + len(cells):i + len(cells) + 1]))
         figures = []
         for m in re.finditer(r"\d[\d,]*\.?\d*", joined[:sum(len(c) + 1 for c in cells)]):
             digits = m.group(0).replace(",", "").rstrip(".")
@@ -1780,20 +1786,89 @@ def _printed_with(value: float, text: str, word: str) -> bool:
                for row in _row_figures(text, word) for n in row for unit in _UNITS)
 
 
-def _ebitda_printed(value: float, text: str) -> bool:
-    """Whether the filing prints this EBITDA as the company rounds it: within half the printed figure's last digit, plus
-    ROUNDING for our sum of rounded lines, in a plain or operating EBITDA row (Jyoti CNC's deck prints ₹147.4 Cr for our
-    ₹147.39 Cr; IGI 2,360 Mn for our ₹235.92 Cr; Sambhv's "Operating EBITDA 922" for our ₹92.26 Cr). A share tolerance
-    alone would not do: Patel Retail's printed ₹17.33 Cr is 0.12% from our wrong ₹17.35 Cr (fresh review, 25 Oct 2026)."""
-    return any(abs(n - abs(value) * unit) <= half + abs(value) * unit * ROUNDING
-               for _, cells in _row_cells(text, "ebitda", plain=False) for n, half in cells for unit in _UNITS)
+_PAGE_START = re.compile(r"^(=== page \d+|--- Page \d+ of \d+)")
+_QUARTER = re.compile(r"\bq[1-4]\s*['’]?\s*(fy)?\s*['’]?\s*\d{0,4}|\b[1-4]q\s*fy\s*['’]?\d{2}|quarter|three months|\b3\s*m\b", re.I)
+_YEAR = re.compile(r"\bfy\s*['’]?\s*\d{2,4}\b|full[\s-]year|year ended|for the year|twelve months|12 months|annual|"
+                   r"\b15[\s-]month|\bfye\b|\b9m\b|nine months|\bh[12]\b|half[\s-]year|six months", re.I)
+_RATIO = re.compile(r"/|\bper\b|cagr|coverage", re.I)
 
 
-def _contradicting_ebitda(value: float, text: str) -> bool:
-    """Whether the filing prints a plain EBITDA row that can stand against ours: not a ratio ("Net debt / EBITDA",
-    "EBITDA/Finance cost", "EBITDA per ton", "EBITDA CAGR"), whose figures are no EBITDA (Bharat Forge's ratios page,
-    fresh review, 25 Oct 2026). A call's sentence counts: most companies state their EBITDA only there."""
-    return any(not re.search(r"/|\bper\b|cagr|coverage", label.lower()) for label, _ in _row_cells(text, "ebitda"))
+def _period_of(text: str) -> str | None:
+    """"Q" when the text names a quarter only, "Y" a year (or another cumulative period) only, "QY" both, else None.
+    A quarter's own year ("Q4 FY26", "Q4FY'26") is the quarter's, not a year."""
+    quarter = bool(_QUARTER.search(text))
+    year = bool(_YEAR.search(_QUARTER.sub(" ", text)))
+    return ("Q" if quarter else "") + ("Y" if year else "") or None
+
+
+def _ebitda_rows(text: str) -> list[dict]:
+    """Each EBITDA row of the filing's text (_row_cells: plain or operating, never a margin, adjusted, core, normalised
+    or pro-forma figure, nor a ratio such as "Net debt / EBITDA", "EBITDA per ton" or "EBITDA CAGR"), with the period
+    and basis it is printed for.
+    - period: the row's own line names it ("EBITDA (Q4 FY 26)", "EBITDA FY26"), else the nearest line above it that
+      names one. For a row of two or more figures (a table) that is every period named above it on its page, where the
+      column header is, often one cell a line ("Q4' FY26", "Q3' FY26", "FY26": "QY"); for a single figure (a call's
+      sentence) the two lines before it. None when nothing does.
+    - basis: the last "consolidated" or "standalone" on the page up to the row; None when the page names neither."""
+    lines = text.splitlines()
+    starts = [i for i, line in enumerate(lines) if _PAGE_START.match(line)]
+    found = _row_cells(text, "ebitda", plain=False)
+    rows, at = [], 0
+    for label, figures in found:
+        at = lines.index(label, at) if label in lines[at:] else at
+        page = max((i for i in starts if i <= at), default=0)
+        period = _period_of(label)
+        if not period and len(figures) >= 2:   # a table: its header's columns, often one cell a line
+            period = _period_of("\n".join(lines[page:at]))
+        for i in range(at - 1, max(page, at - 2) - 1, -1):
+            if period:
+                break
+            period = _period_of(lines[i])
+        basis = None
+        for line in lines[page:at + 1]:
+            low = line.lower()
+            if "consolidated" in low and "standalone" not in low:
+                basis = "CONSOLIDATED"
+            elif "standalone" in low and "consolidated" not in low:
+                basis = "STANDALONE"
+        if not _RATIO.search(label):
+            rows.append({"label": label, "figures": figures, "period": period, "basis": basis})
+        at += 1
+    return rows
+
+
+def _at_rounding(value: float, figure: float, half: float, unit: float) -> bool:
+    """Whether a printed figure is this one as the company rounds it: within half the printed figure's last digit
+    (147.4 is ±0.05, 1,236 ±0.5), plus ROUNDING for our sum of rounded statement lines. Not a share of the figure
+    alone: Patel Retail's printed ₹17.33 Cr is 0.12% from our wrong ₹17.35 Cr (fresh review, 25 Oct 2026)."""
+    return abs(figure - abs(value) * unit) <= half + abs(value) * unit * ROUNDING
+
+
+def _ebitda_check(value: float, text: str, basis: str | None = None, comparatives: tuple = ()) -> str | None:
+    """What the filing's own EBITDA rows say of ours for this quarter: "printed" when a row of this quarter and basis
+    prints it as the company rounds it (_at_rounding), "other" when such a row prints EBITDA but not ours, None when no
+    row is this quarter's or the text has none. A row counts for this quarter when its period is a quarter ("Q", or a
+    results table's "QY" header of quarter and year columns); a year's row ("Y") never counts either way: Ross Tech's
+    deck prints only FY26 EBITDA ₹66.6 Cr, Krishival's call only the year's ₹41.95 Cr (fresh review, 25 Oct 2026). A
+    row with no period counts as printing ours only when it also prints one of our comparatives beside it: two of our
+    quarter's figures in one row are its columns. A row of the other basis counts neither way. A row stands against
+    ours only with a figure between half and twice ours at some unit, which another definition of the same quarter's
+    EBITDA is; a slide number or a stray count is not (Ross Tech's "... a scalable business model. 04").
+    Operating EBITDA counts like plain: ours is before other income, which is what most companies call operating
+    (Sambhv's "Operating EBITDA 922", JSW Cement's ₹365.0 Cr)."""
+    against = False
+    for row in _ebitda_rows(text):
+        if basis and row["basis"] and row["basis"] != basis:
+            continue
+        hit = lambda v: v is not None and any(_at_rounding(v, n, half, unit)   # noqa: E731
+                                              for n, half in row["figures"] for unit in _UNITS)
+        if row["period"] in ("Q", "QY"):
+            if hit(value):
+                return "printed"
+            against = against or any(0.5 <= n / (abs(value) * unit) <= 2 for n, _ in row["figures"] for unit in _UNITS)
+        elif row["period"] is None and hit(value) and any(hit(c) for c in comparatives):
+            return "printed"
+    return "other" if against else None
 
 
 def _kept_basis(sources: list[dict]) -> str | None:
@@ -2131,8 +2206,9 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     # 25 Oct 2026). Until memory keeps the company's reading, neither it nor its margin is shown.
     shown_ebitda = (out.get("ebitda") or {}).get("value")
     if shown_ebitda is not None and not company_ebitda() and (ebitda_text or printed) \
-            and _contradicting_ebitda(shown_ebitda, ebitda_text or printed or "") \
-            and not _ebitda_printed(shown_ebitda, ebitda_text or printed or ""):
+            and _ebitda_check(shown_ebitda, ebitda_text or printed or "",
+                              _kept_basis(current_sources(("ebitda", "operating_profit"))),
+                              tuple((out.get("ebitda") or {}).get(slot) for slot in ("prev_year", "prev_quarter"))) == "other":
         out.pop("ebitda", None)
         out.pop("ebitda_margin", None)
     if len(out) <= 3:

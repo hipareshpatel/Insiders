@@ -4,9 +4,11 @@ origin/main:pipeline/src/bse_intel/dossier.py`); ON is the working tree. Each ta
 as it is now.
 
     python -I onoff_table.py <cards.json> <dossier_off.py> <out.json> [--since 2026-10-25T09:00] [--pdf-dir DIR]
+        [--memory-dir DIR]
 cards.json: a list of feed cards (/api/feed pages). With --pdf-dir each filing's PDF is read with PyMuPDF (ext.py) and
 its text passed as the pipeline passes it (the OCR the pipeline also runs is not, so a scanned page reads emptier).
---since keeps cards filed from that time: a re-measure on tables no change was tuned on."""
+--since keeps cards filed from that time: a re-measure on tables no change was tuned on. --memory-dir saves each
+company's memory on first read and reuses it, so a measurement can be re-run on the same inputs."""
 
 from __future__ import annotations
 
@@ -15,6 +17,7 @@ import json
 import pathlib
 import subprocess
 import sys
+import time
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "src"))
 import bse_intel  # noqa: E402,F401
@@ -46,6 +49,26 @@ def text_of(card: dict, pdf_dir: str | None) -> str | None:
     return subprocess.run([sys.executable, "-I", str(ext), str(pdf)], capture_output=True, text=True).stdout or None
 
 
+def memory_of(scrip: str, memory_dir: str | None) -> dict:
+    """The company's memory as the live API gives it; with --memory-dir it is saved there on first read and read back
+    from there after, so a re-run judges the same memory."""
+    saved = pathlib.Path(memory_dir) / f"{scrip}.json" if memory_dir else None
+    if saved and saved.exists():
+        return json.loads(saved.read_text(encoding="utf-8"))
+    for attempt in range(4):
+        try:
+            dossier = json.loads(subprocess.check_output(["curl", "-s", "--fail", f"{API}/companies/{scrip}"], timeout=120))["dossier"]
+            break
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired, json.JSONDecodeError):
+            if attempt == 3:
+                raise
+            time.sleep(2 ** (attempt + 1))
+    if saved:
+        saved.parent.mkdir(parents=True, exist_ok=True)
+        saved.write_text(json.dumps(dossier, ensure_ascii=False), encoding="utf-8")
+    return dossier
+
+
 def table(mod, memory: dict, card: dict, text: str | None) -> dict | None:
     if card["event_category"] == "RESULTS":
         return mod.results_snapshot(memory, card["news_id"], printed=text)
@@ -59,6 +82,7 @@ def main() -> None:
     args = sys.argv[1:]
     since = args[args.index("--since") + 1] if "--since" in args else ""
     pdf_dir = args[args.index("--pdf-dir") + 1] if "--pdf-dir" in args else None
+    memory_dir = args[args.index("--memory-dir") + 1] if "--memory-dir" in args else None
     cards = [c for c in json.load(open(args[0], encoding="utf-8"))
              if c.get("event_category") in ("RESULTS", "CONCALL_PRESENTATION") and (c.get("filed_at") or "") >= since]
     off_mod = load_off(args[1])
@@ -66,7 +90,7 @@ def main() -> None:
     for card in cards:
         scrip = card["scrip_code"]
         if scrip not in memories:
-            memories[scrip] = json.loads(subprocess.check_output(["curl", "-s", f"{API}/companies/{scrip}"], timeout=120))["dossier"]
+            memories[scrip] = memory_of(scrip, memory_dir)
         try:
             text = text_of(card, pdf_dir)
             off, new = table(off_mod, memories[scrip], card, text), table(on, memories[scrip], card, text)

@@ -887,8 +887,10 @@ def test_our_ebitda_is_not_shown_where_the_filing_prints_another():
         {"metric": "pat", "period": "Q2FY27", "value": 16.28, "sources": [src("n", 16.28)]},
         {"metric": "eps", "period": "Q2FY27", "value": 0.59, "sources": [src("n", 0.59)]},
     ]}
-    other = results_snapshot(memory, "n", printed="EBITDA\n₹ 36.70\n(15.40%) YoY")
+    other = results_snapshot(memory, "n", printed="Q2 FY27 highlights\nEBITDA\n₹ 36.70\n(15.40%) YoY")
     assert "ebitda" not in other and "ebitda_margin" not in other
+    assert "ebitda" in results_snapshot(memory, "n", printed="EBITDA\n₹ 36.70\n(15.40%) YoY")   # no period named
+    assert "ebitda" in results_snapshot(memory, "n", printed="FY27 EBITDA\n₹ 36.70")             # a year's row
     assert results_snapshot(memory, "n", printed="EBITDA 30.34 38.95")["ebitda"]["prev_year"] == 38.95
     assert "ebitda" in results_snapshot(memory, "n", printed="PAT 16.28")
 
@@ -897,24 +899,29 @@ def test_our_ebitda_counts_as_printed_at_the_companys_rounding():
     """Fresh review of the narrowed fix (25 Oct 2026): right EBITDA lines were removed because the company rounds.
     Half the printed figure's last digit plus ROUNDING; a plain share would also pass Patel Retail's wrong ₹17.35 Cr
     against its printed ₹17.33 Cr."""
-    from bse_intel.dossier import _ebitda_printed
+    from bse_intel.dossier import _ebitda_check
 
-    assert _ebitda_printed(147.39, "EBITDA 147.4 177.6 -17.0% 154.6")                 # Jyoti CNC's deck
-    assert _ebitda_printed(235.92, "EBITDA(1) 1,958 2,360 21%")                       # IGI, in Mn
-    assert _ebitda_printed(123.66, "EBITDA\n1,236\n960\n1,236")                        # Ahluwalia, one cell a line
-    assert _ebitda_printed(161.18, "translated into EBITDA of INR 1.61\nbillion, growing over 20.3%")   # Affle's call
-    assert _ebitda_printed(92.26, "Operating EBITDA 482 511 922")                       # Sambhv: operating counts here
-    assert _ebitda_printed(92.26, "Total EBITDA\nINR 922 Mn")
-    assert not _ebitda_printed(17.35, "EBITDA 17.33 15.10")                           # Patel Retail: another figure
-    assert not _ebitda_printed(112.51, "EBITDA 112.91 98.20")                         # Gravita
-    assert not _ebitda_printed(50.0, "Adjusted EBITDA 50.0")                          # adjusted is not ours
+    q = "Particulars Q4FY26 Q4FY25 Q3FY26\n"
+    assert _ebitda_check(147.39, q + "EBITDA 147.4 177.6 -17.0% 154.6") == "printed"           # Jyoti CNC's deck
+    assert _ebitda_check(235.92, q + "EBITDA(1) 1,958 2,360 21%") == "printed"                 # IGI, in Mn
+    assert _ebitda_check(123.66, "EBITDA (Q4 FY 26)\n1,236") == "printed"                      # Ahluwalia
+    assert _ebitda_check(161.18, "For the quarter, EBITDA of INR 1.61\nbillion, growing 20.3%") == "printed"   # Affle
+    assert _ebitda_check(92.26, q + "Operating EBITDA 482 511 922") == "printed"                # operating counts
+    assert _ebitda_check(17.35, q + "EBITDA 17.33 15.10") == "other"                           # Patel Retail
+    assert _ebitda_check(112.51, q + "EBITDA 112.91 98.20") == "other"                         # Gravita
+    assert _ebitda_check(50.0, q + "Adjusted EBITDA 50.0") is None                             # adjusted is not ours
 
 
-def test_a_ratio_row_does_not_stand_against_our_ebitda():
-    """Bharat Forge's ratios page ("EBITDA/Finance cost 0.20 4.67") removed its right EBITDA (fresh review)."""
-    from bse_intel.dossier import _contradicting_ebitda
+def test_only_a_row_of_the_same_quarter_and_basis_judges_our_ebitda():
+    """A year's EBITDA neither confirms nor removes our quarter's (Ross Tech's deck prints only FY26 ₹66.6 Cr); a row
+    of the other basis neither; a ratio row is no EBITDA (Bharat Forge's "EBITDA/Finance cost 0.20 4.67")."""
+    from bse_intel.dossier import _ebitda_check
 
-    assert not _contradicting_ebitda(778.21, "EBITDA/F|nance cost for the period\n0.20\n4.67\n7.46")
-    assert not _contradicting_ebitda(92.26, "Net Debt / Op. EBITDA 0.59x\nEBITDA CAGR 33%\nOp. EBITDA per ton 1,549")
-    assert _contradicting_ebitda(30.34, "EBITDA\n₹ 36.70\n(15.40%) YoY")                # Geojit's deck
-    assert _contradicting_ebitda(358.23, "EBITDA grew to Rs 362 crore in the quarter")  # a call's sentence counts
+    assert _ebitda_check(16.12, "EBITDA FY26\n₹66.6 Cr") is None
+    assert _ebitda_check(16.6, "Full-year performance\nEBITDA 16.6 38.4") is None            # even when it matches
+    assert _ebitda_check(778.21, "Q4FY26\nEBITDA/F|nance cost for the period\n0.20\n4.67") is None
+    assert _ebitda_check(30.34, "Q2 FY27 highlights\nEBITDA\n₹ 36.70\n(15.40%) YoY") == "other"    # Geojit's deck
+    assert _ebitda_check(30.34, "=== page 3\nStandalone Q2 FY27\nEBITDA 36.70", "CONSOLIDATED") is None
+    assert _ebitda_check(30.34, "=== page 3\nConsolidated Q2 FY27\nEBITDA 36.70", "CONSOLIDATED") == "other"
+    assert _ebitda_check(30.34, "EBITDA 30.34 38.95", None, (38.95, None)) == "printed"   # no period: two of our figures
+    assert _ebitda_check(30.34, "EBITDA 30.34 41.00", None, (38.95, None)) is None

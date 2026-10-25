@@ -40,6 +40,7 @@ import re
 import threading
 import time
 from collections.abc import Callable
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from typing import Any, TypeVar
 
@@ -66,6 +67,8 @@ MAX_SLOT_WAIT = 10.0   # wait for a free slot on a concurrency-capped model, the
 PREFER_WEIGHT = 5      # PREFER_MODEL's weight multiplier: about 6 requests in 10 on a pass-2 route. Was 20 (9 in 10), which
                        # left the free Z.AI slots, two keys since 22 Oct, almost idle during the drain (owner, 22 Oct)
 
+CAP_MIN_CALL_S = 30.0  # a card-writing cap with less than this left starts no further call (TODO 35, F149)
+
 UNAVAILABLE, CEILING, TRANSIENT, FAILED = "unavailable", "ceiling", "transient", "failed"
 
 
@@ -74,9 +77,12 @@ class AIError(RuntimeError):
 
 
 class AllProvidersFailed(AIError):
-    def __init__(self, route: str, outcomes: list[tuple[str, str, str]]):
+    def __init__(self, route: str, outcomes: list[tuple[str, str, str]], capped_s: float = 0.0):
         self.route = route
         self.outcomes = outcomes  # (target key, kind, detail)
+        # the filing's card-writing cap (seconds) ended the walk across targets: defer now, do not wait and retry
+        self.capped_s = capped_s
+        self.capped = capped_s > 0
         kinds = {kind for _, kind, _ in outcomes}
         self.attempted = FAILED in kinds
         # Nothing was tried because every usable model is paced, cooling down
@@ -258,6 +264,10 @@ class AIGateway:
         self._rate_hits: dict[str, int] = {}
         self._circuit_open_until: dict[str, float] = {}
         self.deadline: float | None = None  # time.monotonic() after which no request starts
+        # One filing's card-writing cap (TODO 35, F149): per worker thread, because a filing's pass 2 runs on one thread
+        # while the run deadline above is shared. `card_scope` opens it for a filing, `start_cap` starts its clock.
+        self.pass2_cap_s: float = 0.0
+        self._cap = threading.local()
         # Live reserve (ai-quality plan item 1): the best free writers keep most of each day's requests for live
         # filings. A backfill request (bulk=True) may use a reserved model only while its day's requests stay under
         # (1 - share) of its ceiling, except in `bulk_hours` (local time), once the evening flood is over.
@@ -571,6 +581,14 @@ class AIGateway:
             if left is not None and left <= 0:
                 outcomes.append((target.key, TRANSIENT, "run deadline reached"))
                 continue
+            if self._cap_reached():   # this filing has used its card-writing time: stop the walk (TODO 35)
+                state = self._cap.state
+                outcomes.append((target.key, TRANSIENT, self._cap_message()))
+                if not state["logged"]:
+                    state["logged"] = True
+                    log.info("gateway %s: %s; stopping the walk with %d target(s) passed over", route,
+                             self._cap_message(), len(outcomes))
+                raise AllProvidersFailed(route, outcomes, capped_s=state["seconds"])
             pquota = self.provider_quota.get(target.provider)
             extra = (pquota,) if pquota else ()
             wait = MAX_PACING_WAIT if left is None else min(MAX_PACING_WAIT, left)
@@ -596,10 +614,59 @@ class AIGateway:
             finally:
                 if slot is not None:
                     slot.release()
+        if self._cap_reached():   # the last target's own call ran the cap out: still a cap stop, not a busy wait
+            raise AllProvidersFailed(route, outcomes, capped_s=self._cap.state["seconds"])
         raise AllProvidersFailed(route, outcomes)
 
     def _time_left(self) -> float | None:
         return None if self.deadline is None else self.deadline - time.monotonic()
+
+    @contextmanager
+    def card_scope(self):
+        """Around one filing's analysis on this thread: a cap started inside it ends with it."""
+        saved = getattr(self._cap, "state", None)
+        self._cap.state = {"deadline": None, "seconds": 0.0, "logged": False}
+        try:
+            yield
+        finally:
+            self._cap.state = saved
+
+    def start_cap(self, seconds: float | None = None) -> None:
+        """Start this filing's card-writing clock (first call only; later calls keep the first start). No scope, or
+        0 seconds (`PASS2_CAP_S=0`): no cap."""
+        state = getattr(self._cap, "state", None)
+        seconds = self.pass2_cap_s if seconds is None else seconds
+        if state is None or state["deadline"] is not None or seconds <= 0:
+            return
+        state["deadline"] = time.monotonic() + seconds
+        state["seconds"] = float(seconds)
+
+    @contextmanager
+    def uncapped(self):
+        """A shared request (the packed call) is not one filing's time: no cap while it runs on this thread."""
+        state = getattr(self._cap, "state", None)
+        saved = state["deadline"] if state else None
+        if state:
+            state["deadline"] = None
+        try:
+            yield
+        finally:
+            if state and saved is not None:
+                state["deadline"] = saved
+
+    def _cap_left(self) -> float | None:
+        state = getattr(self._cap, "state", None)
+        if not state or state["deadline"] is None:
+            return None
+        return state["deadline"] - time.monotonic()
+
+    def _cap_reached(self) -> bool:
+        left = self._cap_left()
+        return left is not None and left < CAP_MIN_CALL_S
+
+    def _cap_message(self) -> str:
+        state = getattr(self._cap, "state", None) or {}
+        return f"card-writing cap reached ({state.get('seconds', 0):.0f} s)"
 
     def _call_target(self, target: Target, messages: list[dict], schema, est: int, extra: tuple) -> AIResult:
         limiter = self.limiters[target.key]
@@ -721,6 +788,8 @@ class AIGateway:
                         widened = True
                         max_tokens = min(max_tokens * 2, MAX_OUTPUT_TOKENS)
                         log.info("%s stopped at its max_tokens; trying again with %d", target.key, max_tokens)
+                        if self._cap_reached():   # a repeat call would run past the filing's card-writing cap
+                            raise _Retryable(self._cap_message(), transient=True) from exc
                         if not limiter.acquire(est, max_wait=MAX_PACING_WAIT, extra_quota=extra):
                             raise _Retryable("paced before a wider retry", transient=True) from exc
                         continue
@@ -736,6 +805,8 @@ class AIGateway:
                             "Reply with only the corrected JSON object."
                         )},
                     ]
+                    if self._cap_reached():   # a repeat call would run past the filing's card-writing cap
+                        raise _Retryable(self._cap_message(), transient=True) from exc
                     if not limiter.acquire(est, max_wait=MAX_PACING_WAIT, extra_quota=extra):
                         raise _Retryable("paced before repair", transient=True) from exc
                     continue

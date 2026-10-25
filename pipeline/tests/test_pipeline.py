@@ -1124,3 +1124,64 @@ def test_a_cards_memory_is_written_with_its_row_and_not_before(settings):
     pipeline._commit([again])
     memory = sink.get_dossier(f.scrip_code)
     assert any(m.get("source_news_id") == "n-mem" or m.get("value_news_id") == "n-mem" for m in memory["financial_metrics"])
+
+
+def test_card_writing_cap_defers_without_waiting_or_an_attempt(settings):
+    """F149 (TODO 35): a filing that used its card-writing time is deferred at once: no 60 s waits, no attempt spent."""
+    from dataclasses import replace
+
+    settings = replace(settings, workers=1)
+    now = now_ist() - timedelta(minutes=5)
+    f = _filing("n-cap", "Unaudited Financial Results for the quarter", now, "Result")
+    pdfs = {f.pdf_url: _pdf(RESULT_TEXT)}
+    pipeline, sink, fake = build(settings, [f], pdfs, {"nvidia/nemotron-3.5-super-vl:free": [PASS2]})
+    sleeps = []
+    pipeline._sleep = sleeps.append
+    gw = pipeline.gateway
+    start = gw.start_cap
+
+    def start_and_run_out(seconds=None):   # the clock: this filing's cap is already spent when its pass 2 begins
+        start(seconds)
+        if gw._cap.state and gw._cap.state["deadline"] is not None:
+            gw._cap.state["deadline"] = time.monotonic() - 1
+
+    gw.start_cap = start_and_run_out
+    pipeline.discover(now.date())
+    pipeline.process("2000-01-01", "2100-01-01", time.monotonic() + 30, bulk=False)
+    (row,) = rows(sink, "select status, attempts, last_error from filings where news_id = 'n-cap'")
+    assert row["status"] == "PENDING" and row["attempts"] == 0
+    assert row["last_error"] == "deferred 1x: card-writing cap reached (360 s)"
+    assert sleeps == [] and pipeline.stats.deferred == 1 and pipeline.stats.failed == 0
+    assert fake.calls == []   # not one pass-2 model was called
+
+
+def test_under_the_card_writing_cap_a_filing_is_written_as_before(settings):
+    now = now_ist() - timedelta(minutes=5)
+    f = _filing("n-ok", "Unaudited Financial Results for the quarter", now, "Result")
+    pdfs = {f.pdf_url: _pdf(RESULT_TEXT)}
+    pipeline, sink, fake = build(settings, [f], pdfs, {"nvidia/nemotron-3.5-super-vl:free": [PASS2]})
+    pipeline.discover(now.date())
+    pipeline.process("2000-01-01", "2100-01-01", time.monotonic() + 30, bulk=False)
+    (row,) = rows(sink, "select status from filings where news_id = 'n-ok'")
+    assert row["status"] == "ANALYZED"
+
+
+def test_a_filing_that_always_hits_the_card_writing_cap_spends_an_attempt_in_the_end(settings, monkeypatch):
+    from bse_intel.ai.gateway import AllProvidersFailed
+    from bse_intel.pipeline import MAX_CAP_DEFERRALS
+
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-slow2", "Order win", now, "Company Update")
+    pipeline, sink, fake = build(settings, [f], {}, {})
+    sleeps = []
+    pipeline._sleep = sleeps.append
+
+    def capped(*a, **k):
+        raise AllProvidersFailed("pass2", [("a:m", "transient", "card-writing cap reached (360 s)")], capped_s=360)
+
+    monkeypatch.setattr(pipeline, "analyze", capped)
+    first = pipeline._attempt(f, bulk=False, memory_complete=True)
+    assert first.update["status"] == "PENDING" and first.update["last_error"].startswith("deferred 1x: card-writing cap")
+    worn = f.model_copy(update={"last_error": f"deferred {MAX_CAP_DEFERRALS}x: card-writing cap reached (360 s)"})
+    assert pipeline._attempt(worn, bulk=False, memory_complete=True).update["status"] == "FAILED"
+    assert sleeps == []

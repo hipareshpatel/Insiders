@@ -684,3 +684,96 @@ def test_no_card_writing_spare_waits_more_than_120_seconds():
             if entry.get("spare"):
                 timeout = entry.get("timeout_s", config["providers"][entry["provider"]].get("timeout_s", 60))
                 assert timeout <= 120, (name, entry["provider"], entry["model"], timeout)
+
+
+# ---- a time cap per filing for card writing (TODO 35, F149) ----
+
+def _two_targets(make_gateway, script):
+    config = gateway_config(route({"provider": "a", "model": "m-a"}, {"provider": "b", "model": "m-b"}))
+    return make_gateway(config, script)
+
+
+def _cap_left(gw, seconds):
+    """Start the cap, then move its end so that `seconds` are left (a fake clock: no real waiting)."""
+    import time
+
+    gw.start_cap(360)
+    gw._cap.state["deadline"] = time.monotonic() + seconds
+
+
+def test_cap_reached_stops_the_walk_with_a_cap_outcome(make_gateway, caplog):
+    import logging
+
+    gw, fake = _two_targets(make_gateway, {"m-a": [GOOD], "m-b": [GOOD]})
+    with gw.card_scope(), caplog.at_level(logging.INFO, logger="bse_intel.ai.gateway"):
+        _cap_left(gw, -1)
+        with pytest.raises(AllProvidersFailed) as info:
+            gw.complete_json("r", "s", "u", Pass1Result)
+    assert fake.calls == [] and info.value.capped and info.value.transient
+    assert info.value.outcomes[-1][2] == "card-writing cap reached (360 s)"
+    assert sum("card-writing cap reached" in r.message for r in caplog.records) == 1
+
+
+def test_cap_walk_stops_after_a_slow_target_and_logs_once(make_gateway, caplog):
+    import logging
+
+    def slow(kw):   # the first model took the filing's whole time, then failed
+        gw._cap.state["deadline"] -= 1000
+        raise api_error(openai.InternalServerError, 500, "slow")
+
+    gw, fake = _two_targets(make_gateway, {"m-a": [slow], "m-b": [GOOD]})
+    with gw.card_scope(), caplog.at_level(logging.INFO, logger="bse_intel.ai.gateway"):
+        gw.start_cap(360)
+        with pytest.raises(AllProvidersFailed) as info:
+            gw.complete_json("r", "s", "u", Pass1Result)
+    assert [c["model"] for c in fake.calls] == ["m-a"] and info.value.capped
+    assert sum("card-writing cap reached" in r.message for r in caplog.records) == 1
+
+
+def test_under_the_cap_is_unchanged_and_under_30_s_left_starts_nothing(make_gateway):
+    gw, fake = _two_targets(make_gateway, {"m-a": [GOOD], "m-b": [GOOD]})
+    with gw.card_scope():
+        _cap_left(gw, 100)
+        assert gw.complete_json("r", "s", "u", Pass1Result).provider == "a"
+        _cap_left(gw, 29)
+        with pytest.raises(AllProvidersFailed) as info:
+            gw.complete_json("r", "s", "u", Pass1Result)
+        assert info.value.capped
+    assert len(fake.calls) == 1
+
+
+def test_a_repair_call_past_the_cap_is_not_started(make_gateway):
+    def bad(kw):
+        gw._cap.state["deadline"] -= 1000
+        return "not json"
+
+    gw, fake = _two_targets(make_gateway, {"m-a": [bad, GOOD], "m-b": [GOOD]})
+    with gw.card_scope():
+        gw.start_cap(360)
+        with pytest.raises(AllProvidersFailed) as info:
+            gw.complete_json("r", "s", "u", Pass1Result)
+    assert len(fake.calls) == 1 and info.value.capped   # no repair, no second model
+
+
+def test_cap_off_or_outside_a_filing_scope_is_no_cap(make_gateway):
+    gw, fake = _two_targets(make_gateway, {"m-a": [GOOD, GOOD, GOOD], "m-b": [GOOD]})
+    gw.start_cap(360)                      # no scope: ignored
+    assert gw._cap_left() is None
+    with gw.card_scope():
+        gw.start_cap(0)                    # PASS2_CAP_S=0
+        assert gw._cap_left() is None
+        gw.pass2_cap_s = 0
+        gw.start_cap()
+        assert gw._cap_left() is None
+        gw.complete_json("r", "s", "u", Pass1Result)
+
+
+def test_the_scope_ends_the_cap_and_uncapped_suspends_it(make_gateway):
+    gw, _ = _two_targets(make_gateway, {"m-a": [GOOD], "m-b": [GOOD]})
+    with gw.card_scope():
+        _cap_left(gw, -1)
+        with gw.uncapped():
+            assert gw._cap_left() is None
+            gw.complete_json("r", "s", "u", Pass1Result)
+        assert gw._cap_reached()
+    assert gw._cap_left() is None

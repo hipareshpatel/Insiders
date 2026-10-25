@@ -112,6 +112,9 @@ MAX_DEFERRALS = 3        # runs one attachment may fail on the network, alone, b
 # run every 30-40 minutes, so it outlasts Gemini's daily reset (owner, 25 Oct 2026: 28 filings failed on AI capacity,
 # most after three 15-minute waits against a once-a-day reset)
 MAX_QUOTA_DEFERRALS = 40
+# runs a filing may stop at its card-writing cap (PASS2_CAP_S, TODO 35) before the next stop spends an attempt: it is a
+# filing the models are too slow for, not the day's capacity, so it does not wait for ever like MAX_QUOTA_DEFERRALS
+MAX_CAP_DEFERRALS = 3
 MAX_UNREACHABLE = 3      # filings in a row the platform did not answer for: the site is down, stop
 SAME_FILE_MIN_BYTES = 1_000   # a file smaller than this (a stub, an error page) is never matched as the same file
 NOISE_CHUNK = 500        # rows per noise-audit file in R2
@@ -147,7 +150,7 @@ SNAPSHOT_PAGE = 50        # the feed's page size
 
 
 _DEFERRED = re.compile(r"^deferred (\d+)x: (?:attachment download failed|the better writers are at their day|"
-                       r"the platform did not answer|AI busy)")
+                       r"the platform did not answer|AI busy|card-writing cap reached)")
 
 
 def _deferrals(last_error: str | None) -> int:
@@ -1840,6 +1843,7 @@ class Pipeline:
         self._prices = PriceStore(settings.price_dir) if settings.price_dir and settings.price_dir.is_dir() else None
         self._buckets = settings.load_toml("market.toml")["size_buckets"]
         self.gateway = gateway
+        gateway.pass2_cap_s = settings.pass2_cap_s   # one filing's card-writing time (TODO 35)
         # BSE is a backup source only (owner, 2026-10-19: everything on NSE): its client is made the first time
         # something asks for it (DISCOVERY_SOURCE=bse, a BSE attachment), so an NSE run never calls BSE at all
         self._bse = bse
@@ -2392,7 +2396,8 @@ class Pipeline:
             return self._deferred(filing, "deferred: AI quota ceilings")
         for attempt in range(TRANSIENT_RETRIES + 1):
             try:
-                outcome = self.analyze(filing, bulk, memory_complete)
+                with self.gateway.card_scope():   # the filing's card-writing cap starts at its pass 2, ends here
+                    outcome = self.analyze(filing, bulk, memory_complete)
                 with self._lock:
                     self._busy = 0
                     self._unreachable = 0
@@ -2417,6 +2422,15 @@ class Pipeline:
                     return self._failed(filing, exc)
                 return self._deferred(filing, f"deferred {times}x: the platform did not answer ({exc})"[:300])
             except AllProvidersFailed as exc:
+                if exc.capped:
+                    # The filing used its card-writing time (F149). Defer now: no 60 s waits, which would add minutes to a
+                    # filing that already took six. It waits for the next run with no attempt spent; after
+                    # MAX_CAP_DEFERRALS such runs in a row the next one spends an attempt, so a filing the models are always
+                    # too slow for ends as failed (attempts) instead of looping every 15 minutes for ever.
+                    times = _deferrals(filing.last_error) + 1
+                    if times > MAX_CAP_DEFERRALS:
+                        return self._failed(filing, exc)
+                    return self._deferred(filing, f"deferred {times}x: card-writing cap reached ({exc.capped_s:.0f} s)")
                 if exc.quota_exhausted:
                     with self._lock:
                         self._exhausted.add(exc.route)
@@ -3364,6 +3378,7 @@ class Pipeline:
             if packer is not None:
                 result = packer.complete(route, system, user, Pass2Output, filing.news_id)   # several filings, one Gemini call
             else:
+                self.gateway.start_cap()   # one filing's card-writing time starts here (packed filings: after the pack)
                 result = self.gateway.complete_json(route, system, user, Pass2Output, bulk=bulk)
         out: Pass2Output = result.value
         if not out.is_material or out.card is None:
@@ -3754,6 +3769,7 @@ class Pipeline:
             if packer is not None:
                 result = packer.complete(route, system, user, MemoryOutput, filing.news_id)
             else:
+                self.gateway.start_cap()
                 result = self.gateway.complete_json(route, system, user, MemoryOutput, bulk=True)
         out: MemoryOutput = result.value
         if not out.is_material:
@@ -3864,6 +3880,7 @@ class Pipeline:
         system2, user2 = self.prompts.verify(system, user, out.model_dump(mode="json"), problems + hints)
         try:
             with stages.stage("pass2"):
+                self.gateway.start_cap()   # keeps the first start when this filing's first card began one
                 second = self.gateway.complete_json(route, system2, user2, Pass2Output, avoid_providers=(result.provider, result.model_label),
                                                     bulk=bulk)
         except Exception as exc:  # the first card is still published, marked unverified

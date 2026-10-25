@@ -71,3 +71,4 @@ right. Everything the 2026-10-20 approval leaves to the owner still goes to the 
 - 25 Oct 11:58 UTC: PR #113 merged into `main` (a34cec8) with CI green: this standing approval.
 - 25 Oct 14:28 UTC: PR #114 merged into `main` (1de413b) with CI green: this standing approval. Includes F140 (only removes figures; on/off over the 7 failing real files: 1 file changed).
 - 25 Oct 14:52 UTC: PR #115 merged into `main` (f073b6f) with CI green: this standing approval. Includes DeepSeek off on regular jobs (owner).
+- 25 Oct 15:10 UTC: PR #116 merged into `main` (68315b1) with CI green: this standing approval.

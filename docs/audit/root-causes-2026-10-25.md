@@ -13,7 +13,7 @@ named, against the code (the checks I ran are listed in section 7).
 4. Call and deck cards are about one card in five (27 of 128) but half of the wrong ones (13 of 25 on 23-24 Oct). Results cards were 4 of 29. The call and deck path is where the money is.
 5. No single cause is big. The biggest (results-table lines on mixed definitions) is about 3 points of the 22% wrong rate. To reach 5% we must remove almost all of the causes, not one or two.
 6. The ten fixes in section 3 would, by my estimate, take the pooled wrong rate from about 22% to about 9-10% on the same kind of cards. The last 4-5 points need the "new classes" that every new day brings, or the two-part card (checked part only counts).
-7. Our fixes worked on the companies they were written from and less on new ones: re-runs went 36% to 19%, 21% to 13%, 23% to 10%, but fresh companies scored 12.5%, 23%, 17% and 22%. Invented causes, memory, event type and direction have not moved since round 3.
+7. Our fixes worked on the companies they were written from and less on new ones: re-runs went 36% to 19%, 21% to 13%, 23% to 10%, but fresh companies scored 12.5%, 21%, 23%, 17% and (live, pooled) 22%. Invented causes, memory, event type and direction have not moved since round 3.
 8. Advice: do the data-in review first (how tables pick their numbers, units and currency, comparatives), then the words (let code write comparisons), then the repeat-card and event-type rules. Section 5 gives the split.
 
 How to read the counts. Reviewer class tags ("other" is 35-60% of all tags) are too coarse, so for 21-24 Oct I used the
@@ -31,7 +31,7 @@ PRs #65-#74) and several ledger-only changes have no F-row in TRACKER (a gap in 
 ## 2. The master table
 
 "Trace" = points / cards among the 48 WRONG cards of 21-24 Oct (95 points). Ids are `nse-1068xxxxx` (last five digits
-shown) unless a full id is given. "Fix touches": EXT = extraction or reading, TBL = the table or block the code builds,
+shown); a longer number is the digits after `nse-`. "Fix touches": EXT = extraction or reading, TBL = the table or block the code builds,
 WRT = the writer or its prompt, CHK = a check, CARD = whole-card rules.
 
 ### A. Reading the filing (extraction)
@@ -52,13 +52,13 @@ WRT = the writer or its prompt, CHK = a check, CARD = whole-card rules.
 
 | ID | Root cause (mechanism) | Where | Findings (by date) | Example cards | Status | Fix touches |
 |---|---|---|---|---|---|---|
-| D1 | One results or call-table line sets figures on different definitions or scopes: EBITDA with and without other income, EBIT labelled EBITDA, adjusted or operational against statutory, a segment against the group, total income against revenue from operations, profit before against after associates | `dossier.results_snapshot`, call tables, XBRL EBITDA | Trace 12 / 10 (largest share, 6.4 cards). R0 PBT/segment as EBITDA; live review 3 (IFB, Orient Bell); F123 review: Union, PNB, Canara, ICICI, Federal, RBL, Lumax, Bansal, Solara, MHRIL, Manaksia, Juniper; E13 22 Oct | Shree Cement 26054 and 106826079, Cyient 25071, Swiggy 24838, Adani Energy 24806, Sapphire 24625, TechM 23950, Godrej 26077, Trivenipt 27039 | PARTLY. F38, F91, F109 (3 of 489 changed, narrowed from 47), F119 (EBITDA change kept where the filing prints its own year-ago within 0.5%), F137, E10 (call-table EBITDA from the results filing only; 13 of 461 changed). F151 (print their EBITDA, label ours) is built behind `CARD_EBITDA_PROFIT_V2`, default off, release check pending. F123 (filter after the fact) was rejected: 66% of removals WRONG, mark 80%. E13 still open | TBL |
+| D1 | One results or call-table line sets figures on different definitions or scopes: EBITDA with and without other income, EBIT labelled EBITDA, adjusted or operational against statutory, a segment against the group, total income against revenue from operations, profit before against after associates | `dossier.results_snapshot`, call tables, XBRL EBITDA | Trace 12 / 10 (largest share, 6.4 cards). R0 PBT/segment as EBITDA; live review 3 (IFB, Orient Bell); F123 review: Union, PNB, Canara, ICICI, Federal, RBL, Lumax, Bansal, Solara, MHRIL, Manaksia, Juniper; E13 22 Oct | Shree Cement 26054, Cyient 25071, Swiggy 24838, Adani Energy 24806, Sapphire 24625, TechM 23950, Godrej 26077, Trivenipt 27039 | PARTLY. F38, F91, F109 (3 of 489 changed, narrowed from 47), F119 (EBITDA change kept where the filing prints its own year-ago within 0.5%), F137, E10 (call-table EBITDA from the results filing only; 13 of 461 changed). F151 (print their EBITDA, label ours) is built behind `CARD_EBITDA_PROFIT_V2`, default off, release check pending. F123 (filter after the fact) was rejected: 66% of removals WRONG, mark 80%. E13 still open | TBL |
 | D2 | Year-ago or previous comparative taken from old or unrestated XBRL or memory instead of the current filing's own printed comparative column | `results_snapshot`, `xbrl.add_comparatives` | Trace 6 / 3. R2 (SKF, Prism, Kanoria, HEG); live review 3 (Man Industries, Jubilant Agri), review 5 (Kapston, Bajaj Finance); R6 (Ambuja, Titagarh); 23-24 Oct still | Pitti 25268 (3 points), Geojit 27476 (2), UTI AMC 27362 | PARTLY. F60 (a change only where the filing prints the base), 20 Oct rule (a comparative the text does not print is dropped; Kapston and Bajaj healed), F77 (change left out where not printed). Still wrong after those: Pitti and Geojit. Code audit A5: a call table's old-file comparatives go over the restated one (reported, not fixed) | TBL |
 | D3 | Basis and lens: a handout's standalone figures under a CONSOLIDATED label; standalone current beside consolidated priors; a bank lens (interest earned) on an AMC; an older quarter's table on a call | results block, call blocks, seed | Trace 5 / 5. standalone_consolidated R0 12, R2 6, R3 5, R4 re-run 6, R5b 5; daily 21-24 Oct 4 WRONG cards | BPCL 27243, J&K Bank 24719, PNB 26336, NAM India 24702, UTI AMC 27362 | PARTLY. F83 (one basis per metric), E3 (one basis per comparison), E11 (call table only for the quarter just ended: 14 of 493 lost theirs), `settle` of standalone files in F76/F77. Open: A14 (NBFC lens matches AMCs, exchanges, CRISIL); a deck's own basis against the card's | TBL |
 | D4 | Memory-fed claims with the wrong scope or period: a prediction of another quarter "met"; board size from memory ignoring the filing's appointments; July call figures stored under Q2FY27; a call's segment margin written over the group's in memory | memory view, `dossier.merge` | Trace 5 / 4 (plus Cyient's margin in D1). Memory class: R2 47 issues (37 cards), R2 re-run 11, R3 39, R4 25, R4 re-run 30, R5 37, R5b 40, R6 42 | HDFC Bank 27180 (p_d48ef89e), Shriram PPS 24587, CIE India 24995, Cyient 24929 | PARTLY. F61 (trusted figures only), F106 (`other_definition`: 91 of 15,621 call figures refused), F128 (memory quarantine), F144 and F150 (labels on every item, readers unchanged, no card change). Open: E14 (calendar-year company's call figures under the wrong quarter), A4 (a call card may overwrite results figures), TODO 3 "R1" planned | TBL + CHK |
 | D5 | Memory stores a wrong figure (10x, another basis, another entity's) and later cards quote it | trust filter, memory | R2 Magellanic 127.62, Bandhan net worth, SBI Life; R3 Newgen (employee cost 19,010 Cr, JAWS +10,373%); R4 Anlon 1,533; 21 Oct HCL (USD as Cr) | Newgen, HCL Tech 23370 | PARTLY. F61 (R2 re-run: memory-point errors 37 cards to 11, author-reviewed); F128. R3 blind review found 36 cards with memory points wrong, so the gain did not hold | EXT + CHK |
 | D6 | Wrong period label in prose: H1FY25 for H1FY26, a quarter's margin as "a year ago", a 30-09-2025 column labelled Q2FY25, "Q2FY26" for the Sep 2026 quarter, cumulative H1 called Q2 | writer, `ground()` label shift | Trace 4 / 4. wrong_period R0 64, R4 9, R4 re-run 10, R5 12, R6 7; 22 Oct 5 WRONG cards | Beta 24520, Swiggy 24838, CSB 26208 (CASA), Panache 27016 | PARTLY. F2 (quarter from "quarter ended" date), period shift in `ground()`, `misdated_memory_insights` (3 of 343, all wrong). Not built: the trace's "derive the period label from the column's date header in code" | WRT + CHK |
-| D7 | Per-share and price items across a split or bonus: EPS year-ago before the bonus; market cap and returns on old share count; book value, dividend per share | table, scale block, price | Adani Power (R2), Kapston (21 Oct, 2 WRONG), LIC (R6), Bajaj Finance (held audit, twice); A5/A6/R10 | Kapston Q2FY27, Bajaj Finance | PARTLY. F60, F77, E6 (NSE corporate-actions feed; the company page divides EPS, no F-row), F141 (EPS growth blank across a share-count change). `corporate_actions.share_factor_after` has no caller in the pipeline (section 7): cards, market cap, the scale block are not adjusted (code audit R10 open) | TBL |
+| D7 | Per-share and price items across a split or bonus: EPS year-ago before the bonus; market cap and returns on old share count; book value, dividend per share | table, scale block, price | Adani Power (R2), Kapston (21 Oct, listed twice that day), LIC (R6), Bajaj Finance (held audit, twice); A5/A6/R10 | Kapston Q2FY27, Bajaj Finance | PARTLY. F60, F77, E6 (NSE corporate-actions feed; the company page divides EPS, no F-row), F141 (EPS growth blank across a share-count change). `corporate_actions.share_factor_after` has no caller in the pipeline (section 7): cards, market cap, the scale block are not adjusted (code audit R10 open) | TBL |
 | D8 | An amount's meaning or base is wrong in a deal or scale block: an enabling limit as money raised, a per-year charge, face value as price, an earlier award, shares x face value, net worth from a memory guidance item, TTM against a quarter | `deal_value`, SCALE block | Trace 2 / 1 (Godrej). R4 (Torrent 20.96 Cr, Anlon 10x), R5 Ceigall x4, Repco 20,000 Cr ceiling, R6 Titagarh | Godrej Properties 26077 | PARTLY. F66, F73 (`deal_echo_slips`), F76 (per-year, running totals), F77 (computed impacts in their units), F103 (face value never a price), E4 (foreign deals), F106 (`term_years`) | CARD |
 | D9 | Deal stage or kind wrong (BOARD_APPROVED for proposed, COMPLETED before closing, CANCELLED for done, demerger typed ACQUISITION) | `deal_guards`, `gate.supported_stage` | Live review 3: 4 of 7 WRONG; review 5; R4 re-run, R6 | ITC, Jubilant Agri, Orient Bell | PARTLY. `gate.supported_stage` (20 Oct: 3 of 197 COMPLETED corrected), F105 (case steps: 8 of 109, all toward the filing). No stage WRONG in the 21-24 Oct trace | CARD |
 | D10 | One order counted twice in memory, or a recap read as an order | `dossier.same_deal`, `is_recap` | R2 re-run: 7 of the 17 WRONG (all Magellanic: "17th order, Rs 291 Cr" for 10 orders, Rs 100 Cr) | Magellanic Cloud | FIXED. F66; F105 (census of 21 stored orders told twice: 18 true repeats). Not re-measured on a fresh review since 23 Oct | CARD |
@@ -86,20 +86,21 @@ WRT = the writer or its prompt, CHK = a check, CARD = whole-card rules.
 | P1 | Repeat cards for one event from different documents (results, deck, press release; buyback terms then letter of offer; an order's intimation and its press release; one PDF refiled) | duplicates, D20 | Trace 4 / 4. R2 re-run Magellanic; Kapston, SML (15 M&A cards), Heritage; 21-24 Oct 3 WRONG, 1 MINOR | MCLOUD 25832, Trivenipt 27039 (third card), Panache 27016, VRL 27546 | PARTLY. D20, F66, F105 (order told twice: 18 of 18 true repeats), F110 (17 of 892 pairs, all byte-identical), F143 (same file skipped before OCR). Open (HANDOVER #2): a rule for the same event in different documents; one document with two events gets one card (Jindal Stainless, Eternal, GOCL); stored duplicates stay published | CARD |
 | P2 | A card for a letter with no news (an audio-link letter) | rules | Trace 1 / 1 (Shriram Finance 27198); IREDA MINOR | Shriram Finance | FIXED. F108 (2 of 516 cards changed). Not yet re-measured on live cards | CARD |
 | P3 | A sentence left broken after a figure is stripped ("under of market cap", "7- margin boost", "** **") | `computed.broken`, strip | Trace 3 / 2 (Atul, PNB). R2 re-run and R3: 10 and 3 cards | Atul 26222, PNB 26336 | FIXED. F66, then F108 (`_DANGLING` reads ranges: 2 of 516 changed). Atul and PNB occurred the day before F108; live re-measure pending | CHK |
-| P4 | The quote and prune checks are wrong both ways: they drop true points (15 of 16 pruned points true on 24 Oct, 16 of 17 on 23 Oct; 81% of 675 hold reasons false on 22 Oct) and let some wrong ones through (prefix digits accepted; a trimmed quote passes) | `gate.py`, `prune.py`, `grounding.py` | Trace 2 / 2 (Swiggy, CIE: true points pruned). Code audit A1/A2/A10 | Swiggy 24838, CIE 24995, Cyient 24929 (dividend dropped) | PARTLY. F89, F98-F103 (21 + 17 + 9 false holds freed, 0 true), F116 (pruned points kept behind the tap), F120 (results cards keep the model's quoted facts). Reproduced 25 Oct: `gate.numbers_in_quote` still passes "95" against "951.96" and "1,95,000" against "19,500" (it refuses "29.4" against "9.42"). Not built: A1, A2 | CHK |
+| P4 | The quote and prune checks are wrong both ways: they drop true points (15 of 16 pruned points true on 24 Oct, 16 of 17 on 23 Oct; 81% of 675 hold reasons false on 22 Oct) and let some wrong ones through (prefix digits accepted; a trimmed quote passes) | `gate.py`, `prune.py`, `grounding.py` | Trace 2 / 2 (Swiggy, CIE: true points pruned). Code audit A1/A2/A10 | Swiggy 24838, CIE 24995 (a Cyient interim dividend was also dropped, HANDOVER) | PARTLY. F89, F98-F103 (21 + 17 + 9 false holds freed, 0 true), F116 (pruned points kept behind the tap), F120 (results cards keep the model's quoted facts). Reproduced 25 Oct: `gate.numbers_in_quote` still passes "95" against "951.96" and "1,95,000" against "19,500" (it refuses "29.4" against "9.42"). Not built: A1, A2 | CHK |
 | P5 | The second opinion adopts the whole second card but re-checks only numbers and quotes | `pipeline` second opinion | CORRECTED cards: 6 of 21 WRONG (29%) against 21% overall, 23-24 Oct; one UNCHECKED card published and WRONG | audit rows with review_status CORRECTED | OPEN (code audit section 4; only F112's provider rule is built) | CHK |
 | P6 | `refresh-card-blocks` only adds: a block computed from the card is never removed, impact only raised | `card_refresh.py` | Muthoot Microfin stayed HIGH after its rating block healed; stored duplicates stay published | Muthoot 27430 | OPEN (code audit A11) | CARD |
 | P7 | Weak writers and route fallbacks: Nemotron 3 Super 29-33% WRONG, Ultra 53-58%, GLM-4.7 73%; Gemini 3-5.5%; a spare took packs when Gemini quota ran out | `providers.toml`, gateway | R4, R5, R6 per-writer tables; live reviews 3+5: Flash-Lite 8 of 46 (17%) | R6: Nemotron 12 of 36 | PARTLY. F73, F77 (weak writers off every card route), F75; re-measured: R5 arm B 23% to 10%, R6 Gemini 3 of 55. Open: the audit rows carry no writer field, so WRONG per model cannot be measured now (code audit section 4) | WRT |
 | P8 | Packed Gemini calls could put another filing's fact on a card ("pack bleed") | packer | Round 7 would have measured it; cancelled (D37) | none known | OPEN, unmeasured. F78 (tool), F112(3) (`packer.misplaced`: swaps only) | CHK |
 
 Not in the table because they are not accuracy faults: D1 write budgets, quota and worker waste (code audit R1-R12,
-deep audit E1-E11), site and operations (S1-S6), 36 of the 38 dated items in TODO 36-42 (future features).
+deep audit E1-E11), site and operations (S1-S6), and the future features in TODO 36-42.
 
 ## 3. Ranking: expected wrong-card reduction, and the top-10 work list
 
 Method. Expected gain (percentage points of all cards) = fair-share cards of the cause (section 2, trace) divided by 218
-audited cards (21-24 Oct pooled, 48 WRONG = 22%), times the share a fix would remove (my judgement, stated per row),
-with recency weighting: a card from 23-24 Oct counts 1.0, from 21-22 Oct 0.6. Causes with no trace count (X5-X8, D5,
+audited cards (21-24 Oct pooled, 48 WRONG = 22%), times the share a fix would remove (my judgement, stated per row).
+Ranks follow that gain. Recency is shown in brackets (a card from 23-24 Oct counts 1.0, from 21-22 Oct 0.6) and nudged ties
+only; ranked by the weighted figure instead, item 5 would move up to second and item 9 above item 8. Causes with no trace count (X5-X8, D5,
 D7, D9, W7, W8, P5-P8) are not scored and are listed as "unscored" below. Fixes that make a check accept more still need
 the owner's on/off plus blind-sample rule (HANDOVER task B step 3); a check that removes or flags more needs the pass marks
 set first (the F123/F124 pattern: precision of removals at least 80%, lower Wilson bound at least 70%, wrong-removal at most 20%).
@@ -132,8 +133,8 @@ figure never enters a table line, it goes in the prose as "said on"; the lens co
 turn on F151 after its release check; make the results catch-up pick the newest cards that could be due (A13), so PDF-only
 and standalone-made cards are re-read. Do not add a filter after the fact: F123 showed that fails (66% of removals WRONG).
 Measure without AI: replay `results_snapshot` over the 1,986 stored results and call tables with the new rule on and off
-(the F119 `onoff_facts.py` pattern); list the lines that change; the 48 traced cards give the recall set (about 15 cards
-carry D1/D3/D2 points); blind-check a seeded 120 changed lines against the PDFs; ship only if at least 80% of changed lines
+(the F119 `onoff_facts.py` pattern); list the lines that change; the 48 traced cards give the recall set (15 cards
+carry D1 or D3 points, 18 with D2); blind-check a seeded 120 changed lines against the PDFs; ship only if at least 80% of changed lines
 were wrong and none newly wrong.
 
 **2. Units and currency (X4).**
@@ -190,7 +191,7 @@ Fix: for chart and tile pages pair value to label by bounding box and x position
 label is not adjacent; scanned grids: nil cells kept (the open D29 item); a call figure 10x off the results XBRL is flagged
 (item 2). Measure: replay the stored call and deck cards' key numbers and takeaways against the cached page text or bounding
 boxes (PDFs from NSE; filing text in R2 is kept 6 months from 25 Oct, F147); compare the flagged points with the reviewers'
-wrong points (recall set: 7 + 2 + 3 traced points); precision at least 80% before use.
+wrong points (recall set: 12 traced points on 9 cards); precision at least 80% before use.
 
 **9. Printed comparative as the source (D2).**
 Fix: the prior in the table is the current filing's printed comparative column when the filing prints one (parsed from the
@@ -264,7 +265,7 @@ because they are rules, not reading.
 ## 6. What changed in the picture since the last plan
 
 - The classes did not fall as a set. Since round 3, invented 19-58 issues a round, memory 25-47, event type 12-26 (rising), direction 6-21, signal verdicts 2-20 swing. Arithmetic fell 18x (89 to 5-13) and unit scale 88 to 4-14 and stopped there.
-- Fixes work on the companies they were written from and generalise only in part: round 2 re-run 36% to 19% (author-reviewed), round 3 on new companies 12.5% (blind), round 4 21% to 13% on its own, round 5 on new companies 23%, round 5 arm B 10% on its own, round 6 on new companies 17%, live pooled 21-24 Oct 22% (17-28%).
+- Fixes work on the companies they were written from and generalise only in part: round 2 re-run 36% to 19% (author-reviewed), round 3 on new companies 12.5% (blind), round 4 on new companies 21% then 13% on its own re-run, round 5 on new companies 23% then arm B 10% on its own, round 6 on new companies 17%, live pooled 21-24 Oct 22% (17-28%).
 - Faults cluster (a WRONG card has 2.5 points, 21 of 48 trace cards have two or more mechanisms). A fix that removes one mechanism from a multi-cause card does not make it right.
 - Line accuracy needs a roughly 4x drop in root causes per card to hold 95% at today's 13 lines.
 
@@ -290,8 +291,8 @@ Caveats.
 
 Issues per class on all cards of each audit (a card can have several). Memory was tallied from round 2 on. Live 20 Oct
 reviews 1 and 2 (48 cards): other 31, invented 22, signal_verdict 10, arithmetic 7, direction 6, event_type 6, wrong_period 6,
-wrong_column 3, standalone_consolidated 4. Daily audits 21-24 Oct, one primary class per card: WRONG cards (56 classes
-over 48 cards in the trace set, 4 days): wrong_column 8, arithmetic 7, other 6, unit_scale 5, memory 5, wrong_period 5,
+wrong_column 3, unit_scale 3, standalone_consolidated 4. Daily audits 21-24 Oct (class tags as the reviewers recorded them): the 48 WRONG
+cards carry 56 tags: wrong_column 8, arithmetic 7, other 6, unit_scale 5, memory 5, wrong_period 5,
 standalone_consolidated 4, duplicate 3, event_type 3, invented 2, direction 2, restated 2, attribution 2, unsupported_cause 1,
 noise 1; MINOR cards: other 29, memory 12, unsupported_cause 12, event_type 10, wrong_period 6, attribution 4, invented 4,
 direction 3, arithmetic 3, standalone_consolidated 2, duplicate 1, noise 1.
@@ -331,6 +332,7 @@ Trace points are in `docs/audit/trace-2026-10-25/trace_group{1,2,3}.json`. Cause
 - P1 (4/4): MCLOUD, Trivenipt, Panache, VRL. W6 (3/3): Atul, VRL, Shree Cement. P2 (1/1): Shriram Finance. W9 (3/3): MCLOUD, Muthoot, VRL.
 - P3 (3/2): Atul, PNB x2. P4 (2/2): Swiggy, CIE India (true points pruned).
 
-Totals: X 17, D 34 (D1-D8 with the writer-attributed D6 and part of D8 counted as the trace marked them), W 28, P 16. The
-45 / 34 / 16 split in sections 1 and 5 keeps the trace's own stage for the four period-label points and the Godrej deal
-kind (WRITER), and counts CODE, INPUT and MEMORY points as wrong-number-in.
+Totals by cause group: X 17, D 34, W 28, P 16 (95). The 45 / 34 / 16 split in sections 1 and 5 regroups them: wrong figure or
+label in = X minus Cyient's "$121 Mn" (16) plus D minus the four period-label points and the Godrej deal kind (29) = 45;
+writing = W 28 plus those five points plus the "$121 Mn" point = 34; process = P 16. Those six points keep the trace's own
+stage, WRITER; every CODE, INPUT and MEMORY point is counted as wrong-number-in.

@@ -92,3 +92,24 @@ into memory, consolidated first, standalone kept apart. RELIANCE's memory holds 
 `xbrl:res:500325:Q1FY27`, the same as the file. What history does not fix: our own EBITDA definition (memory says
 Q1FY27 EBITDA ₹47,517 Cr = profit before tax + finance cost + depreciation − other income; companies that count other
 income print a different figure), the choice of basis, and figures our AI wrote into memory before the file existed.
+
+### The official XBRL taxonomy (found 25 Oct 2026)
+
+Measured 25 Oct 2026: the results files are written against SEBI's own taxonomy (`in-capmkt`; RELIANCE's Jun 2026 file
+names `in-capmkt-ent-2026-01-31.xsd`, namespace `http://www.sebi.gov.in/xbrl/IntegratedFinance_IndAS/2026-01-31/...`).
+NSE publishes it on its "XBRL information" page (`/static/companies-listing/xbrl-information`): one package per format
+(Ind AS, other than banks, banking, NBFC, general and life insurance, REITs/InvITs), for both the old Regulation 33
+results and the Integrated Filing. NSE's 2018 circular says the results taxonomy is common to NSE and BSE, so one set
+covers both. The Ind AS Integrated Filing package (`Taxonomy Integrated filing finance (IndAS).zip`, version
+2025-01-31) holds the element list, 499 official labels, and the calculation, presentation, definition and reference
+linkbases. The 2026-01-31 version the live files use is still to be found (the "Taxonomy Archives" zip, or NSE's
+XBRL desk, nsexbrl@nse.co.in).
+
+What it settles, read from the calculation linkbase:
+- Profit before exceptional items and tax = Income − Expenses; profit before tax = that + exceptional items.
+- Profit for the period = continuing operations + discontinued operations + **share of associates and joint ventures**.
+  So the associates' share is added after tax, and profit before tax excludes it by definition. Our EBITDA starts from
+  profit before exceptional items, so it is clean; but `xbrl.settle_pbt` swaps in an after-associates profit before tax
+  when a filer tags it that way (Orient Bell), and EBITDA falls back to that figure when no before-exceptional profit
+  is tagged. That is where item 12's error can enter.
+- Every file can be checked against these sums: a file whose lines do not add up was tagged wrongly.

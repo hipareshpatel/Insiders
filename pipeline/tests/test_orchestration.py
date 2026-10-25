@@ -769,3 +769,74 @@ def test_a_file_over_the_size_cap_fails_once_with_its_reason(settings):
     assert out.update["status"] == "FAILED" and out.update["attempts"] == settings.max_attempts
     assert out.update["last_error"].startswith("AttachmentTooLarge: file too large (over 120 MB)")
     assert pipeline._blocked is None   # one large file does not stop the run
+
+
+def test_a_zip_attachment_is_read_and_a_file_not_yet_on_nse_waits(settings):
+    """Owner, 25 Oct 2026: PGEL's auditor resignation came as a ZIP and was lost; CGCL's press release was given up
+    after three tries while NSE had not served the file yet."""
+    import io
+    import zipfile
+
+    from bse_intel.extract import Document
+    from test_pipeline import _filing as make, _pdf, build
+
+    def zipped(**members):
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as box:
+            for name, body in members.items():
+                box.writestr(name.replace("_", ".", 1), body)
+        return buf.getvalue()
+
+    one = Document(zipped(resignation_pdf=_pdf("Resignation of the statutory auditor"), filing_xml=b"<x/>"))
+    assert one.error is None and "statutory auditor" in one.select_text(10_000, [])
+    two = Document(zipped(a_pdf=_pdf("First letter"), b_pdf=_pdf("Second letter")))
+    assert "First letter" in two.select_text(10_000, []) and "Second letter" in two.select_text(10_000, [])
+    assert Document(zipped(call_mp3=b"ID3")).error.startswith("audio only")
+
+    now = now_ist()
+    young = make("n-young", "Press Release", now - timedelta(hours=2), "Company Update")
+    old = make("n-old", "Press Release", now - timedelta(days=2), "Company Update")
+    audio = make("n-audio", "Con. Call Updates", now - timedelta(hours=2), "Company Update")
+    empty = make("n-empty", "Acquisition", now - timedelta(hours=1), "Company Update")
+    pipeline, sink, fake = build(settings, [young, old, audio, empty],
+                                 {audio.pdf_url: zipped(call_mp3=b"ID3"), empty.pdf_url: b""}, {})
+    out = pipeline._process_one(empty, bulk=False, memory_complete=True)
+    assert out.update["status"] == "PENDING" and "not on NSE yet, or empty" in out.update["last_error"]
+    out = pipeline._process_one(young, bulk=False, memory_complete=True)
+    assert out.update["status"] == "PENDING" and "attempts" not in out.update and "not on NSE yet" in out.update["last_error"]
+    out = pipeline._process_one(old, bulk=False, memory_complete=True)
+    assert out.update["status"] == "FAILED" and out.update["attempts"] == settings.max_attempts
+    assert "missing or empty on NSE 48 h after" in out.update["last_error"]
+    out = pipeline._process_one(audio, bulk=False, memory_complete=True)
+    assert out.update["status"] == "FAILED" and out.update["attempts"] == settings.max_attempts
+    assert out.update["last_error"].startswith("NoTextAttachment: audio only")
+
+
+def test_a_crash_keeps_where_it_happened_and_the_four_crashes_of_25_oct_are_gone():
+    """Owner, 25 Oct 2026: four filings crashed in our own code and only the message was kept."""
+    import math
+
+    from bse_intel.dossier import latest_fundamentals
+    from bse_intel.facts import _bps
+    from bse_intel.pipeline import _crash_site, relabel_periods
+
+    try:
+        {}["as_of"]
+    except KeyError as exc:
+        assert _crash_site(exc) == ""   # not our code: nothing to name
+    try:
+        latest_fundamentals(None)
+    except AttributeError as exc:
+        assert _crash_site(exc).startswith("dossier.py:") and "latest_fundamentals" in _crash_site(exc)
+    # MODIS: a half-year file's period is no quarter
+    from bse_intel.models import Pass2Output
+    out = Pass2Output.model_validate({"is_material": False, "event_type": "RESULTS", "card": None,
+                                      "dossier_delta": {"financial_metrics": [
+                                          {"metric": "revenue", "period": "Q2FY27", "value": 1.0, "unit": "INR_CR"}]}})
+    assert relabel_periods(out, "H1FY27", None) == {}
+    # PNC Infra: an older balance sheet entry without as_of
+    dossier = {"financial_metrics": [{"metric": "borrowings", "period": "FY26", "value": 5.0}],
+               "balance_sheet": [{"period": "FY26", "gross_debt_cr": 4.0}]}
+    assert latest_fundamentals(dossier)["debt"]["value"] in (4.0, 5.0)
+    # L&T Finance: an infinite ratio has no move
+    assert _bps(math.inf, 1.0) == (0, 0)

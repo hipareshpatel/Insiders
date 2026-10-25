@@ -17,7 +17,7 @@ from .timeutil import now_iso
 log = logging.getLogger(__name__)
 
 LIMIT = 500
-TOO_LARGE = "AttachmentTooLarge"
+TOO_LARGE = ("AttachmentTooLarge", "NoTextAttachment: audio only", "NoTextAttachment: a ZIP with no PDF")
 
 
 def _reason(error: str) -> str:
@@ -62,7 +62,7 @@ def requeue_ids(sink, news_ids: list[str], max_attempts: int, dry_run: bool = Fa
 def requeue(sink, since: str, max_attempts: int, attempts_left: int | None = None, dry_run: bool = False) -> dict:
     """Set the failed filings since ``since`` PENDING with ``attempts_left`` tries (default all); returns a summary."""
     left = max_attempts if attempts_left is None else max(1, min(attempts_left, max_attempts))
-    # a file over the size cap stays over it: requeued, it is only downloaded again to fail the same way (by id it can be)
+    # a file over the size cap, or with no text in it, stays so: requeued, it only fails the same way again (by id it can be)
     rows = [r for r in failed(sink, since, max_attempts) if not str(r.get("last_error") or "").startswith(TOO_LARGE)]
     stamp = now_iso()
     updates = [{"news_id": r["news_id"], "status": "PENDING", "attempts": max_attempts - left, "updated_at": stamp,

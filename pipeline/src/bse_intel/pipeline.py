@@ -144,6 +144,19 @@ class EventXbrlPending(Exception):
     """A live filing's event XBRL has not reached NSE yet; the filing stays queued without spending an attempt."""
 
 
+class AttachmentNotYet(Exception):
+    """NSE lists the filing but its file is not there yet (a 404): it waits, without spending an attempt, up to
+    ATTACHMENT_WAIT after the filing (owner, 25 Oct 2026: CGCL's press release was given up after three tries in about
+    two hours and downloads fine later)."""
+
+
+class NoTextAttachment(Exception):
+    """The attachment holds nothing to read (a call's audio, a ZIP without a PDF): failed once, not retried."""
+
+
+ATTACHMENT_WAIT = timedelta(hours=24)
+
+
 @dataclass
 class Stats:
     discovered: int = 0
@@ -276,7 +289,8 @@ def relabel_periods(out: Pass2Output, quarter: str | None, year: str | None) -> 
     quarters = {p for p in labels if quarter_index(p) is not None}
     mapping: dict[str, str] = {}
     offset = 0
-    if quarter and quarters:
+    # a half-year, nine-month or year file's period is no quarter: nothing to shift by (MODIS, 24 Oct 2026, crashed)
+    if quarter and quarters and quarter_index(quarter) is not None:
         model_quarter = max(quarters, key=quarter_index)  # a statement's current period is its latest column
         offset = quarter_index(quarter) - quarter_index(model_quarter)
         if offset:
@@ -2393,9 +2407,11 @@ class Pipeline:
                 return self._failed(filing, exc)
             except EventXbrlPending as exc:
                 return self._deferred(filing, f"deferred: {exc}")
-            except AttachmentTooLarge as exc:
-                # the same file stays too large on every run: fail once with the reason, every attempt spent
+            except (AttachmentTooLarge, NoTextAttachment) as exc:
+                # the same file stays too large, or without text, on every run: fail once with the reason
                 return self._failed(filing, exc, final=True)
+            except AttachmentNotYet as exc:
+                return self._deferred(filing, f"deferred: {exc}"[:300])
             except SourceBlockedError as exc:
                 # NSE answered 401, 403 or 429 (or BSE refused): stop the run politely; the work stays queued and no
                 # filing's attempt is spent (owner, 2026-10-18)
@@ -2433,7 +2449,7 @@ class Pipeline:
                 return self._failed(filing, exc)
             except Exception as exc:  # one bad filing must not stop the run
                 log.exception("filing %s failed", filing.news_id)
-                return self._failed(filing, exc)
+                return self._failed(filing, exc, where=_crash_site(exc))
         return self._failed(filing, RuntimeError("retries exhausted"))
 
     def _deferred(self, filing: Filing, reason: str) -> Outcome:
@@ -2441,13 +2457,14 @@ class Pipeline:
             self.stats.deferred += 1
         return Outcome({"news_id": filing.news_id, "status": "PENDING", "updated_at": now_iso(), "last_error": reason})
 
-    def _failed(self, filing: Filing, exc: Exception, final: bool = False) -> Outcome:
+    def _failed(self, filing: Filing, exc: Exception, final: bool = False, where: str = "") -> Outcome:
         with self._lock:
             self.stats.failed += 1
         # The attempt count is sent as a value, not an increment, so a retried write cannot count twice.
         attempts = max(filing.attempts + 1, self.settings.max_attempts) if final else filing.attempts + 1
         return Outcome({"news_id": filing.news_id, "status": "FAILED", "attempts": attempts,
-                        "last_error": f"{type(exc).__name__}: {exc}"[:500], "updated_at": now_iso()})
+                        "last_error": (f"{type(exc).__name__}: {exc}"[:440] + (f" [at {where}]" if where else ""))[:500],
+                        "updated_at": now_iso()})
 
     def analyze(self, filing: Filing, bulk: bool = False, memory_complete: bool = True) -> Outcome:
         """Run Pass 1 (if needed), extraction, Pass 2, grounding, merge and signals for one filing."""
@@ -2486,6 +2503,8 @@ class Pipeline:
         if doc is None:
             pdf = self._attachment(filing.pdf_url, _attachment_cap(filing), document=True) if filing.pdf_url else None
             self._refusals = self._network_failures = 0
+            if filing.pdf_url and not pdf:   # a 404, or an empty file (XTRANET's of 23 Oct is still 0 bytes)
+                _attachment_missing(filing)
             doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
         try:
             repeat = self._duplicate_of(filing, doc)
@@ -3117,9 +3136,11 @@ class Pipeline:
         events_table = event_xbrl.table(events)
         if not text.strip() and not tagged and not events:
             if filing.pdf_url:
-                # The attachment is there but nothing could be read from it (a 404, over 30 MB, corrupt or
-                # password-protected): a card from the headline alone cannot be checked against anything, and
-                # its checks crashed on the empty text. Failed, so a later run tries the file again.
+                # The attachment is there but nothing could be read from it (corrupt or password-protected; a 404,
+                # a file over the cap and a ZIP with no PDF are told apart before this): a card from the headline
+                # alone cannot be checked against anything. Failed, so a later run tries the file again.
+                if doc.error and doc.error.startswith(("audio only", "a ZIP with no PDF")):
+                    raise NoTextAttachment(doc.error)
                 raise RuntimeError(f"no readable text in the attachment ({doc.error or 'empty'})")
             # No attachment by design - an exchange's clarification request is its headline and subject - so
             # those are the filing's own words, and what its quotes answer to.
@@ -4262,6 +4283,32 @@ def _still_noise(decision, filing: Filing, row: list, returning: bool = False) -
 # (nse-106633606) was skipped at 30 MB on 25 Oct 2026 and failed as "no readable text" (owner: 120 MB for all).
 ATTACHMENT_MAX_BYTES = 120_000_000
 ANNUAL_REPORT_MIN_PAGES = 60   # as Document.kind() reads a directors' report: an AGM notice alone runs to 10-30 pages
+
+
+def _crash_site(exc: BaseException) -> str:
+    """The innermost frame of our own code a crash came from, as "file.py:line in function" (owner, 25 Oct 2026: four
+    crashes were stored with their message alone, so their lines had to be guessed)."""
+    site = ""
+    tb = exc.__traceback__
+    while tb is not None:
+        code = tb.tb_frame.f_code
+        if "bse_intel" in code.co_filename:
+            site = f"{code.co_filename.rsplit('/', 1)[-1]}:{tb.tb_lineno} in {code.co_name}"
+        tb = tb.tb_next
+    return site
+
+
+def _attachment_missing(filing: Filing) -> None:
+    """A listed file NSE does not serve (404) or serves empty: wait for it within ATTACHMENT_WAIT of the filing, then
+    fail for good."""
+    try:
+        age = now_ist() - datetime.fromisoformat(filing.filed_at)
+    except (TypeError, ValueError):
+        age = ATTACHMENT_WAIT
+    if age < ATTACHMENT_WAIT:
+        raise AttachmentNotYet(f"the file is not on NSE yet, or empty ({filing.pdf_url})")
+    raise NoTextAttachment(f"the file was missing or empty on NSE {int(age.total_seconds() // 3600)} h after the filing "
+                           f"({filing.pdf_url})")
 
 
 def _attachment_cap(filing: Filing) -> int:

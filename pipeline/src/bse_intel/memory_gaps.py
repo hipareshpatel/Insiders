@@ -70,12 +70,24 @@ def window(today: date, quarters: int = QUARTERS) -> list[str]:
 
 
 def main_basis(dossier: dict) -> str | None:
-    """Consolidated when memory holds any machine-tagged consolidated revenue or PAT, else standalone, else none."""
+    """The basis of the company's newest machine-tagged quarter (revenue or PAT); consolidated when both bases reach
+    the same newest quarter, else the one that is newer; none without any. It was "consolidated when memory holds any
+    consolidated quarter", which kept a company that stopped filing consolidated results (Bharat Wire Ropes: FY23-FY24
+    consolidated, then standalone only) on a basis its newer quarters are not on: every one of them read as missing
+    and no fill could close them (gaps fill of 25 Oct 2026)."""
+    newest: dict[str, int] = {}
     for basis in (CONSOLIDATED, STANDALONE):
         figures, _ = _figures(dossier, basis)
-        if any(metric in ("revenue", "pat") for metric, _ in figures):
-            return basis
-    return None
+        indexes = [quarter_index(period) for (metric, period), entry in figures.items()
+                   if metric in ("revenue", "pat") and entry.get("value") is not None]
+        indexes = [i for i in indexes if i is not None]
+        if indexes:
+            newest[basis] = max(indexes)
+        elif any(metric in ("revenue", "pat") for metric, _ in figures):
+            newest[basis] = 0   # only a year or half year on this basis: still a basis, the weakest
+    if not newest:
+        return None
+    return max(newest, key=lambda b: (newest[b], b == CONSOLIDATED))
 
 
 def check(dossier: dict | None, today: date, quarters: int = QUARTERS) -> dict:

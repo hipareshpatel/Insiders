@@ -862,3 +862,32 @@ def test_a_call_table_judges_its_comparatives_by_the_calls_text():
     with_text = call_results_snapshot(memory, "2026-10-24T14:11:45+05:30", text=deck)
     assert without["revenue"].get("prev_year") == 169.8
     assert "prev_year" not in with_text["revenue"] and with_text["pat"]["prev_year"] == 23.47
+
+
+def test_a_row_label_reaches_the_cells_below_it():
+    """A PDF's text layer gives Geojit's highlight table one cell a line: "EBITDA", then "₹ 36.70"."""
+    from bse_intel.dossier import _printed_with
+
+    assert _printed_with(36.70, "EBITDA\n₹ 36.70\n(15.40%) YoY\nPAT\n₹ 16.28", "ebitda")
+    assert not _printed_with(16.28, "EBITDA\n₹ 36.70\n(15.40%) YoY\nPAT\n₹ 16.28", "ebitda")   # PAT's row, not EBITDA's
+
+
+def test_our_ebitda_is_not_shown_where_the_filing_prints_another():
+    """Geojit: our EBITDA (before other income) ₹30.34 Cr where the deck prints EBITDA ₹36.70 Cr: neither it nor its
+    margin is shown; where the filing prints ours, or no EBITDA row at all, it stays."""
+    from bse_intel.dossier import results_snapshot
+
+    def src(news_id, value):
+        return {"news_id": news_id, "value": value, "as_of": "2026-10-23T18:00:00+05:30", "basis": "CONSOLIDATED"}
+
+    memory = {"financial_metrics": [
+        {"metric": "revenue", "period": "Q2FY27", "value": 165.82, "sources": [src("n", 165.82)]},
+        {"metric": "ebitda", "period": "Q2FY27", "value": 30.34, "sources": [src("n", 30.34)]},
+        {"metric": "ebitda", "period": "Q2FY26", "value": 38.95, "sources": [src("o", 38.95)]},
+        {"metric": "pat", "period": "Q2FY27", "value": 16.28, "sources": [src("n", 16.28)]},
+        {"metric": "eps", "period": "Q2FY27", "value": 0.59, "sources": [src("n", 0.59)]},
+    ]}
+    other = results_snapshot(memory, "n", printed="EBITDA\n₹ 36.70\n(15.40%) YoY")
+    assert "ebitda" not in other and "ebitda_margin" not in other
+    assert results_snapshot(memory, "n", printed="EBITDA 30.34 38.95")["ebitda"]["prev_year"] == 38.95
+    assert "ebitda" in results_snapshot(memory, "n", printed="PAT 16.28")

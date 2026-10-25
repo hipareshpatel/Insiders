@@ -1733,26 +1733,39 @@ def _beside(a: float, b: float, sequence: list[float], unit: float, near: float 
                for n in sequence[max(0, i - ROW_WINDOW): i + ROW_WINDOW + 1])
 
 
-def _printed_with(value: float, text: str, word: str) -> bool:
-    """Whether the text prints this figure (at any unit) on a line that names `word` before it: the row's own label,
-    not a heading lines above. A margin or an adjusted, normalised or pro-forma figure is not the plain one: "EBITDA
-    margin 22.4%", "Adjusted EBITDA 503.6"."""
-    for line in text.splitlines():
+def _row_figures(text: str, word: str) -> list[list[float]]:
+    """The figures of each row the text labels with `word`: those after the label on its line, then on the purely numeric
+    lines right below it (a PDF's text layer often gives a table one cell a line: "EBITDA" then "₹ 36.70"). A margin
+    or an adjusted, normalised, pro-forma, core or operating figure is not the plain one: "EBITDA margin 22.4%",
+    "Adjusted EBITDA 503.6"."""
+    rows, lines = [], text.splitlines()
+    for i, line in enumerate(lines):
         low = line.lower()
         at = low.find(word)
-        if at < 0:
+        if at < 0 or re.search(r"margin|adjusted|normali[sz]ed|pro[\s-]?forma|\bcore\b|operating",
+                               low[max(0, at - 25):at + len(word) + 12]):
             continue
-        label = low[max(0, at - 25):at + len(word) + 12]
-        if re.search(r"margin|adjusted|normali[sz]ed|pro[\s-]?forma|core|operating", label):
-            continue
-        for m in re.finditer(r"\d[\d,]*\.?\d*", line[at:]):
-            try:
-                n = float(m.group(0).replace(",", ""))
-            except ValueError:
-                continue
-            if any(abs(n - abs(value) * unit) <= _tolerance(value, unit) for unit in _UNITS):
-                return True
-    return False
+        cells = [line[at + len(word):]]
+        for nxt in lines[i + 1:i + 7]:
+            if re.search(r"[a-z]{3,}", nxt.lower()) and not re.fullmatch(r"\s*[₹(\-\d.,%)\s]*(yoy|qoq|bps|cr|crore)?\s*", nxt.lower()):
+                break
+            cells.append(nxt)
+        figures = []
+        for cell in cells:
+            for m in re.finditer(r"\d[\d,]*\.?\d*", cell):
+                try:
+                    figures.append(float(m.group(0).replace(",", "")))
+                except ValueError:
+                    pass
+        if figures:
+            rows.append(figures)
+    return rows
+
+
+def _printed_with(value: float, text: str, word: str) -> bool:
+    """Whether a row the text labels with `word` prints this figure, at any unit (_row_figures)."""
+    return any(abs(n - abs(value) * unit) <= _tolerance(value, unit)
+               for row in _row_figures(text, word) for n in row for unit in _UNITS)
 
 
 def _kept_basis(sources: list[dict]) -> str | None:
@@ -1946,7 +1959,9 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             return False
         units = _UNITS if names[0] in _PRINTED_CR else (1,) if names[0] == "eps" or names[0] in ratios else ()
         entry, value = stored(names, p)
-        current = table.get((entry["metric"], period), {}).get("value") if entry else None
+        # the quarter as the table shows it, from the line's own source: memory's merged figure can be another
+        # filing's reading a paisa apart (Geojit ₹165.83 Cr against the deck's ₹165.82 Cr), and the row was not found
+        current = stored(names, period)[1] if entry else None
         if not units or value is None or current is None or abs(value) < 1 or abs(current) < 1:
             return False
         at = _printed_at(current, numbers, units)
@@ -2083,6 +2098,15 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         if slots:
             row["derived"] = slots   # worked out from cumulative periods (H1 less Q1, ...), not reported as a quarter
         out[key] = row
+    # our EBITDA (from the file: before other income) where the filing prints a plain EBITDA row without it is another
+    # definition: Geojit's deck prints ₹36.70 Cr against our ₹30.34 Cr, -15.4% against -22.1% (architecture audit,
+    # 25 Oct 2026). Until memory keeps the company's reading, neither it nor its margin is shown.
+    shown_ebitda = (out.get("ebitda") or {}).get("value")
+    if shown_ebitda is not None and not company_ebitda() and (ebitda_text or printed) \
+            and _row_figures(ebitda_text or printed or "", "ebitda") \
+            and not _printed_with(shown_ebitda, ebitda_text or printed or "", "ebitda"):
+        out.pop("ebitda", None)
+        out.pop("ebitda_margin", None)
     if len(out) <= 3:
         return None
     lens, rows = next(((name, rows) for name, top, rows in _LENSES if top in out), ("company", _LENSES[-1][2]))

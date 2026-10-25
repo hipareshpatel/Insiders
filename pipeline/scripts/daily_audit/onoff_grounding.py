@@ -76,7 +76,8 @@ def one(card: dict, memories: dict, pdf_dir: pathlib.Path) -> dict | None:
 def main() -> None:
     args = sys.argv[1:]
     workers = int(args[args.index("--workers") + 1]) if "--workers" in args else 8
-    cards = json.load(open(args[0], encoding="utf-8"))
+    every = json.load(open(args[0], encoding="utf-8"))
+    cards = [c for c in every if c.get("scrip_code") and c.get("pdf_url")]   # a feed row with neither cannot be checked
     pdf_dir = pathlib.Path(args[1])
     memories: dict = {}
     for scrip in sorted({c["scrip_code"] for c in cards}):
@@ -88,7 +89,7 @@ def main() -> None:
         rows = [r for r in pool.map(lambda c: one(c, memories, pdf_dir), cards) if r]
     checked = [r for r in rows if "skipped" not in r]
     hit = [r for r in checked if r["newly_ungrounded"]]
-    json.dump({"cards": len(cards), "checked": len(checked), "skipped": len(rows) - len(checked),
+    json.dump({"cards": len(every), "without_company_or_pdf": len(every) - len(cards), "checked": len(checked), "skipped": len(rows) - len(checked),
                "cards_with_new": len(hit), "rows": hit}, open(args[2], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("cards", len(cards), "checked", len(checked), "skipped", len(rows) - len(checked), "cards with newly ungrounded", len(hit),
           "figures", sum(len(r["newly_ungrounded"]) for r in hit))

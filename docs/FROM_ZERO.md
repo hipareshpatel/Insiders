@@ -75,3 +75,17 @@ Almost everything comes from NSE. Two things come from elsewhere: share prices (
   skipped on 25 Oct and failed as "no readable text". **Decided (owner): 120 MB for every filing** (F130).
 - Open, not yet measured: why the other failed filings failed (70 on 25 Oct); whether NSE's one-call-a-day list holds
   every filing on a busy day; runs take about 41 minutes, so the 15-minute schedule really runs every ~42 minutes.
+
+### Past results history (checked 25 Oct 2026)
+
+Measured 25 Oct 2026: NSE lists every quarter's results figure file per company, both bases, on two pages
+(`corporates-financial-results` up to Dec 2024: 130 rows for RELIANCE; `integrated-filing-results` from Mar 2025:
+12 rows, Mar 2025 to Jun 2026). One file holds one quarter only (all 38 contexts of RELIANCE's Jun 2026 consolidated
+file are that quarter), in rupees, with `decimals="-7"` (printed in crore). So year-ago and last-quarter figures come
+from those quarters' own files.
+
+This is already built: `seed-memory` (`seed.py`, run from `maintenance.yml` since 20 Oct) reads 12 quarters from NSE
+into memory, consolidated first, standalone kept apart. RELIANCE's memory holds Q1FY27 revenue ₹3,11,850 Cr from
+`xbrl:res:500325:Q1FY27`, the same as the file. What history does not fix: our own EBITDA definition (memory says
+Q1FY27 EBITDA ₹47,517 Cr = profit before tax + finance cost + depreciation − other income; companies that count other
+income print a different figure), the choice of basis, and figures our AI wrote into memory before the file existed.

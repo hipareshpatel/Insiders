@@ -300,3 +300,16 @@ def choose_profit(candidates: dict[str, float], text: str | None, basis: str | N
     if candidates.get("pat") is not None:
         return "pat", None
     return None, None
+
+
+_EBITDA_PROSE = re.compile(
+    r"\bEBITDA\b[^.%\n]{0,40}?\b(increased|grew|rose|up|improved|declined|decreased|fell|down|dropped)\b[^.%\n]{0,25}?"
+    r"(\d+(?:\.\d+)?)\s*%\s*(?:YoY|Y-o-Y|year[- ]on[- ]year|over the corresponding)", re.I)
+
+
+def printed_ebitda_yoy(text: str | None) -> float | None:
+    """The year-on-year change a release states for its EBITDA in words ("EBITDA increased 24.1% YoY to Rs. 205 Cr"), as a
+    signed percentage; None when it states none or states two that differ (F155)."""
+    found = {(-1 if m.group(1).lower() in ("declined", "decreased", "fell", "down", "dropped") else 1) * float(m.group(2))
+             for m in _EBITDA_PROSE.finditer(text or "")}
+    return found.pop() if len(found) == 1 else None

@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import card_ebitda_profit_v2
+from .settings import card_ebitda_profit_v2, card_same_definition
 from .models import Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -929,6 +929,13 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         key = (_norm(m.metric), _period(m.period))
         if not march_year(d) and not _CALENDAR_QUARTER.fullmatch(key[1]):
             continue   # a half year or year of a company whose year does not end in March: wrongly named here
+        ends = due_date(key[1]) if key[1].startswith("Q") else None
+        if ends is not None and (as_of or "")[:10] <= ends.isoformat():
+            # a quarter no results can describe yet: CIE India's July presentation called its April-June quarter "Q2" and
+            # memory kept its ₹420 Cr EBITDA as Q2FY27 (September) until the real quarter's file was read (F155)
+            log.info("memory: %s %s %s from %s refused: the quarter had not ended when it was filed",
+                     key[0], key[1], m.value, news_id)
+            continue
         if not results_source and key[0] in QUARTER_OWNED and key[1].startswith("Q") \
                 and any(s["news_id"] != news_id for s in _sources(metrics.get(key))):
             continue
@@ -1782,6 +1789,7 @@ _UNITS = (1, 100, 10, 10_000, 1e7)   # crore, lakh, million, thousand, rupees
 # its margin are mostly derived, not printed, so they never count
 _RESTATED_BY = (_PRINTED_CR | _PRINTED_PCT | {"eps"}) - {"ebitda", "ebitda_margin"}
 RESTATED_LINES = 2
+_DEFINITION_LINES = ("pbt",)   # lines whose figure a release and the file define differently (before / after the associates' share)
 ROUNDING = 0.0005   # a comparative within this share of a printed figure is that figure (as computed._base_printed)
 ROW_WINDOW = 6      # numbers either side of a figure in the text that can be cells of its row
 
@@ -1901,6 +1909,16 @@ def _ebitda_lines_v2(out: dict, lines: list[dict], lookup, period: str, printed:
 
     ours = out["ebitda"]
     theirs = printed_figures.printed_ebitda(printed, period, ours["value"], basis) if printed else None
+    stated = printed_figures.printed_ebitda_yoy(printed) if printed else None
+    if stated is not None and ours.get("yoy_pct") is not None and abs(ours["yoy_pct"] - stated) > 1.0:
+        # the release's own change is not ours: its year-ago is a regrouped one (Crompton's Q2FY26 finance cost, 5.16 as
+        # first filed, 11.63 in this year's column: EBITDA 158.37 against the release's 165). Ours is left without a
+        # year-ago rather than set beside a base the company does not use (F155).
+        for key in ("ebitda", "ebitda_margin"):
+            row = out.get(key)
+            if isinstance(row, dict):
+                for slot in ("prev_year", "yoy_pct", "yoy_bps", "yoy_turn"):
+                    row.pop(slot, None)
     other = lookup(("other_income",), period)
     spec_ours = next(spec for spec in lines if spec["key"] == "ebitda")
     spec_ours["label"] = "Operating EBITDA (calculated)"
@@ -2033,8 +2051,28 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
 
     unbuilt = {p for slot, p in periods.items() if slot != "value" and p and numbers and not built(p)}
 
+    def split_definition(names: tuple[str, ...]) -> bool:
+        """This quarter's figure for the line (PBT) is not the definition memory's other quarters are on (F155): the
+        figure shown matches no file-tagged source, and another source for the quarter states a different one.
+        Piramal Finance's release headlines PBT 580 after the associates' share, the file's (and so the previous
+        quarter's 344.12) is 543.14 before it; the card put the two side by side as +68.5%."""
+        if names[0] not in _DEFINITION_LINES or not card_same_definition():
+            return False
+        entry, shown = stored(names, period)
+        if entry is None or shown is None:
+            return False
+        basis = _entry_basis(entry)
+        values = [(src, src["value"]) for src in _sources(entry) if isinstance(src.get("value"), (int, float))
+                  and src.get("basis") in (None, basis)]
+        near = lambda v: abs(v - shown) <= max(0.5, 0.01 * abs(shown))   # noqa: E731
+        if any(near(v) and str(src.get("news_id", "")).startswith(XBRL_SOURCE) for src, v in values):
+            return False
+        return any(not near(v) for _, v in values)
+
     def lookup(names: tuple[str, ...], p: str | None) -> float | None:
         if not p or p in restated or (p in unbuilt and names in (_RESULT_METRICS[1][1], _RESULT_METRICS[2][1])):
+            return None
+        if p != period and split_definition(names):
             return None
         entry, value = stored(names, p)
         if value is not None and p != period and entry is not None:

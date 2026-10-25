@@ -313,7 +313,8 @@ def test_a_long_annual_table_does_not_push_out_recent_quarters():
 
     quarters = [{"metric": "revenue", "period": f"Q{q}FY27", "value": 100 + q} for q in (1, 2)]
     years = [{"metric": "revenue", "period": f"FY{y}", "value": 300 + y} for y in range(10, 27)]
-    d = merge(new_dossier(filing("n1", Q1)), output(financial_metrics=quarters), filing("n1", Q1), "HIGH", "now")
+    # filed after both quarters ended: a figure for a quarter not yet over is refused (F155)
+    d = merge(new_dossier(filing("n1", Q2)), output(financial_metrics=quarters), filing("n1", Q2), "HIGH", "now")
     d = merge(d, output(financial_metrics=years), filing("ppt", Q2), "LOW", "now")
     kinds = [m["period"] for m in d["financial_metrics"]]
     assert "Q1FY27" in kinds and "Q2FY27" in kinds and sum(p.startswith("FY") for p in kinds) == 6

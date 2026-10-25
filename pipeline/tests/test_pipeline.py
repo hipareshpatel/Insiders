@@ -1166,22 +1166,34 @@ def test_under_the_card_writing_cap_a_filing_is_written_as_before(settings):
     assert row["status"] == "ANALYZED"
 
 
-def test_a_filing_that_always_hits_the_card_writing_cap_spends_an_attempt_in_the_end(settings, monkeypatch):
-    from bse_intel.ai.gateway import AllProvidersFailed
+def test_after_three_cap_deferrals_the_cap_is_lifted_and_the_filing_is_written(settings, caplog):
+    """The cap only delays a card: the 4th run has no cap, reaches the slow model and the filing is ANALYZED."""
+    import logging
+
     from bse_intel.pipeline import MAX_CAP_DEFERRALS
 
-    now = now_ist() - timedelta(minutes=10)
-    f = _filing("n-slow2", "Order win", now, "Company Update")
-    pipeline, sink, fake = build(settings, [f], {}, {})
-    sleeps = []
-    pipeline._sleep = sleeps.append
+    now = now_ist() - timedelta(minutes=5)
+    f = _filing("n-lift", "Unaudited Financial Results for the quarter", now, "Result")
+    pdfs = {f.pdf_url: _pdf(RESULT_TEXT)}
+    pipeline, sink, fake = build(settings, [f], pdfs, {"nvidia/nemotron-3.5-super-vl:free": [PASS2]})
+    gw = pipeline.gateway
+    real_start = gw.start_cap
 
-    def capped(*a, **k):
-        raise AllProvidersFailed("pass2", [("a:m", "transient", "card-writing cap reached (360 s)")], capped_s=360)
+    def spent(seconds=None):   # a cap that would already be spent if it were ever started
+        real_start(seconds)
+        if gw._cap.state and gw._cap.state["deadline"] is not None:
+            gw._cap.state["deadline"] = time.monotonic() - 1
 
-    monkeypatch.setattr(pipeline, "analyze", capped)
-    first = pipeline._attempt(f, bulk=False, memory_complete=True)
-    assert first.update["status"] == "PENDING" and first.update["last_error"].startswith("deferred 1x: card-writing cap")
+    gw.start_cap = spent
+    pipeline.discover(now.date())
     worn = f.model_copy(update={"last_error": f"deferred {MAX_CAP_DEFERRALS}x: card-writing cap reached (360 s)"})
-    assert pipeline._attempt(worn, bulk=False, memory_complete=True).update["status"] == "FAILED"
-    assert sleeps == []
+    # the third deferral's own run still stops at the cap (2 earlier deferrals)
+    two = f.model_copy(update={"last_error": "deferred 2x: card-writing cap reached (360 s)"})
+    first = pipeline._attempt(two, bulk=False, memory_complete=True)
+    assert first.update["status"] == "PENDING" and first.update["last_error"].startswith("deferred 3x: card-writing cap")
+    assert fake.calls == []
+    with caplog.at_level(logging.INFO, logger="bse_intel.pipeline"):
+        outcome = pipeline._attempt(worn, bulk=False, memory_complete=True)
+    assert outcome.update["status"] != "FAILED" and outcome.update["status"] != "PENDING", outcome.update
+    assert any(c["model"] == "nvidia/nemotron-3.5-super-vl:free" for c in fake.calls)
+    assert sum("cap lifted for n-lift after 3 deferrals" in r.message for r in caplog.records) == 1

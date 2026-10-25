@@ -112,8 +112,8 @@ MAX_DEFERRALS = 3        # runs one attachment may fail on the network, alone, b
 # run every 30-40 minutes, so it outlasts Gemini's daily reset (owner, 25 Oct 2026: 28 filings failed on AI capacity,
 # most after three 15-minute waits against a once-a-day reset)
 MAX_QUOTA_DEFERRALS = 40
-# runs a filing may stop at its card-writing cap (PASS2_CAP_S, TODO 35) before the next stop spends an attempt: it is a
-# filing the models are too slow for, not the day's capacity, so it does not wait for ever like MAX_QUOTA_DEFERRALS
+# runs a filing may stop at its card-writing cap (PASS2_CAP_S, TODO 35) before the cap is lifted for it: the next run
+# writes it with no cap, as before F149. The cap only delays a card, it never loses one or spends an attempt.
 MAX_CAP_DEFERRALS = 3
 MAX_UNREACHABLE = 3      # filings in a row the platform did not answer for: the site is down, stop
 SAME_FILE_MIN_BYTES = 1_000   # a file smaller than this (a stub, an error page) is never matched as the same file
@@ -151,6 +151,15 @@ SNAPSHOT_PAGE = 50        # the feed's page size
 
 _DEFERRED = re.compile(r"^deferred (\d+)x: (?:attachment download failed|the better writers are at their day|"
                        r"the platform did not answer|AI busy|card-writing cap reached)")
+
+
+_CAP_DEFERRED = re.compile(r"^deferred (\d+)x: card-writing cap reached")
+
+
+def _cap_deferrals(last_error: str | None) -> int:
+    """How many runs in a row this filing stopped at its card-writing cap, from the ledger's note."""
+    m = _CAP_DEFERRED.match(last_error or "")
+    return int(m.group(1)) if m else 0
 
 
 def _deferrals(last_error: str | None) -> int:
@@ -2396,7 +2405,11 @@ class Pipeline:
             return self._deferred(filing, "deferred: AI quota ceilings")
         for attempt in range(TRANSIENT_RETRIES + 1):
             try:
-                with self.gateway.card_scope():   # the filing's card-writing cap starts at its pass 2, ends here
+                lifted = _cap_deferrals(filing.last_error) >= MAX_CAP_DEFERRALS
+                if lifted and attempt == 0:
+                    log.info("cap lifted for %s after %d deferrals", filing.news_id, MAX_CAP_DEFERRALS)
+                # the filing's card-writing cap starts at its pass 2 and ends here; lifted: no cap at all
+                with self.gateway.card_scope(capped=not lifted):
                     outcome = self.analyze(filing, bulk, memory_complete)
                 with self._lock:
                     self._busy = 0
@@ -2423,13 +2436,10 @@ class Pipeline:
                 return self._deferred(filing, f"deferred {times}x: the platform did not answer ({exc})"[:300])
             except AllProvidersFailed as exc:
                 if exc.capped:
-                    # The filing used its card-writing time (F149). Defer now: no 60 s waits, which would add minutes to a
-                    # filing that already took six. It waits for the next run with no attempt spent; after
-                    # MAX_CAP_DEFERRALS such runs in a row the next one spends an attempt, so a filing the models are always
-                    # too slow for ends as failed (attempts) instead of looping every 15 minutes for ever.
-                    times = _deferrals(filing.last_error) + 1
-                    if times > MAX_CAP_DEFERRALS:
-                        return self._failed(filing, exc)
+                    # The filing used its card-writing time (F149). Defer now: no 60 s waits, no attempt spent. After
+                    # MAX_CAP_DEFERRALS such runs the cap is lifted for it (see `lifted` above), so a card is delayed
+                    # at most three runs and never lost to the cap.
+                    times = _cap_deferrals(filing.last_error) + 1
                     return self._deferred(filing, f"deferred {times}x: card-writing cap reached ({exc.capped_s:.0f} s)")
                 if exc.quota_exhausted:
                     with self._lock:

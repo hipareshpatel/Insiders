@@ -622,10 +622,11 @@ class AIGateway:
         return None if self.deadline is None else self.deadline - time.monotonic()
 
     @contextmanager
-    def card_scope(self):
-        """Around one filing's analysis on this thread: a cap started inside it ends with it."""
+    def card_scope(self, capped: bool = True):
+        """Around one filing's analysis on this thread: a cap started inside it ends with it. ``capped=False`` (a filing
+        whose cap was lifted, F149) never starts one."""
         saved = getattr(self._cap, "state", None)
-        self._cap.state = {"deadline": None, "seconds": 0.0, "logged": False}
+        self._cap.state = {"deadline": None, "seconds": 0.0, "logged": False, "off": not capped}
         try:
             yield
         finally:
@@ -636,7 +637,7 @@ class AIGateway:
         0 seconds (`PASS2_CAP_S=0`): no cap."""
         state = getattr(self._cap, "state", None)
         seconds = self.pass2_cap_s if seconds is None else seconds
-        if state is None or state["deadline"] is not None or seconds <= 0:
+        if state is None or state["off"] or state["deadline"] is not None or seconds <= 0:
             return
         state["deadline"] = time.monotonic() + seconds
         state["seconds"] = float(seconds)

@@ -25,7 +25,9 @@ from .grounding import SourceIndex
 from .periods import prior_quarter_period, prior_year_period
 
 # A figure that is computed rather than read: a percentage, a basis-point or percentage-point move, a multiple
-_FIGURE = re.compile(r"(?<![\w.])([+\-−]?)\s?(\d{1,3}(?:,\d{2,3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*"
+# A bracketed negative counts: Geojit's deck prints its margin move as "(366) Bps" and the card's -366 bps was removed as
+# a figure the filing does not print (architecture audit, 25 Oct 2026)
+_FIGURE = re.compile(r"(?<![\w.])([+\-−]?)\s?(\d{1,3}(?:,\d{2,3})+(?:\.\d+)?|\d+(?:\.\d+)?)\)?\s*"
                      r"(%|per\s?cent\b|bps\b|basis points?\b|pp\b|percentage points?\b|x\b|times\b)", re.I)
 # A table row's columns count too: "Gross NPA % 1.30 1.45 2.78" lost all but its last column to the old "(?!\s*\d)",
 # and RBL's card had its NPA ratios stripped to "Gross NPA improved to (vs 1.45% ...)" (round 4)

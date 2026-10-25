@@ -818,3 +818,47 @@ def test_the_results_table_takes_a_lines_three_columns_from_one_source():
     # a comparative the chosen source lacks is not taken from the other when both give the quarter differently
     dossier["financial_metrics"][1]["sources"] = [src("n", 4425.95)]
     assert "prev_year" not in results_snapshot(dossier, "n")["pat"]
+
+
+def test_a_bracketed_bps_move_counts_as_printed():
+    """Geojit's deck prints its margin move as "(366) Bps"; the card's -366 bps was removed as unprinted."""
+    from bse_intel.computed import Pool
+
+    pool = Pool()
+    pool.add_printed("EBITDA Margin 21.42% 25.08% (366) Bps")
+    assert pool.has("bps", 366, 0, -1)
+
+
+def test_the_company_ebitda_must_be_its_rows_own_label():
+    """The company's EBITDA counts only on a line that names EBITDA before it, and not a margin or adjusted line."""
+    from bse_intel.dossier import _printed_with
+
+    assert _printed_with(36.70, "EBITDA* 36.70 43.38 -15.40%", "ebitda")
+    assert not _printed_with(36.70, "EBITDA\n\nPBT 36.70 30.31", "ebitda")              # a heading lines above
+    assert not _printed_with(503.6, "Adjusted EBITDA 503.6 512.5", "ebitda")
+    assert not _printed_with(22.4, "EBITDA margin 22.4% 23.1%", "ebitda")
+    assert _printed_with(36.70, "EBITDA (Rs Mn) 367.0 433.8", "ebitda")                 # another unit, same row
+
+
+def test_a_call_table_judges_its_comparatives_by_the_calls_text():
+    """Geojit Q2FY27 (architecture audit, 25 Oct 2026): the deck prints revenue's restated year-ago ₹161.69 Cr; memory
+    held ₹169.8 Cr as first reported. The call's text now judges the comparatives as a results filing's does."""
+    from bse_intel.dossier import call_results_snapshot
+
+    def src(news_id, value):
+        return {"news_id": news_id, "value": value, "as_of": "2026-10-23T18:00:00+05:30", "basis": "CONSOLIDATED"}
+
+    memory = {"financial_metrics": [
+        {"metric": "revenue", "period": "Q2FY27", "value": 165.82, "as_of": "2026-10-23T18:00:00+05:30", "sources": [src("r", 165.82)]},
+        {"metric": "revenue", "period": "Q2FY26", "value": 169.8, "as_of": "2025-10-23T18:00:00+05:30", "sources": [src("xbrl:res:1:Q2FY26", 169.8)]},
+        {"metric": "revenue", "period": "Q1FY27", "value": 160.4, "as_of": "2026-07-23T18:00:00+05:30", "sources": [src("xbrl:res:1:Q1FY27", 160.4)]},
+        {"metric": "pat", "period": "Q2FY27", "value": 16.28, "as_of": "2026-10-23T18:00:00+05:30", "sources": [src("r", 16.28)]},
+        {"metric": "pat", "period": "Q2FY26", "value": 23.47, "as_of": "2025-10-23T18:00:00+05:30", "sources": [src("xbrl:res:1:Q2FY26", 23.47)]},
+        {"metric": "pat", "period": "Q1FY27", "value": 19.83, "as_of": "2026-07-23T18:00:00+05:30", "sources": [src("xbrl:res:1:Q1FY27", 19.83)]},
+        {"metric": "eps", "period": "Q2FY27", "value": 0.59, "as_of": "2026-10-23T18:00:00+05:30", "sources": [src("r", 0.59)]},
+    ]}
+    deck = "Revenue from operations 165.82 161.69 2.55% 160.40 3.38%\nPAT 16.28 23.47 -30.66% 19.83"
+    without = call_results_snapshot(memory, "2026-10-24T14:11:45+05:30")
+    with_text = call_results_snapshot(memory, "2026-10-24T14:11:45+05:30", text=deck)
+    assert without["revenue"].get("prev_year") == 169.8
+    assert "prev_year" not in with_text["revenue"] and with_text["pat"]["prev_year"] == 23.47

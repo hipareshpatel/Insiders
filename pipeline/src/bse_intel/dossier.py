@@ -1653,12 +1653,16 @@ def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...]
     latest = _latest_reported(dossier, filed)
     if latest is None or not _discussed(latest[0], filed):
         return None
-    snap = results_snapshot(dossier, latest[2], footer, ebitda_text=text)
+    # the call's own text judges the comparatives as a results filing's does: Geojit's deck printed revenue's restated
+    # year-ago ₹161.69 Cr, memory held ₹169.8 Cr as first reported, and with no text nothing was refused (architecture
+    # audit, 25 Oct 2026)
+    snap = results_snapshot(dossier, latest[2], footer, printed=text, ebitda_text=text)
     if not snap:
         return None
     if before is not None:
         earlier = _latest_reported(before, filed)
-        prior = results_snapshot(before, earlier[2], footer, ebitda_text=text) if earlier and earlier[1] == latest[1] else None
+        prior = results_snapshot(before, earlier[2], footer, printed=text, ebitda_text=text) \
+            if earlier and earlier[1] == latest[1] else None
         same = prior and prior.get("ebitda") and snap.get("ebitda") \
             and prior["ebitda"].get("value") == snap["ebitda"].get("value")
         # the call left memory's EBITDA as it was: its margin over the call's revenue stays (Senores' 32.7%, the call's
@@ -1729,19 +1733,31 @@ def _beside(a: float, b: float, sequence: list[float], unit: float, near: float 
                for n in sequence[max(0, i - ROW_WINDOW): i + ROW_WINDOW + 1])
 
 
-def _printed_with(value: float, text: str, word: str, before: int = 160) -> bool:
-    """Whether the text prints this figure (at any unit) with `word` within `before` characters ahead of it."""
-    low = text.lower()
-    for m in re.finditer(r"\d[\d,]*\.?\d*", text):
-        raw = m.group(0).replace(",", "")
-        try:
-            n = float(raw)
-        except ValueError:
+def _printed_with(value: float, text: str, word: str) -> bool:
+    """Whether the text prints this figure (at any unit) on a line that names `word` before it: the row's own label,
+    not a heading lines above. A margin or an adjusted, normalised or pro-forma figure is not the plain one: "EBITDA
+    margin 22.4%", "Adjusted EBITDA 503.6"."""
+    for line in text.splitlines():
+        low = line.lower()
+        at = low.find(word)
+        if at < 0:
             continue
-        if any(abs(n - abs(value) * unit) <= _tolerance(value, unit) for unit in _UNITS) \
-                and word in low[max(0, m.start() - before):m.start()]:
-            return True
+        label = low[max(0, at - 25):at + len(word) + 12]
+        if re.search(r"margin|adjusted|normali[sz]ed|pro[\s-]?forma|core|operating", label):
+            continue
+        for m in re.finditer(r"\d[\d,]*\.?\d*", line[at:]):
+            try:
+                n = float(m.group(0).replace(",", ""))
+            except ValueError:
+                continue
+            if any(abs(n - abs(value) * unit) <= _tolerance(value, unit) for unit in _UNITS):
+                return True
     return False
+
+
+def _kept_basis(sources: list[dict]) -> str | None:
+    kept = {src.get("basis") for src in sources} - {None}
+    return "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)
 
 
 def _from_source(sources: list[dict], source: str, news_id: str, basis: str | None) -> float | None:
@@ -1905,13 +1921,15 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         """Whether this filing's EBITDA is the company's printed one: its figure printed with "EBITDA" just before it.
         The model's reading is not enough: it gave Aster's pro-forma ₹517 Cr, Trent's profit before tax ₹534.95 Cr and
         Heritage's ₹823 Cr for ₹74 Cr as EBITDA (blind review of the first version, 25 Oct 2026)."""
-        value = _from_source(current_sources(("ebitda", "operating_profit")), "filing", news_id, None)
+        srcs = current_sources(("ebitda", "operating_profit"))
+        value = _from_source(srcs, "filing", news_id, _kept_basis(srcs))
         return value is not None and _printed_with(value, ebitda_text or printed or "", "ebitda")
 
     def differ(names: tuple[str, ...]) -> bool:
         """Whether both sources give this quarter and give it differently: two definitions of the line."""
         srcs = current_sources(names)
-        a, b = _from_source(srcs, "xbrl", news_id, None), _from_source(srcs, "filing", news_id, None)
+        basis = _kept_basis(srcs)
+        a, b = _from_source(srcs, "xbrl", news_id, basis), _from_source(srcs, "filing", news_id, basis)
         return a is not None and b is not None and abs(a - b) > max(0.01, ROUNDING * 10 * abs(a))
 
     def refused(names: tuple[str, ...], p: str | None, alone: bool = False) -> bool:

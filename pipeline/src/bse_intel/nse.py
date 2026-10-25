@@ -66,6 +66,8 @@ BLOCKING_STATUS = (401, 403, 429)
 # Every company listed on NSE's main board, one row each: symbol, name, series, listing date, ISIN.
 # Measured 2026-10-18: 2,605 rows; 2,477 of them are among our 5,111 companies by ISIN.
 EQUITY_LIST_URL = "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv"
+# NSE Emerge (SME platform) list, same shape with underscores in the headers (measured 2026-10-25: 582 rows, series ST/SM).
+SME_LIST_URL = "https://nsearchives.nseindia.com/emerge/corporates/content/SME_EQUITY_L.csv"
 ENCUMBRANCE_ENDPOINT = "https://www.nseindia.com/api/corporate-pledgedata-sast3132"
 LARGE_DEALS_ENDPOINT = "https://www.nseindia.com/api/snapshot-capital-market-largedeal"
 PIT_ENDPOINT = "https://www.nseindia.com/api/corporates-pit-gg"
@@ -108,6 +110,17 @@ def parse_equity_list(text: str) -> list[Equity]:
         except ValueError:
             pass
         out.append(Equity(symbol, row.get("NAME OF COMPANY", ""), isin, row.get("SERIES", ""), listed))
+    return out
+
+
+def parse_sme_list(text: str) -> list[Equity]:
+    """NSE Emerge's SME_EQUITY_L.csv ("SYMBOL,NAME_OF_COMPANY,SERIES,DATE_OF_LISTING,...,ISIN_NUMBER,...")."""
+    out: list[Equity] = []
+    for row in csv.DictReader(io.StringIO(text.lstrip("\ufeff"))):
+        row = {(k or "").strip().upper().replace("_", " "): (v or "").strip() for k, v in row.items()}
+        symbol, isin = row.get("SYMBOL", "").upper(), row.get("ISIN NUMBER", "").upper()
+        if symbol and isin:
+            out.append(Equity(symbol, row.get("NAME OF COMPANY", ""), isin, row.get("SERIES", "")))
     return out
 
 
@@ -482,6 +495,10 @@ class NseClient:
     def equity_list(self) -> list[Equity]:
         """NSE's main-board equity list (the universe's starting point; universe.build_nse)."""
         return parse_equity_list(self._get(EQUITY_LIST_URL).text)
+
+    def sme_list(self) -> list[Equity]:
+        """NSE Emerge's SME list (prune-companies tells an SME scrip from a BSE-only one)."""
+        return parse_sme_list(self._get(SME_LIST_URL).text)
 
     def announcements(self, day_from: date, day_to: date | None = None, symbol: str | None = None,
                       scrip_for=lambda isin, symbol: None) -> list[Filing]:

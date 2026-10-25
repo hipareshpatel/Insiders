@@ -6,6 +6,8 @@ import cardsReleasePruned from "../../db/statements/cards_release_pruned.sql?raw
 import cardsReaction from "../../db/statements/cards_reaction.sql?raw";
 import cardsUpsert from "../../db/statements/cards_upsert.sql?raw";
 import catalystsUpsert from "../../db/statements/catalysts_upsert.sql?raw";
+import companiesPrune from "../../db/statements/companies_prune.sql?raw";
+import catalystsPrune from "../../db/statements/catalysts_prune.sql?raw";
 import companiesSeen from "../../db/statements/companies_seen.sql?raw";
 import companiesUpsert from "../../db/statements/companies_upsert.sql?raw";
 import filingsDiscover from "../../db/statements/filings_discover.sql?raw";
@@ -18,6 +20,7 @@ import usageAdd from "../../db/statements/usage_add.sql?raw";
 import companiesForMarket from "../../db/queries/companies_for_market.sql?raw";
 import companiesForMarketAll from "../../db/queries/companies_for_market_all.sql?raw";
 import companiesOutsideUniverse from "../../db/queries/companies_outside_universe.sql?raw";
+import companiesPruneCounts from "../../db/queries/companies_prune_counts.sql?raw";
 import companiesUniverse from "../../db/queries/companies_universe.sql?raw";
 import companyGet from "../../db/queries/company_get.sql?raw";
 import backfillCompanies from "../../db/queries/backfill_companies.sql?raw";
@@ -61,6 +64,8 @@ export const STATEMENTS: Record<string, string> = {
   cards_release_pruned: cardsReleasePruned,
   cards_apply_verdicts: cardsApplyVerdicts,
   companies_upsert: companiesUpsert,
+  companies_prune: companiesPrune,
+  catalysts_prune: catalystsPrune,
   companies_seen: companiesSeen,
   catalysts_upsert: catalystsUpsert,
   runs_upsert: runsUpsert,
@@ -93,6 +98,7 @@ export const QUERIES: Record<string, string> = {
   companies_for_market: companiesForMarket,
   companies_outside_universe: companiesOutsideUniverse,
   companies_universe: companiesUniverse,
+  companies_prune_counts: companiesPruneCounts,
   companies_for_market_all: companiesForMarketAll,
   export_cards: exportCards,
   export_companies: exportCompanies,

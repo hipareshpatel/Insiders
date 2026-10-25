@@ -23,6 +23,12 @@
 #   with gaps only, in four shards (job `gaps`, 5 h, resumes by itself: a company already tried is not tried again;
 #   `restart` tries them all again), and the before / after counts. It reads NSE like seed-memory and shares its group,
 #   so it never runs beside a seed pass; do not start it while a seed pass is queued (the group keeps one waiting run).
+# - prune-companies: compares the companies table with NSE's equity list and SME list (no writes) and reports the rows to
+#   remove by type (BSE-only equity, mutual fund / ETF, REIT / InvIT, SME) with the memory and ledger rows each holds, and
+#   the rows kept because they hold cards or are starred; the JSON and CSV go up as the artifact `prune-companies`.
+#   prune-companies-apply: the same, then writes a backup of every row it removes (and its memory file) to R2
+#   backup/prune-companies-<date>.json, reads it back, and only then deletes the company rows with no cards and their
+#   memory files (owner, 25 Oct 2026; F158). Run the dry run first and read it.
 # - label-memory: reads every stored memory (and the cards' XBRL tables; no NSE, no writes) and counts what the one-off
 #   labelling would give each item (file / ai / calc / unknown) per section; the JSON goes up as the artifact `label-memory`.
 #   label-memory-apply: the same, then writes each changed memory back through the safe three-way merge, resuming after the
@@ -37,7 +43,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, label-memory, label-memory-apply]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -136,6 +142,26 @@ jobs:
         with:
           name: memory-gaps
           path: ${{ runner.temp }}/gaps/
+          if-no-files-found: ignore
+      - name: Prune companies (dry run, reads only)
+        if: inputs.command == 'prune-companies'
+        run: |
+          code=0
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel prune-companies --json "$RUNNER_TEMP/prune-companies.json" --csv "$RUNNER_TEMP/prune-companies.csv" || code=$?
+          mkdir -p "$RUNNER_TEMP/prune" && cp "$RUNNER_TEMP"/prune-companies.* "$RUNNER_TEMP/prune/" || true
+          exit "$code"
+      - name: Prune companies (backup to R2, then remove)
+        if: inputs.command == 'prune-companies-apply'
+        run: |
+          code=0
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel prune-companies --apply --json "$RUNNER_TEMP/prune-companies.json" --csv "$RUNNER_TEMP/prune-companies.csv" || code=$?
+          mkdir -p "$RUNNER_TEMP/prune" && cp "$RUNNER_TEMP"/prune-companies.* "$RUNNER_TEMP/prune/" || true
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && (inputs.command == 'prune-companies' || inputs.command == 'prune-companies-apply')
+        with:
+          name: prune-companies
+          path: ${{ runner.temp }}/prune/
           if-no-files-found: ignore
       - name: Label memory (dry run, counts only)
         if: inputs.command == 'label-memory'

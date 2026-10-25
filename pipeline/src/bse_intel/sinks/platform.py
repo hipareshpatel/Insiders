@@ -108,6 +108,11 @@ class PlatformSink(Sink):
         resp.raise_for_status()
         return resp.content
 
+    def delete_object(self, key):
+        resp = self._request("DELETE", f"/objects/{quote(key)}")
+        if resp.status_code != 404:
+            resp.raise_for_status()
+
     def put_object(self, key, body, content_type="application/json"):
         resp = self._request("PUT", f"/objects/{quote(key)}", content=body, headers={"Content-Type": content_type})
         resp.raise_for_status()

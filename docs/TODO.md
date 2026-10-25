@@ -47,6 +47,26 @@ This list holds only the first-principles review's items (`docs/FROM_ZERO.md`). 
 | 19 | A filing whose PDF is not there yet waits and is tried again over the next day, instead of three tries in about two hours | Filings given up while NSE was still uploading the file | Yes (25 Oct) | Built (F132): waits 24 h. Checked 3 of the 17: ARIS too large (batch 1), CGCL there now, XTRANET's file still 0 bytes on NSE two days on (an empty upload; it now fails once with that reason). How fast NSE adds files was not measurable from the failed list |
 | 20 | Fix the 4 code crashes, each with a test | 4 filings with no card, from our own bugs | Yes (25 Oct) | Built (F133); a crash now records the line it came from |
 
+### Step 1 checks (owner's answers a-h, 25 Oct 2026)
+
+| | Check | Result |
+|---|---|---|
+| a | The 25 requeued filings get cards | Requeued 25 Oct 10:44 UTC; checked at 10 PM IST (scheduled) |
+| b | NSE's daily list on a busy results day | Scheduled for 26 Oct, 10 PM IST |
+| c | The 3 "empty file" failures | Measured 25 Oct: Apollo Hospitals' and Hindustan Zinc's PDFs are **cut short on NSE itself** (3.47 of 12.45 MB, 0.33 of 4.40 MB; no end of file, NSE's own Content-Length matches the short file). Sun Pharma's is a ZIP of two scanned pages (now read, F132; OCR needed). Item 25 |
+| d | A PDF NSE adds after the filing is listed | Confirmed in code: a filing first listed with no file never picks up a later one (`_attachment_changed` counts "no attachment" as no change) and its card is written from the title. Rare: on 23 Oct 2 of 601 rows had no file, both NSE's own questions to companies. Item 26 |
+| e | How late the results figure file comes | Measured 25 Oct, 45 companies' Sep-2026 results: the figure file came a median **132 minutes** after the PDF, 75% within 225 min, 90% within 364 min, the latest 504 min; **16 of 45 (36%) after our 3-hour wait**, so those cards are first made from the PDF alone, and the results catch-up reads them again once the file lands (`event_catchup.results_catch_up`, 10 days) |
+| f | Corrected (revised) results | Handled: NSE's list marks a revision and it replaces the original for the quarter and basis (`nse.py`), and the results catch-up re-reads a card whose file was revised within 10 days |
+| g | 28 filings failed on AI capacity | Built (F134): they now wait up to about a day for the quota; the writer whose replies did not parse left the long route |
+| h | Runs take ~41 minutes | By design: each run fills its 40-minute budget with older work; today's filings were done ~5 minutes in, but waited ~42 minutes for the next run. Built (F135): a quick 15-minute run for today; the memory sweeps hourly |
+| - | Can GitHub's machines reach BSE? (owner's question) | Measured 25 Oct from GitHub (runner in the US, `probe-bse`) and from this session: BSE's website answers (200), its data API refuses ("Access Denied", 403) for both announcements and results. BSE stays off the online path |
+| - | Do real figure files add up? (item 23) | Measured 25 Oct, 166 files of 60 random companies (both formats, all templates): 3,355 official sums checked, **one** real mismatch (Master Trust Dec 2024: a broker's expense lines outside the Ind AS sums) and 8 segment-asset totals. Wrongly tagged files are rare: the sums are a safety net, not a big source of fixes |
+
+| # | Improvement | What it fixes | Owner | State |
+|---|---|---|---|---|
+| 25 | A PDF cut short on NSE (no end of file, no pages) is told apart: wait for NSE to replace it, then fail once with "file cut short on NSE (X of Y MB)" | Apollo Hospitals' amalgamation and Hindustan Zinc's presentation failed as "empty"; the reason was invisible | - | Proposed |
+| 26 | A filing listed with no file picks up the file when NSE adds it (and is read again if its card came from the title alone) | A card written from the title when the PDF came later | - | Proposed (rare) |
+
 Build order (owner, 25 Oct 2026): next batch = items 18, 19, 20 (small); then **23** official definitions, then **10 + 3** memory clean-up, then **22** metrics table. Earlier: **batch 1** = items 1, 2, 6, 7 (small, independent; 5 moved to step 2, 9 needed no work); **batch 2** = items 10 then 3 (they change how memory works, so they are built and measured on their own).
 
 ## Step 2: reading the file (to discuss)

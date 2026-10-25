@@ -935,15 +935,9 @@ context_tokens = 900000
 extra_body = { reasoning_effort = "low" }
 limits = { rpm = 15, tpm = 250_000, rpd = 500 }
 
-[[routes.pass2_long]]
-provider = "openrouter"
-model = "nvidia/nemotron-3.5-super-vl:free"
-spare = true
-json_mode = true
-max_tokens = 8000
-context_tokens = 250000
-extra_body = { reasoning = { enabled = false } }   # thinking off (D21)
-limits = { rpm = 10 }
+# Nemotron 3.5 Super VL taken off pass2_long (owner, 25 Oct 2026): on long prompts its JSON does not parse after repair,
+# and that failure, beside a ceiling or a 429 elsewhere, spent the filing's attempt (7 of the 28 AI failures in the
+# failed-filings report). It stays on the other routes.
 
 # Gemma 4 31B (OpenRouter, free; owner 24 Oct 2026: "use it ... even if it works"): a named spare after the primaries,
 # for when Gemini's day is spent. Probed right 2026-10-19; off the card routes then for supply (28 429s in 40 min),

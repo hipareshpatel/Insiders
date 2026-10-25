@@ -690,7 +690,7 @@ def test_near_the_free_write_cap_a_live_run_only_makes_cards(settings, monkeypat
 
 def test_a_spare_writer_failing_while_the_better_ones_are_at_their_day_waits_for_them(settings):
     """21 Oct: with Gemini at its day until 12:30 IST, the one spare on the long route failed and 12 filings a run spent
-    an attempt. A failure while a better writer sat at its ceiling defers the filing up to MAX_DEFERRALS runs; a failure
+    an attempt. A failure while a better writer sat at its ceiling defers the filing up to MAX_QUOTA_DEFERRALS runs; a failure
     with every writer tried is the filing's and spends an attempt at once."""
     from bse_intel.ai.gateway import CEILING, FAILED, AllProvidersFailed
 
@@ -710,7 +710,7 @@ def test_a_spare_writer_failing_while_the_better_ones_are_at_their_day_waits_for
     pipeline.run("live", time_budget_s=60)
     (row,) = rows(sink, "select status, attempts, last_error from filings where news_id = 'q'")
     assert (row["status"], row["attempts"]) == ("PENDING", 0) and row["last_error"].startswith("deferred 1x: the better writers")
-    sink._db.execute("UPDATE filings SET last_error = 'deferred 3x: the better writers are at their day' WHERE news_id = 'q'")
+    sink._db.execute("UPDATE filings SET last_error = 'deferred 40x: the better writers are at their day' WHERE news_id = 'q'")
     pipeline._tried.clear()
     pipeline.run("live", time_budget_s=60)
     (row,) = rows(sink, "select status, attempts from filings where news_id = 'q'")
@@ -840,3 +840,25 @@ def test_a_crash_keeps_where_it_happened_and_the_four_crashes_of_25_oct_are_gone
     assert latest_fundamentals(dossier)["debt"]["value"] in (4.0, 5.0)
     # L&T Finance: an infinite ratio has no move
     assert _bps(math.inf, 1.0) == (0, 0)
+
+
+def test_today_can_be_read_by_its_own_quick_run_and_the_memory_sweeps_run_hourly(settings, monkeypatch):
+    """Owner, 25 Oct 2026: a new filing waited ~42 min for the next 41-minute run. PIPELINE_TODAY=only reads today's
+    filings and stops; PIPELINE_TODAY=skip reads the earlier days first and today last."""
+    from test_pipeline import build
+
+    pipeline, sink, _ = build(settings, [], {}, {})
+    read = []
+    pipeline.process = lambda day_from, day_to, *a, **k: read.append((day_from, day_to))
+    pipeline._backfill = lambda *a, **k: read.append("backfill")
+    today = now_ist().date().isoformat()
+    monkeypatch.setenv("PIPELINE_TODAY", "only")
+    pipeline.run("live", time_budget_s=60)
+    assert read == [(today, today)]
+    read.clear()
+    monkeypatch.setenv("PIPELINE_TODAY", "skip")
+    pipeline.run("all", time_budget_s=60)
+    assert read[1] == (today, today) and read[0] != read[1] and read[-1] == "backfill"   # today last, as a safety net
+    assert pipeline._memory_syncs_due() is True and pipeline._memory_syncs_due() is False   # once in the hour
+    sink.kv_set("memory_syncs:last", "2020-01-01T00:00:00+05:30", "x")
+    assert pipeline._memory_syncs_due() is True

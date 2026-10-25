@@ -786,3 +786,31 @@ def test_the_results_table_survives_a_quarter_worked_out_from_the_half_year():
     ]}
     snap = results_snapshot(dossier, "n2")
     assert snap["ebitda"]["value"] == 100.0 and "value" in snap["ebitda"]["derived"]
+
+
+def test_the_results_table_takes_a_lines_three_columns_from_one_source():
+    """Union Bank Q2FY27 (review of 90 tables, 25 Oct 2026): the tagged file gives profit before associates (₹5,570.40 Cr,
+    a year ago ₹4,281.27 Cr), the statement profit after them (₹5,781 Cr, ₹4,425.95 Cr); the table set ₹5,570.40 Cr
+    against ₹4,425.95 Cr. Each line now takes all three columns from one source; EBITDA is the company's own when this
+    filing gives it (owner's option a)."""
+    from bse_intel.dossier import results_snapshot
+
+    def src(news_id, value):
+        return {"news_id": news_id, "value": value, "as_of": "2026-10-20T18:00:00+05:30", "basis": "CONSOLIDATED"}
+
+    x = "xbrl:res:532477:"
+    dossier = {"financial_metrics": [
+        {"metric": "pat", "period": "Q2FY27", "value": 5570.4, "sources": [src("n", 5781.0), src(x + "Q2FY27", 5570.4)]},
+        {"metric": "pat", "period": "Q2FY26", "value": 4281.27, "sources": [src(x + "Q2FY26", 4281.27), src("n", 4425.95)]},
+        {"metric": "pat", "period": "Q1FY27", "value": 5368.17, "sources": [src(x + "Q1FY27", 5368.17), src("n", 5641.52)]},
+        {"metric": "revenue", "period": "Q2FY27", "value": 30000.0, "sources": [src(x + "Q2FY27", 30000.0)]},
+        {"metric": "ebitda", "period": "Q2FY27", "value": 160.0, "sources": [src(x + "Q2FY27", 160.0), src("n", 208.0)]},
+        {"metric": "ebitda", "period": "Q2FY26", "value": 120.0, "sources": [src(x + "Q2FY26", 120.0), src("n", 166.0)]},
+        {"metric": "eps", "period": "Q2FY27", "value": 7.3, "sources": [src(x + "Q2FY27", 7.3)]},
+    ]}
+    snap = results_snapshot(dossier, "n")
+    assert (snap["pat"]["value"], snap["pat"]["prev_year"], snap["pat"]["prev_quarter"]) == (5570.4, 4281.27, 5368.17)
+    assert (snap["ebitda"]["value"], snap["ebitda"]["prev_year"]) == (208.0, 166.0)      # the company's printed EBITDA
+    # a comparative the chosen source lacks is not taken from the other when both give the quarter differently
+    dossier["financial_metrics"][1]["sources"] = [src("n", 4425.95)]
+    assert "prev_year" not in results_snapshot(dossier, "n")["pat"]

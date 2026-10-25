@@ -1729,6 +1729,17 @@ def _beside(a: float, b: float, sequence: list[float], unit: float, near: float 
                for n in sequence[max(0, i - ROW_WINDOW): i + ROW_WINDOW + 1])
 
 
+def _from_source(sources: list[dict], source: str, news_id: str, basis: str | None) -> float | None:
+    """A figure as one source gives it: "xbrl" the company's tagged file, "filing" this filing's own reading."""
+    for src in sources:
+        nid = str(src.get("news_id") or "")
+        if src.get("value") is None or (basis and src.get("basis") not in (None, basis)):
+            continue
+        if (source == "xbrl" and nid.startswith(XBRL_SOURCE)) or (source == "filing" and nid == news_id):
+            return src["value"]
+    return None
+
+
 def _mover(out: dict, lookup, periods: dict) -> tuple[str, tuple[str, ...], str] | None:
     """The one line that moved a company's profit most year on year, when that move is significant (O15, owner
     2026-10-20); None when profit barely moved or no single line carried it. Values come from the table's own lookup,
@@ -1827,20 +1838,50 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             return (derived, derived["value"]) if derived else (None, None)
         if not entry:
             return None, None
-        # the comparative this filing prints wins over what an earlier filing said for that quarter: a regrouped
-        # year-ago column (Man Industries' Q1FY26 EBITDA ₹75.80 Cr here, ₹49.11 Cr in last year's own XBRL, made
-        # +192% of +89%; live review 3)
+        # One source for a line's three columns (owner, 25 Oct 2026, after the review of 90 tables): the company's
+        # tagged file (XBRL) or this filing's own reading, never the quarter from one and its comparatives from the
+        # other. A bank's file tags profit before associates (Union Bank Q2FY27 ₹5,570.40 Cr, a year ago ₹4,281.27 Cr)
+        # and its statement prints profit after them (₹5,781 Cr, ₹4,425.95 Cr): the table set ₹5,570.40 Cr against
+        # ₹4,425.95 Cr. The file is the source when it has the quarter (HDFC Life's card read the standalone PAT ₹508 Cr
+        # where the consolidated file says ₹521.60 Cr; hourly review, 22 Oct 2026); EBITDA and its margin are the
+        # company's own printed figures when this filing gives them (owner's option a: the file's EBITDA is ours,
+        # without other income, where Lumax, Solara and Bansal Wire print theirs with it). A comparative the chosen
+        # source lacks comes from the other unless both give the quarter and differ (two definitions), so this filing's
+        # regrouped year-ago column still wins over last year's own file (Man Industries' Q1FY26 EBITDA ₹75.80 Cr
+        # against ₹49.11 Cr; live review 3).
         sources = _sources(entry)
         kept = {src.get("basis") for src in sources} - {None}
         basis = "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)   # as _metric_entry keeps it
-        own = next((src for src in sources if src.get("news_id") == news_id and src.get("value") is not None
-                    and src.get("basis") in (None, basis)), None)
-        if p == period and any(str(src.get("news_id", "")).startswith(XBRL_SOURCE) for src in sources):
-            # this quarter's own figure: the company's tagged file over the card's reading of the PDF. HDFC Life's card
-            # read the standalone PAT ₹508 Cr where the consolidated file says ₹521.60 Cr, against consolidated
-            # comparatives (hourly review, 22 Oct 2026)
-            own = None
-        return entry, own["value"] if own is not None else entry["value"] if entry.get("value") is not None else None
+        source = line_source(names)
+        value = _from_source(sources, source, news_id, basis)
+        if value is None and p != period:
+            other = "filing" if source == "xbrl" else "xbrl"
+            alt = _from_source(sources, other, news_id, basis)
+            if alt is not None:
+                value = None if differ(names) else alt
+            else:
+                value = entry.get("value")   # an earlier filing's figure, neither source's: as before
+        elif value is None:
+            value = entry.get("value")
+        return entry, value
+
+    def current_sources(names: tuple[str, ...]) -> list[dict]:
+        entry = next((table[(n, period)] for n in names if (n, period) in table), None)
+        return _sources(entry) if entry else []
+
+    def line_source(names: tuple[str, ...]) -> str:
+        srcs = current_sources(names)
+        filing = any(src.get("news_id") == news_id and src.get("value") is not None for src in srcs)
+        tagged = any(str(src.get("news_id") or "").startswith(XBRL_SOURCE) and src.get("value") is not None for src in srcs)
+        if names[0] in CALL_OWN_DEFINITION and filing:
+            return "filing"
+        return "xbrl" if tagged else "filing"
+
+    def differ(names: tuple[str, ...]) -> bool:
+        """Whether both sources give this quarter and give it differently: two definitions of the line."""
+        srcs = current_sources(names)
+        a, b = _from_source(srcs, "xbrl", news_id, None), _from_source(srcs, "filing", news_id, None)
+        return a is not None and b is not None and abs(a - b) > max(0.01, ROUNDING * 10 * abs(a))
 
     def refused(names: tuple[str, ...], p: str | None, alone: bool = False) -> bool:
         """An earlier filing's figure for a quarter this statement restates: Kapston's year-ago EPS ₹3.48 before its

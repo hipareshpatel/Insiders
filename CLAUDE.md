@@ -50,8 +50,12 @@ Read before changing anything:
 - BSE (measured 25 Oct 2026): from a GitHub runner the ported adapter
   (`pipeline/src/bse_intel/adapters/bse.py`, Python requests with BSE's own page headers) got 200 on all 16 calls of
   `bse-results-test` (maintenance run 40189201441); a bare curl probe with similar headers got 403 an hour earlier.
-  BSE stays an off-path backup (its results figures match NSE's, 7 of 7 companies). The old ban on a headless-browser
-  fallback was removed by the owner (25 Oct 2026); the adapter-fidelity rules at the top of this file apply.
+  BSE stays an off-path backup (its results figures match NSE's, 7 of 7 companies).
+- Headless browser automation (Selenium/Chrome) is prohibited by default, to save runner resources and run time
+  (owner, 25 Oct 2026). It is permitted only as an isolated fallback for one specific source, and only if:
+  1. standard HTTP with valid browser headers consistently fails because the source requires client-side JavaScript
+     to run, and
+  2. the exception is explicitly scoped to that one adapter.
 - Cloudflare is on Workers Paid ($5 a month, owner, 22 Oct 2026, D40): D1's write and read budgets follow the plan, not the free
   tier. Every other paid upgrade must stay off, with one exception the owner chose: the prepaid DeepSeek balance
   (`DEEPSEEK_API_KEY`, decision D24) that speeds up the backfill. The steady state must still cost $0,

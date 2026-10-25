@@ -225,3 +225,20 @@ def test_the_d1_plan_switch_sets_the_write_budget(monkeypatch):
     assert Settings().d1_daily_write_budget == 80_000
     monkeypatch.setenv("D1_DAILY_WRITE_BUDGET", "50000")     # an explicit budget still wins
     assert Settings().d1_daily_write_budget == 50_000
+
+
+def test_a_filing_listed_without_a_file_is_read_again_when_nse_adds_it(settings):
+    """Owner, 25 Oct 2026: a filing first listed with no file never picked up the one NSE added later, and its card came
+    from the title alone. Now it is queued again with the file, at once (no ATTACHMENT_REQUEUE needed)."""
+    when = now_ist() - timedelta(days=1)
+    bare = _filing("n-late", "Outcome of Board Meeting", when, "Company Update").model_copy(update={"pdf_url": None})
+    pipeline, sink, _ = build(settings, [bare], {}, {})
+    assert pipeline.discover(when.date()) == 1
+    sink.execute("filings_update", [{"news_id": "n-late", "status": "ANALYZED", "attempts": 1, "updated_at": "t"}])
+    pipeline.bse = FakeBse([bare.model_copy(update={"pdf_url": "https://bse.invalid/n-late.pdf"})], {})
+    pipeline.discover(when.date())
+    (row,) = rows(sink, "select status, attempts, pdf_url from filings")
+    assert row == {"status": "PENDING", "attempts": 0, "pdf_url": "https://bse.invalid/n-late.pdf"}
+    after = pipeline.stats.d1_rows_written
+    pipeline.discover(when.date())                                   # the file is now stored: nothing more
+    assert pipeline.stats.d1_rows_written == after

@@ -32,6 +32,18 @@ Who owns what (laptop's proposal, accepted by the cloud 2026-10-19):
 
 ---
 
+## T26 · cloud · DONE — port the reference BSE client as an off-path adapter (owner, 25 Oct 2026)
+
+Ported from Pareshking/NSE-BSE-Insider-Tracker (`collectors/bse/client.py` at d2a929e, `ixbrl_facts` from `parsers.py`)
+into `pipeline/src/bse_intel/adapters/bse.py`: endpoints and parameters, headers, session, 4-6 s pace, retries, stops,
+raw copy, JSON and inline-XBRL parsing as written; typing, logged failures and `safely()` for batch runners added. Left
+out: the reference's headless-Chrome fallback after a refusal (a way round BSE's refusal, against CLAUDE.md). Nothing
+on the NSE path calls it. Test: `tests/test_bse_adapter.py` (request contract, headers, pacing, retries, stops,
+parsing). Measured 25 Oct: from the cloud session's machine (US), with these headers announcements and bulk deals
+answer 200, without Origin/Sec-Fetch-Site 403; from GitHub's runners (`probe-bse` with these headers) 403 "Access
+Denied" either way. So the adapter serves a machine BSE lets in (a laptop in India, a self-hosted runner), not the
+GitHub pipeline.
+
 ## T25 · P1 · laptop · OPEN — live review 5's classes in your files (today's production cards)
 
 Live review 5 (`docs/audit/live/2026-10-20-review5.md`, findings in `.json`): 5 of 32 WRONG (15.6%; review 3 was 26%).

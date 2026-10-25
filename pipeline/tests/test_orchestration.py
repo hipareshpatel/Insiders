@@ -862,3 +862,23 @@ def test_today_can_be_read_by_its_own_quick_run_and_the_memory_sweeps_run_hourly
     assert pipeline._memory_syncs_due() is True and pipeline._memory_syncs_due() is False   # once in the hour
     sink.kv_set("memory_syncs:last", "2020-01-01T00:00:00+05:30", "x")
     assert pipeline._memory_syncs_due() is True
+
+
+def test_a_pdf_cut_short_on_nse_waits_and_then_fails_with_that_reason(settings):
+    """Owner, 25 Oct 2026: Apollo Hospitals' and Hindustan Zinc's PDFs are cut short on NSE itself (no end of file) and
+    failed as "empty"."""
+    from bse_intel.extract import Document
+    from test_pipeline import _filing as make, _pdf, build
+
+    whole = _pdf("Outcome of the board meeting")
+    short = whole[: len(whole) // 3]
+    assert Document(short).error.startswith("cut short") and Document(whole).error is None
+    now = now_ist()
+    young = make("n-short", "Outcome of Board Meeting", now - timedelta(hours=1), "Company Update")
+    old = make("n-short-old", "Outcome of Board Meeting", now - timedelta(days=2), "Company Update")
+    pipeline, sink, fake = build(settings, [young, old], {young.pdf_url: short, old.pdf_url: short}, {})
+    out = pipeline._process_one(young, bulk=False, memory_complete=True)
+    assert out.update["status"] == "PENDING" and "cut short on NSE" in out.update["last_error"]
+    out = pipeline._process_one(old, bulk=False, memory_complete=True)
+    assert out.update["status"] == "FAILED" and out.update["attempts"] == settings.max_attempts
+    assert "cut short on NSE" in out.update["last_error"]

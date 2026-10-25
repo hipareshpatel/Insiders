@@ -183,6 +183,11 @@ def unzip_pdfs(data: bytes) -> tuple[bytes | None, str | None]:
     return merged, None if merged else "a ZIP whose PDFs are all unreadable"
 
 
+def cut_short(data: bytes) -> bool:
+    """A PDF whose end-of-file marker is missing: the download, or the file NSE holds, stops part-way."""
+    return data[:5] == b"%PDF-" and b"%%EOF" not in data[-2048:]
+
+
 class Document:
     def __init__(self, pdf_bytes: bytes | None, ocr: OcrFn | None = None, max_ocr_pages: int = 6, dpi: int = OCR_DPI,
                  figure_reader: OcrFn | None = None, max_figure_pages: int = 12):
@@ -233,6 +238,10 @@ class Document:
         except Exception as exc:  # corrupt PDF, or a non-PDF attachment (xml, zip, xlsx)
             self.error = f"unreadable attachment: {exc}"
             log.warning(self.error)
+        if not self._digital and cut_short(pdf_bytes):
+            # NSE serves some files cut short (Apollo Hospitals' 20 May 2026 outcome: 3.47 of 12.45 MB, no end of file;
+            # owner, 25 Oct 2026): told apart from a scan or a broken file, so the filing can wait for NSE to fix it
+            self.error = f"cut short: {len(pdf_bytes) / 1e6:.2f} MB with no end of file"
 
     def to_cache(self) -> dict:
         """Everything read from the PDF (digital text and the pages OCR'd so far), for the text cache."""

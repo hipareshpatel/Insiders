@@ -64,8 +64,8 @@ This list holds only the first-principles review's items (`docs/FROM_ZERO.md`). 
 
 | # | Improvement | What it fixes | Owner | State |
 |---|---|---|---|---|
-| 25 | A PDF cut short on NSE (no end of file, no pages) is told apart: wait for NSE to replace it, then fail once with "file cut short on NSE (X of Y MB)" | Apollo Hospitals' amalgamation and Hindustan Zinc's presentation failed as "empty"; the reason was invisible | - | Proposed |
-| 26 | A filing listed with no file picks up the file when NSE adds it (and is read again if its card came from the title alone) | A card written from the title when the PDF came later | - | Proposed (rare) |
+| 25 | A PDF cut short on NSE (no end of file, no pages) is told apart: wait for NSE to replace it, then fail once with "file cut short on NSE (X of Y MB)" | Apollo Hospitals' amalgamation and Hindustan Zinc's presentation failed as "empty"; the reason was invisible | Yes (25 Oct) | Built (F136) |
+| 26 | A filing listed with no file picks up the file when NSE adds it (and is read again if its card came from the title alone) | A card written from the title when the PDF came later | Yes (25 Oct) | Built (F136) |
 
 Build order (owner, 25 Oct 2026): next batch = items 18, 19, 20 (small); then **23** official definitions, then **10 + 3** memory clean-up, then **22** metrics table. Earlier: **batch 1** = items 1, 2, 6, 7 (small, independent; 5 moved to step 2, 9 needed no work); **batch 2** = items 10 then 3 (they change how memory works, so they are built and measured on their own).
 
@@ -74,7 +74,7 @@ Build order (owner, 25 Oct 2026): next batch = items 18, 19, 20 (small); then **
 | # | Improvement | What it fixes | Owner | State |
 |---|---|---|---|---|
 | 11 | EBITDA: when the company prints EBITDA (press release or slides), show theirs with its own label; when it does not, show ours marked "calculated by us". Our formula stays: profit before exceptional items and tax + interest + depreciation − other income (the owner's note of 25 Oct gives the same formula); none for banks and NBFCs | Cards set our EBITDA against a company's printed one with a different definition (Lumax, Bansal Wire, Solara and others) | Yes (owner, 25 Oct): label ours "Operating EBITDA (calculated)" and show what it leaves out (other income ₹X Cr) | Step 2 |
-| 12 | Group EBITDA leaves out the share of associates' and joint ventures' profit (owner's note, 25 Oct: Ind AS 28, they are not line-by-line). Subtract it only when the profit we start from includes it, which differs by file; check that per file, never assume | "Profit before vs after associates" was one of the results-table mistakes | Yes (owner, 25 Oct) | Step 2 |
+| 12 | (Built: F137, PR #111) Group EBITDA leaves out the share of associates' and joint ventures' profit (owner's note, 25 Oct: Ind AS 28, they are not line-by-line). Subtract it only when the profit we start from includes it, which differs by file; check that per file, never assume | "Profit before vs after associates" was one of the results-table mistakes | Yes (owner, 25 Oct) | Step 2 |
 | 13 | Official lines (revenue, profit, interest, tax): the PDF's figure is shown, read with care for the unit (lakh or crore) and the basis (standalone or consolidated); the figure file is the second witness, and a line the two disagree on is held, not published | 98.5% per figure is about 64% for a 30-figure table to be all right; the figure file is exact | Yes (owner, 25 Oct: PDF, hold on disagreement) | With item 23 |
 
 Not taken: EBITDA from Yahoo (the owner's note mentions it). It is not an exchange file (item 3), and Yahoo's own
@@ -108,3 +108,27 @@ Fixes to the sample itself, found on review:
 | # | Improvement | What it fixes | Owner | State |
 |---|---|---|---|---|
 | 24 | **Audit pending.** Run the full audit once every item above is built: part 1 (checked) right / WRONG against the 5% bar; part 2 (AI reading) reasonable / unreasonable against **30%** for now. The owner will set the final part 2 bar from that audit's results | We do not yet know where the new card stands | 30% for now (owner, 25 Oct) | Audit pending, last |
+
+## Other work the owner asked for (25 Oct 2026)
+
+| # | Improvement | Owner | State |
+|---|---|---|---|
+| 27 | Port the reference repository's BSE client as an off-path adapter (TASKS T26) | Asked | Built (F138), PR #111. Its headless-browser fallback left out (CLAUDE.md). Measured: GitHub's runners are refused even with BSE's own page headers; the cloud session's machine is let in with them. Usable from a machine BSE lets in, not from the GitHub pipeline |
+
+## Item 13 measured (25 Oct 2026): what "hold a line the PDF does not print" would do
+
+38 Sep-2026 results, 438 official lines from the figure files, PDF text layer only (no OCR), every miss classified by
+an independent agent (`scratchpad` table summarised here):
+- 308 lines (70%) the PDF prints exactly.
+- 130 not found: 81 the PDF's statement page has no usable text (scans, garbled layers: OCR would read most; the
+  pipeline OCRs figure pages, this measurement did not), 24 printed in a form our matcher misses ("1.253.52",
+  "935,20", letters for digits), 10 a wrong PDF (a voting result), **15 real definition differences, 0 different
+  figures for the same line**.
+- The 15 real ones would put a wrong line on a card: "other expenses" tagged as the sum of several printed expense
+  lines (Wipro ₹5,008 Cr where the statement's "Other expenses" is (174); Shree Cement, NELCO, NECC, OFSS, MHRIL), profit
+  before tax before the associates' share where the statement prints it after (Bajaj Finance, ixigo), and tax given as
+  one total where the statement prints current and deferred tax only (Oberoi Realty, Heritage, CCL, HFCL, GNA).
+- So the rule as written would hold about 8 right lines for each wrong one. Next, before it is switched on: OCR for
+  the figure pages (as the pipeline already does), a number normaliser for the matcher misses, and per line: "other
+  expenses" shown only when the statement prints that figure, tax as current + deferred when that is what is printed,
+  profit before tax as printed (`settle_pbt` already does this for the card's line).

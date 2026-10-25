@@ -712,7 +712,10 @@ def owners_share(values: dict) -> int:
     # with no minority share in the file, owners cannot have more than the whole profit: D.B. Corp's Q4FY26 file tags
     # its total comprehensive income ₹63.98 Cr as the owners' profit beside a ₹62.19 Cr profit (held-card audit,
     # 22 Oct 2026: the card's headline said "net profit to shareholders ₹63.98 Cr")
-    with_minority = {label for metric, label in values if metric == "pat_minority"}
+    # A 0 minority is the template's filler, not a share (IREDA's Q2FY26 file tags 0 beside owners 614.76 on a 549.33
+    # profit: the owners' tag holds the total comprehensive income, F155), so it does not excuse an owners' figure above
+    # the profit.
+    with_minority = {label for (metric, label), v in values.items() if metric == "pat_minority" and v}
     for (metric, label), owners in list(values.items()):
         profit = values.get(("pat", label))
         if metric == "pat_owners" and label not in with_minority and profit is not None and profit > 0 \

@@ -65,6 +65,15 @@ def card_two_parts() -> bool:
     return (_env("CARD_TWO_PARTS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_same_definition() -> bool:
+    """CARD_SAME_DEFINITION (default off; F155): a line's year-ago and previous-quarter figures are shown only when they
+    are on the definition of the figure beside them. Piramal Finance's Q2FY27 release headlines profit before tax 580
+    (after the associates' share) while memory's previous quarter, 344.12, is the file's, before it: the card said
+    +68.5% where the release's own 443 gives +31%. Where the figure shown matches no file-tagged source and
+    another source for the quarter states a different one, the changes are left off. Read at the call."""
+    return (_env("CARD_SAME_DEFINITION", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_consolidated_only() -> bool:
     """CARD_CONSOLIDATED_ONLY (default off; TODO 44, F154; owner, 25 Oct 2026: consolidated first, standalone kept from the
     AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the

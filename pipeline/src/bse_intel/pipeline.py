@@ -63,6 +63,7 @@ from .card_context import case_stage, guidance_recall, memory_context, rating_ch
 from .call_summary import remember_call_points, card_takeaways, check_ai_takeaways
 from .prices import PriceStore, point_in_time
 from .signals import priced_for
+from .sinks.platform import PlatformSink
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
 from . import annual_xbrl
@@ -131,6 +132,15 @@ def evidence_key(news_id: str) -> str | None:
     """Where a card's evidence is kept: evidence/{news_id}.json.gz (the id cut to safe characters)."""
     safe = "".join(ch for ch in news_id if ch.isalnum() or ch in "-_")[:120]
     return f"{EVIDENCE_PREFIX}{safe}.json.gz" if safe else None
+TEXT_PREFIX = "text/"   # F147: each filing's extracted text, kept 6 months (R2 lifecycle rule, deploy-web.yml)
+
+
+def text_key(news_id: str) -> str:
+    """Where a filing's text is kept in R2: text/{news_id}.json.gz (the id cut to the same safe characters as the local file)."""
+    safe = "".join(ch for ch in news_id if ch.isalnum() or ch in "-_")[:80]
+    return f"{TEXT_PREFIX}{safe}.json.gz"
+
+
 SNAPSHOT_KEY = "daily_feed/latest_snapshot.json"
 SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
 SNAPSHOT_PAGE = 50        # the feed's page size
@@ -3060,14 +3070,38 @@ class Pipeline:
         safe = "".join(ch for ch in news_id if ch.isalnum() or ch in "-_")[:80]
         return root / safe[:2] / f"{safe}.json.gz" if root and safe else None
 
+    def _durable_text(self) -> bool:
+        """True when texts also live in the platform's R2 (F147); local and laptop sinks keep the local cache alone."""
+        return isinstance(self.sink, PlatformSink) and self.settings.text_cache_dir is not None
+
     def _cached_text(self, news_id: str) -> dict | None:
         path = self._cache_path(news_id)
-        if not path or not path.exists():
+        if not path:
+            return None
+        if path.exists():
+            try:
+                return json.loads(gzip.decompress(path.read_bytes()))
+            except Exception:  # a damaged cache file is re-read from the source (and from R2 below)
+                pass
+        if not self._durable_text():
+            return None
+        # Not on this runner (the GitHub cache keeps 8 days): the durable copy in R2, kept 6 months (F147)
+        try:
+            body = self.sink.get_object(text_key(news_id))
+            if not body:
+                return None
+            entry = json.loads(gzip.decompress(body))
+        except Exception as exc:  # R2 is the second layer: a miss or a failure re-reads the filing
+            log.warning("durable text read failed for %s: %s", news_id, exc)
             return None
         try:
-            return json.loads(gzip.decompress(path.read_bytes()))
-        except Exception:  # a damaged cache file is re-read from BSE
-            return None
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_suffix(".tmp")
+            tmp.write_bytes(body)
+            tmp.replace(path)
+        except OSError as exc:
+            log.warning("text cache write failed for %s: %s", news_id, exc)
+        return entry
 
     @stages.timed("card_write")
     def _save_evidence(self, filing: Filing, first, final, now: str) -> str | None:
@@ -3096,13 +3130,25 @@ class Pipeline:
         path = self._cache_path(news_id)
         if not path:
             return
+        # mtime 0: the same text always compresses to the same bytes, so an unchanged entry is not sent again
+        body = gzip.compress(json.dumps(doc.to_cache(), ensure_ascii=False).encode(), mtime=0)
+        try:
+            unchanged = path.exists() and path.read_bytes() == body
+        except OSError:
+            unchanged = False
         try:
             path.parent.mkdir(parents=True, exist_ok=True)
             tmp = path.with_suffix(".tmp")
-            tmp.write_bytes(gzip.compress(json.dumps(doc.to_cache(), ensure_ascii=False).encode()))
+            tmp.write_bytes(body)
             tmp.replace(path)  # atomic: an interrupted run never leaves half a file
         except OSError as exc:
             log.warning("text cache write failed for %s: %s", news_id, exc)
+        if unchanged or not self._durable_text():
+            return
+        try:
+            self.sink.put_object(text_key(news_id), body, content_type="application/gzip")
+        except Exception as exc:  # the durable copy is best effort: the filing goes on without it
+            log.warning("durable text not saved for %s: %s", news_id, exc)
 
     def _analyze_document(self, filing, company, industry, doc: Document, bulk: bool, memory_complete: bool) -> Outcome:
         now = now_iso()

@@ -41,3 +41,18 @@ jobs:
       - run: npm run build
       - run: npx wrangler d1 migrations apply bse-index-nse --remote
       - run: npx wrangler deploy
+      # F147: filing texts under text/ in R2 are deleted 180 days after they are written (owner, 25 Oct 2026).
+      # Idempotent: the rule is added only when the bucket's list does not already name it. A token without R2 edit
+      # rights only warns; the deploy above has already gone out.
+      - name: R2 lifecycle, delete text/ after 180 days
+        working-directory: web
+        continue-on-error: true
+        run: |
+          if npx wrangler r2 bucket lifecycle list bse-intelligence 2>&1 | tee /tmp/lifecycle.txt | grep -q "text-180d"; then
+            echo "lifecycle rule text-180d already present"
+          elif npx wrangler r2 bucket lifecycle add bse-intelligence text-180d text/ --expire-days 180 --force; then
+            echo "lifecycle rule text-180d added"
+          else
+            cat /tmp/lifecycle.txt
+            echo "::warning::R2 lifecycle rule text-180d not applied (API token needs R2 edit permission); texts under text/ are NOT auto-deleted until it is"
+          fi

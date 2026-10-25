@@ -42,6 +42,10 @@ Read before changing anything:
   owner calls). Blind audit reviews run on the mid model at least, never the smallest. A task of a few tool calls is
   done directly. Subagents follow every rule here; a fix's author never reviews it.
 
+- Explain everything to the owner in very simple English: short sentences, everyday words, no code names unless asked
+  (owner, 25 Oct 2026). The first-principles review of the whole system, one step at a time, is in
+  `docs/FROM_ZERO.md`: read it before changing how data is collected or processed, and record each step's decision there.
+
 ## How to work
 
 0. **Every claim in the docs about a data source** (it exists, is missing, is blocked, arrives late) carries either

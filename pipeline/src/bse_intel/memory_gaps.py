@@ -19,6 +19,7 @@ import calendar
 import json
 import logging
 import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, timedelta
 
 from .metrics import CONSOLIDATED, STANDALONE, _figures
@@ -28,6 +29,7 @@ from .timeutil import now_iso
 log = logging.getLogger(__name__)
 
 QUARTERS = 8
+READ_WORKERS = 8   # dossiers read at once: 1,855 one after another took 11 minutes over the platform sink
 TRIED_KEY = "memgaps:fill_tried"   # kv: companies a fill already tried (a gap NSE cannot close is not retried each pass)
 
 
@@ -118,9 +120,19 @@ def summarise(companies: dict[str, dict]) -> dict:
     }
 
 
-def survey(sink, scrips: list[str], today: date, quarters: int = QUARTERS) -> dict:
-    """Every company's check, and the summary."""
-    companies = {scrip: check(sink.get_dossier(scrip), today, quarters) for scrip in scrips}
+def survey(sink, scrips: list[str], today: date, quarters: int = QUARTERS, workers: int = READ_WORKERS) -> dict:
+    """Every company's check, and the summary. The dossiers are read ``workers`` at a time (the reads wait on the
+    sink); the result is in ``scrips`` order whatever order the reads finish in, so the output does not change. A read
+    that fails raises, as in a plain loop."""
+    def one(scrip: str) -> dict:
+        return check(sink.get_dossier(scrip), today, quarters)
+
+    if workers <= 1 or len(scrips) <= 1:
+        results = [one(scrip) for scrip in scrips]
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            results = list(pool.map(one, scrips))
+    companies = dict(zip(scrips, results))
     periods = window(today, quarters)
     return {"as_of": today.isoformat(), "latest_quarter": periods[0], "quarters": periods,
             "summary": summarise(companies), "companies": companies}

@@ -739,6 +739,32 @@ def cmd_memory_gaps(args, settings, sink) -> int:
     return MORE_LEFT if outcome and outcome["more"] else 0
 
 
+def cmd_label_memory(args, settings, sink) -> int:
+    """Label everything already in memory (memory_labels.py, TRACKER F150): no AI, no NSE, no card change. A dry run
+    prints the counts per section and label and writes nothing; a real run writes each changed dossier back through the
+    safe write (three-way merge) and resumes after the last company it finished."""
+    from . import memory_labels
+
+    if args.scrips:
+        scrips = [s.strip() for s in args.scrips.split(",") if s.strip()]
+    else:
+        scrips = sink.list_dossiers()
+    cards = memory_labels.load_cards(sink, set(scrips) if args.scrips else None)
+    report = memory_labels.label_all(sink, scrips, args.dry_run, cards, args.restart, args.time_budget)
+    print(memory_labels.render(report))
+    if report["skipped_resumed"]:
+        print(f"{report['skipped_resumed']} companies skipped: an earlier run finished them (--restart goes over them again)")
+    for line in report["failed"][:20]:
+        print(f"  failed: {line}")
+    if args.json:
+        body = {k: v for k, v in report.items() if k != "had"} | {
+            "already_labelled": report["had"], "cards_read": len(cards), "new_totals": memory_labels.totals(report["new"])}
+        Path(args.json).write_text(json.dumps(body, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if report["failed"]:
+        return 1
+    return MORE_LEFT if report["more"] else 0
+
+
 def cmd_price_history(args, settings, sink) -> int:
     from datetime import date, timedelta
 
@@ -1144,6 +1170,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--shard", help="with --fill: I/N, this runner's share of the companies with gaps")
     p.add_argument("--time-budget", type=int, default=17400, help="with --fill: seconds; exit 124 if companies are left")
     p.set_defaults(func=cmd_memory_gaps)
+
+    p = sub.add_parser("label-memory", help="label every item already in memory: file / ai / calc / unknown (no AI; --dry-run counts only)")
+    p.add_argument("--scrips", help="comma-separated company keys (default: every stored memory)")
+    p.add_argument("--dry-run", action="store_true", help="count per section and label, write nothing")
+    p.add_argument("--json", help="write the counts to this file")
+    p.add_argument("--restart", action="store_true", help="go over the companies an earlier run finished again")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
+    p.set_defaults(func=cmd_label_memory)
 
     p = sub.add_parser("backup", help="export dossiers as JSON files")
     p.add_argument("--out", required=True)

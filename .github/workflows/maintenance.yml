@@ -23,6 +23,10 @@
 #   with gaps only, in four shards (job `gaps`, 5 h, resumes by itself: a company already tried is not tried again;
 #   `restart` tries them all again), and the before / after counts. It reads NSE like seed-memory and shares its group,
 #   so it never runs beside a seed pass; do not start it while a seed pass is queued (the group keeps one waiting run).
+# - label-memory: reads every stored memory (and the cards' XBRL tables; no NSE, no writes) and counts what the one-off
+#   labelling would give each item (file / ai / calc / unknown) per section; the JSON goes up as the artifact `label-memory`.
+#   label-memory-apply: the same, then writes each changed memory back through the safe three-way merge, resuming after the
+#   last company done (a second run only finishes what is left; exit 124 = run it again). No card changes (F150).
 # None calls an AI model; seed-memory, memory-gaps-fill and fill-memory read NSE. It runs beside the pipeline (its own concurrency group:
 # a shared one would cancel a pending pipeline run); fill-memory pauses the AI pipeline while it writes memory.
 name: Maintenance
@@ -33,7 +37,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, label-memory, label-memory-apply]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -131,6 +135,27 @@ jobs:
         with:
           name: memory-gaps
           path: ${{ runner.temp }}/gaps/
+          if-no-files-found: ignore
+      - name: Label memory (dry run, counts only)
+        if: inputs.command == 'label-memory'
+        run: |
+          code=0
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel label-memory --dry-run --json "$RUNNER_TEMP/label-memory.json" || code=$?
+          mkdir -p "$RUNNER_TEMP/labels" && cp "$RUNNER_TEMP"/label-memory.json "$RUNNER_TEMP/labels/" || true
+          exit "$code"
+      - name: Label memory (writes memory)
+        if: inputs.command == 'label-memory-apply'
+        run: |
+          code=0
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel label-memory --json "$RUNNER_TEMP/label-memory.json" || code=$?
+          mkdir -p "$RUNNER_TEMP/labels" && cp "$RUNNER_TEMP"/label-memory.json "$RUNNER_TEMP/labels/" || true
+          if [ "$code" -eq 124 ]; then echo "::warning::time budget ended with companies left: run label-memory-apply again to resume"; exit 0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && (inputs.command == 'label-memory' || inputs.command == 'label-memory-apply')
+        with:
+          name: label-memory
+          path: ${{ runner.temp }}/labels/
           if-no-files-found: ignore
       - name: Failed filings by reason (reads only)
         if: inputs.command == 'failed-report'

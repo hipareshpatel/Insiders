@@ -1,0 +1,26 @@
+Cards with line counts: 229 (no card JSON for 10: nse-106824676, nse-106824806, nse-106825071, nse-106826082, nse-106826107, nse-106826187, nse-106826259, nse-106826285)
+
+LINES PER CARD (headline, takeaway, what happened, key numbers, notable changes, quantified impact, why it matters, missing disclosures, call takeaways, track-next items; results-table rows apart)
+  mean 14.3, median 13, quartiles 9.5-18.0, range 5-37
+  facts part 6.9 lines a card, interpretation part 7.4, results-table rows 1.9
+  by event type (cards, median, mean): CONCALL_PRESENTATION 51, 19, 20.2; RESULTS 41, 17, 17.7; OTHER 26, 13, 12.3; ORDER_WIN 20, 12, 11.2; M_AND_A 17, 8, 9.8; LITIGATION_REGULATORY 17, 9, 9.2; CAPEX 13, 12, 12.1; CORPORATE_ACTION 10, 12, 11.8; DEBT_RATINGS 9, 16, 15.2; FUNDRAISE 9, 12, 11.9
+
+DAILY AUDITS 23-24 OCT: 121 cards, 1670 lines, 25 WRONG, 50 MINOR
+  wrong lines on WRONG cards: 63 -> p = 3.77% (2.96%-4.80%)
+  of those, in the counted lines (not a signal/block, event type or whole-card fault): 45 -> p = 2.69% (2.02%-3.59%); 18 points sit outside the line count; 4 WRONG cards have only such outside faults
+  every listed fault line (WRONG and MINOR cards): 132 -> p = 7.90% (6.70%-9.30%)
+  observed card WRONG 20.66% (14.40%-28.72%); implied 1-(1-p)^n with p hard: 39.9% (33.0%-47.4%); in-line only: 30.6% (24.1%-38.4%); with every fault line: 64.6% (58.8%-70.3%)
+  WRONG cards with no point listed: 0; whole-card WRONG (not a line fault): 3
+  wrong points per WRONG card 2.52 (independent lines would give 1.59); WRONG cards with 2+ points 21 (independent lines: 12.1 of 121 cards)
+  wrong points by part: table 16, block 12, prose line 9, headline 5, call_takeaways 3, metadata 3, takeaway 3, whole_card 3, quantified_impact 2, what_happened 2, why_it_matters 2, key_numbers 1, track_next 1, notable_changes 1
+  WRONG cards by error class: wrong_column 4, duplicate 3, event_type 3, arithmetic 3, restated 2, standalone_consolidated 2, unit_scale 2, attribution 2, memory 2, other 1, noise 1
+
+EVERY LINE GRADED (30 cards, 266 lines): OK 249, OVERSTATED 2, WRONG_FIGURE 8, UNSUPPORTED_CAUSE 5, INVENTED 2
+  hard faults (wrong figure, invented) 10 -> p = 3.76% (2.05%-6.78%); soft (overstated, unsupported cause) 7 -> 2.63% (1.28%-5.33%); any non-OK line 6.39% (4.03%-10.00%)
+  cards {'MINOR': 12, 'RIGHT': 16, 'WRONG': 2}; cards with a hard-fault line 6; with any non-OK line 14; missing-point notes 0
+  non-OK lines by part (lines, non-OK): what_happened 85/0; key_numbers 54/0; why_it_matters 43/6; headline 30/1; takeaway 30/3; notable_changes 9/2; track_next 6/2; tone/direction 2/0; core_catalyst 2/0; quantified_impact 2/1; results 1/1; call_takeaways 1/0; missing_disclosures 1/1
+
+NEEDED: at the median 13 lines each line must be right 99.61% of the time (fault rate 0.39%) for 95% cards; at the mean 14.3 lines, 0.36% fault rate
+CALIBRATED: the per-line rate that reproduces the observed card WRONG rate is 1.70% (1.14%-2.49%); at that rate a card may carry 3.0 lines (2.0 to 4.5) for 5% WRONG
+AFFORDABLE: at p 3.77% a card may carry 1.3 lines (1.0 to 1.7 over the interval) and stay at 5% WRONG
+ALL FOUR DAYS (208 cards with lines): WRONG 22.12% (17.01%-28.23%); at or below median: 16 of 103; above median: 30 of 105

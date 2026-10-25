@@ -1,3 +1,5 @@
+import threading
+import time
 from datetime import date
 
 import pytest
@@ -156,3 +158,41 @@ def test_fill_shard_takes_every_nth_gap_company():
     calls = []
     mg.fill(sink, report, lambda s, since: calls.append(s), 1000, shard=(1, 2))
     assert calls == ["C", "E"]
+
+
+class SlowSink(Sink):
+    """Reads that take time and finish out of order; counts how many run at once."""
+
+    def __init__(self, dossiers):
+        super().__init__(dossiers)
+        self.lock, self.running, self.peak = threading.Lock(), 0, 0
+
+    def get_dossier(self, scrip):
+        with self.lock:
+            self.running += 1
+            self.peak = max(self.peak, self.running)
+        time.sleep(0.05 if scrip in "ABC" else 0.001)
+        with self.lock:
+            self.running -= 1
+        return self.dossiers.get(scrip)
+
+
+def test_survey_reads_in_parallel_with_identical_ordered_output():
+    dossiers = {s: _dossier(s, EIGHT if s in "ACE" else EIGHT[:3]) for s in "ABCDEFGH"}
+    scrips = list("ABCDEFGH")
+    serial = mg.survey(Sink(dossiers), scrips, TODAY, workers=1)
+    sink = SlowSink(dossiers)
+    parallel = mg.survey(sink, scrips, TODAY)
+    assert parallel == serial
+    assert list(parallel["companies"]) == scrips
+    assert mg.to_csv(parallel) == mg.to_csv(serial)
+    assert 1 < sink.peak <= mg.READ_WORKERS
+
+
+def test_survey_read_error_propagates():
+    class Broken(Sink):
+        def get_dossier(self, scrip):
+            raise RuntimeError("sink down")
+
+    with pytest.raises(RuntimeError):
+        mg.survey(Broken({}), ["A", "B"], TODAY)

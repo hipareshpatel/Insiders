@@ -27,6 +27,19 @@ UNIT_NOTE = "₹ crore; EPS in ₹ a share; ratios and growth in per cent; margi
 
 _LENDER_METRICS = {"interest_earned", "interest_expended", "pre_provision_operating_profit", "nii", "gnpa_pct",
                    "nnpa_pct", "gross_premium", "incurred_claims", "net_premium", "first_year_premium"}
+# A discontinued business's result sits in the headline profit but not in a continuing EPS (HUL Q3FY26: profit 6,603
+# against continuing 2,125); the two differ by more than this share of the profit (associates' share is far smaller).
+_DISCONTINUED_TOLERANCE = 0.02
+# implied share counts (profit / EPS) further apart than this are a bonus, split or issue: EPS is not comparable
+SHARE_COUNT_TOLERANCE = 0.10
+
+COST_TO_INCOME_NOTE = ("not given on the consolidated basis: a group's other income carries its insurance "
+                       "subsidiaries' premium income and its costs their claims (SBI group 60-71% against 47-55% for "
+                       "the bank itself); see the STANDALONE table")
+LENDER_CONSOLIDATED_NOTE = (
+    "a lender's consolidated nii and pre-provision profit add its non-bank subsidiaries' lines (insurers' investment "
+    "income and premiums, cards, brokers: SBI Q1FY27 nii 53,993 consolidated against 46,992 for the bank), so they "
+    "describe the group; the bank's own figures are on the STANDALONE table")
 _LENDER_WORDS = re.compile(r"\b(bank|banks|nbfc|finance|financial|financing|insurance|insurer|lending|housing finance|"
                            r"microfinance|asset reconstruction)\b", re.I)
 
@@ -49,9 +62,12 @@ GENERAL_MISSING = (
 )
 
 
-def _cell(value, unit, source, inputs=()):
-    return {"value": None if value is None else round(value, 2), "unit": unit, "source": source if value is not None else None,
-            "inputs": list(inputs)}
+def _cell(value, unit, source, inputs=(), note=None):
+    cell = {"value": None if value is None else round(value, 2), "unit": unit,
+            "source": source if value is not None else None, "inputs": list(inputs)}
+    if note:
+        cell["note"] = note   # why the figure is to be read with care, or why it is not given
+    return cell
 
 
 def _empty(unit):
@@ -179,11 +195,52 @@ def table(dossier: dict | None, basis: str) -> list[dict]:
                 value = stored(name, period)
                 if value is not None:
                     return value, "exchange", (name,)
+            if lender:
+                # a bank's file has no owners' line of its own: xbrl.py folds the consolidated profit after minority
+                # interest and associates (pat_group) into "pat", the figure its EPS is on
+                value = stored("pat", period)
+                if value is not None:
+                    return value, "exchange", ("pat",)
             return None, None, ()
-        value = stored(metric, period)
+        value = stored(metric, period, "INR" if metric == "eps" else "INR_CR")   # EPS is ₹ a share, not crore
         return (value, "exchange", ()) if value is not None else (None, None, ())
 
+    def discontinued(period: str | None):
+        """The part of a period's headline profit that is not from continuing operations, when it is material."""
+        pat, continuing = stored("pat", period), stored("pat_continuing", period)
+        if pat is None or continuing is None or abs(pat - continuing) <= max(1.0, _DISCONTINUED_TOLERANCE * abs(pat)):
+            return None
+        return pat - continuing
+
+    def implied_shares(period: str | None):
+        """The profit EPS is on over EPS: crore shares. Continuing profit where a discontinued operation sits in the
+        headline, else the owners' profit, else the profit (a lender's: its profit to shareholders)."""
+        eps = stored("eps", period, "INR")
+        if not eps:
+            return None
+        if lender:
+            profit = line("profit_to_shareholders", period)[0]
+        elif discontinued(period) is not None:
+            profit = stored("pat_continuing", period)
+        else:
+            profit = stored("pat_owners", period)
+            profit = stored("pat", period) if profit is None else profit
+        return abs(profit / eps) if profit else None
+
+    def share_count_changed(periods: list) -> bool:
+        counts = [implied_shares(p) for p in periods if p]
+        counts = [c for c in counts if c]
+        return len(counts) > 1 and max(counts) > min(counts) * (1 + SHARE_COUNT_TOLERANCE)
+
     def growth(metric: str, period: str, prior: str | None):
+        if metric == "eps" and prior and share_count_changed([period, prior]):
+            return _cell(None, "PCT", None, [period, prior],
+                         note=f"share count changed between {prior} and {period} (bonus, split or issue); "
+                              "EPS not comparable")
+        if not lender and metric in ("pat", "pat_owners") and (discontinued(period) or discontinued(prior)):
+            # a change that runs through a demerger or sale gain is no growth: read pat_continuing_*
+            return _cell(None, "PCT", None, [period, prior],
+                         note="a period in the comparison holds a discontinued operation; see pat_continuing")
         now, before = line(metric, period)[0], (line(metric, prior)[0] if prior else None)
         value = _pct_change(now, before)
         return _cell(value, "PCT", "computed", [period, prior]) if value is not None else _empty("PCT")
@@ -192,6 +249,8 @@ def table(dossier: dict | None, basis: str) -> list[dict]:
         part, revenue = stored(metric, period), stored("revenue", period)
         if part is None or not revenue:
             return _empty("PCT")
+        if part == 0:
+            return _cell(None, "PCT", None, [period], note="the file prints 0, which is a filler for a line it does not have")
         return _cell(part / revenue * 100, "PCT", "computed", [period])
 
     def consecutive(period: str, count: int = 4) -> list[str] | None:
@@ -206,8 +265,12 @@ def table(dossier: dict | None, basis: str) -> list[dict]:
         values = [line(metric, p)[0] for p in wanted] if wanted else []
         if not wanted or any(v is None for v in values):
             return _empty("INR_CR")
+        if not lender and metric in ("pat", "pat_owners") and any(discontinued(p) for p in wanted):
+            return _cell(None, "INR_CR", None, wanted,
+                         note="a quarter in the year holds a discontinued operation; see ttm_pat_continuing")
         return _cell(sum(values), "INR_CR", "computed", wanted)
 
+    has_discontinued = not lender and any(discontinued(p) is not None for p in periods)
     rows = []
     for period in periods:
         py, pq = prior_year_period(period), prior_quarter_period(period)
@@ -217,6 +280,8 @@ def table(dossier: dict | None, basis: str) -> list[dict]:
                      "unit_note": UNIT_NOTE}
         if not recorded:
             row["basis_recorded"] = False   # memory stored no basis at all for this company: assumed, not known
+        if lender and basis == CONSOLIDATED:
+            row["basis_note"] = LENDER_CONSOLIDATED_NOTE
         if lender:
             for name in ("interest_earned", "interest_expended", "pre_provision_operating_profit", "provisions", "pat",
                          "other_income"):
@@ -238,14 +303,20 @@ def table(dossier: dict | None, basis: str) -> list[dict]:
             n, _, _ = nii(period)
             oi, ppop = stored("other_income", period), stored("pre_provision_operating_profit", period)
             income = n + oi if n is not None and oi is not None else None
-            row["cost_to_income"] = (_cell((income - ppop) / income * 100, "PCT", "computed", [period])
-                                     if income and ppop is not None else _empty("PCT"))
+            if basis != STANDALONE:
+                row["cost_to_income"] = _cell(None, "PCT", None, [period], note=COST_TO_INCOME_NOTE)
+            else:
+                row["cost_to_income"] = (_cell((income - ppop) / income * 100, "PCT", "computed",
+                                               [period, "nii", "other_income", "pre_provision_operating_profit"],
+                                               note="the bank itself (standalone)")
+                                         if income and ppop is not None else _empty("PCT"))
             row["ebitda"] = _empty("INR_CR")        # never for a lender
             row["ebitda_margin"] = _empty("PCT")
             for name in ("nii", "pre_provision_operating_profit", "pat", "profit_to_shareholders", "interest_earned"):
                 row[f"{name}_yoy"] = growth(name, period, py)
                 row[f"{name}_qoq"] = growth(name, period, pq)
             row["eps_yoy"] = growth("eps", period, py)
+            row["eps_qoq"] = growth("eps", period, pq)
             for name in ("nii", "pre_provision_operating_profit", "pat", "interest_earned"):
                 row[f"ttm_{name}"] = ttm(name, period)
         else:
@@ -258,9 +329,19 @@ def table(dossier: dict | None, basis: str) -> list[dict]:
             row["ebitda_margin"] = _cell(m, "PCT", "computed", [period]) if m is not None else _empty("PCT")
             row["pat"] = exchange("pat", period)
             row["profit_to_shareholders"] = exchange("pat_owners", period)
+            held = discontinued(period)
+            if held is not None:
+                note = (f"includes {held:,.2f} cr from discontinued operations; eps and pat_continuing are on "
+                        "continuing operations only")
+                for name in ("pat", "profit_to_shareholders"):
+                    if row[name]["value"] is not None:
+                        row[name]["note"] = note
+            if has_discontinued:
+                row["pat_continuing"] = exchange("pat_continuing", period)
             row["eps"] = exchange("eps", period, "INR")
             row["pbt"] = exchange("pbt", period)
-            for name in ("revenue", "ebitda", "pat", "profit_to_shareholders", "eps"):
+            for name in ("revenue", "ebitda", "pat", "profit_to_shareholders", "eps",
+                         *(("pat_continuing",) if has_discontinued else ())):
                 metric = {"profit_to_shareholders": "pat_owners"}.get(name, name)
                 row[f"{name}_yoy"] = growth(metric, period, py)
                 row[f"{name}_qoq"] = growth(metric, period, pq)
@@ -272,13 +353,19 @@ def table(dossier: dict | None, basis: str) -> list[dict]:
                                  ("depreciation_share", "depreciation")):
                 row[name] = share(metric, period)
             for name, metric in (("ttm_revenue", "revenue"), ("ttm_ebitda", "ebitda"), ("ttm_pat", "pat"),
-                                 ("ttm_profit_to_shareholders", "pat_owners")):
+                                 ("ttm_profit_to_shareholders", "pat_owners"),
+                                 *((("ttm_pat_continuing", "pat_continuing"),) if has_discontinued else ())):
                 row[name] = ttm(metric, period)
             row["ttm_eps"] = _empty("INR")
             wanted = consecutive(period)
             eps = [stored("eps", p, "INR") for p in wanted] if wanted else []
             if wanted and all(v is not None for v in eps):
-                row["ttm_eps"] = _cell(sum(eps), "INR", "computed", wanted)
+                if share_count_changed(wanted):
+                    row["ttm_eps"] = _cell(None, "INR", None, wanted,
+                                           note=f"share count changed between {wanted[-1]} and {wanted[0]} (bonus, "
+                                                "split or issue); EPS not comparable")
+                else:
+                    row["ttm_eps"] = _cell(sum(eps), "INR", "computed", wanted)
             row["ttm_ebitda_margin"] = _empty("PCT")
             if row["ttm_ebitda"]["value"] is not None and row["ttm_revenue"]["value"]:
                 row["ttm_ebitda_margin"] = _cell(row["ttm_ebitda"]["value"] / row["ttm_revenue"]["value"] * 100, "PCT",
@@ -320,17 +407,27 @@ def render(rows: list[dict], limit: int = 8) -> str:
     if not rows:
         return "no machine-tagged quarters on this basis in memory"
     shown = rows[:limit]
-    skip = {"period", "basis", "kind", "unit_note", "basis_recorded"}
+    skip = {"period", "basis", "kind", "unit_note", "basis_recorded", "basis_note"}
     names = [k for k in shown[0] if k not in skip]
     for row in shown:
         names += [k for k in row if k not in skip and k not in names]
     width = max(len(n) for n in names)
-    out = [f"{rows[0]['basis']} ({rows[0]['kind']}), {UNIT_NOTE}", " " * width + "  " + "".join(f"{r['period']:>10}" for r in shown)]
+    body = {name: ["-" if (row.get(name) or {}).get("value") is None else format(row[name]["value"], ",.2f")
+                   for row in shown] for name in names}
+    # each column as wide as its widest cell (or its period label), two spaces from the next
+    col = [max([len(r["period"])] + [len(body[n][i]) for n in names]) for i, r in enumerate(shown)]
+    out = [f"{rows[0]['basis']} ({rows[0]['kind']}), {UNIT_NOTE}",
+           " " * width + "".join("  " + r["period"].rjust(col[i]) for i, r in enumerate(shown))]
     for name in names:
-        cells = []
+        out.append(f"{name:<{width}}" + "".join("  " + body[name][i].rjust(col[i]) for i in range(len(shown))))
+    notes: dict[str, list[str]] = {}   # a cell's note: a figure to read with care, or why it is not given
+    for name in names:
         for row in shown:
-            cell = row.get(name)
-            value = cell["value"] if cell else None
-            cells.append(f"{'-' if value is None else format(value, ',.2f'):>10}")
-        out.append(f"{name:<{width}}  " + "".join(cells))
+            note = (row.get(name) or {}).get("note")
+            if note:
+                notes.setdefault(f"{name}: {note}", []).append(row["period"])
+    for text, periods in notes.items():
+        out.append(f"note {text} ({', '.join(periods)})")
+    if shown[0].get("basis_note"):
+        out.append(f"note {shown[0]['basis_note']}")
     return "\n".join(out)

@@ -575,8 +575,8 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     # gives a charge, and a charge tagged positive took EBITDA down by twice it (data chain audit A9, 22 Oct 2026)
     for label in {p for _, p in values}:
         before = values.pop(("pbt_before_exceptional", label), None)
-        parts = [before if before is not None else values.get(("pbt", label)), values.get(("finance_cost", label)),
-                 values.get(("depreciation", label))]
+        start = before if before is not None else _pbt_without_associates(values, label)
+        parts = [start, values.get(("finance_cost", label)), values.get(("depreciation", label))]
         if all(v is not None for v in parts):
             ebitda = sum(parts) - (values.get(("other_income", label)) or 0) \
                 - (0 if before is not None else values.get(("exceptional_items", label)) or 0)
@@ -606,6 +606,30 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     # the file's own earlier date (March for a half year): like for like by construction, what facts.py compares with
     prior = _balance_sheet(instants[dates[-2]], dates[-2]) if len(dates) > 1 else None
     return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet, fy_end_month=year_end, balance_prior=prior)
+
+
+def _pbt_without_associates(values: dict, label: str) -> float | None:
+    """Profit before tax as SEBI's taxonomy defines it, without the associates' and joint ventures' share, which the
+    official sums add after tax (profit = continuing + discontinued + share; config/xbrl_sums, item 12, owner 25 Oct
+    2026). Some filers tag profit before tax with the share in it (Orient Bell); the file's own lines tell: when profit
+    before tax less tax already gives the profit without adding the share, the share is in it and is taken out."""
+    pbt, share = values.get(("pbt", label)), values.get(("share_associates", label))
+    if pbt is None or not share:
+        return pbt
+    tax = values.get(("tax_expense", label))
+    if tax is None:
+        tax = (values.get(("current_tax", label)) or 0) + (values.get(("deferred_tax", label)) or 0)
+    continuing = values.get(("pat_continuing", label))
+    if continuing is None and values.get(("pat", label)) is not None:
+        continuing = values[("pat", label)] - (values.get(("pat_discontinued", label)) or 0) - share
+    if continuing is None:
+        return pbt
+    slack = 0.02 + 0.001 * abs(continuing)
+    if abs(pbt - tax - continuing) <= slack:
+        return pbt                       # tagged as the taxonomy defines it
+    if abs(pbt - share - tax - continuing) <= slack:
+        return pbt - share               # the share is in the tagged profit before tax
+    return pbt
 
 
 def owners_share(values: dict) -> int:

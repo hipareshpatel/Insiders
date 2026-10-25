@@ -1834,7 +1834,7 @@ These are pointers into the sections above, plus what is not available.
    - **The exact input payload** is not stored either. It can be rebuilt from the code path in section 4.
 
 ## The trace by stage
-95 of the 96 points carry a stage; one has none. Reviewer classes are counted per point.
+The files hold 95 points, each with a stage (the "96" reported earlier was a mis-sum: one reviewer counted 26 and wrote 25). Reviewer classes are counted per point.
 
 | Stage | Points | Reviewer classes on those cards (approximate) |
 |---|---|---|

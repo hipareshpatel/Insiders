@@ -1,7 +1,7 @@
 # Wrong-card trace and the two checks it led to (25 Oct 2026)
 
 ## The trace
-All 48 WRONG cards of the 21-24 Oct daily audits were traced: 96 wrong points. Three independent agents did the work,
+All 48 WRONG cards of the 21-24 Oct daily audits were traced: 95 wrong points (first reported as 96: one reviewer counted 26 points and wrote 25; reconciled 25 Oct from the files). Three independent agents did the work,
 each with the PDF's text layer (OCR was not run). Their files are `trace_group*.json`.
 
 Where each error entered:

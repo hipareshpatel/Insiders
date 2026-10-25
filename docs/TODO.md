@@ -59,7 +59,7 @@ This list holds only the first-principles review's items (`docs/FROM_ZERO.md`). 
 | f | Corrected (revised) results | Handled: NSE's list marks a revision and it replaces the original for the quarter and basis (`nse.py`), and the results catch-up re-reads a card whose file was revised within 10 days |
 | g | 28 filings failed on AI capacity | Built (F134): they now wait up to about a day for the quota; the writer whose replies did not parse left the long route |
 | h | Runs take ~41 minutes | By design: each run fills its 40-minute budget with older work; today's filings were done ~5 minutes in, but waited ~42 minutes for the next run. Built (F135): a quick 15-minute run for today; the memory sweeps hourly |
-| - | Can GitHub's machines reach BSE? (owner's question) | Measured 25 Oct from GitHub (runner in the US, `probe-bse`) and from this session: BSE's website answers (200), its data API refuses ("Access Denied", 403) for both announcements and results. BSE stays off the online path |
+| - | Can GitHub's machines reach BSE? (owner's question) | Measured 25 Oct: a bare curl probe from GitHub (`probe-bse`) got 403 from BSE's data API; the ported adapter (Python requests, BSE's page headers) then got 200 on 16 of 16 calls from GitHub (`bse-results-test`, run 40189201441). BSE is reachable through the adapter; it stays a backup, not the online path |
 | - | Do real figure files add up? (item 23) | Measured 25 Oct, 166 files of 60 random companies (both formats, all templates): 3,355 official sums checked, **one** real mismatch (Master Trust Dec 2024: a broker's expense lines outside the Ind AS sums) and 8 segment-asset totals. Wrongly tagged files are rare: the sums are a safety net, not a big source of fixes |
 
 | # | Improvement | What it fixes | Owner | State |
@@ -113,7 +113,7 @@ Fixes to the sample itself, found on review:
 
 | # | Improvement | Owner | State |
 |---|---|---|---|
-| 27 | Port the reference repository's BSE client as an off-path adapter (TASKS T26) | Asked | Built (F138), PR #111. Its headless-browser fallback left out (CLAUDE.md). Measured: GitHub's runners are refused even with BSE's own page headers; the cloud session's machine is let in with them. Usable from a machine BSE lets in, not from the GitHub pipeline |
+| 27 | Port the reference repository's BSE client as an off-path adapter (TASKS T26) | Asked | Built (F138), PR #111. Its headless-browser fallback left out (CLAUDE.md). Measured: from GitHub the adapter got 200 on 16 of 16 calls (run 40189201441); an earlier bare curl probe got 403 |
 
 ## Item 13 measured (25 Oct 2026): what "hold a line the PDF does not print" would do
 
@@ -132,3 +132,27 @@ an independent agent (`scratchpad` table summarised here):
   the figure pages (as the pipeline already does), a number normaliser for the matcher misses, and per line: "other
   expenses" shown only when the statement prints that figure, tax as current + deferred when that is what is printed,
   profit before tax as printed (`settle_pbt` already does this for the card's line).
+
+### Item 13: final design (owner, 25 Oct 2026: OK)
+
+| Lines | When the PDF and the figure file disagree |
+|---|---|
+| Tier 1: revenue, profit before tax as the statement prints it, profit, EPS | Hold that line |
+| Tier 2: other expenses, tax, finance cost, materials and the rest | Leave that line out, or show the statement's own lines (e.g. current + deferred tax) |
+
+Both stay off until the check reads figure pages as images (as the pipeline already does) and the number matcher reads
+"1.253.52", "935,20" and letters in place of digits.
+
+### BSE results XBRL through the adapter, tested (owner, 25 Oct 2026)
+
+Run from the cloud session's machine and again from GitHub (run 40189201441, same result: 16 of 16 calls 200, 7 of 7 identical, Tata Motors has no NSE file to compare), 8 dual-listed companies, the adapter's own pace:
+- 16 calls (8 results lists `Result_Arch_ng`, 8 figure files), **all 200**, no refusal, no dropped connection; lists
+  99-142 KB (182-272 rows, 62-67 quarter files each), figure files 35-152 KB; four list calls took ~6 s at BSE's end,
+  the rest under 0.5 s.
+- Every file parsed with our reader (`xbrl.parse`), both formats: Ind AS (TCS, Infosys, Reliance, Wipro, HUL, Tata
+  Motors) and banking (HDFC Bank, ICICI Bank).
+- **7 of 7 comparable companies: revenue, total income, profit before tax, profit and EPS identical to NSE's file for
+  the same quarter and basis** (Reliance, HUL and Tata Motors' latest is Jun 2026, the others Sep 2026). Tata Motors'
+  NSE copy was not found under the symbol TATAMOTORS (likely renamed after its demerger), so it was not compared.
+- So BSE's results files carry the same figures as NSE's: no new information for results; useful only as a backup
+  source. 16 calls is not a load test: a full backfill (thousands of calls) is unmeasured.

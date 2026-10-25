@@ -40,9 +40,9 @@ raw copy, JSON and inline-XBRL parsing as written; typing, logged failures and `
 out: the reference's headless-Chrome fallback after a refusal (a way round BSE's refusal, against CLAUDE.md). Nothing
 on the NSE path calls it. Test: `tests/test_bse_adapter.py` (request contract, headers, pacing, retries, stops,
 parsing). Measured 25 Oct: from the cloud session's machine (US), with these headers announcements and bulk deals
-answer 200, without Origin/Sec-Fetch-Site 403; from GitHub's runners (`probe-bse` with these headers) 403 "Access
-Denied" either way. So the adapter serves a machine BSE lets in (a laptop in India, a self-hosted runner), not the
-GitHub pipeline.
+answer 200, without Origin/Sec-Fetch-Site 403. From GitHub's runners a bare curl probe (`probe-bse`) got 403 "Access
+Denied", but the adapter itself (`bse-results-test`, run 40189201441) got 200 on 16 of 16 calls. It stays off the
+NSE pipeline as a backup: its results figures match NSE's.
 
 ## T25 · P1 · laptop · OPEN — live review 5's classes in your files (today's production cards)
 

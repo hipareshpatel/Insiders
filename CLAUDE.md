@@ -35,6 +35,12 @@ Read before changing anything:
   so never add a paid route to a path that runs every day. Don't ask the owner to verify a phone number
   with Mistral.
 - No AI model names or IDs of the assistant itself in commits, PR text or code.
+- Save the owner's tokens with subagents (owner, 25 Oct 2026): hand work to the cheaper subagent models and check
+  what they return against the files or logs before acting on it. Smallest model: lookups, file sweeps, running
+  tests or scripts and summarising output, routine doc edits. Mid model: multi-step changes, root-causing a failure,
+  drafting a fix. The lead session keeps every ship decision (release scoring, the last read of a diff before a push,
+  owner calls). Blind audit reviews run on the mid model at least, never the smallest. A task of a few tool calls is
+  done directly. Subagents follow every rule here; a fix's author never reviews it.
 
 ## How to work
 

@@ -671,6 +671,27 @@ def cmd_price_history(args, settings, sink) -> int:
     return 0
 
 
+def cmd_metrics(args, settings, sink) -> int:
+    """Print a company's metrics table (metrics.py), worked out by code from the XBRL figures in its memory."""
+    from . import metrics
+
+    if args.file:
+        dossier = json.loads(Path(args.file).read_text(encoding="utf-8"))
+    else:
+        dossier = sink.get_dossier(args.scrip)
+    if not dossier:
+        print(f"no memory for {args.scrip}", file=sys.stderr)
+        return 1
+    rows = metrics.table(dossier, args.basis)
+    if args.json:
+        print(json.dumps(rows, ensure_ascii=False, indent=1))
+    else:
+        print(metrics.render(rows, args.quarters))
+        for gap in metrics.missing_lines(dossier):
+            print(f"not shown: {gap}")
+    return 0
+
+
 def cmd_post_mortem(args, settings, sink) -> int:
     from .learning import post_mortem
 
@@ -914,6 +935,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--from", dest="start", help="first day (default: a year before BACKFILL_START)")
     p.add_argument("--scrips", help="comma-separated scrip codes (default: every company)")
     p.set_defaults(func=cmd_price_history)
+    p = sub.add_parser("metrics", help="a company's metrics table from its stored XBRL figures, no AI (TODO 22)")
+    p.add_argument("--scrip", help="scrip code, read from the sink's memory")
+    p.add_argument("--file", help="a dossier JSON file instead of the sink")
+    p.add_argument("--basis", choices=["CONSOLIDATED", "STANDALONE"], default="CONSOLIDATED")
+    p.add_argument("--quarters", type=int, default=8)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_metrics)
     p = sub.add_parser("post-mortem", help="Loop 1: T+1/T+3/T+5 excess returns after each card")
     p.add_argument("--since", help="revisit cards filed from this date (default: the last 14 days)")
     p.set_defaults(func=cmd_post_mortem)

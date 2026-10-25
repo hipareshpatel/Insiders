@@ -41,7 +41,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev,ocr]"      # ocr: RapidOCR for scanned pages (optional)
-python -m pytest -q              # 1,021 tests (2 skip without the ocr extra); web: npm test (55: card text, company statements, owner holds, call takeaways, company keys)
+python -m pytest -q              # 1,036 tests (2 skip without the ocr extra); web: npm test (55: card text, company statements, owner holds, call takeaways, company keys)
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -90,6 +90,7 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 | `python -m bse_intel sync-companies [--source nse\|bse] [--max-lookups N] [--refresh-industry]` | The company master from NSE's equity list (new listings, names, industry → sector lens, size label), then the universe file; `--source bse` reads BSE's scrip list and needs an Indian address |
 | `python -m bse_intel market-data [--all]` | Prices, returns, liquidity, market caps (`pip install -e ".[market]"`); `--all` for every company; reports companies Yahoo has no price for |
 | `python -m bse_intel price-history [--scrips ...]` | Daily prices for point-in-time card footers (laptop, before the history fill) |
+| `python -m bse_intel metrics --scrip X [--basis CONSOLIDATED\|STANDALONE] [--quarters N] [--json] [--file dossier.json]` | A company's metrics table (growth YoY and QoQ, margins, cost shares, last-four-quarters totals, half-year balance ratios; lenders get their own lines), worked out by code from the XBRL figures in its memory, no AI, not on any card yet (TODO 22, F141) |
 | `python -m bse_intel post-mortem [--since D]` | Loop 1: T+1/T+3/T+5 return less the index after each card (nightly after market data) |
 | `python -m bse_intel discover --date 2026-10-13` | Fetch and triage one day |
 | `python -m bse_intel retriage --scrips A,B [--from D] [--to D]` | After a drop or date rule is narrowed: re-read those companies' filings from BSE and queue the ones today's rules no longer drop (discovery skips what is already in the noise file) |

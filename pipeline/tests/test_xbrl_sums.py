@@ -37,3 +37,30 @@ def test_every_results_template_has_its_sums():
         assert xbrl_sums.sums_for(key), key
     assert xbrl_sums.sums_for("INDAS")["ProfitBeforeTax"] == [("ProfitBeforeExceptionalItemsAndTax", 1.0),
                                                                ("ExceptionalItemsBeforeTax", 1.0)]
+
+
+def _metrics(data: bytes) -> dict:
+    from bse_intel import xbrl
+    result = xbrl.parse(data, "N1")
+    return {(m.metric, m.period): m for m in result.metrics}
+
+
+def test_lines_of_a_failing_sum_are_left_off_and_the_rest_kept(caplog, monkeypatch):
+    """F140: Revenue + other income is not total income, so those three go for that period; the profit stays."""
+    bad = _file(RevenueFromOperations=1000_00000, OtherIncome=50_00000, Income=1100_00000,
+                ProfitLossForPeriod=200_00000, FinanceCosts=10_00000)
+    with caplog.at_level("WARNING"):
+        got = _metrics(bad)
+    assert {m for m, _ in got} == {"pat", "finance_cost"}
+    lines = [r.getMessage() for r in caplog.records if r.getMessage().startswith("xbrl sums: N1 INDAS: Income filed")]
+    assert len(lines) == 1 and "left off: other_income, revenue, total_income" in lines[0]
+    # the same file with the switch off is read as before
+    from bse_intel.settings import get_settings
+    monkeypatch.setenv("XBRL_SUMS", "0")
+    get_settings.cache_clear()
+    assert {m for m, _ in _metrics(bad)} == {"revenue", "other_income", "total_income", "pat", "finance_cost"}
+
+
+def test_a_clean_file_is_unchanged():
+    good = _file(RevenueFromOperations=1000_00000, OtherIncome=50_00000, Income=1050_00000, ProfitLossForPeriod=200_00000)
+    assert {m for m, _ in _metrics(good)} == {"revenue", "other_income", "total_income", "pat"}

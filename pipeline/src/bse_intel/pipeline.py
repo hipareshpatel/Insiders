@@ -2663,7 +2663,7 @@ class Pipeline:
         try:
             with stages.stage("xbrl"):
                 data = self._attachment(link.url, 8_000_000)
-            return xbrl_fast_path.parse(data)
+            return xbrl_fast_path.parse(data, filing.news_id)
         except Exception as exc:  # an extra: the consolidated card stands without it
             log.warning("standalone results file for %s unavailable (%s)", filing.news_id, exc)
             return None
@@ -2809,7 +2809,7 @@ class Pipeline:
             url = max(same, key=lambda link: link.filed_at).url
             # an NSE file through NSE's client, with its pacing and refusal handling (deep audit A-07, 2026-10-21)
             data = self._xbrl_file(url, self.nse if self.nse is not None and "nseindia" in url else None)
-            parsed = xbrl_fast_path.parse(data) if data else None
+            parsed = xbrl_fast_path.parse(data, filing.news_id) if data else None
             if parsed:
                 xbrl_fast_path.fix_scale(parsed, [*history, *tagged.metrics], filing.scrip_code)
                 xbrl_fast_path.drop_long_year(parsed, [*history, *tagged.metrics], filing.scrip_code)
@@ -2973,7 +2973,7 @@ class Pipeline:
                     path.write_bytes(gzip.compress(data))
                 except OSError:
                     pass
-        result = xbrl_fast_path.parse(data) if data else None
+        result = xbrl_fast_path.parse(data, filing.news_id) if data else None
         if result:
             with self._lock:
                 self.stats.xbrl += 1

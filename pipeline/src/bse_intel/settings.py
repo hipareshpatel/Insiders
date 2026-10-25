@@ -105,6 +105,9 @@ class Settings:
     # sampling re-run); RESULTS_RICH=0 turns it off
     results_rich: bool = field(default_factory=lambda: _env("RESULTS_RICH", "1") not in ("0", "false", "no"))
     one_card_per_results_quarter: bool = field(default_factory=lambda: _env("ONE_CARD_PER_RESULTS_QUARTER", "1") not in ("0", "false", "no"))
+    # A results file whose lines fail SEBI's own sums has those lines left off the card (xbrl.untrusted_lines, item 23,
+    # F140); XBRL_SUMS=0 turns it off
+    xbrl_sums: bool = field(default_factory=lambda: _env("XBRL_SUMS", "1") not in ("0", "false", "no"))
     # An annual report's own XBRL from NSE, as a table in front of its text (annual_xbrl.py). Off where NSE is
     # not reachable or another run on the same address is already calling it (NSE limits by IP).
     nse_annual_xbrl: bool = field(default_factory=lambda: _env("NSE_ANNUAL_XBRL", "1") not in ("0", "false", "no"))

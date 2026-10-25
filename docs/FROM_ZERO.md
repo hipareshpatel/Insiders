@@ -50,9 +50,10 @@ Almost everything comes from NSE. Two things come from elsewhere: share prices (
 2. **We do not keep the filing.** The PDF is thrown away and the text we read is deleted after 8 days
    (`pipeline.yml`, `find data/text_cache -mtime +8 -delete`). So we cannot re-check an old card against exactly what we
    read, and the check for repeat filings only works while the text is still there.
-3. **We guess the unit of machine-readable files.** The XBRL file states its own unit, but our reader does not look at
-   it (`xbrl.py` never reads `decimals` or `scale`). It guesses by comparing revenue or profit with the PDF. When the
-   guess fails, a figure can be 10 or 100 times off (this happened: Jubilant, F54).
+3. **We ignore the precision the XBRL file states.** Values are always in rupees; `decimals` says how the company
+   printed them (crore or lakh), and our reader does not look at it. Corrected 25 Oct after a live check: this is not a
+   unit guess. A file the company itself tagged at the wrong scale (Jubilant, F54) is caught by our check against the
+   PDF, and `decimals` would not catch it.
 4. **Some filings never reach us.** Companies listed only on NSE are set aside as "not in the company master". These
    are gaps in what we cover, not wrong cards, but they are invisible unless someone looks. (Shareholding filings are
    set aside from the card path, but a separate daily job reads every company's shareholding file into memory: no gap.)

@@ -54,3 +54,16 @@ Every action taken under it is listed below with its commit or run, for the owne
   workers. The balance is prepaid with no card, so spending stops when it runs out; past the date, or with the file
   removed, the pipeline is free-tier only again. Cards keep their model label, so the daily audit scores DeepSeek's
   (47% WRONG in round 1, before today's checks).
+
+## 2026-10-25 08:45 UTC: "Yes for all green"
+
+The owner approved merging every PR into `main` without asking, once it is green: CI passing on the current head, no
+merge conflict, and no review thread left open. A merge redeploys the site and changes the next 15-minute pipeline run,
+so a change that alters what cards say also needs its release gate passed before merging (for example F126d under
+`PASS_MARKS_TABLE.md`, and the blind review for narrowed grounding): green CI shows the code runs, not that the cards are
+right. Everything the 2026-10-20 approval leaves to the owner still goes to the owner.
+
+### Actions taken
+- 25 Oct 08:43 UTC: PR #105 merged into `main` (6bdf77f) with CI green, on the owner's "Merge it, do not ask": the
+  CLAUDE.md rule on cheaper subagents.
+- 25 Oct 08:46 UTC: PR #106 merged into `main` (02ead06) with CI green: this standing approval.

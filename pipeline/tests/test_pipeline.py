@@ -284,12 +284,16 @@ def test_card_with_wrong_math_is_held_for_review(settings):
     assert q["check"] == "MISMATCH" and q["computed"] == 135.0
     assert outcome.card["needs_review"] == 1  # still published, marked unverified
     assert body["review"]["status"] == "UNRESOLVED" and "formula gives 135" in body["review"]["issues"][0]
-    assert body["fundamentals"]["revenue"] == {"period": "Q2FY27", "value": 120.0}
+    assert "revenue" not in (body["fundamentals"] or {})   # a held card's own figures are not memory's (owner, 25 Oct)
     assert body["pdf_pages"] == 1
-    # held: its figures go into memory, its line does not go into the company's story (T5, 2026-10-20)
-    memory = sink.get_dossier(f.scrip_code)
+    # held: neither its figures nor its line go into memory (owner, 25 Oct 2026, reversing T5 of 20 Oct); with no
+    # exchange file to keep, memory is left as it was, and nothing is written before the card's row
+    assert sink.get_dossier(f.scrip_code) is None
+    pipeline._commit([outcome])
+    memory = sink.get_dossier(f.scrip_code) or {}
     assert outcome.card["held"] == 1 and not any(e.get("news_id") == "n-q" for e in memory.get("timeline", []))
-    assert any(m.get("source_news_id") == "n-q" or m.get("value_news_id") == "n-q" for m in memory["financial_metrics"])
+    assert not any(m.get("source_news_id") == "n-q" or m.get("value_news_id") == "n-q"
+                   for m in memory.get("financial_metrics", []))
 
 
 def test_backfill_goes_company_by_company_largest_first(settings):
@@ -873,14 +877,16 @@ def test_a_filing_read_again_as_not_material_takes_its_facts_out_of_memory(setti
     assert again.update["status"] == "NOT_MATERIAL" and "n-again" not in sources()
 
 
-def test_an_annual_report_may_be_larger_than_other_attachments():
-    """519552's FY26 annual report was skipped at the 30 MB cap and, read as nothing, called not material (F57)."""
+def test_every_attachment_may_be_as_large_as_an_annual_report():
+    """519552's FY26 annual report (F57) and NHPC's FY26 results PDF were both skipped at a 30 MB cap; every
+    filing now gets the same 120 MB (owner, 25 Oct 2026)."""
     from bse_intel.pipeline import ATTACHMENT_MAX_BYTES, _attachment_cap
 
     when = now_ist()
     report = _filing("n-ar", "34th Annual Report for FY 2025-26", when, "Company Update", "Reg. 34 (1) Annual Report")
-    assert _attachment_cap(report.model_copy(update={"event_type": "ANNUAL_REPORT"})) >= 100_000_000
-    assert _attachment_cap(report.model_copy(update={"event_type": "RESULTS"})) == ATTACHMENT_MAX_BYTES == 30_000_000
+    assert ATTACHMENT_MAX_BYTES == 120_000_000
+    for kind in ("ANNUAL_REPORT", "RESULTS", "OTHER"):
+        assert _attachment_cap(report.model_copy(update={"event_type": kind})) == ATTACHMENT_MAX_BYTES
 
 
 def test_an_annual_report_inside_an_agm_notice_takes_the_annual_report_path(settings):
@@ -1060,7 +1066,7 @@ def test_memory_a_job_writes_while_the_card_is_being_written_is_kept(settings):
                                  env={"OPENROUTER_API_KEY": "o"})
     holder["sink"] = sink
     sink.put_dossier("999001", new_dossier(f))
-    pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    pipeline._commit([pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))])
     memory = sink.get_dossier("999001")
     assert memory["pledges"]["events"][0]["seq_id"] == "p1"                     # the job's part, kept
     periods = {m["period"] for m in memory["financial_metrics"]}
@@ -1090,3 +1096,31 @@ def test_a_filing_whose_own_write_keeps_failing_spends_an_attempt_in_the_end(set
     # the site down for everyone (the filing before also failed): no attempt spent however many times
     pipeline._unreachable = 1
     assert pipeline._attempt(worn, bulk=False, memory_complete=True).update["status"] == "PENDING"
+
+
+def test_a_cards_memory_is_written_with_its_row_and_not_before(settings):
+    """Owner, 25 Oct 2026 (architecture audit): memory went to the store before the card's row, so a run cut short, or
+    a row the database refused, left memory with no card. Now it waits for the commit; meanwhile the company's later
+    filings in the run read it from the pending store."""
+    from bse_intel.sinks.base import SinkRejected
+
+    now = now_ist() - timedelta(minutes=10)
+    f = _filing("n-mem", "Unaudited Financial Results for the quarter", now, "Result")
+    pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},
+                              {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]}, env={"OPENROUTER_API_KEY": "o"})
+    outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert outcome.card is not None and sink.get_dossier(f.scrip_code) is None          # nothing before the row
+    pending = pipeline._memory(f.scrip_code)                                              # the next filing sees it
+    assert any(m.get("source_news_id") == "n-mem" or m.get("value_news_id") == "n-mem" for m in pending["financial_metrics"])
+
+    def refuse(outcomes):
+        raise SinkRejected("row too large")
+    real, pipeline._commit_rows = pipeline._commit_rows, refuse
+    pipeline._commit([outcome])                                                           # the database refuses it
+    assert sink.get_dossier(f.scrip_code) is None and not pipeline._pending_memory        # so memory is not written
+    pipeline._commit_rows = real
+
+    again = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    pipeline._commit([again])
+    memory = sink.get_dossier(f.scrip_code)
+    assert any(m.get("source_news_id") == "n-mem" or m.get("value_news_id") == "n-mem" for m in memory["financial_metrics"])

@@ -10,12 +10,37 @@ failed filings one more try, so a filing broken by a bug fixed that day still ge
 from __future__ import annotations
 
 import logging
+import re
 
 from .timeutil import now_iso
 
 log = logging.getLogger(__name__)
 
 LIMIT = 500
+TOO_LARGE = ("AttachmentTooLarge", "NoTextAttachment: audio only", "NoTextAttachment: a ZIP with no PDF")
+
+
+def _reason(error: str) -> str:
+    """A failure's reason without what differs from filing to filing (links, ids, sizes), so like ones group."""
+    text = re.sub(r"https?://\S+", "<url>", error or "(no reason stored)")
+    text = re.sub(r"\b(nse|bse)-\d+\b", "<id>", text)
+    text = re.sub(r"\d[\d,.]*", "<n>", text)
+    return text[:120]
+
+
+def report(sink, since: str, limit: int = LIMIT) -> dict:
+    """Every FAILED filing filed on or after ``since`` (whatever its attempts), grouped by reason, largest group
+    first, with up to three examples each (owner, 25 Oct 2026: why do filings fail?). Reads only; no AI."""
+    rows = sink.query("filings_failed", [since, 0, limit])
+    groups: dict[str, list[dict]] = {}
+    for row in rows:
+        groups.setdefault(_reason(str(row.get("last_error") or "")), []).append(row)
+    ordered = sorted(groups.items(), key=lambda kv: -len(kv[1]))
+    return {"since": since, "failed": len(rows), "capped": len(rows) >= limit,
+            "reasons": [{"reason": reason, "count": len(group),
+                         "examples": [f"{r['news_id']} {r.get('symbol') or r.get('scrip_code')} {str(r.get('filed_at'))[:10]} "
+                                      f"{r.get('event_type') or ''} attempts={r.get('attempts')}" for r in group[:3]]}
+                        for reason, group in ordered]}
 
 
 def failed(sink, since: str, max_attempts: int, limit: int = LIMIT) -> list[dict]:
@@ -37,7 +62,8 @@ def requeue_ids(sink, news_ids: list[str], max_attempts: int, dry_run: bool = Fa
 def requeue(sink, since: str, max_attempts: int, attempts_left: int | None = None, dry_run: bool = False) -> dict:
     """Set the failed filings since ``since`` PENDING with ``attempts_left`` tries (default all); returns a summary."""
     left = max_attempts if attempts_left is None else max(1, min(attempts_left, max_attempts))
-    rows = failed(sink, since, max_attempts)
+    # a file over the size cap, or with no text in it, stays so: requeued, it only fails the same way again (by id it can be)
+    rows = [r for r in failed(sink, since, max_attempts) if not str(r.get("last_error") or "").startswith(TOO_LARGE)]
     stamp = now_iso()
     updates = [{"news_id": r["news_id"], "status": "PENDING", "attempts": max_attempts - left, "updated_at": stamp,
                 "last_error": f"requeued {stamp[:10]} after: {r.get('last_error') or ''}"[:500]} for r in rows]

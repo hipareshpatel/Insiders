@@ -146,7 +146,9 @@ def _call_text(pipeline, row: dict) -> str | None:
     from .extract import Document
 
     try:
-        pdf = pipeline._attachment(row["pdf_url"], 30_000_000)
+        from .pipeline import ATTACHMENT_MAX_BYTES
+
+        pdf = pipeline._attachment(row["pdf_url"], ATTACHMENT_MAX_BYTES)
         return Document(pdf, max_ocr_pages=0).select_text(10_000_000, []) or None if pdf else None
     except Exception as exc:  # noqa: BLE001 - one unreachable transcript must not stop the refresh
         log.warning("call %s: transcript not read for the re-check: %s", row["news_id"], exc)

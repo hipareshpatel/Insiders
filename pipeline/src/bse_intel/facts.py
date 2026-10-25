@@ -13,6 +13,7 @@ its figure and sign, so the pool accepts "fell 178 bps" and not "rose 178 bps".
 
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -52,6 +53,8 @@ def _cr(value: float) -> str:
 
 
 def _bps(now: float, then: float) -> tuple[int, int]:
+    if not (math.isfinite(now) and math.isfinite(then)):
+        return 0, 0
     move = round((now - then) * 100)
     return abs(move), (move > 0) - (move < 0)
 

@@ -94,6 +94,15 @@ jobs:
           path: data/text_cache
           key: text-cache-${{ github.run_id }}
           restore-keys: text-cache-
+      # today's texts, read by the quick run (pipeline-today.yml), are added in, so this run's own saved cache holds them
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/text_today
+          key: text-today-${{ github.run_id }}
+          restore-keys: text-today-
+      - name: Add today's texts
+        working-directory: .
+        run: mkdir -p data/text_cache && cp -rn data/text_today/. data/text_cache/ 2>/dev/null || true
       # The DeepSeek drain (owner, 21 Oct 2026: "use deepseek for pending and let's clear them"): while
       # pipeline/config/drain_until holds a UTC time still ahead, the prepaid DeepSeek key (D24) is passed, preferred on
       # every route that has it and the run uses 8 workers. Past that time, or with the file gone, runs are free-tier only
@@ -107,6 +116,8 @@ jobs:
             export DEEPSEEK_API_KEY="$DEEPSEEK_SECRET" PREFER_MODEL=deepseek:deepseek-flash PIPELINE_WORKERS=8
             echo "DeepSeek drain on until $until UTC"
           fi
+          # today's filings are the quick run's (pipeline-today.yml, every 15 minutes; owner, 25 Oct 2026)
+          export PIPELINE_TODAY="${{ vars.PIPELINE_TODAY_SPLIT != 'off' && 'skip' || '' }}"
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel run --mode "${{ inputs.mode || 'all' }}" --time-budget "${{ inputs.time_budget || '2400' }}"
       # GitHub drops scheduled runs when busy (21 Oct 2026: market-data and nightly never fired); a daily job with no run
       # recorded 45 minutes after its slot is started here, once a day

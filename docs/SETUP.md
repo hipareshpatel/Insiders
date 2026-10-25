@@ -41,7 +41,7 @@ npm run dev                      # http://localhost:5173
 cd pipeline
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev,ocr]"      # ocr: RapidOCR for scanned pages (optional)
-python -m pytest -q              # 1,001 tests (2 skip without the ocr extra); web: npm test (55: card text, company statements, owner holds, call takeaways, company keys)
+python -m pytest -q              # 1,016 tests (2 skip without the ocr extra); web: npm test (55: card text, company statements, owner holds, call takeaways, company keys)
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \
@@ -84,6 +84,7 @@ python -m bse_intel analyze-pdf results.pdf --scrip 500000 --company "Some Ltd" 
 | `critic-export --since YYYY-MM-DD [--until D] [--out critic.json]` | The shadow meaning critic's stored verdicts (R2 `evidence/critic/<news_id>.json`, beside the raw replies, one per live published card it judged) to a JSON file, for the daily audit to set beside the reviewers' verdicts; read only, no AI, no D1. The critic itself runs inside each live run (`critic.py`, route `critic` in providers.toml; `CRITIC=0` off, `CRITIC_MAX` cards a run, default 8, `CRITIC_MAX_S` seconds, default 180) |
 | `apply-verdicts` | The owner's standing Wrong / Right verdicts applied to the stored cards once, no AI (verdicts saved before they acted on the card, O11, never held or released it); also from GitHub (Maintenance > apply-verdicts). A re-run keeps a verdict by itself: Wrong holds the new version with the owner's note; Right releases it only if its headline is the approved card's |
 | `requeue-failed [--since D \| --days 30] [--attempts N] [--ids a,b] [--dry-run]` | Filings that used all 3 attempts get fresh attempts (after a fix), no AI; with `--ids`, the named filings re-run whatever their status (held or stale cards); also from GitHub (Maintenance > requeue-failed). Each night after 22:00 IST a live run gives the last 7 days' failed filings one more try by itself |
+| `failed-report [--since D]` | Every failed filing since the backfill start (or D), grouped by reason, with three examples each; reads only, no AI; also from GitHub (Maintenance > failed-report). The nightly requeue skips a file over the size cap |
 | `dgtr-sync [--pages N] [--scrips a,b]` | DGTR anti-dumping / countervailing / safeguard cases into the memory of the companies their notices name as applicant or supporter, no AI (module 8); once a day in a live run (`NSE_DGTR=0` off); `--pages 42` reads every listed case (OCR of scanned notices, hours) |
 | `python -m bse_intel sync-universe` | NSE's main-board equity list joined to the company master by ISIN: the companies analysed (market cap ≥ `UNIVERSE_MIN_MCAP_CR`, ₹500 Cr, to join; one already in leaves below `UNIVERSE_EXIT_MCAP_CR`, ₹400 Cr; unpriced and watchlisted ones stay in) and the maps NSE discovery uses. Needed before NSE discovery; `market-data` and `sync-companies` rebuild it too. 1,778 companies on 2026-10-19 at ₹500 Cr |
 | `python -m bse_intel sync-companies [--source nse\|bse] [--max-lookups N] [--refresh-industry]` | The company master from NSE's equity list (new listings, names, industry → sector lens, size label), then the universe file; `--source bse` reads BSE's scrip list and needs an Indian address |

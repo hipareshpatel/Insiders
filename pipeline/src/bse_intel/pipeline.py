@@ -33,8 +33,8 @@ from datetime import date, datetime, timedelta
 from functools import partial
 from threading import Lock
 
-from .ai.gateway import CEILING, AIGateway, AllProvidersFailed
-from .bse import AttachmentError, BseClient, SourceBlockedError, XbrlLink
+from .ai.gateway import CEILING, TRANSIENT, AIGateway, AllProvidersFailed
+from .bse import AttachmentError, AttachmentTooLarge, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, keep_concurrent_writes, latest_fundamentals, memory_ids, merge,
                       own_former_name,
@@ -47,7 +47,7 @@ from . import order_band
 from . import gate
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
-from .models import EVENT_TAGS, Filing, MemoryOutput, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
+from .models import EVENT_TAGS, DossierDelta, Filing, MemoryOutput, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
                       printed_periods, quarter_index, statement_quarter, statement_year)
 from .prompts.engine import PromptEngine
@@ -106,6 +106,10 @@ RETURNING_PER_RUN = 5   # companies back in the universe whose set-aside filings
 MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing this network
 MAX_NETWORK_FAILURES = 5  # attachment downloads failing on the network in a row that mean the source is down
 MAX_DEFERRALS = 3        # runs one attachment may fail on the network, alone, before it spends an attempt
+# runs a filing waits for the better writers' daily quota, or for busy ones, before it spends an attempt: about a day at a
+# run every 30-40 minutes, so it outlasts Gemini's daily reset (owner, 25 Oct 2026: 28 filings failed on AI capacity,
+# most after three 15-minute waits against a once-a-day reset)
+MAX_QUOTA_DEFERRALS = 40
 MAX_UNREACHABLE = 3      # filings in a row the platform did not answer for: the site is down, stop
 NOISE_CHUNK = 500        # rows per noise-audit file in R2
 NOISE_FIELDS = ("news_id", "scrip_code", "company_name", "headline", "category", "subcategory",
@@ -131,7 +135,7 @@ SNAPSHOT_PAGE = 50        # the feed's page size
 
 
 _DEFERRED = re.compile(r"^deferred (\d+)x: (?:attachment download failed|the better writers are at their day|"
-                       r"the platform did not answer)")
+                       r"the platform did not answer|AI busy)")
 
 
 def _deferrals(last_error: str | None) -> int:
@@ -142,6 +146,21 @@ def _deferrals(last_error: str | None) -> int:
 
 class EventXbrlPending(Exception):
     """A live filing's event XBRL has not reached NSE yet; the filing stays queued without spending an attempt."""
+
+
+class AttachmentNotYet(Exception):
+    """NSE lists the filing but its file is not there yet (a 404): it waits, without spending an attempt, up to
+    ATTACHMENT_WAIT after the filing (owner, 25 Oct 2026: CGCL's press release was given up after three tries in about
+    two hours and downloads fine later)."""
+
+
+class NoTextAttachment(Exception):
+    """The attachment holds nothing to read (a call's audio, a ZIP without a PDF): failed once, not retried."""
+
+
+ATTACHMENT_WAIT = timedelta(hours=24)
+MEMORY_SYNC_KEY = "memory_syncs:last"
+MEMORY_SYNC_EVERY = timedelta(minutes=55)
 
 
 @dataclass
@@ -276,7 +295,8 @@ def relabel_periods(out: Pass2Output, quarter: str | None, year: str | None) -> 
     quarters = {p for p in labels if quarter_index(p) is not None}
     mapping: dict[str, str] = {}
     offset = 0
-    if quarter and quarters:
+    # a half-year, nine-month or year file's period is no quarter: nothing to shift by (MODIS, 24 Oct 2026, crashed)
+    if quarter and quarters and quarter_index(quarter) is not None:
         model_quarter = max(quarters, key=quarter_index)  # a statement's current period is its latest column
         offset = quarter_index(quarter) - quarter_index(model_quarter)
         if offset:
@@ -1867,6 +1887,11 @@ class Pipeline:
         self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
         self._superseding: dict[str, tuple[list[str], str]] = {}  # news_id -> later filings with its quarter's card (D20)
         self._critic_jobs: list[dict] = []   # live cards committed this run, for the shadow critic (critic.py)
+        # A card's memory waits for its card row (owner, 25 Oct 2026, after the architecture audit): written to the store
+        # only once the batch holding the card is committed, so a run cut short or a rejected row leaves no memory
+        # without its card. Until then the company's later filings in this run read it from here (one company's
+        # filings run in order in one job). {scrip: [(news_id, memory, memory as read)]}
+        self._pending_memory: dict[str, list[tuple[str, dict, dict]]] = {}
 
     # ------------------------------------------------------------------ writes
 
@@ -2023,11 +2048,17 @@ class Pipeline:
             return []
         return self.nse.announcements(start, end, symbol=symbol, scrip_for=nse_map.scrip_for)
 
-    def _attachment(self, url: str, max_bytes: int) -> bytes | None:
-        """A filing's attachment from whichever exchange serves it."""
-        if self.nse is not None and "nseindia.com" in url:
-            return self.nse.fetch(url, max_bytes=max_bytes)
-        return self.bse.download(url, max_bytes=max_bytes)
+    def _attachment(self, url: str, max_bytes: int, document: bool = False) -> bytes | None:
+        """A filing's attachment from whichever exchange serves it. A file over the cap raises AttachmentTooLarge for
+        the filing's own document (it fails once, with that reason, and is not retried); any other file is None."""
+        try:
+            if self.nse is not None and "nseindia.com" in url:
+                return self.nse.fetch(url, max_bytes=max_bytes)
+            return self.bse.download(url, max_bytes=max_bytes)
+        except AttachmentTooLarge:
+            if document:
+                raise
+            return None
 
     def _record(self, key: str, filings, noise: dict[str, list], known: set[str],
                 sources: dict[str, str | None] | None = None) -> int:
@@ -2041,9 +2072,16 @@ class Pipeline:
         today = today_ist().isoformat()
         noise_before = len(noise)
         ledger, catalysts, companies = [], [], {}
-        changed = []
+        changed, added = [], []
         for filing in filings:
             if filing.news_id in known:
+                if sources and filing.news_id in sources and not sources[filing.news_id] and filing.pdf_url:
+                    # listed first without a file, which NSE added later: read again with it (owner, 25 Oct 2026; its
+                    # card, if any, came from the title alone)
+                    sources[filing.news_id] = filing.pdf_url
+                    filing.status = "PENDING"
+                    added.append(filing.ledger_row(now))
+                    continue
                 if sources and filing.news_id in sources and _attachment_changed(sources[filing.news_id], filing.pdf_url):
                     sources[filing.news_id] = filing.pdf_url   # once per run, however often the day is read
                     filing.status = "PENDING"
@@ -2087,6 +2125,10 @@ class Pipeline:
         self.stats.discovered += len(ledger) + new_noise
         self._exec("companies_seen", list(companies.values()))
         self._exec("filings_discover", ledger)
+        if added:
+            self.stats.attachment_changed += len(added)
+            self._exec("filings_discover", added)
+            log.info("discovered %s: %d known filings whose file NSE added later, queued again", key, len(added))
         if changed:
             self.stats.attachment_changed += len(changed)
             # counted only until a day's count shows NSE does not vary an unchanged filing's link (a systematic
@@ -2290,8 +2332,17 @@ class Pipeline:
             self._forget_in_memory(filing)
         return outcome
 
+    def _forget_pending(self, scrip: str, news_ids) -> bool:
+        """The same filings taken out of memory still waiting for its card rows (_pending_memory)."""
+        changed = False
+        with self._lock:
+            for _, merged, _ in self._pending_memory.get(scrip, []):
+                changed = any([forget_filing(merged, n) for n in news_ids]) or changed
+        return changed
+
     def _forget_in_memory(self, filing: Filing) -> None:
         """What an earlier analysis of this filing put in memory, taken out now that it ends without a card."""
+        self._forget_pending(filing.scrip_code, (filing.news_id,))
         try:
             dossier = self.sink.get_dossier(filing.scrip_code)
             if dossier and forget_filing(dossier, filing.news_id):
@@ -2371,11 +2422,21 @@ class Pipeline:
                 # is the morning's quota, not the filing (21 Oct: 12 filings a run spent an attempt this way before
                 # Gemini's 12:30 IST reset). It waits for them a few runs before it spends an attempt.
                 times = _deferrals(filing.last_error) + 1
-                if any(kind == CEILING for _, kind, _ in exc.outcomes) and times <= MAX_DEFERRALS:
+                kinds = {kind for _, kind, _ in exc.outcomes}
+                if CEILING in kinds and times <= MAX_QUOTA_DEFERRALS:
                     return self._deferred(filing, f"deferred {times}x: the better writers are at their day ({exc})"[:300])
+                # a writer busy or rate-limited beside one that failed: the capacity, not the filing (gemma 429s, Z.AI's
+                # concurrency limit; 25 Oct 2026 report)
+                if TRANSIENT in kinds and times <= MAX_QUOTA_DEFERRALS:
+                    return self._deferred(filing, f"deferred {times}x: AI busy ({exc})"[:300])
                 return self._failed(filing, exc)
             except EventXbrlPending as exc:
                 return self._deferred(filing, f"deferred: {exc}")
+            except (AttachmentTooLarge, NoTextAttachment) as exc:
+                # the same file stays too large, or without text, on every run: fail once with the reason
+                return self._failed(filing, exc, final=True)
+            except AttachmentNotYet as exc:
+                return self._deferred(filing, f"deferred: {exc}"[:300])
             except SourceBlockedError as exc:
                 # NSE answered 401, 403 or 429 (or BSE refused): stop the run politely; the work stays queued and no
                 # filing's attempt is spent (owner, 2026-10-18)
@@ -2413,7 +2474,7 @@ class Pipeline:
                 return self._failed(filing, exc)
             except Exception as exc:  # one bad filing must not stop the run
                 log.exception("filing %s failed", filing.news_id)
-                return self._failed(filing, exc)
+                return self._failed(filing, exc, where=_crash_site(exc))
         return self._failed(filing, RuntimeError("retries exhausted"))
 
     def _deferred(self, filing: Filing, reason: str) -> Outcome:
@@ -2421,12 +2482,14 @@ class Pipeline:
             self.stats.deferred += 1
         return Outcome({"news_id": filing.news_id, "status": "PENDING", "updated_at": now_iso(), "last_error": reason})
 
-    def _failed(self, filing: Filing, exc: Exception) -> Outcome:
+    def _failed(self, filing: Filing, exc: Exception, final: bool = False, where: str = "") -> Outcome:
         with self._lock:
             self.stats.failed += 1
         # The attempt count is sent as a value, not an increment, so a retried write cannot count twice.
-        return Outcome({"news_id": filing.news_id, "status": "FAILED", "attempts": filing.attempts + 1,
-                        "last_error": f"{type(exc).__name__}: {exc}"[:500], "updated_at": now_iso()})
+        attempts = max(filing.attempts + 1, self.settings.max_attempts) if final else filing.attempts + 1
+        return Outcome({"news_id": filing.news_id, "status": "FAILED", "attempts": attempts,
+                        "last_error": (f"{type(exc).__name__}: {exc}"[:440] + (f" [at {where}]" if where else ""))[:500],
+                        "updated_at": now_iso()})
 
     def analyze(self, filing: Filing, bulk: bool = False, memory_complete: bool = True) -> Outcome:
         """Run Pass 1 (if needed), extraction, Pass 2, grounding, merge and signals for one filing."""
@@ -2456,15 +2519,17 @@ class Pipeline:
             # Written before the text layer was read in reading order: read the PDF again, keeping the
             # pages already OCR'd; if BSE will not serve it now, the old text is still better than none.
             try:
-                pdf = self._attachment(filing.pdf_url, _attachment_cap(filing))
+                pdf = self._attachment(filing.pdf_url, _attachment_cap(filing), document=True)
                 self._refusals = self._network_failures = 0
                 doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
                 doc.keep_ocr(cached)
-            except AttachmentError:
+            except (AttachmentError, AttachmentTooLarge):
                 doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
         if doc is None:
-            pdf = self._attachment(filing.pdf_url, _attachment_cap(filing)) if filing.pdf_url else None
+            pdf = self._attachment(filing.pdf_url, _attachment_cap(filing), document=True) if filing.pdf_url else None
             self._refusals = self._network_failures = 0
+            if filing.pdf_url and not pdf:   # a 404, or an empty file (XTRANET's of 23 Oct is still 0 bytes)
+                _attachment_missing(filing)
             doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
         try:
             repeat = self._duplicate_of(filing, doc)
@@ -2476,7 +2541,7 @@ class Pipeline:
             why = None
             if filing.route != "TIMELINE":
                 first = doc.select_text(6000, [])   # the first pages: an amount often sits on the order's second page
-                profit = annual_profit_cr(self.sink.get_dossier(filing.scrip_code)) if _FINE.search(first) else None
+                profit = annual_profit_cr(self._memory(filing.scrip_code)) if _FINE.search(first) else None
                 why = memory_only(filing, first, doc.page_count, profit)
             if why:
                 log.info("%s: %s, a timeline line and no card", filing.news_id, why)
@@ -2686,6 +2751,7 @@ class Pipeline:
             later, quarter = self._superseding.pop(filing.news_id, ((), ""))
         if not later or outcome.update.get("status") != "ANALYZED" or not outcome.card or outcome.card.get("held"):
             return []
+        self._forget_pending(filing.scrip_code, later)
         dossier = self.sink.get_dossier(filing.scrip_code)
         if dossier and any([forget_filing(dossier, n) for n in later]):
             self.sink.put_dossier(filing.scrip_code, dossier)
@@ -2751,7 +2817,7 @@ class Pipeline:
             # an event XBRL file comes as a zip of the XML and its PDF on some rows (event_xbrl.xml_of)
             fetch = client.fetch if url.lower().endswith(".zip") and hasattr(client, "fetch") else client.download
             data = fetch(url, max_bytes=max_bytes)
-        except AttachmentError:
+        except (AttachmentError, AttachmentTooLarge):
             return None
         if data and path:
             try:
@@ -2971,7 +3037,7 @@ class Pipeline:
         events, events_checked = self._event_xbrl(filing, doc)
         # Before pass 1, not after it: the gatekeeper is shown what this company has already filed, so it
         # can name an event arriving again as a different document (the document rules cannot see those).
-        dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
+        dossier = self._memory(filing.scrip_code) or new_dossier(filing, company)
         read = json.loads(json.dumps(dossier))   # memory as read, for keep_concurrent_writes when it is written back
         if filing.route == "PASS1" and doc.page_count >= ANNUAL_REPORT_MIN_PAGES and doc.kind() == "ANNUAL_REPORT":
             # NSE's headline can name only the meeting ("Annual General Meeting ... to be held on ..."), with the annual
@@ -3095,9 +3161,13 @@ class Pipeline:
         events_table = event_xbrl.table(events)
         if not text.strip() and not tagged and not events:
             if filing.pdf_url:
-                # The attachment is there but nothing could be read from it (a 404, over 30 MB, corrupt or
-                # password-protected): a card from the headline alone cannot be checked against anything, and
-                # its checks crashed on the empty text. Failed, so a later run tries the file again.
+                # The attachment is there but nothing could be read from it (corrupt or password-protected; a 404,
+                # a file over the cap and a ZIP with no PDF are told apart before this): a card from the headline
+                # alone cannot be checked against anything. Failed, so a later run tries the file again.
+                if doc.error and doc.error.startswith(("audio only", "a ZIP with no PDF")):
+                    raise NoTextAttachment(doc.error)
+                if doc.error and doc.error.startswith("cut short"):
+                    _attachment_missing(filing, f"cut short on NSE ({doc.error[11:]})")
                 raise RuntimeError(f"no readable text in the attachment ({doc.error or 'empty'})")
             # No attachment by design - an exchange's clarification request is its headline and subject - so
             # those are the filing's own words, and what its quotes answer to.
@@ -3329,6 +3399,13 @@ class Pipeline:
         # Memory takes only figures confirmed at the filing's unit and the company's scale (audit round 2); the
         # card keeps what it read. XBRL figures go into both, unfiltered.
         remembered, _ = trust.for_memory(out, filed_text, company, dossier)
+        # A held card's own reading stays out of memory: its figures, notes, deals and guidance did not pass the checks.
+        # Only the exchange file's figures are kept (owner, 25 Oct 2026, reversing T5 of 20 Oct, which kept a held card's
+        # figures as "the statement's own")
+        held_now = (review or {}).get("status") == "UNRESOLVED" and not checks.only_style
+        if held_now:
+            remembered = out.model_copy(deep=True)
+            remembered.dossier_delta = DossierDelta()
         if tagged:
             _apply_xbrl(out, tagged, filing.news_id)
             _apply_xbrl(remembered, tagged, filing.news_id)
@@ -3340,7 +3417,7 @@ class Pipeline:
             # the same quarter's standalone figures, for the company page's standalone view (never the card's)
             put_standalone(merged, standalone_file.metrics, standalone_file.balance_sheet, filing.filed_at, filing.news_id)
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector), ("symbol", company.get("symbol") or filing.symbol)) if v})
-        if event_type == "CONCALL_PRESENTATION":
+        if event_type == "CONCALL_PRESENTATION" and not held_now:
             # the call's checked takeaways, kept for the company page's quarterly summary (owner, 2026-10-21: the
             # summary was built from the few items memory happened to keep, not the call's analysis)
             remember_call_points(merged, filing.news_id, filing.filed_at, card.call_takeaways)
@@ -3357,11 +3434,9 @@ class Pipeline:
             # published press release made two Q2FY27 results lines with different figures (T5, 2026-10-20).
             # Its figures stay: they are the statement's own and passed memory's checks.
             merged["timeline"] = [e for e in merged.get("timeline", []) if e.get("news_id") != filing.news_id]
-        # memory was read before the AI call, minutes ago: what a memory job stored since is kept, not overwritten
-        kept = keep_concurrent_writes(merged, read, self.sink.get_dossier(filing.scrip_code))
-        if kept:
-            log.info("%s: memory written meanwhile by another job kept: %s", filing.news_id, ", ".join(kept))
-        self.sink.put_dossier(filing.scrip_code, merged)
+        # written with the card's row, not before it (_write_memory, which also keeps what other jobs stored meanwhile)
+        with self._lock:
+            self._pending_memory.setdefault(filing.scrip_code, []).append((filing.news_id, merged, read))
 
         card_json = {
             "category_tag": EVENT_TAGS.get(event_type, "UPDATE"),
@@ -3761,6 +3836,42 @@ class Pipeline:
             except Exception as exc:  # the archive is a backup; never fail the run for it
                 log.warning("card archive for %s failed: %s", day, exc)
 
+    def _memory(self, scrip: str) -> dict | None:
+        """A company's memory as this run knows it: its latest card's memory not yet written, else the store's."""
+        with self._lock:
+            pending = self._pending_memory.get(scrip)
+            if pending:
+                return json.loads(json.dumps(pending[-1][1]))
+        return self.sink.get_dossier(scrip)
+
+    def _write_memory(self, outcomes: list[Outcome]) -> None:
+        """The memory of committed cards, in the order they were made, each merged with what other jobs stored meanwhile."""
+        committed = {o.update.get("news_id") for o in outcomes}
+        with self._lock:
+            ready = []
+            for scrip, entries in list(self._pending_memory.items()):
+                ready += [(scrip, e) for e in entries if e[0] in committed]
+                rest = [e for e in entries if e[0] not in committed]
+                if rest:
+                    self._pending_memory[scrip] = rest
+                else:
+                    del self._pending_memory[scrip]
+        for scrip, (news_id, merged, read) in ready:
+            kept = keep_concurrent_writes(merged, read, self.sink.get_dossier(scrip))
+            if kept:
+                log.info("%s: memory written meanwhile by another job kept: %s", news_id, ", ".join(kept))
+            self.sink.put_dossier(scrip, merged)
+
+    def _drop_memory(self, news_id: str) -> None:
+        """A card the database refused leaves no memory either."""
+        with self._lock:
+            for scrip, entries in list(self._pending_memory.items()):
+                rest = [e for e in entries if e[0] != news_id]
+                if rest:
+                    self._pending_memory[scrip] = rest
+                else:
+                    del self._pending_memory[scrip]
+
     def _commit(self, outcomes: list[Outcome]) -> None:
         if not outcomes:
             return
@@ -3772,6 +3883,7 @@ class Pipeline:
     def _commit_locked(self, outcomes: list[Outcome]) -> None:
         try:
             self._commit_rows(outcomes)
+            self._write_memory(outcomes)
         except SinkRejected as exc:
             # One bad row must not block the batch (and get its filings analysed again on every
             # run): commit filing by filing, and mark the ones the database refuses as FAILED.
@@ -3779,8 +3891,10 @@ class Pipeline:
             for outcome in outcomes:
                 try:
                     self._commit_rows([outcome])
+                    self._write_memory([outcome])
                 except SinkRejected as one:
                     news_id = outcome.update["news_id"]
+                    self._drop_memory(news_id)
                     self._exec("filings_update", [{"news_id": news_id, "status": "FAILED", "attempts": self.settings.max_attempts,
                                                    "last_error": f"rejected by the database: {one}"[:500], "updated_at": now_iso()}])
         self._flush_usage()
@@ -3851,11 +3965,13 @@ class Pipeline:
                     self._discover_safely(day, full=False)
                 # the window's earlier days cost ~2,000 ledger writes each: under the daily write budget, like the
                 # backfill, so today's filings keep the free tier's headroom (20 Oct: 80,013 writes by 11:30 IST)
-                if writes_at_start + self.stats.d1_rows_written < self.settings.d1_daily_write_budget:
+                today_only = os.environ.get("PIPELINE_TODAY") == "only"   # the quick run: today's filings and nothing else
+                if writes_at_start + self.stats.d1_rows_written < self.settings.d1_daily_write_budget and not today_only:
                     self._discover_window(live_from, today)
-                self._requeue_failed_nightly(live_from)
-                self._sweep_held()
-                if self._on_nse():
+                if not today_only:
+                    self._requeue_failed_nightly(live_from)
+                    self._sweep_held()
+                if self._on_nse() and not today_only:
                     self.retriage_returning(today, started + time_budget_s * 0.2)
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 backfill_done = self.sink.kv_get("backfill:complete") == "1"
@@ -3863,7 +3979,17 @@ class Pipeline:
                 # day's share of the plan's writes (D1_DAILY_WRITE_CAP) the window's earlier days, the catch-ups and the memory syncs wait for
                 # the reset (05:30 IST) and the run only turns today's filings into cards (20 Oct 2026: 91,080 by 20:30
                 # IST, ~400 writes a run on the window's backlog)
-                for day_from, day_to in ((today, today), (live_from, today - timedelta(days=1))):
+                # PIPELINE_TODAY splits the work between two workflows (owner, 25 Oct 2026: a filing waited ~42 min for the
+                # next 41-minute run): "only" reads today's filings and stops (pipeline-today.yml, every 15 min); "skip"
+                # (pipeline.yml) reads the window's earlier days first and today last, a safety net for quick runs
+                # GitHub drops: today's filings are normally done by then. Unset: today first, as before.
+                split = os.environ.get("PIPELINE_TODAY", "")
+                days_to_read = [(today, today), (live_from, today - timedelta(days=1))]
+                if split == "only":
+                    days_to_read = days_to_read[:1]
+                elif split == "skip":
+                    days_to_read = days_to_read[::-1]
+                for day_from, day_to in days_to_read:
                     near_cap = writes_at_start + self.stats.d1_rows_written >= D1_FREE_DAILY_WRITES * D1_NEAR_CAP
                     if near_cap and day_from != today:
                         break
@@ -3873,7 +3999,7 @@ class Pipeline:
                 if near_cap:
                     log.warning("D1 writes near the free tier's daily %d: earlier days, catch-ups and memory syncs "
                                 "skipped this run", D1_FREE_DAILY_WRITES)
-                if self._on_nse() and time.monotonic() < live_deadline and not near_cap:
+                if self._on_nse() and time.monotonic() < live_deadline and not near_cap and split != "only":
                     from . import event_catchup   # cards made before their event XBRL landed
 
                     caught = event_catchup.catch_up(self, live_deadline)
@@ -3882,7 +4008,9 @@ class Pipeline:
                     caught = event_catchup.results_catch_up(self, live_deadline)
                     if caught["rerun"] or caught["stopped"]:
                         log.info("results XBRL catch-up: %s", json.dumps(caught))
-                    if time.monotonic() < live_deadline:
+                    # at most hourly: the three sweeps took ~17 of a run's 24 live minutes and mostly filed nothing (25 Oct
+                    # 2026: shareholding "filed": 5 of 1,069 companies looked at)
+                    if time.monotonic() < live_deadline and self._memory_syncs_due():
                         from . import governance_memory   # quarterly governance reports into memory, no card
 
                         synced = governance_memory.sync(self, live_deadline)
@@ -3902,8 +4030,9 @@ class Pipeline:
                         self._annual_catchup(live_deadline)
                 # its own slot of at most CRITIC_MAX_S from the run's time, before the backfill: inside the live part it
                 # got none whenever the live filings used their share (21 Oct 05:33 IST: 6 cards queued, 0 judged)
-                self._run_critic(deadline)
-            if mode in ("backfill", "all") and not self._halted(bulk=True):
+                if split != "only":
+                    self._run_critic(deadline)
+            if mode in ("backfill", "all") and not self._halted(bulk=True) and os.environ.get("PIPELINE_TODAY") != "only":
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
         except SourceBlockedError as exc:
             status, error = "ERROR", str(exc)
@@ -3986,6 +4115,18 @@ class Pipeline:
         self._kv_set(REQUEUE_KEY, now.date().isoformat())
         if report["requeued"]:
             log.info("nightly requeue: %d failed filings get one more try", report["requeued"])
+
+    def _memory_syncs_due(self) -> bool:
+        """The governance, shareholding and pledge sweeps at most once in MEMORY_SYNC_EVERY (they mostly file nothing)."""
+        last = self.sink.kv_get(MEMORY_SYNC_KEY)
+        now = now_ist()
+        try:
+            if last and now - datetime.fromisoformat(last) < MEMORY_SYNC_EVERY:
+                return False
+        except ValueError:
+            pass
+        self._kv_set(MEMORY_SYNC_KEY, now.isoformat(timespec="seconds"))
+        return True
 
     def _dgtr_due(self) -> bool:
         """DGTR's case lists once a day (module 8): its cases move in weeks, and its server is slow (NSE_DGTR=0 off)."""
@@ -4192,15 +4333,41 @@ def _still_noise(decision, filing: Filing, row: list, returning: bool = False) -
             or (not returning and str(row[7] or "").startswith("outside universe")))
 
 
-# An annual report runs to 300 pages and often past 30 MB: 519552's FY26 report was skipped at that cap and,
-# with no text, called not material (F57). Every other kind of filing stays under it.
-ATTACHMENT_MAX_BYTES = 30_000_000
-ANNUAL_REPORT_MAX_BYTES = 120_000_000
+# One cap for every attachment. An annual report runs to 300 pages and often past 30 MB (519552's FY26 report was
+# skipped at that cap and called not material, F57), and so can a full-year results filing: NHPC's FY26 results PDF
+# (nse-106633606) was skipped at 30 MB on 25 Oct 2026 and failed as "no readable text" (owner: 120 MB for all).
+ATTACHMENT_MAX_BYTES = 120_000_000
 ANNUAL_REPORT_MIN_PAGES = 60   # as Document.kind() reads a directors' report: an AGM notice alone runs to 10-30 pages
 
 
+def _crash_site(exc: BaseException) -> str:
+    """The innermost frame of our own code a crash came from, as "file.py:line in function" (owner, 25 Oct 2026: four
+    crashes were stored with their message alone, so their lines had to be guessed)."""
+    site = ""
+    tb = exc.__traceback__
+    while tb is not None:
+        code = tb.tb_frame.f_code
+        if "bse_intel" in code.co_filename:
+            site = f"{code.co_filename.rsplit('/', 1)[-1]}:{tb.tb_lineno} in {code.co_name}"
+        tb = tb.tb_next
+    return site
+
+
+def _attachment_missing(filing: Filing, why: str = "") -> None:
+    """A listed file NSE does not serve (404), serves empty or serves cut short: wait for it within ATTACHMENT_WAIT of
+    the filing, then fail for good with the reason."""
+    try:
+        age = now_ist() - datetime.fromisoformat(filing.filed_at)
+    except (TypeError, ValueError):
+        age = ATTACHMENT_WAIT
+    if age < ATTACHMENT_WAIT:
+        raise AttachmentNotYet(f"the file is {why or 'not on NSE yet, or empty'} ({filing.pdf_url})")
+    raise NoTextAttachment(f"the file was {why or 'missing or empty on NSE'} {int(age.total_seconds() // 3600)} h after "
+                           f"the filing ({filing.pdf_url})")
+
+
 def _attachment_cap(filing: Filing) -> int:
-    return ANNUAL_REPORT_MAX_BYTES if filing.event_type == "ANNUAL_REPORT" else ATTACHMENT_MAX_BYTES
+    return ATTACHMENT_MAX_BYTES
 
 
 SECOND_OPINION_MIN_S = 300

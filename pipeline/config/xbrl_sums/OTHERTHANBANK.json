@@ -1,0 +1,866 @@
+{
+"labels": {
+"AdjustmentsForDecreaseIncreaseInInventories": "Adjustments for decrease (increase) in inventories",
+"AdjustmentsForDecreaseIncreaseInOtherCurrentAssets": "Adjustments for decrease (increase) in other current assets",
+"AdjustmentsForDecreaseIncreaseInTradeReceivables": "Adjustments for decrease (increase) in trade receivables",
+"AdjustmentsForDepreciationAndAmortisationExpense": "Adjustments for depreciation and amortisation expense",
+"AdjustmentsForDividendIncome": "Adjustments for dividend income",
+"AdjustmentsForFinanceCosts": "Adjustments for finance costs",
+"AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss": "Adjustments for impairment loss reversal of impairment loss recognised in profit or loss",
+"AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities": "Adjustments for increase (decrease) in other current liabilities",
+"AdjustmentsForIncreaseDecreaseInTradePayables": "Adjustments for increase (decrease) in trade payables",
+"AdjustmentsForProvisions": "Adjustments for provisions",
+"AdjustmentsForReconcileProfitLoss": "Adjustments for reconcile profit (loss)",
+"AdjustmentsForSharebasedPayments": "Adjustments for share-based payments",
+"AdjustmentsForUnrealisedForeignExchangeLossesGains": "Adjustments for unrealised foreign exchange losses gains",
+"AdjustmentsForWorkingCapital": "Adjustments for working capital",
+"AdjustmentsToProfitLoss": "Adjustments to profit (loss)",
+"Assets": "Assets",
+"BankBalanceOtherThanCashAndCashEquivalents": "Bank balance other than cash and cash equivalents",
+"CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": "Cash advances and loans made to other parties classified as investing activities",
+"CashAndCashEquivalents": "Cash and cash equivalents",
+"CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": "Cash flows from losing control of subsidiaries or other businesses classified as investing activities",
+"CashFlowsFromUsedInFinancingActivities": "Cash flows from used in financing activities",
+"CashFlowsFromUsedInFinancingActivitiesBeforeExtraordinaryItems": "Cash flows from used in financing activities before extraordinary items",
+"CashFlowsFromUsedInInvestingActivities": "Cash flows from used in investing activities",
+"CashFlowsFromUsedInInvestingActivitiesBeforeExtraordinaryItems": "Cash flows from used in investing activities before extraordinary items",
+"CashFlowsFromUsedInOperatingActivities": "Cash flows from used in operating activities",
+"CashFlowsFromUsedInOperatingActivitiesBeforeExtraordinaryItems": "Cash flows from used in operating activities before extraordinary items",
+"CashFlowsFromUsedInOperations": "Cash flows from used in operations",
+"CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities": "Cash flows used in obtaining control of subsidiaries or other businesses classified as investing activities",
+"CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": "Cash payment for investment in partnership firm or association of persons or limited liability partnerships",
+"CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": "Cash payments for future contracts forward contracts option contracts and swap contracts classified as investing activities",
+"CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities": "Cash receipts from future contracts forward contracts option contracts and swap contracts classified as investing activities",
+"CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities": "Cash receipts from repayment of advances and loans made to other parties classified as investing activities",
+"CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": "Cash receipts from share of profits of partnership firm or association of persons or limited liability partnerships",
+"ChangesInInventoriesOfFinishedGoodsWorkInProgressAndStockInTrade": "Changes in inventories of finished goods work-in-progress and stock-in-trade",
+"CostOfMaterialsConsumed": "Cost of materials consumed",
+"CurrentAssets": "Current assets",
+"CurrentInvestments": "Current investments",
+"CurrentLiabilities": "Current liabilities",
+"CurrentTax": "Current tax",
+"DeferredGovernmentGrants": "Deferred government grants",
+"DeferredTax": "Deferred tax",
+"DeferredTaxAssetsNet": "Deferred tax assets (net)",
+"DeferredTaxLiabilitiesNet": "Deferred tax liabilities (net)",
+"DepreciationAndAmortisationExpense": "Depreciation and amortisation expense",
+"DividendsPaidClassifiedAsFinancingActivities": "Dividends paid classified as financing activities",
+"DividendsReceivedClassifiedAsInvestingActivities": "Dividends received classified as investing activities",
+"DividendsReceivedClassifiedAsOperatingActivities": "Dividends received classified as operating activities",
+"EffectOfExchangeRateChangesOnCashAndCashEquivalents": "Effect of exchange rate changes on cash and cash equivalents",
+"EmployeeBenefitExpense": "Employee benefit expense",
+"EquityAndLiabilities": "Equity and liabilities",
+"ExceptionalItems": "Exceptional items",
+"Expenses": "Expenses",
+"ExtraordinaryItems": "Extraordinary items",
+"FinanceCosts": "Finance costs",
+"ForeignCurrencyMonetaryItemTranslationDifferenceAssetAccount": "Foreign currency monetary item translation difference asset account",
+"ForeignCurrencyMonetaryItemTranslationDifferenceLiabilityAccount": "Foreign currency monetary item translation difference liability account",
+"Income": "Income",
+"IncomeTaxesPaidRefundClassifiedAsFinancingActivities": "Income taxes paid (refund) classified as financing activities",
+"IncomeTaxesPaidRefundClassifiedAsInvestingActivities": "Income taxes paid (refund) classified as investing activities",
+"IncomeTaxesPaidRefundClassifiedAsOperatingActivities": "Income taxes paid (refund) classified as operating activities",
+"IncreaseDecreaseInCashAndCashEquivalents": "Increase (decrease) in cash and cash equivalents",
+"IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": "Increase (decrease) in cash and cash equivalents before effect of exchange rate changes",
+"IntangibleAssets": "Intangible assets",
+"IntangibleAssetsUnderDevelopmentOrWorkInProgress": "Intangible assets under development or work-in-progress",
+"InterSegmentRevenue": "Inter segment revenue",
+"InterestPaidClassifiedAsFinancingActivities": "Interest paid classified as financing activities",
+"InterestPaidClassifiedAsOperatingActivities": "Interest paid classified as operating activities",
+"InterestReceivedClassifiedAsInvestingActivities": "Interest received classified as investing activities",
+"InterestReceivedClassifiedAsOperatingActivities": "Interest received classified as operating activities",
+"Inventories": "Inventories",
+"LongTermBorrowings": "Long-term borrowings",
+"LongTermLoansAndAdvances": "Long-term loans and advances",
+"LongTermProvisions": "Long-term provisions",
+"MinorityInterest": "Minority interest",
+"MoneyReceivedAgainstShareWarrants": "Money received against share warrants",
+"NetSegmentAssets": "Net segment assets",
+"NetSegmentLiabilities": "Net segment liabilities",
+"NoncurrentAssets": "Non-current assets",
+"NoncurrentInvestments": "Non-current investments",
+"NoncurrentLiabilities": "Non-current liabilities",
+"OtherAdjustmentsForNoncashItems": "Other adjustments for non-cash items",
+"OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow": "Other adjustments for which cash effects are investing or financing cash flow",
+"OtherAdjustmentsToReconcileProfitLoss": "Other adjustments to reconcile profit (loss)",
+"OtherCashPaymentsFromOperatingActivities": "Other cash payments from operating activities",
+"OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": "Other cash payments to acquire equity or debt instruments of other entities classified as investing activities",
+"OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities": "Other cash payments to acquire interests in joint ventures classified as investing activities",
+"OtherCashReceiptsFromOperatingActivities": "Other cash receipts from operating activities",
+"OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities": "Other cash receipts from sales of equity or debt instruments of other entities classified as investing activities",
+"OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities": "Other cash receipts from sales of interests in joint ventures classified as investing activities",
+"OtherCurrentAssets": "Other current assets",
+"OtherCurrentLiabilities": "Other current liabilities",
+"OtherExpenses": "Other expenses",
+"OtherIncome": "Other income",
+"OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities": "Other inflows (outflows) of cash classified as financing activities",
+"OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities": "Other inflows (outflows) of cash classified as investing activities",
+"OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities": "Other inflows (outflows) of cash classified as operating activities",
+"OtherLongTermLiabilities": "Other long-term liabilities",
+"OtherNoncurrentAssets": "Other non-current assets",
+"OtherUnallocableExpenditureNetOffUnAllocableIncome": "Other un-allocable expenditure net off un-allocable income",
+"PaymentForExtraordinaryItemsClassifiedAsFinancingActivities": "Payment for extraordinary items classified as financing activities",
+"PaymentForExtraordinaryItemsClassifiedAsInvestingActivities": "Payment for extraordinary items classified as investing activities",
+"PaymentForExtraordinaryItemsClassifiedAsOperatingActivities": "Payment for extraordinary items classified as operating activities",
+"PaymentsForPremiumsAndClaimsAnnuitiesAndOtherPolicyBenefits": "Payments for premiums and claims annuities and other policy benefits",
+"PaymentsToAndOnBehalfOfEmployees": "Payments to and on behalf of employees",
+"PaymentsToFutureContractsForwardContractsOptionsContractsAndSwapContractsHeldForDealingOrTradingPurpose": "Payments to future contracts forward contracts options contracts and swap contracts held for dealing or trading purpose",
+"PaymentsToSuppliersForGoodsAndServices": "Payments to suppliers for goods and services",
+"PreproducingProperties": "Preproducing properties",
+"ProceedsFromBorrowingsClassifiedAsFinancingActivities": "Proceeds from borrowings classified as financing activities",
+"ProceedsFromExtraordinaryItemsClassifiedAsFinancingActivities": "Proceeds from extraordinary items classified as financing activities",
+"ProceedsFromExtraordinaryItemsClassifiedAsInvestingActivities": "Proceeds from extraordinary items classified as investing activities",
+"ProceedsFromExtraordinaryItemsClassifiedAsOperatingActivities": "Proceeds from extraordinary items classified as operating activities",
+"ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities": "Proceeds from government grants classified as investing activities",
+"ProceedsFromIssuingDebenturesNotesBondsEtc": "Proceeds from issuing debentures notes bonds etc",
+"ProceedsFromIssuingOtherEquityInstruments": "Proceeds from issuing other equity instruments",
+"ProceedsFromIssuingShares": "Proceeds from issuing shares",
+"ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities": "Proceeds from sales of intangible assets classified as investing activities",
+"ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": "Proceeds from sales of property plant and equipment classified as investing activities",
+"ProducingProperties": "Producing properties",
+"ProfitBeforeExceptionalAndExtraordinaryItemsAndTax": "Profit before exceptional and extraordinary items and tax",
+"ProfitBeforeExtraordinaryItemsAndTax": "Profit before extraordinary items and tax",
+"ProfitBeforeTax": "Profit before tax",
+"ProfitLossForPeriodBeforeMinorityInterest": "Profit (loss) for period before minority interest",
+"ProfitLossForThePeriod": "Profit (loss) for the period",
+"ProfitLossForThePeriodFromContinuingOperations": "Profit (loss) for the period from continuing operations",
+"ProfitLossFromDiscontinuingOperationAfterTax": "Profit (loss) from discontinuing operation after tax",
+"ProfitLossFromDiscontinuingOperationsBeforeTax": "Profit (loss) from discontinuing operations before tax",
+"ProfitLossOfMinorityInterest": "Profit (loss) of minority interest",
+"PropertyPlantAndEquipment": "Property plant and equipment",
+"PropertyPlantAndEquipmentAndIntangibleAssets": "Property plant and equipment and intangible assets",
+"PropertyPlantAndEquipmentCapitalWorkInProgress": "Property plant and equipment capital work-in-progress",
+"PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities": "Purchase of intangible assets classified as investing activities",
+"PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": "Purchase of property plant and equipment classified as investing activities",
+"PurchasesOfStockInTrade": "Purchases of stock-in-trade",
+"ReceiptsFromFutureContractsForwardContractsOptionsContractsAndSwapContractsHeldForDealingOrTradingPurpose": "Receipts from future contracts forward contracts options contracts and swap contracts held for dealing or trading purpose",
+"ReceiptsFromPremiumsAndClaimsAnnuitiesAndOtherPolicyBenefits": "Receipts from premiums and claims annuities and other policy benefits",
+"ReceiptsFromRoyaltiesFeesCommissionsAndOtherRevenue": "Receipts from royalties fees commissions and other revenue",
+"ReceiptsFromSalesOfGoodsAndRenderingOfServices": "Receipts from sales of goods and rendering of services",
+"RepaymentsOfBorrowingsClassifiedAsFinancingActivities": "Repayments of borrowings classified as financing activities",
+"ReservesAndSurplus": "Reserves and surplus",
+"RevenueFromOperations": "Revenue from operations",
+"SegmentAssets": "Segment assets",
+"SegmentFinanceCosts": "Segment finance costs",
+"SegmentLiabilities": "Segment liabilities",
+"SegmentProfitBeforeTax": "Segment profit before tax",
+"SegmentProfitLossBeforeTaxAndFinanceCosts": "Segment profit (loss) before tax and finance costs",
+"SegmentRevenue": "Segment revenue",
+"SegmentRevenueFromOperations": "Segment revenue from operations",
+"ShareApplicationMoneyPendingAllotment": "Share application money pending allotment",
+"ShareCapital": "Share capital",
+"ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships": "Share of profit and loss from partnership firm or association of persons or limited liability partnerships",
+"ShareOfProfitLossOfAssociates": "Share of profit (loss) of associates",
+"ShareholdersFunds": "Shareholders` funds",
+"ShortTermBorrowings": "Short-term borrowings",
+"ShortTermLoansAndAdvances": "Short-term loans and advances",
+"ShortTermProvisions": "Short-term provisions",
+"TaxExpense": "Tax expense",
+"TaxExpenseOfDiscontinuingOperations": "Tax expense of discontinuing operations",
+"TotalOutstandingDuesOfCreditorsOtherThanMicroEnterprisesAndSmallEnterprises": "Total Outstanding dues of creditors other than micro enterprises and small enterprises",
+"TotalOutstandingDuesOfMicroEnterprisesAndSmallEnterprises": "Total Outstanding dues of micro enterprises and small enterprises",
+"TradePayables": "Trade payables",
+"TradeReceivables": "Trade receivables",
+"UnAllocableAssets": "Un-allocable assets",
+"UnAllocableLiabilities": "Un-allocable liabilities"
+},
+"source": "Taxonomy_Integrated_filing_(finance)_other_than_bank.zip",
+"sums": {
+"AdjustmentsForReconcileProfitLoss": [
+[
+"AdjustmentsToProfitLoss",
+1.0
+],
+[
+"AdjustmentsForWorkingCapital",
+1.0
+]
+],
+"AdjustmentsForWorkingCapital": [
+[
+"AdjustmentsForDecreaseIncreaseInInventories",
+1.0
+],
+[
+"AdjustmentsForDecreaseIncreaseInTradeReceivables",
+1.0
+],
+[
+"AdjustmentsForDecreaseIncreaseInOtherCurrentAssets",
+1.0
+],
+[
+"AdjustmentsForIncreaseDecreaseInTradePayables",
+1.0
+],
+[
+"AdjustmentsForIncreaseDecreaseInOtherCurrentLiabilities",
+1.0
+],
+[
+"AdjustmentsForProvisions",
+1.0
+]
+],
+"AdjustmentsToProfitLoss": [
+[
+"AdjustmentsForFinanceCosts",
+1.0
+],
+[
+"AdjustmentsForDepreciationAndAmortisationExpense",
+1.0
+],
+[
+"AdjustmentsForImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss",
+1.0
+],
+[
+"AdjustmentsForUnrealisedForeignExchangeLossesGains",
+1.0
+],
+[
+"AdjustmentsForDividendIncome",
+-1.0
+],
+[
+"AdjustmentsForSharebasedPayments",
+1.0
+],
+[
+"OtherAdjustmentsForWhichCashEffectsAreInvestingOrFinancingCashFlow",
+1.0
+],
+[
+"OtherAdjustmentsToReconcileProfitLoss",
+1.0
+],
+[
+"OtherAdjustmentsForNoncashItems",
+1.0
+],
+[
+"ShareOfProfitAndLossFromPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships",
+1.0
+]
+],
+"Assets": [
+[
+"CurrentAssets",
+1.0
+],
+[
+"NoncurrentAssets",
+1.0
+]
+],
+"CashFlowsFromUsedInFinancingActivities": [
+[
+"CashFlowsFromUsedInFinancingActivitiesBeforeExtraordinaryItems",
+1.0
+],
+[
+"ProceedsFromExtraordinaryItemsClassifiedAsFinancingActivities",
+1.0
+],
+[
+"PaymentForExtraordinaryItemsClassifiedAsFinancingActivities",
+-1.0
+]
+],
+"CashFlowsFromUsedInFinancingActivitiesBeforeExtraordinaryItems": [
+[
+"ProceedsFromIssuingShares",
+1.0
+],
+[
+"ProceedsFromIssuingOtherEquityInstruments",
+1.0
+],
+[
+"ProceedsFromIssuingDebenturesNotesBondsEtc",
+1.0
+],
+[
+"ProceedsFromBorrowingsClassifiedAsFinancingActivities",
+1.0
+],
+[
+"RepaymentsOfBorrowingsClassifiedAsFinancingActivities",
+-1.0
+],
+[
+"DividendsPaidClassifiedAsFinancingActivities",
+-1.0
+],
+[
+"InterestPaidClassifiedAsFinancingActivities",
+-1.0
+],
+[
+"IncomeTaxesPaidRefundClassifiedAsFinancingActivities",
+-1.0
+],
+[
+"OtherInflowsOutflowsOfCashClassifiedAsFinancingActivities",
+1.0
+]
+],
+"CashFlowsFromUsedInInvestingActivities": [
+[
+"CashFlowsFromUsedInInvestingActivitiesBeforeExtraordinaryItems",
+1.0
+],
+[
+"ProceedsFromExtraordinaryItemsClassifiedAsInvestingActivities",
+1.0
+],
+[
+"PaymentForExtraordinaryItemsClassifiedAsInvestingActivities",
+-1.0
+]
+],
+"CashFlowsFromUsedInInvestingActivitiesBeforeExtraordinaryItems": [
+[
+"CashFlowsFromLosingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities",
+1.0
+],
+[
+"CashFlowsUsedInObtainingControlOfSubsidiariesOrOtherBusinessesClassifiedAsInvestingActivities",
+-1.0
+],
+[
+"OtherCashReceiptsFromSalesOfEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities",
+1.0
+],
+[
+"OtherCashPaymentsToAcquireEquityOrDebtInstrumentsOfOtherEntitiesClassifiedAsInvestingActivities",
+-1.0
+],
+[
+"OtherCashReceiptsFromSalesOfInterestsInJointVenturesClassifiedAsInvestingActivities",
+1.0
+],
+[
+"OtherCashPaymentsToAcquireInterestsInJointVenturesClassifiedAsInvestingActivities",
+-1.0
+],
+[
+"CashReceiptsFromShareOfProfitsOfPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships",
+1.0
+],
+[
+"CashPaymentForInvestmentInPartnershipFirmOrAssociationOfPersonsOrLimitedLiabilityPartnerships",
+-1.0
+],
+[
+"ProceedsFromSalesOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+1.0
+],
+[
+"PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+-1.0
+],
+[
+"ProceedsFromSalesOfIntangibleAssetsClassifiedAsInvestingActivities",
+1.0
+],
+[
+"PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities",
+-1.0
+],
+[
+"CashAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities",
+-1.0
+],
+[
+"CashReceiptsFromRepaymentOfAdvancesAndLoansMadeToOtherPartiesClassifiedAsInvestingActivities",
+1.0
+],
+[
+"CashPaymentsForFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities",
+-1.0
+],
+[
+"CashReceiptsFromFutureContractsForwardContractsOptionContractsAndSwapContractsClassifiedAsInvestingActivities",
+1.0
+],
+[
+"DividendsReceivedClassifiedAsInvestingActivities",
+1.0
+],
+[
+"InterestReceivedClassifiedAsInvestingActivities",
+1.0
+],
+[
+"IncomeTaxesPaidRefundClassifiedAsInvestingActivities",
+-1.0
+],
+[
+"OtherInflowsOutflowsOfCashClassifiedAsInvestingActivities",
+1.0
+],
+[
+"ProceedsFromGovernmentGrantsClassifiedAsInvestingActivities",
+1.0
+]
+],
+"CashFlowsFromUsedInOperatingActivities": [
+[
+"CashFlowsFromUsedInOperatingActivitiesBeforeExtraordinaryItems",
+1.0
+],
+[
+"ProceedsFromExtraordinaryItemsClassifiedAsOperatingActivities",
+1.0
+],
+[
+"PaymentForExtraordinaryItemsClassifiedAsOperatingActivities",
+-1.0
+]
+],
+"CashFlowsFromUsedInOperatingActivitiesBeforeExtraordinaryItems": [
+[
+"CashFlowsFromUsedInOperations",
+1.0
+],
+[
+"DividendsReceivedClassifiedAsOperatingActivities",
+1.0
+],
+[
+"InterestPaidClassifiedAsOperatingActivities",
+-1.0
+],
+[
+"InterestReceivedClassifiedAsOperatingActivities",
+1.0
+],
+[
+"IncomeTaxesPaidRefundClassifiedAsOperatingActivities",
+-1.0
+],
+[
+"OtherInflowsOutflowsOfCashClassifiedAsOperatingActivities",
+1.0
+]
+],
+"CashFlowsFromUsedInOperations": [
+[
+"ProfitBeforeExtraordinaryItemsAndTax",
+1.0
+],
+[
+"AdjustmentsForReconcileProfitLoss",
+1.0
+],
+[
+"ReceiptsFromSalesOfGoodsAndRenderingOfServices",
+1.0
+],
+[
+"ReceiptsFromRoyaltiesFeesCommissionsAndOtherRevenue",
+1.0
+],
+[
+"ReceiptsFromFutureContractsForwardContractsOptionsContractsAndSwapContractsHeldForDealingOrTradingPurpose",
+1.0
+],
+[
+"ReceiptsFromPremiumsAndClaimsAnnuitiesAndOtherPolicyBenefits",
+1.0
+],
+[
+"OtherCashReceiptsFromOperatingActivities",
+1.0
+],
+[
+"PaymentsToSuppliersForGoodsAndServices",
+-1.0
+],
+[
+"PaymentsToFutureContractsForwardContractsOptionsContractsAndSwapContractsHeldForDealingOrTradingPurpose",
+-1.0
+],
+[
+"PaymentsToAndOnBehalfOfEmployees",
+-1.0
+],
+[
+"PaymentsForPremiumsAndClaimsAnnuitiesAndOtherPolicyBenefits",
+-1.0
+],
+[
+"OtherCashPaymentsFromOperatingActivities",
+-1.0
+]
+],
+"CurrentAssets": [
+[
+"CurrentInvestments",
+1.0
+],
+[
+"Inventories",
+1.0
+],
+[
+"TradeReceivables",
+1.0
+],
+[
+"CashAndCashEquivalents",
+1.0
+],
+[
+"BankBalanceOtherThanCashAndCashEquivalents",
+1.0
+],
+[
+"ShortTermLoansAndAdvances",
+1.0
+],
+[
+"OtherCurrentAssets",
+1.0
+]
+],
+"CurrentLiabilities": [
+[
+"ShortTermBorrowings",
+1.0
+],
+[
+"TradePayables",
+1.0
+],
+[
+"OtherCurrentLiabilities",
+1.0
+],
+[
+"ShortTermProvisions",
+1.0
+]
+],
+"EquityAndLiabilities": [
+[
+"ShareholdersFunds",
+1.0
+],
+[
+"ShareApplicationMoneyPendingAllotment",
+1.0
+],
+[
+"DeferredGovernmentGrants",
+1.0
+],
+[
+"MinorityInterest",
+1.0
+],
+[
+"NoncurrentLiabilities",
+1.0
+],
+[
+"CurrentLiabilities",
+1.0
+]
+],
+"Expenses": [
+[
+"CostOfMaterialsConsumed",
+1.0
+],
+[
+"PurchasesOfStockInTrade",
+1.0
+],
+[
+"ChangesInInventoriesOfFinishedGoodsWorkInProgressAndStockInTrade",
+1.0
+],
+[
+"EmployeeBenefitExpense",
+1.0
+],
+[
+"FinanceCosts",
+1.0
+],
+[
+"DepreciationAndAmortisationExpense",
+1.0
+],
+[
+"OtherExpenses",
+1.0
+]
+],
+"Income": [
+[
+"RevenueFromOperations",
+1.0
+],
+[
+"OtherIncome",
+1.0
+]
+],
+"IncreaseDecreaseInCashAndCashEquivalents": [
+[
+"IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges",
+1.0
+],
+[
+"EffectOfExchangeRateChangesOnCashAndCashEquivalents",
+1.0
+]
+],
+"IncreaseDecreaseInCashAndCashEquivalentsBeforeEffectOfExchangeRateChanges": [
+[
+"CashFlowsFromUsedInOperatingActivities",
+1.0
+],
+[
+"CashFlowsFromUsedInInvestingActivities",
+1.0
+],
+[
+"CashFlowsFromUsedInFinancingActivities",
+1.0
+]
+],
+"NetSegmentAssets": [
+[
+"SegmentAssets",
+1.0
+],
+[
+"UnAllocableAssets",
+1.0
+]
+],
+"NetSegmentLiabilities": [
+[
+"SegmentLiabilities",
+1.0
+],
+[
+"UnAllocableLiabilities",
+1.0
+]
+],
+"NoncurrentAssets": [
+[
+"NoncurrentInvestments",
+1.0
+],
+[
+"DeferredTaxAssetsNet",
+1.0
+],
+[
+"ForeignCurrencyMonetaryItemTranslationDifferenceAssetAccount",
+1.0
+],
+[
+"LongTermLoansAndAdvances",
+1.0
+],
+[
+"OtherNoncurrentAssets",
+1.0
+],
+[
+"PropertyPlantAndEquipmentAndIntangibleAssets",
+1.0
+]
+],
+"NoncurrentLiabilities": [
+[
+"LongTermBorrowings",
+1.0
+],
+[
+"DeferredTaxLiabilitiesNet",
+1.0
+],
+[
+"ForeignCurrencyMonetaryItemTranslationDifferenceLiabilityAccount",
+1.0
+],
+[
+"OtherLongTermLiabilities",
+1.0
+],
+[
+"LongTermProvisions",
+1.0
+]
+],
+"ProfitBeforeExceptionalAndExtraordinaryItemsAndTax": [
+[
+"Income",
+1.0
+],
+[
+"Expenses",
+-1.0
+]
+],
+"ProfitBeforeExtraordinaryItemsAndTax": [
+[
+"ProfitBeforeExceptionalAndExtraordinaryItemsAndTax",
+1.0
+],
+[
+"ExceptionalItems",
+1.0
+]
+],
+"ProfitBeforeTax": [
+[
+"ProfitBeforeExtraordinaryItemsAndTax",
+1.0
+],
+[
+"ExtraordinaryItems",
+1.0
+]
+],
+"ProfitLossForPeriodBeforeMinorityInterest": [
+[
+"ProfitLossForThePeriodFromContinuingOperations",
+1.0
+],
+[
+"ProfitLossFromDiscontinuingOperationAfterTax",
+1.0
+]
+],
+"ProfitLossForThePeriod": [
+[
+"ProfitLossForPeriodBeforeMinorityInterest",
+1.0
+],
+[
+"ShareOfProfitLossOfAssociates",
+1.0
+],
+[
+"ProfitLossOfMinorityInterest",
+1.0
+]
+],
+"ProfitLossForThePeriodFromContinuingOperations": [
+[
+"ProfitBeforeTax",
+1.0
+],
+[
+"TaxExpense",
+-1.0
+]
+],
+"ProfitLossFromDiscontinuingOperationAfterTax": [
+[
+"ProfitLossFromDiscontinuingOperationsBeforeTax",
+1.0
+],
+[
+"TaxExpenseOfDiscontinuingOperations",
+-1.0
+]
+],
+"PropertyPlantAndEquipmentAndIntangibleAssets": [
+[
+"ProducingProperties",
+1.0
+],
+[
+"IntangibleAssets",
+1.0
+],
+[
+"PreproducingProperties",
+1.0
+],
+[
+"PropertyPlantAndEquipmentCapitalWorkInProgress",
+1.0
+],
+[
+"IntangibleAssetsUnderDevelopmentOrWorkInProgress",
+1.0
+],
+[
+"PropertyPlantAndEquipment",
+1.0
+]
+],
+"SegmentProfitBeforeTax": [
+[
+"SegmentProfitLossBeforeTaxAndFinanceCosts",
+1.0
+],
+[
+"SegmentFinanceCosts",
+-1.0
+],
+[
+"OtherUnallocableExpenditureNetOffUnAllocableIncome",
+-1.0
+]
+],
+"SegmentRevenueFromOperations": [
+[
+"SegmentRevenue",
+1.0
+],
+[
+"InterSegmentRevenue",
+-1.0
+]
+],
+"ShareholdersFunds": [
+[
+"ShareCapital",
+1.0
+],
+[
+"ReservesAndSurplus",
+1.0
+],
+[
+"MoneyReceivedAgainstShareWarrants",
+1.0
+]
+],
+"TaxExpense": [
+[
+"CurrentTax",
+1.0
+],
+[
+"DeferredTax",
+1.0
+]
+],
+"TradePayables": [
+[
+"TotalOutstandingDuesOfMicroEnterprisesAndSmallEnterprises",
+1.0
+],
+[
+"TotalOutstandingDuesOfCreditorsOtherThanMicroEnterprisesAndSmallEnterprises",
+1.0
+]
+]
+},
+"template": "OTHERTHANBANK",
+"version": "2025-01-31"
+}

@@ -291,6 +291,7 @@ def test_second_opinion_reply_with_only_a_card_keeps_the_memory(settings):
                               env={"NVIDIA_API_KEY": "n", "OPENROUTER_API_KEY": "o", "ZAI_API_KEY": "z"})
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert outcome.card["card"]["review"]["status"] == "CORRECTED"
+    pipeline._commit([outcome])   # memory is written with the card's row (owner, 25 Oct 2026)
     assert {m["period"] for m in sink.get_dossier("999001")["financial_metrics"]} == {"Q2FY27", "Q2FY26"}
     assert outcome.card["event_category"] == "RESULTS"
 
@@ -689,7 +690,7 @@ def test_near_the_free_write_cap_a_live_run_only_makes_cards(settings, monkeypat
 
 def test_a_spare_writer_failing_while_the_better_ones_are_at_their_day_waits_for_them(settings):
     """21 Oct: with Gemini at its day until 12:30 IST, the one spare on the long route failed and 12 filings a run spent
-    an attempt. A failure while a better writer sat at its ceiling defers the filing up to MAX_DEFERRALS runs; a failure
+    an attempt. A failure while a better writer sat at its ceiling defers the filing up to MAX_QUOTA_DEFERRALS runs; a failure
     with every writer tried is the filing's and spends an attempt at once."""
     from bse_intel.ai.gateway import CEILING, FAILED, AllProvidersFailed
 
@@ -709,7 +710,7 @@ def test_a_spare_writer_failing_while_the_better_ones_are_at_their_day_waits_for
     pipeline.run("live", time_budget_s=60)
     (row,) = rows(sink, "select status, attempts, last_error from filings where news_id = 'q'")
     assert (row["status"], row["attempts"]) == ("PENDING", 0) and row["last_error"].startswith("deferred 1x: the better writers")
-    sink._db.execute("UPDATE filings SET last_error = 'deferred 3x: the better writers are at their day' WHERE news_id = 'q'")
+    sink._db.execute("UPDATE filings SET last_error = 'deferred 40x: the better writers are at their day' WHERE news_id = 'q'")
     pipeline._tried.clear()
     pipeline.run("live", time_budget_s=60)
     (row,) = rows(sink, "select status, attempts from filings where news_id = 'q'")
@@ -754,3 +755,130 @@ def test_a_garbled_scan_does_not_hold_a_card_built_from_its_xbrl_file(settings):
     text = "Revenue 1,2O4.5 3,4l2.0 EBITDA 2O1.3 PAT 9S.2l " * 3
     assert pipeline._held_reasons(filing, text) and "garbled" in pipeline._held_reasons(filing, text)[0]
     assert pipeline._held_reasons(filing, text, xbrl_backed=True) == []
+
+
+def test_a_file_over_the_size_cap_fails_once_with_its_reason(settings):
+    """Owner, 25 Oct 2026: NHPC's results PDF was skipped at the cap and failed three times as "no readable text"."""
+    from bse_intel.bse import AttachmentTooLarge
+    from test_pipeline import _filing as make, build
+
+    filing = make("n-big", "Audited Financial Results", now_ist() - timedelta(hours=2), "Company Update")
+    pipeline, sink, fake = build(settings, [filing], {}, {})
+    pipeline.bse.download = lambda url, max_bytes=None: (_ for _ in ()).throw(AttachmentTooLarge(url, max_bytes))
+    out = pipeline._process_one(filing, bulk=False, memory_complete=True)
+    assert out.update["status"] == "FAILED" and out.update["attempts"] == settings.max_attempts
+    assert out.update["last_error"].startswith("AttachmentTooLarge: file too large (over 120 MB)")
+    assert pipeline._blocked is None   # one large file does not stop the run
+
+
+def test_a_zip_attachment_is_read_and_a_file_not_yet_on_nse_waits(settings):
+    """Owner, 25 Oct 2026: PGEL's auditor resignation came as a ZIP and was lost; CGCL's press release was given up
+    after three tries while NSE had not served the file yet."""
+    import io
+    import zipfile
+
+    from bse_intel.extract import Document
+    from test_pipeline import _filing as make, _pdf, build
+
+    def zipped(**members):
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as box:
+            for name, body in members.items():
+                box.writestr(name.replace("_", ".", 1), body)
+        return buf.getvalue()
+
+    one = Document(zipped(resignation_pdf=_pdf("Resignation of the statutory auditor"), filing_xml=b"<x/>"))
+    assert one.error is None and "statutory auditor" in one.select_text(10_000, [])
+    two = Document(zipped(a_pdf=_pdf("First letter"), b_pdf=_pdf("Second letter")))
+    assert "First letter" in two.select_text(10_000, []) and "Second letter" in two.select_text(10_000, [])
+    assert Document(zipped(call_mp3=b"ID3")).error.startswith("audio only")
+
+    now = now_ist()
+    young = make("n-young", "Press Release", now - timedelta(hours=2), "Company Update")
+    old = make("n-old", "Press Release", now - timedelta(days=2), "Company Update")
+    audio = make("n-audio", "Con. Call Updates", now - timedelta(hours=2), "Company Update")
+    empty = make("n-empty", "Acquisition", now - timedelta(hours=1), "Company Update")
+    pipeline, sink, fake = build(settings, [young, old, audio, empty],
+                                 {audio.pdf_url: zipped(call_mp3=b"ID3"), empty.pdf_url: b""}, {})
+    out = pipeline._process_one(empty, bulk=False, memory_complete=True)
+    assert out.update["status"] == "PENDING" and "not on NSE yet, or empty" in out.update["last_error"]
+    out = pipeline._process_one(young, bulk=False, memory_complete=True)
+    assert out.update["status"] == "PENDING" and "attempts" not in out.update and "not on NSE yet" in out.update["last_error"]
+    out = pipeline._process_one(old, bulk=False, memory_complete=True)
+    assert out.update["status"] == "FAILED" and out.update["attempts"] == settings.max_attempts
+    assert "missing or empty on NSE 48 h after" in out.update["last_error"]
+    out = pipeline._process_one(audio, bulk=False, memory_complete=True)
+    assert out.update["status"] == "FAILED" and out.update["attempts"] == settings.max_attempts
+    assert out.update["last_error"].startswith("NoTextAttachment: audio only")
+
+
+def test_a_crash_keeps_where_it_happened_and_the_four_crashes_of_25_oct_are_gone():
+    """Owner, 25 Oct 2026: four filings crashed in our own code and only the message was kept."""
+    import math
+
+    from bse_intel.dossier import latest_fundamentals
+    from bse_intel.facts import _bps
+    from bse_intel.pipeline import _crash_site, relabel_periods
+
+    try:
+        {}["as_of"]
+    except KeyError as exc:
+        assert _crash_site(exc) == ""   # not our code: nothing to name
+    try:
+        latest_fundamentals(None)
+    except AttributeError as exc:
+        assert _crash_site(exc).startswith("dossier.py:") and "latest_fundamentals" in _crash_site(exc)
+    # MODIS: a half-year file's period is no quarter
+    from bse_intel.models import Pass2Output
+    out = Pass2Output.model_validate({"is_material": False, "event_type": "RESULTS", "card": None,
+                                      "dossier_delta": {"financial_metrics": [
+                                          {"metric": "revenue", "period": "Q2FY27", "value": 1.0, "unit": "INR_CR"}]}})
+    assert relabel_periods(out, "H1FY27", None) == {}
+    # PNC Infra: an older balance sheet entry without as_of
+    dossier = {"financial_metrics": [{"metric": "borrowings", "period": "FY26", "value": 5.0}],
+               "balance_sheet": [{"period": "FY26", "gross_debt_cr": 4.0}]}
+    assert latest_fundamentals(dossier)["debt"]["value"] in (4.0, 5.0)
+    # L&T Finance: an infinite ratio has no move
+    assert _bps(math.inf, 1.0) == (0, 0)
+
+
+def test_today_can_be_read_by_its_own_quick_run_and_the_memory_sweeps_run_hourly(settings, monkeypatch):
+    """Owner, 25 Oct 2026: a new filing waited ~42 min for the next 41-minute run. PIPELINE_TODAY=only reads today's
+    filings and stops; PIPELINE_TODAY=skip reads the earlier days first and today last."""
+    from test_pipeline import build
+
+    pipeline, sink, _ = build(settings, [], {}, {})
+    read = []
+    pipeline.process = lambda day_from, day_to, *a, **k: read.append((day_from, day_to))
+    pipeline._backfill = lambda *a, **k: read.append("backfill")
+    today = now_ist().date().isoformat()
+    monkeypatch.setenv("PIPELINE_TODAY", "only")
+    pipeline.run("live", time_budget_s=60)
+    assert read == [(today, today)]
+    read.clear()
+    monkeypatch.setenv("PIPELINE_TODAY", "skip")
+    pipeline.run("all", time_budget_s=60)
+    assert read[1] == (today, today) and read[0] != read[1] and read[-1] == "backfill"   # today last, as a safety net
+    assert pipeline._memory_syncs_due() is True and pipeline._memory_syncs_due() is False   # once in the hour
+    sink.kv_set("memory_syncs:last", "2020-01-01T00:00:00+05:30", "x")
+    assert pipeline._memory_syncs_due() is True
+
+
+def test_a_pdf_cut_short_on_nse_waits_and_then_fails_with_that_reason(settings):
+    """Owner, 25 Oct 2026: Apollo Hospitals' and Hindustan Zinc's PDFs are cut short on NSE itself (no end of file) and
+    failed as "empty"."""
+    from bse_intel.extract import Document
+    from test_pipeline import _filing as make, _pdf, build
+
+    whole = _pdf("Outcome of the board meeting")
+    short = whole[: len(whole) // 3]
+    assert Document(short).error.startswith("cut short") and Document(whole).error is None
+    now = now_ist()
+    young = make("n-short", "Outcome of Board Meeting", now - timedelta(hours=1), "Company Update")
+    old = make("n-short-old", "Outcome of Board Meeting", now - timedelta(days=2), "Company Update")
+    pipeline, sink, fake = build(settings, [young, old], {young.pdf_url: short, old.pdf_url: short}, {})
+    out = pipeline._process_one(young, bulk=False, memory_complete=True)
+    assert out.update["status"] == "PENDING" and "cut short on NSE" in out.update["last_error"]
+    out = pipeline._process_one(old, bulk=False, memory_complete=True)
+    assert out.update["status"] == "FAILED" and out.update["attempts"] == settings.max_attempts
+    assert "cut short on NSE" in out.update["last_error"]

@@ -12,8 +12,10 @@ installed, and checked cell by cell against the text layer (FIGURE_PAGE_AMOUNTS,
 
 from __future__ import annotations
 
+import io
 import logging
 import re
+import zipfile
 import threading
 from collections.abc import Callable, Iterable
 
@@ -145,6 +147,47 @@ def _layer_text(page) -> str:
 _MUPDF = threading.Lock()
 
 
+AUDIO = (".mp3", ".m4a", ".wav", ".aac", ".ogg", ".amr", ".wma", ".mp4")
+ZIP_MAX_BYTES = 120_000_000   # a member larger than the attachment cap is not unpacked
+
+
+def unzip_pdfs(data: bytes) -> tuple[bytes | None, str | None]:
+    """A ZIP attachment's PDFs as one PDF, in the order of their names (owner, 25 Oct 2026: PGEL's auditor resignation
+    came as a ZIP of a PDF and its XML and was lost). Returns (pdf, None), or (None, why) when there is no PDF to read:
+    a call's audio, or no PDF at all."""
+    try:
+        with zipfile.ZipFile(io.BytesIO(data)) as box:
+            members = [m for m in box.infolist() if not m.is_dir()]
+            pdfs = sorted((m for m in members if m.filename.lower().endswith(".pdf") and m.file_size <= ZIP_MAX_BYTES),
+                          key=lambda m: m.filename)
+            if not pdfs:
+                names = [m.filename for m in members]
+                if names and all(n.lower().endswith(AUDIO) for n in names):
+                    return None, "audio only (a ZIP of a recording): no text"
+                return None, f"a ZIP with no PDF in it ({', '.join(names[:5]) or 'empty'})"
+            parts = [box.read(m) for m in pdfs]
+    except (zipfile.BadZipFile, OSError) as exc:
+        return None, f"unreadable ZIP: {exc}"
+    if len(parts) == 1:
+        return parts[0], None
+    with _MUPDF:
+        out = pymupdf.open()
+        for part in parts:
+            try:
+                with pymupdf.open(stream=part, filetype="pdf") as one:
+                    out.insert_pdf(one)
+            except Exception as exc:  # one broken PDF in the box must not lose the others
+                log.warning("a PDF inside a ZIP attachment is unreadable: %s", exc)
+        merged = out.tobytes() if out.page_count else None
+        out.close()
+    return merged, None if merged else "a ZIP whose PDFs are all unreadable"
+
+
+def cut_short(data: bytes) -> bool:
+    """A PDF whose end-of-file marker is missing: the download, or the file NSE holds, stops part-way."""
+    return data[:5] == b"%PDF-" and b"%%EOF" not in data[-2048:]
+
+
 class Document:
     def __init__(self, pdf_bytes: bytes | None, ocr: OcrFn | None = None, max_ocr_pages: int = 6, dpi: int = OCR_DPI,
                  figure_reader: OcrFn | None = None, max_figure_pages: int = 12):
@@ -173,6 +216,11 @@ class Document:
         if not pdf_bytes:
             self.error = "no attachment"
             return
+        if pdf_bytes[:2] == b"PK":
+            pdf_bytes, why = unzip_pdfs(pdf_bytes)
+            if pdf_bytes is None:
+                self.error = why
+                return
         try:
             with _MUPDF:
                 doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
@@ -190,6 +238,10 @@ class Document:
         except Exception as exc:  # corrupt PDF, or a non-PDF attachment (xml, zip, xlsx)
             self.error = f"unreadable attachment: {exc}"
             log.warning(self.error)
+        if not self._digital and cut_short(pdf_bytes):
+            # NSE serves some files cut short (Apollo Hospitals' 20 May 2026 outcome: 3.47 of 12.45 MB, no end of file;
+            # owner, 25 Oct 2026): told apart from a scan or a broken file, so the filing can wait for NSE to fix it
+            self.error = f"cut short: {len(pdf_bytes) / 1e6:.2f} MB with no end of file"
 
     def to_cache(self) -> dict:
         """Everything read from the PDF (digital text and the pages OCR'd so far), for the text cache."""

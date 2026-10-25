@@ -2,6 +2,8 @@ import json
 from datetime import timedelta
 from pathlib import Path
 
+import pytest
+
 from bse_intel import xbrl
 from bse_intel.bse import XbrlLink, parse_results_archive
 from bse_intel.timeutil import now_ist
@@ -862,3 +864,23 @@ def test_the_files_own_earlier_balance_sheet_date_is_kept():
     assert (r.balance_sheet.period, r.balance_prior.period) == ("Q4FY25", "Q4FY24")
     assert (r.balance_sheet.gross_debt_cr, r.balance_prior.gross_debt_cr) == (594.12, 506.72)
     assert xbrl.parse((FIXTURES / "bse_main_ind_as_532811_q2fy25.xml").read_bytes()).balance_prior is None   # one date only
+
+
+def test_ebitda_leaves_out_the_associates_share_a_filer_put_into_profit_before_tax():
+    """Item 12 (owner, 25 Oct 2026): SEBI's sums add the associates' share after tax, so profit before tax excludes it.
+    A file that tags it inside (Orient Bell's kind: PBT 11.15 with the share -0.26 in it, tax 3, profit 8.15) keeps it
+    out of EBITDA; a file tagged as the taxonomy says is left as it is."""
+    def ebitda(pbt, share, tax, pat):
+        body = HEAD + _ctx("OneD", "2026-07-01", "2026-09-30")
+        body += _fact("RevenueFromOperations", "OneD", 1_000_000_000) + _fact("FinanceCosts", "OneD", 10_000_000)
+        body += _fact("DepreciationDepletionAndAmortisationExpense", "OneD", 20_000_000)
+        body += _fact("OtherIncome", "OneD", 5_000_000) + _fact("ProfitBeforeTax", "OneD", pbt)
+        body += _fact("ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod", "OneD", share)
+        body += _fact("TaxExpense", "OneD", tax) + _fact("ProfitLossForPeriod", "OneD", pat)
+        result = xbrl.parse((body + "</xbrli:xbrl>").encode())
+        return next(m.value for m in result.metrics if m.metric == "ebitda" and m.period == "Q2FY27")
+
+    # share inside PBT: 111.5 - 30 = 81.5 = profit; EBITDA from 114.1 (PBT without the share), not 111.5
+    assert ebitda(111_500_000, -2_600_000, 30_000_000, 81_500_000) == pytest.approx(11.41 + 1 + 2 - 0.5)
+    # tagged as the taxonomy says: 114.1 - 30 + (-2.6) = 81.5; PBT is used as filed
+    assert ebitda(114_100_000, -2_600_000, 30_000_000, 81_500_000) == pytest.approx(11.41 + 1 + 2 - 0.5)

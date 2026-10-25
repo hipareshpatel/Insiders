@@ -12,7 +12,8 @@ dependencies = [
 
 [project.optional-dependencies]
 market = ["yfinance>=0.2.40", "pandas>=2.2"]
-dev = ["pytest>=8", "respx>=0.21"]
+dev = ["pytest>=8", "respx>=0.21", "requests>=2.31"]
+bse = ["requests>=2.31"]   # adapters/bse.py, the off-path BSE client ported from the reference repository
 ocr = ["rapidocr>=3.10,<4", "onnxruntime>=1.20"]  # the package and version measured on the extraction benchmark
 
 [project.scripts]

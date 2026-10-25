@@ -15,6 +15,7 @@ older cards.
 from __future__ import annotations
 
 import logging
+import math
 
 import hashlib
 import json
@@ -1473,7 +1474,7 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
         rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and due_date(m["period"])]
         if prefer_quarter and any(m["period"].startswith("Q") for m in rows):
             rows = [m for m in rows if m["period"].startswith("Q")]
-        return max(rows, key=lambda m: (due_date(m["period"]), m["as_of"]), default=None)
+        return max(rows, key=lambda m: (due_date(m["period"]), m.get("as_of") or ""), default=None)
 
     revenue = latest(("revenue", "revenue_from_operations", "total_revenue", "net_sales"), prefer_quarter=True)
     if revenue:
@@ -1487,7 +1488,8 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
                    key=lambda b: (str(due_date(b.get("period")) or ""), b.get("as_of") or ""), default=None)
         metric = latest(names)
         snap_end, metric_end = (str(due_date(x.get("period")) or "") if x else "" for x in (snap, metric))
-        if snap and (not metric or (snap_end, snap["as_of"]) >= (metric_end, metric["as_of"])):
+        # an older entry may have no as_of (PNC Infra's calls, May 2026, crashed on it)
+        if snap and (not metric or (snap_end, snap.get("as_of") or "") >= (metric_end, metric.get("as_of") or "")):
             out[key] = {"period": snap.get("period"), "value": snap[field]}
         elif metric:
             out[key] = {"period": metric["period"], "value": metric["value"]}
@@ -1499,7 +1501,7 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
                 and _unit_fits(fmt, m)]
         if any(m["period"].startswith("Q") for m in rows):
             rows = [m for m in rows if m["period"].startswith("Q")]
-        metric = max(rows, key=lambda m: (due_date(m["period"]), m["as_of"]), default=None)
+        metric = max(rows, key=lambda m: (due_date(m["period"]), m.get("as_of") or ""), default=None)
         if metric:
             kpis.append({"label": spec["label"], "format": fmt, "period": metric["period"], "value": metric["value"]})
     if kpis:
@@ -2169,8 +2171,8 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         row = {slot: v for slot, v in values.items() if v is not None}
         for slot, label in (("prev_year", "yoy"), ("prev_quarter", "qoq")):
             base = values[slot]
-            if base is None:
-                continue
+            if base is None or not math.isfinite(base) or not math.isfinite(values["value"]):
+                continue   # an infinite figure has no change to show (L&T Finance's call, Apr 2026, crashed on it)
             if bps:
                 row[f"{label}_bps"] = round((values["value"] - base) * 100)
             elif base < 0 or values["value"] < 0:

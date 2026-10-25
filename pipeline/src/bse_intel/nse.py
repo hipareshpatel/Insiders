@@ -34,7 +34,7 @@ import io
 
 import httpx
 
-from .bse import AttachmentError
+from .bse import AttachmentError, AttachmentTooLarge
 from .bse import SourceBlockedError as _SourceBlocked
 from .models import Filing
 from .periods import canonical_period
@@ -561,8 +561,8 @@ class NseClient:
         return event_xbrl.parse_list(data.get("data") if isinstance(data, dict) else data, kind)
 
     def fetch(self, url: str, max_bytes: int = 30_000_000) -> bytes | None:
-        """An announcement's attachment (PDF, sometimes a ZIP) from nsearchives. None when it does not exist or is
-        larger than ``max_bytes`` (a truncated PDF is unreadable). A refusal stops the run (SourceBlockedError); a
+        """An announcement's attachment (PDF, sometimes a ZIP) from nsearchives. None when it does not exist;
+        AttachmentTooLarge when it is larger than ``max_bytes`` (a truncated PDF is unreadable). A refusal stops the run (SourceBlockedError); a
         network failure raises AttachmentError, so the filing is tried again rather than read without its text."""
         self.warm_up()
         problem: Exception | None = None
@@ -583,7 +583,7 @@ class NseClient:
                         size += len(chunk)
                         if size > max_bytes:
                             log.warning("Attachment over %d bytes, skipped: %s", max_bytes, url)
-                            return None
+                            raise AttachmentTooLarge(url, max_bytes)
                         chunks.append(chunk)
                     return b"".join(chunks)
             except httpx.HTTPError as exc:

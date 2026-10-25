@@ -19,15 +19,16 @@ from __future__ import annotations
 import gzip
 import hashlib
 import logging
+import re
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 
 from . import xbrl as xbrl_fast_path
 from .dossier import forget_source, merge, new_dossier, put_standalone
-from .models import Filing, Pass2Output
+from .models import FinancialMetric, Filing, Pass2Output
 from .nse import SourceBlockedError
-from .periods import canonical_period
+from .periods import canonical_period, quarter_index
 from .timeutil import now_iso
 
 log = logging.getLogger(__name__)
@@ -43,6 +44,8 @@ class SeedStats:
     skipped: int = 0
     results_from_nse: int = 0   # quarters BSE would not serve and NSE did
     rescaled: int = 0           # files tagged in the wrong unit, put right against the company's other quarters
+    misdated: int = 0           # files whose figures are dated to other months than the quarter NSE lists them for, refused
+    derived: int = 0            # quarters worked out as a longer period less the earlier quarters (the file holds no quarter of its own)
     standalone_periods: int = 0  # a consolidated filer's standalone quarters, kept apart (dossier.put_standalone)
     failures: list[str] = field(default_factory=list)
 
@@ -51,7 +54,9 @@ class SeedStats:
                 f"{self.shareholding_periods} shareholding quarters from {self.shareholding_files} files, "
                 f"{self.skipped} skipped, {len(self.failures)} failures"
                 + (f", {self.results_from_nse} quarters from NSE where BSE served nothing" if self.results_from_nse else "")
-                + (f", {self.rescaled} files in the wrong unit put right" if self.rescaled else ""))
+                + (f", {self.rescaled} files in the wrong unit put right" if self.rescaled else "")
+                + (f", {self.misdated} files dated to the wrong months refused" if self.misdated else "")
+                + (f", {self.derived} quarters worked out from a longer period" if self.derived else ""))
 
 
 def _cache(root: Path | None, url: str) -> Path | None:
@@ -167,6 +172,8 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
         if xbrl_fast_path.fix_scale(parsed, others, scrip):
             stats.rescaled += 1
         xbrl_fast_path.drop_long_year(parsed, others, scrip)   # an 18-month "year" dated as twelve (Siemens)
+    _drop_misdated(sink, scrip, found, stats)
+    _derive_quarters(found, stats)
     for period, (filed_on, url, parsed, _) in sorted(found.items()):
         _write_results(sink, scrip, name, company, period, filed_on, url, parsed, stats)
     # a consolidated filer's standalone files too, kept apart for the company page's standalone view (owner,
@@ -174,6 +181,73 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     consolidated = [p for p, (_, _, result, _) in found.items() if result.basis == "CONSOLIDATED"]
     if nse is not None and symbol and consolidated:
         _seed_standalone(sink, nse, scrip, symbol, since, set(consolidated), cache_root, stats)
+
+
+_PERIOD_END_QUARTER = {"Q1": 1, "Q2": 2, "H1": 2, "Q3": 3, "9M": 3, "Q4": 4, "H2": 4, "FY": 4}
+
+
+def _ends_with_quarter(label: str, quarter: str) -> bool:
+    """Whether a figure's period (Q4FY25, H2FY25, FY25, 9MFY25...) ends in the same month as ``quarter`` (Q4FY25)."""
+    m = re.fullmatch(r"(Q[1-4]|H[12]|9M|FY)(?:FY)?(\d{2})", label or "")
+    return bool(m) and _PERIOD_END_QUARTER[m[1]] == int(quarter[1]) and m[2] == quarter[-2:]
+
+
+def _drop_misdated(sink, scrip: str, found: dict, stats: SeedStats) -> None:
+    """A file NSE lists for a quarter whose figures are dated to other months is not that quarter's: CG Power's Q4FY25
+    file (filed 8 May 2025) tags its March-quarter figures (revenue 2,752.77) as 1 Apr - 30 Sep 2024, and memory then
+    held them as H1FY25 over the real half year (4,640.21), with no Q4FY25 (gaps fill, 25 Oct 2026). Nothing in the
+    file says which months are right, so it is refused, and what an earlier seed stored from it leaves memory."""
+    refused = [period for period, (_, _, parsed, _) in found.items()
+               if quarter_index(period) and not any(_ends_with_quarter(m.period, period) for m in parsed.metrics)]
+    if not refused:
+        return
+    dossier = sink.get_dossier(scrip)
+    changed = False
+    for period in refused:
+        found.pop(period)
+        stats.skipped += 1
+        stats.misdated += 1
+        log.warning("seed %s %s: the file's figures are dated to other months than this quarter; not kept", scrip, period)
+        changed = bool(dossier is not None and forget_source(dossier, f"xbrl:res:{scrip}:{period}")) or changed
+    if changed:
+        sink.put_dossier(scrip, dossier)
+
+
+_QUARTER_SUMS = ("revenue", "total_income", "pat", "pbt", "tax_expense")   # lines that add across periods
+
+
+def _derive_quarters(found: dict, stats: SeedStats) -> None:
+    """A quarter whose file holds the longer period and no quarter of its own: the integrated filing of March 2025 holds
+    H2FY25 and FY25 only (ZEEL, Solex, PGHL, Sanathan, HEMIPROP: most of the "Q4FY25 only" gaps), NDTV's Q2FY26 file
+    only H1FY26 (gaps fill, 25 Oct 2026). The quarter is the longer period less the earlier part, taken from the previous
+    quarter's file on the same basis: Q4 = FY less 9M or H2 less Q3 (December file), Q3 = 9M less H1 (September file),
+    Q2 = H1 less Q1 (June file). A line with no such pair is left out. Marked `calc` with the lines it came from, so
+    nothing reads it as the file's own figure."""
+    recipes = {"2": ((("H1", "Q1"),), "1"), "3": ((("9M", "H1"),), "2"), "4": ((("FY", "9M"), ("H2", "Q3")), "3")}
+    for period, (_, _, parsed, _) in sorted(found.items()):
+        if not quarter_index(period) or period[1] == "1" or any(m.period == period for m in parsed.metrics):
+            continue
+        pairs, previous = recipes[period[1]]
+        year, earlier = period[-2:], found.get(f"Q{previous}FY{period[-2:]}")
+        if earlier is None or earlier[2].basis != parsed.basis:
+            continue
+        own = {(m.metric, m.period): m for m in parsed.metrics}
+        before = {(m.metric, m.period): m for m in earlier[2].metrics}
+        for metric in _QUARTER_SUMS:
+            for whole, part in pairs:
+                whole, part = (f"FY{year}" if whole == "FY" else f"{whole}FY{year}"), f"{part}FY{year}"
+                a, b = own.get((metric, whole)), before.get((metric, part))
+                if a is None or b is None or a.value is None or b.value is None:
+                    continue
+                value = round(a.value - b.value, 2)
+                if metric in ("revenue", "total_income") and value < 0:
+                    continue
+                parsed.metrics.append(FinancialMetric(
+                    metric=metric, period=period, value=value, unit=a.unit, by="calc",
+                    derived_from=[f"{metric}:{whole}", f"{metric}:{part}"], file_basis=parsed.basis))
+                break
+        if any(m.period == period for m in parsed.metrics):
+            stats.derived += 1
 
 
 def _seed_standalone(sink, nse, scrip: str, symbol: str, since: str, periods: set[str], cache_root, stats) -> None:

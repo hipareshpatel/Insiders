@@ -365,3 +365,78 @@ def test_named_companies_may_be_nse_symbols_and_an_unknown_name_fails(settings, 
     assert seen == [("500550", "SIEMENS")]
     args.scrips = "SIEMENS,NOSUCH"
     assert cmd_seed_memory(args, settings, sink) == 2 and len(seen) == 1
+
+
+def _result(basis, *figures):
+    from bse_intel.models import FinancialMetric
+    from bse_intel.xbrl import XbrlResult
+
+    metrics = [FinancialMetric(metric=m, period=p, value=v, by="file", file_basis=basis) for m, p, v in figures]
+    return XbrlResult("RESULTS", basis, figures[0][1], metrics)
+
+
+def _two_quarters(monkeypatch, q3, q4):
+    seed_mod._nse_rows.cache_clear()
+    rows = [ResultsFiling(period="Quarterly", consolidated=False, audited="Audited", filed_at="2025-01-29", xbrl_url="q3",
+                          is_bank=False, period_end="2024-12-31"),
+            ResultsFiling(period="Quarterly", consolidated=False, audited="Audited", filed_at="2025-05-08", xbrl_url="q4",
+                          is_bank=False, period_end="2025-03-31")]
+    files = {"q3": q3, "q4": q4}
+    monkeypatch.setattr(seed_mod.xbrl_fast_path, "parse", lambda data: files[data.decode()])
+    return Nse(rows, {"q3": b"q3", "q4": b"q4"})
+
+
+def test_a_march_quarter_filed_as_half_year_and_year_is_the_year_less_nine_months(monkeypatch):
+    """ZEEL, Solex, PGHL (gaps fill, 25 Oct 2026): the integrated filing of March 2025 holds H2FY25 and FY25 and no
+    quarter, so Q4FY25 never reached memory and the fill re-read the same files every night."""
+    q3 = _result("STANDALONE", ("revenue", "Q3FY25", 100.0), ("pat", "Q3FY25", 10.0),
+                 ("revenue", "9MFY25", 280.0), ("pat", "9MFY25", 28.0))
+    q4 = _result("STANDALONE", ("revenue", "H2FY25", 210.0), ("pat", "H2FY25", 22.0),
+                 ("revenue", "FY25", 490.0), ("pat", "FY25", 50.0))
+    sink, stats = Sink(), SeedStats()
+    seed_results(sink, None, "505537", "Zee", "2024-12-01", None, stats, company={},
+                 nse=_two_quarters(monkeypatch, q3, q4), symbol="ZEEL")
+    entries = {(m["metric"], m["period"]): m for m in sink.dossiers["505537"]["financial_metrics"]}
+    assert entries[("revenue", "Q4FY25")]["value"] == 210.0 and entries[("pat", "Q4FY25")]["value"] == 22.0
+    assert stats.derived == 1 and "1 quarters worked out from a longer period" in stats.line()
+
+
+def test_a_march_quarter_is_not_worked_out_without_the_december_file(monkeypatch):
+    q4 = _result("STANDALONE", ("revenue", "H2FY25", 210.0), ("revenue", "FY25", 490.0))
+    q3 = _result("CONSOLIDATED", ("revenue", "Q3FY25", 100.0), ("revenue", "9MFY25", 280.0))   # another basis
+    sink, stats = Sink(), SeedStats()
+    seed_results(sink, None, "505537", "Zee", "2024-12-01", None, stats, company={},
+                 nse=_two_quarters(monkeypatch, q3, q4), symbol="ZEEL")
+    assert ("revenue", "Q4FY25") not in {(m["metric"], m["period"]) for m in sink.dossiers["505537"]["financial_metrics"]}
+    assert stats.derived == 0
+
+
+def test_a_file_dated_to_other_months_is_refused_and_leaves_memory(monkeypatch):
+    """CG Power: the file NSE lists for March 2025 tags its quarter as 1 Apr - 30 Sep 2024; memory held its figures as
+    H1FY25 over the real half year."""
+    q3 = _result("STANDALONE", ("revenue", "Q3FY25", 100.0), ("revenue", "9MFY25", 280.0))
+    q4 = _result("STANDALONE", ("revenue", "H1FY25", 275.0), ("pat", "H1FY25", 27.0))
+    sink, stats = Sink(), SeedStats()
+    sink.dossiers["500093"] = {"financial_metrics": [{"metric": "revenue", "period": "H1FY25", "value": 275.0, "unit": "INR_CR",
+                                                      "as_of": "2025-05-08T18:00:00+05:30",
+                                                      "source_news_id": "xbrl:res:500093:Q4FY25"}]}
+    seed_results(sink, None, "500093", "CG Power", "2024-12-01", None, stats, company={},
+                 nse=_two_quarters(monkeypatch, q3, q4), symbol="CGPOWER")
+    periods = {m["period"] for m in sink.dossiers["500093"]["financial_metrics"]}
+    assert "H1FY25" not in periods and "Q3FY25" in periods and stats.misdated == 1
+    assert "1 files dated to the wrong months refused" in stats.line()
+
+
+def test_a_september_quarter_filed_as_the_half_year_is_the_half_year_less_the_june_quarter(monkeypatch):
+    """NDTV's Q2FY26 file holds H1FY26 and no quarter."""
+    seed_mod._nse_rows.cache_clear()
+    rows = [ResultsFiling(period="Quarterly", consolidated=True, audited="Audited", filed_at=f, xbrl_url=u, is_bank=False,
+                          period_end=e) for u, e, f in (("q1", "2025-06-30", "2025-08-01"), ("q2", "2025-09-30", "2025-11-10"))]
+    files = {"q1": _result("CONSOLIDATED", ("revenue", "Q1FY26", 100.0), ("pat", "Q1FY26", -5.0)),
+             "q2": _result("CONSOLIDATED", ("revenue", "H1FY26", 230.0), ("pat", "H1FY26", -2.0))}
+    monkeypatch.setattr(seed_mod.xbrl_fast_path, "parse", lambda data: files[data.decode()])
+    sink, stats = Sink(), SeedStats()
+    seed_results(sink, None, "532529", "NDTV", "2025-05-01", None, stats, company={},
+                 nse=Nse(rows, {"q1": b"q1", "q2": b"q2"}), symbol="NDTV")
+    entries = {(m["metric"], m["period"]): m["value"] for m in sink.dossiers["532529"]["financial_metrics"]}
+    assert entries[("revenue", "Q2FY26")] == 130.0 and entries[("pat", "Q2FY26")] == 3.0

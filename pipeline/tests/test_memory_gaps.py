@@ -196,3 +196,18 @@ def test_survey_read_error_propagates():
 
     with pytest.raises(RuntimeError):
         mg.survey(Broken({}), ["A", "B"], TODAY)
+
+
+def test_a_company_that_stopped_filing_consolidated_is_checked_on_its_newer_basis():
+    """Bharat Wire Ropes (gaps fill, 25 Oct 2026): consolidated FY23-FY24, standalone since. One old consolidated quarter
+    kept it on a basis its newer quarters are not on, so all eight read as missing and no fill could close them."""
+    d = _dossier("1", ["Q2FY24", "Q3FY24", "Q4FY24"])
+    d["financial_metrics"] += _dossier("1", EIGHT, basis="STANDALONE")["financial_metrics"]
+    r = mg.check(d, TODAY)
+    assert r["basis"] == "STANDALONE" and r["missing"] == [] and not mg.has_gap(r)
+
+
+def test_both_bases_to_the_same_newest_quarter_are_checked_consolidated():
+    d = _dossier("1", EIGHT[:2])
+    d["financial_metrics"] += _dossier("1", EIGHT[:2], basis="STANDALONE")["financial_metrics"]
+    assert mg.check(d, TODAY)["basis"] == "CONSOLIDATED"

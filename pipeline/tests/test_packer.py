@@ -197,3 +197,27 @@ def test_a_generic_quote_shared_by_filings_does_not_send_a_paraphrased_answer_aw
     answer = {"card": {"what_happened": [{"quote": common}, {"quote": "Alpha won a large railway signalling order today"}]}}
     assert not misplaced(answer, own, [other])
     assert misplaced({"card": {"what_happened": [{"quote": common}, {"quote": BETA}]}}, own, [other])
+
+
+def test_the_packed_call_is_not_under_the_cap_but_the_fallback_is():
+    """F149: a shared request runs uncapped; a single-filing fallback starts the filing's cap."""
+    from contextlib import contextmanager
+
+    class Capped(FakeGateway):
+        def __init__(self, skip=frozenset()):
+            super().__init__(skip)
+            self.events = []
+
+        def start_cap(self):
+            self.events.append("start")
+
+        @contextmanager
+        def uncapped(self):
+            self.events.append("uncapped-in")
+            yield
+            self.events.append("uncapped-out")
+
+    gw = Capped(skip={"t2"})
+    _run(Packer(gw, size=2, wait_s=5), 2)
+    assert gw.events.count("uncapped-in") == 1 and gw.events.count("uncapped-out") == 1
+    assert gw.events.count("start") == 1   # only the filing that fell back to its own route

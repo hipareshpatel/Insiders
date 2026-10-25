@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+import contextlib
 import threading
 import time
 import uuid
@@ -116,6 +117,7 @@ class Packer:
         if can_serve is not None and not can_serve(self.route, bulk=self.bulk):
             with self._lock:
                 self.stats["fallbacks"] += 1
+            self._start_cap()
             return self.gateway.complete_json(fallback_route, system, user, schema, bulk=self.bulk)
         job = _Job(system, user, schema, tag)
         batch = earlier = None
@@ -149,7 +151,14 @@ class Packer:
             return job.result
         with self._lock:
             self.stats["fallbacks"] += 1
+        self._start_cap()
         return self.gateway.complete_json(fallback_route, system, user, schema, bulk=self.bulk)
+
+    def _start_cap(self) -> None:
+        """The single-filing fallback is under the card-writing cap (F149), starting now; the packed call is not."""
+        start = getattr(self.gateway, "start_cap", None)
+        if start is not None:
+            start()
 
     def _wait(self) -> float:
         """How long a filing waits for others: the set wait, but never past the run's deadline (less a margin for the
@@ -170,7 +179,9 @@ class Packer:
         # which filings shared this request, so a card's facts can be checked against the others' (audit: pack bleed)
         pack = {"id": uuid.uuid4().hex[:12], "members": [job.tag for job in batch if job.tag]}
         try:
-            reply = self.gateway.complete_json(self.route, PACK_SYSTEM, user, PackedReply, bulk=self.bulk)
+            uncapped = getattr(self.gateway, "uncapped", None)
+            with uncapped() if uncapped is not None else contextlib.nullcontext():
+                reply = self.gateway.complete_json(self.route, PACK_SYSTEM, user, PackedReply, bulk=self.bulk)
             answers: dict[str, dict] = {}
             twice = set()
             for item in reply.value.results:

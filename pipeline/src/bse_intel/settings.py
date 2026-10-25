@@ -122,6 +122,10 @@ class Settings:
     max_ocr_pages: int = field(default_factory=lambda: _env_int("MAX_OCR_PAGES", 20 if _local_ocr() else 6))
     pass2_char_budget: int = field(default_factory=lambda: _env_int("PASS2_CHAR_BUDGET", 40_000))
     workers: int = field(default_factory=lambda: _env_int("PIPELINE_WORKERS", 3))
+    # Seconds of AI time one filing's card writing (pass 2: every model tried, repairs, retries) may take before the
+    # filing waits for the next run with no attempt spent (owner, 25 Oct 2026; TODO 35). Run 40192588628: single filings
+    # spent 480-1,062 s walking slow spare models, each holding a worker. 0 = no cap. The packed call is not under it.
+    pass2_cap_s: int = field(default_factory=lambda: _env_int("PASS2_CAP_S", 360))
     # Pass 2 packed: this many filings in one request on the `pass2_packed` route (Gemini; ai/packer.py). 0 = off.
     pass2_pack: int = field(default_factory=lambda: _env_int("PASS2_PACK", 0))
     # Seconds a filing waits for others to fill its pack. 20 s gave 1.25 filings a call on round 5's companies

@@ -181,12 +181,6 @@ api_key_env = "NVIDIA_API_KEY_2"
 same_as = "zai"
 api_key_env = "ZAI_API_KEY_2"
 
-# Mistral's second key (owner, 25 Oct 2026: Mistral was the provider still on one key; run 223 had three 429s from it
-# and none from either Gemini key)
-[providers.mistral_2]
-same_as = "mistral"
-api_key_env = "MISTRAL_API_KEY_2"
-
 [providers.siliconflow]
 # Owner's key, from the international site (owner, 2026-10-20), so the .com endpoint. Measured 2026-10-20 (providers
 # check run 2): the key lists ~80 models, but all six candidates tried (DeepSeek-V4.1-Flash, Qwen3.8-27B, GLM-4.5-Air,

@@ -180,3 +180,15 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
   shown as our estimate with both inputs named. Rules: only orders filed after the slide's date, each order once,
   restarted at the next slides or call; it is not reduced for work done since, and says so.
 - **Item 4 reopened as a question:** space for keeping filing texts longer (estimate in the reply of 25 Oct).
+| 29 | Quick run only: cut the wait to share a request from 60 s to 10 s (`PASS2_PACK_WAIT` in pipeline-today.yml; the main run keeps 60 s) | Measured 25 Oct, quick run 40191102782: 3 of 3 filings waited 60-66 s of their 97-185 s for others to share a request, with only 3 filings live. Cost: on a busy hour fewer filings share one request, so more AI requests | Owner: Yes / No / Later | Proposed |
+| 30 | Time the steps still unmeasured (the checks after pass 2, building the card, sending it to the site) | Main run 40192588628: "other" (time outside every measured step) was 57-88 s on 8 filings, so a minute a filing is still unexplained. Logging only, no card change | Owner: Yes / No / Later | Proposed |
+| 31 | Find why pass 2 took 13-18 minutes on some filings (retries, a slow provider or long waits for the rate limit) | Main run 40192588628: pass 2 983 s (LICI), 941 s (ROHLTD), 1,062 s (ZEEL), 772 s (NTPC); each ties up a worker. Diagnosis first, no change yet | Owner: Yes / No / Later | Proposed |
+| 32 | Skip OCR on a filing that is an exact repeat of one already read (same file), before reading its pages | Main run 40192588628: 3 filings OCR'd 7-15 pages (70-129 s each) and then were dropped as repeats (ITC nse-106633666, GOLDIAM nse-106643200 and nse-106643216). Only a same-file repeat can be caught before reading; a same-content repeat still needs the text | Owner: Yes / No / Later | Proposed |
+
+## Owner's answers on memory labels
+
+- Q2 (year-ago figures that cannot be checked are left blank on cards): first make memory complete. Built 25 Oct 2026
+  (F148): `memory-gaps` counts, per universe company, the last 8 quarters without an exchange-XBRL revenue or PAT and the
+  missing year-ago quarter; `memory-gaps-fill` fetches only those once. Run Maintenance > `memory-gaps` first, read the
+  summary, then `memory-gaps-fill`; what stays missing after it is "not found by NSE's results list on <date>", not
+  "no source".

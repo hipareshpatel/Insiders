@@ -3045,7 +3045,7 @@ class Pipeline:
         dossier = self.sink.get_dossier(filing.scrip_code) or new_dossier(filing, company)
         out = Pass2Output(is_material=False, timeline_entry="")
         out.dossier_delta.ownership = tagged.ownership
-        merged = merge(dossier, out, filing, None, now)
+        merged = merge(dossier, out, filing, None, now, by="file")   # the shareholding file's own figures (memory label)
         with stages.stage("memory_write"):
             self.sink.put_dossier(filing.scrip_code, merged)
         own = tagged.ownership
@@ -4629,11 +4629,13 @@ def _apply_xbrl(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult", news_id: 
     if tagged.balance_sheet and not tagged.balance_sheet.is_empty():
         sheet = delta.balance_sheet
         if sheet is None or sheet.is_empty():
-            delta.balance_sheet = tagged.balance_sheet
+            delta.balance_sheet = tagged.balance_sheet.model_copy(deep=True)
+            delta.balance_sheet.file_fields = [k for k, v in tagged.balance_sheet.model_dump().items() if v is not None]
         else:
             for key, value in tagged.balance_sheet.model_dump().items():
                 if value is not None:
                     setattr(sheet, key, value)
+                    sheet.file_fields = [*(sheet.file_fields or []), key]   # memory label: this field is the file's
 
 
 def _company_memory(dossier: dict) -> dict:

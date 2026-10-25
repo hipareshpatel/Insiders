@@ -456,6 +456,7 @@ class DealValue(_Lenient):
     kind: Annotated[str, _enum(DEAL_KINDS, {"CONTRACT": "ORDER", "AWARD": "ORDER", "PREFERENTIAL": "FUNDRAISE",
                                               "WARRANTS": "FUNDRAISE", "QIP": "FUNDRAISE", "M_A": "ACQUISITION"}, "OTHER")] = "OTHER"
     amount_cr: Num = None
+    amount_by: str | None = Field(default=None, exclude=True)   # "file" when the event XBRL set the amount (memory label)
     includes_gst: bool | None = None
     counterparty: OptStr = None
     # an acquisition or sale: what changes hands and who sells it, apart (the counterparty was either; Ceigall's card
@@ -697,6 +698,12 @@ class FinancialMetric(_Lenient):
     unit: str = "INR_CR"
     yoy_pct: Num = None
     qoq_pct: Num = None
+    # Where the figure came from (memory label, docs/design/memory-labels.md): "file" (the filing's own XBRL file),
+    # "calc" (worked out by our code from other figures, `derived_from` names them). Left None for a figure a model
+    # read from the PDF ("ai"). Set by code only, never stored in the model's raw answer.
+    by: str | None = Field(default=None, exclude=True)
+    derived_from: list[str] | None = Field(default=None, exclude=True)
+    file_basis: str | None = Field(default=None, exclude=True)   # CONSOLIDATED / STANDALONE as the file states it
 
 
 class SegmentShare(_Lenient):
@@ -765,6 +772,8 @@ class BalanceSheet(_Lenient):
     credit_rating: OptStr = None
     rating_agency: OptStr = None
     rating_outlook: OptStr = None
+    # the fields that came from the filing's XBRL file (memory label); code sets it, it is never stored as a figure
+    file_fields: list[str] | None = Field(default=None, exclude=True)
 
     def is_empty(self) -> bool:
         return all(v is None for v in self.model_dump().values())

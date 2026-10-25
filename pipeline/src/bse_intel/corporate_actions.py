@@ -23,8 +23,8 @@ from types import SimpleNamespace
 
 from . import nse as nse_api
 from . import universe
-from .dossier import new_dossier
-from .timeutil import today_ist
+from .dossier import new_dossier, section_label
+from .timeutil import now_iso, today_ist
 
 log = logging.getLogger(__name__)
 
@@ -91,6 +91,7 @@ def merge(dossier: dict, actions: list[dict]) -> int:
     if added:
         dossier[KEY] = sorted(have + [{k: v for k, v in a.items() if k != "symbol"} for a in added],
                               key=lambda a: a["ex_date"])[-MAX_ACTIONS:]
+        section_label(dossier, KEY, now_iso())   # an exchange feed alone writes this section (memory label: file)
     return len(added)
 
 

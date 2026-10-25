@@ -21,6 +21,9 @@ import logging
 import re
 from datetime import datetime
 
+from .dossier import section_label
+from .timeutil import now_iso
+
 log = logging.getLogger(__name__)
 
 BASE = "https://www.dgtr.gov.in"
@@ -223,9 +226,11 @@ def merge(dossier: dict, case: dict, documents: list[dict], role: str) -> bool:
             if {k: old.get(k) for k in entry} == entry:
                 return False
             cases[i] = entry
+            section_label(dossier, "trade_remedies", now_iso())   # DGTR's own case pages (memory label: file)
             return True
     cases.append(entry)
     dossier["trade_remedies"] = sorted(cases, key=lambda c: c.get("as_of") or "")[-30:]
+    section_label(dossier, "trade_remedies", now_iso())
     return True
 
 

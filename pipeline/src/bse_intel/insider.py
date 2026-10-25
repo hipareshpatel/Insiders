@@ -19,8 +19,8 @@ from types import SimpleNamespace
 
 from . import nse as nse_api
 from . import universe
-from .dossier import new_dossier
-from .timeutil import today_ist
+from .dossier import new_dossier, section_label
+from .timeutil import now_iso, today_ist
 
 log = logging.getLogger(__name__)
 
@@ -124,6 +124,7 @@ def merge(dossier: dict, events: list[dict], filing_id: str | None = None) -> in
     if new:
         box["events"] = sorted(box.get("events", []) + new,
                                key=lambda e: (e.get("to") or e.get("filed") or "", e.get("person") or ""))[-MAX_EVENTS:]
+        section_label(dossier, "insider_trades", now_iso())   # NSE's PIT feed (memory label: file)
     if filing_id and filing_id not in box.setdefault("filings", []):
         box["filings"] = (box["filings"] + [filing_id])[-MAX_SEEN:]
     return len(new)

@@ -601,6 +601,7 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     # EBITDA = profit before exceptional items and tax + finance cost + depreciation - other income. From the file's
     # own profit before exceptional items when it tags one: PBT less the exceptional items depends on the sign a filer
     # gives a charge, and a charge tagged positive took EBITDA down by twice it (data chain audit A9, 22 Oct 2026)
+    derived: dict[tuple[str, str], list[str]] = {}   # figures our code worked out, and the lines they came from (memory label)
     for label in {p for _, p in values}:
         before = values.pop(("pbt_before_exceptional", label), None)
         start = before if before is not None else _pbt_without_associates(values, label)
@@ -609,9 +610,14 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
             ebitda = sum(parts) - (values.get(("other_income", label)) or 0) \
                 - (0 if before is not None else values.get(("exceptional_items", label)) or 0)
             values[("ebitda", label)] = ebitda
+            names = ["pbt_before_exceptional" if before is not None else "pbt", "finance_cost", "depreciation", "other_income"]
+            if before is None:
+                names.append("exceptional_items")
+            derived[("ebitda", label)] = [f"{n}:{label}" for n in names]
             revenue = values.get(("revenue", label))
             if revenue:
                 values[("ebitda_margin", label)] = ebitda / revenue * 100
+                derived[("ebitda_margin", label)] = [f"ebitda:{label}", f"revenue:{label}"]
     if untrusted:
         # before the changes are worked out, so none is built on a left-off figure; a derived EBITDA goes with its parts
         parts = {"pbt", "pbt_before_exceptional", "finance_cost", "depreciation", "other_income", "exceptional_items",
@@ -638,7 +644,9 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
             if label.startswith("Q"):
                 qoq = _change(value, _match(values, ends, metric, label, months=3))
         metrics.append(FinancialMetric(metric=metric, period=label, value=round(value, 2), unit=unit,
-                                       yoy_pct=yoy, qoq_pct=qoq))
+                                       yoy_pct=yoy, qoq_pct=qoq,
+                                       by="calc" if (metric, label) in derived else "file",
+                                       derived_from=derived.get((metric, label)), file_basis=basis))
     dates = sorted(instants)
     sheet = _balance_sheet(instants[dates[-1]], dates[-1]) if dates else None
     # the file's own earlier date (March for a half year): like for like by construction, what facts.py compares with

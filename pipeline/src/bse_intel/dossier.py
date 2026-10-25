@@ -26,6 +26,7 @@ from typing import Any
 from .scoring import calibration
 from .models import Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
+from .timeutil import now_iso
 
 SCHEMA_VERSION = 3
 MAX_TIMELINE = 600
@@ -287,6 +288,62 @@ def _period(text: str) -> str:
     return canonical_period(text)
 
 
+# Memory labels (docs/design/memory-labels.md, TODO 3 / 10 / 16): every item says who produced it (`by`: file = the
+# exchange's own figure file, ai = a model read it, calc = our code worked it out from labelled inputs, unknown = old
+# memory nobody has labelled), what kind of document it is from (`doc`), and when it was recorded (`at`). A figure adds
+# basis, unit as printed and whether it passed our checks (`ok`); a calc adds `from`. Readers do not use labels yet
+# (step 1): they ride along in the stored dossier, so no card changes.
+LABEL_DOCS = ("results", "call", "slides", "release", "board", "annual", "other")
+_DOC_BY_EVENT = {"RESULTS": "results", "CONCALL_PRESENTATION": "call", "ANNUAL_REPORT": "annual"}
+_SLIDES = re.compile(r"presentation|investor deck|\bslides?\b", re.I)
+_CALL = re.compile(r"transcript|earnings call|conference call|con-?call|audio", re.I)
+_RELEASE = re.compile(r"press release|media release", re.I)
+_BOARD = re.compile(r"board meeting|outcome of (?:the )?board", re.I)
+
+
+def doc_kind(event_type: str | None, filing: Filing | None = None) -> str:
+    """The label's `doc` for a filing: results | call | slides | release | board | annual | other. From its event type,
+    then its headline and subject; ``other`` when neither says (never guessed)."""
+    text = f"{getattr(filing, 'headline', '') or ''} {getattr(filing, 'subject', '') or ''}"
+    if str(getattr(filing, "news_id", "") or "").startswith(XBRL_SOURCE + "res"):
+        return "results"
+    base = _DOC_BY_EVENT.get(event_type or "")
+    if base == "call":
+        return "slides" if _SLIDES.search(text) and not _CALL.search(text) else "call"
+    if base == "results":
+        return "release" if _RELEASE.search(text) else "results"
+    if base:
+        return base
+    for name, rx in (("slides", _SLIDES), ("call", _CALL), ("release", _RELEASE), ("board", _BOARD)):
+        if rx.search(text):
+            return name
+    return "other"
+
+
+def label(by: str, doc: str, at: str | None, *, basis: str | None = None, unit: str | None = None,
+          ok: bool | None = None, src=None) -> dict:
+    """One memory label: ``by`` file | ai | calc | unknown, ``doc``, ``at`` (ISO time recorded); a figure adds ``basis``,
+    ``unit`` as printed and ``ok`` (passed our checks, when the writer knows); a calc adds ``from`` (its input ids).
+    ``page`` and ``quote`` for an AI figure are step 3's: left absent here, never invented."""
+    lab = {"by": by, "doc": doc if doc in LABEL_DOCS else "other"}
+    if basis:
+        lab["basis"] = basis
+    if unit:
+        lab["unit"] = unit
+    lab["at"] = at
+    if ok is not None:
+        lab["ok"] = ok
+    if src:
+        lab["from"] = list(src)
+    return lab
+
+
+def section_label(dossier: dict, section: str, at: str | None, doc: str = "other") -> None:
+    """A section only an exchange feed writes (corporate actions, pledges, insider trades, market deals, governance
+    reports, trade remedies) is labelled ``file`` once, here, not item by item (``dossier["section_lab"]``)."""
+    dossier.setdefault("section_lab", {})[section] = label("file", doc, at)
+
+
 def new_dossier(filing: Filing, company: dict | None = None) -> dict:
     company = company or {}
     return {
@@ -332,6 +389,7 @@ def _sources(entry: dict | None) -> list[dict]:
         "news_id": entry.get("source_news_id"), "as_of": entry.get("as_of"), "value": entry.get("value"),
         "unit": entry.get("unit"), "yoy_pct": entry.get("yoy_pct"), "qoq_pct": entry.get("qoq_pct"),
         **({"basis": entry["basis"]} if entry.get("basis") else {}),
+        **({"lab": entry["lab"]} if entry.get("lab") else {}),
     }]
 
 
@@ -439,6 +497,8 @@ def _metric_entry(metric: str, period: str, sources: list[dict]) -> dict:
              "source_news_id": sources[0]["news_id"]}
     if len(sources) == 1 and sources[0].get("basis"):
         entry["basis"] = sources[0]["basis"]
+    if len(sources) == 1 and sources[0].get("lab"):
+        entry["lab"] = sources[0]["lab"]
     if len(sources) > 1:
         entry.update(sources=sources, updated_as_of=last["as_of"], value_news_id=last["news_id"])
     return entry
@@ -581,12 +641,16 @@ def put_standalone(dossier: dict, metrics, balance, as_of: str, source: str) -> 
         if old and str(old.get("as_of", "")) > as_of:
             continue
         entries[key] = {"metric": key[0], "period": key[1], "value": m.value, "unit": m.unit, "yoy_pct": m.yoy_pct,
-                        "as_of": as_of, "source_news_id": source}
+                        "as_of": as_of, "source_news_id": source,
+                        "lab": (old.get("lab") if old and old.get("value") == m.value and old.get("lab") else None)
+                        or label(getattr(m, "by", None) or "file", "results", now_iso(), basis="STANDALONE", unit=m.unit,
+                                 ok=True, src=getattr(m, "derived_from", None))}   # a re-read of the same figure keeps its label
     if not march_year(dossier):   # as for the main figures: quarters only (drop_off_year_periods)
         entries = {k: e for k, e in entries.items() if _CALENDAR_QUARTER.fullmatch(k[1])}
     part["metrics"] = _cap_metrics(list(entries.values()))
     if balance is not None and not balance.is_empty():
-        snap = {k: v for k, v in balance.model_dump().items() if v is not None} | {"as_of": as_of, "source_news_id": source}
+        snap = {k: v for k, v in balance.model_dump().items() if v is not None} | {
+            "as_of": as_of, "source_news_id": source, "lab": label("file", "results", now_iso(), basis="STANDALONE", ok=True)}
         kept = [b for b in part.get("balance_sheet", []) if b.get("period") != snap.get("period")]
         part["balance_sheet"] = sorted(kept + [snap], key=lambda e: e["as_of"])[-MAX_BALANCE_SNAPSHOTS:]
     return dossier
@@ -662,6 +726,7 @@ def add_timeline_entry(dossier: dict, filing: Filing, event_type: str, entry: st
     d["timeline"] = sorted(d["timeline"] + [{
         "id": "t_" + _hash(filing.news_id), "date": filing.filed_at, "event_type": event_type, "impact_level": None,
         "summary": entry.strip(), "news_id": filing.news_id, "tier": "TIMELINE",
+        "lab": label("ai", doc_kind(event_type, filing), updated_at),
         **({"pdf_url": filing.pdf_url} if filing.pdf_url else {}),
     }], key=lambda e: e["date"])[-MAX_TIMELINE:]
     d["updated_at"] = updated_at
@@ -680,6 +745,7 @@ def merge_governance(d: dict, entry: dict, as_of: str, source: str) -> bool:
     if any(q.get("source") == source and q.get("parser") == entry.get("parser") for q in quarters):
         return False   # the same file read by the same parser; a parser fix files it again
     row = {**entry, "as_of": as_of, "source": source}
+    section_label(d, "governance_quarters", as_of, "other")
     quarters = [q for q in quarters if q.get("quarter_end") != entry.get("quarter_end")] + [row]
     gov["quarters"] = sorted(quarters, key=lambda q: str(q.get("quarter_end") or ""))[-GOVERNANCE_QUARTERS:]
     return True
@@ -825,10 +891,12 @@ def drop_off_year_periods(d: dict) -> int:
 
 
 def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str | None, updated_at: str,
-          basis: str | None = None, fy_end_month: int | None = None) -> dict:
+          basis: str | None = None, fy_end_month: int | None = None, by: str | None = None) -> dict:
     """Return the dossier with this filing's facts merged in (input is not mutated). `basis` is the figures'
     (CONSOLIDATED / STANDALONE): the seed gives its file's, a card its own `basis`. `fy_end_month`: the month the
-    company's year ends, from its results XBRL; a year not ending in March keeps quarters only (march_year)."""
+    company's year ends, from its results XBRL; a year not ending in March keeps quarters only (march_year).
+    `by` is the memory label's writer for what is not a figure (default: file for a synthetic ``xbrl:`` id, else ai);
+    a figure carries its own (``FinancialMetric.by``: file / calc from the XBRL reader, none = a model's reading)."""
     d = json.loads(json.dumps(dossier))  # deep copy, JSON-safe
     d.setdefault("schema_version", SCHEMA_VERSION)
     if fy_end_month:
@@ -839,7 +907,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     delta = output.dossier_delta
 
     if delta.business_summary and not d.get("business_summary"):
-        d["business_summary"] = {"text": delta.business_summary.strip(), "as_of": as_of, "source_news_id": news_id}
+        d["business_summary"] = {"text": delta.business_summary.strip(), "as_of": as_of, "source_news_id": news_id,
+                                 "lab": text_lab()}
 
     metrics = {(m["metric"], m["period"]): m for m in d.get("financial_metrics", [])}
     basis = basis or (output.card.basis if output.card is not None else None)
@@ -848,6 +917,11 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     # profit beside five consolidated sources (T5, 2026-10-20), while a rights issue's quarter is often all there is
     kind = output.event_type if output.event_type not in (None, "", "OTHER") else filing.event_type
     results_source = news_id.startswith(XBRL_SOURCE) or (kind or "RESULTS") == "RESULTS"
+    item_by = by or ("file" if news_id.startswith(XBRL_SOURCE) else "ai")
+    doc = doc_kind(kind, filing)
+
+    def text_lab() -> dict:
+        return label(item_by, doc, updated_at)
     for m in delta.financial_metrics:
         if m.value is None:
             continue
@@ -861,8 +935,14 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             log.info("memory: %s %s %s from %s refused: its own change does not follow from memory's comparatives",
                      key[0], key[1], m.value, news_id)
             continue
+        # the label: a figure the XBRL reader built is file (or calc, from its inputs); a synthetic xbrl: id is file;
+        # anything else a model read from the PDF is ai. A figure only reaches here after trust.for_memory.
+        m_by = getattr(m, "by", None) or item_by
+        lab = label(m_by, "results" if m_by in ("file", "calc") else doc, updated_at,
+                    basis=(getattr(m, "file_basis", None) if m_by in ("file", "calc") else None) or basis, unit=m.unit, ok=True,
+                    src=getattr(m, "derived_from", None) if m_by == "calc" else None)
         source = {"news_id": news_id, "as_of": as_of, "value": m.value, "unit": m.unit,
-                  "yoy_pct": m.yoy_pct, "qoq_pct": m.qoq_pct, **({"basis": basis} if basis else {})}
+                  "yoy_pct": m.yoy_pct, "qoq_pct": m.qoq_pct, **({"basis": basis} if basis else {}), "lab": lab}
         metrics[key] = _metric_entry(*key, [s for s in _sources(metrics.get(key)) if s["news_id"] != news_id] + [source])
     d["financial_metrics"] = _cap_metrics(list(metrics.values()))
 
@@ -874,7 +954,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             continue
         segments[key] = {
             "segment": s.segment.strip(), "period": key[1], "revenue_cr": s.revenue_cr,
-            "share_pct": s.share_pct, "as_of": as_of, "source_news_id": news_id,
+            "share_pct": s.share_pct, "as_of": as_of, "source_news_id": news_id, "lab": text_lab() | {"ok": True},
         }
     d["segment_mix"] = sorted(segments.values(), key=lambda e: e["as_of"])[-120:]
 
@@ -884,16 +964,24 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             log.info("memory: %s %s %s from %s refused: out of scale with the other sources for that date",
                      field, snapshot.get("period"), snapshot[field], news_id)
             snapshot.pop(field)
-        snapshot.update(as_of=as_of, source_news_id=news_id)
+        fields = [k for k in snapshot if k != "period"]
+        from_file = set(delta.balance_sheet.file_fields or [])
+        sheet_by = "file" if news_id.startswith(XBRL_SOURCE) or (fields and all(k in from_file for k in fields)) else "ai"
+        lab = label(sheet_by, "results" if sheet_by == "file" else doc, updated_at, basis=basis, ok=True)
+        if sheet_by == "ai" and from_file & set(fields):
+            lab["file_fields"] = sorted(from_file & set(fields))   # a mixed snapshot: these fields are the file's
+        snapshot.update(as_of=as_of, source_news_id=news_id, lab=lab)
         d["balance_sheet"] = sorted(d.get("balance_sheet", []) + [snapshot], key=lambda e: e["as_of"])[-MAX_BALANCE_SNAPSHOTS:]
 
-    actions = [a.model_dump() | {"as_of": as_of, "source_news_id": news_id} for a in delta.capital_actions]
+    actions = [a.model_dump() | {"as_of": as_of, "source_news_id": news_id, "lab": text_lab()} for a in delta.capital_actions]
     d["capital_actions"] = sorted(d.get("capital_actions", []) + actions, key=lambda e: e["as_of"])[-40:]
 
     deal = output.card.deal_value if output.card is not None else None
     if deal is not None and (deal.amount_cr or deal.updates_deal_id):
+        # the amount is file when the event's XBRL set it (event_xbrl.apply_orders), else what the model read
+        deal_lab = label("file" if getattr(deal, "amount_by", None) == "file" else item_by, doc, updated_at, ok=True)
         entry = {"stage": deal.stage, "amount_cr": deal.amount_cr, "progress": deal.progress,
-                 "as_of": as_of, "source_news_id": news_id}
+                 "as_of": as_of, "source_news_id": news_id, "lab": deal_lab}
         details = {k: v for k, v in deal.model_dump(include={"includes_gst", "counterparty", "segment", "execution_by", "expansion", "usage"}).items()
                    if v is not None}
         deals = d.get("deals", [])
@@ -912,7 +1000,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         elif deal.amount_cr:
             did = "d_" + _hash(news_id)
             existing = next((x for x in deals if x["id"] == did), None)
-            base = deal.model_dump(exclude={"updates_deal_id"}) | {"id": did, "as_of": as_of, "source_news_id": news_id}
+            base = deal.model_dump(exclude={"updates_deal_id"}) | {"id": did, "as_of": as_of, "source_news_id": news_id,
+                                                                    "lab": deal_lab}
             history = ([h for h in _deal_history(existing) if h["source_news_id"] != news_id] if existing else []) + [entry]
             deals = [x for x in deals if x["id"] != did] + [_with_history(base, history)]
         d["deals"] = sorted(deals, key=lambda e: e["as_of"])[-60:]
@@ -924,7 +1013,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         text = _DATED.sub("", n.strip())[:240]
         if text and _norm(text) not in known_notes:
             known_notes.add(_norm(text))
-            notes.append({"text": text, "as_of": as_of, "source_news_id": news_id})
+            notes.append({"text": text, "as_of": as_of, "source_news_id": news_id, "lab": text_lab()})
     d["operating_notes"] = sorted(d.get("operating_notes", []) + notes, key=lambda e: e["as_of"])[-40:]
 
     guidance = {g["id"]: g for g in d.get("guidance", [])}
@@ -945,7 +1034,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             "id": gid, "statement": item.statement.strip(), "metric": item.metric, "target": item.target,
             "due": item.due, "due_date": deadline.isoformat() if deadline else None,
             "source_type": item.source_type.upper(), "given_on": as_of,
-            "source_news_id": news_id, "status": "OPEN", "status_history": [],
+            "source_news_id": news_id, "status": "OPEN", "status_history": [], "lab": text_lab(),
         }
     for update in output.dossier_delta.promise_updates:
         g = guidance.get(update.guidance_id)
@@ -980,7 +1069,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             watch[wid] = {
                 "id": wid, "kind": kind, "text": text.strip(), "check_in": check_in, "target": target,
                 "check_by": check_by.isoformat() if check_by else None, "created_on": as_of,
-                "source_news_id": news_id, "status": "OPEN", "status_history": [],
+                "source_news_id": news_id, "status": "OPEN", "status_history": [], "lab": text_lab(),
                 **({"response": response.strip()} if response else {}),
             }
     for update in delta.watch_updates:
@@ -1016,7 +1105,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         name = _bare_name(e.name.strip())
         key = _norm(name)
         if key and key not in entities and group_entity(e.type):
-            entities[key] = {"name": name[:120], "type": e.type, "as_of": as_of, "source_news_id": news_id}
+            entities[key] = {"name": name[:120], "type": e.type, "as_of": as_of, "source_news_id": news_id,
+                             "lab": text_lab()}
     identity["entities"] = list(entities.values())[-20:]
     identity["former_names"] = [n for n in identity["former_names"] if own_former_name(n, d)]   # against this filing's entities too
 
@@ -1031,12 +1121,14 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         period = _period(delta.ownership.period)
         rows = [o for o in d.get("ownership", []) if o["period"] != period]
         rows.append({k: v for k, v in delta.ownership.model_dump().items() if v is not None}
-                    | {"period": period, "as_of": as_of, "source_news_id": news_id})
+                    | {"period": period, "as_of": as_of, "source_news_id": news_id,
+                       "lab": label(item_by, "other", updated_at, ok=True if item_by == "file" else None)})
         d["ownership"] = sorted(rows, key=lambda o: (str(due_date(o["period"]) or ""), o["as_of"]))[-8:]
 
     if delta.auditor and (delta.auditor.opinion or delta.auditor.change or delta.auditor.name):
         gov = d.setdefault("governance", {"auditor": None, "auditor_history": []})
-        entry = {k: v for k, v in delta.auditor.model_dump().items() if v is not None} | {"as_of": as_of, "source_news_id": news_id}
+        entry = {k: v for k, v in delta.auditor.model_dump().items() if v is not None} | {
+            "as_of": as_of, "source_news_id": news_id, "lab": text_lab()}
         gov["auditor_history"] = sorted(gov.get("auditor_history", []) + [entry], key=lambda a: a["as_of"])[-6:]
         gov["auditor"] = gov["auditor_history"][-1]
 
@@ -1068,7 +1160,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             predictions.setdefault(pid, {
                 "id": pid, "metric": _norm(k.metric), "period": _period(k.period), "value": k.value,
                 "comparison": comparison, "kpi": k.kpi.strip()[:200], "created_on": as_of,
-                "source_news_id": news_id, "status": "OPEN",
+                "source_news_id": news_id, "status": "OPEN", "lab": text_lab(),
             })
     by_key = {(m["metric"], m["period"]): m for m in d["financial_metrics"]}
     for p in predictions.values():
@@ -1096,6 +1188,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             "impact_level": impact_level,
             "summary": output.timeline_entry.strip(),
             "news_id": news_id,
+            "lab": text_lab(),
             **({"pdf_url": filing.pdf_url} if filing.pdf_url else {}),   # the call summary links each quarter's call
         }], key=lambda e: e["date"])[-MAX_TIMELINE:]
 
@@ -1103,7 +1196,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     for ev in delta.upcoming_events:
         events[(ev.event_type, ev.date)] = {
             "event_type": ev.event_type, "date": ev.date, "description": ev.description,
-            "as_of": as_of, "source_news_id": news_id,
+            "as_of": as_of, "source_news_id": news_id, "lab": text_lab(),
         }
     d["upcoming_events"] = sorted(events.values(), key=lambda e: e["date"])
 
@@ -1312,7 +1405,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
     notes = [f"{n['as_of'][:10]}: {n['text']}" for n in dossier.get("operating_notes", []) if before(n)]
     identity = dossier.get("identity") or {}
     entities = [f"{e['name']} ({e['type']})" if e.get("type") else e["name"] for e in identity.get("entities", []) if before(e)]
-    ownership = [{k: v for k, v in o.items() if k not in ("as_of", "source_news_id", "holders")}   # holders: the page's
+    ownership = [{k: v for k, v in o.items() if k not in ("as_of", "source_news_id", "holders", "lab")}   # holders: the page's
                  for o in dossier.get("ownership", []) if before(o)][-2:]
     auditors = [a for a in (dossier.get("governance") or {}).get("auditor_history", []) if before(a)]
     governance = governance_view([q for q in (dossier.get("governance") or {}).get("quarters", []) if before(q)])
@@ -1356,7 +1449,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
             "former_names": identity.get("former_names") or None,
             "entities": entities[-8:],
             "ownership": ownership,
-            "auditor": {k: v for k, v in auditors[-1].items() if k not in ("as_of", "source_news_id")} if auditors else None,
+            "auditor": {k: v for k, v in auditors[-1].items() if k not in ("as_of", "source_news_id", "lab")} if auditors else None,
             "governance": governance,
             "predictions": predictions[-guidance_n:],
             "calibration": (calibration(dossier, cutoff) or {}).get("rule"),  # Loop 2: how its targets turn out

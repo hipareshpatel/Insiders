@@ -47,6 +47,7 @@ jobs:
       BACKFILL_CARDS_FROM: ${{ vars.BACKFILL_CARDS_FROM }}   # a date: backfill before it goes into memory only (F117); unset = off, cards as before
       RESULTS_FACTS: ${{ vars.RESULTS_FACTS || '1' }}   # 0: results cards without the figures computed in code (facts.py)
       RESULTS_RICH: ${{ vars.RESULTS_RICH || '1' }}     # 0: results cards without the model's quoted facts and memory points
+      EPS_SHARE_ADJUST: ${{ vars.EPS_SHARE_ADJUST || '1' }}   # F153, live-bug fix (25 Oct): EPS changes on one share count across splits/bonuses; 0 turns it off
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}

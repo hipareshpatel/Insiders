@@ -82,6 +82,7 @@ jobs:
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       DISCOVERY_SOURCE: nse
+      EPS_SHARE_ADJUST: ${{ vars.EPS_SHARE_ADJUST || '1' }}   # F153: refresh-card-blocks rebuilds results tables with EPS on one share count
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

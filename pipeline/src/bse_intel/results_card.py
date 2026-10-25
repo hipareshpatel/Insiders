@@ -14,9 +14,10 @@ from __future__ import annotations
 
 import re
 
-from . import gate
+from . import gate, printed_figures
 from .models import Fact, Insight, KeyNumber
 from .periods import prior_year_period, quarter_from_index, quarter_index
+from .settings import card_ebitda_profit_v2
 
 MAX_WHY = 2
 # a rich results card (RESULTS_RICH): the computed lines and the model's own quoted facts beside the file's four lines,
@@ -215,7 +216,7 @@ _BRIDGE = (("ebitda", +1, "EBITDA"), ("other_income", +1, "other income"), ("dep
            ("finance_cost", -1, "finance cost"), ("exceptional_items", +1, "exceptional items"), ("tax_expense", -1, "tax"))
 
 
-def profit_driver(tagged) -> str | None:
+def profit_driver(tagged, profit: str = "pat", label: str | None = None, v2: bool = False) -> str | None:
     """What moved net profit year on year, read from the file: the line whose change pulled profit furthest in the
     direction it went. The model gave causes the statement contradicts - Texmaco's profit up 71% on "cost control" when
     a tax credit did it and EBITDA fell 20%, Ramco's fall on "lower other income" when other income rose (round 5)."""
@@ -223,7 +224,7 @@ def profit_driver(tagged) -> str | None:
         return None
     ago = prior_year_period(tagged.period)
     val = {(m.metric, m.period): m.value for m in tagged.metrics if m.value is not None}
-    pat, pat0 = val.get(("pat", tagged.period)), val.get(("pat", ago))
+    pat, pat0 = val.get((profit, tagged.period)), val.get((profit, ago))
     if pat is None or pat0 is None or abs(pat - pat0) < max(1.0, 0.05 * abs(pat0)):
         return None
     if ("ebitda", tagged.period) not in val or ("ebitda", ago) not in val:
@@ -243,6 +244,8 @@ def profit_driver(tagged) -> str | None:
     if not moving:
         return None
     pull, metric, word, now, then = max(moving, key=lambda p: abs(p[0]))
+    if v2 and metric == "ebitda":
+        word = "operating EBITDA (calculated)"
     if metric == "tax_expense":
         def tax(x):
             return f"a tax credit of {_cr(-x)}" if x < 0 else f"tax of {_cr(x)}"
@@ -255,8 +258,9 @@ def profit_driver(tagged) -> str | None:
     contrast = ""
     if metric != "ebitda" and ebitda is not None and ebitda0 and ebitda0 > 0 and (ebitda > ebitda0) != up \
             and abs(ebitda - ebitda0) >= 0.05 * ebitda0:
-        contrast = f", while EBITDA {'fell' if up else 'rose'} to {_cr(ebitda)} from {_cr(ebitda0)}"
-    loss = lambda x: f"a net loss of {_cr(-x)}" if x < 0 else f"net profit of {_cr(x)}"  # noqa: E731
+        contrast = f", while {'calculated ' if v2 else ''}EBITDA {'fell' if up else 'rose'} to {_cr(ebitda)} from {_cr(ebitda0)}"
+    name = (label or ("net profit to shareholders" if profit == "pat_owners" else "net profit")) if v2 else "net profit"
+    loss = lambda x: f"a net loss of {_cr(-x)}" if x < 0 else f"{name} of {_cr(x)}"  # noqa: E731
     return (f"{tagged.period} {loss(pat)} against {loss(pat0)} a year earlier; the largest move was "
             f"{driver}{contrast}.")
 
@@ -356,7 +360,40 @@ def _model_facts(card, tagged, facts, shown: str = "") -> list[Fact]:
     return out
 
 
-def build(out, tagged, company_name: str | None, history=None, text: str = "", facts=None, rich: bool = False) -> list[str]:
+def _printed_ebitda_lines(printed, period: str) -> tuple[Fact, KeyNumber]:
+    """The company's own EBITDA as a fact and a key number, quoting the line it is printed on. Its year-ago figure and
+    change only when the filing prints them."""
+    yoy, before = printed.yoy_pct(), printed.prev_year_cr
+    note = (f" ({yoy:+.1f}% YoY, against {_cr(before)} a year earlier)" if yoy is not None
+            else f" (against {_cr(before)} a year earlier)" if before is not None else "")
+    fact = Fact(text=f"{printed.name} {period} (Filing): {_cr(printed.value_cr)}{note}.", quote=printed.quote)
+    key = KeyNumber(label=f"{printed.name} (Filing)", value=_cr(printed.value_cr),
+                    change=f"{yoy:+.1f}% YoY" if yoy is not None else None, quote=printed.quote)
+    return fact, key
+
+
+def _theirs(label: str, m) -> str:
+    """The company's own name for its profit line, for a loss too ("PAT loss")."""
+    return f"{label} loss" if m.value < 0 else label
+
+
+def _plain(x: float) -> set[str]:
+    return {f"{abs(x):.2f}".rstrip("0").rstrip("."), f"{abs(x):,.2f}".rstrip("0").rstrip(".").replace(",", "")}
+
+
+def _drop_second_profit(items: list, kept: float, other: float | None) -> list:
+    """One profit figure on a card (TODO 15): a line that states the other profit line's amount, and not the chosen
+    one's, is left out (the cash-conversion line "178% of net profit ₹74 Cr" on the total where the card headlines the
+    shareholders' profit)."""
+    if other is None or abs(other - kept) <= 0.005 * abs(kept) + 0.011:
+        return items
+    return [t for t in items
+            if not (re.search(r"profit|\bPAT\b", getattr(t, "text", "") or "", re.I) and _amounts(t.text) & _plain(other)
+                    and not _amounts(t.text) & _plain(kept))]
+
+
+def build(out, tagged, company_name: str | None, history=None, text: str = "", facts=None, rich: bool = False,
+          v2: bool | None = None) -> list[str]:
     """Put the file's figures on a results card. Returns what was replaced (empty when the file cannot carry it).
 
     `rich` (RESULTS_RICH, owner 24 Oct 2026: "so much of information which is missing"): the figures computed in code
@@ -366,6 +403,8 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
     card = getattr(out, "card", None)
     if card is None or tagged is None or getattr(tagged, "kind", None) != "RESULTS" or not tagged.period:
         return []
+    if v2 is None:
+        v2 = card_ebitda_profit_v2()
     unconfirmed = unconfirmed_changes(tagged, text)
     now = {m.metric: m for m in tagged.metrics if m.period == tagged.period and m.value is not None}
     if now.get("pat_owners") is not None and now["pat_owners"].value == 0 and (now.get("pat") or now["pat_owners"]).value:
@@ -380,9 +419,23 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
     owners = now.get("pat_owners")
     if owners is not None and profit is not None and abs(owners.value - profit.value) > 0.005 * abs(profit.value) + 0.01:
         profit = owners   # minority interests take a part: the shareholders' profit is the company's (Bajaj Finserv)
+    profit_label = None   # the company's own name for its headline profit (v2)
+    printed = None        # the company's own EBITDA (v2)
+    other_profit = None   # the profit line not chosen, whose figure no other line may state (v2)
+    if v2:
+        # ONE profit line (TODO 15): the one the company headlines in its release, else the shareholders' profit
+        picked = {k: now[k].value for k in ("pat", "pat_owners") if k in now}
+        metric, profit_label = printed_figures.choose_profit(picked, text)
+        if metric is not None:
+            profit = now[metric]
+            other_profit = next((v for k, v in picked.items() if k != metric), None)
+        # the company's printed EBITDA beside ours (TODO 11, 14); a lender has no EBITDA of ours, so none here either
+        if "ebitda" in now and "interest_earned" not in now:
+            printed = printed_figures.printed_ebitda(text, tagged.period, now["ebitda"].value)
     if top is None or profit is None:
         return []
-    profit_word = "net profit to shareholders" if profit.metric == "pat_owners" else "net profit"
+    profit_word = (profit_label if v2 and profit_label else
+                   "net profit to shareholders" if profit.metric == "pat_owners" else "net profit")
     name = _short_name(company_name)
     basis = (tagged.basis or "").lower()
     period = tagged.period
@@ -391,8 +444,10 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
     def phrase(m, word: str) -> str:
         if m.metric in ("pat", "pat_owners"):
             label, amount, note = _profit_words(tagged, m)
+            if v2 and profit_label:
+                label, amount = _theirs(profit_label, m), _cr(abs(m.value))
             change = f" ({_pct(m.yoy_pct)} YoY)" if m.yoy_pct is not None else f" ({note})" if note else ""
-            return f"{label.lower()} {amount}{change}"
+            return f"{label if v2 and profit_label else label.lower()} {amount}{change}"
         change = f" ({_pct(m.yoy_pct)} YoY)" if m.yoy_pct is not None else ""
         return f"{word} {_cr(m.value)}{change}"
 
@@ -410,20 +465,34 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
         m = now.get(metric)
         if m is None or (metric == "provisions" and "interest_earned" not in now):
             continue
+        if v2 and metric in ("pat", "pat_owners") and m is not profit:
+            continue   # one profit line
         value = f"₹{m.value:,.2f} a share" if metric == "eps" else _cr(m.value)
         changes = _changes(m)
-        if metric == "pat":
+        if metric == "pat" or (v2 and metric == "pat_owners"):
             label, value, note = _profit_words(tagged, m)
+            if v2 and profit_label:
+                label = _theirs(profit_label, m)
             changes = ", ".join(x for x in (changes, note) if x)
+        if v2 and metric == "ebitda":
+            if printed is not None:
+                fact_p, key_p = _printed_ebitda_lines(printed, period)
+                lines.append(fact_p)
+                keys.append(key_p)
+            label = "Operating EBITDA (calculated)"
         text = f"{label} {period}: {value}" + (f" ({changes})" if changes else "")
         if metric == "ebitda" and now.get("ebitda_margin") is not None:
             text += f"; margin {now['ebitda_margin'].value:.1f}%"
+        if v2 and metric == "ebitda":
+            other = now.get("other_income")
+            text += f"; leaves out other income {_cr(other.value)}" if other is not None else "; leaves out other income"
         lines.append(Fact(text=text + ".", quote=_line(m)))
         keys.append(KeyNumber(label=label, value=value, change=(f"{_pct(m.yoy_pct)} YoY" if m.yoy_pct is not None else None),
                               quote=_line(m)))
     margin = now.get("ebitda_margin")
     if margin is not None:
-        keys.append(KeyNumber(label="EBITDA margin", value=f"{margin.value:.1f}%", change=None, quote=_line(margin)))
+        keys.append(KeyNumber(label="Operating EBITDA margin (calculated)" if v2 else "EBITDA margin",
+                              value=f"{margin.value:.1f}%", change=None, quote=_line(margin)))
     replaced = ["headline", "what_happened", "key_numbers", "timeline"]
     card.headline = headline
     computed_lines = [Fact(text=f.text + ".", quote=f.text) for f in facts_found if not f.memory_ref]
@@ -431,7 +500,10 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
     against_memory = [Insight(text=f.text + ".", basis="MEMORY", memory_refs=[f.memory_ref])
                       for f in facts_found if f.memory_ref]
     own_facts = _model_facts(card, tagged, facts_found, " ".join(f.text for f in lines)) if rich else []
-    card.what_happened = (lines[:4] + computed_lines[:MAX_COMPUTED] + own_facts[:MAX_OWN_FACTS]) or card.what_happened
+    if v2 and other_profit is not None:
+        computed_lines = _drop_second_profit(computed_lines, profit.value, other_profit)
+        own_facts = _drop_second_profit(own_facts, profit.value, other_profit)
+    card.what_happened = (lines[:5 if v2 else 4] + computed_lines[:MAX_COMPUTED] + own_facts[:MAX_OWN_FACTS]) or card.what_happened
     if own_facts:
         replaced.append(f"{len(own_facts[:MAX_OWN_FACTS])} quoted fact(s) of the model kept")
     card.key_numbers = keys[:6]
@@ -439,7 +511,7 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
         card.basis = basis.upper()
     if rich:
         return _rich_rest(out, card, tagged, history, period, basis, phrase, top, top_word, profit, profit_word,
-                          replaced, unconfirmed, against_memory)
+                          replaced, unconfirmed, against_memory, v2, profit_label)
     if card.notable_changes:
         replaced.append(f"notable changes ({len(card.notable_changes)}) left out")
     card.notable_changes = []
@@ -449,7 +521,8 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
     if card.quantified_impact:
         replaced.append(f"computed impacts ({len(card.quantified_impact)}) left out")
     card.quantified_impact = []
-    driver = profit_driver(tagged)
+    driver = profit_driver(tagged, profit.metric, profit_label.lower() if profit_label else None, True) if v2 \
+        else profit_driver(tagged)
     if driver:
         card.takeaway = driver   # the file says what moved profit; the model's own cause is left out
         replaced.append("takeaway from the file's profit bridge")
@@ -477,10 +550,11 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
 
 
 def _rich_rest(out, card, tagged, history, period, basis, phrase, top, top_word, profit, profit_word, replaced,
-               unconfirmed, against_memory=()) -> list[str]:
+               unconfirmed, against_memory=(), v2: bool = False, profit_label: str | None = None) -> list[str]:
     """The rest of a rich results card: the takeaway from the file, code's memory points, and the model's notable
     changes, core catalyst and points (memory ones too: those cite their memory ids and are checked against memory)."""
-    driver = profit_driver(tagged)
+    driver = profit_driver(tagged, profit.metric, profit_label.lower() if profit_label else None, True) if v2 \
+        else profit_driver(tagged)
     card.takeaway = driver or f"{period}: {phrase(top, top_word)}, {phrase(profit, profit_word)}."
     replaced.append("takeaway from the file's profit bridge" if driver else "takeaway from the file's figures")
     if card.quantified_impact:

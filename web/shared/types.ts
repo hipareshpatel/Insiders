@@ -103,13 +103,17 @@ export interface ResultsSnapshot {
   pbt?: ResultLine;
   pat?: ResultLine;
   eps?: ResultLine;
+  /** the company's own printed EBITDA, shown above ours when the filing prints one (CARD_EBITDA_PROFIT_V2, F151) */
+  ebitda_filing?: ResultLine;
   /** a bank's and an insurer's top line, in place of revenue */
   interest_earned?: ResultLine;
   gross_premium?: ResultLine;
   /** Which statement the table reads (company, bank, insurer) and its rows in order, the sector's KPIs last. */
   lens?: "company" | "bank" | "insurer";
   /** `mover`: the one line that moved a company's profit most this quarter, shown only when significant (O15). */
-  lines?: { key: string; label: string; unit: "cr" | "pct" | "inr" | "num"; mover?: boolean }[];
+  /** `note`: what the row leaves out ("leaves out other income ₹12.4 Cr", our calculated EBITDA); `quote`: where the
+   *  company's own printed figure stands in the filing (the "ebitda_filing" row); `named`: the label is the company's own. */
+  lines?: { key: string; label: string; unit: "cr" | "pct" | "inr" | "num"; mover?: boolean; note?: string; quote?: string; named?: boolean }[];
 }
 
 export interface DealValue {

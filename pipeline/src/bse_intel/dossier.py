@@ -24,6 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
+from .settings import card_ebitda_profit_v2
 from .models import Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -1888,6 +1889,41 @@ def _entry_basis(entry: dict) -> str | None:
     return "CONSOLIDATED" if "CONSOLIDATED" in kept else next(iter(kept), None)
 
 
+def _ebitda_lines_v2(out: dict, lines: list[dict], lookup, period: str, printed: str | None, kept: dict | None) -> None:
+    """The table's EBITDA rows with CARD_EBITDA_PROFIT_V2 on (F151): the company's own printed EBITDA first, labelled
+    "Filing" with its own name, and ours beneath it, "Operating EBITDA (calculated)", with the other income it leaves
+    out. The year-ago figure and change of the company's own only where the filing prints them; ours is against ours.
+    A refresh without the filing's text keeps the printed row the stored table had."""
+    from . import printed_figures
+
+    ours = out["ebitda"]
+    theirs = printed_figures.printed_ebitda(printed, period, ours["value"]) if printed else None
+    other = lookup(("other_income",), period)
+    spec_ours = next(spec for spec in lines if spec["key"] == "ebitda")
+    spec_ours["label"] = "Operating EBITDA (calculated)"
+    spec_ours["note"] = f"leaves out other income ₹{f'{other:,.2f}'.rstrip('0').rstrip('.')} Cr" if other is not None \
+        else "leaves out other income"
+    for spec in lines:
+        if spec["key"] == "ebitda_margin":
+            spec["label"] = "Operating EBITDA margin (calculated)"
+    if theirs is not None:
+        row = {"value": theirs.value_cr}
+        if theirs.prev_year_cr is not None:
+            row["prev_year"] = theirs.prev_year_cr
+            if theirs.yoy_pct() is not None:
+                row["yoy_pct"] = theirs.yoy_pct()
+        spec = {"key": "ebitda_filing", "label": f"{theirs.name} (Filing)", "unit": "cr", "quote": theirs.quote}
+    elif printed is None and kept and kept.get("period") == period and isinstance(kept.get("ebitda_filing"), dict):
+        row = kept["ebitda_filing"]
+        spec = next((x for x in kept.get("lines") or [] if x.get("key") == "ebitda_filing"), None)
+        if spec is None:
+            return
+    else:
+        return
+    out["ebitda_filing"] = row
+    lines.insert(lines.index(spec_ours), spec)
+
+
 def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = (),
                      printed: str | None = None, like: dict | None = None) -> dict | None:
     """This filing's latest quarter against a year ago and the previous quarter, for the results tables.
@@ -1949,7 +1985,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         PBT ₹1,247.11 Cr read "1,24,7Ll", Kapston's consolidated year-ago PAT missing from its row (reviews 1, 5)."""
         if p == period or not numbers or names[0] in ("ebitda", "ebitda_margin"):
             return False
-        units = _UNITS if names[0] in _PRINTED_CR else (1,) if names[0] == "eps" or names[0] in ratios else ()
+        units = _UNITS if names[0] in _PRINTED_CR or names[0] == "pat_owners" else (1,) if names[0] == "eps" or names[0] in ratios else ()
         entry, value = stored(names, p)
         current = table.get((entry["metric"], period), {}).get("value") if entry else None
         if not units or value is None or current is None or abs(value) < 1 or abs(current) < 1:
@@ -2067,8 +2103,25 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         return max(values) - min(values) > 0.03 * max(abs(v) for v in values)
 
     ebitda_mixed = two_definitions(period)
+    # CARD_EBITDA_PROFIT_V2 (F151): one profit line, the one the company headlines in its release, else the shareholders'
+    # profit; the company's printed EBITDA beside ours. Off: none of this runs.
+    v2 = card_ebitda_profit_v2()
+    profit_metric, profit_label = "pat", None
+    if v2:
+        from . import printed_figures
+        cands = {k: v for k in ("pat", "pat_owners") if (v := lookup((k,), period)) is not None}
+        profit_metric, profit_label = printed_figures.choose_profit(cands, printed)
+        stored_pat = (like or {}).get("pat") if not printed and like and like.get("period") == period else None
+        if stored_pat:
+            # a refresh without the filing's text keeps the profit line the stored table chose, and the company's name for it
+            same = [k for k, v in cands.items() if abs(v - stored_pat["value"]) <= 0.005 * abs(v) + 0.011]
+            profit_metric = same[0] if same else profit_metric
+            profit_label = next((x.get("label") for x in like.get("lines") or [] if x.get("key") == "pat" and x.get("named")), None)
+        profit_metric = profit_metric or "pat"
 
     for key, names in _RESULT_METRICS:
+        if v2 and key == "pat" and profit_metric == "pat_owners":
+            names = ("pat_owners",)
         pick = margin if key == "ebitda_margin" else nii if key == "nii" else (lambda p, names=names: lookup(names, p))
         row = line(pick, key in _BPS_LINES, key)
         if row is None:
@@ -2090,6 +2143,12 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         return None
     lens, rows = next(((name, rows) for name, top, rows in _LENSES if top in out), ("company", _LENSES[-1][2]))
     lines = [{"key": key, "label": label, "unit": unit} for key, label, unit in rows if key in out]
+    if v2:
+        for spec in lines:
+            if spec["key"] == "pat" and (profit_label or profit_metric == "pat_owners"):
+                spec["label"] = profit_label or "Net profit to shareholders"
+                if profit_label:
+                    spec["named"] = True   # the company's own name for its headline profit
     if lens == "company":
         mover = _mover(out, lookup, periods)
         if mover is not None:
@@ -2112,4 +2171,6 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             lines.append({"key": f"kpi:{spec['metric']}", "label": spec["label"], "unit": unit})
     out["lens"] = lens
     out["lines"] = lines
+    if v2 and lens == "company" and "ebitda" in out:
+        _ebitda_lines_v2(out, lines, lookup, period, printed, kept)
     return out

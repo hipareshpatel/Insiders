@@ -55,7 +55,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, d1_plan
+from .settings import Settings, card_ebitda_profit_v2, d1_plan
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -664,9 +664,11 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
     changed: list[str] = []
     unverified: list[str] = []
     for key in out.card.key_numbers:
-        if "margin" in (key.label or "").lower() or "%" in (key.value or ""):
-            continue
+        if "margin" in (key.label or "").lower() or "%" in (key.value or "") or "(filing)" in (key.label or "").lower():
+            continue   # "(Filing)": the company's own printed EBITDA (F151), not the file's line
         metric = next((name for name, pattern in _KEY_METRIC if pattern.search(key.label or "")), None)
+        if metric == "pat" and re.match(r"-\s*pat_owners\b", key.quote or "") and card_ebitda_profit_v2():
+            metric = "pat_owners"   # F151: the company's own name ("PAT") on the shareholders' profit line it headlines
         if metric == "pat" and re.search(r"\bdiscontinued\b", key.label or "", re.I):
             continue  # the discontinued business's own result, which is not the file's PAT
         if metric == "pat" and re.search(r"\bcontinuing\b", key.label or "", re.I):

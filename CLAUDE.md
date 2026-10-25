@@ -56,6 +56,9 @@ Read before changing anything:
   1. standard HTTP with valid browser headers consistently fails because the source requires client-side JavaScript
      to run, and
   2. the exception is explicitly scoped to that one adapter.
+  A plain 403 (or 503) is not a JavaScript requirement: it usually means wrong headers or rate limiting, and header
+  diagnosis comes first. A refusal counts only when its body is a Cloudflare/Akamai JavaScript challenge page. This rule
+  overrides the copy-exactly rule above for browser automation (owner, 25 Oct 2026).
 - Cloudflare is on Workers Paid ($5 a month, owner, 22 Oct 2026, D40): D1's write and read budgets follow the plan, not the free
   tier. Every other paid upgrade must stay off, with one exception the owner chose: the prepaid DeepSeek balance
   (`DEEPSEEK_API_KEY`, decision D24) that speeds up the backfill. The steady state must still cost $0,

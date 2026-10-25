@@ -94,6 +94,9 @@ class LocalSink(Sink):
         path = self._path(key)
         return path.read_bytes() if path.exists() else None
 
+    def delete_object(self, key):
+        self._path(key).unlink(missing_ok=True)
+
     def put_object(self, key, body, content_type="application/json"):
         path = self._path(key)
         path.parent.mkdir(parents=True, exist_ok=True)

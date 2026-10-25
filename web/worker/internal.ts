@@ -90,5 +90,13 @@ internal.put("/objects/:key{.+}", async (c) => {
   return c.json({ ok: true, bytes: body.byteLength });
 });
 
+// Only a company's memory file may be deleted (prune-companies, after its backup went to backup/).
+internal.delete("/objects/:key{.+}", async (c) => {
+  const key = c.req.param("key");
+  if (!allowedKey(key) || !/^memory\/[^/]+\.json$/.test(key)) return c.json({ error: "key not allowed" }, 403);
+  await c.env.VAULT.delete(key);
+  return c.json({ ok: true });
+});
+
 // OpenAI-compatible endpoint over the Workers AI binding: the gateway's spare.
 internal.post("/ai/v1/chat/completions", aiChatCompletions);

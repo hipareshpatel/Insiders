@@ -16,6 +16,8 @@ STATEMENTS = (
     "filings_update",
     "cards_upsert",
     "companies_upsert",
+    "companies_prune",
+    "catalysts_prune",
     "companies_seen",
     "catalysts_upsert",
     "runs_upsert",
@@ -50,6 +52,7 @@ QUERIES = (
     "companies_for_market",
     "companies_outside_universe",
     "companies_universe",
+    "companies_prune_counts",
     "companies_for_market_all",
     "export_cards",
     "export_companies",
@@ -155,6 +158,10 @@ class Sink(ABC):
 
     @abstractmethod
     def get_object(self, key: str) -> bytes | None: ...
+
+    def delete_object(self, key: str) -> None:
+        """Remove one object (only ``memory/`` keys on the platform; prune-companies)."""
+        raise NotImplementedError(f"{type(self).__name__} cannot delete objects")
 
     def kv_set(self, key: str, value: str, updated_at: str) -> int:
         return self.execute("kv_set", [{"key": key, "value": value, "updated_at": updated_at}])

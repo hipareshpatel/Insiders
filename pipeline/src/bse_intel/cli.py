@@ -660,6 +660,31 @@ def cmd_seed_memory(args, settings, sink) -> int:
     return REFUSED if refused else 0
 
 
+def cmd_prune_companies(args, settings, sink) -> int:
+    """Company rows that are not on NSE's lists (prune_companies.py): a dry run by default; --apply backs them up to R2
+    and removes the ones with no cards. A company with cards is only reported."""
+    from . import prune_companies
+    from .nse import NseClient
+
+    with NseClient() as client:
+        raw.attach(client, sink, "nse", settings)
+        equities = client.equity_list()
+        sme = client.sme_list()
+    report = prune_companies.plan(sink, equities, sme, keep_sme=args.keep_sme)
+    print(prune_companies.render(report))
+    done = None
+    if args.apply:
+        done = prune_companies.apply(sink, report, today_ist().isoformat())
+        print(json.dumps(done, ensure_ascii=False))
+    else:
+        print("dry run: nothing changed (--apply backs up to R2 backup/prune-companies-<date>.json, then removes)")
+    if args.json:
+        Path(args.json).write_text(json.dumps({**report, "applied": done}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(prune_companies.to_csv(report), encoding="utf-8")
+    return 0
+
+
 MORE_LEFT = 124   # memory-gaps --fill: the time budget ended the run with companies left (as `timeout` exits)
 
 
@@ -1170,6 +1195,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--shard", help="with --fill: I/N, this runner's share of the companies with gaps")
     p.add_argument("--time-budget", type=int, default=17400, help="with --fill: seconds; exit 124 if companies are left")
     p.set_defaults(func=cmd_memory_gaps)
+
+    p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")
+    p.add_argument("--apply", action="store_true", help="back up, then delete; without it nothing is changed")
+    p.add_argument("--keep-sme", action="store_true", help="keep NSE Emerge (SME) companies, which the universe does not use")
+    p.add_argument("--json", help="write the full report to this file")
+    p.add_argument("--csv", help="write the rows (remove / keep) to this file")
+    p.set_defaults(func=cmd_prune_companies)
 
     p = sub.add_parser("label-memory", help="label every item already in memory: file / ai / calc / unknown (no AI; --dry-run counts only)")
     p.add_argument("--scrips", help="comma-separated company keys (default: every stored memory)")

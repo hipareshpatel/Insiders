@@ -45,6 +45,9 @@ Read before changing anything:
 - Explain everything to the owner in very simple English: short sentences, everyday words, no code names unless asked
   (owner, 25 Oct 2026). The first-principles review of the whole system, one step at a time, is in
   `docs/FROM_ZERO.md`: read it before changing how data is collected or processed, and record each step's decision there.
+- Batch the owner's decisions (owner, 25 Oct 2026): add every improvement to `docs/TODO.md` with the owner's Yes / No /
+  Later, and build all the Yes items together in one PR when the owner says "build", not one PR per decision. Ship at
+  once only a fix for something live that is being lost or published wrong, and say so.
 
 ## How to work
 

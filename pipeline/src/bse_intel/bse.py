@@ -63,6 +63,14 @@ class AttachmentError(RuntimeError):
         self.refused = refused
 
 
+class AttachmentTooLarge(RuntimeError):
+    """An attachment larger than the cap. Not retried: the same file stays too large (owner, 25 Oct 2026)."""
+
+    def __init__(self, url: str, max_bytes: int):
+        super().__init__(f"file too large (over {max_bytes // 1_000_000} MB): {url}")
+        self.url, self.max_bytes = url, max_bytes
+
+
 def xbrl_url(row: dict) -> str | None:
     """The filing's XBRL instance, when BSE lists one (results, shareholding patterns). BSE has used
     more than one field name for it; a bare file name is resolved like a PDF attachment. Whether a
@@ -340,7 +348,7 @@ class BseClient:
                         if size > max_bytes:
                             # A truncated PDF is unreadable (the xref table is at the end).
                             log.warning("Attachment over %d bytes, skipped: %s", max_bytes, candidate)
-                            return None
+                            raise AttachmentTooLarge(candidate, max_bytes)
                         chunks.append(chunk)
                     return b"".join(chunks)
             except httpx.HTTPError as exc:

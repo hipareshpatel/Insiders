@@ -19,16 +19,26 @@ The last trace of 48 wrong cards (95 faults) found: our own code 40, the AI writ
 
 ## Step 1: what we collect, and from where
 
-### What comes in
+### What comes in (from the code, 25 Oct 2026)
 
-| What | Where from | What we keep |
-|---|---|---|
-| The list of new filings | NSE's announcements page, checked every 15 minutes | A row in our database (D1) for each filing |
-| The filing itself (PDF) | NSE's link in that list | Only the text we read from it, for 8 days. The PDF is not kept. |
-| Results figures in a machine-readable file (XBRL) | NSE's results files | The figures, in our company memory |
-| Other machine-readable files | NSE: event files, annual-report files, shareholding | The figures, in our company memory |
-| Share prices | Yahoo | Prices on the company page |
-| Company memory | **Our own earlier cards and files** | One file per company in storage (R2) |
+Almost everything comes from NSE. Two things come from elsewhere: share prices (Yahoo) and trade-remedy cases (DGTR).
+
+| # | What | From where | How often | Used for |
+|---|---|---|---|---|
+| 1 | The company list | NSE's list of listed shares (EQUITY_L.csv); we keep companies worth ₹500 Cr or more | Weekdays | Which companies we cover |
+| 2 | The list of new filings | NSE "Corporate announcements" | Every run | Finding each new filing, its title and its PDF link |
+| 3 | The filing itself (PDF) | NSE's archive, from the link in 2 | Each filing | The card's text: results, slides, call transcripts, orders, and so on |
+| 4 | Results figures (XBRL) | NSE "Financial results" and "Integrated filing" pages | Each results filing | The results table's current quarter |
+| 5 | Event figures (XBRL) | NSE "Announcements XBRL" (three kinds: announcements, Reg 30 events, corporate actions) | Each filing that has one | Orders, deals, actions |
+| 6 | Annual-report figures (XBRL) | NSE "Annual reports XBRL" | Daily catch-up | Annual-report cards |
+| 7 | Shareholding (XBRL) | NSE "Shareholding pattern" | Daily | Memory only: promoter, FII, DII holdings |
+| 8 | Governance reports | NSE | Daily | Memory only: board, auditor |
+| 9 | Promoter pledges | NSE SAST Reg 31 list | Daily | Pledge news |
+| 10 | Insider trades | NSE PIT Reg 7 list | Daily | Insider news |
+| 11 | Bulk and block deals | NSE large deals | Daily | Deal news |
+| 12 | Trade-remedy cases | DGTR's website | Daily | Linked only to companies a notice names |
+| 13 | Share prices | Yahoo | Daily | Company page, price at the time of a filing |
+| 14 | Company memory | **Our own earlier cards and the files above** | Each card | Last quarter's and last year's figures, guidance, orders, notes |
 
 ### What first principles say is wrong here (checked in the code on 25 Oct 2026)
 
@@ -40,12 +50,13 @@ The last trace of 48 wrong cards (95 faults) found: our own code 40, the AI writ
 2. **We do not keep the filing.** The PDF is thrown away and the text we read is deleted after 8 days
    (`pipeline.yml`, `find data/text_cache -mtime +8 -delete`). So we cannot re-check an old card against exactly what we
    read, and the check for repeat filings only works while the text is still there.
-3. **We guess the unit of machine-readable files.** The XBRL file states its own unit, but our reader does not look at
-   it (`xbrl.py` never reads `decimals` or `scale`). It guesses by comparing revenue or profit with the PDF. When the
-   guess fails, a figure can be 10 or 100 times off (this happened: Jubilant, F54).
-4. **Some filings never reach us.** Companies listed only on NSE are set aside as "not in the company master", and NSE
-   shareholding rows are set aside because the list never carries the file's link. These are gaps in what we cover,
-   not wrong cards, but they are invisible unless someone looks.
+3. **We ignore the precision the XBRL file states.** Values are always in rupees; `decimals` says how the company
+   printed them (crore or lakh), and our reader does not look at it. Corrected 25 Oct after a live check: this is not a
+   unit guess. A file the company itself tagged at the wrong scale (Jubilant, F54) is caught by our check against the
+   PDF, and `decimals` would not catch it.
+4. **Some filings never reach us.** Companies listed only on NSE are set aside as "not in the company master". These
+   are gaps in what we cover, not wrong cards, but they are invisible unless someone looks. (Shareholding filings are
+   set aside from the card path, but a separate daily job reads every company's shareholding file into memory: no gap.)
 
 ### The rules proposed for step 1 (waiting for the owner)
 
@@ -55,3 +66,29 @@ The last trace of 48 wrong cards (95 faults) found: our own code 40, the AI writ
   8-day cache), so any card can be checked again later. Assumption, to measure before building: about 20 KB of
   compressed text per filing, so storage stays small.
 - **R3.** Read the unit that the machine-readable file states. Use the guess only when the file states none.
+
+### Step 1 findings and decisions (25 Oct 2026)
+
+- Of the 95 wrong points in the 25 Oct trace, 1 started at fetching (Panache filed the same PDF twice and the repeat
+  check, which needs the first filing's text, did not catch it). The 12 "input" points are reading problems (slides
+  whose numbers and labels come out apart, poor scans: step 2) and two speakers' own slips.
+- We skipped large PDFs: a 30 MB cap for everything but annual reports. NHPC's FY26 results (nse-106633606) was
+  skipped on 25 Oct and failed as "no readable text". **Decided (owner): 120 MB for every filing** (F130).
+- NSE's one-call-a-day list, measured 25 Oct for 23 Oct (601 filings): 120 companies asked one by one gave 113
+  filings, all in the list. No gap found; repeat on a peak results day.
+- NSE-only companies: none set aside (company-list job, 23 Oct: 2,613 listings, all matched).
+- Open: why the failed filings failed (70 on 25 Oct; `failed-report` after batch 1); runs take about 41 minutes, so the 15-minute schedule really runs every ~42 minutes.
+
+### Past results history (checked 25 Oct 2026)
+
+Measured 25 Oct 2026: NSE lists every quarter's results figure file per company, both bases, on two pages
+(`corporates-financial-results` up to Dec 2024: 130 rows for RELIANCE; `integrated-filing-results` from Mar 2025:
+12 rows, Mar 2025 to Jun 2026). One file holds one quarter only (all 38 contexts of RELIANCE's Jun 2026 consolidated
+file are that quarter), in rupees, with `decimals="-7"` (printed in crore). So year-ago and last-quarter figures come
+from those quarters' own files.
+
+This is already built: `seed-memory` (`seed.py`, run from `maintenance.yml` since 20 Oct) reads 12 quarters from NSE
+into memory, consolidated first, standalone kept apart. RELIANCE's memory holds Q1FY27 revenue ₹3,11,850 Cr from
+`xbrl:res:500325:Q1FY27`, the same as the file. What history does not fix: our own EBITDA definition (memory says
+Q1FY27 EBITDA ₹47,517 Cr = profit before tax + finance cost + depreciation − other income; companies that count other
+income print a different figure), the choice of basis, and figures our AI wrote into memory before the file existed.

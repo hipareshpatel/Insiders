@@ -145,7 +145,7 @@ on:
         type: string
         default: ''
       no_ocr:
-        description: text-backfill only - skip local OCR (figure and scanned pages keep their text layer only; faster)
+        description: text-backfill and pdf-referee - skip local OCR (text layer only; pdf-referee then counts only text-layer readings)
         type: boolean
         default: false
       then:
@@ -403,7 +403,7 @@ jobs:
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/pdfreferee"
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel pdf-referee --csv "$RUNNER_TEMP/in/referee-xbrl.csv" ${LIMIT:+--limit "$LIMIT"} --json "$RUNNER_TEMP/pdfreferee/summary.json" --out-csv "$RUNNER_TEMP/pdfreferee/referee-pdf.csv" --md "$RUNNER_TEMP/pdfreferee/pdf-referee.md" || code=$?
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel pdf-referee --csv "$RUNNER_TEMP/in/referee-xbrl.csv" ${LIMIT:+--limit "$LIMIT"} ${{ inputs.no_ocr && '--no-ocr' || '' }} --json "$RUNNER_TEMP/pdfreferee/summary.json" --out-csv "$RUNNER_TEMP/pdfreferee/referee-pdf.csv" --md "$RUNNER_TEMP/pdfreferee/pdf-referee.md" || code=$?
           if [ "$code" = 124 ]; then echo "::warning::time budget ended with pairs left (not_run in the CSV); run again with a limit"; code=0; fi
           exit "$code"
       - uses: actions/upload-artifact@v4

@@ -170,6 +170,14 @@ limits = { rpmo = 1000, rpd = 30 }
 same_as = "gemini"
 api_key_env = "GEMINI_API_KEY_2"
 
+# A third Gemini key (owner, 26 Oct 2026): a project of its own, for call memory only (gateway.expand_key_aliases,
+# `only_routes`): on the call_memory route it replaces the two card keys, and it is on no card route. Unset, call memory
+# falls back to the card keys, held back by gateway.live_reserve.
+[providers.gemini_3]
+same_as = "gemini"
+api_key_env = "GEMINI_API_KEY_3"
+only_routes = ["call_memory"]
+
 [providers.groq_2]
 same_as = "groq"
 api_key_env = "GROQ_API_KEY_2"

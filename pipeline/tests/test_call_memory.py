@@ -484,3 +484,19 @@ def test_figures_in_words_and_an_assembled_slide_quote():
     kept, dropped = cm.check_points([roce, analogs, spoken], slide)
     assert {p.topic for p in kept} == {"roce", "analog_filings"} and [d["reason"] for d in dropped] == ["quote"]
     assert next(p for p in kept if p.topic == "roce").quote_assembled
+
+
+def test_the_third_gemini_key_serves_call_memory_only():
+    from bse_intel.ai.gateway import expand_key_aliases
+
+    config = {"providers": {"gemini": {"api_key_env": "G1", "base_url": "u"},
+                            "gemini_2": {"same_as": "gemini", "api_key_env": "G2"},
+                            "gemini_3": {"same_as": "gemini", "api_key_env": "G3", "only_routes": ["call_memory"]}},
+              "routes": {"pass2": [{"provider": "gemini", "model": "f"}],
+                         "call_memory": [{"provider": "gemini", "model": "f"}, {"provider": "nvidia", "model": "d"}]}}
+    both = expand_key_aliases(config, {"G1": "a", "G2": "b", "G3": "c"})
+    assert [e["provider"] for e in both["routes"]["pass2"]] == ["gemini", "gemini_2"]
+    assert [e["provider"] for e in both["routes"]["call_memory"]] == ["gemini_3", "nvidia"]
+    unset = expand_key_aliases(config, {"G1": "a", "G2": "b"})
+    assert [e["provider"] for e in unset["routes"]["call_memory"]] == ["gemini", "gemini_2", "nvidia"]
+    assert "gemini_3" not in unset["providers"]

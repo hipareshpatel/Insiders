@@ -123,14 +123,23 @@ def expand_key_aliases(config: dict, env: dict[str, str]) -> dict:
         base = providers.get(conf["same_as"])
         if base is None:
             raise ValueError(f"provider {name} is same_as unknown provider {conf['same_as']}")
-        providers[name] = {**base, **{k: v for k, v in conf.items() if k != "same_as"}}
+        providers[name] = {**base, **{k: v for k, v in conf.items() if k not in ("same_as", "only_routes")}}
     live = {name for name, conf in aliases.items() if (env.get(providers[name]["api_key_env"]) or "").strip()}
+    # A key kept for named routes only (`only_routes`): on those routes it takes the place of the base provider and its
+    # other keys, and it is on no other route. GEMINI_API_KEY_3 (owner, 26 Oct 2026) is a Gemini project of its own for
+    # call memory, so that reading never spends the cards' 20-a-day Flash quota and the cards never spend its own.
+    owned = {route: name for name in sorted(live) for route in aliases[name].get("only_routes", [])}
     routes = {}
     for route, entries in config.get("routes", {}).items():
         out = []
         for entry in entries:
+            keeper = owned.get(route)
+            if keeper and entry["provider"] == aliases[keeper]["same_as"]:
+                out.append({**entry, "provider": keeper})
+                continue
             out.append(entry)
-            out += [{**entry, "provider": name} for name in sorted(live) if aliases[name]["same_as"] == entry["provider"]]
+            out += [{**entry, "provider": name} for name in sorted(live) if aliases[name]["same_as"] == entry["provider"]
+                    and not aliases[name].get("only_routes") and not (keeper and aliases[keeper]["same_as"] == entry["provider"])]
         routes[route] = out
     return {**config, "providers": {k: v for k, v in providers.items() if k not in aliases or k in live}, "routes": routes}
 

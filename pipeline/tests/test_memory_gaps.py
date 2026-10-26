@@ -93,7 +93,7 @@ def test_company_with_nothing_and_summary():
     s = mg.summarise(report["companies"])   # D has no dossier at all
     assert s == {"companies_checked": 4, "no_xbrl_results": 2, "missing_latest_quarter": 3,
                  "missing_year_ago_quarter": 3, "companies_with_gaps": 3, "missing_company_quarters": 5 + 8 + 8,
-                 "partial_company_quarters": 0}
+                 "partial_company_quarters": 0, "standalone_only_company_quarters": 0}
     assert [g["scrip"] for g in mg.gap_rows(report)] == ["B", "C", "D"]
 
 
@@ -211,3 +211,33 @@ def test_both_bases_to_the_same_newest_quarter_are_checked_consolidated():
     d = _dossier("1", EIGHT[:2])
     d["financial_metrics"] += _dossier("1", EIGHT[:2], basis="STANDALONE")["financial_metrics"]
     assert mg.check(d, TODAY)["basis"] == "CONSOLIDATED"
+
+
+# --- the standalone rule (F162, TODO 49, 26 Oct 2026) ---------------------------------------------------------------
+
+def test_jyothy_like_company_standalone_after_its_last_subsidiary_has_no_gap():
+    """Jyothy Labs sold its only subsidiary on 25 Mar 2025: consolidated to Q4FY25, standalone only from Q1FY26. The
+    standalone quarters are the company's figures; the older consolidated ones stay filled."""
+    d = _dossier("1", EIGHT[:5], basis="STANDALONE")                      # Q1FY27 .. Q1FY26
+    d["financial_metrics"] += _dossier("1", EIGHT[5:])["financial_metrics"]   # Q4FY25 .. Q2FY25 consolidated
+    d["standalone_only"] = EIGHT[:5][::-1]
+    r = mg.check(d, TODAY)
+    assert r["basis"] == "STANDALONE" and r["missing"] == [] and not mg.has_gap(r)
+
+
+def test_abb_like_company_standalone_then_consolidated_counts_the_standalone_quarters_as_filled():
+    """ABB India: standalone until its first subsidiary (Q2FY26 on), consolidated after."""
+    d = _dossier("1", EIGHT[:3])                                           # Q1FY27, Q4FY26, Q3FY26 consolidated
+    d["financial_metrics"] += _dossier("1", EIGHT[3:], basis="STANDALONE")["financial_metrics"]
+    r = mg.check(d, TODAY)
+    assert r["basis"] == "CONSOLIDATED" and r["missing"] == EIGHT[3:]       # not listed: still a gap (as before)
+    d["standalone_only"] = EIGHT[3:]
+    r = mg.check(d, TODAY)
+    assert r["missing"] == [] and r["standalone_only"] == EIGHT[3:] and not mg.has_gap(r)
+    assert mg.summarise({"1": r})["standalone_only_company_quarters"] == 5
+
+
+def test_a_listed_quarter_needs_its_standalone_figures():
+    d = _dossier("1", EIGHT[:3])
+    d["standalone_only"] = EIGHT[3:]
+    assert mg.check(d, TODAY)["missing"] == EIGHT[3:]

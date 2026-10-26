@@ -786,3 +786,25 @@ def test_the_results_table_survives_a_quarter_worked_out_from_the_half_year():
     ]}
     snap = results_snapshot(dossier, "n2")
     assert snap["ebitda"]["value"] == 100.0 and "value" in snap["ebitda"]["derived"]
+
+
+def test_standalone_quarter_is_never_compared_with_a_consolidated_year_ago_or_quarter():
+    """F162 (26 Oct 2026): a company consolidated to Q4FY25 and standalone since (Jyothy Labs) has Q1FY26 on the
+    standalone basis and Q1FY25 and Q4FY25 on the consolidated one: neither the year-on-year nor the quarter-on-quarter
+    change is given. The guard (dossier.results_snapshot, unconditional) is the one A3 added; with both on one basis the
+    figures are there."""
+    from bse_intel.dossier import results_snapshot
+
+    def rows(now_basis):
+        out = []
+        for metric, vals in (("revenue", (120.0, 100.0, 90.0)), ("pat", (12.0, 10.0, 9.0))):
+            for period, value, basis in zip(("Q1FY26", "Q1FY25", "Q4FY25"), vals, (now_basis, "CONSOLIDATED", "CONSOLIDATED")):
+                out.append({"metric": metric, "period": period, "value": value, "basis": basis,
+                            "source_news_id": f"n-{period}", "as_of": period})
+        return {"financial_metrics": out}
+
+    crossed = results_snapshot(rows("STANDALONE"), "n-Q1FY26")
+    for line in ("revenue", "pat"):
+        assert "prev_year" not in crossed[line] and "yoy_pct" not in crossed[line] and "qoq_pct" not in crossed[line]
+    same = results_snapshot(rows("CONSOLIDATED"), "n-Q1FY26")
+    assert same["revenue"]["yoy_pct"] == 20.0 and same["revenue"]["qoq_pct"] == 33.3

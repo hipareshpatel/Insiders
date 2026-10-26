@@ -785,6 +785,64 @@ def cmd_memory_gaps(args, settings, sink) -> int:
     return MORE_LEFT if outcome and outcome["more"] else 0
 
 
+def cmd_screener_fill(args, settings, sink) -> int:
+    """The one-time fill of quarters memory lacks from screener.in (screener_fill.py, F161): a dry run by default (fetch,
+    decide, report; no write), --apply writes by="screener" figures. One request per gap company, at least 3 s apart per
+    runner, at most 2 runners. No AI."""
+    from . import memory_gaps, screener_fill, universe
+
+    shard = None
+    if args.shard:
+        try:
+            index, count = (int(x) for x in args.shard.split("/"))
+            assert 0 <= index < count <= screener_fill.MAX_SHARDS
+        except (ValueError, AssertionError):
+            print(f"--shard takes I/N with 0 <= I < N <= {screener_fill.MAX_SHARDS}, e.g. 0/2")
+            return 2
+        shard = (index, count)
+    nse_universe = universe.load_nse(sink)
+    if args.scrips:
+        scrips = [nse_universe.symbols.get(name.upper()) or name for name in (s.strip() for s in args.scrips.split(",")) if name]
+    elif nse_universe.built:
+        scrips = sorted(nse_universe.included)
+    else:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    today = date.fromisoformat(args.as_of) if args.as_of else today_ist()
+    report = memory_gaps.survey(sink, scrips, today, args.quarters)
+    print(memory_gaps.render(report))
+    by_scrip = {scrip: symbol for symbol, scrip in nse_universe.symbols.items()}
+    symbols = {scrip: screener_fill.symbol_of(sink.company(scrip), by_scrip.get(scrip, ""))
+               for scrip, r in report["companies"].items() if memory_gaps.has_gap(r)}
+    plan = screener_fill.estimate(report, shard[1] if shard else 1)
+    print(f"\nplanned: about {plan['requests']} requests, about {plan['seconds'] // 60} minutes at one request per "
+          f"{screener_fill.PAUSE_SECONDS:g} s")
+    refused = False
+    with screener_fill.ScreenerClient() as client:
+        try:
+            outcome = screener_fill.run(sink, report, symbols, client, args.apply, args.time_budget, args.restart, shard)
+        except screener_fill.ScreenerRefused as exc:
+            logging.getLogger("bse_intel.screener_fill").error("screener.in refused; stopping: %s", exc)
+            refused = True
+            outcome = {"apply": args.apply, "more": False, "failed": [f"refused: {exc}"[:200]], "rows": [],
+                       "companies_with_gaps": 0, "companies_fetched": 0, "requests_made": client.requests,
+                       "companies_skipped_tried": 0, "companies_failed": 0, "companies_with_fills": 0,
+                       "fillable": {"revenue": 0, "pat": 0}, "written": 0, "skipped": {}}
+    print(screener_fill.render(outcome))
+    for line in outcome["failed"][:20]:
+        print(f"  {line}")
+    if not args.apply:
+        print("dry run: nothing changed (--apply writes the figures as by=\"screener\"; no card reads them unless MEMORY_SCREENER=1)")
+    if args.json:
+        Path(args.json).write_text(json.dumps({k: v for k, v in outcome.items() if k != "rows"} | {"planned": plan, "as_of": report["as_of"]},
+                                              ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(screener_fill.to_csv(outcome), encoding="utf-8")
+    if refused:
+        return REFUSED
+    return MORE_LEFT if outcome["more"] else 0
+
+
 def cmd_label_memory(args, settings, sink) -> int:
     """Label everything already in memory (memory_labels.py, TRACKER F150): no AI, no NSE, no card change. A dry run
     prints the counts per section and label and writes nothing; a real run writes each changed dossier back through the
@@ -1216,6 +1274,18 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--shard", help="with --fill: I/N, this runner's share of the companies with gaps")
     p.add_argument("--time-budget", type=int, default=17400, help="with --fill: seconds; exit 124 if companies are left")
     p.set_defaults(func=cmd_memory_gaps)
+
+    p = sub.add_parser("screener-fill", help="one-time fill of the quarters memory lacks from screener.in: dry run (default) or --apply (no AI)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--quarters", type=int, default=8, help="quarters checked, ending at the latest past its filing deadline")
+    p.add_argument("--as-of", help="YYYY-MM-DD, instead of today (IST)")
+    p.add_argument("--apply", action="store_true", help="write the fills (by=screener); without it nothing is changed")
+    p.add_argument("--shard", help="I/N with N at most 2: this runner's share of the companies with gaps")
+    p.add_argument("--restart", action="store_true", help="try companies an earlier run of the same mode already tried")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--csv", help="write every proposed fill, with its overlap evidence, to this file")
+    p.set_defaults(func=cmd_screener_fill)
 
     p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")
     p.add_argument("--apply", action="store_true", help="back up, then delete; without it nothing is changed")

@@ -29,6 +29,7 @@ from .dossier import forget_source, merge, new_dossier, put_standalone
 from .models import FinancialMetric, Filing, Pass2Output
 from .nse import SourceBlockedError
 from .periods import canonical_period, quarter_index
+from .settings import memory_standalone_only
 from .timeutil import now_iso
 
 log = logging.getLogger(__name__)
@@ -156,8 +157,12 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
                              scrip, period, row.taxonomy or "template not stated")
 
     # A company that files consolidated results keeps that basis: a quarter NSE lists only standalone (Heritage's
-    # re-filed Q4FY25 and Q2FY26, T5 2026-10-20) is left to the cards rather than set beside consolidated quarters
-    if any(result.basis == "CONSOLIDATED" for _, _, result, _ in found.values()):
+    # re-filed Q4FY25 and Q2FY26, T5 2026-10-20) is left to the cards rather than set beside consolidated quarters.
+    # MEMORY_STANDALONE_ONLY (F162): such a quarter is the company's own figure when no consolidated file exists for it
+    # (``found`` already prefers a consolidated file to a standalone one for the same quarter), so it stays, on basis
+    # STANDALONE, and is listed in the dossier's ``standalone_only`` for memory_gaps.
+    keep_standalone = memory_standalone_only()
+    if any(result.basis == "CONSOLIDATED" for _, _, result, _ in found.values()) and not keep_standalone:
         dropped = [p for p, (_, _, result, _) in found.items() if result.basis == "STANDALONE"]
         for period in dropped:
             log.info("seed %s %s: standalone file only, the company files consolidated; left to the cards", scrip, period)
@@ -176,6 +181,8 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     _derive_quarters(found, stats)
     for period, (filed_on, url, parsed, _) in sorted(found.items()):
         _write_results(sink, scrip, name, company, period, filed_on, url, parsed, stats)
+    if keep_standalone and found:
+        _mark_standalone_only(sink, scrip, found)
     # a consolidated filer's standalone files too, kept apart for the company page's standalone view (owner,
     # 2026-10-21); the quarters the consolidated ones cover, no more
     consolidated = [p for p, (_, _, result, _) in found.items() if result.basis == "CONSOLIDATED"]
@@ -248,6 +255,20 @@ def _derive_quarters(found: dict, stats: SeedStats) -> None:
                 break
         if any(m.period == period for m in parsed.metrics):
             stats.derived += 1
+
+
+def _mark_standalone_only(sink, scrip: str, found: dict) -> None:
+    """Record the quarters kept on the standalone basis because NSE lists no consolidated file for them (dossier
+    ``standalone_only``, a sorted list of periods). A quarter now read as consolidated leaves the list."""
+    dossier = sink.get_dossier(scrip)
+    if dossier is None:
+        return
+    only = {p for p, (_, _, result, _) in found.items() if quarter_index(p) and result.basis == "STANDALONE"}
+    done = {p for p, (_, _, result, _) in found.items() if result.basis == "CONSOLIDATED"}
+    marked = (set(dossier.get("standalone_only") or []) - done) | only
+    if sorted(marked) != list(dossier.get("standalone_only") or []):
+        dossier["standalone_only"] = sorted(marked, key=quarter_index)
+        sink.put_dossier(scrip, dossier)
 
 
 def _seed_standalone(sink, nse, scrip: str, symbol: str, since: str, periods: set[str], cache_root, stats) -> None:

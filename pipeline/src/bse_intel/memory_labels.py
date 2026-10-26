@@ -26,7 +26,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
 
-from .dossier import _RESULT_METRICS, STANDALONE_KEY, XBRL_SOURCE, doc_kind, keep_concurrent_writes, label
+from .dossier import _RESULT_METRICS, SCREENER_KEY, SCREENER_PREFIX, STANDALONE_KEY, XBRL_SOURCE, doc_kind, keep_concurrent_writes, label
 from .nse import NEWS_ID_PREFIX
 from .timeutil import now_iso
 
@@ -35,12 +35,12 @@ log = logging.getLogger(__name__)
 RESUME_KEY = "labelmem:last"   # kv: the last company (key order) a real run finished
 READERS = 8                    # dossiers read at a time
 PAGE = 200                     # cards read per export_cards query
-LABELS = ("file", "ai", "calc", "unknown")
+LABELS = ("file", "ai", "calc", "unknown", "screener")   # "screener": the one-time screener.in fill (F161), labelled when written
 DERIVED = ("ebitda", "ebitda_margin", "revenue_net_excise")   # worked out by our code from the file's lines
 _EBITDA_PARTS = ("pbt", "finance_cost", "depreciation", "other_income", "exceptional_items")
 _KEY_OF = {name: key for key, names in _RESULT_METRICS for name in names}   # a metric's name -> the results line's key
 SECTIONS = (
-    "financial_metrics", "standalone_metrics", "standalone_balance_sheet", "balance_sheet", "segment_mix", "capital_actions",
+    "financial_metrics", "screener_fill", "standalone_metrics", "standalone_balance_sheet", "balance_sheet", "segment_mix", "capital_actions",
     "deals", "operating_notes", "guidance", "watchlist", "predictions", "upcoming_events", "timeline", "entities",
     "ownership", "auditor", "business_summary", "call_points",
     "corporate_actions", "market_deals", "pledges", "insider_trades", "trade_remedies", "governance_quarters", "former_names",
@@ -118,6 +118,8 @@ class Labeller:
         news_id = str(news_id or "")
         doc = self.doc(news_id)
         calc = metric in DERIVED
+        if news_id.startswith(SCREENER_PREFIX):
+            return "screener", "other", None   # the fill writes its own label; this only covers one stored without it
         if news_id.startswith(XBRL_SOURCE):
             doc = "results" if news_id.startswith(XBRL_SOURCE + "res") else doc
             return ("calc", doc, inputs) if calc else ("file", doc, None)
@@ -188,6 +190,7 @@ class Labeller:
         self.events = {t["news_id"]: {"event_type": t.get("event_type"), "headline": ""}
                        for t in d.get("timeline", []) if isinstance(t, dict) and t.get("news_id")}
         self.figures("financial_metrics", d.get("financial_metrics", []))
+        self.figures("screener_fill", d.get(SCREENER_KEY, []))
         standalone = d.get(STANDALONE_KEY) or {}
         self.figures("standalone_metrics", standalone.get("metrics", []), "STANDALONE")
         for name, rows in (("standalone_balance_sheet", standalone.get("balance_sheet", [])),

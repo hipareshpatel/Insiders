@@ -229,7 +229,7 @@ def parse_results_rows(rows: list[dict]) -> list[ResultsFiling]:
     out = []
     for row in rows:
         url = (row.get("xbrl") or "").strip()
-        if not url:
+        if not url.lower().endswith(".xml"):   # NSE's older list writes ".../corporate/xbrl/-" when there is no file
             continue
         if not url.startswith("http"):
             url = f"https://nsearchives.nseindia.com/{url.lstrip('/')}"

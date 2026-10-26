@@ -79,7 +79,13 @@ def _fetch(client, url: str, root: Path | None, sink=None) -> bytes | None:
     data = xbrl_store.get(sink, url)
     fresh = not data
     if fresh:
-        data = client.download(url, max_bytes=8_000_000)
+        try:
+            data = client.download(url, max_bytes=8_000_000)
+        except Exception as exc:   # one dead file is that quarter's gap, not the company's: only 404/410 (a refusal still raises)
+            if getattr(getattr(exc, "response", None), "status_code", None) not in (404, 410):
+                raise
+            log.warning("XBRL file gone (HTTP %s): %s", exc.response.status_code, url)
+            return None
     if data and path:
         try:
             path.parent.mkdir(parents=True, exist_ok=True)

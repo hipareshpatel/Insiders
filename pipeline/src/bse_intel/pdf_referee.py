@@ -304,6 +304,12 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
     return {"values": values, "unsure": "; ".join(dict.fromkeys(unsure)), "found": seen}
 
 
+def _same_reading(a: float, b: float) -> bool:
+    """Two printed readings of one figure: within half a unit of a coarser printed precision (120.5 and 120.48 Cr, EPS 1.23
+    and 1.2), or 0.05% (a figure printed in whole crore beside one to a decimal). Tighter than the cross-check's 1 Cr floor."""
+    return abs(a - b) <= max(0.051, 0.0005 * max(abs(a), abs(b)))
+
+
 def verdict_of(values: list[tuple[float, str, int]], ours: float | None, theirs: float | None, xbrl: float | None,
                metric: str) -> tuple[str, list[str], float | None, str]:
     """(verdict, matches, the figure used, its label) for proven PDF figures against the three values. Proven rows that
@@ -311,7 +317,7 @@ def verdict_of(values: list[tuple[float, str, int]], ours: float | None, theirs:
     happens to agree never confirms a figure (independent review, 26 Oct 2026)."""
     distinct: list[float] = []
     for value, _, _ in values:
-        if not any(ours_close(d, value, metric) for d in distinct):
+        if not any(_same_reading(d, value) for d in distinct):
             distinct.append(value)
     if len(distinct) > 1:
         shown = ", ".join(f"{v:g}" for v in distinct[:4])

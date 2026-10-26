@@ -229,3 +229,10 @@ def test_the_sample_run_catches_a_file_the_pdf_disagrees_with():
     assert "upper bound" in pr.to_markdown(out, "2026-10-26")
     with pytest.raises(ValueError):
         pr.sample_pairs(rows, 0)
+
+
+def test_one_figure_printed_at_two_precisions_is_not_a_conflict():
+    assert pr.verdict_of([(120.48, "Revenue", 1), (120.5, "Revenue", 4)], 120.48, 125.0, 120.48, "revenue")[0] == "pdf_matches_ours"
+    assert pr.verdict_of([(1.23, "EPS", 1), (1.2, "EPS", 4)], 1.23, 1.5, 1.23, "eps")[0] == "pdf_matches_ours"
+    assert pr.verdict_of([(5000.9, "Revenue", 1), (5000.0, "Revenue", 4)], 5000.9, 5100.0, 5000.9, "revenue")[0] == "pdf_matches_ours"
+    assert pr.verdict_of([(120.5, "Revenue", 1), (121.0, "Total income", 1)], 120.5, 125.0, 120.5, "revenue")[0] == "pdf_unsure"

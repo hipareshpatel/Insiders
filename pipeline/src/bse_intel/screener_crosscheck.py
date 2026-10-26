@@ -146,6 +146,11 @@ def _ours(figures: dict, lender: bool, metric: str, period: str) -> dict | None:
     for name in (_LENDER_OURS if lender else _OURS)[metric]:
         entry = figures.get((_norm(name), period))
         if entry and entry.get("value") is not None:
+            # a lender template's interest earned of 0 beside no revenue is the template's filler (ICICI Prudential AMC's
+            # NBFC-template file tags InterestEarned 0, its revenue is revenue from operations): "not found", never a 0
+            # revenue (Tijori referee, 26 Oct 2026, F196)
+            if lender and metric == "revenue" and name == "interest_earned" and not entry["value"]:
+                continue
             return entry
     return None
 

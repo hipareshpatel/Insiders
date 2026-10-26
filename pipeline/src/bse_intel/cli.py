@@ -905,6 +905,50 @@ def cmd_screener_download(args, settings, sink) -> int:
     return MORE_LEFT if outcome["more"] else 0
 
 
+def cmd_text_backfill(args, settings, sink) -> int:
+    """The one-time text backfill (text_backfill.py, F165): the filing text of every stored card that has none in R2, fetched
+    from NSE as the pipeline does (its client, headers and 3-5 s pacing; one request a filing) and written through the
+    pipeline's own text-cache bytes. At most 2 shards; exit 75 when NSE refuses, 124 when the time budget ends with filings
+    left. No AI (local OCR only), no card, memory or filings write."""
+    from . import text_backfill as tb
+    from .nse import NseClient, SourceBlockedError
+
+    shard = None
+    if args.shard:
+        try:
+            index, count = (int(x) for x in args.shard.split("/"))
+            assert 0 <= index < count <= tb.MAX_SHARDS
+        except (ValueError, AssertionError):
+            print(f"--shard takes I/N with 0 <= I < N <= {tb.MAX_SHARDS}, e.g. 0/2")
+            return 2
+        shard = (index, count)
+    rows, counts = tb.cards_lacking_text(sink, args.limit)
+    mine = len(rows[shard[0]::shard[1]]) if shard else len(rows)
+    plan = tb.estimate(mine, 1, not args.no_ocr)
+    whole = tb.estimate(len(rows), 2, not args.no_ocr)
+    print(f"text backfill: {counts.get('cards', 0)} cards, {counts.get('lacking', 0)} without text "
+          f"({counts.get('known_no_text', 0)} known to have none), {len(rows)} to fetch, {mine} in this shard; estimated "
+          f"{plan['seconds_each']:g} s a filing, about {plan['seconds'] / 3600:.1f} hours for this shard "
+          f"(the whole {len(rows)} on 2 shards: about {whole['seconds'] / 3600:.1f} hours; an assumption, not measured)")
+    refused = False
+    with NseClient() as nse:
+        try:
+            outcome = tb.run(sink, rows, nse, shard, args.time_budget, args.restart, ocr=not args.no_ocr,
+                             max_ocr_pages=settings.max_ocr_pages)
+        except SourceBlockedError as exc:
+            logging.getLogger("bse_intel.text_backfill").error("NSE refused the session; stopping: %s", exc)
+            refused = True
+            outcome = None
+    if outcome:
+        print(tb.render(outcome, counts))
+    if args.json:
+        body = {**(outcome or {"refused": True}), "cards": counts}
+        Path(args.json).write_text(json.dumps(body, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if refused:
+        return REFUSED
+    return MORE_LEFT if outcome["more"] else 0
+
+
 def cmd_screener_crosscheck(args, settings, sink) -> int:
     """Read-only cross-check of memory against the stored screener pages (screener_crosscheck.py, F163): no request to
     screener or NSE, no write, no AI. Writes the summary JSON, the CSV of every non-match pair, referee.csv and the markdown."""
@@ -1379,6 +1423,15 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_screener_download)
+
+    p = sub.add_parser("text-backfill", help="one-time: download the filing text of every stored card with none in R2 (NSE, no AI)")
+    p.add_argument("--limit", type=int, help="only the first N cards lacking text (a trial)")
+    p.add_argument("--shard", help="I/N with N at most 2: this runner's share of the filings")
+    p.add_argument("--no-ocr", action="store_true", help="skip local OCR: figure and scanned pages keep their text layer only")
+    p.add_argument("--restart", action="store_true", help="try filings an earlier run failed on again")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if filings are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_text_backfill)
 
     p = sub.add_parser("screener-crosscheck", help="read-only: compare memory with the stored screener pages, the official text as referee")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

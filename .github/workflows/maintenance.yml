@@ -54,6 +54,15 @@
 #   again; a run that ends on its time budget (exit 124) is started again and resumes; `restart` ignores the finished list;
 #   screener.in refusing (403, 429, 503: exit 75) fails the shard. Its own concurrency group `screener`, so it runs beside the
 #   NSE memory jobs: it touches no NSE call and no memory. Summary: artifacts `screener-download-0` and `screener-download-1`.
+# - text-backfill: the one-time download of the filing text for the stored cards that have none in R2 (owner 26 Oct 2026; F165,
+#   TODO 51; the text cache `text/<news_id>.json.gz` only started on 25 Oct, so ~6,870 of 7,077 cards lack it). Fetches each
+#   attachment from NSE as the pipeline does (same client, headers, 3-5 s pacing, ZIP handling, 120 MB cap), reads it with the
+#   pipeline's own reader (local OCR on figure and scanned pages; input `no_ocr` skips it and those pages then keep their text
+#   layer only) and writes the object through the pipeline's own cache bytes. Writes nothing else: no card, memory or filings
+#   row. Two runners (job `textback`), the same NSE load as memory-gaps-fill; `limit` (input) = a trial on the first N cards. A
+#   run that ends on its time budget (exit 124) leaves a marker and is started again (with a non-empty `then`, `chain` does
+#   it); filings that failed (404, cut short, too large, ZIP audio) are kept with their reason and not tried again unless
+#   `restart`; NSE refusing (exit 75) fails the shard. Summary: artifacts `text-backfill-0` and `text-backfill-1`.
 # - screener-crosscheck: read only. Memory's exchange-file figures against the stored screener pages (no screener request),
 #   the cached official results text as referee (no download); summary.json, crosscheck.csv, referee.csv and the markdown
 #   report go up as the artifact `screener-crosscheck`. Commits nothing.
@@ -64,7 +73,8 @@
 # false and a group keeps one waiting run (a newer one replaces the waiting one): do not queue two commands of one group.
 #   group              commands
 #   maint-nse-memory   everything that reads NSE or writes memory: seed-memory, memory-gaps-fill, fill-memory, fill-trades,
-#                      label-memory-apply, screener-fill-apply, prune-companies-apply (writes memory and companies)
+#                      label-memory-apply, screener-fill-apply, prune-companies-apply (writes memory and companies),
+#                      text-backfill (reads NSE; writes only text/ objects)
 #   maint-cards        writes cards in D1 (or commits to the branch): refresh-card-blocks, refresh-summaries, both,
 #                      requeue-failed, apply-verdicts, release-pruned, export-held, export-critic
 #   maint-bse          probe-bse, bse-results-test, bse-verify-kept
@@ -80,7 +90,7 @@
 # job failed or was cancelled. Commands that resume themselves are chained only when FINISHED:
 #   - seed-memory (seed-next) and memory-gaps-fill (gaps-next) start the next pass while any shard timed out (exit 124) and
 #     pass `then` along on that re-dispatch; the pass that finds nothing left lets `chain` run the first of `then`;
-#   - screener-download, screener-fill, screener-fill-apply and label-memory-apply (exit 124 = resume) leave a marker
+#   - screener-download, screener-fill, screener-fill-apply, text-backfill and label-memory-apply (exit 124 = resume) leave a marker
 #     artifact (`*-more-*`) when time ran out; with a non-empty `then`, `chain` then re-dispatches the same command with the
 #     same `then` (restart=false) instead of the next one; with `then` empty they stay manual, as before;
 #   - fill-memory starts its own seed-memory passes at its end and hands `then` to them; `chain` does nothing for it.
@@ -92,7 +102,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, screener-fill, screener-fill-apply, screener-download, screener-crosscheck]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, text-backfill]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -110,6 +120,14 @@ on:
         description: fill-memory only - days of NSE's shareholding list to read (110 covers the last two quarters)
         type: string
         default: '110'
+      limit:
+        description: text-backfill only - a trial on the first N cards lacking text (empty = all)
+        type: string
+        default: ''
+      no_ocr:
+        description: text-backfill only - skip local OCR (figure and scanned pages keep their text layer only; faster)
+        type: boolean
+        default: false
       then:
         description: commands to run after this one succeeds, comma separated; name:restart passes restart=true (see the header)
         type: string
@@ -126,7 +144,7 @@ permissions:
 concurrency:
   # groups by source and by what a job writes: the table in the header comment
   group: >-
-    ${{ contains(fromJSON('["seed-memory","memory-gaps-fill","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply"]'), inputs.command) && 'maint-nse-memory'
+    ${{ contains(fromJSON('["seed-memory","memory-gaps-fill","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
@@ -136,7 +154,7 @@ concurrency:
 
 jobs:
   run:
-    if: inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download'
+    if: inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'text-backfill'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -578,9 +596,55 @@ jobs:
           path: ${{ runner.temp }}/more/
           if-no-files-found: ignore
 
+  # The one-time text backfill (F165). Two runners, so two addresses, each taking every second filing lacking text and
+  # pacing its own NSE requests like memory-gaps-fill's shards. Local OCR (the `ocr` extra) unless no_ocr. No AI.
+  textback:
+    if: inputs.command == 'text-backfill'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 320
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1]
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "${{ inputs.no_ocr && '.' || '.[ocr]' }}"
+      - name: Download this shard's filing texts
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/textback" "$RUNNER_TEMP/more"
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel text-backfill --shard ${{ matrix.shard }}/2 --time-budget 17400 ${{ inputs.no_ocr && '--no-ocr' || '' }} ${{ inputs.limit != '' && format('--limit {0}', inputs.limit) || '' }} ${{ inputs.restart && '--restart' || '' }} --json "$RUNNER_TEMP/textback/text-backfill-${{ matrix.shard }}.json" || code=$?
+          if [ "$code" -eq 124 ]; then echo "::warning::time budget ended with filings left: run the same command again to resume"; echo more > "$RUNNER_TEMP/more/${{ matrix.shard }}"; exit 0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: text-backfill-${{ matrix.shard }}
+          path: ${{ runner.temp }}/textback/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: textback-more-${{ matrix.shard }}
+          path: ${{ runner.temp }}/more/
+          if-no-files-found: ignore
+
   # The chain (F164): runs the next command of `then` once this run's work is done and succeeded (see the header).
   chain:
-    needs: [run, seed, seed-next, gaps, gaps-next, screener]
+    needs: [run, seed, seed-next, gaps, gaps-next, screener, textback]
     if: always() && inputs.then != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     steps:
@@ -601,7 +665,7 @@ jobs:
             seed-memory|memory-gaps-fill)
               # seed-next / gaps-next already started the next pass, with `then`; the last pass chains
               if [ -n "$left" ]; then echo "companies left: the next pass carries the chain"; exit 0; fi ;;
-            screener-download|screener-fill|screener-fill-apply|label-memory-apply)
+            screener-download|screener-fill|screener-fill-apply|label-memory-apply|text-backfill)
               if [ -n "$left" ]; then
                 echo "not finished: resuming $CMD with the same chain"
                 gh workflow run maintenance.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f command="$CMD" -f restart=false -f then="$THEN"

@@ -465,8 +465,8 @@ def _num(value) -> float | None:
         return None
 
 
-# screener_explain.TO_PDF: the explain verdicts that still need the PDF (a row the explain run cut, not_run, included)
-EXPLAIN_TO_PDF = ("unexplained", "eps_owners_vs_total", "not_run")
+# the explain verdicts that still need the PDF (a row the explain run cut, not_run, included): one list, the explain module's
+from .screener_explain import TO_PDF as EXPLAIN_TO_PDF  # noqa: E402
 
 
 def open_pairs(rows: list[dict], explained: bool = False) -> list[dict]:

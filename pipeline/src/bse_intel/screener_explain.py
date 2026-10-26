@@ -58,6 +58,7 @@ VERDICTS = ("eps_continuing_vs_total", "share_adjusted", "restated_later", "eps_
 # is a question about our figure, not an explanation (independent review, 26 Oct 2026: AFSL Q2FY25 EPS 5.46 on profit 27.38,
 # screener 5.06 on owners' 25.39; 284 of 503 first "continuing" rows were this)
 TO_PDF = ("unexplained", "eps_owners_vs_total", "not_run")
+SHARE_FLOOR = 0.03   # apart()'s EPS floor for an exact recorded factor
 SHARE_KINDS = ("BONUS", "SPLIT", "CONSOLIDATION")
 RIGHTS_KIND = "RIGHTS"
 ADDED = ["explain_verdict", "factor", "later_value", "later_file", "later_from", "detail"]
@@ -94,10 +95,11 @@ def memory_value(dossier: dict | None, metric: str, period: str, basis: str | No
     return entry.get("value") if entry else None
 
 
-def apart(ours: float, theirs: float, metric: str) -> bool:
+def apart(ours: float, theirs: float, metric: str, eps_floor: float = 0.06) -> bool:
     """An explanation counts only for a gap of more than twice the tolerance: within it, a factor or a ratio can match by
-    chance (review placebo: 3.7% false explanations at |EPS| under 0.5)."""
-    tol = max(0.06, 0.005 * abs(theirs)) if metric == "eps" else max(1.0, 0.005 * abs(theirs))
+    chance (review placebo: 3.7% false explanations at |EPS| under 0.5). A recorded bonus or split, an exact factor, takes
+    a floor of 0.03 instead (second review: EASEMYTRIP 0.19 vs 0.09 after a 1:1 bonus, Motherson 0.30 vs 0.20 after 1:2)."""
+    tol = max(eps_floor, 0.005 * abs(theirs)) if metric == "eps" else max(1.0, 0.005 * abs(theirs))
     return abs(ours - theirs) > 2 * tol
 
 
@@ -171,7 +173,7 @@ def explain_pair(files: CompanyFiles, dossier: dict | None, row: dict, today: st
         factor, actions = share_factor(dossier, period, today)
         if actions and abs(factor - 1) > 1e-9:
             out["factor"] = factor
-            if apart(ours, theirs, "eps") and _close(ours / factor, theirs, "eps"):
+            if apart(ours, theirs, "eps", eps_floor=SHARE_FLOOR) and _close(ours / factor, theirs, "eps"):
                 out.update(explain_verdict="share_adjusted",
                            detail="; ".join([f"x{factor:g}: " + "; ".join(eps_adjust.describe(a) for a in actions)] + notes))
                 return out

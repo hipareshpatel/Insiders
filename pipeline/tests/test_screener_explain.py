@@ -225,3 +225,10 @@ def test_a_gap_within_twice_the_tolerance_is_not_explained():
 def test_a_ratio_of_zero_or_below_explains_nothing():
     dossier = {"financial_metrics": metrics("Q1FY25", pat=10.0, pat_continuing=3.0, pat_owners=0.0)}
     assert run([row("Q1FY25", "eps", 0.9, 0.04)], {"1": dossier})["rows"][0]["explain_verdict"] == "unexplained"
+
+
+def test_a_recorded_bonus_explains_a_small_eps_too():
+    # EASEMYTRIP Q1FY25 (second review): ours 0.19, screener 0.09, bonus 1:1 after the period
+    bonus = [{"kind": "BONUS", "factor": 2.0, "ex_date": "2025-01-10", "subject": "Bonus 1:1"}]
+    r = run([row("Q1FY25", "eps", 0.19, 0.09)], {"1": {"financial_metrics": [], "corporate_actions": bonus}})["rows"][0]
+    assert r["explain_verdict"] == "share_adjusted"

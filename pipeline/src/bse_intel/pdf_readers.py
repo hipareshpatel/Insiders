@@ -93,6 +93,84 @@ class PageLayer:
     has_layer: bool
     numbers: set[float]
     context: str                    # title and unit lines to put above a table of this page
+    words: list = field(default_factory=list)      # (x0, y0, x1, y1, text) of the page's words, when read from the PDF
+    _bands: list | None = None
+
+    def bands(self) -> list["Band"]:
+        """The page's rows as printed (label, trailing figures, the basis of the nearest title above), read once."""
+        if self._bands is None:
+            self._bands = make_bands(self.words, self.text)
+        return self._bands
+
+
+@dataclass
+class Band:
+    label: str
+    nums: list[str]                 # the figures after the label, as printed
+    basis: str | None               # the basis named by the nearest title above (None: none named yet)
+
+
+_NUMTOK = re.compile(r"^\(?-?\d[\d,]*(?:\.\d+)?\)?$")
+
+
+def _alpha(text: str) -> str:
+    return re.sub(r"[^a-z]", "", text.lower())
+
+
+def make_bands(words: list, text: str) -> list[Band]:
+    """Rows of the text layer: words on one baseline band (3.5 pt) when the words are known, else the text's lines. A row's
+    figures are the numeric tokens after its last non-numeric token (a serial number before the label is not one)."""
+    from .pdf_referee import _words_basis
+    groups: list[list[str]] = []
+    if words:
+        ordered = sorted(words, key=lambda w: (w[1] + w[3]) / 2)
+        current: list = []
+        last = None
+        for w in ordered:
+            centre = (w[1] + w[3]) / 2
+            if last is not None and centre - last > 3.5:
+                groups.append([x[4] for x in sorted(current, key=lambda x: x[0])])
+                current = []
+            current.append(w)
+            last = centre
+        if current:
+            groups.append([x[4] for x in sorted(current, key=lambda x: x[0])])
+    else:
+        groups = [line.split() for line in text.splitlines() if line.strip()]
+    bands: list[Band] = []
+    basis: str | None = None
+    for tokens in groups:
+        stop = max((i for i, t in enumerate(tokens) if not _NUMTOK.match(t)), default=-1)
+        label, nums = " ".join(tokens[: stop + 1]), tokens[stop + 1:]
+        if not nums and (named := _words_basis(label)):
+            basis = named
+        bands.append(Band(label, nums, basis))
+    return bands
+
+
+def cell_in_layer(layer: "PageLayer", label: str, basis: str | None, printed: float, index: int, count: int,
+                  anywhere: bool) -> str:
+    """The printed token of the cell when the text layer has the figure on the row of ``label`` under the same basis and at
+    column ``index`` of ``count`` figures (the row must show exactly that many), else an empty string."""
+    from .pdf_referee import STANDALONE
+    key = _alpha(label)
+    if len(key) < 6 or not layer.has_layer:
+        return ""
+    for band in layer.bands():
+        bk = _alpha(band.label)
+        if len(bk) < 6 or not (key in bk or bk in key) or len(band.nums) != count:
+            continue
+        band_basis = band.basis if band.basis is not None else (None if anywhere else STANDALONE)
+        if basis and band_basis != basis:
+            continue
+        token = band.nums[index]
+        try:
+            figure = float(token.strip("()").replace(",", ""))
+        except ValueError:
+            continue
+        if abs(abs(figure) - abs(printed)) <= 1e-6 * max(1.0, abs(printed)):
+            return token
+    return ""
 
 
 @dataclass
@@ -100,7 +178,7 @@ class Reading:
     """One reader's figure for one pair (row, period column, basis)."""
     reader: str
     family: str = ""                # the family it counts in (structure family on a text layer, OCR engine's on a scan)
-    status: str = "ok"              # ok | none | conflict | unavailable | error
+    status: str = "ok"              # ok | none | conflict | otherbasis | unavailable | error
     value: float | None = None      # crore (EPS as printed), after unit conversion
     verbatim: bool = False          # the printed digits are in the page's text layer
     layer: bool = True              # the page has a text layer
@@ -108,6 +186,7 @@ class Reading:
     label: str = ""
     page: int = 0
     note: str = ""
+    tol: float = 0.005              # half a unit of the last printed decimal, in the same unit as ``value``
 
 
 @dataclass
@@ -131,38 +210,56 @@ class Verdict:
 
 # --- the settlement rule -------------------------------------------------------------------------------------------
 
-def same_value(a: float, b: float) -> bool:
-    """Two readings of one figure at the referee's precision (crore to 2 decimals after unit conversion)."""
-    from .pdf_referee import _same_reading
-    return _same_reading(a, b)
+def same_value(a: float, b: float, tol: float = 0.005) -> bool:
+    """Two readings of one figure are the same when they differ by no more than half a unit of the last printed decimal after
+    unit conversion (0.005 crore for two decimals): exact at the printed precision, never a percentage."""
+    return abs(a - b) <= tol + 1e-9
+
+
+def _agree(a: Reading, b: Reading) -> bool:
+    return same_value(a.value, b.value, max(a.tol, b.tol))
 
 
 def settle(readings: list[Reading]) -> Verdict:
-    """The two-families-agree-and-none-disagrees rule over the readers' figures for one pair."""
+    """The two-families-agree-and-none-disagrees rule over the readers' figures for one pair.
+
+    A reader that finds the row only on the other basis vetoes (``disagree``); a reader whose own rows differ vetoes
+    (``unsure``, as the native path does); a reader with no proven column or basis abstains. The agreeing values form a
+    cluster only when every member is within tolerance of every other; the settled value is a text-layer reader's."""
     ok = [r for r in readings if r.status == "ok" and r.value is not None]
-    abstained = [f"{r.reader}({r.status})" for r in readings if r.status != "ok"]
+    abstained = [f"{r.reader}({r.status})" for r in readings if r.status not in ("ok", "otherbasis", "conflict")]
+    other = [r.reader for r in readings if r.status == "otherbasis"]
+    conflict = [r for r in readings if r.status == "conflict"]
     if not ok:
-        return Verdict("none", abstained=abstained, reason="no reader gave a figure")
+        out = Verdict("none", abstained=abstained, reason="no reader gave a figure")
+        if other:
+            out.status, out.disagreed, out.reason = "disagree", other, "a reader finds the figure only on the other basis"
+        elif conflict:
+            out.status, out.reason = "unsure", f"{conflict[0].reader}'s own rows differ ({conflict[0].note})"
+        return out
     clusters: list[list[Reading]] = []
     for r in ok:
         for c in clusters:
-            if same_value(c[0].value, r.value):
+            if all(_agree(m, r) for m in c):
                 c.append(r)
                 break
         else:
             clusters.append([r])
     clusters.sort(key=lambda c: (-len({m.family for m in c}), -len(c)))
     best = clusters[0]
-    names = [m.reader for m in best]
-    first = best[0]
-    out = Verdict("unsure", value=first.value, agreed=names, abstained=abstained, label=first.label, page=first.page)
-    if len(clusters) > 1:
-        out.status = "disagree"
-        out.disagreed = [m.reader for c in clusters[1:] for m in c]
-        shown = ", ".join(f"{c[0].value:g} ({'+'.join(m.reader for m in c)})" for c in clusters[:4])
-        out.reason = f"readers disagree: {shown}"
-        return out
     verbatim = [m for m in best if m.verbatim]
+    first = verbatim[0] if verbatim else best[0]
+    out = Verdict("unsure", value=first.value, agreed=[m.reader for m in best], abstained=abstained, label=first.label,
+                  page=first.page)
+    if len(clusters) > 1 or other:
+        out.status = "disagree"
+        out.disagreed = [m.reader for c in clusters[1:] for m in c] + other
+        shown = ", ".join(f"{c[0].value:g} ({'+'.join(m.reader for m in c)})" for c in clusters[:4])
+        out.reason = "readers disagree: " + (shown if len(clusters) > 1 else "one finds the figure only on the other basis")
+        return out
+    if conflict:
+        out.reason = f"{conflict[0].reader}'s own rows differ ({conflict[0].note}): no verdict"
+        return out
     out.families = sorted({m.family for m in verbatim})
     if len(out.families) >= 2:
         out.status = "settled"
@@ -180,7 +277,7 @@ def settle(readings: list[Reading]) -> Verdict:
     if verbatim:
         out.reason = f"only one family ({verbatim[0].family}) read the figure from the text layer"
     else:
-        out.reason = "the figure's digits are not in the page's text layer"
+        out.reason = "the figure's digits are not in the page's text layer on that row and column"
     return out
 
 
@@ -232,7 +329,18 @@ def _safe_float(token: str) -> bool:
         return False
 
 
-def tables_to_rows(tables: list[Table], layers: dict[int, PageLayer]) -> list:
+def consolidated_anywhere(layers: dict[int, PageLayer], tables: list[Table] | None = None) -> bool:
+    """Shared by every reader of a PDF: a table with no title of its own is read as standalone only when every page's text
+    layer is there to say "consolidated" and does not. A page with no layer, or a layer that names consolidated anywhere,
+    leaves such a table's basis unproven."""
+    if any(not layer.has_layer for layer in layers.values()) or not layers:
+        return True
+    if any(_CONS_WORD.search(layer.text) for layer in layers.values()):
+        return True
+    return any(_CONS_WORD.search(table_text(t.cells)) for t in tables or [])
+
+
+def tables_to_rows(tables: list[Table], layers: dict[int, PageLayer], anywhere: bool | None = None) -> list:
     """The referee's ``Row`` objects of every table, each parsed with ``pdf_referee.parse_page`` under its page's title and unit."""
     from .pdf_referee import parse_page
     texts = []
@@ -241,19 +349,42 @@ def tables_to_rows(tables: list[Table], layers: dict[int, PageLayer]) -> list:
         body = table_text(t.cells)
         if body:
             texts.append((t.page, (layer.context + "\n" if layer and layer.context else "") + body))
-    anywhere = any(_CONS_WORD.search(text) for _, text in texts)
+    if anywhere is None:
+        anywhere = consolidated_anywhere(layers, tables)
     rows = []
     for page, text in texts:
-        rows += parse_page(text, page, anywhere)
+        rows += parse_page(text, page, anywhere or bool(_CONS_WORD.search(text)))
     return rows
 
 
-def reading_of(reader: "Reader", rows: list, layers: dict[int, PageLayer], period: str, metric: str, basis: str | None) -> Reading:
-    """One reader's figure for the pair, with the proof the rule needs (verbatim digits, text layer, source)."""
+def _period_index(row, period: str) -> int | None:
+    """The column of the period in a row, found as ``pdf_referee.figure_for`` finds it."""
+    from .pdf_referee import target_column
+    target = target_column(period)
+    if target is None:
+        return None
+    if row.columns is not None:
+        matching = [k for k, c in enumerate(row.columns) if c == target]
+        return matching[0] if len(matching) == 1 else None
+    return row.dates.index(target[1]) if target[1] in row.dates else None
+
+
+def _other(basis: str | None) -> str | None:
+    from .pdf_referee import CONSOLIDATED, STANDALONE
+    return {CONSOLIDATED: STANDALONE, STANDALONE: CONSOLIDATED}.get(basis or "")
+
+
+def reading_of(reader: "Reader", rows: list, layers: dict[int, PageLayer], period: str, metric: str, basis: str | None,
+               anywhere: bool = True) -> Reading:
+    """One reader's figure for the pair, with the proof the rule needs: the basis proven from a title (rows with no proven
+    basis are never taken), the printed cell found in the text layer on its row and column, the source and the printed precision."""
     from .pdf_referee import figure_for
     got = figure_for(rows, period, metric, basis)
     values = got["values"]
     if not values:
+        theirs = _other(basis)
+        if theirs and figure_for(rows, period, metric, theirs)["values"]:
+            return Reading(reader.name, reader.family, "otherbasis", note=f"the figure is printed on the {theirs} basis only")
         return Reading(reader.name, reader.family, "none", note=got.get("unsure", "") or "no row")
     distinct: list[float] = []
     for v, _, _ in values:
@@ -264,21 +395,28 @@ def reading_of(reader: "Reader", rows: list, layers: dict[int, PageLayer], perio
     value, label, page = values[0]
     layer = layers.get(page)
     has_layer = bool(layer and layer.has_layer)
-    printed = _printed(rows, metric, value, label, page)
-    verbatim = bool(has_layer and printed is not None and round(abs(printed), 4) in layer.numbers)
-    source = "textlayer" if verbatim else "ocr"
-    return Reading(reader.name, family_of(reader, source, verbatim), "ok", value, verbatim, has_layer, source, label, page)
-
-
-def _printed(rows: list, metric: str, value: float, label: str, page: int) -> float | None:
-    """The figure as printed (before unit conversion) of the row that gave ``value``."""
+    token = ""
+    unit = 1.0
     for r in rows:
-        if r.metric == metric and r.page == page and r.label[:60] == label:
-            if metric == "eps":
-                return value
-            if r.unit:
-                return value * r.unit
-    return None
+        if r.metric != metric or r.page != page or r.label[:60] != label or (basis and r.basis != basis):
+            continue
+        if metric != "eps" and not r.unit:
+            continue
+        unit = 1.0 if metric == "eps" else r.unit
+        printed = value * unit
+        seq = r.aligned if r.aligned is not None else r.figures
+        k = _period_index(r, period)
+        if k is not None and k < len(seq) and seq[k] is not None and layer is not None \
+                and abs(seq[k] - printed) <= 1e-9 * max(1.0, abs(printed)):
+            token = cell_in_layer(layer, r.label, r.basis, printed, k, len(seq), anywhere)
+        if token:
+            break
+    verbatim = bool(token)
+    source = "textlayer" if verbatim else "ocr"
+    decimals = len(token.split(".")[1].strip(")")) if "." in token else 0
+    tol = 0.5 * 10 ** -(decimals if verbatim else 2) / unit
+    return Reading(reader.name, family_of(reader, source, verbatim), "ok", value, verbatim, has_layer, source, label, page,
+                   tol=tol)
 
 
 # --- the page sub-PDF and the pages of a statement ---------------------------------------------------------------
@@ -293,7 +431,9 @@ def page_layers(pdf_bytes: bytes, limit: int = 80) -> dict[int, PageLayer]:
     layers: dict[int, PageLayer] = {}
     with pymupdf.open(stream=pdf_bytes, filetype="pdf") as doc:
         for i in range(min(doc.page_count, limit)):
-            layers[i + 1] = page_layer(doc[i].get_text())
+            layer = page_layer(doc[i].get_text())
+            layer.words = [(w[0], w[1], w[2], w[3], w[4]) for w in doc[i].get_text("words")]
+            layers[i + 1] = layer
     return layers
 
 
@@ -949,9 +1089,10 @@ class Ensemble:
     def _load(self, key: str, payload: bytes) -> dict:
         if key in self.cache:
             return self.cache[key]
-        entry: dict = {"layers": {}, "rows": {}}
+        entry: dict = {"layers": {}, "rows": {}, "anywhere": True}
         try:
             entry["layers"] = page_layers(payload)
+            entry["anywhere"] = consolidated_anywhere(entry["layers"])      # one basis context for every reader
             pages = statement_pages(entry["layers"])
         except Exception as exc:   # noqa: BLE001 - an unreadable PDF is a reason, not a stop
             log.warning("pdf readers: layers failed (%s)", type(exc).__name__)
@@ -960,7 +1101,7 @@ class Ensemble:
             reader = READERS[name]
             if self.tables_dir and not isinstance(reader, NativeReader):
                 status, tables = self._stored(name, key)
-                entry["rows"][name] = (status, tables_to_rows(tables, entry["layers"]) if status == "ok" else tables)
+                entry["rows"][name] = (status, tables_to_rows(tables, entry["layers"], entry["anywhere"]) if status == "ok" else tables)
                 continue
             if not reader.available():
                 entry["rows"][name] = ("unavailable", None)
@@ -974,7 +1115,7 @@ class Ensemble:
                     entry["rows"][name] = ("none", [])
                 else:
                     tables = reader.read_tables(payload, pages)
-                    entry["rows"][name] = ("ok", tables_to_rows(tables, entry["layers"]))
+                    entry["rows"][name] = ("ok", tables_to_rows(tables, entry["layers"], entry["anywhere"]))
             except Exception as exc:   # noqa: BLE001 - one reader failing leaves the others
                 log.warning("pdf reader %s failed: %s", name, exc)
                 entry["rows"][name] = ("error", f"{type(exc).__name__}")
@@ -994,7 +1135,7 @@ class Ensemble:
             elif not rows:
                 out.append(Reading(name, reader.family, "none", note="no results row"))
             else:
-                out.append(reading_of(reader, rows, entry["layers"], period, metric, basis))
+                out.append(reading_of(reader, rows, entry["layers"], period, metric, basis, entry["anywhere"]))
         return out
 
 
@@ -1003,6 +1144,10 @@ def referee_pair_ensemble(src, row: dict, out: dict, listed: list, ours: float, 
     ``Sources`` (it downloads and caches the PDFs); ``out`` is the verdict dict being filled."""
     from .pdf_referee import MAX_CANDIDATES, verdict_of
     period, metric = row["period"], row["metric"]
+    if not row.get("basis"):
+        out["reason"] = "the pair names no basis: a figure's basis cannot be proven"
+        out["pdf_verdict"] = "pdf_unsure"
+        return out
     reasons: list[str] = []
     unsure: list[str] = []
     for f in listed[:MAX_CANDIDATES]:

@@ -1017,10 +1017,11 @@ jobs:
       - name: Take the newest referee artifact (screener-referee, or tijori-referee with ids=tijori)
         env:
           GH_TOKEN: ${{ github.token }}
+          IDS: ${{ inputs.ids }}
         run: |
           mkdir -p "$RUNNER_TEMP/in" "$RUNNER_TEMP/pdfs"
           name=screener-referee
-          if [ "${{ inputs.ids }}" = "tijori" ]; then name=tijori-referee; fi
+          if [ "$IDS" = "tijori" ]; then name=tijori-referee; fi
           id=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=$name&per_page=30" --jq '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | last | .id // empty')
           if [ -z "$id" ]; then echo "::error::no unexpired $name artifact: run it first"; exit 1; fi
           gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$id/zip" > "$RUNNER_TEMP/in/artifact.zip"

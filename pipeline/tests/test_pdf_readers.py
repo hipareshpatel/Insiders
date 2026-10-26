@@ -43,7 +43,7 @@ def test_a_different_value_from_any_reader_keeps_it_open():
 
 
 def test_readings_within_the_referees_precision_agree():
-    v = prd.settle([reading("native", "textlayer-native", 120.5), reading("camelot", "camelot", 120.48)])
+    v = prd.settle([reading("native", "textlayer-native", 120.5), reading("camelot", "camelot", 120.504)])
     assert v.status == "settled"
     assert prd.settle([reading("a", "x", 120.5), reading("b", "y", 120.9)]).status == "disagree"
 
@@ -82,8 +82,8 @@ def test_scanned_page_agreement_is_a_lead_not_a_verdict():
 
 # --- tables to rows, units, the page layer -----------------------------------------------------------------------------
 
-def grid(unit="(Rs. in crore)", revenue=("120.50", "110.25", "100.10", "230.75", "440.00")):
-    return [[unit], ["", "Quarter ended", "Quarter ended", "Quarter ended", "Half year ended", "Year ended"],
+def grid(unit="(Rs. in crore)", title=None, revenue=("120.50", "110.25", "100.10", "230.75", "440.00")):
+    return ([[title]] if title else []) + [[unit], ["", "Quarter ended", "Quarter ended", "Quarter ended", "Half year ended", "Year ended"],
             ["Particulars", "30.09.2026", "30.06.2026", "30.09.2025", "30.09.2026", "31.03.2026"],
             ["Revenue from operations", *revenue]]
 
@@ -115,7 +115,7 @@ def run_pair(pdf, **kw):
 
 
 def test_unit_conversion_lakh_and_crore_agree(monkeypatch):
-    lakh = grid("(Rs. in lakhs)", ("12,050.00", "11,025.00", "10,010.00", "23,075.00", "44,000.00"))
+    lakh = grid("(Rs. in lakhs)", revenue=("12,050.00", "11,025.00", "10,010.00", "23,075.00", "44,000.00"))
     layers = {1: prd.page_layer("x" * 60)}
     crore_rows = prd.tables_to_rows([prd.Table("a", 1, grid())], layers)
     lakh_rows = prd.tables_to_rows([prd.Table("b", 1, lakh)], layers)
@@ -160,7 +160,8 @@ def test_digits_missing_from_the_text_layer_never_settle(monkeypatch):
 def test_a_page_without_a_text_layer_gives_a_scanned_lead(monkeypatch):
     doc = pymupdf.open()
     doc.new_page(width=900, height=842)
-    install(monkeypatch, FakeReader("a", "fa", grid(), ocr_family="ocr1"), FakeReader("b", "fb", grid(), ocr_family="ocr2"))
+    titled = grid(title="Statement of Standalone Unaudited Financial Results")
+    install(monkeypatch, FakeReader("a", "fa", titled, ocr_family="ocr1"), FakeReader("b", "fb", titled, ocr_family="ocr2"))
     row = run_pair(doc.tobytes())
     assert row["pdf_verdict"] == "pdf_scanned_lead" and row["pdf_value"] == pytest.approx(120.5)
     summary = pr.summarise([row], {"lists": 1, "pdfs": 1}, 1)
@@ -258,3 +259,85 @@ def test_a_reader_missing_its_package_writes_unavailable_for_every_pdf(monkeypat
     monkeypatch.setattr(prd, "READERS", {"docling": FakeReader("docling", "docling", None)})
     prd.read_all("docling", str(tmp_path), str(tmp_path / "o.json"))
     assert json.loads((tmp_path / "o.json").read_text())["pdfs"]["k1"]["error"] == "unavailable"
+
+
+# --- independent review fixes: basis, vetoes, cell-level proof, exact tolerance -----------------------------------------
+
+CONSOLIDATED_PAGE = [
+    "Statement of Consolidated Unaudited Financial Results for the quarter ended 30 September 2026",
+    *STANDALONE_PAGE[1:3],
+    "Particulars 30.09.2026 30.06.2026 30.09.2025 30.09.2026 31.03.2026",
+    "1 Revenue from operations 999.50 110.25 100.10 230.75 440.00",
+    "2 Other income 1.10 1.00 0.90 2.10 4.00",
+    "Note: the standalone results are available on the company website.",
+]
+TITLED = "Statement of Standalone Unaudited Financial Results"
+
+
+def test_untitled_grids_never_default_to_standalone_on_a_consolidated_document(monkeypatch):
+    g = grid(revenue=("999.50", "110.25", "100.10", "230.75", "440.00"))
+    install(monkeypatch, FakeReader("a", "fa", g), FakeReader("b", "fb", g), native=True)
+    row = run_pair(make_pdf(CONSOLIDATED_PAGE), ours=999.5, theirs=120.5)
+    assert row["pdf_verdict"] != "pdf_matches_ours"
+    assert row["pdf_verdict"] == "pdf_disagree"                      # native sees the figure only on the other basis
+    assert "disagreed=native" in row["readers"] and "abstained=a(none)+b(none)" in row["readers"]
+
+
+def test_a_reader_with_the_figure_on_the_other_basis_vetoes():
+    other = prd.Reading("native", "textlayer-native", "otherbasis", note="CONSOLIDATED only")
+    v = prd.settle([reading("a", "fa"), reading("b", "fb"), other])
+    assert v.status == "disagree" and v.disagreed == ["native"]
+    assert prd.settle([other]).status == "disagree"
+
+
+def test_a_readers_conflicting_rows_veto_while_an_unproven_column_only_abstains():
+    conflict = prd.Reading("tabula", "tabula", "conflict", note="rows differ: 1, 2")
+    v = prd.settle([reading("a", "fa"), reading("b", "fb"), conflict])
+    assert v.status == "unsure" and "tabula" in v.reason
+    none = prd.Reading("tabula", "tabula", "none")
+    assert prd.settle([reading("a", "fa"), reading("b", "fb"), none]).status == "settled"
+
+
+def test_agreement_is_exact_at_the_printed_precision_and_transitive():
+    assert prd.settle([reading("a", "fa", 12345.67), reading("b", "fb", 12349.00)]).status == "disagree"   # not 0.05%
+    assert prd.settle([reading("a", "fa", 100.00), reading("b", "fb", 100.004)]).status == "settled"
+    chain = prd.settle([reading("a", "fa", 100.000), reading("b", "fb", 100.004), reading("c", "fc", 100.008)])
+    assert chain.status == "disagree"                                # a-c differ by more than half a unit
+    coarse = [prd.Reading("a", "fa", "ok", 120.5, True, True, "textlayer", "Revenue", 1, tol=0.05),
+              prd.Reading("b", "fb", "ok", 120.52, True, True, "textlayer", "Revenue", 1, tol=0.005)]
+    assert prd.settle(coarse).status == "settled"                    # one reader prints one decimal: the coarser one rules
+
+
+def test_the_settled_value_comes_from_a_text_layer_reader():
+    docling = prd.Reading("docling", "paddle", "ok", 5000.004, False, True, "ocr", "Revenue", 1)
+    v = prd.settle([docling, reading("native", "textlayer-native", 5000.0), reading("camelot", "camelot", 5000.0)])
+    assert v.status == "settled" and v.value == 5000.0 and v.agreed == ["native", "camelot"]
+
+
+TWO_BASES = [
+    "Statement of Consolidated Unaudited Financial Results", "(Rs. in crore)",
+    "Quarter ended Quarter ended Quarter ended Half year ended Year ended",
+    "Particulars 30.09.2026 30.06.2026 30.09.2025 30.09.2026 31.03.2026",
+    "Revenue from operations 999.50 110.25 100.10 230.75 440.00",
+    "Other income 777.00 1.00 0.90 2.10 4.00",
+    "Statement of Standalone Unaudited Financial Results", "(Rs. in crore)",
+    "Quarter ended Quarter ended Quarter ended Half year ended Year ended",
+    "Particulars 30.09.2026 30.06.2026 30.09.2025 30.09.2026 31.03.2026",
+    "Revenue from operations 120.50 111.00 100.10 230.75 440.00",
+]
+
+
+def test_the_digits_must_be_on_the_same_row_column_and_basis_in_the_layer(monkeypatch):
+    def attempt(revenue):
+        g = grid(title=TITLED, revenue=revenue)
+        install(monkeypatch, FakeReader("a", "fa", g), FakeReader("b", "fb", g))
+        return run_pair(make_pdf(TWO_BASES), ours=revenue[0].replace(",", ""), theirs=1.0)
+
+    good = attempt(("120.50", "111.00", "100.10", "230.75", "440.00"))
+    assert good["pdf_verdict"] == "pdf_matches_ours"
+    # 999.50 is in the layer, on the consolidated revenue row: the wrong basis for a standalone pair
+    assert attempt(("999.50", "111.00", "100.10", "230.75", "440.00"))["pdf_verdict"] == "pdf_unsure"
+    # 777.00 is in the layer on the "Other income" row, not the revenue row
+    assert attempt(("777.00", "111.00", "100.10", "230.75", "440.00"))["pdf_verdict"] == "pdf_unsure"
+    # 111.00 is on the revenue row but in the second column, not the period's
+    assert attempt(("111.00", "111.00", "100.10", "230.75", "440.00"))["pdf_verdict"] == "pdf_unsure"

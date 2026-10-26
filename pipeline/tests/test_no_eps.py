@@ -48,31 +48,69 @@ def test_a_card_line_that_states_eps_is_dropped_and_a_dividend_per_share_stays()
                why_it_matters=[{"text": "Earnings per share fell 18% YoY.", "basis": "FILING"}, {"text": "Margin held.", "basis": "FILING"}],
                key_numbers=[{"label": "EPS", "value": "₹7.00 per share", "change": "-18% YoY"},
                             {"label": "Dividend", "value": "₹2 per share"}, {"label": "PAT", "value": "₹70 Cr"}])
-    dropped = no_eps.drop_eps(out)
+    no_eps.drop_eps(out)
     card = out.card
     assert [f.text for f in card.what_happened] == ["Revenue ₹1,100 Cr.", "Dividend of ₹2 per share declared."]
     assert [i.text for i in card.why_it_matters] == ["Margin held."]
     assert [k.label for k in card.key_numbers] == ["Dividend", "PAT"]
-    assert len(dropped) == 4   # the takeaway, copied from the dropped insight, is rebuilt too
 
 
-def test_an_eps_clause_is_cut_from_a_headline_and_a_card_with_no_eps_is_untouched():
-    out = _out(headline="Acme Q2FY27: revenue ₹1,100 Cr, EPS ₹7.00 (-18% YoY)")
-    assert no_eps.drop_eps(out) == ["headline: EPS clause"]
-    assert out.card.headline == "Acme Q2FY27: revenue ₹1,100 Cr"
-    assert no_eps.drop_eps(_out()) == []
+PARITY = [   # the same list is in web/test/cardText.test.ts: the Python and the web code must give the same answer (None: item dropped)
+    ("Revenue ₹100 Cr, EPS ₹5 and net interest margin 3%", None),
+    ("EPS ₹5, NIM 3%", None),
+    ("Revenue ₹10 Cr (EPS ₹5)", None),
+    ("Revenue ₹1,200 Cr, up 10%, EPS ₹5.2 (+8% YoY)", "Revenue ₹1,200 Cr, up 10%"),
+    ("Revenue ₹10 Cr — basic and diluted EPS ₹2.1 vs ₹1.9 a year ago", "Revenue ₹10 Cr"),
+    ("Revenue ₹10 Cr | Diluted EPS ₹3", "Revenue ₹10 Cr"),
+    ("Revenue ₹10 Cr, earnings per share ₹५.२", "Revenue ₹10 Cr"),
+    ("Revenue ₹5 Cr; profit after tax per share ₹3", "Revenue ₹5 Cr"),
+    ("Revenue ₹5 Cr, PAT/share ₹3", "Revenue ₹5 Cr"),
+    ("Revenue ₹5 Cr, earnings of ₹ 5 / share", "Revenue ₹5 Cr"),
+    ("Revenue ₹5 Cr, earnings per ₹10 share 4", "Revenue ₹5 Cr"),
+    ("Net profit ₹5 Cr, Earnings per equity share of ₹10 each: 4.5", "Net profit ₹5 Cr"),
+    ("Dividend ₹2 per share", "Dividend ₹2 per share"),
+    ("Book value per share ₹40", "Book value per share ₹40"),
+    ("Revenue ₹5 Cr, NAV per share ₹12", "Revenue ₹5 Cr, NAV per share ₹12"),
+    ("earnings ₹5 per share", None),
+    ("Revenue ₹5 Cr, earning ₹5/share", "Revenue ₹5 Cr"),
+    ("Acme: dividend ₹2 per share and EPS ₹7", None),
+    ("Revenue ₹5 Cr, EPS ₹2.10, up 12%", None),
+    ("Revenue ₹5 Cr, profit/share ₹4", "Revenue ₹5 Cr"),
+    ("Revenue ₹5 Cr, EPS 2.1 (vs 1.9 a year ago)", "Revenue ₹5 Cr"),
+    ("Revenue ₹10 Cr, EPS ₹2.1 and PAT ₹5 Cr", None),
+    ("Acme Q1FY27 EPS rises 12% to ₹5.2", None),
+    ("Revenue ₹5 Cr, EPS (basic) ₹3", "Revenue ₹5 Cr"),
+    ("Revenue ₹5 Cr, EPS of Rs. 2.10/- per share", "Revenue ₹5 Cr"),
+    ("Net profit ₹46 Cr", "Net profit ₹46 Cr"),
+]
 
 
-def test_a_line_with_profit_and_eps_keeps_the_profit():
-    from bse_intel.no_eps import _scrub
-    assert _scrub("Net profit ₹50.2 Cr, up 12% YoY, EPS ₹2.10") == "Net profit ₹50.2 Cr, up 12% YoY"
-    assert _scrub("EPS ₹2.10, up 12%") == "EPS ₹2.10, up 12%"     # about nothing else: the caller drops the line
+def test_python_and_the_web_twin_agree_on_a_shared_list():
+    for text, expected in PARITY:
+        assert no_eps.cut_text(text) == expected, text
 
 
-def test_a_card_line_with_profit_and_eps_loses_only_the_eps():
-    out = _out(what_happened=[{"text": "Net profit ₹70 Cr, down 18% YoY, EPS ₹7.00", "quote": "70"}])
+def test_eps_in_the_middle_of_a_sentence_drops_the_item_so_no_figure_is_misattributed():
+    for t in ["Revenue ₹100 Cr, EPS ₹5 and net interest margin 3%", "EPS ₹5, NIM 3%", "Revenue ₹10 Cr, EPS ₹5, AUM ₹2,000 Cr",
+              "Acme: dividend ₹2 per share and EPS ₹7", "Revenue ₹10 Cr (EPS ₹5)", "Revenue ₹10 Cr, EPS ₹2.1 and PAT ₹5 Cr", "Basic EPS ₹2.1, up 12%"]:
+        assert no_eps.cut_text(t) is None, t
+    out = _out(what_happened=[{"text": "Revenue ₹100 Cr, EPS ₹5 and net interest margin 3%", "quote": "100"}, {"text": "PAT ₹5 Cr.", "quote": "5"}],
+               why_it_matters=[{"text": "EPS ₹5, NIM 3%", "basis": "FILING"}],
+               missing_disclosures=["EPS ₹5 and AUM not given", "Order book not given"])
     no_eps.drop_eps(out)
-    assert [f.text for f in out.card.what_happened] == ["Net profit ₹70 Cr, down 18% YoY"]
+    assert [f.text for f in out.card.what_happened] == ["PAT ₹5 Cr."]
+    assert out.card.why_it_matters == [] and out.card.missing_disclosures == ["Order book not given"]
+
+
+def test_a_trailing_eps_clause_is_cut_with_its_separator_and_dangling_words():
+    assert no_eps.cut_text("Revenue ₹1,200 Cr, up 10%, EPS ₹5.2 (+8% YoY)") == "Revenue ₹1,200 Cr, up 10%"
+    assert no_eps.cut_text("Revenue ₹10 Cr — basic and diluted EPS ₹2.1 vs ₹1.9 a year ago") == "Revenue ₹10 Cr"
+    assert no_eps.cut_text("Revenue ₹10 Cr; net EPS ₹2") == "Revenue ₹10 Cr"
+    assert no_eps.cut_text("EPS ₹2.10") is None                  # about nothing else
+    out = _out(what_happened=[{"text": "Net profit ₹70 Cr, down 18% YoY, EPS ₹7.00", "quote": "Net profit 70, EPS 7.00"}])
+    no_eps.drop_eps(out)
+    fact = out.card.what_happened[0]
+    assert fact.text == "Net profit ₹70 Cr, down 18% YoY" and fact.quote == "Net profit 70, EPS 7.00"   # the quote is left as it is
 
 
 def test_a_headline_takeaway_and_timeline_that_are_about_eps_are_rebuilt_without_it():
@@ -87,14 +125,24 @@ def test_a_headline_takeaway_and_timeline_that_are_about_eps_are_rebuilt_without
     assert not no_eps.mentions_eps(out.timeline_entry) and out.timeline_entry == card.headline
 
 
+def test_a_headline_with_a_trailing_eps_clause_is_cut_and_a_headline_with_a_figure_before_eps_is_rebuilt():
+    out = _out(headline="Acme Q2FY27: revenue ₹1,100 Cr, EPS ₹7.00 (-18% YoY)")
+    assert no_eps.drop_eps(out) == ["headline: EPS clause"]
+    assert out.card.headline == "Acme Q2FY27: revenue ₹1,100 Cr"
+    assert no_eps.drop_eps(_out()) == []
+    out = _out(headline="Acme Q2FY27 revenue ₹1,100 Cr and EPS ₹7", what_happened=[{"text": "PAT ₹70 Cr.", "quote": "70"}])
+    no_eps.drop_eps(out)
+    assert out.card.headline == "Acme Q2FY27: PAT ₹70 Cr"
+
+
 def test_with_nothing_else_to_say_the_headline_is_the_company_and_period_and_takeaway_may_be_empty():
     out = _out(headline="Acme Q1FY27 EPS rises 12% to ₹5.2", takeaway="EPS ₹5.2 up 12%", core_catalyst="EPS up",
                what_happened=[{"text": "EPS rose 12% to ₹5.2.", "quote": "5.2"}])
     no_eps.drop_eps(out)
     card = out.card
     assert card.headline == "Acme Q1FY27: results"
-    assert len(card.what_happened) == 1 and not no_eps.mentions_eps(card.what_happened[0].text)
-    assert card.takeaway == "Acme Q1FY27: results" or card.takeaway == ""
+    assert [f.text for f in card.what_happened] == ["Acme Q1FY27: results"]
+    assert card.takeaway in ("", "Acme Q1FY27: results") and card.core_catalyst in (None, "Acme Q1FY27: results")
     assert not no_eps.mentions_eps(card.takeaway) and not no_eps.mentions_eps(card.core_catalyst or "")
 
 
@@ -102,14 +150,6 @@ def test_the_what_happened_fallback_never_keeps_an_eps_line():
     out = _out(what_happened=[{"text": "Basic EPS ₹7.00 a share.", "quote": "7.00"}, {"text": "Diluted EPS ₹6.90.", "quote": "6.90"}])
     no_eps.drop_eps(out)
     assert [f.text for f in out.card.what_happened] == ["Acme Q2FY27: revenue ₹1,100 Cr"]
-
-
-def test_the_eps_clause_stops_at_and_or_another_metric_and_takes_a_bare_change_with_it():
-    from bse_intel.no_eps import _scrub
-    assert _scrub("Revenue ₹10 Cr, EPS ₹2.10 (+1.5% YoY) and PAT ₹5 Cr") == "Revenue ₹10 Cr and PAT ₹5 Cr"
-    assert _scrub("Revenue ₹10 Cr, EPS ₹2.1, up 12%") == "Revenue ₹10 Cr"
-    assert _scrub("Revenue ₹10 Cr, EPS ₹2.1, PAT ₹5 Cr") == "Revenue ₹10 Cr, PAT ₹5 Cr"
-    assert _scrub("Revenue ₹1,000 Cr, EPS ₹2.1; margin 12%") == "Revenue ₹1,000 Cr; margin 12%"
 
 
 def test_only_the_text_of_a_line_is_judged_not_its_quote():
@@ -121,48 +161,10 @@ def test_only_the_text_of_a_line_is_judged_not_its_quote():
 
 def test_more_ways_to_write_eps_and_the_per_share_figures_that_are_not():
     for t in ["E.P.S. ₹5", "earnings of ₹5 a share", "earnings/share ₹5", "PAT per share ₹3", "diluted earnings per ordinary share ₹4",
-              "Earnings per equity share 3"]:
+              "Earnings per equity share 3", "profit after tax per share ₹3", "PAT/share 3", "profit/share 3", "earnings ₹5 per share",
+              "earning ₹5/share", "earnings of ₹ 5 / share", "earnings per ₹10 share 4", "Earnings per equity share of ₹10 each 4.5",
+              "earnings per share ₹५.२"]:
         assert no_eps.mentions_eps(t), t
-    for t in ["Dividend ₹5 per share", "Book value per share ₹40", "NAV per share ₹12", "Issue price ₹10 per share", "Net profit ₹5 Cr"]:
+    for t in ["Dividend ₹5 per share", "DPS ₹5", "Book value per share ₹40", "NAV per share ₹12", "Issue price ₹10 per share",
+              "Net profit ₹5 Cr", "Interim dividend 250% (₹2.5 a share)", "Final dividend of ₹५ per share"]:
         assert not no_eps.mentions_eps(t), t
-
-
-def test_a_full_stop_after_rs_or_before_a_digit_does_not_end_the_eps_clause():
-    from bse_intel.no_eps import _scrub
-    assert _scrub("Revenue ₹10 Cr, EPS Rs. 2.10, PAT ₹3 Cr") == "Revenue ₹10 Cr, PAT ₹3 Cr"
-    assert _scrub("Revenue ₹10 Cr, EPS of Rs. 2.10/- per share, PAT ₹3 Cr") == "Revenue ₹10 Cr, PAT ₹3 Cr"
-    assert _scrub("Revenue ₹10 Cr, EPS INR. 2.10 and PAT ₹3 Cr") == "Revenue ₹10 Cr and PAT ₹3 Cr"
-
-
-def test_an_and_ends_the_eps_clause_only_before_a_metric_and_a_half_comparison_drops_the_line():
-    from bse_intel.no_eps import _scrub
-    assert _scrub("Revenue ₹10 Cr, EPS ₹2.10 vs ₹1.50 and ₹1.20 a year ago, up 12%") == "Revenue ₹10 Cr"
-    assert _scrub("Revenue ₹10 Cr, EPS ₹2.10 and PAT ₹5 Cr") == "Revenue ₹10 Cr and PAT ₹5 Cr"
-    # what is left would be a comparison with nothing compared: the text stays and the caller drops the line
-    assert _scrub("Revenue ₹10 Cr, EPS ₹2.10 vs profit ₹1.50, vs ₹1.20 a year ago") == "Revenue ₹10 Cr, EPS ₹2.10 vs profit ₹1.50, vs ₹1.20 a year ago"
-
-
-def test_eps_in_the_middle_of_a_headline_is_cut_with_its_conjunction_and_the_dividend_stays():
-    out = _out(headline="Acme: dividend ₹2 per share and EPS ₹7", what_happened=[{"text": "Dividend ₹2 per share", "quote": "2"}])
-    no_eps.drop_eps(out)
-    assert out.card.headline == "Acme: dividend ₹2 per share"
-    from bse_intel.no_eps import _scrub
-    assert _scrub("Acme: dividend ₹2 per share with EPS ₹7, up 5%") == "Acme: dividend ₹2 per share"
-    assert _scrub("Acme Q1FY27 EPS rises 12% to ₹5.2") == "Acme Q1FY27 EPS rises 12% to ₹5.2"   # only a period before it: rebuilt later
-
-
-def test_a_leading_eps_clause_gives_way_to_the_metric_after_it():
-    from bse_intel.no_eps import _scrub
-    assert _scrub("EPS ₹2.1 and revenue ₹10 Cr") == "Revenue ₹10 Cr"
-    assert _scrub("EPS ₹2.1, revenue ₹10 Cr") == "Revenue ₹10 Cr"
-    assert _scrub("Basic EPS ₹2.1, up 12%, PAT ₹4 Cr") == "PAT ₹4 Cr"
-
-
-def test_a_cut_line_loses_the_eps_from_its_quote_when_the_rest_is_still_a_stretch_of_the_filing():
-    out = _out(what_happened=[{"text": "Revenue ₹10 Cr, EPS ₹2.1", "quote": "Revenue 10 Cr. Basic EPS 2.1"},
-                              {"text": "Revenue ₹10 Cr, EPS ₹2.1, PAT ₹3 Cr", "quote": "Revenue 10 Cr, EPS 2.1, PAT 3 Cr"}])
-    no_eps.drop_eps(out)
-    first, second = out.card.what_happened
-    assert first.text == "Revenue ₹10 Cr" and first.quote == "Revenue 10 Cr."
-    # both figures are not in one piece of the quote: the original quote stays (it shows on hover only) so grounding holds nothing
-    assert second.text == "Revenue ₹10 Cr, PAT ₹3 Cr" and second.quote == "Revenue 10 Cr, EPS 2.1, PAT 3 Cr"

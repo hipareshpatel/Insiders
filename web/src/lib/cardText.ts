@@ -175,124 +175,105 @@ export function governanceFlags(text: string): string[] {
 }
 
 /** Owner rule 26 Oct 2026: no EPS on cards or stock pages. True when a line of a stored card states earnings per share
- * ("EPS", "E.P.S.", "earnings per share", "earnings/share", "earnings of ₹5 a share", "profit per share", "PAT per share");
- * a dividend, book value, NAV or price per share is not EPS and stays. Same pattern as pipeline no_eps.py EPS_WORDS. */
-const SHARE = "(?:(?:equity|ordinary|diluted|basic)\\s+)*share";
-const EPS_SOURCE = "\\b(?:eps\\b|e\\.p\\.s\\b\\.?|(?:diluted\\s+|basic\\s+)?earnings?(?:\\s+(?:per|a|each)\\s+|\\s*/\\s*)" + SHARE
-  + "|earnings?\\s+of\\s+(?:rs\\.?\\s*|inr\\s*|₹\\s*)?[\\d.,]+\\s*(?:/-)?\\s*(?:per|a|each)\\s+" + SHARE
-  + "|(?:net\\s+)?(?:profit|income|pat)\\s+per\\s+" + SHARE + "|per[\\s-]share\\s+(?:earnings|profit|income))(?!\\w)";
-export const EPS_TEXT = new RegExp(EPS_SOURCE, "i");
-const EPS_AT = new RegExp(EPS_SOURCE, "iy");
+ * ("EPS", "E.P.S.", "earnings per share", "earnings/share", "earnings ₹5 per share", "earnings per ₹10 share", "profit per
+ * share", "profit after tax per share", "PAT/share"); a dividend, DPS, book value, NAV or price per share is not EPS and
+ * stays. Same pattern as pipeline no_eps.py EPS_WORDS; digits are Unicode (\p{Nd}) on both sides. */
+const D = "\\d";
+const AMT = "(?:(?:rs\\.?|inr|₹)\\s*)?\\d[\\d.,]*\\s*(?:/-)?";
+const PER = "(?:\\s+(?:per|a|each)\\s+|\\s*/\\s*)";
+const SHARE = "(?:(?:rs\\.?|inr|₹)\\s*\\d[\\d.,]*\\s*(?:/-)?\\s+)?(?:(?:equity|ordinary|diluted|basic)\\s+)*share"
+  + "(?:\\s+of\\s+(?:rs\\.?|inr|₹)\\s*\\d[\\d.,]*(?:\\s*/-)?(?:\\s+each)?)?";
+const QUAL = "(?:\\s*\\([^)]{0,40}\\))?";
+const EPS_SOURCE = ("(?<![\\p{L}\\p{N}_])(?:eps|e\\.p\\.s\\.?|"
+  + "(?:diluted\\s+|basic\\s+)?earnings?" + QUAL + PER + SHARE + "|"
+  + "earnings?\\s+(?:of\\s+)?" + AMT + PER + SHARE + "|"
+  + "(?:profit|pat)\\s+(?:of\\s+)?" + AMT + PER + SHARE + "|"
+  + "(?:net\\s+)?(?:profit(?:\\s+after\\s+tax)?|income|pat)" + QUAL + PER + SHARE + "|"
+  + "per[\\s-]share\\s+(?:earnings|profit|income))(?![\\p{L}\\p{N}_])").split(D).join("\\p{Nd}");
+export const EPS_TEXT = new RegExp(EPS_SOURCE, "iu");
 export const statesEps = (...texts: (string | null | undefined)[]): boolean => texts.some((t) => !!t && EPS_TEXT.test(t));
 
-const METRIC_SRC = "(?:revenue|sales|pat|pbt|profit|ebitda|ebit|margins?|income|turnover|dividend|order|net\\s+worth|debt)\\b";
-const METRIC = new RegExp("^" + METRIC_SRC, "i");
-const METRIC_ANY = new RegExp("\\b" + METRIC_SRC, "i");
-const AND_AT = new RegExp("^\\s+and\\s+(?=" + METRIC_SRC + ")", "i");   // " and " ends the clause only when a metric follows
-const ABBREV = new Set(["rs", "re", "inr", "no", "nos"]);
-const PERIOD = /\b(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2,4}(?:-\d{2})?\b|\b(?:Q[1-4]|H[12]|9M)\b|\b20\d{2}(?:-\d{2})?\b/gi;
-const ORPHAN = /\bvs\.?\s|\bversus\b|year[\s-]ago|\ba\s+year\s+(?:ago|earlier)\b/i;
-const isDigit = (c: string | undefined) => c !== undefined && c >= "0" && c <= "9";
+// the separators a trailing EPS clause may follow: ", " "; " " — " " | "
+const SEP = /,\s|;\s|\s[—–|]\s/g;
+const LEAD_WORDS = /^(?:\s*\b(?:basic|diluted|and|net|adjusted|reported|with|plus)\b|\s*&)*\s*$/i;
+const DANGLE = /(?:[\s,;:\-—–|(]+|\s+(?:basic|diluted|and|net)$)$/i;
+// the only words a trailing EPS clause may carry after the EPS words: its figure, its change and its comparison
+const CLAUSE_WORDS = new Set(("rs re inr cr crore crores lakh lakhs mn million bn billion bps pp x per share shares a an each of vs versus from to up down "
+  + "rose fell yoy qoq yr yrs year years ago earlier prior previous last compared with at was were is in the quarter quarters "
+  + "q fy h m basic diluted and or grew growth growing increase increased decrease decreased decline declined declining "
+  + "dropped higher lower rise rising falling on by").split(" "));
 
-/** Mirrors pipeline no_eps.py `_stop`: ; or , (not inside a number), a full stop that is not a decimal point, not the dot of
- * "Rs." / "Re." / "INR." / "No." and not one followed by a space and a digit ("EPS Rs. 2.10"). */
-function stopsAt(text: string, j: number): boolean {
-  const c = text[j];
-  if (c === ";") return true;
-  if (c === ",") return !(isDigit(text[j + 1]) && isDigit(text[j - 1]));
-  if (c !== "." || isDigit(text[j + 1])) return false;
-  const word = /(\w+)$/.exec(text.slice(0, j));
-  if (word && ABBREV.has(word[1].toLowerCase())) return false;
-  return !(text[j + 1] === " " && isDigit(text[j + 2]));
-}
-
-function clauseEnd(text: string, from: number): number {
+function balanced(text: string): boolean {
   let depth = 0;
-  for (let j = from; j < text.length; j++) {
-    const c = text[j];
+  for (const c of text) {
     if (c === "(" || c === "[") depth++;
-    else if (c === ")" || c === "]") depth = Math.max(0, depth - 1);
-    else if (depth === 0) {
-      if (stopsAt(text, j) || AND_AT.test(text.slice(j))) return j;
-      if (/\s/.test(c) && METRIC.test(text.slice(j + 1))) return j;
-    }
+    else if (c === ")" || c === "]") { depth--; if (depth < 0) return false; }
   }
-  return text.length;
+  return depth === 0;
 }
 
-function bareChanges(text: string, from: number): number {
-  let end = from;
-  while (end < text.length && text[end] === ",") {   // a bare change after it: ", up 12%", ", down 3% QoQ"
-    const next = clauseEnd(text, end + 1);
-    const piece = text.slice(end + 1, next);
-    if (!piece.trim() || METRIC_ANY.test(piece) || statesEps(piece)) break;
-    end = next;
-  }
-  return end;
-}
-
-const epsAt = (text: string, at: number): RegExpExecArray | null => { EPS_AT.lastIndex = at; return EPS_AT.exec(text); };
-
-function cutClauses(text: string): string {
-  let out = text;
-  for (let n = 0; n < 8; n++) {
-    const lead = /\s*[,;]\s*(?:(?:basic|diluted)\s+)?(?=\S)/gi;
-    let cut = false;
-    for (let m = lead.exec(out); m; m = lead.exec(out)) {
-      const eps = epsAt(out, m.index + m[0].length);
-      if (!eps) continue;
-      const end = bareChanges(out, clauseEnd(out, eps.index + eps[0].length));
-      out = out.slice(0, m.index) + out.slice(end);
-      cut = true;
-      break;
-    }
-    if (cut) continue;
-    // a sentence that opens with the EPS clause and goes on to a metric keeps that metric ("EPS ₹2.1, revenue ₹10 Cr")
-    const start = /^\s*(?:(?:basic|diluted)\s+)?/i.exec(out)![0].length;
-    const eps = epsAt(out, start);
-    if (!eps) break;
-    const end = bareChanges(out, clauseEnd(out, eps.index + eps[0].length));
-    const rest = out.slice(end).replace(/^\s*(?:[,;]|and\b)\s*/i, "");
-    if (!METRIC.test(rest)) break;
-    out = rest.charAt(0).toUpperCase() + rest.slice(1);
-  }
-  return out.trim();
-}
-
-/** EPS words mid-sentence after a part that already states something else ("Acme: dividend ₹2 per share and EPS ₹7"):
- * cut to the end of their clause and drop the "and" / "with" / ":" left hanging. */
-function cutMid(text: string): string {
+/** Mirrors pipeline no_eps.py `_trailing_cut`: the text without a TRAILING EPS clause (the EPS words start after the last
+ * ", " / "; " / " — " / " | " outside brackets and nothing but the clause follows: its figure, a bracketed change, "vs ₹x",
+ * "a year ago"); null when the EPS is anywhere else, so no figure can be given to the wrong metric. */
+function trailingCut(text: string): string | null {
   const m = EPS_TEXT.exec(text);
-  if (!m || !/\d/.test(text.slice(0, m.index).replace(PERIOD, " "))) return text;
-  const before = text.slice(0, m.index).replace(/[\s,;:-]+$/, "").replace(/(?:\s+(?:and|with|&|plus|but)|\s*[,;:])+$/i, "").replace(/[\s,;:-]+$/, "");
-  const end = bareChanges(text, clauseEnd(text, m.index + m[0].length));
-  const rest = text.slice(end);
-  const tail = rest.replace(/^\s*(?:[,;]|and\b)\s*/i, "");
-  return (METRIC.test(tail) ? before + rest.trimEnd() : before).trim();
+  if (!m) return text;
+  const depths: number[] = [];
+  let depth = 0;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (c === ")" || c === "]") depth = Math.max(0, depth - 1);
+    depths.push(depth);
+    if (c === "(" || c === "[") depth++;
+  }
+  let last: RegExpExecArray | null = null;
+  for (const sm of text.matchAll(SEP)) if (depths[sm.index!] === 0) last = sm as unknown as RegExpExecArray;
+  if (!last) return null;
+  const lastEnd = last.index! + last[0].length;
+  if (lastEnd > m.index || depths[m.index] !== 0) return null;
+  if (!LEAD_WORDS.test(text.slice(lastEnd, m.index))) return null;
+  const rest = text.slice(m.index + m[0].length);
+  if (statesEps(rest) || !balanced(rest)) return null;
+  const words = rest.replace(PERIOD_WORDS, " ").match(/[\p{L}\p{No}\p{Nl}]+/gu) ?? [];
+  if (words.some((w) => !CLAUSE_WORDS.has(w.toLowerCase()))) return null;
+  let prefix = text.slice(0, last.index);
+  for (;;) {
+    const cut = prefix.replace(DANGLE, "");
+    if (cut === prefix) break;
+    prefix = cut;
+  }
+  prefix = prefix.trimEnd();
+  return prefix && balanced(prefix) && !statesEps(prefix) ? prefix : null;
 }
 
-/** A piece that says "vs ₹1.50" or "a year ago" with no metric before it: what is left of a half-cut comparison. */
-function orphaned(text: string): boolean {
-  return text.split(/[;,](?!\d)/).some((piece) => {
-    const m = ORPHAN.exec(piece);
-    return !!m && !METRIC_ANY.test(piece.slice(0, m.index));
-  });
+/** Mirrors pipeline no_eps.py `cut_text`: the text unchanged without EPS, its trailing EPS clause cut when that is all there
+ * is, and null when it states EPS anywhere else (the item is then dropped: a wrong line is worse than a missing one). */
+export function trimEps(text: string): string | null {
+  if (!text || !statesEps(text)) return text;
+  const cut = trailingCut(text);
+  return cut && !statesEps(cut) ? cut : null;
 }
 
-/** The text with each ", EPS ₹2.10 (+1.5% YoY)" clause taken out, and the bare change after it (", up 12%"); a clause stops
- * before " and <metric>" or another metric. Same rule as pipeline no_eps.py `_scrub`: when EPS is all the text is about
- * (or is left after the cut, or only half a comparison would be) the text comes back unchanged. */
-export function cutEps(text: string): string {
-  if (!statesEps(text)) return text;
-  let out = cutClauses(text);
-  if (statesEps(out)) out = cutMid(out);
-  if (out !== text && orphaned(out)) return text;
-  return out && !statesEps(out) ? out : text;
+/** For text that is never hidden (a headline in a list or a tooltip): the trailing EPS clause cut, else as stored. */
+export const cutEps = (text: string): string => trimEps(text) ?? text;
+
+function headlineWithoutEps(headline: string, facts: string[]): string {
+  const m = EPS_TEXT.exec(headline);
+  let prefix = m ? headline.slice(0, m.index).replace(/^[\s:\-\u2013\u2014,;(]+|[\s:\-\u2013\u2014,;(]+$/g, "") : "";
+  if (prefix && /\d/.test(prefix.replace(PERIOD_WORDS, " "))) {
+    const p = new RegExp(PERIOD_WORDS.source, "i").exec(prefix);
+    prefix = p ? prefix.slice(0, p.index + p[0].length).replace(/[\s:\-\u2013\u2014,;(]+$/, "") : "";
+  }
+  const fact = facts.map((f) => f.trim().replace(/\.$/, "")).find((f) => f && !statesEps(f)) ?? "";
+  if (fact && prefix && fact.toLowerCase().startsWith(prefix.toLowerCase())) prefix = "";
+  const line = prefix && fact ? `${prefix}: ${fact}` : fact || (prefix ? `${prefix}: results` : "Quarterly results announced");
+  return line.length >= 8 ? line : "Quarterly results announced";
 }
 
-/** A stored card as a reader sees it under the owner's no-EPS rule: lists lose their EPS items (and `parts` is re-indexed so
- * it still points at the right lines), a headline, takeaway or core catalyst that states EPS loses the clause (the headline
- * is never hidden; if EPS is all it says it stays as stored). */
+/** A stored card as a reader sees it under the owner's no-EPS rule, the same item rule as the pipeline (`drop_eps`): an item
+ * whose text states EPS is dropped whole, except a trailing EPS clause, which is cut; `parts` is re-indexed so it still
+ * points at the right lines. A headline that cannot be cut is rebuilt from the company and period and the first line left;
+ * a takeaway or core catalyst that cannot be cut is left off (the face falls back to the insights). */
 export function withoutEps(card: CardBody): CardBody {
   const keepers = <T>(items: T[] | null | undefined, texts: (t: T) => (string | null | undefined)[]) => {
     const map = new Map<number, number>();
@@ -300,19 +281,32 @@ export function withoutEps(card: CardBody): CardBody {
     (items ?? []).forEach((item, i) => { if (!statesEps(...texts(item))) { map.set(i, kept.length); kept.push(item); } });
     return { kept, map };
   };
+  // items with one text: a trailing EPS clause is cut, EPS anywhere else drops the item (its quote is left as it is)
+  const refine = <T>(items: T[] | null | undefined, get: (t: T) => string, set: (t: T, text: string) => T) => {
+    const map = new Map<number, number>();
+    const kept: T[] = [];
+    (items ?? []).forEach((item, i) => {
+      const text = trimEps(get(item));
+      if (text === null) return;
+      map.set(i, kept.length);
+      kept.push(text === get(item) ? item : set(item, text));
+    });
+    return { kept, map };
+  };
+  const strings = (items: string[] | null | undefined) => refine(items, (x) => x, (_, text) => text);
   const text = (f: string | { text: string }) => (typeof f === "string" ? f : f.text);
-  const wh = keepers(card.what_happened, (f) => [text(f)]);
-  const why = keepers(card.why_it_matters, (i) => [i.text]);
+  const wh = refine(card.what_happened, text, (f, t) => (typeof f === "string" ? t : { ...f, text: t }));
+  const why = refine(card.why_it_matters, (i) => i.text, (i, t) => ({ ...i, text: t }));
   const keys = keepers(card.key_numbers, (k) => [k.label, k.value, k.change]);
   const changes = keepers(card.notable_changes, (c) => [c.metric, c.why, c.change]);
   const quant = keepers(card.quantified_impact, (q) => [q.label, q.interpretation, q.formula]);
-  const calls = keepers(card.call_takeaways, (t) => [t.text]);
-  const missing = keepers(card.missing_disclosures, (m) => [m]);
-  const out: CardBody = { ...card, headline: cutEps(card.headline), what_happened: wh.kept, why_it_matters: why.kept, key_numbers: keys.kept,
+  const calls = refine(card.call_takeaways, (t) => t.text, (t, x) => ({ ...t, text: x }));
+  const missing = strings(card.missing_disclosures);
+  const headline = trimEps(card.headline) ?? headlineWithoutEps(card.headline, wh.kept.map(text));
+  const out: CardBody = { ...card, headline, what_happened: wh.kept, why_it_matters: why.kept, key_numbers: keys.kept,
     missing_disclosures: missing.kept };
-  // a takeaway or catalyst that is only EPS is left off (the face falls back to the insights); the headline is always kept
-  if (card.takeaway) out.takeaway = statesEps(cutEps(card.takeaway)) ? undefined : cutEps(card.takeaway);
-  if (card.core_catalyst) out.core_catalyst = statesEps(cutEps(card.core_catalyst)) ? null : cutEps(card.core_catalyst);
+  if (card.takeaway) out.takeaway = trimEps(card.takeaway) ?? undefined;
+  if (card.core_catalyst) out.core_catalyst = trimEps(card.core_catalyst);
   if (card.notable_changes) out.notable_changes = changes.kept;
   if (card.quantified_impact) out.quantified_impact = quant.kept;
   if (card.call_takeaways) out.call_takeaways = calls.kept;
@@ -321,9 +315,9 @@ export function withoutEps(card: CardBody): CardBody {
     out.track_next = { ...t,
       milestones: (t.milestones ?? []).filter((m) => !statesEps(m.what)),
       kpis_to_verify: (t.kpis_to_verify ?? []).filter((k) => !statesEps(k.kpi, k.check_in, k.target)),
-      pending_approvals: (t.pending_approvals ?? []).filter((x) => !statesEps(x)),
-      risks: (t.risks ?? []).filter((x) => !statesEps(x)),
-      ...(t.catalysts ? { catalysts: t.catalysts.filter((x) => !statesEps(x)) } : {}) };
+      pending_approvals: strings(t.pending_approvals).kept,
+      risks: strings(t.risks).kept,
+      ...(t.catalysts ? { catalysts: strings(t.catalysts).kept } : {}) };
   }
   const p = card.parts;
   if (p) {

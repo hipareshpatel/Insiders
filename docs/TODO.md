@@ -12,6 +12,61 @@ tokens. How it works:
 This list holds only the first-principles review's items (`docs/FROM_ZERO.md`). The older lists stay where they are:
 `docs/PLAN.md` "Pending work" and `docs/TASKS.md`.
 
+## Status board (26 Oct 2026, 7 AM IST): done, running, pending, waiting
+
+The owner asked (26 Oct) for one view of everything, the lead session's items as well as the owner's. Row numbers are
+the rows below; F numbers are in `docs/TRACKER.md`.
+
+**Done and live**
+- Batch 1 and step 1: rows 1, 2, 4, 6, 7, 9, 18, 19, 20, 25, 26, 27, 28, 30-35 (F131-F149); 29 was No (60 s wait kept).
+- Row 23 official XBRL sums (F140); row 22 metrics table (F141); row 12 group EBITDA without associates (F137).
+- Row 43 EPS across splits and bonuses (F153), switched on as a live fix (29 published cards were wrong).
+- Row 45: 2,496 companies not on NSE removed on 26 Oct (backup `backup/prune-companies-2026-10-26.json` in R2); kept
+  131 BSE-only companies of 500 Cr or more and the 2 with cards (Lehar Footwears, Andhra Petrochemicals).
+- Memory fixes F155, F157; two filing crashes F159 (JSWENERGY, LTF re-queued); failed-filings report read 26 Oct.
+
+**Running now (26 Oct)**
+- BSE check of the 131 kept companies (row 47's first step, F160): is BSE answering, still traded, market cap, last
+  announcement.
+- Screener download of every company's two pages into R2 (row 50, F163), about 1 h 45 min, own queue.
+- Then, one after another: the precision measurement (row 46), memory-gaps fill with the F157 fixes, a full seed-memory
+  reload (covers the F155 re-seed list).
+
+**Built, switched off: waiting for its release check** (on/off over stored cards, then a blind sample by another agent)
+- Rows 11, 14, 15 `CARD_EBITDA_PROFIT_V2` (blind review of 20 cards: 4 WRONG against 7-10 before; re-run after F155).
+- Row 21 `CARD_TWO_PARTS`; row 44 `CARD_CONSOLIDATED_ONLY`; `QUOTE_EXACT_NUMBERS` (F156); `CARD_SAME_DEFINITION` (F155).
+- Row 49 `MEMORY_STANDALONE_ONLY` (F162), then a reload of the affected companies.
+- Row 48 `MEMORY_SCREENER` (F161): only after the screener-fill dry run and the owner's look.
+
+**Pending: agreed, not built or not run yet**
+- Row 10 memory labels: step 2 (`label-memory` dry run, then apply) not run; steps 3-5 not built; rows 3 and 16 go with them.
+- Row 13 hold a line the PDF does not print: needs OCR on figure pages and a number normaliser first.
+- The root-cause work list (`docs/audit/root-causes-2026-10-25.md`, top 10 causes) after the memory work.
+- Row 50 cross-check: run after the download; owner and lead study it together before anything changes.
+- Row 48 screener fill: dry run after the cross-check study; nothing written without the owner's OK.
+- Queue fix (F164, being built): jobs by source side by side (NSE / BSE / screener / read-only), each job starting the
+  next one itself; lead check-ins every 10 minutes meanwhile.
+- PNC Infra's two calls fail with KeyError 'as_of' (needs the traceback; not guessed).
+- NSE list check on a busy results day: 26 Oct, 10 PM IST (scheduled).
+- Row 24 final audit, once everything above is built.
+
+**Waiting for the owner's decision**
+- Lehar Footwears and Andhra Petrochemicals (BSE-only, have cards): keep (lead's advice) or hide.
+- Row 42 faster NSE history loads: proposed, not decided.
+- Each switch above: turn on after its release check.
+
+**Waiting for discussion**
+- Owner: step 2, reading the file (rows 11-13).
+- Owner and lead: the screener cross-check results (wrong figures, wrong quarters, naming), with the official filing as
+  referee.
+- Lead: many of the 131 kept BSE-only companies look like shells with odd stored market caps (Mrugesh Trading 5,543 Cr,
+  TANFAC 7,491 Cr); the BSE check gives real values; then decide what stays.
+- Lead: long cards and the 95% bar: about 20 lines a card need each line right ~99.75% of the time (row 17).
+- Lead: a single wrong screener column is caught only by a year-total check; how far to trust screener figures on cards.
+- Lead: report texts are kept 6 months, so the referee cannot check older quarters; fetch older official texts or not.
+- Lead: the quick run fires about every 35 minutes, not 15 (GitHub's schedule); watching Monday.
+- Later (after the 95% gate): rows 8, 36-41, 47 (BSE daily pass).
+
 ## Step 1: what we collect
 
 | # | Improvement | What it fixes | Owner | State |

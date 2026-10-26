@@ -163,7 +163,7 @@ on:
         options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
-        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one
+        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows)
         type: string
         default: ''
       since:
@@ -511,16 +511,20 @@ jobs:
         if: inputs.command == 'pdf-referee' || inputs.command == 'screener-explain' || inputs.command == 'pdf-referee-tijori'
         env:
           GH_TOKEN: ${{ github.token }}
+          IDS: ${{ inputs.ids }}
         run: |
           mkdir -p "$RUNNER_TEMP/in"
           name=screener-referee
           # pdf-referee-tijori: the same PDF referee over the tijori-referee's pairs (same CSV columns; owner 26 Oct 2026)
           if [ "${{ inputs.command }}" = "pdf-referee-tijori" ]; then name=tijori-referee; fi
+          # pdf-referee with ids `explained`: screener-explain's unexplained rows (pdf-referee --explained)
+          if [ "${{ inputs.command }}" = "pdf-referee" ] && [ "$IDS" = "explained" ]; then name=screener-explain; fi
           id=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=$name&per_page=30" --jq '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | last | .id // empty')
           if [ -z "$id" ]; then echo "::error::no unexpired $name artifact: run it first"; exit 1; fi
           gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$id/zip" > "$RUNNER_TEMP/in/artifact.zip"
           unzip -o -q "$RUNNER_TEMP/in/artifact.zip" -d "$RUNNER_TEMP/in"
           if [ "$name" = "tijori-referee" ]; then cp "$RUNNER_TEMP/in/referee-tijori.csv" "$RUNNER_TEMP/in/referee-xbrl.csv"; fi
+          if [ "$name" = "screener-explain" ]; then cp "$RUNNER_TEMP/in/explained.csv" "$RUNNER_TEMP/in/referee-xbrl.csv"; fi
           ls -l "$RUNNER_TEMP/in/referee-xbrl.csv"
       - name: Explain the referee's pairs by corporate actions and later files (reads only)
         if: inputs.command == 'screener-explain'
@@ -544,10 +548,13 @@ jobs:
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
           LIMIT: ${{ inputs.limit }}
           SAMPLE: ${{ inputs.sample }}
+          IDS: ${{ inputs.ids }}
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/pdfreferee"
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel pdf-referee --csv "$RUNNER_TEMP/in/referee-xbrl.csv" ${LIMIT:+--limit "$LIMIT"} ${SAMPLE:+--sample "$SAMPLE"} ${{ inputs.no_ocr && '--no-ocr' || '' }} --json "$RUNNER_TEMP/pdfreferee/summary.json" --out-csv "$RUNNER_TEMP/pdfreferee/referee-pdf.csv" --md "$RUNNER_TEMP/pdfreferee/pdf-referee.md" || code=$?
+          src=--csv
+          if [ "${{ inputs.command }}" = "pdf-referee" ] && [ "$IDS" = "explained" ]; then src=--explained; fi
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel pdf-referee "$src" "$RUNNER_TEMP/in/referee-xbrl.csv" ${LIMIT:+--limit "$LIMIT"} ${SAMPLE:+--sample "$SAMPLE"} ${{ inputs.no_ocr && '--no-ocr' || '' }} --json "$RUNNER_TEMP/pdfreferee/summary.json" --out-csv "$RUNNER_TEMP/pdfreferee/referee-pdf.csv" --md "$RUNNER_TEMP/pdfreferee/pdf-referee.md" || code=$?
           if [ "$code" = 124 ]; then echo "::warning::time budget ended with pairs left (not_run in the CSV); run again with a limit"; code=0; fi
           exit "$code"
       - uses: actions/upload-artifact@v4

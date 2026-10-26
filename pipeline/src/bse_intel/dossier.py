@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import card_ebitda_profit_v2, card_same_definition
+from .settings import card_ebitda_profit_v2, card_same_definition, memory_screener
 from .models import Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -295,6 +295,7 @@ def _period(text: str) -> str:
 # basis, unit as printed and whether it passed our checks (`ok`); a calc adds `from`. Readers do not use labels yet
 # (step 1): they ride along in the stored dossier, so no card changes.
 LABEL_DOCS = ("results", "call", "slides", "release", "board", "annual", "other")
+LABEL_BY = ("file", "ai", "calc", "unknown", "screener")   # "screener": the one-time screener.in fill (F161), never "file"
 _DOC_BY_EVENT = {"RESULTS": "results", "CONCALL_PRESENTATION": "call", "ANNUAL_REPORT": "annual"}
 _SLIDES = re.compile(r"presentation|investor deck|\bslides?\b", re.I)
 _CALL = re.compile(r"transcript|earnings call|conference call|con-?call|audio", re.I)
@@ -337,6 +338,52 @@ def label(by: str, doc: str, at: str | None, *, basis: str | None = None, unit: 
     if src:
         lab["from"] = list(src)
     return lab
+
+
+SCREENER_KEY = "screener_fill"       # dossier section: figures filled once from screener.in (screener_fill.py, F161)
+SCREENER_PREFIX = "screener:"        # their source id: "screener:<SYMBOL>:<period>:<basis>"
+
+
+def screener_figures(dossier: dict | None) -> list[dict]:
+    return [e for e in (dossier or {}).get(SCREENER_KEY) or [] if isinstance(e, dict) and e.get("value") is not None]
+
+
+def put_screener(dossier: dict, fills: list[dict], symbol: str, as_of: str) -> int:
+    """Add screener.in figures (``fills``: dicts with metric, period, value, basis) to ``dossier[SCREENER_KEY]``, labelled
+    ``by="screener"`` with the source id ``screener:<SYMBOL>:<period>:<basis>``. Never overwrites: a figure memory already
+    holds for that metric and period (any source, any basis, or an earlier screener one) is left as it is. They sit apart
+    from ``financial_metrics`` so no reader sees them unless MEMORY_SCREENER is on (``with_screener``). Returns how many
+    were added."""
+    held = {(e.get("metric"), e.get("period")) for e in dossier.get("financial_metrics", [])
+            if isinstance(e, dict) and e.get("value") is not None}
+    held |= {(e["metric"], e["period"]) for e in screener_figures(dossier)}
+    added = 0
+    for f in fills:
+        key = (f["metric"], f["period"])
+        if key in held or f.get("value") is None:
+            continue
+        held.add(key)
+        sid = f"{SCREENER_PREFIX}{symbol}:{f['period']}:{f['basis']}"
+        dossier.setdefault(SCREENER_KEY, []).append({
+            "metric": f["metric"], "period": f["period"], "value": f["value"], "unit": "INR_CR", "yoy_pct": None,
+            "qoq_pct": None, "as_of": as_of, "source_news_id": sid, "basis": f["basis"],
+            "lab": label("screener", "other", as_of, basis=f["basis"], unit="INR_CR", ok=True)})
+        added += 1
+    return added
+
+
+def with_screener(dossier: dict | None) -> dict | None:
+    """The dossier a reader should see: with MEMORY_SCREENER on, ``financial_metrics`` also holds the screener figures for
+    a metric and period it has no figure for; off (the default), the dossier itself, so no card changes. A copy; the stored
+    dossier is never changed by a read."""
+    if not dossier or not memory_screener():
+        return dossier
+    extra = screener_figures(dossier)
+    if not extra:
+        return dossier
+    have = {(e.get("metric"), e.get("period")) for e in dossier.get("financial_metrics", []) if isinstance(e, dict)}
+    more = [e for e in extra if (e["metric"], e["period"]) not in have]
+    return {**dossier, "financial_metrics": list(dossier.get("financial_metrics", [])) + more} if more else dossier
 
 
 def section_label(dossier: dict, section: str, at: str | None, doc: str = "other") -> None:
@@ -1353,6 +1400,7 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
 
     if not dossier:
         return None
+    dossier = with_screener(dossier)
     before = lambda e, field="as_of": e.get(field, "") < cutoff  # noqa: E731
 
     as_known = []
@@ -1515,6 +1563,7 @@ def dossier_as_of(dossier: dict | None, cutoff: str, inclusive: bool = True) -> 
     """
     if not dossier:
         return dossier
+    dossier = with_screener(dossier)
     limit = cutoff + "~" if inclusive else cutoff  # "~" sorts after every character of a timestamp
     ok = lambda ts: (ts or "") < limit  # noqa: E731
     d = dict(dossier)
@@ -1603,7 +1652,7 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
     """Latest revenue (quarter preferred), debt and net worth, and the sector's footer KPIs
     (GNPA for a bank, EBITDA/t for cement, ARPU for telecom...), for the card's financial footer."""
     out: dict = {}
-    metrics = dossier.get("financial_metrics", [])
+    metrics = (with_screener(dossier) or {}).get("financial_metrics", [])
 
     def latest(names: tuple[str, ...], prefer_quarter: bool = False):
         rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and due_date(m["period"])]
@@ -1786,6 +1835,7 @@ def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...]
     in the call and the filing alike, and made Senores' margin from the call's EBITDA over the filing's revenue."""
     from datetime import date as _date
 
+    dossier = with_screener(dossier)
     filed = _date.fromisoformat(filed_at[:10])
     latest = _latest_reported(dossier, filed)
     if latest is None or not _discussed(latest[0], filed):
@@ -1988,6 +2038,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     """
     from .periods import prior_quarter_period, prior_year_period
 
+    dossier = with_screener(dossier)
     mine = [m for m in dossier.get("financial_metrics", []) if reported_by(m, news_id)]
     quarters = [m["period"] for m in mine if m["period"].startswith("Q") and due_date(m["period"])]
     if not quarters:

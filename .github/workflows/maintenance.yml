@@ -1076,8 +1076,8 @@ jobs:
           - {reader: docling, extra: pdfreader-docling, java: false, tesseract: false, cache: "~/.cache/docling\n~/.cache/huggingface"}
           - {reader: mineru, extra: pdfreader-mineru, java: false, tesseract: false, cache: "~/.cache/huggingface\n~/.cache/modelscope"}
           - {reader: paddle, extra: pdfreader-paddle, java: false, tesseract: false, cache: "~/.paddlex\n~/.paddleocr"}
-          - {reader: marker, extra: pdfreader-surya, java: false, tesseract: false, cache: "~/.cache/datalab\n~/.cache/huggingface"}
-          - {reader: surya, extra: pdfreader-surya, java: false, tesseract: false, cache: "~/.cache/datalab\n~/.cache/huggingface"}
+          - {reader: marker, extra: pdfreader-surya, java: false, tesseract: false, cache: "~/.cache/datalab\n~/.cache/huggingface", llama: true}
+          - {reader: surya, extra: pdfreader-surya, java: false, tesseract: false, cache: "~/.cache/datalab\n~/.cache/huggingface", llama: true}
     defaults:
       run:
         working-directory: pipeline
@@ -1104,6 +1104,12 @@ jobs:
       - name: Tesseract
         if: matrix.tesseract
         run: sudo apt-get update -q && sudo apt-get install -y -q tesseract-ocr
+      - name: llama.cpp (Surya 2 and Marker 2 start its llama-server; without it every page failed, run 40388046768)
+        if: matrix.llama
+        run: |
+          BREW="$(command -v brew || echo /home/linuxbrew/.linuxbrew/bin/brew)"
+          "$BREW" install llama.cpp
+          echo "$("$BREW" --prefix)/bin" >> "$GITHUB_PATH"
       - uses: actions/cache@v4
         if: matrix.cache != ''
         with:
@@ -1122,6 +1128,7 @@ jobs:
         env:
           PDF_MINERU_BIN: ${{ runner.temp }}/venv/bin/mineru
           MINERU_MODEL_SOURCE: huggingface
+          SURYA_INFERENCE_KEEP_ALIVE: "true"   # one llama-server for all PDFs (each PDF is a worker process of its own)
         run: |
           mkdir -p "$RUNNER_TEMP/readings"
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_readers --read "${{ matrix.reader }}" "$RUNNER_TEMP/pdfs" "$RUNNER_TEMP/readings/${{ matrix.reader }}.json"

@@ -93,8 +93,24 @@ class PageLayer:
     has_layer: bool
     numbers: set[float]
     context: str                    # title and unit lines to put above a table of this page
+    unit_context: str = ""          # the unit lines alone (a page with two tables gives a table without its own title no basis)
     words: list = field(default_factory=list)      # (x0, y0, x1, y1, text) of the page's words, when read from the PDF
     _bands: list | None = None
+
+    def header_block(self) -> str:
+        """The page's column header as printed (the group words above the dates, the dates, the line below), for a table whose
+        reader left the header out: only when every row of dates on the page is the same dates, else empty (two headers would be a
+        guess)."""
+        from .pdf_referee import _dates_in
+        lines = [" ".join([b.label] + b.nums) for b in self.bands()]
+        dated = [i for i, line in enumerate(lines) if len(_dates_in(line)) >= 2]
+        if not dated or len({tuple(_dates_in(lines[i])) for i in dated}) != 1:
+            return ""
+        first = dated[0]
+        end = first + 1
+        if end < len(lines) and not re.search(r"\d[\d,]*\.\d", lines[end]):
+            end += 1          # the line under the dates ("Unaudited", "Audited"), never a row of figures
+        return "\n".join(lines[max(0, first - 4): end])
 
     def bands(self) -> list["Band"]:
         """The page's rows as printed (label, trailing figures, the basis of the nearest title above), read once."""
@@ -297,17 +313,45 @@ def family_of(reader: "Reader", source: str, verbatim: bool = True) -> str:
 # --- tables to the referee's rows ---------------------------------------------------------------------------------
 
 def clean_cell(text) -> str:
-    return re.sub(r"\s+", " ", str(text if text is not None else "")).strip()
+    """One cell's text: runs of spaces become one space; a line break stays as one ``\\n`` (a reader that joins several printed
+    lines into one cell, as Camelot and Tabula do for a merged cell, keeps them apart for ``table_text``)."""
+    raw = str(text if text is not None else "").replace("\r", "\n")
+    return "\n".join(p for p in (re.sub(r"[^\S\n]+", " ", ln).strip() for ln in raw.split("\n")) if p)
+
+
+_LONE_BASIS = re.compile(r"^\W*(?:un-?)?(standalone|stand[- ]alone|consolidated)\W*$", re.I)
+
+
+def _explode_merged(row: list[str]) -> list[list[str]]:
+    """A merged cell row (several printed rows in one: ``label1\\nlabel2`` beside ``1.0\\n2.0``) back into its rows, when the
+    label cell and every figure cell have the same number of lines; any other multi-line row is joined into one line."""
+    cells = [clean_cell(c) for c in row]
+    parts = [c.split("\n") for c in cells]
+    counts = {len(p) for p in parts if p != [""]}
+    if counts <= {1}:
+        return [cells]
+    figure_counts = {len(p) for c, p in zip(cells, parts) if p != [""] and re.search(r"\d", c) and not re.search(r"[A-Za-z]{3}", c)}
+    label_counts = {len(p) for c, p in zip(cells, parts) if re.search(r"[A-Za-z]", c)}
+    n = max(figure_counts, default=1)
+    if n > 1 and {c for c in figure_counts if c > 1} == {n} and label_counts <= {n, 1}:      # a serial number has one line
+        return [[(p[i] if len(p) == n else (p[0] if i == 0 else "")) for p in parts] for i in range(n)]
+    return [[c.replace("\n", " ") for c in cells]]
 
 
 def table_text(cells: list[list[str]]) -> str:
-    """A grid written as lines: the non-empty cells of a row joined by two spaces (what the text layer would give)."""
+    """A grid written as lines: the non-empty cells of a row joined by two spaces (what the text layer would give). A line
+    that is only the basis word (a ``STANDALONE`` cell above the columns) becomes ``STANDALONE financial results``, the form
+    of a title the referee's own parsing reads."""
     lines = []
     for row in cells:
-        parts = [clean_cell(c) for c in row]
-        line = "  ".join(p for p in parts if p)
-        if line:
-            lines.append(line)
+        for sub in _explode_merged(row):
+            parts = [clean_cell(c) for c in sub]
+            line = "  ".join(p for p in parts if p)
+            if line:
+                lines.append(line)
+    for i, line in enumerate(lines[:4]):
+        if _LONE_BASIS.match(line):
+            lines[i] = f"{line} financial results"
     return "\n".join(lines)
 
 
@@ -320,11 +364,20 @@ def page_layer(text: str) -> PageLayer:
     units = [ln for ln in lines if _UNIT_WORD.search(ln)]
     kinds = {m.group(1).lower().rstrip("s") for ln in units for m in _UNIT_WORD.finditer(ln)}
     context: list[str] = []
+    unit_lines: list[str] = []
     if len(bases) == 1:                       # one basis on the page: its title can stand above any table of it
         context += [ln for ln in top if _CONS_WORD.search(ln) or _ALONE_WORD.search(ln)]
+    elif len(bases) == 2:
+        # both words appear (a note naming the other basis, a footer): the page's titles still tell the basis when every title line
+        # of the page, anywhere on it, names the same one; two statements on a page (two titles) give nothing
+        from .pdf_referee import _TITLE, _words_basis
+        titles = [ln for ln in lines if _TITLE.search(ln) and _words_basis(ln)]
+        if titles and len({_words_basis(t) for t in titles}) == 1:
+            context += titles[:2]
     if len(kinds) == 1:                       # one unit on the page; two units would be a guess, so none is given
         context += units[:2]
-    return PageLayer(text, has, numbers, "\n".join(dict.fromkeys(context)))
+        unit_lines = units[:2]
+    return PageLayer(text, has, numbers, "\n".join(dict.fromkeys(context)), "\n".join(dict.fromkeys(unit_lines)))
 
 
 def _safe_float(token: str) -> bool:
@@ -346,15 +399,34 @@ def consolidated_anywhere(layers: dict[int, PageLayer], tables: list[Table] | No
     return any(_CONS_WORD.search(table_text(t.cells)) for t in tables or [])
 
 
+def _cons_or_alone(text: str) -> bool:
+    return bool(_CONS_WORD.search(text) or _ALONE_WORD.search(text))
+
+
 def tables_to_rows(tables: list[Table], layers: dict[int, PageLayer], anywhere: bool | None = None) -> list:
     """The referee's ``Row`` objects of every table, each parsed with ``pdf_referee.parse_page`` under its page's title and unit."""
     from .pdf_referee import parse_page
+    from .pdf_referee import _dates_in
     texts = []
+    per_page: dict[int, int] = {}
+    for t in tables:
+        per_page[t.page] = per_page.get(t.page, 0) + 1
     for t in tables:
         layer = layers.get(t.page)
         body = table_text(t.cells)
         if body:
-            texts.append((t.page, (layer.context + "\n" if layer and layer.context else "") + body))
+            if layer and layer.has_layer and not any(len(_dates_in(ln)) >= 2 for ln in body.splitlines()):
+                # the reader's table starts below the header (or lost it): the page's own header stands above the figures
+                header = layer.header_block()
+                if header:
+                    body = header + "\n" + body
+            context = layer.context if layer else ""
+            if layer and per_page[t.page] > 1 and not (_cons_or_alone(body)):
+                # two tables of this reader on the page and this one names no basis: the page's title may belong to the other
+                # (a results table under the title of an assets and liabilities table: measured on EMKAY, 26 Oct 2026), so
+                # only the unit stands above it
+                context = layer.unit_context
+            texts.append((t.page, (context + "\n" if context else "") + body))
     if anywhere is None:
         anywhere = consolidated_anywhere(layers, tables)
     rows = []
@@ -443,20 +515,46 @@ def page_layers(pdf_bytes: bytes, limit: int = 80) -> dict[int, PageLayer]:
     return layers
 
 
+def _metric_kinds(layer: PageLayer) -> int:
+    """How many of the three metrics (revenue, profit, EPS) have a labelled row with figures on the page, read from the page's
+    rows as printed (words on one baseline), so a table whose cells sit on separate lines of the raw text still counts."""
+    from .pdf_referee import _EPS, _PAT_NAME, _PAT_NOT, _revenue_rank
+    found = set()
+    for band in layer.bands():
+        if not band.nums:
+            continue
+        label = band.label.strip()
+        if _revenue_rank(label) is not None:
+            found.add("revenue")
+        elif _PAT_NAME.search(label) and not _PAT_NOT.search(label):
+            found.add("pat")
+        elif _EPS.search(label):
+            found.add("eps")
+    return len(found)
+
+
+def _has_date_header(layer: PageLayer) -> bool:
+    """A header row with two dates or more: in the raw text's lines, or in the rows read from the words (a page whose raw text
+    puts each cell on a line of its own has its dates on separate lines, so the lines alone never show two)."""
+    from .pdf_referee import _dates_in
+    if any(len(_dates_in(line)) >= 2 for line in layer.text.splitlines()):
+        return True
+    return any(len(_dates_in(" ".join([b.label] + b.nums))) >= 2 for b in layer.bands())
+
+
 def statement_pages(layers: dict[int, PageLayer], max_pages: int = MAX_PAGES) -> list[int]:
     """Pages that hold a results table: a "Statement of ... Results" heading or a header with two dates and the period
-    words (a page of the text layer), best first; pages with no text layer fill what is left in a short PDF."""
-    from .pdf_referee import _dates_in
+    words (a page of the text layer), best first; a page that also has labelled revenue, profit and EPS rows ranks above one that
+    only repeats the heading (a segment or notes page); pages with no text layer fill what is left in a short PDF."""
     scored: list[tuple[int, int]] = []
     for page, layer in layers.items():
         if not layer.has_layer:
             continue
-        dated = any(len(_dates_in(line)) >= 2 for line in layer.text.splitlines())
-        if not dated:
+        if not _has_date_header(layer):
             continue
         score = (2 if _RESULTS_HEAD.search(layer.text) else 0) + (1 if _PERIOD_WORDS.search(layer.text) else 0)
         if score:
-            scored.append((-score, page))
+            scored.append((-(score + 2 * _metric_kinds(layer)), page))
     pages = [p for _, p in sorted(scored)][:max_pages]
     if len(pages) < max_pages and len(layers) <= SCAN_PAGE_LIMIT:
         pages += [p for p, layer in layers.items() if not layer.has_layer][: max_pages - len(pages)]
@@ -485,6 +583,14 @@ def render_pages(pdf_bytes: bytes, dpi: int = DPI) -> list:
 
 
 # --- HTML tables (MinerU, PP-StructureV3, Marker, Surya) ----------------------------------------------------------
+
+def is_group_header(text: str) -> bool:
+    """A header cell that names the kind of period ("Quarter ended", "Year ended", "Nine months ended") and holds no figure: a
+    cell like it that spans several columns names each of them, so its text is repeated over the span (the dates below it then
+    each have their kind). A spanned cell of figures or labels is never repeated."""
+    from .pdf_referee import _GROUP
+    return bool(text) and not re.search(r"\d{2}", text) and bool(_GROUP.search(text)) and len(text) <= 60
+
 
 class _TableParser(HTMLParser):
     def __init__(self):
@@ -526,9 +632,10 @@ class _TableParser(HTMLParser):
         if tag in ("td", "th") and self._cell is not None and self._row is not None:
             self._fill_pending()
             col = len(self._row)
-            self._row.append(clean_cell("".join(self._cell)))
+            text = clean_cell("".join(self._cell))
+            self._row.append(text)
             for k in range(1, self._span):
-                self._row.append("")
+                self._row.append(text if is_group_header(text) else "")
             if self._rowspan > 1:
                 for k in range(self._span):
                     self._pending[col + k] = self._rowspan - 1
@@ -744,7 +851,8 @@ class DoclingReader(Reader):
                 cells = []
                 for c, cell in enumerate(row):
                     start = (getattr(cell, "start_row_offset_idx", r), getattr(cell, "start_col_offset_idx", c))
-                    cells.append(cell.text if start == (r, c) else "")      # a spanned cell's text once, at its origin
+                    # a spanned cell's text once, at its origin; a period-kind header ("Quarter ended") over several columns in each
+                    cells.append(cell.text if start == (r, c) or is_group_header(clean_cell(cell.text)) else "")
                 grid.append(cells)
             out.append((page, grid))
         return out
@@ -805,8 +913,12 @@ class PaddleReader(Reader):
 
     def extract(self, sub_pdf):
         from paddleocr import PPStructureV3
+        # enable_mkldnn False: with oneDNN on (the default) the layout detector of paddlepaddle 3.3.1 stops every page with
+        # "NotImplementedError: (Unimplemented) ConvertPirAttribute2RuntimeAttribute not support
+        # [pir::ArrayAttribute<pir::DoubleAttribute>]" (run 40388046768, 29 of 29 PDFs; reproduced and mended with this flag)
         pipeline = PPStructureV3(use_table_recognition=True, use_formula_recognition=False, use_chart_recognition=False,
-                                 use_seal_recognition=False, use_doc_orientation_classify=False, use_doc_unwarping=False)
+                                 use_seal_recognition=False, use_doc_orientation_classify=False, use_doc_unwarping=False,
+                                 enable_mkldnn=False)
         path = _write_temp(sub_pdf)
         out = []
         try:
@@ -874,10 +986,39 @@ class SuryaReader(Reader):
         return out
 
 
+def table_region(words: list) -> tuple[float, float, float, float] | None:
+    """(x0, y0, x1, y1) in points of a results table on a text-layer page: from three rows above the first row of dates (the group
+    words, "Particulars") to the last row of figures before a gap of six rows with none (the notes). None when no row has two
+    dates. SLANet reads one table at a time (PP-StructureV3 gives it layout crops); a whole page of title, table and notes made
+    its rows run into each other (rapid-table on 0f9e366d page 7: "Revenue from operations" empty, its figures a row lower)."""
+    from .pdf_referee import _dates_in
+    rows: list[list[tuple]] = []
+    for w in sorted(words, key=lambda w: (w[1] + w[3]) / 2):
+        if rows and (w[1] + w[3]) / 2 - sum((x[1] + x[3]) / 2 for x in rows[-1]) / len(rows[-1]) <= 3.5:
+            rows[-1].append(w)
+        else:
+            rows.append([w])
+    texts = [" ".join(x[4] for x in sorted(r, key=lambda x: x[0])) for r in rows]
+    dated = next((i for i, t in enumerate(texts) if len(_dates_in(t)) >= 2), None)
+    if dated is None:
+        return None
+    first, last, gap = max(0, dated - 3), dated, 0
+    for i in range(dated + 1, len(rows)):
+        figures = sum(1 for x in rows[i] if _NUMTOK.match(x[4]))
+        if figures >= 2:
+            last, gap = i, 0
+        else:
+            gap += 1
+            if gap >= 6:
+                break
+    chosen = [w for r in rows[first: last + 1] for w in r]
+    return (min(w[0] for w in chosen), min(w[1] for w in chosen), max(w[2] for w in chosen), max(w[3] for w in chosen))
+
+
 class RapidTableReader(Reader):
     """rapid-table (SLANet-plus, ONNX), the PP-StructureV3 table models without the Paddle framework. The page is rendered at
     200 dpi; the cell text comes from the page's text-layer words (boxes scaled to the image) when it has a layer, else from
-    RapidOCR. The whole page image is passed (no layout step), so it suits a page that is mostly the statement."""
+    RapidOCR. There is no layout model: a text-layer page is cropped to its results table (``table_region``), a scan is passed whole."""
     name, family = "rapidtable", "paddle"   # the PP-StructureV3 table models: one family with PaddleReader
     ocr_family, ocr_engine = "paddle", "rapidocr"
     modules = ("rapid_table", "rapidocr")
@@ -894,6 +1035,14 @@ class RapidTableReader(Reader):
                 image = render_pages_one(page, DPI)
                 words = page.get_text("words")
                 if sum(len(w[4]) for w in words) >= LAYER_MIN_CHARS:
+                    region = table_region(words)
+                    if region:      # the table alone, with a margin; the words inside it, in the crop's own coordinates
+                        pad = 6.0
+                        x0, y0, x1, y1 = (max(0.0, region[0] - pad), max(0.0, region[1] - pad), region[2] + pad, region[3] + pad)
+                        image = image.crop((int(x0 * scale), int(y0 * scale), min(image.width, int(x1 * scale) + 1),
+                                            min(image.height, int(y1 * scale) + 1)))
+                        words = [(w[0] - x0, w[1] - y0, w[2] - x0, w[3] - y0, w[4]) for w in words
+                                 if w[0] >= x0 - 1 and w[2] <= x1 + 1 and w[1] >= y0 - 1 and w[3] <= y1 + 1]
                     boxes = [[[w[0] * scale, w[1] * scale], [w[2] * scale, w[1] * scale], [w[2] * scale, w[3] * scale],
                               [w[0] * scale, w[3] * scale]] for w in words]
                     found = (np.array(boxes, dtype="float32"), [w[4] for w in words], [1.0] * len(words))
@@ -950,7 +1099,7 @@ class TatrReader(Reader):
         processor = AutoImageProcessor.from_pretrained(self.DETECTION)
         detector = TableTransformerForObjectDetection.from_pretrained(self.DETECTION).eval()
         s_processor = AutoImageProcessor.from_pretrained(self.STRUCTURE)
-        structure = TableTransformerForObjectDetection.from_pretrained(self.STRUCTURE).eval()
+        structure = self._structure_model(TableTransformerForObjectDetection).eval()
         scale = self.RENDER_DPI / 72
         out = []
         with _pymupdf().open(stream=sub_pdf, filetype="pdf") as doc:
@@ -974,6 +1123,38 @@ class TatrReader(Reader):
         return out
 
     @staticmethod
+    def _longest_side(processor, image):
+        """(image, processor kwargs). The structure processor's size is ``{"longest_edge": N}`` only (the published config), which
+        transformers 5 refuses ("Size must contain 'height' and 'width' keys or 'shortest_edge' and 'longest_edge' keys", measured
+        26 Oct 2026 with transformers 5.21.0). The model's recipe is a resize of the longest side to N, so the image is resized
+        here and the processor told not to. A size with both keys, or none, changes nothing."""
+        size = getattr(processor, "size", None)
+        get = (lambda k: size.get(k)) if isinstance(size, dict) else (lambda k: getattr(size, k, None))
+        longest = get("longest_edge") if size is not None else None
+        if not longest or get("shortest_edge"):
+            return image, {}
+        scale = longest / max(image.size)
+        return image.resize((max(1, round(image.width * scale)), max(1, round(image.height * scale)))), {"do_resize": False}
+
+    @classmethod
+    def _structure_model(cls, model_class):
+        """The structure model. Its published config (v1.1-all) has ``"dilation": null``, which transformers 5 refuses (the config
+        is a strict dataclass: "Field 'dilation' expected bool, got NoneType", the failure of every tatr read on 26 Oct 2026, run
+        40388046768); the same config with ``dilation`` false (null means off) loads."""
+        try:
+            return model_class.from_pretrained(cls.STRUCTURE)
+        except Exception as exc:   # noqa: BLE001 - only the config's null field is mended; anything else is raised as it was
+            if "dilation" not in str(exc):
+                raise
+            from huggingface_hub import hf_hub_download
+            from transformers import TableTransformerConfig
+            with open(hf_hub_download(cls.STRUCTURE, "config.json"), encoding="utf-8") as fh:
+                data = json.load(fh)
+            if data.get("dilation") is None:
+                data["dilation"] = False
+            return model_class.from_pretrained(cls.STRUCTURE, config=TableTransformerConfig.from_dict(data))
+
+    @staticmethod
     def _detect(torch, processor, model, image) -> list[tuple]:
         inputs = processor(images=image, return_tensors="pt")
         with torch.no_grad():
@@ -984,7 +1165,8 @@ class TatrReader(Reader):
 
     @staticmethod
     def _structure(torch, processor, model, crop) -> tuple[list[tuple], list[tuple]]:
-        inputs = processor(images=crop, return_tensors="pt")
+        image, kwargs = TatrReader._longest_side(processor, crop)
+        inputs = processor(images=image, return_tensors="pt", **kwargs)
         with torch.no_grad():
             outputs = model(**inputs)
         res = processor.post_process_object_detection(outputs, threshold=0.6, target_sizes=[crop.size[::-1]])[0]
@@ -1192,6 +1374,21 @@ def pdf_key(url: str) -> str:
     return hashlib.sha1(url.encode()).hexdigest()[:16]
 
 
+def fetch_with_retry(src, url: str, attempts: int = 3, pause: float = 4.0) -> tuple[bytes | None, str]:
+    """The PDF through ``Sources.payload``, tried again after a pause when the download failed (not when NSE has no file): the
+    first trial of 26 Oct 2026 collected 47 PDFs and left four pairs whose PDF was missing from every reader's file, so all
+    eleven readers read "unavailable" for them."""
+    import time
+    data, why = src.payload(url)
+    for attempt in range(1, attempts):
+        if data or not why.startswith("download failed"):
+            break
+        time.sleep(pause * attempt)
+        src._payload = None                  # the failed answer is kept for the same url: ask again
+        data, why = src.payload(url)
+    return data, why
+
+
 def collect(csv_path: str, out_dir: str, limit: int | None = None) -> int:
     """Download the candidate results PDFs of the open pairs of a screener-referee CSV into ``out_dir`` (``<key>.pdf`` and
     ``manifest.json``: key -> url), once, for the per-reader jobs. Reads NSE only."""
@@ -1202,6 +1399,7 @@ def collect(csv_path: str, out_dir: str, limit: int | None = None) -> int:
     with open(csv_path, encoding="utf-8") as fh:
         pairs = open_pairs(load_csv(fh.read()))
     seen: dict[str, str] = {}
+    failed: dict[str, str] = {}
     periods = list(dict.fromkeys((p["symbol"], p["period"]) for p in pairs))
     if limit:
         periods = periods[:limit]
@@ -1215,14 +1413,19 @@ def collect(csv_path: str, out_dir: str, limit: int | None = None) -> int:
                 key = pdf_key(f.pdf_url)
                 if key in seen:
                     continue
-                data, _why = src.payload(f.pdf_url)
+                data, why = fetch_with_retry(src, f.pdf_url)
                 if data:
                     with open(os.path.join(out_dir, f"{key}.pdf"), "wb") as fh:
                         fh.write(data)
                     seen[key] = f.pdf_url
+                else:
+                    failed[f.pdf_url] = why
+                    print(f"not collected: {symbol} {period} {f.pdf_url} ({why})")
     with open(os.path.join(out_dir, "manifest.json"), "w", encoding="utf-8") as fh:
         json.dump(seen, fh)
-    print(f"collected {len(seen)} PDFs for {len(periods)} company periods")
+    with open(os.path.join(out_dir, "failed.json"), "w", encoding="utf-8") as fh:
+        json.dump(failed, fh)      # not in the manifest: the readers' files cannot cover these PDFs (the pairs read "unavailable")
+    print(f"collected {len(seen)} PDFs for {len(periods)} company periods; {len(failed)} could not be downloaded")
     return 0
 
 

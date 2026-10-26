@@ -725,7 +725,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1]
+        shard: [0, 1, 2, 3, 4, 5]
     defaults:
       run:
         working-directory: pipeline
@@ -749,7 +749,7 @@ jobs:
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/textback" "$RUNNER_TEMP/more"
-          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel text-backfill --shard ${{ matrix.shard }}/2 --time-budget 17400 ${{ inputs.no_ocr && '--no-ocr' || '' }} ${{ inputs.limit != '' && format('--limit {0}', inputs.limit) || '' }} ${{ inputs.restart && '--restart' || '' }} --json "$RUNNER_TEMP/textback/text-backfill-${{ matrix.shard }}.json" || code=$?
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel text-backfill --shard ${{ matrix.shard }}/6 --time-budget 17400 ${{ inputs.no_ocr && '--no-ocr' || '' }} ${{ inputs.limit != '' && format('--limit {0}', inputs.limit) || '' }} ${{ inputs.restart && '--restart' || '' }} --json "$RUNNER_TEMP/textback/text-backfill-${{ matrix.shard }}.json" || code=$?
           if [ "$code" -eq 124 ]; then echo "::warning::time budget ended with filings left: run the same command again to resume"; echo more > "$RUNNER_TEMP/more/${{ matrix.shard }}"; exit 0; fi
           exit "$code"
       - uses: actions/upload-artifact@v4

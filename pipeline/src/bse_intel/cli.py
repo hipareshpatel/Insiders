@@ -785,6 +785,26 @@ def cmd_memory_gaps(args, settings, sink) -> int:
     return MORE_LEFT if outcome and outcome["more"] else 0
 
 
+def cmd_restated_report(args, settings, sink) -> int:
+    """Quarters whose restated figure differs from the one first filed, across stored memory (restated_report.py, F167).
+    Read only: no NSE, no AI, no write."""
+    from . import restated_report, universe
+
+    nse_universe = universe.load_nse(sink)
+    if args.scrips:
+        scrips = [nse_universe.symbols.get(name.upper()) or name for name in (s.strip() for s in args.scrips.split(",")) if name]
+    elif nse_universe.built:
+        scrips = sorted(nse_universe.included)
+    else:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    report = restated_report.survey(sink, scrips)
+    print(restated_report.render(report))
+    if args.json:
+        Path(args.json).write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return 0
+
+
 def cmd_screener_fill(args, settings, sink) -> int:
     """The one-time fill of quarters memory lacks from screener.in (screener_fill.py, F161): a dry run by default (fetch,
     decide, report; no write), --apply writes by="screener" figures. One request per gap company, at least 3 s apart per
@@ -1390,6 +1410,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--results-only", action="store_true")
     p.add_argument("--shareholding-only", action="store_true")
     p.set_defaults(func=cmd_seed_memory)
+
+    p = sub.add_parser("restated-report", help="quarters whose restated figure differs from the first filed one, in stored memory (read only, no AI)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--json", help="write the counts and every restated figure to this file")
+    p.set_defaults(func=cmd_restated_report)
 
     p = sub.add_parser("memory-gaps", help="universe companies lacking exchange-XBRL results quarters in memory; --fill seeds them (no AI)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

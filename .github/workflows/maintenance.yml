@@ -1001,6 +1001,7 @@ jobs:
         working-directory: pipeline
     steps:
       - name: Runner resources
+        working-directory: .   # before checkout the pipeline folder does not exist yet
         run: 'echo "cpus: $(nproc)"; free -h; df -h /'
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -1060,6 +1061,7 @@ jobs:
       PIP_EXTRA_INDEX_URL: https://download.pytorch.org/whl/cpu   # CPU-only torch wheels
     steps:
       - name: Runner resources
+        working-directory: .   # before checkout the pipeline folder does not exist yet
         run: 'echo "reader: ${{ matrix.reader }}"; echo "cpus: $(nproc)"; free -h; df -h /'
       - name: Free disk (unused toolchains)
         working-directory: .
@@ -1116,6 +1118,7 @@ jobs:
         working-directory: pipeline
     steps:
       - name: Runner resources
+        working-directory: .   # before checkout the pipeline folder does not exist yet
         run: 'echo "cpus: $(nproc)"; free -h; df -h /'
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

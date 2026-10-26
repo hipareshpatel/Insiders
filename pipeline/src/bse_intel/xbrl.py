@@ -206,7 +206,13 @@ BALANCE_TAGS = {
 BALANCE_SUMS = {"investments_cr": ("investments_noncurrent", "investments_current"),
                 "receivables_cr": ("receivables_current", "receivables_noncurrent"),
                 "payables_cr": ("payables_current", "payables_noncurrent")}
-PER_SHARE = {"eps"}
+# EPS_VARIANTS (F188): the two EPS tags that `eps` reads as one metric (the first in the file wins), read again on their
+# own for memory, never for a card or prompt. ABB India's Q4FY26 file tags 16.14 on continuing operations first: `eps` is
+# that, where the whole company (its profit includes the ₹1,441.74 Cr from the discontinued operation) earned 84.17.
+EPS_VARIANTS = {"BasicEarningsLossPerShareFromContinuingAndDiscontinuedOperations": "eps_total",
+                "BasicEarningsLossPerShareFromContinuingOperations": "eps_continuing"}
+EPS_METRICS = ("eps", "eps_total", "eps_continuing")
+PER_SHARE = {"eps", "eps_total", "eps_continuing"}
 CASH_FLOW = {"operating_cash_flow", "investing_cash_flow", "financing_cash_flow", "net_cash_flow", "capex", "capex_intangible",
              "capex_intangible_wip"}
 PERCENT = {"ebitda_margin", *RATIO_TAGS.values()}
@@ -610,10 +616,12 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                     continue
                 else:
                     value = value / 1e7
-            if metric in PER_SHARE and values.get((metric, label)) == 0 and value != 0:
-                values[(metric, label)] = value   # a 0 EPS tagged first is a filler; the real one may come under another tag
-            else:
-                values.setdefault((metric, label), value)
+            # an EPS tag also feeds its own metric when it is one of the two variants (F188); `eps` keeps the first tag as before
+            for target in (metric, EPS_VARIANTS[name]) if metric == "eps" and name in EPS_VARIANTS else (metric,):
+                if target in PER_SHARE and values.get((target, label)) == 0 and value != 0:
+                    values[(target, label)] = value   # a 0 EPS tagged first is a filler; the real one may come under another tag
+                else:
+                    values.setdefault((target, label), value)
             ends[label] = info["endDate"]
         elif name in BALANCE_TAGS and kind == "MONEY" and info.get("instant"):
             instants.setdefault(info["instant"], {}).setdefault(BALANCE_TAGS[name], value / 1e7)
@@ -670,6 +678,9 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     owners_share(values, minority)
     eps_fillers(values)
     eps_signs(values)
+    # the two EPS variants go to memory only (F188), beside the owners' share: no table, prompt or card reads them
+    for key in [k for k in values if k[0] in EPS_METRICS[1:]]:
+        minority[key] = values.pop(key)
     metrics = []
     for (metric, label), value in sorted(values.items(), key=lambda kv: (ends.get(kv[0][1]) or date.min, kv[0][0])):
         unit = "INR" if metric in PER_SHARE else "PCT" if metric in PERCENT else "INR_CR"
@@ -689,7 +700,8 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
         all_values = {**values, **minority}
         yoy = _change(value, _match(all_values, ends, metric, label, years=1))
         qoq = _change(value, _match(all_values, ends, metric, label, months=3)) if label.startswith("Q") else None
-        extra.append(FinancialMetric(metric=metric, period=label, value=round(value, 2), unit="INR_CR", yoy_pct=yoy,
+        extra.append(FinancialMetric(metric=metric, period=label, value=round(value, 2),
+                                     unit="INR" if metric in PER_SHARE else "INR_CR", yoy_pct=yoy,
                                      qoq_pct=qoq, by="file", file_basis=basis))
     dates = sorted(instants)
     sheet = _balance_sheet(instants[dates[-1]], dates[-1]) if dates else None
@@ -762,15 +774,23 @@ def owners_share(values: dict, kept: dict | None = None) -> int:
     return changed
 
 
+def _eps_profit(values: dict, metric: str, label: str) -> float | None:
+    """The profit an EPS line is on: the owners' profit, else the whole profit; for the continuing-operations EPS the
+    continuing profit (F188), since a sold business can make the whole profit a gain and the continuing EPS a loss."""
+    if metric == "eps_continuing" and values.get(("pat_continuing", label)) is not None:
+        return values[("pat_continuing", label)]
+    return values.get(("pat_owners", label)) or values.get(("pat", label))
+
+
 def eps_fillers(values: dict) -> int:
     """Drop an EPS of exactly 0 beside a profit of ₹1 Cr or more either way, in place: the template's filler, not a figure
     (Ahluwalia Contracts Q3FY24 EPS 0 beside a profit of ₹70.24 Cr; screener 10.55; 47 such pairs in the screener referee
-    of 26 Oct 2026). Returns how many it dropped."""
+    of 26 Oct 2026). Applies to `eps` and its two variants, whole-company and continuing (F188). Returns how many it dropped."""
     dropped = 0
     for (metric, label), value in list(values.items()):
-        if metric != "eps" or value != 0:
+        if metric not in EPS_METRICS or value != 0:
             continue
-        profit = values.get(("pat_owners", label)) or values.get(("pat", label))
+        profit = _eps_profit(values, metric, label)
         if profit is not None and abs(profit) >= 1:
             values.pop((metric, label))
             dropped += 1
@@ -780,15 +800,16 @@ def eps_fillers(values: dict) -> int:
 def eps_signs(values: dict) -> int:
     """Give each period's EPS its profit's sign, in place ({(metric, period): value}). Returns how many it changed. Not when
     the whole profit and the owners' profit disagree in sign: one of them is wrong, so the filed sign stays (Alembic Q4FY26:
-    profit ₹67.13 Cr, owners' -33.87, filed EPS 2.61 turned into -2.61; screener 2.61; 27 such pairs, 26 Oct 2026)."""
+    profit ₹67.13 Cr, owners' -33.87, filed EPS 2.61 turned into -2.61; screener 2.61; 27 such pairs, 26 Oct 2026). Applies
+    to `eps` and its two variants (F188); the continuing EPS takes the continuing profit's sign where the file has one."""
     changed = 0
     for (metric, label), value in list(values.items()):
-        if metric != "eps" or not value:
+        if metric not in EPS_METRICS or not value:
             continue
         owners, whole = values.get(("pat_owners", label)), values.get(("pat", label))
         if owners and whole and (owners < 0) != (whole < 0):
             continue
-        profit = owners or whole
+        profit = _eps_profit(values, metric, label)
         if profit and abs(profit) >= 0.01 and (profit < 0) != (value < 0):
             values[(metric, label)] = -value
             changed += 1

@@ -87,6 +87,9 @@ export interface ResultLine {
   /** a change across a loss, named instead of a % (LOSS_TO_PROFIT, PROFIT_TO_LOSS, LOSS_NARROWED, LOSS_WIDENED) */
   yoy_turn?: string;
   qoq_turn?: string;
+  /** EPS only, with CARD_EPS_WHOLE (F188): the continuing-operations EPS of the quarter, beside the whole company's `value`,
+   *  present only when the two differ (a company with a discontinued operation) */
+  continuing?: number;
   /** slots worked out from cumulative periods (a quarter as H1 less Q1), not reported as a quarter */
   derived?: ("value" | "prev_year" | "prev_quarter")[];
 }

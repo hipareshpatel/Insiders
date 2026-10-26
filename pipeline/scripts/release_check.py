@@ -53,6 +53,9 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
   eps_follows_profit CARD_EPS_FOLLOWS_PROFIT (F183): a results table's EPS line, `results_snapshot` off and on over memory
                      (an EPS change far above the profit change, with no share-count event, is not shown; dilution is
                      shown). Needs a RESULTS card with a table and memory.
+  eps_whole         CARD_EPS_WHOLE (F188): a results table's EPS line, `results_snapshot` off and on over memory (the whole
+                     company's EPS with the continuing one beside it when they differ). Needs a RESULTS card with a table and
+                     memory; memory read again since F188 for the periods it shows, else the line is unchanged.
 A card or part that cannot be replayed is never faked: it is counted as "not_replayable", written to NAME-unreplayable.json
 and NAME-unreplayable.md (the stored lines and the pdf link, for the blind sample: judge the stored card as it is).
 
@@ -94,12 +97,12 @@ from onoff_facts import tagged_from_memory  # noqa: E402
 
 ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ONLY", "QUOTE_EXACT_NUMBERS", "CARD_SAME_DEFINITION",
                 "CARD_GROUNDED_FIGURES", "CARD_GUIDANCE_DATED", "CARD_ONE_BASIS", "MEMORY_YEAR_CHECK",
-                "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT")
+                "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
           ("year_check", "MEMORY_YEAR_CHECK"), ("footer_plausible", "CARD_FOOTER_PLAUSIBLE"),
-          ("eps_follows_profit", "CARD_EPS_FOLLOWS_PROFIT"))
+          ("eps_follows_profit", "CARD_EPS_FOLLOWS_PROFIT"), ("eps_whole", "CARD_EPS_WHOLE"))
 
 
 # ---------------------------------------------------------------- pure helpers (tested)
@@ -557,8 +560,9 @@ def check_footer(card: dict, dossier: dict | None, row: dict, text: str | None, 
     return rec
 
 
-def check_eps(card: dict, dossier: dict | None, row: dict, text: str | None, period: str | None) -> dict:
-    """eps_follows_profit: the results table (`results_snapshot`), with the EPS-follows-profit switch off and on."""
+def check_eps(card: dict, dossier: dict | None, row: dict, text: str | None, period: str | None,
+              switch: str = "CARD_EPS_FOLLOWS_PROFIT") -> dict:
+    """eps_follows_profit / eps_whole: the results table (`results_snapshot`), with that EPS switch off and on."""
     if not dossier:
         rec = _record(row, card, [], [])
         rec["info"], rec["unreplayable"] = {}, [_unrep(row, "results table on the card, but the company's memory is not available", stored_lines(card))]
@@ -573,7 +577,7 @@ def check_eps(card: dict, dossier: dict | None, row: dict, text: str | None, per
 
     with switches_on():
         off = lines(results_snapshot(current, row["news_id"], (), printed=text, like=like))
-    with switches_on("CARD_EPS_FOLLOWS_PROFIT"):
+    with switches_on(switch):
         on = lines(results_snapshot(current, row["news_id"], (), printed=text, like=like))
     rec = _record(row, card, off, on)
     rec["info"], rec["unreplayable"] = {}, []
@@ -728,12 +732,12 @@ def run(source, wanted: tuple[str, ...]) -> dict:
                     else:
                         seen[name] += 1
                         records[name].append(check_footer(card, memory() or None, row, text, period if results else None))
-                elif name == "eps_follows_profit":
+                elif name in ("eps_follows_profit", "eps_whole"):
                     if not results or not period:
                         skipped[name]["not a results card with a period"] += 1
                     else:
                         seen[name] += 1
-                        records[name].append(check_eps(card, memory() or None, row, text, period))
+                        records[name].append(check_eps(card, memory() or None, row, text, period, switch))
                 elif name == "one_basis":
                     seen[name] += 1
                     records[name].append(check_one_basis(card, memory() or None, row, period if results else None))
@@ -792,6 +796,10 @@ def finish(name: str, switch: str, result: dict, out: pathlib.Path, seed: int, n
     if name == "eps_follows_profit":
         notes.append("`results_snapshot` over memory with the switch off and on; a MEMORY line names an EPS change not shown. "
                      "Corporate actions are read from memory as it stands now.")
+    if name == "eps_whole":
+        notes.append("`results_snapshot` over memory with the switch off and on; the TABLE EPS line shows the whole company's "
+                     "figure and `continuing` where they differ. Memory is as it stands now: a period whose file was not read "
+                     "again since F188 has no whole-company EPS in it, and its line stays as it was.")
     if name == "one_basis":
         notes.append("`one_basis.apply` on the stored words (figures from memory's results rows, history from memory as of the "
                      "filing) and `apply_card_json` on the stored card. Memory is as it stands now, not as at filing.")

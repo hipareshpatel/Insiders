@@ -59,7 +59,7 @@ def test_the_minority_figure_is_not_in_the_metrics_a_card_reads():
     assert "pat_minority" not in {m.metric for m in parsed.metrics}
     assert "pat_minority" in {m.metric for m in parsed.memory_extra}
     assert "pat_minority" not in parsed.table()
-    assert xbrl.parse(results_xml()).memory_extra == []
+    assert {m.metric for m in xbrl.parse(results_xml()).memory_extra} <= {"eps_total"}   # no minority tag, no minority figure (F188 adds the EPS)
 
 
 def test_a_minority_share_that_does_not_add_up_is_not_kept():

@@ -168,6 +168,15 @@ def card_eps_follows_profit() -> bool:
     return (_env("CARD_EPS_FOLLOWS_PROFIT", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_eps_whole() -> bool:
+    """CARD_EPS_WHOLE (default off; F188, TODO 89): on a results table the EPS line is the whole company's (continuing and
+    discontinued operations together), with the continuing-operations EPS shown beside it only when the two differ; an older
+    period without a whole-company figure in memory falls back to the EPS it has, and a change is left out rather than set
+    across the two bases. ABB India's Q4FY26 card showed 16.14 (continuing, from a profit of ₹341.91 Cr) beside a company
+    profit of ₹1,783.65 Cr, where screener says 84.17. Off: the line is the `eps` memory holds, as before. Read at the call."""
+    return (_env("CARD_EPS_WHOLE", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def eps_share_adjust() -> bool:
     """EPS_SHARE_ADJUST (default off; F153, TODO 43): an EPS change on a card is worked out on today's share count (the older
     period's EPS divided by the split, bonus or consolidation factor between the two periods), or left out where the share

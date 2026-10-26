@@ -175,7 +175,10 @@ function ResultsTable({ r, judged }: { r: ResultsSnapshot; judged: { label: stri
                   {label}
                   {note && <span className="block text-[11px] font-normal text-ink-3">{note}</span>}
                 </td>
-                <td className={cn(td, "font-semibold text-ink")}>{lineValue(line.value, unit)}{mark(line, "value")}</td>
+                <td className={cn(td, "font-semibold text-ink")}>
+                  {lineValue(line.value, unit)}{mark(line, "value")}
+                  {line.continuing != null && <span className="block text-[11px] font-normal text-ink-3">continuing {lineValue(line.continuing, unit)}</span>}
+                </td>
                 {py && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_year, unit)}{mark(line, "prev_year")}</td>}
                 {yoy && <td className={td}>{change(line, "yoy", bps, lower, key)}{py && <span className={under}>{was(line.prev_year, unit)}</span>}</td>}
                 {pq && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_quarter, unit)}{mark(line, "prev_quarter")}</td>}
@@ -209,7 +212,7 @@ function tableShows(r: ResultsSnapshot | null | undefined): r is ResultsSnapshot
 /** A results bullet that only restates numbers the P&L table shows adds nothing; the card hides it. */
 function coveredByTable(fact: Fact, r: ResultsSnapshot): boolean {
   const known = resultLines(r).flatMap(({ line }) =>
-    [line.value, line.prev_year, line.prev_quarter, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps]
+    [line.value, line.prev_year, line.prev_quarter, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps, line.continuing]
       .filter((v): v is number => v != null).map(Math.abs));
   const raw = plain(fact).replace(PERIOD_WORDS, " ").match(/\d[\d,]*(?:\.\d+)?/g) ?? [];
   return raw.length > 0 && raw.every((x) => near(Number(x.replace(/,/g, "")), known, x));
@@ -564,7 +567,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
   // every figure and name the table, tiles and blocks show, so a point, a line or a chip that only restates them is
   // left out too (UCO's Key numbers repeated the table's EPS)
   const blockText = [
-    table ? resultLines(table).flatMap(({ line }) => [line.value, line.prev_year, line.prev_quarter, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps])
+    table ? resultLines(table).flatMap(({ line }) => [line.value, line.prev_year, line.prev_quarter, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps, line.continuing])
       .filter((v): v is number => v != null).map((v) => String(Math.abs(v))).join(" ") : "",
     dealBlock ? [...dealFacts(card).map((f) => f.value), ...(card.scale?.against ?? []).flatMap((a) => [a.pct.toFixed(1), a.base_cr]),
                  card.scale?.per_year?.pct.toFixed(1)].filter((x) => x != null).join(" ") : "",

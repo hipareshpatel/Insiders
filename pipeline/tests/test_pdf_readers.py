@@ -365,3 +365,14 @@ def test_title_ending_in_its_date_sets_the_basis():
     assert [b.basis for b in layer.bands() if b.nums and b.label.startswith("Revenue")] == [CONSOLIDATED, STANDALONE]
     assert cell_in_layer(layer, "Revenue from operations", CONSOLIDATED, 100.0, 0, 3, True) == ""
     assert cell_in_layer(layer, "Revenue from operations", STANDALONE, 100.0, 0, 3, True) == "100.00"
+
+
+def test_a_data_row_ending_in_a_year_keeps_the_basis():
+    """Only a results title ending in its date switches the basis; a data row that names a basis and ends in a year does not."""
+    from bse_intel.pdf_readers import page_layer
+    from bse_intel.pdf_referee import STANDALONE
+    text = ("Statement of Standalone Financial Results for the quarter ended 30th September, 2025\n"
+            "Profit attributable to owners (consolidated) 2025\nRevenue from operations 50.00 40.00\n")
+    layer = page_layer(text + "x" * 200)
+    layer.text = text
+    assert [b.basis for b in layer.bands() if b.label.startswith("Revenue")] == [STANDALONE]

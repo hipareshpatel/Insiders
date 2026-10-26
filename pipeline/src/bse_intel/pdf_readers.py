@@ -112,6 +112,9 @@ class Band:
 
 _NUMTOK = re.compile(r"^\(?-?\d[\d,]*(?:\.\d+)?\)?$")
 _YEAR = re.compile(r"(?:19|20)\d\d[,.]?")
+# a title's own date: "... results for the quarter ended September" (then "30, 2025"); a data row never reads so
+_DATED = re.compile(r"\b(?:results|statement)\b.*\b(?:ended|ending|as at|as on)\s+(?:the\s+)?(?:\d{1,2}(?:st|nd|rd|th)?\s+)?"
+                    r"(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*[.,]?$", re.I)
 
 
 def _alpha(text: str) -> str:
@@ -121,7 +124,7 @@ def _alpha(text: str) -> str:
 def make_bands(words: list, text: str) -> list[Band]:
     """Rows of the text layer: words on one baseline band (3.5 pt) when the words are known, else the text's lines. A row's
     figures are the numeric tokens after its last non-numeric token (a serial number before the label is not one)."""
-    from .pdf_referee import _TITLE, _words_basis
+    from .pdf_referee import _words_basis
     groups: list[list[str]] = []
     if words:
         ordered = sorted(words, key=lambda w: (w[1] + w[3]) / 2)
@@ -144,7 +147,7 @@ def make_bands(words: list, text: str) -> list[Band]:
         stop = max((i for i, t in enumerate(tokens) if not _NUMTOK.match(t)), default=-1)
         label, nums = " ".join(tokens[: stop + 1]), tokens[stop + 1:]
         # a title names one basis and ends at most in its date ("... quarter ended September 30, 2025")
-        if (not nums or (_TITLE.search(label) and len(nums) <= 2 and any(_YEAR.fullmatch(n) for n in nums))) \
+        if (not nums or (_DATED.search(label) and len(nums) <= 2 and any(_YEAR.fullmatch(n) for n in nums))) \
                 and (named := _words_basis(label)):
             basis = named
         bands.append(Band(label, nums, basis))

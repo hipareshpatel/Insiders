@@ -698,6 +698,8 @@ jobs:
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "${{ inputs.no_ocr && '.' || '.[ocr]' }}"
       - name: Download this shard's filing texts
+        env:
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169, owner 26 Oct 2026: the attachments are on the archive host; a refusal slows it back
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/textback" "$RUNNER_TEMP/more"

@@ -212,3 +212,24 @@ def test_refresh_adds_the_block_to_a_stored_call_card():
     new, changed = card_refresh.refresh(card, dossier(), filing, None)
     assert "call_memory" in changed and new["call_memory"] == card_takeaways(dossier(), T1, FILED_T1)
     assert not card_refresh.refresh({**card, "event_type": "ORDER_WIN"}, dossier(), filing, None)[0].get("call_memory")
+
+
+def test_no_eps_in_call_takeaways_on_cards_or_the_company_page():
+    """Owner rule (26 Oct 2026): no EPS on cards or stock pages. Memory keeps a call's EPS points for its checks; the
+    call card's takeaway block and the company page's call summary leave them out."""
+    d = dossier()
+    d["operating_notes"] += [{"text": "Diluted EPS for the quarter was Rs 12.40 against Rs 9.10", "source_news_id": T1,
+                              "as_of": FILED_T1}]
+    d.setdefault("call_points", []).append({"news_id": T1, "text": "Earnings per share rose to Rs 12.4 in Q1",
+                                            "category": CATEGORIES[0]})
+    texts = _texts(card_takeaways(d, T1, FILED_T1))
+    assert texts and not any("EPS" in t or "per share" in t.lower() for t in texts)
+    assert "EPS" not in str(summarize_calls(d)) and "Earnings per share" not in str(summarize_calls(d))
+
+
+def test_a_trailing_eps_clause_is_cut_and_the_rest_of_the_point_kept():
+    d = dossier()
+    d.setdefault("call_points", []).append({"news_id": T1, "text": "Net profit rose to Rs 50 crore, EPS Rs 3",
+                                            "category": CATEGORIES[0]})
+    texts = _texts(card_takeaways(d, T1, FILED_T1))
+    assert any("Rs 50 crore" in t for t in texts) and not any("EPS" in t for t in texts)

@@ -43,10 +43,11 @@ _NOT_EPS = re.compile(
     r"revenue|sales|cash\s+flow|preferential|subscription|exercise|esop|options?|tender|acquir\w*|acquisition|consideration|"
     r"swap|split|bonus|sub-?division|stake|qip|placement|ofs|floor|sold|sell\w*|bought|buy|purchase[ds]?|repurchas\w*|trade[ds]?|transfer\w*|"
     r"fair\s+value|market\s+cap\w*|valuer)(?![^\W\d_])", re.I)
-# a share-price move ("shares closed at ₹250, up ₹5 a share") is not EPS, unless an earnings word is beside the figure
-# ("Earnings rose to ₹5 per share")
-_MOVE = re.compile(r"(?<![^\W\d_])(?:clos\w*|gain\w*|fell|falls?|rose|rises?|up|down|stock|shares?\s+(?:closed|traded))(?![^\W\d_])", re.I)
-_EARN = re.compile(r"(?<![^\W\d_])(?:earn\w*|profits?|loss(?:es)?|pat|income)(?![^\W\d_])", re.I)
+# a share-price move ("shares closed at ₹250, up ₹5 a share") is not EPS: a price phrase anywhere on the line excuses a
+# clause that carries no earnings word ("Earnings rose to ₹5 per share" still counts; bare "up 10%" excuses nothing)
+_MOVE = re.compile(r"(?<![^\W\d_])(?<!per\s)(?<!a\s)(?<!each\s)(?:(?:shares?|stock|scrip)\s+(?:\w+\s+)?(?:clos\w*|gain\w*|fell|rose|jump\w*|slipp\w*|"
+                   r"surg\w*|trad\w*|declin\w*|ended|end)|clos\w*\s+at|share\s+price|stock\s+price|market\s+price)(?![^\W\d_])", re.I)
+_EARN = re.compile(r"(?<![^\W\d_])(?:earn\w*|profits?|loss(?:es)?|pat|income|report\w*|post\w*|clock\w*)(?![^\W\d_])", re.I)
 _CLAUSE = re.compile(r",\s|;\s|\s[—–|]\s|\n")   # the pieces of a line (a comma inside "₹1,200" is no break)
 _INVISIBLE = re.compile("[­​-‏⁠﻿]")
 _PERIOD = re.compile(r"\b(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2,4}(?:-\d{2})?\b|\b(?:Q[1-4]|H[12]|9M)\b|\b20\d{2}(?:-\d{2})?\b", re.I)
@@ -73,20 +74,28 @@ def _find(text: str):
     """The first place a normalised text states EPS (a match), or None."""
     found = [m for m in (_TOKEN.search(text), _WORDING.search(text)) if m]
     pos = 0
-    while (m := _FIGURE.search(text, pos)):   # rule B holds unless the clause around the figure names a non-EPS per-share item
-        pos = m.start() + 1
+    while (m := _FIGURE.search(text, pos)):   # rule B holds unless a non-EPS per-share item sits beside the figure
         if _CLAUSE.search(m.group()):   # a figure and a per-share phrase in two different clauses are not one statement
+            pos = m.start() + 1
             continue
         start = max([0] + [x.end() for x in _CLAUSE.finditer(text) if x.end() <= m.start()])
         end = min([len(text)] + [x.start() for x in _CLAUSE.finditer(text) if x.start() >= m.end()])
-        # the non-EPS word must sit beside the figure (up to 6 words before it, 1 after): "Earnings were ₹5 per share
-        # and dividend ₹2 per share" states EPS though its clause names a dividend (review of F190)
-        before = text[start:m.start()].split()[-6:]
-        after = text[m.end():end].split()[:1]
+        # the non-EPS word must sit beside the figure (up to 10 words before it, 1 after, or "as [final] dividend"):
+        # "Earnings were ₹5 per share and dividend ₹2 per share" states EPS though its clause names a dividend (F190 review)
+        before = text[start:m.start()].split()[-10:]
+        words = text[m.end():end].split()
+        after = words[:1]
+        if after == ["as"] and re.search(r"\bdividends?\b", " ".join(words[1:3]), re.I):   # "₹2 per share as final dividend"
+            after = words[:3]
         near = " ".join(before + [m.group()] + after)
-        if not (_NOT_EPS.search(near) or (_MOVE.search(near) and not _EARN.search(near))):
+        clause = text[start:end]
+        # a clause with no earnings word is excused by a non-EPS word anywhere in it ("Preferential allotment of 1.5 crore
+        # shares to the promoter group at ₹250 per share"); one with an earnings word only by a word beside the figure
+        plain = not _EARN.search(clause)
+        if not (_NOT_EPS.search(near) or (plain and (_NOT_EPS.search(clause) or _MOVE.search(text)))):
             found.append(m)
             break
+        pos = m.end()   # excused: a shorter match inside this one would lose the word that excused it
     return min(found, key=lambda m: (m.start(), -m.end())) if found else None
 
 

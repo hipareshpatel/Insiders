@@ -246,3 +246,30 @@ def test_a_non_eps_word_counts_only_beside_the_figure():
                  "Stock gained ₹5 a share after results", "The company repurchased 5 lakh shares at ₹120 a share, total ₹6 Cr",
                  "₹10 per share dividend declared"]:
         assert not mentions_eps(line), line
+
+
+# second review of F190: every line a reviewer found, both ways
+_REVIEW_EPS = ["Net profit ₹45 Cr, ₹5 a share up 10%","Net profit ₹45 Cr; ₹5 a share rose from ₹4","Net profit ₹45 Cr, ₹5 a share (up 10%)",
+"Net profit ₹45 Cr, Q2 ₹5 per share down 8%","Net profit ₹45 Cr | ₹5 a share up 10%","Basic ₹5 a share up 10% YoY",
+"Basic and diluted rose to ₹5 per share from ₹4","Consolidated ₹5 a share down 20% on the year","Per-share figure up to ₹5 a share",
+"Quarterly figure of ₹12.4 per share fell from ₹14 a year earlier","Q2 ₹5 per share fell 8% YoY",
+"Earnings were ₹5 per share and dividend ₹2 per share","Profit worked out to ₹5 per share on higher sales","Earnings rose to ₹5 per share",
+"The firm reported ₹5 a share on sales of ₹900 Cr","loss per share ₹5.2","Earnings were ₹5.2 per share","Profit/(loss) per share ₹5","E P S ₹5","LPS of ₹3","Revenue ₹500 Cr, EPS ₹2","Profit per share ₹3 after QIP"]
+_REVIEW_NOT_EPS = ["Buyback of up to 50 lakh shares at ₹300 per share via tender offer","Promoter group sold 3.2% stake in the company through open market transactions at ₹300 per share",
+"Preferential allotment of up to 1.5 crore equity shares to the promoter group at ₹250 per share","Board approved issue of 1 lakh shares at ₹300 per share",
+"Rights issue of 1 crore shares at ₹100 per share including premium of ₹90","Rights issue of up to 1 crore shares of ₹10 each at ₹100 per share",
+"Promoter acquired 5 lakh shares in the open market at an average ₹300 per share","Promoters bought 1.2% for ₹45 Cr at ₹300 per share",
+"Company will buy back up to 10 lakh shares at a maximum ₹300 per share","Board recommended ₹2 per share as final dividend for FY26",
+"Board declared an interim dividend for the year ended March 2026 of ₹2 per share","Total dividend for the year of ₹4 per share versus ₹3 per share in FY25",
+"Net profit ₹45 Cr and dividend ₹2 per share","Net profit of ₹45 Cr; each share carries one vote","Revenue ₹45 Cr; fair value ₹300 per share per valuer",
+"Net profit ₹45 Cr, shares closed at ₹250, up ₹5 a share","Stock gained ₹5 a share after results","The company repurchased 5 lakh shares at ₹120 a share, total ₹6 Cr",
+"QIP at ₹1,200 per share","Promoter sold 5,000 shares at ₹300 per share","Dividend of ₹2 per share","Interim dividend ₹5 per equity share, record date 2 Nov",
+"Board approved buyback at ₹1,500 per share","₹10 per share dividend declared","Book value ₹120 per share","OFS at ₹410 a share",
+"Stock split: each share of ₹10 split into five shares of ₹2","ESOP grant of 1,000 options at ₹50 per share","Net profit ₹50 Cr, up 10%",
+"Final dividend ₹2 per share vs ₹1.5 per share a year ago"]
+
+
+def test_the_second_review_lines():
+    from bse_intel.no_eps import mentions_eps
+    assert [x for x in _REVIEW_EPS if not mentions_eps(x)] == []
+    assert [x for x in _REVIEW_NOT_EPS if mentions_eps(x)] == []

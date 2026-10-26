@@ -9,6 +9,7 @@ import { useLocation } from "wouter";
 import { useQueryState } from "../lib/url";
 import type { CallRead, CardBody, CardRow, Fact, Impact, PriceReaction, Technicals, ResultLine, ResultsSnapshot, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
+import { cardChecks } from "../../shared/cardChecks";
 import { useOwnerToken, useRatings, useVerdicts, type Verdict } from "../lib/owner";
 import { copyNodeAsPng, printNode } from "../lib/png";
 import { cr, formatKpi, istDate, istDateTime, pct, relativeTime, signClass, titleCase, companyPath } from "../lib/format";
@@ -897,6 +898,28 @@ const VERDICTS: { v: Verdict; label: string; on: string }[] = [
   { v: "WRONG", label: "Wrong", on: "border-neg bg-neg-soft text-neg" },
 ];
 
+/** What the card's stored data says about its own checks, in plain English, grouped (owner only, TODO row 67): what our
+ *  code corrected, what was held and why, checks that failed, the owner's own verdict. Nothing renders when it is empty. */
+function ChecksPanel({ row, card }: { row: CardRow; card: CardBody }) {
+  const { verdicts } = useVerdicts();
+  const { groups } = cardChecks(card, row, verdicts[row.news_id]);
+  if (!groups.length) return null;
+  return (
+    <Section label="Checks · only you see this" tone={groups.some((g) => g.key === "held" || g.key === "failed") ? "warn" : undefined}>
+      <div className="space-y-2.5" data-testid="checks-panel">
+        {groups.map((g) => (
+          <div key={g.key}>
+            <h4 className="text-[12px] font-semibold text-ink-2">{g.title}</h4>
+            <ul className="mt-1 space-y-1">
+              {g.items.map((t, i) => <li key={i} className="text-[12px] leading-relaxed text-ink-2">{t}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
 /** The owner's verdict on the card and a note on what is wrong, stored with the card as judged (owner only). */
 function VerdictBar({ newsId }: { newsId: string }) {
   const { token, verdicts, judge } = useVerdicts();
@@ -1116,6 +1139,8 @@ function DeepDive({ row, card, shown, shownSignal, moreFacts, keyNumbers, faceTe
           </ul>
         </Section>
       )}
+
+      {owner && !exporting && <ChecksPanel row={row} card={card} />}
 
       {exporting && <p className="px-1 text-[11px] text-ink-3">AI summary of a public NSE filing. Not investment advice; verify against the original filing.</p>}
       {!exporting && (

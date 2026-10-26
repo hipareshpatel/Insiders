@@ -5,6 +5,7 @@ import { Hono, type MiddlewareHandler } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import type { AppEnv } from "./env";
 import { withOwnerHold } from "../shared/ownerHold";
+import { cardChecks, parseCheckInput, type IssueRow } from "../shared/cardChecks";
 import { cardById, feed, isCompanyKey, reviewQueue, SNAPSHOT_KEY, systemStatus } from "./public";
 
 export const owner = new Hono<AppEnv>();
@@ -147,4 +148,51 @@ owner.get("/feedback", async (c) => {
   const { results } = await c.env.DB.prepare(
     "SELECT news_id, rating FROM card_feedback ORDER BY created_at DESC LIMIT 500").all();
   return c.json({ ratings: results });
+});
+
+// Which card has which issue (owner TODO row 67). One indexed read of the cards in a date range, newest first, with the
+// owner's verdict joined by its primary key, and only the grounding and review parts of the card JSON (the evidence
+// block is cut out in SQL). The WHERE keeps cards that might have an item; cardChecks then names the types exactly.
+// Paged by a (filed_at, news_id) cursor like the feed, so a deep page re-reads nothing above it.
+const ISSUE_LIMIT = 200;
+const GROUNDING_KEYS = ["unit_fixes", "change_fixes", "one_basis", "call_figure_conflicts", "quotes_dropped"];
+owner.get("/issues", async (c) => {
+  const q = c.req.query();
+  const day = (s: string | undefined) => (s && /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : null);
+  const from = day(q.from) ?? new Date(Date.now() - 7 * 86400_000).toISOString().slice(0, 10);
+  const to = day(q.to) ?? "2999-12-31";
+  const limit = Math.min(Math.max(Number.parseInt(q.limit ?? "", 10) || 100, 1), ISSUE_LIMIT);
+  const [cursorAt, cursorId] = (q.cursor ?? "").split("|");
+  const upper = cursorAt && cursorAt < `${to}T99` ? cursorAt : `${to}T99`;   // filed_at is "YYYY-MM-DDTHH:MM:SS+05:30"
+  const params: unknown[] = [from, upper];
+  const cursor = cursorAt ? (params.push(cursorAt, cursorId ?? ""), "AND (c.filed_at, c.news_id) < (?3, ?4)") : "";
+  const sql = `
+    SELECT c.news_id, c.scrip_code, c.symbol, c.company_name, c.filing_date, c.filed_at, c.event_category, c.headline,
+           c.held, c.needs_review, v.verdict, v.note,
+           json_object('grounding', json(json_remove(json_extract(c.card_json, '$.grounding'), '$.evidence')),
+                       'review', json(json_extract(c.card_json, '$.review'))) AS checks
+      FROM cards c LEFT JOIN card_verdicts v ON v.news_id = c.news_id
+     WHERE c.filed_at >= ?1 AND c.filed_at <= ?2 ${cursor}
+       AND (c.held = 1 OR c.needs_review = 1 OR v.verdict IN ('WRONG', 'MINOR')
+            OR json_extract(c.card_json, '$.review') IS NOT NULL
+            OR json_array_length(c.card_json, '$.grounding.unsupported_claims') > 0
+            OR json_array_length(c.card_json, '$.grounding.ungrounded') > 0
+            ${GROUNDING_KEYS.map((k) => `OR json_extract(c.card_json, '$.grounding.${k}') IS NOT NULL`).join("\n            ")})
+     ORDER BY c.filed_at DESC, c.news_id DESC LIMIT ${limit + 1}`;
+  const { results } = await c.env.DB.prepare(sql).bind(...params).all<Record<string, unknown>>();
+  const page = results.slice(0, limit);
+  const rows: IssueRow[] = [];
+  for (const r of page) {
+    const checks = cardChecks(parseCheckInput(r.checks as string), { held: r.held as number, needs_review: r.needs_review as number },
+      r.verdict ? { verdict: r.verdict as string, note: r.note as string | null } : null);
+    if (!checks.types.length) continue;
+    rows.push({ news_id: r.news_id as string, filed_at: r.filed_at as string, filing_date: r.filing_date as string,
+      scrip_code: r.scrip_code as string, symbol: (r.symbol as string | null) ?? null, company_name: r.company_name as string,
+      event_category: r.event_category as string, headline: r.headline as string, types: checks.types,
+      reasons: checks.groups.filter((g) => g.key !== "unconfirmed").flatMap((g) => g.items).slice(0, 3) });
+  }
+  const last = page[page.length - 1];
+  const more = results.length > limit && last;
+  return c.json({ rows, next_cursor: more ? `${last.filed_at}|${last.news_id}` : null, from, to, scanned: page.length },
+    200, { "Cache-Control": "private, no-store" });
 });

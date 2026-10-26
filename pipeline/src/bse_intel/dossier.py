@@ -618,6 +618,9 @@ def _cap_metrics(entries: list[dict]) -> list[dict]:
 
 
 STANDALONE_KEY = "standalone"
+# Stored for the company page and later readers, never shown to the model: the view (prompts, card checks) leaves them
+# out until a reader is built for them (F166)
+MEMORY_ONLY_METRICS = frozenset({"pat_minority"})
 
 
 # Lists another writer may add entries to while the pipeline holds a dossier, and how an entry is told apart
@@ -1405,6 +1408,8 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
 
     as_known = []
     for m in dossier.get("financial_metrics", []):
+        if m.get("metric") in MEMORY_ONLY_METRICS:
+            continue
         known = [s for s in _sources(m) if s["as_of"] < cutoff]
         if known:
             entry = _metric_entry(m["metric"], m["period"], known)

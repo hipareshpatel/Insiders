@@ -163,7 +163,7 @@ on:
         options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
-        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows)
+        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); seed-memory - re-read only these companies (scrip codes or NSE symbols)
         type: string
         default: ''
       since:
@@ -705,8 +705,16 @@ jobs:
       - name: Seed this shard's companies
         env:
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
+          IDS: ${{ inputs.ids }}
         run: |
           code=0
+          if [ -n "$IDS" ]; then
+            # ids: re-read only these companies (comma-separated scrip codes or NSE symbols), on shard 0 alone; no next pass
+            if [ "${{ matrix.shard }}" != "0" ]; then exit 0; fi
+            timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-memory --scrips "$IDS" --results-only || code=$?
+            if [ "$code" -ne 0 ]; then exit "$code"; fi
+            exit 0
+          fi
           timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-memory --universe --results-only --shard ${{ matrix.shard }}/12 ${{ inputs.restart && '--restart' || '' }} || code=$?
           mkdir -p "$RUNNER_TEMP/more"
           if [ "$code" -eq 124 ]; then echo more > "$RUNNER_TEMP/more/${{ matrix.shard }}"; elif [ "$code" -ne 0 ]; then exit "$code"; fi

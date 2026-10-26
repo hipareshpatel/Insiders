@@ -788,7 +788,11 @@ def owners_share(values: dict, kept: dict | None = None) -> int:
         whole = values.get(("pat", label))
         if metric != "pat_owners" or not owners or not whole or (owners < 0) == (whole < 0):
             continue
-        eps = [v for m in EPS_METRICS if (v := values.get((m, label)))]
+        # judged on `eps` alone, or on the variants when it is absent: the continuing and whole-company EPS legitimately
+        # differ in sign with a discontinued operation
+        eps = [v] if (v := values.get(("eps", label))) else [v for m in EPS_METRICS[1:] if (v := values.get((m, label)))]
+        # Known trade-off: a real opposite-sign owners' profit with a proven minority share and a positive EPS filed unsigned
+        # for a loss is dropped here; it cannot be told from Glenmark Q4FY26 (tested). Less, never a guess.
         backed = all((v < 0) == (owners < 0) for v in eps) and (bool(eps) or label in proven)
         if backed:
             continue
@@ -834,6 +838,16 @@ def _implied_shares(values: dict, metric: str, label: str) -> float | None:
 _PROFIT_METRICS = ("pat", "pat_continuing", "pat_discontinued", "pat_owners")
 
 
+def _year_disagrees(values: dict, label: str) -> bool:
+    """True when a financial year's profit differs from the sum of its four quarters in the same file by more than 2% or
+    ₹1 Cr. False when the four quarters are not all there: the profit then stays (Anup Engineering FY25 -22.06 Cr beside
+    a Q4 of +31.54 is the case; its file has the Q4 only)."""
+    year, quarters = values.get(("pat", label)), [values.get(("pat", f"Q{n}{label}")) for n in (1, 2, 3, 4)]
+    if year is None or any(q is None for q in quarters):
+        return False
+    return abs(sum(quarters) - year) > max(1.0, 0.02 * abs(year))
+
+
 def eps_signs(values: dict, minority_labels: frozenset | set = frozenset()) -> int:
     """Give a period's EPS its profit's sign where the file's own figures show the EPS was filed unsigned, in place
     ({(metric, period): value}). Returns how many figures it changed or left out. Never invents a sign:
@@ -845,7 +859,8 @@ def eps_signs(values: dict, minority_labels: frozenset | set = frozenset()) -> i
       (Centum FY24: whole profit -2.75 Cr, minority -4.62, filed EPS +1.38, which was turned into -1.38);
     * only when another period of the same file proves the share count: profit over EPS there (signs agreeing) is within
       2.5x of this period's. A period nothing proves is left out (Prism Johnson Q1FY26: EPS +0.05 beside a loss of 5.56
-      Cr, nothing else in the file), and one the other periods contradict is left out with its profit lines, as one of
+      Cr, nothing else in the file), and so is one the other periods contradict; the profit lines stay (cards show them),
+      except for a year that does not equal the sum of its four quarters in the file, which loses them too, as one of
       the two is wrong and the file does not say which (Anup Engineering FY25: whole profit -22.06 Cr beside EPS 59.25
       where its Q4 gives 2.0 crore shares and this gives 0.37; screener 59.07).
     Applies to `eps` and its two variants (F188); the continuing EPS takes the continuing profit's sign where the file
@@ -862,16 +877,22 @@ def eps_signs(values: dict, minority_labels: frozenset | set = frozenset()) -> i
             continue
         if label in minority_labels and (not owners or metric == "eps_continuing"):
             continue   # the EPS is on a profit the file did not give us: leave it as filed
+        if abs(profit) < 1 or abs(value) < 0.1:
+            values.pop((metric, label))   # too small to prove a share count by: the EPS goes, never the profit
+            changed += 1
+            continue
         mine = abs(profit / value)
-        refs = [r for (m, other) in values if m == metric and other != label
-                and (r := _implied_shares(values, metric, other)) is not None]
+        refs = sorted(r for (m, other) in values if m == metric and other != label
+                      and (r := _implied_shares(values, metric, other)) is not None)
         if not refs:
-            values.pop((metric, label))
-        elif all(0.4 <= mine / r <= 2.5 for r in refs):
+            values.pop((metric, label))   # nothing proves it: the EPS goes, the profit (shown on cards) stays
+        elif 0.4 <= mine / refs[len(refs) // 2] <= 2.5:   # the median of the other periods' share counts
             values[(metric, label)] = -value
         else:
-            for name in EPS_METRICS + _PROFIT_METRICS:
-                values.pop((name, label), None)
+            values.pop((metric, label))
+            if label.startswith("FY") and _year_disagrees(values, label):
+                for name in _PROFIT_METRICS:
+                    values.pop((name, label), None)
         changed += 1
     return changed
 

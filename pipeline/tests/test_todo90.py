@@ -72,11 +72,11 @@ def test_an_owners_profit_the_eps_backs_stays_and_the_eps_keeps_its_sign():
 
 
 # ---------------------------------------------------------------- the EPS sign repair
-def test_an_eps_beside_a_profit_the_other_periods_contradict_is_left_out_with_its_profit():
+def test_an_eps_beside_a_profit_the_other_periods_contradict_is_left_out_and_the_profit_stays():
     """Anup Engineering FY25: -22.06 Cr beside EPS 59.25; the Q4 of the same file is 31.54 Cr on EPS 15.75 (2.0 crore shares)."""
     got = _by(xbrl.parse(_file({PAT: 31.54, EPS: "15.75"}, {PAT: -22.06, EPS: "59.25"})))
     assert got[("pat", "Q1FY27")] == 31.54 and got[("eps", "Q1FY27")] == 15.75
-    assert not [k for k in got if k[1] == "FY26"]   # neither the profit nor the EPS of the odd year
+    assert ("eps", "FY26") not in got and got[("pat", "FY26")] == -22.06   # cards show profit: it stays, quarters not all there
 
 
 def test_an_unsigned_eps_is_flipped_only_when_the_share_count_agrees_across_the_file():
@@ -103,3 +103,45 @@ def test_owners_share_keeps_what_it_did_for_a_zero_minority_and_sums_that_add_up
     values = {("pat", "A"): -25.27, ("pat_owners", "A"): -25.87, ("pat_minority", "A"): 0.0,
               ("pat", "B"): 100.0, ("pat_owners", "B"): 60.0, ("pat_minority", "B"): 40.0, ("eps", "B"): 3.0}
     assert owners_share(values) == 0 and values[("pat_owners", "A")] == -25.87 and values[("pat_owners", "B")] == 60.0
+
+
+def test_a_year_that_is_not_the_sum_of_its_four_quarters_loses_its_profit_with_the_eps():
+    values = {("pat", "Q1FY26"): 30.0, ("pat", "Q2FY26"): 30.0, ("pat", "Q3FY26"): 30.0, ("pat", "Q4FY26"): 31.54,
+              ("eps", "Q4FY26"): 15.77, ("pat", "FY26"): -22.06, ("eps", "FY26"): 59.25}
+    assert eps_signs(values) == 1
+    assert not [k for k in values if k[1] == "FY26"] and values[("pat", "Q4FY26")] == 31.54
+    ok = {("pat", "Q1FY26"): 30.0, ("pat", "Q2FY26"): 30.0, ("pat", "Q3FY26"): 30.0, ("pat", "Q4FY26"): 31.54,
+          ("eps", "Q4FY26"): 15.77, ("pat", "FY26"): 121.54, ("eps", "FY26"): -3.0}   # only the EPS is in doubt
+    eps_signs(ok)
+    assert ("eps", "FY26") not in ok and ok[("pat", "FY26")] == 121.54
+
+
+def test_the_owners_profit_is_judged_on_eps_not_on_the_continuing_variant():
+    # discontinued operations: continuing EPS is positive beside a negative whole-company EPS
+    values = {("pat", "Q"): 10.0, ("pat_owners", "Q"): -5.0, ("pat_minority", "Q"): 15.0, ("pat_continuing", "Q"): 30.0,
+              ("eps", "Q"): -0.5, ("eps_continuing", "Q"): 0.8}
+    assert owners_share(values) == 0 and values[("pat_owners", "Q")] == -5.0
+    both = {("pat", "Q"): 67.0, ("pat_owners", "Q"): -33.0, ("pat_minority", "Q"): 100.0, ("eps", "Q"): -2.6,
+            ("eps_total", "Q"): 2.6}
+    assert owners_share(both) == 0 and both[("pat_owners", "Q")] == -33.0 and both[("eps", "Q")] == -2.6
+
+
+def test_one_odd_period_does_not_condemn_a_period_the_median_proves():
+    values = {("pat", "A"): -27.77, ("eps", "A"): 2.27,                       # 12.2 crore shares
+              ("pat", "B"): 10.0, ("eps", "B"): 0.8, ("pat", "C"): 11.0, ("eps", "C"): 0.9,   # 12.5, 12.2
+              ("pat", "D"): 100.0, ("eps", "D"): 2.0}                          # 50: a split / issue period
+    assert eps_signs(values) == 1 and values[("eps", "A")] == -2.27 and values[("pat", "A")] == -27.77
+
+
+def test_a_tiny_figure_proves_nothing_the_eps_goes_and_the_profit_stays():
+    values = {("pat", "A"): -0.6, ("eps", "A"): 0.05, ("pat", "B"): 10.0, ("eps", "B"): 0.8}
+    assert eps_signs(values) == 1 and ("eps", "A") not in values and values[("pat", "A")] == -0.6
+    small_eps = {("pat", "A"): -50.0, ("eps", "A"): 0.04, ("pat", "B"): 10.0, ("eps", "B"): 0.8}
+    assert eps_signs(small_eps) == 1 and ("eps", "A") not in small_eps and small_eps[("pat", "A")] == -50.0
+
+
+def test_known_trade_off_a_real_opposite_owners_profit_with_an_unsigned_loss_eps_is_dropped():
+    """Whole +67, minority +101 (adds up), owners' -34 and a loss EPS filed positive 1.3: the same shape as Glenmark Q4FY26,
+    which this must drop; the two cannot be told apart, so the owners' profit goes (less, never a guess)."""
+    got = _by(xbrl.parse(_file({PAT: 67.0, OWN: -34.0, NCI: 101.0, EPS: "1.3"})))
+    assert ("pat_owners", "Q1FY27") not in got and got[("pat", "Q1FY27")] == 67.0

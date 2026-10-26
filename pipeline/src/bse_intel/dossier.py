@@ -553,12 +553,15 @@ def _metric_entry(metric: str, period: str, sources: list[dict]) -> dict:
     if len(sources) > 1:
         entry.update(sources=sources, updated_as_of=last["as_of"], value_news_id=last["news_id"])
         # F167: first filed against restated. The first-filed figure is the earliest source when that one is the period's
-        # own file (a comparative column of a later file is not "first filed": its own file was never read)
-        first = usable[0]
-        if last is not first and not first.get("restated_from") and first.get("value") is not None \
-                and last.get("value") is not None and restated_differs(first["value"], last["value"]):
-            entry.update(first_filed=first["value"], restated=True,
-                         restated_in=last.get("restated_from") or last["news_id"])
+        # own file (a comparative column of a later file is not "first filed": its own file was never read). Both must be
+        # exchange files and the latest a later file's comparative column: a card's figure the period's own file then
+        # replaced is a correction, not a restatement (the 26 Oct report called JSW Steel's Q4FY26 profit "restated"
+        # from a card's 2,094 to its own file's figure, and Newgen's employee cost from a card's lakh slip 19,010)
+        first = tagged[0] if tagged else None
+        if first is not None and last is not first and not first.get("restated_from") and last.get("restated_from") \
+                and first.get("value") is not None and last.get("value") is not None \
+                and restated_differs(first["value"], last["value"]):
+            entry.update(first_filed=first["value"], restated=True, restated_in=last["restated_from"])
     return entry
 
 

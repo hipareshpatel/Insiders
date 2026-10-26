@@ -112,6 +112,9 @@ jobs:
       # again (the $0 steady state). The balance is prepaid with no card on file, so spending stops when it runs out.
       - name: Run pipeline
         env:
+          # F169, owner 26 Oct 2026 (TODO 97 "yes to parallel downloads"): files and attachments on nsearchives at its own
+          # pace, so the run's workers download them side by side; the API keeps 3-5 s; a 403/429/503 slows it back
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"
           DEEPSEEK_SECRET: ${{ secrets.DEEPSEEK_API_KEY }}
         run: |
           until=$(cat config/drain_until 2>/dev/null | tr -d '[:space:]')

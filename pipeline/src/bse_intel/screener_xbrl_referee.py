@@ -83,6 +83,14 @@ def verdict_of(ours: float, theirs: float, official: float, metric: str) -> str:
     return "neither"
 
 
+def _line_names(parsed, metric: str) -> tuple[str, ...]:
+    """The metric lines of a parsed file that carry ``metric``: a lender's revenue is its revenue from operations, else (a
+    bank, whose file has none) its interest earned (F186)."""
+    if metric == "revenue" and parsed.template in LENDER_TEMPLATES:
+        return ("revenue", "interest_earned")
+    return (metric,)
+
+
 class CompanyFiles:
     """One company's results list and files on one basis, each fetched once."""
 
@@ -149,14 +157,29 @@ class CompanyFiles:
             if parsed is None:
                 reasons.append(f"{quarter}: {why}")
                 continue
-            names = ("revenue", "interest_earned") if metric == "revenue" and parsed.template in LENDER_TEMPLATES \
-                else ("revenue",) if metric == "revenue" else ("eps",) if metric == "eps" else (metric,)
-            for n in names:
+            for n in _line_names(parsed, metric):
                 hit = next((m for m in parsed.metrics if m.metric == n and m.period == period and m.value is not None), None)
                 if hit:
                     return {"value": hit.value, "file": name, "used": "own" if i == 0 else f"next:{quarter}", "line": n}
             reasons.append(f"{quarter}: {period} {metric} not in {name}")
         return {"reason": "; ".join(reasons) or f"no file period for {period}"}
+
+    def later(self, period: str, metric: str) -> dict:
+        """ONLY the later file's figure of ``period``: {value, file, line} or {reason}. The later file is the last one
+        ``file_periods`` tries, whose year-ago comparative column carries the period (a quarter: the same quarter a year on;
+        a year: the next year's March file). Used by screener_explain to see whether a later filing restated the figure."""
+        quarters = file_periods(period)
+        if len(quarters) < 2:
+            return {"reason": f"no later file period for {period}"}
+        quarter = quarters[-1]
+        parsed, name, why = self.file_for(quarter)
+        if parsed is None:
+            return {"reason": f"{quarter}: {why}"}
+        for n in _line_names(parsed, metric):
+            hit = next((m for m in parsed.metrics if m.metric == n and m.period == period and m.value is not None), None)
+            if hit:
+                return {"value": hit.value, "file": name, "line": n}
+        return {"reason": f"{quarter}: {period} {metric} not in {name}"}
 
 
 def referee_pair(files: CompanyFiles, row: dict) -> dict:

@@ -465,8 +465,13 @@ def _num(value) -> float | None:
         return None
 
 
-def open_pairs(rows: list[dict]) -> list[dict]:
-    return [r for r in rows if r.get("verdict") in OPEN_VERDICTS and r.get("metric") and r.get("period") and r.get("symbol")]
+def open_pairs(rows: list[dict], explained: bool = False) -> list[dict]:
+    """The pairs still open. With ``explained`` the rows are those of ``screener-explain``'s explained.csv: the ones it left
+    ``unexplained`` (our figure equals the official file and no corporate action or later file accounts for screener's) plus
+    the usual open verdicts it passed through; the rows it explained are left out."""
+    def open_(r: dict) -> bool:
+        return r.get("verdict") in OPEN_VERDICTS or (explained and r.get("explain_verdict") == "unexplained")
+    return [r for r in rows if open_(r) and r.get("metric") and r.get("period") and r.get("symbol")]
 
 
 SAMPLE_METRICS = ("revenue", "pat")   # EPS left out: screener restates old EPS for bonuses and splits, the PDF prints it as filed
@@ -498,11 +503,12 @@ def load_csv(text: str) -> list[dict]:
 
 
 def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | None = None, ocr: bool = True,
-        clock=time.monotonic, sample: int = 0, seed: int = 26) -> dict:
+        clock=time.monotonic, sample: int = 0, seed: int = 26, explained: bool = False) -> dict:
     """Referee the open pairs among the screener-referee ``rows``, company by company; ``limit`` caps the pairs read (a
     company is finished once started); the rest are ``not_run``. With ``sample`` the pairs are instead a seeded random
-    sample of that many pairs where memory already equals the XBRL file (``sample_pairs``)."""
-    pairs = sample_pairs(rows, sample, seed) if sample else open_pairs(rows)
+    sample of that many pairs where memory already equals the XBRL file (``sample_pairs``); with ``explained`` the rows are
+    screener-explain's and its ``unexplained`` ones are taken too (``open_pairs``)."""
+    pairs = sample_pairs(rows, sample, seed) if sample else open_pairs(rows, explained)
     pool = sum(r.get("verdict") == "ours_matches_official" and r.get("metric") in SAMPLE_METRICS for r in rows) if sample else 0
     by_company: dict[tuple[str, str], list[dict]] = {}
     for r in pairs:

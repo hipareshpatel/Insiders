@@ -1253,7 +1253,7 @@ def cmd_pdf_referee(args, settings, sink) -> int:
         return 2
     rows = pr.load_csv(path.read_text(encoding="utf-8"))
     with NseClient() as nse:
-        outcome = pr.run(nse, rows, args.limit, args.time_budget, ocr=not args.no_ocr)
+        outcome = pr.run(nse, rows, args.limit, args.time_budget, ocr=not args.no_ocr, sample=args.sample or 0, seed=args.seed)
     print(pr.render(outcome))
     if args.json:
         Path(args.json).write_text(pr.to_json(outcome), encoding="utf-8")
@@ -1825,6 +1825,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--limit", type=int, help="referee at most this many pairs (a company is finished once started); the rest are not_run")
     p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if pairs are left")
     p.add_argument("--no-ocr", action="store_true", help="skip local OCR (figure and scanned pages keep their text layer only)")
+    p.add_argument("--sample", type=int, help="instead of the open pairs: a seeded random sample of N pairs where memory equals the XBRL file (revenue and profit), to test the file itself")
+    p.add_argument("--seed", type=int, default=26, help="the sample's seed")
     p.add_argument("--json", help="write the summary to this file")
     p.add_argument("--out-csv", help="write every refereed pair, with the PDF's figure and the verdict, to this file")
     p.add_argument("--md", help="write the short markdown summary to this file")

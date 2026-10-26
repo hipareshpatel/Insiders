@@ -451,15 +451,35 @@ def open_pairs(rows: list[dict]) -> list[dict]:
     return [r for r in rows if r.get("verdict") in OPEN_VERDICTS and r.get("metric") and r.get("period") and r.get("symbol")]
 
 
+SAMPLE_METRICS = ("revenue", "pat")   # EPS left out: screener restates old EPS for bonuses and splits, the PDF prints it as filed
+
+
+def sample_pairs(rows: list[dict], n: int, seed: int = 26) -> list[dict]:
+    """A seeded random sample of ``n`` pairs the XBRL step called ``ours_matches_official``, half revenue and half profit
+    (owner, 26 Oct 2026: memory came from NSE's own files, so "ours equals the file" is no check; the PDF is the second,
+    independent source). The rate at which the PDF disagrees with the file says whether the file can be trusted."""
+    import random
+
+    rng = random.Random(seed)
+    out: list[dict] = []
+    for i, metric in enumerate(SAMPLE_METRICS):
+        pool = sorted((r for r in rows if r.get("verdict") == "ours_matches_official" and r.get("metric") == metric
+                       and r.get("period") and r.get("symbol")), key=lambda r: (r["symbol"], r["period"]))
+        want = n // len(SAMPLE_METRICS) + (1 if i < n % len(SAMPLE_METRICS) else 0)
+        out += rng.sample(pool, min(want, len(pool)))
+    return out
+
+
 def load_csv(text: str) -> list[dict]:
     return list(csv.DictReader(io.StringIO(text)))
 
 
 def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | None = None, ocr: bool = True,
-        clock=time.monotonic) -> dict:
+        clock=time.monotonic, sample: int = 0, seed: int = 26) -> dict:
     """Referee the open pairs among the screener-referee ``rows``, company by company; ``limit`` caps the pairs read (a
-    company is finished once started); the rest are ``not_run``."""
-    pairs = open_pairs(rows)
+    company is finished once started); the rest are ``not_run``. With ``sample`` the pairs are instead a seeded random
+    sample of that many pairs where memory already equals the XBRL file (``sample_pairs``)."""
+    pairs = sample_pairs(rows, sample, seed) if sample else open_pairs(rows)
     by_company: dict[tuple[str, str], list[dict]] = {}
     for r in pairs:
         by_company.setdefault((r["symbol"], r.get("basis") or ""), []).append(r)

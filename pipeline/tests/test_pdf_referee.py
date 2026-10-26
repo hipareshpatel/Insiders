@@ -200,3 +200,13 @@ def test_csv_markdown_and_input_round_trip():
 def test_target_column(period, expect):
     kind, day = pr.target_column(period)
     assert (kind, day.isoformat()) == expect
+
+
+def test_the_sample_is_seeded_half_revenue_half_profit_and_never_eps():
+    rows = [{"symbol": f"S{i}", "period": "Q1FY26", "metric": m, "verdict": v}
+            for i in range(30) for m in ("revenue", "pat", "eps") for v in ("ours_matches_official", "neither")]
+    one, two = pr.sample_pairs(rows, 10), pr.sample_pairs(rows, 10)
+    assert one == two and len(one) == 10
+    assert sorted(r["metric"] for r in one) == ["pat"] * 5 + ["revenue"] * 5
+    assert all(r["verdict"] == "ours_matches_official" for r in one)
+    assert pr.sample_pairs(rows, 10, seed=1) != one

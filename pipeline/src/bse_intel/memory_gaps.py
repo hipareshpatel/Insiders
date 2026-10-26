@@ -6,7 +6,8 @@ blank on a card, so every universe company's memory should hold its results from
 For each company, over the last ``QUARTERS`` quarters ending at the latest quarter whose filing deadline has passed
 (45 days after the quarter end, 60 for the March quarter; periods.RESULTS_DAYS_*), a quarter is *missing* when memory
 holds neither an xbrl-sourced revenue nor an xbrl-sourced PAT for it on the company's main basis (consolidated when it
-has any machine-tagged consolidated quarter, else standalone). A quarter with one of the two is *partial*: listed in
+has any machine-tagged consolidated quarter, else standalone). A quarter with no consolidated file, filled by its standalone figures, counts as filled ("standalone_only", F162).
+A quarter with one of the two is *partial*: listed in
 the JSON, not counted as missing. For the latest quarter the year-ago quarter (the YoY base on its card) is reported
 too. Reading uses metrics._figures, the same picker the metrics table uses.
 
@@ -97,19 +98,36 @@ def check(dossier: dict | None, today: date, quarters: int = QUARTERS) -> dict:
     yago = prior_year_period(latest)
     basis = main_basis(dossier) if dossier else None
     out = {"basis": basis, "latest": latest, "year_ago": yago, "missing": [], "partial": [],
-           "no_xbrl": basis is None, "missing_latest": False, "missing_year_ago": False}
+           "no_xbrl": basis is None, "standalone_only": [], "missing_latest": False, "missing_year_ago": False}
     have: dict[str, set[str]] = {}
+    standalone_only: set[str] = set()
     if basis:
         figures, _ = _figures(dossier, basis)
         for (metric, period), entry in figures.items():
             if metric in ("revenue", "pat") and entry.get("value") is not None:
                 have.setdefault(period, set()).add(metric)
+        # A quarter with no consolidated results file (NSE lists only standalone for it) is filled by its standalone
+        # figures: they are the company's figures for it (F162; Jyothy Labs after it sold its only subsidiary, ABB India
+        # before its first). The seed lists such quarters in ``standalone_only``; and a company whose newest basis is
+        # standalone keeps the consolidated quarters it had before as filled.
+        other = STANDALONE if basis == CONSOLIDATED else CONSOLIDATED
+        listed = set(dossier.get("standalone_only") or [])
+        if listed or basis == STANDALONE:
+            more, _ = _figures(dossier, other)
+            for (metric, period), entry in more.items():
+                if metric in ("revenue", "pat") and entry.get("value") is not None \
+                        and (basis == STANDALONE or period in listed):
+                    if period not in have or metric not in have[period]:
+                        if basis == CONSOLIDATED:
+                            standalone_only.add(period)
+                        have.setdefault(period, set()).add(metric)
     for period in periods:
         got = have.get(period, set())
         if not got:
             out["missing"].append(period)
         elif len(got) == 1:
             out["partial"].append(period)
+    out["standalone_only"] = [p for p in periods if p in standalone_only]
     out["missing_latest"] = latest not in have
     out["missing_year_ago"] = bool(yago) and yago not in have
     return out
@@ -129,6 +147,7 @@ def summarise(companies: dict[str, dict]) -> dict:
         "companies_with_gaps": sum(has_gap(r) for r in rows),
         "missing_company_quarters": sum(len(r["missing"]) for r in rows),
         "partial_company_quarters": sum(len(r["partial"]) for r in rows),
+        "standalone_only_company_quarters": sum(len(r.get("standalone_only", [])) for r in rows),
     }
 
 
@@ -167,7 +186,8 @@ def render(report: dict) -> str:
         f"missing the year-ago quarter {s['missing_year_ago_quarter']}",
         f"companies with any gap       {s['companies_with_gaps']}",
         f"missing company-quarters     {s['missing_company_quarters']}",
-        f"partial (one of revenue/PAT) {s['partial_company_quarters']}"])
+        f"partial (one of revenue/PAT) {s['partial_company_quarters']}",
+        f"filled, standalone only      {s.get('standalone_only_company_quarters', 0)}"])
 
 
 def to_csv(report: dict) -> str:

@@ -58,6 +58,20 @@ def card_ebitda_profit_v2() -> bool:
     return (_env("CARD_EBITDA_PROFIT_V2", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def memory_standalone_only() -> bool:
+    """MEMORY_STANDALONE_ONLY (default off; TODO 49, F162): a quarter for which NSE lists no consolidated results file is kept
+    from its standalone file (basis STANDALONE, listed in the dossier's ``standalone_only``), even when the company's other
+    quarters are consolidated (Jyothy Labs after it sold its only subsidiary, ABB India before its first one). Off, such a
+    quarter is dropped, as before. Read at the call."""
+    return (_env("MEMORY_STANDALONE_ONLY", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+def memory_screener() -> bool:
+    """MEMORY_SCREENER (default off; TODO 48, F161): a memory figure labelled by="screener" (the one-time screener.in fill)
+    is read like any other. Off, every reader skips it, so no card changes. Read at the call."""
+    return (_env("MEMORY_SCREENER", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_two_parts() -> bool:
     """CARD_TWO_PARTS (default off; TODO 21, F152): a card carries a `parts` block that sorts every line into part 1,
     "From the filing (checked)", or part 2, "Our reading (AI)", by a code rule, and a part 2 line whose figure or claim

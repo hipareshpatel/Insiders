@@ -444,12 +444,13 @@ def test_a_september_quarter_filed_as_the_half_year_is_the_half_year_less_the_ju
 
 def test_an_integrated_list_that_failed_is_a_failure_and_not_an_empty_company_F195():
     """NseClient.financial_results falls back to the older list when the integrated one will not load, and that list
-    holds no quarter since December 2024: the seed got nothing, said nothing and the fill marked the company done."""
+    holds no quarter since December 2024: the seed got nothing, said nothing and the fill marked the company done. Now
+    the older list's quarters are still used and the failure is recorded, so the company is tried again."""
     seed_mod._nse_rows.cache_clear()
     nse = Nse([_row("legacy", "2024-06-30", "2024-08-01")], {})
     nse.integrated_failed = {"X"}
     stats = SeedStats()
-    assert seed_mod._nse_quarters(nse, "X", "2024-01-01", "500001", stats) == {}
+    assert set(seed_mod._nse_quarters(nse, "X", "2024-01-01", "500001", stats)) == {"Q1FY25"}   # older rows kept
     assert stats.failures and "500001" in stats.failures[0]
     nse.integrated_failed = set()   # the next pass: listed again (a failure is not cached)
     assert set(seed_mod._nse_quarters(nse, "X", "2024-01-01", "500001", stats)) == {"Q1FY25"}

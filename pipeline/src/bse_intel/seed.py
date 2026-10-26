@@ -155,7 +155,7 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     # BSE named, and since March 2025 the integrated format means BSE often names none: a company that
     # changed over has a gap in memory rather than a failed fetch, which no counter would have shown.
     if nse is not None and symbol:
-        for period, row in _nse_quarters(nse, symbol, since, scrip).items():
+        for period, row in _nse_quarters(nse, symbol, since, scrip, stats).items():
             if period in found:
                 continue
             data = _fetch(nse, row.xbrl_url, cache_root, sink)
@@ -340,7 +340,7 @@ def _write_results(sink, scrip: str, name: str, company: dict | None, period: st
              parsed.basis or "basis not stated")
 
 
-def _nse_quarters(nse, symbol: str, since: str, scrip: str) -> dict:
+def _nse_quarters(nse, symbol: str, since: str, scrip: str, stats: "SeedStats | None" = None) -> dict:
     """The newest filing NSE lists per quarter, consolidated where both bases are filed."""
     try:
         rows = _nse_rows(nse, symbol)
@@ -348,6 +348,8 @@ def _nse_quarters(nse, symbol: str, since: str, scrip: str) -> dict:
         raise  # NSE limits by IP: the caller stops the seed rather than marking the company done with nothing
     except Exception as exc:
         log.info("seed %s: NSE list unavailable (%s)", scrip, type(exc).__name__)
+        if stats is not None:   # not silent: the memory-gaps fill must not count this company as done (F195)
+            stats.failures.append(f"{scrip}: NSE results list unavailable ({type(exc).__name__})")
         return {}
     best: dict = {}
     # consolidated over standalone, the integrated filing over the older list's row, then the later filing
@@ -376,7 +378,12 @@ def _recent_and_years(best: dict) -> dict:
 def _nse_rows(nse, symbol: str) -> tuple:
     """NSE's results list for one symbol, fetched once: it is read per quarter and the client paces
     itself by several seconds a call."""
-    return tuple(nse.financial_results(symbol))
+    rows = tuple(nse.financial_results(symbol))
+    if symbol.strip().upper() in getattr(nse, "integrated_failed", ()):
+        # financial_results fell back to the older list, which holds no quarter since December 2024: the newest
+        # quarters would be silently absent and the company marked done (d4 gaps, 26 Oct 2026). Not cached: raise.
+        raise RuntimeError(f"NSE's integrated results list for {symbol} was unavailable; only the older list came back")
+    return rows
 
 
 def _from_nse(nse, symbol: str, period: str, link, cache_root: Path | None, stats: SeedStats,

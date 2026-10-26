@@ -428,6 +428,7 @@ class NseClient:
         self._archive_calls = 0
         self._warmed = False
         self.raw = None  # a raw.RawStore: every JSON answer is saved as received, before it is parsed
+        self.integrated_failed: set[str] = set()   # symbols whose integrated list failed in financial_results (older list only)
 
     def close(self) -> None:
         self._client.close()
@@ -520,6 +521,8 @@ class NseClient:
             except SourceBlockedError:
                 raise
             except (httpx.HTTPError, ValueError, RuntimeError) as exc:
+                # the older list has no quarter since December 2024: a caller that needs them (the seed) reads this
+                self.integrated_failed.add(symbol.strip().upper())
                 log.info("NSE integrated filings unavailable for %s (%s); using the older list", symbol, exc)
         data = self._get(RESULTS_ENDPOINT, {"index": "equities", "symbol": symbol.strip().upper(),
                                             "period": "Quarterly" if quarterly else "Annual"}).json()

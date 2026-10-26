@@ -749,9 +749,12 @@ def cmd_memory_gaps(args, settings, sink) -> int:
             def seed_one(scrip: str, since: str) -> None:
                 company = sink.company(scrip) or {}
                 symbol = (company.get("symbol") or "").strip() or nse_symbols.get(scrip, "")
+                known = len(stats.failures)
                 seed_results(sink, None, scrip, company.get("company_name") or scrip, since, settings.text_cache_dir,
                              stats, company, nse=nse, symbol=symbol)
                 log.info("memory-gaps fill: %s %s", scrip, stats.line())
+                if len(stats.failures) > known:   # NSE's list did not load: not "done", the fill tries it again (F195)
+                    raise RuntimeError("; ".join(stats.failures[known:])[:180])
 
             try:
                 outcome = memory_gaps.fill(sink, before, seed_one, args.time_budget, args.restart, shard)

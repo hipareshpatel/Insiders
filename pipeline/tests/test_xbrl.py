@@ -886,6 +886,15 @@ def test_ebitda_leaves_out_the_associates_share_a_filer_put_into_profit_before_t
     assert ebitda(114_100_000, -2_600_000, 30_000_000, 81_500_000) == pytest.approx(11.41 + 1 + 2 - 0.5)
 
 
+def test_a_half_yearly_december_year_filer_has_no_quarter_to_read_F195():
+    """Vesuvius India (December year end) files July-December as one half year in the slot NSE lists as Q3FY26. Its
+    file has two periods, 1 Jul - 31 Dec 2025 and the calendar year, and no quarter: on the April-March labels a half
+    year ending in December is no period, so nothing is read, and nothing is invented to fill the gap (trimmed copy
+    of the file NSE serves, d4 gaps, 26 Oct 2026)."""
+    data = (Path(__file__).parent / "fixtures" / "nse_vesuvius_halfyearly_dec_h2fy26.xml").read_bytes()
+    assert xbrl.parse(data) is None
+
+
 def test_nse_results_rows_skip_the_dash_link():
     """NSE's older results list writes ".../corporate/xbrl/-" for a filing with no XBRL: that is no file, not a 404 later."""
     from bse_intel.nse import parse_results_rows

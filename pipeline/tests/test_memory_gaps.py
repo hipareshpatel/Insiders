@@ -1,3 +1,4 @@
+import json
 import threading
 import time
 from datetime import date
@@ -241,3 +242,42 @@ def test_a_listed_quarter_needs_its_standalone_figures():
     d = _dossier("1", EIGHT[:3])
     d["standalone_only"] = EIGHT[3:]
     assert mg.check(d, TODAY)["missing"] == EIGHT[3:]
+
+
+def _gap_report(sink, scrip="B"):
+    return mg.survey(sink, [scrip], TODAY)
+
+
+def test_a_failed_company_is_tried_again_until_the_third_failure_F195():
+    """A timeout, or an NSE list that did not load, used to mark the company tried for good: its gap stayed with no
+    error to show (d4 gaps, 26 Oct 2026). Now it is tried again on later passes, three failures in all."""
+    sink = Sink({"B": _dossier("B", EIGHT[1:])})
+    report, calls = _gap_report(sink), []
+
+    def seed(scrip, since):
+        calls.append(scrip)
+        raise RuntimeError("NSE results list unavailable")
+
+    for _ in range(5):
+        mg.fill(sink, report, seed, 1000)
+    assert calls == ["B", "B", "B"]
+
+
+def test_a_new_missing_quarter_is_tried_even_when_the_company_was_tried_before_F195():
+    sink = Sink({"B": _dossier("B", EIGHT[2:])})   # Q1FY27 and Q4FY26 missing now
+    calls = []
+    sink.kv[mg.TRIED_KEY] = json.dumps({"B": ["Q4FY26"]})   # an earlier pass knew of Q4FY26 only
+    mg.fill(sink, _gap_report(sink), lambda scrip, since: calls.append(scrip), 1000)
+    assert calls == ["B"]
+    calls.clear()
+    mg.fill(sink, _gap_report(sink), lambda scrip, since: calls.append(scrip), 1000)   # the same gaps again: NSE has no more
+    assert calls == []
+
+
+def test_the_older_tried_list_is_tried_once_more_F195():
+    sink = Sink({"B": _dossier("B", EIGHT[1:])})
+    sink.kv[mg.TRIED_KEY] = json.dumps(["B"])   # the first format: a bare list, no quarters recorded
+    calls = []
+    mg.fill(sink, _gap_report(sink), lambda scrip, since: calls.append(scrip), 1000)
+    mg.fill(sink, _gap_report(sink), lambda scrip, since: calls.append(scrip), 1000)
+    assert calls == ["B"]

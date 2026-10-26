@@ -199,6 +199,18 @@ Same address, same evening: the online path without AI - `sync-companies --sourc
 `discover` for 2026-10-16 (515 new filings: 308 queued, 207 noise) and 2026-10-19 to 22:38 IST (249 queued, 135 noise),
 every list call answered, 241 of 249 with an attachment link. Not measured here: attachments, XBRL and AI (no keys).
 
+## screener.in quarterly results (one-time, owner permission 26 Oct 2026)
+
+Used once, to fill quarters NSE's files do not give (`screener_fill.py`, TRACKER F161): `https://www.screener.in/company/<SYMBOL>/consolidated/`
+(consolidated) and `/company/<SYMBOL>/` (standalone), no login, a plain browser User-Agent, at least 3 s between requests, two runners at most.
+Section `id="quarters"`, columns such as "Sep 2025", rows "Sales" and "Net Profit" in ₹ crore, mostly whole crore; the section says
+"Consolidated" or "Standalone Figures in Rs. Crores" (a company with no consolidated page shows its standalone one).
+Measured 26 Oct 2026 on 30 companies: 200 on all 44 calls; "Net Profit" equals our `pat` (profit including the minority's share) for
+non-banks in 210 of 223 quarters within ₹1 Cr; banks and insurers disagree (skipped); "Sales" equals revenue from operations for most, and is
+lower by a steady amount for RELIANCE, ITC, HINDUNILVR and GAIL (revenue filled only where the company's own overlap proves it). One column
+that does not match the company's filing: NMDC consolidated, Mar 2026, 11,343 sales / 2,027 profit (its Mar 2025 column, 7,005 / 1,477, matches
+the PDF's 7,004.59 / 1,483.18). Its figures are never labelled `file`: `by="screener"`, and no card reads them unless `MEMORY_SCREENER=1`.
+
 ## Still open
 
 - BSE's announcement API does carry an XBRL identity we had missed, but it is not a link. The beta

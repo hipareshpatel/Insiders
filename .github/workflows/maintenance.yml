@@ -41,6 +41,13 @@
 # - audit-precision: read-only on/off audit of the candidate number-matching rule (match at the precision the filing prints;
 #   pipeline/scripts/audit_precision.py, docs/audit/precision-2026-10-26.md) over every stored card and its text in R2;
 #   summary.json, lines.json and the blind-sample markdown go up as the artifact `audit-precision`. No writes.
+# - screener-fill: the one-time fill of the quarters memory lacks from screener.in (owner permission 26 Oct 2026; F161). A
+#   dry run: one page per company with a gap (the page on memory's basis), at least 3 s between requests per runner, two
+#   runners (job `screener`), a plain browser User-Agent, no login; nothing is written. The counts, the reasons skipped and
+#   a CSV of every proposed fill with its overlap evidence go up as the artifacts `screener-fill-0` and `screener-fill-1`.
+#   screener-fill-apply: the same, then writes the figures as by="screener" (dossier section screener_fill; no card reads
+#   them unless MEMORY_SCREENER=1). A company already tried is not asked again; a run that ends on its time budget (exit
+#   124) is started again by hand and resumes; `restart` tries them all again. screener.in refusing (exit 75) fails the shard.
 # None calls an AI model; seed-memory, memory-gaps-fill and fill-memory read NSE. It runs beside the pipeline (its own concurrency group:
 # a shared one would cancel a pending pipeline run); fill-memory pauses the AI pipeline while it writes memory.
 name: Maintenance
@@ -51,7 +58,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, screener-fill, screener-fill-apply]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -84,7 +91,7 @@ concurrency:
 
 jobs:
   run:
-    if: inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill'
+    if: inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -443,3 +450,45 @@ jobs:
           else
             echo "every shard finished its companies"
           fi
+
+  # The one-time screener.in fill. Two runners, so two addresses, each pacing its own requests at one per 3.2 s and taking
+  # every second company with gaps; each saves the companies it tried (kv screenerfill:tried:<i>of2, or the dry run's own
+  # screenerfill:dry_tried:<i>of2). No AI and no NSE call.
+  screener:
+    if: inputs.command == 'screener-fill' || inputs.command == 'screener-fill-apply'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 320
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1]
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: Fill this shard's gaps from screener.in
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/screener"
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-fill --shard ${{ matrix.shard }}/2 --time-budget 17400 ${{ inputs.command == 'screener-fill-apply' && '--apply' || '' }} ${{ inputs.restart && '--restart' || '' }} --json "$RUNNER_TEMP/screener/screener-fill-${{ matrix.shard }}.json" --csv "$RUNNER_TEMP/screener/screener-fill-${{ matrix.shard }}.csv" || code=$?
+          if [ "$code" -eq 124 ]; then echo "::warning::time budget ended with companies left: run the same command again to resume"; exit 0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screener-fill-${{ matrix.shard }}
+          path: ${{ runner.temp }}/screener/
+          if-no-files-found: ignore

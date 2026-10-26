@@ -200,3 +200,39 @@ def test_csv_markdown_and_input_round_trip():
 def test_target_column(period, expect):
     kind, day = pr.target_column(period)
     assert (kind, day.isoformat()) == expect
+
+
+def test_the_sample_is_seeded_half_revenue_half_profit_and_never_eps():
+    rows = [{"symbol": f"S{i}", "period": "Q1FY26", "metric": m, "verdict": v}
+            for i in range(30) for m in ("revenue", "pat", "eps") for v in ("ours_matches_official", "neither")]
+    one, two = pr.sample_pairs(rows, 10), pr.sample_pairs(rows, 10)
+    assert one == two and len(one) == 10
+    assert sorted(r["metric"] for r in one) == ["pat"] * 5 + ["revenue"] * 5
+    assert all(r["verdict"] == "ours_matches_official" for r in one)
+    assert pr.sample_pairs(rows, 10, seed=1) != one
+
+
+def test_proven_rows_that_disagree_are_unsure_not_a_match():
+    # one row agreeing among rows that disagree with each other never confirms the figure (review)
+    v, matches, value, label = pr.verdict_of([(120.5, "Revenue", 1), (131.0, "Total income", 1)], 120.5, 125.0, 120.5, "revenue")
+    assert v == "pdf_unsure" and value is None and "conflicting rows" in label
+    assert pr.verdict_of([(120.5, "Revenue", 1), (120.5, "Revenue", 3)], 120.5, 125.0, 120.5, "revenue")[0] == "pdf_matches_ours"
+
+
+def test_the_sample_run_catches_a_file_the_pdf_disagrees_with():
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    nse = FakeNse([filing()], {url: make_pdf(STANDALONE_PAGE)})   # the PDF prints 120.5
+    rows = [{**pair(ours=119.0, theirs=125.0, official=119.0), "verdict": "ours_matches_official"}]
+    out = pr.run(nse, rows, ocr=False, sample=1)
+    assert [r["pdf_verdict"] for r in out["rows"]] == ["pdf_matches_none"]
+    assert out["sample"] == {"drawn": 1, "pool": 1, "seed": 26}
+    assert "upper bound" in pr.to_markdown(out, "2026-10-26")
+    with pytest.raises(ValueError):
+        pr.sample_pairs(rows, 0)
+
+
+def test_one_figure_printed_at_two_precisions_is_not_a_conflict():
+    assert pr.verdict_of([(120.48, "Revenue", 1), (120.5, "Revenue", 4)], 120.48, 125.0, 120.48, "revenue")[0] == "pdf_matches_ours"
+    assert pr.verdict_of([(1.23, "EPS", 1), (1.2, "EPS", 4)], 1.23, 1.5, 1.23, "eps")[0] == "pdf_matches_ours"
+    assert pr.verdict_of([(5000.9, "Revenue", 1), (5000.0, "Revenue", 4)], 5000.9, 5100.0, 5000.9, "revenue")[0] == "pdf_matches_ours"
+    assert pr.verdict_of([(120.5, "Revenue", 1), (121.0, "Total income", 1)], 120.5, 125.0, 120.5, "revenue")[0] == "pdf_unsure"

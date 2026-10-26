@@ -329,3 +329,11 @@ def test_parse_full_reads_eps_and_the_annual_section():
               '<td>1.3</td></tr></tbody></table></section>')
     full = parse_full(body.replace("</body>", annual + "</body>") if "</body>" in body else body + annual)
     assert full["annual"] == {"FY24": {"revenue": 100.0, "pat": 10.0, "eps": 1.0}, "FY25": {"revenue": 120.0, "pat": 12.0, "eps": 1.2}}
+
+
+def test_a_lenders_revenue_is_its_revenue_from_operations_not_its_interest_income():
+    # Aadhar Housing Q2FY25: memory holds interest income 672.56 and revenue from operations 764.27; screener shows 764
+    rows = [entry("interest_earned", q, r * 0.88) for q, r in zip(QUARTERS, REVENUE)] + \
+           [entry("revenue", q, r) for q, r in zip(QUARTERS, REVENUE)] + [entry("pat", q, p) for q, p in zip(QUARTERS, PROFIT)]
+    d = {"financial_metrics": rows, "balance_sheet": [], "sector": "Demo", "industry": "Financial Services > Finance > Housing Finance Company"}
+    assert set(classes(run(d, page()), "revenue").values()) == {"match"}

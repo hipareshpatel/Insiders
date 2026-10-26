@@ -1247,13 +1247,21 @@ def cmd_pdf_referee(args, settings, sink) -> int:
     from . import pdf_referee as pr
     from .nse import NseClient
 
-    path = Path(args.csv)
+    explained = bool(args.explained)
+    if not (args.explained or args.csv):
+        print("Give --csv (the screener-referee CSV) or --explained (the screener-explain CSV).")
+        return 2
+    path = Path(args.explained or args.csv)
     if not path.is_file():
-        print(f"No screener-referee CSV at {path}.")
+        print(f"No {'screener-explain' if explained else 'screener-referee'} CSV at {path}.")
+        return 2
+    if args.sample is not None and args.sample <= 0:
+        print("--sample takes a number above 0")
         return 2
     rows = pr.load_csv(path.read_text(encoding="utf-8"))
     with NseClient() as nse:
-        outcome = pr.run(nse, rows, args.limit, args.time_budget, ocr=not args.no_ocr)
+        outcome = pr.run(nse, rows, args.limit, args.time_budget, ocr=not args.no_ocr, sample=args.sample or 0, seed=args.seed,
+                         explained=explained)
     print(pr.render(outcome))
     if args.json:
         Path(args.json).write_text(pr.to_json(outcome), encoding="utf-8")
@@ -1261,6 +1269,33 @@ def cmd_pdf_referee(args, settings, sink) -> int:
         Path(args.out_csv).write_text(pr.to_csv(outcome), encoding="utf-8")
     if args.md:
         Path(args.md).write_text(pr.to_markdown(outcome, today_ist().isoformat()), encoding="utf-8")
+    if outcome["blocked"]:
+        return REFUSED
+    return 124 if outcome["out_of_time"] else 0
+
+
+def cmd_screener_explain(args, settings, sink) -> int:
+    """Read-only: which of the screener-referee's ours_matches_official pairs come from a bonus, split or consolidation after
+    the period (the dossier's recorded actions) or from a later results file restating the figure (memory's stored later-file
+    source first, else NSE's file; screener_explain.py). The input is the screener-referee CSV (``--csv``); no memory write,
+    no card change, no AI. Exit 75 when NSE refused the session, 124 when the time budget ended with rows left."""
+    from . import screener_explain as se
+    from .nse import NseClient
+
+    path = Path(args.csv)
+    if not path.is_file():
+        print(f"No screener-referee CSV at {path}.")
+        return 2
+    rows = se.load_csv(path.read_text(encoding="utf-8"))
+    with NseClient() as nse:
+        outcome = se.run(nse, sink, rows, args.time_budget)
+    print(se.render(outcome))
+    if args.json:
+        Path(args.json).write_text(se.to_json(outcome), encoding="utf-8")
+    if args.out_csv:
+        Path(args.out_csv).write_text(se.to_csv(outcome), encoding="utf-8")
+    if args.md:
+        Path(args.md).write_text(se.to_markdown(outcome, today_ist().isoformat()), encoding="utf-8")
     if outcome["blocked"]:
         return REFUSED
     return 124 if outcome["out_of_time"] else 0
@@ -1820,11 +1855,22 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--md", help="write the short markdown summary to this file")
     p.set_defaults(func=cmd_screener_referee)
 
-    p = sub.add_parser("pdf-referee", help="read-only: the filing PDF as the last referee of the pairs the screener-referee left open")
+    p = sub.add_parser("screener-explain", help="read-only: which referee-xbrl differences a bonus, split or later results file explains")
     p.add_argument("--csv", required=True, help="the screener-referee CSV (referee-xbrl.csv)")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if rows are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--out-csv", help="write every row, with the explanation, to this file (explained.csv)")
+    p.add_argument("--md", help="write the short markdown summary to this file")
+    p.set_defaults(func=cmd_screener_explain)
+
+    p = sub.add_parser("pdf-referee", help="read-only: the filing PDF as the last referee of the pairs the screener-referee left open")
+    p.add_argument("--csv", help="the screener-referee CSV (referee-xbrl.csv)")
+    p.add_argument("--explained", help="the screener-explain CSV (explained.csv) instead of --csv: takes its `unexplained` rows plus the open verdicts")
     p.add_argument("--limit", type=int, help="referee at most this many pairs (a company is finished once started); the rest are not_run")
     p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if pairs are left")
     p.add_argument("--no-ocr", action="store_true", help="skip local OCR (figure and scanned pages keep their text layer only)")
+    p.add_argument("--sample", type=int, help="instead of the open pairs: a seeded random sample of N pairs where memory equals the XBRL file (revenue and profit), to test the file itself")
+    p.add_argument("--seed", type=int, default=26, help="the sample's seed")
     p.add_argument("--json", help="write the summary to this file")
     p.add_argument("--out-csv", help="write every refereed pair, with the PDF's figure and the verdict, to this file")
     p.add_argument("--md", help="write the short markdown summary to this file")

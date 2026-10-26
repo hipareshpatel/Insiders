@@ -72,10 +72,14 @@ def test_a_quote_found_only_in_the_block_reading_counts():
 
 def test_a_figure_not_in_the_quote_drops_the_point():
     # the statement borrows a figure (500) the sentence it quotes does not carry
+    kept, dropped = _check(_point(statement="Capex of 900 crore", type="capex_capacity", value=None, unit=None, period=None,
+                                  quote="the plant is near the river bank"))   # 900 is nowhere near the quote
+    assert kept == [] and _reasons(dropped) == ["figure"]
+    assert "900" in dropped[0]["detail"]
+    # a figure in the next sentence on the page is kept, and the point says so (third measured run: 99 of 107 such drops true)
     kept, dropped = _check(_point(statement="Capex of 500 crore", type="capex_capacity", value=None, unit=None, period=None,
                                   quote="the plant is near the river bank"))
-    assert kept == [] and _reasons(dropped) == ["figure"]
-    assert "500" in dropped[0]["detail"]
+    assert len(kept) == 1 and kept[0].figure_beside_quote and dropped == []
     kept, dropped = _check(_point(value=18))   # the value is not in the quote either
     assert _reasons(dropped) == ["figure"]
 
@@ -100,10 +104,11 @@ def test_a_unit_that_loses_the_scale_word_is_dropped():
         assert kept == [] and _reasons(dropped) == ["unit"], unit
 
 
-def test_a_model_base_value_that_is_wrong_drops_the_point():
+def test_a_model_base_value_that_is_wrong_is_put_right_by_code():
+    # third measured run: Sobha's "12 million square feet" was dropped for a model value_base of 1e6
     kept, dropped = _check(_point(type="capex_capacity", statement="Adds 10 lakh tonnes", value=10, unit="LAKH_TONNES", value_base=100_000,
                                   base_unit="TONNES", period="FY28", quote="We will add 10 lakh tonnes of capacity by FY28"))
-    assert _reasons(dropped) == ["unit"]
+    assert dropped == [] and kept[0].value_base == 1_000_000 and not kept[0].figure_beside_quote
 
 
 def test_crore_and_percent_units_follow_the_quote():
@@ -677,3 +682,20 @@ def test_a_partly_read_document_is_written_and_read_again(monkeypatch, settings,
     monkeypatch.setattr(cli, "_read_call_document", lambda *a, **k: {"news_id": "call-2", "parts_failed": [2]})
     assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 124
     assert [(i["news_id"], i["attempts"]) for i in call_queue.pending(sink)] == [("call-2", 1)]
+
+
+def test_a_quote_of_figures_alone_proves_no_label():
+    # APL Apollo (third run): "64% housing, 19% commercial" on the quote "64% 19%", where the slide says 64% commercial
+    kept, dropped = _check(_point(type="dependence", statement="64% of revenue is housing", value=64, unit="PERCENT",
+                                  period=None, quote="15%"))
+    assert kept == [] and dropped[0]["detail"] == "the quote has no words, only figures"
+
+
+def test_a_scale_word_above_the_quoted_row_counts():
+    # a table row "Revenue 25,174" under "All figures in Rs lakh" (review of the third run: 31 true rows dropped)
+    page = "--- Page 1 of 1 ---\nAll figures in Rs lakh\nRevenue from operations 25,174 for the half year\n"
+    p = _point(type="kpi", statement="Revenue from operations Rs 25,174 lakh", value=25174, unit="INR_LAKH", period=None,
+               quote="Revenue from operations 25,174", page=1)
+    from bse_intel import call_memory as cm
+    kept, dropped = cm.check_points([p], page)
+    assert dropped == [] and kept[0].value_base == 25174 * 100_000

@@ -29,6 +29,7 @@ log = logging.getLogger(__name__)
 
 CALL_MEMORY_KEPT = 600   # points a company keeps, newest call first (about eight quarters of 60-75)
 PRIOR_POINTS = 40        # the last call's points the model sees, to say what changed
+_WORDS = re.compile(r"[A-Za-z]{3,}")   # a quote needs at least one word of three letters
 CONTEXT_CHARS = 600      # around a quote, on its page, where its period may be named
 # One request reads this much of the document (whole pages); a longer one is read in parts. The first measured run's
 # 6,000-token replies were too short for a whole document's points; Gemini Flash's 32,000-token reply is not (run 2, 26 Oct)
@@ -162,10 +163,14 @@ def _has(value: float, numbers: list[float]) -> bool:
     return any(abs(abs(value) - abs(n)) < 1e-9 for n in numbers)
 
 
-def figure_issue(point: CallPoint, quote: str) -> str | None:
-    """Every figure of the statement, the value and the high end is in the quote (spec 3.2). The statement's period labels
-    and dates are not figures (call_summary._figures); the quote's numbers are read whole, so "2000 crore" is not a year."""
-    stated = _numbers(quote)
+def figure_issue(point: CallPoint, quote: str, context: str = "") -> str | None:
+    """Every figure of the statement, the value and the high end is in the quote or beside it on its page (``context``: the
+    CONTEXT_CHARS around the quote, a slide's whole page). The statement's period labels and dates are not figures
+    (call_summary._figures); the numbers are read whole, so "2000 crore" is not a year. Changed after the third measured run
+    (independent comparison, 26 Oct 2026): the quote alone dropped 99 true points of 107 (APL Apollo's "8 Mn Ton by FY28"
+    under the slide heading "Capacity Expansion Plan By FY28", Eris's +100 bps margin levers, Sobha's Chandivali INR 1,000 cr
+    in the next sentence of the answer) for 4 it rightly stopped."""
+    stated = _numbers(f"{quote} {context}")
     for value, _, _ in _figures(point.statement or ""):
         if not _has(value, stated):
             return f"figure {value:g} of the statement is not in the quote"
@@ -176,7 +181,7 @@ def figure_issue(point: CallPoint, quote: str) -> str | None:
     return None
 
 
-def unit_issue(point: CallPoint, quote: str) -> str | None:
+def unit_issue(point: CallPoint, quote: str, context: str = "") -> str | None:
     """The unit agrees with the quote's own scale word (spec 3.3): "10 lakh tonnes" with unit TONNES loses a factor of
     100,000, and a crore figure typed as lakh is 100 times off. Also fills `value_base` / `base_unit` (the figure in the base
     unit, so a later comparison is in one unit) or finds the model's own value_base wrong."""
@@ -197,7 +202,9 @@ def unit_issue(point: CallPoint, quote: str) -> str | None:
     if stated:
         if not named or not named <= stated:
             return f"the quote says {'/'.join(sorted(stated))}, the unit {point.unit or 'none'} says {'/'.join(sorted(named)) or 'no scale'}"
-    elif any(not re.search(_ANYWHERE[kind], flat) for kind in named):
+    # a scale the unit names may stand beside the quote on its page ("Rs in lakh" above a table row); a number followed by a
+    # scale word (above) is read in the quote only (review of the third run: 31 true table rows dropped for this)
+    elif any(not re.search(_ANYWHERE[kind], f"{flat} {gate._flat(context)}") for kind in named):
         return f"the unit {point.unit} names a scale the quote does not carry"
     magnitude = [k for k in named if k in _MAGNITUDE]
     if not magnitude:
@@ -205,10 +212,9 @@ def unit_issue(point: CallPoint, quote: str) -> str | None:
         return None
     base_unit = "_".join(t for t in _unit_tokens(point.unit) if not any(re.fullmatch(rx, t) for _, rx in _UNIT_KINDS)) or None
     if point.value is not None:
-        expected = point.value * _MAGNITUDE[magnitude[0]]
-        if point.value_base is not None and abs(point.value_base - expected) > 1e-6 * abs(expected):
-            return f"value_base {point.value_base:g} is not {point.value:g} x {_MAGNITUDE[magnitude[0]]:g}"
-        point.value_base, point.base_unit = expected, base_unit
+        # the code works the base figure out; the model's own value_base is not a reason to drop (third measured run: Sobha's
+        # "12 million square feet" was dropped for a model value_base of 1e6)
+        point.value_base, point.base_unit = point.value * _MAGNITUDE[magnitude[0]], base_unit
     return None
 
 
@@ -317,28 +323,39 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
             else:
                 drop(p, "quote", "the quote is not in the document")
                 continue
-        if (issue := figure_issue(p, quote)):
-            drop(p, "figure", issue)
-            continue
-        if (issue := unit_issue(p, quote)):
-            drop(p, "unit", issue)
-            continue
-        # the page the quote is on, whatever the model named (spec 3.5); the page's text also gives the period its context
-        # (a quote on several pages, as the same sentence on a slide and in the talk, stays on the page the model named)
+        # the page the quote is on, whatever the model named (spec 3.5); the page's text also gives the figures and the period
+        # their context (a quote on several pages, as the same sentence on a slide and in the talk, stays on the page the
+        # model named)
         homes = [(n, t) for n, t in pages if gate.quote_found(quote, t)]
         number, page_text = next((h for h in homes if h[0] == p.page), homes[0] if homes else (None, ""))
+        if not page_text and p.quote_assembled:
+            page_text = next((t for n, t in pages if n == p.page), "")
         if number is not None:
             p.page = number
         if p.page is None and len(pages) == 1:
             p.page = pages[0][0]
+        context = ""
+        if page_text:
+            flat_page, flat_quote = gate._flat(page_text), gate._flat(quote)
+            at = flat_page.find(flat_quote.split("...")[0].strip()[:80])
+            if p.quote_assembled:
+                context = flat_page   # a slide's figures sit in boxes around its words: the whole slide
+            elif at >= 0:
+                context = flat_page[max(0, at - CONTEXT_CHARS):at + len(flat_quote) + CONTEXT_CHARS]
+        if not _WORDS.search(quote):
+            # "64% 19%" or "37.3%" alone says nothing of what the figures are: APL Apollo's 64% was put on housing where the
+            # slide says commercial (review of the third run)
+            drop(p, "quote", "the quote has no words, only figures")
+            continue
+        if (issue := figure_issue(p, quote, context)):
+            drop(p, "figure", issue)
+            continue
+        p.figure_beside_quote = figure_issue(p, quote) is not None   # kept, but the quote alone does not carry every figure
+        if (issue := unit_issue(p, quote, context)):
+            drop(p, "unit", issue)
+            continue
         if p.period:
-            context = quote
-            if page_text:
-                flat_page, flat_quote = gate._flat(page_text), gate._flat(quote)
-                at = flat_page.find(flat_quote.split("...")[0].strip()[:80])
-                if at >= 0:
-                    context = flat_page[max(0, at - CONTEXT_CHARS):at + len(flat_quote) + CONTEXT_CHARS]
-            if not period_named(p.period, f"{quote} {context}"):
+            if not period_named(p.period, f"{quote} {context or quote}"):
                 p.period, p.period_stated = None, False   # never guessed, and never a checkable target
             elif re.fullmatch(r"(?:Q[1-4]|H[12]|9M)?FY\d{2}", canon := canonical_period(p.period)):
                 p.period = canon   # "H2 FY27" and "FY2026-27" match one another call to call (review of F180)

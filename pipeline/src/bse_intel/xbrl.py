@@ -610,7 +610,10 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                     continue
                 else:
                     value = value / 1e7
-            values.setdefault((metric, label), value)
+            if metric in PER_SHARE and values.get((metric, label)) == 0 and value != 0:
+                values[(metric, label)] = value   # a 0 EPS tagged first is a filler; the real one may come under another tag
+            else:
+                values.setdefault((metric, label), value)
             ends[label] = info["endDate"]
         elif name in BALANCE_TAGS and kind == "MONEY" and info.get("instant"):
             instants.setdefault(info["instant"], {}).setdefault(BALANCE_TAGS[name], value / 1e7)
@@ -665,6 +668,7 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     # where the file has one (a 0 there is a filler), else the group's.
     minority: dict[tuple[str, str], float] = {}
     owners_share(values, minority)
+    eps_fillers(values)
     eps_signs(values)
     metrics = []
     for (metric, label), value in sorted(values.items(), key=lambda kv: (ends.get(kv[0][1]) or date.min, kv[0][0])):
@@ -758,13 +762,33 @@ def owners_share(values: dict, kept: dict | None = None) -> int:
     return changed
 
 
+def eps_fillers(values: dict) -> int:
+    """Drop an EPS of exactly 0 beside a profit of ₹1 Cr or more either way, in place: the template's filler, not a figure
+    (Ahluwalia Contracts Q3FY24 EPS 0 beside a profit of ₹70.24 Cr; screener 10.55; 47 such pairs in the screener referee
+    of 26 Oct 2026). Returns how many it dropped."""
+    dropped = 0
+    for (metric, label), value in list(values.items()):
+        if metric != "eps" or value != 0:
+            continue
+        profit = values.get(("pat_owners", label)) or values.get(("pat", label))
+        if profit is not None and abs(profit) >= 1:
+            values.pop((metric, label))
+            dropped += 1
+    return dropped
+
+
 def eps_signs(values: dict) -> int:
-    """Give each period's EPS its profit's sign, in place ({(metric, period): value}). Returns how many it changed."""
+    """Give each period's EPS its profit's sign, in place ({(metric, period): value}). Returns how many it changed. Not when
+    the whole profit and the owners' profit disagree in sign: one of them is wrong, so the filed sign stays (Alembic Q4FY26:
+    profit ₹67.13 Cr, owners' -33.87, filed EPS 2.61 turned into -2.61; screener 2.61; 27 such pairs, 26 Oct 2026)."""
     changed = 0
     for (metric, label), value in list(values.items()):
         if metric != "eps" or not value:
             continue
-        profit = values.get(("pat_owners", label)) or values.get(("pat", label))
+        owners, whole = values.get(("pat_owners", label)), values.get(("pat", label))
+        if owners and whole and (owners < 0) != (whole < 0):
+            continue
+        profit = owners or whole
         if profit and abs(profit) >= 0.01 and (profit < 0) != (value < 0):
             values[(metric, label)] = -value
             changed += 1

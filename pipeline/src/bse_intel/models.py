@@ -1013,6 +1013,7 @@ class CallPoint(_Lenient):
     period_stated: bool = True
     company_defined: bool = False
     quote_assembled: bool = False   # set by code: a slide quote whose words and figures are on its page, not in one line
+    figure_beside_quote: bool = False   # set by code: a figure of the point is beside its quote on the page, not in it
     superseded_by: OptStr = None
 
 

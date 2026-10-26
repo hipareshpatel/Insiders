@@ -85,6 +85,11 @@
 #   with the pipeline's own reader (local OCR on figure pages) and keeps a figure only when its column, basis and unit are
 #   proven (else pdf_unsure). `limit` caps the pairs. referee-pdf.csv, summary.json and the markdown go up as the artifact
 #   `pdf-referee`. Writes nothing to memory, cards or the branch. No AI.
+# - screener-explain: read only (owner 26 Oct 2026). Of the `screener-referee` pairs where our figure equals NSE's own file,
+#   which differences a later bonus, split or consolidation (the dossier's corporate actions) or a later results file
+#   (memory's stored later-file source, else NSE's file) explains. The job takes the newest unexplained `screener-referee`
+#   artifact like pdf-referee. explained.csv, summary.json and the markdown go up as the artifact `screener-explain`; its
+#   `unexplained` rows are what `pdf-referee --explained` then reads. Writes nothing to memory, cards or the branch. No AI.
 # - nse-speedtest: read only (F168, owner 26 Oct 2026). 100 seeded universe companies: their file links listed as the seed
 #   lists them (timed), the all-company results list timed, then downloads from nsearchives only in rounds on different files
 #   (A 3-5 s as today, B 1 s, C 0.3 s, D 0 s, E four workers at 0 s); a round stops at the first 403/429/503 or third timeout,
@@ -108,7 +113,7 @@
 #   maint-screener     screener-download, screener-fill (the dry run reads screener.in)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
-#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), restated-report (memory only), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
+#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
 # A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
@@ -129,7 +134,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, pdf-referee, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
         description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated)
@@ -155,6 +160,10 @@ on:
         description: text-backfill and pdf-referee - skip local OCR (text layer only; pdf-referee then counts only text-layer readings)
         type: boolean
         default: false
+      sample:
+        description: pdf-referee only - instead of the open pairs, a random sample of N pairs where memory equals NSE's file (tests the file against its PDF)
+        type: string
+        default: ''
       then:
         description: commands to run after this one succeeds, comma separated; name:restart passes restart=true (see the header)
         type: string
@@ -175,7 +184,7 @@ concurrency:
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-referee","pdf-referee","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-referee","screener-explain","pdf-referee","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -442,7 +451,7 @@ jobs:
           path: ${{ runner.temp }}/referee/
           if-no-files-found: ignore
       - name: Take the newest screener-referee artifact (the input of pdf-referee)
-        if: inputs.command == 'pdf-referee'
+        if: inputs.command == 'pdf-referee' || inputs.command == 'screener-explain'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -452,15 +461,32 @@ jobs:
           gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$id/zip" > "$RUNNER_TEMP/in/artifact.zip"
           unzip -o -q "$RUNNER_TEMP/in/artifact.zip" -d "$RUNNER_TEMP/in"
           ls -l "$RUNNER_TEMP/in/referee-xbrl.csv"
+      - name: Explain the referee's pairs by corporate actions and later files (reads only)
+        if: inputs.command == 'screener-explain'
+        env:
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/explain"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-explain --csv "$RUNNER_TEMP/in/referee-xbrl.csv" --json "$RUNNER_TEMP/explain/summary.json" --out-csv "$RUNNER_TEMP/explain/explained.csv" --md "$RUNNER_TEMP/explain/screener-explain.md" || code=$?
+          if [ "$code" = 124 ]; then echo "::warning::time budget ended with rows left (not_run in the CSV); run again"; code=0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'screener-explain'
+        with:
+          name: screener-explain
+          path: ${{ runner.temp }}/explain/
+          if-no-files-found: ignore
       - name: Referee the open pairs with the filing PDF (reads only)
         if: inputs.command == 'pdf-referee'
         env:
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
           LIMIT: ${{ inputs.limit }}
+          SAMPLE: ${{ inputs.sample }}
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/pdfreferee"
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel pdf-referee --csv "$RUNNER_TEMP/in/referee-xbrl.csv" ${LIMIT:+--limit "$LIMIT"} ${{ inputs.no_ocr && '--no-ocr' || '' }} --json "$RUNNER_TEMP/pdfreferee/summary.json" --out-csv "$RUNNER_TEMP/pdfreferee/referee-pdf.csv" --md "$RUNNER_TEMP/pdfreferee/pdf-referee.md" || code=$?
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel pdf-referee --csv "$RUNNER_TEMP/in/referee-xbrl.csv" ${LIMIT:+--limit "$LIMIT"} ${SAMPLE:+--sample "$SAMPLE"} ${{ inputs.no_ocr && '--no-ocr' || '' }} --json "$RUNNER_TEMP/pdfreferee/summary.json" --out-csv "$RUNNER_TEMP/pdfreferee/referee-pdf.csv" --md "$RUNNER_TEMP/pdfreferee/pdf-referee.md" || code=$?
           if [ "$code" = 124 ]; then echo "::warning::time budget ended with pairs left (not_run in the CSV); run again with a limit"; code=0; fi
           exit "$code"
       - uses: actions/upload-artifact@v4

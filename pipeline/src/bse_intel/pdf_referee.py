@@ -304,9 +304,24 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
     return {"values": values, "unsure": "; ".join(dict.fromkeys(unsure)), "found": seen}
 
 
+def _same_reading(a: float, b: float) -> bool:
+    """Two printed readings of one figure: within half a unit of a coarser printed precision (120.5 and 120.48 Cr, EPS 1.23
+    and 1.2), or 0.05% (a figure printed in whole crore beside one to a decimal). Tighter than the cross-check's 1 Cr floor."""
+    return abs(a - b) <= max(0.051, 0.0005 * max(abs(a), abs(b)))
+
+
 def verdict_of(values: list[tuple[float, str, int]], ours: float | None, theirs: float | None, xbrl: float | None,
                metric: str) -> tuple[str, list[str], float | None, str]:
-    """(verdict, matches, the figure used, its label) for proven PDF figures against the three values."""
+    """(verdict, matches, the figure used, its label) for proven PDF figures against the three values. Proven rows that
+    disagree with each other (a segment total, "Total income" beside revenue) are no verdict: ``pdf_unsure``, so one row that
+    happens to agree never confirms a figure (independent review, 26 Oct 2026)."""
+    distinct: list[float] = []
+    for value, _, _ in values:
+        if not any(_same_reading(d, value) for d in distinct):
+            distinct.append(value)
+    if len(distinct) > 1:
+        shown = ", ".join(f"{v:g}" for v in distinct[:4])
+        return "pdf_unsure", [], None, f"conflicting rows: {shown}"
     best = None
     for value, label, _ in values:
         matches = []
@@ -422,6 +437,9 @@ def referee_pair(src: Sources, row: dict) -> dict:
         got = figure_for(rows, period, metric, row.get("basis") or None)
         if got["values"]:
             v, matches, value, label = verdict_of(got["values"], ours, theirs, xbrl, metric)
+            if v == "pdf_unsure":
+                out.update(pdf_verdict=v, pdf_url=f.pdf_url, reason=label)
+                return out
             out.update(pdf_verdict=v, pdf_value=value, pdf_label=label, pdf_url=f.pdf_url, matches="|".join(matches))
             return out
         if got["unsure"]:
@@ -447,8 +465,43 @@ def _num(value) -> float | None:
         return None
 
 
-def open_pairs(rows: list[dict]) -> list[dict]:
-    return [r for r in rows if r.get("verdict") in OPEN_VERDICTS and r.get("metric") and r.get("period") and r.get("symbol")]
+# the explain verdicts that still need the PDF (a row the explain run cut, not_run, included): one list, the explain module's
+from .screener_explain import TO_PDF as EXPLAIN_TO_PDF  # noqa: E402
+
+
+def open_pairs(rows: list[dict], explained: bool = False) -> list[dict]:
+    """The pairs still open. With ``explained`` the rows are those of ``screener-explain``'s explained.csv: the ones it left
+    ``unexplained`` (our figure equals the official file and no corporate action or later file accounts for screener's) plus
+    the usual open verdicts it passed through; the rows it explained are left out."""
+    def open_(r: dict) -> bool:
+        return r.get("verdict") in OPEN_VERDICTS or (explained and r.get("explain_verdict") in EXPLAIN_TO_PDF)
+    return [r for r in rows if open_(r) and r.get("metric") and r.get("period") and r.get("symbol")]
+
+
+SAMPLE_METRICS = ("revenue", "pat")   # EPS left out: screener restates old EPS for bonuses and splits, the PDF prints it as filed
+
+
+def sample_pairs(rows: list[dict], n: int, seed: int = 26) -> list[dict]:
+    """A seeded random sample of ``n`` pairs the XBRL step called ``ours_matches_official``, half revenue and half profit
+    (owner, 26 Oct 2026: memory came from NSE's own files, so "ours equals the file" is no check; the PDF is the second,
+    independent source). The referee CSV holds only pairs where screener disagreed, so the rate at which the PDF disagrees
+    with the file here is an upper bound of the file's error rate, not the rate over all figures."""
+    import random
+
+    if n <= 0:
+        raise ValueError("--sample takes a number above 0")
+    rng = random.Random(seed)
+    out: list[dict] = []
+    for i, metric in enumerate(SAMPLE_METRICS):
+        pool = sorted((r for r in rows if r.get("verdict") == "ours_matches_official" and r.get("metric") == metric
+                       and r.get("period") and r.get("symbol")
+                       and r.get("explain_verdict", "unexplained") in EXPLAIN_TO_PDF),   # an explained row is no sample
+                      key=lambda r: (r["symbol"], r["period"]))
+        want = n // len(SAMPLE_METRICS) + (1 if i < n % len(SAMPLE_METRICS) else 0)
+        if len(pool) < want:
+            log.warning("sample: only %d %s pairs to draw from, %d wanted", len(pool), metric, want)
+        out += rng.sample(pool, min(want, len(pool)))
+    return out
 
 
 def load_csv(text: str) -> list[dict]:
@@ -456,10 +509,13 @@ def load_csv(text: str) -> list[dict]:
 
 
 def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | None = None, ocr: bool = True,
-        clock=time.monotonic) -> dict:
+        clock=time.monotonic, sample: int = 0, seed: int = 26, explained: bool = False) -> dict:
     """Referee the open pairs among the screener-referee ``rows``, company by company; ``limit`` caps the pairs read (a
-    company is finished once started); the rest are ``not_run``."""
-    pairs = open_pairs(rows)
+    company is finished once started); the rest are ``not_run``. With ``sample`` the pairs are instead a seeded random
+    sample of that many pairs where memory already equals the XBRL file (``sample_pairs``); with ``explained`` the rows are
+    screener-explain's and its ``unexplained`` ones are taken too (``open_pairs``)."""
+    pairs = sample_pairs(rows, sample, seed) if sample else open_pairs(rows, explained)
+    pool = sum(r.get("verdict") == "ours_matches_official" and r.get("metric") in SAMPLE_METRICS for r in rows) if sample else 0
     by_company: dict[tuple[str, str], list[dict]] = {}
     for r in pairs:
         by_company.setdefault((r["symbol"], r.get("basis") or ""), []).append(r)
@@ -488,7 +544,10 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
                 blocked = True
                 log.warning("NSE refused (%s): stopping the PDF referee", exc)
                 results.append(not_run(r, "blocked"))
-    return summarise(results, src.calls, len(by_company), blocked, out_of_time, len(rows) - len(pairs))
+    summary = summarise(results, src.calls, len(by_company), blocked, out_of_time, len(rows) - len(pairs))
+    if sample:
+        summary["sample"] = {"drawn": len(pairs), "pool": pool, "seed": seed}
+    return summary
 
 
 def summarise(results: list[dict], calls: dict, companies: int, blocked: bool = False, out_of_time: bool = False,
@@ -535,7 +594,8 @@ def to_json(summary: dict) -> str:
 
 
 def render(summary: dict) -> str:
-    lines = [f"pdf referee (the filing PDF, read only): {summary['pairs']} open pairs, {summary['companies']} companies, "
+    kind = "sampled pairs (memory equals the file)" if summary.get("sample") else "open pairs"
+    lines = [f"pdf referee (the filing PDF, read only): {summary['pairs']} {kind}, {summary['companies']} companies, "
              f"{summary['calls']['announcement_lists']} announcement lists, {summary['calls']['pdfs']} PDFs"]
     lines += [f"  {v:24}{summary['verdicts'].get(v, 0)}" for v in VERDICTS]
     if summary["blocked"]:
@@ -546,11 +606,17 @@ def render(summary: dict) -> str:
 
 
 def to_markdown(summary: dict, date_text: str) -> str:
+    sample = summary.get("sample")
+    intro = ((f"Read only: a seeded random sample (seed {sample['seed']}) of {sample['drawn']} of the {sample['pool']} revenue and "
+              "profit pairs where memory equals NSE's results XBRL, each checked against the filing's own PDF. The referee's input "
+              "holds only pairs where screener disagreed, so the share where the PDF disagrees with the file is an upper bound "
+              "of the file's error rate, not its rate over all figures.") if sample else
+             "Read only: the filing's own PDF decides each pair the XBRL step left open (verdict neither, no_file or "
+             "screener_matches_official).")
     out = [f"# PDF referee, {date_text}", "",
-           "Read only: the filing's own PDF decides each pair the XBRL step left open (verdict neither, no_file or "
-           "screener_matches_official). A figure counts only when its column, basis and unit are proven on the page; "
-           "otherwise it is `pdf_unsure`. Memory is not written and no card changes.", "",
-           f"{summary['pairs']} open pairs ({summary['left_out']} other rows of the input left out), {summary['companies']} "
+           intro + " A figure counts only when its column, basis and unit are proven on the page and the proven rows agree "
+           "with each other; otherwise it is `pdf_unsure`. Memory is not written and no card changes.", "",
+           f"{summary['pairs']} {'sampled' if sample else 'open'} pairs, {summary['companies']} "
            f"companies, {summary['calls']['announcement_lists']} announcement lists and {summary['calls']['pdfs']} PDFs fetched.", ""]
     if summary["blocked"] or summary["out_of_time"]:
         out += ["The run stopped early (" + ("NSE refused the session" if summary["blocked"] else "time budget")

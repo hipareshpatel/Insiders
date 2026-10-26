@@ -432,3 +432,20 @@ def test_a_rich_card_keeps_no_model_fact_whose_amounts_code_already_shows():
     texts = [f.text for f in out.card.what_happened]
     assert "Finance cost rose to ₹18.85 Cr." in texts and "Paid a final dividend of ₹12.34 Cr." in texts
     assert not any(t.startswith(("EBITDA for the quarter", "Borrowings rose")) for t in texts)
+
+
+def test_a_zero_eps_beside_a_profit_is_a_filler():
+    """Ahluwalia Contracts Q3FY24: EPS 0 beside a ₹70.24 Cr profit (screener 10.55; referee 26 Oct 2026)."""
+    from bse_intel.xbrl import eps_fillers
+
+    values = {("pat", "Q3FY24"): 70.24, ("eps", "Q3FY24"): 0.0, ("pat", "Q4FY24"): 0.4, ("eps", "Q4FY24"): 0.0}
+    assert eps_fillers(values) == 1
+    assert ("eps", "Q3FY24") not in values and values[("eps", "Q4FY24")] == 0.0   # a profit under ₹1 Cr: a 0 EPS can be real
+
+
+def test_eps_keeps_its_filed_sign_when_the_two_profits_disagree():
+    """Alembic Q4FY26: profit ₹67.13 Cr, owners' share -33.87, filed EPS 2.61 (screener 2.61)."""
+    from bse_intel.xbrl import eps_signs
+
+    values = {("pat", "Q4FY26"): 67.13, ("pat_owners", "Q4FY26"): -33.87, ("eps", "Q4FY26"): 2.61}
+    assert eps_signs(values) == 0 and values[("eps", "Q4FY26")] == 2.61

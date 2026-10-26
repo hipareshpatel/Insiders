@@ -79,3 +79,9 @@ right. Everything the 2026-10-20 approval leaves to the owner still goes to the 
 - 25 Oct 16:18 UTC: PR #121 merged into `main` (f8a5eec) with CI green: this standing approval. F155's two memory guards are live (they refuse bad figures on new writes only); the PBT and EBITDA-change parts are behind switches.
 - 25 Oct 17:00 UTC: PR #122 merged into `main` (c59e338) with CI green: this standing approval. F153 switched on as a fix of live wrong cards (owner's rule).
 - 25 Oct 17:49 UTC: PR #123 merged into `main` (b4f7eb0) with CI green: this standing approval. F157 changes what the seed writes to memory (derived quarters labelled calc; mis-dated files refused).
+- 26 Oct 12:25 UTC: PR #153 merged into `main` (4311bb0) with CI green, after three independent reviews: this standing approval. F180-F184 are all behind switches that are off (MEMORY_CALL_V2, MEMORY_YEAR_CHECK, CARD_FOOTER_PLAUSIBLE, CARD_EPS_FOLLOWS_PROFIT); `text-backfill-bse` writes only text objects.
+- 26 Oct 12:30 UTC, owner ("All approved, if you need DeepSeek you it also"):
+  - AI re-runs for testing and measurement no longer need a separate OK.
+  - DeepSeek may be used for one-off tests only, never on a path that runs every day (CLAUDE.md, $0 steady state).
+  - Turning a switch on is approved in principle, but each one still waits for its release check and blind sample (owner's own bar).
+  - Switches are repository variables, which this session cannot set, so the owner flips each one when it passes.

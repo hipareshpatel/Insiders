@@ -805,6 +805,16 @@ def cmd_restated_report(args, settings, sink) -> int:
     return 0
 
 
+def cmd_memory_recall_export(args, settings, sink) -> int:
+    """The sample of recent call transcripts and decks for the memory recall audit, each with its full text, what memory
+    holds from it and its card (memory_recall_export.py, TODO row 82). Read only: no NSE, no AI, no write."""
+    from . import memory_recall_export as mre
+
+    index = mre.export(sink, Path(args.out), args.limit, args.seed, args.days)
+    print(mre.render(index))
+    return 0 if index["sampled"] else 1
+
+
 def cmd_nse_selfcheck(args, settings, sink) -> int:
     """NSE's own figures in memory against themselves: own file against a later file's comparative column, and Q1+Q2+Q3+Q4
     against the year (nse_selfcheck.py, TODO row 60). Read only: no NSE, no AI, no write."""
@@ -1523,6 +1533,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
     p.add_argument("--json", help="write the counts and every restated figure to this file")
     p.set_defaults(func=cmd_restated_report)
+
+    p = sub.add_parser("memory-recall-export", help="sample recent call transcripts and decks with their full text, memory and card, for the recall audit (read only, no AI)")
+    p.add_argument("--out", default="memory-recall", help="folder to write (one subfolder per filing, index.json, README.md)")
+    p.add_argument("--limit", type=int, default=20, help="filings in the sample")
+    p.add_argument("--seed", type=int, default=26)
+    p.add_argument("--days", type=int, default=30, help="cards filed in the last N days")
+    p.set_defaults(func=cmd_memory_recall_export)
 
     p = sub.add_parser("nse-selfcheck", help="NSE's own figures in memory against themselves: own file vs later comparative, quarters vs year (read only, no AI)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

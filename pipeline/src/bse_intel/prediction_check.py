@@ -2,14 +2,14 @@
 
 APL Apollo's "10 lakh tonnes" Q2FY27 volume target was marked MET at 963,143 t (memory recall audit, 26 Oct 2026): the
 check compared 963,143 with 10. ``dossier.comparable_target`` now converts a target's scale word and leaves a target
-more than 5x from its figure UNCHECKED; this lists the stored verdicts the next merge of each company will withdraw, and
+50x or more from its figure, or one whose words name another measure, UNCHECKED; this lists the stored verdicts the next merge of each company will withdraw, and
 the per-share units on figures that are not per share (``models.FinancialMetric``), so the change is counted first."""
 
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
 
-from .dossier import comparable_target
+from .dossier import comparable_target, other_measure
 from .models import _PER_OTHER
 
 READ_WORKERS = 8
@@ -19,7 +19,8 @@ def check(dossier: dict | None) -> list[dict]:
     rows = []
     for p in (dossier or {}).get("predictions", []):
         if p.get("status") in ("MET", "MISSED") and p.get("actual") is not None \
-                and comparable_target(p, {"value": p["actual"], "unit": p.get("actual_unit")}) is None:
+                and (other_measure(p.get("kpi"), p.get("metric"))
+                     or comparable_target(p, {"value": p["actual"], "unit": p.get("actual_unit")}) is None):
             rows.append({"kind": "verdict_withdrawn", "metric": p.get("metric"), "period": p.get("period"),
                          "detail": f"{p.get('status')}: target {p.get('comparison')} {p.get('value')} vs actual {p.get('actual')} "
                                    f"({str(p.get('kpi') or '')[:80]})"})

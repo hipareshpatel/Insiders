@@ -691,7 +691,8 @@ class Card(_Lenient):
         return self
 
 
-_PER_OTHER = re.compile(r"_per_(?!share)[a-z]+", re.I)   # ebitda_per_tonne, realisation_per_kg: not per share
+# ebitda_per_tonne, realisation_per_kg: not per share; earnings_per_equity_share and cash_eps_per_diluted_share are
+_PER_OTHER = re.compile(r"_per_(?!(?:[a-z]+_)*shares?\b)[a-z]+", re.I)
 
 
 class FinancialMetric(_Lenient):

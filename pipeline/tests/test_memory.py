@@ -754,3 +754,20 @@ def test_a_stored_per_share_tonne_is_relabelled_at_the_next_merge():
     after = merge(d, output(financial_metrics=[]), filing("other", Q2), "LOW", "now")
     (m,) = [m for m in after["financial_metrics"] if m["metric"] == "ebitda_per_tonne"]
     assert m["unit"] == "INR" and all(src["unit"] == "INR" for src in m.get("sources", []))
+
+
+def test_review_cases_of_the_unit_check():
+    from bse_intel.dossier import comparable_target, other_measure, target_scale
+    from bse_intel.models import FinancialMetric
+
+    # a real big beat or miss stays judged
+    assert comparable_target({"value": 1200}, {"value": 100, "unit": "INR_CR"}) == 1200
+    assert comparable_target({"value": 30}, {"value": 4, "unit": "PCT"}) == 30
+    # the scale word must follow the target's own figure, and never scales a rate
+    assert target_scale("EBITDA margin 18% with capex of Rs 500 crore", 18) is None
+    assert target_scale("Rs 500 crore capex", 500) == 1e7
+    assert comparable_target({"value": 18, "scale": 1e7}, {"value": 17, "unit": "PCT"}) == 18
+    assert FinancialMetric(metric="earnings_per_equity_share", period="Q2FY27", value=5, unit="INR_PER_SHARE").unit == "INR_PER_SHARE"
+    # another measure (the dry run's Prism Johnson and Schneider)
+    assert other_measure("RMC segment EBITDA", "ebitda") and other_measure("Gross margin recovery", "ebitda_margin")
+    assert not other_measure("EBITDA margin 18%", "ebitda_margin") and not other_measure("Q2FY27 volume", "volumes")

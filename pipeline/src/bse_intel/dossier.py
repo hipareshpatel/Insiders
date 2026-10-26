@@ -965,7 +965,7 @@ def _forget(dossier: dict, news_id: str) -> None:
         if p.get("source_news_id") == news_id:
             continue
         if p.get("resolved_by") == news_id:
-            p = {k: v for k, v in p.items() if k not in ("resolved_by", "resolved_on", "actual")} | {"status": "OPEN"}
+            p = {k: v for k, v in p.items() if k not in ("resolved_by", "resolved_on", "actual", "actual_unit", "reason")} | {"status": "OPEN"}
         predictions.append(p)
     dossier["predictions"] = predictions
 
@@ -981,35 +981,70 @@ _FULL_YEAR = re.compile(r"\b(?:full[- ]year|for\s+the\s+(?:full\s+)?year|annual(
                         r"(?:target|guidance|average)|average\s+for\s+(?:the\s+)?(?:year|FY))\b", re.I)
 
 
-# A target's own scale word ("10 lakh tonnes", "₹2,000 crore", "5 mn units"), as a multiplier of one unit
-_SCALE_WORDS = ((re.compile(r"\b(?:lakh|lac|lakhs|lacs|lkh)\b", re.I), 1e5), (re.compile(r"\b(?:crores?|cr)\b", re.I), 1e7),
-                (re.compile(r"\b(?:billion|bn)\b", re.I), 1e9), (re.compile(r"\b(?:million|mn|mln)\b", re.I), 1e6),
-                (re.compile(r"\b(?:thousand|'000)\b|\d\s*k\b", re.I), 1e3))
+# A target's own scale word right after its figure ("10 lakh tonnes", "₹2,000 crore", "5 mn units"), as a multiplier
+_SCALE_WORDS = ((re.compile(r"^(?:lakhs?|lacs?|lkh)\b", re.I), 1e5), (re.compile(r"^(?:crores?|cr)\b", re.I), 1e7),
+                (re.compile(r"^(?:billion|bn)\b", re.I), 1e9), (re.compile(r"^(?:million|mn|mln)\b", re.I), 1e6),
+                (re.compile(r"^(?:thousand|k)\b", re.I), 1e3))
+_FIGURE = re.compile(r"(\d[\d,]*(?:\.\d+)?)\s*")
 # what one of a stored figure's unit is: crore and lakh amounts and counts; per-unit and per-cent figures are 1
 _STORED_SCALE = {"INR_CR": 1e7, "CR": 1e7, "INR_LAKH": 1e5, "LAKH": 1e5, "INR_MN": 1e6, "INR_M": 1e6, "INR_BN": 1e9,
                  "USD_MN": 1e6, "USD_M": 1e6, "USD_BN": 1e9, "SHARES_CR": 1e7, "SHARES_LAKH": 1e5}
-TARGET_SCALE_RATIO = 5   # the same band as _plausible_target: a target 5x away from the figure is another unit
+_NO_SCALE_UNITS = {"PCT", "%", "BPS", "X", "TIMES", "RATIO", "INR_PER_SHARE", "INR", "DAYS"}   # a rate, a ratio or a per-unit figure
+# A target this many times from its figure was read in another unit: a scale slip is a factor of 1,000 or more (lakh
+# against tonnes is 1e5); a real beat or miss is rarely 50x (net debt 100 against a 1,200 target is 12x, a 30% growth
+# target missed at 4% is 7.5x: both stay judged, review of F179, 26 Oct 2026)
+TARGET_SCALE_RATIO = 50
 
 
-def target_scale(text: str) -> float | None:
-    """The multiplier a KPI target's wording names (lakh 1e5, crore 1e7, million 1e6, ...), else None."""
-    for pattern, size in _SCALE_WORDS:
-        if pattern.search(text or ""):
-            return size
+_SEGMENT_SCOPE = re.compile(r"\b(?:segment|division|vertical|subsidiary|business unit)\b", re.I)
+_MARGIN_KIND = re.compile(r"\b(gross|ebitda|ebit|operating|pbt|pat|net)\s+(?:profit\s+)?margins?\b", re.I)
+_MARGIN_KEY = {"gross": "gross", "ebitda": "ebitda", "operating": "ebitda", "ebit": "ebit", "pbt": "pbt", "pat": "pat", "net": "pat"}
+
+
+def other_measure(kpi: str | None, metric: str | None) -> bool:
+    """The target's own words name another measure than the metric it would be judged on: Prism Johnson's "RMC segment
+    EBITDA" judged on the company's EBITDA, Schneider's "gross margin recovery" on its EBITDA margin (item 84 dry run)."""
+    kpi, metric = kpi or "", (metric or "").lower()
+    if _SEGMENT_SCOPE.search(kpi) and "segment" not in metric:
+        return True
+    kinds = {_MARGIN_KEY[m.group(1).lower()] for m in _MARGIN_KIND.finditer(kpi)}
+    if kinds and "margin" in metric:
+        own = next((v for k, v in _MARGIN_KEY.items() if metric.startswith(k)), None)
+        return own is not None and own not in kinds
+    return False
+
+
+def target_scale(text: str, value: float | None = None) -> float | None:
+    """The multiplier the scale word right after the target's own figure names (lakh 1e5, crore 1e7, million 1e6, ...),
+    else None. Only that figure counts: "EBITDA margin 18% with capex of Rs 500 crore" has no scale for the 18."""
+    if value is None:
+        return None
+    for m in _FIGURE.finditer(text or ""):
+        try:
+            if abs(float(m.group(1).replace(",", "")) - float(value)) > 1e-9:
+                continue
+        except ValueError:
+            continue
+        rest = (text or "")[m.end():]
+        for pattern, size in _SCALE_WORDS:
+            if pattern.match(rest):
+                return size
     return None
 
 
 def comparable_target(p: dict, actual: dict) -> float | None:
-    """The prediction's target in the actual figure's own unit, or None when the two cannot be compared: the target's
-    scale word converted against the figure's unit (APL Apollo's "10 lakh tonnes" is 1,000,000 against a figure in
-    tonnes), and, either way, a target more than 5x from the figure is taken for another unit (item 84, 26 Oct 2026)."""
+    """The prediction's target in the actual figure's own unit, or None when the two cannot be compared: a scale word
+    after the target's figure converted against the figure's unit (APL Apollo's "10 lakh tonnes" is 1,000,000 against
+    a figure in tonnes; never for a rate, a ratio or a per-unit figure), and a target 50x or more from its figure taken
+    for another unit (item 84, 26 Oct 2026)."""
     value, figure = p.get("value"), actual.get("value")
     if value is None or figure is None:
         return None
     goal = float(value)
-    if p.get("scale"):
-        goal = goal * p["scale"] / _STORED_SCALE.get(str(actual.get("unit") or "").upper(), 1)
-    if goal and figure and not (1 / TARGET_SCALE_RATIO <= abs(float(figure)) / abs(goal) <= TARGET_SCALE_RATIO):
+    unit = str(actual.get("unit") or "").upper()
+    if p.get("scale") and unit not in _NO_SCALE_UNITS:
+        goal = goal * p["scale"] / _STORED_SCALE.get(unit, 1)
+    if goal and figure and not (1 / TARGET_SCALE_RATIO < abs(float(figure)) / abs(goal) < TARGET_SCALE_RATIO):
         return None
     return goal
 
@@ -1328,6 +1363,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
                 k = k.model_copy(update={"period": "FY" + _period(k.period)[-2:]})
             if not _plausible_target(d, _norm(k.metric), k.value):
                 continue  # "Net worth target >= 128.1" (a refund) for a ₹1,357 Cr net worth
+            if other_measure(f"{k.kpi or ''} {k.target or ''}", _norm(k.metric)):
+                continue  # "RMC segment EBITDA >= 75" is not the company's EBITDA (item 84)
             pid = "p_" + _hash(filing.scrip_code, _norm(k.metric), _period(k.period), f"{k.value:g}")
             key = (_norm(k.metric), _period(k.period))
             if any((m["metric"], m["period"]) == key for m in d["financial_metrics"]):
@@ -1341,14 +1378,17 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
                 "id": pid, "metric": _norm(k.metric), "period": _period(k.period), "value": k.value,
                 "comparison": comparison, "kpi": k.kpi.strip()[:200], "created_on": as_of,
                 "source_news_id": news_id, "status": "OPEN", "lab": text_lab(),
-                **({"scale": scale} if (scale := target_scale(f"{k.target or ''} {k.kpi or ''}")) else {}),
+                **({"scale": scale} if (scale := target_scale(f"{k.target or ''} {k.kpi or ''}", k.value)) else {}),
             })
     by_key = {(m["metric"], m["period"]): m for m in d["financial_metrics"]}
     for p in predictions.values():
-        if p["status"] in ("MET", "MISSED") and p.get("actual") is not None \
-                and comparable_target(p, {"value": p["actual"], "unit": p.get("actual_unit")}) is None:
-            # judged before the scale check: APL Apollo's 10 (lakh t) target "met" at 963,143 t (item 84)
-            p.update(status="UNCHECKED", reason="target and figure are not in the same unit")
+        if p["status"] in ("MET", "MISSED") and p.get("actual") is not None:
+            # judged before these checks: APL Apollo's 10 (lakh t) target "met" at 963,143 t; Schneider's gross-margin
+            # target "missed" on its EBITDA margin (item 84)
+            if other_measure(p.get("kpi"), p.get("metric")):
+                p.update(status="UNCHECKED", reason="the target is for another measure")
+            elif comparable_target(p, {"value": p["actual"], "unit": p.get("actual_unit")}) is None:
+                p.update(status="UNCHECKED", reason="target and figure are not in the same unit")
     for p in predictions.values():
         if p["status"] != "OPEN" or p["created_on"] >= as_of:
             continue

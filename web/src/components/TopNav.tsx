@@ -12,6 +12,7 @@ const NAV = [
   { href: "/companies", label: "Companies" },
   { href: "/calendar", label: "Calendar" },
   { href: "/system", label: "System", owner: true },   // owner only (22 Oct 2026); the owner signs in at /system
+  { href: "/issues", label: "Issues", owner: true },   // owner only: which card has which check item (TODO row 67)
 ];
 
 type Theme = "system" | "light" | "dark";

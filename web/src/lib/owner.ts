@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useSyncExternalStore } from "react";
 import type { CardRow, FeedResponse, ReviewCard, SystemResponse } from "../../shared/types";
+import type { IssuesResponse } from "../../shared/cardChecks";
 import type { FeedFilters } from "./api";
 
 /** The owner's verdict on a card, in the blind audit's own words. */
@@ -62,6 +63,12 @@ export const ownerApi = {
     call<{ ok: boolean; held: number }>(token, "/verdict", { method: "POST", body: JSON.stringify({ news_id: newsId, verdict, note }) }),
   card: (token: string, id: string) => call<CardRow>(token, `/cards/${encodeURIComponent(id)}`),
   review: (token: string) => call<{ cards: ReviewCard[]; total?: number }>(token, "/review"),
+  /** Cards with a check item (corrected, held, failed, owner verdict) in a date range, newest first, paged by cursor. */
+  issues: (token: string, from: string, to: string, cursor?: string | null) => {
+    const qs = new URLSearchParams({ from, to, limit: "200" });
+    if (cursor) qs.set("cursor", cursor);
+    return call<IssuesResponse>(token, `/issues?${qs.toString()}`);
+  },
   verdicts: (token: string) => call<{ verdicts: OwnerVerdict[] }>(token, "/verdicts"),
 };
 

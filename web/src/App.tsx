@@ -8,6 +8,7 @@ import { CalendarView } from "./views/CalendarView";
 import { CompaniesView } from "./views/CompaniesView";
 import { CompanyPage } from "./views/CompanyPage";
 import { Empty, FeedView } from "./views/FeedView";
+import { IssuesView } from "./views/IssuesView";
 import { ResultsView } from "./views/ResultsView";
 import { SystemView } from "./views/SystemView";
 import { TodayView } from "./views/TodayView";
@@ -53,6 +54,7 @@ export function App() {
           <Route path="/company/:scrip" component={CompanyPage} />
           <Route path="/calendar" component={CalendarView} />
           <Route path="/system" component={SystemView} />
+          <Route path="/issues" component={IssuesView} />
           <Route>
             <div className="mx-auto max-w-[1240px] px-4 py-10 sm:px-6"><Empty title="Page not found" /></div>
           </Route>

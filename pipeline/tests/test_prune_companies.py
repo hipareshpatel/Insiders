@@ -138,6 +138,48 @@ def test_backup_that_cannot_be_read_back_stops_before_deleting(settings, monkeyp
     assert len(sink.query("companies_prune_counts", ["", 100])) == len(ROWS)
 
 
+def _with_caps(settings):
+    sink = _sink(settings)
+    sink.execute("companies_upsert", [
+        {"scrip_code": "500001", "symbol": "BIGBSE", "company_name": "Big Bse Only Ltd", "isin": "INE0FFF01014", "market_cap_cr": 500.0, "updated_at": "x"},
+        {"scrip_code": "500002", "symbol": "SMLBSE", "company_name": "Small Bse Only Ltd", "isin": "INE0GGG01015", "market_cap_cr": 499.0, "updated_at": "x"},
+        {"scrip_code": "590200", "symbol": "BIGETF", "company_name": "Big Gold ETF", "isin": "INF0HHH01016", "market_cap_cr": 9000.0, "updated_at": "x"},
+        {"scrip_code": "544950", "symbol": "BIGREIT", "company_name": "Big REIT", "isin": "INE0III01017", "market_cap_cr": 9000.0, "updated_at": "x"}])
+    return sink
+
+
+def test_bse_only_500_cr_kept_set_aside(settings):
+    report = pc.plan(_with_caps(settings), _equities(), SME)
+    assert _ids(report["bse_kept"]) == {"500001"}
+    assert report["bse_kept"][0]["type"] == pc.BSE_KEPT and report["bse_kept"][0]["isin"] == "INE0FFF01014"
+    removed = {r["scrip_code"]: r["type"] for r in report["remove"]}
+    assert removed["500002"] == pc.BSE_ONLY                         # 499 Cr: removed
+    assert removed["590200"] == pc.FUND and removed["544950"] == pc.REIT   # funds and REITs go whatever their value
+    assert "500001" not in removed
+    assert report["summary"]["bse_kept"] == 1
+    assert "500001" in pc.render(report) and "keep_bse_kept,bse_kept,500001" in pc.to_csv(report)
+
+
+def test_bse_keep_can_be_turned_off_or_moved(settings):
+    sink = _with_caps(settings)
+    off = pc.plan(sink, _equities(), SME, bse_keep_min_mcap=0)
+    assert off["bse_kept"] == [] and "500001" in _ids(off["remove"])
+    low = pc.plan(sink, _equities(), SME, bse_keep_min_mcap=499)
+    assert _ids(low["bse_kept"]) == {"500001", "500002"}
+
+
+def test_apply_never_removes_a_kept_bse_company(settings):
+    sink = _with_caps(settings)
+    report = pc.plan(sink, _equities(), SME)
+    pc.apply(sink, report, "2026-10-26")
+    left = _ids(sink.query("companies_prune_counts", ["", 100]))
+    assert "500001" in left and "500002" not in left and "590200" not in left
+
+
+def test_bse_kept_rows_reads_no_memory(settings):
+    assert _ids(pc.bse_kept_rows(_with_caps(settings), _equities(), SME)) == {"500001"}
+
+
 def test_parse_sme_list():
     text = "SYMBOL,NAME_OF_COMPANY,SERIES,DATE_OF_LISTING,PAID_UP_VALUE,ISIN_NUMBER,FACE_VALUE,\nRAVITA,Ravita Engineering Services Limited,ST,22-Oct-26,5,INE1UEL01023,5,\n"
     assert parse_sme_list(text) == [Equity("RAVITA", "Ravita Engineering Services Limited", "INE1UEL01023", "ST")]

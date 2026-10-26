@@ -17,7 +17,12 @@ listed apart as ``has_cards`` for the owner to decide (keep, or hide from lists;
 nothing is flagged). Only a company with no cards at all is removed, with its memory file. ``apply`` first writes every
 row it will remove, with the keys and content of their memory files, to R2 ``backup/prune-companies-<date>.json``, reads
 that object back, and only then deletes the memory objects and company rows (companies_prune re-checks "no cards" in
-SQL). The filing ledger rows of removed companies stay (the noise audit's history); their counts are in the report."""
+SQL). The filing ledger rows of removed companies stay (the noise audit's history); their counts are in the report.
+
+Kept BSE-only companies (owner, 26 Oct 2026, Option A): a row classified ``bse_only_equity`` whose stored market_cap_cr is
+``BSE_KEEP_MIN_MCAP_CR`` (500 Cr) or more is never removed (``bse_kept``): it is set aside, listed in the report (scrip, name,
+ISIN, market cap) and counted apart (about 131 rows on 25 Oct), for a later BSE daily pass. ``--bse-keep-min-mcap N`` changes
+the line, 0 turns the keep off. Fund / ETF and REIT / InvIT rows are removed whatever their value."""
 
 from __future__ import annotations
 
@@ -33,6 +38,7 @@ READ_WORKERS = 8
 APPLY_BATCH = 200
 MIN_NSE_ROWS = 2000     # NSE's main board has ~2,600; a shorter answer is a broken file, and pruning against it would empty the table
 MIN_SME_ROWS = 100
+BSE_KEEP_MIN_MCAP_CR = 500   # owner, 26 Oct 2026: BSE-only companies worth this much or more are kept and set aside
 BACKUP_PREFIX = "backup/prune-companies-"
 TRUST = re.compile(r"\b(reit|invit|real estate investment trust|infrastructure investment trust)\b", re.I)
 
@@ -40,6 +46,7 @@ BSE_ONLY = "bse_only_equity"
 FUND = "mutual_fund_etf"
 REIT = "reit_invit"
 SME = "nse_sme"
+BSE_KEPT = "bse_kept"   # a kept type, never removed: a BSE-only equity at or over BSE_KEEP_MIN_MCAP_CR
 REMOVE_TYPES = (BSE_ONLY, FUND, REIT, SME)
 DOSSIER_SECTIONS = ("financial_metrics", "ownership", "timeline", "deals", "balance_sheet", "capital_actions")
 
@@ -84,7 +91,13 @@ def _dossier_counts(dossier: dict | None) -> dict:
     return {k: len(dossier[k]) for k in DOSSIER_SECTIONS if isinstance(dossier.get(k), list) and dossier[k]}
 
 
-def plan(sink, equities, sme, keep_sme: bool = False, workers: int = READ_WORKERS) -> dict:
+def is_bse_kept(company: dict, kind: str, min_mcap: float) -> bool:
+    cap = company.get("market_cap_cr")
+    return bool(min_mcap) and kind == BSE_ONLY and cap is not None and float(cap) >= min_mcap
+
+
+def plan(sink, equities, sme, keep_sme: bool = False, workers: int = READ_WORKERS,
+         bse_keep_min_mcap: float = BSE_KEEP_MIN_MCAP_CR) -> dict:
     """The dry-run report (pure reads). ``equities``/``sme`` are NSE's lists (nse.Equity rows)."""
     if len(equities) < MIN_NSE_ROWS:
         raise ValueError(f"NSE's equity list has {len(equities)} rows (expected {MIN_NSE_ROWS}+): not pruning against it")
@@ -95,7 +108,7 @@ def plan(sink, equities, sme, keep_sme: bool = False, workers: int = READ_WORKER
     sme_isins = {e.isin for e in sme}
     sme_symbols = {e.symbol for e in sme}
     companies = stored_with_counts(sink)
-    keep, mismatch = 0, []
+    keep, mismatch, bse_kept = 0, [], []
     candidates: list[dict] = []
     for company in companies:
         kind = classify(company, nse_isins, nse_symbols, sme_isins, sme_symbols)
@@ -105,6 +118,8 @@ def plan(sink, equities, sme, keep_sme: bool = False, workers: int = READ_WORKER
             mismatch.append(_row(company, kind))
         elif kind == SME and keep_sme:
             keep += 1
+        elif is_bse_kept(company, kind, bse_keep_min_mcap):
+            bse_kept.append(_row(company, BSE_KEPT))
         else:
             candidates.append(_row(company, kind))
     have = set(sink.list_dossiers())
@@ -122,7 +137,8 @@ def plan(sink, equities, sme, keep_sme: bool = False, workers: int = READ_WORKER
     remove = [c for c in candidates if not (c["cards"] or c["card_count"] or c["watchlist"])]
     return {"companies": len(companies), "nse_kept": keep, "nse_listed": len(equities), "sme_listed": len(sme),
             "keep_sme": keep_sme, "isin_mismatch_kept": mismatch, "remove": remove, "has_cards": protected,
-            "summary": summarise(remove, protected, len(companies), keep, len(mismatch))}
+            "bse_kept": bse_kept, "bse_keep_min_mcap": bse_keep_min_mcap,
+            "summary": summarise(remove, protected, len(companies), keep, len(mismatch), len(bse_kept))}
 
 
 def _row(company: dict, kind: str) -> dict:
@@ -132,7 +148,7 @@ def _row(company: dict, kind: str) -> dict:
             "card_count": int(company.get("card_count") or 0), "filings": int(company.get("filings") or 0)}
 
 
-def summarise(remove: list[dict], protected: list[dict], total: int, kept: int, mismatch: int) -> dict:
+def summarise(remove: list[dict], protected: list[dict], total: int, kept: int, mismatch: int, bse_kept: int = 0) -> dict:
     def by_type(rows: list[dict]) -> dict:
         out: dict[str, dict] = {}
         for r in rows:
@@ -147,7 +163,7 @@ def summarise(remove: list[dict], protected: list[dict], total: int, kept: int, 
         return out
 
     return {"companies_in_table": total, "kept_on_nse": kept, "isin_mismatch_kept": mismatch,
-            "to_remove": len(remove), "to_remove_by_type": by_type(remove),
+            "bse_kept": bse_kept, "to_remove": len(remove), "to_remove_by_type": by_type(remove),
             "kept_for_cards_or_watchlist": len(protected), "kept_for_cards_by_type": by_type(protected)}
 
 
@@ -160,6 +176,9 @@ def render(report: dict) -> str:
     for kind, v in sorted(s["to_remove_by_type"].items()):
         lines.append(f"  {kind:17} {v['rows']:5} rows, {v['with_memory']} with a memory file ({v['memory_items']} items), "
                      f"{v['filings']} ledger rows, {v['mcap_500_plus']} with a market cap of 500 Cr or more")
+    lines.append(f"kept and set aside, BSE-only with a market cap of {report.get('bse_keep_min_mcap', 0):g} Cr or more: {s['bse_kept']}")
+    for r in report.get("bse_kept", [])[:30]:
+        lines.append(f"  {r['scrip_code']} {r['company_name']} {r.get('isin') or '-'} {r.get('market_cap_cr')} Cr")
     lines.append(f"not removed, they hold cards or are starred: {s['kept_for_cards_or_watchlist']}  (owner decides: keep or hide)")
     for r in report["has_cards"][:30]:
         lines.append(f"  {r['scrip_code']} {r['company_name']} [{r['type']}] cards {r['cards']} watchlist {r['watchlist']}")
@@ -169,7 +188,8 @@ def render(report: dict) -> str:
 def to_csv(report: dict) -> str:
     out = ["action,type,scrip_code,symbol,isin,company_name,market_cap_cr,cards,filings,memory_items"]
     for action, rows in (("remove", report["remove"]), ("keep_has_cards", report["has_cards"]),
-                         ("keep_isin_mismatch", report["isin_mismatch_kept"])):
+                         ("keep_isin_mismatch", report["isin_mismatch_kept"]),
+                         ("keep_bse_kept", report.get("bse_kept", []))):
         for r in rows:
             name = (r.get("company_name") or "").replace('"', "'")
             out.append(f'{action},{r["type"]},{r["scrip_code"]},{r.get("symbol") or ""},{r.get("isin") or ""},"{name}",'
@@ -213,6 +233,20 @@ def apply(sink, report: dict, day: str) -> dict:
     log.info("prune-companies: %d company rows removed, %d memory files, backup %s (%d bytes)", len(gone), deleted_objects, key, len(body))
     return {"removed": len(gone), "kept_by_sql_guard": sorted(left), "memory_deleted": deleted_objects, "backup": key,
             "backup_bytes": len(body), "rows_written": written}
+
+
+def bse_kept_rows(sink, equities, sme, min_mcap: float = BSE_KEEP_MIN_MCAP_CR) -> list[dict]:
+    """Only the kept BSE-only rows (the same classification and line as ``plan``), with no memory reads: for bse-verify-kept."""
+    if len(equities) < MIN_NSE_ROWS or len(sme) < MIN_SME_ROWS:
+        raise ValueError("NSE's lists are too short to classify against")
+    nse_isins, nse_symbols = {e.isin for e in equities}, {e.symbol for e in equities}
+    sme_isins, sme_symbols = {e.isin for e in sme}, {e.symbol for e in sme}
+    rows = []
+    for company in stored_with_counts(sink):
+        kind = classify(company, nse_isins, nse_symbols, sme_isins, sme_symbols)
+        if is_bse_kept(company, kind, min_mcap):
+            rows.append(_row(company, BSE_KEPT))
+    return rows
 
 
 def _full_rows(sink, scrips: set[str]) -> list[dict]:

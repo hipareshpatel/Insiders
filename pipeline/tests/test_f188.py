@@ -119,13 +119,13 @@ def test_a_quarter_without_the_whole_company_figure_is_unchanged(monkeypatch):
     assert results_snapshot(d, "n2") == off
 
 
-def test_the_older_eps_that_is_not_the_whole_companys_is_the_continuing_one(monkeypatch):
-    # memory read before F188 has `eps` 16.14 and the file's whole-company figure only as eps_total
+def test_no_continuing_figure_is_inferred_from_the_older_eps(monkeypatch):
+    # a file without the continuing tag: memory's other `eps` is never labelled "continuing" by inference (lead's review)
     monkeypatch.setenv("CARD_EPS_WHOLE", "1")
     d = _abb()
     d["financial_metrics"] = [m for m in d["financial_metrics"] if m["metric"] != "eps_continuing"]
     eps = results_snapshot(d, "n2")["eps"]
-    assert eps["value"] == 84.17 and eps["continuing"] == 16.14
+    assert eps["value"] == 84.17 and "continuing" not in eps
 
 
 def test_the_share_base_and_profit_checks_still_work_on_the_chosen_line(monkeypatch):

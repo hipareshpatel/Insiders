@@ -2495,12 +2495,10 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         if ebitda_mixed and key in ("ebitda", "ebitda_margin"):
             row = {k: v for k, v in row.items() if k == "value"}
         if key == "eps" and eps_whole:
-            # the continuing-operations EPS beside the whole company's, only when they differ (F188): the file's own, else the
-            # `eps` memory holds when that is not the whole company's figure (stored before eps_continuing was read)
+            # the continuing-operations EPS beside the whole company's, only when they differ (F188), and only the file's own:
+            # a quarter with eps_total was read with both tags, so a missing eps_continuing is a file that does not tag one, and
+            # memory's `eps` is never called "continuing" by inference
             continuing = lookup(("eps_continuing",), period)
-            if continuing is None:
-                old_eps = lookup(_RESULT_METRICS[5][1], period)
-                continuing = old_eps if old_eps is not None and abs(old_eps - row["value"]) > 0.01 else None
             if continuing is not None and abs(continuing - row["value"]) > 0.01:
                 row["continuing"] = continuing
         if key == "eps":

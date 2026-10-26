@@ -201,7 +201,13 @@ def test_a_trailing_ttm_column_dated_march_is_dropped():
     assert out == {"FY25": {"revenue": 10.0, "pat": None, "eps": None}, "FY26": {"revenue": 20.0, "pat": None, "eps": None}}
     section = {"report_dates": ["Mar 2025", "Mar 2026"], "table_footer": "TTM Values as of Mar 2026",
                "data": [{"name": "Sales", "value": [10.0, 99.0]}]}
-    assert list(tc.parse_section(section, "year", False)[0]) == ["FY25"]       # the TTM is the only March 2026 column
+    assert list(tc.parse_section(section, "year", False)[0]) == ["FY25", "FY26"]   # a real FY26: the footer's date alone is not a TTM
+    section = {"report_dates": ["Mar 2025", "Mar 2026", "Jun 2026"], "table_footer": "TTM Values as of Jun 2026",
+               "data": [{"name": "Sales", "value": [10.0, 20.0, 99.0]}]}
+    assert list(tc.parse_section(section, "year", False)[0]) == ["FY25", "FY26"]    # the TTM is the odd month out
+    section = {"report_dates": ["Mar 2025", "Mar 2026", "Jun 2026"], "table_footer": "Values in crore",
+               "data": [{"name": "Sales", "value": [10.0, 20.0, 99.0]}]}
+    assert list(tc.parse_section(section, "year", False)[0]) == ["FY25", "FY26"]    # Jun is no March column anyway
 
 
 def test_an_eps_gap_with_one_factor_across_periods_is_eps_adjusted_not_a_mismatch():
@@ -214,3 +220,35 @@ def test_an_eps_gap_with_one_factor_across_periods_is_eps_adjusted_not_a_mismatc
     assert {p["class"] for p in result["pairs"]} == {"eps_adjusted"}
     result = tc.compare_company(dossier(entries), {"qt_c": qt([5.0, 14.0, 30.0])}, "1", "X")   # no common factor
     assert {p["period"]: p["class"] for p in result["pairs"]} == {"Q1FY27": "mismatch", "Q4FY26": "mismatch", "Q3FY26": "match"}
+
+
+def _eps_result(ours, theirs, screener=None):
+    """EPS-only quarters; the revenue and profit entries only give the dossier a basis (no such row on the page)."""
+    periods = ["Jun 2026", "Mar 2026", "Dec 2025"][:len(ours)]
+    qt = {"report_dates": periods, "data": [{"name": "Quarterly Ratios", "value": [],
+                                             "sub_section": [{"name": "EPS", "value": theirs}]}]}
+    entries = [entry("eps", p, v) for p, v in zip(["Q1FY27", "Q4FY26", "Q3FY26"], ours)]
+    entries += [entry("revenue", "Q1FY27", 100.0), entry("pat", "Q1FY27", 5.0)]
+    return tc.compare_company(dossier(entries), {"qt_c": qt}, "1", "X", screener)
+
+
+def test_an_eps_slip_of_10_100_1000_on_several_periods_is_scale_not_adjusted():
+    result = _eps_result([1.0, 2.0, 3.0], [10.0, 20.0, 30.0])
+    assert {p["class"] for p in result["pairs"]} == {"scale"}
+    result = _eps_result([100.0, 200.0], [1.0, 2.0])
+    assert {p["class"] for p in result["pairs"]} == {"scale"}
+    s = tc.summarise([result])
+    assert s["by_class"]["scale"] == 2 and s["by_class"]["eps_adjusted"] == 0 and s["worst_companies"][0]["wrong_pairs"] == 2
+
+
+def test_one_eps_gap_near_one_is_a_mismatch_and_two_with_one_factor_are_adjusted():
+    assert [p["class"] for p in _eps_result([10.0], [10.1])["pairs"]] == ["mismatch"]
+    assert {p["class"] for p in _eps_result([10.0, 20.0], [10.1, 20.2])["pairs"]} == {"eps_adjusted"}
+
+
+def test_a_lead_is_never_reclassed_to_eps_adjusted_or_scale():
+    pairs = [{"metric": "eps", "class": "mismatch", "memory_value": 10.0, "tijori_value": 5.0, "lead": True, "note": ""},
+             {"metric": "eps", "class": "mismatch", "memory_value": 20.0, "tijori_value": 10.0, "lead": False, "note": ""},
+             {"metric": "eps", "class": "mismatch", "memory_value": 1.0, "tijori_value": 10.0, "lead": True, "note": ""}]
+    tc.mark_eps_adjusted(pairs)
+    assert [p["class"] for p in pairs] == ["mismatch", "mismatch", "mismatch"]

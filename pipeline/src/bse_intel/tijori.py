@@ -24,11 +24,11 @@ Stored at ``raw/tijori/<YYYY-MM-DD>/<SYMBOL>.json.gz``: the ``fin_tables_data`` 
 
 Pace and refusal (owner, 26 Oct 2026: 6 requests a second works; measured, see ``TijoriClient``): ``TIJORI_RATE`` requests a
 second (default 6) through 8 threads and one shared start-time limiter, a plain browser User-Agent and ``Accept-Language``, no
-login, one runner for the whole universe (about 1,900 companies, 5 to 6 minutes). The first refusal (403, 429, 503 or a CAPTCHA /
-challenge page) drops the run to one request every 3 s and is recorded; a second one raises ``TijoriRefused`` and stops the run
-(exit 75); what is stored stays. A normal Tijori page mentions reCAPTCHA in its own scripts (10 times on Apar's page), so a
-CAPTCHA is only a refusal when the page has no
-``fin_tables_data`` block.
+login, one runner for the whole universe (about 1,900 companies, 5 to 6 minutes). The first refusal (403, 429, 503 or a
+Cloudflare / Akamai challenge page) drops the run to one request every 3 s and is recorded; a second one raises ``TijoriRefused`` and stops the run
+(exit 75); what is stored stays. A normal Tijori page mentions reCAPTCHA in its own scripts (10 times on Apar's page), so only
+an explicit gate marker on a page with no ``fin_tables_data`` and no ``company_details`` is a refusal. A 200 page with neither
+block and no marker is "suspect": counted, not stored, not finished (the next run asks again), not a refusal.
 
 Slug map: the sitemap (``/sitemap.xml``, one request a run) lists 5,741 companies as ``/company/<slug>/``; the slugs are
 irregular (``aadhar-housing-finance-ltd``, ``sundaram-finance-limited``, ``the-anup-engineering-ltd``), so a company is matched
@@ -67,17 +67,18 @@ DONE_KEY = "tijoridl:done"          # + ":<day>": the symbols a run finished
 TABLES_ID = "fin_tables_data"
 DROP_WORDS = frozenset({"limited", "ltd", "the"})
 # a page with no financials block is a gate only when it is not a normal company page and has one of these markers
-_CHALLENGE = re.compile(r"cf-challenge|challenge-platform|just a moment|attention required|access denied", re.I)
-_CAPTCHA = re.compile(r"captcha", re.I)
+_CHALLENGE = re.compile(r"cf-challenge|challenge-platform|just a moment|attention required|access denied|"
+                        r"you have been blocked|error 10\d\d|rate limited|cloudflare ray id|akamai", re.I)
 NORMAL_PAGE_BYTES = 50_000    # a company page is about 200 KB; a gate is a few KB
 
 
 def is_challenge(body: str) -> bool:
-    """A refusal page: not a normal company page (its ``company_details`` block, or a large body) and carrying a
-    challenge marker, or a CAPTCHA on a short body. A normal page without tables is "no_tables", not a refusal."""
+    """A refusal page: not a normal company page (its ``company_details`` block, or a large body) and carrying an explicit
+    Cloudflare / Akamai marker. A bare "captcha" is not one: a short 200 page with no tables, no ``company_details`` and no
+    marker is "suspect" (see ``_fetch``), a normal page without tables is "no_tables"."""
     if 'id="company_details"' in body or len(body) > NORMAL_PAGE_BYTES:
         return False
-    return bool(_CHALLENGE.search(body) or _CAPTCHA.search(body))
+    return bool(_CHALLENGE.search(body))
 
 
 class TijoriRefused(RuntimeError):
@@ -144,10 +145,18 @@ def identity(body: str) -> dict:
         for attrs, text in _SCRIPT.findall(body):
             if "ld+json" in attrs:
                 try:
-                    about = (json.loads(text) or {}).get("about") or {}
+                    data = json.loads(text)
                 except ValueError:
                     continue
-                out["symbol"], out["name"] = str(about.get("tickerSymbol") or ""), str(about.get("name") or "")
+                items = data if isinstance(data, list) else (data.get("@graph") if isinstance(data, dict)
+                                                             and isinstance(data.get("@graph"), list) else [data])
+                for item in items:
+                    about = item.get("about") if isinstance(item, dict) else None
+                    if isinstance(about, dict) and (about.get("tickerSymbol") or about.get("name")):
+                        out["symbol"], out["name"] = str(about.get("tickerSymbol") or ""), str(about.get("name") or "")
+                        break
+                if out["symbol"] or out["name"]:
+                    break
     return out
 
 
@@ -198,9 +207,10 @@ def map_slugs(companies: list[tuple[str, str, str]], slugs: list[str]) -> dict:
 
 
 def verifies(page: dict, symbol: str, name: str) -> bool:
-    """True when the page names this company: its NSE symbol, else its name after ``normalise``."""
-    if page["symbol"] and page["symbol"].strip().upper() == symbol.strip().upper():
-        return True
+    """True when the page names this company: its NSE symbol, else its name after ``normalise``. A page that carries a
+    symbol which is not ours is another company's, whatever its name."""
+    if page["symbol"]:
+        return page["symbol"].strip().upper() == symbol.strip().upper()
     return bool(page["name"]) and normalise(page["name"]) in _keys(name)
 
 
@@ -272,6 +282,9 @@ class TijoriClient:
         """(status, body); the body only on a 200. 0 is a network error (the reason in the body)."""
         while True:
             was_slow = self._slot()
+            with self._lock:
+                if self._stopped:    # last look before the request leaves
+                    raise TijoriRefused(self._stopped)
             try:
                 response = self._client.get(url)
             except httpx.HTTPError as exc:
@@ -296,23 +309,33 @@ def estimate(companies: int, rate: float = RATE) -> dict:
 
 
 _COUNTER = {"no_tables": "pages_no_tables", "not_verified": "pages_not_verified", "no_page": "pages_no_page"}
+_FINAL = {"stored", "no_tables", "not_verified", "no_page"}
 
 
 def _fetch(client, symbol: str, name: str, slug: str | list[str]) -> dict:
     """One company's page, checked: ``{"kind": "stored" | "no_tables" | "not_verified" | "no_page" | "failed", ...}``. Given
     several candidate slugs (an ambiguous name), they are tried in turn and the first page that verifies wins; when none
-    does, the last candidate's answer stands."""
+    does, a "failed" answer (transient: the symbol is retried) wins, then a "suspect" one, else the last candidate's answer
+    stands. "suspect": a 200 page with no tables, no ``company_details`` and no gate marker (a stub or an unknown gate): not
+    stored, not finished, not a refusal."""
     if isinstance(slug, list):
         got: dict = {"kind": "no_page"}
+        failed = suspect = None
         for one in slug:
             got = _fetch(client, symbol, name, one)
             if got["kind"] == "stored":
-                break
-        return got
+                return got
+            if got["kind"] == "failed" and failed is None:
+                failed = got
+            elif got["kind"] == "suspect" and suspect is None:
+                suspect = got
+        return failed or suspect or got
     status, body = client.get(url_for(slug))
     if status == 200:
         tables, page = extract_tables(body), identity(body)
         if tables is None:
+            if 'id="company_details"' not in body:
+                return {"kind": "suspect", "note": f"{symbol} {slug}: 200 page without tables or company_details"[:200]}
             return {"kind": "no_tables"}
         if not verifies(page, symbol, name):
             return {"kind": "not_verified",
@@ -336,13 +359,14 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
     stored = set(sink.list_objects(f"{PREFIX}{day}/"))
     totals = {"day": day, "companies": len(companies), "companies_done_before": 0, "pages_stored": 0,
               "pages_already_stored": 0, "pages_no_page": 0, "pages_not_verified": 0, "pages_no_tables": 0,
-              "pages_failed": 0, "requests_made": 0, "bytes_stored": 0}
+              "pages_failed": 0, "pages_suspect": 0, "requests_made": 0, "bytes_stored": 0}
     before = client.requests
     status, xml = client.get(SITEMAP_URL)
     slugs = sitemap_slugs(xml) if status == 200 else []
     mapping = map_slugs(companies, slugs) if slugs else {"matched": {}, "ambiguous": {}, "unmatched": []}
     failed: list[str] = [] if slugs else [f"sitemap: {'HTTP ' + str(status) if status else xml}"[:200]]
     not_verified: list[str] = []
+    suspect: list[str] = []
     todo = []
     for scrip, symbol, name in companies:
         if symbol not in mapping["matched"] and symbol not in mapping["ambiguous"]:
@@ -362,7 +386,13 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
             deferred.set()
             return None
         symbol, name, slug = item
-        return _fetch(client, symbol, name, slug)
+        try:
+            return _fetch(client, symbol, name, slug)
+        except TijoriRefused:
+            raise
+        except Exception as exc:    # one bad page must not end the run: this company is retried by the next one
+            log.warning("tijori %s: unexpected %s: %s", symbol, type(exc).__name__, exc)
+            return {"kind": "failed", "note": f"{symbol}: unexpected {type(exc).__name__}: {exc}"[:200]}
 
     refused: TijoriRefused | None = None
     unsaved = 0
@@ -381,6 +411,10 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
                 totals["pages_failed"] += 1
                 failed.append(got["note"])
                 continue
+            if kind == "suspect":
+                totals["pages_suspect"] += 1
+                suspect.append(got["note"])
+                continue
             if kind == "stored":
                 sink.put_object(object_key(day, symbol), got["blob"], "application/gzip")
                 totals["pages_stored"] += 1
@@ -398,7 +432,7 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
     totals["requests_made"] = client.requests - before
     if refused:
         raise refused
-    return {"more": deferred.is_set(), "failed": failed, "not_verified": not_verified, "sitemap_companies": len(slugs),
+    return {"more": deferred.is_set(), "failed": failed, "suspect": suspect, "not_verified": not_verified, "sitemap_companies": len(slugs),
             "matched": len(mapping["matched"]), "ambiguous": mapping["ambiguous"], "unmatched": mapping["unmatched"],
             "slowed": client.slowed, "slowed_after_requests": client.slowed_after, "refusal": client.refusal, **totals}
 
@@ -418,5 +452,6 @@ def render(outcome: dict) -> str:
         f"page not this company        {outcome['pages_not_verified']}",
         f"page without tables          {outcome['pages_no_tables']}",
         f"pages that failed            {outcome['pages_failed']}",
+        f"suspect pages (retried)      {outcome['pages_suspect']}",
         f"requests made                {outcome['requests_made']}",
         f"bytes stored (gzip)          {outcome['bytes_stored']}"])

@@ -20,8 +20,9 @@ Tijori prints 2 to 4 decimals, so the tolerance is tight, not screener's ₹1 Cr
 - ``scale``: the ratio is 10, 100 or 1000 (or the inverse) within 3%;
 - ``naming``: Tijori's figure equals another official line of ours (total income, owners' profit ...);
 - ``lender_definition``: a lender's revenue or profit differs (different definitions);
-- ``eps_adjusted``: an EPS mismatch (not a sign or wrong-quarter one) whose tijori / ours ratio (same sign) is within 2% of 1, or within 2% of another EPS pair's
-  ratio of the same company (tijori's EPS is adjusted for later share changes, ours is as filed);
+- ``eps_adjusted``: an EPS mismatch (not a sign, wrong-quarter or scale one, and not a lead) whose tijori / ours ratio (same
+  sign) is within 2% of another EPS pair's ratio of the same company (tijori's EPS is adjusted for later share changes, ours
+  is as filed); an EPS ratio of 10, 100 or 1000 (or the inverse) within 3% is ``scale``, never an adjustment;
 - ``mismatch``: anything else.
 
 Row names (measured 26 Oct 2026 on ABB, Apar and Dolphin Offshore, none a lender): ``Net Sales``, ``Net Profit`` and the
@@ -102,6 +103,25 @@ def _number(value) -> float | None:
     return round(float(value), 4) if isinstance(value, (int, float)) and not isinstance(value, bool) else None
 
 
+def _month_year(column: str) -> tuple[str, str] | None:
+    m = re.fullmatch(r"\s*([A-Za-z]{3})\w*\s+(\d{4})\s*", column or "")
+    return (m[1].lower(), m[2]) if m else None
+
+
+def _last_is_ttm(columns: list, footer: str) -> bool:
+    """The footer marks a TTM AND the last column is the TTM one: it repeats the previous column's year, or is not a fiscal
+    year-end of the series (another month than the column before it, which is how "Jun 2026" follows "Mar 2026"). A last
+    column that is a regular year-end of the series is a real year, even when its date is the footer's "as of" date."""
+    if "ttm" not in footer.lower():
+        return False
+    last, before = _month_year(columns[-1]), _month_year(columns[-2])
+    if not last or not before:
+        return False
+    if last[1] == before[1]:
+        return True
+    return last[0] != before[0]
+
+
 def parse_section(section: dict | None, kind: str, lender: bool) -> tuple[dict[str, dict], dict]:
     """One section (``qt_c`` ... or ``pl_c_s`` ...) as ``{period: {"revenue", "pat", "eps"}}`` and the row names used
     (``{"revenue": name, "pat": name, "eps": name}``). ``kind`` is ``quarter`` or ``year``. Columns in
@@ -115,8 +135,8 @@ def parse_section(section: dict | None, kind: str, lender: bool) -> tuple[dict[s
     eps = _row(section, EPS_LINES) if kind == "quarter" else None
     skip = set(section.get("skip_report_dates") or [])
     columns = list(section.get("report_dates") or [])
-    if kind == "year" and columns and "ttm" in str(section.get("table_footer") or "").lower():
-        columns = columns[:-1]    # the footer says the last column is a trailing twelve months, even when dated March
+    if kind == "year" and len(columns) > 1 and _last_is_ttm(columns, str(section.get("table_footer") or "")):
+        columns = columns[:-1]
     out: dict[str, dict] = {}
     for i, column in enumerate(columns):
         if column in skip:
@@ -232,18 +252,24 @@ def compare_company(dossier: dict, tables: dict | None, scrip: str = "", symbol:
 
 
 def mark_eps_adjusted(pairs: list[dict]) -> None:
-    """Re-class EPS gaps that are a share-change adjustment: same sign, the tijori / ours ratio within 2% of 1, or within 2%
-    of another EPS gap's ratio of the same company (two or more periods sharing one factor)."""
+    """Re-class EPS mismatches. A ratio (tijori / ours, same sign) within 3% of 10, 100 or 1000 or their inverses is a
+    ``scale`` slip, never an adjustment. Of the rest, a gap is ``eps_adjusted`` (a share-change adjustment) only when at least
+    two EPS gaps of the company share the factor within 2%; one gap alone, even near 1, stays a mismatch. A lead (screener
+    agrees with tijori) is never re-classed."""
     ratios = {}
     for i, p in enumerate(pairs):
-        if p["metric"] == "eps" and p["class"] == "mismatch" and p["memory_value"] and p["tijori_value"]:
+        if p["metric"] == "eps" and p["class"] == "mismatch" and not p.get("lead") and p["memory_value"] and p["tijori_value"]:
             ratio = p["tijori_value"] / p["memory_value"]
             if ratio > 0:
                 ratios[i] = ratio
+    scaled = {i for i in ratios if sc._is_scale(pairs[i]["memory_value"], pairs[i]["tijori_value"])}
+    for i in scaled:
+        pairs[i]["class"] = "scale"
+        pairs[i]["note"] = (pairs[i]["note"] + "; " if pairs[i]["note"] else "") + f"tijori / ours = {ratios[i]:.4g} (EPS scale slip)"
     for i, ratio in ratios.items():
-        shared = abs(ratio - 1) <= EPS_FACTOR_TOLERANCE or any(
-            j != i and abs(other - ratio) <= EPS_FACTOR_TOLERANCE * ratio for j, other in ratios.items())
-        if shared:
+        if i in scaled:
+            continue
+        if any(j != i and j not in scaled and abs(other - ratio) <= EPS_FACTOR_TOLERANCE * ratio for j, other in ratios.items()):
             pairs[i]["class"] = "eps_adjusted"
             pairs[i]["note"] = (pairs[i]["note"] + "; " if pairs[i]["note"] else "") + f"tijori / ours = {ratio:.4g} (adjusted EPS)"
 

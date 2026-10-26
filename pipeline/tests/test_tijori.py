@@ -259,7 +259,7 @@ def test_a_normal_page_without_tables_is_no_tables_not_a_refusal_and_a_short_gat
         out = tijori._fetch(client, "ABB", "ABB India Ltd.", "abb-india-limited")
         assert out["kind"] == "no_tables" and not client.slowed
     short = "<html><title>Just a moment...</title></html>"
-    assert tijori.is_challenge(short) and tijori.is_challenge("<div class='g-recaptcha'></div>")
+    assert tijori.is_challenge(short) and not tijori.is_challenge("<div class='g-recaptcha'></div>")
     client, _ = client_for(lambda url: (200, short), [])
     with client, pytest.raises(tijori.TijoriRefused):
         client.get("https://www.tijorifinance.com/x/")
@@ -299,3 +299,88 @@ def test_an_ambiguous_name_takes_the_first_candidate_whose_page_verifies():
     with client:
         out = tijori.run(sink, [("1", "ABB", "ABB India Ltd.")], client, DAY, workers=1)
     assert out["pages_stored"] == 1 and f"raw/tijori/{DAY}/ABB.json.gz" in sink.objects
+
+
+@pytest.mark.parametrize("gate", ["<html>Sorry, you have been blocked. Cloudflare Ray ID: 8a1</html>",
+                                  "<html><h1>Error 1015</h1>You are being rate limited</html>"])
+def test_other_gate_wordings_on_a_200_page_are_refusals(gate):
+    assert tijori.is_challenge(gate)
+    client, _ = client_for(lambda url: (200, gate), [])
+    with client, pytest.raises(tijori.TijoriRefused):
+        client.get("https://www.tijorifinance.com/x/")
+    assert client.slowed
+
+
+def test_a_stub_page_is_suspect_not_stored_not_finished_and_not_a_refusal():
+    stub = "<html><body>please verify you are human: captcha</body></html>"
+    sink = Sink()
+
+    def answers(url):
+        return (200, stub) if "/abb-india-limited/" in url else site(url)
+    client, _ = client_for(answers, [])
+    with client:
+        out = tijori.run(sink, COMPANIES[:1], client, DAY)
+    assert not sink.objects and out["pages_suspect"] == 1 and len(out["suspect"]) == 1 and not out["slowed"]
+    assert json.loads(sink.kv[f"tijoridl:done:{DAY}"]) == []          # a later run asks again
+    assert "suspect" in tijori.render(out)
+
+
+def test_candidates_a_failed_one_and_a_suspect_one_win_over_final_answers():
+    def run_with(first, second):
+        pages = {"/a/": first, "/b/": second}
+        client, _ = client_for(lambda url: next(v for k, v in pages.items() if k in url), [])
+        with client:
+            return tijori._fetch(client, "ABB", "ABB India Ltd.", ["a", "b"])["kind"]
+    other = (200, page_html(fixture("apar")))
+    assert run_with((500, ""), other) == "failed" and run_with(other, (500, "")) == "failed"
+    assert run_with((200, "<html>stub</html>"), (302, "")) == "suspect"
+    assert run_with((500, ""), (200, "<html>stub</html>")) == "failed"
+    assert run_with(other, (302, "")) == "no_page"
+
+
+def test_a_symbol_that_is_not_ours_rejects_the_page_even_when_the_name_fits():
+    page = {"symbol": "OTHER", "name": "ABB India Ltd", "slug": ""}
+    assert not tijori.verifies(page, "ABB", "ABB India Ltd.")
+    assert tijori.verifies({"symbol": "", "name": "ABB India Ltd", "slug": ""}, "ABB", "ABB India Ltd.")
+
+
+@pytest.mark.parametrize("ld", ['[{"about": {"tickerSymbol": "ABB", "name": "ABB India"}}]',
+                                '{"@graph": [{"@type": "x"}, {"about": {"tickerSymbol": "ABB", "name": "ABB India"}}]}',
+                                '{"about": "a string"}', '"just a string"', "[1, 2]", "null"])
+def test_identity_survives_odd_ld_json(ld):
+    page = tijori.identity(f'<script type="application/ld+json">{ld}</script>')
+    assert page["symbol"] in ("", "ABB") and set(page) == {"symbol", "name", "slug"}
+    if "ABB" in ld:
+        assert page["symbol"] == "ABB"
+
+
+def test_an_unexpected_error_on_one_company_is_a_failure_of_that_company_only(monkeypatch):
+    real = tijori._fetch
+
+    def broken(client, symbol, name, slug):
+        if symbol == "ABB":
+            raise ValueError("boom")
+        return real(client, symbol, name, slug)
+    monkeypatch.setattr(tijori, "_fetch", broken)
+    sink = Sink()
+    client, _ = client_for(site, [])
+    with client:
+        out = tijori.run(sink, COMPANIES[:2], client, DAY, workers=1)
+    assert out["pages_failed"] == 1 and "ValueError" in out["failed"][0] and out["pages_stored"] == 1
+    assert json.loads(sink.kv[f"tijoridl:done:{DAY}"]) == ["APARINDS"]
+
+
+def test_the_stop_is_checked_again_just_before_the_request_goes_out():
+    seen = []
+    client = tijori.TijoriClient(transport=httpx.MockTransport(lambda r: seen.append(1) or httpx.Response(200, text="ok")),
+                                 clock=lambda: 0.0, sleep=lambda n: None)
+    real = client._slot
+
+    def slot():
+        out = real()
+        client._stopped = "stopped after the slot"
+        return out
+    client._slot = slot
+    with client, pytest.raises(tijori.TijoriRefused):
+        client.get("https://x/1")
+    assert seen == []

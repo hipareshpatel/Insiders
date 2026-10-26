@@ -341,3 +341,27 @@ def test_the_digits_must_be_on_the_same_row_column_and_basis_in_the_layer(monkey
     assert attempt(("777.00", "111.00", "100.10", "230.75", "440.00"))["pdf_verdict"] == "pdf_unsure"
     # 111.00 is on the revenue row but in the second column, not the period's
     assert attempt(("111.00", "111.00", "100.10", "230.75", "440.00"))["pdf_verdict"] == "pdf_unsure"
+
+
+def test_rapidtable_is_the_paddle_family():
+    """rapid-table runs the PP-StructureV3 table models: with PP-StructureV3 it is one family, so the two never settle alone."""
+    from bse_intel.pdf_readers import READERS, Reading, settle
+    def rd(n):
+        return Reading(n, READERS[n].family, "ok", 10.0, True, True, "textlayer", "x", 1)
+    assert READERS["rapidtable"].family == READERS["paddle"].family == "paddle"
+    assert settle([rd("paddle"), rd("rapidtable")]).status != "settled"
+
+
+def test_title_ending_in_its_date_sets_the_basis():
+    """A basis title ending in its date ("... September 30, 2025") switches the basis: the standalone row under it is not
+    proven on the consolidated basis."""
+    from bse_intel.pdf_readers import cell_in_layer, page_layer
+    from bse_intel.pdf_referee import CONSOLIDATED, STANDALONE
+    text = ("Consolidated Results\nRevenue from operations 200.00 190.00 180.00\n"
+            "Standalone Financial Results for the quarter ended September 30, 2025\n"
+            "Revenue from operations 100.00 90.00 80.00\n")
+    layer = page_layer(text + "x" * 200)
+    layer.text = text
+    assert [b.basis for b in layer.bands() if b.nums and b.label.startswith("Revenue")] == [CONSOLIDATED, STANDALONE]
+    assert cell_in_layer(layer, "Revenue from operations", CONSOLIDATED, 100.0, 0, 3, True) == ""
+    assert cell_in_layer(layer, "Revenue from operations", STANDALONE, 100.0, 0, 3, True) == "100.00"

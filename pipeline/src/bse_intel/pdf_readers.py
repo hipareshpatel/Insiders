@@ -111,6 +111,7 @@ class Band:
 
 
 _NUMTOK = re.compile(r"^\(?-?\d[\d,]*(?:\.\d+)?\)?$")
+_YEAR = re.compile(r"(?:19|20)\d\d[,.]?")
 
 
 def _alpha(text: str) -> str:
@@ -120,7 +121,7 @@ def _alpha(text: str) -> str:
 def make_bands(words: list, text: str) -> list[Band]:
     """Rows of the text layer: words on one baseline band (3.5 pt) when the words are known, else the text's lines. A row's
     figures are the numeric tokens after its last non-numeric token (a serial number before the label is not one)."""
-    from .pdf_referee import _words_basis
+    from .pdf_referee import _TITLE, _words_basis
     groups: list[list[str]] = []
     if words:
         ordered = sorted(words, key=lambda w: (w[1] + w[3]) / 2)
@@ -142,7 +143,9 @@ def make_bands(words: list, text: str) -> list[Band]:
     for tokens in groups:
         stop = max((i for i, t in enumerate(tokens) if not _NUMTOK.match(t)), default=-1)
         label, nums = " ".join(tokens[: stop + 1]), tokens[stop + 1:]
-        if not nums and (named := _words_basis(label)):
+        # a title names one basis and ends at most in its date ("... quarter ended September 30, 2025")
+        if (not nums or (_TITLE.search(label) and len(nums) <= 2 and any(_YEAR.fullmatch(n) for n in nums))) \
+                and (named := _words_basis(label)):
             basis = named
         bands.append(Band(label, nums, basis))
     return bands
@@ -872,7 +875,7 @@ class RapidTableReader(Reader):
     """rapid-table (SLANet-plus, ONNX), the PP-StructureV3 table models without the Paddle framework. The page is rendered at
     200 dpi; the cell text comes from the page's text-layer words (boxes scaled to the image) when it has a layer, else from
     RapidOCR. The whole page image is passed (no layout step), so it suits a page that is mostly the statement."""
-    name = family = "rapidtable"
+    name, family = "rapidtable", "paddle"   # the PP-StructureV3 table models: one family with PaddleReader
     ocr_family, ocr_engine = "paddle", "rapidocr"
     modules = ("rapid_table", "rapidocr")
 

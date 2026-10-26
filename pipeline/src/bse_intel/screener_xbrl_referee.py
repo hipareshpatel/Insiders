@@ -163,7 +163,8 @@ class CompanyFiles:
                 reasons.append(f"{quarter}: {why}")
                 continue
             for n in _line_names(parsed, metric):
-                hit = next((m for m in parsed.metrics if m.metric == n and m.period == period and m.value is not None), None)
+                hit = next((m for m in parsed.metrics if m.metric == n and m.period == period and m.value is not None
+                        and not (metric == "revenue" and n == "interest_earned" and not m.value)), None)   # a 0 is no revenue
                 if hit:
                     return {"value": hit.value, "file": name, "used": "own" if i == 0 else f"next:{quarter}", "line": n}
             reasons.append(f"{quarter}: {period} {metric} not in {name}")
@@ -181,7 +182,8 @@ class CompanyFiles:
         if parsed is None:
             return {"reason": f"{quarter}: {why}"}
         for n in _line_names(parsed, metric):
-            hit = next((m for m in parsed.metrics if m.metric == n and m.period == period and m.value is not None), None)
+            hit = next((m for m in parsed.metrics if m.metric == n and m.period == period and m.value is not None
+                        and not (metric == "revenue" and n == "interest_earned" and not m.value)), None)
             if hit:
                 return {"value": hit.value, "file": name, "line": n}
         return {"reason": f"{quarter}: {period} {metric} not in {name}"}

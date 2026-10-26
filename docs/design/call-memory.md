@@ -143,3 +143,24 @@ points and every dropped point with its reason to the artifact, writes nothing t
 grader are agents that did not build it. **Pass, set before the run:** at least 85% of important points kept, 2% or
 fewer saved wrong, no unit error, transcripts and decks reported apart. Fail: the commonest missed class is fixed and the
 same 20 are run again.
+
+**Changed after the third measured run** (26 Oct, maintenance run 40314304047; independent comparison against the blind lists
+of round 1). The result was a FAIL:
+- important points kept: 38.1% over the ten documents, 45.1% over the eight read, 69.2% on the pages actually read;
+- saved wrong: 1.62% (3 of 185 kept);
+- unit errors: 0.
+
+The causes and the changes:
+1. **Parts never read (29 of the 45 important points missed).** The cards' Gemini keys were at their daily ceiling or held
+   for live cards, and the free spares timed out. The run started before the third key was wired in; run 4 uses it
+   (`GEMINI_API_KEY_3`, `only_routes`).
+2. **The figure check dropped 99 true points of 107** for the 4 it rightly stopped. The quote was a slide heading, a table
+   cell or the answer without its number: APL Apollo's 8 Mn Ton by FY28 under "Capacity Expansion Plan By FY28", Eris's
+   +100 bps levers, Sobha's Chandivali INR 1,000 cr in the next sentence. A figure now counts when it is in the quote or
+   within `CONTEXT_CHARS` of it on its page (a slide: the whole page). Such a point is marked `figure_beside_quote`, so its
+   saved-wrong rate can be measured on its own; it is the risk the comparison found once, APL's 64% given the wrong label.
+3. **A model's wrong `value_base` dropped true points** (Sobha's 12 million sq ft). Code now works the base figure out from
+   the value and the scale word and never drops for it.
+
+Not changed yet: dependence, mix and risk points not taken where the page was read (4 of the 45). This is the next prompt
+change if run 5 still misses them.

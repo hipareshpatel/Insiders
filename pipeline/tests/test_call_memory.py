@@ -72,10 +72,14 @@ def test_a_quote_found_only_in_the_block_reading_counts():
 
 def test_a_figure_not_in_the_quote_drops_the_point():
     # the statement borrows a figure (500) the sentence it quotes does not carry
+    kept, dropped = _check(_point(statement="Capex of 900 crore", type="capex_capacity", value=None, unit=None, period=None,
+                                  quote="the plant is near the river bank"))   # 900 is nowhere near the quote
+    assert kept == [] and _reasons(dropped) == ["figure"]
+    assert "900" in dropped[0]["detail"]
+    # a figure in the next sentence on the page is kept, and the point says so (third measured run: 99 of 107 such drops true)
     kept, dropped = _check(_point(statement="Capex of 500 crore", type="capex_capacity", value=None, unit=None, period=None,
                                   quote="the plant is near the river bank"))
-    assert kept == [] and _reasons(dropped) == ["figure"]
-    assert "500" in dropped[0]["detail"]
+    assert len(kept) == 1 and kept[0].figure_beside_quote and dropped == []
     kept, dropped = _check(_point(value=18))   # the value is not in the quote either
     assert _reasons(dropped) == ["figure"]
 
@@ -100,10 +104,11 @@ def test_a_unit_that_loses_the_scale_word_is_dropped():
         assert kept == [] and _reasons(dropped) == ["unit"], unit
 
 
-def test_a_model_base_value_that_is_wrong_drops_the_point():
+def test_a_model_base_value_that_is_wrong_is_put_right_by_code():
+    # third measured run: Sobha's "12 million square feet" was dropped for a model value_base of 1e6
     kept, dropped = _check(_point(type="capex_capacity", statement="Adds 10 lakh tonnes", value=10, unit="LAKH_TONNES", value_base=100_000,
                                   base_unit="TONNES", period="FY28", quote="We will add 10 lakh tonnes of capacity by FY28"))
-    assert _reasons(dropped) == ["unit"]
+    assert dropped == [] and kept[0].value_base == 1_000_000 and not kept[0].figure_beside_quote
 
 
 def test_crore_and_percent_units_follow_the_quote():

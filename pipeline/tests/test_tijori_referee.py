@@ -18,3 +18,8 @@ def test_revenue_and_profit_leads_and_every_sign_difference_go_to_the_referee():
     assert [(r["metric"], r["class"]) for r in picked] == [("revenue", "mismatch"), ("pat", "lender_definition"), ("eps", "sign")]
     assert picked[-1]["screener_value"] == -12.0      # Tijori's figure stands in where screener has none
     assert picked[0]["screener_value"] == 10.0
+
+
+def test_every_wrong_quarter_pair_goes_to_the_referee_lead_or_not():
+    picked = tijori_referee_rows([_row("pat", "wrong_quarter", False), _row("eps", "mismatch", False)])
+    assert [(r["metric"], r["class"]) for r in picked] == [("pat", "wrong_quarter")]

@@ -110,7 +110,11 @@
 #   different families agree on the row, period column and basis, and none differs (`pdf_disagree` otherwise; two OCR families
 #   on a page with no text layer give `pdf_scanned_lead`). `limit` caps the company periods fetched. Every job logs the runner's
 #   CPUs, RAM and free disk first. Artifact `pdf-referee-ensemble` (referee-pdf.csv with a `readers` column, summary.json,
-#   markdown). Writes nothing to memory, cards or the branch. No AI.
+#   markdown). Writes nothing to memory, cards or the branch. No AI. F199: `ids` = `hardset` reads docs/bench/hardpdf/key.csv (340
+#   public NSE figures of 21 hard PDFs, the answer key) instead of a referee artifact: the fetch job downloads the key's own
+#   pdf_url, the settle job asks every reader and the settle rule each key row and scores them (artifact `pdf-referee-ensemble`:
+#   hardset-score.json / .md, hardset-readings.json): per reader and for the ensemble right / wrong / abstain, per difficulty
+#   tag, and the ensemble's false settlements one by one. `limit` = the first N PDFs.
 # - screener-explain: read only (owner 26 Oct 2026). Of the `screener-referee` pairs where our figure equals NSE's own file,
 #   which differences a later bonus, split or consolidation (the dossier's corporate actions) or a later results file
 #   (memory's stored later-file source, else NSE's file) explains. The job takes the newest unexplained `screener-referee`
@@ -164,7 +168,7 @@ on:
         options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
-        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); seed-memory - re-read only these companies (scrip codes or NSE symbols)
+        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); seed-memory - re-read only these companies (scrip codes or NSE symbols)
         type: string
         default: ''
       since:
@@ -1031,6 +1035,7 @@ jobs:
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
       - name: Take the newest referee artifact (screener-referee, or tijori-referee with ids=tijori)
+        if: inputs.ids != 'hardset'
         env:
           GH_TOKEN: ${{ github.token }}
           IDS: ${{ inputs.ids }}
@@ -1044,7 +1049,16 @@ jobs:
           unzip -o -q "$RUNNER_TEMP/in/artifact.zip" -d "$RUNNER_TEMP/in"
           if [ "$name" = "tijori-referee" ]; then cp "$RUNNER_TEMP/in/referee-tijori.csv" "$RUNNER_TEMP/in/referee-xbrl.csv"; fi
           cp "$RUNNER_TEMP/in/referee-xbrl.csv" "$RUNNER_TEMP/pdfs/referee-xbrl.csv"
+      - name: Download the hard test set's PDFs (ids=hardset; reads NSE, the key's own pdf_url)
+        if: inputs.ids == 'hardset'
+        env:
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/pdfs"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --collect ../docs/bench/hardpdf/key.csv "$RUNNER_TEMP/pdfs" ${LIMIT}
       - name: Download the candidate PDFs (reads NSE)
+        if: inputs.ids != 'hardset'
         env:
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
           LIMIT: ${{ inputs.limit }}
@@ -1176,7 +1190,17 @@ jobs:
           pattern: pdf-readings-*
           path: ${{ runner.temp }}/readings
           merge-multiple: true
+      - name: Score every reader and the ensemble against the answer key (ids=hardset)
+        if: inputs.ids == 'hardset'
+        env:
+          PDF_READERS: native,camelot,pdfplumber,tabula,rapidtable,tatr,docling,mineru,paddle,marker,surya
+          PDF_READER_TABLES_DIR: ${{ runner.temp }}/readings
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/pdfreferee"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --run ../docs/bench/hardpdf/key.csv "$RUNNER_TEMP/pdfs" "$RUNNER_TEMP/pdfreferee" ${LIMIT}
       - name: Settle the pairs (the native reader here; the others from their files)
+        if: inputs.ids != 'hardset'
         env:
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"
           PDF_READERS: native,camelot,pdfplumber,tabula,rapidtable,tatr,docling,mineru,paddle,marker,surya

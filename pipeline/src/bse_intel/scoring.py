@@ -100,7 +100,9 @@ def calibration(dossier: dict | None, cutoff: str = "~") -> dict | None:
 def ttm_revenue(dossier: dict | None) -> tuple[float, str] | None:
     """Trailing revenue: the last four quarters when memory has them, else the latest year, else the
     latest quarter x 4."""
-    rows = [m for m in (dossier or {}).get("financial_metrics", [])
+    from .dossier import with_year_hold   # MEMORY_YEAR_CHECK (F177): a held year is not the trailing revenue
+
+    rows = [m for m in (with_year_hold(dossier) or {}).get("financial_metrics", [])
             if m.get("metric") in REVENUE and m.get("value") and (m.get("unit") or "INR_CR") == "INR_CR" and due_date(m["period"])]
     quarters = sorted((m for m in rows if m["period"].startswith("Q")), key=lambda m: due_date(m["period"]))
     by_period = {m["period"]: m["value"] for m in quarters}

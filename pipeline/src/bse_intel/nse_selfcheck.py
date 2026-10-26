@@ -27,10 +27,9 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 
 from .dossier import FLOW_METRICS, XBRL_SOURCE
+from .year_check import ROUND_CR, ROUND_PCT, SUM_METRICS, close   # shared with the MEMORY_YEAR_CHECK hold (F177)
 
 READ_WORKERS = 8
-ROUND_PCT = 0.5     # within 0.5% ...
-ROUND_CR = 1.0      # ... or 1 crore
 MERGER_LINES = 3    # this many lines of a quarter differing together in one later file
 SCALES = (10, 100, 1000)
 SCALE_TOL = 0.02
@@ -50,7 +49,6 @@ DERIVED_INPUTS = {
                        "depreciation", "other_expenses"),
     "other_expenses": (),
 }
-SUM_METRICS = FLOW_METRICS - {"operating_cash_flow"}   # a cash flow is not stated quarter by quarter, so the sum check skips it
 
 
 def _sources(entry: dict) -> list[dict]:
@@ -67,14 +65,6 @@ def is_exchange(source: dict) -> bool:
 
 def _same_basis(a: str | None, b: str | None) -> bool:
     return a is None or b is None or a == b
-
-
-def close(a: float, b: float, unit: str | None = "INR_CR") -> bool:
-    """Equal within rounding: 0.5% of the larger figure, or 1 crore when the figures are in crore."""
-    tol = max(abs(a), abs(b)) * ROUND_PCT / 100
-    if (unit or "INR_CR") == "INR_CR":
-        tol = max(tol, ROUND_CR)
-    return abs(a - b) <= max(tol, 1e-9)
 
 
 def _scale(own: float, later: float) -> int | None:

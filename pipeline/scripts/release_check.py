@@ -42,13 +42,18 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      REPLAYABLE and is listed, as is a card with such a signal and no memory.
   one_basis          CARD_ONE_BASIS (F173): `one_basis.apply` on the stored card's words (tagged figures and history from
                      memory) and `one_basis.apply_card_json` on the stored card, off against on. Complete.
+  year_check        MEMORY_YEAR_CHECK (F177): a results card's table and face (`results_snapshot`, `results_card.build` over memory's
+                     file figures) rendered off and on, plus a MEMORY line for each figure the table would have read and the
+                     switch holds, with its reason. A card with a results table and no memory is NOT REPLAYABLE (listed). Not
+                     replayable at all: a year figure the model wrote into a card's words from the PDF (only the table and the
+                     face are code's), and an event card that quotes a full-year figure.
 A card or part that cannot be replayed is never faked: it is counted as "not_replayable", written to NAME-unreplayable.json
 and NAME-unreplayable.md (the stored lines and the pdf link, for the blind sample: judge the stored card as it is).
 
 Output, per switch NAME: NAME.json (every changed card, what changed, the counts), NAME.txt (the plain-text summary),
 NAME-blind.json and NAME-blind.md (a seeded sample of up to --sample changed cards for the reviewer; the two renderings
 as X and Y in a seeded order, and for quote_exact the flagged lines with their quotes), NAME-key.json (which of X / Y is
-on; keep it from the reviewer). Also release-check.json and release-check.txt (the counts of all eight).
+on; keep it from the reviewer). Also release-check.json and release-check.txt (the counts of all nine).
 Limits shared by all: the text is the filing's own pages (`Document.select_text`), without the XBRL table the pipeline
 puts in front or the second reading, and memory is as it stands now, not as at filing."""
 
@@ -75,17 +80,18 @@ import audit_precision as prec  # noqa: E402
 import audit_two_parts as two  # noqa: E402
 from bse_intel import event_xbrl, gate, one_basis, signals  # noqa: E402
 from bse_intel import pipeline as P  # noqa: E402
-from bse_intel.dossier import dossier_as_of, results_snapshot  # noqa: E402
+from bse_intel.dossier import dossier_as_of, results_snapshot, with_year_hold  # noqa: E402
 from bse_intel.extract import Document  # noqa: E402
 from bse_intel.grounding import declared_unit  # noqa: E402
 from bse_intel.models import Card, DealValue, Filing, Pass2Output  # noqa: E402
 from onoff_facts import tagged_from_memory  # noqa: E402
 
 ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ONLY", "QUOTE_EXACT_NUMBERS", "CARD_SAME_DEFINITION",
-                "CARD_GROUNDED_FIGURES", "CARD_GUIDANCE_DATED", "CARD_ONE_BASIS")
+                "CARD_GROUNDED_FIGURES", "CARD_GUIDANCE_DATED", "CARD_ONE_BASIS", "MEMORY_YEAR_CHECK")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
-          ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"))
+          ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
+          ("year_check", "MEMORY_YEAR_CHECK"))
 
 
 # ---------------------------------------------------------------- pure helpers (tested)
@@ -435,6 +441,27 @@ def check_guidance(card: dict, dossier: dict | None, row: dict) -> dict:
     return rec
 
 
+def check_year(card: dict, dossier: dict | None, row: dict, text: str | None, period: str | None) -> dict:
+    """year_check: the results table and face, `v2._render`, with MEMORY_YEAR_CHECK off and on, and the figures it holds."""
+    if not dossier:
+        rec = _record(row, card, [], [])
+        rec["info"] = {}
+        rec["unreplayable"] = [_unrep(row, "results table on the card, but the company's memory is not available", stored_lines(card))]
+        return rec
+    current = dossier_as_of(dossier, row["filed_at"])
+    with switches_on():
+        off = v2._render(card, dossier, row, text, period, False)
+    with switches_on("MEMORY_YEAR_CHECK"):
+        on = v2._render(card, dossier, row, text, period, False)
+        held = (results_snapshot(current, row["news_id"], (), printed=text, like=None if text else card.get("results")) or {}).get("held") or []
+        whole = with_year_hold(current)
+    on += [f"MEMORY held {h['metric']} {h['period']}: {h['reason']}" for h in held]
+    rec = _record(row, card, off, on)
+    rec["info"] = {"cards_with_a_held_figure_in_memory": 1 if (whole or {}).get("year_held") else 0}
+    rec["unreplayable"] = []
+    return rec
+
+
 def _basis_lines(card: dict) -> list[str]:
     """A stored card's words, key numbers and results table, in the order a reader meets them (keyed for the diff)."""
     def text(x):
@@ -618,6 +645,12 @@ def run(source, wanted: tuple[str, ...]) -> dict:
                     else:
                         seen[name] += 1
                         records[name].append(check_guidance(card, memory() or None, row))
+                elif name == "year_check":
+                    if not results or not period:
+                        skipped[name]["not a results card with a period"] += 1
+                    else:
+                        seen[name] += 1
+                        records[name].append(check_year(card, memory() or None, row, text, period))
                 elif name == "one_basis":
                     seen[name] += 1
                     records[name].append(check_one_basis(card, memory() or None, row, period if results else None))
@@ -650,7 +683,7 @@ def finish(name: str, switch: str, result: dict, out: pathlib.Path, seed: int, n
     for r in recs:
         for k, v in (r.get("info") or {}).items():
             counts[k] = counts.get(k, 0) + v
-    if unrep or name in ("grounded_figures", "guidance_dated"):
+    if unrep or name in ("grounded_figures", "guidance_dated", "year_check"):
         counts["not_replayable"] = dict(Counter(u["reason"] for u in unrep))
         counts["not_replayable_cards"] = len({u["news_id"] for u in unrep})
         notes.append("NOT REPLAYABLE offline (listed in NAME-unreplayable.json and .md for the blind sample, which judges the "
@@ -664,6 +697,11 @@ def finish(name: str, switch: str, result: dict, out: pathlib.Path, seed: int, n
         notes.append("`signals._promises` is run as it is, over memory before and after the filing; the model's updates are the "
                      "ones memory recorded for the filing (status histories). The MEMORY lines are updates `dossier.merge` would "
                      "not have recorded. Memory is as it stands now (restated figures, later screener fills).")
+    if name == "year_check":
+        notes.append("`results_snapshot` and `results_card.build` (over memory's file figures) rendered with the switch off and on; "
+                     "a MEMORY line names each held figure the table reads, with its reason. Replayed: the results table and "
+                     "the card's face. Not replayable: a full-year figure the model wrote into a card's words from the PDF, and "
+                     "an event card that quotes a year (only the table and the face are code's). Memory is as it stands now.")
     if name == "one_basis":
         notes.append("`one_basis.apply` on the stored words (figures from memory's results rows, history from memory as of the "
                      "filing) and `apply_card_json` on the stored card. Memory is as it stands now, not as at filing.")

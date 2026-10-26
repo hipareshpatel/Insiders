@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 
-from .dossier import judged_on, third_party_view
+from .dossier import judged_on, third_party_view, with_year_hold
 
 # Long-term scale shared by CRISIL, ICRA, CARE, India Ratings, Acuite, Brickwork and Infomerics, best first
 LONG_TERM = ("AAA", "AA+", "AA", "AA-", "A+", "A", "A-", "BBB+", "BBB", "BBB-", "BB+", "BB", "BB-",
@@ -314,7 +314,7 @@ def memory_context(before: dict | None, event_type: str, filed_at: str | None, n
         text = g["statement"] + (f" ({g['target']})" if g.get("target") and g["target"] not in g["statement"] else "")
         out.append({"label": "Management said", "text": text + (f" · by {g['due']}" if g.get("due") else ""),
                     "as_of": g.get("given_on")})
-    metrics = [m for m in before.get("financial_metrics", []) if m.get("value") is not None
+    metrics = [m for m in (with_year_hold(before) or {}).get("financial_metrics", []) if m.get("value") is not None
                and str(m.get("period", "")).startswith("Q") and m.get("metric") in ("revenue", "pat", "pat_owners")]
     if event_type != "RESULTS" and metrics:
         latest = max((m["period"] for m in metrics), key=lambda p: str(due_date(p) or ""))

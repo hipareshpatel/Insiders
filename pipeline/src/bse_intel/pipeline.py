@@ -38,7 +38,7 @@ from .bse import AttachmentError, AttachmentTooLarge, BseClient, SourceBlockedEr
 from . import duplicates
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, keep_concurrent_writes, latest_fundamentals, memory_ids, merge,
                       own_former_name,
-                      new_dossier, put_standalone, repeated_order, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
+                      new_dossier, put_standalone, with_year_hold, repeated_order, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
 from .extract import CACHE_VERSION, FIGURE_PAGE_AMOUNTS, Document, amounts, cache_needs_ocr
 from .ocr import available as local_ocr_available
 from .ocr import page_reader, recognise
@@ -1258,7 +1258,7 @@ def small_fine(first_page: str, annual_profit_cr: float | None) -> bool:
 
 def annual_profit_cr(dossier: dict | None) -> float | None:
     """The last full year's profit memory holds (the latest FYxx PAT), for the materiality floors."""
-    years = [m for m in (dossier or {}).get("financial_metrics", []) if m.get("metric") in ("pat", "pat_owners")
+    years = [m for m in (with_year_hold(dossier) or {}).get("financial_metrics", []) if m.get("metric") in ("pat", "pat_owners")
              and re.fullmatch(r"FY\d{2}", str(m.get("period") or "")) and isinstance(m.get("value"), (int, float))]
     return max(years, key=lambda m: m["period"])["value"] if years else None
 

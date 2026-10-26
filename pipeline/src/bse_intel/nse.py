@@ -25,6 +25,7 @@ import random
 import re
 import threading
 import time
+from urllib.parse import urlparse
 from dataclasses import dataclass
 from datetime import date, datetime
 
@@ -385,9 +386,29 @@ def pause_from_env() -> tuple[float, float]:
     return (low, high) if 1.0 <= low <= high else (3.0, 5.0)
 
 
+ARCHIVE_HOST = "nsearchives.nseindia.com"
+ARCHIVE_REFUSALS = (403, 429, 503)
+
+
+def archive_pause_from_env() -> tuple[float, float] | None:
+    """Seconds between two requests to the archive host (nsearchives): NSE_ARCHIVE_PAUSE_SECONDS="0,0" (same "low,high"
+    form as NSE_PAUSE_SECONDS, 0 allowed). None when unset or malformed: the archive then shares the API's pace and
+    lock, exactly as before (F169)."""
+    try:
+        low, high = (float(x) for x in os.environ.get("NSE_ARCHIVE_PAUSE_SECONDS", "").split(","))
+    except ValueError:
+        return None
+    return (low, high) if 0.0 <= low <= high else None
+
+
+def _is_archive(url: str | None) -> bool:
+    return bool(url) and (urlparse(url).hostname or "").lower() == ARCHIVE_HOST
+
+
 class NseClient:
     def __init__(self, timeout: float = 45.0, pause: tuple[float, float] | None = None,
-                 retries: int = 3, transport: httpx.BaseTransport | None = None, sleep=time.sleep):
+                 retries: int = 3, transport: httpx.BaseTransport | None = None, sleep=time.sleep,
+                 archive_pause: tuple[float, float] | None = None):
         self._client = httpx.Client(
             timeout=timeout,
             follow_redirects=True,
@@ -400,6 +421,11 @@ class NseClient:
         self._sleep = sleep
         self._lock = threading.Lock()
         self._calls = 0
+        # the archive host's own pace, lock and counter; None = it shares the API's (today's behaviour). A refusal from
+        # the archive host sets it back to None for the rest of the run (_note_refusal)
+        self._archive_pause = archive_pause if archive_pause is not None else archive_pause_from_env()
+        self._archive_lock = threading.Lock()
+        self._archive_calls = 0
         self._warmed = False
         self.raw = None  # a raw.RawStore: every JSON answer is saved as received, before it is parsed
 
@@ -422,22 +448,38 @@ class NseClient:
         except httpx.HTTPError as exc:
             log.info("NSE warm-up request failed (%s); continuing", exc)
 
-    def _wait(self) -> None:
+    def _wait(self, url: str | None = None) -> None:
+        pause = self._archive_pause
+        if pause is not None and _is_archive(url):
+            with self._archive_lock:
+                if self._archive_calls and pause[1] > 0:
+                    self._sleep(random.uniform(*pause))
+                self._archive_calls += 1
+            return
         with self._lock:
             if self._calls:
                 self._sleep(random.uniform(*self._pause))
             self._calls += 1
 
+    def _note_refusal(self, url: str, status: int) -> None:
+        """A 403, 429 or 503 from the archive host while it runs on its own fast pace: back to the API's pace (3-5 s, and
+        its lock, so one request at a time) for the rest of the run. A 404 is a missing file, not a refusal."""
+        if status in ARCHIVE_REFUSALS and _is_archive(url) and self._archive_pause is not None:
+            self._archive_pause = None
+            log.warning("NSE archive host answered HTTP %s: archive pace back to the API pace (%s s) for the rest of "
+                        "this run", status, "-".join(f"{x:g}" for x in self._pause))
+
     def _get(self, url: str, params: dict | None = None) -> httpx.Response:
         self.warm_up()
         last: Exception | None = None
         for _ in range(self._retries):
-            self._wait()
+            self._wait(url)
             try:
                 response = self._client.get(url, params=params)
             except httpx.HTTPError as exc:
                 last = exc
                 continue
+            self._note_refusal(url, response.status_code)
             if response.status_code in BLOCKING_STATUS:
                 raise SourceBlockedError(
                     f"NSE refused the request (HTTP {response.status_code}) for {url}. NSE limits by IP address: "
@@ -584,11 +626,12 @@ class NseClient:
         self.warm_up()
         problem: Exception | None = None
         for _ in range(self._retries):
-            self._wait()
+            self._wait(url)
             try:
                 with self._client.stream("GET", url) as resp:
                     if resp.status_code == 404:
                         return None
+                    self._note_refusal(url, resp.status_code)
                     if resp.status_code in BLOCKING_STATUS:
                         raise SourceBlockedError(f"NSE refused the attachment (HTTP {resp.status_code}): {url}")
                     if resp.status_code >= 500:

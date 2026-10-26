@@ -371,9 +371,12 @@ jobs:
         if: inputs.command == 'fill-memory'
         env:
           DAYS: ${{ inputs.days }}
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel shareholding-sync --days "$DAYS" --max-files 100000 --time-budget 9000'
       - name: Governance reports into memory, in one go
         if: inputs.command == 'fill-memory' && !cancelled()
+        env:
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel governance-sync --pages 8 --max-files 100000 --time-budget 4800'
       - name: A year of pledge events into memory
         if: inputs.command == 'fill-memory' && !cancelled()
@@ -464,6 +467,8 @@ jobs:
       # refuses the session (exit 75: the shard fails, no next pass now, so a refusal is never pressed on; recover.yml
       # starts the seed again once the next morning)
       - name: Seed this shard's companies
+        env:
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
         run: |
           code=0
           timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel seed-memory --universe --results-only --shard ${{ matrix.shard }}/12 ${{ inputs.restart && '--restart' || '' }} || code=$?
@@ -528,6 +533,8 @@ jobs:
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
       - name: Fill this shard's gaps
+        env:
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/gaps" "$RUNNER_TEMP/more"

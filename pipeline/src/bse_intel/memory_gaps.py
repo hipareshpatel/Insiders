@@ -203,6 +203,26 @@ def since_for(result: dict) -> str:
     return (quarter_end(oldest) - timedelta(days=100)).isoformat()
 
 
+MAX_FAILED_TRIES = 3   # a company whose seed fails is tried again on later passes, this many times in all
+
+
+def _gap_signature(result: dict) -> list[str]:
+    """The quarters a company lacked when a fill tried it: the missing ones and, when absent, the year-ago quarter."""
+    out = list(result["missing"])
+    if result.get("missing_year_ago") and result.get("year_ago"):
+        out.append(result["year_ago"])
+    return sorted(set(out))
+
+
+def _load_tried(raw: str | None) -> dict:
+    """The tried companies, each with the quarters it lacked then. The first format was a bare list of companies (no
+    quarters known): those load as None and are tried once more."""
+    data = json.loads(raw or "{}")
+    if isinstance(data, list):
+        return {scrip: None for scrip in data}
+    return data
+
+
 def fill(sink, report: dict, seed_fn, time_budget: float, restart: bool = False,
          shard: tuple[int, int] | None = None, clock=time.monotonic) -> dict:
     """Seed (results only) the companies with gaps, one ``seed_fn(scrip, since)`` call each: the seed's per-company
@@ -212,26 +232,36 @@ def fill(sink, report: dict, seed_fn, time_budget: float, restart: bool = False,
     from .nse import SourceBlockedError
 
     key = TRIED_KEY + (f":{shard[0]}of{shard[1]}" if shard else "")
-    tried = set() if restart else set(json.loads(sink.kv_get(key) or "[]"))
+    tried = {} if restart else _load_tried(sink.kv_get(key))
+    fails = {} if restart else dict(json.loads(sink.kv_get(key + ":failed") or "{}"))
     todo = [s for s, r in sorted(report["companies"].items()) if has_gap(r)]
     if shard:
         todo = todo[shard[0]::shard[1]]
     attempted, failed, more = [], [], False
     deadline = clock() + time_budget
     for scrip in todo:
-        if scrip in tried:
+        wanted = _gap_signature(report["companies"][scrip])
+        # tried already, and nothing new is missing since: NSE cannot close it. A quarter that became due after the try,
+        # or an entry from the older list format (it recorded no quarters), is tried again (F195)
+        if scrip in tried and tried[scrip] is not None and set(wanted) <= set(tried[scrip]):
             continue
         if clock() >= deadline:
             more = True
             break
+        ok = True
         try:
             seed_fn(scrip, since_for(report["companies"][scrip]))
         except SourceBlockedError:
             raise
         except Exception as exc:
+            ok = False
             failed.append(f"{scrip}: {type(exc).__name__}: {exc}"[:200])
             log.warning("memory-gaps fill %s failed: %s", scrip, exc)
         attempted.append(scrip)
-        tried.add(scrip)
-        sink.kv_set(key, json.dumps(sorted(tried)), now_iso())
+        if ok or fails.get(scrip, 0) + 1 >= MAX_FAILED_TRIES:
+            tried[scrip] = wanted   # a timeout or an NSE list that did not load is not "NSE has nothing": tried again next pass
+        else:
+            fails[scrip] = fails.get(scrip, 0) + 1
+        sink.kv_set(key, json.dumps(tried, sort_keys=True), now_iso())
+        sink.kv_set(key + ":failed", json.dumps(fails, sort_keys=True), now_iso())
     return {"attempted": attempted, "failed": failed, "more": more}

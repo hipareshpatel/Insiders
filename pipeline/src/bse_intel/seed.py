@@ -155,7 +155,7 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     # BSE named, and since March 2025 the integrated format means BSE often names none: a company that
     # changed over has a gap in memory rather than a failed fetch, which no counter would have shown.
     if nse is not None and symbol:
-        for period, row in _nse_quarters(nse, symbol, since, scrip).items():
+        for period, row in _nse_quarters(nse, symbol, since, scrip, stats).items():
             if period in found:
                 continue
             data = _fetch(nse, row.xbrl_url, cache_root, sink)
@@ -286,7 +286,7 @@ def _mark_standalone_only(sink, scrip: str, found: dict) -> None:
 
 def _seed_standalone(sink, nse, scrip: str, symbol: str, since: str, periods: set[str], cache_root, stats) -> None:
     try:
-        rows = _nse_rows(nse, symbol)
+        rows = _rows_or_partial(nse, symbol, None, scrip)   # a failed integrated list is recorded by _nse_quarters
     except SourceBlockedError:
         raise
     except Exception:
@@ -340,14 +340,16 @@ def _write_results(sink, scrip: str, name: str, company: dict | None, period: st
              parsed.basis or "basis not stated")
 
 
-def _nse_quarters(nse, symbol: str, since: str, scrip: str) -> dict:
+def _nse_quarters(nse, symbol: str, since: str, scrip: str, stats: "SeedStats | None" = None) -> dict:
     """The newest filing NSE lists per quarter, consolidated where both bases are filed."""
     try:
-        rows = _nse_rows(nse, symbol)
+        rows = _rows_or_partial(nse, symbol, stats, scrip)
     except SourceBlockedError:
         raise  # NSE limits by IP: the caller stops the seed rather than marking the company done with nothing
     except Exception as exc:
         log.info("seed %s: NSE list unavailable (%s)", scrip, type(exc).__name__)
+        if stats is not None:   # not silent: the memory-gaps fill must not count this company as done (F195)
+            stats.failures.append(f"{scrip}: NSE results list unavailable ({type(exc).__name__})")
         return {}
     best: dict = {}
     # consolidated over standalone, the integrated filing over the older list's row, then the later filing
@@ -372,11 +374,35 @@ def _recent_and_years(best: dict) -> dict:
     return {label: row for label, row in best.items() if row.period_end in recent or row.period_end[5:7] == "03"}
 
 
+class PartialNseList(RuntimeError):
+    """NSE's integrated list failed and only the older list came back (it holds no quarter since December 2024). The
+    older rows are still good: callers use ``rows`` and record the failure, so the company is not counted done."""
+
+    def __init__(self, symbol: str, rows: tuple):
+        super().__init__(f"NSE's integrated results list for {symbol} was unavailable; only the older list came back")
+        self.rows = rows
+
+
+def _rows_or_partial(nse, symbol: str, stats: "SeedStats | None", scrip: str) -> tuple:
+    """``_nse_rows``, keeping the older list's rows when the integrated list failed (recorded as a failure)."""
+    try:
+        return _nse_rows(nse, symbol)
+    except PartialNseList as exc:
+        if stats is not None:   # not silent: the memory-gaps fill must not count this company as done (F195)
+            stats.failures.append(f"{scrip}: NSE integrated results list unavailable (older list only)")
+        return exc.rows
+
+
 @lru_cache(maxsize=64)
 def _nse_rows(nse, symbol: str) -> tuple:
     """NSE's results list for one symbol, fetched once: it is read per quarter and the client paces
     itself by several seconds a call."""
-    return tuple(nse.financial_results(symbol))
+    rows = tuple(nse.financial_results(symbol))
+    if symbol.strip().upper() in getattr(nse, "integrated_failed", ()):
+        # financial_results fell back to the older list, which holds no quarter since December 2024: the newest
+        # quarters would be silently absent and the company marked done (d4 gaps, 26 Oct 2026). Not cached: raise.
+        raise PartialNseList(symbol, rows)
+    return rows
 
 
 def _from_nse(nse, symbol: str, period: str, link, cache_root: Path | None, stats: SeedStats,
@@ -384,7 +410,7 @@ def _from_nse(nse, symbol: str, period: str, link, cache_root: Path | None, stat
     """The same quarter from NSE, when BSE served nothing. Matched on the filing date BSE listed, so the
     row is the same filing and not merely the same company; the basis is matched where NSE states it."""
     try:
-        rows = _nse_rows(nse, symbol)
+        rows = _rows_or_partial(nse, symbol, stats, scrip)
     except SourceBlockedError:
         raise
     except Exception as exc:

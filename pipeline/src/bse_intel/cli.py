@@ -1329,16 +1329,27 @@ def cmd_pdf_referee(args, settings, sink) -> int:
         print("--sample takes a number above 0")
         return 2
     rows = pr.load_csv(path.read_text(encoding="utf-8"))
+    pr.be_gentle()      # OCR must not starve the runner's own agent of CPU (maintenance run 40387696323 was lost that way)
+    saved = pr.load_progress(sink, args.progress) if args.progress else None
+    if saved:
+        print(f"pdf-referee: {len(saved)} pairs saved by an earlier run of '{args.progress}'; those decided are not read again")
+
+    def write(outcome: dict) -> None:
+        """The outputs so far: local files for the artifact, the decided pairs to R2 (what a lost runner leaves behind)."""
+        if args.json:
+            Path(args.json).write_text(pr.to_json(outcome), encoding="utf-8")
+        if args.out_csv:
+            Path(args.out_csv).write_text(pr.to_csv(outcome), encoding="utf-8")
+        if args.md:
+            Path(args.md).write_text(pr.to_markdown(outcome, today_ist().isoformat()), encoding="utf-8")
+        if args.progress:
+            pr.save_progress(sink, args.progress, outcome)
+
     with NseClient() as nse:
         outcome = pr.run(nse, rows, args.limit, args.time_budget, ocr=not args.no_ocr, sample=args.sample or 0, seed=args.seed,
-                         explained=explained)
+                         explained=explained, progress=write, saved=saved)
     print(pr.render(outcome))
-    if args.json:
-        Path(args.json).write_text(pr.to_json(outcome), encoding="utf-8")
-    if args.out_csv:
-        Path(args.out_csv).write_text(pr.to_csv(outcome), encoding="utf-8")
-    if args.md:
-        Path(args.md).write_text(pr.to_markdown(outcome, today_ist().isoformat()), encoding="utf-8")
+    write(outcome)
     if outcome["blocked"]:
         return REFUSED
     return 124 if outcome["out_of_time"] else 0
@@ -2018,6 +2029,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the summary to this file")
     p.add_argument("--out-csv", help="write every refereed pair, with the PDF's figure and the verdict, to this file")
     p.add_argument("--md", help="write the short markdown summary to this file")
+    p.add_argument("--progress", metavar="NAME", help="save the decided pairs to R2 (meta/pdf-referee/NAME.csv) every 25 pairs or 3 minutes, and skip the pairs an earlier run of NAME decided (scrip, basis, period, metric)")
     p.set_defaults(func=cmd_pdf_referee)
 
     p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")

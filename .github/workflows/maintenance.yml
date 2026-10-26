@@ -97,7 +97,8 @@
 #   artifact (gh api, the repository's own Actions artifacts), finds each pair's results PDF in NSE's announcements, reads it
 #   with the pipeline's own reader (local OCR on figure pages) and keeps a figure only when its column, basis and unit are
 #   proven (else pdf_unsure). `limit` caps the pairs. referee-pdf.csv, summary.json and the markdown go up as the artifact
-#   `pdf-referee`. Writes nothing to memory, cards or the branch. No AI.
+#   `pdf-referee`. Writes nothing to memory, cards or the branch. No AI. F197: every 25 pairs or 3 minutes the decided pairs go to R2
+#   (`meta/pdf-referee/<command>-<ids>-<run id>.csv`), because a lost runner kills the artifact upload; "Re-run failed jobs" of the same run skips them.
 # - pdf-referee-ensemble: read only (owner 26 Oct 2026, F177; default off, `pdf-referee` itself is unchanged). The PDF referee with
 #   several free local document readers that must agree. Three stages of jobs, each reader in a process and a job of its own
 #   (a heavy reader is never loaded beside another; their dependencies conflict anyway): pdf-ensemble-fetch downloads the open
@@ -554,7 +555,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/pdfreferee"
           src=--csv
           if [ "${{ inputs.command }}" = "pdf-referee" ] && [ "$IDS" = "explained" ]; then src=--explained; fi
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel pdf-referee "$src" "$RUNNER_TEMP/in/referee-xbrl.csv" ${LIMIT:+--limit "$LIMIT"} ${SAMPLE:+--sample "$SAMPLE"} ${{ inputs.no_ocr && '--no-ocr' || '' }} --json "$RUNNER_TEMP/pdfreferee/summary.json" --out-csv "$RUNNER_TEMP/pdfreferee/referee-pdf.csv" --md "$RUNNER_TEMP/pdfreferee/pdf-referee.md" || code=$?
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel pdf-referee "$src" "$RUNNER_TEMP/in/referee-xbrl.csv" ${LIMIT:+--limit "$LIMIT"} ${SAMPLE:+--sample "$SAMPLE"} ${{ inputs.no_ocr && '--no-ocr' || '' }} --progress "${{ inputs.command }}${IDS:+-$IDS}-${{ github.run_id }}" --json "$RUNNER_TEMP/pdfreferee/summary.json" --out-csv "$RUNNER_TEMP/pdfreferee/referee-pdf.csv" --md "$RUNNER_TEMP/pdfreferee/pdf-referee.md" || code=$?
           if [ "$code" = 124 ]; then echo "::warning::time budget ended with pairs left (not_run in the CSV); run again with a limit"; code=0; fi
           exit "$code"
       - uses: actions/upload-artifact@v4

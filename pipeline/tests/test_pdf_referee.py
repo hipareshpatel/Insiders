@@ -512,3 +512,83 @@ def test_the_standard_layout_needs_a_march_year_end_on_the_page():
     assert got["values"] == [] and "group words" in got["unsure"]       # the same dates may be nine-month columns
     assert revenue_of(lines_grid(body, head=[head[0].replace("quarter ended", "quarter and year ended")] + head[1:]),
                       "Q4FY26", "STANDALONE") == [120.5]
+
+
+class MemorySink:
+    def __init__(self, fail_put=False):
+        self.objects, self.fail_put = {}, fail_put
+
+    def get_object(self, key):
+        return self.objects.get(key)
+
+    def put_object(self, key, body, content_type="application/json"):
+        if self.fail_put:
+            raise OSError("R2 down")
+        self.objects[key] = body
+
+
+def test_progress_is_saved_during_the_run_and_a_rerun_skips_the_decided_pairs():
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    rows = [{**pair(symbol=s), "scrip": str(i)} for i, s in enumerate("ABCDE")]
+    sink, saves = MemorySink(), []
+
+    def progress(outcome):
+        saves.append(len(outcome["rows"]))
+        assert pr.save_progress(sink, "run-1", outcome)
+
+    first = pr.run(FakeNse([filing()], {url: make_pdf(STANDALONE_PAGE)}), rows, ocr=False, progress=progress, every=2)
+    assert saves == [2, 4]                      # after the company that made 2 new pairs, again after 2 more
+    assert len(first["rows"]) == 5 and "resumed" not in first
+    # a lost runner leaves the last save: 4 decided pairs. A re-run reads only the fifth.
+    saved = pr.load_progress(sink, "run-1")
+    assert len(saved) == 4 and pr.progress_key("run-1") in sink.objects
+    nse = FakeNse([filing()], {url: make_pdf(STANDALONE_PAGE)})
+    second = pr.run(nse, rows, ocr=False, saved=saved)
+    assert second["resumed"] == 4 and len(nse.lists) == 1            # one announcement list: only company E was read again
+    assert second["verdicts"] == first["verdicts"]
+    assert [r["pdf_value"] for r in second["rows"]] == [r["pdf_value"] for r in first["rows"]]
+    assert "kept from the saved progress" in pr.render(second)
+
+
+def test_resume_never_keeps_not_run_or_another_pair_and_limit_counts_new_reads_only():
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    rows = [{**pair(symbol="A"), "scrip": "10"}, {**pair(symbol="B", metric="pat", ours=12.3, theirs=12.0, official=12.0), "scrip": "11"}]
+    saved = [{**rows[0], "pdf_verdict": "not_run", "reason": "limit"},                          # not decided: read again
+             {**rows[1], "pdf_verdict": "pdf_unreadable", "reason": "x", "metric": "revenue"}]  # another metric of company B: not this pair
+    nse = FakeNse([filing()], {url: make_pdf(STANDALONE_PAGE)})
+    out = pr.run(nse, rows, ocr=False, saved=saved)
+    assert "resumed" not in out and len(nse.lists) == 2
+    kept = [{**rows[0], "pdf_verdict": "pdf_matches_ours", "pdf_value": "120.5", "reason": ""}]
+    nse2 = FakeNse([filing()], {url: make_pdf(STANDALONE_PAGE)})
+    out2 = pr.run(nse2, rows, ocr=False, saved=kept, limit=1)
+    assert out2["resumed"] == 1 and out2["rows"][0]["pdf_value"] == 120.5 and len(nse2.lists) == 1
+    assert out2["verdicts"].get("not_run", 0) == 0     # the resumed pair did not use up the limit
+
+
+def test_a_failed_save_or_missing_progress_never_stops_the_run():
+    class Broken:
+        def get_object(self, key):
+            raise OSError("down")
+
+    assert pr.load_progress(MemorySink(), "none") == []
+    assert pr.save_progress(MemorySink(fail_put=True), "n", {"rows": [], "pairs": 0}) is False
+    assert pr.load_progress(Broken(), "n") == []
+    assert pr.progress_key("a/b c") == "meta/pdf-referee/a_b_c.csv"
+
+
+def test_sources_release_drops_the_companys_pdf_rows_and_bytes():
+    src = pr.Sources(FakeNse([], {}), ocr=False)
+    src.docs["u"], src._payload = ([], ""), ("u", b"x" * 10, "")
+    src.release()
+    assert src.docs == {} and src._payload is None
+
+
+def test_be_gentle_leaves_a_core():
+    from bse_intel import ocr
+    key = "EngineConfig.onnxruntime.intra_op_num_threads"
+    before = ocr.SETTINGS[key]
+    try:
+        pr.be_gentle()
+        assert 1 <= ocr.SETTINGS[key] <= 4
+    finally:
+        ocr.SETTINGS[key] = before

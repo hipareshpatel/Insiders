@@ -682,6 +682,11 @@ class Sources:
             self.ensemble = pdf_readers.Ensemble(names, ocr)
         self._payload: tuple[str, bytes | None, str] | None = None
 
+    def release(self) -> None:
+        """Drop what only the company just read needed (its PDFs' rows, the PDF bytes kept for the readers ensemble)."""
+        self.docs.clear()
+        self._payload = None
+
     def filings(self, symbol: str, period: str) -> list | str:
         key = (symbol, period)
         if key not in self.lists:
@@ -846,43 +851,120 @@ def load_csv(text: str) -> list[dict]:
     return list(csv.DictReader(io.StringIO(text)))
 
 
+def be_gentle() -> None:
+    """Leave the machine one core and the lowest priority: OCR on every core starved the GitHub runner's own agent, which
+    lost contact and killed the job after 2 h 33 min with nothing saved (maintenance run 40387696323). Memory was measured
+    flat (580 MB after 36 reads, peak 1.35 GB on a 14 MB PDF), so CPU is the suspect."""
+    try:
+        from . import ocr
+        ocr.SETTINGS["EngineConfig.onnxruntime.intra_op_num_threads"] = max(1, min(4, (os.cpu_count() or 2) - 1))
+    except Exception:   # noqa: BLE001
+        pass
+    try:
+        os.nice(10)
+    except (AttributeError, OSError):
+        pass
+
+
+PROGRESS_PREFIX = "meta/pdf-referee/"   # R2 (the platform sink's `meta/` prefix): outlives a lost runner, unlike the job's artifact
+SAVE_EVERY_PAIRS = 25
+SAVE_EVERY_SECONDS = 180.0
+_DECIDED_FIELDS = ("pdf_verdict", "pdf_value", "pdf_label", "pdf_url", "matches", "reason")
+
+
+def pair_key(r: dict) -> tuple[str, str, str, str]:
+    """What names a pair across runs: scrip (symbol when the row has none), basis, period, metric."""
+    return (str(r.get("scrip") or r.get("symbol") or ""), r.get("basis") or "", r.get("period") or "", r.get("metric") or "")
+
+
+def progress_key(name: str) -> str:
+    return f"{PROGRESS_PREFIX}{re.sub(r'[^A-Za-z0-9._-]', '_', name)[:100]}.csv"
+
+
+def load_progress(sink, name: str) -> list[dict]:
+    """The pairs an earlier run of ``name`` already decided (its saved CSV), or none when nothing is saved or R2 does not answer."""
+    try:
+        body = sink.get_object(progress_key(name))
+    except Exception as exc:   # noqa: BLE001 - no saved progress is a fresh start, not a stop
+        log.warning("pdf-referee: saved progress unreadable (%s: %s); starting fresh", type(exc).__name__, exc)
+        return []
+    return load_csv(body.decode("utf-8")) if body else []
+
+
+def save_progress(sink, name: str, summary: dict) -> bool:
+    """Store the decided pairs so far; a failed save is logged, never a stop."""
+    try:
+        sink.put_object(progress_key(name), to_csv(summary).encode("utf-8"), "text/csv")
+        return True
+    except Exception as exc:   # noqa: BLE001
+        log.warning("pdf-referee: progress not saved (%s: %s)", type(exc).__name__, exc)
+        return False
+
+
 def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | None = None, ocr: bool = True,
-        clock=time.monotonic, sample: int = 0, seed: int = 26, explained: bool = False) -> dict:
+        clock=time.monotonic, sample: int = 0, seed: int = 26, explained: bool = False,
+        progress=None, saved: list[dict] | None = None, every: int = SAVE_EVERY_PAIRS,
+        every_seconds: float = SAVE_EVERY_SECONDS) -> dict:
     """Referee the open pairs among the screener-referee ``rows``, company by company; ``limit`` caps the pairs read (a
     company is finished once started); the rest are ``not_run``. With ``sample`` the pairs are instead a seeded random
     sample of that many pairs where memory already equals the XBRL file (``sample_pairs``); with ``explained`` the rows are
-    screener-explain's and its ``unexplained`` ones are taken too (``open_pairs``)."""
+    screener-explain's and its ``unexplained`` ones are taken too (``open_pairs``).
+
+    ``saved`` are the rows an earlier run decided (``load_progress``): a pair with the same scrip, basis, period and metric
+    keeps that verdict and is not read again (not_run rows are never kept). ``progress`` gets the summary of the decided pairs
+    so far after the company that makes ``every`` new pairs or ``every_seconds`` since its last call, so a lost runner loses
+    a few minutes, not the run."""
     pairs = sample_pairs(rows, sample, seed) if sample else open_pairs(rows, explained)
     pool = sum(r.get("verdict") == "ours_matches_official" and r.get("metric") in SAMPLE_METRICS for r in rows) if sample else 0
     by_company: dict[tuple[str, str], list[dict]] = {}
     for r in pairs:
         by_company.setdefault((r["symbol"], r.get("basis") or ""), []).append(r)
+    decided = {pair_key(r): r for r in (saved or []) if r.get("pdf_verdict") and r["pdf_verdict"] != "not_run"}
     src = Sources(nse, ocr)
-    started, done, blocked, out_of_time = clock(), 0, False, False
+    started, done, blocked, out_of_time, resumed = clock(), 0, False, False, 0
+    last_save, since_save, symbol_now = started, 0, None
     results: list[dict] = []
 
     def not_run(r: dict, why: str) -> dict:
         return {**r, "pdf_verdict": "not_run", "reason": why, "pdf_value": None, "pdf_label": "", "pdf_url": "", "matches": ""}
 
     for (symbol, _basis), items in by_company.items():
+        if symbol != symbol_now:
+            src.release()           # the previous company's PDFs are not asked for again
+            symbol_now = symbol
+        todo = []
+        for r in items:
+            old = decided.get(pair_key(r))
+            if old is not None:
+                results.append({**r, **{k: old.get(k, "") for k in _DECIDED_FIELDS}, "pdf_value": _num(old.get("pdf_value"))})
+                resumed += 1
+            else:
+                todo.append(r)
         if not blocked and time_budget is not None and clock() - started > time_budget:
             out_of_time = True
         why = "blocked" if blocked else "time budget" if out_of_time else "limit" if limit is not None and done >= limit else ""
         if why:
-            results += [not_run(r, why) for r in items]
+            results += [not_run(r, why) for r in todo]
             continue
-        for r in items:
+        for r in todo:
             if blocked:
                 results.append(not_run(r, "blocked"))
                 continue
             try:
                 results.append({**r, **referee_pair(src, r)})
                 done += 1
+                since_save += 1
             except SourceBlockedError as exc:
                 blocked = True
                 log.warning("NSE refused (%s): stopping the PDF referee", exc)
                 results.append(not_run(r, "blocked"))
+        if progress and (since_save >= every or (since_save and clock() - last_save >= every_seconds)):
+            progress(summarise([x for x in results if x["pdf_verdict"] != "not_run"], src.calls, len(by_company), blocked,
+                               out_of_time, len(rows) - len(pairs)))
+            last_save, since_save = clock(), 0
     summary = summarise(results, src.calls, len(by_company), blocked, out_of_time, len(rows) - len(pairs))
+    if resumed:
+        summary["resumed"] = resumed
     if sample:
         summary["sample"] = {"drawn": len(pairs), "pool": pool, "seed": seed}
     return summary
@@ -941,6 +1023,8 @@ def render(summary: dict) -> str:
     lines = [f"pdf referee (the filing PDF, read only): {summary['pairs']} {kind}, {summary['companies']} companies, "
              f"{summary['calls']['announcement_lists']} announcement lists, {summary['calls']['pdfs']} PDFs"]
     lines += [f"  {v:24}{summary['verdicts'].get(v, 0)}" for v in _columns(summary)]
+    if summary.get("resumed"):
+        lines.append(f"  {summary['resumed']} pairs kept from the saved progress of an earlier run (not read again)")
     if summary["blocked"]:
         lines.append("stopped: NSE refused the session")
     if summary["out_of_time"]:

@@ -85,3 +85,4 @@ right. Everything the 2026-10-20 approval leaves to the owner still goes to the 
   - DeepSeek may be used for one-off tests only, never on a path that runs every day (CLAUDE.md, $0 steady state).
   - Turning a switch on is approved in principle, but each one still waits for its release check and blind sample (owner's own bar).
   - Switches are repository variables, which this session cannot set, so the owner flips each one when it passes.
+- 26 Oct 13:55 UTC: PR #154 merged into `main` (0400011) with CI green, on the owner's "Merge" of 26 Oct. F187 (EPS fillers, signs) is live for new reads; F185/F186 and the pdf-referee changes are read-only; call memory stays behind MEMORY_CALL_V2 (off).

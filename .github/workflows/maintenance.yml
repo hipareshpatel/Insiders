@@ -38,6 +38,9 @@
 #   labelling would give each item (file / ai / calc / unknown) per section; the JSON goes up as the artifact `label-memory`.
 #   label-memory-apply: the same, then writes each changed memory back through the safe three-way merge, resuming after the
 #   last company done (a second run only finishes what is left; exit 124 = run it again). No card changes (F150).
+# - audit-precision: read-only on/off audit of the candidate number-matching rule (match at the precision the filing prints;
+#   pipeline/scripts/audit_precision.py, docs/audit/precision-2026-10-26.md) over every stored card and its text in R2;
+#   summary.json, lines.json and the blind-sample markdown go up as the artifact `audit-precision`. No writes.
 # None calls an AI model; seed-memory, memory-gaps-fill and fill-memory read NSE. It runs beside the pipeline (its own concurrency group:
 # a shared one would cancel a pending pipeline run); fill-memory pauses the AI pipeline while it writes memory.
 name: Maintenance
@@ -48,7 +51,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -202,6 +205,19 @@ jobs:
         with:
           name: label-memory
           path: ${{ runner.temp }}/labels/
+          if-no-files-found: ignore
+      - name: Audit the precision rule (reads only)
+        if: inputs.command == 'audit-precision'
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/precision"
+          "$RUNNER_TEMP/venv/bin/python" -I -X utf8 scripts/audit_precision.py "$RUNNER_TEMP/precision" --platform --doc "$RUNNER_TEMP/precision/precision-sample-2026-10-26.md" || code=$?
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'audit-precision'
+        with:
+          name: audit-precision
+          path: ${{ runner.temp }}/precision/
           if-no-files-found: ignore
       - name: Failed filings by reason (reads only)
         if: inputs.command == 'failed-report'

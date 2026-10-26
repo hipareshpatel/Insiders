@@ -698,3 +698,76 @@ def test_a_watch_long_past_its_quarter_or_already_settled_is_not_resolved_again(
     assert watch_verdict(w, "MET", "EBITDA margin 27.5%", "2025-05-20T17:00:00+05:30") == "MET"
     assert watch_verdict(w, "MET", "EBITDA margin 27.5%", "2025-11-10T17:00:00+05:30") == "PENDING"
     assert watch_verdict({**w, "status": "MET"}, "MET", "EBITDA margin 27.5%", "2025-05-21T17:00:00+05:30") == "PENDING"
+
+
+def _volume_target(kpi: str, target: str | None = None):
+    kpis = [{"kpi": kpi, "metric": "volumes", "period": "Q2 FY27", "value": 10, "comparison": ">=", "target": target}]
+    return Pass2Output.model_validate({
+        "is_material": True, "event_type": "CONCALL_PRESENTATION",
+        "card": {"impact_level": "MODERATE", "headline": "Demo Tubes guides 10 lakh t", "what_happened": ["x"],
+                 "track_next": {"kpis_to_verify": kpis}}})
+
+
+def test_a_lakh_tonne_target_is_judged_in_tonnes_apl_apollo_q2fy27():
+    # APL Apollo: "10 lakh tonnes" for Q2FY27 marked MET at 963,143 t, 963,143 >= 10 (memory recall audit, item 84)
+    d = merge(new_dossier(filing("call", Q1)), _volume_target("Q2FY27 volume", "10 lakh tonnes"), filing("call", Q1),
+              "MODERATE", "now")
+    assert d["predictions"][0]["scale"] == 1e5
+    out = output(financial_metrics=[{"metric": "volumes", "period": "Q2FY27", "value": 963143, "unit": "MT"}])
+    after = merge(d, out, filing("q2", Q2), "HIGH", "now")
+    (p,) = after["predictions"]
+    assert p["status"] == "MISSED" and p["actual"] == 963143
+
+
+def test_a_target_in_another_unit_is_not_judged():
+    d = merge(new_dossier(filing("call", Q1)), _volume_target("Q2FY27 volume"), filing("call", Q1), "MODERATE", "now")
+    out = output(financial_metrics=[{"metric": "volumes", "period": "Q2FY27", "value": 963143, "unit": "MT"}])
+    after = merge(d, out, filing("q2", Q2), "HIGH", "now")
+    (p,) = after["predictions"]
+    assert p["status"] == "UNCHECKED"
+    signals = compute(d, after, out, filing("q2", Q2), {}, every=True)
+    assert not any(s["type"] == "PREDICTION_RESOLVED" for s in signals)
+
+
+def test_a_stored_verdict_from_before_the_scale_check_is_withdrawn():
+    d = new_dossier(filing("call", Q1))
+    d["predictions"] = [{"id": "p_1", "metric": "volumes", "period": "Q2FY27", "value": 10.0, "comparison": ">=",
+                         "kpi": "Q2FY27 volume", "created_on": Q1, "source_news_id": "call", "status": "MET",
+                         "actual": 963143.0, "resolved_on": Q2, "resolved_by": "q2"}]
+    after = merge(d, output(financial_metrics=[]), filing("other", Q2), "LOW", "now")
+    assert after["predictions"][0]["status"] == "UNCHECKED"
+
+
+def test_ebitda_per_tonne_is_not_per_share():
+    from bse_intel.models import FinancialMetric
+
+    assert FinancialMetric(metric="ebitda_per_tonne", period="Q2FY27", value=5999, unit="INR_PER_SHARE").unit == "INR"
+    assert FinancialMetric(metric="dividend_per_share", period="Q2FY27", value=5, unit="INR_PER_SHARE").unit == "INR_PER_SHARE"
+    assert FinancialMetric(metric="eps", period="Q2FY27", value=5, unit="INR_PER_SHARE").unit == "INR_PER_SHARE"
+
+
+def test_a_stored_per_share_tonne_is_relabelled_at_the_next_merge():
+    d = new_dossier(filing("q1", Q1))
+    d["financial_metrics"] = [{"metric": "ebitda_per_tonne", "period": "Q1FY27", "value": 931.0, "unit": "INR_PER_SHARE",
+                               "as_of": Q1, "source_news_id": "q1",
+                               "sources": [{"news_id": "q1", "as_of": Q1, "value": 931.0, "unit": "INR_PER_SHARE"}]}]
+    after = merge(d, output(financial_metrics=[]), filing("other", Q2), "LOW", "now")
+    (m,) = [m for m in after["financial_metrics"] if m["metric"] == "ebitda_per_tonne"]
+    assert m["unit"] == "INR" and all(src["unit"] == "INR" for src in m.get("sources", []))
+
+
+def test_review_cases_of_the_unit_check():
+    from bse_intel.dossier import comparable_target, other_measure, target_scale
+    from bse_intel.models import FinancialMetric
+
+    # a real big beat or miss stays judged
+    assert comparable_target({"value": 1200}, {"value": 100, "unit": "INR_CR"}) == 1200
+    assert comparable_target({"value": 30}, {"value": 4, "unit": "PCT"}) == 30
+    # the scale word must follow the target's own figure, and never scales a rate
+    assert target_scale("EBITDA margin 18% with capex of Rs 500 crore", 18) is None
+    assert target_scale("Rs 500 crore capex", 500) == 1e7
+    assert comparable_target({"value": 18, "scale": 1e7}, {"value": 17, "unit": "PCT"}) == 18
+    assert FinancialMetric(metric="earnings_per_equity_share", period="Q2FY27", value=5, unit="INR_PER_SHARE").unit == "INR_PER_SHARE"
+    # another measure (the dry run's Prism Johnson and Schneider)
+    assert other_measure("RMC segment EBITDA", "ebitda") and other_measure("Gross margin recovery", "ebitda_margin")
+    assert not other_measure("EBITDA margin 18%", "ebitda_margin") and not other_measure("Q2FY27 volume", "volumes")

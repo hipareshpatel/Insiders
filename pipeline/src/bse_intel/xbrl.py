@@ -224,8 +224,15 @@ class XbrlResult:
     ownership: Ownership | None = None
     confirmed: bool = True
     template: str = ""                          # the SEBI template filed on: INDAS, NBFC, BANKING, GI, LI
+    # memory-only figures (F166): the profit to minority interests, kept beside the owners' profit it was checked
+    # against. Never in ``metrics``, so no card, prompt, table or check reads it; `memory_metrics` joins the two
+    memory_extra: list[FinancialMetric] = field(default_factory=list)
     ratio_basis: str | None = None              # STANDALONE when a consolidated bank file's ratios came from it
     fy_end_month: int | None = None             # the company's year end, from DateOfEndOfFinancialYear (3 = March)
+
+    def memory_metrics(self) -> list[FinancialMetric]:
+        """What memory stores from this file: the figures a card reads and the memory-only ones (F166)."""
+        return [*self.metrics, *self.memory_extra]
 
     def table(self, explicit_basis: bool = False) -> str:
         """The figures as text for the Pass 2 prompt (and for grounding). `explicit_basis` (CARD_CONSOLIDATED_ONLY, F154)
@@ -656,7 +663,8 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     # EPS takes its period's profit sign: Shivam Autotech's file tags H1FY24 EPS 2.27 beside a loss of ₹27.77 Cr, and
     # memory then read a fall to a loss as "EPS down 177%" (live review 2, 2026-10-20). The owners' profit decides
     # where the file has one (a 0 there is a filler), else the group's.
-    owners_share(values)
+    minority: dict[tuple[str, str], float] = {}
+    owners_share(values, minority)
     eps_signs(values)
     metrics = []
     for (metric, label), value in sorted(values.items(), key=lambda kv: (ends.get(kv[0][1]) or date.min, kv[0][0])):
@@ -670,11 +678,21 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
                                        yoy_pct=yoy, qoq_pct=qoq,
                                        by="calc" if (metric, label) in derived else "file",
                                        derived_from=derived.get((metric, label)), file_basis=basis))
+    extra = []
+    for (metric, label), value in sorted(minority.items(), key=lambda kv: (ends.get(kv[0][1]) or date.min, kv[0][0])):
+        if label not in ends:
+            continue
+        all_values = {**values, **minority}
+        yoy = _change(value, _match(all_values, ends, metric, label, years=1))
+        qoq = _change(value, _match(all_values, ends, metric, label, months=3)) if label.startswith("Q") else None
+        extra.append(FinancialMetric(metric=metric, period=label, value=round(value, 2), unit="INR_CR", yoy_pct=yoy,
+                                     qoq_pct=qoq, by="file", file_basis=basis))
     dates = sorted(instants)
     sheet = _balance_sheet(instants[dates[-1]], dates[-1]) if dates else None
     # the file's own earlier date (March for a half year): like for like by construction, what facts.py compares with
     prior = _balance_sheet(instants[dates[-2]], dates[-2]) if len(dates) > 1 else None
-    return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet, fy_end_month=year_end, balance_prior=prior)
+    return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet, fy_end_month=year_end, balance_prior=prior,
+                      memory_extra=extra)
 
 
 def _pbt_without_associates(values: dict, label: str) -> float | None:
@@ -701,14 +719,15 @@ def _pbt_without_associates(values: dict, label: str) -> float | None:
     return pbt
 
 
-def owners_share(values: dict) -> int:
+def owners_share(values: dict, kept: dict | None = None) -> int:
     """Drop, in place, an owners' profit that its own file's minority share does not add up to. Returns how many.
 
     Adani Ports' Q4FY26 file tags ₹1,238.67 Cr as the profit attributable to owners beside a ₹3,308.30 Cr profit and a
     ₹179.14 Cr minority share: both are the shares of its other comprehensive income (1,417.81), the statement prints
     3,328.96 and (20.66), and the card's headline gave "net profit to shareholders ₹1,238.67 Cr (-58.9%)" (needs-review
     sweep, 2026-10-20). Profit less that minority figure would be wrong too, so the card falls back to the group's
-    profit. The minority figure itself is not kept: no card reads it."""
+    profit. The minority figure is not on the card path; with ``kept`` given (F166) a minority share that does add up
+    to the file's own profit and owners' figures goes into it, {(metric, period): value}, for memory only."""
     changed = 0
     # with no minority share in the file, owners cannot have more than the whole profit: D.B. Corp's Q4FY26 file tags
     # its total comprehensive income ₹63.98 Cr as the owners' profit beside a ₹62.19 Cr profit (held-card audit,
@@ -734,6 +753,8 @@ def owners_share(values: dict) -> int:
         if abs(owners + minority - profit) > max(0.5, 0.01 * abs(profit)):
             values.pop(("pat_owners", label))
             changed += 1
+        elif kept is not None and minority != 0:   # a 0 is the template's filler, not a share
+            kept[("pat_minority", label)] = minority
     return changed
 
 

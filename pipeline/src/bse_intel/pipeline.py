@@ -3658,7 +3658,7 @@ class Pipeline:
                        fy_end_month=getattr(tagged, "fy_end_month", None) if tagged else None)
         if standalone_file is not None and standalone_file.kind == "RESULTS":
             # the same quarter's standalone figures, for the company page's standalone view (never the card's)
-            put_standalone(merged, standalone_file.metrics, standalone_file.balance_sheet, filing.filed_at, filing.news_id)
+            put_standalone(merged, standalone_file.memory_metrics(), standalone_file.balance_sheet, filing.filed_at, filing.news_id)
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector), ("symbol", company.get("symbol") or filing.symbol)) if v})
         if event_type == "CONCALL_PRESENTATION" and not held_now:
             # the call's checked takeaways, kept for the company page's quarterly summary (owner, 2026-10-21: the
@@ -3903,7 +3903,7 @@ class Pipeline:
         merged = merge(dossier, remembered, filing, None, now,
                        fy_end_month=getattr(tagged, "fy_end_month", None) if tagged else None)
         if standalone_file is not None and standalone_file.kind == "RESULTS":
-            put_standalone(merged, standalone_file.metrics, standalone_file.balance_sheet, filing.filed_at, filing.news_id)
+            put_standalone(merged, standalone_file.memory_metrics(), standalone_file.balance_sheet, filing.filed_at, filing.news_id)
         sector = self.prompts.sector_for(industry).name
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector),
                                          ("symbol", company.get("symbol") or filing.symbol)) if v})
@@ -4797,7 +4797,7 @@ def _apply_xbrl(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult", news_id: 
     delta = out.dossier_delta
     exact = {(m.metric, m.period): m for m in tagged.metrics}
     delta.financial_metrics = [m for m in delta.financial_metrics if (m.metric, canonical_period(m.period)) not in exact] \
-        + list(exact.values())
+        + list(exact.values()) + list(getattr(tagged, "memory_extra", None) or [])   # F166: stored, never shown
     if tagged.balance_sheet and not tagged.balance_sheet.is_empty():
         sheet = delta.balance_sheet
         if sheet is None or sheet.is_empty():

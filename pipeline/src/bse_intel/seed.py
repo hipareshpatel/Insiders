@@ -295,7 +295,7 @@ def _seed_standalone(sink, nse, scrip: str, symbol: str, since: str, periods: se
         parsed = _parse_results(data, stats) if data else None
         if parsed is None or parsed.basis == "CONSOLIDATED":
             continue
-        put_standalone(dossier, parsed.metrics, parsed.balance_sheet, f"{row.filed_at[:10]}T18:00:00+05:30",
+        put_standalone(dossier, parsed.memory_metrics(), parsed.balance_sheet, f"{row.filed_at[:10]}T18:00:00+05:30",
                        f"xbrl:res-sa:{scrip}:{period}")
         stats.standalone_periods += 1
     sink.put_dossier(scrip, dossier)
@@ -316,7 +316,7 @@ def _write_results(sink, scrip: str, name: str, company: dict | None, period: st
     """One parsed results file into memory."""
     filing = _filing("res", scrip, name, period, f"{filed_on}T18:00:00+05:30", url)
     out = Pass2Output(is_material=False, timeline_entry="")
-    out.dossier_delta.financial_metrics = list(parsed.metrics)
+    out.dossier_delta.financial_metrics = parsed.memory_metrics() if hasattr(parsed, "memory_metrics") else list(parsed.metrics)
     if parsed.balance_sheet and not parsed.balance_sheet.is_empty():
         out.dossier_delta.balance_sheet = parsed.balance_sheet
     dossier = sink.get_dossier(scrip) or new_dossier(filing, company or {})

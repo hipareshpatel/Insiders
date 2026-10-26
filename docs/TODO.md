@@ -39,6 +39,8 @@ the rows below; F numbers are in `docs/TRACKER.md`.
 - Row 48 `MEMORY_SCREENER` (F161): only after the screener-fill dry run and the owner's look.
 
 **Pending: agreed, not built or not run yet**
+- Memory saves the excise duty and the profit to minority interests (owner 26 Oct, screener-mapping point 8, F166): built
+  and committed, not run on production; old quarters fill only after the full seed-memory reload. No card changes.
 - Row 10 memory labels: step 2 (`label-memory` dry run, then apply) not run; steps 3-5 not built; rows 3 and 16 go with them.
 - Row 13 hold a line the PDF does not print: needs OCR on figure pages and a number normaliser first.
 - The root-cause work list (`docs/audit/root-causes-2026-10-25.md`, top 10 causes) after the memory work.

@@ -282,9 +282,9 @@ export function withoutEps(card: CardBody): CardBody {
     const maps: Record<string, Map<number, number>> = { what_happened: wh.map, why_it_matters: why.map, key_numbers: keys.map,
       notable_changes: changes.map, quantified_impact: quant.map, call_takeaways: calls.map, missing_disclosures: missing.map };
     const fix = <T extends object>(part: T): T => {
-      const next: Record<string, unknown> = { ...part };
+      const next = { ...part } as Record<string, unknown>;
       for (const [name, map] of Object.entries(maps)) if (Array.isArray(next[name])) next[name] = remap(next[name] as number[], map);
-      return next as T;
+      return next as unknown as T;
     };
     out.parts = { ...p, part1: fix(p.part1), part2: fix(p.part2) };
   }

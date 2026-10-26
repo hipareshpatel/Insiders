@@ -109,7 +109,7 @@ def test_total_is_read_once_and_saved_at_exit():
 
 def test_a_full_store_on_start_blocks_puts(monkeypatch):
     sink = FakeSink()
-    sink.objects[xbrl_store.TOTAL_KEY] = json.dumps({"bytes": 100_000_000}).encode()
+    sink.objects[xbrl_store.TOTAL_KEY] = json.dumps({"bytes": 500_000_000}).encode()
     xbrl_store.put(sink, URL, XML)
     assert xbrl_store.key(URL) not in sink.objects
 

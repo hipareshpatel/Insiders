@@ -295,10 +295,12 @@ class AIGateway:
         # reserved for its base is avoided or reserved for it too
         self._base_provider = {name: conf["same_as"] for name, conf in config.get("providers", {}).items()
                                if conf.get("same_as")}
+        own_quota = {name for name, conf in config.get("providers", {}).items() if conf.get("only_routes")}
         config = expand_key_aliases(config, env)
         providers = config.get("providers", {})
         self.reserved = self.reserved | frozenset(
             f"{alias}:{key.split(':', 1)[1]}" for alias, base in self._base_provider.items()
+            if alias not in own_quota   # a key of its own for named routes has a quota of its own, not the cards' reserve
             for key in self.reserved if key.split(":", 1)[0] == base)
         self._day_of = {name: _day_function(pconf.get("quota_tz")) for name, pconf in providers.items()}
         # a ledger row counts for its provider's own day (usage rows for both the UTC day and that day may be passed)

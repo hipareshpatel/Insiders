@@ -9,6 +9,7 @@ from types import SimpleNamespace
 import pytest
 
 from bse_intel import call_memory as cm
+from bse_intel import call_queue
 from bse_intel import cli
 from bse_intel.dossier import merge, new_dossier
 from bse_intel.models import CallMemoryOutput, CallPoint, Filing, Pass2Output
@@ -404,15 +405,148 @@ def test_the_step_does_nothing_with_the_switch_off(monkeypatch, settings):
     assert gateway.calls == [] and "call_memory" not in merged
 
 
-def test_the_step_writes_points_with_the_switch_on_and_a_failure_is_swallowed(monkeypatch, settings):
+def test_the_step_only_queues_the_filing_with_the_switch_on_and_a_failure_is_swallowed(monkeypatch, settings):
     monkeypatch.setenv("MEMORY_CALL_V2", "1")
     filing = _filing("c", "2026-11-10T19:00:00+05:30", "CONCALL_PRESENTATION", "Earnings call transcript")
+    gateway, sink = FakeGateway([_raw(_point())]), KvSink()
     merged = {"scrip_code": "123"}
-    Hook(settings, FakeGateway([_raw(_point())]))._call_memory_step(filing, "Real Estate", merged, TEXT, "")
-    assert [e["news_id"] for e in merged["call_memory"]] == ["c"]
-    failing = {"scrip_code": "123", "call_memory": [{"id": "cm_x", "news_id": "old", "date": "2026-05-01"}]}
-    Hook(settings, FakeGateway([], fail=True))._call_memory_step(filing, "Real Estate", failing, TEXT, "")   # logged, nothing raised
-    assert [e["id"] for e in failing["call_memory"]] == ["cm_x"]
+    hook = Hook(settings, gateway)
+    hook.sink = sink
+    hook._call_memory_step(filing, "Real Estate", merged, TEXT, "")
+    assert gateway.calls == [] and "call_memory" not in merged   # no AI call, memory untouched
+    assert [i["news_id"] for i in call_queue.pending(sink)] == ["c"]
+    item = call_queue.pending(sink)[0]
+    assert item["scrip"] == "123" and item["filed_at"] == "2026-11-10T19:00:00+05:30"
+    hook._call_memory_step(filing, "Real Estate", merged, TEXT, "")   # queued twice is one entry
+    assert len(call_queue.pending(sink)) == 1
+    hook.sink = SimpleNamespace(kv_get=lambda k: (_ for _ in ()).throw(RuntimeError("D1 down")))
+    hook._call_memory_step(filing, "Real Estate", merged, TEXT, "")   # logged, nothing raised
+
+
+class KvSink(FakeSink):
+    def __init__(self, texts=None, dossier=None, filings=None):
+        super().__init__(texts or {}, dossier, filings or [])
+        self.kv = {}
+
+    def kv_get(self, key):
+        return self.kv.get(key)
+
+    def kv_set(self, key, value, updated_at):
+        self.kv[key] = value
+
+
+def _queued_world(settings):
+    world = _world(settings)
+    sink = KvSink(world.texts, world.dossier, world.filings)
+    return sink
+
+
+def _pending_args(tmp_path, **kw):
+    return SimpleNamespace(ids=None, out=str(tmp_path / "o"), apply=True, pending=True, time_budget=1500, limit=0, **kw)
+
+
+def test_pending_reads_the_queue_writes_points_and_clears_the_filing(monkeypatch, settings, tmp_path):
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    sink = _queued_world(settings)
+    call_queue.enqueue(sink, "call-2", "123", "2026-11-10T19:00:00+05:30")
+    gateway = FakeGateway([_raw(_point())])
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=gateway, prompts=PromptEngine(s)))
+    assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 0
+    assert [e["news_id"] for e in sink.dossier["call_memory"]] == ["call-2"] and len(gateway.calls) == 1
+    assert call_queue.pending(sink) == []
+    assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 0 and len(gateway.calls) == 1   # nothing left to read
+
+
+def test_pending_does_nothing_with_the_switch_off_or_an_empty_queue(monkeypatch, settings, tmp_path):
+    sink = _queued_world(settings)
+    call_queue.enqueue(sink, "call-2", "123", "x")
+    called = []
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: called.append(1))
+    monkeypatch.delenv("MEMORY_CALL_V2", raising=False)
+    assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 0
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    assert cli.cmd_call_memory(_pending_args(tmp_path), settings, _queued_world(settings)) == 0
+    assert called == [] and len(call_queue.pending(sink)) == 1
+
+
+def test_a_transient_failure_stays_queued_and_is_given_up_after_three_attempts(monkeypatch, settings, tmp_path):
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    sink = _queued_world(settings)
+    call_queue.enqueue(sink, "call-2", "123", "x")
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=FakeGateway([], fail=True), prompts=PromptEngine(s)))
+    for attempt in (1, 2):
+        assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 124   # left in the queue
+        assert [i["attempts"] for i in call_queue.pending(sink)] == [attempt]
+    assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 0   # third failure: given up, nothing left
+    assert call_queue.pending(sink) == [] and sink.puts == []
+    states = json.loads(next(v for k, v in sink.kv.items() if k.startswith("callmem:s:")))
+    assert states["call-2"]["state"] == "gave_up" and states["call-2"]["attempts"] == 3 and "every provider failed" in states["call-2"]["reason"]
+
+
+def test_a_permanent_failure_leaves_the_queue_at_once_with_its_reason(monkeypatch, settings, tmp_path):
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    sink = _queued_world(settings)
+    call_queue.enqueue(sink, "call-missing", "123", "x")
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=FakeGateway([]), prompts=PromptEngine(s)))
+    assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 0
+    states = json.loads(next(v for k, v in sink.kv.items() if k.startswith("callmem:s:")))
+    assert states["call-missing"] == {**states["call-missing"], "state": "gave_up", "attempts": 0, "reason": "LookupError: no stored text"}
+    assert call_queue.pending(sink) == []
+
+
+def test_a_rerun_of_a_read_filing_is_queued_again(monkeypatch, settings):
+    sink = KvSink()
+    call_queue.enqueue(sink, "a", "1", "x")
+    call_queue.settle(sink, call_queue.pending(sink)[0], "done")
+    assert call_queue.pending(sink) == []
+    call_queue.enqueue(sink, "a", "1", "x")
+    assert [i["news_id"] for i in call_queue.pending(sink)] == ["a"]
+
+
+def test_the_time_budget_stops_the_queue_with_exit_124(monkeypatch, settings, tmp_path):
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    sink = _queued_world(settings)
+    for n in ("call-2", "call-1"):
+        call_queue.enqueue(sink, n, "123", "x")
+    gateway = FakeGateway([_raw(_point())])
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=gateway, prompts=PromptEngine(s)))
+    clock = iter([0.0, 0.0, 5000.0, 5000.0, 5000.0, 5000.0])
+    monkeypatch.setattr(cli.time, "monotonic", lambda: next(clock, 5000.0))
+    args = _pending_args(tmp_path)
+    args.time_budget = 100
+    assert cli.cmd_call_memory(args, settings, sink) == 124
+    assert len(gateway.calls) == 1 and [i["news_id"] for i in call_queue.pending(sink)] == ["call-1"]
+
+
+def test_the_limit_caps_the_filings_read(monkeypatch, settings, tmp_path):
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    sink = _queued_world(settings)
+    for n in ("call-2", "call-1"):
+        call_queue.enqueue(sink, n, "123", "x")
+    gateway = FakeGateway([_raw(_point())])
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=gateway, prompts=PromptEngine(s)))
+    args = _pending_args(tmp_path)
+    args.limit = 1
+    cli.cmd_call_memory(args, settings, sink)
+    assert len(gateway.calls) == 1
+
+
+def test_gemini_3_serves_call_memory_with_the_cards_key_absent_and_has_no_live_reserve():
+    import tomllib
+    from pathlib import Path
+
+    from bse_intel.ai.gateway import AIGateway
+
+    config = tomllib.loads((Path(cli.__file__).parents[2] / "config" / "providers.toml").read_text())
+    env = {"GEMINI_API_KEY_3": "k3", "NVIDIA_API_KEY": "n"}   # what call-memory.yml passes: no GEMINI_API_KEY
+    gateway = AIGateway(config, client_factory=lambda *a, **k: None, env=env)
+    entries = gateway.routes["call_memory"]
+    assert {t.provider for t in entries} == {"gemini_3", "nvidia"}
+    live = [t for t in entries if t.api_key]
+    assert {t.provider for t in live} == {"gemini_3", "nvidia"}
+    assert not any(t.provider == "gemini" for t in gateway.routes["pass2"] if t.api_key)
+    assert not any(gateway.reserved_for_live(t) for t in entries if t.provider == "gemini_3")   # its own quota, not the cards' reserve
+    assert all(t.provider != "gemini_3" for r, ts in gateway.routes.items() if r != "call_memory" for t in ts)
 
 
 # ---------------------------------------------------------------- the independent review's cases (F180)

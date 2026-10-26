@@ -45,7 +45,7 @@ from .ocr import page_reader, recognise
 from . import raw
 from . import stages
 from . import order_band
-from . import call_memory, gate, two_parts
+from . import call_memory, call_queue, gate, two_parts
 from .currency import CODES as CURRENCY_CODES
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
@@ -3966,20 +3966,15 @@ class Pipeline:
     def _call_memory_step(self, filing: Filing, industry, merged: dict, text: str, blocks: str) -> None:
         """MEMORY_CALL_V2 (F180): the call or deck's own memory reading (call_memory.py), its checked points into
         ``merged["call_memory"]`` just before the memory write. Off, or any failure, leaves memory and the card as they were:
-        the points wait for a re-run of `call-memory --ids`."""
+        the points wait for a re-run of `call-memory --ids`. On, it only queues the filing (call_queue.py); the reading is the
+        job `call-memory --pending`."""
         if not memory_call_v2():
             return
         try:
-            prior = call_memory.prior_points(merged, filing.news_id, filing.filed_at)
-            out = call_memory.read(self.gateway, self.prompts, filing, "transcript" if is_transcript(filing) else "deck",
-                                   industry, text, blocks, prior, call_memory.paid_providers(self.settings))
-            points, dropped = call_memory.check_points(out.points, text, blocks, scope=f"{filing.scrip_code}:{filing.news_id}")
-            if points:   # an empty or failed reading never wipes the points an earlier reading kept (review of F180)
-                call_memory.remember(merged, filing.news_id, filing.filed_at, points)
-            log.info("%s: call memory by %s: %d points kept, %d dropped (%s)", filing.news_id, out.served_by, len(points),
-                     len(dropped), ", ".join(sorted({d["reason"] for d in dropped})) or "none")
-        except Exception as exc:   # noqa: BLE001 - the card and the rest of memory go on
-            log.warning("%s: call memory failed, the card stands: %s", filing.news_id, exc)
+            # the reading itself is a queued job (call-memory --pending, call-memory.yml): a slow reply never holds the cards
+            call_queue.enqueue(self.sink, filing.news_id, filing.scrip_code, filing.filed_at)
+        except Exception as exc:   # noqa: BLE001 - the card goes on; `call-memory --ids` reads it later
+            log.warning("%s: call memory not queued, the card stands: %s", filing.news_id, exc)
 
     def _pass2_writer(self, bulk: bool, prompt_chars: int):
         """(route, packer or None) for one filing's pass 2. A live filing and a backfill one never share a pack, and a

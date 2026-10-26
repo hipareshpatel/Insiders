@@ -815,18 +815,121 @@ def cmd_memory_recall_export(args, settings, sink) -> int:
     return 0 if index["sampled"] else 1
 
 
-def cmd_call_memory(args, settings, sink) -> int:
-    """The call-memory reading (call_memory.py, TODO 83) of the named transcripts and decks: the stored text and the company's
-    memory in, the checked points and every dropped point with its reason out, one file a document and a summary.json. Without
-    --apply nothing is written to memory (the measurement run: maintenance, read only); with it the points are merged into
-    the dossier's `call_memory` through the same three-way write the pipeline uses. Free providers only."""
+def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path | None, read_text, paid) -> dict:
+    """One transcript or deck through the call-memory reading and its checks (call_memory.py); with `apply` the kept points
+    are merged into the dossier's `call_memory` by the three-way write the pipeline uses. Returns the report row. A document
+    that can never be read (no stored text, not in the ledger, an invitation) raises LookupError; any other error is transient."""
     from . import call_memory, memory_recall_export as mre
     from .dossier import keep_concurrent_writes
     from .extract import Document
 
+    row: dict = {"news_id": news_id}
+    data = read_text(news_id)
+    filing = call_memory.find_filing(sink, news_id)
+    if not data or filing is None:
+        raise LookupError("no stored text" if not data else "not in the filings ledger")
+    text, _ = mre.render_text(data)
+    doc = Document.from_cache(data)
+    blocks = doc.block_text(range(doc.page_count))
+    dossier = sink.get_dossier(filing.scrip_code) or {}
+    industry = dossier.get("industry") or (sink.company(filing.scrip_code) or {}).get("industry")
+    kind = mre.kind_from_text(data, filing.headline)
+    if kind == "invitation":
+        raise LookupError("an invitation to a call, not a transcript or deck")
+    prior = call_memory.prior_points(dossier, news_id, filing.filed_at)
+    started = time.monotonic()
+    reply = call_memory.read(pipeline.gateway, pipeline.prompts, filing, kind, industry, text, blocks, prior, paid)
+    kept, dropped = call_memory.check_points(reply.points, text, blocks, scope=f"{filing.scrip_code}:{news_id}")
+    row |= {"symbol": filing.symbol, "company": filing.company_name, "filed_at": filing.filed_at, "kind": kind,
+            "model": reply.served_by, "chars": len(text), "prompt_chars": reply.prompt_chars, "pages": doc.page_count,
+            "seconds": round(time.monotonic() - started, 1), "asked": len(reply.points), "kept": len(kept),
+            "dropped": len(dropped), "counts_by_type": call_memory.counts_by_type(kept),
+            "dropped_by_reason": {r: sum(d["reason"] == r for d in dropped) for r in sorted({d["reason"] for d in dropped})},
+            "prior_points": len(prior), "reason": reply.reason, "applied": False, "parts": reply.parts,
+            "parts_failed": reply.parts_failed, "assembled_quotes": sum(p.quote_assembled for p in kept)}
+    if apply and kept:
+        merged = json.loads(json.dumps(dossier))
+        call_memory.remember(merged, news_id, filing.filed_at, kept)
+        fresh = sink.get_dossier(filing.scrip_code)
+        held = keep_concurrent_writes(merged, dossier, fresh)
+        if held:
+            logging.getLogger(__name__).info("%s: memory written meanwhile by another job kept: %s", news_id, ", ".join(held))
+        sink.put_dossier(filing.scrip_code, merged)
+        row["applied"] = True
+    if out_dir is not None:
+        (out_dir / f"{mre._folder_name(news_id)}.json").write_text(json.dumps(
+            {**row, "points_kept": [p.model_dump(exclude_none=True) for p in kept], "points_dropped": dropped},
+            ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return row
+
+
+def _call_memory_pending(args, settings, sink) -> int:
+    """`call-memory --pending`: the queue the pipeline fills with MEMORY_CALL_V2 on (call_queue.py), oldest first. A filing
+    leaves the queue once its points are written (or the reading has none), or on a permanent failure (no stored text, an
+    invitation) with its reason; a transient failure leaves it queued with an attempt counted, given up after
+    call_queue.MAX_ATTEMPTS. Stops at the time budget; exit 124 when filings are left."""
+    from . import call_memory, call_queue, memory_recall_export as mre
+    from .settings import memory_call_v2
+
+    if not memory_call_v2():
+        print("MEMORY_CALL_V2 is off: nothing to read")
+        return 0
+    items = call_queue.pending(sink)
+    if args.limit:
+        items = items[:args.limit]
+    if not items:
+        print("call memory queue is empty")
+        return 0
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    deadline = time.monotonic() + args.time_budget
+    pipeline = _pipeline(settings, sink)
+    paid = call_memory.paid_providers(settings)
+    read_text = mre.read_text_from(sink)
+    counts = {"done": 0, "gave_up": 0, "retry": 0}
+    left = 0
+    for n, item in enumerate(items):
+        if time.monotonic() >= deadline:
+            left = len(items) - n
+            break
+        news_id = item["news_id"]
+        reason = None
+        try:
+            row = _read_call_document(pipeline, sink, news_id, args.apply, out_dir, read_text, paid)
+            state = "done"
+            print(json.dumps({k: row.get(k) for k in ("news_id", "symbol", "kind", "model", "asked", "kept", "dropped")}, ensure_ascii=False))
+        except LookupError as exc:   # permanent: nothing to read now or later
+            state, reason = "gave_up", f"LookupError: {exc}"
+        except Exception as exc:   # noqa: BLE001 - one document never stops the rest; a transient failure is retried
+            state, reason = "retry", f"{type(exc).__name__}: {exc}"
+        if state != "done":
+            print(json.dumps({"news_id": news_id, "state": state, "error": reason}, ensure_ascii=False))
+        if not args.apply:
+            continue   # a measurement run changes no queue state
+        try:
+            state = call_queue.settle(sink, item, state, reason)
+        except Exception as exc:   # noqa: BLE001 - the points are written; the entry is read again, which replaces them
+            log.warning("%s: queue state not saved: %s", news_id, exc)
+        counts[state] += 1
+        if state == "retry":
+            left += 1
+    print(json.dumps({"queue": len(items), **counts, "left": left}))
+    return MORE_LEFT if left else 0
+
+
+def cmd_call_memory(args, settings, sink) -> int:
+    """The call-memory reading (call_memory.py, TODO 83) of the named transcripts and decks: the stored text and the company's
+    memory in, the checked points and every dropped point with its reason out, one file a document and a summary.json. Without
+    --apply nothing is written to memory (the measurement run: maintenance, read only); with it the points are merged into
+    the dossier's `call_memory` through the same three-way write the pipeline uses. Free providers only.
+    `--pending` reads the queue instead of named ids (_call_memory_pending)."""
+    from . import call_memory, memory_recall_export as mre
+
+    if getattr(args, "pending", False):
+        return _call_memory_pending(args, settings, sink)
     ids = [i.strip() for i in (args.ids or "").replace("\n", ",").split(",") if i.strip()]
     if not ids:
-        print("No filings: give --ids news_id,news_id")
+        print("No filings: give --ids news_id,news_id (or --pending)")
         return 2
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -837,41 +940,7 @@ def cmd_call_memory(args, settings, sink) -> int:
     for news_id in ids:
         row: dict = {"news_id": news_id}
         try:
-            data = read_text(news_id)
-            filing = call_memory.find_filing(sink, news_id)
-            if not data or filing is None:
-                raise LookupError("no stored text" if not data else "not in the filings ledger")
-            text, _ = mre.render_text(data)
-            doc = Document.from_cache(data)
-            blocks = doc.block_text(range(doc.page_count))
-            dossier = sink.get_dossier(filing.scrip_code) or {}
-            industry = dossier.get("industry") or (sink.company(filing.scrip_code) or {}).get("industry")
-            kind = mre.kind_from_text(data, filing.headline)
-            if kind == "invitation":
-                raise LookupError("an invitation to a call, not a transcript or deck")
-            prior = call_memory.prior_points(dossier, news_id, filing.filed_at)
-            started = time.monotonic()
-            reply = call_memory.read(pipeline.gateway, pipeline.prompts, filing, kind, industry, text, blocks, prior, paid)
-            kept, dropped = call_memory.check_points(reply.points, text, blocks, scope=f"{filing.scrip_code}:{news_id}")
-            row |= {"symbol": filing.symbol, "company": filing.company_name, "filed_at": filing.filed_at, "kind": kind,
-                    "model": reply.served_by, "chars": len(text), "prompt_chars": reply.prompt_chars, "pages": doc.page_count,
-                    "seconds": round(time.monotonic() - started, 1), "asked": len(reply.points), "kept": len(kept),
-                    "dropped": len(dropped), "counts_by_type": call_memory.counts_by_type(kept),
-                    "dropped_by_reason": {r: sum(d["reason"] == r for d in dropped) for r in sorted({d["reason"] for d in dropped})},
-                    "prior_points": len(prior), "reason": reply.reason, "applied": False, "parts": reply.parts,
-                    "parts_failed": reply.parts_failed, "assembled_quotes": sum(p.quote_assembled for p in kept)}
-            if args.apply and kept:
-                merged = json.loads(json.dumps(dossier))
-                call_memory.remember(merged, news_id, filing.filed_at, kept)
-                fresh = sink.get_dossier(filing.scrip_code)
-                held = keep_concurrent_writes(merged, dossier, fresh)
-                if held:
-                    logging.getLogger(__name__).info("%s: memory written meanwhile by another job kept: %s", news_id, ", ".join(held))
-                sink.put_dossier(filing.scrip_code, merged)
-                row["applied"] = True
-            (out_dir / f"{mre._folder_name(news_id)}.json").write_text(json.dumps(
-                {**row, "points_kept": [p.model_dump(exclude_none=True) for p in kept], "points_dropped": dropped},
-                ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+            row = _read_call_document(pipeline, sink, news_id, args.apply, out_dir, read_text, paid)
         except Exception as exc:   # noqa: BLE001 - one document never stops the rest
             row["error"] = f"{type(exc).__name__}: {exc}"[:300]
         report.append(row)
@@ -1651,6 +1720,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--ids", help="news ids, comma separated")
     p.add_argument("--out", default="call-memory", help="folder to write (one <news_id>.json each, summary.json)")
     p.add_argument("--apply", action="store_true", help="also merge the points into each company's memory (call_memory)")
+    p.add_argument("--pending", action="store_true", help="read the queue the pipeline fills with MEMORY_CALL_V2 on, oldest first; exit 124 when filings are left")
+    p.add_argument("--time-budget", type=int, default=1500, help="seconds; with --pending, no new filing starts after it")
+    p.add_argument("--limit", type=int, default=0, help="with --pending, at most this many filings (0 = all)")
     p.set_defaults(func=cmd_call_memory)
 
     p = sub.add_parser("prediction-units", help="stored targets judged in two different units, and per-share units on other figures (read only, no AI)")

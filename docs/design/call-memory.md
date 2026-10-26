@@ -118,6 +118,23 @@ OpenRouter 429); the 2 read were far fuller than run 1 (Onward 18 points kept ag
 so a slow reply never holds the cards), and (2) its Gemini requests move to a project of their own (owner's offer, 26 Oct),
 so they never share the cards' 20-a-day Flash quota.
 
+**The queued job** (built 26 Oct, behind `MEMORY_CALL_V2`, default off; with it off nothing changes). With the switch on the
+pipeline step makes no AI call: it adds the filing's news id, scrip code and filing time to a queue kept in the sink's kv
+table (`call_queue.py`). The kv table cannot list or delete, so the queue is two sets of keys with one writer each:
+`callmem:q:<UTC day>` (the pipeline only: a read, add and write of one key under a lock, re-read just before the write; the
+pipeline runs one at a time) and `callmem:s:<UTC day>` (the job only, one at a time: done, gave_up or retry with an attempt
+count and the reason). A filing is pending until its state is done or gave_up for its latest enqueue, so a re-run of a
+filing queues it again. The job looks back 14 days. `call-memory --pending [--apply] [--time-budget S] [--limit N]` reads
+the queue oldest first with the same per-document code as `--ids`; a filing leaves the queue only after its points are
+written (an empty reading counts) or on a permanent failure (no stored text, not in the ledger, an invitation) with its
+reason; a transient failure (every provider failed, a write error) leaves it queued with an attempt counted and is given up
+after 3; at the time budget it stops and exits 124 (filings left). Without `--apply` it reads and changes no queue state.
+`.github/workflows/call-memory.yml` runs it every 30 minutes in its own concurrency group (never cancelled), skipped unless
+the repository variable `MEMORY_CALL_V2` is `1`, with `GEMINI_API_KEY_3` and `NVIDIA_API_KEY` only (the cards' Gemini keys and
+DeepSeek are not passed). The gateway builds without the base `GEMINI_API_KEY`: `gemini_3` is live on its own key, takes the
+Gemini entries of the `call_memory` route, and (fixed with this job) is not held back by the cards' live reserve, because its
+quota is its own.
+
 ## Measurement before the switch goes on (owner's Yes, 26 Oct 2026)
 
 `call-memory --ids ... --out DIR` (maintenance, read only: reads the stored text and memory, calls the AI, writes the

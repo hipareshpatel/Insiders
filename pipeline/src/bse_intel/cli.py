@@ -1368,6 +1368,20 @@ def cmd_screener_explain(args, settings, sink) -> int:
     return 124 if outcome["out_of_time"] else 0
 
 
+def _referee_writer(args):
+    """Writes the referee's JSON, CSV and markdown; called with the summary so far and at the end."""
+    from . import screener_xbrl_referee as sx
+
+    def write(outcome: dict) -> None:
+        if args.json:
+            Path(args.json).write_text(sx.to_json(outcome), encoding="utf-8")
+        if args.csv:
+            Path(args.csv).write_text(sx.to_csv(outcome), encoding="utf-8")
+        if args.md:
+            Path(args.md).write_text(sx.to_markdown(outcome, today_ist().isoformat()), encoding="utf-8")
+    return write
+
+
 def cmd_screener_referee(args, settings, sink) -> int:
     """Read-only: NSE's own results XBRL as the referee of the screener cross-check (screener_xbrl_referee.py). The
     cross-check is worked out again from R2 and memory (no request), then each disagreeing pair is looked up in the period's
@@ -1382,15 +1396,11 @@ def cmd_screener_referee(args, settings, sink) -> int:
         print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
         return 2
     summary = sc.run(sink, companies, args.day, args.workers, False)
+    write = _referee_writer(args)
     with NseClient() as nse:
-        outcome = sx.run(nse, summary["rows"], args.limit, args.time_budget, sink=sink)
+        outcome = sx.run(nse, summary["rows"], args.limit, args.time_budget, sink=sink, progress=write)
     print(sx.render(outcome))
-    if args.json:
-        Path(args.json).write_text(sx.to_json(outcome), encoding="utf-8")
-    if args.csv:
-        Path(args.csv).write_text(sx.to_csv(outcome), encoding="utf-8")
-    if args.md:
-        Path(args.md).write_text(sx.to_markdown(outcome, today_ist().isoformat()), encoding="utf-8")
+    write(outcome)
     if outcome["blocked"]:
         return REFUSED
     return 124 if outcome["out_of_time"] else 0
@@ -1420,15 +1430,11 @@ def cmd_tijori_referee(args, settings, sink) -> int:
         return 2
     rows = tijori_referee_rows(tc.run(sink, companies, args.day, args.workers)["rows"])
     print(f"tijori-referee: {len(rows)} pairs to look up")
+    write = _referee_writer(args)
     with NseClient() as nse:
-        outcome = sx.run(nse, rows, args.limit, args.time_budget, sink=sink)
+        outcome = sx.run(nse, rows, args.limit, args.time_budget, sink=sink, progress=write)
     print(sx.render(outcome))
-    if args.json:
-        Path(args.json).write_text(sx.to_json(outcome), encoding="utf-8")
-    if args.csv:
-        Path(args.csv).write_text(sx.to_csv(outcome), encoding="utf-8")
-    if args.md:
-        Path(args.md).write_text(sx.to_markdown(outcome, today_ist().isoformat()), encoding="utf-8")
+    write(outcome)
     if outcome["blocked"]:
         return REFUSED
     return 124 if outcome["out_of_time"] else 0

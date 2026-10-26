@@ -242,9 +242,11 @@ def disagreeing(rows: list[dict]) -> list[dict]:
 
 
 def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | None = None, clock=time.monotonic,
-        sink=None) -> dict:
+        sink=None, progress=None, every: int = 20) -> dict:
     """Referee the disagreeing pairs among the cross-check's ``rows``, company by company. ``limit`` caps the pairs
-    refereed (a company is not split: the one that crosses the cap is finished); pairs left over are ``not_run``."""
+    refereed (a company is not split: the one that crosses the cap is finished); pairs left over are ``not_run``.
+    ``progress`` (optional) gets the summary so far every ``every`` companies, so a run stopped by hand keeps its work
+    (26 Oct 2026: a cancelled 2 h run had written nothing)."""
     pairs = disagreeing(rows)
     by_company: dict[tuple[str, str, str], list[dict]] = {}
     for r in pairs:
@@ -279,6 +281,8 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
                 results.append(not_run(r, "blocked"))
         calls["list"] += files.calls["list"]
         calls["files"] += files.calls["files"]
+        if progress and calls["companies"] % every == 0:
+            progress(summarise(results, calls, blocked, out_of_time))
     return summarise(results, calls, blocked, out_of_time)
 
 

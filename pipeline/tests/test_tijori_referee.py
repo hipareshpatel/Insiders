@@ -23,3 +23,17 @@ def test_revenue_and_profit_leads_and_every_sign_difference_go_to_the_referee():
 def test_every_wrong_quarter_pair_goes_to_the_referee_lead_or_not():
     picked = tijori_referee_rows([_row("pat", "wrong_quarter", False), _row("eps", "mismatch", False)])
     assert [(r["metric"], r["class"]) for r in picked] == [("pat", "wrong_quarter")]
+
+
+def test_the_referee_reports_its_progress_so_a_stopped_run_keeps_its_work():
+    from bse_intel import screener_xbrl_referee as sx
+
+    class Nse:
+        def financial_results(self, symbol):
+            return []
+
+    rows = [{"scrip": f"s{i}", "symbol": f"S{i}", "basis": "consolidated", "period": "Q1FY27", "metric": "pat",
+             "class": "mismatch", "memory_value": 1.0, "screener_value": 2.0} for i in range(5)]
+    seen = []
+    sx.run(Nse(), rows, progress=lambda o: seen.append(len(o["rows"])), every=2)
+    assert seen == [2, 4]

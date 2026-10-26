@@ -104,6 +104,16 @@ def card_grounded_figures() -> bool:
     return (_env("CARD_GROUNDED_FIGURES", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_guidance_dated() -> bool:
+    """CARD_GUIDANCE_DATED (default off; F156; owner, 26 Oct 2026): a guidance verdict (delivered, on track, delayed,
+    missed) is made only from a memory target that has its own date (not before the day it was said), is due for the
+    period this filing reports, and is for a metric this filing prints a figure for. Castrol India's "medium term"
+    EBITDA margin band and one stored as due FY26 in August 2026 were "missed" on a Q2FY27 card; Union Bank's FCNR target
+    was "missed" by a filing that never mentions FCNR. Otherwise no verdict: a dated "management said X on <date>" line
+    stands instead (a KPI watch item follows the same rule). Read at the call."""
+    return (_env("CARD_GUIDANCE_DATED", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_consolidated_only() -> bool:
     """CARD_CONSOLIDATED_ONLY (default off; TODO 44, F154; owner, 25 Oct 2026: consolidated first, standalone kept from the
     AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the

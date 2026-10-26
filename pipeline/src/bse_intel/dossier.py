@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import card_ebitda_profit_v2, card_grounded_figures, card_same_definition, memory_restated, memory_screener
+from .settings import card_ebitda_profit_v2, card_grounded_figures, card_guidance_dated, card_same_definition, memory_restated, memory_screener
 from .models import Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -1155,6 +1155,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if update.status == "ON_TRACK" and g.get("due_date") and judged_on(g.get("due"), g["due_date"]) < as_of[:10]:
             continue  # past its deadline a promise is delivered or missed, not on track ("2 MLPD by FY26" in Q2FY27);
             # a period's deadline passes when its results are due, not at its end (O12, owner 2026-10-20)
+        if card_guidance_dated() and update.status in ("DELIVERED", "ON_TRACK", "DELAYED", "MISSED"):
+            from .guidance_dated import why_no_verdict
+            if why_no_verdict(g, d["financial_metrics"], news_id):
+                continue  # F156: no verdict from an undated target or one for another period or metric; it stays as said
         g["status_history"] = sorted(
             g.get("status_history", []) + [{
                 "status": update.status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,

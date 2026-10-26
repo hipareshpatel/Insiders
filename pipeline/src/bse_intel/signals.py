@@ -31,6 +31,7 @@ from . import eps_adjust
 from .dossier import approval_granted, watch_verdict, deal_state, is_recap, reported_by, same_deal
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period, results_due
+from .settings import card_guidance_dated
 
 STRAIN_GAP_PP = 15.0      # receivable/inventory growth minus revenue growth, percentage points
 MAX_OVERDUE_SIGNALS = 2
@@ -279,12 +280,20 @@ def _own_latest(after: dict, news_id: str) -> list[dict]:
 
 def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Filing) -> list[Signal]:
     out: list[Signal] = []
+    dated = card_guidance_dated()   # F156: a verdict only from a dated target for this filing's period and metric
+    if dated:
+        from .guidance_dated import said_on, why_no_verdict, why_no_watch_verdict
     known = {g["id"]: g for g in (before or {}).get("guidance", []) if g.get("given_on", "") < filing.filed_at}
     for update in output.dossier_delta.promise_updates:
         g = known.get(update.guidance_id)
         if not g:
             continue
         when = g.get("given_on", "")[:10]
+        if dated and update.status in ("DELIVERED", "DELAYED", "MISSED"):
+            why = why_no_verdict(g, after.get("financial_metrics", []), filing.news_id)
+            if why:
+                out.append(Signal("WATCH_RESOLVED", "INFO", said_on(g, why), g["id"]))
+                continue
         if update.status == "DELIVERED":
             out.append(Signal("PROMISE_DELIVERED", "POSITIVE",
                               f"\"{g['statement']}\" (guided {when}). {update.evidence}".strip(), g["id"]))
@@ -301,6 +310,11 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
         status = watch_verdict(w, update.status, update.evidence, filing.filed_at)
         if status == "PENDING":
             continue  # no news, another item's news, or an earlier quarter's figure
+        if dated and status in ("MET", "MISSED"):
+            why = why_no_watch_verdict(w, after.get("financial_metrics", []), filing.news_id)
+            if why:
+                out.append(Signal("WATCH_RESOLVED", "INFO", said_on(w, why), w["id"]))
+                continue
         severity = {"MET": "POSITIVE", "MISSED": "WARNING"}.get(status, "INFO")
         label = {"KPI": "KPI check", "APPROVAL": "Approval", "CONCERN": "Concern"}.get(w["kind"], "Watch item")
         out.append(Signal("WATCH_RESOLVED", severity,
@@ -325,6 +339,10 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
         and g["id"] not in touched and g.get("given_on", "") < filing.filed_at and not (last and last > _judged_on(g))
     ]
     for g in sorted(overdue, key=lambda g: g["due_date"])[:MAX_OVERDUE_SIGNALS]:
+        why = why_no_verdict(g, after.get("financial_metrics", []), filing.news_id) if dated else None
+        if why:
+            out.append(Signal("WATCH_RESOLVED", "INFO", said_on(g, why), g["id"]))
+            continue
         out.append(Signal("GUIDANCE_BREACH", "WARNING",
                           f"Deadline passed: \"{g['statement']}\" was due {g['due']}, with no delivery on record.",
                           g["id"]))

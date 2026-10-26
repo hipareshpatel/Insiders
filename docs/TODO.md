@@ -12,7 +12,7 @@ tokens. How it works:
 This list holds only the first-principles review's items (`docs/FROM_ZERO.md`). The older lists stay where they are:
 `docs/PLAN.md` "Pending work" and `docs/TASKS.md`.
 
-## Status board (26 Oct 2026, 7 AM IST): done, running, pending, waiting
+## Status board (26 Oct 2026, 11 AM IST): done, running, pending, waiting
 
 The owner asked (26 Oct) for one view of everything, the lead session's items as well as the owner's. Row numbers are
 the rows below; F numbers are in `docs/TRACKER.md`.
@@ -22,47 +22,52 @@ the rows below; F numbers are in `docs/TRACKER.md`.
 - Row 23 official XBRL sums (F140); row 22 metrics table (F141); row 12 group EBITDA without associates (F137).
 - Row 43 EPS across splits and bonuses (F153), switched on as a live fix (29 published cards were wrong).
 - Row 45: 2,496 companies not on NSE removed on 26 Oct (backup `backup/prune-companies-2026-10-26.json` in R2); kept
-  131 BSE-only companies of 500 Cr or more and the 2 with cards (Lehar Footwears, Andhra Petrochemicals).
+  131 BSE-only companies of 500 Cr or more and the 2 with cards (Lehar Footwears, Andhra Petrochemicals). BSE check
+  (F160): all 131 answer and are active, 118 still 500 Cr or more; the 13 below are left as they are (owner).
 - Memory fixes F155, F157; two filing crashes F159 (JSWENERGY, LTF re-queued); failed-filings report read 26 Oct.
+- Row 50 screener download (F163): 3,708 pages in R2. Terminology map: `docs/design/screener-mapping.md`.
+- Queue fix (F164): jobs by source side by side, each starting the next one (`then`); lead checks every 10 minutes.
+- Memory-gaps fill with the F157 fixes (run 40260768382, 4 shards, 1 h 26 min).
+- Row 10 step 2: old memory labelled (run 40268366548): 1,861 of 1,866 companies; results lines 663,978 from the
+  exchange file, 57,653 our calculation, 6,743 our AI, 137,756 unknown (older entries, counted as AI).
+- Row 55 NSE speed test (F168, run 40269677400): the archive host refused nothing at any pace (3-5 s 14 files a
+  minute, 0 s 172, four at once 705); NSE's all-company list found only 1,123 of 4,297 files, so row 42 does not
+  replace the per-company listing.
+- F169: the archive host has its own pace; `maintenance.yml` downloads with no pause on the seed, the gap fill and
+  fill-memory's shareholding and governance steps (owner "go", 26 Oct). Listing on NSE's main site keeps 3-5 s.
 
-**Running now (26 Oct)**
-- BSE check of the 131 kept companies (row 47's first step, F160): is BSE answering, still traded, market cap, last
-  announcement.
-- Screener download of every company's two pages into R2 (row 50, F163), about 1 h 45 min, own queue.
-- Then, one after another: the precision measurement (row 46), memory-gaps fill with the F157 fixes, a full seed-memory
-  reload (covers the F155 re-seed list).
+**Running now (26 Oct, one after another)**
+- Screener cross-check (row 50), then the full seed-memory reload (12 lanes, first run on the F169 pace, about
+  30-40 min estimated), the restated report (row 53), the old cards' text (row 51), the precision audit (row 46).
 
 **Built, switched off: waiting for its release check** (on/off over stored cards, then a blind sample by another agent)
 - Rows 11, 14, 15 `CARD_EBITDA_PROFIT_V2` (blind review of 20 cards: 4 WRONG against 7-10 before; re-run after F155).
 - Row 21 `CARD_TWO_PARTS`; row 44 `CARD_CONSOLIDATED_ONLY`; `QUOTE_EXACT_NUMBERS` (F156); `CARD_SAME_DEFINITION` (F155).
 - Row 49 `MEMORY_STANDALONE_ONLY` (F162), then a reload of the affected companies.
 - Row 48 `MEMORY_SCREENER` (F161): only after the screener-fill dry run and the owner's look.
+- Row 53 restated figures (F167): memory side runs with the reload; `MEMORY_RESTATED` for readers.
 
 **Pending: agreed, not built or not run yet**
-- Memory saves the excise duty and the profit to minority interests (owner 26 Oct, screener-mapping point 8, F166): built
-  and committed, not run on production; old quarters fill only after the full seed-memory reload. No card changes.
-- Row 10 memory labels: step 2 (`label-memory` dry run, then apply) not run; steps 3-5 not built; rows 3 and 16 go with them.
+- Excise duty and minority profit (F166): fill with the reload. No card changes.
+- Row 10 steps 3-5 not built; rows 3 and 16 go with them.
 - Row 13 hold a line the PDF does not print: needs OCR on figure pages and a number normaliser first.
 - The root-cause work list (`docs/audit/root-causes-2026-10-25.md`, top 10 causes) after the memory work.
-- Row 50 cross-check: run after the download; owner and lead study it together before anything changes.
 - Row 48 screener fill: dry run after the cross-check study; nothing written without the owner's OK.
-- Queue fix (F164, being built): jobs by source side by side (NSE / BSE / screener / read-only), each job starting the
-  next one itself; lead check-ins every 10 minutes meanwhile.
+- Row 52 screener-style table on the company page: after the cross-check study.
+- Row 54 keep NSE's XBRL files in R2: worth less now that a reload takes under an hour (F169); still saves NSE load.
+- Old cards' text at the fast archive pace: only after the reload runs clean on it.
 - PNC Infra's two calls fail with KeyError 'as_of' (needs the traceback; not guessed).
 - NSE list check on a busy results day: 26 Oct, 10 PM IST (scheduled).
 - Row 24 final audit, once everything above is built.
 
 **Waiting for the owner's decision**
-- Lehar Footwears and Andhra Petrochemicals (BSE-only, have cards): keep (lead's advice) or hide.
-- Row 42 faster NSE history loads: proposed, not decided.
 - Each switch above: turn on after its release check.
+- Row 42 (all-company list): measured as incomplete (above); lead suggests No.
 
 **Waiting for discussion**
 - Owner: step 2, reading the file (rows 11-13).
 - Owner and lead: the screener cross-check results (wrong figures, wrong quarters, naming), with the official filing as
   referee.
-- Lead: many of the 131 kept BSE-only companies look like shells with odd stored market caps (Mrugesh Trading 5,543 Cr,
-  TANFAC 7,491 Cr); the BSE check gives real values; then decide what stays.
 - Lead: long cards and the 95% bar: about 20 lines a card need each line right ~99.75% of the time (row 17).
 - Lead: a single wrong screener column is caught only by a year-total check; how far to trust screener figures on cards.
 - Lead: report texts are kept 6 months, so the referee cannot check older quarters; fetch older official texts or not.
@@ -227,7 +232,7 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
 | 39 | Run-rate estimate: e.g. H1 is 65% of last full year and management expects the same run rate, so the year grows ~30%; always "our estimate" with inputs named; seasonality warning | Not built | Later (owner, 25 Oct: after the 95% gate; after 38) | Not started |
 | 40 | Capacity coming online next quarter, from management's stated dates (a forward list; today only finished capacity counts on the Radar) | Not built | Later (owner, 25 Oct: after the 95% gate) | Not started |
 | 41 | Customer dependence from annual reports (a customer at 10% or more of revenue must be disclosed; link to the customer company only when it is named), e.g. "ABC Auto: 70% from Hero; watch Hero's numbers" | Customers are left out of memory today (a laptop test filled the list with lawsuit parties) | Later (owner, 25 Oct: after the 95% gate) | Not started |
-| 42 | Faster NSE history loads: read file links from NSE's all-company results list (about 30 calls) instead of each company's page (about 1,150 calls for 576 companies), with a 1.5-2.5 s pause for one-off loads; the daily results check could use the same list | memory-gaps-fill, 25 Oct: about 1-1.5 h on 4 machines at 3-5 s a call | Proposed (owner to decide) | Proposed |
+| 42 | Faster NSE history loads: read file links from NSE's all-company results list (about 30 calls) instead of each company's page (about 1,150 calls for 576 companies), with a 1.5-2.5 s pause for one-off loads; the daily results check could use the same list | memory-gaps-fill, 25 Oct: about 1-1.5 h on 4 machines at 3-5 s a call | Proposed (owner to decide) | Measured 26 Oct (F168): the all-company list found 1,123 of 4,297 files; lead suggests No |
 | 44 | Consolidated first: standalone kept from the AI. The model sees consolidated figures only, each block naming its basis; a printed EBITDA or headline profit is taken only on the card's basis; a standalone figure the model writes on a consolidated card is removed (standalone only for a company that files standalone alone) | Cards quoting the company-alone EBITDA or profit from a release that prints both | Yes (owner, 25 Oct) | Built behind `CARD_CONSOLIDATED_ONLY` and `CARD_EBITDA_PROFIT_V2` (F154); release check pending |
 | 43 | EPS across splits and bonuses: the older period's EPS is put on today's share count (recorded split, bonus or consolidation, "adjusted for bonus 1:1 on <date>") before any EPS growth, TTM EPS or EPS signal; real dilution (allotment, rights, QIP, ESOPs, merger) keeps its reported change; with no record only an exact split/bonus ratio of the share count blanks it ("possible bonus or split not on record"). Switch `EPS_SHARE_ADJUST` (default off) | Reliance Q2FY26 EPS -45% beside profit +14% across its Oct 2024 1:1 bonus; LIC -38% (F153) | Yes (owner, 25 Oct: implied by the bug report). Fix of a live bug; release check pending | Built (F153); ON in the workflows from 25 Oct (live-bug fix: 29 published cards stated EPS changes across a split or bonus, e.g. Kotak -74.7% for +26.4%); EPS_SHARE_ADJUST=0 repository variable turns it off |
 | 45 | Take every company that is not on NSE out of the database (owner, 25 Oct: "remove all other than NSE listed companies"; a bhavcopy or market-cap file helps to compare): BSE-only shares, mutual-fund and ETF scrips, REIT / InvIT units, SME and delisted names, about 2,630 of the 5,258 rows (estimate from the public list against NSE's equity and SME lists, 25 Oct). `prune-companies` is a dry run first and writes a report; `prune-companies-apply` saves a backup of every row and its memory file in R2 first, then removes only companies with no cards. Companies with cards or a star are listed apart (2 on 25 Oct: Lehar Footwears, Andhra Petrochemicals) for the owner to keep or hide | Not on NSE rows in the public company list, in counts and in search | Yes (owner, 25 Oct); dry run first | Built (F158); dry run not run yet, apply waits for the owner's read of the report |
@@ -239,7 +244,7 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
 | 51 | Texts for the old cards only: download the filing text once for every stored card that has none in R2 | Owner 26 Oct: 6,872 of 7,077 cards have no text (the cache started 25 Oct), so audits cannot re-check them. Only the missing ones are fetched, NSE at the pipeline's own pace, no AI, no card or memory change | Yes (owner, 26 Oct) | Built 26 Oct (F165): Maintenance > `text-backfill` (try `limit` 20 first; `then` resumes it; about 6 hours on 2 shards, an estimate). Then re-run audit-precision over all cards. Not run on production |
 | 52 | A screener-style financials table on each company page (not on cards): screener's row names and layout (quarterly results, profit and loss, balance sheet, cash flows, ratios), every figure worked out by code from the exchange files, restated figures shown as restated; rows screener builds as leftovers (other assets, other liabilities) and its groupings (borrowings with leases, fixed assets) reproduced from the formulas `docs/design/screener-mapping.md` measures, tested against the 3,708 stored screener pages | Investors know screener's layout; a second witness for every figure on the company page | Yes (owner, 26 Oct) | After the screener cross-check |
 | 53 | Restated figures: when a later results file restates an earlier quarter (its comparative columns: a merger, a discontinued business, an accounting change), keep both the first-filed and the restated figure, and show the restated one like screener.in | Owner 26 Oct: "Restated figures - we must have it". Screener shows the latest restated figures; memory's comparative columns were stored but not named | Yes (owner, 26 Oct, "must have") | Built 26 Oct (F167): memory marks a comparative column's source (`restated_from`) and, when it differs from the first-filed figure by more than 0.5%, the entry carries `first_filed`, `restated`, `restated_in`; `dossier.latest_value` reads the restated value. Switch `MEMORY_RESTATED=1` (default off) names the restatement on a card's memory view. Read-only `restated-report` (Maintenance > `restated-report`). Old memory fills only after the seed-memory reload. Not run on production |
-| 54 | Keep every NSE results figure file (XBRL) in R2 the first time it is downloaded, as the screener pages are; the seed, the gap fill and any later reload read our copy and ask NSE only for files we do not hold | A full memory reload downloads ~40,000 files from NSE again (5-10 h, slowly to avoid a block) because each run's local copy is thrown away; with stored files a reload after a reader fix takes minutes | Yes (owner, 26 Oct) | About half a day; after the current reload |
+| 54 | Keep every NSE results figure file (XBRL) in R2 the first time it is downloaded, as the screener pages are; the seed, the gap fill and any later reload read our copy and ask NSE only for files we do not hold | A full memory reload downloads ~40,000 files from NSE again (5-10 h, slowly to avoid a block) because each run's local copy is thrown away; with stored files a reload after a reader fix takes minutes | Yes (owner, 26 Oct) | About half a day; after the current reload. Since F169 a reload is under an hour, so this saves less time than first thought |
 | 55 | Archive speed test: measure whether nsearchives.nseindia.com (the XBRL files) throttles, separately from www.nseindia.com/api (the listing), with 100 seeded companies at pauses of 3-5 s, 1 s, 0.3 s, 0 s and four parallel workers, then the full-reload time at the fastest safe pace | Owner 26 Oct: "if we are getting it from the NSE archive site, I think there is no stopping there; test with 100 companies as a sample". Today one pause (3-5 s) is taken before every request of both hosts, so a reload is 5-10 h; row 42 (all-company list) is timed in the same run | Built as `nse-speedtest` (F168, read only); Maintenance > `nse-speedtest` to run it; its result decides the pause and workers of the next reload | Run it, read the artifact |
 
 ### Owner's answers on memory labels (items 3, 10, 16), 25 Oct 2026 evening

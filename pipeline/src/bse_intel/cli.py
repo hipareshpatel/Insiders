@@ -1396,6 +1396,44 @@ def cmd_screener_referee(args, settings, sink) -> int:
     return 124 if outcome["out_of_time"] else 0
 
 
+def tijori_referee_rows(rows: list[dict]) -> list[dict]:
+    """The Tijori cross-check pairs worth a referee: revenue and profit where screener agrees with Tijori against memory,
+    and every sign difference. Tijori's figure stands in where screener has none (the referee compares memory with it)."""
+    picked = [r for r in rows if r.get("class") == "sign"
+              or (r.get("lead") and r.get("metric") in ("revenue", "pat") and r.get("class") not in ("match", "naming"))]
+    return [{**r, "screener_value": r["screener_value"] if r.get("screener_value") is not None else r.get("tijori_value")}
+            for r in picked]
+
+
+def cmd_tijori_referee(args, settings, sink) -> int:
+    """Read-only: NSE's own results XBRL as the referee of the Tijori cross-check's leads (revenue and profit where Tijori and
+    screener agree against memory) and its sign differences (owner, 26 Oct 2026). The cross-check is worked out again from R2
+    and memory (no Tijori request), then each pair is looked up in the period's NSE file as screener-referee does. No memory
+    write, no card change, no AI. Exit 75 when NSE refused the session, 124 when the time budget ended with pairs left."""
+    from . import screener_xbrl_referee as sx
+    from . import tijori_crosscheck as tc
+    from .nse import NseClient
+
+    companies = _universe_companies(sink, args.scrips)
+    if companies is None:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    rows = tijori_referee_rows(tc.run(sink, companies, args.day, args.workers)["rows"])
+    print(f"tijori-referee: {len(rows)} pairs to look up")
+    with NseClient() as nse:
+        outcome = sx.run(nse, rows, args.limit, args.time_budget)
+    print(sx.render(outcome))
+    if args.json:
+        Path(args.json).write_text(sx.to_json(outcome), encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(sx.to_csv(outcome), encoding="utf-8")
+    if args.md:
+        Path(args.md).write_text(sx.to_markdown(outcome, today_ist().isoformat()), encoding="utf-8")
+    if outcome["blocked"]:
+        return REFUSED
+    return 124 if outcome["out_of_time"] else 0
+
+
 def cmd_label_memory(args, settings, sink) -> int:
     """Label everything already in memory (memory_labels.py, TRACKER F150): no AI, no NSE, no card change. A dry run
     prints the counts per section and label and writes nothing; a real run writes each changed dossier back through the
@@ -1940,6 +1978,17 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--csv", help="write every refereed pair, with the official figure and the verdict, to this file")
     p.add_argument("--md", help="write the short markdown summary to this file")
     p.set_defaults(func=cmd_screener_referee)
+
+    p = sub.add_parser("tijori-referee", help="read-only: NSE's results XBRL as the referee of the Tijori cross-check's leads and sign differences")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--day", help="use the Tijori pages stored on or before this day (default the newest)")
+    p.add_argument("--workers", type=int, default=8, help="companies read at a time for the cross-check (the NSE look-ups are one at a time)")
+    p.add_argument("--limit", type=int, help="referee at most this many pairs (a company is finished once started); the rest are not_run")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if pairs are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--csv", help="write every refereed pair, with the official figure and the verdict, to this file")
+    p.add_argument("--md", help="write the short markdown summary to this file")
+    p.set_defaults(func=cmd_tijori_referee)
 
     p = sub.add_parser("screener-explain", help="read-only: which referee-xbrl differences a bonus, split or later results file explains")
     p.add_argument("--csv", required=True, help="the screener-referee CSV (referee-xbrl.csv)")

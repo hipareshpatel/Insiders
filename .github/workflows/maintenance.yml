@@ -85,6 +85,9 @@
 # - screener-crosscheck: read only. Memory's exchange-file figures against the stored screener pages (no screener request),
 #   the cached official results text as referee (no download); summary.json, crosscheck.csv, referee.csv and the markdown
 #   report go up as the artifact `screener-crosscheck`. Commits nothing.
+# - tijori-referee: read only (owner 26 Oct 2026). The Tijori cross-check's revenue and profit leads (screener agrees with
+#   Tijori against memory) and its sign differences, each looked up in NSE's results XBRL as screener-referee does; the CSV's
+#   screener_value is Tijori's where screener has none. Artifact `tijori-referee`. Writes nothing.
 # - screener-referee: read only. The cross-check worked out again (R2 and memory), then each disagreeing pair looked up in
 #   NSE's own results XBRL (the period's file, else the next period's): one results list a company, each file once, the
 #   archive host on its F169 pace, the API at 3-5 s. `limit` caps the pairs. referee-xbrl.csv, summary.json and the markdown
@@ -124,7 +127,7 @@
 #   maint-tijori       tijori-download (reads tijorifinance.com; writes only raw/tijori/ objects)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
-#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), tijori-crosscheck (R2 and memory; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
+#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
 # A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
@@ -145,7 +148,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, tijori-download, tijori-crosscheck, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, tijori-download, tijori-crosscheck, tijori-referee, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
         description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated)
@@ -196,7 +199,7 @@ concurrency:
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","screener-referee","screener-explain","pdf-referee","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -457,6 +460,22 @@ jobs:
         with:
           name: tijori-crosscheck
           path: ${{ runner.temp }}/tijori-crosscheck/
+          if-no-files-found: ignore
+      - name: Referee the Tijori cross-check's leads and sign differences with NSE's results XBRL (reads only)
+        if: inputs.command == 'tijori-referee'
+        env:
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/tijori-referee"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel tijori-referee ${LIMIT:+--limit "$LIMIT"} --json "$RUNNER_TEMP/tijori-referee/summary.json" --csv "$RUNNER_TEMP/tijori-referee/referee-tijori.csv" --md "$RUNNER_TEMP/tijori-referee/tijori-referee.md" || code=$?
+          if [ "$code" = 124 ]; then echo "::warning::time budget ended with pairs left (not_run in the CSV)"; code=0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'tijori-referee'
+        with:
+          name: tijori-referee
+          path: ${{ runner.temp }}/tijori-referee/
           if-no-files-found: ignore
       - name: Referee the cross-check's disagreeing pairs with NSE's results XBRL (reads only)
         if: inputs.command == 'screener-referee'

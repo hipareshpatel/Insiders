@@ -204,7 +204,7 @@ def test_the_page_layer_gives_no_unit_when_two_are_declared():
 def test_html_tables_with_spans():
     html = ("<table><tr><th rowspan=2>Particulars</th><th colspan=2>Quarter ended</th></tr>"
             "<tr><td>30.09.2026</td><td>30.06.2026</td></tr><tr><td>Revenue</td><td>1.0</td><td>2.0</td></tr></table>")
-    assert prd.html_tables(html) == [[["Particulars", "Quarter ended", ""], ["", "30.09.2026", "30.06.2026"],
+    assert prd.html_tables(html) == [[["Particulars", "Quarter ended", "Quarter ended"], ["", "30.09.2026", "30.06.2026"],
                                       ["Revenue", "1.0", "2.0"]]]
 
 
@@ -376,3 +376,241 @@ def test_a_data_row_ending_in_a_year_keeps_the_basis():
     layer = page_layer(text + "x" * 200)
     layer.text = text
     assert [b.basis for b in layer.bands() if b.label.startswith("Revenue")] == [STANDALONE]
+# --- adapters: what the first GitHub trial (run 40388046768, 26 Oct 2026) showed -----------------------------------------
+
+import json
+import pathlib
+import sys
+import types
+
+FIXTURES = pathlib.Path(__file__).parent / "fixtures" / "pdf_readers"
+
+
+def words_pdf(*pages: list[list[str]]) -> bytes:
+    """A PDF whose every token sits at its own x on its row's baseline (the raw text then has one token a line, as a table's
+    cells do in many results PDFs); a page is a list of rows, a row a list of tokens."""
+    doc = pymupdf.open()
+    for rows in pages:
+        page = doc.new_page(width=900, height=842)
+        for i, row in enumerate(rows):
+            for j, token in enumerate(row):
+                page.insert_text((20 + 110 * j, 40 + 16 * i), token, fontsize=8)
+    return doc.tobytes()
+
+
+def test_camelot_output_of_a_ruled_results_table_gets_its_columns_proven():
+    """The real camelot table of RBL Bank's standalone page: the header spans columns ("Quarter ended" once over three dates)."""
+    rows = json.loads((FIXTURES / "camelot_rbl.json").read_text())["rows"]
+    layers = {1: prd.page_layer("UNAUDITED STANDALONE FINANCIAL RESULTS FOR THE QUARTER AND HALF YEAR ENDED\n(in lakh) " + "x" * 60)}
+    parsed = prd.tables_to_rows([prd.Table("camelot", 1, rows)], layers)
+    got = pr.figure_for(parsed, "Q2FY25", "revenue", pr.STANDALONE)
+    assert [round(v, 2) for v, _, _ in got["values"]] == [3530.93]    # 353,093 lakh
+    got = pr.figure_for(parsed, "FY24", "revenue", pr.STANDALONE)
+    assert [round(v, 2) for v, _, _ in got["values"]] == [12394.30]       # the year column, after two quarter and two half columns
+
+
+def test_merged_multiline_cells_are_split_into_their_rows():
+    """pdfplumber's real output for J&K Bank: one cell holds the five printed rows of "Interest earned (a)-(d)" and the next
+    holds their five figures (the line breaks were collapsed into spaces before, so the row was one long label)."""
+    rows = json.loads((FIXTURES / "pdfplumber_jk_merged.json").read_text())["rows"]
+    lines = prd.table_text(rows).splitlines()
+    assert any(ln.startswith("b) Income on Investments") and "564.87" in ln and "558,84" in ln for ln in lines)
+    assert not any("Income on Investments" in ln and "Advances" in ln for ln in lines)        # no longer one line
+    # a label of 2 lines over figures of 3 is not guessed apart: joined
+    assert prd.table_text([["a\nb", "1\n2\n3"]]) == "a b  1 2 3"
+    assert prd.table_text([["Revenue\nOther income", "10.0\n2.0", "9.0\n1.0"]]) == "Revenue  10.0  9.0\nOther income  2.0  1.0"
+
+
+def test_a_lone_basis_cell_above_the_columns_is_a_title():
+    """Docling's real grid of an Indian results table starts with a cell that only says STANDALONE: not a title the referee
+    reads, so it is written as "STANDALONE financial results"; a cell deeper in the table is left alone."""
+    cells = [["", "STANDALONE", "", ""], ["Particulars", "Quarter Ended", "Quarter Ended", "Year Ended"],
+             ["", "30/06/2024", "31/03/2024", "31/03/2024"], ["Revenue from Operations", "91,934.83", "116,366.01", "385,529.77"]]
+    text = prd.table_text(cells)
+    assert text.splitlines()[0] == "STANDALONE financial results"
+    layers = {1: prd.page_layer("(Rs. in lakhs) " + "x" * 60)}
+    parsed = prd.tables_to_rows([prd.Table("docling", 1, cells)], layers)
+    assert parsed and parsed[0].basis == pr.STANDALONE
+    deep = prd.table_text([["a", "1"], ["b", "2"], ["c", "3"], ["d", "4"], ["CONSOLIDATED", ""]])
+    assert deep.splitlines()[-1] == "CONSOLIDATED"
+
+
+def test_a_header_spanning_cell_is_repeated_over_its_columns():
+    """PP-StructureV3 (and MinerU, Marker, Surya) give the header as HTML with colspan: "Quarter Ended" over three columns
+    names the kind of each of the three dates below it, so the text is repeated over the span; figures and labels are not."""
+    html = ('<html><body><table><thead><tr><td rowspan="3">Particulars</td><td colspan="3">Quarter Ended</td>'
+            '<td colspan="2">Nine Months Ended</td><td>Year Ended</td></tr><tr><td>31.12.2024</td><td>30.09.2024</td>'
+            '<td>31.12.2023</td><td>31.12.2024</td><td>31.12.2023</td><td>31.03.2024</td></tr></thead><tbody>'
+            '<tr><td>Revenue from Operations</td><td>1,926.65</td><td>2,022.88</td><td>1,754.24</td><td>5,637.39</td>'
+            '<td>5,200.89</td><td>7,100.46</td></tr><tr><td colspan="2">Total 12.50</td><td>1.0</td></tr></tbody></table></body></html>')
+    grid_ = prd.html_tables(html)[0]
+    assert grid_[0] == ["Particulars", "Quarter Ended", "Quarter Ended", "Quarter Ended", "Nine Months Ended", "Nine Months Ended",
+                        "Year Ended"]
+    assert grid_[-1] == ["Total 12.50", "", "1.0"]
+    layers = {1: prd.page_layer("Standalone Financial Results\n(Rs. in crore) " + "x" * 60)}
+    parsed = prd.tables_to_rows([prd.Table("paddle", 1, grid_)], layers)
+    assert parsed[0].columns is not None
+    assert [k for k, _ in parsed[0].columns] == ["quarter", "quarter", "quarter", "nine", "nine", "year"]
+    assert prd.is_group_header("Quarter Ended") and not prd.is_group_header("Total 12.50")
+    assert not prd.is_group_header("Revenue from operations") and not prd.is_group_header("30.09.2024 Quarter ended")
+
+
+def test_a_table_without_its_header_takes_the_pages_header():
+    """Camelot, Tabula and MinerU often start the table below the dates; the page's own header (read from its words) goes above."""
+    pdf = words_pdf([["Statement of Standalone Financial Results for the quarter ended 30.09.2026"], ["(Rs. in crore)"],
+                     ["Quarter ended", "Quarter ended", "Quarter ended", "Half year ended", "Year ended"],
+                     ["30.09.2026", "30.06.2026", "30.09.2025", "30.09.2026", "31.03.2026"],
+                     ["Revenue from operations", "120.50", "110.25", "100.10", "230.75", "440.00"]])
+    layers = prd.page_layers(pdf)
+    assert "30.09.2026" in layers[1].header_block() and "Quarter ended" in layers[1].header_block()
+    cells = [["Revenue from operations", "120.50", "110.25", "100.10", "230.75", "440.00"]]
+    parsed = prd.tables_to_rows([prd.Table("tabula", 1, cells)], layers)
+    got = pr.figure_for(parsed, "Q2FY27", "revenue", pr.STANDALONE)
+    assert [round(v, 2) for v, _, _ in got["values"]] == [120.5]
+    # a table that has its own header is not given another
+    own = prd.tables_to_rows([prd.Table("a", 1, grid())], layers)
+    assert own[0].dates == parsed[0].dates
+    # two different headers on the page: none is guessed
+    two = words_pdf([["Statement of Standalone Financial Results"], ["30.09.2026", "30.06.2026"], ["31.03.2026", "31.03.2025"]])
+    assert prd.page_layers(two)[1].header_block() == ""
+
+
+def test_statement_pages_read_the_words_not_the_raw_text_lines():
+    """The raw text of many results PDFs has one cell a line, so no line shows two dates and no page was ever chosen (18 of 47
+    PDFs of the trial had no page); the rows of words show them. A page with revenue, profit and EPS rows ranks above one that
+    only repeats the heading."""
+    head = ["Statement of Standalone Financial Results for the quarter ended 30.09.2026"]
+    dates = [["Quarter ended", "Quarter ended"], ["30.09.2026", "30.06.2026"]]
+    pdf = words_pdf(
+        [head, *dates, ["Segment revenue", "10.00", "9.00"]],
+        [head, *dates, ["Revenue from operations", "120.50", "110.25"], ["Net profit for the period", "20.10", "18.00"],
+         ["Basic earnings per share", "2.01", "1.80"]],
+    )
+    layers = prd.page_layers(pdf)
+    assert not any(len(pr._dates_in(line)) >= 2 for line in layers[2].text.splitlines())     # the raw lines never show two
+    assert prd.statement_pages(layers) == [1, 2]
+    assert prd.statement_pages(layers, max_pages=1) == [2]
+
+
+def test_page_context_names_the_basis_by_its_titles_when_both_words_appear():
+    text = "Statement of Standalone Financial Results\nNote 3: the consolidated figures are on page 9\n(Rs. in crore)\n" + "x" * 50
+    assert "Standalone Financial Results" in prd.page_layer(text).context
+    two = "Statement of Standalone Financial Results\nStatement of Consolidated Financial Results\n(Rs. in crore)\n" + "x" * 50
+    assert "Standalone" not in prd.page_layer(two).context       # two statements on a page: no basis is given to a table
+
+
+# --- the heavy readers' own failures (mended; the model packages are replaced by fakes here) ---------------------------------
+
+def test_tatr_structure_model_loads_when_its_config_has_a_null_dilation(monkeypatch, tmp_path):
+    """transformers 5 builds its configs as strict dataclasses; the structure model's published config has "dilation": null
+    ("Field 'dilation' expected bool, got NoneType", every tatr read of run 40388046768, reproduced with transformers 5.21.0)."""
+    cfg = tmp_path / "config.json"
+    cfg.write_text(json.dumps({"dilation": None, "d_model": 256}))
+    seen = {}
+
+    class Config:
+        @classmethod
+        def from_dict(cls, data):
+            seen["config"] = data
+            return cls()
+
+    class Model:
+        @classmethod
+        def from_pretrained(cls, name, config=None):
+            if config is None:
+                raise ValueError("StrictDataclassFieldValidationError: Validation error for field 'dilation'")
+            return "model"
+
+    monkeypatch.setitem(sys.modules, "huggingface_hub", types.SimpleNamespace(hf_hub_download=lambda name, fname: str(cfg)))
+    monkeypatch.setitem(sys.modules, "transformers", types.SimpleNamespace(TableTransformerConfig=Config))
+    assert prd.TatrReader._structure_model(Model) == "model"
+    assert seen["config"] == {"dilation": False, "d_model": 256}
+
+    class Broken:
+        @classmethod
+        def from_pretrained(cls, name, config=None):
+            raise OSError("offline")
+
+    with pytest.raises(OSError):
+        prd.TatrReader._structure_model(Broken)         # only the null field is mended
+
+
+def test_tatr_structure_image_is_resized_by_its_longest_side():
+    """The structure processor's size is {"longest_edge": 800} only, which transformers 5 refuses at resize time."""
+    Image = pytest.importorskip("PIL.Image")   # Pillow comes with the reader extras; CI installs [dev] only
+    image = Image.new("RGB", (1600, 400), "white")
+    only_longest = types.SimpleNamespace(size=types.SimpleNamespace(longest_edge=800, shortest_edge=None))
+    resized, kwargs = prd.TatrReader._longest_side(only_longest, image)
+    assert resized.size == (800, 200) and kwargs == {"do_resize": False}
+    both = types.SimpleNamespace(size={"shortest_edge": 800, "longest_edge": 1333})
+    assert prd.TatrReader._longest_side(both, image) == (image, {})
+    assert prd.TatrReader._longest_side(types.SimpleNamespace(), image) == (image, {})
+
+
+def test_paddle_runs_without_onednn(monkeypatch):
+    """With oneDNN on (the default) paddlepaddle 3.3.1 stops on every page: "ConvertPirAttribute2RuntimeAttribute not support"."""
+    made = {}
+
+    class FakePipeline:
+        def __init__(self, **kwargs):
+            made.update(kwargs)
+
+        def predict(self, input):
+            return []
+
+    monkeypatch.setitem(sys.modules, "paddleocr", types.SimpleNamespace(PPStructureV3=FakePipeline))
+    assert prd.PaddleReader().extract(make_pdf(STANDALONE_PAGE)) == []
+    assert made["enable_mkldnn"] is False and made["use_table_recognition"] is True
+
+
+def test_a_failed_download_is_tried_again_but_a_missing_file_is_not(monkeypatch):
+    """The trial collected 47 PDFs and four more were never downloaded, so every reader read "unavailable" for their pairs."""
+    monkeypatch.setattr("time.sleep", lambda s: None)
+
+    class Src:
+        def __init__(self, answers):
+            self.answers, self.calls, self._payload = list(answers), 0, None
+
+        def payload(self, url):
+            self.calls += 1
+            return self.answers.pop(0)
+
+    flaky = Src([(None, "download failed (ReadTimeout)"), (None, "download failed (ReadTimeout)"), (b"%PDF", "")])
+    assert prd.fetch_with_retry(flaky, "u") == (b"%PDF", "") and flaky.calls == 3
+    gone = Src([(None, "NSE serves no file (404)")])
+    assert prd.fetch_with_retry(gone, "u") == (None, "NSE serves no file (404)") and gone.calls == 1
+
+
+def test_rapidtable_crops_the_page_to_its_results_table():
+    """rapid-table's SLANet reads one table; given a whole page its rows ran into each other (0 of 98 figures right on the hard
+    set, 25 right after the crop). The region runs from three rows above the dates to the last row of figures."""
+    rows = [["Company Limited registered office address"], ["Statement of Standalone Financial Results"], ["(Rs. in crore)"],
+            ["Particulars", "Quarter ended", "Quarter ended"], ["30.09.2026", "30.06.2026"],
+            ["Revenue from operations", "120.50", "110.25"], ["Net profit", "20.10", "18.00"]]
+    rows += [["Notes: the above results were approved by the board"]] * 7 + [["Footer 12.00 13.00"]]
+    doc = pymupdf.open(stream=words_pdf(rows), filetype="pdf")
+    words = doc[0].get_text("words")
+    x0, y0, x1, y1 = prd.table_region(words)
+
+    def top_of(text):
+        return next(w[1] for w in words if w[4] == text)
+
+    assert y0 <= top_of("(Rs.") and y0 > top_of("Company")                    # the title above the unit line is left out
+    assert y1 >= top_of("Net") and y1 < top_of("Footer")                      # the notes and the footer are not in it
+    assert prd.table_region([w for w in words if w[4] not in ("30.09.2026", "30.06.2026")]) is None      # no row of dates
+
+
+def test_a_headerless_table_never_takes_a_basis_title_from_the_page_header():
+    """Review of F198: the page header lent to a table its reader left headerless never carries a basis title, so a
+    consolidated table read alone on a page that opens with a standalone title is not called standalone."""
+    dates = ["30.09.2025", "30.06.2025", "30.09.2024", "30.09.2025", "30.09.2024", "31.03.2025"]
+    text = ("(Rs. in crore)\nStatement of Standalone Financial Results\nQuarter ended Half year ended Year ended\n"
+            + " ".join(dates) + "\nParticulars\nRevenue from operations 100.00 90.00 80.00 190.00 160.00 330.00\n"
+            "Statement of Consolidated Financial Results\nQuarter ended Half year ended Year ended\n" + " ".join(dates)
+            + "\nParticulars\nRevenue from operations 500.00 450.00 400.00 950.00 800.00 1650.00\n")
+    layer = prd.page_layer(text + "\n" + "x" * 200)
+    layer.text = text
+    assert "Standalone" not in layer.header_block() and "Consolidated" not in layer.header_block()
+    rows = prd.tables_to_rows([prd.Table("camelot", 1, [["Revenue from operations", "500.00", "450.00", "400.00",
+                                                         "950.00", "800.00", "1650.00"]])], {1: layer})
+    assert not any(r.basis == pr.STANDALONE and 500.0 in (r.figures or []) for r in rows)

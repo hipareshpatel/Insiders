@@ -1251,6 +1251,9 @@ def cmd_pdf_referee(args, settings, sink) -> int:
     if not path.is_file():
         print(f"No screener-referee CSV at {path}.")
         return 2
+    if args.sample is not None and args.sample <= 0:
+        print("--sample takes a number above 0")
+        return 2
     rows = pr.load_csv(path.read_text(encoding="utf-8"))
     with NseClient() as nse:
         outcome = pr.run(nse, rows, args.limit, args.time_budget, ocr=not args.no_ocr, sample=args.sample or 0, seed=args.seed)

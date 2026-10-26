@@ -210,3 +210,22 @@ def test_the_sample_is_seeded_half_revenue_half_profit_and_never_eps():
     assert sorted(r["metric"] for r in one) == ["pat"] * 5 + ["revenue"] * 5
     assert all(r["verdict"] == "ours_matches_official" for r in one)
     assert pr.sample_pairs(rows, 10, seed=1) != one
+
+
+def test_proven_rows_that_disagree_are_unsure_not_a_match():
+    # one row agreeing among rows that disagree with each other never confirms the figure (review)
+    v, matches, value, label = pr.verdict_of([(120.5, "Revenue", 1), (131.0, "Total income", 1)], 120.5, 125.0, 120.5, "revenue")
+    assert v == "pdf_unsure" and value is None and "conflicting rows" in label
+    assert pr.verdict_of([(120.5, "Revenue", 1), (120.5, "Revenue", 3)], 120.5, 125.0, 120.5, "revenue")[0] == "pdf_matches_ours"
+
+
+def test_the_sample_run_catches_a_file_the_pdf_disagrees_with():
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    nse = FakeNse([filing()], {url: make_pdf(STANDALONE_PAGE)})   # the PDF prints 120.5
+    rows = [{**pair(ours=119.0, theirs=125.0, official=119.0), "verdict": "ours_matches_official"}]
+    out = pr.run(nse, rows, ocr=False, sample=1)
+    assert [r["pdf_verdict"] for r in out["rows"]] == ["pdf_matches_none"]
+    assert out["sample"] == {"drawn": 1, "pool": 1, "seed": 26}
+    assert "upper bound" in pr.to_markdown(out, "2026-10-26")
+    with pytest.raises(ValueError):
+        pr.sample_pairs(rows, 0)

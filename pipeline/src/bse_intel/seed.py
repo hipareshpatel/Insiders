@@ -25,6 +25,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from . import xbrl as xbrl_fast_path
+from . import xbrl_store
 from .dossier import forget_source, merge, new_dossier, put_standalone
 from .models import FinancialMetric, Filing, Pass2Output
 from .nse import SourceBlockedError
@@ -66,21 +67,27 @@ def _cache(root: Path | None, url: str) -> Path | None:
     return root / "xbrl" / (hashlib.sha1(url.encode()).hexdigest()[:20] + ".xml.gz")
 
 
-def _fetch(client, url: str, root: Path | None) -> bytes | None:
-    """One XBRL file, kept by checksum so a parser fix is a re-parse and not another download."""
+def _fetch(client, url: str, root: Path | None, sink=None) -> bytes | None:
+    """One XBRL file, kept by checksum so a parser fix is a re-parse and not another download: the local cache first,
+    then our copy in R2 (xbrl_store, F191), then the exchange (and R2 gets the file)."""
     path = _cache(root, url)
     if path and path.exists():
         try:
             return gzip.decompress(path.read_bytes())
         except OSError:
             pass
-    data = client.download(url, max_bytes=8_000_000)
+    data = xbrl_store.get(sink, url)
+    fresh = not data
+    if fresh:
+        data = client.download(url, max_bytes=8_000_000)
     if data and path:
         try:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(gzip.compress(data))
         except OSError:
             pass
+    if data and fresh:
+        xbrl_store.put(sink, url, data)
     return data
 
 
@@ -121,9 +128,9 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     for link in sorted(links, key=lambda link: (link.basis == "CONSOLIDATED", link.filed_at)):
         by_period[link.period] = link  # consolidated, then the later filing, wins
     for period, link in sorted(by_period.items()):
-        data = _fetch(bse, link.url, cache_root)
+        data = _fetch(bse, link.url, cache_root, sink)
         if not data and nse is not None and symbol:
-            data = _from_nse(nse, symbol, period, link, cache_root, stats, scrip)
+            data = _from_nse(nse, symbol, period, link, cache_root, stats, scrip, sink)
         if not data:
             # Loudly: BSE's own archive listed this file, so nothing coming back means the company is
             # about to be written from PDFs alone with no machine-tagged figure to check against. Two of
@@ -145,7 +152,7 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
         for period, row in _nse_quarters(nse, symbol, since, scrip).items():
             if period in found:
                 continue
-            data = _fetch(nse, row.xbrl_url, cache_root)
+            data = _fetch(nse, row.xbrl_url, cache_root, sink)
             if not data:
                 continue
             stats.results_from_nse += 1
@@ -291,7 +298,7 @@ def _seed_standalone(sink, nse, scrip: str, symbol: str, since: str, periods: se
     if dossier is None:
         return
     for period, row in sorted(best.items()):
-        data = _fetch(nse, row.xbrl_url, cache_root)
+        data = _fetch(nse, row.xbrl_url, cache_root, sink)
         parsed = _parse_results(data, stats) if data else None
         if parsed is None or parsed.basis == "CONSOLIDATED":
             continue
@@ -367,7 +374,7 @@ def _nse_rows(nse, symbol: str) -> tuple:
 
 
 def _from_nse(nse, symbol: str, period: str, link, cache_root: Path | None, stats: SeedStats,
-              scrip: str) -> bytes | None:
+              scrip: str, sink=None) -> bytes | None:
     """The same quarter from NSE, when BSE served nothing. Matched on the filing date BSE listed, so the
     row is the same filing and not merely the same company; the basis is matched where NSE states it."""
     try:
@@ -395,7 +402,7 @@ def _from_nse(nse, symbol: str, period: str, link, cache_root: Path | None, stat
     row = next((r for r in near if r.consolidated == want_consolidated), None) or next(iter(near), None)
     if row is None:
         return None
-    data = _fetch(nse, row.xbrl_url, cache_root)
+    data = _fetch(nse, row.xbrl_url, cache_root, sink)
     if data:
         stats.results_from_nse += 1
         log.info("seed %s %s: BSE served nothing, NSE did (%s)", scrip, period, row.xbrl_url.rsplit("/", 1)[-1])
@@ -406,7 +413,7 @@ def seed_shareholding(sink, nse, scrip: str, symbol: str, name: str, since: str,
                       stats: SeedStats, company: dict | None = None) -> None:
     """Every quarter's shareholding pattern NSE lists for the symbol, into memory."""
     for filing_row in nse.shareholding(symbol, since=since):
-        data = _fetch(nse, filing_row.xbrl_url, cache_root)
+        data = _fetch(nse, filing_row.xbrl_url, cache_root, sink)
         if not data:
             stats.skipped += 1
             continue

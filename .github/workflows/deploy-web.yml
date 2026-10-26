@@ -56,3 +56,17 @@ jobs:
             cat /tmp/lifecycle.txt
             echo "::warning::R2 lifecycle rule text-180d not applied (API token needs R2 edit permission); texts under text/ are NOT auto-deleted until it is"
           fi
+      # F191: results XBRL files kept under raw/xbrl/ (pipeline xbrl_store.py) are deleted after 180 days too (owner, 26 Oct
+      # 2026). raw/screener/ and raw/tijori/ carry no rule, so this prefix overlaps none.
+      - name: R2 lifecycle, delete raw/xbrl/ after 180 days
+        working-directory: web
+        continue-on-error: true
+        run: |
+          if npx wrangler r2 bucket lifecycle list bse-intelligence 2>&1 | tee /tmp/lifecycle.txt | grep -q "xbrl-180d"; then
+            echo "lifecycle rule xbrl-180d already present"
+          elif npx wrangler r2 bucket lifecycle add bse-intelligence xbrl-180d raw/xbrl/ --expire-days 180 --force; then
+            echo "lifecycle rule xbrl-180d added"
+          else
+            cat /tmp/lifecycle.txt
+            echo "::warning::R2 lifecycle rule xbrl-180d not applied (API token needs R2 edit permission); files under raw/xbrl/ are NOT auto-deleted until it is"
+          fi

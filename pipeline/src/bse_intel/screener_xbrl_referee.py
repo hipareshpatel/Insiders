@@ -37,6 +37,7 @@ from .nse import SourceBlockedError
 from .periods import canonical_period, quarter_index
 from .screener_crosscheck import _close, _neighbours, CLASSES
 from . import xbrl
+from . import xbrl_store
 
 log = logging.getLogger(__name__)
 
@@ -94,8 +95,8 @@ def _line_names(parsed, metric: str) -> tuple[str, ...]:
 class CompanyFiles:
     """One company's results list and files on one basis, each fetched once."""
 
-    def __init__(self, nse, symbol: str, basis: str | None):
-        self.nse, self.symbol, self.basis = nse, symbol, basis
+    def __init__(self, nse, symbol: str, basis: str | None, sink=None):
+        self.nse, self.symbol, self.basis, self.sink = nse, symbol, basis, sink   # sink: R2 keeps the files (xbrl_store, F191)
         self.rows: dict[str, object] | None = None
         self.error = ""
         self.parsed: dict[str, tuple[object | None, str]] = {}   # url -> (XbrlResult or None, why not)
@@ -129,8 +130,12 @@ class CompanyFiles:
         name = row.xbrl_url.rsplit("/", 1)[-1]
         if row.xbrl_url not in self.parsed:
             try:
-                self.calls["files"] += 1
-                data = self.nse.download(row.xbrl_url, max_bytes=MAX_FILE_BYTES)
+                data = xbrl_store.get(self.sink, row.xbrl_url)
+                if not data:
+                    self.calls["files"] += 1
+                    data = self.nse.download(row.xbrl_url, max_bytes=MAX_FILE_BYTES)
+                    if data:
+                        xbrl_store.put(self.sink, row.xbrl_url, data)
             except SourceBlockedError:
                 raise
             except Exception as exc:   # noqa: BLE001
@@ -236,7 +241,8 @@ def disagreeing(rows: list[dict]) -> list[dict]:
     return [r for r in rows if r.get("metric") and r.get("class") not in NOT_PAIRS]
 
 
-def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | None = None, clock=time.monotonic) -> dict:
+def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | None = None, clock=time.monotonic,
+        sink=None) -> dict:
     """Referee the disagreeing pairs among the cross-check's ``rows``, company by company. ``limit`` caps the pairs
     refereed (a company is not split: the one that crosses the cap is finished); pairs left over are ``not_run``."""
     pairs = disagreeing(rows)
@@ -258,7 +264,7 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
         if why:
             results += [not_run(r, why) for r in items]
             continue
-        files = CompanyFiles(nse, symbol, basis or None)
+        files = CompanyFiles(nse, symbol, basis or None, sink)
         calls["companies"] += 1
         for r in items:
             if blocked:

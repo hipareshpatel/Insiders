@@ -1383,7 +1383,7 @@ def cmd_screener_referee(args, settings, sink) -> int:
         return 2
     summary = sc.run(sink, companies, args.day, args.workers, False)
     with NseClient() as nse:
-        outcome = sx.run(nse, summary["rows"], args.limit, args.time_budget)
+        outcome = sx.run(nse, summary["rows"], args.limit, args.time_budget, sink=sink)
     print(sx.render(outcome))
     if args.json:
         Path(args.json).write_text(sx.to_json(outcome), encoding="utf-8")
@@ -1421,7 +1421,7 @@ def cmd_tijori_referee(args, settings, sink) -> int:
     rows = tijori_referee_rows(tc.run(sink, companies, args.day, args.workers)["rows"])
     print(f"tijori-referee: {len(rows)} pairs to look up")
     with NseClient() as nse:
-        outcome = sx.run(nse, rows, args.limit, args.time_budget)
+        outcome = sx.run(nse, rows, args.limit, args.time_budget, sink=sink)
     print(sx.render(outcome))
     if args.json:
         Path(args.json).write_text(sx.to_json(outcome), encoding="utf-8")

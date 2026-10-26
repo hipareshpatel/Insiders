@@ -6,7 +6,6 @@ import { AnnouncementCard, AnnouncementRow } from "../components/AnnouncementCar
 import { Avatar } from "../components/Avatar";
 import { parseCard } from "../components/FilingCard";
 import { api, type FeedFilters } from "../lib/api";
-import { cutEps } from "../lib/cardText";
 import { cn } from "../lib/cn";
 import { addDays, istDate, istDateTime, marketSession, num, pct, signClass, titleCase, todayIST, companyPath } from "../lib/format";
 import { catalystFamily, catalystText, FEED_TABS, SECTORS, SIZES, verdict, type Tone } from "../lib/taxonomy";
@@ -201,7 +200,7 @@ function SignalsStrip({ rows }: { rows: CardRow[] }) {
               <Avatar name={row.company_name} symbol={row.symbol} size={40} />
               <span className="min-w-0">
                 <span className="block text-[13.5px] font-bold text-ink">{row.company_name} <span className="num font-semibold text-ink-3">· {card?.score?.total ?? row.actionability_score ?? ""}</span></span>
-                <span className="mt-0.5 line-clamp-2 block text-[12.5px] leading-snug text-ink-2">{card?.headline ?? cutEps(row.headline)}</span>
+                <span className="mt-0.5 line-clamp-2 block text-[12.5px] leading-snug text-ink-2">{card?.headline ?? row.headline}</span>
                 <span className="mt-1.5 flex flex-wrap gap-1">
                   {["Big", "Inflection", "Not run up", "Clean"].map((g) => <span key={g} className="rounded-md bg-pos-soft px-1.5 py-px text-[10px] font-extrabold text-pos">{g}</span>)}
                 </span>

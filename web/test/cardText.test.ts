@@ -1,7 +1,7 @@
 // The card's "say each thing once" rules (src/lib/cardText.ts). Run: npm test (node --test, types stripped).
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { changeTone, cutEps, executionFact, figures, repeats, showsFigure, statesEps, trimEps, withoutEps } from "../src/lib/cardText.ts";
+import { changeTone, executionFact, figures, repeats, showsFigure, statesEps } from "../src/lib/cardText.ts";
 
 test("a point that restates the headline is a repeat", () => {
   // the owner's Punjab & Sind Bank card: headline and first point were the same figure
@@ -227,80 +227,4 @@ test("more ways to write EPS are caught and per-share figures that are not EPS s
     "earnings per ₹10 share 4", "Earnings per equity share of ₹10 each 4.5", "earnings per share ₹५.२"]) assert.ok(statesEps(t), t);
   for (const t of ["Dividend ₹5 per share", "DPS ₹5", "Book value per share ₹40", "NAV per share ₹12", "Issue price ₹10 per share", "Net profit ₹5 Cr",
     "Interim dividend 250% (₹2.5 a share)", "Final dividend of ₹५ per share"]) assert.ok(!statesEps(t), t);
-});
-
-const PARITY: [string, string | null][] = [   // the same list is in pipeline/tests/test_no_eps.py
-  ["Revenue ₹100 Cr, EPS ₹5 and net interest margin 3%", null],
-  ["EPS ₹5, NIM 3%", null],
-  ["Revenue ₹10 Cr (EPS ₹5)", null],
-  ["Revenue ₹1,200 Cr, up 10%, EPS ₹5.2 (+8% YoY)", "Revenue ₹1,200 Cr, up 10%"],
-  ["Revenue ₹10 Cr — basic and diluted EPS ₹2.1 vs ₹1.9 a year ago", "Revenue ₹10 Cr"],
-  ["Revenue ₹10 Cr | Diluted EPS ₹3", "Revenue ₹10 Cr"],
-  ["Revenue ₹10 Cr, earnings per share ₹५.२", "Revenue ₹10 Cr"],
-  ["Revenue ₹5 Cr; profit after tax per share ₹3", "Revenue ₹5 Cr"],
-  ["Revenue ₹5 Cr, PAT/share ₹3", "Revenue ₹5 Cr"],
-  ["Revenue ₹5 Cr, earnings of ₹ 5 / share", "Revenue ₹5 Cr"],
-  ["Revenue ₹5 Cr, earnings per ₹10 share 4", "Revenue ₹5 Cr"],
-  ["Net profit ₹5 Cr, Earnings per equity share of ₹10 each: 4.5", "Net profit ₹5 Cr"],
-  ["Dividend ₹2 per share", "Dividend ₹2 per share"],
-  ["Book value per share ₹40", "Book value per share ₹40"],
-  ["Revenue ₹5 Cr, NAV per share ₹12", "Revenue ₹5 Cr, NAV per share ₹12"],
-  ["earnings ₹5 per share", null],
-  ["Revenue ₹5 Cr, earning ₹5/share", "Revenue ₹5 Cr"],
-  ["Acme: dividend ₹2 per share and EPS ₹7", null],
-  ["Revenue ₹5 Cr, EPS ₹2.10, up 12%", null],
-  ["Revenue ₹5 Cr, profit/share ₹4", "Revenue ₹5 Cr"],
-  ["Revenue ₹5 Cr, EPS 2.1 (vs 1.9 a year ago)", "Revenue ₹5 Cr"],
-  ["Revenue ₹10 Cr, EPS ₹2.1 and PAT ₹5 Cr", null],
-  ["Acme Q1FY27 EPS rises 12% to ₹5.2", null],
-  ["Revenue ₹5 Cr, EPS (basic) ₹3", "Revenue ₹5 Cr"],
-  ["Revenue ₹5 Cr, EPS of Rs. 2.10/- per share", "Revenue ₹5 Cr"],
-  ["Net profit ₹46 Cr", "Net profit ₹46 Cr"],
-];
-
-test("trimEps gives the same answer as the pipeline on a shared list (null: the item is dropped)", () => {
-  for (const [text, expected] of PARITY) assert.equal(trimEps(text), expected, text);
-});
-
-test("EPS in the middle of a sentence is not cut: no figure is given to the wrong metric", () => {
-  for (const t of ["Revenue ₹100 Cr, EPS ₹5 and net interest margin 3%", "EPS ₹5, NIM 3%", "Revenue ₹10 Cr, EPS ₹5, AUM ₹2,000 Cr",
-    "Revenue ₹10 Cr (EPS ₹5)", "Basic EPS ₹2.1, up 12%"]) assert.equal(trimEps(t), null, t);
-  assert.equal(cutEps("Revenue ₹10 Cr (EPS ₹5)"), "Revenue ₹10 Cr (EPS ₹5)");   // text that is never hidden stays as stored
-  assert.equal(cutEps("Revenue ₹1,200 Cr, up 10%, EPS ₹5.2 (+8% YoY)"), "Revenue ₹1,200 Cr, up 10%");
-  assert.equal(cutEps("Revenue ₹10 Cr; net EPS ₹2"), "Revenue ₹10 Cr");
-});
-
-test("withoutEps drops mid-sentence EPS items, cuts trailing clauses, rebuilds a headline and keeps the parts indexes right", () => {
-  const card = {
-    headline: "Acme Q1FY27 revenue ₹10 Cr and EPS ₹2.1", takeaway: "EPS ₹2.1 up 12%", core_catalyst: "Volumes, EPS ₹2.1",
-    what_happened: [{ text: "EPS ₹2.1, NIM 3%" }, { text: "Revenue ₹10 Cr, EPS ₹2.1 (+5% YoY)", quote: "Revenue 10, EPS 2.1" }, "PAT ₹4 Cr"],
-    why_it_matters: [{ text: "Margin held" }], key_numbers: [{ label: "EPS", value: "2.1" }, { label: "PAT", value: "5" }],
-    notable_changes: [{ metric: "Basic EPS", why: "x" }, { metric: "PAT", why: "y" }],
-    missing_disclosures: ["EPS and AUM not given", "Order book", "Cash flow, basic EPS"],
-    track_next: { milestones: [], kpis_to_verify: [], pending_approvals: [], risks: ["EPS dilution, NIM"], catalysts: ["Capacity, EPS"] },
-    parts: { v: 1, part1: { what_happened: [0, 1, 2], key_numbers: [1] }, part2: { notable_changes: [1], missing_disclosures: [0, 1, 2] } },
-  } as unknown as Parameters<typeof withoutEps>[0];
-  const out = withoutEps(card);
-  assert.equal(out.headline, "Acme Q1FY27: Revenue ₹10 Cr");
-  assert.equal(out.takeaway, undefined);
-  assert.equal(out.core_catalyst, "Volumes");
-  assert.deepEqual(out.what_happened, [{ text: "Revenue ₹10 Cr", quote: "Revenue 10, EPS 2.1" }, "PAT ₹4 Cr"]);
-  assert.deepEqual(out.key_numbers.map((k) => k.label), ["PAT"]);
-  assert.deepEqual(out.notable_changes?.map((c) => c.metric), ["PAT"]);
-  assert.deepEqual(out.missing_disclosures, ["Order book", "Cash flow"]);
-  assert.deepEqual(out.track_next?.risks, []);
-  assert.deepEqual(out.track_next?.catalysts, ["Capacity"]);
-  assert.deepEqual(out.parts?.part1.what_happened, [0, 1]);
-  assert.deepEqual(out.parts?.part1.key_numbers, [0]);
-  assert.deepEqual(out.parts?.part2.notable_changes, [0]);
-  assert.deepEqual(out.parts?.part2.missing_disclosures, [0, 1]);
-});
-
-test("withoutEps keeps parts undefined and a missing part1 or part2 missing", async () => {
-  const { withoutEps } = await import("../src/lib/cardText.ts");
-  const base = { headline: "Acme", what_happened: [{ text: "Revenue ₹10 Cr" }], why_it_matters: [], key_numbers: [], missing_disclosures: [] };
-  const none = withoutEps(base as unknown as Parameters<typeof withoutEps>[0]);
-  assert.equal(none.parts, undefined);
-  const one = withoutEps({ ...base, parts: { v: 1, part1: { what_happened: [0] } } } as unknown as Parameters<typeof withoutEps>[0]);
-  assert.ok(one.parts && !("part2" in one.parts));
 });

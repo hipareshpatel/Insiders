@@ -1,8 +1,6 @@
 /** Plain-text rules the card uses to say each thing once (owner, 2026-10-19: "lots of repeated items"). No React here,
  * so `node --test` runs the cases in cardText.test.ts. */
 
-import type { CardBody } from "../../shared/types";
-
 const plainText = (text: string) => text.replace(/\*\*/g, "");
 
 // Period labels ("Q2FY27", "Q2 FY 2026-27", "H1FY27") and years are not figures.
@@ -177,7 +175,7 @@ export function governanceFlags(text: string): string[] {
 /** Owner rule 26 Oct 2026: no EPS on cards or stock pages. True when a line of a stored card states earnings per share
  * ("EPS", "E.P.S.", "earnings per share", "earnings/share", "earnings ₹5 per share", "earnings per ₹10 share", "profit per
  * share", "profit after tax per share", "PAT/share"); a dividend, DPS, book value, NAV or price per share is not EPS and
- * stays. Same pattern as pipeline no_eps.py EPS_WORDS; digits are Unicode (\p{Nd}) on both sides. */
+ * stays. Used to keep EPS rows off the face of stored cards; the pipeline's no_eps.py guards new cards (it is wider: per-share figures, LPS). */
 const D = "\\d";
 const AMT = "(?:(?:rs\\.?|inr|₹)\\s*)?\\d[\\d.,]*\\s*(?:/-)?";
 const PER = "(?:\\s+(?:per|a|each)\\s+|\\s*/\\s*)";
@@ -192,144 +190,3 @@ const EPS_SOURCE = ("(?<![\\p{L}\\p{N}_])(?:eps|e\\.p\\.s\\.?|"
   + "per[\\s-]share\\s+(?:earnings|profit|income))(?![\\p{L}\\p{N}_])").split(D).join("\\p{Nd}");
 export const EPS_TEXT = new RegExp(EPS_SOURCE, "iu");
 export const statesEps = (...texts: (string | null | undefined)[]): boolean => texts.some((t) => !!t && EPS_TEXT.test(t));
-
-// the separators a trailing EPS clause may follow: ", " "; " " — " " | "
-const SEP = /,\s|;\s|\s[—–|]\s/g;
-const LEAD_WORDS = /^(?:\s*\b(?:basic|diluted|and|net|adjusted|reported|with|plus)\b|\s*&)*\s*$/i;
-const DANGLE = /(?:[\s,;:\-—–|(]+|\s+(?:basic|diluted|and|net)$)$/i;
-// the only words a trailing EPS clause may carry after the EPS words: its figure, its change and its comparison
-const CLAUSE_WORDS = new Set(("rs re inr cr crore crores lakh lakhs mn million bn billion bps pp x per share shares a an each of vs versus from to up down "
-  + "rose fell yoy qoq yr yrs year years ago earlier prior previous last compared with at was were is in the quarter quarters "
-  + "q fy h m basic diluted and or grew growth growing increase increased decrease decreased decline declined declining "
-  + "dropped higher lower rise rising falling on by").split(" "));
-
-function balanced(text: string): boolean {
-  let depth = 0;
-  for (const c of text) {
-    if (c === "(" || c === "[") depth++;
-    else if (c === ")" || c === "]") { depth--; if (depth < 0) return false; }
-  }
-  return depth === 0;
-}
-
-/** Mirrors pipeline no_eps.py `_trailing_cut`: the text without a TRAILING EPS clause (the EPS words start after the last
- * ", " / "; " / " — " / " | " outside brackets and nothing but the clause follows: its figure, a bracketed change, "vs ₹x",
- * "a year ago"); null when the EPS is anywhere else, so no figure can be given to the wrong metric. */
-function trailingCut(text: string): string | null {
-  const m = EPS_TEXT.exec(text);
-  if (!m) return text;
-  const depths: number[] = [];
-  let depth = 0;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (c === ")" || c === "]") depth = Math.max(0, depth - 1);
-    depths.push(depth);
-    if (c === "(" || c === "[") depth++;
-  }
-  let last: RegExpExecArray | null = null;
-  for (const sm of text.matchAll(SEP)) if (depths[sm.index!] === 0) last = sm as unknown as RegExpExecArray;
-  if (!last) return null;
-  const lastEnd = last.index! + last[0].length;
-  if (lastEnd > m.index || depths[m.index] !== 0) return null;
-  if (!LEAD_WORDS.test(text.slice(lastEnd, m.index))) return null;
-  const rest = text.slice(m.index + m[0].length);
-  if (statesEps(rest) || !balanced(rest)) return null;
-  const words = rest.replace(PERIOD_WORDS, " ").match(/[\p{L}\p{No}\p{Nl}]+/gu) ?? [];
-  if (words.some((w) => !CLAUSE_WORDS.has(w.toLowerCase()))) return null;
-  let prefix = text.slice(0, last.index);
-  for (;;) {
-    const cut = prefix.replace(DANGLE, "");
-    if (cut === prefix) break;
-    prefix = cut;
-  }
-  prefix = prefix.trimEnd();
-  return prefix && balanced(prefix) && !statesEps(prefix) ? prefix : null;
-}
-
-/** Mirrors pipeline no_eps.py `cut_text`: the text unchanged without EPS, its trailing EPS clause cut when that is all there
- * is, and null when it states EPS anywhere else (the item is then dropped: a wrong line is worse than a missing one). */
-export function trimEps(text: string): string | null {
-  if (!text || !statesEps(text)) return text;
-  const cut = trailingCut(text);
-  return cut && !statesEps(cut) ? cut : null;
-}
-
-/** For text that is never hidden (a headline in a list or a tooltip): the trailing EPS clause cut, else as stored. */
-export const cutEps = (text: string): string => trimEps(text) ?? text;
-
-function headlineWithoutEps(headline: string, facts: string[]): string {
-  const m = EPS_TEXT.exec(headline);
-  let prefix = m ? headline.slice(0, m.index).replace(/^[\s:\-\u2013\u2014,;(]+|[\s:\-\u2013\u2014,;(]+$/g, "") : "";
-  if (prefix && /\d/.test(prefix.replace(PERIOD_WORDS, " "))) {
-    const p = new RegExp(PERIOD_WORDS.source, "i").exec(prefix);
-    prefix = p ? prefix.slice(0, p.index + p[0].length).replace(/[\s:\-\u2013\u2014,;(]+$/, "") : "";
-  }
-  const fact = facts.map((f) => f.trim().replace(/\.$/, "")).find((f) => f && !statesEps(f)) ?? "";
-  if (fact && prefix && fact.toLowerCase().startsWith(prefix.toLowerCase())) prefix = "";
-  const line = prefix && fact ? `${prefix}: ${fact}` : fact || (prefix ? `${prefix}: results` : "Quarterly results announced");
-  return line.length >= 8 ? line : "Quarterly results announced";
-}
-
-/** A stored card as a reader sees it under the owner's no-EPS rule, the same item rule as the pipeline (`drop_eps`): an item
- * whose text states EPS is dropped whole, except a trailing EPS clause, which is cut; `parts` is re-indexed so it still
- * points at the right lines. A headline that cannot be cut is rebuilt from the company and period and the first line left;
- * a takeaway or core catalyst that cannot be cut is left off (the face falls back to the insights). */
-export function withoutEps(card: CardBody): CardBody {
-  const keepers = <T>(items: T[] | null | undefined, texts: (t: T) => (string | null | undefined)[]) => {
-    const map = new Map<number, number>();
-    const kept: T[] = [];
-    (items ?? []).forEach((item, i) => { if (!statesEps(...texts(item))) { map.set(i, kept.length); kept.push(item); } });
-    return { kept, map };
-  };
-  // items with one text: a trailing EPS clause is cut, EPS anywhere else drops the item (its quote is left as it is)
-  const refine = <T>(items: T[] | null | undefined, get: (t: T) => string, set: (t: T, text: string) => T) => {
-    const map = new Map<number, number>();
-    const kept: T[] = [];
-    (items ?? []).forEach((item, i) => {
-      const text = trimEps(get(item));
-      if (text === null) return;
-      map.set(i, kept.length);
-      kept.push(text === get(item) ? item : set(item, text));
-    });
-    return { kept, map };
-  };
-  const strings = (items: string[] | null | undefined) => refine(items, (x) => x, (_, text) => text);
-  const text = (f: string | { text: string }) => (typeof f === "string" ? f : f.text);
-  const wh = refine(card.what_happened, text, (f, t) => (typeof f === "string" ? t : { ...f, text: t }));
-  const why = refine(card.why_it_matters, (i) => i.text, (i, t) => ({ ...i, text: t }));
-  const keys = keepers(card.key_numbers, (k) => [k.label, k.value, k.change]);
-  const changes = keepers(card.notable_changes, (c) => [c.metric, c.why, c.change]);
-  const quant = keepers(card.quantified_impact, (q) => [q.label, q.interpretation, q.formula]);
-  const calls = refine(card.call_takeaways, (t) => t.text, (t, x) => ({ ...t, text: x }));
-  const missing = strings(card.missing_disclosures);
-  const headline = trimEps(card.headline) ?? headlineWithoutEps(card.headline, wh.kept.map(text));
-  const out: CardBody = { ...card, headline, what_happened: wh.kept, why_it_matters: why.kept, key_numbers: keys.kept,
-    missing_disclosures: missing.kept };
-  if (card.takeaway) out.takeaway = trimEps(card.takeaway) ?? undefined;
-  if (card.core_catalyst) out.core_catalyst = trimEps(card.core_catalyst);
-  if (card.notable_changes) out.notable_changes = changes.kept;
-  if (card.quantified_impact) out.quantified_impact = quant.kept;
-  if (card.call_takeaways) out.call_takeaways = calls.kept;
-  const t = card.track_next;
-  if (t) {
-    out.track_next = { ...t,
-      milestones: (t.milestones ?? []).filter((m) => !statesEps(m.what)),
-      kpis_to_verify: (t.kpis_to_verify ?? []).filter((k) => !statesEps(k.kpi, k.check_in, k.target)),
-      pending_approvals: strings(t.pending_approvals).kept,
-      risks: strings(t.risks).kept,
-      ...(t.catalysts ? { catalysts: strings(t.catalysts).kept } : {}) };
-  }
-  const p = card.parts;
-  if (p) {
-    const remap = (idx: number[] | undefined, map: Map<number, number>) => idx?.flatMap((i) => (map.has(i) ? [map.get(i) as number] : []));
-    const maps: Record<string, Map<number, number>> = { what_happened: wh.map, why_it_matters: why.map, key_numbers: keys.map,
-      notable_changes: changes.map, quantified_impact: quant.map, call_takeaways: calls.map, missing_disclosures: missing.map };
-    const fix = <T extends object>(part: T): T => {
-      const next = { ...part } as Record<string, unknown>;
-      for (const [name, map] of Object.entries(maps)) if (Array.isArray(next[name])) next[name] = remap(next[name] as number[], map);
-      return next as unknown as T;
-    };
-    out.parts = { ...p, ...(p.part1 ? { part1: fix(p.part1) } : {}), ...(p.part2 ? { part2: fix(p.part2) } : {}) };
-  }
-  return out;
-}

@@ -69,6 +69,7 @@ from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
 from . import eps_adjust, no_eps
 from . import annual_xbrl
+from . import xbrl_store
 from . import directions
 from . import results_card
 from . import footer_plausible, one_basis
@@ -2998,6 +2999,10 @@ class Pipeline:
                 return gzip.decompress(path.read_bytes())
             except OSError:
                 pass
+        data = xbrl_store.get(self.sink, url)   # our copy in R2 (F191) before asking the exchange
+        if data:
+            self._xbrl_local_put(path, data)
+            return data
         try:
             client = client or self.bse
             # an event XBRL file comes as a zip of the XML and its PDF on some rows (event_xbrl.xml_of)
@@ -3005,13 +3010,20 @@ class Pipeline:
             data = fetch(url, max_bytes=max_bytes)
         except (AttachmentError, AttachmentTooLarge):
             return None
-        if data and path:
-            try:
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_bytes(gzip.compress(data))
-            except OSError:
-                pass
+        if data:
+            self._xbrl_local_put(path, data)
+            xbrl_store.put(self.sink, url, data)
         return data
+
+    @staticmethod
+    def _xbrl_local_put(path, data: bytes) -> None:
+        if not path:
+            return
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(gzip.compress(data))
+        except OSError:
+            pass
 
     def _event_files(self, filing: Filing) -> list:
         """NSE's event XBRL files broadcast in the window around a filing, read once a run for each day (one request

@@ -32,7 +32,7 @@ class _Sink:
 def test_seed_keeps_a_standalone_only_quarter_with_the_switch(monkeypatch):
     files = {"u:2025-03-31:True": _parsed("Q4FY25", "CONSOLIDATED"), "u:2025-06-30:False": _parsed("Q1FY26", "STANDALONE")}
     monkeypatch.setattr(seed, "_nse_quarters", lambda *a, **k: {"Q4FY25": _Row("2025-03-31", True), "Q1FY26": _Row("2025-06-30", False)})
-    monkeypatch.setattr(seed, "_fetch", lambda client, url, root: url.encode())
+    monkeypatch.setattr(seed, "_fetch", lambda client, url, root, sink=None: url.encode())
     monkeypatch.setattr(seed, "_parse_results", lambda data, stats: files[data.decode()])
     monkeypatch.setattr(seed, "_seed_standalone", lambda *a, **k: None)
     for switch in ("0", "1"):

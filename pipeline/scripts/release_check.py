@@ -47,13 +47,19 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      switch holds, with its reason. A card with a results table and no memory is NOT REPLAYABLE (listed). Not
                      replayable at all: a year figure the model wrote into a card's words from the PDF (only the table and the
                      face are code's), and an event card that quotes a full-year figure.
+  footer_plausible  CARD_FOOTER_PLAUSIBLE (F182): the footer KPIs of the stored card (its sector rows of the results table and
+                     the `fundamentals` strip) worked out again from memory off and on, the figures the switch hides listed with
+                     their reason (GIC Housing's NIM 19.63%). A card with a footer KPI and no memory is NOT REPLAYABLE (listed).
+  eps_follows_profit CARD_EPS_FOLLOWS_PROFIT (F183): a results table's EPS line, `results_snapshot` off and on over memory
+                     (an EPS change that does not follow the profit change, with no share-count event, is not shown; the
+                     filing's own stated change wins). Needs a RESULTS card with a table and memory.
 A card or part that cannot be replayed is never faked: it is counted as "not_replayable", written to NAME-unreplayable.json
 and NAME-unreplayable.md (the stored lines and the pdf link, for the blind sample: judge the stored card as it is).
 
 Output, per switch NAME: NAME.json (every changed card, what changed, the counts), NAME.txt (the plain-text summary),
 NAME-blind.json and NAME-blind.md (a seeded sample of up to --sample changed cards for the reviewer; the two renderings
 as X and Y in a seeded order, and for quote_exact the flagged lines with their quotes), NAME-key.json (which of X / Y is
-on; keep it from the reviewer). Also release-check.json and release-check.txt (the counts of all nine).
+on; keep it from the reviewer). Also release-check.json and release-check.txt (the counts of all the switches).
 Limits shared by all: the text is the filing's own pages (`Document.select_text`), without the XBRL table the pipeline
 puts in front or the second reading, and memory is as it stands now, not as at filing."""
 
@@ -80,18 +86,20 @@ import audit_precision as prec  # noqa: E402
 import audit_two_parts as two  # noqa: E402
 from bse_intel import event_xbrl, gate, one_basis, signals  # noqa: E402
 from bse_intel import pipeline as P  # noqa: E402
-from bse_intel.dossier import dossier_as_of, results_snapshot, with_year_hold  # noqa: E402
+from bse_intel.dossier import dossier_as_of, latest_fundamentals, results_snapshot, with_year_hold  # noqa: E402
 from bse_intel.extract import Document  # noqa: E402
 from bse_intel.grounding import declared_unit  # noqa: E402
 from bse_intel.models import Card, DealValue, Filing, Pass2Output  # noqa: E402
 from onoff_facts import tagged_from_memory  # noqa: E402
 
 ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ONLY", "QUOTE_EXACT_NUMBERS", "CARD_SAME_DEFINITION",
-                "CARD_GROUNDED_FIGURES", "CARD_GUIDANCE_DATED", "CARD_ONE_BASIS", "MEMORY_YEAR_CHECK")
+                "CARD_GROUNDED_FIGURES", "CARD_GUIDANCE_DATED", "CARD_ONE_BASIS", "MEMORY_YEAR_CHECK",
+                "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
-          ("year_check", "MEMORY_YEAR_CHECK"))
+          ("year_check", "MEMORY_YEAR_CHECK"), ("footer_plausible", "CARD_FOOTER_PLAUSIBLE"),
+          ("eps_follows_profit", "CARD_EPS_FOLLOWS_PROFIT"))
 
 
 # ---------------------------------------------------------------- pure helpers (tested)
@@ -509,6 +517,69 @@ def check_one_basis(card: dict, dossier: dict | None, row: dict, period: str | N
     return rec
 
 
+def _kpi_specs(card: dict) -> list[dict]:
+    """The footer specs a stored card shows: its results table's kpi rows and its fundamentals strip's labels."""
+    specs = [footer_spec(x) for x in (card.get("results") or {}).get("lines") or [] if str(x.get("key") or "").startswith("kpi:")]
+    for k in (card.get("fundamentals") or {}).get("kpis") or []:
+        found = next((x for x in _footer_specs() if x.get("label") == k.get("label")), None)
+        if found and found not in specs:
+            specs.append(found)
+    return specs
+
+
+def _fundamentals_lines(block: dict | None) -> list[str]:
+    return [f"TABLE footer {k.get('label')}: {k.get('value')} ({k.get('period')})" for k in (block or {}).get("kpis") or []]
+
+
+def check_footer(card: dict, dossier: dict | None, row: dict, text: str | None, period: str | None) -> dict:
+    """footer_plausible: the footer rows of the results table and the fundamentals strip, off and on, and the figures hidden."""
+    specs = _kpi_specs(card)
+    if not dossier:
+        rec = _record(row, card, [], [])
+        rec["info"], rec["unreplayable"] = {}, [_unrep(row, "footer KPI on the card, but the company's memory is not available", stored_lines(card))]
+        return rec
+    current = dossier_as_of(dossier, row["filed_at"])
+    like = None if text else card.get("results")
+
+    def render() -> tuple[list[str], list[dict]]:
+        snap = results_snapshot(current, row["news_id"], specs, printed=text, like=like) if card.get("results") and period else None
+        funds = latest_fundamentals(current, specs)
+        return kpi_lines(snap, [x for x in specs if card.get("results")]) + _fundamentals_lines(funds), \
+            [*((snap or {}).get("footer_hidden") or []), *(funds.get("footer_hidden") or [])]
+
+    with switches_on():
+        off, _ = render()
+    with switches_on("CARD_FOOTER_PLAUSIBLE"):
+        on, hidden = render()
+    on += [f"MEMORY hidden {h['label']} {h['period']}: {h['reason']}" for h in hidden]
+    rec = _record(row, card, off, on)
+    rec["info"], rec["unreplayable"] = {"cards_with_a_footer_figure_hidden": 1 if hidden else 0}, []
+    return rec
+
+
+def check_eps(card: dict, dossier: dict | None, row: dict, text: str | None, period: str | None) -> dict:
+    """eps_follows_profit: the results table (`results_snapshot`), with the EPS-follows-profit switch off and on."""
+    if not dossier:
+        rec = _record(row, card, [], [])
+        rec["info"], rec["unreplayable"] = {}, [_unrep(row, "results table on the card, but the company's memory is not available", stored_lines(card))]
+        return rec
+    current = dossier_as_of(dossier, row["filed_at"])
+    like = None if text else card.get("results")
+
+    def lines(snap: dict | None) -> list[str]:
+        eps = (snap or {}).get("eps")
+        out = ["TABLE EPS: " + (", ".join(f"{k} {eps[k]}" for k in eps) if isinstance(eps, dict) else "(not shown)")]
+        return out + [f"MEMORY hidden EPS change: {h['reason']}" for h in (snap or {}).get("eps_hidden") or []]
+
+    with switches_on():
+        off = lines(results_snapshot(current, row["news_id"], (), printed=text, like=like))
+    with switches_on("CARD_EPS_FOLLOWS_PROFIT"):
+        on = lines(results_snapshot(current, row["news_id"], (), printed=text, like=like))
+    rec = _record(row, card, off, on)
+    rec["info"], rec["unreplayable"] = {}, []
+    return rec
+
+
 # ---------------------------------------------------------------- reading the stored cards, texts and memory
 class PlatformSource:
     def __init__(self, limit: int | None):
@@ -651,6 +722,18 @@ def run(source, wanted: tuple[str, ...]) -> dict:
                     else:
                         seen[name] += 1
                         records[name].append(check_year(card, memory() or None, row, text, period))
+                elif name == "footer_plausible":
+                    if not _kpi_specs(card):
+                        skipped[name]["no footer KPI on the card"] += 1
+                    else:
+                        seen[name] += 1
+                        records[name].append(check_footer(card, memory() or None, row, text, period if results else None))
+                elif name == "eps_follows_profit":
+                    if not results or not period:
+                        skipped[name]["not a results card with a period"] += 1
+                    else:
+                        seen[name] += 1
+                        records[name].append(check_eps(card, memory() or None, row, text, period))
                 elif name == "one_basis":
                     seen[name] += 1
                     records[name].append(check_one_basis(card, memory() or None, row, period if results else None))
@@ -683,7 +766,7 @@ def finish(name: str, switch: str, result: dict, out: pathlib.Path, seed: int, n
     for r in recs:
         for k, v in (r.get("info") or {}).items():
             counts[k] = counts.get(k, 0) + v
-    if unrep or name in ("grounded_figures", "guidance_dated", "year_check"):
+    if unrep or name in ("grounded_figures", "guidance_dated", "year_check", "footer_plausible"):
         counts["not_replayable"] = dict(Counter(u["reason"] for u in unrep))
         counts["not_replayable_cards"] = len({u["news_id"] for u in unrep})
         notes.append("NOT REPLAYABLE offline (listed in NAME-unreplayable.json and .md for the blind sample, which judges the "
@@ -702,6 +785,13 @@ def finish(name: str, switch: str, result: dict, out: pathlib.Path, seed: int, n
                      "a MEMORY line names each held figure the table reads, with its reason. Replayed: the results table and "
                      "the card's face. Not replayable: a full-year figure the model wrote into a card's words from the PDF, and "
                      "an event card that quotes a year (only the table and the face are code's). Memory is as it stands now.")
+    if name == "footer_plausible":
+        notes.append("`results_snapshot` and `latest_fundamentals` over memory with the switch off and on, for the footer KPIs the "
+                     "card shows; a MEMORY line names each hidden figure with its reason. Memory is as it stands now, so a figure "
+                     "the card stored from another reading (the AI's own, GIC Housing's NIM) is replayed only when memory holds it.")
+    if name == "eps_follows_profit":
+        notes.append("`results_snapshot` over memory with the switch off and on; a MEMORY line names an EPS change not shown. "
+                     "Corporate actions are read from memory as it stands now.")
     if name == "one_basis":
         notes.append("`one_basis.apply` on the stored words (figures from memory's results rows, history from memory as of the "
                      "filing) and `apply_card_json` on the stored card. Memory is as it stands now, not as at filing.")

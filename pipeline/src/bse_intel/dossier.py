@@ -24,8 +24,9 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import (card_ebitda_profit_v2, card_grounded_figures, card_guidance_dated, card_same_definition, memory_call_v2,
+from .settings import (card_ebitda_profit_v2, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, memory_call_v2,
                        memory_restated, memory_screener, memory_year_check)
+from . import footer_plausible
 from .models import _PER_OTHER, Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -1888,6 +1889,7 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
         elif metric:
             out[key] = {"period": metric["period"], "value": metric["value"]}
     kpis = []
+    hidden: list[dict] = []
     for spec in footer:
         fmt = spec.get("format", "num")
         names = (spec["metric"], *spec.get("aliases", ()))
@@ -1896,10 +1898,15 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
         if any(m["period"].startswith("Q") for m in rows):
             rows = [m for m in rows if m["period"].startswith("Q")]
         metric = max(rows, key=lambda m: (due_date(m["period"]), m.get("as_of") or ""), default=None)
+        if metric and card_footer_plausible() and (why := footer_plausible.hide_reason(metrics, names, metric, fmt, dossier.get("industry"))):
+            hidden.append(footer_plausible.note(spec["label"], metric, why))   # F182: GIC Housing's NIM 19.63% against 3.41%
+            continue
         if metric:
             kpis.append({"label": spec["label"], "format": fmt, "period": metric["period"], "value": metric["value"]})
     if kpis:
         out["kpis"] = kpis[:2]
+    if hidden:
+        out["footer_hidden"] = hidden   # not shown; the card keeps why (grounding.footer_hidden)
     return out
 
 
@@ -2468,6 +2475,10 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             # EPS_SHARE_ADJUST (F153): the changes on one share count; the profit EPS is on is the owners', else the total
             from . import eps_adjust
             row = eps_adjust.snapshot_row(row, dossier, periods, lambda p: lookup(("pat_owners",), p) or lookup(("pat",), p))
+            # CARD_EPS_FOLLOWS_PROFIT (F183): a change the profit does not carry, with no share-count event on record, is not shown
+            row, eps_hidden = eps_adjust.follow_profit(row, dossier, periods, lambda p: lookup(("pat_owners",), p) or lookup(("pat",), p), printed)
+            if eps_hidden:
+                out["eps_hidden"] = eps_hidden
         # the file's own YoY only when memory has no year-ago figure at all: when it has one and the table refused it
         # (restated, or not what this statement prints), that YoY rests on the refused base (data chain audit A8)
         if key == "revenue" and "yoy_pct" not in row and stored(names, periods["prev_year"])[1] is None:
@@ -2511,11 +2522,18 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     # the sector's own figures (EBITDA a tonne for cement, ARPU for telecom, occupancy for hospitals...) where memory
     # holds them for this quarter; a KPI the statement already shows is not repeated
     shown = {key for key, _, _ in rows}
+    footer_hidden: list[dict] = []
     for spec in footer:
         names = (spec["metric"], *spec.get("aliases", ()))
         if shown & set(names):
             continue
         unit = {"pct": "pct", "cr": "cr", "inr": "inr"}.get(spec.get("format", "num"), "num")
+        if card_footer_plausible():
+            now = stored(names, period)[0]
+            if now is not None and (why := footer_plausible.hide_reason(dossier.get("financial_metrics", []), names, now,
+                                                                         spec.get("format", "num"), dossier.get("industry"))):
+                footer_hidden.append(footer_plausible.note(spec["label"], now, why))   # F182: not shown, the card keeps why
+                continue
         pick = lambda p, names=names: lookup(names, p)   # noqa: E731
         if card_grounded_figures():
             # a figure stored in MW or GW is no ₹ Cr, and a year-ago or previous quarter in another unit than this
@@ -2534,6 +2552,8 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             lines.append({"key": f"kpi:{spec['metric']}", "label": spec["label"], "unit": unit})
     out["lens"] = lens
     out["lines"] = lines
+    if footer_hidden:
+        out["footer_hidden"] = footer_hidden
     if v2 and lens == "company" and "ebitda" in out:
         _ebitda_lines_v2(out, lines, lookup, period, printed, kept, card_basis if v2 else None)
     return out

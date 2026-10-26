@@ -45,6 +45,7 @@ const CORRECTED_BY_CODE: [string, string][] = [
   ["unit_fixes", "Unit corrected"],
   ["change_fixes", "Change figure corrected"],
   ["one_basis", "One basis"],
+  ["footer_hidden", "Footer figure hidden (cannot be right)"],
   ["call_figure_conflicts", "Call figure dropped (the company's own filing says otherwise)"],
   ["quotes_dropped", "Point dropped (its quote did not carry it)"],
 ];

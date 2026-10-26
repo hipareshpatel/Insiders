@@ -150,6 +150,24 @@ def card_consolidated_only() -> bool:
     return (_env("CARD_CONSOLIDATED_ONLY", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_footer_plausible() -> bool:
+    """CARD_FOOTER_PLAUSIBLE (default off; F182, TODO 77): a footer KPI that cannot be right is not shown, and the card stores
+    why (`grounding.footer_hidden`, listed on the owner's Issues page): one more than 3x the highest or under a third of
+    the lowest of the company's own last four periods of the same metric, or outside what its type of company can earn
+    (home-loan lender NIM 1-7%, bank NIM 1.5-6%, a non-financial company's EBITDA / operating margin -50% to +60%).
+    GIC Housing Finance showed a NIM of 19.63% against its FY26 3.41% (26 Oct 2026). Read at the call."""
+    return (_env("CARD_FOOTER_PLAUSIBLE", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+def card_eps_follows_profit() -> bool:
+    """CARD_EPS_FOLLOWS_PROFIT (default off; F183, TODO 78): on a results table an EPS change that does not follow the profit
+    change (more than 5 points plus share-count noise apart, or the other way round) with no split, bonus, buyback or rights
+    issue on record is not shown, nor the comparative it rests on; where the filing's own text states the EPS change ("EPS up
+    0.9% QoQ") that stated change is shown instead. Wipro's card (26 Oct 2026) showed EPS 3.23 against 2.74 and 2.50, +18%,
+    beside profit +1%. Read at the call."""
+    return (_env("CARD_EPS_FOLLOWS_PROFIT", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def eps_share_adjust() -> bool:
     """EPS_SHARE_ADJUST (default off; F153, TODO 43): an EPS change on a card is worked out on today's share count (the older
     period's EPS divided by the split, bonus or consolidation factor between the two periods), or left out where the share

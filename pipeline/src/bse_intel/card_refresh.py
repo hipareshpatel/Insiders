@@ -23,10 +23,12 @@ from .call_summary import card_takeaways, remember_call_points
 from .corporate_actions import card_block as corporate_action_block
 from .card_context import case_stage, guidance_recall, memory_context, rating_change
 from .impact import high_reasons
+from . import footer_plausible
 from .dossier import call_results_snapshot, dossier_as_of, latest_fundamentals, results_snapshot
 from .models import Card, Filing, Pass2Output
 from .prices import point_in_time
 from .signals import SIGNALS_OFF, priced_for, scale_parts, volume_strip
+from .settings import card_footer_plausible
 
 log = logging.getLogger(__name__)
 
@@ -92,6 +94,9 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
             new["results"] = None
     new["signals"] = [s for s in card.get("signals") or [] if s.get("type") not in SIGNALS_OFF]
     changed = [k for k in (*BLOCKS, "signals") if json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
+    if card_footer_plausible() and (hidden := footer_plausible.card_notes(new)) and (new.get("grounding") or {}).get("footer_hidden") != hidden:
+        new["grounding"] = {**(new.get("grounding") or {}), "footer_hidden": hidden}   # F182: for the owner's Issues page
+        changed.append("grounding")
     return new, changed
 
 

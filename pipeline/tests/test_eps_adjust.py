@@ -156,3 +156,74 @@ def test_snapshot_row_and_signal_bases(monkeypatch):
     by = {"pat": [{"period": "Q2FY26", "value": 15390.0}, {"period": "Q2FY25", "value": 13500.0}]}
     assert signals._eps_bases(old, cur, BONUS, by)[0]["value"] == 10.0
     assert signals._eps_bases(old, cur, {}, by) == []
+
+
+# ---------------------------------------------------------------- CARD_EPS_FOLLOWS_PROFIT (F183, TODO 78)
+def _wipro(eps_now=3.23, eps_year=2.74, eps_qtr=2.50, actions=None):
+    """Wipro's card (nse-106820253, 26 Oct 2026): EPS 3.23 against 2.74 and 2.50 where profit rose 1%."""
+    def m(metric, period, value, news="n1", unit="INR_CR"):
+        return {"metric": metric, "period": period, "value": value, "unit": unit, "source_news_id": news, "as_of": "2026-10-01"}
+    d = {"financial_metrics": [
+        m("revenue", "Q2FY27", 23000.0, "n2"), m("revenue", "Q2FY26", 22400.0), m("revenue", "Q1FY27", 22800.0),
+        m("ebitda", "Q2FY27", 4400.0, "n2"), m("ebitda", "Q2FY26", 4300.0), m("ebitda", "Q1FY27", 4350.0),
+        m("pat", "Q2FY27", 3300.0, "n2"), m("pat", "Q2FY26", 3250.0), m("pat", "Q1FY27", 3267.0),
+        m("eps", "Q2FY27", eps_now, "n2", "INR"), m("eps", "Q2FY26", eps_year, unit="INR"), m("eps", "Q1FY27", eps_qtr, unit="INR")]}
+    if actions:
+        d["corporate_actions"] = actions
+    return d
+
+
+RELEASE_EPS = "Wipro Q2FY27: Revenue 23,000 Cr. EPS up 0.9% QoQ at Rs 3.23. Profit 3,300 Cr."
+
+
+def test_an_eps_change_the_profit_does_not_carry_is_shown_off_and_left_out_on(monkeypatch):
+    from bse_intel.dossier import results_snapshot
+    monkeypatch.delenv("CARD_EPS_FOLLOWS_PROFIT", raising=False)
+    off = results_snapshot(_wipro(), "n2")
+    assert off["eps"]["yoy_pct"] == 17.9 and off["eps"]["prev_quarter"] == 2.5 and "eps_hidden" not in off
+    monkeypatch.setenv("CARD_EPS_FOLLOWS_PROFIT", "1")
+    on = results_snapshot(_wipro(), "n2")
+    assert on["eps"] == {"value": 3.23, "eps_note": on["eps"]["eps_note"]}   # neither change, nor the bases they rest on
+    assert "does not follow profit +1.5% and no share-count event is on record" in on["eps"]["eps_note"]
+    assert [h["slot"] for h in on["eps_hidden"]] == ["yoy", "qoq"]
+
+
+def test_a_change_the_profit_carries_is_kept(monkeypatch):
+    from bse_intel.dossier import results_snapshot
+    monkeypatch.setenv("CARD_EPS_FOLLOWS_PROFIT", "1")
+    on = results_snapshot(_wipro(eps_year=3.17, eps_qtr=3.2), "n2")   # profit +1.5% / +1.0%, EPS +1.9% / +0.9%
+    assert on["eps"]["yoy_pct"] == 1.9 and on["eps"]["prev_quarter"] == 3.2 and "eps_hidden" not in on
+
+
+def test_the_filings_own_stated_eps_change_wins(monkeypatch):
+    from bse_intel.dossier import results_snapshot
+    monkeypatch.setenv("CARD_EPS_FOLLOWS_PROFIT", "1")
+    on = results_snapshot(_wipro(), "n2", printed=RELEASE_EPS)
+    assert on["eps"]["qoq_pct"] == 0.9                        # "EPS up 0.9% QoQ"
+    assert "prev_quarter" not in on["eps"]                     # the base that disagreed with it is not shown
+    assert "yoy_pct" not in on["eps"] and "prev_year" not in on["eps"]   # the year-on-year change the profit does not carry
+    assert "the filing states EPS +0.9% QOQ" in on["eps"]["eps_note"]
+
+
+def test_a_recorded_bonus_leaves_the_change_to_the_share_base_logic(monkeypatch):
+    from bse_intel.dossier import results_snapshot
+    monkeypatch.setenv("CARD_EPS_FOLLOWS_PROFIT", "1")
+    bonus = [{"ex_date": "2026-09-01", "kind": "BONUS", "factor": 2.0, "subject": "BONUS 1:1"}]
+    on = results_snapshot(_wipro(eps_qtr=6.4, eps_year=6.3, actions=bonus), "n2")
+    assert "eps_hidden" not in on and on["eps"]["prev_quarter"] == 6.4   # a share-count event on record: not this switch's call
+
+
+def test_the_stated_change_is_read_from_the_words():
+    from bse_intel.eps_adjust import stated_changes
+    assert stated_changes("EPS up 0.9% QoQ") == {"qoq": 0.9}
+    assert stated_changes("Diluted EPS down 3.4% YoY; EPS up 1% sequentially") == {"yoy": -3.4, "qoq": 1.0}
+    assert stated_changes("Basic EPS of Rs 3.23, growth of 18% YoY") == {"yoy": 18.0}
+    assert stated_changes("revenue up 5% QoQ") == {} and stated_changes(None) == {}
+
+
+def test_follows_allows_share_count_noise_but_not_a_flip():
+    from bse_intel.eps_adjust import follows
+    assert follows(1.5, 17.9) is False
+    assert follows(10.0, 14.0) and follows(10.0, 4.0)        # 5 points plus share-count noise
+    assert follows(1.0, -3.0)                                # within noise
+    assert follows(8.0, -2.0) is False                       # signs differ by more than noise

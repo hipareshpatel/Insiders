@@ -56,7 +56,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_two_parts, d1_plan, memory_call_v2
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_two_parts, d1_plan, memory_call_v2
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -71,7 +71,7 @@ from . import eps_adjust
 from . import annual_xbrl
 from . import directions
 from . import results_card
-from . import one_basis
+from . import footer_plausible, one_basis
 from . import event_xbrl
 from . import computed
 from . import facts as code_facts
@@ -3746,6 +3746,9 @@ class Pipeline:
         # the table and the key numbers read against the card's stated basis (CARD_ONE_BASIS; off: nothing)
         if one_basis_notes := one_basis.apply_card_json(card_json, current):
             card_json.setdefault("grounding", {})["one_basis"] = one_basis_notes
+        # a footer figure that cannot be right is left off the card (CARD_FOOTER_PLAUSIBLE; off: nothing); the card keeps why
+        if card_footer_plausible() and (footer_notes := footer_plausible.card_notes(card_json)):
+            card_json.setdefault("grounding", {})["footer_hidden"] = footer_notes
         # A card the checks faulted, that a second provider was asked to correct and that still
         # fails, is kept out of the feed rather than published with an "Unverified" mark. On the
         # rebuild that was 117 of 456 cards, and a flagged card was judged WRONG 52% of the time

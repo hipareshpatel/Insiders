@@ -20,6 +20,13 @@ test("corrections the code made are listed from the grounding notes, strings or 
   assert.match(out.groups[0].items[1], /Change figure corrected: YoY set from XBRL/);
 });
 
+test("a footer figure hidden as implausible is listed with its reason (GIC Housing's NIM 19.63%)", () => {
+  const card = { grounding: { footer_hidden: ["NIM 19.63 (Q2FY27) not shown: 19.63% is outside the 1-7% a home-loan lender's NIM can be"] } };
+  const out = cardChecks(card, { held: 0, needs_review: 0 });
+  assert.deepEqual(out.types, ["corrected"]);
+  assert.match(out.groups[0].items[0], /Footer figure hidden \(cannot be right\): NIM 19\.63/);
+});
+
 test("held, failed checks and the owner's verdict each get their own group and type", () => {
   const card = { grounding: { ungrounded: ["1,234"], unsupported_claims: ["Order is record high"], math_mismatches: 1 },
     review: { status: "UNRESOLVED", issues: ["Numbers not found in the filing: 1,234"], held: ["The filing's text layer is garbled"] } };

@@ -818,7 +818,8 @@ def cmd_memory_recall_export(args, settings, sink) -> int:
 def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path | None, read_text, paid) -> dict:
     """One transcript or deck through the call-memory reading and its checks (call_memory.py); with `apply` the kept points
     are merged into the dossier's `call_memory` by the three-way write the pipeline uses. Returns the report row. A document
-    that can never be read (no stored text, not in the ledger, an invitation) raises LookupError; any other error is transient."""
+    that can never be read (not in the ledger, an invitation) raises LookupError; any other error is transient. No stored text
+    is transient: the pipeline writes the text after it queues the filing, and the write is best effort."""
     from . import call_memory, memory_recall_export as mre
     from .dossier import keep_concurrent_writes
     from .extract import Document
@@ -826,8 +827,10 @@ def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path
     row: dict = {"news_id": news_id}
     data = read_text(news_id)
     filing = call_memory.find_filing(sink, news_id)
-    if not data or filing is None:
-        raise LookupError("no stored text" if not data else "not in the filings ledger")
+    if filing is None:
+        raise LookupError("not in the filings ledger")
+    if not data:
+        raise RuntimeError("no stored text yet")   # retried; given up after call_queue.MAX_ATTEMPTS
     text, _ = mre.render_text(data)
     doc = Document.from_cache(data)
     blocks = doc.block_text(range(doc.page_count))

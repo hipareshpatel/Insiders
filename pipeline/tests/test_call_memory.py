@@ -356,7 +356,7 @@ def test_the_command_writes_points_and_reasons_and_leaves_memory_alone(monkeypat
     assert detail["points_kept"][0]["page"] == 1 and detail["kind"] == "transcript"
     summary = json.loads((tmp_path / "o" / "summary.json").read_text())
     assert summary["documents"] == 2 and summary["read"] == 1 and summary["failed"] == 1 and summary["dropped_by_reason"] == {"quote": 1}
-    assert [r.get("error") for r in summary["rows"]] == [None, "LookupError: no stored text"]
+    assert [r.get("error") for r in summary["rows"]] == [None, "LookupError: not in the filings ledger"]
     assert sink.puts == [] and sink.dossier["call_memory"] == []   # nothing written to memory
 
 
@@ -483,14 +483,27 @@ def test_a_transient_failure_stays_queued_and_is_given_up_after_three_attempts(m
     assert states["call-2"]["state"] == "gave_up" and states["call-2"]["attempts"] == 3 and "every provider failed" in states["call-2"]["reason"]
 
 
-def test_a_permanent_failure_leaves_the_queue_at_once_with_its_reason(monkeypatch, settings, tmp_path):
+def test_no_stored_text_yet_stays_queued(monkeypatch, settings, tmp_path):
+    # the pipeline queues the filing before it writes the text (best effort), so a missing text is retried, not given up
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    sink = _queued_world(settings)
+    sink.texts.clear()   # in the ledger, text not written yet
+    call_queue.enqueue(sink, "call-2", "123", "x")
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=FakeGateway([]), prompts=PromptEngine(s)))
+    assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 124
+    states = json.loads(next(v for k, v in sink.kv.items() if k.startswith("callmem:s:")))
+    assert states["call-2"] == {**states["call-2"], "state": "retry", "attempts": 1, "reason": "RuntimeError: no stored text yet"}
+    assert [i["news_id"] for i in call_queue.pending(sink)] == ["call-2"]
+
+
+def test_a_filing_not_in_the_ledger_leaves_the_queue_at_once_with_its_reason(monkeypatch, settings, tmp_path):
     monkeypatch.setenv("MEMORY_CALL_V2", "1")
     sink = _queued_world(settings)
     call_queue.enqueue(sink, "call-missing", "123", "x")
     monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=FakeGateway([]), prompts=PromptEngine(s)))
     assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 0
     states = json.loads(next(v for k, v in sink.kv.items() if k.startswith("callmem:s:")))
-    assert states["call-missing"] == {**states["call-missing"], "state": "gave_up", "attempts": 0, "reason": "LookupError: no stored text"}
+    assert states["call-missing"]["state"] == "gave_up" and states["call-missing"]["reason"] == "LookupError: not in the filings ledger"
     assert call_queue.pending(sink) == []
 
 

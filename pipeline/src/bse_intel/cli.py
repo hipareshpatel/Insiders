@@ -805,6 +805,30 @@ def cmd_restated_report(args, settings, sink) -> int:
     return 0
 
 
+def cmd_nse_selfcheck(args, settings, sink) -> int:
+    """NSE's own figures in memory against themselves: own file against a later file's comparative column, and Q1+Q2+Q3+Q4
+    against the year (nse_selfcheck.py, TODO row 60). Read only: no NSE, no AI, no write."""
+    from . import nse_selfcheck, universe
+
+    nse_universe = universe.load_nse(sink)
+    if args.scrips:
+        scrips = [nse_universe.symbols.get(name.upper()) or name for name in (s.strip() for s in args.scrips.split(",")) if name]
+    elif nse_universe.built:
+        scrips = sorted(nse_universe.included)
+    else:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    symbols = {scrip: sym for sym, scrip in nse_universe.symbols.items()}
+    report = nse_selfcheck.survey(sink, scrips, symbols)
+    print(nse_selfcheck.render(report))
+    if args.json:
+        summary = {k: v for k, v in report.items() if k != "rows"}
+        Path(args.json).write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(nse_selfcheck.to_csv(report), encoding="utf-8")
+    return 0
+
+
 def cmd_nse_speedtest(args, settings, sink) -> int:
     """Read-only speed test of NSE's listing API and the archive host (nse_speedtest.py, F168). Writes only the --json file;
     nothing to D1, R2 or memory. No AI."""
@@ -1470,6 +1494,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
     p.add_argument("--json", help="write the counts and every restated figure to this file")
     p.set_defaults(func=cmd_restated_report)
+
+    p = sub.add_parser("nse-selfcheck", help="NSE's own figures in memory against themselves: own file vs later comparative, quarters vs year (read only, no AI)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--json", help="write the counts and the worst companies to this file")
+    p.add_argument("--csv", help="write every comparison to this CSV file")
+    p.set_defaults(func=cmd_nse_selfcheck)
 
     p = sub.add_parser("memory-gaps", help="universe companies lacking exchange-XBRL results quarters in memory; --fill seeds them (no AI)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

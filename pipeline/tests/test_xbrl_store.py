@@ -133,3 +133,23 @@ def test_referee_files_use_the_store():
     files.rows = {"Q1 FY26": type("R", (), {"xbrl_url": URL})()}
     files.file_for("Q1 FY26")
     assert files.nse.calls == 0 and files.calls["files"] == 0
+
+
+def test_a_gone_file_is_that_quarter_only_and_a_refusal_still_raises(tmp_path):
+    """One dead XBRL file (404/410) is a gap for its quarter, not an error that loses the company's other quarters; any
+    other HTTP error (a 403 refusal) still raises so the run stops."""
+    import httpx
+    from bse_intel import seed
+
+    class Gone:
+        def __init__(self, status):
+            self.status = status
+
+        def download(self, url, max_bytes=0):
+            req = httpx.Request("GET", url)
+            raise httpx.HTTPStatusError("x", request=req, response=httpx.Response(self.status, request=req))
+
+    assert seed._fetch(Gone(404), URL, tmp_path, None) is None
+    assert seed._fetch(Gone(410), URL, tmp_path, None) is None
+    with pytest.raises(httpx.HTTPStatusError):
+        seed._fetch(Gone(403), URL, tmp_path, None)

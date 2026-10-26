@@ -884,3 +884,15 @@ def test_ebitda_leaves_out_the_associates_share_a_filer_put_into_profit_before_t
     assert ebitda(111_500_000, -2_600_000, 30_000_000, 81_500_000) == pytest.approx(11.41 + 1 + 2 - 0.5)
     # tagged as the taxonomy says: 114.1 - 30 + (-2.6) = 81.5; PBT is used as filed
     assert ebitda(114_100_000, -2_600_000, 30_000_000, 81_500_000) == pytest.approx(11.41 + 1 + 2 - 0.5)
+
+
+def test_nse_results_rows_skip_the_dash_link():
+    """NSE's older results list writes ".../corporate/xbrl/-" for a filing with no XBRL: that is no file, not a 404 later."""
+    from bse_intel.nse import parse_results_rows
+
+    rows = parse_results_rows([
+        {"xbrl": "https://nsearchives.nseindia.com/corporate/xbrl/-", "filingDate": "29-Jan-2025"},
+        {"xbrl": "-", "filingDate": "29-Jan-2025"},
+        {"xbrl": "/corporate/xbrl/INDAS_1_29012025.xml", "filingDate": "29-Jan-2025", "consolidated": "Consolidated"},
+    ])
+    assert [r.xbrl_url for r in rows] == ["https://nsearchives.nseindia.com/corporate/xbrl/INDAS_1_29012025.xml"]

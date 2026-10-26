@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import type { CardRow } from "../../../shared/types";
+import { cutEps } from "../../lib/cardText";
 import { cn } from "../../lib/cn";
 import { istDate } from "../../lib/format";
 import { EVENT_LABELS } from "../../lib/taxonomy";
@@ -93,7 +94,7 @@ function Row({ row, last, open, onToggle }: { row: CardRow; last: boolean; open:
       </span>
       <div className={cn("min-w-0", last && !open ? "pb-1" : "pb-4")}>
         <button type="button" aria-expanded={open} onClick={onToggle} className="block w-full text-left">
-          <b className="block text-[14.5px] font-extrabold leading-snug tracking-tight text-ink hover:text-accent">{plain(card?.headline ?? row.headline)}</b>
+          <b className="block text-[14.5px] font-extrabold leading-snug tracking-tight text-ink hover:text-accent">{plain(card?.headline ?? cutEps(row.headline))}</b>
           {card?.takeaway && !open ? <span className="mt-0.5 line-clamp-2 block text-[13.5px] leading-snug text-ink-2 sm:line-clamp-1">{plain(card.takeaway)}</span> : null}
         </button>
         <div className="mt-1.5 flex flex-wrap gap-1.5">

@@ -265,3 +265,29 @@ test("withoutEps hides EPS items in every list, cuts the headline and keeps the 
   assert.deepEqual(out.parts?.part2.notable_changes, [0]);
   assert.deepEqual(out.parts?.part2.missing_disclosures, [0]);
 });
+
+test("cutEps: Rs. dots, and-before-metric, orphaned comparisons, mid-sentence and leading EPS (same cases as the pipeline)", async () => {
+  const { cutEps } = await import("../src/lib/cardText.ts");
+  assert.equal(cutEps("Revenue ₹10 Cr, EPS Rs. 2.10, PAT ₹3 Cr"), "Revenue ₹10 Cr, PAT ₹3 Cr");
+  assert.equal(cutEps("Revenue ₹10 Cr, EPS of Rs. 2.10/- per share, PAT ₹3 Cr"), "Revenue ₹10 Cr, PAT ₹3 Cr");
+  assert.equal(cutEps("Revenue ₹10 Cr, EPS INR. 2.10 and PAT ₹3 Cr"), "Revenue ₹10 Cr and PAT ₹3 Cr");
+  assert.equal(cutEps("Revenue ₹10 Cr, EPS ₹2.10 vs ₹1.50 and ₹1.20 a year ago, up 12%"), "Revenue ₹10 Cr");
+  assert.equal(cutEps("Revenue ₹10 Cr, EPS ₹2.10 and PAT ₹5 Cr"), "Revenue ₹10 Cr and PAT ₹5 Cr");
+  const half = "Revenue ₹10 Cr, EPS ₹2.10 vs profit ₹1.50, vs ₹1.20 a year ago";
+  assert.equal(cutEps(half), half);
+  assert.equal(cutEps("Acme: dividend ₹2 per share and EPS ₹7"), "Acme: dividend ₹2 per share");
+  assert.equal(cutEps("Acme: dividend ₹2 per share with EPS ₹7, up 5%"), "Acme: dividend ₹2 per share");
+  assert.equal(cutEps("EPS ₹2.1 and revenue ₹10 Cr"), "Revenue ₹10 Cr");
+  assert.equal(cutEps("EPS ₹2.1, revenue ₹10 Cr"), "Revenue ₹10 Cr");
+  assert.equal(cutEps("Basic EPS ₹2.1, up 12%, PAT ₹4 Cr"), "PAT ₹4 Cr");
+  assert.equal(cutEps("EPS ₹2.10, up 12%"), "EPS ₹2.10, up 12%");
+});
+
+test("withoutEps keeps parts undefined and a missing part1 or part2 missing", async () => {
+  const { withoutEps } = await import("../src/lib/cardText.ts");
+  const base = { headline: "Acme", what_happened: [{ text: "Revenue ₹10 Cr" }], why_it_matters: [], key_numbers: [], missing_disclosures: [] };
+  const none = withoutEps(base as unknown as Parameters<typeof withoutEps>[0]);
+  assert.equal(none.parts, undefined);
+  const one = withoutEps({ ...base, parts: { v: 1, part1: { what_happened: [0] } } } as unknown as Parameters<typeof withoutEps>[0]);
+  assert.ok(one.parts && !("part2" in one.parts));
+});

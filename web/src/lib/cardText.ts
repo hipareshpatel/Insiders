@@ -185,16 +185,25 @@ export const EPS_TEXT = new RegExp(EPS_SOURCE, "i");
 const EPS_AT = new RegExp(EPS_SOURCE, "iy");
 export const statesEps = (...texts: (string | null | undefined)[]): boolean => texts.some((t) => !!t && EPS_TEXT.test(t));
 
-const METRIC = /^(?:revenue|sales|pat|pbt|profit|ebitda|ebit|margins?|income|turnover|dividend|order|net\s+worth|debt)\b/i;
-const METRIC_ANY = /\b(?:revenue|sales|pat|pbt|profit|ebitda|ebit|margins?|income|turnover|dividend|order|net\s+worth|debt)\b/i;
-const AND_AT = /^\s+and\s+/i;
+const METRIC_SRC = "(?:revenue|sales|pat|pbt|profit|ebitda|ebit|margins?|income|turnover|dividend|order|net\\s+worth|debt)\\b";
+const METRIC = new RegExp("^" + METRIC_SRC, "i");
+const METRIC_ANY = new RegExp("\\b" + METRIC_SRC, "i");
+const AND_AT = new RegExp("^\\s+and\\s+(?=" + METRIC_SRC + ")", "i");   // " and " ends the clause only when a metric follows
+const ABBREV = new Set(["rs", "re", "inr", "no", "nos"]);
+const PERIOD = /\b(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2,4}(?:-\d{2})?\b|\b(?:Q[1-4]|H[12]|9M)\b|\b20\d{2}(?:-\d{2})?\b/gi;
+const ORPHAN = /\bvs\.?\s|\bversus\b|year[\s-]ago|\ba\s+year\s+(?:ago|earlier)\b/i;
 const isDigit = (c: string | undefined) => c !== undefined && c >= "0" && c <= "9";
 
+/** Mirrors pipeline no_eps.py `_stop`: ; or , (not inside a number), a full stop that is not a decimal point, not the dot of
+ * "Rs." / "Re." / "INR." / "No." and not one followed by a space and a digit ("EPS Rs. 2.10"). */
 function stopsAt(text: string, j: number): boolean {
   const c = text[j];
   if (c === ";") return true;
   if (c === ",") return !(isDigit(text[j + 1]) && isDigit(text[j - 1]));
-  return c === "." && !isDigit(text[j + 1]);
+  if (c !== "." || isDigit(text[j + 1])) return false;
+  const word = /(\w+)$/.exec(text.slice(0, j));
+  if (word && ABBREV.has(word[1].toLowerCase())) return false;
+  return !(text[j + 1] === " " && isDigit(text[j + 2]));
 }
 
 function clauseEnd(text: string, from: number): number {
@@ -211,33 +220,73 @@ function clauseEnd(text: string, from: number): number {
   return text.length;
 }
 
-/** The text with each ", EPS ₹2.10 (+1.5% YoY)" clause taken out, and the bare change after it (", up 12%"); a clause stops
- * before " and ..." or another metric. Same rule as pipeline no_eps.py `_scrub`: when EPS is all the text is about
- * (or is left after the cut) the text comes back unchanged. */
-export function cutEps(text: string): string {
-  if (!statesEps(text)) return text;
+function bareChanges(text: string, from: number): number {
+  let end = from;
+  while (end < text.length && text[end] === ",") {   // a bare change after it: ", up 12%", ", down 3% QoQ"
+    const next = clauseEnd(text, end + 1);
+    const piece = text.slice(end + 1, next);
+    if (!piece.trim() || METRIC_ANY.test(piece) || statesEps(piece)) break;
+    end = next;
+  }
+  return end;
+}
+
+const epsAt = (text: string, at: number): RegExpExecArray | null => { EPS_AT.lastIndex = at; return EPS_AT.exec(text); };
+
+function cutClauses(text: string): string {
   let out = text;
   for (let n = 0; n < 8; n++) {
     const lead = /\s*[,;]\s*(?:(?:basic|diluted)\s+)?(?=\S)/gi;
     let cut = false;
     for (let m = lead.exec(out); m; m = lead.exec(out)) {
-      EPS_AT.lastIndex = m.index + m[0].length;
-      const eps = EPS_AT.exec(out);
+      const eps = epsAt(out, m.index + m[0].length);
       if (!eps) continue;
-      let end = clauseEnd(out, eps.index + eps[0].length);
-      while (end < out.length && out[end] === ",") {
-        const next = clauseEnd(out, end + 1);
-        const piece = out.slice(end + 1, next);
-        if (!piece.trim() || METRIC_ANY.test(piece) || statesEps(piece)) break;
-        end = next;
-      }
+      const end = bareChanges(out, clauseEnd(out, eps.index + eps[0].length));
       out = out.slice(0, m.index) + out.slice(end);
       cut = true;
       break;
     }
-    if (!cut) break;
+    if (cut) continue;
+    // a sentence that opens with the EPS clause and goes on to a metric keeps that metric ("EPS ₹2.1, revenue ₹10 Cr")
+    const start = /^\s*(?:(?:basic|diluted)\s+)?/i.exec(out)![0].length;
+    const eps = epsAt(out, start);
+    if (!eps) break;
+    const end = bareChanges(out, clauseEnd(out, eps.index + eps[0].length));
+    const rest = out.slice(end).replace(/^\s*(?:[,;]|and\b)\s*/i, "");
+    if (!METRIC.test(rest)) break;
+    out = rest.charAt(0).toUpperCase() + rest.slice(1);
   }
-  out = out.trim();
+  return out.trim();
+}
+
+/** EPS words mid-sentence after a part that already states something else ("Acme: dividend ₹2 per share and EPS ₹7"):
+ * cut to the end of their clause and drop the "and" / "with" / ":" left hanging. */
+function cutMid(text: string): string {
+  const m = EPS_TEXT.exec(text);
+  if (!m || !/\d/.test(text.slice(0, m.index).replace(PERIOD, " "))) return text;
+  const before = text.slice(0, m.index).replace(/[\s,;:-]+$/, "").replace(/(?:\s+(?:and|with|&|plus|but)|\s*[,;:])+$/i, "").replace(/[\s,;:-]+$/, "");
+  const end = bareChanges(text, clauseEnd(text, m.index + m[0].length));
+  const rest = text.slice(end);
+  const tail = rest.replace(/^\s*(?:[,;]|and\b)\s*/i, "");
+  return (METRIC.test(tail) ? before + rest.trimEnd() : before).trim();
+}
+
+/** A piece that says "vs ₹1.50" or "a year ago" with no metric before it: what is left of a half-cut comparison. */
+function orphaned(text: string): boolean {
+  return text.split(/[;,](?!\d)/).some((piece) => {
+    const m = ORPHAN.exec(piece);
+    return !!m && !METRIC_ANY.test(piece.slice(0, m.index));
+  });
+}
+
+/** The text with each ", EPS ₹2.10 (+1.5% YoY)" clause taken out, and the bare change after it (", up 12%"); a clause stops
+ * before " and <metric>" or another metric. Same rule as pipeline no_eps.py `_scrub`: when EPS is all the text is about
+ * (or is left after the cut, or only half a comparison would be) the text comes back unchanged. */
+export function cutEps(text: string): string {
+  if (!statesEps(text)) return text;
+  let out = cutClauses(text);
+  if (statesEps(out)) out = cutMid(out);
+  if (out !== text && orphaned(out)) return text;
   return out && !statesEps(out) ? out : text;
 }
 
@@ -286,7 +335,7 @@ export function withoutEps(card: CardBody): CardBody {
       for (const [name, map] of Object.entries(maps)) if (Array.isArray(next[name])) next[name] = remap(next[name] as number[], map);
       return next as unknown as T;
     };
-    out.parts = { ...p, part1: fix(p.part1), part2: fix(p.part2) };
+    out.parts = { ...p, ...(p.part1 ? { part1: fix(p.part1) } : {}), ...(p.part2 ? { part2: fix(p.part2) } : {}) };
   }
   return out;
 }

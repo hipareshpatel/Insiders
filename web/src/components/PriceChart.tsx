@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { CardRow, CompanyDetail } from "../../shared/types";
+import { cutEps } from "../lib/cardText";
 import { cn } from "../lib/cn";
 import { placeFilings, rangeMove, type Series } from "../lib/chart";
 import { istDate, signClass } from "../lib/format";
@@ -100,7 +101,7 @@ export function PriceChart({ chart, cards, onOpen }: { chart: CompanyDetail["cha
           {filings.map(({ index, items }) => {
             const top = items.some((c) => c.impact_level === "HIGH") ? "HIGH" : items.some((c) => c.impact_level === "MODERATE") ? "MODERATE" : "LOW";
             return (
-              <button key={index} type="button" aria-label={`Filing on ${istDate(shown.d[index])}: ${items[0].headline}. Open its card`}
+              <button key={index} type="button" aria-label={`Filing on ${istDate(shown.d[index])}: ${cutEps(items[0].headline)}. Open its card`}
                 onClick={() => onOpen?.(items[0].news_id)} onPointerEnter={() => setDot(index)} onFocus={() => setDot(index)} onBlur={() => setDot(null)}
                 className={cn("absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface shadow transition-transform hover:scale-125",
                   top === "LOW" ? "h-3 w-3" : "h-3.5 w-3.5")}
@@ -112,7 +113,7 @@ export function PriceChart({ chart, cards, onOpen }: { chart: CompanyDetail["cha
               style={{ left: `${(x(tip.index) / W) * 100}%`, top: `${(y(shown.c[tip.index]) / H) * 100}%`,
                 transform: `translate(${x(tip.index) / W > 0.66 ? "-100%" : x(tip.index) / W < 0.33 ? "0" : "-50%"}, calc(-100% - 12px))` }}>
               <b className="num block text-[11.5px] opacity-75">{istDate(shown.d[tip.index])}{tip.items.length > 1 ? ` · ${tip.items.length} filings` : ""}</b>
-              <span className="line-clamp-3">{tip.items[0].headline}</span>
+              <span className="line-clamp-3">{cutEps(tip.items[0].headline)}</span>
             </div>
           )}
         </div>

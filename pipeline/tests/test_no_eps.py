@@ -125,3 +125,44 @@ def test_more_ways_to_write_eps_and_the_per_share_figures_that_are_not():
         assert no_eps.mentions_eps(t), t
     for t in ["Dividend ₹5 per share", "Book value per share ₹40", "NAV per share ₹12", "Issue price ₹10 per share", "Net profit ₹5 Cr"]:
         assert not no_eps.mentions_eps(t), t
+
+
+def test_a_full_stop_after_rs_or_before_a_digit_does_not_end_the_eps_clause():
+    from bse_intel.no_eps import _scrub
+    assert _scrub("Revenue ₹10 Cr, EPS Rs. 2.10, PAT ₹3 Cr") == "Revenue ₹10 Cr, PAT ₹3 Cr"
+    assert _scrub("Revenue ₹10 Cr, EPS of Rs. 2.10/- per share, PAT ₹3 Cr") == "Revenue ₹10 Cr, PAT ₹3 Cr"
+    assert _scrub("Revenue ₹10 Cr, EPS INR. 2.10 and PAT ₹3 Cr") == "Revenue ₹10 Cr and PAT ₹3 Cr"
+
+
+def test_an_and_ends_the_eps_clause_only_before_a_metric_and_a_half_comparison_drops_the_line():
+    from bse_intel.no_eps import _scrub
+    assert _scrub("Revenue ₹10 Cr, EPS ₹2.10 vs ₹1.50 and ₹1.20 a year ago, up 12%") == "Revenue ₹10 Cr"
+    assert _scrub("Revenue ₹10 Cr, EPS ₹2.10 and PAT ₹5 Cr") == "Revenue ₹10 Cr and PAT ₹5 Cr"
+    # what is left would be a comparison with nothing compared: the text stays and the caller drops the line
+    assert _scrub("Revenue ₹10 Cr, EPS ₹2.10 vs profit ₹1.50, vs ₹1.20 a year ago") == "Revenue ₹10 Cr, EPS ₹2.10 vs profit ₹1.50, vs ₹1.20 a year ago"
+
+
+def test_eps_in_the_middle_of_a_headline_is_cut_with_its_conjunction_and_the_dividend_stays():
+    out = _out(headline="Acme: dividend ₹2 per share and EPS ₹7", what_happened=[{"text": "Dividend ₹2 per share", "quote": "2"}])
+    no_eps.drop_eps(out)
+    assert out.card.headline == "Acme: dividend ₹2 per share"
+    from bse_intel.no_eps import _scrub
+    assert _scrub("Acme: dividend ₹2 per share with EPS ₹7, up 5%") == "Acme: dividend ₹2 per share"
+    assert _scrub("Acme Q1FY27 EPS rises 12% to ₹5.2") == "Acme Q1FY27 EPS rises 12% to ₹5.2"   # only a period before it: rebuilt later
+
+
+def test_a_leading_eps_clause_gives_way_to_the_metric_after_it():
+    from bse_intel.no_eps import _scrub
+    assert _scrub("EPS ₹2.1 and revenue ₹10 Cr") == "Revenue ₹10 Cr"
+    assert _scrub("EPS ₹2.1, revenue ₹10 Cr") == "Revenue ₹10 Cr"
+    assert _scrub("Basic EPS ₹2.1, up 12%, PAT ₹4 Cr") == "PAT ₹4 Cr"
+
+
+def test_a_cut_line_loses_the_eps_from_its_quote_when_the_rest_is_still_a_stretch_of_the_filing():
+    out = _out(what_happened=[{"text": "Revenue ₹10 Cr, EPS ₹2.1", "quote": "Revenue 10 Cr. Basic EPS 2.1"},
+                              {"text": "Revenue ₹10 Cr, EPS ₹2.1, PAT ₹3 Cr", "quote": "Revenue 10 Cr, EPS 2.1, PAT 3 Cr"}])
+    no_eps.drop_eps(out)
+    first, second = out.card.what_happened
+    assert first.text == "Revenue ₹10 Cr" and first.quote == "Revenue 10 Cr."
+    # both figures are not in one piece of the quote: the original quote stays (it shows on hover only) so grounding holds nothing
+    assert second.text == "Revenue ₹10 Cr, PAT ₹3 Cr" and second.quote == "Revenue 10 Cr, EPS 2.1, PAT 3 Cr"

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
+import { cutEps } from "../lib/cardText";
 import { istDate, companyPath } from "../lib/format";
 import { IMPACT_LABEL, IMPACT_TEXT } from "../lib/taxonomy";
 import { Avatar } from "./Avatar";
@@ -43,7 +44,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
     ...(query.data?.cards ?? []).map((c) => ({
       key: `n${c.news_id}`,
       kind: "card" as const,
-      title: c.headline,
+      title: cutEps(c.headline),
       symbol: null as string | null,
       meta: `${c.company_name} · ${istDate(c.filed_at)}`,
       extra: c.impact_level,

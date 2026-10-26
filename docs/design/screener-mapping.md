@@ -193,6 +193,7 @@ year results. The screener Total Liabilities line is the same as Total Assets (e
    on average, so `n` is lower than the page's cells.
 4. **Where the exchange's file itself is the odd one out is not tested.** Screener and our memory agree on a figure and are
    both wrong is possible; the referee in `screener_crosscheck.py` (the filing text, a R2 cache) is the only tie-break.
+5a. **Screener shows restated figures (owner 26 Oct 2026, F167).** Screener's quarter and year columns carry the latest figure the company gave, so a quarter a later file restated (a comparative column) shows the restated value. Memory keeps the first-filed figure and the restated one (`first_filed`, `restated`, `restated_in` on the entry; `dossier.latest_value` is the screener-like number), so a cross-check should compare screener with the latest value and report a miss against the first-filed one as a restatement, not an error. Old memory gets the fields after the seed-memory reload; `restated-report` counts them.
 5. **Screener-side oddities seen:** one column per company can be a restated or mislabelled one (the NMDC Q4FY25
    consolidated column was already caught in `screener_fill.py`); EPS restates for splits and bonus; a Q4 EPS can be
    the year's; the SunPharma standalone page shows Sales 45 to 63% below the unlabelled memory figures, which are probably

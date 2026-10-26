@@ -66,6 +66,12 @@ def memory_standalone_only() -> bool:
     return (_env("MEMORY_STANDALONE_ONLY", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def memory_restated() -> bool:
+    """MEMORY_RESTATED (default off; F167, TODO 53): the memory view a card reads names a restated comparative as such
+    ("restated in Q2FY27's filing, first filed X") instead of the bare "restated <date>" note. Read at the call."""
+    return (_env("MEMORY_RESTATED", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def memory_screener() -> bool:
     """MEMORY_SCREENER (default off; TODO 48, F161): a memory figure labelled by="screener" (the one-time screener.in fill)
     is read like any other. Off, every reader skips it, so no card changes. Read at the call."""

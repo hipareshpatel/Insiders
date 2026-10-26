@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import card_ebitda_profit_v2, card_same_definition, memory_screener
+from .settings import card_ebitda_profit_v2, card_same_definition, memory_restated, memory_screener
 from .models import Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -438,6 +438,7 @@ def _sources(entry: dict | None) -> list[dict]:
         "unit": entry.get("unit"), "yoy_pct": entry.get("yoy_pct"), "qoq_pct": entry.get("qoq_pct"),
         **({"basis": entry["basis"]} if entry.get("basis") else {}),
         **({"lab": entry["lab"]} if entry.get("lab") else {}),
+        **({"restated_from": entry["restated_from"]} if entry.get("restated_from") else {}),
     }]
 
 
@@ -547,9 +548,50 @@ def _metric_entry(metric: str, period: str, sources: list[dict]) -> dict:
         entry["basis"] = sources[0]["basis"]
     if len(sources) == 1 and sources[0].get("lab"):
         entry["lab"] = sources[0]["lab"]
+    if len(sources) == 1 and sources[0].get("restated_from"):
+        entry["restated_from"] = sources[0]["restated_from"]
     if len(sources) > 1:
         entry.update(sources=sources, updated_as_of=last["as_of"], value_news_id=last["news_id"])
+        # F167: first filed against restated. The first-filed figure is the earliest source when that one is the period's
+        # own file (a comparative column of a later file is not "first filed": its own file was never read)
+        first = usable[0]
+        if last is not first and not first.get("restated_from") and first.get("value") is not None \
+                and last.get("value") is not None and restated_differs(first["value"], last["value"]):
+            entry.update(first_filed=first["value"], restated=True,
+                         restated_in=last.get("restated_from") or last["news_id"])
     return entry
+
+
+def restated_differs(first: float, latest: float) -> bool:
+    """Whether a restated figure differs from the first-filed one beyond rounding: more than 0.5% of it and more than 0.01
+    (the filings' own crore figures are rounded; a ₹1 Cr difference on a ₹200 Cr line is the 0.5%)."""
+    return abs(latest - first) > max(0.01, abs(latest) * 0.005)
+
+
+def latest_value(entry: dict | None) -> float | None:
+    """The figure as the company last stated it (screener.in's number): the restated value when a later filing's
+    comparative column changed it, else the only one. ``_metric_entry`` already holds the latest XBRL source as ``value``."""
+    return entry.get("value") if entry else None
+
+
+def first_filed_value(entry: dict | None) -> float | None:
+    """The figure as first filed, when memory holds the period's own file and a later one restated it; else the value."""
+    if not entry:
+        return None
+    return entry["first_filed"] if entry.get("restated") else entry.get("value")
+
+
+_QUARTER_MONTH_INDEX = {"Q1": 1, "Q2": 2, "H1": 2, "Q3": 3, "9M": 3, "Q4": 4, "H2": 4, "FY": 4}
+
+
+def is_comparative(period: str, own_period: str | None) -> bool:
+    """Whether a figure's period is a comparative column of the file whose own quarter is ``own_period`` (Q2FY27): a period
+    that does not end in that quarter's month (Q2FY26, Q1FY27, FY26) is; Q2FY27, H1FY27 and 9M of the same year end there."""
+    own = re.fullmatch(r"(Q[1-4])(?:FY)?(\d{2})", own_period or "")
+    cur = re.fullmatch(r"(Q[1-4]|H[12]|9M|FY)(?:FY)?(\d{2})", period or "")
+    if not own or not cur:
+        return False
+    return not (_QUARTER_MONTH_INDEX[cur[1]] == int(own[1][1]) and cur[2] == own[2])
 
 
 # Whose words a forecast is: a rating agency's or an analyst's view is not the company's promise (laptop test,
@@ -942,7 +984,8 @@ def drop_off_year_periods(d: dict) -> int:
 
 
 def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str | None, updated_at: str,
-          basis: str | None = None, fy_end_month: int | None = None, by: str | None = None) -> dict:
+          basis: str | None = None, fy_end_month: int | None = None, by: str | None = None,
+          own_period: str | None = None) -> dict:
     """Return the dossier with this filing's facts merged in (input is not mutated). `basis` is the figures'
     (CONSOLIDATED / STANDALONE): the seed gives its file's, a card its own `basis`. `fy_end_month`: the month the
     company's year ends, from its results XBRL; a year not ending in March keeps quarters only (march_year).
@@ -973,6 +1016,12 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
 
     metrics = {(m["metric"], m["period"]): m for m in d.get("financial_metrics", [])}
     basis = basis or (output.card.basis if output.card is not None else None)
+    if own_period is None:
+        # the file's own quarter is the latest quarter its machine-tagged figures name; the earlier ones are its comparative
+        # columns (F167)
+        tagged_q = [_period(m.period) for m in delta.financial_metrics
+                    if getattr(m, "by", None) in ("file", "calc") and m.value is not None and _period(m.period).startswith("Q")]
+        own_period = max(tagged_q, key=lambda p: (str(due_date(p) or ""), p), default=None)
     for m in delta.financial_metrics:
         if m.value is None:
             continue
@@ -1001,6 +1050,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
                     src=getattr(m, "derived_from", None) if m_by == "calc" else None)
         source = {"news_id": news_id, "as_of": as_of, "value": m.value, "unit": m.unit,
                   "yoy_pct": m.yoy_pct, "qoq_pct": m.qoq_pct, **({"basis": basis} if basis else {}), "lab": lab}
+        if m_by in ("file", "calc") and results_source and is_comparative(key[1], own_period):
+            source["restated_from"] = own_period   # F167: a comparative column of this filing, for its own earlier period
         metrics[key] = _metric_entry(*key, [s for s in _sources(metrics.get(key)) if s["news_id"] != news_id] + [source])
     d["financial_metrics"] = _cap_metrics(list(metrics.values()))
 
@@ -1341,6 +1392,8 @@ def _restated(entry: dict) -> str:
     first, value = sources[0]["value"], entry["value"]
     if abs(first - value) <= max(0.01, abs(value) * 0.005):
         return ""
+    if memory_restated() and entry.get("restated_in"):   # F167
+        return f" restated in {entry['restated_in']}'s filing ({str(entry.get('updated_as_of') or '')[:10]}), first filed {first:g}"
     return f" restated {str(entry.get('updated_as_of') or '')[:10]}, first reported {first:g}"
 
 

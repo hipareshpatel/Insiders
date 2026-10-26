@@ -71,6 +71,10 @@
 # - screener-crosscheck: read only. Memory's exchange-file figures against the stored screener pages (no screener request),
 #   the cached official results text as referee (no download); summary.json, crosscheck.csv, referee.csv and the markdown
 #   report go up as the artifact `screener-crosscheck`. Commits nothing.
+# - screener-referee: read only. The cross-check worked out again (R2 and memory), then each disagreeing pair looked up in
+#   NSE's own results XBRL (the period's file, else the next period's): one results list a company, each file once, the
+#   archive host on its F169 pace, the API at 3-5 s. `limit` caps the pairs. referee-xbrl.csv, summary.json and the markdown
+#   go up as the artifact `screener-referee`. Writes nothing to memory, cards or the branch.
 # - nse-speedtest: read only (F168, owner 26 Oct 2026). 100 seeded universe companies: their file links listed as the seed
 #   lists them (timed), the all-company results list timed, then downloads from nsearchives only in rounds on different files
 #   (A 3-5 s as today, B 1 s, C 0.3 s, D 0 s, E four workers at 0 s); a round stops at the first 403/429/503 or third timeout,
@@ -90,7 +94,7 @@
 #   maint-screener     screener-download, screener-fill (the dry run reads screener.in)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
-#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), restated-report (memory only), nse-speedtest (reads NSE; writes nothing)
+#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), screener-referee (R2, memory and NSE; writes nothing), restated-report (memory only), nse-speedtest (reads NSE; writes nothing)
 # A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
@@ -111,7 +115,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, text-backfill, restated-report, nse-speedtest]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, text-backfill, restated-report, nse-speedtest]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -130,7 +134,7 @@ on:
         type: string
         default: '110'
       limit:
-        description: text-backfill only - a trial on the first N cards lacking text (empty = all)
+        description: text-backfill - a trial on the first N cards lacking text; screener-referee - at most N pairs refereed (empty = all)
         type: string
         default: ''
       no_ocr:
@@ -157,7 +161,7 @@ concurrency:
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","restated-report","nse-speedtest"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-referee","restated-report","nse-speedtest"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -344,6 +348,23 @@ jobs:
         with:
           name: screener-crosscheck
           path: ${{ runner.temp }}/crosscheck/
+          if-no-files-found: ignore
+      - name: Referee the cross-check's disagreeing pairs with NSE's results XBRL (reads only)
+        if: inputs.command == 'screener-referee'
+        env:
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/referee"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-referee ${LIMIT:+--limit "$LIMIT"} --json "$RUNNER_TEMP/referee/summary.json" --csv "$RUNNER_TEMP/referee/referee-xbrl.csv" --md "$RUNNER_TEMP/referee/screener-referee.md" || code=$?
+          if [ "$code" = 124 ]; then echo "::warning::time budget ended with pairs left (not_run in the CSV); run again with a limit or scrips"; code=0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'screener-referee'
+        with:
+          name: screener-referee
+          path: ${{ runner.temp }}/referee/
           if-no-files-found: ignore
       - name: NSE speed test (reads only)
         if: inputs.command == 'nse-speedtest'

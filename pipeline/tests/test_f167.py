@@ -97,3 +97,13 @@ def test_restated_report_counts_by_size_and_the_yoy_base():
     row = report["rows"][0]
     assert (row["metric"], row["period"], row["first_filed"], row["restated"]) == ("revenue", "Q2FY26", 80.0, 90.91)
     assert "restated figures in memory: 1 of" in restated_report.render(report)
+
+
+def test_a_card_figure_the_periods_own_file_replaced_is_not_called_restated():
+    # 26 Oct report: JSW Steel Q4FY26 profit "restated" from a card's 2,094 to its own file's figure; a correction, not a
+    # restatement (the own file has no restated_from)
+    from bse_intel.dossier import _metric_entry
+    card = {"news_id": "nse-1", "as_of": "2026-05-20", "value": 2094.0, "basis": "CONSOLIDATED"}
+    own = {"news_id": "xbrl:res:500228:Q4FY26", "as_of": "2026-05-22", "value": 19243.0, "basis": "CONSOLIDATED"}
+    entry = _metric_entry("pat", "Q4FY26", [card, own])
+    assert entry["value"] == 19243.0 and "restated" not in entry and first_filed_value(entry) == 19243.0

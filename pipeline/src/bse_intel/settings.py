@@ -94,6 +94,35 @@ def card_same_definition() -> bool:
     return (_env("CARD_SAME_DEFINITION", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_grounded_figures() -> bool:
+    """CARD_GROUNDED_FIGURES (default off; 26 Oct 2026 live audit): three places where our own code damaged a right figure
+    are refused. (1) An event-XBRL order amount that rounds to 0 Cr (the file gave it in crore, not rupees) is not put on
+    the deal: DSSL's Rs 137.15 Cr order showed 0. (2) The Reg 30 template's own "withdrawal/cancellation or suspension"
+    row is not a withdrawal: Omaxe's RERA approval showed CANCELLED. (3) A KPI whose figure is in MW or GW is not shown
+    as crore or given a change beside a figure of another unit: Emmvee's order book showed 10,404 cr, +104,990.9% QoQ.
+    Read at the call."""
+    return (_env("CARD_GROUNDED_FIGURES", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+def card_guidance_dated() -> bool:
+    """CARD_GUIDANCE_DATED (default off; F172; owner, 26 Oct 2026): a guidance verdict (delivered, on track, delayed,
+    missed) is made only from a memory target that has its own date (not before the day it was said), is due for the
+    period this filing reports, and is for a metric this filing prints a figure for. Castrol India's "medium term"
+    EBITDA margin band and one stored as due FY26 in August 2026 were "missed" on a Q2FY27 card; Union Bank's FCNR target
+    was "missed" by a filing that never mentions FCNR. Otherwise no verdict: a dated "management said X on <date>" line
+    stands instead (a KPI watch item follows the same rule). Read at the call."""
+    return (_env("CARD_GUIDANCE_DATED", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+def card_one_basis() -> bool:
+    """CARD_ONE_BASIS (default off; live audit of 26 Oct 2026, class "two bases of one figure"): a card states one basis for a
+    figure. A profit, or its change, whose quarter or comparison base holds a discontinued operation is labelled with it (an
+    EPS change across one is taken out); a line whose quote carries the company's adjusted basis ("non-GAAP") is labelled
+    with it; a results table on another basis (standalone against consolidated) than the card states is removed; a
+    presentation's own EBITDA is labelled beside the table's. Read at the call."""
+    return (_env("CARD_ONE_BASIS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_consolidated_only() -> bool:
     """CARD_CONSOLIDATED_ONLY (default off; TODO 44, F154; owner, 25 Oct 2026: consolidated first, standalone kept from the
     AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the

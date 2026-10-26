@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import card_ebitda_profit_v2, card_same_definition, memory_restated, memory_screener
+from .settings import card_ebitda_profit_v2, card_grounded_figures, card_guidance_dated, card_same_definition, memory_restated, memory_screener
 from .models import Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -553,12 +553,15 @@ def _metric_entry(metric: str, period: str, sources: list[dict]) -> dict:
     if len(sources) > 1:
         entry.update(sources=sources, updated_as_of=last["as_of"], value_news_id=last["news_id"])
         # F167: first filed against restated. The first-filed figure is the earliest source when that one is the period's
-        # own file (a comparative column of a later file is not "first filed": its own file was never read)
-        first = usable[0]
-        if last is not first and not first.get("restated_from") and first.get("value") is not None \
-                and last.get("value") is not None and restated_differs(first["value"], last["value"]):
-            entry.update(first_filed=first["value"], restated=True,
-                         restated_in=last.get("restated_from") or last["news_id"])
+        # own file (a comparative column of a later file is not "first filed": its own file was never read). Both must be
+        # exchange files and the latest a later file's comparative column: a card's figure the period's own file then
+        # replaced is a correction, not a restatement (the 26 Oct report called JSW Steel's Q4FY26 profit "restated"
+        # from a card's 2,094 to its own file's figure, and Newgen's employee cost from a card's lakh slip 19,010)
+        first = tagged[0] if tagged else None
+        if first is not None and last is not first and not first.get("restated_from") and last.get("restated_from") \
+                and first.get("value") is not None and last.get("value") is not None \
+                and restated_differs(first["value"], last["value"]):
+            entry.update(first_filed=first["value"], restated=True, restated_in=last["restated_from"])
     return entry
 
 
@@ -1152,6 +1155,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if update.status == "ON_TRACK" and g.get("due_date") and judged_on(g.get("due"), g["due_date"]) < as_of[:10]:
             continue  # past its deadline a promise is delivered or missed, not on track ("2 MLPD by FY26" in Q2FY27);
             # a period's deadline passes when its results are due, not at its end (O12, owner 2026-10-20)
+        if card_guidance_dated() and update.status in ("DELIVERED", "ON_TRACK", "DELAYED", "MISSED"):
+            from .guidance_dated import why_no_verdict
+            if why_no_verdict(g, d["financial_metrics"], news_id):
+                continue  # F172: no verdict from an undated target or one for another period or metric; it stays as said
         g["status_history"] = sorted(
             g.get("status_history", []) + [{
                 "status": update.status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,
@@ -2353,7 +2360,19 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         if shown & set(names):
             continue
         unit = {"pct": "pct", "cr": "cr", "inr": "inr"}.get(spec.get("format", "num"), "num")
-        row = line(lambda p, names=names: lookup(names, p), unit == "pct", f"kpi:{spec['metric']}")
+        pick = lambda p, names=names: lookup(names, p)   # noqa: E731
+        if card_grounded_figures():
+            # a figure stored in MW or GW is no ₹ Cr, and a year-ago or previous quarter in another unit than this
+            # quarter's is no base (Emmvee's order book: 10,404 MW shown as crore, +104,990.9% on 9.9 GW; 26 Oct 2026)
+            fmt = spec.get("format", "num")
+            now = stored(names, period)[0]
+            if now is not None and not _unit_fits(fmt, now):
+                continue
+            pick = lambda p, names=names, now=now: (   # noqa: E731
+                None if p != period and now is not None and stored(names, p)[0] is not None
+                and str(stored(names, p)[0].get("unit") or "").upper() != str(now.get("unit") or "").upper()
+                else lookup(names, p))
+        row = line(pick, unit == "pct", f"kpi:{spec['metric']}")
         if row is not None:
             out[f"kpi:{spec['metric']}"] = row
             lines.append({"key": f"kpi:{spec['metric']}", "label": spec["label"], "unit": unit})

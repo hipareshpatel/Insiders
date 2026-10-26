@@ -1011,6 +1011,34 @@ def cmd_screener_crosscheck(args, settings, sink) -> int:
     return 0
 
 
+def cmd_screener_referee(args, settings, sink) -> int:
+    """Read-only: NSE's own results XBRL as the referee of the screener cross-check (screener_xbrl_referee.py). The
+    cross-check is worked out again from R2 and memory (no request), then each disagreeing pair is looked up in the period's
+    file (the next period's as a fallback) from NSE: one results list a company, each file once. No memory write, no card
+    change, no AI. Exit 75 when NSE refused the session, 124 when the time budget ended with pairs left (--limit is a chosen stop: 0)."""
+    from . import screener_crosscheck as sc
+    from . import screener_xbrl_referee as sx
+    from .nse import NseClient
+
+    companies = _universe_companies(sink, args.scrips)
+    if companies is None:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    summary = sc.run(sink, companies, args.day, args.workers, False)
+    with NseClient() as nse:
+        outcome = sx.run(nse, summary["rows"], args.limit, args.time_budget)
+    print(sx.render(outcome))
+    if args.json:
+        Path(args.json).write_text(sx.to_json(outcome), encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(sx.to_csv(outcome), encoding="utf-8")
+    if args.md:
+        Path(args.md).write_text(sx.to_markdown(outcome, today_ist().isoformat()), encoding="utf-8")
+    if outcome["blocked"]:
+        return REFUSED
+    return 124 if outcome["out_of_time"] else 0
+
+
 def cmd_label_memory(args, settings, sink) -> int:
     """Label everything already in memory (memory_labels.py, TRACKER F150): no AI, no NSE, no card change. A dry run
     prints the counts per section and label and writes nothing; a real run writes each changed dossier back through the
@@ -1495,6 +1523,17 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--referee-csv", help="write the refereed pairs, with the official line and the verdict, to this file")
     p.add_argument("--md", help="write the short markdown report to this file")
     p.set_defaults(func=cmd_screener_crosscheck)
+
+    p = sub.add_parser("screener-referee", help="read-only: NSE's results XBRL as the referee of the screener cross-check's disagreeing pairs")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--day", help="use the screener pages stored on or before this day (default the newest)")
+    p.add_argument("--workers", type=int, default=8, help="companies read at a time for the cross-check (the NSE look-ups are one at a time)")
+    p.add_argument("--limit", type=int, help="referee at most this many pairs (a company is finished once started); the rest are not_run")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if pairs are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--csv", help="write every refereed pair, with the official figure and the verdict, to this file")
+    p.add_argument("--md", help="write the short markdown summary to this file")
+    p.set_defaults(func=cmd_screener_referee)
 
     p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")
     p.add_argument("--apply", action="store_true", help="back up, then delete; without it nothing is changed")

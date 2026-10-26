@@ -273,3 +273,18 @@ def test_the_second_review_lines():
     from bse_intel.no_eps import mentions_eps
     assert [x for x in _REVIEW_EPS if not mentions_eps(x)] == []
     assert [x for x in _REVIEW_NOT_EPS if mentions_eps(x)] == []
+
+
+# third review of F190: a price phrase on another clause, revenue beside the figure, a sentence stop, "against"
+_REVIEW3_EPS = ["Net profit ₹40 Cr; ₹5.2 a share. Shares closed at ₹250","Net profit ₹40 Cr; ₹5.2 a share. The share price fell 2%","Q2 profit ₹40 Cr, ₹5.2 a share; share price ₹250",
+"Net profit ₹40 Cr, ₹5.2 per share; the stock closed at ₹250","Stock gained 3% to close at ₹250. Q2 profit rose, ₹5.2 a share","Results: ₹5.2 a share; the share price rose 3%",
+"Q2 results: ₹5.2 a share, up from ₹4 a share; stock closed higher","Result: ₹5.2 a share on revenue of ₹500 Cr, trade receivables rose","Revenue ₹500 Cr and ₹5.2 a share",
+"Revenue rose 12% to ₹500 Cr, ₹5.2 a share on sales growth","Dividend ₹2 per share. Basic ₹5 a share","Declared dividend ₹2 per share. Quarter earned ₹5 a share",
+"Payout of ₹2 a share against ₹5.2 a share earned","Dividend ₹2 per share, ₹5 a share basic"]
+_REVIEW3_NOT_EPS = ["EBITDA per share ₹12","Revenue per share ₹40","Net profit ₹45 Cr, shares closed at ₹250, up ₹5 a share","Shares closed at ₹250 per share"]
+
+
+def test_the_third_review_lines():
+    from bse_intel.no_eps import mentions_eps
+    assert [x for x in _REVIEW3_EPS if not mentions_eps(x)] == []
+    assert [x for x in _REVIEW3_NOT_EPS if mentions_eps(x)] == []

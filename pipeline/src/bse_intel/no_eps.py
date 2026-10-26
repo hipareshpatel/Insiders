@@ -39,16 +39,16 @@ _FIGURE = re.compile(_FIG + r"(?:\s+\S+){0,6}?\s*" + _PS + "|" + _PS + r"(?:\s+\
 # per-share items that are NOT EPS: a figure with one of these beside it keeps its per-share figure (rule B only)
 _NOT_EPS = re.compile(
     r"(?<![^\W\d_])(?:dividends?|dps|payout|book\s+value|bvps|nav|net\s+asset\s+value|prices?|cmp|market\s+price|face\s+value|"
-    r"par\s+value|buy-?\s*back|offers?|issue[ds]?|rights|premium|allot\w*|conversion|warrants?|targets?|valuation|ebitda|"
-    r"revenue|sales|cash\s+flow|preferential|subscription|exercise|esop|options?|tender|acquir\w*|acquisition|consideration|"
+    r"par\s+value|buy-?\s*back|offers?|issue[ds]?|rights|premium|allot\w*|conversion|warrants?|targets?|valuation|"
+    r"(?:revenue|sales|ebitda|cash\s+flow)\s*(?:per|a|/)\s*share|preferential|subscription|exercise|esop|options?|tender|acquir\w*|acquisition|consideration|"
     r"swap|split|bonus|sub-?division|stake|qip|placement|ofs|floor|sold|sell\w*|bought|buy|purchase[ds]?|repurchas\w*|trade[ds]?|transfer\w*|"
     r"fair\s+value|market\s+cap\w*|valuer)(?![^\W\d_])", re.I)
-# a share-price move ("shares closed at ₹250, up ₹5 a share") is not EPS: a price phrase anywhere on the line excuses a
+# a share-price move ("shares closed at ₹250, up ₹5 a share") is not EPS: a price phrase in the figure's clause excuses a
 # clause that carries no earnings word ("Earnings rose to ₹5 per share" still counts; bare "up 10%" excuses nothing)
 _MOVE = re.compile(r"(?<![^\W\d_])(?<!per\s)(?<!a\s)(?<!each\s)(?:(?:shares?|stock|scrip)\s+(?:\w+\s+)?(?:clos\w*|gain\w*|fell|rose|jump\w*|slipp\w*|"
                    r"surg\w*|trad\w*|declin\w*|ended|end)|clos\w*\s+at|share\s+price|stock\s+price|market\s+price)(?![^\W\d_])", re.I)
 _EARN = re.compile(r"(?<![^\W\d_])(?:earn\w*|profits?|loss(?:es)?|pat|income|report\w*|post\w*|clock\w*)(?![^\W\d_])", re.I)
-_CLAUSE = re.compile(r",\s|;\s|\s[—–|]\s|\n")   # the pieces of a line (a comma inside "₹1,200" is no break)
+_CLAUSE = re.compile(r",\s|;\s|\s[—–|]\s|\n|\.\s+(?=[A-Z])")   # a sentence stop too ("Rs. 5" is none)   # the pieces of a line (a comma inside "₹1,200" is no break)
 _INVISIBLE = re.compile("[­​-‏⁠﻿]")
 _PERIOD = re.compile(r"\b(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2,4}(?:-\d{2})?\b|\b(?:Q[1-4]|H[12]|9M)\b|\b20\d{2}(?:-\d{2})?\b", re.I)
 # the separators a trailing EPS clause may follow: ", " "; " " — " " | "
@@ -70,6 +70,17 @@ def normalise(text: str) -> str:
     return text.replace("_", " ")
 
 
+def _moved(text: str, start: int, clause: str) -> bool:
+    """A clause that goes on with a price move ("shares closed at ₹250, up ₹5 a share") after one naming the price."""
+    if not re.match(r"\s*(?:up|down|rose|fell|gained|lost|higher|lower)\b", clause, re.I):
+        return False
+    breaks = [x for x in _CLAUSE.finditer(text) if x.end() <= start]
+    if not breaks:
+        return False
+    prev_start = max([0] + [x.end() for x in breaks[:-1]])
+    return bool(_MOVE.search(text[prev_start:breaks[-1].start()]))
+
+
 def _find(text: str):
     """The first place a normalised text states EPS (a match), or None."""
     found = [m for m in (_TOKEN.search(text), _WORDING.search(text)) if m]
@@ -83,6 +94,8 @@ def _find(text: str):
         # the non-EPS word must sit beside the figure (up to 10 words before it, 1 after, or "as [final] dividend"):
         # "Earnings were ₹5 per share and dividend ₹2 per share" states EPS though its clause names a dividend (F190 review)
         before = text[start:m.start()].split()[-10:]
+        cut = [i for i, w in enumerate(before) if w.lower() in ("against", "vs", "vs.", "versus", "compared")]
+        before = before[cut[-1] + 1:] if cut else before   # "Payout of ₹2 a share against ₹5.2 a share earned"
         words = text[m.end():end].split()
         after = words[:1]
         if after == ["as"] and re.search(r"\bdividends?\b", " ".join(words[1:3]), re.I):   # "₹2 per share as final dividend"
@@ -92,7 +105,7 @@ def _find(text: str):
         # a clause with no earnings word is excused by a non-EPS word anywhere in it ("Preferential allotment of 1.5 crore
         # shares to the promoter group at ₹250 per share"); one with an earnings word only by a word beside the figure
         plain = not _EARN.search(clause)
-        if not (_NOT_EPS.search(near) or (plain and (_NOT_EPS.search(clause) or _MOVE.search(text)))):
+        if not (_NOT_EPS.search(near) or (plain and (_NOT_EPS.search(clause) or _MOVE.search(clause) or _moved(text, start, clause)))):
             found.append(m)
             break
         pos = m.end()   # excused: a shorter match inside this one would lose the word that excused it

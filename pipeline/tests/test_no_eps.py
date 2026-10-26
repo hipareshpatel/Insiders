@@ -233,3 +233,16 @@ def test_issue_and_trade_prices_per_share_are_not_eps():
                  "Purchased 2,000 shares at ₹55 per share"]:
         assert not mentions_eps(line), line
     assert mentions_eps("Profit per share ₹3 after QIP")     # the EPS wording itself still counts
+
+
+def test_a_non_eps_word_counts_only_beside_the_figure():
+    # review of F190: a word anywhere in the clause let EPS through; a match across two clauses dropped a plain line
+    from bse_intel.no_eps import mentions_eps
+    for line in ["Earnings were ₹5 per share and dividend ₹2 per share", "Profit worked out to ₹5 per share on higher sales",
+                 "Earnings rose to ₹5 per share"]:
+        assert mentions_eps(line), line
+    for line in ["Net profit ₹45 Cr and dividend ₹2 per share", "Net profit of ₹45 Cr; each share carries one vote",
+                 "Revenue ₹45 Cr; fair value ₹300 per share per valuer", "Net profit ₹45 Cr, shares closed at ₹250, up ₹5 a share",
+                 "Stock gained ₹5 a share after results", "The company repurchased 5 lakh shares at ₹120 a share, total ₹6 Cr",
+                 "₹10 per share dividend declared"]:
+        assert not mentions_eps(line), line

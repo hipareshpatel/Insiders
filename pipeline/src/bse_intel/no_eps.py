@@ -36,12 +36,17 @@ _PS = (r"(?:(?<![^\W\d_])per\s*(?:equity\s+|ordinary\s+)?(?:share|sh)|(?<![^\W\d
        r"|/\s*(?:equity\s+)?(?:share|sh))(?![^\W\d_])(?!\s+(?:of|capital)\b)")
 _FIG = r"(?<![^\W_])(?<![.,])(?:(?:rs\.?|inr|₹)\s*)?[(+\-−]?\d[\d.,]*"
 _FIGURE = re.compile(_FIG + r"(?:\s+\S+){0,6}?\s*" + _PS + "|" + _PS + r"(?:\s+\S+){0,6}?[\s:=]*" + _FIG, re.I)
-# per-share items that are NOT EPS: a clause naming any of these keeps its per-share figure (rule B only)
+# per-share items that are NOT EPS: a figure with one of these beside it keeps its per-share figure (rule B only)
 _NOT_EPS = re.compile(
     r"(?<![^\W\d_])(?:dividends?|dps|payout|book\s+value|bvps|nav|net\s+asset\s+value|prices?|cmp|market\s+price|face\s+value|"
     r"par\s+value|buy-?\s*back|offers?|issue[ds]?|rights|premium|allot\w*|conversion|warrants?|targets?|valuation|ebitda|"
     r"revenue|sales|cash\s+flow|preferential|subscription|exercise|esop|options?|tender|acquir\w*|acquisition|consideration|"
-    r"swap|split|bonus|sub-?division|stake|qip|placement|ofs|floor|sold|sell\w*|bought|buy|purchase[ds]?|trade[ds]?|transfer\w*)(?![^\W\d_])", re.I)
+    r"swap|split|bonus|sub-?division|stake|qip|placement|ofs|floor|sold|sell\w*|bought|buy|purchase[ds]?|repurchas\w*|trade[ds]?|transfer\w*|"
+    r"fair\s+value|market\s+cap\w*|valuer)(?![^\W\d_])", re.I)
+# a share-price move ("shares closed at ₹250, up ₹5 a share") is not EPS, unless an earnings word is beside the figure
+# ("Earnings rose to ₹5 per share")
+_MOVE = re.compile(r"(?<![^\W\d_])(?:clos\w*|gain\w*|fell|falls?|rose|rises?|up|down|stock|shares?\s+(?:closed|traded))(?![^\W\d_])", re.I)
+_EARN = re.compile(r"(?<![^\W\d_])(?:earn\w*|profits?|loss(?:es)?|pat|income)(?![^\W\d_])", re.I)
 _CLAUSE = re.compile(r",\s|;\s|\s[—–|]\s|\n")   # the pieces of a line (a comma inside "₹1,200" is no break)
 _INVISIBLE = re.compile("[­​-‏⁠﻿]")
 _PERIOD = re.compile(r"\b(?:Q[1-4]|H[12]|9M)?\s*FY\s*'?\d{2,4}(?:-\d{2})?\b|\b(?:Q[1-4]|H[12]|9M)\b|\b20\d{2}(?:-\d{2})?\b", re.I)
@@ -70,9 +75,16 @@ def _find(text: str):
     pos = 0
     while (m := _FIGURE.search(text, pos)):   # rule B holds unless the clause around the figure names a non-EPS per-share item
         pos = m.start() + 1
+        if _CLAUSE.search(m.group()):   # a figure and a per-share phrase in two different clauses are not one statement
+            continue
         start = max([0] + [x.end() for x in _CLAUSE.finditer(text) if x.end() <= m.start()])
         end = min([len(text)] + [x.start() for x in _CLAUSE.finditer(text) if x.start() >= m.end()])
-        if not _NOT_EPS.search(text[start:end]):
+        # the non-EPS word must sit beside the figure (up to 6 words before it, 1 after): "Earnings were ₹5 per share
+        # and dividend ₹2 per share" states EPS though its clause names a dividend (review of F190)
+        before = text[start:m.start()].split()[-6:]
+        after = text[m.end():end].split()[:1]
+        near = " ".join(before + [m.group()] + after)
+        if not (_NOT_EPS.search(near) or (_MOVE.search(near) and not _EARN.search(near))):
             found.append(m)
             break
     return min(found, key=lambda m: (m.start(), -m.end())) if found else None

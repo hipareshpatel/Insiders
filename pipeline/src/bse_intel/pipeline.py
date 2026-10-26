@@ -3536,7 +3536,6 @@ class Pipeline:
             foreign_fixes = fix_foreign_crore(candidate, filed_text)
             counts = fix_count_millions(candidate, sources)
             changes = built + fix_change_percentages(candidate, sources) + counts + foreign_fixes
-            changes += no_eps.drop_eps(candidate)   # owner rule 26 Oct 2026: no EPS on cards or stock pages
             changes += apply_deal_guards(candidate, filing, history, dossier.get("balance_sheet", []), text)
             changes += deal_echo_slips(candidate, filed_text)
             changes += continued_deal(candidate, view, filed_text)
@@ -3552,6 +3551,8 @@ class Pipeline:
             changes += computed.enforce(candidate, produced)
             changes += directions.guard(candidate, tagged)   # tax, inventory, EPS, credit cost: the file decides
             changes += directions.multiple_guard(candidate)   # "more than double" for +74%: the amounts decide
+            # owner rule 26 Oct 2026: no EPS on new cards; last of the text edits, so nothing written above slips past it
+            changes += no_eps.drop_eps(candidate)
             if card_two_parts() and candidate.card is not None:
                 # part 2 lines that fail the checks are hidden one by one, before the whole-card checks (F152)
                 two_hidden[id(candidate)] = two_parts.hide_part2(

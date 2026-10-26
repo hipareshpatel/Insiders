@@ -464,6 +464,7 @@ jobs:
       - name: Referee the Tijori cross-check's leads and sign differences with NSE's results XBRL (reads only)
         if: inputs.command == 'tijori-referee'
         env:
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the files are on the archive host; the results lists keep the API's 3-5 s
           LIMIT: ${{ inputs.limit }}
         run: |
           code=0

@@ -184,11 +184,33 @@ class RunSink:
 def test_the_run_reads_the_newest_stored_page_of_each_symbol_and_counts_a_company_without_one():
     old = {"qt_c": {"report_dates": ["Jun 2026"], "data": []}}
     objects = {
-        "tijori/2026-10-20/APARINDS.json.gz": tijori.pack(json.dumps(old)),
-        "tijori/2026-10-27/APARINDS.json.gz": tijori.pack(json.dumps(tables("apar"))),
-        "tijori/2026-10-28/ABB.json.gz": tijori.pack(json.dumps(tables("abb")))}
+        "raw/tijori/2026-10-20/APARINDS.json.gz": tijori.pack(json.dumps(old)),
+        "raw/tijori/2026-10-27/APARINDS.json.gz": tijori.pack(json.dumps(tables("apar"))),
+        "raw/tijori/2026-10-28/ABB.json.gz": tijori.pack(json.dumps(tables("abb")))}
     sink = RunSink({"1": apar_memory(), "2": dossier([entry("revenue", "Q3FY26", 3557.01)]), "3": apar_memory()}, objects)
     out = tc.run(sink, [("1", "APARINDS"), ("2", "ABB"), ("3", "GONE")], day="2026-10-27")
     assert out["pages_day"] == "2026-10-27"             # the 28th is after --day
     assert out["skipped"] == {"no stored page": 2} and out["companies_compared"] == 1 and out["by_class"]["sign"] == 1
     assert tc.stored_tables(sink)[1] == "2026-10-28"
+
+
+def test_a_trailing_ttm_column_dated_march_is_dropped():
+    section = {"report_dates": ["Mar 2025", "Mar 2026", "Mar 2026"], "table_footer": "TTM Values as of Mar 2026",
+               "data": [{"name": "Sales", "value": [10.0, 20.0, 99.0]}]}
+    out, _ = tc.parse_section(section, "year", False)
+    assert out == {"FY25": {"revenue": 10.0, "pat": None, "eps": None}, "FY26": {"revenue": 20.0, "pat": None, "eps": None}}
+    section = {"report_dates": ["Mar 2025", "Mar 2026"], "table_footer": "TTM Values as of Mar 2026",
+               "data": [{"name": "Sales", "value": [10.0, 99.0]}]}
+    assert list(tc.parse_section(section, "year", False)[0]) == ["FY25"]       # the TTM is the only March 2026 column
+
+
+def test_an_eps_gap_with_one_factor_across_periods_is_eps_adjusted_not_a_mismatch():
+    def qt(values):
+        return {"report_dates": ["Jun 2026", "Mar 2026", "Dec 2025"],
+                "data": [{"name": "Quarterly Ratios", "value": [], "sub_section": [{"name": "EPS", "value": values}]}]}
+    entries = [entry("eps", "Q1FY27", 10.0), entry("eps", "Q4FY26", 20.0), entry("eps", "Q3FY26", 30.0),
+               entry("revenue", "Q1FY27", 100.0), entry("pat", "Q1FY27", 5.0)]
+    result = tc.compare_company(dossier(entries), {"qt_c": qt([5.0, 10.0, 15.0])}, "1", "X")   # tijori = ours / 2
+    assert {p["class"] for p in result["pairs"]} == {"eps_adjusted"}
+    result = tc.compare_company(dossier(entries), {"qt_c": qt([5.0, 14.0, 30.0])}, "1", "X")   # no common factor
+    assert {p["period"]: p["class"] for p in result["pairs"]} == {"Q1FY27": "mismatch", "Q4FY26": "mismatch", "Q3FY26": "match"}

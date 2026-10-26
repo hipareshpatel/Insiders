@@ -20,7 +20,7 @@ The page names its company in ``<script id="company_details">`` (``symbol``, ``c
 name after the normalisation below. A wrong slug answers 302 to the home page (the client does not follow redirects, so a 302
 is "no such page"); a slug that belongs to another company would be a wrong page that answers 200, which the check catches.
 
-Stored at ``tijori/<YYYY-MM-DD>/<SYMBOL>.json.gz``: the ``fin_tables_data`` dict as compact JSON, gzipped.
+Stored at ``raw/tijori/<YYYY-MM-DD>/<SYMBOL>.json.gz``: the ``fin_tables_data`` dict as compact JSON, gzipped.
 
 Pace and refusal (owner, 26 Oct 2026: 6 requests a second works; measured, see ``TijoriClient``): ``TIJORI_RATE`` requests a
 second (default 6) through 8 threads and one shared start-time limiter, a plain browser User-Agent and ``Accept-Language``, no
@@ -33,7 +33,7 @@ CAPTCHA is only a refusal when the page has no
 Slug map: the sitemap (``/sitemap.xml``, one request a run) lists 5,741 companies as ``/company/<slug>/``; the slugs are
 irregular (``aadhar-housing-finance-ltd``, ``sundaram-finance-limited``, ``the-anup-engineering-ltd``), so a company is matched
 by name: lowercase, "&" to "and", the words "limited", "ltd" and "the" dropped, punctuation stripped. A name that fits two
-slugs is ambiguous and is left out, never guessed; both lists and the unmatched companies are in the summary.
+slugs is ambiguous: its candidates are fetched in turn and the first page that verifies is kept; both lists and the unmatched companies are in the summary.
 """
 
 from __future__ import annotations
@@ -62,13 +62,22 @@ RATE = float(os.environ.get("TIJORI_RATE", "6"))   # requests a second, shared b
 SLOW_PAUSE_SECONDS = 3.0                          # after the first refusal: one request every 3 s
 WORKERS = 8
 SAVE_EVERY = 25                                   # finished companies between two saves of the done list
-PREFIX = "tijori/"
+PREFIX = "raw/tijori/"
 DONE_KEY = "tijoridl:done"          # + ":<day>": the symbols a run finished
 TABLES_ID = "fin_tables_data"
 DROP_WORDS = frozenset({"limited", "ltd", "the"})
-# a page with no financials block that is one of these is a gate, not a company page
-_CHALLENGE = re.compile(r"recaptcha|captcha|cf-challenge|challenge-platform|just a moment|attention required|access denied",
-                        re.I)
+# a page with no financials block is a gate only when it is not a normal company page and has one of these markers
+_CHALLENGE = re.compile(r"cf-challenge|challenge-platform|just a moment|attention required|access denied", re.I)
+_CAPTCHA = re.compile(r"captcha", re.I)
+NORMAL_PAGE_BYTES = 50_000    # a company page is about 200 KB; a gate is a few KB
+
+
+def is_challenge(body: str) -> bool:
+    """A refusal page: not a normal company page (its ``company_details`` block, or a large body) and carrying a
+    challenge marker, or a CAPTCHA on a short body. A normal page without tables is "no_tables", not a refusal."""
+    if 'id="company_details"' in body or len(body) > NORMAL_PAGE_BYTES:
+        return False
+    return bool(_CHALLENGE.search(body) or _CAPTCHA.search(body))
 
 
 class TijoriRefused(RuntimeError):
@@ -244,6 +253,9 @@ class TijoriClient:
             slowed = self.slowed
         if start > now:
             self._sleep(start - now)
+        with self._lock:
+            if self._stopped:    # a stop that came while this thread slept: send nothing
+                raise TijoriRefused(self._stopped)
         return slowed
 
     def _refused(self, reason: str, was_slow: bool) -> None:
@@ -270,7 +282,7 @@ class TijoriClient:
             if response.status_code != 200:
                 return response.status_code, ""
             body = response.text
-            if f'id="{TABLES_ID}"' not in body and _CHALLENGE.search(body):
+            if f'id="{TABLES_ID}"' not in body and is_challenge(body):
                 self._refused(f"a CAPTCHA or challenge page from {url}", was_slow)
                 continue
             return 200, body
@@ -286,8 +298,17 @@ def estimate(companies: int, rate: float = RATE) -> dict:
 _COUNTER = {"no_tables": "pages_no_tables", "not_verified": "pages_not_verified", "no_page": "pages_no_page"}
 
 
-def _fetch(client, symbol: str, name: str, slug: str) -> dict:
-    """One company's page, checked: ``{"kind": "stored" | "no_tables" | "not_verified" | "no_page" | "failed", ...}``."""
+def _fetch(client, symbol: str, name: str, slug: str | list[str]) -> dict:
+    """One company's page, checked: ``{"kind": "stored" | "no_tables" | "not_verified" | "no_page" | "failed", ...}``. Given
+    several candidate slugs (an ambiguous name), they are tried in turn and the first page that verifies wins; when none
+    does, the last candidate's answer stands."""
+    if isinstance(slug, list):
+        got: dict = {"kind": "no_page"}
+        for one in slug:
+            got = _fetch(client, symbol, name, one)
+            if got["kind"] == "stored":
+                break
+        return got
     status, body = client.get(url_for(slug))
     if status == 200:
         tables, page = extract_tables(body), identity(body)
@@ -324,7 +345,7 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
     not_verified: list[str] = []
     todo = []
     for scrip, symbol, name in companies:
-        if symbol not in mapping["matched"]:
+        if symbol not in mapping["matched"] and symbol not in mapping["ambiguous"]:
             continue
         if symbol in done:
             totals["companies_done_before"] += 1
@@ -332,7 +353,7 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
             totals["pages_already_stored"] += 1
             done.add(symbol)
         else:
-            todo.append((symbol, name, mapping["matched"][symbol]))
+            todo.append((symbol, name, mapping["matched"].get(symbol) or mapping["ambiguous"][symbol]))
     deadline = clock() + time_budget
     deferred = threading.Event()
 

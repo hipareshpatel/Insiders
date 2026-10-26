@@ -61,7 +61,7 @@
 #   screener.in refusing (403, 429, 503: exit 75) fails the shard. Its own concurrency group `screener`, so it runs beside the
 #   NSE memory jobs: it touches no NSE call and no memory. Summary: artifacts `screener-download-0` and `screener-download-1`.
 # - tijori-download: the download of every company's financials page from Tijori Finance (owner request 26 Oct 2026; F189, TODO 92),
-#   gzipped JSON tables into R2 at tijori/<date>/<SYMBOL>.json.gz. One runner (job `tijori`) for the whole universe: 8 threads
+#   gzipped JSON tables into R2 at raw/tijori/<date>/<SYMBOL>.json.gz. One runner (job `tijori`) for the whole universe: 8 threads
 #   behind one shared limiter at TIJORI_RATE requests a second (default 6; about 1,900 pages, 5 to 6 minutes). The first refusal
 #   (403, 429, 503, a challenge page) drops it to one request every 3 s and is recorded in the summary; a second one (exit 75)
 #   fails the job. `limit` (input) = a trial on the first N companies; a page stored for the date is not fetched again; exit 124
@@ -121,7 +121,7 @@
 #                      requeue-failed, apply-verdicts, release-pruned, export-held, export-critic
 #   maint-bse          probe-bse, bse-results-test, bse-verify-kept, text-backfill-bse (reads BSE; writes only text/ objects)
 #   maint-screener     screener-download, screener-fill (the dry run reads screener.in)
-#   maint-tijori       tijori-download (reads tijorifinance.com; writes only tijori/ objects)
+#   maint-tijori       tijori-download (reads tijorifinance.com; writes only raw/tijori/ objects)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
 #                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), tijori-crosscheck (R2 and memory; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)

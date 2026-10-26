@@ -20,6 +20,8 @@ Tijori prints 2 to 4 decimals, so the tolerance is tight, not screener's ₹1 Cr
 - ``scale``: the ratio is 10, 100 or 1000 (or the inverse) within 3%;
 - ``naming``: Tijori's figure equals another official line of ours (total income, owners' profit ...);
 - ``lender_definition``: a lender's revenue or profit differs (different definitions);
+- ``eps_adjusted``: an EPS mismatch (not a sign or wrong-quarter one) whose tijori / ours ratio (same sign) is within 2% of 1, or within 2% of another EPS pair's
+  ratio of the same company (tijori's EPS is adjusted for later share changes, ours is as filed);
 - ``mismatch``: anything else.
 
 Row names (measured 26 Oct 2026 on ABB, Apar and Dolphin Offshore, none a lender): ``Net Sales``, ``Net Profit`` and the
@@ -61,7 +63,8 @@ from .tijori import PREFIX, unpack
 MONEY_ABS, MONEY_REL = 0.011, 0.0005
 EPS_ABS = 0.011
 MIN_SHIFT_VALUE = sc.MIN_SHIFT_VALUE
-CLASSES = ("match", "sign", "wrong_quarter", "scale", "naming", "lender_definition", "mismatch")
+CLASSES = ("match", "sign", "wrong_quarter", "scale", "naming", "lender_definition", "eps_adjusted", "mismatch")
+EPS_FACTOR_TOLERANCE = 0.02   # tijori's adjusted EPS over ours: the same factor within 2% across a company's periods
 WORKERS = 8
 
 # the row names (see the module docstring for what was measured and what was not)
@@ -111,8 +114,11 @@ def parse_section(section: dict | None, kind: str, lender: bool) -> tuple[dict[s
     profit = _row(section, PROFIT_LINES)
     eps = _row(section, EPS_LINES) if kind == "quarter" else None
     skip = set(section.get("skip_report_dates") or [])
+    columns = list(section.get("report_dates") or [])
+    if kind == "year" and columns and "ttm" in str(section.get("table_footer") or "").lower():
+        columns = columns[:-1]    # the footer says the last column is a trailing twelve months, even when dated March
     out: dict[str, dict] = {}
-    for i, column in enumerate(section.get("report_dates") or []):
+    for i, column in enumerate(columns):
         if column in skip:
             continue
         period = period_of(column) if kind == "quarter" else year_of(column)
@@ -221,13 +227,31 @@ def compare_company(dossier: dict, tables: dict | None, scrip: str = "", symbol:
                         pair["lead"] = True
                         pair["note"] = (pair["note"] + "; " if pair["note"] else "") + "screener agrees with tijori"
                 out["pairs"].append(pair)
+    mark_eps_adjusted(out["pairs"])
     return out
+
+
+def mark_eps_adjusted(pairs: list[dict]) -> None:
+    """Re-class EPS gaps that are a share-change adjustment: same sign, the tijori / ours ratio within 2% of 1, or within 2%
+    of another EPS gap's ratio of the same company (two or more periods sharing one factor)."""
+    ratios = {}
+    for i, p in enumerate(pairs):
+        if p["metric"] == "eps" and p["class"] == "mismatch" and p["memory_value"] and p["tijori_value"]:
+            ratio = p["tijori_value"] / p["memory_value"]
+            if ratio > 0:
+                ratios[i] = ratio
+    for i, ratio in ratios.items():
+        shared = abs(ratio - 1) <= EPS_FACTOR_TOLERANCE or any(
+            j != i and abs(other - ratio) <= EPS_FACTOR_TOLERANCE * ratio for j, other in ratios.items())
+        if shared:
+            pairs[i]["class"] = "eps_adjusted"
+            pairs[i]["note"] = (pairs[i]["note"] + "; " if pairs[i]["note"] else "") + f"tijori / ours = {ratio:.4g} (adjusted EPS)"
 
 
 # --- the stored pages ---------------------------------------------------------------------------------------------
 
 def stored_tables(sink, day: str | None = None) -> tuple[dict[str, str], str | None]:
-    """symbol -> object key, from ``tijori/<day>/`` (the newest day stored when ``day`` is None; a company missing from that
+    """symbol -> object key, from ``raw/tijori/<day>/`` (the newest day stored when ``day`` is None; a company missing from that
     day takes its page from the newest earlier day), and the newest day found."""
     found: dict[str, tuple[str, str]] = {}
     for key in sink.list_objects(PREFIX):

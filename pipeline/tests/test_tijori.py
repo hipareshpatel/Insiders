@@ -133,12 +133,12 @@ def test_a_verified_page_is_stored_as_gzipped_tables_and_a_302_is_no_page():
     client, _ = client_for(site, seen)
     with client:
         out = tijori.run(sink, COMPANIES, client, DAY)
-    assert sorted(sink.objects) == [f"tijori/{DAY}/ABB.json.gz", f"tijori/{DAY}/APARINDS.json.gz"]
-    stored = json.loads(tijori.unpack(sink.objects[f"tijori/{DAY}/APARINDS.json.gz"]))
+    assert sorted(sink.objects) == [f"raw/tijori/{DAY}/ABB.json.gz", f"raw/tijori/{DAY}/APARINDS.json.gz"]
+    stored = json.loads(tijori.unpack(sink.objects[f"raw/tijori/{DAY}/APARINDS.json.gz"]))
     assert stored == fixture("apar")["fin_tables_data"]
-    assert out["pages_stored"] == 2 and out["pages_no_page"] == 1 and out["matched"] == 3 and out["unmatched"] == ["NOSUCH"]
-    assert "TWINA" in out["ambiguous"] and not any("twin-a" in u for u in seen)
-    assert sum("/sitemap.xml" in u for u in seen) == 1 and out["requests_made"] == 4 and not out["more"] and not out["slowed"]
+    assert out["pages_stored"] == 2 and out["pages_no_page"] == 2 and out["matched"] == 3 and out["unmatched"] == ["NOSUCH"]
+    assert "TWINA" in out["ambiguous"] and sum("twin-a" in u for u in seen) == 2   # both candidates tried, none has a page
+    assert sum("/sitemap.xml" in u for u in seen) == 1 and out["requests_made"] == 6 and not out["more"] and not out["slowed"]
 
 
 def test_a_page_of_another_company_is_discarded_and_listed():
@@ -155,12 +155,12 @@ def test_a_page_of_another_company_is_discarded_and_listed():
 
 def test_a_finished_company_and_a_stored_page_are_not_fetched_again():
     sink, seen = Sink(), []
-    sink.objects[f"tijori/{DAY}/ABB.json.gz"] = tijori.pack("{}")
+    sink.objects[f"raw/tijori/{DAY}/ABB.json.gz"] = tijori.pack("{}")
     client, _ = client_for(site, seen)
     with client:
         first = tijori.run(sink, COMPANIES[:2], client, DAY)
         assert first["pages_already_stored"] == 1 and first["pages_stored"] == 1
-        assert tijori.unpack(sink.objects[f"tijori/{DAY}/ABB.json.gz"]) == "{}"
+        assert tijori.unpack(sink.objects[f"raw/tijori/{DAY}/ABB.json.gz"]) == "{}"
         again = tijori.run(sink, COMPANIES[:2], client, DAY)
     assert again["companies_done_before"] == 2 and again["requests_made"] == 1   # only the sitemap
 
@@ -228,7 +228,7 @@ def test_a_second_refusal_after_slowing_down_stops_the_run_and_keeps_what_is_don
     client, _ = client_for(answers, seen)
     with client, pytest.raises(tijori.TijoriRefused):
         tijori.run(sink, COMPANIES[:3], client, DAY, workers=1)
-    assert f"tijori/{DAY}/ABB.json.gz" in sink.objects          # stored before the refusal
+    assert f"raw/tijori/{DAY}/ABB.json.gz" in sink.objects          # stored before the refusal
     assert json.loads(sink.kv[f"tijoridl:done:{DAY}"]) == ["ABB"]
     assert not any("the-anup" in u for u in seen)               # nothing asked after it
 
@@ -245,3 +245,57 @@ def test_a_challenge_page_counts_as_a_refusal_but_the_recaptcha_script_of_a_real
     client, _ = client_for(lambda url: (200, real), [])
     with client:
         assert client.get("https://www.tijorifinance.com/x/")[0] == 200 and not client.slowed
+
+
+BIG = "<html>" + "x" * 60_000
+
+
+def test_a_normal_page_without_tables_is_no_tables_not_a_refusal_and_a_short_gate_is_refused():
+    normal = ('<html><script src="https://www.google.com/recaptcha/api.js"></script>'
+              '<script id="company_details" type="application/json">{"symbol": "ABB"}</script>' + "x" * 60_000 + "</html>")
+    assert not tijori.is_challenge(normal) and not tijori.is_challenge(BIG + "recaptcha")
+    client, _ = client_for(lambda url: (200, normal), [])
+    with client:
+        out = tijori._fetch(client, "ABB", "ABB India Ltd.", "abb-india-limited")
+        assert out["kind"] == "no_tables" and not client.slowed
+    short = "<html><title>Just a moment...</title></html>"
+    assert tijori.is_challenge(short) and tijori.is_challenge("<div class='g-recaptcha'></div>")
+    client, _ = client_for(lambda url: (200, short), [])
+    with client, pytest.raises(tijori.TijoriRefused):
+        client.get("https://www.tijorifinance.com/x/")
+
+
+def test_no_request_goes_out_after_a_stop_even_from_a_thread_that_was_sleeping():
+    seen = []
+
+    def handler(request):
+        seen.append(str(request.url))
+        return httpx.Response(200, text="ok")
+    client = tijori.TijoriClient(transport=httpx.MockTransport(handler), clock=lambda: 0.0, sleep=lambda n: None)
+    with client:
+        client.get("https://x/1")
+
+        def stopping_sleep(n):
+            client._stopped = "stopped while waiting"     # the stop arrives during the sleep
+        client._sleep = stopping_sleep
+        with pytest.raises(tijori.TijoriRefused):
+            client.get("https://x/2")
+    assert seen == ["https://x/1"]
+
+
+def test_an_ambiguous_name_takes_the_first_candidate_whose_page_verifies():
+    sink, seen = Sink(), []
+
+    def answers(url):
+        if url.endswith("/sitemap.xml"):
+            return 200, SITEMAP.replace("abb-india-limited", "x-abb-india-ltd").replace("</urlset>",
+                "<url><loc>https://www.tijorifinance.com/company/abb-india-ltd/</loc></url></urlset>")
+        if "/abb-india-ltd/" in url:
+            return 200, page_html(fixture("abb"))
+        if "/x-abb-india-ltd/" in url:
+            return 200, page_html(fixture("apar"))   # another company's page
+        return site(url)
+    client, _ = client_for(answers, seen)
+    with client:
+        out = tijori.run(sink, [("1", "ABB", "ABB India Ltd.")], client, DAY, workers=1)
+    assert out["pages_stored"] == 1 and f"raw/tijori/{DAY}/ABB.json.gz" in sink.objects

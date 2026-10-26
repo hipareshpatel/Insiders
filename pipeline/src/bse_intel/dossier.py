@@ -24,8 +24,9 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import (card_ebitda_profit_v2, card_grounded_figures, card_guidance_dated, card_same_definition, memory_restated,
-                       memory_screener, memory_year_check)
+from .settings import (card_ebitda_profit_v2, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, memory_call_v2,
+                       memory_restated, memory_screener, memory_year_check)
+from . import footer_plausible
 from .models import _PER_OTHER, Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -118,6 +119,22 @@ def other_definition(metrics: dict, key: tuple[str, str], value: float | None, u
         implied = (value / base - 1) * 100
         checked.append(abs(implied - pct) > max(15.0, 0.5 * abs(pct)))
     return bool(checked) and all(checked)
+
+
+CALL_FILE_GAP = 0.05   # a call's figure this far (share of the file's) from the exchange file's is another definition
+
+
+def file_figure_apart(entry: dict | None, value: float | None) -> float | None:
+    """The exchange file's figure for this metric and period (a source labelled by file) that ``value`` is more than 5% away
+    from, else None (no file figure, or they agree). Read only."""
+    if value is None:
+        return None
+    for source in _sources(entry):
+        held = source.get("value")
+        if (source.get("lab") or {}).get("by") == "file" and held is not None \
+                and abs(float(value) - float(held)) > CALL_FILE_GAP * max(abs(float(held)), 1e-9):
+            return held
+    return None
 
 
 def repeated_order(deals: list[dict], deal, as_of: str, news_id: str) -> dict | None:
@@ -1139,6 +1156,13 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             log.info("memory: %s %s %s from %s refused: its own change does not follow from memory's comparatives",
                      key[0], key[1], m.value, news_id)
             continue
+        if memory_call_v2() and doc in ("call", "slides") and not (getattr(m, "by", None) in ("file", "calc")) \
+                and (held := file_figure_apart(metrics.get(key), m.value)) is not None:
+            # a call's or deck's own measure under the statutory name (F180): Sobha's "operational cash flow" +755 Cr beside
+            # the file's -342.12 Cr for H1FY27, Vishal Mega Mart's operating EBITDA margin 7.7% beside the file's 12.12%. The
+            # call reading keeps it as a kpi point with its own definition (call_memory.py)
+            log.info("memory: %s %s %s from %s refused as a source: the exchange file holds %s", key[0], key[1], m.value, news_id, held)
+            continue
         # the label: a figure the XBRL reader built is file (or calc, from its inputs); a synthetic xbrl: id is file;
         # anything else a model read from the PDF is ai. A figure only reaches here after trust.for_memory.
         m_by = getattr(m, "by", None) or item_by
@@ -1247,6 +1271,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             "source_type": item.source_type.upper(), "given_on": as_of,
             "source_news_id": news_id, "status": "OPEN", "status_history": [], "lab": text_lab(),
         }
+    year_held = _year_held(d["financial_metrics"])   # MEMORY_YEAR_CHECK (item 76): a held figure settles no verdict
     for update in output.dossier_delta.promise_updates:
         g = guidance.get(update.guidance_id)
         if g is None or g.get("given_on", "") >= as_of:
@@ -1256,7 +1281,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             # a period's deadline passes when its results are due, not at its end (O12, owner 2026-10-20)
         if card_guidance_dated() and update.status in ("DELIVERED", "ON_TRACK", "DELAYED", "MISSED"):
             from .guidance_dated import why_no_verdict
-            if why_no_verdict(g, d["financial_metrics"], news_id):
+            if why_no_verdict(g, [e for e in d["financial_metrics"] if (e["metric"], e["period"]) not in year_held], news_id):
                 continue  # F172: no verdict from an undated target or one for another period or metric; it stays as said
         g["status_history"] = sorted(
             g.get("status_history", []) + [{
@@ -1395,6 +1420,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         actual = by_key.get((p["metric"], p["period"]))
         if actual is None or not reported_by(actual, news_id):
             continue
+        if (p["metric"], p["period"]) in year_held:
+            continue   # MEMORY_YEAR_CHECK (item 76, F181): a held year figure is no MET / MISSED; the target stays open
         goal = comparable_target(p, actual)
         if goal is None:
             p.update(status="UNCHECKED", actual=actual["value"], actual_unit=actual.get("unit"), resolved_on=as_of,
@@ -1862,6 +1889,7 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
         elif metric:
             out[key] = {"period": metric["period"], "value": metric["value"]}
     kpis = []
+    hidden: list[dict] = []
     for spec in footer:
         fmt = spec.get("format", "num")
         names = (spec["metric"], *spec.get("aliases", ()))
@@ -1870,10 +1898,15 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
         if any(m["period"].startswith("Q") for m in rows):
             rows = [m for m in rows if m["period"].startswith("Q")]
         metric = max(rows, key=lambda m: (due_date(m["period"]), m.get("as_of") or ""), default=None)
+        if metric and card_footer_plausible() and (why := footer_plausible.hide_reason(metrics, names, metric, fmt, dossier.get("industry"))):
+            hidden.append(footer_plausible.note(spec["label"], metric, why))   # F182: GIC Housing's NIM 19.63% against 3.41%
+            continue
         if metric:
             kpis.append({"label": spec["label"], "format": fmt, "period": metric["period"], "value": metric["value"]})
     if kpis:
         out["kpis"] = kpis[:2]
+    if hidden:
+        out["footer_hidden"] = hidden   # not shown; the card keeps why (grounding.footer_hidden)
     return out
 
 
@@ -2442,6 +2475,10 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             # EPS_SHARE_ADJUST (F153): the changes on one share count; the profit EPS is on is the owners', else the total
             from . import eps_adjust
             row = eps_adjust.snapshot_row(row, dossier, periods, lambda p: lookup(("pat_owners",), p) or lookup(("pat",), p))
+            # CARD_EPS_FOLLOWS_PROFIT (F183): a change the profit does not carry, with no share-count event on record, is not shown
+            row, eps_hidden = eps_adjust.follow_profit(row, dossier, periods, lambda p: lookup(("pat_owners",), p) or lookup(("pat",), p), printed)
+            if eps_hidden:
+                out["eps_hidden"] = eps_hidden
         # the file's own YoY only when memory has no year-ago figure at all: when it has one and the table refused it
         # (restated, or not what this statement prints), that YoY rests on the refused base (data chain audit A8)
         if key == "revenue" and "yoy_pct" not in row and stored(names, periods["prev_year"])[1] is None:
@@ -2485,11 +2522,18 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     # the sector's own figures (EBITDA a tonne for cement, ARPU for telecom, occupancy for hospitals...) where memory
     # holds them for this quarter; a KPI the statement already shows is not repeated
     shown = {key for key, _, _ in rows}
+    footer_hidden: list[dict] = []
     for spec in footer:
         names = (spec["metric"], *spec.get("aliases", ()))
         if shown & set(names):
             continue
         unit = {"pct": "pct", "cr": "cr", "inr": "inr"}.get(spec.get("format", "num"), "num")
+        if card_footer_plausible():
+            now = stored(names, period)[0]
+            if now is not None and (why := footer_plausible.hide_reason(dossier.get("financial_metrics", []), names, now,
+                                                                         spec.get("format", "num"), dossier.get("industry"))):
+                footer_hidden.append(footer_plausible.note(spec["label"], now, why))   # F182: not shown, the card keeps why
+                continue
         pick = lambda p, names=names: lookup(names, p)   # noqa: E731
         if card_grounded_figures():
             # a figure stored in MW or GW is no ₹ Cr, and a year-ago or previous quarter in another unit than this
@@ -2508,6 +2552,8 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             lines.append({"key": f"kpi:{spec['metric']}", "label": spec["label"], "unit": unit})
     out["lens"] = lens
     out["lines"] = lines
+    if footer_hidden:
+        out["footer_hidden"] = footer_hidden
     if v2 and lens == "company" and "ebitda" in out:
         _ebitda_lines_v2(out, lines, lookup, period, printed, kept, card_basis if v2 else None)
     return out

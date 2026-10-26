@@ -155,7 +155,7 @@ owner.get("/feedback", async (c) => {
 // block is cut out in SQL). The WHERE keeps cards that might have an item; cardChecks then names the types exactly.
 // Paged by a (filed_at, news_id) cursor like the feed, so a deep page re-reads nothing above it.
 const ISSUE_LIMIT = 200;
-const GROUNDING_KEYS = ["unit_fixes", "change_fixes", "one_basis", "call_figure_conflicts", "quotes_dropped"];
+const GROUNDING_KEYS = ["unit_fixes", "change_fixes", "one_basis", "footer_hidden", "call_figure_conflicts", "quotes_dropped"];
 owner.get("/issues", async (c) => {
   const q = c.req.query();
   const day = (s: string | undefined) => (s && /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : null);

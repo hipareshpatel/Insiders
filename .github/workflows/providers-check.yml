@@ -41,6 +41,7 @@ jobs:
       ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+      GEMINI_API_KEY_3: ${{ secrets.GEMINI_API_KEY_3 }}   # call memory only (providers.gemini_3, only_routes)
       GROQ_API_KEY_2: ${{ secrets.GROQ_API_KEY_2 }}
       MISTRAL_API_KEY_2: ${{ secrets.MISTRAL_API_KEY_2 }}
       NVIDIA_API_KEY_2: ${{ secrets.NVIDIA_API_KEY_2 }}

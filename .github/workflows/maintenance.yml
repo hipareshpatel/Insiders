@@ -69,6 +69,9 @@
 #   run that ends on its time budget (exit 124) leaves a marker and is started again (with a non-empty `then`, `chain` does
 #   it); filings that failed (404, cut short, too large, ZIP audio) are kept with their reason and not tried again unless
 #   `restart`; NSE refusing (exit 75) fails the shard. Summary: artifacts `text-backfill-0` and `text-backfill-1`.
+# - text-backfill-bse: the same download for the cards whose file is on BSE (the older ones the NSE run lists as "not an NSE
+#   file"; owner 26 Oct 2026, TODO 87), through the pipeline's own BSE client and its pace. One runner (job `textback-bse`),
+#   group maint-bse, so it runs beside the NSE shards; BSE refusing (exit 75) fails it. Summary: artifact `text-backfill-bse`.
 # - screener-crosscheck: read only. Memory's exchange-file figures against the stored screener pages (no screener request),
 #   the cached official results text as referee (no download); summary.json, crosscheck.csv, referee.csv and the markdown
 #   report go up as the artifact `screener-crosscheck`. Commits nothing.
@@ -86,6 +89,10 @@
 #   lists them (timed), the all-company results list timed, then downloads from nsearchives only in rounds on different files
 #   (A 3-5 s as today, B 1 s, C 0.3 s, D 0 s, E four workers at 0 s); a round stops at the first 403/429/503 or third timeout,
 #   waits 60 s and no faster round follows. Writes nothing to D1, R2 or memory; artifact `nse-speedtest` (nse-speedtest.json).
+# - call-memory: read only (F180, TODO 83, owner 26 Oct 2026). The call-memory reading (MEMORY_CALL_V2's step, call_memory.py) of the
+#   filings named in `ids` (transcripts and decks, news ids): stored text and memory in, one AI call each on the free providers
+#   (never DeepSeek), the checked points and every dropped point with its reason out. One <news_id>.json each and summary.json go up
+#   as the artifact `call-memory`. Writes nothing to memory (the measurement run; --apply is for the laptop).
 # None calls an AI model; seed-memory, memory-gaps-fill and fill-memory read NSE. It runs beside the pipeline (its own concurrency group:
 # a shared one would cancel a pending pipeline run); fill-memory pauses the AI pipeline while it writes memory.
 # CONCURRENCY GROUPS (owner, 26 Oct 2026; F164). Jobs wait in the group of their SOURCE and what they WRITE, so jobs on
@@ -97,11 +104,11 @@
 #                      text-backfill (reads NSE; writes only text/ objects)
 #   maint-cards        writes cards in D1 (or commits to the branch): refresh-card-blocks, refresh-summaries, both,
 #                      requeue-failed, apply-verdicts, release-pruned, export-held, export-critic
-#   maint-bse          probe-bse, bse-results-test, bse-verify-kept
+#   maint-bse          probe-bse, bse-results-test, bse-verify-kept, text-backfill-bse (reads BSE; writes only text/ objects)
 #   maint-screener     screener-download, screener-fill (the dry run reads screener.in)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
-#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), restated-report (memory only), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing)
+#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), restated-report (memory only), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
 # A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
@@ -122,10 +129,10 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, pdf-referee, text-backfill, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, pdf-referee, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
-        description: requeue-failed only - re-run these filings instead (news ids, comma separated)
+        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated)
         type: string
         default: ''
       since:
@@ -166,15 +173,15 @@ concurrency:
   group: >-
     ${{ contains(fromJSON('["seed-memory","memory-gaps-fill","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic"]'), inputs.command) && 'maint-cards'
-    || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept"]'), inputs.command) && 'maint-bse'
+    || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-referee","pdf-referee","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-referee","pdf-referee","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
 jobs:
   run:
-    if: inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'text-backfill'
+    if: inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -300,6 +307,32 @@ jobs:
         with:
           name: prediction-units
           path: ${{ runner.temp }}/predunits/
+          if-no-files-found: ignore
+      - name: Call memory (reads only; free AI providers)
+        if: inputs.command == 'call-memory'
+        env:
+          IDS: ${{ inputs.ids }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+          GEMINI_API_KEY_3: ${{ secrets.GEMINI_API_KEY_3 }}   # call memory only (providers.gemini_3, only_routes)
+          GROQ_API_KEY_2: ${{ secrets.GROQ_API_KEY_2 }}
+          MISTRAL_API_KEY_2: ${{ secrets.MISTRAL_API_KEY_2 }}
+          NVIDIA_API_KEY_2: ${{ secrets.NVIDIA_API_KEY_2 }}
+          ZAI_API_KEY_2: ${{ secrets.ZAI_API_KEY_2 }}
+          COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/callmem"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel call-memory --ids "$IDS" --out "$RUNNER_TEMP/callmem"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'call-memory'
+        with:
+          name: call-memory
+          path: ${{ runner.temp }}/callmem/
           if-no-files-found: ignore
       - name: Prune companies (dry run, reads only)
         if: inputs.command == 'prune-companies'
@@ -788,9 +821,50 @@ jobs:
           path: ${{ runner.temp }}/more/
           if-no-files-found: ignore
 
+  # The text backfill's BSE part (TODO 87): one runner, the cards whose file is on BSE, the pipeline's BSE client and pace.
+  textback-bse:
+    if: inputs.command == 'text-backfill-bse'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 320
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "${{ inputs.no_ocr && '.' || '.[ocr]' }}"
+      - name: Download the BSE cards' filing texts
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/textback" "$RUNNER_TEMP/more"
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel text-backfill --source bse --time-budget 17400 ${{ inputs.no_ocr && '--no-ocr' || '' }} ${{ inputs.limit != '' && format('--limit {0}', inputs.limit) || '' }} ${{ inputs.restart && '--restart' || '' }} --json "$RUNNER_TEMP/textback/text-backfill-bse.json" || code=$?
+          if [ "$code" -eq 124 ]; then echo "::warning::time budget ended with filings left: run the same command again to resume"; echo more > "$RUNNER_TEMP/more/bse"; exit 0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: text-backfill-bse
+          path: ${{ runner.temp }}/textback/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: textback-more-bse
+          path: ${{ runner.temp }}/more/
+          if-no-files-found: ignore
+
   # The chain (F164): runs the next command of `then` once this run's work is done and succeeded (see the header).
   chain:
-    needs: [run, seed, seed-next, gaps, gaps-next, screener, textback]
+    needs: [run, seed, seed-next, gaps, gaps-next, screener, textback, textback-bse]
     if: always() && inputs.then != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     steps:
@@ -811,7 +885,7 @@ jobs:
             seed-memory|memory-gaps-fill)
               # seed-next / gaps-next already started the next pass, with `then`; the last pass chains
               if [ -n "$left" ]; then echo "companies left: the next pass carries the chain"; exit 0; fi ;;
-            screener-download|screener-fill|screener-fill-apply|label-memory-apply|text-backfill)
+            screener-download|screener-fill|screener-fill-apply|label-memory-apply|text-backfill|text-backfill-bse)
               if [ -n "$left" ]; then
                 echo "not finished: resuming $CMD with the same chain"
                 gh workflow run maintenance.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f command="$CMD" -f restart=false -f then="$THEN"

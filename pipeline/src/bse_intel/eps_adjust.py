@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from fractions import Fraction
 
 from .periods import due_date, prior_quarter_period, prior_year_period
-from .settings import eps_share_adjust
+from .settings import card_eps_follows_profit, eps_share_adjust
 
 # Owner, 25 Oct 2026: a preferential allotment, rights issue, QIP, ESOPs or a merger is real dilution, so EPS growth
 # shows the reported change there. Only a recorded split, bonus or consolidation is adjusted for; with no record, a share
@@ -162,3 +162,57 @@ def snapshot_row(row: dict, dossier: dict | None, periods: dict, profit) -> dict
     if notes:
         row["eps_note"] = "; ".join(dict.fromkeys(notes))
     return row
+
+
+# ---- CARD_EPS_FOLLOWS_PROFIT (F183, TODO 78): the safety net behind the share-base logic above.
+# Wipro's card (nse-106820253, 26 Oct 2026) showed EPS 3.23 against 2.74 and 2.50, +18%, while profit rose 1% and the CFO said
+# EPS +0.9% QoQ: comparatives on another share base (Wipro's 1:1 bonus was ex 3 Dec 2024). EPS can rise faster than profit
+# only when the share count falls (a buyback, a consolidation: recorded) or by rounding; so an EPS change more than the
+# tolerance ABOVE the profit change, with no share-count event on record, is not shown, nor the comparative it rests on.
+# An EPS change below the profit change is left as it is: that is real dilution (QIP, preferential allotment, ESOPs, a
+# merger), which the owner wants shown (25 Oct 2026). Only hidden, never replaced (independent review: a figure read from
+# the filing's words, "EPS declined by 5%", was signed wrongly).
+PROFIT_TOLERANCE_PP = 5.0      # EPS may rise this many percentage points faster than profit ...
+SHARE_NOISE_PCT = 3.0          # ... plus this much share-count noise (a small buyback, rounding of shares), scaled to the base
+SHARE_EVENTS = ("BONUS", "SPLIT", "CONSOLIDATION", "BUYBACK", "RIGHTS", "DEMERGER")
+
+
+def share_event(dossier: dict | None, old_period: str, new_period: str) -> dict | None:
+    """A recorded action between two periods that changes the share count (corporate_actions), else None."""
+    old_end, new_end = due_date(old_period), due_date(new_period)
+    if not dossier or not old_end or not new_end:
+        return None
+    old_end, new_end = old_end.isoformat(), new_end.isoformat()
+    return next((a for a in dossier.get(KEY) or [] if a.get("kind") in SHARE_EVENTS and old_end < a.get("ex_date", "") <= new_end), None)
+
+
+def follows(profit_pct: float, eps_pct: float, base: float | None = None) -> bool:
+    """Whether an EPS change is one the profit change allows: not more than 5 points plus share-count noise above it, plus
+    the rounding of a small EPS (a base of 0.08 printed to two decimals moves 12% on its last digit)."""
+    rounding = 100 * 0.01 / abs(base) if base else 0.0
+    return eps_pct - profit_pct <= PROFIT_TOLERANCE_PP + SHARE_NOISE_PCT * (1 + max(profit_pct, 0) / 100) + rounding
+
+
+def follow_profit(row: dict, dossier: dict | None, periods: dict, profit, printed: str | None = None) -> tuple[dict, list[dict]]:
+    """The results table's EPS row with every change the profit does not carry taken out, with the comparative figure it
+    rests on, and the notes of what was done. A change beside a recorded split, bonus, buyback or rights issue is left to
+    ``snapshot_row``. ``printed`` is unused (kept for the caller's signature)."""
+    if not card_eps_follows_profit() or row.get("value") is None:
+        return row, []
+    row, hidden = dict(row), []
+    for slot, label in (("prev_year", "yoy"), ("prev_quarter", "qoq")):
+        base, computed = row.get(slot), row.get(f"{label}_pct")
+        if base is None or computed is None or not periods.get(slot):
+            continue
+        now_p, was_p = profit(periods["value"]), profit(periods[slot])
+        if not (now_p and was_p and now_p > 0 and was_p > 0):
+            continue   # a loss on either side: no percentage to judge by
+        profit_pct = (now_p / was_p - 1) * 100
+        if share_event(dossier, periods[slot], periods["value"]) is None and not follows(profit_pct, computed, base):
+            for key in (f"{label}_pct", f"{label}_turn", slot):
+                row.pop(key, None)
+            hidden.append({"slot": label, "reason": f"EPS {computed:+g}% {label.upper()} ({base} to {row['value']}) is above profit "
+                                                     f"{profit_pct:+.1f}% and no share-count event is on record"})
+    if hidden:
+        row["eps_note"] = "; ".join(dict.fromkeys(([row["eps_note"]] if row.get("eps_note") else []) + [h["reason"] for h in hidden]))
+    return row, hidden

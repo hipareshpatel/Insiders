@@ -168,12 +168,30 @@ def kind_of(headline: str) -> str:
     return "transcript" if call and not deck else "deck" if deck and not call else "unknown"
 
 
+INVITATION_PAGES = 3          # a notice of an upcoming call is a page or two
+INVITATION_CHARS = 6000
+
+
+def invitation(doc: Document) -> bool:
+    """A short document with no call in it: the notice that a call will be held (no moderator, no questions, a few pages).
+    Syrma SGS's nse-106828335, headlined "to discuss Q2FY27 results on November 2 earnings call", is two pages of dial-in
+    details; sampled as a transcript it sent a reviewer to list points from a page of logistics (26 Oct 2026)."""
+    if doc.kind() == "TRANSCRIPT":
+        return False
+    chars = sum(len(page) for page in doc._digital) + sum(len(t) for t in doc._ocr_cache.values())
+    return doc.page_count <= INVITATION_PAGES and chars < INVITATION_CHARS
+
+
 def kind_from_text(data: dict, headline: str) -> str:
-    """The headline first; the document's own look (moderator, "conference call"; "investor presentation") when it is silent."""
+    """The headline first, but a headline that says "earnings call" over an invitation is not a transcript: the text decides
+    then (a deck when it is one, else ``invitation``). A headline-less or unclear one is read from the document's own look."""
     k = kind_of(headline)
+    doc = Document.from_cache(data)
+    if k == "transcript" and invitation(doc):
+        return "deck" if doc.kind() == "PRESENTATION" else "invitation"
     if k != "unknown":
         return k
-    return "transcript" if Document.from_cache(data).kind() == "TRANSCRIPT" else "deck"
+    return "transcript" if doc.kind() == "TRANSCRIPT" else "deck"
 
 
 # ---------------------------------------------------------------- the sample
@@ -241,7 +259,10 @@ def choose(rows: list[dict], read_text, limit: int, seed: int) -> list[dict]:
                 continue
             data = read_text(row["news_id"])
             if data and (data.get("digital") or data.get("ocr")):
-                picked.append({**row, "_data": data, "_kind": kind_from_text(data, row.get("headline") or "")})
+                actual = kind_from_text(data, row.get("headline") or "")
+                if actual == "invitation":
+                    continue   # not a call and not a deck: nothing for a reviewer to read
+                picked.append({**row, "_data": data, "_kind": actual})
                 seen.add(row["scrip_code"])
         queues = deferred
     return picked

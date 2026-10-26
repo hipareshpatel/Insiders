@@ -17,6 +17,13 @@ by the next run (``--restart`` tries it again); a network failure is not kept, s
 by the listing, so a run that ends on its time budget (exit 124) is started again and resumes. At most 6 shards (2 until 26 Oct, when the archive pace went fast), so NSE sees
 the load of memory-gaps-fill. The next download starts while the current file is read; NSE still sees one request at a
 time, at the client's own pace.
+
+``source="bse"`` (owner 26 Oct 2026, TODO 87: "Download texts for older cards from BSE... OK"): the same run for the cards
+whose file is on BSE (the BSE-era cards the NSE run lists as "not an NSE file"), fetched with the pipeline's own BSE client
+(``BseClient.download``: BSE's AttachLive/AttachHis fallback and its own pace). One runner, its own failure list
+(``textbackfill-bse:failed``). BSE refusing the first download, or REFUSED_STOP in a row, stops the run as an NSE refusal does;
+a single refused file after downloads that worked is kept as failed ("refused (403)") and the run goes on (independent
+review: one old file BSE will not serve must not stop every re-run on the same row).
 """
 
 from __future__ import annotations
@@ -37,6 +44,7 @@ log = logging.getLogger(__name__)
 
 MAX_SHARDS = 6   # owner 26 Oct 2026: 6 machines on the fast archive pace (F169); reading, not NSE, was the limit
 FAILED_KEY = "textbackfill:failed"      # + ":<i>of<n>": {news_id: reason} for the filings that will not be tried again
+REFUSED_STOP = 3                         # BSE only: refusals in a row (after a download that worked) that stop the run
 NETWORK_STOP = 3                         # downloads failing on the network in a row stop the run (the pipeline's rule)
 FETCH_PAUSE_S = 4.0                      # NseClient's default pause is 3-5 s between requests
 # what a ledger row's last_error says when the filing has no text for good (pipeline.NoTextAttachment, AttachmentTooLarge)
@@ -44,7 +52,13 @@ KNOWN_NO_TEXT = re.compile(r"audio only|a ZIP with no PDF|over the cap|too large
 
 R_NO_URL = "no attachment (the card has no file)"
 R_NOT_NSE = "not an NSE file"
+R_NOT_BSE = "not a BSE file"
 R_404 = "404 (NSE does not serve it)"
+R_404_BSE = "404 (BSE does not serve it)"
+
+# source -> (the host its files are on, the failure list's key, the reason for a file on another host, the 404 reason)
+SOURCES = {"nse": ("nseindia.com", FAILED_KEY, R_NOT_NSE, R_404),
+           "bse": ("bseindia.com", "textbackfill-bse:failed", R_NOT_BSE, R_404_BSE)}
 R_CUT = "cut short"
 R_LARGE = "too large"
 R_AUDIO = "ZIP audio only"
@@ -53,6 +67,7 @@ R_UNREADABLE = "unreadable"
 R_OCR = "OCR failed"
 R_NOTEXT = "no text"
 R_NETWORK = "network"
+R_REFUSED = "refused (403)"
 
 
 def failure_reason(doc: Document) -> str | None:
@@ -114,6 +129,27 @@ def estimate(n: int, shards: int = 1, ocr: bool = True) -> dict:
     return {"filings": n, "seconds_each": per, "seconds": round(n * per / max(1, shards))}
 
 
+class BseFetcher:
+    """The pipeline's BSE client behind the NseClient ``fetch`` shape: None for a file on neither AttachLive nor AttachHis,
+    and a refusal (403) raised as SourceBlockedError so it stops the run."""
+
+    def __init__(self, client):
+        self.client = client
+
+    def fetch(self, url: str, max_bytes: int = 30_000_000) -> bytes | None:
+        try:
+            return self.client.download(url, max_bytes=max_bytes)
+        except AttachmentError as exc:
+            if exc.refused:
+                raise SourceBlockedError(str(exc)) from exc
+            raise
+
+
+def bse_rows(rows: list[dict]) -> list[dict]:
+    """The rows whose file is on BSE (the ones an NSE run cannot fetch)."""
+    return [r for r in rows if "bseindia.com" in (r.get("pdf_url") or "")]
+
+
 def _fetch(client, url: str, cap: int):
     """('ok', bytes) / ('none', None) / ('error', exception): taken on the download thread, judged on the main one."""
     try:
@@ -125,10 +161,11 @@ def _fetch(client, url: str, cap: int):
 
 def run(sink, rows: list[dict], client, shard: tuple[int, int] | None = None, time_budget: float = 17400.0,
         restart: bool = False, ocr: bool = True, max_ocr_pages: int = 6, cap: int = P.ATTACHMENT_MAX_BYTES,
-        clock=time.monotonic) -> dict:
+        clock=time.monotonic, source: str = "nse") -> dict:
     """Fetch, read and store the text of this shard's rows. A refusal from NSE propagates (what is stored stays, and the
     failures so far are saved). ``more`` is true when the time budget ended the run with filings left."""
-    key = FAILED_KEY + (f":{shard[0]}of{shard[1]}" if shard else ":0of1")
+    host, base_key, r_other, r_404 = SOURCES[source]
+    key = base_key + (f":{shard[0]}of{shard[1]}" if shard else ":0of1")
     failed_map = dict(json.loads(sink.kv_get(key) or "{}"))
     before = {} if restart else dict(failed_map)   # --restart tries them again; the list stays until each one is written
     todo = list(rows)
@@ -136,7 +173,7 @@ def run(sink, rows: list[dict], client, shard: tuple[int, int] | None = None, ti
         todo = todo[shard[0]::shard[1]]
     queue = [r for r in todo if r["news_id"] not in before]
     totals = {"filings": len(todo), "skipped_failed_before": len(todo) - len(queue), "fetched": 0, "written": 0,
-              "failed": 0, "more": False, "ocr": ocr}
+              "failed": 0, "more": False, "ocr": ocr, "source": source}
     reasons: Counter = Counter()
     read_seconds = 0.0
 
@@ -157,14 +194,16 @@ def run(sink, rows: list[dict], client, shard: tuple[int, int] | None = None, ti
     started = clock()
     deadline = started + time_budget
     streak = 0
+    refused = 0        # BSE: refusals in a row
+    served = False     # BSE: a download has worked in this run
     pool = ThreadPoolExecutor(max_workers=1)
     futures: dict[int, object] = {}
 
     def want(i: int) -> None:
-        """Start row i's download (when it has an NSE file) so it runs while the row before is read."""
+        """Start row i's download (when its file is on this source) so it runs while the row before is read."""
         if i < len(queue) and i not in futures:
             url = queue[i]["pdf_url"]
-            futures[i] = pool.submit(_fetch, client, url, cap) if url and "nseindia.com" in url else None
+            futures[i] = pool.submit(_fetch, client, url, cap) if url and host in url else None
 
     try:
         for i, row in enumerate(queue):
@@ -175,8 +214,8 @@ def run(sink, rows: list[dict], client, shard: tuple[int, int] | None = None, ti
             if not url:
                 fail(nid, R_NO_URL)
                 continue
-            if "nseindia.com" not in url:
-                fail(nid, R_NOT_NSE)
+            if host not in url:
+                fail(nid, r_other)
                 continue
             want(i)
             want(i + 1)
@@ -184,7 +223,11 @@ def run(sink, rows: list[dict], client, shard: tuple[int, int] | None = None, ti
             totals["fetched"] += 1
             if kind == "error":
                 if isinstance(payload, SourceBlockedError):
-                    raise payload
+                    refused += 1
+                    if source != "bse" or not served or refused >= REFUSED_STOP:
+                        raise payload
+                    fail(nid, R_REFUSED)   # one file BSE will not serve; kept, so the next run does not stop on it
+                    continue
                 if isinstance(payload, AttachmentTooLarge):
                     streak = 0
                     fail(nid, R_LARGE)
@@ -198,9 +241,10 @@ def run(sink, rows: list[dict], client, shard: tuple[int, int] | None = None, ti
                 else:
                     raise payload
                 continue
-            streak = 0
+            streak = refused = 0
+            served = True
             if kind == "none":
-                fail(nid, R_404)
+                fail(nid, r_404)
                 continue
             began = clock()
             doc = Document(payload, ocr=ocr_fn, max_ocr_pages=max_ocr_pages, figure_reader=figure_fn)
@@ -237,7 +281,7 @@ def render(outcome: dict, counts: dict | None = None) -> str:
                   f"  known no-text filings      {counts.get('known_no_text', 0)}"]
     lines += [f"filings in this shard        {outcome['filings']}",
               f"failed in an earlier run     {outcome['skipped_failed_before']}",
-              f"fetched from NSE             {outcome['fetched']}",
+              f"fetched from {outcome.get('source', 'nse').upper()}             {outcome['fetched']}",
               f"written                      {outcome['written']}",
               f"failed                       {outcome['failed']}",
               f"OCR                          {'on' if outcome.get('ocr') else 'off (figure and scanned pages keep their text layer)'}",

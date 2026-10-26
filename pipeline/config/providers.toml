@@ -47,6 +47,7 @@ models = ["gemini:gemini-3.6-flash", "gemini:gemini-3.7-flash", "gemini:gemini-3
 pass2 = "weighted"
 pass2_bulk = "weighted"
 pass2_long = "weighted"
+call_memory = "weighted"
 
 # ------------------------------------------------------------------ providers
 
@@ -168,6 +169,14 @@ limits = { rpmo = 1000, rpd = 30 }
 [providers.gemini_2]
 same_as = "gemini"
 api_key_env = "GEMINI_API_KEY_2"
+
+# A third Gemini key (owner, 26 Oct 2026): a project of its own, for call memory only (gateway.expand_key_aliases,
+# `only_routes`): on the call_memory route it replaces the two card keys, and it is on no card route. Unset, call memory
+# falls back to the card keys, held back by gateway.live_reserve.
+[providers.gemini_3]
+same_as = "gemini"
+api_key_env = "GEMINI_API_KEY_3"
+only_routes = ["call_memory"]
 
 [providers.groq_2]
 same_as = "groq"
@@ -1072,3 +1081,76 @@ max_tokens = 1500
 max_share = 0.75
 extra_body = { reasoning_effort = "low" }
 limits = { rpm = 30, tpm = 8000, rpd = 1000, tpd = 200000 }
+
+
+# Call memory v2 (TODO 83, F180, MEMORY_CALL_V2): the memory-only reading of transcripts and decks, one request a document up
+# to call_memory.PART_CHARS (60,000 characters; a longer one in parts of whole pages), a long reply (60 points, ~12,000 tokens).
+# Measured 26 Oct: run 1 on pass2_long (40306940769) was served by Flash-Lite with a 6,000-token reply, 67 points over ten
+# documents against the blind reviewers' 178; run 2 (40308409939) on the free side models failed 8 of 10 documents: Gemma 4
+# on Google's key answered HTTP 500 ten times, NVIDIA's DeepSeek V4.1 Flash timed out at 120 s on every long reply, Z.AI and
+# OpenRouter 429; Gemini 3.8 Flash served the part it was given. So Gemini Flash first (the bulk share: a backfill request
+# uses a Flash model only while the cards' live reserve holds, gateway.live_reserve), the side models as spares with a
+# longer wait. No paid provider (D24).
+[[routes.call_memory]]
+timeout_s = 300
+provider = "gemini"
+model = "gemini-3.8-flash"
+weight = 3
+json_mode = true
+max_tokens = 32000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
+[[routes.call_memory]]
+timeout_s = 300
+provider = "gemini"
+model = "gemini-3.7-flash"
+weight = 3
+json_mode = true
+max_tokens = 32000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
+[[routes.call_memory]]
+timeout_s = 300
+provider = "gemini"
+model = "gemini-3.6-flash"
+weight = 3
+json_mode = true
+max_tokens = 32000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
+[[routes.call_memory]]
+timeout_s = 300
+provider = "gemini"
+model = "gemini-3.5-flash"
+weight = 2
+json_mode = true
+max_tokens = 32000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }
+
+[[routes.call_memory]]
+timeout_s = 300
+provider = "nvidia"
+model = "deepseek-ai/deepseek-v4.1-flash"
+spare = true
+json_mode = true
+max_tokens = 16000
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { thinking = false } }
+limits = { rpm = 30 }
+
+[[routes.call_memory]]
+timeout_s = 300
+provider = "gemini"
+model = "gemma-4-31b-it"
+spare = true
+max_tokens = 16000
+context_tokens = 120000
+limits = { rpm = 10, rpd = 1000 }   # assumption, not measured: Google publishes no Gemma daily limit here

@@ -86,6 +86,27 @@ CALL_TAKEAWAYS_SCHEMA = [{
 }]
 
 
+# The call-memory reading (call_memory.py, docs/design/call-memory.md §2): typed points, each with its page and exact quote.
+CALL_MEMORY_SCHEMA = {
+    "points": [{
+        "type": "guidance | outlook | commitment | capex_capacity | order_book | margin_driver | volume_price_mix | dependence | "
+                "kpi | risk | catalyst | capital_allocation | management_change | one_off | competitive_view",
+        "statement": "one plain sentence with the figure and period as stated",
+        "metric": "snake_case", "topic": "short key that stays the same call to call",
+        "value": 10, "value_high": None, "unit": "LAKH_TONNES", "value_base": 1000000, "base_unit": "TONNES",
+        "period": "FY27 or null", "basis": "consolidated | standalone | adjusted | volume ... or null",
+        "definition": "only when the company defines the measure itself, else null",
+        "direction": "NEW | RAISED | CUT | MAINTAINED | WITHDRAWN | REWORDED", "prior_id": "cm_... of the earlier point, or null",
+        "certainty": "WILL | EXPECT | AIM | HOPE", "condition": "if ... or null",
+        "speaker": "MANAGEMENT | ANALYST", "section": "PREPARED | QA | SLIDE",
+        "page": 12, "quote": "the document's own words, copied exactly",
+    }],
+    "reason": "only when points is empty: 15 words or fewer",
+}
+MAX_CALL_POINTS = 60
+PART_CALL_POINTS = 45   # each part of a document read in parts (call_memory.PART_CHARS)
+
+
 def pass2_schema(event_type: str) -> dict:
     """The reply's shape for this event type: a call or presentation also returns its key takeaways."""
     if event_type != "CONCALL_PRESENTATION":
@@ -250,6 +271,7 @@ class PromptEngine:
         self._pass2_user = Template((prompts / "pass2_user.md").read_text())
         self._consolidated_only = (prompts / "consolidated_only.md").read_text().strip()
         self._memory = Template((prompts / "memory.md").read_text())
+        self._call_memory = Template((prompts / "call_memory.md").read_text())
         self._verify = (prompts / "verify.md").read_text()
         self.memory_start = settings.backfill_start
         self.events: dict = settings.load_toml("events.toml")
@@ -381,6 +403,31 @@ class PromptEngine:
             peers="None.",
             text=_unit_note(text) + (text or "(attachment had no extractable text; rely on the headline)"),
         )
+        return system, user
+
+    def call_memory(self, filing: Filing, kind: str, industry: str | None, text: str,
+                    prior: list[dict] | None = None, part: tuple[int, int] = (1, 1)) -> tuple[str, str]:
+        """The call-memory reading of a transcript or deck (call_memory.py): the typed-points prompt with the sector's KPIs,
+        and the document's whole selected text with its page markers beside the company's points from its last call."""
+        sector = self.sector_for(industry)
+        system = self._call_memory.safe_substitute(
+            sector_name=sector.name.replace("_", " "), sector_context=sector.lens(), sector_kpis=", ".join(sector.kpis),
+            max_points=MAX_CALL_POINTS if part[1] == 1 else PART_CALL_POINTS, schema=json.dumps(CALL_MEMORY_SCHEMA, ensure_ascii=False, separators=(",", ":")),
+            prior_rule=("- The user message lists the company's points from its last call, each with an id."
+                        if prior else "- No earlier call of this company is on file: every point is NEW."))
+        earlier = ("POINTS FROM THE COMPANY'S LAST CALL (id, type, topic, statement, period)\n"
+                   + "\n".join(json.dumps({k: p.get(k) for k in ("id", "type", "topic", "statement", "period")},
+                                         ensure_ascii=False, separators=(",", ":")) for p in prior)
+                   if prior else "POINTS FROM THE COMPANY'S LAST CALL\nNone on file.")
+        user = (f"Company: {filing.company_name} ({_listing(filing)})\n"
+                f"Industry: {industry or 'unknown'}\n"
+                f"Filed: {filing.filed_at}\n"
+                f"Headline: {filing.headline}\n"
+                f"Document: {kind}\n\n"
+                f"{earlier}\n\n"
+                + (f"This is part {part[0]} of {part[1]} of the document: list the points of these pages only; the other parts "
+                   f"are read apart.\n\n" if part[1] > 1 else "")
+                + f"DOCUMENT TEXT (page markers show each page)\n{text or '(no text)'}")
         return system, user
 
     def pass2(

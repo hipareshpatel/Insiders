@@ -939,3 +939,100 @@ class MemoryOutput(Pass2Output):
                                              what_happened=[Fact.model_construct(text=line, quote=None)],
                                              deal_value=self.deal_value, track_next=self.track_next)
         return self
+
+
+# --------------------------------------------------------------------------- Call memory v2 (call_memory.py)
+CALL_POINT_TYPES = ("guidance", "outlook", "commitment", "capex_capacity", "order_book", "margin_driver", "volume_price_mix",
+                    "dependence", "kpi", "risk", "catalyst", "capital_allocation", "management_change", "one_off",
+                    "competitive_view")
+CALL_DIRECTIONS = ("NEW", "RAISED", "CUT", "MAINTAINED", "WITHDRAWN", "REWORDED")
+
+
+def _plain_number(value: Any) -> float | None:
+    """A figure as the call states it, never scaled: ``_to_float`` turns "10 lakh" into 0.1 crore, and a call point keeps
+    "10" with its unit LAKH_TONNES (call_memory.py checks the unit against the quote's own scale word)."""
+    if value is None or isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    try:
+        return float(re.sub(r"[,\s~]", "", str(value)))
+    except ValueError:
+        return None
+
+
+PlainNum = Annotated[float | None, BeforeValidator(_plain_number)]
+
+
+def _page_number(value: Any) -> int | None:
+    number = _plain_number(value)
+    return int(number) if number is not None and number >= 1 else None
+
+
+def _lower_or_none(value: Any) -> str | None:
+    text = re.sub(r"[^a-z]+", "_", str(value or "").strip().lower()).strip("_")
+    return text if text in CALL_POINT_TYPES else {"target": "commitment", "capex": "capex_capacity", "capacity": "capex_capacity",
+                                                  "orderbook": "order_book", "volume": "volume_price_mix",
+                                                  "price_mix": "volume_price_mix"}.get(text)
+
+
+class CallPoint(_Lenient):
+    """One point worth remembering from a call transcript or deck (docs/design/call-memory.md §2). Lenient like the rest: a
+    bad enum becomes None and call_memory.check_points drops the point with the reason, the reply is never refused for it.
+    The fields from `id` on are set by code, never taken from the model."""
+
+    type: Annotated[str | None, BeforeValidator(_lower_or_none)] = None
+    statement: OptStr = None
+    metric: OptStr = None
+    topic: OptStr = None
+    value: PlainNum = None
+    value_high: PlainNum = None
+    unit: OptStr = None
+    value_base: PlainNum = None   # the figure in the base unit ("10 lakh tonnes" = 1,000,000 TONNES): checked, then kept
+    base_unit: OptStr = None
+    period: OptStr = None
+    basis: OptStr = None
+    definition: OptStr = None     # only when the company defines the measure itself
+    direction: Annotated[str | None, _enum_early(CALL_DIRECTIONS, {
+        "UPGRADED": "RAISED", "INCREASED": "RAISED", "LOWERED": "CUT", "REDUCED": "CUT", "WEAKENED": "CUT",
+        "UNCHANGED": "MAINTAINED", "REITERATED": "MAINTAINED", "SAME": "MAINTAINED", "INTRODUCED": "NEW", "FIRST": "NEW",
+        "DROPPED": "WITHDRAWN"})] = None
+    prior_id: OptStr = None
+    certainty: Annotated[str | None, _enum_early(("WILL", "EXPECT", "AIM", "HOPE"), {
+        "EXPECTS": "EXPECT", "AIMS": "AIM", "TARGET": "AIM", "HOPES": "HOPE"})] = None
+    condition: OptStr = None
+    speaker: Annotated[str | None, _enum_early(("MANAGEMENT", "ANALYST"), {"CEO": "MANAGEMENT", "CFO": "MANAGEMENT",
+                                                                          "MD": "MANAGEMENT"})] = None
+    section: Annotated[str | None, _enum_early(("PREPARED", "QA", "SLIDE"), {
+        "Q_A": "QA", "QNA": "QA", "Q_AND_A": "QA", "PREPARED_REMARKS": "PREPARED", "DECK": "SLIDE", "SLIDES": "SLIDE"})] = None
+    page: Annotated[int | None, BeforeValidator(_page_number)] = None
+    quote: OptStr = None
+    # set by code (call_memory.check_points / remember)
+    id: OptStr = None
+    pages: list[int] = Field(default_factory=list)
+    period_stated: bool = True
+    company_defined: bool = False
+    quote_assembled: bool = False   # set by code: a slide quote whose words and figures are on its page, not in one line
+    superseded_by: OptStr = None
+
+
+def _lenient_point(item: Any) -> "CallPoint | None":
+    """One point or nothing: a malformed entry never costs the other points."""
+    if isinstance(item, CallPoint):
+        return item
+    try:
+        return CallPoint.model_validate(item) if isinstance(item, dict) else None
+    except Exception:
+        return None
+
+
+class CallMemoryOutput(_Lenient):
+    """The reply of the call-memory reading: the points, and a one-line reason when the document has none."""
+
+    points: Annotated[list[CallPoint], BeforeValidator(lambda v: [p for p in map(_lenient_point, _to_list(v)) if p is not None])] \
+        = Field(default_factory=list)
+    reason: OptStr = None
+    served_by: OptStr = None   # set by code (call_memory.read): the provider and model that answered
+    prompt_chars: int = 0
+    parts: int = 1                  # set by code: the requests the document was read in
+    parts_failed: list[int] = Field(default_factory=list)

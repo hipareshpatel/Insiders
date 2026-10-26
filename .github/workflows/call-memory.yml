@@ -1,0 +1,63 @@
+# The call-memory reading as a job of its own (F180, TODO 83, docs/design/call-memory.md "queued job"). With the repository
+# variable MEMORY_CALL_V2 = 1 (exactly 1: the job's `if` reads only that) the 15-minute pipeline run only notes each transcript and deck in a queue (call_queue.py); this
+# job reads them, checks every point in code and merges it into the company's memory (call-memory --pending --apply), so a
+# slow reply (1-5 minutes) never holds the cards. Variable unset or not 1: the job is skipped, and the command itself would
+# do nothing and exit 0.
+#
+# AI keys: GEMINI_API_KEY_3 (a Gemini project for call memory only: providers.gemini_3, only_routes) and NVIDIA's free key as
+# a spare on the call_memory route. Never GEMINI_API_KEY / GEMINI_API_KEY_2 (the cards' keys) and never DEEPSEEK_API_KEY.
+# Exit 124 (filings left when the time budget ended) is not a failure: the next run carries on.
+name: Call memory
+
+on:
+  workflow_dispatch:
+    inputs:
+      time_budget:
+        description: seconds of work before no new filing is started
+        default: "1500"
+      limit:
+        description: at most this many filings (0 = all)
+        default: "0"
+  schedule:
+    - cron: "11,41 * * * *"   # every 30 minutes
+
+permissions:
+  contents: read
+
+concurrency:
+  group: call-memory   # its own group; a running reading is never cancelled, the next one waits
+  cancel-in-progress: false
+
+jobs:
+  run:
+    if: vars.MEMORY_CALL_V2 == '1'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 45   # the 25-minute budget, then the filing in hand (a reply waits up to 5 minutes a part)
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}
+      MEMORY_CALL_V2: ${{ vars.MEMORY_CALL_V2 }}
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      GEMINI_API_KEY_3: ${{ secrets.GEMINI_API_KEY_3 }}   # call memory only (providers.gemini_3, only_routes)
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}       # free spare on the call_memory route
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e .
+      - name: Read the queued calls and decks
+        env:
+          BUDGET: ${{ inputs.time_budget || '1500' }}
+          LIMIT: ${{ inputs.limit || '0' }}
+        run: |
+          code=0
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel call-memory --pending --apply --time-budget "$BUDGET" --limit "$LIMIT" --out "$RUNNER_TEMP/callmem" || code=$?
+          if [ "$code" = 124 ]; then echo "filings left in the queue; the next run carries on"; exit 0; fi
+          exit "$code"

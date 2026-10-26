@@ -64,6 +64,8 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     data as of the filing when a stored series has it (``prices.point_in_time``); today's prices are
     used only for recent filings."""
     company = priced_for(company, filing)
+    from .dossier import with_year_hold
+    before, after = with_year_hold(before), with_year_hold(after)   # MEMORY_YEAR_CHECK (item 76, F181): a held year figure triggers no signal, no verdict
     signals: list[Signal] = []
     signals += _promises(before, after, output, filing)
     signals += _dilution(after, output, company)
@@ -128,9 +130,12 @@ def misfires(signal: dict, output: Pass2Output) -> bool:
 def _predictions(after: dict, filing: Filing) -> list[Signal]:
     """Loop 2: a number management or the analyst predicted, now checked against the actual."""
     out = []
+    held = {(h["metric"], h["period"]) for h in after.get("year_held", [])}   # MEMORY_YEAR_CHECK (item 76, F181); empty when off
     for p in after.get("predictions", []):
         if p.get("resolved_by") != filing.news_id or p.get("status") not in ("MET", "MISSED"):
             continue   # UNCHECKED: the target and the figure are not in one unit (item 84), no verdict to signal
+        if (p["metric"], p["period"]) in held:
+            continue   # a verdict stored before the figure was held is no signal either
         met = p["status"] == "MET"
         out.append(Signal("PREDICTION_RESOLVED", "POSITIVE" if met else "WARNING",
                           f"{'Met' if met else 'Missed'}: \"{p['kpi']}\" ({metric_label(p['metric'])} {p['period']} target "

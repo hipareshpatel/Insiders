@@ -37,6 +37,14 @@ prompt `config/prompts/call_memory.md`, the document's whole selected text with 
 and the company's points from its previous call (up to 40) for "what changed". The card path is not touched. A failure
 never fails the filing: the card stands, the call points wait for a re-run (`call-memory --ids`).
 
+**Changed after the first measured run** (26 Oct, maintenance run 40306940769): the whole document in one request on the
+long route got 67 points over the ten round-1 documents against the reviewers' 178, mostly from Flash-Lite with a
+6,000-token reply. The document is now read in parts of whole pages of about 18,000 characters (3-4 requests a long
+transcript), on its own `call_memory` route (Gemma 4 on Google's key and NVIDIA's free DeepSeek first, Gemini Flash only as
+the last spare, so the cards' 20-a-day Flash quota is not spent). A figure in words ("three more", "our fourth") counts
+as a figure; on a slide, where words sit in boxes, a quote whose every word and figure is on the named page is kept and
+marked `quote_assembled`.
+
 ### 2. Typed points, each with page and exact quote
 
 | type | what | key fields |
@@ -101,6 +109,31 @@ the call reading keeps it as a `kpi` point with its own definition.
 Guidance and commitment points with a stated figure and period feed `guidance` and `predictions` (judged with
 `comparable_target`, F179); the stock page's call summary reads `call_memory`; "dropped topic" and slipped-deadline
 signals from one call to the next.
+
+**Changed after the second measured run** (26 Oct, maintenance run 40308409939): the free side models failed 8 of the 10
+documents (Gemma 4 on Google's key HTTP 500 ten times; NVIDIA's DeepSeek timed out at 120 s on every long reply; Z.AI and
+OpenRouter 429); the 2 read were far fuller than run 1 (Onward 18 points kept against 9, Sobha 16 against 6). Gemini Flash
+(3.8, 3.7, 3.6, 3.5) is now first on the route with a 32,000-token reply and a 300 s wait, one request a document up to
+60,000 characters. Before the switch goes on: (1) the reading leaves the 15-minute pipeline run (a queued job of its own,
+so a slow reply never holds the cards), and (2) its Gemini requests move to a project of their own (owner's offer, 26 Oct),
+so they never share the cards' 20-a-day Flash quota.
+
+**The queued job** (built 26 Oct, behind `MEMORY_CALL_V2`, default off; with it off nothing changes). With the switch on the
+pipeline step makes no AI call: it adds the filing's news id, scrip code and filing time to a queue kept in the sink's kv
+table (`call_queue.py`). The kv table cannot list or delete, so the queue is two sets of keys with one writer each:
+`callmem:q:<UTC day>` (the pipeline only: a read, add and write of one key under a lock, re-read just before the write; the
+pipeline runs one at a time) and `callmem:s:<UTC day>` (the job only, one at a time: done, gave_up or retry with an attempt
+count and the reason). A filing is pending until its state is done or gave_up for its latest enqueue, so a re-run of a
+filing queues it again. The job looks back 14 days. `call-memory --pending [--apply] [--time-budget S] [--limit N]` reads
+the queue oldest first with the same per-document code as `--ids`; a filing leaves the queue only after its points are
+written (an empty reading counts) or on a permanent failure (no stored text, not in the ledger, an invitation) with its
+reason; a transient failure (every provider failed, a write error) leaves it queued with an attempt counted and is given up
+after 3; at the time budget it stops and exits 124 (filings left). Without `--apply` it reads and changes no queue state.
+`.github/workflows/call-memory.yml` runs it every 30 minutes in its own concurrency group (never cancelled), skipped unless
+the repository variable `MEMORY_CALL_V2` is `1`, with `GEMINI_API_KEY_3` and `NVIDIA_API_KEY` only (the cards' Gemini keys and
+DeepSeek are not passed). The gateway builds without the base `GEMINI_API_KEY`: `gemini_3` is live on its own key, takes the
+Gemini entries of the `call_memory` route, and (fixed with this job) is not held back by the cards' live reserve, because its
+quota is its own.
 
 ## Measurement before the switch goes on (owner's Yes, 26 Oct 2026)
 

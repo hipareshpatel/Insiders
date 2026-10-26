@@ -103,6 +103,16 @@ def memory_year_check() -> bool:
     return (_env("MEMORY_YEAR_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def memory_call_v2() -> bool:
+    """MEMORY_CALL_V2 (default off; TODO 83, F180): every earnings-call transcript and investor deck gets a second, memory-only
+    AI reading (call_memory.py) whose typed points, each with its page and exact quote, are checked by code and kept in the
+    dossier's `call_memory`; and a figure a call or deck gives for a metric and period an exchange file already holds, more
+    than 5% away from the file's, is not added as a source of that metric (Sobha's own "operational cash flow" +755 Cr
+    beside the statutory -342 Cr; Vishal Mega Mart's operating EBITDA margin 7.7% beside the file's 12.1%). Off until the
+    measured pass in docs/design/call-memory.md. Read at the call."""
+    return (_env("MEMORY_CALL_V2", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_grounded_figures() -> bool:
     """CARD_GROUNDED_FIGURES (default off; 26 Oct 2026 live audit): three places where our own code damaged a right figure
     are refused. (1) An event-XBRL order amount that rounds to 0 Cr (the file gave it in crore, not rupees) is not put on
@@ -138,6 +148,24 @@ def card_consolidated_only() -> bool:
     pass-2 prompt says to state consolidated figures only, and a standalone figure the model writes on a consolidated card
     is taken out. Turned on together with CARD_EBITDA_PROFIT_V2 for the release check. Read at the call."""
     return (_env("CARD_CONSOLIDATED_ONLY", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+def card_footer_plausible() -> bool:
+    """CARD_FOOTER_PLAUSIBLE (default off; F182, TODO 77): a footer KPI that cannot be right is not shown, and the card stores
+    why (`grounding.footer_hidden`, listed on the owner's Issues page): one more than 3x the highest of the company's own
+    last four periods of the same metric and kind, or a NIM outside what its type of lender can earn (home-loan lender
+    1-15%, bank 1-8.5%). No low side and no margin range (independent review: a collapse is news; Power Grid's ~85% is real).
+    GIC Housing Finance showed a NIM of 19.63% against its FY26 3.41% (26 Oct 2026). Read at the call."""
+    return (_env("CARD_FOOTER_PLAUSIBLE", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+def card_eps_follows_profit() -> bool:
+    """CARD_EPS_FOLLOWS_PROFIT (default off; F183, TODO 78): on a results table an EPS change that does not follow the profit
+    change by more than 5 points plus share-count noise and rounding, with no split, bonus, buyback or rights issue on record,
+    is not shown, nor the comparative it rests on. An EPS change below the profit change (real dilution) is shown; nothing is
+    ever replaced by a figure read from the filing's words. Wipro's card (26 Oct 2026) showed EPS 3.23 against 2.74 and 2.50, +18%,
+    beside profit +1%. Read at the call."""
+    return (_env("CARD_EPS_FOLLOWS_PROFIT", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
 def eps_share_adjust() -> bool:

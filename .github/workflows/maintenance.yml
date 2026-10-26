@@ -993,6 +993,9 @@ jobs:
 
   # PDF referee ensemble (F177): fetch the PDFs once, one reader a job, then settle. Default off (only this command runs them).
   pdf-ensemble-fetch:
+    permissions:   # read only: these jobs install third-party packages and run their model code
+      contents: read
+      actions: read
     if: inputs.command == 'pdf-referee-ensemble'
     runs-on: ubuntu-latest
     timeout-minutes: 330
@@ -1004,6 +1007,8 @@ jobs:
         working-directory: .   # before checkout the pipeline folder does not exist yet
         run: 'echo "cpus: $(nproc)"; free -h; df -h /'
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -1036,6 +1041,8 @@ jobs:
           retention-days: 7
 
   pdf-ensemble-read:
+    permissions:   # read only: these jobs install third-party packages and run their model code
+      contents: read
     needs: pdf-ensemble-fetch
     if: inputs.command == 'pdf-referee-ensemble'
     runs-on: ubuntu-latest
@@ -1067,6 +1074,8 @@ jobs:
         working-directory: .
         run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /opt/hostedtoolcache/CodeQL; df -h /
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -1109,6 +1118,9 @@ jobs:
           retention-days: 7
 
   pdf-ensemble-settle:
+    permissions:   # read only: these jobs install third-party packages and run their model code
+      contents: read
+      actions: read
     needs: [pdf-ensemble-fetch, pdf-ensemble-read]
     if: always() && inputs.command == 'pdf-referee-ensemble' && needs.pdf-ensemble-fetch.result == 'success'
     runs-on: ubuntu-latest
@@ -1121,6 +1133,8 @@ jobs:
         working-directory: .   # before checkout the pipeline folder does not exist yet
         run: 'echo "cpus: $(nproc)"; free -h; df -h /'
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"

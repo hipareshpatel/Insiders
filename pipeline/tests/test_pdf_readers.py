@@ -598,3 +598,19 @@ def test_rapidtable_crops_the_page_to_its_results_table():
     assert y0 <= top_of("(Rs.") and y0 > top_of("Company")                    # the title above the unit line is left out
     assert y1 >= top_of("Net") and y1 < top_of("Footer")                      # the notes and the footer are not in it
     assert prd.table_region([w for w in words if w[4] not in ("30.09.2026", "30.06.2026")]) is None      # no row of dates
+
+
+def test_a_headerless_table_never_takes_a_basis_title_from_the_page_header():
+    """Review of F198: the page header lent to a table its reader left headerless never carries a basis title, so a
+    consolidated table read alone on a page that opens with a standalone title is not called standalone."""
+    dates = ["30.09.2025", "30.06.2025", "30.09.2024", "30.09.2025", "30.09.2024", "31.03.2025"]
+    text = ("(Rs. in crore)\nStatement of Standalone Financial Results\nQuarter ended Half year ended Year ended\n"
+            + " ".join(dates) + "\nParticulars\nRevenue from operations 100.00 90.00 80.00 190.00 160.00 330.00\n"
+            "Statement of Consolidated Financial Results\nQuarter ended Half year ended Year ended\n" + " ".join(dates)
+            + "\nParticulars\nRevenue from operations 500.00 450.00 400.00 950.00 800.00 1650.00\n")
+    layer = prd.page_layer(text + "\n" + "x" * 200)
+    layer.text = text
+    assert "Standalone" not in layer.header_block() and "Consolidated" not in layer.header_block()
+    rows = prd.tables_to_rows([prd.Table("camelot", 1, [["Revenue from operations", "500.00", "450.00", "400.00",
+                                                         "950.00", "800.00", "1650.00"]])], {1: layer})
+    assert not any(r.basis == pr.STANDALONE and 500.0 in (r.figures or []) for r in rows)

@@ -110,7 +110,9 @@ class PageLayer:
         end = first + 1
         if end < len(lines) and not re.search(r"\d[\d,]*\.\d", lines[end]):
             end += 1          # the line under the dates ("Unaudited", "Audited"), never a row of figures
-        return "\n".join(lines[max(0, first - 4): end])
+        from .pdf_referee import _words_basis
+        # never a line that names a basis: a title carried into the table would set its basis from the page's other table
+        return "\n".join(line for line in lines[max(0, first - 4): end] if not _words_basis(line))
 
     def bands(self) -> list["Band"]:
         """The page's rows as printed (label, trailing figures, the basis of the nearest title above), read once."""

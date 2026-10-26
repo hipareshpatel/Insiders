@@ -1109,7 +1109,9 @@ jobs:
         run: |
           BREW="$(command -v brew || echo /home/linuxbrew/.linuxbrew/bin/brew)"
           "$BREW" install llama.cpp
-          echo "$("$BREW" --prefix)/bin" >> "$GITHUB_PATH"
+          # only llama-server on PATH: brew's bin may hold its own python3, which must not shadow setup-python's
+          mkdir -p "$RUNNER_TEMP/llama-bin" && ln -sf "$("$BREW" --prefix)/bin/llama-server" "$RUNNER_TEMP/llama-bin/llama-server"
+          echo "$RUNNER_TEMP/llama-bin" >> "$GITHUB_PATH"
       - uses: actions/cache@v4
         if: matrix.cache != ''
         with:

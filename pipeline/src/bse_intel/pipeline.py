@@ -146,6 +146,13 @@ def text_key(news_id: str) -> str:
     return f"{TEXT_PREFIX}{safe}.json.gz"
 
 
+def text_cache_body(doc: Document) -> bytes:
+    """The bytes of a filing's text-cache entry (local file and R2 object alike). mtime 0: the same text always compresses
+    to the same bytes, so an unchanged entry is not sent again. Shared with text_backfill.py (F165), so a backfilled
+    object has exactly the pipeline's shape."""
+    return gzip.compress(json.dumps(doc.to_cache(), ensure_ascii=False).encode(), mtime=0)
+
+
 SNAPSHOT_KEY = "daily_feed/latest_snapshot.json"
 SNAPSHOT_DAYS = 7         # the feed's default range ("Last 7 days")
 SNAPSHOT_PAGE = 50        # the feed's page size
@@ -3231,8 +3238,7 @@ class Pipeline:
         path = self._cache_path(news_id)
         if not path:
             return
-        # mtime 0: the same text always compresses to the same bytes, so an unchanged entry is not sent again
-        body = gzip.compress(json.dumps(doc.to_cache(), ensure_ascii=False).encode(), mtime=0)
+        body = text_cache_body(doc)
         try:
             unchanged = path.exists() and path.read_bytes() == body
         except OSError:

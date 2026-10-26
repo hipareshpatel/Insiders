@@ -1012,6 +1012,7 @@ class CallPoint(_Lenient):
     pages: list[int] = Field(default_factory=list)
     period_stated: bool = True
     company_defined: bool = False
+    quote_assembled: bool = False   # set by code: a slide quote whose words and figures are on its page, not in one line
     superseded_by: OptStr = None
 
 
@@ -1033,3 +1034,5 @@ class CallMemoryOutput(_Lenient):
     reason: OptStr = None
     served_by: OptStr = None   # set by code (call_memory.read): the provider and model that answered
     prompt_chars: int = 0
+    parts: int = 1                  # set by code: the requests the document was read in
+    parts_failed: list[int] = Field(default_factory=list)

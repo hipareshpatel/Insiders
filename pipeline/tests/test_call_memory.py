@@ -464,3 +464,23 @@ def test_an_empty_reading_keeps_the_filings_earlier_points(monkeypatch, settings
     Hook(settings, FakeGateway([_raw(_point(quote="words that are not in the document"))]))._call_memory_step(
         filing, "Real Estate", merged, TEXT, "")
     assert [e["id"] for e in merged["call_memory"]] == ["cm_c"]
+
+
+# ---------------------------------------------------------------- after the first measured run (F180)
+def test_a_long_document_is_read_in_parts_of_whole_pages():
+    pages = "".join(f"--- Page {i} of 6 ---\n" + ("word " * 1000) + "\n" for i in range(1, 7))
+    chunks = cm.parts(pages, limit=12_000)
+    assert len(chunks) == 3 and all(c.startswith("--- Page") for c in chunks)
+    assert "".join(chunks) == pages
+
+
+def test_figures_in_words_and_an_assembled_slide_quote():
+    slide = "--- Page 1 of 1 ---\n39.7%            27.7%\nROCE in H1FY27        ROE in H1FY27\nThree more analogs from Dec-Mar\n"
+    roce = _point(type="kpi", statement="ROCE 39.7% in H1FY27", metric="roce", topic="roce", value=39.7, unit="PERCENT",
+                  period="H1FY27", section="SLIDE", page=1, quote="39.7% ROCE in H1FY27")
+    analogs = _point(type="catalyst", statement="Three more analogs filed Dec-Mar", metric="filings", topic="analog_filings",
+                     value=3, unit=None, period=None, section="SLIDE", page=1, quote="Three more analogs from Dec-Mar")
+    spoken = roce.model_copy(update={"section": "PREPARED", "topic": "roce_spoken"})
+    kept, dropped = cm.check_points([roce, analogs, spoken], slide)
+    assert {p.topic for p in kept} == {"roce", "analog_filings"} and [d["reason"] for d in dropped] == ["quote"]
+    assert next(p for p in kept if p.topic == "roce").quote_assembled

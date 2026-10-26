@@ -858,7 +858,8 @@ def cmd_call_memory(args, settings, sink) -> int:
                     "seconds": round(time.monotonic() - started, 1), "asked": len(reply.points), "kept": len(kept),
                     "dropped": len(dropped), "counts_by_type": call_memory.counts_by_type(kept),
                     "dropped_by_reason": {r: sum(d["reason"] == r for d in dropped) for r in sorted({d["reason"] for d in dropped})},
-                    "prior_points": len(prior), "reason": reply.reason, "applied": False}
+                    "prior_points": len(prior), "reason": reply.reason, "applied": False, "parts": reply.parts,
+                    "parts_failed": reply.parts_failed, "assembled_quotes": sum(p.quote_assembled for p in kept)}
             if args.apply and kept:
                 merged = json.loads(json.dumps(dossier))
                 call_memory.remember(merged, news_id, filing.filed_at, kept)

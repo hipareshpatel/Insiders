@@ -47,6 +47,7 @@ models = ["gemini:gemini-3.6-flash", "gemini:gemini-3.7-flash", "gemini:gemini-3
 pass2 = "weighted"
 pass2_bulk = "weighted"
 pass2_long = "weighted"
+call_memory = "weighted"
 
 # ------------------------------------------------------------------ providers
 
@@ -1072,3 +1073,59 @@ max_tokens = 1500
 max_share = 0.75
 extra_body = { reasoning_effort = "low" }
 limits = { rpm = 30, tpm = 8000, rpd = 1000, tpd = 200000 }
+
+
+# Call memory v2 (TODO 83, F180, MEMORY_CALL_V2): the memory-only reading of transcripts and decks, in parts of about 18,000
+# characters (call_memory.PART_CHARS), 3-4 requests a long transcript. Its own route so it never spends the cards' Gemini
+# Flash days (20 a model, measured 2026-10-19): the free Gemma 4 on Google's key and NVIDIA's free DeepSeek first; Flash only
+# as the last spares. No paid provider (D24). The first measured run on pass2_long (26 Oct, maintenance run 40306940769) was
+# served by Flash-Lite and listed 67 points over ten documents against the blind reviewers' 178.
+[[routes.call_memory]]
+timeout_s = 120
+provider = "gemini"
+model = "gemma-4-31b-it"
+weight = 3
+max_tokens = 8000
+context_tokens = 120000
+limits = { rpm = 10, rpd = 1000 }   # assumption, not measured: Google publishes no Gemma daily limit here
+
+[[routes.call_memory]]
+timeout_s = 120
+provider = "nvidia"
+model = "deepseek-ai/deepseek-v4.1-flash"
+weight = 3
+json_mode = true
+max_tokens = 8000
+context_tokens = 120000
+extra_body = { chat_template_kwargs = { thinking = false } }
+limits = { rpm = 30 }
+
+[[routes.call_memory]]
+timeout_s = 120
+provider = "openrouter"
+model = "google/gemma-4-31b-it:free"
+spare = true
+json_mode = true
+max_tokens = 8000
+context_tokens = 120000
+limits = { rpm = 8 }
+
+[[routes.call_memory]]
+provider = "zai"
+model = "glm-4.7-flash"
+spare = true
+json_mode = true
+max_tokens = 8000
+context_tokens = 190000
+extra_body = { thinking = { type = "disabled" } }
+limits = { rpm = 30, concurrency = 1 }
+
+[[routes.call_memory]]
+provider = "gemini"
+model = "gemini-3.8-flash"
+spare = true
+json_mode = true
+max_tokens = 8000
+context_tokens = 900000
+extra_body = { reasoning_effort = "low" }
+limits = { rpm = 5, tpm = 250_000, rpd = 20 }

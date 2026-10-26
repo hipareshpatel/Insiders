@@ -30,6 +30,10 @@ log = logging.getLogger(__name__)
 CALL_MEMORY_KEPT = 600   # points a company keeps, newest call first (about eight quarters of 60-75)
 PRIOR_POINTS = 40        # the last call's points the model sees, to say what changed
 CONTEXT_CHARS = 600      # around a quote, on its page, where its period may be named
+# One request reads this much of the document (whole pages): the first measured run sent ten documents of 18,000-74,000
+# characters whole, each in one request with a 6,000-token reply, and got 67 points against the reviewers' 178
+PART_CHARS = 18_000
+PART_POINTS = 30         # asked of each part
 
 _PAGE_MARK = re.compile(r"^(?:-{3}|={5})\s*page\s+(\d+)\s+of\s+\d+[^\n]*$", re.I | re.M)
 
@@ -46,20 +50,63 @@ def split_pages(text: str) -> list[tuple[int | None, str]]:
 
 
 # ---------------------------------------------------------------- the reading
+def parts(text: str, limit: int = PART_CHARS) -> list[str]:
+    """The document in parts of whole pages, each at most `limit` characters (a longer page is a part of its own), every part
+    keeping its page markers; a text with no markers is cut at line ends."""
+    marks = list(_PAGE_MARK.finditer(text or ""))
+    if not marks:
+        chunks, cur = [], ""
+        for line in (text or "").splitlines(keepends=True):
+            if cur and len(cur) + len(line) > limit:
+                chunks.append(cur)
+                cur = ""
+            cur += line
+        return [c for c in chunks + [cur] if c.strip()] or [""]
+    pages = [text[m.start():(marks[i + 1].start() if i + 1 < len(marks) else len(text))] for i, m in enumerate(marks)]
+    head = text[:marks[0].start()]
+    out, cur = [], head
+    for page in pages:
+        if cur.strip() and len(cur) + len(page) > limit:
+            out.append(cur)
+            cur = ""
+        cur += page
+    return out + ([cur] if cur.strip() else [])
+
+
 def read(gateway, prompts, filing, kind: str, industry: str | None, text: str, blocks: str = "", prior: list[dict] | None = None,
          paid: frozenset[str] | set[str] = frozenset()) -> CallMemoryOutput:
-    """One AI call over the document's whole selected text with its page markers. The long-context route, the bulk share, and
-    never a paid provider (the daily path costs $0, CLAUDE.md D24). A reply that is not JSON raises; the caller logs it and
-    the card stands (the points wait for a re-run of `call-memory --ids`). The model and prompt size ride on the result."""
-    system, user = prompts.call_memory(filing, kind, industry, text, prior)
-    route = "pass2_long" if gateway.has_route("pass2_long") else "pass2_bulk"
+    """The document read in parts of whole pages (PART_CHARS), one AI call each, on the call_memory route (free models with
+    their own quota, not the cards' Gemini Flash days) and never a paid provider (the daily path costs $0, CLAUDE.md D24).
+    A part whose reply is not JSON is skipped and counted; if every part fails it raises, the caller logs it and the card
+    stands (the points wait for a re-run of `call-memory --ids`). The models and prompt size ride on the result."""
+    route = next((r for r in ("call_memory", "pass2_long", "pass2_bulk") if gateway.has_route(r)), "pass2_bulk")
     scope = getattr(gateway, "card_scope", None)
-    # not the card's clock: the card is written and its cap spent before this reading
-    with (scope(capped=False) if scope else nullcontext()):
-        result = gateway.complete_json(route, system, user, CallMemoryOutput, bulk=True,
-                                       allow=lambda target: target.provider not in paid)
-    out: CallMemoryOutput = result.value
-    out.served_by, out.prompt_chars = getattr(result, "model_label", None), len(system) + len(user)
+    chunks = parts(text)
+    points, models, chars, failed, reasons, last_error = [], [], 0, [], [], None
+    for i, chunk in enumerate(chunks, 1):
+        system, user = prompts.call_memory(filing, kind, industry, chunk, prior, part=(i, len(chunks)))
+        chars += len(system) + len(user)
+        try:
+            # not the card's clock: the card is written and its cap spent before this reading
+            with (scope(capped=False) if scope else nullcontext()):
+                result = gateway.complete_json(route, system, user, CallMemoryOutput, bulk=True,
+                                               allow=lambda target: target.provider not in paid)
+        except Exception as exc:   # noqa: BLE001 - one part's failure leaves the others
+            failed.append(i)
+            last_error = exc
+            log.warning("%s: call memory part %d of %d failed: %s", getattr(filing, "news_id", "?"), i, len(chunks), exc)
+            continue
+        points.extend(result.value.points)
+        models.append(getattr(result, "model_label", None) or "?")
+        if result.value.reason:
+            reasons.append(result.value.reason)
+    if len(failed) == len(chunks):
+        raise RuntimeError(f"every part of the call-memory reading failed ({len(chunks)}): {last_error}")
+    out = CallMemoryOutput(points=[], reason="; ".join(reasons)[:300] or None)
+    out.points = points
+    out.served_by = ", ".join(sorted(set(models)))
+    out.prompt_chars = chars
+    out.parts, out.parts_failed = len(chunks), failed
     return out
 
 
@@ -93,8 +140,16 @@ def _unit_kinds(unit: str | None) -> set[str]:
     return {kind for token in _unit_tokens(unit) for kind, rx in _UNIT_KINDS if re.fullmatch(rx, token)}
 
 
+_WORD_NUMBERS = {w: float(i) for i, w in enumerate(
+    "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen "
+    "eighteen nineteen twenty".split())} | {w: float(i) for i, w in enumerate(
+    "zeroth first second third fourth fifth sixth seventh eighth ninth tenth eleventh twelfth".split())} | {
+    "thirty": 30.0, "forty": 40.0, "fifty": 50.0, "hundred": 100.0, "half": 0.5, "double": 2.0, "twice": 2.0}
+
+
 def _numbers(text: str) -> list[float]:
-    out = []
+    # "Three more analogs", "our fourth design center": a figure in words is the quote's figure (first measured run, F180)
+    out = [v for w, v in _WORD_NUMBERS.items() if re.search(rf"\b{w}\b", (text or "").lower())]
     for m in gate._CLAIM_NUMBER.finditer(gate._flat(text or "")):
         try:
             out.append(float(m.group(0).replace(",", "").rstrip(".")))
@@ -211,6 +266,16 @@ def _same_span(a: str | None, b: str | None) -> bool:
     return year(a) is not None and year(a) == year(b) and (re.fullmatch(r"FY\d{2}", a) or re.fullmatch(r"FY\d{2}", b)) is not None
 
 
+def _on_page(quote: str, page: str) -> bool:
+    """Every word (of 2+ letters) and every figure of the quote is on the page."""
+    flat = gate._flat(page)
+    words = re.findall(r"[a-z][a-z0-9]+", gate._flat(quote))
+    figures = _numbers(quote)
+    on_page = _numbers(page)
+    return bool(words or figures) and all(re.search(rf"\b{re.escape(w)}", flat) for w in words) \
+        and all(_has(f, on_page) for f in figures)
+
+
 def _topic_key(p: CallPoint) -> str:
     return _norm(p.topic or p.metric or (p.statement or "")[:60])
 
@@ -240,9 +305,19 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
             drop(p, "statement", "no statement")
             continue
         quote = (p.quote or "").strip()
-        if not quote or not gate.quote_found(quote, text, blocks):
-            drop(p, "quote", "the quote is not in the document" if quote else "no quote")
+        if not quote:
+            drop(p, "quote", "no quote")
             continue
+        if not gate.quote_found(quote, text, blocks):
+            # a slide's words are laid out in boxes: "39.7% ROCE in H1FY27" is on APL Apollo's slide as a figure above its
+            # label, never as one line. On a slide, every word and figure of the quote on the named page is enough; the
+            # point says its quote was assembled (first measured run, F180)
+            page_text = next((t for n, t in pages if n == p.page), "")
+            if p.section == "SLIDE" and page_text and _on_page(quote, page_text):
+                p.quote_assembled = True
+            else:
+                drop(p, "quote", "the quote is not in the document")
+                continue
         if (issue := figure_issue(p, quote)):
             drop(p, "figure", issue)
             continue

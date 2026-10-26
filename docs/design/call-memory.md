@@ -37,6 +37,14 @@ prompt `config/prompts/call_memory.md`, the document's whole selected text with 
 and the company's points from its previous call (up to 40) for "what changed". The card path is not touched. A failure
 never fails the filing: the card stands, the call points wait for a re-run (`call-memory --ids`).
 
+**Changed after the first measured run** (26 Oct, maintenance run 40306940769): the whole document in one request on the
+long route got 67 points over the ten round-1 documents against the reviewers' 178, mostly from Flash-Lite with a
+6,000-token reply. The document is now read in parts of whole pages of about 18,000 characters (3-4 requests a long
+transcript), on its own `call_memory` route (Gemma 4 on Google's key and NVIDIA's free DeepSeek first, Gemini Flash only as
+the last spare, so the cards' 20-a-day Flash quota is not spent). A figure in words ("three more", "our fourth") counts
+as a figure; on a slide, where words sit in boxes, a quote whose every word and figure is on the named page is kept and
+marked `quote_assembled`.
+
 ### 2. Typed points, each with page and exact quote
 
 | type | what | key fields |

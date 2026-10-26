@@ -104,6 +104,7 @@ CALL_MEMORY_SCHEMA = {
     "reason": "only when points is empty: 15 words or fewer",
 }
 MAX_CALL_POINTS = 60
+PART_CALL_POINTS = 30   # each part of a document read in parts (call_memory.PART_CHARS)
 
 
 def pass2_schema(event_type: str) -> dict:
@@ -405,13 +406,13 @@ class PromptEngine:
         return system, user
 
     def call_memory(self, filing: Filing, kind: str, industry: str | None, text: str,
-                    prior: list[dict] | None = None) -> tuple[str, str]:
+                    prior: list[dict] | None = None, part: tuple[int, int] = (1, 1)) -> tuple[str, str]:
         """The call-memory reading of a transcript or deck (call_memory.py): the typed-points prompt with the sector's KPIs,
         and the document's whole selected text with its page markers beside the company's points from its last call."""
         sector = self.sector_for(industry)
         system = self._call_memory.safe_substitute(
             sector_name=sector.name.replace("_", " "), sector_context=sector.lens(), sector_kpis=", ".join(sector.kpis),
-            max_points=MAX_CALL_POINTS, schema=json.dumps(CALL_MEMORY_SCHEMA, ensure_ascii=False, separators=(",", ":")),
+            max_points=MAX_CALL_POINTS if part[1] == 1 else PART_CALL_POINTS, schema=json.dumps(CALL_MEMORY_SCHEMA, ensure_ascii=False, separators=(",", ":")),
             prior_rule=("- The user message lists the company's points from its last call, each with an id."
                         if prior else "- No earlier call of this company is on file: every point is NEW."))
         earlier = ("POINTS FROM THE COMPANY'S LAST CALL (id, type, topic, statement, period)\n"
@@ -424,7 +425,9 @@ class PromptEngine:
                 f"Headline: {filing.headline}\n"
                 f"Document: {kind}\n\n"
                 f"{earlier}\n\n"
-                f"DOCUMENT TEXT (page markers show each page)\n{text or '(no text)'}")
+                + (f"This is part {part[0]} of {part[1]} of the document: list the points of these pages only; the other parts "
+                   f"are read apart.\n\n" if part[1] > 1 else "")
+                + f"DOCUMENT TEXT (page markers show each page)\n{text or '(no text)'}")
         return system, user
 
     def pass2(

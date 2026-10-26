@@ -110,6 +110,118 @@ def test_survey_counts_ranks_and_writes_csv():
     assert report["by_class"]["restated"] == 1 and report["by_class"]["rounding"] == 2
     assert report["worst_companies"] == [{"scrip": "1", "symbol": "AAA", "differences": 1, "by_class": {"restated": 1}}]
     lines = sc.to_csv(report).splitlines()
-    assert lines[0].startswith("scrip,symbol,metric,period,own_value,later_value,class,source_ids")
+    assert lines[0].startswith("scrip,symbol,metric,period,own_value,later_value,class,cause,quarter,ytd_links,source_ids")
     assert len(lines) == 4 and "AAA" in lines[1]
     assert "restated" in sc.render(report)
+
+
+# --- causes, the year-to-date chain and the referee export ----------------------------------------------------------
+
+def chain_year(metric, quarters, full, h1=None, m9=None, by="file"):
+    """One March year of a flow line in memory: four quarters, FY, and the year-to-date figures when given."""
+    out = [entry(metric, f"Q{i}FY26", src(f"xbrl:res:1:Q{i}FY26", v, f"2025-0{i}-01", by=by)) for i, v in enumerate(quarters, 1)]
+    out.append(entry(metric, "FY26", src("xbrl:res:1:Q4FY26", full, "2026-05-01")))
+    if h1 is not None:
+        out.append(entry(metric, "H1FY26", src("xbrl:res:1:Q2FY26", h1, "2025-10-20")))
+    if m9 is not None:
+        out.append(entry(metric, "9MFY26", src("xbrl:res:1:Q3FY26", m9, "2026-01-20")))
+    return out
+
+
+def run(entries):
+    rows = [{"scrip": "1", "symbol": "AAA", **r} for r in sc.quarters_against_year(entries)]
+    return {(r["metric"], r["period"]): r for r in sc.classify(rows)}, rows
+
+
+def test_memory_year_to_date_figures_are_checked_link_by_link():
+    # Q3 is 4.38 short in memory: H1 agrees with Q1+Q2, 9M and FY say Q3 should be 34.38
+    rows, _ = run(chain_year("revenue", [10.0, 20.0, 30.0, 40.0], 104.38, h1=30.0, m9=64.38))
+    r = rows[("revenue", "FY26")]
+    assert r["ytd_links"] == "ok,broken,ok" and r["quarter"] == "Q3"
+    assert r["cause"] == "one_quarter_off" and "Q3" in r["note"]
+    # the last link: 9M and Q4 do not make the year
+    rows, _ = run(chain_year("revenue", [10.0, 20.0, 30.0, 40.0], 110.0, h1=30.0, m9=60.0))
+    assert rows[("revenue", "FY26")]["ytd_links"] == "ok,ok,broken" and rows[("revenue", "FY26")]["quarter"] == "Q4"
+    # the first link cannot tell Q1 from Q2
+    rows, _ = run(chain_year("revenue", [10.0, 20.0, 30.0, 40.0], 105.0, h1=35.0, m9=65.0))
+    assert rows[("revenue", "FY26")]["quarter"] == "Q1|Q2"
+
+
+def test_missing_year_to_date_figures_leave_the_quarter_unnamed():
+    rows, _ = run(chain_year("revenue", [10.0, 20.0, 30.0, 40.0], 110.0))
+    r = rows[("revenue", "FY26")]
+    assert r["ytd_links"] == "missing,missing,broken"   # the year breaks, but with H1 and 9M missing no quarter is to blame
+    assert r["quarter"] == "" and r["cause"] == "other"
+
+
+def test_same_gap_on_two_lines_is_one_quarter_off():
+    a = chain_year("revenue", [10.0, 20.0, 30.0, 40.0], 104.38)
+    b = chain_year("total_income", [11.0, 21.0, 31.0, 41.0], 108.38)
+    c = chain_year("pat", [1.0, 2.0, 3.0, 4.0], 10.0)
+    rows, _ = run(a + b + c)
+    assert rows[("revenue", "FY26")]["cause"] == rows[("total_income", "FY26")]["cause"] == "one_quarter_off"
+    assert "not named" in rows[("revenue", "FY26")]["note"] and rows[("pat", "FY26")]["class"] == "rounding"
+
+
+def test_five_lines_over_two_percent_say_restructuring():
+    entries = []
+    for i, m in enumerate(["revenue", "pat", "pbt", "employee_cost", "finance_cost"]):
+        entries += chain_year(m, [10.0, 20.0, 30.0, 40.0], 130.0 + 7 * i)   # different gaps: not one quarter
+    rows, _ = run(entries)
+    assert {r["cause"] for r in rows.values()} == {"restructuring_suspect"}
+    assert "merger" in rows[("pat", "FY26")]["note"]
+
+
+def test_derived_line_with_inputs_that_sum_is_the_derivation():
+    ebitda = chain_year("ebitda", [10.0, 20.0, 30.0, 40.0], 120.0, by="calc")
+    for e in ebitda[:4]:
+        e["lab"]["from"] = ["pbt:Q1FY26", "finance_cost:Q1FY26"]
+    inputs = chain_year("pbt", [5.0, 5.0, 5.0, 5.0], 20.0) + chain_year("finance_cost", [1.0, 1.0, 1.0, 1.0], 4.0)
+    rows, _ = run(ebitda + inputs)
+    r = rows[("ebitda", "FY26")]
+    assert r["cause"] == "derived_line" and "pbt" in r["note"] and "derivation" in r["note"]
+
+
+def test_derived_line_inheriting_its_inputs_gap_is_not_the_derivation():
+    rows, _ = run(chain_year("ebitda", [10.0, 20.0, 30.0, 40.0], 104.38) + chain_year("pbt", [5.0, 5.0, 5.0, 5.0], 24.38))
+    r = rows[("ebitda", "FY26")]
+    assert r["cause"] == "one_quarter_off" and "inheriting" in r["note"]
+    assert rows[("pbt", "FY26")]["cause"] == "one_quarter_off"
+
+
+def test_derived_line_whose_inputs_are_not_checked():
+    rows, _ = run(chain_year("other_expenses", [10.0, 20.0, 30.0, 40.0], 120.0))
+    assert rows[("other_expenses", "FY26")]["cause"] == "derived_line"
+
+
+def test_classify_works_on_csv_rows():
+    import csv as _csv
+    import io as _io
+    text = ("scrip,symbol,metric,period,own_value,later_value,class,diff_pct,basis,note\n"
+            "9,ZZZ,revenue,FY25,100,104.38,quarter_sum_gap,4.4,CONSOLIDATED,\n"
+            "9,ZZZ,pat,FY25,10,14.38,quarter_sum_gap,43.8,CONSOLIDATED,\n"
+            "9,ZZZ,ebitda,FY25,50,60,quarter_sum_gap,20,CONSOLIDATED,\n"
+            "9,ZZZ,revenue,Q2FY25,1,1,rounding,0,CONSOLIDATED,\n")
+    rows = sc.classify(list(_csv.DictReader(_io.StringIO(text))))
+    assert [r.get("cause") for r in rows] == ["one_quarter_off", "one_quarter_off", "derived_line", None]
+
+
+def test_referee_export_rows_are_open_pairs_for_the_pdf_referee():
+    from bse_intel import pdf_referee as pr
+    _, all_rows = run(chain_year("revenue", [10.0, 20.0, 30.0, 40.0], 104.38, h1=30.0, m9=64.38))
+    got = pr.load_csv(sc.referee_csv({"rows": all_rows}))
+    assert len(got) == 1 and got[0]["period"] == "Q3FY26" and got[0]["symbol"] == "AAA" and got[0]["metric"] == "revenue"
+    assert float(got[0]["memory_value"]) == 30.0 and float(got[0]["screener_value"]) == 34.38
+    assert pr.open_pairs(got) == got
+    # the first-link case gives one row per quarter; derived and unnamed rows are not exported
+    _, all_rows = run(chain_year("revenue", [10.0, 20.0, 30.0, 40.0], 105.0, h1=35.0, m9=65.0)
+                      + chain_year("other_expenses", [10.0, 20.0, 30.0, 40.0], 120.0))
+    assert [r["period"] for r in pr.load_csv(sc.referee_csv({"rows": all_rows}))] == ["Q1FY26", "Q2FY26"]
+
+
+def test_survey_reports_causes_and_links():
+    sink = FakeSink({"1": {"financial_metrics": chain_year("revenue", [10.0, 20.0, 30.0, 40.0], 104.38, h1=30.0, m9=64.38)}})
+    report = sc.survey(sink, ["1"], {"1": "AAA"}, workers=1)
+    assert report["by_cause"]["one_quarter_off"] == 1 and report["first_broken_link_names"] == {"Q3": 1}
+    assert report["ytd_links"]["H1+Q3=9M"] == {"broken": 1}
+    assert "one_quarter_off" in sc.render(report) and "Q3" in sc.to_csv(report)

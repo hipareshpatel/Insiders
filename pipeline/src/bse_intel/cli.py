@@ -826,6 +826,8 @@ def cmd_nse_selfcheck(args, settings, sink) -> int:
         Path(args.json).write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     if args.csv:
         Path(args.csv).write_text(nse_selfcheck.to_csv(report), encoding="utf-8")
+    if args.referee_csv:
+        Path(args.referee_csv).write_text(nse_selfcheck.referee_csv(report), encoding="utf-8")
     return 0
 
 
@@ -1526,6 +1528,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
     p.add_argument("--json", help="write the counts and the worst companies to this file")
     p.add_argument("--csv", help="write every comparison to this CSV file")
+    p.add_argument("--referee-csv", help="write the one_quarter_off rows to this CSV, in the shape `pdf-referee --csv` reads (the PDF decides that quarter)")
     p.set_defaults(func=cmd_nse_selfcheck)
 
     p = sub.add_parser("memory-gaps", help="universe companies lacking exchange-XBRL results quarters in memory; --fill seeds them (no AI)")

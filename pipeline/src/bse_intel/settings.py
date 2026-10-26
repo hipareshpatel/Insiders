@@ -94,6 +94,15 @@ def card_same_definition() -> bool:
     return (_env("CARD_SAME_DEFINITION", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def memory_year_check() -> bool:
+    """MEMORY_YEAR_CHECK (default off; F177, TODO 64-65): a read-time hold, nothing stored is changed. (A) A flow line's year
+    or year-to-date figure (FY, 9M, H1) whose own quarters are in memory and do not add up to it beyond rounding is not used:
+    not on a card, not as the input of a derived quarter (Q4 = FY - 9M), not as the base of a change. (B) A period's owners'
+    profit under 5% of its profit, where the year before it was 80% or more, is held with its minorities' figure (the labels
+    are swapped: Glenmark FY26, Nitco FY25). Each held figure carries a reason. Read at the call."""
+    return (_env("MEMORY_YEAR_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_grounded_figures() -> bool:
     """CARD_GROUNDED_FIGURES (default off; 26 Oct 2026 live audit): three places where our own code damaged a right figure
     are refused. (1) An event-XBRL order amount that rounds to 0 Cr (the file gave it in crore, not rupees) is not put on

@@ -24,7 +24,8 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import card_ebitda_profit_v2, card_grounded_figures, card_guidance_dated, card_same_definition, memory_restated, memory_screener
+from .settings import (card_ebitda_profit_v2, card_grounded_figures, card_guidance_dated, card_same_definition, memory_restated,
+                       memory_screener, memory_year_check)
 from .models import Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -384,6 +385,31 @@ def with_screener(dossier: dict | None) -> dict | None:
     have = {(e.get("metric"), e.get("period")) for e in dossier.get("financial_metrics", []) if isinstance(e, dict)}
     more = [e for e in extra if (e["metric"], e["period"]) not in have]
     return {**dossier, "financial_metrics": list(dossier.get("financial_metrics", [])) + more} if more else dossier
+
+
+def _year_held(entries: list[dict]) -> dict[tuple[str, str], str]:
+    """{(metric, period): reason} of the figures MEMORY_YEAR_CHECK holds in ``entries``; empty when the switch is off."""
+    if not memory_year_check():
+        return {}
+    from .year_check import held_figures
+    return held_figures(entries)
+
+
+def with_year_hold(dossier: dict | None) -> dict | None:
+    """The dossier a reader of figures should see with MEMORY_YEAR_CHECK on (F177): ``financial_metrics`` without the figures
+    ``year_check.held_figures`` holds (a year that does not match its quarters, a swapped owners' / minorities' share), and
+    ``year_held``, a list of {metric, period, reason} for each. Off (the default), or nothing held: the dossier itself, so
+    nothing changes. A copy; the stored dossier is never changed by a read."""
+    if not dossier or not memory_year_check():
+        return dossier
+    from .year_check import held_figures
+
+    held = held_figures(dossier.get("financial_metrics", []))
+    if not held:
+        return dossier
+    return {**dossier, "financial_metrics": [e for e in dossier.get("financial_metrics", [])
+                                             if (e.get("metric"), e.get("period")) not in held],
+            "year_held": [{"metric": m, "period": p, "reason": why} for (m, p), why in sorted(held.items())]}
 
 
 def section_label(dossier: dict, section: str, at: str | None, doc: str = "other") -> None:
@@ -850,7 +876,7 @@ def merge_governance(d: dict, entry: dict, as_of: str, source: str) -> bool:
 def annual_profit_cr(dossier: dict | None) -> float | None:
     """The company's annual profit after tax from memory, ₹ Cr: the last four quarters when memory has them, else the
     latest year. None when memory has neither."""
-    rows = [m for m in (dossier or {}).get("financial_metrics", [])
+    rows = [m for m in (with_year_hold(dossier) or {}).get("financial_metrics", [])
             if m.get("metric") in ("pat", "net_profit") and m.get("value") is not None
             and (m.get("unit") or "INR_CR") == "INR_CR" and due_date(m["period"])]
     quarters = {m["period"]: m["value"] for m in rows if m["period"].startswith("Q")}
@@ -1480,15 +1506,18 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
     as_known = [e for e in as_known if not (e["metric"] in consolidated and e["_basis"] == "STANDALONE")]
     if consolidated_only:   # CARD_CONSOLIDATED_ONLY (F154): a consolidated filer's standalone figures are not shown to the model
         as_known = [e for e in as_known if e["_basis"] != "STANDALONE"]
+    held = _year_held(as_known)   # MEMORY_YEAR_CHECK (F177); judged before the printed periods are withheld, so every quarter is there
     printed = printed or set()
     withheld = sorted({e["period"] for e in as_known if e["period"] in printed}, key=lambda p: (str(due_date(p) or ""), p))
     as_known = [e for e in as_known if e["period"] not in printed]
     # A figure that breaks the cumulative identity never reaches the model: a wrong comparative is worse
     # than no comparative, because the card states it as fact (audit round 1).
-    broken = unreconciled(as_known)
+    broken = unreconciled(as_known) | set(held)
     if broken:
         log.info("memory: %d figures left out, they do not reconcile with their own periods: %s",
                  len(broken), sorted(f"{m} {p}" for m, p in broken)[:8])
+    for (m, p), why in held.items():
+        log.info("memory: %s %s held: %s", m, p, why)
     metrics_by_name: dict[str, list[dict]] = {}
     for entry in as_known:
         if (entry["metric"], entry["period"]) not in broken:
@@ -1717,7 +1746,7 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
     """Latest revenue (quarter preferred), debt and net worth, and the sector's footer KPIs
     (GNPA for a bank, EBITDA/t for cement, ARPU for telecom...), for the card's financial footer."""
     out: dict = {}
-    metrics = (with_screener(dossier) or {}).get("financial_metrics", [])
+    metrics = (with_year_hold(with_screener(dossier)) or {}).get("financial_metrics", [])   # MEMORY_YEAR_CHECK: a held year is not 'latest'
 
     def latest(names: tuple[str, ...], prefer_quarter: bool = False):
         rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and due_date(m["period"])]
@@ -1900,7 +1929,7 @@ def call_results_snapshot(dossier: dict, filed_at: str, footer: tuple[dict, ...]
     in the call and the filing alike, and made Senores' margin from the call's EBITDA over the filing's revenue."""
     from datetime import date as _date
 
-    dossier = with_screener(dossier)
+    dossier = with_year_hold(with_screener(dossier))
     filed = _date.fromisoformat(filed_at[:10])
     latest = _latest_reported(dossier, filed)
     if latest is None or not _discussed(latest[0], filed):
@@ -2103,7 +2132,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     """
     from .periods import prior_quarter_period, prior_year_period
 
-    dossier = with_screener(dossier)
+    dossier = with_year_hold(with_screener(dossier))   # MEMORY_YEAR_CHECK: held figures are not in the table, its bases or a derived quarter
     mine = [m for m in dossier.get("financial_metrics", []) if reported_by(m, news_id)]
     quarters = [m["period"] for m in mine if m["period"].startswith("Q") and due_date(m["period"])]
     if not quarters:
@@ -2336,6 +2365,17 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         out[key] = row
     if len(out) <= 3:
         return None
+    if dossier.get("year_held"):
+        # the periods this table reads, and the half year, nine months or year each quarter is derived from
+        reads = {p for p in periods.values() if p}
+        for p in list(reads):
+            m = re.fullmatch(r"(Q[1-4])(FY\d{2})", p)
+            if m:
+                whole, part = _FROM_CUMULATIVE[m.group(1)]
+                reads |= {f"{whole}{m.group(2)}" if whole != "FY" else m.group(2), f"{part}{m.group(2)}"}
+        held_here = [h for h in dossier["year_held"] if h["period"] in reads]
+        if held_here:
+            out["held"] = held_here   # each with its reason; the figure itself is not shown
     lens, rows = next(((name, rows) for name, top, rows in _LENSES if top in out), ("company", _LENSES[-1][2]))
     lines = [{"key": key, "label": label, "unit": unit} for key, label, unit in rows if key in out]
     if v2:

@@ -41,9 +41,9 @@
 # - audit-precision: read-only on/off audit of the candidate number-matching rule (match at the precision the filing prints;
 #   pipeline/scripts/audit_precision.py, docs/audit/precision-2026-10-26.md) over every stored card and its text in R2;
 #   summary.json, lines.json and the blind-sample markdown go up as the artifact `audit-precision`. No writes.
-# - release-check: read-only on/off comparison of the eight card switches that are built but off (CARD_EBITDA_PROFIT_V2,
+# - release-check: read-only on/off comparison of the nine card switches that are built but off (CARD_EBITDA_PROFIT_V2,
 #   CARD_SAME_DEFINITION, CARD_CONSOLIDATED_ONLY, CARD_TWO_PARTS, QUOTE_EXACT_NUMBERS, CARD_GROUNDED_FIGURES,
-#   CARD_GUIDANCE_DATED, CARD_ONE_BASIS; the parts that cannot be replayed offline are listed, not faked; pipeline/scripts/release_check.py,
+#   CARD_GUIDANCE_DATED, CARD_ONE_BASIS, MEMORY_YEAR_CHECK; the parts that cannot be replayed offline are listed, not faked; pipeline/scripts/release_check.py,
 #   F170) over every stored card, its text in R2 and its company's memory, no AI. Per switch: what changed (cards, lines
 #   added, removed, changed), a plain-text summary and a seeded blind sample of up to 20 changed cards with its key, all up
 #   as the artifact `release-check`. No writes.

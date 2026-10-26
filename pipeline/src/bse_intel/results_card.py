@@ -17,7 +17,7 @@ import re
 from . import gate, printed_figures
 from .models import Fact, Insight, KeyNumber
 from .periods import prior_year_period, quarter_from_index, quarter_index
-from .settings import card_ebitda_profit_v2
+from .settings import card_ebitda_profit_v2, memory_year_check
 
 MAX_WHY = 2
 # a rich results card (RESULTS_RICH): the computed lines and the model's own quoted facts beside the file's four lines,
@@ -408,6 +408,15 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
         return []
     if v2 is None:
         v2 = card_ebitda_profit_v2()
+    if memory_year_check():
+        # MEMORY_YEAR_CHECK (F177): a period's owners' profit that looks swapped with the minorities' is not on the face
+        import dataclasses
+
+        from .year_check import held_figures
+        held = held_figures([{"metric": m.metric, "period": m.period, "value": m.value, "unit": m.unit, "basis": tagged.basis}
+                             for m in tagged.metrics])
+        if held:
+            tagged = dataclasses.replace(tagged, metrics=[m for m in tagged.metrics if (m.metric, m.period) not in held])
     unconfirmed = unconfirmed_changes(tagged, text)
     now = {m.metric: m for m in tagged.metrics if m.period == tagged.period and m.value is not None}
     if now.get("pat_owners") is not None and now["pat_owners"].value == 0 and (now.get("pat") or now["pat_owners"]).value:

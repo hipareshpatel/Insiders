@@ -87,7 +87,7 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
     out = tmp_path / "out"
     total = json.loads((out / "release-check.json").read_text(encoding="utf-8"))
     assert set(total) == {"ebitda_v2", "same_definition", "consolidated_only", "two_parts", "quote_exact",
-                          "grounded_figures", "guidance_dated", "one_basis"}
+                          "grounded_figures", "guidance_dated", "one_basis", "year_check"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1

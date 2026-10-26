@@ -148,7 +148,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, tijori-download, tijori-crosscheck, tijori-referee, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
         description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated)
@@ -199,7 +199,7 @@ concurrency:
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","pdf-referee-tijori","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -225,7 +225,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install
-        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "${{ inputs.command == 'pdf-referee' && '.[ocr]' || '.' }}"
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "${{ (inputs.command == 'pdf-referee' || inputs.command == 'pdf-referee-tijori') && '.[ocr]' || '.' }}"
       - name: Refresh card blocks
         if: inputs.command == 'refresh-card-blocks' || inputs.command == 'both'
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-card-blocks ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
@@ -496,15 +496,19 @@ jobs:
           path: ${{ runner.temp }}/referee/
           if-no-files-found: ignore
       - name: Take the newest screener-referee artifact (the input of pdf-referee)
-        if: inputs.command == 'pdf-referee' || inputs.command == 'screener-explain'
+        if: inputs.command == 'pdf-referee' || inputs.command == 'screener-explain' || inputs.command == 'pdf-referee-tijori'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p "$RUNNER_TEMP/in"
-          id=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=screener-referee&per_page=30" --jq '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | last | .id // empty')
-          if [ -z "$id" ]; then echo "::error::no unexpired screener-referee artifact: run screener-referee first"; exit 1; fi
+          name=screener-referee
+          # pdf-referee-tijori: the same PDF referee over the tijori-referee's pairs (same CSV columns; owner 26 Oct 2026)
+          if [ "${{ inputs.command }}" = "pdf-referee-tijori" ]; then name=tijori-referee; fi
+          id=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=$name&per_page=30" --jq '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | last | .id // empty')
+          if [ -z "$id" ]; then echo "::error::no unexpired $name artifact: run it first"; exit 1; fi
           gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$id/zip" > "$RUNNER_TEMP/in/artifact.zip"
           unzip -o -q "$RUNNER_TEMP/in/artifact.zip" -d "$RUNNER_TEMP/in"
+          if [ "$name" = "tijori-referee" ]; then cp "$RUNNER_TEMP/in/referee-tijori.csv" "$RUNNER_TEMP/in/referee-xbrl.csv"; fi
           ls -l "$RUNNER_TEMP/in/referee-xbrl.csv"
       - name: Explain the referee's pairs by corporate actions and later files (reads only)
         if: inputs.command == 'screener-explain'
@@ -523,7 +527,7 @@ jobs:
           path: ${{ runner.temp }}/explain/
           if-no-files-found: ignore
       - name: Referee the open pairs with the filing PDF (reads only)
-        if: inputs.command == 'pdf-referee'
+        if: inputs.command == 'pdf-referee' || inputs.command == 'pdf-referee-tijori'
         env:
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
           LIMIT: ${{ inputs.limit }}
@@ -535,7 +539,7 @@ jobs:
           if [ "$code" = 124 ]; then echo "::warning::time budget ended with pairs left (not_run in the CSV); run again with a limit"; code=0; fi
           exit "$code"
       - uses: actions/upload-artifact@v4
-        if: always() && inputs.command == 'pdf-referee'
+        if: always() && (inputs.command == 'pdf-referee' || inputs.command == 'pdf-referee-tijori')
         with:
           name: pdf-referee
           path: ${{ runner.temp }}/pdfreferee/

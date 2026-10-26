@@ -1398,8 +1398,8 @@ def cmd_screener_referee(args, settings, sink) -> int:
 
 def tijori_referee_rows(rows: list[dict]) -> list[dict]:
     """The Tijori cross-check pairs worth a referee: revenue and profit where screener agrees with Tijori against memory,
-    and every sign difference. Tijori's figure stands in where screener has none (the referee compares memory with it)."""
-    picked = [r for r in rows if r.get("class") == "sign"
+    and every sign and wrong_quarter difference. Tijori's figure stands in where screener has none (the referee compares memory with it)."""
+    picked = [r for r in rows if r.get("class") in ("sign", "wrong_quarter")   # every one, lead or not (owner, 26 Oct)
               or (r.get("lead") and r.get("metric") in ("revenue", "pat") and r.get("class") not in ("match", "naming"))]
     return [{**r, "screener_value": r["screener_value"] if r.get("screener_value") is not None else r.get("tijori_value")}
             for r in picked]

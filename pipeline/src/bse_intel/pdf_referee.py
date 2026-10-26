@@ -465,12 +465,16 @@ def _num(value) -> float | None:
         return None
 
 
+# screener_explain.TO_PDF: the explain verdicts that still need the PDF (a row the explain run cut, not_run, included)
+EXPLAIN_TO_PDF = ("unexplained", "eps_owners_vs_total", "not_run")
+
+
 def open_pairs(rows: list[dict], explained: bool = False) -> list[dict]:
     """The pairs still open. With ``explained`` the rows are those of ``screener-explain``'s explained.csv: the ones it left
     ``unexplained`` (our figure equals the official file and no corporate action or later file accounts for screener's) plus
     the usual open verdicts it passed through; the rows it explained are left out."""
     def open_(r: dict) -> bool:
-        return r.get("verdict") in OPEN_VERDICTS or (explained and r.get("explain_verdict") == "unexplained")
+        return r.get("verdict") in OPEN_VERDICTS or (explained and r.get("explain_verdict") in EXPLAIN_TO_PDF)
     return [r for r in rows if open_(r) and r.get("metric") and r.get("period") and r.get("symbol")]
 
 
@@ -490,7 +494,9 @@ def sample_pairs(rows: list[dict], n: int, seed: int = 26) -> list[dict]:
     out: list[dict] = []
     for i, metric in enumerate(SAMPLE_METRICS):
         pool = sorted((r for r in rows if r.get("verdict") == "ours_matches_official" and r.get("metric") == metric
-                       and r.get("period") and r.get("symbol")), key=lambda r: (r["symbol"], r["period"]))
+                       and r.get("period") and r.get("symbol")
+                       and r.get("explain_verdict", "unexplained") in EXPLAIN_TO_PDF),   # an explained row is no sample
+                      key=lambda r: (r["symbol"], r["period"]))
         want = n // len(SAMPLE_METRICS) + (1 if i < n % len(SAMPLE_METRICS) else 0)
         if len(pool) < want:
             log.warning("sample: only %d %s pairs to draw from, %d wanted", len(pool), metric, want)

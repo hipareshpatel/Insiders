@@ -52,7 +52,12 @@ from .timeutil import today_ist
 
 log = logging.getLogger(__name__)
 
-VERDICTS = ("eps_continuing_vs_total", "share_adjusted", "restated_later", "unexplained", "not_explained_input", "not_run")
+VERDICTS = ("eps_continuing_vs_total", "share_adjusted", "restated_later", "eps_owners_vs_total", "unexplained",
+            "not_explained_input", "not_run")
+# rows the PDF referee still takes from explained.csv: an EPS on the whole profit where screener's is on the owners' share
+# is a question about our figure, not an explanation (independent review, 26 Oct 2026: AFSL Q2FY25 EPS 5.46 on profit 27.38,
+# screener 5.06 on owners' 25.39; 284 of 503 first "continuing" rows were this)
+TO_PDF = ("unexplained", "eps_owners_vs_total", "not_run")
 SHARE_KINDS = ("BONUS", "SPLIT", "CONSOLIDATION")
 RIGHTS_KIND = "RIGHTS"
 ADDED = ["explain_verdict", "factor", "later_value", "later_file", "later_from", "detail"]
@@ -75,27 +80,47 @@ def share_factor(dossier: dict | None, period: str, today: str) -> tuple[float, 
     return factor, used
 
 
+def _entry(dossier: dict | None, metric: str, period: str, basis: str | None) -> dict | None:
+    """The metric entry of the period on the row's basis: one on exactly that basis first, else one with no basis told."""
+    rows = [e for e in (dossier or {}).get("financial_metrics") or [] if e.get("metric") == metric and e.get("period") == period]
+    exact = next((e for e in rows if basis and e.get("basis") == basis), None)
+    return exact or next((e for e in rows if _same_basis(basis, e.get("basis"))), None)
+
+
 def memory_value(dossier: dict | None, metric: str, period: str, basis: str | None = None) -> float | None:
     """Memory's own figure of a metric and period on the row's basis (the entry's value), None when it holds none: a
     standalone profit is never put beside a consolidated EPS."""
-    entry = next((e for e in (dossier or {}).get("financial_metrics") or []
-                  if e.get("metric") == metric and e.get("period") == period and _same_basis(basis, e.get("basis"))), None)
+    entry = _entry(dossier, metric, period, basis)
     return entry.get("value") if entry else None
+
+
+def apart(ours: float, theirs: float, metric: str) -> bool:
+    """An explanation counts only for a gap of more than twice the tolerance: within it, a factor or a ratio can match by
+    chance (review placebo: 3.7% false explanations at |EPS| under 0.5)."""
+    tol = max(0.06, 0.005 * abs(theirs)) if metric == "eps" else max(1.0, 0.005 * abs(theirs))
+    return abs(ours - theirs) > 2 * tol
 
 
 def continuing_ratio(dossier: dict | None, period: str, basis: str | None = None) -> tuple[float, str] | None:
     """(the whole profit over the continuing operations' profit, the profit line used) for a period with a discontinued
-    operation, None when memory holds no ``pat_continuing`` or no usable whole profit."""
-    continuing = memory_value(dossier, "pat_continuing", period, basis)
-    for line in ("pat_owners", "pat"):
-        whole = memory_value(dossier, line, period, basis)
-        if whole is not None:
-            break
-    else:
+    operation (``pat`` and ``pat_continuing`` apart by more than ₹1 Cr and 0.5%), None when there is none, or no usable
+    whole profit, or the ratio is not above 0."""
+    continuing, total = memory_value(dossier, "pat_continuing", period, basis), memory_value(dossier, "pat", period, basis)
+    if not continuing or total is None or abs(total - continuing) <= max(1.0, 0.005 * abs(continuing)):
         return None
-    if not continuing or whole is None:
+    owners = memory_value(dossier, "pat_owners", period, basis)
+    whole, line = (owners, "pat_owners") if owners is not None else (total, "pat")
+    ratio = whole / continuing
+    return (ratio, line) if ratio > 0 else None
+
+
+def owners_ratio(dossier: dict | None, period: str, basis: str | None = None) -> float | None:
+    """The owners' profit over the whole profit, for a period with no discontinued operation: an EPS that screener's equals
+    once put on the owners' share was worked on the whole profit (a question about our figure). None when not usable."""
+    total, owners = memory_value(dossier, "pat", period, basis), memory_value(dossier, "pat_owners", period, basis)
+    if not total or owners is None or owners / total <= 0 or abs(total - owners) <= max(0.5, 0.005 * abs(total)):
         return None
-    return whole / continuing, line
+    return owners / total
 
 
 def rights_note(dossier: dict | None, period: str, today: str) -> str:
@@ -112,8 +137,7 @@ def memory_later(dossier: dict | None, row: dict) -> dict | None:
     """The period's figure from a later file's comparative column, as memory stores it: {value, file} from the newest source of
     the metric entry that is an exchange file with ``restated_from`` on the row's basis; None when memory holds none."""
     basis = row.get("basis") or None
-    entry = next((e for e in (dossier or {}).get("financial_metrics") or []
-                  if e.get("metric") == row["metric"] and e.get("period") == row["period"] and _same_basis(basis, e.get("basis"))), None)
+    entry = _entry(dossier, row["metric"], row["period"], basis)
     if entry is None:
         return None
     later = sorted((s for s in _sources(entry) if s.get("restated_from") and is_exchange(s) and s.get("value") is not None
@@ -135,14 +159,19 @@ def explain_pair(files: CompanyFiles, dossier: dict | None, row: dict, today: st
         notes.append(rights)
     if metric == "eps":
         ratio = continuing_ratio(dossier, period, row.get("basis") or None)
-        if ratio and abs(ratio[0] - 1) > 1e-9 and _close(ours * ratio[0], theirs, "eps"):
+        if ratio and apart(ours, theirs, "eps") and _close(ours * ratio[0], theirs, "eps"):
             out.update(explain_verdict="eps_continuing_vs_total", factor=ratio[0],
                        detail=f"memory's EPS is on continuing operations; x{ratio[0]:.4g} = {ratio[1]} over pat_continuing")
+            return out
+        owners = owners_ratio(dossier, period, row.get("basis") or None)
+        if owners and apart(ours, theirs, "eps") and _close(ours * owners, theirs, "eps"):
+            out.update(explain_verdict="eps_owners_vs_total", factor=owners,
+                       detail=f"our EPS fits the whole profit, screener's the owners' share (x{owners:.4g}); to the PDF referee")
             return out
         factor, actions = share_factor(dossier, period, today)
         if actions and abs(factor - 1) > 1e-9:
             out["factor"] = factor
-            if _close(ours / factor, theirs, "eps"):
+            if apart(ours, theirs, "eps") and _close(ours / factor, theirs, "eps"):
                 out.update(explain_verdict="share_adjusted",
                            detail="; ".join([f"x{factor:g}: " + "; ".join(eps_adjust.describe(a) for a in actions)] + notes))
                 return out
@@ -157,7 +186,7 @@ def explain_pair(files: CompanyFiles, dossier: dict | None, row: dict, today: st
         out.update(later_value=got["value"], later_file=got["file"], later_from=origin)
         if ours_close(ours, got["value"], metric):
             notes.append("later_same")
-        elif _close(got["value"], theirs, metric):
+        elif apart(ours, theirs, metric) and _close(got["value"], theirs, metric):
             out.update(explain_verdict="restated_later", detail="; ".join([f"a later file ({got['file']}) prints {got['value']:g}, screener's figure"] + notes))
             return out
         else:

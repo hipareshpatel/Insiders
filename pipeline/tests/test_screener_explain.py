@@ -166,7 +166,7 @@ def test_abb_eps_is_continuing_operations_and_screener_has_the_whole_profit():
 
 
 def test_abfrl_eps_uses_pat_owners_over_pat_continuing():
-    dossier = {"financial_metrics": metrics("Q4FY25", pat_continuing=-160.92, pat_owners=-16.87)}
+    dossier = {"financial_metrics": metrics("Q4FY25", pat=-23.55, pat_continuing=-160.92, pat_owners=-16.87)}   # the 25 Oct backup
     r = run([row("Q4FY25", "eps", -1.34, -0.14)], {"1": dossier})["rows"][0]
     assert r["explain_verdict"] == "eps_continuing_vs_total"
 
@@ -190,7 +190,7 @@ def test_pdf_referee_explained_takes_unexplained_and_the_open_verdicts():
             for s, ev, v in [("A", "unexplained", "ours_matches_official"), ("B", "share_adjusted", "ours_matches_official"),
                              ("C", "restated_later", "ours_matches_official"), ("D", "not_explained_input", "neither"),
                              ("E", "not_run", "ours_matches_official"), ("F", "not_explained_input", "both_match")]]
-    assert [r["symbol"] for r in pr.open_pairs(rows, explained=True)] == ["A", "D"]
+    assert [r["symbol"] for r in pr.open_pairs(rows, explained=True)] == ["A", "D", "E"]   # a row the explain run cut still goes
     assert [r["symbol"] for r in pr.open_pairs(rows)] == ["D"]    # without the flag the old behaviour
 
 
@@ -200,6 +200,28 @@ def test_a_standalone_profit_is_never_put_beside_a_consolidated_eps():
         {"metric": "pat_continuing", "period": "Q4FY26", "value": 100.0, "basis": "STANDALONE"},
         {"metric": "pat", "period": "Q4FY26", "value": 500.0, "basis": "STANDALONE"},
         {"metric": "pat_continuing", "period": "Q4FY26", "value": 341.91, "basis": "CONSOLIDATED"},
+        {"metric": "pat", "period": "Q4FY26", "value": 1783.65, "basis": "CONSOLIDATED"},
         {"metric": "pat_owners", "period": "Q4FY26", "value": 1783.65, "basis": "CONSOLIDATED"}]}
     ratio, line = se.continuing_ratio(d, "Q4FY26", "CONSOLIDATED")
     assert abs(ratio - 1783.65 / 341.91) < 1e-9 and line == "pat_owners"
+
+
+
+def test_an_eps_on_the_whole_profit_where_screener_is_on_the_owners_share_goes_to_the_pdf():
+    # AFSL Q2FY25 (25 Oct backup): no discontinued operation (pat = pat_continuing 27.38), owners 25.39; ours 5.46, screener 5.06
+    dossier = {"financial_metrics": metrics("Q2FY25", pat=27.38, pat_continuing=27.38, pat_owners=25.39)}
+    r = run([row("Q2FY25", "eps", 5.46, 5.06)], {"1": dossier})["rows"][0]
+    assert r["explain_verdict"] == "eps_owners_vs_total"
+    assert pr.open_pairs([{**r, "verdict": "ours_matches_official"}], explained=True)
+
+
+def test_a_gap_within_twice_the_tolerance_is_not_explained():
+    # UEL Q2FY25 (review): ours 0.07, screener 0.01, a factor of 5.04 "explained" it by chance
+    bonus = [{"kind": "BONUS", "factor": 5.04, "ex_date": "2025-01-10", "subject": "Bonus"}]
+    r = run([row("Q2FY25", "eps", 0.07, 0.01)], {"1": {"financial_metrics": [], "corporate_actions": bonus}})["rows"][0]
+    assert r["explain_verdict"] == "unexplained"
+
+
+def test_a_ratio_of_zero_or_below_explains_nothing():
+    dossier = {"financial_metrics": metrics("Q1FY25", pat=10.0, pat_continuing=3.0, pat_owners=0.0)}
+    assert run([row("Q1FY25", "eps", 0.9, 0.04)], {"1": dossier})["rows"][0]["explain_verdict"] == "unexplained"

@@ -5,7 +5,7 @@
 [RESULTS]
 focus = """
 This is a periodic financial result. Extract revenue from operations, EBITDA (or operating profit),
-PAT, EPS for the latest period and the comparable period; the changes (YoY, QoQ, margins) are computed
+PAT for the latest period and the comparable period (no EPS: the owner keeps earnings per share off cards); the changes (YoY, QoQ, margins) are computed
 in code and given in the table in front of the text, so use those and compute none yourself. State whether figures are standalone or consolidated and their unit
 in the source (₹ lakh / ₹ crore / ₹ million); convert to ₹ crore. Note exceptional items, auditor
 qualifications, and segment results. Compare against guidance in memory where one exists.

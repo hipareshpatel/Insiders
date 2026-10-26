@@ -171,3 +171,8 @@ const GOVERNANCE_FLAGS: [RegExp, string][] = [
 export function governanceFlags(text: string): string[] {
   return GOVERNANCE_FLAGS.filter(([re]) => re.test(text)).map(([, label]) => label);
 }
+
+/** Owner rule 26 Oct 2026: no EPS on cards or stock pages. True when a line of a stored card states earnings per share
+ * ("EPS", "earnings per share", "profit per share"); a dividend per share is not EPS and stays. */
+export const EPS_TEXT = /\b(?:eps|earnings?\s+(?:per|a|each)\s+(?:equity\s+)?share|(?:net\s+)?(?:profit|income)\s+per\s+(?:equity\s+)?share|per[\s-]share\s+(?:earnings|profit|income))\b/i;
+export const statesEps = (...texts: (string | null | undefined)[]): boolean => texts.some((t) => !!t && EPS_TEXT.test(t));

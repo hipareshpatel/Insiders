@@ -80,14 +80,14 @@ def test_the_switch_off_leaves_the_table_as_it_is_with_or_without_the_new_figure
     monkeypatch.delenv("CARD_EPS_WHOLE", raising=False)
     old = _abb()
     old["financial_metrics"] = [m for m in old["financial_metrics"] if m["metric"] not in ("eps_total", "eps_continuing")]
-    assert results_snapshot(_abb(), "n2") == results_snapshot(old, "n2")
-    assert results_snapshot(_abb(), "n2")["eps"] == {"value": 16.14, "prev_year": 14.2, "prev_quarter": 15.5,
+    assert results_snapshot(_abb(), "n2", with_eps=True) == results_snapshot(old, "n2", with_eps=True)
+    assert results_snapshot(_abb(), "n2", with_eps=True)["eps"] == {"value": 16.14, "prev_year": 14.2, "prev_quarter": 15.5,
                                                     "yoy_pct": 13.7, "qoq_pct": 4.1}
 
 
 def test_the_whole_company_eps_with_the_continuing_one_beside_it(monkeypatch):
     monkeypatch.setenv("CARD_EPS_WHOLE", "1")
-    eps = results_snapshot(_abb(), "n2")["eps"]
+    eps = results_snapshot(_abb(), "n2", with_eps=True)["eps"]
     assert eps["value"] == 84.17 and eps["continuing"] == 16.14
     assert eps["prev_year"] == 14.2 and eps["yoy_pct"] == round((84.17 / 14.2 - 1) * 100, 1)   # no discontinued operation then
 
@@ -99,13 +99,13 @@ def test_an_eps_that_is_the_same_on_both_bases_shows_no_continuing(monkeypatch):
         if m["metric"] in ("eps", "eps_total", "eps_continuing") and m["period"] == "Q4FY26":
             m["value"] = 16.14
     d["financial_metrics"] = [m for m in d["financial_metrics"] if m["metric"] != "pat_discontinued"]
-    eps = results_snapshot(d, "n2")["eps"]
+    eps = results_snapshot(d, "n2", with_eps=True)["eps"]
     assert eps["value"] == 16.14 and "continuing" not in eps
 
 
 def test_a_comparison_across_two_bases_is_left_out(monkeypatch):
     monkeypatch.setenv("CARD_EPS_WHOLE", "1")
-    eps = results_snapshot(_abb(year_ago_discontinued=True), "n2")["eps"]
+    eps = results_snapshot(_abb(year_ago_discontinued=True), "n2", with_eps=True)["eps"]
     assert eps["value"] == 84.17
     assert "prev_year" not in eps and "yoy_pct" not in eps       # the year-ago EPS is continuing only: not a base for 84.17
     assert eps["prev_quarter"] == 15.5 and "qoq_pct" in eps       # that quarter had no discontinued operation
@@ -115,9 +115,9 @@ def test_a_quarter_without_the_whole_company_figure_is_unchanged(monkeypatch):
     d = _abb()
     d["financial_metrics"] = [m for m in d["financial_metrics"] if m["metric"] not in ("eps_total", "eps_continuing")]
     monkeypatch.delenv("CARD_EPS_WHOLE", raising=False)
-    off = results_snapshot(copy.deepcopy(d), "n2")
+    off = results_snapshot(copy.deepcopy(d), "n2", with_eps=True)
     monkeypatch.setenv("CARD_EPS_WHOLE", "1")
-    assert results_snapshot(d, "n2") == off
+    assert results_snapshot(d, "n2", with_eps=True) == off
 
 
 def test_no_continuing_figure_is_inferred_from_the_older_eps(monkeypatch):
@@ -125,7 +125,7 @@ def test_no_continuing_figure_is_inferred_from_the_older_eps(monkeypatch):
     monkeypatch.setenv("CARD_EPS_WHOLE", "1")
     d = _abb()
     d["financial_metrics"] = [m for m in d["financial_metrics"] if m["metric"] != "eps_continuing"]
-    eps = results_snapshot(d, "n2")["eps"]
+    eps = results_snapshot(d, "n2", with_eps=True)["eps"]
     assert eps["value"] == 84.17 and "continuing" not in eps
 
 
@@ -134,14 +134,14 @@ def test_the_share_base_and_profit_checks_still_work_on_the_chosen_line(monkeypa
     monkeypatch.setenv("CARD_EPS_FOLLOWS_PROFIT", "1")
     d = _abb()
     # profit rose from 330 to 1,783.65 (+440%) and EPS from 15.5 to 84.17 (+443%): carried, kept
-    eps = results_snapshot(d, "n2")["eps"]
+    eps = results_snapshot(d, "n2", with_eps=True)["eps"]
     assert eps["value"] == 84.17 and eps["continuing"] == 16.14 and "qoq_pct" in eps
     monkeypatch.setenv("EPS_SHARE_ADJUST", "1")
     d["corporate_actions"] = [{"ex_date": "2026-02-01", "kind": "SPLIT", "factor": 5.0, "subject": "SPLIT 1:5"}]
     for m in d["financial_metrics"]:
         if (m["metric"], m["period"]) == ("eps", "Q4FY25"):
             m["value"] = 71.0   # the year-ago EPS before the 1:5 split
-    eps = results_snapshot(d, "n2")["eps"]
+    eps = results_snapshot(d, "n2", with_eps=True)["eps"]
     assert eps["value"] == 84.17 and eps["continuing"] == 16.14 and eps.get("eps_note") \
         and eps["yoy_pct"] == round((84.17 / 14.2 - 1) * 100, 1)   # the share-count note is on the line, the change on one count
 

@@ -2,7 +2,6 @@ import { useState, type ReactNode } from "react";
 import type { Dossier } from "../../../shared/types";
 import { cn } from "../../lib/cn";
 import {
-  adjustPerShare,
   annualTable, balanceTable, cashFlowTable, formatCell, growth, isBank, mainBasis, quarterlyTable, ratioTable, statementDate, type Table,
 } from "./statements";
 import { Panel } from "./Panel";
@@ -19,9 +18,7 @@ export function Financials({ dossier }: { dossier: Dossier }) {
   const alone = dossier.standalone?.metrics?.length ? dossier.standalone : null;
   const [basis, setBasis] = useState<"main" | "standalone">("main");
   const useAlone = basis === "standalone" && alone;
-  const metrics = adjustPerShare((useAlone ? alone.metrics : dossier.financial_metrics) as Dossier["financial_metrics"],
-    dossier.corporate_actions);
-  const reshaped = (dossier.corporate_actions ?? []).filter((a) => a.factor && a.factor !== 1);
+  const metrics = (useAlone ? alone.metrics : dossier.financial_metrics) as Dossier["financial_metrics"];
   const sheets = useAlone ? alone.balance_sheet ?? [] : dossier.balance_sheet;
   const label = useAlone ? "Standalone" : main === "CONSOLIDATED" ? "Consolidated" : main === "STANDALONE" ? "Standalone" : null;
   const bank = isBank(metrics);
@@ -43,11 +40,6 @@ export function Financials({ dossier }: { dossier: Dossier }) {
           This company's financial year ends in {yearEnd}. Quarters here are named by calendar months on the April-March
           convention (Q2FY27 = July-September 2026), not by the company's own numbering; its half-year and full-year
           figures are left out, so the yearly tables and growth rates are not shown.
-        </p>
-      )}
-      {reshaped.length > 0 && (
-        <p className="text-[12px] text-ink-3">
-          EPS is on today's share count, adjusted for {reshaped.map((a) => `${a.subject ?? a.kind} (ex ${a.ex_date})`).join("; ")}.
         </p>
       )}
       {alone && main === "CONSOLIDATED" && (

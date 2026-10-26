@@ -1,7 +1,7 @@
 // The card's "say each thing once" rules (src/lib/cardText.ts). Run: npm test (node --test, types stripped).
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { changeTone, executionFact, figures, repeats, showsFigure } from "../src/lib/cardText.ts";
+import { changeTone, executionFact, figures, repeats, showsFigure, statesEps } from "../src/lib/cardText.ts";
 
 test("a point that restates the headline is a repeat", () => {
   // the owner's Punjab & Sind Bank card: headline and first point were the same figure
@@ -214,4 +214,9 @@ test("governance flags: exits, orders, defaults; never an appointment", async ()
   assert.deepEqual(governanceFlags("Company defaulted on interest on NCDs due 15 Oct"), ["Default"]);
   assert.deepEqual(governanceFlags("Board appoints M/s ABC & Co as statutory auditors for five years"), []);
   assert.deepEqual(governanceFlags("No fraud was reported by the auditors"), []);
+});
+
+test("a stored card line that states EPS is told apart from a dividend per share (owner rule 26 Oct 2026)", () => {
+  for (const t of ["EPS ₹5.20", "Basic EPS of 3.1", "Earnings per share rose 12%", "profit per share ₹4", "Diluted earnings a share ₹2"]) assert.ok(statesEps(t), t);
+  for (const t of ["Dividend of ₹5 per share", "Interim dividend 250% (₹2.5 a share)", "Net profit ₹46 Cr", "steps taken"]) assert.ok(!statesEps(t), t);
 });

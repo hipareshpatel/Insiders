@@ -253,6 +253,8 @@ class XbrlResult:
             lines[0] = (f"Machine-tagged results (XBRL, {self.basis.capitalize()}, ₹ crore unless noted{_period_words(self.period)}; "
                         "exact, prefer these over figures read from the PDF):")
         for m in self.metrics:
+            if m.metric in EPS_METRICS:
+                continue   # owner rule 26 Oct 2026: no EPS on cards; the model is not given it (memory keeps it)
             unit = " ₹/share" if m.unit == "INR" else " %" if m.unit == "PCT" else " Cr"
             change = "".join(f", {label} {v:+.1f}%" for label, v in (("YoY", m.yoy_pct), ("QoQ", m.qoq_pct)) if v is not None)
             basis = " (standalone)" if self.ratio_basis and m.metric in BANK_RATIOS else ""

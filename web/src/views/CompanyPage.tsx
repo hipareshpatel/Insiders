@@ -537,14 +537,14 @@ function ResultsScorecard({ parsed, onOpen }: { parsed: Parsed[]; onOpen: (newsI
  *  drawer's baseline was complete, the page's in the wrong order; now one baseline on the page); `balance` adds the
  *  balance sheet below. */
 export function MetricsPanel({ dossier, balance: showBalance = true, periods = 8 }: { dossier: Dossier; balance?: boolean; periods?: number }) {
-  // F188: the whole-company and continuing EPS kept beside `eps` in memory; not on the page, which adjusts only `eps` for splits
-  const MEMORY_ONLY_ROWS = new Set(["eps_total", "eps_continuing"]);
+  // owner rule 26 Oct 2026: no EPS on cards or stock pages; memory keeps every EPS figure (F188 variants too), the page shows none
+  const MEMORY_ONLY_ROWS = new Set(["eps", "basic_eps", "diluted_eps", "eps_total", "eps_continuing"]);
   type Cell = { value: number; unit: string; yoy?: number | null };
   type Group = { periods: string[]; metrics: Map<string, Map<string, Cell>> };
   const groups = useMemo(() => {
     const byKind = new Map<string, Group>();
     for (const m of dossier.financial_metrics) {
-      if (MEMORY_ONLY_ROWS.has(m.metric)) continue;   // F188: the two EPS variants are for memory, not the page (review)
+      if (MEMORY_ONLY_ROWS.has(m.metric)) continue;   // no EPS rows (owner rule 26 Oct 2026)
       const kind = periodKind(m.period);
       const g: Group = byKind.get(kind) ?? { periods: [], metrics: new Map() };
       if (!g.periods.includes(m.period)) g.periods.push(m.period);

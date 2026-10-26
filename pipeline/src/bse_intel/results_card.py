@@ -84,7 +84,7 @@ def _profit_words(tagged, m) -> tuple[str, str, str]:
 
 _LABELS = (("revenue", "Revenue from operations"), ("interest_earned", "Interest earned"),
            ("pre_provision_operating_profit", "Operating profit before provisions"), ("ebitda", "EBITDA"),
-           ("provisions", "Provisions"), ("pat", "Net profit"), ("pat_owners", "Net profit to shareholders"), ("eps", "EPS"))
+           ("provisions", "Provisions"), ("pat", "Net profit"), ("pat_owners", "Net profit to shareholders"))   # owner rule 26 Oct 2026: no EPS on cards or stock pages
 
 
 _VIEW_LINE = re.compile(r"^\s*(Q[1-4]FY\d{2})\s*:\s*(-?\d[\d,]*(?:\.\d+)?)\s*([A-Z_]*)")

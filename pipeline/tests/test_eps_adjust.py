@@ -82,7 +82,7 @@ def test_results_file_off_is_byte_identical_and_on_adjusts(monkeypatch):
     assert eps_adjust.adjust_result(off, BONUS) == 1
     m = off.metrics[0]
     assert m.yoy_pct == 14.0 and m.eps_note == "adjusted for bonus 1:1 on 2024-10-28"
-    assert "adjusted for bonus 1:1 on 2024-10-28" in off.table()
+    assert "eps" not in off.table()   # owner rule 26 Oct 2026: the model is given no EPS line, adjusted or not
     assert "+14.0% YoY" in results_card._changes(m) and results_card._line(m).endswith("(adjusted for bonus 1:1 on 2024-10-28)")
     assert "eps_note" not in m.model_dump()              # never stored in the model's answer
 
@@ -133,10 +133,10 @@ def test_memory_view_shows_the_adjusted_yoy_only_when_on(monkeypatch):
                          "yoy_pct": e["yoy_pct"], "basis": "CONSOLIDATED"}]
     monkeypatch.delenv("EPS_SHARE_ADJUST", raising=False)
     off = str(view_as_of(d, "2027-01-01"))
-    assert "YoY -50" in off
+    assert "YoY -50" not in off and "'eps'" not in off   # owner rule 26 Oct 2026: the model is given no EPS, adjusted or not
     monkeypatch.setenv("EPS_SHARE_ADJUST", "1")
     on_view = str(view_as_of(d, "2027-01-01"))
-    assert "YoY -50" not in on_view and "adjusted for bonus 1:1" in on_view
+    assert "YoY -50" not in on_view and "'eps'" not in on_view
 
 
 def test_snapshot_row_and_signal_bases(monkeypatch):
@@ -179,10 +179,10 @@ RELEASE_EPS = "Wipro Q2FY27: Revenue 23,000 Cr. EPS up 0.9% QoQ at Rs 3.23. Prof
 def test_an_eps_change_the_profit_does_not_carry_is_shown_off_and_left_out_on(monkeypatch):
     from bse_intel.dossier import results_snapshot
     monkeypatch.delenv("CARD_EPS_FOLLOWS_PROFIT", raising=False)
-    off = results_snapshot(_wipro(), "n2")
+    off = results_snapshot(_wipro(), "n2", with_eps=True)
     assert off["eps"]["yoy_pct"] == 17.9 and off["eps"]["prev_quarter"] == 2.5 and "eps_hidden" not in off
     monkeypatch.setenv("CARD_EPS_FOLLOWS_PROFIT", "1")
-    on = results_snapshot(_wipro(), "n2")
+    on = results_snapshot(_wipro(), "n2", with_eps=True)
     assert on["eps"] == {"value": 3.23, "eps_note": on["eps"]["eps_note"]}   # neither change, nor the bases they rest on
     assert "is above profit +1.5% and no share-count event is on record" in on["eps"]["eps_note"]
     assert [h["slot"] for h in on["eps_hidden"]] == ["yoy", "qoq"]
@@ -191,7 +191,7 @@ def test_an_eps_change_the_profit_does_not_carry_is_shown_off_and_left_out_on(mo
 def test_a_change_the_profit_carries_is_kept(monkeypatch):
     from bse_intel.dossier import results_snapshot
     monkeypatch.setenv("CARD_EPS_FOLLOWS_PROFIT", "1")
-    on = results_snapshot(_wipro(eps_year=3.17, eps_qtr=3.2), "n2")   # profit +1.5% / +1.0%, EPS +1.9% / +0.9%
+    on = results_snapshot(_wipro(eps_year=3.17, eps_qtr=3.2), "n2", with_eps=True)   # profit +1.5% / +1.0%, EPS +1.9% / +0.9%
     assert on["eps"]["yoy_pct"] == 1.9 and on["eps"]["prev_quarter"] == 3.2 and "eps_hidden" not in on
 
 
@@ -199,7 +199,7 @@ def test_the_filings_words_never_replace_the_change(monkeypatch):
     # only hidden, never replaced (review: "EPS declined by 5%" was read as +5%)
     from bse_intel.dossier import results_snapshot
     monkeypatch.setenv("CARD_EPS_FOLLOWS_PROFIT", "1")
-    on = results_snapshot(_wipro(), "n2", printed=RELEASE_EPS)
+    on = results_snapshot(_wipro(), "n2", printed=RELEASE_EPS, with_eps=True)
     assert on["eps"]["value"] == 3.23 and "yoy_pct" not in on["eps"] and "qoq_pct" not in on["eps"]   # no +0.9% from the words
 
 
@@ -207,7 +207,7 @@ def test_a_recorded_bonus_leaves_the_change_to_the_share_base_logic(monkeypatch)
     from bse_intel.dossier import results_snapshot
     monkeypatch.setenv("CARD_EPS_FOLLOWS_PROFIT", "1")
     bonus = [{"ex_date": "2026-09-01", "kind": "BONUS", "factor": 2.0, "subject": "BONUS 1:1"}]
-    on = results_snapshot(_wipro(eps_qtr=6.4, eps_year=6.3, actions=bonus), "n2")
+    on = results_snapshot(_wipro(eps_qtr=6.4, eps_year=6.3, actions=bonus), "n2", with_eps=True)
     assert "eps_hidden" not in on and on["eps"]["prev_quarter"] == 6.4   # a share-count event on record: not this switch's call
 
 

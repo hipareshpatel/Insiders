@@ -74,6 +74,8 @@ Read before changing anything:
   owner calls). Blind audit reviews run on the mid model at least, never the smallest. A task of a few tool calls is
   done directly. Subagents follow every rule here; a fix's author never reviews it.
 
+- No EPS numbers on cards or on stock pages (owner rule, 26 Oct 2026). Memory keeps EPS for its checks; it is never shown
+  and never given to the AI for card text.
 - Explain everything to the owner in very simple English: short sentences, everyday words, no code names unless asked
   (owner, 25 Oct 2026). Give times to the owner in IST (India), never UTC alone. The first-principles review of the whole system, one step at a time, is in
   `docs/FROM_ZERO.md`: read it before changing how data is collected or processed, and record each step's decision there.

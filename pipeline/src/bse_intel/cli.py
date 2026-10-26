@@ -670,7 +670,7 @@ def cmd_prune_companies(args, settings, sink) -> int:
         raw.attach(client, sink, "nse", settings)
         equities = client.equity_list()
         sme = client.sme_list()
-    report = prune_companies.plan(sink, equities, sme, keep_sme=args.keep_sme)
+    report = prune_companies.plan(sink, equities, sme, keep_sme=args.keep_sme, bse_keep_min_mcap=args.bse_keep_min_mcap)
     print(prune_companies.render(report))
     done = None
     if args.apply:
@@ -682,6 +682,27 @@ def cmd_prune_companies(args, settings, sink) -> int:
         Path(args.json).write_text(json.dumps({**report, "applied": done}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     if args.csv:
         Path(args.csv).write_text(prune_companies.to_csv(report), encoding="utf-8")
+    return 0
+
+
+def cmd_bse_verify_kept(args, settings, sink) -> int:
+    """Read-only (bse_verify_kept.py): BSE's answer for each kept BSE-only company, through the ported adapter."""
+    from . import bse_verify_kept, prune_companies
+    from .nse import NseClient
+
+    with NseClient() as client:
+        equities = client.equity_list()
+        sme = client.sme_list()
+    every = prune_companies.bse_kept_rows(sink, equities, sme, args.min_mcap)
+    kept = every[:args.limit] if args.limit else every
+    print(f"kept BSE-only companies: {len(every)}; asking BSE about {len(kept)}", flush=True)
+    client, _ = bse_verify_kept.make_client()
+    result = bse_verify_kept.verify(client, kept, today_ist(), args.min_mcap)
+    print(bse_verify_kept.render(result))
+    if args.json:
+        Path(args.json).write_text(json.dumps(result, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(bse_verify_kept.to_csv(result), encoding="utf-8")
     return 0
 
 
@@ -1269,9 +1290,18 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")
     p.add_argument("--apply", action="store_true", help="back up, then delete; without it nothing is changed")
     p.add_argument("--keep-sme", action="store_true", help="keep NSE Emerge (SME) companies, which the universe does not use")
+    p.add_argument("--bse-keep-min-mcap", type=float, default=500.0,
+                   help="keep BSE-only companies with a stored market cap of at least this many Cr (default 500; 0 keeps none)")
     p.add_argument("--json", help="write the full report to this file")
     p.add_argument("--csv", help="write the rows (remove / keep) to this file")
     p.set_defaults(func=cmd_prune_companies)
+
+    p = sub.add_parser("bse-verify-kept", help="read-only: ask BSE (ported adapter, paced) about each kept BSE-only company: status, market cap, latest announcement")
+    p.add_argument("--min-mcap", type=float, default=500.0, help="the keep line in Cr (as prune-companies --bse-keep-min-mcap)")
+    p.add_argument("--limit", type=int, default=0, help="only the first N kept companies (0 = all)")
+    p.add_argument("--json", help="write the full result to this file")
+    p.add_argument("--csv", help="write one row a company to this file")
+    p.set_defaults(func=cmd_bse_verify_kept)
 
     p = sub.add_parser("label-memory", help="label every item already in memory: file / ai / calc / unknown (no AI; --dry-run counts only)")
     p.add_argument("--scrips", help="comma-separated company keys (default: every stored memory)")

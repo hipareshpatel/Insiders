@@ -543,7 +543,7 @@ def test_a_first_302_in_the_sweep_is_one_miss_retried_next_run_and_only_a_second
     client, _ = client_for(answers, seen)
     with client:
         first = tijori.run(sink, ETERNAL[:1], client, DAY, workers=1)
-        assert json.loads(sink.kv[tijori.SLUGS_KEY])["slugs"] == {"zomato-ltd": "!1"} and first["pages_stored"] == 0
+        assert json.loads(sink.kv[tijori.SLUGS_KEY])["slugs"] == {"zomato-ltd": f"!1:{DAY}"} and first["pages_stored"] == 0
         state["gone"] = False       # the soft block lifts
         second = tijori.run(sink, ETERNAL[:1], client, DAY, workers=1)
     assert second["pages_stored"] == 1 and json.loads(sink.kv[tijori.SLUGS_KEY])["slugs"] == {"zomato-ltd": "ETERNAL"}
@@ -551,10 +551,12 @@ def test_a_first_302_in_the_sweep_is_one_miss_retried_next_run_and_only_a_second
     client, _ = client_for(lambda url: sweep_site({}, extra=["gone-ltd"])(url), seen2)
     with client:
         tijori.run(sink2, ETERNAL[:1], client, DAY, workers=1)
-        tijori.run(sink2, ETERNAL[:1], client, DAY, workers=1)
+        tijori.run(sink2, ETERNAL[:1], client, DAY, workers=1)    # same day: still the first miss
+        assert json.loads(sink2.kv[tijori.SLUGS_KEY])["slugs"] == {"gone-ltd": f"!1:{DAY}"}
+        tijori.run(sink2, ETERNAL[:1], client, "2099-01-01", workers=1)
         assert json.loads(sink2.kv[tijori.SLUGS_KEY])["slugs"] == {"gone-ltd": "!"}
         seen2.clear()
-        tijori.run(sink2, ETERNAL[:1], client, DAY, workers=1)
+        tijori.run(sink2, ETERNAL[:1], client, "2099-01-02", workers=1)
     assert not any("/company/" in u for u in seen2)    # final: not asked again
 
 
@@ -615,3 +617,26 @@ def test_a_no_tables_page_does_not_finish_a_company_that_has_another_slug():
         out = tijori.run(sink, ETERNAL[1:], client, DAY, workers=1)
     assert out["pages_stored"] == 0 and out["pages_no_tables"] == 1
     assert json.loads(sink.kv[f"tijoridl:done:{DAY}"]) == ["ABB"]
+
+
+def test_an_old_plain_first_miss_is_final_on_the_next_miss_and_is_still_due_and_counted():
+    sink, seen = Sink(seed=False), []
+    sink.kv[tijori.SLUGS_KEY] = json.dumps({"built": "x", "slugs": {"gone-ltd": "!1"}})
+    client, _ = client_for(lambda url: sweep_site({}, extra=["gone-ltd"])(url), seen)
+    with client:
+        tijori.run(sink, ETERNAL[:1], client, DAY, workers=1, sweep_limit=0)
+        assert tijori.run(sink, ETERNAL[:1], client, DAY, workers=1, sweep_limit=0)["slugs_left_to_sweep"] == 1
+        tijori.run(sink, ETERNAL[:1], client, DAY, workers=1)
+    assert json.loads(sink.kv[tijori.SLUGS_KEY])["slugs"] == {"gone-ltd": "!"}
+
+
+def test_a_cut_rebuild_keeps_the_old_entries_of_slugs_not_yet_re_swept():
+    sink, seen = Sink(seed=False), []
+    old = {"a-ltd": "AAA", "b-ltd": "BBB", "zomato-ltd": "OLD"}
+    sink.kv[tijori.SLUGS_KEY] = json.dumps({"built": "x", "slugs": old})
+    client, _ = client_for(sweep_site({"zomato-ltd": page_as("ETERNAL")}, extra=["a-ltd", "b-ltd"]), seen)
+    with client:
+        out = tijori.run(sink, ETERNAL[:1], client, DAY, workers=1, rebuild_map=True, sweep_limit=1)
+    saved = json.loads(sink.kv[tijori.SLUGS_KEY])["slugs"]
+    assert saved["zomato-ltd"] == "ETERNAL" and saved["a-ltd"] == "AAA" and saved["b-ltd"] == "BBB"
+    assert len(saved) >= len(old) and out["slugs_left_to_sweep"] == 2

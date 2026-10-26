@@ -77,7 +77,7 @@ MISS_LIMIT = 20                                   # more than this many 302 / 40
 SAVE_EVERY = 25                                   # finished companies (or swept slugs) between two saves of the done list / slug map
 PREFIX = "raw/tijori/"
 DONE_KEY = "tijoridl:done"          # + ":<day>": the symbols a run finished
-SLUGS_KEY = "tijoridl:slugs"        # {"built": iso, "slugs": {slug: page symbol | "" (none on the page) | "!1" (no page once, asked again next run) | "!" (no page twice)}}, kept between days
+SLUGS_KEY = "tijoridl:slugs"        # {"built": iso, "slugs": {slug: page symbol | "" (none on the page) | "!1:<day>" (no page once, on that day; plain "!1" in older maps; asked again, final only on a later day) | "!" (no page twice)}}, kept between days
 SITEMAP_COMPANIES = 5741            # measured 26 Oct 2026; only the estimate before a run uses it
 TABLES_ID = "fin_tables_data"
 DROP_WORDS = frozenset({"limited", "ltd", "the"})
@@ -244,7 +244,7 @@ class TijoriClient:
     (403, 429, 503 or a challenge page) drops the whole client to one request every ``SLOW_PAUSE`` seconds for the rest of the run
     and the refused page is asked once more; ``slowed`` records that it happened. A refusal of a request started after that, the
     SECOND, raises ``TijoriRefused`` and every other thread stops with it. Requests already in flight when the first refusal came
-    (up to 8 of them, all at the fast rate) do not count as a second: they are retried at the slow pace."""
+    (up to ``WORKERS``, 32, of them: slots reserved before the first refusal still go out at the fast rate) do not count as a second: they are retried at the slow pace."""
 
     def __init__(self, rate: float = RATE, transport: httpx.BaseTransport | None = None, sleep=time.sleep,
                  clock=time.monotonic, slow_pause: float = SLOW_PAUSE_SECONDS):
@@ -420,7 +420,7 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
     verified wrong, answered 302 or 404, or had no tables (those do not change on a retry); a network or server error is tried
     again by the next run.
 
-    Order: (1) the sitemap and the saved slug map (``rebuild_map`` empties it); (2) the SWEEP of every sitemap slug not in the map
+    Order: (1) the sitemap and the saved slug map (``rebuild_map`` re-sweeps every slug, keeping old entries of those not yet re-swept); (2) the SWEEP of every sitemap slug not in the map
     (at most ``sweep_limit``): each page read once, its symbol recorded, stored when it is one of ours; (3) our companies whose
     symbol is in the map but not yet stored today, fetched by slug; (4) the name rule, for the companies still without a slug and
     only against slugs whose page had no symbol."""
@@ -437,7 +437,8 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
     failed: list[str] = [] if slugs else [f"sitemap: {'HTTP ' + str(status) if status else xml}"[:200]]
     not_verified: list[str] = []
     suspect: list[str] = []
-    slug_map = {} if rebuild_map else load_slug_map(sink)
+    slug_map = load_slug_map(sink)    # a rebuild starts from a copy: a slug not re-swept keeps its old entry, so a cut sweep never shrinks the saved map
+    reswept: set[str] = set()
     built = now_iso()
     ours = {symbol.strip().upper(): symbol for _, symbol, _ in companies}
     started = clock()
@@ -494,7 +495,7 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
     by_name_symbols: set[str] = set()
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
         # (2) the sweep
-        to_sweep = [s for s in slugs if s not in slug_map or slug_map[s] == "!1"]    # "!1": no page last time, asked once more
+        to_sweep = [s for s in slugs if rebuild_map or s not in slug_map or slug_map[s].startswith("!1")]    # "!1...": no page last time, asked once more
         if sweep_limit is not None:
             to_sweep = to_sweep[:sweep_limit]
         futures = [(s, pool.submit(work, _sweep_fetch, client, s, set(ours))) for s in to_sweep]
@@ -515,8 +516,16 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
                 suspect.append(got["note"])
                 continue
             totals["slugs_swept"] += 1
-            if got["symbol"] == "!":    # a first miss is "!1" (retried next run); only a second miss is final
-                slug_map[slug] = "!" if slug_map.get(slug) == "!1" else "!1"
+            reswept.add(slug)
+            if got["symbol"] == "!":    # a first miss is "!1:<day>" (retried); final only when a later day misses again
+                prev = slug_map.get(slug, "")
+                first_day = prev[3:] if prev.startswith("!1:") else ""
+                if prev == "!1" or (first_day and first_day < day):
+                    slug_map[slug] = "!"
+                elif prev.startswith("!1:"):
+                    slug_map[slug] = prev    # a second miss on the same day: still the first
+                else:
+                    slug_map[slug] = f"!1:{day}"
             else:
                 slug_map[slug] = got["symbol"]
             map_unsaved += 1
@@ -533,7 +542,7 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
             if unsaved >= SAVE_EVERY:
                 sink.kv_set(key, json.dumps(sorted(done)), now_iso())
                 unsaved = 0
-        if slugs:    # a failed or empty sitemap never overwrites the saved map (a --rebuild-map run starts from {})
+        if slugs:    # a failed or empty sitemap never overwrites the saved map (a --rebuild-map run starts from a copy of it and overwrites only what it re-sweeps)
             save_slug_map(sink, slug_map, built)
         sink.kv_set(key, json.dumps(sorted(done)), now_iso())
         unsaved = 0
@@ -605,7 +614,7 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
         raise refused
     unmatched = [symbol for _, symbol, _ in companies if symbol.strip().upper() not in by_symbol and symbol not in by_name_symbols]
     duplicates = {ours[k]: v for k, v in by_symbol.items() if len(v) > 1}
-    left = sum(1 for s in slugs if s not in slug_map)
+    left = sum(1 for s in slugs if (s not in reswept if rebuild_map else s not in slug_map) or slug_map.get(s, "").startswith("!1"))
     return {"more": deferred.is_set(), "failed": failed, "suspect": suspect, "not_verified": not_verified,
             "sitemap_companies": len(slugs), "slugs_in_map": len(slug_map), "slugs_left_to_sweep": left,
             "ours_by_symbol": len(by_symbol), "ours_by_name": len(by_name_symbols), "ours_unmatched": unmatched,

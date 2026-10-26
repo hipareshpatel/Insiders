@@ -60,6 +60,16 @@
 #   again; a run that ends on its time budget (exit 124) is started again and resumes; `restart` ignores the finished list;
 #   screener.in refusing (403, 429, 503: exit 75) fails the shard. Its own concurrency group `screener`, so it runs beside the
 #   NSE memory jobs: it touches no NSE call and no memory. Summary: artifacts `screener-download-0` and `screener-download-1`.
+# - tijori-download: the download of every company's financials page from Tijori Finance (owner request 26 Oct 2026; F189, TODO 92),
+#   gzipped JSON tables into R2 at raw/tijori/<date>/<SYMBOL>.json.gz. One runner (job `tijori`) for the whole universe: 8 threads
+#   behind one shared limiter at TIJORI_RATE requests a second (default 6; about 1,900 pages, 5 to 6 minutes). The first refusal
+#   (403, 429, 503, a challenge page) drops it to one request every 3 s and is recorded in the summary; a second one (exit 75)
+#   fails the job. `limit` (input) = a trial on the first N companies; a page stored for the date is not fetched again; exit 124
+#   leaves a marker and the command is started again. Its own concurrency group `maint-tijori`. No AI, no NSE, no memory
+#   write. Summary: artifact `tijori-download`.
+# - tijori-crosscheck: read only. Memory's exchange-file figures against the stored Tijori pages (no request) at Tijori's own
+#   precision, and where the stored screener pages agree with Tijori against memory, those pairs as leads; summary.json,
+#   crosscheck.csv and the markdown go up as the artifact `tijori-crosscheck`. Commits nothing. Group maint-ro-tijori-crosscheck.
 # - text-backfill: the one-time download of the filing text for the stored cards that have none in R2 (owner 26 Oct 2026; F165,
 #   TODO 51; the text cache `text/<news_id>.json.gz` only started on 25 Oct, so ~6,870 of 7,077 cards lack it). Fetches each
 #   attachment from NSE as the pipeline does (same client, headers, 3-5 s pacing, ZIP handling, 120 MB cap), reads it with the
@@ -111,9 +121,10 @@
 #                      requeue-failed, apply-verdicts, release-pruned, export-held, export-critic
 #   maint-bse          probe-bse, bse-results-test, bse-verify-kept, text-backfill-bse (reads BSE; writes only text/ objects)
 #   maint-screener     screener-download, screener-fill (the dry run reads screener.in)
+#   maint-tijori       tijori-download (reads tijorifinance.com; writes only raw/tijori/ objects)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
-#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
+#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), tijori-crosscheck (R2 and memory; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
 # A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
@@ -122,7 +133,7 @@
 # job failed or was cancelled. Commands that resume themselves are chained only when FINISHED:
 #   - seed-memory (seed-next) and memory-gaps-fill (gaps-next) start the next pass while any shard timed out (exit 124) and
 #     pass `then` along on that re-dispatch; the pass that finds nothing left lets `chain` run the first of `then`;
-#   - screener-download, screener-fill, screener-fill-apply, text-backfill and label-memory-apply (exit 124 = resume) leave a marker
+#   - screener-download, screener-fill, screener-fill-apply, tijori-download, text-backfill and label-memory-apply (exit 124 = resume) leave a marker
 #     artifact (`*-more-*`) when time ran out; with a non-empty `then`, `chain` then re-dispatches the same command with the
 #     same `then` (restart=false) instead of the next one; with `then` empty they stay manual, as before;
 #   - fill-memory starts its own seed-memory passes at its end and hands `then` to them; `chain` does nothing for it.
@@ -134,7 +145,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, tijori-download, tijori-crosscheck, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
         description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated)
@@ -184,13 +195,14 @@ concurrency:
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-referee","screener-explain","pdf-referee","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || inputs.command == 'tijori-download' && 'maint-tijori'
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","screener-referee","screener-explain","pdf-referee","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
 jobs:
   run:
-    if: inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse'
+    if: inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -432,6 +444,19 @@ jobs:
         with:
           name: screener-crosscheck
           path: ${{ runner.temp }}/crosscheck/
+          if-no-files-found: ignore
+      - name: Cross-check memory against the stored Tijori pages (reads only)
+        if: inputs.command == 'tijori-crosscheck'
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/tijori-crosscheck"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel tijori-crosscheck --json "$RUNNER_TEMP/tijori-crosscheck/summary.json" --csv "$RUNNER_TEMP/tijori-crosscheck/crosscheck.csv" --md "$RUNNER_TEMP/tijori-crosscheck/tijori-crosscheck.md" || code=$?
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'tijori-crosscheck'
+        with:
+          name: tijori-crosscheck
+          path: ${{ runner.temp }}/tijori-crosscheck/
           if-no-files-found: ignore
       - name: Referee the cross-check's disagreeing pairs with NSE's results XBRL (reads only)
         if: inputs.command == 'screener-referee'
@@ -888,9 +913,51 @@ jobs:
           path: ${{ runner.temp }}/more/
           if-no-files-found: ignore
 
+  # The Tijori download (F189, TODO 92). One runner for the whole universe (about 1,900 pages at 6 a second: 5 to 6 minutes);
+  # the first refusal slows it to one request every 3 s, a second one fails the job (exit 75). No AI, no NSE, no memory write.
+  tijori:
+    if: inputs.command == 'tijori-download'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 320
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: Download the Tijori financials pages
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/tijori" "$RUNNER_TEMP/more"
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel tijori-download --time-budget 17400 ${{ inputs.limit != '' && format('--limit {0}', inputs.limit) || '' }} ${{ inputs.restart && '--restart' || '' }} --json "$RUNNER_TEMP/tijori/tijori-download.json" || code=$?
+          if [ "$code" -eq 124 ]; then echo "::warning::time budget ended with companies left: run the same command again to resume"; echo more > "$RUNNER_TEMP/more/tijori"; exit 0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tijori-download
+          path: ${{ runner.temp }}/tijori/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tijori-more
+          path: ${{ runner.temp }}/more/
+          if-no-files-found: ignore
+
   # The chain (F164): runs the next command of `then` once this run's work is done and succeeded (see the header).
   chain:
-    needs: [run, seed, seed-next, gaps, gaps-next, screener, textback, textback-bse]
+    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse]
     if: always() && inputs.then != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     steps:
@@ -911,7 +978,7 @@ jobs:
             seed-memory|memory-gaps-fill)
               # seed-next / gaps-next already started the next pass, with `then`; the last pass chains
               if [ -n "$left" ]; then echo "companies left: the next pass carries the chain"; exit 0; fi ;;
-            screener-download|screener-fill|screener-fill-apply|label-memory-apply|text-backfill|text-backfill-bse)
+            screener-download|screener-fill|screener-fill-apply|label-memory-apply|text-backfill|text-backfill-bse|tijori-download)
               if [ -n "$left" ]; then
                 echo "not finished: resuming $CMD with the same chain"
                 gh workflow run maintenance.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f command="$CMD" -f restart=false -f then="$THEN"

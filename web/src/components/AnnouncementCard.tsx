@@ -18,7 +18,7 @@ import { Avatar, TickerChip } from "./Avatar";
 import { parseCard, QuantLine, SEVERITY_TEXT, SIGNAL } from "./FilingCard";
 import { plain, RichText } from "./RichText";
 import { governanceFlags,
-  boxSignal, changeTone, executionFact, missingOnTopic, near, PERIOD_WORDS, procedural, restates, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, tilesBesides,
+  boxSignal, changeTone, executionFact, missingOnTopic, near, PERIOD_WORDS, procedural, restates, ratedAmount, realValue, repeats, restatesHeadline, saysExGst, showsFigure, splitFacts, statesEps, tilesBesides,
   verifiedFact,
 } from "../lib/cardText";
 import { callTakeaways, type CallTakeawaysView } from "../lib/callTakeaways";
@@ -111,13 +111,14 @@ type LineSpec = NonNullable<ResultsSnapshot["lines"]>[number];
 const DEFAULT_LINES: LineSpec[] = [
   { key: "revenue", label: "Revenue", unit: "cr" }, { key: "ebitda", label: "EBITDA", unit: "cr" },
   { key: "ebitda_margin", label: "EBITDA margin", unit: "pct" },
-  { key: "pat", label: "PAT", unit: "cr" }, { key: "eps", label: "EPS (₹)", unit: "inr" },
+  { key: "pat", label: "PAT", unit: "cr" },   // owner rule 26 Oct 2026: no EPS on cards or stock pages
 ];
 
 /** The table's rows: the statement's own lines (company, bank, insurer) and the sector's KPIs, as the pipeline chose them. */
 export function resultLines(r: ResultsSnapshot): (LineSpec & { line: ResultLine })[] {
   const get = (key: string) => (r as unknown as Record<string, ResultLine | undefined>)[key];
   return (r.lines?.length ? r.lines : DEFAULT_LINES).flatMap((s) => {
+    if (/^eps/i.test(s.key)) return [];   // a stored card's table still has its EPS row: hidden (owner rule 26 Oct 2026)
     const line = get(s.key);
     return line && typeof line.value === "number" && !allZero(line) ? [{ ...s, line }] : [];
   });
@@ -175,7 +176,10 @@ function ResultsTable({ r, judged }: { r: ResultsSnapshot; judged: { label: stri
                   {label}
                   {note && <span className="block text-[11px] font-normal text-ink-3">{note}</span>}
                 </td>
-                <td className={cn(td, "font-semibold text-ink")}>{lineValue(line.value, unit)}{mark(line, "value")}</td>
+                <td className={cn(td, "font-semibold text-ink")}>
+                  {lineValue(line.value, unit)}{mark(line, "value")}
+                  {line.continuing != null && <span className="block text-[11px] font-normal text-ink-3">continuing {lineValue(line.continuing, unit)}</span>}
+                </td>
                 {py && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_year, unit)}{mark(line, "prev_year")}</td>}
                 {yoy && <td className={td}>{change(line, "yoy", bps, lower, key)}{py && <span className={under}>{was(line.prev_year, unit)}</span>}</td>}
                 {pq && <td className={cn(td, "hidden text-ink-2 sm:table-cell")}>{was(line.prev_quarter, unit)}{mark(line, "prev_quarter")}</td>}
@@ -209,7 +213,7 @@ function tableShows(r: ResultsSnapshot | null | undefined): r is ResultsSnapshot
 /** A results bullet that only restates numbers the P&L table shows adds nothing; the card hides it. */
 function coveredByTable(fact: Fact, r: ResultsSnapshot): boolean {
   const known = resultLines(r).flatMap(({ line }) =>
-    [line.value, line.prev_year, line.prev_quarter, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps]
+    [line.value, line.prev_year, line.prev_quarter, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps, line.continuing]
       .filter((v): v is number => v != null).map(Math.abs));
   const raw = plain(fact).replace(PERIOD_WORDS, " ").match(/\d[\d,]*(?:\.\d+)?/g) ?? [];
   return raw.length > 0 && raw.every((x) => near(Number(x.replace(/,/g, "")), known, x));
@@ -559,12 +563,12 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
   const headline = plain(card.headline);
   const factLimit = event === "RESULTS" || longRead ? 4 : 3;
   // key tiles the headline already gives are left out; the rest wait in "Full analysis"
-  const tiles = tilesFor && card.key_numbers.length >= 2 ? tilesBesides(card.key_numbers, headline).slice(0, 4) : [];
+  const tiles = tilesFor && card.key_numbers.length >= 2 ? tilesBesides(card.key_numbers.filter((k) => !statesEps(k.label, k.value, k.change)), headline).slice(0, 4) : [];
   const rated = rating ? ratedAmount(headline, ...card.what_happened.filter((f) => verifiedFact(f, g.ungrounded)).map(plain)) : null;
   // every figure and name the table, tiles and blocks show, so a point, a line or a chip that only restates them is
   // left out too (UCO's Key numbers repeated the table's EPS)
   const blockText = [
-    table ? resultLines(table).flatMap(({ line }) => [line.value, line.prev_year, line.prev_quarter, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps])
+    table ? resultLines(table).flatMap(({ line }) => [line.value, line.prev_year, line.prev_quarter, line.yoy_pct, line.qoq_pct, line.yoy_bps, line.qoq_bps, line.continuing])
       .filter((v): v is number => v != null).map((v) => String(Math.abs(v))).join(" ") : "",
     dealBlock ? [...dealFacts(card).map((f) => f.value), ...(card.scale?.against ?? []).flatMap((a) => [a.pct.toFixed(1), a.base_cr]),
                  card.scale?.per_year?.pct.toFixed(1)].filter((x) => x != null).join(" ") : "",
@@ -572,14 +576,14 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
     tiles.map((k) => `${k.label} ${k.value} ${k.change ?? ""}`).join(" "),
     (card.volume_strip?.months ?? []).map((m) => `${m.value} ${m.yoy_pct ?? ""}`).join(" "),
   ].join(" ");
-  const unique = card.what_happened.filter((fact) => !(table && coveredByTable(fact, table)) && !repeats(plain(fact), `${headline} ${blockText}`));
+  const unique = card.what_happened.filter((fact) => !statesEps(plain(fact)) && !(table && coveredByTable(fact, table)) && !repeats(plain(fact), `${headline} ${blockText}`));
   // the verified face: only facts whose quoted sentence code found in the filing; the rest is the AI's reading
   const split = splitFacts(unique, g.ungrounded, factLimit);
   const facts = split.face, unverified = split.unverified;
   const shownText = [headline, blockText, ...facts.map(plain)].join(" ");
   const box = boxItems(card, (s) =>
     (s.type === "SCALE" && ((dealBlock && !!card.scale) || restatesHeadline(s.text, headline)))
-    || (s.type === "RATING_LIQUIDITY" && !!rating && /outlook/i.test(s.text)) || repeats(s.text, shownText));
+    || (s.type === "RATING_LIQUIDITY" && !!rating && /outlook/i.test(s.text)) || statesEps(s.text) || repeats(s.text, shownText));
   const faceText = [shownText, ...box.insights.map((i) => i.text), box.signal?.text ?? ""].join(" ");
   const decision = decisionLines(row, card, table, faceText);
   // "Our reading" never restates the headline (owner, 2026-10-21: it showed one restatement); measured over 400 live
@@ -878,7 +882,7 @@ export function AnnouncementCard({ row, defaultOpen = false, highlight = false, 
         // the share image is the card's face only: what waits under "Full analysis" stays out (owner, 2026-10-22)
         <DeepDive row={row} card={card} shown={box.insights.length} shownSignal={box.signal}
           moreFacts={split.more} faceText={faceText} thinShown={thin} exporting={exporting}
-          keyNumbers={card.key_numbers.filter((k) => !tiles.includes(k) && !showsFigure(faceText, k.value))} />
+          keyNumbers={card.key_numbers.filter((k) => !tiles.includes(k) && !statesEps(k.label, k.value, k.change) && !showsFigure(faceText, k.value))} />
       )}
     </article>
   );

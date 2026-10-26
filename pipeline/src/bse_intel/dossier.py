@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import (card_ebitda_profit_v2, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, memory_call_v2,
+from .settings import (card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, memory_call_v2,
                        memory_restated, memory_screener, memory_year_check)
 from . import footer_plausible
 from .models import _PER_OTHER, Filing, Pass2Output
@@ -526,7 +526,7 @@ FLOW_METRICS = frozenset({
     "interest_earned", "interest_expended", "pre_provision_operating_profit", "provisions"})
 # what a results filing owns for its quarter: the flows, and the per-share figures, which a presentation often gives
 # annualised (deep audit F-02: CSB Bank's Q1FY27 EPS 35.00 from its concall presentation over the results' 8.65)
-QUARTER_OWNED = FLOW_METRICS | {"eps", "basic_eps", "diluted_eps"}
+QUARTER_OWNED = FLOW_METRICS | {"eps", "basic_eps", "diluted_eps", "eps_total", "eps_continuing"}
 RECONCILE_TOLERANCE = 0.02  # a filing's own crore figures are rounded
 
 
@@ -708,7 +708,8 @@ def _cap_metrics(entries: list[dict]) -> list[dict]:
 STANDALONE_KEY = "standalone"
 # Stored for the company page and later readers, never shown to the model: the view (prompts, card checks) leaves them
 # out until a reader is built for them (F166)
-MEMORY_ONLY_METRICS = frozenset({"pat_minority"})
+# F188: the whole-company and the continuing-operations EPS, which only the results table with CARD_EPS_WHOLE reads
+MEMORY_ONLY_METRICS = frozenset({"pat_minority", "eps_total", "eps_continuing"})
 
 
 # Lists another writer may add entries to while the pipeline holds a dossier, and how an entry is told apart
@@ -1653,6 +1654,8 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
             entries.sort(key=lambda e: (str(due_date(e["period"]) or ""), e["period"]))
             bases = {e["_basis"] for e in entries}
             shared = next(iter(bases)) if len(bases) == 1 else None
+            if name in EPS_METRICS:
+                continue   # owner rule 26 Oct 2026: no EPS on cards or stock pages; memory keeps it, the model is not given it
             if name == "eps":
                 entries = _eps_on_one_basis(dossier, entries, as_known)   # EPS_SHARE_ADJUST (F153); a no-op when off
             out[name] = ([f"basis: {shared.lower()}"] if shared else []) + [
@@ -1934,7 +1937,7 @@ _RESULT_METRICS = (
     ("ebitda_margin", ("ebitda_margin", "opm", "operating_margin")),
     ("pbt", ("pbt", "profit_before_tax")),
     ("pat", ("pat", "net_profit", "profit_after_tax")),
-    ("eps", ("eps", "basic_eps", "diluted_eps")),
+    ("eps", ("eps", "basic_eps", "diluted_eps")),   # still worked out (memory side); never shown (owner rule 26 Oct 2026, below)
     ("exceptional_items", ("exceptional_items",)),
     # a bank's own lines (the banking template): its table is read on these, not on revenue and EBITDA
     ("interest_earned", ("interest_earned",)),
@@ -1961,18 +1964,20 @@ _LENSES = (
                                  ("ppop", "Operating profit", "cr"), ("provisions", "Provisions", "cr"),
                                  ("exceptional_items", "Exceptional items", "cr"), ("pbt", "PBT", "cr"),
                                  ("pat", "Net profit", "cr"), ("gnpa_pct", "Gross NPA", "pct"),
-                                 ("nnpa_pct", "Net NPA", "pct"), ("roa_pct", "Return on assets", "pct"),
-                                 ("eps", "EPS (₹)", "inr"))),
+                                 ("nnpa_pct", "Net NPA", "pct"), ("roa_pct", "Return on assets", "pct"))),
     ("insurer", "gross_premium", (("gross_premium", "Gross premium", "cr"), ("revenue", "Net premium", "cr"),
                                   ("incurred_claims", "Claims", "cr"), ("claims_ratio", "Claims ratio", "pct"),
                                   ("combined_ratio", "Combined ratio", "pct"), ("pbt", "PBT", "cr"),
-                                  ("pat", "PAT", "cr"), ("eps", "EPS (₹)", "inr"))),
+                                  ("pat", "PAT", "cr"))),
     # a company's table is the five lines that tell the quarter, plus at most one mover (owner, 2026-10-20, O15: "show
     # only revenue, EBITDA, margin, PAT and EPS, and the one line that moved profit when it matters"); PBT and
     # exceptional items stay in the snapshot, off the table unless exceptional items are that mover
     ("company", "revenue", (("revenue", "Revenue", "cr"), ("ebitda", "EBITDA", "cr"), ("ebitda_margin", "EBITDA margin", "pct"),
-                            ("pat", "PAT", "cr"), ("eps", "EPS (₹)", "inr"))),
+                            ("pat", "PAT", "cr"))),
 )
+# owner rule 26 Oct 2026: no EPS on cards or stock pages. Memory keeps every EPS figure; the results table, the lines the
+# model is given and the card text do not carry it (the line lists above have no EPS row, results_snapshot drops the row).
+EPS_METRICS = frozenset({"eps", "basic_eps", "diluted_eps", "eps_total", "eps_continuing"})
 # The lines that can be a company table's mover (O15): (key, names in memory, sign of its pull on profit, label). The
 # two operating costs are judged on their change beyond what the revenue change carries, so a cost that only grew with
 # sales is no mover, and a payroll that jumped ahead of output is (a new plant staffed before it produces).
@@ -2245,7 +2250,7 @@ def _ebitda_lines_v2(out: dict, lines: list[dict], lookup, period: str, printed:
 
 
 def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | list[dict] = (),
-                     printed: str | None = None, like: dict | None = None) -> dict | None:
+                     printed: str | None = None, like: dict | None = None, with_eps: bool = False) -> dict | None:
     """This filing's latest quarter against a year ago and the previous quarter, for the results tables.
 
     Each metric carries its value, the year-ago and previous-quarter values when memory has them,
@@ -2306,7 +2311,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         PBT ₹1,247.11 Cr read "1,24,7Ll", Kapston's consolidated year-ago PAT missing from its row (reviews 1, 5)."""
         if p == period or not numbers or names[0] in ("ebitda", "ebitda_margin"):
             return False
-        units = _UNITS if names[0] in _PRINTED_CR or names[0] == "pat_owners" else (1,) if names[0] == "eps" or names[0] in ratios else ()
+        units = _UNITS if names[0] in _PRINTED_CR or names[0] == "pat_owners" else (1,) if names[0] in ("eps", "eps_total") or names[0] in ratios else ()
         entry, value = stored(names, p)
         current = table.get((entry["metric"], period), {}).get("value") if entry else None
         if not units or value is None or current is None or abs(value) < 1 or abs(current) < 1:
@@ -2462,15 +2467,44 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             profit_label = next((x.get("label") for x in like.get("lines") or [] if x.get("key") == "pat" and x.get("named")), None)
         profit_metric = profit_metric or "pat"
 
+    # CARD_EPS_WHOLE (F188): the EPS line is the whole company's where memory has it for this quarter, else as before
+    eps_whole = card_eps_whole() and lookup(("eps_total",), period) is not None
+
+    def discontinued(p: str) -> bool:
+        """Whether a period had a discontinued operation: profit and continuing profit apart by more than ₹1 Cr and 0.5%
+        (a file without a continuing profit says nothing, and counts as none)."""
+        whole, continuing = stored(("pat",), p)[1], stored(("pat_continuing",), p)[1]
+        return whole is not None and continuing is not None and abs(whole - continuing) > max(1.0, 0.005 * abs(whole))
+
+    def eps_pick(p: str | None) -> float | None:
+        """The whole-company EPS of a period, else the `eps` memory has, but not across bases: an older period with no
+        whole-company figure and a discontinued operation has only the continuing EPS, which is no base for this quarter's
+        whole one (ABB India's year-ago EPS would be set beside 84.17 as if the same thing)."""
+        total = lookup(("eps_total",), p)
+        if total is not None:
+            return total
+        if p and p != period and discontinued(p):
+            return None
+        return lookup(_RESULT_METRICS[5][1], p)
+
     for key, names in _RESULT_METRICS:
         if v2 and key == "pat" and profit_metric == "pat_owners":
             names = ("pat_owners",)
         pick = margin if key == "ebitda_margin" else nii if key == "nii" else (lambda p, names=names: lookup(names, p))
+        if key == "eps" and eps_whole:
+            pick = eps_pick
         row = line(pick, key in _BPS_LINES, key)
         if row is None:
             continue
         if ebitda_mixed and key in ("ebitda", "ebitda_margin"):
             row = {k: v for k, v in row.items() if k == "value"}
+        if key == "eps" and eps_whole:
+            # the continuing-operations EPS beside the whole company's, only when they differ (F188), and only the file's own:
+            # a quarter with eps_total was read with both tags, so a missing eps_continuing is a file that does not tag one, and
+            # memory's `eps` is never called "continuing" by inference
+            continuing = lookup(("eps_continuing",), period)
+            if continuing is not None and abs(continuing - row["value"]) > 0.01:
+                row["continuing"] = continuing
         if key == "eps":
             # EPS_SHARE_ADJUST (F153): the changes on one share count; the profit EPS is on is the owners', else the total
             from . import eps_adjust
@@ -2492,6 +2526,9 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         out[key] = row
     if len(out) <= 3:
         return None
+    if not with_eps:   # `with_eps` is for the tests of the memory-side EPS logic only; no caller on a card path sets it
+        out.pop("eps", None)   # owner rule 26 Oct 2026: no EPS on cards or stock pages (counted above, so the table's gate is unchanged)
+        out.pop("eps_hidden", None)
     if dossier.get("year_held"):
         # the periods this table reads, and the half year, nine months or year each quarter is derived from
         reads = {p for p in periods.values() if p}
@@ -2505,6 +2542,8 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             out["held"] = held_here   # each with its reason; the figure itself is not shown
     lens, rows = next(((name, rows) for name, top, rows in _LENSES if top in out), ("company", _LENSES[-1][2]))
     lines = [{"key": key, "label": label, "unit": unit} for key, label, unit in rows if key in out]
+    if with_eps and "eps" in out:
+        lines.append({"key": "eps", "label": "EPS (₹)", "unit": "inr"})
     if v2:
         for spec in lines:
             if spec["key"] == "pat" and (profit_label or profit_metric == "pat_owners"):

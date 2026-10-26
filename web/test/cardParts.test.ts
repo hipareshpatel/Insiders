@@ -42,3 +42,14 @@ test("an index that points nowhere is ignored", () => {
   assert.deepEqual(v.part1.facts, []);
   assert.deepEqual(v.part2.lines, []);
 });
+
+test("a stored card's EPS key number and EPS line are not shown, a dividend per share is (owner rule 26 Oct 2026)", () => {
+  const card = { ...(base as object),
+    what_happened: [{ text: "EPS ₹5.20 for the quarter", quote: "EPS 5.20" }, { text: "Dividend ₹2 per share declared", quote: "dividend 2" }],
+    key_numbers: [{ label: "EPS", value: "₹5.20 per share", change: "+10% YoY" }, { label: "PAT", value: "₹46 Cr" }],
+    parts: { v: 1, part1: { headline: true, what_happened: [0, 1], key_numbers: [0, 1], blocks: [] },
+             part2: { what_happened: [], key_numbers: [], blocks: [] } } } as never;
+  const v = partsView(card)!;
+  assert.deepEqual(v.part1.facts, ["Dividend ₹2 per share declared"]);
+  assert.deepEqual(v.part1.keyNumbers.map((k) => k.label), ["PAT"]);
+});

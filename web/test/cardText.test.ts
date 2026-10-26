@@ -1,7 +1,7 @@
 // The card's "say each thing once" rules (src/lib/cardText.ts). Run: npm test (node --test, types stripped).
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { changeTone, executionFact, figures, repeats, showsFigure } from "../src/lib/cardText.ts";
+import { changeTone, executionFact, figures, repeats, showsFigure, statesEps } from "../src/lib/cardText.ts";
 
 test("a point that restates the headline is a repeat", () => {
   // the owner's Punjab & Sind Bank card: headline and first point were the same figure
@@ -214,4 +214,17 @@ test("governance flags: exits, orders, defaults; never an appointment", async ()
   assert.deepEqual(governanceFlags("Company defaulted on interest on NCDs due 15 Oct"), ["Default"]);
   assert.deepEqual(governanceFlags("Board appoints M/s ABC & Co as statutory auditors for five years"), []);
   assert.deepEqual(governanceFlags("No fraud was reported by the auditors"), []);
+});
+
+test("a stored card line that states EPS is told apart from a dividend per share (owner rule 26 Oct 2026)", () => {
+  for (const t of ["EPS ₹5.20", "Basic EPS of 3.1", "Earnings per share rose 12%", "profit per share ₹4", "Diluted earnings a share ₹2"]) assert.ok(statesEps(t), t);
+  for (const t of ["Dividend of ₹5 per share", "Interim dividend 250% (₹2.5 a share)", "Net profit ₹46 Cr", "steps taken"]) assert.ok(!statesEps(t), t);
+});
+
+test("more ways to write EPS are caught and per-share figures that are not EPS stay (owner rule 26 Oct 2026)", () => {
+  for (const t of ["E.P.S. ₹5", "earnings of ₹5 a share", "earnings/share ₹5", "PAT per share ₹3", "diluted earnings per ordinary share ₹4", "Earnings per equity share 3",
+    "profit after tax per share ₹3", "PAT/share 3", "profit/share 3", "earnings ₹5 per share", "earning ₹5/share", "earnings of ₹ 5 / share",
+    "earnings per ₹10 share 4", "Earnings per equity share of ₹10 each 4.5", "earnings per share ₹५.२"]) assert.ok(statesEps(t), t);
+  for (const t of ["Dividend ₹5 per share", "DPS ₹5", "Book value per share ₹40", "NAV per share ₹12", "Issue price ₹10 per share", "Net profit ₹5 Cr",
+    "Interim dividend 250% (₹2.5 a share)", "Final dividend of ₹५ per share"]) assert.ok(!statesEps(t), t);
 });

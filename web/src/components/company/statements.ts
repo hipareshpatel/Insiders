@@ -12,22 +12,8 @@ export type Cell = number | null;
 export type Row = { label: string; cells: Cell[]; kind?: "pct" | "days" | "ratio" | "per_share"; strong?: boolean };
 export type Table = { columns: string[]; rows: Row[] };
 
-export type CorporateAction = { ex_date: string; kind: string; factor?: number; subject?: string };
-const PER_SHARE = new Set(["eps", "basic_eps", "diluted_eps"]);
-
-/** Per-share figures on today's share count: a period ending before a split or bonus has its EPS divided by the shares
- * one share became (corporate_actions.py), so a quarter before LIC's 1:1 bonus is not twice the one after it and a TTM
- * EPS sums like with like (data chain audit, 22 Oct 2026). Every other figure is untouched. */
-export function adjustPerShare(metrics: Metric[], actions: CorporateAction[] | undefined | null): Metric[] {
-  const steps = (actions ?? []).filter((a) => a.factor && a.factor > 0 && a.factor !== 1 && a.ex_date);
-  if (!steps.length) return metrics;
-  return metrics.map((m) => {
-    if (!PER_SHARE.has(m.metric) || typeof m.value !== "number") return m;
-    const end = periodEnd(String(m.period));
-    const factor = steps.filter((a) => a.ex_date > end).reduce((f, a) => f * (a.factor as number), 1);
-    return factor === 1 ? m : { ...m, value: Math.round((m.value / factor) * 100) / 100 };
-  });
-}
+// owner rule 26 Oct 2026: no EPS on cards or stock pages. Memory keeps every EPS figure; no row, TTM or split adjustment of it here.
+const NO_EPS = new Set(["eps", "basic_eps", "diluted_eps", "eps_total", "eps_continuing"]);
 
 const QUARTERS = 12;
 const YEARS = 6;
@@ -35,6 +21,7 @@ const YEARS = 6;
 function collect(metrics: Metric[]): Values {
   const out: Values = new Map();
   for (const m of metrics) {
+    if (NO_EPS.has(m.metric)) continue;
     if (typeof m.value !== "number" || !Number.isFinite(m.value)) continue;
     const row = out.get(m.metric) ?? new Map<string, number>();
     row.set(m.period, m.value);
@@ -77,7 +64,7 @@ function lines(v: Values, p: string, bank: boolean): Record<string, Cell> {
     const ppop = g("pre_provision_operating_profit") ?? (nii != null && opex != null ? nii + (g("other_income") ?? 0) - opex : null);
     return {
       revenue, interest, nii, other_income: g("other_income"), opex, ppop, provisions: g("provisions"), pbt: g("pbt"),
-      tax_pct: pct(g("tax_expense"), g("pbt")), pat: g("pat"), eps: g("eps"),
+      tax_pct: pct(g("tax_expense"), g("pbt")), pat: g("pat"),
       gnpa: g("gnpa_pct") ?? g("gnpa_ratio"), nnpa: g("nnpa_pct") ?? g("nnpa_ratio"),
     };
   }
@@ -89,7 +76,7 @@ function lines(v: Values, p: string, bank: boolean): Record<string, Cell> {
     revenue, expenses: sub(revenue, ebitda), ebitda, opm: g("ebitda_margin") ?? pct(ebitda, revenue),
     other_income: g("other_income"), interest: g("finance_cost"), depreciation: g("depreciation"),
     exceptional: g("exceptional_items"), pbt: g("pbt"), tax_pct: pct(g("tax_expense"), g("pbt")),
-    pat: g("pat"), pat_owners: g("pat_owners"), eps: g("eps"),
+    pat: g("pat"), pat_owners: g("pat_owners"),
   };
 }
 
@@ -97,13 +84,13 @@ const CORPORATE: [string, string, Row["kind"]?, boolean?][] = [
   ["revenue", "Sales", undefined, true], ["expenses", "Expenses"], ["ebitda", "Operating profit", undefined, true],
   ["opm", "OPM %", "pct"], ["other_income", "Other income"], ["interest", "Interest"], ["depreciation", "Depreciation"],
   ["exceptional", "Exceptional items"], ["pbt", "Profit before tax"], ["tax_pct", "Tax %", "pct"],
-  ["pat", "Net profit", undefined, true], ["pat_owners", "Profit to shareholders"], ["eps", "EPS (₹)", "per_share"],
+  ["pat", "Net profit", undefined, true], ["pat_owners", "Profit to shareholders"],
 ];
 const BANK: [string, string, Row["kind"]?, boolean?][] = [
   ["revenue", "Interest earned", undefined, true], ["interest", "Interest expended"], ["nii", "Net interest income", undefined, true],
   ["other_income", "Other income"], ["opex", "Operating expenses"], ["ppop", "Operating profit (before provisions)", undefined, true],
   ["provisions", "Provisions"], ["pbt", "Profit before tax"], ["tax_pct", "Tax %", "pct"],
-  ["pat", "Net profit", undefined, true], ["eps", "EPS (₹)", "per_share"], ["gnpa", "Gross NPA %", "pct"], ["nnpa", "Net NPA %", "pct"],
+  ["pat", "Net profit", undefined, true], ["gnpa", "Gross NPA %", "pct"], ["nnpa", "Net NPA %", "pct"],
 ];
 
 function table(columns: string[], perColumn: Record<string, Cell>[], bank: boolean): Table {
@@ -126,7 +113,7 @@ export function quarterlyTable(metrics: Metric[]): Table {
 }
 
 const ADDITIVE = ["revenue", "total_income", "other_income", "finance_cost", "depreciation", "exceptional_items", "pbt", "tax_expense",
-  "pat", "pat_owners", "eps", "ebitda", "interest_earned", "interest_expended", "employee_cost", "other_expenses", "provisions",
+  "pat", "pat_owners", "ebitda", "interest_earned", "interest_expended", "employee_cost", "other_expenses", "provisions",
   "pre_provision_operating_profit"];
 
 /** The four quarters to the latest one, when memory has all four and the latest is after the last year's end. */

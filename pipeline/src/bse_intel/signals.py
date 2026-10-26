@@ -703,14 +703,17 @@ def _period_kind(period: str) -> str:
     return "FY" if p.startswith("FY") else "M"
 
 
+_NO_EPS = {"eps", "basic_eps", "diluted_eps", "eps_total", "eps_continuing"}
+
+
 def _metric_shifts(after: dict, filing: Filing, skip: set[str]) -> list[Signal]:
     by_metric: dict[str, list[dict]] = {}
     for m in after.get("financial_metrics", []):
         by_metric.setdefault(m["metric"], []).append(m)
     found: list[tuple[float, Signal]] = []
     for m in _own_latest(after, filing.news_id):
-        if m["metric"] in skip:
-            continue
+        if m["metric"] in skip or m["metric"] in _NO_EPS:
+            continue   # owner rule 26 Oct 2026: no EPS on cards or stock pages (no "EPS up 35%" signal; memory keeps it)
         end = due_date(m["period"])
         if end is None:
             continue

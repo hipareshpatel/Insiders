@@ -172,3 +172,25 @@ Sakar's "30+", "40", "18", which cannot prove their label). Left: a date such as
 
 Not changed yet: dependence, mix and risk points not taken where the page was read (4 of the 45). This is the next prompt
 change if run 5 still misses them.
+
+### Run 5 (maintenance run 40326324044, 26 Oct 2026, 18:25-20:12 IST): FAIL on recall
+
+10 documents asked, **5 read, 5 failed**: every model on the free route answered server errors (InternalServerError, then
+circuit open) for nse-106828232, 106828285 and three more; nothing of ours. The 5 read gave 55 points; the checks at the
+current head keep 52 (4 unit drops of the run are kept now). Scored by an independent agent against the blind keys
+(`scratchpad/review5/score.md`; one key per filing, 39 important reference points graded by that agent):
+
+| Bar | Result | |
+|---|---|---|
+| Important points kept, ≥ 85% | 24 of 39 = 61.5% (72.7% without PNG Sreva) | FAIL |
+| Wrong, ≤ 2% of kept | 1 of 52 = 1.9% (VMM: "3,000 small-format stores"; the 3,000 are large-format) | pass, at the edge |
+| Unit errors, 0 | 0 (every value_base recomputed) | pass |
+
+Why the 15 important points were missed:
+- **13 never asked for or never returned by the model** (47 of all 50 misses): risks, one-offs and dependences above all
+  (one risk point in the whole run; ERIS exceptional items ₹36 Cr; ABREL PAT from discontinued operations; VMM festival shift
+  Q2 to Q3; PNG Sreva parent dependence and gold price risk). This is the reading, not the checks: the next fix is the ask.
+- **2 dropped by the quote check, both true** (PNG Sreva page 25, checked by the lead against the text): the slide is two
+  columns read straight across, so each sentence is split by the other column's words; and the model gave page 24, the
+  slide's printed number. Fix class: look on the cited page and the next, and match a quote across a two-column line split.
+- 1 minor dropped by the unit check (ABREL portfolio GDV ₹77,718 Cr; "Cr" is in the table heading, not the quote).

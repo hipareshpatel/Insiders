@@ -235,3 +235,12 @@ def test_only_a_caro_remark_that_something_is_wrong_is_a_flag():
                "Undisputed dues of Rs 3.2 crore were outstanding for a period of more than six months from the date they became payable."]
     assert not any(annual_xbrl.caro_adverse(t) for t in clean)
     assert all(annual_xbrl.caro_adverse(t) for t in adverse)
+
+
+def test_the_annual_table_has_no_eps_line_but_the_data_keeps_it():
+    from datetime import date
+    r = annual_xbrl.AnnualReport(basis="CONSOLIDATED", period_end=date(2026, 3, 31),
+                                 current={"revenue": 100.0, "pat": 10.0, "eps": 5.2}, prior={"revenue": 90.0, "pat": 9.0, "eps": 4.8})
+    text = annual_xbrl.table([r])
+    assert "revenue from operations" in text and "profit for the year" in text and "EPS" not in text and "share" not in text
+    assert r.current["eps"] == 5.2

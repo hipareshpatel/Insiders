@@ -171,3 +171,22 @@ const GOVERNANCE_FLAGS: [RegExp, string][] = [
 export function governanceFlags(text: string): string[] {
   return GOVERNANCE_FLAGS.filter(([re]) => re.test(text)).map(([, label]) => label);
 }
+
+/** Owner rule 26 Oct 2026: no EPS on cards or stock pages. True when a line of a stored card states earnings per share
+ * ("EPS", "E.P.S.", "earnings per share", "earnings/share", "earnings ₹5 per share", "earnings per ₹10 share", "profit per
+ * share", "profit after tax per share", "PAT/share"); a dividend, DPS, book value, NAV or price per share is not EPS and
+ * stays. Used to keep EPS rows off the face of stored cards; the pipeline's no_eps.py guards new cards (it is wider: per-share figures, LPS). */
+const D = "\\d";
+const AMT = "(?:(?:rs\\.?|inr|₹)\\s*)?\\d[\\d.,]*\\s*(?:/-)?";
+const PER = "(?:\\s+(?:per|a|each)\\s+|\\s*/\\s*)";
+const SHARE = "(?:(?:rs\\.?|inr|₹)\\s*\\d[\\d.,]*\\s*(?:/-)?\\s+)?(?:(?:equity|ordinary|diluted|basic)\\s+)*share"
+  + "(?:\\s+of\\s+(?:rs\\.?|inr|₹)\\s*\\d[\\d.,]*(?:\\s*/-)?(?:\\s+each)?)?";
+const QUAL = "(?:\\s*\\([^)]{0,40}\\))?";
+const EPS_SOURCE = ("(?<![\\p{L}\\p{N}_])(?:eps|e\\.p\\.s\\.?|"
+  + "(?:diluted\\s+|basic\\s+)?earnings?" + QUAL + PER + SHARE + "|"
+  + "earnings?\\s+(?:of\\s+)?" + AMT + PER + SHARE + "|"
+  + "(?:profit|pat)\\s+(?:of\\s+)?" + AMT + PER + SHARE + "|"
+  + "(?:net\\s+)?(?:profit(?:\\s+after\\s+tax)?|income|pat)" + QUAL + PER + SHARE + "|"
+  + "per[\\s-]share\\s+(?:earnings|profit|income))(?![\\p{L}\\p{N}_])").split(D).join("\\p{Nd}");
+export const EPS_TEXT = new RegExp(EPS_SOURCE, "iu");
+export const statesEps = (...texts: (string | null | undefined)[]): boolean => texts.some((t) => !!t && EPS_TEXT.test(t));

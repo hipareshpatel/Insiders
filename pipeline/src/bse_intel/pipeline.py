@@ -67,7 +67,7 @@ from .signals import priced_for
 from .sinks.platform import PlatformSink
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
-from . import eps_adjust
+from . import eps_adjust, no_eps
 from . import annual_xbrl
 from . import directions
 from . import results_card
@@ -617,7 +617,6 @@ _KEY_METRIC = (("pat_owners", re.compile(r"\b(?:to|for)\s+(?:the\s+)?(?:share|eq
                ("ebitda", re.compile(r"\bebitda\b(?!.*margin)", re.I)),
                ("pbt", re.compile(r"\bpbt\b|profit before tax", re.I)),
                ("pat", re.compile(r"\bpat\b|net profit|profit after tax|net income", re.I)),
-               ("eps", re.compile(r"\beps\b|earnings per share", re.I)),
                ("revenue", re.compile(r"revenue|net sales|income from operations|\bsales\b", re.I)))
 
 
@@ -649,7 +648,7 @@ def _label_period(label: str, default: str, available: dict) -> str | None:
 
 def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
                      sources: tuple[str, ...] = ()) -> list[str]:
-    """A results card's key numbers for revenue, EBITDA, PBT, PAT and EPS set from the XBRL file: exact
+    """A results card's key numbers for revenue, EBITDA, PBT and PAT set from the XBRL file: exact
     value and YoY (SML's "revenue -40% YoY" was the fall from the previous quarter; its "EBITDA ₹0.75 Cr"
     was PBT). Only on the card's own basis and quarter. Returns what changed."""
     if out.card is None or tagged.kind != "RESULTS" or not tagged.period:
@@ -701,7 +700,7 @@ def xbrl_key_numbers(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult",
         group = by_period.get(wanted, {}).get("pat")
         if metric == "pat_owners" and m.value == 0 and group is not None and group.value:
             continue   # a zero the file carries for the owners' share beside a real profit is a filler (Orient Bell)
-        value = f"₹{m.value:,.2f}" + (" per share" if metric == "eps" else " Cr")
+        value = f"₹{m.value:,.2f} Cr"
         # The value is one tagged fact and is trusted; the YoY needs a second one, and a wrong period
         # match produced headline reversals in audit round 1 (Kanoria Q1FY27 revenue +129% rewritten to
         # +1.5%). Accept it only when the year-ago figure it implies is in the filing as well.
@@ -3552,6 +3551,8 @@ class Pipeline:
             changes += computed.enforce(candidate, produced)
             changes += directions.guard(candidate, tagged)   # tax, inventory, EPS, credit cost: the file decides
             changes += directions.multiple_guard(candidate)   # "more than double" for +74%: the amounts decide
+            # owner rule 26 Oct 2026: no EPS on new cards; last of the text edits, so nothing written above slips past it
+            changes += no_eps.drop_eps(candidate)
             if card_two_parts() and candidate.card is not None:
                 # part 2 lines that fail the checks are hidden one by one, before the whole-card checks (F152)
                 two_hidden[id(candidate)] = two_parts.hide_part2(

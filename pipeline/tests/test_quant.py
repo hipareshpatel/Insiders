@@ -345,12 +345,12 @@ def test_the_results_table_drops_a_comparative_the_filing_does_not_print():
 
     text = ("Revenue from operations 24,546.37 23,165.45 19,990.42 47,711.82\n"
             "Basic EPS (Rs.) 2.77 2.79 2.32 (refer note 6: restated for the bonus issue)")
-    snap = results_snapshot(dossier(), "n2", printed=text)
+    snap = results_snapshot(dossier(), "n2", printed=text, with_eps=True)
     assert "prev_year" not in snap["revenue"] and "yoy_pct" not in snap["revenue"]
     assert snap["revenue"]["prev_quarter"] == 23165.45 and snap["revenue"]["qoq_pct"] == 6.0
     assert "prev_year" not in snap["eps"] and "yoy_pct" not in snap["eps"] and snap["eps"]["prev_quarter"] == 2.79
     # without the text (the maintenance refresh) the table is as before
-    assert results_snapshot(dossier(), "n2")["eps"]["yoy_pct"] == -20.4
+    assert results_snapshot(dossier(), "n2", with_eps=True)["eps"]["yoy_pct"] == -20.4
     # a statement whose table the text missed keeps its comparatives: nothing of the current quarter is printed
     assert results_snapshot(dossier(), "n2", printed="Outcome of the board meeting held today")["revenue"]["yoy_pct"] == 21.6
 
@@ -529,8 +529,8 @@ def test_a_company_table_shows_five_lines_and_the_one_that_moved_profit():
     assert snap["lines"] == [{"key": "revenue", "label": "Revenue", "unit": "cr"}, {"key": "ebitda", "label": "EBITDA", "unit": "cr"},
                              {"key": "ebitda_margin", "label": "EBITDA margin", "unit": "pct"},
                              {"key": "employee_cost", "label": "Employee cost", "unit": "cr", "mover": True},
-                             {"key": "pat", "label": "PAT", "unit": "cr"}, {"key": "eps", "label": "EPS (₹)", "unit": "inr"}]
-    assert snap["employee_cost"] == {"value": 180.0, "prev_year": 120.0, "yoy_pct": 50.0}
+                             {"key": "pat", "label": "PAT", "unit": "cr"}]   # no EPS line (owner rule 26 Oct 2026)
+    assert "eps" not in snap and snap["employee_cost"] == {"value": 180.0, "prev_year": 120.0, "yoy_pct": 50.0}
     assert snap["pbt"]["value"] == 90.0 and "exceptional_items" in snap   # kept in the snapshot, off the table
 
     # a tax credit lifting profit while EBITDA fell (Texmaco's shape, round 5)

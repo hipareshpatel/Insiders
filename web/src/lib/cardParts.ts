@@ -4,6 +4,7 @@
  *  number or fact in it still checked (a failed line was hidden by the pipeline, never shown). A card without `parts`
  *  returns null and renders as before. No React here, so `node --test` runs cardParts.test.ts. */
 import type { CardBody, KeyNumber, QuantifiedImpact } from "../../shared/types";
+import { statesEps } from "./cardText.ts";
 
 export const PART1_TITLE = "From the filing (checked)";
 export const PART2_TITLE = "Our reading (AI)";
@@ -34,19 +35,19 @@ export function partsView(card: CardBody): PartsView | null {
   if (p.part2.core_catalyst && card.core_catalyst) lines.push(`Core catalyst: ${card.core_catalyst}`);
   lines.push(...pick(card.why_it_matters, p.part2.why_it_matters).map((i) => i.text));
   lines.push(...pick(card.what_happened, p.part2.what_happened).map(plainText));
-  lines.push(...pick(card.key_numbers, p.part2.key_numbers).map(key));
+  lines.push(...pick(card.key_numbers, p.part2.key_numbers).filter((k) => !statesEps(k.label, k.value, k.change)).map(key));
   lines.push(...pick(card.notable_changes, p.part2.notable_changes).map(change));
   lines.push(...pick(card.quantified_impact, p.part2.quantified_impact).map(estimateLine));
   lines.push(...pick(card.missing_disclosures, p.part2.missing_disclosures).map((m) => `Not disclosed: ${m}`));
   return {
     part1: {
-      facts: pick(card.what_happened, p.part1.what_happened).map(plainText),
-      keyNumbers: pick(card.key_numbers, p.part1.key_numbers),
+      facts: pick(card.what_happened, p.part1.what_happened).map(plainText).filter((t) => !statesEps(t)),
+      keyNumbers: pick(card.key_numbers, p.part1.key_numbers).filter((k) => !statesEps(k.label, k.value, k.change)),
       estimates: pick(card.quantified_impact, p.part1.quantified_impact).map(estimateLine),
       blocks: p.part1.blocks ?? [],
     },
     part2: {
-      lines: lines.filter((l) => l.trim()),
+      lines: lines.filter((l) => l.trim() && !statesEps(l)),   // owner rule 26 Oct 2026: no EPS on cards
       blocks: p.part2.blocks ?? [],
       callTakeaways: pick(card.call_takeaways, p.part2.call_takeaways).map((t) => ({ category: t.category, text: t.text, versus_prior: t.versus_prior })),
       track: !!p.part2.track_next,

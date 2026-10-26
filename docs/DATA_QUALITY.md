@@ -71,6 +71,9 @@ Wherever a correction can be automated it must be, but only on proof:
 - The exchange's own file is one source, not proof: companies' XBRL can be wrong (Glenmark FY26 owners' and
   minorities' profit swapped, 26 Oct 2026). Every automatic correction is logged and can be undone; stored data is
   still never edited by hand. A correction path goes behind a switch and through the release check like any card change.
+- **A PDF figure counts as a source only when read from the page's text layer, with its unit printed on that page and
+  its column and basis proven.** A figure read only by OCR (a scanned page) can hold or list a figure, never correct one
+  (owner, 26 Oct 2026: scanned copies, units and OCR misreads).
 
 ## What not to do
 

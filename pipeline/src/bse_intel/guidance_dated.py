@@ -1,4 +1,4 @@
-"""F156 (CARD_GUIDANCE_DATED): a guidance verdict only from a target that can be judged by this filing.
+"""F172 (CARD_GUIDANCE_DATED): a guidance verdict only from a target that can be judged by this filing.
 
 A card said management "missed" a target in three live cases (26 Oct 2026 audit): Castrol India's 21-24% EBITDA margin
 was "medium term" (no date) and, said again in August 2026, was stored as due FY26 (a year that ended before it was

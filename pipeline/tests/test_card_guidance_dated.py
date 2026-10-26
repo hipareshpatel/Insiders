@@ -1,4 +1,4 @@
-"""F156 (CARD_GUIDANCE_DATED): a guidance verdict only from a dated target for this filing's period and metric.
+"""F172 (CARD_GUIDANCE_DATED): a guidance verdict only from a dated target for this filing's period and metric.
 The three failing cards of the 26 Oct 2026 audit, each with the switch off (what it was) and on."""
 
 from __future__ import annotations

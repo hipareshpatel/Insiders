@@ -105,7 +105,7 @@ def card_grounded_figures() -> bool:
 
 
 def card_guidance_dated() -> bool:
-    """CARD_GUIDANCE_DATED (default off; F156; owner, 26 Oct 2026): a guidance verdict (delivered, on track, delayed,
+    """CARD_GUIDANCE_DATED (default off; F172; owner, 26 Oct 2026): a guidance verdict (delivered, on track, delayed,
     missed) is made only from a memory target that has its own date (not before the day it was said), is due for the
     period this filing reports, and is for a metric this filing prints a figure for. Castrol India's "medium term"
     EBITDA margin band and one stored as due FY26 in August 2026 were "missed" on a Q2FY27 card; Union Bank's FCNR target

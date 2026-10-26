@@ -280,7 +280,7 @@ def _own_latest(after: dict, news_id: str) -> list[dict]:
 
 def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Filing) -> list[Signal]:
     out: list[Signal] = []
-    dated = card_guidance_dated()   # F156: a verdict only from a dated target for this filing's period and metric
+    dated = card_guidance_dated()   # F172: a verdict only from a dated target for this filing's period and metric
     if dated:
         from .guidance_dated import said_on, why_no_verdict, why_no_watch_verdict
     known = {g["id"]: g for g in (before or {}).get("guidance", []) if g.get("given_on", "") < filing.filed_at}

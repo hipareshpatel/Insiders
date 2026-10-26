@@ -43,7 +43,7 @@ python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev,ocr]"      # ocr: RapidOCR for scanned pages (optional)
 # NSE pacing: NSE_PAUSE_SECONDS="low,high" (default 3,5; min 1 s) for every request; NSE_ARCHIVE_PAUSE_SECONDS="low,high" (0 allowed;
 # unset = archive files share the API pace) for nsearchives.nseindia.com only, back to 3-5 s after a 403/429/503 (F169)
-python -m pytest -q              # 1,339 tests (2 skip without the ocr extra); web: npm test (59: card text, company statements, owner holds, call takeaways, company keys, card parts)
+python -m pytest -q              # 1,354 tests (2 skip without the ocr extra); web: npm test (59: card text, company statements, owner holds, call takeaways, company keys, card parts)
 
 # 3. Fictional demo data, written through the real pipeline into the local Worker
 BSE_INTEL_SINK=platform PLATFORM_API_URL=http://localhost:5173 \

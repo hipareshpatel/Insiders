@@ -1158,7 +1158,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if card_guidance_dated() and update.status in ("DELIVERED", "ON_TRACK", "DELAYED", "MISSED"):
             from .guidance_dated import why_no_verdict
             if why_no_verdict(g, d["financial_metrics"], news_id):
-                continue  # F156: no verdict from an undated target or one for another period or metric; it stays as said
+                continue  # F172: no verdict from an undated target or one for another period or metric; it stays as said
         g["status_history"] = sorted(
             g.get("status_history", []) + [{
                 "status": update.status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,

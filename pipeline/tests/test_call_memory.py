@@ -413,3 +413,54 @@ def test_the_step_writes_points_with_the_switch_on_and_a_failure_is_swallowed(mo
     failing = {"scrip_code": "123", "call_memory": [{"id": "cm_x", "news_id": "old", "date": "2026-05-01"}]}
     Hook(settings, FakeGateway([], fail=True))._call_memory_step(filing, "Real Estate", failing, TEXT, "")   # logged, nothing raised
     assert [e["id"] for e in failing["call_memory"]] == ["cm_x"]
+
+
+# ---------------------------------------------------------------- the independent review's cases (F180)
+REVIEW_TEXT = """--- Page 1 of 2 ---
+We guide revenue growth of 20% for FY27 and 25% for FY28. Operating cash flow was an outflow of (342.12) crore in H1.
+EBITDA margin was up 2 percentage points.
+--- Page 2 of 2 ---
+Management: For FY28 we now see 22%.
+"""
+
+
+def test_an_answer_clarifies_only_its_own_period():
+    fy27 = _point(statement="Revenue growth of 20% for FY27", topic="revenue_growth", value=20, period="FY27",
+                  quote="We guide revenue growth of 20% for FY27 and 25% for FY28.")
+    fy28 = _point(statement="Revenue growth of 25% for FY28", topic="revenue_growth", value=25, period="FY28",
+                  quote="We guide revenue growth of 20% for FY27 and 25% for FY28.")
+    answer = _point(statement="Revenue growth of 22% for FY28", topic="revenue_growth", value=22, period="FY28",
+                    section="QA", page=2, quote="For FY28 we now see 22%.")
+    kept, _ = cm.check_points([fy27, fy28, answer], REVIEW_TEXT)
+    by_value = {p.value: p for p in kept}
+    assert by_value[20].superseded_by is None and by_value[25].superseded_by == by_value[22].id
+
+
+def test_a_negative_figure_and_percentage_points_are_kept():
+    outflow = _point(type="kpi", statement="Operating cash flow of (342.12) crore in H1", metric="operating_cash_flow",
+                     topic="operating_cash_flow", value=-342.12, unit="INR_CR", period=None,
+                     quote="Operating cash flow was an outflow of (342.12) crore in H1.")
+    points = _point(type="margin_driver", statement="EBITDA margin up 2 percentage points", metric="ebitda_margin",
+                    topic="ebitda_margin_change", value=2, unit="PERCENTAGE_POINTS", period=None,
+                    quote="EBITDA margin was up 2 percentage points.")
+    sign = _point(type="margin_driver", statement="EBITDA margin up 2 percentage points", metric="ebitda_margin",
+                  topic="ebitda_margin_change_pct", value=2, unit="%", period=None,
+                  quote="EBITDA margin was up 2 percentage points.")
+    kept, dropped = cm.check_points([outflow, points, sign], REVIEW_TEXT)
+    assert len(kept) == 3, dropped
+
+
+def test_periods_are_stored_in_one_form():
+    p = _point(period="FY 2027", quote="We guide revenue growth of 20% for FY27 and 25% for FY28.", value=20,
+               statement="Revenue growth of 20% for FY27")
+    (kept,), _ = cm.check_points([p], REVIEW_TEXT)
+    assert kept.period == "FY27"
+
+
+def test_an_empty_reading_keeps_the_filings_earlier_points(monkeypatch, settings):
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    filing = _filing("c", "2026-11-10T19:00:00+05:30", "CONCALL_PRESENTATION", "Earnings call transcript")
+    merged = {"scrip_code": "123", "call_memory": [{"id": "cm_c", "news_id": "c", "date": "2026-11-10"}]}
+    Hook(settings, FakeGateway([_raw(_point(quote="words that are not in the document"))]))._call_memory_step(
+        filing, "Real Estate", merged, TEXT, "")
+    assert [e["id"] for e in merged["call_memory"]] == ["cm_c"]

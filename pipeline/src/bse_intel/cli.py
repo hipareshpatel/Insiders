@@ -847,6 +847,8 @@ def cmd_call_memory(args, settings, sink) -> int:
             dossier = sink.get_dossier(filing.scrip_code) or {}
             industry = dossier.get("industry") or (sink.company(filing.scrip_code) or {}).get("industry")
             kind = mre.kind_from_text(data, filing.headline)
+            if kind == "invitation":
+                raise LookupError("an invitation to a call, not a transcript or deck")
             prior = call_memory.prior_points(dossier, news_id, filing.filed_at)
             started = time.monotonic()
             reply = call_memory.read(pipeline.gateway, pipeline.prompts, filing, kind, industry, text, blocks, prior, paid)

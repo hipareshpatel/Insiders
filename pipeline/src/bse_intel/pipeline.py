@@ -3974,7 +3974,8 @@ class Pipeline:
             out = call_memory.read(self.gateway, self.prompts, filing, "transcript" if is_transcript(filing) else "deck",
                                    industry, text, blocks, prior, call_memory.paid_providers(self.settings))
             points, dropped = call_memory.check_points(out.points, text, blocks, scope=f"{filing.scrip_code}:{filing.news_id}")
-            call_memory.remember(merged, filing.news_id, filing.filed_at, points)
+            if points:   # an empty or failed reading never wipes the points an earlier reading kept (review of F180)
+                call_memory.remember(merged, filing.news_id, filing.filed_at, points)
             log.info("%s: call memory by %s: %d points kept, %d dropped (%s)", filing.news_id, out.served_by, len(points),
                      len(dropped), ", ".join(sorted({d["reason"] for d in dropped})) or "none")
         except Exception as exc:   # noqa: BLE001 - the card and the rest of memory go on

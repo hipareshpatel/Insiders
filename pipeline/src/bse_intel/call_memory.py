@@ -73,18 +73,19 @@ def paid_providers(settings) -> frozenset[str]:
 _SCALE_AFTER = re.compile(
     r"^\s*(?:(?:-|–|to)\s*[\d.,]+\s*)?(?:"
     r"(?P<lakh>lakhs?\b|lacs?\b)|(?P<crore>crores?\b|crs?\b)|(?P<million>millions?\b|mn\b|mln\b)|(?P<billion>billions?\b|bn\b|bln\b)|"
-    r"(?P<thousand>thousands?\b)|(?P<bps>bps\b|basis points?\b|bp\b)|(?P<percent>%|per ?cent\b|pct\b))", re.I)
+    r"(?P<thousand>thousands?\b)|(?P<bps>bps\b|basis points?\b|bp\b)|(?P<percent>%|per ?cent(?:age)?(?: points?)?\b|pct\b|ppts?\b|pps?\b))", re.I)
 _UNIT_KINDS = (("lakh", r"LAKHS?|LACS?"), ("crore", r"CRORES?|CRS?"), ("million", r"MILLIONS?|MNS?|MLN"),
                ("billion", r"BILLIONS?|BNS?|BLN"), ("thousand", r"THOUSANDS?"), ("bps", r"BPS|BP"),
-               ("percent", r"PERCENT|PERCENTAGE|PCT|PC"))
+               ("percent", r"PERCENT|PERCENTAGE|PCT|PC|PPT|PP|POINTS?"))
 _MAGNITUDE = {"lakh": 1e5, "crore": 1e7, "million": 1e6, "billion": 1e9, "thousand": 1e3}
 _ANYWHERE = {"lakh": r"\blakhs?\b|\blacs?\b", "crore": r"\bcrores?\b|\bcrs?\b", "million": r"\bmillions?\b|\bmn\b|\bmln\b",
              "billion": r"\bbillions?\b|\bbn\b|\bbln\b", "thousand": r"\bthousands?\b", "bps": r"\bbps\b|\bbasis points?\b|\bbp\b",
-             "percent": r"%|\bper ?cent\b|\bpct\b"}
+             "percent": r"%|\bper ?cent(?:age)?\b|\bpct\b|\bppts?\b|\bpps?\b"}
 
 
 def _unit_tokens(unit: str | None) -> list[str]:
-    return [t for t in re.split(r"[^A-Z]+", (unit or "").upper()) if t]
+    # "%" is a unit too: the model writes it as often as PERCENT
+    return [t for t in re.split(r"[^A-Z]+", (unit or "").upper().replace("%", " PERCENT ")) if t]
 
 
 def _unit_kinds(unit: str | None) -> set[str]:
@@ -103,7 +104,8 @@ def _numbers(text: str) -> list[float]:
 
 
 def _has(value: float, numbers: list[float]) -> bool:
-    return any(abs(value - n) < 1e-9 for n in numbers)
+    # the quote's numbers carry no sign: an outflow is "(342.12)", "minus 342" or "-342" (review of F180)
+    return any(abs(abs(value) - abs(n)) < 1e-9 for n in numbers)
 
 
 def figure_issue(point: CallPoint, quote: str) -> str | None:
@@ -197,6 +199,18 @@ def period_named(period: str, haystack: str) -> bool:
 _MONTHS = {"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"}
 
 
+def _same_span(a: str | None, b: str | None) -> bool:
+    """Two periods one answer can clarify: the same one, or one inside the other (Sobha's "whole of FY27" and the answer's
+    H2FY27). FY27 and FY28 guidance on one topic are two points, never one clarifying the other (review of F180); a point
+    with no period is clarified by none."""
+    if not a or not b:
+        return False
+    if a == b:
+        return True
+    year = lambda p: (m[1] if (m := re.fullmatch(r"(?:Q[1-4]|H[12]|9M)?FY(\d{2})", p)) else None)
+    return year(a) is not None and year(a) == year(b) and (re.fullmatch(r"FY\d{2}", a) or re.fullmatch(r"FY\d{2}", b)) is not None
+
+
 def _topic_key(p: CallPoint) -> str:
     return _norm(p.topic or p.metric or (p.statement or "")[:60])
 
@@ -252,6 +266,8 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
                     context = flat_page[max(0, at - CONTEXT_CHARS):at + len(flat_quote) + CONTEXT_CHARS]
             if not period_named(p.period, f"{quote} {context}"):
                 p.period, p.period_stated = None, False   # never guessed, and never a checkable target
+            elif re.fullmatch(r"(?:Q[1-4]|H[12]|9M)?FY\d{2}", canon := canonical_period(p.period)):
+                p.period = canon   # "H2 FY27" and "FY2026-27" match one another call to call (review of F180)
         else:
             p.period_stated = False
         p.company_defined = bool((p.definition or "").strip())   # never written to financial_metrics (spec 3.8)
@@ -278,6 +294,7 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
         for earlier in merged:
             if (earlier is not answer and earlier.section in ("PREPARED", "SLIDE") and earlier.type == answer.type
                     and _topic_key(earlier) == _topic_key(answer) and earlier.superseded_by is None
+                    and _same_span(earlier.period, answer.period)
                     and (earlier.period != answer.period or (earlier.value, earlier.value_high) != (answer.value, answer.value_high))):
                 earlier.superseded_by = answer.id
     return merged, dropped

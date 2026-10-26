@@ -41,6 +41,11 @@
 # - audit-precision: read-only on/off audit of the candidate number-matching rule (match at the precision the filing prints;
 #   pipeline/scripts/audit_precision.py, docs/audit/precision-2026-10-26.md) over every stored card and its text in R2;
 #   summary.json, lines.json and the blind-sample markdown go up as the artifact `audit-precision`. No writes.
+# - release-check: read-only on/off comparison of the five card switches that are built but off (CARD_EBITDA_PROFIT_V2,
+#   CARD_SAME_DEFINITION, CARD_CONSOLIDATED_ONLY, CARD_TWO_PARTS, QUOTE_EXACT_NUMBERS; pipeline/scripts/release_check.py,
+#   F170) over every stored card, its text in R2 and its company's memory, no AI. Per switch: what changed (cards, lines
+#   added, removed, changed), a plain-text summary and a seeded blind sample of up to 20 changed cards with its key, all up
+#   as the artifact `release-check`. No writes.
 # - screener-fill: the one-time fill of the quarters memory lacks from screener.in (owner permission 26 Oct 2026; F161). A
 #   dry run: one page per company with a gap (the page on memory's basis), at least 3 s between requests per runner, two
 #   runners (job `screener`), a plain browser User-Agent, no login; nothing is written. The counts, the reasons skipped and
@@ -85,7 +90,7 @@
 #   maint-screener     screener-download, screener-fill (the dry run reads screener.in)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
-#                      with NSE's lists, writes nothing), audit-precision, screener-crosscheck (R2 and memory), restated-report (memory only), nse-speedtest (reads NSE; writes nothing)
+#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), restated-report (memory only), nse-speedtest (reads NSE; writes nothing)
 # A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
@@ -106,7 +111,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, text-backfill, restated-report, nse-speedtest]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, text-backfill, restated-report, nse-speedtest]
         default: both
       ids:
         description: requeue-failed only - re-run these filings instead (news ids, comma separated)
@@ -152,7 +157,7 @@ concurrency:
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","screener-crosscheck","restated-report","nse-speedtest"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","restated-report","nse-speedtest"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -313,6 +318,19 @@ jobs:
         with:
           name: audit-precision
           path: ${{ runner.temp }}/precision/
+          if-no-files-found: ignore
+      - name: Release check of the card switches (reads only)
+        if: inputs.command == 'release-check'
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/release-check"
+          "$RUNNER_TEMP/venv/bin/python" -I -X utf8 scripts/release_check.py "$RUNNER_TEMP/release-check" --platform || code=$?
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'release-check'
+        with:
+          name: release-check
+          path: ${{ runner.temp }}/release-check/
           if-no-files-found: ignore
       - name: Cross-check memory against the stored screener pages (reads only)
         if: inputs.command == 'screener-crosscheck'

@@ -15,6 +15,22 @@ market = ["yfinance>=0.2.40", "pandas>=2.2"]
 dev = ["pytest>=8", "respx>=0.21", "requests>=2.31"]
 bse = ["requests>=2.31"]   # adapters/bse.py, the off-path BSE client ported from the reference repository
 ocr = ["rapidocr>=3.10,<4", "onnxruntime>=1.20"]  # the package and version measured on the extraction benchmark
+# PDF referee readers (F177, owner 26 Oct 2026; off by default: PDF_READERS=native). Exact pins, current stable on PyPI 26 Oct 2026.
+# The heavy ones can conflict (pip --dry-run 26 Oct: marker-pdf 2.0.0 with mineru 4.0.12 cannot resolve; the rest not tried together), and a
+# heavy reader is never loaded beside another, so each has its own extra and its own virtual environment (maintenance.yml
+# `pdf-referee-ensemble`). `pdfreaders` is the light set that resolves together. CPU torch: --extra-index-url https://download.pytorch.org/whl/cpu
+pdfreader-text = ["camelot-py==1.0.9", "pdfplumber==0.11.10", "tabula-py==2.10.0"]   # text-layer table readers (tabula needs Java)
+pdfreader-rapidtable = ["rapid-table==3.0.2", "rapidocr>=3.10,<4", "onnxruntime>=1.20"]   # SLANet-plus ONNX
+pdfreader-tatr = ["transformers==5.21.0", "timm==1.0.30", "torch==2.14.1", "pytesseract==0.3.13"]   # Table Transformer (+ tesseract-ocr from apt)
+pdfreaders = [
+  "camelot-py==1.0.9", "pdfplumber==0.11.10", "tabula-py==2.10.0",
+  "rapid-table==3.0.2", "rapidocr>=3.10,<4", "onnxruntime>=1.20",
+  "transformers==5.21.0", "timm==1.0.30", "torch==2.14.1", "pytesseract==0.3.13",
+]
+pdfreader-docling = ["docling==2.142.1"]
+pdfreader-mineru = ["mineru[pipeline]==3.4.5"]          # 4.x has no pipeline backend (VLM only); 3.4.5 is the last 3.x
+pdfreader-paddle = ["paddleocr[doc-parser]==3.7.0", "paddlepaddle==3.3.1"]   # PP-StructureV3, CPU wheel
+pdfreader-surya = ["marker-pdf==2.0.0"]                 # Marker and Surya (surya-ocr 0.22.1); code Apache-2.0; 1.x is GPL-3.0
 
 [project.scripts]
 bse-intel = "bse_intel.cli:main"

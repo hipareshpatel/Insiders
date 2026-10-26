@@ -57,6 +57,7 @@ import difflib
 import io
 import json
 import logging
+import os
 import re
 import time
 from collections import Counter
@@ -79,6 +80,9 @@ log = logging.getLogger(__name__)
 OPEN_VERDICTS = ("neither", "no_file", "screener_matches_official")
 VERDICTS = ("pdf_matches_ours", "pdf_matches_screener", "pdf_matches_xbrl", "pdf_matches_none", "pdf_unsure",
             "pdf_unreadable", "not_run")
+# Added by the readers ensemble (PDF_READERS other than "native", pdf_readers.py): a disagreement between readers stays open,
+# and OCR readers of two engines agreeing on a page with no text layer is a lead, not a verdict. Never set by the default path.
+EXTRA_VERDICTS = ("pdf_disagree", "pdf_scanned_lead")
 MAX_CANDIDATES = 4          # results PDFs tried for one period
 MAX_PAGES = 12              # candidate table pages read in one PDF
 WINDOW_DAYS = 120           # a period's results are filed within this many days after its end
@@ -565,6 +569,11 @@ def candidate_filings(filings: list, period: str) -> list:
     return out
 
 
+def _pdf_readers():
+    from . import pdf_readers
+    return pdf_readers
+
+
 class Sources:
     """The announcement lists and PDFs of the run, each fetched and read once."""
 
@@ -573,6 +582,12 @@ class Sources:
         self.lists: dict[tuple[str, str], list | str] = {}      # (symbol, period) -> filings or the reason none
         self.docs: dict[str, tuple[list[Row] | None, str]] = {}
         self.calls = {"lists": 0, "pdfs": 0}
+        self.ensemble = None            # several readers (env PDF_READERS), None for "native" alone: today's path
+        from . import pdf_readers
+        names = pdf_readers.configured_readers()
+        if names != [pdf_readers.DEFAULT_READERS]:
+            self.ensemble = pdf_readers.Ensemble(names, ocr)
+        self._payload: tuple[str, bytes | None, str] | None = None
 
     def filings(self, symbol: str, period: str) -> list | str:
         key = (symbol, period)
@@ -591,6 +606,33 @@ class Sources:
                 except Exception as exc:   # noqa: BLE001 - one company's list failing is a reason, not a stop
                     self.lists[key] = f"announcement list unavailable ({type(exc).__name__})"
         return self.lists[key]
+
+    def payload(self, url: str) -> tuple[bytes | None, str]:
+        """(PDF bytes, why none) for the readers ensemble; the last PDF is kept, as every pair of a filing asks for it."""
+        if self._payload and self._payload[0] == url:
+            return self._payload[1], self._payload[2]
+        data, why = None, ""
+        folder = os.environ.get("PDF_CACHE_DIR")
+        cached = os.path.join(folder, f"{_pdf_readers().pdf_key(url)}.pdf") if folder else ""
+        if cached and os.path.isfile(cached):           # saved earlier by `pdf_readers --collect` (the matrix jobs)
+            with open(cached, "rb") as fh:
+                self._payload = (url, fh.read(), "")
+            return self._payload[1], ""
+        try:
+            self.calls["pdfs"] += 1
+            data = self.nse.fetch(url, max_bytes=MAX_PDF_BYTES)
+            if not data:
+                data, why = None, "NSE serves no file (404)"
+        except SourceBlockedError:
+            raise
+        except AttachmentTooLarge:
+            why = "PDF too large"
+        except AttachmentError as exc:
+            why = f"download failed ({str(exc)[:60]})"
+        except Exception as exc:   # noqa: BLE001
+            why = f"download failed ({type(exc).__name__})"
+        self._payload = (url, data, why)
+        return data, why
 
     def rows(self, url: str) -> tuple[list[Row] | None, str]:
         if url not in self.docs:
@@ -628,6 +670,9 @@ def referee_pair(src: Sources, row: dict) -> dict:
     if isinstance(listed, str):
         out["reason"] = listed
         return out
+    if src.ensemble is not None:
+        from .pdf_readers import referee_pair_ensemble
+        return referee_pair_ensemble(src, row, out, listed, ours, theirs, xbrl)
     reasons, unsure = [], []
     for f in listed[:MAX_CANDIDATES]:
         rows, why = src.rows(f.pdf_url)
@@ -758,7 +803,7 @@ def summarise(results: list[dict], calls: dict, companies: int, blocked: bool = 
     for r in results:
         by_before.setdefault(r.get("verdict", ""), Counter())[r["pdf_verdict"]] += 1
         by_metric.setdefault(r["metric"], Counter())[r["pdf_verdict"]] += 1
-        if r["pdf_verdict"] in ("pdf_unreadable", "pdf_unsure", "not_run"):
+        if r["pdf_verdict"] in ("pdf_unreadable", "pdf_unsure", "not_run", "pdf_disagree", "pdf_scanned_lead"):
             reasons[_short_reason(r.get("reason", ""))] += 1
     return {"pairs": len(results), "companies": companies, "left_out": left_out,
             "calls": {"announcement_lists": calls["lists"], "pdfs": calls["pdfs"]}, "blocked": blocked,
@@ -783,9 +828,10 @@ def _cell(v) -> str:
 def to_csv(summary: dict) -> str:
     buffer = io.StringIO()
     writer = csv.writer(buffer, lineterminator="\n")
-    writer.writerow(CSV_HEADER)
+    header = CSV_HEADER + (["readers"] if any("readers" in r for r in summary["rows"]) else [])   # only with PDF_READERS
+    writer.writerow(header)
     for r in summary["rows"]:
-        writer.writerow([_cell(r.get(k)) for k in CSV_HEADER])
+        writer.writerow([_cell(r.get(k)) for k in header])
     return buffer.getvalue()
 
 
@@ -793,11 +839,15 @@ def to_json(summary: dict) -> str:
     return json.dumps({k: v for k, v in summary.items() if k != "rows"}, ensure_ascii=False, indent=1) + "\n"
 
 
+def _columns(summary: dict) -> tuple:
+    return VERDICTS + tuple(v for v in EXTRA_VERDICTS if summary["verdicts"].get(v))
+
+
 def render(summary: dict) -> str:
     kind = "sampled pairs (memory equals the file)" if summary.get("sample") else "open pairs"
     lines = [f"pdf referee (the filing PDF, read only): {summary['pairs']} {kind}, {summary['companies']} companies, "
              f"{summary['calls']['announcement_lists']} announcement lists, {summary['calls']['pdfs']} PDFs"]
-    lines += [f"  {v:24}{summary['verdicts'].get(v, 0)}" for v in VERDICTS]
+    lines += [f"  {v:24}{summary['verdicts'].get(v, 0)}" for v in _columns(summary)]
     if summary["blocked"]:
         lines.append("stopped: NSE refused the session")
     if summary["out_of_time"]:
@@ -821,11 +871,12 @@ def to_markdown(summary: dict, date_text: str) -> str:
     if summary["blocked"] or summary["out_of_time"]:
         out += ["The run stopped early (" + ("NSE refused the session" if summary["blocked"] else "time budget")
                 + "); the rest is `not_run`.", ""]
-    sep = "|---|" + "---|" * len(VERDICTS)
+    columns = _columns(summary)
+    sep = "|---|" + "---|" * len(columns)
 
     def table(title: str, groups: dict) -> list[str]:
-        rows = [f"## {title}", "", "| Group | " + " | ".join(VERDICTS) + " |", sep]
-        rows += [f"| {k} | " + " | ".join(str(v.get(x, 0)) for x in VERDICTS) + " |" for k, v in sorted(groups.items())]
+        rows = [f"## {title}", "", "| Group | " + " | ".join(columns) + " |", sep]
+        rows += [f"| {k} | " + " | ".join(str(v.get(x, 0)) for x in columns) + " |" for k, v in sorted(groups.items())]
         return rows + [""]
 
     out += table("PDF verdict per XBRL verdict", summary["by_xbrl_verdict"]) + table("PDF verdict per metric", summary["by_metric"])

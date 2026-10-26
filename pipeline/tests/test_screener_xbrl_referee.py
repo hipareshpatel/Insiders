@@ -108,11 +108,16 @@ def test_a_year_is_read_from_the_march_file(parsed):
     assert out["rows"][0]["verdict"] == "ours_matches_official" and out["rows"][0]["official_file"] == "Q4FY26_c.xml"
 
 
-def test_a_lenders_revenue_is_its_interest_earned(parsed):
+def test_a_lenders_revenue_is_its_revenue_from_operations_else_interest_earned(parsed):
+    # the cross-check's line: revenue from operations (an NBFC), interest earned only where the file has no revenue (a bank)
     parsed[b"q2"] = result({("interest_earned", "Q2FY26"): 21936.39, ("revenue", "Q2FY26"): 24546.37}, template="NBFC")
     nse = FakeNse({"DEMO": [listing("Q2FY26")]}, {"Q2FY26_c.xml": b"q2"})
-    out = sx.run(nse, [row("Q2FY26", "revenue", 21936.39, 24546.0, cls="lender_definition")])
-    assert out["rows"][0]["verdict"] == "ours_matches_official"
+    out = sx.run(nse, [row("Q2FY26", "revenue", 24546.37, 24000.0, cls="lender_definition")])
+    assert out["rows"][0]["verdict"] == "ours_matches_official" and out["rows"][0]["official_value"] == 24546.37
+    parsed[b"q2"] = result({("interest_earned", "Q2FY26"): 21936.39}, template="BANKING")   # a bank: no revenue line
+    out = sx.run(FakeNse({"DEMO": [listing("Q2FY26")]}, {"Q2FY26_c.xml": b"q2"}),
+                 [row("Q2FY26", "revenue", 21936.39, 24000.0, cls="lender_definition")])
+    assert out["rows"][0]["official_value"] == 21936.39
 
 
 def test_the_basis_is_memorys(parsed):

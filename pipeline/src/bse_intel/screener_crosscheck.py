@@ -4,7 +4,10 @@ TRACKER F163, TODO 50.
 For every company, each quarter (and each financial year of screener's annual profit and loss section) is compared on
 memory's basis with the exchange file's figure only (``metrics._figures``: ``xbrl:`` sources):
 
-- revenue: screener's Sales against our ``revenue`` (a lender: its Revenue against our ``interest_earned``),
+- revenue: screener's Sales against our ``revenue`` (a lender: its Revenue against our ``revenue``, revenue from operations,
+  else ``interest_earned``: a bank's file has no revenue line. Interest earned first compared an NBFC's interest income with
+  screener's revenue from operations: Aadhar Housing Q2FY25 672.56 against 764.27, RattanIndia 1.91 against 1,921.49, both
+  in memory; screener-referee run 40288810286, checked on the 25 Oct backup),
 - pat: Net Profit against our ``pat`` (a lender's profit is a different definition, so a difference is not a mismatch),
 - eps: EPS in Rs against our ``eps`` (or ``basic_eps``), where both have it.
 
@@ -70,9 +73,9 @@ WORKERS = 8
 CSV_HEADER = ("scrip,symbol,sector,basis,period,metric,class,memory_value,screener_value,memory_source_id,"
               "memory_filed,note").split(",")
 
-# our metric names for each compared line; a lender's revenue line is interest earned
+# our metric names for each compared line; a lender's revenue line is its revenue from operations, a bank's interest earned
 _OURS = {"revenue": ("revenue",), "pat": ("pat",), "eps": ("eps", "basic_eps")}
-_LENDER_OURS = {"revenue": ("interest_earned",), "pat": ("pat",), "eps": ("eps", "basic_eps")}
+_LENDER_OURS = {"revenue": ("revenue", "interest_earned"), "pat": ("pat",), "eps": ("eps", "basic_eps")}
 
 
 _SCREENER_LINE = {"revenue": "Sales", "pat": "Net Profit", "eps": "EPS"}
@@ -161,7 +164,7 @@ def alternatives(figures: dict, metric: str, period: str, lender: bool) -> list[
     if metric == "revenue":
         out += [("total_income", v("total_income"))]
         if lender:
-            out.append(("revenue", v("revenue")))
+            out.append(("interest_earned", v("interest_earned")))
         if v("revenue") is not None and v("excise_duty") is not None:
             out.append(("revenue less excise_duty", v("revenue") - v("excise_duty")))
         if v("revenue") is not None and v("other_income") is not None:

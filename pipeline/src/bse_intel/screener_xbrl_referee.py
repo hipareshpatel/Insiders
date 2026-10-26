@@ -10,7 +10,7 @@ downloaded once per run and read with the pipeline's own XBRL reader (``xbrl.par
   figure, the next period's file (the next quarter's, or the next year's March file) and then the same quarter of the next
   year, whose comparative columns may carry it; ``official_file`` and ``official_from`` say which file gave the figure;
 - the metric is read on the memory entry's basis (consolidated files for a consolidated memory entry, and so on); a
-  lender's revenue is its ``interest_earned``, as memory's is;
+  lender's revenue is its ``revenue`` (revenue from operations), else ``interest_earned`` (a bank), as the cross-check's is;
 - ours must agree with the official figure to a hundredth (it comes from the same kind of file); screener's rounds to a
   whole crore, so it gets the cross-check's own tolerance (``screener_crosscheck._close``).
 
@@ -149,7 +149,7 @@ class CompanyFiles:
             if parsed is None:
                 reasons.append(f"{quarter}: {why}")
                 continue
-            names = ("interest_earned", "revenue") if metric == "revenue" and parsed.template in LENDER_TEMPLATES \
+            names = ("revenue", "interest_earned") if metric == "revenue" and parsed.template in LENDER_TEMPLATES \
                 else ("revenue",) if metric == "revenue" else ("eps",) if metric == "eps" else (metric,)
             for n in names:
                 hit = next((m for m in parsed.metrics if m.metric == n and m.period == period and m.value is not None), None)

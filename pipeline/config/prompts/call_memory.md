@@ -24,6 +24,26 @@ What to keep, by type (use exactly these names for `type`)
 - one_off: an exceptional gain or loss, provision, restatement, with its size, the line it sits in, and whether it recurs.
 - competitive_view: market share, industry growth, rivals' capacity, imports, as the company says it.
 
+Points that are easy to skip: look for each of these on every page and in every answer
+- Risks and headwinds management names, even in one clause: a disrupted operation and its size ("UAE volume 26,227 ton
+  against 57,931"), a festival or season that shifted sales from one quarter to the next, input-cost inflation, a wage
+  rise, a regulatory shutdown, a price that moves with gold, a currency or a commodity. Type `risk` (or `margin_driver`
+  when it moved a margin); give the size and the period.
+- One-off items in the quarter: exceptional items, profit from discontinued operations, a licensing or deal gain, a tax
+  gain from a court order, a reclassification or re-grouping of lines, a provision. Type `one_off`, with the amount and the
+  line it sits in, even when the reported profit already carries it: the reason and the size are the point, not the total.
+- Dependences: one parent, one customer, one supplier, one plant, one government scheme, one commodity, a few markets that
+  carry most of the pipeline or sales, a revenue method that makes income lumpy (completed-contract recognition). Type
+  `dependence`, with the share if it is given.
+- Dated events: a commissioning date, a launch date, a store or plant count by a date, a capex timeline and what funds
+  it, a migration of a plant or warehouse in stages, guidance with a date ("second half better than the first"). Type
+  `catalyst`, `capex_capacity` or `guidance`, and keep each date and count the document gives.
+- Every lever of a list: when management names two or three drivers (two margin levers of 100 bps each, three new launches,
+  four markets), give one point for each, not only the first.
+- Pipeline and portfolio totals (ongoing and upcoming projects with their area and value, a total portfolio value) are
+  `order_book` points.
+Aim to return at least one point of each of these four kinds whenever the document has one.
+
 Questions and answers
 - Management's clarification in the Q&A wins over the opening: if the opening said "whole of FY27" and the answer says the
   second half, give the second half, with section QA. Give the opening point too when it differs; code links the two.
@@ -62,7 +82,8 @@ Rules for every point
 Do not keep
 - Greetings, introductions, the safe-harbour statement, call logistics, company background and brand history.
 - Routine reported figures the results filing already carries: revenue, EBITDA, profit, EPS, statement lines of the quarter
-  just reported. Keep management's claims and reasons, not the reported number.
+  just reported. Keep management's claims and reasons, not the reported number. An exceptional or one-off item is not
+  routine: keep it.
 - Adjectives with no figure and no period ("strong", "robust"); sales-pitch claims with no metric.
 - Share price, valuation, ratings, estimates, consensus; the same point said again on another page (keep it once).
 - Anything not in the text. Do not infer, do not compute, do not use outside knowledge.

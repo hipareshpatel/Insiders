@@ -699,3 +699,125 @@ def test_a_scale_word_above_the_quoted_row_counts():
     from bse_intel import call_memory as cm
     kept, dropped = cm.check_points([p], page)
     assert dropped == [] and kept[0].value_base == 25174 * 100_000
+
+
+# ---------------------------------------------------------------- run 5 fixes: pages, columns, retry
+# a slide set in two columns, read straight across: each sentence of the left column is cut by the right column's words
+TWO_COLUMNS = """--- Page 24 of 40 ---
+Our board is evaluating options for deployment of surplus cash.
+--- Page 25 of 40 ---
+We plan to open 15 exclusive stores
+Gold sales were nil in the half year
+of which 4 have been launched
+against 205.50 Mn in the earlier half
+--- Page 26 of 40 ---
+Other income rose to 52 Mn.
+"""
+COLUMN_QUOTE = "We plan to open 15 exclusive stores of which 4 have been launched"
+
+
+def _column_point(**kw) -> CallPoint:
+    base = dict(type="capex_capacity", statement="15 exclusive stores planned, 4 launched", metric="stores", topic="stores",
+                value=15, unit=None, period=None, section="SLIDE", page=24, quote=COLUMN_QUOTE)
+    return _point(**{**base, **kw})
+
+
+def test_a_quote_split_by_a_second_column_is_kept_on_the_page_before_the_cited_one():
+    # the model named the printed number 24, the quote is on PDF page 25 and is cut by the other column's lines
+    kept, dropped = _check(_column_point(), text=TWO_COLUMNS)
+    assert dropped == [] and len(kept) == 1
+    assert kept[0].page == 25 and kept[0].pages == [25] and kept[0].quote_assembled
+
+
+def test_the_cited_page_one_after_is_tried_too():
+    kept, dropped = _check(_column_point(page=26), text=TWO_COLUMNS)
+    assert dropped == [] and kept[0].page == 25
+
+
+def test_a_quote_two_pages_from_the_cited_one_is_not_looked_for():
+    kept, dropped = _check(_column_point(page=23), text=TWO_COLUMNS + "--- Page 27 of 40 ---\nnothing")
+    assert kept == [] and _reasons(dropped) == ["quote"]
+    assert not cm._across_columns(COLUMN_QUOTE, "--- Page 24 of 40 ---\nOur board is evaluating options")
+
+
+def test_a_quote_on_no_page_is_still_dropped_after_the_column_and_page_tries():
+    kept, dropped = _check(_column_point(quote="We plan to open 15 exclusive stores of which 9 have been shut"), text=TWO_COLUMNS)
+    assert kept == [] and _reasons(dropped) == ["quote"]
+    # the words are on the page but in the wrong order: not one column's text followed by the other's
+    assert not cm._across_columns("launched stores exclusive open plan to We 15 of which 4 have been", TWO_COLUMNS)
+
+
+def test_a_column_quote_ignores_line_breaks_and_spacing():
+    assert cm._across_columns("Gold sales were nil   in the half year against 205.50 Mn in the earlier half", TWO_COLUMNS)
+
+
+def test_a_figure_the_columns_do_not_carry_still_drops_the_point():
+    kept, dropped = _check(_column_point(value=16, statement="16 exclusive stores planned"), text=TWO_COLUMNS)
+    assert kept == [] and _reasons(dropped) == ["figure"]
+
+
+class FlakyGateway(FakeGateway):
+    """Fails with the given errors in turn, then answers."""
+
+    def __init__(self, errors, points):
+        super().__init__(points)
+        self.errors = list(errors)
+
+    def complete_json(self, *a, **kw):
+        if self.errors:
+            self.calls.append({})
+            raise RuntimeError(self.errors.pop(0))
+        return super().complete_json(*a, **kw)
+
+
+def _read(gateway, settings):
+    filing = _filing("c3", "2026-11-10T19:00:00+05:30", "CONCALL_PRESENTATION", "Earnings call transcript")
+    return cm.read(gateway, PromptEngine(settings), filing, "transcript", "Realty", TEXT, "", None, frozenset())
+
+
+def test_a_server_error_on_every_model_is_retried_once_and_the_attempts_are_counted(monkeypatch, settings):
+    waits = []
+    monkeypatch.setattr(cm.time, "sleep", waits.append)
+    gateway = FlakyGateway(["route: no provider could serve the request (a: InternalServerError 503; b: circuit open)"],
+                           [_raw(_point())])
+    out = _read(gateway, settings)
+    assert out.attempts == 2 and len(out.points) == 1 and out.parts_failed == [] and waits == [cm.RETRY_WAIT_S]
+    assert len(gateway.calls) == 2
+
+
+def test_a_second_server_error_fails_the_reading_and_says_two_attempts(monkeypatch, settings):
+    monkeypatch.setattr(cm.time, "sleep", lambda s: None)
+    gateway = FlakyGateway(["503 InternalServerError", "request timed out"], [])
+    with pytest.raises(RuntimeError, match="2 attempts"):
+        _read(gateway, settings)
+    assert len(gateway.calls) == 2
+
+
+def test_a_refusal_is_not_retried(monkeypatch, settings):
+    monkeypatch.setattr(cm.time, "sleep", lambda s: pytest.fail("no wait for a refusal"))
+    gateway = FlakyGateway(["400 Bad Request: invalid argument"], [])
+    with pytest.raises(RuntimeError, match="1 attempt"):
+        _read(gateway, settings)
+    assert len(gateway.calls) == 1
+
+
+def test_a_valid_empty_answer_is_not_retried(monkeypatch, settings):
+    monkeypatch.setattr(cm.time, "sleep", lambda s: pytest.fail("no wait for an empty answer"))
+    gateway = FakeGateway([])
+    out = _read(gateway, settings)
+    assert out.points == [] and out.attempts == 1 and len(gateway.calls) == 1
+
+
+def test_provider_error_kinds():
+    assert cm.provider_error(RuntimeError("openrouter: InternalServerError"))
+    assert cm.provider_error(RuntimeError("gemini: 503 UNAVAILABLE overloaded"))
+    assert not cm.provider_error(RuntimeError("gemini: 429 quota"))
+    assert not cm.provider_error(RuntimeError("403 Forbidden"))
+    assert not cm.provider_error(SimpleNamespace(capped=True))
+
+
+def test_the_ask_covers_the_kinds_of_point_run_5_missed(settings):
+    system, _ = PromptEngine(settings).call_memory(
+        _filing("c3", "2026-11-10T19:00:00+05:30", "CONCALL_PRESENTATION", "x"), "deck", "Realty", TEXT, None, part=(1, 1))
+    for word in ("headwinds", "One-off items", "Dependences", "Dated events", "commissioning date", "discontinued operations"):
+        assert word in system

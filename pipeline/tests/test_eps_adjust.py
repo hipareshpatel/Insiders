@@ -184,7 +184,7 @@ def test_an_eps_change_the_profit_does_not_carry_is_shown_off_and_left_out_on(mo
     monkeypatch.setenv("CARD_EPS_FOLLOWS_PROFIT", "1")
     on = results_snapshot(_wipro(), "n2")
     assert on["eps"] == {"value": 3.23, "eps_note": on["eps"]["eps_note"]}   # neither change, nor the bases they rest on
-    assert "does not follow profit +1.5% and no share-count event is on record" in on["eps"]["eps_note"]
+    assert "is above profit +1.5% and no share-count event is on record" in on["eps"]["eps_note"]
     assert [h["slot"] for h in on["eps_hidden"]] == ["yoy", "qoq"]
 
 
@@ -195,14 +195,12 @@ def test_a_change_the_profit_carries_is_kept(monkeypatch):
     assert on["eps"]["yoy_pct"] == 1.9 and on["eps"]["prev_quarter"] == 3.2 and "eps_hidden" not in on
 
 
-def test_the_filings_own_stated_eps_change_wins(monkeypatch):
+def test_the_filings_words_never_replace_the_change(monkeypatch):
+    # only hidden, never replaced (review: "EPS declined by 5%" was read as +5%)
     from bse_intel.dossier import results_snapshot
     monkeypatch.setenv("CARD_EPS_FOLLOWS_PROFIT", "1")
     on = results_snapshot(_wipro(), "n2", printed=RELEASE_EPS)
-    assert on["eps"]["qoq_pct"] == 0.9                        # "EPS up 0.9% QoQ"
-    assert "prev_quarter" not in on["eps"]                     # the base that disagreed with it is not shown
-    assert "yoy_pct" not in on["eps"] and "prev_year" not in on["eps"]   # the year-on-year change the profit does not carry
-    assert "the filing states EPS +0.9% QOQ" in on["eps"]["eps_note"]
+    assert on["eps"]["value"] == 3.23 and "yoy_pct" not in on["eps"] and "qoq_pct" not in on["eps"]   # no +0.9% from the words
 
 
 def test_a_recorded_bonus_leaves_the_change_to_the_share_base_logic(monkeypatch):
@@ -213,23 +211,11 @@ def test_a_recorded_bonus_leaves_the_change_to_the_share_base_logic(monkeypatch)
     assert "eps_hidden" not in on and on["eps"]["prev_quarter"] == 6.4   # a share-count event on record: not this switch's call
 
 
-def test_the_stated_change_is_read_from_the_words():
-    from bse_intel.eps_adjust import stated_changes
-    assert stated_changes("EPS up 0.9% QoQ") == {"qoq": 0.9}
-    assert stated_changes("Diluted EPS down 3.4% YoY; EPS up 1% sequentially") == {"yoy": -3.4, "qoq": 1.0}
-    assert stated_changes("Basic EPS of Rs 3.23, growth of 18% YoY") == {"yoy": 18.0}
-    assert stated_changes("revenue up 5% QoQ") == {} and stated_changes(None) == {}
-
-
-def test_follows_allows_share_count_noise_but_not_a_flip():
+def test_follows_allows_dilution_and_noise_but_not_eps_far_above_profit():
     from bse_intel.eps_adjust import follows
-    assert follows(1.5, 17.9) is False
-    assert follows(10.0, 14.0) and follows(10.0, 4.0)        # 5 points plus share-count noise
-    assert follows(1.0, -3.0)                                # within noise
-    assert follows(8.0, -2.0) is False                       # signs differ by more than noise
-
-
-def test_a_change_of_another_measure_after_eps_is_not_read_as_the_eps_change():
-    # "EPS at Rs 3.23; revenue grew 2% YoY": the 2% is revenue's, never shown as the EPS change
-    assert eps_adjust.stated_changes("EPS at Rs 3.23; revenue grew 2% YoY") == {}
-    assert eps_adjust.stated_changes("Basic EPS rose 4.5% year-on-year") == {"yoy": 4.5}
+    assert follows(1.5, 17.9) is False                       # Wipro: EPS +17.9% on profit +1.5%
+    assert follows(10.0, 14.0) and follows(10.0, 4.0)        # within 5 points plus share-count noise
+    assert follows(20.0, 9.0) and follows(8.0, -2.0)         # below profit: real dilution (a QIP), shown
+    assert follows(0.0, 15.0, base=0.08)                     # a small EPS: its last printed digit is 12.5% of 0.08
+    assert follows(0.0, 25.0, base=0.08) is False            # 0.08 to 0.10 is more than rounding
+    assert follows(-10.0, 5.0) is False                      # EPS up while profit fell, no buyback on record

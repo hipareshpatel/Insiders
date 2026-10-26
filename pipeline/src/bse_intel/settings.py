@@ -152,18 +152,18 @@ def card_consolidated_only() -> bool:
 
 def card_footer_plausible() -> bool:
     """CARD_FOOTER_PLAUSIBLE (default off; F182, TODO 77): a footer KPI that cannot be right is not shown, and the card stores
-    why (`grounding.footer_hidden`, listed on the owner's Issues page): one more than 3x the highest or under a third of
-    the lowest of the company's own last four periods of the same metric, or outside what its type of company can earn
-    (home-loan lender NIM 1-7%, bank NIM 1.5-6%, a non-financial company's EBITDA / operating margin -50% to +60%).
+    why (`grounding.footer_hidden`, listed on the owner's Issues page): one more than 3x the highest of the company's own
+    last four periods of the same metric and kind, or a NIM outside what its type of lender can earn (home-loan lender
+    1-15%, bank 1-8.5%). No low side and no margin range (independent review: a collapse is news; Power Grid's ~85% is real).
     GIC Housing Finance showed a NIM of 19.63% against its FY26 3.41% (26 Oct 2026). Read at the call."""
     return (_env("CARD_FOOTER_PLAUSIBLE", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
 def card_eps_follows_profit() -> bool:
     """CARD_EPS_FOLLOWS_PROFIT (default off; F183, TODO 78): on a results table an EPS change that does not follow the profit
-    change (more than 5 points plus share-count noise apart, or the other way round) with no split, bonus, buyback or rights
-    issue on record is not shown, nor the comparative it rests on; where the filing's own text states the EPS change ("EPS up
-    0.9% QoQ") that stated change is shown instead. Wipro's card (26 Oct 2026) showed EPS 3.23 against 2.74 and 2.50, +18%,
+    change by more than 5 points plus share-count noise and rounding, with no split, bonus, buyback or rights issue on record,
+    is not shown, nor the comparative it rests on. An EPS change below the profit change (real dilution) is shown; nothing is
+    ever replaced by a figure read from the filing's words. Wipro's card (26 Oct 2026) showed EPS 3.23 against 2.74 and 2.50, +18%,
     beside profit +1%. Read at the call."""
     return (_env("CARD_EPS_FOLLOWS_PROFIT", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 

@@ -4,12 +4,14 @@ The case: GIC Housing Finance (nse-106827848, 26 Oct 2026 audit) showed a net in
 3.41%, a figure an AI read off the card's document and stored under a label nobody checked. Two tests, each a reason to hide
 the figure from the footer strip and the results table's sector rows (nothing stored is changed; the figure stays in memory):
 
-1. **Against the company itself.** More than 3x the highest, or under a third of the lowest, of the company's own last four
-   periods of the same metric (quarters first, then years; at least two, all above zero). It is deliberately the wide test: a
-   real order book can double, a margin does not triple.
-2. **Against what its type of company can earn.** A home-loan (housing finance) NIM 1-7%, a bank's 1.5-6%, a non-financial
-   company's EBITDA or operating margin -50% to +60%. Other lenders (microfinance NIMs run 10% and more) and other metrics
-   have no range, only test 1.
+1. **Against the company itself.** More than 3x the highest of the company's own last four periods of the same metric and
+   kind (a quarter against quarters, a year against years: a quarter's flow is a quarter of the year; a rate, such as a NIM,
+   may be judged against years when there are fewer than two quarters; at least two, all above zero). It is deliberately the wide test: a
+   real order book can double, a margin does not triple. There is no low side: a margin or volume that collapses is often
+   the news of the filing (independent review, 26 Oct 2026).
+2. **Against what its type of company can earn.** A home-loan (housing finance) NIM 1-15% (small-ticket lenders run past
+   10%), a bank's 1-8.5% (Bandhan has reported above 7%). Other lenders (microfinance NIMs run 10% and more) and every other
+   metric have no range, only test 1: an EBITDA margin above 60% is real for power transmission, exchanges and ports.
 
 The type is read from the company's industry the way sectors.toml reads it: the most specific level first.
 A hidden figure comes back with its reason so the card can store it (``grounding.footer_hidden``, shown on the owner's Issues
@@ -20,15 +22,13 @@ import re
 
 from .periods import due_date
 
-RATIO = 3.0          # more than 3x the highest, or under 1/3 of the lowest, of the last periods
+RATIO = 3.0          # more than 3x the highest of the last periods
 LOOK_BACK = 4        # the company's own last four periods
 MIN_PRIORS = 2       # fewer than this and the company has no history to judge by
 _PCT_UNITS = ("PCT", "%", "PERCENT", "")
 
 # (type, metric) -> (low, high) in percent
-RANGES = {("hfc", "nim"): (1.0, 7.0), ("bank", "nim"): (1.5, 6.0)}
-OPERATING_MARGIN = (-50.0, 60.0)
-_MARGINS = {"ebitda_margin", "ebit_margin", "operating_margin", "opm"}
+RANGES = {("hfc", "nim"): (1.0, 15.0), ("bank", "nim"): (1.0, 8.5)}
 
 _HFC = re.compile(r"housing\s+finance", re.I)
 _BANK = re.compile(r"\bbanks?\b|\bbanking\b", re.I)
@@ -53,8 +53,9 @@ def _num(entry: dict | None) -> float | None:
     return float(v) if isinstance(v, (int, float)) and not isinstance(v, bool) else None
 
 
-def _priors(metrics: list[dict], names: tuple[str, ...], entry: dict) -> list[float]:
-    """The values of the company's own last four earlier quarters (else years) of this metric, newest first, one a period."""
+def _priors(metrics: list[dict], names: tuple[str, ...], entry: dict, rate: bool = False) -> list[float]:
+    """The values of the company's own last four earlier periods of this metric and of the entry's kind (quarters for a
+    quarter, years for a year: a quarter's flow is a quarter of the year), newest first, one a period."""
     end = due_date(entry.get("period"))
     if end is None:
         return []
@@ -70,9 +71,9 @@ def _priors(metrics: list[dict], names: tuple[str, ...], entry: dict) -> list[fl
             continue
         if p not in latest or str(m.get("as_of") or "") >= str(latest[p].get("as_of") or ""):
             latest[p] = m
-    quarters = sorted((p for p in latest if p.startswith("Q")), key=due_date, reverse=True)
-    pool = quarters[:LOOK_BACK]
-    if len(pool) < MIN_PRIORS:   # a company with no quarters of it on file (GIC's NIM: FY26 3.41%): its years
+    quarter = str(entry.get("period")).startswith("Q")
+    pool = sorted((p for p in latest if p.startswith("Q") == quarter), key=due_date, reverse=True)[:LOOK_BACK]
+    if rate and len(pool) < MIN_PRIORS:   # a rate has no quarter-to-year scale (GIC's NIM: FY26 3.41%): its years
         pool = sorted(latest, key=due_date, reverse=True)[:LOOK_BACK]
     return [_num(latest[p]) for p in pool]
 
@@ -90,16 +91,10 @@ def hide_reason(metrics: list[dict], names: tuple[str, ...], entry: dict | None,
             if not low <= value <= high:
                 label = "home-loan lender" if kind == "hfc" else "bank"
                 return f"{value:g}% is outside the {low:g}-{high:g}% a {label}'s NIM can be"
-        if names[0] in _MARGINS and kind in ("other",):
-            low, high = OPERATING_MARGIN
-            if not low <= value <= high:
-                return f"{value:g}% is outside the {low:g}% to {high:g}% an operating margin can be"
-    priors = _priors(metrics, names, entry)
+    priors = _priors(metrics, names, entry, rate=fmt == "pct")
     if len(priors) >= MIN_PRIORS and value > 0 and all(p > 0 for p in priors):
         if value > RATIO * max(priors):
             return f"{value:g} is more than {RATIO:g}x the company's own last {len(priors)} periods (highest {max(priors):g})"
-        if value < min(priors) / RATIO:
-            return f"{value:g} is under a third of the company's own last {len(priors)} periods (lowest {min(priors):g})"
     return None
 
 

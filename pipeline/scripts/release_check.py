@@ -51,8 +51,8 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      the `fundamentals` strip) worked out again from memory off and on, the figures the switch hides listed with
                      their reason (GIC Housing's NIM 19.63%). A card with a footer KPI and no memory is NOT REPLAYABLE (listed).
   eps_follows_profit CARD_EPS_FOLLOWS_PROFIT (F183): a results table's EPS line, `results_snapshot` off and on over memory
-                     (an EPS change that does not follow the profit change, with no share-count event, is not shown; the
-                     filing's own stated change wins). Needs a RESULTS card with a table and memory.
+                     (an EPS change far above the profit change, with no share-count event, is not shown; dilution is
+                     shown). Needs a RESULTS card with a table and memory.
 A card or part that cannot be replayed is never faked: it is counted as "not_replayable", written to NAME-unreplayable.json
 and NAME-unreplayable.md (the stored lines and the pdf link, for the blind sample: judge the stored card as it is).
 

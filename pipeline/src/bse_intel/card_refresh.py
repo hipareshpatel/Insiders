@@ -94,8 +94,10 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
             new["results"] = None
     new["signals"] = [s for s in card.get("signals") or [] if s.get("type") not in SIGNALS_OFF]
     changed = [k for k in (*BLOCKS, "signals") if json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
-    if card_footer_plausible() and (hidden := footer_plausible.card_notes(new)) and (new.get("grounding") or {}).get("footer_hidden") != hidden:
-        new["grounding"] = {**(new.get("grounding") or {}), "footer_hidden": hidden}   # F182: for the owner's Issues page
+    hidden = footer_plausible.card_notes(new) if card_footer_plausible() else []
+    if (new.get("grounding") or {}).get("footer_hidden", []) != hidden:   # F182: for the owner's Issues page; a stale note goes
+        grounding = {k: v for k, v in (new.get("grounding") or {}).items() if k != "footer_hidden"}
+        new["grounding"] = {**grounding, **({"footer_hidden": hidden} if hidden else {})}
         changed.append("grounding")
     return new, changed
 

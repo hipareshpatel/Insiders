@@ -43,7 +43,7 @@ def test_gic_housings_nim_is_outside_the_range_of_a_home_loan_lender_and_far_abo
     d = gic()
     entry = next(e for e in d["financial_metrics"] if e["period"] == "Q2FY27" and e["metric"] == "nim")
     why = fp.hide_reason(d["financial_metrics"], ("nim", *NIM["aliases"]), entry, "pct", HFC)
-    assert why and "19.63% is outside the 1-7%" in why
+    assert why and "19.63% is outside the 1-15%" in why
     # with no industry the company's own history still stops it: more than 3x its last years
     own = fp.hide_reason(d["financial_metrics"], ("nim", *NIM["aliases"]), entry, "pct", None)
     assert own and "more than 3x" in own and "3.41" in own
@@ -56,22 +56,25 @@ def test_a_normal_nim_and_a_real_move_are_shown():
     assert fp.hide_reason([], ("nim",), entry, "pct", HFC) is None   # no history, in range: shown
 
 
-def test_a_bank_and_a_factory_have_their_own_ranges():
-    nim = m("nim", "Q2FY27", 7.5)
-    assert "1.5-6%" in fp.hide_reason([], ("nim",), nim, "pct", "Financial Services > Banks > Private Sector Bank")
-    assert fp.hide_reason([], ("nim",), nim, "pct", "Financial Services > Non Banking Financial Company (NBFC)") is None  # microfinance can be 10%
-    margin = m("ebitda_margin", "Q2FY27", 75.0)
-    assert "-50% to 60%" in fp.hide_reason([], ("ebitda_margin", "opm"), margin, "pct", "Capital Goods > Industrial Machinery")
-    assert fp.hide_reason([], ("ebitda_margin",), m("ebitda_margin", "Q2FY27", 55.0), "pct", "Materials > Cement") is None
-    assert fp.hide_reason([], ("ebitda_margin",), m("ebitda_margin", "Q2FY27", -40.0), "pct", "Materials > Cement") is None
+def test_a_bank_has_its_range_and_other_margins_have_none():
+    assert "1-8.5%" in fp.hide_reason([], ("nim",), m("nim", "Q2FY27", 9.5), "pct", "Financial Services > Banks > Private Sector Bank")
+    assert fp.hide_reason([], ("nim",), m("nim", "Q2FY27", 7.5), "pct", "Financial Services > Banks > Private Sector Bank") is None  # Bandhan
+    assert fp.hide_reason([], ("nim",), m("nim", "Q2FY27", 12.0), "pct", "Financial Services > Non Banking Financial Company (NBFC)") is None
+    # Power Grid's EBITDA margin is about 85%: real, so no margin range (review)
+    assert fp.hide_reason([], ("ebitda_margin",), m("ebitda_margin", "Q2FY27", 86.0), "pct", "Power > Transmission") is None
 
 
-def test_under_a_third_of_the_last_four_quarters_is_hidden():
+def test_a_collapse_is_shown_it_is_often_the_news():
     rows = [m("ebitda_margin", f"Q{i}FY26", v) for i, v in enumerate([18.0, 19.0, 17.0, 18.5], 1)]
-    low = m("ebitda_margin", "Q1FY27", 4.0)
-    why = fp.hide_reason(rows, ("ebitda_margin",), low, "pct", "Materials > Cement")
-    assert why and "under a third" in why
-    assert fp.hide_reason(rows, ("ebitda_margin",), m("ebitda_margin", "Q1FY27", 9.0), "pct", "Materials > Cement") is None
+    assert fp.hide_reason(rows, ("ebitda_margin",), m("ebitda_margin", "Q1FY27", 4.0), "pct", "Materials > Cement") is None
+    assert "more than 3x" in fp.hide_reason(rows, ("ebitda_margin",), m("ebitda_margin", "Q1FY27", 60.0), "pct", "Materials > Cement")
+
+
+def test_a_quarters_flow_is_not_judged_against_years():
+    years = [m("ad_revenue", "FY25", 1400.0, unit="CR"), m("ad_revenue", "FY26", 1500.0, unit="CR")]
+    assert fp.hide_reason(years, ("ad_revenue",), m("ad_revenue", "Q2FY27", 400.0, unit="CR"), "cr", "Media") is None
+    quarters = [m("ad_revenue", f"Q{i}FY26", 380.0, unit="CR") for i in (1, 2, 3, 4)]
+    assert fp.hide_reason(quarters, ("ad_revenue",), m("ad_revenue", "FY27", 1550.0, unit="CR"), "cr", "Media") is None
 
 
 def test_the_footer_strip_is_unchanged_off_and_hides_the_figure_on(monkeypatch):
@@ -100,7 +103,7 @@ def test_the_card_keeps_one_line_a_hidden_figure_for_the_issues_page(monkeypatch
     d = gic()
     card = {"fundamentals": latest_fundamentals(d, [NIM]), "results": results_snapshot(d, "n2", [NIM])}
     lines = fp.card_notes(card)
-    assert len(lines) == 1 and lines[0].startswith("NIM 19.63 (Q2FY27) not shown: 19.63% is outside the 1-7%")
+    assert len(lines) == 1 and lines[0].startswith("NIM 19.63 (Q2FY27) not shown: 19.63% is outside the 1-15%")
 
 
 def test_refreshing_a_stored_card_records_the_hidden_footer_figure(monkeypatch):
@@ -115,3 +118,9 @@ def test_refreshing_a_stored_card_records_the_hidden_footer_figure(monkeypatch):
     monkeypatch.setenv("CARD_FOOTER_PLAUSIBLE", "1")
     new, changed = refresh(stored, gic(), filing, None, [NIM])
     assert "grounding" in changed and new["grounding"]["footer_hidden"][0].startswith("NIM 19.63")
+    # the figure becomes plausible (or the switch goes off): the stored note goes, so the Issues page does not list it
+    fixed, changed = refresh(new, gic(nim=3.8), filing, None, [NIM])
+    assert "grounding" in changed and "footer_hidden" not in fixed["grounding"]
+    monkeypatch.delenv("CARD_FOOTER_PLAUSIBLE")
+    off, changed = refresh(new, gic(), filing, None, [NIM])
+    assert "footer_hidden" not in off["grounding"]

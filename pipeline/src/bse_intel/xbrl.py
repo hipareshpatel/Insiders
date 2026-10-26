@@ -777,8 +777,10 @@ def owners_share(values: dict, kept: dict | None = None) -> int:
 def _eps_profit(values: dict, metric: str, label: str) -> float | None:
     """The profit an EPS line is on: the owners' profit, else the whole profit; for the continuing-operations EPS the
     continuing profit (F188), since a sold business can make the whole profit a gain and the continuing EPS a loss."""
-    if metric == "eps_continuing" and values.get(("pat_continuing", label)) is not None:
-        return values[("pat_continuing", label)]
+    if metric == "eps_continuing":
+        # only the continuing profit: the whole one may be a gain from the business sold while continuing operations lost
+        # (review: a continuing EPS of -3.0 beside a whole profit of +200 was turned into +3.0); none, no sign or filler rule
+        return values.get(("pat_continuing", label))
     return values.get(("pat_owners", label)) or values.get(("pat", label))
 
 

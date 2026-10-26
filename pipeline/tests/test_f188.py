@@ -41,7 +41,8 @@ def test_the_variants_follow_the_filler_and_sign_rules_of_eps():
     values = {("pat", "Q1"): 70.0, ("eps", "Q1"): 0.0, ("eps_total", "Q1"): 0.0, ("eps_continuing", "Q1"): 0.0,
               ("pat", "Q2"): -30.0, ("eps_total", "Q2"): 2.0,
               ("pat", "Q3"): 40.0, ("pat_continuing", "Q3"): -10.0, ("eps_continuing", "Q3"): -1.0, ("eps_total", "Q3"): 3.0}
-    assert xbrl.eps_fillers(values) == 3                 # the template's 0 beside a profit of 70 Cr, on all three lines
+    assert xbrl.eps_fillers(values) == 2                 # the template's 0 beside a profit of 70 Cr, eps and eps_total
+    assert values[("eps_continuing", "Q1")] == 0.0       # no continuing profit to judge it by: left as filed
     assert xbrl.eps_signs(values) == 1
     assert values[("eps_total", "Q2")] == -2.0           # a loss makes the EPS a loss
     assert values[("eps_continuing", "Q3")] == -1.0      # the continuing loss keeps its sign beside a whole profit
@@ -143,3 +144,13 @@ def test_the_share_base_and_profit_checks_still_work_on_the_chosen_line(monkeypa
     eps = results_snapshot(d, "n2")["eps"]
     assert eps["value"] == 84.17 and eps["continuing"] == 16.14 and eps.get("eps_note") \
         and eps["yoy_pct"] == round((84.17 / 14.2 - 1) * 100, 1)   # the share-count note is on the line, the change on one count
+
+
+
+def test_a_continuing_eps_without_a_continuing_profit_keeps_its_sign_and_its_zero():
+    # review of F188: a loss on continuing operations beside a whole profit from the business sold, no continuing-profit tag
+    from bse_intel.xbrl import eps_fillers, eps_signs
+    values = {("eps_continuing", "Q4FY26"): -3.0, ("pat", "Q4FY26"): 200.0, ("pat_owners", "Q4FY26"): 200.0}
+    assert eps_signs(values) == 0 and values[("eps_continuing", "Q4FY26")] == -3.0
+    zero = {("eps_continuing", "Q4FY26"): 0.0, ("pat", "Q4FY26"): 200.0}
+    assert eps_fillers(zero) == 0 and zero[("eps_continuing", "Q4FY26")] == 0.0

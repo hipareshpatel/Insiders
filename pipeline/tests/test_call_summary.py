@@ -225,3 +225,11 @@ def test_no_eps_in_call_takeaways_on_cards_or_the_company_page():
     texts = _texts(card_takeaways(d, T1, FILED_T1))
     assert texts and not any("EPS" in t or "per share" in t.lower() for t in texts)
     assert "EPS" not in str(summarize_calls(d)) and "Earnings per share" not in str(summarize_calls(d))
+
+
+def test_a_trailing_eps_clause_is_cut_and_the_rest_of_the_point_kept():
+    d = dossier()
+    d.setdefault("call_points", []).append({"news_id": T1, "text": "Net profit rose to Rs 50 crore, EPS Rs 3",
+                                            "category": CATEGORIES[0]})
+    texts = _texts(card_takeaways(d, T1, FILED_T1))
+    assert any("Rs 50 crore" in t for t in texts) and not any("EPS" in t for t in texts)

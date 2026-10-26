@@ -15,7 +15,7 @@ import re
 from datetime import date
 
 from .dossier import _deal_history, label
-from .no_eps import mentions_eps
+from .no_eps import cut_text
 from .timeutil import now_iso
 from .periods import due_date, quarter_index
 from .signals import stated_net_debt
@@ -157,8 +157,9 @@ def _points(dossier: dict, calls: dict[str, dict]) -> list[dict]:
     call's own checked takeaways rank above what memory took from it."""
     out: list[dict] = []
     for p in dossier.get("call_points", []):
-        if p.get("news_id") in calls and not boilerplate(p.get("text") or "") and not mentions_eps(p.get("text")):
-            out.append({"text": _short(p["text"]), "category": p["category"] if p.get("category") in CATEGORIES else "Other",
+        text = cut_text(p.get("text"))   # memory keeps EPS; the card and the stock page never show it (owner)
+        if p.get("news_id") in calls and text and not boilerplate(text):
+            out.append({"text": _short(text), "category": p["category"] if p.get("category") in CATEGORIES else "Other",
                         "news_id": p["news_id"], "date": calls[p["news_id"]]["date"],
                         "rank": 9 + (2 if re.search(r"\d", p["text"]) else 0),
                         **({"versus": p["versus_prior"]} if p.get("versus_prior") else {})})
@@ -166,8 +167,8 @@ def _points(dossier: dict, calls: dict[str, dict]) -> list[dict]:
     def add(text: str | None, kind: str, news_id: str | None, rank: int, **extra) -> None:
         if not text or news_id not in calls:
             return
-        text = _short(re.sub(r"^\d{4}-\d{2}-\d{2}:\s*", "", str(text)))
-        if boilerplate(text) or mentions_eps(text):   # memory keeps EPS; the card and the stock page never show it (owner)
+        text = cut_text(_short(re.sub(r"^\d{4}-\d{2}-\d{2}:\s*", "", str(text))))   # a trailing EPS clause is cut, else the line is left out
+        if not text or boilerplate(text):
             return
         out.append({"text": text, "category": category(text, kind), "news_id": news_id,
                     "date": calls[news_id]["date"], "rank": rank + (2 if re.search(r"\d", text) else 0), **extra})

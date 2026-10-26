@@ -872,9 +872,11 @@ SAVE_EVERY_SECONDS = 180.0
 _DECIDED_FIELDS = ("pdf_verdict", "pdf_value", "pdf_label", "pdf_url", "matches", "reason")
 
 
-def pair_key(r: dict) -> tuple[str, str, str, str]:
-    """What names a pair across runs: scrip (symbol when the row has none), basis, period, metric."""
-    return (str(r.get("scrip") or r.get("symbol") or ""), r.get("basis") or "", r.get("period") or "", r.get("metric") or "")
+def pair_key(r: dict) -> tuple[str, ...]:
+    """What names a pair across runs: scrip (symbol when the row has none), basis, period, metric, and the figures it
+    compares (memory's and screener's), so a newer input with other figures for the same pair is read again."""
+    return (str(r.get("scrip") or r.get("symbol") or ""), r.get("basis") or "", r.get("period") or "", r.get("metric") or "",
+            str(r.get("memory_value") or ""), str(r.get("screener_value") or ""))
 
 
 def progress_key(name: str) -> str:

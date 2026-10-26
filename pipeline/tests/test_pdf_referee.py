@@ -592,3 +592,11 @@ def test_be_gentle_leaves_a_core():
         assert 1 <= ocr.SETTINGS[key] <= 4
     finally:
         ocr.SETTINGS[key] = before
+
+
+def test_resume_key_holds_the_compared_figures():
+    """A newer input with other figures for the same pair is read again, not given the earlier verdict."""
+    from bse_intel.pdf_referee import pair_key
+    a = {"scrip": "500001", "basis": "STANDALONE", "period": "Q1FY27", "metric": "revenue", "memory_value": "10",
+         "screener_value": "11"}
+    assert pair_key(a) == pair_key(dict(a)) and pair_key(a) != pair_key({**a, "memory_value": "12"})

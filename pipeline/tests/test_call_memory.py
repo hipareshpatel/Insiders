@@ -356,7 +356,7 @@ def test_the_command_writes_points_and_reasons_and_leaves_memory_alone(monkeypat
     assert detail["points_kept"][0]["page"] == 1 and detail["kind"] == "transcript"
     summary = json.loads((tmp_path / "o" / "summary.json").read_text())
     assert summary["documents"] == 2 and summary["read"] == 1 and summary["failed"] == 1 and summary["dropped_by_reason"] == {"quote": 1}
-    assert [r.get("error") for r in summary["rows"]] == [None, "LookupError: not in the filings ledger"]
+    assert [r.get("error") for r in summary["rows"]] == [None, "PermanentSkip: not in the filings ledger"]
     assert sink.puts == [] and sink.dossier["call_memory"] == []   # nothing written to memory
 
 
@@ -503,7 +503,7 @@ def test_a_filing_not_in_the_ledger_leaves_the_queue_at_once_with_its_reason(mon
     monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=FakeGateway([]), prompts=PromptEngine(s)))
     assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 0
     states = json.loads(next(v for k, v in sink.kv.items() if k.startswith("callmem:s:")))
-    assert states["call-missing"]["state"] == "gave_up" and states["call-missing"]["reason"] == "LookupError: not in the filings ledger"
+    assert states["call-missing"]["state"] == "gave_up" and states["call-missing"]["reason"] == "PermanentSkip: not in the filings ledger"
     assert call_queue.pending(sink) == []
 
 
@@ -647,3 +647,33 @@ def test_the_third_gemini_key_serves_call_memory_only():
     unset = expand_key_aliases(config, {"G1": "a", "G2": "b"})
     assert [e["provider"] for e in unset["routes"]["call_memory"]] == ["gemini", "gemini_2", "nvidia"]
     assert "gemini_3" not in unset["providers"]
+
+
+def test_a_run_killed_mid_reading_still_counts_an_attempt_and_three_give_it_up():
+    sink = KvSink()
+    call_queue.enqueue(sink, "a", "1", "x")
+    for n in (1, 2, 3):   # three runs killed after start, before settle
+        item = call_queue.pending(sink)[0]
+        assert call_queue.start(sink, item) and item["attempts"] == n
+    item = call_queue.pending(sink)[0]
+    assert call_queue.start(sink, item) is False and call_queue.pending(sink) == []
+
+
+def test_a_re_enqueue_while_reading_is_read_again():
+    sink = KvSink()
+    call_queue.enqueue(sink, "a", "1", "x")
+    item = call_queue.pending(sink)[0]
+    call_queue.start(sink, item)
+    call_queue.enqueue(sink, "a", "1", "x")   # the pipeline re-ran the filing meanwhile
+    call_queue.settle(sink, item, "done", count=False)
+    assert [i["news_id"] for i in call_queue.pending(sink)] == ["a"]
+
+
+def test_a_partly_read_document_is_written_and_read_again(monkeypatch, settings, tmp_path):
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    sink = _queued_world(settings)
+    call_queue.enqueue(sink, "call-2", "123", "x")
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=FakeGateway([_raw(_point())]), prompts=PromptEngine(s)))
+    monkeypatch.setattr(cli, "_read_call_document", lambda *a, **k: {"news_id": "call-2", "parts_failed": [2]})
+    assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 124
+    assert [(i["news_id"], i["attempts"]) for i in call_queue.pending(sink)] == [("call-2", 1)]

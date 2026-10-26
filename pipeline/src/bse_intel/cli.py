@@ -815,10 +815,14 @@ def cmd_memory_recall_export(args, settings, sink) -> int:
     return 0 if index["sampled"] else 1
 
 
+class PermanentSkip(Exception):
+    """A call document that can never be read (not in the ledger, an invitation): it leaves the queue at once."""
+
+
 def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path | None, read_text, paid) -> dict:
     """One transcript or deck through the call-memory reading and its checks (call_memory.py); with `apply` the kept points
     are merged into the dossier's `call_memory` by the three-way write the pipeline uses. Returns the report row. A document
-    that can never be read (not in the ledger, an invitation) raises LookupError; any other error is transient. No stored text
+    that can never be read (not in the ledger, an invitation) raises PermanentSkip; any other error is transient. No stored text
     is transient: the pipeline writes the text after it queues the filing, and the write is best effort."""
     from . import call_memory, memory_recall_export as mre
     from .dossier import keep_concurrent_writes
@@ -828,7 +832,7 @@ def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path
     data = read_text(news_id)
     filing = call_memory.find_filing(sink, news_id)
     if filing is None:
-        raise LookupError("not in the filings ledger")
+        raise PermanentSkip("not in the filings ledger")
     if not data:
         raise RuntimeError("no stored text yet")   # retried; given up after call_queue.MAX_ATTEMPTS
     text, _ = mre.render_text(data)
@@ -838,7 +842,7 @@ def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path
     industry = dossier.get("industry") or (sink.company(filing.scrip_code) or {}).get("industry")
     kind = mre.kind_from_text(data, filing.headline)
     if kind == "invitation":
-        raise LookupError("an invitation to a call, not a transcript or deck")
+        raise PermanentSkip("an invitation to a call, not a transcript or deck")
     prior = call_memory.prior_points(dossier, news_id, filing.filed_at)
     started = time.monotonic()
     reply = call_memory.read(pipeline.gateway, pipeline.prompts, filing, kind, industry, text, blocks, prior, paid)
@@ -897,12 +901,22 @@ def _call_memory_pending(args, settings, sink) -> int:
             break
         news_id = item["news_id"]
         reason = None
+        if args.apply:   # the attempt counts before the reading: a run killed mid-reading still counts it
+            try:
+                if not call_queue.start(sink, item):
+                    counts["gave_up"] += 1
+                    continue
+            except Exception as exc:   # noqa: BLE001 - read it anyway; the state is written after
+                log.warning("%s: queue state not saved: %s", news_id, exc)
         try:
             row = _read_call_document(pipeline, sink, news_id, args.apply, out_dir, read_text, paid)
             state = "done"
+            if row.get("parts_failed") and int(item.get("attempts", 0)) < call_queue.MAX_ATTEMPTS:
+                # some parts unread: the points kept are written, and the whole document is read again (which replaces them)
+                state, reason = "retry", f"parts failed: {row['parts_failed']}"
             print(json.dumps({k: row.get(k) for k in ("news_id", "symbol", "kind", "model", "asked", "kept", "dropped")}, ensure_ascii=False))
-        except LookupError as exc:   # permanent: nothing to read now or later
-            state, reason = "gave_up", f"LookupError: {exc}"
+        except PermanentSkip as exc:   # nothing to read now or later
+            state, reason = "gave_up", f"PermanentSkip: {exc}"
         except Exception as exc:   # noqa: BLE001 - one document never stops the rest; a transient failure is retried
             state, reason = "retry", f"{type(exc).__name__}: {exc}"
         if state != "done":
@@ -910,7 +924,7 @@ def _call_memory_pending(args, settings, sink) -> int:
         if not args.apply:
             continue   # a measurement run changes no queue state
         try:
-            state = call_queue.settle(sink, item, state, reason)
+            state = call_queue.settle(sink, item, state, reason, count=False)
         except Exception as exc:   # noqa: BLE001 - the points are written; the entry is read again, which replaces them
             log.warning("%s: queue state not saved: %s", news_id, exc)
         counts[state] += 1

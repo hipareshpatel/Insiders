@@ -218,3 +218,18 @@ def test_bse_network_failure_is_retried_later():
     sink = Sink()
     out = tb.run(sink, [card(1, url=f"{BSE}a.pdf")], tb.BseFetcher(client), ocr=False, source="bse")
     assert out["reasons"] == {tb.R_NETWORK: 1} and "textbackfill-bse:failed:0of1" not in sink.kv
+
+
+def test_bse_one_refused_file_after_a_good_one_is_kept_and_the_run_goes_on():
+    files = {f"{BSE}a.pdf": pdf(), f"{BSE}b.pdf": AttachmentError("BSE refused", refused=True), f"{BSE}c.pdf": pdf()}
+    sink = Sink()
+    out = tb.run(sink, [card(n, url=f"{BSE}{x}.pdf") for n, x in ((1, "a"), (2, "b"), (3, "c"))],
+                 tb.BseFetcher(BseDownload(files)), ocr=False, source="bse")
+    assert out["written"] == 2 and json.loads(sink.kv["textbackfill-bse:failed:0of1"]) == {"NSE2": tb.R_REFUSED}
+
+
+def test_bse_three_refusals_in_a_row_stop_the_run():
+    files = {f"{BSE}a.pdf": pdf(), **{f"{BSE}{x}.pdf": AttachmentError("BSE refused", refused=True) for x in "bcd"}}
+    rows = [card(n, url=f"{BSE}{x}.pdf") for n, x in enumerate("abcd", 1)]
+    with pytest.raises(SourceBlockedError):
+        tb.run(Sink(), rows, tb.BseFetcher(BseDownload(files)), ocr=False, source="bse")

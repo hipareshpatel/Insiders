@@ -1,5 +1,5 @@
 # The call-memory reading as a job of its own (F180, TODO 83, docs/design/call-memory.md "queued job"). With the repository
-# variable MEMORY_CALL_V2 = 1 the 15-minute pipeline run only notes each transcript and deck in a queue (call_queue.py); this
+# variable MEMORY_CALL_V2 = 1 (exactly 1: the job's `if` reads only that) the 15-minute pipeline run only notes each transcript and deck in a queue (call_queue.py); this
 # job reads them, checks every point in code and merges it into the company's memory (call-memory --pending --apply), so a
 # slow reply (1-5 minutes) never holds the cards. Variable unset or not 1: the job is skipped, and the command itself would
 # do nothing and exit 0.

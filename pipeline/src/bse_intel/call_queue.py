@@ -10,8 +10,11 @@ another's entries:
 <day> is the UTC day of the enqueue. A filing is pending until its state is done or gave_up for its latest enqueue (a re-run
 enqueues again with a later time and so reads again). The job looks back QUEUE_DAYS days.
 An enqueue is a read-modify-write of one key under a lock (the run's workers are threads) with a re-read just before the
-write; two pipeline runs never overlap (concurrency group bse-pipeline), and a lost entry is only a reading that waits for
-`call-memory --ids`.
+write. The live pipeline's runs never overlap (concurrency group bse-pipeline), but a maintenance `requeue-failed` can run
+beside one; a lost entry is only a reading that waits for `call-memory --ids`.
+A state records the enqueue it settles (`for`: that enqueue's `at`), so a re-enqueue made while the job reads is read again.
+The job counts an attempt before it reads (a run killed mid-reading still counts one), so one document can never hold the
+head of the queue for more than MAX_ATTEMPTS runs.
 """
 from __future__ import annotations
 
@@ -67,22 +70,40 @@ def pending(sink, days: int = QUEUE_DAYS) -> list[dict]:
         states = _load(sink, f"callmem:s:{day}")
         for news_id, item in queued.items():
             state = states.get(news_id) or {}
-            current = state.get("at", "") >= item.get("at", "")   # the state is about this enqueue, not an earlier one
+            # the state is about this enqueue, not an earlier one
+            current = state["for"] == item.get("at") if "for" in state else state.get("at", "") >= item.get("at", "")
             if current and state.get("state") in ("done", "gave_up"):
                 continue
             out.append({"news_id": news_id, "day": day, **item, "attempts": int(state.get("attempts", 0)) if current else 0})
     return sorted(out, key=lambda i: i.get("at", ""))
 
 
-def settle(sink, item: dict, state: str, reason: str | None = None) -> str:
-    """Record the outcome of one reading: 'done' or 'gave_up' leave the queue, 'retry' counts an attempt and becomes
-    'gave_up' at MAX_ATTEMPTS. Returns the state stored. Only the queue job calls this."""
+def start(sink, item: dict) -> bool:
+    """Count this attempt before the reading (state 'retry', "started, not finished"). False when the filing already had
+    MAX_ATTEMPTS (runs killed mid-reading): it is given up instead and not read."""
+    if int(item.get("attempts", 0)) >= MAX_ATTEMPTS:
+        settle(sink, item, "gave_up", "killed mid-reading too often", count=False)
+        return False
     key = f"callmem:s:{item['day']}"
     states = _load(sink, key)
-    attempts = int(item.get("attempts", 0)) + (1 if state == "retry" else 0)
+    item["attempts"] = int(item.get("attempts", 0)) + 1
+    states[item["news_id"]] = {"state": "retry", "attempts": item["attempts"], "at": _stamp(), "for": item.get("at", ""),
+                               "reason": "started, not finished"}
+    sink.kv_set(key, json.dumps(states, ensure_ascii=False), _stamp())
+    return True
+
+
+def settle(sink, item: dict, state: str, reason: str | None = None, count: bool = True) -> str:
+    """Record the outcome of one reading: 'done' or 'gave_up' leave the queue, 'retry' counts an attempt (unless ``count`` is
+    false: the attempt was counted when the reading started) and becomes 'gave_up' at MAX_ATTEMPTS. Returns the state stored.
+    Only the queue job calls this."""
+    key = f"callmem:s:{item['day']}"
+    states = _load(sink, key)
+    attempts = int(item.get("attempts", 0)) + (1 if state == "retry" and count else 0)
     if state == "retry" and attempts >= MAX_ATTEMPTS:
         state = "gave_up"
-    states[item["news_id"]] = {"state": state, "attempts": attempts, "at": _stamp(), **({"reason": reason[:200]} if reason else {})}
+    states[item["news_id"]] = {"state": state, "attempts": attempts, "at": _stamp(), "for": item.get("at", ""),
+                               **({"reason": reason[:200]} if reason else {})}
     sink.kv_set(key, json.dumps(states, ensure_ascii=False), _stamp())
     item["attempts"] = attempts
     return state

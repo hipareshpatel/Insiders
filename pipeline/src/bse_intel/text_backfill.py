@@ -21,7 +21,9 @@ time, at the client's own pace.
 ``source="bse"`` (owner 26 Oct 2026, TODO 87: "Download texts for older cards from BSE... OK"): the same run for the cards
 whose file is on BSE (the BSE-era cards the NSE run lists as "not an NSE file"), fetched with the pipeline's own BSE client
 (``BseClient.download``: BSE's AttachLive/AttachHis fallback and its own pace). One runner, its own failure list
-(``textbackfill-bse:failed``); BSE refusing an attachment stops the run as an NSE refusal does.
+(``textbackfill-bse:failed``). BSE refusing the first download, or REFUSED_STOP in a row, stops the run as an NSE refusal does;
+a single refused file after downloads that worked is kept as failed ("refused (403)") and the run goes on (independent
+review: one old file BSE will not serve must not stop every re-run on the same row).
 """
 
 from __future__ import annotations
@@ -42,6 +44,7 @@ log = logging.getLogger(__name__)
 
 MAX_SHARDS = 6   # owner 26 Oct 2026: 6 machines on the fast archive pace (F169); reading, not NSE, was the limit
 FAILED_KEY = "textbackfill:failed"      # + ":<i>of<n>": {news_id: reason} for the filings that will not be tried again
+REFUSED_STOP = 3                         # BSE only: refusals in a row (after a download that worked) that stop the run
 NETWORK_STOP = 3                         # downloads failing on the network in a row stop the run (the pipeline's rule)
 FETCH_PAUSE_S = 4.0                      # NseClient's default pause is 3-5 s between requests
 # what a ledger row's last_error says when the filing has no text for good (pipeline.NoTextAttachment, AttachmentTooLarge)
@@ -64,6 +67,7 @@ R_UNREADABLE = "unreadable"
 R_OCR = "OCR failed"
 R_NOTEXT = "no text"
 R_NETWORK = "network"
+R_REFUSED = "refused (403)"
 
 
 def failure_reason(doc: Document) -> str | None:
@@ -190,6 +194,8 @@ def run(sink, rows: list[dict], client, shard: tuple[int, int] | None = None, ti
     started = clock()
     deadline = started + time_budget
     streak = 0
+    refused = 0        # BSE: refusals in a row
+    served = False     # BSE: a download has worked in this run
     pool = ThreadPoolExecutor(max_workers=1)
     futures: dict[int, object] = {}
 
@@ -217,7 +223,11 @@ def run(sink, rows: list[dict], client, shard: tuple[int, int] | None = None, ti
             totals["fetched"] += 1
             if kind == "error":
                 if isinstance(payload, SourceBlockedError):
-                    raise payload
+                    refused += 1
+                    if source != "bse" or not served or refused >= REFUSED_STOP:
+                        raise payload
+                    fail(nid, R_REFUSED)   # one file BSE will not serve; kept, so the next run does not stop on it
+                    continue
                 if isinstance(payload, AttachmentTooLarge):
                     streak = 0
                     fail(nid, R_LARGE)
@@ -231,7 +241,8 @@ def run(sink, rows: list[dict], client, shard: tuple[int, int] | None = None, ti
                 else:
                     raise payload
                 continue
-            streak = 0
+            streak = refused = 0
+            served = True
             if kind == "none":
                 fail(nid, r_404)
                 continue

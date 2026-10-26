@@ -1085,8 +1085,13 @@ def cmd_text_backfill(args, settings, sink) -> int:
     pipeline's own text-cache bytes. At most 2 shards; exit 75 when NSE refuses, 124 when the time budget ends with filings
     left. No AI (local OCR only), no card, memory or filings write."""
     from . import text_backfill as tb
-    from .nse import NseClient, SourceBlockedError
+    from .bse import BseClient, SourceBlockedError   # the base class: NSE's refusal and BSE's both
+    from .nse import NseClient
 
+    bse = args.source == "bse"
+    if bse and args.shard:
+        print("--source bse runs on one runner (no --shard)")
+        return 2
     shard = None
     if args.shard:
         try:
@@ -1096,7 +1101,9 @@ def cmd_text_backfill(args, settings, sink) -> int:
             print(f"--shard takes I/N with 0 <= I < N <= {tb.MAX_SHARDS}, e.g. 0/2")
             return 2
         shard = (index, count)
-    rows, counts = tb.cards_lacking_text(sink, args.limit)
+    rows, counts = tb.cards_lacking_text(sink, None if bse else args.limit)
+    if bse:   # only the cards whose file is on BSE; --limit counts those
+        rows = tb.bse_rows(rows)[:args.limit] if args.limit else tb.bse_rows(rows)
     mine = len(rows[shard[0]::shard[1]]) if shard else len(rows)
     plan = tb.estimate(mine, 1, not args.no_ocr)
     whole = tb.estimate(len(rows), 2, not args.no_ocr)
@@ -1105,12 +1112,13 @@ def cmd_text_backfill(args, settings, sink) -> int:
           f"{plan['seconds_each']:g} s a filing, about {plan['seconds'] / 3600:.1f} hours for this shard "
           f"(the whole {len(rows)} on 2 shards: about {whole['seconds'] / 3600:.1f} hours; an assumption, not measured)")
     refused = False
-    with NseClient() as nse:
+    with (BseClient() if bse else NseClient()) as client:
         try:
-            outcome = tb.run(sink, rows, nse, shard, args.time_budget, args.restart, ocr=not args.no_ocr,
-                             max_ocr_pages=settings.max_ocr_pages)
+            outcome = tb.run(sink, rows, tb.BseFetcher(client) if bse else client, shard, args.time_budget, args.restart,
+                             ocr=not args.no_ocr, max_ocr_pages=settings.max_ocr_pages, source=args.source)
         except SourceBlockedError as exc:
-            logging.getLogger("bse_intel.text_backfill").error("NSE refused the session; stopping: %s", exc)
+            logging.getLogger("bse_intel.text_backfill").error("%s refused the session; stopping: %s",
+                                                               args.source.upper(), exc)
             refused = True
             outcome = None
     if outcome:
@@ -1692,7 +1700,9 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("text-backfill", help="one-time: download the filing text of every stored card with none in R2 (NSE, no AI)")
     p.add_argument("--limit", type=int, help="only the first N cards lacking text (a trial)")
-    p.add_argument("--shard", help="I/N with N at most 2: this runner's share of the filings")
+    p.add_argument("--shard", help="I/N with N at most 6: this runner's share of the filings (NSE only)")
+    p.add_argument("--source", choices=["nse", "bse"], default="nse",
+                   help="bse: only the cards whose file is on BSE (the older ones NSE cannot serve), one runner")
     p.add_argument("--no-ocr", action="store_true", help="skip local OCR: figure and scanned pages keep their text layer only")
     p.add_argument("--restart", action="store_true", help="try filings an earlier run failed on again")
     p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if filings are left")

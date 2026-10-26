@@ -177,3 +177,44 @@ def test_a_refusal_stops_the_run_and_keeps_earlier_failures():
 
 def test_estimate():
     assert tb.estimate(6872, 2, ocr=False)["seconds"] == round(6872 * 6.0 / 2)
+
+
+BSE = "https://www.bseindia.com/xml-data/corpfiling/AttachLive/"
+
+
+class BseDownload:
+    """A fake BseClient: url -> bytes, None (404 on both paths) or an exception to raise."""
+
+    def __init__(self, files):
+        self.files, self.calls = files, []
+
+    def download(self, url, max_bytes=30_000_000):
+        self.calls.append(url)
+        got = self.files[url]
+        if isinstance(got, Exception):
+            raise got
+        return got
+
+
+def test_bse_source_fetches_only_bse_files_with_its_own_failure_list():
+    rows = [card(1, url=f"{BSE}a.pdf"), card(2, url=f"{BSE}b.pdf"), card(3)]
+    assert tb.bse_rows(rows) == rows[:2]
+    client = BseDownload({f"{BSE}a.pdf": pdf(), f"{BSE}b.pdf": None})
+    sink = Sink()
+    out = tb.run(sink, rows, tb.BseFetcher(client), ocr=False, source="bse")
+    assert out["written"] == 1 and client.calls == [f"{BSE}a.pdf", f"{BSE}b.pdf"]
+    assert json.loads(sink.kv["textbackfill-bse:failed:0of1"]) == {"NSE2": tb.R_404_BSE, "NSE3": tb.R_NOT_BSE}
+    assert "textbackfill:failed:0of1" not in sink.kv
+
+
+def test_bse_refusal_stops_the_run():
+    client = BseDownload({f"{BSE}a.pdf": AttachmentError("BSE refused", refused=True)})
+    with pytest.raises(SourceBlockedError):
+        tb.run(Sink(), [card(1, url=f"{BSE}a.pdf")], tb.BseFetcher(client), ocr=False, source="bse")
+
+
+def test_bse_network_failure_is_retried_later():
+    client = BseDownload({f"{BSE}a.pdf": AttachmentError("timeout")})
+    sink = Sink()
+    out = tb.run(sink, [card(1, url=f"{BSE}a.pdf")], tb.BseFetcher(client), ocr=False, source="bse")
+    assert out["reasons"] == {tb.R_NETWORK: 1} and "textbackfill-bse:failed:0of1" not in sink.kv

@@ -5,6 +5,7 @@ import {
 import { useState, type ReactNode } from "react";
 import type { CardBody, CardRow, QuantifiedImpact, Signal } from "../../shared/types";
 import { cn } from "../lib/cn";
+import { withoutEps } from "../lib/cardText";
 import { exact, quantValue } from "../lib/format";
 
 /** Signal types the pipeline has turned off (signals.py SIGNALS_OFF): cards written before then still carry them, and
@@ -16,7 +17,7 @@ export const SIGNALS_OFF = new Set<string>(["DILUTION", "MARGIN_MIX", "CAPITAL_C
 export function parseCard(row: CardRow): CardBody | null {
   try {
     const card = JSON.parse(row.card_json) as CardBody;
-    return { ...card, signals: (card.signals ?? []).filter((s) => !SIGNALS_OFF.has(s.type)) };
+    return withoutEps({ ...card, signals: (card.signals ?? []).filter((s) => !SIGNALS_OFF.has(s.type)) });
   } catch {
     return null;
   }

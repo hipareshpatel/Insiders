@@ -480,7 +480,7 @@ def table(reports: list[AnnualReport]) -> str:
     lines = [f"Machine-tagged annual report (XBRL the company filed with NSE, {fy}, {basis}, ₹ crore unless noted; "
              f"exact, prefer these over figures read from the PDF{printed}):"]
     for metric, wording, _ in FLOWS:
-        if metric in main.current and metric != "managerial_remuneration":
+        if metric in main.current and metric not in ("managerial_remuneration", "eps"):   # no EPS for the model (owner rule 26 Oct 2026)
             lines.append(f"- {basis} {wording} {fy}: {_figure(main, metric, prior_fy)}")
     at = _day(main.period_end)
     # the company's own equity is its net worth; a group's net worth is the owners' share, without minorities

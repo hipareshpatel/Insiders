@@ -220,3 +220,48 @@ test("a stored card line that states EPS is told apart from a dividend per share
   for (const t of ["EPS ₹5.20", "Basic EPS of 3.1", "Earnings per share rose 12%", "profit per share ₹4", "Diluted earnings a share ₹2"]) assert.ok(statesEps(t), t);
   for (const t of ["Dividend of ₹5 per share", "Interim dividend 250% (₹2.5 a share)", "Net profit ₹46 Cr", "steps taken"]) assert.ok(!statesEps(t), t);
 });
+
+test("more ways to write EPS are caught and per-share figures that are not EPS stay (owner rule 26 Oct 2026)", () => {
+  for (const t of ["E.P.S. ₹5", "earnings of ₹5 a share", "earnings/share ₹5", "PAT per share ₹3", "diluted earnings per ordinary share ₹4", "Earnings per equity share 3"]) assert.ok(statesEps(t), t);
+  for (const t of ["Dividend ₹5 per share", "Book value per share ₹40", "NAV per share ₹12", "Issue price ₹10 per share"]) assert.ok(!statesEps(t), t);
+});
+
+test("cutEps takes the EPS clause out as the pipeline does", async () => {
+  const { cutEps } = await import("../src/lib/cardText.ts");
+  assert.equal(cutEps("Revenue ₹10 Cr, EPS ₹2.10 (+1.5% YoY) and PAT ₹5 Cr"), "Revenue ₹10 Cr and PAT ₹5 Cr");
+  assert.equal(cutEps("Revenue ₹10 Cr, EPS ₹2.1, up 12%"), "Revenue ₹10 Cr");
+  assert.equal(cutEps("Revenue ₹1,000 Cr, EPS ₹2.1; margin 12%"), "Revenue ₹1,000 Cr; margin 12%");
+  assert.equal(cutEps("Acme Q1FY27 EPS rises 12% to ₹5.2"), "Acme Q1FY27 EPS rises 12% to ₹5.2");   // all EPS: unchanged
+  assert.equal(cutEps("Net profit ₹46 Cr"), "Net profit ₹46 Cr");
+});
+
+test("withoutEps hides EPS items in every list, cuts the headline and keeps the parts indexes right", async () => {
+  const { withoutEps } = await import("../src/lib/cardText.ts");
+  const card = {
+    headline: "Acme Q1: revenue ₹10 Cr, EPS ₹2.1", takeaway: "EPS ₹2.1 up 12%", core_catalyst: "Volumes",
+    what_happened: [{ text: "EPS ₹2.1" }, { text: "Revenue ₹10 Cr" }], why_it_matters: [{ text: "Margin held" }],
+    key_numbers: [{ label: "EPS", value: "2.1" }, { label: "PAT", value: "5" }],
+    notable_changes: [{ metric: "Basic EPS", why: "x" }, { metric: "PAT", why: "y" }],
+    quantified_impact: [{ label: "PAT per share", interpretation: "", formula: "" }, { label: "Margin", interpretation: "", formula: "" }],
+    call_takeaways: [{ category: "Other", text: "EPS guided higher" }, { category: "Other", text: "Capex steady" }],
+    missing_disclosures: ["EPS not given", "Order book"],
+    track_next: { milestones: [], kpis_to_verify: [{ kpi: "EPS growth" }, { kpi: "Margin" }], pending_approvals: [], risks: ["EPS dilution"], catalysts: ["Capacity"] },
+    parts: { v: 1, part1: { what_happened: [0, 1], key_numbers: [1] }, part2: { why_it_matters: [0], notable_changes: [1], missing_disclosures: [0, 1] } },
+  } as unknown as Parameters<typeof withoutEps>[0];
+  const out = withoutEps(card);
+  assert.equal(out.headline, "Acme Q1: revenue ₹10 Cr");
+  assert.equal(out.takeaway, undefined);
+  assert.equal(out.core_catalyst, "Volumes");
+  assert.deepEqual(out.what_happened, [{ text: "Revenue ₹10 Cr" }]);
+  assert.deepEqual(out.key_numbers.map((k) => k.label), ["PAT"]);
+  assert.deepEqual(out.notable_changes?.map((c) => c.metric), ["PAT"]);
+  assert.deepEqual(out.quantified_impact?.map((q) => q.label), ["Margin"]);
+  assert.deepEqual(out.call_takeaways?.map((t) => t.text), ["Capex steady"]);
+  assert.deepEqual(out.missing_disclosures, ["Order book"]);
+  assert.deepEqual(out.track_next?.kpis_to_verify.map((k) => k.kpi), ["Margin"]);
+  assert.deepEqual(out.track_next?.risks, []);
+  assert.deepEqual(out.parts?.part1.what_happened, [0]);
+  assert.deepEqual(out.parts?.part1.key_numbers, [0]);
+  assert.deepEqual(out.parts?.part2.notable_changes, [0]);
+  assert.deepEqual(out.parts?.part2.missing_disclosures, [0]);
+});

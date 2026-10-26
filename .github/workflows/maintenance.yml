@@ -270,7 +270,7 @@ jobs:
         if: inputs.command == 'nse-selfcheck'
         run: |
           mkdir -p "$RUNNER_TEMP/selfcheck"
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel nse-selfcheck --json "$RUNNER_TEMP/selfcheck/nse-selfcheck.json" --csv "$RUNNER_TEMP/selfcheck/nse-selfcheck.csv"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel nse-selfcheck --json "$RUNNER_TEMP/selfcheck/nse-selfcheck.json" --csv "$RUNNER_TEMP/selfcheck/nse-selfcheck.csv" --referee-csv "$RUNNER_TEMP/selfcheck/nse-selfcheck-referee.csv"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'nse-selfcheck'
         with:

@@ -104,7 +104,10 @@ _NOT_RESULTS = re.compile(r"intimation|trading\s+window|earnings?\s+call|confere
 _REVENUE = re.compile(r"(?:revenue|income|sales)\s+from\s+operations|net\s+sales|total\s+interest\s+earned|"
                       r"^\W*(?:\d+\W+)?interest\s+earned", re.I)
 # the revenue line by rank, best first: the top line, a bank's interest earned, then a lender's total income
-_INTEREST_TOP = re.compile(r"^\W*(?:[\divx]+\W+|[a-d]\W+)?(?:total\s+)?interest\s+earned|total\s+interest\s+income", re.I)
+_INTEREST_TOP = re.compile(r"^\W*(?:\d+\W+)?(?:total\s+)?interest\s+earned\b(?!\s+(?:on|from|by)\b)|total\s+interest\s+income", re.I)
+# a bank's sub-line of interest earned: "(a) Interest earned on advances", "Interest earned on investments" (never the total)
+_INTEREST_SUB = re.compile(r"^\W*(?:\(?[a-d]\)|\(?[ivx]+\)|[a-d]\.|[ivx]+\.)\s*(?:total\s+)?interest\s+(?:earned|income)|"
+                           r"^\W*(?:\d+\W+)?interest\s+earned\s+(?:on|from|by)\b", re.I)
 _TOTAL_INCOME = re.compile(r"^\W*(?:[\divx]+\W+|[a-d]\W+)?total\s+income\b(?!\s+(?:from|tax))", re.I)
 _PAT_NAME = re.compile(r"^\W*(?:[ivx]+\W+|\d+\W+|[a-d]\)\s*)?(?:net\s+|total\s+)?(?:profit|loss)\b[^\d]{0,40}?"
                        r"(?:for\s+the\s+(?:period|year|quarter)|after\s+tax|after\s+taxes)", re.I)
@@ -130,6 +133,7 @@ class Row:
     aligned: list[float | None] | None = None   # the figure under each header date, when the row lacks a cell (by position)
     odd: set[int] | None = None            # indexes of figures without the decimals their siblings print (a garbled layer)
     key: tuple | None = None               # (header line, basis): the table the row belongs to
+    unproven: str = ""                     # why the row cannot be trusted at all (figures not on the label's baseline)
 
 
 # --- reading a page -----------------------------------------------------------------------------------------------
@@ -149,12 +153,34 @@ def _dates_in(line: str) -> list[date]:
     return [d for m in _DATE_LOOSE.finditer(line) if (d := _date_of(m[0]))]
 
 
+_MARCH_YEAR = re.compile(r"year\s+ended\W{0,12}(?:on\W+)?(?:\d{1,2}\W{0,3}(?:st|nd|rd|th|t)?\W{0,3}mar|mar|\d{1,2}[./-]0?3[./-])", re.I)
+_UNCONS = re.compile(r"\bun-?consolidated\b", re.I)
+
+
+def _edits(a: str, b: str) -> int:
+    """Levenshtein distance of two short words."""
+    row = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        new = [i]
+        for j, cb in enumerate(b, 1):
+            new.append(min(row[j] + 1, new[j - 1] + 1, row[j - 1] + (ca != cb)))
+        row = new
+    return row[-1]
+
+
 def _names(text: str, basis: str) -> bool:
-    """The text names the basis, a text layer's misspelling included ("CONSOUDATED": most letters of the word, in order)."""
-    if (_CONS if basis == "consolidated" else _ALONE).search(text):
+    """The text names the basis: the word itself, or a text layer's small misspelling of the whole word ("CONSOUDATED": at
+    most two edits, same first and last three letters, so "Consolidating", "Consolidate", "Deconsolidated" are not it).
+    "Unconsolidated" is a standalone statement."""
+    if basis == "consolidated" and _CONS.search(text):
         return True
-    return any(w.lower() != "consolidation" and difflib.SequenceMatcher(None, w.lower(), basis).ratio() >= 0.8
-               for w in _LONG_WORD.findall(text))
+    if basis == "standalone" and (_ALONE.search(text) or _UNCONS.search(text)):
+        return True
+    for w in _LONG_WORD.findall(text):
+        w = w.lower()
+        if w[:3] == basis[:3] and w[-3:] == basis[-3:] and w != basis and _edits(w, basis) <= 2:
+            return True
+    return False
 
 
 def _words_basis(words: str) -> str | None:
@@ -208,15 +234,17 @@ def _gap_months(a: date, b: date) -> int:
     return (a.year - b.year) * 12 + a.month - b.month
 
 
-def _pattern_kinds(dates: list[date]) -> list[str] | None:
+def _pattern_kinds(dates: list[date], march_year_end: bool = False) -> list[str] | None:
     """The kind of each header date by the standard layout of Indian results, when the dates fit it exactly, else None.
 
     Q4: quarter, quarter, quarter, year, year (current quarter, the one before, the year before; the year, the year before).
     Q2 / Q3: quarter x3, then the half year (nine months) to date and its year-ago twin, then the last year.
     Q1: quarter x3 and the last year (the same date as the quarter before). The dates alone prove it: the first is a quarter end,
-    the second one quarter before it, the third a year before it, and the tail repeats them as the layout says."""
+    the second one quarter before it, the third a year before it, and the tail repeats them as the layout says. The four and
+    five column layouts are only read when the page says the year ends in March ("year ended 31 March"): a company with another
+    year end can print the same dates as nine-month columns, so without that word they stay unsure."""
     n = len(dates)
-    if n not in (4, 5, 6):
+    if n not in (4, 5, 6) or (n < 6 and not march_year_end):
         return None
     d0, d1, d2 = dates[:3]
     if d0.month not in (3, 6, 9, 12) or d0.day < 28 or _gap_months(d0, d1) != 3 or _gap_months(d0, d2) != 12:
@@ -232,9 +260,12 @@ def _pattern_kinds(dates: list[date]) -> list[str] | None:
 
 
 def _revenue_rank(label: str) -> int | None:
-    """0 for revenue from operations, 1 for a bank's interest earned, 2 for total income; None when it is none of them."""
+    """0 for revenue from operations, 1 for a bank's interest earned (the total line), 2 for total income, 3 for a sub-line of
+    interest earned (never a figure: unsure when it stands alone); None when it is none of them."""
     if re.search(r"other\s+(?:operating\s+)?income", label, re.I):
         return None
+    if _INTEREST_SUB.search(label):
+        return 3
     if _REVENUE.search(label) and not _INTEREST_TOP.search(label):
         return 0
     if _INTEREST_TOP.search(label):
@@ -242,11 +273,11 @@ def _revenue_rank(label: str) -> int | None:
     return 2 if _TOTAL_INCOME.search(label) else None
 
 
-def _centres(words: list[tuple[float, float, str]], keep) -> list[tuple[float, str]]:
-    return [((x0 + x1) / 2, w) for x0, x1, w in words if keep(w)]
+def _centres(words: list[tuple], keep) -> list[tuple[float, str]]:
+    return [((x0 + x1) / 2, w) for x0, x1, w, *_ in words if keep(w)]
 
 
-def _align(row_words: list[tuple[float, float, str]], header_words: list[tuple[float, float, str]], dates: list[date],
+def _align(row_words: list[tuple], header_words: list[tuple], dates: list[date],
            figures: list[float]) -> list[float | None] | None:
     """The figure under each header date by position, when the row has fewer cells than the header has dates (a nil cell
     printed as nothing). Only when each date is one word, each figure is one word and every figure sits clearly under one date,
@@ -294,17 +325,28 @@ def _odd_figures(line: str, start: int) -> set[int]:
 
 
 def parse_page(text: str, page: int, consolidated_anywhere: bool,
-               positions: list[list[tuple[float, float, str]]] | None = None) -> list[Row]:
+               positions: list[list[tuple]] | None = None, bad_lines: frozenset[int] | set[int] = frozenset()) -> list[Row]:
     """The metric rows (revenue, pat, eps) of one page's text, each with the column proof it has. ``positions`` are the words
-    of each line of ``text`` with their left and right edges, when the text was built from word positions."""
+    of each line of ``text`` with their left and right edges, when the text was built from word positions; ``bad_lines`` are
+    the lines whose figures were not nearer their label's baseline than the next label's: those rows are unproven."""
     lines = text.splitlines()
     if positions is not None and len(positions) != len(lines):
         positions = None
+    if positions is not None:
+        positions = [list(w) for w in positions]
     rows: list[Row] = []
     offsets, pos = [], 0
     for line in lines:
         offsets.append(pos)
         pos += len(line) + 1
+    lines = list(lines)
+    for i in range(len(lines) - 1):      # a label wrapped onto two lines ("Revenue from" / "operations 120.50 ..."): one line
+        a, b = lines[i].strip(), lines[i + 1].strip()
+        if a and len(a) <= 60 and re.search(r"[A-Za-z]$", a) and not any(f for _, f in numbers_on(a)) \
+                and re.match(r"[a-z]", b) and any(f for _, f in numbers_on(b)):
+            lines[i], lines[i + 1] = f"{a} {b}", ""
+            if positions is not None:
+                positions[i], positions[i + 1] = positions[i] + positions[i + 1], []
     for i, line in enumerate(lines):
         label_probe = line.strip()
         if not label_probe:
@@ -338,6 +380,8 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
             unit = _bare_unit(lines, header)
         row = Row(metric, label, basis, unit, figures, None, [], set(), page, rank=rank, key=(header, basis))
         row.odd = _odd_figures(line, start) or None
+        if i in bad_lines:
+            row.unproven = "the row's figures are not nearer its label's baseline than the next label's"
         if header is None:
             row.why = "no header with the period dates above the row"
             rows.append(row)
@@ -361,7 +405,8 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
             if kinds is not None and len(set(zip(kinds, dates))) == len(dates):   # one word for all five: not a proof
                 break
             kinds = None
-        if kinds is None and (pattern := _pattern_kinds(dates)) is not None and row.group_words <= set(pattern):
+        march = bool(_MARCH_YEAR.search("\n".join(lines[max(0, header - 12): header + 2])))
+        if kinds is None and (pattern := _pattern_kinds(dates, march)) is not None and row.group_words <= set(pattern):
             kinds = pattern
         if kinds is not None:
             row.columns = list(zip(kinds, dates))
@@ -376,19 +421,55 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
     return [r for r in rows if r.metric != "revenue" or r.rank == best[r.key]]
 
 
-def coordinate_text(page) -> tuple[str, list[list[tuple[float, float, str]]]]:
+BASELINE_SHARE = 0.45        # a figure farther than this share of the distance to the next label is not trusted to its row
+SYSTEMATIC_SHARE = 0.3       # figures all sitting this far (median) off their labels: the pairing of the page is in doubt
+
+
+def coordinate_text(page) -> tuple[str, list[list[tuple]], set[int], bool]:
     """A page's words put into rows by position, not by the order the text layer lists them: a layer that runs column by
-    column (all labels, then all figures) or sets a figure a point off its label's baseline. The words are clustered with the
-    OCR's line builder (``ocr.positioned_lines``). Returns the text and each line's words with their left and right edges."""
+    column (all labels, then all figures) or sets a figure a point off its label's baseline.
+
+    The words with letters are put into label rows with the OCR's line builder (``ocr.positioned_lines``, without its
+    de-skew: a text layer is not tilted); every other word (a figure, a date, a bracket) joins the label row whose baseline is
+    nearest. Returns the text, each row's words (left edge, right edge, text, height), the rows holding a figure that is not
+    nearer its label's baseline than ``BASELINE_SHARE`` of the distance to the nearest other label, and whether the figures of
+    the whole page sit systematically off their labels (median offset over ``SYSTEMATIC_SHARE`` of that distance, where a
+    figure may as well belong to the row above or below: no row of the page is then trusted)."""
     from .ocr import positioned_lines
 
-    boxes = [([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], word, 1.0) for x0, y0, x1, y1, word, *_ in page.get_text("words")]
-    lines = positioned_lines(boxes)
-    return "\n".join(" ".join(w for _x0, _x1, w in line) for line in lines), lines
+    words = page.get_text("words")
+    alpha = [([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], w, 1.0) for x0, y0, x1, y1, w, *_ in words if re.search(r"[A-Za-z]", w)]
+    rest = [((x0 + x1) / 2, x0, x1, w, (y0 + y1) / 2) for x0, y0, x1, y1, w, *_ in words
+            if not re.search(r"[A-Za-z]", w) and w.strip()]
+    rows = [list(line) for line in positioned_lines(alpha, deskew=False)]
+    if not rows:
+        return "", [], set(), False
+    centre = [sum(w[3] for w in row) / len(row) for row in rows]
+    order = sorted(range(len(rows)), key=lambda k: centre[k])
+    rows, centre = [rows[k] for k in order], [centre[k] for k in order]
+    gap = [min((abs(c - o) for k2, o in enumerate(centre) if k2 != k and abs(c - o) > 0.5), default=None) for k, c in enumerate(centre)]
+    bad: set[int] = set()
+    offsets: list[float] = []
+    for _, x0, x1, w, y in rest:
+        k = min(range(len(rows)), key=lambda r: abs(centre[r] - y))
+        rows[k].append((x0, x1, w, y))
+        off = abs(y - centre[k])
+        if gap[k] is not None and off >= BASELINE_SHARE * gap[k]:
+            bad.add(k)
+        if gap[k] is not None and re.search(r"\d\.\d", w):
+            offsets.append(off / gap[k])
+    offsets.sort()
+    systematic = len(offsets) >= 6 and offsets[len(offsets) // 2] > SYSTEMATIC_SHARE
+    rows = [sorted(row) for row in rows]
+    return "\n".join(" ".join(w[2] for w in row) for row in rows), rows, bad, systematic
 
 
-def _proven(rows: list[Row]) -> int:
-    return sum(r.columns is not None and (r.aligned is not None or len(r.figures) == len(r.dates)) for r in rows)
+def _proven(rows: list[Row]) -> tuple[int, int]:
+    """(rows whose figures failed the baseline check, negated; rows with a proven column): the reading with fewer failed rows
+    wins, then the one with more proven rows."""
+    failed = sum(bool(r.unproven) for r in rows)
+    return -failed, sum(not r.unproven and r.columns is not None and (r.aligned is not None or len(r.figures) == len(r.dates))
+                        for r in rows)
 
 
 def read_document(payload: bytes, ocr: bool = True, max_ocr_pages: int = 6) -> tuple[list[Row] | None, str]:
@@ -425,8 +506,14 @@ def read_document(payload: bytes, ocr: bool = True, max_ocr_pages: int = 6) -> t
                 candidates.append(parse_page(text, i + 1, consolidated_anywhere or _names(text, "consolidated")))
             if by_position is not None and any(len(_dates_in(line)) >= 2 for line in by_position[0].splitlines()):
                 candidates.append(parse_page(by_position[0], i + 1, consolidated_anywhere or _names(by_position[0], "consolidated"),
-                                             by_position[1]))
-            if candidates:       # the reading with more proven rows; the page's own order wins a tie
+                                             by_position[1], by_position[2]))
+            if by_position is not None and by_position[3]:
+                # figures sit systematically off their labels' baselines: either reading may have paired a row with its
+                # neighbour's figures, so no row of the page is trusted
+                for candidate in candidates:
+                    for r in candidate:
+                        r.unproven = r.unproven or "the page's figures sit off their labels' baselines (rows may be paired wrongly)"
+            if candidates:       # the reading with fewer failed rows, then more proven rows; the page's own order wins a tie
                 rows += max(candidates, key=_proven)
         if doc.ocr_error is not None and not rows:
             return None, "OCR failed"
@@ -442,10 +529,10 @@ def _by_position(doc, index: int):
             page = doc._doc[index]
             if upright_text(page) is not None:
                 return None
-            text, lines = coordinate_text(page)
+            text, lines, bad, systematic = coordinate_text(page)
     except Exception:   # noqa: BLE001 - a second reading that fails leaves the first
         return None
-    return (text, lines) if text.strip() else None
+    return (text, lines, bad, systematic) if text.strip() else None
 
 
 # --- the figure of one pair -----------------------------------------------------------------------------------------
@@ -472,6 +559,12 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
         if r.basis is None or (basis and r.basis != basis):
             if r.basis is None and basis:
                 unsure.append(f"p{r.page}: the table's basis is not told")
+            continue
+        if r.rank == 3:
+            unsure.append(f"p{r.page}: only a sub-line of interest earned is printed, not its total")
+            continue
+        if r.unproven:
+            unsure.append(f"p{r.page}: {r.unproven}")
             continue
         if not any(d == target[1] for d in r.dates):
             continue
@@ -522,6 +615,10 @@ def verdict_of(values: list[tuple[float, str, int]], ours: float | None, theirs:
     if len(distinct) > 1:
         shown = ", ".join(f"{v:g}" for v in distinct[:4])
         return "pdf_unsure", [], None, f"conflicting rows: {shown}"
+    if metric == "revenue" and all(_TOTAL_INCOME.search(lab) for _, lab, _ in values):
+        # no revenue from operations or interest earned row: "Total income" includes other income, so neither a match nor a
+        # difference is a verdict
+        return "pdf_unsure", [], None, f"only 'Total income' printed ({values[0][0]:g}), which includes other income"
     best = None
     for value, label, _ in values:
         matches = []
@@ -536,10 +633,6 @@ def verdict_of(values: list[tuple[float, str, int]], ours: float | None, theirs:
             break
     if best is None:
         value, label, _ = values[0]
-        if metric == "revenue" and all(re.search(r"total\s+income", lab, re.I) for _, lab, _ in values):
-            # the statement prints no revenue from operations or interest earned row: "Total income" includes other income,
-            # so a difference from the revenue line is a definition, not an error
-            return "pdf_unsure", [], None, f"only 'Total income' printed ({value:g}), which includes other income"
         return "pdf_matches_none", [], value, label
     value, label, matches = best
     names = set(matches)

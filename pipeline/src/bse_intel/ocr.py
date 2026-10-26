@@ -115,9 +115,9 @@ def _repair(token: str) -> str:
     return t
 
 
-def positioned_lines(result) -> list[list[tuple[float, float, str]]]:
+def positioned_lines(result, deskew: bool = True) -> list[list[tuple[float, float, str, float]]]:
     """RapidOCR's boxes (or any boxes of the same form) put into lines, top to bottom: each line is its boxes left to
-    right as (left edge, right edge, text).
+    right as (left edge, right edge, text, centre height).
 
     The page's tilt is measured first and taken out, so a slightly skewed scan does not slide one row into
     the next. A box joins the line whose running centre is within half the smaller box's height of its own,
@@ -128,7 +128,7 @@ def positioned_lines(result) -> list[list[tuple[float, float, str]]]:
         xs = [point[0] for point in box]
         if str(text).strip():
             items.append(((min(ys) + max(ys)) / 2, max(max(ys) - min(ys), 1.0), min(xs), str(text).strip(), max(xs)))
-    if (theta := _skew(items)):
+    if deskew and (theta := _skew(items)):
         t = math.tan(theta)
         items = [(yc - x * t, h, x, text, x1) for yc, h, x, text, x1 in items]
     items.sort(key=lambda i: (i[0], i[2]))
@@ -139,9 +139,9 @@ def positioned_lines(result) -> list[list[tuple[float, float, str]]]:
             if abs(yc - line["yc"]) <= 0.5 * min(h, line["h"]):
                 home = line
         if home is None:
-            lines.append({"yc": yc, "h": h, "items": [(x, x1, text)]})
+            lines.append({"yc": yc, "h": h, "items": [(x, x1, text, yc)]})
         else:
-            home["items"].append((x, x1, text))
+            home["items"].append((x, x1, text, yc))
             n = len(home["items"])
             home["yc"] += (yc - home["yc"]) / n
             home["h"] += (h - home["h"]) / n
@@ -151,7 +151,7 @@ def positioned_lines(result) -> list[list[tuple[float, float, str]]]:
 def lines_from_boxes(result) -> str:
     """RapidOCR's boxes as text lines, top to bottom and left to right (``positioned_lines``); a figure whose bracket
     was half-lost has it put back."""
-    return "\n".join("  ".join(re.sub(r"\S+", lambda m: _repair(m.group()), text) for _x, _x1, text in line)
+    return "\n".join("  ".join(re.sub(r"\S+", lambda m: _repair(m.group()), text) for _x, _x1, text, _y in line)
                      for line in positioned_lines(result))
 
 

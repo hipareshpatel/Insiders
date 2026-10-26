@@ -258,13 +258,13 @@ LENDER_ROWS = [
 WORDS_LINE = "Quarter ended and Year ended"
 
 
-def make_grid_pdf(rows, columns=Q4_COLUMNS, skip=(), column_order=False) -> bytes:
+def make_grid_pdf(rows, columns=Q4_COLUMNS, skip=(), column_order=False, pitch=16, offset=0) -> bytes:
     """Rows of (label, figures or None) with each figure at its column's x. ``skip`` leaves cells blank; ``column_order`` writes
     every label first and then the figures column by column, as some text layers run."""
     doc = pymupdf.open()
     page = doc.new_page(width=900, height=842)
-    placed = [(20, 40 + 16 * i, label, figs) for i, (label, figs) in enumerate(rows)]
-    cells = [(columns[k], y, f) for _, y, label, figs in placed if figs for k, f in enumerate(figs)
+    placed = [(20, 40 + pitch * i, label, figs) for i, (label, figs) in enumerate(rows)]
+    cells = [(columns[k], y + (0 if label == "Particulars" else offset), f) for _, y, label, figs in placed if figs for k, f in enumerate(figs)
              if label == "Particulars" or k not in skip]
     for x, y, label, _ in placed:
         page.insert_text((x, y), label, fontsize=8)
@@ -306,7 +306,7 @@ def test_a_banks_interest_earned_then_total_income_only_when_nothing_better_is_p
     assert unsure["pdf_verdict"] == "pdf_unsure" and "Total income" in unsure["reason"]
     agree = pr.referee_pair(pr.Sources(FakeNse([filing()], {url: only}), ocr=False),
                             pair(period="Q4FY24", basis="STANDALONE", ours=1100.5, theirs=1000.5, official=1100.5))
-    assert agree["pdf_verdict"] == "pdf_matches_ours"
+    assert agree["pdf_verdict"] == "pdf_unsure" and agree["pdf_value"] is None     # even a match: it never settles a pair
 
 
 def test_a_text_layer_that_runs_column_by_column_is_rebuilt_by_position(monkeypatch):
@@ -415,3 +415,100 @@ def test_a_scanned_page_as_ocr_reads_it_dates_with_noise_and_a_unit_without_its_
     bare = pr.parse_page(OCR_PAGE.replace("\ncrore\n", "\n"), 8, True)
     got = pr.figure_for(bare, "Q4FY24", "revenue", "CONSOLIDATED")
     assert got["values"] == [] and "no unit" in got["unsure"]
+
+
+STANDARD_HEAD = ["Statement of Standalone Audited Financial Results for the quarter and year ended 31 March 2026", "(Rs. in crore)",
+                 ("Particulars", ["31.03.2026", "31.12.2025", "31.03.2025", "31.03.2026", "31.03.2025"]),
+                 ("Quarter ended Quarter ended Quarter ended Year ended Year ended", None)]
+
+
+def lines_grid(body, head=None, **kw):
+    head = [(h, None) if isinstance(h, str) else h for h in (head or STANDARD_HEAD)]
+    return make_grid_pdf(head + body, **kw)
+
+
+def referee_revenue(pdf, ours, theirs, official=None):
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    return pr.referee_pair(pr.Sources(FakeNse([filing()], {url: pdf}), ocr=False),
+                           pair(period="Q4FY26", basis="STANDALONE", ours=ours, theirs=theirs, official=official))
+
+
+def test_total_income_never_settles_a_pair_and_a_wrapped_label_is_joined():
+    wrapped = [("Revenue from", None), ("operations", ["120.50", "110.25", "100.10", "440.00", "400.00"]),
+               ("Total income", ["121.60", "111.25", "101.00", "444.00", "403.00"])]
+    pdf = lines_grid(wrapped)
+    assert [(r.rank, r.label) for r in rows_of(pdf) if r.metric == "revenue"] == [(0, "Revenue from operations")]
+    got = referee_revenue(pdf, ours=120.5, theirs=121.6)
+    assert got["pdf_verdict"] == "pdf_matches_ours" and got["pdf_value"] == 120.5       # not Total income's 121.6
+    # nothing but Total income printed, and screener equals it: unsure, never matches_screener
+    only = lines_grid([("Total income", ["121.60", "111.25", "101.00", "444.00", "403.00"])])
+    got = referee_revenue(only, ours=120.5, theirs=121.6)
+    assert got["pdf_verdict"] == "pdf_unsure" and got["pdf_value"] is None and "Total income" in got["reason"]
+    # a segment line "Total income from operations" is revenue from operations, not total income
+    seg = lines_grid([("Total income from operations", ["120.50", "110.25", "100.10", "440.00", "400.00"])])
+    assert referee_revenue(seg, ours=120.5, theirs=121.6)["pdf_verdict"] == "pdf_matches_ours"
+
+
+def test_a_banks_sub_line_of_interest_earned_is_never_the_revenue():
+    top = ("1 Interest earned (a)+(b)+(c)+(d)", ["500.00", "480.00", "450.00", "1,900.00", "1,700.00"])
+    sub = ("(a) Interest/discount on advances/bills", ["400.00", "390.00", "350.00", "1,500.00", "1,300.00"])
+    earned_on = ("(a) Interest earned on advances", ["400.00", "390.00", "350.00", "1,500.00", "1,300.00"])
+    assert revenue_of(lines_grid([top, sub, earned_on]), "Q4FY26", "STANDALONE") == [500.0]
+    alone = lines_grid([earned_on])
+    got = pr.figure_for(rows_of(alone), "Q4FY26", "revenue", "STANDALONE")
+    assert got["values"] == [] and "sub-line" in got["unsure"]
+    assert referee_revenue(alone, ours=400.0, theirs=400.0)["pdf_verdict"] == "pdf_unsure"
+    plain = ("Interest earned on investments", ["50.00", "40.00", "30.00", "150.00", "120.00"])
+    assert pr.figure_for(rows_of(lines_grid([plain])), "Q4FY26", "revenue", "STANDALONE")["values"] == []
+
+
+def test_basis_words_are_not_fuzzy_beyond_small_misspellings_of_the_whole_word():
+    for word in ("Consolidating", "Consolidate", "Consolidator", "Deconsolidated", "Reconsolidated", "Consolidation"):
+        assert not pr._names(f"Statement of {word} results", "consolidated"), word
+    for word in ("CONSOUDATED", "Consolidted", "Consoldated"):
+        assert pr._names(f"Statement of {word} results", "consolidated"), word
+    assert not pr._names("Statement of Unconsolidated results", "consolidated")
+    assert pr._names("Statement of Unconsolidated results", "standalone")
+    page = lines_grid([("Revenue from operations", ["120.50", "110.25", "100.10", "440.00", "400.00"])],
+                      head=["Statement of Unconsolidated Audited Financial Results for the quarter and year ended 31 March 2026"]
+                      + STANDARD_HEAD[1:])
+    assert revenue_of(page, "Q4FY26", "STANDALONE") == [120.5]
+    assert pr.figure_for(rows_of(page), "Q4FY26", "revenue", "CONSOLIDATED")["values"] == []
+
+
+def test_a_figure_nearer_the_next_label_than_its_own_makes_the_position_reading_unproven(monkeypatch):
+    body = [("Revenue from operations", ["120.50", "110.25", "100.10", "440.00", "400.00"]),
+            ("Other income", ["1.10", "1.00", "0.90", "4.00", "3.00"]),
+            ("Net Profit for the period", ["12.30", "10.10", "9.00", "40.00", "30.00"])]
+
+    def column_order(pdf):
+        def raw(self, index, figures=True):
+            with pymupdf.open(stream=pdf, filetype="pdf") as d:
+                return d[index].get_text("text")
+        monkeypatch.setattr(pr.Document, "page_text", raw)
+
+    # figures 2 pt off their labels' baselines on 10 pt rows: clearly their own row's, so the rebuild reads them
+    good = lines_grid(body, column_order=True, pitch=10, offset=2)
+    column_order(good)
+    assert revenue_of(good, "Q4FY26", "STANDALONE") == [120.5]
+    # 4.7 pt off on 10 pt rows (more than 45% of the pitch): they may belong to the next row, so no figure is taken
+    bad = lines_grid(body, column_order=True, pitch=10, offset=4.7)
+    column_order(bad)
+    got = pr.figure_for(rows_of(bad), "Q4FY26", "revenue", "STANDALONE")
+    assert got["values"] == [] and "baseline" in got["unsure"]
+    # 5 pt off on 8 pt rows: nearer the next label than its own (the review's probe): never the next row's figures
+    worse = lines_grid(body, column_order=True, pitch=8, offset=5)
+    column_order(worse)
+    rows, _why = pr.read_document(worse, ocr=False)
+    assert not rows or pr.figure_for(rows, "Q4FY26", "revenue", "STANDALONE")["values"] == []
+    assert not rows or pr.figure_for(rows, "Q4FY26", "pat", "STANDALONE")["values"] == []
+
+
+def test_the_standard_layout_needs_a_march_year_end_on_the_page():
+    body = [("Revenue from operations", ["120.50", "110.25", "100.10", "440.00", "400.00"])]
+    head = ["Statement of Standalone Audited Financial Results for the quarter ended 31 March 2026", "(Rs. in crore)",
+            STANDARD_HEAD[2]]
+    got = pr.figure_for(rows_of(lines_grid(body, head=head)), "Q4FY26", "revenue", "STANDALONE")
+    assert got["values"] == [] and "group words" in got["unsure"]       # the same dates may be nine-month columns
+    assert revenue_of(lines_grid(body, head=[head[0].replace("quarter ended", "quarter and year ended")] + head[1:]),
+                      "Q4FY26", "STANDALONE") == [120.5]

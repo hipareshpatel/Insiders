@@ -805,6 +805,26 @@ def cmd_restated_report(args, settings, sink) -> int:
     return 0
 
 
+def cmd_nse_speedtest(args, settings, sink) -> int:
+    """Read-only speed test of NSE's listing API and the archive host (nse_speedtest.py, F168). Writes only the --json file;
+    nothing to D1, R2 or memory. No AI."""
+    from . import nse_speedtest as st, universe
+    from .nse import NseClient
+
+    nse_universe = universe.load_nse(sink)
+    if not nse_universe.built:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    symbols = st.pick_symbols([sym for sym, scrip in nse_universe.symbols.items() if scrip in nse_universe.included],
+                              args.companies, args.seed)
+    with NseClient() as nse:
+        report = st.run(nse, symbols, seed=args.seed, per_round=args.files)
+    print(st.render(report))
+    if args.json:
+        st.write_json(report, args.json)
+    return 0
+
+
 def cmd_screener_fill(args, settings, sink) -> int:
     """The one-time fill of quarters memory lacks from screener.in (screener_fill.py, F161): a dry run by default (fetch,
     decide, report; no write), --apply writes by="screener" figures. One request per gap company, at least 3 s apart per
@@ -1410,6 +1430,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--results-only", action="store_true")
     p.add_argument("--shareholding-only", action="store_true")
     p.set_defaults(func=cmd_seed_memory)
+
+    p = sub.add_parser("nse-speedtest", help="read-only speed test of NSE's listing API and archive host at shrinking pauses (no write, no AI)")
+    p.add_argument("--companies", type=int, default=100, help="sample size, drawn by --seed from the universe")
+    p.add_argument("--files", type=int, default=80, help="files per download round (each round takes different files)")
+    p.add_argument("--seed", type=int, default=26)
+    p.add_argument("--json", help="write the whole measurement to this file")
+    p.set_defaults(func=cmd_nse_speedtest)
 
     p = sub.add_parser("restated-report", help="quarters whose restated figure differs from the first filed one, in stored memory (read only, no AI)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

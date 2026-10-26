@@ -42,7 +42,7 @@ _SERVER_ERROR = re.compile(r"\b(?:http|status|code|error)[ :=]*5\d\d\b|\b5\d\d\s
                           r"internal ?server|server error|time[sd]? ?out|overload|service unavailable|bad gateway|"
                           r"connection (?:reset|error|aborted)", re.I)
 _REFUSAL = re.compile(r"\b(?:http|status|code|error)[ :=]*(?:400|401|403|404)\b|\b(?:400|401|403|404)\s+(?:bad request|unauthori|"
-                      r"forbidden|not found|invalid)|bad request|unauthori[sz]ed|forbidden|invalid api key", re.I)
+                      r"forbidden|not found|invalid)|bad request|model\b.{0,40}\bnot found|not found.{0,20}\bmodel|unauthori[sz]ed|forbidden|invalid api key", re.I)
 
 _PAGE_MARK = re.compile(r"^(?:-{3}|={5})\s*page\s+(\d+)\s+of\s+\d+[^\n]*$", re.I | re.M)
 
@@ -326,42 +326,6 @@ def _words(text: str) -> list[str]:
     return [w.rstrip(".,") for w in re.findall(r"[a-z0-9][a-z0-9.,%]*", gate._flat(text))]
 
 
-COLUMN_GAP_WORDS = 40   # the other column's words between a sentence's two runs
-
-
-def _across_columns(quote: str, page: str) -> bool:
-    """The quote stands on the page in two adjacent column fragments: a slide set in two columns is read straight across, so
-    a sentence of the left column is cut by the right column's lines (PNG Sreva slide 25, run 5). The first run must end at
-    the end of a line of the page and the second begin at the start of a later line, at most COLUMN_GAP_WORDS words on (the
-    other column's text between), each run three words or more. Whitespace and line breaks do not matter inside a run. Two
-    sentences of one line or paragraph never join. The figures of the quote are then the runs' own, nothing else of the page."""
-    q = _words(quote)
-    if len(q) < 6:
-        return False
-    w, starts, ends = [], set(), set()
-    for line in page.splitlines():
-        lw = _words(line)
-        if lw:
-            starts.add(len(w))
-            w.extend(lw)
-            ends.add(len(w) - 1)
-    if not w:
-        return False
-
-    def runs(piece: list[str]):
-        n = len(piece)
-        return [k for k in range(len(w) - n + 1) if w[k:k + n] == piece]
-
-    for cut in range(3, len(q) - 2):
-        for first in runs(q[:cut]):
-            end = first + cut - 1
-            if end not in ends:
-                continue
-            if any(k in starts and end < k <= end + COLUMN_GAP_WORDS + 1 for k in runs(q[cut:])):
-                return True
-    return False
-
-
 def _near_pages(pages: list[tuple[int | None, str]], cited: int | None) -> list[tuple[int | None, str]]:
     """The cited page, the page before and the one after (a slide's printed number is not its PDF page). With no cited page,
     or a text with no page markers, none: a quote is then accepted only whole."""
@@ -371,13 +335,15 @@ def _near_pages(pages: list[tuple[int | None, str]], cited: int | None) -> list[
 
 
 def _quote_on_near_pages(quote: str, p_page: int | None, pages: list[tuple[int | None, str]], slide: bool):
-    """(page number, page text, mode) of the cited page or its neighbours where the quote stands once a column split is
-    undone ("columns"), or, on the cited page only, once a slide's boxes are (`slide`: every word and figure on the page),
-    else None. The cited page first, then the one before and after."""
+    """(page number, page text, mode) where the quote stands as the page's own words, line breaks and spacing aside, on the
+    cited page or the one before or after ("page"; a slide's printed number is not its PDF page), or, on a slide's cited page
+    only, with every word and figure on the page ("slide"). Else None. Words joined across a column split, or from two
+    sentences, are never one quote (review of F180: it let a question and a later answer join)."""
     near = sorted(_near_pages(pages, p_page), key=lambda h: (h[0] != p_page, h[0] or 0))
+    bare = quote.rstrip(" .,;:")
     for n, t in near:
-        if gate.quote_found(quote, t) or _across_columns(quote, t):
-            return n, t, "columns"
+        if gate.quote_found(bare, t):
+            return n, t, "page"
         if slide and n == p_page and _on_page(quote, t):
             return n, t, "slide"
     return None
@@ -421,14 +387,13 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
             # label, never as one line. On a slide, every word and figure of the quote on the named page is enough; the
             # point says its quote was assembled (first measured run, F180). A page set in two columns is read straight
             # across and the model may name the slide's printed number, not the PDF page (run 5): the cited page, the one
-            # before and the one after are tried, a quote may stand in two adjacent column fragments. A quote that is
-            # on none of them is dropped.
+            # before and the one after are tried for the quote whole. A quote that is on none of them is dropped.
             elsewhere = _quote_on_near_pages(quote, p.page, pages, p.section == "SLIDE")
             if elsewhere is None:
                 drop(p, "quote", "the quote is not in the document")
                 continue
-            p.quote_assembled = True
             elsewhere, mode = elsewhere[:2], elsewhere[2]
+            p.quote_assembled = mode == "slide"
         # the page the quote is on, whatever the model named (spec 3.5); the page's text also gives the figures and the period
         # their context (a quote on several pages, as the same sentence on a slide and in the talk, stays on the page the
         # model named)
@@ -444,9 +409,7 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
         if page_text:
             flat_page, flat_quote = gate._flat(page_text), gate._flat(quote)
             at = flat_page.find(flat_quote.split("...")[0].strip()[:80])
-            if mode == "columns":
-                context = ""   # the quote's own runs: nothing else of the page vouches for a figure or a period
-            elif p.quote_assembled:
+            if p.quote_assembled:
                 context = flat_page   # a slide's figures sit in boxes around its words: the whole slide
             elif at >= 0:
                 context = flat_page[max(0, at - CONTEXT_CHARS):at + len(flat_quote) + CONTEXT_CHARS]

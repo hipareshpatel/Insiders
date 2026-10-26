@@ -722,38 +722,44 @@ def _column_point(**kw) -> CallPoint:
     return _point(**{**base, **kw})
 
 
-def test_a_quote_split_by_a_second_column_is_kept_on_the_page_before_the_cited_one():
-    # the model named the printed number 24, the quote is on PDF page 25 and is cut by the other column's lines
-    kept, dropped = _check(_column_point(), text=TWO_COLUMNS)
-    assert dropped == [] and len(kept) == 1
-    assert kept[0].page == 25 and kept[0].pages == [25] and kept[0].quote_assembled
+def test_a_quote_split_by_a_second_column_is_dropped():
+    # joined across two columns it is two sentences' words, never one quote (review of F180)
+    for page, section in ((24, "SLIDE"), (26, "SLIDE"), (25, "PREPARED")):
+        kept, dropped = _check(_column_point(page=page, section=section), text=TWO_COLUMNS)
+        assert kept == [] and _reasons(dropped) == ["quote"]
+    # on a slide's own cited page the old word-by-word rule still applies (the figures sit in boxes), as before this work
+    kept, _ = _check(_column_point(page=25), text=TWO_COLUMNS)
+    assert len(kept) == 1
 
 
-def test_the_cited_page_one_after_is_tried_too():
-    kept, dropped = _check(_column_point(page=26), text=TWO_COLUMNS)
-    assert dropped == [] and kept[0].page == 25
+ONE_COLUMN = """--- Page 24 of 40 ---
+Our board is evaluating options for deployment of surplus cash.
+--- Page 25 of 40 ---
+We plan to open 15 exclusive stores of
+which 4 have been  launched.
+Other income rose to 52 Mn.
+--- Page 26 of 40 ---
+Nothing here.
+"""
+
+
+def test_a_quote_on_the_page_before_or_after_the_cited_one_is_kept_whole():
+    # the model named the slide's printed number 24; the words are on PDF page 25, broken over two lines
+    quote = "We plan to open 15 exclusive stores of which 4 have been launched."
+    for cited in (24, 25, 26):
+        kept, dropped = _check(_column_point(page=cited, quote=quote), text=ONE_COLUMN)
+        assert dropped == [] and kept[0].page == 25 and kept[0].pages == [25]
+    assert cm._quote_on_near_pages(quote, 24, cm.split_pages(ONE_COLUMN), False)[:1] == (25,)
 
 
 def test_a_quote_two_pages_from_the_cited_one_is_not_looked_for():
-    kept, dropped = _check(_column_point(page=23), text=TWO_COLUMNS + "--- Page 27 of 40 ---\nnothing")
+    pages = cm.split_pages(ONE_COLUMN + "--- Page 27 of 40 ---\nnothing")
+    assert cm._quote_on_near_pages("We plan to open 15 exclusive stores of", 23, pages, False) is None
+
+
+def test_a_quote_on_no_page_is_still_dropped():
+    kept, dropped = _check(_column_point(quote="We plan to open 15 exclusive stores of which 9 have been shut"), text=ONE_COLUMN)
     assert kept == [] and _reasons(dropped) == ["quote"]
-    assert not cm._across_columns(COLUMN_QUOTE, "--- Page 24 of 40 ---\nOur board is evaluating options")
-
-
-def test_a_quote_on_no_page_is_still_dropped_after_the_column_and_page_tries():
-    kept, dropped = _check(_column_point(quote="We plan to open 15 exclusive stores of which 9 have been shut"), text=TWO_COLUMNS)
-    assert kept == [] and _reasons(dropped) == ["quote"]
-    # the words are on the page but in the wrong order: not one column's text followed by the other's
-    assert not cm._across_columns("launched stores exclusive open plan to We 15 of which 4 have been", TWO_COLUMNS)
-
-
-def test_a_column_quote_ignores_line_breaks_and_spacing():
-    assert cm._across_columns("Gold sales were nil   in the half year against 205.50 Mn in the earlier half", TWO_COLUMNS)
-
-
-def test_a_figure_the_columns_do_not_carry_still_drops_the_point():
-    kept, dropped = _check(_column_point(value=16, statement="16 exclusive stores planned"), text=TWO_COLUMNS)
-    assert kept == [] and _reasons(dropped) == ["figure"]
 
 
 class FlakyGateway(FakeGateway):
@@ -831,19 +837,6 @@ def test_two_sentences_of_one_line_are_never_joined_into_one_quote():
     quote = "Total revenue grew 14% in Q2 on mix."
     kept, dropped = _check(_point(statement="Revenue grew 14% in Q2", value=14, period="Q2", quote=quote, page=1), text=SPLICE_PAGE)
     assert kept == [] and _reasons(dropped) == ["quote"]
-    assert not cm._across_columns(quote, SPLICE_PAGE)
-
-
-def test_a_column_quote_far_from_its_first_run_is_not_joined():
-    far = "We plan to open 15 exclusive stores\n" + "\n".join(f"filler words number {i} here" for i in range(30)) \
-        + "\nof which 4 have been launched\n"
-    assert not cm._across_columns(COLUMN_QUOTE, far)
-
-
-def test_a_figure_only_in_the_other_column_does_not_vouch_for_the_quote():
-    # the quote is a real column split, but the statement's 205.50 is the other column's figure, not the quote's
-    kept, dropped = _check(_column_point(statement="15 exclusive stores planned against 205.50"), text=TWO_COLUMNS)
-    assert kept == [] and _reasons(dropped) == ["figure"]
 
 
 SPLIT_CALL = """--- Page 1 of 2 ---
@@ -859,7 +852,7 @@ def test_with_no_page_cited_only_a_whole_quote_counts():
     point = _point(type="guidance", statement="Guidance cut by 30%", value=30, period="FY27", section="QA", quote=spliced, page=None)
     kept, dropped = _check(point, text=SPLIT_CALL)
     assert kept == [] and _reasons(dropped) == ["quote"]
-    assert cm._quote_on_near_pages(COLUMN_QUOTE, None, cm.split_pages(TWO_COLUMNS), True) is None
+    assert cm._quote_on_near_pages(COLUMN_QUOTE, None, cm.split_pages(ONE_COLUMN), True) is None
 
 
 def test_a_text_without_page_markers_takes_only_whole_quotes():
@@ -879,10 +872,29 @@ def test_a_slide_bag_of_words_is_for_the_cited_page_only():
     assert cm._quote_on_near_pages(quote, 3, cm.split_pages(box), True)[2] == "slide"
 
 
-def test_column_words_lose_their_trailing_punctuation():
-    assert cm._words("Stores, planned. Rs 1,200 crore.") == ["stores", "planned", "rs", "1,200", "crore"]
-    assert cm._across_columns("We plan to open 15 exclusive stores, of which 4 have been launched.",
-                              TWO_COLUMNS.replace("stores\n", "stores,\n"))
+def test_a_quote_loses_its_trailing_punctuation_before_the_page_match():
+    quote = "We plan to open 15 exclusive stores of which 4 have been launched,"
+    assert cm._quote_on_near_pages(quote, 25, cm.split_pages(ONE_COLUMN), False)[0] == 25
+
+
+# a question and a later answer, or two sentences on adjacent lines, are never joined
+JOINED = """--- Page 1 of 1 ---
+Analyst: Will you cut guidance by 30% this year?
+Management: Let me think.
+We will raise the dividend to Rs 5 per share by FY28.
+Total revenue grew 9% in Q1 on volumes.
+Other income was small.
+Capex plan is 500 crore for FY27
+"""
+
+
+def test_sentences_of_adjacent_lines_are_not_joined():
+    for quote, kw in (("Will you cut guidance by 30% this year? We will raise the dividend to Rs 5 per share by FY28.",
+                       dict(value=5, unit="INR", period="FY28")),
+                      ("Total revenue grew 9% in Q1 on volumes. Capex plan is 500 crore for FY27", dict(value=500, unit="INR_CR", period="FY27"))):
+        kept, dropped = _check(_point(type="guidance", statement="a figure " + str(kw["value"]), section="QA", quote=quote, page=1, **kw),
+                               text=JOINED)
+        assert kept == [] and _reasons(dropped) == ["quote"]
 
 
 def _failed(*details):
@@ -897,4 +909,5 @@ def test_the_retry_reads_the_models_own_outcomes():
     assert not cm.provider_error(_failed("rate limited (429)", "max 512 tokens exceeded"))
     assert not cm.provider_error(_failed("InternalServerError", "HTTP 403 forbidden"))
     assert not cm.provider_error(_failed("HTTP 400 bad request"))
+    assert not cm.provider_error(_failed("InternalServerError", "model glm-9 not found"))
     assert not cm.provider_error(RuntimeError("model said 512 tokens"))

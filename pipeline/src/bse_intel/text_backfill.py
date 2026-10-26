@@ -14,7 +14,7 @@ Which cards: one listing of the ``text/`` prefix, not a head request a card. A f
 no text (audio only, a ZIP with no PDF, too large) is left out; so is a card with no attachment or one not on NSE (BSE is
 off the path). A filing that fails here is kept in kv ``textbackfill:failed:<i>of<n>`` with its reason and not fetched again
 by the next run (``--restart`` tries it again); a network failure is not kept, so it is retried. Written objects are skipped
-by the listing, so a run that ends on its time budget (exit 124) is started again and resumes. At most 2 shards, so NSE sees
+by the listing, so a run that ends on its time budget (exit 124) is started again and resumes. At most 6 shards (2 until 26 Oct, when the archive pace went fast), so NSE sees
 the load of memory-gaps-fill. The next download starts while the current file is read; NSE still sees one request at a
 time, at the client's own pace.
 """
@@ -35,7 +35,7 @@ from .timeutil import now_iso
 
 log = logging.getLogger(__name__)
 
-MAX_SHARDS = 2
+MAX_SHARDS = 6   # owner 26 Oct 2026: 6 machines on the fast archive pace (F169); reading, not NSE, was the limit
 FAILED_KEY = "textbackfill:failed"      # + ":<i>of<n>": {news_id: reason} for the filings that will not be tried again
 NETWORK_STOP = 3                         # downloads failing on the network in a row stop the run (the pipeline's rule)
 FETCH_PAUSE_S = 4.0                      # NseClient's default pause is 3-5 s between requests

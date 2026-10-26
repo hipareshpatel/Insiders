@@ -843,6 +843,90 @@ def cmd_screener_fill(args, settings, sink) -> int:
     return MORE_LEFT if outcome["more"] else 0
 
 
+def _universe_companies(sink, scrips_arg: str | None):
+    """(scrip, NSE symbol) for the universe (or the ``--scrips`` list: company keys or NSE symbols), in symbol order; None
+    when there is no universe file yet. BSE-only companies kept by prune-companies are not in it (the universe code lists
+    NSE companies only), so they are not here."""
+    from . import screener_download, universe
+
+    nse_universe = universe.load_nse(sink)
+    if scrips_arg:
+        scrips = [nse_universe.symbols.get(name.upper()) or name for name in (s.strip() for s in scrips_arg.split(",")) if name]
+    elif nse_universe.built:
+        scrips = sorted(nse_universe.included)
+    else:
+        return None
+    by_scrip = {scrip: symbol for symbol, scrip in nse_universe.symbols.items()}
+    return screener_download.symbols_for(sink, scrips, by_scrip)
+
+
+def cmd_screener_download(args, settings, sink) -> int:
+    """The one-time download of every company's screener.in pages, raw and gzipped, into R2 (screener_download.py, F163): two
+    pages a company, at least 3.2 s apart per runner, at most 2 runners, no login, a plain browser User-Agent; a 403, 429 or
+    503 stops the run (exit 75). Resumable; exit 124 when the time budget ends with companies left. No AI, no NSE, no memory."""
+    from . import screener_download as sd
+
+    shard = None
+    if args.shard:
+        try:
+            index, count = (int(x) for x in args.shard.split("/"))
+            assert 0 <= index < count <= sd.MAX_SHARDS
+        except (ValueError, AssertionError):
+            print(f"--shard takes I/N with 0 <= I < N <= {sd.MAX_SHARDS}, e.g. 0/2")
+            return 2
+        shard = (index, count)
+    companies = _universe_companies(sink, args.scrips)
+    if companies is None:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    day = args.day or today_ist().isoformat()
+    mine = companies[shard[0]::shard[1]] if shard else companies
+    plan = sd.estimate(len(mine), 1)
+    whole = sd.estimate(len(companies), 2)
+    print(f"screener download {day}: {len(mine)} companies in this shard, about {plan['requests']} requests, about "
+          f"{plan['seconds'] / 3600:.1f} hours at one request per {sd.PAUSE_SECONDS:g} s "
+          f"(the whole universe: {whole['requests']} requests, about {whole['seconds'] / 3600:.1f} hours on 2 shards)")
+    refused = False
+    with sd.ScreenerClient() as client:
+        try:
+            outcome = sd.run(sink, companies, client, day, shard, args.time_budget, args.restart)
+        except sd.ScreenerRefused as exc:
+            logging.getLogger("bse_intel.screener_download").error("screener.in refused; stopping: %s", exc)
+            refused = True
+            outcome = None
+    if outcome:
+        print(sd.render(outcome))
+        for line in outcome["failed"][:20]:
+            print(f"  {line}")
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome or {"refused": True}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if refused:
+        return REFUSED
+    return MORE_LEFT if outcome["more"] else 0
+
+
+def cmd_screener_crosscheck(args, settings, sink) -> int:
+    """Read-only cross-check of memory against the stored screener pages (screener_crosscheck.py, F163): no request to
+    screener or NSE, no write, no AI. Writes the summary JSON, the CSV of every non-match pair, referee.csv and the markdown."""
+    from . import screener_crosscheck as sc
+
+    companies = _universe_companies(sink, args.scrips)
+    if companies is None:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    summary = sc.run(sink, companies, args.day, args.workers, not args.no_referee)
+    print(sc.render(summary))
+    if args.json:
+        Path(args.json).write_text(sc.to_json(summary), encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(sc.to_csv(summary), encoding="utf-8")
+    if args.referee_csv:
+        Path(args.referee_csv).write_text(sc.to_referee_csv(summary), encoding="utf-8")
+    if args.md:
+        Path(args.md).write_text(sc.to_markdown(summary, today_ist().isoformat()), encoding="utf-8")
+    return 0
+
+
 def cmd_label_memory(args, settings, sink) -> int:
     """Label everything already in memory (memory_labels.py, TRACKER F150): no AI, no NSE, no card change. A dry run
     prints the counts per section and label and writes nothing; a real run writes each changed dossier back through the
@@ -1286,6 +1370,26 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the summary to this file")
     p.add_argument("--csv", help="write every proposed fill, with its overlap evidence, to this file")
     p.set_defaults(func=cmd_screener_fill)
+
+    p = sub.add_parser("screener-download", help="one-time download of every company's two screener.in pages, raw, into R2 (no AI, no NSE)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--day", help="YYYY-MM-DD the pages are stored under (default today, IST); a page already stored for it is not fetched again")
+    p.add_argument("--shard", help="I/N with N at most 2: this runner's share of the companies")
+    p.add_argument("--restart", action="store_true", help="ignore this day's list of finished companies (stored pages are still not fetched again)")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_screener_download)
+
+    p = sub.add_parser("screener-crosscheck", help="read-only: compare memory with the stored screener pages, the official text as referee")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--day", help="use the pages stored on or before this day (default the newest)")
+    p.add_argument("--workers", type=int, default=8, help="companies read at a time")
+    p.add_argument("--no-referee", action="store_true", help="skip the look-up in the official text")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--csv", help="write every non-match pair and gap to this file")
+    p.add_argument("--referee-csv", help="write the refereed pairs, with the official line and the verdict, to this file")
+    p.add_argument("--md", help="write the short markdown report to this file")
+    p.set_defaults(func=cmd_screener_crosscheck)
 
     p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")
     p.add_argument("--apply", action="store_true", help="back up, then delete; without it nothing is changed")

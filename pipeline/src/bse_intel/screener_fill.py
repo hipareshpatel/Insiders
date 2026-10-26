@@ -96,10 +96,10 @@ def _number(cell: str) -> float | None:
         return None
 
 
-def parse_page(body: str) -> dict | None:
-    """The quarters section of a company page: ``{"basis": CONSOLIDATED | STANDALONE | None, "quarters": {period:
-    {"revenue": Sales, "pat": Net Profit}}}``; None when the page has no such section. Whole-crore figures, as printed."""
-    start = body.find('id="quarters"')
+def _section_table(body: str, section_id: str) -> tuple[list[str], dict[str, list[float | None]], str] | None:
+    """A results section of a company page ("quarters", "profit-loss"): its column titles, its rows by label (the
+    trailing "+" of an expandable label removed) and the section's own text; None when there is no such table."""
+    start = body.find(f'id="{section_id}"')
     if start < 0:
         return None
     end = body.find("</section>", start)
@@ -114,6 +114,21 @@ def parse_page(body: str) -> dict | None:
         cells = [_text(c) for c in re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", tr, re.S)]
         if cells:
             rows[re.sub(r"\s*\+$", "", cells[0]).strip()] = [_number(c) for c in cells[1:]]
+    return columns, rows, section
+
+
+def _basis_of(section: str) -> str | None:
+    which = re.search(r"(Consolidated|Standalone)\s+Figures", re.sub(r"<[^>]+>", " ", section))
+    return {"Consolidated": CONSOLIDATED, "Standalone": STANDALONE}.get(which[1]) if which else None
+
+
+def parse_page(body: str) -> dict | None:
+    """The quarters section of a company page: ``{"basis": CONSOLIDATED | STANDALONE | None, "quarters": {period:
+    {"revenue": Sales, "pat": Net Profit}}}``; None when the page has no such section. Whole-crore figures, as printed."""
+    got = _section_table(body, "quarters")
+    if not got:
+        return None
+    columns, rows, section = got
     sales = rows.get("Sales") or rows.get("Revenue") or []
     profit = rows.get("Net Profit") or []
     quarters: dict[str, dict] = {}
@@ -122,9 +137,43 @@ def parse_page(body: str) -> dict | None:
         if period:
             quarters[period] = {"revenue": sales[i] if i < len(sales) else None,
                                 "pat": profit[i] if i < len(profit) else None}
-    which = re.search(r"(Consolidated|Standalone)\s+Figures", re.sub(r"<[^>]+>", " ", section))
-    basis = {"Consolidated": CONSOLIDATED, "Standalone": STANDALONE}.get(which[1]) if which else None
-    return {"basis": basis, "quarters": quarters}
+    return {"basis": _basis_of(section), "quarters": quarters}
+
+
+def year_of(column: str) -> str | None:
+    """"Mar 2025" -> FY25 (the annual section's columns; "TTM" is not a year)."""
+    m = re.fullmatch(r"\s*Mar\w*\s+(20\d{2})\s*", column or "")
+    return f"FY{int(m[1]) % 100:02d}" if m else None
+
+
+def parse_full(body: str) -> dict | None:
+    """parse_page plus EPS per quarter and the annual profit and loss section: ``{"basis", "quarters": {period:
+    {"revenue", "pat", "eps"}}, "annual": {"FY25": {"revenue", "pat", "eps"}}}`` (``annual`` empty when the page has no
+    such section). Used by the cross-check, which reads stored pages."""
+    page = parse_page(body)
+    if page is None:
+        return None
+    columns, rows, _ = _section_table(body, "quarters")
+    eps = rows.get("EPS in Rs") or []
+    for i, column in enumerate(columns):
+        period = period_of(column)
+        if period:
+            page["quarters"][period]["eps"] = eps[i] if i < len(eps) else None
+    annual: dict[str, dict] = {}
+    pl = _section_table(body, "profit-loss")
+    if pl:
+        columns, rows, _ = pl
+        sales = rows.get("Sales") or rows.get("Revenue") or []
+        profit = rows.get("Net Profit") or []
+        eps = rows.get("EPS in Rs") or []
+        for i, column in enumerate(columns):
+            year = year_of(column)
+            if year:
+                annual[year] = {"revenue": sales[i] if i < len(sales) else None,
+                                "pat": profit[i] if i < len(profit) else None,
+                                "eps": eps[i] if i < len(eps) else None}
+    page["annual"] = annual
+    return page
 
 
 def url_for(symbol: str, basis: str) -> str:

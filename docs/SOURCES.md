@@ -211,6 +211,13 @@ lower by a steady amount for RELIANCE, ITC, HINDUNILVR and GAIL (revenue filled 
 that does not match the company's filing: NMDC consolidated, Mar 2026, 11,343 sales / 2,027 profit (its Mar 2025 column, 7,005 / 1,477, matches
 the PDF's 7,004.59 / 1,483.18). Its figures are never labelled `file`: `by="screener"`, and no card reads them unless `MEMORY_SCREENER=1`.
 
+**Download of every page (owner permission 26 Oct 2026, F163, TODO 50; assumption until run: about 3,800 requests, 1.7 h on 2 shards).**
+`screener-download` stores both pages of every universe company raw and gzipped in R2 at `raw/screener/<YYYY-MM-DD>/<SYMBOL>_<c|s>.html.gz`
+(same fetcher, 3.2 s pause and refusal rule as the fill; the whole page is kept, not only the quarters table). Later fills and the
+cross-check read the stored pages, so screener is not asked twice. `screener-crosscheck` parses them (`parse_full`: quarters with EPS, and the
+annual `profit-loss` section as FY columns) and compares them with memory's exchange-file figures, the official results text (R2 `text/`,
+6 months) as referee. No page has been downloaded in bulk yet: the annual section's layout is an assumption until the first run.
+
 ## Still open
 
 - BSE's announcement API does carry an XBRL identity we had missed, but it is not a link. The beta

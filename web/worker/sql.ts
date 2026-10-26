@@ -33,6 +33,7 @@ import cardHeld from "../../db/queries/card_held.sql?raw";
 import annualCardsWithoutXbrl from "../../db/queries/annual_cards_without_xbrl.sql?raw";
 import eventCardsWithoutXbrl from "../../db/queries/event_cards_without_xbrl.sql?raw";
 import resultsCardsRecent from "../../db/queries/results_cards_recent.sql?raw";
+import resultsCardsCompany from "../../db/queries/results_cards_company.sql?raw";
 import filingsRemaining from "../../db/queries/filings_remaining.sql?raw";
 import filingsBacklog from "../../db/queries/filings_backlog.sql?raw";
 import exportCards from "../../db/queries/export_cards.sql?raw";
@@ -84,6 +85,7 @@ export const QUERIES: Record<string, string> = {
   annual_cards_without_xbrl: annualCardsWithoutXbrl,
   event_cards_without_xbrl: eventCardsWithoutXbrl,
   results_cards_recent: resultsCardsRecent,
+  results_cards_company: resultsCardsCompany,
   filings_remaining: filingsRemaining,
   filings_backlog: filingsBacklog,
   filings_known_day: filingsKnownDay,

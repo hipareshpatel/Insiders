@@ -40,6 +40,7 @@ QUERIES = (
     "annual_cards_without_xbrl",
     "event_cards_without_xbrl",
     "results_cards_recent",
+    "results_cards_company",
     "filings_remaining",
     "filings_backlog",
     "filings_known_day",

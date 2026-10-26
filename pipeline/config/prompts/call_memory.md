@@ -25,8 +25,8 @@ What to keep, by type (use exactly these names for `type`)
 - competitive_view: market share, industry growth, rivals' capacity, imports, as the company says it.
 
 Points that are easy to skip: look for each of these on every page and in every answer
-- Risks and headwinds management names, even in one clause: a disrupted operation and its size ("UAE volume 26,227 ton
-  against 57,931"), a festival or season that shifted sales from one quarter to the next, input-cost inflation, a wage
+- Risks and headwinds management names, even in one clause: a disrupted operation and its size ("plant X output 4,200 ton
+  against 9,100"), a festival or season that shifted sales from one quarter to the next, input-cost inflation, a wage
   rise, a regulatory shutdown, a price that moves with gold, a currency or a commodity. Type `risk` (or `margin_driver`
   when it moved a margin); give the size and the period.
 - One-off items in the quarter: exceptional items, profit from discontinued operations, a licensing or deal gain, a tax
@@ -42,7 +42,7 @@ Points that are easy to skip: look for each of these on every page and in every 
   four markets), give one point for each, not only the first.
 - Pipeline and portfolio totals (ongoing and upcoming projects with their area and value, a total portfolio value) are
   `order_book` points.
-Aim to return at least one point of each of these four kinds whenever the document has one.
+Keep each of these kinds when the document has them; never add one the document does not carry.
 
 Questions and answers
 - Management's clarification in the Q&A wins over the opening: if the opening said "whole of FY27" and the answer says the

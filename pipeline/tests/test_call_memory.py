@@ -821,3 +821,80 @@ def test_the_ask_covers_the_kinds_of_point_run_5_missed(settings):
         _filing("c3", "2026-11-10T19:00:00+05:30", "CONCALL_PRESENTATION", "x"), "deck", "Realty", TEXT, None, part=(1, 1))
     for word in ("headwinds", "One-off items", "Dependences", "Dated events", "commissioning date", "discontinued operations"):
         assert word in system
+
+
+# ---------------------------------------------------------------- review of the run-5 fixes
+SPLICE_PAGE = "--- Page 1 of 1 ---\nTotal revenue grew 9% in Q1 on volumes. EBITDA margin rose 14% in Q2 on mix.\n"
+
+
+def test_two_sentences_of_one_line_are_never_joined_into_one_quote():
+    quote = "Total revenue grew 14% in Q2 on mix."
+    kept, dropped = _check(_point(statement="Revenue grew 14% in Q2", value=14, period="Q2", quote=quote, page=1), text=SPLICE_PAGE)
+    assert kept == [] and _reasons(dropped) == ["quote"]
+    assert not cm._across_columns(quote, SPLICE_PAGE)
+
+
+def test_a_column_quote_far_from_its_first_run_is_not_joined():
+    far = "We plan to open 15 exclusive stores\n" + "\n".join(f"filler words number {i} here" for i in range(30)) \
+        + "\nof which 4 have been launched\n"
+    assert not cm._across_columns(COLUMN_QUOTE, far)
+
+
+def test_a_figure_only_in_the_other_column_does_not_vouch_for_the_quote():
+    # the quote is a real column split, but the statement's 205.50 is the other column's figure, not the quote's
+    kept, dropped = _check(_column_point(statement="15 exclusive stores planned against 205.50"), text=TWO_COLUMNS)
+    assert kept == [] and _reasons(dropped) == ["figure"]
+
+
+SPLIT_CALL = """--- Page 1 of 2 ---
+Analyst: Will you cut guidance by 30% for the year?
+--- Page 2 of 2 ---
+Management: we will hold our margin guidance for FY27.
+We will not discuss it further.
+"""
+
+
+def test_with_no_page_cited_only_a_whole_quote_counts():
+    spliced = "Will you cut guidance by 30% for the year? we will hold our margin guidance for FY27."
+    point = _point(type="guidance", statement="Guidance cut by 30%", value=30, period="FY27", section="QA", quote=spliced, page=None)
+    kept, dropped = _check(point, text=SPLIT_CALL)
+    assert kept == [] and _reasons(dropped) == ["quote"]
+    assert cm._quote_on_near_pages(COLUMN_QUOTE, None, cm.split_pages(TWO_COLUMNS), True) is None
+
+
+def test_a_text_without_page_markers_takes_only_whole_quotes():
+    flat = "We plan to open 15 exclusive stores\nGold sales were nil\nof which 4 have been launched\n"
+    kept, dropped = _check(_column_point(page=None), text=flat)
+    assert kept == [] and _reasons(dropped) == ["quote"]
+
+
+def test_a_slide_bag_of_words_is_for_the_cited_page_only():
+    slide = "--- Page 3 of 4 ---\nDebt\n12%\nSafe harbour notice\n--- Page 4 of 4 ---\nEBITDA\n9%\ncrore\n"
+    quote = "Debt 12% EBITDA 9% crore"
+    assert cm._quote_on_near_pages(quote, 3, cm.split_pages(slide), True) is None
+    point = _point(type="kpi", statement="Debt 12%", value=12, unit="PERCENT", period=None, section="SLIDE", quote=quote, page=3)
+    kept, dropped = _check(point, text=slide)
+    assert kept == [] and _reasons(dropped) == ["quote"]
+    box = "--- Page 3 of 4 ---\nDebt\nEBITDA\n12%\n9%\ncrore\n--- Page 4 of 4 ---\nx\n"
+    assert cm._quote_on_near_pages(quote, 3, cm.split_pages(box), True)[2] == "slide"
+
+
+def test_column_words_lose_their_trailing_punctuation():
+    assert cm._words("Stores, planned. Rs 1,200 crore.") == ["stores", "planned", "rs", "1,200", "crore"]
+    assert cm._across_columns("We plan to open 15 exclusive stores, of which 4 have been launched.",
+                              TWO_COLUMNS.replace("stores\n", "stores,\n"))
+
+
+def _failed(*details):
+    from bse_intel.ai.gateway import AllProvidersFailed
+    return AllProvidersFailed("pass2_long", [(f"m{i}", "failed", d) for i, d in enumerate(details)])
+
+
+def test_the_retry_reads_the_models_own_outcomes():
+    assert cm.provider_error(_failed("InternalServerError", "rate limited (429)"))
+    assert cm.provider_error(_failed("HTTP 503 service unavailable", "circuit open"))
+    assert not cm.provider_error(_failed("circuit open", "circuit open"))
+    assert not cm.provider_error(_failed("rate limited (429)", "max 512 tokens exceeded"))
+    assert not cm.provider_error(_failed("InternalServerError", "HTTP 403 forbidden"))
+    assert not cm.provider_error(_failed("HTTP 400 bad request"))
+    assert not cm.provider_error(RuntimeError("model said 512 tokens"))

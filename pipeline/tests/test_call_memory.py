@@ -682,3 +682,20 @@ def test_a_partly_read_document_is_written_and_read_again(monkeypatch, settings,
     monkeypatch.setattr(cli, "_read_call_document", lambda *a, **k: {"news_id": "call-2", "parts_failed": [2]})
     assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 124
     assert [(i["news_id"], i["attempts"]) for i in call_queue.pending(sink)] == [("call-2", 1)]
+
+
+def test_a_quote_of_figures_alone_proves_no_label():
+    # APL Apollo (third run): "64% housing, 19% commercial" on the quote "64% 19%", where the slide says 64% commercial
+    kept, dropped = _check(_point(type="dependence", statement="64% of revenue is housing", value=64, unit="PERCENT",
+                                  period=None, quote="15%"))
+    assert kept == [] and dropped[0]["detail"] == "the quote has no words, only figures"
+
+
+def test_a_scale_word_above_the_quoted_row_counts():
+    # a table row "Revenue 25,174" under "All figures in Rs lakh" (review of the third run: 31 true rows dropped)
+    page = "--- Page 1 of 1 ---\nAll figures in Rs lakh\nRevenue from operations 25,174 for the half year\n"
+    p = _point(type="kpi", statement="Revenue from operations Rs 25,174 lakh", value=25174, unit="INR_LAKH", period=None,
+               quote="Revenue from operations 25,174", page=1)
+    from bse_intel import call_memory as cm
+    kept, dropped = cm.check_points([p], page)
+    assert dropped == [] and kept[0].value_base == 25174 * 100_000

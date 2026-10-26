@@ -162,5 +162,13 @@ The causes and the changes:
 3. **A model's wrong `value_base` dropped true points** (Sobha's 12 million sq ft). Code now works the base figure out from
    the value and the scale word and never drops for it.
 
+Review of that change (re-run on the 113 points the third run dropped): it kept 73, but two of the four rightly dropped
+leaked (APL's 64% on the quote "64% 19%", Eris's 37.3% on "37.3%"), and 31 true table rows were still dropped by the unit
+check, whose scale word stands in the table heading. So: a quote with no word of three letters (figures alone) is dropped;
+the whole slide is the context only for an assembled quote (other slides: the 600-character window); the unit check may
+find the scale its unit names beside the quote (a number followed by a scale word is still read in the quote). On the same
+113: 67 kept, the four wrong ones all dropped again; 14 points kept before are now dropped (bare-figure quotes such as
+Sakar's "30+", "40", "18", which cannot prove their label). Left: a date such as "as at September 26" read as the figure 26.
+
 Not changed yet: dependence, mix and risk points not taken where the page was read (4 of the 45). This is the next prompt
 change if run 5 still misses them.

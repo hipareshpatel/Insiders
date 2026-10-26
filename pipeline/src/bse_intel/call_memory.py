@@ -29,6 +29,7 @@ log = logging.getLogger(__name__)
 
 CALL_MEMORY_KEPT = 600   # points a company keeps, newest call first (about eight quarters of 60-75)
 PRIOR_POINTS = 40        # the last call's points the model sees, to say what changed
+_WORDS = re.compile(r"[A-Za-z]{3,}")   # a quote needs at least one word of three letters
 CONTEXT_CHARS = 600      # around a quote, on its page, where its period may be named
 # One request reads this much of the document (whole pages); a longer one is read in parts. The first measured run's
 # 6,000-token replies were too short for a whole document's points; Gemini Flash's 32,000-token reply is not (run 2, 26 Oct)
@@ -180,7 +181,7 @@ def figure_issue(point: CallPoint, quote: str, context: str = "") -> str | None:
     return None
 
 
-def unit_issue(point: CallPoint, quote: str) -> str | None:
+def unit_issue(point: CallPoint, quote: str, context: str = "") -> str | None:
     """The unit agrees with the quote's own scale word (spec 3.3): "10 lakh tonnes" with unit TONNES loses a factor of
     100,000, and a crore figure typed as lakh is 100 times off. Also fills `value_base` / `base_unit` (the figure in the base
     unit, so a later comparison is in one unit) or finds the model's own value_base wrong."""
@@ -201,7 +202,9 @@ def unit_issue(point: CallPoint, quote: str) -> str | None:
     if stated:
         if not named or not named <= stated:
             return f"the quote says {'/'.join(sorted(stated))}, the unit {point.unit or 'none'} says {'/'.join(sorted(named)) or 'no scale'}"
-    elif any(not re.search(_ANYWHERE[kind], flat) for kind in named):
+    # a scale the unit names may stand beside the quote on its page ("Rs in lakh" above a table row); a number followed by a
+    # scale word (above) is read in the quote only (review of the third run: 31 true table rows dropped for this)
+    elif any(not re.search(_ANYWHERE[kind], f"{flat} {gate._flat(context)}") for kind in named):
         return f"the unit {point.unit} names a scale the quote does not carry"
     magnitude = [k for k in named if k in _MAGNITUDE]
     if not magnitude:
@@ -335,15 +338,20 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
         if page_text:
             flat_page, flat_quote = gate._flat(page_text), gate._flat(quote)
             at = flat_page.find(flat_quote.split("...")[0].strip()[:80])
-            if p.section == "SLIDE" or p.quote_assembled:
+            if p.quote_assembled:
                 context = flat_page   # a slide's figures sit in boxes around its words: the whole slide
             elif at >= 0:
                 context = flat_page[max(0, at - CONTEXT_CHARS):at + len(flat_quote) + CONTEXT_CHARS]
+        if not _WORDS.search(quote):
+            # "64% 19%" or "37.3%" alone says nothing of what the figures are: APL Apollo's 64% was put on housing where the
+            # slide says commercial (review of the third run)
+            drop(p, "quote", "the quote has no words, only figures")
+            continue
         if (issue := figure_issue(p, quote, context)):
             drop(p, "figure", issue)
             continue
         p.figure_beside_quote = figure_issue(p, quote) is not None   # kept, but the quote alone does not carry every figure
-        if (issue := unit_issue(p, quote)):
+        if (issue := unit_issue(p, quote, context)):
             drop(p, "unit", issue)
             continue
         if p.period:

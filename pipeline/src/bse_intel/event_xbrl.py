@@ -440,8 +440,9 @@ def orders(matches: list[Match]) -> list[Order]:
                 continue
             if amount <= 0:
                 continue
-            if card_grounded_figures() and round(amount, 4) <= 0:
-                continue   # a figure the file gave in crore ("137.15") read as rupees is 0.0000137 Cr, shown as 0 (DSSL, 26 Oct 2026)
+            if card_grounded_figures() and amount < 0.01:
+                continue   # under ₹1 lakh is a figure the file gave in crore or lakh, not rupees: DSSL's "137.15" read as
+                #            rupees is 0.0000137 Cr and was shown as 0 (26 Oct 2026); no Reg 30 order is that small
             broad = item.get("BroadConsiderationForTheOrdersOrContracts") or ""
             out.append(Order(round(amount, 4), item.get("NameOfTheEntityAwardingTheOrdersOrContracts"),
                              "awarding" not in sub, f.get("TypeOfAnnouncementAsPerRegulation30ParaBOfPartAOfScheduleIII"),

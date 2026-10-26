@@ -71,6 +71,10 @@ def test_a_real_withdrawal_still_cancels(monkeypatch):
     monkeypatch.setenv("CARD_GROUNDED_FIGURES", "1")
     assert gate.is_terminated("The Board has withdrawn the proposed acquisition") is True
     assert gate.is_terminated(OMAXE_TEXT) is False
+    # the exchange's subject line lists the same choices with other separators
+    assert gate.is_terminated("Receipt/Withdrawal/Cancellation/Suspension of License/Approval") is False
+    assert gate.is_terminated("Withdrawal, cancellation or revocation of approval: Not Applicable") is False
+    assert gate.is_terminated("The licence was cancelled by the authority") is True
 
 
 def _emmvee():

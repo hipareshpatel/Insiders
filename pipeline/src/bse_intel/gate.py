@@ -634,7 +634,8 @@ _TERMINATED = re.compile(r"\b(?:terminat\w+|cancel\w*|withdr[ae]w\w*|rescind\w*|
 
 # The Reg 30 annexure's own row: "Withdrawal/cancellation or suspension of licence/approval ... Not Applicable". It names
 # the question asked, not an event (Omaxe's RERA registration was marked CANCELLED on it, 26 Oct 2026).
-_TEMPLATE_WITHDRAWAL = re.compile(r"\bwithdr[ae]w\w*\s*[/,]?\s*(?:or\s+)?cancel\w*\s*(?:,\s*)?(?:or\s+)?suspen\w*", re.I)
+_LIST_SEP = r"(?:\s*(?:/|,|\bor\b|\band\b)\s*)+"
+_TEMPLATE_WITHDRAWAL = re.compile(rf"\bwithdr[ae]w\w*{_LIST_SEP}cancel\w*(?:{_LIST_SEP}(?:suspen|revo)\w*)?", re.I)
 
 
 def is_terminated(headline: str | None, subject: str | None = None) -> bool:

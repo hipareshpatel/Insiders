@@ -815,6 +815,26 @@ def cmd_memory_recall_export(args, settings, sink) -> int:
     return 0 if index["sampled"] else 1
 
 
+def cmd_prediction_units(args, settings, sink) -> int:
+    """Stored targets judged in two different units, and per-share units on figures that are not per share (TODO item
+    84, prediction_check.py). Read only: no AI, no write; the next merge of each company withdraws the verdicts."""
+    from . import prediction_check, universe
+
+    nse_universe = universe.load_nse(sink)
+    if args.scrips:
+        scrips = [nse_universe.symbols.get(name.upper()) or name for name in (s.strip() for s in args.scrips.split(",")) if name]
+    elif nse_universe.built:
+        scrips = sorted(nse_universe.included)
+    else:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    report = prediction_check.survey(sink, scrips, {scrip: sym for sym, scrip in nse_universe.symbols.items()})
+    print(prediction_check.render(report))
+    if args.json:
+        Path(args.json).write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return 0
+
+
 def cmd_nse_selfcheck(args, settings, sink) -> int:
     """NSE's own figures in memory against themselves: own file against a later file's comparative column, and Q1+Q2+Q3+Q4
     against the year (nse_selfcheck.py, TODO row 60). Read only: no NSE, no AI, no write."""
@@ -1540,6 +1560,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--seed", type=int, default=26)
     p.add_argument("--days", type=int, default=30, help="cards filed in the last N days")
     p.set_defaults(func=cmd_memory_recall_export)
+
+    p = sub.add_parser("prediction-units", help="stored targets judged in two different units, and per-share units on other figures (read only, no AI)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--json", help="write the report to this file")
+    p.set_defaults(func=cmd_prediction_units)
 
     p = sub.add_parser("nse-selfcheck", help="NSE's own figures in memory against themselves: own file vs later comparative, quarters vs year (read only, no AI)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

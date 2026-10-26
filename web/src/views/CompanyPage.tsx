@@ -337,7 +337,7 @@ export function IdentityAndOwnership({ dossier }: { dossier: Dossier | null }) {
                   <span className="num block text-[12px] text-ink-3">{p.period} · target {p.comparison} {p.value}{p.actual != null ? ` · actual ${p.actual}` : ""}</span>
                 </span>
                 <Badge className={p.status === "MET" ? "bg-pos-soft text-pos" : p.status === "MISSED" ? "bg-neg-soft text-neg" : "bg-surface-2 text-ink-2"}>
-                  {p.status === "OPEN" ? "Open" : p.status === "MET" ? "Met" : p.status === "NOT_REPORTED" ? "Not reported" : "Missed"}
+                  {p.status === "OPEN" ? "Open" : p.status === "MET" ? "Met" : p.status === "NOT_REPORTED" ? "Not reported" : p.status === "UNCHECKED" ? "Not comparable (units)" : "Missed"}
                 </Badge>
               </li>
             ))}

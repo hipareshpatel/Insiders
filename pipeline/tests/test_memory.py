@@ -698,3 +698,49 @@ def test_a_watch_long_past_its_quarter_or_already_settled_is_not_resolved_again(
     assert watch_verdict(w, "MET", "EBITDA margin 27.5%", "2025-05-20T17:00:00+05:30") == "MET"
     assert watch_verdict(w, "MET", "EBITDA margin 27.5%", "2025-11-10T17:00:00+05:30") == "PENDING"
     assert watch_verdict({**w, "status": "MET"}, "MET", "EBITDA margin 27.5%", "2025-05-21T17:00:00+05:30") == "PENDING"
+
+
+def _volume_target(kpi: str, target: str | None = None):
+    kpis = [{"kpi": kpi, "metric": "volumes", "period": "Q2 FY27", "value": 10, "comparison": ">=", "target": target}]
+    return Pass2Output.model_validate({
+        "is_material": True, "event_type": "CONCALL_PRESENTATION",
+        "card": {"impact_level": "MODERATE", "headline": "Demo Tubes guides 10 lakh t", "what_happened": ["x"],
+                 "track_next": {"kpis_to_verify": kpis}}})
+
+
+def test_a_lakh_tonne_target_is_judged_in_tonnes_apl_apollo_q2fy27():
+    # APL Apollo: "10 lakh tonnes" for Q2FY27 marked MET at 963,143 t, 963,143 >= 10 (memory recall audit, item 84)
+    d = merge(new_dossier(filing("call", Q1)), _volume_target("Q2FY27 volume", "10 lakh tonnes"), filing("call", Q1),
+              "MODERATE", "now")
+    assert d["predictions"][0]["scale"] == 1e5
+    out = output(financial_metrics=[{"metric": "volumes", "period": "Q2FY27", "value": 963143, "unit": "MT"}])
+    after = merge(d, out, filing("q2", Q2), "HIGH", "now")
+    (p,) = after["predictions"]
+    assert p["status"] == "MISSED" and p["actual"] == 963143
+
+
+def test_a_target_in_another_unit_is_not_judged():
+    d = merge(new_dossier(filing("call", Q1)), _volume_target("Q2FY27 volume"), filing("call", Q1), "MODERATE", "now")
+    out = output(financial_metrics=[{"metric": "volumes", "period": "Q2FY27", "value": 963143, "unit": "MT"}])
+    after = merge(d, out, filing("q2", Q2), "HIGH", "now")
+    (p,) = after["predictions"]
+    assert p["status"] == "UNCHECKED"
+    signals = compute(d, after, out, filing("q2", Q2), {}, every=True)
+    assert not any(s["type"] == "PREDICTION_RESOLVED" for s in signals)
+
+
+def test_a_stored_verdict_from_before_the_scale_check_is_withdrawn():
+    d = new_dossier(filing("call", Q1))
+    d["predictions"] = [{"id": "p_1", "metric": "volumes", "period": "Q2FY27", "value": 10.0, "comparison": ">=",
+                         "kpi": "Q2FY27 volume", "created_on": Q1, "source_news_id": "call", "status": "MET",
+                         "actual": 963143.0, "resolved_on": Q2, "resolved_by": "q2"}]
+    after = merge(d, output(financial_metrics=[]), filing("other", Q2), "LOW", "now")
+    assert after["predictions"][0]["status"] == "UNCHECKED"
+
+
+def test_ebitda_per_tonne_is_not_per_share():
+    from bse_intel.models import FinancialMetric
+
+    assert FinancialMetric(metric="ebitda_per_tonne", period="Q2FY27", value=5999, unit="INR_PER_SHARE").unit == "INR"
+    assert FinancialMetric(metric="dividend_per_share", period="Q2FY27", value=5, unit="INR_PER_SHARE").unit == "INR_PER_SHARE"
+    assert FinancialMetric(metric="eps", period="Q2FY27", value=5, unit="INR_PER_SHARE").unit == "INR_PER_SHARE"

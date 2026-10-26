@@ -691,6 +691,9 @@ class Card(_Lenient):
         return self
 
 
+_PER_OTHER = re.compile(r"_per_(?!share)[a-z]+", re.I)   # ebitda_per_tonne, realisation_per_kg: not per share
+
+
 class FinancialMetric(_Lenient):
     metric: str
     period: str
@@ -706,6 +709,14 @@ class FinancialMetric(_Lenient):
     file_basis: str | None = Field(default=None, exclude=True)   # CONSOLIDATED / STANDALONE as the file states it
     # EPS only (eps_adjust.py, EPS_SHARE_ADJUST): why its YoY / QoQ is adjusted for a bonus or split, or left out
     eps_note: str | None = Field(default=None, exclude=True)
+
+    @model_validator(mode="after")
+    def _per_share_only_for_shares(self) -> "FinancialMetric":
+        # "per share" fits EPS, dividend and book value per share only: APL Apollo's EBITDA per tonne came back as
+        # ₹5,999 INR_PER_SHARE (memory recall audit, 26 Oct 2026); it is rupees per tonne
+        if str(self.unit or "").upper() == "INR_PER_SHARE" and _PER_OTHER.search(self.metric or ""):
+            self.unit = "INR"
+        return self
 
 
 class SegmentShare(_Lenient):

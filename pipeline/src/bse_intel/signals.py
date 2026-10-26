@@ -129,8 +129,8 @@ def _predictions(after: dict, filing: Filing) -> list[Signal]:
     """Loop 2: a number management or the analyst predicted, now checked against the actual."""
     out = []
     for p in after.get("predictions", []):
-        if p.get("resolved_by") != filing.news_id:
-            continue
+        if p.get("resolved_by") != filing.news_id or p.get("status") not in ("MET", "MISSED"):
+            continue   # UNCHECKED: the target and the figure are not in one unit (item 84), no verdict to signal
         met = p["status"] == "MET"
         out.append(Signal("PREDICTION_RESOLVED", "POSITIVE" if met else "WARNING",
                           f"{'Met' if met else 'Missed'}: \"{p['kpi']}\" ({metric_label(p['metric'])} {p['period']} target "

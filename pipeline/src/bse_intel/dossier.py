@@ -981,6 +981,39 @@ _FULL_YEAR = re.compile(r"\b(?:full[- ]year|for\s+the\s+(?:full\s+)?year|annual(
                         r"(?:target|guidance|average)|average\s+for\s+(?:the\s+)?(?:year|FY))\b", re.I)
 
 
+# A target's own scale word ("10 lakh tonnes", "₹2,000 crore", "5 mn units"), as a multiplier of one unit
+_SCALE_WORDS = ((re.compile(r"\b(?:lakh|lac|lakhs|lacs|lkh)\b", re.I), 1e5), (re.compile(r"\b(?:crores?|cr)\b", re.I), 1e7),
+                (re.compile(r"\b(?:billion|bn)\b", re.I), 1e9), (re.compile(r"\b(?:million|mn|mln)\b", re.I), 1e6),
+                (re.compile(r"\b(?:thousand|'000)\b|\d\s*k\b", re.I), 1e3))
+# what one of a stored figure's unit is: crore and lakh amounts and counts; per-unit and per-cent figures are 1
+_STORED_SCALE = {"INR_CR": 1e7, "CR": 1e7, "INR_LAKH": 1e5, "LAKH": 1e5, "INR_MN": 1e6, "INR_M": 1e6, "INR_BN": 1e9,
+                 "USD_MN": 1e6, "USD_M": 1e6, "USD_BN": 1e9, "SHARES_CR": 1e7, "SHARES_LAKH": 1e5}
+TARGET_SCALE_RATIO = 5   # the same band as _plausible_target: a target 5x away from the figure is another unit
+
+
+def target_scale(text: str) -> float | None:
+    """The multiplier a KPI target's wording names (lakh 1e5, crore 1e7, million 1e6, ...), else None."""
+    for pattern, size in _SCALE_WORDS:
+        if pattern.search(text or ""):
+            return size
+    return None
+
+
+def comparable_target(p: dict, actual: dict) -> float | None:
+    """The prediction's target in the actual figure's own unit, or None when the two cannot be compared: the target's
+    scale word converted against the figure's unit (APL Apollo's "10 lakh tonnes" is 1,000,000 against a figure in
+    tonnes), and, either way, a target more than 5x from the figure is taken for another unit (item 84, 26 Oct 2026)."""
+    value, figure = p.get("value"), actual.get("value")
+    if value is None or figure is None:
+        return None
+    goal = float(value)
+    if p.get("scale"):
+        goal = goal * p["scale"] / _STORED_SCALE.get(str(actual.get("unit") or "").upper(), 1)
+    if goal and figure and not (1 / TARGET_SCALE_RATIO <= abs(float(figure)) / abs(goal) <= TARGET_SCALE_RATIO):
+        return None
+    return goal
+
+
 def _plausible_target(d: dict, metric: str, value: float) -> bool:
     """A numeric KPI target in the scale of the company's own figures for that metric: one more than 5x
     away from the latest stored value (a refund amount as a net-worth target, a segment's growth %
@@ -1303,17 +1336,29 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
                 "id": pid, "metric": _norm(k.metric), "period": _period(k.period), "value": k.value,
                 "comparison": comparison, "kpi": k.kpi.strip()[:200], "created_on": as_of,
                 "source_news_id": news_id, "status": "OPEN", "lab": text_lab(),
+                **({"scale": scale} if (scale := target_scale(f"{k.target or ''} {k.kpi or ''}")) else {}),
             })
     by_key = {(m["metric"], m["period"]): m for m in d["financial_metrics"]}
+    for p in predictions.values():
+        if p["status"] in ("MET", "MISSED") and p.get("actual") is not None \
+                and comparable_target(p, {"value": p["actual"], "unit": p.get("actual_unit")}) is None:
+            # judged before the scale check: APL Apollo's 10 (lakh t) target "met" at 963,143 t (item 84)
+            p.update(status="UNCHECKED", reason="target and figure are not in the same unit")
     for p in predictions.values():
         if p["status"] != "OPEN" or p["created_on"] >= as_of:
             continue
         actual = by_key.get((p["metric"], p["period"]))
         if actual is None or not reported_by(actual, news_id):
             continue
-        hit = {">=": actual["value"] >= p["value"], "<=": actual["value"] <= p["value"],
-               "=": abs(actual["value"] - p["value"]) <= abs(p["value"]) * 0.02}[p["comparison"]]
-        p.update(status="MET" if hit else "MISSED", actual=actual["value"], resolved_on=as_of, resolved_by=news_id)
+        goal = comparable_target(p, actual)
+        if goal is None:
+            p.update(status="UNCHECKED", actual=actual["value"], actual_unit=actual.get("unit"), resolved_on=as_of,
+                     resolved_by=news_id, reason="target and figure are not in the same unit")
+            continue
+        hit = {">=": actual["value"] >= goal, "<=": actual["value"] <= goal,
+               "=": abs(actual["value"] - goal) <= abs(goal) * 0.02}[p["comparison"]]
+        p.update(status="MET" if hit else "MISSED", actual=actual["value"], actual_unit=actual.get("unit"),
+                 resolved_on=as_of, resolved_by=news_id)
     for p in predictions.values():
         # the period's results and call came and went without the figure (a deck-only KPI, another key): not
         # reported, rather than open for ever

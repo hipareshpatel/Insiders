@@ -104,7 +104,7 @@ CALL_MEMORY_SCHEMA = {
     "reason": "only when points is empty: 15 words or fewer",
 }
 MAX_CALL_POINTS = 60
-PART_CALL_POINTS = 30   # each part of a document read in parts (call_memory.PART_CHARS)
+PART_CALL_POINTS = 45   # each part of a document read in parts (call_memory.PART_CHARS)
 
 
 def pass2_schema(event_type: str) -> dict:

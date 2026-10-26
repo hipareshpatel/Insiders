@@ -30,10 +30,9 @@ log = logging.getLogger(__name__)
 CALL_MEMORY_KEPT = 600   # points a company keeps, newest call first (about eight quarters of 60-75)
 PRIOR_POINTS = 40        # the last call's points the model sees, to say what changed
 CONTEXT_CHARS = 600      # around a quote, on its page, where its period may be named
-# One request reads this much of the document (whole pages): the first measured run sent ten documents of 18,000-74,000
-# characters whole, each in one request with a 6,000-token reply, and got 67 points against the reviewers' 178
-PART_CHARS = 18_000
-PART_POINTS = 30         # asked of each part
+# One request reads this much of the document (whole pages); a longer one is read in parts. The first measured run's
+# 6,000-token replies were too short for a whole document's points; Gemini Flash's 32,000-token reply is not (run 2, 26 Oct)
+PART_CHARS = 60_000
 
 _PAGE_MARK = re.compile(r"^(?:-{3}|={5})\s*page\s+(\d+)\s+of\s+\d+[^\n]*$", re.I | re.M)
 

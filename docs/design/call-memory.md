@@ -110,6 +110,14 @@ Guidance and commitment points with a stated figure and period feed `guidance` a
 `comparable_target`, F179); the stock page's call summary reads `call_memory`; "dropped topic" and slipped-deadline
 signals from one call to the next.
 
+**Changed after the second measured run** (26 Oct, maintenance run 40308409939): the free side models failed 8 of the 10
+documents (Gemma 4 on Google's key HTTP 500 ten times; NVIDIA's DeepSeek timed out at 120 s on every long reply; Z.AI and
+OpenRouter 429); the 2 read were far fuller than run 1 (Onward 18 points kept against 9, Sobha 16 against 6). Gemini Flash
+(3.8, 3.7, 3.6, 3.5) is now first on the route with a 32,000-token reply and a 300 s wait, one request a document up to
+60,000 characters. Before the switch goes on: (1) the reading leaves the 15-minute pipeline run (a queued job of its own,
+so a slow reply never holds the cards), and (2) its Gemini requests move to a project of their own (owner's offer, 26 Oct),
+so they never share the cards' 20-a-day Flash quota.
+
 ## Measurement before the switch goes on (owner's Yes, 26 Oct 2026)
 
 `call-memory --ids ... --out DIR` (maintenance, read only: reads the stored text and memory, calls the AI, writes the

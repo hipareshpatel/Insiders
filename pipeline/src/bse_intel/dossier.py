@@ -26,7 +26,7 @@ from typing import Any
 from .scoring import calibration
 from .settings import (card_ebitda_profit_v2, card_grounded_figures, card_guidance_dated, card_same_definition, memory_restated,
                        memory_screener, memory_year_check)
-from .models import Filing, Pass2Output
+from .models import _PER_OTHER, Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
 
@@ -1115,6 +1115,11 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if m_by in ("file", "calc") and results_source and is_comparative(key[1], own_period):
             source["restated_from"] = own_period   # F167: a comparative column of this filing, for its own earlier period
         metrics[key] = _metric_entry(*key, [s for s in _sources(metrics.get(key)) if s["news_id"] != news_id] + [source])
+    for entry in metrics.values():
+        # stored before models.FinancialMetric checked it: Ambuja's EBITDA per tonne kept as ₹931 INR_PER_SHARE (item 84)
+        for row in [entry, *entry.get("sources", [])]:
+            if str(row.get("unit") or "").upper() == "INR_PER_SHARE" and _PER_OTHER.search(entry.get("metric") or ""):
+                row["unit"] = "INR"
     d["financial_metrics"] = _cap_metrics(list(metrics.values()))
 
     segments = {(_norm(s["segment"]), _period(s["period"])): s for s in d.get("segment_mix", [])}

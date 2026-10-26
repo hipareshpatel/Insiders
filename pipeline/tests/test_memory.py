@@ -744,3 +744,13 @@ def test_ebitda_per_tonne_is_not_per_share():
     assert FinancialMetric(metric="ebitda_per_tonne", period="Q2FY27", value=5999, unit="INR_PER_SHARE").unit == "INR"
     assert FinancialMetric(metric="dividend_per_share", period="Q2FY27", value=5, unit="INR_PER_SHARE").unit == "INR_PER_SHARE"
     assert FinancialMetric(metric="eps", period="Q2FY27", value=5, unit="INR_PER_SHARE").unit == "INR_PER_SHARE"
+
+
+def test_a_stored_per_share_tonne_is_relabelled_at_the_next_merge():
+    d = new_dossier(filing("q1", Q1))
+    d["financial_metrics"] = [{"metric": "ebitda_per_tonne", "period": "Q1FY27", "value": 931.0, "unit": "INR_PER_SHARE",
+                               "as_of": Q1, "source_news_id": "q1",
+                               "sources": [{"news_id": "q1", "as_of": Q1, "value": 931.0, "unit": "INR_PER_SHARE"}]}]
+    after = merge(d, output(financial_metrics=[]), filing("other", Q2), "LOW", "now")
+    (m,) = [m for m in after["financial_metrics"] if m["metric"] == "ebitda_per_tonne"]
+    assert m["unit"] == "INR" and all(src["unit"] == "INR" for src in m.get("sources", []))

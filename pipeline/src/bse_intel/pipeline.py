@@ -2624,6 +2624,11 @@ class Pipeline:
             return self._xbrl_memory(filing, company)
         industry = company.get("industry")
         ocr = _ocr_timed(page_reader(self.gateway.transcribe_image if self.gateway.has_route("vision") else None))
+        ocr_cap = self.settings.max_ocr_pages
+        if filing.event_type == "CONCALL_PRESENTATION" and local_ocr_available():
+            # owner 26 Oct 2026: a scanned call transcript or deck is read whole (up to CALL_OCR_PAGES), so memory sees all
+            # of it; the pages past the usual cap go to local OCR only, never the vision route (an AI call)
+            ocr_cap, ocr = max(ocr_cap, CALL_OCR_PAGES), _call_ocr(ocr, recognise, ocr_cap)
         # Pages of figures are read by local OCR first, the text layer putting back the nils it drops
         # (extract.figure_page); never by the vision route, which costs quota and swaps digits.
         figures = _ocr_timed(recognise if local_ocr_available() else None)
@@ -2634,13 +2639,13 @@ class Pipeline:
         # an entry written before figure pages went to local OCR.
         current = (cached is not None and cached.get("v", 1) >= CACHE_VERSION
                    and not cache_needs_ocr(cached, local_ocr=figures is not None,
-                                       max_ocr_pages=self.settings.max_ocr_pages if ocr else None)
+                                       max_ocr_pages=ocr_cap if ocr else None)
                    and "blocks" in cached  # written before pages were also read block by block
                    # Nothing was read (too large at the cap then, or not there): there is no text to lose by
                    # asking again, and 519552's annual report, skipped at 30 MB, would stay empty for good.
                    and bool(cached.get("digital")))
         if cached is not None and (current or not filing.pdf_url):
-            doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
+            doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=ocr_cap)
         elif cached is not None:
             # Written before the text layer was read in reading order: read the PDF again, keeping the
             # pages already OCR'd; if BSE will not serve it now, the old text is still better than none.
@@ -2649,10 +2654,10 @@ class Pipeline:
                     pdf = self._attachment(filing.pdf_url, _attachment_cap(filing), document=True)
                 self._refusals = self._network_failures = 0
                 with stages.stage("read"):
-                    doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
+                    doc = Document(pdf, ocr=ocr, max_ocr_pages=ocr_cap, figure_reader=figures)
                 doc.keep_ocr(cached)
             except (AttachmentError, AttachmentTooLarge):
-                doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages)
+                doc = Document.from_cache(cached, ocr=ocr, max_ocr_pages=ocr_cap)
         if doc is None:
             with stages.stage("download"):
                 pdf = self._attachment(filing.pdf_url, _attachment_cap(filing), document=True) if filing.pdf_url else None
@@ -2667,7 +2672,7 @@ class Pipeline:
                 return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": filing.event_type,
                                 "reason": f"duplicate of {same} (same file)", "updated_at": now_iso()})
             with stages.stage("read"):
-                doc = Document(pdf, ocr=ocr, max_ocr_pages=self.settings.max_ocr_pages, figure_reader=figures)
+                doc = Document(pdf, ocr=ocr, max_ocr_pages=ocr_cap, figure_reader=figures)
         try:
             repeat = self._duplicate_of(filing, doc)
             if repeat:
@@ -4665,6 +4670,23 @@ def _ocr_timed(read):
             return read(png)
 
     return timed
+
+
+CALL_OCR_PAGES = 60   # owner 26 Oct 2026: scanned call transcripts and decks are read whole (local OCR, about 5 s a page)
+
+
+def _call_ocr(full, local, first: int):
+    """The OCR of a call transcript or deck: the usual reader (local OCR, the vision route when it reads nothing) for the
+    first ``first`` pages it is asked for, local OCR alone after that, so a long scanned document costs no AI call."""
+    if full is None or local is None:
+        return full
+    asked = [0]
+
+    def read(png: bytes) -> str:
+        asked[0] += 1
+        return full(png) if asked[0] <= first else local(png)
+
+    return read
 
 
 def _attachment_cap(filing: Filing) -> int:

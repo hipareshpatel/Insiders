@@ -253,9 +253,9 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
 | 58 | Texts of the about 20 oldest cards (BSE era) from BSE, so they can be re-checked | NSE has no file for them | Later (owner, 26 Oct) | Not started |
 | 59 | Faster memory saving in the seed: one write per company instead of one per quarter | The 26 Oct reload: about two thirds of its 1 h 42 min was our own reading and saving, not NSE | Later (owner, 26 Oct) | Not started |
 | 60 | NSE checked against itself (read only, no download): each quarter's figure in its own file against the same quarter in the next year's file (comparative column), and four quarters against the year | Catches an NSE file with a wrong figure or a wrong quarter even where screener copied it (Jubilant's own file tagged at a tenth, F54) | Yes (owner, 26 Oct) | Built 26 Oct (F175): Maintenance > `nse-selfcheck` |
-| 61 | The filing PDF as the last referee, only for pairs that NSE's file and screener still disagree on after rows 57 and 60; read by code (OCR first on figure pages), no AI | NSE's file can be wrong too (owner, 26 Oct) | Yes (owner, 26 Oct); sized after the referee count | Building 26 Oct |
-| 62 | When NSE's file, screener and the PDF all disagree, the figure is not shown (stock page and cards) and marked unverified, never a guess | | Yes (owner, 26 Oct) | With row 52 |
-| 63 | Old-card texts (text-backfill) at the fast archive pace | 3-5 s a download: about 6-8 h | Yes (owner, 26 Oct) | From the second pass (the first ends about 5:25 PM IST) |
+| 61 | The filing PDF as the last referee, only for pairs that NSE's file and screener still disagree on after rows 57 and 60; read by code (OCR first on figure pages), no AI | NSE's file can be wrong too (owner, 26 Oct) | Yes (owner, 26 Oct); sized after the referee count | Built 26 Oct (F176): Maintenance > `pdf-referee`; a trial of about 20 pairs first |
+| 62 | When NSE's file, screener and the PDF all disagree, the figure is not shown (stock page and cards) and marked unverified, never a guess | | Owner, 26 Oct: decide on the final results (rows 57, 60, 61) | With row 52 |
+| 63 | Old-card texts (text-backfill) at the fast archive pace | 3-5 s a download: about 6-8 h | Yes (owner, 26 Oct) | Done 26 Oct: the slow run was stopped at 1:47 PM IST (each text is saved as it is fetched) and restarted on the fast pace |
 
 ### Owner's answers on memory labels (items 3, 10, 16), 25 Oct 2026 evening
 

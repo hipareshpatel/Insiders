@@ -1035,6 +1035,33 @@ def cmd_screener_crosscheck(args, settings, sink) -> int:
     return 0
 
 
+def cmd_pdf_referee(args, settings, sink) -> int:
+    """Read-only: the filing PDF as the last referee of the pairs the screener-referee left open (pdf_referee.py). The input
+    is the screener-referee CSV (``--csv``); each pair with verdict neither, no_file or screener_matches_official gets its
+    period's results PDF from NSE (announcement list, ``NseClient.fetch``), read with the pipeline's own reader. No memory
+    write, no card change, no AI. Exit 75 when NSE refused the session, 124 when the time budget ended with pairs left."""
+    from . import pdf_referee as pr
+    from .nse import NseClient
+
+    path = Path(args.csv)
+    if not path.is_file():
+        print(f"No screener-referee CSV at {path}.")
+        return 2
+    rows = pr.load_csv(path.read_text(encoding="utf-8"))
+    with NseClient() as nse:
+        outcome = pr.run(nse, rows, args.limit, args.time_budget, ocr=not args.no_ocr)
+    print(pr.render(outcome))
+    if args.json:
+        Path(args.json).write_text(pr.to_json(outcome), encoding="utf-8")
+    if args.out_csv:
+        Path(args.out_csv).write_text(pr.to_csv(outcome), encoding="utf-8")
+    if args.md:
+        Path(args.md).write_text(pr.to_markdown(outcome, today_ist().isoformat()), encoding="utf-8")
+    if outcome["blocked"]:
+        return REFUSED
+    return 124 if outcome["out_of_time"] else 0
+
+
 def cmd_screener_referee(args, settings, sink) -> int:
     """Read-only: NSE's own results XBRL as the referee of the screener cross-check (screener_xbrl_referee.py). The
     cross-check is worked out again from R2 and memory (no request), then each disagreeing pair is looked up in the period's
@@ -1564,6 +1591,16 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--csv", help="write every refereed pair, with the official figure and the verdict, to this file")
     p.add_argument("--md", help="write the short markdown summary to this file")
     p.set_defaults(func=cmd_screener_referee)
+
+    p = sub.add_parser("pdf-referee", help="read-only: the filing PDF as the last referee of the pairs the screener-referee left open")
+    p.add_argument("--csv", required=True, help="the screener-referee CSV (referee-xbrl.csv)")
+    p.add_argument("--limit", type=int, help="referee at most this many pairs (a company is finished once started); the rest are not_run")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if pairs are left")
+    p.add_argument("--no-ocr", action="store_true", help="skip local OCR (figure and scanned pages keep their text layer only)")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--out-csv", help="write every refereed pair, with the PDF's figure and the verdict, to this file")
+    p.add_argument("--md", help="write the short markdown summary to this file")
+    p.set_defaults(func=cmd_pdf_referee)
 
     p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")
     p.add_argument("--apply", action="store_true", help="back up, then delete; without it nothing is changed")

@@ -699,3 +699,215 @@ def test_a_scale_word_above_the_quoted_row_counts():
     from bse_intel import call_memory as cm
     kept, dropped = cm.check_points([p], page)
     assert dropped == [] and kept[0].value_base == 25174 * 100_000
+
+
+# ---------------------------------------------------------------- run 5 fixes: pages, columns, retry
+# a slide set in two columns, read straight across: each sentence of the left column is cut by the right column's words
+TWO_COLUMNS = """--- Page 24 of 40 ---
+Our board is evaluating options for deployment of surplus cash.
+--- Page 25 of 40 ---
+We plan to open 15 exclusive stores
+Gold sales were nil in the half year
+of which 4 have been launched
+against 205.50 Mn in the earlier half
+--- Page 26 of 40 ---
+Other income rose to 52 Mn.
+"""
+COLUMN_QUOTE = "We plan to open 15 exclusive stores of which 4 have been launched"
+
+
+def _column_point(**kw) -> CallPoint:
+    base = dict(type="capex_capacity", statement="15 exclusive stores planned, 4 launched", metric="stores", topic="stores",
+                value=15, unit=None, period=None, section="SLIDE", page=24, quote=COLUMN_QUOTE)
+    return _point(**{**base, **kw})
+
+
+def test_a_quote_split_by_a_second_column_is_dropped():
+    # joined across two columns it is two sentences' words, never one quote (review of F180)
+    for page, section in ((24, "SLIDE"), (26, "SLIDE"), (25, "PREPARED")):
+        kept, dropped = _check(_column_point(page=page, section=section), text=TWO_COLUMNS)
+        assert kept == [] and _reasons(dropped) == ["quote"]
+    # on a slide's own cited page the old word-by-word rule still applies (the figures sit in boxes), as before this work
+    kept, _ = _check(_column_point(page=25), text=TWO_COLUMNS)
+    assert len(kept) == 1
+
+
+ONE_COLUMN = """--- Page 24 of 40 ---
+Our board is evaluating options for deployment of surplus cash.
+--- Page 25 of 40 ---
+We plan to open 15 exclusive stores of
+which 4 have been  launched.
+Other income rose to 52 Mn.
+--- Page 26 of 40 ---
+Nothing here.
+"""
+
+
+def test_a_quote_on_the_page_before_or_after_the_cited_one_is_kept_whole():
+    # the model named the slide's printed number 24; the words are on PDF page 25, broken over two lines
+    quote = "We plan to open 15 exclusive stores of which 4 have been launched."
+    for cited in (24, 25, 26):
+        kept, dropped = _check(_column_point(page=cited, quote=quote), text=ONE_COLUMN)
+        assert dropped == [] and kept[0].page == 25 and kept[0].pages == [25]
+    assert cm._quote_on_near_pages(quote, 24, cm.split_pages(ONE_COLUMN), False)[:1] == (25,)
+
+
+def test_a_quote_two_pages_from_the_cited_one_is_not_looked_for():
+    pages = cm.split_pages(ONE_COLUMN + "--- Page 27 of 40 ---\nnothing")
+    assert cm._quote_on_near_pages("We plan to open 15 exclusive stores of", 23, pages, False) is None
+
+
+def test_a_quote_on_no_page_is_still_dropped():
+    kept, dropped = _check(_column_point(quote="We plan to open 15 exclusive stores of which 9 have been shut"), text=ONE_COLUMN)
+    assert kept == [] and _reasons(dropped) == ["quote"]
+
+
+class FlakyGateway(FakeGateway):
+    """Fails with the given errors in turn, then answers."""
+
+    def __init__(self, errors, points):
+        super().__init__(points)
+        self.errors = list(errors)
+
+    def complete_json(self, *a, **kw):
+        if self.errors:
+            self.calls.append({})
+            raise RuntimeError(self.errors.pop(0))
+        return super().complete_json(*a, **kw)
+
+
+def _read(gateway, settings):
+    filing = _filing("c3", "2026-11-10T19:00:00+05:30", "CONCALL_PRESENTATION", "Earnings call transcript")
+    return cm.read(gateway, PromptEngine(settings), filing, "transcript", "Realty", TEXT, "", None, frozenset())
+
+
+def test_a_server_error_on_every_model_is_retried_once_and_the_attempts_are_counted(monkeypatch, settings):
+    waits = []
+    monkeypatch.setattr(cm.time, "sleep", waits.append)
+    gateway = FlakyGateway(["route: no provider could serve the request (a: InternalServerError 503; b: circuit open)"],
+                           [_raw(_point())])
+    out = _read(gateway, settings)
+    assert out.attempts == 2 and len(out.points) == 1 and out.parts_failed == [] and waits == [cm.RETRY_WAIT_S]
+    assert len(gateway.calls) == 2
+
+
+def test_a_second_server_error_fails_the_reading_and_says_two_attempts(monkeypatch, settings):
+    monkeypatch.setattr(cm.time, "sleep", lambda s: None)
+    gateway = FlakyGateway(["503 InternalServerError", "request timed out"], [])
+    with pytest.raises(RuntimeError, match="2 attempts"):
+        _read(gateway, settings)
+    assert len(gateway.calls) == 2
+
+
+def test_a_refusal_is_not_retried(monkeypatch, settings):
+    monkeypatch.setattr(cm.time, "sleep", lambda s: pytest.fail("no wait for a refusal"))
+    gateway = FlakyGateway(["400 Bad Request: invalid argument"], [])
+    with pytest.raises(RuntimeError, match="1 attempt"):
+        _read(gateway, settings)
+    assert len(gateway.calls) == 1
+
+
+def test_a_valid_empty_answer_is_not_retried(monkeypatch, settings):
+    monkeypatch.setattr(cm.time, "sleep", lambda s: pytest.fail("no wait for an empty answer"))
+    gateway = FakeGateway([])
+    out = _read(gateway, settings)
+    assert out.points == [] and out.attempts == 1 and len(gateway.calls) == 1
+
+
+def test_provider_error_kinds():
+    assert cm.provider_error(RuntimeError("openrouter: InternalServerError"))
+    assert cm.provider_error(RuntimeError("gemini: 503 UNAVAILABLE overloaded"))
+    assert not cm.provider_error(RuntimeError("gemini: 429 quota"))
+    assert not cm.provider_error(RuntimeError("403 Forbidden"))
+    assert not cm.provider_error(SimpleNamespace(capped=True))
+
+
+def test_the_ask_covers_the_kinds_of_point_run_5_missed(settings):
+    system, _ = PromptEngine(settings).call_memory(
+        _filing("c3", "2026-11-10T19:00:00+05:30", "CONCALL_PRESENTATION", "x"), "deck", "Realty", TEXT, None, part=(1, 1))
+    for word in ("headwinds", "One-off items", "Dependences", "Dated events", "commissioning date", "discontinued operations"):
+        assert word in system
+
+
+# ---------------------------------------------------------------- review of the run-5 fixes
+SPLICE_PAGE = "--- Page 1 of 1 ---\nTotal revenue grew 9% in Q1 on volumes. EBITDA margin rose 14% in Q2 on mix.\n"
+
+
+def test_two_sentences_of_one_line_are_never_joined_into_one_quote():
+    quote = "Total revenue grew 14% in Q2 on mix."
+    kept, dropped = _check(_point(statement="Revenue grew 14% in Q2", value=14, period="Q2", quote=quote, page=1), text=SPLICE_PAGE)
+    assert kept == [] and _reasons(dropped) == ["quote"]
+
+
+SPLIT_CALL = """--- Page 1 of 2 ---
+Analyst: Will you cut guidance by 30% for the year?
+--- Page 2 of 2 ---
+Management: we will hold our margin guidance for FY27.
+We will not discuss it further.
+"""
+
+
+def test_with_no_page_cited_only_a_whole_quote_counts():
+    spliced = "Will you cut guidance by 30% for the year? we will hold our margin guidance for FY27."
+    point = _point(type="guidance", statement="Guidance cut by 30%", value=30, period="FY27", section="QA", quote=spliced, page=None)
+    kept, dropped = _check(point, text=SPLIT_CALL)
+    assert kept == [] and _reasons(dropped) == ["quote"]
+    assert cm._quote_on_near_pages(COLUMN_QUOTE, None, cm.split_pages(ONE_COLUMN), True) is None
+
+
+def test_a_text_without_page_markers_takes_only_whole_quotes():
+    flat = "We plan to open 15 exclusive stores\nGold sales were nil\nof which 4 have been launched\n"
+    kept, dropped = _check(_column_point(page=None), text=flat)
+    assert kept == [] and _reasons(dropped) == ["quote"]
+
+
+def test_a_slide_bag_of_words_is_for_the_cited_page_only():
+    slide = "--- Page 3 of 4 ---\nDebt\n12%\nSafe harbour notice\n--- Page 4 of 4 ---\nEBITDA\n9%\ncrore\n"
+    quote = "Debt 12% EBITDA 9% crore"
+    assert cm._quote_on_near_pages(quote, 3, cm.split_pages(slide), True) is None
+    point = _point(type="kpi", statement="Debt 12%", value=12, unit="PERCENT", period=None, section="SLIDE", quote=quote, page=3)
+    kept, dropped = _check(point, text=slide)
+    assert kept == [] and _reasons(dropped) == ["quote"]
+    box = "--- Page 3 of 4 ---\nDebt\nEBITDA\n12%\n9%\ncrore\n--- Page 4 of 4 ---\nx\n"
+    assert cm._quote_on_near_pages(quote, 3, cm.split_pages(box), True)[2] == "slide"
+
+
+def test_a_quote_loses_its_trailing_punctuation_before_the_page_match():
+    quote = "We plan to open 15 exclusive stores of which 4 have been launched,"
+    assert cm._quote_on_near_pages(quote, 25, cm.split_pages(ONE_COLUMN), False)[0] == 25
+
+
+# a question and a later answer, or two sentences on adjacent lines, are never joined
+JOINED = """--- Page 1 of 1 ---
+Analyst: Will you cut guidance by 30% this year?
+Management: Let me think.
+We will raise the dividend to Rs 5 per share by FY28.
+Total revenue grew 9% in Q1 on volumes.
+Other income was small.
+Capex plan is 500 crore for FY27
+"""
+
+
+def test_sentences_of_adjacent_lines_are_not_joined():
+    for quote, kw in (("Will you cut guidance by 30% this year? We will raise the dividend to Rs 5 per share by FY28.",
+                       dict(value=5, unit="INR", period="FY28")),
+                      ("Total revenue grew 9% in Q1 on volumes. Capex plan is 500 crore for FY27", dict(value=500, unit="INR_CR", period="FY27"))):
+        kept, dropped = _check(_point(type="guidance", statement="a figure " + str(kw["value"]), section="QA", quote=quote, page=1, **kw),
+                               text=JOINED)
+        assert kept == [] and _reasons(dropped) == ["quote"]
+
+
+def _failed(*details):
+    from bse_intel.ai.gateway import AllProvidersFailed
+    return AllProvidersFailed("pass2_long", [(f"m{i}", "failed", d) for i, d in enumerate(details)])
+
+
+def test_the_retry_reads_the_models_own_outcomes():
+    assert cm.provider_error(_failed("InternalServerError", "rate limited (429)"))
+    assert cm.provider_error(_failed("HTTP 503 service unavailable", "circuit open"))
+    assert not cm.provider_error(_failed("circuit open", "circuit open"))
+    assert not cm.provider_error(_failed("rate limited (429)", "max 512 tokens exceeded"))
+    assert not cm.provider_error(_failed("InternalServerError", "HTTP 403 forbidden"))
+    assert not cm.provider_error(_failed("HTTP 400 bad request"))
+    assert not cm.provider_error(_failed("InternalServerError", "model glm-9 not found"))
+    assert not cm.provider_error(RuntimeError("model said 512 tokens"))

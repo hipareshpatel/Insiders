@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import logging
 import re
+import time
 from contextlib import nullcontext
 
 from . import gate
@@ -34,6 +35,14 @@ CONTEXT_CHARS = 600      # around a quote, on its page, where its period may be 
 # One request reads this much of the document (whole pages); a longer one is read in parts. The first measured run's
 # 6,000-token replies were too short for a whole document's points; Gemini Flash's 32,000-token reply is not (run 2, 26 Oct)
 PART_CHARS = 60_000
+RETRY_WAIT_S = 20.0      # a document whose provider answered server errors is tried once more after this wait (run 5, F180)
+# what one provider's failure says (the gateway's outcome details): a server error, a timeout or an overload is worth another
+# try; a refusal of the request itself (400, 401, 403, 404) would answer the same. A 429 or "circuit open" says neither.
+_SERVER_ERROR = re.compile(r"\b(?:http|status|code|error)[ :=]*5\d\d\b|\b5\d\d\s+(?:internal|bad gateway|service|gateway|server)|"
+                          r"internal ?server|server error|time[sd]? ?out|overload|service unavailable|bad gateway|"
+                          r"connection (?:reset|error|aborted)", re.I)
+_REFUSAL = re.compile(r"\b(?:http|status|code|error)[ :=]*(?:400|401|403|404)\b|\b(?:400|401|403|404)\s+(?:bad request|unauthori|"
+                      r"forbidden|not found|invalid)|bad request|model\b.{0,40}\bnot found|not found.{0,20}\bmodel|unauthori[sz]ed|forbidden|invalid api key", re.I)
 
 _PAGE_MARK = re.compile(r"^(?:-{3}|={5})\s*page\s+(\d+)\s+of\s+\d+[^\n]*$", re.I | re.M)
 
@@ -82,9 +91,12 @@ def read(gateway, prompts, filing, kind: str, industry: str | None, text: str, b
     route = next((r for r in ("call_memory", "pass2_long", "pass2_bulk") if gateway.has_route(r)), "pass2_bulk")
     scope = getattr(gateway, "card_scope", None)
     chunks = parts(text)
-    points, models, chars, failed, reasons, last_error = [], [], 0, [], [], None
-    for i, chunk in enumerate(chunks, 1):
+    points: dict[int, list] = {}
+    models, chars, reasons, errors = [], 0, [], {}
+
+    def attempt(i: int, chunk: str) -> None:
         system, user = prompts.call_memory(filing, kind, industry, chunk, prior, part=(i, len(chunks)))
+        nonlocal chars
         chars += len(system) + len(user)
         try:
             # not the card's clock: the card is written and its cap spent before this reading
@@ -92,22 +104,51 @@ def read(gateway, prompts, filing, kind: str, industry: str | None, text: str, b
                 result = gateway.complete_json(route, system, user, CallMemoryOutput, bulk=True,
                                                allow=lambda target: target.provider not in paid)
         except Exception as exc:   # noqa: BLE001 - one part's failure leaves the others
-            failed.append(i)
-            last_error = exc
+            errors[i] = exc
             log.warning("%s: call memory part %d of %d failed: %s", getattr(filing, "news_id", "?"), i, len(chunks), exc)
-            continue
-        points.extend(result.value.points)
+            return
+        errors.pop(i, None)
+        points[i] = list(result.value.points)
         models.append(getattr(result, "model_label", None) or "?")
         if result.value.reason:
             reasons.append(result.value.reason)
+
+    for i, chunk in enumerate(chunks, 1):
+        attempt(i, chunk)
+    attempts = 1
+    # run 5: every model of the route answered server errors for 5 of 10 documents. Once the route's models have all failed
+    # with a server error or a timeout, the parts that failed are asked again after a short wait; a refusal (4xx) is not
+    redo = [i for i, exc in errors.items() if provider_error(exc)]
+    if redo:
+        attempts = 2
+        log.info("%s: call memory retries parts %s after %.0f s", getattr(filing, "news_id", "?"), redo, RETRY_WAIT_S)
+        time.sleep(RETRY_WAIT_S)
+        for i in redo:
+            attempt(i, chunks[i - 1])
+    failed = sorted(errors)
     if len(failed) == len(chunks):
-        raise RuntimeError(f"every part of the call-memory reading failed ({len(chunks)}): {last_error}")
+        raise RuntimeError(f"every part of the call-memory reading failed ({len(chunks)}, {attempts} attempt"
+                           f"{'s' if attempts > 1 else ''}): {errors[failed[-1]]}")
+    all_points = [pt for i in sorted(points) for pt in points[i]]
     out = CallMemoryOutput(points=[], reason="; ".join(reasons)[:300] or None)
-    out.points = points
+    out.points = all_points
+    out.attempts = attempts
     out.served_by = ", ".join(sorted(set(models)))
     out.prompt_chars = chars
     out.parts, out.parts_failed = len(chunks), failed
     return out
+
+
+def provider_error(exc: BaseException) -> bool:
+    """A failure worth one more try: some provider of the route answered a server error (5xx), timed out or was overloaded,
+    and none refused the request itself (400, 401, 403, 404). Read from the gateway's per-model outcomes when it gives them
+    (a 429 beside a 5xx still retries; "circuit open" alone does not). Not the card's cap or a spent quota, and not a reply
+    that merely holds no points (that is no exception)."""
+    if getattr(exc, "capped", False) or getattr(exc, "quota_exhausted", False):
+        return False
+    outcomes = getattr(exc, "outcomes", None)
+    details = [str(o[-1]) for o in outcomes] if outcomes else [str(exc)]
+    return any(_SERVER_ERROR.search(d) for d in details) and not any(_REFUSAL.search(d) for d in details)
 
 
 def paid_providers(settings) -> frozenset[str]:
@@ -281,6 +322,33 @@ def _on_page(quote: str, page: str) -> bool:
         and all(_has(f, on_page) for f in figures)
 
 
+def _words(text: str) -> list[str]:
+    return [w.rstrip(".,") for w in re.findall(r"[a-z0-9][a-z0-9.,%]*", gate._flat(text))]
+
+
+def _near_pages(pages: list[tuple[int | None, str]], cited: int | None) -> list[tuple[int | None, str]]:
+    """The cited page, the page before and the one after (a slide's printed number is not its PDF page). With no cited page,
+    or a text with no page markers, none: a quote is then accepted only whole."""
+    if cited is None:
+        return []
+    return [(n, t) for n, t in pages if n is not None and abs(n - cited) <= 1]
+
+
+def _quote_on_near_pages(quote: str, p_page: int | None, pages: list[tuple[int | None, str]], slide: bool):
+    """(page number, page text, mode) where the quote stands as the page's own words, line breaks and spacing aside, on the
+    cited page or the one before or after ("page"; a slide's printed number is not its PDF page), or, on a slide's cited page
+    only, with every word and figure on the page ("slide"). Else None. Words joined across a column split, or from two
+    sentences, are never one quote (review of F180: it let a question and a later answer join)."""
+    near = sorted(_near_pages(pages, p_page), key=lambda h: (h[0] != p_page, h[0] or 0))
+    bare = quote.rstrip(" .,;:")
+    for n, t in near:
+        if gate.quote_found(bare, t):
+            return n, t, "page"
+        if slide and n == p_page and _on_page(quote, t):
+            return n, t, "slide"
+    return None
+
+
 def _topic_key(p: CallPoint) -> str:
     return _norm(p.topic or p.metric or (p.statement or "")[:60])
 
@@ -313,21 +381,24 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
         if not quote:
             drop(p, "quote", "no quote")
             continue
+        elsewhere, mode = None, None
         if not gate.quote_found(quote, text, blocks):
             # a slide's words are laid out in boxes: "39.7% ROCE in H1FY27" is on APL Apollo's slide as a figure above its
             # label, never as one line. On a slide, every word and figure of the quote on the named page is enough; the
-            # point says its quote was assembled (first measured run, F180)
-            page_text = next((t for n, t in pages if n == p.page), "")
-            if p.section == "SLIDE" and page_text and _on_page(quote, page_text):
-                p.quote_assembled = True
-            else:
+            # point says its quote was assembled (first measured run, F180). A page set in two columns is read straight
+            # across and the model may name the slide's printed number, not the PDF page (run 5): the cited page, the one
+            # before and the one after are tried for the quote whole. A quote that is on none of them is dropped.
+            elsewhere = _quote_on_near_pages(quote, p.page, pages, p.section == "SLIDE")
+            if elsewhere is None:
                 drop(p, "quote", "the quote is not in the document")
                 continue
+            elsewhere, mode = elsewhere[:2], elsewhere[2]
+            p.quote_assembled = mode == "slide"
         # the page the quote is on, whatever the model named (spec 3.5); the page's text also gives the figures and the period
         # their context (a quote on several pages, as the same sentence on a slide and in the talk, stays on the page the
         # model named)
         homes = [(n, t) for n, t in pages if gate.quote_found(quote, t)]
-        number, page_text = next((h for h in homes if h[0] == p.page), homes[0] if homes else (None, ""))
+        number, page_text = next((h for h in homes if h[0] == p.page), homes[0] if homes else (elsewhere or (None, "")))
         if not page_text and p.quote_assembled:
             page_text = next((t for n, t in pages if n == p.page), "")
         if number is not None:

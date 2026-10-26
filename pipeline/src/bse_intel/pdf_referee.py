@@ -27,6 +27,22 @@ period, basic EPS) followed by its figures. A figure is *proven* only when all o
   is standalone), and equals memory's;
 - the unit is declared on the page ahead of the row (crore, lakh, million, ...), except for EPS.
 
+Added 26 Oct 2026 (TODO 91; the first trials settled 1 pair of 20):
+
+- lenders: a statement's revenue row is "Total revenue from operations" / "Revenue from operations", else (a bank) "Interest
+  earned" / "Total interest income", else "Total income" (rank 0, 1, 2; only the best rank of one table is kept, so a sub-line
+  such as "I. Interest Income" is never the revenue). A figure that matches nothing and came from "Total income" alone is
+  ``pdf_unsure``: the line includes other income, so a difference is a definition.
+- a text layer that runs column by column (all labels, then all figures) or whose figures sit a point or two off their
+  label's baseline: the page's words are put into rows by position (``ocr.positioned_lines``, the clustering the OCR text
+  uses) and read as a second reading of the page; the one with more proven rows is kept.
+- the column of a period: a header date is matched to a figure by position when the row lacks a cell (``Row.aligned``); the
+  kind of each column comes from the header's group words or, when they do not tell it (a misread "Quarter Ended"), from the
+  standard Indian layout: quarter x3 and year x2 (Q4); quarter x3, half year or nine months x2, year (Q2, Q3); quarter x3 and
+  year (Q1). It is accepted only when the header's own dates fit it exactly and no group word contradicts it.
+- the basis words are matched with a spelling tolerance ("CONSOUDATED" in a text layer is consolidated).
+- a figure printed without the decimals its row's other figures have ("5,081,67") is a garbled layer: its column is unsure.
+
 Verdicts: ``pdf_matches_ours``, ``pdf_matches_screener``, ``pdf_matches_xbrl`` (a figure that agrees with the XBRL
 referee's official value, and not ours), ``pdf_matches_none`` (a proven figure that agrees with no value), ``pdf_unsure`` (a
 figure on the page but not provably the right column, basis or unit) and ``pdf_unreadable`` (no PDF, not downloaded, no
@@ -37,9 +53,11 @@ several values agree, ``matches`` lists them all.
 from __future__ import annotations
 
 import csv
+import difflib
 import io
 import json
 import logging
+import os
 import re
 import time
 from collections import Counter
@@ -47,8 +65,8 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 
 from .bse import AttachmentError, AttachmentTooLarge
-from .extract import Document
-from .grounding import unit_before
+from .extract import _MUPDF, Document, upright_text
+from .grounding import _PER_CRORE, unit_before
 from .memory_gaps import quarter_end
 from .metrics import CONSOLIDATED, STANDALONE
 from .nse import SourceBlockedError
@@ -62,11 +80,14 @@ log = logging.getLogger(__name__)
 OPEN_VERDICTS = ("neither", "no_file", "screener_matches_official")
 VERDICTS = ("pdf_matches_ours", "pdf_matches_screener", "pdf_matches_xbrl", "pdf_matches_none", "pdf_unsure",
             "pdf_unreadable", "not_run")
+# Added by the readers ensemble (PDF_READERS other than "native", pdf_readers.py): a disagreement between readers stays open,
+# and OCR readers of two engines agreeing on a page with no text layer is a lead, not a verdict. Never set by the default path.
+EXTRA_VERDICTS = ("pdf_disagree", "pdf_scanned_lead")
 MAX_CANDIDATES = 4          # results PDFs tried for one period
 MAX_PAGES = 12              # candidate table pages read in one PDF
 WINDOW_DAYS = 120           # a period's results are filed within this many days after its end
 MAX_PDF_BYTES = 40_000_000
-HEADER_LOOKBACK = 60
+HEADER_LOOKBACK = 100
 GROUP_LINES_ABOVE = 4       # lines above the date line searched for the group words ("Quarter ended")
 
 _GROUP = re.compile(r"(?P<half>half[\s-]*year(?:ly)?|six\s+months|6\s+months)|(?P<nine>nine\s+months|9\s+months)"
@@ -74,6 +95,7 @@ _GROUP = re.compile(r"(?P<half>half[\s-]*year(?:ly)?|six\s+months|6\s+months)|(?
                     r"|(?P<quarter>quarter|three\s+months|3\s+months)", re.I)
 _CONS = re.compile(r"\bconsolidated\b", re.I)
 _ALONE = re.compile(r"\bstand[- ]?alone\b", re.I)
+_LONG_WORD = re.compile(r"[A-Za-z]{8,}")
 _TITLE = re.compile(r"results|statement|financial|profit|particulars", re.I)
 _RESULTS = re.compile(r"financial\s+results?|outcome\s+of\s+(?:the\s+)?board|\bresults?\b", re.I)
 _NOT_RESULTS = re.compile(r"intimation|trading\s+window|earnings?\s+call|conference\s+call|presentation|transcript|investor|"
@@ -81,6 +103,12 @@ _NOT_RESULTS = re.compile(r"intimation|trading\s+window|earnings?\s+call|confere
 
 _REVENUE = re.compile(r"(?:revenue|income|sales)\s+from\s+operations|net\s+sales|total\s+interest\s+earned|"
                       r"^\W*(?:\d+\W+)?interest\s+earned", re.I)
+# the revenue line by rank, best first: the top line, a bank's interest earned, then a lender's total income
+_INTEREST_TOP = re.compile(r"^\W*(?:\d+\W+)?(?:total\s+)?interest\s+earned\b(?!\s+(?:on|from|by)\b)|total\s+interest\s+income", re.I)
+# a bank's sub-line of interest earned: "(a) Interest earned on advances", "Interest earned on investments" (never the total)
+_INTEREST_SUB = re.compile(r"^\W*(?:\(?[a-d]\)|\(?[ivx]+\)|[a-d]\.|[ivx]+\.)\s*(?:total\s+)?interest\s+(?:earned|income)|"
+                           r"^\W*(?:\d+\W+)?interest\s+earned\s+(?:on|from|by)\b", re.I)
+_TOTAL_INCOME = re.compile(r"^\W*(?:[\divx]+\W+|[a-d]\W+)?total\s+income\b(?!\s+(?:from|tax))", re.I)
 _PAT_NAME = re.compile(r"^\W*(?:[ivx]+\W+|\d+\W+|[a-d]\)\s*)?(?:net\s+|total\s+)?(?:profit|loss)\b[^\d]{0,40}?"
                        r"(?:for\s+the\s+(?:period|year|quarter)|after\s+tax|after\s+taxes)", re.I)
 _PAT_NOT = re.compile(r"before|attributable|owners|comprehensive|continuing|discontinued|per\s+share|margin|%|"
@@ -101,16 +129,62 @@ class Row:
     group_words: set[str]
     page: int
     why: str = ""                          # why the columns are not proven
+    rank: int = 0                          # revenue only: 0 revenue from operations, 1 interest earned, 2 total income
+    aligned: list[float | None] | None = None   # the figure under each header date, when the row lacks a cell (by position)
+    odd: set[int] | None = None            # indexes of figures without the decimals their siblings print (a garbled layer)
+    key: tuple | None = None               # (header line, basis): the table the row belongs to
+    unproven: str = ""                     # why the row cannot be trusted at all (figures not on the label's baseline)
 
 
 # --- reading a page -----------------------------------------------------------------------------------------------
 
+_MONTH = r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?"
+# the page's date pattern with the noise OCR puts after a day ("31{t Dec, 2023", "31* March, 2024", "31st March, 2024")
+_DATE_LOOSE = re.compile(r"\b\d{1,2}[./-]\d{1,2}[./-]20\d{2}\b|\b\d{1,2}(?:st|nd|rd|th|[^\w\s]{1,2}t?)?[ -]+" + _MONTH
+                         + r",?[ -]+20\d{2}\b|\b" + _MONTH + r" \d{1,2},? 20\d{2}\b", re.I)
+_DAY_NOISE = re.compile(r"(?<=\d)(?:st|nd|rd|th|[^\w\s]{1,2}t?)(?=[ -]+[A-Za-z])", re.I)
+
+
+def _date_of(text: str) -> date | None:
+    return explicit_date(re.sub(r"[ ]{2,}", " ", _DAY_NOISE.sub("", text)))
+
+
 def _dates_in(line: str) -> list[date]:
-    return [d for m in _DATE.finditer(line) if (d := explicit_date(m[0]))]
+    return [d for m in _DATE_LOOSE.finditer(line) if (d := _date_of(m[0]))]
+
+
+_MARCH_YEAR = re.compile(r"year\s+ended\W{0,12}(?:on\W+)?(?:\d{1,2}\W{0,3}(?:st|nd|rd|th|t)?\W{0,3}mar|mar|\d{1,2}[./-]0?3[./-])", re.I)
+_UNCONS = re.compile(r"\bun-?consolidated\b", re.I)
+
+
+def _edits(a: str, b: str) -> int:
+    """Levenshtein distance of two short words."""
+    row = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        new = [i]
+        for j, cb in enumerate(b, 1):
+            new.append(min(row[j] + 1, new[j - 1] + 1, row[j - 1] + (ca != cb)))
+        row = new
+    return row[-1]
+
+
+def _names(text: str, basis: str) -> bool:
+    """The text names the basis: the word itself, or a text layer's small misspelling of the whole word ("CONSOUDATED": at
+    most two edits, same first and last three letters, so "Consolidating", "Consolidate", "Deconsolidated" are not it).
+    "Unconsolidated" is a standalone statement."""
+    if basis == "consolidated" and _CONS.search(text):
+        return True
+    if basis == "standalone" and (_ALONE.search(text) or _UNCONS.search(text)):
+        return True
+    for w in _LONG_WORD.findall(text):
+        w = w.lower()
+        if w[:3] == basis[:3] and w[-3:] == basis[-3:] and w != basis and _edits(w, basis) <= 2:
+            return True
+    return False
 
 
 def _words_basis(words: str) -> str | None:
-    cons, alone = bool(_CONS.search(words)), bool(_ALONE.search(words))
+    cons, alone = _names(words, "consolidated"), _names(words, "standalone")
     return CONSOLIDATED if cons and not alone else STANDALONE if alone and not cons else None
 
 
@@ -128,8 +202,8 @@ def _groups(region: str, dates: list[date]) -> list[str] | None:
     events: list[tuple[int, str, object]] = []
     for m in _GROUP.finditer(region):
         events.append((m.start(), "g", m.lastgroup))
-    for m in _DATE.finditer(region):
-        if (d := explicit_date(m[0])):
+    for m in _DATE_LOOSE.finditer(region):
+        if (d := _date_of(m[0])):
             events.append((m.start(), "d", d))
     events.sort(key=lambda e: e[0])
     kinds = [e for e in events if e[1] == "g"]
@@ -156,21 +230,130 @@ def _groups(region: str, dates: list[date]) -> list[str] | None:
     return out if len(out) == len(dates) else None
 
 
-def parse_page(text: str, page: int, consolidated_anywhere: bool) -> list[Row]:
-    """The metric rows (revenue, pat, eps) of one page's text, each with the column proof it has."""
+def _gap_months(a: date, b: date) -> int:
+    return (a.year - b.year) * 12 + a.month - b.month
+
+
+def _pattern_kinds(dates: list[date], march_year_end: bool = False) -> list[str] | None:
+    """The kind of each header date by the standard layout of Indian results, when the dates fit it exactly, else None.
+
+    Q4: quarter, quarter, quarter, year, year (current quarter, the one before, the year before; the year, the year before).
+    Q2 / Q3: quarter x3, then the half year (nine months) to date and its year-ago twin, then the last year.
+    Q1: quarter x3 and the last year (the same date as the quarter before). The dates alone prove it: the first is a quarter end,
+    the second one quarter before it, the third a year before it, and the tail repeats them as the layout says. The four and
+    five column layouts are only read when the page says the year ends in March ("year ended 31 March"): a company with another
+    year end can print the same dates as nine-month columns, so without that word they stay unsure."""
+    n = len(dates)
+    if n not in (4, 5, 6) or (n < 6 and not march_year_end):
+        return None
+    d0, d1, d2 = dates[:3]
+    if d0.month not in (3, 6, 9, 12) or d0.day < 28 or _gap_months(d0, d1) != 3 or _gap_months(d0, d2) != 12:
+        return None
+    if n == 5:
+        return ["quarter"] * 3 + ["year"] * 2 if d0.month == 3 and dates[3] == d0 and dates[4] == d2 else None
+    if n == 4:
+        return ["quarter"] * 3 + ["year"] if d0.month == 6 and dates[3] == d1 and d1.month == 3 else None
+    if d0.month not in (9, 12) or dates[3] != d0 or dates[4] != d2 or dates[5].month != 3 \
+            or _gap_months(d0, dates[5]) != d0.month - 3:
+        return None
+    return ["quarter"] * 3 + ["half" if d0.month == 9 else "nine"] * 2 + ["year"]
+
+
+def _revenue_rank(label: str) -> int | None:
+    """0 for revenue from operations, 1 for a bank's interest earned (the total line), 2 for total income, 3 for a sub-line of
+    interest earned (never a figure: unsure when it stands alone); None when it is none of them."""
+    if re.search(r"other\s+(?:operating\s+)?income", label, re.I):
+        return None
+    if _INTEREST_SUB.search(label):
+        return 3
+    if _REVENUE.search(label) and not _INTEREST_TOP.search(label):
+        return 0
+    if _INTEREST_TOP.search(label):
+        return 1
+    return 2 if _TOTAL_INCOME.search(label) else None
+
+
+def _centres(words: list[tuple], keep) -> list[tuple[float, str]]:
+    return [((x0 + x1) / 2, w) for x0, x1, w, *_ in words if keep(w)]
+
+
+def _align(row_words: list[tuple], header_words: list[tuple], dates: list[date],
+           figures: list[float]) -> list[float | None] | None:
+    """The figure under each header date by position, when the row has fewer cells than the header has dates (a nil cell
+    printed as nothing). Only when each date is one word, each figure is one word and every figure sits clearly under one date,
+    in order; else None."""
+    hdr = _centres(header_words, lambda w: bool(_DATE.fullmatch(w)) and explicit_date(w) is not None)
+    figs = [(c, w) for c, w in _centres(row_words, lambda w: True) if (n := numbers_on(w)) and len(n) == 1 and n[0][1]]
+    if len(hdr) != len(dates) or len(figs) != len(figures) or len(hdr) < 2:
+        return None
+    gap = min(b[0] - a[0] for a, b in zip(hdr, hdr[1:]))
+    if gap <= 0:
+        return None
+    out: list[float | None] = [None] * len(dates)
+    last = -1
+    for (c, _w), value in zip(figs, figures):
+        nearest = min(range(len(hdr)), key=lambda k: abs(hdr[k][0] - c))
+        if abs(hdr[nearest][0] - c) > 0.45 * gap or nearest <= last:
+            return None
+        out[nearest] = value
+        last = nearest
+    return out
+
+
+_BARE_UNIT = re.compile(r"^(?:in\s+)?(?:\S{1,4}\s+)?(?:in\s+)?(crores?|crs?\.?|lakhs?|lacs?|millions?|mn|thousands?)(?![a-z])"
+                        r"[^\w]*(?:except\b.*|\(.*)?$", re.I)
+
+
+def _bare_unit(lines: list[str], header: int) -> float | None:
+    """The unit when the page prints it alone on a short line near the header and OCR lost the currency sign before it
+    ("crore", "< in crore", "(in lakhs)"), as figures per crore; None when no such line or when the lines name two units."""
+    found = set()
+    for line in lines[max(0, header - 8): header + 2]:
+        probe = re.sub(r"^[^\w]+|[^\w.)]+$", "", line.strip())
+        if len(probe) <= 40 and (m := _BARE_UNIT.match(probe)):
+            found.add(_PER_CRORE.get(m[1].lower().rstrip("s.").rstrip("s")))
+    return found.pop() if len(found) == 1 and None not in found else None
+
+
+def _odd_figures(line: str, start: int) -> set[int]:
+    """Indexes of the row's figures printed without the decimals the others have ("5,081,67" for 5,081.67 in a garbled layer)."""
+    nums = [m[0] for m, (_, fig) in zip(_NUMBER.finditer(line[start:]), numbers_on(line[start:])) if fig]
+    decimals = [("." in n) for n in nums]
+    if sum(decimals) < 3:
+        return set()
+    return {k for k, d in enumerate(decimals) if not d}
+
+
+def parse_page(text: str, page: int, consolidated_anywhere: bool,
+               positions: list[list[tuple]] | None = None, bad_lines: frozenset[int] | set[int] = frozenset()) -> list[Row]:
+    """The metric rows (revenue, pat, eps) of one page's text, each with the column proof it has. ``positions`` are the words
+    of each line of ``text`` with their left and right edges, when the text was built from word positions; ``bad_lines`` are
+    the lines whose figures were not nearer their label's baseline than the next label's: those rows are unproven."""
     lines = text.splitlines()
+    if positions is not None and len(positions) != len(lines):
+        positions = None
+    if positions is not None:
+        positions = [list(w) for w in positions]
     rows: list[Row] = []
     offsets, pos = [], 0
     for line in lines:
         offsets.append(pos)
         pos += len(line) + 1
+    lines = list(lines)
+    for i in range(len(lines) - 1):      # a label wrapped onto two lines ("Revenue from" / "operations 120.50 ..."): one line
+        a, b = lines[i].strip(), lines[i + 1].strip()
+        if a and len(a) <= 60 and re.search(r"[A-Za-z]$", a) and not any(f for _, f in numbers_on(a)) \
+                and re.match(r"[a-z]", b) and any(f for _, f in numbers_on(b)):
+            lines[i], lines[i + 1] = f"{a} {b}", ""
+            if positions is not None:
+                positions[i], positions[i + 1] = positions[i] + positions[i + 1], []
     for i, line in enumerate(lines):
         label_probe = line.strip()
         if not label_probe:
             continue
-        metric = None
-        if _REVENUE.search(label_probe) and not re.search(r"other\s+(?:operating\s+)?income", label_probe, re.I):
-            metric = "revenue"
+        metric, rank = None, 0
+        if (rank_ := _revenue_rank(label_probe)) is not None:
+            metric, rank = "revenue", rank_
         elif _PAT_NAME.search(label_probe) and not _PAT_NOT.search(label_probe):
             metric = "pat"
         elif _EPS.search(label_probe) and any(_EPS_CONTEXT.search(lines[j]) for j in range(max(0, i - 6), i + 1)):
@@ -193,7 +376,12 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool) -> list[Row]:
         unit = unit_before(text, offsets[i])
         # header: the nearest line above with two or more dates
         header = next((b for b in range(i - 1, max(-1, i - HEADER_LOOKBACK), -1) if len(_dates_in(lines[b])) >= 2), None)
-        row = Row(metric, label, basis, unit, figures, None, [], set(), page)
+        if unit is None and header is not None:
+            unit = _bare_unit(lines, header)
+        row = Row(metric, label, basis, unit, figures, None, [], set(), page, rank=rank, key=(header, basis))
+        row.odd = _odd_figures(line, start) or None
+        if i in bad_lines:
+            row.unproven = "the row's figures are not nearer its label's baseline than the next label's"
         if header is None:
             row.why = "no header with the period dates above the row"
             rows.append(row)
@@ -203,21 +391,85 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool) -> list[Row]:
         wide = "\n".join(lines[max(0, header - GROUP_LINES_ABOVE): min(i, header + 2)])
         row.group_words = {m.lastgroup for m in _GROUP.finditer(wide)}
         if len(figures) != len(dates):
-            row.why = f"{len(figures)} figures on the row but {len(dates)} dates in the header (a cell may be missing)"
-            rows.append(row)
-            continue
+            row.aligned = _align(positions[i], positions[header], dates, figures) if positions is not None else None
+            if row.aligned is None:
+                row.why = f"{len(figures)} figures on the row but {len(dates)} dates in the header (a cell may be missing)"
+                rows.append(row)
+                continue
+            if row.odd:       # the odd indexes counted the row's own figures: no proof by position over a garbled row
+                row.odd = {k for k, v in enumerate(row.aligned) if v is not None and v in [figures[j] for j in row.odd]}
         kinds = None
         for above in range(GROUP_LINES_ABOVE, -1, -1):   # a title line above may add group words: try fewer lines
             region = "\n".join(lines[max(0, header - above): min(i, header + 2)])
             kinds = _groups(region, dates)
-            if kinds is not None:
+            if kinds is not None and len(set(zip(kinds, dates))) == len(dates):   # one word for all five: not a proof
                 break
+            kinds = None
+        march = bool(_MARCH_YEAR.search("\n".join(lines[max(0, header - 12): header + 2])))
+        if kinds is None and (pattern := _pattern_kinds(dates, march)) is not None and row.group_words <= set(pattern):
+            kinds = pattern
         if kinds is not None:
             row.columns = list(zip(kinds, dates))
         else:
             row.why = "the header's group words (quarter, year) do not tell each date's kind"
         rows.append(row)
-    return rows
+    # one revenue line a table: the best rank (revenue from operations, else interest earned, else total income)
+    best: dict[tuple, int] = {}
+    for r in rows:
+        if r.metric == "revenue":
+            best[r.key] = min(best.get(r.key, 9), r.rank)
+    return [r for r in rows if r.metric != "revenue" or r.rank == best[r.key]]
+
+
+BASELINE_SHARE = 0.45        # a figure farther than this share of the distance to the next label is not trusted to its row
+SYSTEMATIC_SHARE = 0.3       # figures all sitting this far (median) off their labels: the pairing of the page is in doubt
+
+
+def coordinate_text(page) -> tuple[str, list[list[tuple]], set[int], bool]:
+    """A page's words put into rows by position, not by the order the text layer lists them: a layer that runs column by
+    column (all labels, then all figures) or sets a figure a point off its label's baseline.
+
+    The words with letters are put into label rows with the OCR's line builder (``ocr.positioned_lines``, without its
+    de-skew: a text layer is not tilted); every other word (a figure, a date, a bracket) joins the label row whose baseline is
+    nearest. Returns the text, each row's words (left edge, right edge, text, height), the rows holding a figure that is not
+    nearer its label's baseline than ``BASELINE_SHARE`` of the distance to the nearest other label, and whether the figures of
+    the whole page sit systematically off their labels (median offset over ``SYSTEMATIC_SHARE`` of that distance, where a
+    figure may as well belong to the row above or below: no row of the page is then trusted)."""
+    from .ocr import positioned_lines
+
+    words = page.get_text("words")
+    alpha = [([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], w, 1.0) for x0, y0, x1, y1, w, *_ in words if re.search(r"[A-Za-z]", w)]
+    rest = [((x0 + x1) / 2, x0, x1, w, (y0 + y1) / 2) for x0, y0, x1, y1, w, *_ in words
+            if not re.search(r"[A-Za-z]", w) and w.strip()]
+    rows = [list(line) for line in positioned_lines(alpha, deskew=False)]
+    if not rows:
+        return "", [], set(), False
+    centre = [sum(w[3] for w in row) / len(row) for row in rows]
+    order = sorted(range(len(rows)), key=lambda k: centre[k])
+    rows, centre = [rows[k] for k in order], [centre[k] for k in order]
+    gap = [min((abs(c - o) for k2, o in enumerate(centre) if k2 != k and abs(c - o) > 0.5), default=None) for k, c in enumerate(centre)]
+    bad: set[int] = set()
+    offsets: list[float] = []
+    for _, x0, x1, w, y in rest:
+        k = min(range(len(rows)), key=lambda r: abs(centre[r] - y))
+        rows[k].append((x0, x1, w, y))
+        off = abs(y - centre[k])
+        if gap[k] is not None and off >= BASELINE_SHARE * gap[k]:
+            bad.add(k)
+        if gap[k] is not None and re.search(r"\d\.\d", w):
+            offsets.append(off / gap[k])
+    offsets.sort()
+    systematic = len(offsets) >= 6 and offsets[len(offsets) // 2] > SYSTEMATIC_SHARE
+    rows = [sorted(row) for row in rows]
+    return "\n".join(" ".join(w[2] for w in row) for row in rows), rows, bad, systematic
+
+
+def _proven(rows: list[Row]) -> tuple[int, int]:
+    """(rows whose figures failed the baseline check, negated; rows with a proven column): the reading with fewer failed rows
+    wins, then the one with more proven rows."""
+    failed = sum(bool(r.unproven) for r in rows)
+    return -failed, sum(not r.unproven and r.columns is not None and (r.aligned is not None or len(r.figures) == len(r.dates))
+                        for r in rows)
 
 
 def read_document(payload: bytes, ocr: bool = True, max_ocr_pages: int = 6) -> tuple[list[Row] | None, str]:
@@ -242,18 +494,45 @@ def read_document(payload: bytes, ocr: bool = True, max_ocr_pages: int = 6) -> t
                 break
         if not texts:
             return None, "no page names a quarter or year ended"
-        consolidated_anywhere = any(_CONS.search(t) for t in texts.values())
+        consolidated_anywhere = any(_names(t, "consolidated") for t in texts.values())
         rows: list[Row] = []
         for i, layer in texts.items():
             text = doc.page_text(i)       # a page of figures is read with OCR first, as the pipeline reads it
-            if not any(len(_dates_in(line)) >= 2 for line in text.splitlines()):
-                continue
-            rows += parse_page(text, i + 1, consolidated_anywhere or bool(_CONS.search(text)))
+            by_position = None if doc.is_scanned(i) else _by_position(doc, i)
+            if by_position is not None:
+                consolidated_anywhere = consolidated_anywhere or _names(by_position[0], "consolidated")
+            candidates = []
+            if any(len(_dates_in(line)) >= 2 for line in text.splitlines()):
+                candidates.append(parse_page(text, i + 1, consolidated_anywhere or _names(text, "consolidated")))
+            if by_position is not None and any(len(_dates_in(line)) >= 2 for line in by_position[0].splitlines()):
+                candidates.append(parse_page(by_position[0], i + 1, consolidated_anywhere or _names(by_position[0], "consolidated"),
+                                             by_position[1], by_position[2]))
+            if by_position is not None and by_position[3]:
+                # figures sit systematically off their labels' baselines: either reading may have paired a row with its
+                # neighbour's figures, so no row of the page is trusted
+                for candidate in candidates:
+                    for r in candidate:
+                        r.unproven = r.unproven or "the page's figures sit off their labels' baselines (rows may be paired wrongly)"
+            if candidates:       # the reading with fewer failed rows, then more proven rows; the page's own order wins a tie
+                rows += max(candidates, key=_proven)
         if doc.ocr_error is not None and not rows:
             return None, "OCR failed"
         return rows, "" if rows else "no results row (revenue, profit or EPS with its figures) found"
     finally:
         doc.close()
+
+
+def _by_position(doc, index: int):
+    """The page's words in rows by position, or None for a sideways page (read upright already) or a page with no words."""
+    try:
+        with _MUPDF:
+            page = doc._doc[index]
+            if upright_text(page) is not None:
+                return None
+            text, lines, bad, systematic = coordinate_text(page)
+    except Exception:   # noqa: BLE001 - a second reading that fails leaves the first
+        return None
+    return (text, lines, bad, systematic) if text.strip() else None
 
 
 # --- the figure of one pair -----------------------------------------------------------------------------------------
@@ -281,11 +560,18 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
             if r.basis is None and basis:
                 unsure.append(f"p{r.page}: the table's basis is not told")
             continue
+        if r.rank == 3:
+            unsure.append(f"p{r.page}: only a sub-line of interest earned is printed, not its total")
+            continue
+        if r.unproven:
+            unsure.append(f"p{r.page}: {r.unproven}")
+            continue
         if not any(d == target[1] for d in r.dates):
             continue
         if r.columns is None:
             # kinds not told: one date only in the header, and the header names the kind of the period
-            if r.dates.count(target[1]) == 1 and len(r.figures) == len(r.dates) and target[0] in r.group_words:
+            if r.dates.count(target[1]) == 1 and (r.aligned is not None or len(r.figures) == len(r.dates)) \
+                    and target[0] in r.group_words:
                 index = r.dates.index(target[1])
             else:
                 unsure.append(f"p{r.page}: {r.why}")
@@ -299,7 +585,14 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
         if metric != "eps" and r.unit is None:
             unsure.append(f"p{r.page}: no unit declared above the row")
             continue
-        value = r.figures[index] if metric == "eps" else r.figures[index] / r.unit
+        cell = r.aligned[index] if r.aligned is not None else r.figures[index]
+        if cell is None:
+            unsure.append(f"p{r.page}: no figure under the period's column (a nil cell)")
+            continue
+        if r.odd and index in r.odd:
+            unsure.append(f"p{r.page}: the period's figure lacks the decimals its row prints (a garbled text layer)")
+            continue
+        value = cell if metric == "eps" else cell / r.unit
         values.append((value, r.label[:60], r.page))
     return {"values": values, "unsure": "; ".join(dict.fromkeys(unsure)), "found": seen}
 
@@ -322,6 +615,10 @@ def verdict_of(values: list[tuple[float, str, int]], ours: float | None, theirs:
     if len(distinct) > 1:
         shown = ", ".join(f"{v:g}" for v in distinct[:4])
         return "pdf_unsure", [], None, f"conflicting rows: {shown}"
+    if metric == "revenue" and all(_TOTAL_INCOME.search(lab) for _, lab, _ in values):
+        # no revenue from operations or interest earned row: "Total income" includes other income, so neither a match nor a
+        # difference is a verdict
+        return "pdf_unsure", [], None, f"only 'Total income' printed ({values[0][0]:g}), which includes other income"
     best = None
     for value, label, _ in values:
         matches = []
@@ -365,6 +662,11 @@ def candidate_filings(filings: list, period: str) -> list:
     return out
 
 
+def _pdf_readers():
+    from . import pdf_readers
+    return pdf_readers
+
+
 class Sources:
     """The announcement lists and PDFs of the run, each fetched and read once."""
 
@@ -373,6 +675,12 @@ class Sources:
         self.lists: dict[tuple[str, str], list | str] = {}      # (symbol, period) -> filings or the reason none
         self.docs: dict[str, tuple[list[Row] | None, str]] = {}
         self.calls = {"lists": 0, "pdfs": 0}
+        self.ensemble = None            # several readers (env PDF_READERS), None for "native" alone: today's path
+        from . import pdf_readers
+        names = pdf_readers.configured_readers()
+        if names != [pdf_readers.DEFAULT_READERS]:
+            self.ensemble = pdf_readers.Ensemble(names, ocr)
+        self._payload: tuple[str, bytes | None, str] | None = None
 
     def filings(self, symbol: str, period: str) -> list | str:
         key = (symbol, period)
@@ -391,6 +699,33 @@ class Sources:
                 except Exception as exc:   # noqa: BLE001 - one company's list failing is a reason, not a stop
                     self.lists[key] = f"announcement list unavailable ({type(exc).__name__})"
         return self.lists[key]
+
+    def payload(self, url: str) -> tuple[bytes | None, str]:
+        """(PDF bytes, why none) for the readers ensemble; the last PDF is kept, as every pair of a filing asks for it."""
+        if self._payload and self._payload[0] == url:
+            return self._payload[1], self._payload[2]
+        data, why = None, ""
+        folder = os.environ.get("PDF_CACHE_DIR")
+        cached = os.path.join(folder, f"{_pdf_readers().pdf_key(url)}.pdf") if folder else ""
+        if cached and os.path.isfile(cached):           # saved earlier by `pdf_readers --collect` (the matrix jobs)
+            with open(cached, "rb") as fh:
+                self._payload = (url, fh.read(), "")
+            return self._payload[1], ""
+        try:
+            self.calls["pdfs"] += 1
+            data = self.nse.fetch(url, max_bytes=MAX_PDF_BYTES)
+            if not data:
+                data, why = None, "NSE serves no file (404)"
+        except SourceBlockedError:
+            raise
+        except AttachmentTooLarge:
+            why = "PDF too large"
+        except AttachmentError as exc:
+            why = f"download failed ({str(exc)[:60]})"
+        except Exception as exc:   # noqa: BLE001
+            why = f"download failed ({type(exc).__name__})"
+        self._payload = (url, data, why)
+        return data, why
 
     def rows(self, url: str) -> tuple[list[Row] | None, str]:
         if url not in self.docs:
@@ -428,6 +763,9 @@ def referee_pair(src: Sources, row: dict) -> dict:
     if isinstance(listed, str):
         out["reason"] = listed
         return out
+    if src.ensemble is not None:
+        from .pdf_readers import referee_pair_ensemble
+        return referee_pair_ensemble(src, row, out, listed, ours, theirs, xbrl)
     reasons, unsure = [], []
     for f in listed[:MAX_CANDIDATES]:
         rows, why = src.rows(f.pdf_url)
@@ -558,7 +896,7 @@ def summarise(results: list[dict], calls: dict, companies: int, blocked: bool = 
     for r in results:
         by_before.setdefault(r.get("verdict", ""), Counter())[r["pdf_verdict"]] += 1
         by_metric.setdefault(r["metric"], Counter())[r["pdf_verdict"]] += 1
-        if r["pdf_verdict"] in ("pdf_unreadable", "pdf_unsure", "not_run"):
+        if r["pdf_verdict"] in ("pdf_unreadable", "pdf_unsure", "not_run", "pdf_disagree", "pdf_scanned_lead"):
             reasons[_short_reason(r.get("reason", ""))] += 1
     return {"pairs": len(results), "companies": companies, "left_out": left_out,
             "calls": {"announcement_lists": calls["lists"], "pdfs": calls["pdfs"]}, "blocked": blocked,
@@ -583,9 +921,10 @@ def _cell(v) -> str:
 def to_csv(summary: dict) -> str:
     buffer = io.StringIO()
     writer = csv.writer(buffer, lineterminator="\n")
-    writer.writerow(CSV_HEADER)
+    header = CSV_HEADER + (["readers"] if any("readers" in r for r in summary["rows"]) else [])   # only with PDF_READERS
+    writer.writerow(header)
     for r in summary["rows"]:
-        writer.writerow([_cell(r.get(k)) for k in CSV_HEADER])
+        writer.writerow([_cell(r.get(k)) for k in header])
     return buffer.getvalue()
 
 
@@ -593,11 +932,15 @@ def to_json(summary: dict) -> str:
     return json.dumps({k: v for k, v in summary.items() if k != "rows"}, ensure_ascii=False, indent=1) + "\n"
 
 
+def _columns(summary: dict) -> tuple:
+    return VERDICTS + tuple(v for v in EXTRA_VERDICTS if summary["verdicts"].get(v))
+
+
 def render(summary: dict) -> str:
     kind = "sampled pairs (memory equals the file)" if summary.get("sample") else "open pairs"
     lines = [f"pdf referee (the filing PDF, read only): {summary['pairs']} {kind}, {summary['companies']} companies, "
              f"{summary['calls']['announcement_lists']} announcement lists, {summary['calls']['pdfs']} PDFs"]
-    lines += [f"  {v:24}{summary['verdicts'].get(v, 0)}" for v in VERDICTS]
+    lines += [f"  {v:24}{summary['verdicts'].get(v, 0)}" for v in _columns(summary)]
     if summary["blocked"]:
         lines.append("stopped: NSE refused the session")
     if summary["out_of_time"]:
@@ -621,11 +964,12 @@ def to_markdown(summary: dict, date_text: str) -> str:
     if summary["blocked"] or summary["out_of_time"]:
         out += ["The run stopped early (" + ("NSE refused the session" if summary["blocked"] else "time budget")
                 + "); the rest is `not_run`.", ""]
-    sep = "|---|" + "---|" * len(VERDICTS)
+    columns = _columns(summary)
+    sep = "|---|" + "---|" * len(columns)
 
     def table(title: str, groups: dict) -> list[str]:
-        rows = [f"## {title}", "", "| Group | " + " | ".join(VERDICTS) + " |", sep]
-        rows += [f"| {k} | " + " | ".join(str(v.get(x, 0)) for x in VERDICTS) + " |" for k, v in sorted(groups.items())]
+        rows = [f"## {title}", "", "| Group | " + " | ".join(columns) + " |", sep]
+        rows += [f"| {k} | " + " | ".join(str(v.get(x, 0)) for x in columns) + " |" for k, v in sorted(groups.items())]
         return rows + [""]
 
     out += table("PDF verdict per XBRL verdict", summary["by_xbrl_verdict"]) + table("PDF verdict per metric", summary["by_metric"])

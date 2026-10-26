@@ -98,6 +98,18 @@
 #   with the pipeline's own reader (local OCR on figure pages) and keeps a figure only when its column, basis and unit are
 #   proven (else pdf_unsure). `limit` caps the pairs. referee-pdf.csv, summary.json and the markdown go up as the artifact
 #   `pdf-referee`. Writes nothing to memory, cards or the branch. No AI.
+# - pdf-referee-ensemble: read only (owner 26 Oct 2026, F177; default off, `pdf-referee` itself is unchanged). The PDF referee with
+#   several free local document readers that must agree. Three stages of jobs, each reader in a process and a job of its own
+#   (a heavy reader is never loaded beside another; their dependencies conflict anyway): pdf-ensemble-fetch downloads the open
+#   pairs' candidate PDFs once (NSE) and saves them with the referee CSV (`ids` = `tijori` takes the newest `tijori-referee`
+#   artifact, else the newest `screener-referee`); pdf-ensemble-read is a matrix, one job a reader (camelot, pdfplumber, tabula,
+#   rapidtable, tatr, docling, mineru, paddle, marker, surya), each installing only its own extra, caching its model weights
+#   (actions/cache) and uploading its tables as the artifact `pdf-readings-<reader>`; pdf-ensemble-settle (the native reader
+#   plus the files) applies the rule: a figure is settled only when its digits are in the page's text layer, two readers of two
+#   different families agree on the row, period column and basis, and none differs (`pdf_disagree` otherwise; two OCR families
+#   on a page with no text layer give `pdf_scanned_lead`). `limit` caps the company periods fetched. Every job logs the runner's
+#   CPUs, RAM and free disk first. Artifact `pdf-referee-ensemble` (referee-pdf.csv with a `readers` column, summary.json,
+#   markdown). Writes nothing to memory, cards or the branch. No AI.
 # - screener-explain: read only (owner 26 Oct 2026). Of the `screener-referee` pairs where our figure equals NSE's own file,
 #   which differences a later bonus, split or consolidation (the dossier's corporate actions) or a later results file
 #   (memory's stored later-file source, else NSE's file) explains. The job takes the newest unexplained `screener-referee`
@@ -148,10 +160,10 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
-        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated)
+        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one
         type: string
         default: ''
       since:
@@ -199,13 +211,13 @@ concurrency:
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","pdf-referee-tijori","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","pdf-referee-tijori","pdf-referee-ensemble","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
 jobs:
   run:
-    if: inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse'
+    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -979,9 +991,189 @@ jobs:
           path: ${{ runner.temp }}/more/
           if-no-files-found: ignore
 
+  # PDF referee ensemble (F177): fetch the PDFs once, one reader a job, then settle. Default off (only this command runs them).
+  pdf-ensemble-fetch:
+    permissions:   # read only: these jobs install third-party packages and run their model code
+      contents: read
+      actions: read
+    if: inputs.command == 'pdf-referee-ensemble'
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - name: Runner resources
+        working-directory: .   # before checkout the pipeline folder does not exist yet
+        run: 'echo "cpus: $(nproc)"; free -h; df -h /'
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
+      - name: Take the newest referee artifact (screener-referee, or tijori-referee with ids=tijori)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/in" "$RUNNER_TEMP/pdfs"
+          name=screener-referee
+          if [ "${{ inputs.ids }}" = "tijori" ]; then name=tijori-referee; fi
+          id=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=$name&per_page=30" --jq '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | last | .id // empty')
+          if [ -z "$id" ]; then echo "::error::no unexpired $name artifact: run it first"; exit 1; fi
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$id/zip" > "$RUNNER_TEMP/in/artifact.zip"
+          unzip -o -q "$RUNNER_TEMP/in/artifact.zip" -d "$RUNNER_TEMP/in"
+          if [ "$name" = "tijori-referee" ]; then cp "$RUNNER_TEMP/in/referee-tijori.csv" "$RUNNER_TEMP/in/referee-xbrl.csv"; fi
+          cp "$RUNNER_TEMP/in/referee-xbrl.csv" "$RUNNER_TEMP/pdfs/referee-xbrl.csv"
+      - name: Download the candidate PDFs (reads NSE)
+        env:
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
+          LIMIT: ${{ inputs.limit }}
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_readers --collect "$RUNNER_TEMP/pdfs/referee-xbrl.csv" "$RUNNER_TEMP/pdfs" ${LIMIT}'
+      - name: Size of the PDFs
+        run: du -sh "$RUNNER_TEMP/pdfs"; ls "$RUNNER_TEMP/pdfs" | wc -l
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pdf-ensemble-pdfs
+          path: ${{ runner.temp }}/pdfs/
+          retention-days: 7
+
+  pdf-ensemble-read:
+    permissions:   # read only: these jobs install third-party packages and run their model code
+      contents: read
+    needs: pdf-ensemble-fetch
+    if: inputs.command == 'pdf-referee-ensemble'
+    runs-on: ubuntu-latest
+    timeout-minutes: 330   # MinerU takes about a minute a page
+    strategy:
+      fail-fast: false      # one reader failing leaves the others (its readings file says unavailable)
+      matrix:
+        include:
+          - {reader: camelot, extra: pdfreader-text, java: false, tesseract: false, cache: ""}
+          - {reader: pdfplumber, extra: pdfreader-text, java: false, tesseract: false, cache: ""}
+          - {reader: tabula, extra: pdfreader-text, java: true, tesseract: false, cache: ""}
+          - {reader: rapidtable, extra: pdfreader-rapidtable, java: false, tesseract: false, cache: ""}
+          - {reader: tatr, extra: pdfreader-tatr, java: false, tesseract: true, cache: "~/.cache/huggingface"}
+          - {reader: docling, extra: pdfreader-docling, java: false, tesseract: false, cache: "~/.cache/docling\n~/.cache/huggingface"}
+          - {reader: mineru, extra: pdfreader-mineru, java: false, tesseract: false, cache: "~/.cache/huggingface\n~/.cache/modelscope"}
+          - {reader: paddle, extra: pdfreader-paddle, java: false, tesseract: false, cache: "~/.paddlex\n~/.paddleocr"}
+          - {reader: marker, extra: pdfreader-surya, java: false, tesseract: false, cache: "~/.cache/datalab\n~/.cache/huggingface"}
+          - {reader: surya, extra: pdfreader-surya, java: false, tesseract: false, cache: "~/.cache/datalab\n~/.cache/huggingface"}
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      PIP_EXTRA_INDEX_URL: https://download.pytorch.org/whl/cpu   # CPU-only torch wheels
+    steps:
+      - name: Runner resources
+        working-directory: .   # before checkout the pipeline folder does not exist yet
+        run: 'echo "reader: ${{ matrix.reader }}"; echo "cpus: $(nproc)"; free -h; df -h /'
+      - name: Free disk (unused toolchains)
+        working-directory: .
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /opt/hostedtoolcache/CodeQL; df -h /
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-java@v4
+        if: matrix.java
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Tesseract
+        if: matrix.tesseract
+        run: sudo apt-get update -q && sudo apt-get install -y -q tesseract-ocr
+      - uses: actions/cache@v4
+        if: matrix.cache != ''
+        with:
+          path: ${{ matrix.cache }}
+          key: pdf-models-${{ matrix.extra == 'pdfreader-surya' && 'surya' || matrix.reader }}-v1
+      - name: Install only this reader's extra
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr,${{ matrix.extra }}]"
+          df -h /
+      - uses: actions/download-artifact@v4
+        with:
+          name: pdf-ensemble-pdfs
+          path: ${{ runner.temp }}/pdfs
+      - name: Read every PDF with this reader (a process of its own)
+        env:
+          PDF_MINERU_BIN: ${{ runner.temp }}/venv/bin/mineru
+          MINERU_MODEL_SOURCE: huggingface
+        run: |
+          mkdir -p "$RUNNER_TEMP/readings"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_readers --read "${{ matrix.reader }}" "$RUNNER_TEMP/pdfs" "$RUNNER_TEMP/readings/${{ matrix.reader }}.json"
+          df -h /
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pdf-readings-${{ matrix.reader }}
+          path: ${{ runner.temp }}/readings/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  pdf-ensemble-settle:
+    permissions:   # read only: these jobs install third-party packages and run their model code
+      contents: read
+      actions: read
+    needs: [pdf-ensemble-fetch, pdf-ensemble-read]
+    if: always() && inputs.command == 'pdf-referee-ensemble' && needs.pdf-ensemble-fetch.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - name: Runner resources
+        working-directory: .   # before checkout the pipeline folder does not exist yet
+        run: 'echo "cpus: $(nproc)"; free -h; df -h /'
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
+      - uses: actions/download-artifact@v4
+        with:
+          name: pdf-ensemble-pdfs
+          path: ${{ runner.temp }}/pdfs
+      - uses: actions/download-artifact@v4
+        continue-on-error: true   # a reader that failed leaves no file: it is counted unavailable
+        with:
+          pattern: pdf-readings-*
+          path: ${{ runner.temp }}/readings
+          merge-multiple: true
+      - name: Settle the pairs (the native reader here; the others from their files)
+        env:
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"
+          PDF_READERS: native,camelot,pdfplumber,tabula,rapidtable,tatr,docling,mineru,paddle,marker,surya
+          PDF_READER_TABLES_DIR: ${{ runner.temp }}/readings
+          PDF_CACHE_DIR: ${{ runner.temp }}/pdfs
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          code=0
+          ls -l "$RUNNER_TEMP/readings" || true
+          mkdir -p "$RUNNER_TEMP/pdfreferee"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel pdf-referee --csv "$RUNNER_TEMP/pdfs/referee-xbrl.csv" ${LIMIT:+--limit "$LIMIT"} ${{ inputs.no_ocr && '--no-ocr' || '' }} --json "$RUNNER_TEMP/pdfreferee/summary.json" --out-csv "$RUNNER_TEMP/pdfreferee/referee-pdf.csv" --md "$RUNNER_TEMP/pdfreferee/pdf-referee.md" || code=$?
+          if [ "$code" = 124 ]; then echo "::warning::time budget ended with pairs left (not_run in the CSV)"; code=0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pdf-referee-ensemble
+          path: ${{ runner.temp }}/pdfreferee/
+          if-no-files-found: ignore
+
   # The chain (F164): runs the next command of `then` once this run's work is done and succeeded (see the header).
   chain:
-    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse]
+    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle]
     if: always() && inputs.then != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     steps:

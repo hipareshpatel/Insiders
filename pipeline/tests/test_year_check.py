@@ -210,3 +210,44 @@ def test_the_release_check_run_writes_year_check_and_restores_the_environment(tm
     total = json.loads((tmp_path / "out" / "release-check.json").read_text(encoding="utf-8"))
     assert total["year_check"]["cards_changed"] == 1 and total["year_check"]["errors"] == 0
     assert (tmp_path / "out" / "year_check.json").exists() and (tmp_path / "out" / "year_check-key.json").exists()
+
+
+# ---------------------------------------------------------------- item 76 (F181): a held year figure settles no verdict
+def _year_prediction_case():
+    from bse_intel.dossier import merge, new_dossier
+    from bse_intel.models import Pass2Output
+    from test_memory import filing, output
+    call = filing("call", "2026-07-20T17:00:00+05:30")
+    d = merge(new_dossier(call), Pass2Output.model_validate({
+        "is_material": True, "event_type": "CONCALL_PRESENTATION",
+        "card": {"impact_level": "MODERATE", "headline": "Demo Cement guides a profit above Rs 100 Cr", "what_happened": ["x"],
+                 "track_next": {"kpis_to_verify": [{"kpi": "Full-year profit above Rs 100 Cr", "metric": "pat",
+                                                    "period": "FY27", "value": 100, "comparison": ">="}]}}}),
+        call, "MODERATE", "now")
+    # the quarters add up to 100, the year says 250 (The Leela class: a year that misses its quarters)
+    metrics = [{"metric": "pat", "period": f"Q{i}FY27", "value": v} for i, v in enumerate([10, 20, 30, 40], 1)] \
+        + [{"metric": "pat", "period": "FY27", "value": 250}]
+    return d, output(financial_metrics=metrics), filing("q4", "2027-05-20T17:00:00+05:30")
+
+
+def test_a_held_year_figure_does_not_resolve_a_prediction(monkeypatch):
+    from bse_intel.dossier import merge
+    d, out, f = _year_prediction_case()
+    off = merge(d, out, f, "HIGH", "now")
+    assert off["predictions"][0]["status"] == "MET"          # switch off: no change
+    monkeypatch.setenv("MEMORY_YEAR_CHECK", "1")
+    on = merge(d, out, f, "HIGH", "now")
+    assert on["predictions"][0]["status"] == "OPEN" and "actual" not in on["predictions"][0]   # held: no MET / MISSED
+
+
+def test_a_held_year_figure_triggers_no_signal(monkeypatch):
+    from bse_intel.dossier import merge
+    from bse_intel.signals import compute
+    d, out, f = _year_prediction_case()
+    after = merge(d, out, f, "HIGH", "now")                  # stored with the switch off, so the year is in memory
+    kinds = ("METRIC_SHIFT", "PREDICTION_RESOLVED")
+    off = [s for s in compute(d, after, out, f, {}, every=True) if s["type"] in kinds and ("(FY27)" in s["text"] or s["type"] == "PREDICTION_RESOLVED")]
+    assert off
+    monkeypatch.setenv("MEMORY_YEAR_CHECK", "1")
+    on = [s for s in compute(d, after, out, f, {}, every=True) if s["type"] in kinds and ("(FY27)" in s["text"] or s["type"] == "PREDICTION_RESOLVED")]
+    assert not on

@@ -1270,6 +1270,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             "source_type": item.source_type.upper(), "given_on": as_of,
             "source_news_id": news_id, "status": "OPEN", "status_history": [], "lab": text_lab(),
         }
+    year_held = _year_held(d["financial_metrics"])   # MEMORY_YEAR_CHECK (item 76): a held figure settles no verdict
     for update in output.dossier_delta.promise_updates:
         g = guidance.get(update.guidance_id)
         if g is None or g.get("given_on", "") >= as_of:
@@ -1279,7 +1280,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             # a period's deadline passes when its results are due, not at its end (O12, owner 2026-10-20)
         if card_guidance_dated() and update.status in ("DELIVERED", "ON_TRACK", "DELAYED", "MISSED"):
             from .guidance_dated import why_no_verdict
-            if why_no_verdict(g, d["financial_metrics"], news_id):
+            if why_no_verdict(g, [e for e in d["financial_metrics"] if (e["metric"], e["period"]) not in year_held], news_id):
                 continue  # F172: no verdict from an undated target or one for another period or metric; it stays as said
         g["status_history"] = sorted(
             g.get("status_history", []) + [{
@@ -1418,6 +1419,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         actual = by_key.get((p["metric"], p["period"]))
         if actual is None or not reported_by(actual, news_id):
             continue
+        if (p["metric"], p["period"]) in year_held:
+            continue   # MEMORY_YEAR_CHECK (item 76, F181): a held year figure is no MET / MISSED; the target stays open
         goal = comparable_target(p, actual)
         if goal is None:
             p.update(status="UNCHECKED", actual=actual["value"], actual_unit=actual.get("unit"), resolved_on=as_of,

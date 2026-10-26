@@ -114,6 +114,15 @@ def card_guidance_dated() -> bool:
     return (_env("CARD_GUIDANCE_DATED", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_one_basis() -> bool:
+    """CARD_ONE_BASIS (default off; live audit of 26 Oct 2026, class "two bases of one figure"): a card states one basis for a
+    figure. A profit, or its change, whose quarter or comparison base holds a discontinued operation is labelled with it (an
+    EPS change across one is taken out); a line whose quote carries the company's adjusted basis ("non-GAAP") is labelled
+    with it; a results table on another basis (standalone against consolidated) than the card states is removed; a
+    presentation's own EBITDA is labelled beside the table's. Read at the call."""
+    return (_env("CARD_ONE_BASIS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_consolidated_only() -> bool:
     """CARD_CONSOLIDATED_ONLY (default off; TODO 44, F154; owner, 25 Oct 2026: consolidated first, standalone kept from the
     AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the

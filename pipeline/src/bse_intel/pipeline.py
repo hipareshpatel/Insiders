@@ -71,6 +71,7 @@ from . import eps_adjust
 from . import annual_xbrl
 from . import directions
 from . import results_card
+from . import one_basis
 from . import event_xbrl
 from . import computed
 from . import facts as code_facts
@@ -3553,6 +3554,7 @@ class Pipeline:
                     unit=declared_unit(filed_text))
             if consolidated_only:
                 changes += standalone_figures_removed(candidate, tagged, standalone_file)
+            changes += one_basis.apply(candidate, tagged, history)   # CARD_ONE_BASIS: one basis a figure (off: nothing)
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged, filed_text)
             found.scale += basis_mixups(candidate, tagged, standalone_file)
@@ -3735,6 +3737,9 @@ class Pipeline:
             face = [card_json.get("headline") or ""] + [p.get("text") or "" for p in card_json.get("what_happened") or []]
             if any(v in line for v in slipped for line in face):
                 needs_review = True
+        # the table and the key numbers read against the card's stated basis (CARD_ONE_BASIS; off: nothing)
+        if one_basis_notes := one_basis.apply_card_json(card_json, current):
+            card_json.setdefault("grounding", {})["one_basis"] = one_basis_notes
         # A card the checks faulted, that a second provider was asked to correct and that still
         # fails, is kept out of the feed rather than published with an "Unverified" mark. On the
         # rebuild that was 117 of 456 cards, and a flagged card was judged WRONG 52% of the time

@@ -44,6 +44,9 @@ the rows below; F numbers are in `docs/TRACKER.md`.
 **Built, switched off: waiting for its release check** (on/off over stored cards, then a blind sample by another agent)
 - Rows 11, 14, 15 `CARD_EBITDA_PROFIT_V2` (blind review of 20 cards: 4 WRONG against 7-10 before; re-run after F155).
 - Row 21 `CARD_TWO_PARTS`; row 44 `CARD_CONSOLIDATED_ONLY`; `QUOTE_EXACT_NUMBERS` (F156); `CARD_SAME_DEFINITION` (F155).
+- `CARD_ONE_BASIS` (F173, TODO 56a; 26 Oct 2026 audit, class "two bases of one figure"; built, off): labels a profit or
+  its change whose quarter or base holds a discontinued operation, labels "non-GAAP" lines, drops a results table on another basis
+  than the card states, labels a presentation EBITDA beside the table's (`one_basis.py`, tests `test_one_basis.py`). `CARD_GROUNDED_FIGURES` (F171, TODO 56b) and `CARD_GUIDANCE_DATED` (F172, TODO 56c): built, off.
 - Row 49 `MEMORY_STANDALONE_ONLY` (F162), then a reload of the affected companies.
 - Row 48 `MEMORY_SCREENER` (F161): only after the screener-fill dry run and the owner's look.
 - Row 53 restated figures (F167): memory side runs with the reload; `MEMORY_RESTATED` for readers.

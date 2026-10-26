@@ -133,7 +133,9 @@ def test_resume_does_not_fetch_written_or_failed_again_and_restart_does():
     files = {f"{NSE}f1.pdf": pdf(), f"{NSE}f2.pdf": None, f"{NSE}f3.pdf": pdf("later")}
     sink = Sink([card(1), card(2), card(3)])
     first = Client(files)
-    clock = lambda: 10.0 * len(first.calls)   # the budget runs out after the second download
+    # a clock that moves with the rows finished (written or failed), not with downloads started: the next download
+    # runs in a background thread, so counting client calls raced it (flaky on CI)
+    clock = lambda: 15.0 * (len(sink.puts) + len(json.loads(sink.kv.get("textbackfill:failed:0of1", "{}"))))
     out = tb.run(sink, tb.cards_lacking_text(sink)[0], first, time_budget=25, clock=clock, ocr=False)
     assert out["more"] and out["fetched"] == 2 and P.text_key("NSE3") not in sink.objects and json.loads(sink.kv["textbackfill:failed:0of1"]) == {"NSE2": tb.R_404}
     again = Client(files)

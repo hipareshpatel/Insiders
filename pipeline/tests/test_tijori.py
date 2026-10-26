@@ -40,9 +40,18 @@ COMPANIES = [("1", "ABB", "ABB India Ltd."), ("2", "APARINDS", "Apar Industries 
              ("5", "NOSUCH", "No Such Company Ltd")]
 
 
+SLUGS = ("apar-industries-limited", "abb-india-limited", "the-anup-engineering-ltd", "sundaram-finance-limited", "twin-a-ltd",
+         "twin-a-limited")
+
+
 class Sink:
-    def __init__(self):
+    """``seed``: a saved slug map in which no page named a symbol, so a company is found by the name rule and fetched by slug (the
+    run before the sweep existed); ``Sink(seed=False)`` is a first run with no map."""
+
+    def __init__(self, seed=True):
         self.kv, self.objects = {}, {}
+        if seed:
+            self.kv[tijori.SLUGS_KEY] = json.dumps({"built": "x", "slugs": {s: "" for s in SLUGS}})
 
     def kv_get(self, key):
         return self.kv.get(key)
@@ -384,3 +393,126 @@ def test_the_stop_is_checked_again_just_before_the_request_goes_out():
     with client, pytest.raises(tijori.TijoriRefused):
         client.get("https://x/1")
     assert seen == []
+
+
+# --- matching by the page's own symbol (the sweep) ------------------------------------------------------------------
+
+def page_as(symbol, name="Whatever Ltd.", base="abb"):
+    fx = json.loads(json.dumps(fixture(base)))
+    fx["company_details"]["symbol"], fx["company_details"]["company"] = symbol, name
+    return page_html(fx)
+
+
+def no_symbol_page(base="abb"):
+    fx = json.loads(json.dumps(fixture(base)))
+    fx["company_details"]["symbol"] = ""
+    fx["company_details"]["company"] = "ABB India Ltd."
+    return ('<script id="company_details" type="application/json">%s</script><script id="%s" type="application/json">%s</script>'
+            % (json.dumps(fx["company_details"]), tijori.TABLES_ID, json.dumps(fx["fin_tables_data"])))
+
+
+def sweep_site(pages, extra=()):
+    slugs = list(pages) + list(extra)
+    xml = "<urlset>" + "".join(f"<url><loc>https://www.tijorifinance.com/company/{s}/</loc></url>" for s in slugs) + "</urlset>"
+
+    def answers(url):
+        if url.endswith("/sitemap.xml"):
+            return 200, xml
+        for slug, body in pages.items():
+            if f"/company/{slug}/financials/" in url:
+                return 200, body
+        return 302, ""
+    return answers
+
+
+ETERNAL = [("1", "ETERNAL", "Eternal Limited"), ("2", "ABB", "ABB India Ltd.")]
+
+
+def test_a_renamed_company_is_found_by_the_symbol_on_its_page_and_another_companys_page_is_only_recorded():
+    pages = {"zomato-ltd": page_as("ETERNAL"), "abb-india-limited": page_as("abb"), "not-ours-ltd": page_as("ELSEWHERE")}
+    sink, seen = Sink(seed=False), []
+    client, _ = client_for(sweep_site(pages), seen)
+    with client:
+        out = tijori.run(sink, ETERNAL, client, DAY, workers=1)
+    assert sorted(sink.objects) == [f"raw/tijori/{DAY}/ABB.json.gz", f"raw/tijori/{DAY}/ETERNAL.json.gz"]
+    assert out["slugs_swept"] == 3 and out["slugs_in_map"] == 3 and out["ours_by_symbol"] == 2 and out["ours_by_name"] == 0
+    assert out["ours_unmatched"] == [] and out["duplicate_symbols"] == {} and out["requests_made"] == 4 and out["pages_stored"] == 2
+    saved = json.loads(sink.kv[tijori.SLUGS_KEY])
+    assert saved["slugs"] == {"zomato-ltd": "ETERNAL", "abb-india-limited": "ABB", "not-ours-ltd": "ELSEWHERE"}
+    assert sorted(json.loads(sink.kv[f"tijoridl:done:{DAY}"])) == ["ABB", "ETERNAL"]
+    text = tijori.render(out)
+    assert "slugs swept this run         3" in text and "ours matched by symbol       2" in text
+
+
+def test_the_second_run_uses_the_saved_map_and_sweeps_nothing():
+    pages = {"zomato-ltd": page_as("ETERNAL"), "not-ours-ltd": page_as("ELSEWHERE")}
+    sink, seen = Sink(seed=False), []
+    client, _ = client_for(sweep_site(pages), seen)
+    with client:
+        tijori.run(sink, ETERNAL[:1], client, DAY, workers=1)
+        seen.clear()
+        out = tijori.run(sink, ETERNAL[:1], client, "2026-10-28", workers=1)    # a new day: the page is fetched again, by slug
+        assert out["slugs_swept"] == 0 and out["pages_stored"] == 1 and out["ours_by_symbol"] == 1
+        assert [u for u in seen if "/company/" in u] == ["https://www.tijorifinance.com/company/zomato-ltd/financials/"]
+        seen.clear()
+        again = tijori.run(sink, ETERNAL[:1], client, "2026-10-28", workers=1)
+        assert again["requests_made"] == 1 and again["companies_done_before"] == 1       # only the sitemap
+        seen.clear()
+        rebuilt = tijori.run(sink, ETERNAL[:1], client, "2026-10-29", workers=1, rebuild_map=True)
+    assert rebuilt["slugs_swept"] == 2 and sum("/company/" in u for u in seen) == 2
+
+
+def test_a_run_stopped_by_a_refusal_keeps_its_swept_slugs_and_the_next_run_does_not_fetch_them_again():
+    pages = {"a-ltd": page_as("AAA"), "b-ltd": page_as("BBB"), "c-ltd": page_as("ETERNAL"), "d-ltd": page_as("DDD")}
+    sink, seen = Sink(seed=False), []
+    state = {"refuse": True}
+
+    def answers(url):
+        if "/c-ltd/" in url and state["refuse"]:
+            return 429, ""
+        return sweep_site(pages)(url)
+    client, _ = client_for(answers, seen)
+    with client, pytest.raises(tijori.TijoriRefused):
+        tijori.run(sink, ETERNAL[:1], client, DAY, workers=1)
+    assert sorted(json.loads(sink.kv[tijori.SLUGS_KEY])["slugs"]) == ["a-ltd", "b-ltd"]
+    assert "d-ltd" not in "".join(seen)
+    state["refuse"] = False
+    seen.clear()
+    client, _ = client_for(answers, seen)
+    with client:
+        out = tijori.run(sink, ETERNAL[:1], client, DAY, workers=1)
+    fetched = [u.split("/company/")[1].split("/")[0] for u in seen if "/company/" in u]
+    assert fetched == ["c-ltd", "d-ltd"] and out["pages_stored"] == 1 and out["slugs_in_map"] == 4
+
+
+def test_two_slugs_with_one_symbol_keep_the_first_and_list_both():
+    pages = {"abb-india-limited": page_as("ABB"), "abb-india-ltd": page_as("ABB")}
+    sink, seen = Sink(seed=False), []
+    client, _ = client_for(sweep_site(pages), seen)
+    with client:
+        out = tijori.run(sink, ETERNAL[1:], client, DAY, workers=1)
+    assert out["pages_stored"] == 1 and out["duplicate_symbols"] == {"ABB": ["abb-india-limited", "abb-india-ltd"]}
+    assert tijori.unpack(sink.objects[f"raw/tijori/{DAY}/ABB.json.gz"])
+
+
+def test_a_page_without_a_symbol_is_recorded_empty_and_matched_by_name_only():
+    pages = {"abb-india-limited": no_symbol_page(), "zomato-ltd": page_as("ETERNAL")}
+    sink, seen = Sink(seed=False), []
+    client, _ = client_for(sweep_site(pages), seen)
+    with client:
+        out = tijori.run(sink, ETERNAL, client, DAY, workers=1)
+    assert json.loads(sink.kv[tijori.SLUGS_KEY])["slugs"]["abb-india-limited"] == ""
+    assert out["ours_by_symbol"] == 1 and out["ours_by_name"] == 1 and out["ours_unmatched"] == []
+    assert sorted(sink.objects) == [f"raw/tijori/{DAY}/ABB.json.gz", f"raw/tijori/{DAY}/ETERNAL.json.gz"]
+    assert sum("abb-india-limited" in u for u in seen) == 2        # once in the sweep, once by the name rule
+
+
+def test_the_limit_caps_the_sweep_and_the_estimate_counts_it():
+    pages = {f"co-{i}-ltd": page_as(f"S{i}") for i in range(10)}
+    sink, seen = Sink(seed=False), []
+    client, _ = client_for(sweep_site(pages), seen)
+    with client:
+        out = tijori.run(sink, ETERNAL, client, DAY, workers=1, sweep_limit=3)
+    assert out["slugs_swept"] == 3 and out["slugs_left_to_sweep"] == 7 and sum("/company/" in u for u in seen) == 3
+    assert out["ours_unmatched"] == ["ETERNAL", "ABB"]
+    assert tijori.estimate(100, rate=10, sweep=50) == {"requests": 151, "seconds": 15}

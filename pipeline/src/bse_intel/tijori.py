@@ -30,7 +30,16 @@ Cloudflare / Akamai challenge page) drops the run to one request every 3 s and i
 an explicit gate marker on a page with no ``fin_tables_data`` and no ``company_details`` is a refusal. A 200 page with neither
 block and no marker is "suspect": counted, not stored, not finished (the next run asks again), not a refusal.
 
-Slug map: the sitemap (``/sitemap.xml``, one request a run) lists 5,741 companies as ``/company/<slug>/``; the slugs are
+Matching by the page's own stock symbol (owner, 26 Oct 2026; measured offline: matching by name found 1,534 of 1,866 companies,
+82%; the misses are renames (Eternal = zomato-ltd, KSB = ksb-pumps-limited), brackets, a dropped "and" and Tijori's own typos).
+Every financials page names its NSE symbol in ``company_details``, so a run SWEEPS the sitemap: it fetches each slug's financials
+page once (the same client, limiter and refusal rules), records ``slug -> the page's symbol`` in the saved slug map (KV
+``tijoridl:slugs``, kept between days: a later run fetches our companies straight by slug and sweeps only slugs not yet in it) and
+stores the page when its symbol is one of our companies'. A symbol match beats a name match. A page that carries no symbol is
+recorded as "" and its slug is matched to a company by the name rule below (that fallback only); a slug with no page (302, 404)
+is recorded as "!" and never asked again. Two slugs with one symbol: the first page stored wins, both are listed in the summary.
+
+Slug map by name (the fallback): the sitemap (``/sitemap.xml``, one request a run) lists 5,741 companies as ``/company/<slug>/``; the slugs are
 irregular (``aadhar-housing-finance-ltd``, ``sundaram-finance-limited``, ``the-anup-engineering-ltd``), so a company is matched
 by name: lowercase, "&" to "and", the words "limited", "ltd" and "the" dropped, punctuation stripped. A name that fits two
 slugs is ambiguous: its candidates are fetched in turn and the first page that verifies is kept; both lists and the unmatched companies are in the summary.
@@ -61,9 +70,11 @@ USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHT
 RATE = float(os.environ.get("TIJORI_RATE", "6"))   # requests a second, shared by all threads
 SLOW_PAUSE_SECONDS = 3.0                          # after the first refusal: one request every 3 s
 WORKERS = 8
-SAVE_EVERY = 25                                   # finished companies between two saves of the done list
+SAVE_EVERY = 25                                   # finished companies (or swept slugs) between two saves of the done list / slug map
 PREFIX = "raw/tijori/"
 DONE_KEY = "tijoridl:done"          # + ":<day>": the symbols a run finished
+SLUGS_KEY = "tijoridl:slugs"        # {"built": iso, "slugs": {slug: page symbol | "" (none on the page) | "!" (no page)}}, kept between days
+SITEMAP_COMPANIES = 5741            # measured 26 Oct 2026; only the estimate before a run uses it
 TABLES_ID = "fin_tables_data"
 DROP_WORDS = frozenset({"limited", "ltd", "the"})
 # a page with no financials block is a gate only when it is not a normal company page and has one of these markers
@@ -303,9 +314,24 @@ class TijoriClient:
 
 # --- the run ------------------------------------------------------------------------------------------------------
 
-def estimate(companies: int, rate: float = RATE) -> dict:
-    """One page a company plus the sitemap, ``rate`` requests a second."""
-    return {"requests": companies + 1, "seconds": round((companies + 1) / rate)}
+def estimate(companies: int, rate: float = RATE, sweep: int = 0) -> dict:
+    """One page a company, one page a slug still to sweep, plus the sitemap, ``rate`` requests a second."""
+    n = companies + sweep + 1
+    return {"requests": n, "seconds": round(n / rate)}
+
+
+def load_slug_map(sink) -> dict:
+    """The saved slug map ``{slug: symbol}`` ({} when none or unreadable)."""
+    try:
+        data = json.loads(sink.kv_get(SLUGS_KEY) or "{}")
+        slugs = data.get("slugs") if isinstance(data, dict) else None
+        return {str(k): str(v) for k, v in slugs.items()} if isinstance(slugs, dict) else {}
+    except ValueError:
+        return {}
+
+
+def save_slug_map(sink, slugs: dict, built: str) -> None:
+    sink.kv_set(SLUGS_KEY, json.dumps({"built": built, "slugs": slugs}, separators=(",", ":"), sort_keys=True), now_iso())
 
 
 _COUNTER = {"no_tables": "pages_no_tables", "not_verified": "pages_not_verified", "no_page": "pages_no_page"}
@@ -346,58 +372,183 @@ def _fetch(client, symbol: str, name: str, slug: str | list[str]) -> dict:
     return {"kind": "failed", "note": f"{symbol} {slug}: {'HTTP ' + str(status) if status else body}"[:200]}
 
 
+def _sweep_fetch(client, slug: str, ours: set) -> dict:
+    """One sitemap slug's page read once: ``{"kind": "swept", "symbol": <page symbol, "" if none, "!" if no page>, "blob"?}``;
+    the blob (the tables) only when the page's symbol is one of ``ours`` (upper case). "failed" and "suspect" are not recorded."""
+    status, body = client.get(url_for(slug))
+    if status == 200:
+        tables, page = extract_tables(body), identity(body)
+        if tables is None and 'id="company_details"' not in body:
+            return {"kind": "suspect", "note": f"sweep {slug}: 200 page without tables or company_details"[:200]}
+        symbol = page["symbol"].strip().upper()
+        out = {"kind": "swept", "symbol": symbol}
+        if tables is None:
+            out["no_tables"] = True
+        elif symbol and symbol in ours:
+            out["blob"] = pack(json.dumps(tables, separators=(",", ":"), ensure_ascii=False))
+        return out
+    if status in (302, 404):
+        return {"kind": "swept", "symbol": "!"}
+    return {"kind": "failed", "note": f"sweep {slug}: {'HTTP ' + str(status) if status else body}"[:200]}
+
+
 def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budget: float = 17400.0,
-        restart: bool = False, clock=time.monotonic, workers: int = WORKERS) -> dict:
+        restart: bool = False, clock=time.monotonic, workers: int = WORKERS, rebuild_map: bool = False,
+        sweep_limit: int | None = None) -> dict:
     """Fetch and store the financials page of each company ((scrip, symbol, name), in symbol order) on ``workers`` threads
     behind the client's one shared limiter. The sink is written from this thread only. A second refusal propagates as
-    ``TijoriRefused`` after what was fetched is stored and the finished companies are saved. ``more`` is true when the time
-    budget ended the run with companies left. A page already stored for ``day`` is not fetched again; a company is finished
-    when its page is stored, verified wrong, answered 302 or 404, or had no tables (those do not change on a retry); a network
-    or server error is tried again by the next run."""
+    ``TijoriRefused`` after what was fetched is stored and the finished companies and the slug map are saved. ``more`` is true
+    when the time budget ended the run with companies or slugs left (slugs a failed request or a ``sweep_limit`` left are in
+    ``slugs_left_to_sweep`` and the next run sweeps them). A page already stored for ``day`` is not fetched again; a company is finished when its page is stored,
+    verified wrong, answered 302 or 404, or had no tables (those do not change on a retry); a network or server error is tried
+    again by the next run.
+
+    Order: (1) the sitemap and the saved slug map (``rebuild_map`` empties it); (2) the SWEEP of every sitemap slug not in the map
+    (at most ``sweep_limit``): each page read once, its symbol recorded, stored when it is one of ours; (3) our companies whose
+    symbol is in the map but not yet stored today, fetched by slug; (4) the name rule, for the companies still without a slug and
+    only against slugs whose page had no symbol."""
     key = f"{DONE_KEY}:{day}"
     done = set() if restart else set(json.loads(sink.kv_get(key) or "[]"))
     stored = set(sink.list_objects(f"{PREFIX}{day}/"))
     totals = {"day": day, "companies": len(companies), "companies_done_before": 0, "pages_stored": 0,
               "pages_already_stored": 0, "pages_no_page": 0, "pages_not_verified": 0, "pages_no_tables": 0,
-              "pages_failed": 0, "pages_suspect": 0, "requests_made": 0, "bytes_stored": 0}
+              "pages_failed": 0, "pages_suspect": 0, "requests_made": 0, "bytes_stored": 0, "slugs_swept": 0}
     before = client.requests
     status, xml = client.get(SITEMAP_URL)
     slugs = sitemap_slugs(xml) if status == 200 else []
-    mapping = map_slugs(companies, slugs) if slugs else {"matched": {}, "ambiguous": {}, "unmatched": []}
     failed: list[str] = [] if slugs else [f"sitemap: {'HTTP ' + str(status) if status else xml}"[:200]]
     not_verified: list[str] = []
     suspect: list[str] = []
-    todo = []
-    for scrip, symbol, name in companies:
-        if symbol not in mapping["matched"] and symbol not in mapping["ambiguous"]:
-            continue
-        if symbol in done:
-            totals["companies_done_before"] += 1
-        elif object_key(day, symbol) in stored:
-            totals["pages_already_stored"] += 1
-            done.add(symbol)
-        else:
-            todo.append((symbol, name, mapping["matched"].get(symbol) or mapping["ambiguous"][symbol]))
+    slug_map = {} if rebuild_map else load_slug_map(sink)
+    built = now_iso()
+    ours = {symbol.strip().upper(): symbol for _, symbol, _ in companies}
     deadline = clock() + time_budget
     deferred = threading.Event()
+    map_unsaved = 0
 
-    def work(item):
+    def have(symbol: str) -> bool:
+        return symbol in done or object_key(day, symbol) in stored
+
+    def work(fn, *args):
         if clock() >= deadline:
             deferred.set()
             return None
-        symbol, name, slug = item
         try:
-            return _fetch(client, symbol, name, slug)
+            return fn(*args)
         except TijoriRefused:
             raise
-        except Exception as exc:    # one bad page must not end the run: this company is retried by the next one
-            log.warning("tijori %s: unexpected %s: %s", symbol, type(exc).__name__, exc)
-            return {"kind": "failed", "note": f"{symbol}: unexpected {type(exc).__name__}: {exc}"[:200]}
+        except Exception as exc:    # one bad page must not end the run: it is retried by the next one
+            log.warning("tijori %s: unexpected %s: %s", args[1] if len(args) > 1 else "", type(exc).__name__, exc)
+            return {"kind": "failed", "note": f"{args[1] if len(args) > 1 else ''}: unexpected {type(exc).__name__}: {exc}"[:200]}
+
+    def count(got):
+        """The tally of a company page's answer; True when it ends the company for today."""
+        kind = got["kind"]
+        if kind == "failed":
+            totals["pages_failed"] += 1
+            failed.append(got["note"])
+            return False
+        if kind == "suspect":
+            totals["pages_suspect"] += 1
+            suspect.append(got["note"])
+            return False
+        if kind != "stored":
+            totals[_COUNTER[kind]] += 1
+            if kind == "not_verified":
+                not_verified.append(got["note"])
+        return True
+
+    def put(symbol: str, blob: bytes) -> None:
+        sink.put_object(object_key(day, symbol), blob, "application/gzip")
+        stored.add(object_key(day, symbol))
+        totals["pages_stored"] += 1
+        totals["bytes_stored"] += len(blob)
 
     refused: TijoriRefused | None = None
     unsaved = 0
+    by_name_symbols: set[str] = set()
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
-        futures = [(item[0], pool.submit(work, item)) for item in todo]
+        # (2) the sweep
+        to_sweep = [s for s in slugs if s not in slug_map]
+        if sweep_limit is not None:
+            to_sweep = to_sweep[:sweep_limit]
+        futures = [(s, pool.submit(work, _sweep_fetch, client, s, set(ours))) for s in to_sweep]
+        for slug, future in futures:
+            try:
+                got = future.result()
+            except TijoriRefused as exc:
+                refused = refused or exc
+                continue
+            if got is None:
+                continue
+            if got["kind"] == "failed":
+                totals["pages_failed"] += 1
+                failed.append(got["note"])
+                continue
+            if got["kind"] == "suspect":
+                totals["pages_suspect"] += 1
+                suspect.append(got["note"])
+                continue
+            totals["slugs_swept"] += 1
+            slug_map[slug] = got["symbol"]
+            map_unsaved += 1
+            symbol = ours.get(got["symbol"])
+            if symbol and "blob" in got and not have(symbol):
+                put(symbol, got["blob"])
+                done.add(symbol)
+                unsaved += 1
+            elif symbol and got.get("no_tables") and not have(symbol):
+                totals["pages_no_tables"] += 1
+                done.add(symbol)
+                unsaved += 1
+            if map_unsaved >= SAVE_EVERY:
+                save_slug_map(sink, slug_map, built)
+                map_unsaved = 0
+            if unsaved >= SAVE_EVERY:
+                sink.kv_set(key, json.dumps(sorted(done)), now_iso())
+                unsaved = 0
+        save_slug_map(sink, slug_map, built)
+        sink.kv_set(key, json.dumps(sorted(done)), now_iso())
+        unsaved = 0
+        if refused:
+            totals["requests_made"] = client.requests - before
+            raise refused
+
+        # (3) our companies by their symbol in the map, (4) then by name against the slugs with no symbol
+        by_symbol: dict[str, list[str]] = {}
+        for slug, sym in slug_map.items():
+            if sym and sym != "!" and sym in ours:
+                by_symbol.setdefault(sym, []).append(slug)
+        by_symbol = {k: sorted(v) for k, v in by_symbol.items()}
+        todo = []
+        rest = []
+        for scrip, symbol, name in companies:
+            up = symbol.strip().upper()
+            if up in by_symbol:
+                if symbol in done:
+                    totals["companies_done_before"] += 1
+                elif object_key(day, symbol) in stored:
+                    totals["pages_already_stored"] += 1
+                    done.add(symbol)
+                else:
+                    todo.append((symbol, name, by_symbol[up]))
+            else:
+                rest.append((scrip, symbol, name))
+        nosym = [s for s, v in slug_map.items() if v == ""]
+        mapping = map_slugs(rest, nosym) if nosym else {"matched": {}, "ambiguous": {}, "unmatched": [m[1] for m in rest]}
+        for scrip, symbol, name in rest:
+            slug = mapping["matched"].get(symbol) or mapping["ambiguous"].get(symbol)
+            if not slug:
+                continue
+            by_name_symbols.add(symbol)
+            if symbol in done:
+                totals["companies_done_before"] += 1
+            elif object_key(day, symbol) in stored:
+                totals["pages_already_stored"] += 1
+                done.add(symbol)
+            else:
+                todo.append((symbol, name, slug))
+        futures = [(item[0], pool.submit(work, _fetch, client, item[0], item[1], item[2])) for item in todo]
         for symbol, future in futures:
             try:
                 got = future.result()
@@ -406,23 +557,10 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
                 continue
             if got is None:
                 continue
-            kind = got["kind"]
-            if kind == "failed":
-                totals["pages_failed"] += 1
-                failed.append(got["note"])
+            if not count(got):
                 continue
-            if kind == "suspect":
-                totals["pages_suspect"] += 1
-                suspect.append(got["note"])
-                continue
-            if kind == "stored":
-                sink.put_object(object_key(day, symbol), got["blob"], "application/gzip")
-                totals["pages_stored"] += 1
-                totals["bytes_stored"] += len(got["blob"])
-            else:
-                totals[_COUNTER[kind]] += 1
-                if kind == "not_verified":
-                    not_verified.append(got["note"])
+            if got["kind"] == "stored":
+                put(symbol, got["blob"])
             done.add(symbol)
             unsaved += 1
             if unsaved >= SAVE_EVERY:
@@ -432,8 +570,14 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
     totals["requests_made"] = client.requests - before
     if refused:
         raise refused
-    return {"more": deferred.is_set(), "failed": failed, "suspect": suspect, "not_verified": not_verified, "sitemap_companies": len(slugs),
-            "matched": len(mapping["matched"]), "ambiguous": mapping["ambiguous"], "unmatched": mapping["unmatched"],
+    unmatched = [symbol for _, symbol, _ in companies if symbol.strip().upper() not in by_symbol and symbol not in by_name_symbols]
+    duplicates = {ours[k]: v for k, v in by_symbol.items() if len(v) > 1}
+    left = sum(1 for s in slugs if s not in slug_map)
+    return {"more": deferred.is_set(), "failed": failed, "suspect": suspect, "not_verified": not_verified,
+            "sitemap_companies": len(slugs), "slugs_in_map": len(slug_map), "slugs_left_to_sweep": left,
+            "ours_by_symbol": len(by_symbol), "ours_by_name": len(by_name_symbols), "ours_unmatched": unmatched,
+            "duplicate_symbols": duplicates,
+            "matched": len(by_symbol) + len(mapping["matched"]), "ambiguous": mapping["ambiguous"], "unmatched": unmatched,
             "slowed": client.slowed, "slowed_after_requests": client.slowed_after, "refusal": client.refusal, **totals}
 
 
@@ -442,9 +586,12 @@ def render(outcome: dict) -> str:
         f"tijori download for {outcome['day']}:",
         f"companies                    {outcome['companies']}",
         f"companies in the sitemap     {outcome['sitemap_companies']}",
-        f"matched to a slug            {outcome['matched']}",
-        f"ambiguous (not fetched)      {len(outcome['ambiguous'])}",
-        f"unmatched                    {len(outcome['unmatched'])}",
+        f"slugs swept this run         {outcome['slugs_swept']}",
+        f"slugs in the saved map       {outcome['slugs_in_map']} ({outcome['slugs_left_to_sweep']} still to sweep)",
+        f"ours matched by symbol       {outcome['ours_by_symbol']}",
+        f"ours matched by name         {outcome['ours_by_name']}",
+        f"ours unmatched               {len(outcome['ours_unmatched'])}",
+        f"symbols on two or more slugs {len(outcome['duplicate_symbols'])}",
         f"finished by an earlier run   {outcome['companies_done_before']}",
         f"pages stored                 {outcome['pages_stored']}",
         f"pages already stored         {outcome['pages_already_stored']}",

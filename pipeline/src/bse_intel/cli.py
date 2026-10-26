@@ -1168,7 +1168,8 @@ def cmd_screener_download(args, settings, sink) -> int:
 def cmd_tijori_download(args, settings, sink) -> int:
     """The download of every company's financials from Tijori Finance, raw and gzipped, into R2 (tijori.py, F189, TODO 92): one
     page a company at TIJORI_RATE requests a second (default 6) through 8 threads; the first refusal slows the run to one
-    request every 3 s, a second one stops it (exit 75). Resumable; exit 124 when the time budget ends with companies left. No AI,
+    request every 3 s, a second one stops it (exit 75). Companies are matched by the stock symbol on each page: a sweep of the
+    sitemap's slugs fills a saved slug map; --limit N also limits the sweep to N slugs; --rebuild-map starts the map again. Resumable; exit 124 when the time budget ends with companies left. No AI,
     no NSE, no memory write."""
     from . import tijori
 
@@ -1180,13 +1181,18 @@ def cmd_tijori_download(args, settings, sink) -> int:
         companies = companies[:args.limit]
     triples = [(scrip, symbol, (sink.company(scrip) or {}).get("company_name") or "") for scrip, symbol in companies]
     day = args.day or today_ist().isoformat()
-    plan = tijori.estimate(len(triples))
-    print(f"tijori download {day}: {len(triples)} companies, about {plan['requests']} requests, about "
-          f"{plan['seconds'] / 60:.1f} minutes at {tijori.RATE:g} a second")
+    saved = {} if args.rebuild_map else tijori.load_slug_map(sink)
+    sweep = max(tijori.SITEMAP_COMPANIES - len(saved), 0)
+    if args.limit:
+        sweep = min(sweep, args.limit)    # a trial sweeps at most N slugs too
+    plan = tijori.estimate(len(triples), sweep=sweep)
+    print(f"tijori download {day}: {len(triples)} companies, {len(saved)} slugs already in the saved map, about {sweep} slugs to "
+          f"sweep, about {plan['requests']} requests, about {plan['seconds'] / 60:.1f} minutes at {tijori.RATE:g} a second")
     refused = False
     with tijori.TijoriClient() as client:
         try:
-            outcome = tijori.run(sink, triples, client, day, args.time_budget, args.restart)
+            outcome = tijori.run(sink, triples, client, day, args.time_budget, args.restart,
+                                 rebuild_map=args.rebuild_map, sweep_limit=args.limit or None)
         except tijori.TijoriRefused as exc:
             logging.getLogger("bse_intel.tijori").error("tijorifinance.com refused twice; stopping: %s", exc)
             refused = True
@@ -1885,9 +1891,10 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("tijori-download", help="download every company's financials page from Tijori Finance, raw, into R2 (no AI, no NSE)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
-    p.add_argument("--limit", type=int, help="only the first N companies (a trial)")
+    p.add_argument("--limit", type=int, help="only the first N companies and sweep at most N sitemap slugs (a trial)")
     p.add_argument("--day", help="YYYY-MM-DD the pages are stored under (default today, IST); a page already stored for it is not fetched again")
     p.add_argument("--restart", action="store_true", help="ignore this day's list of finished companies (stored pages are still not fetched again)")
+    p.add_argument("--rebuild-map", action="store_true", help="forget the saved slug map (slug -> the page's stock symbol) and sweep every sitemap slug again")
     p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_tijori_download)

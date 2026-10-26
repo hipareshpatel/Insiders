@@ -1103,15 +1103,18 @@ def scale_slip(result: XbrlResult, history) -> int:
     # step to the other quarters is growth, not a slip (a slip is ten times off its neighbours too). Dolphin Offshore
     # grew from 2 to 40 crore a quarter while its share count rose tenfold (split), which looked like a slip in its
     # Q2FY24 and Q4FY24 files and put memory at 10x (Tijori referee, 26 Oct 2026, F196).
+    by_revenue = power(own[metric], [f.get(metric) for f in others])
+    by_shares = power(_shares(own), [_shares(f) for f in others])
+    slip = by_revenue if by_revenue is not None and by_revenue == by_shares else 0
     index = quarter_index(result.period)
     by_quarter = _quarters(history)
     for step in (-1, 1):
         near = by_quarter.get(quarter_from_index(index + step), {}).get(metric) if index else None
         if near and near > 0 and 1 / _NEIGHBOUR_BAND <= own[metric] / near <= _NEIGHBOUR_BAND:
+            if slip:   # kept visible: two quarters filed in the wrong unit in a row also shield each other
+                log.warning("scale slip 10^%s of %s not applied: in line with its neighbour quarter", slip, result.period)
             return 0
-    by_revenue = power(own[metric], [f.get(metric) for f in others])
-    by_shares = power(_shares(own), [_shares(f) for f in others])
-    return by_revenue if by_revenue is not None and by_revenue == by_shares else 0
+    return slip
 
 
 def _printed_exactly(crore: float, text: str) -> bool:

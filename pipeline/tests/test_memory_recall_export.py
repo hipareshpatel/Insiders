@@ -60,7 +60,8 @@ def _world(n=12):
         deck = i % 2
         cards.append(_card(nid, scrip, "Investor presentation Q2" if deck else "Earnings call transcript Q2",
                            sector=["IT", "Pharma", "Auto"][i % 3]))
-        texts[text_key(nid)] = _body(_entry([f"page one of {nid}", "page two"]))
+        # a transcript has its moderator in the text (an invitation does not: test_a_headline_that_says_call_over_an_invitation)
+        texts[text_key(nid)] = _body(_entry([f"page one of {nid}: moderator, moderator, moderator, participant", "page two"]))
         caps[scrip] = [30000, 8000, 900][i % 3]
         dossiers[scrip] = {"guidance": [{"id": "g", "source_news_id": nid, "status": "OPEN", "status_history": []}]}
     return cards, texts, dossiers, caps
@@ -192,3 +193,22 @@ def test_command_runs_and_exits_1_with_nothing_to_sample(tmp_path, monkeypatch, 
     assert "memory recall export: 2 of 3" in capsys.readouterr().out
     monkeypatch.setattr("bse_intel.cli.make_sink", lambda settings: FakeSink([], {}, {}, {}), raising=False)
     assert main(["memory-recall-export", "--out", str(tmp_path / "none")]) == 1
+
+
+def test_a_headline_that_says_call_over_an_invitation_is_not_sampled_as_a_transcript():
+    # Syrma SGS nse-106828335 (26 Oct 2026): "to discuss Q2FY27 results on November 2 earnings call", two pages of dial-in details
+    headline = "Syrma SGS: to discuss Q2FY27 results on November 2 earnings call"
+    notice = _entry(["Intimation of earnings call. Syrma SGS will hold a call on November 2, 2026 at 4 pm; dial-in 91 22 6280 1000.",
+                     "Registration link and the safe harbour statement."])
+    assert mre.kind_of(headline) == "transcript"
+    assert mre.kind_from_text(notice, headline) == "invitation"
+    assert mre.kind_from_text(_entry(["Investor presentation Q2FY27 earnings presentation", "x"]), headline) == "deck"
+    real = _entry(["Moderator: welcome. " * 3 + "participant", "x"])   # a call with its moderator is one, however short
+    assert mre.kind_from_text(real, headline) == "transcript"
+    # a long document with the same headline is a transcript even when no moderator is named in it
+    assert mre.kind_from_text(_entry(["words " * 400] * 4), headline) == "transcript"
+    # and the sample passes the invitation over for another filing
+    cards = [_card("inv", "300", headline), _card("real", "301", "Earnings call transcript Q2")]
+    texts = {"inv": notice, "real": real}
+    picked = mre.choose(cards, lambda nid: texts[nid], 5, seed=1)
+    assert [r["news_id"] for r in picked] == ["real"]

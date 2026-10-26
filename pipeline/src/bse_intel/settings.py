@@ -103,6 +103,16 @@ def memory_year_check() -> bool:
     return (_env("MEMORY_YEAR_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def memory_call_v2() -> bool:
+    """MEMORY_CALL_V2 (default off; TODO 83, F180): every earnings-call transcript and investor deck gets a second, memory-only
+    AI reading (call_memory.py) whose typed points, each with its page and exact quote, are checked by code and kept in the
+    dossier's `call_memory`; and a figure a call or deck gives for a metric and period an exchange file already holds, more
+    than 5% away from the file's, is not added as a source of that metric (Sobha's own "operational cash flow" +755 Cr
+    beside the statutory -342 Cr; Vishal Mega Mart's operating EBITDA margin 7.7% beside the file's 12.1%). Off until the
+    measured pass in docs/design/call-memory.md. Read at the call."""
+    return (_env("MEMORY_CALL_V2", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_grounded_figures() -> bool:
     """CARD_GROUNDED_FIGURES (default off; 26 Oct 2026 live audit): three places where our own code damaged a right figure
     are refused. (1) An event-XBRL order amount that rounds to 0 Cr (the file gave it in crore, not rupees) is not put on

@@ -24,8 +24,8 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import (card_ebitda_profit_v2, card_grounded_figures, card_guidance_dated, card_same_definition, memory_restated,
-                       memory_screener, memory_year_check)
+from .settings import (card_ebitda_profit_v2, card_grounded_figures, card_guidance_dated, card_same_definition, memory_call_v2,
+                       memory_restated, memory_screener, memory_year_check)
 from .models import _PER_OTHER, Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -118,6 +118,22 @@ def other_definition(metrics: dict, key: tuple[str, str], value: float | None, u
         implied = (value / base - 1) * 100
         checked.append(abs(implied - pct) > max(15.0, 0.5 * abs(pct)))
     return bool(checked) and all(checked)
+
+
+CALL_FILE_GAP = 0.05   # a call's figure this far (share of the file's) from the exchange file's is another definition
+
+
+def file_figure_apart(entry: dict | None, value: float | None) -> float | None:
+    """The exchange file's figure for this metric and period (a source labelled by file) that ``value`` is more than 5% away
+    from, else None (no file figure, or they agree). Read only."""
+    if value is None:
+        return None
+    for source in _sources(entry):
+        held = source.get("value")
+        if (source.get("lab") or {}).get("by") == "file" and held is not None \
+                and abs(float(value) - float(held)) > CALL_FILE_GAP * max(abs(float(held)), 1e-9):
+            return held
+    return None
 
 
 def repeated_order(deals: list[dict], deal, as_of: str, news_id: str) -> dict | None:
@@ -1138,6 +1154,13 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if not results_source and other_definition(metrics, key, m.value, m.unit, m.yoy_pct, m.qoq_pct):
             log.info("memory: %s %s %s from %s refused: its own change does not follow from memory's comparatives",
                      key[0], key[1], m.value, news_id)
+            continue
+        if memory_call_v2() and doc in ("call", "slides") and not (getattr(m, "by", None) in ("file", "calc")) \
+                and (held := file_figure_apart(metrics.get(key), m.value)) is not None:
+            # a call's or deck's own measure under the statutory name (F180): Sobha's "operational cash flow" +755 Cr beside
+            # the file's -342.12 Cr for H1FY27, Vishal Mega Mart's operating EBITDA margin 7.7% beside the file's 12.12%. The
+            # call reading keeps it as a kpi point with its own definition (call_memory.py)
+            log.info("memory: %s %s %s from %s refused as a source: the exchange file holds %s", key[0], key[1], m.value, news_id, held)
             continue
         # the label: a figure the XBRL reader built is file (or calc, from its inputs); a synthetic xbrl: id is file;
         # anything else a model read from the PDF is ai. A figure only reaches here after trust.for_memory.

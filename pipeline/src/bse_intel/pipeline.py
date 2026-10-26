@@ -45,7 +45,7 @@ from .ocr import page_reader, recognise
 from . import raw
 from . import stages
 from . import order_band
-from . import gate, two_parts
+from . import call_memory, gate, two_parts
 from .currency import CODES as CURRENCY_CODES
 from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
@@ -56,7 +56,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_two_parts, d1_plan
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_two_parts, d1_plan, memory_call_v2
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -3454,7 +3454,7 @@ class Pipeline:
         scale = scale_block(dossier_as_of(dossier, filing.filed_at, inclusive=False), company, text, declared_unit(text))
         if memory_only:
             return self._memory_flow(filing, company, industry, event_type, dossier, read, view, text, filed_text, tagged,
-                                     standalone_file, scale, events, now)
+                                     standalone_file, scale, events, now, blocks)
         variant = prompt_variant(filing.news_id, bulk, self.settings.prompt_short_share)
         # The cost shares, margins, tax rate and cash conversion a results card may state, computed here (facts.py)
         before_filing = dossier_as_of(dossier, filing.filed_at, inclusive=False) or {}
@@ -3671,6 +3671,7 @@ class Pipeline:
             # the call's checked takeaways, kept for the company page's quarterly summary (owner, 2026-10-21: the
             # summary was built from the few items memory happened to keep, not the call's analysis)
             remember_call_points(merged, filing.news_id, filing.filed_at, card.call_takeaways)
+            self._call_memory_step(filing, industry, merged, text, blocks)
         # Signals, footer and results table see memory as it stood at this filing, not later facts
         # that a backfill may already have stored.
         before = dossier_as_of(dossier, filing.filed_at, inclusive=False)
@@ -3873,7 +3874,7 @@ class Pipeline:
 
     def _memory_flow(self, filing: Filing, company: dict, industry, event_type: str, dossier: dict, read: dict,
                      view: dict | None, text: str, filed_text: str, tagged, standalone_file, scale: str, events: list,
-                     now: str) -> Outcome:
+                     now: str, blocks: str = "") -> Outcome:
         """An older backfill filing into memory with no card (owner, 24 Oct 2026): one slimmer AI reading of the memory
         delta, the deal and what to track (prompts.memory, MemoryOutput), then the same event-type rules, deal guards,
         memory trust checks, XBRL figures and merge a card's memory gets. Nothing is written to the cards table."""
@@ -3917,6 +3918,8 @@ class Pipeline:
         sector = self.prompts.sector_for(industry).name
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector),
                                          ("symbol", company.get("symbol") or filing.symbol)) if v})
+        if event_type == "CONCALL_PRESENTATION":
+            self._call_memory_step(filing, industry, merged, text, blocks)
         kept = keep_concurrent_writes(merged, read, self.sink.get_dossier(filing.scrip_code))
         if kept:
             log.info("%s: memory written meanwhile by another job kept: %s", filing.news_id, ", ".join(kept))
@@ -3959,6 +3962,23 @@ class Pipeline:
             log.info("repeat check: %s repeats %s (%s) - %s; pass 2 not spent on it", filing.news_id,
                      entry.get("news_id"), str(entry.get("date", ""))[:10], said.why[:60])
         return entry
+
+    def _call_memory_step(self, filing: Filing, industry, merged: dict, text: str, blocks: str) -> None:
+        """MEMORY_CALL_V2 (F180): the call or deck's own memory reading (call_memory.py), its checked points into
+        ``merged["call_memory"]`` just before the memory write. Off, or any failure, leaves memory and the card as they were:
+        the points wait for a re-run of `call-memory --ids`."""
+        if not memory_call_v2():
+            return
+        try:
+            prior = call_memory.prior_points(merged, filing.news_id, filing.filed_at)
+            out = call_memory.read(self.gateway, self.prompts, filing, "transcript" if is_transcript(filing) else "deck",
+                                   industry, text, blocks, prior, call_memory.paid_providers(self.settings))
+            points, dropped = call_memory.check_points(out.points, text, blocks, scope=f"{filing.scrip_code}:{filing.news_id}")
+            call_memory.remember(merged, filing.news_id, filing.filed_at, points)
+            log.info("%s: call memory by %s: %d points kept, %d dropped (%s)", filing.news_id, out.served_by, len(points),
+                     len(dropped), ", ".join(sorted({d["reason"] for d in dropped})) or "none")
+        except Exception as exc:   # noqa: BLE001 - the card and the rest of memory go on
+            log.warning("%s: call memory failed, the card stands: %s", filing.news_id, exc)
 
     def _pass2_writer(self, bulk: bool, prompt_chars: int):
         """(route, packer or None) for one filing's pass 2. A live filing and a backfill one never share a pack, and a

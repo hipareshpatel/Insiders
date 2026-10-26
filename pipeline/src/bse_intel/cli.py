@@ -815,6 +815,81 @@ def cmd_memory_recall_export(args, settings, sink) -> int:
     return 0 if index["sampled"] else 1
 
 
+def cmd_call_memory(args, settings, sink) -> int:
+    """The call-memory reading (call_memory.py, TODO 83) of the named transcripts and decks: the stored text and the company's
+    memory in, the checked points and every dropped point with its reason out, one file a document and a summary.json. Without
+    --apply nothing is written to memory (the measurement run: maintenance, read only); with it the points are merged into
+    the dossier's `call_memory` through the same three-way write the pipeline uses. Free providers only."""
+    from . import call_memory, memory_recall_export as mre
+    from .dossier import keep_concurrent_writes
+    from .extract import Document
+
+    ids = [i.strip() for i in (args.ids or "").replace("\n", ",").split(",") if i.strip()]
+    if not ids:
+        print("No filings: give --ids news_id,news_id")
+        return 2
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    pipeline = _pipeline(settings, sink)
+    paid = call_memory.paid_providers(settings)
+    read_text = mre.read_text_from(sink)
+    report: list[dict] = []
+    for news_id in ids:
+        row: dict = {"news_id": news_id}
+        try:
+            data = read_text(news_id)
+            filing = call_memory.find_filing(sink, news_id)
+            if not data or filing is None:
+                raise LookupError("no stored text" if not data else "not in the filings ledger")
+            text, _ = mre.render_text(data)
+            doc = Document.from_cache(data)
+            blocks = doc.block_text(range(doc.page_count))
+            dossier = sink.get_dossier(filing.scrip_code) or {}
+            industry = dossier.get("industry") or (sink.company(filing.scrip_code) or {}).get("industry")
+            kind = mre.kind_from_text(data, filing.headline)
+            prior = call_memory.prior_points(dossier, news_id, filing.filed_at)
+            started = time.monotonic()
+            reply = call_memory.read(pipeline.gateway, pipeline.prompts, filing, kind, industry, text, blocks, prior, paid)
+            kept, dropped = call_memory.check_points(reply.points, text, blocks, scope=f"{filing.scrip_code}:{news_id}")
+            row |= {"symbol": filing.symbol, "company": filing.company_name, "filed_at": filing.filed_at, "kind": kind,
+                    "model": reply.served_by, "chars": len(text), "prompt_chars": reply.prompt_chars, "pages": doc.page_count,
+                    "seconds": round(time.monotonic() - started, 1), "asked": len(reply.points), "kept": len(kept),
+                    "dropped": len(dropped), "counts_by_type": call_memory.counts_by_type(kept),
+                    "dropped_by_reason": {r: sum(d["reason"] == r for d in dropped) for r in sorted({d["reason"] for d in dropped})},
+                    "prior_points": len(prior), "reason": reply.reason, "applied": False}
+            if args.apply and kept:
+                merged = json.loads(json.dumps(dossier))
+                call_memory.remember(merged, news_id, filing.filed_at, kept)
+                fresh = sink.get_dossier(filing.scrip_code)
+                held = keep_concurrent_writes(merged, dossier, fresh)
+                if held:
+                    logging.getLogger(__name__).info("%s: memory written meanwhile by another job kept: %s", news_id, ", ".join(held))
+                sink.put_dossier(filing.scrip_code, merged)
+                row["applied"] = True
+            (out_dir / f"{mre._folder_name(news_id)}.json").write_text(json.dumps(
+                {**row, "points_kept": [p.model_dump(exclude_none=True) for p in kept], "points_dropped": dropped},
+                ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        except Exception as exc:   # noqa: BLE001 - one document never stops the rest
+            row["error"] = f"{type(exc).__name__}: {exc}"[:300]
+        report.append(row)
+        print(json.dumps({k: row.get(k) for k in ("news_id", "symbol", "kind", "model", "asked", "kept", "dropped", "error")}, ensure_ascii=False))
+    done = [r for r in report if "error" not in r]
+    by_type: dict[str, int] = {}
+    by_reason: dict[str, int] = {}
+    for r in done:
+        for k, v in r["counts_by_type"].items():
+            by_type[k] = by_type.get(k, 0) + v
+        for k, v in r["dropped_by_reason"].items():
+            by_reason[k] = by_reason.get(k, 0) + v
+    summary = {"documents": len(ids), "read": len(done), "failed": len(report) - len(done), "applied": sum(bool(r.get("applied")) for r in done),
+               "asked": sum(r["asked"] for r in done), "kept": sum(r["kept"] for r in done), "dropped": sum(r["dropped"] for r in done),
+               "counts_by_type": dict(sorted(by_type.items())), "dropped_by_reason": dict(sorted(by_reason.items())),
+               "by_kind": {k: sum(r["kind"] == k for r in done) for k in ("transcript", "deck")}, "rows": report}
+    (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    print(json.dumps({k: v for k, v in summary.items() if k != "rows"}, ensure_ascii=False))
+    return 0 if done else 1
+
+
 def cmd_prediction_units(args, settings, sink) -> int:
     """Stored targets judged in two different units, and per-share units on figures that are not per share (TODO item
     84, prediction_check.py). Read only: no AI, no write; the next merge of each company withdraws the verdicts."""
@@ -1560,6 +1635,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--seed", type=int, default=26)
     p.add_argument("--days", type=int, default=30, help="cards filed in the last N days")
     p.set_defaults(func=cmd_memory_recall_export)
+
+    p = sub.add_parser("call-memory", help="the call-memory reading of named transcripts and decks (MEMORY_CALL_V2, TODO 83): checked points per document; memory is written only with --apply")
+    p.add_argument("--ids", help="news ids, comma separated")
+    p.add_argument("--out", default="call-memory", help="folder to write (one <news_id>.json each, summary.json)")
+    p.add_argument("--apply", action="store_true", help="also merge the points into each company's memory (call_memory)")
+    p.set_defaults(func=cmd_call_memory)
 
     p = sub.add_parser("prediction-units", help="stored targets judged in two different units, and per-share units on other figures (read only, no AI)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

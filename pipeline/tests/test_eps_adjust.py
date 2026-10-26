@@ -227,3 +227,9 @@ def test_follows_allows_share_count_noise_but_not_a_flip():
     assert follows(10.0, 14.0) and follows(10.0, 4.0)        # 5 points plus share-count noise
     assert follows(1.0, -3.0)                                # within noise
     assert follows(8.0, -2.0) is False                       # signs differ by more than noise
+
+
+def test_a_change_of_another_measure_after_eps_is_not_read_as_the_eps_change():
+    # "EPS at Rs 3.23; revenue grew 2% YoY": the 2% is revenue's, never shown as the EPS change
+    assert eps_adjust.stated_changes("EPS at Rs 3.23; revenue grew 2% YoY") == {}
+    assert eps_adjust.stated_changes("Basic EPS rose 4.5% year-on-year") == {"yoy": 4.5}

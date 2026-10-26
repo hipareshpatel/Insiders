@@ -178,6 +178,8 @@ _STATED = re.compile(
     r"grew|rose|fell|[+\-−])?\s*(?P<n>\d+(?:\.\d+)?)\s*%\s*(?:\(?\s*)?(?P<basis>YoY|Y-o-Y|QoQ|Q-o-Q|year[- ]on[- ]year|"
     r"quarter[- ]on[- ]quarter|sequentially|on a sequential basis)", re.I)
 _DOWN = {"down", "lower", "decline", "declined", "decrease", "decreased", "fell", "-", "−"}
+# another measure named between "EPS" and the figure: the change is that measure's ("EPS at 3.23; revenue grew 2% YoY")
+_OTHER_MEASURE = re.compile(r"revenue|sales|income|profit|\bPAT\b|EBITDA|margin|turnover|dividend|volume|order", re.I)
 
 
 def stated_changes(text: str | None) -> dict[str, float]:
@@ -185,6 +187,8 @@ def stated_changes(text: str | None) -> dict[str, float]:
     first statement of each kind, signed."""
     found: dict[str, float] = {}
     for m in _STATED.finditer(text or ""):
+        if _OTHER_MEASURE.search(m.group(0)[3:m.start("n") - m.start()]):
+            continue
         basis = "qoq" if re.match(r"q|seq|on a seq", m["basis"], re.I) else "yoy"
         sign = -1.0 if (m["sign"] or "").lower() in _DOWN else 1.0
         found.setdefault(basis, sign * float(m["n"]))
@@ -227,7 +231,7 @@ def follow_profit(row: dict, dossier: dict | None, periods: dict, profit, printe
         said = stated.get(label)
         wrong = (computed is not None and profit_pct is not None and share_event(dossier, periods[slot], periods["value"]) is None
                  and not follows(profit_pct, computed))
-        if said is not None and (wrong or computed is None or abs(said - computed) > 1.0):
+        if said is not None and (wrong or computed is None):   # the filing's own change only where the table's is out or missing
             for key in (f"{label}_pct", f"{label}_turn"):
                 row.pop(key, None)
             row[f"{label}_pct"] = said

@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import card_ebitda_profit_v2, card_same_definition, memory_restated, memory_screener
+from .settings import card_ebitda_profit_v2, card_grounded_figures, card_same_definition, memory_restated, memory_screener
 from .models import Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -2356,7 +2356,19 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
         if shown & set(names):
             continue
         unit = {"pct": "pct", "cr": "cr", "inr": "inr"}.get(spec.get("format", "num"), "num")
-        row = line(lambda p, names=names: lookup(names, p), unit == "pct", f"kpi:{spec['metric']}")
+        pick = lambda p, names=names: lookup(names, p)   # noqa: E731
+        if card_grounded_figures():
+            # a figure stored in MW or GW is no ₹ Cr, and a year-ago or previous quarter in another unit than this
+            # quarter's is no base (Emmvee's order book: 10,404 MW shown as crore, +104,990.9% on 9.9 GW; 26 Oct 2026)
+            fmt = spec.get("format", "num")
+            now = stored(names, period)[0]
+            if now is not None and not _unit_fits(fmt, now):
+                continue
+            pick = lambda p, names=names, now=now: (   # noqa: E731
+                None if p != period and now is not None and stored(names, p)[0] is not None
+                and str(stored(names, p)[0].get("unit") or "").upper() != str(now.get("unit") or "").upper()
+                else lookup(names, p))
+        row = line(pick, unit == "pct", f"kpi:{spec['metric']}")
         if row is not None:
             out[f"kpi:{spec['metric']}"] = row
             lines.append({"key": f"kpi:{spec['metric']}", "label": spec["label"], "unit": unit})

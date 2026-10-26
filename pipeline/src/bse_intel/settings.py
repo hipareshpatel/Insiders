@@ -94,6 +94,16 @@ def card_same_definition() -> bool:
     return (_env("CARD_SAME_DEFINITION", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_grounded_figures() -> bool:
+    """CARD_GROUNDED_FIGURES (default off; 26 Oct 2026 live audit): three places where our own code damaged a right figure
+    are refused. (1) An event-XBRL order amount that rounds to 0 Cr (the file gave it in crore, not rupees) is not put on
+    the deal: DSSL's Rs 137.15 Cr order showed 0. (2) The Reg 30 template's own "withdrawal/cancellation or suspension"
+    row is not a withdrawal: Omaxe's RERA approval showed CANCELLED. (3) A KPI whose figure is in MW or GW is not shown
+    as crore or given a change beside a figure of another unit: Emmvee's order book showed 10,404 cr, +104,990.9% QoQ.
+    Read at the call."""
+    return (_env("CARD_GROUNDED_FIGURES", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_consolidated_only() -> bool:
     """CARD_CONSOLIDATED_ONLY (default off; TODO 44, F154; owner, 25 Oct 2026: consolidated first, standalone kept from the
     AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the

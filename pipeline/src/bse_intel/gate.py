@@ -12,7 +12,7 @@ import re
 from pathlib import Path
 
 from .currency import TAIL_PATTERN
-from .settings import quote_exact_numbers
+from .settings import card_grounded_figures, quote_exact_numbers
 
 # --- garbled text (a bad scan or OCR layer): every figure read from it is suspect -------------------------------------
 
@@ -632,8 +632,16 @@ def tranche_total_cr(tranches: list, text: str | None) -> float | None:
 _TERMINATED = re.compile(r"\b(?:terminat\w+|cancel\w*|withdr[ae]w\w*|rescind\w*|called off|abandon\w*|lapse[ds]?)\b", re.I)
 
 
+# The Reg 30 annexure's own row: "Withdrawal/cancellation or suspension of licence/approval ... Not Applicable". It names
+# the question asked, not an event (Omaxe's RERA registration was marked CANCELLED on it, 26 Oct 2026).
+_TEMPLATE_WITHDRAWAL = re.compile(r"\bwithdr[ae]w\w*\s*[/,]?\s*(?:or\s+)?cancel\w*\s*(?:,\s*)?(?:or\s+)?suspen\w*", re.I)
+
+
 def is_terminated(headline: str | None, subject: str | None = None) -> bool:
-    return bool(_TERMINATED.search(f"{headline or ''} {subject or ''}"))
+    text = f"{headline or ''} {subject or ''}"
+    if card_grounded_figures():
+        text = _TEMPLATE_WITHDRAWAL.sub(" ", text)
+    return bool(_TERMINATED.search(text))
 
 
 # --- a deal stage the filing's own words support (live review 3: 4 of 7 WRONG cards) ----------------------------------

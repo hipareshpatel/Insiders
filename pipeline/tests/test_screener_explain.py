@@ -216,7 +216,7 @@ def test_an_eps_on_the_whole_profit_where_screener_is_on_the_owners_share_goes_t
 
 
 def test_a_gap_within_twice_the_tolerance_is_not_explained():
-    # UEL Q2FY25 (review): ours 0.07, screener 0.01, a factor of 5.04 "explained" it by chance
+    # UEL Q2FY25 (review) was 0.07 against 0.01 with a factor of 5.04: a gap of exactly twice the 0.03 floor is not apart
     bonus = [{"kind": "BONUS", "factor": 5.04, "ex_date": "2025-01-10", "subject": "Bonus"}]
     r = run([row("Q2FY25", "eps", 0.07, 0.01)], {"1": {"financial_metrics": [], "corporate_actions": bonus}})["rows"][0]
     assert r["explain_verdict"] == "unexplained"

@@ -100,7 +100,7 @@ def apart(ours: float, theirs: float, metric: str, eps_floor: float = 0.06) -> b
     chance (review placebo: 3.7% false explanations at |EPS| under 0.5). A recorded bonus or split, an exact factor, takes
     a floor of 0.03 instead (second review: EASEMYTRIP 0.19 vs 0.09 after a 1:1 bonus, Motherson 0.30 vs 0.20 after 1:2)."""
     tol = max(eps_floor, 0.005 * abs(theirs)) if metric == "eps" else max(1.0, 0.005 * abs(theirs))
-    return abs(ours - theirs) > 2 * tol
+    return abs(ours - theirs) > 2 * tol + 1e-9   # a gap of exactly twice the tolerance is not apart (float noise)
 
 
 def continuing_ratio(dossier: dict | None, period: str, basis: str | None = None) -> tuple[float, str] | None:

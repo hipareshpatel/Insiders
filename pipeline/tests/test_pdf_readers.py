@@ -537,7 +537,7 @@ def test_tatr_structure_model_loads_when_its_config_has_a_null_dilation(monkeypa
 
 def test_tatr_structure_image_is_resized_by_its_longest_side():
     """The structure processor's size is {"longest_edge": 800} only, which transformers 5 refuses at resize time."""
-    from PIL import Image
+    Image = pytest.importorskip("PIL.Image")   # Pillow comes with the reader extras; CI installs [dev] only
     image = Image.new("RGB", (1600, 400), "white")
     only_longest = types.SimpleNamespace(size=types.SimpleNamespace(longest_edge=800, shortest_edge=None))
     resized, kwargs = prd.TatrReader._longest_side(only_longest, image)

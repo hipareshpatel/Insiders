@@ -193,7 +193,7 @@ def test_a_server_error_is_retried_by_the_next_run_and_a_new_day_starts_again():
 def test_the_time_budget_leaves_companies_and_says_so():
     sink = Sink()
     client, _ = client_for(site, [])
-    ticks = iter([0, 100, 100, 100, 100, 100, 100])
+    ticks = iter([0] + [100] * 20)
     with client:
         out = tijori.run(sink, COMPANIES[:2], client, DAY, time_budget=10, clock=lambda: next(ticks), workers=1)
     assert out["more"] and not sink.objects
@@ -202,7 +202,7 @@ def test_the_time_budget_leaves_companies_and_says_so():
 # --- pace and refusal --------------------------------------------------------------------------------------------
 
 def test_one_shared_limiter_spaces_every_start_by_a_sixth_of_a_second():
-    assert tijori.RATE == 6.0 and tijori.WORKERS == 8
+    assert tijori.RATE == 6.0 and tijori.WORKERS == 32
     client, naps = client_for(site, [])
     with client:
         for _ in range(4):
@@ -516,3 +516,102 @@ def test_the_limit_caps_the_sweep_and_the_estimate_counts_it():
     assert out["slugs_swept"] == 3 and out["slugs_left_to_sweep"] == 7 and sum("/company/" in u for u in seen) == 3
     assert out["ours_unmatched"] == ["ETERNAL", "ABB"]
     assert tijori.estimate(100, rate=10, sweep=50) == {"requests": 151, "seconds": 15}
+
+
+# --- review fixes: speed record, soft blocks, counts, the saved map, two slugs ------------------------------------------
+
+def test_the_summary_records_elapsed_seconds_and_the_achieved_rate():
+    pages = {"zomato-ltd": page_as("ETERNAL")}
+    sink, seen = Sink(seed=False), []
+    client, _ = client_for(sweep_site(pages), seen)
+    ticks = iter([0.0] + [10.0] * 50)
+    with client:
+        out = tijori.run(sink, ETERNAL[:1], client, DAY, workers=1, clock=lambda: next(ticks))
+    assert out["elapsed_seconds"] == 10.0 and out["requests_per_second"] == round(out["requests_made"] / 10.0, 2)
+    assert "elapsed seconds              10.0" in tijori.render(out)
+
+
+def test_a_first_302_in_the_sweep_is_one_miss_retried_next_run_and_only_a_second_miss_is_final():
+    pages = {"zomato-ltd": page_as("ETERNAL")}
+    sink, seen = Sink(seed=False), []
+    state = {"gone": True}
+
+    def answers(url):
+        if "/zomato-ltd/" in url and state["gone"]:
+            return 302, ""
+        return sweep_site(pages)(url)
+    client, _ = client_for(answers, seen)
+    with client:
+        first = tijori.run(sink, ETERNAL[:1], client, DAY, workers=1)
+        assert json.loads(sink.kv[tijori.SLUGS_KEY])["slugs"] == {"zomato-ltd": "!1"} and first["pages_stored"] == 0
+        state["gone"] = False       # the soft block lifts
+        second = tijori.run(sink, ETERNAL[:1], client, DAY, workers=1)
+    assert second["pages_stored"] == 1 and json.loads(sink.kv[tijori.SLUGS_KEY])["slugs"] == {"zomato-ltd": "ETERNAL"}
+    sink2, seen2 = Sink(seed=False), []
+    client, _ = client_for(lambda url: sweep_site({}, extra=["gone-ltd"])(url), seen2)
+    with client:
+        tijori.run(sink2, ETERNAL[:1], client, DAY, workers=1)
+        tijori.run(sink2, ETERNAL[:1], client, DAY, workers=1)
+        assert json.loads(sink2.kv[tijori.SLUGS_KEY])["slugs"] == {"gone-ltd": "!"}
+        seen2.clear()
+        tijori.run(sink2, ETERNAL[:1], client, DAY, workers=1)
+    assert not any("/company/" in u for u in seen2)    # final: not asked again
+
+
+def test_a_long_run_of_302s_is_a_suspected_refusal_that_slows_and_then_stops():
+    n = tijori.MISS_LIMIT * 3
+    sink, seen = Sink(seed=False), []
+    client, naps = client_for(sweep_site({}, extra=[f"gone-{i}-ltd" for i in range(n)]), seen)
+    with client, pytest.raises(tijori.TijoriRefused):
+        tijori.run(sink, ETERNAL[:1], client, DAY, workers=1)
+    assert client.slowed and "302 or 404 in a row" in client.refusal
+
+
+def test_a_few_302s_among_good_pages_are_not_a_refusal():
+    pages = {f"co-{i}-ltd": page_as(f"S{i}") for i in range(5)}
+    extra = [f"gone-{i}-ltd" for i in range(tijori.MISS_LIMIT)]
+    sink, seen = Sink(seed=False), []
+    client, _ = client_for(sweep_site(pages, extra=extra), seen)
+    with client:
+        out = tijori.run(sink, ETERNAL, client, DAY, workers=1)
+    assert not client.slowed and out["slugs_swept"] == 5 + tijori.MISS_LIMIT
+
+
+def test_companies_done_before_counts_only_the_done_list_loaded_at_the_start():
+    pages = {"zomato-ltd": page_as("ETERNAL")}
+    sink, seen = Sink(seed=False), []
+    client, _ = client_for(sweep_site(pages), seen)
+    with client:
+        out = tijori.run(sink, ETERNAL[:1], client, DAY, workers=1)
+    assert out["pages_stored"] == 1 and out["companies_done_before"] == 0 and out["pages_already_stored"] == 0
+
+
+def test_a_rebuild_with_an_empty_sitemap_keeps_the_saved_map():
+    sink, seen = Sink(seed=False), []
+    client, _ = client_for(sweep_site({"zomato-ltd": page_as("ETERNAL")}), seen)
+    with client:
+        tijori.run(sink, ETERNAL[:1], client, DAY, workers=1)
+    saved = sink.kv[tijori.SLUGS_KEY]
+    client, _ = client_for(lambda url: (500, ""), [])
+    with client:
+        out = tijori.run(sink, ETERNAL[:1], client, "2026-10-30", workers=1, rebuild_map=True)
+    assert sink.kv[tijori.SLUGS_KEY] == saved and out["failed"]
+
+
+def test_a_no_tables_page_does_not_finish_a_company_that_has_another_slug():
+    nt = no_tables_page = ('<script id="company_details" type="application/json">%s</script>'
+                           % json.dumps({"symbol": "ABB", "company": "ABB India Ltd."}))
+    pages = {"abb-a-ltd": nt, "abb-b-ltd": page_as("ABB")}
+    # the second slug's page is slower to reach in map order only; the sweep reads both, the first has no tables
+    sink, seen = Sink(seed=False), []
+    client, _ = client_for(sweep_site(pages), seen)
+    with client:
+        out = tijori.run(sink, ETERNAL[1:], client, DAY, workers=1)
+    assert out["pages_stored"] == 1 and out["pages_no_tables"] == 0
+    # and with one slug only, the no-tables page is the answer
+    sink, seen = Sink(seed=False), []
+    client, _ = client_for(sweep_site({"abb-a-ltd": nt}), seen)
+    with client:
+        out = tijori.run(sink, ETERNAL[1:], client, DAY, workers=1)
+    assert out["pages_stored"] == 0 and out["pages_no_tables"] == 1
+    assert json.loads(sink.kv[f"tijoridl:done:{DAY}"]) == ["ABB"]

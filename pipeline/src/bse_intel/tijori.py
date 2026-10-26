@@ -69,11 +69,15 @@ USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHT
               "Chrome/124.0 Safari/537.36")
 RATE = float(os.environ.get("TIJORI_RATE", "6"))   # requests a second, shared by all threads
 SLOW_PAUSE_SECONDS = 3.0                          # after the first refusal: one request every 3 s
-WORKERS = 8
+# Threads. Measured 26 Oct 2026 (trial run 40341400053): 201 requests in 97 s, about 2 a second though the rate is 6, because
+# a GitHub runner's per-request latency is 3-4 s and 8 threads cap the throughput at about 8 / 3.5. With 32 threads the one
+# shared limiter (TIJORI_RATE, 6 a second) is the cap again. The rate and the refusal policy are unchanged.
+WORKERS = int(os.environ.get("TIJORI_WORKERS", "32"))
+MISS_LIMIT = 20                                   # more than this many 302 / 404 answers in a row is a suspected refusal
 SAVE_EVERY = 25                                   # finished companies (or swept slugs) between two saves of the done list / slug map
 PREFIX = "raw/tijori/"
 DONE_KEY = "tijoridl:done"          # + ":<day>": the symbols a run finished
-SLUGS_KEY = "tijoridl:slugs"        # {"built": iso, "slugs": {slug: page symbol | "" (none on the page) | "!" (no page)}}, kept between days
+SLUGS_KEY = "tijoridl:slugs"        # {"built": iso, "slugs": {slug: page symbol | "" (none on the page) | "!1" (no page once, asked again next run) | "!" (no page twice)}}, kept between days
 SITEMAP_COMPANIES = 5741            # measured 26 Oct 2026; only the estimate before a run uses it
 TABLES_ID = "fin_tables_data"
 DROP_WORDS = frozenset({"limited", "ltd", "the"})
@@ -255,6 +259,7 @@ class TijoriClient:
         self.slowed_after: int | None = None    # requests made when the first refusal came
         self.refusal: str | None = None         # the first refusal's reason
         self._stopped: str | None = None
+        self._misses = 0                        # 302 / 404 answers in a row
 
     def __enter__(self):
         return self
@@ -303,6 +308,18 @@ class TijoriClient:
             if response.status_code in (403, 429, 503):
                 self._refused(f"HTTP {response.status_code} from {url}", was_slow)
                 continue
+            if response.status_code in (302, 404):
+                with self._lock:
+                    self._misses += 1
+                    streak = self._misses > MISS_LIMIT
+                    if streak:
+                        self._misses = 0
+                if streak:    # real dead slugs are rare: a long run of them is a soft block, so slow down (then stop) and ask again
+                    self._refused(f"more than {MISS_LIMIT} answers of 302 or 404 in a row (last from {url})", was_slow)
+                    continue
+                return response.status_code, ""
+            with self._lock:
+                self._misses = 0
             if response.status_code != 200:
                 return response.status_code, ""
             body = response.text
@@ -387,7 +404,7 @@ def _sweep_fetch(client, slug: str, ours: set) -> dict:
         elif symbol and symbol in ours:
             out["blob"] = pack(json.dumps(tables, separators=(",", ":"), ensure_ascii=False))
         return out
-    if status in (302, 404):
+    if status in (302, 404):    # not final on first sight: ``run`` records "!1" and asks again next run (a soft block redirects)
         return {"kind": "swept", "symbol": "!"}
     return {"kind": "failed", "note": f"sweep {slug}: {'HTTP ' + str(status) if status else body}"[:200]}
 
@@ -409,6 +426,7 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
     only against slugs whose page had no symbol."""
     key = f"{DONE_KEY}:{day}"
     done = set() if restart else set(json.loads(sink.kv_get(key) or "[]"))
+    done_at_start = set(done)    # "finished by an earlier run" counts only these, not what this run's sweep finished
     stored = set(sink.list_objects(f"{PREFIX}{day}/"))
     totals = {"day": day, "companies": len(companies), "companies_done_before": 0, "pages_stored": 0,
               "pages_already_stored": 0, "pages_no_page": 0, "pages_not_verified": 0, "pages_no_tables": 0,
@@ -422,9 +440,11 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
     slug_map = {} if rebuild_map else load_slug_map(sink)
     built = now_iso()
     ours = {symbol.strip().upper(): symbol for _, symbol, _ in companies}
-    deadline = clock() + time_budget
+    started = clock()
+    deadline = started + time_budget
     deferred = threading.Event()
     map_unsaved = 0
+    sweep_no_tables: set[str] = set()    # symbols whose swept page had no tables: finished only when no other slug carries the symbol
 
     def have(symbol: str) -> bool:
         return symbol in done or object_key(day, symbol) in stored
@@ -458,6 +478,11 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
                 not_verified.append(got["note"])
         return True
 
+    def finish_totals() -> None:
+        totals["requests_made"] = client.requests - before
+        totals["elapsed_seconds"] = round(max(clock() - started, 0.0), 1)
+        totals["requests_per_second"] = round(totals["requests_made"] / totals["elapsed_seconds"], 2) if totals["elapsed_seconds"] else 0.0
+
     def put(symbol: str, blob: bytes) -> None:
         sink.put_object(object_key(day, symbol), blob, "application/gzip")
         stored.add(object_key(day, symbol))
@@ -469,7 +494,7 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
     by_name_symbols: set[str] = set()
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
         # (2) the sweep
-        to_sweep = [s for s in slugs if s not in slug_map]
+        to_sweep = [s for s in slugs if s not in slug_map or slug_map[s] == "!1"]    # "!1": no page last time, asked once more
         if sweep_limit is not None:
             to_sweep = to_sweep[:sweep_limit]
         futures = [(s, pool.submit(work, _sweep_fetch, client, s, set(ours))) for s in to_sweep]
@@ -490,7 +515,10 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
                 suspect.append(got["note"])
                 continue
             totals["slugs_swept"] += 1
-            slug_map[slug] = got["symbol"]
+            if got["symbol"] == "!":    # a first miss is "!1" (retried next run); only a second miss is final
+                slug_map[slug] = "!" if slug_map.get(slug) == "!1" else "!1"
+            else:
+                slug_map[slug] = got["symbol"]
             map_unsaved += 1
             symbol = ours.get(got["symbol"])
             if symbol and "blob" in got and not have(symbol):
@@ -498,20 +526,19 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
                 done.add(symbol)
                 unsaved += 1
             elif symbol and got.get("no_tables") and not have(symbol):
-                totals["pages_no_tables"] += 1
-                done.add(symbol)
-                unsaved += 1
+                sweep_no_tables.add(symbol)
             if map_unsaved >= SAVE_EVERY:
                 save_slug_map(sink, slug_map, built)
                 map_unsaved = 0
             if unsaved >= SAVE_EVERY:
                 sink.kv_set(key, json.dumps(sorted(done)), now_iso())
                 unsaved = 0
-        save_slug_map(sink, slug_map, built)
+        if slugs:    # a failed or empty sitemap never overwrites the saved map (a --rebuild-map run starts from {})
+            save_slug_map(sink, slug_map, built)
         sink.kv_set(key, json.dumps(sorted(done)), now_iso())
         unsaved = 0
         if refused:
-            totals["requests_made"] = client.requests - before
+            finish_totals()
             raise refused
 
         # (3) our companies by their symbol in the map, (4) then by name against the slugs with no symbol
@@ -520,13 +547,18 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
             if sym and sym != "!" and sym in ours:
                 by_symbol.setdefault(sym, []).append(slug)
         by_symbol = {k: sorted(v) for k, v in by_symbol.items()}
+        for symbol in sorted(sweep_no_tables):    # one slug: its page is the answer; two or more: the todo list tries each in turn
+            if len(by_symbol.get(symbol.upper(), [])) <= 1 and not have(symbol):
+                totals["pages_no_tables"] += 1
+                done.add(symbol)
         todo = []
         rest = []
         for scrip, symbol, name in companies:
             up = symbol.strip().upper()
             if up in by_symbol:
                 if symbol in done:
-                    totals["companies_done_before"] += 1
+                    if symbol in done_at_start:
+                        totals["companies_done_before"] += 1
                 elif object_key(day, symbol) in stored:
                     totals["pages_already_stored"] += 1
                     done.add(symbol)
@@ -542,7 +574,8 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
                 continue
             by_name_symbols.add(symbol)
             if symbol in done:
-                totals["companies_done_before"] += 1
+                if symbol in done_at_start:
+                    totals["companies_done_before"] += 1
             elif object_key(day, symbol) in stored:
                 totals["pages_already_stored"] += 1
                 done.add(symbol)
@@ -567,7 +600,7 @@ def run(sink, companies: list[tuple[str, str, str]], client, day: str, time_budg
                 sink.kv_set(key, json.dumps(sorted(done)), now_iso())
                 unsaved = 0
     sink.kv_set(key, json.dumps(sorted(done)), now_iso())
-    totals["requests_made"] = client.requests - before
+    finish_totals()
     if refused:
         raise refused
     unmatched = [symbol for _, symbol, _ in companies if symbol.strip().upper() not in by_symbol and symbol not in by_name_symbols]
@@ -601,4 +634,6 @@ def render(outcome: dict) -> str:
         f"pages that failed            {outcome['pages_failed']}",
         f"suspect pages (retried)      {outcome['pages_suspect']}",
         f"requests made                {outcome['requests_made']}",
+        f"elapsed seconds              {outcome['elapsed_seconds']}",
+        f"requests a second            {outcome['requests_per_second']}",
         f"bytes stored (gzip)          {outcome['bytes_stored']}"])

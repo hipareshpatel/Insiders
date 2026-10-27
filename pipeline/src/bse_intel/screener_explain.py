@@ -19,6 +19,11 @@ and later restatements cause, and send only the rest to the PDF referee (``pdf_r
    EPS on today's share count and ours is the figure as filed. ``factor`` and the action subjects go to ``detail``. A rights
    issue has no factor (partly-paid and premium shares: none is invented); it is left to step 2, and ``detail`` says
    "rights issue on <date> between the period and today" so the report can count those rows.
+1a. ``excise_netted`` (revenue only). Screener reports sales net of excise duty where a company's revenue from operations
+   includes it ("Companies are now required to report sales net of excise duty and discounts. Screener automatically excludes
+   items where not excluded", screener.in/guides/optimizations, read 27 Oct 2026; measured the same day on PICCADIL Q2FY25,
+   revenue 200.52 Cr with excise 15.61 Cr in it, screener 185). If memory holds ``excise_duty`` for the period on the row's
+   basis and screener's revenue is ours less it, that is the cause and ours is the company's own line.
 2. ``restated_later`` (revenue, profit, EPS). The same period's figure as printed in a LATER NSE results file. Memory
    already keeps a later file's comparative column as a separate source of the metric entry (``restated_from``,
    ``dossier._metric_entry``, F167; ``nse_selfcheck`` part a), so the dossier is read first (``later_from`` = memory, no
@@ -52,7 +57,7 @@ from .timeutil import today_ist
 
 log = logging.getLogger(__name__)
 
-VERDICTS = ("eps_continuing_vs_total", "share_adjusted", "restated_later", "eps_owners_vs_total", "unexplained",
+VERDICTS = ("eps_continuing_vs_total", "share_adjusted", "excise_netted", "restated_later", "eps_owners_vs_total", "unexplained",
             "not_explained_input", "not_run")
 # rows the PDF referee still takes from explained.csv: an EPS on the whole profit where screener's is on the owners' share
 # is a question about our figure, not an explanation (independent review, 26 Oct 2026: AFSL Q2FY25 EPS 5.46 on profit 27.38,
@@ -178,6 +183,11 @@ def explain_pair(files: CompanyFiles, dossier: dict | None, row: dict, today: st
                            detail="; ".join([f"x{factor:g}: " + "; ".join(eps_adjust.describe(a) for a in actions)] + notes))
                 return out
             notes.append(f"factor {factor:g} does not reach screener")
+    if metric == "revenue":
+        excise = memory_value(dossier, "excise_duty", period, row.get("basis") or None)
+        if excise and excise > 0 and apart(ours, theirs, metric) and _close(ours - excise, theirs, metric):
+            out.update(explain_verdict="excise_netted", detail=f"screener's revenue is ours less excise duty {excise:g}")
+            return out
     got = memory_later(dossier, row)
     origin = "memory"
     if got is None:

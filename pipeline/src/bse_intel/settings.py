@@ -237,6 +237,15 @@ def eps_share_adjust() -> bool:
     return (_env("EPS_SHARE_ADJUST", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def xbrl_filer_checks() -> bool:
+    """XBRL_FILER_CHECKS (default off; TODO 109, F219): where the filer's own NSE XBRL contradicts itself, two signals in the
+    file must agree before a figure is trusted. (A) owners' + minority profit against the whole profit, decided by the EPS
+    share count of the file's other periods; (B) a profit the EPS and the other periods' share count contradict is held,
+    not kept, even where the year-against-quarters check cannot run; (C) a lender's revenue that equals its total income
+    beside an "other revenue from operations" is held. Off: the reader copies the file as before. Read at the call."""
+    return (_env("XBRL_FILER_CHECKS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def file_cap() -> int:
     """FILE_CAP (default 0 = no cap; F213): the most NSE/BSE files one run downloads, the rest waiting for the next run. The
     owner set a cap of 100 on 27 Oct 2026 and lifted it the same day ("Ignore rule of 100, continue with existing rule");

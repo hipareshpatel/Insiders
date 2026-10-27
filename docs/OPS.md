@@ -76,8 +76,8 @@ Every maintenance run stays here until its result is read and acted on; the 15-m
 | 40388046768 | pdf-referee-ensemble, 20 pairs | 1 matched ours, 24 unsure | Trial only |
 | 40387696323 | pdf-referee | Failed: runner lost (GitHub side), log gone | Same step now in 40393302149 |
 | 40414799620 | pdf-referee-ensemble hardset | Done. 340 key figures. Right / wrong / no answer: docling 54/0/286, native (ours) 65/10/265, tatr 36/5, marker 44/7, tabula 40/9, mineru 60/18, paddle 39/24, rapidtable 26/19, surya 17/16, camelot 12/8, pdfplumber 12/7. Ensemble settled 14, all right; 130 disagreements | No reader answers most figures; docling is never wrong but answers 16%. Decide the reader set from this |
-| 40407491267 | release-check | Running 5 h with no change since 03:19 IST: probably hung; GitHub stops it about 09:19 IST | Re-run in parts if it ends with nothing |
-| 40393302149 | pdf-referee "explained" | Running 4 h 40 min in the step that lost its runner before; GitHub stops it about 09:36 IST | Read what it saved |
+| 40407491267 | release-check | Stopped by GitHub at 6 h (08:49 IST), nothing saved. It hung on our own site's API ("Server disconnected without sending a response" for nse-106605841, nse-106606044, memory/544570), not on NSE | Make it save as it goes, run in parts |
+| 40393302149 | pdf-referee "explained" | Done (5 h budget). 1,982 open pairs: PDF = ours 130, PDF = screener 9, = NSE file 1, none 9, unsure 151, unreadable 178, not run 1,504 | Run the rest after the PDF date/page fix (F215) and the file cap |
 | not run | memory-gaps-fill-bse dry run, text-backfill | Never ran (skipped in the chain) | Dispatch |
 | not found | seed signs APARINDS Q1FY27, PVRINOX Q1FY25, GLENMARK Q4FY26 | No run re-read them | seed-memory with ids |
 

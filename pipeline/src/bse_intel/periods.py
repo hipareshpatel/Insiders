@@ -29,8 +29,15 @@ def _fy_from_span(text: str) -> int | None:
     return None
 
 
-def explicit_date(text: str | None) -> date | None:
-    """A calendar date written out: 2026-11-15, 15-11-2026, 15.11.2026, 15 November 2026, November 15, 2026."""
+# the guard at the end: "31.03.20 24", a year split by a space, is not 2020
+_TWO_DIGIT_YEAR = re.compile(r"(?<![\w./,])(\d{1,2})(?:ST|ND|RD|TH)?[\s-]*" + _MON + r"[\s,-]*(\d{2})(?![\w.,]?\d)(?!(?<=20)\s(?:1[5-9]|2\d)\b(?![-./]))")
+_TWO_DIGIT_NUMERIC = re.compile(r"(?<![\w./,-])(\d{1,2})[./-](\d{1,2})[./-](\d{2})(?![\w.,/-]?\d)(?!(?<=20)\s(?:1[5-9]|2\d)\b(?![-./]))")
+
+
+def explicit_date(text: str | None, two_digit: bool = False) -> date | None:
+    """A calendar date written out: 2026-11-15, 15-11-2026, 15.11.2026, 15 November 2026, November 15, 2026.
+    ``two_digit`` (the PDF referee and readers only, F215, PDF_DATES_2DIGIT) also reads a two-digit year after a day and a
+    month name or number: "31-Mar-24", "31Mar-23", "30 September 24", "31.03.24"; never a day-month pair alone ("31-24")."""
     if not text:
         return None
     s = text.strip().upper()
@@ -43,6 +50,11 @@ def explicit_date(text: str | None) -> date | None:
             return date(int(m[3]), _MONTHS[m[2].lower()], int(m[1]))
         if m := re.search(_MON + r"\s+(\d{1,2})(?:ST|ND|RD|TH)?,?\s+(20\d{2})\b", s):
             return date(int(m[3]), _MONTHS[m[1].lower()], int(m[2]))
+        if two_digit:
+            if (m := _TWO_DIGIT_YEAR.search(s)) and int(m[3]) <= 40:
+                return date(2000 + int(m[3]), _MONTHS[m[2].lower()], int(m[1]))
+            if (m := _TWO_DIGIT_NUMERIC.search(s)) and int(m[3]) <= 40:
+                return date(2000 + int(m[3]), int(m[2]), int(m[1]))
     except ValueError:
         return None
     return None

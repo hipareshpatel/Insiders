@@ -65,9 +65,13 @@ def answer_pair(ensemble, payload: bytes | None, pair: dict) -> dict:
     verdict = settle(readings)
     tol = max([r.tol for r in readings if r.reader in verdict.agreed] or [MIN_TOL])
     return {**{k: pair[k] for k in ("symbol", "period", "metric", "basis", "pdf_url", "expected", "tags")},
-            "readers": {r.reader: {"status": r.status, "value": r.value, "tol": r.tol} for r in readings},
+            "readers": {r.reader: {"status": r.status, "value": r.value, "tol": r.tol, "note": r.note[:200], "page": r.page}
+                        for r in readings},
             "verdict": {"status": verdict.status, "value": verdict.value, "tol": tol, "agreed": verdict.agreed,
                         "disagreed": verdict.disagreed, "reason": verdict.reason}}
+
+
+SCAN_ONLY_TAG = "scanned_no_text_layer"      # key rows whose figure is in no text layer: only an OCR reader can answer them
 
 
 def _count() -> dict:
@@ -82,11 +86,14 @@ def score(records: list[dict]) -> dict:
     by_tag: dict[str, dict[str, dict]] = defaultdict(lambda: defaultdict(_count))
     false_settlements: list[dict] = []
     verdicts: dict[str, int] = defaultdict(int)
+    by_layer: dict[str, dict[str, dict]] = {"text_layer": defaultdict(_count), "scan_only": defaultdict(_count)}
     for rec in records:
         exp = rec["expected"]
+        group = by_layer["scan_only" if SCAN_ONLY_TAG in rec["tags"] else "text_layer"]
         for name, rd in rec["readers"].items():
             o = outcome(rd["status"], rd["value"], exp, rd["tol"])
             readers.setdefault(name, _count())[o] += 1
+            group[name][o] += 1
             for t in rec["tags"]:
                 by_tag[t][name][o] += 1
         v = rec["verdict"]
@@ -102,6 +109,7 @@ def score(records: list[dict]) -> dict:
                                       "basis": rec["basis"], "settled": v["value"], "expected": exp,
                                       "agreed": v["agreed"], "tags": rec["tags"], "pdf_url": rec["pdf_url"]})
     return {"pairs": len(records), "readers": readers, "ensemble": ensemble, "verdicts": dict(verdicts),
+            "by_layer": {g: {k: dict(c) for k, c in d.items()} for g, d in by_layer.items()},
             "by_tag": {t: {k: dict(c) for k, c in d.items()} for t, d in sorted(by_tag.items())},
             "false_settlements": false_settlements}
 
@@ -127,6 +135,12 @@ def to_markdown(s: dict) -> str:
     for tag, d in s["by_tag"].items():
         out.append(f"| {tag} | " + " | ".join(
             "{}/{}/{}".format(*(d.get(n, _count())[k] for k in ("right", "wrong", "abstain"))) for n in names) + " |")
+    for group, title in (("text_layer", "Rows with a text layer"), ("scan_only", "Scan-only rows (no text layer: only OCR can answer)")):
+        d = s.get("by_layer", {}).get(group)
+        if d:
+            out += ["", f"## {title} (right/wrong/abstain)", "",
+                    "| Reader | right/wrong/abstain |", "|---|---|"]
+            out += [f"| {n} | {c['right']}/{c['wrong']}/{c['abstain']} |" for n, c in sorted(d.items())]
     out += ["", f"## The ensemble's false settlements ({len(s['false_settlements'])})", ""]
     out += [f"- {f['symbol']} {f['period']} {f['basis']} {f['metric']}: settled {f['settled']:g}, printed {f['expected']:g} "
             f"(agreed: {'+'.join(f['agreed'])}; tags: {', '.join(f['tags'])})" for f in s["false_settlements"]] or ["None."]

@@ -111,6 +111,7 @@ _INTEREST_SUB = re.compile(r"^\W*(?:\(?[a-d]\)|\(?[ivx]+\)|[a-d]\.|[ivx]+\.)\s*(
 _TOTAL_INCOME = re.compile(r"^\W*(?:[\divx]+\W+|[a-d]\W+)?total\s+income\b(?!\s+(?:from|tax))", re.I)
 _PAT_NAME = re.compile(r"^\W*(?:[ivx]+\W+|\d+\W+|[a-d]\)\s*)?(?:net\s+|total\s+)?(?:profit|loss)\b[^\d]{0,40}?"
                        r"(?:for\s+the\s+(?:period|year|quarter)|after\s+tax|after\s+taxes)", re.I)
+_PAT_TOTAL = re.compile(r"for\s+the\s+(?:period|year|quarter)", re.I)
 _PAT_NOT = re.compile(r"before|attributable|owners|comprehensive|continuing|discontinued|per\s+share|margin|%|"
                       r"minority|non[- ]controlling|exceptional|share\s+of", re.I)
 _EPS = re.compile(r"earnings?\s+per\s+(?:equity\s+)?share[^\d]{0,60}basic|^\W*(?:\(?[a-d]\)?\W+)?basic\b", re.I)
@@ -143,14 +144,28 @@ _MONTH = r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?"
 _DATE_LOOSE = re.compile(r"\b\d{1,2}[./-]\d{1,2}[./-]20\d{2}\b|\b\d{1,2}(?:st|nd|rd|th|[^\w\s]{1,2}t?)?[ -]+" + _MONTH
                          + r",?[ -]+20\d{2}\b|\b" + _MONTH + r" \d{1,2},? 20\d{2}\b", re.I)
 _DAY_NOISE = re.compile(r"(?<=\d)(?:st|nd|rd|th|[^\w\s]{1,2}t?)(?=[ -]+[A-Za-z])", re.I)
+# the same with a two-digit year after a day and a month name or number ("31-Mar-24", "31Mar-23", "31.03.24"); F215, PDF_DATES_2DIGIT
+_DATE_LOOSE_2 = re.compile(_DATE_LOOSE.pattern + r"|(?<![\w./,])\d{1,2}(?:st|nd|rd|th)?[ -]*" + _MONTH + r"[ ,-]*\d{2}(?![\w.,]?\d)(?!(?<=20)\s(?:1[5-9]|2\d)\b(?![-./]))"
+                           r"|(?<![\w./,-])\d{1,2}[./-]\d{1,2}[./-]\d{2}(?![\w.,/-]?\d)(?!(?<=20)\s(?:1[5-9]|2\d)\b(?![-./]))", re.I)
 
 
-def _date_of(text: str) -> date | None:
-    return explicit_date(re.sub(r"[ ]{2,}", " ", _DAY_NOISE.sub("", text)))
+def _row_fixes() -> bool:
+    from .settings import get_settings
+    return get_settings().pdf_row_fixes
+
+
+def _two_digit() -> bool:
+    from .settings import get_settings
+    return get_settings().pdf_dates_2digit
+
+
+def _date_of(text: str, two_digit: bool = False) -> date | None:
+    return explicit_date(re.sub(r"[ ]{2,}", " ", _DAY_NOISE.sub("", text)), two_digit)
 
 
 def _dates_in(line: str) -> list[date]:
-    return [d for m in _DATE_LOOSE.finditer(line) if (d := _date_of(m[0]))]
+    two = _two_digit()
+    return [d for m in (_DATE_LOOSE_2 if two else _DATE_LOOSE).finditer(line) if (d := _date_of(m[0], two))]
 
 
 _MARCH_YEAR = re.compile(r"year\s+ended\W{0,12}(?:on\W+)?(?:\d{1,2}\W{0,3}(?:st|nd|rd|th|t)?\W{0,3}mar|mar|\d{1,2}[./-]0?3[./-])", re.I)
@@ -202,8 +217,9 @@ def _groups(region: str, dates: list[date]) -> list[str] | None:
     events: list[tuple[int, str, object]] = []
     for m in _GROUP.finditer(region):
         events.append((m.start(), "g", m.lastgroup))
-    for m in _DATE_LOOSE.finditer(region):
-        if (d := _date_of(m[0])):
+    two = _two_digit()
+    for m in (_DATE_LOOSE_2 if two else _DATE_LOOSE).finditer(region):
+        if (d := _date_of(m[0], two)):
             events.append((m.start(), "d", d))
     events.sort(key=lambda e: e[0])
     kinds = [e for e in events if e[1] == "g"]
@@ -282,7 +298,8 @@ def _align(row_words: list[tuple], header_words: list[tuple], dates: list[date],
     """The figure under each header date by position, when the row has fewer cells than the header has dates (a nil cell
     printed as nothing). Only when each date is one word, each figure is one word and every figure sits clearly under one date,
     in order; else None."""
-    hdr = _centres(header_words, lambda w: bool(_DATE.fullmatch(w)) and explicit_date(w) is not None)
+    two = _two_digit()
+    hdr = _centres(header_words, lambda w: bool((_DATE_LOOSE_2 if two else _DATE).fullmatch(w)) and explicit_date(w, two) is not None)
     figs = [(c, w) for c, w in _centres(row_words, lambda w: True) if (n := numbers_on(w)) and len(n) == 1 and n[0][1]]
     if len(hdr) != len(dates) or len(figs) != len(figures) or len(hdr) < 2:
         return None
@@ -313,6 +330,27 @@ def _bare_unit(lines: list[str], header: int) -> float | None:
         if len(probe) <= 40 and (m := _BARE_UNIT.match(probe)):
             found.add(_PER_CRORE.get(m[1].lower().rstrip("s.").rstrip("s")))
     return found.pop() if len(found) == 1 and None not in found else None
+
+
+_DATE_TOKEN = re.compile(r"\d{1,2}\s?[./-]\s?\d{1,2}\s?[./-]\s?[\dOolI\]\[|]{1,4}(?!\d)")
+
+
+def _with_extra_date(header: str, figures: int) -> str | None:
+    """The header line with its last date token, which the text layer garbled ("31 .03.202]"), read again, when the row has one
+    figure more than the header has dates and the line shows exactly one date-like token for each figure with only the last one
+    unread: a trailing date column the layer lost, not a sub-total. The standard six-column layout (three quarters, the half year
+    or nine months and its year-ago twin, then the last year end) says which date it is: 31 March of the first date's year; the
+    token's own visible digits must agree ("31 .03.202" starts "2023"). None when the line is not that (F215, PDF_ROW_FIXES)."""
+    tokens = list(_DATE_TOKEN.finditer(header))
+    dates = _dates_in(header)
+    if figures != 6 or len(tokens) != 6 or len(dates) != 5 or _dates_in(tokens[-1][0]):
+        return None
+    parts = re.findall(r"\d+", tokens[-1][0])
+    d0 = dates[0]
+    if len(parts) < 3 or (int(parts[0]), int(parts[1])) != (31, 3) or d0.month not in (9, 12) or len(parts[2]) < 3 \
+            or not str(d0.year).startswith(parts[2]):
+        return None
+    return header[:tokens[-1].start()] + f"31.03.{d0.year}" + header[tokens[-1].end():]
 
 
 def _odd_figures(line: str, start: int) -> set[int]:
@@ -387,8 +425,12 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
             rows.append(row)
             continue
         dates = _dates_in(lines[header])
+        shown = lines
+        if len(figures) == len(dates) + 1 and _row_fixes() and (fixed := _with_extra_date(lines[header], len(figures))):
+            shown = lines[:header] + [fixed] + lines[header + 1:]
+            dates = _dates_in(fixed)
         row.dates = dates
-        wide = "\n".join(lines[max(0, header - GROUP_LINES_ABOVE): min(i, header + 2)])
+        wide = "\n".join(shown[max(0, header - GROUP_LINES_ABOVE): min(i, header + 2)])
         row.group_words = {m.lastgroup for m in _GROUP.finditer(wide)}
         if len(figures) != len(dates):
             row.aligned = _align(positions[i], positions[header], dates, figures) if positions is not None else None
@@ -400,12 +442,12 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
                 row.odd = {k for k, v in enumerate(row.aligned) if v is not None and v in [figures[j] for j in row.odd]}
         kinds = None
         for above in range(GROUP_LINES_ABOVE, -1, -1):   # a title line above may add group words: try fewer lines
-            region = "\n".join(lines[max(0, header - above): min(i, header + 2)])
+            region = "\n".join(shown[max(0, header - above): min(i, header + 2)])
             kinds = _groups(region, dates)
             if kinds is not None and len(set(zip(kinds, dates))) == len(dates):   # one word for all five: not a proof
                 break
             kinds = None
-        march = bool(_MARCH_YEAR.search("\n".join(lines[max(0, header - 12): header + 2])))
+        march = bool(_MARCH_YEAR.search("\n".join(shown[max(0, header - 12): header + 2])))
         if kinds is None and (pattern := _pattern_kinds(dates, march)) is not None and row.group_words <= set(pattern):
             kinds = pattern
         if kinds is not None:
@@ -552,6 +594,7 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
     values: list[tuple[float, str, int]] = []
     siblings: list[list[float]] = []       # per value: the row's other figures, in the same unit (a joined-cell check)
     unsure: list[str] = []
+    totals: list[bool] = []                # per value: the label is the bottom-line total ("Profit for the period")
     seen = 0
     for r in rows:
         if r.metric != metric:
@@ -595,8 +638,15 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
             continue
         value = cell if metric == "eps" else cell / r.unit
         values.append((value, r.label[:60], r.page))
+        totals.append(bool(_PAT_TOTAL.search(r.label)))
         siblings.append([f / (1 if metric == "eps" else r.unit) for k, f in enumerate(r.figures)
                          if k != index and f is not None])
+    if metric == "pat" and _row_fixes() and len({round(v, 4) for v, _, _ in values}) > 1 and any(totals):
+        # a table with "Profit after tax (5-6)" and, below the share of associates, "Profit for the period (7+8)": the total is
+        # the bottom line; the rows above it are steps (F215, PDF_ROW_FIXES). Basis, unit and column proofs are unchanged.
+        keep = [k for k, t in enumerate(totals) if t]
+        if len({round(values[k][0], 4) for k in keep}) == 1:
+            values, siblings = [values[k] for k in keep], [siblings[k] for k in keep]
     return {"values": values, "unsure": "; ".join(dict.fromkeys(unsure)), "found": seen, "siblings": siblings}
 
 

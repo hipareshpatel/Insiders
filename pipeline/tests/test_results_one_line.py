@@ -324,3 +324,71 @@ def test_a_basis_word_counts_only_near_the_figure_and_a_company_name_is_no_basis
     # but a basis word beside the figure leaves it alone
     near = "Acme: revenue ₹1,153 Cr as reported"
     assert headline(near) == near
+
+
+# the refresh dry run of 28 Oct 2026: the year's revenue set against the quarter's row, and guided figures, were labelled
+def test_a_figure_of_another_period_or_a_guided_one_is_not_labelled(monkeypatch):
+    _on(monkeypatch)
+    block = {"period": "Q4FY26", "revenue": {"value": 852.85}, "ebitda": {"value": 16.37}, "lines": LINES}
+
+    def headline(text, results=block):
+        card = {"headline": text, "results": copy.deepcopy(results)}
+        results_one_line.apply_card_json(card)
+        return card["headline"]
+
+    for text in ("VRL Logistics FY26 revenue rose 2% YoY to ₹3,245 Cr; PAT jumped 29% to ₹237 Cr",
+                 "Solex Energy FY26 revenue rose 144% to ₹1,618 Cr; Q4 up 248% YoY",
+                 "Acme 9M FY26 revenue ₹2,400 Cr", "Acme 9MFY26 revenue ₹2,400 Cr", "Acme Q3FY26 revenue ₹700 Cr",
+                 "Coforge H1FY27: revenue ₹11,698.5 Cr", "Himadri H1 FY27 revenue rises 43% YoY to ₹3,123 Cr",
+                 "Ircon guides FY27 revenue flat at ~₹9,000 Cr", "Adani Ports guides for FY31 revenue of ₹91,500 Cr",
+                 "SML Mahindra Q4FY26 revenue up 16% YoY; FY31 revenue target set at ₹15,000 Cr",
+                 "Kanoria Q4FY26 EBITDA jumped to ₹16.37 Cr from ₹1.8 Cr"):
+        assert headline(text) == text, text
+    # the block's own quarter, or no period named, is still compared
+    assert headline("Acme Q4FY26 revenue ₹1,000 Cr").endswith("(company-reported; results table ₹852.85 Cr)")
+    assert headline("Acme Q4 FY26: revenue ₹1,000 Cr").endswith("(company-reported; results table ₹852.85 Cr)")
+    assert headline("Acme: revenue ₹1,000 Cr").endswith("(company-reported; results table ₹852.85 Cr)")
+    # a year's row against a year's figure is compared too
+    year = {**block, "period": "FY26", "revenue": {"value": 3245.0}}
+    assert headline("Acme FY26 revenue ₹3,500 Cr", year).endswith("(company-reported; results table ₹3,245 Cr)")
+
+
+def test_a_key_number_of_another_quarter_is_not_labelled(monkeypatch):
+    _on(monkeypatch)
+    card = {"key_numbers": [{"label": "Q3 revenue", "value": "₹700 Cr"}, {"label": "Q4 revenue", "value": "₹1,000 Cr"}],
+            "results": {"period": "Q4FY26", "revenue": {"value": 852.85}, "lines": LINES}}
+    results_one_line.apply_card_json(card)
+    assert card["key_numbers"][0]["label"] == "Q3 revenue"
+    assert card["key_numbers"][1]["label"] == "Q4 revenue (company-reported; results table ₹852.85 Cr)"
+
+
+def test_the_period_is_compared_in_full_and_after_the_figure_too(monkeypatch):
+    """Review of 28 Oct 2026: another year of the same quarter, a year's or a half's row, a period named after the figure,
+    and the shapes 4QFY26, FY27E, a bare FY, 'expected' were still labelled."""
+    _on(monkeypatch)
+    q4 = {"period": "Q4FY26", "revenue": {"value": 852.85}, "lines": LINES}
+    fy = {"period": "FY26", "revenue": {"value": 3245.0}, "lines": LINES}
+    h1 = {"period": "H1FY27", "revenue": {"value": 2400.0}, "lines": LINES}
+
+    def headline(text, results):
+        card = {"headline": text, "results": copy.deepcopy(results)}
+        results_one_line.apply_card_json(card)
+        return card["headline"]
+
+    for text, block in (("Acme Q4FY25 revenue ₹1,000 Cr", q4), ("Acme 4QFY25 revenue ₹1,000 Cr", q4),
+                        ("Acme revenue ₹3,245 Cr in FY26", q4), ("Acme revenue ₹3,245 Cr for the year", q4),
+                        ("Q4FY26 results: FY revenue ₹3,245 Cr", q4), ("Acme FY27E revenue ₹4,000 Cr", q4),
+                        ("Acme projected revenue ₹1,000 Cr", q4), ("Acme targets revenue of ₹1,000 Cr", q4),
+                        ("Acme Q4FY26E revenue ₹9,000 Cr", q4), ("Acme revenue ₹3,245 Cr in Fiscal 2026", q4),
+                        ("Acme Q4 revenue ₹800 Cr", fy), ("Acme Q4FY26 revenue ₹800 Cr", fy), ("Acme 9M FY26 revenue ₹2,400 Cr", fy),
+                        ("Acme H1FY26 revenue ₹2,400 Cr", fy), ("Acme FY25 revenue ₹2,900 Cr", fy), ("Acme Q3 revenue ₹1,300 Cr", h1)):
+        assert headline(text, block) == text, (text, block["period"])
+    # the block's own period, however it is written, is still compared
+    for text, block in (("Acme 4QFY26 revenue ₹1,000 Cr", q4), ("Acme Q4 FY2026 revenue ₹1,000 Cr", q4),
+                        ("Acme revenue ₹1,000 Cr in Q4", q4), ("Acme FY2026 revenue ₹3,500 Cr", fy),
+                        ("Acme H1 FY27 revenue ₹2,600 Cr", h1)):
+        assert "(company-reported; results table" in headline(text, block), (text, block["period"])
+    card = {"key_numbers": [{"label": "Q4FY25 revenue", "value": "₹700 Cr"}, {"label": "Q4 revenue", "value": "₹800 Cr"}],
+            "results": copy.deepcopy(fy)}
+    results_one_line.apply_card_json(card)
+    assert [k["label"] for k in card["key_numbers"]] == ["Q4FY25 revenue", "Q4 revenue"]

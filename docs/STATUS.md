@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 00:25 IST.
+Last updated: 28 Oct 2026, 01:35 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -78,8 +78,13 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 4. **`refresh-card-blocks` waits for the owner.** The dry run (run 40546510549, 27 Oct 23:08 IST) would change **3,214
    of 7,895 stored cards**: the results block on 2,876, grounding 1,344, headline 288, key numbers 287, memory context
    270, fundamentals 140, scale 123. That is far more than `CARD_ONE_BASIS` alone; the refresh rebuilds every block
-   with today's code and switches. Not run for real. Next: a list of 30 changed cards, before and after, read by a
-   blind reviewer, so the owner can decide with evidence.
+   with today's code and switches. Not run for real.
+   Read 28 Oct, 01:15 IST (run 40565069516, artifact `refresh-diff`, 3,221 cards): mostly what the owner's rules want. 2,571
+   cards lose the EPS line (owner: no EPS on cards), about 260 lose EBITDA comparatives, 145 lose a results table on the
+   other basis (`CARD_ONE_BASIS`), 36 bank cards change their profit (for example ICICI Bank Q4FY26 15,611.87 to
+   14,755.06: to be checked against the filing before any refresh). One defect found: 289 headlines got "(company-reported;
+   results table ₹X Cr)", and 158 of them set a year's or a guided figure against the quarter's row. Fixed (below, PR
+   #200); with the fix, 209 of those labels go. Before a real refresh: the bank profits checked, then the owner's go.
 5. **FROM_ZERO step 2** (owner: yes to A-H): F first, a reliable PDF reader for results statements, scored on a
    hand-checked answer key of about 50 statements with pass marks set before scoring (`docs/FROM_ZERO.md`, TODO 112).
    Then B on (`XBRL_FILER_CHECKS`, after its on/off over stored memory, TODO 111), C, D, E, G.
@@ -94,7 +99,12 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
    started.
 
 Not in the order, waiting where they are: call memory v2 (a second blind sample, then the owner's go); the screener
-referee run 40513449694 (running); screener-explain run 40498040302 finished 27 Oct, and its planned PDF check on the
+referee run 40513449694 (finished 28 Oct 00:11 IST at its 5-hour limit, results saved: 5,707 of 16,344 pairs decided by
+NSE's own XBRL; memory matches the file in 5,480, screener in 21, neither in 10, no file 196; memory and the file are not
+independent, memory was built from it). The 31 where memory is wrong or unsure: 12 EPS signs flipped (ALEMBICLTD Q4FY26,
+APOLLOPIPE Q2FY26, PRIVISCL Q1FY25, RPOWER Q2FY25, SILVERTUC Q1FY27, MOLDTECH x5, NITCO Q4FY24, MAXESTATES Q2FY24), 9 EPS
+stored as 0 (AHLUCONT, ARVIND, BGRENERGY, PILANIINVS, SKFINDIA, HARDWYN), DOLPHIN revenue and profit ten times too big
+(Q2FY24, Q4FY24, FY24) and two lender revenue definitions (GEOJITFSL, SHRIRAMFIN): they wait for item 6; screener-explain run 40498040302 finished 27 Oct, and its planned PDF check on the
 unexplained rows is not started (owner to say).
 
 ## 4. Known problems (found 27 Oct, not fixed)
@@ -104,7 +114,12 @@ unexplained rows is not started (owner to say).
   export runs only with the repository variable `CRITIC` at 1.
 - Fixed 27 Oct night: the `file_cap` input (the 100-file first test) now reaches every job that marks the cap: seed-memory,
   memory-gaps-fill, text-backfill and the PDF ensemble's download, beside `run` and `textback-bse`. Empty means no cap.
-- `xbrl.eps_signs` still flips an EPS sign from one source (the same file's profit sign).
+- `xbrl.eps_signs` still flips an EPS sign from one source (the same file's profit sign). Measured 28 Oct: 12 of the 31
+  memory errors in the screener referee are flipped EPS signs.
+- Fixed 28 Oct, 01:30 IST (PR #200): the "company-reported" label on a headline or key number is no longer added to a
+  figure of another period (a year, nine months, a half, another quarter), to a guided or target figure, or to the
+  earlier figure after "from". It was live since 27 Oct (`CARD_RESULTS_ONE_LINE`); cards written since then keep the
+  label until a refresh.
 - `screener-fill-apply` sits in the `maint-nse-memory` group, so it can run beside `screener-fill` and
   `screener-download`.
 - During the hourly memory sweeps and the daily annual catch-up (they run whole), a new filing can wait about 15 minutes

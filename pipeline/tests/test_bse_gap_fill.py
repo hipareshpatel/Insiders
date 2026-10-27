@@ -371,3 +371,72 @@ def test_a_known_wrong_quarter_is_left_out_while_the_companys_other_gaps_are_fil
     periods = {e["period"] for e in sink.dossiers["1"]["financial_metrics"]}
     assert "Q1FY27" in periods and "Q4FY26" not in periods
     assert {r["period"] for r in out["rows"]} == {"Q1FY27"} and out["skipped"]["known wrong on bse"] == 1
+
+
+# the record kept as the run goes (STATUS section 3 item 3): a stop part-way leaves what was done on disk
+class StopsAt(Bse):
+    """Refuses, as BSE did on 27 Oct 2026, when asked for company ``scrip``."""
+
+    def __init__(self, scrip, links, files):
+        super().__init__(links, files)
+        self.stop = scrip
+
+    def results_xbrl(self, scrip):
+        if scrip == self.stop:
+            raise bf.SourceBlockedError("BSE refused: HTTP 403")
+        return super().results_xbrl(scrip)
+
+
+def three(tmp_path):
+    companies = {s: company(n, 900.0) for s, n in (("1", "AAA"), ("2", "BBB"), ("3", "CCC"))}
+    link = XbrlLink("Q1FY27", "STANDALONE", URL, "2026-08-10T18:00:00")
+    sink = Sink(companies)
+    report = mg.survey(sink, sorted(companies), TODAY)
+    record = bf.Record(tmp_path / "fill.csv", tmp_path / "fill.json", lambda: {"as_of": "2026-10-25"})
+    return sink, report, {s: c["symbol"] for s, c in companies.items()}, {s: [link] for s in companies}, record
+
+
+def test_a_fill_stopped_after_the_second_of_three_companies_leaves_both_on_disk(tmp_path):
+    sink, report, symbols, links, record = three(tmp_path)
+    bse = StopsAt("3", links, {URL: Q1FY27_XML})
+    try:
+        bf.run(sink, report, symbols, Nse(), bse, SETTINGS, apply=True, record=record)
+        raise AssertionError("the refusal must stop the run")
+    except bf.SourceBlockedError:
+        pass
+    lines = (tmp_path / "fill.csv").read_text(encoding="utf-8").splitlines()
+    assert lines[0] == "scrip,symbol,period,metric,value,basis,source,url"
+    assert {line.split(",")[0] for line in lines[1:]} == {"1", "2"}
+    summary = json.loads((tmp_path / "fill.json").read_text(encoding="utf-8"))
+    assert summary["companies_filled"] == 2 and summary["figures_written"] == len(lines) - 1
+    assert summary["in_progress"] is True and summary["as_of"] == "2026-10-25" and "rows" not in summary
+    assert not (tmp_path / "fill.json.tmp").exists()
+    assert len(record.rows) == len(lines) - 1 and record.snapshot["companies_filled"] == 2
+    assert "3" not in sink.dossiers   # what the files list is what memory holds
+
+
+def test_a_dry_run_records_what_it_would_write(tmp_path):
+    sink, report, symbols, links, record = three(tmp_path)
+    out = bf.run(sink, report, symbols, Nse(), Bse(links, {URL: Q1FY27_XML}), SETTINGS, apply=False, record=record)
+    assert sink.writes == 0 and out["figures_written"] == 0
+    assert (tmp_path / "fill.csv").read_text(encoding="utf-8") == bf.to_csv(out) and len(out["rows"]) > 0
+
+
+def test_a_complete_runs_files_equal_what_the_command_wrote_before(tmp_path):
+    sink, report, symbols, links, record = three(tmp_path)
+    out = bf.run(sink, report, symbols, Nse(), Bse(links, {URL: Q1FY27_XML}), SETTINGS, apply=True, record=record)
+    assert (tmp_path / "fill.csv").read_text(encoding="utf-8") == bf.to_csv(out)
+    # the same run without a record gives the same outcome (the record changes nothing it writes to memory)
+    again_sink, again_report, again_symbols, again_links, _ = three(tmp_path)
+    plain = bf.run(again_sink, again_report, again_symbols, Nse(), Bse(again_links, {URL: Q1FY27_XML}), SETTINGS, apply=True)
+    assert plain == out and again_sink.dossiers == sink.dossiers
+    # the command's final write: the summary as the command wrote it before, the CSV as it wrote it before
+    old_json = json.dumps({k: v for k, v in out.items() if k != "rows"} | {"as_of": "2026-10-25"}, ensure_ascii=False,
+                          indent=1) + "\n"
+    bf.write_atomic(tmp_path / "fill.json", bf.summary_text(out, {"as_of": "2026-10-25"}))
+    bf.write_atomic(tmp_path / "fill.csv", bf.to_csv(out))
+    assert (tmp_path / "fill.json").read_text(encoding="utf-8") == old_json
+    old_csv = ["scrip,symbol,period,metric,value,basis,source,url"] + [
+        f"{r['scrip']},{r['symbol']},{r['period']},{r['metric']},{r['value']},{r.get('basis') or ''},{r['source']},"
+        f"{r.get('url') or ''}" for r in plain["rows"]]
+    assert (tmp_path / "fill.csv").read_text(encoding="utf-8") == "\n".join(old_csv) + "\n"

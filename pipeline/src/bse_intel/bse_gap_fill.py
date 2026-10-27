@@ -32,9 +32,11 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 import time
 from datetime import date
+from pathlib import Path
 
 import requests
 
@@ -298,12 +300,14 @@ def new_figures(before: dict | None, after: dict | None, scrip: str, wanted: set
 
 def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: bool = False,
         time_budget: float = 17400.0, restart: bool = False, clock=time.monotonic,
-        pre_nse: bool | None = None) -> dict:
+        pre_nse: bool | None = None, record: "Record | None" = None) -> dict:
     """The fill over the gap companies of a ``memory_gaps.survey`` report. ``nse`` needs ``financial_results(symbol)`` (and may
     carry ``integrated_failed``); ``bse`` needs ``results_xbrl`` and ``download``. A refusal (SourceBlockedError) from either
     propagates. ``more`` is true when the time budget ended the run with companies left. Only a real run (``apply``) keeps the
     list of companies handled; a dry run keeps no state. ``pre_nse`` (default: the ``BSE_FILL_PRE_NSE`` switch) lets a company
-    NSE lists be filled for the quarters older than its first NSE results row."""
+    NSE lists be filled for the quarters older than its first NSE results row. ``record`` (a ``Record``) keeps the run's output
+    on disk as it goes: each filled company's rows are appended to the CSV and the summary is rewritten, so a refusal, a crash
+    or a kill leaves everything done so far (CLAUDE.md: a run that ends with nothing saved is a defect)."""
     from .seed import SeedStats, seed_results
     from .settings import bse_fill_pre_nse
 
@@ -329,6 +333,12 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
     failed: list[str] = []
     more = capped = False
     deadline = clock() + time_budget
+
+    def outcome() -> dict:
+        return {"apply": apply, "more": more, "capped": capped, "failed": failed, "rows": rows, "min_mcap_cr": floor, **totals}
+
+    if record is not None:
+        record.start()
     for scrip in todo:
         if scrip in tried:
             totals["companies_skipped_tried"] += 1
@@ -336,6 +346,8 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
         if clock() >= deadline:
             more = True
             break
+        if record is not None:
+            record.progress(outcome())   # the state after the companies handled so far (written only when it changed)
         result = report["companies"][scrip]
         company = sink.company(scrip) or {}
         symbol = symbols.get(scrip, "")
@@ -418,15 +430,17 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
         totals["companies_filled"] += 1
         totals["quarters_filled"] += len(periods)
         totals["figures_filled"] += len(fresh)
-        for entry in sorted(fresh, key=lambda e: (quarter_index(e["period"]) or 0, e["metric"])):
-            rows.append({"scrip": scrip, "symbol": symbol, "period": entry["period"], "metric": entry["metric"],
-                         "value": entry["value"], "basis": entry.get("basis"), "source": EXCHANGE,
-                         "url": entry.get("source_url")})
+        added = [{"scrip": scrip, "symbol": symbol, "period": entry["period"], "metric": entry["metric"],
+                  "value": entry["value"], "basis": entry.get("basis"), "source": EXCHANGE, "url": entry.get("source_url")}
+                 for entry in sorted(fresh, key=lambda e: (quarter_index(e["period"]) or 0, e["metric"]))]
+        rows.extend(added)
         if apply:
             totals["figures_written"] += _write(sink, scrip, fresh, scratch.dossier)
+        if record is not None:
+            record.company(added, outcome())   # after the write to memory: the record never lists a figure that was not written
         if not stats.failures:
             done(scrip)
-    return {"apply": apply, "more": more, "capped": capped, "failed": failed, "rows": rows, "min_mcap_cr": floor, **totals}
+    return outcome()
 
 
 def _write(sink, scrip: str, fresh: list[dict], seeded: dict | None = None) -> int:
@@ -473,9 +487,64 @@ def render(outcome: dict) -> str:
     return "\n".join(lines)
 
 
+CSV_HEADER = "scrip,symbol,period,metric,value,basis,source,url"
+
+
+def csv_row(r: dict) -> str:
+    return (f"{r['scrip']},{r['symbol']},{r['period']},{r['metric']},{r['value']},{r.get('basis') or ''},"
+            f"{r['source']},{r.get('url') or ''}")
+
+
 def to_csv(outcome: dict) -> str:
-    out = ["scrip,symbol,period,metric,value,basis,source,url"]
-    for r in outcome["rows"]:
-        out.append(f"{r['scrip']},{r['symbol']},{r['period']},{r['metric']},{r['value']},{r.get('basis') or ''},"
-                   f"{r['source']},{r.get('url') or ''}")
-    return "\n".join(out) + "\n"
+    return "\n".join([CSV_HEADER, *(csv_row(r) for r in outcome["rows"])]) + "\n"
+
+
+def summary_text(outcome: dict, extra: dict | None = None) -> str:
+    """The summary file: the outcome without its rows, then ``extra`` (bse_files, as_of)."""
+    return json.dumps({k: v for k, v in outcome.items() if k != "rows"} | (extra or {}), ensure_ascii=False, indent=1) + "\n"
+
+
+def write_atomic(path, text: str) -> None:
+    """Write to a temp file beside ``path`` and rename it over: a kill mid-write leaves the old file whole."""
+    path = Path(path)
+    tmp = path.with_name(path.name + ".tmp")
+    with open(tmp, "w", encoding="utf-8", newline="") as handle:
+        handle.write(text)
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(tmp, path)
+
+
+class Record:
+    """The fill's output kept on disk as it goes (the CSV of every figure and the JSON summary of ``run``). ``start`` writes the
+    CSV header; ``company`` appends a filled company's rows (flushed to disk) and rewrites the summary; ``progress`` rewrites
+    the summary when it changed. The summary written here carries ``in_progress: true``; the command's final write has the
+    same content as before this record existed, so a run that completes ends with the same two files. ``rows`` and
+    ``snapshot`` are what was last recorded, for a run a refusal stopped. ``extra`` gives the summary's trailing keys."""
+
+    def __init__(self, csv_path=None, json_path=None, extra=None):
+        self.csv_path, self.json_path, self.extra = csv_path, json_path, extra
+        self.rows: list[dict] = []
+        self.snapshot: dict | None = None
+        self._last = None
+
+    def start(self) -> None:
+        self.rows = []
+        if self.csv_path:
+            write_atomic(self.csv_path, CSV_HEADER + "\n")
+
+    def company(self, rows: list[dict], snapshot: dict) -> None:
+        self.rows.extend(rows)
+        if self.csv_path and rows:
+            with open(self.csv_path, "a", encoding="utf-8", newline="") as handle:
+                handle.write("".join(csv_row(r) + "\n" for r in rows))
+                handle.flush()
+                os.fsync(handle.fileno())
+        self.progress(snapshot)
+
+    def progress(self, snapshot: dict) -> None:
+        self.snapshot = {k: v for k, v in snapshot.items() if k != "rows"}
+        text = summary_text(self.snapshot, (self.extra() if self.extra else {}) | {"in_progress": True})
+        if self.json_path and text != self._last:
+            write_atomic(self.json_path, text)
+            self._last = text

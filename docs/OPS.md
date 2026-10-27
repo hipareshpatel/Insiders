@@ -93,3 +93,11 @@ Still in review: F205 (watch verdicts), F206 (one line a results row), F212 (res
   switch): a missing change, never a wrong one. All other tests unchanged with every live switch on.
 - File cap (owner rule, 100 NSE/BSE files a run): run 40441227348 (memory-gaps-fill over every company) cancelled before it
   passed the cap; the cap is being built (F213). No NSE/BSE maintenance run is dispatched until it is in.
+
+## 27 Oct 2026, 14:02-14:22 IST: BSE fill, 100-file test (owner: one task at a time, benchmark)
+
+Run 40474143469 (`memory-gaps-fill-bse`, dry run, `file_cap` 100): BSE answered every call through the ported adapter,
+100 files downloaded and kept, none refused. 8 companies, 53 quarters, 1,417 figures would be filled. Against screener.in,
+then the companies' own statements: 9 of 9 differences settled, BSE right in all 9. Report:
+`docs/bench/bse-fill-2026-10-27.md`. The full run waits for the owner. (Run 40471967773 before it stopped at the start: the
+step did not install `requests`; fixed in #179.)

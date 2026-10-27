@@ -1,0 +1,27 @@
+{
+ "apply": false,
+ "more": true,
+ "capped": true,
+ "failed": [],
+ "min_mcap_cr": 500.0,
+ "companies_with_gaps": 433,
+ "companies_skipped_tried": 0,
+ "companies_class_b": 7,
+ "companies_pre_nse": 1,
+ "companies_filled": 7,
+ "quarters_filled": 53,
+ "figures_filled": 1417,
+ "figures_written": 0,
+ "skipped": {
+  "not a gap quarter": 2178,
+  "nse has results": 1,
+  "basis differs": 5,
+  "no new quarter": 1
+ },
+ "bse_files": {
+  "downloaded": 100,
+  "kept": 100,
+  "from_store": 0
+ },
+ "as_of": "2026-10-27"
+}

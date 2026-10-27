@@ -1982,6 +1982,7 @@ class Pipeline:
         self._unreachable = 0
         self._busy = 0
         self._busy_halt = False
+        self._slice_end: float | None = None   # the current slice's end (_in_slices, _fresh): no filing starts past it
         self._pause_checked = float("-inf")   # monotonic time of the last look at the nightly pause (pause.py); -inf, not 0: a fresh runner's clock starts near 0
         self._paused = False
         self._blocked: SourceBlockedError | None = None
@@ -2315,7 +2316,7 @@ class Pipeline:
         and after are the same documents rather than two different samples. Returns the outcomes, committed.
         """
         after, done = ("", ""), []
-        while time.monotonic() < deadline and not self._halted(bulk):
+        while not self._stop_starting(deadline) and not self._halted(bulk):
             rows = self.sink.pending_filings(day_from, day_to, self.settings.max_attempts, BATCH, after)
             if not rows:
                 return done
@@ -2386,7 +2387,7 @@ class Pipeline:
     def _process_group(self, filings: list[Filing], deadline: float, bulk: bool, memory_complete: bool) -> list[Outcome]:
         results = []
         for filing in sorted(filings, key=lambda f: f.filed_at):
-            if time.monotonic() >= deadline or self._halted(bulk) or self._blocked:
+            if self._stop_starting(deadline) or self._halted(bulk) or self._blocked:
                 break
             with self._lock:
                 if filing.news_id in self._tried:  # one attempt per filing per run
@@ -2400,6 +2401,13 @@ class Pipeline:
                 for o in unsaved:
                     o.committed = True
         return results
+
+    def _stop_starting(self, deadline: float) -> bool:
+        """No new filing (or batch, or history day) is started past the deadline or the current slice's end. A filing
+        already started keeps the run's deadline for its own retries and pack waits: before 27 Oct 2026 evening the slice
+        end was passed down as the deadline, so in the last minute of every slice a busy provider was not waited for
+        and the deferral counted toward BUSY_STOP."""
+        return time.monotonic() >= min(deadline, self._slice_end or deadline)
 
     def _halted(self, bulk: bool) -> bool:
         """The analyst route for this phase has hit its quota ceilings, or the nightly memory jobs paused the AI
@@ -4307,27 +4315,37 @@ class Pipeline:
         while not self._blocked:
             for day in days:
                 self._discover_safely(day, full=False)
+            if time.monotonic() >= deadline:
+                return   # the run's time is up: the filings just found wait for the next run
             end = min(deadline, time.monotonic() + SLICE_S)
-            self.process(today.isoformat(), today.isoformat(), end, bulk=False, memory_complete=memory_complete,
-                         history_first=True)
-            if time.monotonic() < end or self._halted(bulk=False):
-                return   # today's queue is empty for now (or the route is out of quota): back to the older work
+            self._slice(lambda: self.process(today.isoformat(), today.isoformat(), deadline, bulk=False,
+                                             memory_complete=memory_complete, history_first=True), end)
+            now = time.monotonic()
+            if now < end or now >= deadline or self._halted(bulk=False):
+                return   # today's queue is empty for now, the run's time is up or the route is out of quota
 
     def _in_slices(self, step, until: float, fresh, slice_s: float | None = None) -> None:
         """Older work in slices (SLICE_S unless given), today's new filings looked for between them. A slice that ends
         before its own deadline had nothing left to do (or the route is out of quota), so the step is finished for this
         run. With no today to look for (a backfill-only run) the step runs in one piece."""
         if fresh is None:
-            step(until)
+            step()
             return
         while time.monotonic() < until and not self._blocked:
             end = min(until, time.monotonic() + (slice_s or SLICE_S))
-            step(end)
+            self._slice(step, end)
             more = time.monotonic() >= end
-            if fresh:
-                fresh()
+            fresh()
             if not more:
                 return
+
+    def _slice(self, step, end: float) -> None:
+        """One slice of a step: no filing starts past ``end``; a filing started keeps the run's deadline."""
+        self._slice_end = end
+        try:
+            step()
+        finally:
+            self._slice_end = None
 
     def _discover_window(self, live_from: date, today: date, days: int = 2) -> None:
         """Discover the live window's earlier days that no run has read in full, newest first, ``days`` a run.
@@ -4380,8 +4398,8 @@ class Pipeline:
                 near_cap = writes_at_start + self.stats.d1_rows_written >= D1_FREE_DAILY_WRITES * D1_NEAR_CAP
                 if not near_cap and live_from < today:
                     earlier = (live_from.isoformat(), (today - timedelta(days=1)).isoformat())
-                    self._in_slices(lambda until: self.process(*earlier, until, bulk=False, memory_complete=backfill_done,
-                                                               history_first=True), live_deadline, fresh)
+                    self._in_slices(lambda: self.process(*earlier, live_deadline, bulk=False, memory_complete=backfill_done,
+                                                         history_first=True), live_deadline, fresh)
                 near_cap = writes_at_start + self.stats.d1_rows_written >= D1_FREE_DAILY_WRITES * D1_NEAR_CAP
                 if near_cap:
                     log.warning("D1 writes near the free tier's daily %d: earlier days, catch-ups and memory syncs "
@@ -4426,8 +4444,8 @@ class Pipeline:
                 history_to = live_from - timedelta(days=1)
                 days = [max_backfill_days]   # history days are discovered in the first slice only, as in one call before
 
-                def backfill(until: float) -> None:
-                    self._backfill(today, until, writes_at_start, days[0], history_to)
+                def backfill() -> None:
+                    self._backfill(today, deadline, writes_at_start, days[0], history_to)
                     days[0] = 0
 
                 self._in_slices(backfill, deadline, fresh, BACKFILL_SLICE_S)
@@ -4582,7 +4600,7 @@ class Pipeline:
         # rows written each, and discovering 5 days a run while the companies' queues wait spent the day's free D1
         # writes on filings nobody read yet (21 Oct 2026: one run discovered 2,737 filings, 7,234 rows, with
         # analysis weeks behind). The live window is never gated.
-        while cursor < yesterday and days < max_days and time.monotonic() < deadline:
+        while cursor < yesterday and days < max_days and not self._stop_starting(deadline):
             if self._over_budget(writes_at_start):
                 break
             backlog = self.sink.backlog(start.isoformat(), history_to.isoformat(), BACKLOG_MAX)
@@ -4661,7 +4679,7 @@ class Pipeline:
         state["extra"] = extra
         order: list[str] = priority + [s for s in state["scrips"] if s not in set(priority)]
         width = max(1, self.settings.workers) * 2
-        while order and time.monotonic() < deadline and not self._halted(bulk=True) and not self._blocked:
+        while order and not self._stop_starting(deadline) and not self._halted(bulk=True) and not self._blocked:
             if self._over_budget(writes_at_start):
                 break
             batch, order = order[:width], order[width:]

@@ -882,17 +882,53 @@ def test_a_busy_today_is_worked_in_slices_with_a_look_for_new_filings_before_eac
     monkeypatch.setattr(pipeline_module, "SLICE_S", 0.02)
     looks, slices = [], []
     pipeline._discover_safely = lambda day, full: looks.append(day) or 0
+    run_deadline = time.monotonic() + 5
 
-    def process(day_from, day_to, until, *a, **k):   # two full slices of today's filings, then the queue is empty
-        slices.append(until)
-        while len(slices) <= 2 and time.monotonic() < until:
+    def process(day_from, day_to, deadline, *a, **k):   # two full slices of today's filings, then the queue is empty
+        assert deadline == run_deadline   # the filings keep the run's deadline; the slice end only stops new starts
+        slices.append(pipeline._slice_end)
+        while len(slices) <= 2 and not pipeline._stop_starting(deadline):
             time.sleep(0.005)
         return []
 
     pipeline.process = process
-    pipeline._fresh(today_ist(), time.monotonic() + 5, True)
-    assert len(slices) == 3 and len(looks) >= 3   # a look before every slice
-    assert all(until <= time.monotonic() + 5 for until in slices)
+    pipeline._fresh(today_ist(), run_deadline, True)
+    assert len(slices) == 3 and len(looks) >= 3 and all(slices)   # a look before every slice
+    assert pipeline._slice_end is None
+
+
+def test_today_is_not_looked_at_in_a_loop_once_the_run_is_over(settings):
+    """Review of 5d263f4: with the deadline past, the slice ended at once and the loop asked NSE again and again."""
+    import time
+
+    from test_pipeline import build
+
+    pipeline, _, _ = build(settings, [], {}, {})
+    looks, made = [], []
+    pipeline._discover_safely = lambda day, full: looks.append(day) or 0
+    pipeline.process = lambda *a, **k: made.append(1) or []
+    pipeline._fresh(today_ist(), time.monotonic() - 1, True)
+    assert 1 <= len(looks) <= 2 and made == []   # one look (the new filings are recorded), no cards, no loop
+
+
+def test_a_filing_started_in_a_slice_keeps_the_runs_deadline(settings, monkeypatch):
+    """Review of 5d263f4: the slice end was passed down as the deadline, so in its last minute a busy provider was
+    not waited for and the deferral counted toward BUSY_STOP."""
+    import time
+
+    from test_pipeline import _filing, build
+
+    pipeline, _, _ = build(settings, [], {}, {})
+    seen = []
+    pipeline._process_one = lambda filing, bulk, memory_complete, deadline=None: seen.append(deadline) or \
+        pipeline_module.Outcome({"news_id": filing.news_id, "status": "ANALYZED"})
+    run_deadline = time.monotonic() + 60
+    now = now_ist()
+    one, two = _filing("s1", "Outcome", now, "Company Update"), _filing("s2", "Outcome", now, "Company Update")
+    pipeline._slice(lambda: pipeline._process_group([one], run_deadline, False, True), time.monotonic() + 30)
+    assert seen == [run_deadline]
+    pipeline._slice(lambda: pipeline._process_group([two], run_deadline, False, True), time.monotonic() - 1)
+    assert seen == [run_deadline]   # past the slice end: not started
 
 
 def test_a_slice_that_used_all_its_time_is_followed_by_another_until_the_deadline(settings, monkeypatch):
@@ -904,20 +940,20 @@ def test_a_slice_that_used_all_its_time_is_followed_by_another_until_the_deadlin
     monkeypatch.setattr(pipeline_module, "SLICE_S", 0.02)
     calls, looks = [], []
 
-    def busy(until):   # more work than a slice holds
-        calls.append(until)
-        while time.monotonic() < until:
+    def busy():   # more work than a slice holds
+        calls.append(pipeline._slice_end)
+        while not pipeline._stop_starting(time.monotonic() + 60):
             time.sleep(0.005)
 
     pipeline._in_slices(busy, time.monotonic() + 0.07, lambda: looks.append(1))
     assert len(calls) >= 3 and len(looks) == len(calls)
     calls.clear()
     looks.clear()
-    pipeline._in_slices(lambda until: calls.append(until), time.monotonic() + 5, lambda: looks.append(1))
+    pipeline._in_slices(lambda: calls.append(1), time.monotonic() + 5, lambda: looks.append(1))
     assert len(calls) == 1 and len(looks) == 1   # finished early: nothing left, one look for today after it
     calls.clear()
-    pipeline._in_slices(busy, time.monotonic() + 0.05, None)
-    assert len(calls) == 1   # a backfill-only run has no today to look for: one piece, no slices
+    pipeline._in_slices(lambda: calls.append(pipeline._slice_end), time.monotonic() + 0.05, None)
+    assert calls == [None]   # a backfill-only run has no today to look for: one piece, no slices
 
 
 def test_a_pdf_cut_short_on_nse_waits_and_then_fails_with_that_reason(settings):

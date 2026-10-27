@@ -371,6 +371,20 @@ def _parse_results(data: bytes, stats: SeedStats):
     return parsed
 
 
+def stamp_file(dossier: dict, news_id: str, name: str) -> int:
+    """Put the exchange file's name on the label of every figure this synthetic filing stated (F222): memory kept only the
+    source id ``xbrl:res:<scrip>:<period>``, so the file could not be found again without NSE's results list. Returns how
+    many labels were stamped."""
+    stamped = 0
+    for entry in dossier.get("financial_metrics", []):
+        rows = entry.get("sources") or ([{"news_id": entry.get("source_news_id"), "lab": entry.get("lab")}] if entry.get("lab") else [])
+        for row in rows:
+            if row.get("news_id") == news_id and isinstance(row.get("lab"), dict):
+                row["lab"]["file"] = name
+                stamped += 1
+    return stamped
+
+
 def _write_results(sink, scrip: str, name: str, company: dict | None, period: str, filed_on: str,
                    url: str, parsed, stats: SeedStats) -> None:
     """One parsed results file into memory."""
@@ -385,8 +399,10 @@ def _write_results(sink, scrip: str, name: str, company: dict | None, period: st
         dossier["scale_held"] = left
         if not left:
             dossier.pop("scale_held")
-    sink.put_dossier(scrip, merge(dossier, out, filing, None, now_iso(), basis=parsed.basis,
-                                  fy_end_month=getattr(parsed, "fy_end_month", None), own_period=period))
+    merged = merge(dossier, out, filing, None, now_iso(), basis=parsed.basis,
+                   fy_end_month=getattr(parsed, "fy_end_month", None), own_period=period)
+    stamp_file(merged, filing.news_id, url.rsplit("/", 1)[-1])
+    sink.put_dossier(scrip, merged)
     stats.results_periods += 1
     log.info("seed %s %s: %d figures from %s (%s)", scrip, period, len(parsed.metrics), url.rsplit("/", 1)[-1],
              parsed.basis or "basis not stated")

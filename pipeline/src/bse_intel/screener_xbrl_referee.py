@@ -14,6 +14,12 @@ downloaded once per run and read with the pipeline's own XBRL reader (``xbrl.par
 - ours must agree with the official figure to a hundredth (it comes from the same kind of file); screener's rounds to a
   whole crore, so it gets the cross-check's own tolerance (``screener_crosscheck._close``).
 
+Archive-only mode (``--archive-only``, owner 27 Oct 2026: "Run NSE on archive site which do not block access and we can do
+super fast"): no results list is fetched. Memory records each seeded figure's file name (``lab.file`` of its
+``xbrl:res:<scrip>:<period>`` source, F222); the file's URL is rebuilt as ``ARCHIVE_XBRL_BASE + name`` and read from the XBRL
+store first, else from the archive host (``NseClient.download``). A pair that needs a period with no name in memory, or whose
+file the archive does not serve, is ``not_run`` (never an API call).
+
 Verdicts: ``ours_matches_official``, ``screener_matches_official``, ``both_match``, ``neither``, ``no_file`` (the reason in
 ``reason``), ``not_run`` (cut by ``--limit`` or the time budget).
 
@@ -29,7 +35,9 @@ import csv
 import io
 import json
 import logging
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from collections import Counter
 
 from .metrics import CONSOLIDATED
@@ -48,6 +56,21 @@ VERDICTS = ("ours_matches_official", "screener_matches_official", "both_match", 
 OURS_ABS, OURS_REL = 0.011, 0.0001
 LENDER_TEMPLATES = xbrl.LENDER_TEMPLATES
 MAX_FILE_BYTES = 8_000_000
+ARCHIVE_XBRL_BASE = "https://nsearchives.nseindia.com/corporate/xbrl/"   # the host and folder nse.py builds every results url on
+
+
+def file_names(dossier: dict | None, scrip: str, basis: str | None) -> dict[str, str]:
+    """quarter -> the exchange file's name memory recorded for it (``lab.file``, stamped by the seed, F222), on ``basis``:
+    read from the sources whose id is ``xbrl:res:<scrip>:<quarter>``. {} when memory holds none (a seed before F222)."""
+    out: dict[str, str] = {}
+    prefix = f"xbrl:res:{scrip}:"
+    for entry in (dossier or {}).get("financial_metrics", []):
+        rows = entry.get("sources") or [{"news_id": entry.get("source_news_id"), "lab": entry.get("lab"), "basis": entry.get("basis")}]
+        for row in rows:
+            nid, lab = str(row.get("news_id") or ""), row.get("lab") or {}
+            if nid.startswith(prefix) and lab.get("file") and (row.get("basis") or lab.get("basis")) in (None, basis):
+                out[nid[len(prefix):]] = lab["file"]
+    return out
 
 
 def _label(year: int, quarter: int) -> str:
@@ -97,12 +120,14 @@ def _line_names(parsed, metric: str) -> tuple[str, ...]:
 class CompanyFiles:
     """One company's results list and files on one basis, each fetched once."""
 
-    def __init__(self, nse, symbol: str, basis: str | None, sink=None):
+    def __init__(self, nse, symbol: str, basis: str | None, sink=None, names: dict[str, str] | None = None):
         self.nse, self.symbol, self.basis, self.sink = nse, symbol, basis, sink   # sink: R2 keeps the files (xbrl_store, F191)
+        self.names = names     # archive-only: quarter -> file name from memory; None = the default mode (NSE's results list)
+        self.missing = False   # archive-only: a file a read needed has no name in memory or is not on the archive
         self.rows: dict[str, object] | None = None
         self.error = ""
         self.parsed: dict[str, tuple[object | None, str]] = {}   # url -> (XbrlResult or None, why not)
-        self.calls = {"list": 0, "files": 0}
+        self.calls = {"list": 0, "files": 0, "store": 0}
 
     def _list(self) -> dict[str, object]:
         if self.rows is None:
@@ -126,34 +151,47 @@ class CompanyFiles:
 
     def file_for(self, quarter: str) -> tuple[object | None, str, str]:
         """(parsed file, its url's name, why none)."""
-        row = self._list().get(quarter)
-        if row is None:
-            return None, "", self.error or f"NSE lists no {(self.basis or '').lower()} results file for {quarter}"
-        name = row.xbrl_url.rsplit("/", 1)[-1]
-        if row.xbrl_url not in self.parsed:
+        if self.names is not None:
+            name = self.names.get(quarter, "")
+            if not name:
+                self.missing = True
+                return None, "", f"no file name in memory for {quarter}"
+            url = ARCHIVE_XBRL_BASE + name
+        else:
+            row = self._list().get(quarter)
+            if row is None:
+                return None, "", self.error or f"NSE lists no {(self.basis or '').lower()} results file for {quarter}"
+            url = row.xbrl_url
+            name = url.rsplit("/", 1)[-1]
+        if url not in self.parsed:
             try:
-                data = xbrl_store.get(self.sink, row.xbrl_url)
-                if not data:
+                data = xbrl_store.get(self.sink, url)
+                if data:
+                    self.calls["store"] += 1
+                else:
                     self.calls["files"] += 1
-                    data = self.nse.download(row.xbrl_url, max_bytes=MAX_FILE_BYTES)
+                    data = self.nse.download(url, max_bytes=MAX_FILE_BYTES)
                     if data:
-                        xbrl_store.put(self.sink, row.xbrl_url, data)
+                        xbrl_store.put(self.sink, url, data)
             except SourceBlockedError:
                 raise
             except Exception as exc:   # noqa: BLE001
-                self.parsed[row.xbrl_url] = (None, f"download failed ({type(exc).__name__})")
+                self.missing = self.names is not None
+                self.parsed[url] = (None, f"download failed ({type(exc).__name__})")
             else:
                 if data is None:
-                    self.parsed[row.xbrl_url] = (None, "NSE served no XML (missing, not XML, or over the size cap)")
+                    self.missing = self.names is not None
+                    self.parsed[url] = (None, "file not on the archive" if self.names is not None
+                                        else "NSE served no XML (missing, not XML, or over the size cap)")
                 else:
                     result = xbrl.parse(data)
                     if not result or result.kind != "RESULTS" or not result.metrics:
-                        self.parsed[row.xbrl_url] = (None, "file holds no results figures")
+                        self.parsed[url] = (None, "file holds no results figures")
                     elif result.basis and self.basis and result.basis != self.basis:
-                        self.parsed[row.xbrl_url] = (None, f"file is {result.basis.lower()}, memory's basis is {self.basis.lower()}")
+                        self.parsed[url] = (None, f"file is {result.basis.lower()}, memory's basis is {self.basis.lower()}")
                     else:
-                        self.parsed[row.xbrl_url] = (result, "")
-        parsed, why = self.parsed[row.xbrl_url]
+                        self.parsed[url] = (result, "")
+        parsed, why = self.parsed[url]
         return parsed, name, why
 
     def official(self, period: str, metric: str) -> dict:
@@ -197,9 +235,12 @@ def referee_pair(files: CompanyFiles, row: dict) -> dict:
     ours, theirs = _num(row.get("memory_value")), _num(row.get("screener_value"))
     out = {"verdict": "no_file", "official_value": None, "official_file": "", "official_from": "", "reason": "",
            "period_finding": ""}
+    files.missing = False
     got = files.official(period, metric)
     if "value" not in got:
         out["reason"] = got["reason"]
+        if files.missing:   # archive-only: a file memory has no name for, or the archive lacks, settles nothing
+            out["verdict"] = "not_run"
     elif ours is None or theirs is None:
         out["reason"] = "the row has no figure on one side"
     else:
@@ -246,11 +287,14 @@ def disagreeing(rows: list[dict]) -> list[dict]:
 
 
 def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | None = None, clock=time.monotonic,
-        sink=None, progress=None, every: int = 20) -> dict:
+        sink=None, progress=None, every: int = 20, names_for=None, workers: int = 1) -> dict:
     """Referee the disagreeing pairs among the cross-check's ``rows``, company by company. ``limit`` caps the pairs
     refereed (a company is not split: the one that crosses the cap is finished); pairs left over are ``not_run``.
     ``progress`` (optional) gets the summary so far every ``every`` companies, so a run stopped by hand keeps its work
-    (26 Oct 2026: a cancelled 2 h run had written nothing)."""
+    (26 Oct 2026: a cancelled 2 h run had written nothing). ``names_for(scrip, basis)`` (archive-only mode) gives a company's
+    quarter -> file name from memory (``file_names``): then no results list is fetched, and a pair needing a file memory
+    has no name for, or the archive lacks, is ``not_run``. ``workers`` (archive-only only) reads that many companies at
+    once (owner 27 Oct 2026: "use multiple downloads at once")."""
     pairs = disagreeing(rows)
     # the cross-check's six other lines (Operating Profit ... Tax %) are not refereed here: a file is read for revenue,
     # profit and EPS only; their rows pass through as not_run
@@ -259,44 +303,70 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
     by_company: dict[tuple[str, str, str], list[dict]] = {}
     for r in pairs:
         by_company.setdefault((r["scrip"], r["symbol"], r.get("basis") or ""), []).append(r)
-    started, done, blocked, out_of_time = clock(), 0, False, False
-    capped = False   # the run's file cap (F213): the pairs left are not_run and read by the next run
+    started = clock()
+    state = {"done": 0, "blocked": False, "out_of_time": False, "capped": False}   # shared by the workers, under `lock`
+    lock = threading.Lock()   # F222: archive-only mode reads companies in parallel; the default mode has one worker
     results: list[dict] = []
-    calls = {"list": 0, "files": 0, "companies": 0}
+    calls = {"list": 0, "files": 0, "store": 0, "companies": 0, "archive_only": names_for is not None}
 
     def not_run(r: dict, why: str) -> dict:
         return {**r, "verdict": "not_run", "reason": why, "official_value": None, "official_file": "", "official_from": "",
                 "period_finding": ""}
 
     results += [not_run(r, "metric not refereed") for r in skipped]
-    for (scrip, symbol, basis), items in by_company.items():
-        if not blocked and time_budget is not None and clock() - started > time_budget:
-            out_of_time = True
-        why = "blocked" if blocked else "file cap" if capped else "time budget" if out_of_time else "limit" if limit is not None and done >= limit else ""
+
+    def company(key: tuple[str, str, str], items: list[dict]) -> list[dict]:
+        scrip, symbol, basis = key
+        with lock:
+            if not state["blocked"] and time_budget is not None and clock() - started > time_budget:
+                state["out_of_time"] = True
+            why = ("blocked" if state["blocked"] else "file cap" if state["capped"] else "time budget" if state["out_of_time"]
+                   else "limit" if limit is not None and state["done"] >= limit else "")
         if why:
-            results += [not_run(r, why) for r in items]
-            continue
-        files = CompanyFiles(nse, symbol, basis or None, sink)
-        calls["companies"] += 1
+            return [not_run(r, why) for r in items]
+        files = CompanyFiles(nse, symbol, basis or None, sink, names_for(scrip, basis or None) if names_for else None)
+        out: list[dict] = []
         for r in items:
-            if blocked or capped:
-                results.append(not_run(r, "blocked" if blocked else "file cap"))
+            if state["blocked"] or state["capped"]:
+                out.append(not_run(r, "blocked" if state["blocked"] else "file cap"))
                 continue
             try:
-                results.append({**r, **referee_pair(files, r)})
-                done += 1
+                out.append({**r, **referee_pair(files, r)})
+                with lock:
+                    state["done"] += 1
             except FileCapReached as exc:
-                capped = True
+                state["capped"] = True
                 log.warning("file cap reached (%s): stopping the referee; the rest waits for the next run", exc)
-                results.append(not_run(r, "file cap"))
+                out.append(not_run(r, "file cap"))
             except SourceBlockedError as exc:
-                blocked = True
+                state["blocked"] = True
                 log.warning("NSE refused (%s): stopping the referee", exc)
-                results.append(not_run(r, "blocked"))
-        calls["list"] += files.calls["list"]
-        calls["files"] += files.calls["files"]
+                out.append(not_run(r, "blocked"))
+        with lock:
+            calls["companies"] += 1
+            for k in ("list", "files", "store"):
+                calls[k] += files.calls[k]
+        return out
+
+    def collect(rows: list[dict]) -> None:
+        results.extend(rows)
         if progress and calls["companies"] % every == 0:
-            progress(summarise(results, calls, blocked, out_of_time))
+            progress(summarise(results, calls, state["blocked"], state["out_of_time"]))
+
+    if workers <= 1 or names_for is None:
+        for key, items in by_company.items():
+            collect(company(key, items))
+    else:
+        # the archive host only, on its own pace (F169): NseClient's pace lock and counter are thread-safe, and a refusal
+        # from the host puts every later request back on the API's pace behind one lock
+        warm = getattr(nse, "warm_up", None)
+        if warm:
+            warm()   # the cookie visit once, before the threads start
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = [pool.submit(company, key, items) for key, items in by_company.items()]
+            for future in futures:   # in company order, so the CSV reads the same as a serial run
+                collect(future.result())
+    blocked, out_of_time, capped = state["blocked"], state["out_of_time"], state["capped"]
     summary = summarise(results, calls, blocked, out_of_time)
     if capped:
         summary["file_cap_reached"] = True
@@ -321,7 +391,9 @@ def summarise(results: list[dict], calls: dict, blocked: bool = False, out_of_ti
             findings[r["period_finding"].split(":")[0]] += 1
         if r.get("official_from"):
             used[r["official_from"].split(":")[0]] += 1
-    return {"pairs": len(results), "companies": calls["companies"], "calls": {"results_lists": calls["list"], "files": calls["files"]},
+    return {"pairs": len(results), "companies": calls["companies"], "calls": {"results_lists": calls["list"], "files": calls["files"],
+                                                                                         **({"store_hits": calls.get("store", 0)} if calls.get("archive_only") else {})},
+            "archive_only": bool(calls.get("archive_only")),
             "blocked": blocked, "out_of_time": out_of_time,
             "verdicts": dict(Counter(r["verdict"] for r in results)),
             "by_class": {k: dict(v) for k, v in by_class.items()}, "by_metric": {k: dict(v) for k, v in by_metric.items()},
@@ -360,7 +432,8 @@ def to_json(summary: dict) -> str:
 
 def render(summary: dict) -> str:
     lines = [f"screener referee (NSE results XBRL, read only): {summary['pairs']} pairs, {summary['companies']} companies, "
-             f"{summary['calls']['results_lists']} results lists, {summary['calls']['files']} files"]
+             f"{summary['calls']['results_lists']} results lists, {summary['calls']['files']} files downloaded, "
+             f"{summary['calls'].get('store_hits', 0)} from the store" + (" (archive only)" if summary.get("archive_only") else "")]
     lines += [f"  {v:28}{summary['verdicts'].get(v, 0)}" for v in VERDICTS]
     if summary["blocked"]:
         lines.append("stopped: NSE refused the session")
@@ -376,7 +449,8 @@ def to_markdown(summary: dict, date: str) -> str:
            "Read only: NSE's own results XBRL decides each disagreeing pair of the screener cross-check (the period's own file, "
            "else the next period's as a comparative). Memory is not written and no card changes.", "",
            f"{summary['pairs']} pairs, {summary['companies']} companies, {summary['calls']['results_lists']} results lists and "
-           f"{summary['calls']['files']} files fetched.", ""]
+           f"{summary['calls']['files']} files downloaded, {summary['calls'].get('store_hits', 0)} read from the store"
+           + (" (archive-only mode: file names from memory, no results list)." if summary.get("archive_only") else "."), ""]
     if summary["blocked"] or summary["out_of_time"]:
         out += ["The run stopped early (" + ("NSE refused the session" if summary["blocked"] else "time budget")
                 + "); the rest is `not_run`.", ""]

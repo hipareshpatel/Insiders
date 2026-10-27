@@ -92,6 +92,9 @@
 #   NSE's own results XBRL (the period's file, else the next period's): one results list a company, each file once, the
 #   archive host on its F169 pace, the API at 3-5 s. `limit` caps the pairs. referee-xbrl.csv, summary.json and the markdown
 #   go up as the artifact `screener-referee`. Writes nothing to memory, cards or the branch.
+#   With ids `archive` (F222, owner 27 Oct 2026): no results list at all. Each period's file name is read from memory (the
+#   figure's `lab.file`, stamped by seed-memory from F222 on), the file comes from our XBRL store, else the archive host;
+#   a pair with no name or file is not_run. Seed again first or most pairs are not_run.
 # - pdf-referee: read only (owner 26 Oct 2026, TODO 61). The filing PDF as the last referee of the pairs `screener-referee`
 #   left open (neither, no_file, screener_matches_official). The job downloads the newest unexpired `screener-referee`
 #   artifact (gh api, the repository's own Actions artifacts), finds each pair's results PDF in NSE's announcements, reads it
@@ -177,7 +180,7 @@ on:
         options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
-        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
+        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
         type: string
         default: ''
       since:
@@ -641,10 +644,12 @@ jobs:
           PLATFORM_ATTEMPTS: "3"
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
           LIMIT: ${{ inputs.limit }}
+          IDS: ${{ inputs.ids }}
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/referee"
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-referee ${LIMIT:+--limit "$LIMIT"} --json "$RUNNER_TEMP/referee/summary.json" --csv "$RUNNER_TEMP/referee/referee-xbrl.csv" --md "$RUNNER_TEMP/referee/screener-referee.md" || code=$?
+          archive=; if [ "$IDS" = "archive" ]; then archive=--archive-only; fi   # F222
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-referee $archive ${LIMIT:+--limit "$LIMIT"} --json "$RUNNER_TEMP/referee/summary.json" --csv "$RUNNER_TEMP/referee/referee-xbrl.csv" --md "$RUNNER_TEMP/referee/screener-referee.md" || code=$?
           if [ "$code" = 124 ]; then echo "::warning::time budget ended with pairs left (not_run in the CSV); run again with a limit or scrips"; code=0; fi
           exit "$code"
       - uses: actions/upload-artifact@v4

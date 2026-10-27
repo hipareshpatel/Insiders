@@ -44,8 +44,13 @@ def _pct(value: float | None) -> str | None:
     return None if value is None else f"{value:+.1f}%"
 
 
+def _vs(m) -> str:
+    """" vs restated" after a YoY worked against a restated year-ago figure (CARD_YOY_RESTATED), else nothing."""
+    return f" {m.yoy_note}" if getattr(m, "yoy_note", None) else ""
+
+
 def _changes(m) -> str:
-    parts = [f"{p} YoY" for p in (_pct(m.yoy_pct),) if p] + [f"{p} QoQ" for p in (_pct(m.qoq_pct),) if p]
+    parts = [f"{p} YoY{_vs(m)}" for p in (_pct(m.yoy_pct),) if p] + [f"{p} QoQ" for p in (_pct(m.qoq_pct),) if p]
     if getattr(m, "eps_note", None):
         parts.append(m.eps_note)   # EPS_SHARE_ADJUST only: "adjusted for bonus 1:1 on <date>" or why it is left out
     return ", ".join(parts)
@@ -54,7 +59,8 @@ def _changes(m) -> str:
 def _line(m) -> str:
     """The table line for this metric exactly as `XbrlResult.table()` writes it (the quote a fact carries)."""
     unit = " ₹/share" if m.unit == "INR" else " %" if m.unit == "PCT" else " Cr"
-    change = "".join(f", {label} {v:+.1f}%" for label, v in (("YoY", m.yoy_pct), ("QoQ", m.qoq_pct)) if v is not None)
+    change = "".join(f", {label} {v:+.1f}%" + (_vs(m) if label == "YoY" else "")
+                     for label, v in (("YoY", m.yoy_pct), ("QoQ", m.qoq_pct)) if v is not None)
     note = f" ({m.eps_note})" if getattr(m, "eps_note", None) else ""
     return f"- {m.metric} {m.period}: {m.value:g}{unit}{change}{note}"
 
@@ -458,9 +464,9 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
             label, amount, note = _profit_words(tagged, m)
             if v2 and profit_label:
                 label, amount = _theirs(profit_label, m), _cr(abs(m.value))
-            change = f" ({_pct(m.yoy_pct)} YoY)" if m.yoy_pct is not None else f" ({note})" if note else ""
+            change = f" ({_pct(m.yoy_pct)} YoY{_vs(m)})" if m.yoy_pct is not None else f" ({note})" if note else ""
             return f"{label if v2 and profit_label else label.lower()} {amount}{change}"
-        change = f" ({_pct(m.yoy_pct)} YoY)" if m.yoy_pct is not None else ""
+        change = f" ({_pct(m.yoy_pct)} YoY{_vs(m)})" if m.yoy_pct is not None else ""
         return f"{word} {_cr(m.value)}{change}"
 
     headline = f"{name} {period}: {phrase(top, top_word)}, {phrase(profit, profit_word)}"
@@ -499,7 +505,7 @@ def build(out, tagged, company_name: str | None, history=None, text: str = "", f
             other = now.get("other_income")
             text += f"; leaves out other income {_cr(other.value)}" if other is not None else "; leaves out other income"
         lines.append(Fact(text=text + ".", quote=_line(m)))
-        keys.append(KeyNumber(label=label, value=value, change=((f"{_pct(m.yoy_pct)} YoY" + (f", {m.eps_note}" if getattr(m, "eps_note", None) else ""))
+        keys.append(KeyNumber(label=label, value=value, change=((f"{_pct(m.yoy_pct)} YoY{_vs(m)}" + (f", {m.eps_note}" if getattr(m, "eps_note", None) else ""))
                                       if m.yoy_pct is not None else None),
                               quote=_line(m)))
     margin = now.get("ebitda_margin")

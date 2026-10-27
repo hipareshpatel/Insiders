@@ -56,7 +56,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_two_parts, d1_plan, memory_call_v2
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_two_parts, card_yoy_restated, d1_plan, memory_call_v2
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -67,7 +67,7 @@ from .signals import priced_for
 from .sinks.platform import PlatformSink
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
-from . import eps_adjust, no_eps
+from . import eps_adjust, no_eps, restated_pdf
 from . import annual_xbrl
 from . import xbrl_store
 from . import directions
@@ -3457,6 +3457,8 @@ class Pipeline:
             xbrl_fast_path.settle_pbt(tagged, filed_text)
             self._xbrl_comparatives(filing, tagged, history)
             eps_adjust.adjust_result(tagged, dossier)   # EPS_SHARE_ADJUST (F153): EPS changes on one share count
+            if card_yoy_restated():
+                restated_pdf.apply_to_result(tagged, dossier)   # CARD_YOY_RESTATED (F202): YoY on the restated year-ago figure
             text = tagged.table(explicit_basis=card_consolidated_only()) + "\n\n" + text  # exact figures first; they also ground the card
         # An annual report's statements as the company tagged them, in crore and on a named basis, where the PDF
         # prints lakh or million with standalone and consolidated side by side (12 of 31 cards held, round 3d).

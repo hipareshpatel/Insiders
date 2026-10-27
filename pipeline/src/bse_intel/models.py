@@ -710,6 +710,8 @@ class FinancialMetric(_Lenient):
     file_basis: str | None = Field(default=None, exclude=True)   # CONSOLIDATED / STANDALONE as the file states it
     # EPS only (eps_adjust.py, EPS_SHARE_ADJUST): why its YoY / QoQ is adjusted for a bonus or split, or left out
     eps_note: str | None = Field(default=None, exclude=True)
+    # CARD_YOY_RESTATED (restated_pdf.py): "vs restated" when the YoY is worked against a restated year-ago figure
+    yoy_note: str | None = Field(default=None, exclude=True)
 
     @model_validator(mode="after")
     def _per_share_only_for_shares(self) -> "FinancialMetric":

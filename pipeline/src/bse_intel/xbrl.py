@@ -257,7 +257,8 @@ class XbrlResult:
             if m.metric in EPS_METRICS:
                 continue   # owner rule 26 Oct 2026: no EPS on cards; the model is not given it (memory keeps it)
             unit = " ₹/share" if m.unit == "INR" else " %" if m.unit == "PCT" else " Cr"
-            change = "".join(f", {label} {v:+.1f}%" for label, v in (("YoY", m.yoy_pct), ("QoQ", m.qoq_pct)) if v is not None)
+            change = "".join(f", {label} {v:+.1f}%" + (f" {m.yoy_note}" if label == "YoY" and m.yoy_note else "")
+                             for label, v in (("YoY", m.yoy_pct), ("QoQ", m.qoq_pct)) if v is not None)
             basis = " (standalone)" if self.ratio_basis and m.metric in BANK_RATIOS else ""
             note = f" ({m.eps_note})" if m.eps_note else ""   # EPS_SHARE_ADJUST only
             lines.append(f"- {m.metric} {m.period}{basis}: {m.value:g}{unit}{change}{note}")

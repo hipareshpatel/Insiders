@@ -859,6 +859,39 @@ def cmd_restated_report(args, settings, sink) -> int:
     return 0
 
 
+def cmd_restated_pdf(args, settings, sink) -> int:
+    """Keep a restated comparative beside the original (restated_pdf.py, F202, TODO 104): for each company, read its latest
+    quarters' results PDFs from NSE with the text layer only (no OCR, no AI) and store the year-ago and previous-quarter
+    figures that differ from the original in the dossier's ``restated_figures``. The history is not touched. Exit 75 when NSE
+    refused the session."""
+    from . import restated_pdf, universe
+    from .nse import NseClient, SourceBlockedError
+
+    nse_universe = universe.load_nse(sink)
+    if not nse_universe.built:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    by_scrip = {scrip: symbol for symbol, scrip in nse_universe.symbols.items()}
+    if args.scrips:
+        wanted = [nse_universe.symbols.get(n.upper()) or n for n in (s.strip() for s in args.scrips.split(",")) if n]
+        symbols = {s: by_scrip[s] for s in wanted if s in by_scrip}
+    else:
+        symbols = {s: by_scrip[s] for s in sorted(nse_universe.included) if s in by_scrip}
+    from . import pdf_referee as pr
+    pr.be_gentle()
+    try:
+        with NseClient() as nse:
+            stats = restated_pdf.run(nse, sink, symbols, args.quarters, args.limit)
+    except SourceBlockedError as exc:
+        print(f"NSE refused ({exc}): stopped")
+        return REFUSED
+    print(f"restated-pdf: {stats['companies']} companies read, {stats['restated']} restated figures found, "
+          f"{stats['stored']} dossiers changed, {len(stats['reasons'])} companies with quarters not read")
+    if args.json:
+        Path(args.json).write_text(json.dumps(stats, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return 0
+
+
 def cmd_memory_recall_export(args, settings, sink) -> int:
     """The sample of recent call transcripts and decks for the memory recall audit, each with its full text, what memory
     holds from it and its card (memory_recall_export.py, TODO row 82). Read only: no NSE, no AI, no write."""
@@ -1936,6 +1969,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
     p.add_argument("--json", help="write the counts and every restated figure to this file")
     p.set_defaults(func=cmd_restated_report)
+
+    p = sub.add_parser("restated-pdf", help="keep restated comparatives beside the originals, read from later results PDFs' text layer (no OCR, no AI; F202)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--quarters", type=int, default=6, help="how many of each company's latest quarters to read")
+    p.add_argument("--limit", type=int, help="stop after this many companies")
+    p.add_argument("--json", help="write the counts and the reasons to this file")
+    p.set_defaults(func=cmd_restated_pdf)
 
     p = sub.add_parser("memory-recall-export", help="sample recent call transcripts and decks with their full text, memory and card, for the recall audit (read only, no AI)")
     p.add_argument("--out", default="memory-recall", help="folder to write (one subfolder per filing, index.json, README.md)")

@@ -66,6 +66,13 @@ def memory_standalone_only() -> bool:
     return (_env("MEMORY_STANDALONE_ONLY", "1") or "1").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_yoy_restated() -> bool:
+    """CARD_YOY_RESTATED (default off; TODO 104, F202): a results card's YoY is worked against the restated year-ago figure
+    where memory holds one (read from a later filing's PDF text layer, restated_pdf.py) and says "vs restated". The history
+    keeps the original. Read at the call."""
+    return (_env("CARD_YOY_RESTATED", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def memory_restated() -> bool:
     """MEMORY_RESTATED (default off; F167, TODO 53): the memory view a card reads names a restated comparative as such
     ("restated in Q2FY27's filing, first filed X") instead of the bare "restated <date>" note. Read at the call."""

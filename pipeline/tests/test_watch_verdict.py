@@ -121,11 +121,13 @@ def test_the_period_must_match_exactly_even_when_the_evidence_would_not_say_so()
 
 
 def test_strict_words_do_not_include_the_figure():
-    assert V(W("NNPA ratio", "below 0.40%"), [M("nnpa_pct", "Q2FY27", 0.40, "PCT")]) == wc.MISSED
+    assert V(W("NNPA ratio", "below 0.40%"), [M("nnpa_pct", "Q2FY27", 0.40, "PCT")]) is None   # equal at its precision: rounding decides
+    assert V(W("NNPA ratio", "below 0.40%"), [M("nnpa_pct", "Q2FY27", 0.46, "PCT")]) == wc.MISSED
     assert V(W("NNPA ratio", "under 0.40%"), [M("nnpa_pct", "Q2FY27", 0.39, "PCT")]) == wc.MET
-    assert V(W("EBITDA margin", "above 18%"), [M("ebitda_margin", "Q2FY27", 18.0, "PCT")]) == wc.MISSED
-    assert V(W("ROA", "over 15%"), [M("roa_pct", "Q2FY27", 15.0, "PCT")]) == wc.MISSED
-    assert V(W("Revenue", "more than Rs1,000 Cr"), [M("revenue", "Q2FY27", 1000)]) == wc.MISSED
+    assert V(W("EBITDA margin", "above 18%"), [M("ebitda_margin", "Q2FY27", 18.0, "PCT")]) is None
+    assert V(W("ROA", "over 15%"), [M("roa", "Q2FY27", 14.4, "PCT")]) == wc.MISSED
+    assert V(W("Revenue", "more than Rs1,000 Cr"), [M("revenue", "Q2FY27", 1000)]) is None
+    assert V(W("Revenue", "more than Rs1,000 Cr"), [M("revenue", "Q2FY27", 990)]) == wc.MISSED
     assert V(W("Revenue", "exceeding Rs1,000 Cr"), [M("revenue", "Q2FY27", 1000.5)]) == wc.MET
     assert V(W("Revenue", "at least Rs1,000 Cr"), [M("revenue", "Q2FY27", 1000)]) == wc.MET
     assert V(W("NNPA ratio", "not exceeding 0.5%"), [M("nnpa_pct", "Q2FY27", 0.5, "PCT")]) == wc.MET
@@ -144,7 +146,7 @@ def test_a_due_period_memory_has_not_reached_is_no_verdict_not_not_due():
 @pytest.mark.parametrize("text,target", [
     ("Revenue", "20% growth"), ("Revenue", "at least Rs100 Cr, up 20%"), ("Revenue", "from Rs80 Cr to Rs100 Cr"),
     ("Revenue", "Rs100-120 Cr"), ("Revenue", "between Rs100 Cr and Rs120 Cr"), ("Revenue", "up to Rs100 Cr"),
-    ("Revenue", "Rs100 Cr"), ("Revenue", "at least Rs100 Cr and at most Rs200 Cr"), ("Revenue", "not at least Rs100 Cr"),
+    ("EBITDA margin", "12%"), ("Revenue", "at least Rs100 Cr and at most Rs200 Cr"), ("Revenue", "not at least Rs100 Cr"),
     ("Revenue", "at least 100 stores"), ("Revenue", "at least 100 bps"), ("Revenue", "at least Rs100"),
     ("Revenue", "reduce by Rs 100 Cr"), ("Revenue", "at least Rs100 Cr cumulative"), ("Revenue", None),
     ("Oncology revenue", "at least Rs100 Cr"), ("Segment EBITDA", "at least Rs100 Cr"), ("EBITDA per tonne", "at least Rs100 Cr"),
@@ -345,3 +347,77 @@ def test_watch_keeps_the_metric_and_period_only_with_the_switch_on(monkeypatch):
     on = _merge_watch(monkeypatch, True)
     assert on["metric"] == "gnpa_pct" and on["period"] == "Q2FY27"
     assert {k: v for k, v in on.items() if k not in ("metric", "period")} == off
+
+
+# ---------------------------------------------------------------- live review of e5960fc (118 companies)
+def _srcs(*rows):
+    """A multi-source memory row: (value, basis, by)."""
+    sources = [{"news_id": f"n{i}", "as_of": WHEN, "value": v, "unit": "PCT", "basis": b, "lab": {"by": by, "ok": True}}
+               for i, (v, b, by) in enumerate(rows)]
+    return {"metric": "ebitda_margin", "period": "Q2FY27", "value": rows[-1][0], "unit": "PCT", "as_of": WHEN,
+            "source_news_id": "n0", "sources": sources}
+
+
+def test_b1_a_row_whose_sources_disagree_gives_no_verdict_aequs_and_friends():
+    w = W("Consolidated EBITDA margin", "above 5%")
+    assert V(w, [_srcs((3.39, "CONSOLIDATED", "calc"), (6.0, "CONSOLIDATED", "ai"))]) is None          # AEQUS
+    assert V(W("EBITDA margin", "at least 23%"), [_srcs((21.63, "CONSOLIDATED", "calc"), (23.25, "CONSOLIDATED", "ai"))]) is None  # HFCL
+    assert V(W("EBITDA margin", "at least 13%"), [_srcs((13.58, None, "calc"), (18.5, None, "ai"))]) is None   # PERSISTENT
+    assert V(W("EBITDA margin", "at least 8%"), [_srcs((8.17, "CONSOLIDATED", "file"), (8.2, "CONSOLIDATED", "ai"))]) == wc.MET   # within 2%
+
+
+def test_b2_or_above_and_or_below_include_the_figure():
+    w = W("EBITDA margin", "21.9% or above")
+    assert V(w, [M("ebitda_margin", "Q2FY27", 21.9, "PCT")]) == wc.MET                                   # SUMICHEM wording
+    assert V(w, [M("ebitda_margin", "Q2FY27", 20.47, "PCT")]) == wc.MISSED
+    assert V(W("GNPA ratio", "1.45% or below"), [M("gnpa", "Q2FY27", 1.45, "PCT")]) == wc.MET
+    assert V(W("GNPA ratio", "1.45% or less"), [M("gnpa", "Q2FY27", 1.5, "PCT")]) == wc.MISSED
+    assert V(W("Revenue", "Rs 100 Cr or more"), [M("revenue", "Q2FY27", 100)]) == wc.MET
+
+
+def test_b3_strict_word_on_a_figure_equal_at_its_precision_is_no_verdict():
+    w = W("GNPA ratio", "Below 1.45%", "Q1FY27")
+    assert V(w, [M("gnpa_pct", "Q1FY27", 1.45, "PCT")]) is None                                           # MAHABANK Q1FY27
+    assert V(w, [M("gnpa_pct", "Q1FY27", 1.44, "PCT")]) == wc.MET
+    assert V(W("Revenue", "above 107.62 Cr"), [M("revenue", "Q2FY27", 107.62)]) is None
+
+
+def test_b4_basis_is_read_from_the_sources():
+    standalone = {"metric": "ebitda_margin", "period": "Q2FY27", "value": 7.24, "unit": "PCT", "as_of": WHEN, "source_news_id": "n0",
+                  "sources": [{"news_id": "n0", "as_of": WHEN, "value": 7.24, "unit": "PCT", "basis": "STANDALONE"},
+                              {"news_id": "n1", "as_of": WHEN, "value": 7.24, "unit": "PCT", "basis": "STANDALONE"}]}
+    assert V(W("Consolidated EBITDA margin", "above 8%"), [standalone]) is None                             # DEEPA
+    assert V(W("Standalone EBITDA margin", "above 8%"), [standalone]) == wc.MISSED
+    assert V(W("EBITDA margin", "above 8%"), [standalone]) == wc.MISSED
+    mixed = _srcs((7.2, "STANDALONE", "file"), (7.2, "CONSOLIDATED", "file"))
+    assert V(W("EBITDA margin", "above 8%"), [mixed]) is None
+    assert V(W("Consolidated EBITDA margin", "above 8%"), [mixed]) is None
+
+
+def test_aplapollo_live_watch_q2fy27_volume_10_lakh_tons_with_memorys_mt_row():
+    w = W("Q2FY27 volume", "10 lakh tons", "Q2FY27 results")
+    row = M("volumes", "Q2FY27", 963143.0, "MT", lab={"by": "ai", "ok": True})
+    assert V(w, [row]) == wc.MISSED
+    assert V(w, [M("volumes", "Q2FY27", 1_020_000.0, "MT")]) == wc.MET
+    assert V(W("Q2FY27 volume", "10 lakh tons"), [M("volumes", "Q2FY27", 0.96, "MT")]) is None            # million tonnes: 50x rule
+    assert V(W("EBITDA margin", "12%"), [M("ebitda_margin", "Q2FY27", 11, "PCT")]) is None                 # a bare ratio could be a ceiling
+
+
+def test_a_watch_made_by_the_filing_is_not_answered_by_it():
+    w = W("GNPA ratio", "at or below 1.45%", created_on=WHEN)
+    assert V(w, GNPA) is None
+
+
+def test_c1_titles_and_company_abbreviations_do_not_split_a_sentence():
+    j = _judged("at least Rs 100 Cr", wc.MISSED, "revenue")
+    s = "Dr. Rao said revenue beat the Rs 100 Cr target. Margins rose."
+    left = [wc._cut(x, j)[0] for x in wc._sentences(s)]
+    assert left == [None, "Margins rose."]
+    assert wc._sentences("Mr. Shah noted revenue beat the Rs 100 Cr target in the quarter.") == ["Mr. Shah noted revenue beat the Rs 100 Cr target in the quarter."]
+    assert wc._sentences("ABC Pvt. Ltd. revenue beat the Rs 100 Cr target. Margins rose.")[0].endswith("target.")
+
+
+def test_c2_a_clause_hanging_on_the_cut_one_takes_the_sentence_with_it():
+    j = _judged("at least Rs 100 Cr", wc.MISSED, "revenue")
+    s = "Driven by exports, revenue beat the Rs 100 Cr target, which management called a milestone."
+    assert wc._cut(s, j) == (None, s)

@@ -50,14 +50,15 @@ def _spaced(text: str) -> str:
     """"Rs100" and "INR100" as "Rs 100": the figure is not part of the mark."""
     return re.sub(r"\b(rs\.?|inr)(?=\d)", r"\1 ", text or "", flags=re.I)
 _DIRECTION = re.compile(
-    r"<=|≤|=<|>=|≥|=>|\bnot\s+(?:to\s+)?exceed(?:ing)?\b|\b(?:not|no)\s+more\s+than\b|\b(?:not|no)\s+less\s+than\b|"
+    r"<=|≤|=<|>=|≥|=>|\bor\s+(?:above|more|higher|greater)\b|\bor\s+(?:below|less|lower)\b|\bnot\s+(?:to\s+)?exceed(?:ing)?\b|\b(?:not|no)\s+more\s+than\b|\b(?:not|no)\s+less\s+than\b|"
     r"\bat\s+or\s+below\b|\bat\s+or\s+above\b|\bat\s+most\b|\bat\s+least\b|"
     r"\bbelow\b|\bunder\b|\babove\b|\bover\b|\bmore\s+than\b|\bexceed(?:ing|s)?\b|<|>", re.I)
 # word -> (comparison, strict): below / under / above / over / more than / exceed* are strict, the rest include the figure
 _OPS = {"<=": ("<=", False), "≤": ("<=", False), "=<": ("<=", False), ">=": (">=", False), "≥": (">=", False), "=>": (">=", False),
         "not exceed": ("<=", False), "not exceeding": ("<=", False), "not to exceed": ("<=", False),
         "not more than": ("<=", False), "no more than": ("<=", False), "not less than": (">=", False), "no less than": (">=", False),
-        "at or below": ("<=", False), "at or above": (">=", False), "at most": ("<=", False), "at least": (">=", False),
+        "or above": (">=", False), "or more": (">=", False), "or higher": (">=", False), "or greater": (">=", False),
+        "or below": ("<=", False), "or less": ("<=", False), "or lower": ("<=", False), "at or below": ("<=", False), "at or above": (">=", False), "at most": ("<=", False), "at least": (">=", False),
         "below": ("<", True), "under": ("<", True), "<": ("<", True), "above": (">", True), "over": (">", True),
         "more than": (">", True), "exceed": (">", True), "exceeds": (">", True), "exceeding": (">", True), ">": (">", True)}
 _BAD_CURRENCY = re.compile(r"[$€£¥]|\b(?:us\$|usd|eur|gbp|jpy|aed|sgd|dollars?|euros?|pounds?|yen)\b", re.I)
@@ -109,6 +110,8 @@ class Target:
     op: str          # "<=", "<", ">=", ">"
     goal: float      # in the base unit of its kind
     kind: str        # "pct", "inr", "mass"
+    strict: bool = False
+    bare: bool = False   # no direction word was given
 
 
 def parse_target(target: str | None, text: str = "") -> Target | None:
@@ -122,11 +125,11 @@ def parse_target(target: str | None, text: str = "") -> Target | None:
     if _RATE.search(t):
         return None
     hits = list(_DIRECTION.finditer(t))
-    if len(hits) != 1:
+    if len(hits) > 1:
         return None
-    word = re.sub(r"\s+", " ", hits[0].group(0).lower())
-    op = _OPS.get(word)
-    rest = t[:hits[0].start()] + " " + t[hits[0].end():]
+    # no direction word: a bare figure ("10 lakh tons"); judge() reads it as "at least" for the measures that only grow
+    op = _OPS.get(re.sub(r"\s+", " ", hits[0].group(0).lower())) if hits else (">=", False)
+    rest = t[:hits[0].start()] + " " + t[hits[0].end():] if hits else t
     for pattern in (_DATE, _CALENDAR, _PERIOD_TOKEN):
         rest = pattern.sub(" ", rest)
     if op is None or _DELTA.search(rest) or _NEGATION.search(rest):
@@ -145,7 +148,7 @@ def parse_target(target: str | None, text: str = "") -> Target | None:
     if any(w not in allowed for w in re.findall(r"[a-z]+", left)):
         return None
     value = float(f.group(0).replace(",", ""))
-    return Target(op[0], value if kind == "pct" else value * factor, kind)
+    return Target(op[0], value if kind == "pct" else value * factor, kind, strict=op[1], bare=not hits)
 
 
 # ------------------------------------------------------------------ the metric
@@ -162,9 +165,9 @@ def _rx(p: str) -> re.Pattern:
 
 
 _SPECS = (
-    _Spec("gnpa", _rx(r"\bgnpas?\b|\bgross\s+(?:non[- ]?performing\s+assets?|npas?)\b"), ("gnpa_pct",), "pct"),
-    _Spec("nnpa", _rx(r"\bnnpas?\b|\bnet\s+(?:non[- ]?performing\s+assets?|npas?)\b"), ("nnpa_pct",), "pct"),
-    _Spec("roa", _rx(r"\broa\b|\breturn\s+on\s+assets?\b"), ("roa_pct",), "pct"),
+    _Spec("gnpa", _rx(r"\bgnpas?\b|\bgross\s+(?:non[- ]?performing\s+assets?|npas?)\b"), ("gnpa_pct", "gnpa"), "pct"),
+    _Spec("nnpa", _rx(r"\bnnpas?\b|\bnet\s+(?:non[- ]?performing\s+assets?|npas?)\b"), ("nnpa_pct", "nnpa"), "pct"),
+    _Spec("roa", _rx(r"\broa\b|\breturn\s+on\s+assets?\b"), ("roa_pct", "roa"), "pct"),
     _Spec("combined", _rx(r"\bcombined\s+ratio\b"), ("combined_ratio",), "pct"),
     _Spec("claims", _rx(r"\bclaims?\s+ratio\b"), ("claims_ratio",), "pct"),
     _Spec("ebitda_margin", _rx(r"\b(?:ebitda|operating)\s+margins?\b|\bopm\b"), ("ebitda_margin",), "pct"),
@@ -177,7 +180,7 @@ _SPECS = (
 )
 _STORED = {"PCT": ("pct", 1.0), "%": ("pct", 1.0), "PERCENT": ("pct", 1.0), "PERCENTAGE": ("pct", 1.0),
            "INR_CR": ("inr", 1e7), "CR": ("inr", 1e7), "INR_LAKH": ("inr", 1e5), "LAKH": ("inr", 1e5), "INR_MN": ("inr", 1e6),
-           "INR_M": ("inr", 1e6), "INR_BN": ("inr", 1e9), "TONNES": ("mass", 1.0), "TONNE": ("mass", 1.0), "TONS": ("mass", 1.0),
+           "INR_M": ("inr", 1e6), "INR_BN": ("inr", 1e9), "TONNES": ("mass", 1.0), "MT": ("mass", 1.0), "TONNE": ("mass", 1.0), "TONS": ("mass", 1.0),
            "LAKH_TONNES": ("mass", 1e5), "LAKH_TONS": ("mass", 1e5)}
 _BASIS = re.compile(r"\b(standalone|consolidated)\b", re.I)
 
@@ -210,26 +213,50 @@ def map_metric(w: dict) -> _Spec | None:
     return spec
 
 
+def _sources_of(e: dict) -> list[dict]:
+    from .dossier import _sources
+
+    return _sources(e)
+
+
+def _src_basis(s: dict, e: dict) -> str | None:
+    return s.get("basis") or (s.get("lab") or {}).get("basis") or e.get("basis") or (e.get("lab") or {}).get("basis") or None
+
+
 def _entry_basis(e: dict) -> str | None:
-    return (e.get("basis") or (e.get("lab") or {}).get("basis") or None)
+    """The row's one basis from its sources; None when they are unlabelled or disagree."""
+    bases = {_src_basis(s, e) for s in _sources_of(e)}
+    return next(iter(bases)) if len(bases) == 1 else None
+
+
+def _sources_agree(e: dict) -> bool:
+    """Every source of the row states the same figure within 2% and in one unit (a calculated EBITDA margin of 3.39% beside the
+    company's stated 6.0% is no figure to judge a target by)."""
+    src = [s for s in _sources_of(e) if s.get("value") is not None]
+    if len({str(s.get("unit") or e.get("unit") or "").upper() for s in src}) > 1:
+        return False
+    top = max((abs(float(s["value"])) for s in src), default=0)
+    return all(abs(float(s["value"]) - float(src[0]["value"])) <= 0.02 * top for s in src)
 
 
 def _memory_row(spec: _Spec, period: str, metrics: list[dict], text: str) -> dict | None:
     """Memory's figure for the metric and exact period, on the basis the watch names; None when absent, ambiguous (two metric
-    names fit) or not marked ok."""
+    names fit), not marked ok, when its sources disagree, or when they sit on different bases (or the watch names a basis that is
+    not every source's)."""
     rows = [e for e in metrics if e.get("period") == period and e.get("value") is not None and (e.get("lab") or {}).get("ok") is not False
             and (e.get("metric") in spec.names if spec.names else ("volume" in (e.get("metric") or "") and "growth" not in (e.get("metric") or "")))]
-    if len({e["metric"] for e in rows}) != 1:
+    if not rows or len({str(e.get("unit")).upper() for e in rows}) != 1:
         return None
     row = rows[0]
+    # two names of one measure (gnpa and gnpa_pct) may both hold the period: they must say the same
+    if any(not _sources_agree(e) or abs(float(e["value"]) - float(row["value"])) > 0.02 * max(abs(float(e["value"])), abs(float(row["value"]))) for e in rows):
+        return None
     wanted = {b.upper() for b in _BASIS.findall(text)}
     if len(wanted) > 1:
         return None
-    have = (_entry_basis(row) or "").upper()
-    if wanted and have and have not in wanted:
+    have = {(_src_basis(s, row) or "").upper() for s in _sources_of(row)}
+    if len(have - {""}) > 1 or (wanted and have != wanted):
         return None
-    if wanted == {"STANDALONE"} and not have:
-        return None   # a multi-source figure is the consolidated one when any source is
     return row
 
 
@@ -269,6 +296,14 @@ def not_due(w: dict, filed_at: str) -> bool | None:
     return any(e > when for e in ends)
 
 
+_GROWS = frozenset({"revenue", "ebitda", "pat", "pbt", "nii", "volume"})
+
+
+def _decimals(value) -> int:
+    text = repr(float(value))
+    return len(text.split(".")[1].rstrip("0")) if "." in text and "e" not in text else 0
+
+
 def judge(w: dict, metrics: list[dict], filed_at: str) -> Judged | None:
     """MET / MISSED from memory's figure for the watch's one metric and one period, against the target's one figure and
     direction; None whenever a step is not certain."""
@@ -292,6 +327,11 @@ def judge(w: dict, metrics: list[dict], filed_at: str) -> Judged | None:
     actual = float(row["value"]) * stored[1]
     if target.kind != "pct" and target.goal and actual and not (1 / 50 < abs(actual) / abs(target.goal) < 50):
         return None   # F179's 50x rule: another unit
+    if target.bare and spec.key not in _GROWS:
+        return None   # a ratio or a count with no direction word could be a ceiling
+    step = 0.5 * 10 ** -_decimals(row["value"]) * stored[1]
+    if target.strict and abs(actual - target.goal) <= step:
+        return None   # equal at the figure's own precision: strict "below 1.45%" with 1.45 is not decided by rounding
     hit = {"<=": actual <= target.goal, "<": actual < target.goal, ">=": actual >= target.goal, ">": actual > target.goal}[target.op]
     return Judged(MET if hit else MISSED, spec, target, period, actual)
 
@@ -301,6 +341,8 @@ def watch_code_verdict(w: dict, evidence: str | None, metrics: list[dict], news_
     text and the filing's id are not read: the actual is memory's figure."""
     if w.get("kind") != "KPI":
         return None
+    if (w.get("created_on") or "") >= filed_at:
+        return None   # a watch made by this filing or later is not answered by it
     if not_due(w, filed_at):
         return NOT_DUE
     j = judge(w, metrics, filed_at)
@@ -362,7 +404,7 @@ _FORWARD = re.compile(r"\b(?:expects?|expected|will|would|aims?|aiming|plans?|ta
                       r"next\s+(?:quarter|year)|going\s+forward|guid(?:es|ed|ance)\s+for)\b", re.I)
 _OTHER_TIME = re.compile(r"\b(?:last\s+(?:year|quarter)|a\s+(?:year|quarter)\s+(?:ago|earlier)|year[- ]ago|prior|previous|earlier|"
                          r"yoy|qoq|y-o-y|q-o-q)\b", re.I)
-_ABBREV = re.compile(r"(?:\bRs|\bapprox|\bNo|\bvs|\bInc|\bLtd|\bi\.e|\be\.g|\bSt)\.$", re.I)
+_ABBREV = re.compile(r"(?:\bRs|\bapprox|\bNo|\bvs|\bInc|\bLtd|\bPvt|\bCo|\bCorp|\bDr|\bMr|\bMrs|\bMs|\bi\.e|\be\.g|\bSt)\.$", re.I)
 
 
 def _figures(clause: str) -> set[tuple[str, float]]:
@@ -450,8 +492,10 @@ _DANGLING = re.compile(r"(?:which|who|whom|whose|while|whereas|although|though|t
 
 def _cut(sentence: str, j: Judged) -> tuple[str | None, str | None]:
     """(what is left of the sentence, the cut text): only the contradicting clause when the rest stands alone (three words or
-    more), else the whole sentence. (sentence, None) when nothing is contradicted."""
-    bad = [c for c in _clauses(sentence) if _clause_contradicts(c, j)]
+    more) and no kept clause hangs on a cut one ("..., which management called a milestone"), else the whole sentence.
+    (sentence, None) when nothing is contradicted."""
+    clauses = _clauses(sentence)
+    bad = [c for c in clauses if _clause_contradicts(c, j)]
     if not bad:
         return sentence, None
     rest = sentence
@@ -459,7 +503,8 @@ def _cut(sentence: str, j: Judged) -> tuple[str | None, str | None]:
         rest = rest.replace(c, "", 1)
     edge = r"(?:[\s,;]|\band\b|\bbut\b)+"
     rest = re.sub(rf"^{edge}|{edge}$", "", re.sub(r"\s{2,}", " ", rest), flags=re.I).strip()
-    if len(rest.split()) < 3 or _DANGLING.match(rest):
+    hangs = any(c not in bad and _DANGLING.match(c) and i > 0 and clauses[i - 1] in bad for i, c in enumerate(clauses))
+    if len(rest.split()) < 3 or _DANGLING.match(rest) or hangs:
         return None, sentence
     rest = rest[0].upper() + rest[1:]
     return (rest + "." if sentence.rstrip().endswith(".") and not rest.endswith(".") else rest), " ".join(bad)

@@ -39,22 +39,55 @@ _KEY_EBITDA = re.compile(r"(?:operating )?EBITDA", re.I)
 # a period a headline names: the block is one period's row, and a figure of another period is not on another basis (28 Oct
 # 2026 refresh dry run: "VRL FY26 revenue ... ₹3,245 Cr (company-reported; results table ₹852.85 Cr)" set the year's revenue
 # against the quarter's row, 126 of 289 labels; a guided or target figure is no result at all, 32 more)
-_PERIOD = re.compile(r"\b(?:(Q[1-4])|9M|H[12])\s*'?(?:FY|CY)?\s*'?\d{0,4}\b|\b(?:(?:FY|CY)\s*'?\d{2,4}|nine[- ]months?|full[- ]year|"
-                     r"annual|half[- ]year)\b", re.I)
-_GUIDANCE = re.compile(r"\b(?:guid\w*|targets?|outlook|expects?|aims?|plans?|projects?|forecasts?|ambition|by FY\s*\d{2})\b", re.I)
+_PERIOD = re.compile(r"(?<![A-Za-z0-9])(?:Q([1-4])|([1-4])Q|H([12])|(9M|12M))(?:\s?(?:FY|CY)\s?'?|')?(\d{2,4})?E?(?![A-Za-z0-9])"
+                     r"|(?<![A-Za-z0-9])(?:FY|CY)\s?'?(\d{2,4})?E?(?![A-Za-z0-9])"
+                     r"|\b(nine[- ]months?|twelve[- ]months?|full[- ]year|annual|yearly|half[- ]year|for the year)\b", re.I)
+_GUIDANCE = re.compile(r"\b(?:guid\w*|targets?|outlook|expect\w*|aims?|plans?|project(?:s|ed|ion)?|forecast\w*|estimate\w*|"
+                       r"ambition|by FY\s?\d{2})\b", re.I)
 
 
-def _other_period(text: str, period: str | None) -> bool:
-    """Whether the last period named in ``text`` (a headline up to a figure, or a key number's label) is not the block's
-    period: a year, nine months or a half against a quarter's row, or another quarter. No period named is no other period."""
-    named = list(_PERIOD.finditer(text))
-    if not named:
-        return False
-    quarter = named[-1].group(1)
-    own = re.match(r"(Q[1-4])", period or "", re.I)
-    if quarter:
-        return own is not None and quarter.upper() != own.group(1).upper()
-    return own is not None or not period   # a year (or 9M, or a half) against a quarter's row, or a row of no known period
+def _periods(text: str) -> list[tuple[int, str, int | None, int | None]]:
+    """Each period ``text`` names, as (where it starts, kind Q/H/9M/Y, which quarter or half, the year's last two digits)."""
+    found = []
+    for m in _PERIOD.finditer(text):
+        q, q2, h, nine, year, fy, words = m.groups()
+        if q or q2:
+            kind, n = "Q", int(q or q2)
+        elif h:
+            kind, n = "H", int(h)
+        elif nine:
+            kind, n = ("9M" if nine.upper() == "9M" else "Y"), None
+        elif words:
+            kind, n = ("9M" if words.lower().startswith("nine") else "H" if words.lower().startswith("half") else "Y"), None
+        else:
+            kind, n = "Y", None
+        digits = year or fy
+        found.append((m.start(), kind, n, int(digits[-2:]) if digits else None))
+    return found
+
+
+def _differs_from(named: tuple, own: tuple | None) -> bool:
+    """A named period is another period than the block's when its kind, its quarter or half, or its year differs; a part
+    one side does not say is not compared. With no block period, only a quarter is taken as possibly the block's."""
+    _, kind, n, year = named
+    if own is None:
+        return kind != "Q"
+    _, own_kind, own_n, own_year = own
+    return kind != own_kind or (n is not None and own_n is not None and n != own_n) or \
+        (year is not None and own_year is not None and year != own_year)
+
+
+def _other_period(text: str, period: str | None, at: int | None = None, end: int | None = None) -> bool:
+    """Whether ``text`` (a key number's label, or a headline with its figure at ``at``..``end``) names a period that is not
+    the block's: the last one before the figure, and any after it in the figure's own clause ("₹3,245 Cr in FY26"); a year,
+    nine months or a half against a quarter's row, another quarter, another year. No period named is no other period."""
+    own = (_periods(period or "") or [None])[0]
+    if at is None:
+        named = _periods(text)[-1:]
+    else:
+        after = _CLAUSE.split(text[end:])[0]
+        named = _periods(text[:at])[-1:] + _periods(after)
+    return any(_differs_from(p, own) for p in named)
 
 
 def _cr(value: float) -> str:
@@ -286,7 +319,7 @@ def apply_card_json(card_json: dict) -> list[str]:
     if isinstance(headline, str) and "(company-reported; results table" not in headline and not _GUIDANCE.search(headline):
         for word, figure, stated, at in _headline_figures(headline):   # not twice, and never on a guided or target figure
             which = which_of(word)
-            if which is None or stated or _other_period(headline[:at], period):
+            if which is None or stated or _other_period(headline, period, at, re.compile(_FIG, re.I).match(headline, at).end()):
                 continue
             block = rows[which][0]
             if _differs(figure, block, 0.03 if which == "ebitda" else 0.015):

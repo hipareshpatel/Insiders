@@ -345,3 +345,15 @@ def test_an_old_gaps_earlier_quarters_are_not_cut_by_the_seeds_since():
     since = bf.fill_since(result, bf.needed_quarters({"Q4FY24"}))
     assert since == "2023-03-31"   # Q4FY23 ends then; its file comes after, so it is kept
     assert since <= mg.since_for(result)
+
+
+def test_a_quarter_known_wrong_on_bse_is_never_filled_from_it(monkeypatch):
+    monkeypatch.setitem(bf.KNOWN_WRONG, ("1", "Q1FY27"), "test: the company corrected this quarter after filing")
+    sink, report, symbols, nse, bse = setup({"1": company("KOVAI", 900.0)})
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True)
+    assert out["skipped"]["known wrong on bse"] == 1 and out["figures_written"] == 0 and sink.writes == 0
+    assert not any(r["period"] == "Q1FY27" for r in out["rows"])   # BSE's file for it was there and was not used
+
+
+def test_the_known_wrong_list_holds_kovais_corrected_quarter():
+    assert ("523323", "Q4FY26") in bf.KNOWN_WRONG

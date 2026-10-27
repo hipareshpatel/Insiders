@@ -52,7 +52,14 @@ log = logging.getLogger(__name__)
 EXCHANGE = "BSE"
 TRIED_KEY = "bsefill:tried"            # kv: companies a real run already handled
 REASONS = ("mcap below cut-off", "mcap unknown", "no symbol", "nse list unavailable", "nse has results",
-           "bse lists nothing", "bse lists no needed quarter", "bse fetch failed", "no new quarter", "quarter held", "basis differs", "not a gap quarter")
+           "bse lists nothing", "bse lists no needed quarter", "bse fetch failed", "no new quarter", "quarter held", "basis differs", "not a gap quarter",
+           "known wrong on bse")
+# (scrip, quarter) whose BSE file is known to be wrong, never filled from it; each with the evidence (owner, 27 Oct 2026: "skip
+# Kovai and start saving")
+KNOWN_WRONG = {
+    ("523323", "Q4FY26"): "Kovai Medical: the company's corrigendum of 25 May 2026 (newspaper extract) corrects Q4 tax, so profit"
+                          " is 6,335.32 lakh and basic EPS 57.90; BSE's XBRL of 22 May still has 59.69 Cr and 54.55",
+}
 
 
 class _Scratch:
@@ -354,6 +361,13 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
         wanted = set(result["missing"])
         if result.get("missing_year_ago") and result.get("year_ago"):
             wanted.add(result["year_ago"])
+        wrong = {q for q in wanted if (scrip, q) in KNOWN_WRONG}
+        if wrong:
+            skip("known wrong on bse", len(wrong))
+            wanted -= wrong
+            if not wanted:
+                done(scrip)
+                continue
         if nse_rows:
             first = first_nse_index(nse_rows) if pre_nse else None
             wanted = {q for q in wanted if first is not None and (quarter_index(q) or 0) < first}

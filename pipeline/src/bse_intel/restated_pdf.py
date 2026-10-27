@@ -66,7 +66,8 @@ def comparatives(rows: list, period: str, basis: str) -> list[dict]:
             continue
         for metric in METRICS:
             got = pr.figure_for(rows, target, metric, basis)
-            values = {round(v, 4) for v, _label, _page in got["values"]}
+            found = pr.revenue_only(got["values"]) if metric == "revenue" else got["values"]
+            values = {round(v, 4) for v, _label, _page in found}
             if len(values) == 1:        # none, or two readings that disagree: nothing stored
                 out.append({"metric": metric, "period": target, "basis": basis, "value": values.pop()})
     return out

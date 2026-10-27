@@ -50,6 +50,7 @@ class PdfCheck:
         if self.sources is None:
             return None, "no NSE client to fetch the PDF"
         period, basis = result.period, result.basis
+        top_line = metric == "revenue"   # revenue from operations: a "Total income" line is not it
         metric = "revenue" if metric in ("revenue", "total_income", "interest_earned") else metric
         try:
             urls = self._urls(period)
@@ -62,6 +63,8 @@ class PdfCheck:
                     reasons.append(why)
                     continue
                 got = pdf_referee.figure_for(rows, period, metric, basis)
+                if top_line:
+                    got["values"] = pdf_referee.revenue_only(got["values"])
                 if not got["values"]:
                     reasons.append(got["unsure"] or f"no {metric} figure of the {period} column on the {basis} basis")
                     continue

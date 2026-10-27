@@ -597,6 +597,13 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
     return {"values": values, "unsure": "; ".join(dict.fromkeys(unsure)), "found": seen}
 
 
+def revenue_only(values: list[tuple[float, str, int]]) -> list[tuple[float, str, int]]:
+    """The figures of a revenue lookup that are revenue, not "Total income": memory's revenue is revenue from operations, and a
+    table that splits it into sub-lines with no total leaves only "Total income" (Titan: 17,868 total income for 17,740
+    revenue), which includes other income (restated-pdf trial, 27 Oct 2026)."""
+    return [v for v in values if not _TOTAL_INCOME.search(v[1])]
+
+
 def _same_reading(a: float, b: float) -> bool:
     """Two printed readings of one figure: within half a unit of a coarser printed precision (120.5 and 120.48 Cr, EPS 1.23
     and 1.2), or 0.05% (a figure printed in whole crore beside one to a decimal). Tighter than the cross-check's 1 Cr floor."""

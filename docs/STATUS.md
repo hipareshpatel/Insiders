@@ -83,9 +83,9 @@ unexplained rows is not started (owner to say).
 
 ## 4. Known problems (found 27 Oct, not fixed)
 
-- `audit-export.yml` and `maintenance.yml` commit their exports to `claude/gracious-goodall-jn9buu` (a parked branch)
-  unless the repository variable `AUDIT_BRANCH` is set.
-- The shadow critic is off (D41) but `audit-export.yml` still exports its verdicts every morning at 09:51 IST.
+- Fixed 27 Oct night: the audit exports are kept as a GitHub artifact (`audit-export`, or the command's name) and are
+  committed only to the branch the repository variable `AUDIT_BRANCH` names (before, a parked branch); the critic's
+  export runs only with the repository variable `CRITIC` at 1.
 - `FILE_CAP` (the 100-file first test) is wired only into the `run` and `textback-bse` jobs of `maintenance.yml`, not
   into seed-memory, memory-gaps-fill or text-backfill.
 - `xbrl.eps_signs` still flips an EPS sign from one source (the same file's profit sign).

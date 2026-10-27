@@ -233,6 +233,14 @@ concurrency:
     || 'maint-cards' }}
   cancel-in-progress: false
 
+# F215 (owner 27 Oct: merge and switch on once reviewed): the PDF referee and reader paths read two-digit years, rank pages and
+# take the profit total; maintenance only. The live pipeline keeps them off: its restated-YoY and unit-slip checks share this
+# code and need the on/off over stored cards first (review of e559bcb). A repository variable set to 0 turns one off.
+env:
+  PDF_DATES_2DIGIT: ${{ vars.PDF_DATES_2DIGIT || '1' }}
+  PDF_PAGE_RANK: ${{ vars.PDF_PAGE_RANK || '1' }}
+  PDF_ROW_FIXES: ${{ vars.PDF_ROW_FIXES || '1' }}
+
 jobs:
   run:
     if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse'

@@ -72,6 +72,7 @@ jobs:
       EPS_BASE_CHECK: ${{ vars.EPS_BASE_CHECK || '1' }}   # F208: standalone EPS stored as consolidated refused (Wipro)
       EPS_SHARE_COUNT_CHECK: ${{ vars.EPS_SHARE_COUNT_CHECK || '1' }}   # F211: split/bonus adjusted only when record and share count agree
       CARD_RESULTS_ONE_LINE: ${{ vars.CARD_RESULTS_ONE_LINE || '1' }}   # F206 (TODO 107): a results row's figures from one statement line
+      CARD_WATCH_VERDICT: ${{ vars.CARD_WATCH_VERDICT || '1' }}   # F205 (TODO 106): code decides met / missed / not due from memory's own figure
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}

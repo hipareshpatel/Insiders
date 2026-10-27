@@ -117,6 +117,16 @@ def memory_year_check() -> bool:
     return (_env("MEMORY_YEAR_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_watch_verdict() -> bool:
+    """CARD_WATCH_VERDICT (default off; F205, TODO 106): code decides a watch's or guidance's MET / MISSED / NOT DUE from the
+    target's direction (at or below, at or above, a range), the target's period against the filing's (a later period is not
+    due, no missed signal) and the figure on the target's own kind and unit (``watch_code.py``); a card sentence that says
+    met when code says missed, or the reverse, is cut with a change-log note. MAHABANK's GNPA 1.25% "missed" a 1.45% ceiling;
+    SAKAR's FY27 target "missed" on a Q2 card; APL Apollo's 9.63 lakh t "meets" a 10 lakh t watch; Unimech's breach on a
+    target memory shows met. Read at the call."""
+    return (_env("CARD_WATCH_VERDICT", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def memory_call_v2() -> bool:
     """MEMORY_CALL_V2 (default off; TODO 83, F180): every earnings-call transcript and investor deck gets a second, memory-only
     AI reading (call_memory.py) whose typed points, each with its page and exact quote, are checked by code and kept in the

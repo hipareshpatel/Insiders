@@ -87,3 +87,9 @@ financials on screener's formulas: on through `VITE_SCREENER_LINES` in deploy-we
 on), F208 (Wipro: an AI-read standalone EPS stored as consolidated is refused; stored EPS changes the profit does not carry are
 not kept: on). EPS is never shown, so F208 and F211 change memory only. The suite with every live switch on together: 1,864 passed.
 Still in review: F205 (watch verdicts), F206 (one line a results row), F212 (restated reader).
+- ~09:10 IST: F206 merged and on (`CARD_RESULTS_ONE_LINE`), F212 merged (no switch: the restated reader only stores fewer
+  figures; MEMORY_RESTATED stays off). Known cost of F206: when this quarter's EBITDA is only the release's and the comparatives
+  are the file's, the EBITDA change is left off even where it would have been right (Shree Cement and Crompton tests under the
+  switch): a missing change, never a wrong one. All other tests unchanged with every live switch on.
+- File cap (owner rule, 100 NSE/BSE files a run): run 40441227348 (memory-gaps-fill over every company) cancelled before it
+  passed the cap; the cap is being built (F213). No NSE/BSE maintenance run is dispatched until it is in.

@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 02:12 IST.
+Last updated: 28 Oct 2026, 02:45 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -106,8 +106,9 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
    The normal key scored (27 Oct night, code before #199; `docs/bench/normalpdf/score-baseline-2026-10-27.md`): of 337
    figures, live switches 35 right / 1 wrong / 301 no answer, maintenance switches 45 / 0 / 292. Fails the 98% right and 5%
    no-answer marks by far; passes the wrong mark. The reader has no rows for total income or profit before tax at all,
-   and 29 of 50 filings give no answer. The maintenance state gave 40 and then 45 right on two runs: not repeatable yet;
-   a re-score on the new code, run alone twice, is running.
+   and 29 of 50 filings give no answer. Re-scored alone, twice, on the code with #199 (28 Oct, 02:40 IST): 45 / 0 / 292 both
+   times, identical on all 337 figures, so the score is repeatable; #199 added 5 right (SRF, VISL, HUHTAMAKI revenue; TBZ
+   revenue and profit) and no wrong. The earlier 40-then-45 was the #199 code arriving between two runs.
 6. **A way to take a proven-wrong figure out of memory in code** (not by hand). Today `bse_gap_fill.KNOWN_WRONG` only
    stops a future fill, and nothing removes a wrong figure already written.
 7. **The docs clean-up the owner planned for later** (one doc per purpose, the one-off tools out of the live code); not

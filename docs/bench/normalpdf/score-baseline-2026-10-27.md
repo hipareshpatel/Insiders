@@ -7,23 +7,25 @@ Read-only measurement. Nothing was changed, committed or written to a database. 
 | | right | wrong | no answer |
 |---|---|---|---|
 | (a) live flags, all 337 figures | 35 (10.4%) | 1 (0.3%) | 301 (89.3%) |
-| (b) maintenance flags, all 337 figures | 45 (13.4%) | 0 | 292 (86.6%) |
+| (b) maintenance flags, all 337 figures, code before PR #199 | 40 (11.9%) | 0 | 297 (88.1%) |
 | (a) revenue + pat only (165 figures the reader can answer) | 35 (21%) | 1 | 129 (78%) |
-| (b) revenue + pat only | 45 (27%) | 0 | 120 (73%) |
+| (b) revenue + pat only, code before PR #199 | 40 (24%) | 0 | 125 (76%) |
 
-Answered 36 figures in (a): 35 right, 1 wrong (2.8% of what it answered). Answered 45 in (b): all right. Filings with at least one answer: 17 of 50 in (a), 21 of 50 in (b).
+Answered 36 figures in (a): 35 right, 1 wrong (2.8% of what it answered). Answered 40 in (b) (pre-#199): all right. Filings with at least one answer: 17 of 50 in (a), 21 of 50 in (b, with #199).
 
-Run to run noise: state (a) gave identical results on two runs. State (b) did not: the first run (made while the (a) run used the same machine) scored 40 right, the rerun alone scored 45. Seven figures flipped (Standalone revenue of SRF, VISL, HUHTAMAKI: "conflict" to right; TBZ standalone revenue and profit: none to right; TBZ consolidated: none to other-basis). The cause was not traced; OCR or page choice is not fully repeatable under load. The tables below use the second (alone) runs. Treat (b) as 40 to 45 right.
+CORRECTION (28 Oct): an earlier version of this section called state (b) not repeatable (40 right on one run, 45 on another). That was wrong. The checkout's `pdf_referee.py` was replaced by the PR #199 revisions at 19:13 UTC while the runs were going, so the first (b) run used the code before #199 (40 right) and the rerun used the code with it (45). The headline (b) rows above and the pass-mark table are the pre-#199 code (40); the detailed tables further down for (b) come from the rerun with #199 (45). State (a) is unchanged by #199 and was identical on two runs. See the section at the end.
 
 ## Pass marks (set before scoring: at least 98% right, at most 5% no answer, at most 1 wrong in 100)
 
 | mark | (a) | (b) |
 |---|---|---|
-| at least 98% right | 10.4%: FAIL | 13.4%: FAIL |
-| at most 5% no answer | 89.3%: FAIL | 86.6%: FAIL |
+| at least 98% right | 10.4%: FAIL | 11.9%: FAIL |
+| at most 5% no answer | 89.3%: FAIL | 88.1%: FAIL |
 | at most 1 wrong per 100 | 0.3 per 100: pass | 0: pass |
 
 Only the wrong-rate mark is met, and only because the reader says nothing when unsure. Even on the two metrics it can answer, it answers about 1 figure in 4.
+
+Note: the by-metric, by-basis, by-unit, by-tag and by-reason tables below for state (b) were made from the rerun, which already had the #199 code (45 right). The pre-#199 (b) differs only in the 7 figures listed in the last section.
 
 ## Metrics the reader cannot answer at all
 
@@ -90,3 +92,32 @@ State (b): none. `PDF_ROW_FIXES` turns that case into "only Total income printed
 
 - Script: `scratchpad/normalscore/scripts/run_state.py` (Ensemble of the `native` reader, `pdf_bench.answer_pair` and `pdf_bench.outcome`, reused unchanged; settings built after setting the three flags, checked by assertion). Run with `python -I`, one process a state, PDFs from `scratchpad/normalkey/pdfs/` (all 50 present, none downloaded again). The reader's own verdict rule (`settle`) was not used because it needs two reader families; each reading is scored directly, as `pdf_bench` scores each reader.
 - Readings: `scratchpad/normalscore/readings_a_rerun.json`, `readings_b_rerun.json` (first runs `readings_a.json`, `readings_b.json`).
+
+## After PR #199 (merged 28 Oct 00:48 IST, commit 97e2a23): state (b) rescored alone, twice, and the repeatability check
+
+Code: `git archive` of origin/main a940049 (the reader modules are the same as at 97e2a23) in a scratch folder; the pre-#199 code is a `git archive` of 97e2a23^ (a502761). The run script asserts which copy was imported. Each run alone on the machine, one after another, all three switches 1, `python -I`, same key, same 50 PDFs.
+
+| run | code | right | wrong | no answer | revenue + pat |
+|---|---|---|---|---|---|
+| old | before #199 (a502761) | 40 (11.9%) | 0 | 297 | 40/0/125 of 165 |
+| new 1 | main a940049 | 45 (13.4%) | 0 | 292 | 45/0/120 of 165 |
+| new 2 | main a940049 | 45 (13.4%) | 0 | 292 | 45/0/120 of 165 |
+
+(1) What #199 changed on the normal set: +5 right, 0 wrong, no answer 297 to 292. By metric: revenue 20 to 24 right, pat 20 to 21. By basis: standalone 22 to 27, consolidated 18 to 18. Still 13% right against the 98% mark and 87% no answer against the 5% mark; total_income and pbt are still 0 of 172. State (a) is untouched by #199 (35/1/301 before and after).
+
+Seven figures changed between the old and the new code, all in six filings:
+
+| figure | key | before #199 | after #199 |
+|---|---|---|---|
+| SRF standalone revenue | 3,808.61 | conflict (rows differ: 3,718.1 and 3,808.61) | right |
+| VISL standalone revenue | 1,069 | conflict (rows differ: 1,045 and 1,069) | right |
+| HUHTAMAKI standalone revenue | 768.84 | conflict (rows differ: 748.13 and 768.84) | right |
+| TBZ standalone revenue | 705.35 | none ("no unit declared above the row") | right |
+| TBZ standalone profit | 15.43 | none (same reason) | right |
+| TBZ consolidated revenue and profit | 705.35 / 14.27 | none ("basis not told") | other basis only (the reader now sees the standalone table and says the figure is printed on the standalone basis only; still no answer) |
+
+All five gains match what #199 lists: garbled unit lines (TBZ) and revenue/profit label fixes that drop the second, wrong row (SRF, VISL, HUHTAMAKI).
+
+(2) Repeatability: the two new runs are identical figure for figure (status, value and note of all 337 pairs; 0 differences). The old code run is identical to the first (b) run made earlier (0 differences). So (b) is repeatable when nothing else runs, and the earlier flips were not noise: they were the code change landing mid-session (file replaced at 19:13 UTC; the first (b) run started before it, the rerun after it). No OCR thread, page order, timing or cache effect was seen. (Run times were 22 minutes each alone, against about 50 minutes when two runs shared the machine; the results did not depend on it.)
+
+Files (scratch, not committed): `scratchpad/normalscore/new_b1.json`, `new_b2.json`, `old_b1.json`, run scripts `scripts/run_state2.py`, `scripts/cmp.py`.

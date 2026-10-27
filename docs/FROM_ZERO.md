@@ -126,3 +126,32 @@ What it settles, read from the calculation linkbase:
 - "No adjustment for splits and bonuses": already built. `corporate_actions.py` reads NSE's corporate-actions feed and
   turns each split, bonus and consolidation into a factor that EPS and share counts are adjusted by (LIC's 1:1 bonus,
   Kapston's 1:2).
+
+## Step 2: the daily flow for results figures, PDF + XBRL (proposed 27 Oct 2026, waiting for the owner)
+
+What 27 Oct showed (measured; reports in `docs/bench/`):
+- NSE's own results XBRL is sometimes wrong against the company's PDF, and our reader copies it: ADANIENT Q4FY25 profit
+  1,382.17 (PDF 4,014.90), ANUP FY25 -22.06 (PDF 118.30), ABREL Q4FY26 the continuing-operations loss (PDF total 5.39),
+  APTUS revenue holding total income. A check of "ours = NSE's file" proves nothing for these: it reads the same file.
+- BSE's file can miss a company's own correction: KOVAI Q4FY26 (the corrigendum of 25 May 2026; BSE's XBRL of 22 May).
+- Screener is a useful referee, not a source: it agrees with the company where we were wrong (ADANIENT) and is wrong
+  where we were right (KENNAMET, SGMART, KIRLFER, 63MOONS). Most differences are its documented treatments (excise,
+  exceptional items in other income, EPS after splits, later restatements): `docs/bench/screener-rules.md`.
+- Our PDF reader is the weak link: of the pairs it reached, a third ended unsure or unreadable, and it read the wrong
+  line in 9 of 18 hand-settled cases (the first sub-line, the standalone table, a segment table).
+
+The flow proposed, one item per Yes / No:
+
+| # | Step | What it does | State today |
+|---|---|---|---|
+| A | Keep both files | Every results filing: NSE's XBRL and the PDF fetched and kept (R2), BSE's XBRL where NSE has none | XBRL kept (F191); PDFs kept as text only |
+| B | The file checked against itself | Owners' + minority vs whole profit, EPS x shares vs profit, quarters vs year, SEBI's own sums: a contradicted figure is held, never replaced | built: F219 (`XBRL_FILER_CHECKS`, off), xbrl_sums (on) |
+| C | The PDF confirms the main lines | Revenue, profit, EPS and PBT read from the PDF's statement on the same basis, column and unit; agree = confirmed; disagree = held | not built for the daily path; needs item F first |
+| D | A second source settles a held figure | BSE's XBRL, a corrigendum, the next filing's comparative column, the annual report; two sources must agree before a figure is written (owner's rule) | parts exist (restated_from, BSE fill, KNOWN_WRONG); not joined up |
+| E | Corrections and restatements watched | A corrigendum or a later filing that revises a quarter keeps both figures, each labelled (as filed / restated, with the file) | restated_from kept (F167); corrigenda not read |
+| F | A reliable PDF reader for results statements | The reader proves the row, column, basis and unit before it gives a figure; measured on a hand-checked answer key of results statements before it is trusted | the hard-PDF set exists (`docs/bench/hardpdf/`); results-statement key not built |
+| G | Cards use confirmed figures only | A held or unconfirmed figure stays off the card (memory keeps it, marked) | not built |
+| H | Screener as a weekly audit | The nine-line cross-check through the screener view (F220); the rest to the PDF referee; each new error class fixed in code with a test | built (F220), run by hand |
+
+Order if all are Yes: F first (without a reliable reader, C would hold too many right figures), then B on, C, D, E, G;
+H keeps running as the audit.

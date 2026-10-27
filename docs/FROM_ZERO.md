@@ -127,7 +127,7 @@ What it settles, read from the calculation linkbase:
   turns each split, bonus and consolidation into a factor that EPS and share counts are adjusted by (LIC's 1:1 bonus,
   Kapston's 1:2).
 
-## Step 2: the daily flow for results figures, PDF + XBRL (proposed 27 Oct 2026, waiting for the owner)
+## Step 2: the daily flow for results figures, PDF + XBRL (proposed 27 Oct 2026; owner: "YES for all", same day)
 
 What 27 Oct showed (measured; reports in `docs/bench/`):
 - NSE's own results XBRL is sometimes wrong against the company's PDF, and our reader copies it: ADANIENT Q4FY25 profit
@@ -153,5 +153,5 @@ The flow proposed, one item per Yes / No:
 | G | Cards use confirmed figures only | A held or unconfirmed figure stays off the card (memory keeps it, marked) | not built |
 | H | Screener as a weekly audit | The nine-line cross-check through the screener view (F220); the rest to the PDF referee; each new error class fixed in code with a test | built (F220), run by hand |
 
-Order if all are Yes: F first (without a reliable reader, C would hold too many right figures), then B on, C, D, E, G;
-H keeps running as the audit.
+Decision (owner, 27 Oct 2026): **Yes to A-H**, in this order: F first (without a reliable reader, C would hold too many
+right figures), then B on, C, D, E, G; H keeps running as the audit. Each is built and measured before the next starts.
